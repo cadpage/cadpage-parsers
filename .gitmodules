@@ -1,0 +1,6 @@
+[submodule "cadpage"]
+	path = cadpage
+	url = git@github.com:cadpage/cadpage-cadpage.git
+[submodule "cadpage-private"]
+	path = cadpage-private
+	url = git@github.com:cadpage/cadpage-private.git
