@@ -37,8 +37,28 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "ALEX CITY",      "ALEXANDER",
-      "CHAN",           "CHANTILY",
-      "FLCH",           "FALLS CHURCH"
+      "ALEX",          "ALEXANDRIA",
+      "ALEX CITY",     "ALEXANDER",
+      "ANDL",          "ANNANDALE",
+      "ARLN",          "ARLINGTON",
+      "BRKE",          "BURKE",
+      "CENT",          "CENTREVILLE",
+      "CHAN",          "CHANTILLY",
+      "CLFT",          "CLIFTON",
+      "FLCH",          "FALLS CHURCH",
+      "FRFX CITY",     "FAIRFAX CITY",
+      "FRFX",          "FAIRFAX",
+      "FXST",          "FAIRFAX STATION",
+      "GTFL",          "GREAT FALLS",
+      "HRND",          "HERNDON",
+      "LOCO",          "LOUDOUN",
+      "LRTN",          "LORTON",
+      "MCLN",          "MCLEAN",
+      "OKTN",          "OAKTON",
+      "RSTN",          "RESTON",
+      "SFLD",          "SPRINGFIELD",
+      "VNNA",          "VIENNA",
+      "VNNA TOWN",     "VIENNA"
+
   });
 }
