@@ -1,0 +1,7 @@
+MODULES="."
+if [ -e cadpage/.git ]; then
+  MODULES="$MODULES cadpage"
+fi
+if [ -e cadpage-private/.git ]; then
+  MODULES="$MODULES cadpage-private"
+fi

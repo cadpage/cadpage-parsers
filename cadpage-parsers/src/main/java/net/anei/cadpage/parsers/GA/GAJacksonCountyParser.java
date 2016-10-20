@@ -49,7 +49,7 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
   
   @Override
   public String getFilter() {
-    return "93001,777,14101,JACKSONE911@jacksoncountygov.com";
+    return "93001,777,14101,2002,JACKSONE911@jacksoncountygov.com";
   }
   
   @Override
@@ -73,6 +73,7 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
       "DIABETIC PATIENT",
       "DRUG OVERDOSE",
       "FIRE",
+      "FRACTURE",
       "HIT AND RUN",
       "ILLEGAL",
       "INJURY",
