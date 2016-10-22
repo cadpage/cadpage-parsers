@@ -3,10 +3,9 @@
 MODULES="${MODULES#. *} ."
 
 # Check for any unresolved merge conflicts
-for DIR in $MODULES; do
-  if ( cd $DIR; git merge HEAD>/dev/null ); then
-    echo $DIR is OK
-  else
+for DIR in $MODULES
+do
+  if ( cd $DIR; ! git merge HEAD>/dev/null ); then
     echo "**** Project:$DIR has unresolved conflicts" 1>&2
     exit 1
   fi
@@ -20,5 +19,5 @@ done
 # Now do the final commit
 for DIR in $MODULES; do
   echo "$DIR:"
-  ( cd $DIR; git commit "$@" )
+  ( cd $DIR; git config --local core.editor gedit; git commit "$@";  git config --local --unset core.editor )
 done

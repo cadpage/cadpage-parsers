@@ -1,6 +1,6 @@
 #! /bin/bash
 . ${0%/*}/common
-${0/*}/gssh-add
+${0%/*}/gssh-add
 for DIR in $MODULES
 do
   echo "$DIR:"

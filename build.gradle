@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.2.2'
     }
 }
 
@@ -18,3 +18,24 @@ ext {
     versionName = '1.9.10.27'
     versionCode = 10910270
 }
+
+task status(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gstatus'
+}
+
+task pull(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gpull'
+}
+
+task commit(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gcommit'
+}
+
+task push(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gpush'
+}
+
