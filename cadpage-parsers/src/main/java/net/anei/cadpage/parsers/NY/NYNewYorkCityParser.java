@@ -26,7 +26,7 @@ public class NYNewYorkCityParser extends FieldProgramParser {
 	    }
 	    body = body.replace(" Bet ", " Bet: ");
 	    body = body.replace(" Between ", " Bet: ");
-	    return parseFields(body.split(" -+ "), 3, data);
+	    return parseFields(body.split(" -+ "), 2, data);
 	  }
 	  
 	  @Override

@@ -14,15 +14,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAElkCountyParser extends FieldProgramParser {
   
-  private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-      "JOHNSBURG", "JOHNSONBURG",
-      "RIDGWAY_B", "RIDGWAY",
-      "ST_MARYS", "ST MARYS"
-  }); 
-  
   public  PAElkCountyParser() {
     super(CITY_TABLE, "ELK COUNTY", "PA",
-          "Inc_Code:CALL! Address:ADDR! City:CITY! Cross_Streets:X? Agency:SRC! INFO+? DATETIME");
+          "Inc_Code:CALL! Address:ADDR! City:CITY! Apt:APT? Cross_Streets:X? Agency:SRC! INFO+? DATETIME END");
   }
   
   @Override
@@ -38,18 +32,25 @@ public class PAElkCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
     body = body.replace("Inc:", "Inc Code:").replace(" Add:", "\nAddress:").replace("\nXSt:", "\nCross Streets:");
     return parseFields(body.split("\n"), 5, data);
   }
   
-  private final static DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-  
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('[');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
   }
   
   private class MyCrossField extends CrossField {
@@ -59,4 +60,29 @@ public class PAElkCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  private final static DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private final static Pattern TRUNC_DATE_TIME_PTN = Pattern.compile("\\d\\d?/[/0-9]*(?: [:0-9]*(?: [AP])?)?");
+  
+  private class MyDateTimeField extends DateTimeField {
+    
+    public MyDateTimeField() {
+      super(DATE_TIME_FMT, true);
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (super.checkParse(field, data)) return true;
+      if (TRUNC_DATE_TIME_PTN.matcher(field).matches()) return true;
+      return false;
+    }
+  }
+  
+  private static final Properties CITY_TABLE = buildCodeTable(new String[]{
+      "JOHNSBURG", "JOHNSONBURG",
+      "RIDGWAY_B", "RIDGWAY",
+      "RIDGWAY_T", "RIDGWAY TWP",
+      "SPRING_CR", "SPRING CREEK TWP",
+      "ST_MARYS",  "ST MARYS"
+  }); 
 }
