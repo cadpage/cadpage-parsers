@@ -19,22 +19,22 @@ ext {
     versionCode = 10910280
 }
 
-task status(type: Exec) {
+task gstatus(type: Exec) {
     group = "team"
     commandLine 'scripts/gstatus'
 }
 
-task pull(type: Exec) {
+task gpull(type: Exec) {
     group = "team"
     commandLine 'scripts/gpull'
 }
 
-task commit(type: Exec) {
+task gcommit(type: Exec) {
     group = "team"
-    commandLine 'scripts/gcommit'
+    commandLine 'scripts/gcommit', '-editor', 'gedit'
 }
 
-task push(type: Exec) {
+task gpush(type: Exec) {
     group = "team"
     commandLine 'scripts/gpush'
 }

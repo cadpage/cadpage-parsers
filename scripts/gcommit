@@ -1,4 +1,14 @@
 #! /bin/bash
+
+# See if editor was passed from caller
+TEDITOR=
+if [[ $1 == -editor ]]; then
+  TEDITOR="$2"
+  shift 2
+fi
+
+# Get the master module list
+# and reverse order so top menu comes last
 . ${0%/*}/common
 MODULES="${MODULES#. *} ."
 
@@ -16,8 +26,23 @@ for DIR in  $MODULES; do
   ( cd $DIR; git add --all )
 done
 
+# Do we need to override the editor setting
+if [[ -n TEDITOR ]]; then
+  OLD_EDITOR=`git config --global core.editor`
+  git config --global core.editor $TEDITOR
+fi
+
 # Now do the final commit
 for DIR in $MODULES; do
   echo "$DIR:"
-  ( cd $DIR; git config --local core.editor gedit; git commit "$@";  git config --local --unset core.editor )
+  ( cd $DIR; git commit "$@" )
 done
+
+# Restore editor setting
+if [[ -n TEDITOR ]]; then
+  if [[ -n OLD_EDITOR ]]; then
+    git config --global core.editor $OLD_EDITOR
+  else
+    git config --global --unset core.editor
+  fi
+fi
