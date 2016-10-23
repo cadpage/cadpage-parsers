@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-
-
 public class OHShelbyCountyParser extends FieldProgramParser {
   
   public OHShelbyCountyParser() {
@@ -16,23 +14,40 @@ public class OHShelbyCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad@shelbycountysheriff.com";
+    return "cad@shelbycountysheriff.com,PFullenkamp@Plastipak.com,pfullenkamp@nktelco.net";
   }
   
   @Override
   public boolean parseMsg(String body, Data data) {
+    if (body.startsWith("Quick Look")) {
+      int pt = body.indexOf("\n\n");
+      if (pt < 0) return false;
+      body = body.substring(pt+2).trim();
+    } else {
+      body = body.replace("\n>", "\n").trim();
+      body = stripFieldStart(body,">");
+    }
     return parseFields(body.split("\\|"), data);
   }
-  
+
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d\\d-\\d{6}", true);
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d|", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    return super.getField(name);
+  }
+
   private class MyCallField extends CallField {
     
     public MyCallField() {
-      setPattern(Pattern.compile(":?\\d\\d? ?- ?[A-Z]*"), true);
+      setPattern(Pattern.compile(":?[A-Z0-9]+ ?- ?[A-Z0-9]*"), true);
     }
     
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith(":")) field = field.substring(1);
+      field = stripFieldStart(field, ":");
       super.parse(field, data);
     }
   }
@@ -70,15 +85,6 @@ public class OHShelbyCountyParser extends FieldProgramParser {
   }
   private static final Pattern PLACE_PTN = Pattern.compile("[^ ]+ +[^ ]+ .*");
 
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d\\d-\\d{6}", true);
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d|", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    return super.getField(name);
-  }
-  
   private static final String[] CITY_LIST = new String[]{
     "SIDNEY",
     "ANNA",
