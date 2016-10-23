@@ -35,7 +35,7 @@ fi
 # Now do the final commit
 for DIR in $MODULES; do
   echo "$DIR:"
-  ( cd $DIR; git commit "$@" )
+  ( cd $DIR; git commit -a "$@" )
 done
 
 # Restore editor setting
