@@ -31,40 +31,16 @@ public class PABerksCountyParser extends FieldProgramParser {
     int pt = body.indexOf("\n\nSent ");
     if (pt < 0) pt = body.indexOf("\nReply ");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    boolean force = body.startsWith("<!DOCTYPE");
-    if (force) {
-      body = cleanDocHeaders(body);
-      if (body == null) return false;
-    }
     body = stripFieldEnd(body, "=");
     
     // There used to be a Muni: field label.  Which we remove from old  messages
     body = body.replace("; Muni:",        ";");
     
-    if (parseFields(body.split(";"), data)) {
-      data.strCity = stripFieldEnd(data.strCity, " BORO");
-      return true;
-    }
-    if (!force) return false;
-    setFieldList("INFO");
-    data.parseGeneralAlert(this, body);
+    if (!parseFields(body.split(";"), data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
     return true;
   }
-  
-  
-  private static final Pattern CLEAN_HTML_PTN = Pattern.compile("</?(?:span|p)\\b[^>]*>", Pattern.CASE_INSENSITIVE);
-  
-  private String cleanDocHeaders(String body) {
-    int ifCnt = 0;
-    for (String line : body.split("\n")) {
-      if (line.trim().length() == 0) continue;
-      if (line.contains("<!--[if ")) ifCnt++;
-      else if (line.contains("<![endif]")) ifCnt--;
-      else if (ifCnt == 0) return CLEAN_HTML_PTN.matcher(line).replaceAll("").trim();
-    }
-    return null;
-  }
-  
+
   @Override
   protected Field getField(String name) {
     if (name.equals("UNITCALL")) return new MyUnitCallField();

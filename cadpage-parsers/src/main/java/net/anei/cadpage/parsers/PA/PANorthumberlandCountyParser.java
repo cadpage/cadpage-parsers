@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.PA;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo;
 import net.anei.cadpage.parsers.dispatch.DispatchA45Parser;
 
 public class PANorthumberlandCountyParser extends DispatchA45Parser {
@@ -14,7 +15,20 @@ public class PANorthumberlandCountyParser extends DispatchA45Parser {
   public String getFilter() {
     return "@northumberland.alertpa.org,777";
   }
-  
+
+  @Override
+  protected boolean parseMsg(String body, MsgInfo.Data data) {
+    int pt = body.indexOf("<div style=");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(body, data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{10}", true);
+    return super.getField(name);
+  }
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equals("POINT TWP")) city += ",NORTHUMBERLAND COUNTY";

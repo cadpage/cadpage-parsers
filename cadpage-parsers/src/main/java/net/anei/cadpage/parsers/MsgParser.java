@@ -475,7 +475,31 @@ public abstract class MsgParser {
   }
   
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    return parseUntrimmedMsg(subject, decodeHtmlSequence(body), data);
+    boolean force = body.startsWith("<!DOCTYPE");
+    if (force) {
+      body = cleanDocHeaders(body);
+      if (body == null) return false;
+    }
+    if (parseUntrimmedMsg(subject, decodeHtmlSequence(body), data)) return true;
+    if (force) {
+      setFieldList("INFO");
+      data.parseGeneralAlert(this, body);
+      return true;
+    }
+    return false;
+  }
+
+  private static final Pattern CLEAN_HTML_PTN = Pattern.compile("</?(?:span|p)\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+
+  private String cleanDocHeaders(String body) {
+    int ifCnt = 0;
+    for (String line : body.split("\n")) {
+      if (line.trim().length() == 0) continue;
+      if (line.contains("<!--[if ")) ifCnt++;
+      else if (line.contains("<![endif]")) ifCnt--;
+      else if (ifCnt == 0) return CLEAN_HTML_PTN.matcher(line).replaceAll("").trim();
+    }
+    return null;
   }
 
   /**

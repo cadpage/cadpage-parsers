@@ -1,8 +1,7 @@
 #! /bin/bash
 . ${0%/*}/common
-${0%/*}/gssh-add
 for DIR in $MODULES
 do
   echo "$DIR:"
-  ( cd $DIR; git pull "$@" )
+  ( cd $DIR; "$@" )
 done

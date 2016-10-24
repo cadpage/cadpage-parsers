@@ -15,6 +15,27 @@ allprojects {
 }
 
 ext {
-    versionName = '1.9.10.27'
-    versionCode = 10910270
+    versionName = '1.9.10.28'
+    versionCode = 10910280
 }
+
+task gstatus(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gstatus'
+}
+
+task gpull(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gpull'
+}
+
+task gcommit(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gcommit', '-editor', 'gedit'
+}
+
+task gpush(type: Exec) {
+    group = "team"
+    commandLine 'scripts/gpush'
+}
+
