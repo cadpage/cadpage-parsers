@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 
@@ -24,6 +25,13 @@ public class PABerksCountyParser extends FieldProgramParser {
   }
 
   @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (data.msgType == MsgType.GEN_ALERT) data.strSupp = stripFieldEnd(data.strSupp, "\n.");
+    return true;
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     
     // Strip off message trailer(s)
@@ -31,7 +39,10 @@ public class PABerksCountyParser extends FieldProgramParser {
     int pt = body.indexOf("\n\nSent ");
     if (pt < 0) pt = body.indexOf("\nReply ");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    body = stripFieldEnd(body, "\n.");
     body = stripFieldEnd(body, "=");
+    
+    body = body.replace('\n', ' ');
     
     // There used to be a Muni: field label.  Which we remove from old  messages
     body = body.replace("; Muni:",        ";");

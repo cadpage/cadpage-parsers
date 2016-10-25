@@ -480,7 +480,8 @@ public abstract class MsgParser {
       body = cleanDocHeaders(body);
       if (body == null) return false;
     }
-    if (parseUntrimmedMsg(subject, decodeHtmlSequence(body), data)) return true;
+    body = decodeHtmlSequence(body);
+    if (parseUntrimmedMsg(subject, body, data)) return true;
     if (force) {
       setFieldList("INFO");
       data.parseGeneralAlert(this, body);
@@ -489,17 +490,29 @@ public abstract class MsgParser {
     return false;
   }
 
-  private static final Pattern CLEAN_HTML_PTN = Pattern.compile("</?(?:span|p)\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CLEAN_HTML_PTN = Pattern.compile("</?(?:div|span|p)\\b[^>]*?>", Pattern.CASE_INSENSITIVE);
 
   private String cleanDocHeaders(String body) {
+    StringBuilder sb = null;
     int ifCnt = 0;
     for (String line : body.split("\n")) {
-      if (line.trim().length() == 0) continue;
-      if (line.contains("<!--[if ")) ifCnt++;
-      else if (line.contains("<![endif]")) ifCnt--;
-      else if (ifCnt == 0) return CLEAN_HTML_PTN.matcher(line).replaceAll("").trim();
+      if (sb == null) {
+        if (line.trim().length() == 0) continue;
+        if (line.contains("<!--[if ")) ifCnt++;
+        else if (line.contains("<![endif]")) ifCnt--;
+        else if (ifCnt == 0) {
+          sb = new StringBuilder(CLEAN_HTML_PTN.matcher(line).replaceAll("").trim());
+        }
+      }
+      else {
+        Matcher match = CLEAN_HTML_PTN.matcher(line.trim());
+        if (match.lookingAt()) break;
+        sb.append("\n");
+        sb.append(match.replaceAll("").trim());
+      }
     }
-    return null;
+    if (sb == null) return null;
+    return sb.toString();
   }
 
   /**
@@ -1569,11 +1582,24 @@ public static void addCodeTable(Properties props, String[] table) {
    body = HTML_PTN.matcher(body).replaceAll("");
    body = HEAD_PTN.matcher(body).replaceFirst("");
    body = BR_PTN.matcher(body).replaceAll("\n");
-   return body.replace("&nbsp;",  " ").replace("&amp;",  "&").replace("&gt;", ">").replace("&lt;", "<");
+   body = body.replace("&nbsp;",  " ").replace("&amp;",  "&").replace("&gt;", ">").replace("&lt;", "<");
+   
+   Matcher match = CODE_PTN.matcher(body);
+   if (match.find()) {
+     StringBuffer sb = new StringBuffer();
+     do {
+       match.appendReplacement(sb, String.valueOf((char)Integer.parseInt(match.group(1))));
+     } while (match.find());
+     match.appendTail(sb);
+     body = sb.toString();
+   }
+   
+   return body;
  }
  private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML>|</?(?:BODY|FONT|B|I|PRE)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
+ private static final Pattern CODE_PTN = Pattern.compile("&#(\\d+);");
  
  /**
   * Utility class used to parse fixed length fields from text line
