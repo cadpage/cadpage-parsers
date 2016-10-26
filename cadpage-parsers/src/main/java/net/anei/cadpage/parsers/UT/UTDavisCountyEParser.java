@@ -16,14 +16,24 @@ public class UTDavisCountyEParser extends DispatchA11Parser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-     "KAY", "KAYSVILLE",
-     "LAY", "LAYTON",
-     "ODC", "ODC",
-     "SUN", "SUNSET",
-     "SW",  "SOUTH WEBER",
-     "SYR", "SYRACUSE",
-     "WCO", "WCO",
-     "WP",  "WEST POINT"
+      "ANT", "ANTELOPE ISLAND",
+      "CLF", "CLEARFIELD", 
+      "CLN", "CLINTON",
+      "CNE", "CENTERVILLE",  // or KAYESVILLE?
+      "FAR", "FARMINGTON",
+      "FHT", "FRUIT HEIGHTS",
+      "HIL", "HAFB",
+      "HOO", "HOOPER",
+      "KAY", "KAYSVILLE",
+      "LAY", "LAYTON",
+      "ODC", "OGDEN",
+      "OGD",  "OGDEN",
+      "ROY", "ROY",
+      "SUN", "SUNSET",
+      "SW",  "SOUTH WEBER",
+      "SYR", "SYRACUSE",
+      "WCO", "WCO",
+      "WP",  "WEST POINT"
   });
 
 }
