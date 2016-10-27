@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +48,8 @@ public class NCCarteretCountyParser extends DispatchSouthernPlusParser {
     if (data.strCity.equals(data.strPlace)) data.strPlace = "";
     
     // Fix misspelled cities
-    if (data.strCity.equalsIgnoreCase("PELLETIER")) data.strCity = "PELETIER";
+    String fixCity = MISSPELLED_CITIES.getProperty(data.strCity.toUpperCase());
+    if (fixCity != null) data.strCity = fixCity;
     return true;
   }
   
@@ -60,6 +62,12 @@ public class NCCarteretCountyParser extends DispatchSouthernPlusParser {
   protected int getExtraParseAddressFlags() {
     return FLAG_CROSS_FOLLOWS;
   }
+  
+  private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{
+      "MILLCREEK",      "MILL CREEK",
+      "ONLSOW CO",      "ONSLOW CO",
+      "PELLETIER",      "PELETIER"
+  });
 
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 HANG UP",
@@ -143,6 +151,7 @@ public class NCCarteretCountyParser extends DispatchSouthernPlusParser {
     "MARSHALLBERG",
     "MERRIMON",
     "MILL CREEK",
+    "MILLCREEK",
     "NORTH RIVER",
     "OCEAN",
     "OTWAY",
@@ -157,9 +166,28 @@ public class NCCarteretCountyParser extends DispatchSouthernPlusParser {
     "WILLISTON",
     "WIREGRASS",
     
+    // Craven County
+    "CRAVEN CO",
+    "CRAVEN",
+    "HAVELOCK",
+    
+    // Jones County
+    "JONES CO",
+    "JONES",
+    "MAYSVILLE",
+    
+    // Lenoir County
+    "LENOIR CO",
+    "LENOIR",
+    "KINSTON",
+    
     // Onslow County
-    "SWANSBORO"
-   
+    "ONSLOW CO",
+    "ONLSOW CO",
+    "ONSLOW",
+    "HUBERT",
+    "SWANSBORO",
+    "WHITE OAK"
   };
 
 }
