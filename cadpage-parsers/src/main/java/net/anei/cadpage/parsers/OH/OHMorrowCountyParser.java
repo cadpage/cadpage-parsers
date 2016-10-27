@@ -1,18 +1,14 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA1Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
+/*
  * Morrow County, OH
  */
-public class OHMorrowCountyParser extends DispatchA1Parser {
 
-  public OHMorrowCountyParser() {
-    super("MORROW COUNTY", "OH"); 
-  }
+public class OHMorrowCountyParser extends GroupBestParser {
   
-  @Override
-  public String getFilter() {
-    return "mc911@rrohio.com";
+  public OHMorrowCountyParser() {
+    super(new OHMorrowCountyAParser(), new OHMorrowCountyBParser());
   }
 }

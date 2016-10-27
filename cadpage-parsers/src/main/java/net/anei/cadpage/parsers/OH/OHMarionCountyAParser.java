@@ -20,6 +20,16 @@ public class OHMarionCountyAParser extends SmartAddressParser {
     super(CITY_CODES, "MARION COUNTY", "OH");
     setFieldList("UNIT DATE TIME ID CALL ADDR CITY APT X");
   }
+
+  OHMarionCountyAParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState);
+    setFieldList("UNIT DATE TIME ID CALL ADDR CITY APT X");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "OHMarionCountyA";
+  }
   
   @Override
   public String getFilter() {
@@ -71,14 +81,14 @@ public class OHMarionCountyAParser extends SmartAddressParser {
     String cross;
     match = APT_PTN.matcher(addr);
     if (match.matches()) {
-      parseAddress(StartType.START_CALL, FLAG_PREF_TRAILING_BOUND | FLAG_ANCHOR_END, match.group(1), data);
+      parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_PREF_TRAILING_BOUND | FLAG_ANCHOR_END, match.group(1), data);
       data.strApt = append(data.strApt, "-", match.group(2));
       cross = match.group(3);
     }
     
     // No such luck, do what we can with the address parser
     else {
-      parseAddress(StartType.START_CALL, FLAG_PREF_TRAILING_BOUND | FLAG_CROSS_FOLLOWS, addr, data); 
+      parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_PREF_TRAILING_BOUND | FLAG_CROSS_FOLLOWS, addr, data); 
       cross = getLeft();
     }
     
