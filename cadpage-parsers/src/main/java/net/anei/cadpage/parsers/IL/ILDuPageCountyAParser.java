@@ -18,8 +18,17 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
   private static final Pattern DATE_PTN = Pattern.compile("\\d{4}-\\d\\d-\\d\\d");
   
   public ILDuPageCountyAParser() {
-    super(CITY_CODES, "DUPAGE COUNTY", "IL",
+    this("DUPAGE COUNTY", "IL");
+  }
+  
+  public ILDuPageCountyAParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState,
           "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! ( DATE:SKIP! TIME:SRC! MAP:MAP! UNIT:UNIT! INFO:INFO! | URL? ) INFO/N+");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "ILDuPageCountyA";
   }
   
   @Override
