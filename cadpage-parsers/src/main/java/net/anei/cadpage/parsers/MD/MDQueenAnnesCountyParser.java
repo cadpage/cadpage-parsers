@@ -11,13 +11,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MDQueenAnnesCountyParser extends SmartAddressParser {
   
-  private static final Pattern PREFIX_PTN = Pattern.compile("^(?:qac911|QA911com):");
-  private static final Pattern MARKER = Pattern.compile("^(?:(?:qac911|QA911com):\\*)?[DG] ");
-  private static final Pattern UNIT_PTN = Pattern.compile(" +([A-Z]{1,2}\\d{2})$");
-  private static final Pattern BOX_PTN = Pattern.compile("(\\d{1,2}-\\d{1,2}) (.*?)((?: +(?:COMMERCIAL|MEDICAL|STILL|WATER RESCUE|RESCUE))?(?: +LOCAL)?)(?: +BOX)?(?: (Q\\d{2}))?");
-  private static final Pattern PAREN_PTN = Pattern.compile(" *\\((.*?)\\) *");
-  private static final Pattern MA_CALL_PTN = Pattern.compile("([A-Z]{4}) +MUTUAL AID\\b.*");
-  
   public MDQueenAnnesCountyParser() {
     super("QUEEN ANNES COUNTY", "MD");
     setFieldList("BOX CALL CITY ADDR APT PLACE INFO CH UNIT");
@@ -110,6 +103,20 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
   public String getFilter() {
     return "qac911@qac.org,QA911com@qac.org,@c-msg.net";
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = addr.replace("BROADNECK", "BROAD NECK");
+    return super.adjustMapAddress(addr);
+  }
+  
+  private static final Pattern PREFIX_PTN = Pattern.compile("^(?:qac911|QA911com):");
+  private static final Pattern MARKER = Pattern.compile("^(?:(?:qac911|QA911com):\\*)?[DG] ");
+  private static final Pattern UNIT_PTN = Pattern.compile(" +([A-Z]{1,2}\\d{2})$");
+  private static final Pattern BOX_PTN = Pattern.compile("(\\d{1,2}-\\d{1,2}|AACO|CARO|KENT|TALB|OTHE)-? (.*?)((?: +(?:COMMERCIAL|MEDICAL|STILL|WATER RESCUE|RESCUE))?(?: +LOCAL)?)(?: +BOX)?(?: \\1)?(?: (Q\\d{2}))?");
+  private static final Pattern PAREN_PTN = Pattern.compile(" *\\((.*?)\\) *");
+  private static final Pattern MA_BOX_PTN = Pattern.compile("[A-Z]{4}");
+  private static final Pattern MA_TO_CITY_PTN = Pattern.compile("MUTUAL AID.* TO ([A-Z]+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -165,7 +172,7 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
         parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT | FLAG_ANCHOR_END, body.substring(0,pt).trim(), data);
         data.strSupp = body.substring(pt).trim();
       } else {
-        parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT , body, data);
+        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT , body, data);
         data.strSupp = getLeft();
       }
     } 
@@ -204,10 +211,22 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
     }
     
     // See if this is a mutual aid call that we can extract a city name from
-    match = MA_CALL_PTN.matcher(data.strCall);
+    match = MA_BOX_PTN.matcher(data.strBox);
     if (match.matches()) {
-      String city = MA_CITY_TABLE.getProperty(match.group(1));
-      if (city != null) data.strCity = city;
+      String city = MA_CITY_TABLE.getProperty(data.strBox);
+      if (city != null) {
+        data.strCity = city;
+      }
+      if (data.strCall.startsWith("MUTUAL AID") && !data.strCall.contains(" TO ")) {
+        data.strCall = data.strCall + " TO " + data.strBox;
+      }
+    }
+    if (data.strCity.length() == 0) {
+      match = MA_TO_CITY_PTN.matcher(data.strCall);
+      if (match.matches()) {
+        String city = MA_CITY_TABLE.getProperty(match.group(1));
+        if (city != null) data.strCity = city;
+      }
     }
     
     // If not address was found, move place to address
@@ -218,19 +237,22 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
     }
 
     // Box is required, unless this was a mutual aid call
-    return (data.strBox.length() > 0 || data.strCall.contains("MUTUAL AID"));
+    return data.strBox.length() > 0 || data.strCall.startsWith("MUTUAL AID");
   }
   
   private static CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAINS",
+      "ACCIDENTAL OVERDOSE",
       "ALERT",
       "ALLERGIC/REACTION",
+      "ALS INTERFACILITY",
       "ANIMAL BITE/ATTACK",
       "APPLIANCE FIRE",
       "ASSAULT",
       "BACK PAIN-NONTRAUMA",
       "BREATHING PROBLEMS",
       "BRUSH/GRASS FIRE",
+      "BUILDING FIRE",
       "CARDIAC ARREST",
       "CHEST PAINS",
       "CHIMNEY FIRE",
@@ -241,6 +263,7 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
       "COLD EXPOSURE",
       "COMMERCIAL BLDG FIRE",
       "COMMERCIAL VEH FIRE",
+      "CONTROL BURNING",
       "DIABETIC PROBLEMS",
       "DROWNING/DIVE ACCDNT",
       "DWELLING FIRE",
@@ -263,14 +286,18 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
       "HEMORRHAGE/LACS",
       "INTENTIONAL OVERDOSE",
       "INSIDE GAS LEAK",
+      "LARGE FUEL SPILL",
       "LG BRUSH/GRASS FIRE",
       "LOCK OUT OF VEHICLE",
       "LOCK OUT",
       "MLTPL DWELLING FIRE",
+      "MULTIPLE VEH MVC",
       "MVC/NOT ALERT",
       "MVC INVOLVING A BUS",
       "MVC UNKNOWN INJURIES",
+      "MVC W/BIKE/MOTORCYCL",
       "MVC W/ENTRAPMENT",
+      "MVC W/HAZARDS",
       "MVC W/INJURIES",
       "MVC W/MINOR INJURIES",
       "MVC W/PEDESTRIAN",
@@ -283,9 +310,12 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
       "OUTSIDE FIRE",
       "OUTSIDE GAS LEAK",
       "OUTSIDE ODOR OF GAS",
+      "OVERDOSE",
       "PENETRATING TRAUMA",
+      "PREG/CHILDBIRTH/MATR",
       "PSYCHIATRIC",
       "PSYCHIATRIC/SUICIDE",
+      "PULL STATION ALARM",
       "SCUBA DIVE ACCIDENT",
       "SEIZURE",
       "SEIZURES",
@@ -298,34 +328,40 @@ public class MDQueenAnnesCountyParser extends SmartAddressParser {
       "SMOKE DETECTOR",
       "SMOKE INVESTIGATION",
       "STROKE",
+      "STROKE(CVA)",
       "STROKE (CVA)",
       "STROKE(CVA)<2HRS",
       "STROKE(CVA)>2HRS",
       "STRUCTURE FIRE/OUT",
+      "TALB MUTUAL AID MEDICAL",
+      "TANK FARM FIRE",
       "TRAILER FIRE",
       "TRAUMATIC INJURY",
       "UNCONSCIOUS",                                                                                                                                                                                                                                           
       "UNCONSCIOUS/FAINTING",
       "UNKNOWN PROBLEM",
+      "UNKNOWN TYPE ALARM",
       "VEH FIRE W/EXPOSURE",
       "VESSEL TAKING WATER",
+      "WATERFLOW ALARM",
       "WATER RESCUE",
       "WILDLAND FIRE DAVIDSON",                                                                                                                                                                                                                                
       "WIRES DOWN",
       "VEHICLE FIRE",
       
-      "AACO MUTUAL AID",
-      "CARO MUTUAL AID",
-      "KENT MUTUAL AID",
-      "KENT MUTUAL AID MEDICAL",
-      "KM06 MUTUAL AID MEDICAL",
       "MUTUAL AID",
-      "OTHE MUTUAL AID"
+      "MUTUAL AID TO AACO",
+      "MUTUAL AID TO CARO",
+      "MUTUAL AID TO KENT",
+      "MUTUAL AID TO TALBOT",
+      "MUTUAL AID MEDICAL"
   );
   
   private static final Properties MA_CITY_TABLE = buildCodeTable(new String[]{
       "AACO", "ANNE ARUNDEL COUNTY",
       "CARO", "CAROLINE COUNTY",
       "KENT", "KENT",
+      "TALB", "TALBOT COUNTY",
+      "TALBOT", "TALBOT COUNTY"
   });
 }
