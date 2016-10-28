@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.ReverseCodeSet;
 
 /**
  * Shelby County, AL
@@ -255,12 +257,19 @@ public class ALShelbyCountyParser extends FieldProgramParser {
           field = match.group(1);
         }
       }
+      else {
+        String city = SPECIAL_CITY_LIST.getCode(field, true);
+        if (city != null) {
+          data.strCity = city;
+          field = field.substring(0,field.length()-city.length()).trim();
+        }
+      }
       return field;
     }
     
     @Override
     public String getFieldNames() {
-      return "ADDR CITY APT PLACE PHONE";
+      return "ADDR CITY APT PLACE PHONE UNIT";
     }
   }
   
@@ -323,6 +332,11 @@ public class ALShelbyCountyParser extends FieldProgramParser {
     if (city.equals("CAHABA VALLEY")) city = "BIRMINGHAM";
     return city;
   }
+  
+  private static final ReverseCodeSet SPECIAL_CITY_LIST = new ReverseCodeSet(
+      "BRIERFIELD",
+      "CHILTON"
+  );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALA", "ALABASTER",
