@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.ReverseCodeSet;
 
 /**
  * Shelby County, AL
@@ -87,7 +88,8 @@ public class ALShelbyCountyParser extends FieldProgramParser {
   private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*)\\b(?:APT|RM|ROOM|UNIT|SUITE?|STE|LOT)(?![A-Z]) *(.+)|((?:LOT|FLR?) *.+)");
   private static final Pattern ADDR_PHONE_PTN = Pattern.compile("\\d{3}-\\d{3}-\\d{4}|\\(\\d{3}\\) \\d{3}[- ]\\d{4}|\\d{3}-\\d{4}");
   private static final Pattern ADDR_UNIT_PTN = Pattern.compile("^[A-Z]{2}FD\\b");
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?) *\\b([A-Z][A-Z0-9]{3}) ([A-Z]{3})");
+  private static final Pattern ADDR_CITY_PTN1 = Pattern.compile("(.*?) *\\b([A-Z][A-Z0-9]{3}) ([A-Z]{3})");
+  private static final Pattern ADDR_CITY_PTN2 = Pattern.compile("(.*?) *\\b([A-Z][A-Z0-9]{3}) MOPT(?: (\\d+))?");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -243,7 +245,7 @@ public class ALShelbyCountyParser extends FieldProgramParser {
     }
     
     private String stripCity(String field, Data data) {
-      Matcher match = ADDR_CITY_PTN.matcher(field);
+      Matcher match = ADDR_CITY_PTN1.matcher(field);
       if (match.matches()) {
         String city = CITY_CODES.getProperty(match.group(3));
         if (city == null || city.endsWith(" COUNTY")) {
@@ -255,12 +257,27 @@ public class ALShelbyCountyParser extends FieldProgramParser {
           field = match.group(1);
         }
       }
+      else if ((match = ADDR_CITY_PTN2.matcher(field)).matches()) {
+        String city = CITY_SUBCODES.getProperty(match.group(2));
+        if (city != null) {
+          data.strCity = city;
+          data.strApt = append(data.strApt, "-", getOptGroup(match.group(3)));
+          field =  match.group(1);
+        }
+      }
+      else {
+        String city = SPECIAL_CITY_LIST.getCode(field, true);
+        if (city != null) {
+          data.strCity = city;
+          field = field.substring(0,field.length()-city.length()).trim();
+        }
+      }
       return field;
     }
     
     @Override
     public String getFieldNames() {
-      return "ADDR CITY APT PLACE PHONE";
+      return "ADDR CITY APT PLACE PHONE UNIT";
     }
   }
   
@@ -323,6 +340,11 @@ public class ALShelbyCountyParser extends FieldProgramParser {
     if (city.equals("CAHABA VALLEY")) city = "BIRMINGHAM";
     return city;
   }
+  
+  private static final ReverseCodeSet SPECIAL_CITY_LIST = new ReverseCodeSet(
+      "BRIERFIELD",
+      "CHILTON"
+  );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALA", "ALABASTER",
