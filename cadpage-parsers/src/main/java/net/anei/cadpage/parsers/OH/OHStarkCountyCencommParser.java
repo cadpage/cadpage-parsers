@@ -6,10 +6,11 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 
 
 
-public class OHStarkCountyCencommParser extends SmartAddressParser {
+public class OHStarkCountyCencommParser extends DispatchA13Parser {
   
   public OHStarkCountyCencommParser() {
     this("STARK COUNTY", "OH");
@@ -17,7 +18,6 @@ public class OHStarkCountyCencommParser extends SmartAddressParser {
   
   OHStarkCountyCencommParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState);
-    setFieldList("CALL ADDR APT CITY PLACE INFO");
     setupSaintNames("ABIGAIL", "FRANCIS");
     setupMultiWordStreets("ST ABIGAIL", "ST FRANCIS", "ST FRANCAIS", "CORPORATE WOODS");
   }
@@ -28,6 +28,7 @@ public class OHStarkCountyCencommParser extends SmartAddressParser {
   }
 
   private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
+  private static final Pattern SUBJECT_MASTER = Pattern.compile("ALL CALLS|DISPATCHED CALLS|EMS TIMES|FIRES CALLS");
   private static final Pattern FIX_NUMBER_PTN = Pattern.compile("\\b\\d*(?:2 ND|3 RD)\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern YOFM_PTN = Pattern.compile("\\b(\\d+) */ *([MF])\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
@@ -36,13 +37,21 @@ public class OHStarkCountyCencommParser extends SmartAddressParser {
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    
-    // To sloppy to continue without positive confirmation
-    if (!isPositiveId()) return false;
-    
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    // Clean up an non-ASCII characters
     body = NON_ASCII_PTN.matcher(body).replaceAll("");
     
+    // Check for "normal" alerts
+    if (SUBJECT_MASTER.matcher(subject).matches()) {
+      return parseMsg(body, data);
+    }
+    
+    // Otherwise, to sloppy to continue without positive confirmation
+    if (!isPositiveId()) return false;
+
+    setFieldList("CALL ADDR APT CITY PLACE INFO");
+
     Matcher match = FIX_NUMBER_PTN.matcher(body);
     if (match.find()) {
       StringBuffer sb = new StringBuffer();
