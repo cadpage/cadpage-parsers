@@ -49,6 +49,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     
     // Otherwise, to sloppy to continue without positive confirmation
     if (!isPositiveId()) return false;
+    if (body.contains(" COMMENTS:")) return false;
 
     setFieldList("CALL ADDR APT CITY PLACE INFO");
 

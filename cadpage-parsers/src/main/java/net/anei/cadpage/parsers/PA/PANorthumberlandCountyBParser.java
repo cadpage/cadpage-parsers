@@ -15,7 +15,7 @@ public class PANorthumberlandCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "noreply@norrycopa.net";
+    return "noreply@norrycopa.net,1027194726673";
   }
 
   @Override
