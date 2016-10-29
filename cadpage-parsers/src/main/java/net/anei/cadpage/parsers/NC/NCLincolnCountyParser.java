@@ -17,7 +17,7 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
   
   public NCLincolnCountyParser() {
     super("LINCOLN COUNTY", "NC",
-           "ID: FYI? SRC ID? CODE? CALL ( PHONE NAME | ) PARTADDR? ADDR! ( X X? | PLACE X X? | ) INFO+");
+           "ID: ( CANCEL ADDR! | FYI? SRC? ID? CODE? CALL ( PHONE NAME | ) PARTADDR? ADDR! ( X X? | PLACE X X? | ) ) INFO+");
   }
   
   @Override
@@ -55,6 +55,18 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     while (body.endsWith("-")) body = body.substring(0,body.length()-1).trim();
     if (! super.parseMsg(body, data)) return false;
     return true;
+  }
+  
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("SRC")) return new SourceField("[A-Z][A-Z0-9]{2,4}", true);
+    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("CODE")) return new MyCodeField();
+    if (name.equals("PHONE")) return new PhoneField("\\d{7,}", true);
+    if (name.equals("PARTADDR")) return new MyPartAddressField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("PLACE")) return new MyPlaceAddress();
+    return super.getField(name);
   }
   
   private class MyIdField extends IdField {
@@ -112,17 +124,5 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     public String getFieldNames() {
       return "PLACE INFO";
     }
-  }
-  
-  
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ID")) return new MyIdField();
-    if (name.equals("CODE")) return new MyCodeField();
-    if (name.equals("PHONE")) return new PhoneField("\\d{7,}", true);
-    if (name.equals("PARTADDR")) return new MyPartAddressField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("PLACE")) return new MyPlaceAddress();
-    return super.getField(name);
   }
 }
