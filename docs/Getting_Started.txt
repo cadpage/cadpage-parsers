@@ -1,0 +1,128 @@
+Quick getting started instructions for new developers.
+
+Quick overview.  Cadpage is an Android app used by emergency responders.  Dispatch centers can usually send a text message notifying
+users when a call is dispatched.  Cadpage intercepts these messages, display a popup message sounds an alert.  Then, when the
+user asks for it,  display a map showing the incident location that they can use to navigate to the event.  It is really really
+popular amount emergency responders who tend to think it is the best thing since sliced bread.  The actual app UI code is pretty
+simple, and rather small.  The problem is that there is no standard text page format.  Every dispatch center has their own.  90% of
+Cadpage code consists of 1300+ message text parsers that have been written to parse different dispatch text messages.   
+
+Things you will need to install:
+
+Google recomends you install the new Android Studio, which is based on a proprietary Intellij IDEA IDE.  Feel free to pursue that 
+approach.  But so far, I have been sticking with the older, and open source Eclipse IDE, so the only directions I can supply are
+how to install that.
+
+1) The basic Eclipse IDE can be downloaded from http://www.eclipse.org.  You want the Eclipse IDE for Java developers.
+
+2)You need to install the standalone Android SDK tools.  Instructions on doing this can be found at 
+http://developer.android.com/sdk/installing/index.html?pkg=tools.
+
+3) For Linux on a 64 bit system, make sure you have the ia32libs package installed.  Some of the
+ADT binaries are 32 bit binaries that will not run without it.
+
+4) Java JDK, Apache Ant, and Git from the Download Manager for Linux systems.  For Windows they are available from
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
+http://ant.apache.org/bindownload.cgi
+https://git-scm.com/downloads.
+
+4.5) You need to install the Android ADT plugin for Eclipse.  Instructions can be found at 
+http://developer.android.com/sdk/installing/installing-adt.html
+
+5) Now to finish installing Android SDK.  From Eclipse, Window-> SDK Manager.  Let the window load up, and then select API 22, and download.
+
+6) Next, install the Cadpage source tree
+The Cadpage project is hosted at https://github.com/cadpage/cadpage-android.
+Though not really required, you will probably want to set up a github account.
+The page lists the URL you need to use to clone the Cadpage repository.
+
+7)  Go back to eclipse and import the 4 Cadpage projects.
+File-> Import-> General -> Existing Projects into Workspace.
+Browse-> git -> cadpage, Select all 4 projects, click okay, and then finish.
+
+If you are just doing parsers, you won't be running much of the Android SDK, but you need the libraries to get project to compile.
+
+Eclipse configuration settings
+Open the main Eclipse settings and create a Cadpage format template
+Window > Preferences > Java > Code Style > Formatter
+Create a new format profile named Cadpage and edit this profile
+Indentation
+  Set Tab policy to Spaces Only
+  Check use spaces to indent lines
+  Set the indentation size and tab size to 2
+
+Right click both cadpage and cadpageTest Projects and select
+Properties > Java Code Style > Formatter
+ Enable project specific settings and select the new Cadpage profile
+For Windows users:  Open the Resource tab and set the text encoding to UTF-8
+
+Back to main Eclipse settings
+Window > Preferencs > Run/Debug > Console
+uncheck "Limit Console Output"
+Window > Preferences > Run/Debug > Launching > Launch Operation
+Check "Always Launch the Previous Application"
+
+Hopefully the Cadpage project will now compile successfully  Some more work is needed to 
+get the CadpageTest project functional
+
+Open the Eclipse Ant view (Window > Show View > Ant)
+Click the Add Buildfiles Icon and navigate to and select build.xml in the Cadpage project.
+Toggle the Hide Internal Projects icon to hide internal targets
+Double Click the initialize target.  This will recreate the cadpageTest source folder
+Refresh the CadpageTest project.
+There will be a build path error because CadpageTest needs a reference to the 
+Android SDK android.jar file, which is never in the same place.  The project class path uses 
+an ANDROID_JAR classpath variable that you will have to set.  To do that, open Eclipse preferences and select
+Java > Build Path > Classpath Variables.
+Create a new Classpath variable named ANDROID_JAR of type file and point it to one of the android.jar files
+files in your Android SDK folder.
+
+You should now be able to compile and run the Cadpage app from the cadpage project.  And run the entire
+JUnit test suite in the cadpageTest project.  The first time you try this, Eclipse will ask whether you 
+want to turn the Android test runner or the Junit test runner.  You want the JUnit test runner.
+
+So what is this import/export business all about.  The test project source lives in a standard src directory.
+but this source contains thousands of sample 911 emergency pages of real calls to real emergencies at real 
+addresses.  To keep those from showing up in standard Google searches, we do not commit this directory to 
+the archive.  Instead we run it all through a rot13 cypher to a rot13-src directory which is committed to the
+archive.  There are some Ant build files with targets to update these directories from the other.  These
+have to be run from the command line in the root folder that contains both the Cadpage and CadpageTest projects.
+
+import - copy any rot13-src changes to src
+export - copy any src changes to rot13
+stat   - perform an export followed by an svn stat.
+update - perform an svn update followed by an import.
+
+For people who don't like working from the command line, most functions are replicated in the Cadpage 
+project build.xml file where they can be run from the Eclipse Ant window.  The targets you can
+execute from here are
+
+initialize - perform the initial  import task to construct the cadpageTest src folder
+update     - brings your workspace up  to date with the latest repostitory changes
+stat       - list the change you have made in the works space that need to be reported
+commit     - commits your changes to repostory (anyone can do this)
+push       - pushes changes from your repository to the main cadpage-android repository
+             this requires write access to that repository.
+gen_patch  - create a cadpage.patch patch file in the root directory that should be
+             emailed to the repository administrator.
+
+Work is needed in two general areas, one is the Android app UI and features, the other is the general text parsing library.  Since you expressed an interest in compilers and parsing, I'll go a bit further down the parsing library trail.
+
+Everything in the net.anei.cadpage.parser package and subpackages can be compiled into a separate standalone parsing library jar file.  Which allows other applications to take advantage of all of this parsing magic.
+
+What I need more than anything else is help cranking out next text parsers.  While these can get to be challenging at times, our biggest infrastructure successes come when they are brain dead trivial exercises that you can knock off in less than an hour.  I can usually pick out the brain dead simple ones, but even with these, there often turn out to be unexpected complications that can make them very challenging.
+
+If you want to tackle some serious coding challenges, you can dive into the parsing support infrastructure.  These are pretty stable and seldom require additional enhancements.  And when they do I can easily take care of them.  Going into this stuff isn't all that helpful in the short run, the short run challenges are getting new parsers out.  But it would be extremely helpful in the long term, providing some degree of assurance that there is someone else who understands this stuff and could take over maintaining it when I and not around.
+
+The parsing support infrastructure consists of...
+
+MsgParser - the base class for all parser classes.  This is long with a fair number of support methods and classes, particularly the Parser subclass.  But is not all that complicated.
+
+SmartAddressParser - base class for classes that require smart address parsing.  Which is the ability to identify an address from a data field that contains an address and something else.  This gets far more complicated than you would believe possible, supporting all kinds of special options that were added to support some special condition required for something somewhere.
+
+FieldProgramParser - This is the crown jewel, designed to be a base class handling all parsers handling text pages with nicely delimited fields.  You pass a program string to the constructor that tells it which fields come in which order and if there are any keyword labels to check.  This gets compiled into a list of program steps which are executed in order to parse the text pages.  More often than not, there are some fields that require some special processing so there is a mechanism to override the standard field parsing class for each field type with one of your own.  And frequently there are exceptions the the standard strait forward field order, so there are provisions for keyword searches, optional fields, repeating fields, and conditional branches.
+
+Infrastructure improvements wish list.  Like I said, this is pretty stable and satisfactory, but there are a couple items that would be nice to add.
+
+Cached the compiled results.  FieldProgramParser pushes much of the work of interpreting and compiling the program string to a one time startup task.  In any normal computer environment, this would be sufficient.  But the Android system is a bit strange in that it arbitrarily decides when to kill your app to recover needed resources and starts it up again whenever it happens to be needed.  Add the fact that the secondary storage is really semiconductor memory that isn't that much slower than your primary memory and it makes a lot of sense to be able to cache the compiled program steps to secondary memory rather than compile them every time the class is loaded.
+ 

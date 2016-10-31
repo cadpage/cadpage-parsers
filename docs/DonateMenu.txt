@@ -1,0 +1,59 @@
+Donation status
+
+
+
+<green>
+Thank your for your support
+    You have free, lifetime access to Cadpage 
+    Thank your for you past contributions to the Cadpage
+    <donate>
+
+    
+<yellow>
+Demo expires in nn days
+    Your Cadpage demo will expire in nn days
+    <purchase cadpage>
+    <complain>
+    <donate>
+    
+<red>
+Demo expired  <<<
+    Your Cadpage demo expired nn days ago
+    <Give me one more day>
+    <purchase cadpage>
+    <complain>
+    <donate>
+     
+    
+<green>
+Maintenance renewal expected in nn days
+    Maintenance renewal expected in nn days
+    <purchase maintenance renewal>          
+    <complain>
+    <donate> 
+
+<yellow>
+Maintenance renewal requested in nn days (<= 30)
+    A maintenance renewal will be needed if you intend
+    to continue installing new versions of Cadpage after
+    nn days
+    <purchase maintenance renewal>
+    <complain>
+    <donate>
+
+<red>
+Maintenance renewal required
+    A maintenance renewal fee will be required if you load a new version
+    of Cadpage
+    <purchase maintenance renewal>
+    <complain>
+    <donate>
+
+<red>
+Maintenance renewal required <<<<
+    A maintenance renewal fee is required to run this version of Cadpage
+    <Give me one more day>
+    <purchase maintenance renewal>
+    <complain>
+    <donate>
+    

@@ -1,0 +1,7 @@
+What is Cadpage?
+
+Cadpage is an open source Android app designed to assist emergency responders in getting to an incident location.  The basic idea is extremely simple.  911 Dispatch centers typically rely on radio pagers to alert responders when a call is dispatched.  Many centers have also added the ability to alert responders by sending SMS text messages directly to their cell phones.  Cadpage simply checks incoming text messages for something that looks like a dispatch page, parsers the important information out of that text page and displays it in a call alert popup dialog.  When requested, it takes the address information and sends it to Google Maps as an address search query.  Google Maps (hopefully) displays the incident location and lets the user request turn by turn directions to that location.
+
+What makes Cadpage a complicated and very high maintenance project is that there is almost no standardization in how dispatch centers format these text pages.  Pretty much every dispatch center has their own format and needs their own text parser.  Cadpage is currently supporting something like 750 different text parsers, and I have a backlog of over 150 requests for new parsers.
+
+This has grown beyond the point where I can keep it going as a solo developer.  I clearly need to find some way to get more developers involved with this.  While the income is nowhere near what I used to make as a professional software engineer, there is enough that paying people for that developer assist is becoming feasible.

@@ -1,0 +1,525 @@
+How to write Cadpage Location parsers
+
+You will need to write both a parser class and a parser test class in the appropriate package.
+Generally an administrator (me) will have set up a skeleton test class with all of the test page
+information for you.
+
+Next write the parser class.  More details will be provided later.  I find it useful to set up a
+split editor screen with the test class showing the text pages on top an the new parser I am
+writing below it.
+
+Next finish the parser test class.  This part is semi-automated.
+1) The skeleton test class will contain a call to DummyParser in its constructor.  This needs
+   to be replaced with your new constructor name.
+2) The last method in the skeleton test class should be a main() method that invokes
+   generateTests().  The only parameter is a test title, usually "T1", that will be incremented 
+   for each generated test.  If the parser class is not a FieldProgramParser subclass, you will 
+   have to list the fields that your parser parses, in roughly the order they appear in the text 
+   message, in a second parameter to the generateTests() method.
+3) Now scroll up to the top of the skeleton test class, then select and copy a block of
+   test messages including a final blank line.
+4) Run the test class as a Java application.  When prompted, past the block of test messages
+   into the console window.  The program will generate test code which you can select by
+   immediately typing  cntl-shift-end.  Copy and paste this block of code into a new
+   test method.
+   
+Run the test class as a JUnit test.  Usually this succeeds because the generated code is basically
+checking for the result that were actually be returned.  When it fails, it is usually because
+a parsed field name was left out the field list passed to setFieldList().  Or because a
+FieldProgramParser based parser did not correctly calculate its list of parsed field names.  If
+something needs to be fixed, you can regenerated the test class code as above.
+
+Look for parser failures.  You can find these by searching the generated parser code for lines
+that start with a double //.  if any are found you need to find and fix whatever is wrong, then
+regenerate the test classes.
+
+Next, carefully examine the generated test class code, making certain that it is parsing the 
+message the way you intended it to.  If something is wrong, fix it and either manually correct
+the test or regenerate all of the test code.  
+
+While you are doing this, test the map result.  To do 
+this, open a browser window and point it to http://maps.google.com, then give it a map search 
+string that consists of
+the MADDR field if it exists, otherwise the ADDR field
+a comma
+the CITY field if it exists, otherwise the default city/county value
+a comma
+the ST field if it exists, otherwise the default state field
+
+If Google finds a reasonable looking location for the address each, rejoice and
+be exceedingly glad.
+If it doesn't, see if you can do anything to tweak the search string to find
+a correct location.  There are lots of tricks
+1) Highway mile markers and intersections that are overpasses and don't actually
+intersect (even if there are interchange ramps) are a lost cause.  Google just
+won't do them (sob).  For things like Interstate mile marker, don't even bother
+doing a map check or commenting the fact that it doesn't map.  These things are
+just understood.
+2) If there is a CITY field, try replacing it with the default city/county.  It
+is possible the city field is invalid, or something dispatch just has it wrong.
+3) if there is a house number, try searching for the street without the house
+number.
+4) If this is an intersection, try searching for each street individually.
+
+If you can find what appears to be the correct address but Google can not.  And it
+is within the boundaries of the municipal unit we are searching.  You should report
+it as a Google mapping problem.  Click the "Report a Problem" in the bottom right
+corner of the browser window and flag the location indicating that the search
+string you entered could not find this location.
+
+If the address looks right, but Google just won't find the address, flag it 
+with a "//" comment explaining what you found.
+
+There can be up to 100 test pages in some blocks.  You are not expected to
+check all of them. You should do at least 20 for each parser.  If there are 
+multiple blocks of pages should check at least 10 in each group.  Add a
+// TESTED TO HERE
+comment telling us how far you went with manual checking.  We will probably delete
+all of the unchecked tests eventually, but I want to be able to review them first.  It can
+be handy to run some regexp searches looking for things like unresolved city codes.
+
+Add the new parser source(s) to version control and use the gen_patch Ant target to create a 
+cadpage.patch file that you email home. 
+  
+******************************************************************************************
+
+Start by checking the text pages and making a determination as to which base 
+parser you should use.
+
+Search MsgFormats for anything that looks like this location text pages.
+Pattern searches are your friend hear, learn how to use them.  If you find 
+something that matches that is already based on one of the Dispatch parsers, 
+you probably want to subclass this parser from the same base parser.
+
+If you find a pattern match that isn't already based on a Dispatch parser, you 
+should consider creating a new one that can be hold the common code needed to
+process both locations and subclassing both location parsers from it. 
+
+Otherwise, if the text pages consists of data fields separated by an obvious field 
+delimiter, use subclass FieldProgramParser
+
+Otherwise, if text pages contains fields that are separated by keywords with
+trailing colons, subclass FieldProgramParser
+
+Otherwise, if the text pages contain an address whose beginning and end cannot
+be identified without having to understand what an address looks like, subclass
+SmartAddressParser.
+
+Otherwise, subclass MsgParser
+
+I usually look for another parser based on the same base parser class in the same 
+state and make a copy of it.  If there aren't any you can copy one from another
+state and rename it.
+
+First step is always to remove the description comments at the front of the parser 
+and replace them with the text from MsgFormats.txt for this parser.  The sample
+pages have to be reduced to a single line for each page with "\n" sequences
+replacing the hard line breaks and blanks replacing the soft breaks inserted
+by a message composer.  If the pages came from a Cadpage email, there is no
+ambiguity between the two.  Hard line breaks already have a \n at the end of the 
+line, but sequences of 2 or more blanks will be replaced with a \ns sequence
+which needs to be restored to a string of blanks.  If the pages were copied
+or forwarded by the user, you have to look at them and try to figure out which 
+are hard and which are soft breaks.  Hard breaks occur at the same place in all
+text pages, soft breaks happen all over the place.
+
+There are some cute regular expression find/replace operations you can do to
+mass change large number of sample pages
+
+
+In any case, always leave a blank line at the end of each block of sample text
+pages, you'll find out why later.
+
+Next you need to adjust, add, or remove the getFilter() method to return the
+correct sender filter for this location.
+
+**************************************************************************
+* General parser writing hints
+**************************************************************************
+
+The Admin who set this up should have run some regexp searches through MsgFormats.txt
+to see if we have done anything like this before.  But it wouldn't hurt for you to
+try running some of your own.  Might give you some hints on how best to handle
+this one.
+
+That search may have discovered that we already have a base dispatch class for
+handling these pages.  The dispatch classes were written to cover the common 
+functionality involved when we discover multiple locations that are using the
+same basic page format.  Presumably because they are using the same CAD software
+in their dispatch centers.  If found you should try creating a new parser that
+is a subclass of the dispatch parser.  Results vary.  In some cases where users
+have few opportunities to customize the page outputs generated by their CAD
+software, you won't have to do much more than override the getFilter() method.
+Sometimes you have to create a new city list for a new county.
+Sometimes some special processing has to be added to handle some idiosyncrasy
+with how this dispatch center is using the CAD software.  And sometimes the
+page output is highly customizable, the base class handles only some common
+processing leaving you to do most of the actual field processing yourself.
+
+More challenging are cases where we discover one or more individual parsers
+handling text pages that are very much like this one.  This is a case where
+we might be able to create a new dispatch parser that can be used as the
+base class for all of them.  You start by creating a new dispatch class from
+the first of the existing parsers, then use that as the base class for each 
+of the others, all of the while teasing out what functionality is common and
+should go into the base class and location specific and should remain in 
+the parser subclasses.
+
+**************************************************************************
+* MsgParser subclasses
+**************************************************************************
+
+All parser are subclasses of MsgParser.  You have to override one of the
+two parseMsg() methods.  Both are passed the message text body to be parsed and
+a Data object where all of the parsed information should be returned.  Both
+return true if message text was successfully parsed.  They differ in that
+one is also passed the message subject.  This method signature should be used
+if your parser needs to check or grab information from the message subject.
+
+On the subject of message subjects.  You need to know that the the message text
+passed to your parser will not be the same as the text originally passed
+to the test method.  Cadpage has two levels of message parsing.  This has
+proven to be necessary because Dispatch centers typically rely on the services
+of another agency to relay the dispatch pages to individual phones.  The dispatch
+centers use their CAD software to send an SMTP message to the messaging agency.
+The messaging agency may add some message prefixes and refinements of their
+own to the page and possibly split it up into multiple pages before sending it.
+When the the text messages arive, Cadpage uses a preparser located in the
+Message class to attempt to identify and remove all of the refinements added
+by the message servicer, merge together pages that have been split up into
+multiple messages, and generally attempt to recover the message as it was
+originally delivered by the dispatch centers CAD software.  This is the
+message that will be delivered to your parser.  Usually you will not have to
+worry about this process.  But the most common thing you will notice is that
+text messages that come prefixed with a value in round or square brackets
+will have that value stripped out and sent to the parser as a message subject.
+
+There are some useful support features provided by the base MsgParser class.
+
+There is a parseAddress(String address, Data data) method that should always
+be used to save the parsed address line.  It peforms some basic address
+cleanup and may extract an apartment number from the line.
+
+And there is an embedded Parser class that can be used to break long messages
+into different fields based on the the presence of specific delimiter
+sequences, or delimiting pattern matches.  It can be very useful.
+
+**************************************************************************
+* SmartAddressParser subclasses
+**************************************************************************
+
+This class adds the ability to pick an address from a message or data field
+where the beginning and/or end of the address is cannot be reliably determined.
+it adds a number of parseAddress() methods.  All of them take an initial
+StartType parameter indicating what your parsed field starts with and, of course,
+the data field to be parsed.  The start type an be
+StartType.START_ADDR - if address must start in beginning of field.
+StartType.START_CALL - if address will be preceded by a call field
+StartType.START_PLACE - if address will be preceded by a place field
+
+A bitmask of flag values is optional.  THere are a lot of flags that do 
+strange and wonderful things.  The most commonly uses are
+FLAG_START_FLD_REQUIRED - indicates that a starting field, usually the call field, must be present
+FLAG_ANCHHOR_END - indicates the address extends to the end of the parsed field
+
+Most of the parseAddress methods are passed a Data object where the parse results
+will be returned.  Subsequent calls to getStatus() tell you how confident we are 
+with the address that was found and getLeft() to retrieve the field data to the
+right of the identified address.
+
+There are also parseAddress methods that are not passed a Data object.  These return
+a result object that you can later use to parse the address data into a Data object.
+They are useful when you have several fields that might possibly contain an address
+and want to try them all to see which one looks the most like an address
+
+**************************************************************************
+* FieldProgramParser subclasses
+**************************************************************************
+
+The FieldProgramParser class, or dispatch classes subclassed from it is 
+designed to handle text formats where there is are clearly designated fields
+that are either separated by a common delimiter or prefixed with a keyword
+terminated by a colon.  You have to pass the constructor a program string
+that tells it what order fields need to be processed in. 
+
+If the message has labeled or unlabeled fields separated by a delimiter,
+you should override parseMsg() do any initial checking and the split the
+message up into an array of fields an pass that to parseFields() returning
+the result.  If the message contains labeled fields with no clear field
+delimiters, the base class parseMsg(String, Data) method can be called
+and will break the message up into fields and process them.
+
+The program string passed to the constructor controls everything.  It usually
+consists of a set of terms separated by blanks.  Each term consists of
+a field name, an optional preceding tag/label name followed by a colon, and
+an optional trailing set of options preceded by a slash all followed by an
+optional set of special character flags.
+
+The field name is passed to getFields which returns a Field object that will
+parse this field.  The base class has a large set of Field classes and its own
+getField() method to find.  You only need to supply your own getField() method
+when it is necessary to create your own field class to do some special processing.
+For on writing Field objects later
+
+The tag/label name is a keyword which must precede any data field that will be
+considered for this field term.  Blanks in the actual keyword must be replaced with 
+underscores.
+
+The options are specific to each particular field term.  Documentation on them can be
+found in the FieldProgramParser source.  One commonly used option that is applicable
+to all field names is Z which means, don't trust or use this fields validation checking.
+More on that later
+
+The special flags are
+! means this field is required.  If the parser does not find it that parser will return a failure status
+% means this field is expected.  If the parser does not find it it will continue and return
+  a success status.  But it will set a flag telling Cadpage that the message does not look
+  complete it and, if possible, it should want for another text message with more of the page content
+? means this field is optional, which means it may or may not be present.  This
+  very definitely complicates things
++ means this field repeats indefinetely.  + by itself repeats forever, or until a keyword
+  labeled data field breaks the sequence.  +? is a conditional repeat that will stop when
+  the right conditions are met.  
+  
+Some field terms can validate their data results, meaning they can determine if the data field
+passed to them is valid or not.  And some cannot.  Usually this is obvious.  An address field
+can identify things that look like an address.  So can a cross street field.  A name or call
+description field usually cannot.  But everything has exceptions.  You can override fields
+to add a validation criteria to a field that usually does not have one.  And you can use the
+Z flag to tell the parser not to use a field native validation capability.
+
+So, when the parser finds an optional field, it checks to see if that field can validate data.
+If it can, that it will be asked  if the prospective data field is valid or not, if not, it 
+considered absent and skipped over.  If it cannot validate data, the parser will look ahead
+to the next field(s) in sequence, looking for one that can validate data.  If found, it will
+use that one to see if the optional field is present or not present in the array of data
+fields.  If it reaches the end of the program without finding an validating field, or finds
+another optional field first, the constructor will throw an exception.
+
+Similar logic is used to determine when conditional repeating item will stop repeating
+
+But wait, there is more.....
+
+Sometimes text pages have two or more formats with fields in slightly different order.  The
+FieldProgramParser supports something called conditional branches which look like
+FLDA FLDB ( FLDC FLDD | FLDF ) FLDG
+This tells the parser that it needs to take one of two possible field branches, or that
+the text field order could be either 
+FLDA FLDB FLDC FLDD FLDG
+or
+FLDA FLDB FLDF FLDG
+
+When processing a program with conditional branches, the parser will look at the fields in
+the first branch, looking for the first one with validation capability, and use that to
+decide if this looks like the correct branch.  If it is not, it will check the second
+branch, etc until it gets to the last branch which will always be taken.
+
+The Z option is most commonly used  with address or cross street fields.  While these
+can validate their data, they are less reliable that other fields and will often fail
+to identify proper fields.  If possible, we tell the parser to skip those and check
+other, fields later in the program string whose validation is more trustworthy. 
+
+Field classes have three important methods.
+boolean canFail()
+return true if this Field class is able to make decision as to whether a data field
+is valid or not.
+
+boolean checkParse(String field, Data data)
+this will only be called in canFail() returns true.
+if the data field is not valid, return false
+if the data field is valid, parse the data field 
+saving the results in the Data object and return
+true.
+
+void parse(String field, Data data)
+parse the data field saving the results in the Data object
+The parse method is not asked if the field is valid and cannot
+return a valid/not-valid status.  But if it really dislikes
+the contents of the data field, it an call the abort() method
+which will terminate all attempts to parse this message and
+return a fail to parse status.
+
+These two methods frequently call each others superclass method as in
+public boolean checkparse(String field, Data data) {
+  if (no good) return false;
+  parse(field, data);
+  return true; 
+}
+
+or
+
+public void parse(String field, Data data) {
+  if (!checkparse(field, data) abort()  
+}
+
+If all you want to do is add a regular expression validation pattern to a field,
+you do not need to write your own field.  Most existing field classes 
+have a constructor that takes a string containing a regular expression that 
+should be matched by any valid data field.  So you can do things like
+
+public Field getField(String name) {
+  if (name.equals("UNIT") return new UnitField("M\\d+");
+  return super.getField(name);
+}
+
+This turns the regular UNIT field into a validating field that will check the data value
+against the specified regular expression.  When set up this way, the field will
+check the data against the pattern when asked if a data field is valid but will
+not reject non-matching data if not asked about it.  if you pass an additional
+boolean value of true, this becomes a hard validation check, and the field will
+also abort parsing if the parse method is called with data that does not match
+the pattern.
+
+
+Tricks to debugging FieldProgramParser based parsers....
+1) I  usually step into the parseFields() method just to make sure the fields
+   were split up the way I think they should be.  This usually involves stepping 
+   into String.split() first, then using the step out key, the step into a second 
+   time to get to parseFields.
+2) There are only 3 places where FieldProgramParser returns a failure status.  
+   Put breakpoints on all 3 and you can pretty much nail down why a particular 
+   parse is failing.  These are...
+   a) the abort() method is called by any field parser that want the parse to fail.  
+      Search the source for abort() then hit F3 to find the method where you want 
+      to put a breakpoint.
+   b) When a required tagged field is skipped.  Search for the skipReq variable 
+      and put a breakpoint on the call to state.setResult(false) that is called 
+      when it is true.
+   c) Required field not found before end of text is reached.  Search for the 
+      checkFailure() method and put a breakpoint on the return false statement.
+
+**************************************************************************
+* Admin functions are performed by someone with a very good knowledge of
+* the Cadpage internals and distribution system.  Which for now means me.
+* But I am documenting them so people know what has to be done, and so,
+* just maybe, someone else might be doing them someday.
+**************************************************************************
+* Admin function - building skeleton test classes
+**************************************************************************
+
+First build a list of sample test messages.  These come from two places.
+
+1) Requests initiated by Cadpage users are found in the MsgFormats.txt file
+   below the READY TO ROLL tag.  These were accumulated from Cadpage user 
+   reports and are pretty much ready to go after some final cleanup
+    If they came from Cadpage emails
+    Change "\\n\n" to "\\n"  gets rid of line breaks following a \n  
+    Change "\n(?!\n)" to " " replaces line breaks not followed by second line break with blank
+    Search for any "\\\d+s" sequences and replace them with the appropriate number of blanks
+    If they came from non-cadpage emails
+    Change "\n" to "\\n" changes line breaks to \n
+    Change "\\n\\n" to "\n" changes double \n\n sequences back to a line break
+   
+2) Requests initiated by Active911 are pulled from their issue tracking system.
+   Find the appropriate ticket item and open the Raw Report link, preferably
+   in another tab or window.  Copy the entire report to an eclipse window and do 
+   some simple editing
+   * Remove the initial /** line and remove the leading '*' from the next three lines
+   * Move the Contact: Active911 line to the beginning of the block
+   * Look at the first couple of * From: lines and use the to add a Sender: line
+     at the end of the 3 line information block.
+   * If there are multiple clients, use the same operation to copy and adjust their
+     Raw reports to the end of the window
+   * Select the entire text and start doing some bulk search and replace operations
+     Replace '^\* Subject:' with 'Subject:'
+     Replace '^/?\*.*\r?\n' with nothing
+     Replace '\\n\r?\n' with '\\n'
+     Replace '\\r\\n' with '\\n'
+     Replace '\\n$' with nothing.  Repeat until no more are found
+     Replace '^Subject: (.*)\r?\n with '($1) '
+     Replace '^ *\r?\n' with nothing
+   * Not go back and find all of the information blocks starting with "Contact: Active911"
+     and restore the blank lines in front of and behind them.  
+   The above works for most raw reports.  Things an be simplified if there are no
+   Subject: lines.  Things have to refined a bit if the message text contains
+   any lines that start with asterisks.
+   
+This should give you your sample text pages. At this point you should start running
+some clever regexp searches through MsgFormats.txt to see if we have encountered anything
+like this before.  Very occasionally, you will find that we already have a parser handing
+these calls because they are really dispatched from dispatch center in a neighboring county.
+When this happens, add the new text page block to the existing parser test class, generate
+a new test method and verify that they work.  If they do, you can tell the user that the
+existing parser code will work for this call and close everything out.  Problem solved.
+
+If the search finds a hit in an existing dispatch class, add some comment to the effect that
+they should try using that dispatch class.  If it finds a hit in some other parser class, they
+should consider creating a new dispatch class from that parser and using it for both parsers.  
+
+Hopefully you have figured out what the
+new parser class should be called.  I usually copy another test class from the same
+state and open it. Replace the initial information block with the list of text pages
+you just created.  Change the constructor call to invoke DummyParser and pass the 
+correct city/county and state.  And remove all test code leaving only a single empty
+test method.
+
+Create an entry in MsgFormats.text under the FARMED OUT heading consisting of the
+name of the this location followed by the not yet written parser name in parenthesis
+followed by 3 sample text pages
+
+Commit everything and publish the fact that a new parser request is available.   
+
+*******************************************************************************
+* Admin - Finish implementation
+*******************************************************************************
+
+First, do a quick check of the generated test code to see if the developer got
+fields in the right places.  Check for any added mapping comments and decide
+what should be done with them.  If it is obvious that this is a google map
+problem initiate a problem report with Google.  Otherwise find a way to 
+notify the user of the potential  mapping problem and what they can do about it.
+
+If this is a new standalone parser (the best kind) open the ParserList class 
+in the net.anei.cadpage.parsers package. and create a new entry in the long
+parser list for this parser
+
+If the new parser is to join an existing set of grouped parsers, just just have
+to add a new entry to the existing master parser and test class for this group.
+
+If the new parser is to be joined with an existing parser to create parser group, then
+* Rename the existing parser to an appropriate name, usually appending an A to the
+  base parser name
+* Create a new master group parser subclassing GroupBestParser and supporting the two
+  grouped parsers.  Or you can copy an existing master group parser and change the 
+  names of of the grouped parsers.
+* Rename the existing parser test class as above
+* Create a new master group parser test class.  These can be complicated and I 
+  usually find an existing master group test class and clone it, replacing the
+  names of the invoked class and test classes.
+
+If you have done anything with a master group parser, run its test class as a 
+JUnit test.  What this does is invoke all of the individual test class 
+in the group with a single instance of the master group parser class.  
+Problems are rare, but occasionally one the text page formats are close 
+enough that one parser snatches pages that were intended for
+another.  WHen this happens you have add some logic to the snatching parser
+to rule out pages that are intended for the other parser.  Also add a test
+method to the snatched parser test class invoking the  doBadTest method to
+prove that the snatching parser will not accept a page intended for the other
+parser.
+
+Next, start up an Android emulator and launch Cadpage as an Android app to
+run on that emulator.  While it is busy doing that, you can update the
+MsgFormats.txt file.  Just move the descriptive block for this parser from
+the "FARMED OUT" section to the appropriate section of the file.
+
+By now cadpage should be installed on the emulator.  Open it, switch the 
+current location to the location you just installed.  Check that the name
+show as the current location is appropriate.  If necessary, check the
+override location filter box and set the From: (filter) to something we can
+actually enter (1112223333 is my favorite).
+
+Open a command shell and telnet to the emulator port on localhost.  Then type
+something like
+sms send 1112223333 <complete text of one of your text messages>
+This sends an SMS message to the emulator which should trigger Cadpage to
+display the call information.  If you created a new master group parser
+use the same technique to send a test message for the other parser.  If
+this all works, all is well.  If it doesn't, it usually means you mistyped 
+the entry in ParserList.
+
+Check in all code changes. 
+Create a new Issue for this location with a status of "ReadyForRealise" and
+a "Location" label.
+Notify the user, either by emailing them or changing the owner of the Active911
+release ticket to Miriam Sulivan.

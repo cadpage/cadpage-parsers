@@ -1,0 +1,12 @@
+
+So what do I have on that publish intent feature.  Cadpage users turn it on by going into Cadpage Location Settings and checking the box labeled "Publish CAD pages" at the bottom of the screen.  This tells Cadpage to automatically publish all incoming pages.  There is also a way to manually publish page information from previously received pages.  To do that the user can long press the call and select "Publish Page" from the option menu.  Like all Option menu items, they can set up a configurable button on the call display window to trigger this.
+
+To pick up this information, your app needs to request the net.anei.cadpage.RECIEVE_CADPAGE permission and set a broadcast receiver listening for intents with an action of net.anei.cadpage.CADPAGE_RECEIVED.  The received intent information consists of extra parameters under the keys listed in the BroadcastBindings.java file.
+
+If the key starts with EXTRA_PARSE_ the information was parsed from the message text.  If it doesn't it is a basic part of the text message that is always present and did not need to be parsed.
+
+The EXTRA_PARSE_CALL call description will occasionally be blank.  Some page formats only have a very long call description field which will be in EXTRA_PARSE_INFO.
+
+There are two special values of the EXTRA_PARSE_CALL field which indicate we received a text page from which we cannot or did not parse any useful information
+"GENERAL ALERT" indicates a call that came from dispatch but was not identified as a dispatch page.  No attempt is made to parse information from the page.
+"RUN REPORT" is a special case of the general alert call where we did have enough information to identify this as a call summary page.  For the most part we do not attempt to parse use information from this page.

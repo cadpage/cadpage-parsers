@@ -1,0 +1,83 @@
+Cadpage App to App communications
+
+I have been experimenting, and documenting for users, how we can go about running
+Cadpage and Active911 apps on the same device, with the same device authorization 
+code.  Nothing tricky about it, basically we register the Active911 app with your
+servers first.  Then register Cadpage.  The direct page sent from the servers
+goes to Cadpage.  But when Active911 is launched, either manually or from Cadpage,
+Active911 polls your servers for updated information.  This is working pretty
+well with existing software, but there are some things that can be changed to
+make it work better.
+
+The only real problem, which I discovered last week, is that installing a new
+version of the Active911 app reregisters with the server and switch direct 
+paging back to the Active911 app.  This shouldn't have been a surprise, both
+Android apps are required to register and send an updated registration ID to
+the server when a new release is installed.  You had to put in some special server
+logic to ensure that a Cadpage reregister request did not switch the page type 
+when a new Cadpage release is installed.  Now we need something similar to
+prevent an unintended page type switch when a new Active911 release is installed.
+
+The next Cadpage release adds a new parameter to the reregister request.  
+userReq=Y indicates the user specifically requested Cadpage be reconnnected
+to the Active911 servers, and that switching the page type would be an
+appropriate action.
+userReq=N indicates this is an automatically generated request when Google
+sent us an updated registration ID for whatever reason.  If the device page
+type is not currently set for c2dm_cadpage, the request should be ignored.
+
+If there is no userReq parameter, you are getting the request from an older Cadpage 
+release and have no idea why it is being sent.  It would be appropriate to
+default to N processing.    
+
+
+That is the only thing we really need.  The rest of this stuff is totally optional.
+If you want to take advantage of it, feel free.  If not, no big deal....
+
+*****************************************************************************
+
+Cadpage has a feature that allows users to configure a button that launches the
+Active911 app for a specific message.  This is implemented by by constructing
+a regular launcher intent to launch the Active911 app.  The latest release
+adds an extra "q" parameter containing the q= code from the ack URL sent with
+the original alert.  Again, whether you choose to honor this or not is entirely
+up to you.
+
+*****************************************************************************
+
+Cadpage will broadcast an empty intent when a direct page is received.  You
+can use this as a prewarning that some kind of call has been received and that
+it is time to poll the server for any updated alert information.  The broadcast
+action will be net.anei.cadpage.RECEIVE.Active911
+
+*****************************************************************************
+
+If Cadpage has been registered with Active911, it will broadcast the account
+and token information that can be used by Active911 to automatically register
+with the servers.  Information is broadcast when Cadpage starts up, or when the
+information changes, or when it picks up broadcast requesting it.
+
+Cadpage listens for a broadcast with action
+net.anei.cadpage.REQ_ACCOUNT_INFO.Active911
+
+Cadpage broadcasts an intent with action
+net.anei.cadpage.ACCOUNT_INFO.Active911
+with extra parameters
+  account  - the account parameter
+  token    - the token parameter 
+
+The plan was that your app can just broadcast the REQ_ACCOUNT_INFO request when
+it starts up.  Otherwise all it has to do is listen for the ACCOUNT_INFO broadcast
+and retain the device authorization code until the user requests that the app
+connect with your servers.
+
+I've gone back and forth as to whether we should require a declared permission
+to receive the ACCOUNT_INFO broadcast.  On one hand, by not doing this, we are 
+enabling any malicious app to grab what amounts to the login access to Active911
+from the Active911 app.  On the other hand, required a new declared permission
+means that any new Active911 release declaring that permission will not
+install automatically.  To be on the safe side, the next release will require
+the net.cadpage.anei.RECEIVE_CADPAGE permission.  We can change that if you want.
+ 
+
+

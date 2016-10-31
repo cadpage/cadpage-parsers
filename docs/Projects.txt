@@ -1,0 +1,32 @@
+** In progress **
+Add timeout to Scanner Radio Startup (#4484)
+Supra Radio Interface
+
+** On Deck **
+Disabling Cadpage should block GCM alerts (#2253)
+Do not launch scanner when phone is muted or call in progress? (#2417)
+Upgrade to latest supported GCM protocol
+
+** Short Term **
+Suppress audio alert if call in progress (#3118)
+Option to install Active911 alert tones
+Better run report parsing options
+User server time when dispatch time not avail.  Also to check for delayed pages. (#1474)
+Prompt for apt if we have a GPS lookup table
+Add main menu option to make all messages as opened (#239/2472)
+Look into using flash notification (#2730) 
+Improve response button options (general text repsonse, HTTP request)
+Option to enable phone hyperlinks in call detail information
+Option to add email address to existing default filters instead of replacing them all
+Option to disable backing out or closing app (#1380)
+
+** Intermediate **
+Configurable call history display (#1994)
+Update GUI to latest standards
+Add tablet interface
+Redo preference settings menu
+
+** Long Term **
+Implement Tasker Interface (#4483)
+Inprove filtering options
+Including time based scheduling

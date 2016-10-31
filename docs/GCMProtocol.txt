@@ -1,0 +1,342 @@
+**** Cadpage GCM messaging protocol
+    
+Stuff we need from you
+A list of the IP address ranges that will be used by your servers to push pages to Cadpage
+An HTTP address that cadpage will use to communicate with your servers.
+A name or title of your service
+A short one line description, good place to sell why users should use your service
+A longer text description, more of the same
+Optional set of Icons we will display with your service.  These are all views
+of the same logo that are used for different screen resolutions.  Size if flexible
+but shouldn't be too far off the standard which is.
+  72x72 pixel
+  48x48 pixel
+  36x36 pixel
+If you want to make this one include the name of your service, it can be a lot wider.
+
+There is also room for a smaller status Icon that I can put in the call detail
+window for calls received from your service.  Icon sizes for this are
+  48x48
+  32x32
+  24x24
+  
+
+Current assigned values
+
+For CodeMessaging
+    vendor code: CodeMessaging
+    SMS trigger: >CMG
+    
+For Active911
+    vender code: Active911
+    SMS trigger: >A91
+    
+You have to set up a base HTTP address that Cadpage will use to communicate with
+your servers.  Cadpage will send the following parameter information to this address
+
+req=info       general request for information about your company and service
+    This will come from a web browser, you can do any interaction you want with it
+    
+req=profile    request by user for specific information about their account
+    vendor          Vendor code
+    account         Account number/string reported in REGISTER request to device
+    phone           Phone number if we have it (for Android tablets we probably will not)
+    token           Security token reported in REGISTER request to device
+    type            GCM for now (Another code my be used in future for Apple Push connections)
+    CadpageRegId    New Cadpage registration ID
+
+    This will come from a web browser, you can do any interaction you want with it
+
+req=register - initial user request to register phone
+    phone           Phone number if we have it (for Android tablets we probably will not)
+    type            GCM for now (Another code my be used in future for Apple Push connections)
+    CadpageRegId    Cadpage registration ID, this is what you need to send messages to this device
+    version         Cadpage client version
+
+    This also comes from a web browser.  If you redirect them to other links, it is
+    your responsibility to preserve the passed parameters, either by adding them to
+    the directed links or saving them as cookies.
+    
+    A successful registration should send REGISTER request to the device which will
+    include the user account number and security token
+    
+req=reregister  Used by Cadpage to report a change to the device registration ID
+    vendor          Vendor code
+    phone           Phone number if we have it (for Android tablets we probably will not)
+    account         Account number/string reported in REGISTER request to device
+    token           Security token reported in REGISTER request to device
+    type            GCM for now (Another code my be used in future for Apple Push connections)
+    CadpageRegId    New Cadpage registration ID
+    version         Cadpage client version
+    UserReq         "Y" is user requested registration request
+                    "N" if automatic registration request
+    transfer        "Y" Cadpage configuration has been copied from another device
+    
+    If the transfer flag has been set, and the registration ID reported in   CadpageRegId differs
+    from the one you already have on file for this account, then it can be safely assumed that
+    someone has used the Android 6 backup/restore feature to copy an existing Cadpage configuration
+    to another device.  Because allowing two devices to exist with Cadpage configured to use the
+    same direct paging account information is a bad idea, it is strongly advised that you push an
+    "UNREGISTER" message to the old registration ID before continuing to process this request.
+    
+    Return an 200 - OK if successful
+              299 - registration is successful, but the registration ID we passed is known 
+                    to be non-functional and should be replaced
+              400 - ERROR if device is not found or has been deregistered
+              Anything else indicates link is broken but fixable.  In a broken
+              state Cadpage will attempt a reregister with the old account
+              and token information when user attempts to reregister
+    
+req=unregister     Used by Cadpage to inidicate user request to unregister their phone  
+    vendor          Vendor code
+    account         Account number/string reported in REGISTER request to device
+    phone           Phone number reported in REGISTER request to device
+    token           Security token reported in REGISTER request to device
+    type            GCM for now (Another code my be used in future for Apple Push connections)
+    CadpageRegId    New Cadpage registration ID
+    version         Cadpage client version
+    
+    Return an OK or ERROR response code to indicate success or failure
+    
+    If user is not registered with your service, you should send an req=unregister
+    request to the registration ID that is passed.
+    
+Once you have a GCM registration ID, you can send messages to the device.  The
+technical details are explained at http://developer.android.com/guide/google/gcm/index.html
+
+You will have to use a Google server ID which will only be good for a selected 
+list of server IP addresses.  Different vendors get different server ID's.  To get yours
+email Cadpage support with a list of server IP addresses that will be using.  This can be
+a block of addresses such as 196.78.5.0/24.
+
+The message you send to Cadpage consists of set of name/value pairs.  The name
+keywords Cadpage will look for are
+
+type:   Message type which can take following values
+        REGISTER - report successful cadpage registration
+        UNREGISTER - report user initiated request to unregister from your servers
+        PING - Cadpage will initiate automatic response to server
+        PAGE (or anything not listed above) - alert page
+        
+For REGISTER type
+vendor:     Assigned vendor code 
+account:    Users account number with your service
+token:      Security token that will be reported back to your servers with
+            re-register and unregister requests
+            
+For UNREGISTER type            
+vendor:     Assigned vendor code 
+            
+For regular message requests    
+Either content or contentURL must be specified, everything else is optional.    
+sender - Sender address (default C2DM)
+subject - Message subject (optional)
+content - Actual message content
+content_url - URL from which message content can be retrieved 
+             (use only if sending actual content exceeds the maximum size limit)
+format - Format/location parsing code (default, use user configured location code)
+vendor - Your vendor code.  Not required, but it does help us tag the message display
+         as coming through your service
+call_id - optional identification code to identify this call on vendor system         
+unix_time - date/time you received page from dispatch, as a unix timestamp 
+            (seconds since midnight Jan 1, 1970)
+info_url - URL of web page containing additional information about call.
+agency_code - code for agency being dispatched            
+
+For everything
+ack_url:  URL Cadpage will connect with to acknowledge message status (optional)
+ack_req:  String of characters indicating what kind manual responses may be sent
+          A - ACK merely indicates user has pressed a button or done something
+              to acknowledge the call
+          R - RESP user indicates they are responding
+          N - NO user indicates that they are not responding
+          L - Request user location (again only if user has enabled location
+              services and allowed Cadpage to report this info
+              An L code may be followed by three numbers separated with a slash,
+              as in L15/30/10.  This tells Cadpage to continue sending periodic
+              location reports for 15 minutes with a minimum time interval of 
+              30 seconds and a minimum distance intervals of 10 meters
+          P - Request user payment status
+          
+          [...] - Custom Response menu.  The response menu consists of any
+          number of response definition separated by semicolons.  Each
+          response definition look like
+          <code>=<desc>
+          where code is the code that will be reported to the server when this 
+                     response is selected
+                     A leading + or - indicates a positive or negative response.
+                     This character will not be included in the code sent to the
+                     server, it merely tells Cadpage whether user is responding
+                     or not.  The only affect this has is to turn on or off
+                     the location reporting feature triggered by the L code. 
+                desc is the text for this response that will be displayed
+                
+          sequence of numeric digits - An index that will be used to search for
+          a predefined custom response menu for this vendor.  Before using this, 
+          you should check the first part of client version reported by Cadpage 
+          to ensure that this version supports the predefined custom response 
+          menu you wish to use.  If it doesn't, use the Custom Response menu sequence.
+
+
+Cadpage acknowledgments
+If an ack_url has been included in a text page, Cadpage will automatically 
+respond by opening the specified URL.  If ack_req has been set, it will allow
+the user to report their responding/non-responding status manually.  These reports
+will be sent the the ack_url URL with parameters
+type:     Type of acknowledgment
+          AUTO - automatic sent as soon as Cadpage receives message
+          ACK  - sent when user performs any action in response to page
+          RESP - sent when user indicates they are responding to call
+          NO   - sent when user indicates they are not responding to call
+          LOCATION - location report (if requested and enabled)
+paid_status: Cadpage subscription status if requested
+             YES - user is a paid Cadpage subscriber entitled to any discounts that brings
+             NO  - user is not a paid Cadpage subscriber
+paid_expire_date: If subscription status is YES, this contains the date the subscription
+                  expires as MM/DD/YYYY.  If the subscription never expires, it has a value
+                  of "LIFE".
+phone:    User phone number.  Only tacked on when paid status is requested.
+vendor_status:  returns your vendor registration status
+                registered     - device is registered with your vendor.  All is well
+                not_registered - device is not registered with your vendor
+                undefined      - vendor code passed in request is not valid                   
+version:  Cadpage client version
+account:  user account value
+token:    user token value                           
+
+Note: If message content was delivered through content_url instead of a content 
+keyword an automatic acknowledgment is redundant and will not be sent.
+
+Vendors should check all responses to see if they returns vendor_status of not_registered.  
+this indicates that that Cadpage does not believe it is registered to GCM push message
+from your service.  Since it is sending this in direct response to a GCM push message, it
+is clearly mistaken.  But you need to send it another type=REGISTER message to inform it 
+of this fact.  There are a couple of ways this can happen, either the user has reinstalled
+Cadpage or the initial REGISTER message did not get through for some reason.
+
+Cadpage Location Reports
+Cadpage will report the users current location are periodic intervals under certain specific
+conditions.
+1) User must leave location reporting enabled in Cadpage settings
+2) GPL location tracking must be enabled on the device
+3) Server must request location report in a page report
+4) User must press a response button that indicates a positive response status
+   Currently defined as sending a response code to the server other than N or NO
+
+The server requests location reports for a call by including an 'L' code in the ack_req
+parameter.  This code can be followed by 3 numbers separated by slashes such as L15/30/10
+The first number is the time in minutes that report tracking will be enabled.  The enabled
+time interval starts when the text page is received.  The second number is the minmum
+time interval between reports in seconds.  The third number is the minimum distance iterval
+in meters.  This L15/30/10 request location reports for 15 minutes after the call, with 
+a minimum time interval of 30 seconds and a minimum distance interval of 10 meters.
+
+Location reports will be sent to the URL specified by that ack_url parameter. And will include 
+the following parameters
+type      LOCATION
+lat       latitude in degrees
+long      longitude in degrees
+time      UTC time of location report in msecs since Jan 1, 1970
+acc       accuracy in meters (if available)
+alt       altitude in meters (if available)
+bearing   direction of travel in degrees east of true north (if available)
+speed     speed in meters/sec (if available)
+
+Client version codes
+All HTTP requests originated by recent versions of Cadpage will include a client version code.
+This code will consist of two numeric portionas separated by a dash.  The first will be a one
+or possibly 2 digit number that is tied specifically to your vendor interface.  In particular
+this number should be used to confirm whether or not this version of Cadpage supports any
+particular precompiled response menu before you try to use it.  The second number will be 5-6
+digits long and is tied to the actual Cadpage release code. 
+
+
+SMS text message discovery
+
+Any regular SMS text message that has been identified as a CAD page or general
+alert that starts with your assigned SMS trigger code will be identified as
+coming from your location.  The trigger code will be stripped off and the text
+message will be processed normally.  But the next time the users opens Cadpage
+they will be asked if would like to sign up for direct C2DM services.
+
+Any received text message that starts with the sequence
+*CADPAGEQ*
+and contains a valid URL that starts with your configured base URL address
+will be considered a Cadpage query.  The message will be intercepted and Cadpage 
+will immediately initiate a register request adding the usual register request 
+parameters to your URL.  The expectation is that you will include any account 
+or other necessary identification information in that URL.
+
+These *CADPAGEQ* discover pages will show up in user inboxes where Cadpage is
+not installed or enabled.  The text page has be be user friendly and readable.
+
+The *CADPAGEQ* discover page will not work if received as an MMS message with
+a sender address that does not match the sender filter.  When an MMS message
+fails to pass the sender filter, we don't bother retrieving the message content
+so we can't tell if it starts with *CADPAGEQ*.
+
+Note that none of these will work if the pages is relayed through another
+messaging service that adds it's own message headers. 
+
+
+**** Migration from older C2DM implementation
+
+GCM technical documenation can be found at http://developer.android.com/guide/google/gcm/index.html
+
+Primary differences are ...
+1) The request should be sent to a new endpoint: https://android.googleapis.com/gcm/send.
+2) The Authorization header of the request should contain the API key generated during sign up. 
+   This key replaces the deprecated ClientLogin Auth token.  We generate this key for you, send
+   us a request including the IP address(s) or address blocks of the servers that will be
+   generating GCM messages
+3) Server may report that a registration ID has been invalidated and replaced with a new one.  
+   You need to retain and use the new registration ID for this device
+4) You can now send one page to up to 1000 devices with one request
+5) You should drop the collapse_key parameter.  This makes turns the request into a message with 
+   payload request.  Maximum message size has been increased to 4KB.
+6) JSON format is supported
+
+The basic Cadpage protocol is about the same except that we pass a type field with "GCM" 
+instead of "C2DM".  You must keep track of which one you got and use
+the the appropriate Google messaging protocol to communicate with that device
+
+The current releases of Cadpage default to C2DM functionality.  You can change this by
+selecting Settings > Payment Status > I have an authorization code
+and enterring GCMON to enable GCM messaging and GCMOFF to disable it
+
+Once CodeMessaging and Active911 have GCM implemented, I will release a version of Cadpage
+that only does GCM communications. it will still be a while before
+all existing Cadpage users migrate to it, so C2DM communication will need to be supported 
+for some time.  It will be appropriate, and proper, to return an error screen for register
+requests, asking users to install the most recent version of Cadpage first.
+
+It will also be possible to scan your tables for users still registered under the old C2DM 
+protocol and send them a C2DM message advising them to install the latest version of Cadpage, 
+possibly warning that support for older versions of Cadpage will be dropped at some future date
+
+**** Finance issues:
+
+A revenue sharing arrangement with Cadpage, where Cadpage gets some percentage
+of your income from C2DM registered phones instead of collecting from the end users,
+is strongly encouraged, but not required to use this interface.
+
+If the subscribing user already has a current paid Cadpage subscription, we would
+prefer that you credit the user for whatever amount would normally be sent to
+Cadpage.  You can determine if they have a paid subscription by sending the device
+a PING request with a P code in the ack_req field.  Cadpage will respond with
+an acknowledge query that contains a paid_status value of either YES or NO.  
+If paid_status is YES, there will also be a paid_expiration_date with the Cadpage 
+subscription expiration date
+
+**** General notes:
+
+Might be nice to have a web page feature allowing user to locate and map their
+own phone if it happened to be misplaced.
+
+Also might be worth trying to give users an option initiate a reregistration 
+from your web page.  This would be used when Cadpage had to be reinstalled on 
+the phone in hopes that you could restore the registration info that we lost.  
+Whether it will work or not remains to be seen.
+
+We should probably make an effort to make sure that we have format/location codes 
+for all of your clients.  And code new ones for any we are missing.

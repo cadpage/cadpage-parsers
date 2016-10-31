@@ -1,0 +1,61 @@
+Specs to support  Cadpage branded paging service
+
+For each user, we will send an phone number, name and MEID device number.  These can 
+be used to identify a second request from the same user/device.  Otherwise they are 
+informational only.
+
+When looking for a matching device, I would check for a phone number if we sent one, 
+otherwise check for a matching MEID number.
+
+Need to keep the standard account and token items.  You send these in the REGISTER
+confirmation message.  We send them to you in any subsequent request.
+
+You need to keep an active/inactive binary flag and an expiration date.  We have requests
+that update these values.  Lacking any other information, the flag should be set to
+inactive if the expiration date has been reached.  Users that are not in an active state 
+should not have anything pushed to the device.  Obviously we only pay for users with an
+active status.
+
+We have something called a lifetime subscription.  These are people who either sent us money 
+back in the very early days before we started enforcing subscriptions, or performed some other
+exceptional service.  The numbers are few, less than 200.  I am OK with absorbing the $4 cost
+even though they are not paying us are a regular basis.  But wanted to make sure you knew
+they might show up.
+
+We need a base URL.  Can be the same as the CodeMessaging base URL or can be different.
+
+req=register - initial user request to register phone
+    Sent when user requests an initial registration
+    Server should respond by pushing a register confirmation to Cadpage
+    vendor          Cadpage
+    type            GCM
+    phone           Phone number if we have it (for Android tablets we probably will not)
+    MEID            device MEID number
+    CadpageRegId    Cadpage registration ID, this is what you need to send messages to this device
+    version         Cadpage client version
+    expDate         expiration date in MMDDYYYY format or LIFE for lifetime subscribers.
+
+req=reset - Reset dispatch email address
+    Sent when user requests a new email address
+    Server should respond by pushing a new register confirmation with a new
+    dispatch email address to Cadpage     
+   vendor           Cadpage
+   account          account returned in register confirmation
+   token            token returned in register confirmation
+    
+req=update - Update user subscription information
+   vendor           Cadpage
+   account          account returned in register confirmation
+   token            token returned in register confirmation
+   expDate          New expiration date (optional)
+   active           Y/N new activation status (optional)
+
+These are identical with their usage in the standard GCM protocol   
+req=reregister  Used by Cadpage to report a change to the device registration ID
+req=unregister  Used by Cadpage to inidicate user request to unregister their phone  
+req=reg_query   Used by Cadpage to report a device registration ID and request that
+
+Message push protocol is same as standard GCM protocol except that we will always report a 
+vendor code of "Cadpage", and the REGISTER confirmation will include a new
+dispatchEmail  
+     Email address to which dispatch alerts should be sent.   

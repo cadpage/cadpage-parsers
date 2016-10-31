@@ -1,0 +1,14 @@
+The integration between Cadpage and Active911 has never quite been completed.  Somethings are minor, but they do annoy Cadpage users and it would be nice to get them cleaned up.
+
+#1 Implement the req=profile HTML request.
+Comes with account, phone, token and a few other things
+What it is supposed to do is bring up a web page where user can adjust their Active911 settings.
+
+This is probably the number one complaint my Active911 users have.  Active911 app users can change there settings from within the app.  Cadpage users have to log in to your web page.
+
+#2 Implement the req=req_query HTML request
+This one comes with a regId and phone number and a few other things.  It doesn't have an account or token, that is why I am sending it to you.  You are supposed to search your tables for a device entry with a matching registration ID and, if found, send the same registration confirmation push message that you send in response to a req=register request.
+
+What this will do is automatically reregister Cadpage with Active911 after a user uninstalls and reinstalls cadpage, and (possibly) after a factory reset or switching to a new phone.  It has been observed that when I ask for another registration ID from Google, I usually get the same one we had previously.  By sending it to you as a reg_query we can automatically establish the registration.
+
+#3 I would still prefer to get the unadulterated output from the Cadpage parser as the text message content.  But what you are sending me now is working.  You have always sent a format code of "Active911" and I had been automatically converting it to "Cadpage".  What I did to fix things was take out that logic and write a real Active911 parser that handles the idiosyncrasies of the pages that you send.  But, it would be nice if you could append the agency number as a SRC parameter.  That would give my users a definitive indication of what agency the page is coming from.

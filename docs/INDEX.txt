@@ -1,0 +1,17 @@
+What all can be found here.
+
+GCMProtocol.txt - describes the protocols used to push pages to Cadpage with
+the Google GCM message protocol.
+
+CadpageParser.txt - instructions on how to run the Standalone Cadpage Parser
+
+INDEX.txt - This file
+
+LocationParser.txt - Very sketch instructions on how to write new parsers
+
+MsgFormats.txt - Lists some examples of text pages processed by all supported
+message format codes.  Plus a bunch of other in various states of being implemented.
+
+Publish_howto.txt - Detailed instructions how to publish new Cadpage releases,
+beta Cadpage releases, Cadpage Parser releases, and the free/no-support version
+of Cadpage.

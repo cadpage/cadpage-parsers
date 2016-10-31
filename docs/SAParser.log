@@ -1,0 +1,138 @@
+Version 24 01/03/2016
+
+Major changes/improvements to lots of things
+
+Version 23 09/13/2015
+
+Fixed problem not recognizing city names that are followed by a cross street
+indicator followed by a cross street
+
+Added "UNKNOWN" to special cross street names
+
+Version 22 06/35/2015
+
+Fixed problem with GPS parsing logic not switching signs of negative 
+coordinates when appropriate
+
+Version 21 05/29/2015
+
+Fixed problem not recognizing ALPINE CUTOFF RD or GREEN TERRACE CT properly.
+
+Version 20 05/10/2015
+
+Added "XSTR" and "X" to list of keywords that identify the start of a cross street.
+
+Fixed logic so that cross street keywords at the end of the data field will not be
+treated as cross street keywords.
+
+Fixed problem with the GPS location pattern match not always picking up a 
+leading sign.
+
+setupProtectedName() names will now be protected throughout the smart address parsing logic
+
+Version 19 05/08/2015
+
+Fixed problem stripping the word "APTS" from end of address fields
+
+Version 18 05/02/2015
+
+Fixed some unusual problems with the implied intersection logic
+
+Version 17 04/27/2015
+
+Added "BD" and "EXPY" to list of road suffixes.
+Added "BUS" to list of recognized street direction terms
+
+Version 16 04/20/2015
+
+Fixed logic checking for a tagged field match to follow the failure branch
+when the branch decision depends on a tag match.
+
+Version 15 04/16/2015
+
+Added logic to prevent a number followed by an XS: indicator from being
+interpreted as a street address
+
+Fixed some odd problems parsing naked street names
+
+Version 14 03/05/2015
+
+Added new FLAG_STRICT_SUFFIX flag
+
+Fixed some issues about when street names that should have a street suffix can
+be considered terminated by the cross street or apt marker
+
+Version 13.0 02/08/2015
+
+Fixed problem not recognizing NEW ST as a standalone street name
+
+Version 12.0 02/01/2015
+
+Major rewrite of the logic handling @ (or AT) splits.
+
+Version 11.0 01/18/2015
+
+Added FLAG_PREF_TRAILING_DIR flag.  This should be used when street directions are routinely
+attached to the end of a street name rather than the beginning.  It is only checked when
+a single direction is found between two valid street names.
+
+Added ESTS and ESTATES to list of words that might or might not be street suffixes.
+
+Will now recognize dual numbers separated by a dash as a possible dual highway number.
+
+Version 10.0 01/12/2015
+
+Map address cleanup will now remove NORTHBOUND, EASTBOUND, SOUTHBOUND, WESTBOUND, and any trailing 
+dash or comma characters
+
+Version 9.0 01/08/2015
+
+Michigan state highways will be recognized with a "M" prefix as well as the standard
+"MI" prefix.
+
+Version 8.0 01/04/2015
+
+Improved logic that determines if a trailing direction should be included in the address
+or if it is instead part of a trailing city name or cross street.
+
+Fixed bug in the FLAG_NO_STREET_SFX logic.
+
+Version 7.0 12/29/2014
+
+Added option to specify a regular expression pattern that will be used to 
+identify leading place names instead of the regular address start logic.
+
+Version 6.0 12/18/2014
+
+Added new setupSpecialStreets() method allowing parser to define street names
+should be considered valid street names without a trailing street suffix.
+
+Fixed problem not finding legitimate numbered address following a "COUNTY 911"
+construct that could be mistaken for a naked road.
+
+Fixed problem misidentifying saint or doctor names starting one or two words
+after a city name.
+
+Fixed problem where logic not permitting city names following connectors or
+cross street indicators remained effective when only searching for city name.
+ 
+Version 5.0 12/08/2014
+
+Fixed case insensitive keyword processing to properly handle truncated keywords
+at the end of the message
+
+Version 4.0 11/14/2014
+
+Added "GR" to list of valid road suffixes
+
+Version 3.0 11/7/2014
+
+Fixed bug which allowing parser to return a STATUS_STREET_NAME result for a
+street name in the Multi Word Street name table that lacks a proper street suffix.
+
+Added BV and TE as recognized street suffixes.
+Added MC as an option street prefix
+
+Added logic to support utility to identify multiple word street names that
+need to be added to the multiple word street name table. 
+ 
