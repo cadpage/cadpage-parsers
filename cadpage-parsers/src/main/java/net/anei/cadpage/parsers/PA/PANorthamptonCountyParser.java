@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.PA;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
@@ -9,8 +10,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 
 public class PANorthamptonCountyParser extends DispatchB2Parser {
-  
-  private static final Pattern MARKER = Pattern.compile(">.* Cad: ");
 
   public PANorthamptonCountyParser() {
     super(CITY_LIST, "NORTHAMPTON COUNTY", "PA", B2_CROSS_FOLLOWS);
@@ -23,8 +22,10 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
   
   @Override
   public String getFilter() {
-    return "@notifync.org,14100,12101,777,411912";
+    return "@notifync.org,14100,12101,777,411912,4702193914,no-reply@ecnalert.com";
   }
+  
+  private static final Pattern MARKER = Pattern.compile(">.* Cad: ");
  
   @Override
   protected boolean isPageMsg(String body) {
@@ -32,9 +33,17 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
     return CALL_LIST.getCode(body) != null;
   }
   
+  private static final Pattern UNIT_MARKER = Pattern.compile("([A-Za-z]+\\d+) > ");
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    data.strUnit = new Parser(subject).getLast('|');
+    if (subject.equals("Alert Message")) {
+      Matcher match = UNIT_MARKER.matcher(body);
+      if (!match.lookingAt()) return false;
+      data.strUnit = match.group(1);
+      body = body.substring(match.end()).trim();
+    } else {
+      data.strUnit = new Parser(subject).getLast('|');
+    }
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseMsg(body, data)) return false;
@@ -68,96 +77,147 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
-    "ALUTA MILL",
-    "BABBLING BROOK",
-    "BANGOR JUNCTION",
-    "BLACK RIVER",
-    "BLUE MOUNTAIN",
-    "BRIDLE PATH",
-    "BROTHER THOMAS BRIGHT",
-    "BUNKER HILL",
-    "BUSHKILL CENTER",
-    "BUSHKILL PLAZA",
-    "CEDAR PARK",
-    "CHERRY HILL",
-    "CINDER DUMP",
-    "COAL YARD",
-    "COMMERCE PARK",
-    "COUNTRY CHASE",
-    "COUNTRY CLUB",
-    "COUNTRY SIDE",
-    "COVERED BRIDGE",
-    "CREEK VIEW",
-    "DE MARIA",
-    "DEER PATH",
-    "DEPUES FERRY",
-    "ECHO LAKE",
-    "FAWN MEADOW",
-    "FIRE CO",
-    "FIVE POINTS RICHMOND",
-    "FLINT HILL",
-    "FOX RIDGE",
-    "FRANKLIN HILL",
-    "FRIARS VIEW",
-    "GREEN MEADOW",
-    "GREEN PINE",
-    "GREEN POND",
-    "HICKORY HILLS",
-    "HIGH POINT",
-    "HONEY SUCKLE",
-    "HOPE RIDGE",
-    "LARRY HOLMES",
-    "LITTLE CREEK",
-    "LONG LANE",
-    "MARK TWAIN",
-    "MARTINS CREEK-BELVIDERE",
-    "MARY ANN",
-    "MAUCH CHUNK",
-    "MOUNTAIN VIEW",
-    "MT PLEASANT",
-    "MUD RUN",
-    "NEWLINS MILL",
-    "OAK RIDGE",
-    "PARK WEST",
-    "PEN ARGYL",
-    "PENN DIXIE",
-    "PLEASANT VIEW",
-    "POLK VALLEY",
-    "RASLEY HILL",
-    "RED OAK",
-    "ROCKY MOUNTAIN",
-    "SAUCON CREEK",
-    "SCENIC VIEW",
-    "SILVER CREEK",
-    "SILVER CREST",
-    "SLATE BELT",
-    "SNOW HILL",
-    "SNYDERS CHURCH",
-    "SOUTH MAIN",
-    "SPRING BROOK",
-    "STATE PARK",
-    "STOKE PARK",
-    "STONES CROSSING",
-    "SUGAR MAPLE",
-    "TOWNSHIP LINE",
-    "VALLEY CENTER",
-    "VALLEY VIEW",
-    "VAN BUREN",
-    "WAGON WHEEL",
-    "WILKES BARRE",
-    "WILLIAM PENN",
-    "WILLIAMS CHURCH",
-    "WILLOW PARK",
-    "WOODS EDGE"
-
+      "ALUTA MILL",
+      "BABBLING BROOK",
+      "BANGOR JUNCTION",
+      "BANGOR VEIN",
+      "BETH BATH",
+      "BETHLEHEM TWP",
+      "BILL SCOTT",
+      "BLACK RIVER",
+      "BLOSSOM HILL",
+      "BLUE MOUNTAIN",
+      "BOCCE CLUB",
+      "BRIDLE PATH",
+      "BROTHER THOMAS BRIGHT",
+      "BUNKER HILL",
+      "BUSHKILL CENTER",
+      "BUSHKILL PLAZA",
+      "CEDAR PARK",
+      "CHASE HOLLOW",
+      "CHERRY HILL",
+      "CHRISTIAN SPRING",
+      "CINDER DUMP",
+      "COAL YARD",
+      "COMMERCE PARK",
+      "COUNTRY CHASE",
+      "COUNTRY CLUB",
+      "COUNTRY SIDE",
+      "COUNTY LINE",
+      "COVERED BRIDGE",
+      "CREEK VIEW",
+      "DE MARIA",
+      "DEER PATH",
+      "DEL HAVEN",
+      "DELABOLE JUNCTION",
+      "DEPUES FERRY",
+      "EAST LAWN",
+      "ECHO LAKE",
+      "ECHO RIDGE",
+      "FAWN MEADOW",
+      "FIRE CO",
+      "FIVE POINTS RICHMOND",
+      "FLINT HILL",
+      "FOUL RIFT",
+      "FOX RIDGE",
+      "FRANKLIN HILL",
+      "FRIARS VIEW",
+      "GLENDON HILL",
+      "GREEN MEADOW",
+      "GREEN PINE",
+      "GREEN POND",
+      "HICKORY HILL",
+      "HICKORY HILLS",
+      "HIGH POINT",
+      "HONEY SUCKLE",
+      "HOPE RIDGE",
+      "LAKE MINSI",
+      "LARRY HOLMES",
+      "LITTLE CREEK",
+      "LOCKE HEIGHTS",
+      "LONG LANE",
+      "LORD BYRON",
+      "MARK TWAIN",
+      "MARTINS CREEK BELVIDERE",
+      "MARTINS CREEK-BELVIDERE",
+      "MARY ANN",
+      "MAUCH CHUNK",
+      "MOCKINGBIRD HILL",
+      "MORAVIAN HALL",
+      "MORGAN HILL",
+      "MOUNTAIN VIEW",
+      "MT BETHEL",
+      "MT PLEASANT",
+      "MT VERNON",
+      "MUD RUN",
+      "NEWLINS MILL",
+      "OAK RIDGE",
+      "PARK RIDGE",
+      "PARK WEST",
+      "PEACH TREE",
+      "PEN ARGYL",
+      "PENN ALLEN",
+      "PENN DIXIE",
+      "PINE HURST",
+      "PLEASANT VIEW",
+      "POLK VALLEY",
+      "QUARTER MILE",
+      "RASLEY HILL",
+      "RED OAK",
+      "RITZ CRAFT",
+      "ROCKY MOUNTAIN",
+      "ROSE INN",
+      "SAUCON CREEK",
+      "SCENIC VIEW",
+      "SHERRY HILL",
+      "SILVER CREEK",
+      "SILVER CREST",
+      "SLATE BELT",
+      "SMITH GAP",
+      "SNOW HILL",
+      "SNYDERS CHURCH",
+      "SOUTH MAIN",
+      "SPRING BROOK",
+      "SPRING GARDEN",
+      "SPRING VALLEY",
+      "SPRINGTOWN HILL",
+      "ST JOHN",
+      "STATE PARK",
+      "STEPHEN CRANE",
+      "STOCKER MILL",
+      "STOKE PARK",
+      "STONE CHURCH",
+      "STONES CROSSING",
+      "SUGAR MAPLE",
+      "TOWNSHIP LINE",
+      "VALLEY CENTER",
+      "VALLEY VIEW",
+      "VAN BUREN",
+      "VERA CRUZ",
+      "WAGON WHEEL",
+      "WALKING PURCHASE",
+      "WEYHILL FARM",
+      "WHISPERING ACRES",
+      "WHITE OAK",
+      "WILKES BARRE",
+      "WILLIAM C",
+      "WILLIAM PENN",
+      "WILLIAMS CHURCH",
+      "WILLOW PARK",
+      "WOODS EDGE"
   };
 
   private static final CodeSet CALL_LIST = new CodeSet(
+      "911 INCIDENT (TYPE)",
       "ADVANCED LIFE SUPPORT CALL",
+      "AIRCRAFT DOWN",
       "ALERT 2",
+      "ANIMAL COMPLAINT",
       "ASSISTANCE CALL",
       "BASIC LIFE SUPPORT CALL",
+      "BOMB THREAT \\ ATTEMPT \\ FOUND",
       "BRUSH FIRE",
+      "CARBON MONOXIDE - NO SYMPTOMS",
       "CARBON MONOXIDE (NO SYMPTOMS)",
       "CARBON MONOXIDE - SYMPTOMS",
       "COMMERCIAL STRUCTURE FIRE",
@@ -170,6 +230,9 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       "FIRE TRANSFORMER / WIRES",
       "FOLLOW UP",
       "FOOT / VEHICLE PURSUIT",
+      "GAS OTHER LEAK\\ALARM INDOOR",
+      "GAS OTHER LEAK\\ALARM OUTDOOR",
+      "GAS STRIKE",
       "GENERAL INFORMATION",
       "HIGH OCCUPANCY FACILITY FIRE",
       "INDOOR ODOR",
@@ -177,16 +240,23 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       "KNOX BOX RELEASE",
       "LOCK OUT VEHICLE / BUILDING",
       "LOST PROPERTY REPORT",
+      "MISSING PERSON / RUNAWAY",
       "MOVE UP ASSIGNMENT",
       "MVA EMS REQUEST",
+      "MVA NON INJURY",
       "MVA NONE INJURY",
+      "MVA UNKNOWN INJURIES",
       "MVA WITH ENTRAPMENT",
       "MVA WITH INJURIES",
       "MVA WITH UNKNOW INJUIRIES",
+      "MVA WITH UNKNOWN INJURIES",
       "MVA WITH UNKNOWN INJUIRIES",
+      "NG\\LPG LEAK\\ALARM INDOOR",
+      "NG\\LPG LEAK\\ALARM OUTDOOR",
       "NOISE COMPLAINT",
       "ODOR / OTHER THAN SMOKE",
-      "ODOR/OTHER THAN SMOKE",
+      "ODOR/OTHER THAN SMOKE INDOOR",
+      "ODOR/OTHER THAN SMOKE OUTDOOR",
       "OUTDOOR SMOKE INVESTIGATION",
       "PHONE CALL",
       "PUMP DETAIL",
@@ -199,23 +269,31 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       "STATION IN SERVICE",
       "STATION OUT OF SERVICE",
       "STRUCTURE FIRE",
+      "SUSPICIOUS ACTIVITY",
       "TERRAIN / SEARCH RESCUE",
       "TERRAIN / SEARCH RESCUE SMITH",
+      "TEST (DO NOT DISPATCH)",
       "TEST CALL (DO NOT DISPATCH)",
+      "TONE(S) TEST",
       "TRAFFIC CONTROL",
+      "TRAFFIC STOP",
       "TREE DOWN",
       "TREE DOWN PLACE",
       "UNIT IN SERVICE",
       "UNIT OUT OF SERVICE",
       "VEHICLE FIRE",
+      "WARRANT SERVICE",
       "WATER / DIVE RESCUE",
+      "WATER MAIN\\LINE BREAK",
       "WELFARE CHECK",
       "WIRE (GENERAL PROBLEM)",
       "WIRES DOWN"
   );
   
   private static final String[] CITY_LIST = new String[]{
+    "BETH CITY",
     "BETHLEHEM",
+    "BETHELEHM",  // Misspelled
     "EASTON",
 
     "BANGOR",
@@ -237,6 +315,7 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
     "WALNUTPORT",
     "WEST EASTON",
     "WILSON",
+    "WIN GAP",
     "WIND GAP",
 
     "ALLEN TWP",
@@ -296,9 +375,17 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
     // Lehigh County
     "LEHIGH COUNTY",
     "LEHIGH CO",
+    "FOUNTAIN HILL",
+    "NORTH WHITEHALL",
     "SALISBURY",
+    "SAILSBURY",
+    "SALSBURY",
+    "SALISB URY",
     "HAN LE CO",
     "HAN-LE-CO",
+    "UPPER SAUCON",
+    "UPPER SAUCON TWP",
+    "UPPER SAUCON LEHIGH",
     
     // Monroe County
     "MONROE COUNTY",
@@ -319,6 +406,8 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       "HAN LE CO",            "HANOVER TWP, LEHIGH COUNTY",
       "HAN-LE-CO",            "HANOVER TWP, LEHIGH COUNTY",
       "LEHIGH CARBON COUNTY", "LEHIGH, CARBON COUNTY",
+      "BETH CITY",            "BETHLEHEM",
+      "BETHELEHM",            "BETHLEHEM",
       "BUCKS CO",             "BUCKS COUNTY",
       "BUCKS",                "BUCKS COUNTY",
       "CARBON CO",            "CARBON COUNTY",
@@ -326,7 +415,12 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       "LEHIGH CO",            "LEHIGH COUNTY",
       "MONROE CO",            "MONROE COUNTY",
       "MONROE",               "MONROE COUNTY",
+      "SAILSBURY",            "SALISBURY",
+      "SALISB URY",           "SALISBURY",
+      "SALSBURY",             "SALISBURY",
+      "UPPER SAUCON LEHIGH",  "UPPER SAUCON",
       "WARREN CO",            "WARREN COUNTY",
-      "WARREN",               "WARREN COUNTY"
+      "WARREN",               "WARREN COUNTY",
+      "WIN GAP",              "WIND GAP"
   });
 }
