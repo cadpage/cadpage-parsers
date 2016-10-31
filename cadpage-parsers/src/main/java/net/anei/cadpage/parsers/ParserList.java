@@ -108,6 +108,7 @@ public class ParserList {
               ,"StandardSpottedDog"             ,"Spotted Dog Technologies"
           ),
           new ParserCategory("Alabama"
+              ,"ALAutaugaCounty"                ,"Autauga County, AL"
               ,"ALBaldwinCounty"                ,"Baldwin County, AL"
               ,"ALBlountCounty"                 ,"Blount County, AL"
               ,"ALCalhounCounty"                ,"Calhoun County, AL"
