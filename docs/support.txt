@@ -1,11 +1,3 @@
-**************************************************************************
-* v1.8.09.01 crash!!!!
-**************************************************************************
-
-This should be fixed in the latest version of Cadpage available in Google Play store.
-
-Terribly sorry for the inconvenience,
--Ken
 
 **************************************************************************
 * No email address & Android 6.0 & GET_ACCOUNTS permission denied
