@@ -1,11 +1,22 @@
 Quick getting started instructions for new developers.
 
-Quick overview.  Cadpage is an Android app used by emergency responders.  Dispatch centers can usually send a text message notifying
+Quick overview.  The Cadpage app is an Android app used by emergency responders.  Dispatch centers can usually send a text message notifying
 users when a call is dispatched.  Cadpage intercepts these messages, display a popup message sounds an alert.  Then, when the
 user asks for it,  display a map showing the incident location that they can use to navigate to the event.  It is really really
 popular amount emergency responders who tend to think it is the best thing since sliced bread.  The actual app UI code is pretty
 simple, and rather small.  The problem is that there is no standard text page format.  Every dispatch center has their own.  90% of
-Cadpage code consists of 1300+ message text parsers that have been written to parse different dispatch text messages.   
+Cadpage code consists close to 2000 message text parsers that have been written to parse different dispatch text messages.
+
+The message parsing library is distributed as a standalone library that can be used by other app or service developers.  The test classes 
+for the parsing library contain close to a million examples of live 911 calls.  All of this resulted in the source archive being broken up
+into three software repositories hosted on github.
+
+cadpage-parsers is the main repository that contains the source code for the parsing library.  This is required.
+cadpage-cadpage is a submodule repository that contains the source code for the android app.  This is only needed if you are
+going to be working on the app interface
+cadpage-private is a submodule that contains the test suite for the parser library, and some other sensitive information like lists of 
+user email addresses.  It is flagged as a private library to protect the citizens who made the 911 calls that ended up in our test classes
+from showing up in general web searches.  But access will be granted to anyone who requests it.
 
 Things you will need to install:
 
