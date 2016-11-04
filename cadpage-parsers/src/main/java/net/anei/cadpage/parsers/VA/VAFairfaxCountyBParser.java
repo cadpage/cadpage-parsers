@@ -99,6 +99,7 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
       "FLCH",          "FALLS CHURCH",
       "FRFX CITY",     "FAIRFAX CITY",
       "FRFX",          "FAIRFAX",
+      "FTBV",          "FORT BELVOIR",
       "FXST",          "FAIRFAX STATION",
       "GTFL",          "GREAT FALLS",
       "HRND",          "HERNDON",

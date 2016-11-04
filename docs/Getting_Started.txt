@@ -20,11 +20,20 @@ from showing up in general web searches.  But access will be granted to anyone w
 
 Things you will need to install:
 
+git
+Eclipse
+Android Studio
+
+*****************************************************************************************************************************************
 Google recomends you install the new Android Studio, which is based on a proprietary Intellij IDEA IDE.  Feel free to pursue that 
 approach.  But so far, I have been sticking with the older, and open source Eclipse IDE, so the only directions I can supply are
 how to install that.
 
 1) The basic Eclipse IDE can be downloaded from http://www.eclipse.org.  You want the Eclipse IDE for Java developers.
+
+1.1) You will need to bump the default heap allocation.  Find the eclipse.ini file and edit two lines to read
+-Xms512m
+-Xmx4g
 
 2)You need to install the standalone Android SDK tools.  Instructions on doing this can be found at 
 http://developer.android.com/sdk/installing/index.html?pkg=tools.
@@ -37,21 +46,30 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html
 http://ant.apache.org/bindownload.cgi
 https://git-scm.com/downloads.
 
-4.5) You need to install the Android ADT plugin for Eclipse.  Instructions can be found at 
-http://developer.android.com/sdk/installing/installing-adt.html
-
 5) Now to finish installing Android SDK.  From Eclipse, Window-> SDK Manager.  Let the window load up, and then select API 22, and download.
+*****************************************************************************************************************************************
 
 6) Next, install the Cadpage source tree
-The Cadpage project is hosted at https://github.com/cadpage/cadpage-android.
-Though not really required, you will probably want to set up a github account.
-The page lists the URL you need to use to clone the Cadpage repository.
+First decide where the tree will be hosted.  Recomend creating a StudioProject folder to
+stay compatible with Android Studio, buy you can probably put in in Workspace to suit Eclipse
+or anywhere else you want to.
 
-7)  Go back to eclipse and import the 4 Cadpage projects.
+cd <root project directory>
+git clone git@github.com:cadpage/cadpage-parsers.git cadpage
+cd cadpage
+git submodule init
+git submodule update --checkout
+cd cadpage-private
+git checkout master
+cd ../cadpage-cadpage
+git checkout master
+cd ..
+
+
+7)  Go back to eclipse and import the Cadpage.
 File-> Import-> General -> Existing Projects into Workspace.
-Browse-> git -> cadpage, Select all 4 projects, click okay, and then finish.
-
-If you are just doing parsers, you won't be running much of the Android SDK, but you need the libraries to get project to compile.
+Browse-> root project directory -> cadpage
+click finish
 
 Eclipse configuration settings
 Open the main Eclipse settings and create a Cadpage format template
@@ -73,6 +91,7 @@ uncheck "Limit Console Output"
 Window > Preferences > Run/Debug > Launching > Launch Operation
 Check "Always Launch the Previous Application"
 
+*******************************************************************************************zzzzzzz
 Hopefully the Cadpage project will now compile successfully  Some more work is needed to 
 get the CadpageTest project functional
 
