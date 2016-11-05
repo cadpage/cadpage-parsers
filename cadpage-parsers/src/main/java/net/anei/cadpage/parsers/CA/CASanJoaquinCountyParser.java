@@ -283,13 +283,15 @@ public class CASanJoaquinCountyParser extends FieldProgramParser {
       }
       if (p.check("Loc:")) {
         String place = p.get(50);
+        p.check(" ");
         String addr = p.get(50);
         String cross = p.get(20);
         if (!p.check("Bldg:")) break;
         String apt = p.get(10);
         if (!p.check("Apt:")) break;
-        apt = append(apt, "-", p.get(10));
-        if (!p.check("City:")) break;
+        String apt2 = p.getOptional("City:", 10, 12);
+        if (apt2 == null) break;
+        apt = append(apt, "-", apt2);
         String city = p.get();
 
         setFieldList("UNIT ID PLACE ADDR X APT CITY");
@@ -338,7 +340,7 @@ public class CASanJoaquinCountyParser extends FieldProgramParser {
         if (p.get(20).length() > 0) break;
         if (!p.check("Apt#:")) break;
       } else { 
-        if (!p.check("Apt #") && !p.check("Apt#")) break;
+        if (!p.check("Apt #") && !p.check("Apt#") && !p.check("Apt:")) break;
       }
       apt2 = p.get(10);
       if (!p.check("BLDG#") && !p.check("BLDG:")) break;
