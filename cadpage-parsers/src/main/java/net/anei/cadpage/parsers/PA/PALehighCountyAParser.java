@@ -15,6 +15,7 @@ public class PALehighCountyAParser extends DispatchPrintrakParser {
   
   public PALehighCountyAParser() {
     super(CITY_TABLE, "LEHIGH COUNTY", "PA", "UNTS:UNIT", FLG_USE_CMT1_CALL);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -28,6 +29,11 @@ public class PALehighCountyAParser extends DispatchPrintrakParser {
     data.strUnit = UNIT_PFX_PTN.matcher(data.strUnit).replaceAll("");
     return true;
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "5265 ROCKROSE LN",       "+40.589732,-75.573961"
+
+  });
 
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       "06 LONGSWAMP",     "LONGSWAMP TWP",
