@@ -38,6 +38,7 @@ public class DENewCastleCountyDParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -51,14 +52,35 @@ public class DENewCastleCountyDParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM)?[- #]*(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN1 = Pattern.compile("((?:APT|LOT|RM|ROOM|SUITE|UNIT)?[- #]*)(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN2 = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]|BLDG +.*", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = APT_PTN.matcher(field);
-      if (match.matches()) field = match.group(1);
+      boolean forceApt = false;
+      Matcher match = APT_PTN1.matcher(field);
+      if (match.matches()) {  // Always matches
+        if (match.group(1).length() > 0) forceApt = true;
+        field = match.group(2);
+      }
       if (data.strApt.equalsIgnoreCase(field)) return;
-      data.strApt = append(data.strApt, " - ", field);
+      
+      if (forceApt || APT_PTN2.matcher(field).matches()) {
+        data.strApt = append(data.strApt, " - ", field);
+      } else {
+        data.strPlace = field;
+      }
+    }
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (data.strPlace.length() > 0) {
+        data.strApt = append(data.strApt, " - ", data.strPlace);
+      }
+      data.strPlace = field;
     }
   }
 

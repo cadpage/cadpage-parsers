@@ -22,7 +22,8 @@ Things you will need to install:
 
 git
 Eclipse
-Android Studio
+Android Studio 
+Follow directions from http://developer.android.com/studio
 
 *****************************************************************************************************************************************
 Google recomends you install the new Android Studio, which is based on a proprietary Intellij IDEA IDE.  Feel free to pursue that 

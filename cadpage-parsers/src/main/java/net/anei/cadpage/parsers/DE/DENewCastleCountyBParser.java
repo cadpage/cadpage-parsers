@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.DE;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,13 +32,24 @@ public class DENewCastleCountyBParser extends DispatchChiefPagingParser {
     }
     
     body = body.replace("Dead - End", "Dead End");
-    return  super.parseMsg(subject,  body, data);
+    if (!super.parseMsg(subject,  body, data)) return false;
+    
+    if (data.strCity.length() == 0 && data.strPlace.length() > 0) {
+      String city = PLACE_CITY_TABLE.getProperty(data.strPlace.toUpperCase());
+      if (city != null) data.strCity = city;
+    }
+    return true;
   }
   
   @Override
   public String getProgram() {
     return super.getProgram() + " CODE";
   }
+  
+  private static final Properties PLACE_CITY_TABLE = buildCodeTable(new String[]{
+      "HIGH HOOK FARMS",    "MIDDLETOWN",
+      "SHENANDOAH",         "MIDDLETOWN"
+  });
   
   private static String[] CITY_LIST = new String[]{
     "NEW CASTLE",
@@ -75,9 +87,12 @@ public class DENewCastleCountyBParser extends DispatchChiefPagingParser {
     "ROCKLAND",
     "ST. GEORGES",
     "STANTON",
+    "WESTVIEW",
     "WILMINGTON MANOR",
     "WINTERTHUR",
-    "WINTERSET"
+    "WINTERSET",
+    
+    "AVONDALE"
   };
 }
 
