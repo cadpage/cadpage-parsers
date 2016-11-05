@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Pennington County, SD
@@ -19,6 +21,14 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
           "SRC EMPTY? UNIT CALL ADDR! INFODATETIME+");
     setupCallList(CALL_LIST);
   }
+
+// Used for testing non-Active911 split messages  
+//  @Override
+//  public SplitMsgOptions getActive911SplitMsgOptions() {
+//    return new SplitMsgOptionsCustom(){
+//      @Override public boolean splitBlankIns() { return false; }
+//    };
+//  }
 
   @Override
   public String getFilter() {
@@ -64,6 +74,9 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       parseAddress(data.strCross, data);
       data.strCross = "";
     }
+    
+    // If trailing time wasn't included, see if there is more data coming
+    if (data.strTime.length() == 0) data.expectMore = true;
     return true;
   }
   
@@ -309,6 +322,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "CARDIAC",
       "CARDIAC-E",
       "CHEST",
+      "CHEST-C",
       "CHEST-D",
       "CHOKE",
       "CHOKE-D",
