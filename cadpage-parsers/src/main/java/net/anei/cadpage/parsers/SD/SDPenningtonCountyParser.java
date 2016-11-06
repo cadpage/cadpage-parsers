@@ -23,12 +23,12 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   }
 
 // Used for testing non-Active911 split messages  
-//  @Override
-//  public SplitMsgOptions getActive911SplitMsgOptions() {
-//    return new SplitMsgOptionsCustom(){
-//      @Override public boolean splitBlankIns() { return false; }
-//    };
-//  }
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+    };
+  }
 
   @Override
   public String getFilter() {
@@ -61,6 +61,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       if (!parseMedicalCall(body, data)) return false;
     }
     else if (body.startsWith(":")) {
+      data.expectMore = true;
       if (!parseFields(DELIM.split(body.substring(1)), data)) return false;
     }
     else return false;
@@ -74,9 +75,6 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       parseAddress(data.strCross, data);
       data.strCross = "";
     }
-    
-    // If trailing time wasn't included, see if there is more data coming
-    if (data.strTime.length() == 0) data.expectMore = true;
     return true;
   }
   
@@ -167,11 +165,13 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         }
         match = INFO_DATE_TIME_PTN.matcher(part);
         if (match.matches()) {
+          data.expectMore = false;
           data.strDate = match.group(1);
           data.strTime = match.group(2);
           data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(3)));
           continue;
         }
+        data.expectMore = true;
         if (TRUNC_DATE_TIME_MARK.startsWith(part.replaceAll("\\d", "N"))) continue;
         data.strSupp = append(data.strSupp, connect, part);
         connect = "; ";
@@ -405,7 +405,8 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "WATER",
       "WATER-D6",
       "WEATHER",
-      "WILDF"
+      "WILDF",
+      "WILDF2"
   );
   
   private static final String[] CITY_LIST = new String[]{

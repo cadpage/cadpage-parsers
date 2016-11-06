@@ -138,6 +138,7 @@ public class NCMcDowellCountyParser extends DispatchSouthernParser {
     "MCDOWELL HIGH",
     "MCDOWELL JUNIOR HIGH",
     "MEMORIAL PARK",
+    "MISTY MOUNTAIN",
     "MOFFITT BRANCH",
     "MOFFITT HILL CHURCH",
     "MONTFORD COVE",
