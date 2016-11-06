@@ -23,7 +23,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
   protected TXLaPorteParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
           "( KEMA_FMT KEMA_ADDR/aS9CI | " +
-          "FYI ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ | " +
+          "FYI ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ | " +
           "CANCEL ADDR! CITY? ) INFO+");
   }
   
@@ -96,6 +96,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("CALL_ADDR")) return new MyCallAddressField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("OPT_CITY")) return new MyOptCityField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("CODE")) return new CodeField("[A-Z]{1,2}[A-Z0-9]{1,2}", true);
     if (name.equals("INFO")) return new MyInfoField();
@@ -133,7 +134,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
   
   private class MySourceField extends SourceField {
     public MySourceField() {
-      super("[A-Z]{4}", true);
+      super("(?!ASFD)[A-Z]{4}", true);
     }
     
     @Override
@@ -173,6 +174,14 @@ public class TXLaPorteParser extends DispatchOSSIParser {
         data.strAddress = match.group(1) + " KEMAH WATER FRONT";
         return;
       }
+      
+      if (data.strCity.length() == 0) {
+        int pt = field.lastIndexOf(',');
+        if (pt >= 0) {
+          data.strCity = convertCodes(field.substring(pt+1).trim().toUpperCase(), CITY_CODES);
+          field = field.substring(0,pt).trim();
+        }
+      }
       super.parse(field, data);
     }
   }
@@ -191,6 +200,24 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     }
   }
   
+  private class MyOptCityField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (data.strCity.length() > 0) return false;
+      return super.checkParse(field, data);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
   @Override
   public String adjustMapAddress(String address) {
     address = PVT_DR_PTN.matcher(address).replaceAll("");
@@ -205,30 +232,41 @@ public class TXLaPorteParser extends DispatchOSSIParser {
   private static final Pattern IH45_PTN = Pattern.compile("\\bIH *45(?: *FWY)?", Pattern.CASE_INSENSITIVE);
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AL", "ALVIN",
-      "CLEMC", "CLEAR LAKE",
-      "CS", "CLEAR LAKE SHORES",
-      "DP", "DEER PARK",
-      "EL", "EL LAGO",
-      "FB", "FOREST BEND",
-      "FW", "FRIENDSWOOD",
-      "GALV", "GALVESTON",
-      "HC", "",
-      "HO", "NASSAU BAY",
-      "KH", "KEMAH",
-      "LC", "LEAGUE CITY",
-      "LP", "LA PORTE",
-      "MP", "MORGANS POINT",
-      "NB", "NASSAU BAY",
-      "PA", "PASADENA",
-      "PL", "PEARLAND",
-      "SA", "SHOREACRES",
-      "SB", "SEABROOK",
-      "SE", "SOUTHEAST",
-      "SO", "",           // Harris County Sherrifs office
-      "TL", "SEABROOK",   // ???
-      "WB", "WEBSTER",
+      "AL",     "ALVIN",
+      "BACL",   "BACLIFF",
+      "CLEMC",  "CLEAR LAKE",
+      "CS",     "CLEAR LAKE SHORES",
+      "DICK",   "DICKINSON",
+      "DP",     "DEER PARK",
+      "EL",     "EL LAGO",
+      "ETJ",    "SUGAR LAND",
+      "FB",     "FOREST BEND",
+      "FW",     "FRIENDSWOOD",
+      "GACO",   "GALVESTON COUNTY",
+      "GALV",   "GALVESTON",
+      "GC",     "KEMAH",  // ??
+      "HC",     "HARRIS COUNTY",
+      "HITC",   "HITCHCOCK",
+      "HO",     "NASSAU BAY",
+      "JAMA",   "JAMAICA BEACH",
+      "KH",     "KEMAH",
+      "LC",     "LEAGUE CITY",
+      "LP",     "LA PORTE",
+      "MP",     "MORGANS POINT",
+      "NB",     "NASSAU BAY",
+      "PA",     "PASADENA",
+      "PL",     "PEARLAND",
+      "SA",     "SHOREACRES",
+      "SANT",   "SANTE FE",
+      "SB",     "SEABROOK",
+      "SE",     "SOUTHEAST",
+      "SL",     "SUGAR LAND",
+      "ST",     "STAFFORD",
+      "SO",     "HARRIS COUNTY",
+      "TL",     "SEABROOK",   // ???
+      "WB",     "WEBSTER",
       
       "BAYTOWN",    "BAYTOWN"
+
   });
 }
