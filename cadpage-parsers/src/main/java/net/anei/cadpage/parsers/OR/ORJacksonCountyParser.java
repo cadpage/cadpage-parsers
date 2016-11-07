@@ -15,7 +15,7 @@ public class ORJacksonCountyParser extends FieldProgramParser {
   
   public ORJacksonCountyParser() {
     super(CITY_CODES, "JACKSON COUNTY", "OR",
-          "CODE CALL ( PLACE SKIP AT | ADDR ) CITY! PRI:PRI! Unit:UNIT! UNIT+");
+          "CODE CALL ( PLACE SKIP AT | ADDR ) CITY PRI:PRI! Unit:UNIT! UNIT+");
   }
   
   @Override
@@ -49,7 +49,7 @@ public class ORJacksonCountyParser extends FieldProgramParser {
     }
     
     body = body.replace("Units:", "Unit:");
-    return parseFields(body.split(","), 6, data);
+    return parseFields(body.split(","), 5, data);
   }
   
   @Override
