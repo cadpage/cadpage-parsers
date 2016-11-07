@@ -1,21 +1,20 @@
 package net.anei.cadpage.parsers.IL;
 
 
-import net.anei.cadpage.parsers.dispatch.DispatchA9Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
 
 
 /**
  *  O'Fallon, IL
  */
-public class ILOFallonParser extends DispatchA9Parser {
+public class ILOFallonParser extends DispatchA33Parser {
     
   public ILOFallonParser() {
-    super(null, "O'FALLON", "IL");
+    super("O'FALLON", "IL");
   }
   
   @Override
   public String getFilter() {
-    return "ofallonfire@ofallon.org,jrunyan@ofallon.org,forwarding-noreply@google.com";
+    return "OFALLON@PUBLICSAFETYSOFTWARE.NET";
   }
-
 }
