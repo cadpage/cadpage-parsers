@@ -15,7 +15,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WAPierceCountyParser extends GroupBestParser {
   
   public WAPierceCountyParser() {
-    super(new WAPierceCountyAParser(), new WAPierceCountyBParser(), new WAPierceCountyCParser(), new WAPierceCountyDParser());
+    super(new WAPierceCountyAParser(), new WAPierceCountyBParser(), 
+          new WAPierceCountyCParser(), new WAPierceCountyDParser(),
+          new WAPierceCountyEParser());
   }
   
   static String adjustMapAddressCommon(String sAddress) {
