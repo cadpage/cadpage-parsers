@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgParser;
 
 public class MOCapeGirardeauCountyBParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("FDTYPE:([- A-Z]+?), LOCATION:(.*?)(?:[\\[,].*)?");
+  private static final Pattern MASTER = Pattern.compile("FDTYPE:([- A-Z0-9]+?), LOCATION:(.*?)(?:[\\[,].*)?");
   
   public MOCapeGirardeauCountyBParser() {
     super("CAPE GIRARDEAU COUNTY", "MO");
