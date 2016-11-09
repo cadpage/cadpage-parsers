@@ -10,6 +10,6 @@ public class SCAndersonCountyCParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "anderson911@andersonsheriff.com";
+    return "anderson911@andersonsheriff.com,anderson911@andersoncountysc.org";
   }
 }
