@@ -1,19 +1,17 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchBParser;
+import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 /**
  * Fayette County, Pennsylvania
  */
-public class PAFayetteCountyParser extends DispatchBParser {
+public class PAFayetteCountyParser extends DispatchB2Parser {
 
   public PAFayetteCountyParser() {
-    super(CITY_LIST, "FAYETTE COUNTY", "PA");
+    super("FAYETTE-911:", CITY_LIST, "FAYETTE COUNTY", "PA");
+    setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
@@ -21,70 +19,59 @@ public class PAFayetteCountyParser extends DispatchBParser {
     return "FAYETTE-911@fcema.org";
   }
   
-  @Override
-  protected boolean isPageMsg(String body) {
-    return body.startsWith("FAYETTE-911:");
-  }
-  
-  @Override
-  public boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    
-    // Dispatch doesn't usually add a TWP to townships, but Google insists on it
-    if (TOWNSHIPS.contains(data.strCity.toUpperCase())) data.strCity += " TWP";
-    return true;
-  }
-  
-  private static final String[] CITY_LIST = new String[]{
-    "CONNELLSVILLE",
-    "UNIONTOWN",
-
-    "BELLE VERNON",
-    "BROWNSVILLE",
-    "DAWSON",
-    "DUNBAR",
-    "EVERSON",
-    "FAIRCHANCE",
-    "FAYETTE CITY",
-    "MARKLEYSBURG",
-    "MASONTOWN",
-    "NEWELL",
-    "OHIOPYLE",
-    "PERRYOPOLIS",
-    "POINT MARION",
-    "SEVEN SPRINGS",
-    "SMITHFIELD",
-    "SOUTH CONNELLSVILLE",
-    "VANDERBILT",
-  
-    "BROWNSVILLE TWP",
-    "BULLSKIN",
-    "CONNELLSVILLE TWP",
-    "DUNBAR TWP",
-    "FRANKLIN",
-    "GEORGES",
-    "GERMAN",
-    "HENRY CLAY",
-    "JEFFERSON",
-    "LOWER TYRONE",
-    "LUZERNE",
-    "MENALLEN",
-    "NICHOLSON",
-    "NORTH UNION",
-    "PERRY",
-    "REDSTONE",
-    "SALTLICK",
-    "SOUTH UNION",
-    "SPRINGFIELD",
-    "SPRINGHILL",
-    "STEWART",
-    "UPPER TYRONE",
-    "WASHINGTON",
-    "WHARTON"
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "QUAIL HILL",
+      "ROUND BARN",
+      "TOWN COUNTRY",
+      "VANCES MILL"
   };
   
-  private static Set<String> TOWNSHIPS = new HashSet<String>(Arrays.asList(new String[]{
+  private static final CodeSet CALL_LIST = new CodeSet(
+      "AED CARDIAC ARREST ALS",
+      "AED UNRESPONSIVE ALS",
+      "AUTOMATIC FIRE ALARM COMERCIAL",
+      "E_BREATHING ALS",
+      "E FALLS ALS",
+      "E SICK/UNKNOWN ALS",
+      "E STROKE ALS",
+      "E TRAUMA ALS",
+      "F_ACCIDENT NO INJURIES",
+      "F-ACCIDENT W/ INJURIES",
+      "F_ASSIST",
+      "F_STRUCTURE FIRE",
+      "F_STRUCTURE FIRE COMMERCIAL",
+      "F_TRAFFIC CONTROL",
+      "F_TREE DOWN",
+      "F_TREE DOWN BUENA",
+      "F_UNKNOWN FIRE"
+  );
+  
+  private static final String[] CITY_LIST = new String[]{
+      "CONNELLSVILLE",
+      "UNIONTOWN",
+  
+      "BELLE VERNON",
+      "BROWNSVILLE",
+      "DAWSON",
+      "DUNBAR",
+      "EVERSON",
+      "FAIRCHANCE",
+      "FAYETTE CITY",
+      "MARKLEYSBURG",
+      "MASONTOWN",
+      "NEWELL",
+      "OHIOPYLE",
+      "PERRYOPOLIS",
+      "POINT MARION",
+      "SEVEN SPRINGS",
+      "SMITHFIELD",
+      "SOUTH CONNELLSVILLE",
+      "VANDERBILT",
+    
+      "BROWNSVILLE TWP",
       "BULLSKIN",
+      "CONNELLSVILLE TWP",
+      "DUNBAR TWP",
       "FRANKLIN",
       "GEORGES",
       "GERMAN",
@@ -105,5 +92,5 @@ public class PAFayetteCountyParser extends DispatchBParser {
       "UPPER TYRONE",
       "WASHINGTON",
       "WHARTON"
-  })); 
+  };
 }

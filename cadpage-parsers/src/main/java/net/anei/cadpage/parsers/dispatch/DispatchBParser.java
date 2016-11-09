@@ -20,6 +20,7 @@ public class DispatchBParser extends FieldProgramParser {
   private static final Pattern PHONE_PTN = Pattern.compile("(?: +(?:VERIZON|AT ?& ?T MOBILITY))? +(\\d{10}|\\d{7}|\\d{3} \\d{7}|\\d{3}-\\d{4})$");
   private static final Pattern RETURN_PHONE_PTN = Pattern.compile("([-0-9]+) *");
   private static final Pattern TIME_PTN = Pattern.compile("(\\d\\d)(\\d\\d)");
+  private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[: ]+");
   
   int version;
   
@@ -115,7 +116,10 @@ public class DispatchBParser extends FieldProgramParser {
     if (callId != null) {
       int pt = callId.indexOf(' ');
       if (pt >= 0) {
-        data.strSupp = callId.substring(pt+1).trim();
+        String info = callId.substring(pt+1).trim();
+        match = INFO_PREFIX_PTN.matcher(info);
+        if (match.lookingAt()) info = info.substring(match.end());
+        data.strSupp = info;
         callId = callId.substring(0,pt);
       }
       data.strCallId = callId;
