@@ -15,7 +15,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   
   public MDBaltimoreCountyBParser() {
     super("BALTIMORE COUNTY", "MD",
-           "BOX:BOX CALL:CALL! ADDR:ADDR! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
+           "BOX:MAP CALL:CALL! ADDR:ADDR! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
   }
   
   @Override
@@ -44,11 +44,11 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("BOX")) return new BoxField("[A-Z0-9]{2,3}-\\d{2,3}|MUTAID", true);
+    if (name.equals("BOX")) return new BoxField("[A-Z0-9]{2,3}-\\d{2,3}|MUTAID|", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("DATE")) return new MyDateField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d|", true);
     return super.getField(name);
   }
   
@@ -118,7 +118,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   private class MyDateField extends DateField {
     
     public MyDateField() {
-      super("\\d\\d-\\d\\d-\\d\\d", true);
+      super("\\d\\d-\\d\\d-\\d\\d|", true);
     }
     
     @Override
