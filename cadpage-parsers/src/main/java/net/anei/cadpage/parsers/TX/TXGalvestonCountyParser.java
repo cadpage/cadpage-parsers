@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile(".* FIRE", Pattern.CASE_INSENSITIVE);
   
   public TXGalvestonCountyParser() {
-    super("GALVESTON COUNTY", "TX",
+    super(CITY_CODES, "GALVESTON COUNTY", "TX",
           "ADDR/aS8CI! INFO+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
@@ -198,6 +199,9 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
       "UNKNOWN REQUIRES EMS",
       "VEHICLE FIRE",
       "WASH DOWN"
-
   );
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "SANL SLFD",      "SAN LEON"
+  });
 }
