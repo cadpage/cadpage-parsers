@@ -88,6 +88,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
 
+  private static final Pattern BOX_ADDR_PTN = Pattern.compile("(\\d+) +(.*)");
   private static final Pattern NUMBER_HWY_PTN = Pattern.compile("\\b(\\d+)(US|FT|TX|FM)\\b");
   private static final Pattern HWY_ST_PTN = Pattern.compile("\\b(HWY \\d+) (ST|RD)\\b");
   private static final Pattern AVE_X_ST_PTN = Pattern.compile("\\bAVE [A-Z](?: HALF)?(?: REAR)?(?= ST\\b)");
@@ -100,13 +101,19 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
       if (field.startsWith("FYI:")) field = field.substring(4).trim();
       else if (field.startsWith("Update:")) field = field.substring(7).trim();
+      
+      Matcher match = BOX_ADDR_PTN.matcher(field);
+      if (match.matches()) {
+        data.strBox = match.group(1);
+        field = match.group(2);
+      }
 
       int saveLen = field.length();
       field = NUMBER_HALF_PTN.matcher(field).replaceAll("$1.5");
       boolean repHalf = field.length() != saveLen;
 
       field = NUMBER_HWY_PTN.matcher(field).replaceAll("$1 $2");
-      Matcher match = AVE_X_ST_PTN.matcher(field);
+      match = AVE_X_ST_PTN.matcher(field);
       if (match.find()) {
         field = field.substring(0,match.start()) + match.group().replace(' ', '_') + field.substring(match.end());
       }
@@ -127,7 +134,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " X";
+      return "BOX " + super.getFieldNames() + " X";
     }
   }
   
@@ -137,6 +144,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   }
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "ANIMAL ASTRAY",
       "ASSAULT",
       "ASSIST EMS",
       "ASSIST LAW ENFORCEMENT",
@@ -148,6 +156,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
       "CANCEL",
       "CHEST PAINS",
       "CHOKE",
+      "DEAD ON SCENE",
       "DEAD ON SCENE - DICKINSON",
       "DIABETIC SICK CALL",
       "DIFFICULTY BREATHING",
@@ -161,8 +170,10 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
       "GAS LEAK",
       "GRASS FIRE",
       "HAZMAT",
+      "INDUSTRIAL ACCIDENT",
       "INJURED PERSON",
       "INJURY TO A CHILD",
+      "LABOR",
       "LANDING ZONE",
       "LINE DOWN",
       "MAJOR ACCIDENT",
@@ -170,6 +181,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
       "MEDICAL ALARM",
       "MEDICAL ASSIST",
       "MUTUAL AID",
+      "NON EMERGENCY TRANSFER",
       "OVERDOSE",
       "POLE FIRE",
       "RESCUE",
@@ -179,7 +191,9 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
       "STROKE",
       "STRUCTURE FIRE",
       "SUICIDE ATTEMPTED OR COMPLETED",
+      "TEST CALL ONLY",
       "TRAFFIC STOP",
+      "TRASH FIRE",
       "UNCONSCIOUS PERSON",
       "UNKNOWN REQUIRES EMS",
       "VEHICLE FIRE",
