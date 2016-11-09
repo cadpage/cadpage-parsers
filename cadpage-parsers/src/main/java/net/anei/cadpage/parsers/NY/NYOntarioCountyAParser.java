@@ -13,7 +13,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
   
     public NYOntarioCountyAParser() {
       super("ONTARIO COUNTY", "NY",
-             "CANCEL? CALL TIME ADDR X UNIT! INFO/N ID");
+             "INFO? CALL TIME ADDR X UNIT! INFO/N ID");
     }
     
     @Override
@@ -28,7 +28,6 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
 
     @Override
     protected Field getField(String name) {
-      if (name.equals("CANCEL")) return new InfoField("Cancel Reason:.*", true);
       if (name.equals("CALL")) return new MyCallField();
       if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
       if (name.equals("ADDR")) return new MyAddressField();
@@ -39,8 +38,16 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
     private class MyCallField extends CallField {
       @Override
       public void parse(String field, Data data) {
-        if (data.strSupp.startsWith("Cancel Reason:")) {
+        if (data.strSupp.startsWith("Cancel Reason:") || 
+            data.strSupp.contains("CANCEL") ||
+            data.strSupp.contains("STAND DOWN")) {
           field = "CANCEL - " + field;
+        } else if (data.strSupp.equals("RE-ALERT!")) {
+          field = "RE-ALERT - " + field;
+          data.strSupp = "";
+        } else if (data.strSupp.equalsIgnoreCase("NO RESPONSE")) {
+          field = "NO RESPONSE - " + field;
+          data.strSupp = "";
         }
         super.parse(field, data);
       }
