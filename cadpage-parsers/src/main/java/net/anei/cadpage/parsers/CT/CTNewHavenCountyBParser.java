@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CTNewHavenCountyBParser extends SmartAddressParser {
   
-  private static final String FIELD_LIST = "ID CALL PRI ADDR APT PLACE CITY MAP X UNIT DATE TIME";
+  private static final String FIELD_LIST = "ID SRC CALL PRI ADDR APT PLACE CITY MAP X UNIT DATE TIME INFO";
   
   private Properties cityCodes = null;
   
@@ -48,7 +48,7 @@ public class CTNewHavenCountyBParser extends SmartAddressParser {
     return "paging@nbpolicect.org,paging@mail.nbpolicect.org,paging@easthavenfire.com,pdpaging@farmington-ct.org,noreply@whpd.com";
   }
   
-  private static final Pattern MARKER = Pattern.compile("^(\\d{10}) +");
+  private static final Pattern MARKER = Pattern.compile("(\\d{10}) +(?:(S\\d{2}) +)?");
   private static final Pattern DATE_TIME_PTN = Pattern.compile(" +(\\d{6}) (\\d\\d:\\d\\d)(?:[ ,]|$)"); 
   private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile(" +\\d{6} [\\d:]+$| +\\d{1,6}$"); 
   private static final Pattern PRI_MARKER = Pattern.compile(" - PRI (\\d) - ");
@@ -62,8 +62,9 @@ public class CTNewHavenCountyBParser extends SmartAddressParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
-    if (!match.find()) return false;
+    if (!match.lookingAt()) return false;
     data.strCallId = match.group(1);
+    data.strSource = getOptGroup(match.group(2));
     body = body.substring(match.end());
     
     match =  DATE_TIME_PTN.matcher(body);
