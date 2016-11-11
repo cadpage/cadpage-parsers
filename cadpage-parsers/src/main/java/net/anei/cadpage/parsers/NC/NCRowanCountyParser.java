@@ -20,7 +20,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "9300,CAD";
+    return "9300,CAD,CAD@rowancountync.gov,CAD@co.rowan.nc.us,messaging@iamresponding.com";
   }
   
   @Override
@@ -107,6 +107,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      field = field.replace("`", "");
       String city;
       if (field.length() <= 4) {
         city = field;
@@ -352,6 +353,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       // Cabarrus County, NC
       "CON",  "CONCORD",
       "CONC", "CONCORD",
+      "MP",   "MT PLEASANT",
       
       // Out of County
       "OOC",  "OUT OF COUNTY"
