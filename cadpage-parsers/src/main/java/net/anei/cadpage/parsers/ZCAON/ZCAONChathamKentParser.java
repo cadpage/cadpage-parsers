@@ -20,6 +20,8 @@ public class ZCAONChathamKentParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf(" DISPATCH TIME:");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseFields(body.split(";"), data)) return false;
     if (data.strAddress.length() == 0) {
       parseAddress(data.strCross, data);
