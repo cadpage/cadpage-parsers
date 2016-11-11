@@ -14,7 +14,7 @@ public class CAMontecitoParser extends SmartAddressParser {
   
   public CAMontecitoParser() {
     super("MONTECITO", "CA");
-    setFieldList("CALL ADDR APT TIME");
+    setFieldList("ID CALL ADDR APT TIME");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "BARKER PASS",
@@ -59,20 +59,33 @@ public class CAMontecitoParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA;
   }
   
+  private static final Pattern ID_PTN = Pattern.compile("([A-Z]{2,4}\\d{9}) +");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d:\\d\\d)$");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("Visicad Message")) return false;
-    if (!body.startsWith("INCIDENT DISPATCH ")) return false;
-    body =  body.substring(18).trim();
+    boolean ok = body.startsWith("INCIDENT DISPATCH");
+    if (ok) {
+      body =  body.substring(17).trim();
+    } else {
+      Matcher match = ID_PTN.matcher(body);
+      if (match.lookingAt()) {
+        ok = true;
+        data.strCallId = match.group(1);
+        body = body.substring(match.end());
+      }
+    }
     
     Matcher match = TRAIL_TIME_PTN.matcher(body);
     if (match.find()) {
+      ok = true;
       data.strTime = match.group(1);
       body = body.substring(0,match.start());
     }
+    
+    if (!ok) return false;
     
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, body, data);
     return true;
@@ -82,12 +95,20 @@ public class CAMontecitoParser extends SmartAddressParser {
       "ALARM - CARBON MONOXIDE",
       "ALARM - FIRE: RES, COMM",
       "ALARM - MEDICAL",
+      "ALLERGIC REACTION",
       "ANIMAL PROBLEM/RESCUE",
+      "AUTO AID MED WITH VNC",
       "AUTOMATCI AID STB",
+      "AUTOMATIC AID - MEDICAL",
+      "AUTOMATIC AID STB",
+      "AUTOMATIC AID - OTHER",
       "AUTOMATIC AID VNC",
       "BACK INJURY / PAIN",
+      "BLEED/HEMORRHAGE/LACERATION",
       "BRUSH/VEGETATION FIRE",
       "DIABETIC PROBLEM",
+      "DIFFICULTY BREATHING",
+      "FALL / SERIOUS OR UNK. STATUS",
       "FALL, CODE2",
       "ILL PERSON",
       "INVESTIGATION",
@@ -96,6 +117,8 @@ public class CAMontecitoParser extends SmartAddressParser {
       "MEDICAL EMERGENCIES",
       "NAT GAS LEAK/MAIN BREAK OUTSID",
       "PUBLIC ASSIST GENERAL",
+      "SEIZURES/CONVULSIONS",
+      "STROKE",
       "STRUCTURE FIRE",
       "TEST CALL",
       "TRAFFIC COLLISION RESPONSE",
