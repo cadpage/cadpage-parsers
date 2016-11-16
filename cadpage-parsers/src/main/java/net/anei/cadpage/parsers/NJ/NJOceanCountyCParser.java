@@ -51,10 +51,13 @@ public class NJOceanCountyCParser extends FieldProgramParser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BER", "BERKELEY TWP",
       "BEW", "PINE BEACH", //???
+      "LAC", "LACEY TWP",
       "LKH", "LAKEHURST",
+      "MNT", "MANTOLOKING",
       "OCG", "",            //???
       "OCT", "OCEAN TWP",
       "OGT", "OCEAN GATE",
+      "PLU", "PLUMSTED TWP",
       "PNB", "PINE BEACH",
       "TRV", "TOMS RIVER"
   });

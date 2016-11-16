@@ -31,7 +31,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   
   public DispatchA19Parser(String defCity, String defState) {
     super(defCity, defState,
-           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! Contact:NAME! Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO! Comments:INFO+ Receiving_and_Responding_Units:SKIP TIMES/N+ " +
+           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! Contact:NAME? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO! Comments:INFO+ Receiving_and_Responding_Units:SKIP TIMES/N+ " +
            "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! Address:ADDR! Zone:MAP! City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO! INFO+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO? INFO+ Contact:NAME Phone:PHONE )");
   }
   
