@@ -3,175 +3,161 @@ package net.anei.cadpage.parsers.VA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.ReverseCodeSet;
+import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 
-public class VAOrangeCountyParser extends FieldProgramParser {
-  
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(\\d{1,2}/\\d{1,2}/\\d{4}) (\\d\\d:\\d\\d)");
+public class VAOrangeCountyParser extends SmartAddressParser {
   
   public VAOrangeCountyParser() {
-    super(CITY_LIST, "ORANGE COUNTY", "VA",
-           "[LOCATION]:ADDR/S5XPP! [NATURE]:CALL! [INCIDENT#]:ID BOX:BOX Map:MAP");
+    super("ORANGE COUNTY", "VA");
+    setFieldList("ADDR APT PHONE PLACE ID CALL INFO GPS");
   }
   
   @Override
   public String getFilter() {
-    return "orange911@oorange.org";
+    return "orange911@orangecountyva.gov";
   }
-
+  
+  private static final Pattern MASTER = Pattern.compile("LOC: (.*?) NATURE:\\s*");
+  private static final Pattern ADDR_ID_CALL_PTN = Pattern.compile("(.*?) (\\d{4}-\\d{8}) (.*)");
+  private static final Pattern APT_PTN1 = Pattern.compile("(\\d{1,4}[A-Za-z]?|[A-Za-z]$)\\b *(.*)");
+  private static final Pattern APT_PTN2 = Pattern.compile("(.*)? (\\d{1,4}[A-Za-z]?|[A-Za-z])");
+  private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile("\\\\+ *(?:([-+]?\\d{2,3}\\.\\d{6,} +[-+]?\\d{2,3}\\.\\d{6,})|-361 -361)(?: +[- A-Z0-9]+)?$");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() == 0) return false;
+    if (!subject.equals("Orange911")) return false;
     
-    // Sometimes leading square bracket terms do not make it into the subject line
-    // So we will try to fix that here.
-    while (body.startsWith("[")) {
-      int pt = body.indexOf(']');
-      if (pt < 0) return false;
-      subject = subject + '|' + body.substring(1,pt).trim();
-      body = body.substring(pt+1).trim();
-    }
+    Matcher match = MASTER.matcher(body);
+    if (!match.lookingAt()) return false;
+    String addr = match.group(1).trim();
+    String info = body.substring(match.end());
     
-    // Now that we have built it up, split up the subject line
-    String[] subParts = subject.split("\\|");
-    
-    // Detect and try to fix IAR alterations
-    if (subParts.length == 1 && !subject.contains(" ")) {
-      data.strSource = subject;
-      int pt = body.indexOf("  ");
-      if (pt < 0) return false;
-      body = "[LOCATION]:" + body.substring(0,pt+2) + "[NATURE]:" + body.substring(pt+2);
-    }
-    
-    // Otherwise process the different subject parts
-    else {
-      boolean good = false;
-      String lastTerm = null;
-      for (String part : subParts) {
-        part = part.trim();
-        if (part.equals("Orange911")) {
-          good = true;
-          continue;
-        }
-        Matcher match = SUBJECT_PTN.matcher(part);
-        if (match.matches()) {
-          data.strDate = match.group(1);
-          data.strTime = match.group(2);
-          continue;
-        }
-        lastTerm = part;
-      }
-      if (!good) return false;
-      if (body.startsWith(":")) {
-        body = '[' + lastTerm + ']' + body;
+    match = ADDR_ID_CALL_PTN.matcher(addr);
+    if (match.matches()) {
+      addr = match.group(1).trim();
+      data.strCallId = match.group(2);
+      data.strCall = match.group(3).trim();
+    } else {
+      String call = CALL_LIST.getCode(addr, true);
+      if (call != null) {
+        data.strCall = call;
+        addr = addr.substring(0, addr.length()-call.length()).trim();
       }
     }
     
-    // See if this should be a general alert
-    if (!body.contains("[INCIDENT#]:") && !body.contains("[NATURE]:")) {
-      return data.parseGeneralAlert(this, body);
+    parseAddress(StartType.START_ADDR, addr, data);
+    String left = getLeft();
+    
+    match = APT_PTN1.matcher(left);
+    if (match.matches()) {
+      data.strApt = append(data.strApt, "-", match.group(1));
+      left = match.group(2);
     }
-      
-    body = body.replace(" BOX ", "  BOX: ").replace(" Map ", "  Map: ").replace("[", " [");
-    body = body.trim();
-    if (!super.parseMsg(body, data)) return false;
-    data.strPlace = data.strPlace.replace(" Village of", "");
-    data.strAddress = data.strAddress.replace("DAILY DR", "DAILEY DR");  // Dispatch typo
+    
+    match = PHONE_PTN.matcher(left);
+    if (match.matches()) {
+      data.strPhone = match.group(1);
+      left = match.group(2);
+    }
+    
+    if (data.strCall.length() == 0) {
+      data.strCall = left;
+    } else {
+      match = APT_PTN2.matcher(left);
+      if (match.matches()) {
+        left = match.group(1).trim();
+        data.strApt = append(data.strApt, "-", match.group(2));
+      }
+      data.strPlace = left;
+    }
+    
+    match = TRAIL_GPS_PTN.matcher(info);
+    if (match.find()) {
+      String gps = match.group(1);
+      if (gps != null) setGPSLoc(gps, data);
+      info = info.substring(0,match.start()).trim();
+    }
+    
+    int pt = info.indexOf("E911 Info - ");
+    if (pt >= 0) info = info.substring(0,pt).trim();
+    data.strSupp = info;
+
     return true;
   }
   
   @Override
-  public String getProgram() {
-    return "DATE TIME SRC " + super.getProgram() + " PLACE";
+  public CodeSet getCallList() {
+    return CALL_LIST;
   }
   
-  private class MyIdField extends IdField {
-    
-    @Override
-    public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strCallId = p.get(' ');
-      
-      // The time field here appears to be an est incident time.  Which we
-      // will use if we didn't get a dispatch time from the subject
-      String sTime = p.get(' ');
-      if (data.strTime.length() == 0) data.strTime = sTime;
-      
-      field = p.get();
-      parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY, field, data);
-      data.strCross = getStart();
-      parseInfo(getLeft(), data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "ID X CITY INFO";
-    }
-  }
-  
-  private class MyCallField extends CallField {
-    @Override
-    public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      super.parse(p.get("  "), data);
-      parseInfo(p.get(), data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "CALL INFO";
-    }
-  }
-  
-  private class MyBoxField extends BoxField {
-    @Override
-    public void parse(String field, Data data) {
-      int pt = field.indexOf(' ');
-      if (pt >= 0) field = field.substring(0,pt).trim();
-      super.parse(field, data);
-    }
-  }
-
-  private class MyMapField extends MapField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.startsWith("Page ")) {
-        field = field.substring(5).trim();
-      } else {
-        if ("Page ".startsWith(field)) return;
-      }
-      Parser p = new Parser(field);
-      super.parse(p.get(' '), data);
-      String id = p.get(' ');
-      if (data.strCallId.length() == 0) data.strCallId = id;
-      String time = p.get();
-      if (data.strTime.length() == 0) data.strTime = time;
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "MAP ID TIME";
-    }
-  }
-  
-  private static void parseInfo(String info, Data data) {
-    int pt = info.indexOf(" E911 Info ");
-    if (pt >= 0) info = info.substring(0,pt).trim();
-    data.strSupp = append(data.strSupp, "  ", info);
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ID")) return new MyIdField();
-    if (name.equals("BOX")) return new MyBoxField();
-    if (name.equals("MAP")) return new MyMapField();
-    return super.getField(name);
-  }
+  private static final CodeSet CALL_LIST = new ReverseCodeSet(
+      "AA- Auto Accident",
+      "AA- HAZ ONLY",
+      "AA- Unk/No Injuries MRP",
+      "AA- W/ ENT",
+      "Abdominal Pain",
+      "Allergic Reaction",
+      "ALOC/AMS",
+      "Assist LE",
+      "Back Pain",
+      "Brush Fire",
+      "Cardiac Arrest/CPR",
+      "CardiacEmergency/MI",
+      "Child lockout vehicle",
+      "Choking",
+      "CO Alarm",
+      "CP",
+      "DB",
+      "Diabetic Emergency",
+      "Dumpster Fire",
+      "Electrocution",
+      "Fire Alarm COM",
+      "Fire Alarm NHSA",
+      "Fire Alarm RES",
+      "Fuel Spill Small",
+      "Gas Leak Outside",
+      "Illness",
+      "Injury",
+      "Injury/Fall",
+      "Lift Assist",
+      "Lines Down",
+      "Medical Alarm",
+      "Minor Bleeding",
+      "NEW CALL",
+      "Odor Inside COM",
+      "Odor Inside RES",
+      "Odor Outside",
+      "Outside Fire",
+      "Outside Smoke",
+      "Overdose/Poisoning",
+      "Pedestrian Struck",
+      "Public Service EMS",
+      "Public Service Fire",
+      "Road Hazard",
+      "Seizure",
+      "Severe Bleeding",
+      "Smell of Smoke RES",
+      "Standby EMS",
+      "Standby FIRE",
+      "Stroke",
+      "Structure Fire COM",
+      "Structure Fire NHSA",
+      "Structure Fire RES",
+      "Structure Fire SHED/BARN",
+      "Suicide/Attempted",
+      "Syncopal Episode",
+      "Transfer",
+      "Unconscious",
+      "UNK Medical Emergency",
+      "Vehicle Fire"
+  );
   
   private static final String[] CITY_LIST = new String[]{
     "GORDONSVILLE",
