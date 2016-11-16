@@ -158,18 +158,4 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "UNK Medical Emergency",
       "Vehicle Fire"
   );
-  
-  private static final String[] CITY_LIST = new String[]{
-    "GORDONSVILLE",
-    "ORANGE",
-    "BARBOURSVILLE",
-    "LOCUST GROVE",
-    
-    "MADISON COUNTY",
-    "CULPEPER COUNTY",
-    "SPOTSYLVANIA COUNTY",
-    "LOUISA COUNTY",
-    "ALBEMARLE COUNTY",
-    "GREENE COUNTY"
-  };
 }
