@@ -15,7 +15,7 @@ public class MOClayCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "LogiSYS CAD";
+    return "LogiSYS CAD,CAD@libertymo.gov";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:\\[SPAM\\]:)?CAD Page for CFS ([-\\d]+)");
