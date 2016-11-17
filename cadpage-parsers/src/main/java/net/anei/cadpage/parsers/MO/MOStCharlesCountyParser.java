@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -20,6 +21,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     return "dispatch@sccda.org,dispatch@sccmo.org";
   }
   
+  private static final Pattern PRENOTE_PTN = Pattern.compile("\\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] \\[Notification\\] *(.*)");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
     
@@ -34,27 +37,40 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     
     // Check for special New Notification format
     if (p.check("New Notification:")) {
-      setFieldList("CALL ADDR APT INFO");
-      data.strCall = p.get(26);
+      setFieldList("CODE CALL ADDR APT INFO");
+      parseCodeCall(p.get(26), data);
       parseAddress(p.get(31), data);
       if (p.getOptional(" [Notification] ", 26, 28) == null) return false;
       data.strSupp = p.get();
       return true;
     }
     
-    setFieldList("ID INFO CALL ADDR PLACE APT X MAP CH SRC UNIT");
-    
     // Skip optional ID: label
     p.check("ID:");
     
     data.strCallId = p.get(12);
     if (! ID_PTN.matcher(data.strCallId).matches()) return false;
+    
+    if (p.check("        New Notification:")) {
+      setFieldList("ID CODE CALL ADDR DATE TIME INFO");
+      parseCodeCall(p.get(26), data);
+      parseAddress(p.get(31), data);
+      String info = p.get();
+      Matcher match = PRENOTE_PTN.matcher(info);
+      if (!match.matches()) return false;
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strSupp = match.group(3);
+      return true;
+    }
+    
+    setFieldList("ID INFO CALL ADDR PLACE APT X MAP CH SRC UNIT");
 
     data.strSupp = p.get(8);
     int fLen = p.checkAhead("APT:", 101, 100);
     if (fLen < 0) return false;
     fLen -= 75; 
-    data.strCall = p.get(fLen);
+    parseCodeCall(p.get(fLen), data);
     parseAddress(p.get(50), data);
     data.strPlace = p.get(25);
     if (!p.check("APT:")) return false;
@@ -85,6 +101,17 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?|\\d{2}) *(.*)");
+  
+  private void parseCodeCall(String call, Data data) {
+    Matcher match = CODE_CALL_PTN.matcher(call);
+    if (match.matches()) {
+      data.strCode = match.group(1);
+      call = match.group(2);
+    }
+    data.strCall = call;
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
