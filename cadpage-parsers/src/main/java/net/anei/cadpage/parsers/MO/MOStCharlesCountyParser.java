@@ -64,7 +64,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       return true;
     }
     
-    setFieldList("ID INFO CALL ADDR PLACE APT X MAP CH SRC UNIT");
+    setFieldList("ID INFO CODE CALL ADDR PLACE APT X MAP CH SRC UNIT");
 
     data.strSupp = p.get(8);
     int fLen = p.checkAhead("APT:", 101, 100);
