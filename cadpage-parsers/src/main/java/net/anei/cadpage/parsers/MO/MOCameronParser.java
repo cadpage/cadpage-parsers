@@ -12,6 +12,6 @@ public class MOCameronParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@CAMERONMO.COM";
+    return "DISPATCH@CAMERONMO.COM,DISPATCH@MAIL.PUBLICSAFETYSOFTWARE.NET";
   }
 }
