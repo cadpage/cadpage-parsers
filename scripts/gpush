@@ -1,6 +1,17 @@
 #! /bin/bash
 . ${0%/*}/common
-${0%/*}/gssh-add
+${0%/*}/gpull
+
+# Check for any unresolved merge conflicts
+for DIR in $MODULES
+do
+  if ( cd $DIR; ! git merge HEAD>/dev/null ); then
+    echo "**** Project:$DIR has unresolved conflicts" 1>&2
+    exit 1
+  fi
+done
+
+
 for DIR in $MODULES
 do
   echo "$DIR:"
