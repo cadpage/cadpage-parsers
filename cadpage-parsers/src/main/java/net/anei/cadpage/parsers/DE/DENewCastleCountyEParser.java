@@ -48,6 +48,7 @@ public class DENewCastleCountyEParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CH")) return new MyChannelField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
@@ -58,6 +59,14 @@ public class DENewCastleCountyEParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("TIMES")) return new TimesField();
     return super.getField(name);
+  }
+  
+  private class MyChannelField extends ChannelField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
   }
 
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
