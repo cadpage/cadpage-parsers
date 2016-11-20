@@ -18,7 +18,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   
   public MDCarrollCountyAParser() {
     super("CARROLL COUNTY", "MD",
-           "TIME CT:ADDR! BOX:BOX! DUE:UNIT!");
+          "TIME CT:ADDR! BOX:BOX! DUE:UNIT!");
     setupMultiWordStreets(
         "BEAR BRANCH",
         "COON CLUB",
@@ -663,6 +663,12 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         CALL_TABLE.put(value, value);
         key = null;
       }
+    }
+    
+    for (String value : new String[]{
+        "UNKNOWN NATURE BLS"
+    }) {
+      CALL_TABLE.put(value, value);
     }
   };
 }
