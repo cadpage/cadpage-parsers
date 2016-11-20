@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.VA;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -21,5 +23,16 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
     body = stripFieldEnd(body, " <end>");
     return parseFields(body.split(";"), data);
   }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    String tmp = MAP_CITY_TABLE.getProperty(city.toUpperCase());
+    if (tmp != null) city = tmp;
+    return city;
+  }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "VIRGINIA TECH", "Blacksburg"
+  });
 
 }
