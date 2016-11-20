@@ -12,7 +12,7 @@ public class OHPortageCountyDParser extends DispatchA9Parser {
   
   @Override
   public String getFilter() {
-    return "BROCMURPHY@GMAIL.COM,dispatch@kent.edu";
+    return "BROCMURPHY@GMAIL.COM,dispatch@kent.edu,dispatch@police.kent.edu";
   }
 
   @Override
