@@ -836,6 +836,7 @@ public class ParserList {
           ),
           new ParserCategory("Nebraska"
               ,"NEGrandIsland"                  ,"Grand Island, NE"
+              ,"NEMadisonCounty"                ,"Madison County, NE"
           ),
           new ParserCategory("Nevada"
               ,"NVClarkCounty"                  ,"Clark County, NV"
