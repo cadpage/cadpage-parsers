@@ -46,3 +46,4 @@ if [[ -n TEDITOR ]]; then
     git config --global --unset core.editor
   fi
 fi
+exit 0
