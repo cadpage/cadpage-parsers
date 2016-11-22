@@ -15,7 +15,7 @@ public class ZCABCNanaimoParser extends DispatchA51Parser {
 
   @Override
   public String getFilter() {
-    return "ciFirecomm_do_not_reply@nanaimo.ca";
+    return "ciFirecomm_do_not_reply@nanaimo.ca,@cvrd.bc.ca";
   }
   
   @Override
