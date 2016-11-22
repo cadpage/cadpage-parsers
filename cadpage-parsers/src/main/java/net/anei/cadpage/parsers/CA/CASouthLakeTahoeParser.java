@@ -8,6 +8,11 @@ public class CASouthLakeTahoeParser extends DispatchA58Parser {
     super("Alliance Message", CITY_LIST, "SOUTH LAKE TAHOE", "CA");
   }
 
+  @Override
+  public String getFilter() {
+    return "cyrunpaging@gmail.com";
+  }
+  
   private static String[] CITY_LIST = new String[] {
       "MEYERS",
       "S LAKE TAHOE" 
