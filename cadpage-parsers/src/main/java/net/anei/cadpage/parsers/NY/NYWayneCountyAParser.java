@@ -11,22 +11,31 @@ public class NYWayneCountyAParser extends FieldProgramParser {
     
     public NYWayneCountyAParser() {
       super("WAYNE COUNTY", "NY",
-             "( DISPATCH | ALARM_CLOSE/R ) TIME CALL ADDR! ( PLACE_APT NAME PHONE | PLACENAME? X PLACE_APT? PHONE ) INFO+");
+             "( DISPATCH_TIME ADDR CALL " +
+             "| ( DISPATCH | ALARM_CLOSE/R ) TIME CALL ADDR! ( PLACE_APT NAME PHONE | PLACENAME? X PLACE_APT? PHONE ) ) INFO+");
     }
     
     @Override
     public String getFilter() {
-      return "newarkamb@fdcms.info,williamsonfireco@fdcms.info,contari1@rochester.rr.com,Dispatch@marionfiredept.com";
+      return "@fdcms.info,contari1@rochester.rr.com,Dispatch@marionfiredept.com";
     }
+    
+    private static final Pattern DELIM = Pattern.compile("[ \n]\\*\\*[ \n]");
 
-	  @Override
-	  protected boolean parseMsg(String subject, String body, Data data) {
-	    body = body + " ";
-	    return parseFields(body.split(" \\*\\* "), data);
-	  }
+    @Override
+    protected boolean parseMsg(String subject, String body, Data data) {
+      
+      if (subject.startsWith("Disptch:") && body.startsWith("** ")) {
+        body = subject + ' ' + body;
+      }
+      
+      body = body + " ";
+      return parseFields(DELIM.split(body), data);
+    }
 
     @Override
     protected Field getField(String name) {
+      if (name.equals("DISPATCH_TIME")) return new TimeField("Disptch:(\\d\\d:\\d\\d)");
       if (name.equals("DISPATCH")) return new SkipField("Dispatch", true);
       if (name.equals("ALARM_CLOSE")) return new SkipField("Alarm Close", true);
       if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d|", true);
