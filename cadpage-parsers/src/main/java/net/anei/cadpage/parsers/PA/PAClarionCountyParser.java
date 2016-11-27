@@ -12,7 +12,8 @@ public class PAClarionCountyParser extends GroupBestParser {
   
   public PAClarionCountyParser() {
     super(new PAClarionCountyAParser(), new PAClarionCountyBParser(), 
-          new PAClarionCountyCParser(), new PAClarionCountyDParser());
+          new PAClarionCountyCParser(), new PAClarionCountyDParser(),
+          new PAClarionCountyEParser());
   }
   
 
