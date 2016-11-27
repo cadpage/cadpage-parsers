@@ -105,6 +105,7 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
       "CSVL", "CASNOVIA VILLAGE",
       "CSTW", "CASNOVIA TWP",
       "EGTW", "EGELSTON TWP",
+      "FAST", "MUSKEGON",
       "FLTW", "FRUITLAND TWP",
       "FPTW", "FRUITPORT TWP",
       "FPVL", "FRUITPORT",
