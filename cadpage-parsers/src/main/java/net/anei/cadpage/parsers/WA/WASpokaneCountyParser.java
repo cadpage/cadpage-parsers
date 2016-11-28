@@ -31,7 +31,7 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       return true;
     }
     
-    if (subject.startsWith("Assigned to Incident ")) {
+    if (subject.toUpperCase().startsWith("ASSIGNED TO INCIDENT ") ) {
       return parseFields(body.split("\n"), data);
     }
     
