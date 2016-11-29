@@ -64,6 +64,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   // Flag indicating place field following address is a place field
   public static final int DSFLAG_PLACE_FOLLOWS = 0x10000;
+  
+  // Flag indicating that we will never have a call ID field
+  public static final int DSFLAG_NO_ID = 0x20000;
+  
 
   private boolean parseFieldOnly;
 
@@ -83,6 +87,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   private boolean state;
   private boolean timeOptional;
   private boolean inclPlace;
+  private boolean noId;
   private CodeSet callSet;
   private Pattern unitPtn;
   
@@ -113,7 +118,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.unitId = (flags & DSFLAG_UNIT) != 0;
     this.idOptional = (flags & DSFLAG_ID_OPTIONAL) != 0;
     this.leadPlace = (flags &  (DSFLAG_BOTH_PLACE | DSFLAG_LEAD_PLACE)) != 0;
-    this.trailPlace = (flags & (DSFLAG_LEAD_PLACE | DSFLAG_NO_PLACE)) == 0;
+    this.trailPlace = (flags & (DSFLAG_LEAD_PLACE | DSFLAG_NO_PLACE | DSFLAG_PLACE_FOLLOWS)) == 0;
     this.trailPlace2 = (flags & (DSFLAG_BOTH_PLACE | DSFLAG_TRAIL_PLACE)) != 0;
     this.inclCross = (flags & DSFLAG_FOLLOW_CROSS) != 0;
     this.inclCrossNamePhone = (flags & DSFLAG_CROSS_NAME_PHONE) != 0;
@@ -124,6 +129,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.state = (flags & DSFLAG_STATE) != 0;
     this.timeOptional = (flags & DSFLAG_TIME_OPTIONAL) != 0;
     this.inclPlace = (flags & DSFLAG_PLACE_FOLLOWS) != 0;
+    this.noId = (flags & DSFLAG_NO_ID) != 0;
     this.unitPtn = (unitPtnStr == null ? null : Pattern.compile(unitPtnStr));
 
     
@@ -143,8 +149,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
       sb.append(" CODE+? PARTCODE?");
       if (leadUnitId) sb.append(" UNIT?");
     }
-    sb.append(" ID");
-    if (idOptional) sb.append('?');
+    if (!noId) {
+      sb.append(" ID");
+      if (idOptional) sb.append('?');
+    }
     sb.append(" TIME");
     if (timeOptional) sb.append('?');
     sb.append(" INFO+ OCA:ID2");
@@ -248,11 +256,13 @@ public class DispatchSouthernParser extends FieldProgramParser {
           String sExtra = body.substring(match.end()).trim();
           
           // See if there is an ID field immediate in front of the time field
-          match = ID_PTN.matcher(sAddr);
-          if (match.find()) {
-            data.strCallId = match.group();
-            sAddr = sAddr.substring(0,match.start()).trim();
-          } else if (!idOptional) return false;
+          if (!noId) {
+            match = ID_PTN.matcher(sAddr);
+            if (match.find()) {
+              data.strCallId = match.group();
+              sAddr = sAddr.substring(0,match.start()).trim();
+            } else if (!idOptional) return false;
+          }
           
           // See if there is a labeled OCA field at the end of the extra block
           match = OCA_TRAIL_PTN.matcher(sExtra);
@@ -374,6 +384,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       if (match.matches()) {
         parseAddress(match.group(1), data);
       } else {
+        sLeft = stripLeadPlace(sLeft, data, true);
         sLeft = stripFieldStart(sLeft, "AT ");
         sLeft = sLeft.replace(" X ", " / ");
         sLeft = stripFieldEnd(sLeft, " X");
@@ -384,13 +395,19 @@ public class DispatchSouthernParser extends FieldProgramParser {
     else {
       
       if (inclCrossNamePhone) {
-        int pt = sLeft.indexOf(" X ");
-        if (pt >= 0) {
-          String save = sLeft.substring(0,pt).trim();
-          sLeft = sLeft.substring(pt+3).trim();
-          parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, sLeft, data);
-          data.strCross = save + " / " + data.strCross;
+        if (sLeft.startsWith("X ")) {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, sLeft.substring(2).trim(), data);
           sLeft = getLeft();
+        } else {
+          sLeft = stripLeadPlace(sLeft, data, false);
+          int pt = sLeft.indexOf(" X ");
+          if (pt >= 0) {
+            String save = sLeft.substring(0,pt).trim();
+            sLeft = sLeft.substring(pt+3).trim();
+            parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, sLeft, data);
+            data.strCross = save + " / " + data.strCross;
+            sLeft = getLeft();
+          }
         }
       }
       
@@ -409,6 +426,42 @@ public class DispatchSouthernParser extends FieldProgramParser {
         data.strName = cleanWirelessCarrier(sLeft);
       }
     }
+  }
+
+  private static final Pattern CROSS_MARK_PTN = Pattern.compile("[/]| X ");
+  
+  private String stripLeadPlace(String field, Data data, boolean anchorEnd) {
+    
+    if (!inclPlace) return field;
+    
+    if (field.length() == 0 || Character.isDigit(field.charAt(0))) return field;
+    
+    int pt = field.length();
+    Matcher match = CROSS_MARK_PTN.matcher(field);
+    if (match.find()) {
+      anchorEnd = true;
+      pt = match.start();
+    }
+    
+    String part = field.substring(0,pt).trim();
+    pt = part.indexOf('@');
+    if (pt < 0) pt = part.indexOf('*');
+    if (pt >= 0) {
+      data.strPlace = append(data.strPlace, " - ", field.substring(0,pt).trim());
+      return field.substring(pt+1).trim();
+    }
+    
+    int flags = FLAG_ONLY_CROSS;
+    if (anchorEnd) flags |= FLAG_ANCHOR_END;
+    Result res = parseAddress(StartType.START_PLACE, flags, part);
+    if (res.isValid()) {
+      Data tmpData = new Data(this);
+      res.getData(tmpData);
+      data.strPlace = append(data.strPlace, " - ", tmpData.strPlace);
+      field = field.substring(tmpData.strPlace.length()).trim();
+      
+    }
+    return field;
   }
 
   protected void parseExtra(String sExtra, Data data) {
