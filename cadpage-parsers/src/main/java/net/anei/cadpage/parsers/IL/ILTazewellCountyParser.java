@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.IL;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -15,6 +16,14 @@ public class ILTazewellCountyParser extends DispatchOSSIParser {
     return "cad@tazewell911.com";
   }
   
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.length() > 0 && body.startsWith("CAD:;")) {
+      body = "CAD:" + subject + ": " + body.substring(4);
+    }
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);

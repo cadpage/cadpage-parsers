@@ -112,7 +112,8 @@ public class COParkCountyParser extends SmartAddressParser {
       "GAS ODOR/LEAK",
       "MEDICAL",
       "SMOKE REPORT",
-      "VEHICLE SLIDE OFF"
+      "VEHICLE SLIDE OFF",
+      "FIRE WILDLAND"
  );
   
   private static final String[] CITY_LIST = new String[]{
