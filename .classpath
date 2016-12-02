@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="cadpage-parsers/src/main/java"/>
-	<classpathentry kind="src" path="cadpage-private/src/main/java"/>
-	<classpathentry kind="src" path="cadpage-private/src/test/java"/>
+	<classpathentry kind="src" output="cadpage-parsers/build/classes/main" path="cadpage-parsers/src/main/java"/>
+	<classpathentry kind="src" output="cadpage-private/build/classes/main" path="cadpage-private/src/main/java"/>
+	<classpathentry kind="src" output="cadpage-private/build/classes/test" path="cadpage-private/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build"/>

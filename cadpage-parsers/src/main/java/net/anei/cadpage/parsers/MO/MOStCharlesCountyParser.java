@@ -18,7 +18,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@sccda.org,dispatch@sccmo.org";
+    return "dispatch@sccda.org,dispatch@sccmo.org,SCCEC_info@sccmo.org";
   }
   
   private static final Pattern PRENOTE_PTN = Pattern.compile("\\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] \\[Notification\\] *(.*)");

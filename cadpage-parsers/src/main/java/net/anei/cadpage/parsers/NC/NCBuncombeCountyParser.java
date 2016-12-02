@@ -13,7 +13,7 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
   
   public NCBuncombeCountyParser() {
     super("BUNCOMBE COUNTY", "NC",
-           "FYI? CHANGE? ASSREQ? ADDR! SRC? UNIT? SPEC+");
+           "FYI? CHANGE? ASSREQ/SDS? PREFIX/SDS? CALL/SDS? ADDR! SRC? UNIT? SPEC+");
   }
   
   @Override
@@ -21,15 +21,34 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     return "CAD@buncombecounty.org";
   }
   
+  private boolean callFound;
+  
   @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("S:") && body.endsWith(" M:")) {
       body = body.substring(2, body.length()-3).trim();
     }
     body = body.replaceAll("\n", " ");
+    
+    // Sanity check - must have at least one semicolons
+    if (!body.contains(";")) return false;
+    
+    callFound = false;
     if (! super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) data.strCall = "Unknown";
     return true;
+  }
+  
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("CHANGE")) return new MyChangeField();
+    if (name.equals("ASSREQ")) return new AssReqField();
+    if (name.equals("PREFIX")) return new CallField("UNDER CONTROL|Working fire", true);
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("SRC")) return new SourceField("FS\\d+");
+    if (name.equals("UNIT")) return new UnitField("[A-Z]{1,5}[0-9]{1,3}[A-Z]?(?:,.*)?", true);
+    if (name.equals("SPEC")) return new SpecField();
+    return super.getField(name);
   }
   
   private static final Pattern CHANGED_PTN = Pattern.compile("Changed ([A-Za-z]+) from .*? to (.*)");
@@ -54,7 +73,7 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
     }
   }
-  
+
   /**
    * Call field that only trips if it contains the words "ASSISTANCE REQUESTED"
    */
@@ -74,16 +93,37 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     }
   }
   
+  private class MyCallField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() == 0) return false;
+      if (Character.isDigit(field.charAt(0))) return false;
+      if (!CALL_PATTERN.matcher(field).find()) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      callFound = true;
+      super.parse(field, data);
+    }
+  }
+  
   /**
    * Covers fields entered in random order between the Unit and cross street
    */
   
   // Field will be treated as a call description if it contains
   // A something in parenthesis
-  // A slash
   // Any of a set of words generally found in call descriptions
   private static final Pattern CALL_PATTERN = 
-    Pattern.compile("^\\(.+\\)|/|\\b(?:FALL|FALLS|FIRE|PAIN|PAINS|HEART|PROBLEM|PROBLEMS|CHOKING|STROKE|SICK|INJURY|INJURIES|DAMAGE)\\b");
+    Pattern.compile("^\\(.+\\)|^\\{.+\\}|\\b(?:ASSAULT|ASSIST|CARDIAC|CHOKING|CONVULSIONS|DAMAGE|EMS|FALL|FALLS|FIRE|HEART|HEMORRHAGE|INJURY|INJURIES|PAIN|PAINS|PROBLEM|PROBLEMS|SEIZURES|SICK|SMOKE|STROKE|TRANSPORT|UNCONSCIOUS|WORKING)\\b", Pattern.CASE_INSENSITIVE);
   private class SpecField extends Field {
     
     private Field callField = new CallField();
@@ -92,6 +132,10 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     private Field idField = new IdField();
     private Field crossField = new CrossField();
     private Field infoField = new InfoField();
+    
+    public SpecField() {
+      callField.setQual("SDS");
+    }
 
     @Override
     public void parse(String field, Data data) {
@@ -108,7 +152,8 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
         fieldProc = nameField;
       }
       
-      else if (CALL_PATTERN.matcher(field).find()) {
+      else if (!callFound && CALL_PATTERN.matcher(field).find()) {
+        callFound = true;
         fieldProc = callField;
       }
       
@@ -135,15 +180,5 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     public String getFieldNames() {
       return "CALL NAME PHONE INFO X ID";
     }
-  }
-  
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("CHANGE")) return new MyChangeField();
-    if (name.equals("ASSREQ")) return new AssReqField();
-    if (name.equals("SRC")) return new SourceField("FS\\d+");
-    if (name.equals("UNIT")) return new UnitField("[A-Z]{1,5}[0-9]{1,3}[A-Z]?(?:,.*)?", true);
-    if (name.equals("SPEC")) return new SpecField();
-    return super.getField(name);
   }
 }
