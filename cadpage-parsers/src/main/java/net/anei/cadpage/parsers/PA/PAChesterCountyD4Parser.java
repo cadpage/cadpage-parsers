@@ -23,6 +23,10 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    // Eliminate PAChesterCountyO alerts.  These are dual format alerts, they start out looking like
+    // PAChesterCountyD4 alerts but have PAChesterCountyO information appended
+    if (body.contains("Chester County Emergency Services Dispatch Report")) return false;
+    
     Matcher match = START_TIME_PTN.matcher(body);
     if (match.lookingAt()) {
       String search = " ** Dispatch ** " + match.group();

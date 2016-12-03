@@ -464,6 +464,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "PNSBRY", "PENNSBURY TWP",
       "POCOPS", "POCOPSON TWP",
       "PRKSBG", "PARKESBURG",
+      "ROBSN",  "ROBINSON TWP",
       "RSNGSUNMCD", "RISING SUN",
       "SADS",   "SADSBURY TWP",
       "SCHYKL", "SCHUYLKILL TWP",
@@ -500,10 +501,12 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "WWHITE", "WEST WHITELAND TWP",
 
       // Mongtomery county
-      "MONT",        "MONTGOMERY COUNTY",
-      "MONTC",       "MONTGOMERY COUNTY",
-      "UPPER POTTS", "UPPER POTTSGROVE TWP",
-      "UPPER PROV",  "UPPER PROVIDENCE TWP"
+      "MONT",         "MONTGOMERY COUNTY",
+      "MONTC",        "MONTGOMERY COUNTY",
+      "ROYRFRD",      "ROYERSFORD",
+      "UPPER POTTS",  "UPPER POTTSGROVE TWP",
+      "UPPER PROV",   "UPPER PROVIDENCE TWP",
+      "UPPPROVDNCE",  "UPPER PROVIDENCE TWP"
   });
   
   private static final Properties OOC_CITIES = buildCodeTable(new String[]{
