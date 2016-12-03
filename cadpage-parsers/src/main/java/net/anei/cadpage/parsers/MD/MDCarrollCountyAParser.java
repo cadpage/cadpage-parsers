@@ -666,6 +666,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     }
     
     for (String value : new String[]{
+        "GAS LEAK IN RESIDENC",
         "UNKNOWN NATURE BLS"
     }) {
       CALL_TABLE.put(value, value);

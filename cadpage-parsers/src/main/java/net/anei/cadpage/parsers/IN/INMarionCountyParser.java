@@ -228,6 +228,7 @@ public class INMarionCountyParser extends MsgParser {
       "16312 TERMINAL WAY",                   "+39.714466,-86.298459",
       "16315 TERMINAL WAY",                   "+39.714466,-86.298459",
       "17324 TERMINAL WAY",                   "+39.714466,-86.298459",
+
       
       "I465 011 RAMP A",                      "+39.728231,-86.263175",
       "I465 012 RAMP A",                      "+39.746920,-86.263479",
