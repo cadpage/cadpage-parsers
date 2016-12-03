@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 
@@ -17,6 +19,11 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "IPAGE@westchestergov.com";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
