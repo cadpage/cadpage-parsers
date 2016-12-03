@@ -377,8 +377,8 @@ public class WAPierceCountyEParser extends FieldProgramParser {
   });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AI AI","LAKEWOOD",
-      "AL",   "ANDERSON ISLAND",
+      "AI AI","ANDERSON ISLAND",
+      "AI",   "ANDERSON ISLAND",
       "AUB",  "AUBURN",
       "BON",  "BONNEY LAKE",
       "BUC",  "BUCKLEY",
