@@ -17,7 +17,7 @@ public class DispatchA51Parser extends FieldProgramParser {
   protected DispatchA51Parser(String defCity, String defState) {
     super(defCity, defState,
           "( SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ | " +
-            "Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT )");
+            "Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ )");
   }
   
   @Override

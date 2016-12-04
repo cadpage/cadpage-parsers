@@ -1773,6 +1773,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "MEDICATION OVERDOSE",
       "MENTAL",
       "MENTAL SUBJECT",
+      "MENTALLY ILL PERSON",
       "MISCELLANEOUS FIRE",
       "MOTORIST ASSIST",
       "MUTUAL",
