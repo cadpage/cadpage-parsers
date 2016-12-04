@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   
-  private static final Pattern BAD_MARKER = Pattern.compile("911-CENTER:[A-Z0-9]+ ?>");
+  private static final Pattern BAD_MARKER = Pattern.compile("911-CENTER:[A-Z0-9]+ +>");
   private static final Pattern TO_X_PTN = Pattern.compile("(?:(.*) )?(?:NORTH|SOUTH|EAST|WEST) BOUND (.*) TO +(.*)");
   
   public TNWilliamsonCountyBParser() {
@@ -55,29 +55,47 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   private static final Pattern CR_XX_PTN = Pattern.compile(" *\\b[A-Z]{2,3}-[A-Z]{2,3}\\b *");
   
   private static final String[] MWORD_STREET_NAMES = new String[]{
-    "BAKERS BRIDGE",
-    "CROWNE BROOKE",
-    "GLEN RIDGE",
-    "GOOD SPRINGS",
-    "GRAND HAVEN",
-    "GRAND OAKS",
-    "GREEN HILL",
-    "KNOX VALLEY",
-    "MALLORY STATION",
-    "NORTH BOUND MOORES",
-    "SHADOW RIDGE",
-    "SUMMIT VIEW",
-    "TWIN SPRINGS",
-    "WILSON PIKE"
+      "BAKERS BRIDGE",
+      "BERRY CHAPEL",
+      "CROWNE BROOKE",
+      "EXECUTIVE CENTER",
+      "GENERAL MACARTHUR",
+      "GLEN RIDGE",
+      "GOOD SPRINGS",
+      "GRAND HAVEN",
+      "GRAND OAKS",
+      "GRANNY WHITE",
+      "GREEN HILL",
+      "HOLLY TEE GAP",
+      "HOLLY TREE GAP",
+      "JOHNSON CHAPEL",
+      "KNOX VALLEY",
+      "MALLORY STATION",
+      "MEADOW LAKE",
+      "NORTH BOUND MOORES",
+      "OWL LANDING",
+      "QUAIL VALLEY",
+      "RED OAK",
+      "SHADOW CREEK",
+      "SHADOW RIDGE",
+      "SUMMIT VIEW",
+      "TWIN SPRINGS",
+      "WALNUT HILLS",
+      "WALNUT PARK",
+      "WILSON PIKE"
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "ATTEMPTED ROBBERY",
+      "DEATH INVESTIGATION",
       "HOME INVASION",
       "KIDNAPPING OR ABDUCTION",
       "MISSING ENDANGERED",
       "PERSONAL INJURY ACCIDENT",
       "PERSON SHOT",
       "PERSON STABBED",
+      "ROBBERY FROM BUSINESS",
+      "ROBBERY FROM PERSON",
       "ROBBERY IN PROGRESS",
       "STRUCTURE FIRE"
   );

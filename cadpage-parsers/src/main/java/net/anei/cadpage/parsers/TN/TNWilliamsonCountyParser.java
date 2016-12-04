@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TNWilliamsonCountyParser extends GroupBestParser {
   
   public TNWilliamsonCountyParser() {
-    super(new TNWilliamsonCountyAParser(), new TNWilliamsonCountyBParser());
+    super(new TNWilliamsonCountyAParser(), new TNWilliamsonCountyBParser(), new TNWilliamsonCountyCParser());
   }
 
   static final String[] CITY_LIST = new String[]{

@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 public class TNWilliamsonCountyAParser extends DispatchB2Parser {
   
-  private static final Pattern MARKER = Pattern.compile("911-CENTER:[A-Z0-9]+ ?>");
+  private static final Pattern MARKER = Pattern.compile("911-CENTER:[A-Z0-9]+ +>");
   
   public TNWilliamsonCountyAParser() {
     super("911-CENTER:", TNWilliamsonCountyParser.CITY_LIST, "WILLIAMSON COUNTY", "TN");
