@@ -22,7 +22,6 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() > 0) return false;
     if (BAD_MARKER.matcher(body).lookingAt()) return false;
     if (!super.parseMsg(body, data)) return false;
     
@@ -56,7 +55,9 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   
   private static final String[] MWORD_STREET_NAMES = new String[]{
       "BAKERS BRIDGE",
+      "BEECH CREEK",
       "BERRY CHAPEL",
+      "COOL SPRINGS",
       "CROWNE BROOKE",
       "EXECUTIVE CENTER",
       "GENERAL MACARTHUR",
@@ -68,21 +69,29 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "GREEN HILL",
       "HOLLY TEE GAP",
       "HOLLY TREE GAP",
+      "IN A VALE",
       "JOHNSON CHAPEL",
       "KNOX VALLEY",
+      "LONG VALLEY",
       "MALLORY STATION",
+      "MARKET EXCHANGE",
       "MEADOW LAKE",
+      "MORGAN FARMS",
       "NORTH BOUND MOORES",
       "OWL LANDING",
       "QUAIL VALLEY",
       "RED OAK",
+      "RIVER OAKS",
       "SHADOW CREEK",
       "SHADOW RIDGE",
       "SUMMIT VIEW",
+      "TORREY PINES",
       "TWIN SPRINGS",
       "WALNUT HILLS",
       "WALNUT PARK",
-      "WILSON PIKE"
+      "WARDLEY PARK",
+      "WILSON PIKE",
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -91,12 +100,15 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "HOME INVASION",
       "KIDNAPPING OR ABDUCTION",
       "MISSING ENDANGERED",
+      "OTHER FIRE",
       "PERSONAL INJURY ACCIDENT",
       "PERSON SHOT",
       "PERSON STABBED",
       "ROBBERY FROM BUSINESS",
       "ROBBERY FROM PERSON",
       "ROBBERY IN PROGRESS",
-      "STRUCTURE FIRE"
+      "STRUCTURE FIRE",
+      "TEST STRUCTURE FIRE",
+      "WEEKLY PAGER TEST"
   );
 }
