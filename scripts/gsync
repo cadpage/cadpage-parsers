@@ -13,6 +13,6 @@ fi
 
 ${0%/*}/gpull
 
-${0%/*}/gcommit -m '$1' || exit 1
+${0%/*}/gcommit -m "$1" || exit 1
 
 ${0%/*}/gpush
