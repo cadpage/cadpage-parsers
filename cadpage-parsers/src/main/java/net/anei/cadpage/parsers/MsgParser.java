@@ -1596,7 +1596,7 @@ public static void addCodeTable(Properties props, String[] table) {
    
    return body;
  }
- private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML>|</?(?:BODY|FONT|B|I|PRE)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+ private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML>|</?(?:B|BODY|DIV|FONT|I|PRE|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
  private static final Pattern CODE_PTN = Pattern.compile("&#(\\d+);");
