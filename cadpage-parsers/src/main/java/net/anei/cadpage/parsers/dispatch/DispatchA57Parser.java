@@ -15,7 +15,7 @@ public class DispatchA57Parser extends FieldProgramParser {
   
   public DispatchA57Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! City:CITY? Closest_Intersection:X! Additional_Location_Info:INFO? EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT! | Dispatched_Units:UNIT! ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+");
+          "Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! City:CITY? Closest_Intersection:X! EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT! | Dispatched_Units:UNIT! ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+");
   }
   
   @Override
