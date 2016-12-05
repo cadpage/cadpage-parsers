@@ -43,7 +43,7 @@ public class INStJosephCountyParser extends DispatchA6Parser {
   private static final Pattern DATE_ADDR_BRK = Pattern.compile(" \\d\\d/\\d\\d/\\d\\d(?<!20)(?=[A-Z0-9])");
   private static final Pattern CROSS_BREAK = Pattern.compile("\\)[ A-Z0-9]+? (?:(?:RD|HW)(?! )|(?:ST|AV|TR|DR)(?![AEIOU ]))");
   private static final Pattern MAP_PTN = Pattern.compile(" +([A-Z]-\\d+|\\d{2,3}-\\d{2,3})");
-  private static final Pattern LEAD_DATE_TIME = Pattern.compile("^(?:(\\d\\d?:\\d\\d[AP]M) )?(\\d\\d/\\d\\d/\\d{4}) ");
+  private static final Pattern LEAD_DATE_TIME = Pattern.compile("^(?:(\\d\\d?:\\d\\d(?::\\d\\d|[AP]M)) )?(\\d\\d/\\d\\d/\\d{4}) ");
   private static final Pattern TRAIL_TIME = Pattern.compile(" ([012]\\d)(\\d\\d),?$");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mmaa");;
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(?:[ ,]*\\b(?:[A-Z]+\\d+|\\d{4}|OSCEO|PENN|SWPCA))+$");
@@ -77,7 +77,13 @@ public class INStJosephCountyParser extends DispatchA6Parser {
     match = LEAD_DATE_TIME.matcher(body);
     if (match.lookingAt()) {
       String time = match.group(1);
-      if (time != null) setTime(TIME_FMT, time, data);
+      if (time != null) {
+        if (time.endsWith("M")) {
+          setTime(TIME_FMT, time, data);
+        } else {
+          data.strTime = time;
+        }
+      }
       data.strDate = match.group(2);
       body = body.substring(match.end()).trim();
     }
@@ -135,6 +141,7 @@ public class INStJosephCountyParser extends DispatchA6Parser {
       "SO", "SW CENTRAL",
       "SW", "",
       "WA", "WARREN TWP",
+      "WK", "WALKERTON"
 
   });
 }
