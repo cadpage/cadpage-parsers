@@ -299,13 +299,19 @@ public class COWeldCountyParser extends FieldProgramParser {
   });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ACO", "BRIGHTON",   // ???
       "ARO", "ARROWHEAD",
       "AUL", "AULT",
       "ARI", "ARISTOCRAT ACRES",
-      "BOU", "BOULDER",
+      "BER", "BERTHOUD",
       "BCO", "BOULDER COUNTY",
+      "BOU", "BOULDER",
+      "BRI", "BRIGHTON",
+      "BRG", "BRIGGSDALE",
+      "BUC", "RAYMER",   // ???
       "CAM", "CAMFIELD",
       "DAC", "DACONO",
+      "DOS", "GREELEY",  // ???
       "EAT", "EATON",
       "ERI", "ERIE",
       "EVA", "EVANS",
@@ -314,10 +320,13 @@ public class COWeldCountyParser extends FieldProgramParser {
       "FRE", "FREDERICK",
       "FTL", "FORT LUPTON",
       "GAL", "GALETON",
+      "GIC", "GILCREST",
       "GIL", "GILCREST",
       "GRE", "GREELEY",
-      "HUD", "HUDSON",
+      "GRO", "GROVER",
+      "HER", "HEREFORD",
       "HIL", "HILL N PARK",
+      "HUD", "HUDSON",
       "JOH", "JOHNSTOWN",
       "KER", "KERSEY",
       "LAF", "LAFAYETTE",
@@ -326,10 +335,12 @@ public class COWeldCountyParser extends FieldProgramParser {
       "LOC", "LOCHBUIE",
       "LON", "LONGMONT",
       "LOV", "LOVELAND",
+      "LUC", "LUCERNE",
       "MEA", "MEAD",
       "MIL", "MILLIKEN",
       "NIW", "NIWOT",
       "PIE", "PIERCE",
+      "PLA", "PLATTEVILLE",
       "SEV", "SEVERANCE",
       "WEL", "WELD COUNTY",
       "WIN", "WINDSOR"
