@@ -25,6 +25,7 @@ public class MTStillwaterCountyParser extends DispatchA16Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Perform Page")) subject = "Imc Solutions Page";
     if (!super.parseMsg(subject, body, data)) return false;
     
     // Clean up some odd address conventions
