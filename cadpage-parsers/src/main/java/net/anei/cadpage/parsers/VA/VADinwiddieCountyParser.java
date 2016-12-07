@@ -15,7 +15,7 @@ public class VADinwiddieCountyParser extends DispatchA48Parser {
   public VADinwiddieCountyParser() {
     super(CITY_LIST, "DINWIDDIE COUNTY", "VA", FieldType.PLACE, A48_NO_CODE);
     setupCallList(CALL_LIST);
-    setupMultiWordStreets("BOYDTON PLANK");
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
@@ -33,17 +33,38 @@ public class VADinwiddieCountyParser extends DispatchA48Parser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "AB PAIN",
+      "ASSAULT RAPE RES",
+      "BLEED NON TRAUMA",
+      "BREATHING DIFF",
+      "BRUSH FIRE",
+      "CARD RESP ARREST",
       "CHESTP",
+      "COMM BUILD FIRE",
+      "COMM FIRE ALARM",
+      "FALLS ACCID",
+      "HAZ CONDIT SPILL",
       "HOUSE FIRE",
+      "MENTAL EMOTION",
+      "MUTUAL AID E",
+      "MUTUAL AID F",
+      "MVA ENTRAP",
+      "MVA HAZ",
+      "MVA INJ",
+      "SEIZURES",
       "SICK",
       "STROKE",
       "SYNCOPAL EPI",
-      "UNKNW FIRE"
+      "UNCONS UNRESP",
+      "UNKNW FIRE",
+      "VEH FIRE"
   );
   
   private String[] MWORD_STREET_LIST = new String[]{
-      
-  };
+      "A P HILL",
+      "BOYDTON PLANK",
+      "SQUIRREL LEVEL",
+      "WEST WASHINGTON"
+ };
 
   private static final String[] CITY_LIST = new String[]{
 
