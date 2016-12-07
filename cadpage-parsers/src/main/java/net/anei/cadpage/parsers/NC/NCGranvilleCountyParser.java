@@ -2,6 +2,8 @@ package net.anei.cadpage.parsers.NC;
 
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -24,6 +26,8 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     return "@granvillecounty.org";
   }
   
+  private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([A-Z]+ COUNTY)", Pattern.CASE_INSENSITIVE);
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
@@ -31,14 +35,24 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       data.strSupp = append(data.strCall, " ", data.strSupp);
       data.strCall = "";
     }
+    
     data.strCity = data.strCity.replace('-', ' ');
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITY_TABLE);
+
+    data.strName = data.strName.replace('-', ' ');
+    Matcher match = NAME_COUNTY_PTN.matcher(data.strName);
+    if (match.matches()) {
+      data.strName = match.group(1);
+      if (data.strCity.length() == 0) data.strCity = match.group(2);
+    }
+    
     return true;
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
       "ADAMS MOUNTAIN",
       "ALLEN CREEK",
+      "ANTLER WAY",
       "B CLARK",
       "BATTLE CAVINESS",
       "BAXTER HUFF",
@@ -79,6 +93,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "HUNTERS RIDGE",
       "JOE PEED",
       "JOE PRUITT",
+      "JOHN SANDLING",
       "JOHNSON CREEK FARM",
       "JONAH DAVIS",
       "KNOTTY PINE",
@@ -100,6 +115,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "PINE TOWN",
       "PINE VALLEY",
       "PIXLEY PRITCHARD",
+      "PLEASANTS RIDGE",
       "QUEEN ANNE",
       "RAVEN WOOD",
       "RED BUD",
@@ -121,10 +137,12 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "SMITH CREEK",
       "ST LUCY",
       "STERLING CREEK",
+      "STOOL TREE",
       "SUGAR MAPLE",
       "SUITTS STORE",
       "SUMMER SPRINGS",
       "SUMMIT RIDGE",
+      "SUNRISE RIDGE",
       "TALLY HO",
       "TAR RIVER",
       "THOLLIE GREEN",
@@ -134,6 +152,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "VIRGINIA PINE",
       "WALNUT CREEK",
       "WAYSIDE FARM",
+      "WES SANDLING",
       "WHEELER POND",
       "WHITE PINE",
       "WILD GOOSE",
@@ -267,6 +286,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "DURHAM",
     "DURHAM CO",
     "DURHAM-CO",
+    "DURHAM COUNTY",
     "CARR",
     "FALLS LAKE",
     "GORMAN",
@@ -278,6 +298,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "FRANKLIN",
     "FRANKLIN CO",
     "FRANKLIN-CO",
+    "FRANKLIN COUNTY",
     "FRANKLINTON",
     "YOUNGSVILLE",
     
@@ -285,6 +306,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "PERSON",
     "PERSON CO",
     "PERSON-CO",
+    "PERSON COUNTY",
     "ALLENSVILLE",
     "HOLLOWAY",
     "MOUNT TIRZAH",
@@ -296,6 +318,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "VANCE",
     "VANCE CO",
     "VANCE-CO",
+    "VANCE COUNTY",
     "TOWNSVILLE",
     "WILLIAMSBORO",
     "DABNEY",
@@ -306,6 +329,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "WAKE",
     "WAKE CO",
     "WAKE-CO",
+    "WAKE COUNTY",
     "FALLS LAKE",
     "NEW LIGHT",
     "RALEIGH",
