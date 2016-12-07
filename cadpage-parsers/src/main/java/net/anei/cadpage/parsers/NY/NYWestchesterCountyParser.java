@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.NY;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -59,6 +61,13 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
     return true;
   }
 
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
   private class MyAddressField extends AddressField {
 
     @Override
@@ -85,18 +94,42 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern GPS_PTN1 = Pattern.compile("WPH\\d +([-+]?\\d{3}\\.\\d{6,}[, ][-+]?\\d{3}\\.\\d{6,})");
+  private static final Pattern GPS_PTN2 = Pattern.compile("http://maps.google.com/\\?q=([-+]?\\d{2,3}\\.\\d{6,})");
+  private static final Pattern GPS_PTN3 = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,})");
   private class MyInfoField extends InfoField {
+    
+    private String gps1 = null;
+    
     @Override
     public void parse(String field, Data data) {
+      Matcher match = GPS_PTN1.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1), data);
+        return;
+      }
+      
+      match = GPS_PTN2.matcher(field);
+      if (match.matches()) {
+        gps1 = match.group(1);
+        return;
+      }
+      if (gps1 != null) {
+        match = GPS_PTN3.matcher(field);
+        if (data.strGPSLoc.length() == 0 && match.matches()) {
+          setGPSLoc(gps1+',' +  match.group(1), data);
+        }
+        gps1 = null;
+        return;
+      }
+      
       data.strSupp = append(data.strSupp, ", ", field);
     }
-  }
-
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
+    
+    @Override
+    public String getFieldNames() {
+      return "INFO GPS";
+    }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
