@@ -63,7 +63,7 @@ public class DispatchA3Parser extends FieldProgramParser {
   
   private String prefix = null;
   private Pattern prefixPtn = null;
-  private Pattern delim = Pattern.compile("(?<!\\*)\\*[\n ]+");
+  private Pattern delim = Pattern.compile("(?<![\\*\\^])[\\*\\^][\n ]+");
   
   public DispatchA3Parser(int version, Pattern prefixPtn, String defCity, String defState) {
     this(version, prefixPtn, defCity, defState, 0);
@@ -179,7 +179,7 @@ public class DispatchA3Parser extends FieldProgramParser {
       body  = body.substring(match.end()).trim();
     }
     if (splitField) {
-      if (body.endsWith("*")) body = body + " ";
+      if (body.endsWith("*") || body.endsWith("^")) body = body + " ";
       return parseFields(delim.split(body), data);
     } else {
       return super.parseMsg(body, data);
