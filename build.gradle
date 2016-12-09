@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 }
 
@@ -15,8 +15,8 @@ allprojects {
 }
 
 ext {
-    versionName = '1.9.11-07'
-    versionCode = 10911070
+    versionName = '1.9.11-08'
+    versionCode = 10911080
 }
 
 task gstatus(type: Exec) {
