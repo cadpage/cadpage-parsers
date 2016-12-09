@@ -10,16 +10,28 @@ import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
 public class MOLincolnCountyParser extends DispatchA25Parser {
   
-  private static final Pattern ELSBERRY_PTN = Pattern.compile("(NEW .*)(?: - |, )(Elsberry).?");
   public MOLincolnCountyParser() {
-    super("LINCOLN COUNTY", "MO");
+    this("LINCOLN COUNTY", "MO");
+  }
+  
+  public MOLincolnCountyParser(String defCity, String defState) {
+    super(defCity, defState);
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "MOLincolnCounty";
   }
   
   @Override
   public String getFilter() {
-    return "EnterpolAlerts@PikeCountySO.org,lincolncounty911@LC911Dispatch.org,messaging@iamresponding.com";
+    return "lincolncounty911@LC911Dispatch.org,messaging@iamresponding.com";
   }
+  
+  private static final Pattern ELSBERRY_PTN = Pattern.compile("(NEW .*)(?: - |, )(Elsberry).?");
+  private static final Pattern DIRO_PTN = Pattern.compile("\\b([NSEW])[/ ](O)F?\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -28,37 +40,114 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
     Matcher match = ELSBERRY_PTN.matcher(body);
     if (match.matches()) body = match.group(1) + ", " + match.group(2);
     
+    // Fix dir/o construct
+    body = DIRO_PTN.matcher(body).replaceAll("$1$2");
+    
     // TODO Auto-generated method stub
     return super.parseMsg(subject, body, data);
   }
   
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "BLUE BUNTING",
+      "BURR OAK",
+      "CAP AU GRIS",
+      "CHAPMAN FARM",
+      "COLLEGE CAMPUS",
+      "CORNER STONE CHURCH",
+      "DEER RUN",
+      "DEER VALLEY",
+      "EAST SIDE OF",
+      "ELM TREE",
+      "FOX RUN",
+      "HICKORY HILL",
+      "HIDDEN VALLEY",
+      "HIGH COUNTRY",
+      "MARKET PLACE",
+      "MEADOW RIDGE",
+      "MOORE SCHOOL",
+      "MOSCOW MILLS",
+      "OAK BEND",
+      "PEBBLE CREEK",
+      "PEINE LAKES",
+      "PIN OAK",
+      "PUMP HOUSE",
+      "SNOW HILLS",
+      "SPRING HOUSE",
+      "ST STEPHEN",
+      "THORNHILL CEMETERY",
+      "WEST LOOP"
+  };
+
+  
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 HANG UP/ACCIDENTAL",
+      "AMBULANCE TRANSFER",
+      "ABDOMINAL PAIN/PROBLEMS",
       "ALARM",
+      "ALARM - FIRE & DETECTORS",
+      "ALARM - RESIDENTIAL",
+      "ALARMS",
+      "ALARMS (FIRE)",
+      "ALLERGIES",
+      "ASSIST MOTORIST NB",
+      "ASSIST - CITIZEN",
+      "ASSIST - OTHER AGENCY",
       "BREATHING PROBLEMS",
+      "CARDIAC OF RESPIRATORY ARREST",
       "CHECK WELL BEING",
       "CHEST PAIN (NON-TRAUMATIC)",
       "C&I DRIVER",
       "CITIZEN ASSIST/SERVICE CALL",
+      "CONTROL BURN",
+      "CONTROL BURN NOTICE",
       "CONVULSIONS/SEIZURES",
+      "DIABETIC PROBLEMS",
       "DOMESTIC DISTURBANCE/VIOLENCE",
       "ELECTRICAL HAZARD",
+      "EXTRICATION/ENTRAPPED",
       "FALLS",
+      "FIRE",
+      "GAS LEAK/GAS ODOR",
       "HEART PROBLEMS/A.I.C.D.",
       "HEMORRHAGE/LACERATION",
+      "INFORMATION",
+      "JUVENILE CALL",
+      "HAZARD - CONDITIONS",
+      "HAZMAT",
+      "MEDICAL - AID",
+      "MISSING PERSON",
       "MOTOR VEHICLE ACCIDENT REPORT",
+      "MOTOR VEHICLE SLIDE OFF",
+      "MOTOR VEHICLE VS. DEER",
+      "MUTUAL AID/ASSIST OUTSIDE AGENCY",
+      "MVC - INSURANCE REPORT",
+      "MVC - PERSONAL INJURY",
+      "MVC - PROPERTY DAMAGE",
       "ODOR (STRANGE/UNKNOWN)",
+      "OUTSIDE AGENCY ASSIST",
       "OUTSIDE FIRE",
+      "OVER DOSE",
       "OVERDOSE/POISONING (INGESTION)",
+      "PSYCHIATRIC/ABNORMAL BEHAVIOR",
       "SICK PERSON",
       "SMOKE INVESTIGATION (OUTSIDE)",
       "SPECIAL ASSIGNMENT",
+      "SPECIAL EVENTS",
       "STROKE",
       "STRUCTURE FIRE",
+      "SUICIDE",
       "SUSPICIOUS ACTIVITY",
+      "TEST LINCOLN CO 911",
+      "THREAT SUICIDE",
       "TRAFFIC HAZARD",
       "TRAFFIC/TRANSPORT ACCIDENTS",
+      "TRAINING",
+      "TRAUMATIC INJURIES (SPECIFIC)",
+      "TRESPASSING",
       "UNCONSCIOUS/FAINTING (NEAR)",
+      "UNKNOWN PROBLEMS (MAN DOWN)",
+      "UNKNOWN TROUBLE",
+      "UTILITY OUTAGE OR PROBLEM",
       "VEHICLE FIRE",
       "VEHICLE LOCKOUT"
  );
