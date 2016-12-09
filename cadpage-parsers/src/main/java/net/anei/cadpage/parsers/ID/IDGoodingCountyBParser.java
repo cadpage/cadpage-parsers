@@ -40,8 +40,9 @@ public class IDGoodingCountyBParser extends DispatchA22Parser {
   }
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "KMB AREA",   "KIMBERLY",
+      "BLISS_AREA", "BLISS",
       "GDG AREA",   "GOODING",
+      "KMB AREA",   "KIMBERLY",
       "WND AREA",   "WENDELL"
   });
   
