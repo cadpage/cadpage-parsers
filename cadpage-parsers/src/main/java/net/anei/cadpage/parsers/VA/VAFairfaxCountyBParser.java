@@ -9,7 +9,7 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
   
   public VAFairfaxCountyBParser() {
     super(CITY_CODES, "FAIRFAX COUNTY", "VA", 
-          "LOCATION:ADDR/S! EVENT_TYPE:CALL! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH! Disp:UNIT");
+          "LOCATION:ADDR/S! EVENT_TYPE:CALL! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH% Disp:UNIT");
   }
   
   @Override
