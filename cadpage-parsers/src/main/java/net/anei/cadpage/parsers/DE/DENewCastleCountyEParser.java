@@ -69,12 +69,13 @@ public class DENewCastleCountyEParser extends FieldProgramParser {
     }
   }
 
-  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d( [AP]M)?)", Pattern.CASE_INSENSITIVE);
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
-      if (!setDateTime(DATE_TIME_FMT, field, data)) abort();
+      if (!parseDateTime(field, data)) abort();
     }
   }
 
@@ -236,7 +237,7 @@ public class DENewCastleCountyEParser extends FieldProgramParser {
             int pt = time.indexOf('\t');
             if (pt < 0) pt = time.indexOf("  ");
             if (pt >= 0) time = time.substring(0,pt).trim();
-            setDateTime(DATE_TIME_FMT, time, data);
+            parseDateTime(time, data);
           }
         }
         if (field.indexOf("Cleared at:") >= 0) data.msgType = MsgType.RUN_REPORT;
@@ -250,9 +251,21 @@ public class DENewCastleCountyEParser extends FieldProgramParser {
       return "UNIT DATE TIME INFO";
     }
   }
-  
+
   private void addUnit(String unit, Data data) {
     if (unitSet.add(unit)) data.strUnit = append(data.strUnit, " ", unit);
+  }
+  
+  private boolean parseDateTime(String field, Data data) {
+    Matcher match = DATE_TIME_PTN.matcher(field);
+    if (!match.matches()) return false;
+    data.strDate = match.group(1);
+    if (match.group(3) != null) {
+      setDateTime(TIME_FMT, match.group(2), data);
+    } else {
+      data.strTime = match.group(2);
+    }
+    return true;
   }
   
   private static final Pattern DEMOTE_CITY_PTN = 
