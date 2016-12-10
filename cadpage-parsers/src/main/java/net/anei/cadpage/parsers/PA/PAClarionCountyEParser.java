@@ -13,7 +13,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   
   public PAClarionCountyEParser() {
     super(CITY_LIST, "CLARION COUNTY", "PA", 
-          "ADDR/S6 CITY? CALL! PLACE/N+? XStreets:X! X/CS+? NAME? INFO/N+");
+          "ADDR/S6 CITY? CALL! PLACE/N+? Xstreets:X! X/CS+? NAME? INFO/N+");
     addRoadSuffixTerms("EXT");
   }
   
@@ -23,7 +23,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   }
   
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]+(?:ProQA|Questionnaire:) ");
-  private static final Pattern MASTER = Pattern.compile("(.*?) - (.*?), +(.*?)(?:\n([^,].*))?[ \n]+XStreets: +");
+  private static final Pattern MASTER = Pattern.compile("(.*?) - (.*?), +(.*?)(?:\n([^,].*))?[ \n]+Xstreets: +");
   private static final Pattern MBREAK_PTN = Pattern.compile(" *\n[\n ]*");
   private static final Pattern TRAIL_NAME_PTN = Pattern.compile("(.*) ([A-Z]{5,})", Pattern.CASE_INSENSITIVE);
   
@@ -35,6 +35,8 @@ public class PAClarionCountyEParser extends FieldProgramParser {
     
     Matcher match = TRAIL_JUNK_PTN.matcher(body);
     if (match.find()) body = body.substring(0, match.start());
+    
+    body = body.replace("XStreets:", "Xstreets:");
     
     match = MASTER.matcher(body);
     if (match.lookingAt()) {
