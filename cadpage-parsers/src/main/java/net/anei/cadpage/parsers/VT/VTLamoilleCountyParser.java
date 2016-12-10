@@ -53,19 +53,20 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDRESS_CITY_PATTERN
-    = Pattern.compile("(.*?)(?:,([^,]*?))?(?:, *([A-Za-z]{2}))?(?:, *(\\d{5}))?");
+  private static final Pattern ADDRESS_PLACE_CITY_PATTERN
+    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:, *([A-Za-z]{2}))?(?:, *(\\d{5}))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      Matcher m = ADDRESS_CITY_PATTERN.matcher(field);
+      Matcher m = ADDRESS_PLACE_CITY_PATTERN.matcher(field);
       if (!m.matches()) abort();   // Can not happen!!
       String addr = m.group(1);
       addr = addr.replace(',', '&');
       parseAddress(addr, data);
-      data.strCity = getOptGroup(m.group(2));
-      if (data.strCity.equals("")) data.strCity = getOptGroup(m.group(4));
-      data.strState = getOptGroup(m.group(3));
+      data.strPlace = getOptGroup(m.group(2));
+      data.strCity = getOptGroup(m.group(3));
+      if (data.strCity.equals("")) data.strCity = getOptGroup(m.group(5));
+      data.strState = getOptGroup(m.group(4));
     }
     
     @Override
