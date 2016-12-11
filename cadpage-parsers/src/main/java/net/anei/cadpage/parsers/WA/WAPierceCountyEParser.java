@@ -12,7 +12,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
   
   public WAPierceCountyEParser() {
     super(CITY_CODES, "PIERCE COUNTY", "WA", 
-          "Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! FireComm_Map_Page:MAP! Units:SKIP! Time:TIME! EventNum:ID? Disp:UNIT!");
+          "Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! FireComm_Map_Page:MAP! Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT!");
   }
   
   @Override
