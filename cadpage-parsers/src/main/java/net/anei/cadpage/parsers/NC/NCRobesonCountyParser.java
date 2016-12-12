@@ -14,8 +14,11 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
   }
     
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "Text Message / ");
+    if (subject.length() > 0 && body.equals("CAD:")) {
+      body = body + subject;
+    }
     return super.parseMsg(body, data);
   }
 
