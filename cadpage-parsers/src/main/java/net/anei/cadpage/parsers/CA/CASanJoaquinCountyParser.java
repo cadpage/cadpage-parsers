@@ -18,8 +18,17 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class CASanJoaquinCountyParser extends FieldProgramParser {
 
   public CASanJoaquinCountyParser() {
-    super("SAN JOAQUIN COUNTY", "CA",
+    this("SAN JOAQUIN COUNTY", "CA");
+  }
+
+  CASanJoaquinCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL! Location:PLACE! Address:ADDR! City:CITY! GPS:GPS? Bldg:PLACE% Apt:APT% CrossStreets:X% Plan:PLAN% Initial_Assignment:UNIT%");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "CASanJoaquinCounty";
   }
   
   @Override
@@ -354,7 +363,9 @@ public class CASanJoaquinCountyParser extends FieldProgramParser {
         map = "";
         comment = "";
       } else {
-        if (!p.check("      ProQA Code:Map:")) break;
+        if (!p.check("      ProQA Code:")) break;
+        p.check(" ");
+        if (!p.check("Map:")) break;
         map = p.get(8);
         p.setOptional();
         if (!p.check(" Comments:")) break;
