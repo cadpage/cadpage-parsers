@@ -43,6 +43,7 @@ public class NHHanoverParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField("\\*\\* *(.*)", true);
     if (name.equals("DATETIME1")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d[AP]M", DATE_TIME_FMT1, true);
+    if (name.equals("ADDR")) return new AddressField("Addr:(.*)", false);
     if (name.equals("CITYST1")) return new MyCityState1Field();
     if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("INFO2")) return new MyInfo2Field();
