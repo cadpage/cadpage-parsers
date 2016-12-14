@@ -10,7 +10,7 @@ public class RIProvidenceCountyParser extends DispatchA32Parser {
   
   @Override
   public String getFilter() {
-    return "woonsocketdispatch@gmail.com>";
+    return "woonsocketdispatch@gmail.com,dispatch@lincolnpoliceri.com";
   }
   
   private static final String[] CITY_LIST = new String[]{
