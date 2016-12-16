@@ -22,6 +22,7 @@ public class NDCassCountyParser extends SmartAddressParser {
     removeWords("ESTATES");
     setupMultiWordStreets(
         "MAPLE RIVER",
+        "TRENT JONES",
         "TURTLE LAKE"
     );
   }
