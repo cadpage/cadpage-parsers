@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NDCassCountyParser extends SmartAddressParser {
   
-  private static final Pattern DATE_TIME_CFS_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) CFS #:? (\\d+) ");
+  private static final Pattern DATE_TIME_CFS_PTN = Pattern.compile("(?:\\* )?(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) CFS #:? (\\d+) ");
   private static final Pattern CALL_PFX_PTN = Pattern.compile("X - |X-SEND FIRE ", Pattern.CASE_INSENSITIVE);
   private static final Pattern UNIT_PTN = Pattern.compile("(?: \\d{3}| \\d{4}-[A-Z]+)+$");
  
@@ -49,11 +49,23 @@ public class NDCassCountyParser extends SmartAddressParser {
       sAddr = sAddr.substring(match.end());
     }
     
+    StartType st = StartType.START_CALL;
+    int flags = FLAG_START_FLD_REQ;
+    int pt = sAddr.indexOf(" * ");
+    if (pt < 0 && sAddr.endsWith(" *")) pt = sAddr.length()-2;
+    if (pt >= 0) {
+      data.strCall = sAddr.substring(0, pt).trim();
+      sAddr = sAddr.substring(pt+2).trim();
+      sAddr = stripFieldStart(sAddr, "*");
+      st = StartType.START_ADDR;
+      flags = 0;
+    }
     sAddr = sAddr.replace("\\", "&");
-    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_IMPLIED_INTERSECT, sAddr, data);
+    flags |= FLAG_EMPTY_ADDR_OK | FLAG_IMPLIED_INTERSECT;
+    parseAddress(st, flags, sAddr, data);
     if (prefix != null) data.strCall = prefix + data.strCall;
     
-    int pt = data.strCity.indexOf('/');
+    pt = data.strCity.indexOf('/');
     if (pt >= 0) {
       data.strState = data.strCity.substring(pt+1);
       if (data.strState.equals("ND")) data.strState = "";
@@ -61,10 +73,15 @@ public class NDCassCountyParser extends SmartAddressParser {
     }
     
     String sPlace = getLeft();
+    sPlace = stripFieldStart(sPlace, "*");
     pt = sPlace.indexOf(" - ");
     if (pt >= 0) sPlace = sPlace.substring(0,pt).trim();
     if (sPlace.length() <= 1) sPlace = "";
-    data.strPlace = sPlace;
+    if (data.strAddress.length() == 0) {
+      parseAddress(sPlace, data);
+    } else {
+      data.strPlace = sPlace;
+    }
     
     match = UNIT_PTN.matcher(sInfo);
     if (match.find()) {
@@ -87,9 +104,12 @@ public class NDCassCountyParser extends SmartAddressParser {
       "09 CARDIAC/RESPIRATORY ARREST",
       "09 CARDIAC/RESPIRATORY ARREST",
       "10 CHEST PAIN",
+      "11 CHOKING",
       "12 CONVULSIONS/SEIZURE",
       "13 DIABETIC PROBLEMS",
       "17 FALLS",
+      "19 HEART PROBLEMS",
+      "20 HEAT - COLD EXPOSURE",
       "21 HEMORRAHAGE - LACERATIONS",
       "23 OVERDOSE - POISONING",
       "24 PREGNANCY - CHILDBIRTH",
@@ -103,10 +123,12 @@ public class NDCassCountyParser extends SmartAddressParser {
       "ACCIDENT - PROPERTY",
       "AIRCRAFT CRASH",
       "ARCING WIRE/TRANSFORMER FIRE",
+      "ASSAULT",
       "BKOA",
       "BON FIRE",
       "CARBON MONOXIDE DETECTOR",
       "COMMERCIAL FIRE",
+      "COMMERCIAL FIRE ALARM RESET ONLY",
       "DOMESTIC",
       "DUMPSTER FIRE",
       "GAS/FUEL SPILLS",
@@ -126,8 +148,11 @@ public class NDCassCountyParser extends SmartAddressParser {
       "RESCUE",
       "RESIDENTIAL FIRE",
       "SUICIDAL PERSON",
+      "TEST",
+      "TS",
       "VEHICLE FIRE",
-      "WATER BREAK/WASHED OUT ROAD"
+      "WATER BREAK/WASHED OUT ROAD",
+      "WATER BREAK/SEWER/WASH OUT ROAD"
   );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -226,6 +251,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "WOLV", "WOLVERTON/MN",
       
       "BECKCO",          "BECKER COUNTY/MN",
+      "NORMCO",          "NORMAN COUNTY/MN",
       "RICHCO",          "RICHLAND COUNTY",
       "ROTHSAY",         "ROTHSAY/MN",
       "WALCOT",          "WALCOTT",
