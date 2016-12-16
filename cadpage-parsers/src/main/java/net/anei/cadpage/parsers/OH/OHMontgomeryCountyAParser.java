@@ -19,7 +19,7 @@ public class OHMontgomeryCountyAParser extends FieldProgramParser {
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
     
-    if(!subject.equals("CAD Page")) return false;
+    if(!subject.startsWith("CAD Page")) return false;
     
     String[] fields = body.split("\n");
     return parseFields(fields, data);
