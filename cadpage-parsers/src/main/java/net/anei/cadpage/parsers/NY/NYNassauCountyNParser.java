@@ -15,7 +15,7 @@ public class NYNassauCountyNParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "root@wlvacems.com";
+    return "root@wlvacems.com,Mark@MimoCAD.io";
   }
   
   @Override

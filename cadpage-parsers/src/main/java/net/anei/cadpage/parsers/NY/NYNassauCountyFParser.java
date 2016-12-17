@@ -9,12 +9,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NYNassauCountyFParser extends FieldProgramParser {
-  
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
 
   public NYNassauCountyFParser() {
     super("NASSAU COUNTY", "NY",
-           "CALL1 CALL2 CALL3 CALL4 ADDR CITY PHONE!");
+           "CALL1 ( PHONE! | CALL2 CALL3 CALL4 ADDR CITY PHONE! )");
   }
   
   @Override
@@ -25,10 +23,8 @@ public class NYNassauCountyFParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (body.endsWith(" support@2sig.com")) {
-      body = body.substring(0,body.length()-17).trim();
-    }
-    return parseFields(body.split("\n"), 6, data);
+    body = stripFieldEnd(body, " support@2sig.com");
+    return parseFields(body.split("\n"), data);
   }
   
   @Override
@@ -37,7 +33,7 @@ public class NYNassauCountyFParser extends FieldProgramParser {
       String ptn;
       switch (name.charAt(4)) {
       case '1':
-        ptn = "[A-Z\\.]+";
+        ptn = "[A-Z\\.]+\\d*";
         break;
       case '2':
         ptn = "[A-Z]{0,4}";
@@ -47,7 +43,7 @@ public class NYNassauCountyFParser extends FieldProgramParser {
       }
       return new MyCallField(ptn);
     }
-    if (name.equals("TIME")) return new TimeField(TIME_FMT);
+    if (name.equals("PHONE")) return new PhoneField("(?:1-)?\\d{3}-\\d{3}-\\d{4}");
     return super.getField(name);
   }
   
