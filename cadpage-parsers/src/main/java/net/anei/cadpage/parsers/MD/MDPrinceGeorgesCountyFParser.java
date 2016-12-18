@@ -12,12 +12,26 @@ public class MDPrinceGeorgesCountyFParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "firema8@ehub33.webhostinghub.com";
+    return "firema8@ehub33.webhostinghub.com,messaging@firemapping.org";
   }
   
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
-
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
+  }
 }
