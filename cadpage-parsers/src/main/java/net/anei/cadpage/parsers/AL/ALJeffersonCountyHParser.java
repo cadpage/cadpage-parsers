@@ -27,8 +27,26 @@ public class ALJeffersonCountyHParser extends DispatchSouthernParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{9}");
+    if (name.equals("ID")) return new IdField("\\d{6}-\\d{6}");
+    if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-
+  
+  private static final Pattern UNIT_CALL_PTN = Pattern.compile("(\\d\\d) +(.*)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = UNIT_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strUnit = match.group(1);
+        field = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "UNIT CALL";
+    }
+  }
 }
