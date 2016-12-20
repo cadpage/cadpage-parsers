@@ -16,13 +16,13 @@ public class VAAlbemarleCountyCParser extends FieldProgramParser {
   
   public VAAlbemarleCountyCParser() {
     super("ALBEMARLE COUNTY", "VA",
-          "DATETIME! Pri:PRI_CALL! PLACE! AD:ADDRCITY/S6! X! INFO/N+");
+          "( DATETIME! Pri:PRI_CALL! PLACE! AD:ADDRCITY/S6! X! INFO/N+? UNIT! END | CALL ADDRCITY X/Z? PLACE UNIT! INFO/N+ )");
     setupProtectedNames("LEWIS AND CLARK");
   }
   
   @Override
   public String getFilter() {
-    return "cad2@acuecc.org ";
+    return "cad2@acuecc.org,jplumb@albemarle.org";
   }
 
   @Override
@@ -40,6 +40,8 @@ public class VAAlbemarleCountyCParser extends FieldProgramParser {
     if (name.equals("PRI_CALL")) return new MyPriorityCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X"))  return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d{1,3}(?:A|ALS|CHF|DUTY)?|COUNTY(?:BC\\d+|DUTY|FM)?)\\b[, ]*)+", true);
     return super.getField(name);
   }
   
@@ -71,6 +73,14 @@ public class VAAlbemarleCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("Searching Cross Streets...")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(",")) return;
       super.parse(field, data);
     }
   }

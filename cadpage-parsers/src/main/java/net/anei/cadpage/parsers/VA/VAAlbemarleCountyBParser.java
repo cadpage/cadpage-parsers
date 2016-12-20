@@ -2,6 +2,8 @@ package net.anei.cadpage.parsers.VA;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -20,7 +22,7 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad2@acuecc.org ";
+    return "cad2@acuecc.org,jplumb@albemarle.org";
   }
 
   @Override
@@ -36,14 +38,12 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
     return true;
   }
   
-  private static DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-  
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z ]+", true);
+    if (name.equals("SRC")) return new SourceField("[A-Za-z ]+", true);
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
   
@@ -63,4 +63,22 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [ap]m)?)", Pattern.CASE_INSENSITIVE);
+  private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      String time = match.group(2).toUpperCase();
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
+    }
+  }
+
 }
