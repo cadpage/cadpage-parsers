@@ -17,7 +17,7 @@ public class NDCassCountyParser extends SmartAddressParser {
  
   public NDCassCountyParser() {
     super(CITY_CODES, "CASS COUNTY", "ND");
-    setFieldList("CALL ADDR APT CITY ST PLACE DATE TIME ID INFO UNIT");
+    setFieldList("CALL ADDR APT CITY ST PLACE DATE TIME ID INFO UNIT GPS");
     setupCallList(CALL_LIST);
     removeWords("ESTATES");
     setupMultiWordStreets(
@@ -30,6 +30,11 @@ public class NDCassCountyParser extends SmartAddressParser {
   @Override
   public String getFilter() {
     return "dispatch@rrrdc.or,dispatch@cityoffargo.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   @Override
@@ -89,6 +94,13 @@ public class NDCassCountyParser extends SmartAddressParser {
       data.strUnit = match.group().trim();
       sInfo = sInfo.substring(0,match.start()).trim();
     }
+    
+    pt = sInfo.indexOf(" GPS:");
+    if (pt >= 0) {
+      setGPSLoc(sInfo.substring(pt+5), data);
+      sInfo = sInfo.substring(0,pt).trim();
+    }
+    
     for (String info : sInfo.split("Nature Of Call:")) {
       info = info.trim();
       if (info.length() > data.strSupp.length()) data.strSupp = info;
