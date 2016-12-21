@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 /**
- * Nassau Bay (Harris County, TX)  
+ * NLa Porte, TX 
  */
 
 public class TXLaPorteParser extends DispatchOSSIParser {
