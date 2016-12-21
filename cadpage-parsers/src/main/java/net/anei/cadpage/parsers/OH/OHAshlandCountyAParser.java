@@ -9,6 +9,11 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   public OHAshlandCountyAParser() {
     super(true, CITY_LIST, "ASHLAND COUNTY", "OH");
   }
+  
+  @Override
+  public String getFilter() {
+    return "911@ashlandcountysheriff.org";
+  }
 
   private static final String[] CITY_LIST = new String[]{
     
