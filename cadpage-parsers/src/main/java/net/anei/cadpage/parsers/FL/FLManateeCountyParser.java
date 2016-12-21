@@ -10,16 +10,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class FLManateeCountyParser extends FieldProgramParser {
   
-  private static final Pattern FROM_PREFIX_PTN = Pattern.compile("(?:\\*\\*\\[from \\d+\\]|FWD:) +");
-  
   public FLManateeCountyParser() {
     super(CITY_CODES, "MANATEE COUNTY", "FL",
-        "Location:ADDR/S? Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO TIME:TIME% MAP_GRID:MAP TIME:TIME");
+        "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! " + 
+                         "| Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
   }
 
   @Override
   public String getFilter() {
-    return "93001,777,888,@txt.voice.google.com";
+    return "93001,777,888,@txt.voice.google.com,americanopportunityfla@gmail.com";
   }
   
   @Override
@@ -27,15 +26,24 @@ public class FLManateeCountyParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
   
+  private static final Pattern FROM_PREFIX_PTN = Pattern.compile("(?:\\*\\*\\[from \\d+\\]|FWD:) +");
+  private static final Pattern EST_PREFIX_PTN = Pattern.compile("\\d+ : EST |EA : ");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
+    
     int pt = body.indexOf("\n\n--\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    
     Matcher match = FROM_PREFIX_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
-    if (body.startsWith("EA : ")) body = "Location:" + body.substring(5);
+
+    match = EST_PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) body = "Location: " + body.substring(match.end());
+
     body = body.replaceAll("\\s+", " ").replace("SUB TYPE:", " SUB TYPE:");
     body = body.replace("Estimated Address ", "Estimated Address:");
+    
     if (!super.parseMsg(body, data)) return false;
     if (data.strAddress.length() == 0) return false;
     return true;
