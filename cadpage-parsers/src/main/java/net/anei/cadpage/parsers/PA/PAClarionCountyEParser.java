@@ -13,7 +13,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   
   public PAClarionCountyEParser() {
     super(CITY_LIST, "CLARION COUNTY", "PA", 
-          "ADDR/S6 CITY? CALL! PLACE/N+? Xstreets:X! X/CS+? NAME? INFO/N+");
+          "( LAT:ADDR1 LON:ADDR2 | ADDR/S6 ) CITY? CALL! PLACE/N+? Xstreets:X! X/CS+? NAME? INFO/N+");
     addRoadSuffixTerms("EXT");
   }
   
@@ -23,7 +23,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   }
   
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]+(?:ProQA|Questionnaire:) ");
-  private static final Pattern MASTER = Pattern.compile("(.*?) - (.*?), +(.*?)(?:\n([^,].*))?[ \n]+Xstreets: +");
+  private static final Pattern MASTER = Pattern.compile("(.*?) - (.*?), +(.*?)(?:\n([^,].*))?[ \n]+Xstreets: *");
   private static final Pattern MBREAK_PTN = Pattern.compile(" *\n[\n ]*");
   private static final Pattern TRAIL_NAME_PTN = Pattern.compile("(.*) ([A-Z]{5,})", Pattern.CASE_INSENSITIVE);
   
@@ -129,6 +129,8 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR1")) return new MyAddress1Field();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("NAME")) return new MyNameField();
@@ -154,6 +156,20 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       field = cleanCity(field);
       super.parse(field,  data);
       data.strApt = stripFieldStart(data.strApt, "-");
+    }
+  }
+  
+  private class MyAddress1Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = "LAT:" + field;
+    }
+  }
+  
+  private class MyAddress2Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = data.strAddress + ", LON:" + field;
     }
   }
   
