@@ -14,13 +14,17 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   private static final String CAD_MARKER = "IPS I/Page Notification";
   
   public ALMadisonCountyParser() {
-    super(CITY_TABLE, "MADISON COUNTY", "AL",
-           "EVENT:ID? Loc:ADDR! EVT#:ID TYPE:CALL TIME:TIME GRID_ID:MAP");
+    this("MADISON COUNTY", "AL");
+  }
+  
+  ALMadisonCountyParser(String defCity, String defState) {
+    super(CITY_TABLE, defCity, defState,
+           "EVENT:ID? Loc:ADDR EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP");
   }
   
   @Override
   public String getFilter() {
-    return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org";
+    return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org,cad.page@hsv.madco911.com";
   }
 
   @Override
@@ -40,7 +44,11 @@ public class ALMadisonCountyParser extends FieldProgramParser {
       return false;
     } while (false);
    
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    
+    // Address and call ID are both optional.  But one of them 
+    // must be present
+    return data.strAddress.length() > 0 || data.strCallId.length() > 0;
   }
   
   private class MyAddressField extends AddressField {
