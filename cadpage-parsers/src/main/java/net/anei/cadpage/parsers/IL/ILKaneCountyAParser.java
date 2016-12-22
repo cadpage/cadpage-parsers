@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class ILKaneCountyAParser extends SmartAddressParser {
   
-  private static final Pattern MASTER = Pattern.compile("([- A-Z0-9]+?)  (?:((?:[A-Z]{2}(?:\\d{4}[A-Z]?|-[A-Z0-9]+)|ALGN|ELGIN|PNGR)) )?([^ ].*?) ([A-Z]{3,4}) - (.*?)(?: (\\d{4}-\\d{8}))?(?: ([A-Z]-\\d\\d))?");
+  private static final Pattern MASTER = Pattern.compile("([- A-Z0-9]+?)  (?:((?:[A-Z]{2}(?:\\d{4}[A-Z]?|-[A-Z0-9]+)|ALGN|ELGIN|PNGR)) )?([^ ].*?) ([A-Z]{3,4}) ?- (.*?)(?: (\\d{4}-\\d{8}))?(?: ([A-Z]-\\d\\d))?");
   private static final Pattern APT_PTN = Pattern.compile("([0-9][^ ]*|[A-Z]\\d*)\\b *(.*)", Pattern.CASE_INSENSITIVE);
   
   public ILKaneCountyAParser() {

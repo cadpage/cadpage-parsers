@@ -76,7 +76,10 @@ public class ILKaneCountyParser extends GroupBestParser {
       // Cook County
       "BARRINGTON",
       "SCHAUMBURG",
-      "STREAMWOOD"
+      "STREAMWOOD",
+      
+      // McHenry County
+      "CARY"
 
   };
 
