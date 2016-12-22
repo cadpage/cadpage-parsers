@@ -11,7 +11,7 @@ public class NCMontgomeryCountyParser extends DispatchSouthernParser {
   
   
   public NCMontgomeryCountyParser() {
-    super(CITY_LIST, "MONTGOMERY COUNTY", "NC", DSFLAG_ID_OPTIONAL | DSFLAG_LEAD_PLACE);
+    super(CITY_LIST, "MONTGOMERY COUNTY", "NC", DSFLAG_ID_OPTIONAL | DSFLAG_BOTH_PLACE | DSFLAG_NO_NAME_PHONE);
     allowBadChars("()");
     removeWords("LA");
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -22,7 +22,7 @@ public class NCMontgomeryCountyParser extends DispatchSouthernParser {
     return "@montgomerycountync.com";
   }
   
-  private static final Pattern BAD_MSG_PTN = Pattern.compile(".*;.*;.*;.*");
+  private static final Pattern BAD_MSG_PTN = Pattern.compile("CAD:.*;.*;.*;.*");
   
   @Override
   public boolean parseMsg(String body, Data data) {

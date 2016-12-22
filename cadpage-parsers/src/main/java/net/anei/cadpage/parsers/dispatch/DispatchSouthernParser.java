@@ -415,7 +415,12 @@ public class DispatchSouthernParser extends FieldProgramParser {
       // assume whatever follows it is a place name
       if (trailPlace) {
         if (sLeft.startsWith("/")) {
-          data.strAddress = data.strAddress + " & " + sLeft.substring(1).trim();
+          sLeft = sLeft.substring(1).trim();
+          if (data.strCity.length() == 0 && isCity(sLeft)) {
+            data.strCity = sLeft;
+          } else {
+            data.strAddress = data.strAddress + " & " + sLeft;
+          }
         } else {
           data.strPlace = append(data.strPlace, " - ", sLeft);
         }
