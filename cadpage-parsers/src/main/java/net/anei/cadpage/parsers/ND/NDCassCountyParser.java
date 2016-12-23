@@ -20,6 +20,7 @@ public class NDCassCountyParser extends SmartAddressParser {
     setFieldList("CALL ADDR APT CITY ST PLACE DATE TIME ID INFO UNIT GPS");
     setupCallList(CALL_LIST);
     removeWords("ESTATES");
+    setupSaintNames("FRANCIS");
     setupMultiWordStreets(
         "MAPLE RIVER",
         "TRENT JONES",
