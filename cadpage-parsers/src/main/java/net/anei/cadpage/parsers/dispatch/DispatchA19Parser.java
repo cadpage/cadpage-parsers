@@ -32,7 +32,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   public DispatchA19Parser(String defCity, String defState) {
     super(defCity, defState,
            "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! Contact:NAME? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO! Comments:INFO+ Receiving_and_Responding_Units:SKIP TIMES/N+ " +
-           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! Address:ADDR! Zone:MAP! City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO! INFO+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO? INFO+ Contact:NAME Phone:PHONE )");
+           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO! INFO+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO? INFO+ Contact:NAME Phone:PHONE )");
   }
   
   @Override
@@ -71,9 +71,18 @@ public class DispatchA19Parser extends FieldProgramParser {
   }
   
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|RM|SUITE) *(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*) {3,}([ A-Z]*), *([A-Z]{2})");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      
+      Matcher match = ADDR_CITY_ST_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCity = match.group(2).trim();
+        data.strState = match.group(3);
+      }
+      
       String apt = null;
       String place = null;
       int pt = field.lastIndexOf(';');
@@ -103,9 +112,8 @@ public class DispatchA19Parser extends FieldProgramParser {
           }
         }
       }
-      if (apt != null && place == null) {
-      }
       if (place != null) data.strPlace = place;
+      
       super.parse(field, data);
       if (apt != null) data.strApt = append(data.strApt, "-", apt);
     }
@@ -120,7 +128,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "PLACE " + super.getFieldNames();
+      return "ADDR PLACE APT CITY ST";
     }
   }
 

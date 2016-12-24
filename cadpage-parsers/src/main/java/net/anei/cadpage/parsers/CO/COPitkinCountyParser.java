@@ -11,6 +11,6 @@ public class COPitkinCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return " PCREDC@pitkin911.org";
+    return "PCREDC@pitkin911.org";
   }
 }
