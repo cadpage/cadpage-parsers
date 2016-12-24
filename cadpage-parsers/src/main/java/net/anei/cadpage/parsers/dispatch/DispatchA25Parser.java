@@ -77,6 +77,17 @@ public class DispatchA25Parser extends FieldProgramParser {
         addr = addr.substring(0,pt);
       }
       
+      String apt = "";
+      if (addr.endsWith(")")) {
+        pt = addr.lastIndexOf('(');
+        if (pt >= 0) {
+          apt = addr.substring(pt+1, addr.length()-1).trim();
+          addr = addr.substring(0,pt).trim();
+          match = APT_PREFIX_PTN.matcher(apt);
+          if (match.matches()) apt = match.group(1);
+        }
+      }
+      
       pt = addr.indexOf(" - ");
       if (pt >= 0) {
         data.strCall = addr.substring(0,pt).trim();
@@ -97,6 +108,8 @@ public class DispatchA25Parser extends FieldProgramParser {
           data.strPlace = "";
         }
       }
+      
+      data.strApt = append(data.strApt, "-", apt);
       
       // See if place looks like it should really be prefixed to the address
       match = PLACE_ADDR_PREFIX_PTN.matcher(data.strPlace);
@@ -132,7 +145,7 @@ public class DispatchA25Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CALL_PTN = Pattern.compile("([-A-Z0-9]+) - (.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CALL_PTN = Pattern.compile("([- A-Z0-9]+?) - (.*)", Pattern.CASE_INSENSITIVE);
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -167,6 +180,7 @@ public class DispatchA25Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT(?: ROOM)?|LOT|RM|ROOM|STE)[ :]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -177,10 +191,12 @@ public class DispatchA25Parser extends FieldProgramParser {
       String addr = p.get();
       String apt = "";
       if (addr.endsWith(")")) {
-        int pt = addr.indexOf('(');
+        int pt = addr.lastIndexOf('(');
         if (pt >= 0) {
           apt = addr.substring(pt+1, addr.length()-1).trim();
           addr = addr.substring(0,pt).trim();
+          Matcher match = APT_PREFIX_PTN.matcher(apt);
+          if (match.matches()) apt = match.group(1);
         }
       }
       parseAddress(addr, data);
