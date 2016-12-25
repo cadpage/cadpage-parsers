@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA27Parser extends FieldProgramParser {
   
-  private static final Pattern MARKER = Pattern.compile("Notification from (?:CIS )?[A-Za-z0-9 ]+:");
+  private static final Pattern MARKER = Pattern.compile("Notification from (?:CIS )?[-A-Za-z0-9 ]+:");
   private static final Pattern DELIM_PTN = Pattern.compile("\n{2}");
   
   private Pattern unitPtn;
