@@ -70,8 +70,8 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|RM|SUITE) *(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*) {3,}([ A-Z]*), *([A-Z]{2})");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)[: ]*(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -115,15 +115,21 @@ public class DispatchA19Parser extends FieldProgramParser {
       if (place != null) data.strPlace = place;
       
       super.parse(field, data);
-      if (apt != null) data.strApt = append(data.strApt, "-", apt);
+      if (apt != null && !apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
     }
     
     private String checkApt(String field) {
       Matcher match = ADDR_APT_PTN.matcher(field);
-      if (!match.matches()) return null;
-      String apt = match.group(1);
-      if (apt == null) apt = field;
-      return apt;
+      if (match.matches()) {
+        String apt = match.group(1);
+        if (apt == null) apt = field;
+        return apt;
+      }
+      if (field.startsWith("#")) {
+        field = field.substring(1).trim();
+        if (!field.contains(" ")) return field;
+      }
+      return null;
     }
     
     @Override
