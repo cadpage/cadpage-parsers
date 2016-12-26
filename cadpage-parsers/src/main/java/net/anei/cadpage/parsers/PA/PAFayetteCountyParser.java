@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class PAFayetteCountyParser extends DispatchB2Parser {
 
   public PAFayetteCountyParser() {
-    super("FAYETTE-911:", CITY_LIST, "FAYETTE COUNTY", "PA");
+    super("FAYETTE-911:", -5, CITY_LIST, "FAYETTE COUNTY", "PA");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -48,6 +48,7 @@ public class PAFayetteCountyParser extends DispatchB2Parser {
   
   private static final String[] CITY_LIST = new String[]{
       "CONNELLSVILLE",
+      "CONNELLSVILLE CITY",
       "UNIONTOWN",
   
       "BELLE VERNON",

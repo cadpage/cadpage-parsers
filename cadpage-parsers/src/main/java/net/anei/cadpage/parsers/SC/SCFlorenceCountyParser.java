@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchBParser;
 public class SCFlorenceCountyParser extends DispatchBParser {
  
   public SCFlorenceCountyParser() {
-    super(1, CITY_CODES, "FLORENCE COUNTY", "SC");
+    super(-1, CITY_CODES, "FLORENCE COUNTY", "SC");
   }
   
   @Override

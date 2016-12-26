@@ -62,12 +62,12 @@ public class DispatchB2Parser extends DispatchBParser {
   }
 
   public DispatchB2Parser(String prefix, String[] cityList, String defCity, String defState) {
-    super(cityList, defCity, defState);
+    super(-4, cityList, defCity, defState);
     this.prefixList = prefix.split("\\|\\|");
   }
 
   public DispatchB2Parser(String prefix, String[] cityList, String defCity, String defState, int flags) {
-    super(cityList, defCity, defState);
+    super(-4, cityList, defCity, defState);
     setup(prefix, flags);
   }
 
@@ -77,7 +77,7 @@ public class DispatchB2Parser extends DispatchBParser {
   }
 
   public DispatchB2Parser(String prefix, Properties cityCodes, String defCity, String defState) {
-    super(cityCodes, defCity, defState);
+    super(-4, cityCodes, defCity, defState);
     setup(prefix,0);
   }
   
@@ -86,7 +86,7 @@ public class DispatchB2Parser extends DispatchBParser {
   }
   
   public DispatchB2Parser(String prefix, String defCity, String defState, int flags) {
-    super(defCity, defState);
+    super(-4, defCity, defState);
     setup(prefix, flags);
   }
   
@@ -153,17 +153,8 @@ public class DispatchB2Parser extends DispatchBParser {
       field = field.substring(1, pt-1);
     }
 
-    Matcher match = CODE_PATTERN.matcher(field);
-    if (match.find()) {
-      data.strCode = match.group(1);
-      field = field.substring(match.end());
-    } else if (forceCallCode) {
-      int pt = field.indexOf(' ');
-      if (pt >= 0) {
-        data.strCode = field.substring(0,pt);
-        field = field.substring(pt+1).trim();
-      }
-    }
+    Matcher match;
+    field = parseCallCode(field, data);
     
     if (address != null) {
       data.strCall = field;
@@ -309,6 +300,21 @@ public class DispatchB2Parser extends DispatchBParser {
     return null;
   }
 
+  private String parseCallCode(String field, Data data) {
+    Matcher match = CODE_PATTERN.matcher(field);
+    if (match.find()) {
+      data.strCode = match.group(1);
+      field = field.substring(match.end());
+    } else if (forceCallCode) {
+      int pt = field.indexOf(' ');
+      if (pt >= 0) {
+        data.strCode = field.substring(0,pt);
+        field = field.substring(pt+1).trim();
+      }
+    }
+    return field;
+  }
+
   /**
    * Method that can be called to indicate that something that looks like a name really is not a name value
    * @param name field we have tentatively identified as a name value
@@ -316,5 +322,38 @@ public class DispatchB2Parser extends DispatchBParser {
    */
   protected boolean notName(String name) {
     return false;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new BaseCallField();
+    if (name.equals("CALL_ADDR")) return new BaseCallAddressField();
+    return super.getField(name);
+  }
+
+  private class BaseCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = parseCallCode(field, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private class BaseCallAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = parseCallCode(field, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE " + super.getFieldNames();
+    }
   }
 }

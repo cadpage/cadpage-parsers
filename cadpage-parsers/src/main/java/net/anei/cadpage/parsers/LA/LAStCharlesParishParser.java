@@ -62,6 +62,8 @@ public class LAStCharlesParishParser extends DispatchB2Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (MISSING_PFX_PTN.matcher(body).lookingAt()) body = "911:" + body;
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseMsg(body, data)) return false;
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
     return true;

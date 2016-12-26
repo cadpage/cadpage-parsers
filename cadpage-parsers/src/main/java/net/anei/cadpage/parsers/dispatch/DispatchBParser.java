@@ -55,24 +55,26 @@ public class DispatchBParser extends FieldProgramParser {
   }
   
   private static String calcProgram(int version) {
-    switch (version) {
+    switch (Math.abs(version)) {
     case 0: return null;
-    case 1: return "ADDR/SC XS:X NAME Return_Phone:PHONE Cad:ID!";
+    case 1: return "CALL_ADDR/SC XS:X? CITY? NAME Return_Phone:PHONE Cad:ID!";
     case 2: return "CALL ADDR Apt:APT? CITY? PLACE Map:MAP Cad:ID";
     case 3: return "CALL ADDR Apt:APT? CITY? NAME Map:MAP Cad:ID";
+    case 4: return "CALL! ADDR/S6! Apt:APT? XS:X? CITY? NAME PHONE Map:MAP Cad:ID";
+    case 5: return "CALL_ADDR/S69C! Apt:APT? XS:X? CITY? NAME PHONE Map:MAP Cad:ID";
     default:return null;
     }
   }
-  
-  private static final int MIN_FIELD_COUNTS[] = new int[]{ 4, 2, 2};
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     
     // See if this is the new fangled line break delimited format
-    if (version > 0) {
+    if (version != 0) {
       String[] flds = body.split("\n");
-      if (flds.length >= MIN_FIELD_COUNTS[version-1]) return parseFields(flds, data);
+      if (version > 0 || flds.length >= 3) {
+        return parseFields(flds, data);
+      }
     }
  
     // Otherwise use the old logic
@@ -114,15 +116,7 @@ public class DispatchBParser extends FieldProgramParser {
     data.strMap = props.getProperty("Map", "");
     String callId = props.getProperty("Cad");
     if (callId != null) {
-      int pt = callId.indexOf(' ');
-      if (pt >= 0) {
-        String info = callId.substring(pt+1).trim();
-        match = INFO_PREFIX_PTN.matcher(info);
-        if (match.lookingAt()) info = info.substring(match.end());
-        data.strSupp = info;
-        callId = callId.substring(0,pt);
-      }
-      data.strCallId = callId;
+      parseCallId(callId, data);
     }
     
     String time = props.getProperty("Time", "");
@@ -173,7 +167,31 @@ public class DispatchBParser extends FieldProgramParser {
     if (data.strName.equals("UNK")) data.strName = "";
     return true;
   }
+
+  private void parseCallId(String callId, Data data) {
+    Matcher match;
+    int pt = callId.indexOf(' ');
+    if (pt >= 0) {
+      String info = callId.substring(pt+1).trim();
+      match = INFO_PREFIX_PTN.matcher(info);
+      if (match.lookingAt()) info = info.substring(match.end());
+      data.strSupp = info;
+      callId = callId.substring(0,pt);
+    }
+    data.strCallId = callId;
+  }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new BaseCallField();
+    if (name.equals("CALL_ADDR")) return new BaseCallAddressField();
+    if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("APT")) return new BaseAptField();
+    if (name.equals("MAP")) return new BaseMapField();
+    if (name.equals("ID")) return new BaseIdField();
+    return super.getField(name);
+  }
+
   private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -189,6 +207,34 @@ public class DispatchBParser extends FieldProgramParser {
     }
   }
   
+  private class BaseCallAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCall.length() == 0) {
+        int pt = field.indexOf('>');
+        if (pt >= 0) {
+          data.strCode = field.substring(0,pt).trim();
+          field = field.substring(pt+1).trim();
+        }
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE " + super.getFieldNames();
+    }
+  }
+  
+  private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
+  private class BaseCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = MBLANK_PTN.matcher(field).replaceAll(" ");
+      super.parse(field, data);
+    }
+  }
+  
   private class BaseAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
@@ -198,26 +244,31 @@ public class DispatchBParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern NULL_GRID_PTN = Pattern.compile("0*,0*");
   private class BaseMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf("Grids:");
       if (pt >= 0) {
         String grid = field.substring(pt+6).trim();
-        if (grid.equals("00000,000") || grid.equals(",")) grid = "";
+        if (NULL_GRID_PTN.matcher(grid).matches()) grid = "";
         field = field.substring(0,pt).trim();
-        field = append(field, "-", grid);
+        field = append(field, "/", grid);
       }
       super.parse(field, data);
     }
   }
   
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new BaseCallField();
-    if (name.equals("APT")) return new BaseAptField();
-    if (name.equals("MAP")) return new BaseMapField();
-    return super.getField(name);
+  private class BaseIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      parseCallId(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ID INFO";
+    }
   }
   
   private void setup() {

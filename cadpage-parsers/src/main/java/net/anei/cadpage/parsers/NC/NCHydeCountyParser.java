@@ -6,13 +6,13 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class NCHydeCountyParser extends DispatchB2Parser {
 
   public NCHydeCountyParser() {
-    super("911-CENTER:",CITY_LIST, "HYDE COUNTY", "NC");
+    super("911-CENTER:", CITY_LIST, "HYDE COUNTY", "NC", B2_FORCE_CALL_CODE);
     setupCallList(CALL_LIST);
   }
   
   private static final CodeSet CALL_LIST = new CodeSet(
       
-      "FBRUSH BRUSH / WOODS / GRASS FIRE",
+      "BRUSH / WOODS / GRASS FIRE",
       "CARDIAC/CHEST PAINS",
       "DIABETIC EMERGENCY",
       "EMS UNKNOWN",
@@ -22,7 +22,6 @@ public class NCHydeCountyParser extends DispatchB2Parser {
       "HELICOPTER LANDING",
       "INJURED PERSON",
       "RESPIRATORY DISTRESS",
-      "RESP RESPIRATORY DISTRESS",
       "SICK CALL",
       "SUBJECT HEMORRHAGING",
       "SUICIDE"

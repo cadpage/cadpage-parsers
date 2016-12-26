@@ -12,7 +12,7 @@ public class NYGreeneCountyParser extends DispatchB2Parser {
     "PALENVILLE", "PRATTSVILLE", "TANNERSVILLE", "WINDHAM"};
  
   public NYGreeneCountyParser() {
-    super("GREENE911:", 3, CITY_LIST, "GREENE COUNTY", "NY");
+    super("GREENE911:", CITY_LIST, "GREENE COUNTY", "NY");
   }
   
   @Override
