@@ -14,7 +14,7 @@ public class GAHenryCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "93001,777";
+    return "93001,777,4702193511";
   }
   
   @Override
