@@ -14,7 +14,7 @@ public class IAWarrenCountyBParser extends FieldProgramParser {
   
   IAWarrenCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "ID DATE/d TIME ( TRANSPORT CITY? INFO END | CALL ( ADDR/Z CITY | ) ( PLACE X/Z X/Z MAP! | X X/Z? MAP! | PLACE X/Z MAP! | PLACE MAP! | MAP! | ) INFO/N+ )");
+          "ID DATE/d TIME CALL ( INFO END | ( ADDR/Z CITY | ) ( PLACE X/Z X/Z MAP! | X X/Z? MAP! | PLACE X/Z MAP! | PLACE MAP! | MAP! | ) INFO/N+ )");
   }
   
   @Override
@@ -40,7 +40,7 @@ public class IAWarrenCountyBParser extends FieldProgramParser {
     if (name.equals("DATE")) return new DateField("\\d\\d-\\d\\d-\\d\\d", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("TRANSPORT")) return new CallField("TRANSPORT - .*", true);
-    if (name.equals("MAP")) return new MapField("(?:V[FG]|[CDE]|CLV|UI)\\d+", true);
+    if (name.equals("MAP")) return new MapField("(?:V[FG]|[CDE]|CLV|UI)\\d+[A-Z]?", true);
     return super.getField(name);
   }
   
