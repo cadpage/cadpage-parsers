@@ -20,6 +20,7 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "CAD:");
     return parseFields(body.split(";"), data);
   }
   
@@ -47,6 +48,8 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
   
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BOOM", "BOOMER",
+      "COLL", "COLLETTSVILLE",
       "GF",   "GRANITE FALLS",
       "GMW",  "GAMEWELL",
       "GC",   "GRACE CHAPEL",
@@ -55,6 +58,7 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
       "KC",   "KINGS CREEK",
       "LEN",  "LENOIR",
       "LR",   "LITTLE RIVER",
+      "MORG", "MORGONTON",
       "NC",   "NORTH CATAWBA",
       "PATT", "PATTERSON",
       "RHOD", "RHODHISS",
