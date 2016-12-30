@@ -177,7 +177,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       // "EL",     "ELGIN",       // Conflict
       "EOL",    "EOLA",
       "ET",     "ELK GROVE TWP",
-      "FML",    "BATAVIA",
+      "FML",    "FERMILAB",
       "FP",     "FRANKLIN PARK",
       "FR",     "FERMI LAB",
       "FX",     "FOX RIVER",
@@ -256,7 +256,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       "WG",     "WEST CHICAGO",
       "WH",     "WHEATON",
       "WI",     "WINFIELD",
-      "WL",     "WILLOW SPRINGS",
+      "WL",     "WILLOWBROOK",
       "WLS",    "WILLOW SPRINGS",
       "WM",     "WESTMONT",
       "WN",     "WINFIELD",
