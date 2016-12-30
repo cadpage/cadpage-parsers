@@ -12,7 +12,7 @@ public class SCMcCormickCountyParser extends DispatchGeoconxParser {
 
   @Override
   public String getFilter() {
-    return "geoconex@nlamerica.com,dispatch@911email.org,dispatch@911email.net";
+    return "geoconex@nlamerica.com,dispatch@911email.org,dispatch@911email.net,mccormickcosc@911email.net";
   }
 
   @Override
