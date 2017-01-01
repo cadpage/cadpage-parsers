@@ -27,18 +27,13 @@ public class OHTrentonParser extends DispatchEmergitechParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
-    String[] subflds = subject.split("\\|");
-    if (subflds.length != 2 || !subflds[0].equals("Trenton Paging System")) return false;
-    if (!body.startsWith("-")) return false;
-    body = '[' + subflds[1] + ']' + body;
-    
     Matcher match = DATE_TIME_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1).trim();
       data.strDate = match.group(2);
       setTime(TIME_FMT, match.group(3), data);
     }
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
   
   @Override
@@ -47,7 +42,60 @@ public class OHTrentonParser extends DispatchEmergitechParser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-    "MIDDLETOWN",
-    "TRENTON"
+      "ALERT",
+      "AMANDA",
+      "BECKETT RIDGE",
+      "BETHANY",
+      "BLUE BALL",
+      "COLLEGE CORNER",
+      "COLLINSVILLE",
+      "DARRTOWN",
+      "ENGLE'S CORNER",
+      "EXCELLO",
+      "FAIRFIELD",
+      "FOUR BRIDGES",
+      "HAMILTON",
+      "HANOVER",
+      "HERITAGE",
+      "INDIAN SPRINGS",
+      "JACKSONBURG",
+      "LEMON",
+      "LESOURDESVILLE",
+      "LIBERTY",
+      "MADISON",
+      "MAUD",
+      "MCGONIGLE",
+      "MIDDLETOWN",
+      "MILFORD",
+      "MILLVILLE",
+      "MILTONVILLE",
+      "MONROE",
+      "MORGAN",
+      "NEW MIAMI",
+      "OKEANA",
+      "OLDE WEST CHESTER",
+      "ONEIDA",
+      "OVERPECK",
+      "OXFORD",
+      "PISGAH",
+      "POASTTOWN",
+      "PORT UNION",
+      "PRINCETON",
+      "REILY",
+      "ROSS",
+      "SCIPIO",
+      "SEVEN MILE",
+      "SHANDON",
+      "SHARONVILLE",
+      "SOMERVILLE",
+      "ST CLAIR",
+      "TRENTON",
+      "TYLERSVILLE",
+      "WAYNE",
+      "WEST CHESTER",
+      "WEST MIDDLETOWN",
+      "WETHERINGTON",
+      "WILLIAMSDALE",
+      "WOODSDALE"
   };
 }
