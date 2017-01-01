@@ -45,12 +45,35 @@ public class OHPrebleCountyParser extends DispatchEmergitechParser {
     "WASHINGTON",
 
     // Unincorporated communities
+
+    "BRENNERSVILLE",
+    "BRINLEY",
+    "BROWNS",
     "CAMPBELLSTOWN",
+    "CEDAR SPRINGS",
+    "DADSVILLE",
+    "EBENEZER",
+    "ENTERPRISE",
     "FAIRHAVEN",
+    "GETTYSBURG",
+    "GREENBUSH",
+    "HAMBURG",
+    "INGOMAR",
     "MORNING SUN",
+    "MUTTONVILLE",
     "NEW HOPE",
+    "NEW LEXINGTON",
+    "NEW WESTVILLE",
+    "SUGAR VALLEY",
+    "TALAWANDA SPRINGS",
+    "WEST FLORENCE",
+    "WEST SONORA",
+    "WHEATVILLE",
     
     // Butler County
-    "SOMERVILLE"
+    "SOMERVILLE",
+    
+    // Montgomery County
+    "GERMANTOWN"
   };
 }

@@ -83,7 +83,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     String getFieldNames();
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\[([-A-Z0-9]+)\\]-+ ?");
+  private static final Pattern UNIT_PTN = Pattern.compile("\\[([-A-Z0-9]+)\\] *-+ *");
   private static final Pattern ID_PTN = Pattern.compile("Call: *([- 0-9]+)\\b");
   private static final Pattern HOUSE_DECIMAL_PTN = Pattern.compile("\\b(\\d+)\\.0{1,2}(?= )");
   private static final Pattern COMMENTS_PTN = Pattern.compile("\\bC ?O ?M ?M ?E ?N ?T ?S ?:");
@@ -509,6 +509,10 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     }
     
     // See if this is the new fangled dash delimited format.  Makes things so much easier
+    if (body.contains(" - LOCATION:")) {
+      if (body.endsWith("-")) body += ' ';
+      return parseFields(body.substring(st).split(" - "), data);
+    }
     String tmp = body.substring(st);
     if (tmp.contains(" - Location:")) {
       
