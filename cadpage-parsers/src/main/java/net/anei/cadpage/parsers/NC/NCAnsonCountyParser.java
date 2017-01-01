@@ -12,7 +12,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCAnsonCountyParser extends DispatchSouthernParser {
 
   public NCAnsonCountyParser() {
-    super(CITY_LIST, "ANSON COUNTY", "NC", 0);
+    super(CITY_LIST, "ANSON COUNTY", "NC", 
+          DSFLG_ADDR | DSFLG_ID | DSFLG_TIME);
   }
   
   @Override
@@ -29,6 +30,14 @@ public class NCAnsonCountyParser extends DispatchSouthernParser {
     return true;
   }
   
+  private static final Pattern AT_PTN = Pattern.compile("\\bAT\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  protected void parseMain(String sAddr, Data data) {
+    sAddr = AT_PTN.matcher(sAddr).replaceAll("@");
+    super.parseMain(sAddr, data);
+  }
+
   @Override
   protected void parseExtra(String sExtra, Data data) {
     Matcher match = EXTRA_PTN.matcher(sExtra);
@@ -48,6 +57,7 @@ public class NCAnsonCountyParser extends DispatchSouthernParser {
     "NORTH ANSONVILLE",
     "PEACHLAND",
     "POLKTON",
-    "WADESBORO"
+    "WADESBORO",
+    "STANLY"
   };
 }

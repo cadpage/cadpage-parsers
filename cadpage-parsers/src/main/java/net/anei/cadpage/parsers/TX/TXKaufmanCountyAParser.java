@@ -11,7 +11,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class TXKaufmanCountyAParser extends DispatchSouthernParser {
 
   public TXKaufmanCountyAParser() {
-    super(CITY_LIST, "KAUFMAN COUNTY", "TX", DSFLAG_NO_IMPLIED_APT | DSFLAG_NO_NAME_PHONE | DSFLAG_NO_PLACE | DSFLAG_PLACE_FOLLOWS | DSFLAG_STATE);
+    super(CITY_LIST, "KAUFMAN COUNTY", "TX", 
+          DSFLG_ADDR|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_OPT_BAD_PLACE|DSFLG_ID|DSFLG_TIME);
   }
   
   private static final Pattern MARKER = Pattern.compile("Dispatch:|kaufmancotx911:");

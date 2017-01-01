@@ -15,10 +15,10 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
   
   public NCGranvilleCountyParser() {
     super(CITY_LIST, "GRANVILLE COUNTY", "NC", 
-           DSFLAG_OPT_DISPATCH_ID | DSFLAG_CROSS_NAME_PHONE | DSFLAG_PLACE_FOLLOWS | DSFLAG_NO_ID);
+           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_X|DSFLG_OPT_NAME|DSFLG_OPT_PHONE|DSFLG_OPT_CODE|DSFLG_TIME);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
-    setupSpecialStreets("STEM CITY LIMITS");
+    setupSpecialStreets("CREEDMOOR CITY LIMITS", "STEM CITY LIMITS");
   }
 
   @Override
@@ -26,10 +26,12 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     return "@granvillecounty.org";
   }
   
+  private static final Pattern NUMBER_DR_PTN = Pattern.compile("# *(\\d+ DR\\b)", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([A-Z]+ COUNTY)", Pattern.CASE_INSENSITIVE);
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = NUMBER_DR_PTN.matcher(body).replaceAll("$1");
     if (!super.parseMsg(body, data)) return false;
     if (NUMERIC.matcher(data.strCall).matches()) {
       data.strSupp = append(data.strCall, " ", data.strSupp);
@@ -206,6 +208,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "FIRE-(STRUCTURE)",
       "FIRE (STRUCTURE) MUTUAL AID.",
       "FIRE-(STRUCTURE)-MUTUAL-AID.",
+      "FIRE (VEHICLE)",
       "FIRE (VEHICLE) RV ON FIRE",
       "FIRE-(VEHICLE)-RV-ON-FIRE",
       "FIRE-ALARM",
@@ -215,9 +218,11 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "FIRE-(STRUCTURE)",
       "FIRE-(STRUCTURE) STOVE FIRE",
       "FIRE-(VEHICLE)",
+      "FUEL SPILL",
       "FUEL-SPILL",
       "GAS-SMELL/LEAK",
       "HEART ATTACK",
+      "HEART PROBLEMS",
       "HEART-ATTACK",
       "HEART-PROBLEMS",
       "HEMORRHAGING-CALL",
@@ -238,9 +243,10 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       "SICK CALL",
       "SICK-CALL",
       "SMOKE-INVESTIGATION",
+      "STAND-BY-(SPECIFY-REASON)",
       "STROKE",
-      "TEST-CALL",
       "SUICIDE-ATTEMPT",
+      "TEST-CALL",
       "UNCONSCIOUS PERSON",
       "UNCONSCIOUS-PERSON",
       "UNKNOWN EMS CALL",

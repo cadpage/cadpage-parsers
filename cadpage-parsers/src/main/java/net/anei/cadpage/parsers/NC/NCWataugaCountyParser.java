@@ -8,7 +8,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCWataugaCountyParser extends DispatchSouthernParser {
 
   public NCWataugaCountyParser() {
-    super(CITY_LIST, "WATAUGA COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID | DSFLAG_NO_NAME_PHONE);
+    super(CITY_LIST, "WATAUGA COUNTY", "NC",
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE2|DSFLG_ID|DSFLG_TIME);
   }
   
   @Override

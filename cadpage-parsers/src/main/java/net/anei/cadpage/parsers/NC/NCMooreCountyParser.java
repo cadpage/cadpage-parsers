@@ -7,7 +7,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
 public class NCMooreCountyParser extends DispatchSouthernPlusParser {
   
   public NCMooreCountyParser() {
-    super(CITY_LIST, "MOORE COUNTY", "NC", DSFLAG_NO_NAME_PHONE | DSFLAG_ID_OPTIONAL | DSFLAG_UNIT | DSFLAG_NO_IMPLIED_APT);
+    super(CITY_LIST, "MOORE COUNTY", "NC",
+          DSFLG_ADDR|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_OPT_CODE|DSFLG_OPT_ID|DSFLG_TIME);
+    setCallCodePtn("[MF]\\d+");
   }
   
   @Override
@@ -52,6 +54,8 @@ public class NCMooreCountyParser extends DispatchSouthernPlusParser {
     "SANDHILL TWP",
     "MINERAL SPRINGS TWP",
     "LITTLE RIVER TWP",
+    
+    "FT BRAGG",
     
     // Lee County
     "SANFORD",

@@ -10,7 +10,8 @@ public class TNJeffersonCountyParser extends DispatchSouthernParser {
   
   
   public TNJeffersonCountyParser() {
-    super(CITY_LIST, "JEFFERSON COUNTY", "TN", DSFLAG_OPT_DISPATCH_ID | DSFLAG_ID_OPTIONAL | DSFLAG_TRAIL_PLACE);
+    super(CITY_LIST, "JEFFERSON COUNTY", "TN", 
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE2|DSFLG_OPT_ID|DSFLG_TIME);
     removeWords("CIRCLE", "COURT", "PLACE", "TERRACE");
   }
   

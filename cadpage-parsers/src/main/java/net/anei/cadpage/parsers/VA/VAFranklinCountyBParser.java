@@ -9,7 +9,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class VAFranklinCountyBParser extends DispatchSouthernParser {
   
   public VAFranklinCountyBParser() {
-    super(CITY_LIST, "FRANKLIN COUNTY", "VA", DSFLAG_BOTH_PLACE | DSFLAG_FOLLOW_CROSS | DSFLAG_LEAD_UNIT, "(?:CO|SQ)\\d+");
+    super(CITY_LIST, "FRANKLIN COUNTY", "VA",
+        DSFLG_ADDR|DSFLG_ADDR_LEAD_PLACE|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_X|DSFLG_OPT_CODE|DSFLG_OPT_UNIT1|DSFLG_ID|DSFLG_TIME,
+        "(?:CO|DP|SQ|M)\\d+[A-Z]?|(?:MED|RESPONSE) *[-0-9]+");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
       

@@ -24,7 +24,8 @@ public class NCPolkCountyParser extends DispatchSouthernParser {
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile("\\. +[A-Z][a-z]+ \\d+, \\d+:\\d+ [AP]M\\.?$");
 
   public NCPolkCountyParser() {
-    super(CITY_LIST, "POLK COUNTY", "NC", DSFLAG_ID_OPTIONAL | DSFLAG_NO_PLACE);
+    super(CITY_LIST, "POLK COUNTY", "NC",
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_NAME|DSFLG_OPT_PHONE|DSFLG_TIME);
   }
   
   @Override

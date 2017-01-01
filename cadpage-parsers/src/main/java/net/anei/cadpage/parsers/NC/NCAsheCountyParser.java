@@ -9,10 +9,13 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCAsheCountyParser extends DispatchSouthernParser {
 
   public NCAsheCountyParser() {
-    super(CITY_LIST, "ASHE COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID | DSFLAG_BOTH_PLACE | DSFLAG_NO_NAME_PHONE);
+    super(CITY_LIST, "ASHE COUNTY", "NC", 
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_OPT_CODE|DSFLG_ID|DSFLG_TIME);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets("VIRGINIA ST LINE");
+    setupSaintNames("MARYS");
     addExtendedDirections();
+    removeWords("PLACE", "SQUARE");
   }
   
   @Override
@@ -438,13 +441,27 @@ public class NCAsheCountyParser extends DispatchSouthernParser {
       // Alleghany County
       "ALLEGHANY COUNTY",
       "ALLEGHANY",
+      "CRANBERRY",
       "ENNICE",
+      "PINEY CREEK",
+      "PRATHERS CREEK",
       "SPARTA",
       
       // Wataugua County
       "WATAUGUA COUNTY",
       "WATAUGUA",
+      "BALD MOUNTAIN",
+      "BOONE",
+      "NORTH FORK",
+      "STONY FORK",
       "ZIONVILLE",
+      
+      // Wilkes County
+      "WILKES COUNTY",
+      "WILKES",
+      "ELK",
+      "JOBS CABIN",
+      "UNION",
       
       // Other counties
       
@@ -452,7 +469,27 @@ public class NCAsheCountyParser extends DispatchSouthernParser {
       "GRAYSON",
       "JOHNSON COUNTY",
       "JOHNSON",
-      "WILKES COUNTY",
-      "WILKES"
+      
+      // Washington County is on the other side of the state
+      // But someone they have one department there (Creswell VFD)
+      "WASHINGTON COUNTY",
+      "WASHINGTON",
+
+      // Cities
+      "CRESWELL",
+      "PLYMOUTH",
+      "ROPER",
+
+      // Unincorporated communities
+      "LAKE PHELPS",
+      "MACKEYS",
+      "PEA RIDGE",
+      "PLEASANT GROVE",
+
+      // Townships
+      "PLYMOUTH",
+      "LEES MILL",
+      "SCUPPERNONG",
+      "SKINNERSVILLE"
   };
 }

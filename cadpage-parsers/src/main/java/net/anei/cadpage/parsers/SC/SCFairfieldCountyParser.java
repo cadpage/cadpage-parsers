@@ -10,7 +10,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class SCFairfieldCountyParser extends DispatchSouthernParser {
 
   public SCFairfieldCountyParser() {
-    super(CITY_LIST, "FAIRFIELD COUNTY", "SC", DSFLAG_LEAD_PLACE | DSFLAG_FOLLOW_CROSS |  DSFLAG_LEAD_UNIT);
+    super(CITY_LIST, "FAIRFIELD COUNTY", "SC",
+        DSFLG_ADDR|DSFLG_ADDR_LEAD_PLACE|DSFLG_OPT_X|DSFLG_OPT_UNIT1|DSFLG_ID|DSFLG_TIME);
     setupMultiWordStreets(
         "ASHFORD FERRY",
         "CAMP WELFARE",

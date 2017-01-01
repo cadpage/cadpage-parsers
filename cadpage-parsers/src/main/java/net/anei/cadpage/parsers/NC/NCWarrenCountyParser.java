@@ -10,33 +10,32 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCWarrenCountyParser extends DispatchSouthernParser {
-  
-  private static final Pattern MASTER2 = Pattern.compile("(.*?) (20\\d{3,}) (.*)");
 
   public NCWarrenCountyParser() {
-    super(CITY_LIST, "WARREN COUNTY", "NC", DSFLAG_FOLLOW_CALL);
+    super(CITY_LIST, "WARREN COUNTY", "NC", 
+          DSFLG_ADDR|DSFLG_OPT_CODE|DSFLG_ID|DSFLG_TIME);
   }
   
   @Override
   public String getFilter() {
     return "@warrencountync.com";
   }
+  
+  private static final Pattern DISPATCH_PTN = Pattern.compile(" +[A-Za-z]+\\d+$");
+  private static final Pattern MASTER2 = Pattern.compile("(.*?) (20\\d{3,}) (.*)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (super.parseMsg(body, data)) return true;
-    
-    
-    // Check for alternate fallback format missing a date.time
-    Matcher match = MASTER2.matcher(body);
-    setFieldList("CALL ID ADDR APT CITY");
-    if (!match.matches()) return false;
 
-    data.initialize(this);
-    data.strCall = match.group(1).trim();
-    data.strCallId = match.group(2);
-    parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(3).trim(), data);
-    return data.strCity.length() > 0;
+    Matcher match = DISPATCH_PTN.matcher(body);
+    if (match.find()) body = body.substring(0, match.start());
+    
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strSupp.length() > 0) {
+      data.strCall = data.strCall + data.strSupp;
+      data.strSupp = "";
+    }
+    return true;
   }
   
   @Override
