@@ -128,7 +128,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     // See if we can split the remaining body into place name, call, and info
     for (int j = 0; j<body.length()-2; j++) {
       if (Character.isLetter(body.charAt(j))) {
-        String call = CALL_LIST.getCode(body.substring(j));
+        String call = CALL_LIST.getCode(body.substring(j), true);
         if (call != null) {
           String place = stripFieldEnd(body.substring(0,j).trim(), "<New Call>");
           data.strPlace = append(data.strPlace, " - ", place);
