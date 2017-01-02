@@ -27,11 +27,18 @@ public class INHamiltonCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (!subject.equals("CADPage")) return false;
     if (!super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) data.strCall = data.strCode;
     if (data.strCall.length() == 0) data.strCall = "ALERT";
     return true;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("STATUS")) return new SkipField("Dispatched|Arrived", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
   }
   
   private class MyAddressField extends AddressField {
@@ -43,10 +50,11 @@ public class INHamiltonCountyAParser extends FieldProgramParser {
     }
   }
   
-  @Override
-  public Field getField(String name) {
-    if (name.equals("STATUS")) return new SkipField("Dispatched|Arrived", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    return super.getField(name);
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Nature of Call:");
+      super.parse(field,  data);
+    }
   }
 }

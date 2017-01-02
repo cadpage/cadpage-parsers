@@ -3235,7 +3235,14 @@ public abstract class SmartAddressParser extends MsgParser {
       // Otherwise return the end of this numbered highway
       return ndx+2;
     }
-    if (!strict && isType(ndx, ID_ROUTE_PFX) && isType(ndx+1, ID_ALPHA_ROUTE)) return ndx+1;
+    
+    if (!strict && isType(ndx, ID_ROUTE_PFX) && isType(ndx+1, ID_ALPHA_ROUTE)) {
+      
+      // "IN A"  is never considered a numbered highway
+      if (tokens[ndx].equalsIgnoreCase("IN") && tokens[ndx+1].equalsIgnoreCase("A")) return -1;
+
+      return ndx+1;
+    }
     return -1;
   }
   

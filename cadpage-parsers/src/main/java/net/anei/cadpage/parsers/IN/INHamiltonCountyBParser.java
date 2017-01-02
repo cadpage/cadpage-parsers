@@ -25,9 +25,16 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
     return "CAD@noblesville.in.us";
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("MASH")) return new MashField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+  
   private static final Pattern MASH_PRI_PTN = Pattern.compile("^(\\d) +");
   private static final Pattern MASH_UNIT_PTN = Pattern.compile("^([A-Z]+\\d+\\b[,A-Z0-9]*) +");
-  private static final Pattern MASH_PLACE_PTN = Pattern.compile(" *\\(S\\) *(.*?) *\\(N\\) *");
+  private static final Pattern MASH_PLACE_PTN = Pattern.compile("[- ]*\\(S\\) *(.*?) *\\(N\\) *");
   private static final Pattern MASH_APT_PTN = Pattern.compile("^(APT|ROOM|RM|SUITE|BLDG) +([^ ]+)\\b");
   private static final Pattern MASH_SRC_PTN = Pattern.compile("^\\d{2}\\b");
   private class MashField extends Field {
@@ -63,7 +70,7 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
         addr = addr.substring(0,match.start()).trim();
       }
       
-      parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | flags, addr, data);
+      parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_IGNORE_AT | flags, addr, data);
       data.strCall = convertCodes(data.strCall, CALL_TABLE);
       if (extra == null) extra = getLeft();
       
@@ -87,7 +94,7 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "PRI UNIT CALL PLACE ADDR APT CITY X SRC";
+      return "PRI UNIT CALL PLACE ADDR APT CITY X SRC INFO";
     }
     
   }
@@ -106,13 +113,6 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
     public String getFieldNames() {
       return "CH INFO";
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("MASH")) return new MashField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
