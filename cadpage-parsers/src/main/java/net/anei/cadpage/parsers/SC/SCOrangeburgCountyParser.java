@@ -11,8 +11,9 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class SCOrangeburgCountyParser extends SmartAddressParser {
 
   private static final Pattern GRID_SLASH_PTN = Pattern.compile("\\bGRID (?:ON )?(\\d{1,2})/ ?([A-Z]\\d{1,2})\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern GRID_PTN = Pattern.compile("\\bGRIDS?[ :]+(?:ON )?(\\d{1,2}[ -][A-Z]\\d{1,2})\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern GRID_PTN = Pattern.compile("[ /]*\\bGRIDS?[ :]+(?:ON )?(\\d{1,2}[ -][A-Z]\\d{1,2})\\b[ /]*", Pattern.CASE_INSENSITIVE);
   private static final Pattern CROSS_PTN = Pattern.compile("[/| ]*\\bCR?OSS\\b:?(?: OF\\b)? *", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PLACE_PTN = Pattern.compile("\\((.*)\\)");
   private static final Pattern AND_NEAR_PTN = Pattern.compile(" *(?: AND|[/&]) *NEAR +", Pattern.CASE_INSENSITIVE);
   private static final Pattern AT_MARK_PTN = Pattern.compile(" @ | AT ", Pattern.CASE_INSENSITIVE);
   private static final Pattern LAN_PTN = Pattern.compile("\\bLAN\\b", Pattern.CASE_INSENSITIVE);
@@ -52,8 +53,16 @@ public class SCOrangeburgCountyParser extends SmartAddressParser {
     
     body = stripFieldEnd(body, "/");
     body = stripFieldEnd(body, "|");
+    body = stripFieldStart(body, "@");
     
     String origBody = body;
+    
+    match = PLACE_PTN.matcher(body);
+    if (match.find()) {
+      data.strPlace = match.group(1).trim();
+      body = append(body.substring(0,match.start()).trim(), " ", body.substring(match.end()).trim());
+    }
+    
     
     // If the first part has an @ or AT marker, that marks the beginning of the address
     int status = 0;
@@ -128,7 +137,9 @@ public class SCOrangeburgCountyParser extends SmartAddressParser {
     "BILL SALLEY",
     "BINNICKER BRIDGE",
     "BOGGY BRANCH",
+    "BOWMAN BRANCH",
     "BOYLESTON POND",
+    "BRANCH VILLA",
     "BREEZE HAVEN",
     "BROKEN ARROW",
     "CALVARY CHURCH",
@@ -149,23 +160,29 @@ public class SCOrangeburgCountyParser extends SmartAddressParser {
     "MARTHA HEIGHTS",
     "MIDDLE WILLOW",
     "MILKY WAY",
+    "NEESES CAMP",
     "NINETY SIX",
     "NUMBER SIX",
     "OLD NUMBER SIX",
+    "PEACH ORCHARD",
     "PLUM TREE",
     "RAMBLING BRIDGE",
     "REDMOND MILL",
+    "REEVES BRA",
     "RIVER TURN",
     "RIVERS TURN",
     "SHILLINGS BRIDGE",
     "SHORT CUT",
     "SLAB LANDING",
     "ST MATTHEWS",
+    "STACEY BRIDGE",
     "STEEPLE CHASE",
     "TERRY COURT",
+    "TILL HILL",
     "TODD CREEK",
     "TUG TOWN",
     "TWIN LAKES",
-    "WATER TANK"
+    "WATER TANK",
+
   };
 }
