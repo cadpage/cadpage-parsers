@@ -25,8 +25,20 @@ public class NJHunterdonCountyParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    if (body.startsWith("Fwd:")) {
+      body = body.substring(4).trim();
+      if (subject.length() == 0 && body.startsWith("(")) {
+        int pt = body.indexOf(')', 1);
+        if (pt >= 0) {
+          subject = body.substring(1,pt).trim();
+          body = body.substring(pt+1).trim();
+        }
+      }
+    }
+    
     data.strSource = subject;
     
+    body = body.replace('\n', ':');
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strUnit = getOptGroup(match.group(1));
@@ -47,6 +59,7 @@ public class NJHunterdonCountyParser extends MsgParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "2",  "WASHINGTON TWP",
       "11", "FRENCHTOWN",
       "12", "GLEN GARDNER",
       "13", "HAMPTON",
@@ -66,8 +79,9 @@ public class NJHunterdonCountyParser extends MsgParser {
       "32", "READINGTON",
       "33", "THREE BRIDGES",
       "34", "FAIRMOUNT",
-      "43", "BLOOMSBURY",
       "41", "QUAKERTOWN",
+      "42", "FRANKLIN TWP",
+      "43", "BLOOMSBURY",
       "44", "CALIFON",
       "45", "CLINTON",
       "46", "ANNANDALE",
