@@ -19,7 +19,7 @@ public class NJHunterdonCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "hces@hunterdon.co.nj.us,messaging@iamresponding.com,7127390583";
+    return "hces@hunterdon.co.nj.us,messaging@iamresponding.com,7127390583,777";
   }
   
   @Override
