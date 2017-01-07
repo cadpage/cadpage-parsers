@@ -274,6 +274,8 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     
     // Parse dispatch alert
     if (body.startsWith("DISPATCH INFO\n\n")) {
+      int pt = body.indexOf("\n\n*** Premise Info ***");
+      if (pt >= 0) body = body.substring(0,pt).trim();
       Parser p = new Parser(body.substring(15).replace("\n\n", "\n"));
       match = CALL_ID_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
@@ -284,7 +286,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       match = ADDR_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       String addr = match.group(1).trim();
-      int pt = addr.lastIndexOf(' ');
+      pt = addr.lastIndexOf(' ');
       String city = CITY_CODES.getProperty(addr.substring(pt+1));
       if (city != null) {
         data.strCity = city;
