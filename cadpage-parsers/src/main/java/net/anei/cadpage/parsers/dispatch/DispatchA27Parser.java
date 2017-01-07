@@ -117,8 +117,10 @@ public class DispatchA27Parser extends FieldProgramParser {
       if (pt >= 0) agency = agency.substring(0,pt).trim();
       data.strSource = agency;
       if ((data.strCallId = getValue(p, "Incident Nr:")) == null) abort();
-      if (getValue(p, "Location:") == null) abort();
       String line = p.getLine();
+      if (getValue(line, "Case Nr:") != null) line = p.getLine(); 
+      if (getValue(line, "Location:") == null) abort();
+      line = p.getLine();
       String place = getValue(line, "Common Name:");
       if (place != null) {
         data.strPlace = place;

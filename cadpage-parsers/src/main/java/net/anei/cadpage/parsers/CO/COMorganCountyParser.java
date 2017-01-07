@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class COMorganCountyParser extends DispatchA27Parser {
   
   public COMorganCountyParser() {
-    super("MORGAN COUNTY", "CO", "[A-Z]+\\d+|\\d{8}");
+    super("MORGAN COUNTY", "CO", "\\w+");
   }
   
   @Override
