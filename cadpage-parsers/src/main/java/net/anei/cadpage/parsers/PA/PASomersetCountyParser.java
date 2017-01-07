@@ -3,55 +3,53 @@ package net.anei.cadpage.parsers.PA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchBParser;
+import net.anei.cadpage.parsers.dispatch.DispatchB3Parser;
 
 
 
-public class PASomersetCountyParser extends DispatchBParser {
+public class PASomersetCountyParser extends DispatchB3Parser {
   
   private static final Pattern MASTER = Pattern.compile("Code: ([^\n]*)\nCode Detail: .*\n\nUnformatted Message: 9-1-1 CENTER:(.*)");
 
   public PASomersetCountyParser() {
     super(CITY_LIST, "SOMERSET COUNTY", "PA");
+    setupCallList((CodeSet)null);
   }
-  
+
   @Override
   public String getFilter() {
     return "alert@ecm2.com,911CENTER@co.somerset.pa.us";
   }
   
   @Override
-  protected boolean isPageMsg(String body) {
-    return true;
-  }
-  
-  @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    Matcher match = MASTER.matcher(body);
     do {
-      Matcher match = MASTER.matcher(body);
       if (match.matches()) {
         body = match.group(1) + " @ " + match.group(2);
         break;
       }
       
-      if (body.startsWith("911CENTER:") && subject.length() > 0) {
-        body = subject + " " + body.substring(10);
-        break;
-      }
+      if (body.startsWith("911CENTER:")) break;
       
-      if (subject.contains(">")) {
-        body = subject + " @ " + body;
-        break;
-      }
+      if (subject.contains(">")) break;
       return false;
-    } while (false);
+    } while(false);
     
+    body = stripFieldStart(body, "911CENTER:");
     body = body.replace(" AT ", " & ");
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
   
+  @Override
+  protected boolean isPageMsg(String body) {
+    return true;
+  }
+
   private static final String[] CITY_LIST = new String[]{
+    
     // Boroughs
     "ADDISON",
     "BENSON",
@@ -60,6 +58,7 @@ public class PASomersetCountyParser extends DispatchBParser {
     "CALLIMONT",
     "CASSELMAN",
     "CENTRAL CITY",
+    "CHAMPION",
     "CONFLUENCE",
     "GARRETT",
     "HOOVERSVILLE",
@@ -78,6 +77,7 @@ public class PASomersetCountyParser extends DispatchBParser {
     "URSINA",
     "WELLERSBURG",
     "WINDBER",
+    
     // Townships
     "ADDISON TWP",
     "ALLEGHENY TWP",
@@ -85,6 +85,7 @@ public class PASomersetCountyParser extends DispatchBParser {
     "BROTHERSVALLEY TWP",
     "CONEMAUGH TWP",
     "ELK LICK TWP",
+    "FAIRHOPE",
     "FAIRHOPE TWP",
     "GREENVILLE TWP",
     "JEFFERSON TWP",
@@ -104,12 +105,29 @@ public class PASomersetCountyParser extends DispatchBParser {
     "STONYCREEK TWP",
     "SUMMIT TWP",
     "UPPER TURKEYFOOT TWP",
+    
     // Census designated places
+    "CAIRNBROOK",
     "DAVIDSVILLE",
+    "EDIE",
     "FRIEDENS",
     "JEROME",
+    
     // Unincorporated communities
+    "ACOSTA",
+    "DEAL",
+    "FORT HILL",
+    "GRAY",
+    "HIDDEN VALLEY",
     "JENNERS",
+    "MARKLETON",
+    "QUECREEK",
     "SPRINGS",
+    
+    // Fayette County
+    "CHAMPION",
+    
+    // Bedford County
+    "SCHELLSBURG"
   };
 }
