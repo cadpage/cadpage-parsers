@@ -1,12 +1,16 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class TXMansfieldParser extends DispatchOSSIParser {
   
   public TXMansfieldParser() {
-    super("MANSFIELD", "TX", "FYI? CALL ADDR ( PLACE X/Z X/Z SRC! | SRC! | ( X | PLACE ) X/Z? SRC! ) PLACENAME? EMPTY? CH? INFO/N+");
+    super(CITY_CODES, "MANSFIELD", "TX", 
+          "( CANCEL ADDR CITY " +
+          "| FYI? CALL ADDR CITY? ( PLACE X/Z X/Z SRC! | SRC! | ( X | PLACE ) X/Z? SRC! ) PLACENAME? EMPTY? CH? ) INFO/N+");
   }
   
   @Override
@@ -32,5 +36,11 @@ public class TXMansfieldParser extends DispatchOSSIParser {
     if (name.equals("CH")) return new ChannelField("(CH(?:AN)? *\\d+)", true);
     return super.getField(name);
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "KENN", "KENNEDALE",
+      "MANS", "MANSFIELD",
+      "TRCO", "TARRANT COUNTY"
+  });
 
 }
