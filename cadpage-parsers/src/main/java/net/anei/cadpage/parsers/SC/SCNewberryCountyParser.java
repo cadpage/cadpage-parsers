@@ -66,7 +66,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   }
 
   // crossroad follows address
-  private static Pattern ADDR_CROSS = Pattern.compile("Location - (.*)");
+  private static Pattern ADDR_CROSS = Pattern.compile("Location - *(.*)");
   private static Pattern CROSS = Pattern.compile(" cross ", Pattern.CASE_INSENSITIVE);
   private static Pattern APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?)|(?:APT|ROOM|RM|LOT) +([^ ]+) *(.*)");
   private class MyAddressField extends AddressField {
