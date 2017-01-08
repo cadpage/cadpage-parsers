@@ -30,7 +30,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
   
-  private static final Pattern REPORT_PTN = Pattern.compile("ID#:([^ ]+) *- *UNIT:([^ ])+ +- *(.*)");
+  private static final Pattern REPORT_PTN = Pattern.compile("ID#:([^ ]+) *- *UNIT:([^ ]+) *- *(.*)");
   private static final Pattern TIME_DELIM_PTN = Pattern.compile(" +- *");
   
   @Override
@@ -146,7 +146,6 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
   }
   
   // Unit field only exists if it is tagged (or contains something that looks like a unit
-  private static final Pattern UNIT2_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH");
   private class MyUnit2Field extends MyUnitField {
     
     @Override
@@ -158,16 +157,17 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("Units:")) {
         field = field.substring(6).trim();
-      } else if (!UNIT2_PTN.matcher(field).matches()) return false;
+      } else if (!UNIT_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH|");
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH|[A-Z]{4}HOME");
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
+      if (field.length() == 0) return;
       if (!UNIT_PTN.matcher(field).matches()) abort();
       super.parse(field, data);
     }
