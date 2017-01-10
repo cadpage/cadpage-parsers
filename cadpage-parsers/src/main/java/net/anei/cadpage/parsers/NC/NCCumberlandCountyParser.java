@@ -19,7 +19,7 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad@co.cumberland.nc.us,messaging@iamresponding.com,@ci.fay.nc.us";
+    return "cad@co.cumberland.nc.us,messaging@iamresponding.com,@ci.fay.nc.us,777";
   }
   
   private static final Pattern SRC_PTN = Pattern.compile("Station .*");
