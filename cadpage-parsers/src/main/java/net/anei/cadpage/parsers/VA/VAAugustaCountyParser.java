@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  */
 public class VAAugustaCountyParser extends DispatchOSSIParser {
   
-  private static final Pattern DELIM_PTN = Pattern.compile("(?<!CAD|DIST|FYI|Update):");
+  private static final Pattern DELIM_PTN = Pattern.compile("(?<!\\b(?:CAD|DIST|FYI|Update)):");
   
   
   public VAAugustaCountyParser() {
