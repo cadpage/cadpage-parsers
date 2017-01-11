@@ -4115,6 +4115,14 @@ contain your email account, which Jean will use to set up your subscription.
 
 Thank you for your support,
 -Ken
+**************************************************************************************
+Ack button
+
+Cadpage displays the 'Ack' button when it things something about your
+notification settings requires that the alert be cleared before
+proceeding.  If you had Cadpage configured to play a loud alert
+continuously, for example, it would make sense that you should do
+something to silence the alert before looking at your other options.
 
 **************************************************************************************
 * Inactive Active911 account - Current user paid subscription
