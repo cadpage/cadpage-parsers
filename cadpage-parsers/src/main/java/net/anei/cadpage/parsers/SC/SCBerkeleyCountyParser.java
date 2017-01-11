@@ -35,7 +35,6 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       "NORTH CHARLESTON",
 
       //Towns
-
       "BONNEAU",
       "JAMESTOWN",
       "MONCKS CORNER",
@@ -43,7 +42,6 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       "SUMMERVILLE",
 
       //Townships
-      
       "CROSS",
       "GUMVILLE",
       "LADSON",
@@ -77,7 +75,7 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "CAINHOY",                 "CHARLESTON",
-      "LAKE MOULTRIE",            "BONNEAU",
+      "LAKE MOULTRIE",           "BONNEAU",
       "MACEDONIA",               "BONNEAU",
       "SANTEE CIRCLE",           "BONNEAU",
       "SPRING LAKE VILLAGE",     "SUMMERVILLE",
