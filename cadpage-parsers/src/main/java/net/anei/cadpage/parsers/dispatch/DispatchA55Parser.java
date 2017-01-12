@@ -35,9 +35,11 @@ public class DispatchA55Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CITY_ST_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strCity = match.group(1).trim();
-      data.strState = match.group(2);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strState = match.group(2);
+      }
+      super.parse(field, data);
     }
     
     @Override

@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class OHMedinaCountyBParser extends DispatchEmergitechParser {
   
   public OHMedinaCountyBParser() {
-    super(CITY_LIST, "MEDINA COUNTY", "OH", TrailAddrType.PLACE);
+    super("Medina911:", CITY_LIST, "MEDINA COUNTY", "OH", TrailAddrType.PLACE);
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -47,6 +47,9 @@ public class OHMedinaCountyBParser extends DispatchEmergitechParser {
       "HOMERVILLE",
       "LITCHFIELD",
       "VALLEY CITY",
+      
+      // Ashland County
+      "MEDINA"
   
   };
 }
