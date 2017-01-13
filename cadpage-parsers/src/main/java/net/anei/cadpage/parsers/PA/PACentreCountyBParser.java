@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PACentreCountyBParser extends FieldProgramParser {
   
   public PACentreCountyBParser() {
-    super("CENTRE COUNTY", "PA", "Box:BOX_CALL_ADDR! Name:NAME");
+    super("CENTRE COUNTY", "PA", "Box:BOX_CALL_ADDR! Due:UNIT? Name:NAME");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("TWP");
   }
@@ -33,12 +33,23 @@ public class PACentreCountyBParser extends FieldProgramParser {
   }
   
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
-  private static final Pattern BOX_CALL_ADDR_PTN = Pattern.compile("(?:(\\d{3,}) )?(.*?) (?![A-Z]+-[AB]LS\\b)([^a-z,]*)(?:, *([^,]*))?");
+  private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*)([NSEW][NSEW]? SECTOR)");
+  private static final Pattern BOX_CALL_ADDR_PTN = Pattern.compile("(?:(\\d{3,}) )?(.*?) (?![A-Z]+-[AB]LS\\b)([^a-z,]*)");
   private class MyBoxCallAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = MBLANK_PTN.matcher(field).replaceAll(" ");
-      Matcher match = BOX_CALL_ADDR_PTN.matcher(field);
+      Matcher match = ADDR_MAP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strMap = match.group(2);
+      }
+      int pt = field.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strCity = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      match = BOX_CALL_ADDR_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strBox = getOptGroup(match.group(1));
       data.strCall = match.group(2).trim();
@@ -47,12 +58,11 @@ public class PACentreCountyBParser extends FieldProgramParser {
         data.strAddress = data.strPlace;
         data.strPlace = "";
       }
-      data.strCity = getOptGroup(match.group(4));
     }
     
     @Override
     public String getFieldNames() {
-      return "BOX CALL PLACE ADDR APT CITY";
+      return "BOX CALL PLACE ADDR APT CITY MAP";
     }
   }
   
