@@ -23,6 +23,7 @@ public class OHMedinaCountyBParser extends DispatchEmergitechParser {
       "LODI",
       "SEVILLE",
       "SPENCER",
+      "SULLIVAN",
       "WESTFIELD CENTER",
       
       "BRUNSWICK HILLS TWP",
