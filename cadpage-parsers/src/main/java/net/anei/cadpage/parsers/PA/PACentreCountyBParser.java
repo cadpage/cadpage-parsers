@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PACentreCountyBParser extends FieldProgramParser {
   
   public PACentreCountyBParser() {
-    super("CENTRE COUNTY", "PA", "Box:BOX_CALL_ADDR! Name:NAME!");
+    super("CENTRE COUNTY", "PA", "Box:BOX_CALL_ADDR! Name:NAME");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("TWP");
   }
@@ -65,27 +65,47 @@ public class PACentreCountyBParser extends FieldProgramParser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+    "BALD EAGLE",
+    "BELL HOLLOW",
     "BIG OAK",
+    "BRUSH VALLEY",
+    "BULLIT RUN",
     "DIX RUN",
+    "EAGLE VALLEY",
     "EGYPT HOLLOW",
     "END OF LINE",
     "FLAT ROCK",
+    "FOWLER HOLLOW",
     "GOVERNORS PARK",
     "HALFMOON VALLEY",
+    "HECKMAN CEMETERY",
+    "JACK STRAW",
     "JAMES HILL",
+    "LIONS HILL",
     "LITTLE MARSH CREEK",
     "MATCH FACTORY",
+    "MEDICAL PARK",
     "MOOSE RUN",
+    "PENNS VALLEY",
+    "PHILIPSBURG BIGLER",
+    "PINE CREEK",
+    "PORT MATILDA",
     "PURDUE MOUNTAIN",
     "RABBIT HILL",
+    "REESE HOLLOW",
+    "RISHEL HILL",
     "ROLLING RIDGE",
+    "ROSS HILL",
+    "SKYTOP MOUNTAIN",
     "SPORTS CAMP",
     "STEELE HOLLOW",
     "SUMMIT HILL",
+    "SUNNYSIDE HOLLOW",
     "SWAMP POODLE",
     "TOW HILL",
     "TURKEY EYE",
     "VALLEY VIEW",
+    "WEAVER HILL",
     "WHITE PINE"
   };
 }
