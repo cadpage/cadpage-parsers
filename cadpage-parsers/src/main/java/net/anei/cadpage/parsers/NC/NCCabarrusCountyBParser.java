@@ -15,7 +15,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     super("CABARRUS COUNTY", "NC",
           "( CANCEL ADDR SKIP EXTRA+ " +
           "| FYI? ( DATETIME CALL CH? ADDR! X+? INFO+ " +
-                 "| DIGIT CALL ( PRI/Z UNIT UNIT+? CH? ADDR! X+? | DIGIT? CH? ADDR! X+? EXTRA+? ( PRI | UNIT ) UNIT+? ) DATETIME EXTRA+? ID ) )");
+                 "| DIGIT CALL ( PRI/Z UNIT UNIT+? CH? ADDR! X+? EXTRA+? DATETIME | DIGIT? CH? ADDR! X+? EXTRA+? ( PRI | UNIT ) UNIT+? DATETIME ) EXTRA+? ID ) )");
     setupMultiWordStreets("A T ALLEN SCHOOL");
   }
   
@@ -81,8 +81,15 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
       Matcher match = APT_PTN.matcher(field);
       if (match.matches()) {
-        data.strApt = append(data.strApt, "-", match.group(1));
-        return;
+        String apt = match.group(1);
+        field = "";
+        int pt = apt.indexOf("(S)");
+        if (pt >= 0) {
+          field = apt.substring(pt+3).trim();
+          apt = apt.substring(0, pt).trim();
+        }
+        data.strApt = append(data.strApt, "-", apt);
+        if (field.length() == 0) return;
       }
       match = PHONE_PTN.matcher(field);
       if (match.matches()) {

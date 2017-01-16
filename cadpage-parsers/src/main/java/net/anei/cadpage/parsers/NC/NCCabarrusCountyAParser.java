@@ -21,11 +21,6 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
   public NCCabarrusCountyAParser() {
     super(CITY_CODES, "CABARRUS COUNTY", "NC",
         "( CANCEL ADDR CITY | FYI? ( ADDR CALL | CALL ADDR ) CITY? X_PLACE+? ( ID | SRC UNIT? ID? | UNIT SRC? ID? ) ) INFO+");
-    
-//           "FYI? ( UNIT PRI CALL! ADDR! MAP X X? INFO+ " +
-//                "| ADDR/Z CITY CALL X_PLACE+? " +
-//                "| ADDR/Z CALL UNIT2 X_PLACE/Z+? CITY " +
-//                "| CALL! ADDR! CITY? X_PLACE+? ( SRC UNIT | UNIT | NAME ) ) ID? INFO+");
   }
 
   private static final Pattern SPEC_UNIT_PTN = Pattern.compile("CAD: *\\{([A-Z0-9]+)\\} *");
