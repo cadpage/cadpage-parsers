@@ -25,7 +25,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CAD.Alert@AlleghenyCounty.us,777,9300,4127802418";
+    return "CAD.Alert@AlleghenyCounty.us,CADAlert1@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
   }
 
   @Override
