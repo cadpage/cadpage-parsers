@@ -52,7 +52,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
   
   @Override
   public String adjustMapCity(String city) {
-    if (city.equals("ROWAN")) city = "GLASSBORO";
+    if (city.equalsIgnoreCase("ROWAN")) city = "GLASSBORO";
     return city;
   }
 }
