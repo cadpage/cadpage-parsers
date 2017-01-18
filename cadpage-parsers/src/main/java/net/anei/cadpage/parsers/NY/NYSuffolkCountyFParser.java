@@ -14,12 +14,12 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
 
   public NYSuffolkCountyFParser() {
     super("SUFFOLK COUNTY", "NY",
-           "CALL! TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO+");
+           "CALL! ( TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO+ | PLACE ADDR/S6Xa CITY! TOA:TOA! SRC ID INFO+? HQ! UNIT/S+ )");
   }
   
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,masticambco@optonline.net,paging@wadingriverfd.info";
+    return "@firerescuesystems.xohost.com,masticambco@optonline.net,paging@wadingriverfd.info,amityvillefdpaging1@gmail.com,amityvillefdpaging@gmail.com,paging@amityvillefireinfo.com";
   }
 
   @Override
@@ -36,6 +36,12 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
       data.strCall = data.strCall + " (" + prefix + ")";
     }
     return true;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("HQ")) return new SkipField("HQ");
+    return super.getField(name);
   }
 
   @Override
