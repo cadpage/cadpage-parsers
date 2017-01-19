@@ -16,8 +16,7 @@ public class IAWinnebagoCountyParser extends DispatchA47Parser {
 
   private static final String[] CITY_LIST =new String[]{
 
-  //Cities
-      
+      //Cities
       "BUFFALO CENTER",
       "FOREST CITY",
       "LAKE MILLS",
@@ -26,8 +25,7 @@ public class IAWinnebagoCountyParser extends DispatchA47Parser {
       "SCARVILLE",
       "THOMPSON",
 
-  //Townships
-
+      //Townships
       "BUFFALO",
       "CENTER",
       "EDEN",
@@ -39,8 +37,9 @@ public class IAWinnebagoCountyParser extends DispatchA47Parser {
       "LOGAN",
       "MOUNT VALLEY",
       "NEWTON",
-      "NORWAY"
-
-
+      "NORWAY",
+      
+      // Worth County
+      "FERTILE"
   };
 }

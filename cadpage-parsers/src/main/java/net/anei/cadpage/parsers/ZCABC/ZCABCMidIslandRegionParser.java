@@ -311,6 +311,7 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
       "RESCUE - ROAD",
       "RESCUE ROAD",
       "RESCUE",
+      "STRUCTURE - SMOKE",
       "STRUCTURE - SMOKE(FIRE IS OUT)",
       "STRUCTURE  - FIRE",
       "STRUCTURE - ELECTRICAL TROUBLE",
