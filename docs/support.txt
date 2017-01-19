@@ -712,7 +712,7 @@ We would really love to have departments sponsor Cadpage for their members. We o
 Also, if your department uses Active911 or CodeMessaging, then Cadpage is free if you use direct paging.
 
 In the meantime, I can give you a 30-day extension.  To get that, go into the Cadpage settings, press the Payment Status item, then the "I have an authorization code" button, and enter an authorization code of
-LHPVPICA or lhpvpica.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days. 
+PNSECUAA or pnsecuaa.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days. 
 
 Thanks so much for your support, 
 Jean ~ Cadpage Administrator
@@ -933,7 +933,7 @@ Philomath, OR 97370
 If you do this, please include your Cadpage User email address (usually a gmail account) so I can make sure you get credit for it.
 
 If you need a 30-day extension, open the Cadpage settings and press Payment Status, then press the "I have an authorization code" button, and enter an authorization code of
-LHPVPICA or lhpvpica.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
+ULUCZOEA or uluczoea.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
 Thanks for your support,
 Jean ~ Cadpage Administrator
@@ -4115,6 +4115,37 @@ contain your email account, which Jean will use to set up your subscription.
 
 Thank you for your support,
 -Ken
+**************************************************************************************
+Cadpage with Active911 - advantages
+
+If your department goes with Active911, they will tell you how install
+and use the Active911 app for Android phones.  What they don't tell you
+is that you can register Cadpage with the Active911 service and use
+Cadpage instead of their Active911 app.  If you do that, Active911 pays
+us some of the money they get from your department, so Cadpage becomes a
+free sponsored product.
+
+Cadpage will continue to work as it always has.  You do gain the ability
+to report your response status to the Active911 servers.  And an
+additional button appears that will display the call information that
+Active911 has, including overall responder status.
+
+There are some features of the Active911 app that Cadpage can not duplicate
+1) It has a map display showing current responder positions.
+2) It allows easy access to your Active911 profile settings.
+
+And Cadpage has some features that the Active911 app does not, primarily
+more flexible notification options.
+
+Cadpage uses different message parsers that Active911 does.  For most
+locations, this doesn't make a whole lot of difference.  But there are a
+fair number of locations where we do a much better job of extracting
+information from the dispatch alerts.
+
+If you want to use Cadpage with Active911, open Cadpage settings and select
+Direct Paging Vendors > Active911 > Register
+and enter the activation code that you will soon get from your department.
+
 **************************************************************************************
 Ack button
 
