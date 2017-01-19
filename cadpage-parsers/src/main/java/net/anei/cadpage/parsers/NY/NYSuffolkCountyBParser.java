@@ -9,11 +9,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchA14Parser;
 
 
 public class NYSuffolkCountyBParser extends DispatchA14Parser {
-  
-  private static final Pattern LETTER_PTN = Pattern.compile("[A-Z]");
-  private static final Pattern DIR_SLASH_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
-  private static final Pattern DOUBLE_CALL_PTN = Pattern.compile("\\*\\*\\*([\\w ]+)\\*\\*\\* +\\*\\*\\*([\\w ]+) *\\*\\*\\* +([A-Z]{4}) +");
-  private static final Pattern NK_PTN = Pattern.compile("\\bNK\\b");
  
   public NYSuffolkCountyBParser() {
     super(NYSuffolkCountyAParser.CITY_TABLE, DISTRICT_SET, "SUFFOLK COUNTY", "NY", false);
@@ -26,6 +21,12 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   public String getFilter() {
     return "@firerescuesystems.xohost.com,scmproducts@optonline.net,@bcfa.xohost.com,alarms@ronkonkomafd.net,paging@babyloncentral.info,paging@setauketfd.info,bcfa@bcfa.xohost.com,paging@portjeffersonfireinfo.com,paging@northpatchoguefireinfo.com,paging@huntingtoncommunityambinfo.com";
   }
+  
+  private static final Pattern LETTER_PTN = Pattern.compile("[A-Z]");
+  private static final Pattern DIR_SLASH_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
+  private static final Pattern DOUBLE_CALL_PTN = Pattern.compile("\\*\\*\\*([\\w/ ]+)\\*\\*\\* +\\*\\*\\*([\\w/ ]+) *\\*\\*\\* +([A-Z]{4}) +");
+  private static final Pattern DOUBLE_CALL_PTN2 = Pattern.compile("\\*([\\w/ ]+)\\* +\\*([\\w/ ]+) *\\* +");
+  private static final Pattern NK_PTN = Pattern.compile("\\bNK\\b");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -45,6 +46,17 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
       if (!call.equalsIgnoreCase(call2)) call = call + " - " + call2;
       code = match.group(3);
       body = "***" + call + "***" + body.substring(match.end());
+    } else {
+      match = DOUBLE_CALL_PTN2.matcher(body);
+      if (match.lookingAt()) {
+        String call = match.group(1).trim();
+        String call2 = match.group(2).trim();
+        if (!call.equalsIgnoreCase(call2)) call = call + " - " + call2;
+        body = "***" + call + "***" + body.substring(match.end());
+        
+        int pt = body.indexOf('\n');
+        if (pt >= 0) body = body.substring(0, pt);
+      }
     }
     
     if (!super.parseMsg(body, data)) return false;
@@ -90,6 +102,11 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
     // Expand NK -> NECK abbreviation
     data.strAddress = NK_PTN.matcher(data.strAddress).replaceAll("NECK");
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("APT", "APT X?");
   }
 
   @Override
