@@ -10,8 +10,8 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   
   public MIMontcalmCountyParser() {
     super(CITY_CODES, "MONTCALM COUNTY", "MI",
-          "( CANCEL ADDR CITY/Y! " + 
-          "| UNIT ID? CALL ( CITY X+? ADDR! | ADDR! ( CITY/Y! | APT CITY/Y! | ) X+? ) " + 
+          "( CANCEL ADDR CITY/Y " + 
+          "| UNIT ID? CALL ( CITY X+? ADDR! | ADDR! ( CITY/Y! | APT CITY/Y! | ) CITY? X+? ) " + 
           "| FYI? DATETIME? ADDR ( ID | CALL! X+? ) ) INFO/N+");
   }
   
@@ -39,6 +39,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM)\\b,?)+", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new MyCallField();
@@ -55,6 +56,20 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     }
   }
   
+  private class MyCityField extends CityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String oldCity = data.strCity;
+      if (!super.checkParse(field, data)) return false;
+      if (oldCity.length() > 0) {
+        if (!oldCity.endsWith(" TWP") || data.strCity.endsWith(" TWP")) {
+          data.strCity = oldCity;
+        }
+      }
+      return true;
+    }
+  }
+  
   private class MyCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -64,8 +79,8 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     }
     
   }
+  
   private class MyCallField extends CallField {
-    
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "Event spawned from "); 
@@ -83,9 +98,12 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BELV", "BELVIDERE TWP",
       "BUSH", "BUSHNELL TWP",
       "CARS", "CARSON CITY",
       "CATO", "CATO TWP",
+      "CRYS", "CRYSTAL TWP",
+      "DAY",  "DAY TWP",
       "DOUG", "DOUGLASS TWP",
       "EDMO", "EDMORE",
       "EURE", "EUREKA TWP",
@@ -98,7 +116,9 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       "MAPL", "MAPLE VALLEY TWP",
       "MONT", "MONTCALM TWP",
       "PIER", "PIERSON",
+      "PINE", "PINE TWP",
       "REYN", "REYNOLDS TWP",
+      "RICH", "RICHLAND TWP",
       "SHER", "SHERIDAN",
       "STAN", "STANTON",
       "SIDN", "SIDNEY TWP"
