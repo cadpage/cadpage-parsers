@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   
   public OHAshlandCountyAParser() {
-    super(true, CITY_LIST, "ASHLAND COUNTY", "OH");
+    super("911:", CITY_LIST, "ASHLAND COUNTY", "OH", TrailAddrType.INFO);
   }
   
   @Override
