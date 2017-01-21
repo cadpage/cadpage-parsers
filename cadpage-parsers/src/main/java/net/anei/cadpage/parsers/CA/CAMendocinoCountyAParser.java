@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +16,7 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
   
   public CAMendocinoCountyAParser() {
     super(CITY_CODES, "MENDOCINO COUNTY", "CA",
-           "CALL ADDR! ( Inc:IDGPSUNIT! INFO/N+ | INFO/N+ Map:MAP! Y:GPS! INFO/N+? ( UNITID! | UNIT Inc:ID ) Cmd:CH! Tac:CH/L! INFO/N+? MAPURL )");
+           "CALL ADDR! ( IDGPSUNIT! INFO/N+ |  ( ID INFO/N+ RA:MAP! GPS! UNIT! | INFO/N+ Map:MAP! GPS! INFO/N+? ( UNITID! | UNIT ID ) ) Cmd:CH! Tac:CH/L! Air:CH/L? INFO/N+? ( DATETIME | MAPURL ) )");
   }
   
   @Override
@@ -29,17 +31,18 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = body.replace(" Inc# ", " Inc: ");
     return parseFields(body.split(";"), data);
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("IDGPSUNIT")) return new IdGpsUnitField();
+    if (name.equals("IDGPSUNIT")) return new MyIdGpsUnitField();
+    if (name.equals("ID")) return new MyIdField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("UNITID")) return new MyUnitIdField();
-    if (name.equals("MAPURL")) return new SkipField("http:.*", true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("MAPURL")) return new SkipField("http:.*|<a href=.*", true);
     return super.getField(name);
   }
   
@@ -66,20 +69,30 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern ID_GPS_UNIT_PTN =
-    Pattern.compile("(\\d*) *X: ([- 0-9.]+) Y: ([- 0-9.]+)(.*)");
-  private class IdGpsUnitField extends Field {
+    Pattern.compile("Inc# *(\\d*) *X: ([- 0-9.]+) Y: ([- 0-9.]+)(.*)");
+  private class MyIdGpsUnitField extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ID_GPS_UNIT_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCallId = match.group(1).trim();
+      // GPS coordinates have to be reversed, Google expects Latitude first.
+      String gpsLoc = match.group(3) + ',' + match.group(2);
+      setGPSLoc(gpsLoc, data);
+      data.strUnit = match.group(4).trim();
+      return true;
+    }
 
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ID_GPS_UNIT_PTN.matcher(field);
-      if (match.matches()) {
-        data.strCallId = match.group(1).trim();
-        // GPS coordinates have to be reversed, Google expects Latitude first.
-        String gpsLoc = match.group(3) + ',' + match.group(2);
-        setGPSLoc(gpsLoc, data);
-        data.strUnit = match.group(4).trim();
-      }
+      if (!checkParse(field, data)) abort();
     }
+
     
     @Override
     public String  getFieldNames() {
@@ -87,11 +100,52 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
     }
   }
   
-  private class MyGPSField extends GPSField {
+  private class MyIdField extends IdField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("Inc#"))  return false;
+      field = field.substring(4).trim();
+      data.strCallId = field;
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
-      field = field.replace(" X: ", ",");
-      super.parse(field, data);
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  private static final Pattern GPS_PTN1 = Pattern.compile("Y: *(.*?) *X:(.*)");
+  private static final Pattern GPS_PTN2 = Pattern.compile("X: *(.*?) *Y:(.*)");
+  private class MyGPSField extends GPSField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = GPS_PTN1.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        return true;
+      }
+      match = GPS_PTN2.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(2)+','+match.group(1), data);
+        return true;
+      }
+      return false;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
@@ -119,6 +173,29 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "UNIT ID";
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d-[A-Z][a-z]{2}-\\d{4})/(\\d\\d:\\d\\d:\\d\\d)");
+  private static final DateFormat DATE_FMT = new SimpleDateFormat("dd-MMM-yyyy");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      setDate(DATE_FMT, match.group(1), data);
+      data.strTime = match.group(2);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
