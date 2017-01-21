@@ -23,7 +23,7 @@ public class CALakeCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "lakecounty.dispatch@lakecountyca.gov";
+    return "lakecounty.dispatch@lakecountyca.gov,cloverdalepaging@gmail.com";
   }
   
   @Override
@@ -94,7 +94,9 @@ public class CALakeCountyParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCity.length() > 0) return false;
-      return super.checkParse(field, data);
+      if (!super.checkParse(field, data)) return false;
+      data.strCity = stripFieldEnd(data.strCity, "(Unincorporated)");
+      return true;
     }
   }
   
