@@ -11,7 +11,7 @@ public class VAArlingtonCountyParser extends FieldProgramParser {
 
   public VAArlingtonCountyParser() {
     super(CITY_CODES, "ARLINGTON COUNTY", "VA", 
-          "CALL BOX ADDR CITY Units:UNIT/S+");
+          "CALL BOX? ADDR/S CITY? Units:UNIT/S+");
   }
   
   @Override
@@ -44,8 +44,39 @@ public class VAArlingtonCountyParser extends FieldProgramParser {
     return super.getProgram() + " DATE TIME";
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("BOX")) return new BoxField("\\d{4,5}");
+    if (name.equals("CITY")) return new MyCityField();
+    return super.getField(name);
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (data.strCity.length() > 0) return false;
+      return super.checkParse(field, data);
+    }
+  }
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AC", "ARLINGTON COUNTY",
-      "AX", "ALEXANDRIA"
+      "AC",   "ARLINGTON COUNTY",
+      "AX",   "ALEXANDRIA",
+      "FC",   "FALLS CHURCH",
+      "FX",   "FAIRFAX",
+      "MW",   "RONALD REAGAN AIRPORT",  
+      
+      "ALEX", "ALEXANDRIA",
+      "ANDL", "ANNANDALE",
+      "DUNN", "DUNN LORING",
+      "FLCH", "FALLS CHURCH",
+      "FRFX", "FAIRFAX",
+      "MCLN", "MCLEAN"
+
   });
 }
