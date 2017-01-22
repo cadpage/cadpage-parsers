@@ -36,6 +36,12 @@ public class CALakeCountyParser extends FieldProgramParser {
     return D_ALBERT_PTN.matcher(addr).replaceAll("D ALBERT");
   }
   private static final Pattern D_ALBERT_PTN = Pattern.compile("\\bD'ALBERT\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapCity(String city) {
+    city = stripFieldEnd(city, "(Unincorporated)");
+    return city;
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -94,9 +100,7 @@ public class CALakeCountyParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCity.length() > 0) return false;
-      if (!super.checkParse(field, data)) return false;
-      data.strCity = stripFieldEnd(data.strCity, "(Unincorporated)");
-      return true;
+      return super.checkParse(field, data);
     }
   }
   

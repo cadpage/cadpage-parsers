@@ -31,7 +31,7 @@ public class DispatchA14Parser extends FieldProgramParser {
   
   public DispatchA14Parser(Properties cityCodes, ReverseCodeSet sourceSet, String defCity, String defState, boolean unitInfo) {
     super(cityCodes, defCity, defState,
-          "ADDR1! CS:X? ADTML:CODE? TOA:TIMEDATE TYPE:INFO LOC:ADDR2/S CROSS:X2 CODE:CODE TIME:TIME");
+          "ADDR1! CS:X? ADTML:CODE? TOA:TIMEDATE TYPE:INFO LOC:ADDR2/SXP CROSS:X2 CODE:CODE TIME:TIME");
     this.sourceSet = sourceSet;
     this.unitInfo = unitInfo;
     
@@ -253,16 +253,17 @@ public class DispatchA14Parser extends FieldProgramParser {
   public String getProgram() {
     return "ID CALL " + super.getProgram();
   }
-  
-  private static final Pattern ADDR_MARK_PTN = Pattern.compile(" (?:(C/?S:?)|(APT)) ", Pattern.CASE_INSENSITIVE);
+
+  private static final Pattern ADDR_MARK_PTN = Pattern.compile(" (?:(C/?S:?)|(APT|SUITE|ROOM|RM|UNIT)) ", Pattern.CASE_INSENSITIVE);
   private class MyAddressField2 extends AddressField {
     @Override
     public void parse(String field, Data data) {
       String saveCity = data.strCity;
       data.strAddress = data.strApt = data.strCity = "";
+      String place = "";
       int pt = field.indexOf('@');
       if (pt >= 0) {
-        data.strPlace = field.substring(pt+1).trim();
+        place = field.substring(pt+1).trim();
         field = field.substring(0,pt).trim();
         field = stripFieldEnd(field, ":");
       }
@@ -285,6 +286,8 @@ public class DispatchA14Parser extends FieldProgramParser {
       else {
         super.parse(field, data);
       }
+      
+      data.strPlace = append(data.strPlace, " ", place);
       
       if (data.strCity.length() == 0) data.strCity = saveCity;
     }

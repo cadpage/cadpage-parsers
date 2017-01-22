@@ -13,6 +13,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   public NYSuffolkCountyBParser() {
     super(NYSuffolkCountyAParser.CITY_TABLE, DISTRICT_SET, "SUFFOLK COUNTY", "NY", false);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSaintNames("ANTHONY'S");
     setupSpecialStreets("NEW HY", "NEW HWY", "NEW HW");
     removeWords("ESTATES", "HEIGHTS", "SQUARE");
   }

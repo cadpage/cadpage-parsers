@@ -14,7 +14,7 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
 
   public NYSuffolkCountyFParser() {
     super("SUFFOLK COUNTY", "NY",
-           "CALL! ( TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO+ | PLACE ADDR/S6Xa CITY! TOA:TOA! SRC ID INFO+? HQ! UNIT/S+ )");
+           "CALL! ( TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO+ | PLACE ADDR/S6Xa CITY! TOA:TOA! SRC ID! INFO+? HQ UNIT/S+ )");
   }
   
   @Override

@@ -211,7 +211,8 @@ public class ManageParsers {
         "SCAndersonCountyD",  "SCCharlestonCountyB",     // 08/31/2016
         "TXSanMarcosCounty",  "TXHaysCountyC",           // 09/28/2016
         "ILWoodfordCountyA",  "ILWoodfordCounty",        // 10/01/2016
-        "ILWoodfordCountyB",  "ILWOodfordCounty"         
+        "ILWoodfordCountyB",  "ILWOodfordCounty",       
+        "NYSuffolkCountyI",   "NYSuffolkCountyF"         // 01/21/2017
   });
 
 }
