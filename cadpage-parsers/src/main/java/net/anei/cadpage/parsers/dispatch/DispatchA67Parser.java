@@ -37,7 +37,7 @@ public class DispatchA67Parser extends FieldProgramParser {
     this.mapPtn = mapPtn == null ? null : Pattern.compile(mapPtn);
     boolean reqUnit = unitPtn.equals(".*");
     this.unitPtn = unitPtn == null || reqUnit ? null : Pattern.compile(unitPtn);
-    StringBuilder sb = new StringBuilder("ID DATE/d TIME ( CALL ADDR/Z CITY | CALL CALL/L ADDR/Z CITY | CALL CALL2/L ADDR | CALL ADDR | CALL CALL/L ADDR | CALL ADDR ) ");
+    StringBuilder sb = new StringBuilder("ID DATE/d TIME ( CALL ADDR/Z CITY | CALL CALL/L ADDR/Z CITY | CALL ADDR | CALL CALL2/L ADDR | CALL CALL/L ADDR | CALL ADDR ) ");
 
     int tmp = flags & (A67_OPT_PLACE|A67_OPT_CROSS);
     if (mapPtn != null) tmp |= A67_OPT_MAP;

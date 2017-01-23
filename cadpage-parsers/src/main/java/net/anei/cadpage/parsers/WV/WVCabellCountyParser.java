@@ -14,7 +14,7 @@ public class WVCabellCountyParser extends DispatchA67Parser {
   public WVCabellCountyParser() {
     super(CITY_LIST, "CABELL COUNTY", "WV", A67_OPT_PLACE | A67_OPT_CROSS, null, "(?:\\b(?!APT|LOT|I\\d|UNIT)[A-Z]{1,4}\\d{1,3}\\b *)+");
     setupMultiWordStreets("R FORK MERRITTS CREEK");
-    setupSpecialStreets("MILL CREEK CROSSING", "RUSSELL CREEK");
+    setupSpecialStreets("MILL CREEK CROSSING", "RUSSELL CREEK", "TEAYS MEADOWS");
   }
   
   @Override
@@ -60,10 +60,25 @@ public class WVCabellCountyParser extends DispatchA67Parser {
     else {
       int pt = data.strCall.lastIndexOf('/');
       if (pt >= 0) {
-        String city = data.strCall.substring(pt+1).trim();
-        if (PUTNAM_CO_PTN.matcher(city).matches()) {
-          data.strCall = data.strCall.substring(0,pt).trim();
+        String call = data.strCall.substring(0,pt).trim();
+        String addr = data.strCall.substring(pt+1).trim();
+        if (PUTNAM_CO_PTN.matcher(addr).matches()) {
+          data.strCall = call;
           if (data.strCity.length() == 0) data.strCity = "PUTNAM COUNTY";
+        }
+        
+        else {
+          if (call.equals("Mutual Aid")) {
+            String saveCall = data.strCall;
+            String saveAddr = data.strAddress;
+            data.strCall = call;
+            String tmp = parseMutualAddress(true, addr, data);
+            if (tmp != null) {
+              data.strCross = append(saveAddr, " & ", data.strCross);
+            } else {
+              data.strCall = saveCall;
+            }
+          }
         }
       }
     }
@@ -120,7 +135,7 @@ public class WVCabellCountyParser extends DispatchA67Parser {
   
   @Override
   public String getProgram() {
-    return super.getProgram().replace("ADDR", "ADDR CITY?");
+    return super.getProgram().replace("ADDR", "ADDR CITY? X?");
   }
   
   private static final String[] CITY_LIST = new String[]{
