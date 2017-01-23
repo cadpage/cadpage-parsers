@@ -5,16 +5,17 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA67Parser;
 
-public class IAWarrenCountyBParser extends FieldProgramParser {
+public class IAWarrenCountyBParser extends DispatchA67Parser {
   
   public IAWarrenCountyBParser() {
     this("WARREN COUNTY", "IA");
   }
   
   IAWarrenCountyBParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState,
-          "ID DATE/d TIME CALL ( INFO END | ( ADDR/Z CITY | ) ( PLACE X/Z X/Z MAP! | X X/Z? MAP! | PLACE X/Z MAP! | PLACE MAP! | MAP! | ) INFO/N+ )");
+    super("Westcom:", CITY_LIST, defCity, defState, A67_OPT_PLACE | A67_OPT_CROSS, 
+          "(?:V[FG]|CLV|UI)\\d+[A-Z]?", "(?:\\b[A-Z]+\\d+\\b *)+"); 
   }
   
   @Override
@@ -25,45 +26,6 @@ public class IAWarrenCountyBParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "Westcom@wdm-ia.com";
-  }
-  
-  @Override
-  public boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("Westcom:")) return false;
-    body = body.substring(8).trim();
-    return parseFields(body.split("!"), data);
-  }
-
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ID")) return new MyIdField();
-    if (name.equals("DATE")) return new DateField("\\d\\d-\\d\\d-\\d\\d", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("TRANSPORT")) return new CallField("TRANSPORT - .*", true);
-    if (name.equals("MAP")) return new MapField("(?:V[FG]|[CDE]|CLV|UI)\\d+[A-Z]?", true);
-    return super.getField(name);
-  }
-  
-  private static final Pattern ID_PTN = Pattern.compile("(?:(.*)/)?(\\d{3,})");
-  private class MyIdField extends IdField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = ID_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strSupp = getOptGroup(match.group(1));
-      data.strCallId = match.group(2);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "INFO? ID";
-    }
-  }
-  
-  @Override
-  public String adjustMapAddress(String addr) {
-    addr = stripFieldEnd(addr, " INTERSECTN");
-    return super.adjustMapAddress(addr);
   }
   
   private static final String[] CITY_LIST = new  String[]{

@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -18,10 +19,13 @@ public class DispatchA67Parser extends FieldProgramParser {
   public static final int A67_OPT_PLACE = 0x1;
   public static final int A67_OPT_CROSS = 0x2;
   private static final int A67_OPT_MAP = 0x4;
+  public static final int A67_SINGLE_CALL = 0x8;
   
   private String prefix;
   private Pattern mapPtn;
   private Pattern unitPtn;
+  
+  private boolean singleCall;
   
   public DispatchA67Parser(String[] cityList, String defCity, String defState, int flags) {
     this(null, cityList, defCity, defState, flags, null, null);
@@ -35,9 +39,9 @@ public class DispatchA67Parser extends FieldProgramParser {
     super(cityList, defCity, defState, null);
     this.prefix = prefix;
     this.mapPtn = mapPtn == null ? null : Pattern.compile(mapPtn);
-    boolean reqUnit = unitPtn.equals(".*");
+    boolean reqUnit = unitPtn != null && unitPtn.equals(".*");
     this.unitPtn = unitPtn == null || reqUnit ? null : Pattern.compile(unitPtn);
-    StringBuilder sb = new StringBuilder("ID DATE/d TIME ( CALL ADDR/Z CITY | CALL CALL/L ADDR/Z CITY | CALL ADDR | CALL CALL2/L ADDR | CALL CALL/L ADDR | CALL ADDR ) ");
+    StringBuilder sb = new StringBuilder("ID DATE/d TIME ( SELECT/A CALL ADDR CITY? | CALL ADDR/Z CITY | CALL CALL/L ADDR/Z CITY | CALL ADDR | CALL CALL2/L ADDR | CALL CALL/L ADDR | CALL ADDR ) ");
 
     int tmp = flags & (A67_OPT_PLACE|A67_OPT_CROSS);
     if (mapPtn != null) tmp |= A67_OPT_MAP;
@@ -86,8 +90,10 @@ public class DispatchA67Parser extends FieldProgramParser {
     }
     
     setProgram(sb.toString(), 0);
+    singleCall = (flags & A67_SINGLE_CALL) != 0;
   }
   
+  private static Pattern CALL_CHG_PTN = Pattern.compile("(CALL CHGFROM [A-Z0-9]+ TO [A-Z0-9]+)/");
   private static Pattern SLASH_DELIM = Pattern.compile("/");
   private static Pattern EXC_DELIM = Pattern.compile("!");
 
@@ -97,15 +103,26 @@ public class DispatchA67Parser extends FieldProgramParser {
       if (!body.startsWith(prefix)) return false;
       body = body.substring(prefix.length());
     }
+    
+    String chgInfo = null;
+    Matcher match = CALL_CHG_PTN.matcher(body);
+    if (match.lookingAt()) {
+      chgInfo = match.group(1);
+      body = body.substring(match.end()).trim();
+    }
+    
     if (body.length() < 10) return false;
     char delim = body.charAt(9);
     if (delim != '!' && delim != '/') return false;
     Pattern delimPtn = delim == '/' ? SLASH_DELIM : EXC_DELIM;
-    return parseFields(delimPtn.split(body), data);
+    setSelectValue(singleCall || delim == '!' ? "A" : "B");
+    if (!parseFields(delimPtn.split(body), data)) return false;
+    if (chgInfo != null) data.strSupp = append(chgInfo, "\n", data.strSupp);
+    return true;
   }
   
   @Override
-  public Field getField(String name) {
+  protected Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{9}", true);
     if (name.equals("CALL2")) return new CallField("Gas", true);
     if (name.equals("DATE")) return new DateField("\\d\\d-\\d\\d-\\d\\d", true);
@@ -154,8 +171,7 @@ public class DispatchA67Parser extends FieldProgramParser {
   private class MyPlaceCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
-      if (!(unitPtn != null && isLastField() && unitPtn.matcher(field).matches()) &&
-          CROSS_PTN.matcher(field).matches() || isValidAddress(field)) {
+      if (CROSS_PTN.matcher(field).matches() || isValidAddress(field)) {
         data.strCross = field;
       } else {
         data.strPlace = field;
