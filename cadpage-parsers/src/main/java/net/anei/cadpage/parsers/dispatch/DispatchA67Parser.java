@@ -23,11 +23,20 @@ public class DispatchA67Parser extends FieldProgramParser {
   private Pattern mapPtn;
   private Pattern unitPtn;
   
-  public  DispatchA67Parser(String prefix, String[] cityList, String defCity, String defState, int flags, String mapPtn, String unitPtn) {
+  public DispatchA67Parser(String[] cityList, String defCity, String defState, int flags) {
+    this(null, cityList, defCity, defState, flags, null, null);
+  }
+  
+  public DispatchA67Parser(String[] cityList, String defCity, String defState, int flags, String mapPtn, String unitPtn) {
+    this(null, cityList, defCity, defState, flags, mapPtn, unitPtn);
+  }
+  
+  public DispatchA67Parser(String prefix, String[] cityList, String defCity, String defState, int flags, String mapPtn, String unitPtn) {
     super(cityList, defCity, defState, null);
     this.prefix = prefix;
     this.mapPtn = mapPtn == null ? null : Pattern.compile(mapPtn);
-    this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
+    boolean reqUnit = unitPtn.equals(".*");
+    this.unitPtn = unitPtn == null || reqUnit ? null : Pattern.compile(unitPtn);
     StringBuilder sb = new StringBuilder("ID DATE/d TIME ( CALL ADDR/Z CITY | CALL CALL/L ADDR/Z CITY | CALL CALL2/L ADDR | CALL ADDR | CALL CALL/L ADDR | CALL ADDR ) ");
 
     int tmp = flags & (A67_OPT_PLACE|A67_OPT_CROSS);
@@ -52,7 +61,7 @@ public class DispatchA67Parser extends FieldProgramParser {
       break;
       
     case A67_OPT_PLACE | A67_OPT_CROSS:
-      sb.append("( X X+? | PLACE X X+? | )");
+      sb.append("( X X+? | PLACE X X+? | ) ");
       break;
       
     case A67_OPT_CROSS:
@@ -69,7 +78,7 @@ public class DispatchA67Parser extends FieldProgramParser {
     sb.append("INFO/SLS+");
     
     if (unitPtn != null) {
-      if (unitPtn.equals(".*")) {
+      if (reqUnit) {
         sb.append("? UNIT/Z! END");
       } else {
         sb.append("? UNIT END");
@@ -83,7 +92,7 @@ public class DispatchA67Parser extends FieldProgramParser {
   private static Pattern EXC_DELIM = Pattern.compile("!");
 
   @Override
-  public boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     if (prefix !=  null) {
       if (!body.startsWith(prefix)) return false;
       body = body.substring(prefix.length());
@@ -113,6 +122,7 @@ public class DispatchA67Parser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public boolean checkParse(String field, Data data) {
+      if ((unitPtn != null && isLastField() && unitPtn.matcher(field).matches())) return false;
       field = stripFieldEnd(field, " INTERSECTN");
       return super.checkParse(field, data);
     }
@@ -140,11 +150,12 @@ public class DispatchA67Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CROSS_PTN = Pattern.compile("MM.*|ROAD.*|DEAD END");
+  private static final Pattern CROSS_PTN = Pattern.compile("MM.*|.*\\b\\d*MM\\b.*|ROAD.*|DEAD END|END");
   private class MyPlaceCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
-      if (CROSS_PTN.matcher(field).matches() || isValidAddress(field)) {
+      if (!(unitPtn != null && isLastField() && unitPtn.matcher(field).matches()) &&
+          CROSS_PTN.matcher(field).matches() || isValidAddress(field)) {
         data.strCross = field;
       } else {
         data.strPlace = field;
@@ -160,6 +171,7 @@ public class DispatchA67Parser extends FieldProgramParser {
   private class MyCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
+      if (unitPtn != null && isLastField() && unitPtn.matcher(field).matches()) return false;
       if (CROSS_PTN.matcher(field).matches()) {
         super.parse(field, data);
         return true;
@@ -195,7 +207,8 @@ public class DispatchA67Parser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!unitPtn.matcher(field).matches()) return false;
+      if (!isLastField()) return false;
+      if (unitPtn != null && !unitPtn.matcher(field).matches()) return false;
       data.strUnit = field;
       return true;
     }
