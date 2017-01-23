@@ -933,7 +933,7 @@ Philomath, OR 97370
 If you do this, please include your Cadpage User email address (usually a gmail account) so I can make sure you get credit for it.
 
 If you need a 30-day extension, open the Cadpage settings and press Payment Status, then press the "I have an authorization code" button, and enter an authorization code of
-ULUCZOEA or uluczoea.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
+PLZRPVBA or plzrpvba.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
 Thanks for your support,
 Jean ~ Cadpage Administrator
@@ -3013,9 +3013,9 @@ Can you long press some of the calls that are coming in late and select
 "Report Problem" to send them to us?
 
 ***************************************************************************
-switch to Active911 Android app
+switch from Active911 Android app
 
-Apparently, your department has paid for Active911, and your device is currently registered to use the new Active911 Android app. Since that new system is in place, your pages will no longer be sent to the Cadpage app.
+Apparently, your department has paid for Active911, and your device is currently registered to use the Active911 Android app. Since that system is in place, your pages will no longer be sent to the Cadpage app.
 
 If you want to switch back to using Cadpage instead of the Active911 app, you need to re-register Cadpage with Active911.
 To do that, go into Cadpage Settings and select
