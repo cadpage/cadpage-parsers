@@ -16,11 +16,7 @@ public class ILDuPageCountyBParser extends FieldProgramParser {
     super(CITY_LIST, "DUPAGE COUNTY", "IL",
         "ID DATE/d TIME ( MUTUAL_AID SKIP MACALL SKIP MAMAP MAINFO MACROSS? "
 +                           "|"
-+                       " CALL ADDR CITY? ( BOX X/Z+? MAP! "
-+                                            "|"
-+                                        " PLACE BOX X/Z+? MAP! "
-+                                            "|"
-+                                        " PLACE X/Z X/Z MAP! "
++                       " CALL ADDR CITY? ( PLACE X/Z X/Z MAP! "
 +                                            "|"
 +                                        " X ( X/Z MAP | MAP | ) "
 +                                            "|"
@@ -64,7 +60,6 @@ public class ILDuPageCountyBParser extends FieldProgramParser {
     if (name.equals("MAMAP")) return new MapField("[A-Z]*\\d+", true);
     if (name.equals("MAINFO")) return new MutualAidInfoField();
     if (name.equals("MACROSS")) return new CrossField("(?i)CROSS +(.*)", true);
-    if (name.equals("BOX")) return new BoxField("[AB]\\d{3}", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("MAP")) return new MyMapField();
