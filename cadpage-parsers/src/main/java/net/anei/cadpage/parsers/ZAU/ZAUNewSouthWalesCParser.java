@@ -17,7 +17,12 @@ public class ZAUNewSouthWalesCParser extends MsgParser {
   
   private static final Pattern MASTER = Pattern.compile("(?:(\\d\\d? [A-Z][a-z]+ \\d{4}) )?(\\d\\d:\\d\\d:\\d\\d) (.*) - ([A-Z ]+) - ([A-Z]+)");
   private static final DateFormat DATE_FMT = new SimpleDateFormat("dd MMM yyyy");
-  
+
+  @Override
+  public String getLocName() {
+    return "New South Wales, AU";
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     

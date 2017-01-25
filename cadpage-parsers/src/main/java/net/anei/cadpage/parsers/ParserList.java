@@ -1584,12 +1584,12 @@ public class ParserList {
               ,"ZCAQCQuebec"                    ,"Quebec, QC"
           ),
           new ParserCategory("Australia"
+              ,"ZAUMountBarker"                 ,"Mount Barker, AU"
               ,"ZAUNewSouthWales"               ,"New South Wales, AU"
+              ,"ZAUWhyalla"                     ,"Whyalla, AU"
               ,"ZAUGeneral"                     ,"Generic Location"
               ,"ZAUGeneralSlash"                ,"Generic (slash field separator)"
               ,"ZAUGeneralDash"                 ,"Generic (dash field separator)"
-              ,"ZAUMountBarker"                 ,"Mount Barker, AU"
-              ,"ZAUWhyalla"                     ,"Whyalla, AU"
               ,"ZAUCadpage2"                    ,"Standard Cadpage Format B"
               ,"ZAUCadpage3"                    ,"Standard Cadpage Format C"
           ),
