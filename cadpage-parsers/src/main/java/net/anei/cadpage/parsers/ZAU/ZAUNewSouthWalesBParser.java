@@ -45,7 +45,7 @@ public class ZAUNewSouthWalesBParser extends SmartAddressParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = DATE_TIME_MARKER.matcher(body);
     if (!match.find()) return false;
     String date = match.group(1);

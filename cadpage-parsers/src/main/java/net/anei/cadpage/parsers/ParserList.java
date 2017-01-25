@@ -1589,6 +1589,7 @@ public class ParserList {
               ,"ZAUGeneralSlash"                ,"Generic (slash field separator)"
               ,"ZAUGeneralDash"                 ,"Generic (dash field separator)"
               ,"ZAUMountBarker"                 ,"Mount Barker, AU"
+              ,"ZAUWhyalla"                     ,"Whyalla, AU"
               ,"ZAUCadpage2"                    ,"Standard Cadpage Format B"
               ,"ZAUCadpage3"                    ,"Standard Cadpage Format C"
           ),

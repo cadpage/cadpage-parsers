@@ -1,13 +1,17 @@
 package net.anei.cadpage.parsers.ZAU;
 
 import net.anei.cadpage.parsers.GroupBestParser;
+import net.anei.cadpage.parsers.GroupBlockParser;
 
 
 public class ZAUNewSouthWalesParser extends GroupBestParser {
 
   public ZAUNewSouthWalesParser() {
-    super(new ZAUNewSouthWalesAParser(), new ZAUNewSouthWalesBParser(), 
-        new ZAUNewSouthWalesCParser(), new ZAUNewSouthWalesDParser());
+    super(new ZAUNewSouthWalesAParser(),
+          new ZAUNewSouthWalesCParser(),
+          
+          new GroupBlockParser(),
+          new ZAUNewSouthWalesBParser());
   }
 
   @Override
