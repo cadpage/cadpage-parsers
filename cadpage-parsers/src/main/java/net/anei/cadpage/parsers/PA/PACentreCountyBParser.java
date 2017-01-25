@@ -9,7 +9,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PACentreCountyBParser extends FieldProgramParser {
   
   public PACentreCountyBParser() {
-    super("CENTRE COUNTY", "PA", "Box:BOX_CALL_ADDR! Due:UNIT? Name:NAME");
+    super("CENTRE COUNTY", "PA", 
+          "( SELECT/1 Box:BOX_CALL_ADDR! Due:UNIT? Name:NAME " + 
+          "| Box:BOX! ( CALL_ADDR/Z! END | CALL PLACE? ADDRCITY! Name:NAME? MAP END ) )");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("TWP");
   }
@@ -22,20 +24,52 @@ public class PACentreCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Centre County Alerts")) return false;
-    return super.parseMsg(body, data);
+    int pt = body.indexOf(" http://");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+    body = stripFieldEnd(body, ".");
+    if (body.contains("\n")) {
+      setSelectValue("2");
+      return parseFields(body.split("\n"), data);
+    }
+    
+    else {
+      setSelectValue("1");
+      return super.parseMsg(body, data);
+    }
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("BOX_CALL_ADDR")) return new MyBoxCallAddressField();
+    if (name.equals("CALL_ADDR")) return new MyCallAddressField();
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
   
+  private static final Pattern BOX_PTN = Pattern.compile("(\\d{3,}) +");
+  private class MyBoxCallAddressField extends MyCallAddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = BOX_PTN.matcher(field);
+      if (match.lookingAt()) {
+        data.strBox = match.group(1);
+        field = field.substring(match.end());
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "BOX " + super.getFieldNames();
+    }
+  }
+  
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*)([NSEW][NSEW]? SECTOR)");
-  private static final Pattern BOX_CALL_ADDR_PTN = Pattern.compile("(?:(\\d{3,}) )?(.*?) (?![A-Z]+-[AB]LS\\b)([^a-z,]*)");
-  private class MyBoxCallAddressField extends AddressField {
+  private static final Pattern CALL_ADDR_PTN1 = Pattern.compile("(.*- ?[AB]LS(?: Urgent)?) *(.*)");
+  private static final Pattern CALL_ADDR_PTN2 = Pattern.compile("(.*?) ([^a-z,]*)");
+  private static final Pattern STATION_PTN = Pattern.compile("(STATION \\d{1,2}) +(.*)");
+  private class MyCallAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = MBLANK_PTN.matcher(field).replaceAll(" ");
@@ -49,11 +83,21 @@ public class PACentreCountyBParser extends FieldProgramParser {
         data.strCity = field.substring(pt+1).trim();
         field = field.substring(0,pt).trim();
       }
-      match = BOX_CALL_ADDR_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strBox = getOptGroup(match.group(1));
-      data.strCall = match.group(2).trim();
-      parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, match.group(3).trim().replace('@',  '&'), data);
+      match = CALL_ADDR_PTN1.matcher(field);
+      if (!match.matches()) {
+        match = CALL_ADDR_PTN2.matcher(field);
+        if (!match.matches()) abort();
+      }
+      data.strCall = match.group(1).trim();
+      String addr = match.group(2).trim();
+      String prefix = "";
+      match = STATION_PTN.matcher(addr);
+      if (match.lookingAt()) {
+        prefix = match.group(1);
+        addr = match.group(2);
+      }
+      parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr.replace('@',  '&'), data);
+      data.strPlace = append(prefix, " ", data.strPlace);
       if (data.strAddress.length() == 0) {
         data.strAddress = data.strPlace;
         data.strPlace = "";
@@ -62,7 +106,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "BOX CALL PLACE ADDR APT CITY MAP";
+      return "CALL PLACE ADDR APT CITY MAP";
     }
   }
   
