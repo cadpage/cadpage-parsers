@@ -123,7 +123,11 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "BELL HOLLOW",
     "BIG OAK",
     "BRUSH VALLEY",
+    "BUFFALO RUN",
     "BULLIT RUN",
+    "BUSH HOLLOW",
+    "CENTENNIAL HILLS",
+    "CURTIN NARROWS",
     "DIX RUN",
     "EAGLE VALLEY",
     "EGYPT HOLLOW",
@@ -151,6 +155,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "ROLLING RIDGE",
     "ROSS HILL",
     "SKYTOP MOUNTAIN",
+    "SNO FOUNTAIN",
     "SPORTS CAMP",
     "STEELE HOLLOW",
     "SUMMIT HILL",
@@ -159,6 +164,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "TOW HILL",
     "TURKEY EYE",
     "VALLEY VIEW",
+    "VIRGINIA PINE",
     "WEAVER HILL",
     "WHITE PINE"
   };
