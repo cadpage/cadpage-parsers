@@ -10,6 +10,7 @@ targetCompatibility = '1.7'
 jar {
     manifest {
         attributes('Implementation-Title': 'Cadpage Parsing Library',
-                   'Implementation-Version': project.versionName)
+                   'Implementation-Version': project.versionName,
+                   'Main-Class' : 'net.anei.cadpage.parsers.Parser')
     }
 }
