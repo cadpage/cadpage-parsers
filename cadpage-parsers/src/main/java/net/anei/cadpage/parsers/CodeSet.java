@@ -36,7 +36,7 @@ public class CodeSet {
     }
   }
   
-  protected void add(String code) {
+  public void add(String code) {
     if (code.length() < minCodeLen) minCodeLen = code.length();
     codeSet.add(code);
   }

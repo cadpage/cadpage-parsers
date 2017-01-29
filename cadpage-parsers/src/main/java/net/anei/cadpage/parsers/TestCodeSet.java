@@ -17,7 +17,7 @@ public class TestCodeSet extends CodeSet {
   }
 
   @Override
-  protected void add(String code) {
+  public void add(String code) {
     codeSet.add(code);
   }
 

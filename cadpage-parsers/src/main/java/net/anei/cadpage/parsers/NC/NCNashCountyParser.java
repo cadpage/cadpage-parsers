@@ -12,210 +12,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3AParser;
 
 public class NCNashCountyParser extends DispatchA3AParser {
   
-  private static final Pattern CHANNEL_PTN = Pattern.compile("TAC.*", Pattern.CASE_INSENSITIVE);
-  private static final Pattern HAZARD_PTN = Pattern.compile("Hazards: .*");
-  private static final Pattern UNIT_PTN = Pattern.compile("(?!FIRES)(?:\\b(?:\\d*[A-Z]*\\d+[A-Z]?|\\d+-\\d+|[A-Z]*EMS|[A-Z]*FIR?E|[A-Z]*FD|[A-Z]*RES|[A-Z]*CEM|[A-Z]CSO|DOT|TOISN|SI FR|WAKEM|ST\\d+(?:-\\d+)?|(?:BRUSH|EMS|PPO|Nash Car|UNIT|RESCUE|TRUCK|ENG|SQD) ?\\d+)\\b[ ,]?)+");
-  private static final Pattern PHONE_PTN = Pattern.compile("\\d{2}[ 0-9]-\\d{3}-\\d{4}");
-  private static final Pattern COMMENT_LABEL_PTN = Pattern.compile("(?:Geo|Landmark|Place) Comment: *(.*)|NBH: *(.*)");
-  
   public NCNashCountyParser() {
     super(CITY_LIST, "NASH COUNTY", "NC");
-    setFieldList("ADDR APT CH CITY X PLACE CODE CALL NAME UNIT PHONE INFO " + getFieldList());
+    setFieldList("ID ADDR APT CH CITY X PLACE CODE CALL NAME UNIT PHONE INFO " + getFieldList());
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
-    setupMultiWordStreets(
-        "ADOLPHUS T BOONE",
-        "ANNIE LEIGH",
-        "AVENTON GIN",
-        "BAINES LOOP",
-        "BALDY HILL",
-        "BARNES HILL CHURCH",
-        "BARNHILL FARM",
-        "BATTLE PARK",
-        "BATTLEBORO LEEGETT",
-        "BATTLEBORO LEGGETT",
-        "BATTLEBORO LEGGIT",
-        "BEAVER DAM",
-        "BELLAMY MILL",
-        "BEND OF THE RIVER",
-        "BIG WOODS",
-        "BLACK CLOUD",
-        "BLUE HERON",
-        "BODDIE MILL POND",
-        "BONES ACRES",
-        "BONES CUT OFF",
-        "BRADLEY CUTCHIN",
-        "BRANTLEY PARK",
-        "BRIDGE TENDER",
-        "BUCK DEANS",
-        "BULL HEAD",
-        "BULLOCK SCHOOL",
-        "BULLUCK SCHOOL",
-        "BURNT MILL",
-        "CABIN PATH",
-        "CAMP CHARLES",
-        "CARRIAGE FARM",
-        "CARRIAGE HOUSE",
-        "CARTER GROVE",
-        "CEDAR GROVE SCHOOL LOOP",
-        "CEDAR LAKE",
-        "CHILDRENS HOME",
-        "COKER TOWN",
-        "COLLIE TYSON",
-        "COOL SPRING",
-        "COOPERS SCHOOL",
-        "COUNTRY CLUB",
-        "COUNTY HOME",
-        "COUNTY LINE",
-        "CRESCENT MEADOWS",
-        "CURTIS ELLIS",
-        "DAVIS STORE",
-        "DAVIS WORRELL",
-        "DOUBLE WIDE",
-        "EAGLE RIDGE",
-        "EL SHADDAI",
-        "FIRE TOWER FARM",
-        "FIRE TOWER",
-        "FISHING CREEK",
-        "FLAG POND LOOP",
-        "FLAT ROCK",
-        "FLOOD STORE",
-        "FLOODS STORE",
-        "FLOWER HILL",
-        "FOREST COVE",
-        "FOREST HILL",
-        "FOUNTAIN BRANCH",
-        "FOX RUN",
-        "GASKILL FARM",
-        "GEORGE PACE",
-        "GOLD ROCK",
-        "GREEN HILLS",
-        "GREEN PASTURE",
-        "GREEN POND LOOP",
-        "GREYS MILL",
-        "GRIFFIN FARM",
-        "HARRIS COLLIE",
-        "HORNES CHURCH",
-        "HUNTER HILL",
-        "HUNTER RIDGE",
-        "JOHN J SHARPE",
-        "L A GREEN FARM",
-        "LAKE ROYALE",
-        "LAKE VIEW",
-        "LANCASTER STORE",
-        "LOCHMERE BAY",
-        "LOGANS RUN",
-        "LONESOME PINE",
-        "LOYD PARK",
-        "MAMAS RUN",
-        "MARTIN LUTHER KING",
-        "MEADOW PARK",
-        "MICHAEL SCOTT",
-        "MIDDLESEX CORPORATE",
-        "MIGHTY CIRCLE",
-        "MILL BRANCH",
-        "MILLIE FIELD",
-        "MISSING MILE",
-        "MOORE FARM",
-        "MORNING STAR CH",
-        "MORNING STAR CHURCH",
-        "MOUNT PLEASANT",
-        "MT PLEASANT",
-        "MT ZION CHURCH",
-        "MURRAY LOOP",
-        "NASHVILLE COMMONS",
-        "NICODEMUS MILE",
-        "NORTH OF WHITFIELD",
-        "NORTHERN NASH",
-        "OAK GROVE",
-        "OAK LEVEL",
-        "PEACHTREE HILLS",
-        "PLANER MILL",
-        "PLEASANT GROVE CHURCH",
-        "PLEASANT GROVE",
-        "POLE CAT",
-        "PREACHER JOYNER",
-        "QUIET WATERS",
-        "RACE TRACK",
-        "RALEIGH WILSON",
-        "RED BUD",
-        "RED OAK BATTLEBORO",
-        "RED OAK",
-        "REGES STORE",
-        "RIVER BEND",
-        "RIVER GLENN",
-        "RIVER LAKE",
-        "ROCK QUARRY",
-        "ROCK RIDGE",
-        "ROCKY CROSS",
-        "ROLLING ROCK",
-        "ROSE LOOP",
-        "SALEM SCHOOL",
-        "SAMARIA CHURCH",
-        "SANCTIFIED CHURCH",
-        "SANDY CROSS",
-        "SANDY HILL CHURCH",
-        "SCHOOL HOUSE",
-        "SEVEN BRIDGES",
-        "SEVEN PATHS",
-        "SHADY LANE",
-        "SHEEP PASTURE",
-        "SHILOH CHURCH",
-        "SHILOH SCHOOL",
-        "SOUTHERN NASH HIGH",
-        "SPEIGHT CHAPEL",
-        "SPEIGHTS CHAPEL",
-        "SPENCER COCKRELL",
-        "SPRING HILL",
-        "SPRING HOPE",
-        "SQUIRREL DEN",
-        "ST JOHN",
-        "STANLEY PARK",
-        "STONE HERITAGE",
-        "STONE PARK",
-        "STONE ROSE",
-        "STONE WHITLEY",
-        "STONEY CREEK",
-        "STONEY HILL CHURCH",
-        "STRAIGHT GATE",
-        "SUGAR HILL",
-        "SUTTERS CREEK",
-        "SWIFT CREEK SCHOOL",
-        "TABERNACLE CHURCH",
-        "TAR RIVER CHURCH",
-        "TAYLORS GIN",
-        "TAYLORS STORE",
-        "THOMAS A BETTS",
-        "THOMAS BETTS",
-        "THOMPSON CHAPEL",
-        "THORNE FARM",
-        "TOWN CREEK",
-        "TRESSELL LOOP",
-        "TYSON LOOP",
-        "VALLEY CREEK",
-        "VAUGHAN CHAPEL",
-        "VILLAGE SQUARE",
-        "WAGON WHEEL",
-        "WATER FRONT",
-        "WATER LOO",
-        "WATERS EDGE",
-        "WATSON SED FARM",
-        "WATSON SEED FARM",
-        "WATSONS COVE",
-        "WEBBS MILL",
-        "WEST MOUNT",
-        "WEST NASHVILLE",
-        "WESTERN HILLS",
-        "WESTRIDGE CIRCLE",
-        "WESTVIEW PARK",
-        "WHEELESS CABIN",
-        "WHITE OAK",
-        "WHITLEY CIRCLE",
-        "WILD RED",
-        "WINDCHASE POINTE",
-        "WINDY TRAILS",
-        "WINSTEAD STORE",
-        "WOLLETT MILL"
-     );
+    setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSpecialStreets("TAR RIVER BRIDGE", "WHITAKERS CITY LIMITS");
   }
   
   @Override
@@ -229,6 +31,15 @@ public class NCNashCountyParser extends DispatchA3AParser {
     return super.isNotExtraApt(apt);
   };
   
+  private static final Pattern MBLANK_DELIM = Pattern.compile(" {2,}");
+  private static final Pattern SEMI_DELIM = Pattern.compile(" ;(?: |$)");
+  private static final Pattern ID_PTN = Pattern.compile("(\\d\\d-\\d{6})(?= )");
+  private static final Pattern CHANNEL_PTN = Pattern.compile("TAC.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern HAZARD_PTN = Pattern.compile("Hazards: .*");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?!FIRES)(?:\\b(?:\\d*[A-Z]*\\d+[A-Z]?|\\d+-\\d+|[A-Z]*EMS|[A-Z]*FIR?E|[A-Z]*FD|[A-Z]*RES|[A-Z]*CEM|[A-Z]CSO|DOT|TOISN|SI FR|WAKEM|ST\\d+(?:-\\d+)?|(?:BRUSH|EMS|PPO|Nash Car|UNIT|RESCUE|TRUCK|ENG|SQD) ?\\d+)\\b[ ,]?)+");
+  private static final Pattern PHONE_PTN = Pattern.compile("\\d{2}[ 0-9]-\\d{3}-\\d{4}");
+  private static final Pattern COMMENT_LABEL_PTN = Pattern.compile("\\b(?:Geo|Landmark|Place|Special) Comment:+ *(.*)|NBH: *(.*)");
+
   @Override
   public boolean parseMain(String body, Data data) {
   
@@ -236,38 +47,87 @@ public class NCNashCountyParser extends DispatchA3AParser {
     body = body.replace("\n", "  ");
     if (!body.startsWith("NASH911:")) return false;
     body = body.substring(8);
-    boolean mBlankFmt = body.startsWith("  ");
-    body = body.trim();
     
-    // If we are lucky, we can count on the fields being separated by multiple blanks
-    if (mBlankFmt) {
+    // Check for leading ID
+    Matcher match = ID_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strCallId = match.group(1);
+      body = body.substring(match.end());
+    }
+    
+    body = body.replace("PERSONAL  ITEMS", "PERSONAL ITEMS");
+    body = body.replace("EASTERN NC MEDICAL GROUP  ", "EASTERN NC MEDICAL GROUP ");
+    
+    // Check for one of two possible field delimiters
+    Pattern delimPtn = SEMI_DELIM;
+    match = delimPtn.matcher(body);
+    if (!match.lookingAt()) {
+      delimPtn = MBLANK_DELIM;
+      match = delimPtn.matcher(body);
+      if (!match.lookingAt()) delimPtn = null;
+    }
+    
+    // If we identified a delimiter, use it to split the line
+    boolean special = false;
+    String[] flds = null;
+    if (delimPtn != null) {
+      body = body.substring(match.end());
+      flds = delimPtn.split(body);
+    }
+    
+    // If not, but the alerts starts with one leading blank, then see if we can break
+    // it up with the multi-blank delimiter.  If it set a flag to check some fields
+    // that are not properly split in this mode
+    else {
+      if (body.startsWith(" ")) {
+        special = true;
+        flds = MBLANK_DELIM.split(body.trim());
+        if (flds.length < 4) flds = null;
+      }
+    }
+    
+    // Did any of those field splitting techniques work?
+    if (flds != null) {
       
-      // Split out fields by multiple blank separators
-      String[] flds = body.split("  +");
+      // Split out fields
       int spt = 0;
       int ept = flds.length;
      
       // First field has to be the address
       String addr = flds[spt++].replace("//", "/");
-      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
+      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
       
-      // Second field has to be city.  Unless we found city in first field
-      // Or unless second field is apt and third field is city
+      // This has to be followed by city, but there can be a multi-part 
+      // apt field before we get to the city.  In special parsing mode
+      // the city is combined with the following field, so we have to
+      // extract the rest of the field and put it back in the array.
       if (data.strCity.length() == 0) {
         if (spt >= ept) return false;
         String city = flds[spt++];
-        if (!isCity(city)) {
+        while (true) {
+          int flags = FLAG_ONLY_CITY;
+          if (!special) flags |= FLAG_ANCHOR_END;
+          parseAddress(StartType.START_ADDR, flags, city, data);
+          if (data.strCity.length() > 0) {
+            if (special) {
+              String left = getLeft();
+              if (left.length() > 0) {
+                flds[--spt] = left;
+              }
+            }
+            break;
+          }
+          
           if (CHANNEL_PTN.matcher(city).matches()) {
-            data.strChannel = city;
+            data.strChannel = append(data.strChannel, "/", city);
           } else {
-            data.strApt = append(data.strApt, "-", city);
+            data.strApt = append(data.strApt, " ", city);
           }
           if (spt >= ept) return false;
           city = flds[spt++];
-          if (!isCity(city)) return false;
         }
-        data.strCity = convertCodes(city, CITY_FIXES);
       }
+      data.strCity = convertCodes(data.strCity, CITY_FIXES);
       
       // Now lets start working from the end.
       // First check for a special info field
@@ -307,53 +167,111 @@ public class NCNashCountyParser extends DispatchA3AParser {
         lastFld = flds[--ept];
       }
       
-      // Which may be preceded by a (possibly 2 part) name
-      if (CALL_LIST.getCode(lastFld) == null) {
-        if (!lastFld.equals("UNK")) data.strName = cleanWirelessCarrier(lastFld);
-        if (spt > ept) return false;
+      // Things are different for special field parsing
+      if (special) {
+
+        // One field contains special, call code and description and name
+        // Which we just happen to have a cool method to parse
+        parseCallInfo(false, lastFld, data);
         lastFld = flds[--ept];
+      }
+      
+      // Regular (non-special) field parsing
+      
+      else {
         
-        if (spt <= ept && CALL_LIST.getCode(lastFld) == null && 
-            CALL_LIST.getCode(flds[ept-1]) != null) {
-          data.strName = lastFld + ' ' + data.strName;
+        // Look for a call description or code
+        // followed by 0-2 name fields
+        int pt = ept;
+        boolean found = parseCall(lastFld, data);
+        if (!found && --pt >= spt) {
+          found = parseCall(flds[pt], data);
+          if (!found && --pt >= spt) {
+            found = parseCall(flds[pt], data);
+          }
+        }
+        
+        // If we found one, anything between it and ept
+        // should form the name
+        if (found) {
+          if (pt < ept) { 
+            String name = "";
+            for (int tpt = pt+1; tpt<=ept; tpt++) {
+              if (!flds[tpt].equals("UNK")) {
+                name = append(name, " ", flds[tpt]);
+              }
+            }
+            data.strName = cleanWirelessCarrier(name);
+            ept = pt;
+          }
+          
+          // If we found a call description, but not a code, see
+          // if the previous field is a recognized call code
+          lastFld = flds[--ept];
+          if (spt <= ept) {
+            CodeTable.Result cRes = CODE_TABLE.getResult(lastFld, true);
+            if (cRes != null && cRes.getCode().length() == lastFld.length()) {
+              data.strCode = lastFld;
+              lastFld = flds[--ept];
+            }
+          }
+        }
+        
+        // If not, just use what we have for a call description
+        else {
+          data.strCall = lastFld;
           lastFld = flds[--ept];
         }
       }
       
-      // Which is preceded by a call description
-      data.strCall = lastFld;
-      if (spt > ept) return false;
-      lastFld = flds[--ept];
-      
-      // Which may be preceded by a call code
-      if (CODE_TABLE.getResult(lastFld, true) != null) {
-        data.strCode = lastFld;
-        if (spt > ept) return false;
-        lastFld = flds[--ept];
-      }
-      
       // Check for a Geo|Place|Landmark Comment: info field
-      while (true) {
-        Matcher match = COMMENT_LABEL_PTN.matcher(lastFld);
-        if (!match.matches()) break;
-        String info = match.group(1);
-        if (info == null) {
-          data.strPlace = match.group(2);
-        } else {
-          data.strSupp = append(info, "\n", data.strSupp);
+      // Occasionally these fields contain multiple blanks splitting
+      // them across two more data fields
+      for (int pt = ept; pt >= spt; pt--) {
+        String fld = flds[pt];
+        match = COMMENT_LABEL_PTN.matcher(fld);
+        if (match.matches()) {
+          boolean place = false;
+          String info = match.group(1);
+          if (info == null) {
+            place = true;
+            info = match.group(2);
+          }
+          for (int ii = pt+1; ii<=ept; ii++) {
+            info = append(info, " ", flds[ii]);
+          }
+          if (place) {
+            data.strPlace = append(info, " - ", data.strPlace);
+          } else {
+            data.strSupp = append(info, "\n", data.strSupp);
+          }
+          ept = pt-1;
         }
-        if (spt > ept) return false;
-        lastFld = flds[--ept];
       }
       
       // Anything that hasn't been processed is a cross street
-      for (int ii = spt; ii <= ept; ii++) {
-        data.strCross = append(data.strCross, " / ", flds[ii]);
+      // If there is only one, check it for implied separators
+      if (ept >= spt) {
+        if (ept == spt) {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_NO_CITY | FLAG_ANCHOR_END, flds[spt], data);
+        } else {
+          for (int ii = spt; ii <= ept; ii++) {
+            data.strCross = append(data.strCross, " / ", flds[ii]);
+          }
+        }
       }
     }
     
-    // Multiple blanks have been removed, we have do this the hard way
+    // Multiple blanks have been removed, we have do this the hard way :(
     else {
+      
+      // Strip off Hazard notice
+      int pt = body.indexOf(" Hazards:");
+      if (pt >= 0) {
+        data.strSupp = body.substring(pt+1).trim();
+        body = body.substring(0,pt).trim();
+      }
+      
       body = body.replace("//", "/");
       parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_CROSS_FOLLOWS, body, data);
       String left = getLeft();
@@ -368,75 +286,138 @@ public class NCNashCountyParser extends DispatchA3AParser {
         left = p.get();
       }
       
-      // If there is a landmark comment, it nicely separates the cross streets
-      // from the comment & call description.  But sorting out where the comment/place
-      // ends and the call description begins will require checking each word to 
-      // see if it starts a known call description
-      Matcher match = COMMENT_LABEL_PTN.matcher(left);
-      if (match.find()) {
-        left = left.substring(0,match.start()).trim();
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, left, data);
-        
-        String extra = match.group(1);
-        boolean savePlace = (extra == null);
-        if (savePlace) extra = match.group(2);
-        
-        boolean lastBlank = true;
-        boolean found = false;
-        for (int pt = 0; pt < extra.length(); pt++) {
-          if (Character.isWhitespace(extra.charAt(pt))) {
-            lastBlank = true;
-          } else if (lastBlank) {
-            lastBlank = false;
-            String call = CALL_LIST.getCode(extra.substring(pt), true);
-            if (call != null) {
-              found = true;
-              data.strCall = call;
-              String tmp = extra.substring(0,pt).trim();
-              if (savePlace) data.strPlace = tmp;
-              else data.strSupp = tmp;
-              data.strName = cleanWirelessCarrier(extra.substring(pt+call.length()).trim());
-              break;
-            }
-          }
-        }
-        
-        // If we could not find a call description, dump everything in the info field.
-        if (!found) {
-          data.strSupp = extra;
-        }
-      }
-      
-      // Otherwise, there may be a  cross street at the start of what is left.  But we
-      // will check for a recognized call description first, lest we get tripped
-      // up by something like STRUCTURE PAUL LANE being misinterpreted as a 
-      // cross street
-      else {
-        CodeTable.Result cRes = CODE_TABLE.getResult(left);
-        if (cRes == null) {
-          Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT, left);
-          if (res.isValid()) {
-            res.getData(data);
-            left = res.getLeft();
-            cRes = CODE_TABLE.getResult(left);
-          }
-        }
-        
-        // Now things get sticky.
-        // What is left is either specific call code (which may be multiple words)
-        // followed by a name.  Or is all call description :(
-        if (cRes != null) {
-          data.strCode = cRes.getCode();
-          data.strCall  = cRes.getDescription();
-          data.strName = cleanWirelessCarrier(cRes.getRemainder());
-        } else {
-          data.strCall = left;
-        }
-      }
+      // And parse what is left into cross street special, call and name information
+      parseCallInfo(true, left, data);
     }
     data.strAddress = data.strAddress.replace("LEEGETT", "LEGGETT");
     data.strCity = convertCodes(data.strCity, CITY_FIXES);
     return true;
+  }
+  
+  /**
+   * This is called to handle a combined cross special code call field
+   * It is called from two different format parsers, one of which will 
+   * not include a leading cross street
+   * @param leadCross true if we should check for a leading cross street
+   * @param field the data field
+   * @param data parsed data object
+   */
+  private void parseCallInfo(boolean leadCross, String field, Data data) {
+    
+    // If there is a landmark comment, it nicely separates the cross streets
+    // from the comment & call description.  But sorting out where the comment/place
+    // ends and the call description begins will require checking each word to 
+    // see if it starts a known call description
+    Matcher match = COMMENT_LABEL_PTN.matcher(field);
+    if (leadCross ? match.find() : match.lookingAt()) {
+      if (leadCross) {
+        String cross = field.substring(0,match.start()).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, cross, data);
+      }
+      
+      // Parse the landmark comment information
+      String extra = match.group(1);
+      boolean savePlace = (extra == null);
+      if (savePlace) extra = match.group(2);
+      
+      // Start scanning through the comment information
+      // for every word start, see if it matches a know call code
+      // or call description
+      boolean lastBlank = true;
+      boolean found = false;
+      for (int pt = 0; pt < extra.length(); pt++) {
+        if (Character.isWhitespace(extra.charAt(pt))) {
+          lastBlank = true;
+        } else if (lastBlank) {
+          lastBlank = false;
+          String tmp = extra.substring(pt);
+          CodeTable.Result cRes = CODE_TABLE.getResult(tmp, true);
+          if (cRes != null) {
+            found = true;
+            data.strCode = cRes.getCode();
+            data.strCall = cRes.getDescription();
+            tmp = cRes.getRemainder();
+            String call = CALL_LIST.getCode(tmp, true);
+            if (call != null) {
+              data.strCall = call;
+              tmp = tmp.substring(call.length()).trim();
+            }
+          }
+          else {
+            String call = CALL_LIST.getCode(tmp, true);
+            if (call != null) {
+              found = true;
+              data.strCall = call;
+              tmp = tmp.substring(call.length()).trim();
+            }
+          }
+          
+          if (found) {
+            String info = extra.substring(0,pt).trim();
+            if (savePlace) data.strPlace = info;
+            else data.strSupp = info;
+            
+            data.strName = cleanWirelessCarrier(tmp);
+            break;
+          }
+        }
+      }
+      
+      // If we could not find a call description, dump everything in the info field.
+      if (!found) {
+        data.strSupp = extra;
+      }
+    }
+    
+    // Otherwise, there may be a  cross street at the start of what is left.  But we
+    // will check for a recognized call description first, lest we get tripped
+    // up by something like STRUCTURE PAUL LANE being misinterpreted as a 
+    // cross street
+    else {
+      CodeTable.Result cRes = CODE_TABLE.getResult(field);
+      if (leadCross && cRes == null) {
+        Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT, field);
+        if (res.isValid()) {
+          res.getData(data);
+          field = res.getLeft();
+          cRes = CODE_TABLE.getResult(field);
+        }
+      }
+      
+      // Now things get sticky.
+      // What is left is either specific call code (which may be multiple words)
+      // followed by a name.  Or is all call description :(
+      if (cRes != null) {
+        data.strCode = cRes.getCode();
+        field = cRes.getRemainder();
+        String call = CALL_LIST.getCode(field, true);
+        if (call != null) {
+          field = field.substring(call.length()).trim();
+        } else {
+          call = cRes.getDescription();
+        }
+        data.strCall  = call;
+        data.strName = cleanWirelessCarrier(field);
+      } else {
+        data.strCall = field;
+      }
+    }
+  }
+  
+  private boolean parseCall(String field, Data data) {
+    String call = CALL_LIST.getCode(field, true);
+    if (call != null && call.length() == field.length()) {
+      data.strCall = field;
+      return true;
+    }
+    CodeTable.Result cRes = CODE_TABLE.getResult(field, true);
+    if (cRes != null && cRes.getCode().length() == field.length()) {
+      data.strCode = field;
+      data.strCall = cRes.getDescription();
+      return true;
+    }
+    
+    return false;
   }
   
   @Override
@@ -467,214 +448,373 @@ public class NCNashCountyParser extends DispatchA3AParser {
 
   });
   
-  private static final CodeTable CODE_TABLE = new CodeTable(
-      
-        // Fire:
-        "911 HANGUP", "911 HANGUP",
-        "ADMIN-C",    "SERVICE CALL",
-        "ADMIN-H",    "SERVICE CALL",
-        "ALARM-FIRE", "FIRE ALARM",
-        "ALARMS-C",   "UNKNOWN ALARM",
-        "ALARMS-H",   "UNKNOWN ALARM",
-        "ELECTRICAL", "ELECTRICAL",
-        "EXPLOSION",  "EXPLOSION",
-        "FUEL SPILL", "FUEL SPILL",
-        "GAS LEAK",   "GAS LEAK",
-        "MISC-C",     "MISC PROBLEM",
-        "MISS PER-C", "MISSING PERSON",
-        "MISS PER-H", "MISSING PERSON",
-        "MUTUAL AID", "MUTUAL AID",
-        "MVA PD",     "MVA PROPERTY DAMAGE",
-        "MVA PD/OT",  "MVA OTHER",
-        "MVA PI-C",   "MVA PERSON INJURED",
-        "MVA PI-H",   "MVA PERSON INJURED",
-        "MVA PIN-C",  "MVA PERSON PINNED",
-        "MVA PIN-H",  "MVA PERSON PINNED",
-        "ODOR",       "ODOR INVESTIGATION",
-        "OUTSIDE FI", "OUTSIDE FIRE",
-        "PUBL SER-C", "SERVICE CALL",
-        "PUBL SER-H", "SERVICE CALL",
-        "SERV CALL",  "SERVICE CALL",
-        "SMOKE INVE", "SMOKE INVESTIGATION",
-        "STRUCTURE",  "STRUCTURE FIRE",
-        "TRAF/V/H-C", "MVA UNKNOWN",
-        "TRAF/V/H-H", "MVA UNKNOWN",
-        "VEH FIRE S", "SMALL VEHICLE FIRE",
-        "VEH FIRE L", "LARGE VEHICLE FIRE",
-        "VEH FIRE-L", "LARGE VEHICLE FIRE",
-        "WATER RESC", "WATER RESCUE",
-        
-        // Police
-        "THEFT-H",    "THEFT",
-
-        // Medical:
-        "ABD-C",      "ABDOMINAL PAIN",
-        "ABD-H",      "ABDOMINAL PAIN",
-        "ALLERGY-C",  "ALLERGIC REACTION",
-        "ALLERGY-H",  "ALLERGIC REACTION",
-        "ANIMAL-M-H", "ANIMAL BITE",
-        "ANIMAL-M-L", "ANIMAL BITE",
-        "ASSALT-M-C", "INJURED PERSON",
-        "ASSALT-M-H", "INJURED PERSON",
-        "BK PAIN-C",  "BACK PAIN",
-        "BK PAIN-H",  "BACK PAIN",
-        "BREATH-C",   "BREATHING DIFFICULTY",
-        "BREATH-H",   "BREATHING DIFFICULTY",
-        "BURNS-C",    "SUBJECT BURNED",
-        "BURNS-H",    "SUBJECT BURNED",
-        "CARBON-C",   "CO INHALATION",
-        "CARBON-H",   "CO INHALATION",
-        "CARD/ARR-C", "CODE BLUE",
-        "CARD/ARR-H", "CODE BLUE",
-        "CARDIAC-C",  "CODE BLUE",
-        "CARDIAC-H",  "CODE BLUE",
-        "CHEST-C",    "CHEST PAIN",
-        "CHEST-H",    "CHEST PAIN",
-        "CONF SPACE", "CONFINED SPACE RESCUE",
-        "DIABETIC-C", "DIABETIC EMERGENCY",
-        "DIABETIC-H", "DIABETIC EMERGENCY",
-        "DISTURB-H",  "DISTURB",
-        "FALLS-C",    "SUBJECT FALLEN",
-        "FALLS-H",    "SUBJECT FALLEN",
-        "HEADACHE-C", "HEADACHE",
-        "HEADACHE-H", "HEADACHE",
-        "HEART PR-C", "HEART PROBLEMS",
-        "HEART PR-H", "HEART PROBLEMS",
-        "HEAT/CLD-C", "HEAT EMERGENCY",
-        "HEAT/CLD-H", "HEAT EMERGENCY",
-        "HEMORRHA-C", "SUBJECT HEMORRHAGING",
-        "HEMORRHA-H", "SUBJECT HEMORRHAGING",
-        "LIGHTNING",  "LIGHTNING STRIKES",
-        "MEDICAL",    "MEDICAL",
-        "OB/PREG-H",  "OB/PREGNANCY",
-        "OVERDOSE-C", "OVERDOSE",
-        "OVERDOSE-H", "OVERDOSE",
-        "PSYC/SUI-C", "PSYCHIATRIC PROBLEM",
-        "PSYC/SUI-H", "PSYCHIATRIC PROBLEM",
-        "SEIZURES-C", "SEIZURES",
-        "SEIZURES-H", "SEIZURES",
-        "SHOTSTAB-C", "SHOOTING/ STABBING",
-        "SHOTSTAB-H", "SHOOTING/ STABBING",
-        "SICK-C",     "SICK CALL",
-        "SICK-H",     "SICK CALL",
-        "STROKE-C",   "STROKE/ CVA",
-        "STROKE-H",   "STROKE/ CVA",
-        "SUSPWANT-C", "ASSIST LAW",
-        "SUSPWANT-H", "ASSIST LAW",
-        "TRANSFER-C", "TRANSFER ASST",
-        "TRANSFER-H", "TRANSFER ASST",
-        "TRAUMA-C",   "INJURED PERSON",
-        "TRAUMA-H",   "INJURED PERSON",
-        "UNCONSC-C",  "UNRESPONSIVE PERSON",
-        "UNCONSC-H",  "UNRESPONSIVE PERSON",
-        "UNK PROB-C", "UNKNOWN MEDICAL",
-        "UNK PROB-H", "UNKNOWN MEDICAL",
-        "WARRANT SERV", "WARRANT SERVICE"
-
-  );
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "ADOLPHUS T BOONE",
+      "ANNIE LEIGH",
+      "AVENTON GIN",
+      "BAINES LOOP",
+      "BALDY HILL",
+      "BARNES HILL CHURCH",
+      "BARNHILL FARM",
+      "BATTLE PARK",
+      "BATTLEBORO LEEGETT",
+      "BATTLEBORO LEGGETT",
+      "BATTLEBORO LEGGIT",
+      "BEAVER DAM",
+      "BELLAMY MILL",
+      "BEND OF THE RIVER",
+      "BIG WOODS",
+      "BLACK CLOUD",
+      "BLUE HERON",
+      "BODDIE MILL POND",
+      "BONES ACRES",
+      "BONES CUT OFF",
+      "BRADLEY CUTCHIN",
+      "BRANTLEY PARK",
+      "BRIDGE TENDER",
+      "BUCK DEANS",
+      "BULL HEAD",
+      "BULLOCK SCHOOL",
+      "BULLUCK SCHOOL",
+      "BURNT MILL",
+      "CABIN PATH",
+      "CAMP CHARLES",
+      "CARRIAGE FARM",
+      "CARRIAGE HOUSE",
+      "CARTER GROVE",
+      "CEDAR GROVE SCHOOL LOOP",
+      "CEDAR LAKE",
+      "CHILDRENS HOME",
+      "COKER TOWN",
+      "COLLIE TYSON",
+      "COOL SPRING",
+      "COOPERS SCHOOL",
+      "COUNTRY CLUB",
+      "COUNTY HOME",
+      "COUNTY LINE",
+      "CRESCENT MEADOWS",
+      "CURTIS ELLIS",
+      "DAVIS STORE",
+      "DAVIS WORRELL",
+      "DOUBLE WIDE",
+      "EAGLE RIDGE",
+      "EL SHADDAI",
+      "FIRE TOWER FARM",
+      "FIRE TOWER",
+      "FISHING CREEK",
+      "FLAG POND LOOP",
+      "FLAT ROCK",
+      "FLOOD STORE",
+      "FLOODS STORE",
+      "FLOWER HILL",
+      "FOREST COVE",
+      "FOREST HILL",
+      "FOUNTAIN BRANCH",
+      "FOX RUN",
+      "GASKILL FARM",
+      "GEORGE PACE",
+      "GOLD ROCK",
+      "GREEN HILLS",
+      "GREEN PASTURE",
+      "GREEN POND LOOP",
+      "GREYS MILL",
+      "GRIFFIN FARM",
+      "HARRIS COLLIE",
+      "HORNES CHURCH",
+      "HUNTER HILL",
+      "HUNTER RIDGE",
+      "JOHN J SHARPE",
+      "L A GREEN FARM",
+      "LAKE ROYALE",
+      "LAKE VIEW",
+      "LANCASTER STORE",
+      "LOCHMERE BAY",
+      "LOGANS RUN",
+      "LONESOME PINE",
+      "LOYD PARK",
+      "MAMAS RUN",
+      "MARTIN LUTHER KING",
+      "MEADOW PARK",
+      "MICHAEL SCOTT",
+      "MIDDLESEX CORPORATE",
+      "MIGHTY CIRCLE",
+      "MILL BRANCH",
+      "MILLIE FIELD",
+      "MISSING MILE",
+      "MOORE FARM",
+      "MORNING STAR CH",
+      "MORNING STAR CHURCH",
+      "MOUNT PLEASANT",
+      "MT PLEASANT",
+      "MT ZION CHURCH",
+      "MURRAY LOOP",
+      "NASHVILLE COMMONS",
+      "NICODEMUS MILE",
+      "NORTH OF WHITFIELD",
+      "NORTHERN NASH",
+      "OAK GROVE",
+      "OAK LEVEL",
+      "PEACHTREE HILLS",
+      "PLANER MILL",
+      "PLEASANT GROVE CHURCH",
+      "PLEASANT GROVE",
+      "POLE CAT",
+      "PREACHER JOYNER",
+      "QUIET WATERS",
+      "RACE TRACK",
+      "RALEIGH WILSON",
+      "RED BUD",
+      "RED OAK BATTLEBORO",
+      "RED OAK",
+      "REGES STORE",
+      "RIVER BEND",
+      "RIVER GLENN",
+      "RIVER LAKE",
+      "ROCK QUARRY",
+      "ROCK RIDGE",
+      "ROCKY CROSS",
+      "ROLLING ROCK",
+      "ROSE LOOP",
+      "SALEM SCHOOL",
+      "SAMARIA CHURCH",
+      "SANCTIFIED CHURCH",
+      "SANDY CROSS",
+      "SANDY HILL CHURCH",
+      "SCHOOL HOUSE",
+      "SEVEN BRIDGES",
+      "SEVEN PATHS",
+      "SHADY LANE",
+      "SHEEP PASTURE",
+      "SHILOH CHURCH",
+      "SHILOH SCHOOL",
+      "SOUTHERN NASH HIGH",
+      "SPEIGHT CHAPEL",
+      "SPEIGHTS CHAPEL",
+      "SPENCER COCKRELL",
+      "SPRING HILL",
+      "SPRING HOPE",
+      "SQUIRREL DEN",
+      "ST JOHN",
+      "STANLEY PARK",
+      "STONE HERITAGE",
+      "STONE PARK",
+      "STONE ROSE",
+      "STONE WHITLEY",
+      "STONEY CREEK",
+      "STONEY HILL CHURCH",
+      "STRAIGHT GATE",
+      "SUGAR HILL",
+      "SUTTERS CREEK",
+      "SWIFT CREEK SCHOOL",
+      "TABERNACLE CHURCH",
+      "TAR RIVER CHURCH",
+      "TAYLORS GIN",
+      "TAYLORS STORE",
+      "THOMAS A BETTS",
+      "THOMAS BETTS",
+      "THOMPSON CHAPEL",
+      "THORNE FARM",
+      "TOWN CREEK",
+      "TRESSELL LOOP",
+      "TYSON LOOP",
+      "VALLEY CREEK",
+      "VAUGHAN CHAPEL",
+      "VILLAGE SQUARE",
+      "WAGON WHEEL",
+      "WATER FRONT",
+      "WATER LOO",
+      "WATERS EDGE",
+      "WATSON SED FARM",
+      "WATSON SEED FARM",
+      "WATSONS COVE",
+      "WEBBS MILL",
+      "WEST MOUNT",
+      "WEST NASHVILLE",
+      "WESTERN HILLS",
+      "WESTRIDGE CIRCLE",
+      "WESTVIEW PARK",
+      "WHEELESS CABIN",
+      "WHITE OAK",
+      "WHITLEY CIRCLE",
+      "WILD RED",
+      "WINDCHASE POINTE",
+      "WINDY TRAILS",
+      "WINSTEAD STORE",
+      "WOLLETT MILL"
+  };
   
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ABDOMINAL PAIN",
-      "ABDOMINAL PAINS/PROBLEMS - COLD",
-      "ABDOMINAL PAINS/PROBLEMS - HOT",
-      "ALLERGIES,REACTIONS,ENVENOMATIONS-HOT",
-      "ALL FIRE RELATED ALARMS",
-      "ALL LARGE VEHICLE RELATED FIRES - INCLUDING TRACTOR TRAILERS",
-      "ALL LAW ENFORCEMENT REALTED ALARMS-COLD",
-      "ALL SMALL VEHICLE RELATED FIRES",
-      "ANIMAL BITES,ATTACKS-EMERGENCY-HOT (EMS & FRSP ONLY)",
-      "ANY OUTSIDE FIRE,GRASS,BRUSH, GRILL, DOG HOUSE, PUMP HOUSE",
-      "ASSIST OTHER LAW ENFORCEMENT AGENCY-COLD",
-      "BOMB FOUND/SUSPICIOUS PACKAGE (LETTER/ITEM)-HOT",
-      "BREATHING DIFFICULTY",
-      "BREATHING PROBLEMS-EMERGENCY",
-      "BREATHING PROBLEMS-ROUTINE",
-      "CARBON MONOXIDE/INHALATION/HAZ MAT/CRBN-HOT",
-      "CARDIAC OR RESPIRATORY ARREST-HOT",
-      "CHEST PAIN",
-      "CHEST PAIN NON-TRAUMATIC-EMERGENCY",
-      "CHEST PAIN NON-TRAUMATIC-ROUTINE",
-      "CHOKING-EMERGENCY",
-      "CHOKING-ROUTINE",
-      "CONF. SPACE / STRUCT COLLAPSE/OTHER NON VEH ENTRAPMENT",
-      "CONVALESCENT TRANSFER",
-      "DEPT TRANSPORTATION",
-      "DIABETIC PROBLEMS-EMERGENCY",
-      "DIABETIC PROBLEMS-ROUTINE",
-      "DOCUMENTS,LOST/FOUND PROP.,MESSAGES,TRANSPORTS-COLD",
-      "ELECTRICAL HAZZARD OUSIDE/AWAY FROM A STRUCTURE",
-      "ELECTROCUTION/LIGHTNING",
-      "EMERGENCY FIRE DISPATCH",
-      "EMERGENCY MEDICAL DISPATCH",
-      "EMERGENCY POLICE DISPATCH",
-      "EXTRICATION/ENTRAPPED (MACHINERY, VEHICLE)",
-      "EYE PROBLEMS/INJURIES-EMERGENCY",
-      "EYE PROBLEMS/INJURIES-ROUTINE",
-      "FALLS-EMERGENCY",
-      "FALLS-ROUTINE",
-      "FALLS-LIFTING ASST. ROUTINE - EMS ONLY",
-      "FUEL SPILL",
-      "FIGHTS/PHYSICAL/SEXUAL ASSALT W/ INJUR-HOT (FRSP & EMS ONLY)",
-      "FIRE ALARM",
-      "GAS LEAK",
-      "GAS LEAK/GAS ODOR/ NATURAL OR LP GAS LEAK",
-      "HEADACHE-EMERGENCY",
-      "HEADACHE-ROUTINE",
-      "HEART PROBLEMS",
-      "HEART PROBLEMS/AICD-EMERGENCY",
-      "HEART PROBLEMS/AICD-ROUTINE",
-      "HEAT/COLD EXPOSURE-EMERGENCY",
-      "HEAT/COLD EXPOSURE-ROUTINE",
-      "HEMORRHAGE/LACERATIONS/BLEEDING-EMERGENCY",
-      "HEMORRHAGE/LACERATIONS/BLEEDING-COLD",
-      "HIGH ANGLE RESCUE",
-      "LIGHTNING STRIKES",
-      "LIQUID,SOLID MATERIAL RELEASED OR SPILLED",
-      "LOCK-IN/OUT, WELFARE CHECK, SECURITY CHECKS-COLD -SPECIFY",
-      "LOCK-IN/OUT, WELFARE CHECK, SECURITY CHECKS-HOT -SPECIFY",
-      "MENTAL DISORDER/BEHAVIOR PROBLEMS/SUICIDAL-HOT FRSP&EMS",
-      "MISCELLANEOUS CALLS FOR SERVICE-COLD - SPECIFY IN",
-      "MOTOR VEH ACCIDENT PROPERTY DAMAGE ONLY VEH OVERTURNED",
-      "MOTOR VEH ACCIDENT WITH INJURIES NO ONE PINNED -HOT",
-      "MOTOR VEHICLE ACCIDENT WITH INJURIES-COLD",
-      "MOTOR VEHICLE ACCIDENT WITH PROPERTY DAMAGE ONLY",
-      "MOTOR VEHICLE ACC WITH INJURIES-UNK/PIN IN-HOT",
-      "MUTUAL AID ASSIST ANOTHER DEPT - FIRE & EMS ONLY",
-      "MVA PERSON INJURED",
-      "MVA PERSON PINNED",
-      "NON-TRAUMATIC OR NON-RECENT TRAUMA-COLD",
-      "OB/CHILDBIRTH/MISCARR-HOT",
-      "OD/POISONING-EMERGENCY",
-      "OD/POISONING-ROUTINE",
-      "OUTSIDE FIRE",
-      "PATIENT TRANSFER ROUTINE/EMERGENCY - SPECIFY IN NARRATIVE",
-      "SCALDS/BURNS ETC.-HOT",
-      "SEIZURES",
-      "SEIZURES/CONVULSIONS-EMERGENCY",
-      "SEIZURES/CONVULSIONS-ROUTINE",
-      "SERV CALL",
-      "SERVICE/CITIZEN ASSISTANCE CALLS/",
-      "SHOOTING,STABBING, OR OTHER PENETRATING TRAUMA-EMERGENCY",
-      "SHOOTING,STABBING, OR OTHER PENETRATING TRAUMA-ROUTINE",
-      "SICK CALL-EMERGENCY",
-      "SICK CALL-ROUTINE",
-      "SMOKE INVESTIGATION OUTSIDE OF A STRUCTURE",
-      "STROKE/CVA-EMERGENCY",
-      "STROKE/CVA-ROUTINE",
-      "STRUCTURE FIRE",
-      "SUBJECT FALLEN",
-      "TRAFFIC VIOLATION/COMPLAINT/HAZARD/LIVESTOCK/-COLD",
-      "TRAUMATIC INJURIES SPECIFIC/ EMERG",
-      "TRAUMATIC INJURIES SPECIFIC/ ROUTINE",
-      "UNCONSCIOUS/FAINTING-EMERGENCY",
-      "UNCONSCIOUS/FAINTING-ROUTINE",
-      "UNK TYPE CALL 3RD PARTY CALLER- LAW ENFORCEMENT ONLY-HOT",
-      "UNKNOWN PROBLEM/PERSON DOWN -HOT (EMS RELATED)",
-      "UNRESPONSIVE PERSON",
-      "WARRANT SERV",
-      "WARRANT SERVICE",
-      "WATER RESCUE"
-  );
+  private static final CodeTable CODE_TABLE = new CodeTable();
+  private static final CodeSet CALL_LIST = new CodeSet();
+  
+  static {
+    boolean isCode = true;
+    String code = null;
+    for (String value : new String[]{
+    
+      // Fire:
+      "911 HANGUP", "911 HANGUP",
+      "ADMIN-C",    "SERVICE CALL",
+      "ADMIN-H",    "SERVICE CALL",
+      "ALARM-FIRE", "ALL FIRE RELATED ALARMS",
+      "ALARMS-C",   "ALL LAW ENFORCEMENT REALTED ALARMS-COLD",
+      "ALARMS-H",   "ALL LAW ENFORCEMENT REALTED ALARMS-HOT",
+      "ASST OTH-C", "ASSIST OTHER LAW ENFORCEMENT AGENCY-COLD",
+      "ASST OTH-H", "ASSIST OTHER LAW ENFORCEMENT AGENCY-HOT",
+      "ELECTRICAL", "ELECTRICAL",
+      "ELECTRO-H",  "ELECTROCUTION/LIGHTNING",
+      "EXPLOSION",  "EXPLOSION",
+      "EXTRICATIO", "EXTRICATION/ENTRAPPED (MACHINERY, VEHICLE)",
+      "FIRE",       "EMERGENCY FIRE DISPATCH",
+      "FUEL ODOR",  "FUEL ODOR",
+      "FUEL SPILL", "FUEL SPILL",
+      "GAS LEAK",   "GAS LEAK/GAS ODOR/ NATURAL OR LP GAS LEAK",
+      "HAZMAT",     "LIQUID,SOLID MATERIAL RELEASED OR SPILLED",
+      "INACCESS-H", "FARM MACHINARY,INACCESIBLE,OTHER ENTRAP-HOT",
+      "MISC-C",     "MISCELLANEOUS CALLS FOR SERVICE-COLD - SPECIFY IN",
+      "MISC-H",     "MISCELLANEOUS CALLS FOR SERVICE-HOT - SPECIFY IN",
+      "MUTUAL AID", "MUTUAL AID ASSIST ANOTHER DEPT - FIRE & EMS ONLY",
+      "MVA PD",     "MOTOR VEHICLE ACCIDENT WITH PROPERTY DAMAGE ONLY",
+      "MVA PD/OT",  "MOTOR VEH ACCIDENT PROPERTY DAMAGE ONLY VEH OVERTURNED",
+      "MVA PI-C",   "MOTOR VEHICLE ACCIDENT WITH INJURIES-COLD",
+      "MVA PI-H",   "MOTOR VEH ACCIDENT WITH INJURIES NO ONE PINNED -HOT",
+      "MVA PIN-C",  "MOTOR VEHICLE ACC WITH INJURIES-UNK/PIN IN-COLD",
+      "MVA PIN-H",  "MOTOR VEHICLE ACC WITH INJURIES-UNK/PIN IN-HOT",
+      "ODOR",       "ODOR INVESTIGATION",
+      "OUTSIDE FI", "ANY OUTSIDE FIRE,GRASS,BRUSH, GRILL, DOG HOUSE, PUMP HOUSE",
+      "PUBL SER-C", "LOCK-IN/OUT, WELFARE CHECK, SECURITY CHECKS-COLD -SPECIFY",
+      "PUBL SER-H", "LOCK-IN/OUT, WELFARE CHECK, SECURITY CHECKS-HOT -SPECIFY",
+      "SERV CALL",  "SERVICE/CITIZEN ASSISTANCE CALLS/",
+      "SMOKE INVE", "SMOKE INVESTIGATION OUTSIDE OF A STRUCTURE",
+      "STRUCTURE",  "STRUCTURE FIRE",
+      "VEH FIRE S", "ALL SMALL VEHICLE RELATED FIRES",
+      "VEH FIRE L", "ALL LARGE VEHICLE RELATED FIRES - INCLUDING TRACTOR TRAILERS",
+      "VEH FIRE-L", "ALL LARGE VEHICLE RELATED FIRES - INCLUDING TRACTOR TRAILERS",
+      "WATER RESC", "WATER RESCUE",
+      null,         "BOMB FOUND/SUSPICIOUS PACKAGE (LETTER/ITEM)-COLD",
+      null,         "BOMB FOUND/SUSPICIOUS PACKAGE (LETTER/ITEM)-HOT",
+      null,         "CONF. SPACE / STRUCT COLLAPSE/OTHER NON VEH ENTRAPMENT",
+      null,         "DEPT TRANSPORTATION",
+      null,         "ELECTRICAL HAZZARD OUSIDE/AWAY FROM A STRUCTURE",
+      null,         "HIGH ANGLE RESCUE",
+      
+      // Police
+      "BURGLARY-C", "BURGLARY (BREAK AND ENTER) HOME INVASION, - COLD",
+      "BURGLARY-H", "BURGLARY (BREAK AND ENTER) HOME INVASION, - HOT",
+      "CHASE",      "FOOT OR VEHICLE CHASE",
+      "DISTURB-C",  "DISTURBANCE/NUISANCE-COLD",
+      "DISTURB-H",  "DISTURBANCE/NUISANCE-HOT",
+      "DAMAGE-C",   "DAMAGE/VANDALISM/OR OTHER MISCHIEF ACTIVITY-COLD",
+      "DAMAGE-H",   "DAMAGE/VANDALISM/OR OTHER MISCHIEF ACTIVITY-HOT",
+      "DOMESTIC-c", "DOMESTIC VIOLENCE/DISTRUBANCE-COLD",
+      "DOMESTIC-H", "DOMESTIC VIOLENCE/DISTRUBANCE-HOT",
+      "DRUGS-C",    "DRUGS VIOLATION-COLD",
+      "DRUGS-H",    "DRUGS VIOLATION-HOT",
+      "HARASS-C",   "HARASSMENT/STALKING/THREATS/ MADE BY PHONE OR IN PERSON-COLD",
+      "HARASS-C",   "HARASSMENT/STALKING/THREATS/ MADE BY PHONE OR IN PERSON-HOT",
+      "MISS PER-C", "MISSING/RUNAWAY/FOUND PERSON-COLD",
+      "MISS PER-H", "MISSING/RUNAWAY/FOUND PERSON-HOT",
+      "POLICE",     "EMERGENCY POLICE DISPATCH",
+      "SUSPWANT-C", "SUSPICIOUS PERSON/VEHICLE/CIRCUMSTANCES/WANTED PERSON-COLD",
+      "SUSPWANT-H", "SUSPICIOUS PERSON/VEHICLE/CIRCUMSTANCES/WANTED PERSON-HOT",
+      "THEFT-C",    "LARCENY/THEFT OF MONEY,PERSONAL ITEMS, VEHICLES, ETC-COLD",
+      "THEFT-H",    "LARCENY/THEFT OF MONEY,PERSONAL ITEMS, VEHICLES, ETC-HOT",
+      "TRAF/V/H-C", "TRAFFIC VIOLATION/COMPLAINT/HAZARD/LIVESTOCK/-COLD",
+      "TRAF/V/H-H", "TRAFFIC VIOLATION/COMPLAINT/HAZARD/LIVESTOCK/-HOT",
+      "TRAFFIC STOP", "TRAFFIC STOP",
+      "WARRANT SERV", "WARRANT SERVICE",
+      null,         "UNK TYPE CALL 3RD PARTY CALLER- LAW ENFORCEMENT ONLY-HOT",
+
+      // Medical:
+      "ABD-C",      "ABDOMINAL PAINS/PROBLEMS - COLD",
+      "ABD-H",      "ABDOMINAL PAINS/PROBLEMS - HOT",
+      "ALLERGY-C",  "ALLERGIES,REACTIONS,ENVENOMATIONS-COLD",
+      "ALLERGY-H",  "ALLERGIES,REACTIONS,ENVENOMATIONS-HOT",
+      "ANIMAL-M-C", "ANIMAL BITES,ATTACKS-EMERGENCY-COLD (EMS & FRSP ONLY)",
+      "ANIMAL-M-H", "ANIMAL BITES,ATTACKS-EMERGENCY-HOT (EMS & FRSP ONLY)",
+      "ANIMAL-M-L", "ANIMAL BITE",
+      "ASSALT-M-C", "FIGHTS/PHYSICAL/SEXUAL ASSAULT W/ INJURIES.-COLD (EMS ONLY)",
+      "ASSALT-M-H", "FIGHTS/PHYSICAL/SEXUAL ASSAULT W/ INJURIES.-HOT (EMS ONLY)",
+      null,         "FIGHTS/PHYSICAL/SEXUAL ASSAULT W/ INJUR-COLD (FRSP & EMS ONLY))",
+      null,         "FIGHTS/PHYSICAL/SEXUAL ASSAULT W/ INJUR-HOT (FRSP & EMS ONLY)",
+      null,         "FIGHTS/PHYSICAL/SEXUAL ASSALT W/ INJUR-COLD (FRSP & EMS ONLY)",
+      null,         "FIGHTS/PHYSICAL/SEXUAL ASSALT W/ INJUR-HOT (FRSP & EMS ONLY)",
+      "BK PAIN-C",  "NON-TRAUMATIC OR NON-RECENT TRAUMA-COLD",
+      "BK PAIN-H",  "NON-TRAUMATIC OR NON-RECENT TRAUMA-HOT",
+      "BREATH-C",   "BREATHING PROBLEMS-ROUTINE",
+      "BREATH-H",   "BREATHING PROBLEMS-EMERGENCY",
+      "BURNS-C",    "SCALDS/BURNS ETC.-COLD",
+      "BURNS-H",    "SCALDS/BURNS ETC.-HOT",
+      "CARBON-C",   "CARBON MONOXIDE/INHALATION/HAZ MAT/CRBN-COLD",
+      "CARBON-H",   "CARBON MONOXIDE/INHALATION/HAZ MAT/CRBN-HOT",
+      "CARD/ARR-C", "CARDIAC OR RESPIRATORY ARREST-OBVIOUS DEATH-COLD",
+      "CARD/ARR-H", "CARDIAC OR RESPIRATORY ARREST-HOT",
+      "CARDIAC-C",  "CODE BLUE",
+      "CARDIAC-H",  "CODE BLUE",
+      "CHEST-C",    "CHEST PAIN NON-TRAUMATIC-ROUTINE",
+      "CHEST-H",    "CHEST PAIN NON-TRAUMATIC-EMERGENCY",
+      "CHOKING-C",  "CHOKING-ROUTINE",
+      "CHOKING-H",  "CHOKING-EMERGENCY",
+      "CODE PCI",   "CODE PCI TRANSFER",
+      "CONF SPACE", "CONFINED SPACE RESCUE",
+      "CONVALESCENT","CONVALESCENT TRANSFER",
+      "DIABETIC-C", "DIABETIC PROBLEMS-ROUTINE",
+      "DIABETIC-H", "DIABETIC PROBLEMS-EMERGENCY",
+      "DISTURB-H",  "DISTURB",
+      "ASST FD/EMS","EMS ASSIST FIRE DEPT",
+      "EYE-C",      "EYE PROBLEMS/INJURIES-ROUTINE",
+      "EYE-H",      "EYE PROBLEMS/INJURIES-EMERGENCY",
+      "FALLS-C",    "FALLS-LIFTING ASST. ROUTINE - EMS ONLY",
+      "FALLS-H",    "FALLS-EMERGENCY",
+      "HEADACHE-C", "HEADACHE-ROUTINE",
+      "HEADACHE-H", "HEADACHE-EMERGENCY",
+      "HEART PR-C", "HEART PROBLEMS/AICD-ROUTINE",
+      "HEART PR-H", "HEART PROBLEMS/AICD-EMERGENCY",
+      "HEAT/CLD-C", "HEAT/COLD EXPOSURE-ROUTINE",
+      "HEAT/CLD-H", "HEAT/COLD EXPOSURE-EMERGENCY",
+      "HEMORRHA-C", "HEMORRHAGE/LACERATIONS/BLEEDING-COLD",
+      "HEMORRHA-H", "HEMORRHAGE/LACERATIONS/BLEEDING-EMERGENCY",
+      "LIGHTNING",  "LIGHTNING STRIKES",
+      "MEDICAL",    "EMERGENCY MEDICAL DISPATCH",
+      "OB/PREG-C",  "OB/CHILDBIRTH/MISCARR-COLD",
+      "OB/PREG-H",  "OB/CHILDBIRTH/MISCARR-HOT",
+      "OVERDOSE-C", "OD/POISONING-ROUTINE",
+      "OVERDOSE-H", "OD/POISONING-EMERGENCY",
+      "PSYC/SUI-C", "MENTAL DISORDER/BEHAVIOR PROBLEMS/SUICIDAL-COLD FRSP&EMS",
+      "PSYC/SUI-H", "MENTAL DISORDER/BEHAVIOR PROBLEMS/SUICIDAL-HOT FRSP&EMS",
+      "SEIZURES-C", "SEIZURES/CONVULSIONS-ROUTINE",
+      "SEIZURES-H", "SEIZURES/CONVULSIONS-EMERGENCY",
+      "SHOTSTAB-C", "SHOOTING,STABBING, OR OTHER PENETRATING TRAUMA-ROUTINE",
+      "SHOTSTAB-H", "SHOOTING,STABBING, OR OTHER PENETRATING TRAUMA-EMERGENCY",
+      "SICK-C",     "SICK CALL-ROUTINE",
+      "SICK-H",     "SICK CALL-EMERGENCY",
+      "STROKE-C",   "STROKE/CVA-ROUTINE",
+      "STROKE-H",   "STROKE/CVA-EMERGENCY",
+      "SUSPWANT-C", "ASSIST LAW",
+      "SUSPWANT-H", "ASSIST LAW",
+      "TRANSFER-C", "PATIENT TRANSFER ROUTINE/EMERGENCY - SPECIFY IN NARRATIVE",
+      "TRANSFER-H", "PATIENT TRANSFER ROUTINE/EMERGENCY - SPECIFY IN NARRATIVET",
+      "TRAUMA-C",   "TRAUMATIC INJURIES SPECIFIC/ ROUTINE",
+      "TRAUMA-H",   "TRAUMATIC INJURIES SPECIFIC/ EMERG",
+      "UNCONSC-C",  "UNCONSCIOUS/FAINTING-ROUTINE",
+      "UNCONSC-H",  "UNCONSCIOUS/FAINTING-EMERGENCY",
+      "UNK PROB-C", "UNKNOWN PROBLEM/PERSON DOWN -COLD (EMS RELATED)",
+      "UNK PROB-H", "UNKNOWN PROBLEM/PERSON DOWN -HOT (EMS RELATED)",
+      
+      // Other
+      "ADMIN-C",    "DOCUMENTS,LOST/FOUND PROP.,MESSAGES,TRANSPORTS-COLD",
+      "ADMIN-H",    "DOCUMENTS,LOST/FOUND PROP.,MESSAGES,TRANSPORTS-HOT"
+    }) {
+      if (isCode) {
+        code = value;
+      } else {
+        if (code != null) {
+          CODE_TABLE.put(code, value);
+        }
+        CALL_LIST.add(value);
+      }
+      isCode = !isCode;
+    }
+  }
   
   private static final String[] CITY_LIST = new String[]{
     
@@ -748,7 +888,10 @@ public class NCNashCountyParser extends DispatchA3AParser {
       "JOHNSTON CO",
       "HALIFAX CO",
       "WARREN CO",
-      "WILSON CO"
+      "WILSON CO",
+      
+      // ???
+      "VIRGINIA"
       
   };
   

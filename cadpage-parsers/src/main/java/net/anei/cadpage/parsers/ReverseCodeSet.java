@@ -11,7 +11,7 @@ public class ReverseCodeSet extends CodeSet {
   }
 
   @Override
-  protected void add(String code) {
+  public void add(String code) {
     super.add(reverse(code));
   }
 
