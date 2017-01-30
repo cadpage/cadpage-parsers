@@ -231,7 +231,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z]{2}\\d{6})=([A-Z0-9]+)");
+  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Z0-9]+)");
   private class MyIdUnitField extends Field {
     
     @Override
