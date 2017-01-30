@@ -45,7 +45,10 @@ public class TNWilliamsonCountyParser extends GroupBestParser {
     "NASHVILLE",
     
     // Hickman County
-    "HICKMAN CO"
+    "HICKMAN CO",
+    
+    // Williamson County
+    "WILLIAMSON COUNTY"
   };
 
 }

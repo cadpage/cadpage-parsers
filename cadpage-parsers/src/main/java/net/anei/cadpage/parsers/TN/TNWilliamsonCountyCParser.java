@@ -11,13 +11,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TNWilliamsonCountyCParser extends FieldProgramParser {
   
   public TNWilliamsonCountyCParser() {
-    super("WILLIAMSON COUNTY", "TN", 
-          "PN:CALL! ADD:ADDR! CITY:CITY! LAT:GPS1! LON:GPS2! APT:APT! X_ST:X! LOCATION:PLACE! TIME:DATETIME! CN:ID! UNITS:UNIT! END");
+    super(TNWilliamsonCountyParser.CITY_LIST, "WILLIAMSON COUNTY", "TN", 
+          "( PN:CALL! ADD:ADDR! CITY:CITY! LAT:GPS1/d! LON:GPS2/d! APT:APT! X_ST:X! LOCATION:PLACE! TIME:DATETIME! CN:ID! UNITS:UNIT! END " +
+          "| CALL! ADD:ADDR/S! LAT:GPS1/d! LON:GPS2_ID/d! UNITS:UNIT! LOC:PLACE! END )");
   }
   
   @Override
   public String getFilter() {
     return "911-Center@williamson-tn.org";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=[ap]m)(?=CN:)");
@@ -31,6 +37,7 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("GPS2_ID")) return new MyGPS2IdField();
     return super.getField(name);
   }
   
@@ -44,5 +51,27 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
       data.strDate = match.group(1);
       setTime(TIME_FMT, match.group(2), data);
     }
+  }
+  
+  private class MyGPS2IdField extends GPSField {
+    
+    public MyGPS2IdField() {
+      super(2);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('#');
+      if (pt < 0) abort();
+      data.strCallId = field.substring(pt+1).trim();
+      field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS ID";
+    }
+    
   }
 }

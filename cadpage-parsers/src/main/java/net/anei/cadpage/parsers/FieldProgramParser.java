@@ -124,6 +124,9 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  *         G - Mark call as general alert
  *         R - Mark call as run report
  *         
+ *   GPS fields
+ *         d - assume 6 implied decimal digits
+ *         
  * SPECIAL FIELD NAMES
  * 
  * INTLS - operator initials, always skipped but will validated as 1-3 upper case letters
@@ -3192,6 +3195,7 @@ public class FieldProgramParser extends SmartAddressParser {
   public class GPSField extends Field {
     
     private int type;
+    private boolean addDec = false;
     
     public GPSField() {
       this(0);
@@ -3234,9 +3238,18 @@ public class FieldProgramParser extends SmartAddressParser {
       super(pattern, hardPattern);
       this.type = type;
     }
+    
+    @Override
+    public void setQual(String qual) {
+      addDec = qual != null && qual.contains("d");
+    }
 
     @Override
     public void parse(String field, Data data) {
+      if (addDec) {
+        int pt = field.length() - 6;
+        if (pt >= 0) field = field.substring(0,pt)+'.'+field.substring(pt);
+      }
       switch (type) {
       case 1:
         saveGPSLoc = field;
