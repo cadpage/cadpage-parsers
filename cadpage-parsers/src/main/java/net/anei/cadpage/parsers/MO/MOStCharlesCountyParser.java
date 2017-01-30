@@ -118,24 +118,22 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_PTN = Pattern.compile("(?:Comment: *(.*), {2,})?(?:ID: *(\\d{6}-\\d{5}) +)?(?:(\\d\\d?[A-Z]\\d\\d?[A-Z]?) +)?(.*) AT (.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("Comment:")) {
-        int pt = field.indexOf(',', 8);
-        if (pt < 0) abort();
-        data.strSupp = field.substring(8, pt).trim();
-        field = field.substring(pt+1).trim();
-      }
-      int pt = field.indexOf(" AT ");
-      if (pt < 0) abort();
-      data.strCall = field.substring(0,pt).trim();
-      super.parse(field.substring(pt+4).trim(), data);
+      Matcher match = ADDR_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strSupp = getOptGroup(match.group(1));
+      data.strCallId = getOptGroup(match.group(2));
+      data.strCode = getOptGroup(match.group(3));
+      data.strCall = match.group(4).trim();
+      super.parse(match.group(5).trim(), data);
     }
     
     @Override
     public String getFieldNames() {
-      return "INFO CALL " + super.getFieldNames();
+      return "INFO ID CODE CALL " + super.getFieldNames();
     }
   }
   
