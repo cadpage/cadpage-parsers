@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.RI;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
 
 public class RIProvidenceCountyParser extends DispatchA32Parser {
@@ -10,9 +11,15 @@ public class RIProvidenceCountyParser extends DispatchA32Parser {
   
   @Override
   public String getFilter() {
-    return "woonsocketdispatch@gmail.com,dispatch@lincolnpoliceri.com";
+    return "woonsocketdispatch@gmail.com,dispatch@lincolnpoliceri.com,centralfallsfd@gmail.com";
   }
   
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Lincoln Dispatch")) subject = "Perform Page";
+    return super.parseMsg(subject, body, data);
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
       //Cities
