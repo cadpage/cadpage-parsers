@@ -11,7 +11,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
   
   public TXParkerCountyBParser() {
     super(CITY_CODES, "PARKER COUNTY", "TX",
-        "CALL ADDR CITY/Y! X/Z+? ( CH SRC UNIT! | SRC UNIT! | UNIT! | END ) INFO/N+");
+          "CALL ADDR CITY/Y! X/Z+? ( CH SRC UNIT! | SRC UNIT! | UNIT! | END ) INFO/N+");
   }
   
   @Override
@@ -38,7 +38,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
       "CRE", "CRESSON",
       "FTW", "FORT WORTH",
       "MIL", "MILLSAP",
-      "POL", "PLANO",
+      "POL", "POOLVILLE",
       "SPT", "SPRINGTOWN",
       "WFD", "WEATHERFORD"
   });
