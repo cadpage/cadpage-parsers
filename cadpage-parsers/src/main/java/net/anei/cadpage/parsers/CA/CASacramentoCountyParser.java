@@ -19,7 +19,7 @@ public class CASacramentoCountyParser extends MsgParser {
   
   public CASacramentoCountyParser() {
     super("SACRAMENTO COUNTY", "CA");
-    setFieldList("SRC CODE CALL MAP MAP ADDR APT CITY UNIT INFO");
+    setFieldList("SRC CODE CALL CH MAP ADDR APT CITY UNIT INFO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -49,9 +49,9 @@ public class CASacramentoCountyParser extends MsgParser {
     data.strCode = match.group(2);
     data.strCall = CALL_CODES.getCodeDescription(data.strCode);
     if (data.strCall == null) data.strCall = data.strCode;
-    data.strMap = match.group(3);
+    data.strChannel = match.group(3);
     String map = match.group(4);
-    if (!map.equals(",")) data.strMap = data.strMap + '-' + map;
+    if (!map.equals(",")) data.strMap = map;
     parseAddress(match.group(5).replace('.', ' ').trim(), data);
     data.strCity = convertCodes(match.group(6), CITY_CODES);
     data.strUnit = match.group(7).trim();
