@@ -9,7 +9,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   
   public NCPittCountyBParser() {
     super(CITY_CODES, "PITT COUNTY", "NC", 
-          "CALL PLACE? ( ADDRCITY ID PRI DATETIME! | ADDR/Z CITY ID PRI DATETIME! | ADDR/Z ID PRI DATETIME! | ADDR/Z PRI DATETIME! | ADDR/Z DATETIME! ) SRC UNIT Radio_Channel:CH INFO/N+");
+          "CALL PLACE? ( ADDRCITY ( ID PRI | ) DATETIME! | ADDR/Z CITY ID PRI DATETIME! | ADDR/Z ID CITY? PRI DATETIME! | ADDR/Z PRI DATETIME! | ADDR/Z DATETIME! ) SRC UNIT Radio_Channel:CH X+? INFO/N+");
   }
   
   @Override
@@ -27,9 +27,18 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{11}", true);
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("PRI")) return new PriorityField("[P1-9]", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() == 0) return true;
+      return super.checkParse(field, data);
+    }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
