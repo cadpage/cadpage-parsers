@@ -1,0 +1,12 @@
+#! /bin/bash
+
+if [[ $# != 1 ]]; then
+  echo "*** Specify parser name" 1>&2
+  exit 1
+fi
+
+PARSER=$1
+PKG=`echo $PARSER | sed 's/[A-Z][a-z].*//'`
+FILE=cadpage-private/src/test/java/net/anei/cadpage/parsers/$PKG/${PARSER}ParserTest.java
+
+grep '"CALL:' $FILE | sed 's/");/",/' | sort -u | sed 's/CALL://'
