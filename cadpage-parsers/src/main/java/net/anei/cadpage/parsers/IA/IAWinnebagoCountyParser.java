@@ -40,6 +40,21 @@ public class IAWinnebagoCountyParser extends DispatchA47Parser {
       "NORWAY",
       
       // Worth County
-      "FERTILE"
+      "FERTILE",
+      
+      // Cerro Gordo County
+      "BRITT",
+      "MASON CITY",
+      
+      // Freeborn County, MN
+      "ALBERT LEA",
+      
+      // Faribault County, MN
+      "BLUE EARTH",
+      
+      // Far far away
+      "IOWA CITY",
+      "DES MOINES",
+      "ROCHESTER"
   };
 }
