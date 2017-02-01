@@ -3241,6 +3241,7 @@ public class FieldProgramParser extends SmartAddressParser {
     
     @Override
     public void setQual(String qual) {
+      super.setQual(qual);
       addDec = qual != null && qual.contains("d");
     }
 

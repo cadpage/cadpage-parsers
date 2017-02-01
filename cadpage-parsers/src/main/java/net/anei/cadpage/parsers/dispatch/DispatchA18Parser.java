@@ -25,7 +25,7 @@ public class DispatchA18Parser extends FieldProgramParser {
   
   public DispatchA18Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CALL ADDR X BOX! EMPTY+? ( DASHES DATETIME SRC SRC | ) INFO+? ID_UNIT");
+          "CALL ADDR X BOX! EMPTY+? ( DASHES DATETIME SRC SRC | ) INFO+? ID_UNIT ID_UNIT+? END");
   }
   
   @Override
@@ -231,7 +231,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Z0-9]+)");
+  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Z0-9,]+)");
   private class MyIdUnitField extends Field {
     
     @Override
@@ -243,8 +243,8 @@ public class DispatchA18Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = ID_UNIT_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strCallId = match.group(1);
-      data.strUnit = match.group(2);
+      data.strCallId = append(data.strCallId, "/", match.group(1));
+      data.strUnit = append(data.strUnit, ",", match.group(2));
       return true;
     }
 
