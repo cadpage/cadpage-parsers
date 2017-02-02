@@ -1,10 +1,12 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
@@ -27,12 +29,24 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     return MAP_FLG_REMOVE_EXT;
   }
   
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("[A-Z.]*:CFS: *(\\d+) +Unit: *(\\S+) +(.*)");
   private static final Pattern FIX_ADDR_DIR_PTN = Pattern.compile("\\b([NSEW])- *");
   private static final Pattern FIX_ADDR_PTN = Pattern.compile("[ &]*(?: - *|- +)(.*?[^ ])(?= *[&/]|$)");
   
   @Override
-  protected boolean parseMsg(String field, Data data) {
-    if (!super.parseMsg(field, data)) return false;
+  protected boolean parseMsg(String body, Data data) {
+    
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      data.msgType = MsgType.RUN_REPORT;
+      setFieldList("ID UNIT CALL");
+      data.strCallId = match.group(1);
+      data.strUnit = match.group(2);
+      data.strCall = match.group(3);
+      return true;
+    }
+    
+    if (!super.parseMsg(body, data)) return false;
     data.strCity = convertCodes(data.strCity.toUpperCase(), FIX_CITY_TABLE);
     data.strAddress = FIX_ADDR_DIR_PTN.matcher(data.strAddress).replaceAll("$1 ");
     data.strCross = FIX_ADDR_DIR_PTN.matcher(data.strCross).replaceAll("$1 ");
