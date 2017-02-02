@@ -1120,6 +1120,15 @@ public class MsgInfo {
    * from multiple possible parsings
    */
   public int score() {
+    return score(false);
+  }
+
+  /**
+   * @param incomplete true if this is an incomplete message.  
+   * @return relative score that can be used to pick out the better result
+   * from multiple possible parsings
+   */
+  public int score(boolean incomplete) {
     int result = 0;
     if (msgType == MsgType.GEN_ALERT || strCall.equals("GENERAL ALERT")) result += 0;
     else if (msgType == MsgType.RUN_REPORT || strCall.equals("RUN REPORT")) result += 20000;
@@ -1138,7 +1147,7 @@ public class MsgInfo {
     if (strCallId.length() > 0) result += 10;
     if (strName.length() > 0) result += 10;
     if (strPhone.length() > 0) result += 10;
-    if (strSupp.length() > 0) result += 1;
+    if (strSupp.length() > 0) result += 2;
     if (strCode.length() > 0) result += 10;
     if (strSource.length() > 0) result += 10;
     if (strState.length() > 0) result += 10;
@@ -1148,7 +1157,7 @@ public class MsgInfo {
     if (strDate.length() > 0) result += 10;
     if (strTime.length() > 0) result += 10;
     if (strInfoURL.length() > 0) result += 5;
-    if (expectMore) result--;
+    if (incomplete ^ expectMore) result--;
     return result;
   }
 

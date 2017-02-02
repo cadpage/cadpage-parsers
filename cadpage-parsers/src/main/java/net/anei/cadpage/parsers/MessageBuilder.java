@@ -107,7 +107,8 @@ public class MessageBuilder {
    * @param n Number of elements that have been set in msgOrder
    */
   private void trialParse(int[] msgOrder, int n) {
-    ParseResult result = new ParseResult(bldWorkingMsgOrder(msgOrder, n));
+    boolean incomplete = n < msgOrder.length-1;
+    ParseResult result = new ParseResult(bldWorkingMsgOrder(msgOrder, n), incomplete);
     int score = result.getScore();
     if (score > bestScore) {
       bestScore = score;
@@ -172,23 +173,26 @@ public class MessageBuilder {
     private Message result;
     private int score;
     
-    public ParseResult(int[] msgOrder) {
+    public ParseResult(int[] msgOrder, boolean incomplete) {
       this.msgOrder = msgOrder;
       result = bldMessage(msgOrder);
       MsgInfo info = result.getInfo();
       if (info != null) {
-        score = info.score();
+        score = info.score(incomplete);
       } else {
         score = Integer.MIN_VALUE+1;
       }
       
       // For the tie breaker, favor combinations in which the
       // last segment is significantly shorter than the others
+      // Unless this is an incomplete trial, in which case this
+      // preference is reversed
       int minLen = Integer.MAX_VALUE;
       for (int j = 0; j<msgOrder.length-1; j++) {
         minLen = Math.min(minLen, msgList[msgOrder[j]].getMessageBody(true, j>0).length());
       }
-      if (msgList[msgOrder[msgOrder.length-1]].getMessageBody(true, true).length() < minLen-5) score++;
+      boolean shortLast = msgList[msgOrder[msgOrder.length-1]].getMessageBody(true, true).length() < minLen-5;
+      if (incomplete ^ shortLast) score++;
     }
     
     public int[] getMsgOrder() {

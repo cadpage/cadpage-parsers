@@ -1,15 +1,17 @@
 package net.anei.cadpage.parsers.OH;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-
-
+import net.anei.cadpage.parsers.ReverseCodeSet;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class OHUnionCountyParser extends FieldProgramParser {
   
   public OHUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "OH",
-           "CALL ADDR/S ( CITY/Z ST_ZIP | CITY | ) X/Z+? X2! INFO+");
+           "CALL ADDR/S ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
   }
   
   @Override
@@ -18,6 +20,16 @@ public class OHUnionCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 130; }
+      @Override public int splitBreakPad() { return 2; }
+    };
+  }
+
+  @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!body.endsWith(",")) data.expectMore = true;
     return parseFields(body.split(","), data);
@@ -25,10 +37,47 @@ public class OHUnionCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ST_ZIP")) return new SkipField("OH(?: +\\d{5})?", true);
     if (name.equals("X2")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      
+      // If message is split into two messages and the trailing part does not
+      // contain a comma, then putting them back together in the wrong order
+      // results in a long call description ending in the real call description
+      // which should also be rejected
+      String call = CALL_LIST.getCode(field);
+      if (call != null && call.length() < field.length()) abort();
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      
+      // If the message happens to end with a comma, and happens to get split
+      // into two messages, then putting them back together in the wrong order
+      // will push the call description into the address field.  Which should be rejected
+      if (CALL_LIST.getCode(field) != null) abort();
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.contains("/")) abort();
+      super.parse(field, data);
+    }
   }
   
   private class MyCrossField extends CrossField {
@@ -56,6 +105,78 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  @Override
+  public CodeSet getCallList() {
+    return CALL_LIST;
+  }
+
+  private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(
+      "911 UNKNOWN",
+      "ABDOMINAL PAIN/PROBLEMS",
+      "ADULT CPR",
+      "ALARM DROP",
+      "ALLERGIC REACTION",
+      "ATTEMPTED SUICIDE",
+      "BACK PAIN",
+      "BLEEDING",
+      "BREATHING/ RECENT OPEN HEART",
+      "BURNS",
+      "CARBON MONOXIDE ALARM",
+      "CARBON MONOXIDE INHALATION",
+      "CHECK WELL BEING",
+      "CHEST PAINS",
+      "COMMERCIAL FIRE",
+      "COMMERCIAL FIRE ALARM",
+      "CPR IN PROGRESS",
+      "DEAD ON ARRIVAL",
+      "DIABETIC PROBLEMS",
+      "DIFFICULTY BREATHING",
+      "DISABLED VEHICLE",
+      "DISPUTE",
+      "DOG BITE",
+      "DOMESTIC",
+      "DUMPSTER FIRE",
+      "EXPLOSION",
+      "EYE PROBLEMS/INJURY",
+      "FALL/BACK INJURY",
+      "FIRE",
+      "FIRE ALARM",
+      "FRACTURES",
+      "GENERAL ILLNESS",
+      "GRASS FIRE",
+      "HAZARDOUS SPILL",
+      "HEADACHE",
+      "HEART PROBLEMS",
+      "HOSPITAL TRANSPORT",
+      "INFANT CPR",
+      "INJURY CRASH",
+      "LACERATIONS",
+      "LEFT SIDE",
+      "LIFT ASSIST",
+      "MEDICAL ALARM",
+      "MENTAL HEALTH",
+      "NATURAL GAS/PROPANE LEAK",
+      "NATURE UNKNOWN",
+      "OVERDOSE",
+      "POISONING",
+      "POLE FIRE",
+      "PREGNANCY/CHILDBIRTH",
+      "PROPERTY DAMAGE CRASH",
+      "SEIZURES",
+      "SERVICE RUN",
+      "SICK PERSON",
+      "SKATEBOARDERS",
+      "STROKE",
+      "SUSPICIOUS CIRCUMSTANCES",
+      "THREATENED SUICIDE",
+      "TRAUMATIC INJURY",
+      "UNCONSCIOUS/ FAINTING",
+      "UNKNOWN PROBLEM (MEDICAL)",
+      "VEHICLE FIRE",
+      "WALK IN",
+      "WIRES DOWN"
+  );
   
   private static final String[] CITY_LIST = new String[]{
     
