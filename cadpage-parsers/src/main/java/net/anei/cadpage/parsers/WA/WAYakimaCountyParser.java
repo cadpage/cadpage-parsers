@@ -5,12 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 
 public class WAYakimaCountyParser extends SmartAddressParser {
   
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([A-Z0-9]+)\n([A-Z0-9]+)\n([A-Z]\\d+|\\d{2}[A-Z]{1,3}\\d+)\n(.*)", Pattern.DOTALL);
   private static final Pattern MASTER = 
     Pattern.compile("(?:(\\d\\d\\.\\d\\d\\.\\d\\d) (\\d\\d/\\d\\d/\\d\\d)|\\*\\*\\.\\*\\*\\.\\*\\* \\*\\*/\\*\\*/\\*\\*) ([^@]*?) (?:@ )?([A-Z]{2}[FP]D|AMR|ALS|SCOM|PRAM)((?: +(?:[A-Z]+\\d+[A-Z]?|AOA|[A-Z]{1,2}DC))+)(?: +(.*))?");
   private static final Pattern APT_MARK_PTN = Pattern.compile(" +(?:APT|ROOM) +", Pattern.CASE_INSENSITIVE);
@@ -18,31 +20,47 @@ public class WAYakimaCountyParser extends SmartAddressParser {
   public WAYakimaCountyParser() {
     super("YAKIMA COUNTY", "WA");
     setup();
-    setFieldList("TIME DATE CALL ADDR APT PLACE SRC CITY UNIT INFO");
+    setFieldList("TIME DATE CALL ADDR APT PLACE SRC CITY UNIT ID INFO");
   }
   
   @Override
   public String getFilter() {
-    return "wwantla@ci.yakima.wa.us";
+    return "wwantla@ci.yakima.wa.us,Brad.Coughenour@yakimawa.gov";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    Matcher match = MASTER.matcher(body);
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      data.msgType = MsgType.RUN_REPORT;
+      data.strSource = match.group(1);
+      data.strUnit = match.group(2);
+      data.strCallId = match.group(3);
+      data.strSupp = match.group(4).trim();
+      return true;
+    }
+    
+    match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strTime = getOptGroup(match.group(1)).replace('.', ':');
     data.strDate = getOptGroup(match.group(2));
     String sAddr = match.group(3).trim();
     data.strSource = match.group(4);
-    String city = CITY_CODES.getProperty(data.strSource);
+    String city = SRC_CITY_CODES.getProperty(data.strSource);
     if (city != null) data.strCity = city;
     data.strUnit = match.group(5).trim();
     data.strSupp = getOptGroup(match.group(6));
     
     // Address section consists of a call, address, and possible semicolon separated place and/or apt
     Parser p = new Parser(sAddr);
-    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, p.get(';'), data);
+    String addr = p.get(';');
+    int pt = addr.lastIndexOf(',');
+    if (pt >= 0) {
+      data.strCity = convertCodes(addr.substring(pt+1).trim(), CITY_CODES);
+      addr = addr.substring(0,pt).trim();
+    }
+    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
     String place = p.get(';');
     match = APT_MARK_PTN.matcher(place);
     if (match.find()) {
@@ -121,7 +139,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
     );
   }
   
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+  private static final Properties SRC_CITY_CODES = buildCodeTable(new String[]{
       "GRFD", "GRANGER",
       "GVFD", "GRANDVIEW",
       "MBFD", "MABTON",
@@ -133,5 +151,24 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "YKPD", "YAKIMA",
       "WPFD", "WAPATO",
       "ZIFD", "ZILLAH"
+  });
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BUE", "BUENA",
+      "COW", "COWICHE",
+      "GRA", "GRANGER",
+      "GRV", "GRANDVIEW",
+      "HAR", "HARRAH",
+      "MAB", "MABTON",
+      "MOX", "MOXEE",
+      "NAC", "NACHES",
+      "PRO", "PROSSER",
+      "SEL", "SELAH",
+      "SUN", "SUNNYSIDE",
+      "TIE", "TIETON",
+      "TOP", "TOPPENISH",
+      "WAP", "WAPATO",
+      "WHI", "WHITE SWAN",
+      "ZIL", "ZILAH"
   });
 }
