@@ -225,7 +225,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (chkFlag(DSFLG_CODE | DSFLG_OPT_CODE)) sb.append(" CODE");
     if (chkFlag(DSFLG_ID | DSFLG_OPT_ID)) sb.append(" ID");
     if (chkFlag(DSFLG_TIME | DSFLG_OPT_TIME)) sb.append(" TIME");
-    sb.append(" CODE CALL INFO");
+    sb.append(" CODE CALL INFO ID");
     defaultFieldList = sb.toString();
   }
   

@@ -26,7 +26,7 @@ public class ORLinnCountyParser extends FieldProgramParser {
   
   public ORLinnCountyParser() {
     super(CITY_LIST, "LINN COUNTY", "OR",
-           "UNIT? ( CALL_PREFIX CALL_PREFIX+? CALL CALL2+? ADDR CITY? INFO+? ID | CALL CALL2+? ( DATE TIME PLACE_X | ADDR/S! ( CITY! | DATE TIME! | PLACE_X+? MAP! ) ) UNIT? INFO+? UNIT )");
+           "UNIT? ( CALL_PREFIX CALL_PREFIX+? CALL CALL2+? ADDR CITY? INFO+? ID | CALL CALL2+? ( DATE TIME PLACE_X | ADDR/S! ( CITY! | JCFD | DATE TIME! | PLACE_X+? MAP! ) ) UNIT? INFO+? UNIT )");
   }
   
   @Override
@@ -61,6 +61,7 @@ public class ORLinnCountyParser extends FieldProgramParser {
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INTERSECT")) return new MyIntersectField();
+    if (name.equals("JCFD")) return new MyJCFDField();
     if (name.equals("DATE")) return new MyDateField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
@@ -116,6 +117,10 @@ public class ORLinnCountyParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      if (field.endsWith(" JC")) {
+        data.strCity = "JUNCTION CITY";
+        field = field.substring(0,field.length()-3).trim();
+      }
       intersection = field.endsWith(" INTERSECTN");
       if (intersection) field = field.substring(0,field.length()-11).trim();
       super.parse(field, data);
@@ -142,6 +147,23 @@ public class ORLinnCountyParser extends FieldProgramParser {
     }
   }
   
+  private class MyJCFDField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.equals("JCFD")) return false;
+      if (data.strCity.length() == 0) data.strCity = "JUNCTION CITY";
+      return true;
+    }
+    
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
   
   private class MyDateField extends DateField {
     public MyDateField() {
@@ -231,7 +253,7 @@ public class ORLinnCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "PRI INFO";
+      return "PRI PLACE INFO";
     }
   }
   
@@ -273,6 +295,7 @@ public class ORLinnCountyParser extends FieldProgramParser {
       "EMERGENCY TRANSFER",
       "EYE PROB/INJURIES",
       "FALLS/BACK INJURIES",
+      "FLUE FIRE",
       "GRASS FIRE",
       "HAZMAT INCIDENT",
       "HEADACHE",
@@ -281,6 +304,7 @@ public class ORLinnCountyParser extends FieldProgramParser {
       "HEMORRHAGE/LACERATIONS",
       "HOUSE FIRE",
       "UNCONC/FAINTING",
+      "LARGE FIRE",
       "MEDICAL TRANSFER",
       "MOVE UP (MUTUAL AID)",
       "MUTUAL AID TO SCENE",

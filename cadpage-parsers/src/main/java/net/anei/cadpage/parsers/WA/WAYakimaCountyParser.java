@@ -96,6 +96,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "ACCIDENT UNKNOW",
       "AGENCY ASSIST",
       "ALARM BUSINESS",
+      "ALARM RESIDENT",
       "ASSAULT WEAPON",
       "CITIZEN ASSIST",
       "EMR ALARM MED",
@@ -132,9 +133,11 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "FIRE STRUCTURE",
       "FIRE TRASH GARB",
       "FIRE VEHICLE",
+      "OVERDOSE",
       "PAGED",
       "ROBBERY",
       "SUSPICIOUS CIRC",
+      "WEAPON OFFENSE",
       "WELFARE CHECK"
     );
   }
