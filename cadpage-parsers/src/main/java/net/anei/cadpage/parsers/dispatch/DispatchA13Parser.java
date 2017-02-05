@@ -65,14 +65,18 @@ public class DispatchA13Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+    if (body.contains("\n")) {
+      return parseFields(body.split("\n"), data);
+    }
+    
+    return parseStrippedMsg(body, data);
   }
 
   @Override
   protected Field getField(String name) {
     if (name.equals("SRCID")) return  new SourceIdField();
     if (name.equals("STATUS")) return new BaseStatusField();
-    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("ADDR")) return new BaseAddressField(false);
     if (name.equals("GPS1")) return new BaseGPSField(1);
     if (name.equals("GPS2")) return new BaseGPSField(2);
     if (name.equals("INFO")) return new BaseInfoField();
@@ -115,7 +119,7 @@ public class DispatchA13Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern STATUS_PTN = Pattern.compile("Dispatched|Req[ _]?Dispatch|(Acknowledge|Enroute|En Route Hosp|Responding|On *Scene|Standing ?By|Stack|In Command|Staged|Staging|ArrivedAtDestination|Transport)|(Disposed|Terminated)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern STATUS_PTN = Pattern.compile("\\b(?:Dispatched|Req[ _]?Dispatch|(Acknowledge|Enroute|En Route Hosp|Responding|On *Scene|Standing ?By|Stack|In Command|Staged|Staging|ArrivedAtDestination|Transport)|(Disposed|Terminated))\\b", Pattern.CASE_INSENSITIVE);
   private class BaseStatusField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -146,6 +150,16 @@ public class DispatchA13Parser extends FieldProgramParser {
   private static final Pattern TRAIL_NAME_PTN = Pattern.compile("(.*) # ([A-Z][-a-z]+)");
   protected class BaseAddressField extends AddressField {
     
+    private boolean includeCall;
+    
+    public BaseAddressField() {
+      this(false);
+    }
+    
+    public BaseAddressField(boolean includeCall) {
+      this.includeCall = includeCall;
+    }
+    
     @Override
     public void parse(String field, Data data) {
       
@@ -163,6 +177,14 @@ public class DispatchA13Parser extends FieldProgramParser {
       String sPart3 = p.get('(');
       String sPart4 = p.getSmart(')');
       String sPart5 = p.get();
+      
+      if (includeCall) {
+        int pt = sPart1.indexOf('@');
+        if (pt >= 0) {
+          data.strCall = append(data.strCall, " - ", sPart1.substring(0,pt).trim());
+          sPart1 = sPart1.substring(pt);
+        }
+      }
      
       // If first part starts with @, it contains a place name
       // and the second part is the address
@@ -282,11 +304,27 @@ public class DispatchA13Parser extends FieldProgramParser {
           data.strCross = append(data.strCross, " / ", fld);
         }
         
-        StartType st = (leadPlaceName || leadPlace ? StartType.START_OTHER : StartType.START_ADDR);
+        StartType st = (includeCall && (leadPlaceName | leadPlace) ? StartType.START_CALL_PLACE :
+                        includeCall ? StartType.START_CALL :
+                        leadPlaceName || leadPlace ? StartType.START_OTHER 
+                                                   : StartType.START_ADDR);
         int flags = FLAG_IGNORE_AT;
+        if (includeCall) flags |= FLAG_START_FLD_REQ;
         if (!trailPlace) flags |= FLAG_ANCHOR_END;
+        String saveCall = null;
+        if (includeCall) {
+          saveCall = data.strCall;
+          data.strCall = "";
+        }
+        String place;
         parseAddress(st, flags, addr, data);
-        String place = getStart();
+        if (includeCall) {
+          data.strCall = append(saveCall, " - ", data.strCall);
+          place = data.strPlace;
+          data.strPlace = "";
+        } else {
+          place = getStart();
+        }
         if (place.length() > 0) {
           if (data.strAddress.length() == 0) {
             parseAddress(place, data);
@@ -513,6 +551,50 @@ public class DispatchA13Parser extends FieldProgramParser {
       if (field.equals("Incident Notes:")) return;
       field = INFO_PREFIX_PTN.matcher(field).replaceFirst("");
       super.parse(field, data);
+    }
+  }
+  
+  private boolean fieldsInitialized = false;
+  private SourceIdField sourceIdField;
+  private BaseStatusField statusField;
+  private BaseAddressField addressField;
+  private String fieldList;
+  
+  /**
+   * Parse message that has been stripped of all field breaks :(
+   */
+  private boolean parseStrippedMsg(String body, Data data) {
+    
+    
+    if (!fieldsInitialized) {
+      fieldsInitialized = true;
+      sourceIdField = new SourceIdField();
+      statusField = new BaseStatusField();
+      addressField = new BaseAddressField(true);
+      
+      fieldList = sourceIdField.getFieldNames()+' '+statusField.getFieldNames()+' '+addressField.getFieldNames();
+    }
+    
+    setFieldList(fieldList);
+    
+    try {
+      body = stripFieldStart(body, "?");
+      Matcher match = STATUS_PTN.matcher(body);
+      if (!match.find()) return false;
+      String callId = body.substring(0, match.start()).trim();
+      for (String id : callId.split(" ")) {
+        sourceIdField.parse(id, data);
+      }
+      
+      statusField.parse(match.group(), data);
+      
+      addressField.parse(body.substring(match.end()).trim(), data);
+      
+      return true;
+    }
+    
+    catch (FieldProgramException ex) {
+      return false;
     }
   }
 }

@@ -3791,7 +3791,7 @@ public class FieldProgramParser extends SmartAddressParser {
   }
   
   @SuppressWarnings("serial")
-  private static class FieldProgramException extends RuntimeException {};
+  public static class FieldProgramException extends RuntimeException {};
   
   @Override
   public String toString() {

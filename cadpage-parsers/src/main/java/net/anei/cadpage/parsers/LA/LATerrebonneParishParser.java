@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.LA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
@@ -15,6 +16,8 @@ public class LATerrebonneParishParser extends DispatchA13Parser {
   public LATerrebonneParishParser() {
     super("TERREBONNE PARISH", "LA");
     addrField = getField("ADDR");
+    setupCallList(CALL_LIST);
+    setupProtectedNames("J AND V GUIDRY");
   }
   
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d)");
@@ -70,11 +73,16 @@ public class LATerrebonneParishParser extends DispatchA13Parser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR")) return new MyAddressField(false);
     return super.getField(name);
   }
   
   private class MyAddressField extends BaseAddressField {
+    
+    public MyAddressField(boolean includeCall) {
+      super(includeCall);
+    }
+
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
@@ -116,4 +124,22 @@ public class LATerrebonneParishParser extends DispatchA13Parser {
       }
     }
   }
+  
+  private static final CodeSet CALL_LIST = new CodeSet(
+      "111 FIRE-STRUCTURE",
+      "143 FIRE-GRASS",
+      "321 MEDICAL EMERGENCY",
+      "322 ACCIDENT W/INJURY",
+      "324 ACCIDENT W/O INJURY",
+      "400 HAZARDOUS CONDITION",
+      "444 POWER LINE DOWN",
+      "445(I) ARCING INSIDE",
+      "445(O) ARCING OUTSIDE",
+      "461 BUILDING OR STRUCTURE WEAKEND OR COLLASPED",
+      "500 SERVICE CALL",
+      "531(I) SMOKE ODOR INSIDE",
+      "745 ALARM-FIRE",
+      "746 ALARM-CARBON MONOXIDE",
+      "XFER TPSO"
+ );
 }
