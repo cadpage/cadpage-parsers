@@ -1,10 +1,5 @@
 package net.anei.cadpage.parsers.IA;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA67Parser;
 
 public class IAWarrenCountyBParser extends DispatchA67Parser {
