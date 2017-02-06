@@ -178,6 +178,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
   
   private static final String[] MWORD_STREET_LIST = new String[]{
     "BALD EAGLE",
+    "BEAVER FARM",
     "BELL HOLLOW",
     "BIG OAK",
     "BRUSH VALLEY",
@@ -192,9 +193,11 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "END OF LINE",
     "FLAT ROCK",
     "FOWLER HOLLOW",
+    "GEORGES VALLEY",
     "GOVERNORS PARK",
     "HALFMOON VALLEY",
     "HECKMAN CEMETERY",
+    "JACK PINE",
     "JACK STRAW",
     "JAMES HILL",
     "LIONS HILL",
@@ -215,6 +218,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "SKYTOP MOUNTAIN",
     "SNO FOUNTAIN",
     "SPORTS CAMP",
+    "SPRING RUN",
     "STEELE HOLLOW",
     "SUMMIT HILL",
     "SUNNYSIDE HOLLOW",
@@ -223,6 +227,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     "TURKEY EYE",
     "VALLEY VIEW",
     "VIRGINIA PINE",
+    "WALKER HOLLOW",
     "WEAVER HILL",
     "WHITE PINE"
   };

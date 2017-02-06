@@ -17,6 +17,7 @@ public class LATerrebonneParishParser extends DispatchA13Parser {
     super("TERREBONNE PARISH", "LA");
     addrField = getField("ADDR");
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
     setupProtectedNames("J AND V GUIDRY");
   }
   
@@ -124,6 +125,60 @@ public class LATerrebonneParishParser extends DispatchA13Parser {
       }
     }
   }
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+    "AFTON VILLA",
+    "ALS TRAILER",
+    "ASHLAND LANDFILL",
+    "BACK PROJECT",
+    "BAYOU BLACK",
+    "BAYOU BLUE BY PASS",
+    "BAYOU DULARGE",
+    "BAYOU GARDENS",
+    "BONNIE BLUE",
+    "CEDER GROVE",
+    "CYPRESS VILLAGE",
+    "DAIGLES LAKE",
+    "DR BEATROUS",
+    "FALGOUT CANAL",
+    "GARDEN VIEW",
+    "GRAND CAILLOU",
+    "GULF ACCESS",
+    "HENRY CLAY",
+    "JERRY ANN",
+    "JESSICA LYNN",
+    "JOHN EDWARD",
+    "JOHNSON RIDGE",
+    "LILEY PORCHE",
+    "LINDA LEE",
+    "LUMEN CHRISTI",
+    "MAIN PROJECT",
+    "MARTIN LUTHER KING",
+    "MARY KAY",
+    "MAW MAW",
+    "NORTH BAYOU BLACK",
+    "OAK POINTE",
+    "PORT AU PRINCE",
+    "SAINT CHARLES",
+    "SAINT MATT",
+    "SHADY ARBORS",
+    "SHADY OAK",
+    "SOUTH BAYOU BLACK",
+    "SOUTH FRENCH QUARTER",
+    "SOUTH HOLLYWOOD",
+    "SOUTH LEGION",
+    "SOUTHDOWN MANDALAY",
+    "SUGAR BEND",
+    "SUGAR CREEK",
+    "SUGAR LAND",
+    "TERRA CANE",
+    "THERIOT VOISIN BRIDGE",
+    "TWELVE OAKS",
+    "WEST MAIN",
+    "WEST PARK",
+    "WEST TUNNEL",
+    "WINTER QUARTERS"
+  };
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "111 FIRE-STRUCTURE",
