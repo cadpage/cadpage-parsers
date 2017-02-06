@@ -14,6 +14,7 @@ public class ILPeoriaCountyBParser extends DispatchA49Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+    data.strAddress = stripFieldEnd(data.strAddress, " CO");
     if (data.strAddress.startsWith("MUTUAL AID")) {
       if (data.strCall.length() == 0) {
         data.strCall = data.strAddress;

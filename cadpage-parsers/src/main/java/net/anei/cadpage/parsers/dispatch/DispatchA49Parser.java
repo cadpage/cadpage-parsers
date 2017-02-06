@@ -16,7 +16,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     super(defCity, defState, 
         "( CAD_Num:SKIP! Addr:ADDR! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
         "| ( Rpt#:ID! Addr:ADDR! Inc_Type:CODE! " +
-          "| DATE_TIME_SRC! Addr:ADDR! Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS! EXTRA+ )");
+          "| DATE_TIME_SRC! Addr:ADDR! Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
   }
   
   private static final Pattern REMARKS_PTN = Pattern.compile("(\nRemarks)[: ]+");
@@ -24,7 +24,7 @@ public class DispatchA49Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = REMARKS_PTN.matcher(body).replaceFirst("$1:\n");
-    return parseFields(body.split("\n+"), 5, data);
+    return parseFields(body.split("\n+"), data);
   }
   
   @Override
