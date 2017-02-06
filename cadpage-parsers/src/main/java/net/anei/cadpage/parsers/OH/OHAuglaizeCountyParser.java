@@ -20,6 +20,7 @@ public class OHAuglaizeCountyParser extends FieldProgramParser {
   }
 
   private static Pattern REDUNDANT_X = Pattern.compile("(.*?) *& *(\\1)");
+  private static final Pattern WOPAK_FISCHER_RD_PTN = Pattern.compile("\\bWAPAK FISHER RD\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   public String adjustMapAddress(String sAddress, boolean cross) {
@@ -27,7 +28,8 @@ public class OHAuglaizeCountyParser extends FieldProgramParser {
       Matcher mat = REDUNDANT_X.matcher(sAddress);
       if (mat.matches()) sAddress = mat.group(1);
     }
-    return sAddress;
+    sAddress = WOPAK_FISCHER_RD_PTN.matcher(sAddress).replaceAll("WAPAKONETA FISHER RD");
+    return super.adjustMapAddress(sAddress);
   }
 
   @Override
