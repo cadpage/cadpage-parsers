@@ -12,8 +12,10 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCMcDowellCountyParser extends DispatchSouthernParser {
 
   public NCMcDowellCountyParser() {
-    super(CITY_LIST, "MCDOWELL COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID |   DSFLAG_LEAD_PLACE | DSFLAG_ID_OPTIONAL | DSFLAG_FOLLOW_CROSS);
+    super(CITY_LIST, "MCDOWELL COUNTY", "NC", 
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_TIME);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSaintNames("JOSEPH");
   }
   
   @Override
@@ -25,9 +27,8 @@ public class NCMcDowellCountyParser extends DispatchSouthernParser {
   public boolean parseMsg(String body, Data data) {
     if (! super.parseMsg(body, data)) return false;
     data.strCall = stripFieldEnd(data.strCall, "-");
-    if (data.strCity.equalsIgnoreCase("MARION AREA") || data.strCity.equalsIgnoreCase("MARION CITY")) {
-      data.strCity = "MARION";
-    }
+    data.strCity = stripFieldEnd(data.strCity, " CITY");
+    data.strCity = stripFieldEnd(data.strCity, " AREA");
     return true;
   }
   
@@ -216,11 +217,11 @@ public class NCMcDowellCountyParser extends DispatchSouthernParser {
   });
   
   private static final String[] CITY_LIST = new String[]{
+      
     //cities
     "MARION",
     "MARION AREA",
     "MARION CITY",
-    
     "HANKINS NORTH FORK",
     "WOODLAWN",
     
@@ -231,9 +232,9 @@ public class NCMcDowellCountyParser extends DispatchSouthernParser {
     
     //Census-designated place
     "WEST MARION",
+    "WEST MARION CITY",
     
     //Unincorporated communities
-
     "GLENWOOD",
     "LINVILLE FALLS",
     "LITTLE SWITZERLAND",
