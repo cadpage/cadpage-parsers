@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,14 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
       return "Dispatch@co.kern.ca.us";
     }
     
+    private static final Pattern TMT_PTN = Pattern.compile("\\bTMT\\b", Pattern.CASE_INSENSITIVE);
+    
+    @Override
+    public String adjustMapAddress(String addr) {
+      addr = TMT_PTN.matcher(addr).replaceAll("TWENTY MULE TEAM");
+      return super.adjustMapAddress(addr);
+    }
+    
     @Override
     public boolean parseMsg(String subject, String body, Data data) {
       if (!subject.equals("!")) return false;
@@ -42,23 +51,51 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
       return super.getField(name);
     }
     
-    private static final Pattern CALL_ADDR_MAP_PTN = Pattern.compile("([A-Z]+\\d?) ?- (.*) ([A-Z]\\d{2,}(?:-\\d+)?+(?:-[A-Z])?) *(.*)"); 
+    private static final Pattern CALL_ADDR_MAP_PTN = Pattern.compile("([A-Z][A-Z0-9]+)([- ]+)(.*) ([A-Z]{1,2}\\d+(?:-\\d+)?+(?:-[A-Z])?) *(.*)"); 
     private class MyAddressField extends AddressField {
       @Override
       public void parse(String field, Data data) {
         Matcher match = CALL_ADDR_MAP_PTN.matcher(field);
         if (!match.matches()) abort();
         data.strCode = match.group(1);
-        field = match.group(2).trim();
-        data.strMap = match.group(3);
-        data.strPlace = match.group(4);
+        String delim = match.group(2);
+        field = match.group(3).trim();
+        data.strMap = match.group(4);
+        data.strPlace = match.group(5);
         
         int pt = field.lastIndexOf(',');
-        if (pt < 0) abort();
-        data.strCity = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
+        if (pt >= 0) {
+          data.strCity = field.substring(pt+1).trim();
+          field = field.substring(0,pt).trim();
+        }
+        
+        pt = field.indexOf(" - ");
+        if (pt >= 0) {
+          String place = field.substring(0,pt).trim();
+          field = field.substring(pt+3).trim();
+          if (!data.strPlace.startsWith(place)) {
+            if (place.startsWith(data.strPlace)) {
+              data.strPlace = place;
+            } else {
+              data.strPlace = append(place, " - ", data.strPlace);
+            }
+          }
+        }
+        
         field = field.replace('@', '&');
-        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_RECHECK_APT | FLAG_ANCHOR_END, field, data);
+        StartType st;
+        int flags;
+        if (delim.contains("-")) {
+          st = StartType.START_CALL;
+          flags = FLAG_START_FLD_REQ;
+        } else {
+          st = StartType.START_ADDR;
+          flags = 0;
+        }
+        parseAddress(st, flags | FLAG_RECHECK_APT | FLAG_ANCHOR_END, field, data);
+        if (st == StartType.START_ADDR) {
+          data.strCall = convertCodes(data.strCode, CALL_CODES);
+        }
       }
       
       @Override
@@ -96,12 +133,36 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
       }
     }
     
-    private CodeSet CALL_LIST = new CodeSet(
-        "AMB ONLY CODE 2",
-        "COMMERCIAL FIRE ALARM",
-        "HAZARDOUS CONDITION",
-        "MEDICAL AID",
-        "STRUCTURE FIRE REINFORCED",
-        "STRUCTURE FIRE / RESPONSE"
-    );
+    private static final Properties CALL_CODES = buildCodeTable(new String[]{
+        "AE",   "ARSON EVENT",
+        "AMB2", "AMB ONLY CODE 2",
+        "AMB3", "AMB ONLY CODE 3",
+        "AOD",  "ASSIST OTHER DEPT OR AMB",
+        "C2MA", "MUTUAL AID",
+        "CFA",  "COMMERCIAL FIRE ALARM",
+        "EMD",  "EMD",                             // ???
+        "FO",   "FIRE OUT INVEST. / REPORT",
+        "IB",   "ILLEGAL BURN",
+        "HC",   "HAZARDOUS CONDITION",
+        "MA",   "MEDICAL AID",
+        "OF",   "OUTSIDE FIRE",
+        "PS",   "PS",                          // Public Service?
+        "SF",   "STRUCTURE FIRE / RESPONSE",
+        "SI",   "SMOKE INVESTIGATION",
+        "SFR",  "STRUCTURE FIRE REINFORCED",
+        "TEST", "TEST",
+        "RX",   "RX",                          // ???
+        "TC",   "TC",                          // ???
+        "UTF",  "UTF",                         // Unknown type fire?
+        "VF",   "VEHICLE FIRE",
+        "VG",   "VEGETATION FIRE",
+    });
+    
+    private static final CodeSet CALL_LIST = new CodeSet();
+    
+    static {
+      for (Object val : CALL_CODES.values()) {
+        CALL_LIST.add((String)val);
+      }
+    }
   }
