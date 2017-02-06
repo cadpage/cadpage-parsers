@@ -23,8 +23,17 @@ public class OHMontgomeryCountyCParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     
+    if (body.startsWith("<https://")) {
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      body = body.substring(pt+1).trim();
+      pt = body.indexOf("\nYOUR ACCOUNT");
+      if (pt >= 0) body = body.substring(0,pt).trim();
+    }
+
     if (!body.startsWith("MCSO Dispatch Alerts:DISPATCH:")) return false;
     body = body.substring(30).trim();
+    
     body = LINE_BRK_PTN.matcher(body).replaceAll(" ");
     int pt = body.indexOf(" - From");
     if (pt >= 0) body = body.substring(0,pt).trim();
