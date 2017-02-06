@@ -117,6 +117,8 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "BURN-3",                     "BLS - MINOR BURN PATIENT",
       "BURN-3MULT",                 "BLS - MULTIPLE MINOR BURN PATIENTS",
       "CHAP-default",               "CHAPLAIN",
+      "CHEST 1",                    "ALS HEART PROBLEM",
+      "CHEST 2",                    "BLS POSSIBLE HEART PROBLEM",
       "CHEST-default",              "ALS - HEART PROBLEM",
       "CODEBLUE-default",           "CODE BLUE",
       "CPR-default",                "CARDIAC ARREST",
@@ -150,6 +152,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "FALL-2",                     "BLS - FALL PATIENT",
       "FALL-3",                     "BLS - FALL PATIENT",
       "FAPPL-default",              "APPLIANCE FIRE",
+      "FBARK",                      "SMALL BARK FIRE",
       "FBOAT-1LAKE",                "BOAT FIRE - LAKE",
       "FBOAT-1SOUND",               "SHIP FIRE - PUGET SOUND",
       "FBOAT-1TRLR",                "SHIP FIRE - ON TRAILER",
@@ -191,6 +194,8 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "FCTEST-1",                   "TEST SUBTYPE",
       "FCTEST-default",             "FIRECOMM TEST EVENT",
       "FDOCK-default",              "DOCK FIRE",
+      "FIRE BARK",                  "SMALL BARK FIRE",
+      "FIRE POLE",                  "UTILITY POLE FIRE",
       "FIRE-DEBRIS",                "DEBRIS FIRE",
       "FIRE-default",               "FIRE",
       "FIRE-DUMPSTER",              "DUMPSTER FIRE",
@@ -199,6 +204,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "FIRE-X",                     "W/EXPOSURE",
       "FMARINA-default",            "MARINA FIRE",
       "FOUT-default",               "FIRE NOW OUT",
+      "FPOLE",                      "UTILITY POLE FIRE",
       "FRES-default",               "RESIDENTIAL FIRE",
       "FRES-GAR",                   "GARAGE FIRE",
       "FRES-ODOR",                  "SMOKE ODOR IN RESIDENCE",
@@ -341,6 +347,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "SVC-LAW",                    "ASSIST LAW ENFORCEMENT",
       "SVC-LOCK",                   "VEHICLE LOCKOUT",
       "SVC-PTA",                    "PATIENT ASSIST",
+      "SZR 3",                      "BLS POSSIBLE SEIZURE",
       "SZR-2",                      "BLS - SEIZURE",
       "SZR-F1",                     "FREIGHT TRAIN DERAIL/FIRE",
       "TFCINFO-default",            "INFO EVENT - TACOMA FIRE",
@@ -374,6 +381,8 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "WTR-POOL",                   "WATER RESCUE - POOL",
       "WTR-PUGET_SOUND",            "WATER RESCUE - PUGET SOUND",
       "WTR-SWIFT",                  "WATER RESCUE - SWIFT"
+
+
   });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
