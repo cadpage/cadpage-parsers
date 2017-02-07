@@ -24,7 +24,7 @@ public class TXNuecesCountyParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
   
-  private static final Pattern SRC_ID_PTN = Pattern.compile("([A-Z]+):? +(\\d{10}) +");
+  private static final Pattern SRC_ID_PTN = Pattern.compile("([ A-Z]+)[: ] +(\\d{10}) +");
  
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -40,7 +40,7 @@ public class TXNuecesCountyParser extends FieldProgramParser {
     
     Matcher match = SRC_ID_PTN.matcher(body);
     if (match.lookingAt()) {
-      data.strSource = match.group(1);
+      data.strSource = match.group(1).trim();
       data.strCallId = match.group(2);
       body = body.substring(match.end());
     }
