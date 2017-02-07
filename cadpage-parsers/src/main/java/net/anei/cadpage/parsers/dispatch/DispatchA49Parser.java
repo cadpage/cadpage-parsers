@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,12 +12,19 @@ Lafayette Parish, LA
 */
 
 public class DispatchA49Parser extends FieldProgramParser {
+  
+  private boolean checkCity;
+  
+  public  DispatchA49Parser(String defCity, String defState) {
+    this(null, defCity, defState);
+  }
 
-  public DispatchA49Parser(String defCity, String defState) {
-    super(defCity, defState, 
-        "( CAD_Num:SKIP! Addr:ADDR! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
-        "| ( Rpt#:ID! Addr:ADDR! Inc_Type:CODE! " +
-          "| DATE_TIME_SRC! Addr:ADDR! Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
+  public DispatchA49Parser(Properties cityCodes, String defCity, String defState) {
+    super(cityCodes, defCity, defState, 
+        "( CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
+        "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
+          "| DATE_TIME_SRC! Addr:ADDR/S! Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
+    checkCity = cityCodes != null;
   }
   
   private static final Pattern REMARKS_PTN = Pattern.compile("(\nRemarks)[: ]+");
@@ -58,7 +66,11 @@ public class DispatchA49Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "\".");
-      super.parse(field, data);
+      if (!checkCity) {
+        parseAddress(field, data);
+      } else {
+        super.parse(field, data);
+      }
     }
   }
 
