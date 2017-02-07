@@ -423,6 +423,8 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AIRY", "MT AIRY",
+      "COOK", "COOKSVILLE",
+      "DETO", "DETOUR",
       "FINK", "FINKSBURG",
       "HAMP", "HAMPSTEAD",
       "KEYM", "KEYMAR",
@@ -430,15 +432,17 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       "LINW", "LINWOOD",
       "MANC", "MANCHESTER",
       "MARR", "MARRIOTSVILLE",
+      "MIDD", "MIDDLEBURG",
       "MILL", "MILLERS",
       "NWIN", "NEW WINDSOR",
+      "RAND", "RANDALLSTOWN",
       "REIS", "REISTERSTOWN",
       "SYKE", "SYKESVILLE",
       "TANE", "TANEYTOWN",
       "UNBR", "UNION BRIDGE",
       "UPCO", "UPPERCO",
       "WEST", "WESTMINSTER",
-      "WOOD", "WOODBINE",
+      "WOOD", "WOODBINE"
   });
   
   // Mutual aid count abbreviations
