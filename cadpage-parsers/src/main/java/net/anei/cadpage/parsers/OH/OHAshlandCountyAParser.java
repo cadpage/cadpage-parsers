@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 
@@ -13,6 +16,16 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   @Override
   public String getFilter() {
     return "911@ashlandcountysheriff.org";
+  }
+  
+  private static final Pattern SUBJECT_PTN = Pattern.compile("\\d{4}");
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!body.startsWith("911:") && SUBJECT_PTN.matcher(subject).matches()) {
+      body = "911:[" + subject + "]" + body;
+    }
+    return super.parseMsg(body, data);
   }
 
   private static final String[] CITY_LIST = new String[]{
