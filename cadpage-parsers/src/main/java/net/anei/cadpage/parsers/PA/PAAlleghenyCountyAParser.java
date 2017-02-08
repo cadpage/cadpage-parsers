@@ -12,11 +12,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class PAAlleghenyCountyAParser extends FieldProgramParser {
   
-  private static final Pattern MARKER = Pattern.compile("ALLEGHENY COUNTY 911:? :|:");
-  private static final Pattern TRAILER_PTN = Pattern.compile(" - From \\d+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)$");
-  private static final Pattern MOVE_UP_PTN = Pattern.compile("MOVE-UP: +([A-Z0-9]+) +to +([A-Z0-9]+)\\.?");
-  private static final Pattern MOVE_UP_UNIT_PTN = Pattern.compile("\\b([A-Z0-9]+) +to +");
-  
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
            "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID? INFO+ Units:UNIT UNIT+");
@@ -28,14 +23,20 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     return "CAD.Alert@AlleghenyCounty.us,CADAlert1@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
   }
 
+  private static final Pattern ARCH_ST_EXT = Pattern.compile("\\b(ARCH ST) EXT\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BUTLER_STREET_EXT = Pattern.compile("\\b(BUTLER ST(?:REET)?) EXT\\b", Pattern.CASE_INSENSITIVE);
+
   @Override
   public String adjustMapAddress(String sAddress) {
     sAddress = ARCH_ST_EXT.matcher(sAddress).replaceAll("$1");
     sAddress = BUTLER_STREET_EXT.matcher(sAddress).replaceAll("$1");
     return super.adjustMapAddress(sAddress);
   }
-  private static final Pattern ARCH_ST_EXT = Pattern.compile("\\b(ARCH ST) EXT\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern BUTLER_STREET_EXT = Pattern.compile("\\b(BUTLER ST(?:REET)?) EXT\\b", Pattern.CASE_INSENSITIVE);
+  
+  private static final Pattern MARKER = Pattern.compile("ALLEGHENY COUNTY 911:? :|:");
+  private static final Pattern TRAILER_PTN = Pattern.compile(" +- +From \\d+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b.*$");
+  private static final Pattern MOVE_UP_PTN = Pattern.compile("MOVE-UP: +([A-Z0-9]+) +to +([A-Z0-9]+)\\.?");
+  private static final Pattern MOVE_UP_UNIT_PTN = Pattern.compile("\\b([A-Z0-9]+) +to +");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
