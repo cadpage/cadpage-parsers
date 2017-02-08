@@ -12,8 +12,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParser {
   
-  private static final Pattern ID_PTN = Pattern.compile("(PF\\d{14}): *");
-  
   public MDPrinceGeorgesCountyGParser() {
     super("CALL ADDR! APT? PLACE/CS+? X! CH? BOX Units:UNIT% UNIT+ Remarks:INFO");
   }
@@ -23,6 +21,22 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
     return "@alert.co.pg.md.us,@c-msg.net,14100,12101,@everbridge.net,89361,87844";
   }
   
+  private static final Pattern HTML_FILTER_PTN = Pattern.compile("\n {3,}<p> (.*?)</p>\n {3,}", Pattern.DOTALL);
+  
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<!doctype html>\n")) {
+      Matcher match = HTML_FILTER_PTN.matcher(body);
+      if (!match.find()) return false;
+      body = match.group(1).trim();  
+      body = body.replace("\n<br>", " ").replace("\n", " ").replace("<br>", " ");
+    }
+
+    return super.parseHtmlMsg(subject, body, data);
+  }
+  
+  private static final Pattern ID_PTN = Pattern.compile("(PF\\d{14}): *");
+
   @Override
   public boolean parseMsg(String body, Data data) {
     
