@@ -26,7 +26,7 @@ public class NJCumberlandCountyParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (body.startsWith("E911:")) body = body.substring(5).trim();
-    if (subject.length() > 0) body = subject + "_" + body;
+    if (subject.length() > 0 && !subject.equals("Text Message")) body = subject + "_" + body;
     if (!parseFields(body.split("_"), data)) return false;
     if (data.strUnit.endsWith("AC")) {
       data.strCall = "ALL CALL - " + data.strCall;
