@@ -12,7 +12,7 @@ public class INTiptonCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@tipco.com.CAD@tiptoncounty.in.gov";
+    return "CAD@tipco.com,CAD@tiptoncounty.in.gov";
   }
   
   @Override
