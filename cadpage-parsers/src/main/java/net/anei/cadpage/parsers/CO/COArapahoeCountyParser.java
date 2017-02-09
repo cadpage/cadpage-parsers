@@ -19,7 +19,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "metcomdispatch@metcom911.org";
+    return "metcomdispatch@metcom911.org,SMTPRELAY@SMFRA.onmicrosoft.com";
   }
   
   @Override
