@@ -27,11 +27,13 @@ public class DispatchA18Parser extends FieldProgramParser {
     super(cityList, defCity, defState,
           "CALL ADDR X BOX! EMPTY+? ( DASHES DATETIME SRC SRC | ) INFO+? ID_UNIT ID_UNIT+? END");
   }
-  
+
+  private static final Pattern FIX_BROKEN_INFO_PTN = Pattern.compile("([A-Za-z]+:.*[^\\]])\n(.*\\[\\d\\d:\\d\\d:\\d\\d\\])");
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\nDisclaimer");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    body = FIX_BROKEN_INFO_PTN.matcher(body).replaceAll("$1$2");
     return parseFields(body.split("\n"), 4, data);
   }
   
@@ -205,7 +207,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern INFO_PTN = Pattern.compile("[a-z]+: *(.*?) +\\[(\\d\\d:\\d\\d:\\d\\d)\\]");
+  private static final Pattern INFO_PTN = Pattern.compile("[A-Za-z]+: *(.*?) *\\[(\\d\\d:\\d\\d:\\d\\d)\\]");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -231,7 +233,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Z0-9,]+)");
+  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Za-z0-9,]+)");
   private class MyIdUnitField extends Field {
     
     @Override

@@ -27,7 +27,7 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
 
   @Override
   public String getFilter() {
-    return "wilmerfd@cityofwilmer.net";
+    return "wilmerfd@cityofwilmer.net,crimes@seagoville.us";
   }
 
   private static String[] CITY_LIST = new String[]{
