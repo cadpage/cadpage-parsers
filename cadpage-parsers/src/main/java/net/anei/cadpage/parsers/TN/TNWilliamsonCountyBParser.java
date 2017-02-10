@@ -13,6 +13,7 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   
   private static final Pattern BAD_MARKER = Pattern.compile("911-CENTER:[A-Z0-9]+ +>");
   private static final Pattern TO_X_PTN = Pattern.compile("(?:(.*) )?(?:NORTH|SOUTH|EAST|WEST) BOUND (.*) TO +(.*)");
+  private static final Pattern I_X_PTN = Pattern.compile("(\\d+ I\\d+(?: [NSEW]B)?)\\b *(.*)");
   
   public TNWilliamsonCountyBParser() {
     super("911-CENTER:", TNWilliamsonCountyParser.CITY_LIST, "WILLIAMSON COUNTY", "TN", B2_FORCE_CALL_CODE);
@@ -23,7 +24,13 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (BAD_MARKER.matcher(body).lookingAt()) return false;
+    
+    // 615 area code frequently appears without the rest of the phone number :(
+    body = body.replace("   615 ", "   6150000000 ");
     if (!super.parseMsg(body, data)) return false;
+    if (data.strPhone.equals("6150000000")) data.strPhone = "";
+    
+    data.strAddress = stripFieldEnd(data.strAddress, " & CITY LIMITS");
     
     // Odd cross street conventions frequently end up in the name field
     String name = append(data.strCross, " ", data.strName);
@@ -43,6 +50,18 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       data.strCross = append(cross, " / ", data.strCross);
       data.strName = name;
     }
+    else if (data.strCross.length() == 0 && (match = I_X_PTN.matcher(data.strName)).matches()) {
+      data.strCross = match.group(1);
+      data.strName = match.group(2);
+    }
+    
+    if (data.strCity.length() == 0) {
+      data.strName = stripFieldEnd(data.strName, " CITY OF");
+      if (data.strName.endsWith("FRANKLIN")) {
+        data.strCity = "FRANKLIN";
+        data.strName = data.strName.substring(0, data.strName.length()-8).trim();
+      }
+    }
     return true;
   }
   
@@ -57,6 +76,7 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "BAKERS BRIDGE",
       "BEECH CREEK",
       "BERRY CHAPEL",
+      "CARRIAGE HILLS",
       "COOL SPRINGS",
       "CROWNE BROOKE",
       "EXECUTIVE CENTER",
@@ -67,6 +87,8 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "GRAND OAKS",
       "GRANNY WHITE",
       "GREEN HILL",
+      "HIGH LEA",
+      "HIGH OAKS",
       "HOLLY TEE GAP",
       "HOLLY TREE GAP",
       "IN A VALE",
@@ -77,21 +99,26 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "MARKET EXCHANGE",
       "MEADOW LAKE",
       "MORGAN FARMS",
+      "MOUNTAIN ASH",
       "NORTH BOUND MOORES",
       "OWL LANDING",
+      "PRINCETON HILLS",
       "QUAIL VALLEY",
+      "RAVENSWOOD FARM",
       "RED OAK",
       "RIVER OAKS",
+      "ROCKY SPRINGS",
       "SHADOW CREEK",
       "SHADOW RIDGE",
       "SUMMIT VIEW",
       "TORREY PINES",
       "TWIN SPRINGS",
+      "WALNUT BEND",
       "WALNUT HILLS",
       "WALNUT PARK",
       "WARDLEY PARK",
-      "WILSON PIKE",
-
+      "WEST MCEWEN",
+      "WILSON PIKE"
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(

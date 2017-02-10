@@ -251,7 +251,8 @@ public class DispatchB2Parser extends DispatchBParser {
       // We can't turn on the FLAG_CROSS_FOLLOWS option or it will mess up following names
       // but if we have identified a cross street, see if the address has a trailing direction
       // symbol that should be attached to the cross street.
-      if (noCross && data.strApt.length() == 0 && data.strCross.length() > 0 && data.strCity.length() == 0) {
+      if (noCross && data.strApt.length() == 0 && data.strCross.length() > 0 && 
+          data.strCity.length() == 0 && data.strPhone.length() == 0) {
         match = TRAIL_DIR_PTN.matcher(data.strAddress);
         if (match.find()) {
           data.strCross = match.group(1) + ' ' + data.strCross;
