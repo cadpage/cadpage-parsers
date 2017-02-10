@@ -1,26 +1,26 @@
 package net.anei.cadpage.parsers.OH;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA37Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA39Parser;
 
-public class OHMedinaCountyCParser extends DispatchA37Parser {
+public class OHMedinaCountyCParser extends DispatchA39Parser {
 
   public OHMedinaCountyCParser() {
-    super("{Dispatch Message}",CITY_LIST, "MEDINA COUNTY", "OH");
+    super(CITY_LIST, "MEDINA COUNTY", "OH");
   }
   
   @Override
   public String getFilter() { 
     return "dispatch@brunswick.oh.us"; 
   }
-
+  
   @Override
-  protected boolean parseMessageField(String field, Data data) {
-    
-    data.strSupp = field;
+  public boolean parseUntrimmedMsg(String subject, String body, Data data) {
+    if (!super.parseUntrimmedMsg(subject, body, data)) return false;
+    if (data.strCity.equalsIgnoreCase("BRUNSWICK HI")) data.strCity = "BRUNSWICK HILLS";
     return true;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
       "BRUNSWICK",
       "MEDINA",
@@ -36,27 +36,42 @@ public class OHMedinaCountyCParser extends DispatchA37Parser {
       "SULLIVAN",
       "WESTFIELD CENTER",
       
-      "BRUNSWICK HILLS TWP",
-      "CHATHAM TWP",
-      "GRANGER TWP",
-      "GUILFORD TWP",
-      "HARRISVILLE TWP",
-      "HINCKLEY TWP",
-      "HOMER TWP",
-      "LAFAYETTE TWP",
-      "LITCHFIELD TWP",
-      "LIVERPOOL TWP",
-      "MEDINA TWP",
-      "MONTVILLE TWP",
-      "SHARON TWP",
-      "SPENCER TWP",
-      "WADSWORTH TWP",
-      "WESTFIELD TWP",
-      "YORK TWP",
-      
-      "BEEBETOWN",
-      "HOMERVILLE",
+      "BRUNSWICK HI",
+      "CHATHAM",
+      "GRANGER",
+      "GUILFORD",
+      "HARRISVILLE",
+      "HINCKLEY",
+      "HOMER",
+      "LAFAYETTE",
       "LITCHFIELD",
-      "VALLEY CITY",
+      "LIVERPOOL",
+      "MEDINA",
+      "MONTVILLE",
+      "SHARON",
+      "SPENCER",
+      "WADSWORTH",
+      "WESTFIELD",
+      "YORK",
+      
+      "ABBEYVILLE",
+      "BEEBETOWN",
+      "BENNETTS CORNERS",
+      "CHATHAM",
+      "CODDINGVILLE",
+      "CRAWFORD CORNERS",
+      "ERHART",
+      "FRIENDSVILLE",
+      "GRANGER",
+      "HINCKLEY",
+      "HOMERVILLE",
+      "LESTER",
+      "LITCHFIELD",
+      "MALLET CREEK",
+      "PAWNEE",
+      "REMSEN CORNERS",
+      "RIVER STYX",
+      "SHARON CENTER",
+      "VALLEY CITY"
   };
 }
