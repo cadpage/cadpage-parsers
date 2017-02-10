@@ -164,16 +164,19 @@ public class COAdamsCountyParser extends FieldProgramParser {
   private Pattern TWO_PT_FIVE = Pattern.compile("\\b2\\.5\\b");
   
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-      "ADAM ADAM", "",
+      "ADAM ADAM", "ADAMS COUNTY",
       "ADAM ARV",  "ARVADA",
       "ADAM AUR",  "AURORA",
       "ADAM BPD",  "BRIGHTON",
       "ADAM CCPD", "COMMERCE CITY",
       "ADAM FHPD", "FEDERAL HEIGHTS",
       "ADAM TPD",  "THORNTON",
+      "ADAM NPD",  "NORTHGLENN",
       "ADAM WES",  "WESTMINSTER",
       "ARAP ARAP", "ARAPAHOE COUNTY",
       "JECO ARV",  "ARVADA",
+      "WELD BPD",  "BRIGHTON",
+      "WELD FTLP", "FORT LUPTON",
       "WELD WELD", "WELD COUNTY"
   });
 }
