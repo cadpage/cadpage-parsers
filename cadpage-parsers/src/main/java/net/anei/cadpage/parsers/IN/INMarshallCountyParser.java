@@ -11,7 +11,7 @@ public class INMarshallCountyParser extends DispatchOSSIParser {
   
   public INMarshallCountyParser() {
     super(CITY_CODES, "MARSHALL COUNTY", "IN",
-           "( CANCEL ADDR CITY/Y! PLACE INFO+ | FYI ( PLACE ADDR/Z CITY/Y | ADDR/Z CITY/Y | DPLACE? ADDR ) X/Z+? CALL! END ) DATETIME");
+           "( CANCEL ( CITY/Y ADDR | ADDR CITY/Y! PLACE ) INFO+ | FYI ( PLACE ADDR/Z CITY/Y | ADDR/Z CITY/Y | DPLACE? ADDR ) X/Z+? CALL! END ) DATETIME");
     setupCities(CITY_LIST);
   }
   
@@ -92,6 +92,8 @@ public class INMarshallCountyParser extends DispatchOSSIParser {
   });
   
   private static final String[] CITY_LIST = new String[]{
+    "ELKHART COUNTY",
+    "ELKHART",
     "ST JOSEPH COUNTY",
     "ST JOSEPH"
   };
