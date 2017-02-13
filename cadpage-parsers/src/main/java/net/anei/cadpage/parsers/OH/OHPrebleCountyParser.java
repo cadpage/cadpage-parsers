@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 public class OHPrebleCountyParser extends DispatchEmergitechParser {
@@ -12,6 +15,27 @@ public class OHPrebleCountyParser extends DispatchEmergitechParser {
   public String getFilter() {
     return "PREBLESHERIFF@swohio.twcbc.com";
   }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    data.strCode = data.strCall;
+    data.strCall = convertCodes(data.strCode, CALL_CODES);
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CALL", "CODE CALL");
+  }
+
+  private static final Properties CALL_CODES = buildCodeTable(new String[]{
+      "4",  "MVA",
+      "16", "Dead Body",
+      "28", "Fire",
+      "29", "EMS Response",
+      "C4", "MVA"
+  });
 
   private static final String[] CITY_LIST = new String[]{
     
