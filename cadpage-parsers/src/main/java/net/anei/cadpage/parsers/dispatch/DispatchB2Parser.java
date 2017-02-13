@@ -180,10 +180,12 @@ public class DispatchB2Parser extends DispatchBParser {
     // look for a phone number.  If found it will either be at the end of
     // the message, or it will mark the end of the address
     String left = null;
+    boolean foundPhone = false;
     match = PHONE_PTN.matcher(field);
     if (match.find()) {
       int pt;
       do {
+        foundPhone = true;
         data.strPhone = match.group(1).trim();
         left = field.substring(match.end());
         pt = match.start();
@@ -252,9 +254,9 @@ public class DispatchB2Parser extends DispatchBParser {
       // but if we have identified a cross street, see if the address has a trailing direction
       // symbol that should be attached to the cross street.
       if (noCross && data.strApt.length() == 0 && data.strCross.length() > 0 && 
-          data.strCity.length() == 0 && data.strPhone.length() == 0) {
+          data.strCity.length() == 0 && !foundPhone) {
         match = TRAIL_DIR_PTN.matcher(data.strAddress);
-        if (match.find()) {
+        if (match.find() && !TRAIL_DIR_PTN.matcher(data.strCross).find()) {
           data.strCross = match.group(1) + ' ' + data.strCross;
           data.strAddress = data.strAddress.substring(0,match.start());
         }
