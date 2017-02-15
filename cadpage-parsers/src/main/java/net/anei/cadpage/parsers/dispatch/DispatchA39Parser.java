@@ -38,6 +38,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DEMPTY")) return new MyDoubleEmptyField();
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("INFO")) return new BaseInfoField();
@@ -53,6 +54,24 @@ public class DispatchA39Parser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       return field.length() == 0 && getRelativeField(+1).length() == 0;
+    }
+  }
+  
+  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (\\d{9})");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CALL_ID_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCallId = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL ID";
     }
   }
   
