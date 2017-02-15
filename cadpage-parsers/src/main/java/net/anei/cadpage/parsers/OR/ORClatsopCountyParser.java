@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.OR;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ public class ORClatsopCountyParser extends SmartAddressParser {
     super("CLATSOP COUNTY", "OR");
     setFieldList("CALL ADDR APT PLACE INFO");
     setupSpecialStreets("PROMENADE");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -86,6 +88,26 @@ public class ORClatsopCountyParser extends SmartAddressParser {
     
     return true;
   }
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "LIFEGUARD TOWER",      "45.99311606,-123.93176492",
+      "SEMAPHORE 3",          "45.99578003,-123.93150575",
+      "SEMAPHORE 6",          "45.99778334,-123.93132269",
+      "SEMAPHORE 9",          "45.99978448,-123.93095993",
+      "SEMAPHORE G",          "45.99045964,-123.93280596",
+      "SEMAPHORE K",          "45.98790000,-123.93390000",
+      "SEMAPHORE N",          "45.98582156,-123.93419601",
+      "SEMAPHORE S",          "45.98368526,-123.93485315",
+      "SEMAPHORE U",          "45.98081219,-123.93578757",
+      "SEMAPHORE 12",         "46.00159970,-123.93056296",
+      "SEMAPHORE 16",         "46.00450523,-123.92970029"
+
+  });
   
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
       "2 VEH MVA",
