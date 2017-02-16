@@ -284,6 +284,9 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     "WACONDA",
     "WEST STAYTON",
     
+    // Clackamas County
+    "MOLALLA",
+    
     // Linn County
     "LYONS"
   ));

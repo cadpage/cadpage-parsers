@@ -13,7 +13,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
   
   public PALackawannaCountyAParser() {
     super(CITY_CODES, "LACKAWANNA COUNTY", "PA",
-          "UNIT! Location:ADDR/aSXax! Common_Name:PLACE? Call_Type:CALL! Call_Time:DATETIME Nature_of_Call:INFO CFS_Number:ID");
+          "UNIT! Location:ADDR/aSXax! Cross_Streets:X? Common_Name:PLACE? Call_Type:CALL! Call_Time:DATETIME Nature_of_Call:INFO Incident_Number:ID");
     addRoadSuffixTerms("CLOSE", "PARK");
     setupSpecialStreets("NEW ST");
   }
@@ -31,18 +31,32 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
-    body = body.replace("Call Type:", " Call Type:").replaceAll(" CFS Number ", " CFS Number: ").replace('\n', ' ');
+    body = body.replace("Call Type:", " Call Type:").replaceAll(" Incident  Number ", " Incident Number: ").replace('\n', ' ');
 
     return super.parseMsg(body, data);
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("UNIT")) return new UnitField("Unit\\b *(.*)", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    return super.getField(name);
+  }
+  
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*) ([-+]?\\d{2,3}\\.\\d{6,} [-+]?\\d{2,3}\\.\\d{6,})");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?) +(?:(?:APT|RM|(LOT|WARD)) *([^ ]+|[^0-9]+)|(FLR +\\d+(?: +APT +.*)?))", Pattern.CASE_INSENSITIVE);
   private static final Pattern LVIH_PTN = Pattern.compile("\\bLVIH\\b");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("0 ")) field = field.substring(2).trim();
-      Matcher match = ADDR_APT_PTN.matcher(field);
+      Matcher match = ADDR_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        setGPSLoc(match.group(2), data);
+      }
+      match = ADDR_APT_PTN.matcher(field);
       String apt = "";
       if (match.matches()) {
         field = match.group(1);
@@ -58,13 +72,28 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
       data.strApt = append(data.strApt, "-", apt);
       if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
     }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS";
+    }
   }
   
-  @Override
-  public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("Unit\\b *(.*)", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    return super.getField(name);
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|#) *(.*)", Pattern.CASE_INSENSITIVE);
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_ONLY_CITY, field, data);
+      String left = getLeft();
+      Matcher match = APT_PTN.matcher(left);
+      if (match.matches()) left = match.group(1);
+      data.strApt = left;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "X CITY";
+    }
   }
   
   @Override
