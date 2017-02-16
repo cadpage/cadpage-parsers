@@ -16,7 +16,7 @@ public class WALewisCountyParser extends FieldProgramParser {
   
   public WALewisCountyParser() {
     super("LEWIS COUNTY", "WA",
-           "SRC ( FIPO DATETIME | TIMEDATE ) CALL ADDR! INFO+? ID GPS1 GPS2");
+           "ASSIGNED? SRC ( FIPO DATETIME | TIMEDATE ) CALL ADDR! INFO+? ID GPS1 GPS2");
   }
   
   @Override
@@ -84,6 +84,7 @@ public class WALewisCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ASSIGNED")) return new SkipField("Assigned");
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("FIPO")) return new SkipField("fipo", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
