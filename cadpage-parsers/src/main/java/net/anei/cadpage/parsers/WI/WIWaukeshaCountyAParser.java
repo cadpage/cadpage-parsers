@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Waukesha County, WI
@@ -19,8 +21,16 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
 
   public WIWaukeshaCountyAParser() {
     super(CITY_CODES, "WAUKESHA COUNTY", "WI",
-        "Location:ADDR/S! TYPE_CODE:CALL! TYPE_CODE:CALL! TIME:TIME%");
+        "Location:ADDR/S! PRI:PRI? TYPE_CODE:CALL! TYPE_CODE:CALL! TIME:TIME% END");
     setupGpsLookupTable(WIWaukeshaCountyAParserTable.buildGpsLookupTable());
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean revMsgOrder() { return true;   }
+    };
   }
 
   @Override
@@ -38,6 +48,7 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
         if (match.find()) body = body.substring(0,match.start());
       }
     }
+    body = body.replace("TYPE CODE:", " TYPE CODE:");
     return super.parseMsg(body, data);
   }
 
