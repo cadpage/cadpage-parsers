@@ -57,6 +57,13 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
     return "@iaralerts.com";
   }
 
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CALL")) return new MyCallField();
+    return super.getField(name);
+  }
+
   private static final Pattern APT_PTN = Pattern.compile("-([-A-Z0-9]*)$");
   private static final Pattern APT_PTN2 = Pattern.compile("(?:APT|ROOM|RM|SUITE):? *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
@@ -100,13 +107,6 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
     }
-  }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CALL")) return new MyCallField();
-    return super.getField(name);
   }
   
   @Override
