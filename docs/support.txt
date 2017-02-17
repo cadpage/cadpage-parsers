@@ -603,9 +603,12 @@ Jean ~ Cadpage Administrator
 *******************************************************************
 inquiry about department sponsorship
 
-I would be delighted to sign up your department with a Cadpage subscription. We offer a 30% discount to departments that sponsor their members. That would be $7 per person per year.
 
-Please note that our Cadpage app is exclusively for Android Users only. If anyone in your department is using an iPhone, we would need to discuss other options -- specifically, a messaging service like CodeMessaging.net or Active911.com.
+Thanks so much for your interest in Cadpage!
+
+I would be delighted to sign up your department with a Cadpage subscription. We offer a 30% discount to departments that sponsor their members. That would be $7 per person per year.  For a department with 25-30 Users, the cost per year would be $175-$210.
+
+Please note that our Cadpage app is exclusively for Android Users.  If anyone in your department is using an iPhone, we would need to discuss other options -- specifically, a messaging service like CodeMessaging.net or Active911.com. Your Android Users can still use Cadpage with those messaging services.   When they register with direct paging, Cadpage is free, since we get some of the funds from that purchase.
 
 If you just have Android Users, I would need the following information to register your department sponsorship: the name of your department, a contact person, which could be you, and a list of your department members' names and phones numbers. It would be easiest if you would send the list in the following format:
 
@@ -613,6 +616,8 @@ First Last (5551234567)
 Jean Goul (5551230987)
 
 For payment, I can email or mail you an invoice, with the mailing address for Cadpage. PayPal is another viable option for making a payment.
+
+Please let me know if you have any further questions about Cadpage.
 
 Thanks so much for your interest!
 Jean ~ Cadpage Administrator
