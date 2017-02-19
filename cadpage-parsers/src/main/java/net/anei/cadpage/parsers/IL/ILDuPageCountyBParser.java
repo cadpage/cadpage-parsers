@@ -14,7 +14,7 @@ public class ILDuPageCountyBParser extends FieldProgramParser {
 
   public ILDuPageCountyBParser() {
     super(CITY_LIST, "DUPAGE COUNTY", "IL",
-        "ID DATE/d TIME ( MUTUAL_AID SKIP MACALL SKIP MAMAP MAINFO MACROSS? "
+        "ID DATE/d TIME ( MUTUAL_AID SKIP MACALL SKIP MAMAP MAINFO CITY? MACROSS? "
 +                           "|"
 +                       " CALL ADDR CITY? ( PLACE X/Z X/Z MAP! "
 +                                            "|"
