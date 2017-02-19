@@ -4,17 +4,17 @@ package net.anei.cadpage.parsers.MO;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 
 
-public class MOJohnsonCountyParser extends SmartAddressParser {
+public class MOJohnsonCountyParser extends FieldProgramParser {
  
   public MOJohnsonCountyParser() {
-    super(CITY_LIST, "JOHNSON COUNTY", "MO");
-    setFieldList("SRC CALL ADDR APT CITY DATE TIME");
+    super(CITY_LIST, "JOHNSON COUNTY", "MO", 
+          "SRC CALL ADDR CITY DATETIME! END");
   }
   
   @Override
@@ -27,6 +27,12 @@ public class MOJohnsonCountyParser extends SmartAddressParser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    // New format
+    if (body.startsWith("Dispatch,")) {
+      body = body.substring(9).trim();
+      return parseFields(body.split(";"), data);
+    }
     
     do {
       if (subject.contains("911 Page")) break;
@@ -43,6 +49,9 @@ public class MOJohnsonCountyParser extends SmartAddressParser {
       
       return false;
     } while (false);
+    
+    setFieldList("SRC CALL ADDR APT CITY DATE TIME");
+
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
     data.strDate = match.group(1);
@@ -63,6 +72,12 @@ public class MOJohnsonCountyParser extends SmartAddressParser {
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, body, data);
     if (data.strCity.startsWith("JOHNSON COUNTY")) data.strCity = "";
     return true;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    return super.getField(name);
   }
   
   private static final String[] CITY_LIST = new String[]{
