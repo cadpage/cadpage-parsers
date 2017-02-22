@@ -12,6 +12,7 @@ public class NJSalemCountyParser extends GroupBestParser {
   
   public NJSalemCountyParser() {
     super(new NJSalemCountyAParser(),
-          new NJSalemCountyBParser());
+          new NJSalemCountyBParser(),
+          new NJSalemCountyCParser());
   }
 }
