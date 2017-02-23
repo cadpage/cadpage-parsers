@@ -27,7 +27,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern FROM_PREFIX_PTN = Pattern.compile("(?:\\*\\*\\[from \\d+\\]|FWD:) +");
-  private static final Pattern EST_PREFIX_PTN = Pattern.compile("\\d+ : EST |EA : ");
+  private static final Pattern EST_PREFIX_PTN = Pattern.compile("\\d+ : EST |EA : |\\d+ (?=Inside location:)");
   
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -45,7 +45,11 @@ public class FLManateeCountyParser extends FieldProgramParser {
     body = body.replace("Estimated Address ", "Estimated Address:");
     
     if (!super.parseMsg(body, data)) return false;
-    if (data.strAddress.length() == 0) return false;
+    if (data.strAddress.length() == 0) {
+      if (data.strPlace.length() == 0) return false;
+      parseAddress(data.strPlace, data);
+      data.strPlace = "";
+    }
     return true;
   }
   
@@ -58,6 +62,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.* [A-Z]{2}) (\\d{5})");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -69,11 +74,20 @@ public class FLManateeCountyParser extends FieldProgramParser {
       } else {
         data.strPlace = p.getLastOptional(':');
       }
-      p = new Parser(stripFieldEnd(p.get(), " EA"));
+      String zip = null;
+      field = p.get();
+      Matcher match = ADDR_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        zip = match.group(2);
+      }
+      field = stripFieldEnd(field,  " EA");
+      p = new Parser(field);
       String apt = p.getLastOptional(',');
       if (apt.length() == 0) apt = p.getLastOptional(';');
       super.parse(p.get(), data);
       data.strApt = append(data.strApt, "-", apt);
+      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
     }
     
     @Override
