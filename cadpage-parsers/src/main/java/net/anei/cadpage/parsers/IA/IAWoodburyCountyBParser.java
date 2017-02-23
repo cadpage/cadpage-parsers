@@ -7,7 +7,8 @@ public class IAWoodburyCountyBParser extends FieldProgramParser {
   
   public IAWoodburyCountyBParser() {
     super("WOODBURY COUNTY", "IA", 
-          "ID DATE/d TIME CALL ADDR CITY PLACE? X/Z+? INFO/Z UNIT/SZ EMPTY/Z! END");
+          "ID DATE/d TIME CALL ( UNIT1 ADDR CITY PLACE? X/Z+? INFO/Z EMPTY/Z END " + 
+                              "| ADDR CITY PLACE? X/Z+? INFO/Z UNIT/SZ EMPTY/Z! END )");
   }
   
   @Override
@@ -25,6 +26,7 @@ public class IAWoodburyCountyBParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d{9}");
     if (name.equals("DATE")) return new DateField("\\d\\d-\\d\\d-\\d\\d");
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d");
+    if (name.equals("UNIT1")) return new UnitField("[A-Z]+\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -58,7 +60,9 @@ public class IAWoodburyCountyBParser extends FieldProgramParser {
       }
       pt = field.indexOf(INFO_UNIT_TAG);
       if (pt >= 0) {
-        data.strUnit = field.substring(pt+INFO_UNIT_TAG.length()).trim();
+        if (data.strUnit.length() == 0) {
+          data.strUnit = field.substring(pt+INFO_UNIT_TAG.length()).trim();
+        }
         field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
