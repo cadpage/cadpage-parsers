@@ -17,7 +17,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
 
   public ALJeffersonCountyCParser() {
     super("JEFFERSON COUNTY", "AL",
-          "( CALL ADDRCITY/SXP | ADDRCITY/SXP CALL! ) EMPTY X:X! Units:UNIT! Created:DATETIME! Pri_Inc:ID! N:INFO/N+");
+          "( CALL ADDRCITY/SXP | ADDRCITY/SXP CALL! ) JUNK X:X? Units:UNIT! Created:DATETIME! Pri_Inc:ID! N:INFO/N+");
   }
     
   @Override
@@ -41,6 +41,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("JUNK")) return new SkipField("|@.*", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new MyIdField();
