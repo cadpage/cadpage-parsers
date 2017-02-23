@@ -10,8 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
- * Abstract combination parser that accepts the results of the first parser
- * that accepts each message 
+ * Abstract combination parser that accepts the best results of a group of parsers
  */
 
 public class GroupBestParser extends GroupBaseParser {

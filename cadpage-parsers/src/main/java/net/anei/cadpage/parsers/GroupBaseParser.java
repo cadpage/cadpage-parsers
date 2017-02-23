@@ -24,7 +24,9 @@ public abstract class GroupBaseParser extends MsgParser {
   }
 
   protected void addParser(MsgParser parser) {
-  
+
+    // Group block parser isn't a real parser and should not update any of this
+    if (parser instanceof GroupBlockParser) return;
     setDefaults(parser.getDefaultCity(), parser.getDefaultState());
     updateFilter(parser.getFilter());
   }
