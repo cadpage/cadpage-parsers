@@ -103,7 +103,7 @@ public class MOPulaskiCountyParser extends FieldProgramParser {
   }
   
   // Unit codes will be nnnn, or xFDn, or Mnn
-  private static final Pattern UNIT_PTN = Pattern.compile("(?: *\\b(?:[A-Z]+\\d+|\\d{3,4}|[A-Z]{1,2}[FP]D\\d?|DAD|LIFELINE|MARIES|MILLER|RESCUE|STAFF)\\b)+$");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?: *\\b(?:[A-Z]+\\d+|\\d{3,4}|[A-Z]{1,2}[FP]D\\d?|CAMDEN|DAD|EVAC|FLWAMB|LACLEDE|LIFELINE|MARIES|MILLER|RESCUE|SLEEPER|STAFF)\\b)+$");
   
   // Place/Call portion never has any lower case characters
   private static final Pattern CROSS_CALL_PTN = Pattern.compile("(.*?[a-z.].*?) (?![NS]?[EW]?(?: |$))([^a-z.]+)"); 
@@ -164,7 +164,9 @@ public class MOPulaskiCountyParser extends FieldProgramParser {
   
   private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(
       "ABDOMINAL/BACK PAIN",
+      "ALARM",
       "ALLERGIC REACTION",
+      "BLEEDING (NON-TRAUMATIC)",
       "BREATHING DIFFICULTY",
       "BURN PERMIT",
       "CARBON MONOXIDE ALARM",
@@ -175,18 +177,27 @@ public class MOPulaskiCountyParser extends FieldProgramParser {
       "FIRE ALARM - RESIDENTIAL",
       "FIRE - MISCELLANEOUS",
       "GAS ODOR",
+      "GAS ODOR/LEAK RESIDENTIAL",
       "HAZARDOUS MATERIAL INCIDENT",
       "HAZMAT - FUEL SPILL",
       "LIFT ASSIST",
+      "LINES DOWN",
+      "MENTAL/EMOTIONAL/PSYCHOLOGICAL",
       "MOTOR VEHICLE ACCIDENT NO INJURY",
       "MOTOR VEHICLE ACCIDENT WITH INJURY",
       "NATURAL COVER FIRE",
+      "NEUROLOGICAL/HEAD INJURY",
+      "OVERDOSE/POISONING",
       "OTHER",
       "SEIZURES",
       "SMOKE INVESTIGATION",
+      "SMOKE ODOR",
+      "STROKE (CVA)",
       "STRUCTURE FIRE COMMERCIAL",
+      "STRUCTURE FIRE",
       "STRUCTURE FIRE RESIDENTIAL",
       "SUICIDE ATTEMPTED",
+      "SYNCOPE",
       "TRAFFIC STOP",
       "TRAUMA WITH INJURY",
       "UNCLEAR SYMPTOMS",
