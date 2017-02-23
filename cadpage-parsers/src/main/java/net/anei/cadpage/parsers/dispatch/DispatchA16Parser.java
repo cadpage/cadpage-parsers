@@ -98,8 +98,15 @@ public class DispatchA16Parser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public boolean checkParse(String field, Data data) {
+      field = stripFieldStart(field, "Addr:");
       if (field.contains(",")) return false;
       return super.checkParse(field, data);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Addr:");
+      super.parse(field, data);
     }
   }
   
