@@ -17,6 +17,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     super(CITY_LIST, "DUPLIN COUNTY", "NC",
           DSFLG_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_TIME);
     setupCallList(CALL_LIST);
+    removeWords("DRIVE");
   }
   
   @Override
@@ -161,6 +162,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     "KENANSVILLE",
     "MAGNOLIA",
     "MT OLIVE",
+    "MOUNT OLIVE",
     "ROSE HILL",
     "SARECTA",
     "TEACHEY",
@@ -195,6 +197,12 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     
     // Pender County
     "PENDER",
+    "WATHA",
+    "WILLARD",
+    
+    // Sampson County
+    "SAMPSON",
+    "TURKEY",
     
     // Wayne County
     "SEVEN SPRINGS"

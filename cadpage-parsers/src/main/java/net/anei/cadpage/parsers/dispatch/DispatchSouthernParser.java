@@ -312,7 +312,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callCodePtn = callCodePtn;
   }
 
-  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z]+:)?(\\d{8,10}|[A-Z]\\d{2}-\\d+)[ ;] *([- A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+:)?(\\d{8,10}|[A-Z]\\d{2}-\\d+)[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("CFS: *(\\S+), *Unit: *(\\S+), *(Status:.*)");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
@@ -490,6 +490,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
     parseAddress(st, flags, sAddr, data);
     if (leadOne) data.strAddress = append("1", " ", data.strAddress);
     String sLeft = getLeft();
+    
+    if (sLeft.equals("MM")) {
+      data.strAddress = append(data.strAddress, " ", "MM");
+      sLeft = "";
+    } else if (sLeft.startsWith("MM ")) {
+      data.strAddress = append(data.strAddress, " ", "MM");
+      sLeft = sLeft.substring(3).trim();
+    }
     
     // If everything went to place, move it back to address
     if (st == StartType.START_PLACE && data.strAddress.length() == 0) {
