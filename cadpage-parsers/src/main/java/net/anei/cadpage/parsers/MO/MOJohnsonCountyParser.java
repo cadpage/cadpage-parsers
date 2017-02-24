@@ -14,7 +14,7 @@ public class MOJohnsonCountyParser extends FieldProgramParser {
  
   public MOJohnsonCountyParser() {
     super(CITY_LIST, "JOHNSON COUNTY", "MO", 
-          "SRC CALL ADDR CITY DATETIME! END");
+          "SRC CALL ADDR CITY PLACE? DATETIME! END");
   }
   
   @Override
