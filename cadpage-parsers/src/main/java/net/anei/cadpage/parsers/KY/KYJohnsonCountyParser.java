@@ -29,6 +29,11 @@ public class KYJohnsonCountyParser extends DispatchSPKParser {
   }
   
   @Override
+  public String getProgram() {
+    return super.getProgram().replace("PLACE", "MAP");
+  }
+  
+  @Override
   public String adjustMapAddress(String addr) {
     addr = CRK_PTN.matcher(addr).replaceAll("CREEK");
     return super.adjustMapAddress(addr);
