@@ -13,6 +13,11 @@ public class PAMcKeanCountyParser extends MsgParser {
     setFieldList("UNIT CALL ADDR APT");
   }
   
+  @Override
+  public String getFilter() {
+    return "alerts@mckeancounty.ealertgov.com";
+  }
+  
   private static final Pattern UNIT_PTN = Pattern.compile("[_A-Z0-9]+");
   private static final Pattern MASTER = Pattern.compile("([ A-Z]+) \\(\\) Loc:(.*)");
   

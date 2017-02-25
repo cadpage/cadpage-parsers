@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 
@@ -13,7 +14,7 @@ public class WVPocahontasCountyParser extends DispatchEmergitechParser {
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("([A-Z0-9]+):\\[\\1\\][ -]*(.*)");
   
   public WVPocahontasCountyParser() {
-    super(true, 60, CITY_LIST, "POCAHONTAS COUNTY", "WV");
+    super(CITY_LIST, "POCAHONTAS COUNTY", "WV", TrailAddrType.INFO);
     addSpecialWords("JERICO", "MOUNTAIN");
   }
 
@@ -37,10 +38,11 @@ public class WVPocahontasCountyParser extends DispatchEmergitechParser {
     else {
       match = GEN_ALERT_PTN.matcher(body);
       if (!match.matches()) return false;
+      setFieldList("UNIT INFO");
       data.initialize(this);
-      data.strCall = "GENERAL ALERT";
+      data.msgType = MsgType.GEN_ALERT;
       data.strUnit = match.group(1);
-      data.strPlace = match.group(2);
+      data.strSupp = match.group(2);
       return true;
     }
   }
