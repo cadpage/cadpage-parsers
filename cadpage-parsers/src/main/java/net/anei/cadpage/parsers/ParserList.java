@@ -1205,6 +1205,7 @@ public class ParserList {
               ,"PALehighCounty"                 ,"Lehigh County, PA"
               ,"PALuzerneCounty"                ,"Luzerne County, PA"
               ,"PALycomingCounty"               ,"Lycoming County, PA"
+              ,"PAMcKeanCounty"                 ,"McKean County, PA"
               ,"PAMercerCounty"                 ,"Mercer County, PA"
               ,"PAMifflinCounty"                ,"Mifflin County, PA"
               ,"PAMonroeCounty"                 ,"Monroe County, PA"
