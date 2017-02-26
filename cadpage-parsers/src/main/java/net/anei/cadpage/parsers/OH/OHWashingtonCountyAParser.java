@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class OHWashingtonCountyAParser extends FieldProgramParser {
 
@@ -23,6 +25,13 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "notifications@washingtoncountysheriff.or";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+    };
   }
 
   @Override
