@@ -31,6 +31,8 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean splitBlankIns() { return false; }
+      @Override public int splitBreakLength() { return 180; }
+      @Override public int splitBreakPad() { return 1; }
     };
   }
 
