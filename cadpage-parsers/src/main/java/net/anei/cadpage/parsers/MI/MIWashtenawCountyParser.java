@@ -11,7 +11,7 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
 
   public MIWashtenawCountyParser() {
     super("WASHTENAW COUNTY", "MI", 
-          "ADDR CITY_ST_ZIP APT! EMPTY+? PRI Cross:X! INFO+");
+          "( ADDR_CITY_ST | ADDR CITY_ST_ZIP ) EMPTY APT! PRI? INFO+ Cross:X! INFO+");
   }
   
   @Override
@@ -19,11 +19,22 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static Pattern DELIM = Pattern.compile(" /(?= )");
   private static Pattern RUN_REPORT = Pattern.compile("(\\d+) / (.+)");
+  private static Pattern RUN_REPORT_PTN2 = Pattern.compile("(\\d+) /(.*)");
   private static Pattern CODE_CALL = Pattern.compile("(\\d{2}[A-Z]\\d[A-Z]?|CBC)-(.*)");
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.startsWith("CALL CLOSED ")) {
+      data.msgType = MsgType.RUN_REPORT;
+      Matcher match = RUN_REPORT_PTN2.matcher(body);
+      if (!match.matches()) return false;
+      setFieldList("ID INFO");
+      data.strCallId = match.group(1);
+      data.strSupp = match.group(2).replaceAll(" /", "\n").trim();
+      return true;
+    }
+    
     //parse run reports (CALL) ID? PLACE
     if (subject.equals("Message from Dispatch")) {
       setFieldList("ID INFO");
@@ -50,9 +61,8 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
     } else data.strCall = field;
     //prepare body to be split
     body = body.replace("Cross:/", "Cross: /"); //in case the / is actually meant to be a delim
-    if (body.endsWith("/")) body += " ";
     //save outcome, fail if !TIME, return outcome
-    if (!parseFields(DELIM.split(body), data)) return false;
+    if (!parseFields(body.split(" /"), data)) return false;
     return data.strTime.length() > 0; //return false if no TIME parsed
   }
   
@@ -63,6 +73,7 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR_CITY_ST"))  return new MyAddressCityStateField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CITY_ST_ZIP")) return new MyCSZField();
@@ -71,8 +82,31 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*), ([ A-Z]+), ([A-Z]{2})");
+  private class MyAddressCityStateField extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ADDR_CITY_ST_PTN.matcher(field);
+      if (!match.matches()) return false;
+      parseAddress(match.group(1).trim(), data);
+      data.strCity = match.group(2).trim();
+      data.strState = match.group(3).trim();
+      return true;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY ST";
+    }
+  }
+  
   private static Pattern ADDR_MAP = Pattern.compile("(.+?)-([A-Z]{1,2})?");
-  public class MyAddressField extends AddressField {
+  private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       //sometimes field matches ADDR_MAP/ADDR_MAP. if it does we split and parse both
@@ -112,7 +146,7 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
     public String getFieldNames() { return super.getFieldNames() + " MAP"; }
   }
   
-  public class MyCrossField extends CrossField {
+  private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       //remove leading 0
@@ -130,7 +164,7 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
   }
   
   private static Pattern CITY_STATE_ZIP = Pattern.compile("(.+), ([A-Z]{2}), \\d{5}");
-  public class MyCSZField extends Field {
+  private class MyCSZField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher mat = CITY_STATE_ZIP.matcher(field);
@@ -146,7 +180,7 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
   
   private static Pattern INFO_TIME = Pattern.compile("\\d{2}:\\d{2}:\\d{2}");
   private static Pattern INFO_JUNK_PTN = Pattern.compile(".*[a-z].*");
-  public class MyInfoField extends InfoField {
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       
