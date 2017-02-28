@@ -369,6 +369,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     
     // Madison County
     "CANASTOTA VILLAGE",
+    "MORRISVILLE VILLAGE",
     
     // Herkimer County
     "CONSTANTIA",
