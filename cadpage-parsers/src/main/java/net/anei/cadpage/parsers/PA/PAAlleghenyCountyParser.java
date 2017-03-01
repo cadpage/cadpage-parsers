@@ -10,6 +10,6 @@ Allegheny County, PA
 public class PAAlleghenyCountyParser extends GroupBestParser {
   
   public PAAlleghenyCountyParser() {
-    super(new PAAlleghenyCountyAParser(), new PAAlleghenyCountyBParser());
+    super(new PAAlleghenyCountyAParser(), new PAAlleghenyCountyBParser(), new PAAlleghenyCountyCParser());
   }
 }
