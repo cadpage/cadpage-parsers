@@ -14,11 +14,12 @@ public class NMChavesCountyParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "CAD@roswellpolice.com,Cad@roswell-nm.gov";
+    return "CAD@roswellpolice.com,Cad@roswell-nm.gov,messaging@iamresponding.com";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, ":");
     if (body.startsWith("FYI:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
