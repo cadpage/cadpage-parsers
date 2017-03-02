@@ -69,7 +69,10 @@ public class DispatchA53Parser extends SmartAddressParser {
     
     // If we haven't used anything up, we have room for one cross street
     if (iEnd > 2) return false;
-    if (iEnd == 2) data.strCross = fields[2].trim();
+    if (iEnd == 2) {
+      String cross = fields[2].trim();
+      if (!cross.equals("NONE")) data.strCross = cross;
+    }
     
     //INFO
     mat = TIME.matcher(trail);
