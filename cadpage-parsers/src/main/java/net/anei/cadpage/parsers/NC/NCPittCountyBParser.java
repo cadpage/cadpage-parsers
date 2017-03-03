@@ -9,7 +9,8 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   
   public NCPittCountyBParser() {
     super(CITY_CODES, "PITT COUNTY", "NC", 
-          "CALL PLACE? ( ADDRCITY ( ID PRI | ) DATETIME! | ADDR/Z CITY ID PRI DATETIME! | ADDR/Z ID CITY? PRI DATETIME! | ADDR/Z PRI DATETIME! | ADDR/Z DATETIME! ) SRC UNIT Radio_Channel:CH X+? INFO/N+");
+          "( CANCEL ADDR CITY! " +
+          "| CALL PLACE? ( ADDRCITY ( DATETIME! | ID ( EMPTY/Z PRI | PRI EMPTY? ) DATETIME! ) | ADDR/Z CITY ID PRI DATETIME! | ADDR/Z ID CITY? PRI DATETIME! | ADDR/Z PRI DATETIME! | ADDR/Z DATETIME! ) EMPTY? SRC UNIT Radio_Channel:CH? X+? ) INFO/N+");
   }
   
   @Override
@@ -20,15 +21,17 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
     body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{11}", true);
+    if (name.equals("ID")) return new IdField("\\d{11}", false);
     if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("PRI")) return new PriorityField("[P1-9]", true);
+    if (name.equals("PRI")) return new PriorityField("[P1-9]", false);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
