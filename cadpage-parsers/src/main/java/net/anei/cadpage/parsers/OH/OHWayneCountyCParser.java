@@ -17,7 +17,7 @@ public class OHWayneCountyCParser extends DispatchEmergitechParser {
 
   @Override
   public String getFilter() {
-    return "@wcjustice-center.org";
+    return "@wcjustice-center.org,Dispatch@wcsohio.org";
   }
   
   private static final Pattern DASH_COUNTY_PTN = Pattern.compile(" - HC? ");
