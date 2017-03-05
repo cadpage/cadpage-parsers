@@ -28,11 +28,12 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
   public ILKankakeeCountyParser() {
     super(CITY_LIST, "KANKAKEE COUNTY", "IL");
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
   public String getFilter() {
-    return "dispatchmessage@nwsmessage.net";
+    return "dispatchmessage@nwsmessage.net,noreply@k3county.net";
   }
   
   @Override
@@ -102,24 +103,31 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
         data.strAddress = append(data.strAddress, " ", match.group(1));
         pad = match.group(2);
       }
-      if (pad.length() < 5) {
+      if (pad.startsWith("/")) {
+        data.strAddress = append(data.strAddress, " & ", pad.substring(2).trim());
+      } else if (pad.length() < 5) {
         data.strApt = append(data.strApt, "-", pad);
       } else {
         data.strPlace = pad;
       }
 
       String place = getLeft();
-      match = APT_PTN.matcher(place);
-      if (match.matches()) {
-        data.strApt = append(data.strApt, "-", match.group(2));
-        place = append(match.group(1), " ", match.group(3));
+      if (data.strCity.length() == 0 && place.startsWith("/")) {
+        data.strAddress = append(data.strAddress, " & ", place.substring(2).trim());
       }
-      if (isValidAddress(place) && !place.toUpperCase().endsWith(" TERRACE")) {
-        data.strCross = append(data.strCross, " / ", place);
-      } else if (data.strApt.length() == 0 && place.length() < 5) {
-        data.strApt = append(data.strApt, "-", place);
-      } else {
-        data.strPlace = append(data.strPlace, " - ", place);
+      else {
+        match = APT_PTN.matcher(place);
+        if (match.matches()) {
+          data.strApt = append(data.strApt, "-", match.group(2));
+          place = append(match.group(1), " ", match.group(3));
+        }
+        if (isValidAddress(place) && !place.toUpperCase().endsWith(" TERRACE")) {
+          data.strCross = append(data.strCross, " / ", place);
+        } else if (data.strApt.length() == 0 && place.length() < 5) {
+          data.strApt = append(data.strApt, "-", place);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", place);
+        }
       }
       setState(data);
       return true;
@@ -170,10 +178,55 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     if (state != null) data.strState = state;
   }
   
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "1ST NORTH",
+      "1ST SOUTH",
+      "2ND SOUTH",
+      "3RD SOUTH",
+      "3300 NORTH",
+      "4TH SOUTH",
+      "ARTHUR BURCH",
+      "BELLE AIRE",
+      "BROTHER ALPHONSUS",
+      "BULL CREEK",
+      "BUR OAK",
+      "CAREER CENTER",
+      "DOWN E COURT",
+      "EDGE WATER",
+      "EL PASO",
+      "ESSON FARM",
+      "EXLINE CLUB",
+      "FAMILY DOLLAR",
+      "FOX RUN",
+      "HARVEST VIEW",
+      "INDUSTRIAL PARK",
+      "LAKE METONGA",
+      "MILL POND",
+      "OAK CREEK",
+      "OAK RIDGE",
+      "OAK RUN",
+      "PARK LANE",
+      "RIVER BEND",
+      "SAINT FRANCIS",
+      "SAINT JOSEPH",
+      "SAINT PETERS",
+      "SPORTSMAN CLUB",
+      "STEEPLE CHASE",
+      "STOCKTON HEIGHTS",
+      "TOWN LINE",
+      "VAN BUREN",
+      "VAN METER",
+      "WESTERN HILLS",
+      "WILL PEOTONE",
+      "WILLIAM LATHAM"
+  };
+  
   private static final CodeSet CALL_LIST = new CodeSet(
       "911:UNKNOWN",
       "911:ABANDONED",
+      "ABANDONED",
       "ACCIDENT",
+      "AGENCY ASSIST",
       "ALARM CALL",
       "ALARM:AUTOMATIC",
       "ALARM:AUTOMATIC/SHAPIRO",
@@ -184,7 +237,9 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "AMB:MUTUAL AID",
       "AMBULANCE",
       "AMBULANCE:ASSIST",
+      "ANIMAL CASE",
       "BATTERY",
+      "BURGLARY",
       "CONTROL BURN",
       "DEATH INVESTIGATION",
       "DECEASED SUBJ",
@@ -192,23 +247,37 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "DISABLED VEH",
       "DISTURBANCE",
       "DOM DIST",
+      "DUI",
       "FIGHT",
       "FIRE:BRUSH",
       "FIRE:MUTAL AID",
       "FIRE:STRUCTURE",
       "FIRE:VEHICLE",
+      "HAZMAT",
+      "HIT/RUN",
+      "HOME INVASION",
       "ILLEGAL BURNING",
       "INDECENT EXPOSURE",
+      "JUV/RUNAWAY",
+      "JUVENILE CALL",
+      "KEEP THE PEACE",
+      "LIFT ASSIST",
       "MABAS RADIO DRILL",
       "MENTAL CASE",
       "MISSING PERSON",
       "NEW",
       "OTHER DUTIES",
+      "PERSON UNK",
       "REMOVAL",
       "RIVERSIDE AMB",
+      "ROBBERY",
+      "SERVICE",
       "SHOTS FIRED",                                                                                                                                                                                                 
       "SMOKE/ODOR",
-      "ABANDONED",
+      "SUSPICIOUS PERSON",
+      "TRAFFIC COMPLAINT",
+      "UNKNOWN PROBLEM",
+      "WALK THRU",
       "WEAPONS",
       "WELFARE CHECK",
       "WIRES DOWN"
@@ -273,13 +342,16 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     
     
     // Grundy County
+    "GARDNER",
     "GRUNDY COUNTY",
     "BRACEVILLE",
+    "PEOTONE",
     
     // Iroquois County
     "IROQUOIS COUNTY",
     "ASHKUM",
     "BEAVERVILLE",
+    "PAPINEAU",
     "THAWVILLE",
     
     // Vermillion County
@@ -290,6 +362,8 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     
     // Will County
     "WILL COUNTY",
+    "BEECHER",
+    "CRETE",
     "BRAIDWOOD",
     "CUSTER PARK",
     
