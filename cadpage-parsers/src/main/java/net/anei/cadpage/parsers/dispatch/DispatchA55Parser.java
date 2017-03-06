@@ -10,7 +10,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL! Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Notes:INFO/N+");
+          "Call_Type:CALL? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Notes:INFO/N+");
   }
 
   @Override
