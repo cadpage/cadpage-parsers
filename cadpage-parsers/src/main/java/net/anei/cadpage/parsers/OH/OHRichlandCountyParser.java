@@ -9,6 +9,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class OHRichlandCountyParser extends GroupBestParser {
   
   public OHRichlandCountyParser() {
-    super(new OHRichlandCountyBParser());
+    super(new OHRichlandCountyAParser(), new OHRichlandCountyBParser());
   }
 }

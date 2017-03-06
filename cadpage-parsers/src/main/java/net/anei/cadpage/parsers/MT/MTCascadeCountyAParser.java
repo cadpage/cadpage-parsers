@@ -1,10 +1,5 @@
 package net.anei.cadpage.parsers.MT;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA68Parser;
 
 public class MTCascadeCountyAParser extends DispatchA68Parser {

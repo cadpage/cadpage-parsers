@@ -38,25 +38,38 @@ public class DispatchA68Parser extends FieldProgramParser {
   }
   
   private static final Pattern ADDRESS_ST_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern ADDRESS_ST_PLACE_APT_PTN = Pattern.compile("(.*?)(?:#|\\b(?:Apt|Rm|Room|Lot)\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      String city = p.getLast(',');
+      String city = p.getLastOptional(',');
       if (city.length() > 0) {
         if (ADDRESS_ST_PTN.matcher(city).matches()) {
           data.strState = city;
-          city = p.getLast(',');
+          city = p.getLastOptional(',');
         }
         data.strCity = city;
-        field = p.get();
+      }
+      String place = p.getLastOptional(';');
+      field = p.get();
+      
+      String apt = "";
+      if (place.length() > 0) {
+        Matcher match = ADDRESS_ST_PLACE_APT_PTN.matcher(place);
+        if (match.matches()) {
+          place = match.group(1).trim();
+          apt = match.group(2);
+        }
+        data.strPlace = place;
       }
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CITY ST";
+      return super.getFieldNames() + " CITY ST PLACE";
     }
   }
 }

@@ -10,9 +10,12 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchH02Parser extends HtmlProgramParser {
   
+  private Properties cityCodes;
+  
   public DispatchH02Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
-          "Communications%EMPTY! Dispatch%EMPTY! Incident#:ID! Report#:SKIP! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! City:CITY Addt_Address:ADD_ADDR! Cross:X! X+ Subdivision:EMPTY! RA:CH! Neighborhood:CITY2! Notes:INFO+ Hot_Spot:INFO/N! INFO/N+ Premise:INFO/N! Units:UNIT!");
+          "Communications%EMPTY! Dispatch%EMPTY! Incident#:ID! Report#:SKIP! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! City:CITY Addt_Address:ADD_ADDR! Cross:X! X+ Subdivision:SUBDIV! RA:CH! Neighborhood:CITY2! Notes:INFO+ Hot_Spot:INFO/N! INFO/N+ Premise:INFO/N! Units:UNIT!");
+    this.cityCodes = cityCodes;
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(Dispatch|Clear|Event) Report Incident #(\\d+)");
@@ -37,21 +40,60 @@ public class DispatchH02Parser extends HtmlProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ADD_ADDR")) return new MyAddAddressField();
-    if (name.equals("CITY2")) return new MyCity2Field();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADD_ADDR")) return new BaseAddAddressField();
+    if (name.equals("SUBDIV")) return new BaseSubdivisionField();
+    if (name.equals("CITY2")) return new BaseCity2Field();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
   
-  private class MyAddAddressField extends AddressField {
+  private static final Pattern AA_PTN = Pattern.compile("\\(S\\) *(.*?) *\\(N\\) *(.*)");
+  private static final Pattern AA_BOX_PTN = Pattern.compile(".*(?<!\\bPO )\\bBOX\\b.*");
+  private class BaseAddAddressField extends Field {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
-      data.strAddress = append(data.strAddress, " ", '('+field+')');
+      Matcher match = AA_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        String city = match.group(2);
+        if (city.length() > 0 && data.strCity.length() == 0) {
+          if (cityCodes != null) city = convertCodes(city, cityCodes);
+          data.strCity = city;
+        }
+      }
+      if (AA_BOX_PTN.matcher(field).matches()) {
+        data.strBox = field;
+      } else {
+        data.strAddress = append(data.strAddress, " ", '('+field+')');
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR BOX";
     }
   }
   
-  private class MyCity2Field extends CityField {
+  private class BaseSubdivisionField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (AA_BOX_PTN.matcher(field).matches()) {
+        data.strBox = field;
+      }
+      else {
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "BOX PLACE";
+    }
+    
+  }
+  
+  private class BaseCity2Field extends CityField {
     @Override
     public void parse(String field, Data data) {
       if (data.strCity.length() > 0) return;
@@ -61,7 +103,7 @@ public class DispatchH02Parser extends HtmlProgramParser {
   }
   
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d(?:\\d\\d)? \\d\\d:\\d\\d:\\d\\d [A-Z0-9]+\\]$");
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       field = INFO_DATE_TIME_PTN.matcher(field).replaceFirst("");
