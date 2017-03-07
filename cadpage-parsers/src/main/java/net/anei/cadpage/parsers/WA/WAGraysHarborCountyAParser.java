@@ -63,11 +63,10 @@ public class WAGraysHarborCountyAParser extends FieldProgramParser {
   }
   
   private static Properties CITY_CODES = buildCodeTable(new String[] {
-/*      Cities
-
-      ABERDEEN
-      COSMOPOLIS
-*/
+      
+      // Cities
+      "ABD", "ABERDEEN",
+      "COS", "COSMOPOLIS",
       "ELM", "ELMA",
       "HOQ", "HOQUIAM",
       "MCC", "MCCLEARY",
@@ -75,8 +74,9 @@ public class WAGraysHarborCountyAParser extends FieldProgramParser {
       "OAK", "OAKVILLE",
       "OCC", "OCEAN SHORES",
       "OCS", "OCEAN SHORES",
-/*      WESTPORT
-
+      "WES", "WESTPORT",
+      
+/*
   Census-designated places
 
       ABERDEEN GARDENS
@@ -86,7 +86,8 @@ public class WAGraysHarborCountyAParser extends FieldProgramParser {
       COHASSETT BEACH
 */
       "COB", "COPALIS BEACH",
-/*      GRAYLAND
+      "GRY", "GRAYLAND",
+/*
       HUMPTULIPS
       JUNCTION CITY
       */
@@ -126,6 +127,9 @@ public class WAGraysHarborCountyAParser extends FieldProgramParser {
       NEW LONDON
       NEWTON
       NISSON
+*/
+      "NOC", "NORTH COVE",
+/*
       OCOSTA
       */
       "PAB", "PACIFIC BEACH",
