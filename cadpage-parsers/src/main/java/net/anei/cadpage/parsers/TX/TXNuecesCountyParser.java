@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 public class TXNuecesCountyParser extends FieldProgramParser {
@@ -14,6 +16,17 @@ public class TXNuecesCountyParser extends FieldProgramParser {
            "CALL! ALRM:SKIP! PRI:PRI! ESZ:UNIT! TIME:TIME? EV:ID");
   }
   
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public int splitBreakLength() { return 150; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
+
   @Override
   public String getFilter() {
     return "ccpdpaging@cctexas.com";
