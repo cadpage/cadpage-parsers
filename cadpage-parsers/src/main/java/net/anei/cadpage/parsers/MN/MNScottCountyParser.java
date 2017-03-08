@@ -55,7 +55,11 @@ public class MNScottCountyParser extends FieldProgramParser {
     "UNION HILL",
     
     // Le Sueur County
+    "DERRYNANE TOWNSHIP",
     "LANESBURGH",
+    
+    // Sibley County
+    "FAXON TOWNSHIP",
     
     "DAKOTA COUNTY",
     "CARVER COUNTY",
