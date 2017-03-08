@@ -511,7 +511,10 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     // See if this is the new fangled dash delimited format.  Makes things so much easier
     if (body.contains(" - LOCATION:")) {
       if (body.endsWith("-")) body += ' ';
-      body = body.replace("  BETWEEN ", " - BETWEEN: ");
+      int pt = body.indexOf(" BETWEEN ");
+      if (pt >= 0) {
+        body = body.substring(0,pt) + " - BETWEEN: " + body.substring(pt+9);
+      }
       return parseFields(body.substring(st).split(" - "), data);
     }
     String tmp = body.substring(st);

@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA40Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
-public class OHJeffersonCountyParser extends DispatchA40Parser {
+public class OHJeffersonCountyParser extends DispatchEmergitechParser {
 
   public OHJeffersonCountyParser() {
-    super(CITY_LIST, "JEFFERSON COUNTY", "OH");
+    super("jcomm:", CITY_LIST, "JEFFERSON COUNTY", "OH");
   }
 
   @Override
@@ -20,6 +20,15 @@ public class OHJeffersonCountyParser extends DispatchA40Parser {
     else if (data.strCity.endsWith(" Co")) data.strCity += "unty";
     if (WV_CITIES.contains(data.strCity.toUpperCase())) data.strState = "WV";
     return true;
+  }
+
+  @Override
+  public String adjustMapAddress(String address, boolean cross) {
+    if (cross) {
+      int pt = address.indexOf('@');
+      if (pt >= 0) address = address.substring(0, pt).trim();
+    }
+    return super.adjustMapAddress(address, cross);
   }
 
   private static final String[] CITY_LIST = new String[] { 
