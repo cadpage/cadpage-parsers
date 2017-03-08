@@ -16,7 +16,8 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
  
   public INHamiltonCountyBParser() {
     super(CITY_CODES, "HAMILTON COUNTY", "IN",
-           "MASH INFO+");
+           "( WORKING ADDR CITY_PLACE CALL/SDS END " +
+           "| MASH INFO+ )");
     setupCallList(new CodeSet(CALL_TABLE));
   }
   
@@ -27,9 +28,29 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("WORKING")) return new CallField("(?:\\{\\w+\\} )?WORKING INCIDENT.*", true);
+    if (name.equals("CITY_PLACE")) return new MyCityPlaceField();
     if (name.equals("MASH")) return new MashField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private static final Pattern CITY_PLACE_PTN = Pattern.compile("(.*)\\(S\\)(.*)\\(N\\)");
+  private class MyCityPlaceField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CITY_PLACE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strPlace = match.group(2).trim();
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CITY PLACE";
+    }
   }
   
   private static final Pattern MASH_PRI_PTN = Pattern.compile("^(\\d) +");
