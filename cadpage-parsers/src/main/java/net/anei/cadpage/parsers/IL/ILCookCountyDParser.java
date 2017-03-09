@@ -12,7 +12,7 @@ public class ILCookCountyDParser extends MsgParser {
   
   public ILCookCountyDParser() {
     super("COOK COUNTY", "IL");
-    setFieldList("CALL TIME UNIT ADDR APT CITY PLACE INFO ID");
+    setFieldList("CALL TIME UNIT ADDR APT CITY PLACE INFO ID GPS MAP");
   }
   
   @Override
@@ -20,31 +20,49 @@ public class ILCookCountyDParser extends MsgParser {
     return "911@nwcds.org";
   }
   
+  private static final Pattern BAD_PREFIX = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)\\] *");
   private static final Pattern SUBJECT_PTN = Pattern.compile("([-/ A-Z0-9]+)\\|(\\d\\d:\\d\\d:\\d\\d)");
-  private static final Pattern MASTER = Pattern.compile("([A-Z0-9]+) at ([^,]*?), ([A-Z]{2}) - ([^,]*), (.*?)\\. \\$([A-Z]{3}\\d{8})\\. (\\d{8})\\.", Pattern.DOTALL);
+  private static final Pattern MASTER = Pattern.compile("(?:([A-Z0-9]+) )?at ([^,]*?)(?:, ([ A-Z]+))? - ([^,]*), (.*?)\\. ?\\$([A-Z]{3}\\d{8})\\. (\\d{8})\\.(?: ?([-+]?\\d{2}\\.\\d{6,})\\. ?([-+]?\\d{2}\\.\\d{6,})\\. ?\\. ?([/A-Z0-9]*)\\.)?", Pattern.DOTALL);
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strCall = match.group(1).trim();
-    data.strTime = match.group(2);
+    if (match.matches()) {
+      data.strCall = match.group(1).trim();
+      data.strTime = match.group(2);
+    } else {
+      match = BAD_PREFIX.matcher(body);
+      if (!match.lookingAt()) return false;
+      data.strCall = subject;
+      data.strTime =  match.group(1);
+      body = body.substring(match.end());
+      
+    }
     
     match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    data.strUnit = match.group(1);
+    data.strUnit = getOptGroup(match.group(1));
     parseAddress(match.group(2).trim(), data);
-    data.strCity = convertCodes(match.group(3), CITY_CODES);
+    data.strCity = convertCodes(getOptGroup(match.group(3)), CITY_CODES);
     data.strPlace = match.group(4).trim();
     data.strSupp = match.group(5).trim();
     data.strCallId = match.group(6) + '/' + match.group(7);
+    setGPSLoc(getOptGroup(match.group(8)) + ',' + getOptGroup(match.group(9)), data);
+    data.strMap = getOptGroup(match.group(10));
     return true;
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AH", "ARLINGTON HEIGHTS",
-      "BG", "BUFFALO GROVE",
-      "LG", "LONG GROVE"
+      "AH",   "ARLINGTON HEIGHTS",
+      "BA",   "BARRINGTON",
+      "BG",   "BUFFALO GROVE",
+      "BH",   "BARRINGTON HILLS",
+      "FR",   "FOX RIVER",
+      "IN",   "INVERNESS",
+      "LG",   "LONG GROVE",
+      "LKBA", "LAKE BARRINGTON",
+      "SB",   "SOUTH BARRINGTON",
+      "WH",   "WHEELING"
   });
 }
