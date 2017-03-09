@@ -21,8 +21,14 @@ public class OHLawrenceCountyParser extends DispatchEmergitechParser {
     return "alert@lawco911.org";
   }
   
+  private static final Pattern BAD_PREFIX_PTN = Pattern.compile("alert:\\w+(?=\\[)");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
+    Matcher match = BAD_PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      body = "alert:" + body.substring(match.end());
+    }
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getProperty(data.strCall.replace(" ", ""));
     if (call != null) {
