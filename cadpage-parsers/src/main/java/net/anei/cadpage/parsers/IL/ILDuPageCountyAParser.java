@@ -72,8 +72,8 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       else {
         setFieldList("UNIT SRC CODE CALL ADDR APT MAP ID CITY DATE TIME");
         data.strUnit = MBLANK_PTN.matcher(p.get(10)).replaceAll(" ");
-        data.strSource = p.get(3);
-        if (!p.check("   "))  return false;
+        data.strSource = p.get(5);
+        if (!p.check(" "))  return false;
         data.strCode = p.get(6);
         data.strCall = p.get(20);
         parseAddress(p.get(30), data);
