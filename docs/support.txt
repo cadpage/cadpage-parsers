@@ -4212,23 +4212,6 @@ then enter your device code: ______________.
 
 Have a nice day,
 -Ken
-**************************************************************************************
-Reconnect Active911 or Unregister with Cadpage Paging Service
-
-First, you are registered with Active911, but your last alert from Active911 was back on Jan 9. And it looks like Active911 has lost track of how to push alerts to your device.  To fix that, open Cadpage Settings and select
-Direct Paging Vendors > Reconnect Direct Paging.
-
-Second, you are registered with the Cadpage Paging Service as well a the Active911 service.  And this is why Cadpage is expecting you to purchase a subscription.  Usually just registering with Active911 gives you a sponsored by Active911 status, but registering with Cadpage Paging service requires a real paid subscription.  Cadpage is warning you that if you do not purchase a paid subscription you will stop receiving alerts from the Cadpage Paging Service.
-
-Which probably isn't a big deal.  The last alert you got through the Cadpage Paging Service was back on 4/4/2016.   My guess would be that you were using that service a year ago, but stopped using it when you registered with Active911.  In which case, all we have to do is unregister from the Cadpage Paging Service to restore your sponsored payment status.
-
-To do that, open Cadpage settings and select
-Direct Paging Vendors > Cadpage Paging Service > Unregister
-
-If you can follow this up by using the "Email the Developer" setting to send us another support email, I can check to make sure that everything is properly set up with Active911.
-
-Have a nice day,
-Ken
 
 **************************************************************************************
 * Inactive Active911 account - page type:active911_gcm - paid agency subscription

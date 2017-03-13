@@ -113,7 +113,7 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("Cross Streets :") || field.startsWith("http:")) {
-        return !INFO_JUNK_PTN.matcher(getRelativeField(+1)).matches();
+        return INFO_JUNK_PTN.matcher(getRelativeField(+1)).matches();
       }
       parse(field, data);
       return true;
