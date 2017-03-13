@@ -9,7 +9,7 @@ public class INHamiltonCountyCParser extends FieldProgramParser {
   
   public INHamiltonCountyCParser() {
     super("HAMILTON COUNTY", "IN", 
-          "Call_Type:CALL! Status:SKIP! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! City:CITY! Nature_of_Call:CALL/SDS! Units:UNIT! Quadrant:MAP! Narrative:SKIP! CC_Text:CALL/SDS Caller_Statement:INFO Coord:GPS! ID! END");
+          "Call_Type:CALL! Status:SKIP! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! City:CITY! Nature_of_Call:CALL/SDS! Units:UNIT! Quadrant:MAP! Narrative:SKIP! CC_Text:CALL/SDS Caller_Statement:INFO Coord:GPS ID END");
   }
   
   @Override
