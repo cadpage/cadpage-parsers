@@ -99,9 +99,12 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BELV", "BELVIDERE TWP",
+      "BLOO", "BLOOMER TWP",
       "BUSH", "BUSHNELL TWP",
       "CARS", "CARSON CITY",
       "CATO", "CATO TWP",
+      "CDLK", "CEDAR LAKE",
+      "CORA", "CORAL",
       "CRYS", "CRYSTAL TWP",
       "DAY",  "DAY TWP",
       "DOUG", "DOUGLASS TWP",
@@ -109,18 +112,27 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       "EURE", "EUREKA TWP",
       "EVER", "EVERGREEN TWP",
       "FAIR", "FAIRPLAIN TWP",
+      "FENW", "FENWICK",
+      "FERR", "FERRIS TWP",
+      "GOWE", "GOWEN",
       "GREE", "GREENVILLE",
       "HOME", "HOME TWP",
       "HOWA", "HOWARD CITY",
       "LAKE", "LAKEVIEW",
       "MAPL", "MAPLE VALLEY TWP",
+      "MCBR", "MCBRIDE",
       "MONT", "MONTCALM TWP",
-      "PIER", "PIERSON",
+      "PIER", "PIERSON TWP",
       "PINE", "PINE TWP",
       "REYN", "REYNOLDS TWP",
       "RICH", "RICHLAND TWP",
+      "SAND", "SAND LAKE",
       "SHER", "SHERIDAN",
+      "SIDN", "SIDNEY TWP",
+      "SIXL", "SIX LAKES",
       "STAN", "STANTON",
-      "SIDN", "SIDNEY TWP"
+      "VEST", "VESTABURG",
+      "WINF", "WINFIELD TWP",
+
   });
 }
