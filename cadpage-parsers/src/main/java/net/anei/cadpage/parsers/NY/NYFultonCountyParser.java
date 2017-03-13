@@ -28,6 +28,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern DELIM = Pattern.compile(",|\n-?");
   private static final Pattern MASTER = Pattern.compile("([A-Z]+) +(.*?) +(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d)(\\d\\d)(?: +(?:([-+]?\\d+\\.\\d+ +[-+]?\\d+\\.\\d+)|-1 +-1))?");
   private static final Pattern STRIP_CODE_PTN = Pattern.compile("(.*?) +[CVT]");
   
@@ -38,7 +39,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
 
     // See if this is a new comma delimited page
-    String flds[] = body.split(",");
+    String flds[] = DELIM.split(body);
     if (flds.length >= 7) {
       addressLines.clear();
       if (!parseFields(flds, data)) return false;
@@ -327,11 +328,13 @@ public class NYFultonCountyParser extends FieldProgramParser {
     // Hamilton County
     "BENSON",
     "HOPE",
+    "LAKE PLEASANT",
     "WELLS",
     
     // Montgomery County
     "AMSTERDAM",
     "HAGAMAN",
+    "MOHAWK",
     
     // Saratoga County
     "EDINURG",
