@@ -15,7 +15,7 @@ public class KYBooneCountyAParser extends FieldProgramParser {
   
   public KYBooneCountyAParser() {
     super(CITY_CODES, "BOONE COUNTY", "KY",
-          "Location:ADDR/S? Event_Number:ID! Event_Type:CALL! CALLER_NAME:NAME! CALLER_ADDR:ADDR2! TIME:TIME! Comments:INFO");
+          "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP! Event_Type:SKIP!");
     setupCityValues(CITY_CODES);
   }
   
@@ -99,31 +99,43 @@ public class KYBooneCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_GPS_PTN = Pattern.compile(".*? ([-+]?\\d{2,3}\\.\\d{6}) ([-+]?\\d{2,3}\\.\\d{6})\\b *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("SPECIAL ADDRESS COMMENT:")) field = field.substring(27).trim();
+      
+      Matcher match = INFO_GPS_PTN.matcher(field);
+      if (match.lookingAt()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        field = field.substring(match.end());
+      }
       super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS INFO";
     }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "FLOR", "FLORENCE",
-      "UNIO", "UNION",
-      "WALT", "WALTON",
-      "BURL", "BURLINGTON",
-      "PETE", "PETERSBURG",
-      "ERLA", "ERLANGER",
-      "CRIT", "CRITTENDEN",
-      "HEBR", "HEBRON",
-      "VERO", "VERONA",
-      "INDE", "INDEPENDENCE",
       "BCFL", "FLORENCE",
-      "BCWA", "WALTON",
       "BCUN", "UNION",
+      "BCWA", "WALTON",
+      "BURL", "BURLINGTON",
+      "CRIT", "CRITTENDEN",
+      "ERLA", "ERLANGER",
+      "FLOR", "FLORENCE",
+      "FLUN", "FLORENCE UNION",
       "GAC",  "GALATIN",
       "GRC",  "GRANT",
+      "HEBR", "HEBRON",
+      "INDE", "INDEPENDENCE",
       "KEC",  "KENTON",
-
+      "PETE", "PETERSBURG",
+      "UNIO", "UNION",
+      "VERO", "VERONA",
+      "WALT", "WALTON"
   }); 
 }
