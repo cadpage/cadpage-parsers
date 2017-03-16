@@ -10,7 +10,7 @@ public class TXTarrantCountyParser extends GroupBestParser {
   
   public TXTarrantCountyParser() {
     super(new TXTarrantCountyAParser(), new TXTarrantCountyBParser(),
-        new TXTarrantCountyCParser());
+          new TXTarrantCountyCParser(), new TXTarrantCountyDParser());
   }
  
 }

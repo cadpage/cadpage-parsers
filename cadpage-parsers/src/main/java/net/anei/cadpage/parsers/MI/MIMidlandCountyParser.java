@@ -104,6 +104,7 @@ public class MIMidlandCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[\\d\\d?:\\d\\d:\\d\\d .*\\]");
+  private static final Pattern INFO_CODE_PRI_PTN = Pattern.compile("dispatchlevel=(\\S+):cadresponse=(\\d+)");
   private class MyInfoField extends InfoField {
     @Override
     public boolean canFail() {
@@ -121,9 +122,23 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     
     @Override
     public void parse(String field, Data data) {
+      
       Matcher match = INFO_JUNK_PTN.matcher(field);
       if (match.matches()) return;
+      
+      match = INFO_CODE_PRI_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        data.strPriority = match.group(2);
+        return;
+      }
+      
       super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE PRI INFO";
     }
   }
   
