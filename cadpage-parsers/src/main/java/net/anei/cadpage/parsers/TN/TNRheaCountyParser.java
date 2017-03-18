@@ -11,6 +11,6 @@ public class TNRheaCountyParser extends DispatchGeoconxParser {
   
   @Override
   public String getFilter() {
-    return "rheacotn@911email.net";
+    return "rheacotn@911email.net,dispatch@911email.org";
   }
 }
