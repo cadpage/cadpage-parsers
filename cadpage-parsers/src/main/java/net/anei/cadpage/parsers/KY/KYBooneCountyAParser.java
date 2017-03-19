@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 
@@ -15,7 +17,7 @@ public class KYBooneCountyAParser extends FieldProgramParser {
   
   public KYBooneCountyAParser() {
     super(CITY_CODES, "BOONE COUNTY", "KY",
-          "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP! Event_Type:SKIP!");
+          "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP% Event_Type:SKIP%");
     setupCityValues(CITY_CODES);
   }
   
@@ -24,6 +26,13 @@ public class KYBooneCountyAParser extends FieldProgramParser {
     return "jfussinger@bcpscc.org";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+    };
+  }
+
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
       if (subject.equals(MARKER)) break;

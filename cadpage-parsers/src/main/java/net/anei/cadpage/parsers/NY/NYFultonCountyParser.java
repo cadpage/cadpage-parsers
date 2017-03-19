@@ -15,7 +15,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
 
   public NYFultonCountyParser() {
     super(CITY_LIST, "FULTON COUNTY", "NY",
-        "SRC CALL ADDR+? ( ADDRCITY | ADDR_END CITY ) PLACE? DATE TIME! ID? ( GPS | GPS1 GPS2 | ) INFO+");
+        "SRC CALL ADDR/Z+? ( ADDRCITY | ADDR_END CITY ) PLACE? DATE TIME! ID? ( GPS | GPS1 GPS2 | ) INFO+");
   }
 
   @Override
@@ -41,6 +41,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
     // See if this is a new comma delimited page
     String flds[] = DELIM.split(body);
     if (flds.length >= 7) {
+      flds[0] = stripFieldStart(flds[0], "-");
       addressLines.clear();
       if (!parseFields(flds, data)) return false;
     } else { 
@@ -71,7 +72,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
   private static final String GPS_PTN_S = "(?:[-+]?\\d{2,3}\\.\\d{2,}|0|-1)";
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("|(?:T )?[A-Z]{3,6}", true);
+    if (name.equals("SRC")) return new SourceField("|(?:T )?[A-Z]{1,6}", true);
     if (name.equals("ADDR")) return new MyAddressField(false);
     if (name.equals("ADDR_END")) return new MyAddressField(true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -85,7 +86,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern BOX_ADDR_PTN = Pattern.compile("BOX (\\d+)-(.*)");
+  private static final Pattern BOX_ADDR_PTN = Pattern.compile("BOX (\\d+)[- ](.*?)(?: (\\d+(?:-\\d+)?))?");
   private static final Pattern STREET_NO_PTN = Pattern.compile("\\d+(?:-\\d+)?");
   
   private class MyAddressField extends Field {
@@ -101,7 +102,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
       
       // We won't be able to figure out what goes where until we
       // reach the last address line.  Until then just accumulate them
-      if (field.length() > 0) addressLines.add(field);
+      addressLines.add(field);
       if (!end) return;
       
       // Once we have everything, the real work starts.
@@ -119,13 +120,14 @@ public class NYFultonCountyParser extends FieldProgramParser {
           Matcher match = BOX_ADDR_PTN.matcher(addressLines.get(j));
           if (match.matches()) {
             data.strBox = match.group(1);
-            addressLines.set(j, match.group(2));
+            data.strPlace = match.group(2);
+            addressLines.set(j, getOptGroup(match.group(3)));
             st = j;
             break;
           }
         }
         if (st >= 0) {
-          nd = st + 1;
+          nd = st + 2;
           break;
         }
         
@@ -162,7 +164,9 @@ public class NYFultonCountyParser extends FieldProgramParser {
         // then make the last line a cross street and use the line in front of it as the address
         int stat2 = checkAddress(addressLines.get(nd-1));
         if (stat2 <= STATUS_STREET_NAME) {
-          if (isValidAddress(addressLines.get(nd-2)) || stat2 == STATUS_STREET_NAME) nd--;
+          String prev = addressLines.get(nd-2);
+          if (stat2 == STATUS_STREET_NAME && prev.length() > 0 ||
+              isValidAddress(prev)) nd--;
         }
         st = nd-1;
         break;
@@ -192,7 +196,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO BOX ADDR APT X CITY";
+      return "INFO BOX PLACE ADDR APT X CITY";
     }
     
   }
@@ -284,14 +288,14 @@ public class NYFultonCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4}");
+  private static final Pattern DATE_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d{4}");
   private class MyDateField extends DateField {
     public MyDateField() {
       setPattern(DATE_PTN, true);
     }
   }
 
-  private static final Pattern TIME_PTN = Pattern.compile("\\d{4}");
+  private static final Pattern TIME_PTN = Pattern.compile("(\\d{4})(?:Hrs)?");
   private class MyTimeField extends TimeField {
     public MyTimeField() {
       setPattern(TIME_PTN, true);
@@ -330,6 +334,9 @@ public class NYFultonCountyParser extends FieldProgramParser {
     "HOPE",
     "LAKE PLEASANT",
     "WELLS",
+    
+    // Herkimer County
+    "LITTLE FALLS",
     
     // Montgomery County
     "AMSTERDAM",
