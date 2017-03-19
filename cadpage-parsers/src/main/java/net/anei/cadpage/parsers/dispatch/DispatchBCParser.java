@@ -4,7 +4,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.MsgParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
