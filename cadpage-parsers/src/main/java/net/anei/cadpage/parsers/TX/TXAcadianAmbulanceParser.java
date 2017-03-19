@@ -23,6 +23,11 @@ public class TXAcadianAmbulanceParser extends XXAcadianAmbulanceParser {
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
+  
+  @Override
+  public String getFilter() {
+    return "commcenteraustin@acadian.com," + super.getFilter();
+  }
 
   @Override
   public boolean parseMsg(String body, Data data) {
