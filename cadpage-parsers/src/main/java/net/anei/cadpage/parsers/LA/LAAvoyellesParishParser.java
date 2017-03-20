@@ -6,7 +6,7 @@ public class LAAvoyellesParishParser extends DispatchA46Parser {
 
   public LAAvoyellesParishParser() {
     super("AVOYELLES PARISH", "LA");
-    }
+  }
 
   @Override
   public String getFilter() {

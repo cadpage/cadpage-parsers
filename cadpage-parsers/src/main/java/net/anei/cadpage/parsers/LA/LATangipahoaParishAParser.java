@@ -18,8 +18,9 @@ public class LATangipahoaParishAParser extends DispatchA46Parser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    subject = stripFieldStart(subject, "911 -");
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    if (data.strSource.equals("911")) data.strSource = "";
+    return true;
   }
 
   private static Properties CALL_CODES = buildCodeTable(new String[]{

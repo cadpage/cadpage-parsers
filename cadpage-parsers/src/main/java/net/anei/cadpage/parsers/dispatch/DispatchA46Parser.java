@@ -22,11 +22,12 @@ public class DispatchA46Parser extends SmartAddressParser {
     this.callCodes = callCodes;
   }
 
-  private static Pattern SUBJECT_PTN1 = Pattern.compile("(?:([A-Z]{3,4}) +- +)?(.*?) +- +(\\d{10})\\b[- ]*(.*)");
+  private static Pattern SUBJECT_PTN1 = Pattern.compile("([A-Z0-9]{3,5}) +- +(.*?) +- +(\\d{10})\\b[- ]*(.*)");
   private static Pattern BODY_PTN1 = Pattern.compile("(?:There has been a\\(n\\) +)?(.*?) +reported (at|across from) +(.*)");
   private static Pattern ADDR_PTN1 = Pattern.compile("([^,]*),([^,]*), *([A-Z]{2})\\b,? *(.*)");
   
-  private static Pattern SUBJECT_PTN2 = Pattern.compile("(?:([A-Z]{3,4}) *- +(?:.*\\|)?)?(.*?)");
+  private static Pattern SUBJECT_PTN2 = Pattern.compile("([A-Z0-9]{3,5}) *- +(?:.*\\|)?(.*?)");
+  private static Pattern ID_PTN = Pattern.compile("\\d{10}");
   private static Pattern BODY_PTN2 = Pattern.compile("(?:A\\(n\\) *)?(.*?) has been reported at (.*?)");
   private static Pattern ADDR_PTN2A = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
@@ -100,7 +101,12 @@ public class DispatchA46Parser extends SmartAddressParser {
       setFieldList("SRC CODE CALL ADDR APT CITY ST ID INFO");
       
       data.strSource = getOptGroup(mat.group(1));
-      data.strCode = mat.group(2);
+      String code = mat.group(2);
+      if (ID_PTN.matcher(code).matches()) {
+        data.strCallId = code;
+      } else {
+        data.strCode = code;
+      }
 
       StartType st;
       int flags;
@@ -120,11 +126,11 @@ public class DispatchA46Parser extends SmartAddressParser {
       Pattern ptn = (st == StartType.START_ADDR ? ADDR_PTN2A : ADDR_PTN2B);
       mat = ptn.matcher(addr);
       if (mat.matches()) {
-        addr = mat.group(1).trim();
-        parseAddress(st, flags | FLAG_ANCHOR_END, mat.group(1).trim(), data);
+        addr = mat.group(1).trim().replace('@', '&');
+        parseAddress(st, flags | FLAG_ANCHOR_END, addr, data);
         data.strCity = getOptGroup(mat.group(2));
         data.strState = mat.group(3);
-        data.strCallId = getOptGroup(mat.group(4));
+        if (data.strCallId.length() == 0) data.strCallId = getOptGroup(mat.group(4));
         data.strSupp = getOptGroup(mat.group(5)).replaceAll("  +", " ");
       } else {
         if (st == StartType.START_CALL) return false;
