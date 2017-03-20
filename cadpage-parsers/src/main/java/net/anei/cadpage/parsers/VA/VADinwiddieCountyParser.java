@@ -97,7 +97,8 @@ public class VADinwiddieCountyParser extends DispatchA48Parser {
     "WILSONS",
     
     // Independent cities
-    "PETERSBURG"
+    "PETERSBURG",
+    "TUCKER"
 
   };
 }

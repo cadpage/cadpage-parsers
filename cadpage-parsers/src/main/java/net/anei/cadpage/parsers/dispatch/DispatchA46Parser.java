@@ -28,7 +28,8 @@ public class DispatchA46Parser extends SmartAddressParser {
   
   private static Pattern SUBJECT_PTN2 = Pattern.compile("(?:([A-Z]{3,4}) *- +(?:.*\\|)?)?(.*?)");
   private static Pattern BODY_PTN2 = Pattern.compile("(?:A\\(n\\) *)?(.*?) has been reported at (.*?)");
-  private static Pattern ADDR_PTN2 = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
+  private static Pattern ADDR_PTN2A = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
+  private static Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -100,11 +101,38 @@ public class DispatchA46Parser extends SmartAddressParser {
       
       data.strSource = getOptGroup(mat.group(1));
       data.strCode = mat.group(2);
-      
+
+      StartType st;
+      int flags;
+      String addr;
       mat = BODY_PTN2.matcher(body);
-      if (!mat.matches()) return false;
-      data.strCall = mat.group(1).trim();
-      String addr = mat.group(2).trim();
+      if (mat.matches()) {
+        st = StartType.START_ADDR;
+        flags = 0;
+        data.strCall = mat.group(1).trim();
+        addr = mat.group(2).trim();
+      } else {
+        st = StartType.START_CALL;
+        flags = FLAG_START_FLD_REQ;
+        addr = body;
+      }
+
+      Pattern ptn = (st == StartType.START_ADDR ? ADDR_PTN2A : ADDR_PTN2B);
+      mat = ptn.matcher(addr);
+      if (mat.matches()) {
+        addr = mat.group(1).trim();
+        parseAddress(st, flags | FLAG_ANCHOR_END, mat.group(1).trim(), data);
+        data.strCity = getOptGroup(mat.group(2));
+        data.strState = mat.group(3);
+        data.strCallId = getOptGroup(mat.group(4));
+        data.strSupp = getOptGroup(mat.group(5)).replaceAll("  +", " ");
+      } else {
+        if (st == StartType.START_CALL) return false;
+        parseAddress(st, flags, addr, data);
+        String left = getLeft();
+        left = stripFieldStart(left, "-");
+        data.strSupp = left;
+      }
 
       if (callCodes != null) {
         String call = callCodes.getProperty(data.strCall);
@@ -112,20 +140,6 @@ public class DispatchA46Parser extends SmartAddressParser {
           data.strCode = data.strCall;
           data.strCall = call;
         }
-      }
-
-      mat = ADDR_PTN2.matcher(addr);
-      if (mat.matches()) {
-        parseAddress(mat.group(1).trim(), data);
-        data.strCity = getOptGroup(mat.group(2));
-        data.strState = mat.group(3);
-        data.strCallId = getOptGroup(mat.group(4));
-        data.strSupp = getOptGroup(mat.group(5)).replaceAll("  +", " ");
-      } else {
-        parseAddress(StartType.START_ADDR, addr, data);
-        String left = getLeft();
-        left = stripFieldStart(left, "-");
-        data.strSupp = left;
       }
       return true;
     }
