@@ -66,12 +66,11 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
       "FSMOKA",   "SMOKE INVESTIGATION",
       "FSPILL",   "FUEL SPILL",
       "FSVC",     "SERVICE CALL",
+      "FSVCSE",   "A FIRE SERVICE CALL",
       "FTRAIN",   "TRAIN FIRE",
       "FTRUCK",   "TRUCK FIRE",
       "FWATER",   "WATER RESCUE",
-      "FWIRE",    "WIRE DOWN",
-
-
+      "FWIRE",    "WIRE DOWN"
   });
 
 }
