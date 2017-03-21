@@ -11,8 +11,8 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   public MIMontcalmCountyParser() {
     super(CITY_CODES, "MONTCALM COUNTY", "MI",
           "( CANCEL ADDR CITY/Y " + 
-          "| UNIT ID? CALL ( CITY X+? ADDR! | ADDR! ( CITY/Y! | APT CITY/Y! | ) CITY? X+? ) " + 
-          "| FYI? DATETIME? ADDR ( ID | CALL! X+? ) ) INFO/N+");
+          "| FYI? ( ( ID2 UNIT? | UNIT ) CALL ADDR! DUPADDR? ( CITY/Y! | SKIP CITY/Y! | SKIP EMPTY/Z CITY/Y! | CITY? ) X+? ( SKIP ID | ID? ) " + 
+                 "| DATETIME? ADDR ( ID | CALL! X+? ) ) ) INFO/N+");
   }
   
   @Override
@@ -37,13 +37,15 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM)\\b,?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM|NEWYM)\\b,?)+", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DUPADDR")) return new MyDupAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ID")) return new IdField("\\d{7}", true);
+    if (name.equals("ID2"))  return new IdField("\\d+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -53,6 +55,18 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
       saveAddress = field;
       super.parse(field, data);
+    }
+  }
+  
+  private class MyDupAddressField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.equals(saveAddress);
     }
   }
   
