@@ -1399,6 +1399,7 @@ public class ParserList {
           ),
           new ParserCategory("Vermont"
               ,"VTAddisonCounty"                ,"Addison County, VT"
+              ,"VTCaledoniaCounty"              ,"Caledonia County, VT"
               ,"VTChittendenCounty"             ,"Chittenden County, VT"
               ,"VTGrandIsleCounty"              ,"Grand Isle County, VT"
               ,"VTHartford"                     ,"Hartford, VT"
