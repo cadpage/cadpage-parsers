@@ -118,6 +118,7 @@ public class WVHarrisonCountyBParser extends SmartAddressParser {
       "ELECTRICAL FIRE",
       "EXPLOSION/SIG 82",
       "FIRE ALARM INVESTIGATION",
+      "FLOODING",
       "HEAD INJURY",
       "HEMORRHAGE/BLEEDING",
       "MISSING JUVENILE/SIG 61A",
