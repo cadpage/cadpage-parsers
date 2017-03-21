@@ -15,7 +15,7 @@ public class NCFranklinCountyParser extends DispatchSouthernParser {
 
   public NCFranklinCountyParser() {
     super(CITY_LIST, "FRANKLIN COUNTY", "NC", 
-          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_CODE|DSFLG_TIME);
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_OPT_CODE|DSFLG_TIME);
   }
   
   @Override
@@ -91,6 +91,7 @@ public class NCFranklinCountyParser extends DispatchSouthernParser {
     // Wake County
     "WAKE CO",
     "WAKE COUNTY",
+    "RALEIGH",
     "ROLESVILLE",
     "ZEBULON",
     
