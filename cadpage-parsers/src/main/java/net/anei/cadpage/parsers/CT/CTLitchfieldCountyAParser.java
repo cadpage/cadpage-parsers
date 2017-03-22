@@ -10,12 +10,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CTLitchfieldCountyAParser extends SmartAddressParser {
   
-  private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO (.*?)(?:,|,? (\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|)) *(?::|--| -)(\\d\\d:\\d\\d)(?:(?: ([A-Z]\\d{2}-\\d+)|\\*\\*), *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))| *\\(.*\\))?");
-  private static final Pattern MISMATCH_PAREN_PTN = Pattern.compile("[^\\(\\)]*\\).*");
-  
-  private static final Pattern MASTER2 = Pattern.compile("(.+?)-(?!Dwelling)(.+)-(.*?) *\\*\\*\\* (\\d\\d:\\d\\d)---");
-  private static final Pattern MAU_HILL = Pattern.compile("^(.*) MAUWEEHOO H(?:IL)?L (.*)$");
-  private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
   
   public CTLitchfieldCountyAParser() {
     super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT");
@@ -30,8 +24,27 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     return "@everbridge.net,@lcd911.com,89361";
   }
   
+  private static final Pattern HTML_MASK_PTN = Pattern.compile("\n +<p>(.*)</p>\n");
+
   @Override
-  public boolean parseMsg(String body, Data data) {
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<!doctype html>\n")) {
+      Matcher match = HTML_MASK_PTN.matcher(body);
+      if (!match.find()) return false;
+      body = match.group(1).trim();
+    }
+    return parseMsg(subject, body, data);
+  }
+
+  private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO (.*?)(?:,|,? (\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|)) *(?::|--| -)(\\d\\d:\\d\\d)(?:(?: ([A-Z]\\d{2}-\\d+)|\\*\\*), *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))| *\\(.*\\))?");
+  private static final Pattern MISMATCH_PAREN_PTN = Pattern.compile("[^\\(\\)]*\\).*");
+  
+  private static final Pattern MASTER2 = Pattern.compile("(.+?)-(?!Dwelling)(.+)-(.*?) *\\*\\*\\* (\\d\\d:\\d\\d)---");
+  private static final Pattern MAU_HILL = Pattern.compile("^(.*) MAUWEEHOO H(?:IL)?L (.*)$");
+  private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
+  
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
     
     body = body.replace('\n', ' ');
     Matcher match = MASTER1.matcher(body);
@@ -70,8 +83,9 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
       
       return true;
     }
-    setFieldList("INFO");
+    setFieldList("CALL INFO");
     data.msgType = MsgType.GEN_ALERT;
+    data.strCall = subject;
     data.strSupp = body;
     return true;
   }
