@@ -119,6 +119,7 @@ public class PADelawareCountyBParser extends FieldProgramParser {
         }
         
         body = stripFieldStart(body, "Location:");
+        body = stripFieldStart(body, "LOC:");
   
         crossAddress = false;
         if (!super.parseMsg(body, data)) return false;
