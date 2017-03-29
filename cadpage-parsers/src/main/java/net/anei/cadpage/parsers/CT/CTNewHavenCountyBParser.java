@@ -315,10 +315,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern APT_PTN2 = Pattern.compile("(?:APT|RM|ROOM|LOT|UNIT)#? *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "APT#");
+      Matcher match = APT_PTN2.matcher(field);
+      if (match.matches()) field = match.group(1);
       super.parse(field, data);
     }
   }
