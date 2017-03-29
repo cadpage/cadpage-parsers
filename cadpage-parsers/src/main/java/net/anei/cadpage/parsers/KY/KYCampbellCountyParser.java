@@ -32,4 +32,10 @@ public class KYCampbellCountyParser extends DispatchA27Parser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern PI_PTN = Pattern.compile("\bPI\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("Fairlane")) city = "Butler";
+    return city;
+  }
 }
