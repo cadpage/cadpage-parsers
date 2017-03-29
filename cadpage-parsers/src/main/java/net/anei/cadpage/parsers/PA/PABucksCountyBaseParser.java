@@ -21,7 +21,24 @@ abstract class PABucksCountyBaseParser extends DispatchA7Parser {
   public PABucksCountyBaseParser(String program) {
     super(INIT_TOWN_CODE, TOWN_CODES, CITY_CODES, "BUCKS COUNTY", "PA", program);
   }
-   
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    if (subject.equals("CAD Incident") && body.trim().startsWith("<!doctype html>\n")) {
+      int pt1 = body.indexOf("\n<br>Text:");
+      if (pt1 < 0) return false;
+      pt1 += 10;
+      int pt2 = body.indexOf("\n<br></p>\n", pt1);
+      if (pt2 < 0) return false;
+      body = body.substring(pt1, pt2).trim();
+      body = body.replace("\n<br>", "\n");
+      return parseMsg(subject, body, data);
+    }
+    
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   
   @Override
   protected void parseAddress(StartType sType, int flags, String address, Data data) {

@@ -10,14 +10,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Bucks County, PA
  */
 public class PABucksCountyAParser extends PABucksCountyBaseParser {
-
-  private static final Pattern STATION_PTN = Pattern.compile("Station +(.*)");
-  private static final Pattern TRAIL_URL_PTN = Pattern.compile("(.*)\\. {5,}(https:[^ ]+) {3,}.*");
-  private static final Pattern MARKER1 = Pattern.compile("(?:(Station [^/:]+) / )?([A-Z]+\\s+(?:Adr:|adr:|Box:).*)", Pattern.DOTALL);
-  private static final Pattern MARKER2 = Pattern.compile("^([A-Z0-9 ]+): *([A-Z]+) *");
-  private static final Pattern NAKED_DATE_TIME = Pattern.compile("(?<!: ?)\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d:\\d\\d\\b");
-  private static final Pattern GEN_ALERT_MARKER = Pattern.compile("^(\\d\\d/\\d\\d/\\d\\d) +(\\d\\d:\\d\\d:\\d\\d) +~TO~ [A-Z0-9]+ FROM [A-Z0-9]+:\n?");
-  private static final Pattern SRC_MARKER = Pattern.compile("^([A-Z]+[0-9]+)[, ]");
   
   public PABucksCountyAParser() {
     super("SRC type:CALL! Box:BOX? adr:ADDR! aai:AAI box:BOX map:MAP tm:TIME% TEXT:INFO? Run:UNIT");
@@ -27,6 +19,14 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   public String getFilter() {
     return "8276,@bnn.us,iamresponding.com,Bucks RSAN,@alert.bucksema.org,1210,@co.bucks.pa.us,@buckscounty.org,@everbridge.net,@buckscounty.gov";
   }
+
+  private static final Pattern STATION_PTN = Pattern.compile("Station +(.*)");
+  private static final Pattern TRAIL_URL_PTN = Pattern.compile("(.*)\\. {5,}(https:[^ ]+) {3,}.*");
+  private static final Pattern MARKER1 = Pattern.compile("(?:(Station [^/:]+) / )?([A-Z]+\\s+(?:Adr:|adr:|Box:).*)", Pattern.DOTALL);
+  private static final Pattern MARKER2 = Pattern.compile("^([A-Z0-9 ]+): *([A-Z]+) *");
+  private static final Pattern NAKED_DATE_TIME = Pattern.compile("(?<!: ?)\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d:\\d\\d\\b");
+  private static final Pattern GEN_ALERT_MARKER = Pattern.compile("^(\\d\\d/\\d\\d/\\d\\d) +(\\d\\d:\\d\\d:\\d\\d) +~TO~ [A-Z0-9]+ FROM [A-Z0-9]+:\n?");
+  private static final Pattern SRC_MARKER = Pattern.compile("^([A-Z]+[0-9]+)[, ]");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
