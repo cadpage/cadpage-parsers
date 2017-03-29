@@ -12,6 +12,11 @@ public class FLWashingtonCountyParser extends SmartAddressParser {
     super("WASHINGTON COUNTY", "FL");
     setFieldList("ADDR APT PLACE X INFO CALL NAME");
   }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@exchangewcso.us,@wcso.us";
+  }
 
   private static Pattern MASTER = Pattern.compile("(.*?)((?<=[A-Z])\\d+)?\n(.*?)(?:X2\\[(.*?)\\])?\n(Y)?\n\n(.*?)(?:\n(.*))?", Pattern.DOTALL);
 
