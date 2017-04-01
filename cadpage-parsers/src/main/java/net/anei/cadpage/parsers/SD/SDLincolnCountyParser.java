@@ -16,7 +16,7 @@ public class SDLincolnCountyParser extends FieldProgramParser {
   
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("MEETING|TRAINING|DISREGARD", Pattern.CASE_INSENSITIVE);
   private static final Pattern SUBJECT_MSG_PTN = Pattern.compile("([ /A-Z0-9]+):(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern SRC_PTN = Pattern.compile("NONE||(?:[A-Z0-9 ]+, +)?(?:(?:CANTON|CHANCELLOR|HARRISBURG|HURLEY|LENNOX|MARION|MONROE|PARKER|SIOUX FALLS|TEA|WORTHINGTON) (?:AMB|AMBULANCE|FD|FIRE|FIRE DEPARTMENT)|TURNER COUNTY SHERIFF's OFFICE|TCSO)(?:;[ A-Z;']+)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SRC_PTN = Pattern.compile("NONE||(?:[A-Z0-9 ]+, +)?(?:(?:CANTON|CENTERVILLE|CHANCELLOR|DAVIS|HARRISBURG|HURLEY|LENNOX|MARION|MONROE|PARKER|SIOUX FALLS|TEA|VIBORG|WORTHINGTON) (?:AMB|AMBULANCE|FD|FIRE|FIRE DEPARTMENT|POLICE)|.* SHERIFF's OFFICE|PARAMEDICS PLUS|TCSO)(?:;[ A-Z;']+)?", Pattern.CASE_INSENSITIVE);
   private static final Pattern LEAD_NUMBER = Pattern.compile("^\\d+ +(?!Y/O |YO ).*");
   private static final Pattern CALL_ID_PTN = Pattern.compile("^\\{?(\\d\\d-\\d+)\\b\\}?");
   private static final Pattern MASTER_PTN = Pattern.compile("\\{?(.*?)\\}? *(\n| - )(.*)");
@@ -44,9 +44,10 @@ public class SDLincolnCountyParser extends FieldProgramParser {
 
     if (subject.length() == 0) {
       Matcher match = SUBJECT_MSG_PTN.matcher(body);
-      if (!match.matches()) return false;
-      subject = match.group(1).trim();
-      body = match.group(2).trim();
+      if (match.matches()) {
+        subject = match.group(1).trim();
+        body = match.group(2).trim();
+      }
     }
     if (subject.equals("MESSAGE PAGE")) return false;
     
@@ -62,7 +63,7 @@ public class SDLincolnCountyParser extends FieldProgramParser {
     if (tmp.endsWith("-")) tmp = tmp + ' ';
     
     String[] flds = tmp.split(" - ", -1);
-    if (subject.equals(flds[0])) {
+    if (subject.length() > 0 && subject.equals(flds[0])) {
       version = "2";
       return super.parseFields(flds, data);
     }
@@ -74,7 +75,7 @@ public class SDLincolnCountyParser extends FieldProgramParser {
       return parseFields(flds, data);
     }
 
-    if (flds.length >= 3) return false;
+    if (subject.length() == 0 || flds.length >= 3) return false;
     version = "0";
     
     // See if subject contains the address
@@ -289,6 +290,7 @@ public class SDLincolnCountyParser extends FieldProgramParser {
     // Turner County
     "HURLEY",
     "MONROE",
+    "PARKER",
 
     // Iowa
     "INWOOD"
