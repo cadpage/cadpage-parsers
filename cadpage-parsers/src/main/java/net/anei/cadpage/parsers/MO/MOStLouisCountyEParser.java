@@ -11,10 +11,15 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
   public MOStLouisCountyEParser() {
     super(CITY_LIST, "ST LOUIS COUNTY", "MO", "Call_Received_Time:DATE_TIME_CALL! ADDR/S! UNIT_PLACE! Description:INFO+");
   }
+  
+  @Override
+  public String getFilter() {
+    return "ECDC@rejis.org,Admin@east-central.org";
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("_Dispatch")) return false;
+    if (!subject.equals("_Dispatch") && !subject.equals("Dispatch")) return false;
 
     body = body.replace("Description:", "\nDescription:");
 
