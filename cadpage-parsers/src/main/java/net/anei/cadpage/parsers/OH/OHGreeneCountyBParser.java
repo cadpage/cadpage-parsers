@@ -10,7 +10,8 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
   
   public OHGreeneCountyBParser() {
     super("GREENE COUNTY", "OH", 
-          "Call:CODE_CALL! Place:ADDRCITY! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP! Units:UNIT! Narrative:INFO/N+");
+          "Call:CODE_CALL! Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP! Units:UNIT! Narrative:INFO/N+");
+    setupMultiWordStreets(MULTI_WORD_STREET_LIST);
   }
   
   @Override
@@ -27,6 +28,8 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -51,6 +54,24 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
     }
   }
   
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      field = stripFieldEnd(field, " CD");
+      super.parse(field, data);
+      data.strAddress = stripFieldEnd(data.strAddress, " CD");
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("No Cross Streets Found")) return;
+      super.parse(field, data);
+    }
+  }
+  
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+|\\d\\d:\\d\\d:\\d\\d|[a-z]+|-");
   private class MyInfoField extends InfoField {
     
@@ -60,4 +81,42 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
+  
+  private static final String[] MULTI_WORD_STREET_LIST = new String[]{
+      "APPLE GROVE",
+      "BIG WOODS",
+      "BROWN BARK",
+      "CENTER POINT",
+      "CLEAR VIEW",
+      "COLONEL GLENN",
+      "CORNERSTONE NORTH",
+      "COUNTY LINE",
+      "DAYTON SPRINGFIELD",
+      "DAYTON XENIA",
+      "DAYTON YELLOW SPRINGS",
+      "EL CAMINO",
+      "FAIRFIELD COMMONS",
+      "FOREST DELL",
+      "GRAND PORTAGE",
+      "GRANGE HALL",
+      "GRANGE VIEW",
+      "HONEY JANE",
+      "INDIAN RIPPLE",
+      "MEADOW BRIDGE",
+      "NORTH HAVEN",
+      "PINE BLUFF",
+      "RED APPLE",
+      "RED OAK",
+      "SOUTH POINT",
+      "SPRING VALLEY ALPHA",
+      "STRAIGHT ARROW",
+      "TOLL GATE",
+      "VALLEY OAK",
+      "VAN TRESS",
+      "VILLAGE GREEN",
+      "WRIGHT CYCLE",
+      "YELLOW ROSE",
+      "YELLOW SPRINGS FAIRFIELD"
+     
+  };
 }
