@@ -109,6 +109,14 @@ Take care,
 Jean ~ Cadpage Administrator
 
 ***************************************************************************
+How does Cadpage work?
+
+Cadpage, proper, does not handle that part of the notification process.  It merely displays information from alerts that are already being sent to your phone.  Departments and dispatch centers have to utilize some kind of paging service that will send the dispatch alerts to your phone.  There are many such services and Cadpage will work with all of them.  But we recommend using either CodeMessaging or Active911 as they can push alerts to your phone through the data network instead of relying on text messages.
+
+That being said, Cadpage does include it's own paging service which works by setting up a dispatch email account for each user.  The department can have dispatch alerts sent as emails to that address and they will be forwarded to Cadpage running on the users device. We implemented it primarily as a way that individual users can bypass text messaging as a way to receive dispatch alerts.  For departments, other services provide far better services at lower cost.
+
+
+***************************************************************************
 * New National Weather Service location
 ***************************************************************************
 
