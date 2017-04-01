@@ -17,7 +17,7 @@ public class DispatchA51Parser extends FieldProgramParser {
   protected DispatchA51Parser(String defCity, String defState) {
     super(defCity, defState,
           "( SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ | " +
-            "Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ )");
+            "ID:ID? Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ )");
   }
   
   @Override
@@ -72,9 +72,15 @@ public class DispatchA51Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.endsWith(")")) {
+        if (field.startsWith("LL(")) {
+          data.strAddress = field;
+          return;
+        }
         int pt = field.indexOf('(');
-        data.strPlace = field.substring(pt+1,field.length()-1).trim();
-        field = field.substring(0,pt).trim();
+        if (pt >= 0) {
+          data.strPlace = field.substring(pt+1,field.length()-1).trim();
+          field = field.substring(0,pt).trim();
+        }
       }
       String apt = "";
       Parser p = new Parser(field);
