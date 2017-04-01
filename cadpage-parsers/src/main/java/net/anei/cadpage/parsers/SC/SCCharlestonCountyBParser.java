@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   public SCCharlestonCountyBParser() {
-    super("ANDERSON COUNTY", "SC", 
+    super("CHARLESTON COUNTY", "SC", 
           "UNIT ADDR X/Z? CITY CALL! Incident_Channel:CH! ID DATETIME!");
   }
   
