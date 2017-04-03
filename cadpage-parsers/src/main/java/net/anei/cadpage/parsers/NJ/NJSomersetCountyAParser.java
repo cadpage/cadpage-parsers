@@ -74,6 +74,7 @@ public class NJSomersetCountyAParser extends MsgParser {
   public String adjustMapAddress(String sAddr) {
     sAddr = US_PTN.matcher(sAddr).replaceAll("US");
     sAddr = NO_PTN.matcher(sAddr).replaceAll(" ").trim();
+    sAddr = stripFieldEnd(sAddr, " H WY ST");
     return sAddr;
   }
   private static final Pattern US_PTN = Pattern.compile("\\bU +S\\b");
