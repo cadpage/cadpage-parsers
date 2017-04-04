@@ -16,6 +16,7 @@ public class DispatchA65Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("E911-Page")) return false;
+    body = body.trim();
     body = body.replace("\nX:", "\nCS:").replace("\nApt:", "\nAPT:");
     return parseFields(body.split("\n"), 6, data);
   }

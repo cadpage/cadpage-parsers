@@ -240,6 +240,7 @@ public class MessageBuilder {
    * @return the complete text message
    */
   private Message bldMessage(Message[] msgList) {
+    boolean insBreak = options.splitBreakIns();
     boolean insBlank = options.splitBlankIns();
     int breakLen = options.splitBreakLength();
     int breakPad = options.splitBreakPad();
@@ -266,6 +267,7 @@ public class MessageBuilder {
             for (int jj = 0; jj<delta; jj++) sb.append(' ');
           }
         }
+        else if (insBreak) sb.append('\n');
         else if (insBlank) sb.append(' ');
       }
       

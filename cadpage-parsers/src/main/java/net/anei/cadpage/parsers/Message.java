@@ -373,6 +373,7 @@ public class Message {
                 } else {
                   if (sb.length() > 0) {
                     if (!skipBreak) sb.append('\n');
+                    else if (options.splitBreakIns()) sb.append('\n');
                     else if (options.splitBlankIns()) sb.append(' ');
                   }
                   sb.append(line);

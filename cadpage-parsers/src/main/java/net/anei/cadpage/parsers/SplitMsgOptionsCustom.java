@@ -6,6 +6,8 @@ public class SplitMsgOptionsCustom implements SplitMsgOptions {
 
   @Override public int splitMinMsg() { return 0; }
 
+  @Override public boolean splitBreakIns() { return false; }
+
   @Override public boolean splitBlankIns() { return true; }
 
   @Override public boolean splitChkSender() { return true; }

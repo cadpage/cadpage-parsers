@@ -21,6 +21,12 @@ public interface SplitMsgOptions {
   public int splitMinMsg();
   
   /**
+   * @return true if a newline should be inserted between split messages when
+   * they are merged into a final alert
+   */
+  public boolean splitBreakIns();
+  
+  /**
    * @return true if a blank should be inserted between split messages when
    * they are merged into a final alert
    */
