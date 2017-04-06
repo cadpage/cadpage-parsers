@@ -29,7 +29,7 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean splitBlankIns() { return false; }
-      @Override public boolean revMsgOrder() { return true;   }
+      @Override public boolean mixedMsgOrder() { return true; }
     };
   }
 
@@ -60,6 +60,7 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("PRI")) return new MyPriorityField();
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
@@ -101,6 +102,13 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
       return super.getFieldNames() + " APT PLACE";
     }
   }
+  
+  private class MyPriorityField extends PriorityField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strPriority = convertCodes(field, PRIORITY_CODES);
+    }
+  }
 
   private class MyCallField extends CallField {
     @Override
@@ -121,6 +129,15 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
     if (apt.length() > 0) address = address + " #" + apt;
     return address;
   }
+  
+  private static final Properties PRIORITY_CODES = buildCodeTable(new String[]{
+      "1", "Echo",
+      "2", "Delta",
+      "3", "Charlie",
+      "4", "Bravo",
+      "5", "Alpha",
+      "6", "Omega"
+  });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "ASHP_T", "ASHIPPUN", 
