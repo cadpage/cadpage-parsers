@@ -13,7 +13,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
   
   public PALancasterCountyParser() {
     super(CITY_LIST, "LANCASTER COUNTY", "PA",
-           "CITY ADDR X/Z+? UNIT TIME!");
+           "CITY ADDR X/Z+? UNIT! TIME%");
   }
   
   @Override
@@ -42,7 +42,8 @@ public class PALancasterCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+[,A-Z0-9]*");
+    if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
   
@@ -81,6 +82,29 @@ public class PALancasterCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = LANC_PTN.matcher(field).replaceAll("LANCASTER");
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern PART_TIME_PTN = Pattern.compile("[\\d:]*");
+  private class MyTimeField extends TimeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (TIME_PTN.matcher(field).matches()) {
+        data.strTime = field;
+        return true;
+      }
+      return PART_TIME_PTN.matcher(field).matches();
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
