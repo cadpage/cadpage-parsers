@@ -4,13 +4,14 @@ import java.util.Properties;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
-public class ORLinnCountyBParser extends FieldProgramParser {
+public class ORLinnCountyBParser extends DispatchOSSIParser {
   
   public ORLinnCountyBParser() {
     super(CITY_CODES, "LINN COUNTY", "OR", 
-          "( CANCEL ADDR CITY! " +
-          "| FYI CALL ADDR CITY! ) INFO/N+");
+          "( CANCEL ADDR CITY! INFO/N+ " +
+          "| FYI? CALL ADDR! ( PLACE CITY | CITY? ( PLACE MAP! | MAP? ) UNIT ) END )");
   }
 
   @Override
@@ -20,8 +21,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new CallField("CANCEL");
-    if (name.equals("FYI")) return new SkipField("FYI:");
+    if (name.equals("MAP")) return new MapField("\\d{4}", true);
     return super.getField(name);
   }
 

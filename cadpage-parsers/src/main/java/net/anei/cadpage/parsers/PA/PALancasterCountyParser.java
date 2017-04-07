@@ -18,7 +18,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "911@lcwc911.us,messaging@iamresponding.com,@everbridge.net,@den.everbridge.net,@den2.everbridge.net, @smtpic-ne.prd1.everbridge.net,141000";
+    return "911@lcwc911.us,messaging@iamresponding.com,@everbridge.net,@den.everbridge.net,@den2.everbridge.net,@smtpic-ne.prd1.everbridge.net,141000";
   }
 
   @Override
