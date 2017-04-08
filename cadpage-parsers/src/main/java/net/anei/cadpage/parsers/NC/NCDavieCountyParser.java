@@ -44,6 +44,7 @@ public class NCDavieCountyParser extends DispatchA3Parser {
     body = body.replace(" LocCmmt:", " Location:").replace(" Comp:", " Complaint:").replace(" Ph#:", " PH#:");
     body = body.replace("Desc:", "Description:");
     String[] flds = (body+' ').split("\\* ");
+    if (flds.length < 7) flds = body.split("\n");
     if (flds.length >= 7) {
       setSelectValue("1");
       return parseFields(flds, data);
