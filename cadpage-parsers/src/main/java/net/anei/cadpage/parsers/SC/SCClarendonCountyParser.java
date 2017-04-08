@@ -64,6 +64,7 @@ public class SCClarendonCountyParser extends SmartAddressParser {
     "ALCOLU",
     "GABLE",
     "MANNING",
+    "NEW ZION",
     "PAXVILLE",
     "SILVER",
     "SUMMERTON",
@@ -71,7 +72,15 @@ public class SCClarendonCountyParser extends SmartAddressParser {
     "RIMINI",
     
     // Sumpter County
-    "PINEWOOD"
+    "PINEWOOD",
+    
+    // Williamsburg County
+    "CADES",
+    "GREENLEYVILLE",
+    
+    // Florence County
+    "LAKE CITY",
+    "OLANTA"
   };
 
 }
