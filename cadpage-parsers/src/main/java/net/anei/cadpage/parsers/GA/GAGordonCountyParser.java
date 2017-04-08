@@ -1,9 +1,9 @@
 package net.anei.cadpage.parsers.GA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA17Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 
-public class GAGordonCountyParser extends DispatchA17Parser {
+public class GAGordonCountyParser extends DispatchA19Parser {
   
   public GAGordonCountyParser() {
     super("GORDON COUNTY", "GA");
@@ -11,7 +11,7 @@ public class GAGordonCountyParser extends DispatchA17Parser {
   
   @Override
   public String getFilter() {
-    return "gordon911cad@gmail.com";
+    return "gordone911@spillman.com,@ALERT.ACTIVE911.COM";
   }
 
 }
