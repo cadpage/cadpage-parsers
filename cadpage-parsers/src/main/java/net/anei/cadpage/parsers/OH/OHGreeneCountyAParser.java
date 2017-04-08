@@ -28,6 +28,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Call Type:");
     String[] flds = body.split("\n");
     if (flds.length > 5) {
       setSelectValue("1");
@@ -74,6 +75,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
         data.strCross = g3;
         data.strPlace = g4;
       }
+      if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
     }
     
     @Override

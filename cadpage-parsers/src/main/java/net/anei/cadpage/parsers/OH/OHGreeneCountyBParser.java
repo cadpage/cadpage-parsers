@@ -10,7 +10,13 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
   
   public OHGreeneCountyBParser() {
     super("GREENE COUNTY", "OH", 
-          "Call:CODE_CALL! Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP! Units:UNIT! Narrative:INFO/N+");
+          "( SRC UNITS:UNIT! INCIDENT_NUMBER:ID? CALL_TYPE:CALL! LOCATION:ADDRCITY! ( CROSS_STREETS:X! ( NAME:NAME! QUADRANT:MAP! | QUADRANT:MAP! NAME:NAME? ) DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO/N+ " +
+                                                                                   "| NARRATIVE:X! DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO INFO/N+? MAP:MAP! " +
+                                                                                   ") " + 
+          "| Call:CODE_CALL! ( Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP? Units:UNIT! " + 
+                            "| Name:PLACE! Address:ADDRCITY! Cross:X! Units:UNIT! Incident_Number:ID! Call_Time:SKIP! Dispatch_Time:DATETIME! Quadrant:MAP! " + 
+                            ") Narrative:INFO/N+ " + 
+          ")");
     setupMultiWordStreets(MULTI_WORD_STREET_LIST);
   }
   
@@ -22,6 +28,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Automatic R&R Notification:")) return false;
+    body = body.replace("    INCIDENT NUMBER:", "<div/>INCIDENT NUMBER:");
     return super.parseHtmlMsg(subject, body, data);
   }
   
@@ -54,13 +61,18 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
     }
   }
   
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?) +([A-Z]*\\d+[A-Z]*|[A-Z]{1,2})", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
-      field = stripFieldEnd(field, " CD");
       super.parse(field, data);
-      data.strAddress = stripFieldEnd(data.strAddress, " CD");
+      Matcher match = ADDR_APT_PTN.matcher(data.strCity);
+      if  (match.matches()) {
+        data.strCity = match.group(1);
+        data.strApt = match.group(2);
+        data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strApt);
+      }
     }
   }
   
