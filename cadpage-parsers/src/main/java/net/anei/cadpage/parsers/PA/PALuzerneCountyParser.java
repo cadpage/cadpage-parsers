@@ -2,17 +2,26 @@ package net.anei.cadpage.parsers.PA;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 
 public class PALuzerneCountyParser extends DispatchA41Parser {
 
   public PALuzerneCountyParser() {
     super(CITY_CODES, "LUZERNE COUNTY", "PA", "[A-Z]{4}");
+    setupCities(EXTRA_CITY_LIST);
   }
   
   @Override
   public String getFilter() {
     return "CADDispatch@LuzerneCounty.org,";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
+    return true;
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -101,30 +110,106 @@ public class PALuzerneCountyParser extends DispatchA41Parser {
       "9101", "HAZLE TWP",
       "92",   "YATESVILLE",
       "93",   "EAST SIDE",
-      "94",   "MONROE TWP",
+      "94",   "MONROE TWP"
+  });
 
+  private static final String[] EXTRA_CITY_LIST = new String[]{
       
       // Carbon County
-      "WEATHERLY",       "WEATHERLY",
+      "CARBON CO",
+      "BANKS",
+      "BANKS TWP",
+      "BEAVER MEADOWS",
+      "EAST SIDE",
+      "EAST SIDE BORO",
+      "KIDDER",
+      "KIDDER TWP",
+      "LAUSANNE",
+      "LAUSANNE TWP",
+      "LEHIGH",
+      "LEHIGH TWP",
+      "PACKER",
+      "PACKER TWP",
+      "TRESCKOW",
+      "WEATHERLY",
       
       // Columbia County
-      "BERWICK",         "BERWICK",
-      "BRIAR CREEK",     "BRIAR CREEK",
+      "COLUMBIA CO",
+      "BEAVER",
+      "BEAVER TWP",
+      "BENTON",
+      "BENTON TWP",
+      "BERWICK",
+      "BRIAR CREEK",
+      "BRIAR CREEK TWP",
+      "FISHING CREEK",
+      "FISHING CREEK TWP",
+      "FOUNDRYVILLE",
+      "JAAMISON",
+      "JAMISON CITY",
+      "JONESTOWN",
+      "MIFFLIN",
+      "MIFFLIN TWP",
+      "MIFFLINVILLE",
+      "STILLWATER",
+      "SOUTH CENTRE",
+      "SUGARLOAF",
+      "SUGARLOAF TWP",
       
       // Lackawanna County
-      "MOOSIC",          "MOOSIC",
-      "OLDFORGE",        "OLD FORGE",
-      "OLD FORGE",       "OLD FORGE",
-      "RANSOM",          "RANSOM",
+      "LACKAWANNA CO",
+      "CLIFTON",
+      "CLIFTON TWP",
+      "NEWTON",
+      "NEWTON TWP",
+      "MOOSIC",
+      "OLDFORGE",
+      "OLD FORGE",
+      "RANSOM",
+      "RANSOM TWP",
+      "SCRANTON",
+      "SPRINGBROOK",
+      "SPRINGBROOK TWP",
+      "THORNHURST",
+      "THORNHURST TWP",
+      
+      // Monroe County
+      "MONROE CO",
+      "TOBYHANNA",
+      "TOBYHANNA TWP",
       
       // Schuylkill County
-      "EAST UNION TWP",  "EAST UNION TWP",
+      "SCHUYLKILL CO",
+      "KLINE",
+      "KLINE TWP",
+      "MCADOO",
+      "NORTH UNION",
+      "NORTH UNION TWP",
+      "NUREMBERG",
+      "ONEIDA",
+      "EAST UNION",
+      "EAST UNION TWP",
+      
+      // Sullivan County
+      "SULLIVAN CO",
+      "DAVIDSON",
+      "DAVIDSON TWP",
       
       // Wyoming County
-      "EXETER TWP",      "EXETER TWP",
-      "NORTH MORELAND",  "NORTHMORELAND",
-      "NORTHMORELAND",   "NORTHMORELAND",
-      "NOXEN",           "NOXEN"
- 
-  });
+      "WYOMING CO",
+      "EXTER",
+      "EXETER TWP",
+      "FALLS",
+      "FALLS TWP",
+      "FORKSTON",
+      "FORKSTON TWP",
+      "MONROE",
+      "MONROE TWP",
+      "NORTH MORELAND",
+      "NORTH MORELAND TWP",
+      "NORTHMORELAND",
+      "NORTHMORELAND TWP",
+      "NOXEN",
+      "NOXEN TWP"
+  };
 }

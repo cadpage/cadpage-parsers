@@ -50,7 +50,7 @@ public class DispatchA41Parser extends FieldProgramParser {
     sb.append("CODE! ");
     if ((flags & A41_FLG_ID) != 0) sb.append("ID ");
     else if ((flags & A41_FLG_NO_CALL) == 0) sb.append("CALL ");
-    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ID1 GPS1 GPS2 ID2? Unit:UNIT UNIT+");
+    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ID1 GPS1 GPS2 ID2? Unit:UNIT UNIT+");
     return sb.toString();
   }
 
@@ -84,6 +84,7 @@ public class DispatchA41Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CODE")) return new BaseCodeField();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("ADDR2")) return new BaseAddress2Field();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("AT")) return new AddressField("at +(.*)", true);
     if (name.equals("X1")) return new CrossField("btwn *(.*)", true);
@@ -128,6 +129,27 @@ public class DispatchA41Parser extends FieldProgramParser {
         if (pt >= 0) field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?\\d{1,3}\\.\\d{6,}");
+  private class BaseAddress2Field extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override 
+    public boolean checkParse(String field, Data data) {
+      if (!ADDR_GPS_PTN.matcher(field).matches()) return false;
+      if (!ADDR_GPS_PTN.matcher(data.strAddress).matches()) return false;
+      data.strAddress = data.strAddress + ',' + field;
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
