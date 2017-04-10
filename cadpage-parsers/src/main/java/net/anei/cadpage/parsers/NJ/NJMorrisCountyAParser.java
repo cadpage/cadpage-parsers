@@ -28,7 +28,7 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@co.morris.nj.us,mcdispatch@optimum.net,iamresponding.com,@c-msg.net,Dispatch,MadisonDispatch@rosenet.org,712";
+    return "Dispatch@co.morris.nj.us,mcdispatch@optimum.net,iamresponding.com,@c-msg.net,Dispatch,MadisonDispatch@rosenet.org,712,777";
   }
   
   @Override
