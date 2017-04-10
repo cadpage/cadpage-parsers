@@ -212,7 +212,8 @@ public class ManageParsers {
         "TXSanMarcosCounty",  "TXHaysCountyC",           // 09/28/2016
         "ILWoodfordCountyA",  "ILWoodfordCounty",        // 10/01/2016
         "ILWoodfordCountyB",  "ILWOodfordCounty",       
-        "NYSuffolkCountyI",   "NYSuffolkCountyF"         // 01/21/2017
+        "NYSuffolkCountyI",   "NYSuffolkCountyF",        // 01/21/2017
+        "CAYebaCounty",       "CAYubaCounty"             // 04/10/2017
   });
 
 }

@@ -211,7 +211,7 @@ public class ParserList {
               ,"CATulareCounty"                 ,"Tulare County, CA"
               ,"CATuolumneCounty"               ,"Tuolumne County, CA"
               ,"CAVenturaCounty"                ,"Ventura County, CA"
-              ,"CAYebaCounty"                   ,"Yeba County, CA"
+              ,"CAYubaCounty"                   ,"Yuba County, CA"
               ,"CAYoloCounty"                   ,"Yolo County, CA"
           ),
           new ParserCategory("Colorado"
