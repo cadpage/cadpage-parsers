@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA41Parser extends FieldProgramParser {
   
@@ -57,22 +58,34 @@ public class DispatchA41Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    if (!body.startsWith(prefix)) return false;
-    body = body.substring(prefix.length()).trim();
-    
+    boolean good = false;
     Matcher match = DATE_TIME_PTN.matcher(body);
     if (match.matches()) {
+      good = true;
       body = match.group(1);
       data.strSource = match.group(2);
       data.strDate = match.group(3);
       data.strTime = match.group(4);
     } else {
       int pt = body.lastIndexOf(" - From");
-      if (pt >= 0) body = body.substring(0,pt).trim();
+      if (pt >= 0) {
+        good = true;
+        body = body.substring(0,pt).trim();
+      }
     }
+
+    if (!body.startsWith(prefix)) {
+      if (!good) return false;
+      setFieldList("INFO SRC DATE TIME");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body.trim();
+      return true;
+    }
+    body = body.substring(prefix.length()).trim();
+
     body = body.replace(" Units:", " Unit:");
     if (body.endsWith(",")) body = body + ' ';
-    return parseFields(body.split(",+ "), data);
+    return parseFields(body.split(",+ ", -1), data);
   }
   
   @Override
