@@ -51,7 +51,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     crosses.clear();
     body = MISSING_SEMI_PTN.matcher(body).replaceAll(";");
     if (! super.parseMsg(body, data)) return false;
-    if (data.strPlace.equals("OOC")) data.defCity = "";
+    if (data.strCity.equals("OOC")) data.defCity = data.strCity = "";
     if (!ok && data.strCity.length() <= 3) return false;
     
     // Cross streets accumulated before an ID/SRC/UNIT field really are cross streets
