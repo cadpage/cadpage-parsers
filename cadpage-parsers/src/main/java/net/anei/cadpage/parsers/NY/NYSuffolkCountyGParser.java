@@ -30,6 +30,7 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{6}", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
@@ -40,6 +41,7 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, "'");
+      field = stripFieldEnd(field, "\"");
       Parser p = new Parser(field);
       String state = p.getLast(',');
       if (!state.equals("NY")) abort();
@@ -52,6 +54,15 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR CITY";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "/");
+      field = stripFieldStart(field, "/");
+      super.parse(field, data);
     }
   }
   
@@ -86,7 +97,10 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     data.strDate = match.group(3).replace('-', '/');
     parseAddress(StartType.START_ADDR, match.group(4).trim(), data);
     data.strPlace = getLeft();
-    data.strCross = getOptGroup(match.group(5));
+    String cross = getOptGroup(match.group(5));
+    cross = stripFieldEnd(cross, "/");
+    cross = stripFieldStart(cross, "/");
+    data.strCross = cross;
     data.strSource = match.group(6).trim();
     data.strCallId = match.group(7);
     return true;
