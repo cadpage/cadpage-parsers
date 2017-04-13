@@ -13,7 +13,7 @@ public class WVCabellCountyParser extends DispatchA67Parser {
   
   public WVCabellCountyParser() {
     super(CITY_LIST, "CABELL COUNTY", "WV", A67_OPT_PLACE | A67_OPT_CROSS, null, "(?:\\b(?!APT|LOT|I\\d|UNIT)[A-Z]{1,4}\\d{1,3}\\b *)+");
-    setupMultiWordStreets("R FORK MERRITTS CREEK");
+    setupMultiWordStreets("R FORK MERRITTS CREEK", "R FORK RACCOON CREEK");
     setupSpecialStreets("MILL CREEK CROSSING", "RUSSELL CREEK", "TEAYS MEADOWS");
   }
   
