@@ -1,6 +1,6 @@
 package net.anei.cadpage.parsers.PA;
 
-public class PAAdamsCountyBParser extends PAFranklinCountyParser {
+public class PAAdamsCountyBParser extends PAFranklinCountyAParser {
   
   // The Franklin County parser was originally identified as an alternate Adams County
   // parser.  So we keep this alias so people using that original parser will still work
