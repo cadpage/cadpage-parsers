@@ -92,17 +92,25 @@ public class DispatchA33Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("([A-Z]{2})( +(\\d{5}))?");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
-      if (city.length() == 0 || city.length() == 2) {
-        if (!city.equals(data.defState)) data.strState = city;
+      String zip = null;
+      Matcher match = ADDR_ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        data.strState = getOptGroup(match.group(1));
+        zip = match.group(2);
+        city = "";
+      }
+      if (city.length() == 0) {
         city = p.getLastOptional(',');
       }
       super.parse(p.get(), data);
       data.strCity = city;
+      if (city.length() == 0 && zip != null) data.strCity = zip;
     }
     
     @Override
