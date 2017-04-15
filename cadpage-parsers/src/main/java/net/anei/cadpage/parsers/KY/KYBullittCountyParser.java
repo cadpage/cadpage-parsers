@@ -156,28 +156,28 @@ public class KYBullittCountyParser extends DispatchB2Parser {
   );
   
   private static final String[] CITY_LIST =new String[]{
-    "BROOKS", 
-    "BROWNINGTON", 
-    "CLERMONT", 
-    "FOX CHASE", 
-    "HEBRON ESTATES", 
-    "HILLVIEW", 
-    "HUNTERS HOLLOW" ,
-    "LEBANON JUNCTION", 
-    "MOUNT WASHINGTON", 
-    "MT WASHINGTON", 
-    "PIONEER VILLAGE", 
-    "SHEPHERDSVILLE",
-    "SOLITUDE", 
-    "TAYLORSVILLE",
-  
-    "LOUISVILLE",
-    "LOUISVILLLE",  // Misspelled
+      "BROOKS", 
+      "BROWNINGTON", 
+      "CLERMONT", 
+      "FOX CHASE", 
+      "HEBRON ESTATES", 
+      "HILLVIEW", 
+      "HUNTERS HOLLOW" ,
+      "LEBANON JUNCTION", 
+      "MOUNT WASHINGTON", 
+      "MT WASHINGTON", 
+      "PIONEER VILLAGE", 
+      "SHEPHERDSVILLE",
+      "SOLITUDE", 
+      "TAYLORSVILLE",
     
-    // Hardin County
-    "WEST POINT",
-    
-    // Nelson County
-    "COXS CREEK"
+      "LOUISVILLE",
+      "LOUISVILLLE",  // Misspelled
+      
+      // Hardin County
+      "WEST POINT",
+      
+      // Nelson County
+      "COXS CREEK"
   };
 }

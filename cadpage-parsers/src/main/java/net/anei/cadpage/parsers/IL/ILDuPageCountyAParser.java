@@ -33,7 +33,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "DU-COMM@ducomm.org";
+    return "DU-COMM@ducomm.org,ducomm@ducomm.org";
   }
   
   @Override
@@ -60,7 +60,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
         data.strCall = p.get(20);
         data.strPlace = p.get(45);
         data.strCross = append(p.get(20), " & ", p.get(20));
-        p.skip(166);
+        p.skip(143);
         String city = p.get(3);
         if (city.endsWith("2") ||
             city.length() > 2 && city.endsWith("U")) {
@@ -199,7 +199,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       "IT",     "ITASCA",
       "KC",     "KANE COUNTY",
       "KE",     "KENDALL COUNTY",
-      "LB",     "fLOCKPORT",
+      "LB",     "LOCKPORT",
       "LE",     "LEMONT",
       "LG",     "LAGRANGE",
       "LI",     "LISLE",
@@ -262,12 +262,13 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       "WN",     "WINFIELD",
       "WO",     "WOODRIDGE",
       "WR",     "WARRENVILLE",
-      "WS",     "WESTMONT",
-      // "WS",     "WESTERN SPRINGS",
+      "WS",     "WESTERN SPRINGS",
+      // "WS",     "WESTMONT",
       // "WT",     "WHEATON",
       "WT",     "WHEELING",
       "WV",     "WARRENVILLE",
       "WY",     "WILL COUNTY",
       "YC",     "YORK CENTER"
+
   });
 }
