@@ -27,6 +27,12 @@ public class DispatchB2Parser extends DispatchBParser {
   // information will be following the main address
   public static final int B2_CROSS_FOLLOWS = 2;
   
+  // Flag indicating that the call code is optional
+  public static final int B2_OPT_CALL_CODE = 4;
+  
+  // Flag indicating that will be a separate apt field following the city
+  public static final int B2_SEPARATE_APT_FLD = 8;
+  
   private static final Pattern CODE_PATTERN = Pattern.compile("^([- /#&_A-Z0-9]{0,6}?|\\?) *> *"); 
   private static final Pattern PHONE_PTN = Pattern.compile("[ /]*((?<!\\d)(?:(?:\\d{3}[- ]?)?\\d{3}[- ]?\\d{4}\\b *)+)[ /]*");
   private static final Pattern NAME_PTN = Pattern.compile(" +([A-Z]+, ?[A-Z]+(?: [A-Z]\\.?)?)$");
@@ -40,6 +46,7 @@ public class DispatchB2Parser extends DispatchBParser {
   private String[] prefixList;
   private boolean forceCallCode;
   private boolean crossFollows;
+  private boolean optCallCode;
 
   public DispatchB2Parser(String[] cityList, String defCity, String defState) {
     this(null, cityList, defCity, defState, 0);
@@ -67,7 +74,7 @@ public class DispatchB2Parser extends DispatchBParser {
   }
 
   public DispatchB2Parser(String prefix, String[] cityList, String defCity, String defState, int flags) {
-    super(-4, cityList, defCity, defState);
+    super(calcVersionCode(flags), cityList, defCity, defState);
     setup(prefix, flags);
   }
 
@@ -90,10 +97,15 @@ public class DispatchB2Parser extends DispatchBParser {
     setup(prefix, flags);
   }
   
+  private static int calcVersionCode(int flags) {
+    return ((flags & B2_SEPARATE_APT_FLD) != 0 ? -6 : -4);
+  }
+  
   private void setup(String prefix, int flags) {
     prefixList = (prefix == null ? null : prefix.split("\\|\\|"));
     forceCallCode = (flags & B2_FORCE_CALL_CODE) != 0;
     crossFollows = (flags & B2_CROSS_FOLLOWS) != 0;
+    optCallCode = (flags & B2_OPT_CALL_CODE) != 0;
   }
   
 
@@ -155,6 +167,7 @@ public class DispatchB2Parser extends DispatchBParser {
 
     Matcher match;
     field = parseCallCode(field, data);
+    if (data.strCode.length() == 0 && !optCallCode) return false;
     
     if (address != null) {
       data.strCall = field;
@@ -338,6 +351,7 @@ public class DispatchB2Parser extends DispatchBParser {
     @Override
     public void parse(String field, Data data) {
       field = parseCallCode(field, data);
+      if (data.strCode.length() == 0 && !optCallCode) abort();
       super.parse(field, data);
     }
     

@@ -15,7 +15,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "noreply@everbridge.net";
+    return "noreply@everbridge.net,89361";
   }
   
   @Override

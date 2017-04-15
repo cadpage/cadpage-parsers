@@ -12,16 +12,6 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchBParser extends FieldProgramParser {
   
-  private static final String[] FIXED_KEYWORDS = new String[]{"Map", "Grids", "Cad"};
-  private static final String[] KEYWORDS = 
-    new String[]{"Loc", "Return Phone", "BOX", "Map", "Grids", "Cad", "Time"};
-  private static final Pattern REPORT_PTN = Pattern.compile("(?:EVENT: *(\\S*?) +LOC:(.*?) Cad: +([-0-9]+) |\\(?(\\S+?)\\)? *= *)([A-Z0-9]+ +>?\\d\\d:\\d\\d(?::\\d\\d)? .*)");
-  private static final Pattern REPORT_DELIM_PTN = Pattern.compile("(?<=\\b\\d\\d:\\d\\d) +(?:Case: \\d+ Disp: *)?");
-  private static final Pattern PHONE_PTN = Pattern.compile("(?: +(?:VERIZON|AT ?& ?T MOBILITY))? +(\\d{10}|\\d{7}|\\d{3} \\d{7}|\\d{3}-\\d{4})$");
-  private static final Pattern RETURN_PHONE_PTN = Pattern.compile("([-0-9]+) *");
-  private static final Pattern TIME_PTN = Pattern.compile("(\\d\\d)(\\d\\d)");
-  private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[: ]+");
-  
   int version;
   
   public DispatchBParser(Properties cityCodes, String defCity, String defState) {
@@ -62,25 +52,26 @@ public class DispatchBParser extends FieldProgramParser {
     case 3: return "CALL ADDR Apt:APT? CITY? NAME Map:MAP Cad:ID";
     case 4: return "CALL! ADDR/S6! Apt:APT? XS:X? CITY? NAME PHONE Map:MAP Cad:ID";
     case 5: return "CALL_ADDR/S69C! Apt:APT? XS:X? CITY? NAME PHONE Map:MAP Cad:ID";
+    case 6: return "CALL! ADDR! Apt:APT? XS:X? CITY? APT1? NAME PHONE Map:MAP Cad:ID";
     default:return null;
     }
   }
+  
+  private static final String[] FIXED_KEYWORDS = new String[]{"Map", "Grids", "Cad"};
+  private static final String[] KEYWORDS = 
+    new String[]{"Loc", "Return Phone", "BOX", "Map", "Grids", "Cad", "Time"};
+  private static final Pattern REPORT_PTN = Pattern.compile("(?:EVENT: *(\\S*?) +LOC:(.*?)[ \n]Cad: +([-0-9]+)[ \n]|\\(?(\\S+?)\\)? *= *)([A-Z0-9]+ +>?\\d\\d:\\d\\d(?::\\d\\d)?[ \n].*)", Pattern.DOTALL);
+  private static final Pattern REPORT_PTN2 = Pattern.compile("([-A-Z0-9]+)\n= (DSP .*)");
+  private static final Pattern REPORT_DELIM_PTN = Pattern.compile("(?<=\\b\\d\\d:\\d\\d) +(?:Case: \\d+ Disp: *)?");
+  private static final Pattern PHONE_PTN = Pattern.compile("(?: +(?:VERIZON|AT ?& ?T MOBILITY))? +(\\d{10}|\\d{7}|\\d{3} \\d{7}|\\d{3}-\\d{4})$");
+  private static final Pattern RETURN_PHONE_PTN = Pattern.compile("([-0-9]+) *");
+  private static final Pattern TIME_PTN = Pattern.compile("(\\d\\d)(\\d\\d)");
+  private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[: ]+");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
-    // See if this is the new fangled line break delimited format
-    if (version != 0) {
-      String[] flds = body.split("\n");
-      if (version > 0 || flds.length >= 3) {
-        return parseFields(flds, data);
-      }
-    }
- 
-    // Otherwise use the old logic
-    if (! isPageMsg(body)) return false;
-    setFieldList("CODE CALL ADDR APT X PLACE CITY NAME PHONE BOX MAP ID TIME");
 
+    // Check for run report formats
     Matcher match = REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("CODE ADDR APT ID INFO");
@@ -95,6 +86,27 @@ public class DispatchBParser extends FieldProgramParser {
       data.strSupp = REPORT_DELIM_PTN.matcher(match.group(5).trim()).replaceAll("\n");
       return true;
     }
+    
+    match = REPORT_PTN2.matcher(body);
+    if (match.matches()) {
+      setFieldList("CODE INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCode = match.group(1);
+      data.strSupp = REPORT_DELIM_PTN.matcher(match.group(2).trim()).replaceAll("\n");
+      return true;
+    }
+    
+    // See if this is the new fangled line break delimited format
+    if (version != 0) {
+      String[] flds = body.split("\n");
+      if (version > 0 || flds.length >= 3) {
+        return parseFields(flds, data);
+      }
+    }
+ 
+    // Otherwise use the old logic
+    if (! isPageMsg(body)) return false;
+    setFieldList("CODE CALL ADDR APT X PLACE CITY NAME PHONE BOX MAP ID TIME");
     
     body = "Loc: " + body;
     Properties props = parseMessage(body, KEYWORDS);
@@ -186,6 +198,7 @@ public class DispatchBParser extends FieldProgramParser {
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("CALL_ADDR")) return new BaseCallAddressField();
     if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("APT1")) return new AptField("\\d{1,4}");
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("ID")) return new BaseIdField();
