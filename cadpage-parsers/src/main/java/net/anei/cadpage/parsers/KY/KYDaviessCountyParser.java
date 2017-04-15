@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class KYDaviessCountyParser extends DispatchB2Parser {
   
   public KYDaviessCountyParser() {
-    super(CITY_LIST, "DAVIESS COUNTY", "KY");
+    super(CITY_LIST, "DAVIESS COUNTY", "KY", B2_OPT_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ALPHONSUS", "ANTHONY", "BENEDICT", "JOSEPH", "LAWRENCE");

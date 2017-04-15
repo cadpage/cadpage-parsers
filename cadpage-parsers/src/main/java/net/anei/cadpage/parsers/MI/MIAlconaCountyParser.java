@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class MIAlconaCountyParser extends DispatchB2Parser {
 
   public MIAlconaCountyParser() {
-    super(CITY_LIST,"ALCONA COUNTY", "MI");
+    super(CITY_LIST,"ALCONA COUNTY", "MI", B2_OPT_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }

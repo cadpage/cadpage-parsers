@@ -25,6 +25,20 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public Field getField(String name) {
+    if (name.equals("X")) return new MyCrossField();
+    return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("Searching Cross Streets...")) return;
+      super.parse(field,  data);
+    }
+  }
+  
+  @Override
   public String adjustMapCity(String city) {
     String tmp = MAP_CITY_TABLE.getProperty(city.toUpperCase());
     if (tmp != null) city = tmp;

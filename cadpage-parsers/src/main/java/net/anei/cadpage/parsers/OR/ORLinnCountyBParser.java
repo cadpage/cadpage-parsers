@@ -86,6 +86,11 @@ public class ORLinnCountyBParser extends FieldProgramParser {
         super.parse(field, data);
       }
     }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE X";
+    }
   }
   
   private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\](?=\n|$)");

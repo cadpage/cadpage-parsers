@@ -19,7 +19,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
   private static final Pattern RETURN_PHONE_PTN = Pattern.compile("(Return Phone: \\d{10}) +(.*)");
 
   public OHClermontCountyAParser() {
-    super(CITY_LIST, "CLERMONT COUNTY", "OH", B2_CROSS_FOLLOWS);
+    super(CITY_LIST, "CLERMONT COUNTY", "OH", B2_OPT_CALL_CODE | B2_CROSS_FOLLOWS);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }

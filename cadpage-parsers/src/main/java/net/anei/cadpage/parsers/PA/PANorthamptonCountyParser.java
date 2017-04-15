@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class PANorthamptonCountyParser extends DispatchB2Parser {
 
   public PANorthamptonCountyParser() {
-    super(CITY_LIST, "NORTHAMPTON COUNTY", "PA", B2_CROSS_FOLLOWS);
+    super(CITY_LIST, "NORTHAMPTON COUNTY", "PA", B2_OPT_CALL_CODE | B2_CROSS_FOLLOWS);
     setupCallList(CALL_LIST);
     removeWords("RCH");
     setupSaintNames("FRANCIS");

@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class GAJacksonCountyParser extends DispatchB2Parser {
 
   public GAJacksonCountyParser() {
-    super("JACKSONE911:||JACKSON CO SO JACKSONE911:||JACKSON CO SO: JACKSONE911:", CITY_LIST, "JACKSON COUNTY", "GA");
+    super("JACKSONE911:||JACKSON CO SO JACKSONE911:||JACKSON CO SO: JACKSONE911:", CITY_LIST, "JACKSON COUNTY", "GA", B2_FORCE_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "APPLE VALLEY",

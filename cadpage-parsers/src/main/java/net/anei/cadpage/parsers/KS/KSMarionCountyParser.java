@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class KSMarionCountyParser extends DispatchB2Parser {
   
   public KSMarionCountyParser() {
-    super("MARION911:", CITY_LIST, "MARION COUNTY", "KS");
+    super("MARION911:", CITY_LIST, "MARION COUNTY", "KS", B2_OPT_CALL_CODE);
   }
   
   @Override

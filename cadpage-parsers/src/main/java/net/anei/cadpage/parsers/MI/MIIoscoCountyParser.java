@@ -16,7 +16,7 @@ public class MIIoscoCountyParser extends DispatchB3Parser {
   private static final Pattern BODY_PHONE_PTN = Pattern.compile(MARKER + "(\\d{10}) +(.*?)( Cad: .*)");
   
   public MIIoscoCountyParser() {
-    super(MARKER, CITY_LIST, "IOSCO COUNTY", "MI");
+    super(MARKER, CITY_LIST, "IOSCO COUNTY", "MI", B2_OPT_CALL_CODE);
   }
   
   @Override

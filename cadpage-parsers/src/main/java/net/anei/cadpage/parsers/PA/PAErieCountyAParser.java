@@ -17,7 +17,7 @@ public class PAErieCountyAParser extends DispatchB2Parser {
   private static final Pattern CITY_SUFFIX = Pattern.compile("(?:BORO|CITY|VILLAGE|TWP|CO)\\b *");
  
   public PAErieCountyAParser() {
-    super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA");
+    super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA", B2_OPT_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }

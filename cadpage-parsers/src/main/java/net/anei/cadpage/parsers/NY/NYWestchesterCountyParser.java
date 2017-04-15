@@ -68,16 +68,28 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern ADDR_DELIM_PTN = Pattern.compile("(.*): *(?:@|(APT|CONDO|ROOM|RM|UNIT)|)(.*)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?\\d?|[A-Z]\\d*");
   private class MyAddressField extends AddressField {
 
     @Override
     public void parse(String field, Data data) {
+      String apt = "";
+      while (true) {
+        Matcher match = ADDR_DELIM_PTN.matcher(field);
+        if (!match.matches()) break;
+        field = match.group(1).trim();
+        String term = match.group(3).trim();
+        if (match.group(2) != null || ADDR_APT_PTN.matcher(term).matches()) {
+          apt = append(term, "-", apt);
+        } else {
+          data.strPlace = append(term, " - ", data.strPlace);
+        }
+      }
       Parser p = new Parser(field);
-      data.strApt = p.getLastOptional(":APT ");
-      data.strPlace = p.getLastOptional(": @");
-      if (data.strPlace.length() == 0) data.strPlace = p.getLastOptional(':');
       data.strCity = p.getLast(' ');
       parseAddress(p.get(), data);
+      data.strApt = append(data.strApt, "-", apt);
       if (data.strAddress.length() == 0) {
         data.strAddress = data.strPlace;
         data.strPlace = "";
