@@ -20,15 +20,15 @@ public class ORClackamasCountyDParser extends SmartAddressParser {
  
   private static final String
     TYPE_PATTERN_S
-      = "([A-Z0-9]+)(?: +([A-Z0-9]+|- .+?|\\*[A-Z]))? +",
+      = "(?:([A-Z0-9]+)(?: +([A-Z0-9]+|- .+?|\\*[A-Z]))?|(.*?)) +",
     LOCATION_PATTERN_S
       = "(\\d{2}:\\d{2}:\\d{2})(.*?)",
     MAP1_PATTERN_S
       = "Dt: ([A-Z]{2}) +",
     MAP2_PATTERN_S
-      = "Zne: (\\d{4}) +",
+      = "Zne: (\\d{4}|[A-Z]{2}) +",
     TRAILER_PATTERN_S
-      = "Gd: (\\d{4}[A-Z])(.+?)/ BLOCK:<.+?>(.*?)RG #(\\d+) Sent by:(.*)";
+      = "Gd: (\\d{4}[A-Z]|CCOM STA\\d+)\\b(.+?)(?:/ )?BLOCK:<.+?>(.*?) #(\\d+) Sent by:(.*)";
 
   private static final Pattern MASTER_PATTERN
     = Pattern.compile(TYPE_PATTERN_S
@@ -41,14 +41,14 @@ public class ORClackamasCountyDParser extends SmartAddressParser {
   protected boolean parseMsg(String body, Data data) {
     Matcher m = MASTER_PATTERN.matcher(body);
     if (m.matches()) {
-      parseType(m.group(1), getOptGroup(m.group(2)).trim(), data);
-      data.strTime = m.group(3);
-      parseLocation(m.group(4).trim(), data);
-      data.strMap = append(m.group(5), "-", append(m.group(6), "-", m.group(7)));
-      parseCross(m.group(8).trim(), data);
-      parseUnit(m.group(9).trim(), data);
-      data.strCallId = m.group(10);
-      data.strSource = m.group(11).trim();
+      parseType(m.group(1), m.group(2), m.group(3), data);
+      data.strTime = m.group(4);
+      parseLocation(m.group(5).trim(), data);
+      data.strMap = append(m.group(6), "-", append(m.group(7), "-", m.group(8)));
+      parseCross(m.group(9).trim(), data);
+      parseUnit(m.group(10).trim(), data);
+      data.strCallId = m.group(11);
+      data.strSource = m.group(12).trim();
       
       return true;
     }
@@ -56,19 +56,19 @@ public class ORClackamasCountyDParser extends SmartAddressParser {
     return false;
   }
 
-  private void parseType(String field1, String field2, Data data) {
-    if(field2.equals(""))
-      data.strCode = field1;
-    else
-      if (field2.charAt(0) == '-') {
-        data.strCode = field1;
-        data.strCall = field2.substring(1).trim();
-      }
-      else
-        if (field2.charAt(0) == '*')
-          data.strCode = append(field1, " ", field2);
-        else
-          data.strCall = append(field1, " ", field2);
+  private void parseType(String field1, String field2, String field3, Data data) {
+    if (field3 != null) {
+      data.strCall = field3.trim();
+    } else if(field2 ==  null) {
+      data.strCode = field1.trim();
+    } else if (field2.charAt(0) == '-') {
+      data.strCode = field1.trim();
+      data.strCall = field2.substring(1).trim();
+    } else if (field2.charAt(0) == '*') {
+      data.strCode = append(field1.trim(), " ", field2.trim());
+    } else {
+      data.strCall = append(field1.trim(), " ", field2.trim());
+    }
   }
   
   private void parseLocation(String field, Data data) {
