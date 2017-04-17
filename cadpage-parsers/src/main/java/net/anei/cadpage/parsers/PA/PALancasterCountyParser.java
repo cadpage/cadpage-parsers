@@ -13,7 +13,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
   
   public PALancasterCountyParser() {
     super(CITY_LIST, "LANCASTER COUNTY", "PA",
-           "CITY ADDR X/Z+? UNIT! TIME%");
+           "CITY ADDR! X/Z+? UNIT TIME%");
   }
   
   @Override
@@ -30,7 +30,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     int pt = body.lastIndexOf('^');
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace(" BOROUGH", " BORO").replace(" TOWNSHIP", " TWP");
-    return parseFields(body.split("~"), data);
+    return parseFields(body.split("~"), 3, data);
   }
   
   @Override
