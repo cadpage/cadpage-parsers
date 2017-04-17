@@ -5,13 +5,15 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Fresno County, CA
  */
 public class CAFresnoCountyParser extends FieldProgramParser {
   
-  private static final Pattern GENERAL_ALERT_PTN = Pattern.compile("Unit:([^ ]+) ,EMS#:(\\d+) ,.*,CN:\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Unit:(.+?) +Incident #:(\\d+) +(.*)");
+  private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<=\\b\\d\\d:\\d\\d:\\d\\d)");
   
   public CAFresnoCountyParser() {
     super("FRESNO COUNTY", "CA",
@@ -34,12 +36,13 @@ public class CAFresnoCountyParser extends FieldProgramParser {
     
     if (!subject.equals("VisiCad Email")) return false;
     if (body.startsWith("Unit:")) {
-      Matcher match = GENERAL_ALERT_PTN.matcher(body);
+      Matcher match = RUN_REPORT_PTN.matcher(body);
       if (match.matches()) {
-        data.strCall = "GENERAL ALERT";
-        data.strPlace = body;
-        data.strUnit = match.group(1);
+        setFieldList("UNIT ID INFO");
+        data.msgType = MsgType.RUN_REPORT;
+        data.strUnit = match.group(1).trim();
         data.strCallId = match.group(2);
+        data.strSupp = RUN_REPORT_BRK.matcher(match.group(3)).replaceAll("\n");
         return true;
       }
       
@@ -51,6 +54,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
       if (super.parseMsg(body, data)) return true;
     }
     
+    setFieldList("INFO");
     data.parseGeneralAlert(this, body);
     return true;
   }
