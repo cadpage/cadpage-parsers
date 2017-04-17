@@ -15,7 +15,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "paging@rutherfordcountync.gov";
+    return "paging@rutherfordcountync.gov,8284295922";
   }
   
   private static final Pattern KEYWORD_DELIM = Pattern.compile("(?<=Location|APT/ROOM|City|Call Type|Line11|Units)[^*]");
