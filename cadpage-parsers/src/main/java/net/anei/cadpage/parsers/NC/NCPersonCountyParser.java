@@ -46,6 +46,18 @@ public class NCPersonCountyParser extends DispatchSouthernParser {
     "LEASBURG",
     "ROUGEMONT",
     "SEMORA",
-    "TIMBERLAKE"
+    "TIMBERLAKE",
+    
+    // Allamance County
+    "MEBANE",
+    
+    // Caswell County
+    "BLANCH",
+    "MILTON",
+    "PROSPECT HILL",
+    "YANCEYVILLE",
+    
+    // Granville County
+    "OXFORD"
   };
 }
