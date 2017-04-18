@@ -108,6 +108,7 @@ public class NJBurlingtonCountyCParser extends DispatchA5Parser {
   
   private static final CodeTable CALL_CODES = new CodeTable(
       "11",    "Structure Fire Call",
+      "16",    "Alarm System",
       "17",    "Fumes",
       "101",   "Abdominal Pain/Problems",
       "102",   "Allergies/Hives/Reaction/Stings",
