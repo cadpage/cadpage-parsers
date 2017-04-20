@@ -36,20 +36,20 @@ public class ALMorganCountyParser extends DispatchOSSIParser {
         // complicated
         
         // If we can identify the call field, things are pretty simple
-        "( PLACE ADDR/Z CALL X/Z+? ( ID UNIT | UNIT ) " +
-        "| ADDR/Z CALL X/Z+? ( ID UNIT | UNIT ) " +
-          
-        // If the call field is unknown, things get complicated
-        // next see if the unit is in the 7th place, which means all
-        // of the optional fields are present
-        "| PLACE ADDR/Z CALL/Z X/Z X/Z ID/Z UNIT " +
-        
-        // Still no luck.  All we can do is hope the address
-        // is recognizable
-        "| PLACE? ADDR/s CALL! X/Z+? ( ID UNIT | UNIT ) " +
-        
-        // And finally an optional channel at the end
-        ") CH");
+        "FYI? ( PLACE ADDR/Z CALL X/Z+? ( ID UNIT | UNIT ) " +
+             "| ADDR/Z CALL X/Z+? ( ID UNIT | UNIT ) " +
+               
+             // If the call field is unknown, things get complicated
+             // next see if the unit is in the 7th place, which means all
+             // of the optional fields are present
+             "| PLACE ADDR/Z CALL/Z X/Z X/Z ID/Z UNIT " +
+             
+             // Still no luck.  All we can do is hope the address
+             // is recognizable
+             "| PLACE? ADDR/s CALL! X/Z+? ( ID UNIT | UNIT ) " +
+            
+             // And finally an optional channel at the end
+             ") CH");
   }
   
   @Override
@@ -106,18 +106,31 @@ public class ALMorganCountyParser extends DispatchOSSIParser {
   
   private static final Pattern CALL_CAT_PTN = Pattern.compile(".* CAT ?\\d");
   private Set<String> CALL_LIST = new HashSet<String>(Arrays.asList(
+      "APPLIANCE FIRE",
+      "ASSIST LAW ENFORCEMENT",
+      "BUSINESS FIRE",
       "BUSINESS FIRE ALARM",
+      "BRUSH FIRE",
       "CARBON MONOXIDE ALARM",
       "CAR FIRE",
+      "COMMERCIAL VEHICLE FIRE",
       "CONTROLLED BURN",
+      "EMERGENCY TRANSPORT",
+      "EXPLOSION",
+      "FIRE DEPARTMENT CHECK",
       "FIRE OTHER",
       "FIRE PR EVENT",
       "GAS LEAK",
       "GRASS FIRE",
       "HIT AND RUN NO INJURY",
       "HIT AND RUN WITH INJURY",
+      "ILLEGAL BURN",
+      "LIFT ASSIST",
       "MEDICAL TRANSPORT",
+      "PASSENGER VEHICLE FIRE",
+      "RESIDENTIAL FIRE",
       "RESIDENTIAL FIRE ALARM",
+      "SEARCH AND RESCUE OPERATIONS",
       "SHOOTING",
       "SMOKE INVESTIGATION",
       "STABBING",
@@ -125,6 +138,7 @@ public class ALMorganCountyParser extends DispatchOSSIParser {
       "SUICIDE",
       "SUICIDE ATTEMPTED",
       "SUICIDE THREATENED",
+      "TRASH FIRE",
       "URGENT TRANSPORT",
       "WATER RESCUE WITH INJURY",
       "WEATHER RELATED",
