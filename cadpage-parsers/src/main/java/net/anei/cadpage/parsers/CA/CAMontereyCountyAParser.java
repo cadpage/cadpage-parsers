@@ -17,7 +17,6 @@ public class CAMontereyCountyAParser extends MsgParser {
   
   public CAMontereyCountyAParser() {
     super("MONTEREY COUNTY", "CA");
-    setFieldList("MAP CODE CALL ADDR PLACE CITY UNIT INFO");
   }
   
   @Override
@@ -33,7 +32,47 @@ public class CAMontereyCountyAParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    if (parseMsg2(body, data)) return true;
+    if (parseMsg1(subject, body, data)) return true;
+    return false;
+  }
+  
+  private static final Pattern MARKER = Pattern.compile("([A-Z]+) -  ");
+  
+  private boolean parseMsg2(String body, Data data) {
+    
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    setFieldList("SRC UNIT CALL ADDR APT X");
+    
+    data.strSource = match.group(1);
+    body = body.substring(match.end());
+    
+    FParser fp = new FParser(body);
+    if (fp.checkAhead(94, "CROSS STREETS")) {
+      data.strUnit = fp.get(31);
+      if (!fp.check(" ")) return false;
+    } else {
+      fp.skip(7);
+    }
+    
+    if (fp.check(" ")) return false;
+    data.strCall = fp.get(10);
+    
+    if (!fp.check(" ") || fp.check(" ")) return false;
+    parseAddress(fp.get(50), data);
+    
+    if (!fp.check(" CROSS STREETS  ")) return false;
+    data.strCross = fp.get();
+    return true;
+  }
+    
+   
+  private boolean parseMsg1(String subject, String body, Data data) {
+    // Old page format
+    
     if (!subject.equals("CAD Page")) return false;
+    setFieldList("MAP CODE CALL ADDR PLACE CITY UNIT INFO");
     
     int pt = body.indexOf('\n');
     String extra = null;
