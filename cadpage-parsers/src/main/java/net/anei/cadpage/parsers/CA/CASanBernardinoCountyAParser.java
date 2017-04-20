@@ -19,7 +19,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
   
   public CASanBernardinoCountyAParser() {
     super("SAN BERNARDINO COUNTY", "CA",
-          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! UNIT COMMENTS:INFO LAT/LON:GPS");
+          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! ( UNITS:UNIT CALL_INFO:INFO | UNIT COMMENTS:INFO ) LAT/LON:GPS");
   }
   
   @Override
