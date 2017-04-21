@@ -30,6 +30,83 @@ public class PAFranklinCountyBParser extends MsgParser {
     if (!subject.equals("CAD Paging")) return false;
     
     FParser fp = new FParser(body);
+    
+    String zip = fp.lookahead(449,  5);
+    if (ZIP_PTN.matcher(zip).matches()) {
+      setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH");
+      data.strCall = fp.get(20);
+      parseAddress(fp.get(30), data);
+      if (!fp.checkBlanks(370)) return false;
+      data.strApt = append(data.strApt, "-", fp.get(9));
+      data.strCity = fixCity(fp.get(20));
+      zip = fp.get(5);
+      if (data.strCity.length() == 0) data.strCity = zip;
+      data.strCross = fp.get(40);
+      if (!parseGPS(fp, data)) return false;
+      if (!fp.check("  ")) return false;
+      data.strMap = fp.get(20);
+      data.strChannel = fp.get(10);
+      data.strUnit = fp.get(10);
+      String ch = fp.get();
+      if (ch.length() > 0) data.strChannel = ch;
+      return true;
+    }
+    
+    zip = fp.lookahead(95,  5);
+    if (ZIP_PTN.matcher(zip).matches()) {
+      setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH");
+      data.strCall = fp.get(20);
+      parseAddress(fp.get(55), data);
+      data.strCity = fixCity(fp.get(20));
+      zip = fp.get(5);
+      if (data.strCity.length() == 0) data.strCity = zip;
+      data.strCross = fp.get(40);
+      if (!parseGPS(fp, data)) return false;
+      if (!fp.check("  ")) return false;
+      data.strMap = fp.get(20);
+      data.strChannel = fp.get(10);
+      data.strUnit = fp.get(10);
+      String ch = fp.get();
+      if (ch.length() > 0) data.strChannel = ch;
+      return true;
+    }
+    
+    if (fp.checkAhead(70, "Apt.")) {
+      setFieldList("UNIT CALL ADDR APT CITY X GPS MAP");
+      data.strUnit = fp.get(10);
+      data.strCall = fp.get(20);
+      parseAddress(fp.get(40), data);
+      if (!fp.check("Apt.")) return false;
+      data.strApt = append(data.strApt, "-", fp.get(15));
+      data.strCity = fp.get(20);
+      if (fp.check("Cross Streets")) {
+        data.strCross = fp.get(40);
+        String gps1 = fp.get(8);
+        if (!fp.check("  /")) return false;
+        String gps2 = fp.get(8);
+        if (!parseGps(gps1, gps2, data)) return false;
+      } else {
+        if (!fp.check("Zip: ")) return false;
+        zip = fp.get(5);
+        if (data.strCity.length() == 0) data.strCity = zip;
+        if (!fp.check("  Cross Streets:  ")) return false;
+        data.strCross = fp.get(40);
+        fp.check("Lat:");
+        String gps1 = fp.get(8);
+        if (!fp.check("  /Long:") && !fp.check("  /Lon:")) return false;
+        String gps2 = fp.get(8);
+        if (!parseGps(gps1, gps2, data)) return false;
+      }
+      if (!fp.check("  ")) return false;
+      fp.check(" ");
+      if (!fp.check("Resp. Area")) return false;
+      fp.check(":  ");
+      fp.check("  ");
+      fp.check(" ");
+      data.strMap = fp.get(20);
+      return true;
+    }
+    
     String call = fp.get(30);
     String addr = fp.get(30);
     if (addr.length() == 0) {
@@ -39,7 +116,7 @@ public class PAFranklinCountyBParser extends MsgParser {
       data.strCity = fixCity(fp.get(35));
       data.strCross = fp.get(30);
       if (!fp.checkBlanks(370)) return false;
-      data.strApt = fp.get(10);
+      data.strApt = append(data.strApt, "-", fp.get(10));
       if (fp.check(" ")) return false;
       data.strCall = fp.get(30);
       data.strMap = fp.get(30);
@@ -56,7 +133,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     data.strApt = append(fp.get(10), "-", fp.get(10));
     data.strCity = fixCity(fp.get(35));
     
-    String zip = fp.lookahead(0, 10);
+    zip = fp.lookahead(0, 10);
     if (ZIP_PTN.matcher(zip).matches()) {
       if (data.strCity.length() == 0) data.strCity = zip;
       fp.skip(10);
@@ -96,6 +173,10 @@ public class PAFranklinCountyBParser extends MsgParser {
     String gps1 = fp.get(8);
     if (!fp.check("  ")) return false;
     String gps2 = fp.get(8);
+    return parseGps(gps1, gps2, data);
+  }
+
+  private boolean parseGps(String gps1, String gps2, Data data) {
     if (gps1.length() == 0 && gps2.length() == 0) return true;
     gps1 = cvtGps(gps1);
     gps2 = cvtGps(gps2);
