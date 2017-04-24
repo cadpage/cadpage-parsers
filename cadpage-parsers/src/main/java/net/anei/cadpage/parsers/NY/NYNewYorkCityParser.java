@@ -19,6 +19,7 @@ public class NYNewYorkCityParser extends FieldProgramParser {
 
 	  @Override
 	  protected boolean parseMsg(String body, Data data) {
+	    data.strCall = "ALERT";
 	    int pt = body.indexOf('\n');
 	    if (pt >= 0) {
 	      data.strSupp = body.substring(pt+1).trim();
@@ -31,7 +32,7 @@ public class NYNewYorkCityParser extends FieldProgramParser {
 	  
 	  @Override
 	  public String getProgram() {
-	    return super.getProgram() + " INFO";
+	    return "CALL " + super.getProgram() + " INFO";
 	  }
 	}
 	
