@@ -17,7 +17,7 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
   
   public DispatchChiefPagingParser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CALL ADDRCITY! Xst's:X Caller:NAME? Lat:GPS1 Long:GPS2");
+          "CALL ADDRCITY! Xst's:X Caller:NAME? DESC:INFO Units:UNIT Lat:GPS1 Long:GPS2");
   }
   
   @Override
@@ -84,10 +84,6 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
   // one and the one following.  When it does it has to make the determination
   // which one looks more like an address field and treat the other as a place 
   // field
-  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(?:([A-Z]{2}) +)?\\d{5}");
-  private static final Pattern ADDR_ST_PTN = Pattern.compile("(.*) (DE|MD|NJ)");
-  private static final Pattern ZIP_PTN = Pattern.compile("(.*) \\d{5}");
-  private static final Pattern SPECIAL_ADDR_PTN = Pattern.compile("70 HQ|EASTER SEALS", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     
     @Override
@@ -100,7 +96,7 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
       field = fixAddress(field);
       ExtResult res1 = new ExtResult(field);
       String fld2 = getRelativeField(+1);
-      if (fld2.length() > 0 && !fld2.startsWith("Xst's:") && !fld2.startsWith("Caller:")) {
+      if (fld2.length() > 0 && !fld2.startsWith("Xst's:") && !fld2.startsWith("Caller:") && !fld2.startsWith("DESC:") && !fld2.startsWith("Units:")) {
         fld2 = fixAddress(fld2);
         ExtResult res2 = new ExtResult(fld2);
         if (res2.getStatus() > res1.getStatus()) {
@@ -130,7 +126,12 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
     }
   }
   private static final Pattern FOUR_DIGIT_ZIP_PTN = Pattern.compile("\\b8070\\b");
-  
+
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(?:([A-Z]{2}) +)?\\d{5}|([A-Z]{2})");
+  private static final Pattern ADDR_ST_PTN = Pattern.compile("(.*) (DE|MD|NJ)");
+  private static final Pattern ZIP_PTN = Pattern.compile("(.*) \\d{5}");
+  private static final Pattern SPECIAL_ADDR_PTN = Pattern.compile("70 HQ|EASTER SEALS", Pattern.CASE_INSENSITIVE);
+
   /**
    * This class extends the Result class with additional information we
    * need to properly parse and check our special address constructs
@@ -157,6 +158,7 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
         if (match.matches()) {
           city = null;
           state = match.group(1);
+          if (state == null) state = match.group(2);
           if (state == null) {
             match = ADDR_ST_PTN.matcher(field);
             if (match.matches()) {

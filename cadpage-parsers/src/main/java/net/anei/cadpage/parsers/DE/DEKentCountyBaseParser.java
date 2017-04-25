@@ -100,6 +100,7 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
     "MARYDEL",
     
     // Carolin County, MD
+    "CAROLIN COUNTY",
     "DENTON",
     "FEDERALSBURG",
     "GREENSBORO",
@@ -110,6 +111,7 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
     "RIDGELY",
     
     // Kent County, MD
+    "KENT COUNTY",
     "BETTERTON",
     "CHESTERTOWN",
     "GALENA",
@@ -117,10 +119,21 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
     "PENNSVILLE",
     "ROCK HALL",
     
+    // New Castle County
+    "NEW CASTLE COUNTY",
+    "ELSMERE",
+    "GREENVILLE",
+    "HOCKESSIN",
+    "NEWARK",
+    "ROCKLAND",
+    "WILMINGTON",
+    
     // Somerset County, MD
+    "SOMERSET COUNTY",
     "PRINCESS ANNE",
     
     // Sussex County
+    "SUSSEX COUNTY",
     "BETHANY BEACH", 
     "BETHEL", 
     "BLADES", 
@@ -156,12 +169,14 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
     "SOUTH BETHANY",
     
     // Wicomico County, MD
+    "WICOMICO COUNTY",
     "FRUITLAND",
     "PARSONSBURG",
     "PITTSVILLE",
     "SALISBURY",
     
     // Worcester County, MD
+    "WORCESTER COUNTY",
     "BISHOPVILLE",
     
     // Neighborhood names in the PLACE_NAMES table
@@ -277,6 +292,7 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
   private static final Properties CITY_STATE_TABLE = buildCodeTable(new String[]{
       
       // Carolin County
+      "CAROLIN COUNTY", "MD",
       "DENTON",       "MD",
       "FEDERALSBURG", "MD",
       "GREENSBORO",   "MD",
@@ -287,6 +303,7 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
       "RIDGELY",      "MD",
       
       // Kent County
+      "KENT COUNTY",  "MD",
       "BETTERTON",    "MD",
       "CHESTERTOWN",  "MD",
       "GALENA",       "MD",
@@ -294,15 +311,18 @@ public class DEKentCountyBaseParser extends FieldProgramParser {
       "ROCK HALL",    "MD",
       
       // Somerset County
+      "SOMERSET COUNTY", "MD",
       "PRINCESS ANNE","MD",
       
       // Wicomico County
+      "WICOMICO COUNTY", "MD",
       "FRUITLAND",    "MD",
       "PARSONSBURG",  "MD",
       "PITTSVILLE",   "MD",
       "SALISBURY",    "MD",
       
       // Worcester County
+      "WORCESTER COUNTY", "MD",
       "BISHOPVILLE",  "MD"
 
   });

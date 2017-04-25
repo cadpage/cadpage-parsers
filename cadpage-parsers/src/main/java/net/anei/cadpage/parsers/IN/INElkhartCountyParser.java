@@ -13,17 +13,25 @@ public class INElkhartCountyParser extends FieldProgramParser {
   private static SimpleDateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss a");
 
   public INElkhartCountyParser() {
-    super("ELKHART COUNTY", "IN", "CALL:CALL! ADDR:ADDR! UNIT:UNIT! CITY:CITY! ST:ST! INFO:INFO!");
+    super("ELKHART COUNTY", "IN", "CALL:CALL? ADDR:ADDR! UNIT:UNIT! CITY:CITY! ST:ST! INFO:INFO!");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "@c-msg.net";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher mat = DATE_TIME_PTN.matcher(body);
-    if (!mat.matches()) return false;
-    body = mat.group(1).trim();
-    data.strDate = mat.group(2);
-    setTime(TIME_FMT, mat.group(3), data);
-    return super.parseMsg(body, data);
+    if (mat.matches()) {
+      body = mat.group(1).trim();
+      data.strDate = mat.group(2);
+      setTime(TIME_FMT, mat.group(3), data);
+    }
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strCall.length() == 0) data.strCall = "ALERT";
+    return true;
   }
 
   @Override

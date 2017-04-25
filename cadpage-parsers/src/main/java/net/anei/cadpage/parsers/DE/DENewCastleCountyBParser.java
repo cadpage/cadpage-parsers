@@ -92,7 +92,9 @@ public class DENewCastleCountyBParser extends DispatchChiefPagingParser {
     "WINTERTHUR",
     "WINTERSET",
     
-    "AVONDALE"
+    "AVONDALE",
+    
+    "NEW GARDEN TOWNSHIP"
   };
 }
 
