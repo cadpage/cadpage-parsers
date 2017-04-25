@@ -1,9 +1,12 @@
 package net.anei.cadpage.parsers.AL;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Madison County, AL
@@ -19,13 +22,25 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   
   ALMadisonCountyParser(String defCity, String defState) {
     super(CITY_TABLE, defCity, defState,
-           "EVENT:ID? Loc:ADDR EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP");
+           "EVENT:ID? Loc:ADDR EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP%");
   }
   
   @Override
   public String getFilter() {
     return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org,cad.page@hsv.madco911.com";
   }
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 150; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
+  private static final Pattern TRUNC_MAP_PTN = Pattern.compile("\\d{1,2}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -34,8 +49,9 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     do {
       if (subject.contains(CAD_MARKER)) break;
       
-      if (body.startsWith(CAD_MARKER + " / ")) {
-        body = body.substring(CAD_MARKER.length()+3);
+      if (body.startsWith(CAD_MARKER)) {
+        body = body.substring(CAD_MARKER.length()).trim();
+        body = stripFieldStart(body, "/ ");
         break;
       }
       
@@ -48,7 +64,11 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     
     // Address and call ID are both optional.  But one of them 
     // must be present
-    return data.strAddress.length() > 0 || data.strCallId.length() > 0;
+    if (data.strAddress.length() == 0 &&  data.strCallId.length() == 0) return false;
+    if (!data.expectMore) {
+      data.expectMore = TRUNC_MAP_PTN.matcher(data.strMap).matches();
+    }
+    return true;
   }
   
   private class MyAddressField extends AddressField {
