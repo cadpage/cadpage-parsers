@@ -47,8 +47,9 @@ public class PAFranklinCountyBParser extends MsgParser {
       data.strMap = fp.get(20);
       data.strChannel = fp.get(10);
       data.strUnit = fp.get(10);
-      String ch = fp.get();
+      String ch = fp.get(5);
       if (ch.length() > 0) data.strChannel = ch;
+      data.strCallId = fp.get();
       return true;
     }
     
