@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class PAClarionCountyEParser extends FieldProgramParser {
   
@@ -22,6 +24,11 @@ public class PAClarionCountyEParser extends FieldProgramParser {
     return "@oes.clarion.pa.us";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]+(?:ProQA|Questionnaire:) ");
   private static final Pattern MASTER = Pattern.compile("(.*?) - (.*?), +(.*?)(?:\n([^,].*))?[ \n]+Xstreets: *");
   private static final Pattern MBREAK_PTN = Pattern.compile(" *\n[\n ]*");
@@ -88,6 +95,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   private static final Pattern CITY_BREAK_PTN = Pattern.compile("(.* (?:BORO|TWP)) (.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CITY_BORO_PTN1 = Pattern.compile("Boro\\b *(.*?)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CITY_BORO_PTN2 = Pattern.compile("(.*?) +Boro", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTownship\\b", Pattern.CASE_INSENSITIVE);
 
   private void parseCity(String city, Data data) {
     
@@ -115,12 +123,15 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   }
   
   private String cleanCity(String city) {
+    city = stripFieldEnd(city, ".");
     Matcher match = CITY_BORO_PTN2.matcher(city);
     if (match.matches()) city = match.group(1);
+    city = TOWNSHIP_PTN.matcher(city).replaceAll("TWP");
     return city;
   }
   
   private void fixCity(Data data) {
+    if (data.strCity.length() == 0) return;
     String city = MISSPELLED_CITY_TABLE.getProperty(data.strCity.toUpperCase());
     if (city != null) data.strCity = city;
   }
@@ -156,6 +167,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       field = cleanCity(field);
       super.parse(field,  data);
       data.strApt = stripFieldStart(data.strApt, "-");
+      fixCity(data);
     }
   }
   
@@ -239,12 +251,26 @@ public class PAClarionCountyEParser extends FieldProgramParser {
     }
   }
   
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.toUpperCase().startsWith("OUT")) return "";
+    return city;
+  }
+  
+  
   private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
       "EAST BRANDY",    "East Brady",
-      "NEW BETHELEM",   "New Bethlehem"
+      "NEW BETHELEM",   "New Bethlehem",
+      "ALLEGHANY TWP",  "Allegheny Twp",
+      "ALEGHENNY TWP",  "Allegheny Twp",
+      "ALLEGHENNY TWP", "Allegheny Twp"
   }); 
   
   private static final String[] CITY_LIST = new String[]{
+      
+      // Out of county
+      "OUT OF COUNTY",
+      "OUTCOUNTY",
 
       // Boroughs
       "CALLENSBURG",
@@ -304,12 +330,15 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "MADISON TWP",
       "MAHONING TWP",
       "REDBANK TWP",
+      "WAYNE TWP",
       "PARKER",
       "PARKER CITY",
-      "SOUTH BEHTLEHEM",
+      "SOUTH BETHLEHEM",
       
       // Butler County
+      "ALLEGHANY TWP",
       "ALLEGHENY TWP",
+      "ALLEGHENNY TWP",
       "VENANGO TWP",
       "WASHINGTON TWP",
       "PARKER TWP",
@@ -345,6 +374,5 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "CRANBERRY TWP",
       "PINEGROVE TWP",
       "EMLENTON"
-
   };
 }
