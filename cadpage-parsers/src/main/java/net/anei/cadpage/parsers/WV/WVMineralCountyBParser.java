@@ -8,6 +8,11 @@ public class WVMineralCountyBParser extends DispatchSPKParser {
   public WVMineralCountyBParser() {
     super("MINERAL COUNTY", "WV");
   }
+  
+  @Override
+  public String getFilter() {
+    return "xdc@mineralcounty911.com,dispatchfire@comcast.net";
+  }
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
