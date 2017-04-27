@@ -4025,7 +4025,7 @@ Hi Folks,
 
 We have been reaching out to Cadpage users that we haven't heard from for a while, partly to see how Cadpage is working for you now. And if your department is one of many that have since switched to using Active911, we want to make sure everyone knows that Cadpage can be used with the Active911 service instead of, or in addition to the Android Active911 app. There is no additional charge for using Cadpage in this manner.
 
-We do have some features that the Active911 app still lacks -- more flexible notification options, and easier access to turn by turn navigation, for example. And some users like the simpler interface. Message alerts may be a bit more reliable. But the basic functionality will probably be about the same as the Active911 app.
+We do have some features that the Active911 app still lacks -- more flexible notification options, and easier access to turn by turn navigation, for example. And some users like the simpler interface. But the basic functionality will probably be about the same as the Active911 app.
 
 If you have an Android device and are not currently using Cadpage and would like to try it. You can install Cadpage from the Google Play Store. Then open Cadpage settings and select
 Direct Paging Vendors > Active911 > Register
