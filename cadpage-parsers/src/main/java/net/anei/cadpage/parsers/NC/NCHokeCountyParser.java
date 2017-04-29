@@ -19,7 +19,7 @@ public class NCHokeCountyParser extends DispatchVisionAirParser {
   
   @Override
   public String getFilter() {
-    return "Hoke@hokecounty.org,HokeCo911@hokecounty.org,hoke911@hokecounty.org";
+    return "Hoke@hokecounty.org,HokeCo911@hokecounty.org,hoke911@hokecounty.org,hokecounty911@gmail.com";
   }
   
   @Override
