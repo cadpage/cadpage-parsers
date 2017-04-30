@@ -16,6 +16,11 @@ public class VTHartfordParser extends DispatchA19Parser {
   }
   
   @Override
+  public String getFilter() {
+    return "fire@hartford-vt.org,spillman@test.com";
+  }
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     if (NH_CITIES.contains(data.strCity.toUpperCase())) data.strState = "NH";
