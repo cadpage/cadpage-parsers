@@ -73,10 +73,12 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
   private static final Pattern CR_XX_PTN = Pattern.compile(" *\\b[A-Z]{2,3}-[A-Z]{2,3}\\b *");
   
   private static final String[] MWORD_STREET_NAMES = new String[]{
+      "ANN JULIAN",
       "BAKERS BRIDGE",
       "BEECH CREEK",
       "BERRY CHAPEL",
       "CARRIAGE HILLS",
+      "CHESTNUT SPRINGS",
       "COOL SPRINGS",
       "CROWNE BROOKE",
       "EXECUTIVE CENTER",
@@ -87,6 +89,7 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "GRAND OAKS",
       "GRANNY WHITE",
       "GREEN HILL",
+      "HARPETH RIVER",
       "HIGH LEA",
       "HIGH OAKS",
       "HOLLY TEE GAP",
@@ -108,8 +111,10 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "RED OAK",
       "RIVER OAKS",
       "ROCKY SPRINGS",
+      "ROSEWOOD VALLEY",
       "SHADOW CREEK",
       "SHADOW RIDGE",
+      "SHINING ORE",
       "SUMMIT VIEW",
       "TORREY PINES",
       "TWIN SPRINGS",
@@ -119,6 +124,7 @@ public class TNWilliamsonCountyBParser extends DispatchB2Parser {
       "WARDLEY PARK",
       "WEST MCEWEN",
       "WILSON PIKE"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
