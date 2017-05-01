@@ -63,6 +63,7 @@ public class OHLakeCountyParser extends FieldProgramParser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CO", "CONCORD TWP",
       "FH", "FAIRPORT HARBOR",
+      "GR", "GRAND RIVER",
       "LE", "LEROY TWP",
       "MA", "MADISON",
       "MV", "MADISON",

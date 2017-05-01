@@ -582,7 +582,6 @@ public class MsgInfo {
   private static final Pattern BLV_PTN = Pattern.compile("\\bBLV\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern TL_PTN = Pattern.compile("\\bTL\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern TRC_PTN = Pattern.compile("\\bTRC\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern GR_PTN = Pattern.compile("\\bGR\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern CRSN_PTN = Pattern.compile("\\bCRSN\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern CG_PTN = Pattern.compile("\\bCG\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern BYP_PTN = Pattern.compile("\\bBY?P\\b", Pattern.CASE_INSENSITIVE);
@@ -625,7 +624,6 @@ public class MsgInfo {
     sAddr = replace(sAddr, BLV_PTN, "BLVD");
     sAddr = replace(sAddr, TL_PTN, "TRL");
     sAddr = replace(sAddr, TRC_PTN, "TRCE");
-    sAddr = replace(sAddr, GR_PTN, "GRADE");
     sAddr = replace(sAddr, CRSN_PTN, "CRESCENT");
     sAddr = replace(sAddr, CG_PTN, "CROSSING");
     sAddr = replace(sAddr, BYP_PTN, "BYPASS");
