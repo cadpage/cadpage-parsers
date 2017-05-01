@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 /**
  * Bell County, TX
  */
@@ -13,7 +15,7 @@ public class TXBellCountyParser extends FieldProgramParser {
   
   public TXBellCountyParser() {
     super(CITY_CODES, "BELL COUNTY", "TX",
-        "PRI LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
+        "PRI LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
     setupGpsLookupTable(GPS_TABLE);
   }
   
@@ -22,13 +24,22 @@ public class TXBellCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      
+    };
+  }
+
+  @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
   
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Comments:|CALLER NAME:|CLRNUM:|TIME:)");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = body.replace("Comments:", " Comments:");
+    body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getProperty(data.strCode);
     if (call == null) {
@@ -55,6 +66,7 @@ public class TXBellCountyParser extends FieldProgramParser {
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
 
@@ -125,6 +137,14 @@ public class TXBellCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "UNIT PHONE GPS INFO";
+    }
+  }
+  
+  private class MyTimeField extends TimeField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) data.expectMore = true;
+      super.parse(field, data);
     }
   }
   
