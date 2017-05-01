@@ -25,7 +25,7 @@ public class CAElDoradoCountyParser extends MsgParser {
   private static final Pattern MAP_URL_PTN = Pattern.compile("<a href=.*?$");
   private static final Pattern UNIT_PTN = Pattern.compile("(?:;|  |(?<=\\)) ) *([ A-Z0-9\\[\\]]+)$");
   private static final Pattern CITY_UNIT_PTN = Pattern.compile(", *([_A-Za-z0-9]+) ([ A-Z0-9\\[\\]]+)$");
-  private static final Pattern MASTER = Pattern.compile("^(.*?)[:;] Inc# ([A-Z]*\\d+)[:;] (.*?) *(?:,([_A-Za-z0-9]*) *)?");
+  private static final Pattern MASTER = Pattern.compile("(.*?)[:;] Inc# ([A-Z]*\\d*)[:;] (.*?) *(?:,([_A-Za-z0-9]*) *)?");
   private static final Pattern B_ADDR = Pattern.compile("=[BL]\\(.*\\)");
   private static final DateFormat DATE_FMT = new SimpleDateFormat("dd-MMM-yyyy");
   
