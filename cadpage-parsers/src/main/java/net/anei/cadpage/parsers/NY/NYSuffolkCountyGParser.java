@@ -17,7 +17,7 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "commackfd@gmail.com,commackfd2@gmail.com";
+    return "commackfd@gmail.com,commackfd2@gmail.com,paging1@firerescuesystems.xohost.com";
   }
   
   @Override
@@ -48,7 +48,7 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
       data.strCity = p.getLast(',');
       String address = p.get();
       if (address.length() == 0) abort();
-      parseAddress(address, data);
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, address, data);
     }
     
     @Override
