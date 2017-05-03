@@ -9,30 +9,39 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NYNassauCountyMParser extends FieldProgramParser {
   
-  private static final Pattern ID_PTN = Pattern.compile("\\b\\d{4}-\\d{6}$");
-  
   public NYNassauCountyMParser() {
     super("NASSAU COUNTY", "NY",
-          "TOA:TIMEDATE! CALL CALL+? ADDRCITY! NAME CS:X");
+          "EMPTY TOA:TIMEDATE! CALL/SDS CALL/SDS+? ADDRCITY! NAME CS:X");
   }
   
   @Override
   public String getFilter() {
-    return "alarms@oceansidefd.net,paging@oceansidefd.info";
+    return "alarms@oceansidefd.net,paging@oceansidefd.info,paging@oceansidefdinfo.com";
   }
+
+  private static final Pattern PREFIX_PTN = Pattern.compile("(.*) (?=TOA:)");
+  private static final Pattern ID_PTN = Pattern.compile("\\b\\d{4}-\\d{6}$");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    Matcher match = ID_PTN.matcher(body);
-    if (!match.find()) return false;;
-    data.strCallId = match.group();
-    body = body.substring(0,match.start()).trim();
+    data.strSource = subject;
+    
+    Matcher match = PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strCall = match.group(1).trim();
+      body = body.substring(match.end());
+    }
+    match = ID_PTN.matcher(body);
+    if (match.find()) {
+      data.strCallId = match.group();
+      body = body.substring(0,match.start()).trim();
+    }
     return parseFields(body.split("\n"), 4, data);
   }
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " ID";
+    return "SRC " + super.getProgram() + " ID";
   }
   
   @Override
