@@ -28,6 +28,34 @@ Good luck,
 -Ken
 
 **************************************************************************
+No email address - wanting to pay with check
+
+
+Before I tell you about our payment options, please note the following:
+
+You presumably do have a configured email address, but you have not
+granted Cadpage permission to access your account information.  Without
+that access, Cadpage does not know who you are and can not confirm
+whether or not you have a subscription.
+
+If you use the Google Play Store payment option mentioned in my next email, you do not need to do anything about that.
+
+If you decide to send a check via SNAIL mail, then you will need to do the following:
+
+Cadpage needs the GET_ACCOUNTS permission to process your subscription request. 
+It would have prompted you to grant this
+permission the first time you tried to send us a support email or
+recalculate your payment status.  But if you declined that request, and
+checked the "Never ask again" box, you will never again be prompted to
+grant be permission.  If this is the case, the only way to fix things is
+to open the main Android settings and select
+Apps > Cadpage > Permissions
+then enable the "Contact" permission.
+
+Details on payment options are in the next email.
+
+
+**************************************************************************
 * Not receiving runs/ calls, pages
 **************************************************************************
 
