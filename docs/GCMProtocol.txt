@@ -68,7 +68,7 @@ req=reregister  Used by Cadpage to report a change to the device registration ID
     type            GCM for now (Another code my be used in future for Apple Push connections)
     CadpageRegId    New Cadpage registration ID
     version         Cadpage client version
-    UserReq         "Y" is user requested registration request
+    userReq         "Y" is user requested registration request
                     "N" if automatic registration request
     transfer        "Y" Cadpage configuration has been copied from another device
     

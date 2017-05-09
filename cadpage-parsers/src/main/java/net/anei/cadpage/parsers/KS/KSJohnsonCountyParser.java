@@ -1,7 +1,11 @@
 package net.anei.cadpage.parsers.KS;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 /**
  * Johnson County, KS
  */
@@ -9,7 +13,8 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
 
   public KSJohnsonCountyParser() {
     super("JOHNSON COUNTY", "KS",
-           "SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X");
+          "( Address_UpdateIncident_#:ID! Add:ADDR! Apt:APT! " +
+          "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X ) END");
   }
   
   @Override
@@ -17,8 +22,21 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
     return "93001,ecc1@jocogov.org,ecc2@jocogov.org,ecc3@jocogov.org,ecc4@jocogov.org,@jocofd1.org,@jocoems.org,2183500185";
   }
   
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Call Times +(.*?) +incident#:(.*)");
+  private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<![ a-z]) +");
+
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("INFO ID");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strSupp = RUN_REPORT_BRK.matcher(match.group(1)).replaceAll("\n");
+      data.strCallId = match.group(2);
+      return true;
+    }
     
     body = body.replaceAll("Incident#", "Incident:");
     return super.parseMsg(body, data);
