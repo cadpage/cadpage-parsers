@@ -744,6 +744,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_CNCT_PTN = Pattern.compile("(?:[/&]|AND\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   protected class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -754,7 +755,15 @@ public class DispatchSouthernParser extends FieldProgramParser {
         if (!chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) flags |= FLAG_ANCHOR_END;
         if (!chkFlag(DSFLG_ADDR_NO_IMPLIED_APT)) flags |= FLAG_RECHECK_APT;
         parseAddress(StartType.START_ADDR, flags, field, data);
-        if (chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) data.strPlace = append(data.strPlace, " - ", getLeft());
+        if (chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) {
+          String left = getLeft();
+          Matcher match = ADDR_CNCT_PTN.matcher(left);
+          if (match.matches()) {
+            data.strAddress = append(data.strAddress, " & ", match.group(1));
+          } else {
+            data.strPlace = append(data.strPlace, " - ", left);
+          }
+        }
         data.strAddress = append("1", " ", data.strAddress);
       } else {
         super.parse(field, data);
