@@ -347,7 +347,7 @@ public class DispatchB2Parser extends DispatchBParser {
     return super.getField(name);
   }
 
-  private class BaseCallField extends CallField {
+  protected class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       field = parseCallCode(field, data);
@@ -361,7 +361,7 @@ public class DispatchB2Parser extends DispatchBParser {
     }
   }
   
-  private class BaseCallAddressField extends AddressField {
+  protected class BaseCallAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = parseCallCode(field, data);
