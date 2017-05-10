@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,10 +76,15 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     String program = 
         (version == FLG_VERSION_1 ?
             "( TIME:TIME_INFO! TYP:CALL " +
-            "| AD:ADDR! LOC:CITY TIME:TIME_INFO! TYP:CALL " +
-            "| LOC:ADDR! AD:PLACE! DESC:CALL! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N+ " +
-            "| PRI:PRI INC:ID CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
-              " Original_Location:PLACE2? CMT2:INFO/N CMT3:INFO/N CMT4:INFO/N CMT5:INFO/N Original_Location:PLACE2? CE:INFO? CMT2:INFO CALLER_STATEMENT:INFO? STATEMENT:INFO? TIME:TIME UNTS:UNIT XST:X XST2:X UNTS:UNIT XST:X XST2:X )"
+            "| PRI:PRI INC:ID " +
+                "( AD:ADDR! LOC:CITY TIME:TIME_INFO! TYP:CALL " +
+                "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! DESC:INFO! TYP:CODE! TYPN:CALL! CMT1:INFO/N! TIME:DATETIME UNS:UNIT " +
+                                      "| DESC:CALL! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N+ " + 
+                                      ") " +
+                "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
+                  " Original_Location:PLACE2? CMT2:INFO/N CMT3:INFO/N CMT4:INFO/N CMT5:INFO/N Original_Location:PLACE2? CE:INFO? CMT2:INFO CALLER_STATEMENT:INFO? STATEMENT:INFO? TIME:TIME UNTS:UNIT XST:X XST2:X UNTS:UNIT XST:X XST2:X " + 
+                ") " + 
+           ") END"
         : version == FLG_VERSION_2 ?
             "TYP:CALL! LOC:PLACE! AD:ADDR/S! XST:X! CMT1:INFO! UNTS:UNIT!"
         : null);    
@@ -119,12 +126,15 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
   
+  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("EEEEEE, MMM dd, yyyy hh:mm:ss aa");
+  
   @Override
   public Field getField(String name) {
     if (name.equals("PRI")) return new BasePriorityField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("TIME_INFO")) return new BaseTimeInfoField();
     if (name.equals("CALL2")) return new BaseCall2Field();

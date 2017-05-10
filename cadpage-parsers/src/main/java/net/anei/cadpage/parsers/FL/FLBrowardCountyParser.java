@@ -1,8 +1,12 @@
 package net.anei.cadpage.parsers.FL;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchPrintrakParser;
 
 /**
@@ -21,10 +25,31 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
   }
 
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean mixedMsgOrder() { return true; }
+    };
+  }
+  
+  private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?) +([A-Z]{2}/[ A-Z]+)");
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    Matcher match = TRAIL_CH_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1);
+      data.strChannel = match.group(2);
+    } else {
+      data.expectMore = true;
+    }
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " CH";
   }
 
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
