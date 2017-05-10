@@ -46,7 +46,7 @@ public class PAFranklinCountyBParser extends MsgParser {
       if (!fp.check("  ")) return false;
       data.strMap = fp.get(20);
       data.strChannel = fp.get(10);
-      data.strUnit = fp.get(10);
+      data.strUnit = fp.get(10).replace('-', '_');
       String ch = fp.get(5);
       if (ch.length() > 0) data.strChannel = ch;
       data.strCallId = fp.get();
@@ -66,7 +66,7 @@ public class PAFranklinCountyBParser extends MsgParser {
       if (!fp.check("  ")) return false;
       data.strMap = fp.get(20);
       data.strChannel = fp.get(10);
-      data.strUnit = fp.get(10);
+      data.strUnit = fp.get(10).replace('-', '_');;
       String ch = fp.get();
       if (ch.length() > 0) data.strChannel = ch;
       return true;
@@ -74,7 +74,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     
     if (fp.checkAhead(70, "Apt.")) {
       setFieldList("UNIT CALL ADDR APT CITY X GPS MAP");
-      data.strUnit = fp.get(10);
+      data.strUnit = fp.get(10).replace('-', '_');;
       data.strCall = fp.get(20);
       parseAddress(fp.get(40), data);
       if (!fp.check("Apt.")) return false;
@@ -148,7 +148,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     fp.checkBlanks(10);
     data.strMap = fp.get(30);
 
-    if (!parseDateTime(fp, data)) data.strUnit = fp.get(10);
+    if (!parseDateTime(fp, data)) data.strUnit = fp.get(10).replace('-', '_');;
     data.strSupp = fp.get();
     return true;
   }

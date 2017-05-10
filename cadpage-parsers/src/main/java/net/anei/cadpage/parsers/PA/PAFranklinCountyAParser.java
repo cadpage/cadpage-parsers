@@ -75,7 +75,7 @@ public class PAFranklinCountyAParser extends FieldProgramParser {
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace(' ', '_');
+      field = field.replace(' ', '_').replace('-', '_');
       super.parse(field, data);
     }
   }
