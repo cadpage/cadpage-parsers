@@ -81,8 +81,10 @@ public class DispatchProQAParser extends FieldProgramParser {
       setFieldList("ID INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
-      data.strSupp = append(getOptGroup(match.group(2)), "\n", 
-                            match.group(3).replace('/', '\n').trim());
+      String cancel = match.group(2);
+      String info = addTimeLabels(match.group(3).trim(), cancel != null);
+      if (cancel != null) info = append(cancel, "\n", info);
+      data.strSupp = info;
       return true;
     }
     
@@ -92,9 +94,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
       data.strUnit = match.group(2);
-      for (String time : match.group(3).split("/")) {
-        data.strSupp = append(data.strSupp, "\n", time.trim());
-      }
+      data.strSupp = addTimeLabels(match.group(3).trim(), false);
       return true;
     }
     
@@ -118,6 +118,48 @@ public class DispatchProQAParser extends FieldProgramParser {
     body = body.replace("ProQA comments:", "/");
     String[] lines = delimPattern.split(body);
     return parseFields(lines, data);
+  }
+  
+  private static final Pattern LINE_BRK_PTN = Pattern.compile(" */ *");
+  private static final Pattern TIME_LINE_PTN = Pattern.compile("\\d\\d:\\d\\d(?::\\d\\d)?");
+  private static final String[] RUN_REPORT_LABELS = new String[]{
+      "911 Call",
+      "Dispatched",
+      "En Route",
+      "On Scene",
+      "Transporting",
+      "At Destination",
+      "Clear",
+      "Available"
+  };
+
+  private static final String addTimeLabels(String info, boolean cancel) {
+    String[] lines = LINE_BRK_PTN.split(info);
+    int endLabelNdx;
+    for (int ndx = 0; ; ndx++) {
+      if (ndx >= lines.length || !TIME_LINE_PTN.matcher(lines[ndx]).matches()) {
+        endLabelNdx = ndx;
+        break;
+      }
+    }
+    if (cancel) endLabelNdx--;
+    
+    StringBuilder sb = new StringBuilder();
+    for (int ndx = 0; ndx < lines.length; ndx++) {
+      if (sb.length() > 0) sb.append('\n');
+      if (ndx < endLabelNdx) {
+        if (ndx < RUN_REPORT_LABELS.length) {
+          sb.append(RUN_REPORT_LABELS[ndx]);
+          sb.append(' ');
+        }
+      }
+      else if (cancel && ndx == endLabelNdx) {
+        sb.append("Cancelled ");
+      }
+      sb.append(lines[ndx]);
+    }
+    
+    return sb.toString();
   }
   
   @Override
