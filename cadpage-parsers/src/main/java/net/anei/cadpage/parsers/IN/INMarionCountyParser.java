@@ -18,7 +18,7 @@ public class INMarionCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "CAD@pager.mecagov.org,CAD@page.indy.gov,777,888,93001";
+    return "CAD@pager.mecagov.org,CAD@page.indy.gov,777,888,93001,72436";
   }
   
   private static final Pattern EX_PTN = Pattern.compile("\\bEX\\b", Pattern.CASE_INSENSITIVE);

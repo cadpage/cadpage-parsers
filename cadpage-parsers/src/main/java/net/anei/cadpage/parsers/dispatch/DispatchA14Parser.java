@@ -171,6 +171,7 @@ public class DispatchA14Parser extends FieldProgramParser {
         data.strMap = field.substring(pt+6).trim();
         field = field.substring(0,pt).trim();
       }
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
     
