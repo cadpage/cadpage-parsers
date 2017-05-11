@@ -17,7 +17,16 @@ public class DispatchA32Parser extends FieldProgramParser {
   
   public DispatchA32Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "( ADDR CALL! | CALL ( DATETIME2 District:MAP? ID? PLACE+? ADDR/Z CITY_ST! | ( ADDR_PL ADDR_PL ADDR_PL2 CITY! | ADDR_PL ADDR_PL2 CITY! | ADDR/Z CITY! | PLACE ADDR! INFO | ADDR! INFO ) District:MAP? INFO+? DATETIME ) ) INFO+");
+          "( ADDR CALL! " + 
+          "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! ) District:MAP? ID? PLACE+? ADDR/Z CITY_ST! " + 
+                 "| ( ADDR_PL ADDR_PL ADDR_PL2 CITY! " + 
+                   "| ADDR_PL ADDR_PL2 CITY! " + 
+                   "| ADDR/Z CITY! " + 
+                   "| PLACE ADDR! INFO " + 
+                   "| ADDR! INFO " + 
+                   ") District:MAP? INFO+? DATETIME " + 
+                 ") " + 
+          ") INFO+");
   }
   
   @Override
@@ -32,6 +41,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     if (name.equals("DATETIME2")) return new MyDateTime2Field();
     if (name.equals("ID")) return new IdField("\\d\\d-\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY_ST")) return new MyCityStateField();
     if (name.equals("ADDR_PL")) return new MyAddressPlaceField(false);
     if (name.equals("ADDR_PL2")) return new MyAddressPlaceField(true);
@@ -80,6 +90,20 @@ public class DispatchA32Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "APT PLACE";
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Addr:");
+      super.parse(field, data);
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      field = stripFieldStart(field, "Addr:");
+      return super.checkParse(field, data);
     }
   }
   

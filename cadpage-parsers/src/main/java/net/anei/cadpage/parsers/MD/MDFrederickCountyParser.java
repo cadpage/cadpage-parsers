@@ -24,7 +24,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "www.codemessaging.net,CAD@psb.net,@c-msg.net,messaging@iamresponding.com,89361";
+    return "www.codemessaging.net,CAD@psb.net,@c-msg.net,messaging@iamresponding.com,IntergraphNotificati@frederickcountymd.gov,89361";
   }
   
   @Override
@@ -105,7 +105,6 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         data.strPlace = getOptGroup(match.group(4));
         addr = stripCity(addr, data);
         
-        Result res = parseAddress(StartType.START_OTHER, FLAG_NO_CITY | FLAG_ANCHOR_END, addr);
         parseAddress(addr, data);
       }
   
@@ -639,6 +638,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       "OUTSIDE / INVESTIGATION OF SMOKE",
       "OUTSIDE FIRE (SPECIFY)",
       "OUTSIDE FIRE / SMALL BRUSH FIRE",
+      "OUTSIDE FIRE / SMALL BRUSH FIRE WITH VEHICLE",
       "OUTSIDE FIRE / VEHICLE (specify)",
       "OUTSIDE FIRE / LARGE BRUSH",
       "OUTSIDE FIRE / LARGE BRUSH FIRE",
