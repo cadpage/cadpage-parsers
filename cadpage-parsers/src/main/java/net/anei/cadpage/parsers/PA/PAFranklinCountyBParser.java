@@ -33,10 +33,10 @@ public class PAFranklinCountyBParser extends MsgParser {
     
     String zip = fp.lookahead(449,  5);
     if (ZIP_PTN.matcher(zip).matches()) {
-      setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH");
+      setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH ID");
       data.strCall = fp.get(20);
-      parseAddress(fp.get(30), data);
-      if (!fp.checkBlanks(370)) return false;
+      parseAddress(fp.get(50), data);
+      if (!fp.checkBlanks(350)) return false;
       data.strApt = append(data.strApt, "-", fp.get(9));
       data.strCity = fixCity(fp.get(20));
       zip = fp.get(5);
