@@ -25,8 +25,7 @@ public class INHamiltonCountyDParser extends FieldProgramParser {
   private static final Pattern DELIM = Pattern.compile("\n+");
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CADPage")) return false;
+  protected boolean parseMsg(String body, Data data) {
     return parseFields(DELIM.split(body), data);
   }
   
