@@ -1,13 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Marshall County, NC
- */
-public class KYMarshallCountyParser extends DispatchGeoconxParser {
+
+public class KYMarshallCountyParser extends GroupBestParser {
   
   public KYMarshallCountyParser() {
-    super("MARSHALL COUNTY", "KY", GCX_FLG_EMPTY_SUBJECT_OK);
+    super(new KYMarshallCountyAParser(), new KYMarshallCountyBParser());
   }
 }
