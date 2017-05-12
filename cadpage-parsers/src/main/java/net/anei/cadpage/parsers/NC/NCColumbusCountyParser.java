@@ -1,7 +1,14 @@
 
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
@@ -9,11 +16,18 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCColumbusCountyParser extends DispatchSouthernParser {
 
   public NCColumbusCountyParser() {
-    super(CITY_LIST, "COLUMBUS COUNTY", "NC", DSFLAG_DISPATCH_ID | DSFLAG_LEAD_PLACE | DSFLAG_CROSS_NAME_PHONE);
-    setupMultiWordStreets(MWORD_STREET_LIST);
+    super(CITY_LIST, "COLUMBUS COUNTY", "NC", 
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME);
+    setupSpecialStreets("HWY 701 N BY PASS");
     setupProtectedNames("ROUGH AND READY RD");
+    removeWords("PLACE");
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
@@ -21,83 +35,127 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
       data.strAddress = append(data.strAddress, " ", data.strApt);
       data.strApt = "";
     }
+    data.strCity = convertCodes(data.strCity.toUpperCase(), MISSPELLED_CITY_TABLE);
+    if (SC_CITY_SET.contains(data.strCity)) data.strState = "SC";
     return true;
   }
   
-  private static final String[] MWORD_STREET_LIST = new String[]{
-    "A D HINSON",
-    "ANDREW JACKSON",
-    "BRICK CITY",
-    "C H BUFFKIN",
-    "CARL SIMMONS",
-    "CARL STEPHENS",
-    "CLARENDON CHADBOURN",
-    "CLYDE NORRIS",
-    "COLUMBUS CORNERS",
-    "COVEY RUN",
-    "COX TOWN",
-    "ERIC L COOK",
-    "F M CARTRET",
-    "FARM POND",
-    "FLOWERS PRIDGEN",
-    "FRANK NORRIS",
-    "GARLAND DUNCAN",
-    "GLENN BUFFKIN",
-    "GREEN ACRES",
-    "GREEN HILL",
-    "GREEN SEA",
-    "HORACE COX",
-    "J K POWELL",
-    "JAMES B WHITE",
-    "JK POWELL",
-    "JOE BROWN",
-    "JOHN COX",
-    "KENNY JORDAN",
-    "L DUNCAN",
-    "L F HINSON",
-    "LEBANON CHURCH",
-    "LESLIE NEWSOME",
-    "LESTER SMITH",
-    "LOVE MILL",
-    "LOVETT BUFFKIN",
-    "M M RAY",
-    "MARTIN LUTHER KING",
-    "MILL BRANCH CH",
-    "MILL POND",
-    "MILLER FARM",
-    "MINOS MEARES",
-    "PINE CIRCLE",
-    "PINE LOG",
-    "PINE NEEDLE",
-    "R C SELLERS",
-    "R CRIBB",
-    "RALPH SPIVEY",
-    "RICHLAND PARK",
-    "RIDGELAND ACRES",
-    "SAWMILL APARTMENTS",
-    "SCHOOL HOUSE",
-    "SHORT CUT",
-    "SHUG NORRIS",
-    "SLIPPERY LOG",
-    "SWAMP FOX",
-    "VINEGAR LOOP",
-    "WALTER TODD",
-    "WILL ANDERSON",
-    "WILL INMAN"
-  };
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CITY", "CITY ST");
+  }
+  
+  private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
+      "CHADBURN",   "CHADBOURN",
+      "NICOLS",     "NICHOLS"
+  });
+  
+  private static final Set<String> SC_CITY_SET = new HashSet<String>(Arrays.asList(
+      "MARION COUNTY",
+      "MARION CO",
+      "NICHOLS"
+  ));
 
   private static final String[] CITY_LIST = new String[]{
+    
+    // Cities
+    "TABOR CITY",
+    "WHITEVILLE",
+    
+    // Towns
     "BOARDMAN",
     "BOLTON",
     "BRUNSWICK",
     "CERRO GORDO",
     "CHADBOURN",
+    "CHADBURN",   // Misspelled
     "CLARENDON",
     "FAIR BLUFF",
+    "FAIRBLUFF",
     "LAKE WACCAMAW",
     "SANDYFIELD",
-    "TABOR CITY",
-    "WHITEVILLE"
     
+    // Townships
+    "BOGUE TWP",
+    "BOLTON TWP",
+    "BUG HILL TWP",
+    "CERRO GORDO TWP",
+    "CHADBOURN TWP",
+    "FAIR BLUFF TWP",
+    "LEES TWP",
+    "RANSOM TWP",
+    "SOUTH WILLIAMS TWP",
+    "TATUMS TWP",
+    "WACCAMAW TWP",
+    "WELCH CREEK TWP",
+    "WESTERN PRONG TWP",
+    "WILLIAMS TWP",
+    "WHITEVILLE TWP",
+
+    // Census-designated places
+    "DELCO",
+    "EVERGREEN",
+    "HALLSBORO",
+    "RIEGELWOOD",
+
+    // Unincorporated areas
+    "ACME",
+    "CHERRY GROVE",
+    "EVERGREEN",
+    "NAKINA",
+    "OLYPHIC",
+    "PIREWAY",
+    "RIVERVIEW",
+    "SELLERSTOWN",
+    
+    // Bladen County
+    "BLADEN COUNTY",
+    "BLADEN CO",
+    "HOLLOW TWP",
+    "WHITE OAK TWP",
+    "TURNBULL TWP",
+    "BLADENBORO",
+    "CLARKTON",
+    "TAR HEEL",
+    "WHITE OAK",
+    
+    // Brunswick County
+    "BRUNSWICK COUNTY",
+    "BRUNSWICK CO",
+    "SHALLOTTE TWP",
+    "WACCAMAW TWP",
+    "LOCKWOODS FOLLY TWP",
+    "TOWN CREEK TWP",
+    "NORTHWEST TWP",
+    "ASH",
+    "NORTHWEST",
+    "SANDY CREEK",
+    
+    // Horry County
+    "HORRY COUNTY",
+    "HORRY CO",
+    
+    // Marion County, SC
+    "MARION COUNTY",
+    "MARION CO",
+    "NICHOLS",
+    "NICOLS" ,   // Misspelled
+    
+    // Pender County
+    "PENDER COUNTY",
+    "PENDER CO",
+    "CANETUCK TWP",
+    
+    // Robeson County
+    "ROBESON COUNTY",
+    "ROBESON CO",
+    "BRITTS TWP",
+    "EAST HOWELLSVILLE TWP",
+    "ORRUM TWP",
+    "STERLINGS TWP",
+    "WISHART TWP",
+    "LUMBERTON",
+    "ORRUM",
+    "PROCTORVILLE"
   };
 }
