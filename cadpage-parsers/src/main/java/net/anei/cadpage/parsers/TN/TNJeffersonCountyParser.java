@@ -12,7 +12,7 @@ public class TNJeffersonCountyParser extends DispatchSouthernParser {
   public TNJeffersonCountyParser() {
     super(CITY_LIST, "JEFFERSON COUNTY", "TN", 
           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE2|DSFLG_OPT_ID|DSFLG_TIME);
-    removeWords("CIRCLE", "COURT", "PLACE", "TERRACE");
+    removeWords("CIRCLE", "COURT", "COVE", "PLACE", "ROAD", "TERRACE");
   }
   
   @Override
@@ -37,6 +37,11 @@ public class TNJeffersonCountyParser extends DispatchSouthernParser {
     }
   }
 
+  @Override
+  protected int getExtraParseAddressFlags() {
+    return FLAG_CROSS_FOLLOWS;
+  }
+
   private static final String[] CITY_LIST = new String[]{
     "JEFFERSON CITY",
     "CHESTNUT HILL",
@@ -49,7 +54,11 @@ public class TNJeffersonCountyParser extends DispatchSouthernParser {
     "WHITE PINE",
     
     // Hamblen County
-    "MORRISTOWN"
+    "MORRISTOWN",
+    
+    // Sevior County
+    "GATLINBURG",
+    "PITTMAN CENTER"
   };
 
 }
