@@ -9,6 +9,7 @@ public class WIKenoshaCountyParser extends GroupBestParser {
   public WIKenoshaCountyParser() {
     super(new WIKenoshaCountyAParser(), 
            new WIKenoshaCountyBParser(),
-           new WIKenoshaCountyCParser());
+           new WIKenoshaCountyCParser(),
+           new WIKenoshaCountyDParser());
   }
 }

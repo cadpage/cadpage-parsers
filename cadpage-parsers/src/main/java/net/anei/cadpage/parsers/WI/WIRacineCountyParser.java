@@ -4,6 +4,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 public class WIRacineCountyParser extends GroupBestParser {
   public WIRacineCountyParser() {
-    super(new WIRacineCountyAParser(), new WIRacineCountyBParser());
+    super(new WIRacineCountyAParser(), new WIRacineCountyBParser(), 
+          new WIRacineCountyCParser());
   }
 }

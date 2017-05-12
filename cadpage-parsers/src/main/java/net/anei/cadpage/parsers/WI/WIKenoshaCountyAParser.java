@@ -23,7 +23,7 @@ public class WIKenoshaCountyAParser extends SmartAddressParser {
   
   @Override
   public String getAliasCode() {
-    return "WIKenoshaCounty";
+    return "WIKenoshaACounty";
   }
   
   @Override
