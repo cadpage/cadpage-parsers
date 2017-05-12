@@ -27,6 +27,8 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
         "G LEGG",
         "HOYT HOLDER",
         "HOYT WOOD",
+        "INDIAN CREEK",
+        "JACKSON COMMONS",
         "JACKSON TRAIL",
         "JESSE CRONIC",
         "LAGREE DUCK",
@@ -38,13 +40,20 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
         "POSSUM CREEK",
         "RAFORD WILSON",
         "REMINGTON PARK",
+        "ROYAL CREST",
+        "SUMMER SPRINGS",
         "THOMPSON MILL",
         "TOM WHITE",
+        "TOWNE CTR",
+        "TURNING LEAF",
         "WALNUT RIDGE",
         "WALNUT WOODS",
+        "WEST JACKSON COMMONS",
+        "WEST JACKSON",
         "WOOD CREST",
         "ZION CHURCH"
    );
+    addRoadSuffixTerms("CRK");
   }
   
   @Override
@@ -61,12 +70,17 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "1070 FIRE",
       "1070R RESIDENTIAL FIRE",
+      "ABDOMINAL PAIN",
       "ACCIDENT - INJURIES",
       "ACCIDENT - NO INJURIES",
+      "ACTIVITY",
       "ALARM-ADVISE TYPE",
       "ALLERGIC REACTION",
       "ASSIST",
       "ASSISTING MOTORIST",
+      "BOLO",
+      "CANCER PATIENT",
+      "CARDIAC ARREST",
       "CHEST PAIN/RESPIRATORY DISTRES",
       "COMMERCIAL FIRE",
       "CONVULSION/SEIZURE",
@@ -74,11 +88,13 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
       "DRUG OVERDOSE",
       "FIRE",
       "FRACTURE",
+      "HEMORRHAGE",
       "HIT AND RUN",
       "ILLEGAL",
       "INJURY",
       "KEYS LOCKED IN VEH W/OCCP",
       "MEDICAL ALERT ACTIVATION",
+      "MISSING PERSON OR JUVENILE",
       "NOT REGULAR CALL",
       "OB CALL",
       "PROBLEM UNKNOWN",
@@ -88,7 +104,9 @@ public class GAJacksonCountyParser extends DispatchB2Parser {
       "STOPPING SUSPICIOUS VEHICLE",
       "STROKE/CVA PATIENT",
       "SUBJECT ILL",
-      "SYNCOPAL EPISODE (FAINTING)"
+      "SUICIDE OR ATTEMPT",
+      "SYNCOPAL EPISODE (FAINTING)",
+      "TRANSPORT PATIENT"
   );
   
   private static final String[] CITY_LIST = new String[]{
