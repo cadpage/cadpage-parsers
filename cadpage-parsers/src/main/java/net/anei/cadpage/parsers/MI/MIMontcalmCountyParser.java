@@ -12,7 +12,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "MONTCALM COUNTY", "MI",
           "( CANCEL ADDR CITY/Y " + 
           "| FYI? ( ( ID2 UNIT? | UNIT ) CALL ADDR! DUPADDR? ( CITY/Y! | SKIP CITY/Y! | SKIP EMPTY/Z CITY/Y! | CITY? ) X+? ( SKIP ID | ID? ) " + 
-                 "| DATETIME? ADDR ( ID | CALL! X+? ) ) ) INFO/N+");
+                 "| DATETIME? ADDR CITY? ( ID | CALL! X+? ) ) ) INFO/N+");
   }
   
   @Override
@@ -37,7 +37,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM|NEWYM)\\b,?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM|NEWYM|SLR)\\b,?)+", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DUPADDR")) return new MyDupAddressField();
     if (name.equals("CITY")) return new MyCityField();
@@ -136,6 +136,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       "MAPL", "MAPLE VALLEY TWP",
       "MCBR", "MCBRIDE",
       "MONT", "MONTCALM TWP",
+      "NEWA", "NEWARK",
       "PIER", "PIERSON TWP",
       "PINE", "PINE TWP",
       "REYN", "REYNOLDS TWP",
