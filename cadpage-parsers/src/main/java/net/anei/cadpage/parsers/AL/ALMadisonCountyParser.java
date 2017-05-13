@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -60,6 +61,13 @@ public class ALMadisonCountyParser extends FieldProgramParser {
       return false;
     } while (false);
    
+    body = body.replace("GRID_ID:", "GRID ID:");
+    String info = null;
+    int pt = body.indexOf('\n');
+    if (pt >= 0) {
+      info = body.substring(pt+1).trim();
+      body = body.substring(0,pt).trim();
+    }
     if (!super.parseMsg(body, data)) return false;
     
     // Address and call ID are both optional.  But one of them 
@@ -68,17 +76,58 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     if (!data.expectMore) {
       data.expectMore = TRUNC_MAP_PTN.matcher(data.strMap).matches();
     }
+
+    if (info != null) {
+      boolean isUnit = false;
+      for (String term : info.split("\n")) {
+        term = term.trim();
+        if (term.length() == 0) continue;
+        if (!isUnit) {
+          if (term.equals("[Remark]")) continue;
+          if (term.equals("[Unit]")) {
+            isUnit = true;
+            continue;
+          }
+          data.strSupp = append(data.strSupp, "\n", term);
+        } else {
+          data.strUnit = append(data.strUnit, ",", term);
+        }
+      }
+    }
     return true;
   }
   
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " INFO UNIT";
+  }
+  
+  private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)");
+  private static final Pattern COLON_PTN = Pattern.compile(" *: *");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace("null", "");
+      field = MBLANK_PTN.matcher(field).replaceAll(" ");
       field = field.replaceAll(" alias ", " @");
-      Parser p = new Parser(field);
-      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, p.get(":"), data);
-      data.strPlace = p.get();
-      if (data.strPlace.startsWith("@")) data.strPlace = data.strPlace.substring(1).trim();
+      if (field.startsWith("@")) {
+        data.strAddress = COLON_PTN.matcher(field.substring(1)).replaceAll(" ").trim();
+      } else {
+        Parser p = new Parser(field);
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, p.get(":"), data);
+        while (true) {
+          String term = p.get(':');
+          if (term.length() == 0) break;
+          Matcher match = APT_PTN.matcher(term);
+          if (match.matches()) {
+            data.strApt = append(data.strApt, "-", match.group(1));
+          } else {
+            term = stripFieldStart(term, "@");
+            data.strPlace = append(data.strPlace, " - ", term);
+          }
+        }
+      }
     }
     
     @Override
@@ -101,15 +150,25 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern PRIV_PTN = Pattern.compile("\\bPRIV\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = PRIV_PTN.matcher(addr).replaceAll("").trim();
+    return super.adjustMapAddress(addr);
+  }
+  
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-      "MAD",   "MADISON",
-      "MDCO",  "MADISON COUNTY",
-      "HSV",   "HUNTSVILLE",
-      "LIME",  "LIMESTONE COUNTY",
-      "LIME MAD", "MADISON",
-      "NEWH",  "NEW HOPE",
-      "OXRD",  "OWENS CROSS ROADS",
-      "TRI",   "TRIANA"
+      "MAD",            "MADISON",
+      "MDCO",           "MADISON COUNTY",
+      "HSV",            "HUNTSVILLE",
+      "LIME",           "LIMESTONE COUNTY",
+      "LIME MAD",       "MADISON",
+      "NEWH",           "NEW HOPE",
+      "NWMK",           "NEW MARKET",
+      "NWMK MDCO",      "NEW MARKET",
+      "OXRD",           "OWENS CROSS ROADS",
+      "TRI",            "TRIANA"
   });
   
   private static final Properties TYPE_CODES = buildCodeTable(new String[]{
