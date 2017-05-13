@@ -40,9 +40,11 @@ public class MNAnokaCountyBParser extends MsgParser {
     
     String call = p.get(30);
     int pt = call.indexOf('-');
-    if (pt < 0) return false;
-    data.strCode = call.substring(0,pt).trim();
-    data.strCall = call.substring(pt+1).trim();
+    if (pt >= 0) {
+      data.strCode = call.substring(0,pt).trim();
+      call = call.substring(pt+1).trim();
+    }
+    data.strCall = call;
     
     parseAddress(p.get(40), data);
     
