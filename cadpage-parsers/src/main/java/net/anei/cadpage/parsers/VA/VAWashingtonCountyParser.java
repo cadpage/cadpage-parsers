@@ -220,6 +220,8 @@ public class VAWashingtonCountyParser extends DispatchSouthernParser {
   
      // Sullivan County, TN
      "BRISTOL",
+     "JOHNSON",
+     "JOHNSON CITY",
     
      // Scott County
      "HILTONS",
