@@ -48,20 +48,30 @@ public class PALancasterCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern CITY_DELIM = Pattern.compile("\n| / ");
+  private static final Pattern CITY_ST_PTN = Pattern.compile("(.*) (DE|MD|PA)");
+  private static final Pattern COUNTY_CITY_PTN = Pattern.compile("(?:CHESTER|DAUPHIN|LEBANON) (?!COUNTY)(.*)");
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = CITY_DELIM.matcher(field);
-      if (match.find()) {
-        data.strCall = field.substring(0,match.start()).trim();
-        data.strCity = field.substring(match.end()).trim();
-      } else {
-        parseAddress(StartType.START_CALL, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
-        if (data.strCity.length() == 0) abort();
+      if (field.length() > 0) {
+        Matcher match = CITY_DELIM.matcher(field);
+        if (match.find()) {
+          data.strCall = field.substring(0,match.start()).trim();
+          data.strCity = field.substring(match.end()).trim();
+        } else {
+          parseAddress(StartType.START_CALL, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
+          if (data.strCity.length() == 0) abort();
+        }
+        match = CITY_ST_PTN.matcher(data.strCity);
+        if (match.matches()) {
+          data.strCity = match.group(1);
+          data.strState = match.group(2);
+        }
+        match = COUNTY_CITY_PTN.matcher(data.strCity);
+        if (match.matches()) data.strCity = match.group(1);
+        data.strCity = stripFieldEnd(data.strCity, " BORO");
+        if (data.strCity.startsWith("LANC") && !data.strCity.endsWith(" TWP")) data.strCity = "LANCASTER";
       }
-      data.strCity = stripFieldStart(data.strCity, "DAUPHIN ");
-      data.strCity = stripFieldEnd(data.strCity, " BORO");
-      if (data.strCity.startsWith("LANC")) data.strCity = "LANCASTER";
       
       if (data.strCall.length() == 0) {
         data.strCall = data.strSource;
@@ -72,7 +82,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "CALL CITY";
+      return "CALL CITY ST";
     }
   }
   
@@ -264,12 +274,17 @@ public class PALancasterCountyParser extends FieldProgramParser {
     
     // Other counties
     "BERKS COUNTY",
+    "BUCKS COUNTY",
+    "CECIL COUNTY MD",
     "CHESTER COUNTY",
+    "CUMBERLAND COUNTY",
     "DAUPHIN COUNTY",
     "LEBANON COUNTY",
+    "NEW CASTLE COUNTY DE",
     "YORK COUNTY",
     
     "CHESTER ATGLEN BORO",
+    "LEBANON SOUTH LONDONDERRY TWP",
     "DAUPHIN CONEWAGO TWP",
     "DAUPHIN LONDONDERRY TWP"
 
