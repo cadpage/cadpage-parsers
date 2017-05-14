@@ -12,7 +12,7 @@ public class INGibsonCountyParser extends DispatchH02Parser {
   
   @Override
   public String getFilter() {
-    return "SHERIFFOFFICE@GIBSONCOUNTY-IN.GOV";
+    return "SHERIFFOFFICE@GIBSONCOUNTY-IN.GOV,SUPPORT@PARRISHCONSULTING.ORG";
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
