@@ -1,12 +1,14 @@
 package net.anei.cadpage.parsers.CO;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class COBroomfieldCountyParser extends FieldProgramParser {
 
   public COBroomfieldCountyParser() {
-    super("BROOMFIELD COUNTY", "CO", 
+    super(CITY_CODES, "BROOMFIELD COUNTY", "CO", 
           "ADDRCITY X CALL INFO/N+");
   }
   
@@ -44,4 +46,8 @@ public class COBroomfieldCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "JEFFCO NMFRD", "JEFFERSON COUNTY"
+  }); 
 }
