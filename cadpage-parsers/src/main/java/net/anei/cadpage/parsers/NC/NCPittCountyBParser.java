@@ -11,6 +11,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "PITT COUNTY", "NC", 
           "( CANCEL ADDR CITY! " +
           "| CALL PLACE? ( ADDRCITY ( DATETIME! | ID ( EMPTY/Z PRI | PRI EMPTY? ) DATETIME! ) | ADDR/Z CITY ID PRI DATETIME! | ADDR/Z ID CITY? PRI DATETIME! | ADDR/Z PRI DATETIME! | ADDR/Z DATETIME! ) EMPTY? SRC UNIT Radio_Channel:CH? X+? ) INFO/N+");
+    setupCities("BEAUFORT CO");
   }
   
   @Override
@@ -33,6 +34,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("PRI")) return new PriorityField("[P1-9]", false);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -44,9 +46,23 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     }
   }
   
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equalsIgnoreCase("BEAUFORT COUNTY")) {
+        if (data.strCity.length() == 0) {
+          data.strCity = field;
+          return;
+        }
+      }
+      super.parse(field, data);
+    }
+  }
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AYDE", "AYDEN",
       "BELL", "BELL ARTHUR",
+      "BEAU", "BEAUFORT COUNTY",
       "BETH", "BETHEL",
       "CHOC", "CHOCOWINITY",
       "FALK", "FALKLAND",
