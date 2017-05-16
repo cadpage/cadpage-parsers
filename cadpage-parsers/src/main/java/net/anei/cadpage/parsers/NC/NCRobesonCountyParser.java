@@ -12,6 +12,11 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
     super("ROBESON COUNTY", "NC",
       "( CANCEL ADDR INFO | CALL PLACE? ADDR X/Z+? ( ID PRI | PRI ) INFO+ )");
   }
+  
+  @Override
+  public String getFilter() {
+    return "CAD@robesoncoso.org";
+  }
     
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
