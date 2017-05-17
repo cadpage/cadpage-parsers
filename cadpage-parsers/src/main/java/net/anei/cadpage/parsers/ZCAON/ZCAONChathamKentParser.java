@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.ZCAON;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -9,7 +10,7 @@ public class ZCAONChathamKentParser extends FieldProgramParser {
   
   public ZCAONChathamKentParser() {
     super("CHATHAM-KENT", "ON", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! XSTR:X CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! ( LATITUDE:GPS1! LONGITUDE:GPS2! UNITS:UNIT! SOURCE:SKIP! | ) INFO:INFO");
+          "CALL:CALL! ( PLACE:PLACE! ADDR:ADDR! XSTR:X CITY:CITY! ID:ID? | ) DATE:DATE! TIME:TIME! ( LATITUDE:GPS1! LONGITUDE:GPS2! ID:ID? UNITS:UNIT! SOURCE:SKIP! | ) INFO:INFO");
     addRoadSuffixTerms("LI");
   }
   
@@ -18,10 +19,11 @@ public class ZCAONChathamKentParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
+  private static final Pattern EOM_MARK_PTN = Pattern.compile(" Access Token Refreshed | CALLBACK ROSTER ASSIGNED:| DISPATCH TIME:| Dispath Time:|\n-{5,}\n");
   @Override
   protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf(" DISPATCH TIME:");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+    Matcher match = EOM_MARK_PTN.matcher(body);
+    if (match.find()) body = body.substring(0, match.start()).trim();
     if (!super.parseFields(body.split(";"), data)) return false;
     if (data.strAddress.length() == 0) {
       parseAddress(data.strCross, data);
