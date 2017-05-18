@@ -10,6 +10,11 @@ public class WAKingCountyCParser extends DispatchA41Parser {
     super(CITY_CODES, "KING COUNTY", "WA", "FIR\\d|[A-Z]9|[A-ZS]\\d|MD", A41_FLG_ID, CALL_CODES);
   }
   
+  @Override
+  public String getFilter() {
+    return "cad@valleycom.org";
+  }
+  
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "ACCINF", "Vehicle Accident",
       "ACCMDF", "Serious Vehicle accident",
