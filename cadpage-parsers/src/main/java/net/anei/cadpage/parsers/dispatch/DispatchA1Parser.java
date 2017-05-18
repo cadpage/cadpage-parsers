@@ -136,7 +136,7 @@ public class DispatchA1Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern APT_PATTERN = Pattern.compile("(?:APT|ROOM|RM|STE)[-:]? *(.*)|(LOT *.*|.* (?:APT|ROOM|RM|STE|bHALLWAY)\\b.*|\\d+[A-Z]?|[A-Z])");
+  private static final Pattern APT_PATTERN = Pattern.compile("(?:APT|ROOM|RM|STE(?![A-Z]))[-:]? *(.*)|(LOT *.*|.* (?:APT|ROOM|RM|STE(?![A-Z])|bHALLWAY)\\b.*|\\d+[A-Z]?|[A-Z])");
   private class MyAptField extends AptField {
 
     @Override
