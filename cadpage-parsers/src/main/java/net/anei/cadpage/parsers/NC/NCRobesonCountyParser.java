@@ -15,7 +15,7 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
   
   @Override
   public String getFilter() {
-    return "CAD@robesoncoso.org";
+    return "CAD@robesoncoso.org,9107850026";
   }
     
   @Override
