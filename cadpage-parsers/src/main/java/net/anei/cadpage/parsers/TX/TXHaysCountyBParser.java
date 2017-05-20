@@ -21,6 +21,8 @@ public class TXHaysCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
     return parseFields(body.split("; ", 11), 11, data);
   }
   
