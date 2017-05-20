@@ -16,7 +16,8 @@ public class OHClintonCountyParser extends DispatchA10Parser {
 
   public OHClintonCountyParser() {
     super(CITY_LIST, "CLINTON COUNTY", "OH",
-          "( CODE ADDR ( ID | CITY ST_ZIP ID ) INFO! INFO+? X2 CITY END " +
+          "( CODE ADDR ( ( X:X! | CITY/Z ST_ZIP! X:X! ) X+? INFO+ NOTES:INFO+ " + 
+                      "| ( ID | CITY ST_ZIP ID ) INFO! INFO+? X2 CITY END ) " +
           "| CALL ADDR/S PHONE? INFO! X+ )");
   }
   
