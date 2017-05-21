@@ -2,14 +2,14 @@ package net.anei.cadpage.parsers.IL;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA49Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 
 
 
-public class ILChampaignCountyParser extends DispatchA49Parser {
+public class ILChampaignCountyParser extends DispatchA41Parser {
   
   public ILChampaignCountyParser() {
-    super(CITY_CODES, "CHAMPAIGN COUNTY", "IL");
+    super(CITY_CODES, "CHAMPAIGN COUNTY", "IL", "RURF");
   }
   
   @Override
@@ -18,9 +18,7 @@ public class ILChampaignCountyParser extends DispatchA49Parser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      
-      "URT", "URBANA"
-      
+      "URT", "URBANA TWP"
   });
 
 }
