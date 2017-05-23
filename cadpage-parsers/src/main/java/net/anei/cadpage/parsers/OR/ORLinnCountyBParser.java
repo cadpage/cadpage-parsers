@@ -60,7 +60,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z])\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+", false);
-    if (name.equals("PH")) return new PhoneField("(?:541|503|800|888)\\d{7}|", true);
+    if (name.equals("PH")) return new PhoneField("(?:541|503|800|866|888)\\d{7}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new IdField("20\\d{8}");
     if (name.equals("ID2")) return new SkipField("\\d*", true);
