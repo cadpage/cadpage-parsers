@@ -442,7 +442,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
                                   String[] cityList, String defCity, String defState, TrailAddrType taType) {
     super(cityList, defCity, defState, 
           "( Nature:CALL Location:ADDR/S2! Comments:INFO " + 
-          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) LOCATION:ADDR2! BETWEEN:X? COMMENTS:INFO )");
+          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) ( LOCATION:ADDR2! | PLACE:ADDR2 ) BETWEEN:X? COMMENTS:INFO )");
     this.extraSpacePosList = extraSpacePosList;
     this.prefixList = prefixList;
     this.optUnit = optUnit;
@@ -488,7 +488,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     return parseMsg(body, data);
   }
   
-  private static Pattern MISSING_LOC_BLANK_PTN = Pattern.compile("(?<! |^)(?=LOCATION:)", Pattern.CASE_INSENSITIVE);
+  private static Pattern MISSING_LOC_BLANK_PTN = Pattern.compile("(?<! |^)(?=LOCATION:|PLACE:)", Pattern.CASE_INSENSITIVE);
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -509,7 +509,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     }
     
     // See if this is the new fangled dash delimited format.  Makes things so much easier
-    if (body.contains(" - LOCATION:")) {
+    if (body.contains(" - LOCATION:") || body.contains(" - PLACE:")) {
       if (body.endsWith("-")) body += ' ';
       int pt = body.indexOf(" BETWEEN ");
       if (pt >= 0) {

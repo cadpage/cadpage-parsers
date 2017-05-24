@@ -11,8 +11,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 public class OHTrentonParser extends DispatchEmergitechParser {
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(.*?) +(?:-(?:\\d+|TRAIN))?\\((\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)\\)");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa"); 
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(.*?) +(?:-(?:\\d+|TRAIN))?\\((\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d(:\\d\\d)? [AP]M)\\)");
+  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm:ss aa"); 
+  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm aa"); 
   
   public OHTrentonParser() {
     super("", CITY_LIST, "TRENTON", "OH");
@@ -31,7 +32,7 @@ public class OHTrentonParser extends DispatchEmergitechParser {
     if (match.matches()) {
       body = match.group(1).trim();
       data.strDate = match.group(2);
-      setTime(TIME_FMT, match.group(3), data);
+      setTime(match.group(4) != null ? TIME_FMT1 :  TIME_FMT2, match.group(3), data);
     }
     return super.parseMsg(subject, body, data);
   }
