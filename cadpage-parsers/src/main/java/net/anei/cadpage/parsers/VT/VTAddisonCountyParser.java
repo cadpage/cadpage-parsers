@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-
-
-public class VTAddisonCountyParser extends DispatchA19Parser {
+/**
+ * Addison County, VT
+ */
+public class VTAddisonCountyParser extends GroupBestParser {
   
   public VTAddisonCountyParser() {
-    super("ADDISON COUNTY", "VT");
+    super(new VTAddisonCountyAParser(), new VTAddisonCountyBParser());
   }
 }

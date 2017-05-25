@@ -548,6 +548,7 @@ public class ParserList {
               ,"KYStatePolice"                  ,"Kentucky State Police, KY"
               ,"KYLaRueCounty"                  ,"LaRue County, KY"
               ,"KYLawrenceCounty"               ,"Lawrence County, KY"
+              ,"KYLincolnCounty"                ,"Lincoln County, KY"
               ,"KYLoganCounty"                  ,"Logan County, KY"
               ,"KYLouisville"                   ,"Louisville, KY"
               ,"KYLyonCounty"                   ,"Lyon County, KY"
