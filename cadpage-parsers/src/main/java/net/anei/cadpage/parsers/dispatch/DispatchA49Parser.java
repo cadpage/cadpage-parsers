@@ -23,7 +23,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     super(cityCodes, defCity, defState, 
         "( CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
         "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
-          "| DATE_TIME_SRC! Addr:ADDR/S! Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
+          "| DATE_TIME_SRC! Addr:ADDR/S! City:CITY? Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
     checkCity = cityCodes != null;
   }
   
@@ -37,15 +37,16 @@ public class DispatchA49Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("DATE_TIME_SRC")) return new MyDateTimeSourceField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATE_TIME_SRC")) return new BaseDateTimeSourceField();
+    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("REMARKS")) return new SkipField("Remarks:", true);;
-    if (name.equals("EXTRA")) return new MyExtraField();
+    if (name.equals("EXTRA")) return new BaseExtraField();
     return super.getField(name);
   }
 
   private static final Pattern DATE_TIME_SRC_PTN = Pattern.compile("Date:(\\d\\d/\\d\\d/\\d{4}) Time:(\\d\\d:\\d\\d)(?:EQPT:(\\S+)| Num:(\\S+)|)");
-  private class MyDateTimeSourceField extends Field {
+  private class BaseDateTimeSourceField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_SRC_PTN.matcher(field);
@@ -62,7 +63,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     }
   }
   
-  private class MyAddressField extends AddressField {
+  private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "\".");
@@ -71,6 +72,14 @@ public class DispatchA49Parser extends FieldProgramParser {
       } else {
         super.parse(field, data);
       }
+    }
+  }
+  
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      super.parse(field, data);
     }
   }
 
@@ -82,7 +91,7 @@ public class DispatchA49Parser extends FieldProgramParser {
   private static final Pattern EXTRA_PHONE_PTN1 = Pattern.compile("(?:\\d{3})?\\d{7}");
   private static final Pattern EXTRA_PHONE_PTN2 = Pattern.compile("(?:LOC = .*\\bP#|>P#< P-ANI:) *(\\(?\\d{3}\\)? \\d{3}-\\d{4})\\b.*", Pattern.CASE_INSENSITIVE);
   private static final Pattern EXTRA_LEAD_GT_PTN = Pattern.compile(">(?![A-Z]+<)");
-  private class MyExtraField extends Field {
+  private class BaseExtraField extends Field {
     @Override
     public void parse(String field, Data data) {
       

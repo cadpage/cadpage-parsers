@@ -273,10 +273,10 @@ public class PADauphinCountyParser extends FieldProgramParser {
       "SLON LEBA", "SOUTH LONDONDERRY TWP",
       
       // Northumberland County
+      "HNDB NORT", "HERNDON",
       "JKST NORT", "JACKSON TWP",
       "JORD NORT", "JORDAN TWP",
       "LMHY NORT", "LOWER MAHANOY TWP",
-      "HNDB NORT", "HERNDON",
       
       // Perry County
       "DUNC PERR", "DUNCANNON",
