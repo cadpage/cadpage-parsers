@@ -12,7 +12,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
   
   public WAPierceCountyEParser() {
     super(CITY_CODES, "PIERCE COUNTY", "WA", 
-          "Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! FireComm_Map_Page:MAP Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT!");
+          "Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! Map_Page:MAP Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT!");
   }
   
   @Override
@@ -28,6 +28,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("SouthSound911 Page Notification")) return false;
+    body = body.replace("FireComm", "Firecomm");
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getProperty(data.strCall);
     if (call != null) {
@@ -123,6 +124,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "BURN-3MULT",                 "BLS - MULTIPLE MINOR BURN PATIENTS",
       "CHAP-default",               "CHAPLAIN",
       "CHEST 1",                    "ALS HEART PROBLEM",
+      "CHEST - 1",                  "ALS - HEART PROBLEM",
       "CHEST 2",                    "BLS POSSIBLE HEART PROBLEM",
       "CHEST-default",              "ALS - HEART PROBLEM",
       "CODEBLUE-default",           "CODE BLUE",
