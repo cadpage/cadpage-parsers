@@ -215,7 +215,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     // For non-delimited alerts, build a list of field terms
     sb = new StringBuilder();
     if (chkFlag(DSFLG_ADDR_LEAD_PLACE)) sb.append("PLACE ");
-    sb.append("ADDR APT CITY");
+    sb.append("ADDR X? APT CITY");
     if (chkFlag(DSFLG_ADDR_TRAIL_PLACE | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_BAD_PLACE | DSFLG_OPT_BAD_PLACE)) sb.append(" PLACE");
     if (chkFlag(DSFLG_BAD_CALL)) sb.append(" CALL");
     if (chkFlag(DSFLG_X | DSFLG_OPT_X)) sb.append(" X");
@@ -320,7 +320,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   private static final Pattern ID_PTN = Pattern.compile("\\b\\d{2,4}-?(?:\\d\\d-)?\\d{4,8}$");
   private static final Pattern CALL_PTN = Pattern.compile("^([A-Z0-9\\- /()]+)\\b[ \\.,-]*");
   private static final Pattern PHONE_PTN = Pattern.compile("\\b\\d{10}\\b");
-  private static final Pattern EXTRA_CROSS_PTN = Pattern.compile("(?:AND +|[/&] *)(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern EXTRA_CROSS_PTN = Pattern.compile("(?:AND +|[/&] *|X +)(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CALL_BRK_PTN = Pattern.compile(" +/+ *");
   private static final Pattern VERIFY_X_PTN = Pattern.compile(" *\\(Verify\\) *");
 
