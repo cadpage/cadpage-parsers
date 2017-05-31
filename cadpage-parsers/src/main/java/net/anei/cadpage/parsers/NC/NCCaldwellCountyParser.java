@@ -49,6 +49,7 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BOOM", "BOOMER",
+      "BR",   "BLOWING ROCK",
       "COLL", "COLLETTSVILLE",
       "GF",   "GRANITE FALLS",
       "GMW",  "GAMEWELL",

@@ -317,16 +317,30 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
     "VILAS",
     
     // Ashe County
+    "ASHE",
     "CRESTON",
+    "ELK",
     "FLEETWOOD",
-    
-    // Caldwell County
-    "LENOIR",
+    "NORTH FORK",
+    "OLD FIELDS",
+    "PINE SWAMP",
     
     // Avery County
+    "AVERY",
     "BANNER ELK",
+    "LINDVILLE",
+    "SUGAR MOUNTAIN",
+    
+    // Caldwell County
+    "CALDWELL",
+    "GLOBE",
+    "LENOIR",
+    "MULBERRY",
+    "PATTERSON",
+    "YADKIN VALLEY",
     
     // Wilkes County
-    "WILKES"
+    "WILKES",
+    "JOBS CABIN"
   };
 }
