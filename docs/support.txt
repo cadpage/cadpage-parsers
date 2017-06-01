@@ -1,21 +1,5 @@
 
 **************************************************************************
-* Active911 alerts no longer going to Cadpage
-**************************************************************************
-
-Active911 put out a recent Android app release that switches alerts that were going to Cadpage to itself.  To fix that, you have to unregister Cadpage from Active911 and then re-register it again.
-
-Open Cadpage Settings and select
-Direct Paging Vendors > Active911 > Unregister > Register
-then enter your Active911 device activation code which is
-<<<<<>>>>>
-
-That should take care of things.  If you want, you can call Active911 support and very nicely ask them to please not do that again.
-
-Good luck,
--Ken
-
-**************************************************************************
 * No email address & Android 6.0 & GET_ACCOUNTS permission denied
 **************************************************************************
 

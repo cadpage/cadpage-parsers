@@ -36,7 +36,7 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     
     if (BAD_MSG_PTN.matcher(body).matches()) return false;
     

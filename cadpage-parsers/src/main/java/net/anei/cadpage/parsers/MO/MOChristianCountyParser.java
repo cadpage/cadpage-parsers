@@ -24,12 +24,13 @@ public class MOChristianCountyParser extends DispatchPrintrakParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Incident Notification")) return false;
+    if (!subject.equals("INC:")) return false;
     Matcher match = TRAIL_DATE_TIME_PTN.matcher(body);
-    if (!match.find()) return false;
-    data.strDate = match.group(1);
-    data.strTime = match.group(2);
-    body = body.substring(0,match.start());
+    if (match.find()) {
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      body = body.substring(0,match.start());
+    }
     if (!super.parseMsg(body, data)) return false;
     
     // It seems that intersections are going in the place field
@@ -98,6 +99,8 @@ public class MOChristianCountyParser extends DispatchPrintrakParser {
     "SPARTA",
     "SPOKANE",
     "SPRINGFIELD",
-    "TANEYVILLE"
+    "TANEYVILLE",
+    
+    "LAWRENCE COUNTY",
   };
 }

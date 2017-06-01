@@ -126,6 +126,12 @@ public class ALShelbyCountyParser extends FieldProgramParser {
           place = "";
         }
         addr = stripCity(addr, data);
+        int pt = addr.indexOf(':');
+        if (pt >= 0) {
+          data.strPlace = append(data.strPlace, " - ", stripFieldStart(addr.substring(pt+1).trim(), "@"));
+          addr = addr.substring(0,pt).trim();
+        }
+        
         parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
         if (place.endsWith("FD")) {
           if (data.strSource.length() == 0) data.strSource = place;

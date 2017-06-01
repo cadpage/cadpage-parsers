@@ -8,22 +8,16 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Dauphin County, PA
  */
 public class PADauphinCountyParser extends FieldProgramParser {
   
-  private static final Pattern SRC_PTN = Pattern.compile("^(\\d{7}) +");
-  private static final Pattern WEST_HANOVER_PTN = Pattern.compile("(\\d{6}) - (\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d [AP]M) - (.*) - West Hanover", Pattern.DOTALL);
-  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-  private static final Pattern SPECIAL_PTN = Pattern.compile("([-A-Z0-9]+) +(2ND DISPATCH|ER(?: WITH \\d)?)(?!.*BOX:) (.*)");
-  
-  private String selectValue = "";
-  
   public PADauphinCountyParser() {
     super(CITY_CODES, "DAUPHIN COUNTY", "PA",
-           "( SELECT/SPECIAL UNIT CALL ADDR/S4! | UNIT_CALL EVENT:ID? Box:BOX! Loc:ADDR/S4 XSts:X Event_Type:CALL Class:PRI Disp:UNIT )", FLDPROG_IGNORE_CASE);
+           "( SELECT/SPECIAL UNIT INFO/R ADDR/S4! | UNIT_CALL EVENT:ID? Box:BOX! Loc:ADDR/S4 XSts:X Event_Type:CALL Class:PRI Disp:UNIT )", FLDPROG_IGNORE_CASE);
     setupCities(CITY_LIST);
     
     // BLDG is a suffix???
@@ -35,6 +29,12 @@ public class PADauphinCountyParser extends FieldProgramParser {
   public String getFilter() {
     return "@c-msg.net,donotreply-911@dauphinc.org,messaging@iamresponding.com,pagermail@verizon.net";
   }
+  
+  private static final Pattern SRC_PTN = Pattern.compile("^(\\d{7}) +");
+  private static final Pattern WEST_HANOVER_PTN = Pattern.compile("(\\d{6}) - (\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d [AP]M) - (.*) - West Hanover", Pattern.DOTALL);
+  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private static final Pattern CRITICAL_PTN = Pattern.compile("([-A-Z0-9]+) CRITICAL MSG: *(.*)");
+  private static final Pattern SPECIAL_PTN = Pattern.compile("([-A-Z0-9]+) +(2ND DISPATCH|AVAILABLE|ER(?: WITH \\d)?|ENROUTE IN PLACE OF \\S+|IN SERVICE|OUT OF SERVICE)(?!.*BOX:)(?:[- ]+(.*))?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -63,25 +63,29 @@ public class PADauphinCountyParser extends FieldProgramParser {
       }
     }
     
-    selectValue = "";
+    match = CRITICAL_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strUnit = match.group(1);
+      data.strSupp = match.group(2);
+      return true;
+    }
+    
+    setSelectValue("");
     match = SPECIAL_PTN.matcher(body);
     if (match.matches()) {
-      selectValue = "SPECIAL";
-      return parseFields(new String[]{match.group(1), match.group(2), match.group(3)}, data);
+      setSelectValue("SPECIAL");
+      return parseFields(new String[]{match.group(1), match.group(2), getOptGroup(match.group(3))}, data);
     }
 
     if (!super.parseMsg(body, data)) return false;
-    if (data.strCall.length() == 0) return false;
+    if (data.strCall.startsWith("ENROUTE")) data.msgType = MsgType.RUN_REPORT;
     if (data.strAddress.length() == 0) {
       data.strAddress = data.strCross.replace('/', '&');
       data.strCross = "";
     }
     return true;
-  }
-  
-  @Override
-  protected String getSelectValue() {
-    return selectValue;
   }
 
   @Override
@@ -105,6 +109,16 @@ public class PADauphinCountyParser extends FieldProgramParser {
     public String getFieldNames() {
       return "UNIT CALL";
     }
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("UNIT_CALL"))  return new UnitCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("PRI")) return new MyPriorityField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    return super.getField(name);
   }
   
   private static final Pattern ADDR_SPLIT_PTN = Pattern.compile("[:\n]");
@@ -191,16 +205,6 @@ public class PADauphinCountyParser extends FieldProgramParser {
     }
   }
   
-  @Override
-  public Field getField(String name) {
-    if (name.equals("UNIT_CALL"))  return new UnitCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("PRI")) return new MyPriorityField();
-    if (name.equals("UNIT")) return new MyUnitField();
-    return super.getField(name);
-  }
-  
   private static final Properties CITY_CODES = new Properties();
   static {
     String key = null;
@@ -254,6 +258,7 @@ public class PADauphinCountyParser extends FieldProgramParser {
       "SVSP CUMB", "SILVER SPRING TWP",
       
       // Lancaster County
+      "CONY LANC", "CONOY TWP",
       "EDON LANC", "EAST DONEGAL TWP",
       "EZAB LANC", "ELIZABETHTOWN",
       "MTJT LANC", "MT JOY TWP",
@@ -268,10 +273,10 @@ public class PADauphinCountyParser extends FieldProgramParser {
       "SLON LEBA", "SOUTH LONDONDERRY TWP",
       
       // Northumberland County
+      "HNDB NORT", "HERNDON",
       "JKST NORT", "JACKSON TWP",
       "JORD NORT", "JORDAN TWP",
       "LMHY NORT", "LOWER MAHANOY TWP",
-      "HNDB NORT", "HERNDON",
       
       // Perry County
       "DUNC PERR", "DUNCANNON",
@@ -280,6 +285,7 @@ public class PADauphinCountyParser extends FieldProgramParser {
       "WTFD PERR", "WHEATFIELD TWP",
       
       // Schuylkill County
+      "PRTR SCKH", "PORTER TWP",
       "TREM SCKH", "TREMONT"
     }) {
       if (key == null) {
