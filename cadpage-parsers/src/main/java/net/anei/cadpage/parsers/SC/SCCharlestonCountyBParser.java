@@ -10,7 +10,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   public SCCharlestonCountyBParser() {
     super("CHARLESTON COUNTY", "SC", 
-          "UNIT ADDR X/Z? CITY CALL! Incident_Channel:CH! ID DATETIME!");
+          "UNIT ADDR X/Z? CITY CALL! CH! ID! DATETIME");
   }
   
   @Override
@@ -20,7 +20,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("PURVIS_ENS")) return false;
+    if (!subject.equals("PURVIS_ENS") && !subject.equals("PURVIS")) return false;
     body = stripFieldStart(body, ":");
     return parseFields(body.split("\n"), data);
   }
@@ -28,8 +28,18 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d\\d-\\d{7}", true);
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CH")) return new ChannelField("(?:Incident Channel:|INC-) *(.*)", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "*");
+      super.parse(field, data);
+    }
   }
   
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d)");
@@ -46,6 +56,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("ST PAULS")) return "";
+    if (city.equalsIgnoreCase("UNINCORPORATED")) return "";
     return city;
   }
 }
