@@ -44,7 +44,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*) ([-+]?\\d{2,3}\\.\\d{6,} [-+]?\\d{2,3}\\.\\d{6,})");
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*) ([-+]?\\d{2,3}\\.\\d{6,} [-+]?\\d{2,3}\\.\\d{6,}|-361 -361)");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?) +(?:(?:APT|RM|(LOT|WARD)) *([^ ]+|[^0-9]+)|(FLR +\\d+(?: +APT +.*)?))", Pattern.CASE_INSENSITIVE);
   private static final Pattern LVIH_PTN = Pattern.compile("\\bLVIH\\b");
   private class MyAddressField extends AddressField {
@@ -83,7 +83,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_ONLY_CITY, field, data);
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_ONLY_CITY | FLAG_CROSS_FOLLOWS, field, data);
       String left = getLeft();
       Matcher match = APT_PTN.matcher(left);
       if (match.matches()) left = match.group(1);
@@ -125,6 +125,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
       "27",   "Throop",
       "28",   "Scott Twp",
       "29",   "Jefferson Twp",
+      "31",   "Jemyn",
       "33",   "Eynon",
       "34",   "Sturges",
       "35",   "Scranton",
@@ -139,6 +140,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
       "54",   "Thornhurst",
       "55",   "Lehigh Twp",
       "56",   "Madison Twp",
+      "57",   "Gouldsboro",
       "58",   "Jermyn",
       "59",   "Mayfield",
       "60",   "Carbondale Twp",
@@ -148,6 +150,7 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
       "65",   "West Abington",
       "66",   "LaPlume",
       "67",   "Moscow",
+      "71",   "Avoca",
       "93",   "Old Forge",
       "94",   "Moosic",
       "95",   "Taylor",
@@ -160,11 +163,19 @@ public class PALackawannaCountyAParser extends FieldProgramParser {
       "LUZN CNTY",    "Luzerne County",
       "LUZERNE CNTY", "Luzerne County",
       "MONROE CNTY",  "Monroe County",
+      "PIKE CNTY",    "Pike County",
+      "PITTSTON",      "Pittston",
       "SUSQ CNTY",    "Susquehanna County",
       "WAYNE CNTY",   "Wayne County",
       "WYOMING CNTY", "Wyoming County",
 
       // Susquehanna County
-      "LENOXVILLE",   "Lenoxville"
+      "LENOXVILLE",   "Lenoxville",
+      
+      // Wayne County
+      "WAYMART",      "Waymart",
+      
+      // Wyoming County
+      "NICHOLSON",    "Nicholson"
   });
 }

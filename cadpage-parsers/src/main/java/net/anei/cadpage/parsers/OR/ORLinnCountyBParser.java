@@ -12,60 +12,103 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   public ORLinnCountyBParser() {
     super(CITY_CODES, "LINN COUNTY", "OR", 
           "( CANCEL ADDR CITY! INFO/N+ " +
-          "| FYI? CALL ADDR! APT? REF? ( PLACE_ADDR X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
-                                      "| PLACE_ADDR X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
-                                      "| PLACE_ADDR X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
-                                      "| CITY ( PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNITQ? ) " + 
-                                      "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " + 
-                                      "| PLACE_X CITY MAPQ? CODEQ? UNITQ? " + 
-                                      "| X/Z X/Z MAP CODEQ? UNITQ? " + 
-                                      "| X CITY? MAPQ? CODEQ? UNITQ? " +
-                                      "| PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNIT? " + 
-                                      ") UNITQ/C+? ( DATETIME " + 
-                                                  "| INFO ( CH/Z EMPTY/Z NAME PH/Z SKIP DATETIME " +
-                                                         "| CH/Z NAME PH/Z SKIP DATETIME " +
-                                                         "| NAME PH/Z SKIP DATETIME " +
-                                                         "| SKIP DATETIME " + 
-                                                         "| NAME PH DATETIME " + 
-                                                         "| PH SKIP? DATETIME " +
-                                                         "| CH SKIP? DATETIME " +
-                                                         "| DATETIME " +
-                                                         "| NAME PH SKIP+ " +
-                                                         "| PH SKIP+ " +
-                                                         "| SKIP+ " + 
-                                                         ") " +
-                                                  ") ID ID2? PRI+? UNIT/C+ " + 
+          "| UNIT/Z ENROUTE/R ADDR CITY CALL END " + 
+          "| FYI? CALL ( ADDR! | PLACE ADDR! | EMPTY_PLACE ADDR! | ADDR! ) APT? REF? " + 
+                "( PLACE X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
+                "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
+                "| PLACE X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
+                "| X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
+                "| PLACE X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
+                "| X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
+                "| CITY ( PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNITQ? ) " + 
+                "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " + 
+                "| PLACE_X CITY MAPQ? CODEQ? UNITQ? " + 
+                "| X/Z X/Z MAP CODEQ? UNITQ? " + 
+                "| X CITY? MAPQ? CODEQ? UNITQ? " +
+                "| PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNIT? " + 
+                ") UNITQ/C+? ( DATETIME " + 
+                            "| INFO ( CH/Z EMPTY/Z NAME PH/Z SKIP DATETIME " +
+                                   "| CH/Z NAME PH/Z SKIP DATETIME " +
+                                   "| NAME PH/Z SKIP DATETIME " +
+                                   "| SKIP DATETIME " + 
+                                   "| NAME PH DATETIME " + 
+                                   "| PH SKIP? DATETIME " +
+                                   "| CH SKIP? DATETIME " +
+                                   "| DATETIME " +
+                                   "| NAME PH SKIP+ " +
+                                   "| PH SKIP+ " +
+                                   "| SKIP+ " + 
+                                   ") " +
+                            ") ID ID2? PRI+? UNIT/C+ " + 
           ")");
     setupCityValues(CITY_CODES);
+    removeWords("PLACE");
+    addRoadSuffixTerms("LP");
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.contains(",Enroute,")) return parseFields(body.split(","), data);
     return parseFields(body.split(";"), data);
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
+    if (name.equals("ENROUTE")) return new CallField("Enroute", true);
     if (name.equals("FYI")) return new SkipField("FYI:|Update:");
+    if (name.equals("EMPTY_PLACE")) return new MyEmptyPlaceField();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new AptField("(?:APT|RM|ROOM|LOT)[ #]*(.*)", true);
     if (name.equals("REF")) return new InfoField("\\(S\\).*", true);
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("MAP")) return new MapField("\\d{4}", true);
-    if (name.equals("MAPQ")) return new MapField("\\d{4}|", true);
-    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
-    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|", true);
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z])\\b,?)+", true);
-    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z])\\b,?)+|", true);
+    if (name.equals("MAP")) return new MapField("\\d{4}|\\d{3}[AB]", true);
+    if (name.equals("MAPQ")) return new MapField("\\d{4}|\\d{3}[AB]|", true);
+    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO", true);
+    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+", true);
+    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+", false);
-    if (name.equals("PH")) return new PhoneField("(?:541|503|800|888)\\d{7}|", true);
+    if (name.equals("PH")) return new PhoneField("(?:541|503|800|866|888)\\d{7}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new IdField("20\\d{8}");
     if (name.equals("ID2")) return new SkipField("\\d*", true);
     if (name.equals("PRI")) return new SkipField("\\d{0,1}");
     return super.getField(name);
+  }
+  
+  private class MyEmptyPlaceField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() > 0)  return false;
+      return !isCity(getRelativeField(+1));
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("LL:")) {
+        super.parse(field,  data);
+        return true;
+      }
+      Result res = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ANCHOR_END, field);
+      if (res.getStatus() < STATUS_INTERSECTION) return false;
+      res.getData(data);
+      return true;
+    }
   }
   
   private class MyPlaceAddressField extends PlaceField {
@@ -150,6 +193,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
       "JEFF", "JEFFERSON",
       "LEB",  "LEBANON",
       "LYON", "LYONS",
+      "LYONS","LYONS",
       "MBG",  "MILLERSBURG",
       "MILL", "MILL CITY",
       "SCIO", "SCIO",

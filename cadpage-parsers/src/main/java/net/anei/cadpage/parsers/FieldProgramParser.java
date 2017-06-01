@@ -1704,6 +1704,9 @@ public class FieldProgramParser extends SmartAddressParser {
           // Keep a record of which fields successfully processed
           // which data fields
           if (success && ndx < fieldRecord.length) fieldRecord[ndx] = field.getProcField();
+          
+          // Nice debug info
+          // System.out.println(name + ':' + success + ':' + curFld);
         }
       } catch (FieldProgramException ex) {
         state.setResult(false);

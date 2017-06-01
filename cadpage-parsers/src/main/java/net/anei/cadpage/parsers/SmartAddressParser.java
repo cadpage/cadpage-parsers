@@ -2521,7 +2521,7 @@ public abstract class SmartAddressParser extends MsgParser {
     // OK, we have to do this....
     // If the city is followed by a road suffix, disqualify it
     // Unless the road suffix is followed by a road suffix
-    if (!isType(endNdx, ID_NOT_ADDRESS | ID_CROSS_STREET)) {
+    if (!isType(endNdx, ID_NOT_ADDRESS | ID_CROSS_STREET | ID_NEAR)) {
       if (isRoadSuffix(endNdx) || isRoadSuffix(endNdx+1)) {
         
         // Or unless there might be a following cross street, and the street suffix

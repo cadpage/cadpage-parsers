@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.MsgParser;
  */
 public class ALBaldwinCountyParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("(?:- E911 Notification - ([^-]+) - )?(\\d\\d-\\d\\d-\\d\\d) (\\d\\d:\\d\\d): Station ([A-Z0-9]+) dispatched to Incident ID (\\d+) \\(([^\\)]*?)\\) at (.*?)(?:\\(.*\\))?");
+  private static final Pattern MASTER = Pattern.compile("(?:- E911 Notification - ([^-]+) - )?(\\d\\d-\\d\\d-\\d\\d) (\\d\\d:\\d\\d): Station ([A-Z0-9]+) dispatched to Incident ID (\\S+) \\((.*?)\\) at (.*?)(?:\\(.*\\))?");
   private static final DateFormat DATE_FMT = new SimpleDateFormat("MM-dd-yy");
   private static final Pattern DOUBLE_NUMBER_PTN = Pattern.compile("(\\d+) +(\\d+)");
 
@@ -25,7 +25,7 @@ public class ALBaldwinCountyParser extends MsgParser {
     
   @Override
   public String getFilter() {
-    return "noreply@emergencycallworx.com,cad@baldwin911.org";
+    return "noreply@emergencycallworx.com,cad@baldwin911.org,messaging@iamresponding.com";
   }
   
   @Override
@@ -38,7 +38,17 @@ public class ALBaldwinCountyParser extends MsgParser {
   private static final Pattern YUPON_RD_EXT = Pattern.compile("\\b(YUPON RD) EXT?\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
-  public boolean parseMsg(String body, Data data) {
+  public boolean parseMsg(String subject, String body, Data data) {
+    
+    // Fix IAR edits
+    if (subject.equals("Foley Sta. 30")) {
+      String[] lines =  body.replace("\n(LSA \n(", "\n(LSA (").split(" *\n *");
+      if (lines.length != 4) return false;
+      body = "- E911 Notification - " + subject + " - " + lines[0] + " dispatched to " + lines[1] + " " + lines[2] + " at " + lines[3];
+    } 
+    else if (subject.length() > 0 && !body.startsWith("- ")) {
+      body = "- " + subject + " - " + body;
+    }
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strSource = getOptGroup(match.group(1));
