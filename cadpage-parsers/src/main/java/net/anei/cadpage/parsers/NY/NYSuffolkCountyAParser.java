@@ -13,7 +13,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
   
   public NYSuffolkCountyAParser() {
     super(CITY_TABLE, "SUFFOLK COUNTY", "NY");
-    setFieldList("CALL ADDR CITY PLACE APT X CODE INFO TIME");
+    setFieldList("CALL ADDR CITY PLACE APT X CODE INFO TIME ID");
     setupDoctorNames("KAHN", "HSU", "KAMDAR", "KLEINER", "SINGH");
   }
   
@@ -23,7 +23,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
   }
 
   private static final Pattern SUFFOLK_E_MARKER = Pattern.compile("(?:/[A-Z ]*RELAY */|(?:FROM )?RELAY )");
-  private static final String[] KEYWORDS = new String[]{"TYPE", "LOC", "CROSS", "CODE", "TIME"};
+  private static final String[] KEYWORDS = new String[]{"TYPE", "LOC", "CROSS", "CODE", "TIME", "EVENT#"};
 
   private static final Pattern CALL_ADDR_SPLIT_PTN = Pattern.compile(" +: +| {2,}");
   private static final Pattern APT_PTN = Pattern.compile("(.*)[: ](?:APT|ROOM|UNIT|STE\\b|SUITE|#)(?!S) *#?([-A-Z0-9]+?)[- ]*");
@@ -164,6 +164,8 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     }
     if (sTime.length() > 5 && sTime.length() < 8) sTime = sTime.substring(0,5);
     if (sTime.length() >= 5) data.strTime = sTime;
+    
+    data.strCallId = props.getProperty("EVENT#", "");
     
     return true;
   }
