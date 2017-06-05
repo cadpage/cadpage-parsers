@@ -200,5 +200,4 @@ public class NCCarteretCountyParser extends DispatchSouthernPlusParser {
     "SWANSBORO",
     "WHITE OAK"
   };
-
 }
