@@ -17,7 +17,7 @@ public class KYJohnsonCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "CADPJC911@CityofPaintsville.net";
+    return "CADPJC911@CityofPaintsville.net,noreply@public-safety-cloud.com";
   }
 
   @Override
