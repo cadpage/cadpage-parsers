@@ -112,7 +112,6 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "MIFFLINBURG BORO",
     "LIMESTONE TWP",
     "NEW BERLIN BORO",
-    
    
     "PERRY COUNTY"
  };

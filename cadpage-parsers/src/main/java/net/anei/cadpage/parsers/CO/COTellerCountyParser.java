@@ -32,22 +32,30 @@ public class COTellerCountyParser extends MsgParser {
       return true;
     }
     
-    if (p.check("Add:")) {
-      setFieldList("ADDR CALL APT PLACE CODE");
-      parseAddress(p.get(35), data);
-      if (!p.check("Problem:")) return false;
-      String call = p.getOptional(30, "Apt:");
-      if (call != null) {
-        data.strCall = call;
-        data.strApt = p.get(5);
+    if (p.check("Add:") || p.check("ADD:")) {
+      if (p.checkAhead(80, "Prob:") || p.checkAhead(80, "PROB:")) {
+        setFieldList("ADDR APT CALL");
+        parseAddress(p.get(80), data);
+        p.skip(5);
+        data.strCall = p.get();
+        return true;
       } else {
-        data.strCall = p.get(35);
+        setFieldList("ADDR CALL APT PLACE CODE");
+        parseAddress(p.get(35), data);
+        if (!p.check("Problem:")) return false;
+        String call = p.getOptional(30, "Apt:");
+        if (call != null) {
+          data.strCall = call;
+          data.strApt = p.get(5);
+        } else {
+          data.strCall = p.get(35);
+        }
+        if (!p.check("Loc:")) return false;
+        data.strPlace = p.get(70);
+        if (!p.check("Code:")) return false;
+        data.strCode = p.get();
+        return true;
       }
-      if (!p.check("Loc:")) return false;
-      data.strPlace = p.get(70);
-      if (!p.check("Code:")) return false;
-      data.strCode = p.get();
-      return true;
     }
     
     if (p.check("Add")) {
