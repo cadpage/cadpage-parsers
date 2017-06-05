@@ -51,9 +51,11 @@ public class DispatchGeoconxParser extends FieldProgramParser {
   
   public DispatchGeoconxParser(Set<String> citySet, String defCity, String defState, int flags) {
     super(defCity, defState,
-          (flags & GCX_FLG_NAME_PHONE) == 0
-              ? "CALL ADDR INFO+"
-              : "CALL ( EMPTY ADDR | NAMEPH/Z ADDR | NAMEPH? ADDR ) INFO+");
+          "( CFS:ID! MSG:CALL! PLACE CITY ADDR! " +
+          "| " + ((flags & GCX_FLG_NAME_PHONE) == 0
+                  ? "CALL ADDR "
+                  : "CALL ( EMPTY ADDR | NAMEPH/Z ADDR | NAMEPH? ADDR ) ") +
+          ") INFO+");
     this.citySet = citySet;
     this.noSubject = (flags & GCX_FLG_EMPTY_SUBJECT_OK) != 0;
     this.nameField = (flags & GCX_FLG_NAME_PHONE) != 0;
@@ -64,7 +66,9 @@ public class DispatchGeoconxParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     String flds[] = body.split("\n");
-    if (!subject.equals("E911") && !subject.equals("E911 Incident Auto-Page")) {
+    if (!subject.equals("E911") &&
+        !subject.equals("E911-Page") && 
+        !subject.equals("E911 Incident Auto-Page")) {
       if (!noSubject || flds.length < 3) return false;
     }
     return parseFields(flds, data);
