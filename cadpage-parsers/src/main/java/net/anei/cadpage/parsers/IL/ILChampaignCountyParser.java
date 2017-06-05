@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 public class ILChampaignCountyParser extends DispatchA41Parser {
 
   public ILChampaignCountyParser() {
-    super(CITY_CODES, "CHAMPAIGN COUNTY", "IL", "[A-Z]{1,2}FD");
+    super(CITY_CODES, "CHAMPAIGN COUNTY", "IL", "RURF");
   }
   
   @Override
