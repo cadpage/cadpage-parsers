@@ -89,6 +89,9 @@ public class NCCaswellCountyParser extends DispatchSouthernParser {
     "CHERRY GROVE",
     "BLANCH",
     
+    // Almace County
+    "ELON",
+    
     // Rockingham County
     "REIDSVILLE",
     
