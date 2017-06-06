@@ -19,6 +19,7 @@ public class OHPrebleCountyAParser extends DispatchEmergitechParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.contains(" ADDR:")) return false;
     if (!super.parseMsg(body, data)) return false;
     data.strCode = data.strCall;
     data.strCall = convertCodes(data.strCode, CALL_CODES);
