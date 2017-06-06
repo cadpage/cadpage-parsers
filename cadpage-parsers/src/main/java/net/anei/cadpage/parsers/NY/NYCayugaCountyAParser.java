@@ -10,11 +10,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NYCayugaCountyAParser extends FieldProgramParser {
   
-  private static final Pattern DELIM = Pattern.compile("  +");
+  private static final Pattern DELIM = Pattern.compile("  +|\n");
   
   public NYCayugaCountyAParser() {
-    super(CITY_LIST, "CAYUGA COUNTY", "NY",
-          "ADDR_PFX+? ADDR/iSC INFO/N+? ( UNIT DATETIME! | DATETIME_UNIT! )");
+    super(MISTYPED_CITIES, "CAYUGA COUNTY", "NY",
+          "ADDR_PFX+? ADDR/iSC INFO/N+? ( UNIT DATETIME% | DATETIME_UNIT% )");
+    setupCities(CITY_LIST);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "BAPTIST CORNERS",
@@ -56,7 +57,8 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("From 911 Center")) return false;
-    return parseFields(DELIM.split(body), data);
+    if (!parseFields(DELIM.split(body), data)) return false;
+    return data.strTime.length() > 0 || data.strCity.length() > 0;
   }
   
   @Override
@@ -93,7 +95,6 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       field = append(data.strAddress, " ", field);
       data.strAddress = "";
       super.parse(field, data);
-      data.strCity = convertCodes(data.strCity, MISTYPED_CITIES);
     }
   }
   
@@ -145,6 +146,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       "ASSIST BY EMS",
       "ASSIST BY FIRE",
       "BLEEDING",
+      "BURNS",
       "CARDIAC",
       "CHECK WELFARE W/MEDICAL",
       "CHOKING",
@@ -160,8 +162,10 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       "INJURY FROM A FALL",
       "INVESTIGATE - FIRE",
       "LOCKOUT",
+      "MATERNITY",
       "MEDICAL EMERGENCY",
       "MVAPI",
+      "NEW",
       "OUTSIDE FIRE",
       "OVERDOSE",
       "PAIN - GENERAL",
@@ -174,53 +178,55 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       "STRUCTURE FIRE",
       "SUICIDE",
       "UNCONSCIOUS PERSON",
+      "UTILITY POLE FIRE",
       "VEHICLE FIRE",
       "WATER RESCUE"
   );
   
   private static final String[] CITY_LIST = new String[]{
-    "AUBURN",
-    "AURELIUS", 
-    "CAYUGA",
-    "BRUTUS", 
-    "WEEDSPORT",
-    "CATO", 
-    "MERIDIAN",
-    "CONQUEST", 
-    "FLEMING",
-    "GENOA",
-    "IRA",
-    "LEDYARD", 
-    "AURORA",
-    "LOCKE",
-    "MENTZ", 
-    "PORT BYRON",
-    "MONTEZUMA",
-    "MORAVIA", 
-    "MORAVIL",              // Typo
-    "NILES", 
-    "OWASCO",
-    "SCIPIO",
-    "SEMPRONIUS",
-    "SENNETT",
-    "SPRINGPORT", 
-    "UNION SPRINGS",
-    "STERLING", 
-    "FAIR HAVEN",
-    "SUMMERHILL",
-    "THROOP",
-    "VENICE",
-    "VICTORY",
-    
-    "ONONDAGA COUNTY",
-    "SKANEATELES",
-    "SKANEATELES ONONDAGA COUNTY",
-    
-    "WAYNE COUNTY"
+      "AUBURN",
+      "AURELIUS", 
+      "CAYUGA",
+      "BRUTUS", 
+      "WEEDSPORT",
+      "CATO", 
+      "MERIDIAN",
+      "CONQUEST", 
+      "FLEMING",
+      "GENOA",
+      "IRA",
+      "LEDYARD", 
+      "AURORA",
+      "LOCKE",
+      "MENTZ", 
+      "PORT BYRON",
+      "MONTEZUMA",
+      "MORAVIA", 
+      "NILES", 
+      "OWASCO",
+      "SCIPIO",
+      "SEMPRONIUS",
+      "SENNETT",
+      "SPRINGPORT", 
+      "UNION SPRINGS",
+      "STERLING", 
+      "FAIR HAVEN",
+      "SUMMERHILL",
+      "THROOP",
+      "VENICE",
+      "VICTORY",
+      
+      "ONONDAGA COUNTY",
+      "SKANEATELES",
+      
+      "WAYNE COUNTY",
+      "WOLCOTT"
   };
   
   private static Properties MISTYPED_CITIES = buildCodeTable(new String[]{
-      "MORAVIL",      "MORAVIA"
+      "MORAVIL",                        "MORAVIA",
+      "SKANEATELES ONONDAGA COUNTY",    "SKANEATELES",
+      "TOWN OF WOLCOTT WAYNE COUNTY",   "WOLCOTT"
   });
 }
 	
