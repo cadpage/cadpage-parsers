@@ -11,12 +11,26 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class FLBayCountyParser extends FieldProgramParser {
 
   public FLBayCountyParser() {
-    super("BAY COUNTY", "FL", 
-          "UNIT? ADDR! MAP? CALL INPROGRESS? DATETIME ID!");
+    this("BAY COUNTY", "FL");
+  }
+  
+  FLBayCountyParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState, 
+          "UNIT? ADDR! CITY? MAP? CALL INPROGRESS? DATETIME ID!");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "DISPATCH@BAYSO.ORG";
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "FLBayCounty";
   }
   
   private static Pattern DELIMITER = Pattern.compile(" *, *");
-  private static Pattern UNIT = Pattern.compile("\\d{3}");
+  private static Pattern UNIT = Pattern.compile("\\d{2}[A-Z0-9]?");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -80,5 +94,9 @@ public class FLBayCountyParser extends FieldProgramParser {
     if (mat.matches()) address = mat.group(1) + mat.group(2);
     return address;
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+    "ST JOE BCH"
+  };
 
 }
