@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.FieldProgramParser.DateField;
+import net.anei.cadpage.parsers.FieldProgramParser.TimeField;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchEmergitechParser extends FieldProgramParser {
@@ -83,7 +87,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     String getFieldNames();
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\[([-A-Z0-9]+)\\] *-+ *");
+  private static final Pattern UNIT_PTN = Pattern.compile("D?\\[([-A-Z0-9]+)\\] *-+ *");
   private static final Pattern ID_PTN = Pattern.compile("Call: *([- 0-9]+)\\b");
   private static final Pattern HOUSE_DECIMAL_PTN = Pattern.compile("\\b(\\d+)\\.0{1,2}(?= )");
   private static final Pattern COMMENTS_PTN = Pattern.compile("\\bC ?O ?M ?M ?E ?N ?T ?S ?:");
@@ -440,8 +444,9 @@ public class DispatchEmergitechParser extends FieldProgramParser {
    */
   public DispatchEmergitechParser(String[] prefixList, boolean optUnit, int[] extraSpacePosList,
                                   String[] cityList, String defCity, String defState, TrailAddrType taType) {
-    super(cityList, defCity, defState, 
-          "( Nature:CALL Location:ADDR/S2! Comments:INFO " + 
+    super(cityList, defCity, defState,
+          "( SELECT/2 CALL:CALL! PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
+          "| Nature:CALL Location:ADDR/S2! Comments:INFO " + 
           "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+? ( LOCATION:ADDR2! | PLACE:ADDR2! ) BETWEEN:X? COMMENTS:INFO )");
     this.extraSpacePosList = extraSpacePosList;
     this.prefixList = prefixList;
@@ -508,7 +513,16 @@ public class DispatchEmergitechParser extends FieldProgramParser {
       if (!optUnit) return false;
     }
     
+    // An ADDR: keyword identifies new format
+    if (body.contains(" ADDR:")) {
+      setSelectValue("2");
+      body = body.substring(st).trim().replace(" BETWEEN ", " BETWEEN: ");
+      return super.parseMsg(body, data);
+    }
+    
+    
     // See if this is the new fangled dash delimited format.  Makes things so much easier
+    setSelectValue("1");
     if (body.contains(" - LOCATION:") || body.contains(" - PLACE:")) {
       if (body.endsWith("-")) body += ' ';
       int pt = body.indexOf(" BETWEEN ");
@@ -651,8 +665,12 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     return specialWordSet.contains(word) || isDictionaryWord(word);
   }
   
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mmaa");
+
   @Override
   public Field getField(String name) {
+    if (name.equals("DATE2")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME2")) return new TimeField(TIME_FMT, true);
     if (name.equals("ADDR2")) return new BaseAddressField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("INFO")) return new BaseInfoField();
