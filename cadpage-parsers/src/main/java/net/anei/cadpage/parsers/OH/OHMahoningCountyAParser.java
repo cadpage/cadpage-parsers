@@ -19,7 +19,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
 
   @Override
   public String getFilter() {
-    return "BPD911@twp.boardman.oh.us,canfieldpd@ci.canfield.oh.us,jonracco25@yahoo.com,@sebringohio.net";
+    return "BPD911@twp.boardman.oh.us,canfieldpd@ci.canfield.oh.us,jonracco25@yahoo.com,@sebringohio.net,@sebringohiopolice.com";
   }
   
   @Override
@@ -33,6 +33,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
+    body = stripFieldStart(body, "contact:");
     Matcher match = MARK_ID_PTN.matcher(body);
     if (match.lookingAt()) {
       body = body.substring(match.end()).trim();
