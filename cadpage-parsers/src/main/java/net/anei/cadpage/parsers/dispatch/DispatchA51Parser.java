@@ -12,12 +12,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class DispatchA51Parser extends FieldProgramParser {
   
-  private String version;
-  
   protected DispatchA51Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ | " +
-            "ID:ID? Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ )");
+          "( Sent:DATETIME3 INFO/G! INFO/N+ " +
+          "| SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ " +
+          "| DATETIME CALL ADDRCITY INFO/N+ " +
+          "| ID:ID? Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ " + 
+          ")");
   }
   
   @Override
@@ -26,11 +27,11 @@ public class DispatchA51Parser extends FieldProgramParser {
     body = body.replace("LatitudeUnits Responding", "Units Responding");
     body = body.replace('\\', '/');
     if (body.startsWith("/ ")) {
-      version = "2";
+      setSelectValue("2");
       body = body.replace("\n", " / ");
       if (!parseFields(body.substring(2).trim().split(" / "), data)) return false;
     } else {  
-      version = "1";
+      setSelectValue("1");
       if (!parseFields(body.split("\n"), data)) return false;
       setGPSLoc(data.strGPSLoc, data);
       if (data.strAddress.startsWith("Unknown Location -") && data.strGPSLoc.length() > 0) {
@@ -40,30 +41,41 @@ public class DispatchA51Parser extends FieldProgramParser {
     return true;
   }
   
-  @Override
-  protected String getSelectValue() {
-    return version;
-  }
+  private static final DateFormat DATE_TIME_FMT3 = new SimpleDateFormat("yyyy/MMM/dd HH:mm");
+  private static final DateFormat DATE_TIME_FMT1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT3, true);
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CALL2")) return new CallField("Gas Odor.*");
     if (name.equals("LOCATION")) return new SkipField("Location", true);
     if (name.equals("VILLAGE_OF")) return new SkipField("VILLAGE OF");
     if (name.equals("APT")) return new AptField("Unit +(.*)");
     if (name.equals("UNITS_RESPONDING")) return new SkipField("Units Responding", true);
-    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT1, true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-
-  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-  private class MyDateTimeField extends DateTimeField {
+  
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\w+) - +(.*)");
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      setDateTime(DATE_TIME_FMT, field, data);
+      Matcher match =  CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      data.strCall = field;
     }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+    
   }
   
   private static Pattern STATE_CODE_PTN = Pattern.compile("[A-Z]{2}");
