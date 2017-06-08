@@ -9,6 +9,11 @@ public class OHMedinaCountyBParser extends DispatchEmergitechParser {
   public OHMedinaCountyBParser() {
     super("Medina911:", CITY_LIST, "MEDINA COUNTY", "OH", TrailAddrType.PLACE);
   }
+  
+  @Override
+  public String getFilter() {
+    return "@c-msg.net";
+  }
 
   private static final String[] CITY_LIST = new String[]{
       
