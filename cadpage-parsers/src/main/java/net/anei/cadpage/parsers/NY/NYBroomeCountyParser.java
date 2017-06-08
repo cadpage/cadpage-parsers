@@ -33,7 +33,7 @@ public class NYBroomeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "messaging@iamresponding.com,mplus@co.broome.ny.us,9300,Dispatch@co.broome.ny.us";
+    return "messaging@iamresponding.com,messaging@emergencysmc.com,mplus@co.broome.ny.us,9300,Dispatch@co.broome.ny.us,dispatch@co.broomecounty.org";
   }
   
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT|RM|ROOM) *(\\S*)", Pattern.CASE_INSENSITIVE);
