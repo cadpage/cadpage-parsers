@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class NJMorrisCountyAParser extends SmartAddressParser {
   
   private static final Pattern MASTER_PTN = 
-    Pattern.compile("(.*?)[ \n]\\[([-A-Za-z ]+)(?:\\.*\\d+)?\\] \\(([-A-Z0-9\\\\/\\. ]+)\\) - (.*)", Pattern.DOTALL);
+    Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\. ]+)\\) - (.*)", Pattern.DOTALL);
   
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*), *\\d{5}");
   private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)(?![A-Z'])[- ]*((?:ABOVE +)?[^ ]+(?: [A-Z]\\b)?) *(.*)", Pattern.CASE_INSENSITIVE);
@@ -24,6 +24,8 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   public NJMorrisCountyAParser() {
     super(OOC_CITY_LIST, "MORRIS COUNTY", "NJ");
     setFieldList("PLACE APT ADDR CITY CALL UNIT INFO CODE ID TIME");
+    setupMultiWordStreets(MWORD_STREET_LIST);
+    removeWords("NEW", "BLOCK");
   }
   
   @Override
@@ -116,11 +118,13 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     // See what we can do with the address
     // First see if the address parser can identify a city at the end of the address
     // If it can not, parser everything and treat whatever is left as a city name
-    Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, sAddress);
+    sAddress = stripFieldEnd(sAddress, " NJ");
+    StartType st = data.strPlace.length() == 0 ? StartType.START_PLACE : StartType.START_ADDR;
+    Result res = parseAddress(st, FLAG_ANCHOR_END, sAddress);
     if (res.getCity().length() > 0) {
       res.getData(data);
     } else {
-      parseAddress(StartType.START_ADDR, sAddress, data);
+      parseAddress(st, sAddress, data);
       String left = getLeft();
       if (left.startsWith("/") || left.startsWith("&")) {
         data.strAddress = data.strAddress + " & " + left.substring(1).trim();
@@ -130,6 +134,10 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
         data.strApt = append(data.strApt, " ", left);
       }
       if (data.strCity.length() == 0) data.strCity = city;
+    }
+    if (st == StartType.START_PLACE && data.strAddress.length() == 0) {
+      parseAddress(data.strPlace, data);
+      data.strPlace = "";
     }
 
     // Combine all of the apt values we have located
@@ -177,6 +185,10 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     return true;
   }
   
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "VAN HOUTON"
+  };
+  
   private static final String[] OOC_CITY_LIST = new String[]{
     
     // Essex County
@@ -193,8 +205,12 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     "SPARTA",
     "WANTAGE",
     
+    // Mercer County
+    "PRINCETON",
+    
     // Union County
     "BERKLEY HEIGHTS",
+    "BERKLEY HIEGHTS", // Misspelled
     "NEW PROVIDENCE",
     
     // Warren County
@@ -205,6 +221,7 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   };
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BERKELEY HIEGHTS", "BERKELEY HEIGHTS",
       "Morris Plns",    "Morris Plains",
       "MtArlington",    "Mt Arlington",
       "SANDSTON",       "SANDYSTON",
