@@ -14,7 +14,7 @@ public class PAAlleghenyCountyCParser extends DispatchProQAParser {
   
   public PAAlleghenyCountyCParser() {
     super("ALLEGHENY COUNTY", "PA", 
-          "CALL_PREFIX? CALL/L CALL2/SLS+? EMPTY+? ADDR PLACE_APT CITY ID! PRI! INFO/L+", true);
+          "CALL_PREFIX? CALL/L CALL2/SLS+? EMPTY+? ADDR PLACE_APT EMPTY/Z? CITY ID! PRI! INFO/L+", true);
   }
   
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
@@ -29,7 +29,7 @@ public class PAAlleghenyCountyCParser extends DispatchProQAParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL_PREFIX")) return new CallField("EMERGENCY|ALS-\\d|BLS", true);
+    if (name.equals("CALL_PREFIX")) return new CallField("EMERGENCY|ALS-\\d|BLS|BLS Non Covered Ambulance", true);
     if (name.equals("CALL2"))  return new MyCall2Field();
     if (name.equals("PLACE_APT")) return new MyPlaceAptField();
     return super.getField(name);
@@ -55,7 +55,7 @@ public class PAAlleghenyCountyCParser extends DispatchProQAParser {
   }
   
   private static final Pattern PLACE_APT_PTN1 = Pattern.compile("(?:(.*) )?(?:APT|RM|ROOM|LOT)\\b[#. ]*+(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern PLACE_APT_PTN2 = Pattern.compile("(?:(.*) )?(\\d+(?:-?[A-Za-z])?)");
+  private static final Pattern PLACE_APT_PTN2 = Pattern.compile("(?!EXIT)(?:(.*) )?(\\d+(?:-?[A-Za-z])?)");
   private class MyPlaceAptField extends Field {
 
     @Override
