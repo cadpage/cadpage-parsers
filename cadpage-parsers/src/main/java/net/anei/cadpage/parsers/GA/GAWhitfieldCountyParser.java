@@ -8,6 +8,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class GAWhitfieldCountyParser extends GroupBestParser {
   
   public GAWhitfieldCountyParser() {
-    super(new GAWhitfieldCountyAParser(), new GAWhitfieldCountyBParser(), new GAWhitfieldCountyCParser());
+    super(new GAWhitfieldCountyAParser(), new GAWhitfieldCountyBParser(), 
+          new GAWhitfieldCountyCParser(), new GAWhitfieldCountyDParser());
   }
 }
