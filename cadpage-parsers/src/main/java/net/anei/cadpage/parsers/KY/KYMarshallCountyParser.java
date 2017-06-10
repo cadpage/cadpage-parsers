@@ -6,6 +6,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class KYMarshallCountyParser extends GroupBestParser {
   
   public KYMarshallCountyParser() {
-    super(new KYMarshallCountyAParser(), new KYMarshallCountyBParser());
+    super(new KYMarshallCountyAParser(), new KYMarshallCountyBParser(), new KYMarshallCountyCParser());
   }
 }

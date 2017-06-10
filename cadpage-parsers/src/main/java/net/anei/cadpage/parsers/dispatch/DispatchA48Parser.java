@@ -179,7 +179,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     fieldList = ("DATE TIME ID CODE CALL ADDR APT CITY NAME " + fieldType.getFieldList() + " UNIT INFO").replace("  ", " ");
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("As of \\d\\d?/\\d\\d?/\\d\\d \\d\\d(:\\d\\d:\\d\\d)?");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("As of \\d\\d?/\\d\\d?/\\d\\d \\d\\d(:\\d\\d:\\d\\d( [AP]M)?)?");
   private static final Pattern PREFIX_PTN = Pattern.compile("(?!\\d\\d:)([- A-Za-z0-9]+: *)(.*)");
   private static final Pattern TRUNC_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d \\d{4}-\\d{8} ");
   private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8} ");
@@ -187,7 +187,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+(\\w+)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?\\b");
   private static final Pattern DATE_TIME_UNIT_MARK_PTN = Pattern.compile("(.*?)(?: \\d\\d?/\\d\\d?/\\d\\d)? Date/Time Unit Status Unit Location/Remarks");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:dd aa");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern TRAIL_DATE_PTN = Pattern.compile("(.*) \\d\\d/\\d\\d/\\d\\d");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[ ,]+");
 
