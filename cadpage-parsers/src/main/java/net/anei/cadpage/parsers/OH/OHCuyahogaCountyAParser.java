@@ -19,7 +19,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@chagrinfallspd.com,dispatcher@bhpd.org,dispatch@secc-911.org,PRDC@parma.com,dispatch@waltonhillsohio.gov,@cox.net,PRDC@parmajustice.net,DISPATCH@MAYFIELDVILLAGE.COM,dispatch@beachwoodohio.com";
+    return "dispatch@chagrinfallspd.com,dispatcher@bhpd.org,dispatch@secc-911.org,PRDC@parma.com,dispatch@waltonhillsohio.gov,@cox.net,PRDC@parmajustice.net,DISPATCH@MAYFIELDVILLAGE.COM,dispatch@beachwoodohio.com,dispatch@prdc.net";
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
