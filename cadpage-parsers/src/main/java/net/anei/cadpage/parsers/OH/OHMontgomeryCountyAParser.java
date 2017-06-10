@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -20,21 +23,23 @@ public class OHMontgomeryCountyAParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     
     if(!subject.startsWith("CAD Page")) return false;
-    
+
+    body = body.replaceAll("\nCFS# ", "\nCFS #: ");
     String[] fields = body.split("\n");
     return parseFields(fields, data);
   }
   
+  private static final Pattern ADDR_ST_PTN = Pattern.compile("(.*), *OH");
   private class MyAddressField extends AddressField {
 
     @Override
     public void parse(String field, Data data) {
       
-      // Remove OH from Address.  Should be after last comma
-      if (field.endsWith(", OH")) {
-        field = field.substring(0,field.length()-4).trim();
+      Matcher match = ADDR_ST_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
       }
-      
+      field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
