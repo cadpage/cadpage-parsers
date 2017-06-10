@@ -25,6 +25,11 @@ public class SCMarionCountyParser extends DispatchA48Parser {
   }
   
   @Override
+  public String getProgram() {
+    return super.getProgram() + " PLACE";
+  }
+  
+  @Override
   public String fixCallAddress(String field) {
     int pt = field.indexOf("//");
     if (pt >= 0) {
