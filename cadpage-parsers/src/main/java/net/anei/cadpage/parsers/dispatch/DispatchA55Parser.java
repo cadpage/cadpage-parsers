@@ -10,13 +10,17 @@ public class DispatchA55Parser extends FieldProgramParser {
   
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Notes:INFO/N+");
+          "Call_Type:CALL/SDS? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Disposition:SKIP Lat/Long:GPS Zip:ZIP Subgrid_Grid_District:MAP Notes:INFO/N+");
   }
+  
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() > 0 && !subject.equals("Dispatch Alert")) return false;
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (match.lookingAt()) subject = subject.substring(match.end());
+    data.strCall = subject;
     int pt = body.indexOf("\n_____");
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!parseFields(body.split("\n"), data)) return false;
@@ -26,6 +30,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("ZIP")) return new MyZipField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -45,6 +50,14 @@ public class DispatchA55Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CITY ST";
+    }
+  }
+  
+  private class MyZipField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCity.length() > 0) return;
+      data.strCity = field;
     }
   }
   
