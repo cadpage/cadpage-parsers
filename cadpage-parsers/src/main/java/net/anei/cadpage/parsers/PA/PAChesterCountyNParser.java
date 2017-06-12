@@ -10,7 +10,7 @@ public class PAChesterCountyNParser extends PAChesterCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "station41@verizon.net";
+    return "station41@verizon.net,whcems@gmail.com";
   }
   
   @Override
