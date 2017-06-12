@@ -17,7 +17,7 @@ public class MOColeCountyParser extends FieldProgramParser {
   public String getFilter() {
     return "ccems";
   }
-  protected boolean parseMsg(String subject, String body, Data data) {
-    return super.parseFields(body.split("\n"), data);
+  protected boolean parseMsg(String body, Data data) {
+    return super.parseFields(body.split(""), data);
   }
 }
