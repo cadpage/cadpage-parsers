@@ -13,8 +13,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class CAMontereyCountyAParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("(?:(.*?) - )?([A-Z0-9]{2,6}):(.*?) - (.*?)(?: - ([A-Z]{3}))? *(?:Units?:(.*?))?");
-  
   public CAMontereyCountyAParser() {
     super("MONTEREY COUNTY", "CA");
   }
@@ -37,7 +35,7 @@ public class CAMontereyCountyAParser extends MsgParser {
     return false;
   }
   
-  private static final Pattern MARKER = Pattern.compile("([A-Z]+) -  ");
+  private static final Pattern MARKER = Pattern.compile("([A-Z ]+) - ");
   
   private boolean parseMsg2(String body, Data data) {
     
@@ -45,28 +43,48 @@ public class CAMontereyCountyAParser extends MsgParser {
     if (!match.lookingAt()) return false;
     setFieldList("SRC UNIT CALL ADDR APT X");
     
-    data.strSource = match.group(1);
+    String source = match.group(1);
     body = body.substring(match.end());
     
     FParser fp = new FParser(body);
-    if (fp.checkAhead(94, "CROSS STREETS")) {
-      data.strUnit = fp.get(31);
+    if (fp.checkAhead(95, "CROSS STREETS")) {
+      data.strSource = source;
+      
+      data.strUnit = fp.get(32);
       if (!fp.check(" ")) return false;
-    } else {
-      fp.skip(7);
+      
+      if (fp.check(" ")) return false;
+      data.strCall = fp.get(10);
+      
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      parseAddress(fp.get(50), data);
+      
+      if (!fp.check(" CROSS STREETS  ")) return false;
+      data.strCross = fp.get();
+      return true;
     }
     
-    if (fp.check(" ")) return false;
-    data.strCall = fp.get(10);
-    
-    if (!fp.check(" ") || fp.check(" ")) return false;
-    parseAddress(fp.get(50), data);
-    
-    if (!fp.check(" CROSS STREETS  ")) return false;
-    data.strCross = fp.get();
-    return true;
+    if (fp.checkAhead(93, "X STREETS")) {
+      data.strSource = source;
+      
+      data.strUnit = fp.get(30);
+      if (!fp.check(" ")) return false;
+      
+      if (fp.check(" ")) return false;
+      data.strCall = fp.get(10);
+      
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      parseAddress(fp.get(50), data);
+      
+      if (!fp.check(" X STREETS ")) return false;
+      data.strCross = fp.get();
+      return true;
+      
+    }
+    return false;
   }
     
+  private static final Pattern MASTER = Pattern.compile("(?:(.*?) - )?([A-Z0-9]{2,6}):(.*?) - (.*?)(?: - ([A-Z]{3}))? *(?:Units?:(.*?))?");
    
   private boolean parseMsg1(String subject, String body, Data data) {
     // Old page format
