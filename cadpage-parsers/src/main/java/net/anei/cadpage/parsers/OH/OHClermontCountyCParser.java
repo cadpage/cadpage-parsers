@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA1Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
-public class OHClermontCountyCParser extends DispatchA1Parser {
+public class OHClermontCountyCParser extends DispatchA52Parser {
   
   public OHClermontCountyCParser() {
     super("CLERMONT COUNTY", "OH");
@@ -10,6 +10,6 @@ public class OHClermontCountyCParser extends DispatchA1Parser {
   
   @Override
   public String getFilter() {
-    return "utcc@union-township.oh.us";
+    return "1027194726673";
   }
 }
