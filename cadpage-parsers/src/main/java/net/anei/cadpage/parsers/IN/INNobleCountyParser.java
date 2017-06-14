@@ -3,7 +3,7 @@ package net.anei.cadpage.parsers.IN;
 import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
 
 /**
- * Marshall County, AL
+ * Noble County, AL
  */
 public class INNobleCountyParser extends DispatchGeoconxParser {
 
