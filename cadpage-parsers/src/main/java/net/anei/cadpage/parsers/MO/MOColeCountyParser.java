@@ -18,6 +18,6 @@ public class MOColeCountyParser extends FieldProgramParser {
     return "ccems";
   }
   protected boolean parseMsg(String body, Data data) {
-    return super.parseFields(body.split(""), data);
+    return super.parseFields(body.split("\n"), data);
   }
 }
