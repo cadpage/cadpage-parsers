@@ -2,6 +2,8 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
@@ -28,9 +30,18 @@ public class NCAsheCountyParser extends DispatchSouthernParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
   
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(?:(\\S+) - +)?(.*?)[-/ ]*");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+    
+    // Clean up call
+    Matcher match = CODE_CALL_PTN.matcher(data.strCall);
+    if (match.matches()) { // Always matches
+      data.strCode = getOptGroup(match.group(1));
+      data.strCall = match.group(2);
+    }
     
     // Fix mispelled city names
     data.strCity = convertCodes(data.strCity.toUpperCase(), FIX_CITY_TABLE);
