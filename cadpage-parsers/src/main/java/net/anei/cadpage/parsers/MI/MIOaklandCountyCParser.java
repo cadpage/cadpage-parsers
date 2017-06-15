@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MI;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
 
   MIOaklandCountyCParser(String defCity, String defState) {
     super(defCity, defState, 
-          "CALL ADDR ADDR2? APT? PLACE+? PHONE END");
+          "CODE ADDR ADDR2? APT? PLACE+? PHONE END");
   }
   
   @Override
@@ -36,7 +37,14 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
     int pt = body.indexOf(" /");
     if (pt < 0) return false;
     body = body.substring(pt+2).trim();
-    return parseFields(body.split("/"), data);
+    if (!parseFields(body.split("/"), data)) return false;
+    data.strCall = convertCodes(data.strCode, CALL_CODES);
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CODE", "CODE CALL");
   }
   
   @Override
@@ -119,4 +127,86 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
       return "X PLACE";
     }
   }
+  
+  private static final Properties CALL_CODES = buildCodeTable(new String[]{
+        "AC",         "ASSIST CITIZEN",
+        "BOX_COM",    "BOX ALARM COMMERCIAL",
+        "BOX_RESD",   "BOX ALARM RESIDENTIAL",
+        "BT",         "BOMB THREAT",
+        "BURNIN",     "BURNING COMPLAINT",
+        "CO",         "CARBON MONOXIDE",
+        "CR",         "CONFINED SPACE RESCUE",
+        "DC",         "DUTY CALL",
+        "EXPLSN",     "EXPLOSION",
+        "FAC",        "FIRE ALARM COMMERCIAL",
+        "FAR",        "FIRE ALARM RESIDENTIAL",
+        "FULL_COM",   "FULL ALARM COMMERCIAL",
+        "FULL_RES",   "FULL ALARM RESIDENTIAL",
+        "FULL_RESD",  "FULL ALARM RESIDENTIAL",
+        "GASLK",      "GAS LEAK",
+        "HR",         "HIGH ANGLE RESCUE",
+        "HZ",         "HAZMAT",
+        "MA ",        "MEDICAL ALARM",
+        "MABAS",      "MABAS",
+        "ME",         "MEDICAL (NO EMD)",
+        "MEA",        "ALPHA",
+        "MEB",        "BRAVO",
+        "MEC",        "CHARLIE",
+        "MED",        "DELTA",
+        "MEE",        "ECHO",
+        "MEO",        "OMEGA",
+        "MET",        "MEDICAL TRANSFER",
+        "MUTAID",     "MUTUAL AID",
+        "OF",         "OUTSIDE FIRE",
+        "OI",         "ODOR INVESTIGATION",
+        "PA",         "POLICE ASSIST",
+        "PI",         "INJURY ACCIDENT",
+        "PLANE",      "PLANE INCIDENT",
+        "RC",         "COMMERCIAL STRUCTURE FIRE",
+        "RR",         "RESIDENTIAL STRUCTURE FIRE",
+        "SMOKE",      "SMOKE INV (OUTSIDE)",
+        "STILL_COM",  "STILL ALARM COMMERCIAL",
+        "STILL_RESD", "FULL ALARM RESIDENTIAL",
+        "TECHR",      "TECH RESCUE",
+        "TRAIN",      "TRAIN INCIDENT",
+        "TREE",       "DOWN TREE",
+        "TRENCH",     "TRENCH RESCUE",
+        "VF",         "VEHICLE FIRE",
+        "WIRE",       "DOWN WIRES",
+        "FAIRLG",     "LARGE AIRCRAFT: CRASH/FIRE",
+        "FAIRSM",     "SMALL AIRCRAFT CRASH/FIRE",
+        "FALARM",     "FIRE ALARM",
+        "FBOAT",      "BOAT FIRE",
+        "FBOMB",      "BOMB: THREAT/STANDBY",
+        "FBURNC",     "BURNING COMPLAINT",
+        "FCOALM",     "CO ALARM",
+        "FDUTYO",     "DO: CALL/NOTIFICATION",
+        "FELEVA",     "ELEVATOR MALFUNCTION",
+        "FELHZD",     "ELECTRICAL HAZARD",
+        "FEXPLO",     "EXPLOSION",
+        "FEXTRI",     "EXTRICATION",
+        "FFUELS",     "FUEL SPILL",
+        "FGASLK",     "NATURAL GAS LEAK",
+        "FHAZMT",     "HAZ MAT: SPILL/LEAK/RUPTURE",
+        "FINVEST",    "FIRE INVESTIGATION",
+        "FLGHTN",     "LIGHTNING STRIKE",
+        "FMUTAI",     "MUTUAL AID",
+        "FODORS",     "ODOR: INSIDE/OUTSIDE",
+        "FOTHER",     "FIRE: OTHER/MISC",
+        "FOUTSI",     "OUTISDE FIRE: BRUSH/TRASH",
+        "FPIACC",     "PIA/EXTRICATION",
+        "FRESCU",     "RESCUE: ABOVE/BELOW GRADE",
+        "FSMOKE",     "SMOKE VISIBLE OUTSIDE",
+        "FSRVCE",     "ASSIST: POLICE/CITIZEN",
+        "FSTRUC",     "STRUCTURE FIRE",
+        "FSYSIM",     "FIRE SYSTEM IMPAIRMENT",
+        "FSYSTR",     "FIRE SYSTEM TROUBLE",
+        "FTRAIN",     "TRAIN: DERAILMENT/FIRE",
+        "FTRANS",     "TRANSFORMER: EXPLOSION/FIRE",
+        "FVEHIC",     "VEHICLE FIRE",
+        "FWATER",     "RESCUE: WATER/ICE/FLOOD",
+        "FWEATH",     "WEATHER: ALERT/STANDBY",
+        "FWIRES",     "WIRES: DOWN/ARCING/SPARKING"
+
+  });
 }
