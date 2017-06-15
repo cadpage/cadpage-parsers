@@ -32,7 +32,7 @@ public class ORTillamookCountyParser extends SmartAddressParser {
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
     int pt = body.length();
     while (true) {
