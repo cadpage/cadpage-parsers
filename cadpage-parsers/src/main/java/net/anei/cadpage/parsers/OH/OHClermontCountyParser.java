@@ -9,6 +9,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class OHClermontCountyParser extends GroupBestParser {
   
   public OHClermontCountyParser() {
-    super(new OHClermontCountyAParser(), new OHClermontCountyBParser(), new OHClermontCountyCParser());
+    super(new OHClermontCountyAParser(), new OHClermontCountyBParser(), 
+          new OHClermontCountyCParser(), new OHClermontCountyDParser());
   }
 }
