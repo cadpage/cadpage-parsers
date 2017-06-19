@@ -26,7 +26,7 @@ public class ZCANSAnnapolisCountyParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "valleycommunications@ns.aliantzinc.ca";
+    return "valleycommunications@ns.aliantzinc.ca,valley295-u@iamresponding.com";
   }
   
   @Override
@@ -93,6 +93,7 @@ public class ZCANSAnnapolisCountyParser extends SmartAddressParser {
       "ALARM",
       "CHIMNEY",
       "CHIMNEY FIRE",
+      "CO ALARM ACTIVATION",
       "FIRE ALARM",
       "FIRE ALARM SOUNDING",
       "HOUSE FIRE",

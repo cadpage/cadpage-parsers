@@ -198,12 +198,12 @@ public class Message {
     Pattern.compile("SRS1=[A-Za-z0-9\\.]+=AIDz=WT=[A-Za-z0-9\\.]+= ([A-Za-z0-9\\.]+@[A-Za-z0-9\\.]+)"),
     Pattern.compile("FRM: *(.*?) MSG: *")
   };
-  private static final Pattern EMAIL_PFX_PATTERN = Pattern.compile("^([\\w\\.]+@\\w+\\.[\\w\\.]+)(?:\\n|: )");
+  private static final Pattern EMAIL_PFX_PATTERN = Pattern.compile("^([-\\w\\.]+@\\w+\\.[-\\w\\.]+)(?:\\n|: )");
   private static final Pattern FRM_TAG_PATTERN = Pattern.compile("\n *FRM:");
   private static final Pattern MULTI_MSG_MASTER_PATTERN = Pattern.compile("1 of \\d FRM:(.*?) SUBJ:(.*?) MSG:(.*)\\(End\\)");
   private static final Pattern MULTI_MSG_BREAK_PATTERN = Pattern.compile(" \\(Con't\\) \\d of \\d ");
   private static final Pattern[] E_S_M_PATTERNS = new Pattern[]{
-    Pattern.compile("^(?:([\\w\\.]+@[\\w\\.]+) +)?Subj(?:ect)?: *(.*)\n"),
+    Pattern.compile("^(?:([-\\w\\.]+@[-\\w\\.]+) +)?Subj(?:ect)?: *(.*)\n"),
     Pattern.compile("^(?:([^ ,;/]+) +)?S:(.*?)(?: +M:|\n)"), 
     Pattern.compile("^Fr:<(.*?)>?\nSu:(.*?)\nTxt: "),
     Pattern.compile("^prvs=[0-9a-f]{8,}=[\\w .<>@]*<([\\w.\\-]+@[\\w.]+)> *\\((.*?)\\)")
