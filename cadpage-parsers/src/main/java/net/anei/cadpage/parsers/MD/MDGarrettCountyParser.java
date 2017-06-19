@@ -15,7 +15,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
   
   public MDGarrettCountyParser() {
     super(CITY_LIST, "GARRETT COUNTY", "MD", 
-          "ADDR CALL CALL2/SDS+? INFO/SDS+? UNIT_TIME! END");
+          "ADDR ( X | X1 X2 | ) CALL CALL2/SDS+? INFO/SDS+? UNIT_TIME! END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MULTI_WORD_STREET_LIST);
   }
@@ -55,6 +55,9 @@ public class MDGarrettCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField("\\[ *(.*?) *\\]", true);
+    if (name.equals("X1")) return new MyCrossField("\\[ *(.*?)", true);
+    if (name.equals("X2")) return new MyCrossField("(.*?) *\\]", true);
     if (name.equals("CALL2")) return new CallField("HOT|COLD|[AB]LS", true);
     if (name.equals("UNIT_TIME")) return new MyUnitTimeField();
     return super.getField(name);
@@ -63,6 +66,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      while (field.startsWith("*")) field = field.substring(1).trim();
       Parser p = new Parser(field);
       String apt = p.getLastOptional('#');
       data.strPlace = p.getLastOptional(',');
@@ -73,6 +77,18 @@ public class MDGarrettCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    
+    public MyCrossField(String pattern, boolean required) {
+      super(pattern, required);
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return false;
     }
   }
 

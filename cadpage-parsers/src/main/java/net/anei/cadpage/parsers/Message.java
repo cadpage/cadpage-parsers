@@ -400,23 +400,10 @@ public class Message {
         break;
       }
       
-      /* Decode patterns that look like this 
-      CommCenter@ccems.com <Body%3ACommCenter@ccems.com> [] TAP OUT (SAL)
-       */
-      int ipt = body.indexOf(" [] ");
-      if (ipt >= 0) {
-        String sAddr = body.substring(0, ipt).trim();
-        if (sAddr.contains("@")) {
-          parseAddress = sAddr;
-          body = trimLead(body.substring(ipt+4), keepLeadBreak);
-          break;
-        }
-      }
-      
       /* Decode patterns that look like this
         Dispatch@ci.waynesboro.va.us <Body%3ADispatch@ci.waynesboro.va.us> Msg: Dispatch:2ND CALL 1001 HOPEMAN PKWY, ZAP12 INJURIES FROM PREVIOUS MVA
       */
-      ipt = body.indexOf(" Msg:");
+      int ipt = body.indexOf(" Msg:");
       if (ipt >= 0) {
         String addr = body.substring(0,ipt).trim();
         if (addr.contains("@") && ! addr.contains(":")) {
