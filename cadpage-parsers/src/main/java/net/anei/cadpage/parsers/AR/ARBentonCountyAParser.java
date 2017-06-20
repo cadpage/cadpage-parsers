@@ -4,21 +4,23 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
-public class ARBentonCountyAParser extends FieldProgramParser {
+public class ARBentonCountyAParser extends DispatchSouthernParser {
   
   public ARBentonCountyAParser() {
     super(CITY_LIST, "BENTON COUNTY", "AR",
-           "ADDR/S ( NAME PHONE/Z ID | NAME ID | ID ) TIME CALL! INFO");
+          DSFLG_ADDR | DSFLG_NAME | DSFLG_OPT_PHONE | DSFLG_ID | DSFLG_TIME);
   }
   
   @Override
   public String getFilter() {
     return "OECOperations@bentoncountyar.gov";
   }
+  
+  private static final Pattern NAME_DISPATCH_PTN = Pattern.compile("(.* CO(?:UNTY)?)(?: DISPATCH)?", Pattern.CASE_INSENSITIVE);
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -32,91 +34,50 @@ public class ARBentonCountyAParser extends FieldProgramParser {
       body = body.substring(colon+1).trim();    
     }
     
-    // Check to see if the subject contains field data and if so, combine with message body
-    if(subject.length() > 0 && !subject.equals("Text Message")) {
-      body = subject + ":" + body;
+    if (!super.parseMsg(body, data)) return false;
+    
+    if (data.strPhone.equals("0000000000")) data.strPhone = "";
+    
+    if (data.strCity.length() == 0) {
+      Matcher match = NAME_DISPATCH_PTN.matcher(data.strName);
+      if (match.matches()) data.strCity = match.group(1);
     }
     
-    // Parse the fields
-    String[] fields = body.split(";");
-    if (parseFields(fields, 4, data)) return true;
-    
-    // If parsing fails, return general alert
-    return data.parseGeneralAlert(this,body);
+    return true;
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("NAME")) return new MyNameField();
-    if(name.equals("ID")) return new IdField("\\d{10}", true);
-    if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
   
-  private class MyAddressField extends AddressField {
+  private static final Pattern ADDR_ST_PTN = Pattern.compile("(.*?)[, ]+(AR|OK|MO)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern FARM_RD_PTN = Pattern.compile(".*\\bFARM RD", Pattern.CASE_INSENSITIVE);
+  
+  private class MyAddressField extends BaseAddressField {
     @Override
     public void parse(String field, Data data) {
+      Matcher match = ADDR_ST_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strState = match.group(2).toUpperCase();
+      }
       super.parse(field, data);
-
-      data.strCity = fixCity(data.strCity);
-      setCityState(data);
+      
+      String state = CITY_STATE_TABLE.getProperty(data.strCity);
+      if (state != null) data.strState = state;
+      
+      if (NUMERIC.matcher(data.strApt).matches() && 
+          FARM_RD_PTN.matcher(data.strAddress).matches()) {
+        data.strAddress = data.strAddress + ' ' + data.strApt;
+        data.strApt = "";
+      }
     }
     
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST";
-    }
-  }
-  
-  private class MyNameField extends NameField {
-    @Override
-    public void parse(String field, Data data) {
-      if (isCity(field)) {
-        field = field.toUpperCase();
-        field = fixCity(field);
-        if (data.strCity.length() > 0) {
-          if (!field.equalsIgnoreCase(data.strCity)) data.strPlace = field;
-        } else {
-          data.strCity = field;
-          setCityState(data);
-        }
-      } else {
-        super.parse(field, data);
-      }
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "NAME PLACE CITY ST";
-    }
-  }
-  
-  private String fixCity(String city) {
-    city = city.replace('_',  ' ');
-    if (city.endsWith(" CO")) {
-      city = city.substring(0,city.length()-3).trim() + " COUNTY";
-    }
-    return city;
-  }
-  
-  private void setCityState(Data data) {
-    String state = CITY_STATE_TABLE.getProperty(data.strCity);
-    if (state != null) data.strState = state;
-  }
-  
-  private static final Pattern PTN_TIME = Pattern.compile("\\d{2}:\\d{2}:\\d{2}");
-  private class MyTimeField extends TimeField {
-    
-    @Override 
-    public void parse(String field, Data data) {
-      Matcher m = PTN_TIME.matcher(field);
-      if(m.matches()) {
-        data.strTime = field;
-      }
-      else {
-        data.strTime = "";
-      }
     }
   }
   
@@ -150,50 +111,53 @@ public class ARBentonCountyAParser extends FieldProgramParser {
     
     // Barry County, MO
     "SELIGMAN",
+    "WASHBURN",
+    
+    // Mcdonald County, MO
+    "NOEL",
     
     // Delaware County, OK
     "JAY",
+    "COLCORD",
+    
+    // Washington County
+    "FAYETTEVILLE",
     
     "ADAIR CO",
-    "ADAIR_CO",
     "ADAIR COUNTY",
     
     "BARRY CO",
-    "BARRY_CO",
     "BARRY COUNTY",
     
     "CARROLL CO",
-    "CARROLL_CO",
     "CARROLL COUNTY",
     
     "DELAWARE CO",
-    "DELAWARE_CO",
     "DELAWARE COUNTY",
     
     "MADISON CO",
-    "MADISON_CO",
     "MADISON COUNTY",
     
     "MCDONALD CO",
-    "MCDONALD_CO",
     "MCDONALD COUNTY",
     
     "PETTIS CO",
-    "PETTIS_CO",
     "PETTIS COUNTY",
     
     "WASHINGTON CO",
-    "WASHINGTON_CO",
     "WASHINGTON COUNTY"
   };
   
   private static final Properties CITY_STATE_TABLE = buildCodeTable(new String[]{
       "BARRY COUNTY",         "MO",
       "MCDONALD COUNTY",      "MO",
+      "NOEL",                 "MO",
       "SELIGMAN",             "MO",
+      "WASHBURN",             "MO",
       
       "ADAIR COUNTY",         "OK",
       "JAY",                  "OK",
-      "DELAWARE COUNTY",      "OK"
+      "DELAWARE COUNTY",      "OK",
+      "COLCORD",              "OK"
   });
 }

@@ -209,6 +209,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     appendTerm(sb, "TIME", DSFLG_TIME,  DSFLG_OPT_TIME);
     sb.append(" INFO+ OCA:ID2");
     String program = sb.toString();
+    program = program.replace(" PHONE? ID! ", " ( PHONE/Z ID! | ID! ) ");
 //    System.out.println(program);
     setProgram(program, 0);
     
