@@ -67,6 +67,7 @@ public class MSDeSotoCountyAParser extends DispatchB3Parser {
       "20 HEAT / COLD EXPOSURE",
       "21 HEMORRHAGE / LACERATIONS",
       "26 SICK PERSON (SPECIFIC DIAG)",
+      "28 STROKE (CVA) - TIA",
       "29 MVA WITH INJURIES",
       "30 TRAUMATIC INJURIES",
       "31 UNCONSCIOUS / FAINTING",
