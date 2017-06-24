@@ -72,6 +72,7 @@ public class TXWilliamsonCountyParser extends DispatchOSSIParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AU",      "AUSTIN",
+      "BT",      "BARTLETT",
       "CL",      "COUPLAND",
       "CP",      "CEDAR PARK",
       "EL",      "ELGIN",
