@@ -5,14 +5,16 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class DispatchA65Parser extends FieldProgramParser {
   
   public DispatchA65Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState, 
-          "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY! EMPTY+? ( SRC! END | CITY? ADDR! APT:APT? CS:X? EMPTY SRC END )");
+          "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY! EMPTY+? ( SRC! END | CITY? ADDR! APT? CS:X? EMPTY EMPTY+? SRC END )");
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("E911-Page")) return false;
@@ -25,6 +27,7 @@ public class DispatchA65Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("APT")) return new AptField("(?:APT|RM|ROOM)[: ]+(.*)|(\\d{1,4})");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);

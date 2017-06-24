@@ -1,34 +1,65 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
+import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
-public class TNCampbellCountyParser extends DispatchGeoconxParser {
+public class TNCampbellCountyParser extends DispatchA65Parser {
   
   public TNCampbellCountyParser() {
-    super("CAMPBELL COUNTY", "TN", GCX_FLG_NAME_PHONE);
+    super(CITY_LIST, "CAMPBELL COUNTY", "TN");
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (! super.parseMsg(subject, body, data)) return false;
-    if (data.strCity.equalsIgnoreCase("LAFOLLETTE")) data.strCity = "LA FOLLETTE";
-    
-    // Dispatch requests caller name not be included in result
-    data.strName = "";
-    return true;
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBreakIns() { return true; }
+      @Override public boolean splitKeepLeadBreak() { return true; }
+    };
   }
 
   @Override
   public String getFilter() {
-    return "@911email.net,@911email.org";
-  }
-
-  @Override
-  protected boolean isAddress(String field) {
-    if (field.equals("LMCER")) return true;
-    return super.isAddress(field);
+    return "campbellcotn@911email.net";
   }
   
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "JELLICO",
+      "LAFOLLETTE",
+      "ROCKY TOP",
+
+      // Towns
+      "CARYVILLE",
+      "JACKSBORO",
+
+      // Census-designated place
+      "FINCASTLE",
+
+      // Unincorporated communities
+      "ALDER SPRINGS",
+      "ANTHRAS",
+      "BLOCK",
+      "CLINCHMORE",
+      "COAL CREEK",
+      "COOLIDGE",
+      "COTULA",
+      "DUFF",
+      "ELK VALLEY",
+      "HABERSHAM",
+      "LAKE CITY",
+      "MORLEY",
+      "NEWCOMB",
+      "PINECREST",
+      "PIONEER",
+      "STINKING CREEK",
+      "STONY FORK",
+      "VASPER",
+      "WESTBOURNE",
+      "WHITE OAK",
+      "WOOLDRIDGE",
+      "WYNN"
+  };
 }
