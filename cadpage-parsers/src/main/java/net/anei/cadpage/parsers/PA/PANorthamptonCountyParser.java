@@ -22,7 +22,7 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
   
   @Override
   public String getFilter() {
-    return "@notifync.org,14100,12101,777,411912,4702193914,no-reply@ecnalert.com";
+    return "@notifync.org,14100,12101,777,411912,4702193914,no-reply@ecnalert.com,no-reply@onsolve.com";
   }
   
   private static final Pattern MARKER = Pattern.compile(">.* Cad: ");
