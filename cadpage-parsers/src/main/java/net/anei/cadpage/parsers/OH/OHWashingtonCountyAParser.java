@@ -19,12 +19,12 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
 
   public OHWashingtonCountyAParser () {
     super("WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDR EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ADDR DATETIME CALL ) UNIT INFO+");
+        "( CALL EMPTY ADDR EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR DATETIME CALL ) UNIT INFO+");
   }
   
   @Override
   public String getFilter() {
-    return "notifications@washingtoncountysheriff.or";
+    return "notifications@washingtoncountysheriff.or,notifications@wcso84.us";
   }
 
   @Override
@@ -51,6 +51,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{2}-\\d{6}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
