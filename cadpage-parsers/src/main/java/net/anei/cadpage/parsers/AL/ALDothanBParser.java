@@ -11,8 +11,8 @@ public class ALDothanBParser extends FieldProgramParser {
   
   public ALDothanBParser() {
     super(CITY_LIST, "DOTHAN", "AL", 
-          "ADDR/S6XP X EMPTY EMPTY EMPTY TIME CALL PRI! INFO+");
-    removeWords("AVENUE", "PLACE", "TERRACE");
+          "ADDR/S6XP ( X/Z EMPTY EMPTY EMPTY TIME CALL! | X_CALL | X? CALL! ) PRI? MAP? INFO+");
+    removeWords("AVENUE", "ESTATES", "LANE", "PLACE", "SQUARE", "TERRACE");
   }
   
   @Override
@@ -32,20 +32,21 @@ public class ALDothanBParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("X_CALL")) return new MyCrossCallField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("PRI")) return new PriorityField("\\d", true);
+    if (name.equals("MAP")) return new MapField("ZE:.*", true);
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*) ((?:[NSEW]|[NS][EW]) SECTOR)\\b *(.*)");
+  private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*) (?:[NSEW]|[NS][EW]) SECTOR\\b *(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_MAP_PTN.matcher(field);
       if (match.matches()) {
         String addr = match.group(1).trim();
-        data.strMap = match.group(2);
-        String extra = match.group(3);
+        String extra = match.group(2);
         
         parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, extra, data);
@@ -58,15 +59,34 @@ public class ALDothanBParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT MAP CITY PLACE";
+      return "ADDR APT CITY PLACE";
     }
   }
   
+  private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\bX\\b");
   private class MyCrossField extends CrossField {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CROSS_MARK_PTN.matcher(field);
+      if (!match.find()) return false;
+      field = match.replaceAll("/");
+      field = field.replace("*", "");
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
-      field = field.replace("*", "").replace(" X ", " / ");
-      super.parse(field, data);
+      if (field.length() == 0) return;
+      if (!checkParse(field, data)) abort();
     }
   }
 
@@ -85,6 +105,42 @@ public class ALDothanBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+  
+  private static final Pattern CROSS_CALL_PTN = Pattern.compile("(.* X [^a-z]+) (.*[a-z].*)");
+  private class MyCrossCallField extends MyCrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CROSS_CALL_PTN.matcher(field);
+      if (!match.matches()) return false;
+      String cross = match.group(1).trim();
+      String call = match.group(2).trim();
+      
+      super.checkParse(cross, data);
+      
+      match = CODE_CALL_PTN.matcher(call);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        call =  match.group(2).trim();
+      }
+      data.strCall = call;
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "X CODE CALL";
     }
   }
   
@@ -119,6 +175,7 @@ public class ALDothanBParser extends FieldProgramParser {
     "COTTONWOOD",
     "COWARTS",
     "CROSBY",
+    "DALE CO",
     "DOTHAN",
     "DUPREE",
     "ENON",
@@ -126,6 +183,7 @@ public class ALDothanBParser extends FieldProgramParser {
     "GORDON",
     "GRANGEBURG",
     "HARMON",
+    "HEADLAND",
     "HODGESVILLE",
     "KEYTONS",
     "KINSEY",
