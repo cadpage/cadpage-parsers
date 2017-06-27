@@ -11,7 +11,7 @@ public class ALDothanBParser extends FieldProgramParser {
   
   public ALDothanBParser() {
     super(CITY_LIST, "DOTHAN", "AL", 
-          "ADDR/S6XP ( X/Z EMPTY EMPTY EMPTY TIME CALL! | X_CALL | X? CALL! ) PRI? MAP? INFO+");
+          "ADDR/S6XP ( X/Z EMPTY EMPTY EMPTY TIME CALL! | X_CALL | X? TIME? CALL! ) PRI? MAP? INFO+");
     removeWords("AVENUE", "ESTATES", "LANE", "PLACE", "SQUARE", "TERRACE");
   }
   
@@ -24,7 +24,15 @@ public class ALDothanBParser extends FieldProgramParser {
   public boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "CITY OF DOTHAN:");
     body = stripFieldEnd(body, "\nstop");
-    return parseFields(body.split(";"), data);
+    String[] flds = body.split(";");
+    String[] flds2 = body.split(",");
+    if (flds2.length >= flds.length) flds = flds2;
+    if (!parseFields(flds, data)) return false;
+    
+    // Two many optional fields.  There has to be at least one properly
+    // formatted data field before we accept the result
+    return (data.strTime.length() > 0 || data.strCross.length() > 0 ||
+            data.strPriority.length() > 0 || data.strMap.length() > 0);
   }
 
   @Override
