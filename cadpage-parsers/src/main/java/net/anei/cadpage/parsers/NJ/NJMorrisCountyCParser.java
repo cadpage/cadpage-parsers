@@ -13,6 +13,11 @@ public class NJMorrisCountyCParser extends MsgParser {
     setFieldList("CALL UNIT ID ADDR APT CITY");
   }
   
+  @Override
+  public String getFilter() {
+    return "cadpaging@primehealthcare.com";
+  }
+  
   private static final Pattern MASTER = Pattern.compile("([A-Z0-9]+) {2,}respond for call #(\\d{2}-\\d+) {2,}at (.*?) {2,}in (.*)");
   
   protected boolean parseMsg(String subject, String body, Data data) {
