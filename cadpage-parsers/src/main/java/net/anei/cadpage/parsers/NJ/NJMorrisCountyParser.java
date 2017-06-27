@@ -10,6 +10,6 @@ Morris County, NJ
 public class NJMorrisCountyParser extends GroupBestParser {
   
   public NJMorrisCountyParser() {
-    super(new NJMorrisCountyAParser(), new NJMorrisCountyBParser());
+    super(new NJMorrisCountyAParser(), new NJMorrisCountyBParser(), new NJMorrisCountyCParser());
   }
 }
