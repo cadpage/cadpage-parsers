@@ -163,7 +163,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH|[A-Z]{4}HOME");
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH|[A-Z]{4}HOME|[A-Z]{2}FD");
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
