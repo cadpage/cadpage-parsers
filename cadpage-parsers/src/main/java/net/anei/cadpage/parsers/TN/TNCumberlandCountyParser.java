@@ -12,6 +12,6 @@ public class TNCumberlandCountyParser extends DispatchGeoconxParser {
   
   @Override
   public String getFilter() {
-    return "@911email.net,@911email.org";
+    return "@911email.net,@911email.org,e911@cumberlandtn911.org";
   }
 }
