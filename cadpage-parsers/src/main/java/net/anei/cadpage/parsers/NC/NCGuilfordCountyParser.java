@@ -274,6 +274,10 @@ public class NCGuilfordCountyParser extends DispatchOSSIParser {
     }
   }
   
+  public static boolean isCityCode(String code) {
+    return CITY_CODES.getProperty(code) != null;
+  }
+  
   // Token pattern that only occur in Rowan County calls, which also should force an automatic rejectd
   private static final Pattern BAD_INFO_PTN = Pattern.compile("OPS\\d{1,2}");
   

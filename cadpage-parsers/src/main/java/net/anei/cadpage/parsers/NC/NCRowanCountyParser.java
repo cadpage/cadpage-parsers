@@ -38,6 +38,9 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     // to chancy to accept
     if (!ok && data.strCity.length() == 0) return false;
     
+    // If the Apt looks like an NCDavidsonCountyA city code, reject
+    if (data.strApt.length() > 0 && NCDavidsonCountyAParser.isCityCode(data.strApt)) return false;
+    
     if (data.strCity.equals("OUT OF COUNTY")) {
       data.defCity = "";
     }
@@ -72,7 +75,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   }
 
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)(?: - |~)(.*)");
-  private static final Pattern BAD_CITY_PTN = Pattern.compile("[NSEW]|[NS][EW]");
+  private static final Pattern BAD_CITY_PTN = Pattern.compile("\\b(?:[NSEW]|[NS][EW])\\b");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -82,7 +85,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
         data.strCity = match.group(2).trim();
         
         // Cities that look like directions is a feature of Davidson County alerts
-        if (BAD_CITY_PTN.matcher(data.strCity).matches()) abort();
+        if (BAD_CITY_PTN.matcher(data.strCity).find()) abort();
+        if (isValidAddress(data.strCity)) abort();
         if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
       }
       if (field.endsWith(" DR DR") || field.endsWith(" RD RD")) {
@@ -143,7 +147,6 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     @Override
     public void parse(String field, Data data) {
       
-      // If this is a DavidsonCountyA call ID, we need to reject it
       // If it looks like a phone number (also 10 digits) accept it
       if (field.length() == 10 && NUMERIC.matcher(field).matches()) { 
         if (field.startsWith("20")) abort();
