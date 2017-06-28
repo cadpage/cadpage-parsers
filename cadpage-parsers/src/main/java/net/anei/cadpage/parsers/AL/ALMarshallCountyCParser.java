@@ -8,6 +8,11 @@ public class ALMarshallCountyCParser extends DispatchA65Parser {
     super(CITY_LIST, "MARSHALL COUNTY", "AL");
   }
   
+  @Override
+  public String getFilter() {
+    return "dispatch@911email.org,ispatch@911email.net,geoconex@nlamerica.com";
+  }
+  
   private static final String[] CITY_LIST = new String[]{
     
     // Cities
