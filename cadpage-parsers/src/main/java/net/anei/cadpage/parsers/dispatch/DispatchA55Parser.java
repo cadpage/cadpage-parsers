@@ -35,7 +35,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Z][ A-Za-z]+), *([A-Z]{2}), *[A-Z]{2}");
+  private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Z][ A-Za-z]+), *([A-Z]{2})(?: *\\([ A-Za-z]+\\))?, *[A-Z]{2}(?: *\\([ A-Za-z]+\\))?");
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
