@@ -9,12 +9,24 @@ public class GAColquittCountyParser extends DispatchB2Parser {
   public GAColquittCountyParser() {
     super("CC911:", CITY_LIST, "COLQUITT COUNTY", "GA");
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
   public String getFilter() {
     return "dpierce62@gmail.com";
   }
+  
+  private static String[] MWORD_STREET_LIST = new String[]{
+      "DONA TURNER",
+      "FUNSTON DOERUN",
+      "FUNSTON SIGSBEE",
+      "JAMES KING",
+      "MIKE HORNE",
+      "MT SINAI",
+      "SAM SELLS",
+      "SWIFT CANTEEN"
+  };
 
   private static final String[] CITY_LIST = new String[]{
       
@@ -51,14 +63,9 @@ public class GAColquittCountyParser extends DispatchB2Parser {
       "TERRACE",
       "TICKNOR",
       "WELDON"
-
-
-
-
      };
   
   private static final CodeSet CALL_LIST = new CodeSet(
-      
       "ACCIDENT/INJURIES",
       "ACCIDENT/NO REPORTED INJURIES",
       "ANY FIRE",

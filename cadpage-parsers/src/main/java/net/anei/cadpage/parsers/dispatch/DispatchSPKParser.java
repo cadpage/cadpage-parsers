@@ -25,7 +25,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-         "CURDATETIME! Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! ) Priority:PRI? Incident_Disposition:SKIP? DATA+?  INFO/N<+", 
+         "CURDATETIME! Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA+?  INFO/N<+", 
          "table|tr");
     FIELD_MAP.put("Location:", getField("ADDRCITY"));
     FIELD_MAP.put("Intersection:", getField("SKIP"));
@@ -75,12 +75,18 @@ public class DispatchSPKParser extends HtmlProgramParser {
     colNdx = -1;
     
     if (!super.parseHtmlMsg(subject, body, data)) return false;
-    
+
+    if (data.strCall.length() == 0) data.strCall = "ALERT";
     
     if (data.strAddress.length() == 0 && callerLocField != null) parseAddress(callerLocField, data);
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     unitSet.clear();
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " CALL";
   }
 
   @Override
