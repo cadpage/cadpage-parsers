@@ -9,19 +9,37 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ILRandolphCountyAParser extends FieldProgramParser {
 
   public ILRandolphCountyAParser() {
-    super("RANDOLPH COUNTY", "IL",
+    this("RANDOLPH COUNTY", "IL");
+  } 
+
+  public ILRandolphCountyAParser(String defCity, String defState) {
+    super(defCity, defState,
           "( SELECT/1 CALL ID PLACE ADDR1 ADDR2 ADDR3 APT CITY ST ZIP NAME PHONE INFO! INFO/N+ " +
           "| CALL_ID ADDRCITY! Caller:NAME Callback_#:PHONE INFO/N+ )");
   } 
   
   @Override
+  public String getAliasCode() {
+    return "ILRandolphCounty";
+  }
+  
+  @Override
   public String getFilter() {
-    return "lawman@randolphco.org";
+    return "lawman@randolphco.org,lawmancm@idsapplications.com";
   }
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    // They can use any one of three field delimiters
     String flds[] = body.split(";",-1);
+    
+    String[] tFlds = body.split(",", -1);
+    if (tFlds.length > flds.length) flds = tFlds;
+    
+    tFlds = body.split("~", -1);
+    if (tFlds.length > flds.length) flds = tFlds;
+    
     if (flds.length >= 13) {
       setSelectValue("1");
     } else {
