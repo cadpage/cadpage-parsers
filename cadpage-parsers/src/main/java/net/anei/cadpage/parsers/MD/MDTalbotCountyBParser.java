@@ -14,15 +14,22 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
+  
+  public String getFilter() {
+    return "@talbotdes.org,4702193527";
+  }
  
   private static final Pattern PREFIX = Pattern.compile("([ A-Za-z0-9]+)(?: Page - Dispatch| - Page)(?=:)");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    body = stripFieldStart(body, "TALBOTDES:");
     Matcher match = PREFIX.matcher(body);
     if (match.lookingAt()) {
       subject = match.group(1);
       body = body.substring(match.end());
     }
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(subject, body, data);
   }
   
@@ -39,6 +46,7 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "ALARMS RESIDENTIAL (SINGLE)",
       "ASSAULT NOT IN PROGRESS",
       "ASSIST EMS",
+      "ASSIST FIRE DEPARTMENT",
       "BREATHING PROBLEM DIFFICULTY SPEAKING",
       "CHEST PAINS - BREATHING NORMALLY >35",
       "CHEST PAINS COCAINE",
