@@ -23,6 +23,7 @@ public class TXHaysCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
+    body = body.replace(";; ", "; ; ");
     return parseFields(body.split("; ", 11), 11, data);
   }
   
@@ -82,7 +83,7 @@ public class TXHaysCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern TIME_LOG_PTN = Pattern.compile("Time Reported: (\\d\\d:\\d\\d:\\d\\d) *(?:Time Completed: (\\d\\d:\\d\\d:\\d\\d) *)?(?:Logs +<<Logs>>)? *(.*)");
+  private static final Pattern TIME_LOG_PTN = Pattern.compile("Time Reported: (\\d\\d:\\d\\d:\\d\\d) *(?:Time Completed: (\\d\\d:\\d\\d:\\d\\d) *)?(?:Logs +<<Logs>>)? *(.*)", Pattern.DOTALL);
   private static final Pattern LOG_BRK_PTN = Pattern.compile(" +(?=\\d\\d:\\d\\d:\\d\\d +)");
   private class MyTimeLogField extends Field {
     
