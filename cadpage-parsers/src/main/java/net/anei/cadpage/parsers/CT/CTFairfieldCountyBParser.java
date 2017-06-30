@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class CTFairfieldCountyBParser extends SmartAddressParser {
 
   public CTFairfieldCountyBParser() {
-    super(CITY_LIST, "FAIRFIELD COUNTY", "CT");
+    super(CTFairfieldCountyParser.CITY_LIST, "FAIRFIELD COUNTY", "CT");
     setFieldList("SRC ADDR APT CITY CALL TIME");
   }
   
@@ -40,13 +40,5 @@ public class CTFairfieldCountyBParser extends SmartAddressParser {
     data.strTime = mat.group(4).trim();
     return true;
   }
-  
-  private static String[] CITY_LIST = new String[]{
-    "EASTON",
-    "MONROE",
-    "STRATFORD",
-    "TRUMBULL",
-    "WESTON"
-  };
   
 }
