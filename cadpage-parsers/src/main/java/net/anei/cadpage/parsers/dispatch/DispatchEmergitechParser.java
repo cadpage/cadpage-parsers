@@ -9,8 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.FieldProgramParser.DateField;
-import net.anei.cadpage.parsers.FieldProgramParser.TimeField;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchEmergitechParser extends FieldProgramParser {
@@ -87,7 +85,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     String getFieldNames();
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("D?\\[([-A-Z0-9]+)\\] *-+ *");
+  private static final Pattern UNIT_PTN = Pattern.compile("D?\\[([- A-Z0-9]+)\\] *-+ *");
   private static final Pattern ID_PTN = Pattern.compile("Call: *([- 0-9]+)\\b");
   private static final Pattern HOUSE_DECIMAL_PTN = Pattern.compile("\\b(\\d+)\\.0{1,2}(?= )");
   private static final Pattern COMMENTS_PTN = Pattern.compile("\\bC ?O ?M ?M ?E ?N ?T ?S ?:");
@@ -683,6 +681,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       int flags = FLAG_AT_SIGN_ONLY;
       if (trailField == null) flags = FLAG_ANCHOR_END;
+      flags |= getExtraParseAddressFlags();
       parseAddress(StartType.START_PLACE, flags, field, data);
       if (data.strAddress.length() == 0) {
         parseAddress(data.strPlace, data);
@@ -764,6 +763,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   private static final Pattern INFO_GPS_PTN7 = Pattern.compile("X=([+-]?[0-9\\.]+)Y=([+-]?[0-9\\.]+)CF=\\d+%UF=\\d+MZ=[0-9\\.]*M");
   private static final Pattern INFO_GPS_PTN8 = Pattern.compile("=([+-]?[0-9\\.]+) Y=([+-]?[0-9\\.]+) F= *\\d+% UF= *\\d*\\b *");
   private static final Pattern INFO_GPS_PTN9 = Pattern.compile("(?:(\\(\\d{3}\\)\\d{3}-\\d{4}))?LAT:([-+]?\\d{3}\\.\\d{5,6})LON:([-+]?\\d{3}\\.\\d{5,6})ELV:\\d*COF:\\d*COP:\\d{2}");
+  private static final Pattern INFO_GPS_PTN10 = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{5,6})([-+]\\d{3}\\.\\d{5,6})\\b");
 
   private class BaseInfoField extends InfoField {
     @Override
@@ -809,6 +809,11 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         setGPSLoc(match.group(1)+','+match.group(2), data);
       }
       else if ((match = INFO_GPS_PTN9.matcher(compField)).lookingAt()) {
+        found = true;
+        data.strPhone = getOptGroup(match.group(1));
+        setGPSLoc(match.group(2)+','+match.group(3), data);
+      }
+      else if ((match = INFO_GPS_PTN10.matcher(compField)).lookingAt()) {
         found = true;
         data.strPhone = getOptGroup(match.group(1));
         setGPSLoc(match.group(2)+','+match.group(3), data);

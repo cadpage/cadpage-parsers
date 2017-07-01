@@ -1,21 +1,40 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA16Parser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
+import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 /**
  * Hocking County, OH
  */
-public class OHHockingCountyParser extends DispatchA16Parser {
+public class OHHockingCountyParser extends DispatchEmergitechParser {
 
   public OHHockingCountyParser() {
-    super(CITY_LIST, "HOCKING COUNTY", "OH");
+    super(CITY_LIST, "HOCKING COUNTY", "OH", TrailAddrType.INFO);
   }
 
   @Override
   public String getFilter() {
-    return "hockingcounty911@gmail.com";
+    return "hockingcounty911@gmail.com,Perry911@perrycountyohio.net";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
+  @Override
+  protected int getExtraParseAddressFlags() {
+    return FLAG_CROSS_FOLLOWS;
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    body = stripFieldStart(body, "Perry911:");
+    return super.parseMsg(subject, body, data);
+  }
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("SOUTH BLOOMING")) city = "SOUTH BLOOMINGVILLE";
@@ -61,10 +80,74 @@ public class OHHockingCountyParser extends DispatchA16Parser {
     "UNION FURNACE",
     "SOUTH PERRY",
     
-    // Athens County
-    "NELSONVILLE",
+    // Perry County
+    "PERRY COUNTY",
     
-    "PERRY COUNTY"
+    // Vilages
+    "CORNING",
+    "CROOKSVILLE",
+    "GLENFORD",
+    "HEMLOCK",
+    "JUNCTION CITY",
+    "NEW LEXINGTON",
+    "NEW STRAITSVILLE",
+    "RENDVILLE",
+    "ROSEVILLE",
+    "SHAWNEE",
+    "SOMERSET",
+    "THORNVILLE",
+
+    // Townships
+    "BEARFIELD TWP",
+    "CLAYTON TWP",
+    "COAL TWP",
+    "HARRISON TWP",
+    "HOPEWELL TWP",
+    "JACKSON TWP",
+    "MADISON TWP",
+    "MONDAY CREEK TWP",
+    "MONROE TWP",
+    "PIKE TWP",
+    "PLEASANT TWP",
+    "READING TWP",
+    "SALT LICK TWP",
+    "THORN TWP",
+
+    // Census-designated places
+    "ROSE FARM",
+    "THORNPORT",
+
+    // Other unincorporated communities
+    "BRISTOL",
+    "BUCKINGHAM",
+    "CHALFANTS",
+    "CHAPEL HILL",
+    "CLARKSVILLE",
+    "CROSSENVILLE",
+    "GLASS ROCK",
+    "MCCUNEVILLE",
+    "MCLUNEY",
+    "MILLERTOWN",
+    "MILLIGAN",
+    "MOUNT PERRY",
+    "MOXAHALA",
+    "NEW READING",
+    "OAKFIELD",
+    "PORTERSVILLE",
+    "REHOBOTH",
+    "SALTILLO",
+    "SEGO",
+    "SULPHUR SPRINGS",
+    "WHIPSTOWN",
+
+    // Ghost towns
+    "DICKSONTON",
+    "SAN TOY",
+
+    
+    // Athens County
+    "ATHENS COUNTY",
+    "NELSONVILLE"
   };
 }
   
