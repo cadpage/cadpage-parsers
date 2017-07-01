@@ -12,7 +12,8 @@ public class WIKenoshaCountyEParser extends FieldProgramParser {
   
   public WIKenoshaCountyEParser() {
     super(CITY_LIST, "KENOSHA COUNTY", "WI", 
-          "DATE_TIME_CALL! Address:ADDR! UNIT! Narrative:INFO! INFO/N+");
+          "DATE_TIME_CALL! ( Address:ADDR! UNIT! Narrative:INFO! INFO/N+ " +
+                          "| ADDR! CALL/SDS! ID? UNIT! INFO/N+ )");
   }
   
   @Override
@@ -20,21 +21,25 @@ public class WIKenoshaCountyEParser extends FieldProgramParser {
     return "dispatch@kenoshajs.org";
   }
   
+  private static final Pattern DELIM = Pattern.compile(";?\n");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
-    return parseFields(body.split("\n"), data);
+    body = stripFieldEnd(body, ";");
+    return parseFields(DELIM.split(body), data);
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("DATE_TIME_CALL")) return new MyDateTimeCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{8}\\b.*|");
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private static final Pattern DATE_TIME_CALL_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)/(.*)");
+  private static final Pattern DATE_TIME_CALL_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)[/;](.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeCallField extends DateTimeField {
     @Override
@@ -56,10 +61,25 @@ public class WIKenoshaCountyEParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf(',');
-      if (pt < 0) abort();
-      parseAddress(field.substring(0, pt).trim(), data);
-      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field.substring(pt+1).trim(), data);
-      data.strPlace = getLeft();
+      if (pt < 0) {
+        pt = field.indexOf(';');
+        if (pt >= 0) {
+          data.strPlace = field.substring(pt+1).trim();
+          field = field.substring(0, pt).trim();
+        }
+        parseAddress(field, data);
+      } else {
+        parseAddress(field.substring(0, pt).trim(), data);
+        String city = field.substring(pt+1).trim();
+        pt = city.indexOf(';');
+        if (pt >= 0) {
+          data.strCity = city.substring(0,pt).trim();
+          data.strPlace = city.substring(pt+1).trim();
+        } else {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+          data.strPlace = getLeft();
+        }
+      }
     }
     
     @Override
