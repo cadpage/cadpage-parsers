@@ -11,11 +11,20 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class MOStFrancoisCountyBParser extends FieldProgramParser {
   
   public MOStFrancoisCountyBParser() {
-    super("ST FRANCOIS COUNTY", "MO", 
-          "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
-          "| CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+ )");
+    this("ST FRANCOIS COUNTY", "MO");
   }
   
+  public MOStFrancoisCountyBParser(String defCity, String defState) {
+    super(defCity, defState, 
+         "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
+         "| CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+ )");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "MOStFrancoisCountyB";
+  }
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
