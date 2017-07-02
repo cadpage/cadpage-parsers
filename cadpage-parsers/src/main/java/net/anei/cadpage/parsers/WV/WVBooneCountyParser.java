@@ -1,26 +1,14 @@
 package net.anei.cadpage.parsers.WV;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
-/**
- * NOTES: In general this dispatcher uses a '-' as a field delimiter as well
- * as labels.  However, there were a couple of cases where a field is blank,
- * in which case it does not have a '-' before the next field, so I decided to 
- * process by the field names and remove excess dashes.  
- */
-public class WVBooneCountyParser extends FieldProgramParser {
-  
-  private static final Pattern SUBJECT_PTN = Pattern.compile("\\[([0-9]-[0-9]{1,2})\\]-[- ]*(?:(.*?) -)? (Call|Nature)");
-  private static final Pattern MISSING_DELIM_PTN = Pattern.compile("(?<! -) (Nature:|Comments:)");
+public class WVBooneCountyParser extends DispatchEmergitechParser {
   
   public WVBooneCountyParser() {
-    super(CITY_LIST, "BOONE COUNTY", "WV",
-           "Call:ID Nature:CALL! CALL+ Location:ADDR/S! Comments:INFO INFO/SDS+");
+    super(true, CITY_LIST, "BOONE COUNTY", "WV");
   }
   
   @Override
@@ -30,83 +18,8 @@ public class WVBooneCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-  
-    // Check to see which type of subject heading we have.
-    Matcher subjectUnit = SUBJECT_PTN.matcher(subject);
-    
-    // If the subject heading looks like "[1-13]-- - Nature", add to body with a :
-    if(subjectUnit.find()) {
-      data.strUnit = subjectUnit.group(1).trim();
-      data.strSupp = getOptGroup(subjectUnit.group(2));
-      if (body.startsWith("donotreply:")) body = body.substring(11).trim(); 
-      body = subjectUnit.group(3) + ": " + body;
-    }
-    // Otherwise our subject contains the unit only
-    else {
-      data.strUnit = subject;
-      if (!body.startsWith("-- - ")) return false;
-      body = body.substring(5).trim();
-    }
-    
-    // One sample has "Loca" instead of "Location:"
-    body = body.replace("Loca ", "Location: ");
-    
-    // Occasional missing delimiter before Comment:
-    body = MISSING_DELIM_PTN.matcher(body).replaceAll(" - $1");
-    
-    return super.parseFields(body.split(" - "), data);
-  }
-  
-  @Override 
-  public String getProgram() {
-    return "UNIT " + super.getProgram();
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-  
-  private class MyCallField extends CallField {
-    @Override 
-    public void parse(String field, Data data) {
-      data.strCall = append(data.strCall, " - ", field);
-    }
-  }
-  
-  
-  private static final Pattern STREET_NUM_PTN = Pattern.compile("([0-9]{1,5}).0+\\b");
-  private class MyAddressField extends AddressField {
-    
-    @Override
-    public void parse(String field, Data data) {
-      
-      // Remove the 0's found after the '.' in the address
-      field = STREET_NUM_PTN.matcher(field).replaceAll("$1");
-      field = field.replace("Suite:APT", "APT");
-      super.parse(field, data);
-    }
-  }
-
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("(LAT:(?:[-+]\\d{3}.\\d{6})? LON:(?:[-+]\\d{3}.\\d{6})?)(?: COF:\\d*)?(?: COP:\\d*)? *");
-  private class MyInfoField extends InfoField {
-    public void parse(String field, Data data) {
-      Matcher match = INFO_GPS_PTN.matcher(field);
-      if (match.lookingAt()) {
-        String gps = match.group(1);
-        if (gps != null) setGPSLoc(gps, data);
-        field = field.substring(match.end());
-      }
-      super.parse(field, data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "GPS " + super.getFieldNames();
-    }
+    if (subject.length() > 0) body = subject + ": " + body;
+    return super.parseMsg(body,  data);
   }
   
   @Override
