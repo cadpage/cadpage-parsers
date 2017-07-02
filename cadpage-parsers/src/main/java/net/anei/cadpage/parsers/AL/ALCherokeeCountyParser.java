@@ -1,23 +1,28 @@
 package net.anei.cadpage.parsers.AL;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 /**
  * Cherokee County, AL
  */
-public class ALCherokeeCountyParser extends DispatchGeoconxParser {
+public class ALCherokeeCountyParser extends DispatchA65Parser {
   
   public ALCherokeeCountyParser() {
-    super(CITY_SET, "CHEROKEE COUNTY", "AL");
+    super(CITY_LIST, "CHEROKEE COUNTY", "AL");
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      public boolean splitBreakIns() { return true; }
+      public boolean splitKeepLeadBreak() { return true; }
+    };
+  }
+
+  @Override
   public String getFilter() {
-    return "dispatch@911email.ne,cherokeecoal@911email.net";
+    return "dispatch@911comm2.info,geoconex@nlamerica.com";
   }
   
   @Override
@@ -25,7 +30,7 @@ public class ALCherokeeCountyParser extends DispatchGeoconxParser {
     return MAP_FLG_SUPPR_SR;
   }
 
-  private static final Set<String> CITY_SET = new HashSet<String>(Arrays.asList(new String[]{
+  private static final String[] CITY_LIST = new String[]{
 
       //INCORPORATED
       "CEDAR BLUFF",
@@ -45,5 +50,5 @@ public class ALCherokeeCountyParser extends DispatchGeoconxParser {
       "BROOMTOWN",
       "SPRING GARDEN"
 
-  }));
+  };
 }
