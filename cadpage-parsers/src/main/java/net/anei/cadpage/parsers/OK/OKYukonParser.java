@@ -14,7 +14,7 @@ public class OKYukonParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "911dispatch@cityofyukonok.gov";
+    return "911dispatch@cityofyukonok.gov,911dispatch@yukonok.gov";
   }
   
   static private final Pattern MASTER_PATTERN
