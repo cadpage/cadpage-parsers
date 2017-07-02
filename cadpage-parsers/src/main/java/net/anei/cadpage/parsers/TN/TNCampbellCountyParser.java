@@ -21,7 +21,7 @@ public class TNCampbellCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "campbellcotn@911email.net";
+    return "dispatch@911comm2.info,geoconex@nlamerica.com,campbellcotn@911email.net";
   }
   
   private static final String[] CITY_LIST = new String[]{
