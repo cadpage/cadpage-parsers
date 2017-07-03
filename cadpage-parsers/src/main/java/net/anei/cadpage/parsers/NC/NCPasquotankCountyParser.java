@@ -11,7 +11,8 @@ public class NCPasquotankCountyParser extends DispatchOSSIParser {
   
   public NCPasquotankCountyParser() {
     super("PASQUOTANK COUNTY", "NC",
-           "FYI? CALL ADDR INFO+");
+           "FYI? ( ADDR CALL | CALL ADDR ) INFO+");
+    addExtendedDirections();
   }
 
   @Override
@@ -28,5 +29,27 @@ public class NCPasquotankCountyParser extends DispatchOSSIParser {
       body = body.substring(0,pt) + subject + ' ' +  body.substring(pt);
     }
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      
+      // Treat first field as address unless next field is a better address
+      if (checkAddress(getRelativeField(+1)) > checkAddress(field)) return false;
+      parse(field, data);
+      return true;
+    }
   }
 }
