@@ -19,13 +19,13 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   }
   
   VTLamoilleCountyParser(String defCity, String defState) {
-    super(defCity, defState,
+    super(CITY_LIST, defCity, defState,
           "SKIP SKIP SKIP SKIP SKIP SKIP Address:ADDRCITY Incident_Number:ID! Call_Type:CALL Narratives:INFO+");
   }
   
   @Override
   public String getAliasCode() {
-    return "VTGLamoilleCounty";
+    return "VTLamoilleCounty";
   }
 
   @Override
@@ -54,18 +54,22 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDRESS_PLACE_CITY_PATTERN
-    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:, *([A-Za-z]{2}))?(?:, *(\\d{5}))?");
+    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:[, ] *([A-Za-z]{2}))?(?:[, ] *(\\d{5}))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       Matcher m = ADDRESS_PLACE_CITY_PATTERN.matcher(field);
       if (!m.matches()) abort();   // Can not happen!!
       String addr = m.group(1);
-      addr = addr.replace(',', '&');
-      parseAddress(addr, data);
       data.strPlace = getOptGroup(m.group(2));
       data.strCity = getOptGroup(m.group(3));
-      if (data.strCity.equals("")) data.strCity = getOptGroup(m.group(5));
+      addr = addr.replace(',', '&');
+      if (data.strCity.length() > 0) {
+        parseAddress(addr, data);
+      } else {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+      }
+      if (data.strCity.length() == 0) data.strCity = getOptGroup(m.group(5));
       data.strState = getOptGroup(m.group(4));
     }
     
@@ -124,4 +128,98 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       return super.getFieldNames()+" UNIT DATE TIME";
     }
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Bennington County
+      
+      // Towns
+      "ARLINGTON",
+      "BENNINGTON",
+      "DORSET",
+      "GLASTENBURY",
+      "LANDGROVE",
+      "MANCHESTER",
+      "PERU",
+      "POWNAL",
+      "READSBORO",
+      "RUPERT",
+      "SANDGATE",
+      "SEARSBURG",
+      "SHAFTSBURY",
+      "STAMFORD",
+      "SUNDERLAND",
+      "WINHALL",
+      "WOODFORD",
+
+      // Villages
+      "MANCHESTER VILLAGE",
+      "NORTH BENNINGTON",
+      "OLD BENNINGTON",
+
+      // Census-designated places
+      "ARLINGTON",
+      "BENNINGTON",
+      "DORSET",
+      "MANCHESTER CENTER",
+      "MANCHESTER CTR",
+      "READSBORO",
+      "SOUTH SHAFTSBURY",
+      
+      // Franklin County
+      
+      // City
+      "ST ALBANS",
+
+      // Towns
+      "BAKERSFIELD",
+      "BERKSHIRE",
+      "ENOSBURGH",
+      "FAIRFAX",
+      "FAIRFIELD",
+      "FLETCHER",
+      "FRANKLIN",
+      "GEORGIA",
+      "HIGHGATE",
+      "MONTGOMERY",
+      "RICHFORD",
+      "SHELDON",
+      "ST. ALBANS",
+      "SWANTON",
+
+      // Villages
+      "ENOSBURG FALLS",
+      "SWANTON VILLAGE",
+
+      // Census-designated places
+      "FAIRFAX",
+      "RICHFORD",
+      
+      // Lamoille County
+      
+      // Towns
+      "BELVIDERE",
+      "CAMBRIDGE",
+      "EDEN",
+      "ELMORE",
+      "HYDE PARK",
+      "JOHNSON",
+      "MORRISTOWN",
+      "STOWE",
+      "WATERVILLE",
+      "WOLCOTT",
+
+      // Villages
+      "CAMBRIDGE",
+      "HYDE PARK",
+      "JEFFERSONVILLE",
+      "JOHNSON",
+      "MORRISVILLE",
+
+      // Census-designated place
+      "STOWE",
+
+      // Unincorporated community
+      "MOSCOW"
+  };
 }
