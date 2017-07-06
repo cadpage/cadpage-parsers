@@ -29,7 +29,7 @@ public class MSHarrisonCountyParser extends DispatchB2Parser {
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
-    data.strUnit = match.group(1);
+    data.strSource = match.group(1);
     body = body.substring(match.end());
     return super.parseMsg(body, data);
   }
@@ -41,7 +41,7 @@ public class MSHarrisonCountyParser extends DispatchB2Parser {
   
   @Override
   public String getProgram() {
-    return "UNIT " + super.getProgram();
+    return "SRC " + super.getProgram();
   }
   
   private static final CodeSet CALL_LIST = new CodeSet(
