@@ -10,7 +10,7 @@ public class TNMorganCountyBParser extends DispatchA65Parser {
   
   @Override
   public String getFilter() {
-    return "dispatch@911email.org";
+    return "dispatch@911email.org,dispatch@911comm1.info";
   }
   
   private static final String[] CITY_LIST = new String[]{

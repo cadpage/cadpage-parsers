@@ -14,6 +14,6 @@ public class INNobleCountyParser extends DispatchGeoconxParser {
   
   @Override
   public String getFilter() {
-    return "combs155@hotmail.com,dispatch@911email.org,kendalsvillepdin@911email.net";
+    return "combs155@hotmail.com,dispatch@911email.org,kendalsvillepdin@911email.net,dispatch@911comm1.info";
   }
 }
