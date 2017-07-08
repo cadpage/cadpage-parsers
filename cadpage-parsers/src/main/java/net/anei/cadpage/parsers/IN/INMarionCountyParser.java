@@ -36,7 +36,7 @@ public class INMarionCountyParser extends MsgParser {
   private static final Pattern MASTER2 = Pattern.compile("([^,]+?) " + APT_PTN + "?" + MAP_PTN + "(.*)");
   private static final Pattern CALL_ID_PTN = Pattern.compile("\\b(I\\d{4,5})\\.?$");
   private static final Pattern UNIT_PTN =
-      Pattern.compile("\\b((?:(?:[A-Z]+[0-9]+[A-Z]?|BC\\d+[A-Z]?|\\d+CIV|\\d+FF|\\d+GRP|[A-Z]+GRP|\\d+TN|\\d+WAY|[A-Z]+FYI|[A-Z]{2}FD|[A-Z]{3}ADM|[A-Z]{2}TF|ALS|AMO|BKCREG|BKCRMD|COMM|COMVAN|DHS|FYI[A-Z]+|CMND|DECSCH|HEMAPG|HINDOT|HMEDIA|IFDEDO|IFDHAZ|IFSPOP|INDOT|IPAGE|IUPAGE|MAJOR|MANPOW|MAYDAY|MEDIA|NONEMG|PVTBLS|PVTMED|SFDOPS|STI|WPAGE|WRKFIR|XLFCHF|XLFINV|XLMCOR|WAYVIC|WRTFWY|(?:IFD|PIK)[A-Z]{1,3}|99\\d|(?:1ST|2ND|3RD)[A-Z]{3})\\b *)+)[\\., ]*(.*)");
+      Pattern.compile("\\b((?:(?:[A-Z]+[0-9]+[A-Z]?|BC\\d+[A-Z]?|\\d+CIV|\\d+FF|\\d+GRP|[A-Z]+GRP|\\d+TN|\\d+WAY|[A-Z]+FYI|[A-Z]{2}FD|[A-Z]{3}ADM|[A-Z]{2}TF|ALS|AMO|BKCREG|BKCRMD|COMM|COMVAN|DHS|FYI[A-Z]+|CMND|DECSCH|HEMAPG|HINDOT|HMEDIA|IFDEDO|IFDHAZ|IFSPOP|INDOT|IPAGE|IUPAGE|MAJOR|MANPOW|MAYDAY|MEDIA|NONEMG|PVTBLS|PVTMED|SFDOPS|STI|WPAGE|WRKFIR|XLFCHF|XLFINV|XLMCOR|WAYVIC|WRTFPK|WRTFWY|(?:IFD|PIK)[A-Z]{1,3}|99\\d|(?:1ST|2ND|3RD)[A-Z]{3})\\b *)+)[\\., ]*(.*)");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
