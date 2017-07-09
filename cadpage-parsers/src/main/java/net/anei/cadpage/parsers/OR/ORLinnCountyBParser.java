@@ -63,10 +63,10 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("REF")) return new InfoField("\\(S\\).*", true);
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("MAP")) return new MapField("\\d{4}|\\d{3}[AB]", true);
-    if (name.equals("MAPQ")) return new MapField("\\d{4}|\\d{3}[AB]|", true);
-    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO", true);
-    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|", true);
+    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[A-D]", true);
+    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[A-D]|", true);
+    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|MILL", true);
+    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|MILL|", true);
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+", true);
     if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
