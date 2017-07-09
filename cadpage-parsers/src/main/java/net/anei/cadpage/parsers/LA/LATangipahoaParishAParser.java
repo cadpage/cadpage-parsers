@@ -13,7 +13,7 @@ public class LATangipahoaParishAParser extends DispatchA46Parser {
 
   @Override
   public String getFilter() {
-    return "PTS@ptssolutions.com";
+    return "PTS@ptssolutions.com,tangipahoaparish911@pagingpts.com";
   }
   
   @Override
