@@ -27,7 +27,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
     
     @Override
     public String getFilter() {
-      return "Dispatch@co.kern.ca.us";
+      return "Dispatch@co.kern.ca.us,Dispatch@kerncountyfire.org";
     }
     
     private static final Pattern TMT_PTN = Pattern.compile("\\bTMT\\b", Pattern.CASE_INSENSITIVE);
