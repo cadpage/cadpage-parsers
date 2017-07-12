@@ -9,7 +9,7 @@ public class DispatchA69Parser extends FieldProgramParser {
   
   protected DispatchA69Parser(String defCity, String defState) {
     super(defCity, defState,
-          "ID MAP? CALL ADDR PLACE GPS! Resources:UNIT! INFO/N+ Remarks:INFO/N+");
+          "ID MAP? CALL ADDR PLACE GPS! Resources:UNIT% INFO/N+ Remarks:INFO/N+");
   }
   
   @Override
@@ -101,13 +101,24 @@ public class DispatchA69Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("(?:.*\n)?http://maps.google.com/\\?q=([-+]?\\d+\\.\\d{4,},[-+]?\\d+\\.\\d{4,})");
+  private static final Pattern GPS_PTN1 = Pattern.compile("(?:.*\n)?http://maps.google.com/\\?q=([-+]?\\d+\\.\\d{4,},[-+]?\\d+\\.\\d{4,})");
+  private static final Pattern GPS_PTN2 = Pattern.compile("Lat: (.*); Long: (.*)");
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = GPS_PTN.matcher(field);
-      if (!match.matches()) abort();
-      setGPSLoc(match.group(1), data);
+      Matcher match = GPS_PTN1.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1), data);
+        return;
+      }
+      int pt = field.indexOf('\n');
+      if (pt >= 0) field = field.substring(0, pt).trim();
+      match = GPS_PTN2.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        return;
+      }
+      if (!field.startsWith("Lat:")) abort();
     }
   }
 }
