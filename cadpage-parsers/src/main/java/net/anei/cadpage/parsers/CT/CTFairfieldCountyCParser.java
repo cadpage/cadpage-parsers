@@ -4,11 +4,11 @@ package net.anei.cadpage.parsers.CT;
 public class CTFairfieldCountyCParser extends CTNewHavenCountyBParser {
   
   public CTFairfieldCountyCParser() {
-    super(CTFairfieldCountyParser.CITY_LIST, "FAIRFIELD COUNTY", "CT");
+    super("FAIRFIELD COUNTY", "CT");
   }
   
   @Override
   public String getFilter() {
-    return "paging@sheltonpolice.net";
+    return "paging@sheltonpolice.net,paging@townofstratford.com";
   }
 }

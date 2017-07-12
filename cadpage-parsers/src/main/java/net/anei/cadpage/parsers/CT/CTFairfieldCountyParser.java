@@ -10,11 +10,15 @@ public class CTFairfieldCountyParser extends GroupBestParser {
   }
   
   static String[] CITY_LIST = new String[]{
+    "BRIDGEPORT",  
     "EASTON",
     "MONROE",
     "SHELTON",
     "STRATFORD",
     "TRUMBULL",
-    "WESTON"
+    "WESTON",
+    
+    // New Haven County
+    "MILFORD"
   };
 }
