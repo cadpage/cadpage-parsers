@@ -160,6 +160,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       "FALL-3",                     "BLS - FALL PATIENT",
       "FAPPL-default",              "APPLIANCE FIRE",
       "FBARK",                      "SMALL BARK FIRE",
+      "FBARK-default",              "SMALL BARK FIRE",
       "FBOAT-1LAKE",                "BOAT FIRE - LAKE",
       "FBOAT-1SOUND",               "SHIP FIRE - PUGET SOUND",
       "FBOAT-1TRLR",                "SHIP FIRE - ON TRAILER",
