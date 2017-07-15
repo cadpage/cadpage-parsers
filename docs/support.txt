@@ -4263,6 +4263,25 @@ Have a nice day,
 -Ken
 
 **************************************************************************************
+* Inactive Active911 account - scratchpad is still down :(
+**************************************************************************************
+
+You do have Cadpage registered with Active911, but you have not received an Active911 alert for 60 days, leading Cadpage to assume that either your Active911 account has been disabled or alerts have been switched to the Active911 app.  We used to be able to look up your device in the Active911 server tables, but that system has been down for a week, so we just have to guess.
+
+The usual reason this happens is because your alerts are being sent to to the Active911 app, not to Cadpage. Since you are not using Cadpage to process Active911 alerts, Active911 does not pay us anything.
+
+if that is the case, you can restore the sponsored payment status by re-registering Cadpage with Active911.  This will result in your dispatch alerts being sent to the Cadpage app and not to the Active911 app.
+
+To do that, go into Cadpage Settings and select
+Direct Paging Vendors > Active911.com > Unregister > Register
+then enter your device code: ______________.
+
+If that does not fix things, let us know and we will ask Active911 support for help figuring out what is wrong.
+
+Good luck,
+-Ken
+
+**************************************************************************************
 Useful search expressions...
 ^ +"ADDR:.*\r?\n(?: +"(?:MADDR|APT|X):.*\r?\n)*+(?! +"CITY:)
 ***************************************************************************************
