@@ -15,7 +15,7 @@ public class ORJacksonCountyParser extends FieldProgramParser {
   
   public ORJacksonCountyParser() {
     super(CITY_CODES, "JACKSON COUNTY", "OR",
-          "CODE CALL ( PLACE SKIP AT | ADDR ) CITY PRI:PRI! Unit:UNIT! UNIT+");
+          "CODE CALL ( PLACE SKIP AT | ADDR ) CITY X? PRI:PRI! Unit:UNIT! UNIT+");
   }
   
   @Override
@@ -57,6 +57,16 @@ public class ORJacksonCountyParser extends FieldProgramParser {
     return super.getProgram() + " SRC DATE TIME";
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("AT")) return new AtField();
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    return super.getField(name);
+  }
+  
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -89,20 +99,32 @@ public class ORJacksonCountyParser extends FieldProgramParser {
     }
   }
   
+  private class MyCrossField extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("btwn ")) return false;
+      field = field.substring(5).trim();
+      field = field.replace(" and ", " / ");
+      super.parse(field, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, ",", field);
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("AT")) return new AtField();
-    if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("UNIT")) return new MyUnitField();
-    return super.getField(name);
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
