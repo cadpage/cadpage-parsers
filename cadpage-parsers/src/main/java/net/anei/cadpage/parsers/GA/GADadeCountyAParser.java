@@ -31,13 +31,6 @@ public class GADadeCountyAParser extends SmartAddressParser {
     
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_CROSS_FOLLOWS | FLAG_IGNORE_AT, body, data);
     if (data.strAddress.length() == 0) return false;
-    if (data.strCity.length() > 0) {
-      String city = PLACE_CITY_XREF.getProperty(data.strCity);
-      if (city != null) {
-        data.strPlace = data.strCity;
-        data.strCity = city;
-      }
-    }
     body = getLeft();
 
     String info = "";
@@ -66,6 +59,19 @@ public class GADadeCountyAParser extends SmartAddressParser {
 
     return true;
   }
+
+  @Override
+  public String adjustMapCity(String city) {
+    String mCity = MAP_CITY_TABLE.getProperty(city.toUpperCase());
+    if (mCity != null) return mCity;
+    return city;
+  }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "NEW SALEM",   "RISING FAWN",
+      "SLYGO",       "TRENTON",
+      "WEST BROW",   "LOOKOUT MOUNTAIN"
+  }); 
   
   private static final String[] CITY_LIST = new String[]{
     "NEW ENGLAND",
@@ -77,10 +83,4 @@ public class GADadeCountyAParser extends SmartAddressParser {
     
     "SLYGO"
   };
-  
-  private static final Properties PLACE_CITY_XREF = buildCodeTable(new String[]{
-      "NEW SALEM",   "",
-      "SLYGO",       "TRENTON",
-      "WEST BROW",   ""
-  }); 
 }
