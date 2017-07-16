@@ -7,4 +7,9 @@ public class MSPearlRiverCountyParser extends DispatchA46Parser {
   public MSPearlRiverCountyParser() {
     super("PEARL RIVER COUNTY", "MS");
   }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@PicayunePolice.com,picayunepd@pagingpts.com";
+  }
 }
