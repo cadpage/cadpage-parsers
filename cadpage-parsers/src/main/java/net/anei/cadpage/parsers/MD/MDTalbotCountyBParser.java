@@ -13,6 +13,7 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
     super(CITY_LIST, "TALBOT COUNTY", "MD", FieldType.PLACE, A48_NO_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSaintNames("MICHAELS");
   }
   
   public String getFilter() {
