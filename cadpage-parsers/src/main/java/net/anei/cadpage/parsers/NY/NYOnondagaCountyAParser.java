@@ -61,12 +61,13 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
     // Some services split message into subject and message
     if (subject.startsWith("CAD MSG") || subject.startsWith("I/CAD MSG")) {
       body = subject + " " + body;
+    } else if (subject.equals("Cicero Fire")) {
+      body = "I/CAD MSG " + body.replace('\n', ',');
     }
 
     // Make sure pages starts with initial marker
     Matcher match = MARKER.matcher(body);
-    if (!match.find())
-      return false;
+    if (!match.find()) return false;
     data.strSource = getOptGroup(match.group(1));
     data.strTime = match.group(2);
     body = body.substring(match.end());
@@ -84,12 +85,9 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("ADDR"))
-      return new MyAddressField();
-    if (name.equals("X"))
-      return new MyCrossField();
-    if (name.equals("INFO"))
-      return new MyInfoField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -157,8 +155,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       String cross = p.get(',');
       String code = p.getLastOptional(',');
       String place = p.get();
-      if (code.length() == 0)
-        abort();
+      if (code.length() == 0) abort();
 
       if (data.strAddress.length() == 0) {
         if (!place.startsWith("BETWEEN ") && !place.startsWith("BTWN")) {
