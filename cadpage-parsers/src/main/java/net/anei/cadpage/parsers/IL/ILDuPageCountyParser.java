@@ -5,7 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class ILDuPageCountyParser extends GroupBestParser {
   
   public ILDuPageCountyParser() {
-    super(new ILDuPageCountyAParser(), new ILDuPageCountyBParser(), new ILDuPageCountyCParser());
+    super(new ILDuPageCountyAParser(), new ILDuPageCountyBParser(), 
+          new ILDuPageCountyCParser(), new ILDuPageCountyDParser());
   }
 
 }
