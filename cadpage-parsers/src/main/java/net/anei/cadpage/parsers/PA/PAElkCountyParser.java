@@ -16,7 +16,7 @@ public class PAElkCountyParser extends FieldProgramParser {
   
   public  PAElkCountyParser() {
     super(CITY_TABLE, "ELK COUNTY", "PA",
-          "Inc_Code:CALL! Address:ADDR! City:CITY! Apt:APT? Cross_Streets:X? Agency:SRC! INFO+? DATETIME END");
+          "Inc_Code:CALL! Address:ADDR! City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME END");
   }
   
   @Override
@@ -33,7 +33,7 @@ public class PAElkCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("Inc:", "Inc Code:").replace(" Add:", "\nAddress:").replace("\nXSt:", "\nCross Streets:");
-    return parseFields(body.split("\n"), 5, data);
+    return parseFields(body.split("\n"), 4, data);
   }
   
   @Override
