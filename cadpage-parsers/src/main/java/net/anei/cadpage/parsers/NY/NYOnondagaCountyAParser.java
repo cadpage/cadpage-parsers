@@ -215,7 +215,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "ADDR X APT PLACE CODE CALL";
+      return "ADDR X APT PLACE CODE CALL PRI";
     }
   }
 
