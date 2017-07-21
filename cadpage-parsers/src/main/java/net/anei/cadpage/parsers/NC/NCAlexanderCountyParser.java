@@ -12,8 +12,11 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
   
   public NCAlexanderCountyParser() {
     super(CITY_CODES, "ALEXANDER COUNTY", "NC",
-          "FYI? ( CALL2 ADDR CITY INFO+ " +
-               "| SRC? ADDR ( CALL! ( END | CODE | X ) | PLACE CALL! CODE? ) X+ )");
+          "FYI? ( CALL2/Z ADDR/Z CITY X+? ID? CODE? INFO+ " +
+               "| SRC? ADDR ( CALL! ( END | CODE | X ) | PLACE CALL! CODE? ) X+? INFO+ )");
+    addRoadSuffixTerms("LP");
+    removeWords("AVENUE", "BEND");
+    setupProtectedNames("B AND S");
   }
   
   @Override
@@ -40,6 +43,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("SRC")) return new SourceField("[A-Z]+", true);
+    if (name.equals("ID")) return new IdField("\\d{10}");
     if (name.equals("CODE")) return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Za-z]?", true);
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
@@ -57,7 +61,9 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
     public boolean checkParse(String field, Data data) {
       
       // See if this is one of our special call fields
-      if (!field.startsWith("CANCEL") && !field.equals("UNDER CONTROL")) {
+      if (!field.startsWith("CANCEL") && !field.equals("UNDER CONTROL") &&
+          !field.startsWith("FIRE OPS") && 
+          !field.startsWith("ROUTINE FURTHER RESPONSE")) {
         if (!field.startsWith("{")) return false;
         int pt = field.indexOf('}');
         if (pt < 0) return false;
@@ -75,7 +81,19 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
 
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      if (field.startsWith("{")) {
+        int pt = field.indexOf('}');
+        if (pt >= 0) {
+          data.strSource = field.substring(1,pt).trim();
+          field = field.substring(pt+1).trim();
+        }
+      }
+      Matcher match = CALL_CH_PTN.matcher(field);
+      if (match.matches()) {
+        data.strChannel = match.group(1) + ' ' +  match.group(2);
+      } else {
+        data.strCall = field;
+      }
     }
 
     @Override
