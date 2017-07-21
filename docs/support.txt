@@ -21,7 +21,7 @@ then enable the "Contact" permission.
 Then, open Cadpage Settings and select
 Payment Status > Recalculate Payment Status
 
-If that does not work, select "I can't afford $10" to send us a new
+If that does not work, select "I can't afford $9.99" to send us a new
 request for a free subscription.
 
 Good luck,
@@ -491,7 +491,7 @@ Take care,
 
 Please tell us something about yourself.
 
-Why do you need a free subscription? Do you have some hardship in paying $10 per year for Cadpage?
+Why do you need a free subscription? Do you have some hardship in paying $9.99 per year for Cadpage?
 
 In the interest of helping communities, we offer a free subscription to Cadpage for people who cannot afford it, and who give us a reasonable reason.
 
@@ -501,7 +501,7 @@ Jean ~ Cadpage Administrator
 ******************************************************************
 
 To request a free subscription, go into Cadpage Settings and select
-Payment Status > I can't afford $10 this year
+Payment Status > I can't afford $9.99 this year
 
 Please add a message about why you need a free subscription.
 That generates an email to us with information we need to set up your free subscription.
@@ -510,7 +510,7 @@ Take care,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
-Subsequent $10 payments are set up as maintenance fees.   If you stop installing  the weekly Cadpage updates when the subscription expires, you are not required to pay for subsequent years.
+Subsequent payments of $9.99 are set up as maintenance fees.   If you stop installing  the weekly Cadpage updates when the subscription expires, you are not required to pay for subsequent years.
 
  You can continue to use Cadpage after the expiration date as long as you do not install a release published after that date.
  
@@ -531,7 +531,7 @@ The only payment record I found with your email address was dated _______, which
 
 You may find it useful to log in to wallet.google.com or paypal.com.  From there you should be able to look up your Cadpage purchase and send us the date, time and transaction ID, and whether it was PayPal or Play Store.
 
-A Cadpage subscription is $10 for one year.  As you have likely experienced, Cadpage can be used well past the expiration date if you refrain from updates or phone changes.
+A Cadpage subscription is $9.99 for one year.  As you have likely experienced, Cadpage can be used well past the expiration date if you refrain from updates or phone changes.
 
 Is it possible that you or your department have paid for an account with Active911 or another messaging service?  You will need to register your phone to enable Cadpage. Your department administrator should be able to tell you what service your department is using. Perhaps you have paid for Cadpage For IOS.  We are separate companies.
 
@@ -669,7 +669,7 @@ Jean ~ Cadpage Administrator
 
 *********************************************************************************
 
-I noted that your PayPal payment amounted to only $1.00, while a Cadpage subscription is $10 per year.  Did you intend to pay for a full subscription?
+I noted that your PayPal payment amounted to only $1.00, while a Cadpage subscription is $9.99 per year.  Did you intend to pay for a full subscription?
 
 If you need other payment options, or your have some hardship in paying, please let me know.
 
@@ -678,7 +678,7 @@ Jean
 
 *******************************************************************
 
-I have refunded your $1 payment for Cadpage.  A one-year subscription is $10.
+I have refunded your $1 payment for Cadpage.  A one-year subscription is $9.99.
 
 Please let me know how I can help you successfully continue to use Cadpage.
 
@@ -722,7 +722,7 @@ Jean ~ Cadpage Administrator
 
 ******************************************************************
 
-Thanks for considering the purchase of a Cadpage subscription!  A one-year Cadpage subscription is $10.
+Thanks for considering the purchase of a Cadpage subscription!  A one-year Cadpage subscription is $9.99.
 
 The usual, and preferred method of purchasing a Cadpage subscription is through the Google Play Store.  You do this by going into the Cadpage Settings and pressing
 Payment Status > Purchase through Android Market.  Often you can pay through your phone service at Google Play Store.
@@ -758,7 +758,7 @@ How did you pay -- through Google Play Store, PayPal, or by check?  We are unabl
 
 Have you recently changed your email address?  Most of our accounts are registered with User email addresses.
 
-Approximately when was your last payment?  A Cadpage subscription is $10 per year.  Is it possible that your subscription has expired?
+Approximately when was your last payment?  A Cadpage subscription is $9.99 per year.  Is it possible that your subscription has expired?
 
 It may not be necessary to locate that payment.  Go to Cadpage Settings and select Payment Status > Recalculate Payment Status
 
@@ -914,7 +914,7 @@ Most of our Users are volunteer firefighters or EMS workers.  My husband and I a
 Most of our Users are volunteer firefighters or EMS workers, so our policy for free subscriptions is based on hardship, not on being a volunteer.
 
 To clarify our payment request:
-$10 per year is way out of line for what you normally expect to pay for a general purpose Android app.  There are two reasons why this is necessary for our Cadpage app.
+$9.99 per year is way out of line for what you normally expect to pay for a general purpose Android app.  There are two reasons why this is necessary for our Cadpage app.
 1) Cadpage is an extremely high maintenance app.  We put out weekly releases, and every week there are usually 10 or so location parsers that have to be fixed, either because Dispatch changed the text format, or because someone found a corner case that wasn't covered by the existing parser.  Most apps get by with a release every 3 months or more.
 2) The potential user base is a tiny fraction of what a general purpose app can expect.  Cadpage is a niche market app, appealing to the small number of people who work or volunteer in emergency services.  The same development costs have to be spread among fewer people.
 
@@ -928,7 +928,7 @@ We would really love to have departments sponsor Cadpage for their members.  But
 
 In the interest of helping communities, we offer a  number of approved ways to run Cadpage without paying anything.
 
-1) You may request a free subscription, but you have to include a reasonable reason for not being able to afford $10 per year.  
+1) You may request a free subscription, but you have to include a reasonable reason for not being able to afford $9.99 per year.  
 
 2) You can simply reinstall Cadpage every 30 days.
 
@@ -1848,10 +1848,10 @@ Take care,
 
 I'm trying to make enough from Cadpage users to keep making this my full time occupation.  I think this is in the users interest, if I can't do this and have to get a real paying job, Cadpage maintenance will decline dramatically.  And the way text formats change all over the time, that would make it unusable for large numbers of people.
 
-I'm asking for $10/year, which isn't very much in terms of how much people usually pay just to have an Android phone.  But I'm also committed to making sure people who can not, or just will not, pay anything can continue to use it.
+I'm asking for $9.99/year, which isn't very much in terms of how much people usually pay just to have an Android phone.  But I'm also committed to making sure people who can not, or just will not, pay anything can continue to use it.
 
 1) You can roll back to the v1.4.32 version has no real enforcement logic.  If the demo runs out it will just display a demo expired notice and go happily on its way.
-2) If you run through the payment status menu, there is a "I can't afford $10" that gives you a chance to send us an email explaining why you can't pay that.  I'm pretty easy with these, as long as you don't insult me I'll probably give you a free 1 year subscription.
+2) If you run through the payment status menu, there is a "I can't afford $9.99" that gives you a chance to send us an email explaining why you can't pay that.  I'm pretty easy with these, as long as you don't insult me I'll probably give you a free 1 year subscription.
 3) You can uninstall and reinstall Cadpage, which resets the 30 day demo clock.  You can do this as often as you want. Cadpage tries to make this easier by giving you a Reinstall Cadpage button when the demo expires.
 
 It is also worth mentioning that Cadpage is distributed under an open source license.  Which makes it free software in the "Free Speech", rather than the "Free Beer" sense.  Anyone who doesn't like the way I am running things is free to take the source code and use it to create their own product.
@@ -1984,7 +1984,7 @@ I have the following members registered as Cadpage Users as of __________:
 ________
 ________
 
-A Cadpage subscription is $10 per year, but department sponsorships are given a 30% discount.  Therefore this account would only amount to $21. I can prepare a more formal invoice at your request.  The subscription will expire on ______.
+A Cadpage subscription is $9.99 per year, but department sponsorships are given a 30% discount.  Therefore this account would only amount to $21. I can prepare a more formal invoice at your request.  The subscription will expire on ______.
 
 Please let me know if this is in error, or if you are having any problems with Cadpage.
 
@@ -2650,12 +2650,12 @@ Have a nice day,
 ************************************************************************************
 not refunding 
 
-Please allow me to explain the fee for our Cadpage app.  Because it is a high maintenance app, continually in development, our $10 fee is a per-year subscription.  You have not purchased the app, but I did find your subscription payment of ____________.  You apparently used Cadpage for over 8 months.
+Please allow me to explain the fee for our Cadpage app.  Because it is a high maintenance app, continually in development, our $9.99 fee is a per-year subscription.  You have not purchased the app, but I did find your subscription payment of ____________.  You apparently used Cadpage for over 8 months.
 
-Also, when you pay through Google Play Store, Google takes 30% of that $10. With Google, we cannot do partial refunds, so we would be losing out of most of our $7 gain. 
+Also, when you pay through Google Play Store, Google takes 30% of that $9.99. With Google, we cannot do partial refunds, so we would be losing out of most of our $7 gain. 
 
 Therefore our policy is to refund subscriptions 6 months old or less. 
-I regret to say that we will not refund your $10 payment, but if you are really in a hardship situation, please let us know.
+I regret to say that we will not refund your $9.99 payment, but if you are really in a hardship situation, please let us know.
 
 Thanks for your support and your understanding,
 Jean ~ Cadpage Administrator
@@ -2678,7 +2678,7 @@ Explanation of CodeMessaging and Active911
 
 Cadpage, as a standalone app, has no addition features beyond what you
 get during the evaluation demo.  And no additional costs beyond the
-regular $10/year subscription fee.
+regular $9.99/year subscription fee.
 
 If you use CodeMessaging.net or Active911.com as your message forwarding
 service, they will provide additional features.  Both can push pages to
@@ -3486,7 +3486,7 @@ First, make sure you are getting text pages sent to your phone when a call is to
 
 Next, go into the Cadpage location settings, select a single location, and then see if we have a location set up for where you happen to live or work. We do have Warren County, NY as one of our supported locations.
 
-Cadpage will give you a free 30-day DEMO.  It is the same great app as the "pro" version, and after your DEMO expires, there are some payment options.  A one-year subscription to Cadpage is $10. 
+Cadpage will give you a free 30-day DEMO.  It is the same great app as the "pro" version, and after your DEMO expires, there are some payment options.  A one-year subscription to Cadpage is $9.99. 
 
 Let's see how the DEMO goes first before we tackle the payment.
 
@@ -3594,7 +3594,7 @@ you are waiting for full location support.
 That is basically all that you need to do to get started.  Once things
 are up and running, you may want to consider whether your department
 and/or dispatch center want to sponsor Cadpage for their members.  We
-normally expect end users to purchase a $10 annual subscription for
+normally expect end users to purchase a $9.99 annual subscription for
 Cadpage after using it for 30 days.  But if departments want to sponsor
 Cadpage for their members we give them a discounted $7/user rate.
 Dispatch centers get a $5/user rate.  Or if you choose to use, and pay
@@ -4106,7 +4106,7 @@ We have a variable schedule, and with time differences around the country and th
 
 Thanks so much for your interest in Cadpage.
 
-We manage an exclusively Android app, at the cost of $10 per person per
+We manage an exclusively Android app, at the cost of $9.99 per person per
 year.  Payment is generally accomplished through Google Play Store, but
 we also take PayPal payments and checks by snail mail.
 
