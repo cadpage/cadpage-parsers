@@ -131,7 +131,8 @@ public class LAJeffersonParishParser extends FieldProgramParser {
       "ME", "Metairie",
       "RR", "River Ridge",
       "TT", "Terrytown",
-      "WA", "Live Oak",
+      "WA", "Waggaman",
+      "WU", "Westwego",
       "WE", "Westwego",
   });
 }
