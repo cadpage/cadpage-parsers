@@ -22,6 +22,13 @@ public class FLEscambiaCountyParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    if (subject.length() == 0) {
+      body = stripFieldStart(body, "/ ");
+      int pt = body.indexOf(" / ");
+      if (pt < 0) return false;
+      subject = body.substring(0, pt).trim();
+      body = body.substring(pt+3).trim();
+    }
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     setSelectValue(match.group(1).startsWith("I") ? "R" : "P");
