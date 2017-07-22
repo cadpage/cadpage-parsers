@@ -18,7 +18,7 @@ public class INVigoCountyBParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "VigoCoCAD@ipsc.in.gov";
+    return "VigoCoCAD@ipsc.in.gov,CAD@vigosheriff.in.gov";
   }
   
   @Override
