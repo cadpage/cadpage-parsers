@@ -58,6 +58,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     if (!super.parseMsg(subject, body, data)) return false;
     
     // See if a doubled city name has been interpretted as an apt
+    data.strApt = stripFieldStart(data.strApt, "TRL ");
     String apt = data.strApt;
     if (data.strCity.length() == 0) {
       int pt = apt.indexOf(" - ");
@@ -93,6 +94,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     return FLAG_RECHECK_APT;
   }
   
+  @Override
+  protected String adjustGpsLookupAddress(String address, String apt) {
+    address = address.toUpperCase();
+    if (address.equals("90 KNIGHT RD")) address = append(address, " LOT ", apt);
+    return address;
+  }
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "0 US 15 NB",                           "+39.720100,-77.306500",
       "0.2 US 15 NB",                         "+39.722600,-77.305100",
@@ -361,8 +369,68 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "26 US 15 SB",                          "+40.029400,-77.084400",
       "26.2 US 15 SB",                        "+40.031700,-77.082000",
       "26.4 US 15 SB",                        "+40.034100,-77.079900",
-      "26.6 US 15 SB",                        "+40.036600,-77.078000"
-
+      "26.6 US 15 SB",                        "+40.036600,-77.078000",
+      
+      "90 KNIGHT RD LOT 1",  "39.77982295,-77.23336034",
+      "90 KNIGHT RD LOT 2",  "39.77988196,-77.23356318",
+      "90 KNIGHT RD LOT 3",  "39.77992756,-77.23380558",
+      "90 KNIGHT RD LOT 4",  "39.77986907,-77.23399770",
+      "90 KNIGHT RD LOT 5",  "39.77979229,-77.23418076",
+      "90 KNIGHT RD LOT 6",  "39.77963022,-77.23434236",
+      "90 KNIGHT RD LOT 7",  "39.77922337,-77.23458242",
+      "90 KNIGHT RD LOT 8",  "39.77906001,-77.23449927",
+      "90 KNIGHT RD LOT 9",  "39.77892963,-77.23438393",
+      "90 KNIGHT RD LOT 10", "39.77880234,-77.23430581",
+      "90 KNIGHT RD LOT 11", "39.77863795,-77.23415259",
+      "90 KNIGHT RD LOT 12", "39.77945604,-77.23357525",
+      "90 KNIGHT RD LOT 13", "39.77951582,-77.23380357",
+      "90 KNIGHT RD LOT 14", "39.77926794,-77.23405436",
+      "90 KNIGHT RD LOT 15", "39.77903630,-77.23389577",
+      "90 KNIGHT RD LOT 16", "39.77918936,-77.23367181",
+      "90 KNIGHT RD LOT 17", "39.77886727,-77.23377910",
+      "90 KNIGHT RD LOT 18", "39.77880827,-77.23366678",
+      "90 KNIGHT RD LOT 19", "39.77909505,-77.23322522",
+      "90 KNIGHT RD LOT 20", "39.77892654,-77.23328792",
+      "90 KNIGHT RD LOT 21", "39.77841430,-77.23312430",
+      "90 KNIGHT RD LOT 22", "39.77823084,-77.23304585",
+      "90 KNIGHT RD LOT 23", "39.77805923,-77.23298416",
+      "90 KNIGHT RD LOT 24", "39.77794766,-77.23277628",
+      "90 KNIGHT RD LOT 25", "39.77785052,-77.23262005",
+      "90 KNIGHT RD LOT 26", "39.77849701,-77.23358732",
+      "90 KNIGHT RD LOT 27", "39.77833803,-77.23356485",
+      "90 KNIGHT RD LOT 28", "39.77819992,-77.23348740",
+      "90 KNIGHT RD LOT 29", "39.77785361,-77.23345354",
+      "90 KNIGHT RD LOT 30", "39.77780413,-77.23327082",
+      "90 KNIGHT RD LOT 31", "39.77769901,-77.23310720",
+      "90 KNIGHT RD LOT 32", "39.77759207,-77.23295096",
+      "90 KNIGHT RD LOT 33", "39.77733801,-77.23260563",
+      "90 KNIGHT RD LOT 34", "39.77721458,-77.23247755",
+      "90 KNIGHT RD LOT 35", "39.77712079,-77.23232701",
+      "90 KNIGHT RD LOT 36", "39.77948773,-77.23305356",
+      "90 KNIGHT RD LOT 37", "39.77691259,-77.23201990",
+      "90 KNIGHT RD LOT 38", "39.77670155,-77.23217178",
+      "90 KNIGHT RD LOT 39", "39.77681339,-77.23232232",
+      "90 KNIGHT RD LOT 40", "39.77693192,-77.23251645",
+      "90 KNIGHT RD LOT 41", "39.77703782,-77.23266799",
+      "90 KNIGHT RD LOT 42", "39.77711718,-77.23284435",
+      "90 KNIGHT RD LOT 43", "39.77739238,-77.23326076",
+      "90 KNIGHT RD LOT 44", "39.77749570,-77.23341063",
+      "90 KNIGHT RD LOT 45", "39.77760702,-77.23361012",
+      "90 KNIGHT RD LOT 46", "39.77774049,-77.23373450",
+      "90 KNIGHT RD LOT 47", "39.77792395,-77.23385789",
+      "90 KNIGHT RD LOT 48", "39.77812519,-77.23395377",
+      "90 KNIGHT RD LOT 49", "39.77831071,-77.23400138",
+      "90 KNIGHT RD LOT 50", "39.77787036,-77.23438662",
+      "90 KNIGHT RD LOT 51", "39.77773972,-77.23425083",
+      "90 KNIGHT RD LOT 52", "39.77762119,-77.23418813",
+      "90 KNIGHT RD LOT 53", "39.77751529,-77.23406978",
+      "90 KNIGHT RD LOT 54", "39.77738336,-77.23398127",
+      "90 KNIGHT RD LOT 55", "39.77728287,-77.23377842",
+      "90 KNIGHT RD LOT 56", "39.77720221,-77.23365203",
+      "90 KNIGHT RD LOT 57", "39.77686904,-77.23315548",
+      "90 KNIGHT RD LOT 58", "39.77670104,-77.23293420",
+      "90 KNIGHT RD LOT 59", "39.77659075,-77.23276757",
+      "90 KNIGHT RD LOT 60", "39.77643667,-77.23259926"
   });
 
   private static final String[] CITY_LIST = new String[]{
