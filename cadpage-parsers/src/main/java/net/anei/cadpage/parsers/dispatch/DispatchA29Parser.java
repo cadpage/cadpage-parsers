@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class DispatchA29Parser extends SmartAddressParser {
   
-  private static final Pattern MARKER = Pattern.compile("^DISPATCH:(\\S+?(?: FD)?) - (?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?");
+  private static final Pattern MARKER = Pattern.compile("^DISPATCH:(\\S+?(?: (?:FD|ALS|BLS))?) - (?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?");
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
   private static final Pattern UNIT_INFO_PTN = Pattern.compile("[ /\n]+((?:\\b[A-Z\\d]+:[-_A-Z\\d]+(?: FD|-\\d| \\d(?=,)|)\\b,?)++)[ /\n]*");
   private static final Pattern NEW_LINE_PTN = Pattern.compile("\n+");
