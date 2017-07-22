@@ -17,7 +17,7 @@ public class MOStFrancoisCountyBParser extends FieldProgramParser {
   public MOStFrancoisCountyBParser(String defCity, String defState) {
     super(defCity, defState, 
          "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
-         "| CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+ )");
+         "| CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT% INFO:INFO/N+ )");
   }
   
   @Override
@@ -64,9 +64,11 @@ public class MOStFrancoisCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf(' ');
-      if (pt < 0) abort();
-      data.strCode = field.substring(0, pt);
-      data.strCall = field.substring(pt+1).trim();
+      if (pt >= 0) {
+        data.strCode = field.substring(0, pt);
+        field = field.substring(pt+1).trim();
+      }
+      super.parse(field, data);
     }
     
     @Override
