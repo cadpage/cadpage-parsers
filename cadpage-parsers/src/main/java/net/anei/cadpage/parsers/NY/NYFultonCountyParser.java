@@ -15,7 +15,7 @@ public class NYFultonCountyParser extends FieldProgramParser {
 
   public NYFultonCountyParser() {
     super(CITY_LIST, "FULTON COUNTY", "NY",
-        "SRC CALL ADDR/Z+? ( ADDRCITY | ADDR_END CITY ) PLACE? DATE TIME! ID? ( GPS | GPS1 GPS2 | ) INFO+");
+        "SRC? CALL ADDR/Z+? ( ADDRCITY | ADDR_END CITY ) PLACE? DATE TIME! ID? ( GPS | GPS1 GPS2 | ) INFO+");
   }
 
   @Override
