@@ -23,7 +23,7 @@ public class NCGuilfordCountyParser extends DispatchOSSIParser {
   
   protected NCGuilfordCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? XINFO+ )");
+          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? Radio_Channel:CH? XINFO+ )");
   }
   
   @Override
