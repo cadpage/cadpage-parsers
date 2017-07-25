@@ -173,8 +173,12 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       if (field.toUpperCase().startsWith("NO CROSS STREETS FOUND")) {
         data.strSupp = field.substring(22).trim();
       } else {
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_NO_IMPLIED_APT, field, data);
-        data.strSupp = getLeft();
+        Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_NO_IMPLIED_APT, field);
+        if (res.isValid()) {
+          res.getData(data);
+          field = res.getLeft();
+        }
+        data.strSupp = field;
       }
     }
     
