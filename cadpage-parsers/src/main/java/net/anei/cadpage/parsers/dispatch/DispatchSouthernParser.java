@@ -356,7 +356,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     }
     
     if (parseFieldOnly || !chkFlag(DSFLG_TIME | DSFLG_OPT_TIME)) {
-      if (!parseDelimitedFields(body, data)) return false;
+      if (!parseDelimitedFields(parseFieldOnly, body, data)) return false;
       if (!parseFieldOnly) {
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       }
@@ -369,7 +369,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       match = NAKED_TIME_PTN.matcher(body);
       if (!match.find()) {
         if (!chkFlag(DSFLG_OPT_TIME)) return false;
-        if (!parseDelimitedFields(body, data)) return false;
+        if (!parseDelimitedFields(false, body, data)) return false;
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       } else {
         String delim = match.group(1);
@@ -446,15 +446,15 @@ public class DispatchSouthernParser extends FieldProgramParser {
     return true;
   }
 
-  private boolean parseDelimitedFields(String body, Data data) {
+  private boolean parseDelimitedFields(boolean singleDelim, String body, Data data) {
     String ocaField = null;
     int pt = body.lastIndexOf(" OCA:");
     if (pt >= 0) {
       ocaField = body.substring(pt+1);
       body = body.substring(0,pt);
     }
-    String[] flds = body.split(";");
-    String[] flds2 = body.split(",");
+    String[] flds = body.split(singleDelim ? ";" : ";+");
+    String[] flds2 = body.split(singleDelim ? "," : ",+");
     if (flds2.length > flds.length) flds = flds2;
     if (ocaField != null) {
       flds2 = flds;

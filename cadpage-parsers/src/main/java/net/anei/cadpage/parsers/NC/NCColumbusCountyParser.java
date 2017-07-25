@@ -17,7 +17,7 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
 
   public NCColumbusCountyParser() {
     super(CITY_LIST, "COLUMBUS COUNTY", "NC", 
-          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME);
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_OPT_TIME);
     setupSpecialStreets("HWY 701 N BY PASS");
     setupProtectedNames("ROUGH AND READY RD");
   }
