@@ -1,20 +1,10 @@
 package net.anei.cadpage.parsers.TN;
 
-/**
- * Sumner County, TN
- */
-import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-
-public class TNSumnerCountyParser extends DispatchA3Parser {
+public class TNSumnerCountyParser extends GroupBestParser {
   
   public TNSumnerCountyParser() {
-    super("", "SUMNER COUNTY", "TN",
-           "EMPTY ADDR APT UNK CITY PLACE CALL! INFO+");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "E911@sumnersheriff.com";
+    super(new TNSumnerCountyAParser(), new TNSumnerCountyBParser());
   }
 }
