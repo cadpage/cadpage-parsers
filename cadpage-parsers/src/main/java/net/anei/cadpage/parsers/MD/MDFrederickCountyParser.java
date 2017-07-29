@@ -17,7 +17,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
 
   public MDFrederickCountyParser(){
     super(CITY_CODES, "FREDERICK COUNTY", "MD",
-          "CT:ADDR! TIME:TIME? ESZ:BOX? MAP:MAP Disp:UNIT");
+          "CT:ADDR! TIME:TIME? ESZ:BOX? MAP:MAP TG:CH Disp:UNIT");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREETS);
   }
@@ -79,10 +79,11 @@ public class MDFrederickCountyParser extends FieldProgramParser {
   }
   
   // Address field gets complicated
-  private static final Pattern MUT_AID_PTN = Pattern.compile("(.*?):? @MA (.*?)(?:(?:[:\\*;/]+) *(.*?)(?:[:@](.*))?)?");
-  private static final Pattern PLACE_MARK_PTN = Pattern.compile(": ?(?:@|AT\\b)?");
-  private static final Pattern PLACE_MARK_PTN2 = Pattern.compile("[:\\*;]");
-  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*)[;,] *([-/A-Z0-9a-z]+)");
+  private static final Pattern MUT_AID_PTN = Pattern.compile("(.*?):? @MA ([A-Z]+(?: CO)?)[ :\\*;/@]*(.*?)(?:[:@](.*))?");
+  private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("(ENGINE \\S+) +(.*)");
+  private static final Pattern NOT_TRAIL_PLACE_PTN = Pattern.compile(".*MM|.*\\bMILE MARKER|OFF .*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PLACE_MARK_PTN2 = Pattern.compile("[\\*;]");
+  private static final Pattern APT_PTN = Pattern.compile("(?:RM|LOT|ROOM|APT|UNIT)[- ]*(.*)|\\d{1,4}[A-Z]?|[A-Z]|IAO", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     
     @Override
@@ -102,10 +103,37 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         data.strCall = "Mutual Aid: " + call;
         data.strCity = convertCodes(match.group(2).trim(), CITY_CODES);
         String addr = getOptGroup(match.group(3));
-        data.strPlace = getOptGroup(match.group(4));
-        addr = stripCity(addr, data);
+        String place = match.group(4);
         
-        parseAddress(addr, data);
+        match = UNIT_PREFIX_PTN.matcher(addr);
+        if (match.matches()) {
+          data.strCall = append(data.strCall, " - ", match.group(1));
+          addr = match.group(2);
+        }
+        
+        if (place != null) {
+          addr = stripCity(addr, data);
+          parseAddress(addr, data);
+          place = place.trim();
+          match = APT_PTN.matcher(place);
+          if (match.matches()) {
+            String apt = match.group(1);
+            if (apt == null) apt = place;
+            data.strApt = append(data.strApt, "-", apt);
+          } else {
+            data.strPlace = place;
+          }
+        } else {
+          parseAddress(StartType.START_ADDR, FLAG_NO_IMPLIED_APT, addr, data);
+          place = getLeft();
+          if (place.startsWith("&") || place.startsWith("/")) {
+            data.strAddress = append (data.strAddress, " & ", place.substring(1).trim());
+          } else if (NOT_TRAIL_PLACE_PTN.matcher(place).matches()) {
+            data.strAddress = append(data.strAddress, " ", place);
+          } else {
+            data.strPlace = place;
+          }
+        }
       }
   
       else {
@@ -126,20 +154,12 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           pt = field.indexOf(')', pt+3);
         }
         if (pt < 0) pt = 0;
-        match = PLACE_MARK_PTN.matcher(field);
-        if (match.find(pt)) {
-          data.strPlace = field.substring(match.end()).trim();
-          field = field.substring(0,match.start()).trim();
-        }
         
-        while (true) {
-          match = TRAIL_APT_PTN.matcher(field);
-          if (!match.matches()) break;
-          field = match.group(1).trim();
-          String apt = match.group(2);
-          if (!data.strApt.startsWith(apt)) {
-            data.strApt = append(apt, "-", data.strApt);
-          }
+        String extra = null;
+        pt = field.indexOf(':', pt);
+        if (pt >= 0) {
+          extra = field.substring(pt+1).trim();
+          field = field.substring(0,pt).trim();
         }
         
         // Strip off possibly multiple city codes
@@ -151,6 +171,32 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         if (data.strApt.length() > 0) flags |= FLAG_NO_IMPLIED_APT;
         parseAddress(st, flags, field, data);
         if (data.strPlace.length() == 0) data.strPlace = getLeft();
+        
+        if (extra != null) {
+          for (String part : extra.split(":")) {
+            part = part.trim();
+            if (part.length() == 0) continue;
+            if (data.strAddress.length() == 0) {
+              parseAddress(stripFieldStart(part, "@"), data);
+            }
+            else if (part.startsWith("@")) {
+              part = part.substring(1).trim();
+              data.strPlace = append(data.strPlace, " - ", part);
+            } else {
+              match = APT_PTN.matcher(part);
+              if (match.matches()) {
+                String apt = match.group(1);
+                if (apt == null) apt = part;
+                data.strApt = append(data.strApt, "-", apt);
+              }
+              else if (data.strPlace.length() == 0) {
+                data.strPlace = append(data.strPlace, " - ", part);
+              } else {
+                data.strApt = append(data.strApt, "-", part);
+              }
+            }
+          }
+        }
       }
       
       // If no address (it happens) substitute the place name
@@ -194,10 +240,27 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     }
     
     private String stripCity(String field, Data data) {
+      
+      Matcher match = PLACE_MARK_PTN2.matcher(field);
+      if (match.find()) {
+        String part = field.substring(match.end()).trim();
+        field = field.substring(0,match.start()).trim();
+        match = APT_PTN.matcher(part);
+        if (match.matches()) {
+          String apt = match.group(1);
+          if (apt == null) apt = part;
+          data.strApt = append(data.strApt, "-", apt);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", part);
+        }
+      }
+      
       while (true) {
         Result res = parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field);
         if (res.getCity().length() == 0) break;
+        String saveCity = data.strCity;
         res.getData(data);
+        if (saveCity.length() > 0) data.strCity = saveCity;
         field = res.getStart();
       }
       return field;
@@ -226,6 +289,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     "ALBERT STAUB",
     "ALL SAINTS",
     "AMBER MEADOW",
+    "APPLES CHURCH",
     "ARABY CHURCH",
     "ARBOR SQUARE",
     "BAKER VALLEY",
@@ -259,6 +323,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     "BRIDLE PATH",
     "BROKEN REED",
     "BROOK VALLEY",
+    "BULL FROG",
     "BURGESS HILL",
     "BUSH CREEK",
     "CALEB WOOD",
@@ -354,6 +419,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     "JAY BIRD",
     "JESSE SMITH",
     "JIM PHELAN",
+    "JOHN DRAPER",
     "JOHN MILLS",
     "KEEP TRYST",
     "KEMPTOWN CHURCH",
@@ -495,6 +561,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     "YELLOW SHEAVE",
     "YELLOW SPRINGS",
     "YOUNG FAMILY"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -686,6 +753,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       "SPILL / LARGE / UNCONTAINED / OUTSIDE",
       "STABBING",
       "STILL WATER RESCUE BLS",
+      "STRANDED PERSON / NON-THREATENED",
       "STROKE",
       "STRUCTURE / EXTINGUISHED",
       "STRUCTURE / UNKNOWN / FIRE / SMOKE (PRE-ALERT)",
@@ -710,6 +778,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       "UNKNOWN MEDICAL EMERGENCY",
       "UNKNOWN SITUATION / GENERAL ALARM ACTIVATION",
       "UNKNOWN SITUATION / OTHER ALARM TYPES",
+      "UNKNOWN SITUATION / SMOKE DETECTOR ACTIVATION (no fire or smoke)",
       "VEHICLE ACCIDENT",
       "VEHICLE ACCIDENT (ALS SPECIFY)",
       "VEHICLE ACCIDENT WITH ENTRAPMENT",
@@ -734,6 +803,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         "ADCO",   "Adams County,PA",
         "BRAD",   "Braddock Heights",
         "BRUN",   "Brunswick",
+        "BURK",   "Burkitsville",
         "CACO",   "Carroll County",
         "CADA",   "Adamstown",
         "CARRCO", "Carroll County",
@@ -758,7 +828,9 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         "CRKY",   "Rocky Ridge",
         "CSAB",   "Sabillasville",
         "CSMT",   "Smithsburg",
+        "CTAN",   "Taneytown",
         "CTHU",   "Thurmont",
+        "CTUS",   "Tuscarora",
         "CUBR",   "Union Bridge",
         "CWAL",   "Walkersville",
         "CWOD",   "Woodsboro",

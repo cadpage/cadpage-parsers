@@ -28,4 +28,12 @@ public class TNSumnerCountyBParser extends MsgParser {
     data.strCall = match.group(2).trim();
     return true;
   }
+  
+  private static final Pattern PVT_PTN = Pattern.compile(" *\\bPVT\\b *", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = PVT_PTN.matcher(addr).replaceAll(" ").trim();
+    return super.adjustMapAddress(addr);
+  }
 }
