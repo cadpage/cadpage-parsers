@@ -23,7 +23,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "paging@scfres.com,@communityamb.org,FRES CAD,6316640853@pm.sprint.com";
+    return "paging@scfres.com,printing@scfres.com,@communityamb.org,FRES CAD,6316640853@pm.sprint.com";
   }
 
   private static final Pattern SIG_3_PTN = Pattern.compile("SIG 3: *(.*) (\\d{1,2}-[A-Z]-\\d{1,2}[A-Z]?)");
