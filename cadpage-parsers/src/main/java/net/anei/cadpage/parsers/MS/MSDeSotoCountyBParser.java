@@ -11,6 +11,7 @@ public class MSDeSotoCountyBParser extends DispatchB2Parser {
     setupMultiWordStreets(
         "ANSLEY PARK",
         "CEDAR LAKE",
+        "CEDAR POINT",
         "CHARLIE MOORES",
         "COLONIAL HILLS",
         "GREAT OAKS",
@@ -18,13 +19,16 @@ public class MSDeSotoCountyBParser extends DispatchB2Parser {
         "MARKET PLACE",
         "MOSS POINT",
         "OAK CHASE",
+        "PECAN GROVE",
+        "PECAN HILL",
         "PLUM POINT",
+        "SHADOW OAKS",
         "SLEEPY HOLLOW",
         "STAR LANDING",
         "SWINNEA RIDGE",
         "WE ROSS",
         "WINNERS CIRCLE"
-   );
+    );
   }
   
   @Override
@@ -47,21 +51,26 @@ public class MSDeSotoCountyBParser extends DispatchB2Parser {
       "DISTURBANCE",
       "DOA/DEATH INVESTIGATION",
       "GENERAL COMPLAINT OF PAIN",
+      "FAINTED (NOW CONSCIOUS)",
       "FALLS",
       "LIFTING ASSISTANCE NO INJURIES",
       "MEDICAL ALARM",
       "MUTUAL AID DESOTO COUNTY",
       "MUTUAL AID HERNANDO",
+      "MUTUAL AID HORN LAKE",
       "RESIDENTIAL FIRE ALARM",
       "SEIZURES/CONVULSIONS",
+      "SERVICE CALL",
       "SICK PARTY",
       "SMELL OF SMOKE INSIDE",
       "STROKE - CVA - TIA",
+      "SUICIDE-ATTEMPT",
       "SUICIDE-THREAT",
       "SUSPICIOUS PERSON",
       "TEST CALL",
       "TRAFFIC STOP",
       "UNCONSCIOUS PARTY",
-      "VISIBLE SMOKE OUTSIDE"
+      "VISIBLE SMOKE OUTSIDE",
+      "WELFARE CONCERN"
   );
 }
