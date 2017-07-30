@@ -6,42 +6,42 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 
-public class VARoanokeCountyParser extends SmartAddressParser {
+public class VARoanokeCountyParser extends FieldProgramParser {
+  
+  public VARoanokeCountyParser() {
+    super("ROANOKE COUNTY", "VA", 
+          "UNIT CALL PLACE? ADDRCITY! X MAP END");
+    setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
+  }
+  
+  @Override
+  public String getFilter() {
+    return "5403144404,Active911server@Vintonems.com,dispatch@roanokecountyva.gov,dispatchcalls@cavespringfire.org";
+  }
   
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
-  private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(Roanoke County|Floyd County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
+  private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(Roanoke County|Floyd County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
+  private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (Roanoke County|Floyd County|Montgomery County|Town of Vinton)(?: (.*?))?(?:\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
   private static final Pattern NOT_DISPATCH_PTN = Pattern.compile("\\b(?:ADV|TRAINING)\\b");
   private static final Pattern DATE_TIME_PTN1 = Pattern.compile("[ \n]*([12]?\\d/\\d{1,2}/\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2} [AP]M)$");
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("[ \n]*([12]?\\d-[A-Z]{3}-\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2})$", Pattern.CASE_INSENSITIVE);
   private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm:ss aa");
   private static final DateFormat DATE_FMT2 = new SimpleDateFormat("dd-MMM-yyyy");
   private static final Pattern XST_PTN = Pattern.compile("[- ]+X ?ST(?:REETS?)?\\b:? *");
-  private static final Pattern X_APT_PTN1 = Pattern.compile("(?:APT|RM|(FL|LOT))(?:\\b|(?=\\d)) *([^ ]+)\\b *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern X_APT_PTN1 = Pattern.compile("(?:APT|RM|STE|(FL|LOT))(?:\\b|(?=\\d)) *([^ ]+)\\b *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern X_APT_PTN2 = Pattern.compile("([A-Z]?\\d+(?: [A-DF-H])?|[A-DF-H])\\b(?! +(?:AVE?|ST)\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern X_NO_CROSS_PTN = Pattern.compile("(.*?) *\\bNo Cross Streets Found\\b *(.*)");
   private static final Pattern UNIT_PTN = Pattern.compile("^((?:[A-Z]+\\d+|SALEMEMS|SALEMF|RES(?:CUE)?[- ]\\d+)(?:\\$[A-Z]+\\d+)? +)+");
   private static final Pattern X_PHONE_PTN = Pattern.compile("((?:\\(?\\d{3}\\)? ?)?\\d{3}[- ]\\d{4})\\b *(.*)");
   private static final Pattern APT_PHONE_PTN = Pattern.compile("\\b(?:\\(?\\d{3}\\)? ?)?\\d{3}[- ]\\d{4}\\b");
   private static final Pattern APT_PTN = Pattern.compile("([A-Z]{2}|[A-Z]?\\d+[A-Z]?)\\b *(.*)");
-    
-  
-  public VARoanokeCountyParser() {
-    super("ROANOKE COUNTY", "VA");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(MWORD_STREET_LIST);
-  }
-  
-  @Override
-  public String adjustMapAddress(String address) {
-    address = GRANDIN_ROAD_EXT.matcher(address).replaceAll("$1 EXD");
-    return super.adjustMapAddress(address);
-  }
-  private static final Pattern GRANDIN_ROAD_EXT = Pattern.compile("\\b(GRANDIN ROAD) EXT\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -64,8 +64,16 @@ public class VARoanokeCountyParser extends SmartAddressParser {
       body = body.substring(match.end()).trim();
     }
     
-    // There seem to be two different formats, possibly separated chronologically
-    // This one can be identified by a pattern match
+    // Now there is a new newline delimited format
+    String[] flds = body.split("\n");
+    if (flds.length >= 4) {
+      if (!parseFields(flds, data)) return false;
+      if (data.strCity.startsWith("Town of ")) data.strCity = data.strCity.substring(8).trim();
+      return true;
+    }
+    
+    // There seem to be three different formats, possibly separated chronologically
+    // This first one can be identified by a pattern match
     match = MASTER_PTN1.matcher(body);
     if (match.matches()) {
       setFieldList("DATE TIME UNIT BOX ADDR APT CITY CALL ID");
@@ -77,6 +85,24 @@ public class VARoanokeCountyParser extends SmartAddressParser {
       data.strCity = city;
       data.strCall = match.group(5).trim();
       data.strCallId = match.group(6);
+      return true;
+    }
+    
+    // So can the second format
+    match = MASTER_PTN2.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT CALL PLACE ADDR APT CITY X DATE TIME");
+      data.strUnit = match.group(1);
+      parseAddress(StartType.START_CALL_PLACE, FLAG_NO_IMPLIED_APT | FLAG_NO_CITY, match.group(2).trim(), data);
+      String city = match.group(3);
+      if (city.startsWith("Town of ")) city = city.substring(8).trim();
+      data.strCity = city;
+      data.strCross = getOptGroup(match.group(4));
+      String date = match.group(5);
+      if (date != null) {
+        data.strDate = date;
+        setTime(TIME_FMT1, match.group(6), data);
+      }
       return true;
     }
     
@@ -150,7 +176,6 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     if (match.find()) {
       data.strUnit = match.group().trim();
       body = body.substring(match.end()).trim();
-      good = true;
     }
     
     parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM, body.toUpperCase(), data);
@@ -189,8 +214,17 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     return true;
   }
   
+  private static final Pattern GRANDIN_ROAD_EXT = Pattern.compile("\\b(GRANDIN ROAD) EXT\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String address) {
+    address = GRANDIN_ROAD_EXT.matcher(address).replaceAll("$1 EXD");
+    return super.adjustMapAddress(address);
+  }
+  
   private static final String[] MWORD_STREET_LIST = new String[]{
     "AMERICAN TIRE",
+    "ANNIE HOLLAND",
     "APPLE GROVE",
     "APPLE HARVEST",
     "AUTUMN PARK",
@@ -200,12 +234,17 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "BELLE MEADE",
     "BENDING OAK",
     "BENT MOUNTAIN",
+    "BLACK WALNUT",
+    "BLUE RIDGE",
     "BLUE VIEW",
+    "BOONES CHAPEL",
+    "BOONES MILL",
     "BOTTOM CREEK",
     "BRIAR HILL",
     "BROAD HILL",
     "BUCK MOUNTAIN",
     "BUCK RUN",
+    "BUNKER HILL",
     "BUSH FARM",
     "CARDINAL PARK",
     "CARRIAGE HILLS",
@@ -214,9 +253,11 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "CASTLE ROCK",
     "CATAWBA FOREST",
     "CATAWBA HOSPITAL",
+    "CATAWBA VALLEY",
     "CAVE SPRING",
     "CHARING CROSS",
     "CIRCLE BROOK",
+    "CLEAR SPRING",
     "CLEARBROOK PARK",
     "CLEARBROOK VILLAGE",
     "CLOVER HILL",
@@ -224,40 +265,53 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "COTTAGE ROSE",
     "COTTON HILL",
     "COUNTRY HOMES",
+    "CROWELL GAP",
     "CRYSTAL CREEK",
     "CYPRESS PARK",
     "DEER BRANCH",
     "DEER PATH",
     "DEER RIDGE",
     "DREWRYS HILL",
+    "DUTCH OVEN",
     "EAGLE CREST",
+    "EAST CAMPUS",
     "EAST VIRGINIA",
     "ELM VIEW",
     "FAIRWAY FOREST",
     "FAIRWAY RIDGE",
     "FAIRWAY WOODS",
+    "FALCON RIDGE",
     "FEATHER GARDEN",
+    "FLORA FARM",
     "FOREST EDGE",
     "FOREST VIEW",
+    "FORT LEWIS CHURCH",
     "FORTUNE RIDGE",
+    "GARST CABIN",
     "GARST MILL PARK",
     "GARST MILL",
     "GLADE CREEK",
     "GLEN HAVEN",
     "GLEN HEATHER",
     "GOLDEN IVY",
+    "GOLDEN OAK",
+    "GORDON BROOK",
+    "GRAVELLY RIDGE",
     "GREEN HOLLOW",
     "GREEN MEADOW",
     "GREEN RIDGE",
     "GREEN VALLEY",
     "GREY FOX",
+    "GUS NICKS",
     "HARVEST HILL",
     "HICKORY HILL",
     "HICKORY RIDGE",
+    "HIDDEN FOREST",
     "HIDDEN HILL",
     "HIDDEN VALLEY SCHOOL",
     "HIDDEN VALLEY",
     "HIDDEN WOODS",
+    "HIGHFIELDS FARM",
     "HORSEPEN MOUNTAIN",
     "HUFF MILL",
     "HUNTING HILLS",
@@ -265,35 +319,51 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "INDIAN GRAVE",
     "IVY RIDGE",
     "JAE VALLEY",
+    "JOHN RICHARDSON",
+    "JUBAL EARLY",
+    "K OLD CAVE SPRING",
+    "KESSLER MILL",
+    "LAKE BACK O BEYOND",
     "LAUREL CREEK",
     "LAUREL GLEN",
+    "LITTLE BEAR",
+    "LITTLE CATAWBA CREEK",
     "LOCH HAVEN",
     "LOST MOUNTAIN",
     "LOST VIEW",
     "LOUISE WELLS",
     "LYNN HAVEN",
     "LYNNN HAVEN",
+    "M GEORGETOWN",
     "MALLARD LAKE",
     "MANSARD SQUARE",
     "MARTINS CREEK",
     "MCVITTY FOREST",
+    "MEADOW BRANCH",
+    "MEADOW SPRINGS",
     "MEWS HILL",
     "MILL FOREST",
     "MILL PLANTATION",
     "MILL RUN",
+    "MILLERS LANDING",
     "MOCKINGBIRD HILL",
     "MOUNT PLEASANT",
     "MOUNTAIN HEIGHTS",
+    "MOUNTAIN VALLEY",
     "MOUNTAIN VIEW",
     "MT CHESTNUT",
+    "NICHOLAS HILL",
     "NORTH ELECTRIC",
     "NORTH GARDEN",
+    "NORTH LAKE",
+    "NORTH SPRING",
     "NORTHSIDE HIGH SCHOOL",
     "OLD CAVE SPRING",
     "OLD MILL PLANTATION",
     "ORCHARD PARK",
     "ORCHARD VIEW",
     "ORCHARD VILLAS",
+    "PARK MANOR",
     "PAST TIMES",
     "PENN FOREST",
     "PETERS CREEK",
@@ -304,6 +374,7 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "POAGE VALLEY RD",
     "POAGE VALLEY",
     "POAGES MILL",
+    "POLLY HILL",
     "POOR MOUNTAIN",
     "POPLAR SPRINGS",
     "PURPLE FINCH",
@@ -312,11 +383,15 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "RED CEDAR",
     "RED LANE",
     "RIDGELEA ESTATES",
+    "ROBIN LYNN",
     "SCARLET OAK",
     "SCENIC HILLS",
+    "SCOTCH PINE",
     "SHINGLE RIDGE",
     "SILVER LEAF",
+    "SLEEPY HOLLOW",
     "SLINGS GAP",
+    "SNOW OWL",
     "SOUTH BARRENS",
     "SOUTH MOUNTAIN",
     "SOUTH PACIFIC",
@@ -328,27 +403,35 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "SPRING MEADOW",
     "SPRING RUN",
     "SPRINGWOOD PARK",
+    "ST JAMES",
+    "STANLEY FARM",
     "STERLING PLACE",
     "STILL BRANCH",
     "STONE MOUNTAIN",
     "STONELYN COTTAGE",
     "STONEY RIDGE",
+    "STRAWBERRY MOUNTAIN",
     "SUGAR LOAF MOUNTAIN",
     "SUGAR LOAF MOUNTEI^",
     "SUGAR RIDGE",
     "SUNNY SIDE",
     "TANGLEWOOD EAST ENTRANCE",
     "TANGLEWOOD WEST ENTRANCE",
+    "THE PEAKS",
+    "THOMPSON MEMORIAL",
     "TIMBER BRIDGE",
+    "TOWNE SQUARE",
     "TREE TOP CAMP",
     "TREE TOP",
     "TWELVE OCLOCK KNOB",
     "TWIN VIEWS",
     "TWINE HOLLOW",
+    "UPLAND GAME",
     "VA SPRUCE",
     "VALE HILL",
     "VALLEY FORGE",
     "VALLEY GATEWAY",
+    "VALLEY STREAM",
     "VALLEY VIEW",
     "WALMART CHALLENGER FRONT ENTRANCE",
     "WEST MAIN",
@@ -357,10 +440,13 @@ public class VARoanokeCountyParser extends SmartAddressParser {
     "WEST VIRGINIA",
     "WESTWARD LAKE",
     "WHITE PELICAN",
+    "WILLOW BRANCH",
+    "WILLOW CREEK",
     "WILLOW LEAF",
     "WILLOW SPRING",
     "WIND SONG",
     "WOOD HAVEN",
+    "WOODS CROSSING",
     "YELLOW MOUNTAIN"
   };
   
@@ -409,6 +495,7 @@ public class VARoanokeCountyParser extends SmartAddressParser {
       "HIT & RUN PERSONAL INJURY",
       "ILLEGAL BURN",
       "ILLEGALBURN",
+      "MULCH",
       "RESIDENTIAL FIRE ALARM",
       "RESIDENTIAL GAS LEAK",
       "RESIDENTIAL STRUCTURE FIRE",
@@ -420,6 +507,7 @@ public class VARoanokeCountyParser extends SmartAddressParser {
       "STRUCTC",
       "STRUCTR",
       "TECHRES",
+      "TEST",
       "TEST CALL",
       "TEST PUBLIC SAFETY CENTER",
       "TEST STATION 2",
