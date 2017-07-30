@@ -12,7 +12,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
   
   public COMesaCountyBParser() {
     super(CITY_LIST, "MESA COUNTY", "CO", 
-          "ID! ( Call_Type:CALL! || Fire_Call_Type:CALL! EMS_Call_Type:CALL! ) Address:ADDRCITY/S! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO? Call_Time:DATETIME! Units:UNIT? Narrative:INFO! INFO/N+");
+          "MARKER? ID! ( Call_Type:CALL! | Fire_Call_Type:CALL! EMS_Call_Type:CALL! ) Address:ADDRCITY/S! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO? Call_Time:DATETIME! Units:UNIT? Narrative:INFO! INFO/N+");
   }
   
   @Override
@@ -20,7 +20,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
     return "@MESACOUNTY.US,GJCITY.ORG,@CI.GRANDJCT.CO.US";
   }
   
-  private static final Pattern DELIM = Pattern.compile("\n| +(?=(?:Call Type|Fire Call Type|EMS Call Type|Common Name|Additional Location Info|Units):)");
+  private static final Pattern DELIM = Pattern.compile("\n| +(?<! Fire | EMS )(?=(?:Call Type|Fire Call Type|EMS Call Type|Common Name|Additional Location Info|Units):)");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -29,6 +29,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("MARKER")) return new SkipField("\\*{3,}[A-Z0-9 ]+\\*{3,}", true);
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
@@ -109,7 +110,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -117,7 +118,12 @@ public class COMesaCountyBParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(2), data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
   
