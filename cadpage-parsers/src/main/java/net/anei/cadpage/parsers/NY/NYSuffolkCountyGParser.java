@@ -22,8 +22,8 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    String[] flds =  body.split("\n");
-    if (flds.length > 1) return parseFields(body.split("\n"), 3, data);
+    String[] flds = body.split("\n");
+    if (flds.length > 1) return parseFields(flds, 3, data);
     return parseNewFormat(body, data);
   }
   
@@ -85,13 +85,13 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern MASTER = Pattern.compile("(.*?) TOA: (\\d\\d:\\d\\d) (\\d\\d-\\d\\d-\\d\\d) ([^a-z]*?) (?:CS: ([^a-z]*?) )?(\\S*[a-z].*?) (\\d{4}-\\d{6})");
+  private static final Pattern MASTER = Pattern.compile("(.*?) TOA: (\\d\\d:\\d\\d) (\\d\\d-\\d\\d-\\d\\d) ([^a-z]*?) (?:CS: ([^a-z]*?) )?(\\S*[a-z].*?) (\\d{4}-\\d{6})(?: +(.*))?");
   
   private boolean parseNewFormat(String body, Data data) {
     
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    setFieldList("CALL TIME DATE ADDR APT PLACE X SRC ID");
+    setFieldList("CALL TIME DATE ADDR APT PLACE X SRC ID INFO");
     data.strCall = match.group(1).trim();
     data.strTime = match.group(2);
     data.strDate = match.group(3).replace('-', '/');
@@ -103,6 +103,7 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     data.strCross = cross;
     data.strSource = match.group(6).trim();
     data.strCallId = match.group(7);
+    data.strSupp = getOptGroup(match.group(8));
     return true;
   }
 }
