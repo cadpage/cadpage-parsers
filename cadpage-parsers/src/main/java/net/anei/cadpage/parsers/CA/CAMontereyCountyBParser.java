@@ -8,7 +8,7 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
   public CAMontereyCountyBParser() {
     super("MONTEREY COUNTY", "CA", 
           "( RES:UNIT! CLOSE:ID! CALL! ADDRCITY! DSP:TIME! AIQ:SKIP! END " +
-          "| CALL ADDRCITY UNIT EMPTY X MAP GPS! ID! Tac:CH! AIR/N GRD/N UNIT! INFO/N )");
+          "| CALL ADDRCITY UNIT PLACE X MAP GPS! ID! Tac:CH! AIR/N GRD/N UNIT! INFO/N )");
   }
   
   @Override

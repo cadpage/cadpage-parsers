@@ -30,9 +30,38 @@ public class CAMontereyCountyAParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    if (parseMsg3(body, data)) return true;
     if (parseMsg2(body, data)) return true;
     if (parseMsg1(subject, body, data)) return true;
     return false;
+  }
+  
+  private boolean parseMsg3(String body, Data data) {
+    FParser fp = new FParser(body);
+    String unit = fp.get(10);
+    if (!fp.check(" Address: ")) return false;
+    String addr = fp.get(21);
+    if (!fp.check("Apt ")) return false;
+    String apt = fp.get(5);
+    if (!fp.check("X st ")) return false;
+    String cross = fp.get(30);
+    if (!fp.check("City ")) return false;
+    String city = fp.get(10);
+    if (!fp.check(" ")) return false;
+    String code = fp.get(6);
+    if (!fp.check(" ")) return false;
+    if (fp.check(" ")) return false;
+    String call = fp.get();
+    
+    setFieldList("UNIT ADDR APT X CITY CODE CALL");
+    data.strUnit = unit;
+    parseAddress(addr, data);
+    data.strApt = append(data.strApt, "-", apt);
+    data.strCross = cross;
+    data.strCity = city;
+    data.strCode = code;
+    data.strCall = call;
+    return true;
   }
   
   private static final Pattern MARKER = Pattern.compile("([A-Z ]+) - ");
@@ -41,43 +70,81 @@ public class CAMontereyCountyAParser extends MsgParser {
     
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
-    setFieldList("SRC UNIT CALL ADDR APT X");
+    setFieldList("SRC UNIT CALL ADDR APT X MAP");
     
     String source = match.group(1);
     body = body.substring(match.end());
     
     FParser fp = new FParser(body);
-    if (fp.checkAhead(95, "CROSS STREETS")) {
-      data.strSource = source;
+    int pt = fp.checkAhead("CROSS STREETS", 71, 95, 97);
+    if (pt >= 0) {
       
-      data.strUnit = fp.get(32);
+      if (pt == 71) {
+        String unit = fp.get(9);
+        
+        if (fp.check(" ")) return false;
+        String call = fp.get(10);
+        
+        if (!fp.check(" ")) return false;
+        if (fp.check(" ")) return false;
+        String addr = fp.get(50);
+        
+        if (!fp.check(" CROSS STREETS")) return false;
+        String cross = fp.get();
+
+        data.strSource = source;
+        data.strUnit = unit;
+        data.strCall = call;
+        parseAddress(addr, data);
+        data.strCross = cross;
+        return true;
+      }
+
+      int fpLen = pt - 63;
+      String unit = fp.get(fpLen);
       if (!fp.check(" ")) return false;
       
       if (fp.check(" ")) return false;
-      data.strCall = fp.get(10);
+      String call = fp.get(10);
       
       if (!fp.check(" ") || fp.check(" ")) return false;
-      parseAddress(fp.get(50), data);
+      String addr = fp.get(50);
       
-      if (!fp.check(" CROSS STREETS  ")) return false;
-      data.strCross = fp.get();
+      if (!fp.check(" CROSS STREETS ")) return false;
+      String cross = fp.get();
+      
+      data.strSource = source;
+      data.strUnit = unit;
+      data.strCall = call;
+      parseAddress(addr, data);
+      data.strCross = cross;
       return true;
     }
     
     if (fp.checkAhead(93, "X STREETS")) {
-      data.strSource = source;
       
-      data.strUnit = fp.get(30);
+      String unit = fp.get(30);
       if (!fp.check(" ")) return false;
       
       if (fp.check(" ")) return false;
-      data.strCall = fp.get(10);
+      String call = fp.get(10);
       
       if (!fp.check(" ") || fp.check(" ")) return false;
-      parseAddress(fp.get(50), data);
+      String addr = fp.get(50);
       
       if (!fp.check(" X STREETS ")) return false;
-      data.strCross = fp.get();
+      String cross = fp.get(76);
+      
+      fp.setOptional();
+      if (!fp.check("MAP PAGE")) return false;
+      String map = fp.get();
+      
+      data.strSource = source;
+      data.strUnit = unit;
+      data.strCall = call;
+      parseAddress(addr, data);
+      data.strCross = cross;
+      data.strMap = map;
       return true;
       
     }
