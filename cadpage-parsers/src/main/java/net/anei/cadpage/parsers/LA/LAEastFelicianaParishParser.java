@@ -22,8 +22,9 @@ public class LAEastFelicianaParishParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("E911 Station Dispatch Notification")) return false;
-    return parseFields(body.split("\n"), 4
-        , data);
+    String[] flds = body.split("\n");
+    if (flds.length >= 4) return parseFields(flds, data);
+    return super.parseMsg(body, data);
   }
   
   @Override
