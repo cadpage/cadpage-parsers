@@ -241,6 +241,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "UNKNOWN PROBLEM MAN DOWN",
       "VEHICLE FIRE",
       "WALK-UP",
+      "WATER RESCUE",
       "WATERCRAFT IN DISTRESS"
   }));
   

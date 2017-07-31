@@ -10,6 +10,6 @@ public class ARPulaskiCountyBParser extends DispatchA46Parser {
 
   @Override
   public String getFilter() {
-    return "PTS@gmail.com";
+    return "PTS@gmail.com,pulaskicountyso@pagingpts.com";
   }
 }
