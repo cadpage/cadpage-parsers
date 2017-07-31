@@ -36,6 +36,8 @@ public class CAMontereyCountyAParser extends MsgParser {
     return false;
   }
   
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d\\d?[A-Z]\\d\\d?[A-Z]?) +(.*)", Pattern.CASE_INSENSITIVE);
+  
   private boolean parseMsg3(String body, Data data) {
     FParser fp = new FParser(body);
     String unit = fp.get(10);
@@ -48,8 +50,6 @@ public class CAMontereyCountyAParser extends MsgParser {
     if (!fp.check("City ")) return false;
     String city = fp.get(10);
     if (!fp.check(" ")) return false;
-    String code = fp.get(6);
-    if (!fp.check(" ")) return false;
     if (fp.check(" ")) return false;
     String call = fp.get();
     
@@ -59,7 +59,11 @@ public class CAMontereyCountyAParser extends MsgParser {
     data.strApt = append(data.strApt, "-", apt);
     data.strCross = cross;
     data.strCity = city;
-    data.strCode = code;
+    Matcher match = CODE_CALL_PTN.matcher(call);
+    if (match.matches()) {
+      data.strCode = match.group(1);
+      call = match.group(2);
+    }
     data.strCall = call;
     return true;
   }
