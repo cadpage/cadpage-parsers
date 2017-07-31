@@ -13,7 +13,7 @@ public class IAWoodburyCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "WCICC3@sioux-city.org";
+    return "WCICC3@sioux-city.org,@wcicc.com";
   }
   
   @Override
