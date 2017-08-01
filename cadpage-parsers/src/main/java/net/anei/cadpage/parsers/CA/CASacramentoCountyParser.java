@@ -58,6 +58,14 @@ public class CASacramentoCountyParser extends MsgParser {
     return true;
   }
   
+  private static final Pattern EW_PTN = Pattern.compile("\\bEW\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = EW_PTN.matcher(addr).replaceAll("EXP");
+    return super.adjustMapAddress(addr);
+  }
+  
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
