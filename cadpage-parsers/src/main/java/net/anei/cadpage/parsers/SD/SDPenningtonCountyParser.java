@@ -32,7 +32,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.pennington.sd.us,dispatch@pennco.org,777,74121";
+    return "dispatch@co.pennington.sd.us,dispatch@pennco.org,messaging@iamresponding.com,777,74121";
   }
   
   @Override
@@ -341,6 +341,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "FALL-B",
       "FALL-D",
       "FALL-D2",
+      "FALL-D3",
       "FATAL",
       "FIGHT",
       "FIRE",
@@ -348,6 +349,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "FUEL-C",
       "GRASSF",
       "GRASSF2",
+      "GSW",
       "HEAD",
       "HEART-C",
       "HEART-D",
@@ -382,6 +384,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "STRUCF",
       "STRUCF-D4",
       "STRUCF-D9",
+      "STRUCF-E",
       "STRUCF2",
       "SUIC",
       "TRANSFER",
