@@ -14,8 +14,9 @@ public class FLCitrusCountyParser extends SmartAddressParser {
   private static final Pattern MARKER = Pattern.compile("CITRUS COUNTY FIRE DEPARTMENT:? +");
   private static final Pattern TRUNC_CITY_PTN = Pattern.compile("(?: [A-Z][a-z]+)+(?: [A-Z])?$");
   private static final Pattern MASTER1 = Pattern.compile("Unit:([A-Z0-9]+) Status:Dispatched ([A-Z0-9]+) - (.*?) (\\d{2}[A-Z]) (.*)");
-  private static final Pattern MASTER2 = Pattern.compile("((?:[A-Z]+\\d+[A-Z]? )+) ([A-Z]?\\d{1,2}[A-Z]) (.*?) ([A-Z0-9]+?)(?: (?:- ([^-]*) )?(\\d{4}-\\d+)(?: +(.*))?)?");
-  private static final Pattern CITY_BRK_PTN = Pattern.compile("(.*? [A-Z]+)(?: - [A-Z]{2})?([A-Z][a-z].*)");
+  private static final Pattern MASTER2 = Pattern.compile("((?:[A-Z]+\\d+[A-Z]? )+) ([A-Z]?\\d{1,2}[A-Z]) (.*?) ([A-Z0-9]+?)(?:(?: - ([^-]*?))?(?: (\\d{4}-\\d+)(?: +(.*))?)?)?");
+  private static final Pattern CITY_ABBRV_PTN = Pattern.compile("( [A-Z0-9]+) - [A-Z]{2,4} ?([A-Z][a-z])");
+  private static final Pattern CITY_BRK_PTN = Pattern.compile("(.*? [A-Z]+)([A-Z][a-z].*)");
 
   
   public FLCitrusCountyParser() {
@@ -74,7 +75,8 @@ public class FLCitrusCountyParser extends SmartAddressParser {
       data.strSupp = getLeft();
       return true;
     }
-    
+
+    body =  CITY_ABBRV_PTN.matcher(body).replaceFirst("$1 $2");
     match = MASTER2.matcher(body);
     if (match.matches()) {
       setFieldList("UNIT MAP ADDR APT PLACE CITY CODE CALL ID INFO");
