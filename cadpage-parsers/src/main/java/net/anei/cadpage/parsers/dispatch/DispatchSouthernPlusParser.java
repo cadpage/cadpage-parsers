@@ -20,8 +20,16 @@ public class DispatchSouthernPlusParser extends DispatchSouthernParser {
     super(cityList, defCity, defState, flags);
   }
   
+  public DispatchSouthernPlusParser(String[] cityList, String defCity, String defState, int flags, String unitPtn) {
+    super(cityList, defCity, defState, flags, unitPtn);
+  }
+  
   public DispatchSouthernPlusParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags) {
     super(callSet, cityList, defCity, defState, flags);
+  }
+  
+  public DispatchSouthernPlusParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags, String unitPtn) {
+    super(callSet, cityList, defCity, defState, flags, unitPtn);
   }
   
   public DispatchSouthernPlusParser(String[] cityList, String defCity, String defState, String program) {

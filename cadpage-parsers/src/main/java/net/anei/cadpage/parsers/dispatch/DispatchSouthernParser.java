@@ -196,20 +196,24 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (chkFlag(DSFLG_BAD_CALL)) sb.append(" CALL!");
     else if (chkFlag(DSFLG_BAD_PLACE | DSFLG_OPT_BAD_PLACE)) {
       appendTerm(sb, "PLACE", DSFLG_BAD_PLACE, DSFLG_OPT_BAD_PLACE);
-    } else {
-      appendTerm(sb, "X", DSFLG_X, DSFLG_OPT_X);
-      if (chkFlag(DSFLG_NAME)) sb.append(" NAME NAME+?");
-      else if (chkFlag(DSFLG_OPT_NAME)) sb.append(" NAME+?");
-      appendTerm(sb, "PHONE", DSFLG_PHONE, DSFLG_OPT_PHONE);
     }
+    
+    appendTerm(sb, "X", DSFLG_X, DSFLG_OPT_X);
+    
+    if (chkFlag(DSFLG_NAME)) sb.append(" NAME NAME+?");
+    else if (chkFlag(DSFLG_OPT_NAME)) sb.append(" NAME+?");
+    
+    appendTerm(sb, "PHONE", DSFLG_PHONE, DSFLG_OPT_PHONE);
+
     if (chkFlag(DSFLG_CODE)) sb.append(" CODE! CODE+? PARTCODE?");
     else if (chkFlag(DSFLG_OPT_CODE)) sb.append(" CODE+? PARTCODE?");
+    
     appendTerm(sb, "UNIT", DSFLG_UNIT1, DSFLG_OPT_UNIT1);
     appendTerm(sb, "ID", DSFLG_ID, DSFLG_OPT_ID);
     appendTerm(sb, "TIME", DSFLG_TIME,  DSFLG_OPT_TIME);
     sb.append(" INFO+ OCA:ID2");
     String program = sb.toString();
-    program = program.replace(" PHONE? ID! ", " ( PHONE/Z ID! | ID! ) ");
+    program = fixProgram(program);
 //    System.out.println(program);
     setProgram(program, 0);
     
@@ -292,6 +296,74 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   private static boolean chkFlag(int flags, int mask) {
     return ((flags & mask) != 0);
+  }
+  
+  private static final Pattern OPT_PLACE_PTN = Pattern.compile(" PLACE\\? ((?:[A-Z]+\\? )+[A-Z]+!)");
+
+  /**
+   * Fix some basic constructs in constructed program string.
+   * @param program  Constructed program string
+   * @return fixed program string
+   */
+  private static String fixProgram(String program) {
+    
+    // An optional place name followed by an optional field does not work.
+    // But if that is followed by a required field, we can use that required field
+    // to identify when a place field exists.
+    Matcher match = OPT_PLACE_PTN.matcher(program);
+    if (match.find()) {
+      
+      // fldList contains the string of optional fields following the PLACE? field, plus
+      // a trailing required field.  That sequence needs to be turned into one big
+      // conditional branch statement
+      String fldList = match.group(1);
+      
+      // Start building the conditional branch statement
+      StringBuilder sb = new StringBuilder(program.substring(0,match.start()));
+      String connect = " ( ";
+      int spt = 0;
+      
+      // Looping through each term in fldList
+      do {
+        
+        // For each term, we build a tList list which consists of
+        // 1) the current term from the field list, stripped of
+        //    the trailing question mark
+        // 2) All of the following terms from the field list 
+        int ept = fldList.indexOf(' ', spt);
+        String tList;
+        if (ept < 0) {
+          ept = fldList.length();
+          tList = fldList.substring(spt);
+        } else {
+          tList = fldList.substring(spt, ept-1) + fldList.substring(ept);
+        }
+        
+        // Bumpt spt to the next field term
+        spt = ept + 1;
+        
+        // Next we add two branches to are conditional branch statement
+        // The first consist of the constructed tList
+        // The second consists of a PLACE term followed by the constructted tList
+        sb.append(connect);
+        connect = " | ";
+        
+        sb.append(tList);
+        sb.append(connect);
+        sb.append("PLACE ");
+        sb.append(tList);
+      } while (spt < fldList.length());
+      
+      // Finish off by closing the conditional branch construct and appendig the
+      // rest of the additional statement
+      sb.append(" )");
+      sb.append(program.substring(match.end()));
+      program = sb.toString();
+    }
+    
+    // Fix PHONE - ID combination
+    program = program.replace(" PHONE? ID! ", " ( PHONE/Z ID! | ID! ) ");
+    return program;
   }
 
   public DispatchSouthernParser(String[] cityList, String defState, String defCity, String program) {

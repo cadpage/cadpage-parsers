@@ -20,7 +20,8 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
 
   public ALChiltonCountyParser() {
     super(CITY_LIST, "CHILTON COUNTY", "AL",
-        DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_UNIT1 | DSFLG_ID | DSFLG_TIME);
+        DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_BAD_PLACE | DSFLG_OPT_X | DSFLG_OPT_UNIT1 | DSFLG_ID | DSFLG_TIME,
+        ".*Fire|[A-Z ]+ FIRE|[a-z][a-z0-9_]+|.*\\b(?:BATT|BRUSH TK|CAR|EMA|ENG|GRASS|PCO|PT|RESCUE|SERVICE|TANKER) [-0-9]+[A-Z]?|CARE|EMA|RPS");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -66,7 +67,7 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
   
   @Override
   protected int getExtraParseAddressFlags() {
-    return FLAG_IGNORE_AT;
+    return FLAG_IGNORE_AT | FLAG_CROSS_FOLLOWS;
   }
 
   @Override
@@ -123,6 +124,7 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
     "MARBURY",
     
     // Bibb County
+    "LAWLEY",
     "RANDOLPH",
     
     // Dallas County
