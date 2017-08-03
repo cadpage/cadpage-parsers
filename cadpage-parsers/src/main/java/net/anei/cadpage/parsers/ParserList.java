@@ -151,6 +151,7 @@ public class ParserList {
           new ParserCategory("Arizona"
               ,"AZMaricopaCounty"               ,"Maricopa County, AZ"
               ,"AZNavajoCounty"                 ,"Navajo County, AZ"
+              ,"AZPimaCounty"                   ,"Pima County, AZ"
               ,"AZYavapaiCounty"                ,"Yavapai County, AZ"
               ,"AZYumaCounty"                   ,"Yuma County, AZ"
           ),
