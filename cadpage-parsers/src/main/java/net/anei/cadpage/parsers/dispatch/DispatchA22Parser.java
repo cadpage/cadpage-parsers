@@ -29,6 +29,7 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "INCIDENT NEW\n");
+    body = stripFieldStart(body, "UNIT DISPATCH\n");
     
     // The standard format has line breaks between each field.  On some occasions these are replaced with
     // blanks and have to be manually restored.  Which requires the use of a source pattern to identify
@@ -64,10 +65,11 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ID_SRC_PTN.matcher(field);
-      if (!match.matches()) abort();
-      
-      data.strCallId = match.group(1).trim();
-      data.strSource =  match.group(2).trim();
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strSource =  match.group(2).trim();
+      }
+      data.strCallId = field;
     }
     
     @Override
