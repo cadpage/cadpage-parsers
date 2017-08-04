@@ -9,13 +9,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NCEdgecombeCountyParser extends FieldProgramParser {
   
-  private static final Pattern MARKER = Pattern.compile("Edgecombe(?:911|Central):");
-  private static final Pattern CALL_CODE_UNIT_PTN = Pattern.compile("(.*) CODE (\\d) (.*)");
-  private static final Pattern CALL_UNIT_PTN = Pattern.compile("(.*?) ([A-Z]*\\d[ ,A-Z0-9]*)");
-  
   public NCEdgecombeCountyParser() {
     super(CITY_LIST, "EDGECOMBE COUNTY", "NC",
-          "ADDR EMPTY EMPTY CITY EMPTY EMPTY EMPTY EMPTY EMPTY CALL EMPTY EMPTY UNIT END");
+          "( CITY | ADDR PLACE EMPTY CITY ) EMPTY EMPTY EMPTY EMPTY EMPTY CALL EMPTY EMPTY UNIT! INFO/N+");
   }
   
   @Override
@@ -23,17 +19,37 @@ public class NCEdgecombeCountyParser extends FieldProgramParser {
     return "@co.edgecombe.nc.us";
   }
   
+  private static final Pattern MARKER1 = Pattern.compile("Edgecombe(?:911|Central):(\\d{9})\\s+");
+  private static final Pattern MARKER2 = Pattern.compile("(\\d{9}): +");
+  private static final Pattern CALL_CODE_UNIT_PTN = Pattern.compile("(.*) CODE (\\d) (.*)");
+  private static final Pattern CALL_UNIT_PTN = Pattern.compile("(.*?) ([A-Z]*\\d[ ,A-Z0-9]*)");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
+
+    boolean bad = false;
+    Matcher match = MARKER1.matcher(body);
+    if (!match.lookingAt()) {
+      match = MARKER2.matcher(body);
+      if (!match.lookingAt()) bad = true;
+    }
     
-    Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end()).trim();
+    if (!bad) {
+      data.strCallId = match.group(1);
+      body = body.substring(match.end());
+    }
     
     String[] flds =  body.split("\n");
-    if (flds.length > 10) return parseFields(flds, data);
+    if (flds.length >= 10) return parseFields(flds, data);
     
-    setFieldList("ADDR APT CITY CALL PRI UNIT");
+    if (bad) return false;
+    
+    setFieldList("ADDR APT CITY CALL PRI UNIT INFO");
+    int pt = body.indexOf(" Medical:");
+    if (pt >= 0) {
+      data.strSupp = body.substring(pt+1);
+      body = body.substring(0,pt).trim();
+    }
     parseAddress(StartType.START_ADDR, body.replace(" @ ", " / ").replace("//", "/"), data);
     body = getLeft();
     if (body.length() == 0) return false;
@@ -58,6 +74,11 @@ public class NCEdgecombeCountyParser extends FieldProgramParser {
       data.strCall = body;
     }
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "ID " + super.getProgram();
   }
   
   @Override
