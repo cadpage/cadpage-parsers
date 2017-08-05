@@ -34,7 +34,7 @@ public class NCDavidsonCountyAParser extends NCGuilfordCountyParser {
   // it is (fortunately) first alpahbetically and this logic is not executed.
   // When Davidson and Rowan Counties are merged togother, it does take effect.
   
-  private static final Pattern BAD_MSG_PTN = Pattern.compile("; *ROCK(?: *;|$)");
+  private static final Pattern BAD_MSG_PTN = Pattern.compile("; *ROCK(?: *;|$)|^CAD:PAGE / ");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {

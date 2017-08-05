@@ -215,7 +215,8 @@ public class ManageParsers {
         "NYSuffolkCountyI",   "NYSuffolkCountyF",        // 01/21/2017
         "CAYebaCounty",       "CAYubaCounty",            // 04/10/2017
         "OHPrebleCountyA",    "OHPrebleCounty",          // 06/06/2017
-        "OHPrebleCountyB",    "OHPrebleCounty"
+        "OHPrebleCountyB",    "OHPrebleCounty",
+        "CASanDiegoCountyB",  "CASanDiegoCountyA"        // 08/05/2017
   });
 
 }
