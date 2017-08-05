@@ -90,7 +90,10 @@ public class KYMurrayCountyParser extends DispatchSPKParser {
       "1525 UNIVERSITY DR",                   "+36.610074,-88.322553",
       "1570 UUNIVERSITY DR",                  "+36.611044,-88.323723",
       "810 WALDROP DR",                       "+36.618341,-88.322459",
-      "906 WALDROP DR",                       "+36.619654,-88.322478"
+      "906 WALDROP DR",                       "+36.619654,-88.322478",
+      
+      "90 C C LOWERY DR",                     "+36.628302,-88.294734",
+      "400 S LP MILLER ST",                   "+36.606873,-88.300139",
      
   });
 }
