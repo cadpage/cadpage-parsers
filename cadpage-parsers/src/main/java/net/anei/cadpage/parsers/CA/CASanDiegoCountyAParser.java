@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * San Diego County, CA
@@ -15,8 +16,10 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
 
   public CASanDiegoCountyAParser() {
     super("SAN DIEGO COUNTY", "CA",
-           "( ADVISE ALRM:PRI! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT% XST:X% TIMEDSP:TIME% UNITS:UNIT% | " +
-             "ALM:PRI? MSTR_INC#:ID? TYP:CALL! ADR:ADDR! LOC:PLACE! XST:X? SP:APT% TB:MAP% MAP:MAP% TG:CH% TIMEDSP:TIME? UNITS:UNIT INFO+ LOC_CMNTS:INFO+ )");
+          "( ALRM:PRI! MSTR_INC#:ID! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT! TB:MAP% MAP:MAP/D% XST:X% TG:CH% TIMEDSP:TIME% UNITS:UNIT% INFO/N+ RPNAME:NAME% TEXT:INFO/N+ " +
+          "| NAT:CALL! ADR:ADDR! APT:APT! TAC:CH! UNITS:UNIT! MAP:MAP! XST:X! X/Z? SRC ID! END " +
+          "| ADVISE ALRM:PRI! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT% XST:X% TIMEDSP:TIME% UNITS:UNIT% " +
+          "| ALM:PRI? MSTR_INC#:ID? TYP:CALL! ADR:ADDR! LOC:PLACE! XST:X? SP:APT% TB:MAP% MAP:MAP% TG:CH% TIMEDSP:TIME? UNITS:UNIT INFO+ LOC_CMNTS:INFO+ )");
   }
 
   @Override
@@ -27,7 +30,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
-      if (subject.equals("CAD MESSAGE")) break;
+      if (subject.equals("CAD MESSAGE") || subject.equals("HCFA Inc Page")) break;
       
       if (body.startsWith("/ CAD MESSAGE / ")) {
         body = body.substring(16).trim();
@@ -38,10 +41,13 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     } while (false);
     
     if (RUN_REPORT_PTN.matcher(body).matches()) {
-      data.strCall = "RUN REPORT";
-      data.strPlace = body;
+      setFieldList("INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strSupp = body;
       return true;
     }
+    
+    if (body.startsWith("NAT:")) return parseFields(body.split("/"), data);
     return parseFields(body.split("\\\\"), data);
   }
   
@@ -59,6 +65,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     if (name.equals("CH")) return new MyChannelField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{6,8}", true);
     return super.getField(name);
   }
   
@@ -121,10 +128,12 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern EMPTY_PTN = Pattern.compile("[A-Z]+[:;]");
   private static final Pattern SKIP_PTN = Pattern.compile("(?:^| *,) *This incident \\d{4}.*$");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (EMPTY_PTN.matcher(field).matches()) return;
       field = stripFieldStart(field, "TXT:[1]");
       field = SKIP_PTN.matcher(field).replaceAll("");
       super.parse(field, data);
