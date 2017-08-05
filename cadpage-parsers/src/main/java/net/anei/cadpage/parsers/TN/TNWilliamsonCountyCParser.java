@@ -12,7 +12,7 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
   
   public TNWilliamsonCountyCParser() {
     super(TNWilliamsonCountyParser.CITY_LIST, "WILLIAMSON COUNTY", "TN", 
-          "( PN:CALL! ADD:ADDR! ( CITY:CITY! LAT:GPS1/d! LON:GPS2/d! APT:APT! X_ST:X! LOCATION:PLACE! TIME:DATETIME! CN:ID! UNITS:UNIT! | ) END " +
+          "( PN:CALL! ADD:ADDR! ( END | ( XST:X! | CITY:CITY! LAT:GPS1/d! LON:GPS2/d! APT:APT! X_ST:X! LOCATION:PLACE! TIME:DATETIME! CN:ID! ) UNITS:UNIT! END ) " +
           "| CALL! ADD:ADDR/S! LAT:GPS1/d! LON:GPS2_ID/d! UNITS:UNIT! LOC:PLACE! END )");
   }
   
@@ -60,7 +60,7 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT UNIT?";
+      return super.getFieldNames() + " UNIT?";
     }
   }
   
@@ -95,6 +95,5 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
     public String getFieldNames() {
       return "GPS ID";
     }
-    
   }
 }
