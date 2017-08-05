@@ -112,6 +112,7 @@ public class WAJeffersonCountyParser extends FieldProgramParser {
       "Fire - Alarm Commercial",
       "Fire - Alarm Residential",
       "Fire - Brush",
+      "Fire - Commercial",
       "Fire - Dumpster",
       "Fire - Illegal Burn",
       "Fire - Other",
