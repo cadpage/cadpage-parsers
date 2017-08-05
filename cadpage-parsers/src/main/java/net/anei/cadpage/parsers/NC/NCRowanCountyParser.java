@@ -14,7 +14,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
-           "FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO+");
+           "FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO/Z+? NAME PH");
     setupSpecialStreets("NEW ST");
   }
   
@@ -62,6 +62,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     if (name.equals("XPLACE")) return new MyCrossPlaceField();
     if (name.equals("MAP_CH_UNIT")) return new MyMapChannelUnitField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("PH")) return new PhoneField("\\d{10}", true);
     return super.getField(name);
   }
   
