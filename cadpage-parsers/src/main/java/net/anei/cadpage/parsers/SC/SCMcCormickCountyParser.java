@@ -1,28 +1,31 @@
 package net.anei.cadpage.parsers.SC;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
-public class SCMcCormickCountyParser extends DispatchGeoconxParser {
+public class SCMcCormickCountyParser extends DispatchA65Parser {
   
   public SCMcCormickCountyParser() {
-    super("MCCORMICK COUNTY", "SC", GCX_FLG_NAME_PHONE);
+    super(CITY_LIST, "MCCORMICK COUNTY", "SC");
   }
 
   @Override
   public String getFilter() {
-    return "geoconex@nlamerica.com,dispatch@911email.org,dispatch@911email.net,mccormickcosc@911email.net";
-  }
-
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (body.startsWith("Message-Id:")) {
-      int pt = body.indexOf('\n');
-      if (pt < 0) return false;
-      body = body.substring(pt+1).trim();
-    }
-    return super.parseMsg(subject, body, data);
+    return "dispatch@911comm1.info,mccormickcosc@911email.net";
   }
   
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Towns
+      "MCCORMICK",
+      "MC CORMICK",
+      "PARKSVILLE",
+      "PLUM BRANCH",
+
+      // Census-designated places
+      "CLARKS HILL",
+      "MODOC",
+      "MOUNT CARMEL",
+      "WILLINGTON"
+  };
 }
