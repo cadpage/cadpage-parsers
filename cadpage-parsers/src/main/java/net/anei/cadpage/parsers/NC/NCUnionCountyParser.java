@@ -25,13 +25,22 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   }
   
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    
+    boolean good = body.startsWith("CAD:");
+    if (!good) body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    return good || data.strCity.length() > 0 || data.strCallId.length() > 0;
+  }
+
+  @Override
   protected Field getField(String name) {
     if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{2,4}", true);
     if (name.equals("CUSTOM")) return new CustomField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d");
-    if (name.equals("ID")) return new IdField("\\d{5,}");
+    if (name.equals("ID")) return new IdField("\\d{5,}", true);
     return super.getField(name);
   }
   
