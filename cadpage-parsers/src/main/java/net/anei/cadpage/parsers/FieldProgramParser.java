@@ -1326,6 +1326,7 @@ public class FieldProgramParser extends SmartAddressParser {
       newStep.required = required;
       newStep.optional = optional;
       newStep.nextStepLink = nextStepLink;
+      newStep.emptyTag = emptyTag;
       newStep.htmlTag = htmlTag;
       return newStep;
     }
