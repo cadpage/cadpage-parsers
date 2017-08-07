@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MOStLouisCountyEParser extends FieldProgramParser {
 
   public MOStLouisCountyEParser() {
-    super(CITY_LIST, "ST LOUIS COUNTY", "MO", "Call_Received_Time:DATE_TIME_CALL! ADDR/S! UNIT_PLACE! Description:INFO+");
+    super(MOStLouisCountyParser.CITY_LIST, "ST LOUIS COUNTY", "MO", "Call_Received_Time:DATE_TIME_CALL! ADDR/S! UNIT_PLACE! Description:INFO+");
   }
   
   @Override
@@ -79,19 +79,4 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
       }
     }
   }
-
-  private static final String[] CITY_LIST = new String[] { 
-    "AFFTON", 
-    "BRENTWOOD",
-    "CLAYTON", 
-    "CREVE COEUR", 
-    "LADUE", 
-    "MAPLEWOOD", 
-    "OLIVETTE", 
-    "OVERLAND", 
-    "SHREWSBURY", 
-    "ST LOUIS COUNTY", 
-    "RICHMOND HEIGHTS", 
-    "UNIVERSITY CITY", 
-    "WEBSTER GROVES" };
 }
