@@ -13,5 +13,4 @@ public class CALosAngelesCountyCParser extends DispatchA51Parser {
   public String getFilter() {
     return "No-reply@areaefire.org";
   }
-
 }
