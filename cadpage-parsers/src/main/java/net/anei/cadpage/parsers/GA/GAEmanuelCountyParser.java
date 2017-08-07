@@ -8,12 +8,35 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
   public GAEmanuelCountyParser() {
     super("EMANUEL COUNTY E911:", CITY_LIST, "EMANUEL COUNTY", "GA");
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
   public String getFilter() {
     return "tehanners@gmail.com";
   }
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "CALL N MAIN",
+      "DELLWOOD MAIN",
+      "GRIFFIN FERRY",
+      "KING CIRCLE",
+      "LAMBS BRIDGE",
+      "LONG BAY",
+      "MARTIN LUTHER KING",
+      "MARY ANN",
+      "MCLEOD BRIDGE",
+      "MEDICAL CENTER",
+      "MT OLIVET CHURCH",
+      "OAK PARK",
+      "PARK CIRCLE",
+      "ROUNTREE FARM",
+      "TONY BAKER",
+      "UNKNOWN TYPE CARVER",
+      "WADLEY COLEMAN LAKE"
+
+  };
+  
   private static final CodeSet CALL_LIST = new CodeSet(
       
       "ABDOMINAL PAIN",
@@ -26,12 +49,11 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "GENERAL WEAKNESS",
       "LIFT ASSISTANCE",
       "MEDICAL CALL",
-      "MISC",
+      "MISC CALL",
       "MVA",
       "REPORT",     
       "SEIZURE"
-      
-      );
+  );
   
   private static final String[] CITY_LIST = new String[]{
 
