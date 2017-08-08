@@ -52,7 +52,8 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "MISC CALL",
       "MVA",
       "REPORT",     
-      "SEIZURE"
+      "SEIZURE",
+      "SUSPICIOUS PERSON"
   );
   
   private static final String[] CITY_LIST = new String[]{
