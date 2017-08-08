@@ -12,7 +12,7 @@ public class TXAransasCountyParser extends DispatchA46Parser {
   
   @Override
   public String getFilter() {
-    return "@outbound.globalmailrelay.com,PTS@ptssolutions.com,PTS@gmail.com";
+    return "@outbound.globalmailrelay.com,PTS@ptssolutions.com,PTS@gmail.com,aransas@pagingpts.com";
   }
   
   @Override

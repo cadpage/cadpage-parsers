@@ -28,7 +28,7 @@ public class DispatchA46Parser extends SmartAddressParser {
   
   private static Pattern SUBJECT_PTN2 = Pattern.compile("([A-Z0-9]{3,6}) *- +(?:.*\\|)?(.*?)");
   private static Pattern ID_PTN = Pattern.compile("\\d{10}");
-  private static Pattern BODY_PTN2 = Pattern.compile("(?:A\\(n\\) *)?(.*?) has been reported at (.*?)");
+  private static Pattern BODY_PTN2 = Pattern.compile("(?:A(?:\\(n\\))? *)?(.*?) has been reported at (.*?)");
   private static Pattern ADDR_PTN2A = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
 
