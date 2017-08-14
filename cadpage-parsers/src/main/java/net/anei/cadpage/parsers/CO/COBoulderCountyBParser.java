@@ -5,20 +5,31 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class COBoulderCountyBParser extends FieldProgramParser {
 
 	public COBoulderCountyBParser() {
-		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! | CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT )");
+		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! | CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT% )");
 	}
 	
 	@Override
-	public String getProgram() {
-	  return "SRC ID "+super.getProgram();
+	public String getFilter() {
+	  return "bretsa@bretsaps.org";
 	}
 	
-	private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
-	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(BLD|INFO|TIME|UNITS):");
+	@Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+	  return new SplitMsgOptionsCustom(){
+	    @Override public boolean splitBlankIns() { return false; }
+	    @Override public boolean mixedMsgOrder() { return true; }
+	    @Override public int splitBreakLength() { return 150; }
+	  };
+  }
+
+  private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
+	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|BLD|APT|LOC|INFO|TIME|UNITS):");
 
 	public boolean parseMsg(String body, Data data) {
 	  Matcher mat = SRC_ID.matcher(body);
@@ -26,10 +37,17 @@ public class COBoulderCountyBParser extends FieldProgramParser {
 	  data.strSource = mat.group(1);
 	  data.strCallId = mat.group(2);
 	  body = mat.group(3);
+	  
+	  body = body.replace("Response:", "UNITS:");
 	  body = MISSING_BLANK_PTN.matcher(body).replaceAll(" $1:");
 	  
 	  return super.parseMsg(body, data);
 	}
+  
+  @Override
+  public String getProgram() {
+    return "SRC ID "+super.getProgram();
+  }
 	
 	@Override
 	  public Field getField(String name) {

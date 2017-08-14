@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
 import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 /**
