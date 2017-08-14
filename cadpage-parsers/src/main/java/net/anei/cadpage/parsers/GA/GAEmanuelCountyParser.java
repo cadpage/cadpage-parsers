@@ -17,9 +17,12 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
-      "CALL N MAIN",
+      "BIRD FLANDERS",
+      "CANOOCHEE GARFIELD",
       "DELLWOOD MAIN",
       "GRIFFIN FERRY",
+      "HALLS BRIDGE",
+      "KEAS OLD MILL POND",
       "KING CIRCLE",
       "LAMBS BRIDGE",
       "LONG BAY",
@@ -27,39 +30,84 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "MARY ANN",
       "MCLEOD BRIDGE",
       "MEDICAL CENTER",
+      "MOORES FERRY",
       "MT OLIVET CHURCH",
+      "MT SHADY CHURCH",
+      "NUNEZ LEXSY",
       "OAK PARK",
       "PARK CIRCLE",
       "ROUNTREE FARM",
+      "ROY WOODS",
+      "SAM OVERSTREET",
+      "ST GALILEE",
       "TONY BAKER",
-      "UNKNOWN TYPE CARVER",
       "WADLEY COLEMAN LAKE"
-
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
-      
+      "911 HANG UP",
       "ABDOMINAL PAIN",
+      "ALTERED LEVEL OF CONSCIOUSNESS",
       "ALTERED MENTAL STATUS",
+      "BOMB THREAT",
+      "BROKE DOWN VEHICLE",
+      "BURGLARY REPORT",
+      "CAD CALL CREATED IN ERROR",
       "CHEST PAINS",
+      "DEAD ON ARRIVAL",
+      "DIABETIC EMERGENCY",
       "DIFFICULTY BREATHING",
       "DOMESTIC IN PROGRESS",
+      "DOMESTIC PREVIOUSLY OCCURRED",
       "FIGHT",
-      "FIRE",
+      "FIRE - UNKNOWN TYPE",
+      "FIRE -EXPLOSION",
+      "FIRE ALARM",
+      "FIRE-SMOKE",
+      "GENERAL ALARM",
       "GENERAL WEAKNESS",
+      "GUN SHOT WOUND",
+      "HAZMAT INCIDENT",
+      "HIT AND RUN",
+      "INTERFACILITY TRANSFER",
+      "INTOXICATED PEDESTRIAN",
+      "IRATE SUBJECT",
       "LIFT ASSISTANCE",
       "MEDICAL CALL",
       "MISC CALL",
+      "MISSING JUVENILE",
+      "MURDER/HOMICIDE",
       "MVA",
-      "REPORT",     
+      "MVA ROLLOVER",
+      "MVA WITH INJURIES",
+      "NAUSEA AND VOMITING",
+      "NON EMERGENCY TRANSFER",
+      "NON EMERGENCY TRANSPORT",
+      "OFFICER ASSIST",
+      "POSSIBLE OVERDOSE",
+      "PREG COMPLICATIONS/OB/GYN",
+      "RECKLESS DRIVER",
+      "REPORT",
       "SEIZURE",
-      "SUSPICIOUS PERSON"
+      "SHOTS FIRED",
+      "STABBING",
+      "STROKE",
+      "STRUCTURE FIRE",
+      "SUICIDE",
+      "SUICIDE ATTEMPT",
+      "SUSPICIOUS PERSON",
+      "TEST CALL",
+      "THEFT",
+      "TRAFFIC STOP",
+      "TRANSPORT",
+      "TRAUMA",
+      "WELFARE CHECK"
   );
+  
   
   private static final String[] CITY_LIST = new String[]{
 
       //cities
-      
       "ADRIAN",
       "GARFIELD",
       "NUNEZ",
@@ -70,9 +118,22 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "TWIN CITY",
 
       //other
-
+      "BLUNDALE",
+      "DELLWOOD",
       "CANOOCHEE",
-      "NORRISTOWN"
-
+      "NORRISTOWN",
+      
+      // Burke County
+      "MIDVILLE",
+      
+      // Chandler County
+      "METTER",
+      
+      // Johnson County
+      "KITE",
+      
+      // Toombs County
+      "LYONS",
+      "VISALIA"
   };
 }
