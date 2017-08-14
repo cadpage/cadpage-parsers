@@ -19,15 +19,15 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@chagrinfallspd.com,dispatcher@bhpd.org,dispatch@secc-911.org,PRDC@parma.com,dispatch@waltonhillsohio.gov,@cox.net,PRDC@parmajustice.net,DISPATCH@MAYFIELDVILLAGE.COM,dispatch@beachwoodohio.com,dispatch@prdc.net";
+    return "dispatch@chagrinfallspd.com,dispatcher@bhpd.org,dispatch@secc-911.org,PRDC@parma.com,dispatch@waltonhillsohio.gov,@cox.net,PRDC@parmajustice.net,DISPATCH@MAYFIELDVILLAGE.COM,dispatch@beachwoodohio.com,dispatch@prdc.net,broadviewheightspd@cox.net,dispatch@cvdispatch.net,CECOMS@cvdispatch.net";
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
   
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
+  public boolean parseUntrimmedMsg(String subject, String body, Data data) {
     body = DIR_BOUND_PTN.matcher(body).replaceAll("$1B");
-    return super.parseMsg(subject, body, data);
+    return super.parseUntrimmedMsg(subject, body, data);
   }
 
   private static final Pattern GPS_JUNK_PTN = Pattern.compile("&|\\b[NSEW]B\\b|\\bMM\\b|\\((?:NORTH|SOUTH|EAST|WEST)\\)|\\b(?:NORTH|SOUTH|EAST|WEST) ?BOUND\\b");

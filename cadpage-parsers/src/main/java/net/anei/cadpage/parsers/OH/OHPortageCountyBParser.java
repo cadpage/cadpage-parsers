@@ -21,14 +21,14 @@ public class OHPortageCountyBParser extends DispatchA39Parser {
   }
   
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
+  public boolean parseUntrimmedMsg(String subject, String body, Data data) {
     
     // Fix a few dispatch oddities
     Matcher match = SLASH_DOTS_PTN.matcher(body);
     if (match.matches()) body = match.group(1) + '\n' + match.group(2) + '\n' + match.group(3);
     body = BROISUS_PTN.matcher(body).replaceAll("BROSIUS");
     
-    if (!super.parseMsg(subject, body, data)) return false;
+    if (!super.parseUntrimmedMsg(subject, body, data)) return false;
     data.strCity = OHPortageCountyParser.fixCity(data.strCity);
     return true;
   }
