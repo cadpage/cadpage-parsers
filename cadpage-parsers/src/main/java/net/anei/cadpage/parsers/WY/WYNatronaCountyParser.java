@@ -17,21 +17,23 @@ public class WYNatronaCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "csphiplink@cityofcasperwy.com";
+    return "csphiplink@cityofcasperwy.com,emailrelay@casperwy.gov,emailrelay@cityofcasperwy.com";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    subject = stripFieldStart(subject, "Email Copy ");
     if (!subject.equalsIgnoreCase("Message From Hiplink")) return false;
     return parseFields(body.split("\n"), 4, data);
   }
-  
+
+  private static final Pattern ADDR_DELIM = Pattern.compile("[,;]");
   private static final Pattern ADDR_EXT_PTN = Pattern.compile("(?:APT|LOT|SUITE|STE|ROOM|RM|#)[ #]*(.*)|(\\d+[A-Z]?)|(M[MP] .*|[NSEW]B)");
-  private static final Pattern COMMENTS_PTN = Pattern.compile("CMNTS|COMMENTS", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COMMENTS_PTN = Pattern.compile("CMTS|CMNTS?|CMTNS|COMMENTS", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      String[] flds = field.split(";");
+      String[] flds = ADDR_DELIM.split(field);
       parseAddress(flds[0], data);
       for (int ndx = 1; ndx < flds.length; ndx++) {
         String fld = flds[ndx].trim().toUpperCase();
@@ -44,8 +46,14 @@ public class WYNatronaCountyParser extends FieldProgramParser {
           } else {
             data.strAddress = data.strAddress + ' ' + fld;
           }
-        } else if (! COMMENTS_PTN.matcher(fld).matches()) {
-          data.strPlace = append(data.strPlace, " - ", fld);
+        } else {
+          String city = CITY_CODES.getProperty(fld);
+          if (city != null) {
+            data.strCity = city;
+          }
+          else if (! COMMENTS_PTN.matcher(fld).matches()) {
+            data.strPlace = append(data.strPlace, " - ", fld);
+          }
         }
       }
     }
@@ -60,11 +68,13 @@ public class WYNatronaCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
-      if (field.startsWith("PD-")) data.strCity = "CASPER";
-      else if (field.startsWith("NC")) data.strCity = "NATRONA COUNTY";
-      else {
-        String city = CITY_CODES.getProperty(field);
-        if (city != null) data.strCity = city;
+      if (data.strCity.length() == 0) {
+        if (field.startsWith("PD-")) data.strCity = "CASPER";
+        else if (field.startsWith("NC")) data.strCity = "NATRONA COUNTY";
+        else {
+          String city = CITY_CODES.getProperty(field);
+          if (city != null) data.strCity = city;
+        }
       }
     }
     
@@ -109,6 +119,13 @@ public class WYNatronaCountyParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BAR",    "BAR NUNN",
+      "CAS",    "CASPER",
+      "EDG",    "EDGERTON",
+      "EVA",    "EVANSVILLE",
+      "MIL",    "MILLS",
+      "NAT",    "NATRONA COUNTY",
+      
       "ALRD",   "ALCOVA LAKE",
       "MWRD",   "MIDWEST",
   });
