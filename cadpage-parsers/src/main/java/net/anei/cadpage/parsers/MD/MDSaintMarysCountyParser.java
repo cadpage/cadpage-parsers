@@ -20,6 +20,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
   public MDSaintMarysCountyParser() {
     super("SAINT MARYS COUNTY", "MD");
     setFieldList("TIME CALL ADDR APT X PLACE CITY UNIT INFO");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -165,6 +166,20 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     }
     return true;
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "44100A LOUISDALE RD",                  "+38.294415,-76.558088",
+      "44100B LOUISDALE RD",                  "+38.293484,-76.558780",
+      "44096 LOUISDALE RD",                   "+38.296261,-76.562480",
+      "44100 LOUISDALE RD",                   "+38.295197,-76.558400",
+      "44800 OAK CREST RD",                   "+38.311297,-76.527188",
+      "22024 OXFORD CT",                      "+38.273351,-76.468718",
+      "22025 OXFORD CT",                      "+38.273123,-76.468245",
+      "22026 OXFORD CT",                      "+38.273393,-76.468547",
+      "22027 OXFORD CT",                      "+38.273178,-76.468065",
+      "22028 OXFORD CT",                      "+38.273434,-76.468369",
+      "22030 OXFORD CT",                      "+38.273478,-76.468200"
+  });
   
   private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "CALIFORNIA",
