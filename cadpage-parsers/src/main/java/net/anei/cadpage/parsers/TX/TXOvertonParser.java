@@ -10,6 +10,6 @@ public class TXOvertonParser extends DispatchA59Parser {
   
   @Override
   public String getFilter() {
-    return "overtonpd@ci.overton.tx.us";
+    return "overtonpd@ci.overton.tx.us,@smithcountyfire.org";
   }
 }
