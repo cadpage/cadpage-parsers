@@ -15,7 +15,7 @@ public class LAStJamesParishParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@stjamesla.com";
+    return "@stjamesla.com,Reports@stjamesvfd.com ";
   }
   
   private static final Pattern DELIM = Pattern.compile("[;,\n]");
