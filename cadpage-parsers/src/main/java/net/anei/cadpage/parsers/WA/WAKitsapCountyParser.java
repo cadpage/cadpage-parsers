@@ -11,25 +11,25 @@ public class WAKitsapCountyParser extends FieldProgramParser {
 
   public WAKitsapCountyParser() {
     super(CITY_CODES, "KITSAP COUNTY", "WA", 
-          "Location:ADDR/S! EID:ID! TYPE_CODE:CODE! TIME:TIME! Comments:INFO? TY:CALL! ALR:PRI! Beat:BOX! C:SKIP? Disp:UNIT! END");
+          "Location:ADDR/S? EID:ID! TYPE_CODE:CODE! TIME:TIME! Comments:INFO? TY:CALL! ALR:PRI! Beat:BOX! C:SKIP? Disp:UNIT! END");
   }
   
   @Override
   public String getFilter() {
-    return "cencomca@co.kitsap.wa.us";
+    return "cencomca@co.kitsap.wa.us,Kitsap911@Kitsap911.org";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
     //check for CENCOM, remove from body
-    if (!subject.equals("CENCOM")) {
+    if (!subject.equals("CENCOM") && !subject.equals("KITSAP911")) {
       if (!body.startsWith("CENCOM")) return false;
       body = body.substring(6).trim();
     }
     
     // Is this the new format
-    if (body.startsWith("Location:")) {
+    if (body.startsWith("Location:") || body.startsWith("EID:")) {
       return super.parseMsg(body, data);
     }
     
