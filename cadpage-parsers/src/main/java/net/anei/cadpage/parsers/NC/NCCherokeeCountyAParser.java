@@ -9,7 +9,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCCherokeeCountyAParser extends DispatchSouthernParser {
 
   public NCCherokeeCountyAParser() {
-    super(CITY_LIST, "CHEROKEE COUNTY", "NC", DSFLAG_TRAIL_PLACE);
+    super(CITY_LIST, "CHEROKEE COUNTY", "NC", 
+          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_OPT_ID | DSFLG_TIME);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   

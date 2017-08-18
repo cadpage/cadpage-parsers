@@ -10,7 +10,7 @@ public class NCCherokeeCountyBParser extends FieldProgramParser {
   
   public NCCherokeeCountyBParser() {
     super("CHEROKEE COUNTY", "NC", 
-          "CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! XY:GPS ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT INFO:X_INFO! END");
+          "CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! XY:GPS ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT INFO:X_INFO END");
   }
   
   @Override
