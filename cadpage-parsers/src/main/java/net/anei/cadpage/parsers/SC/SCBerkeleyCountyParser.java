@@ -12,12 +12,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class SCBerkeleyCountyParser extends DispatchB2Parser {
 
   public SCBerkeleyCountyParser() {
-    super(CITY_LIST, "BERKELEY COUNTY", "SC", B2_SEPARATE_APT_FLD);
+    super(CITY_LIST, "BERKELEY COUNTY", "SC", B2_FORCE_CALL_CODE | B2_SEPARATE_APT_FLD | B2_DELIM_ONLY);
     setupCallList((CodeSet)null);
   }
   
   private static final Pattern EXTRA_CODE_PTN = Pattern.compile("^(([A-Z0-9]+)) ++(?!>)");
-  private static final Pattern EXTRA_PHONE_PTN = Pattern.compile(" {4,}(\\d+)(?=\n)");
+  private static final Pattern EXTRA_PHONE_PTN = Pattern.compile(" {4,}(\\d+)(?=\n|$)");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -43,12 +43,22 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
         }
       }
     }
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    
+    String city = MISSPELLED_CITY_TABLE.getProperty(data.strCity.toUpperCase());
+    if (city != null) data.strCity = city;
+    
+    if (data.strCross.length() == 0 && data.strName.length() > 0 && isValidAddress(data.strName)) {
+      data.strCross = data.strName;
+      data.strName = "";
+    }
+    
+    return true;
   }
   
   @Override
   public String getProgram() {
-    return "PHONE? " + super.getProgram();
+    return "PHONE? " + super.getProgram().replaceAll("NAME", "X NAME");
   }
 
   @Override
@@ -77,6 +87,7 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       "JAMESTOWN",
       "MONCKS CORNER",
       "ST STEPHEN",
+      "ST STEPHENS",   // Misspelled
       "SUMMERVILLE",
 
       //Townships
@@ -93,9 +104,12 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       "SANTEE CIRCLE",
       
       // Other neighborhoods
+      "BONNEAU BEACH",
       "LAKE MOULTRIE",
+      "LAKE MOULTRIE EST",
       "LEBANON",
       "MACEDONIA",
+      "SANDRIDGE",
       "SPRING LAKE VILLAGE",
       "VILLAGE GREEN",
       "WOODSIDE",
@@ -103,6 +117,7 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       // Charleston County
       "CAINHOY",
       "WANDO",
+      "WANDO POINT",
       
       // Dorchester County
       "RIDGEVILLE",
@@ -111,10 +126,17 @@ public class SCBerkeleyCountyParser extends DispatchB2Parser {
       "HOLLY HILL"
   };
   
+  private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
+      "ST STEPHENS",             "ST STEPHEN"
+  });
+  
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "BONNEAU BEACH",           "BONNEAU",
       "CAINHOY",                 "CHARLESTON",
       "LAKE MOULTRIE",           "BONNEAU",
+      "LAKE MOULTRIE EST",       "BONNEAU",
       "MACEDONIA",               "BONNEAU",
+      "SANDRIDGE",               "CROSS",
       "SANTEE CIRCLE",           "BONNEAU",
       "SPRING LAKE VILLAGE",     "SUMMERVILLE",
       "VILLAGE GREEN",           "SUMMERVILLE",

@@ -33,6 +33,9 @@ public class DispatchB2Parser extends DispatchBParser {
   // Flag indicating that will be a separate apt field following the city
   public static final int B2_SEPARATE_APT_FLD = 8;
   
+  // Flag indicating that we will only recognized delimited field formats
+  public static final int B2_DELIM_ONLY = 0x10;
+  
   private static final Pattern CODE_PATTERN = Pattern.compile("^([- /#&_A-Z0-9]{0,6}?|\\?) *> *"); 
   private static final Pattern PHONE_PTN = Pattern.compile("[ /]*((?<!\\d)(?:(?:\\d{3}[- ]?)?\\d{3}[- ]?\\d{4}\\b *)+)[ /]*");
   private static final Pattern NAME_PTN = Pattern.compile(" +([A-Z]+, ?[A-Z]+(?: [A-Z]\\.?)?)$");
@@ -98,7 +101,10 @@ public class DispatchB2Parser extends DispatchBParser {
   }
   
   private static int calcVersionCode(int flags) {
-    return ((flags & B2_SEPARATE_APT_FLD) != 0 ? -6 : -4);
+    
+    int code = ((flags & B2_SEPARATE_APT_FLD) != 0 ? 6 : 4);
+    if ((flags & B2_DELIM_ONLY) == 0) code = -code;
+    return code;
   }
   
   private void setup(String prefix, int flags) {
