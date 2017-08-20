@@ -37,7 +37,12 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:Apt|Rm|Room|Lot|Suite) *(.*)");
+  private static final Pattern ADDR_APT1_PTN = Pattern.compile("\\b(?:Apt|Rm|Room|Lot|Suite)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT2_PTN = Pattern.compile("(.*?) {2,}(\\d{1,3}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT3_PTN = Pattern.compile("\\d{1,3}[A-Z]?|[A-Z]$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_CITY_OF_PTN = Pattern.compile("\\bCity of +", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_CITY_TRAIL_JUNK_PTN = Pattern.compile(" +(?:Village|Vlg|Vl|#\\d)$", Pattern.CASE_INSENSITIVE);
+  
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -46,24 +51,110 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
       while (true) {
         int pt = field.lastIndexOf(';');
         if (pt < 0) break;
-        String tmp = field.substring(pt+1).trim();
+        String term = field.substring(pt+1).trim();
         field = field.substring(0,pt).trim();
-        if (data.strCity.length() == 0) {
-          String city = cleanCityName(tmp);
-          if (city != null) {
-            data.strCity = city;
-            continue;
+        Matcher match = ADDR_APT1_PTN.matcher(term);
+        if (match.find()) {
+          String lead = term.substring(0, match.start()).trim();
+          String trail = term.substring(match.end()).trim();
+          trail = parseCity(trail, data);
+          apt = append(trail, "-", apt);
+          lead = parseCity(lead, data);
+          data.strPlace = append(lead, " - ", data.strPlace);
+        }
+        else {
+          match = ADDR_APT2_PTN.matcher(term);
+          if (match.matches()) {
+            term = match.group(1);
+            apt = append(match.group(2), "-", apt);
+          }
+          term = parseCity(term, data);
+          if (ADDR_APT3_PTN.matcher(term).matches()) {
+            apt = append(term, "-", apt);
+            
+          } else {
+            data.strPlace = append(term, " - ", data.strPlace);
           }
         }
-        Matcher match = ADDR_APT_PTN.matcher(tmp);
-        if (match.matches()) {
-          apt = append(match.group(1), "-", apt);
-          continue;
-        }
-        data.strPlace = append(tmp, "-", data.strPlace);
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
+    }
+    
+    /**
+     * Parse city from end of field
+     * @param field data field
+     * @param data parse data results
+     * @return remainder of field after city information has been stripped off
+     */
+    private String parseCity(String field, Data data) {
+      
+      // If we already found a city, don't try to parse another one
+      if (data.strCity.length() > 0) return field;
+      
+      // Look for City of marker, which makes life pretty easy
+      Matcher match = ADDR_CITY_OF_PTN.matcher(field);
+      if (match.find()) {
+        String city = cleanCity(field.substring(match.end()));
+        String tmp = checkCity(city);
+        if (tmp != null) city = tmp;
+        data.strCity = city;
+        return field.substring(0, match.start()).trim();
+      }
+      
+      // We have to do this the hard way
+      // start by cleaning of the data field city information
+      String field2 = cleanCity(field);
+      
+      // Scan through each blank separated word in data field
+      int pt = 0;
+      while (true) {
+        
+        // For each starting word, retrieve remainder of data field
+        // If resulting length is less than 5, give up
+        String tmp = field2.substring(pt).toUpperCase();
+        if (tmp.length() < 5) break;
+
+        // See if remainder is in our city table
+        tmp = checkCity(tmp);
+        if (tmp != null) {
+          data.strCity = tmp;
+          return field2.substring(0,pt).trim();
+        }
+        
+        // No go, bump pt to start of next word
+        pt = field2.indexOf(' ', pt);
+        if (pt < 0) break;
+        pt++;
+      }
+      
+      // No city found, return original field
+      return field;
+    }
+    
+    private String cleanCity(String city) {
+      Matcher match = ADDR_CITY_TRAIL_JUNK_PTN.matcher(city);
+      if (match.find()) city = city.substring(0,match.start()).trim();
+      city = city.replace("Township", "Twp");
+      city = city.replace("TOWNSHIP", "TWP");
+      return city;
+    }
+
+    /**
+     * Check if city matches anything in our list of city names
+     * @param city city name to be checked
+     * @return expanded city name if found, null otherwise
+     */
+    private String checkCity(String city) {
+      
+      // Run through our list of city names checking to see if
+      // the field remained might be a truncated city name.  If it
+      // matches, save this as the city and return the field city prefix
+      city = city.toUpperCase();
+      for (String tCity : CITY_LIST) {
+        if (tCity.toUpperCase().startsWith(city)) return tCity;
+      }
+      return null;
     }
     
     @Override
@@ -98,37 +189,6 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CALL INFO";
     }
-    
-  }
-
-  private String cleanCityName(String city) {
-    
-    // Clean up extraneous prefixs and suffixs
-    city = stripFieldStart(city, "City of ");
-    city = stripFieldStart(city, "City Of ");
-    city = stripFieldEnd(city, " #1");
-    city = stripFieldEnd(city, " #2");
-    city = stripFieldEnd(city, " Village");
-    
-    // Now comes the hard part. 
-    // Checking to see if this is a truncated city that needs
-    // to be expanded.
-    String result = null;
-    for (String tCity : CITY_LIST) {
-      if (city.equals(tCity)) return city;
-      if (tCity.startsWith(city)) {
-        if (result == null) {
-          result = tCity;
-        } else {
-          if (!tCity.equals(result + " Twp")) {
-            result = "";
-            break;
-          }
-        }
-      }
-    }
-    
-    return result;
   }
   
   private static final String[] CITY_LIST = new String[]{
@@ -139,6 +199,10 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     "Hunting Valley",
     "Middlefield",
     "South Russell",
+
+    // Census-designated places
+    "Bainbridge",
+    "Chesterland",
 
     // Townships
     "Auburn Twp",
@@ -158,16 +222,88 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     "Thompson Twp",
     "Troy Twp",
 
-    // Census-designated places
-    "Bainbridge",
-    "Chesterland",
-
     // Other localities
     "East Claridon",
     "Materials Park",
     "Montville",
     "Parkman",
     "Novelty",
-    "Welshfield"
+    "Welshfield",
+    
+    // Ashtabula County
+    "Ashtabula County",
+    "Harpersfield Twp",
+    "Hartsgrove Twp",
+    "Trumbull Twp",
+    "Windsor",
+    "Windsor Twp",
+    
+    // Cuyahoga County
+    "Cuyahoga County",
+    "Bentleyville",
+    "Chargrin Falls",
+    "Chargrin Falls Twp",
+    "Mayfield",
+    "Mayfield Heights",
+    "Gates Mills",
+    "Glenwillow",
+    "Hunting Valley",
+    "Moreland Hills",
+    "Orange",
+    "Pepper Pike",
+    "Solon",
+    "Woodmere",
+    
+    
+    // Lake County
+    "Lake County",
+    "Concord Twp",
+    "Eastlake",
+    "Fairport Harbor",
+    "Grand River",
+    "Kirtland",
+    "Kirtland Hills",
+    "Lakeline",
+    "Leroy Twp",
+    "Madison",
+    "Madison Twp",
+    "Mentor",
+    "Mentor-on-the-Lake",
+    "North Madison",
+    "North Perry",
+    "Painesville (county seat)",
+    "Painesville on the Lake",
+    "Painesville Twp",
+    "Perry",
+    "Perry Twp",
+    "Timberlake",
+    "Unionville",
+    "Waite Hill",
+    "Wickliffe",
+    "Willoughby",
+    "Willoughby Hills",
+    "Willowick",
+    
+    // Portage County
+    "Portage County",
+    "Aurora",
+    "Freedom Twp",
+    "Garrettsville",
+    "Hiram",
+    "Hiram Twp",
+    "Mantua",
+    "Mantua Twp",
+    "Nelson Twp",
+    "Shalersville Twp",
+    "Streetsboro",
+    "Windham",
+    "Windham Twp",
+    
+    // Trumbull County
+    "Trumbull County",
+    "Mesopotamia Twp",
+    "Farmington Twp",
+    "Southington Twp",
+    "West Farmington"
   };
 }
