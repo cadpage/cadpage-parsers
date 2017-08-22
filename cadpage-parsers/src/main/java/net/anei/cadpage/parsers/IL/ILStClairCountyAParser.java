@@ -5,23 +5,46 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class ILStClairCountyAParser extends FieldProgramParser {
   
-  private static final String MSG_PREFIX = "Fire Run";
-  private static final Pattern PTN_GARBAGE = Pattern.compile("^(\\p{ASCII}+)");
-  private static final Pattern PTN_GARBAGE_PRE = Pattern.compile("(\\p{ASCII}+)$");
-  
   public ILStClairCountyAParser() {
     super("ST CLAIR COUNTY", "IL",
-           "Response_Type:CALL! Location:ADDRCITY! Creation_Time:DATETIME! Agency:SRC");
+          "( SELECT/2 EMPTY? SRC2! Response%EMPTY! Location:ADDRCITY! Response_Type:CALL! INFO/N+? SequenceNumber:ID! Priority:PRI! INFO/N+? Agency:SRC! INFO/N+ " +
+          "| Response_Type:CALL! Location:ADDRCITY! Creation_Time:DATETIME! Agency:SRC )");
   }
    
   @Override
   public String getFilter() {
     return "freeburgfire@yahoo.com,@stclaircountyil.gov,sjr5536@aol.com,svfd4801@yahoo.com";
   }
+
+  private static final Pattern HTML_TAG_PTN = Pattern.compile("(?: *<[^>]*?> *)+");
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    if (body.startsWith("<STYLE>")) {
+      int pt = body.indexOf("</STYLE>");
+      if (pt < 0) return false;
+      body = body.substring(pt+8).trim();
+      
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("2");
+      return parseFields(HTML_TAG_PTN.split(body), data);
+    }
+    
+    else {
+      setSelectValue("1");
+      return super.parseHtmlMsg(subject, body, data);
+    }
+  }
+
+  private static final String MSG_PREFIX = "Fire Run";
+  private static final Pattern PTN_GARBAGE = Pattern.compile("^(\\p{ASCII}+)");
+  private static final Pattern PTN_GARBAGE_PRE = Pattern.compile("(\\p{ASCII}+)$");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -60,6 +83,7 @@ public class ILStClairCountyAParser extends FieldProgramParser {
   private static final String DATETIME = "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}";
   @Override
   public Field getField(String name) {
+    if (name.equals("SRC2")) return new SourceField("(.*?) +Closeout Report", true);
     if (name.equals("ADDRCITY")) return new MyAddressField();
     if (name.equals("DATETIME")) return new DateTimeField(DATETIME, true);
     return super.getField(name);
@@ -82,6 +106,11 @@ public class ILStClairCountyAParser extends FieldProgramParser {
       if(match.matches()) {
         field = append(match.group(1).trim(), " ", match.group(3).trim());
         cross = match.group(2).trim();
+        int pt = cross.indexOf(';');
+        if (pt >= 0) {
+          data.strPlace = cross.substring(pt+1).trim();
+          cross = cross.substring(0, pt).trim();
+        }
         cross = stripFieldStart(cross, "/");
         cross = stripFieldEnd(cross, "/");
       }
