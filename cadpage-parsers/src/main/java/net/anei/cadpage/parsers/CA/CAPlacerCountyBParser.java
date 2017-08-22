@@ -28,6 +28,7 @@ public class CAPlacerCountyBParser extends DispatchA20Parser {
       "CALARM",   "COMMERCIAL FIRE ALARM",
       "CGAS",     "COMMERCIAL GAS LEAK",
       "CO",       "CARBON MONIXIDE ALARM",
+      "CPR",      "CARDIAC ARREST",
       "CSTRUC",   "COMMERCIAL STRUCTURE FIRE",
       "CSTRUH",   "COMMERCIAL STRUCTURE FIRE - HIGH",
       "CSTRUL",   "COMMERCIAL STRUCTURE FIRE - LOW",
