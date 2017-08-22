@@ -16,7 +16,7 @@ public class LACalcasieuParishParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "e911page@cityoflc.us,72436050";
+    return "e911page@cityoflc.us,@calcasieu911.com,72436050";
   }
   
   private static final Pattern DIR_SLASH_PTN1 = Pattern.compile("\\b([NS])/([EW])\\b");
