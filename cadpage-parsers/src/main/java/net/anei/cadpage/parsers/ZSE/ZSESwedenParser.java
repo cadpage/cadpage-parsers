@@ -10,8 +10,9 @@ public class ZSESwedenParser extends FieldProgramParser {
 
   public ZSESwedenParser() {
     super("", "", CountryCode.SE,
-    "( ID CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
-    "| CALL CALL CALL ADDR CITY ( GPS/Z END | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
+    "( FROM!  Radiogruppsnamn:CH! ADDR CITY SKIP CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
+    "| ID CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
+    "| CALL CALL CALL ADDR CITY ( GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
   
   @Override
@@ -39,6 +40,7 @@ public class ZSESwedenParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("FROM")) return new SourceField("Från +(.*)", true);
     if (name.equals("ID")) return new IdField("\\d+");
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("INFO2")) return new ExtraInfoField();
@@ -110,7 +112,7 @@ public class ZSESwedenParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT PLACE INFO";
+      return "ADDR APT PLACE INFO?";
     }
   }
   
