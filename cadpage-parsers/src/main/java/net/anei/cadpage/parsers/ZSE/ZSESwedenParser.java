@@ -10,7 +10,7 @@ public class ZSESwedenParser extends FieldProgramParser {
 
   public ZSESwedenParser() {
     super("", "", CountryCode.SE,
-    "( FROM!  Radiogruppsnamn:CH! ADDR CITY SKIP CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
+    "( FROM!  Radiogruppsnamn:CH! ADDR X2? CITY DUPCITY? CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
     "| ID CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
     "| CALL CALL CALL ADDR CITY ( GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
@@ -41,6 +41,8 @@ public class ZSESwedenParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("FROM")) return new SourceField("Från +(.*)", true);
+    if (name.equals("DUPCITY")) return new MyDuplicateCityField();
+    if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("ID")) return new IdField("\\d+");
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("INFO2")) return new ExtraInfoField();
@@ -49,6 +51,38 @@ public class ZSESwedenParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new UnitField("\\d{3}-\\d{4}|MRSYDLB|MRSYDIB");
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+  
+  private class MyDuplicateCityField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.equals(data.strCity);
+    }
+  }
+  
+  private class MyCross2Field extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("mellan ")) return false;
+      field = field.substring(7).trim().replace(" - ", " / ");
+      super.parse(field, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
   
   // Sometimes the info field is split by a newline leaving a fragment that we have to
