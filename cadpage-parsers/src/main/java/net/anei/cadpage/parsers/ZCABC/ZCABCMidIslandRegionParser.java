@@ -331,6 +331,8 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      "HMCS QUADRA",    "49.662330,-124.914198"
+      "HMCS QUADRA",            "+49.662330,-124.914198",
+      "10696 TAYLOR ARM DR",    "+49.275430,-124.985284"
+
   });
 }
