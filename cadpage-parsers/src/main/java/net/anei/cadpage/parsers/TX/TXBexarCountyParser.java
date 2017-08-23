@@ -18,8 +18,11 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   public TXBexarCountyParser() {
     super("BEXAR COUNTY", "TX",
-          "( Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID! Units:UNIT! Notes:INFO " +
-          "| DATETIME? CALL1 CALL1? ADDR1 X_APT+? MAP_ID_UNIT! MAP_ID_UNIT+? INFO+ )");
+          "( SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY EMPTY EMPTY MAP EMPTY UNIT END " + 
+                      "| SRC INCIDENT_INFORMATION! DATE_&_TIME:DATETIME2! EMPTY! PROBLEM:CALL! EMPTY! ADDRESS:ADDRCITY! EMPTY! CHANNEL:CH! EMPTY! DIVISION:MAP! EMPTY! UNITS:UNIT! EMPTY! LOCATION_NAME:PLACE! EMPTY! LOCATION_TYPE:SKIP END " +
+                      ") " + 
+          "| Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID! Units:UNIT! Notes:INFO " +
+          "| DATETIME1? CALL1 CALL1? ADDR1 X_APT+? MAP_ID_UNIT! MAP_ID_UNIT+? INFO+ )");
   }
   
   public String getFilter() {
@@ -31,6 +34,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern PREFIX_PTN = Pattern.compile("\\*{2,} *([A-Za-z0-9 ]+?) *\\*{2,} +[A-Z0-9]+(?=Problem)");
   private static final String MAP_PATTERN = "(\\d{3}[A-Z]\\d|SA\\d{3}(?:/[A-Z]\\d?)?|NOT FOUN)";
   private static final Pattern DASH_DELIM_PTN = Pattern.compile(" +- ");
   private static final Pattern PROTECT_KEYWORD = Pattern.compile("(?<=:)  +(?=[^ ])");
@@ -44,6 +48,19 @@ public class TXBexarCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
+    if (body.startsWith("|")) {
+      setSelectValue("2");
+      return parseFields(body.substring(1).trim().split("\\|"), data);
+    }
+    
+    setSelectValue("1");
+    Matcher match = PREFIX_PTN.matcher(body);
+    String prefix = "";
+    if (match.lookingAt()) {
+      prefix = match.group(1);
+      body = body.substring(match.end());
+    }
+    
     // Check for latest new page format
     if (body.startsWith("Problem:")) {
       int pt = body.indexOf("Notes:");
@@ -52,7 +69,9 @@ public class TXBexarCountyParser extends FieldProgramParser {
       String[] flds2 = new String[flds1.length+1];
       System.arraycopy(flds1, 0, flds2, 0, flds1.length);
       flds2[flds1.length] = body.substring(pt);
-      return parseFields(flds2, data);
+      if (!parseFields(flds2, data)) return false;
+      data.strCall = append(prefix, " - ", data.strCall);
+      return true;
     }
     
     // The main format is usually dash delimited, but occasionally drops the dashes in favor on
@@ -72,10 +91,16 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("SRC")) return new SourceField("[A-Z0-9]+", true);
+    if (name.equals("INCIDENT_NOTIFICATION")) return new SkipField("\\*\\*Incident Notification\\*\\*", true);
+    if (name.equals("INCIDENT_INFORMATION")) return new SkipField("\\*\\*Incident Information\\*\\*", true);
+    if (name.equals("DATETIME2")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d");
+    if (name.equals("CH")) return new ChannelField("\\* *(.*)");
+    
     if (name.equals("MAP")) return new MyMapField();
     
     if (name.startsWith("T") && name.length()==2) return new SkipField(name, true);
-    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("DATETIME1")) return new MyDateTime1Field();
     if (name.equals("CALL1")) return new MyCallField();
     if (name.equals("ADDR1")) return new MyAddressField();
     if (name.equals("X_APT")) return new MyCrossAptField();
@@ -94,7 +119,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d )?(\\d\\d:\\d\\d(?: [ap]m)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("KK:mm aa");
-  private class MyDateTimeField extends DateTimeField {
+  private class MyDateTime1Field extends DateTimeField {
     @Override
     public boolean canFail() {
       return true;
