@@ -464,9 +464,6 @@ public class MsgInfo {
     String sAddr = strAddress;
     if (parser != null) sAddr = parser.adjustMapAddress(sAddr, strCity, false);
     
-    // Non-English addresses is beyond our capabilites at this point
-    if (countryCode == CountryCode.SE) return sAddr;
-    
     // UK addresses have a postal code prefix that we don't want to mess with
     String prefix = "";
     if (countryCode == MsgParser.CountryCode.UK){
@@ -494,7 +491,10 @@ public class MsgInfo {
     sAddr = cleanSTRoutes(sAddr);
     
     // Make sure & are surrounded by blanks
-    sAddr = sAddr.replaceAll(" *&[& ]*", " & ");
+    // Except in Swedish where & can be part of a legitimate street name
+    if (countryCode != CountryCode.SE) {
+      sAddr = sAddr.replaceAll(" *&[& ]*", " & ");
+    }
     
     // If there wasn't an address number or intersection marker in address
     // try appending cross street info as as intersection
