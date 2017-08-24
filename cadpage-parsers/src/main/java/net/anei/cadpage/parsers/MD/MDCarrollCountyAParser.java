@@ -243,7 +243,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   
   private static final Pattern PREFIX_PTN = Pattern.compile("(\\d\\d:\\d\\d) +");
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
-  private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ A-Z0-9]+?) +\\(([^)]+)\\) +Incident No +(\\d+)");
+  private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ /A-Z0-9]+?) +\\(([^)]+)\\) +Incident No +(\\d+)");
   private static final Pattern ADDR_PTN = Pattern.compile("Loc *\\b(.*?)");
   private static final Pattern CROSS_MAP_PTN = Pattern.compile("(.*?) *(\\d+-[A-Z]\\d+)?");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
