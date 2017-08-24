@@ -46,9 +46,8 @@ public class OHHighlandCountyParser extends DispatchEmergitechParser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-    
-    // Mutual aid counties
-    "FAYETTE COUNTY",
+      
+    "HIGHLAND COUNTY",
 
     // Cites
     "HILLSBORO",
@@ -117,9 +116,53 @@ public class OHHighlandCountyParser extends DispatchEmergitechParser {
     "TAYLORSVILLE",
     "WILLETTSVILLE",
     
+    // Adams County
+    "ADAMS COUNTY",
+    "CHERRY FORK",
+    "LIBERTY TWP",
+    "WAYNE TWP",
+    "WINCHESTER",
+    "WINCHESTER TWP",
+    
+    // Brown County
+    "BROWN COUNTY",
+    "EAGLE TWP",
+    "FAYETTEVILLE",
+    "GREEN TWP",
+    "MOUNT ORAB",
+    "MT ORAB",
+    "PERRY TWP",
+    "PIKE TWP",
+    "SARDINIA",
+    "ST MARTIN",
+    "WASHINGTON TWP",
+    
+    // Clinton County
+    "CLINTON COUNTY",
+    "CLARK TWP",
+    "GREEN TWP",
+    "MARTINSVILLE",
+    "NEW VIENNA",
+    "WAYNE TWP",
+    
+    // Fayette County
+    "FAYETTE COUNTY",
+    "GREEN TWP",
+    "PERRY TWP",
+    "WAYNE TWP",
+    
+    // Pike County
+    "PIKE COUNTY",
+    "MIFFLIN TWP",
+    "PERRY TWP",
+    
     // Ross County
     "ROSS COUNTY",
+    "BRAINBRIDGE",
     "BUSKIN TWP",
-    "BUCKSKIN TWP ROSS COUNTY"
+    "BUCKSKIN TWP ROSS COUNTY",
+    "PAINT TWP",
+    "PAXTON",
+    "SOUTH SALEM"
   };
 }
