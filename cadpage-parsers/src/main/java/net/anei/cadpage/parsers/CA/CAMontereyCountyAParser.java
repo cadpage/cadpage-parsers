@@ -68,7 +68,7 @@ public class CAMontereyCountyAParser extends MsgParser {
     return true;
   }
   
-  private static final Pattern MARKER = Pattern.compile("([A-Z ]+) - ");
+  private static final Pattern MARKER = Pattern.compile("([A-Z ]+) - +");
   
   private boolean parseMsg2(String body, Data data) {
     
@@ -80,11 +80,11 @@ public class CAMontereyCountyAParser extends MsgParser {
     body = body.substring(match.end());
     
     FParser fp = new FParser(body);
-    int pt = fp.checkAhead("CROSS STREETS", 71, 95, 97);
+    int pt = fp.checkAhead("CROSS STREETS", 68, 92, 93, 94);
     if (pt >= 0) {
       
-      if (pt == 71) {
-        String unit = fp.get(9);
+      if (pt == 68) {
+        String unit = fp.get(6);
         
         if (fp.check(" ")) return false;
         String call = fp.get(10);
@@ -104,8 +104,8 @@ public class CAMontereyCountyAParser extends MsgParser {
         return true;
       }
 
-      int fpLen = pt - 63;
-      String unit = fp.get(fpLen);
+      int unitLen = pt - 63;
+      String unit = fp.get(unitLen);
       if (!fp.check(" ")) return false;
       
       if (fp.check(" ")) return false;
@@ -125,9 +125,11 @@ public class CAMontereyCountyAParser extends MsgParser {
       return true;
     }
     
-    if (fp.checkAhead(93, "X STREETS")) {
-      
-      String unit = fp.get(30);
+    pt = fp.checkAhead("X STREETS", 92, 93);
+    if (pt >= 0) {
+
+      int unitLen = pt-34;
+      String unit = fp.get(29);
       if (!fp.check(" ")) return false;
       
       if (fp.check(" ")) return false;
@@ -152,7 +154,21 @@ public class CAMontereyCountyAParser extends MsgParser {
       return true;
       
     }
-    return false;
+    
+    String unit = fp.get(30);
+    if (!fp.check(" ") || fp.check(" ")) return false;
+    String call = fp.get(10);
+    if (!fp.check(" ") || fp.check(" ")) return false;
+    String addr = fp.get(30);
+    if (!fp.checkBlanks(371)) return false;
+    String cross = fp.get();
+    
+    data.strSource = source;
+    data.strUnit = unit;
+    data.strCall = call;
+    parseAddress(addr, data);
+    data.strCross = cross;
+    return true;
   }
     
   private static final Pattern MASTER = Pattern.compile("(?:(.*?) - )?([A-Z0-9]{2,6}):(.*?) - (.*?)(?: - ([A-Z]{3}))? *(?:Units?:(.*?))?");
