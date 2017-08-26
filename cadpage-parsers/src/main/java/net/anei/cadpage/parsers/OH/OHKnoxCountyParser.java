@@ -21,7 +21,7 @@ public class OHKnoxCountyParser extends DispatchEmergitechParser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@smtp-server.Columbus.rr.com";
+    return "Dispatch@smtp-server.Columbus.rr.com,Dispatch@smtp-relay.gmail.com";
   }
   
   private static final Pattern END_TWP_RD_PTN = Pattern.compile(".*\\b(?:TWP|TWNSHI?P) RD|\\d+ +RD");
