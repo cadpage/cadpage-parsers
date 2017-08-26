@@ -10,6 +10,6 @@ public class OHClermontCountyCParser extends DispatchA52Parser {
   
   @Override
   public String getFilter() {
-    return "PageGate@clermontcountyohio.gov,1027194726673";
+    return "PageGate@clermontcountyohio.gov,1027194726673,777";
   }
 }

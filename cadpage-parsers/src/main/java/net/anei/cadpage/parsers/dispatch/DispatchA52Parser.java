@@ -15,7 +15,7 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState, 
-          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE CMT:INFO! CC:INFO/N? CC_TEXT:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID TIME:SKIP");
+          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE CMT:INFO! CC:SKIP? CC_TEXT:CALL CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID TIME:SKIP");
     this.callCodes = callCodes;
   }
   
