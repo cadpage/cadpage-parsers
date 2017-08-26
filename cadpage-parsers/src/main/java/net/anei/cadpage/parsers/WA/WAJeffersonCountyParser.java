@@ -119,6 +119,7 @@ public class WAJeffersonCountyParser extends FieldProgramParser {
       "Fire - Residential",
       "HazCon",
       "Rescue - Technical",
+      "Rescue - Water",
       "SUIC",
       "TC",
       "TC - Multi",

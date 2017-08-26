@@ -11,20 +11,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NCForsythCountyParser extends FieldProgramParser {
   
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "FC", "FORSYTH COUNTY",
-      "BE", "BETHANIA",
-      "CL", "CLEMMONS",
-      "HP", "HIGH POINT",
-      "KE", "KERNERSVILLE",
-      "KI", "KING",
-      "LE", "LEWISVILLE",
-      "RH", "RURAL HALL",
-      "TO", "TOBACCOVILLE",
-      "WA", "WALKERTOWN",
-      "WS", "WINSTON-SALEM"
-  });
-  
   public NCForsythCountyParser() {
     super(CITY_CODES, "FORSYTH COUNTY", "NC",
            "Location:ADDR/S Nature:CALL! P:PRI DISTRICT:UNIT X_Str:X CALLER_NAME:NAME");
@@ -136,4 +122,40 @@ public class NCForsythCountyParser extends FieldProgramParser {
     return RA_PTN.matcher(addr).replaceAll("");
   }
   private static final Pattern RA_PTN = Pattern.compile("\\bRA\\b", Pattern.CASE_INSENSITIVE);
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BE",   "BETHANIA",
+      "BELE", "BELEWS CREEK",
+      "BETH", "BETHANIA",
+      "CL",   "CLEMMONS",
+      "CLEM", "CLEMMONS",
+      "COLF", "COLFAX",
+      "DC",   "DAVIDSON COUNTY",
+      "EDEN", "EDEN",
+      "FC",   "FORSYTH COUNTY",
+      "GC",   "GUILFORD COUNTY",
+      "GER",  "GERMANTON",
+      "GERM", "GERMANTON",
+      "HP",   "HIGH POINT",
+      "KE",   "KERNERSVILLE",
+      "KER",  "KERNERSVILLE",
+      "KI",   "KING",
+      "KING", "KING",
+      "LE",   "LEWISVILLE",
+      "LEW",  "LEWISVILLE",
+      "PFAF", "PFAFFTOWN",
+      "RH",   "RURAL HALL",
+      "SC",   "STOKES COUNTY",
+      "STAN", "STANLEYVILLE",
+      "STOK", "STOKESDALE",
+      "SU",   "SURRY",
+      "TO",   "TOBACCOVILLE",
+      "TOB",  "TOBACCOVILLE",
+      "TOBA", "TOBACCOVILLE",
+      "WA",   "WALKERTOWN",
+      "WALK", "WALKERTOWN",
+      "WALN", "WALNUT COVE",
+      "WS",   "WINSTON-SALEM",
+
+  });
 }
