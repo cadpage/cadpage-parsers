@@ -164,6 +164,9 @@ public class GAMeriwetherCountyParser extends FieldProgramParser {
     "WARMSPRINGS",
     "WOODBURY",
     
+    // Coweta County
+    "SENOIA",
+    
     // Troup County 
     "HOGANSVILLE"
   };
