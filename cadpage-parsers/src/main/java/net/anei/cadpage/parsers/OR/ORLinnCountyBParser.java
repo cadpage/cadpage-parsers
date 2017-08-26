@@ -11,26 +11,41 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   
   public ORLinnCountyBParser() {
     super(CITY_CODES, "LINN COUNTY", "OR", 
-          "( CANCEL ADDR CITY! INFO/N+ " +
-          "| UNIT/Z ENROUTE/R ADDR CITY CALL END " + 
-          "| FYI? CALL ( ADDR! | PLACE ADDR! | EMPTY_PLACE ADDR! | ADDR! ) APT? REF? " + 
-                "( PLACE X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
-                "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
-                "| PLACE X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
-                "| X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
-                "| PLACE X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
-                "| X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
-                "| CITY ( PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNITQ? ) " + 
-                "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " + 
+          "( CANCEL ADDR/S CITY! INFO/N+ " +
+          "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " + 
+          "| FYI? CALL ( ADDR/S! | PLACE ADDR/S! | EMPTY_PLACE ADDR/S! | ADDR/S! ) APT? REF? " +
+          
+                // These branches have to be sorted by the number of fixed non-decision fields appear before
+                // the first decistion field
+                // No non decision fields
+                "( CITY ( MAP CODEQ? UNITQ? | CODE UNITQ? | PLACE MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | PLACE UNIT | UNITQ? ) " +
+
+                // One non-decision field
                 "| PLACE_X CITY MAPQ? CODEQ? UNITQ? " + 
+
+                // Two non-decision fields
+                "| X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
                 "| X/Z X/Z MAP CODEQ? UNITQ? " + 
+          
+                // Three non-decision fields
+                "| PLACE X/Z X/Z CITY MAPQ? CODEQ? UNITQ? " +
+                "| X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
+                
+                // Four non-decision fields
+                "| PLACE X/Z X/Z EMPTY/Z MAP CODEQ? UNITQ? " +
+                "| X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
+                
+                // Five non-decision fields
+                "| PLACE X/Z X/Z EMPTY/Z EMPTY/Z CODE UNITQ? " +
+                
+                // No decision fields (Cross street doesn't count)
                 "| X CITY? MAPQ? CODEQ? UNITQ? " +
                 "| PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNIT? " + 
                 ") UNITQ/C+? ( DATETIME " + 
                             "| INFO ( CH/Z EMPTY/Z NAME PH/Z SKIP DATETIME " +
                                    "| CH/Z NAME PH/Z SKIP DATETIME " +
                                    "| NAME PH/Z SKIP DATETIME " +
-                                   "| SKIP DATETIME " + 
+//                                   "| SKIP DATETIME " + 
                                    "| NAME PH DATETIME " + 
                                    "| PH SKIP? DATETIME " +
                                    "| CH SKIP? DATETIME " +
@@ -42,6 +57,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
                             ") ID ID2? PRI+? UNIT/C+ " + 
           ")");
     setupCityValues(CITY_CODES);
+    setupCities(CITY_LIST);
     removeWords("PLACE");
     addRoadSuffixTerms("LP");
   }
@@ -63,15 +79,16 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("REF")) return new InfoField("\\(S\\).*", true);
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[A-D]", true);
-    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[A-D]|", true);
-    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|MILL", true);
-    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|LYO|MILL|", true);
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+", true);
-    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|SH1ST)\\b,?)+|", true);
+    if (name.equals("LCITY")) return new MyLongCityField();
+    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[A-D]|HBRG|LCJ|LCSO|LYO|MILL|SWH", true);
+    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[A-D]|HBRG|LCJ|LCSO|LYO|MILL|SWH", true);
+    if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
+    if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|HBRG|SDIVE|SH1ST|SWH)\\b,?)+", true);
+    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|HBRG|SDIVE|SH1ST|SWH)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+", false);
-    if (name.equals("PH")) return new PhoneField("(?:541|503|800|866|888)\\d{7}|", true);
+    if (name.equals("PH")) return new PhoneField("(?:541|503|800|818|866|888)\\d{7}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new IdField("20\\d{8}");
     if (name.equals("ID2")) return new SkipField("\\d*", true);
@@ -141,6 +158,19 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     }
   }
   
+  private class MyLongCityField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() <= 3) return false;
+      return super.checkParse(field, data);
+    }
+  }
+  
   private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\](?=\n|$)");
   private class MyInfoField extends InfoField {
     @Override
@@ -178,6 +208,12 @@ public class ORLinnCountyBParser extends FieldProgramParser {
       }
     }
   }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("FOSTER")) city = "SWEET HOME";
+    return city;
+  }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALB",  "ALBANY",
@@ -206,4 +242,8 @@ public class ORLinnCountyBParser extends FieldProgramParser {
       "SWH",  "SWEET HOME",
       "TANG", "TANGENT"
   });
+  
+  private static final String[] CITY_LIST = new String[]{
+      "MCKENZIE"
+  };
 }
