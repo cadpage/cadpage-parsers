@@ -23,7 +23,7 @@ public class WAKitsapCountyParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     
     //check for CENCOM, remove from body
-    if (!subject.equals("CENCOM") && !subject.equals("KITSAP911")) {
+    if (!subject.equals("CENCOM") && !subject.equalsIgnoreCase("KITSAP911")) {
       if (!body.startsWith("CENCOM")) return false;
       body = body.substring(6).trim();
     }
@@ -54,6 +54,11 @@ public class WAKitsapCountyParser extends FieldProgramParser {
         String place = field.substring(pt+1).trim();
         place = stripFieldStart(place, "@");
         data.strPlace = place;
+        field = field.substring(0,pt).trim();
+      }
+      pt = field.indexOf(';');
+      if (pt >= 0) {
+        data.strPlace = append(field.substring(pt+1).trim(), " - ", data.strPlace);
         field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
@@ -163,6 +168,8 @@ public class WAKitsapCountyParser extends FieldProgramParser {
       "PO", "PORT ORCHARD",
       "SE", "SEABACK",
       "SI", "SILVERDALE",
-      "SU", "SUQUAMISH"
+      "SU", "SUQUAMISH",
+      
+      "PC PRCCO",  "PIERCE COUNTY"
   });
 }
