@@ -10,6 +10,11 @@ public class COMontezumaCountyParser extends DispatchA67Parser {
     removeWords("RR");   // RR is a unit, not a cross street
   }
   
+  @Override
+  public String getFilter() {
+    return "cadalerts@messaging.eforcesoftware.net";
+  }
+  
   private static final String[] CITY_LIST = new String[]{
       "ARRIOLA",
       "CAHONE",
