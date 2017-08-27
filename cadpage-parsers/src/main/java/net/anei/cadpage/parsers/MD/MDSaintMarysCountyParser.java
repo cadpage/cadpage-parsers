@@ -21,6 +21,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     super("SAINT MARYS COUNTY", "MD");
     setFieldList("TIME CALL ADDR APT X PLACE CITY UNIT INFO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    setupProtectedNames("BARNES AND YEH");
   }
   
   @Override
@@ -167,9 +168,61 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     return true;
   }
   
+  @Override
+  protected String adjustGpsLookupAddress(String address, String apt) {
+    if (address.equals("46860 HILTON DR") && apt.length() > 2) {
+      address = address + " BLDG " + apt.substring(0, apt.length()-2); 
+    }
+    return address;
+  }
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "44100A LOUISDALE RD",                  "+38.294415,-76.558088",
       "44100B LOUISDALE RD",                  "+38.293484,-76.558780",
+      "44605 BARNES AND YEH LANE",            "+38.289400,-76.532300",
+      "44655 BARNES AND YEH LANE",            "+38.286800,-76.530900",
+      "44665 BARNES AND YEH LANE",            "+38.286400,-76.531600",
+      "44683 BARNES AND YEH LANE",            "+38.285600,-76.530600",
+      "46860 HILTON DR BLDG 1",               "+38.247680,-76.459357",
+      "46860 HILTON DR BLDG 2",               "+38.248052,-76.459638",
+      "46860 HILTON DR BLDG 3",               "+38.248016,-76.460045",
+      "46860 HILTON DR BLDG 4",               "+38.247862,-76.460461",
+      "46860 HILTON DR BLDG 5",               "+38.248137,-76.460772",
+      "46860 HILTON DR BLDG 6",               "+38.248310,-76.460351",
+      "46860 HILTON DR BLDG 7",               "+38.248618,-76.460261",
+      "46860 HILTON DR BLDG 8",               "+38.248898,-76.460566",
+      "46860 HILTON DR BLDG 9",               "+38.249052,-76.460147",
+      "46860 HILTON DR BLDG 10",              "+38.248774,-76.459841",
+      "46860 HILTON DR BLDG 11",              "+38.248637,-76.459482",
+      "46860 HILTON DR BLDG 12",              "+38.248869,-76.459048",
+      "46860 HILTON DR BLDG 13",              "+38.246921,-76.455179",
+      "46860 HILTON DR BLDG 14",              "+38.246892,-76.455582",
+      "46860 HILTON DR BLDG 15",              "+38.246974,-76.456037",
+      "46860 HILTON DR BLDG 16",              "+38.247192,-76.456301",
+      "46860 HILTON DR BLDG 17",              "+38.247367,-76.456849",
+      "46860 HILTON DR BLDG 18",              "+38.247198,-76.457187",
+      "46860 HILTON DR BLDG 19",              "+38.247560,-76.457808",
+      "46860 HILTON DR BLDG 20",              "+38.247340,-76.458201",
+      "46860 HILTON DR BLDG 21",              "+38.247626,-76.458444",
+      "46860 HILTON DR BLDG 22",              "+38.249001,-76.456838",
+      "46860 HILTON DR BLDG 23",              "+38.248483,-76.456992",
+      "46860 HILTON DR BLDG 24",              "+38.248172,-76.456569",
+      "46860 HILTON DR BLDG 25",              "+38.247810,-76.456274",
+      "46860 HILTON DR BLDG 26",              "+38.248028,-76.455913",
+      "46860 HILTON DR BLDG 27",              "+38.248600,-76.455898",
+      "46860 HILTON DR BLDG 28",              "+38.248697,-76.456372",
+      "46860 HILTON DR BLDG 29",              "+38.248491,-76.455268",
+      "46860 HILTON DR BLDG 30",              "+38.248461,-76.454921",
+      "46860 HILTON DR BLDG 31",              "+38.248002,-76.455438",
+      "46860 HILTON DR BLDG 32",              "+38.247738,-76.455525",
+      "46860 HILTON DR BLDG 33",              "+38.247667,-76.455166",
+      "46860 HILTON DR BLDG 34",              "+38.247891,-76.454839",
+      "46860 HILTON DR BLDG 35",              "+38.248175,-76.454757",
+      "22492 JOHNSON POND LANE",              "+38.285500,-76.549000",
+      "22494 JOHNSON POND LANE",              "+38.285500,-76.549000",
+      "22505 JOHNSON POND LANE",              "+38.286000,-76.550400",
+      "22525 JOHNSON POND LANE",              "+38.286300,-76.550800",
+      "22550 JOHNSON POND LANE",              "+38.286500,-76.550700",
       "44096 LOUISDALE RD",                   "+38.296261,-76.562480",
       "44100 LOUISDALE RD",                   "+38.295197,-76.558400",
       "44800 OAK CREST RD",                   "+38.311297,-76.527188",

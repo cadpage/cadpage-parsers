@@ -21,8 +21,7 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end()).trim();
+    if (match.lookingAt()) body = body.substring(match.end()).trim();
     int pt = body.indexOf("\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace('@', '&');
