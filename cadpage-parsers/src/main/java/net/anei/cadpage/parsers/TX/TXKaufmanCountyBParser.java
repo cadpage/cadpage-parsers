@@ -1,6 +1,8 @@
 
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
@@ -15,12 +17,19 @@ public class TXKaufmanCountyBParser extends DispatchSouthernParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
+
+  private static final Pattern TIME_MARKER_PTN = Pattern.compile("; *\\d\\d:\\d\\d:\\d\\d;");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
     
     // Reject any TXKaufmanCountyA alerts
-    if (body.startsWith("kaufmancotx911:") || body.startsWith("Dispatch:")) return false;
+    
+    // They recently dropped the prefix, which makes things a bit more difficult.  They are both 
+    // based on Southern dispatch format, but TXKaufmanCountyA uses comma delimiters and 
+    // TXKaufmanCountyB used semicolon delimiters, so we will check for a properly delimited time field
+    
+    if (!TIME_MARKER_PTN.matcher(body).find()) return false;
 
     return super.parseMsg(body, data);
   }
