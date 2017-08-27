@@ -101,6 +101,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "TRAFFIC STOP",
       "TRANSPORT",
       "TRAUMA",
+      "VEHICLE DAMAGE",
       "WELFARE CHECK"
   );
   
