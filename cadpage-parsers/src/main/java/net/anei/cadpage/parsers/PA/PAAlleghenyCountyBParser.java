@@ -11,6 +11,7 @@ public class PAAlleghenyCountyBParser extends FieldProgramParser {
   public PAAlleghenyCountyBParser() {
     super("ALLEGHENY COUNTY", "PA", 
           "Address:ADDR! xSts:X! Code:CODE! Code_Detail:CALL! Fire_Zone:MAP! Description:INFO! TOC:DATETIME! Inc_Num:ID! Responding:SKIP! Units:UNIT! Disp_Grp:CH! Call_Taker:SKIP");
+    setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
   }
   
   @Override

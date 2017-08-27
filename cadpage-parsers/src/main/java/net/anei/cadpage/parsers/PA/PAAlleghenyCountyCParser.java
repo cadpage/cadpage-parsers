@@ -15,6 +15,7 @@ public class PAAlleghenyCountyCParser extends DispatchProQAParser {
   public PAAlleghenyCountyCParser() {
     super("ALLEGHENY COUNTY", "PA", 
           "CALL_PREFIX? CALL/L CALL2/SLS+? EMPTY+? ADDR PLACE_APT EMPTY/Z? CITY ID! PRI! INFO/L+", true);
+    setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
   }
   
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
