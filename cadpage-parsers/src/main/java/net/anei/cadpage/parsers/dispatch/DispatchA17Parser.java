@@ -89,7 +89,7 @@ public class DispatchA17Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern PHONE_XXX_PTN = Pattern.compile("X{3,}-X{4}");
+  private static final Pattern PHONE_XXX_PTN = Pattern.compile("X{3,}-X{4}|.*-");
   private class MyPhoneField extends PhoneField {
     @Override
     public void parse(String field, Data data) {
