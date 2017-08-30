@@ -9,17 +9,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NYNassauCountyBParser extends SmartAddressParser {
-  
-  private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
-  private static final Pattern MARKER = Pattern.compile("^(?:FireCom:|RedAlert:)");
-  private static final Pattern CALL_PTN = Pattern.compile(" *\\(([-/ A-Z0-9]{2,})\\) *");
-  private static final Pattern MAP_PTN = Pattern.compile(" - +(?:(?:MAP|ZONE) +)?(\\d|[A-Z]-\\d)$");
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d) (\\d\\d:\\d\\d)");
-  
-  // Pattern to catch problematic patterns, typically those that contain numbers
-  // that might be mistaken for street numbers
-  private static final Pattern PLACE_PTN = 
-      Pattern.compile("(.* NUMBER \\d+ SCHOOL|.* FD STATION \\d+|ELKS BPOE \\d+) +(.*)");
 
   public NYNassauCountyBParser() {
     super("NASSAU COUNTY", "NY");
@@ -37,6 +26,18 @@ public class NYNassauCountyBParser extends SmartAddressParser {
   public String getFilter() {
     return "paging@alpinesoftware.com,@rednmxcad.com";
   }
+  
+  private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
+  private static final Pattern MARKER = Pattern.compile("^(?:FireCom:|RedAlert:)");
+  private static final Pattern CALL_PTN = Pattern.compile(" *\\(([-/ A-Z0-9]{2,})\\) *");
+  private static final Pattern MAP_PTN = Pattern.compile(" - +(?:(?:AREA|MAP|ZONE) +)?(.*)$");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d) (\\d\\d:\\d\\d)");
+  private static final Pattern MAP_PREFIX_PTN = Pattern.compile("[- ]+");
+  
+  // Pattern to catch problematic patterns, typically those that contain numbers
+  // that might be mistaken for street numbers
+  private static final Pattern PLACE_PTN = 
+      Pattern.compile("(.* NUMBER \\d+ SCHOOL|.* FD STATION \\d+|ELKS BPOE \\d+) +(.*)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -50,13 +51,18 @@ public class NYNassauCountyBParser extends SmartAddressParser {
     match = CALL_PTN.matcher(body);
     if (!match.find()) return false;
     String sAddr = body.substring(0, match.start());
-    data.strCall = match.group(1);
+    data.strCall = match.group(1).trim();
     String sExtra = body.substring(match.end());
     
     match = MAP_PTN.matcher(sAddr);
     if (match.find()) {
-      data.strMap = match.group(1);
+      String map = match.group(1);;
       sAddr = sAddr.substring(0,match.start()).trim();
+      match = MAP_PREFIX_PTN.matcher(map);
+      if (match.lookingAt()) map = map.substring(match.end());
+      data.strMap = map;
+    } else {
+      sAddr = stripFieldEnd(sAddr, " -");
     }
     match = PLACE_PTN.matcher(sAddr);
     StartType st = StartType.START_PLACE;
@@ -65,6 +71,8 @@ public class NYNassauCountyBParser extends SmartAddressParser {
       sAddr = match.group(2);
     }
     parseAddress(st, FLAG_IGNORE_AT | FLAG_ANCHOR_END, sAddr, data);
+    
+    data.strCross = stripFieldEnd(data.strCross, "/");
     
     Parser p = new Parser(' ' + sExtra);
     data.strSupp = p.get(" D:");
