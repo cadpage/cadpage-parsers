@@ -42,7 +42,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
     
     // This may bite us someday, but it is a convenient way to identify
     // VAWaynesboroB calls
-    if (subject.length() > 0) return false;
+    if (subject.length() > 0 && !subject.equals("Text Message")) return false;
     
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
