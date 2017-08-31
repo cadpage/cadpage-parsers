@@ -18,7 +18,7 @@ public class OHButlerCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "IPAGE@IPSCAD";
+    return "IPAGE@IPSCAD,@westchesteroh.org,IPAGE@IPSCAD.westchesteroh.org";
   }
 
   @Override
