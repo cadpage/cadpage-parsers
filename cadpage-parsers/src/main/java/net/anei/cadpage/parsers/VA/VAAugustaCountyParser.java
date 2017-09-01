@@ -42,10 +42,18 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
     
     // This may bite us someday, but it is a convenient way to identify
     // VAWaynesboroB calls
-    if (subject.length() > 0 && !subject.equals("Text Message")) return false;
+    if (subject.length() > 0 && 
+        !subject.equals("Text Message") &&
+        !subject.equals("%Text Message%") &&
+        !subject.equals("%Augusta 911%")) return false;
     
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
+    if (body.startsWith("CAD:%")) {
+      pt = body.indexOf('%', 5);
+      if (pt < 0) return false;
+      body = "CAD:" + body.substring(pt+1);
+    }
     body = DELIM_PTN.matcher(body).replaceAll(";");
     return super.parseMsg(body, data);
   }
