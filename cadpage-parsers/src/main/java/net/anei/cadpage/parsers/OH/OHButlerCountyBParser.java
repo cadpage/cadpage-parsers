@@ -22,6 +22,13 @@ public class OHButlerCountyBParser extends FieldProgramParser {
   }
 
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0, pt).trim();
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new MyCallField();
