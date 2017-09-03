@@ -78,8 +78,15 @@ public class ILKaneCountyParser extends GroupBestParser {
       "SCHAUMBURG",
       "STREAMWOOD",
       
+      // Dekalb County
+      "DEKALB",
+      "GENOA",
+      "SYCAMORE",
+      
       // McHenry County
-      "CARY"
+      "CARY",
+      "MARENGO",
+      "WOODSTOCK"
 
   };
 

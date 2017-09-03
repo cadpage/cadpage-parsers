@@ -10,35 +10,104 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class ILKaneCountyCParser extends SmartAddressParser {
   
-  private static final Pattern DIR_STREET_NO_PTN = Pattern.compile(" (\\d+[NSEW]\\d? ?\\d+) ");
-  private static final Pattern DIR_STREET_NO_PTN2 = Pattern.compile("(\\d+[NSEW]\\d? \\d+) ");
-  private static final Pattern X_ST_PTN1 = Pattern.compile("([ A-Z]+/[A-Z]+)  +");
-  private static final Pattern X_ST_PTN2 = Pattern.compile("([ A-Z]+/[A-Z]+) ");
-  
-  
   public ILKaneCountyCParser() {
     super(ILKaneCountyParser.CITY_LIST, "KANE COUNTY", "IL");
-    setFieldList("CALL ADDR APT PLACE CITY X GPS INFO");
+    setFieldList("CALL ADDR APT CITY PLACE X INFO GPS");
     setupCallList(CALL_LIST);
+    setupSaintNames("CHARLES");
     setupMultiWordStreets(
+        "ABBEY GLEN",
         "ARBOR CREEK",
         "ARMY TRAIL",
+        "BAR HARBOR",
+        "BARB HILL",
+        "BAY SHORE",
         "BIG TIMBER",
+        "BILLY BURNS",
         "BOWES BEND",
+        "BREWSTER CREEK",
+        "BRIDLE CREEK",
+        "BRIER HILL",
+        "CAMPTON HILLS",
+        "CAMPTON WOOD",
+        "CAPE COD",
+        "CARL LEE",
         "CLOVER FIELD",
         "COUNTRY CLUB",
+        "COUNTY LINE",
+        "CREEK VIEW",
+        "CURLING POND",
+        "DEER RUN",
         "DIAMOND HEAD",
+        "DUNHAM TRAILS",
+        "EDNA ST VINCENT MILLAY",
+        "EDGAR LEE MASTERS",
+        "EAST MARY",
+        "EAST LAURA INGALLS WILDER",
+        "EMILY DICKINSON",
+        "FERSON CREEK",
+        "FOX BEND",
+        "FOX BLUFF",
         "FOX MILL",
+        "FOX RIVER",
+        "FRANCIS BRET HARTE",
+        "FOX RUN",
+        "GLEN COVE",
+        "HAPPY HILLS",
+        "HIDDEN HILL",
         "HIDDEN OAKS",
+        "JJC LINCOLN",
+        "JOYCE KILMER",
+        "LAKE BLUFF",
+        "LONG VIEW",
+        "LOON LAKE",
         "NORTH JAMES",
+        "OLIVER WENDELL HOLMES",
+        "OAK RIDGE",
+        "PADRE ISLAND",
+        "PINE HILLS",
+        "PINE HILLS",
+        "PRAIRIE HILL",
+        "PRAIRIE LAKES",
+        "RAMM WOODS",
+        "RED BARN",
+        "RED GATE",
+        "RED HAWK",
+        "RED LEAF",
+        "RICHARD J BROWN",
+        "RIVER GRANGE",
+        "ROLLING OAKS",
+        "SETTLERS GROVE",
         "SILVER GLEN",
-        "WILLIAM CULLEN BRYANT");
+        "SILVER LAKE",
+        "SORRENTOS MCGOUGH",
+        "TALL PINES",
+        "TAYLOR CALDWELL",
+        "TIMBER RIDGE",
+        "TOWN PLACE",
+        "VACHEL LINDSAY",
+        "VALLEY STREAM",
+        "WALT WHITMAN",
+        "WEST LAURA INGALLS WILDER",
+        "WEST MARY",
+        "WEST VIEW",
+        "WHITE PINE",
+        "WILD ROSE",
+        "WILLIAM CULLEN BRYANT",
+        "WINDING HILL"
+    );
   }
   
   @Override
   public String getFilter() {
     return "shfradio@co.kane.il.us";
   }
+  
+  private static final Pattern DIR_STREET_NO_PTN = Pattern.compile(" (\\d+[NSEW]\\d? ?\\d+) ");
+  private static final Pattern MIXED_CASE_PTN = Pattern.compile("[A-Z][a-z].*");
+  private static final Pattern DIR_STREET_NO_PTN2 = Pattern.compile("(\\d+[NSEW]\\d? \\d+) ");
+  private static final Pattern X_ST_PTN1 = Pattern.compile("([. A-Z0-9]+ ?/ ?[. ,A-Z0-9]+?)(?: {2,}|$)");
+  private static final Pattern X_ST_PTN2 = Pattern.compile("([. A-Z0-9]+ ?/ ?[.A-Z0-9]+?)(?: |$)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -52,11 +121,16 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     String dirStreetNo = null;
     Matcher match = DIR_STREET_NO_PTN.matcher(body);
     if (match.find()) {
-      st = StartType.START_ADDR;
-      flags = 0;
-      data.strCall = body.substring(0,match.start()).trim();
-      dirStreetNo = match.group(1);
-      body = "999999" + body.substring(match.end(1));
+      String call = body.substring(0,match.start()).trim();
+      Result tmpRes = parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY, call);
+      String city = tmpRes.getCity();
+      if (!MIXED_CASE_PTN.matcher(city).matches()) {
+        st = StartType.START_ADDR;
+        flags = 0;
+        data.strCall = call;
+        dirStreetNo = match.group(1);
+        body = "999999" + body.substring(match.end(1));
+      }
     }
     
     else {
@@ -71,6 +145,7 @@ public class ILKaneCountyCParser extends SmartAddressParser {
 
     // They like verbose highway names
     body = body.replace(" UNITED STATES HIGHWAY ", " US ");
+    body = body.replaceAll(" ILLIONIS ", " ILLINOIS ");
     body = body.replace(" ILLINOIS ROUTE ", " IL ");
     
     match = GPS_PATTERN.matcher(body);
@@ -82,9 +157,8 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     
     
     // Lets see what we can do...
-    parseAddress(st, flags | FLAG_IMPLIED_INTERSECT | FLAG_IGNORE_AT| FLAG_CROSS_FOLLOWS | FLAG_PAD_FIELD_EXCL_CITY, body, data);
+    parseAddress(st, flags | FLAG_IMPLIED_INTERSECT | FLAG_IGNORE_AT| FLAG_CROSS_FOLLOWS | FLAG_RECHECK_APT, body, data);
     if (!isValidAddress() && data.strCity.length() == 0) return false;
-    data.strPlace = getPadField();
     body = getLeft();
     if (dirStreetNo != null && data.strAddress.startsWith("999999 ")) {
       data.strAddress = dirStreetNo + data.strAddress.substring(6);
@@ -93,10 +167,6 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     // Next is the cross street. But it is a bit chancy.  Let's see what we can do 
     // with this.
     do {
-      if (data.strGPSLoc.length() > 0) {
-        data.strCross = body;
-        break;
-      }
       
       if (body.startsWith("No Cross Streets Found ")) {
         data.strSupp = body.substring(23).trim();
@@ -117,7 +187,7 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         break;
       }
       
-      Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, body);
+      Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_NO_CITY, body);
       if (res.isValid()) {
         res.getData(data);
         data.strSupp = res.getLeft();
@@ -131,6 +201,22 @@ public class ILKaneCountyCParser extends SmartAddressParser {
       data.strSupp = body;
         
     } while (false);
+    
+    // Split out place name from cross street
+    String cross = data.strCross;
+    data.strCross = "";
+    String crossExt = null;
+    int pt = cross.indexOf(',');
+    if (pt >= 0) {
+      crossExt = cross.substring(pt);
+      cross = cross.substring(0, pt).trim();
+    }
+    parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_ANCHOR_END | FLAG_NO_CITY, cross, data);
+    if (data.strCross.length() == 0) {
+      data.strPlace = "";
+      data.strCross = cross;
+    }
+    if (crossExt != null) data.strCross += crossExt;
     
     return true;
   }
@@ -148,9 +234,12 @@ public class ILKaneCountyCParser extends SmartAddressParser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "AMBULANCE CALL",
+      "CALLBACK",
+      "CARBON MONOXIDE DETECTOR",
       "FIELD FIRE",
       "FIRE ALARM",
       "FIRE CALL",
+      "MABAS",
       "MUTUAL AID REQUEST",
       "STRUCTURE FIRE",
       "VEHICLE FIRE"
