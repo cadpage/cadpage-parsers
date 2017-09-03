@@ -81,7 +81,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
                 "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! DESC:INFO! TYP:CODE! TYPN:CALL! CMT1:INFO/N! TIME:DATETIME UNS:UNIT " +
                                       "| DESC:CALL! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N+ " + 
                                       ") " +
-                "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDRCITY! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
+                "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
                   " Original_Location:PLACE2? CMT2:INFO/N CMT3:INFO/N CMT4:INFO/N CMT5:INFO/N Original_Location:PLACE2? CE:INFO? CMT2:INFO CALLER_STATEMENT:INFO? STATEMENT:INFO? TIME:TIME UNTS:UNIT XST:X XST2:X UNTS:UNIT XST:X XST2:X " + 
                 ") " + 
            ") END"
@@ -164,7 +164,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
   }
   
   private static final Pattern APT_PTN = Pattern.compile("\\b(?:APT|RM|UNIT) +([-A-Z0-9]+)$", Pattern.CASE_INSENSITIVE);
-  private class BaseAddressField extends AddressField {
+  private class BaseAddressField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       String apt = "";
@@ -173,7 +173,11 @@ public class DispatchPrintrakParser extends FieldProgramParser {
         apt = match.group(1);
         field = field.substring(0,match.start()).trim();
       }
-      super.parse(field, data);
+      if (field.startsWith("LATLONG")) {
+        parseAddress(field, data);
+      } else {
+        super.parse(field, data);
+      }
       data.strApt = append(data.strApt, " - ", apt);
     }
   }
