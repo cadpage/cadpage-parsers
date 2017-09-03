@@ -27,7 +27,7 @@ public class PAPikeCountyBParser extends DispatchA45Parser {
     body = SPECIAL_BRK_PTN.matcher(body).replaceAll(" ");
     body = MBLANK_PTN.matcher(body).replaceAll(" ");
 
-    if (!subject.equals("Pike CAD")) data.strSource = subject;
+    if (!subject.equals("Pike CAD") && !subject.equals("Pike 911 Notification")) data.strSource = subject;
     return super.parseMsg(body, data);
   }
   
