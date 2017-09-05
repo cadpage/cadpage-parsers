@@ -4033,23 +4033,6 @@ You then have to enter the same Active911 device activation code that you used t
 
 Once you do this, Active911 alerts will be picked up by Cadpage and will not be sent to the Active911 app. If you launch the Active911 app manually, it will query their servers and update the displayed call history after a few seconds.
 
-If you have any questions, or if there is anything you would like to see added to the Cadpage feature set, by all means feel free to contact us.
-
-Have a great day,
--Ken
-
-**************************************************************************
-* Old Cadpage users - better parser Suffolk County
-**************************************************************************
-
-We have recently put a lot of work into the Cadpage message parser you were using in Suffolk County, NY.  If you are currently using Cadpage, we hope you like the results.  If you are currently using the Android Active911 app with the Active911 service, you might want to give Cadpage a try.  The Cadpage and Active911 apps can both receive alerts from the Active911 service, but they use a different set of message parsers.  For most areas, this makes very little difference, but this Suffolk County message format is one of the more challenging ones, and you will probably find that Cadpage parsing is more reliable.
-
-If you are not currently using Cadpage and would like to try it. You can install Cadpage from the Google Play Store. Then open Cadpage settings and select
-Direct Paging Vendors > Active911 > Register
-You then have to enter the same Active911 device activation code that you used to register the Active911 app.
-
-Once you do this, Active911 alerts will be picked up by Cadpage and will not be sent to the Active911 app. If you launch the Active911 app manually, it will query their servers and update the displayed call history after a few seconds.
-
 If you have any problems with the way Cadpage displays or maps any alert, long press the alert and select "Report Problem" to send it to us.
 
 If you find you would rather use the Active911 app, make sure that you uninstall the Cadpage app.  Then open the Active911 app setting and press the "Connection to Active911" setting 6 times until it displays a "Renewing GCM ID" message.
@@ -4058,7 +4041,6 @@ If you have any questions, or if there is anything you would like to see added t
 
 Have a great day,
 -Ken
-
 **************************************************************************
 * Old Cadpage users - equivalent functionality
 **************************************************************************
@@ -4082,7 +4064,6 @@ If you have any questions, or if there is anything you would like to see added t
 
 Have a great day,
 -Ken
-
 **************************************************************************
 trouble paying through Google
 
