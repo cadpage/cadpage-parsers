@@ -14,12 +14,7 @@ public class FLSarasotaCountyParser extends FieldProgramParser {
   
   public FLSarasotaCountyParser() {
     super(CITY_CODES, "SARASOTA COUNTY", "FL",
-        "EVENT_TYPE:CALL! Location:ADDR/S AREA:MAP? MUN:CITY? TIME:TIME! Disp:UNIT");
-  }
-  
-  @Override
-  public int getMapFlags() {
-    return  MAP_FLG_SUPPR_LA;
+        "EVENT_TYPE:CALL! Location:ADDR/S AREA:MAP? MUN:CITY? TIME:TIME! LAT:GPS1? LONG:GPS2? Disp:UNIT");
   }
 
   @Override
@@ -28,8 +23,14 @@ public class FLSarasotaCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+  
+  @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("SARASOTA COUNTY ")) body = body.substring(16).trim();
+    body = body.replace("LONG:", " LONG:");
     return super.parseMsg(body, data);
   }
   
