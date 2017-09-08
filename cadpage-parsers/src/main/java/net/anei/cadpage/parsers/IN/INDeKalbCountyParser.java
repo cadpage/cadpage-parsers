@@ -1,15 +1,11 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA68Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class INDeKalbCountyParser extends DispatchA68Parser {
+public class INDeKalbCountyParser extends GroupBestParser {
   
   public INDeKalbCountyParser() {
-    super("DEKALB COUNTY", "IN");
+    super(new INDeKalbCountyAParser(), new INDeKalbCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "bhunter@co.dekalb.in.us";
-  }
+
 }
