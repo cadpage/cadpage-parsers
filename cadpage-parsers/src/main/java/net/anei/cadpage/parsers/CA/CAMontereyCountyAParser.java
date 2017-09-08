@@ -31,8 +31,8 @@ public class CAMontereyCountyAParser extends MsgParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (parseMsg3(body, data)) return true;
-    if (parseMsg2(body, data)) return true;
     if (parseMsg1(subject, body, data)) return true;
+    if (parseMsg2(body, data)) return true;
     return false;
   }
   
@@ -154,13 +154,21 @@ public class CAMontereyCountyAParser extends MsgParser {
       return true;
       
     }
-    
-    String unit = fp.get(30);
-    if (!fp.check(" ") || fp.check(" ")) return false;
-    String call = fp.get(10);
-    if (!fp.check(" ") || fp.check(" ")) return false;
-    String addr = fp.get(30);
-    if (!fp.checkBlanks(371)) return false;
+
+    String call, unit;
+    if (fp.checkAhead(30, " ") && !fp.checkAhead(31,  " ")) {
+      unit = fp.get(30);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      call = fp.get(10);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+    } else {
+      call = fp.get(10);
+      if (fp.check(" ")) return false;
+      unit = fp.get(30);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+    }
+    String addr = fp.get(40);
+    if (!fp.checkBlanks(361)) return false;
     String cross = fp.get();
     
     data.strSource = source;
