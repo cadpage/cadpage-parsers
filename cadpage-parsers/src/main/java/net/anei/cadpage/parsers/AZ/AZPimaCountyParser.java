@@ -28,7 +28,7 @@ public class AZPimaCountyParser extends SmartAddressParser {
     if (!match.matches()) return false;
     
     String addr = match.group(1).trim();
-    data.strCross = match.group(2).trim();
+    data.strCross = stripFieldStart(match.group(2).trim(), "/");
     data.strPlace = getOptGroup(match.group(3));
     data.strCall = match.group(4).trim();
     data.strUnit = match.group(5).trim();
