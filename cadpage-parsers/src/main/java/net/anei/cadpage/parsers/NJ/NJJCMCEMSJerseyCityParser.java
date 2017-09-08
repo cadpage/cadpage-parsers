@@ -14,6 +14,23 @@ import net.anei.cadpage.parsers.MsgParser;
  */
 public class NJJCMCEMSJerseyCityParser extends MsgParser {
   
+  public NJJCMCEMSJerseyCityParser() {
+    super("HUDSON COUNTY", "NJ");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "hudcen@libertyhcs.org,HUDCEN@barnabashealth.org,hudcen@rwjbh.org";
+  }
+  
+  @Override
+  public String getLocName() {
+    return "JCMC EMS Jersey City, NJ";
+  }
+  
+  private static final Pattern MASTER1 = Pattern.compile("Closest Hospital/Med Ctr to (.*?): (.*)");
+  private static final Pattern BREAK_PTN = Pattern.compile(" *\\| *");
+  
   private static final Pattern TIME_PTN = Pattern.compile("(.*?) +(\\d\\d?:\\d\\d [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
   
@@ -21,25 +38,20 @@ public class NJJCMCEMSJerseyCityParser extends MsgParser {
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("Times: (.*?) +Response Number:([-0-9]+)");
   private static final Pattern MASTER_PTN = Pattern.compile("Unit:(\\d+) +(.*?) Resp:(.*?) Apt\\.(.*?) /(.*?)S?Cross:(.*)");
   private static final Pattern APT_PLACE_PTN = Pattern.compile("(.+?) +(?!FRONT|REAR|FLR?\\b|\\d+)(.*)", Pattern.CASE_INSENSITIVE);
-  
-  
-  public NJJCMCEMSJerseyCityParser() {
-    super("HUDSON COUNTY", "NJ");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "hudcen@libertyhcs.org,HUDCEN@barnabashealth.org";
-  }
-  
-  @Override
-  public String getLocName() {
-    return "JCMC EMS Jersey City, NJ";
-  }
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    Matcher match = TIME_PTN.matcher(body);
+    
+    Matcher match = MASTER1.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ADDR INFO");
+      data.strCall = "ALERT";
+      parseAddress(match.group(1).trim(), data);
+      data.strSupp = BREAK_PTN.matcher(match.group(2).trim()).replaceAll("\n");
+      return true;
+    }
+    
+    match = TIME_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1);
       setTime(TIME_FMT, match.group(2), data);
