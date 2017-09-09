@@ -30,6 +30,7 @@ public class WVCabellCountyParser extends DispatchA67Parser {
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER_PTN.matcher(body);
     if (match.find()) body = body.substring(match.end()).trim();
+    body = body.replace("\n", "");
     if (!super.parseMsg(body,  data)) return false;
     
     // Mutual aid calls to Putnam county are different
