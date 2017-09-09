@@ -11,16 +11,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA57Parser extends FieldProgramParser {
   
-  private static final Pattern DELIM = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
-  
   public DispatchA57Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE City:CITY Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+");
+          "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE City:CITY Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+ " +
+          "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID UNIT! INFO/N+ )");
   }
+  
+  private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
+  private static final Pattern DELIM2 = Pattern.compile("\\s*;\\s*");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return super.parseFields(DELIM.split(body), data);
+    if (body.startsWith("Call Time:") || body.startsWith("Call Type:")) {
+      setSelectValue("1");
+      return super.parseFields(DELIM1.split(body), data);
+    }
+    
+    setSelectValue("2");
+    return super.parseFields(DELIM2.split(body), data);
   };
   
   @Override

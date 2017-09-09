@@ -12,18 +12,6 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
   WIKenoshaCountyDParser(String defState, String defCity) {
     super(defState, defCity);
   }
-  
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    int pt = data.strCross.lastIndexOf("Add");
-    if (pt >= 0) {
-      if ("Additional Location Info:".startsWith(data.strCross.substring(pt))) {
-        data.strCross = data.strCross.substring(0,pt).trim();
-      }
-    }
-    return true;
-  }
 
   @Override
   public String getFilter() {
@@ -34,5 +22,17 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
   public String getAliasCode() {
     return "WIKenoshaCountyD";
   }
-
+  
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("Dispatch")) return false;
+    if (!super.parseMsg(body, data)) return false;
+    int pt = data.strCross.lastIndexOf("Add");
+    if (pt >= 0) {
+      if ("Additional Location Info:".startsWith(data.strCross.substring(pt))) {
+        data.strCross = data.strCross.substring(0,pt).trim();
+      }
+    }
+    return true;
+  }
 }
