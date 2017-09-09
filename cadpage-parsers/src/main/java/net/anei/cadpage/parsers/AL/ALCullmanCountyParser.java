@@ -12,6 +12,6 @@ public class ALCullmanCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "25064-KS3YajNtu7AasQVa@alert.active911.com";
+    return "@alert.active911.com";
   }
 }
