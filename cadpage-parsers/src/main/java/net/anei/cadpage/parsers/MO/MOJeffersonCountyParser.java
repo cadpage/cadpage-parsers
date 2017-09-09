@@ -14,11 +14,19 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
  
   public MOJeffersonCountyParser() {
     super(CITY_CODES, "JEFFERSON COUNTY", "MO",
-          "Location:ADDR/S? TYPE_CODE:CALL! CALLER_ADDR:CADDR? Comments:INFO? Disp:UNIT%");
+          "( SELECT/R Times_For:SRC! Event_Number:ID! Call_Entered:SKIP! Event_Type:CALL! INFO/RN+ " +
+          "| Location:ADDR/S? TYPE_CODE:CALL! CALLER_ADDR:CADDR? Comments:INFO? Disp:UNIT% )");
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.startsWith("EVENT TIMES FOR ")) {
+      setSelectValue("R");
+      return super.parseFields(body.split("\n"), data);
+    }
+    
+    setSelectValue("");
     address = callerAddress = null;
     if (!super.parseMsg(body, data)) return false;
     if (address  == null) {
@@ -64,6 +72,7 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CADDR")) return new MyCallerAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -117,6 +126,14 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY INFO";
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" \t", " ").replaceAll("\t", "  ");
+      super.parse(field, data);
     }
   }
   
