@@ -966,7 +966,7 @@ Philomath, OR 97370
 If you do this, please include your Cadpage User email address (usually a gmail account) so I can make sure you get credit for it.
 
 If you need a 30-day extension, open the Cadpage settings and press Payment Status, then press the "I have an authorization code" button, and enter an authorization code of
-YGKJNUCA or ygkjnuca.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
+PGCFLBEA or pgcflbea.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
 Thanks for your support,
 Jean ~ Cadpage Administrator
