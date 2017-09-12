@@ -80,7 +80,7 @@ public class CAMontereyCountyAParser extends MsgParser {
     body = body.substring(match.end());
     
     FParser fp = new FParser(body);
-    int pt = fp.checkAhead("CROSS STREETS", 68, 92, 93, 94);
+    int pt = fp.checkAhead("CROSS STREETS", 68, 92, 93, 94, 142);
     if (pt >= 0) {
       
       if (pt == 68) {
@@ -99,6 +99,24 @@ public class CAMontereyCountyAParser extends MsgParser {
         data.strSource = source;
         data.strUnit = unit;
         data.strCall = call;
+        parseAddress(addr, data);
+        data.strCross = cross;
+        return true;
+      }
+      
+      if (pt == 142) {
+        setFieldList("SRC CALL UNIT ADDR APT X");
+        String call = fp.get(10);
+        if (fp.check(" ")) return false;
+        String unit = fp.get(30);
+        if (!fp.check(" ") || fp.check(" ")) return false;
+        String addr = fp.get(100);
+        if (!fp.check(" CROSS STREETS")) return false;
+        String cross = fp.get(50);
+        
+        data.strSource = source;
+        data.strCall = call;
+        data.strUnit = unit;
         parseAddress(addr, data);
         data.strCross = cross;
         return true;
@@ -153,6 +171,19 @@ public class CAMontereyCountyAParser extends MsgParser {
       data.strMap = map;
       return true;
       
+    }
+    
+    if (fp.checkAhead(243, "MAP PAGE")) {
+      String unit = fp.get(20);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      String call = fp.get(9);
+      if (fp.check(" ")) return false;
+      String addr = fp.get(50);
+      
+      data.strUnit = unit;
+      data.strCall = call;
+      parseAddress(addr, data);
+      return true;
     }
 
     String call, unit;
