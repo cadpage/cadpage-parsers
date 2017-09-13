@@ -11,9 +11,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NJSussexCountyAParser extends SmartAddressParser {
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}(?: .*)?");
   private static final Pattern MASTER_PTN = 
-    Pattern.compile("([-/A-Za-z0-9 ]+) @ (?:([^,]*?) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.)| )(?: (.*?)[-\\.]*)?(?: +Active Units: *(.*))?"); 
+    Pattern.compile("([-/A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
   private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
   private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
   
@@ -22,8 +23,8 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   }
   
   public NJSussexCountyAParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState);
-    setFieldList("ID CODE CALL ADDR APT CITY INFO UNIT");
+    super(defCity, defState);
+    setFieldList("ID CODE CALL BOX PLACE ADDR X APT CITY ST INFO UNIT");
   }
   
   @Override
@@ -33,7 +34,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@NPD.local";
+    return "@nwbcd.org,@englewoodpd.org,@enforsys.com";
   }
 
   @Override
@@ -45,6 +46,24 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       if (! SUBJECT_PTN.matcher(subject).matches()) return false;
       data.strCallId = subject;
     }
+
+    String trailInfo = "";
+    int pt = body.indexOf("\nActive Units:");
+    if (pt >= 0) {
+      String unit = body.substring(pt+14).trim();
+      body = body.substring(0, pt).trim();
+      
+      pt = unit.indexOf(" - ");
+      if (pt >= 0) {
+        trailInfo = unit.substring(pt+3).trim();
+        unit = unit.substring(0, pt).trim();
+      } else {
+        unit = stripFieldEnd(unit, "-");
+      }
+      data.strUnit = unit;
+    }
+    
+    
     body = body.replace('\n', ' ');
     Matcher match = MASTER_PTN.matcher(body);
     if (!match.matches()) return false;
@@ -55,17 +74,24 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       data.strCall = call;
     }
     
-    data.strPlace = getOptGroup(match.group(2));
-    parseAddress(StartType.START_ADDR, FLAG_NO_CITY | FLAG_ANCHOR_END | FLAG_RECHECK_APT, match.group(3).trim(), data);
-    String city = getOptGroup(match.group(4));
-    String sInfo = getOptGroup(match.group(5));
-    data.strUnit = getOptGroup(match.group(6));
+    data.strBox = getOptGroup(match.group(2));
+    data.strPlace = getOptGroup(match.group(3));
+    parseAddress(StartType.START_ADDR, FLAG_NO_CITY | FLAG_ANCHOR_END | FLAG_RECHECK_APT, match.group(4).trim(), data);
+    String city = getOptGroup(match.group(5));
+    String sInfo = getOptGroup(match.group(6));
     
-    int pt = city.lastIndexOf(',');
+    pt = city.lastIndexOf(',');
     if (pt >= 0) {
       data.strApt = append(data.strApt, ", ", city.substring(0,pt).trim());
       city = city.substring(pt+1).trim();
     }
+    
+    match = CITY_ST_ZIP_PTN.matcher(city);
+    if (match.matches()) {
+      city = match.group(1).trim();
+      data.strState = getOptGroup(match.group(2));
+    }
+    
     if (city.equals("CMCH")) city = "CAPE MAY COURT HOUSE";
     data.strCity = city;
     
@@ -108,117 +134,17 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       data.strSupp = sInfo;
     }
     data.strCity = stripFieldEnd(data.strCity, " BOROUGH");
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
     data.strSupp = LEAD_INFO_JUNK_PTN.matcher(data.strSupp).replaceFirst("");
+    data.strSupp = append(data.strSupp, "\n", trailInfo);
     return true;
   }
   
-  private static final String[] CITY_LIST = new String[]{
-
-    "ANDOVER",
-    "ANDOVER BOROUGH",
-    "BRANCHVILLE",
-    "BYRAM CENTER",
-    "CRANDON LAKES",
-    "CRANDON LAKES",
-    "FRANKFORD",
-    "FREDON",
-    "GLENWOOD",
-    "HIGHLAND LAKES",
-    "HOPATCONG",
-    "LAFAYETTE",
-    "LAKE MOHAWK",
-    "MCAFEE",
-    "NEWTON",
-    "OGDENSBURG",
-    "ROSS CORNER",
-    "SPARTA",
-    "STANHOPE",
-    "STILLWATER",
-    "SUSSEX",
-    "VERNON CENTER",
-    "VERNON VALLEY",
-
-    "ANDOVER TWP",
-    "BYRAM TWP",
-    "FRANKFORD TWP",
-    "FRANKLIN",
-    "FREDON TWP",
-    "GREEN TWP",
-    "HAMBURG",
-    "HAMPTON TWP",
-    "HARDYSTON TWP",
-    "LAFAYETTE TWP",
-    "MONTAGUE TWP",
-    "SANDYSTON TWP",
-    "SPARTA TWP",
-    "STILLWATER TWP",
-    "VERNON TWP",
-    "WALPACK TWP",
-    "WANTAGE TWP",
-    
-    "WARREN COUNTY",
-      
-    "ALLAMUCHY",
-    "ALLAMUCHY TWP",
-    "ALPHA",
-    "ANDERSON",
-    "ASBURY",
-    "BEATYESTOWN",
-    "BELVIDERE",
-    "BLAIRSTOWN",
-    "BLAIRSTOWN TWP",
-    "BRAINARDS",
-    "BRASS CASTLE",
-    "BRIDGEVILLE",
-    "BROADWAY",
-    "BROOKFIELD",
-    "BUTTZVILLE",
-    "CHANGEWATER",
-    "COLUMBIA",
-    "DELAWARE",
-    "DELAWARE PARK",
-    "FINESVILLE",
-    "FRANKLIN TWP",
-    "FRELINGHUYSEN TWP",
-    "GREAT MEADOWS",
-    "GREENWICH",
-    "GREENWICH TWP",
-    "HACKETTSTOWN",
-    "HAINESBURG",
-    "HARDWICK",
-    "HARDWICK TWP",
-    "HARMONY",
-    "HARMONY TWP",
-    "HOPE",
-    "HOPE TWP",
-    "HUTCHINSON",
-    "INDEPENDENCE TWP",
-    "JOHNSONBURG",
-    "KNOWLTON TWP",
-    "LIBERTY TWP",
-    "LOPATCONG OVERLOOK",
-    "LOPATCONG TWP",
-    "MANSFIELD TWP",
-    "MARKSBORO",
-    "MOUNT HERMON",
-    "MOUNTAIN LAKE",
-    "NEW VILLAGE",
-    "OXFORD",
-    "OXFORD TWP",
-    "PANTHER VALLEY",
-    "PHILLIPSBURG",
-    "POHATCONG TWP",
-    "PORT COLDEN",
-    "PORT MURRAY",
-    "SILVER LAKE",
-    "STEWARTSVILLE",
-    "UPPER POHATCONG",
-    "UPPER STEWARTSVILLE",
-    "VIENNA",
-    "WASHINGTON",
-    "WASHINGTON TWP",
-    "WHITE TWP"
-  };
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (apt.startsWith("(")) return true;
+    return super.isNotExtraApt(apt);
+  }
   
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       // "1045F",    "1045F",

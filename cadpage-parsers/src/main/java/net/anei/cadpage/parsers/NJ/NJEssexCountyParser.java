@@ -8,6 +8,6 @@ public class NJEssexCountyParser extends NJSussexCountyAParser {
   
   @Override
   public String getFilter() {
-    return "@NCPD.local,@northcaldwell.org";
+    return "@northcaldwell.org,mail@westcaldwellpd.org";
   }
 }
