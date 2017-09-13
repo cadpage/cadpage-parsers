@@ -17,12 +17,12 @@ public class PACambriaCountyParser extends FieldProgramParser {
   
   public PACambriaCountyParser() {
     super(CITY_CODES, "CAMBRIA COUNTY", "PA",
-           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT ) Sta:UNIT");
+           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS");
   }
   
   @Override
   public String getFilter() {
-    return "alerts@cambria.ealertgov.com,Cambria 9-1-1";
+    return "alerts@cambria.ealertgov.com,Cambria 9-1-1,messaging@iamresponding.com,90360";
   }
 
   @Override
@@ -37,6 +37,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
     body = body.replace("Location:", "Add:");
     String[] flds = body.split("\\|");
     if (flds.length < 5) flds = body.split("\n\\|?");
+    if (flds.length < 5) flds = body.split("  ");
     if (flds.length >= 5) {
       return parseFields(flds, data);
     }
@@ -52,9 +53,45 @@ public class PACambriaCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("DATE")) return new MyDateField();
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+  
+  private static final Pattern DATE_PTN1 = Pattern.compile("\\d\\d/\\d\\d/\\d\\d");
+  private static final Pattern DATE_PTN2 = Pattern.compile("(\\d\\d)(\\d\\d)(\\d\\d)");
+  private class MyDateField extends DateField {
+    @Override
+    public void parse(String field, Data data) {
+      if (DATE_PTN1.matcher(field).matches()) {
+        super.parse(field, data);
+      } else {
+        Matcher match = DATE_PTN2.matcher(field);
+        if (!match.matches()) abort();
+        super.parse(match.group(1)+'/'+match.group(2)+'/'+match.group(3), data);
+      }
+    }
+  }
+  
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Za-z0-9]+)-(.*)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2).trim();
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
   
   private static final Pattern NOT_CITY_PTN = Pattern.compile(".*EXIT.*");
