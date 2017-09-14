@@ -11,7 +11,12 @@ public class MIWashtenawCountyParser extends FieldProgramParser {
 
   public MIWashtenawCountyParser() {
     super("WASHTENAW COUNTY", "MI", 
-          "( ADDR_CITY_ST | ADDR CITY_ST_ZIP ) EMPTY APT! PRI? INFO+ Cross:X! INFO+");
+          "Fire_Run:ID? ( ADDR_CITY_ST | ADDR CITY_ST_ZIP ) EMPTY APT! PRI? INFO+ Cross:X! INFO+");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "cadpaging@emergenthealth.org";
   }
   
   @Override
