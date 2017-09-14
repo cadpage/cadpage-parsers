@@ -37,7 +37,7 @@ public class ILMacoupinCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static Pattern ADDR_SRC_INFO_PTN = Pattern.compile("(.*?)(?:,([ A-Z]+))?//([A-Z]{2,5}:[A-Z0-9 :,]+)//(.*)");
+  private static Pattern ADDR_SRC_INFO_PTN = Pattern.compile("(.*?)(?:,([ A-Z]+))?//([_A-Z]{2,6}:[_A-Z0-9 :,]+)//(.*)");
   private class MyAddressSrcInfoField extends Field {
     @Override
     public boolean canFail() {
