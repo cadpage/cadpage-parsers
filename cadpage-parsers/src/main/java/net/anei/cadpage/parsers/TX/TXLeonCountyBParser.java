@@ -17,6 +17,6 @@ public class TXLeonCountyBParser extends DispatchA64Parser{
   }
 
   public String getFilter() {
-    return "cadalerts@eforcesoftware.com,cadalerts@messaging.eforcesoftware.net";
+    return "cadalerts@eforcesoftware.com,cadalerts@messaging.eforcesoftware.net,cadalerts@messaging.eforcesoftware.net";
   }
 }
