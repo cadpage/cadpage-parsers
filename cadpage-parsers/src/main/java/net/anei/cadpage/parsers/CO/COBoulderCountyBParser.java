@@ -11,7 +11,8 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class COBoulderCountyBParser extends FieldProgramParser {
 
 	public COBoulderCountyBParser() {
-		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! | CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT% )");
+		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! UNITS:UNIT! Map_Page:MAP! " + 
+	                                "| CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT% )");
 	}
 	
 	@Override
@@ -29,7 +30,7 @@ public class COBoulderCountyBParser extends FieldProgramParser {
   }
 
   private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
-	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|BLD|APT|LOC|INFO|TIME|UNITS):");
+	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|BLD|APT|LOC|INFO|TIME|UNITS|Map Page):");
 
 	public boolean parseMsg(String body, Data data) {
 	  Matcher mat = SRC_ID.matcher(body);
