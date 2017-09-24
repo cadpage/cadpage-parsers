@@ -64,7 +64,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       return true;
     }
     
-    setFieldList("ID INFO CODE CALL ADDR PLACE APT X MAP CH SRC UNIT");
+    setFieldList("ID INFO CODE CALL ADDR PLACE APT X MAP CH CITY GPS UNIT");
 
     data.strSupp = p.get(8);
     int fLen = p.checkAhead("APT:", 101, 100);
@@ -85,16 +85,25 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     if (map != null) {
       data.strMap = map;
       fLen = p.checkAhead("Units:", 35, 39);
+      if (fLen < 0) fLen = p.checkAhead("GPS:", 35, 39);
       if (fLen < 0) return false;
       data.strChannel = p.get(fLen-30);
-      data.strSource = p.get(30);
+      data.strCity = p.get(30);
+      if (data.strCity.equalsIgnoreCase("Unincorporated")) data.strCity = "";
+      if (p.check("GPS:")) {
+        String gps = p.get(3)+'.'+p.get(6);
+        if (!p.checkBlanks(3)) return false;
+        setGPSLoc(gps+','+p.get(3)+'.'+p.get(6), data);
+        if (!p.checkBlanks(2)) return false;
+      }
       if (!p.check("Units:")) return false;
       data.strUnit = p.get();
       return true;
       
     } else {
       data.strMap = p.get(15);
-      data.strSource = p.get(30);
+      data.strCity = p.get(30);
+      if (data.strCity.equalsIgnoreCase("Unincorporated")) data.strCity = "";
       if (!p.check("Units:")) return false;
       data.strUnit = p.get();
       return true;
