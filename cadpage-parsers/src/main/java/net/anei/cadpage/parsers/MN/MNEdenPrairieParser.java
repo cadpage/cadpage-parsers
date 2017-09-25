@@ -125,10 +125,56 @@ public class MNEdenPrairieParser extends SmartAddressParser {
   );
   
   private static String[] CITY_LIST = new String[]{
+
+      // Cities
       "BLOOMINGTON",
+      "BROOKLYN CENTER",
+      "BROOKLYN PARK",
+      "CHAMPLIN",
+      "CORCORAN",
+      "CRYSTAL",
+      "DAYTON",
+      "DEEPHAVEN",
       "EDEN PRAIRIE",
       "EDINA",
-      "MINNETONKA"
+      "EXCELSIOR",
+      "GOLDEN VALLEY",
+      "GREENFIELD",
+      "GREENWOOD",
+      "HANOVER",
+      "HOPKINS",
+      "INDEPENDENCE",
+      "LONG LAKE",
+      "LORETTO",
+      "MAPLE GROVE",
+      "MAPLE PLAIN",
+      "MEDICINE LAKE",
+      "MEDINA",
+      "MINNEAPOLIS",
+      "MINNETONKA",
+      "MINNETONKA BEACH",
+      "MINNETRISTA",
+      "MOUND",
+      "NEW HOPE",
+      "ORONO",
+      "OSSEO",
+      "PLYMOUTH",
+      "RICHFIELD",
+      "ROBBINSDALE",
+      "ROCKFORD",
+      "ROGERS",
+      "SHOREWOOD",
+      "SPRING PARK",
+      "ST ANTHONY VILLAGE",
+      "ST BONIFACIUS",
+      "ST LOUIS PARK",
+      "TONKA BAY",
+      "WAYZATA",
+      "WOODLAND",
+
+      // Unorganized territory
+      "FORT SNELLING"
+
   };
 
 }
