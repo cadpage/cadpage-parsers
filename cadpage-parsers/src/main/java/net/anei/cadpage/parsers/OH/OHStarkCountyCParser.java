@@ -2,21 +2,23 @@ package net.anei.cadpage.parsers.OH;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA39Parser;
 
+/**
+ * Stark County C, OH
+ */
 public class OHStarkCountyCParser extends DispatchA39Parser {
 
   public OHStarkCountyCParser() {
     super(CITY_LIST, "STARK COUNTY", "OH");
   }
-  
+
   @Override
-  public String getFilter() { 
-    return "notifications@civicready.com"; 
+  public String getFilter() {
+    return "dharpster@redcenter.us,nws@starksheriff.org,dispatch@alliancepolice.com";
   }
+  static final String[] CITY_LIST = new String[]{
 
-  private static final String[] CITY_LIST = new String[]{
-
-   //Cities
-
+      //Cities
+      
       "ALLIANCE",
       "CANAL FULTON",
       "CANTON",
@@ -24,7 +26,7 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
       "MASSILLON",
       "NORTH CANTON",
 
-  //Villages
+      //Villages
 
       "BEACH CITY",
       "BREWSTER",
@@ -40,7 +42,7 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
       "WAYNESBURG",
       "WILMOT",
 
-  //Townships
+      //Townships
 
       "BETHLEHEM",
       "CANTON",
@@ -60,7 +62,7 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
       "TUSCARAWAS",
       "WASHINGTON",
 
-  //Census-designated places
+      //Census-designated places
 
       "GREENTOWN",
       "MARLBORO",
@@ -70,7 +72,7 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
       "ROBERTSVILLE",
       "UNIONTOWN",
 
-  //Other unincorporated communities
+      //Other unincorporated communities
 
       "AVONDALE",
       "CAIRO",
@@ -91,5 +93,9 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
       "PIGEON RUN",
       "SIPPO",
       "WACO"
-  };
+
+
+    };
+
 }
+

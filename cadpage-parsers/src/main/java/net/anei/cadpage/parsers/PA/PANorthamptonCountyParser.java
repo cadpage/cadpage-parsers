@@ -1,6 +1,9 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +55,7 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
       if (data.strCity.length() == 0) data.strCity = data.strName;
       data.strName = "";
     }
-    if (data.strCity.equals("WARREN COUNTY")) data.strState = "NJ";
+    if (NJ_CITY_TABLE.contains(data.strCity.toUpperCase())) data.strState = "NJ";
     return true;
   }
   
@@ -399,8 +402,16 @@ public class PANorthamptonCountyParser extends DispatchB2Parser {
     // Warren County
     "WARREN COUNTY",
     "WARREN CO",
-    "WARREN"
+    "WARREN",
+    "POHATCONG TWP"
   };
+  
+  private static final Set<String> NJ_CITY_TABLE = new HashSet<String>(Arrays.asList(
+      "WARREN COUNTY",
+      "WARREN CO",
+      "WARREN",
+      "POHATCONG TWP"
+  ));
   
   private static final Properties CITY_ABRV_TABLE = buildCodeTable(new String[]{
       "HAN LE CO",            "HANOVER TWP, LEHIGH COUNTY",

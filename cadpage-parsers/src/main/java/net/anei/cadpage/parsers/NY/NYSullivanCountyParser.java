@@ -10,16 +10,17 @@ public class NYSullivanCountyParser extends FieldProgramParser {
   
     public NYSullivanCountyParser() {
       super("SULLIVAN COUNTY", "NY",
-             "SKIP Type:CALL! Loc:ADDR! X:X V:CITY CN:NAME");
+             "SKIP Type:CALL! Loc:ADDR! X:X V:CITY CN:PLACE");
     }
     
     @Override
     public String getFilter() {
-      return "911@co.sullivan.ny.us,messaging@iamresponding.com";
+      return "911@co.sullivan.ny.us,messaging@iamresponding.com,777";
     }
 
 	  @Override
 	  protected boolean parseMsg(String subject, String body, Data data) {
+	    
 	    do {
 	      if (subject.equalsIgnoreCase("911 Page")) break;
 	      
@@ -28,9 +29,17 @@ public class NYSullivanCountyParser extends FieldProgramParser {
 	        break;
 	      }
 	      
+	      if (body.startsWith("Sullivan County 911: (911 Page)")) {
+	        body = body.substring(31).trim();
+	        break;
+	      }
+	      
 	      return false;
 	      
 	    } while (false);
+	    
+	    int pt = body.indexOf('\n');
+	    if (pt >= 0) body = body.substring(0,pt).trim();
 	    return super.parseMsg(body, data);
 	  }
 	  

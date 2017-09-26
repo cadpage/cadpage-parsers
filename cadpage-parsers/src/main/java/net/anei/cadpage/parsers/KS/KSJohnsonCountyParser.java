@@ -14,7 +14,7 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
   public KSJohnsonCountyParser() {
     super("JOHNSON COUNTY", "KS",
           "( Address_UpdateIncident_#:ID! Add:ADDR! Apt:APT! " +
-          "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X ) END");
+          "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X TAC:CH ) END");
   }
   
   @Override

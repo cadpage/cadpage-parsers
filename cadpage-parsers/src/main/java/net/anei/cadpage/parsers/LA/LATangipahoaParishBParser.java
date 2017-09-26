@@ -15,7 +15,7 @@ public class LATangipahoaParishBParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "HFD@hammond.org";
+    return "HFD@hammond.org,hammondfire@pagingpts.com";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,3}FD");

@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,7 +15,7 @@ public class OHButlerCountyBParser extends FieldProgramParser {
 
   public OHButlerCountyBParser () {
     super(CITY_CODES, "BUTLER COUNTY", "OH",
-          "Loc:ADDR/S! TYPE:CALL! TIME:TIME! Comm:INFO");
+          "Loc:ADDR/S! TYPE:CALL1! SUB_TYPE:CALL/SDS? TIME:TIME! Comm:INFO");
   }
   
   @Override
@@ -22,27 +24,48 @@ public class OHButlerCountyBParser extends FieldProgramParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    do {
+      if (subject.equals("IPS I/Page Notification")) break;
+      
+      if (body.startsWith("IPS I/Page Notification ")) {
+        body = body.substring(24).trim();
+        break;
+      }
+      
+      return false;
+    } while (false);
+    
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0, pt).trim();
+    body = body.replace("SUB_TYPE:", "SUB TYPE:");
+    body = body.replace("TIME:", " TIME:");
     return super.parseMsg(body, data);
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL1")) return new MyCall1Field();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
+  private static final Pattern ADDR_APT_PLACE_PTN = Pattern.compile("(.*?)(?:[,;] *(.*?))?(?:: @ *(.*))?");
   private class MyAddressField extends AddressField {
     
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strPlace = p.getLastOptional(": @");
-      super.parse(p.get(), data);
+      Matcher match = ADDR_APT_PLACE_PTN.matcher(field);
+      String apt = "";
+      if (match.matches()) {
+        field =  match.group(1).trim();
+        apt = getOptGroup(match.group(2));
+        data.strPlace = getOptGroup(match.group(3));
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
@@ -51,10 +74,10 @@ public class OHButlerCountyBParser extends FieldProgramParser {
     }
   }
 
-  private class MyCallField extends CallField {
+  private class MyCall1Field extends CallField {
     @Override 
     public void parse(String field, Data data) {
-      data.strCall = append(convertCodes(field, CALL_CODES), " ", data.strCall);      
+      super.parse(convertCodes(field, CALL_CODES), data);      
     }
     
     @Override
