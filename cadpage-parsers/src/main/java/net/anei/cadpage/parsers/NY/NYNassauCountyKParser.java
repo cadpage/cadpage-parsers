@@ -17,7 +17,7 @@ public class NYNassauCountyKParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,wantaghpaging@gmail.com,paging@wantaghfireinfo.com";
+    return "@firerescuesystems.xohost.com,wantaghpaging@gmail.com,@wantaghfireinfo.com";
   }
   
   @Override
