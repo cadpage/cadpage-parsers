@@ -325,6 +325,24 @@ But, life gets so much simpler for all concerned if you switch to using direct p
 Take care,
 -Ken
 
+*****************************************************************************
+Registering with CodeMessaging
+
+
+Open Cadpage Settings and select
+Direct Paging Vendors > CodeMessaging > Register
+Click the "Register" button under the "Yes my department receives
+messages from CodeMessaging.net"
+Click the "Yes" button under "Do you currently receive messages from
+CodeMessaging.net".
+Enter your email address and phone number and click "Submit"
+CodeMessage should send you an email with a 4 digit validation code.
+Enter this validation code and click validate.
+This should take you to your profile page with a list of configured
+devices.  Make sure the entry labeled "CADpage Direct" is enabled and
+will receive CAD Dispatches.  Then click the "Finish" button.
+
+
 ******************************************************************
 
 Handcent is the culprit.  They insist on being the top dog in the SMS queue, meaning they control whether Cadpage gets to see SMS text pages rather than the other way around.
