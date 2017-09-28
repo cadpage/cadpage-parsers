@@ -11,7 +11,7 @@ public class SCGreenwoodCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "greenwood.county@greenwoodsc.gov";
+    return "greenwood.county@greenwoodsc.gov,donotreplygwdcosheriff@greenwoodsc.gov";
   }
 
   @Override
