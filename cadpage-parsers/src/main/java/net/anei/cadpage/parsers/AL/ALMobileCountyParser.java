@@ -152,7 +152,6 @@ public class ALMobileCountyParser extends SmartAddressParser {
     if (endAddr) flags |= FLAG_ANCHOR_END;
     parseAddress(StartType.START_ADDR, flags, addr, data);
     if (!addr.startsWith("LL(") && data.strCity.length() == 0) return false;
-    if (data.strCity.equals("MOBILE COUNTY")) data.strCity = "";
     
     // So  many different choices
     
