@@ -46,7 +46,7 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("SIMPLE")) return new SkipField("Simple|Complex", true);
-    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]+\\d+[A-Z]?|BTFDTA|Mutual Aid)\\b[, ]*)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]+\\d+[A-Z]?|[A-Z]+(?:FD|FDEN|FDCH|FDGR|FDRE|FDTA|FDTR|FOAM)|(?:NLF|OSOLO|POR)[A-Z]+|BTFDTA|BUTWPTA|CFDMULE|CLETWPCH|CLETWPTR|EDWEN|EDWTA|NLFDPOLK|SBFINVST|SBPConv|SMCAS|STARKEAMB|X+|mobile\\d+|Mutual Aid)\\b[, ]*)+", true);
     if (name.equals("DATEMARK")) return new SkipField("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
