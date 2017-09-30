@@ -37,7 +37,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|BELDM|GRATM|NEWYM|SLR)\\b,?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|Temp\\d+|ALLRESCUES|AERO|BELDM|GRATM|MECOM|MTRT|NEWYM|OTHRM|ROCKM|SLR)\\b,?)+", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DUPADDR")) return new MyDupAddressField();
     if (name.equals("CITY")) return new MyCityField();
