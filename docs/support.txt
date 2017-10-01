@@ -21,7 +21,7 @@ then enable the "Contact" permission.
 Then, open Cadpage Settings and select
 Payment Status > Recalculate Payment Status
 
-If that does not work, select "I can't afford $9.99" to send us a new
+If that does not work, select "I cannot afford $9.99" to send us a new
 request for a free subscription.
 
 Good luck,
