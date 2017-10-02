@@ -6,13 +6,17 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class PAColumbiaCountyBParser extends FieldProgramParser {
   
   public PAColumbiaCountyBParser() {
     super(CITY_CODES, "COLUMBIA COUNTY", "PA", 
-          "( DATETIME1! Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1! GPS! Inc_Code:CALL! SubType:CALL/SDS! Dispatch_Time:DATETIME Responding_Unit(s):EMPTY! UNIT! CFS#:ID! DR_ID+? " + 
-          "| DR_ID+? ADDRCITY/S GPS CALL! Disp_Time:DATETIME! Responding_Unit(s):EMPTY! UNIT! ) Comments:INFO/N+");
+          "( SELECT/1 DATETIME1 Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1? Caller:NAME? Phone#:PHONE! Callback#:PHONE/L! GPS! Inc_Code:CODE_CALL1! SubType:CALL/SDS! INFO/N+ " + 
+          "| ( DR_ID DR_ID+? ADDRCITY/S GPS ( CODE_CALL3 | CODE_CALL2! CALL/SDS ) " + 
+            "| ADDRCITY/S ( CODE_CALL2 CALL/SDS DR_ID+? GPS! " +
+                         "| CODE_CALL3 DR_ID+? GPS! " +
+                         "| GPS ( CODE_CALL2! CALL/SDS! | CODE_CALL3! ) ) ) Disp_Time:DATETIME! Responding_Unit(s):EMPTY! UNIT! Comments:INFO/N+ )");
     setupProtectedNames("TWO AND ONE HALF");
     setupCities(CITY_LIST);
   }
@@ -28,14 +32,23 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS (\\d{6}-\\d{1,3})");
+  private static final Pattern BRK_PTN = Pattern.compile("\n|(?<!\n)(?=Disp Time:)");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
+    if (subject.equals("Archived CFS Report")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("1");
+    } else {
+      Matcher match = SUBJECT_PTN.matcher(subject);
+      if (!match.matches()) return false;
+      data.strCallId = match.group(1);
+      setSelectValue("2");
+      body = body.replace("Disp Time:", " Disp Time:");
+    }
     
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strCallId = match.group(1);
-    
-    return parseFields(body.split("\n"), data);
+    return parseFields(BRK_PTN.split(body), data);
   }
   
   @Override
@@ -47,6 +60,9 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME1")) return new SkipField("[A-Z][a-z]{2} [A-Z][a-z]{2} \\d\\d \\d{4} \\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("CODE_CALL1")) return new MyCodeCall1Field();
+    if (name.equals("CODE_CALL2")) return new MyCodeCall2Field();
+    if (name.equals("CODE_CALL3")) return  new MyCodeCall3Field();
     if (name.equals("X1")) return new MyCrossField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
@@ -81,12 +97,16 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       
       data.strCity = stripFieldEnd(data.strCity, " B");
       if (data.strCity.endsWith(" T")) data.strCity += "WP";
+      data.strCity = data.strCity.replace("  ", " ");
       
       if (data.strCity.length() == 0) {
         match = ADDR_CITY_PTN.matcher(data.strAddress);
         if (match.matches()) {
-          data.strAddress = match.group(1).trim();
-          data.strCity =  match.group(2).trim();
+          String city = match.group(2).trim();
+          if (isCity(city)) {
+            data.strAddress = match.group(1).trim();
+            data.strCity =  convertCodes(city, CITY_CODES);
+          }
         }
       }
     }
@@ -94,6 +114,87 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     @Override
     public void setNoCity(boolean noCity) {}
     
+  }
+  
+  private static final Pattern CALL_CODE1_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*)");
+  private class MyCodeCall1Field extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CALL_CODE1_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCode = match.group(1);
+      data.strCall = match.group(2).trim();
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private static final Pattern CALL_CODE2_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*) :");
+  private class MyCodeCall2Field extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CALL_CODE2_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCode = match.group(1);
+      data.strCall = match.group(2).trim();
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private static final Pattern CALL_CODE3_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*?) : (.*)");
+  private class MyCodeCall3Field extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CALL_CODE3_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCode = match.group(1);
+      data.strCall = append(match.group(2).trim(), " - ", match.group(3).trim());
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
   
   private static final Pattern GPS_PTN = Pattern.compile("http://maps.google.com/maps\\?q=(.*?)%20(.*?)");
@@ -164,12 +265,17 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "HOLLENBACK TWP",
     "HUNLOCK TWP",
     "HUNTINGTON TWP",
+    "MAHONING TWP",
+    "NESCOPECK TWP",
+    "SALEM TWP",
     "FAIRMOUNT",
     "FAIRVIEW",
     "FOSTER",
     "FRANKLIN",
     "HANOVER",
     "HAZLE",
+    "HAZLETON",
+    "HAZLETON CITY",
     "HOLLENBACK",
     "HUNLOCK",
     "HUNTINGTON",
@@ -178,6 +284,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "KINGSTON",
     "LAKE",
     "LEHMAN",
+    "MAHONING",
     "NESCOPECK",
     "NEWPORT",
     "PITTSTON",
@@ -246,6 +353,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "MAYBERRY TWP",
     "VALLEY TWP",
     "WEST HEMLOCK TWP",
+    "DANVILLE",
     
     // Northumberland County
     "COAL TWP",
@@ -271,6 +379,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WEST CAMERON TWP",
     "WEST CHILLISQUAQUE TWP",
     "ZERBE TWP",
+    "RIVERSIDE",
+    "SUNBURY",
     
     // Scuylkill County
     "BARRY TWP",
@@ -323,9 +433,52 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   };
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "GRW TWP",       "GREENWOOD TWP",
-      "NESCOTWP",      "NESCOPECK TWP",
-      "HUNINGTON TWP", "HUNTINGTON TWP"
+      "ANTHONY",        "ANTHONY TWP",
+      "BEAVER",         "BEAVER TWP",
+      "BLACKCREEK TWP", "BLACK CREEK TWP",
+      "BLOOM",          "BLOOMSBURG",
+      "BR CRK B",       "BRIAR CREEK",
+      "BR CRK T",       "BRIAR CREEK TWP",
+      "CATA B",         "CATAWISSA",
+      "CATA T",         "CATAWISSA TWP",
+      "CLEVELAND",      "CLEVELAND TWP",
+      "COOPER",         "COOPER TWP",
+      "DAVIDSON",       "DAVIDSON TWP",
+      "DERRY",          "DERRY TWP",
+      "Derrry To",      "DERRY TWP",
+      "FAIRMONT",       "FAIRMOUNT TWP",
+      "FAIRMONT TWP",   "FAIRMOUNT TWP",
+      "FAIRMOUNT",      "FAIRMOUNT TWP",
+      "FRANKLIN",       "FRANKLIN TWP",
+      "FISH CRK",       "FISHING CREEK TWP",
+      "GRW TWP",        "GREENWOOD TWP",
+      "HEMLOCK",        "HEMLOCK TWP",
+      "HUNINGTON TWP",  "HUNTINGTON TWP",
+      "HOLLENBACH TWP", "HOLLENBACK TWP",
+      "JACKSON",        "JACKSON TWP",
+      "LIBERTY",        "LIBERTY TWP",
+      "LIMESTONE",      "LIMESTONE TWP",
+      "LOCUST",         "LOCUST TWP",
+      "MADISON",        "MADISON TWP",
+      "MAHONING",       "MAHONING TWP",
+      "MAIN",           "MAIN TWP",
+      "MIFFLIN",        "MIFFLIN TWP",
+      "MT PLEAS",       "MT PLEASANT TWP",
+      "N CENTRE",       "N CENTRE TWP",
+      "NESCOTWP",       "NESCOPECK TWP",
+      "OVILLE B",       "ORANGEVILLE",
+      "PINE",           "PINE TWP",
+      "ROAR CRK",       "ROARING CREEK TWP",
+      "RUSH",           "RUSH TWP",
+      "S CENTRE",       "S CENTRE TWP",
+      "SCOTT",          "SCOTT TWP",
+      "Scott  To",      "SCOTT TWP",
+      "SUGARLOAF",      "SUGARLOAF TWP",
+      "STILLWAT",       "STILLWATER",
+      "W HEMLOCK",      "WEST HEMLOCK TWP",
+      "WASHNGTON",      "WASHINGTON TWP",
+      
+      "FAIRMOUNT TWP LUZE CO",    "FAIRMOUNT TWP"
   });
 
 }
