@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.WV;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +11,8 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class WVKanawhaCountyParser extends SmartAddressParser {
   
-  private static final Pattern MASTER = Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?) reported at (.+?)(?:@(.*))? in (.+?)(?:\\((.*?)\\))? on (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)(?: +Call (?:#|Number:) *(.*))?");
+  private static final Pattern MASTER = 
+      Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?) reported at (.+?)(?:@(.*))?(?:/? in |, +)(.+?)(?:\\((.*?)\\))? on (\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d [AP]M)?)(?: +Call (?:#|Number:) *(.*))?");
   
   public WVKanawhaCountyParser() {
     super("KANAWHA COUNTY", "WV");
@@ -21,9 +24,12 @@ public class WVKanawhaCountyParser extends SmartAddressParser {
     return "@metro911.org";
   }
   
+  private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
     
+    body = body.replace('\n', ' ');
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
@@ -36,7 +42,12 @@ public class WVKanawhaCountyParser extends SmartAddressParser {
     }
     data.strPlace = append(data.strPlace, " - ", getOptGroup(match.group(5)));
     data.strDate = match.group(6);
-    data.strTime = match.group(7);
+    String time  = match.group(7);
+    if (time.endsWith("M")) {
+      setTime(TIME_FMT, time, data);
+    } else {
+      data.strTime = time;
+    }
     data.strCallId = getOptGroup(match.group(8));
     return true;
   }
