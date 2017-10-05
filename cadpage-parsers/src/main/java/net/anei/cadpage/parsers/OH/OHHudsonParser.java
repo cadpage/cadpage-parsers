@@ -20,10 +20,13 @@ public class OHHudsonParser extends FieldProgramParser {
     return "@hudson.oh.us";
   }
   
+  private static final Pattern MARKER = Pattern.compile("HudsonCAD: ?CAD System +");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
-    if (! body.startsWith("HudsonCAD:CAD System ")) return false;
-    body = body.substring(21).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end());
     return parseFields(body.split(","), data);
   }
   
