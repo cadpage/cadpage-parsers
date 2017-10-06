@@ -18,6 +18,11 @@ public class SCYorkCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "paging@yorkcountygov.com";
+  }
+  
+  @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
@@ -26,6 +31,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
     // If positively identified as dispatch message, return general alert status
     // so they don't have to deal with that long confidentiality notice
     if (isPositiveId()) {
+      setFieldList("INFO");
       return data.parseGeneralAlert(this, body);
     }
     return false;
@@ -47,7 +53,15 @@ public class SCYorkCountyParser extends FieldProgramParser {
       data.strPlace = p.get('*');
       data.strCity = p.get('*');
       data.strPlace = append(data.strPlace, " - ", p.get('*'));
-      data.strCall = p.get('*') + " - " + p.get('*');
+      data.strCall = p.get('*');
+      String channel = p.get('*');
+      int pt = channel.indexOf('/');
+      if (pt >= 0) {
+        data.strCall = append(data.strCall, " - ", stripFieldStart(channel.substring(pt+1).trim(), "/"));
+        channel = channel.substring(0, pt).trim();
+      }
+      data.strChannel = channel;
+      data.strName = p.get();
 
       if (data.strPlace.length() > 0) {
         String tmp = new Parser(data.strPlace).get(' ');
@@ -58,7 +72,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "X PLACE CITY CALL";
+      return "X PLACE CITY CALL CH NAME";
     }
   }
   
