@@ -12,7 +12,7 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
  
   public SDMinnehahaCountyParser() {
     super(CITY_CODES, "MINNEHAHA COUNTY", "SD");
-    setFieldList("SRC UNIT MAP ADDR APT PLACE UNIT CITY CALL CODE ID");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -29,13 +29,15 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
   private static final Pattern CAD_MSG_PTN = 
     Pattern.compile("(?:((?:[A-Z]{1,2}\\d* +)+))?(?:(\\d{3}) +)?(?:((?:[A-Z]{2} +)+))?(?:(Quad [A-Z0-9]{3,4}) - ([A-Z]{2})|(\\d{4}-\\d{8}(?:, *\\d{4}-\\d{8})*)|" + MAP_PTN_STR + ")? *\\b(.+?)(?: (C\\d))?(?: (\\d{4}-\\d{8}))?");
   private static final Pattern STREET_NO_ADDR_PTN = Pattern.compile("\\d+ (?!ST\\b|AVE?\\b).*");
-  private static final Pattern DISPATCH_MSG_PTN = 
-      Pattern.compile("(.*?) +(\\d{4}-\\d{8})((?:  Dispatch received by unit ([^ ]+))+)");
   
   private static final Pattern LEAD_MAP_PTN = Pattern.compile('^' + MAP_PTN_STR);
   private static final Pattern TRAIL_MAP_PTN = Pattern.compile(MAP_PTN_STR + '$');
   private static final Pattern MM_PTN = Pattern.compile("( MM \\d+)([^\\d ])");
   private static final Pattern MM_PTN2 = Pattern.compile("^MM \\d+");
+  
+  private static final Pattern DISPATCH_MSG_PTN = Pattern.compile("(.*?) +(\\d{4}-\\d{8}) {2,}(.*)");
+  private static final Pattern CALL_PHONE_NAME_PTN = Pattern.compile("(.*) (\\d{10}) *(.*)");
+
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -43,8 +45,26 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
     
-    Matcher match = CAD_MSG_PTN.matcher(body);
+    Matcher match = DISPATCH_MSG_PTN.matcher(body); 
     if (match.matches()) {
+      setFieldList("ADDR APT CITY CALL PHONE NAME ID INFO");
+      String addrFld = match.group(1);
+      data.strCallId = match.group(2);
+      data.strSupp = match.group(3).trim();
+      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ALLOW_DUAL_DIRECTIONS, addrFld, data);
+      String left = getLeft();
+      match = CALL_PHONE_NAME_PTN.matcher(left);
+      if (match.matches()) {
+        left = match.group(1).trim();
+        data.strPhone = match.group(2);
+        data.strName = match.group(3).trim();
+      }
+      data.strCall = left;
+      return data.strCall.length() > 0;
+    }
+    
+    else if ((match = CAD_MSG_PTN.matcher(body)).matches()) {
+      setFieldList("SRC UNIT MAP ADDR APT PLACE UNIT CITY CALL CODE ID");
       data.strUnit = append(getOptGroup(match.group(1)), " ", getOptGroup(match.group(3)));
       data.strSource = getOptGroup(match.group(2));
       data.strMap = getOptGroup(match.group(4));
@@ -126,17 +146,21 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
       
       return true;
     }
-    
-    else if ((match = DISPATCH_MSG_PTN.matcher(body)).matches()) {
-      String addrFld = match.group(1);
-      data.strCallId = match.group(2);
-      data.strUnit = match.group(3).replace("Dispatch received by ", "").trim();
-      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ALLOW_DUAL_DIRECTIONS, addrFld, data);
-      data.strCall = getLeft();
-      return data.strCall.length() > 0;
-    }
     else return false;
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "I 29 MM 84",                              "+43.614354,-96.770602",
+      "I 29 MM 85",                              "+43.630634,-96.770470",
+      "I 29 MM 86",                              "+43.644865,-96.771152",
+      "I 90 MM 396",                             "+43.612866,-96.763988",
+      "I 90 MM 397",                             "+43.611506,-96.751588",
+      "I 90 MM 398",                             "+43.607213,-96.728260",
+      "I 90 MM 399",                             "+43.605563,-96.712834",
+      "I 90 MM 400",                             "+43.606675,-96.691759",
+      "I 90 MM 401",                             "+43.607791,-96.670875",
+      "I 90 MM 402",                             "+43.607910,-96.655458"
+  });
   
   private static final Pattern CITY_PTN = Pattern.compile("(.*?) *(BA|BR|CO|CR|DR|GA|GN|HD|HU|LY|RE|VS|SR|EM) +(.*)");
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
