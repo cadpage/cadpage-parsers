@@ -13,7 +13,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
  
   public MOStCharlesCountyParser() {
     super("ST CHARLES COUNTY", "MO",
-          "ADDR! APT:APT! BUS:PLACE! FD:CITY! CHL:CH! Units:UNIT!");
+          "ADDR! APT:APT! BUS:PLACE! FD:CITY! CHL:CH! GPS:GPS? Units:UNIT!");
   }
   
   @Override
@@ -124,6 +124,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
   
@@ -143,6 +144,17 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "INFO ID CODE CALL " + super.getFieldNames();
+    }
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("(\\d{2})(\\d{6}) - (\\d{2})(\\d{6})");
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match =  GPS_PTN.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1)+'.'+match.group(2)+",-"+match.group(3)+'.'+match.group(4), data);
+      }
     }
   }
   
