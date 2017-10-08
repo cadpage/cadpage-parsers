@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class COBoulderCountyBParser extends FieldProgramParser {
 
 	public COBoulderCountyBParser() {
-		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! UNITS:UNIT! Map_Page:MAP! " + 
+		super("BOULDER COUNTY", "CO", "( ADDR:ADDR APT:APT! PROB:PROB! UNITS:UNIT! Map_Page:MAP! Assigned_Units:UNIT " + 
 	                                "| CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT% )");
 	}
 	
