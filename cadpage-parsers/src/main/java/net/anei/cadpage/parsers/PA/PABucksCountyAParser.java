@@ -13,6 +13,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   
   public PABucksCountyAParser() {
     super("SRC type:CALL! Box:BOX? adr:ADDR! aai:AAI box:BOX map:MAP tm:TIME% TEXT:INFO? Run:UNIT");
+    setupSpecialStreets("CUL DE SAC");
   }
   
   @Override
@@ -132,6 +133,12 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\b(XSTRT:|low xst:|XSTS[,: ])", Pattern.CASE_INSENSITIVE);
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=#)");
   private static final Pattern PLACE_ADDR_PTN = Pattern.compile("([^,]+),([^,]+)");
+  private static final Pattern PHONE_PTN = Pattern.compile("(.*?)[- #;,'/]+(\\d{3}[-. ]?\\d{3}[-. ]?\\d{4}|NO PHONE NUMBER)\\b(?: RESD?[:= ]| */)? *(.*)");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|UNIT|RM|LOT|SUITE) +(.*)");
+  private static final Pattern LEAD_RES_PTN = Pattern.compile("RESD?[:=; ]+(.*)");
+  private static final Pattern TRAIL_RES_PTN = Pattern.compile("(.*) RESD?");
+  private static final Pattern KEEP_CROSS_PTN = Pattern.compile("&.*|BY|EXIT.*|ON .*|CROSSING");
+  private static final Pattern TRAIL_DIR_PTN = Pattern.compile("(.*) ([NSEW]|[NS][EW])");
   
   private class MyAddressField extends AddressField {
     
@@ -165,11 +172,54 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
         data.strPlace = append(match.group(1).trim(), " - ", data.strPlace);
         data.strAddress = match.group(2).trim();
       }
+      
+      match = PHONE_PTN.matcher(data.strCross);
+      if (match.matches()) {
+        data.strCross =  match.group(1).trim();
+        data.strPhone = match.group(2);
+        data.strName = match.group(3);
+      }
+    
+      String cross = data.strCross;
+      data.strCross = "";
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, cross, data);
+      String left = getLeft();
+      if (KEEP_CROSS_PTN.matcher(left).matches()) {
+        data.strCross = append(data.strCross, " ", left);
+      } else if ((match = APT_PTN.matcher(left)).matches()) {
+        left = match.group(1);
+        if (!left.equals(data.strApt)) data.strApt = append(data.strApt, "-", left);
+      } else if (NUMERIC.matcher(left).matches()) {
+        if (!left.equals(data.strApt)) data.strApt = append(data.strApt, "-", left);
+      } else if (data.strName.length() == 0 && data.strPhone.length() > 0){
+        match = LEAD_RES_PTN.matcher(left);
+        if (match.matches()) left =  match.group(1).trim();
+        else {
+          match = TRAIL_RES_PTN.matcher(left);
+          if (match.matches()) left =  match.group(1).trim();
+        }
+        data.strName = left;
+      } else {
+        if (left.equals("SECTOR")) {
+          match = TRAIL_DIR_PTN.matcher(data.strCross);
+          if (match.matches()) {
+            data.strCross = match.group(1).trim();
+            left = match.group(2)+' ' + left;
+          }
+        }
+        if (data.strCross.endsWith(" BUS") && left.startsWith("STOP")) {
+          data.strCross = data.strCross.substring(0, data.strCross.length()-4).trim();
+          left = "BUS " + left;
+        }
+        left = stripFieldStart(left, "@");
+        data.strPlace = append(data.strPlace, " - ", left);
+      }
+      if (data.strPhone.equals("NO PHONE NUMBER")) data.strPhone = "";
     }
     
     @Override
     public String getFieldNames() {
-      return "PLACE " + super.getFieldNames() + " CITY ST X INFO";
+      return "PLACE " + super.getFieldNames() + " CITY ST X PHONE NAME INFO";
     }
   }
   
