@@ -200,14 +200,11 @@ MADDR or PARSER
 *** For more information ****
 
 This file, and other important documentation, is part of the github source archive
-that can be checked out from https://github.com/cadpage/cadpage-android  The various interface
-specs are in a cadpage/docs directory.
+that can be checked out from https://github.com/cadpage/cadpage-parsers  The various interface
+specs are in a docs directory.
 
-The one file that will be of particular interest is MsgFormats.txt which lists all
-of the message formats we currently support, plus a bunch of others that are in
-different stages of being implemented.  The name of the Parser used can be found
-in parenthesis beside the location.  The Format code associated with that parser
-is simply the parser name with the word Parser stripped off.
-
-There are other cool things you can do with Git, look for the online manual 
-if you are interested.  Contact us if you want commit rights.
+Test classes and other potentially sensitive information can be found in
+https://github.com/cadpage/cadpage-private
+which was made a private archive to protect the privacy of individual users and people who have
+made calls to 911 emergency services over the years.  Access to this archive is available on request.
+Just let us know.
