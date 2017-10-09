@@ -25,6 +25,8 @@ public class MOBuchananCountyAParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("(PAGE)")) return false;
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(body,  data);
   }
   
