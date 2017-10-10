@@ -328,7 +328,7 @@ public class DispatchA48Parser extends FieldProgramParser {
         }
       }
       
-      else if (data.strSupp.length() > 0 && !data.strSupp.contains("\n")) {
+      else if (unitPtn != null && data.strSupp.length() > 0 && !data.strSupp.contains("\n")) {
         boolean goodUnit = true;
         String[] parts = UNIT_DELIM_PTN.split(data.strSupp);
         for (String part : parts) {
