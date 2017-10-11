@@ -44,8 +44,35 @@ public class WAKingCountyAParser extends MsgParser {
     }
     
     FParser p = new FParser(body);
+    
+    if (p.check("ADDRESS CHANGE:")) {
+      parseAddress(p.get(42), data);
+      if (!p.check("#")) return false;
+      data.strApt = append(data.strApt, "-", p.get(10));
+      if (p.checkBlanks(1)) return false;
+      data.strCall = p.get(30);
+      if (!p.check("#")) return false;
+      data.strChannel = p.get(7);
+      if (p.check(" ")) return false;
+      data.strUnit = p.get();
+      return true;
+    }
+    
+    
     parseAddress(p.get(50), data);
     if (!p.check("#")) return false;
+    
+    if (p.checkAheadBlanks(26, 2) && !p.checkAheadBlanks(28, 1)) {
+      data.strApt = p.get(6);
+      data.strCity = p.get(22);
+      data.strCall = p.get(29);
+      if (!p.check(" ")) return false;
+      data.strChannel = p.get(6);
+      if (p.check(" ")) return false;
+      data.strUnit = p.get();
+      return true;
+    }
+    
     data.strApt = p.get(10);
     if (p.check(" ")) return false;
     

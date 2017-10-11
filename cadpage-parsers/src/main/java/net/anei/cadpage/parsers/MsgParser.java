@@ -1672,6 +1672,15 @@ public static void addCodeTable(Properties props, String[] table) {
    }
    
    /**
+    * Check ahead for for fixed number of blanks
+    * @param len number of required blanks
+    * @return true if successful
+    */
+   public boolean checkAheadBlanks(int offset, int len) {
+     return lookahead(offset,len).length() == 0;
+   }
+   
+   /**
     * Check for fixed number of blanks
     * @param len number of required blanks
     * @return true if successful

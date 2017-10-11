@@ -8,6 +8,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WAKingCountyParser extends GroupBestParser {
   
   public WAKingCountyParser() {
-    super(new WAKingCountyAParser(), new WAKingCountyBParser(), new WAKingCountyCParser());
+    super(new WAKingCountyAParser(), new WAKingCountyBParser(), 
+          new WAKingCountyCParser(), new WAKingCountyDParser());
   }
 }

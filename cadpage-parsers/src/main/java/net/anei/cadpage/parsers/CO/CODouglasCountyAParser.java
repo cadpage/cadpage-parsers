@@ -26,13 +26,18 @@ public class CODouglasCountyAParser extends FieldProgramParser {
            "( Call:CALL! Location:ADDRCH/SXa! Map:MAP Units:UNITX! Common_Name:PLACE Time:DATETIME Narrative:INFO? Nature_Of_Call:INFO " +
            "| Call_Type:CALLID! Common_Name:PLACE! Location:ADDR/SXXx! Call_Time:DATETIME! Narrative:INFO Nature_Of_Call:INFO " +
            "| CALL! ( LOC:ADDRCITY/SXa! ( Closest_X:X! Map:MAP | Map:MAP! Closest_X:X? ) Units:UNIT Nar:INFO LOC_Name:PLACE ADDL:INFO CR:ID3 " +
-                   "| Address:ADDRCITY/SXa! Closest_Intersection:X! Additional_Location_Info:INFO/N! OPS:CH! Map_Page:MAP! Units:UNIT! Primary_Incident:SKIP! Radio_Channel:CH/L! Common_Name:PLACE! Narrative:INFO/N )  Time:DATETIME3 )");
+                   "| Address:ADDRCITY/SXa! Closest_Intersection:X! Additional_Location_Info:INFO/N! OPS:CH! Map_Page:MAP! Units:UNIT! Primary_Incident:SKIP! Radio_Channel:CH/L! Common_Name:PLACE! Narrative:INFO/N ) Time:DATETIME3 GPS )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
   public String getAliasCode() {
     return "CODouglasCounty";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   @Override
@@ -249,14 +254,22 @@ public class CODouglasCountyAParser extends FieldProgramParser {
   }
   
 
-  private static final Pattern DATE_TIME3_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d?:\\d\\d:? [AP]M");
-  private static final DateFormat DATE_TIME3_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private static final Pattern DATE_TIME3_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d?:\\d\\d:? [AP]M)\\b:? *(.*)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTime3Field extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field,  ":");
-      if (!DATE_TIME3_PTN.matcher(field).matches()) return;
-      setDateTime(DATE_TIME3_FMT, field, data);
+      Matcher match = DATE_TIME3_PTN.matcher(field);
+      if (!match.matches()) return;
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
+      setGPSLoc(match.group(3), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "DATE TIME GPS";
     }
   }
   
