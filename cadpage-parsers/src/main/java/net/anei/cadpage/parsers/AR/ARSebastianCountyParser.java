@@ -10,9 +10,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
-public class ARSebastionCountyParser extends FieldProgramParser {
+public class ARSebastianCountyParser extends FieldProgramParser {
   
-  public ARSebastionCountyParser() {
+  public ARSebastianCountyParser() {
     super("SEBASTIAN COUNTY", "AR", 
           "CALL:CODE_CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATETIME! TIME:SKIP! UNIT:UNIT% INFO:INFO% INFO/N+");
   }

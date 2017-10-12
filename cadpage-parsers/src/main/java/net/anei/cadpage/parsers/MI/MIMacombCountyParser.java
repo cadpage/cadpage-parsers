@@ -3,9 +3,9 @@ package net.anei.cadpage.parsers.MI;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class MICacombCountyParser extends FieldProgramParser {
+public class MIMacombCountyParser extends FieldProgramParser {
   
-  public MICacombCountyParser() {
+  public MIMacombCountyParser() {
     super("MACOMB COUNTY", "MI", 
           "ADDR:ADDR! CITY:CITY! TYPE:CALL! INFO:INFO!");
   }
