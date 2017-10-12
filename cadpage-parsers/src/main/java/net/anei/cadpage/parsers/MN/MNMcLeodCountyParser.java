@@ -50,6 +50,12 @@ public class MNMcLeodCountyParser extends FieldProgramParser {
     "KOMENSKY",
     "SHERMAN",
     "SOUTH SILVER LAKE",
-    "SUMTER"
+    "SUMTER",
+    
+    // Carver County
+    "HOLLYWOOD",
+    
+    // Wright County
+    "VICTOR"
   };
 }
