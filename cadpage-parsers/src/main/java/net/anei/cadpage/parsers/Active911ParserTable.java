@@ -262,7 +262,6 @@ public class Active911ParserTable {
       "US/FL/JacksonCounty",              "FLJacksonCounty",
       "US/FL/LakeCounty",                 "FLLakeCounty",
       "US/FL/LevyCounty",                 "FLLevyCounty",
-//      "US/FL/LongboatKey",                "FLLongboatKey",
       "US/FL/ManateeCounty",              "FLManateeCounty",
       "US/FL/OkaloosaCounty",             "FLOkaloosaCounty",
       "US/FL/PalmBeachCounty",            "FLPalmBeachCounty",
