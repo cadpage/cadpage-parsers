@@ -69,7 +69,7 @@ public class ALMorganCountyParser extends DispatchOSSIParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new IdField("\\d{8}", true);
     if (name.equals("UNIT")) return new UnitField("(?!TAC)[A-Z]{3}[A-Z0-9]", true);
-    if (name.equals("CH")) return new ChannelField("TAC? ?\\d{1,2}", true);
+    if (name.equals("CH")) return new ChannelField("TAC? ?\\d{0,2}", true);
     return super.getField(name);
   }
   
