@@ -14,7 +14,7 @@ public class CASolanoCountyCParser extends FieldProgramParser {
   public CASolanoCountyCParser() {
     super("SOLANO COUNTY", "CA",
           "( MUTUAL_AID_CALL ADDR ( CITY PLACE MAP1 INFO UNIT ID DATE/d TIME! | INFO UNIT ID DATE/d TIME! ) " +
-          "| CALL_PRI ADDR CITY ( X X/Z? MAP1 | PLACE X X/Z? MAP1 | PLACE MAP1 ) MAP2/D+? INFO+? UNIT ID DATE/d TIME! )");
+          "| CALL_PRI ADDR CITY ( PLACE X/Z X/Z MAP1 | X X/Z? MAP1 | PLACE X X/Z? MAP1 | PLACE MAP1 ) MAP2/D+? INFO+? UNIT ID DATE/d TIME! )");
     setupSpecialStreets("PLAZA DE ORO",
                         "MARINA VISTA",
                         "MILITARY EAST",

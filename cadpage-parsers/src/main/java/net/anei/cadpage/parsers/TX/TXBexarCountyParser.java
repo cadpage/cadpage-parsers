@@ -18,7 +18,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   public TXBexarCountyParser() {
     super("BEXAR COUNTY", "TX",
-          "( SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY EMPTY EMPTY MAP EMPTY UNIT END " + 
+          "( SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY X EMPTY MAP EMPTY UNIT END " + 
                       "| SRC INCIDENT_INFORMATION! DATE_&_TIME:DATETIME2! EMPTY! PROBLEM:CALL! EMPTY! ADDRESS:ADDRCITY! EMPTY! CHANNEL:CH! EMPTY! DIVISION:MAP! EMPTY! UNITS:UNIT! EMPTY! LOCATION_NAME:PLACE! EMPTY! LOCATION_TYPE:SKIP END " +
                       ") " + 
           "| Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID! Units:UNIT! Notes:INFO " +
