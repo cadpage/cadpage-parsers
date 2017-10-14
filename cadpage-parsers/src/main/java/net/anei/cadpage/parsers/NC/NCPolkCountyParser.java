@@ -12,14 +12,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 public class NCPolkCountyParser extends DispatchSouthernParser {
   
-  private static final String[] CITY_LIST = new String[]{
-    "COLUMBUS",
-    "MILL SPRING",
-    "RUTHERFORDTON",
-    "SALUDA",
-    "TRYON"
-  };
-  
   private static final Pattern ID_TIME_PTN = Pattern.compile("\\b(\\d{10})(\\d\\d:\\d\\d:\\d\\d)\\b");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile("\\. +[A-Z][a-z]+ \\d+, \\d+:\\d+ [AP]M\\.?$");
 
@@ -71,4 +63,13 @@ public class NCPolkCountyParser extends DispatchSouthernParser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern BEFORE_PTN = Pattern.compile(" (?:JUST )?BEFORE ");
+  
+  private static final String[] CITY_LIST = new String[]{
+    "COLUMBUS",
+    "MILL SPRING",
+    "RUTHERFORD",
+    "RUTHERFORDTON",
+    "SALUDA",
+    "TRYON"
+  };
 }

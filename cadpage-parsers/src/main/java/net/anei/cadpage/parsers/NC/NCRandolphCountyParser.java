@@ -29,7 +29,7 @@ public class NCRandolphCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|\\d+-\\d+|[A-Z]+[FP]D|", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|C?\\d+-\\d+|[A-Z]+[FP]D|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -89,13 +89,23 @@ public class NCRandolphCountyParser extends FieldProgramParser {
       "ARC", "ARCHDALE",
       "ASB", "ASHEBORO",
       "ASH", "ASHEBORO",
+      "BEN", "BENNETT",
+      "CLI", "CLIMAX",
       "DEN", "DENTON",
-      "GRE", "GRE",          // ???
+      "FRA", "FRANKLINVILLE",
+      "GRE", "GREENSBORO",
+      "HIG", "HIGH POINT",
+      "JUL", "JULIAN",
+      "LEX", "LEXINGTON",
       "LIB", "LIBERTY",
+      "PLE", "PLEASANT GARDEN",
       "RAM", "RAMSEUR",
       "RAN", "RANDLEMAN",
+      "ROB", "ROBBINS",
       "SEA", "SEAGROVE",
+      "SIL", "SILER CITY",
       "SOP", "SOPHIA",
+      "STA", "STALEY",
       "THO", "THOMASVILLE",
       "TRI", "TRINITY"
 
