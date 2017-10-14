@@ -35,7 +35,9 @@ public class WACowlitzCountyParser extends FieldProgramParser {
       body = append(subject+':', " ", body);
     }
     
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strUnit.length() == 0) data.expectMore = true;
+    return true;
   }
   
   @Override
@@ -50,10 +52,26 @@ public class WACowlitzCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       int pt = field.indexOf(": @");
       if (pt >= 0) {
-        data.strPlace = field.substring(pt+3).trim();
+        String place = field.substring(pt+3).trim();
         field = field.substring(0,pt).trim();
+        String city = CITY_CODES.getProperty(field);
+        if (city != null) {
+          parseAddress(place, data);
+          data.strCity = city;
+          return;
+        }
+        data.strPlace = place;
+      }
+      
+      String apt = "";
+      pt = field.lastIndexOf(',');
+      if (pt < 0) pt = field.lastIndexOf(';');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt);
       }
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
@@ -86,15 +104,14 @@ public class WACowlitzCountyParser extends FieldProgramParser {
       "AM", "AMBOY",
       "AR", "ARIEL",
       "CO", "COUGAR",
+      "CR", "CASTLE ROCK",
       "KA", "KALAMA",
       "KE", "KELSLO",
       "LV", "LONGVIEW",
       "RV", "ROSE VALLEY",
       "SL", "SILVER LAKE",
       "TO", "TOUTLE",
-      "WD", "WOODLAND",
-
-      
+      "WD", "WOODLAND"
   });
 
 }
