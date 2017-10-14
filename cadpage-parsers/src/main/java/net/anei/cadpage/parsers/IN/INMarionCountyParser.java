@@ -125,6 +125,7 @@ public class INMarionCountyParser extends MsgParser {
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+
       "3300 A CHECKPOINT",                    "+39.714466,-86.298459",
       "3218 A CONCOURSE",                     "+39.714466,-86.298459",
       "3301 A CONCOURSE",                     "+39.714466,-86.298459",
@@ -228,7 +229,6 @@ public class INMarionCountyParser extends MsgParser {
       "16312 TERMINAL WAY",                   "+39.714466,-86.298459",
       "16315 TERMINAL WAY",                   "+39.714466,-86.298459",
       "17324 TERMINAL WAY",                   "+39.714466,-86.298459",
-
       
       "I465 011 RAMP A",                      "+39.728231,-86.263175",
       "I465 012 RAMP A",                      "+39.746920,-86.263479",
@@ -238,8 +238,52 @@ public class INMarionCountyParser extends MsgParser {
       "I465 017 RAMP D",                      "+39.822587,-86.276850",
       "I70 075 RAMP A",                       "+39.729952,-86.242714",
       "I70 077 RAMP A",                       "+39.751322,-86.227014",
-      "I70 077 RAMP B",                       "+39.751810,-86.223286"
+      "I70 077 RAMP B",                       "+39.751810,-86.223286",
+      
+      "59 I70 EB",                            "+39.613621,-86.479988",
+      "59 I70 WB",                            "+39.613621,-86.479988",
+      "60 I70 EB",                            "+39.616998,-86.469243",
+      "60 I70 WB",                            "+39.616998,-86.469243",
+      "61 I70 EB",                            "+39.624576,-86.455704",
+      "61 I70 WB",                            "+39.624576,-86.455704",
+      "62 I70 EB",                            "+39.634080,-86.440289",
+      "62 I70 WB",                            "+39.634080,-86.440289",
+      "63 I70 EB",                            "+39.642463,-86.422976",
+      "63 I70 WB",                            "+39.642463,-86.422976",
+      "64 I70 EB",                            "+39.648398,-86.407061",
+      "64 I70 WB",                            "+39.648398,-86.407061",
+      "65 I70 EB",                            "+39.656745,-86.392618",
+      "65 I70 WB",                            "+39.656745,-86.392618",
+      "66 I70 EB",                            "+39.668423,-86.370042",
+      "66 I70 WB",                            "+39.668423,-86.370042",
+      "67 I70 EB",                            "+39.674615,-86.354182",
+      "67 I70 WB",                            "+39.674615,-86.354182",
+      "68 I70 EB",                            "+39.680859,-86.338814",
+      "68 I70 WB",                            "+39.680859,-86.338814",
+      "69 I70 EB",                            "+39.688153,-86.322482",
+      "69 I70 WB",                            "+39.688153,-86.322482",
+      "70 I70 WB",                            "+39.693588,-86.307938",
 
+      "61 I74 EB",                            "+39.879654,-86.472397",
+      "61 I74 WB",                            "+39.879654,-86.472397",
+      "62 I74 EB",                            "+39.880013,-86.454378",
+      "62 I74 WB",                            "+39.880013,-86.454378",
+      "63 I74 EB",                            "+39.879290,-86.439920",
+      "63 I74 WB",                            "+39.879290,-86.439920",
+      "64 I74 EB",                            "+39.871357,-86.423678",
+      "64 I74 WB",                            "+39.871357,-86.423678",
+      "65 I74 EB",                            "+39.863561,-86.410338",
+      "65 I74 WB",                            "+39.863561,-86.410338",
+      "66 I74 EB",                            "+39.860220,-86.394172",
+      "66 I74 WB",                            "+39.860220,-86.394172",
+      "67 I74 EB",                            "+39.851078,-86.374008",
+      "67 I74 WB",                            "+39.851078,-86.374008",
+      "68 I74 EB",                            "+39.841117,-86.356326",
+      "68 I74 WB",                            "+39.841117,-86.356326",
+      "69 I74 EB",                            "+39.835114,-86.343693",
+      "69 I74 WB",                            "+39.835114,-86.343693",
+      "70 I74 EB",                            "+39.830403,-86.326885",
+      "70 I74 WB",                            "+39.830403,-86.326885"
   });
 
   private static final CodeSet CODE_SET = new CodeSet(
@@ -390,15 +434,18 @@ public class INMarionCountyParser extends MsgParser {
   );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+
       "AIR", "Indianapolis",
+      "AMO", "Amo",
       "AVN", "Avon",
       "BBG", "Brownsburg",
       "BGR", "Beech Grove",
+      "BON", "Lebanon",
       "CAM", "Camby",
       "CAR", "Cartersburg",
       "CLR", "Clermont",
       "CLY", "Clayton",
-      "CTV", "Clayton",
+      "CTV", "Coatsville",
       "DAN", "Danville",
       "HOM", "Homecroft",
       "IND", "Indianapolis",
@@ -406,8 +453,10 @@ public class INMarionCountyParser extends MsgParser {
       "LIZ", "Lizton",
       "MOR", "Mooresville",
       "MOV", "Monrovia",
+      "NSF", "North Salem",
       "PIT", "Pittsboro",
       "PLF", "Plainfield",
+      "STI", "Stilesville",
 
       "DEC", "Decatur TWP",
       "FRA", "Franklin Township",
