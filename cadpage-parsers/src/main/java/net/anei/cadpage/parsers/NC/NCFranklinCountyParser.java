@@ -69,16 +69,39 @@ public class NCFranklinCountyParser extends DispatchSouthernParser {
     "WAKE FOREST", 
     "YOUNGSVILLE",
     
+    // Durham County
+    "DURHAM",
+    
+    // Gainville County
+    "GAINVILLE CO",
+    "GAINVILLE COUNTY",
+    "CREEDMOOR",
+    "BRASSFIELD",
+    "FISHING CREEK",
+    "OXFORD",
+    "SALEM",
+    
     // Halifax County
     "HALIFAX COUNTY",
     "HALIFAX CO",
+    "BRINKLEYVILLE",
     "HOLLISTER",
+    
+    // Johnson County
+    "JOHNSON CO",
+    "JOHNSON COUNTY",
+    "ONEALS",
     
     // Nash County
     "NASH CO",
     "NASH COUNTY",
     "CASTALIA",
+    "DRY WELLS",
+    "FERRELLS",
+    "GRIFFINS",
+    "MANNINGS",
     "MIDDLESEX",
+    "MOMEYER",
     "SPRING HOPE",
     
     // Vance County
@@ -91,14 +114,21 @@ public class NCFranklinCountyParser extends DispatchSouthernParser {
     // Wake County
     "WAKE CO",
     "WAKE COUNTY",
+    "FALLS LAKE",
+    "LITTLE RIVER",
+    "NEW LIGHT",
     "RALEIGH",
     "ROLESVILLE",
+    "WAKE FOREST",
     "ZEBULON",
     
     // Warren County
     "WARREN CO",
     "WARREN COUNTY",
-    "WARRENTON"
+    "WARRENTON",
+    "SANDY CREEK",
+    "SHOCCO",
+    "FORK"
    };
   
 }

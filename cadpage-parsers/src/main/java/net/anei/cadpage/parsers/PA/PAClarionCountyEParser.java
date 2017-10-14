@@ -26,7 +26,9 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean noParseSubjectFollow() { return true; }
+    };
   }
 
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]+(?:ProQA|Questionnaire:) ");
@@ -36,7 +38,6 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("ALERT MESSAGE")) return false;
     if (!body.startsWith("!:")) return false;
     body = body.substring(2).trim();
     
