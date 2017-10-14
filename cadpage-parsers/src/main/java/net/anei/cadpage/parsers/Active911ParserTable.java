@@ -1157,6 +1157,7 @@ public class Active911ParserTable {
       "US/PA/NorthamptonCounty",          "PANorthamptonCounty",
       "US/PA/NorthumberlandCounty",       "PANorthumberlandCounty",
       "US/PA/Padoh",                      "PABethlehem",
+      "US/PA/PennBoroVFD",                "PAWestmorelandCounty",
       "US/PA/PerryCounty",                "PAPerryCounty",
       "US/PA/PFDFireChester",             "PAChesterCountyD4,PAChesterCountyG,PAChesterCountyO",
       "US/PA/PhoenixFire",                "PASchuylkillCounty",
