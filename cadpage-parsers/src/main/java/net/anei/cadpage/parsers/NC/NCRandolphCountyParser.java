@@ -29,7 +29,7 @@ public class NCRandolphCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|C?\\d+-\\d+|[A-Z]+[FP]D|", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|C?\\d+-\\d+|[A-Z]+[FP]D|ASH[A-Z]|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
