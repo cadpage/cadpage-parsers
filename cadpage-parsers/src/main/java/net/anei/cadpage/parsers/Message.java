@@ -433,17 +433,19 @@ public class Message {
         String sub = match.group(2);
         if (sub != null) addSubject(sub.trim());
         body = trimLead(body.substring(match.end()), keepLeadBreak);
-        break;
+        if (from != null) break;
       }
       
       /* Decode patterns that contain an subject and message
        */
-      match = findPattern(body, S_M_PATTERNS);
-      if (match != null) {
-        String sub = match.group(1);
-        if (sub != null) addSubject(sub.trim());
-        body = trimLead(body.substring(match.end()), keepLeadBreak);
-        break;
+      else {
+        match = findPattern(body, S_M_PATTERNS);
+        if (match != null) {
+          String sub = match.group(1);
+          if (sub != null) addSubject(sub.trim());
+          body = trimLead(body.substring(match.end()), keepLeadBreak);
+          break;
+        }
       }
     
       
