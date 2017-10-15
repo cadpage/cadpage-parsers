@@ -15,7 +15,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
   
   public NCDuplinCountyParser() {
     super(CITY_LIST, "DUPLIN COUNTY", "NC",
-          DSFLG_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_TIME);
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_TIME);
     setupCallList(CALL_LIST);
     removeWords("DRIVE");
   }
