@@ -20,7 +20,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
-           "( CALL ADDR! CITY DIST? INFO+ | ADDR APT? ( SELECT/EMS PLACE+? UNIT CALL! CODE | SELECT/FIRE PLACE+? CALL/Z SRC! UNIT | CITY? PLACE+? CALL/Z END ) )");
+           "FYI? ( CALL ADDR! CITY DIST? INFO+ | ADDR APT? ( SELECT/EMS PLACE+? ( CODE | UNIT CODE? ) CALL! CODE END | SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END | CITY? PLACE+? CALL/Z END ) )");
   }
   
   @Override
@@ -42,6 +42,8 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
     body = MSPACE_PTN.matcher(body).replaceAll(" ");
     body = stripFieldStart(body,  "/ no subject /");
     selectValue = (body.contains("[") ? "CALL" : null);
@@ -78,6 +80,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   protected Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DIST")) return new PlaceField("DIST:.*");
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("UNIT")) return new MyUnitField();
@@ -85,6 +88,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
   
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) (\\d{1,3}-?[A-Z]-?\\d{1,2}-?[A-Za-z]?|\\d{4})");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
@@ -94,14 +98,45 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (selectValue.equals("CALL") || CALL_LIST.contains(field)) {
-        super.parse(field, data);
+        parse(field, data);
         return true;
       }
       return false;
     }
+    
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CALL_CODE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCode = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL CODE?";
+    }
   }
   
-  private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|UNIT|SUITE) *(.*)|\\d+");
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (UNIT_PTN.matcher(field).matches()) {
+        data.strUnit = append(data.strUnit, "-", field);
+      } else {
+        super.parse(field, data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE UNIT?";
+    }
+  }
+  
+  private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|SUITE) *(.*)|\\d+|H-?\\d{1,2}|[A-D]");
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
@@ -150,14 +185,14 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     }
   }
   
-  private static final Pattern SOURCE_PTN = Pattern.compile("[A-Z]{1,2}FD|OCRS");
+  private static final Pattern SOURCE_PTN = Pattern.compile("[A-Z]{1,2}FD|OCRS|WCF2");
   private class MySourceField extends SourceField {
     public MySourceField() {
       setPattern(SOURCE_PTN, true);
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\d{1,2}[A-Z]?|[A-Z]{2}FD");
+  private static final Pattern UNIT_PTN = Pattern.compile("\\d{1,2}[A-Z]?|[A-Z]{2}FD|WCF2");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
       setPattern(UNIT_PTN, true);
@@ -184,20 +219,25 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   private static final Set<String> CALL_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "ABDOMINAL PAIN",
       "ALARMS",
-      "ALARMS 7700",
       "ALLERGIES/ENVENOMATIONS",
       "ANIMAL BITES/ATTACKS",
-      "ARSON 2000",
+      "ARSON",
       "ASSAULT/SEXUAL ASSALUT",
+      "ASSAULT/SEXUAL ASSAUL",
+      "ASSAULT/SEXUAL ASSAULT",
       "ASSAULT/ SEXUAL ASSAULT",
-      "ASSIST CITIZEN 8100",
-      "ASSIST OTHER JURISD 7600",
+      "ASSIST CITIZEN",
+      "ASSIST OTHER AGENCIES",
+      "ASSIST OTHER JURISD",
       "BACK PAIN",
       "BREATHING PROBLEMS",
       "BURNS EXPLOSION",
+      "CANCEL",
+      "CARBON MONOXIDE INHAL",
       "CARBON MONOXIDE INHALATION HAT",
       "CARDIAC ARREST DEATH",
       "CHEST PAIN",
+      "CHOKING",
       "CITIZEN ASSIST/SERVICE CALL",
       "CONVULSIONS/SEIZURES",
       "DEATH/INJURY",
@@ -209,15 +249,22 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "ELECTROCUTION AND LIGHTNING",
       "ELEVATOR /ESCUALTOR RESCUE",
       "EMS STAND BY CALLS",
+      "EXPLOSION",
       "EXTRICATION/ENTRAPPED",
       "FALL",
       "FUEL SPILL",
       "GAS LEAK / GAS ODOR",
+      "HAZMAT",
       "HEADACHE",
       "HEART PROBLEM",
       "HEMORRHAGE",
       "INACCESSIBLE INCIDENT",
+      "INCIDENT/SERVICES",
       "LIGHTENING STRIKE",
+      "LIGHTNING STRIKE",
+      "MARINE FIRE",
+      "MENTAL DISORDER (BEHAVIORAL)",
+      "MISCELLANEOUS",
       "MOTOR VEHICLE COLLISION",
       "MUTUAL AID",
       "ODOR",
@@ -228,15 +275,20 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SICK PERSON",
       "SMOKE INVESTIGATION",
       "STAB/GUNSHOT/PEN TRAUMA",
+      "STAB/GUNSHOT/PEN TRAUMA UNCON",
       "STRUCTURE FIRE",
       "STROKE CVA",
+      "SUICIDAL PERSON/ ATTEMPTED",
       "SUSPICIOUS/WANTED (PERSON VEH)",
       "TRAFFIC",
-      "TRAFFIC ACCIDENT 5500",
-      "TRAFFIC STOP",
-      "TRAFFIC TRANSPORTATION ACCIDT",
       "TRAFFIC / TRANSPORTATION",
       "TRAFFIC/ TRANSPORTATION CRASH",
+      "TRAFFIC ACCIDENT",
+      "TRAFFIC STOP",
+      "TRAFFIC TRANS ACCIDT",
+      "TRAFFIC TRANSPORTATION ACCIDT",
+      "TRAFFIC VIOLATION/ COMPLAINT",
+      "TRANSFER INTERFACILITY",
       "TRAUMATIC INJURIES",
       "UNCONSCIOUS FAINTING",
       "UNKNOWN PROBLEM MAN DOWN",
