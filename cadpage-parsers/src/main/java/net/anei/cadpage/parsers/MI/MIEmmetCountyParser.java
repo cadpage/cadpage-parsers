@@ -17,7 +17,7 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   
   MIEmmetCountyParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-           "ID?:( CANCEL ADDR! CITY? | FYI ( ADDR/Z CITY CALL | ADDRCITY CALL | CALL SRC ADDR/Z! CITY? | CALL ADDR/Z! CITY | CADDR1 CADDR2 ) ) SRC? INFO+");
+           "ID?:( CANCEL ADDR! CITY? | FYI ( ADDR/Z CITY CALL | ADDRCITY CALL | CALL SRC ADDR/Z! CITY? | CALL ADDR/Z X/Z CITY | CALL ADDR/Z! CITY | CADDR1 CADDR2 ) ) SRC? INFO+");
   }
   
   @Override
