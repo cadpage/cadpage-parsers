@@ -57,7 +57,6 @@ public class FLCharlotteCountyBParser extends MsgParser {
     if (fp.check(" ")) return false;
     parseAddress(fp.get(50), data);
     
-    if (fp.check(" ")) return false;
     data.strCity = fp.get(34);
     
     if (!fp.check(" ") || fp.check(" ")) return false;
