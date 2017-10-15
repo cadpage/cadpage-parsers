@@ -30,6 +30,7 @@ public class NCCravenCountyCParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CC911")) return false;
     if (super.parseMsg(body, data)) return true;
+    setFieldList("INFO");
     data.parseGeneralAlert(this, body);
     return true;
   }
@@ -41,7 +42,7 @@ public class NCCravenCountyCParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("\\s*(?:(3[45]\\.\\d{4,} +-7[67]\\.\\d{4,})|-361 +-361)$");
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("\\s*(?:(\\b3[45]\\.\\d{4,} +-7[67]\\.\\d{4,})|-361 +-361)$");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -102,6 +103,9 @@ public class NCCravenCountyCParser extends FieldProgramParser {
     
     "JONES",   // Jones County
     "PAMLICO", // Pamlico County
+    
+    // Carteret County
+    "CARTERET",
     
     // Lenoir County
     "GRIFTON"

@@ -15,7 +15,7 @@ public class NCCravenCountyBParser extends SmartAddressParser {
   
   private static final Pattern UNIT_PTN = Pattern.compile("(?:(?:EMSA|STA ?\\d+[A-Z]?|Headquarters) +)+");
   private static final Pattern ID_PTN = Pattern.compile("\\b\\d{4}-\\d{8}\\b");
-  private static final Pattern GPS_PTN = Pattern.compile("\\b\\s*(?:E911 Info .*)?(?:(3[45]\\.\\d{4,} +-7[67]\\.\\d{4,})|-361 +-361)\\b");
+  private static final Pattern GPS_PTN = Pattern.compile("\\s*(?:E911 Info .*)?(?:\\b(3[45]\\.\\d{4,} +-7[67]\\.\\d{4,})|-361 +-361)\\b");
   private static final Pattern OFF_HWY_PTN = Pattern.compile("OFF +HWY +\\d+\\b");
   
   public NCCravenCountyBParser() {
