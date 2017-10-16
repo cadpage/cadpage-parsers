@@ -1413,6 +1413,7 @@ public class Active911ParserTable {
       "US/VT/StowePS",                    "VTLamoilleCounty",
       "US/VT/UVM",                        "VTChittendenCountyC",
       "US/VT/ValcourNotification",        "VTLamoilleCounty",
+      "US/VA/WestmorelandCounty",         "VAWestmorelandCounty",
       "US/VT/WindhamCounty",              "VTWindhamCounty",
       "US/VT/WindsorCounty",              "VTWindsorCounty",
       "US/WA/BentonCounty",               "WABentonCounty",
