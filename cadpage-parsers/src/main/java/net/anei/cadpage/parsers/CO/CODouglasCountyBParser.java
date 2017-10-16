@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CODouglasCountyBParser extends FieldProgramParser {
   
-  private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(?:(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *)?(.*)");
   private static final Pattern MASTER2 = Pattern.compile("([A-Z]{2}-\\d\\d-[A-Z]) +(.*?) +([A-Z0-9,]+)");
   private static final Pattern FALLBACK_PTN = Pattern.compile("(.*?) +([A-Z]{2}[-/ A-Z0-9]+)");
 
@@ -32,8 +32,8 @@ public class CODouglasCountyBParser extends FieldProgramParser {
     Matcher match = MASTER1.matcher(body);
     if (!match.matches()) return false;
     data.strSource = match.group(1);
-    data.strDate = match.group(2);
-    data.strTime = match.group(3);
+    data.strDate = getOptGroup(match.group(2));
+    data.strTime = getOptGroup(match.group(3));
     body = match.group(4);
     
     if (body.startsWith("/")) {

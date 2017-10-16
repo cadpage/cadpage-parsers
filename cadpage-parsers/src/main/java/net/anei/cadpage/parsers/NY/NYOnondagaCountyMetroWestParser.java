@@ -21,6 +21,8 @@ public class NYOnondagaCountyMetroWestParser extends DispatchProQAParser {
   private static final String[] CITY_LIST = new String[]{
       
       // Onondaga County
+    
+      // Towns
       "CAMILLUS",
       "CICERO",
       "CLAY",
@@ -41,6 +43,8 @@ public class NYOnondagaCountyMetroWestParser extends DispatchProQAParser {
       "SPAFFORD",
       "TULLY",
       "VAN BUREN",
+      
+      // Villages
       "BALDWINSVILLE",
       "CAMILLUS",
       "EAST SURACUSE",
@@ -52,6 +56,52 @@ public class NYOnondagaCountyMetroWestParser extends DispatchProQAParser {
       "NORTH SYRACUSE",
       "SOLVAY",
       "SYRACUSE",
+
+      // Census designated places
+      "BREWERTON",
+      "BRIDGEPORT",
+      "FAIRMOUNT",
+      "GALEVILLE",
+      "LAKELAND",
+      "LYNCOURT",
+      "MATTYDALE",
+      "NEDROW",
+      "SENECA KNOLLS",
+      "VILLAGE GREEN",
+      "WESTVALE",
+
+      // Hamlets
+      "AMBER",
+      "APULIA",
+      "BORODINO",
+      "CARDIFF",
+      "DELPHI FALLS",
+      "JACK'S REEF",
+      "JAMESVILLE",
+      "KIRKVILLE",
+      "MARIETTA",
+      "MATTYDALE",
+      "MEMPHIS",
+      "MESSINA SPRINGS",
+      "MOTTVILLE",
+      "MYCENAE",
+      "NAVARINO",
+      "ONONDAGA HILL",
+      "ORAN",
+      "OTISCO",
+      "OTISCO VALLEY",
+      "PLAINVILLE",
+      "POMPEY CENTER",
+      "ROSE HILL",
+      "SHEPARD SETTLEMENT",
+      "SKANEATELES FALLS",
+      "SOUTH SPAFFORD",
+      "SPAFFORD VALLEY",
+      "SPLIT ROCK",
+      "TAUNTON",
+      "WARNERS",
+
+
 
       // Cayuga County
       "AUBURN",
