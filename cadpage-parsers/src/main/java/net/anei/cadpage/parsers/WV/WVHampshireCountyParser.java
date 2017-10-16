@@ -12,9 +12,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
  * Hampshire County, WV
  */
 public class WVHampshireCountyParser extends DispatchA48Parser {
-  
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+|MEDIC", Pattern.CASE_INSENSITIVE);
-  private static final Pattern COUNTY_PTN = Pattern.compile("^(HARDY|FRED|FREDERICK|MINERAL|ALLEGANY|MORGAN) ", Pattern.CASE_INSENSITIVE);
 
   public WVHampshireCountyParser() {
     super(CITY_LIST, "HAMPSHIRE COUNTY", "WV", FieldType.NAME, A48_NO_CODE, UNIT_PTN);
@@ -30,6 +27,9 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
   public String getFilter() {
     return "@frontier.com";
   }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+|MEDIC", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COUNTY_PTN = Pattern.compile("^(HARDY|FRED|FREDERICK|MINERAL|ALLEGANY|MORGAN) ", Pattern.CASE_INSENSITIVE);
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -40,7 +40,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
     body = body.replace("Address:null null;", "");
     body = body.replace("Phone number:000000000;", "");
     
-    if (!super.parseMsg(subject, body, data)) return false;
+    if (!super.parseMsg("", body, data)) return false;
     
     // SO far, so good
     // Now for some special corrective measures to take if the
