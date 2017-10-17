@@ -359,6 +359,7 @@ public class Active911ParserTable {
       "US/IL/PleasantviewFPD",            "ILCookCountyI",
       "US/IL/PrairieDuPont",              "ILStClairCountyA,ILStClairCountyC",
       "US/IL/RandolphCounty",             "ILRandolphCountyA",
+      "US/IL/ShelbyCounty",               "ILShelbyCounty",
       "US/IL/SheldonDistrict",            "ILIroquoisCounty",
       "US/IL/Skokie",                     "ILCookCountyB",
       "US/IL/StClairCounty",              "ILStClairCounty",
