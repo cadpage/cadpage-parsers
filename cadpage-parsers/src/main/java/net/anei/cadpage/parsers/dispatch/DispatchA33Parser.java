@@ -62,7 +62,7 @@ public class DispatchA33Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("(?:\\d{4}|\\d{2}-?[A-Z]{2})-?\\d{5,8}", true);
+    if (name.equals("ID")) return new IdField("(?:\\d{4}|\\d{2}-?[A-Z]{2})-?\\d{5,8}|\\d{2}-\\d{5}[A-Z]", true);
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("DATETIME1")) return new BaseDateTimeField(1);
