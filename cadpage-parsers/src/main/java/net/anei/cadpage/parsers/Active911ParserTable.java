@@ -958,6 +958,7 @@ public class Active911ParserTable {
       "US/NY/WyCo911",                    "NYWyomingCounty",
       "US/OH/AdamsCounty",                "OHAdamsCounty",
       "US/OH/AllenCounty",                "OHAllenCountyA",
+      "US/OH/AlliancePolice",             "OHStarkCountyAlliance",
       "US/OH/AshlandCounty",              "OHAshlandCountyA",
       "US/OH/AshtabulaCounty",            "OHAshtabulaCounty",
       "US/OH/AthensCounty",               "OHAthensCounty",

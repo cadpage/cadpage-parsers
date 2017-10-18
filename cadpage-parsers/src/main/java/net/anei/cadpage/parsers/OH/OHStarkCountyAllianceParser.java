@@ -5,9 +5,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchA39Parser;
 /**
  * Stark County C, OH
  */
-public class OHStarkCountyCParser extends DispatchA39Parser {
+public class OHStarkCountyAllianceParser extends DispatchA39Parser {
 
-  public OHStarkCountyCParser() {
+  public OHStarkCountyAllianceParser() {
     super(CITY_LIST, "STARK COUNTY", "OH");
   }
 
@@ -44,23 +44,23 @@ public class OHStarkCountyCParser extends DispatchA39Parser {
 
       //Townships
 
-      "BETHLEHEM",
-      "CANTON",
-      "JACKSON",
-      "LAKE",
-      "LAWRENCE",
-      "LEXINGTON",
-      "MARLBORO",
-      "NIMISHILLEN",
-      "OSNABURG",
-      "PARIS",
-      "PERRY",
-      "PIKE",
-      "PLAIN",
-      "SANDY",
-      "SUGAR CREEK",
-      "TUSCARAWAS",
-      "WASHINGTON",
+      "BETHLEHEM TWP",
+      "CANTON TWP",
+      "JACKSON TWP",
+      "LAKE TWP",
+      "LAWRENCE TWP",
+      "LEXINGTON TWP",
+      "MARLBORO TWP",
+      "NIMISHILLEN TWP",
+      "OSNABURG TWP",
+      "PARIS TWP",
+      "PERRY TWP",
+      "PIKE TWP",
+      "PLAIN TWP",
+      "SANDY TWP",
+      "SUGAR CREEK TWP",
+      "TUSCARAWAS TWP",
+      "WASHINGTON TWP",
 
       //Census-designated places
 

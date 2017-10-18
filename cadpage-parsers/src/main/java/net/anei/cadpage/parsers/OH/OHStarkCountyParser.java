@@ -10,7 +10,8 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 public class OHStarkCountyParser extends GroupBestParser {
   
   public OHStarkCountyParser() {
-    super(new OHStarkCountyRedcenterParser(),
+    super(new OHStarkCountyAllianceParser(),
+          new OHStarkCountyRedcenterParser(),
           new OHStarkCountyRedcenter2Parser(),
           
           new GroupBlockParser(),

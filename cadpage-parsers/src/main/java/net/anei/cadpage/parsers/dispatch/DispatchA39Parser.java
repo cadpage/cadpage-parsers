@@ -76,19 +76,35 @@ public class DispatchA39Parser extends FieldProgramParser {
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
+  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private class MyAddressField extends AddressField {
     
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.length() == 0) return false;
       field = DIR_BOUND_PTN.matcher(field).replaceAll("$1B");
-      return super.checkParse(field, data);
+      String zip = null;
+      Matcher match = ADDR_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        zip = match.group(2);
+      }
+      if (! super.checkParse(field, data)) return false;
+      if (zip != null && data.strCity.length() == 0) data.strCity = zip;
+      return true;
     }
     
     @Override
     public void parse(String field, Data data) {
       field = DIR_BOUND_PTN.matcher(field).replaceAll("$1B");
+      String zip = null;
+      Matcher match = ADDR_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        zip = match.group(2);
+      }
       super.parse(field,  data);
+      if (zip != null && data.strCity.length() == 0) data.strCity = zip;
     }
   }
   
