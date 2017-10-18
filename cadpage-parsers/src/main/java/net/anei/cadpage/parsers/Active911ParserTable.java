@@ -143,6 +143,7 @@ public class Active911ParserTable {
       "US/CA/MidCoastFire",               "CAMontereyCountyB",
       "US/CA/ModocCounty",                "CAModocCounty",
       "US/CA/Monterey",                   "CAMontereyCountyA",
+      "US/CA/NapaCounty",                 "CANapaCounty",
       "US/CA/Neucad",                     "CAPlacerCountyA",
       "US/CA/OrangeCounty",               "CAOrangeCounty",
       "US/CA/OrovillePD",                 "CAOroville",

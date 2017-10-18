@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -10,7 +12,8 @@ public class CANapaCountyParser extends FieldProgramParser {
   
   public CANapaCountyParser() {
     super("NAPA COUNTY", "CA",
-          "CALL ADDR ID INFO! RA:UNIT! GPS UNIT Cmd:SRC Tac:CH");
+          "( SELECT/1 CALL ADDR ID INFO! RA:UNIT! GPS UNIT Cmd:SRC Tac:CH " + 
+          "| CALL ADDR! Cross-Street:X? ID! Remarks:INFO! INFO/N+? GPS! Cross-Street:X? Resources:UNIT! INFO2/N+ ) END");
   }
   
   @Override
@@ -30,9 +33,28 @@ public class CANapaCountyParser extends FieldProgramParser {
     
     // Don't know what this is, but it gets in the way
     int pt = body.lastIndexOf(" CB#:");
-    if (pt < 0) return false;
-    body = body.substring(0,pt).trim();
-    return parseFields(body.split(";"), data);
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    // Two formats, older one separated by semicolons, new one by line breaks
+    String[] flds1 = body.split(";");
+    String[] flds2 =  body.split("\n");
+    if (flds1.length > flds2.length) {
+      setSelectValue("1");
+    } else {
+      setSelectValue("2");
+      flds1 = flds2;
+    }
+    return parseFields(flds1, data);
+  }
+
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("GPS")) return new GPSField("X:.* Y:.*");
+    if (name.equals("INFO2")) return new MyInfo2Field();
+    return super.getField(name);
   }
   
   private class MyAddressField extends AddressField {
@@ -67,12 +89,13 @@ public class CANapaCountyParser extends FieldProgramParser {
       data.strUnit = append(data.strUnit, " ", field);
     }
   }
-
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("ID")) return new MyIdField();
-    if (name.equals("UNIT")) return new MyUnitField();
-    return super.getField(name);
+  
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("[-A-Za-z]+:|http://maps.google.com.*");
+  private class MyInfo2Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
+      super.parse(field, data);
+    }
   }
 }
