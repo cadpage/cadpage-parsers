@@ -11,6 +11,6 @@ public class NCHalifaxCountyParser extends DispatchA3Parser {
   
   @Override
   public String getFilter() {
-    return "HalifaxCoE911@HalifaxNC911.com";
+    return "HalifaxCoE911@HalifaxNC911.com,HalifaxCoE911@HalifaxNC.com";
   }
 }
