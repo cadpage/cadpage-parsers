@@ -18,6 +18,11 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
     int pt = body.indexOf("\n<end>");
