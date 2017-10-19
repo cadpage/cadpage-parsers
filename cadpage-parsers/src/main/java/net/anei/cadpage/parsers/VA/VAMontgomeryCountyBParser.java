@@ -9,31 +9,53 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
   
   public VAMontgomeryCountyBParser() {
     super("MONTGOMERY COUNTY", "VA", 
-          "ADDRCITY CALL PLACE INFO X UNIT! END");
+          "ADDR:ADDRCITY! GPS:GPS? CALL:CALL! PLACE:PLACE! INFO:INFO! INFO/N+ X:X! UNIT:UNIT! PRI:PRI! ID:ID! END");
   }
   
   @Override
   public String getFilter() {
-    return "dispatch@nrv911.org";
+    return "@nrv911.org";
   }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
-    body = stripFieldEnd(body, " <end>");
-    return parseFields(body.split(";"), data);
+    int pt = body.indexOf("\n<end>");
+    if  (pt >= 0) body = body.substring(0,pt).trim();
+    return parseFields(body.split("\n"), data);
   }
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.contains(", -")) {
+        data.strAddress = field;
+      } else {
+        super.parse(field, data);
+      }
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ";");
+      super.parse(field, data);
+    }
   }
   
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("Searching Cross Streets...")) return;
+      if (field.equals("No Cross Streets Found")) return;
       super.parse(field,  data);
     }
   }
