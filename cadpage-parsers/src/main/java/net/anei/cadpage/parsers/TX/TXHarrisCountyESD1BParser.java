@@ -22,7 +22,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cadnoreply@proxy.hcec.com,93001,agaleucia@avfd.com";
+    return "cadnoreply@proxy.hcec.com,93001,agaleucia@avfd.com,CadNoReply@HC911.Com";
   }
   
   @Override
