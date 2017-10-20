@@ -7,6 +7,8 @@ import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.ReverseCodeSet;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 /**
@@ -18,7 +20,8 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     super(CITY_LIST, "MONTGOMERY COUNTY", "TX",
           "( Comment:INFO/G! ID:ID2! UNIT:UNIT2! " +
           "| ID:ID! PRI:PRI? UNIT:UNIT! PRI:PRI? CALL:CALL! ( NOTES:INFO/R! INFO/N+" + 
-                                                           "| PLACE:PLACE! APT:APT? ADDR:ADDR! ( X-STREETS:X! MAP:MAP! CITY:CITY! CROSS_STREETS:SKIP? | CROSS_STREETS:X! MAP:MAP! CITY:CITY! CHANNEL:CH! | CITY:CITY! ( MAP:MAP! | ) | ) ( INFO:INFO! | GPS! GPS! ) ) )");
+                                                           "| PLACE:PLACE! APT:APT? ADDR:ADDR! ( X-STREETS:X! MAP:MAP! CITY:CITY! CROSS_STREETS:SKIP? | CROSS_STREETS:X! MAP:MAP! CITY:CITY! CHANNEL:CH! | CITY:CITY! ( MAP:MAP! | ) | ) ( INFO:INFO! | GPS1! GPS2! ) ) " +
+          "| ID UNIT! PRI:PRI! CALL! PLACE:PLACE! APT:APT? ADDR:ADDR! X-STREETS:X? MAP:MAP? CITY:CITY% GPS1 GPS2 )");
   }
   
   @Override
@@ -31,6 +34,16 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_REMOVE_EXT | MAP_FLG_PREFER_GPS;
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 175; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
   @Override
   public CodeSet getCallList() {
     return CALL_SET;
@@ -45,12 +58,12 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("ID#:(\\d{2}-\\d{6}) *; *Unit:([^ ]+) *;[ ;]*(AC - Assignment Complete *; *.*|Disp:.*)");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("ID[#:](\\d{4}-\\d{6}) *[-;]([A-Z][ A-Za-z]+:\\d\\d:\\d\\d:\\d\\d\\b.*)");
   private static final Pattern RUN_REPORT_PTN3 = Pattern.compile("(\\d{4}-\\d{6}) (Time at Destination:\\d\\d:\\d\\d:\\d\\d)(.*?)-Destination Address:(.*) -");
-  private static final Pattern RUN_REPORT_PTN4 = Pattern.compile("ID: *(\\S+) +; *(\\S+) +(Call Complete: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d) *(.*)");
+  private static final Pattern RUN_REPORT_PTN4 = Pattern.compile("ID: *(\\S+) +; *(\\S*) +(Call Complete:(?: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)?) *(.*)");
   private static final Pattern RUN_REPORT_PTN5 = Pattern.compile("ID:(\\S+) +; *(Time Cancelled:.*)");
   private static final Pattern NOTIFICATION_PTN1 = Pattern.compile("(\\d\\d-\\d{6}) - \\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) [\\d:]+\\.000-\\[\\d+\\] \\[Notification\\] +(.*?)(?: +\\[Shared\\])?");
   private static final Pattern NOTIFICATION_PTN2 = Pattern.compile("ID#:(\\d\\d-\\d{6}) +; +\\d+\\) (.*)");
   
-  private static final Pattern MISSING_SEMI_PTN = Pattern.compile("(?<=CITY:)(?= *\\d{8}\\b)| (?=NOTES:)");
+  private static final Pattern MISSING_SEMI_PTN = Pattern.compile("(?<!;) ++(?=\\d{8}\\b|NOTES:)|(?<![ 0-9])(?=\\d{8} +\\d{8}\\b)");
   private static final Pattern COMMA_ID_PTN = Pattern.compile(", *ID:");
   private static final Pattern DELIM = Pattern.compile("[ ,]*; *");
 
@@ -61,9 +74,6 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("CAD Message")) return false;
-    
-    int pt = body.indexOf('\n');
-    if (pt >= 0) body = body.substring(0,pt).trim();
     
     body = stripFieldStart(body, ",");
     
@@ -107,7 +117,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
       data.strUnit = match.group(2);
-      data.strSupp = match.group(3) + ' ' + match.group(4);
+      data.strSupp = append(match.group(3), " ", match.group(4));
       return true;
     }
     
@@ -214,7 +224,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       // an upper case character
       else if ((match = MISSING_BLANK_PTN.matcher(addr)).find()) {
         found = true;
-        pt = match.start();
+        int pt = match.start();
         data.strCall = addr.substring(pt);
         addr = addr.substring(0,pt);
       }
@@ -225,7 +235,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         if (addr.endsWith(" ")) {
           addr = addr.trim();
         } else {
-          pt = addr.lastIndexOf(' ');
+          int pt = addr.lastIndexOf(' ');
           if (pt >= 0) {
             pt++;
             String lastWord = addr.substring(pt);
@@ -276,7 +286,8 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     if (name.equals("UNIT2")) return new MyUnit2Field();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("GPS")) return new MyGpsField();
+    if (name.equals("GPS1")) return new MyGpsField(1);
+    if (name.equals("GPS2")) return new MyGpsField(2);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -361,22 +372,16 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   
   private class MyGpsField extends GPSField {
     
-    public MyGpsField() {
-      super("\\d{8}|0", true);
+    public MyGpsField(int type) {
+      super(type, "\\d{8}|0", true);
     }
     
     @Override
     public void parse(String field, Data data) {
-      if (data.strGPSLoc.length() == 0) {
-        data.strGPSLoc = field;
-        return;
+      if (field.length() == 8) {
+        field = field.substring(0,2) + '.' + field.substring(2);
       }
-      
-      else {
-        field = data.strGPSLoc + ' ' + field;
-        data.strGPSLoc = "";
-        parseGPSField(field, data);
-      }
+      super.parse(field, data);
     }
   }
 
@@ -395,23 +400,49 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   }
   
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
+      
+      "#CFD AIRCRAFT EMERGENCY PA",
+      "#CFD STRUCTURE FIRE PA",
+      "1 - EMS (No suspected life threat)",
+      "1 - EMS No suspected life threat",
+      "1 - EMS",
+      "2 - Motor Vehicle Incident (MVC - Single Poss Life Threat)",
+      "2 - Motor Vehicle Incident MVC - Single Poss Life Threat",
+      "2 - Motor Vehicle Incident",
+      "3 - Fire (Still)",
+      "3 - Fire Still",
+      "3 - Fire",
+      "4 - Stage (No suspected life threat)",
+      "4 - Stage No suspected life threat",
+      "4 - Stage",
       "Abd. Pain -Pre-Alert",
       "Abdominal Pain",
       "Aircraft Emergency",
-      "Alarm",
+      "Alarm (Still)",
       "Alarm - Carbon Monox",
       "Alarm - Carbon Monoxide",
+      "Alarm - Fire (Still)",
+      "Alarm - Fire Still",
       "Alarm - Fire",
+      "Alarm - Pull Station Still",
       "Alarm - Pull Station",
+      "Alarm - Water Flow Box - Light",
       "Alarm - Water Flow",
+      "Alarm Still",
+      "Alarm",
+      "Alarm",
+      "ALERT III ON L",
       "Allergic Reaction",
+      "Animal Attack",
       "Animal Bite",
       "Assault",
       "Assist Law Enforceme",
+      "ASSIST LOCKED IN VEHICLE",
       "Back Pain",
       "Bomb Threat",
       "Breathing Problems",
       "Burn Patient",
+      "Burns",
       "Cardiac Arrest",
       "Chest Pain",
       "Chest Pain Pre-Alert",
@@ -419,17 +450,25 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Child Locked in a Vehicle",
       "Choking",
       "Choking Pre-Alert",
+      "COMMERCIAL ALARM",
+      "COMMERCIAL GAS LEAK",
+      "Creekside Medical Still",
       "Dedicated Fire Standby",
       "Dedicated Standby",
-      "Diabetic Problems",
+      "Dedicated Standby Dedicated Standby",
       "Diabetic",
+      "Diabetic Problems",
       "Diff. Breath. Pre-Alert",
       "Difficulty Breathing",
+      "Difficulty Breathing",
+      "DRILL ONLY - TEST Alert",
+      "DRILL ONLY - TEST",
       "Drowning",
-      "Electrical Hazard",
-      "Electrical Hazard -",
+      "Electrical Hazard - Live Wires",
       "Electrical Hazard - Live Wires",
       "Electrical Hazard - Trans Fire",
+      "Electrical Hazard -",
+      "Electrical Hazard",
       "Electrocution",
       "Emotional Crisis",
       "Eval Emerg Resp Req",
@@ -441,17 +480,22 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Fluid Spill",
       "Gas",
       "Gas - Cut Commercial",
+      "Gas - Cut Commercial Line",
+      "Gas - Cut Commercial Line (Hazmat - Still)",
       "Gas - Cut Line Outsi",
       "Gas - Cut Line Outside",
       "Gas - In a Residence",
-      "Gas - Smell in Area",
       "Gas - Smell in a Bui",
       "Gas - Smell in a Building Comm",
       "Gas - Smell in a Res",
       "Gas - Smell in a Residence",
+      "Gas - Smell in Area",
+      "Gas - Smell in Area Still",
+      "GAS LEAK/ODOR PA",
       "General Weakness",
       "Hazmat",
       "Hazmat - Large Fuel",
+      "HazMat Still Hazmat - Still",
       "Headache",
       "Heart Problems",
       "Heat/Cold Exposure",
@@ -460,42 +504,72 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Hemorrhage/Laceration",
       "Inhalation Pre-Alert",
       "Inhalation/Hazmat",
-      "Lake Rescue",
       "Lake Rescue - Conroe",
+      "Lake Rescue",
       "Life Flight Landing",
       "Lightning - To a Str",
-      "MVA",
-      "MVA - Entrapment",
-      "MVA - Fire",
-      "MVC",
-      "MVC Pre-Alert",
+      "M14 Post EMS 14",
+      "M19 Post 1A (45/105 --157R)",
+      "M20 Post 2A (45/RESEARCH FOREST - 252A)",
+      "M20 Post EMS 20",
+      "M20 Post EMS 41",
+      "M21 Post EMS 21",
+      "M22 Post EMS 22",
+      "M23 Post MCHD Fleet",
+      "M24 Post EMS 24",
+      "M32 Post EMS 32",
+      "M33 Post EMS 33",
+      "M34 Post EMS 34",
+      "M39 Post 3B (1314/GENE CAMPBELL - 254M)",
+      "M39 Post EMS 30",
+      "M42 Post 4A (1774/1488 -- 212J)",
+      "M45 Post EMS 45",
+      "M46 Post EMS 24",
+      "M49 Post 4A (1774/1488 -- 212J)",
       "Medical Alarm",
       "Medical Alarm Pre-Alert",
       "Medical Priority 1",
       "Medical Priority 2",
+      "Mutual Aid Assist Agency (Alert)",
       "Mutual Aid Assist Agency",
+      "MVA",
+      "MVA - Entrapment (Vehicle Extrication)",
+      "MVA - Entrapment Vehicle Extrication",
+      "MVA - Entrapment",
+      "MVA - Fire",
+      "MVC",
+      "MVC Pre-Alert",
       "Obvious/Expected Death",
+      "ODOR OF SMOKE OUTSIDE",
       "Odor",
+      "Odor Still",
       "Out of County Respon",
-      "Out of County ResponSPRING",
       "Outside - Check For",
       "Outside - Check For Fire",
-      "Outside - Controlled Burn",
       "Outside - Controlled",
+      "Outside - Controlled Burn",
+      "Outside - Controlled Burn Still",
       "Outside - Dumpster F",
       "Outside - Dumpster Fire",
       "Outside - Extinguish",
+      "Outside - Extinguished Fire Still",
       "Outside - Grass/Wood",
+      "Outside - Grass/Woods Fire (Grass Fire)",
+      "Outside - Grass/Woods Fire Grass Fire",
       "Outside - Grass/Woods Fire",
       "Outside - Illegal Bu",
       "Outside - Illegal Burn",
       "Outside - Small Fire",
+      "Outside - Small Fire (Still)",
+      "Outside - Small Fire Still",
       "Outside - Trash Fire",
       "Outside - Unknown Ty",
+      "Outside - Unknown Type Fire Still",
       "Outside - Unknown Type Fire",
+      "OUTSIDE FIRE PA",
       "Outside Fire",
-      "Overdose Pre-Alert",
       "Overdose Ingestion",
+      "Overdose Pre-Alert",
       "Overdose/Ingestion",
       "Overdose/Poisoning",
       "Penetrating Trauma",
@@ -506,72 +580,71 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Rescue",
       "Rescue - Elevator",
       "Seizures",
-      "Service Call",
       "Service Call - Alert",
+      "Service Call",
+      "Service Call Still",
       "Sick Person",
+      "SMALL OUTSIDE FIRE",
       "Smoke - In a Bldg Co",
       "Smoke - In a Bldg Commercial",
       "Smoke - In a Residen",
       "Smoke - In a Residence",
+      "Smoke - In the Area Still",
       "Smoke - In the Area",
       "Smoke - Smell in a R",
       "Smoke - Smell in Comm Bldg",
+      "Smoke - Smell in the Area Still",
       "Smoke - Smell in the Area",
       "Smoke - Smell in the",
+      "SMOKE INVESTIGATION PA",
       "SSM Level -",
-      "Stab/GSW/Penetrating Trauma",
       "Stab/GSW/Penetrating",
+      "Stab/GSW/Penetrating Trauma",
       "Stroke",
       "Structure - Apartmen",
       "Structure - Apartment",
       "Structure - Commerci",
+      "Structure - Commercial",
+      "Structure - Commercial Heavy Box",
       "Structure - Extingui",
-      "Structure - Large Bu",
       "Structure - High Lif",
       "Structure - High Life Hazard",
+      "Structure - Large Bu",
+      "Structure - Large Building",
+      "Structure - Large Building Box",
       "Structure - Resident",
       "Structure - Residential",
+      "Structure - Residential Box",
       "Structure - Residential/Oven",
       "Structure - Small Bu",
       "Structure - Small Building",
+      "Structure Fire (Box)",
+      "STRUCTURE FIRE PA",
       "Structure Fire",
       "TEST",
       "Transfer/Evaluation",
+      "Traumatic Inj. Pre-Alert",
       "Traumatic Injuries",
       "Traumatic Injury",
-      "Traumatic Inj. Pre-Alert",
       "Unconscious Party",
       "Unconscious Pre-Alert",
       "Unconscious/Fainting",
+      "UNKNOWN FUEL SPILL",
       "Unknown Prob. Pre-Alert",
       "Unknown Problem",
-      "Unknown Problem/Man",
       "Unknown Problem/Man Down",
+      "Unknown Problem/Man Down",
+      "Unknown Problem/Man",
       "Vehicle Fire - Comme",
       "Vehicle Fire - Commercial",
+      "VEHICLE FIRE PA",
+      "Vehicle Fire Still",
       "Vehicle Fire",
       "Water Rescue",
       "Water Rescue - Motor",
       "Water Rescue - Sinki",
       "Water Rescue - Still",
-      "WFD PA Child Locked",
-      
-      "#CFD AIRCRAFT EMERGENCY PA",
-      "#CFD STRUCTURE FIRE PA",
-      "ALERT III ON L",
-      "ASSIST LOCKED IN VEHICLE",
-      "COMMERCIAL ALARM",
-      "COMMERCIAL GAS LEAK",
-      "DRILL ONLY - TEST",
-      "GAS LEAK/ODOR PA",
-      "SMALL OUTSIDE FIRE",
-      "SMOKE INVESTIGATION PA",
-      "STRUCTURE FIRE PA",
-      "ODOR OF SMOKE OUTSIDE",
-      "OUTSIDE FIRE PA",
-      "UNKNOWN FUEL SPILL",
-      "VEHICLE FIRE PA"
-
+      "WFD PA Child Locked"
   );
   
   private static final String[] CITY_LIST = new String[]{
