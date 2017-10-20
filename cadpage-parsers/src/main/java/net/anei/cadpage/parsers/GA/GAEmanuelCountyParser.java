@@ -60,6 +60,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "DOMESTIC IN PROGRESS",
       "DOMESTIC PREVIOUSLY OCCURRED",
       "FIGHT",
+      "FIRE - BRUSH",
       "FIRE - UNKNOWN TYPE",
       "FIRE -EXPLOSION",
       "FIRE ALARM",
