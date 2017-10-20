@@ -11,36 +11,57 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class WVKanawhaCountyParser extends SmartAddressParser {
   
-  private static final Pattern MASTER = 
-      Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?) reported at (.+?)(?:@(.*))?(?:/? in |, +)(.+?)(?:\\((.*?)\\))? on (\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d [AP]M)?)(?: +Call (?:#|Number:) *(.*))?");
-  
   public WVKanawhaCountyParser() {
     super("KANAWHA COUNTY", "WV");
-    setFieldList("CALL ADDR CITY PLACE DATE TIME ID");
+    setFieldList("CALL ADDR APT CITY PLACE DATE TIME ID");
   }
   
   @Override
   public String getFilter() {
     return "@metro911.org";
   }
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Message Forwarded by PageGate")) {
+      return parseMsg1(body, data);
+    } else {
+      return parseMsg2(body, data);
+    }
+  }
   
+  private static final Pattern AT_ON_PTN = Pattern.compile(" (?:at|on) ");
+  
+  private boolean parseMsg1(String body, Data data) {
+    body = stripFieldEnd(body, ".");
+    body = stripFieldStart(body, "Daytime Notifications: - ");
+    Parser p = new Parser(body);
+    data.strCall = stripFieldEnd(p.get(AT_ON_PTN), " reported");
+    data.strCity = p.getLastOptional(" in ");
+    String addr = p.get();
+    addr = stripFieldStart(addr, "the ");
+    if (addr.length() == 0) return false;
+    parseAddress(addr, data);
+    return true;
+  }
+  
+  private static final Pattern MASTER2 = 
+      Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?) reported at (.+?)(?:@([^,]*)?)?(?:(?:/? in |, +)(.+?))?(?:\\((.*?)\\))? on (\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d [AP]M)?)(?: +Call (?:#|Number:) *(.*))?");
   private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    
+  private boolean parseMsg2(String body, Data data) {
     body = body.replace('\n', ' ');
-    Matcher match = MASTER.matcher(body);
+    Matcher match = MASTER2.matcher(body);
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
     parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END | FLAG_IMPLIED_INTERSECT, match.group(2).trim().replaceAll("//", "/"), data);
     data.strPlace = getOptGroup(match.group(3));
-    data.strCity = match.group(4).trim();
+    data.strCity = getOptGroup(match.group(4));
     if (data.strCity.equals("SISSONVILLE")) {
       if (data.strPlace.length() == 0) data.strPlace = data.strCity;
       data.strCity = "CHARLESTON";
     }
-    data.strPlace = append(data.strPlace, " - ", getOptGroup(match.group(5)));
+    data.strPlace = append(data.strPlace, " - ", getOptGroup(match.group(5)).replace(") (", " - "));
     data.strDate = match.group(6);
     String time  = match.group(7);
     if (time.endsWith("M")) {
