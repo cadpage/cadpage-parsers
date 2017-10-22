@@ -29,6 +29,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
         "CHESTNUT RIDGE",
         "COUNTY HOUSE",
         "COUNTY LINE",
+        "FAIR HAVEN",
         "FRANKLIN STREET",
         "GENESEE STREET",
         "GLEN COVE",
@@ -39,13 +40,16 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
         "PINE RIDGE",
         "SAND BEACH",
         "SILVER STREET",
+        "STATE PARK",
         "SUNSET BEACH",
         "TOWN HALL",
         "TWELVE CORNERS",
         "WEEDSPORT SENNETT",
         "WEST LAKE",
         "WHITE BIRCH",
-        "WHITE BRIDGE"
+        "WHITE BRIDGE",
+        "WOOD HOLLOW"
+
     );
   }
   
@@ -140,6 +144,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "ACCIDENT - OTHER",
       "ALARM - CO",
+      "ALARM - CO ILLNESS",
       "ALARM - FIRE",
       "ALARM - MEDICAL",
       "ALLERGIC REACTION",
@@ -218,6 +223,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       
       "ONONDAGA COUNTY",
       "SKANEATELES",
+      "MOTTVILLE",
       
       "WAYNE COUNTY",
       "WOLCOTT"
