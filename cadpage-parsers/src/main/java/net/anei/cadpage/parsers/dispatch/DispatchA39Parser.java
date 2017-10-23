@@ -77,10 +77,20 @@ public class DispatchA39Parser extends FieldProgramParser {
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
+  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private class MyAddressField extends AddressField {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      return checkParse(false, field, data);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      checkParse(true, field, data);
+    }
+    
+    private boolean checkParse(boolean force, String field, Data data) {
       if (field.length() == 0) return false;
       field = DIR_BOUND_PTN.matcher(field).replaceAll("$1B");
       String zip = null;
@@ -89,22 +99,29 @@ public class DispatchA39Parser extends FieldProgramParser {
         field = match.group(1).trim();
         zip = match.group(2);
       }
-      if (! super.checkParse(field, data)) return false;
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(',');
+      if (city.length() > 0) {
+        if (STATE_PTN.matcher(city).matches()) {
+          data.strState = city;
+          city = p.getLastOptional(',');
+        }
+        if (city.length() > 0) data.strCity = city;
+      }
+      field = p.get();
+      int flags = FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT | FLAG_ANCHOR_END;
+      if (!force) flags |= FLAG_CHECK_STATUS;
+      if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
+      Result res = parseAddress(StartType.START_ADDR, flags, field);
+      if (!force && data.strCity.length() == 0 && !res.isValid()) return false;
+      res.getData(data);
       if (zip != null && data.strCity.length() == 0) data.strCity = zip;
       return true;
     }
     
     @Override
-    public void parse(String field, Data data) {
-      field = DIR_BOUND_PTN.matcher(field).replaceAll("$1B");
-      String zip = null;
-      Matcher match = ADDR_ZIP_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        zip = match.group(2);
-      }
-      super.parse(field,  data);
-      if (zip != null && data.strCity.length() == 0) data.strCity = zip;
+    public String getFieldNames() {
+      return "ADDR APT CITY ST";
     }
   }
   

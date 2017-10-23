@@ -144,7 +144,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "ACCIDENT - OTHER",
       "ALARM - CO",
-      "ALARM - CO ILLNESS",
+      "ALARM - CO - ILLNESS",
       "ALARM - FIRE",
       "ALARM - MEDICAL",
       "ALLERGIC REACTION",

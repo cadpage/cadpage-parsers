@@ -198,10 +198,9 @@ public class GroupBestParser extends GroupBaseParser {
     for (MsgParser parser : parsers) {
       
       // If we encounter a GroupBlockParser in the list, see if 
-      // we have found anything so far, excepting anything with
-      // a general alert or run report status.  If we have, return it
+      // we have found anything so far.  If we have, return it
       if (parser instanceof GroupBlockParser) {
-        if (bestData != null && bestData.msgType == MsgType.PAGE) return bestData;
+        if (bestData != null) return bestData;
       }
       
       // Otherwise invoke this parser and see what kind of result it returns.

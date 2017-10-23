@@ -16,6 +16,7 @@ public class ALJeffersonCountyHParser extends DispatchSouthernParser {
   private static final Pattern OCA_PTN = Pattern.compile("\\bOCA: *[\\d-]+$");
   private static final Pattern MM_PTN = Pattern.compile(" MM, *");
   private static final Pattern UNIT_CALL_PTN = Pattern.compile("(\\d\\d) +(.*)");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{6}|\\d{9}");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -28,7 +29,7 @@ public class ALJeffersonCountyHParser extends DispatchSouthernParser {
       data.strUnit = match.group(1);
       data.strCall = match.group(2);
     }
-    return true;
+    return ID_PTN.matcher(data.strCallId).matches();
   }
   
   @Override

@@ -16,7 +16,7 @@ public class ALJeffersonCountyGParser extends DispatchSouthernParser {
   }
   
   private static final Pattern OCA_PTN = Pattern.compile("\\bOCA: *[\\d-]+$");
-      
+  private static final Pattern ID_PTN = Pattern.compile("\\d{6}-\\d{6}");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -26,12 +26,12 @@ public class ALJeffersonCountyGParser extends DispatchSouthernParser {
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equalsIgnoreCase("UNINCORPORATED")) data.strCity = "";
     if (data.strApt.equals("0")) data.strApt = "";
-    return true;
+    return ID_PTN.matcher(data.strCallId).matches();
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{6}-\\d{6}");
+    if (name.equals("ID")) return new IdField("\\d{6}-\\d{6}", true);
     return super.getField(name);
   }
 }

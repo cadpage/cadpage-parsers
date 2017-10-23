@@ -79,6 +79,7 @@ public class Active911ParserTable {
       "US/AL/StClairCounty",              "ALStClairCounty",
       "US/AL/TalladegaCounty",            "ALTalladegaCounty",
       "US/AL/Tallapoosa911",              "StandardA",
+      "US/AL/Trussville",                 "ALJeffersonCountyJ",
       "US/AL/Velocityps",                 "ALJeffersonCountyF",
       "US/AL/WalkerCounty",               "ALWalkerCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",

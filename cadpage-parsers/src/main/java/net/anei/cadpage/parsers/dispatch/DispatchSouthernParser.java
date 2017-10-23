@@ -385,7 +385,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callCodePtn = callCodePtn;
   }
 
-  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+:)?(\\d{8,10}|[A-Z]\\d{2}-\\d+|\\d{4}-\\d{6,7})[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+:)?(\\d{8,10}|[A-Z]\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("CFS: *(\\S+), *Unit: *(\\S+), *(Status:.*)");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
@@ -807,7 +807,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (name.equals("CODE"))  return new BaseCodeField();
     if (name.equals("PARTCODE")) return new SkipField("[MFL]D?");
     if (name.equals("X")) return new BaseCrossField();
-    if (name.equals("ID")) return new IdField("[A-Z]?\\d\\d(?:\\d\\d)?-?\\d{4,8}", true);
+    if (name.equals("ID")) return new IdField("[A-Z]?\\d\\d(?:\\d\\d)?-?\\d{4,8}|\\d{4}-\\d{2}-\\d{5}", true);
     if (name.equals("NAME")) return new BaseNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
