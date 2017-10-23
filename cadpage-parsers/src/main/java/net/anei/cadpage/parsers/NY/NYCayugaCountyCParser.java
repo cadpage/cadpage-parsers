@@ -11,7 +11,7 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   
   public NYCayugaCountyCParser() {
     super(CITY_CODES, "CAYUGA COUNTY", "NY", 
-          "SRC CALL DISP ADDRCITY BOX UNIT INFO TIMEDATE! INFO/N+");
+          "SRC CALL DISP ADDRCITY UNIT! UNIT/C+? INFO/N+");
   }
   
   @Override
@@ -35,25 +35,35 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{3,4}", true);
     if (name.equals("DISP")) return new SkipField("DISP", true);
     if (name.equals("BOX")) return new BoxField("[A-Z0-9]+", true);
-    if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
-    if (name.equals("TIMEDATE")) return new MyTimeDateField();
+    if (name.equals("UNIT")) return new UnitField("[A-Z0-9]{3,7}", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
   private static final Pattern TIME_DATE_PTN = Pattern.compile("(\\d\\d \\d\\d \\d\\d) (\\d\\d/\\d\\d/\\d{4}) - +(.*)");
-  private class MyTimeDateField extends TimeDateField {
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = TIME_DATE_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strTime = match.group(1).replace(' ', ':');
-      data.strDate = match.group(2);
-      data.strSupp = append(data.strSupp, "\n", match.group(3));
+      if (match.matches()) {
+        if (data.strTime.length() == 0) {
+          data.strTime = match.group(1).replace(' ', ':');
+          data.strDate = match.group(2);
+        }
+        field = match.group(3);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " TIME DATE";
     }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FH",     "FAIR HAVEN",
+      "STE",    "STERLING",
       "VIC",    "VICTORY",
       "WOL",    "WOLCOTT"
   });
