@@ -16,7 +16,20 @@ public class MISaginawCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "27538,34292";
+    return "27538,34292,Group_Page_Notification@usamobility.net";
+  }
+  
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = body.replace("TYPN:", "TYP:").replace("TYP:", " TYP:");
+    return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CALL")) return new MyCallField();
+    return super.getField(name);
   }
   
   private static final Pattern GPS_PTN = Pattern.compile("LAT: <([+-]?[\\d\\.]+)> +LONG: <([+-]?[\\d\\.]+)>");
@@ -43,12 +56,5 @@ public class MISaginawCountyParser extends FieldProgramParser {
       if (field.startsWith("*M*")) field = field.substring(3).trim();
       super.parse(field, data);
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("CALL")) return new MyCallField();
-    return super.getField(name);
   }
 }
