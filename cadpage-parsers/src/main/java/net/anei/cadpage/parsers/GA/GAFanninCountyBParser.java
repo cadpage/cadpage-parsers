@@ -26,7 +26,7 @@ public class GAFanninCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("CFS\\d{7}", true);
+    if (name.equals("ID")) return new IdField("CFS\\d{7}|[A-Z]{2,3}\\d{2}-\\d+", true);
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
