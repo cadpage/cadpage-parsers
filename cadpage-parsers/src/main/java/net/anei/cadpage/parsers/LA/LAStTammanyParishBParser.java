@@ -14,7 +14,7 @@ public class LAStTammanyParishBParser extends DispatchA46Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@covla.com";
+    return "dispatch@covla.com,covington@pagingpts.com";
   }
   
   private static final Pattern INN_PTN = Pattern.compile("\\bI[- ]*(\\d+) *([EW])B?\\b");
