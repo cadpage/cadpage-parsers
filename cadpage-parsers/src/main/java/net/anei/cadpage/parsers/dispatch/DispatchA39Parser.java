@@ -13,13 +13,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA39Parser extends FieldProgramParser {
 
   private static final String PROGRAM_STR = "DEMPTY+? CALL? ADDR/iS6! APT? INFO/N+";
+  
+  private Properties cityCodes;
 
   public DispatchA39Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, PROGRAM_STR);
+    this.cityCodes = cityCodes;
   }
 
   public DispatchA39Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState, PROGRAM_STR);
+    this.cityCodes = null;
   }
 
   @Override
@@ -106,7 +110,10 @@ public class DispatchA39Parser extends FieldProgramParser {
           data.strState = city;
           city = p.getLastOptional(',');
         }
-        if (city.length() > 0) data.strCity = city;
+        if (city.length() > 0) {
+          if (cityCodes != null) city = convertCodes(city, cityCodes);
+          data.strCity = city;
+        }
       }
       field = p.get();
       int flags = FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT | FLAG_ANCHOR_END;
