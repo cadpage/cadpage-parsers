@@ -20,8 +20,12 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "BIRD FLANDERS",
       "CANOOCHEE GARFIELD",
       "DELLWOOD MAIN",
+      "FANNIE BREWER",
+      "FRIENDSHIP CHURCH",
+      "GRANDE CREEK",
       "GRIFFIN FERRY",
       "HALLS BRIDGE",
+      "HAWHAMMOCK CHURCH",
       "KEAS OLD MILL POND",
       "KING CIRCLE",
       "LAMBS BRIDGE",
@@ -33,7 +37,9 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "MOORES FERRY",
       "MT OLIVET CHURCH",
       "MT SHADY CHURCH",
+      "NOONDAY CHURCH",
       "NUNEZ LEXSY",
+      "OAK GROVE CHURCH",
       "OAK PARK",
       "PARK CIRCLE",
       "ROUNTREE FARM",
@@ -41,7 +47,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "SAM OVERSTREET",
       "ST GALILEE",
       "TONY BAKER",
-      "WADLEY COLEMAN LAKE"
+      "WADLEY COLEMAN LAKE",
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -69,6 +75,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "GENERAL WEAKNESS",
       "GUN SHOT WOUND",
       "HAZMAT INCIDENT",
+      "HELICOPTER LANDING ZONE",
       "HIT AND RUN",
       "INTERFACILITY TRANSFER",
       "INTOXICATED PEDESTRIAN",
@@ -87,6 +94,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "OFFICER ASSIST",
       "POSSIBLE OVERDOSE",
       "PREG COMPLICATIONS/OB/GYN",
+      "PREG COMPLICATONS/OB/GYN",
       "RECKLESS DRIVER",
       "REPORT",
       "SEIZURE",
@@ -102,6 +110,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "TRAFFIC STOP",
       "TRANSPORT",
       "TRAUMA",
+      "VEHICLE FIRE",
       "VEHICLE DAMAGE",
       "WELFARE CHECK"
   );
@@ -136,6 +145,6 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       
       // Toombs County
       "LYONS",
-      "VISALIA"
+      "VIDALIA"
   };
 }
