@@ -977,7 +977,6 @@ public class Active911ParserTable {
       "US/OH/CityofAvonLake",             "OHLorainCountyA",
       "US/OH/CityofBroadviewHeights",     "OHCuyahogaCountyA",
       "US/OH/CityofCanfield",             "OHMahoningCounty",
-      "US/OH/CityofCanton",               "OHStarkCountyRedcenter2",
       "US/OH/CityofCenterville",          "OHCenterville",
       "US/OH/CityofFairborn",             "OHGreeneCountyB",
       "US/OH/CityofFairfield",            "OHFairfield",
