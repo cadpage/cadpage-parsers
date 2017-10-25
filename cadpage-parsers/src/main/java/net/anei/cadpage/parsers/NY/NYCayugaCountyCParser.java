@@ -62,7 +62,7 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "FH",     "FAIR HAVEN",
+      "FHA",    "FAIR HAVEN",
       "STE",    "STERLING",
       "VIC",    "VICTORY",
       "WOL",    "WOLCOTT"
