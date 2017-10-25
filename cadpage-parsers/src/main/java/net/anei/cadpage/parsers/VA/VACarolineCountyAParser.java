@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgParser;
 
@@ -12,10 +13,10 @@ public class VACarolineCountyAParser extends MsgParser {
   
   public VACarolineCountyAParser() {
     super("CAROLINE COUNTY", "VA");
-    setFieldList("UNIT DATE TIME ID CALL ADDR APT CITY INFO");
+    setFieldList("DATE TIME ID CALL ADDR APT CITY PLACE INFO UNIT");
   }
   
-  private static final Pattern MASTER = Pattern.compile("(?:superuser|ACTIVE 911-([A-Z0-9]+)):As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (\\d{12}) ([A-Z0-9]+) ([^,]+)(?:, *([ A-Z]+))? (Call Created Time:.* \\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d)\\b *(.*)");
+  private static final Pattern MASTER = Pattern.compile("(?:superuser|ACTIVE 911-([A-Z0-9]+))?:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (\\d{12}) ([A-Z0-9]+) ([^,]+), *(.+?) (Call Created Time.*:(?: \\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b)?) *(.*)");
   private static final Pattern INFO_SPLIT_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d) +");
   private static final Pattern UNIT_SPLIT_PTN = Pattern.compile("[, ]+");
   
@@ -33,7 +34,16 @@ public class VACarolineCountyAParser extends MsgParser {
     data.strCallId = match.group(4);
     data.strCall = match.group(5);
     parseAddress(match.group(6).trim(), data);
-    data.strCity = splitCity(getOptGroup(match.group(7)));
+    String cityPlace = match.group(7).trim();
+    String city = CITY_LIST.getCode(cityPlace);
+    if (city != null) {
+      data.strCity = city;
+      data.strPlace = cityPlace.substring(city.length()).trim();
+    } else {
+//      return false;
+      data.strCity = cityPlace;
+    }
+    
     data.strSupp = INFO_SPLIT_PTN.matcher(match.group(8).trim()).replaceAll("\n");
     unit = match.group(9);
     for (String unt : UNIT_SPLIT_PTN.split(unit)) {
@@ -49,14 +59,150 @@ public class VACarolineCountyAParser extends MsgParser {
     }
   }
   
-  private String splitCity(String city) {
-    if (city.length() == 0) return city;
-    int pt =  city.length()/2;
-    if (city.charAt(pt) == ' ') {
-      String tmp1 = city.substring(0,pt);
-      String tmp2 = city.substring(pt+1);
-      if (tmp1.equals(tmp2)) city = tmp1;
-    }
-    return city;
-  }
+  private static CodeSet CITY_LIST = new CodeSet(
+      
+      // Incorporated Towns
+      "BOWLING GREEN",
+      "PORT ROYAL",
+
+      // Census designated places
+      "LAKE CAROLINE",
+      "LAKE LANDOR",
+
+      // Unincorporated communities
+      "ACORS CORNER",
+      "ANN WRIGHTS CORNER",
+      "ANTIOCH FORK",
+      "ATHENS",
+      "BAGBY",
+      "BAGDAD",
+      "BALTY",
+      "BAYLORTOWN",
+      "BLANTONS",
+      "BRANDYWINE",
+      "BROADDUS",
+      "BROADUS CORNER",
+      "BULLOCKS CORNER",
+      "BURRUSS CORNER",
+      "BUTLERS FORK",
+      "CAMPBELL CORNER",
+      "CAMPBELLS CORNER",
+      "CAROLINE PINES",
+      "CARTERS CORNER",
+      "CASH CORNER",
+      "CEDAR FORK",
+      "CEDON",
+      "CENTRAL POINT",
+      "CHANDLER CROSSING",
+      "CHENAULTS SHOP",
+      "CHILESBURG",
+      "CHRISTOPHER FORK",
+      "CLAIBORNE",
+      "COFFEY",
+      "CORNER",
+      "COLEMANS MILL",
+      "CROSSING",
+      "COLLINS CROSSING",
+      "CORBIN",
+      "COVINGSTON CORNER",
+      "DALTONS",
+      "DANIEL CORNER",
+      "DAVIS CORNER",
+      "DAWN",
+      "DEJARNETTE",
+      "DELOS",
+      "DOGGETTS FORK",
+      "EDGAR",
+      "ELEVON",
+      "ETTA",
+      "EUBANK CORNER",
+      "FEATHERSTONE FORK",
+      "FLIPPOS CORNER",
+      "FROG LEVEL",
+      "GETHER",
+      "GOLANSVILLE",
+      "GOLDMANS CORNER",
+      "GUINEA",
+      "HALEYS CORNER",
+      "HARD CORNER",
+      "HART CORNER",
+      "HAYMOUNT",
+      "HICKORY FORK",
+      "HICKS MILL",
+      "HOUSTONS CORNER",
+      "HOWARDS CORNER",
+      "JONES CORNER",
+      "KEMP CORNER",
+      "KIDDS FORK",
+      "LADYSMITH",
+      "LAURAVILLE",
+      "LENT",
+      "LIBERTY",
+      "LIBERTY FORK",
+      "LOCKS CORNER",
+      "LONG BRANCH",
+      "LORNE",
+      "LOVING FORK",
+      "MARTINS CORNER",
+      "MARYTON",
+      "MCBRYANT CORNER",
+      "MCDUFF",
+      "MICA",
+      "MILFORD",
+      "MONCURE CORNER",
+      "MONROE CORNER",
+      "MOSS NECK",
+      "NANCY WRIGHTS CORNER",
+      "NAULAKLA",
+      "NEW LONDON",
+      "OAK CORNER",
+      "OLIVE",
+      "OLNEY CORNER",
+      "PAIGE",
+      "PATERSONS CORNER",
+      "PEATROSS",
+      "PENNY CORNER",
+      "PENOLA",
+      "POORHOUSE CORNER",
+      "POPLAR",
+      "PORT ROYAL CROSS ROADS",
+      "PORTOBAGO",
+      "PULLERS CORNER",
+      "RAINES CORNER",
+      "RANGE CORNER",
+      "RAPPAHANNOCK ACADEMY",
+      "RAPPAHANNOCK CORNER",
+      "RAYMONDS FORK",
+      "REEDY MILL",
+      "RIXEY",
+      "RUTHER GLEN",
+      "RYLAND CORNER",
+      "SALES CORNER",
+      "SAMUELS CORNER",
+      "SHUMANSVILLE",
+      "SIGNBOARD",
+      "SKINKERS CORNER",
+      "SMOOTS",
+      "SORRELL",
+      "SPARTA",
+      "STUART CORNER",
+      "SWANS CORNER",
+      "TAYLORS CORNER",
+      "TIGNOR",
+      "TRAVIS MILL",
+      "UPPER ZION",
+      "VALLEYVIEW CORNER",
+      "VILLBORO",
+      "WALLERS CORNER",
+      "WASHINGTON CORNER",
+      "WAVERLY WELCHS",
+      "WOODFORD",
+      "WRIGHTS CORNER",
+      "WRIGHTS FORK",
+      "WRIGHTSVILLE",
+      "YOUNG CORNER",
+      
+      // Hanover County
+      "HANOVER"
+  );
 }
