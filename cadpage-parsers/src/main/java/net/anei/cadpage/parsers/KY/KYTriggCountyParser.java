@@ -10,4 +10,9 @@ public class KYTriggCountyParser extends DispatchGeoconxParser {
   public KYTriggCountyParser() {
     super("TRIGG COUNTY", "KY");
   }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@911comm2.info,dispatch@911email.org";
+  }
 }

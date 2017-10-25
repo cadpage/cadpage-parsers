@@ -462,6 +462,7 @@ public class Active911ParserTable {
       "US/KY/CityofPaintsville",          "KYJohnsonCounty",
       "US/KY/CityofRadcliff",             "KYHardinCountyD",
       "US/KY/ClarkCounty",                "KYClarkCounty",
+      "US/KY/EastGoldenPondVFD",          "KYTriggCounty",
       "US/KY/ErlangerPD",                 "KYErlangerDispatch",
       "US/KY/FultonCounty",               "KYFultonCounty",
       "US/KY/GallatinCounty",             "KYGallatinCountyA",
