@@ -30,7 +30,7 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
   String unit;
   String times;
   
-  private static final Pattern JUNK_BRK_PTN = Pattern.compile("\n~ *\n|, *\n");
+  private static final Pattern JUNK_BRK_PTN = Pattern.compile("\n *~ *\n|, *\n");
   private static final Pattern DELIM = Pattern.compile("\n(?: +\n)*");
   
   @Override
