@@ -11,7 +11,7 @@ public class COThorntonParser extends FieldProgramParser {
   
   public COThorntonParser() {
     super(CITY_CODES, "THORNTON", "CO", 
-          "Location:ADDR/S! EID:ID! TYPE_CODE:CALL! SUB_TYPE:CALL/SDS! TIME:TIME! Comments:INFO Disp:UNIT");
+          "Location:ADDR/S! EID:ID? TYPE_CODE:CALL! SUB_TYPE:CALL/SDS! TIME:TIME! Comments:INFO Disp:UNIT");
   }
   
   @Override
@@ -40,6 +40,7 @@ public class COThorntonParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("ID:")) return new IdField("\\d+");
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d");
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -69,8 +70,29 @@ public class COThorntonParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("(-\\d{2,3}.\\d{6} \\+\\d{2,3}.\\d{6}) *(.*)");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1), data);
+        field = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS " + super.getFieldNames();
+    }
+  }
+  
   private static Properties CITY_CODES = buildCodeTable(new String[]{
-     "NPD",    "NORTHGLENN", 
-     "TPD",    "THORNTON"
+      "ADAM",   "ADAMS COUNTY",
+      "BPD",    "BRIGHTON",
+      "FHPD",   "FEDERAL HEIGHTS",
+      "NPD",    "NORTHGLENN", 
+      "TPD",    "THORNTON"
   });
 }
