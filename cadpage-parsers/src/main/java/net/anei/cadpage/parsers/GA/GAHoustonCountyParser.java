@@ -13,7 +13,7 @@ public class GAHoustonCountyParser extends DispatchOSSIParser {
   
   public GAHoustonCountyParser() {
     super(CITY_CODES, "HOUSTON COUNTY", "GA",
-           "CALL ADDR ( X/Z UNIT | UNIT | X? ) CITY? ( DATETIME2! | DATETIME1 )");
+           "FYI? CALL ADDR ( X/Z UNIT | UNIT | X? ) CITY? ( DATETIME2! | DATETIME1 ) INFO/N+");
   }
   
   @Override
