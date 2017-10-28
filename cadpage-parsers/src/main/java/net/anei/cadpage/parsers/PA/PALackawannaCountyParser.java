@@ -11,6 +11,7 @@ public class PALackawannaCountyParser extends GroupBestParser {
   
   public PALackawannaCountyParser() {
     super(new PALackawannaCountyAParser(),
-           new PALackawannaCountyAmbulanceParser());
+          new PALackawannaCountyBParser(),
+          new PALackawannaCountyAmbulanceParser());
   }
 }

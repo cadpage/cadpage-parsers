@@ -1194,6 +1194,22 @@ public class StandardCodeTable extends CodeTable {
       "17J", "Jumper",
       "17P", "Public place",
       
+      "18C", "Partial evidence (< T hours)",
+      "18D", "Partial evidence (> T hours)",
+      "18E", "Partial evidence (unknown time)",
+      "18F", "Strong evidence (< T hours)",
+      "18H", "Strong evidence (> T hours)",
+      "18I", "Strong evidence (unknown time)",
+      "18J", "Clear evidence (< T hours)",
+      "18K", "Clear evidence (> T hours)",
+      "18M", "Clear evidence (unknown time)",
+      "18X", "No test evidence (< T hours)",
+      "18Y", "No test evidence (> T hours)",
+      "18Z", "No test evidence (unknown time)",
+      "18L", "< T hours",
+      "18G", "> T hours",
+      "18Z", "Unknown time",
+      
       "20H", "Heat exposure",
       "20C", "Cold exposure",
       
@@ -1224,6 +1240,22 @@ public class StandardCodeTable extends CodeTable {
       "27X", "Self inflicted GSW",
       "27Y", "Self inflicted stab",
       
+      "28C", "Partial evidence (< T hours)",
+      "28D", "Partial evidence (> T hours)",
+      "28E", "Partial evidence (unknown time)",
+      "28F", "Strong evidence (< T hours)",
+      "28H", "Strong evidence (> T hours)",
+      "28I", "Strong evidence (unknown time)",
+      "28J", "Clear evidence (< T hours)",
+      "28K", "Clear evidence (> T hours)",
+      "28M", "Clear evidence (unknown time)",
+      "28X", "No test evidence (< T hours)",
+      "28Y", "No test evidence (> T hours)",
+      "28Z", "No test evidence (unknown time)",
+      "28L", "< T hours",
+      "28G", "> T hours",
+      "28Z", "Unknown time",
+      
       "29V", "Multiple patients",
       "29U", "Unknown # patients",
       "29Y", "Multipel pts and response reqd",
@@ -1231,6 +1263,11 @@ public class StandardCodeTable extends CodeTable {
       
       "33T", "Transfer",
       "33P", "Pallative Care",
+      
+      "36S", "Level 0 (Surveillance only)",
+      "36A", "Level 1 (low triage)",
+      "36B", "Level 2 (moderate triage)",
+      "36C", "Level 3 (high triage)",
       
       "37A", "Additional personnel",
       "37S", "Special equipment",
