@@ -6,8 +6,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class OHCuyahogaCountyDParser extends FieldProgramParser {
 
   public OHCuyahogaCountyDParser() {
-    super(OHCuyahogaCountyParser.CITY_LIST, "CUYAHOGA COUNTY", "OH", 
+    super(OHCuyahogaCountyParser.CITY_CODES, "CUYAHOGA COUNTY", "OH", 
           "CALL UNIT ADDR CITY? INFO! INFO/N+");
+    setupCities(OHCuyahogaCountyParser.CITY_LIST);
   }
 
   @Override

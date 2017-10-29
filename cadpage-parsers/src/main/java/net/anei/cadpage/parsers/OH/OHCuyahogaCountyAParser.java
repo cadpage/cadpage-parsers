@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,6 +14,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   public OHCuyahogaCountyAParser() {
     super(OHCuyahogaCountyParser.CITY_CODES, "CUYAHOGA COUNTY", "OH");
+    setupCities(OHCuyahogaCountyParser.CITY_LIST);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     removeWords("RUN", "HTS");   // Lest SQUAD RUN be considered an address :(
   }
@@ -23,11 +25,20 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
+  private static final Pattern OOC_CITY_PTN = Pattern.compile("\\b(?:GARFIELD HTS|NEWBURG|RICHFIELD|STRONGSVILLE)\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
+    body = stripFieldStart(body, "**TEST ACTIVE911**\n");
     body = DIR_BOUND_PTN.matcher(body).replaceAll("$1B");
-    return super.parseUntrimmedMsg(subject, body, data);
+    if (!super.parseUntrimmedMsg(subject, body, data)) return false;
+    
+    // Mutual aid calls always have a city field in the info section
+    if (data.strCity.length() == 0) {
+      Matcher match = OOC_CITY_PTN.matcher(data.strSupp);
+      if (match.find()) data.strCity = match.group();
+    }
+    return true;
   }
 
   private static final Pattern GPS_JUNK_PTN = Pattern.compile("&|\\b[NSEW]B\\b|\\bMM\\b|\\((?:NORTH|SOUTH|EAST|WEST)\\)|\\b(?:NORTH|SOUTH|EAST|WEST) ?BOUND\\b");

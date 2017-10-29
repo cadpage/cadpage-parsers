@@ -10,7 +10,8 @@ public class OHCuyahogaCountyCParser extends FieldProgramParser {
 
   public OHCuyahogaCountyCParser() {
     super(OHCuyahogaCountyParser.CITY_CODES, "CUYAHOGA COUNTY", "OH", 
-          "CODE_CALL ADDR/SXa PLACE? CITY INFO+");
+          "CODE_CALL ADDR/SXa ( PLACE CITY | CITY | PLACE EMPTY | CITY? ) INFO+");
+    setupCities(OHCuyahogaCountyParser.CITY_LIST);
   }
 
   private static Pattern FROM_SRC = Pattern.compile("From: +(.*)");
