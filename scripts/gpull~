@@ -6,4 +6,3 @@ do
   echo "$DIR:"
   ( cd $DIR; git pull "$@" )
 done
-date
