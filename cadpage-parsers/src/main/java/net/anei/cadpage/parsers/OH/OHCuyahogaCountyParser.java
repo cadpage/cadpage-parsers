@@ -150,6 +150,9 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
     // Summit County
     "MACEDONIA",
     "NORTHFIELD",
-    "RICHFIELD"
+    "RICHFIELD",
+    
+    // Geauga County
+    "BAINBRIDGE",
   };
 }

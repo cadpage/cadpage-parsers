@@ -25,7 +25,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
-  private static final Pattern OOC_CITY_PTN = Pattern.compile("\\b(?:GARFIELD HTS|NEWBURG|RICHFIELD|STRONGSVILLE)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern OOC_CITY_PTN = Pattern.compile("\\b(?:BEDFORD|GARFIELD HTS|NEWBURG|RICHFIELD|STRONGSVILLE)\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
