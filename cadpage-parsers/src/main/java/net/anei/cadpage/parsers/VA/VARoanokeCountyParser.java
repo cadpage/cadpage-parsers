@@ -25,8 +25,8 @@ public class VARoanokeCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
-  private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(Roanoke County|Floyd County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
-  private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (Roanoke County|Floyd County|Montgomery County|Town of Vinton)(?: (.*?))?(?:\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
+  private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
+  private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?(?:\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
   private static final Pattern NOT_DISPATCH_PTN = Pattern.compile("\\b(?:ADV|TRAINING)\\b");
   private static final Pattern DATE_TIME_PTN1 = Pattern.compile("[ \n]*([12]?\\d/\\d{1,2}/\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2} [AP]M)$");
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("[ \n]*([12]?\\d-[A-Z]{3}-\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2})$", Pattern.CASE_INSENSITIVE);
@@ -36,7 +36,7 @@ public class VARoanokeCountyParser extends FieldProgramParser {
   private static final Pattern X_APT_PTN1 = Pattern.compile("(?:APT|RM|STE|(FL|LOT))(?:\\b|(?=\\d)) *([^ ]+)\\b *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern X_APT_PTN2 = Pattern.compile("([A-Z]?\\d+(?: [A-DF-H])?|[A-DF-H])\\b(?! +(?:AVE?|ST)\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern X_NO_CROSS_PTN = Pattern.compile("(.*?) *\\bNo Cross Streets Found\\b *(.*)");
-  private static final Pattern UNIT_PTN = Pattern.compile("^((?:[A-Z]+\\d+|SALEMEMS|SALEMF|RES(?:CUE)?[- ]\\d+)(?:\\$[A-Z]+\\d+)? +)+");
+  private static final Pattern UNIT_PTN = Pattern.compile("^((?:[A-Z]+\\d+|SALEMEMS|SALEMF|RES(?:CUE)?[- ]\\d+)(?:\\$[A-Z]+\\d+)?[, ]+)+");
   private static final Pattern X_PHONE_PTN = Pattern.compile("((?:\\(?\\d{3}\\)? ?)?\\d{3}[- ]\\d{4})\\b *(.*)");
   private static final Pattern APT_PHONE_PTN = Pattern.compile("\\b(?:\\(?\\d{3}\\)? ?)?\\d{3}[- ]\\d{4}\\b");
   private static final Pattern APT_PTN = Pattern.compile("([A-Z]{2}|[A-Z]?\\d+[A-Z]?)\\b *(.*)");
@@ -66,7 +66,8 @@ public class VARoanokeCountyParser extends FieldProgramParser {
     String[] flds = body.split("\n");
     if (flds.length >= 4) {
       if (!parseFields(flds, data)) return false;
-      if (data.strCity.startsWith("Town of ")) data.strCity = data.strCity.substring(8).trim();
+      data.strCity = stripFieldStart(data.strCity, "Town of ");
+      data.strCity = stripFieldStart(data.strCity, "City of ");
       return true;
     }
     
@@ -79,7 +80,8 @@ public class VARoanokeCountyParser extends FieldProgramParser {
       data.strBox = match.group(2);
       parseAddress(match.group(3).trim(), data);
       String city = match.group(4);
-      if (city.startsWith("Town of ")) city = city.substring(8).trim();
+      city = stripFieldStart(city, "Town of");
+      city = stripFieldStart(city, "City of");
       data.strCity = city;
       data.strCall = match.group(5).trim();
       data.strCallId = match.group(6);
@@ -89,17 +91,20 @@ public class VARoanokeCountyParser extends FieldProgramParser {
     // So can the second format
     match = MASTER_PTN2.matcher(body);
     if (match.matches()) {
-      setFieldList("UNIT CALL PLACE ADDR APT CITY X DATE TIME");
+      setFieldList("UNIT CALL PLACE ADDR APT CITY X MAP DATE TIME");
       data.strUnit = match.group(1);
       parseAddress(StartType.START_CALL_PLACE, FLAG_NO_IMPLIED_APT | FLAG_NO_CITY, match.group(2).trim(), data);
       String city = match.group(3);
-      if (city.startsWith("Town of ")) city = city.substring(8).trim();
+      city = stripFieldStart(city, "Town of");
+      city = stripFieldStart(city, "City of");
       data.strCity = city;
       data.strCross = getOptGroup(match.group(4));
-      String date = match.group(5);
+      if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
+      data.strMap = getOptGroup(match.group(5));
+      String date = match.group(6);
       if (date != null) {
         data.strDate = date;
-        setTime(TIME_FMT1, match.group(6), data);
+        setTime(TIME_FMT1, match.group(7), data);
       }
       return true;
     }
@@ -449,6 +454,7 @@ public class VARoanokeCountyParser extends FieldProgramParser {
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      ">NEW<",
       "ACC  INJ",
       "ACC INJ",
       "ACCIDENT",
