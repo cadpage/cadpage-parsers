@@ -32,6 +32,7 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
   
   private static final Pattern LEAD_MAP_PTN = Pattern.compile('^' + MAP_PTN_STR);
   private static final Pattern TRAIL_MAP_PTN = Pattern.compile(MAP_PTN_STR + '$');
+  private static final Pattern MAP_PTN = Pattern.compile(MAP_PTN_STR);
   private static final Pattern MM_PTN = Pattern.compile("( MM \\d+)([^\\d ])");
   private static final Pattern MM_PTN2 = Pattern.compile("^MM \\d+");
   
@@ -122,14 +123,23 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
       }
 
       if (data.strMap.length() == 0) {
-        match = TRAIL_MAP_PTN.matcher(pad);
-        if (match.find()) {
-          data.strMap = match.group(1);
-          pad = pad.substring(0,match.start()).trim();
-        }
-        else if ((match = LEAD_MAP_PTN.matcher(data.strCall)).lookingAt()) {
-          data.strMap = match.group(1);
-          data.strCall = data.strCall.substring(match.end()).trim();
+        if (data.strCity.length() > 0) {
+          match = TRAIL_MAP_PTN.matcher(pad);
+          if (match.find()) {
+            data.strMap = match.group(1);
+            pad = pad.substring(0,match.start()).trim();
+          }
+          else if ((match = LEAD_MAP_PTN.matcher(data.strCall)).lookingAt()) {
+            data.strMap = match.group(1);
+            data.strCall = data.strCall.substring(match.end()).trim();
+          }
+        } else {
+          match = MAP_PTN.matcher(data.strCall);
+          if (match.find()) {
+            pad = data.strCall.substring(0,match.start()).trim();
+            data.strMap = match.group();
+            data.strCall = data.strCall.substring(match.end()).trim();
+          }
         }
       }
       if (pad.length() <= 4) {
@@ -162,23 +172,25 @@ public class SDMinnehahaCountyParser extends SmartAddressParser {
       "I 90 MM 402",                             "+43.607910,-96.655458"
   });
   
-  private static final Pattern CITY_PTN = Pattern.compile("(.*?) *(BA|BR|CO|CR|DR|GA|GN|HD|HU|LY|RE|VS|SR|EM) +(.*)");
+  private static final Pattern CITY_PTN = Pattern.compile("(.*?) *(BA|BR|CO|CR|DR|JA|GA|GN|HB|HD|HU|LY|RE|VS|SR|EM) +(.*)");
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BA", "BALTIC",
       "BR", "BRANDON",
       "CO", "COLTON",
       "CR", "CROOKS",
 //      "DR", "DELL RAPIDS",  // gets confused drive DR road suffix :(
+      "JA", "JASPER",
       "GA", "GARRETSON",
       "GN", "GARRETSON",
-      "HD", "", // Should be Hartford but actually in sioux falls
+      "HB", "HARRISBURG",
+      "HD", "HARTFORD",
       "HU", "HUMBOLT",
       "LY", "LYONS",
+      "MO", "MONROE",
       "RE", "RENNER",
       "SF", "SIOUX FALLS",
       "SH", "SHERMAN",
-      "VS", "VALLEY SPRINGS",
       "SR", "SPLIT ROCK",
-      "EM", ""
+      "VS", "VALLEY SPRINGS"
   });
 }
