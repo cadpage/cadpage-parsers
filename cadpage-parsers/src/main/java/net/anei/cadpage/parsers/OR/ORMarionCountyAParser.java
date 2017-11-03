@@ -19,14 +19,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class ORMarionCountyAParser extends FieldProgramParser {
   
-  private static final Pattern MAP_PTN = Pattern.compile(":MAP::(\\d+[A-Z]?):");
-  
   public ORMarionCountyAParser() {
     super("MARION COUNTY", "OR",
-          "CALL ( ADDRCITY ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) | " +
-                 "CALL CH/Z ADDRCITY MAP UNIT | " +
-                 "CALL CH ADDRCITY MAP UNIT |" +
-                 "ADDRCITY ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) UNIT ) ) INFO+");
+          "CALL ( ADDRCITY ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) " +
+               "| CALL CH/Z ADDRCITY MAP UNIT " +
+               "| CALL CH ADDRCITY MAP UNIT" +
+               "| ADDRCITY ( UNIT! EMPTY? ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) UNIT ) ) INFO+");
     setupSaintNames("PAUL");
   }
   
@@ -34,6 +32,9 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   public String getFilter() {
     return "Dispatch@ci.woodburn.or.us";
   }
+  
+  private static final Pattern MAP_PTN = Pattern.compile(":MAP::(\\d+[A-Z]?):");
+  private static final Pattern DELIM = Pattern.compile("(?<!LAT|LON):");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -59,7 +60,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     // And a MAP::<code> construct
     body = MAP_PTN.matcher(body).replaceFirst(":MAP-$1:");
     
-    String[] flds = body.split(":", -1);
+    String[] flds = DELIM.split(body, -1);
     if (flds.length == 1) {
       setFieldList("ADDR APT CALL");
       parseAddress(StartType.START_ADDR, body, data);
@@ -98,7 +99,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern VALID_ADDR_PTN = Pattern.compile("[-@/ A-Z0-9]+,([A-Z ]+)|.*\\bMP\\b.*|.* COMPLEX", Pattern.CASE_INSENSITIVE);
+  private static final Pattern VALID_ADDR_PTN = Pattern.compile("[-@/ A-Z0-9]+,([A-Z ]+)|.*\\bMP\\b.*|.* COMPLEX|LAT:.* LON:.*", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     
     @Override
@@ -137,7 +138,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE)(?:,.*)?");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+)(?:,.*)?");
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
@@ -146,6 +147,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     
     @Override
     public void parse(String fld, Data data) {
+      fld = fld.replace("Respond-", "");
       Matcher match = STATION_PTN.matcher(fld);
       if (match.find()) {
         data.strSource = match.group();
