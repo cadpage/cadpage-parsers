@@ -61,7 +61,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (\\d{7,9})");
+  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (\\d{7,10})");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {

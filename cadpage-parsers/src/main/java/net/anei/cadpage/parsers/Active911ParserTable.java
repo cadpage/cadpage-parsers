@@ -992,7 +992,7 @@ public class Active911ParserTable {
       "US/OH/CityofNorwood",              "OHHamiltonCountyB",
       "US/OH/CityofOxford",               "OHOxford",
       "US/OH/CityofRavenna",              "OHPortageCountyA",
-      "US/OH/CityofShakerHeights",        "OHShakerHeights",
+      "US/OH/CityofShakerHeights",        "OHCuyahogaCountyA",
       "US/OH/CityofShawnee",              "OHAllenCountyB",
       "US/OH/CityofStow",                 "OHSummitCountyC,OHSummitCountyD",
       "US/OH/CityofTrenton",              "OHTrenton",
