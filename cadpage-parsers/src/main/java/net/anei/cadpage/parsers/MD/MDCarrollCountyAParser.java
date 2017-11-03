@@ -14,28 +14,19 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  */
 public class MDCarrollCountyAParser extends FieldProgramParser {
   
-  private static final Pattern TRAIL_SEQ = Pattern.compile(" \\[\\d+\\]$");
-  
   public MDCarrollCountyAParser() {
     super("CARROLL COUNTY", "MD",
           "TIME CT:ADDR! BOX:BOX! DUE:UNIT!");
-    setupMultiWordStreets(
-        "BEAR BRANCH",
-        "COON CLUB",
-        "DAVE RILL", 
-        "EAST CHERRY HILL",
-        "GILLIS FALLS",
-        "GRAVE RUN",
-        "LE MANS",
-        "SCOTCH HEATHER",
-        "TIMBER BRANCH",
-        "WAKEFIELD VALLEY");
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
   public String getFilter() {
     return "@c-msg.net,carrollalert@carroll911.mygbiz.com";
   }
+
+  private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)(CT:.*?) (?:(\\d{6}) )?(\\d\\d:\\d\\d)");
+  private static final Pattern TRAIL_SEQ = Pattern.compile(" \\[\\d+\\]$");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -61,15 +52,40 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       // Message signatures are now optional.  If we don't find one, keep on procesing
     } while (false);
     
-    Matcher match = TRAIL_SEQ.matcher(body);
-    if (match.find()) body = body.substring(0,match.start()).trim();
+    String[] subFlds = subject.split("|");
+    if (subFlds.length == 2 && subFlds[0].equals("CMalert")) data.strSource = subFlds[1];
     
-    return super.parseMsg(body, data);
+    String prefix = "";
+    if (body.startsWith("RE-ALERT!\n")) {
+      prefix = "RE-ALERT!";
+      body = body.substring(10).trim();
+    }
+    
+    int pt = body.indexOf("\nDO NOT RESPOND");
+    if (pt >= 0) {
+      prefix = append(prefix," ", "DO NOT RESPOND");
+      body = body.substring(0,pt).trim();
+    }
+    
+    Matcher match = TIME_SEQ_TIME_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(2).trim();
+      data.strCallId = getOptGroup(match.group(3));
+      data.strTime = match.group(4);
+    }
+    else {
+      match = TRAIL_SEQ.matcher(body);
+      if (match.find()) body = body.substring(0,match.start()).trim();
+    }
+    
+    if (!super.parseMsg(body, data)) return false;
+    data.strCall = append(prefix, " - ", data.strCall);
+    return true;
   }
   
   @Override
   public String getProgram() {
-    return "SRC " + super.getProgram();
+    return "SRC " + super.getProgram() + " ID TIME";
   }
   
   @Override
@@ -81,7 +97,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern MA_PTN = Pattern.compile("^(?:MA|MUTUAL AID ALARM) (?:BOX |(?!RT|US|ST)[A-Z]{2} )?(?:(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?) )?|^([A-Z]+) +(\\d+-\\d+) +");
-  private static final Pattern MA_SEPARATOR_PTN = Pattern.compile(" +- +| */ *| *; *");
+  private static final Pattern MA_SEPARATOR_PTN = Pattern.compile(" +- +| *[/;,] *");
   private static final Pattern CHANNEL_PTN = Pattern.compile("(?:[ \\.]+(CP|TB|TG|FC) *| +)(\\d{1,2}(?:-?[A-Z])?|WEST)$");
   private static final Pattern BOX_PTN = Pattern.compile("\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?");
   private static final Pattern BOX_PTN2 = Pattern.compile("(?: +BOX)? +(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?)$");
@@ -241,9 +257,10 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern MBREAK_PTN = Pattern.compile("\n{2,}");
   private static final Pattern PREFIX_PTN = Pattern.compile("(\\d\\d:\\d\\d) +");
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
-  private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ /A-Z0-9]+?) +\\(([^)]+)\\) +Incident No +(\\d+)");
+  private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ /A-Z0-9]+?) +\\(([^)]+)\\) +Incident No(?: +(\\d+))?");
   private static final Pattern ADDR_PTN = Pattern.compile("Loc *\\b(.*?)");
   private static final Pattern CROSS_MAP_PTN = Pattern.compile("(.*?) *(\\d+-[A-Z]\\d+)?");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
@@ -256,7 +273,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private boolean parseLongForm(String subject, String body, Data data) {
     
     // Check subject and message prefix
-    if (!subject.equals("CAD")) return false;
+    if (!subject.equals("CAD") && !subject.equals("Dispatch Rip/Run")) return false;
     Matcher match = PREFIX_PTN.matcher(body);
     if (!match.lookingAt()) return false;
     
@@ -276,12 +293,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     if (body.startsWith("DISPATCH INFO\n\n")) {
       int pt = body.indexOf("\n\n*** Premise Info ***");
       if (pt >= 0) body = body.substring(0,pt).trim();
-      Parser p = new Parser(body.substring(15).replace("\n\n", "\n"));
+      body = body.substring(15).trim();
+      body = MBREAK_PTN.matcher(body).replaceAll("\n");
+      Parser p = new Parser(body);
       match = CALL_ID_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       data.strCode = match.group(1);
       data.strCall = match.group(2).trim();
-      data.strCallId = match.group(3);
+      data.strCallId = getOptGroup(match.group(3));
       
       match = ADDR_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
@@ -370,7 +389,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     // Worse, there could be 3 or  more :(  In which case we only
     // check the first two and force the last one into a place field
     // And the place name might contain an apartment
-    String[] flds = fld.split(" *[;@] *", 3);
+    String[] flds = fld.split(" *[;@,] *", 3);
     if (flds.length == 1) {
       parseAddress(st, flags, fld, data);
       if (data.strPlace.endsWith("/")) {
@@ -399,7 +418,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         fld2 = fld2.substring(0,match.start()).trim();
       }
       if (data.strCall.length() == 0) {
-        data.strCall = fld;
+        data.strCall = fld2;
       } else {
         data.strPlace = append(data.strPlace, " - ", fld2);
       }
@@ -420,6 +439,114 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     return DECIMAL_PTN.matcher(address).replaceFirst("$1");
   }
   private static final Pattern DECIMAL_PTN = Pattern.compile("^(\\d+)\\.\\d+");
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+    "AGRICULTURAL CENTER",
+    "ARTHUR SHIPLEY",
+    "BACHMANS VALLEY",
+    "BALTIMORE NATIONAL",
+    "BARK HILL",
+    "BEAR BRANCH",
+    "BERT KOONTZ",
+    "BIRD VIEW",
+    "BLACK ANKLE",
+    "BLACK ROCK",
+    "BOLLINGER MILL",
+    "BRASS EAGLE",
+    "BRIDGE FIELD",
+    "BUCHER JOHN",
+    "BUNKER HILL",
+    "CARROLL HIGHLANDS",
+    "CHERRY TREE",
+    "CHISELED STONE",
+    "CLEAR HILL",
+    "CLEAR RIDGE",
+    "CLOVER LEAF",
+    "CLOVER MEADOW",
+    "COON CLUB",
+    "CORPORATE CENTER",
+    "CROUSE MILL",
+    "DARK HOLLOW",
+    "DAVE RILL", 
+    "DEER PARK",
+    "DOCTOR STITELY",
+    "EAST CHERRY HILL",
+    "FLINT ROCK",
+    "FOX CHASE",
+    "GETTYSBURG VILLAGE",
+    "GILLIS FALLS",
+    "GIST FARM",
+    "GRAVE RUN",
+    "GREEN MEADOW",
+    "GREEN MILL",
+    "GREEN VALLEY",
+    "GRIST STONE",
+    "HEALTH CTR",
+    "HIGH ACRE",
+    "HIGH EARLS",
+    "HIGHLAND VIEW",
+    "HOOPERS DELIGHT",
+    "HUGHES SHOP",
+    "INDIAN VALLEY",
+    "IRVING RUBY",
+    "JOHN HYDE",
+    "KATE WAGNER",
+    "KAYS MILL",
+    "KIMBERLY JAMES",
+    "KINGS FOREST",
+    "KLEE MILL",
+    "LE MANS",
+    "LEES MILL",
+    "LONDON BRIDGE",
+    "LONGLEAF PINE",
+    "LORI JEAN",
+    "MALL RING",
+    "MAPLE GROVE",
+    "MEADOW CREEK",
+    "MEADOW FIELD",
+    "MILLERS STATION",
+    "MISTY MEADOW",
+    "MOUNTAIN LAUREL",
+    "MT CARMEL",
+    "MT ZION",
+    "NORTH WOODS",
+    "OAK ORCHARD",
+    "OAK VIEW",
+    "OTTERDALE MILL",
+    "PINCH VALLEY",
+    "PINE VIEW",
+    "PINE WOOD",
+    "PINEY RIDGE",
+    "PINYON PINE",
+    "PLEASANT VALLEY",
+    "POPES CREEK",
+    "SAINT MARK",
+    "SAINT PAUL",
+    "SALEM BOTTOM",
+    "SAMS CREEK",
+    "SAW MILL",
+    "SCOTCH HEATHER",
+    "SILVER MEADOW",
+    "SILVER RUN VALLEY",
+    "SOUTH CARROLL PARK",
+    "ST MARK",
+    "ST PAUL",
+    "STEEPLE CHASE",
+    "STONE HOUSE VILLAGE",
+    "TALBOT RUN",
+    "TIMBER BRANCH",
+    "TIMBER SHED",
+    "UNION BRIDGE",
+    "VALLEY VIEW ORCHARD",
+    "VELVET RUN",
+    "VILLA HILL",
+    "VILLAGE OAKS",
+    "WAKEFIELD VALLEY",
+    "WEST FALLS",
+    "WHITE ROCK",
+    "WOLF HILL",
+    "ZEIGLERS OUTLET"
+  };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AIRY", "MT AIRY",
@@ -455,13 +582,22 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       "MC", "MONTGOMERY COUNTY"
   });
   
+  @Override
+  public boolean checkCall(String call) {
+    if (call.startsWith("MA - ") || call.equals("MA")) return true;
+    call = stripFieldStart(call, "RE-ALERT! ");
+    call = stripFieldStart(call, "DO NOT RESPOND - ");
+    String chkCall = CALL_TABLE.getCodeDescription(call);
+    return chkCall != null && chkCall.equals(call);
+  }
+
   private static final CodeTable CALL_TABLE = new CodeTable();
   static {
     String key = null;
     for (String value : new String[]{
-        "AAM",                 "AUTOMATIC MEDICAL ALARM",
-        "ABDOM",               "ABDOMINAL PAIN",
-        "ABDOMALS",            "ABDOMINAL PAIN",
+        "AAM",                 "AUTOMATIC MED ALARM",
+        "ABDOM",               "ABDOMINAL PAIN/BLS",
+        "ABDOMALS",            "ABDOMINAL PAIN/ALS",
         "AIR1L",               "LG PLANE INCOMING",
         "AIR1S",               "SM PLANE INCOMING",
         "AIR2L",               "LG PLANE CRASH/STRUC",
@@ -471,15 +607,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "ALARM",               "ALARM",
         "ALARM 1",             "RES FIRE ALARM",
         "ALARM 2",             "COMM FIRE ALARM",
-        "ALLER",               "ALLERGIC REACTION",
-        "ALLERALS",            "ALLERGIC REACTION/ALS",
-        "ALLERBLS",            "ALLERGIC REACTION/BLS",
-        "ALLER REACTION/ALS",  "ALLERGIC REACTION/ALS",
-        "ALLER REACTION/BLS",  "ALLERGIC REACTION/BLS",
+        "ALLER",               "ALLER REACTION/ALS",
+        "ALLERALS",            "ALLER REACTION/ALS",
+        "ALLERBLS",            "ALLER REACTION/BLS",
         "ALS",                 "ALS MEDICAL CALL",
         "ALS+",                "ALS W/SUPPORT",
         "AMB TRAN",            "TRAN AMBULANCE TRANSFER",
         "AMB TRANS",           "TRAN AMBULANCE TRANSFER",
+        "APPL",                "APPLIANCE FIRE",
         "ASTH",                "ASTHMA ATTACK",
         "ATR",                 "ATR RESCUE",
         "ATR/HM",              "ATR RESCUE W/HAZMAT",
@@ -529,9 +664,9 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "COLL",                "BUILDING COLLAPSE",
         "CONST",               "CONSTRUCTION / INDUSTRIAL ACCIDENT",
         "COS",                 "CO W/SICK PERSON",
-        "DIAB",                "DIABETIC",
-        "DIABBLS",             "DIABETIC BLS",
-        "DLOC",                "DECREASED LEVEL OF CONSCIOUSNESS",
+        "DIAB",                "DIABETIC/ALS",
+        "DIABBLS",             "DIABETIC/BLS",
+        "DLOC",                "DECREASED LOC/ALS",
         "DOA",                 "DOA",
         "DROWN",               "DROWNING",
         "DROWNALS",            "NEAR DROWNING",
@@ -546,31 +681,33 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "FARM",                "FARM MACHINERY FIRE",
         "FIELD",               "FIELD FIRE",
         "FIRE INVOL EXPOSURES","FIRE INVOL EXPOSURES",
+        "FIREOUT",             "FIRE REPORTED OUT",
+        "FUELODR",             "ODOR OF FUEL",
         "GAS LINE",            "GAS LINE STRUCK",
         "GAS/OUT",             "OUTSIDE GAS LEAK",
+        "GASC",                "GAS LEAK IN COMMERCI",
         "HANG",                "HANGING",
         "HAZMAT",              "HAZMAT INCIDENT (SPECIFY)",
         "HEADACHE",            "HEADACHE",
         "HEAT",                "HEAT EMERGENCY",
         "HEATALS",             "HEAT EMERGENCY/ALS",
         "HEATBLS",             "HEAT EMERGENCY/BLS",
-        "HEM",                 "HEMORRHAGE",
-        "HEMALS",              "HEMORRHAGE",
+        "HEM",                 "HEMORRHAGE/BLS",
+        "HEMALS",              "HEMORRHAGE/ALS",
         "HEMIVT",              "HEMORRHAGE",
         "HF",                  "HOUSE FIRE",
         "HM",                  "HAZMAT ALARM",
         "ILLEG",               "ILLEGAL OPEN BURNING",
         "INHAL",               "INHALATION EMERGENCY",
         "INHALBLS",            "INHALATION EMERGENCY",
-        "INJ",                 "INJURED PERSON",
-        "INJ PER/ASSAULT/BLS", "INJURED PERSON ASSAULT/BLS",
-        "INJ PER/FALL/BLS",    "INJURED PERSON FALL/BLS",
+        "INJ",                 "INJ PERSON/BLS",
+        "INJ PER/FALL-BLS",    "INJ PER/FALL-BLS",
         "INJ PERSON/ALS",      "INJURED PERSON/ALS",
-        "INJ PERSON/BLS",      "INJURED PERSON/BLS",
         "INJALS",              "INJURED PERSON (SPECIFY NATURE)",
-        "INJFALL",             "INJURED PERSON FROM FALL",
-        "INJAS",               "INJURED PERSON FROM ASSAULT",
+        "INJFALL",             "INJ PER/FALL/BLS",
+        "INJAS",               "INJ PER/ASSAULT/BLS",
         "INJASALS",            "INJURED PERSON FROM ASSAULT (ALS)",
+        "INJBLS",              "INJ PERSON/BLS ",
         "INVEST",              "INVESTIGATION",
         "IVT",                 "IVT MEDICAL ALARM",
         "LARGE TRUCK FIRE",    "LARGE TRUCK FIRE",
@@ -580,14 +717,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "MERCLG",              "MERCURY RELEASE / LARGE",
         "MERCSM",              "MERCURY RELEASE / SMALL",
         "MISC",                "MISCELLANEOUS FIRE - SPECIFY",
-        "MO",                  "MENTAL PATIENT",
-        "MOV",                 "VIOLENT MENTAL PATIENT",
+        "MO",                  "MENTAL PT/BLS",
+        "MOV",                 "VIOL MENTAL PT/BLS",
         "NOSE",                "NOSEBLEED",
         "OB",                  "OBSTETRIC PATIENT",
         "OBALS",               "OBSTETRIC PATIENT ALS",
         "ODOR OF SMOKE",       "ODOR OF SMOKE",
-        "OVERDOSE",            "OVERDOSE",
-        "ODBLS",               "OVERDOSE",
+        "OVERDOSE",            "OVERDOSE/ALS",
+        "ODBLS",               "OVERDOSE/BLS",
         "ODORSICK",            "ODOR WITH SICK SUB",
         "OUTSIDE",             "OUTSIDE FIRE",
         "PA",                  "PATIENT ASSIST",
@@ -616,7 +753,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "SC/LOCKV",            "SUBJECT LOCKED IN A VEHICLE",
         "SC/WASH",             "WASHDOWN",
         "SEIZ",                "SEIZURE",
-        "SEIZALS",             "SEIZURE",
+        "SEIZALS",             "SEIZURE/ALS",
         "SERVICE",             "SERVICE CALL",
         "SHOOT",               "SHOOTING",
         "SHOOTA",              "ACCIDENTAL SHOOTING",
@@ -628,10 +765,13 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "SICK PERSON NON-EMER","SICK PERSON NON-EMER",
         "SNAKE",               "SNAKE BITE",
         "SPILL",               "HAZMAT ALARM - FUEL SPILL",
+        "SPILLLM",             "LG FUEL SPILL",
+        "SPILLSM",             "SM FUEL SPILL",
         "STAB",                "STABBING",
         "STABBLS",             "STABBING BLS",
         "STABS",               "SELF INFLICTED - KNIFE",
         "STROKE",              "STROKE",
+        "STROKALS",            "STROKE/ALS",
         "STRUC",               "STRUCTURE ALARM",
         "SYNCO",               "SYNCOPAL EPISODE",
         "SYNCOALS",            "SYNCOPAL EPISODE ALS",
@@ -654,8 +794,9 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "VC INV BICYCLE",      "VEHICLE COLLISION INV BICYCLE",
         "VC RESCUE",           "VEHICLE COLLISION RESCUE",
         "VC SERIOUS",          "VEHICLE COLLISION SERIOUS",
+        "VCMOT",               "VC INV MOTORCYCLE",
         "VCBUS",               "BUS ACCIDENT",
-        "VCR",                 "VEHICLE COLLISION RESCUE",
+        "VCR",                 "VC RESCUE",
         "VCR/HM",              "VC W/HM",
         "VCS",                 "VEHICLE COLLISION SERIOUS",
         "VEH",                 "VEHICLE FIRE",
@@ -672,7 +813,21 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     }
     
     for (String value : new String[]{
+        "ABDOMINAL PAIN-BLS",
+        "ASTHMA ATTACK-ALS",
+        "BACK PAIN-BLS",
+        "BLDG FIRE",
+        "DECREASED LOC-ALS",
         "GAS LEAK IN RESIDENC",
+        "INJ PERSON-ALS",
+        "MEDICAL PROQA DEFAULT",
+        "MENTAL PT-BLS",
+        "OVERDOSE-ALS",
+        "SEIZURE-ALS",
+        "SELF INFL STAB/ALS",
+        "STROKE-BLS",
+        "TEST FIRE",
+        "UNCONSCIOUS DIABETIC-ALS",
         "UNKNOWN NATURE BLS"
     }) {
       CALL_TABLE.put(value, value);
