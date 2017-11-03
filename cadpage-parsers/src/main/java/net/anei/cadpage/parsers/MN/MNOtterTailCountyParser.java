@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class MNOtterTailCountyParser extends DispatchA27Parser {
   
   public MNOtterTailCountyParser() {
-    super(CITY_LIST, "OTTER TAIL COUNTY", "MN", "\\d{8}|[A-Z]+FD|[A-Z]+AMB|[A-Z]{3}\\d{3}[A-Z]{2}");
+    super(CITY_LIST, "OTTER TAIL COUNTY", "MN", "[A-Z0-9]{3,10}");
   }
   
   @Override
