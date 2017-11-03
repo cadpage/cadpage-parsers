@@ -131,6 +131,7 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     private Field phoneField = new PhoneField();
     private Field idField = new IdField();
     private Field crossField = new CrossField();
+    private Field channelField = new ChannelField();
     private Field infoField = new InfoField();
     
     public SpecField() {
@@ -140,33 +141,47 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     @Override
     public void parse(String field, Data data) {
       
+      field = stripFieldEnd(field, ",");
+      
       String upField = field.toUpperCase();
       if (upField.startsWith("VERIZON")) return;
       if (upField.toUpperCase().startsWith("T-MOBILE")) return;
       if (upField.startsWith("SPRINT")) return;
       if (upField.startsWith("US CELLULAR")) return;
+      if (upField.startsWith("AT&T MOBILITY")) return;
       if (upField.contains("DIST:")) return;
       
+      String nextFld = getRelativeField(+1);
+      if (nextFld.startsWith("Radio Channel:")) {
+        nextFld = nextFld.substring(14).trim();
+        if (field.equals(nextFld)) return;
+      }
+      
       Field fieldProc;
-      if (field.contains(",")) {
+      if (field.startsWith("Radio Channel:")) {
+        field = field.substring(14).trim();
+        fieldProc = channelField;
+      }
+      
+      else if (data.strName.length() == 0 && field.length() <= 35 && field.contains(",")) {
         fieldProc = nameField;
       }
       
-      else if (!callFound && CALL_PATTERN.matcher(field).find()) {
-        callFound = true;
-        fieldProc = callField;
-      }
-      
-      else if (field.length() == 10 && NUMERIC.matcher(field).matches()) {
+      else if (data.strPhone.length() == 0 && field.length() == 10 && NUMERIC.matcher(field).matches()) {
         fieldProc = phoneField;
       }
       
-      else if (field.length() == 8 && NUMERIC.matcher(field).matches()) {
+      else if (data.strCallId.length() == 0 && field.length() == 8 && NUMERIC.matcher(field).matches()) {
         fieldProc = idField;
       }
       
       else if (!field.startsWith("FM") && checkAddress(field) == STATUS_STREET_NAME) {
         fieldProc = crossField;
+      }
+      
+      else if (!callFound && CALL_PATTERN.matcher(field).find()) {
+        callFound = true;
+        fieldProc = callField;
       }
       
       else {
@@ -178,7 +193,7 @@ public class NCBuncombeCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "CALL NAME PHONE INFO X ID";
+      return "CALL NAME PHONE INFO X ID CH";
     }
   }
 }
