@@ -16,7 +16,7 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "2083399494";
+    return "2083399494,2083399308";
   }
   
   private static final String MARKER = "Cayuga County E911: ";
