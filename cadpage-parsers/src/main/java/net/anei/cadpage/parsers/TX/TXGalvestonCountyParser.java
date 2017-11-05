@@ -12,8 +12,9 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   
   public TXGalvestonCountyParser() {
     super(CITY_CODES, "GALVESTON COUNTY", "TX",
-          "( CANCEL ADDR CITY! | FYI CALL ADDR! CITY? ) INFO/N+");
+          "( CANCEL ADDR CITY! | FYI CALL ( ADDR! | PLACE ADDR! | ADDR! ) CITY? ID? PRI? DATETIME? ) INFO/N+");
     setupCityValues(CITY_CODES);
+    setupCities(CITY_LIST);
   }
   
   @Override
@@ -32,6 +33,9 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("PRI")) return new PriorityField("\\d", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -74,7 +78,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "UNIT" + super.getFieldNames();
+      return "UNIT " + super.getFieldNames();
     }
   }
   
@@ -85,9 +89,35 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BAYO",   "BAYO VISTA",
+      "GALV",   "GALVESTON",
+      "JAMA",   "JAMAICA BEACH",
       "SANL",   "SAN LEON",
       "TIKI",   "TIKI ISLAND",
       
       "SANLEON",    "SAN LEON"
   });
+  
+  private static final String[] CITY_LIST = new String[]{
+      "CLEAR LAKE SHORES",
+      "DICKINSON",
+      "FRIENDSWOOD",
+      "HITCHCOCK",
+      "KEMAH",
+      "LA MARQUE",
+      "LEAGUE CITY",
+      "SANTA FE",
+      "TEXAS CITY",
+      
+      "BACLIFF",
+      "BOLIVAR PENINSULA",
+      
+      "ALGOA",
+      "CAPLEN",
+      "CRYSTAL BEACH",
+      "GILCHRIST",
+      "HIH ISLAND",
+      "PORTR BOLIVAR",
+      
+      "GALVESTON COUNTY"
+  };
 }
