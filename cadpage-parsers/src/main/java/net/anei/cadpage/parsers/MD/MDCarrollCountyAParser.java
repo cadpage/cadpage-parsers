@@ -305,12 +305,6 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       match = ADDR_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       String addr = match.group(1).trim();
-      pt = addr.lastIndexOf(' ');
-      String city = CITY_CODES.getProperty(addr.substring(pt+1));
-      if (city != null) {
-        data.strCity = city;
-        addr = addr.substring(0,pt).trim();
-      }
       parseOurAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
       
       String line = p.getLine();
@@ -377,11 +371,17 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     
     // Next check if the last token is a recognized city and
     // strip it off if it is, otherwise it messes up the following logic
-    Parser p = new Parser(fld);
-    String city = CITY_CODES.getProperty(p.getLast(' '));
-    if (city != null) {
-      data.strCity = city;
-      fld = p.get();
+    int pt = fld.lastIndexOf(" City");
+    if (pt >= 0) {
+      data.strCity = convertCodes(fld.substring(pt+5).trim(), CITY_CODES);
+      fld = fld.substring(0,pt).trim();
+    } else {
+      Parser p = new Parser(fld);
+      String city = CITY_CODES.getProperty(p.getLast(' '));
+      if (city != null) {
+        data.strCity = city;
+        fld = p.get();
+      }
     }
     
     // Rest of address could include a place name separated by a ; or @
@@ -417,11 +417,8 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         data.strApt = match.group(1);
         fld2 = fld2.substring(0,match.start()).trim();
       }
-      if (data.strCall.length() == 0) {
-        data.strCall = fld2;
-      } else {
-        data.strPlace = append(data.strPlace, " - ", fld2);
-      }
+      data.strPlace = append(data.strPlace, " - ", fld2);
+
       if (savePlace.length() > 0) {
         match = APT_PTN.matcher(savePlace);
         if (match.find()) {
@@ -584,9 +581,10 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   
   @Override
   public boolean checkCall(String call) {
-    if (call.startsWith("MA - ") || call.equals("MA")) return true;
+    call = stripFieldStart(call, "RE-ALERT! - ");
     call = stripFieldStart(call, "RE-ALERT! ");
     call = stripFieldStart(call, "DO NOT RESPOND - ");
+    if (call.startsWith("MA - ") || call.equals("MA")) return true;
     String chkCall = CALL_TABLE.getCodeDescription(call);
     return chkCall != null && chkCall.equals(call);
   }
@@ -759,7 +757,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "SHOOTA",              "ACCIDENTAL SHOOTING",
         "SHOOTBLS",            "SHOOTING BLS",
         "SHOOTS",              "SELF INFLICTED SHOOTING",
-        "SICK",                "SICK PERSON",
+        "SICK",                "SICK PERSON/BLS",
         "SICKALS",             "SICK PERSON/ALS",
         "SICKBLS",             "SICK PERSON/BLS",
         "SICK PERSON NON-EMER","SICK PERSON NON-EMER",
@@ -773,7 +771,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "STROKE",              "STROKE",
         "STROKALS",            "STROKE/ALS",
         "STRUC",               "STRUCTURE ALARM",
-        "SYNCO",               "SYNCOPAL EPISODE",
+        "SYNCO",               "SYNCOPAL EPISODE-ALS",
         "SYNCOALS",            "SYNCOPAL EPISODE ALS",
         "SYNCOBLS",            "SYNCOPAL EPISODE BLS",
         "TANKER",              "LG FUEL LOAD VEHICLE",
@@ -813,21 +811,52 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     }
     
     for (String value : new String[]{
+        "ABDOMINAL PAIN-ALS",
         "ABDOMINAL PAIN-BLS",
+        "ALLER REACTION-ALS",
+        "ALLER REACTION-BLS",
         "ASTHMA ATTACK-ALS",
+        "ASTHMA ATTACK-BLS",
+        "BACK PAIN-ALS",
         "BACK PAIN-BLS",
         "BLDG FIRE",
+        "CARDIAC PATIENT-ALS",
+        "CARDIAC PATIENT-BLS",
+        "CHEST PAIN-ALS",
+        "CHEST PAIN-BLS",
         "DECREASED LOC-ALS",
+        "DECREASED LOC-BLS",
+        "DIABETIC-ALS",
+        "DIABETIC-BLS",
+        "ELEVATOR RESC/NO INJ",
+        "EMERGENCY LOCK OUT",
         "GAS LEAK IN RESIDENC",
+        "HANGING-ALS",
+        "HEMORRHAGE-ALS",
+        "HEMORRHAGE-BLS",
+        "INJ PER/ASSAULT-ALS",
+        "INJ PER/ASSAULT-BLS",
         "INJ PERSON-ALS",
+        "INJ PERSON-BLS",
         "MEDICAL PROQA DEFAULT",
+        "MENTAL PT-ALS",
         "MENTAL PT-BLS",
         "OVERDOSE-ALS",
+        "OVERDOSE-BLS",
         "SEIZURE-ALS",
+        "SEIZURE-BLS",
         "SELF INFL STAB/ALS",
+        "SELF INFL STAB/BLS",
+        "SICK PERSON-ALS",
+        "SICK PERSON-BLS",
+        "STROKE-ALS",
         "STROKE-BLS",
+        "SYNCOPAL EPISODE-ALS",
+        "SYNCOPAL EPISODE-BLS",
         "TEST FIRE",
         "UNCONSCIOUS DIABETIC-ALS",
+        "UNCONSCIOUS DIABETIC-BLS",
+        "UNKNOWN NATURE ALS",
         "UNKNOWN NATURE BLS"
     }) {
       CALL_TABLE.put(value, value);
