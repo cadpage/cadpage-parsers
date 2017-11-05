@@ -13,7 +13,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
 
   public OHLickingCountyParser() {
     super(CITY_LIST, "LICKING COUNTY", "OH", 
-          "SequenceNumber:ID! Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR! AddressType:SKIP! Business:PLACE! CAD_Zone:MAP! Notes:INFO/N+");
+          "SequenceNumber:ID? Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR! AddressType:SKIP! Business:PLACE! XCoordinate:GPS1? YCoordinate:GPS2? CAD_Zone:MAP! Notes:INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -21,6 +21,11 @@ public class OHLickingCountyParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "notif@domain.com,messaging@iamresponding.com,notif@mecc911.org,WASST@MIFFLIN-OH.GOV";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -32,11 +37,11 @@ public class OHLickingCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (body.startsWith("SequenceNumber:")) {
+    if (body.startsWith("SequenceNumber:") || body.startsWith("Nature:")) {
       return parseFields(body.split("\n+"), data);
     }
 
-    setFieldList("CALL ADDR APT CITY X PLACE");
+    setFieldList("CALL ADDR APT CITY PLACE X");
 
     do {
       if (subject.equals("Notification") && body.startsWith("? ")) {
@@ -59,15 +64,59 @@ public class OHLickingCountyParser extends FieldProgramParser {
     
     return parseCallAddress(data.strCall.length() == 0, body, data);
   }
-  private static final Pattern ADDR_CITY_APT_ZIP_X_PTN = Pattern.compile("([^,]*), ([ A-Za-z]+)(?:, \\d{5})?(?: #APT ([^ ]+))?(?: +\\((.*?)\\)?)?");
+  
+  private static final Pattern BASE_ADDR_X_PTN = Pattern.compile("([^,/;]+?(?:1/2)?) *(?:\\(([^()]*)\\))?(?: *; *(.*))?");
+  private static final Pattern BASE_ADDR_INTERSECT_PTN = Pattern.compile("[^,/()]+/[^,()]*");
+  private static final Pattern ADDR_CITY_APT_ZIP_X_PTN = Pattern.compile("([^,]*), ([ A-Za-z]+)(?:, \\d{5})?(?: #(?:APT)? ([^ ]+))?(?: +\\((.*?)\\)?)?");
   private static final Pattern ADDR_CITY_INTERSECT_PTN = Pattern.compile("([^,]*?), ([^,/]+?)/([^,]+?), ([ A-Z]+)");
-  private static final Pattern MASTER_PTN3 = Pattern.compile("[^,\\(\\)]+");
 
   private boolean parseCallAddress(boolean parseCall, String field, Data data) {
+    
+    Matcher match = BASE_ADDR_X_PTN.matcher(field);
+    if (match.matches()) {
+      String addr = match.group(1).trim();
+      String cross = getOptGroup(match.group(2));
+      cross = stripFieldStart(cross, "/");
+      cross = stripFieldEnd(cross, "/");
+      data.strCross = cross;
+      data.strPlace = getOptGroup(match.group(3));
+      StartType st = parseCall ? StartType.START_CALL : StartType.START_ADDR;
+      int flags = parseCall ? FLAG_START_FLD_REQ : 0;
+      addr = stripFieldEnd(addr, "#");
+      parseAddress(st, flags, addr, data);
+      String place = getLeft();
+      int pt = place.indexOf('#');
+      if (pt >= 0) {
+        data.strApt = append(data.strApt, "-", place.substring(pt+1).trim());
+        place = place.substring(0,pt).trim();
+      }
+      data.strPlace = append(place, " - ", data.strPlace);
+      
+      if (data.strCity.length() > 0 && data.strAddress.contains("&")) {
+        data.strAddress = data.strAddress.replace(' ' + data.strCity + " &", " &");
+      }
+      return true;
+    }
+    
+    if (BASE_ADDR_INTERSECT_PTN.matcher(field).matches()) {
+      String addr = "";
+      StartType st = parseCall ? StartType.START_CALL : StartType.START_ADDR;
+      for (String part : field.split("/")) {
+        part = part.trim();
+        int flags = (st == StartType.START_CALL ? FLAG_START_FLD_REQ : 0);
+        parseAddress(st, flags, part, data);
+        st = StartType.START_ADDR;
+        addr = append(addr, " & ", data.strAddress);
+        data.strAddress = "";
+      }
+      data.strAddress = addr;
+      return true;
+    }
+    
     String addr;
     String addr2 = null;
     String apt = null;
-    Matcher match = ADDR_CITY_APT_ZIP_X_PTN.matcher(field);
+    match = ADDR_CITY_APT_ZIP_X_PTN.matcher(field);
     if (match.matches()) {
       
       addr = match.group(1).trim();
@@ -92,12 +141,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
       if (city1.equals(city2)) data.strCity = city1;
     }
     
-    else if (MASTER_PTN3.matcher(field).matches()){
-      addr = field;
-    }
-    
     else return false;
     
+    addr = stripFieldEnd(addr, "#");
     if (!parseCall) {
       if (addr.startsWith("@")) {
         addr = addr.substring(1).trim();
@@ -142,7 +188,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "PLACE ADDR APT CITY X";
+      return "ADDR APT CITY PLACE X";
     }
   }
   
@@ -154,6 +200,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
         if (field.endsWith(data.strPlace) || data.strPlace.endsWith(field)) return;
       }
       super.parse(field, data);
+      data.strApt = stripFieldEnd(data.strApt, field);
     }
   }
   
@@ -164,13 +211,17 @@ public class OHLickingCountyParser extends FieldProgramParser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+    "AULD RIDGE",
     "BASH LANE",
     "BEAVER RUN",
     "BELL CHURCH",
     "BELLE VISTA",
     "BENNINGTON CHAPEL",
+    "BERGER HOLLOW",
+    "BLACK HORSE",
     "BLUE BONNET",
     "BLUE JAY",
+    "BRISTOL DOWNS",
     "BRUSHY FORK",
     "BRYAN ORR",
     "BRYN DU",
@@ -181,15 +232,27 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "CAMP OHIO",
     "CANYON VILLA",
     "CARREG CAIN",
+    "CEDAR RUN",
+    "CHERRY BARK",
+    "CHERRY BEND",
+    "CHERRY BOTTOM",
+    "CHERRY GROVE",
     "CHERRY VALLEY",
     "CHESTNUT HILLS",
+    "CHURCHILL DOWNS",
+    "CLIFTON CURTIS",
+    "CONN WAY",
+    "COOKS HILL",
     "COUNTY LINE",
     "CRISTLAND HILL",
+    "CUMBERLAND MEADOWS",
+    "CUSTERS POINT",
     "D KING",
     "DEER RUN",
     "DERBY DOWNS",
     "DOG HOLLOW",
     "DON THORP",
+    "DONALD ROSS",
     "DORSEY MILL",
     "DOUGLAS LANE",
     "DRY CREEK",
@@ -198,8 +261,11 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "EDEN CHURCH",
     "EDGEWATER BEACH",
     "EL RANCHO",
+    "FAIRFIELD BEACH",
     "FIRE HOUSE",
     "FLINT RIDGE",
+    "FLOYD BOYER",
+    "FOREST HILLS",
     "FOX CHASE",
     "FOX RUN",
     "FREEMAN MEMORIAL",
@@ -207,14 +273,19 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "GINGER HILL",
     "GIRL SCOUT",
     "GLYN CARIN",
+    "GOOSE LANE",
     "GRACELAND LANE",
     "GREEN MEADOW",
+    "GREEN VALLEY",
     "HALLIE LANE",
     "HARBOR VIEW",
     "HAZEL DELL",
+    "HEADLEYS MILL",
+    "HIDDEN SPRINGS",
     "HIGH POINT",
     "HONDA HILLS",
     "HONEY CREEK",
+    "HOPEWELL INDIAN",
     "HORNS HILL",
     "INDIAN MILL",
     "IRVING WICK",
@@ -225,6 +296,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "JUG STREET",
     "LAKE DR",
     "LAKE SHORE",
+    "LAUREL HILL",
     "LEGEND LANE",
     "LEIBS ISLAND",
     "LICKING SPRINGS",
@@ -235,47 +307,67 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "LOOKERS LANE",
     "LOUDON STREET",
     "LUNDYS LANE",
+    "MCKEE HILL",
     "MCKINNEY CROSSING",
     "MEGGIN MELANNE",
+    "MIDLAND OIL",
     "MILL DAM",
+    "MILL RACE",
+    "MISTY MEADOW",
     "MISTY MEADOWS",
     "MOON RIVER",
     "MOOTS RUN",
     "MORGAN CENTER",
+    "MOUND BUILDERS",
     "MOUNT HERMAN",
     "MT OLIVE",
+    "MT PERRY",
     "MT VERNON",
+    "NICHOLS LANE",
     "NORTH BANK",
     "NORTH SHORE LANDING",
     "NORTH ST",
     "NORTH VILLAGE",
     "OAK CANYON",
+    "OPEN WOODS",
+    "OXFORD DOWNS",
     "PAINTER RUN",
     "PARADISE VALLEY",
     "PARK VIEW",
+    "PERT HILL",
     "PHIL LINN",
     "PHILLIPS GLEN",
+    "PHILLIPS LANE",
     "PINE BLUFF",
+    "PINE CREST",
+    "PINE HILLS",
     "PINE VIEW",
     "PINEWOOD TRAIL",
     "PLEASANT CHAPEL",
     "PLEASANT LEE",
+    "PLEASANT VALLEY",
     "PLEASANT VIEW",
     "QUAIL CREEK",
     "RACCOON VALLEY",
     "RAIN ROCK",
     "RAMP COLUMBUS",
+    "RAMP CREEK",
     "RAMP LANCASTER",
     "RANGE LINE",
+    "RED MAPLE",
     "RED STONE",
+    "REDDINGTON VILLAGE",
     "RIDGELY TRACT",
+    "RIVER OAKS",
     "ROCK HAVEN SERVICE",
     "ROCK HAVEN",
+    "ROCK RUN",
     "ROCKY FORK",
     "ROCKY RIDGE",
     "ROLEY HILLS",
     "ROSE VIEW",
     "SADIE THOMAS",
+    "SAND HOLLOW",
     "SHARON VALLEY",
     "SHARON VIEW",
     "SHELL BEACH",
@@ -286,6 +378,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "SOUTH BANK",
     "SOUTH FORK",
     "SPORTSMAN CLUB",
+    "SPRING HILL",
     "SPRING VALLEY",
     "ST CLAIR",
     "ST JOSEPH",
@@ -295,9 +388,12 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "STONE PILE",
     "SUNSET HILL",
     "SWICK HOLTON",
+    "TAMMY LOUISE",
     "TERRY LINN",
     "UNION STATION",
+    "UPSON DOWNS",
     "VALLEY VIEW",
+    "VAN FOSSEN",
     "WELSH HILLS",
     "WESLEYAN CHURCH",
     "WEST BANK",
@@ -306,7 +402,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "WHISPERING PINES",
     "WHITE CHAPEL",
     "WILKINS RUN",
-    "WILLOW RIDGE",
+    "WILLOW RIDGE"
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -333,6 +429,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "CHILDBIRTH / OB-EMS",
       "CHOKING-EMS",
       "CO ALARMS / CHECK-FIRE",
+      "CO POISONING-EMS",
       "BREATHING PROBLEMS-EMS",
       "DIABETIC PROBLEMS-EMS",
       "DROWNING-EMS",
@@ -361,12 +458,15 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "NATURAL GAS LEAK",
       "NATURAL GAS LEAK-FIRE",
       "NATURAL GAS ODOR OUTSIDE-FIRE",
+      "NATURAL GAS RUPTURE-FIRE",
       "NON BREATHER / ARREST-EMS",
       "OVERDOSE-EMS",
       "PERSONAL ASSIST-EMS",
       "PERSON DOWN-EMS",
       "POLICE ASSIST-FIRE",
+      "RESCUE COLLAPSE / CONFINED SPACE-FIRE",
       "RESCUE ELEVATOR-FIRE",
+      "RESCUE EXTRICATION /  ENTRAPMENT-FIRE",
       "RESCUE WATER-FIRE",
       "SEIZURE-EMS",
       "SERVICE RUN",
@@ -392,6 +492,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
   );
 
   private static final String[] CITY_LIST = new String[]{
+    
+      "LICKING COUNTY",
+      
       "ALEXANDRIA",
       "BUCKEYE LAKE",
       "GRANVILLE",
@@ -442,5 +545,61 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "ETNA",
       "HOMER",
       "JACKSONTOWN",
+      
+      // Coshocton County
+      "COSHOCTON COUNTY",
+      "PIKE TWP",
+      
+      // Delaware County
+      "HARLEM TWP",
+      "DELAWARE COUNTY",
+      "PORTER TWP",
+      "TRENTON TWP",
+      
+      // Fairfield County
+      "FAIRFIELD COUNTY",
+      "BALTIMORE",
+      "COLUMBUS",
+      "PICKERTON",
+      "THURSTON",
+      "WINCHESTER",
+      "MILLERSPORT",
+      "LIBERTY TWP",
+      "VIOLET TWP",
+      "WALNUT TWP",
+      
+      // Franklin County
+      "FRANKLIN COUNTY",
+      "JEFFERSON",
+      "FRANKLIN",
+      "NEW ALBANY",
+      "JEFFERSON TWP",
+      "PLAIN TWP",
+      
+      // Knox County
+      "KNOX COUNTY",
+      "CENTERBURG",
+      "MARTINSBURG",
+      "CLAY TWP",
+      "HILLIAR TWP",
+      "JACKSON TWP",
+      "MARTINSBURG TWP",
+      "MILFORD TWP",
+      "MILLER TWP",
+      
+      // Muskingum County
+      "MUSKINGUM COUNTY",
+      "FRAZEYSBURG",
+      "JACKSON TWP",
+      "LICKING TWP",
+      "HOPEWELL TWP",
+      
+      // Perry County
+      "PERRY COUNTY",
+      "GLENFORD",
+      "THORNVILLE",
+      "HOPEWELL TWP",
+      "MADISON TWP",
+      "THORN TWP"
   };
 }
