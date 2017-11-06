@@ -2,9 +2,9 @@ Using the Cadpage Parser in a standalone server environment
 
 The Cadpage Parser is distributed as the CadpageParser.jar file available from
 http://www.cadpage.org/download-cadpage.  It is distributred under a GPL3 license, 
-the source code is available from http://code.google.com/p/cadpage
+the source code is available from https://github.com/cadpage/cadpage-parsers. 
 
-It can be called directly from a Java program, but will most commonly be 
+The parser can be called directly from a Java program, but will most commonly be 
 executed as a standalone process   You do have to have Java 1.5 or better
 installed on your system.
 
@@ -207,4 +207,4 @@ Test classes and other potentially sensitive information can be found in
 https://github.com/cadpage/cadpage-private
 which was made a private archive to protect the privacy of individual users and people who have
 made calls to 911 emergency services over the years.  Access to this archive is available on request.
-Just let us know.
+Just send us your github user account and we will add you to the access list.
