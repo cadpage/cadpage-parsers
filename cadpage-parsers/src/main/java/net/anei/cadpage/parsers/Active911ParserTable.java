@@ -1325,6 +1325,7 @@ public class Active911ParserTable {
       "US/TX/OssiCAD",                    "TXLaPorte",
       "US/TX/OysterCreekPD",              "TXBrazoriaCountyC",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
+      "US/TX/RockwallCounty",             "TXRockwallCountyC",
       "US/TX/Rosenburg",                  "TXRosenberg",
       "US/TX/RoyseCity",                  "TXRoyseCity",
       "US/TX/RuskCounty",                 "TXRuskCountyA",
