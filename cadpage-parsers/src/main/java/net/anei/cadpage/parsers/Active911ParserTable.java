@@ -815,6 +815,7 @@ public class Active911ParserTable {
       "US/NC/MontgomeryCounty",           "NCMontgomeryCounty",
       "US/NC/MooreCounty",                "NCMooreCounty",
       "US/NC/NashCounty",                 "NCNashCounty",
+      "US/NC/NewBern",                    "NCCravenCountyD",
       "US/NC/Northampton911",             "NCNorthamptonCounty",
       "US/NC/OakWolfeFD",                 "NCDuplinCounty",
       "US/NC/OnslowCounty",               "NCOnslowCounty",
