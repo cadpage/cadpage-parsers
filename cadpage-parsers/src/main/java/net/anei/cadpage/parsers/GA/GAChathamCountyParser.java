@@ -36,10 +36,12 @@ public class GAChathamCountyParser extends FieldProgramParser {
       return true;
     }
     m = APT_PATTERN.matcher(body);
-    if (m.matches())
+    if (m.matches()) {
       body = m.group(1)+" APT: "+m.group(2);
-    else
+    } else {
       body = body.replace("PRI:", " APT: PRI:");
+    }
+    body = body.replace("RESPOND TO:", " RESPOND TO:");
     body = body.replace("CRN:", " CRN:");
     body = body.replace("COMPLAINT:", " COMPLAINT:");
     body = body.replace("C/O:", "COMPLAINT:");
