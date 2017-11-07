@@ -15,12 +15,18 @@ public class ORMarionCountyBParser extends FieldProgramParser {
   }
   
   protected ORMarionCountyBParser(String defCity, String defState) {
-    super(defCity, defState, "CALL SRC DATETIME ADDR/ZiS? UNIT/Z ID!");
+    super(CITY_LIST, defCity, defState, 
+          "CALL SRC DATETIME ADDR/ZiS? UNIT/Z ID! INFO/N+");
   }
 
   @Override
   public String getAliasCode() {
     return "ORMarionCountyB";
+  }
+  
+  @Override
+  public String getFilter() {
+    return "@cityofsalem.net,@ccschaplain.com";
   }
   
   @Override
@@ -65,14 +71,26 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     }
   }
 
-  public static Pattern FIELD_CLEANUP_PATTERN = Pattern.compile(".*?\\(([^/]*,[^/]*)\\)");
-  public static Pattern REMOVE_MAPBOOK_PATTERN = Pattern.compile("(.*?)(?:\\(MapBook:(\\d{4})\\))(.*?)");
-  public static Pattern REMOVE_ZIP_PATTERN = Pattern.compile("(.+?)(?:[, ]+\\d{5}|,? 0)$");
-  public static Pattern INTERSECTION_CLEANUP_PATTERN = Pattern.compile("(.*),.*(/.*)");
+  private static Pattern PHONE_PATTERN = Pattern.compile("(?:[A-Z]{1,3}:)?(?:\\d{3}-)?\\d{3}-?\\d{4}");
+  private static Pattern FIELD_CLEANUP_PATTERN = Pattern.compile(".*?\\(([^/]*,[^/]*)\\)");
+  private static Pattern REMOVE_MAPBOOK_PATTERN = Pattern.compile("(.*?)(?:\\(MapBook:(\\d{4})\\))(.*?)");
+  private static Pattern REMOVE_ZIP_PATTERN = Pattern.compile("(.+?)(?:[, ]+\\d{5}|,? 0)$");
+  private static Pattern INTERSECTION_CLEANUP_PATTERN = Pattern.compile("(.*),.*(/.*)");
 
   public class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      
+      Parser p = new Parser(field);
+      String thing = p.getLastOptional(";");
+      if (thing.length() > 0) {
+        if (PHONE_PATTERN.matcher(thing).matches()) {
+          data.strPhone = thing;
+          thing = p.getLastOptional(';');
+        }
+        data.strName = thing;
+        field = p.get();
+      }
 
       // remove mapbook and store its #
       Matcher mapbookMat = REMOVE_MAPBOOK_PATTERN.matcher(field);
@@ -88,18 +106,17 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       }
       
       // parse remaining string
-      Parser p = new Parser(field);
+      p = new Parser(field);
       if (field.endsWith(")")) {
         p.getLast(")");
         field = p.getOptional("(");
-        data.strCross = p.get();
-        //remove preceding and trailing slashes
-        int si = data.strCross.indexOf("/");
-        if (si == 0) data.strCross = data.strCross.substring(1);
-        else if (si == data.strCross.length() - 1) data.strCross = data.strCross.substring(0, data.strCross.length() - 1);
+        String cross = p.get();
+        cross = stripFieldStart(cross, "/");
+        cross = stripFieldEnd(cross, "/");
+        data.strCross = cross;
         p = new Parser(field);
       }
-
+      
       data.strCity = p.getLastOptional(",");
       if (NUMERIC.matcher(data.strCity).matches()) data.strCity = p.getLastOptional(","); 
       data.strPlace = p.getLastOptional(", @");
@@ -108,20 +125,24 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       String addr = p.get();
       Matcher intMat = INTERSECTION_CLEANUP_PATTERN.matcher(addr);
       if (intMat.matches()) addr = intMat.group(1).trim() + " " + intMat.group(2);
-      super.parse(addr, data);
+      
+      // If the city we found is not a city, then it is probably parser of a name, 
+      // so put it back together
+      if (data.strCity.length() > 0 && !isCity(data.strCity)) {
+        data.strAddress = addr + ", " + data.strCity;
+        data.strCity = "";
+      } else {
+        super.parse(addr, data);
+      }
       
       // remove zipcode from city
       Matcher zipMat = REMOVE_ZIP_PATTERN.matcher(data.strCity);
       if (zipMat.matches()) data.strCity = zipMat.group(1);
-      
-      //  Remove anything following a comma that is left in the address
-      int pt = data.strAddress.indexOf(',');
-      if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
     }
 
     @Override
     public String getFieldNames() {
-      return ("ADDR APT MAP PLACE CITY X");
+      return ("ADDR APT MAP PLACE CITY X NAME PHONE");
     }
   }
   
@@ -213,5 +234,174 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       "WCTRAN",  "Wheelchair transport",
       "WIRE",    "Wire down"
   });
+  
+  private static final String[] CITY_LIST = new String[]{
+    
+    // Marion County
+    "MARION COUNTY",
+    
+    // Cities
+    "AUMSVILLE",
+    "AURORA",
+    "DETROIT",
+    "DONALD",
+    "GATES",
+    "GERVAIS",
+    "HUBBARD",
+    "IDANHA",
+    "JEFFERSON",
+    "KEIZER",
+    "MILL CITY",
+    "MT ANGEL",
+    "ST PAUL",
+    "SALEM",
+    "SCOTTS MILLS",
+    "SILVERTON",
+    "STAYTON",
+    "SUBLIMITY",
+    "TURNER",
+    "WOODBURN",
+
+    // Census-designated places
+    "BROOKS",
+    "BUTTEVILLE",
+    "FOUR CORNERS",
+    "HAYESVILLE",
+    "LABISH VILLAGE",
+    "MARION",
+    "MEHAMA",
+
+    // Unincorporated communities
+    "BREITENBUSH",
+    "CHAMPOEG",
+    "CHEMAWA",
+    "CLEAR LAKE",
+    "MACLEAY",
+    "MCKEE",
+    "MIDDLE GROVE",
+    "MONITOR",
+    "NIAGARA",
+    "NORTH HOWELL",
+    "PRATUM",
+    "ROSEDALE",
+    "SAINT BENEDICT",
+    "SAINT LOUIS",
+    "SHAW",
+    "TALBOT",
+    "WACONDA",
+    "WEST STAYTON",
+    
+    // Lincoln County
+    "LINCOLN COUNTY",
+
+    // Cities
+    "DEPOE BAY",
+    "LINCOLN CITY",
+    "NEWPORT",
+    "SILETZ",
+    "TOLEDO",
+    "WALDPORT",
+    "YACHATS",
+
+    // Census-designated places
+    "LINCOLN BEACH",
+    "ROSE LODGE",
+
+    // Unincorporated communities
+    "AGATE BEACH",
+    "BAYVIEW",
+    "BEVERLY BEACH",
+    "BURNT WOODS",
+    "CHITWOOD",
+    "EDDYVILLE",
+    "ELK CITY",
+    "FISHER",
+    "GLENEDEN BEACH",
+    "HARLAN",
+    "KERNVILLE",
+    "LITTLE ALBANY",
+    "LOGSDEN",
+    "NASHVILLE",
+    "NEOTSU",
+    "NEWPORT HEIGHTS",
+    "NORTONS",
+    "OTIS",
+    "OTIS JUNCTION",
+    "OTTER ROCK",
+    "ROADS END",
+    "SAN MARINE",
+    "SEAL ROCK",
+    "SOUTH BEACH",
+    "TIDEWATER",
+    "YAQUINA",
+    
+    // Benton County
+    "BENTON COUNTY",
+
+    // Cities
+    "ADAIR",
+    "ALBANY",
+    "CORVALLIS",
+    "MONROE",
+    "PHILOMATH",
+
+    // Census-designated places
+    "ALPINE",
+    "ALSEA",
+    "BELLFOUNTAIN",
+    "BLODGETT",
+    "KINGS VALLEY",
+    "SUMMIT",
+
+    // Unincorporated communities
+    "ALDER",
+    "DAWSON",
+    "DRY CREEK",
+    "FLYNN",
+    "GLENBROOK",
+    "GREENBERRY",
+    "HARRIS",
+    "HOSKINS",
+    "LEWISBURG",
+    "NOON",
+    "WREN",
+
+    // Polk County
+    "POLK COUNTY",
+
+    // Cities
+    "DALLAS",
+    "FALLS CITY",
+    "INDEPENDENCE",
+    "MONMOUTH",
+    "WILLAMINA",
+
+    // Census-designated places
+    "EOLA",
+    "FORT HILL",
+    "GRAND RONDE",
+    "RICKREALL",
+
+    // Unincorporated communities
+    "AIRLIE",
+    "BALLSTON",
+    "BETHEL",
+    "BLACK ROCK",
+    "BRIDGEPORT",
+    "BRUNKS CORNER",
+    "BUENA VISTA",
+    "CROWLEY",
+    "ELLENDALE",
+    "LEWISVILLE",
+    "MCCOY",
+    "MODEVILLE",
+    "PEDEE",
+    "PERRYDALE",
+    "SALT CREEK",
+    "SUVER",
+    "VALLEY JUNCTION",
+    "VALSETZ",
+    "ZENA"
+  };
 
 }
