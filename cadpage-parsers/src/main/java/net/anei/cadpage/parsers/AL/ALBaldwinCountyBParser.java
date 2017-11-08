@@ -1,0 +1,69 @@
+package net.anei.cadpage.parsers.AL;
+
+import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
+
+public class ALBaldwinCountyBParser extends DispatchSouthernParser {
+  
+  public ALBaldwinCountyBParser() {
+    super(CITY_LIST, "BALDWIN COUNTY", "AL",
+          DSFLG_ADDR | DSFLG_OPT_X | DSFLG_ID | DSFLG_TIME);
+  }
+  
+  private static final String[] CITY_LIST = new String[]{
+
+    // Cities
+    "BAY MINETTE",
+    "DAPHNE",
+    "FAIRHOPE",
+    "FOLEY",
+    "GULF SHORES",
+    "ORANGE BEACH",
+    "ROBERTSDALE",
+    "SPANISH FORT",
+
+    // Towns
+    "ELBERTA",
+    "LOXLEY",
+    "MAGNOLIA SPRINGS",
+    "PERDIDO BEACH",
+    "SILVERHILL",
+    "SUMMERDALE",
+
+    // Census-designated place
+    "BON SECOUR",
+    "LILLIAN",
+    "PERDIDO",
+    "POINT CLEAR",
+    "STAPLETON",
+    "STOCKTON",
+
+    // Unincorporated areas
+    "BARNWELL",
+    "BATTLES WHARF",
+    "BELFOREST",
+    "BROMLEY",
+    "CLAY CITY",
+    "CROSSROADS",
+    "ELSANOR",
+    "FORT MORGAN",
+    "GASQUE",
+    "JOSEPHINE",
+    "LATHAM",
+    "LITTLE RIVER",
+    "MALBIS",
+    "MARLOW",
+    "MIFLIN",
+    "MONTROSE",
+    "OAK",
+    "ONO ISLAND",
+    "OYSTER BAY",
+    "PINE GROVE",
+    "RABUN",
+    "SEACLIFF",
+    "SEMINOLE",
+    "SWIFT",
+    "WOLF BAY",
+    "YELLING SETTLEMENT"
+  };
+
+}
