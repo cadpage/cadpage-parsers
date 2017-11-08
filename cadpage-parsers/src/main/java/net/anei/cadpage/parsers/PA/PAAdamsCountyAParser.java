@@ -464,6 +464,18 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2215 BIGLERVILLE RD APT 83",           "+39.890094,-77.243828",
       "2215 BIGLERVILLE RD APT 84",           "+39.890086,-77.243685",
       "2215 BIGLERVILLE RD APT 85",           "+39.890560,-77.244795",
+      
+      "750 BUCHANAN VALLEY RD",               "+39.915945,-77.414232",
+      
+      "760A BUCHANAN VALLEY RD",              "+39.914429,-77.418715",
+      "760B BUCHANAN VALLEY RD",              "+39.916906,-77.417225",
+      "760C BUCHANAN VALLEY RD",              "+39.914316,-77.419894",
+      "760D BUCHANAN VALLEY RD",              "+39.915227,-77.419009",
+      "760E BUCHANAN VALLEY RD",              "+39.913950,-77.419092",
+      "760F BUCHANAN VALLEY RD",              "+39.915729,-77.414698",
+      "760G BUCHANAN VALLEY RD",              "+39.916322,-77.417798",
+      "760J BUCHANAN VALLEY RD",              "+39.915797,-77.416159",
+      "760K BUCHANAN VALLEY RD",              "+39.916346,-77.416320",
 
       "721 CHAMBERSBURG RD APT A",            "+39.840970,-77.256860",
       "721 CHAMBERSBURG RD APT B",            "+39.840970,-77.256860",
@@ -543,6 +555,18 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "729 CHAMBERSBURG RD APT P",            "+39.841226,-77.257347",
       
       "731 CHAMBERSBURG RD",                  "+39.841900,-77.257200",
+      
+      "6329 CHAMBERSBURG RD",                 "+39.899750,-77.440610",
+      "6236 CHAMBERSBURD RD",                 "+39.898845,-77.438248",
+      "6240 CHAMBERSBURG RD",                 "+39.898943,-77.438357",
+      "6353 CHAMBERSBURG RD",                 "+39.899659,-77.441139",
+      "6361 CHAMBERSBURG RD",                 "+39.900336,-77.441261",
+      "6375 CHAMBERSBURG RD",                 "+39.900823,-77.442375",
+      
+      "20 INTERFAITH LN",                     "+39.867800,-77.047900",
+      "22 INTERFAITH LN",                     "+39.867800,-77.047900",
+      "24 INTERFAITH LN",                     "+39.867900,-77.048000",
+      "26 INTERFAITH LN",                     "+39.867900,-77.048000",
       
       "90 KNIGHT RD APT 1",                   "+39.779823,-77.233360",
       "90 KNIGHT RD APT 2",                   "+39.779882,-77.233563",
@@ -963,7 +987,10 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "1760 SHRIVERS CORNER RD APT 180",      "+39.885476,-77.165247",
       "1760 SHRIVERS CORNER RD APT 181",      "+39.885671,-77.165296",
       "1760 SHRIVERS CORNER RD APT 182",      "+39.885815,-77.165333",
-      "1760 SHRIVERS CORNER RD APT 183",      "+39.886046,-77.165329"
+      "1760 SHRIVERS CORNER RD APT 183",      "+39.886046,-77.165329",
+      
+      "8 STONEBROOK DR",                      "+39.901892,-77.441883"
+
   });
 
   private static final String[] CITY_LIST = new String[]{
