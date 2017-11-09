@@ -1,147 +1,62 @@
 package net.anei.cadpage.parsers.VA;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Properties;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 
-public class VABrunswickCountyParser extends FieldProgramParser {
+public class VABrunswickCountyParser extends DispatchOSSIParser {
     
   
   public VABrunswickCountyParser() {
-    super(CITY_LIST, "BRUNSWICK COUNTY", "VA",
-          "( Reported:DATETIME IDCALL! Loc:ADDR2/S! X? ( UNIT | PLACE UNIT! ) | " +
-            "IDCALL Reported:DATETIME? ADDR! X? ( UNIT | CITY_PLACE1 UNIT ) )");
+    super(CITY_CODES, "BRUNSWICK COUNTY", "VA",
+          "( CANCEL ADDR CITY! INFO/N+ " +
+          "| FYI? ( ID DATETIME CALL SRC? ADDR CITY! X/Z+? ( UNIT END | END ) " +
+                 "| CALL ADDR CITY! INFO/N+ ) )");
   }
   
   @Override
   public String getFilter() {
-    return "bcso_dispatch@verizon.net,Dispatch@brunswickso.org";
+    return "CAD@brunswickso.org";
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("BCSO CFS Info - DO NOT REPLY") &&
-        !subject.equals("BCSO CFS INFO")) return false;
-    return parseFields(body.split("\n"), data);
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" +  body;
+    return super.parseMsg(body, data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("IDCALL")) return new MyIdCallField();
-    if (name.equals("ADDR2")) return new MyAddress2Field(); 
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("CITY_PLACE1")) return new MyCityPlace1Field();
+    if (name.equals("ID")) return new IdField("\\d{8}", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("SRC")) return new SourceField("DOLPHIN VOLUNTEER FIRE DEPARME", true);
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\d{1,4}[A-Z]*|[A-Z]{4}|[A-Z]{1,2}\\d+|FRSTRY)\\b *)+");
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
-  private class MyIdCallField extends Field {
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(' ');
-      if (pt < 0) abort();
-      data.strCallId = field.substring(0,pt);
-      data.strCall = field.substring(pt+1).trim();
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "ID CALL";
+      if (field.equals("REF#")) return;
+      super.parse(field, data);
     }
   }
   
-  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*),(?: *([A-Z]{2}))?(?: (\\d{5}))?");
-  private class MyAddress2Field extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = ADDR_ST_ZIP_PTN.matcher(field);
-      if (!match.matches()) abort();
-      super.parse(match.group(1).trim(), data);
-      data.strState = getOptGroup(match.group(2));
-      if (data.strCity.length() == 0) data.strCity = getOptGroup(match.group(3));
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CITY ST";
-    }
-  }
-  
-  private class MyCrossField extends CrossField {
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.contains("/")) {
-        parse(field, data);
-        return true;
-      }
-      return super.checkParse(field, data);
-    }
-  }
-  
-  private class MyCityPlace1Field extends CityField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.length() < 2) return;
-      
-      String place, city;
-      int pt = field.lastIndexOf("  ");
-      if (pt >= 0) {
-        place = field.substring(0,pt).trim();
-        city = field.substring(pt+2).trim();
-      } else {
-        place = "";
-        city = field;
-      }
-      boolean confirmCity = false;
-      for (String cty : CITY_LIST) {
-        if (cty.startsWith(city)) {
-          confirmCity = true;
-          city = cty;
-        }
-      }
-      if (data.strPlace.length() == 0 && !confirmCity) {
-        place = city;
-        city = "";
-      }
-      data.strPlace = place;
-      data.strCity = city;
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "PLACE CITY";
-    }
-  }
-  
-  private static final String[] CITY_LIST = new String[]{
-    "ALBERTA",
-    "BRODNAX",
-    "DOLPHIN",
-    "EBONY",
-    "LAWRENCEVILLE",
-    "FREEMAN",
-    "GASBURG",
-    "RAWLINGS",
-    "VALENTINES",
-    "WARFIELD",
-    "WHITE PLAINS",
-    
-    // Greensville County
-    "EMPORIA",
-    
-    // Lunenburg County
-    "DUNDAS",
-    
-    // Mecklenburg County
-    "BRACEY",
-    "SOUTH HILL",
-    
-    // Notoway County
-    "BLACKSTONE"
-  };
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ALBE",   "ALBERTA",
+      "BROD",   "BRODNAX",
+      "DOLP",   "DOLPHIN",
+      "EBON",   "EBONY",
+      "FREE",   "FREEMAN",
+      "GASB",   "GASBURG",
+      "LAWR",   "LAWRENCEVILLE",
+      "RAWL",   "RAWLINGS",
+      "VALE",   "VELENTINES",
+      "WARF",   "WARFIELD",
+      "WHIT",   "WHITE PLAINS"
+  });
 }
