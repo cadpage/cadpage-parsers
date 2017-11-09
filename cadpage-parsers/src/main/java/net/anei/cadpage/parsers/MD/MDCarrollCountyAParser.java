@@ -257,6 +257,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern EVT_PRT_MARKER = Pattern.compile("C\\.A\\.D\\. +Event Listing For: (\\S+) +");
+  private static final Pattern EVT_PRT_FND_CALL1_PTN = Pattern.compile(" HR  PR\n(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) +FND: +(.*?) {6,}");
+  private static final Pattern EVT_PRT_RPT_CALL2_PTN = Pattern.compile("\n +RPT: +(.*?) +\n");
+  private static final Pattern EVT_PRT_CODE_CALL_PTN = Pattern.compile("(\\d{4}) +(.*)");
+  private static final Pattern EVT_PRT_LOCATION_PTN = Pattern.compile("\nLocation +C/A +USE +OPER\n(.*?) {6,}");
+  private static final Pattern EVT_PRT_BOX_PTN = Pattern.compile("\\*\\*\\*(?:BOX)? *(\\S+) +(.*)");
+  private static final Pattern EVT_PRT_APT_PTN = Pattern.compile("(.*?) *(?:APT|ROOM|LOT) +(\\S+)\\b *(.*?)");
+  
   private static final Pattern MBREAK_PTN = Pattern.compile("\n{2,}");
   private static final Pattern PREFIX_PTN = Pattern.compile("(\\d\\d:\\d\\d) +");
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
@@ -271,6 +279,63 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern UNIT_PTN = Pattern.compile("\nUnits *(.*)(?=\n|$)");
 
   private boolean parseLongForm(String subject, String body, Data data) {
+
+    // Process event print format
+    if (subject.equals("Event Print")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setFieldList("ID DATE TIME CODE CALL BOX ADDR APT PLACE INFO");
+      
+      Matcher match = EVT_PRT_MARKER.matcher(body);
+      if (!match.lookingAt()) return false;
+      data.strCallId = match.group(1);
+      body = body.substring(match.end());
+      
+      Parser p = new Parser(body);
+      match = p.getMatcher(EVT_PRT_FND_CALL1_PTN);
+      if (match == null) return false;
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      String call = match.group(3);
+      
+      match = p.getMatcher(EVT_PRT_RPT_CALL2_PTN);
+      if (match == null) return false;
+      if (call.length() == 0) call = match.group(1);
+      match = EVT_PRT_CODE_CALL_PTN.matcher(call);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        call = match.group(2);
+      }
+      data.strCall = call;
+      
+      match = p.getMatcher(EVT_PRT_LOCATION_PTN);
+      if (match == null) return false;
+      String addr = match.group(1);
+      match = EVT_PRT_BOX_PTN.matcher(addr);
+      if (match.matches()) {
+        data.strBox = match.group(1);
+        addr = match.group(2);
+      }
+      String apt = "";
+      int pt = addr.indexOf(',');
+      if (pt >= 0) {
+        String place = addr.substring(pt+1).trim();
+        addr = addr.substring(0,pt).trim();
+        match = EVT_PRT_APT_PTN.matcher(place);
+        if (match.matches()) {
+          addr = append(match.group(1), " ", match.group(3));
+          apt = match.group(2);
+        }
+      }
+      parseAddress(addr, data);
+      data.strApt = append(apt, "-", apt);
+      
+      p.get("\n \n");
+      String info = p.get();
+      if (!info.startsWith("Caller Information")) return false;
+      data.strSupp = info;
+      return true;
+    }
+    
     
     // Check subject and message prefix
     if (!subject.equals("CAD") && !subject.equals("Dispatch Rip/Run")) return false;
@@ -287,7 +352,6 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     
     // and message trailer
     body = stripFieldEnd(body, "<< END OF MESSAGE >>");
-    
     
     // Parse dispatch alert
     if (body.startsWith("DISPATCH INFO\n\n")) {
