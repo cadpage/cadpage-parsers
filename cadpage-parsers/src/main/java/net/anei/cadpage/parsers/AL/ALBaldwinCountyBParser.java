@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.AL;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 public class ALBaldwinCountyBParser extends DispatchSouthernParser {
@@ -9,6 +10,17 @@ public class ALBaldwinCountyBParser extends DispatchSouthernParser {
           DSFLG_ADDR | DSFLG_OPT_X | DSFLG_ID | DSFLG_TIME);
   }
   
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Foley Sta. 30")) data.strSource = subject;
+    return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
     // Cities
