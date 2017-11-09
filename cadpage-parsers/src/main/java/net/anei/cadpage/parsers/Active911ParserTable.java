@@ -973,6 +973,7 @@ public class Active911ParserTable {
       "US/OH/Beavercreek",                "OHGreeneCountyB",
       "US/OH/BelmontCounty",              "OHBelmontCounty",
       "US/OH/Brunswick",                  "OHMedinaCountyC",
+      "US/OH/BrownCounty",                "OHBrownCounty",
       "US/OH/ButlerCountySheriff",        "OHButlerCountyA",
       "US/OH/Cencom",                     "OHStarkCountyCencomm",
       "US/OH/CencomMahoningCounty",       "OHMahoningCountyCencomm",
