@@ -196,6 +196,5 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
       "156 YELLOW",                           "+38.649409,-90.308369",
       "251 YELLOW",                           "+38.646908,-90.305996",
       "257 YELLOW",                           "+38.646830,-90.304728"
-  
   });
 }
