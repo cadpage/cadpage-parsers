@@ -71,6 +71,7 @@ public class GAEmanuelCountyParser extends DispatchB2Parser {
       "FIRE -EXPLOSION",
       "FIRE ALARM",
       "FIRE-SMOKE",
+      "GAS LEAK",
       "GENERAL ALARM",
       "GENERAL WEAKNESS",
       "GUN SHOT WOUND",
