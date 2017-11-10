@@ -15,15 +15,36 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState, 
-          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE CMT:INFO! CC:SKIP? CC_TEXT:CALL CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID TIME:SKIP");
+          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 CMT:INFO! CC:SKIP? CC_TEXT:CALL CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP");
     this.callCodes = callCodes;
   }
   
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
-    if (!super.parseMsg(body, data)) return false;
-    if (data.strCall.length() == 0) {
+    return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CODE", "CODE CALL");
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CODE1")) return new MyCode1Field();
+    if (name.equals("CODE2")) return new MyCode2Field();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ID")) return new MyIdField();
+    return super.getField(name);
+  }
+  
+  private class MyCode1Field extends CodeField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "*M*");
+      field = stripFieldEnd(field, "-");
+      super.parse(field, data);
       if (callCodes == null) {
         data.strCall = data.strCode;
         data.strCode = "";
@@ -36,28 +57,21 @@ public class DispatchA52Parser extends FieldProgramParser {
         }
       }
     }
-    return true;
   }
   
-  @Override
-  public String getProgram() {
-    return super.getProgram().replace("CODE", "CODE CALL");
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CODE")) return new MyCodeField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("ID")) return new MyIdField();
-    return super.getField(name);
-  }
-  
-  private class MyCodeField extends CodeField {
+  private class MyCode2Field extends CodeField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "*M*");
-      field = stripFieldEnd(field, "-");
-      super.parse(field, data);
+      if (field.length() == 0) return;
+      
+      if (data.strCode.length() == 0) {
+        data.strCall = append(data.strCall, " ", field);
+      }
+      else if (data.strCall.equals(data.strCode)) {
+        data.strCode = data.strCall = append(data.strCode, " ", field);
+      } else {
+        data.strCode = append(data.strCode, " ", field);
+      }
     }
   }
 
