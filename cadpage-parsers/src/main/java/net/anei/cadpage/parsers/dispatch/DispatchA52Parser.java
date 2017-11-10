@@ -15,7 +15,7 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState, 
-          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 CMT:INFO! CC:SKIP? CC_TEXT:CALL CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP");
+          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP");
     this.callCodes = callCodes;
   }
   
@@ -34,6 +34,7 @@ public class DispatchA52Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CODE1")) return new MyCode1Field();
     if (name.equals("CODE2")) return new MyCode2Field();
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
@@ -71,6 +72,21 @@ public class DispatchA52Parser extends FieldProgramParser {
         data.strCode = data.strCall = append(data.strCode, " ", field);
       } else {
         data.strCode = append(data.strCode, " ", field);
+      }
+    }
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (data.strCode.length() == 0) {
+        data.strCode = data.strCall;
+        data.strCall = field;
+      } else if (data.strCode.equals(data.strCall)) {
+        data.strCall = field;
+      } else {
+        data.strCall = append(data.strCall, " - ", field);
       }
     }
   }
