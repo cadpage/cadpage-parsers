@@ -9,7 +9,8 @@ public class DispatchA69Parser extends FieldProgramParser {
   
   protected DispatchA69Parser(String defCity, String defState) {
     super(defCity, defState,
-          "ID MAP? CALL ADDR PLACE GPS! Resources:UNIT% INFO/N+ Remarks:INFO/N+");
+          "( SELECT/RR ID1 CALL ADDR INFO/R! INFO/N+ " + 
+          "| ID MAP? CALL ADDR PLACE GPS! Resources:UNIT% INFO/N+ Remarks:INFO/N+ )");
   }
   
   @Override
@@ -23,11 +24,20 @@ public class DispatchA69Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("CAD Page")) return false;
-    return parseFields(DELIM.split(body), data);
+    if (body.startsWith("CLOSE:")) {
+      setSelectValue("RR");
+      body = body.substring(6).trim();
+      return parseFields(body.split(";"), data);
+    }
+    else {
+      setSelectValue("");
+      return parseFields(DELIM.split(body), data);
+    }
   }
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ID1")) return new IdField("Inc# (\\d{6})", true);
     if (name.equals("ID")) return new IdField("Incident #(\\d{6}|)", true);
     if (name.equals("MAP")) return new MapField("RespArea *(\\S+)", true);
     if (name.equals("ADDR")) return new MyAddressField();
