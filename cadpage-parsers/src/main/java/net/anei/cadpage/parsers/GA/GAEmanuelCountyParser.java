@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class GAEmanuelCountyParser extends DispatchB2Parser {
 
   public GAEmanuelCountyParser() {
-    super("EMANUEL COUNTY E911:", CITY_LIST, "EMANUEL COUNTY", "GA");
+    super("EMANUEL COUNTY E911:||EMANUELCOE911:", CITY_LIST, "EMANUEL COUNTY", "GA");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
