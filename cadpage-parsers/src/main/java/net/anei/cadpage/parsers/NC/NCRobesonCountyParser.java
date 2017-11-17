@@ -3,7 +3,9 @@ package net.anei.cadpage.parsers.NC;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCRobesonCountyParser extends DispatchOSSIParser{
@@ -69,7 +71,7 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
     }
   }
 
-  private static final Pattern CODE_PTN = Pattern.compile("(\\d{1,2}-?[A-Z]-?\\d{1,2})\\b *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CODE_PTN = Pattern.compile("(\\d{1,2}-?[A-Z]-?\\d{1,2}[A-Z]?)\\b *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
   
     @Override
@@ -81,6 +83,8 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
         if (match.matches()) {
           data.strCode = match.group(1);
           field = match.group(2);
+          String call = CALL_CODES.getCodeDescription(data.strCode, true);
+          if (call != null) data.strCall = call;
         }
       }
       super.parse(field, data);
@@ -91,4 +95,6 @@ public class NCRobesonCountyParser extends DispatchOSSIParser{
       return super.getFieldNames() + " CODE";
     }
   }
+  
+  private static final CodeTable CALL_CODES = new StandardCodeTable(); 
 }
