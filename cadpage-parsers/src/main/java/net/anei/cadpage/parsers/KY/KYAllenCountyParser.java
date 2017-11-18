@@ -13,6 +13,6 @@ public class KYAllenCountyParser extends DispatchGeoconxParser {
   
   @Override
   public String getFilter() {
-    return "allencoky911@911email.net";
+    return "allencoky911@911email.net,dispatch@911comm1.info";
   }
 }
