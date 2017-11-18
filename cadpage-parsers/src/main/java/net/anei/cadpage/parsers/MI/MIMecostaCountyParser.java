@@ -13,12 +13,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
  */
 public class MIMecostaCountyParser extends DispatchA3Parser {
   
-  private static final String MARKER = "Meceola Dispatch:";
+  private static final Pattern MARKER = Pattern.compile("Meceola[ _]Dispatch:");
   private static final Pattern ADDR_L_CITY_PTN = Pattern.compile("([A-Z0-9 ]+)/L +CITY +", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([^/ ]+ CO)(?:UNTY)?(?: DISPATCH)?", Pattern.CASE_INSENSITIVE);
   
-  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|LT[RF]|M[AO][RF]|RC[RF]|MOTF|BR[FT][RF]|MARE|POSSE|TEST|70)";
-  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:(?!MR )|([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
+  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|LT[RF]|M[AO][RF]|RC[RF]|MOTF|BR[FT][RF]|MARE|MTR|POSSE|TEST|WR|70)";
+  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CLEAN_CROSS_PTN = Pattern.compile("[-/ ]*(.*?)[-/ ]*");
   
 // This was a failed attempt to come up with a Name/Unit expression that was not quite a rigid as the above.  It failed to properly identify distinguish "DIKE,BEV" as a non-unit.  
@@ -32,7 +32,7 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
   }
   
   public MIMecostaCountyParser(String defCity, String defState) {
-    super(MARKER, CITY_LIST, defCity, defState, "");
+    super(CITY_LIST, defCity, defState, "");
     infoField = getField("INFO");
     setFieldList("ADDR APT CITY CALL NAME UNIT " + infoField.getFieldNames());
     setupSaintNames("CLAIR", "ONGE");
@@ -52,8 +52,9 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
   protected boolean parseMsg(String body, Data data) {
     
     // Check the alert marker
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end()).trim();
     
     // First problem.  We have to replace double slashes with a single slash
     // in the address, but not in the info section where a double slash marks
@@ -65,7 +66,7 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     body = body.substring(0,pt).replace("//","/") + body.substring(pt);
     
     // Check for special address construct
-    Matcher match = ADDR_L_CITY_PTN.matcher(body);
+    match = ADDR_L_CITY_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strAddress = match.group(1).trim();
       body = body.substring(match.end());
@@ -163,6 +164,7 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     //Unincorporated communities
     "ALTONA",
     "CANADIAN LAKES",
+    "REMUS VLG",
 
     // Townships
     "AETNA TWP",
@@ -220,6 +222,11 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
        "NORWICH",
     "LAKE COUNTY",
        "DOVER TWP",
-    "WEXFORD COUNTY"
+    "WEXFORD COUNTY",
+    
+    
+    "ISABELLA COUNTY",
+    
+    "WINTERFIELD TWP"
   };
 }
