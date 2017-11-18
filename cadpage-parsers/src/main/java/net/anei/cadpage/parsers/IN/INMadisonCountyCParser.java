@@ -13,7 +13,8 @@ public class INMadisonCountyCParser extends FieldProgramParser {
   
   public INMadisonCountyCParser() {
     super("MADISON COUNTY", "IN",
-          "CALL:CALL! DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY! INFO:INFO? ( MAP:MAP! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! X:X! SOURCE:SKIP! | UNIT:UNIT! X:X! MAP:MAP! ) CALLER-NAME:NAME! CALLER-PHONE:PHONE! INCIDENT#:SKIP! OTHER_INCIDENT#:SKIP? DISTRICT:SKIP? BEAT:MAP! LOCATION_DETAILS:INFO/N+ NARRATIVE:INFO/N+ RADIO_CHANNEL:CH");
+          "( DATE:DATETIME! CALL:CALL! UNIT:UNIT! PLACE:PLACE! ADDR:ADDRCITY! CROSS_STREETS:X! INFO:INFO! FIRE_RD:CH! EMS_RD:CH! RUN_#:ID! NARRATIVE:INFO/N! INFO/N+ CALLER-NAME:NAME! CALLER-PHONE:PHONE! " +
+          "| CALL:CALL! UNIT:UNIT? DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY! INFO:INFO? ( MAP:MAP! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! X:X! SOURCE:SKIP! | UNIT:UNIT! X:X! MAP:MAP! ) CALLER-NAME:NAME! CALLER-PHONE:PHONE! INCIDENT#:SKIP! OTHER_INCIDENT#:SKIP? DISTRICT:SKIP? BEAT:MAP! LOCATION_DETAILS:INFO/N+ NARRATIVE:INFO/N+ RADIO_CHANNEL:CH )");
   }
   
   @Override
@@ -34,6 +35,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("CH")) return new MyChannelField();
     return super.getField(name);
   }
   
@@ -65,4 +67,13 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     return CORD_PTN.matcher(address).replaceAll("");
   }
   private static final Pattern CORD_PTN = Pattern.compile("\\bCORD\\b");
+  
+  private class MyChannelField extends ChannelField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (field.equals(data.strChannel)) return;
+      data.strChannel = append(data.strChannel, "/", field);
+    }
+  }
 }
