@@ -17,8 +17,8 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
   private static final Pattern ADDR_L_CITY_PTN = Pattern.compile("([A-Z0-9 ]+)/L +CITY +", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([^/ ]+ CO)(?:UNTY)?(?: DISPATCH)?", Pattern.CASE_INSENSITIVE);
   
-  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|LT[RF]|M[AO][RF]|RC[RF]|MOTF|BR[FT][RF]|MARE|MTR|POSSE|TEST|WR|70)";
-  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
+  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|LT[RF]|M[AO][RF]|RC[RF]|MOTF|BR[FT][RF]|MARE|MTR|POSSE|TEST|70)";
+  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:(?!MR )|([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CLEAN_CROSS_PTN = Pattern.compile("[-/ ]*(.*?)[-/ ]*");
   
 // This was a failed attempt to come up with a Name/Unit expression that was not quite a rigid as the above.  It failed to properly identify distinguish "DIKE,BEV" as a non-unit.  
@@ -105,11 +105,19 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     }
     
     //   Next are name and unit fields
+    String name;
     match = NAME_UNIT_PTN.matcher(body);
-    if (!match.matches()) return false;
-    String name = stripFieldEnd(getOptGroup(match.group(1)), "-");
-    data.strUnit = match.group(2);
-    body = match.group(3).trim();
+    if (match.matches()) {
+      name = stripFieldEnd(getOptGroup(match.group(1)), "-");
+      data.strUnit = match.group(2);
+      body = match.group(3).trim();
+    } else if (body.startsWith("MR ")) {
+      name = "";
+      data.strUnit = "MR";
+      body = body.substring(3).trim();
+    } else {
+      return false;
+    }
     
     // See if the name includes a county
     match = NAME_COUNTY_PTN.matcher(name);
