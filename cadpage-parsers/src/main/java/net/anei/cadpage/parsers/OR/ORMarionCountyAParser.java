@@ -21,10 +21,11 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   public ORMarionCountyAParser() {
     super("MARION COUNTY", "OR",
-          "CALL ( ADDRCITY ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) " +
-               "| CALL CH/Z ADDRCITY MAP UNIT " +
-               "| CALL CH ADDRCITY MAP UNIT" +
-               "| ADDRCITY ( UNIT! EMPTY? ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) UNIT ) ) INFO+");
+          "( SELECT/1 INFO:CALL! STARS LOC:ADDRCITY1! CFS:SKIP! DATETIME! Units:UNIT! ID! INFO/N+ " +
+          "| CALL2 ( ADDRCITY2 ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) " +
+                  "| CALL CH/Z ADDRCITY2 MAP UNIT " +
+                  "| CALL CH ADDRCITY2 MAP UNIT" +
+                  "| ADDRCITY2 ( UNIT! EMPTY? ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) UNIT ) ) INFO+ )");
     setupSaintNames("PAUL");
   }
   
@@ -55,6 +56,13 @@ public class ORMarionCountyAParser extends FieldProgramParser {
       return false;
     } while (false);
     
+    if (body.startsWith("INFO:")) {
+      setSelectValue("1");
+      return parseFields(body.split("\n"), data);
+    }
+    
+    setSelectValue("2");
+    
     body = body.replace('\n', ' ');
     
     // And a MAP::<code> construct
@@ -72,9 +80,12 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("STARS")) return new SkipField("\\*{4}", true);
+    if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
+    
+    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("CH")) return new ChannelField("N\\d|", true);
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MapField("MAP-?(.*)", true);
@@ -83,13 +94,13 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private class MyCallField extends CallField {
+  private class MyCall2Field extends CallField {
     
-    public MyCallField() {
+    public MyCall2Field() {
       super();
     }
     
-    public MyCallField(String pattern, boolean hard) {
+    public MyCall2Field(String pattern, boolean hard) {
       super(pattern, hard);
     }
     
@@ -99,8 +110,29 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern VALID_ADDR_PTN = Pattern.compile("[-@/ A-Z0-9]+,([A-Z ]+)|.*\\bMP\\b.*|.* COMPLEX|LAT:.* LON:.*", Pattern.CASE_INSENSITIVE);
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern VALID_ADDR1_PTN = Pattern.compile("(.*?),([ A-Z]*)-(.*)");
+  private class MyAddressCity1Field extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = VALID_ADDR1_PTN.matcher(field);
+      if (match.matches()) {
+        parseAddress(match.group(1).trim(), data);
+        data.strCity = match.group(2).trim();
+        data.strPlace = match.group(3).trim();
+      } else {
+        super.parse(field, data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY PLACE";
+    }
+    
+  }
+  
+  private static final Pattern VALID_ADDR2_PTN = Pattern.compile("[-@/ A-Z0-9]+,([A-Z ]+)|.*\\bMP\\b.*|.* COMPLEX|LAT:.* LON:.*", Pattern.CASE_INSENSITIVE);
+  private class MyAddressCity2Field extends AddressCityField {
     
     @Override
     public boolean canFail() {
@@ -109,7 +141,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      Matcher match = VALID_ADDR_PTN.matcher(field);
+      Matcher match = VALID_ADDR2_PTN.matcher(field);
       if (!match.matches())  return false;
       String city = match.group(1);
       if (city != null && !CITY_SET.contains(city.trim().toUpperCase())) return false;
@@ -195,7 +227,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private class MyAlarmField extends MyCallField {
+  private class MyAlarmField extends MyCall2Field {
     public MyAlarmField() {
       super("\\.(.* ALRM)", true);
     }
