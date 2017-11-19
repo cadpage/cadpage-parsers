@@ -69,13 +69,21 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
   
+  private static final Pattern ID_CALL_PTN = Pattern.compile("Inc#(.*);(.*)");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
+      Matcher match = ID_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCallId = match.group(1).trim();
+        field = match.group(2).trim();
+      }
+      
       String call = CALL_CODES.getProperty(field);
       if (call != null) {
         data.strCode = field;
@@ -86,7 +94,7 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "CODE CALL";
+      return "ID CODE CALL";
     }
   }
   
@@ -115,6 +123,23 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      data.strMap = stripFieldStart(p.getLastOptional(" Grd: "), ":");
+      String ch2 = p.getLastOptional("; Tac: ");
+      String ch1 = p.getLastOptional("; Cmd: ");
+      data.strChannel = append(ch1, "/", ch2);
+      super.parse(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "X CH MAP";
     }
   }
   
