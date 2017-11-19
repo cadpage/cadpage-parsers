@@ -11,7 +11,7 @@ public class KYCarrollCountyCParser extends DispatchA17Parser {
   
   @Override
   public String getFilter() {
-    return "Carrollcounty911@carrolltonpd.net";
+    return "Carrollcounty911@carrolltonpd.net,CARROLLCOUNTY911@CARROLLTONPD.NET";
   }
 
 }
