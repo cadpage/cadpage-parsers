@@ -1198,6 +1198,7 @@ public class Active911ParserTable {
       "US/PA/YorkCounty",                 "PAYorkCountyD",
       "US/RI/CentralFalls",               "RIProvidenceCounty",
       "US/RI/CityofWestWarwick",          "RIWestWarwick",
+      "US/OR/Aurora",                     "ORMarionCountyA",
       "US/RI/Woonsocket",                 "RIProvidenceCounty",
       "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",

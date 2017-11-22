@@ -21,7 +21,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   public ORMarionCountyAParser() {
     super("MARION COUNTY", "OR",
-          "( SELECT/1 INFO:CALL! STARS LOC:ADDRCITY1! CFS:SKIP! DATETIME! Units:UNIT! ID! INFO/N+ " +
+          "( SELECT/1 INFO:CALL! CALL1/SDS LOC:ADDRCITY1! CFS:SKIP! DATETIME! Units:UNIT! ID INFO/N+ " +
           "| CALL2 ( ADDRCITY2 ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) " +
                   "| CALL CH/Z ADDRCITY2 MAP UNIT " +
                   "| CALL CH ADDRCITY2 MAP UNIT" +
@@ -80,7 +80,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("STARS")) return new SkipField("\\*{4}", true);
+    if (name.equals("CALL1")) return new SkipField("\\*{2} *(.*?) *\\*{2}", true);
     if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
     
     if (name.equals("CALL2")) return new MyCall2Field();
@@ -170,7 +170,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+)(?:,.*)?");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?");
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
