@@ -25,7 +25,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     return "@c-msg.net,carrollalert@carroll911.mygbiz.com";
   }
 
-  private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)(CT:.*?) (?:(\\d{6}) )?(\\d\\d:\\d\\d)");
+  private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)(CT:.*?) (?:(\\d{6,8}) )?(\\d\\d:\\d\\d)");
   private static final Pattern TRAIL_SEQ = Pattern.compile(" \\[\\d+\\]$");
   
   @Override
@@ -96,7 +96,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern MA_PTN = Pattern.compile("^(?:MA|MUTUAL AID ALARM) (?:BOX |(?!RT|US|ST)[A-Z]{2} )?(?:(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?) )?|^([A-Z]+) +(\\d+-\\d+) +");
+  private static final Pattern MA_PTN = Pattern.compile("^(?:MA|MUTUAL AID ALARM) (?:\\*{3} *(?:BOX )?(?:[A-Z]{2} *)?([-\\d]+)|(?:BOX |(?!RT|US|ST)[A-Z]{2}[/ ]+)?(?:(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?))? +)?|^([A-Z]+) +(\\d+-\\d+) +");
   private static final Pattern MA_SEPARATOR_PTN = Pattern.compile(" +- +| *[/;,] *");
   private static final Pattern CHANNEL_PTN = Pattern.compile("(?:[ \\.]+(CP|TB|TG|FC) *| +)(\\d{1,2}(?:-?[A-Z])?|WEST)$");
   private static final Pattern BOX_PTN = Pattern.compile("\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?");
@@ -112,12 +112,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       // The rules all change for mutual aid calls
       Matcher match = MA_PTN.matcher(fld);
       if (match.find()) {
-        String maCall = match.group(2);
+        String maCall = match.group(3);
         if (maCall != null) {
-          data.strBox = match.group(3);
+          data.strBox = match.group(4);
         } else {
           maCall = "MA";
-          data.strBox = getOptGroup(match.group(1));
+          data.strBox = match.group(1);
+          if (data.strBox == null) data.strBox = match.group(2);
+          if (data.strBox == null) data.strBox = "";
         }
         fld = fld.substring(match.end()).trim();
         
@@ -237,12 +239,16 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   
   // Box field behaves normally unless this is a mutual aid call
   // in which case it becomes a county code
+  private static final Pattern BOX_CODE_PTN = Pattern.compile("([A-Z]{2})\\d+");
   private class MyBoxField extends BoxField {
     
     @Override
     public void parse(String fld, Data data) {
       if (data.strCall.startsWith("MA ") || data.strCall.equals("MA")) {
-        String[] tmp = convertCodes(fld, COUNTY_CODES).split(",");
+        String code = fld;
+        Matcher match = BOX_CODE_PTN.matcher(fld);
+        if (match.matches()) code = match.group(1);
+        String[] tmp = convertCodes(code, COUNTY_CODES).split(",");
         data.strCity = tmp[0];
         if (tmp.length > 1) data.strState = tmp[1];
       }
@@ -270,6 +276,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
   private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ /A-Z0-9]+?) +\\(([^)]+)\\) +Incident No(?: +(\\d+))?");
   private static final Pattern ADDR_PTN = Pattern.compile("Loc *\\b(.*?)");
+  private static final Pattern BOX_ADDR_PTN = Pattern.compile("\\*{3}(?:BOX *)?(?:[A-Z]{2})? *([-\\d]+) +(.*)");
   private static final Pattern CROSS_MAP_PTN = Pattern.compile("(.*?) *(\\d+-[A-Z]\\d+)?");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
   private static final Pattern NAME_PTN = Pattern.compile("Name *(.*?)");
@@ -369,6 +376,11 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       match = ADDR_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       String addr = match.group(1).trim();
+      match = BOX_ADDR_PTN.matcher(addr);
+      if (match.matches()) {
+        data.strBox = match.group(1);
+        addr = match.group(2);
+      }
       parseOurAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
       
       String line = p.getLine();
@@ -892,6 +904,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         "DECREASED LOC-BLS",
         "DIABETIC-ALS",
         "DIABETIC-BLS",
+        "DOA-ALS",
         "ELEVATOR RESC/NO INJ",
         "EMERGENCY LOCK OUT",
         "GAS LEAK IN RESIDENC",

@@ -531,6 +531,7 @@ public class Active911ParserTable {
       "US/MD/CalvertCounty",              "MDCalvertCounty",
       "US/MD/CarrollAlert",               "MDCarrollCountyA",
       "US/MD/CarrollCounty",              "MDCarrollCountyA",
+      "US/MD/CarrollCountyShort",         "MDCarrollCountyA",
       "US/MD/CecilCounty",                "MDCecilCountyE",
       "US/MD/CharlesCounty",              "MDCharlesCountyA,MDCharlesCountyB",
       "US/MD/CharlesCountyCCMedic",       "MDCharlesCountyC",
