@@ -1087,6 +1087,7 @@ public class Active911ParserTable {
       "US/OR/GilliamCounty",              "ORGilliamCounty",
       "US/OR/GreshamStandardA",           "Cadpage2",
       "US/OR/HoodRiverCounty",            "ORHoodRiverCounty",
+      "US/OR/IdanhaDetroit",              "ORMarionCountyA",
       "US/OR/Jackson",                    "ORJacksonCounty",
       "US/OR/JeffersonCounty",            "ORJeffersonCounty",
       "US/OR/JunctionCity",               "ORLaneCountyB",
