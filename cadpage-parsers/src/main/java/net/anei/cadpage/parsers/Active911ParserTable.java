@@ -547,6 +547,7 @@ public class Active911ParserTable {
       "US/MD/HarfordCounty",              "Cadpage2",
       "US/MD/HowardCounty",               "MDHowardCounty",
       "US/MD/KentCounty",                 "MDKentCounty",
+      "US/MD/LineboroVFD",                "MDCarrollCountyA",
       "US/MD/MontgomeryCounty",           "MDMontgomeryCountyC",
       "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty",
       "US/MD/PrintManager",               "MDAnneArundelCountyAnnapolis",
