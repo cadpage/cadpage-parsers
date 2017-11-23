@@ -170,7 +170,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD|SEND_TRPD)(?:,.*)?");
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
