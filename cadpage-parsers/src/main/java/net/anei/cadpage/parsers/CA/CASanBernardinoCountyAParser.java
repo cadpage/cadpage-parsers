@@ -647,7 +647,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "CP-A1",      "Chest Pain norm. breathing",
       "CP-C1",      "Chest Pain abn. breathing",
       "CP-C2",      "Chest Pain cardiac Hx",
-      "CP-C3",      "Chest Pain-Cocaine Involved",
+      "CP-C3",      "Chest Pain-breathing normally",
       "CP-C4",      "Chest Pain w/ reps >35",
       "CP-D1",      "Chest Pain pt not alert",
       "CP-D2",      "Chest Pain w/ diff speaking",
