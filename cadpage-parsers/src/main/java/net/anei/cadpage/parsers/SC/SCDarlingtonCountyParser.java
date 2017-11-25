@@ -11,6 +11,8 @@ public class SCDarlingtonCountyParser extends DispatchSouthernParser {
     super(CITY_LIST, "DARLINGTON COUNTY", "SC", DSFLAG_FOLLOW_CROSS);
   }
   
+  
+  
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
