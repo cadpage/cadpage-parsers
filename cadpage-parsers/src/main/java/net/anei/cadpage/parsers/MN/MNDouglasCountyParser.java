@@ -1,19 +1,10 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Douglas County, MN
- */
-
-public class MNDouglasCountyParser extends DispatchA27Parser {
+public class MNDouglasCountyParser extends GroupBestParser {
   
   public MNDouglasCountyParser() {
-    super("DOUGLAS COUNTY", "MN", "\\d+[A-Z]{2}");
+    super(new MNDouglasCountyAParser(), new MNDouglasCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "noreply@cisusa.org";
-  }
-}
+} 

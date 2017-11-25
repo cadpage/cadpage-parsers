@@ -268,7 +268,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern EVT_PRT_RPT_CALL2_PTN = Pattern.compile("\n +RPT: +(.*?) +\n");
   private static final Pattern EVT_PRT_CODE_CALL_PTN = Pattern.compile("(\\d{4}) +(.*)");
   private static final Pattern EVT_PRT_LOCATION_PTN = Pattern.compile("\nLocation +C/A +USE +OPER\n(.*?) {6,}");
-  private static final Pattern EVT_PRT_BOX_PTN = Pattern.compile("\\*\\*\\*(?:BOX)? *(\\S+) +(.*)");
+  private static final Pattern EVT_PRT_BOX_PTN = Pattern.compile("\\*\\*\\*(?:BOX)? *([-0-9]+)[ /]+(.*)");
   private static final Pattern EVT_PRT_APT_PTN = Pattern.compile("(.*?) *(?:APT|ROOM|LOT) +(\\S+)\\b *(.*?)");
   
   private static final Pattern MBREAK_PTN = Pattern.compile("\n{2,}");
@@ -276,7 +276,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
   private static final Pattern CALL_ID_PTN = Pattern.compile("Call Type +([ /A-Z0-9]+?) +\\(([^)]+)\\) +Incident No(?: +(\\d+))?");
   private static final Pattern ADDR_PTN = Pattern.compile("Loc *\\b(.*?)");
-  private static final Pattern BOX_ADDR_PTN = Pattern.compile("\\*{3}(?:BOX *)?(?:[A-Z]{2})? *([-\\d]+) +(.*)");
+  private static final Pattern BOX_ADDR_PTN = Pattern.compile("\\*{3}(?:BOX *)?(?:[A-Z]{2})? *([-\\d]+)[ /]+(.*)");
   private static final Pattern CROSS_MAP_PTN = Pattern.compile("(.*?) *(\\d+-[A-Z]\\d+)?");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {3,}");
   private static final Pattern NAME_PTN = Pattern.compile("Name *(.*?)");
