@@ -45,6 +45,7 @@ public class LAAscensionParishParser extends FieldProgramParser {
     if (name.equals("ID2")) return new IdField("(\\d{4}-\\d{8}) *\\([A-Z0-9]+\\)|()", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
@@ -65,6 +66,14 @@ public class LAAscensionParishParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace("@", "&");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Common Name:");
       super.parse(field, data);
     }
   }
