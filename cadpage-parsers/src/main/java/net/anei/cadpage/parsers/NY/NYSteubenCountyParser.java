@@ -21,7 +21,7 @@ public class NYSteubenCountyParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "messaging@iamresponding.com,sc911@centralny.twcbc.com";
+    return "messaging@iamresponding.com,sc911@centralny.twcbc.com,777";
   }
 
   private static final Pattern MARKER = Pattern.compile("^messaging@iamresponding.com \\( *(.*?) *\\) ");
