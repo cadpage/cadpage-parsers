@@ -7,7 +7,7 @@ public class MOHowellCountyParser extends FieldProgramParser {
   
   public MOHowellCountyParser() {
     super("HOWELL COUNTY", "MO", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! X_STREET:X! NOTE:INFO! INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! X_STREET:X! NOTE:INFO% INFO/N+");
   }
   
   @Override
