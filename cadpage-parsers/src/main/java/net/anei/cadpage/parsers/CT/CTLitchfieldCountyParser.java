@@ -6,7 +6,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class CTLitchfieldCountyParser extends GroupBestParser {
   
   public CTLitchfieldCountyParser() {
-    super(new CTLitchfieldCountyAParser(), new CTNewMilfordParser(), new CTLitchfieldCountyBParser());
+    super(new CTLitchfieldCountyAParser(), 
+          new CTNewMilfordParser(), 
+          new CTLitchfieldCountyBParser(),
+          new CTLitchfieldCountyCParser());
   }
   
   @Override
