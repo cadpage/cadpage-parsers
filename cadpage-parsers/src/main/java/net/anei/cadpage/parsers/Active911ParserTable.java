@@ -709,6 +709,7 @@ public class Active911ParserTable {
       "US/MO/MaryvilleDeptofPublicSafety","MONodawayCounty",
       "US/MO/McDonaldCounty",             "MOMcDonaldCountyB",
       "US/MO/Mobilefonetotalaccess",      "MOJacksonCountyB",
+      "US/MO/MobileFonePlatteCounty",     "MOJacksonCountyB",
       "US/MO/MoniteauCounty",             "MOMoniteauCounty",
       "US/MO/MorganCounty",               "MOMorganCounty",
       "US/MO/NewtonCounty",               "MONewtonCounty",
