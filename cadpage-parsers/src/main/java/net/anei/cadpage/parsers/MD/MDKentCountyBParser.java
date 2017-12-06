@@ -53,13 +53,38 @@ public class MDKentCountyBParser extends FieldProgramParser {
         data.strSupp = field.substring(pt+3).trim();
         field = field.substring(0, pt).trim();
       }
+      pt = field.indexOf('@');
+      if (pt >= 0) {
+        String part1 = field.substring(0,pt).trim();
+        String part2 = field.substring(pt+1).trim();
+        if (checkAddress(part2) > checkAddress(part1)) {
+          data.strPlace = part1;
+          field = part2;
+        } else {
+          data.strPlace = part2;
+          field = part1;
+        }
+      }
       super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE INFO?";
     }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BETT", "BETTERTON",
       "CHES", "CHESTERTOWN",
-      "ROCK", "ROCK HALL"
+      "GALE", "GALENA",
+      "GOLT", "GOLTS",
+      "KENN", "KENNEDYVILLE",
+      "MASS", "MASSEY",
+      "MILL", "MILLINGTON",
+      "ROCK", "ROCK HALL",
+      "STIL", "STILL POND",
+      "WORT", "WORTON"
   });
 
   private static final CodeTable CALL_CODES = new StandardCodeTable();
