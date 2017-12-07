@@ -12,7 +12,7 @@ public class NYNassauCountyKParser extends FieldProgramParser {
   
   public NYNassauCountyKParser() {
     super("NASSAU COUNTY", "NY",
-          "CALL ( EMPTY NAME ADDRCITY! | ADDR! ) CS:X EMPTY TOA:TIMEDATE! ID! INFO/N+");
+          "CALL ( EMPTY NAME ADDRCITY/S6! | ADDR! ) CS:X EMPTY TOA:TIMEDATE! ID! INFO/N+");
   }
   
   @Override
