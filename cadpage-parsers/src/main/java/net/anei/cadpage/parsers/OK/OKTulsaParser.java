@@ -8,6 +8,6 @@ Tulsa, OK
  */
 public class OKTulsaParser extends GroupBestParser {
   public OKTulsaParser() {
-    super(new OKTulsaAParser(), new OKTulsaBParser());
+    super(new OKTulsaAParser(), new OKTulsaBParser(), new OKTulsaCParser());
   }
 }
