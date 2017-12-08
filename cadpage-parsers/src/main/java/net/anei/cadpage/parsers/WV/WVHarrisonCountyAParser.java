@@ -15,7 +15,7 @@ public class WVHarrisonCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "911@harrco911.org";
+    return "911@harrco911.org,harrison@911page.net";
   }
   
   @Override
