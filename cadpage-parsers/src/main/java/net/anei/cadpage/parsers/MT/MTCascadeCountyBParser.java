@@ -12,7 +12,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
   
   public MTCascadeCountyBParser() {
     super("CASCADE COUNTY", "MT", 
-          "DATETIME EMPTY? UNIT_CALL EMPTY+? Caller_Name:NAME? Caller_Phone:PHONE? EMPTY+? ADDRCITY! DUP_ADDR? APT_PLACE? INFO/N+");
+          "DATETIME EMPTY? ( ID UNIT_CALL | UNIT_CALL EMPTY+? ID? ) EMPTY+? Caller_Name:NAME? Caller_Phone:PHONE? EMPTY+? ADDRCITY! DUP_ADDR? APT_PLACE? INFO/N+");
   }
   
   @Override
@@ -32,6 +32,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("UNIT_CALL")) return new MyUnitCallField();
+    if (name.equals("ID")) return new MyIdField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DUP_ADDR")) return new MyDupAddressField();
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
@@ -63,6 +64,26 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "UNIT CALL";
+    }
+  }
+  
+  private class MyIdField extends IdField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("[") || !field.endsWith("]")) return false;
+      field = field.replace("[", "").replaceAll("]",  "");
+      data.strCallId = field;
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
