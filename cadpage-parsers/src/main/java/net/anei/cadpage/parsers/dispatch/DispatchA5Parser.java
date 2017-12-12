@@ -8,20 +8,11 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA5Parser extends FieldProgramParser {
-  
-  public static final String SUBJECT_SIGNATURE = "Automatic R&R Notification";
-  public static final Pattern RUN_REPORT_MARKER = Pattern.compile("[ *]+FINAL REPORT[ *]+\n+\\s*");
-  
-  private static final Pattern TERMINATOR_PTN = Pattern.compile("\n(?:Additional Info|Address Checks|Additional Inc#s:|Narrative|The Call Taker is)");
-  private static final Pattern KEYWORD_TRAIL_PTN = Pattern.compile("[ \\.]+:|(?: \\.){2,}(?=\n)");
-  private static final Pattern KEYWORD_DASH_PTN = Pattern.compile("(Call Time|Date|Dispatch|En-route|On-scene|Depart [12]|Arrive [12]|In-statn|Cleared) *-");
-  private static final Pattern LINE_PTN = Pattern.compile("(.*)(?:\n|$)");
-  private static final Pattern TRIM_TRAIL_BLANKS = Pattern.compile(" +$");
-  private static final Pattern TRIM_EXTRA_INFO = Pattern.compile("(?:\nAddress Checks *)?(?:\nAdditional Inc#s: *)?$");
   
   private CodeTable callCodes;
   
@@ -35,24 +26,94 @@ public class DispatchA5Parser extends FieldProgramParser {
   
   public DispatchA5Parser(Properties cityCodes, CodeTable callCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-           "Incident_Number:ID! ORI:UNIT! Station:SRC! " +
-           "Incident_Type:CALL! Priority:PRI! " +
-           "Incident_Location:ADDR! Venue:CITY! " +
-           "Located_Between:X? Cross_Street:X? Common_Name:PLACE? " +
-           "Google_Maps:SKIP " + 
-           "Call_Time:TIME! Date:DATE! " +
-           "Dispatch:TIMES! En-route:TIMES! On-scene:TIMES! Depart_1:TIMES! " +
-           "Arrive_2:TIMES! Depart_2:TIMES! In-statn:TIMES! Cleared:TIMES? " +
-           "Area:MAP! Section:MAP! Beat:SKIP! Map:SKIP? " +
-           "Grid:SKIP! Quadrant:MAP! District:MAP! " +
-           "Phone_Number:PHONE! Call_Source:SKIP! " +
-           "Caller:NAME? " +
-           "Units_sent:UNIT? " +
-           "Nature_of_Call:INFO");
+           "( SELECT/2 Incident_Type:CALL2! " + 
+                      "Priority:PRI? " + 
+                      "Incident_Number:ID! " + 
+                      "Incident_Location:ADDRCITY! " + 
+                      "Common_Name:PLACE! " + 
+                      "Located_Between:X! " + 
+                      "Call_Date_/_Time:SKIP! " + 
+                      "Dispatch:DATETIME! " + 
+                      "Caller:NAME! " +
+                      "Nature_of_Call:INFO! " +
+                      "Narrative:EMPTY! NARRATIVE+ " +
+                      "Hazards:INFO_KEY! " +
+                      "Lat/Lon:GPS! " + 
+                      "Map:SKIP! " +
+                      "Times:EMPTY! TIMES2+ " +
+                      "Units_Assigned:UNIT! " +
+                      "Radio_Channel:CH! " +
+           "| Incident_Number:ID! ORI:UNIT/S! Station:SRC! " +
+             "Incident_Type:CALL1! Priority:PRI! " +
+             "Incident_Location:ADDR! Venue:CITY! " +
+             "Located_Between:X? Cross_Street:X? Common_Name:PLACE? " +
+             "Google_Maps:SKIP " + 
+             "Call_Time:TIME! Date:DATE! " +
+             "Dispatch:TIMES1! En-route:TIMES1! On-scene:TIMES1! Depart_1:TIMES1! " +
+             "Arrive_2:TIMES1! Depart_2:TIMES1! In-statn:TIMES1! Cleared:TIMES1? " +
+             "Area:MAP! Section:MAP! Beat:SKIP! Map:SKIP? " +
+             "Grid:SKIP! Quadrant:MAP! District:MAP! " +
+             "Phone_Number:PHONE! Call_Source:SKIP! " +
+             "Caller:NAME? " +
+             "Units_sent:UNIT? " +
+             "Nature_of_Call:INFO " + 
+           ")");
     this.callCodes = callCodes;
   }
+
+  private HtmlDecoder decoder = null;
   
   private String times;
+
+  private static final Pattern MISSING_BRK_PTN = Pattern.compile(" (?=Priority:|Common Name:)");
+  
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    times = "";
+    
+    if (body.startsWith("<")) {
+      if (decoder == null) decoder = new HtmlDecoder();
+      body = MISSING_BRK_PTN.matcher(body).replaceAll("<div>");
+      String[] flds = decoder.parseHtml(body);
+      if (flds == null) return false;
+      setSelectValue("2");
+      if (!parseFields(flds, data)) return false;
+    }
+
+    else {
+      setSelectValue("1");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+    }
+    
+    // Clean up any duplicates in unit field
+    StringBuilder sb = new StringBuilder();
+    Set<String> unitSet = new HashSet<String>();
+    for (String unit : data.strUnit.split(" +")) {
+      if (unitSet.add(unit)) {
+        if (sb.length() > 0) sb.append(' ');
+        sb.append(unit);
+      }
+    }
+    data.strUnit = sb.toString();
+
+    // If run report, append Times info
+    if (data.msgType == MsgType.RUN_REPORT) {
+      data.strSupp = append(times, "\n", data.strSupp);
+    }
+
+    return true;
+  }
+    
+
+  public static final String SUBJECT_SIGNATURE = "Automatic R&R Notification";
+  public static final Pattern RUN_REPORT_MARKER = Pattern.compile("[ *]+FINAL REPORT[ *]+\n+\\s*");
+  
+  private static final Pattern TERMINATOR_PTN = Pattern.compile("\n(?:Additional Info|Address Checks|Additional Inc#s:|Narrative|The Call Taker is)");
+  private static final Pattern KEYWORD_TRAIL_PTN = Pattern.compile("[ \\.]+:|(?: \\.){2,}(?=\n)");
+  private static final Pattern KEYWORD_DASH_PTN = Pattern.compile("(Call Time|Date|Dispatch|En-route|On-scene|Depart [12]|Arrive [12]|In-statn|Cleared) *-");
+  private static final Pattern LINE_PTN = Pattern.compile("(.*)(?:\n|$)");
+  private static final Pattern TRIM_TRAIL_BLANKS = Pattern.compile(" +$");
+  private static final Pattern TRIM_EXTRA_INFO = Pattern.compile("(?:\nAddress Checks *)?(?:\nAdditional Inc#s: *)?$");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -74,11 +135,7 @@ public class DispatchA5Parser extends FieldProgramParser {
     body = KEYWORD_DASH_PTN.matcher(body).replaceAll("$1:");
     body = body.replaceAll("  +", " ");
     
-    times = "";
     if (!super.parseMsg(body, data)) return false;
-    if (data.msgType == MsgType.RUN_REPORT) {
-      data.strSupp = append(times, "\n", data.strSupp);
-    }
     
     // Add additional information from trailing data
     boolean display = false;
@@ -108,36 +165,39 @@ public class DispatchA5Parser extends FieldProgramParser {
     // Trim off any Empty titles from the extra information
     data.strSupp = TRIM_EXTRA_INFO.matcher(data.strSupp).replaceFirst("");
     
-    // Clean up any duplicates in unit field
-    StringBuilder sb = new StringBuilder();
-    Set<String> unitSet = new HashSet<String>();
-    for (String unit : data.strUnit.split(" +")) {
-      if (unitSet.add(unit)) {
-        if (sb.length() > 0) sb.append(' ');
-        sb.append(unit);
-      }
-    }
-    data.strUnit = sb.toString();
-    
     return true;
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL1")) return new MyCallField(CALL_CODE1_PTN);
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("TIMES")) return new MyTimesField();
+    if (name.equals("TIMES1")) return new MyTimes1Field();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("PHONE")) return new MyPhoneField();
-    if (name.equals("UNIT")) return new  MyUnitField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    
+    if (name.equals("CALL2")) return new MyCallField(CALL_CODE2_PTN);
+    if (name.equals("NARRATIVE")) return new MyNarrativeField();
+    if (name.equals("INFO_KEY")) return new MyInfoKeyField();
+    if (name.equals("TIMES2")) return new MyTimes2Field(); 
     return super.getField(name);
   }
   
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("([^ ]+) ([EF] .*)");
+  private static final Pattern CALL_CODE1_PTN = Pattern.compile("([^ ]+) ([EF] .*)");
+  private static final Pattern CALL_CODE2_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) : +(.*)");
+  
   private class MyCallField extends CallField {
+    
+    private Pattern callCodePtn;
+    
+    public MyCallField(Pattern callCodePtn) {
+      this.callCodePtn = callCodePtn;
+    }
+    
     @Override public void parse(String field, Data data) {
-      Matcher match = CALL_CODE_PTN.matcher(field);
-      if (match.find()) {
+      Matcher match = callCodePtn.matcher(field);
+      if (match.matches()) {
         data.strCode = match.group(1);
         field = match.group(2);
         String call = null;
@@ -165,18 +225,12 @@ public class DispatchA5Parser extends FieldProgramParser {
     }
   }
   
-  private class MyTimesField extends Field {
+  private class MyTimes1Field extends InfoField {
 
     @Override
     public void parse(String field, Data data) {
       times = append(times, "\n", getRelativeField(0));
     }
-
-    @Override
-    public String getFieldNames() {
-      return "INFO";
-    }
-    
   }
   
   private static final Pattern MAP_TRAIL_PTN = Pattern.compile("[ +]+$");
@@ -199,7 +253,49 @@ public class DispatchA5Parser extends FieldProgramParser {
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      field = field.replace(", ", " ").replace(',', ' ');
       data.strUnit = append(data.strUnit, " ", field);
+    }
+  }
+  
+  private static final Pattern NARRATIVE_JUNK_PTN = Pattern.compile("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d:\\d\\d:\\d\\d|[A-Z]+\\\\[a-z]+|-");
+  
+  private class MyNarrativeField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (NARRATIVE_JUNK_PTN.matcher(field).matches()) return;
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+  }
+  
+  private class MyInfoKeyField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      data.strSupp = append(data.strSupp, "\n", getRelativeField(0));
+    }
+  }
+
+  private static final Pattern TIMES2_TITLE_PTN = Pattern.compile("[A-Z]+: [A-Z ]+");
+  private class MyTimes2Field extends InfoField {
+    
+    @Override
+    public void parse(String field, Data data) {
+      String delim = "\n";
+      if (TIMES2_TITLE_PTN.matcher(field).matches()) {
+        delim = "\n\n";
+      }
+      
+      else if (field.startsWith("Unit:")) {
+        data.strUnit = append(data.strUnit, " ", field.substring(5).trim());
+      }
+      
+      else if (field.startsWith("Cleared at:")) {
+        data.msgType = MsgType.RUN_REPORT;
+      }
+      
+      times = append(times, delim, field);
     }
   }
 }
