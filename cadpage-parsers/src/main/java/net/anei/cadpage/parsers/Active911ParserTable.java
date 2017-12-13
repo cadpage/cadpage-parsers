@@ -934,6 +934,7 @@ public class Active911ParserTable {
       "US/NY/FireRescueSystems",          "NYSuffolkCountyB,NYSuffolkCountyF",
       "US/NY/FireRescueSystemsSuffolkCounty","NYSuffolkCountyG,NYSuffolkCountyL",
       "US/NY/FultonCounty",               "NYFultonCounty",
+      "US/NY/GeneseeCounty",              "NYGeneseeCounty",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
       "US/NY/Lewis911",                   "NYLewisCounty",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",
