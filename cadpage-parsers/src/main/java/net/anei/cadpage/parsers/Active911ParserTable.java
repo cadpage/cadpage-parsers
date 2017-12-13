@@ -298,6 +298,7 @@ public class Active911ParserTable {
       "US/GA/PikeCounty",                 "GAPikeCounty",
       "US/GA/RabunCounty",                "GARabunCounty",
       "US/GA/SouthsideFire",              "GAChathamCounty",
+      "US/GA/TaylorCounty",               "GATaylorCounty",
       "US/GA/ThompsonMcDuffie",           "GAMcDuffieCounty",
       "US/GA/ThomsonFD",                  "GAMcDuffieCounty",
       "US/GA/TiftCounty",                 "GATiftCounty",
