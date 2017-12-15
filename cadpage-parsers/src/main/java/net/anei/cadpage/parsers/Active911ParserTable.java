@@ -1419,6 +1419,7 @@ public class Active911ParserTable {
       "US/VA/Nrv",                        "VAMontgomeryCountyB",
       "US/VA/PetersburgPD",               "VAPetersburg",
       "US/VA/PowhatanCounty",             "VAPowhatanCounty",
+      "US/VA/PrinceEdwardCounty",         "VAPrinceEdwardCounty",
       "US/VA/PrinceWilliamCounty",        "VAPrinceWilliamCounty",
       "US/VA/RoanokeCounty",              "VARoanokeCounty",
       "US/VA/SouthamptonCounty",          "VASouthamptonCounty",

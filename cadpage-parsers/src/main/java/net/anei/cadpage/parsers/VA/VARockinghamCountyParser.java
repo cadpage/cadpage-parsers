@@ -40,8 +40,9 @@ public class VARockinghamCountyParser extends DispatchDAPROParser {
       if (prefix) body = body.substring(8);
       body = subject + ":" + body;
       if (prefix) body = "MAILBOX:" + body;
+      subject = "";
     }
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{

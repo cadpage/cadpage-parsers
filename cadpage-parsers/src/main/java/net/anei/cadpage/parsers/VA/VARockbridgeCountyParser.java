@@ -25,22 +25,6 @@ public class VARockbridgeCountyParser extends DispatchDAPROParser {
     return "MAILBOX@Rockregional911.org";
   }
   
-  @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    Parser p = new Parser(subject);
-    data.strUnit = p.getLast(' ');
-    String source = p.get();
-    if (!super.parseMsg(body,  data)) return false;
-    data.strBox = data.strSource;
-    data.strSource = source;
-    return true;
-  }
-  
-  @Override
-  public String getProgram() {
-    return "SRC UNIT BOX " + super.getProgram();
-  }
-  
   private static final CodeSet CALL_SET = new CodeSet(
       "9-1-1 HANGUP WITH NO CONTACT",
       "ABDOMINAL PAIN",

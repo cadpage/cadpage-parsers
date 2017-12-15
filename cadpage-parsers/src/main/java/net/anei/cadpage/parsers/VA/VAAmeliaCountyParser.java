@@ -21,23 +21,6 @@ public class VAAmeliaCountyParser extends DispatchDAPROParser {
     return "MAILBOX@ameliasheriff.org";
   }
   
-  @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    Parser p = new Parser(subject);
-    data.strUnit = p.getLast(' ');
-    String source = p.get();
-    if (source.length() == 0) return false;
-    if (!super.parseMsg(body,  data)) return false;
-    data.strBox = data.strSource;
-    data.strSource = source;
-    return true;
-  }
-  
-  @Override
-  public String getProgram() {
-    return "SRC UNIT BOX " + super.getProgram();
-  }
-  
   private static final CodeSet CALL_SET = new CodeSet(
     "ABDOMINAL PAIN / PROBLEMS",
     "AIRCRAFT EMERGENCY",

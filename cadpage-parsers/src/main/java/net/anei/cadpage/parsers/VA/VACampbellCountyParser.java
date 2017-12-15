@@ -20,9 +20,9 @@ public class VACampbellCountyParser extends DispatchDAPROParser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (!super.parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
     
     // If no city was found, see if we can get it from the address line
     if (data.strCity.length() == 0) {
