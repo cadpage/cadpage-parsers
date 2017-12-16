@@ -158,7 +158,7 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     
     @Override
     public void parse(String field, Data data) {
-      field = field.replaceAll(",", "");
+      field = field.replace(",", "");
       super.parse(field, data);
     }
   }
