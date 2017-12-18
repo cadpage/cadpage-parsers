@@ -113,7 +113,7 @@ public class VAPrinceEdwardCountyParser extends DispatchDAPROParser {
     buildCodeTable(new String[]{
         "FAR", "FARMVILLE",
         "GRE", "GREEN BAY",
-        "HSC", "FARMVILLE",
+        "HSC", "HAMPDEN SYDNEY",
         "KEY", "KEYSVILLE",
         "MEH", "MEHERRIN",
         "PAM", "PAMPLIN CITY",
