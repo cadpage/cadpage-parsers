@@ -15,7 +15,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
   
   public NCDuplinCountyParser() {
     super(CITY_LIST, "DUPLIN COUNTY", "NC",
-          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_TIME);
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_OPT_CODE|DSFLG_OPT_ID|DSFLG_TIME);
     setupCallList(CALL_LIST);
     removeWords("DRIVE");
   }
@@ -176,6 +176,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     "GLISSON",
     "ISLAND CREEK",
     "KENANSVILLE",
+    "KENNANSVILLE",  // misspelled
     "KENASVILLE",    // misspelled
     "KENANSVL",      // misspelled
     "LIMESTONE",
@@ -188,19 +189,24 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     "WOLFSCRAPE",
     
     // Onslow County
+    "ONSLOW CO",
     "ONSLOW",
     "RICHLANDS",
     
     // Lenoir County
+    "LENOIR CO",
     "DEEP RUN",
     "PINK HILL",
     
     // Pender County
+    "PENDER CO",
     "PENDER",
     "WATHA",
     "WILLARD",
     
     // Sampson County
+    "SAMPSON CO",
+    "CLINTON",
     "SAMPSON",
     "TURKEY",
     
@@ -209,6 +215,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
   };
   
   private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
+      "KENNANSVILLE",   "KENANSVILLE",
       "KENASVILLE",     "KENANSVILLE",
       "KENANSVL",       "KENANSVILLE"
   });
