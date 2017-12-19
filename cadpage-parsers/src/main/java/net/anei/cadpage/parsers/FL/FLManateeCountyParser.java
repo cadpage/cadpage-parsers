@@ -18,7 +18,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "93001,777,888,@txt.voice.google.com,americanopportunityfla@gmail.com";
+    return "93001,777,888,@txt.voice.google.com,americanopportunityfla@gmail.com,2513877788";
   }
   
   @Override
