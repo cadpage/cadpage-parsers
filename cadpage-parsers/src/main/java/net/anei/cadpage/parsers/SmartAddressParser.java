@@ -1491,7 +1491,13 @@ public abstract class SmartAddressParser extends MsgParser {
                   if (isType(sAddr+1, ID_ST)) {
                     if (!isType(sAddr+2, ID_DIRECTION)) {
                       sEnd = findRoadEnd(sAddr+1, 1);
-                      if (sEnd > 0) break;
+                      if (sEnd > 0) {
+                        
+                        // Unless the implied intesection flag is set, in which case
+                        // this only works if the street name is a defined saint name
+                        if (!isFlagSet(FLAG_IMPLIED_INTERSECT) ||
+                            isType(sAddr+2, ID_SAINT)) break;
+                      }
                     }
                   }
                   

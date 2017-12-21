@@ -17,11 +17,8 @@ public class NDCassCountyParser extends SmartAddressParser {
     setupCallList(CALL_LIST);
     removeWords("ESTATES");
     setupSaintNames("FRANCIS");
-    setupMultiWordStreets(
-        "MAPLE RIVER",
-        "TRENT JONES",
-        "TURTLE LAKE"
-    );
+    setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSpecialStreets("BROADWAY");
   }
   
   @Override
@@ -36,7 +33,7 @@ public class NDCassCountyParser extends SmartAddressParser {
   
   private static final Pattern DATE_TIME_CFS_PTN = Pattern.compile("(?:\\* +)?(?:(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) )?CFS #:? (\\d+) ");
   private static final Pattern CALL_PFX_PTN = Pattern.compile("X - |X-SEND FIRE ", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CITY_PTN = Pattern.compile(", ([A-Z]{3,4})\\b");
+  private static final Pattern CITY_PTN = Pattern.compile("([^*]+), (?!EXIT|RAMP|RED|THEN)([A-Z]{3,4})\\b *(.*)");
   private static final Pattern UNIT_PTN = Pattern.compile("(?: \\d{3}| \\d{4}-[A-Z]+)+$");
   
   @Override
@@ -72,39 +69,60 @@ public class NDCassCountyParser extends SmartAddressParser {
       flags = 0;
     }
     
+    String extra = null;
+    sAddr = stripFieldEnd(sAddr, "*");
+    pt = sAddr.indexOf(" * ");
+    if (pt >= 0) {
+      extra = sAddr.substring(pt+3).trim();
+      sAddr = sAddr.substring(0,pt).trim();
+      
+      String city = CITY_CODES.getProperty(sAddr);
+      if (city != null) {
+        data.strCity = city;
+        sAddr = extra;
+        extra = null;
+        pt = sAddr.indexOf(" * ");
+        if (pt >= 0) {
+          extra = sAddr.substring(pt+3).trim();
+          sAddr = sAddr.substring(0,pt).trim();
+        }
+      }
+    }
+    
     String trail = null;
     match = CITY_PTN.matcher(sAddr);
-    if (match.find()) {
-      data.strCity = convertCodes(match.group(1), CITY_CODES);
-      trail = sAddr.substring(match.end()).trim();
-      sAddr = sAddr.substring(0,match.start()).trim();
+    if (match.matches()) {
+      sAddr = match.group(1).trim();
+      data.strCity = convertCodes(match.group(2), CITY_CODES);
+      trail = match.group(3);
       flags |= FLAG_ANCHOR_END | FLAG_NO_CITY;
     }
     
-    sAddr = sAddr.replace("\\", "&");
+    sAddr = sAddr.replace("\\", "&").replace('@',  '&');
     flags |= FLAG_EMPTY_ADDR_OK | FLAG_IMPLIED_INTERSECT;
     if (version >= 2) flags |= FLAG_CROSS_FOLLOWS;
+    flags |= FLAG_RECHECK_APT;
+    String saveCity = data.strCity;
     parseAddress(st, flags, sAddr, data);
+    if (saveCity.length() > 0) data.strCity = saveCity;
     if (prefix != null) data.strCall = prefix + data.strCall;
+
+    if (trail == null) trail = getLeft();
+    trail = stripFieldStart(trail, "*");
+    parseTrailField(version, trail, data);
+
+    if (extra !=  null) {
+      for (String part : extra.split(" \\* ")) {
+        part = part.trim();
+        parseTrailField(version, part, data);
+      }
+    }
     
     pt = data.strCity.indexOf('/');
     if (pt >= 0) {
       data.strState = data.strCity.substring(pt+1);
       if (data.strState.equals("ND")) data.strState = "";
       data.strCity = data.strCity.substring(0,pt).trim();
-    }
-
-    if (trail == null) trail = getLeft();
-    trail = stripFieldStart(trail, "*");
-    pt = trail.indexOf(" - ");
-    if (pt >= 0) trail = trail.substring(0,pt).trim();
-    if (trail.length() <= 1) trail = "";
-    if (data.strAddress.length() == 0) {
-      parseAddress(trail, data);
-    } else if (version == 2) {
-      if (!trail.equals("No Cross Streets Found")) data.strCross = trail;
-    } else {
-      data.strPlace = trail;
     }
     
     if (version == 1) {
@@ -149,12 +167,66 @@ public class NDCassCountyParser extends SmartAddressParser {
     }
     return true;
   }
+
+  private static final Pattern X_PLACE_PTN = Pattern.compile("(?:(.*?) )??([A-Z][a-z].*)");
+
+  private void parseTrailField(int version, String field, Data data) {
+    Matcher match;
+    
+    int pt = field.indexOf(" - ");
+    if (pt >= 0) field = field.substring(0,pt).trim();
+    if (field.length() <= 1) return;
+    
+    if (data.strCity.length() == 0) {
+      String city = CITY_CODES.getProperty(field);
+      if (city != null) {
+        data.strCity = city;
+        return;
+      }
+    }
+
+    String place = "";
+    if (data.strAddress.length() == 0) {
+      parseAddress(field, data);
+    } else if (version == 2 && data.strCross.length() == 0) {
+      if (field.startsWith("No Cross Streets Found")) {
+        field = field.substring(22).trim();
+        place = stripFieldStart(field, "* ");
+      } else if ((match = X_PLACE_PTN.matcher(field)).matches()) {
+        data.strCross = getOptGroup(match.group(1)).replace("\\", "/").replace('@',  '/');
+        place = match.group(2).trim();
+      } else {
+        data.strCross = field.replace("\\", "/").replace('@',  '/');;
+      }
+    } else if (version == 1 && data.strCross.length() == 0 &&
+               (field.contains("/") || field.contains("\\") || field.contains("@"))) {
+      data.strCross = field.replace("\\", "/").replace('@',  '/');;
+    } else {
+      place = field;
+    }
+    data.strPlace = append(place, " - ", data.strPlace);
+  }
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "EAST GATEWAY",
+      "MAPLE RIVER",
+      "TRENT JONES",
+      "TURTLE LAKE",
+      "AMBER VALLEY",
+      "COUNTRYSIDE TRAILER",
+      "DAKOTA PARK",
+      "NORTHERN PACIFIC",
+      "VALLEY VIEW",
+      "WHEATLAND PINES"
+  };
   
   private static CodeSet CALL_LIST = new CodeSet(
+      "<NEW>",
       "01 ABDOMINAL PAIN",
       "01 ABDOMINAL PAIN/PROBLEMS",
       "02 ALLERGIES/ENVENOMATIONS",
       "05 BACK PAIN -  NON TRAUMATIC",
+      "05 BACK PAIN - NON TRAUMATIC",
       "06 BREATHING PROBLEMS",
       "07 BURNS/SCALDS",
       "08 INHALATION",
@@ -175,6 +247,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "26 SICK PERSON",
       "27 STAB/GUNSHOT/PENETRATING",
       "28 STROKE  - CVA",
+      "28 STROKE - CVA",
       "30 TRAUMATIC INJURIES",
       "31 UNCONSCIOUS - FAINTING",
       "32 UNKNOWN PROBLEM - MAN DOWN",
@@ -194,6 +267,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "DOMESTIC",
       "DUMPSTER FIRE",
       "FIRE ALARM ACTIVATION",
+      "FIRE ALARM RESET",
       "GAS/FUEL SPILLS",
       "GAS LEAK",
       "GRASS FIRE",
@@ -265,6 +339,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "GRAN", "GRANDIN/ND",
       "HAGE", "HAGEN TOWNSHIP/MN",
       "HAWL", "HAWLEY/MN",
+      "HARW", "HARWOOD/ND",
       "HICK", "HICKSON/ND",
       "HIGH", "HIGHLAND GROVE TOWNSHIP/MN",
       "HITT", "HITTERDAL/MN",
@@ -283,7 +358,6 @@ public class NDCassCountyParser extends SmartAddressParser {
       "MHD",  "MOORHEAD/MN",
       "MOLA", "MOLAND TOWNSHIP/MN",
       "MORK", "MORKEN TOWNSHIP/MN",
-      "NARW", "HARWOOD/ND",
       "NEWR", "NEW ROCKFORD/ND",
       "NORA", "HORACE/ND",
       "NROT", "NORTH RIVER/ND",
