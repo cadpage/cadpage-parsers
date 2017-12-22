@@ -14,7 +14,8 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "BRUNSWICK COUNTY", "VA",
           "( CANCEL ADDR CITY! INFO/N+ " +
           "| FYI ( ID DATETIME CALL PLACE? ADDR/Z CITY/Y! X/Z+? ( UNIT END | END ) " +
-                "| CALL ADDR CITY! INFO/N+ ) )");
+                "| DATETIME ID CALL UNIT PLACE? ADDR/Z CITY/Y! X/+? NAME PHONE " +
+                "| CALL ADDR CITY/Y! INFO/N+ ) )");
   }
   
   @Override
