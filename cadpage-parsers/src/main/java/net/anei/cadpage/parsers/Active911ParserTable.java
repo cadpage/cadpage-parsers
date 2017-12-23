@@ -422,7 +422,7 @@ public class Active911ParserTable {
       "US/KS/BartonCounty",               "KSBartonCounty",
       "US/KS/BourbonCounty",              "KSBourbonCounty",
       "US/KS/BrownCounty",                "KSBrownCounty",
-      "US/KS/ButlerCounty",               "KSButlerCounty",
+      "US/KS/ButlerCounty",               "KSButlerCountyA,KSButlerCountyB",
       "US/KS/Cherryvale",                 "KSMontgomeryCounty",
       "US/KS/CityofElkhart",              "KSMortonCounty",
       "US/KS/CityofEudora",               "KSEudora",
