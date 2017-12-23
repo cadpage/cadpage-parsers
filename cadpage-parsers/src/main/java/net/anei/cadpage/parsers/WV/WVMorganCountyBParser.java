@@ -10,7 +10,7 @@ public class WVMorganCountyBParser extends DispatchA17Parser {
   
   @Override
   public String getFilter() {
-    return "911morgancowv@morgancountywv.comcastbiz.net";
+    return "911morgancowv@morgancountywv.comcastbiz.net,ecc@morgancountywv.gov";
   }
 
 }
