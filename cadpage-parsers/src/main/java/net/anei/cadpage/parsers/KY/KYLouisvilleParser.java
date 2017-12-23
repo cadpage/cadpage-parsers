@@ -16,7 +16,6 @@ public class KYLouisvilleParser extends FieldProgramParser {
   public KYLouisvilleParser() {
     super(CITY_CODES, "LOUISVILLE", "KY",
            "Location:ADDR/S? JTN:PLACE? TYPE_CODE:CODE! SUB_TYPE:CALL! TIME:TIME? Comments:INFO INFO+");
-//    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
