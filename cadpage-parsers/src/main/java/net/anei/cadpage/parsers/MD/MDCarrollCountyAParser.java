@@ -290,7 +290,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     // Process event print format
     if (subject.equals("Event Print")) {
       data.msgType = MsgType.RUN_REPORT;
-      setFieldList("ID DATE TIME CODE CALL BOX ADDR APT PLACE INFO");
+      setFieldList("ID DATE TIME CODE CALL BOX ADDR APT CITY PLACE INFO");
       
       Matcher match = EVT_PRT_MARKER.matcher(body);
       if (!match.lookingAt()) return false;
@@ -440,7 +440,9 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     data.strSupp = body;
     return true;
   }
-
+  
+  private static final Pattern BOX1_PFX_PTN = Pattern.compile("([A-Z]C), *");
+  private static final Pattern BOX2_PFX_PTN = Pattern.compile("(\\d{1,2}-\\d{1,2})[ /]+");
   private static final Pattern APT_PTN = Pattern.compile("(?:\\bAPT\\b|#) *([^ ]+)$", Pattern.CASE_INSENSITIVE);
   
   private void parseOurAddress(StartType st, int flags, String fld, Data data) {
@@ -458,6 +460,42 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         data.strCity = city;
         fld = p.get();
       }
+    }
+    
+    pt = fld.lastIndexOf(" Apt");
+    if (pt >= 0) {
+      data.strApt = fld.substring(pt+4).trim();
+      fld = fld.substring(0,pt).trim();
+    }
+    
+    // Again, the rules change when this is a mutual aid alarm
+    if (data.strCall.equals("MUTUAL AID ALARM")) {
+      Matcher match = BOX1_PFX_PTN.matcher(fld);
+      if (match.lookingAt()) {
+        data.strBox = match.group(1);
+        fld = fld.substring(match.end());
+        if (data.strCity.length() == 0) {
+          String city = COUNTY_CODES.getProperty(data.strBox);
+          if (city !=  null) {
+            String[] tmp = city.split(",");
+            data.strCity = tmp[0];
+            if (tmp.length > 1) data.strState = tmp[1];
+          }
+        }
+      }
+      
+      match = BOX2_PFX_PTN.matcher(fld);
+      if (match.lookingAt()) {
+        data.strBox = append(data.strBox, " ", match.group(1));
+        fld = fld.substring(match.end());
+      }
+      
+      parseAddress(StartType.START_ADDR, FLAG_NO_CITY, fld, data);
+      String call = getLeft();
+      call = stripFieldStart(call, "/");
+      call = stripFieldStart(call, "/");
+      data.strCall = append(data.strCall, " - ", call);
+      return;
     }
     
     // Rest of address could include a place name separated by a ; or @
@@ -661,6 +699,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     call = stripFieldStart(call, "RE-ALERT! ");
     call = stripFieldStart(call, "DO NOT RESPOND - ");
     if (call.startsWith("MA - ") || call.equals("MA")) return true;
+    if (call.startsWith("MUTUAL AID ALARM")) return true;
     String chkCall = CALL_TABLE.getCodeDescription(call);
     return chkCall != null && chkCall.equals(call);
   }
