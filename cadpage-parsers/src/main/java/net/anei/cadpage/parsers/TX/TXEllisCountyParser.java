@@ -1,14 +1,13 @@
 package net.anei.cadpage.parsers.TX;
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
 
-public class TXEllisCountyParser extends DispatchA55Parser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Ellis County, TX
+ */
+public class TXEllisCountyParser extends GroupBestParser {
   
   public TXEllisCountyParser() {
-    super("ELLIS COUNTY", "TX");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "cadalerts@eforcesoftware.com";
+    super(new TXEllisCountyAParser(), new TXEllisCountyCParser());
   }
 }

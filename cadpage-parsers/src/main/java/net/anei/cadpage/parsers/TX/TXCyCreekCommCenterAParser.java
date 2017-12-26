@@ -163,9 +163,13 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern CROSS_DASH_PTN = Pattern.compile("(\\d+) - (\\d+ .*)");
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "0 - ");
+      Matcher match = CROSS_DASH_PTN.matcher(field);
+      if (match.matches()) field = match.group(1) + '-' + match.group(2);
       if (field.contains("/") || field.contains("&")) {
         data.strCross = field;
       } else {

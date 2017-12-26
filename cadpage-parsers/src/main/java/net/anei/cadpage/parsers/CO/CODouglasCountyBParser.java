@@ -8,10 +8,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class CODouglasCountyBParser extends FieldProgramParser {
-  
-  private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(?:(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *)?(.*)");
-  private static final Pattern MASTER2 = Pattern.compile("([A-Z]{2}-\\d\\d-[A-Z]) +(.*?) +([A-Z0-9,]+)");
-  private static final Pattern FALLBACK_PTN = Pattern.compile("(.*?) +([A-Z]{2}[-/ A-Z0-9]+)");
 
   public CODouglasCountyBParser() {
     super("DOUGLAS COUNTY", "CO",
@@ -22,6 +18,11 @@ public class CODouglasCountyBParser extends FieldProgramParser {
   public String getFilter() {
     return "Group_Page_Notification@usamobility.net";
   }
+  
+  private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(?:(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *)?(.*)");
+  private static final Pattern MASTER2 = Pattern.compile("([A-Z]{2}-\\d\\d-[A-Z]) +(.*?) +([A-Z0-9,]+)");
+  private static final Pattern ADDR_STREET_DASH_PTN = Pattern.compile("(\\d+) - (\\d+ .*)");
+  private static final Pattern FALLBACK_PTN = Pattern.compile("(.*?) +([A-Z]{2}[-/ A-Z0-9]+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -50,6 +51,8 @@ public class CODouglasCountyBParser extends FieldProgramParser {
     data.strUnit = match.group(3);
     
     // Try using smart address parser to break out address and call description
+    match = ADDR_STREET_DASH_PTN.matcher(addr);
+    if (match.matches()) addr = match.group(1)+ '-' +  match.group(2);
     parseAddress(StartType.START_ADDR, addr, data);
     data.strCall = getLeft();
     if (data.strCall.length() > 0) return true;
