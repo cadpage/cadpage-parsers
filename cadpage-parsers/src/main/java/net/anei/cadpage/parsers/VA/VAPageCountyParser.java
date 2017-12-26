@@ -1,9 +1,13 @@
 package net.anei.cadpage.parsers.VA;
 
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class VAPageCountyParser extends VARockinghamCountyParser {
+/**
+ * Page County, VA
+ */
+public class VAPageCountyParser extends GroupBestParser {
   
   public VAPageCountyParser() {
-    super("PAGE COUNTY", "VA");
+    super(new VAPageCountyAParser(), new VAPageCountyBParser());
   }
 }

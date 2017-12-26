@@ -8,8 +8,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class VAPageCountyBParser extends DispatchSouthernParser {
     
   public VAPageCountyBParser() {
-    super(CITY_LIST, "PAGE COUNTY", "VA", DSFLG_ADDR | DSFLG_BAD_PLACE | DSFLG_OPT_X | DSFLG_UNIT1 | DSFLG_ID |
-        DSFLG_TIME);
+    super(CITY_LIST, "PAGE COUNTY", "VA", 
+          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_BAD_PLACE | DSFLG_X | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_UNIT1 | DSFLG_ID | DSFLG_TIME);
   }
   
   private static final String[] CITY_LIST = new String[]{

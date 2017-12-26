@@ -90,9 +90,16 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   public static final int DSFLG_TIME =                0x00000040;
   public static final int DSFLG_OPT_TIME =            0x00000020;
+
+  // Some special cases
+  // Process empty delimited fields instead of ignoring them
+  // this should be the default, but is not for historical reasons
+  public static final int DSFLG_PROC_EMPTY_FLDS =     0x00000002;
   
+  // In undelimited format, not info fileds, evertyhing goes into call description
   public static final int DSFLG_NO_INFO =             0x00000001;
- 
+
+  
   // Old flags are a complicated mess, which is why they are depreciated
   
   // Flag indicating  a leading dispatch name is required
@@ -428,8 +435,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
       } else if (!chkFlag(DSFLG_OPT_DISP_ID)) return false;
     }
     
+    boolean procEmptyFields = chkFlag(DSFLG_PROC_EMPTY_FLDS);
+    
     if (parseFieldOnly || !chkFlag(DSFLG_TIME | DSFLG_OPT_TIME)) {
-      if (!parseDelimitedFields(parseFieldOnly, body, data)) return false;
+      if (!parseDelimitedFields(procEmptyFields || parseFieldOnly, body, data)) return false;
       if (!parseFieldOnly) {
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       }
@@ -442,13 +451,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
       match = NAKED_TIME_PTN.matcher(body);
       if (!match.find()) {
         if (!chkFlag(DSFLG_OPT_TIME)) return false;
-        if (!parseDelimitedFields(false, body, data)) return false;
+        if (!parseDelimitedFields(procEmptyFields, body, data)) return false;
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       } else {
         String delim = match.group(1);
         if (delim.charAt(0) != ' ') {
           body = body.replace(" OCA:", delim + "OCA:");
-          if (!parseFields(body.split(delim + '+'), data)) return false;
+          if (!procEmptyFields) delim += '+';
+          if (!parseFields(body.split(delim), data)) return false;
         }
         
         // Blank delimited fields get complicated
@@ -865,7 +875,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   }
   
   // Name field continues until it finds a phone number, call number, or time
-  private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d|");
   class BaseNameField extends NameField {
     @Override
     public boolean canFail() {
@@ -887,7 +897,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   private class BaseCodeField extends CodeField {
     public BaseCodeField() {
-      super("[FML]DL *(.*)", true);
+      super("[FML]DL *(.*)|", true);
     }
     
     @Override
