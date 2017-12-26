@@ -10,6 +10,6 @@ public class OHMiamiCountyBParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "CAD@shelbycountysheriff.com";
+    return "CAD@shelbycountysheriff.com,@alert.active911.com";
   }
 }

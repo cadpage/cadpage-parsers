@@ -1050,6 +1050,7 @@ public class Active911ParserTable {
       "US/OH/MedinaCounty",               "OHMedinaCountyB",
       "US/OH/MeigsCounty",                "OHMeigsCounty",
       "US/OH/MercerCounty",               "OHMercerCounty",
+      "US/OH/MiamiCounty",                "OHMiamiCountyB",
       "US/OH/MorrowCounty",               "OHMorrowCountyA",
       "US/OH/MuskingumCounty",            "OHMuskingumCounty",
       "US/OH/PerryCounty",                "OHPerryCounty",
