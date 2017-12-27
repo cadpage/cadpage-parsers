@@ -12,6 +12,11 @@ public class VAPageCountyBParser extends DispatchSouthernParser {
           DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_BAD_PLACE | DSFLG_X | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_UNIT1 | DSFLG_ID | DSFLG_TIME);
   }
   
+  @Override
+  public String getFilter() {
+    return "ecc@pagesheriff.com";
+  }
+  
   private static final String[] CITY_LIST = new String[]{
       
       //Towns
