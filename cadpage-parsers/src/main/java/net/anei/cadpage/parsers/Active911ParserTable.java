@@ -847,6 +847,7 @@ public class Active911ParserTable {
       "US/NC/RowanCounty",                "NCRowanCounty",
       "US/NC/RutherfordCounty",           "NCRutherfordCounty",
       "US/NC/SampsonCounty",              "NCSampsonCounty",
+      "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
       "US/NC/StokesCounty",               "NCStokesCounty",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
       "US/NC/UnionCounty",                "NCUnionCounty",
