@@ -786,7 +786,7 @@ public class Active911ParserTable {
       "US/NC/CityofThomasville",          "NCDavidsonCountyA",
       "US/NC/ClayCounty",                 "NCClayCounty",
       "US/NC/ClevelandCounty",            "NCClevelandCounty",
-      "US/NC/CliffsideAreaFD",            "NCRutherfordCountyB",
+      "US/NC/CliffsideAreaFD",            "NCRutherfordCounty",
       "US/NC/ColumbusCounty",             "NCColumbusCounty",
       "US/NC/Concord",                    "NCCabarrusCounty",
       "US/NC/CravenCounty",               "NCCravenCounty",
