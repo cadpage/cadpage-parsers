@@ -33,7 +33,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
-    body = body.substring(match.start()).trim();
+    body = body.substring(match.start()).trim().replace("\n", "");
     if (body.endsWith(" stop")) body = body.substring(0,body.length()-5).trim();
     
     // Special case, field delimited by double starts is a place name
