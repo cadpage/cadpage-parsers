@@ -48,7 +48,7 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
       FParser p = new FParser(body);
       p.skip(25);
       if (!p.lookahead(0,15).contains(" ")) {
-        setFieldList("ID ADDR APT SRC UNIT CALL PLACE X CITY");
+        setFieldList("ID ADDR APT SRC UNIT CALL INFO PLACE X MAP CITY");
         data.strCallId = p.get(15);
         String addr = p.get(30);
         int pt = addr.indexOf("...");
@@ -58,15 +58,21 @@ public class ILDuPageCountyAParser extends FieldProgramParser {
         data.strSource = p.get(2);
         data.strUnit = p.get(4);
         data.strCall = p.get(20);
-        data.strPlace = p.get(45);
+        data.strSupp = p.get(45);
         data.strCross = append(p.get(20), " & ", p.get(20));
-        p.skip(143);
+        data.strMap = p.get(5);
+        p.skip(138);
         String city = p.get(3);
-        if (city.endsWith("2") ||
-            city.length() > 2 && city.endsWith("U")) {
-          city = city.substring(0,city.length()-1);
+        if (p.get().length() == 0) {
+          if (city.endsWith("2") ||
+              city.length() > 2 && city.endsWith("U")) {
+            city = city.substring(0,city.length()-1);
+          }
+          data.strCity = convertCodes(city, CITY_CODES);
+        } else {
+          data.strPlace = data.strSupp;
+          data.strSupp = "";
         }
-        data.strCity = convertCodes(city, CITY_CODES);
       }
       
       else {
