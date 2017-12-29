@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -75,7 +76,7 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+  private static final Pattern X_PREFIX_PTN = Pattern.compile("(?:X|X-|X-ST) +(.*)");
   private class MyAddressField extends AddressField {
     
     @Override
@@ -94,8 +95,8 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
         if (tmp.startsWith("@")) {
           data.strPlace = tmp.substring(1).trim();
-        } else if (tmp.startsWith("X-ST ")) {
-          data.strCross = tmp.substring(5).trim();
+        } else if ((match = X_PREFIX_PTN.matcher(tmp)).matches()) {
+          data.strCross = match.group(1);
         } else if (tmp.startsWith("APT")) {
           data.strApt = tmp.substring(3).trim();
         } else if (tmp.startsWith("UNIT ")) {
