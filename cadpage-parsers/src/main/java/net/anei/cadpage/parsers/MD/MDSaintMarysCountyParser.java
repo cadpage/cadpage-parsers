@@ -231,7 +231,8 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22026 OXFORD CT",                      "+38.273393,-76.468547",
       "22027 OXFORD CT",                      "+38.273178,-76.468065",
       "22028 OXFORD CT",                      "+38.273434,-76.468369",
-      "22030 OXFORD CT",                      "+38.273478,-76.468200"
+      "22030 OXFORD CT",                      "+38.273478,-76.468200",
+      "22589 THREE NOTCH RD",                 "+38.287556,-76.480120"
   });
   
   private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{
