@@ -10,6 +10,6 @@ public class MICassCountyParser extends DispatchA1Parser {
   
   @Override
   public String getFilter() {
-    return "Dispatcher@cassco.org,911_Copier@cassco.org,cpritchard@alertpss.com,dispatcher@porterfire.org,forwarding-noreply@google.com";
+    return "Dispatcher@cassco.org,911_Copier@cassco.org,cpritchard@alertpss.com,dispatcher@porterfire.org,forwarding-noreply@google.com,riprun@cassco.org";
   }
 }
