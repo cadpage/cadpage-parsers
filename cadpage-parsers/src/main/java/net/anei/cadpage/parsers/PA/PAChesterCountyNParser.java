@@ -5,19 +5,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PAChesterCountyNParser extends PAChesterCountyBaseParser {
   
   public PAChesterCountyNParser() {
-    super("CALL ADDR CITY! INFO/N+ Dispatch%EMPTY TIME ( PLACE_DASH | PLACE ) NAME PHONE! INFO/N+");
+    super("CALL ADDR CITY PLACE X PLACE_PHONE! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "station41@verizon.net,whcems@gmail.com";
+    return "messaging@iamresponding.com";
   }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
-    body = body.replace('\n', ' ');
-    if (body.endsWith(";")) body += ' ';
-    return parseFields(body.split(" ; ", -1), data);
+    if (subject.length() == 0) return false;
+    data.strSource = subject;
+    return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 }
