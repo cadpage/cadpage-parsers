@@ -20,9 +20,10 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,scmproducts@optonline.net,@bcfa.xohost.com,alarms@ronkonkomafd.net,paging@babyloncentral.info,paging@setauketfd.info,bcfa@bcfa.xohost.com,paging@portjeffersonfireinfo.com,paging@northpatchoguefireinfo.com,paging@huntingtoncommunityambinfo.com,babylonpaging@brentwoodambulance.com,paging@babylonpaging.com";
+    return "@firerescuesystems.xohost.com,scmproducts@optonline.net,@bcfa.xohost.com,alarms@ronkonkomafd.net,paging@babyloncentral.info,paging@setauketfd.info,bcfa@bcfa.xohost.com,paging@portjeffersonfireinfo.com,paging@northpatchoguefireinfo.com,paging@huntingtoncommunityambinfo.com,babylonpaging@brentwoodambulance.com,paging@babylonpaging.com,2083399144";
   }
   
+  private static final Pattern SRC_PTN = Pattern.compile("([A-Z]{2,5}): *(?:\\(\\1\\) *)?");
   private static final Pattern LETTER_PTN = Pattern.compile("[A-Z]");
   private static final Pattern DIR_SLASH_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
   private static final Pattern DOUBLE_CALL_PTN = Pattern.compile("\\*\\*\\*([\\w/ ]+)\\*\\*\\* +\\*\\*\\*([\\w/ ]+) *\\*\\*\\* +([A-Z]{4}) +");
@@ -37,10 +38,19 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
     // Rule out version A pages
     if (body.startsWith("TYPE:")) return false;
     
+    int pt = body.indexOf("\nText");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    Matcher match = SRC_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strSource = match.group(1);
+      body = body.substring(match.end());
+    }
+    
     body = DIR_SLASH_BOUND_PTN.matcher(body).replaceAll("$1B");
     
     String code = null;
-    Matcher match = DOUBLE_CALL_PTN.matcher(body);
+    match = DOUBLE_CALL_PTN.matcher(body);
     if (match.lookingAt()) {
       String call = match.group(1).trim();
       String call2 = match.group(2).trim();
@@ -55,7 +65,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
         if (!call.equalsIgnoreCase(call2)) call = call + " - " + call2;
         body = "***" + call + "***" + body.substring(match.end());
         
-        int pt = body.indexOf('\n');
+        pt = body.indexOf('\n');
         if (pt >= 0) body = body.substring(0, pt);
       }
     }
@@ -107,7 +117,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   
   @Override
   public String getProgram() {
-    return super.getProgram().replace("APT", "APT X?");
+    return "SRC " + super.getProgram().replace("APT", "APT X?");
   }
 
   @Override
