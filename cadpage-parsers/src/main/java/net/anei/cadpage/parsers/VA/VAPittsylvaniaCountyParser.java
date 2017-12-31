@@ -30,6 +30,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Text Message / ");
     Matcher match = LEADER.matcher(body);
     if (match.find()) {
       body = body.substring(0,match.end()) + "CAD:" + body.substring(match.end());
