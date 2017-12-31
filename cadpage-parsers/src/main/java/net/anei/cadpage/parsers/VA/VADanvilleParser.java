@@ -20,6 +20,13 @@ public class VADanvilleParser extends DispatchOSSIParser {
     return "CAD@danvilleva.gov";
   }
   
+  
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Text Message / ");
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("X")) return new MyCrossField();
