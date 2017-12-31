@@ -16,6 +16,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
   @Override
   public String adjustMapAddress(String addr) {
     addr = PA_TPK_PTN.matcher(addr).replaceAll("PENNSYLVANIA TURNPIKE");
+    addr = addr.replace("SCHOOL HOUSE", "SCHOOLHOUSE");
     return super.adjustMapAddress(addr);
   }
   private static final Pattern PA_TPK_PTN = Pattern.compile("\\bPA TPK?\\b", Pattern.CASE_INSENSITIVE);
@@ -456,6 +457,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "NEWLND", "NEW LONDON TWP",
       "NEWLON", "NEW LONDON TWP",
       "NGARDN", "NEW GARDEN TWP",
+      "NRTHES", "NORTH EAST",
       "OXFORD", "OXFORD",
       "OXFRD",  "OXFORD",
       "PENN",   "PENN TWP",
@@ -511,6 +513,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
   
   private static final Properties OOC_CITIES = buildCodeTable(new String[]{
       "NEW CASTLE COUNTY",      "DE",
+      "NORTH EAST",             "MD",
       "HOCKESSIN",              "DE",
       "MILL CREEK",             "DE",
       "RISING SUN",             "MD"
