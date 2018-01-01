@@ -8,7 +8,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   
   public PAChesterCountyD4Parser() {
-    super("DISPATCH TIME CALL EMPTY? ( ADDRCITY! | ADDR! ) PLACE ( NAME PHONE! BOX? | NAME PHONE/Z BOX! | BOX | NAME ) EMPTY+? CITY? INFO/N+? ( DETAILS DATE? | DATE ) CITY UNIT? X INFO/N+");
+    super("( SELECT/TEXT TIME? CALL ADDR BOX EMPTY+? DUP_ADDR! " + 
+          "| DISPATCH TIME CALL EMPTY? ( ADDRCITY! | ADDR! ) PLACE ( NAME PHONE! BOX? | NAME PHONE/Z BOX! | BOX | NAME ) EMPTY+? CITY? INFO/N+? ( DETAILS DATE? | DATE ) CITY UNIT? X INFO/N+ " + 
+          ")");
   }
   
   @Override
@@ -16,6 +18,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     return "lcfc73@fdcms.info,adi62@ridgefirecompany.com,firepaging@comcast.net,49dispatch@gmail.com,dispatch@ebfc49.org";
   }
 
+  private static final Pattern TEXT_PTN = Pattern.compile("[A-Z]+ / +");
   private static final Pattern START_TIME_PTN = Pattern.compile("\\d\\d:\\d\\d \\*\\* "); 
   private static final Pattern DETAILS_TO_FOLLOW = Pattern.compile("(?:\n| \\*\\* )(?: *DETAILS TO FOLLOW|TYP:).*? \\*\\*|\\n +\\*\\*", Pattern.DOTALL);
   private static final Pattern DELIM = Pattern.compile(" \\*\\*?(?= |$)");
@@ -27,17 +30,25 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     // PAChesterCountyD4 alerts but have PAChesterCountyO information appended
     if (body.contains("Chester County Emergency Services Dispatch Report")) return false;
     
-    Matcher match = START_TIME_PTN.matcher(body);
+    Matcher match = TEXT_PTN.matcher(body);
     if (match.lookingAt()) {
-      String search = " ** Dispatch ** " + match.group();
-      int pt = body.indexOf(search);
-      if (pt < 0) return false;
-      body = "Dispatch ** " + body.substring(0,pt).trim();
+      setSelectValue("TEXT");
+      body = body.substring(match.end());
+    } else {
+      setSelectValue("");
+      
+      match = START_TIME_PTN.matcher(body);
+      if (match.lookingAt()) {
+        String search = " ** Dispatch ** " + match.group();
+        int pt = body.indexOf(search);
+        if (pt < 0) return false;
+        body = "Dispatch ** " + body.substring(0,pt).trim();
+      }
+     
+      body = stripFieldStart(body, "Dispatch / ");
+      body = DETAILS_TO_FOLLOW.matcher(body).replaceFirst(" ** DETAILS TO FOLLOW **");
+      body = body.replace("\n", "");
     }
-   
-    body = stripFieldStart(body, "Dispatch / ");
-    body = DETAILS_TO_FOLLOW.matcher(body).replaceFirst(" ** DETAILS TO FOLLOW **");
-    body = body.replace("\n", "");
     return parseFields(DELIM.split(body, -1), data);
   }
   
@@ -50,6 +61,8 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   public Field getField(String name) {
     if (name.equals("DISPATCH")) return new SkipField("Dispatch", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if  (name.equals("DUP_ADDR")) return new MyDupAddressField();
     if (name.equals("X")) return new CrossField("XXX.*&.*|");
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("NAME")) return new MyNameField();
@@ -61,6 +74,28 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DETAILS")) return new SkipField("DETAILS TO FOLLOW", true);
     return super.getField(name);
+  }
+  
+  private String saveAddress = "";
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      saveAddress = field;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyDupAddressField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.equals(saveAddress);
+    }
   }
   
   private static final Pattern PLACE_PHONE_PTN = Pattern.compile("#(\\d{3}[- ]\\d{3}[- ]\\d{4})\\b[- ]*(.*)");
