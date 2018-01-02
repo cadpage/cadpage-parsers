@@ -15,7 +15,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   
   public PAClarionCountyEParser() {
     super(CITY_LIST, "CLARION COUNTY", "PA", 
-          "( LAT:ADDR1 LON:ADDR2 | ADDR/S6 ) CITY? CALL! PLACE/N+? Xstreets:X! X/CS+? NAME? INFO/N+");
+          "( LAT:ADDR1 LON:ADDR2? | ADDR/S6 ) CITY? CALL! PLACE/N+? Xstreets:X! X/CS+? NAME? INFO/N+");
     addRoadSuffixTerms("EXT");
   }
   
@@ -37,7 +37,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
   private static final Pattern TRAIL_NAME_PTN = Pattern.compile("(.*) ([A-Z]{5,})", Pattern.CASE_INSENSITIVE);
   
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
+  public boolean parseMsg(String body, Data data) {
     if (!body.startsWith("!:")) return false;
     body = body.substring(2).trim();
     

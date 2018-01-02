@@ -11,9 +11,6 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchDAPROParser extends FieldProgramParser {
   
   private static final String PROGRAM_STR = "( SELECT/1 ADDR/S6CX! | ADDR/S6! ) CFS:ID? INFO:INFO? Run:ID? CROSS:X";
-  
-  private static final Pattern MARKER = Pattern.compile("([-A-Z0-9]+) (?:(\\d{0,2}:\\d\\d) )?");
-
 
   public DispatchDAPROParser(String defCity, String defState) {
     super(defCity, defState, PROGRAM_STR);
@@ -27,14 +24,26 @@ public class DispatchDAPROParser extends FieldProgramParser {
     super(cityList, defCity, defState, PROGRAM_STR);
   }
   
+  private static final Pattern MARKER1 = Pattern.compile("(\\d+:)?MAILBOX:");
+  private static final Pattern MARKER2 = Pattern.compile("([-A-Z0-9]+) (?:(\\d{0,2}:\\d\\d) )?");
+  
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
-    boolean mark =  body.startsWith("MAILBOX:");
-    if (mark) body = body.substring(8).trim();
+    if (subject.length() > 0) {
+      Parser p = new Parser(subject);
+      data.strUnit = p.getLast(' ');
+      data.strSource = p.get();
+    }
+    
+    Matcher match = MARKER1.matcher(body);
+    boolean mark =  match.lookingAt();
+    if (mark) {
+      body = body.substring(match.end()).trim();
+    }
     String alertBody = body;
     
-    Matcher match = MARKER.matcher(body);
+    match = MARKER2.matcher(body);
     if (!match.lookingAt()) {
       if (!mark) return false;
       setFieldList("INFO");
@@ -42,7 +51,8 @@ public class DispatchDAPROParser extends FieldProgramParser {
       data.strSupp = alertBody;
       return true;
     }
-    data.strSource = match.group(1);
+    data.strBox = match.group(1);
+
     String time = getOptGroup(match.group(2));
     if (time.startsWith(":")) time = '0' + time;
     data.strTime = time;
@@ -77,7 +87,7 @@ public class DispatchDAPROParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return "SRC TIME " + super.getProgram();
+    return "SRC UNIT BOX TIME " + super.getProgram();
   }
   
   @Override 

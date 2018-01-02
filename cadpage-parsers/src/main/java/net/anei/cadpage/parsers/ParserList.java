@@ -1335,6 +1335,7 @@ public class ParserList {
               ,"TXDecatur"                      ,"Decatur, TX"
               ,"TXDentonCounty"                 ,"Denton County, TX"
               ,"TXElCampo"                      ,"El Campo, TX"
+              ,"TXEllisCounty"                  ,"Ellis County, TX"
               ,"TXFlightVector"                 ,"Flight Vector, TX"
               ,"TXFlowerMound"                  ,"Flower Mound, TX"
               ,"TXFortBendCounty"               ,"Fort Bend County, TX"

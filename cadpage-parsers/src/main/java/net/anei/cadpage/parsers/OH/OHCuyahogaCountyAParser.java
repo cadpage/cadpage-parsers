@@ -15,6 +15,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
   public OHCuyahogaCountyAParser() {
     super(OHCuyahogaCountyParser.CITY_CODES, "CUYAHOGA COUNTY", "OH");
     setupCities(OHCuyahogaCountyParser.CITY_LIST);
+    setupSaintNames("PETERSBURG", "ANDREWS");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     removeWords("RUN", "HTS");   // Lest SQUAD RUN be considered an address :(
   }

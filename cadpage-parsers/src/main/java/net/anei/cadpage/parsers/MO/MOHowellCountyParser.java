@@ -12,9 +12,9 @@ public class MOHowellCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad@howellcounty911.com";
+    return "cad@howellcounty911.com,4173729057";
   }
-  
+    
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);

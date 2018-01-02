@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.NY;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,20 +13,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NYGeneseeCountyParser extends FieldProgramParser {
   
-  private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("^(?:Unit: *([A-Z0-9]+) +)?Status: *(?:Dispatched|At Scene) *(?:\\*\\* +)?");
-  private static final Pattern MUT_AID_CITY_PTN = Pattern.compile(".*\\bMUTUAL AID\\b.* TO ([^ ]+(?: +[^ ]+)?)", Pattern.CASE_INSENSITIVE);
-  
-  private boolean skipApt;
-  
   public NYGeneseeCountyParser() {
     super(CITY_LIST, "GENESEE COUNTY", "NY",
-           "CALL PLACE ADDR APT? CALL2! X DATETIME ID% INFO+");
+          "( SELECT/3 CODE CALL ADDR3 X DATETIME! UNIT3 INFO/N+ " +
+          "| CALL1 PLACE ADDR1 APT? CALL2! X DATETIME ID% INFO+ )");
   }
   
   @Override
   public String getFilter() {
     return "911center@co.genesee.ny.us,777,888";
   }
+  
+  private static final Pattern DELIM3 = Pattern.compile("\\* *\\n");
+  private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("^(?:Unit: *([A-Z0-9]+) +)?Status: *(?:Dispatched|At Scene) *(?:\\*\\* +)?");
+  private static final Pattern MUT_AID_CITY_PTN = Pattern.compile(".*\\bMUTUAL AID\\b.* TO ([^ ]+(?: +[^ ]+)?)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DELIM1 = Pattern.compile("(?<= )\\*\\*(?= |$)");
+  
+  private boolean skipApt;
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -40,8 +45,25 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       return false;
     } while (false);
     
-    int pt = body.indexOf('\n');
+    skipApt = false;
+    
+    int pt = body.indexOf("\n-- \n");
+    if (pt >= 0) {
+      body = body.substring(0,pt).trim();
+      body = stripFieldEnd(body, "*");
+    }
+    
+    String[] flds = DELIM3.split(body);
+    if (flds.length >= 5) {
+      setSelectValue("3");
+      return parseFields(flds, data);
+    }
+    
+    setSelectValue("1");
+    pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    body = body.replace("\n", "");
     String saveBody = body;
     
     // We have to try old format first, because new format is a subset of it
@@ -53,9 +75,10 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       body = body.substring(3).trim();
     }
     
-    if (!parseFields(body.split("\\*\\*"), 4, data)) {
+    if (!parseFields(DELIM1.split(body), 4, data)) {
       data.initialize(this);
       if (!parseNewFormat(saveBody, data)) {
+        setFieldList("INFO");
         return data.parseGeneralAlert(this, saveBody);
       }
     }
@@ -70,7 +93,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "UNIT " + super.getProgram();
+    return "UNIT? " + super.getProgram();
   }
 
   private static final Pattern UNIT_PTN1 = Pattern.compile("(?:(?:\\d{3}|[A-Z]+\\d+) )+ ");
@@ -114,15 +137,18 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("CALL")) return new CallField("[^:]*", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("CALL1")) return new CallField("[^:]*", true);
     if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("ADDR1")) return new MyAddress1Field();
+    if (name.equals("ADDR3")) return new MyAddress3Field();
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("UNIT3")) return new UnitField("Dispatched(?: Units:)? *(.*)");
     return super.getField(name);
   }
 
-  private class MyAddressField extends AddressField {
+  private class MyAddress1Field extends AddressField {
     
     @Override
     public void parse(String field, Data data) {
@@ -163,6 +189,25 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern ADDRESS3_PTN = Pattern.compile("([^*]*?)\\*([^,]*?), ([^,]*?),(?: (.*))?");
+  private class MyAddress3Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDRESS3_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strPlace = match.group(1).trim();
+      parseAddress(match.group(2).trim(), data);
+      data.strCity = match.group(3).trim();
+      data.strApt = append(data.strApt, "-", getOptGroup(match.group(4)));
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE ADDR CITY APT";
+    }
+    
+  }
+  
   private class MyAptField extends AptField {
     
     @Override
@@ -193,6 +238,27 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d)?(?: [AP]M)?).*");
+  private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile("\\d[ \\d/:]*");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) {
+        if (!isLastField() || !TRUNC_DATE_TIME_PTN.matcher(field).matches()) abort(); 
+        return;
+      }
+      data.strDate = match.group(1);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
   

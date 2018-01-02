@@ -1,23 +1,35 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAChesterCountyNParser extends PAChesterCountyBaseParser {
   
   public PAChesterCountyNParser() {
-    super("CALL ADDR CITY! INFO/N+ Dispatch%EMPTY TIME ( PLACE_DASH | PLACE ) NAME PHONE! INFO/N+");
+    super("CALL ADDR CITY/Y PLACE X PLACE_PHONE! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "station41@verizon.net,whcems@gmail.com";
+    return "messaging@iamresponding.com";
   }
+  
+  private static final Pattern DATE_PTN = Pattern.compile("\\b\\d\\d/\\d\\d/\\d{4}\\b");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
-    body = body.replace('\n', ' ');
-    if (body.endsWith(";")) body += ' ';
-    return parseFields(body.split(" ; ", -1), data);
+    if (subject.length() == 0) return false;
+    data.strSource = subject;
+    if (!parseFields(body.split("\n"), data)) return false;
+    
+    // Rule out misparsed alerts from other formats
+    if (DATE_PTN.matcher(data.strCross).find()) return false;
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 }

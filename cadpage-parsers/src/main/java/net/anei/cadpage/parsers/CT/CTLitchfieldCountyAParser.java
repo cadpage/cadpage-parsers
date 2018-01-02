@@ -17,6 +17,7 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupProtectedNames(PROTECTED_STREET_LIST);
     setupSpecialStreets("EAST ST", "WEST RD");
+    setupSaintNames("ONGE");
   }
   
   @Override

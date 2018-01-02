@@ -34,7 +34,7 @@ public class KYStatePoliceParser extends DispatchB3Parser {
         "LANE BLAIR",
         "PIKE TECHNICAL SERVICES"
     );
-    removeWords("UNKNOWN", "STREET");
+    removeWords("UNKNOWN", "STREET", "-");
     allowBadChars("()");
   }
   
@@ -1065,7 +1065,9 @@ public class KYStatePoliceParser extends DispatchB3Parser {
     "PRINTER",
     "STANVILLE",
     "TEABERRY",
+    "TRAM",
     "TOLER CREEK",
+    "WATERGAP",
     "WAYLAND",
     "WAULAND",  // Mispelled
     "WEEKSBURY",

@@ -5,12 +5,14 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class MOJacksonCountyBParser extends FieldProgramParser {
 
   public MOJacksonCountyBParser() {
     super("JACKSON COUNTY", "MO", 
-          "ADDR! CALLCODE! CH! CASE! ID! Assigned:UNIT! UNIT/C+");
+          "( SELECT/RR ID ID/C ADDR CALLCODE TIMES END " +
+          "| ADDR! CALLCODE! CH! CASE! ( ID2/C! Assigned:UNIT! | UNIT! ) UNIT/C+ )");
   }
   
   @Override
@@ -19,9 +21,9 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
   }
   
   private static Pattern BODY_DATETIME = Pattern.compile("(.*?)(\\d{2}/\\d{2}/\\d{2})? (\\d{2}:\\d{2}:\\d{2})"); //no space between BODY and DATE
-  public boolean parseMsg(String subject, String body, Data data) {
-    //check subject
-    if (!subject.equals("New Message")) return false;
+  private static final Pattern RR_DELIM = Pattern.compile(" {3,}");
+  private static final Pattern DELIM = Pattern.compile(" *, *");
+  public boolean parseMsg(String body, Data data) {
     
     //parse trailing DATE? TIME
     Matcher mat = BODY_DATETIME.matcher(body);
@@ -31,17 +33,15 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
       data.strTime = mat.group(3);
     }
     
-    //check for run report format
-    if (body.startsWith("RFPD")) return data.parseRunReport(this, body);
+    if (body.contains("First Arrive,")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("RR");
+      return parseFields(RR_DELIM.split(body), data);
+    }
     
     //try parsing normally
-    if (parseFields(body.split(" *, *"), data)) return true;
-    
-    //if that fails, check if this is an unlabeled run report
-    if (body.contains("First Arrive")) return data.parseRunReport(this, body);
-    
-    //if we made it here, fail
-    return false;
+    setSelectValue("");
+    return parseFields(DELIM.split(body), data);
   }
   
   @Override
@@ -51,11 +51,31 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALLCODE")) return new MyCallCodeField();
-    if (name.equals("CH")) return new ChannelField("[A-Z]+-[A-Z0-9]+", true); //only two examples, possibly numeric chars before the "-"?
-    if (name.equals("CASE")) return new SkipField("Case#(?:[A-Z]+-)?\\d+", true);
-    if (name.equals("ID")) return new IdField("Response/PCR #(\\d+)", true);
+    if (name.equals("CH")) return new ChannelField("[A-Z]+-[A-Z0-9]+|", true); //only two examples, possibly numeric chars before the "-"?
+    if (name.equals("CASE")) return new IdField("Case# *((?:[A-Z]+-)?(?:\\d{2}-)?\\d+)", true);
+    if (name.equals("ID2")) return new IdField("Response/PCR #(\\d+)", true);
+    if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
+  }
+  
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?) {3,}(.*)");
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDR_CITY_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strCity = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY";
+    }
   }
   
   //CALL( / CODE)?
@@ -74,5 +94,15 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CALL CODE";
     } 
+  }
+  
+  private static final Pattern TIME_BRK_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)(?=[A-Z])");
+  private class MyTimesField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = TIME_BRK_PTN.matcher(field).replaceAll("\n");
+      field = field.replace(',', ' ');
+      data.strSupp = field;
+    }
   }
 }

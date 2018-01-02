@@ -21,22 +21,6 @@ public class VASurryCountyParser extends DispatchDAPROParser {
     return "mailbox@sheriffsoffice.local";
   }
   
-  @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    Parser p = new Parser(subject);
-    data.strUnit = p.getLast(' ');
-    String source = p.get();
-    if (!super.parseMsg(body,  data)) return false;
-    data.strBox = data.strSource;
-    data.strSource = source;
-    return true;
-  }
-  
-  @Override
-  public String getProgram() {
-    return "SRC UNIT BOX " + super.getProgram();
-  }
-  
   private static final CodeSet CALL_SET = new CodeSet(
       "ABDOMINAL PAIN",
       "CHEST PAIN/HEART ATTACK",

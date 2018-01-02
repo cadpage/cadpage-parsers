@@ -4,9 +4,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -60,6 +58,8 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String body, Data data) {
+    
+    body = stripFieldStart(body, "no subject / ");
     
     body = body.replace('\n', ' ');
     
@@ -1003,6 +1003,46 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       
       // Middlesex County
       "CROMWELL",
+      
+      // Litchfield County
+      "TORRINGTON",
+
+      "BARKHAMSTED",
+      "BETHLEHEM",
+      "BRIDGEWATER",
+      "CANAAN",
+      "COLEBROOK",
+      "CORNWALL",
+      "GOSHEN",
+      "HARWINTON",
+          "NORTHWEST HARWINTON",
+      "KENT",
+          "SOUTH KENT",
+      "LITCHFIELD",
+          "BANTAM",
+      "MORRIS",
+      "NEW HARTFORD",
+      "NEW MILFORD",
+          "GAYLORDSVILLE",
+      "NORFOLK",
+      "NORTH CANAAN",
+      "PLYMOUTH",
+          "TERRYVILLE",
+      "ROXBURY",
+      "SALISBURY",
+          "LAKEVILLE",
+          "LIME ROCK",
+      "SHARON",
+      "THOMASTON",
+      "WARREN",
+      "WASHINGTON",
+          "NEW PRESTON",
+      "WATERTOWN",
+          "OAKVILLE",
+      "WINCHESTER",
+          "WINSTED",
+      "WOODBURY",
+          "HOTCHKISSVILLE",
       
       // New London County
       "FRANKLIN",

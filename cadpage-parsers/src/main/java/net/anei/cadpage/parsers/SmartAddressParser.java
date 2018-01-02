@@ -556,7 +556,7 @@ public abstract class SmartAddressParser extends MsgParser {
     setupDictionary(ID_APT_SOFT, "APT", "APTS", "SUITE", "ROOM", "LOT", "UNIT");
     setupDictionary(ID_FLOOR, "FLOOR", "FLR", "FL", "BLDG");
     setupDictionary(ID_STREET_NAME_PREFIX, "HIDDEN", "LAKE", "MT", "MOUNT", "SUNKEN");
-    setupDictionary(ID_NOT_ADDRESS, "ENTRAPED", "ENTRAPPED", "YOM", "YOF", "YOA", "YO", "Y/O");
+    setupDictionary(ID_NOT_ADDRESS, "ENTRAPED", "ENTRAPPED", "SECTOR", "YOM", "YOF", "YOA", "YO", "Y/O", "-");
     setupDictionary(ID_YEAR_OLD_NOT_ADDRESS, "YOM", "YOF", "YOA", "YO", "Y/O");
     setupDictionary(ID_SINGLE_WORD_ROAD, "TURNPIKE");
     setupDictionary(ID_BLOCK, "BLK", "BLOCK");
@@ -1460,7 +1460,7 @@ public abstract class SmartAddressParser extends MsgParser {
         if (isType(sAddr, ID_CROSS_STREET)) return false;
         
         // See if this token looks like a house number, and is not followed by an invalid address token or a connector 
-        if (isHouseNumber(sAddr) && !isType(sAddr+1, ID_NOT_ADDRESS | ID_NUMBER_SUFFIX | ID_CROSS_STREET) && findConnector(sAddr+1)<0) {
+        if (isHouseNumber(sAddr) && !isType(sAddr+1, ID_NOT_ADDRESS | ID_NUMBER_SUFFIX | ID_CROSS_STREET | ID_APT) && findConnector(sAddr+1)<0) {
           
           // And is not followed by another number, unless that number is followed by a numbered road suffix
           if (!isHouseNumber(sAddr+1) || isType(sAddr+2, ID_NUMBERED_ROAD_SFX)) {
@@ -1491,7 +1491,13 @@ public abstract class SmartAddressParser extends MsgParser {
                   if (isType(sAddr+1, ID_ST)) {
                     if (!isType(sAddr+2, ID_DIRECTION)) {
                       sEnd = findRoadEnd(sAddr+1, 1);
-                      if (sEnd > 0) break;
+                      if (sEnd > 0) {
+                        
+                        // Unless the implied intesection flag is set, in which case
+                        // this only works if the street name is a defined saint name
+                        if (!isFlagSet(FLAG_IMPLIED_INTERSECT) ||
+                            isType(sAddr+2, ID_SAINT)) break;
+                      }
                     }
                   }
                   

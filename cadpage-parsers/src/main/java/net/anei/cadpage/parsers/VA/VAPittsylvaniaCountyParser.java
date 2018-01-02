@@ -14,7 +14,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
   private static final Pattern LEADER = Pattern.compile("^\\d+:(?!CAD:)");
   public VAPittsylvaniaCountyParser() {
     super(CITY_CODES, "PITTSYLVANIA COUNTY", "VA",
-           "ID?: EMPTY? ( CANCEL ADDR! CITY?| FYI? CALL ADDR! CITY! ID? X? X? ) INFO+");
+           "ID?: EMPTY? ( CANCEL ADDR! CITY?| FYI? CALL ADDR! ( CITY! ID? | ID! ) X? X? ) INFO+");
     setupProtectedNames("OAKS AND STANFIELD", "R AND L SMITH");
   }
   
@@ -30,6 +30,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Text Message / ");
     Matcher match = LEADER.matcher(body);
     if (match.find()) {
       body = body.substring(0,match.end()) + "CAD:" + body.substring(match.end());
@@ -82,6 +83,8 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
       "RNG","Ringgold",
       "SAN","Sandy Level",
       "SUT","Sutherlin",
+      
+      "CAM","Campbell County",
       
       // Henry County
       "AXT","Axton",

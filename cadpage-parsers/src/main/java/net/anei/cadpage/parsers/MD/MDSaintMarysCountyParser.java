@@ -33,7 +33,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
-    body = body.substring(match.start()).trim();
+    body = body.substring(match.start()).trim().replace("\n", "");
     if (body.endsWith(" stop")) body = body.substring(0,body.length()-5).trim();
     
     // Special case, field delimited by double starts is a place name
@@ -231,7 +231,8 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22026 OXFORD CT",                      "+38.273393,-76.468547",
       "22027 OXFORD CT",                      "+38.273178,-76.468065",
       "22028 OXFORD CT",                      "+38.273434,-76.468369",
-      "22030 OXFORD CT",                      "+38.273478,-76.468200"
+      "22030 OXFORD CT",                      "+38.273478,-76.468200",
+      "22589 THREE NOTCH RD",                 "+38.287556,-76.480120"
   });
   
   private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{

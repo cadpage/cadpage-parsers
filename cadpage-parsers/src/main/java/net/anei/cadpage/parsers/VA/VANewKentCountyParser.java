@@ -18,8 +18,8 @@ public class VANewKentCountyParser extends DispatchDAPROParser {
   }
   
   @Override
-  public boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
     if (data.strApt.equals("0")) data.strApt = "";
     if (data.strAddress.endsWith(" 0")) {
       data.strAddress = data.strAddress.substring(0,data.strAddress.length()-2).trim();

@@ -21,8 +21,8 @@ public class VALunenburgCountyParser extends DispatchDAPROParser {
   }
   
   @Override
-  public boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
     data.strAddress = TRAILER_PK_PTN.matcher(data.strAddress).replaceAll("TRAILER PARK RD");
     if (data.strApt.startsWith("APTS")) {
       data.strAddress = append(data.strAddress, " ", "APTS");

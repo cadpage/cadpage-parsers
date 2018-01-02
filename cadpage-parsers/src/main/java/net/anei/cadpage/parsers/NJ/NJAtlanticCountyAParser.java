@@ -7,7 +7,7 @@ public class NJAtlanticCountyAParser extends FieldProgramParser {
 
   public NJAtlanticCountyAParser() {
     super("ATLANTIC COUNTY", "NJ", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! CROSS:X! MAP:MAP DATE:DATETIME INFO:INFO! ID:ID! GPS:GPS!");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! CROSS:X! MAP:MAP DATE:DATETIME INFO:INFO! ID:ID! GPS:GPS");
   }
   
   @Override
@@ -17,7 +17,8 @@ public class NJAtlanticCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("DISPATCH") && !subject.equals("Dispatch")) return false;
+    if (!subject.equals("DISPATCH") && !subject.equals("Dispatch") &&
+        !subject.equals("Phoenix Notification")) return false;
 
     return super.parseFields(body.split("\n"), data);
   }

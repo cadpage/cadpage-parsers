@@ -65,7 +65,7 @@ public class MOBooneCountyParser extends FieldProgramParser {
     if (name.equals("SRC")) return new SourceField(".{2}|", true);
     if (name.equals("MAP")) return new MapField("((\\d{2}-\\d{1,2}[A-Z]?)|SP1|)", true);
     if (name.equals("NAME")) return new MyNameField();
-    if (name.equals("PHONE")) return new PhoneField("(|\\d{7}(\\d{3})?|(\\d{3}-(\\d{3}-)?\\d{4}))", true);
+    if (name.equals("PHONE")) return new PhoneField("|\\d{7}(?:\\d{3})?|\\d{3}-(?:\\d{3}-)?\\d{4}|\\d{6}-\\d{4}", true);
     return super.getField(name);
   }
   

@@ -155,9 +155,9 @@ public class VAGalaxAParser extends DispatchDAPROParser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     body = body.replace('\n', ' ');
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
 
   private static final CodeSet CALL_SET = new CodeSet(

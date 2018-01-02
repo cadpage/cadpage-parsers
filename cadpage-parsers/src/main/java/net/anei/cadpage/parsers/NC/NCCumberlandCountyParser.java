@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +11,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NCCumberlandCountyParser extends FieldProgramParser {
   
   public NCCumberlandCountyParser() {
-    super("CUMBERLAND COUNTY", "NC",
-          "( CANCEL ADDR SKIP PLACEX END " +
+    super(CITY_CODES, "CUMBERLAND COUNTY", "NC",
+          "( CANCEL ADDR CITY PLACEX END " +
           "| PLACEX DATETIME CALL UNIT? ADDR! X PLACE " + 
           "| DATETIME CALL UNIT? ADDR! X PLACE " +
           "| ADDR CALL ( UNIT/Z! END | PLACE X/Z UNIT/Z! END | ( X | PLACE ) UNIT! END ) )");
@@ -58,7 +59,7 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CANCEL_PTN = Pattern.compile("\\{(\\S+)\\} *(CANCEL.*)");
+  private static final Pattern CANCEL_PTN = Pattern.compile("(?:\\{(\\S+)\\} *)?(CANCEL.*|SCENE SECURE|UNDER CONTROL|TAC .*)");
   private class MyCancelField extends CallField {
     @Override
     public boolean canFail() {
@@ -69,14 +70,20 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = CANCEL_PTN.matcher(field);
       if (match.matches()) {
-        data.strUnit = match.group(1);
-        data.strCall = match.group(2);
+        data.strUnit = getOptGroup(match.group(1));
+        String call = match.group(2);
+        if (call.startsWith("TAC ")) {
+          data.strChannel = call;
+        } else {
+          data.strCall = call;
+        }
         return true;
       } 
-      if (field.equals("UNDER CONTROL")) {
-        data.strCall = field;
-        return true;
-      }
+      
+      // We will (reluctantly) accept an empty field only if there is recognized city field 
+      // two places ahead
+      if (field.length() == 0 && isCity(getRelativeField(+2))) return true;
+      
       return false;
     }
     
@@ -87,7 +94,7 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "UNIT CALL";
+      return "UNIT CALL CH";
     }
   }
 
@@ -202,4 +209,13 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       if (!checkParse(field, data)) abort();
     }
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "FAY", "FAYETTEVILLE",
+      "HM",  "HOPE MILLS",
+      "ROS", "ROSEBORO",
+      "STD", "STEDMAN",
+      "WA",  "WADE"
+      
+  });
 }

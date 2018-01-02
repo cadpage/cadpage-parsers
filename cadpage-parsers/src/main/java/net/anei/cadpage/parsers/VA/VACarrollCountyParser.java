@@ -19,11 +19,11 @@ public class VACarrollCountyParser extends DispatchDAPROParser {
   }
   
   @Override
-  public boolean parseMsg(String body, Data data) {
+  public boolean parseMsg(String subject, String body, Data data) {
     if (!body.startsWith("MAILBOX:")) return false;
     body = body.substring(8).trim();
     body = body.replace('\n', ' ');
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
   
   private static final CodeSet CALL_SET = new CodeSet(

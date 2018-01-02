@@ -18,7 +18,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ANNES", "ANDREWS", "JAMES", "JOHN", "JOSEPHS");
     setupDoctorNames("KAHN", "HSU", "KAMDAR", "KLEINER", "SINGH");
-    removeWords("LA");
+    removeWords("LA", "-");
   }
   
   @Override

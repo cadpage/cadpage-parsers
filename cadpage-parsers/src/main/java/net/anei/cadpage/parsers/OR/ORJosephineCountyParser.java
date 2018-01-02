@@ -14,7 +14,10 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
-          "( ID CALL ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT | DATETIME CALL ADDR_CITY_X/SXa! Units:UNIT | CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT ) GPS1? GPS2? INFO/S+");
+          "( ID CALL ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " + 
+          "| DATETIME CALL ADDR_CITY_X/SXa! Units:UNIT " + 
+          "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " + 
+          ") GPS1? GPS2? INFO/S+");
   }
   
   @Override
@@ -52,6 +55,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d? [AP]M", DATE_TIME_FMT, true);
     if (name.equals("ADDR_CITY_X")) return new MyAddressCityCrossField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("SRC")) return new SourceField("\\d{4}(?:, *\\d{4})*");
     if (name.equals("ID")) return new IdField("\\d+|ODF", true);
@@ -64,15 +68,27 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      super.parse(p.get(',').replace('@', '&'), data);
+      String addr = p.get(',');
+      int pt = addr.indexOf(" - ");
+      if (pt >= 0) {
+        data.strPlace = addr.substring(0, pt).trim();
+        addr = addr.substring(pt+3).trim();
+      }
+      super.parse(addr.replace('@', '&'), data);
+      if (data.strApt.endsWith(" JCT") || isValidAddress(data.strApt)) {
+        data.strCross = data.strApt;
+        data.strApt = "";
+      }
       data.strCity = p.get("  ");
       String cross = p.get();
-      if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
+      if (!cross.equals("No Cross Streets Found")) {
+        data.strCross = append(data.strCross, " / ", cross);
+      }
     }
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CITY X";
+      return "PLACE? " + super.getFieldNames() + " CITY X";
     }
   }
   
@@ -80,8 +96,27 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf(" - ");
+      if (pt >= 0) {
+        data.strPlace = field.substring(0, pt).trim();
+        field = field.substring(pt+3).trim();
+      }
       field = INTERSECT_MARKER.matcher(field).replaceAll(" & ");
       super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE? " + super.getFieldNames();
+    }
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strPlace.contains(field)) return;
+      else if (field.contains(data.strPlace)) data.strPlace = field;
+      else super.parse(field, data);
     }
   }
   

@@ -10,6 +10,6 @@ public class NJBergenCountyFParser extends DispatchA27Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,donotreply@lawsoft-inc.com";
   }
 }

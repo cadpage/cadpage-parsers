@@ -33,6 +33,7 @@ abstract class PABucksCountyBaseParser extends DispatchA7Parser {
       if (pt2 < 0) return false;
       body = body.substring(pt1, pt2).trim();
       body = body.replace("\n<br>", "\n");
+      body = body.replace("<br>", "\n");
       return parseMsg(subject, body, data);
     }
     

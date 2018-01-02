@@ -2888,6 +2888,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class IdField extends Field {
     
+    private String append = null;
+    
     public IdField() {}
     
     public IdField(String pattern) {
@@ -2897,10 +2899,20 @@ public class FieldProgramParser extends SmartAddressParser {
     public IdField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, null);
+    }
 
     @Override
     public void parse(String field, Data data) {
-      data.strCallId = field;
+      if (append != null) {
+        data.strCallId = append(data.strCallId, append, field);
+      } else {
+        data.strCallId = field;
+      }
     }
     
     @Override

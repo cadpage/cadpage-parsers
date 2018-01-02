@@ -90,9 +90,16 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   public static final int DSFLG_TIME =                0x00000040;
   public static final int DSFLG_OPT_TIME =            0x00000020;
+
+  // Some special cases
+  // Process empty delimited fields instead of ignoring them
+  // this should be the default, but is not for historical reasons
+  public static final int DSFLG_PROC_EMPTY_FLDS =     0x00000002;
   
+  // In undelimited format, not info fileds, evertyhing goes into call description
   public static final int DSFLG_NO_INFO =             0x00000001;
- 
+
+  
   // Old flags are a complicated mess, which is why they are depreciated
   
   // Flag indicating  a leading dispatch name is required
@@ -386,7 +393,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   }
 
   private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+:)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
-  private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("CFS: *(\\S+), *Unit: *(\\S+), *(Status:.*)");
+  private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("CFS: *(\\S+?)[, ] *Unit: *(\\S+?)[, ] *(Status:.*?),?(?: Note: *(.*))?");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
   private static final Pattern OCA_TRAIL_PTN = Pattern.compile("\\bOCA: *([-A-Z0-9]+)$");
@@ -416,6 +423,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strCallId = match.group(1);
       data.strUnit = match.group(2);
       data.strSupp = match.group(3).replaceAll(", +", "\n");
+      data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(4)));
       return true;
     }
     
@@ -427,8 +435,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
       } else if (!chkFlag(DSFLG_OPT_DISP_ID)) return false;
     }
     
+    boolean procEmptyFields = chkFlag(DSFLG_PROC_EMPTY_FLDS);
+    
     if (parseFieldOnly || !chkFlag(DSFLG_TIME | DSFLG_OPT_TIME)) {
-      if (!parseDelimitedFields(parseFieldOnly, body, data)) return false;
+      if (!parseDelimitedFields(procEmptyFields || parseFieldOnly, body, data)) return false;
       if (!parseFieldOnly) {
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       }
@@ -441,13 +451,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
       match = NAKED_TIME_PTN.matcher(body);
       if (!match.find()) {
         if (!chkFlag(DSFLG_OPT_TIME)) return false;
-        if (!parseDelimitedFields(false, body, data)) return false;
+        if (!parseDelimitedFields(procEmptyFields, body, data)) return false;
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       } else {
         String delim = match.group(1);
         if (delim.charAt(0) != ' ') {
           body = body.replace(" OCA:", delim + "OCA:");
-          if (!parseFields(body.split(delim + '+'), data)) return false;
+          if (!procEmptyFields) delim += '+';
+          if (!parseFields(body.split(delim), data)) return false;
         }
         
         // Blank delimited fields get complicated
@@ -864,7 +875,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   }
   
   // Name field continues until it finds a phone number, call number, or time
-  private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d|");
   class BaseNameField extends NameField {
     @Override
     public boolean canFail() {
@@ -886,7 +897,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   private class BaseCodeField extends CodeField {
     public BaseCodeField() {
-      super("[FML]DL *(.*)", true);
+      super("[FML]DL *(.*)|", true);
     }
     
     @Override

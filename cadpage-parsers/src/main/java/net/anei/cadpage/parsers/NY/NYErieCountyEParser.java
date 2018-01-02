@@ -55,13 +55,15 @@ public class NYErieCountyEParser extends SmartAddressParser {
   }
 
   private boolean parseDepewMsg(String body, Data data) {
-    if (body.endsWith("?")) body = body.substring(0,body.length()-1).trim();
-    parseAddress(StartType.START_CALL, body, data);
+    body = stripFieldEnd(body, "?");
+    parseAddress(StartType.START_CALL, FLAG_IGNORE_AT, body, data);
     if (data.strAddress.length() == 0) return false;
+    String left = getLeft();
+    left = stripFieldStart(left, "@");
     if (data.strCall.length() == 0) {
-      data.strCall = getLeft();
+      data.strCall = left;
     } else {
-      data.strSupp = getLeft();
+      data.strSupp = left;
     }
     return true;
   }

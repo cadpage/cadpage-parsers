@@ -343,6 +343,8 @@ public abstract class MsgParser {
   public boolean checkCall(String call) {
     return true;
   }
+
+  private static final Object MsgParserLock = new Object();
   
   /**
    * Determine if message is a valid CAD message for this parser, and parse
@@ -363,7 +365,7 @@ public abstract class MsgParser {
     // two user reported crashes in the space of as many weeks.  And yes, it
     // toook a while to track down :(
     
-    synchronized (MsgParser.class) {
+    synchronized (MsgParserLock) {
       
       // Save parse flags for future reference
       this.parseFlags = parseFlags;
@@ -415,7 +417,6 @@ public abstract class MsgParser {
    * build information object from information parsed from message
    * @param msg message to be parsed
    * @param parseFlags
-   * @param sender filter to be used to check message sender 
    * @return new message information object if successful, false otherwise
    */
   protected Data parseMsg(Message msg, int parseFlags, String filter) {
@@ -533,7 +534,7 @@ public abstract class MsgParser {
    * @param data data object to be constructed
    * @return true if successful, false otherwise
    */
-  protected boolean parseMsg(String sbject, String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     return parseMsg(body, data);
   }
 
@@ -1138,7 +1139,7 @@ public abstract class MsgParser {
 
   /**
    * Protect any declared protected names in string field
-   * @param String field
+   * @param field
    * @return protected string field
    */
   protected String protectNames(String field) {
@@ -1147,7 +1148,7 @@ public abstract class MsgParser {
 
   /**
    * Restore any previously protected names in string field
-   * @param protected string field
+   * @param field string field
    * @return original unprotected string field
    */
   protected String unprotectNames(String field) {
@@ -1247,7 +1248,7 @@ public abstract class MsgParser {
    * @param dateFmt Date format to be used to parse date/time string
    * @param field date/time string to be parsed
    * @param data Data object where information should be saved
-   * @param returns true if field was parsed successfully
+   * @return true if field was parsed successfully
    */
   public static boolean setDateTime(DateFormat dateFmt, String field, Data data) {
     try {
@@ -1266,7 +1267,7 @@ public abstract class MsgParser {
    * @param dateFmt Date format to be used to parse date string
    * @param field date string to be parsed
    * @param data Data object where information should be saved
-   * @param returns true if field was parsed successfully
+   * @return true if field was parsed successfully
    */
   public static boolean setDate(DateFormat dateFmt, String field, Data data) {
     try {
@@ -1284,7 +1285,7 @@ public abstract class MsgParser {
    * @param dateFmt Date format to be used to parse date/time string
    * @param field time string to be parsed
    * @param data Data object where information should be saved
-   * @param returns true if field was parsed successfully
+   * @return true if field was parsed successfully
    */
   public static boolean setTime(DateFormat dateFmt, String field, Data data) {
     try {
@@ -1718,7 +1719,7 @@ public static void addCodeTable(Properties props, String[] table) {
    
    /**
     * Return fixed length value terminated by fixed marker
-    * @param fixed field length
+    * @param len fixed field length
     * @param marker fixed marker value
     * @return next field value terminated by fixed marker
     * or null if marker not found

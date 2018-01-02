@@ -13,8 +13,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   
   public OHMahoningCountyAParser() {
-    super(true, CITY_LIST, "MAHONING COUNTY", "OH", TrailAddrType.INFO);
+    this("MAHONING COUNTY", "OH");
+  }
+  
+  public OHMahoningCountyAParser(String defCity, String defState) {
+    super(true, CITY_LIST, defCity, defState, TrailAddrType.INFO);
     setupMultiWordStreets("COLUMBIANA CANFIELD");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "OHMahoningCountyA";
   }
 
   @Override
@@ -29,6 +38,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
 
   private static final Pattern MARK_ID_PTN = Pattern.compile("(\\d{3}):");
   private static final Pattern TRUNC_GPS_PTN = Pattern.compile("[-+]?[\\d\\.]+ CF= *\\d+% UF= *\\d+ M Z= *\\d*M\\b *");
+  private static final Pattern N_GEORGETOWN_PTN = Pattern.compile(" \\(N\\.? GEORGETOWN\\) ");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -41,6 +51,13 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
         subject = '[' + match.group(1) + "]- " + subject;
       }
     }
+    
+    if (subject.endsWith("- CALL")) {
+      body = subject + ':' + body;
+      subject = "";
+    }
+    
+    body = N_GEORGETOWN_PTN.matcher(body).replaceAll(" ");
 
     body = body.replace('\n', ' ');
     if (!super.parseMsg(subject, body,  data)) {
@@ -123,6 +140,92 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "NORTH LIMA",
     "PETERSBURG",
     
+    // Columbiana County
+    // Cities
+    "COLUMBIANA",
+    "EAST LIVERPOOL",
+    "SALEM",
+
+    // Villages
+    "EAST PALESTINE",
+    "HANOVERTON",
+    "LEETONIA",
+    "LISBON",
+    "MINERVA",
+    "NEW WATERFORD",
+    "ROGERS",
+    "SALINEVILLE",
+    "SUMMITVILLE",
+    "WASHINGTONVILLE",
+    "WELLSVILLE",
+
+    // Townships
+    "BUTLER TWP",
+    "CENTER TWP",
+    "ELKRUN TWP",
+    "FAIRFIELD TWP",
+    "FRANKLIN TWP",
+    "HANOVER TWP",
+    "KNOX TWP",
+    "LIVERPOOL TWP",
+    "MADISON TWP",
+    "MIDDLETON TWP",
+    "PERRY TWP",
+    "SALEM TWP",
+    "ST. CLAIR TWP",
+    "UNITY TWP",
+    "WASHINGTON TWP",
+    "WAYNE TWP",
+    "WEST TWP",
+    "YELLOW CREEK TWP",
+
+    // Census-designated places
+    "CALCUTTA",
+    "DAMASCUS",
+    "EAST ROCHESTER",
+    "GLENMOOR",
+    "HOMEWORTH",
+    "LA CROFT",
+    "LAKE TOMAHAWK",
+    "NEGLEY",
+
+    // Unincorporated communities
+    "ACHOR",
+    "BAYARD",
+    "CANNONS MILL",
+    "CHAMBERSBURG",
+    "CLARKSON",
+    "DUNGANNON",
+    "EAST CARMEL",
+    "EAST FAIRFIELD",
+    "ELKTON",
+    "FRANKLIN SQUARE",
+    "FREDERICKTOWN",
+    "GAVERS",
+    "GLASGOW",
+    "GUILFORD",
+    "HIGHLANDTOWN",
+    "KENSINGTON",
+    "LYNCHBURG",
+    "MIDDLETON",
+    "MILL ROCK",
+    "MILLPORT",
+    "MOULTRIE",
+    "NEW ALEXANDER",
+    "NEW GARDEN",
+    "NEW MIDDLETON",
+    "NEW SALISBURY",
+    "NORTH GEORGETOWN",
+    "READING",
+    "TEEGARDEN",
+    "UNIONVILLE",
+    "UNITY",
+    "VALLEY",
+    "WEST POINT",
+    "WILLIAMSPORT",
+    "WINONA",
+
+
     // Portage County
     "DEERFIELD",
     "DEERFIELD TWP"
