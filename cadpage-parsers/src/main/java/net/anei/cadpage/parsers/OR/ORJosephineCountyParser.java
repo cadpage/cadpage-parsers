@@ -22,7 +22,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@Pacific.com";
+    return "Dispatch@Pacific.com,dispatch@grantspassoregon.gov";
   }
   
   private static final Pattern LAT_LON_PTN = Pattern.compile("\\bLAT: *([-+]?[\\d\\.]+),? +LON: *([-+]?[\\d\\.]+)\\b");
