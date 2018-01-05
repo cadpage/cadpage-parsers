@@ -61,7 +61,7 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
       "LA C",   "LACROSSE",
       "LAWR",   "LAWRENCEVILLE",
       "RAWL",   "RAWLINGS",
-      "VALE",   "VELENTINES",
+      "VALE",   "VALENTINES",
       "WARF",   "WARFIELD",
       "WHIT",   "WHITE PLAINS"
   });
