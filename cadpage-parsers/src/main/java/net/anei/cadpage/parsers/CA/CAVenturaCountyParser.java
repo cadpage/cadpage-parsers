@@ -20,7 +20,7 @@ public class CAVenturaCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "Fcc-do-not-reply@Ventura.org,Fcc@ventura.org,FCC-Page@ventura.org,FCC.Paging@ventura.org,fcc-paging@ventura.org";
+    return "Fcc-do-not-reply@Ventura.org,Fcc@ventura.org,FCC-Page@ventura.org,FCC.Paging@ventura.org,fcc-paging@ventura.org,8052090279";
   }
   
   @Override
@@ -36,6 +36,11 @@ public class CAVenturaCountyParser extends MsgParser {
       
       if (body.startsWith("FCC Page / ")) {
         body = body.substring(11).trim();
+        break;
+      }
+      
+      if (body.startsWith("VNC FCC-Paging:\n")) {
+        body = body.substring(16).trim();
         break;
       }
       return false;

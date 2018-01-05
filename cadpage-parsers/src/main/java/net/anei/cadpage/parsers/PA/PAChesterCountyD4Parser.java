@@ -15,7 +15,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "lcfc73@fdcms.info,adi62@ridgefirecompany.com,firepaging@comcast.net,49dispatch@gmail.com,dispatch@ebfc49.org";
+    return "lcfc73@fdcms.info,adi62@ridgefirecompany.com,adi62P@ridgefirecompany.com,firepaging@comcast.net,49dispatch@gmail.com,dispatch@ebfc49.org";
   }
 
   private static final Pattern TEXT_PTN = Pattern.compile("[A-Z]+ / +");
