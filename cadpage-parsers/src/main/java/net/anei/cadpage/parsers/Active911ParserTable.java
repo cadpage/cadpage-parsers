@@ -1222,6 +1222,7 @@ public class Active911ParserTable {
       "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",
       "US/SC/CharlestonCounty",           "SCCharlestonCounty",
+      "US/SC/ChesterCounty",              "SCChesterCounty",
       "US/SC/CherokeeCounty",             "SCCherokeeCounty",
       "US/SC/ClarendonCounty",            "SCClarendonCounty",
       "US/SC/DorchesterCounty",           "SCDorchesterCounty",
