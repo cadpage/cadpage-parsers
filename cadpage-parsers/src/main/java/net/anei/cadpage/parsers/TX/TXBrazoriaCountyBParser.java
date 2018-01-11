@@ -13,7 +13,7 @@ public class TXBrazoriaCountyBParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "FREEPORTDISPATCH@FREEPORT.TX.US";
+    return "FREEPORTDISPATCH@FREEPORT.TX.US,no-reply@freeport.tx.us";
   }
   
   @Override
