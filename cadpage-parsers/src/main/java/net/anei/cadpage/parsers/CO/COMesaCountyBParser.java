@@ -17,7 +17,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@MESACOUNTY.US,GJCITY.ORG,@CI.GRANDJCT.CO.US";
+    return "@MESACOUNTY.US,@GJCITY.ORG,@CI.GRANDJCT.CO.US";
   }
   
   private static final Pattern DELIM = Pattern.compile("\n| +(?<! Fire | EMS )(?=(?:Call Type|Fire Call Type|EMS Call Type|Common Name|Additional Location Info|Units):)");
