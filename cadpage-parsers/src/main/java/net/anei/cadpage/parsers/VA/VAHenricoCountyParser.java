@@ -9,12 +9,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class VAHenricoCountyParser extends MsgParser {
 
   private static final Pattern MASTER = 
-      Pattern.compile("([CM]\\d{4}) (\\d{2})(\\d{2})hrs (.*?)(?:\\((.*?)\\))? +fd:(\\d+) re:(.*)");
+      Pattern.compile("([CM]\\d{4}) (\\d{2})(\\d{2})hrs (.*?)(?:\\((.*?)\\))? +fd:(\\d+) +re:(.*)");
 
   public VAHenricoCountyParser() {
     super("HENRICO COUNTY", "VA");
 
     setFieldList("MAP TIME ADDR APT PLACE UNIT CALL INFO");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "cad_service@henrico.us";
   }
 
   @Override
