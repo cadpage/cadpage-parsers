@@ -93,6 +93,9 @@ public class ILChristianCountyParser extends DispatchEmergitechParser {
       "TAYLORVILLE",
       
       // Montgomery County
-      "NOKOMIS"
+      "NOKOMIS",
+      
+      // Shelby County
+      "SHELBYVILLE"
   };
 }
