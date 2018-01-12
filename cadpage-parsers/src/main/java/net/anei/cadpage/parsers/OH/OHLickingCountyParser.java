@@ -13,7 +13,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
 
   public OHLickingCountyParser() {
     super(CITY_LIST, "LICKING COUNTY", "OH", 
-          "SequenceNumber:ID? Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR! AddressType:SKIP! Business:PLACE! XCoordinate:GPS1? YCoordinate:GPS2? CAD_Zone:MAP! Notes:INFO/N+");
+          "SequenceNumber:ID? Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR! AddressType:SKIP! Business:PLACE! XCoordinate:GPS1? YCoordinate:GPS2? CAD_Zone:MAP! Units:UNIT/S+ Notes:INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
