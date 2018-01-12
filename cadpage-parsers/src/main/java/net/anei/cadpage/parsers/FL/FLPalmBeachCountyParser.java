@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.FL;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -10,7 +11,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
 
   public FLPalmBeachCountyParser() {
     super(CITY_CODES, "PALM BEACH COUNTY", "FL", 
-          "Type:CALL! Event_Location:ADDR/S4? APT? Dev:PLACE Map_page:MAP! Map_Coord:MAP! Talk_Group:CH? TIME:TIME! Disp:UNIT? UNIT+");
+          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE Map_page:MAP! Map_Coord:MAP! Talk_Group:CH? TIME:TIME! Disp:UNIT? UNIT+");
   }
   
   private static Pattern DOTDOTDOT = Pattern.compile("\\.{3,}");
@@ -31,6 +32,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("TIME")) return new TimeField("\\d{2}:\\d{2}:\\d{2}", true);
@@ -53,7 +55,18 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     public String getFieldNames() {
       return "ADDR CITY APT PLACE";
     }
-    
+  }
+  
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = COLON_AT_PTN.matcher(field);
+      if (match.find()) {
+        data.strPlace = append(data.strPlace, " - ", field.substring(match.end()).trim());
+        field = field.substring(0, match.start()).trim();
+      }
+      super.parse(field, data);
+    }
   }
   
   private class MyPlaceField extends PlaceField {
