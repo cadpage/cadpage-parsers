@@ -315,6 +315,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
       "JC", "JUNIATA COUNTY",
       "MC", "MIFFLIN COUNTY",
       "NC", "NORTHUMBERLAND COUNTY",
+      "PC", "PERRY COUNTY",
       "UC", "UNION COUNTY"
   });
 }

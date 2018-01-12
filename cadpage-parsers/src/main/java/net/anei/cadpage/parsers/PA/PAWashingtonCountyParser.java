@@ -13,7 +13,7 @@ public class PAWashingtonCountyParser extends FieldProgramParser {
   
   public PAWashingtonCountyParser() {
     super(CITY_CODES, "WASHINGTON COUNTY", "PA",
-           "Loc:ADDR/S4? Xsts:X? Type:CALL! Time:TIME Loc_Com:INFO Comments:INFO");
+           "Loc:ADDR/S4? Xsts:X? Type:CALL! Time:TIME ( GPS:GPS | LL:GPS? ) Loc_Com:INFO Comments:INFO");
     setupSpecialStreets("NEW ALY");
     setupCityValues(CITY_CODES);
     setupCities(CITY_LIST);
@@ -22,6 +22,11 @@ public class PAWashingtonCountyParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "company10paging,mptfire,WashCo911,@washingtoncounty911.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -38,6 +43,7 @@ public class PAWashingtonCountyParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d(?::\\d\\d)?", true);
     return super.getField(name);
   }
   

@@ -10,7 +10,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com";
+    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org";
   }
   
   private static final String MARKER = "Chester County Emergency Services Dispatch Report \n\n";
