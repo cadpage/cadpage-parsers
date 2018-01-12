@@ -75,6 +75,8 @@ public class DispatchB3Parser extends DispatchB2Parser {
     if (subject.length() > 0) {
       if (body.startsWith("= DSP")) {
         body = '(' + subject + ") " + body;
+      } else if (subject.equals("Return Phone")) {
+        body = subject + ": " + body;
       } else if (!subject.startsWith("EVENT:")) {
         v3 = true;
         subject = stripFieldEnd(subject, " REPORTED AT");
