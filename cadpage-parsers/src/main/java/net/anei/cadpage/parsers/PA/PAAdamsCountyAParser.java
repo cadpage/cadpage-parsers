@@ -1330,7 +1330,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "36 STONEBROOK DR",                     "+39.901461,-77.440451",
       "38 STONEBROOK DR",                     "+39.901334,-77.440286",
       
-      "1 STONEHOUSE CT",                      "+39.900256,-77.440230"
+      "1 STONEHOUSE CT",                      "+39.900256,-77.440230",
+      
+      "225 VILLAGE DR",                       "+39.864515,-77.023866"
   });
 
   private static final String[] CITY_LIST = new String[]{
