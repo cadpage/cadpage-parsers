@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class DispatchA29Parser extends SmartAddressParser {
   
-  private static final Pattern MARKER = Pattern.compile("^DISPATCH:(\\S+?(?: (?:FD|ALS|BLS))?) - (?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?");
+  private static final Pattern MARKER = Pattern.compile("^DISPATCH:(\\S+?(?: (?:FD|ALS|BLS))?) - (?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?(?:([A-Z]{2,4}:\\d{2}-\\d{6}) )?");
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
   private static final Pattern UNIT_INFO_PTN = Pattern.compile("[ /\n]+((?:\\b[A-Z\\d]+:[-_A-Z\\d]+(?: FD|-\\d| \\d(?=,)|)\\b,?)++)[ /\n]*");
   private static final Pattern NEW_LINE_PTN = Pattern.compile("\n+");
@@ -23,7 +23,7 @@ public class DispatchA29Parser extends SmartAddressParser {
 
   public DispatchA29Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState);
-    setFieldList("UNIT DATE TIME CODE CALL ADDR APT CITY PLACE PHONE INFO");
+    setFieldList("UNIT DATE TIME ID CODE CALL ADDR APT CITY PLACE PHONE INFO");
   }
 
   @Override
@@ -34,6 +34,7 @@ public class DispatchA29Parser extends SmartAddressParser {
     data.strUnit = match.group(1).trim();
     data.strDate = getOptGroup(match.group(2));
     data.strTime = getOptGroup(match.group(3));
+    data.strCallId = getOptGroup(match.group(4));
     body = body.substring(match.end()).trim();
     
     body = body.replace("Apt/Unit", "Apt");
