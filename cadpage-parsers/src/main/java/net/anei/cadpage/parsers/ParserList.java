@@ -224,6 +224,7 @@ public class ParserList {
               ,"COBroomfieldCounty"             ,"Broomfield County, CO"
               ,"COChaffeeCounty"                ,"Chaffee County, CO"
               ,"CODeltaCounty"                  ,"Delta County, CO"
+              ,"CODenver"                       ,"Denver, CO"
               ,"CODouglasCounty"                ,"Douglas County, CO"
               ,"COEagleCounty"                  ,"Eagle County, CO"
               ,"COElPasoCounty"                 ,"El Paso County, CO"
