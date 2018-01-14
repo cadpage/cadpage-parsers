@@ -764,6 +764,7 @@ public class ParserList {
               ,"MSLafayetteCounty"			      	,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"
               ,"MSMarionCounty"                 ,"Marion County, MS"
+              ,"MSMonroeCounty"                 ,"Monroe County, MS"
               ,"MSNeshobaCounty"                ,"Neshoba County, MS"
               ,"MSNewtonCounty"                 ,"Newton County, MS"
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
