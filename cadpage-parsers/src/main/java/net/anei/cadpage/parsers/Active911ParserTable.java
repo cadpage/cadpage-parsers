@@ -1038,7 +1038,7 @@ public class Active911ParserTable {
       "US/OH/HighlandCounty",             "OHHighlandCounty",
       "US/OH/HockingCounty",              "OHHockingCounty",
       "US/OH/HolmesCountySheriff",        "OHHolmesCounty",
-      "US/OH/Hudson",                     "OHudson",
+      "US/OH/Hudson",                     "OHHudson",
       "US/OH/JeffersonCounty",            "OHJeffersonCounty",
       "US/OH/KnoxCounty",                 "OHKnoxCounty",
       "US/OH/LawrenceCounty",             "OHLawrenceCounty",
