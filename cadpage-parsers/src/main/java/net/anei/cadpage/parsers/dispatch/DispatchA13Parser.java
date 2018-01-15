@@ -310,12 +310,13 @@ public class DispatchA13Parser extends FieldProgramParser {
                                                    : StartType.START_ADDR);
         int flags = FLAG_IGNORE_AT;
         if (includeCall) flags |= FLAG_START_FLD_REQ;
-        if (!trailPlace) flags |= FLAG_ANCHOR_END;
+        flags |= (trailPlace ? FLAG_PAD_FIELD : FLAG_ANCHOR_END);
         String saveCall = null;
         if (includeCall) {
           saveCall = data.strCall;
           data.strCall = "";
         }
+        if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
         String place;
         parseAddress(st, flags, addr, data);
         if (includeCall) {
@@ -362,6 +363,12 @@ public class DispatchA13Parser extends FieldProgramParser {
         // If it starts with a slash, this is probably the intersection with
         // cities after both streets again :(
         if (trailPlace) {
+          place = getPadField();
+          if (isCity(place)) {
+            data.strCity = place;
+          } else {
+            addPlace(getPadField(), data);
+          }
           place = getLeft();
           if (place.startsWith("/") ||   place.startsWith("&")) {
             place = place.substring(1).trim();
@@ -377,7 +384,11 @@ public class DispatchA13Parser extends FieldProgramParser {
             }
             place = getLeft();
           }
-          addPlace(place, data);
+          if (isCity(place)) {
+            data.strCity = place;
+          } else {
+            addPlace(place, data);
+          }
         }
         
         // Second part is generally the cross street
@@ -486,13 +497,6 @@ public class DispatchA13Parser extends FieldProgramParser {
             apt = getStart();
           }
           apt = APT_PREFIX_PTN.matcher(apt).replaceAll("");
-          if (trailPlace) {
-            int pt2 = apt.indexOf(' ');
-            if (pt2 >= 0) {
-              addPlace(apt.substring(pt2+1).trim(), data);
-              apt = apt.substring(0,pt2);
-            }
-          }
           data.strApt = append(data.strApt, " - ", apt);
         }
         part = part.substring(0,pt).trim();

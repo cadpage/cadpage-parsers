@@ -40,6 +40,11 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
     
     // Missed right parens cause a problem.  If we find any add a closing right paren.
     body = MISMATCH_PAREN_PTN.matcher(body).replaceAll("$1)");
+    
+    if (subject.equals("SEVAC")) {
+      data.strSource = subject;
+      body = body.replace("\n\n", "\n");
+    }
 
     if (!super.parseMsg(body, data)) return false;
     
@@ -47,6 +52,11 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
     data.strCity = stripFieldEnd(data.strCity," VILLAGE");
     return true;
 
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   @Override

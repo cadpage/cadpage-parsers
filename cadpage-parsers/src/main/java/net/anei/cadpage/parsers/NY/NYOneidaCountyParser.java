@@ -15,37 +15,47 @@ import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 
 public class NYOneidaCountyParser extends DispatchA13Parser {
   
-  private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
-  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^[io?¿][^A-Z]*|^(?:&#\\d+;)+");
-  private static final Pattern EXTRA_NL_PTN = Pattern.compile(", *\n");
-  private static final Pattern CLINTON_FIRE_PTN1 = Pattern.compile("(?:\\d\\d[A-Z]\\d\\d )?[A-Z0-9, /\\(\\)]+?  , ");
-  private static final Pattern T_CITY_PTN = Pattern.compile("\\b(?:T/|T/O +|/T +)(CONSTANTIA|NORWAY|OHIO|RUSSIA)\\b");
-  private static final Pattern MARKER = Pattern.compile("(?:(.*?)([^A-Z0-9]{1,4}))?\\b(Dispatched|Acknowledge|Enroute|En Route Hosp|On +Scene)([^A-Z0-9]{1,4})(?=[A-Z0-9])");
-  private static final Pattern CODE_PTN = Pattern.compile("^([A-Za-z_ ]+ - )?(\\d\\d[A-Z]\\d\\d) ?- *");
-  private static final Pattern KNLS = Pattern.compile("\\bKNLS\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern NEAR_PTN = Pattern.compile("[/;]? *(Near:.*)");
-  private static final Pattern REAL_APT_PTN = Pattern.compile("(?:FLR|BLDG|LOT).*");
-  private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:(\\d+[A-Z]?|\\d+[A-Z]* FLR)[_ ]+)?(.*?)(?:-(\\d+[A-Z]?|\\d+[A-Z]* FLR))?");
-  
   public NYOneidaCountyParser() {
-    super(CITY_LIST, "ONEIDA COUNTY", "NY");
+    super(CITY_LIST, "ONEIDA COUNTY", "NY", A13_FLG_TRAIL_PLACE);
+    addRoadSuffixTerms("KNLS");
   }
   
   @Override
   public String getFilter() {
     return "dispatch@ocgov.net,@oc911.org,messaging@iamresponding.com,777,888";
   }
+  
+  private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
+  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^[io?¿][^A-Z]*|^(?:&#\\d+;)+");
+  private static final Pattern EXTRA_NL_PTN = Pattern.compile(", *\n");
+  private static final Pattern T_CITY_PTN = Pattern.compile("\\b(?:T/|T/O +|/T +|TOWN OF ) *(CONSTANTIA|NORWAY|OHIO|RUSSIA)\\b");
+  private static final Pattern EFF_BREATHING_PTN = Pattern.compile("(EFFECTIVE BREATHING NOT VERIFIED)[, ]+(35)");
+  private static final Pattern MARKER = Pattern.compile("(?:(.*?)([^A-Z0-9]{1,4}))?\\b(Dispatched|Acknowledge|Enroute|En Route Hosp|On +Scene)([^A-Z0-9]{1,4})(?=[A-Z0-9])");
+  private static final Pattern CODE_PTN = Pattern.compile("^([A-Za-z_ ]+ - )?(\\d\\d[A-Z]\\d\\d) ?- *");
+  private static final Pattern KNLS = Pattern.compile("\\bKNLS\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NEAR_PTN = Pattern.compile("[/;]? *(Near:.*)");
+  private static final Pattern REAL_APT_PTN = Pattern.compile("(?:FLR|BLDG|LOT|SIDE).*");
+  private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:(\\d+[A-Z]?|\\d+[A-Z]* FLR)[_ ]+)?(.*?)(?:-(\\d+[A-Z]?|\\d+[A-Z]* FLR))?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    // Eliminate NYMadisonCountyB alerts
+    if (subject.equals("SEVAC")) return false;
+    if (subject.equals("LINCOLN VOLUNTEER FIRE DEPT")) return false;
+    
+    // Eliminate NYMadisonCountyGLAS alerts
+    if (subject.equals("Greater Lenox")) return false;
+    if (subject.equals("LINCOLN VOLUNTEER FIRE DEPT")) return false;
     
     data.strSource = subject;
     
     body = LEAD_JUNK_PTN.matcher(body).replaceFirst("");
     body = NON_ASCII_PTN.matcher(body).replaceAll("");
     
-    body = EXTRA_NL_PTN.matcher(body).replaceAll(",");
+    body = EXTRA_NL_PTN.matcher(body).replaceAll(", ");
     body = stripFieldEnd(body, "#[0-0]");
+    body = stripFieldStart(body, ",");
     
     // Check for truncated city at end of line
     int pt = body.lastIndexOf(',');
@@ -58,20 +68,20 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     if (body.startsWith(">") || body.startsWith(", ")) body = "Dispatched " + body;
     
     // Sigh, the contagion seems to be spreading ...
-    else if (subject.equals("Clinton Fire")) {
-      if (CLINTON_FIRE_PTN1.matcher(body).lookingAt()) body = "Dispatched  , " + body;
-    }
-    
     else if (subject.equals("Oneida Castle Fire")) {
       if (body.startsWith("patched")) body = "Dis" + body;
     }
     
-    else if (subject.equals("Durhamville Fire") || subject.equals("Remsen Fire") || subject.equals("Deerfield Fire")) {
-      if (!body.contains("Dispatched")) body = "Dispatched , " + body;
+    else if (subject.equals("Clinton Fire") || subject.equals("Durhamville Fire") || 
+             subject.equals("Remsen Fire") || subject.equals("Deerfield Fire")) {
+      if (!body.contains("Dispatched") && !body.contains("Acknowledge")) body = "Dispatched , " + body;
     }
     
     // Occasional use of T/ or T/O for Town of messes everything up
     body = T_CITY_PTN.matcher(body).replaceAll(" $1");
+    
+    // Clean out extraneous comma
+    body = EFF_BREATHING_PTN.matcher(body).replaceAll("$1 $2");
 
     // Format always has some field delimiters, but they
     // seem to change with the phase of the moon. There is always a "Dispatched"
@@ -198,6 +208,9 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     data.strCity = stripFieldEnd(data.strCity, " VILLA");
     data.strCity = stripFieldEnd(data.strCity, " OUTSIDE");
     data.strCity = stripFieldEnd(data.strCity, " INSIDE");
+    
+    if (data.strCity.equalsIgnoreCase("HERLK CO") ||
+        data.strCity.equalsIgnoreCase("HERIMER CO")) data.strCity = "HERKIMER CO";
     return true;
   }
   
@@ -368,13 +381,23 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     "YORKVILLE VILLAGE NY",
     
     // Madison County
+    "CANASTOTA",
     "CANASTOTA VILLAGE",
-    "MORRISVILLE VILLAGE",
     
     // Herkimer County
-    "CONSTANTIA",
+    "HERKIMER COUNTY",
+    "HERKIMER CO",
+    "HERIMER CO",
+    "HERLK CO",  // spelling??
     "NORWAY",
     "OHIO",
-    "RUSSIA"
+    "RUSSIA",
+    
+    "POLAND",
+    "POLAND VILLAGE",
+    
+    // Oswego County
+    "CONSTANTIA"
+    
   };
 }
