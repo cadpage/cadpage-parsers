@@ -7,7 +7,7 @@ public class MDCarrollCountyCParser extends FieldProgramParser {
   
   public MDCarrollCountyCParser() {
     super(CITY_LIST, "CARROLL COUNTY", "MD", 
-          "CALL ADDR/S! Map:MAP! NARRATIVE:INFO! INFO/N+ FIREBOXINFO:BOX! END");
+          "CALL PLACE? ADDR/SZ! Map:MAP! NARRATIVE:INFO! INFO/N+ FIREBOXINFO:BOX% END");
   }
   
   @Override
@@ -17,6 +17,7 @@ public class MDCarrollCountyCParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldEnd(body, "...");
     return parseFields(body.split("\n"), data);
   }
   
