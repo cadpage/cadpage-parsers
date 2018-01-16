@@ -30,7 +30,7 @@ public class ManageParsers {
    * @return requested parser
    */
   public MsgParser getParser(String location) {
-    return getParser(location, null);
+    return getParser(location, null, null);
   }
   
   /**
@@ -39,7 +39,7 @@ public class ManageParsers {
    * @param body message body if known, otherwise null
    * @return requested parser
    */
-  public MsgParser getParser(String location, String body) {
+  public MsgParser getParser(String location, String subject, String body) {
     
     // No real parser codes start with "X".  If we are given one, then it
     // must come from Active911 which sometimes adds an "X" prefix for their
@@ -47,7 +47,7 @@ public class ManageParsers {
     if (location != null && location.startsWith("X")) location = location.substring(1);
     
     // Convert any old codes that have been renamed to new values
-    location = convertLocationCode(location, body);
+    location = convertLocationCode(location, subject, body);
     
     // First level cache.  If location code matches what we have stored for
     // the current location code, return the current parser
@@ -161,7 +161,7 @@ public class ManageParsers {
    * @return possibly updated location code
    */
   public static String convertLocationCode(String location) {
-    return convertLocationCode(location, null);
+    return convertLocationCode(location, null, null);
   }
   
   /**
@@ -170,14 +170,17 @@ public class ManageParsers {
    * @param body message body if known, null otherwise
    * @return possibly updated location code
    */
-  public static String convertLocationCode(String location, String body) {
+  public static String convertLocationCode(String location, String subject, String body) {
     String result = OLD_CODE_TABLE.getProperty(location);
     if (result != null) return result;
     
     // There was a partial transfer of some NYNassauCountyD calls to NYNassauCountJ
     // from 12/26/14
     if (body != null && location.equals("NYNassauCountyD") && 
-        NOT_NASSAU_COUNTY_D.matcher(body).find()) return "NYNassauCountyJ"; 
+        NOT_NASSAU_COUNTY_D.matcher(body).find()) return "NYNassauCountyJ";
+
+    // And another from NYOneidaCounty to NYMadisonCountyB from 01/16/2018
+    if (subject != null && location.equals("NYOneidaCounty") && subject.equals("SEVAC")) return "NYMadisonCountyB";
     return location;
   }
   private static final Pattern NOT_NASSAU_COUNTY_D = Pattern.compile("[^\\*]CS:");
