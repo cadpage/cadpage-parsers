@@ -29,11 +29,24 @@ public class COBoulderCountyBParser extends FieldProgramParser {
 	  };
   }
 
+	private static Pattern MASTER1 = Pattern.compile("\\*{3} ADVISORY NOTIFICATION \\*{3}Inc #([A-Z]{3,4})(\\d{6}-\\d{6})Type:z?(.*)Addr:(.*)Unit:(.*)");
   private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
 	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|BLD|APT|LOC|INFO|TIME|UNITS|Map Page):");
 
 	public boolean parseMsg(String body, Data data) {
-	  Matcher mat = SRC_ID.matcher(body);
+	  
+	  Matcher mat = MASTER1.matcher(body);
+	  if (mat.matches()) {
+	    setFieldList("SRC ID CALL ADDR APT UNIT");
+	    data.strSource = mat.group(1);
+	    data.strCallId = mat.group(2);
+	    data.strCall = mat.group(3).trim();
+	    parseAddress(mat.group(4).trim(), data);
+	    data.strUnit = mat.group(5).trim();
+	    return true;
+	  }
+	  
+	  mat = SRC_ID.matcher(body);
 	  if (!mat.matches()) return false;
 	  data.strSource = mat.group(1);
 	  data.strCallId = mat.group(2);
