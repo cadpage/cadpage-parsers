@@ -44,6 +44,7 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
     if (subject.equals("SEVAC")) {
       data.strSource = subject;
       body = body.replace("\n\n", "\n");
+      if (!body.contains("Dispatched")) body = "Dispatched\n" + body;
     }
 
     if (!super.parseMsg(body, data)) return false;
