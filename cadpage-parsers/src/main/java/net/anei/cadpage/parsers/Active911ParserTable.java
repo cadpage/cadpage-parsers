@@ -1434,6 +1434,7 @@ public class Active911ParserTable {
       "US/VA/PrinceEdwardCounty",         "VAPrinceEdwardCounty",
       "US/VA/PrinceWilliamCounty",        "VAPrinceWilliamCounty",
       "US/VA/RoanokeCounty",              "VARoanokeCounty",
+      "US/VA/RockinghamCounty",           "VARockinghamCounty",
       "US/VA/SouthamptonCounty",          "VASouthamptonCounty",
       "US/VA/SpotsylvaniaCounty",         "VASpotsylvaniaCounty",
       "US/VA/StaffordCounty",             "VAStaffordCounty",
