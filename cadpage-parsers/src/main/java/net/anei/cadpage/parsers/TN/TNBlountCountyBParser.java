@@ -12,7 +12,7 @@ public class TNBlountCountyBParser extends DispatchA66Parser {
   
   @Override
   public String getFilter() {
-    return "paging@blount911.com,messaging@blount911.com,@c-msg.org";
+    return "paging@blount911.com,messaging@blount911.com,@c-msg.org,hiplink@blount911.net";
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{

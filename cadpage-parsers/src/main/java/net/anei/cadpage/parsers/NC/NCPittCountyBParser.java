@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -17,10 +18,12 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
                         "| ADDR/Z CITYQ ( DATETIME! | IDQ PRIQ? DATETIME! ) " + 
                         "| ADDR/Z ID CITYQ? PRIQ? DATETIME! " + 
                         "| ADDR/Z PRI DATETIME! " + 
-                        "| ADDR/Z DATETIME! " + 
-                        ") EMPTY? SRC UNIT Radio_Channel:CH? EMPTY+? X+? " + 
+                        "| ADDR/Z DATETIME! " +
+                        ") EMPTY+? BOX? ( SRC UNIT? | UNIT | PLACE SRC? UNIT? ) EMPTY+? CH+? EMPTY+? X+? " + 
           ") INFO/N+");
     setupCities("BEAUFORT CO");
+    setupMultiWordStreets("MARTIN LUTHER KING JR", "STOKESTOWN ST JOHNS");
+    addRoadSuffixTerms("ALTERNATE", "ROADWAY");
   }
   
   @Override
@@ -30,9 +33,13 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
     if (!subject.equals("Text Message")) return false;
+    
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
+    
+    body = stripFieldStart(body, "_");
     
     if (body.contains(",Enroute,")) {
       return parseFields(body.split(","), data);
@@ -40,6 +47,11 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     
     body = "CAD:" + body;
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "UNIT? " + super.getProgram();
   }
   
   @Override
@@ -51,6 +63,10 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     if (name.equals("PRI")) return new PriorityField("[P1-9]", true);
     if (name.equals("PRIQ")) return new PriorityField("[P1-9]|", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("BOX")) return new BoxField("\\d\\d", true);
+    if (name.equals("SRC")) return new SourceField("(?:F|R|STA)\\d+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:[A-Z]+\\d+[A-Z]?||\\d{4}|FS)(?:,.*)?", true);
+    if (name.equals("CH")) return new ChannelField("(TAC.*|A\\d{1,2})|Radio Channel: *(.*)");
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -63,11 +79,23 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     }
   }
   
+  private static final Pattern INFO_CH_PTN = Pattern.compile("TAC.*|A\\d{1,2}");
   private static final Pattern INFO_CODE_PTN = Pattern.compile("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?");
   private static final Pattern TRAIL_ID_PTN = Pattern.compile("\\d{10}");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      
+      if (field.startsWith("Radio Channel:")) {
+        data.strChannel = field.substring(14).trim();
+        return;
+      }
+      
+      if (INFO_CH_PTN.matcher(field).matches()) {
+        data.strChannel = field;
+        return;
+      }
+      
       if (field.equalsIgnoreCase("BEAUFORT COUNTY")) {
         if (data.strCity.length() == 0) {
           data.strCity = field;
@@ -90,7 +118,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "CITY CODE " + super.getFieldNames() + " ID";
+      return "CH CITY CODE " + super.getFieldNames() + " ID";
     }
   }
   

@@ -34,7 +34,7 @@ public class ILClintonCountyParser extends DispatchA29Parser {
       "HUEY",
       "KEYESPORT",
       "NEW BADEN",
-      "ST. ROSE",
+      "ST ROSE",
 
       //Townships
 
@@ -54,7 +54,5 @@ public class ILClintonCountyParser extends DispatchA29Parser {
       "WADE",
       "WHEATFIELD"
 
-
-  
   };
 }
