@@ -94,10 +94,15 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     return FLAG_RECHECK_APT;
   }
   
+  private static final Pattern SKI_LIBERTY_PTN = Pattern.compile("SKI LIBERTY - STATION [A-Z0-9]+\\b");
   private static final Pattern ROAD_PTN = Pattern.compile("\\bROAD\\b");
   
   @Override
-  protected String adjustGpsLookupAddress(String address, String apt) {
+  protected String adjustGpsLookupAddress(String address, String apt, String place) {
+    
+    Matcher match = SKI_LIBERTY_PTN.matcher(place);
+    if (match.lookingAt()) return match.group();
+    
     address = address.toUpperCase();
     address = ROAD_PTN.matcher(address).replaceAll("RD");
     address = append(address, " APT ", apt);
@@ -1332,7 +1337,15 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       
       "1 STONEHOUSE CT",                      "+39.900256,-77.440230",
       
-      "225 VILLAGE DR",                       "+39.864515,-77.023866"
+      "225 VILLAGE DR",                       "+39.864515,-77.023866",
+      
+      "SKI LIBERTY - STATION 1A", "+39.762931,-77.375453",
+      "SKI LIBERTY - STATION 1B", "+39.762314,-77.374811",
+      "SKI LIBERTY - STATION 2",  "+39.762314,-77.374811",
+      "SKI LIBERTY – STATION 4",  "+39.762617,-77.368438",
+      "SKI LIBERTY – STATION 3",  "+39.759810,-77.363275",
+      "SKI LIBERTY – STATION 5",  "+39.763964,-77.374466"
+
   });
 
   private static final String[] CITY_LIST = new String[]{

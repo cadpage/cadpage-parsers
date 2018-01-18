@@ -453,7 +453,7 @@ public class MsgInfo {
     
     // If we have a parser, see if we have a GPS location match
     if (parser != null) {
-      String addr = parser.lookupGpsCoordinates(strAddress, strApt);
+      String addr = parser.lookupGpsCoordinates(strAddress, strApt, strPlace);
       if (addr != null) {
         strBaseMapAddress = addr;
         return addr;

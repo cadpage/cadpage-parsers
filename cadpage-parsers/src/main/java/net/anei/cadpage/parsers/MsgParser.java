@@ -1165,9 +1165,9 @@ public abstract class MsgParser {
     return city;
   }
 
-  public String lookupGpsCoordinates(String address, String apt) {
+  public String lookupGpsCoordinates(String address, String apt, String place) {
     if (gpsLookupTable == null) return null;
-    address = adjustGpsLookupAddress(address, apt);
+    address = adjustGpsLookupAddress(address, apt, place);
     if (address == null) return null;
     return gpsLookupTable.getProperty(address);
   }
@@ -1190,6 +1190,18 @@ public abstract class MsgParser {
    * @return adjusted address field
    */
   protected String adjustGpsLookupAddress(String address, String apt) {
+    return adjustGpsLookupAddress(address);
+  }
+
+  /**
+   * Call to perform any adjustments on the raw address field before
+   * trying to match it to an GPS location table entry
+   * @param address raw address field
+   * @param address apt/lot number
+   * @param address place name
+   * @return adjusted address field
+   */
+  protected String adjustGpsLookupAddress(String address, String apt, String place) {
     return adjustGpsLookupAddress(address);
   }
 
