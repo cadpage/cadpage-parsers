@@ -142,4 +142,20 @@ public class CodeTable {
   public String getMatch(String code) {
     return codeMap.get(code);
   }
+
+  /**
+   * Look up table value.  This is called when the key values are
+   * divide the key space into ranges and we want the value that
+   * corresponds to the range that contains this code.  In this case
+   * the key may not be a proper substring of the code value
+   * 
+   * @param code code to look up
+   * @return correct value, or null if no entry is found
+   */
+  public String getRangeValue(String code) {
+    SortedMap<String,String> tail = codeMap.tailMap(code);
+    if (tail.isEmpty()) return null;
+    return tail.entrySet().iterator().next().getValue();
+  }
+  
 }

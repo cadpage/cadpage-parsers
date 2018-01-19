@@ -1369,6 +1369,7 @@ public class Active911ParserTable {
       "US/TX/Stationalerting",            "TXFortBendCountyB",
       "US/TX/TarrantCounty",              "TXTarrantCountyA",
       "US/TX/TexasCity",                  "TXTexasCity",
+      "US/TX/TravisCounty",               "TXTravisCountyB",
       "US/TX/UMCHealth",                  "TXLubbockCountyB",
       "US/TX/VillageFire",                "TXVillage",
       "US/TX/WalkerCounty",               "TXWalkerCounty",
