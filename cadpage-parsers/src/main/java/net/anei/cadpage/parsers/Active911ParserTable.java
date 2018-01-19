@@ -287,6 +287,7 @@ public class Active911ParserTable {
       "US/GA/ForsythCounty",              "GAForsythCounty",
       "US/GA/GordonCounty",               "GAGordonCounty",
       "US/GA/HabershamCounty",            "GAHabershamCounty",
+      "US/GA/HartCounty",                 "GAHartCounty",
       "US/GA/HallCounty",                 "GAHallCounty",
       "US/GA/JacksonCounty",              "GAJacksonCounty",
       "US/GA/JasperCounty",               "GAJasperCounty",

@@ -345,6 +345,7 @@ public class ParserList {
               ,"GAGordonCounty"                 ,"Gordon County, GA"
               ,"GAHabershamCounty"              ,"Habersham County, GA"
               ,"GAHallCounty"                   ,"Hall County, GA"
+              ,"GAHartCounty"                   ,"Hart Couty, GA"
               ,"GAHenryCounty"                  ,"Henry County, GA"
               ,"GAHoustonCounty"                ,"Houston County, GA"
               ,"GAJacksonCounty"                ,"Jackson County, GA"
