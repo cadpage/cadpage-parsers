@@ -1343,6 +1343,7 @@ public class Active911ParserTable {
       "US/TX/Lufkin",                     "TXLufkin",
       "US/TX/ManvelPD",                   "TXBrazoriaCountyA",
       "US/TX/Mcspage",                    "TXVanZandtCounty",
+      "US/TX/Medapoint",                  "TXTravisCountyB",
       "US/TX/Medstar911",                 "TXFortWorth",
       "US/TX/Midlothian",                 "TXMidlothian",
       "US/TX/MontgomeryCounty",           "TXMontgomeryCountyB",
