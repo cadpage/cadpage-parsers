@@ -77,7 +77,7 @@ public class FLBayCountyParser extends FieldProgramParser {
   private class MyUnitField extends UnitField {
 
     public MyUnitField() {
-      super("\\d{3}", true);
+      super("\\d{2,3}", true);
     }
     
     @Override

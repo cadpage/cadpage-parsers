@@ -264,6 +264,7 @@ public class Active911ParserTable {
       "US/FL/GulfBreezePolice",           "FLGulfBreezeB",
       "US/FL/Hendry",                     "FLHendryCounty",
       "US/FL/HernandoSheriff",            "FLHernandoCounty",
+      "US/FL/HolmesCounty",               "FLHolmesCounty",
       "US/FL/JacksonCounty",              "FLJacksonCounty",
       "US/FL/LakeCounty",                 "FLLakeCounty",
       "US/FL/LevyCounty",                 "FLLevyCounty",
