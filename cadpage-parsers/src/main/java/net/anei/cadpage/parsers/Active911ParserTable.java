@@ -1542,6 +1542,7 @@ public class Active911ParserTable {
       "Vendor/ComputerArts",              "IDAdaCounty",
       "Vendor/CTC/Default",               "MIInghamCountyC",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
+      "Vendor/Spillman/Default",          "KSFordCounty",
       "Vendor/Sweden/Zenit",              "ZSESweden"
   });
 
