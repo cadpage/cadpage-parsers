@@ -37,6 +37,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS (\\d{6}-\\d{1,3})");
   private static final Pattern RESPONDING_UNITS_PTN = Pattern.compile("Responding Unit\\(s\\):(?: +Units:)?");
   private static final Pattern BRK_PTN = Pattern.compile("\n|(?<!\n)(?=Disp Time:)");
+  private static final Pattern NAME_CITY_PTN = Pattern.compile("(.*) 911");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -53,7 +54,16 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       body = RESPONDING_UNITS_PTN.matcher(body).replaceAll("Units:");
     }
     
-    return parseFields(BRK_PTN.split(body), data);
+    if (!parseFields(BRK_PTN.split(body), data)) return false;
+    
+    if (data.strCity.length() == 0) {
+      Matcher match = NAME_CITY_PTN.matcher(data.strName);
+      if (match.matches()) {
+        String city = match.group(1).trim().toUpperCase();
+        if (isCity(city)) data.strCity = convertCodes(city, CITY_CODES);
+      }
+    }
+    return true;
   }
   
   @Override
@@ -86,7 +96,11 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern LEAD_UNIT_PTN = Pattern.compile("U:(\\S+) +(.*)");
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)\\((.*?)\\)");
+  private static final Pattern[] ADDR_CITY_PTNS = new Pattern[]{
+      Pattern.compile("(.*)(?:[\\(,]| \\*\\* )(.*?)(?:\\)|\\*\\*)?"),
+      Pattern.compile("(.*):([A-Z ]+):.*")
+  };
+  
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -99,20 +113,32 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       }
       
       super.parse(field, data);
+      data.strAddress = stripFieldEnd(data.strAddress, ";");
       data.strApt = append(apt, "-", data.strApt);
-      
+
+      data.strCity = convertCodes(data.strCity.toUpperCase(), CITY_CODES);
       data.strCity = stripFieldEnd(data.strCity, " B");
       if (data.strCity.endsWith(" T")) data.strCity += "WP";
       data.strCity = data.strCity.replace("  ", " ");
       
-      if (data.strCity.length() == 0) {
-        match = ADDR_CITY_PTN.matcher(data.strAddress);
+      for (Pattern ptn : ADDR_CITY_PTNS) {
+        match = ptn.matcher(data.strAddress);
         if (match.matches()) {
-          String city = match.group(2).trim();
+          String city = match.group(2).trim().toUpperCase();
+          city = stripFieldEnd(city, "BORO");
           if (isCity(city)) {
             data.strAddress = match.group(1).trim();
             data.strCity =  convertCodes(city, CITY_CODES);
           }
+          break;
+        }
+      }
+      
+      if (data.strCity.endsWith(" CO") || data.strCity.endsWith(" COUNTY")) {
+        Result result = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, data.strAddress);
+        if (result.getCity().length() > 0) {
+          data.strAddress = "";
+          result.getData(data);
         }
       }
     }
@@ -240,11 +266,19 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = stripFieldStart(addr, "AREA OF ");
+    return addr;
+  }
 
   // Township names used for out of county calls
   private static final String[] CITY_LIST = new String[] {
     
     // Columbia County
+    "COLUMBIA CO",
+    "COLUMBIA COUNTY",
     "BEAVER TWP",
     "BENTON TWP",
     "BRIAR CREEK TWP",
@@ -271,13 +305,20 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "SUGARLOAF TWP",
 
     // Luzerne County
+    "LUZERNE CO",
+    "LUZERNE COUNTY",
+    "LUZ COUTY",
+    "LUZ COUNTY",
+    "LUZE CO",
     "BEAR CREEK TWP",
     "BLACK CREEK TWP",
     "BUCK TWP",
+    "BULTER TWP",  // Misspelled
     "BUTLER TWP",
     "CONYNGHAM TWP",
     "DALLAS TWP",
     "DENNISON TWP",
+    "DORRENCE TWP", // Misspelled
     "DORRANCE TWP",
     "EXETER TWP",
     "FAIRMOUNT TWP",
@@ -291,6 +332,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "HUNTINGTON TWP",
     "MAHONING TWP",
     "NESCOPECK TWP",
+    "ROSS TWP",
     "SALEM TWP",
     "FAIRMOUNT",
     "FAIRVIEW",
@@ -324,6 +366,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WRIGHT",
     
     // Lycoming County
+    "LYCOMING CO",
+    "LYCOMING COUNTY",
     "ANTHONY TWP",
     "ARMSTRONG TWP",
     "BASTRESS TWP",
@@ -368,6 +412,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WOODWARD TWP",
     
     // Montour County
+    "MONTOUR CO",
+    "MONTOUR COUNTY",
     "ANTHONY TWP",
     "COOPER TWP",
     "DERRY TWP",
@@ -380,6 +426,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "DANVILLE",
     
     // Northumberland County
+    "NORTHUMBERLAND CO",
+    "NORTHUMBERLAND COUNTY",
     "COAL TWP",
     "DELAWARE TWP",
     "EAST CAMERON TWP",
@@ -392,6 +440,9 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "LOWER MAHANOY TWP",
     "MOUNT CARMEL TWP",
     "POINT TWP",
+    "POTTSGROVE",
+    "PT TOWNSHIP",
+    "PT TWP",
     "RALPHO TWP",
     "ROCKEFELLER TWP",
     "RUSH TWP",
@@ -403,10 +454,14 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WEST CAMERON TWP",
     "WEST CHILLISQUAQUE TWP",
     "ZERBE TWP",
+    "RALPHO",
     "RIVERSIDE",
+    "SHAMOKIN",
     "SUNBURY",
     
     // Scuylkill County
+    "SCUYLKILL CO",
+    "SCUYLKILL COUNTY",
     "BARRY TWP",
     "BLYTHE TWP",
     "BRANCH TWP",
@@ -445,6 +500,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WEST PENN TWP",
  
     // Sulivan County
+    "SULIVAN CO",
+    "SULIVAN COUNTY",
     "CHERRY TWP",
     "COLLEY TWP",
     "DAVIDSON TWP",
@@ -463,13 +520,15 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "BLOOM",          "BLOOMSBURG",
       "BR CRK B",       "BRIAR CREEK",
       "BR CRK T",       "BRIAR CREEK TWP",
+      "BULTER TWP",     "BUTLER TWP",
       "CATA B",         "CATAWISSA",
       "CATA T",         "CATAWISSA TWP",
       "CLEVELAND",      "CLEVELAND TWP",
       "COOPER",         "COOPER TWP",
       "DAVIDSON",       "DAVIDSON TWP",
+      "DERRENCE TWP",   "DERRANCE TWP",
       "DERRY",          "DERRY TWP",
-      "Derrry To",      "DERRY TWP",
+      "DERRRY TO",      "DERRY TWP",
       "FAIRMONT",       "FAIRMOUNT TWP",
       "FAIRMONT TWP",   "FAIRMOUNT TWP",
       "FAIRMOUNT",      "FAIRMOUNT TWP",
@@ -483,6 +542,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "LIBERTY",        "LIBERTY TWP",
       "LIMESTONE",      "LIMESTONE TWP",
       "LOCUST",         "LOCUST TWP",
+      "LUZ COUNTY",     "LUZERNE COUNTY",
+      "LUZ COUTY",      "LUZERNE COUNTY",
       "MADISON",        "MADISON TWP",
       "MAHONING",       "MAHONING TWP",
       "MAIN",           "MAIN TWP",
@@ -491,12 +552,14 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "N CENTRE",       "N CENTRE TWP",
       "NESCOTWP",       "NESCOPECK TWP",
       "OVILLE B",       "ORANGEVILLE",
+      "PT TOWNSHIP",    "POINT TWP",
+      "PT TWP",         "POINT TWP",
       "PINE",           "PINE TWP",
       "ROAR CRK",       "ROARING CREEK TWP",
       "RUSH",           "RUSH TWP",
       "S CENTRE",       "S CENTRE TWP",
       "SCOTT",          "SCOTT TWP",
-      "Scott  To",      "SCOTT TWP",
+      "SCOTT  TO",      "SCOTT TWP",
       "SUGARLOAF",      "SUGARLOAF TWP",
       "STILLWAT",       "STILLWATER",
       "W HEMLOCK",      "WEST HEMLOCK TWP",
