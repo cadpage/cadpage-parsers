@@ -12,11 +12,14 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   
   public PAColumbiaCountyBParser() {
     super(CITY_CODES, "COLUMBIA COUNTY", "PA", 
-          "( SELECT/1 DATETIME1 Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1? Caller:NAME? Phone#:PHONE! Callback#:PHONE/L! GPS! Inc_Code:CODE_CALL1! SubType:CALL/SDS! INFO/N+ " + 
+          "( SELECT/1 DATETIME1 Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1? Caller:NAME? Phone#:PHONE! Callback#:PHONE/L! GPS! Inc_Code:CODE_CALL1! SubType:CALL/SDS!  Unit_RunTimes:EMPTY! TIMES+ CFS#:ID! Comments:EMPTY! INFO/N+ " + 
           "| ( DR_ID DR_ID+? ADDRCITY/S GPS ( CODE_CALL3 | CODE_CALL2! CALL/SDS ) " + 
             "| ADDRCITY/S ( CODE_CALL2 CALL/SDS DR_ID+? GPS! " +
                          "| CODE_CALL3 DR_ID+? GPS! " +
-                         "| GPS ( CODE_CALL2! CALL/SDS! | CODE_CALL3! ) ) ) Disp_Time:DATETIME! Responding_Unit(s):EMPTY! UNIT! Comments:INFO/N+ )");
+                         "| GPS ( CODE_CALL2! CALL/SDS! | CODE_CALL3! " + 
+                         ") " + 
+            ") " + 
+          ") Disp_Time:DATETIME! Units:UNIT! UNIT/S+ Comments:INFO/N+ )");
     setupProtectedNames("TWO AND ONE HALF");
     setupCities(CITY_LIST);
   }
@@ -32,6 +35,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS (\\d{6}-\\d{1,3})");
+  private static final Pattern RESPONDING_UNITS_PTN = Pattern.compile("Responding Unit\\(s\\):(?: +Units:)?");
   private static final Pattern BRK_PTN = Pattern.compile("\n|(?<!\n)(?=Disp Time:)");
   
   @Override
@@ -46,6 +50,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       data.strCallId = match.group(1);
       setSelectValue("2");
       body = body.replace("Disp Time:", " Disp Time:");
+      body = RESPONDING_UNITS_PTN.matcher(body).replaceAll("Units:");
     }
     
     return parseFields(BRK_PTN.split(body), data);
@@ -67,6 +72,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DR_ID")) return new SkipField("DR#:.*", true);
+    if (name.equals("TIMES")) return new MyTimesField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -116,7 +122,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     
   }
   
-  private static final Pattern CALL_CODE1_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*)");
+  private static final Pattern CALL_CODE1_PTN = Pattern.compile("([_+A-Z0-9]+) : ([^:]*)");
   private class MyCodeCall1Field extends Field {
     @Override
     public boolean canFail() {
@@ -143,7 +149,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern CALL_CODE2_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*) :");
+  private static final Pattern CALL_CODE2_PTN = Pattern.compile("([_+A-Z0-9]+) : ([^:]*?)(?: :)?");
   private class MyCodeCall2Field extends Field {
     @Override
     public boolean canFail() {
@@ -152,6 +158,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.equals(":  :")) return true;
       Matcher match = CALL_CODE2_PTN.matcher(field);
       if (!match.matches()) return false;
       data.strCode = match.group(1);
@@ -204,6 +211,23 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       Matcher match = GPS_PTN.matcher(field);
       if (!match.matches()) return;
       setGPSLoc(match.group(1)+','+match.group(2), data);
+    }
+  }
+  
+  private static final Pattern TIMES_UNIT_PTN = Pattern.compile("([-A-Z0-9]+) +DISP +.*");
+  private class MyTimesField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = TIMES_UNIT_PTN.matcher(field);
+      if (match.matches()) {
+        data.strUnit = append(match.group(1), " ", data.strUnit);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "UNIT INFO";
     }
   }
   
