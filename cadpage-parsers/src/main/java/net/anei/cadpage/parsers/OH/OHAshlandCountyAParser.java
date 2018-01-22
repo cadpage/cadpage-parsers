@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   
   public OHAshlandCountyAParser() {
-    super("911:", CITY_LIST, "ASHLAND COUNTY", "OH", TrailAddrType.INFO);
+    super(true, CITY_LIST, "ASHLAND COUNTY", "OH", TrailAddrType.INFO);
   }
   
   @Override
@@ -22,9 +22,12 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!body.startsWith("911:") && SUBJECT_PTN.matcher(subject).matches()) {
-      body = "911:[" + subject + "]" + body;
+    body = stripFieldStart(body, "911:");
+    if (SUBJECT_PTN.matcher(subject).matches()) {
+      body = "[" + subject + "]" + body;
     }
+    body = stripFieldStart(body, "- ");
+    body = body.replace("TOWNSHIP RD", "TWP RD");
     return super.parseMsg(body, data);
   }
 
@@ -81,7 +84,79 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "RUGGLES",
       "SPRENG",
       "SULLIVAN",
-      "WIDOWVILLE"
+      "WIDOWVILLE",
+      
+      // Holmes County
+      "KNOX TWP",
+      "RIPLEY TWP",
+      "WASHINGTON TWP",
+      "NASHVILLE",
+      
+      // Huron County
+      "FITCHVILLE TWP",
+      "GREENWICH TWP",
+      "NEW LONDON TWP",
+      "GREENWICH",
+      "NEW LONDONG",
+      
+      // Knox County
+      "BROWN TWP",
+      "HOWARD TWP",
+      "JEFFERSON TWP",
+      "MONROE TWP",
+      "PIKE TWP",
+      "UNION TWP",
+      "DANVILLE",
+      "GANN",
+      
+      // Lorain County
+      "BRIGHTON TWP",
+      "HUNTINGTON TWP",
+      "PENFIELD TWP",
+      "ROCHESTER TWP",
+      "WELLINGTON TWP",
+      "ROCHESTER",
+      "WELLINGTON", 
+      
+      // Medina County
+      "CHATHAM TWP",
+      "HARRISVILLE TWP",
+      "HOMER TWP",
+      "SPENCER TWP",
+      "WESTFIELD CENTER TWP",
+      "LODI",
+      "SPENCER",
+      "WESTFIELD TWP",
+      
+      // Richland County
+      "BLOOMINGGROVE TWP",
+      "BUTLER TWP",
+      "FRANKLIN TWP",
+      "JEFFERSON TWP",
+      "MADISON TWP",
+      "MIFFLIN TWP",
+      "MONROE TWP",
+      "WASHINGTON TWP",
+      "WELLER TWP",
+      "WORTHINGTON TWP",
+      "BELLVILLE",
+      "BUTLER",
+      "LUCAS",
+      "MANSFIELD",
+      
+      // Wayne County
+      "CHESTER TWP",
+      "CLINTON TWP",
+      "CONGRESS TWP",
+      "FRANKLIN TWP",
+      "PLAIN TWP",
+      "WAYNE TWP",
+      "WOOSTER TWP",
+      "BURBANK",
+      "CONGRESS",
+      "SHREVE",
+      "WEST SALEM",
+      "WOOSTER"
 
 
   };
