@@ -1202,7 +1202,7 @@ public abstract class MsgParser {
    * @return adjusted address field
    */
   protected String adjustGpsLookupAddress(String address, String apt, String place) {
-    return adjustGpsLookupAddress(address);
+    return adjustGpsLookupAddress(address, apt);
   }
 
   /**

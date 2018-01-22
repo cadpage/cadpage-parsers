@@ -22,6 +22,10 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    // Reject any OHAshlandCountyB alerts
+    if (subject.equals("From: WarCOGUser")) return false;
+    
     body = stripFieldStart(body, "911:");
     if (SUBJECT_PTN.matcher(subject).matches()) {
       body = "[" + subject + "]" + body;
