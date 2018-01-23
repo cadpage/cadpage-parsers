@@ -10,7 +10,7 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
   
   public NCBurkeCountyParser() {
     super("BURKE COUNTY", "NC",
-           "( CANCEL ADDR | SRC CALL CODE? ADDR! X? X? ) INFO+");
+           "( CANCEL ADDR | FYI? SRC CALL CODE? ADDR! X? X? ) INFO+");
   }
   
   @Override
