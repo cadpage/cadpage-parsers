@@ -616,6 +616,15 @@ public class DispatchEmergitechParser extends FieldProgramParser {
       }
     }
     
+    // Strip off any duplicate NATURE: keywords beyond the
+    // first COMMENTS: keyword
+    int pt = body.indexOf("COMMENTS:");
+    if (pt >= 0) {
+      pt += 8;
+      int pt2 = body.indexOf("NATURE:", pt);
+      if (pt2 >= 0) body = body.substring(0,pt2).trim();
+    }
+    
     // Carry on with more normal adjustments
     body = body.substring(st).trim().replace(" BETWEEN ", " BETWEEN: ");
     

@@ -39,6 +39,7 @@ public class OHColumbianaCountyAParser extends GeneralParser {
     
     // Eliminate OHColumbianaCountyB alerts
     if (body.startsWith("- CALL") || subject.endsWith("- CALL")) return false;
+    if (body.startsWith("NATURE:")) return false;
     
     // See if we can find a city
     Matcher match = CITY_PTN.matcher(body);

@@ -1,6 +1,9 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +93,9 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
       data.strPlace = "";
     }
     
+    data.strCity = data.strCity.toUpperCase();
     data.strCity = convertCodes(data.strCity, CITY_FIXES);
+    if (PA_CITIES.contains(data.strCity)) data.strState = "PA";
     
     match = TRUNC_GPS_PTN.matcher(data.strSupp);
     if (match.lookingAt()) data.strSupp = data.strSupp.substring(match.end());
@@ -102,7 +107,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   
   @Override
   public String getProgram() {
-    return "CODE " + super.getProgram() + " GPS";
+    return "CODE " + super.getProgram().replace("CITY", "CITY ST") + " GPS";
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -260,6 +265,48 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "WEST POINT",
     "WILLIAMSPORT",
     "WINONA",
+    
+    // Columbia County
+    "BUTLER TWP",
+    "FAIRFIELD TWP",
+    "KNOX TWP",
+    "PERRY TWP",
+    "SALEM TWP",
+    "UNIT TWP",
+    
+    "BUTLER",
+    "FAIRFIELD",
+    "KNOX",
+    "PERRY",
+    "UNIT",
+    
+    "COLUMBIANA",
+    "EAST PALESTINE",
+    "LEETONIA",
+    "NEW WATERFORD",
+    "SALEM",
+    "WASHINGTONVILLE",
+    
+    // Lawrence County, PA
+    "LITTLE BEAVER TWP",
+    "MAHONING TWP",
+    "NORTH BEAVER TWP",
+    "PULASKI TWP",
+    "BESSEMER",
+    "SNPJ",
+    "ENON VALLEY",
+    
+    // Mercer County, PA
+    "GREENIE TWP",
+    "WEST SALEM TWP",
+    "SOUTH PYMATUNING TWP",
+    "SHENANGO TWP",
+    "SHARPSVILLE",
+    "SHARRON",
+    "HERMITAGE",
+    "FARRELL",
+    "WHEATLAND",
+    "WEST MIDDLESEX",
 
     // Portage County
     "DEERFIELD",
@@ -267,10 +314,56 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "PALMYRA",
     "PALMYRA TWP",
     
+    // Stark County
+    "LEXINGTON TWP",
+    "LEXINGTON",
+    
     // Trumbull County
-    "GIRARD"
-
+    "HUBBARD TWP",
+    "LIBERTY TWP",
+    "LORDSTOWN TWP",
+    "NEWTON TWP",
+    "WEATHERSFIELD TWP",
+    "LIBERTY",
+    "LORDSTOWN",
+    "NEWTON",
+    "WEATHERSFIELD",
+    
+    "CHURCHILL",
+    "GIRARD",
+    "HUBBARD",
+    "HILLTOP",
+    "HOWLAND",
+    "MAPLEWOOD PARK",
+    "NILES",
+    "MCDONALD",
+    "NEWTON FALLS",
+    "SOUTH CANAL"
   };
+  
+  private static final Set<String> PA_CITIES = new HashSet<String>(Arrays.asList(
+      
+      // Lawrence County, PA
+      "LITTLE BEAVER TWP",
+      "MAHONING TWP",
+      "NORTH BEAVER TWP",
+      "PULASKI TWP",
+      "BESSEMER",
+      "SNPJ",
+      "ENON VALLEY",
+      
+      // Mercer County, PA
+      "GREENIE TWP",
+      "WEST SALEM TWP",
+      "SOUTH PYMATUNING TWP",
+      "SHENANGO TWP",
+      "SHARPSVILLE",
+      "SHARRON",
+      "HERMITAGE",
+      "FARRELL",
+      "WHEATLAND",
+      "WEST MIDDLESEX"
+  ));
   
   private static final Properties CITY_FIXES = buildCodeTable(new String[]{
       "DAMUSCUS",       "DAMASCUS"
