@@ -23,7 +23,17 @@ public class CATehamaCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD Page")) return false;
+    do {
+      if (subject.equals("CAD Page")) break;
+      
+      if (body.startsWith("CAD Page / ")) {
+        body = body.substring(11).trim();
+        break;
+      }
+      
+      return false;
+    } while (false);
+    
     if (body.startsWith("CLOSE: ")) {
       body = body.substring(7).trim();
       data.msgType = MsgType.RUN_REPORT;
@@ -87,11 +97,21 @@ public class CATehamaCountyParser extends FieldProgramParser {
     }
   }
   
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "LAKE CALIFORNIA",    "COTTONWOOD"
+  });
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANTELOPE",     "RED BLUFF",
       "CNG",          "CORNING",
       "JELLYSFERRY",  "RED BLUFF",
       "LOSM",         "LOS MOLINOS",
+      "LKCALIF",      "LAKE CALIFORNIA",
       "NRB",          "RED BLUFF",
       "PROBERTA",     "RED BLUFF",
       "RBCTY",        "RED BLUFF",
