@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB3Parser;
 
 public class NCMaconCountyParser extends DispatchB3Parser {
   
-  private static final Pattern PRIMARY_PREFIX_PTN = Pattern.compile("MACON 911 MACON911:|MACON 911: MACON911:|911 CENTER:|MACON911:|MACON911 ");
+  private static final Pattern PRIMARY_PREFIX_PTN = Pattern.compile("MACON 911:? MACON911:(?:MACON911 )?|911 CENTER:|MACON911[: ]");
  
   public NCMaconCountyParser() {
     super(PRIMARY_PREFIX_PTN, CITY_LIST, "MACON COUNTY", "NC");
@@ -21,13 +21,13 @@ public class NCMaconCountyParser extends DispatchB3Parser {
   
   @Override
   public String getFilter() {
-    return "MACON911@maconnc.org,4702193684,8283420118,8283711473,4702193684";
+    return "MACON911@maconnc.org,4702193684,8283420118,8283711473";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     body = body.replace('~', ' ').trim();
-    body = stripFieldEnd(body, " Stop");
+    body = stripFieldEnd(body, "Stop");
     if (! super.parseMsg(subject, body, data)) return false;
     data.strCross = data.strCross.replace('@', '/');
     return true;
