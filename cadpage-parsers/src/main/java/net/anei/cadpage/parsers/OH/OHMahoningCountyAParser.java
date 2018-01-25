@@ -17,8 +17,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   }
   
   public OHMahoningCountyAParser(String defCity, String defState) {
-    super(true, CITY_LIST, defCity, defState, TrailAddrType.INFO);
-    setupMultiWordStreets("COLUMBIANA CANFIELD");
+    super(true, CITY_LIST, defCity, defState, EMG_FLG_NO_PLACE, TrailAddrType.INFO);
   }
   
   @Override
@@ -37,8 +36,12 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   }
 
   private static final Pattern MARK_ID_PTN = Pattern.compile("(\\d{3}):");
-  private static final Pattern TRUNC_GPS_PTN = Pattern.compile("[-+]?[\\d\\.]+ CF= *\\d+% UF= *\\d+ M Z= *\\d*M\\b *");
+  private static final Pattern CALL_OUT_PFX_PTN = Pattern.compile("[* ]*(?:(?:CALL OUTE?\\b[, ]*)+|MEDIC NEEDED|CORRECTED ADDRESS)[*: ]*");
+  private static final Pattern BAD_UNIT_PFX_PTN = Pattern.compile("[A-Z0-9]+\\]");
   private static final Pattern N_GEORGETOWN_PTN = Pattern.compile(" \\(N\\.? GEORGETOWN\\) ");
+  private static final Pattern TRUNC_GPS_PTN = Pattern.compile("[-+]?[\\d\\.]+ CF= *\\d+% UF= *\\d+ M Z= *[.0-9]* ?M\\b *");
+  private static final Pattern BAD_PLACE_PTN = Pattern.compile(".*(?:EXIT|[/&])");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *[-_]{3,} *");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -57,6 +60,14 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
       subject = "";
     }
     
+    match = CALL_OUT_PFX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      body = body.substring(match.end());
+      if (!body.contains("LOCATION:")) body = "NATURE: CALL OUT LOCATION: " + body;
+    }
+    
+    if (BAD_UNIT_PFX_PTN.matcher(body).lookingAt()) body = '[' + body;
+    
     body = N_GEORGETOWN_PTN.matcher(body).replaceAll(" ");
 
     body = body.replace('\n', ' ');
@@ -73,8 +84,19 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
       data.strCall = call;
     }
     
+    if (BAD_PLACE_PTN.matcher(data.strPlace).matches()) {
+      if (!data.strPlace.endsWith("EXIT")) data.strPlace = data.strPlace.substring(0,data.strPlace.length()-1).trim();
+      data.strAddress = append(data.strPlace, " & ", data.strAddress);
+      data.strPlace = "";
+    }
+    
+    data.strCity = convertCodes(data.strCity, CITY_FIXES);
+    
     match = TRUNC_GPS_PTN.matcher(data.strSupp);
     if (match.lookingAt()) data.strSupp = data.strSupp.substring(match.end());
+    
+    data.strSupp = INFO_BRK_PTN.matcher(data.strSupp).replaceAll("\n").trim();
+    
     return true;
   }
   
@@ -120,6 +142,19 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "POLAND TWP",
     "SMITH TWP",
     "SPRINGFIELD TWP",
+    
+    "BEAVER",
+    "BERLIN",
+    "CANFIELD",
+    "COITSVILLE",
+    "ELLSWORTH",
+    "GOSHEN",
+    "GREEN",
+    "JACKSON",
+    "MILTON",
+    "POLAND",
+    "SMITH",
+    "SPRINGFIELD",
 
     // Census-designated places
     "AUSTINTOWN",
@@ -182,6 +217,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     // Census-designated places
     "CALCUTTA",
     "DAMASCUS",
+    "DAMUSCUS",  // misspelled
     "EAST ROCHESTER",
     "GLENMOOR",
     "HOMEWORTH",
@@ -225,12 +261,20 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "WILLIAMSPORT",
     "WINONA",
 
-
     // Portage County
     "DEERFIELD",
-    "DEERFIELD TWP"
+    "DEERFIELD TWP",
+    "PALMYRA",
+    "PALMYRA TWP",
+    
+    // Trumbull County
+    "GIRARD"
 
   };
+  
+  private static final Properties CITY_FIXES = buildCodeTable(new String[]{
+      "DAMUSCUS",       "DAMASCUS"
+  });
   
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "6A",    "Accident With Injury",
