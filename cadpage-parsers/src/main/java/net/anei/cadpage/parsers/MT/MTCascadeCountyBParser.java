@@ -20,12 +20,39 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     return "911Text@911intn.org,@greatfallsmt.net";
   }
   
+  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([-A-Z0-9]+) ([^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)? (.*?) Map: *(.*?) Call Details: (.*)");
+  private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("Automatic R&R Notification")) return false;
     int pt = body.indexOf("\nCity of Great Falls");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(body.split("\n+"), data);
+    if (subject.startsWith("Automatic R&R Notification")) {
+      return parseFields(body.split("\n+"), data);
+    }
+    
+    if (subject.equals("Emergency Call")) {
+      setFieldList("DATE TIME CALL ADDR APT CITY ST ID MAP INFO");
+      Matcher match = MASTER2.matcher(body);
+      if (!match.matches()) return false;
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strCall = match.group(3);
+      parseAddress(match.group(4).trim(), data);
+      data.strCity = getOptGroup(match.group(5));
+      data.strState = getOptGroup(match.group(6));
+      data.strCallId = match.group(7).replaceAll("; ", " ");
+      data.strMap = match.group(8).trim();
+      for (String info : match.group(9).split("; ")) {
+        info = info.trim();
+        if (info.equals("None")) continue;
+        info = INFO_DATE_TIME_PTN.matcher(info).replaceFirst("");
+        data.strSupp = append(data.strSupp, "\n", info);
+      }
+      return true;
+    }
+    
+    return false;
   }
   
   @Override

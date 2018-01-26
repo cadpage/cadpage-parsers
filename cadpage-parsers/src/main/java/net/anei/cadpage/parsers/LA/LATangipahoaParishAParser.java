@@ -63,6 +63,7 @@ public class LATangipahoaParishAParser extends DispatchA46Parser {
       "SA",     "SUICIDE ATIEMPT",
       "SE",     "SEIZURE",
       "SF",     "STRUCTURE FIRE",
+      "SFCOMM", "COMMERCIAL STRUCTURE FIRE",
       "SH",     "SHOOTING",
       "SI",     "SICK",
       "STA",    "STABBING",
@@ -73,6 +74,7 @@ public class LATangipahoaParishAParser extends DispatchA46Parser {
       "TRDN",   "TREE DOWN",
       "UP",     "UNRESPONSIVE PERSON",
       "VF",     "VEHICLE FIRE",
+      "WC",     "WELLNESS CHECK",
       "WR",     "WRECK"
   });
 }
