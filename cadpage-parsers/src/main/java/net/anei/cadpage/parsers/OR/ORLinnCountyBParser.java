@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class ORLinnCountyBParser extends FieldProgramParser {
   
@@ -60,6 +62,11 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     setupCities(CITY_LIST);
     removeWords("PLACE");
     addRoadSuffixTerms("LP");
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
@@ -180,9 +187,10 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(\\d\\d/\\d\\d/\\d{4})|(\\d{4}-\\d{2}-\\d{2}))? (\\d\\d:\\d\\d:\\d\\d)(?:\\.\\d+)?");
   private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
-  private static final String DATE_TIME_MASK = "NN/NN/NNNN NN:NN:NN";
+  private static final String DATE_TIME_MASK1 = "NN/NN/NNNN NN:NN:NN";
+  private static final String DATE_TIME_MASK2 = "NNNN-NN-NN NN:NN:NN.NNN";
   private class MyDateTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
@@ -191,10 +199,16 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      field = field.replace(" /", "/").replace("/ ", "/");
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strDate = match.group(1);
-      data.strTime = match.group(2);
+      String date = match.group(1);
+      if (date == null) {
+        date = match.group(2);
+        date = date.substring(5,7)+'/'+date.substring(8,10) + '/' + date.substring(1,4);
+      }
+      data.strDate = date;
+      data.strTime = match.group(3);
       return true;
     }
     
@@ -204,7 +218,8 @@ public class ORLinnCountyBParser extends FieldProgramParser {
       
       if (!isLastField()) {
         field = DIGIT_PTN.matcher(field).replaceAll("N");
-        if (!DATE_TIME_MASK.startsWith(field)) abort();
+        if (!DATE_TIME_MASK1.startsWith(field) &&
+            !DATE_TIME_MASK2.startsWith(field)) abort();
       }
     }
   }
