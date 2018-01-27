@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.IL;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,8 +13,27 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ILKankakeeCountyParser extends SmartAddressParser {
   
+  public ILKankakeeCountyParser() {
+    super(CITY_LIST, "KANKAKEE COUNTY", "IL");
+    setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
+    setupSaintNames("MARYS", "MARTINS", "PETERS");
+    setupDoctorNames("JOHN");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "dispatchmessage@nwsmessage.net,@k3county.net,@vil.bourbonnais.il.us,kancomm@gmail.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA;
+  }
+  
   private static final Pattern MASTER_PTN3 =
-      Pattern.compile("(.*)(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)(?: +(\\d{4}-\\d{8}))?(?: +(.*))?");
+      Pattern.compile("(.*?)\\b(\\d\\d?/\\d\\d/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d)?+(?: [AP]M)?+)(?:((?:[, ]+(?:\\b\\d{4}-\\d{8}\\b|\\[\\d{4}-\\d{8}(?: [A-Z0-9]+)?+\\]))+)(?: +(.*))?)?");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern LEAD_DIR_PTN = Pattern.compile("([NSEW])\\b *(.*)");
   private static final Pattern APT_PTN = Pattern.compile("(.*?) *\\b(?:APT|RM|LOT) +([^ ]+) *(.*)", Pattern.CASE_INSENSITIVE);
   
@@ -25,27 +46,11 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
   private static final Pattern PLACE_CITY_BRK_PTN = Pattern.compile("\\b([A-Z0-9]+)([A-Z][a-z]+)\\b");
   private static final Pattern SRC_PTN = Pattern.compile("(Aroma Fire|Bourbonnais Fire|Herscher Fire|K3 Twp Fire|Manteno Fire|Momence Fire|Saline/Limestone Fire|Otto Fire|Saline/Limestone Fire|St.Anne Fire|Station #\\d+) +(.*)");
   
-  public ILKankakeeCountyParser() {
-    super(CITY_LIST, "KANKAKEE COUNTY", "IL");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(MWORD_STREET_LIST);
-  }
-  
-  @Override
-  public String getFilter() {
-    return "dispatchmessage@nwsmessage.net,noreply@k3county.net";
-  }
-  
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
-  }
-  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Check for message signature
-    if (!subject.equals("NWS Message")) return false;
+    if (!subject.equals("NWS Message") && !subject.startsWith("Automatic R&R Notification")) return false;
     
     // There are now three formats, Wish they would make up their minds
     Matcher match = MASTER_PTN2.matcher(body);
@@ -85,7 +90,12 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       setFieldList("CALL ADDR APT CITY ST PLACE DATE TIME ID X");
       body = match.group(1).trim();
       data.strDate = match.group(2);
-      data.strTime = match.group(3);
+      String time = match.group(3);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
       data.strCallId = getOptGroup(match.group(4));
       data.strCross = getOptGroup(match.group(5));
       
@@ -94,8 +104,12 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       // for multiple upper case letters followed by a lower case leter
       body = PLACE_CITY_BRK_PTN.matcher(body).replaceFirst("$1 $2");
       
+      body = body.replace('@', '&');
       parseAddress(StartType.START_CALL, FLAG_PAD_FIELD_EXCL_CITY | FLAG_CROSS_FOLLOWS, body, data);
-      if (data.strAddress.length() == 0) return false;
+      if (data.strAddress.length() == 0) {
+        parseAddress(data.strCall, data);
+        data.strCall = "";
+      }
       
       String pad = getPadField();
       match = LEAD_DIR_PTN.matcher(pad);
@@ -222,6 +236,7 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "<NEW>",
       "911:UNKNOWN",
       "911:ABANDONED",
       "ABANDONED",
@@ -241,12 +256,14 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "BATTERY",
       "BURGLARY",
       "CONTROL BURN",
+      "CRIM DAM PROP",
       "DEATH INVESTIGATION",
       "DECEASED SUBJ",
       "DIS CONDUCT",
       "DISABLED VEH",
       "DISTURBANCE",
       "DOM DIST",
+      "DRUG ACTIVITY",
       "DUI",
       "FIGHT",
       "FIRE:BRUSH",
@@ -268,15 +285,19 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "NEW",
       "OTHER DUTIES",
       "PERSON UNK",
+      "PERSON/ALCOHOL",
       "REMOVAL",
       "RIVERSIDE AMB",
+      "ROAD CLOSURE",
       "ROBBERY",
       "SERVICE",
       "SHOTS FIRED",                                                                                                                                                                                                 
       "SMOKE/ODOR",
+      "SUSPICIOUS ACTIVITY",
       "SUSPICIOUS PERSON",
       "TRAFFIC COMPLAINT",
       "UNKNOWN PROBLEM",
+      "VEHICLE CALL",
       "WALK THRU",
       "WEAPONS",
       "WELFARE CHECK",
@@ -340,7 +361,6 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     "ROBERTS",
     "ROSSVILLE",
     
-    
     // Grundy County
     "GARDNER",
     "GRUNDY COUNTY",
@@ -349,7 +369,9 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     
     // Iroquois County
     "IROQUOIS COUNTY",
+    "CHEBANSE TWP",
     "ASHKUM",
+    "CLIFTON",
     "BEAVERVILLE",
     "PAPINEAU",
     "THAWVILLE",
