@@ -74,6 +74,27 @@ public class COTellerCountyParser extends MsgParser {
       data.strCity = p.get(35);
       return true;
     }
+    
+    if (p.check("FIRE/EMS:")) {
+      setFieldList("SRC UNIT CALL ADDR APT");
+      data.strSource = p.get(32);
+      if (!p.check("~")) return false;
+      data.strUnit = p.get(30);
+      if (!p.check("~")) return false;
+      data.strCall = p.get(30);
+      if (!p.check("~")) return false;
+      parseAddress(p.get(), data);
+      return true;
+      
+    }
+    
+    if (p.checkAheadBlanks(36, 4) && !p.checkAheadBlanks(40, 1)) {
+      setFieldList("ADDR APT CALL");
+      parseAddress(p.get(40), data);
+      data.strCall = p.get();
+      return true;
+    }
+    
     return false;
   }
   
