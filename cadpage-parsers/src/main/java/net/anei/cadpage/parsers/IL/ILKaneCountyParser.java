@@ -5,7 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class ILKaneCountyParser extends GroupBestParser {
   
   public ILKaneCountyParser() {
-    super(new ILKaneCountyAParser(), new ILKaneCountyBParser(), new ILKaneCountyCParser());
+    super(new ILKaneCountyAParser(), new ILKaneCountyBParser(), 
+          new ILKaneCountyCParser(), new ILKaneCountyDParser());
   }
 
   static final String[] CITY_LIST = new String[]{
