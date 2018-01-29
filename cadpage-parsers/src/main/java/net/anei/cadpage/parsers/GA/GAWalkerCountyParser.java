@@ -22,13 +22,22 @@ public class GAWalkerCountyParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@walkerga.org";
+    return "dispatch@walkerga.org,4702193948";
   }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (!subject.equals("!")) return false;
+    do {
+      if (subject.equals("!")) break;
+      
+      if (body.startsWith("WALKER COUNTY GOVERNMENT: (!) ")) {
+        body = body.substring(30).trim();
+        break;
+      }
+      
+      return false;
+    } while (false);
     
     // There are two possible page formats, try the newest one first
     if (parseFormat2(body, data)) return true;
