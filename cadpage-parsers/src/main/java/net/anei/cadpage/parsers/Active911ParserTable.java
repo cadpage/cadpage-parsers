@@ -82,6 +82,7 @@ public class Active911ParserTable {
       "US/AL/Trussville",                 "ALJeffersonCountyJ",
       "US/AL/Velocityps",                 "ALJeffersonCountyF",
       "US/AL/WalkerCounty",               "ALWalkerCounty",
+      "US/AL/WinstonCounty",              "ALWinstonCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",
       "US/AR/Bentonville",                "ARBentonCountyC",
       "US/AR/CaveSpringsFD",              "ARBentonCountyA,ARBentonCountyD",

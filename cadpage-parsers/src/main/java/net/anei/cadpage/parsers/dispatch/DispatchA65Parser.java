@@ -44,6 +44,7 @@ public class DispatchA65Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       
       field = field.toUpperCase();
+      field = stripFieldEnd(field, ",");
       
       boolean force = false;
       Matcher match = CITY_ST_PTN.matcher(field);

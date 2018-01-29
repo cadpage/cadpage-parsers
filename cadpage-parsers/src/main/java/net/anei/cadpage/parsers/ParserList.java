@@ -141,6 +141,7 @@ public class ParserList {
               ,"ALStClairCounty"                ,"St Clair County, AL"
               ,"ALTalladegaCounty"              ,"Talladega County, AL"
               ,"ALWalkerCounty"                 ,"Walker County, AL"
+              ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
           new ParserCategory("Alaska"
               ,"AKFairbanks"                    ,"Fairbanks, AK"
