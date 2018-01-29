@@ -13,7 +13,7 @@ public class ILHancockCountyParser extends DispatchA29Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@Hancock911.com";
+    return "DISPATCH@Hancock911.com,hc911dispatch@hancockcounty-il.gov";
   }
 
   private static final String[] CITY_LIST = new String[]{
