@@ -25,7 +25,7 @@ public class NCMecklenburgCountyAParser extends MsgParser {
     return "paging@rcscom.com,@huntersvillefd.com,Group_Page_Notification@archwireless.net,@huntersvillefd.com,cadmail@medic911.com";
   }
   
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([-0-9]+) +(Received: *\\d\\d:\\d\\d *Assigned: *\\d\\d:\\d\\d *Enroute: *.*?) *INC #.*");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([-0-9]+) +(Received: *\\d\\d:\\d\\d *Assigned: *\\d\\d:\\d\\d *Enroute: *.*?)(?: *INC #.*)?");
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("(?<! ) *(?=Assigned:|Enroute:|Arrived:|Pt Contact:|Pt Cont:|Depart:|Hospital:|Available:|Cancelled:)");
   private static final Pattern PREFIX_PTN = Pattern.compile("Fire threatening Structure\\.");
   
