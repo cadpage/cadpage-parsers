@@ -13,6 +13,11 @@ public class KSWichitaParser extends FieldProgramParser {
     super(CITY_CODES, "WICHITA", "KS", "CALL ADDRCITY MAP ID UNIT SRC TIME! INFO+");
   }
   
+  @Override
+  public String getFilter() {
+    return "firepage2@yahoo.com,tony@turnerhometech.com";
+  }
+  
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!body.startsWith("** DISP ** ")) return false;
     body = body.substring(11).trim();
