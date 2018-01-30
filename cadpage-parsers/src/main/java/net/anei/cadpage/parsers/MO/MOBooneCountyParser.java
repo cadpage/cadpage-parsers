@@ -16,8 +16,7 @@ public class MOBooneCountyParser extends FieldProgramParser {
   
   public MOBooneCountyParser() {
     super(CITY_CODES, "BOONE COUNTY", "MO",
-      "( NEW_CALL ID ADDR/y APT GPS1 GPS2 ZIP PLACE X2 INFO/CS+? CALL DATE TIME SRC BOX UNIT PHONE! END" +
-      "| NEWCALL ID ADDR/y APT GPS1 GPS2 ZIP PLACE X X INFO EMPTY EMPTY CALL PRI BOX DATE TIME TIME SRC MAP INFO INFO INFO UNIT NAME! NAME? EMPTY PHONE )");
+          "NEW_CALL ID ADDR/y APT GPS1 GPS2 ZIP PLACE X2 INFO/CS+? CALL DATE TIME SRC BOX UNIT PHONE! END");
   }
   
   @Override
@@ -47,8 +46,7 @@ public class MOBooneCountyParser extends FieldProgramParser {
       }
     }
     
-    if (!super.parseFields(body.split(",", -1
-        ), data)) return false;
+    if (!super.parseFields(body.split(",", -1), data)) return false;
     return true;
   }
   
@@ -58,14 +56,11 @@ public class MOBooneCountyParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d{9}", true);
     if (name.equals("ZIP")) return new MyZipCityField();
     if (name.equals("X2")) return new MyCross2Field();
-    
-    if (name.equals("NEWCALL")) return new SkipField("NEWCALL", true);
     if (name.equals("CALL")) return new MyCallCodeField();
-    if (name.equals("PRI")) return new PriorityField("\\d?", true);
-    if (name.equals("SRC")) return new SourceField(".{2}|", true);
-    if (name.equals("MAP")) return new MapField("((\\d{2}-\\d{1,2}[A-Z]?)|SP1|)", true);
-    if (name.equals("NAME")) return new MyNameField();
-    if (name.equals("PHONE")) return new PhoneField("|\\d{7}(?:\\d{3})?|\\d{3}-(?:\\d{3}-)?\\d{4}|\\d{6}-\\d{4}", true);
+    if (name.equals("DATE"))  return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("SRC")) return new SourceField(".{2,3}|", true);
+    if (name.equals("PHONE")) return new PhoneField("|\\d{7}(?:\\d{3})?|\\d{3}-(?:\\d{3}-)?\\d{4}|\\d{6}-\\d{4}|[A-F]", true);
     return super.getField(name);
   }
   
@@ -105,7 +100,7 @@ public class MOBooneCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(\\S+)-(\\S.*)");
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(\\S+)-(\\S.*)|(EMS\\.)");
   private class MyCallCodeField extends CallField {
     
     @Override
@@ -118,8 +113,13 @@ public class MOBooneCountyParser extends FieldProgramParser {
       
       Matcher match = CALL_CODE_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strCode = match.group(1);
-      data.strCall = match.group(2);
+      String code = match.group(1);
+      if (code == null) {
+        data.strCall = match.group(3);
+      } else { 
+        data.strCode = code;
+        data.strCall = match.group(2);
+      }
       return true;
     }
     
@@ -131,14 +131,6 @@ public class MOBooneCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
-    }
-  }
-  
-  private class MyNameField extends NameField {
-    
-    @Override
-    public void parse(String field, Data data) {
-      data.strName = append(data.strName, ", ", field);
     }
   }
   
