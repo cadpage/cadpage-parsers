@@ -18,7 +18,8 @@ to open the main Android settings and select
 Apps > Cadpage > Permissions
 then enable the "Contact" permission.
 
-Then, open Cadpage Settings and select
+Then, open Cadpage Settings and selectmost of
+
 Payment Status > Recalculate Payment Status
 
 If that does not work, select "I cannot afford $9.99" to send us a new
