@@ -10,12 +10,12 @@ public class NYNassauCountyNParser extends FieldProgramParser {
   
   public NYNassauCountyNParser() {
     super("NASSAU COUNTY", "NY", 
-          "CALL:CALL! ADDR:ADDR! CITY:CITY! MAP:MAP CROSS:X ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNITS:UNIT SOURCE:SKIP! INFO:INFO! INFO/N+");
+          "CALL:CALL! ADDR:ADDR! CITY:CITY! MAP:MAP CROSS:X ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNITS:UNIT SOURCE:SKIP! INFO:INFO? INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "root@wlvacems.com,Mark@MimoCAD.io";
+    return "root@wlvacems.com,Mark@MimoCAD.io,dygear@mimocad.io";
   }
   
   @Override
