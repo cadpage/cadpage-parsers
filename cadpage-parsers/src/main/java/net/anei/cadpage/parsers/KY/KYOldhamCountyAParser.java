@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.KY;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
@@ -28,6 +30,14 @@ public class KYOldhamCountyAParser extends DispatchEmergitechParser {
     data.strUnit = "";
     return true;
   }
+  
+  private static final Pattern THREE_LAKES_RD_PTN = Pattern.compile("\\bTHREE LAKES RD\\b");
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = THREE_LAKES_RD_PTN.matcher(addr).replaceAll("3 LAKES RD");
+    return super.adjustMapAddress(addr);
+  }
 
   private static final String[] CITY_LIST = new String[]{
     "BALLARDSVILLE",
@@ -50,6 +60,9 @@ public class KYOldhamCountyAParser extends DispatchEmergitechParser {
     "LOUISVILLE",
     
     // Shelby County
-    "SHELBYVILLE"
+    "SHELBYVILLE",
+    
+    // Trimble County
+    "BEDFORD"
   };
 }
