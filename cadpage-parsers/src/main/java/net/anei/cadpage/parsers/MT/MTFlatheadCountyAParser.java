@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MT;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +36,10 @@ public class MTFlatheadCountyAParser extends FieldProgramParser {
   public MTFlatheadCountyAParser() {
     super("FLATHEAD COUNTY", "MT",
           "( SELECT/2 RESCUE_TYPE_DISPATH%EMPTY Unit:UNIT! Loc:ADDR2!  Type:CALL! INFO/N+ " +
-          "| Unit:UNIT Status:SKIP Location:ADDR1/SXa! Gen:PLACE Call_Type:CALL! Call_Time:TIME! Info:INFO )");
+          "| SMS_NOTIFICATION EMPTY! Address:ADDRCITY! Common_Name:PLACE! Venue:CITY! Closest_Intersection:X! Additional_Location_Info:INFO! RP_Phone_Number:PHONE! " + 
+              "Quadrant:MAP! District:MAP/L! LAT/LONG:GPS3! EMPTY! CFS_Number:SKIP! Call_Type:CALL! Nature_of_Call:CALL/SLS! Source:SKIP! Priority:PRI! Status:SKIP! " + 
+              "Caller:NAME3! Call_Date/Time:DATETIME3! Primary_Incident:ID! Dispatched_Units:UNIT! Units:UNIT/S! UNIT/S+ Incident_Numbers:SKIP! Narrative:INFO! INFO/N+ " +
+          "| Unit:UNIT Status:SKIP Location:ADDR1/SXa! Gen:PLACE Call_Type:CALL! Call_Time:TIME! Info:INFO/N+ )");
   }
   
   @Override
@@ -45,17 +50,21 @@ public class MTFlatheadCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.equals("Rescue Type Call")) {
+    if (subject.endsWith(" Type Call")) {
       setSelectValue("2");
       return parseFields(body.split("\n"), data);
     }
     
     if (!subject.equals("Dispatch Information")) return false;
-    
+
+    setSelectValue("1");
+    if (body.startsWith("SMS Notification ")) {
+      return super.parseFields(body.split("\n"), data);
+    }
+
     // Try the older labeled field format first
     if (body.contains("Call Type:")) {
       body = MISSED_BLANK_PTN.matcher(body).replaceAll(" ");
-      setSelectValue("1");
       return super.parseMsg(body, data);
     }
     
@@ -152,7 +161,7 @@ public class MTFlatheadCountyAParser extends FieldProgramParser {
     }
     info = DOUBLE_SLASH_PTN.matcher(info).replaceAll(" / ");
     if (info.endsWith("/")) info = info.substring(0,info.length()-1).trim();
-    data.strSupp = info;
+    data.strSupp = append(data.strSupp, "\n", info);
   }
   private static final Pattern NATURE_OF_CALL_PTN = Pattern.compile("(.*?) *\\bNature Of Call: *([A-Z0-9]+)\\b *(.*?)"); 
   private static final Pattern DISPATCH_UNIT_PTN = Pattern.compile(" *\\bDispatch received by unit ([A-Z0-9]+)\\b *");
@@ -165,6 +174,11 @@ public class MTFlatheadCountyAParser extends FieldProgramParser {
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("INFO")) return new MyInfoField();
+    
+    if (name.equals("SMS_NOTIFICATION")) return new SkipField("SMS Notification \\d{4}", true);
+    if (name.equals("GPS3")) return new MyGPS3Field();
+    if (name.equals("NAME3")) return new MyName3Field();
+    if (name.equals("DATETIME3")) return new MyDateTime3Field();
     return super.getField(name);
   }
   
@@ -240,6 +254,35 @@ public class MTFlatheadCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "UNIT CODE INFO";
+    }
+  }
+  
+  private static final Pattern GPS3_PTN = Pattern.compile("(?<=\\d)(?=-)");
+  private class MyGPS3Field extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      field = GPS3_PTN.matcher(field).replaceFirst(",");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyName3Field extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field,  ",");
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_3_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTime3Field extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_3_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
     }
   }
   
