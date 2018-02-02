@@ -946,6 +946,7 @@ public class Active911ParserTable {
       "US/NY/FingerLakesAmbulance",       "NYOntarioCountyB",
       "US/NY/FireRescueSystems",          "NYSuffolkCountyB,NYSuffolkCountyF",
       "US/NY/FireRescueSystemsSuffolkCounty","NYSuffolkCountyG,NYSuffolkCountyL",
+      "US/NY/FlandersFD",                 "NYSuffolkCountyAParser",
       "US/NY/FultonCounty",               "NYFultonCounty",
       "US/NY/GeneseeCounty",              "NYGeneseeCounty",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
