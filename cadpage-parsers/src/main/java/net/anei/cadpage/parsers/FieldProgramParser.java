@@ -2864,6 +2864,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class MapField extends Field {
     
+    private String append = "-";
+
     public MapField() {};
     public MapField(String pattern) {
       super(pattern);
@@ -2871,10 +2873,20 @@ public class FieldProgramParser extends SmartAddressParser {
     public MapField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, null);
+    }
 
     @Override
     public void parse(String field, Data data) {
-      data.strMap = append(data.strMap, "-", field);
+      if (append != null) {
+        data.strMap = append(data.strMap, append, field);
+      } else {
+        data.strMap = field;
+      }
     }
     
     @Override
