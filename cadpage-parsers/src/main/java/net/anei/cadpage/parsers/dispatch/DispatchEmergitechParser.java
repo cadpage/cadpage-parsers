@@ -549,7 +549,12 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     // An ADDR: keyword identifies new format
     if (body.contains(" ADDR:")) {
       setSelectValue("2");
-      body = body.substring(st).trim().replace(" BETWEEN ", " BETWEEN: ");
+      body = body.substring(st).trim();
+      int pt = body.indexOf(" BETWEEN ");
+      if (pt >= 0) {
+        pt += 8;
+        body = body.substring(0,pt) + ':' + body.substring(pt);
+      }
       return super.parseMsg(body, data);
     }
     
@@ -804,6 +809,8 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   private static final Pattern INFO_GPS_PTN8 = Pattern.compile("=([+-]?[0-9\\.]+) Y=([+-]?[0-9\\.]+) F= *\\d+% UF= *\\d*\\b *");
   private static final Pattern INFO_GPS_PTN9 = Pattern.compile("(?:(\\(\\d{3}\\)\\d{3}-\\d{4}))?LAT:([-+]?\\d{3}\\.\\d{5,6})LON:([-+]?\\d{3}\\.\\d{5,6})(?:ELV:\\d*)?COF:\\d*COP:(?:0+|\\d{2})");
   private static final Pattern INFO_GPS_PTN10 = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{5,6})([-+]\\d{3}\\.\\d{5,6})\\b");
+  private static final Pattern INFO_GPS_PTN11 = Pattern.compile("CALLBK=(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{6})([-+]\\d{3}\\.\\d{6})(?:CF=\\d{1,3}%)?");
+  private static final Pattern INFO_GPS_TRUNC = Pattern.compile("ALT#[=(]|CF=|X=CALLBK=");
 
   private class BaseInfoField extends InfoField {
     @Override
@@ -858,6 +865,11 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         data.strPhone = getOptGroup(match.group(1));
         setGPSLoc(match.group(2)+','+match.group(3), data);
       }
+      else if ((match = INFO_GPS_PTN11.matcher(compField)).lookingAt()) {
+        found = true;
+        data.strPhone = getOptGroup(match.group(1));
+        setGPSLoc(match.group(2)+','+match.group(3), data);
+      }
       
       if (found) {
         int pos = 0;
@@ -881,6 +893,9 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         found = true;
         setGPSLoc(match.group(1)+','+match.group(2), data);
         field = field.substring(match.end());
+      }
+      else if (INFO_GPS_TRUNC.matcher(field).lookingAt()) {
+        return;
       }
       
       super.parse(field, data);

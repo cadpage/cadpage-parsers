@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class OHClarkCountyBParser extends SmartAddressParser {
   
   public OHClarkCountyBParser() {
-    super(CITY_LIST, "CLARK COUNTY", "OH");
+    super(OHClarkCountyParser.CITY_LIST, "CLARK COUNTY", "OH");
     setFieldList("PLACE ADDR APT CITY X CALL INFO ID");
     removeWords("CL", "UNIT");
   }
@@ -24,8 +24,8 @@ public class OHClarkCountyBParser extends SmartAddressParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    // Way to promiscous
-    if (!isPositiveId()) return false;
+    if (!body.startsWith("Dispatch:")) return false;
+    body = body.substring(9).trim();
         
     //remove leading dash and trailing -nnnn
     Matcher mat = MASTER.matcher(body);
@@ -124,41 +124,4 @@ public class OHClarkCountyBParser extends SmartAddressParser {
     
     return true;
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-    
-    // Cities
-    "NEW CARLISLE",
-    "SPRINGFIELD",
-
-    // Villages
-    "CATAWBA",
-    "CLIFTON",
-    "DONNELSVILLE",
-    "ENON",
-    "NORTH HAMPTON",
-    "SOUTH CHARLESTON",
-    "SOUTH VIENNA",
-    "TREMONT CITY",
-
-    // Townships
-    "BETHEL TWP",
-    "GERMAN TWP",
-    "GREEN TWP",
-    "HARMONY TWP",
-    "MAD RIVER TWP",
-    "MADISON TWP",
-    "MOOREFIELD TWP",
-    "PIKE TWP",
-    "PLEASANT TWP",
-    "SPRINGFIELD TWP",
-
-    // Census-designated places
-    "CRYSTAL LAKES",
-    "GREEN MEADOWS",
-    "HOLIDAY VALLEY",
-    "NORTHRIDGE",
-    "PARK LAYNE"
-  };
-
 }
