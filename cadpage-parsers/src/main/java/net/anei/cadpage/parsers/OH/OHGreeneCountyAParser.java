@@ -18,7 +18,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
   public OHGreeneCountyAParser() {
     super(CITY_LIST, "GREENE COUNTY", "OH",
           "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:SKIP! Narative:INFO/N " + 
-          "| CALL2 Location:ADDR2/SXXx! Time:TIME Units:UNIT Common_Name:PLACE Info:INFO ( Problem:CALL Patient_Info:INFO | Nature_Of_Call:CALL ) Incident_#:ID2 Narrative:INFO Nature_Of_Call:CALL/SDS Quadrant:MAP EMS_District:MAP/SDS )");
+          "| CALL2 Location:ADDR2/SXXx! Time:TIME Units:UNIT Common_Name:PLACE Info:INFO ( Problem:CALL Patient_Info:INFO | Nature_Of_Call:CALL ) Incident_#:ID2 Narrative:INFO Nature_Of_Call:CALL/SDS Quadrant:MAP EMS_District:MAP )");
   }
   
   @Override
