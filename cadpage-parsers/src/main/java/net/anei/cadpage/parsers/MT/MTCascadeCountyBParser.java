@@ -20,7 +20,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     return "911Text@911intn.org,@greatfallsmt.net";
   }
   
-  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([-A-Z0-9]+) ([^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)? (.*?) Map: *(.*?) Call Details: (.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([-A-Z0-9]+) ([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+|[^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)? (.*?) Map: *(.*?) Call Details: (.*)");
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   
   @Override
