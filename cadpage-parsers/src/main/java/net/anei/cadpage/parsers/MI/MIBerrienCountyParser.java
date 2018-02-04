@@ -144,9 +144,7 @@ public class MIBerrienCountyParser extends FieldProgramParser {
       "LAPORTE CO",   "IN",
       "LAPORTE",      "IN",
       "NEW CARLISLE", "IN",
-      "PORTER CO",    "IN",
       "SOUTH BEND",   "IN",
-      "SPRINGFIELD",  "IN",
       "ST JOSEPH CO", "IN",
       "WARREN TWP",   "IN"
   });
@@ -189,13 +187,19 @@ public class MIBerrienCountyParser extends FieldProgramParser {
     "MILTON",
     
     // La Porte County
+    "LA PORTE",
     "LAPORTE",
+    "LAPORTE CO",
     
     // Van Buren County
     "VAN BUREN COUNTY",
     "COVERT",
     
     // St Joseph County
+    "ST JOE", 
+    "ST JOE CO",
+    "ST JOE COUNTY",
+    "ST JOSEPH CO",
     "NEW CARLIE",
     "NEW CARLISLE",
     "NEW CARLYIYSLE",
