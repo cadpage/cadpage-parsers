@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.KY;
 
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 /**
@@ -18,6 +19,16 @@ public class KYCampbellCountyParser extends DispatchA27Parser {
     return "noreply@cisusa.org,do-not-reply@cccdcky.org";
   }
   
+  private static final Pattern LEAD_ZERO_PTN = Pattern.compile("\\b0+(?=\\d)");
+  
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strCallId =  LEAD_ZERO_PTN.matcher(data.strCallId).replaceAll("");
+    data.strUnit =  LEAD_ZERO_PTN.matcher(data.strUnit).replaceAll("");
+    return true;
+  }
+
   @Override
   public int getMapFlags() {
     
