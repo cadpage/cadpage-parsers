@@ -12,17 +12,18 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
   public MOJacksonCountyBParser() {
     super("JACKSON COUNTY", "MO", 
           "( SELECT/RR ID ID/C ADDR CALLCODE TIMES END " +
+          "| ID3 ADDR CITY CALL CH MAP! Assigned:UNIT UNIT/C+ Apt/Lot:APT! Location:PLACE END " +
           "| ADDR! CALLCODE! CH! CASE! ( ID2/C! Assigned:UNIT! | UNIT! ) UNIT/C+ )");
   }
   
   @Override
   public String getFilter() {
-    return "totalaccess@mobilfonetotalaccess.com";
+    return "totalaccess@mobilfonetotalaccess.com,KCFD.Notify@kcmo.org";
   }
   
   private static Pattern BODY_DATETIME = Pattern.compile("(.*?)(\\d{2}/\\d{2}/\\d{2})? (\\d{2}:\\d{2}:\\d{2})"); //no space between BODY and DATE
   private static final Pattern RR_DELIM = Pattern.compile(" {3,}");
-  private static final Pattern DELIM = Pattern.compile(" *, *");
+  private static final Pattern DELIM = Pattern.compile(" *, *| *(?=Apt/Lot:|Location:)");
   public boolean parseMsg(String body, Data data) {
     
     //parse trailing DATE? TIME
@@ -36,12 +37,17 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
     if (body.contains("First Arrive,")) {
       data.msgType = MsgType.RUN_REPORT;
       setSelectValue("RR");
-      return parseFields(RR_DELIM.split(body), data);
+      if (!parseFields(RR_DELIM.split(body), data)) return false;
     }
     
     //try parsing normally
-    setSelectValue("");
-    return parseFields(DELIM.split(body), data);
+    else {
+      setSelectValue("");
+      if (!parseFields(DELIM.split(body), data)) return false;
+    }
+    
+    if (data.strCity.equals("North Kansas Ci")) data.strCity += "ty";
+    return true;
   }
   
   @Override
@@ -51,6 +57,7 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ID3")) return new IdField("\\d\\d-\\d{6}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALLCODE")) return new MyCallCodeField();
     if (name.equals("CH")) return new ChannelField("[A-Z]+-[A-Z0-9]+|", true); //only two examples, possibly numeric chars before the "-"?
