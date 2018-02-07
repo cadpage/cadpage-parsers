@@ -16,6 +16,7 @@ public class PASomersetCountyAParser extends DispatchB3Parser {
   public PASomersetCountyAParser() {
     super(CITY_LIST, "SOMERSET COUNTY", "PA");
     setupCallList((CodeSet)null);
+    removeWords("BROOK");
   }
 
   @Override
@@ -40,7 +41,12 @@ public class PASomersetCountyAParser extends DispatchB3Parser {
     
     body = stripFieldStart(body, "911CENTER:");
     body = body.replace(" AT ", " & ");
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    if (data.strApt.startsWith("MP")) {
+      data.strAddress = append(data.strAddress, " ", data.strApt);
+      data.strApt = "";
+    }
+    return true;
   }
   
   @Override
@@ -61,6 +67,7 @@ public class PASomersetCountyAParser extends DispatchB3Parser {
     "CHAMPION",
     "CONFLUENCE",
     "GARRETT",
+    "HOLLSOPPLE",
     "HOOVERSVILLE",
     "INDIAN LAKE",
     "JENNERSTOWN",
@@ -124,10 +131,16 @@ public class PASomersetCountyAParser extends DispatchB3Parser {
     "QUECREEK",
     "SPRINGS",
     
+    // Cambria County
+    "ADAMS TWP",
+    
     // Fayette County
     "CHAMPION",
     
     // Bedford County
+    "BEDFORD",
+    "NAPIER TWP",
+    "NEW PARIS",
     "SCHELLSBURG"
   };
 }

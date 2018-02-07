@@ -6,7 +6,8 @@ public class PASomersetCountyParser extends GroupBestParser {
   
   public PASomersetCountyParser() {
     super(new PASomersetCountyAParser(), 
-          new PASomersetCountyBParser());
+          new PASomersetCountyBParser(),
+          new PASomersetCountyCParser());
   }
   
 }
