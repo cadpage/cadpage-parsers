@@ -306,12 +306,14 @@ public class DispatchB2Parser extends DispatchBParser {
       Matcher match = CROSS_LABEL_PTN.matcher(field);
       boolean forceCross = match.lookingAt();
       if (forceCross) field = field.substring(match.end());
-      int flags = FLAG_ONLY_CROSS;
-      if (data.strCity.length() == 0) flags |= FLAG_ONLY_CITY;
-      Result res = parseAddress(StartType.START_ADDR, flags, field);
+      Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, field);
       if (forceCross || res.isValid()) {
         res.getData(data);
         field = res.getLeft();
+      }
+      if (data.strCity.length() == 0) {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field, data);
+        field = getLeft();
       }
     }
     data.strName = append(field, " ", data.strName);
