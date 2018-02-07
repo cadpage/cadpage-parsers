@@ -11,7 +11,12 @@ public class DispatchH04Parser extends HtmlProgramParser {
   
   public DispatchH04Parser(String defCity, String defState) {
     super(defCity, defState, 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! Cross_Streets:X? Lat_/_Long:GPS? ID:ID! PRI:PRI? DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+");
+          "SKIP? ( CALL:CALL! | Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2 | FIRE_CALL_TYPE:CALL! EMS_CALL_TYPE:CALL2! ) " + 
+             "PLACE:PLACE! ADDR:ADDRCITY! Cross_Streets:X? Lat_/_Long:GPS? ID:ID! " + 
+             "( PRI:PRI! | FIRE_PRIORITY:PRI! EMS_PRIORITY:PRI2! | ) DATE:DATETIME! " + 
+             "( MAP:MAP! | FIRE_QUADRANT:MAP! EMS_District:MAP2! ) " + 
+             "( UNIT:UNIT! | ASSIGNED_UNIT(s):UNIT! ) " + 
+             "( INFO:INFO! | NARRATIVE:INFO! ) INFO/N+");
   }
   
   @Override
@@ -33,10 +38,21 @@ public class DispatchH04Parser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL2")) return new BaseCall2Field();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("PRI2")) return new BasePriority2Field();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("MAP2")) return new BaseMap2Field();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+  
+  private class BaseCall2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strCall)) return;
+      data.strCall = append(data.strCall, " / ", field);
+    }
   }
   
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*?,.*), *(.*)");
@@ -55,6 +71,22 @@ public class DispatchH04Parser extends HtmlProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST";
+    }
+  }
+  
+  private class BasePriority2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strPriority)) return;
+      data.strPriority = append(data.strPriority, " / ", field);
+    }
+  }
+  
+  private class BaseMap2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strMap)) return;
+      data.strMap = append(data.strMap, " / ", field);
     }
   }
   
