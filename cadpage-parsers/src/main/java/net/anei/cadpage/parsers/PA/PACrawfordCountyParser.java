@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +18,8 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
 
   public PACrawfordCountyParser() {
     super(PREFIX_PTN, CITY_LIST, "CRAWFORD COUNTY", "PA");
-    removeWords("CIRCLE", "TRL");
+    removeWords("CIRCLE", "LANE", "TRL");
+    setupSaintNames("JAMES");
     
     // Normally DispatchB3Parser subclasses do not need the call and multiple
     // word street lists because the subject splits them out nicely.  But
@@ -67,37 +71,58 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       if (data.strCity.equals("VNG COUNTY")) data.strCity = "VENANGO COUNTY";
     } else if (data.strCity.equals("LEBOUF TWP")) data.strCity = "LEBOEUF TWP";
     
+    if (OHIO_CITIES.contains(data.strCity)) data.strState = "OH";
+    
     if (data.strCallId.length() == 0) data.expectMore = true;
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replaceAll("CITY", "CITY ST");
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
       "ATLANTIC LAKE",
       "BEAVER CENTER",
+      "BELL HILL",
       "BLOOMING VALLEY",
+      "BLUE FALLS",
       "BOCKMAN HOLLOW",
+      "BOY SCOUT",
+      "BRADLEY TOWN",
       "BRICK CHURCH",
       "BROWN HILL",
+      "BRUNOT CORNERS",
       "CAMBRIDGE SPRINGS",
       "CAPTAIN WILLIAMS",
+      "CHUCK A LOU",
       "CLEVELAND BROWNS",
       "CONNEAUT LAKE",
+      "COUNTRY ACRES TRAILER",
       "COUNTY LINE",
       "CRYSTAL LAKE",
       "DARI DELL",
+      "DE VILLARS",
+      "DIBBLE HILL",
       "DRAKE HILL",
       "DUTCH HILL",
+      "ELLIS HILL",
       "FOREST GREEN",
       "FRENCH CREEK",
+      "GOLF COURSE",
       "GOSPEL HILL",
       "GRANGE CENTER",
       "GRAVEL PIT",
       "GRAVEL RUN",
       "GUYS MILLS",
       "HATCH HILL",
+      "HICKORY CORNERS",
       "HIGBY HILL",
       "HIPPLE HILL",
       "HOGBACK WEST",
+      "HUMES HILL",
+      "HUNTERS RIDGE",
       "JIM TOBIN",
       "JOHN BROWN",
       "KIRILA LAKE",
@@ -108,38 +133,54 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "LEBOEUF TRL",
       "LITTLE COOLEY",
       "MAPLE HILL",
+      "MIKE WOOD",
       "MILLER HILL",
       "MILLER STATION",
       "MORNING VIEW",
+      "MOSS GROVE",
       "MOUNT PLEASANT",
       "MYSTIC PARK",
+      "NEWTON TOWN",
       "NICKEL PLATE",
       "OAKLAND BEACH",
       "OIL CREEK",
       "OWEN HILL",
       "PARK LANE",
+      "PEACH BLOSSOM",
       "PEPPERS TRAILER",
+      "PINEVIEW CAMPLANDS",
       "POST OFFICE",
       "POST RIDGE",
       "REASH CHURCH",
       "REEDS CORNERS",
       "RIDGE VIEW",
       "RIDGEWAY HILL",
+      "ROCK CREEK",
+      "ROCKY GLEN",
       "ROGERS FERRY",
       "ROUND TOP",
+      "RUSSELLS COTTAGE",
+      "SAINT JOHN",
       "SANDY LAKE",
       "SHADY ACRES",
+      "SHEAKLEYVILLE - GREENVILLE",
       "SHERRED HILL",
       "SMITH HEATH",
       "SPOTTED FAWN",
+      "STANHOPE KELLOGSVILLE",
       "STAR ROUTE",
+      "STATE PARK ACCESS",
       "STEEN HILL",
       "STONEY POINT",
+      "STORM FELL",
       "SUGAR CREEK",
       "SUGAR LAKE",
       "SWIFT HILL",
+      "THREE BRIDGES",
       "TOURS END",
       "TROY CENTER",
+      "TURKEY TRACK",
+      "WALTON HILL",
       "WATSON RUN",
       "WHITE HILL",
       "WHITE OAK",
@@ -148,6 +189,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "911 CALL CHECK",
       "ALLERGIC REACTION",
       "ALTERED LOC",
       "ASSAULT",
@@ -157,6 +199,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "BLEEDING",
       "BRUSH FIRE",
       "BURGLAR ALARM",
+      "BURN VICTIM",
       "CARBON MONOXIDE INVESTIGATION",
       "CARDIAC ARREST",
       "CARDIAC SYMPTOMS",
@@ -201,6 +244,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "OVERDOSE",
       "PAIN GENERAL",
       "PEDESTRIAN STRUCK",
+      "POISONING",
       "POSSIBLE DOA",
       "POST SURGICAL COMPLICATION",
       "PUBLIC SERVICE DETAIL",
@@ -209,6 +253,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "SEARCH",
       "SEIZURES",
       "SMOKE INVESTIGATION",
+      "STABBING",
       "STROKE/CVA",
       "STRUCTURE FIRE",
       "STRUCTURE FIRE W ENTRAPMENT",
@@ -305,29 +350,151 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
     "WEST SHENANGO TWP",
     "WOODCOCK TWP",
     
-    // Ashtabula County
+    "OHIO",
+    
+    // Ashtabula County, Ohio
+    "ASHTABULA",
     "ASHTABULA CO",
+    "ASHTABULA COUNTY",
+    
+    "ANDOVER TWP",
+    "PIERPONT TWP",
+    "WILLIAMSFIELD TWP",
+    
+    "ANDOVER",
+    "PIERPONT",
+    "WILLIAMSFIELD",
     
     // Erie County
+    "ERIE",
     "ERIE CO",
     "ERIE COUNTY",
+    
+    "CONCORD TWP",
+    "CONNEAUT TWP",
+    "ELK CREEK TWP",
+    "FRANKLIN TWP",
     "LEBOUF TWP",  // Misspelled
     "LEBOEUF TWP",
     "SUMMMIT TWP",
     "SUMMIT TOWNSHIP",
+    "UNION TWP",
+    "WASHINGTON TWP",
+
+    "CONCORD",
+    "CONNEAUT",
+    "ELK CREEK",
+    "FRANKLIN",
+    "LEBOEUF",
+    "SUMMMIT",
+    "UNION",
+    "WASHINGTON",
+    
+    "ALBION",
+    "CORRY",
+    "CRANESVILLE",
+    "EDINBORO",
+    "ELGIN",
+    "MILL VILLAGE",
+    "UNION CITY",
     
     // Mercer County
+    "MERCER",
     "MERCER COUNTY",
     "MERCER CO",
     
-    "FRENCH CREEK",
-    "SANDY LAKE",
-    
     "DEER CREEK TWP",
     "FRENCH CREEK TWP",
+    "GREENE TWP",
+    "HEMPFIELD TWP",
+    "MILL CREEK TWP",
+    "NEW VERNON TWP",
+    "OTTER CREEK TWP",
+    "PERRY TWP",
+    "SALEM TWP",
+    "SANDY CREEK TWP",
+    "SUGAR GROVE TWP",
+    
+    "DEER CREEK",
+    "FRENCH CREEK",
+    "GREENE",
+    "HEMPFIELD",
+    "NEW VERNON",
+    "OTTER CREEK",
+    "PERRY",
+    "SALEM",
+    "SANDY CREEK",
+    "SANDY LAKE",
+    "SUGAR GROVE",
+    
+    "GREENVILLE",
+    "JAMESTOWN",
+    "NEW LEBANON",
+    "SHEAKLEYVILLE",
+    
+    // Trumbull County, Ohio
+    "TRUMBULL",
+    "TRUMBULL COUNTY",
+    "TRUMBULL CO",
+    
+    "KINSMAN TWP",
+    
+    "KINSMAN",
+    "VERNON",
     
     // Venango County
+    "VENANGO",
+    "VENANGO CO",
+    "VENANGO COUNTY",
     "VNG CO",
-    "PLUM TWP"
+    "VNG COUNTY",
+    
+    "CANAL TWP",
+    "JACKSON TWP",
+    "PLUM TWP",
+    
+    "CANAL",
+    "COOPERSTOWN",
+    "JACKSON",
+    "PLUM",
+    
+    "COOPERSVILLE",
+    "CHAPMANVILLE",
+    "UTICA",
+    
+    // Warren County
+    "WARREN",
+    "WARREN CO",
+    "WARREN COUNTY",
+    
+    "COLUMBUS TWP",
+    "SPRING CREEK TWP",
+    "ELDRED TWP",
+    "SOUTHWEST TWP",
+    
+    "COLUMBUS",
+    "SPRING CREEK",
+    "ELDRED",
+    "SOUTHWEST"
   };
+  
+  private static final Set<String> OHIO_CITIES = new HashSet<String>(Arrays.asList(
+      "ASHTABULA",
+      "ASHTABULA CO",
+      "ASHTABULA COUNTY",
+      "ANDOVER TWP",
+      "PIERPONT TWP",
+      "WILLIAMSFIELD TWP",
+      "ANDOVER",
+      "PIERPONT",
+      "RICHMOND",
+      "WILLIAMSFIELD",
+      
+      "TRUMBULL",
+      "TRUMBULL COUNTY",
+      "TRUMBULL CO",
+      "KINSMAN TWP",
+      "KINSMAN",
+      "VERNON"
+  )); 
 }
