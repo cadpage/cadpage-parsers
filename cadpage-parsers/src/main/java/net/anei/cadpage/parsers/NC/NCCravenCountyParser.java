@@ -7,6 +7,7 @@ public class NCCravenCountyParser extends GroupBestParser {
 
   public NCCravenCountyParser() {
     super(new NCCravenCountyAParser(), new NCCravenCountyBParser(), 
-          new NCCravenCountyCParser(), new NCCravenCountyDParser());
+          new NCCravenCountyCParser(), new NCCravenCountyDParser(),
+          new NCCravenCountyEParser());
   }
 }

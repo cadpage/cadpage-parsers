@@ -814,7 +814,7 @@ public class Active911ParserTable {
       "US/NC/GuilfordCounty",             "NCGuilfordCounty",
       "US/NC/HalifaxCounty",              "NCHalifaxCounty",
       "US/NC/HarnettCounty",              "NCHarnettCountyC",
-      "US/NC/Havelock",                   "NCHavelock",
+      "US/NC/Havelock",                   "NCCravenCountyE",
       "US/NC/HendersonCounty",            "NCHendersonCounty",
       "US/NC/HighPoint",                  "NCGuilfordCounty",
       "US/NC/HokeCounty",                 "NCHokeCounty",

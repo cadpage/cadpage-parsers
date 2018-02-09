@@ -1004,7 +1004,6 @@ public class ParserList {
               ,"NCGuilfordCounty"               ,"Guilford County, NC"
               ,"NCHalifaxCounty"                ,"Halifax County, NC"
               ,"NCHarnettCounty"                ,"Harnett County, NC"
-              ,"NCHavelock"                     ,"Havelock, NC"
               ,"NCHaywoodCounty"                ,"Haywood County, NC"
               ,"NCHendersonCounty"              ,"Henderson County, NC"
               ,"NCHertfordCounty"               ,"Hertford County, NC"
