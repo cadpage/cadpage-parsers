@@ -1505,6 +1505,7 @@ public class Active911ParserTable {
       "US/WA/WhitmanCounty",              "WAWhitmanCounty",
       "US/WA/YakimaCounty",               "WAYakimaCounty",
       "US/WI/CityofLakeGeneva",           "WIWalworthCounty",
+      "US/WI/BrownCounty",                "WIBrownCountyA",
       "US/WI/DaneCounty",                 "WIDaneCounty",
       "US/WI/DoorCounty",                 "WIDoorCounty",
       "US/WI/DouglasCounty",              "WIDouglasCounty",

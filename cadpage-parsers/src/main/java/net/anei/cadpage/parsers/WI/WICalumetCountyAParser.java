@@ -33,6 +33,9 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
+    int pt = body.indexOf("\n******");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     if (!super.parseMsg(body, data)) return false;
     
     // There are two address adjustments that need to be made.
