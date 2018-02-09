@@ -137,6 +137,7 @@ public class MIBayCountyAParser extends SmartAddressParser {
       "COMFIRE",
       "FIRE ALARM",
       "GAS IN",
+      "GAS OUT",
       "MED",
       "PIA",
       "POLE",
@@ -144,6 +145,7 @@ public class MIBayCountyAParser extends SmartAddressParser {
       "STRUCTURE",
       "SUICIDE",
       "TEST",
+      "TREE",
       "VEH FIRE",
       "WIRE"
   );
