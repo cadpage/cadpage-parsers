@@ -29,7 +29,7 @@ public class ZCAABCanmoreParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "LuchiaM@fresc.ca";
+    return "@fresc.ca";
   }
   
   @Override
