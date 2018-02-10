@@ -1,15 +1,16 @@
 package net.anei.cadpage.parsers.KY;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class KYFortKnoxParser extends FieldProgramParser {
 
   public KYFortKnoxParser() {
-    super("FORT KNOX", "KY", "ID:ID! CLASS:CALL! CALL:CALL/SDS! PRI:PRI! PLACE:PLACE ADDR:ADDR! GPS:GPS! END");
+    super("FORT KNOX", "KY", 
+          "INCIDENT:ID! TITLE:CALL! PLACE:PLACE? ADDRESS:ADDR? CITY:CITY? STATE:ST? GPS:GPS! ( BOX:BOX! | Box:BOX! | ) NOTES:INFO/N+");
   }
   
   @Override
@@ -18,25 +19,33 @@ public class KYFortKnoxParser extends FieldProgramParser {
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("TEST Incident Alert")) return false;
+  protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{3}),([-+]?\\d{2,3}\\.\\d{3})");
-  private class MyGPSField extends GPSField {
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = GPS_PTN.matcher(field);
-      if (match.matches()) {
-        setGPSLoc(match.group(1)+"000" + "," + match.group(2) + "000", data);
+      if (field.endsWith("[CLOSED]")) {
+        data.msgType = MsgType.RUN_REPORT;
       }
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *(?:Incident created|Incident closed|\\S+ changed)$");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_JUNK_PTN.matcher(field).replaceFirst("");
+      super.parse(field, data);
     }
   }
 }
