@@ -2,6 +2,8 @@ package net.anei.cadpage.parsers.OH;
 
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 public class OHPerryCountyParser extends DispatchEmergitechParser {
@@ -15,6 +17,12 @@ public class OHPerryCountyParser extends DispatchEmergitechParser {
     return "@perrycountyohio.net";
   }
   
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = TWP_RD_PTN.matcher(addr).replaceAll("TOWNSHIP HWY");
@@ -47,6 +55,7 @@ public class OHPerryCountyParser extends DispatchEmergitechParser {
     "JACKSON TWP",
     "MADISON TWP",
     "MONDAY CREEK TWP",
+    "MONDAY CREEK",
     "MONROE TWP",
     "PIKE TWP",
     "PLEASANT TWP",
@@ -66,6 +75,69 @@ public class OHPerryCountyParser extends DispatchEmergitechParser {
     "WHIPSTOWN",
     
     //ghost town
-    "SAN TOY"
+    "SAN TOY",
+    
+    // Athens Counthy
+    "AMES TWP",
+    "CHAUNCEY TWP",
+    "TRIMBLE TWP",
+    "YORK TWP",
+    "AMESVILLE",
+    "DOVER",
+    "JACKSONVILLE",
+    "GLOUSTER",
+    "NELSONVILLE",
+    "TRIMBLE",
+    
+    // Fairfield County
+    "PLEASANT TWP",
+    "RICHLAND TWP",
+    "RUSH CREEK TWP",
+    "WALNUT TWP",
+    "BUCKEYE LAKE",
+    "BREMEN",
+    "LANCASTER",
+    "MILLERSPORT",
+    "PLEASANTVILLE",
+    "RUSHVILLE",
+    "THURSTON",
+    "WEST RUSHVILLE",
+    
+    // Hocking County
+    "FALLS TWP",
+    "GREEN TWP",
+    "MARION TWP",
+    "WARD TWP",
+    "BUCHTEL",
+    "FALLS",
+    "LOGAN",
+    "MURRAY CITY",
+    
+    // Licking County
+    "BOWLING GREEN",
+    "FRANKLIN TWP",
+    "HOPEWELL TWP",
+    "LICKING TWP",
+    "UNION TWP",
+    "GRATIOT",
+    "HARBOR HILLS",
+    "HEBRON",
+    
+    // Muskingum County
+    "BRUSH CREEK TWP",
+    "CLAY TWP",
+    "FALLS TWP",
+    "HOPEWELL TWP",
+    "NEWTON TWP",
+    "SPRINGFIELD TWP",
+    "SOUTH ZANESVILLE",
+    "ROSEVILLE",
+    "ZANESVILLE",
+    
+    // Morgan County
+    "DEERFIELD TWP",
+    "HOMER TWP",
+    "UNION TWP",
+    "YORK TWP"
   };
 }

@@ -479,7 +479,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     super(cityList, defCity, defState,
           "( SELECT/2 CALL:CALL! PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
           "| Nature:CALL Location:ADDR/S2! Comments:INFO " + 
-          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+? ( LOCATION:ADDR2! | PLACE:ADDR2! ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO )");
+          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+ ( LOCATION:ADDR2! | PLACE:ADDR2! | ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO )");
     this.extraSpacePosList = extraSpacePosList;
     this.prefixList = prefixList;
     this.optUnit = optUnit;
@@ -561,7 +561,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     
     // See if this is the new fangled dash delimited format.  Makes things so much easier
     setSelectValue("1");
-    if (body.contains(" - LOCATION:") || body.contains(" - PLACE:")) {
+    if (body.contains(" - LOCATION:") || body.contains(" - PLACE:") || body.contains(" - NATURE:")) {
       if (body.endsWith("-")) body += ' ';
       int pt = body.indexOf(" BETWEEN ");
       if (pt >= 0) {
