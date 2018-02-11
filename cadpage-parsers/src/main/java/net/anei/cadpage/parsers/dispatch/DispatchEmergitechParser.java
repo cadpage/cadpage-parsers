@@ -639,7 +639,8 @@ public class DispatchEmergitechParser extends FieldProgramParser {
       data.strSupp = "";
       if (data.strCall.length() == 0) data.strCall = "ALERT";
     }
-    return true;
+    return data.strAddress.length() > 0 || data.strGPSLoc.length() > 0
+           || data.strCallId.length() > 0 || data.strSupp.length() > 0;
   }
   
   private String checkPrefix(String body) {
