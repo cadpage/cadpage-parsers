@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.ND;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +15,7 @@ public class NDCassCountyParser extends SmartAddressParser {
  
   public NDCassCountyParser() {
     super(CITY_CODES, "CASS COUNTY", "ND");
-    setFieldList("CALL ADDR APT CITY ST PLACE X DATE TIME ID INFO UNIT GPS MAP");
+    setFieldList("DATE TIME CALL ADDR APT CITY ST PLACE X ID INFO UNIT GPS MAP");
     setupCallList(CALL_LIST);
     removeWords("ESTATES");
     setupSaintNames("FRANCIS");
@@ -32,6 +34,8 @@ public class NDCassCountyParser extends SmartAddressParser {
   }
   
   private static final Pattern DATE_TIME_CFS_PTN = Pattern.compile("(?:\\* +)?(?:(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) )?CFS #:? (\\d+) ");
+  private static final Pattern LEAD_DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M) +");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern CALL_PFX_PTN = Pattern.compile("X - |X-SEND FIRE ", Pattern.CASE_INSENSITIVE);
   private static final Pattern CITY_PTN = Pattern.compile("([^*]+), (?!EXIT|RAMP|RED|THEN)([A-Z]{3,4})\\b *(.*)");
   private static final Pattern UNIT_PTN = Pattern.compile("(?: \\d{3}| \\d{4}-[A-Z]+)+$");
@@ -47,6 +51,15 @@ public class NDCassCountyParser extends SmartAddressParser {
     data.strCallId = match.group(3);
     String sAddr = body.substring(0,match.start()).trim();
     String sInfo = body.substring(match.end()).trim();
+    
+    if (data.strDate.length() == 0) {
+      match = LEAD_DATE_TIME_PTN.matcher(sAddr);
+      if (match.lookingAt()) {
+        data.strDate = match.group(1);
+        setTime(TIME_FMT, match.group(2), data);
+        sAddr = sAddr.substring(match.end());
+      }
+    }
     
     int version =  data.strDate.length() > 0 ? 1 : 2;
     
@@ -255,6 +268,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "911 HANG UP",
       "ACCIDENT - INJURY",
       "ACCIDENT - PROPERTY",
+      "ACTIVE ASSAILANT",
       "AIRCRAFT CRASH",
       "ARCING WIRE/TRANSFORMER FIRE",
       "ASSAULT",
@@ -282,6 +296,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "MISC",
       "MISC FIRE",
       "MUTUAL AID FIRE",
+      "RAILROAD FIRE",
       "RESCUE",
       "RESIDENTIAL FIRE",
       "SU",
@@ -292,7 +307,8 @@ public class NDCassCountyParser extends SmartAddressParser {
       "VEHICLE FIRE",
       "WATER BREAK/WASHED OUT ROAD",
       "WATER BREAK/SEWER/WASH OUT ROAD",
-      "WATER RESCUE"
+      "WATER RESCUE",
+      "WELFARE CHECK"
   );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -308,7 +324,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "BORU", "BORUP/MN",
       "BRIA", "BRIARWOOD/ND",
       "BUFF", "BUFFALO/ND",
-      "CASS", "",
+      "CASS", "CASS COUNTY/ND",
       "CAST", "CASSELTON/ND",
       "CHAF", "CHAFFEE/ND",
       "CHRI", "CHRISTINE/ND",
@@ -389,6 +405,8 @@ public class NDCassCountyParser extends SmartAddressParser {
       "WHEA", "WHEATLAND/ND",   // Changed from MN
       "WILD", "WILD RICE/ND",
       "WOLV", "WOLVERTON/MN",
+      
+      "CHRISTINE",      "CHRISTINE/ND",
       
       "BECKCO",          "BECKER COUNTY/MN",
       "NORMCO",          "NORMAN COUNTY/MN",
