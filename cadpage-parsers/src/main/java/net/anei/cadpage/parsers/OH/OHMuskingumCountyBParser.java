@@ -9,29 +9,25 @@ public class OHMuskingumCountyBParser extends FieldProgramParser {
   
   public OHMuskingumCountyBParser() {
     super("MUSKINGUM COUNTY", "OH", 
-          "CALL ADDR_CITY_X! END");
+          "SequenceNumber:ID! Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR_CITY_X! XCoordinate:GPS1! YCoordinate:GPS2! CAD_Zone:MAP! ( Units:UNIT! UNIT/S+ | ) Notes:INFO! INFO/N+");
   }
   
   @Override
   public String getFilter() {
     return "notif@mecc911.org";
   }
+  
+  private static final Pattern HTML_TR_TD_PTN = Pattern.compile("(?:</?t[rd]>)+", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
-    // Strip out leading garbage
-    if (!body.startsWith("zvmg.biz,")) return false;
-    int pt = body.indexOf("\n\n<HTML>");
-    if (pt < 0) return false;
-    body = body.substring(pt+2).trim();
-    
+    body = HTML_TR_TD_PTN.matcher(body).replaceAll("\n");
     return super.parseHtmlMsg(subject, body, data);
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+    return super.parseFields(body.split("\n+"), data);
   }
   
   @Override
@@ -54,6 +50,9 @@ public class OHMuskingumCountyBParser extends FieldProgramParser {
           data.strCross = cross;
         }
       }
+      while (field.endsWith(",")) {
+        field = field.substring(0,field.length()-1).trim();
+      }
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       if (city.length() > 0) {
@@ -63,7 +62,9 @@ public class OHMuskingumCountyBParser extends FieldProgramParser {
           if (city.length() > 0) data.strCity = city;
         }
       }
-      parseAddress(p.get(), data);
+      String addr = p.get();
+      addr = stripFieldEnd(addr, "#");
+      parseAddress(addr, data);
     }
     
     @Override
