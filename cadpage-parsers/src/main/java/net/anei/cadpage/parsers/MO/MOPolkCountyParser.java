@@ -56,6 +56,8 @@ public class MOPolkCountyParser extends FieldProgramParser {
       "BRIG", "BRIGHTON",
       "HALF", "HALFWAY",
       "HUMA", "HUMANSVILLE",
-      "MORR", "MORRISVILLE"
+      "MORR", "MORRISVILLE",
+      "URBA", "HALFWAY",  // ????
+      "WILL", "BRIGHTON"  // ????
   });
 }
