@@ -167,7 +167,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:[0-9]?[A-Z]+[0-9]+|[0-9]{4}|[A-Z]{2})(?:[,\\$][A-Z0-9,\\$]+)?\\b");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?:[0-9]?[A-Z]+[0-9]+[A-Z]?|[0-9]{4}|[A-Z]{2})(?:[,\\$][A-Z0-9,\\$]+)?\\b");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
       setPattern(UNIT_PTN, true);
@@ -194,7 +194,8 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
   
   private static final Pattern TIME_PTN = Pattern.compile("(?<=^| )(\\d\\d:\\d\\d)\\b");
   private static final Pattern TIME2_PTN = Pattern.compile("\\b[\\d:]*$");
-  private static final Pattern ID_PTN = Pattern.compile("\\b\\d{7}$");
+  private static final Pattern ID_PTN = Pattern.compile("\\b(?:[EF]\\d{9}(?: \\d{7})?|\\d{7})$");
+  private static final Pattern TG_PTN = Pattern.compile("\\bTG: *(\\S+)(?: (.*))?$");
   private class TrailField extends Field {
     
     private int type;
@@ -229,18 +230,26 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
         if (match.find()) sPart1 = field.substring(0,match.start()).trim();
       }
       
-      match = ID_PTN.matcher(sPart1);
+      match = TG_PTN.matcher(sPart1);
       if (match.find()) {
-        data.strCallId = match.group();
+        data.strChannel = match.group(1);
+        data.strCallId = getOptGroup(match.group(2));
         sPart1 = sPart1.substring(0,match.start()).trim();
+      } else {
+        match = ID_PTN.matcher(sPart1);
+        if (match.find()) {
+          data.strCallId = match.group();
+          sPart1 = sPart1.substring(0,match.start()).trim();
+        }
       }
+      
       data.strSupp = append(data.strSupp, " - ", sPart1);
       data.strSupp = append(data.strSupp, " - ", sPart2);
     }
     
     @Override
     public String getFieldNames() {
-      return "UNIT ID INFO TIME";
+      return "UNIT INFO CH ID TIME";
     }
   }
   
