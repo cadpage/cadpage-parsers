@@ -30,6 +30,16 @@ public class CTGrotonParser extends FieldProgramParser {
     return parseFields(body.split("\\|"), 4, data);
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("SRCX")) return new SourceCrossField();
+    if (name.equals("TIME")) return new MyTimeField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+  
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -52,7 +62,7 @@ public class CTGrotonParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern SRC_CROSS_PTN = Pattern.compile("STA ([ A-Z0-9]+) XS(?: (.*))?");
+  private static final Pattern SRC_CROSS_PTN = Pattern.compile("(?:STA )?([ A-Z0-9]+) XS(?: (.*))?");
   private class SourceCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -98,16 +108,6 @@ public class CTGrotonParser extends FieldProgramParser {
       if (field.startsWith("NARR")) field = field.substring(4).trim();
       super.parse(field, data);
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("APT")) return new MyAptField();
-    if (name.equals("SRCX")) return new SourceCrossField();
-    if (name.equals("TIME")) return new MyTimeField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{

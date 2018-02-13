@@ -25,7 +25,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
     return "dispatch@fcema.org";
   }
   
-  private static final Pattern MARKER = Pattern.compile("(?:(?:FAYETTE|Fayette)-911/[A-Za-z0-9/]+\n)?\\[Fayette911\\]\n");
+  private static final Pattern MARKER = Pattern.compile("(?:(?:FAYETTE|Fayette)-911/[A-Za-z0-9/\\\\]+\n)?\\[Fayette911\\]\n");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     String[] parts = subject.split("\\|");
