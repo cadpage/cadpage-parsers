@@ -951,6 +951,7 @@ public class Active911ParserTable {
       "US/NY/GeneseeCounty",              "NYGeneseeCounty",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
       "US/NY/Lewis911",                   "NYLewisCounty",
+      "US/NY/LimaVFD",                    "NYLivingstonCountyA",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",
       "US/NY/MadisonCounty",              "NYMadisonCountyB",
       "US/NY/MonroeCounty",               "NYMonroeCountyWebster",
