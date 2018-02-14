@@ -46,6 +46,8 @@ public class PAClarionCountyEParser extends FieldProgramParser {
     
     body = body.replace("XStreets:", "Xstreets:");
     
+    body = body.replace(" // ",  ", ");
+    body = stripFieldEnd(body, " //");
     match = MASTER.matcher(body);
     if (match.lookingAt()) {
       setFieldList("CALL ADDR APT CITY PLACE X NAME INFO");

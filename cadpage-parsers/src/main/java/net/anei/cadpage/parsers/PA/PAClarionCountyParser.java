@@ -11,9 +11,7 @@ Clarion County, PA
 public class PAClarionCountyParser extends GroupBestParser {
   
   public PAClarionCountyParser() {
-    super(new PAClarionCountyAParser(), new PAClarionCountyBParser(), 
-          new PAClarionCountyCParser(), new PAClarionCountyDParser(),
-          new PAClarionCountyEParser());
+    super(new PAClarionCountyDParser(), new PAClarionCountyEParser());
   }
   
 
