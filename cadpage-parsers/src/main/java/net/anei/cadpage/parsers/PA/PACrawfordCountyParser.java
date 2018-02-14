@@ -70,6 +70,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       data.strCity += "UNTY";
       if (data.strCity.equals("VNG COUNTY")) data.strCity = "VENANGO COUNTY";
     } else if (data.strCity.equals("LEBOUF TWP")) data.strCity = "LEBOEUF TWP";
+    else if (data.strCity.equals("FRENCK CREEK TWP")) data.strCity = "FRENCH CREEK TWP";
     
     if (OHIO_CITIES.contains(data.strCity)) data.strState = "OH";
     
@@ -80,6 +81,28 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
   @Override
   public String getProgram() {
     return super.getProgram().replaceAll("CITY", "CITY ST");
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if(name.equals("CITY")) return new MyCityField();
+    return super.getField(name);
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      return super.checkParse(field, data);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      parse(field, data);
+    }
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
@@ -200,6 +223,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "BRUSH FIRE",
       "BURGLAR ALARM",
       "BURN VICTIM",
+      "CAD TEST",
       "CARBON MONOXIDE INVESTIGATION",
       "CARDIAC ARREST",
       "CARDIAC SYMPTOMS",
@@ -227,6 +251,8 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
       "GI PROBLEM",
       "HEAD INJURY",
       "HIT & RUN",
+      "INTOXICATED SUBJECT",
+      "JUVENILE OFFENSE",
       "LACERATION",
       "LIFT ASSIST",
       "LIMITED EMS SERVICE",
@@ -405,6 +431,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
     
     "DEER CREEK TWP",
     "FRENCH CREEK TWP",
+    "FRENCK CREEK TWP",  // Misspelled
     "GREENE TWP",
     "HEMPFIELD TWP",
     "MILL CREEK TWP",
