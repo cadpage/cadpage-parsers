@@ -11,7 +11,7 @@ public class MOPolkCountyParser extends FieldProgramParser {
   
   public MOPolkCountyParser() {
     super(CITY_CODES, "POLK COUNTY", "MO", 
-          "( UNDER_CONTROL ADDR CITY! PLACE INFO/N+ " +
+          "( UNDER_CONTROL ADDR CITY! INFO/N+ " +
           "| CALL PLACE ADDR CITY DATETIME! END )");
   }
   
