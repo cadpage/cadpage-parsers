@@ -12,16 +12,21 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchProphoenixParser extends FieldProgramParser {
   
   private Properties cityCodes;
+  private boolean hasCityList;
   
   public DispatchProphoenixParser(String defCity, String defState) {
     this(null, defCity, defState);
   }
-  
   public DispatchProphoenixParser(Properties cityCodes, String defCity, String defState) {
-    super(defCity, defState,
+    this(cityCodes, null, defCity, defState);
+  }
+  
+  public DispatchProphoenixParser(Properties cityCodes, String[] cityList, String defCity, String defState) {
+    super(cityList, defCity, defState,
           "( RR_MARK/R! EMPTY? FDID:SKIP! Incident#:ID! CFSCode:CALL1! Alarm:SKIP! District:SKIP! Receive_Source:SKIP! EMPTY? ADDR_INFO! EMPTY? Location:ADDR1! Common_Name:PLACE! CSZ:SKIP! Dispatch_Priority:PRI! Lat/Long:SKIP! EMPTY? INCIDENT_TIMES! EMPTY? INFO/N+? INCIDENT_COMMENTS " +
           "| DATETIME CALL ADDR! Units:UNIT+ Comments:INFO+ )");
     this.cityCodes = cityCodes;
+    this.hasCityList = (cityList != null);
   }
   
   private static final Pattern MARKER = Pattern.compile("^(?:(\\d+)|(?:[ A-Z0-9]+:? +\\(#([A-Z0-9]+)\\) +)?([- A-Z0-9]+):) +");
@@ -136,22 +141,47 @@ public class DispatchProphoenixParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?)(?: (A[LKRZ]|C[AOT]|DE|FL|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])?(?: (\\d{5})))?");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strCity = p.getLastOptional(';');
-      String apt = p.getLastOptional(',');
-      super.parse(p.get(), data);
-      data.strApt = append(data.strApt, "-", apt);
-      if (cityCodes != null) {
-        data.strCity = convertCodes(data.strCity, cityCodes);
+      
+      String zip = null;
+      
+      int pt = field.lastIndexOf(';');
+      if (pt >= 0) {
+        data.strCity = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        if (cityCodes != null) {
+          data.strCity = convertCodes(data.strCity, cityCodes);
+        }
       }
+      else if (hasCityList) {
+        Matcher match = ADDR_ST_ZIP_PTN.matcher(field);
+        if (match.matches()) {  // Can not fail
+          field = match.group(1).trim();
+          data.strState = getOptGroup(match.group(2));
+          zip = match.group(3);
+        }
+        
+        parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
+        field = getStart();
+      }
+      
+      String apt = "";
+      pt = field.lastIndexOf(',');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt);
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
     }
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CITY";
+      return super.getFieldNames() + " CITY ST";
     }
   }
   
