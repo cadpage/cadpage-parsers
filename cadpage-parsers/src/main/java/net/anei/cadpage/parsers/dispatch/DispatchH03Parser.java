@@ -20,7 +20,7 @@ public class DispatchH03Parser extends FieldProgramParser {
   
   public DispatchH03Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
-          "SKIP+? DASHES INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! Location:ADDR! Loc_Name:PLACE! Loc_Descr:PLACE! City:CITY! Building:APT! Subdivision:APT! Floor:APT! Apt/Unit:APT! Zip_Code:ZIP! Cross_Strs:X! Area:MAP! Sector:MAP/D! Beat:MAP/D! DASHES! INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! DASHES! UNITS_DISPATCHED:EMPTY! UNIT! DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! COMMENTS:EMPTY! INFO/N+? DASHES!");
+          "SKIP+? DASHES INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! Location:ADDR! Loc_Name:PLACE! Loc_Descr:INFO! City:CITY! Building:APT! Subdivision:APT! Floor:APT! Apt/Unit:APT! Zip_Code:ZIP! Cross_Strs:X! Area:MAP! Sector:MAP/D! Beat:MAP/D! DASHES! INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! DASHES! UNITS_DISPATCHED:EMPTY! UNIT! DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! COMMENTS:EMPTY! INFO/N+? DASHES!");
   }
   
   private HtmlDecoder decoder = new HtmlDecoder();

@@ -23,6 +23,7 @@ public class MISaginawCountyBParser extends DispatchH03Parser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "20", "FREELAND",
       "25", "FREELAND"
   });
 }
