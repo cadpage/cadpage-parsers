@@ -1,86 +1,47 @@
 package net.anei.cadpage.parsers.GA;
 
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
-public class GAColquittCountyParser extends DispatchB2Parser {
+public class GAColquittCountyParser extends FieldProgramParser {
 
   public GAColquittCountyParser() {
-    super("CC911:", CITY_LIST, "COLQUITT COUNTY", "GA");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(MWORD_STREET_LIST);
+    super("COLQUITT COUNTY", "GA", 
+          "Call_Type:CALL! Date:DATETIME! Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! Agency_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS?");
   }
   
   @Override
   public String getFilter() {
-    return "dpierce62@gmail.com";
+    return "911alert@interoponline.com";
   }
   
-  private static String[] MWORD_STREET_LIST = new String[]{
-      "DONA TURNER",
-      "FUNSTON DOERUN",
-      "FUNSTON SIGSBEE",
-      "JAMES KING",
-      "MIKE HORNE",
-      "MT SINAI",
-      "SAM SELLS",
-      "SWIFT CANTEEN"
-  };
-
-  private static final String[] CITY_LIST = new String[]{
-      
-      //cities
-      
-      "BERLIN",
-      "DOERUN",
-      "ELLENTON",
-      "FUNSTON",
-      "MOULTRIE",
-      "NORMAN PARK",
-      "RIVERSIDE",
-      
-      //communities
-
-      "AUTREYVILLE",
-      "BARBERS",
-      "BAY",
-      "BAYBORO",
-      "CENTER HILL",
-      "COOL SPRINGS",
-      "CROSLAND",
-      "GANOR",
-      "HARTSFIELD",
-      "KIRKWOOD",
-      "MARBLE",
-      "MINNESOTA",
-      "MURPHY",
-      "NEW ELM",
-      "PINEBORO",
-      "SCHELEY",
-      "SIGSBEE",
-      "SUNSET",
-      "TERRACE",
-      "TICKNOR",
-      "WELDON"
-     };
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
   
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ACCIDENT/INJURIES",
-      "ACCIDENT/NO REPORTED INJURIES",
-      "ANY FIRE",
-      "FIRE ALARM",
-      "GAS LEAK / DIESEL SPILL",
-      "GAS ODOR SMELL IN RESIDENT",
-      "GRASS FIRE",
-      "MEDICAL ALARM",
-      "MEDICAL CALL",
-      "SMOKE SMELL",
-      "STRUCTURE FIRE",
-      "SUICIDE/ATTEMPT",
-      "SUSPICIOUS PERSON/VEHICLE",
-      "VEHICLE FIRE"
-  );
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.startsWith("InterOp CAD Alert - ")) return false;
+    return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("GPS")) return new GPSField("Estimated Maps Location.*'http://maps.apple.com/maps\\?q=([^']*?)'.*", true);
+    return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "||");
+      super.parse(field, data);
+    }
+  }
 
 }
 
