@@ -1099,7 +1099,7 @@ public class Active911ParserTable {
       "US/OK/CityofStillwater",           "OKPayneCounty",
       "US/OK/CityofTulsa",                "OKTulsaA",
       "US/OK/CityofYukon",                "OKYukon",
-      "US/OK/FaxConnections",             "OKTulsaB,OKTulsaC",
+      "US/OK/FaxConnections",             "OKTulsaC",
       "US/OK/LakewoodFD",                 "OKBryanCounty",
       "US/OK/LoveCounty",                 "OKLoveCounty",
       "US/OK/MayesCounty",                "OKMayesCounty",
