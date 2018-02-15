@@ -41,7 +41,14 @@ public class DispatchH03Parser extends FieldProgramParser {
     String lastFld = null;
     for (String fld : flds) {
       if (fld.equals("UNITS DISPATCHED:")) copy = true;
-      if (!copy && fld.endsWith(":")) {
+      if (fld.startsWith("---")) {
+        if (lastFld != null) {
+          fldList.add(lastFld);
+          lastFld = null;
+        }
+        fldList.add(fld);
+      }
+      else if (!copy && fld.endsWith(":")) {
         if (lastFld != null) fldList.add(lastFld);
         lastFld = fld;
       }

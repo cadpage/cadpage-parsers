@@ -18,12 +18,21 @@ public class MISaginawCountyBParser extends DispatchH03Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (!subject.equals("TITTABAWASSEE FIRE DEPT")) return false;
-    return super.parseHtmlMsg(subject, body, data);
+    data.strSource = subject;
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (data.strCall.equals(data.strCode)) data.strCode = "";
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "20", "FREELAND",
+      "06", "BRIDGEPORT TWP",
+      "20", "TITTABAWASSEE TWP",
+      "22", "SPAULDING TWP",
       "25", "FREELAND"
   });
 }
