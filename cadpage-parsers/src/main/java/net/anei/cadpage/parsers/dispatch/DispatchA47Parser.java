@@ -19,7 +19,7 @@ public class DispatchA47Parser extends FieldProgramParser {
   
   public DispatchA47Parser(String subjectMarker, String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "( Reported:DATETIME! ID_CALL! Loc:ADDR/S! | ID_CALL! Reported:DATETIME? ADDR/S! ) X? ( PLACE UNIT/Z END | UNIT | PLACE ) END");
+          "( Reported:DATETIME! ID_CALL! Loc:ADDR/S! | ID_CALL! Reported:DATETIME? ADDR/S! ) X? ( PLACE UNITQ | UNIT | PLACE END | ) INFO/N+");
     this.subjectMarker = subjectMarker;
     noUnit = (unitPtn == null);
     this.unitPtn = noUnit ? null : unitPtn.equals(".*") ? null : Pattern.compile("(?:(?:"+unitPtn+")\\b *)+");
@@ -34,16 +34,17 @@ public class DispatchA47Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
-    if (name.equals("ID_CALL")) return new MyIdCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID_CALL")) return new BaseIdCallField();
+    if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("UNITQ")) return new BaseOptUnitField();
     return super.getField(name);
   }
   
   private static Pattern ID_CALL_PTN = Pattern.compile("(\\d\\d-\\d{6}) +(.*)");
-  private class MyIdCallField extends Field {
+  private class BaseIdCallField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ID_CALL_PTN.matcher(field);
@@ -60,7 +61,7 @@ public class DispatchA47Parser extends FieldProgramParser {
   
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)(?:,| - )(.*)");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
-  private class MyAddressField extends AddressField {
+  private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
@@ -117,7 +118,7 @@ public class DispatchA47Parser extends FieldProgramParser {
     }
   }
   
-  private class MyPlaceField extends PlaceField {
+  private class BasePlaceField extends PlaceField {
     
     @Override
     public void parse(String field, Data data) {
@@ -129,8 +130,8 @@ public class DispatchA47Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
-  private class MyUnitField extends UnitField {
+
+  private class BaseUnitField extends UnitField {
     @Override
     public boolean canFail() {
       return true;
@@ -143,5 +144,14 @@ public class DispatchA47Parser extends FieldProgramParser {
       parse(field, data);
       return true;
     }
+  }
+  
+  private class BaseOptUnitField extends BaseUnitField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (noUnit || unitPtn == null && !isLastField()) return false;
+      return super.checkParse(field, data);
+    }
+    
   }
 }

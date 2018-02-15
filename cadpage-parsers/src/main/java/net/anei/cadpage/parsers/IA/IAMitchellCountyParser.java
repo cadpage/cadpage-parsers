@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA47Parser;
 public class IAMitchellCountyParser extends DispatchA47Parser {
   
   public IAMitchellCountyParser() {
-    super("MCSO dispatch", CITY_LIST, "MITCHELL COUNTY", "IA", "\\d{1,3}|[A-Z]{1,3}(?:AMB|FD)|STAR");
+    super("MCSO dispatch", CITY_LIST, "MITCHELL COUNTY", "IA", ".*");
   }
   
   private static final String[] CITY_LIST =new String[]{

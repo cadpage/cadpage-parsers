@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA47Parser;
 public class VAWinchesterParser extends DispatchA47Parser {
   
   public VAWinchesterParser() {
-    super("Winchester ECC info", CITY_LIST, "WINCHESTER", "VA", "[A-Z]{1,3}\\d{1,3}");
+    super("Winchester ECC info", CITY_LIST, "WINCHESTER", "VA", "[A-Z]{1,3}\\d{1,3}|E");
   }
   
   @Override
