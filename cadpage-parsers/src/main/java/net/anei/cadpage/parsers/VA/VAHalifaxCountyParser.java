@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA47Parser;
 public class VAHalifaxCountyParser extends DispatchA47Parser {
   
   public VAHalifaxCountyParser() {
-    super("from Central", null, "HALIFAX COUNTY", "VA", null);
+    super("from Central", CITY_LIST, "HALIFAX COUNTY", "VA", null);
   }
   
   @Override
@@ -19,6 +19,10 @@ public class VAHalifaxCountyParser extends DispatchA47Parser {
     body = body.replace("\n\n", "\n");
     if (!super.parseMsg(subject, body, data)) return false;
     if (data.strCity.toUpperCase().startsWith("TURBEVILLE")) data.strCity = data.strCity.substring(0,10);
+    if (data.strPlace.startsWith("911")) {
+      data.strSupp = append(data.strPlace, "\n", data.strSupp);
+      data.strPlace = "";
+    }
     return true;
   }
   
@@ -28,13 +32,16 @@ public class VAHalifaxCountyParser extends DispatchA47Parser {
     return super.getField(name);
   }
   
-  private class MyPlaceField extends Field {
+  private class MyPlaceField extends PlaceField {
     
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strCity = p.getLast("  ");
-      data.strPlace = p.get();
+      if (data.strCity.length() == 0) {
+        Parser p = new Parser(field);
+        data.strCity = p.getLast("  ");
+        field = p.get();
+      }
+      super.parse(field, data);
     }
     
     @Override
@@ -42,5 +49,27 @@ public class VAHalifaxCountyParser extends DispatchA47Parser {
       return "PLACE CITY";
     }
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+    
+    // Towns
+    "HALIFAX",
+    "SCOTTSBURG",
+    "SOUTH BOSTON",
+    "VIRGILINA",
+
+    // Census-designated places
+    "CLOVER",
+    "CLUSTER SPRINGS",
+    "MOUNTAIN ROAD",
+    "NATHALIE",
+    "RIVERDALE",
+
+    // Other unincorporated communities
+    "ALTON",
+    "CODY",
+    "TURBEVILLE",
+    "VERNON HILL"
+  };
 
 }

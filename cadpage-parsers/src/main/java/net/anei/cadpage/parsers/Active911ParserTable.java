@@ -1427,6 +1427,7 @@ public class Active911ParserTable {
       "US/VA/GalaxGraysonCounty",         "VAGalax",
       "US/VA/GloucesterCounty",           "VAGloucesterCounty",
       "US/VA/GoochlandCounty",            "VAGoochlandCounty",
+      "US/VA/HalifaxCounty",              "VAHalifaxCounty",
       "US/VA/Hanover",                    "VAHanoverCountyA",
       "US/VA/HanoverPageGate",            "VAHanoverCountyB",
       "US/VA/HenricoCounty",              "VAHenricoCounty",
