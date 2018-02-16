@@ -22,6 +22,8 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
 
   private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9]+) +\\*[A-Z] +(\\d\\d:\\d\\d:\\d\\d) (.*?)  Dt: ([^ ]+)  Zn: (\\d+)  Gd: ([^ ]+) (.*) /");
   
+  private static final Pattern MASTER_PTN3 = Pattern.compile("Call for (?:(\\S+) - )?(.*?) at (.*?) Units resp[. ]([A-Z0-9,]+) *(?:time: ?(\\d\\d:\\d\\d)(?:Call for)?|(\\[.*))");
+  
   private String version;
 
   public ORWashingtonCountyAParser() {
@@ -42,7 +44,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "930010,777,888,wccca@wccca.com";
+    return "930010,777,888,wccca@wccca.com,majcs@majcs.us";
   }
 
   @Override
@@ -93,6 +95,19 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       parseAddress(match.group(3).trim(), data);
       data.strMap = append(append(match.group(4), "-", match.group(5)), "-", match.group(6));
       data.strCross = match.group(7);
+      return true;
+    }
+    
+    // They keep on coming
+    match = MASTER_PTN3.matcher(body);
+    if (match.matches()) {
+      setFieldList("CODE CALL ADDR APT UNIT TIME INFO");
+      data.strCode = getOptGroup(match.group(1));
+      data.strCall = match.group(2).trim();
+      parseAddress(match.group(3).trim(), data);
+      data.strUnit = match.group(4).trim();
+      data.strTime = getOptGroup(match.group(5));
+      data.strSupp = getOptGroup(match.group(6));
       return true;
     }
 
@@ -194,6 +209,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "*TEST ONLY",
       "ABANDONED VEHICLE",
       "ABDOMINAL PAIN",
+      "ABDOMINAL PAIN BRAVO",
       "ABDOMINAL-CHARLIE RESPONSE",
       "ABDOMINAL-DELTA RESPONSE",
       "ABDOMINL PAIN C1",
@@ -254,6 +270,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "CIVIL",
       "CODE 1 MEDICAL POLICE REQUEST",
       "COMMERCIAL FIRE ALARM",
+      "COMMERCIAL F",
       "COMMERCIAL FIRE",
       "CONVULSION/SEIZU",
       "CRIMINAL MISCHIEF",
@@ -292,6 +309,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "HARASSMENT",
       "HAZARD",
       "HAZARDOUS MAT",
+      "HAZMAT INCI",
       "HEADACHE C1",
       "HEADACHE",
       "HEADACHE-CHARLIE RESPONSE",
@@ -307,6 +325,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "IMPOUNDED VEHICLE",
       "INCOMPLETE 911",
       "INFORMATION",
+      "INFORMATION F",
       "INVALID ASSIST",
       "JUVENILE ABUSE OR NEGLECT",
       "JUVENILE CUSTODY PROBLEM",
@@ -314,6 +333,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "LANDING ZONE",
       "LIFT ASSIST",
       "LOCKOUT",
+      "MARINE RESCUE",
       "MARINE RESCUE 1",
       "MARINE RESCUE 2",
       "MEDICAL ALARM",
@@ -387,6 +407,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "TAI",
       "TAI-HIGH MECHANI",
       "TAU",
+      "TEST FIRE",
       "TEST MEDICAL",
       "THEFT",
       "THEFT, JUST OCCURRED",
