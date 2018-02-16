@@ -213,7 +213,13 @@ public class DispatchSouthernParser extends FieldProgramParser {
     appendTerm(sb, "PHONE", DSFLG_PHONE, DSFLG_OPT_PHONE);
 
     if (chkFlag(DSFLG_CODE)) sb.append(" CODE! CODE+? PARTCODE?");
-    else if (chkFlag(DSFLG_OPT_CODE)) sb.append(" CODE+? PARTCODE?");
+    else if (chkFlag(DSFLG_OPT_CODE)) {
+      if (chkFlag(DSFLG_OPT_BAD_PLACE)) {
+        sb.append(" CODE?");
+      } else {
+        sb.append(" CODE+? PARTCODE?");
+      }
+    }
     
     appendTerm(sb, "UNIT", DSFLG_UNIT1, DSFLG_OPT_UNIT1);
     appendTerm(sb, "ID", DSFLG_ID, DSFLG_OPT_ID);

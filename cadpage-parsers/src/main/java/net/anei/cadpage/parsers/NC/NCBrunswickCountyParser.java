@@ -13,11 +13,13 @@ public class NCBrunswickCountyParser extends DispatchSouthernPlusParser {
   
   public NCBrunswickCountyParser() {
     super(CITY_LIST, "BRUNSWICK COUNTY", "NC", 
-          DSFLAG_OPT_DISPATCH_ID | DSFLAG_LEAD_PLACE | DSFLAG_NO_NAME_PHONE);
+          DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_BAD_PLACE|DSFLG_OPT_CODE|DSFLG_OPT_UNIT1|DSFLG_ID|DSFLG_TIME,
+          "[A-Z]{1,3}\\d+|\\d{1,4}[A-Z]{0,4}\\d?|bcso_a911_command|pio_bcso_only|pio"); 
     setupMultiWordStreets(MWORD_STREET_LIST);
     addRoadSuffixTerms("WYND");
-    removeWords("COURT", "COVE", "STREET", "SQUARE", "TRAIL");
-    setupSaintNames("JAMES");
+    removeWords("CIRCLE", "COURT", "COVE", "PLACE", "STREET", "SQUARE", "TERRACE", "TRAIL");
+    setupSaintNames("BRENDAN", "JAMES", "LUKE");
+    setupProtectedNames("J AND E");
   }
   
   @Override
@@ -122,6 +124,8 @@ public class NCBrunswickCountyParser extends DispatchSouthernPlusParser {
   @Override
   protected boolean isNotExtraApt(String apt) {
     if (apt.indexOf('/') >= 0) return true;
+    if (apt.startsWith("TO ")) return true;
+    if (apt.contains(" TO ")) return true;
     return super.isNotExtraApt(apt);
   }
 
@@ -466,7 +470,8 @@ public class NCBrunswickCountyParser extends DispatchSouthernPlusParser {
     "WINNABOW",
     
     // Columbus County
-    "RIEGELWOOD"
+    "RIEGELWOOD",
+    "WHITEVILLE"
   };
 
 }
