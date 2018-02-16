@@ -134,31 +134,66 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
     }
     
     private static final Properties CALL_CODES = buildCodeTable(new String[]{
-        "AE",   "ARSON EVENT",
-        "AMB2", "AMB ONLY CODE 2",
-        "AMB3", "AMB ONLY CODE 3",
-        "AOD",  "ASSIST OTHER DEPT OR AMB",
-        "C2MA", "MUTUAL AID",
-        "CFA",  "COMMERCIAL FIRE ALARM",
-        "EMD",  "EMD",                             // ???
-        "FO",   "FIRE OUT INVEST. / REPORT",
-        "IB",   "ILLEGAL BURN",
-        "HC",   "HAZARDOUS CONDITION",
-        "MA",   "MEDICAL AID",
-        "OF",   "OUTSIDE FIRE",
-        "PS",   "PS",                          // Public Service?
-        "SF",   "STRUCTURE FIRE / RESPONSE",
-        "SI",   "SMOKE INVESTIGATION",
-        "SFR",  "STRUCTURE FIRE REINFORCED",
-        "TEST", "TEST",
-        "RX",   "RX",                          // ???
-        "TC",   "TC",                          // ???
-        "UTF",  "UTF",                         // Unknown type fire?
-        "VF",   "VEHICLE FIRE",
-        "VG",   "VEGETATION FIRE",
+        "AE",             "ARSON EVENT",
+        "AL1",            "ALERT 1",
+        "AL2",            "ALERT 2",
+        "AL3",            "ALERT 3",
+        "AMB2",           "AMBULANCE ONLY CODE 2",
+        "AMB3",           "AMBULANCE ONLY CODE 3",
+        "AOD",            "ASSIST OTHER DEPARTMENT",
+        "C2MA",           "CODE 2 MEDICAL AID",
+        "CFA",            "COMMERCIAL FIRE ALARM",
+        "CMA",            "CARBON MONOXIDE ALARM",
+        "COMP",           "COMPLAINT",
+        "EMD",            "EMD",                             // ???
+        "FF",             "FLIGHT FOLLOWING",
+        "FO",             "FIRE OUT",
+        "FWK",            "FIREWORKS",
+        "HC",             "HAZARDOUS CONDITION",
+        "HM1",            "HAZ MAT 1",
+        "HM2",            "HAZ MAT 2",
+        "HM3",            "HAZ MAT 3",
+        "IB",             "ILLEGAL BURNING",
+        "MA",             "MEDICAL AID",
+        "MAA",            "MEDICAL AID AIR",
+        "MAE",            "MEDICAL AID ECHO RESPONSE",
+        "MAEA",           "MEDICAL AID ECHO RESPONSE AIR",
+        "MAR",            "MEDICAL AID REINFORCED",
+        "NR",             "NO RESPONSE",
+        "NTF",            "NOTIFICATION",
+        "OCA",            "OUT OF COUNTY ASSIST",
+        "OF",             "OUTSIDE FIRE",
+        "ORX",            "OFF ROAD RESCUE",
+        "PS",             "PUBLIC SERVICE",
+        "RFA",            "RESIDENTIAL FIRE ALARM",
+        "ROSS",           "OUT OF COUNTY OES REQUEST",
+        "RRX",            "REINFORCED RESCUE",
+        "RX",             "RESCUE",
+        "SF",             "STRUCTURE FIRE",
+        "SFR",            "STRUCTURE FIRE REINFORCED",
+        "SI",             "SMOKE INVESTIGATION",
+        "TC",             "TRAFFIC COLLISION",
+        "TEST",           "TEST",
+        "UTF",            "UNKNOWN TYPE FIRE",
+        "Vegetation A",   "VEGETATION FIRE-URBAN",
+        "Vegetation B",   "VEGETATION FIRE-METRO",
+        "Vegetation C",   "VEGETATION FIRE-RIO BRAVO",
+        "Vegetation D",   "VEGETATION FIRE-NORMAL",
+        "Vegetation E",   "VEGETATION FIRE-SEASONAL",
+        "Vegetation F",   "VEGETATION FIRE-HIGH",
+        "Vegetation G",   "VEGETATION FIRE-EXTREME",
+        "VF",             "VEHICLE FIRE",
+        "VFR",            "VEHICLE FIRE REINFORCED",
+        "VG",             "VEGETATION FIRE"
     });
     
-    private static final CodeSet CALL_LIST = new CodeSet();
+    // Initialize with old call descriptions that have been changed 
+    // in the latest tables
+    private static final CodeSet CALL_LIST = new CodeSet(
+        "ASSIST OTHER DEPT OR AMB",
+        "FIRE OUT INVEST. / REPORT",
+        "STRUCTURE FIRE / RESPONSE"
+    );
     
     static {
       for (Object val : CALL_CODES.values()) {
