@@ -37,7 +37,7 @@ public class PADelawareCountyBParser extends FieldProgramParser {
   private static final Pattern NATURE_PTN = Pattern.compile("[\\* \"<](?:N.tu.e:|..ture:|Natu....|Nat...:|Na..re:(?=[A-Z]))");
   private static final Pattern TIME_PTN = Pattern.compile(".Time:", Pattern.CASE_INSENSITIVE);
   private static final Pattern NOTES_PTN = Pattern.compile(" Not..[\\*:]");
-  private static final Pattern INC_PTN = Pattern.compile(" I..:");
+  private static final Pattern INC_PTN = Pattern.compile(" I..:(?! @)");
   private static final Pattern XN_PTN = Pattern.compile("[ ><](?!X1 INSIDE)X([12])..");
   private static final Pattern X1_PTN = Pattern.compile("..1:");
   private static final Pattern X2_PTN = Pattern.compile("..2:");
