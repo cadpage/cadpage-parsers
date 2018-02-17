@@ -883,6 +883,7 @@ public class Active911ParserTable {
       "US/NJ/CumberlandCounty",           "NJCumberlandCounty",
       "US/NJ/DelranEmergency",            "NJBurlingtonCountyC",
       "US/NJ/EggHarborTownship",          "NJAtlanticCountyA",
+      "US/NJ/FortLeePolice",              "NJBergenCountyB",
       "US/NJ/FranklinLakes",              "NJBergenCountyF",
       "US/NJ/GallowayTownship",           "NJAtlanticCountyC",
       "US/NJ/GloucesterCounty",           "NJGloucesterCountyA",
