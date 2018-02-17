@@ -32,6 +32,8 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     fromAddress = msg.getFromAddress();
     return super.parseMsg(msg, parseFlags);
   }
+  
+  private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\b(T)o(w)nshi(p)\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -49,12 +51,22 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     }
     
     if (!body.contains("\n")) body = body.replace("} ", "}\n");
+    body = TOWNSHIP_PTN.matcher(body).replaceAll("$1$2$3");
     return super.parseMsg(body, data);
+  }
+  
+  private static final Pattern ACE_PTN = Pattern.compile("\\bACE\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = ACE_PTN.matcher(addr).replaceAll("ATLANTIC CITY EXPY");
+    return super.adjustMapAddress(addr);
   }
   
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("ROWAN")) city = "GLASSBORO";
+    else if (city.equalsIgnoreCase("BATSTO")) city = "HAMMONTON";
     return city;
   }
 
@@ -113,18 +125,31 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "WOODBURY HEIGHTS",
     
     // Townships
+    "DEPTFORD",
     "DEPTFORD TWP",
+    "EAST GREENWICH",
     "EAST GREENWICH TWP",
+    "ELK",
     "ELK TWP",
+    "FRANKLIN",
     "FRANKLIN TWP",
+    "GREENWICH",
     "GREENWICH TWP",
+    "HARRISON",
     "HARRISON TWP",
+    "LOGAN",
     "LOGAN TWP",
+    "MANTUA",
     "MANTUA TWP",
+    "MONROE",
     "MONROE TWP",
+    "SOUTH HARRISON",
     "SOUTH HARRISON TWP",
+    "WASHINGTON",
     "WASHINGTON TWP",
+    "WEST DEPTFORD",
     "WEST DEPTFORD TWP",
+    "WOOLWICH",
     "WOOLWICH TWP",
     
     // Communities
@@ -134,6 +159,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "BECKETT",
     "BILLINGSPORT",
     "BRIDGEPORT",
+    "CLARKSBORO",
     "CROSS KEYS",
     "EWAN",
     "FRANKLINVILLE",
@@ -155,6 +181,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "RICHWOOD",
     "RICHWOOD",
     "SEWELL",
+    "SEWELL WASHINGTON",
     "THOROFARE",
     "TURNERSVILLE",
     "VICTORY LAKES",
@@ -163,12 +190,143 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     
     // Atlantic County
     "BUENA",
+      "LANDISVILLE",
+      "MINOTOLA",
     "BUENA VISTA TWP",
+      "COLLINGS LAKES",
+      "EAST VINELAND",
+      "MILMAY",
+      "NEWTONVILLE",
+      "RICHLAND",
+    "CORBIN CITY",
     "EGG HARBOR CITY",
+      "CLARKS LANDING",
+    "EGG HARBOR TWP",
+      "BARGAINTOWN",
+      "ENGLISH CREEK",
+      "JEFFERS LANDING",
     "ESTELL MANOR",
+      "HUNTERS MILL",
     "FOLSOM",
-    "MARYS LANDING",
-    "WEYMOUTH TWP"
+      "PENNY POT",
+    "GALLOWAY TWP",
+      "ABSECON HIGHLANDS",
+      "COLOGNE",
+      "GERMANIA",
+      "LEEDS POINT",
+      "OCEANVILLE",
+      "POMONA",
+      "SMITHVILLE",
+    "HAMILTON TWP",
+      "MAYS LANDING",
+      "MCKEE CITY",
+      "MIZPAH",
+    "HAMMONTON",
+      "BATSTO",
+      "DA COSTA",
+      "DUTCHTOWN",
+    "WEYMOUTH TWP",
+      "DOROTHY",
+      "WEYMOUTH",
+    
+    // Camden County
+    "AUDUBON",
+    "AUDUBON PARK",
+    "BELLMAWR",
+    "BARRINGTON",
+    "BROOKLAWN",
+    "CAMDEN",
+    "CLEMENTON",
+    "COLLINGSWOOD",
+    "GLOUCESTER CITY",
+    "RUNNEMEDE",
+    "GLOUCESTER TWP",
+      "BLACKWOOD",
+      "BLEINHEIM",
+      "CHEWS LANDING",
+      "GENNNDORA",
+      "GRENLOCH",
+      "LAKELAND",
+    "HI-NELLA",
+    "HADDON HEIGHTS",
+    "HADDON TWP",
+    "LAUREL SPRINGS",
+    "LINDENWOLD",
+    "MAGNOLIA",
+    "MOUNT EPHRAIM",
+    "OAKLYN",
+    "PINE HILL",
+    "PINE VALLEY",
+    "SOMERDALE",
+    "STRATFORD",
+    "WINSLOW",  
+    "WINSLOW TWP",
+      "ALBION",
+      "ANCORA",
+      "BLUE ANCHOR",
+      "BRADDOCK",
+      "CEDAR BROOK",
+      "ELM",
+      "IVYSTONE FARMS",
+      "SICKLERVILLE",
+      "SICKLERVILLE WASHING",
+      "TANSBORO",
+      "WATERFORD WORKS",
+      "WEST ATCO",
+      
+    // Cape May County
+    "MARMORA",
+    
+    // Cumberland County
+    "VINELAND",
+    
+    // Delaware County, PA
+    "CHESTER",
+    
+    // Salem County
+    "ALLOWAY TOWNSHIP",
+      "ALDINE",
+      "ALLOWAY",
+      "ALLOWAY JUNCTION",
+      "FRIESBURG",
+      "MOWER",
+      "OAKLAND",
+      "PENTON",
+      "REMSTERVILLE",
+      "RIDDLETON",
+    "CARNEYS POINT TWP",
+      "BIDDLES LANDING",
+      "CARNEYS POINT",
+      "HELMES COVE",
+      "LAYTONS LAKE",
+    "ELMER",
+    "OLDMANS TWP",
+      "AUBURN",
+      "PEDRICKTOWN",
+    "MANNINGTON TWP",
+      "ACTON",
+      "HALTOWN",
+      "MARSHALTOWN",
+      "POINTERS",
+      "PORTERTOWN",
+      "SLAPES CORNER",
+      "WELCHVILLE",
+    "PENNS GROVE",
+    "PENNSVILLE TWP",
+      "DEEPWATER",
+      "PENNSVILLE",
+    "PILESGROVE TWP",
+      "FRIENDSHIP",
+    "PITTSGROVE TWP",
+      "BROTMANVILLE",
+      "CENTERTON",
+      "NORMA",
+      "OLIVET",
+    "SALEM",
+    "UPPER PITTSGROVE TWP",
+      "DARETOWN",
+      "MONROEVILLE",
+      "WHIG LANE",
+    "WOODSTOWN"
   };
-
 }

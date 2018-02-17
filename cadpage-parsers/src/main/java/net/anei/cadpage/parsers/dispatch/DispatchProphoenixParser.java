@@ -24,7 +24,7 @@ public class DispatchProphoenixParser extends FieldProgramParser {
   public DispatchProphoenixParser(Properties cityCodes, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
           "( RR_MARK/R! EMPTY? FDID:SKIP! Incident#:ID! CFSCode:CALL1! Alarm:SKIP! District:SKIP! Receive_Source:SKIP! EMPTY? ADDR_INFO! EMPTY? Location:ADDR1! Common_Name:PLACE! CSZ:SKIP! Dispatch_Priority:PRI! Lat/Long:SKIP! EMPTY? INCIDENT_TIMES! EMPTY? INFO/N+? INCIDENT_COMMENTS " +
-          "| DATETIME CALL ADDR! Units:UNIT+ Comments:INFO+ )");
+          "| DATETIME CALL ADDR! CrossStreet1:X CrossStreet2:X CommonName:PLACE Units:UNIT/S+ Comments:INFO+ )");
     this.cityCodes = cityCodes;
     this.hasCityList = (cityList != null);
   }
@@ -77,6 +77,8 @@ public class DispatchProphoenixParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -182,6 +184,22 @@ public class DispatchProphoenixParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY ST";
+    }
+  }
+  
+  private class BaseCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "-");
+      super.parse(field, data);
+    }
+  }
+  
+  private class BasePlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "-");
+      super.parse(field, data);
     }
   }
   
