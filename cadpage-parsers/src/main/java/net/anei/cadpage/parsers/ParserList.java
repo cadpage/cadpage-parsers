@@ -493,6 +493,7 @@ public class ParserList {
           ),
           new ParserCategory("Kansas"
               ,"KSAndersonCounty"               ,"Anderson County, KS"
+              ,"KSAllenCounty"                  ,"Allen County, KS"
               ,"KSAndover"                      ,"Andover, KS"
               ,"KSAtchisonCounty"               ,"Atchison County, KS"
               ,"KSBartonCounty"                 ,"Barton County, KS"

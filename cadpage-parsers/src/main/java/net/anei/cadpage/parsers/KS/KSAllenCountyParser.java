@@ -13,6 +13,4 @@ public class KSAllenCountyParser extends DispatchA25Parser {
   public String getFilter() {
     return "reports@allencounty911.org";
   }
-
-  
 }
