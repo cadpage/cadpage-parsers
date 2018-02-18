@@ -501,6 +501,9 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "WSADS",  "WEST SADSBURY TWP",
       "WVINCT", "WEST VINCENT TWP",
       "WWHITE", "WEST WHITELAND TWP",
+      
+      // Lancaster County
+      "SLISBRY",      "SALISBURY",
 
       // Mongtomery county
       "MONT",         "MONTGOMERY COUNTY",
