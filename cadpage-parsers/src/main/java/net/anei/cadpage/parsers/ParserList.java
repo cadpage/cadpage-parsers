@@ -842,6 +842,7 @@ public class ParserList {
               ,"MOWarrenCounty"                 ,"Warren County, MO"
               ,"MOWashingtonCity"               ,"Washington City, MO"
               ,"MOWashingtonCounty"             ,"Washington County, MO"
+              ,"MOWayneCounty"                  ,"Wayne County, MO"
               ,"MOWebsterCounty"                ,"Webster County, MO"
               ,"MOWrightCounty"                 ,"Wright County, MO"
           ),
