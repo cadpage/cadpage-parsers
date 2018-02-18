@@ -5,7 +5,21 @@ import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
 public class NHGraftonCountyBParser extends DispatchA32Parser {
   
   public NHGraftonCountyBParser() {
+    this("GRAFTON COUNTY", "NH");
+  }
+  
+  NHGraftonCountyBParser(String defCity, String defState) {
     super(CITY_LIST, "GRAFTON COUNTY", "NH");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "NHGraftonCountyB";
+  }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com";
   }
   
   private static final String[] CITY_LIST = new String[]{
@@ -81,7 +95,64 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
     "MONTCALM",
     "PIKE",
     "STINSON LAKE",
-    "WEST LEBANON"
+    "WEST LEBANON",
+    
+
+    // Carroll County
+    // Cities
+      "ALBANY",
+      "BARTLETT",
+      "BROOKFIELD",
+      "CHATHAM",
+      "CONWAY",
+      "EATON",
+      "EFFINGHAM",
+      "FREEDOM",
+      "HART'S LOCATION",
+      "JACKSON",
+      "MADISON",
+      "MOULTONBOROUGH",
+      "OSSIPEE",
+      "SANDWICH",
+      "TAMWORTH",
+      "TUFTONBORO",
+      "WAKEFIELD",
+      "WOLFEBORO",
+
+  //Township
+      "HALE'S LOCATION",
+
+  //Census-designated places
+      "BARTLETT",
+      "CENTER OSSIPEE",
+      "CENTER SANDWICH",
+      "CONWAY",
+      "MELVIN VILLAGE",
+      "NORTH CONWAY",
+      "SANBORNVILLE",
+      "SUISSEVALE",
+      "UNION",
+      "WOLFEBORO",
+
+  //Villages
+      "CENTER CONWAY",
+      "CHOCORUA",
+      "EAST WAKEFIELD",
+      "EIDELWEISS",
+      "FERNCROFT",
+      "GLEN",
+      "INTERVALE",
+      "KEARSARGE",
+      "LEES MILL",
+      "MIRROR LAKE",
+      "NORTH SANDWICH",
+      "REDSTONE",
+      "SILVER LAKE",
+      "SOUTH TAMWORTH",
+      "WEST OSSIPEE",
+      "WOLFEBORO FALLS",
+      "WONALANCET"
+
   };
 
 }

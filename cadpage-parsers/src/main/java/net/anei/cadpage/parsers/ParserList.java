@@ -865,6 +865,7 @@ public class ParserList {
               ,"NVHumboldtCounty"               ,"Humboldt County, NV"
           ),
           new ParserCategory("New Hampshire"
+              ,"NHCarrollCounty"                ,"Carroll County, NH"
               ,"NHGraftonCounty"                ,"Grafton County, NH"
               ,"NHHanover"                      ,"Hanover, NH"
               ,"NHHollis"                       ,"Hollis, NH"
