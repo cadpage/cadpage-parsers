@@ -368,6 +368,7 @@ public class ParserList {
               ,"GARabunCounty"                  ,"Rabun County, GA"
               ,"GASchleyCounty"                 ,"Schley County, GA"
               ,"GASmyrna"                       ,"Smyrna, GA"
+              ,"GAStephensCounty"               ,"Stephens County, GA"
               ,"GASumterCounty"                 ,"Sumter County, GA"
               ,"GATalbotCounty"                 ,"Talbot County, GA"
               ,"GATaylorCounty"                 ,"Taylor County, GA"
