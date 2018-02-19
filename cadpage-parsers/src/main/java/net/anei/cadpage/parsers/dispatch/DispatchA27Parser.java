@@ -16,16 +16,28 @@ public class DispatchA27Parser extends FieldProgramParser {
   
   private Pattern unitPtn;
   
+  
+  private enum UnitMode {UNIT, TIMES, GPS, INFO};
+  private UnitMode unitMode;
+  private String gps = null;
   private String times;
+  
+  public DispatchA27Parser(String defCity, String defState) {
+    this(null, defCity, defState, null);
+  }
   
   public DispatchA27Parser(String defCity, String defState, String unitPtn) {
     this(null, defCity, defState, unitPtn);
   }
   
+  public DispatchA27Parser(String[] cityList, String defCity, String defState) {
+    this(cityList, defCity, defState, null);
+  }
+  
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
           "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! TIMES+ ) Unit(s)_responded:UNIT+");
-    this.unitPtn = Pattern.compile(unitPtn);
+    this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
   
   @Override 
@@ -34,6 +46,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
     body = body.substring(match.end()).trim();
+    unitMode = UnitMode.UNIT;
     times = "";
     if (!super.parseFields(DELIM_PTN.split(body), data)) return false;;
     
@@ -94,7 +107,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class BaseMashField extends Field {
     @Override
     public boolean canFail() {
@@ -121,6 +134,14 @@ public class DispatchA27Parser extends FieldProgramParser {
       if (getValue(line, "Case Nr:") != null) line = p.getLine(); 
       if (getValue(line, "Location:") == null) abort();
       line = p.getLine();
+      String gps1 = getValue(line, "Latitude:");
+      if (gps1 != null) {
+        line = p.getLine();
+        String gps2 = getValue(line,  "Longitude:");
+        if (gps2 == null) abort();
+        setGPSLoc(gps1+','+gps2, data);
+        line = p.getLine();
+      }
       String place = getValue(line, "Common Name:");
       if (place != null) {
         data.strPlace = place;
@@ -133,7 +154,12 @@ public class DispatchA27Parser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(time);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(2), data);
+      } else {
+        data.strTime = time;
+      }
     }
     
     
@@ -165,8 +191,9 @@ public class DispatchA27Parser extends FieldProgramParser {
       if(delim >= 0) {
         data.strSource = field.substring(0, delim).trim();
         data.strCallId = field.substring(delim+3).trim();
-      }
-      else super.parse(field, data);
+      } else if (field.startsWith("- ")) {
+        data.strCallId = field.substring(2).trim();
+      } else super.parse(field, data);
     }
     
     @Override
@@ -175,7 +202,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern TIMES_PTN = Pattern.compile("([ \\w]+): (\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern TIMES_PTN = Pattern.compile("([ \\w]+): (\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseTimesField extends InfoField {
     @Override
@@ -187,7 +214,12 @@ public class DispatchA27Parser extends FieldProgramParser {
           String type = match.group(1);
           if (type.equals("Time reported")) {
             data.strDate = match.group(2);
-            setTime(TIME_FMT, match.group(3), data);
+            String time = match.group(3);
+            if (time.endsWith("M")) {
+              setTime(TIME_FMT, match.group(3), data);
+            } else {
+              data.strTime = time;
+            }
           }
           else {
             if (type.equals("Time completed")) {
@@ -224,62 +256,99 @@ public class DispatchA27Parser extends FieldProgramParser {
    * @param data Data object
    */
   private void parseUnitField(boolean runReport, String field, Data data) {
-    boolean info = false;
-    boolean chkGPS = false;
-    String gps = null;
+    
+    // Break field up into \n delimited tokens
     for (String token : field.split("\n")) {
       token = token.trim();
       if (token.length() == 0) continue;
-      if (!info) { 
-        Matcher match = unitPtn.matcher(token);
-        if (match.matches()) {
-          if (match.groupCount() == 1) token = match.group(1);
-        } else {
-          info = true;
-        }
-      }
-      if (!info) {
-        data.strUnit = append(data.strUnit, " ", token);
-      } else if (!runReport) {
-        Matcher match = GPS_PTN.matcher(token);
-        if (match.lookingAt()) {
+      token = token.replace('\t', ' ');
+      
+      // Check for tokens that force a mode switch
+      if (token.equals("Incident Time:")) {
+        if (unitMode == UnitMode.INFO) {
           data.strPlace = append(data.strPlace, " - ", data.strSupp);
           data.strSupp = "";
-          gps = match.group(1);
-          if (gps != null) { 
+        }
+        times = token;
+        data.msgType = MsgType.RUN_REPORT;
+        unitMode = UnitMode.TIMES;
+        continue;
+      }
+      
+      Matcher match = GPS_PTN.matcher(token);
+      if (match.lookingAt()) {
+        if (unitMode == UnitMode.INFO) {
+          data.strPlace = append(data.strPlace, " - ", data.strSupp);
+          data.strSupp = "";
+        }
+
+        gps = match.group(1);
+        if (gps != null) { 
+          if (data.strGPSLoc.length() == 0) {
             setGPSLoc(gps+','+match.group(2), data);
-            gps = null;
-          } else {
-            chkGPS = true;
           }
+          gps = null;
+          unitMode = UnitMode.INFO;
+        } else {
+          unitMode = UnitMode.GPS;
+        }
+        token = token.substring(match.end()).trim();
+        if (token.length() > 0) {
+          unitMode = UnitMode.INFO;
+        } else {
+          continue;
+        }
+      }
+      
+      // Switch on processing mode
+      switch (unitMode) {
+      
+      // Unit mode
+      case UNIT:
+        String unit = token;
+        int pt = unit.indexOf("   ");
+        if (pt >= 0) unit = unit.substring(0,pt);
+        if (unitPtn == null ? !unit.contains(" ") : unitPtn.matcher(unit).matches()) {
+          data.strUnit = append(data.strUnit, " ", unit);
+        } else {
+          unitMode = UnitMode.INFO;
+        }
+        break;
+        
+      // Info mode is deferred because two other modes might switch to it
+      case INFO:
+        break;
+        
+      // times mode
+      case TIMES:
+        times = append(times, "\n", token);
+        break;
+        
+      // GPS mode;
+      case GPS:
+        if (token.startsWith("LOC: ")) break;
+        if (token.startsWith("LAT: ")) {
+          gps = token.substring(5).trim();
+          break;
+        }
+        if (gps != null && token.startsWith("LON: ")) {
+          if (data.strGPSLoc.length() == 0) setGPSLoc(gps+','+token.substring(5).trim(), data);
+          break;
+        }
+        if ((match = GPS_TRAIL_PTN.matcher(token)).lookingAt()) {
           token = token.substring(match.end()).trim();
         }
-        else if (chkGPS) {
-          if (token.startsWith("LOC: ")) continue;
-          if (token.startsWith("LAT: ")) {
-            gps = token.substring(5).trim();
-            continue;
-          }
-          if (gps != null && token.startsWith("LON: ")) {
-            setGPSLoc(gps+','+token.substring(5).trim(), data);
-            continue;
-          }
-          if ((match = GPS_TRAIL_PTN.matcher(token)).lookingAt()) {
-            token = token.substring(match.end()).trim();
-            chkGPS = false;
-          } else {
-            chkGPS = false;
-          }
-        }
-        token = token.replace('\t', ' ');
-        if (token.equals("Incident Time:")) {
-          times = "";
-          data.msgType = MsgType.RUN_REPORT;
-        }
+        unitMode = UnitMode.INFO;
+        break;
+      }
+      
+      if (unitMode == UnitMode.INFO) {
+        token = INFO_JUNK_PTN.matcher(token).replaceAll("\n").trim();
         if (!token.equals(".")) data.strSupp = append(data.strSupp, "\n", token);
       }
     }
   }
-  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})0? *LON: ([-+]?\\d+\\.\\d{6})(?: *Lec:[a-z]{3,4})?)?");
-  private static final Pattern GPS_TRAIL_PTN = Pattern.compile("Lec:[a-z]{3,4}");
+  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?"); 
+  private static final Pattern GPS_TRAIL_PTN = Pattern.compile(" *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d{4} +\\d\\d?:\\d\\d:\\d\\d : \\S+\\] *");
 }

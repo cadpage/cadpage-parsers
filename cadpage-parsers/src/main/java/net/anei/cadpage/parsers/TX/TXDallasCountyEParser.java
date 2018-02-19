@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class TXDallasCountyEParser extends DispatchA27Parser {
   
   public TXDallasCountyEParser() {
-    super("DALLAS COUNTY", "TX", "\\d{8}");
+    super("DALLAS COUNTY", "TX");
   }
   
   @Override

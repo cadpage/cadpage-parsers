@@ -9,7 +9,7 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
   }
   
   NHGraftonCountyBParser(String defCity, String defState) {
-    super(CITY_LIST, "GRAFTON COUNTY", "NH");
+    super(CITY_LIST, defCity, defState);
   }
   
   @Override
