@@ -149,6 +149,7 @@ public class KYStatePoliceParser extends DispatchB3Parser {
       "BEAVER CREEK",
       "BEAVER JUNCTION",
       "BEAVER VALLEY",
+      "BEECH GROVE",
       "BELLS RIDGE",
       "BENT BRANCH",
       "BENT MOUNTAIN",
@@ -198,6 +199,7 @@ public class KYStatePoliceParser extends DispatchB3Parser {
       "CABANA SHORES",
       "CABIN CREEK",
       "CALDWELL NORTH",
+      "CAMP BRANCH",
       "CAMP CREEK",
       "CANADA TOWER",
       "CANE FORK",
@@ -301,6 +303,7 @@ public class KYStatePoliceParser extends DispatchB3Parser {
       "FALLING SPRINGS",
       "FALLIS GEST",
       "FASHION RIDGE",
+      "FATHER RINEY",
       "FERRELLS CREEK",
       "FIGETT BEND",
       "FILTER PLANT",
@@ -743,7 +746,6 @@ public class KYStatePoliceParser extends DispatchB3Parser {
       "WRIGHTS HOLW",
       "YELLOW HILL",
       "ZION HILL"
-     
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(

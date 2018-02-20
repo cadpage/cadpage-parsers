@@ -483,6 +483,7 @@ public class Active911ParserTable {
       "US/KY/FultonCounty",               "KYFultonCounty",
       "US/KY/GallatinCounty",             "KYGallatinCountyA",
       "US/KY/GarrardCounty",              "KYGarrardCounty",
+      "US/KY/GravesCounty",               "KYGravesCounty",
       "US/KY/HancockCounty",              "KYHancockCounty",
       "US/KY/HardinCounty",               "KYHardinCounty",
       "US/KY/HarrisonCounty",             "KYHarrisonCountyB",
