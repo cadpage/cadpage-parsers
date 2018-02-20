@@ -5,7 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class KSButlerCountyParser extends GroupBestParser {
   
   public KSButlerCountyParser() {
-    super(new KSButlerCountyAParser(), new KSButlerCountyBParser());
+    super(new KSButlerCountyAParser(), new KSButlerCountyBParser(),
+          new KSButlerCountyCParser());
   }
 
 }
