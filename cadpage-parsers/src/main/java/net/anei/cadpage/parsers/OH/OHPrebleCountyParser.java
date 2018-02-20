@@ -14,7 +14,7 @@ public class OHPrebleCountyParser extends DispatchEmergitechParser {
   
   @Override
   public String getFilter() {
-    return "PREBLESHERIFF@swohio.twcbc.com";
+    return "PREBLESHERIFF@swohio.twcbc.com,Eaton911@eatonpolice.org";
   }
 
   @Override

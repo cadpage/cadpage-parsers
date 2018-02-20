@@ -1015,6 +1015,7 @@ public class Active911ParserTable {
       "US/OH/CityofBroadviewHeights",     "OHCuyahogaCountyA",
       "US/OH/CityofCanfield",             "OHMahoningCountyA",
       "US/OH/CityofCenterville",          "OHCenterville",
+      "US/OH/EatonPolice",                "OHPrebleCounty",
       "US/OH/CityofFairborn",             "OHGreeneCountyB",
       "US/OH/CityofFairfield",            "OHFairfield",
       "US/OH/CityofFairlawn",             "OHSummitCountyE",
