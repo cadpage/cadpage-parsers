@@ -1456,6 +1456,7 @@ public class ParserList {
               ,"VAFairfaxCounty"                ,"Fairfax County, VA"
               ,"VAFallsChurch"                  ,"Falls Church, VA"
               ,"VAFauquierCounty"               ,"Fauquier County, VA"
+              ,"VAFloydCounty"                  ,"Floyd County, VA"
               ,"VAFluvannaCounty"               ,"Fluvanna County, VA"
               ,"VAFranklin"                     ,"Franklin, VA"
               ,"VAFranklinCounty"               ,"Franklin County, VA"
