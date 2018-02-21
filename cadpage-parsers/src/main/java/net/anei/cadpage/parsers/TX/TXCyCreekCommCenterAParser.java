@@ -17,7 +17,8 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
   private static final Pattern DATE_PTN = Pattern.compile("(\\d+)/(\\d+)");
   private static final Pattern MARKER1 = Pattern.compile("(?:/ (?:(?:no subject|Text Message) / )?)?(?:(\\d\\d/\\d\\d) )?(?:(\\d\\d:\\d\\d) )?(?:Inc: *(\\d*);)?");
   private static final Pattern MARKER2 = Pattern.compile("(?:Assigned to Incident|Status Changed to Available|Resend Incident Information) (\\d{9}) +");
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Unit: *([^ ]*) +Dispatched:.*");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Incident: *(\\d+) +Unit: *([^ ]*) +(Dispatched:.*)");
+  private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile("(?<=:(?:\\d\\d:\\d\\d:\\d\\d)?) +");
   private static final Pattern MISSED_COLON_PTN = Pattern.compile("(?<=Map)(?=\\d)");
   private static final Pattern TRAILER = Pattern.compile(" +(\\d{8,}) *$");
   
@@ -77,7 +78,17 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     if (subject.equals("Text Message")) subject = "";
     data.strSource = subject;
     
-    Matcher match = MARKER1.matcher(body);
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID UNIT INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      data.strUnit = match.group(2);
+      data.strSupp = RUN_REPORT_BRK_PTN.matcher(match.group(3)).replaceAll("\n");
+      return true;
+    }
+    
+    match = MARKER1.matcher(body);
     if (!match.lookingAt()) return false;  // Never happens anymore
     data.strDate = getOptGroup(match.group(1));
     data.strTime = getOptGroup(match.group(2));
@@ -96,15 +107,6 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
         data.strCallId = match.group(1);
         body = body.substring(match.end());
       }
-    }
-    
-    match = RUN_REPORT_PTN.matcher(body);
-    if (match.matches()) {
-      setFieldList("ID UNIT INFO");
-      data.msgType = MsgType.RUN_REPORT;
-      data.strUnit = match.group(1);
-      data.strSupp = body;
-      return true;
     }
     
     if (body.startsWith("Repage:")) body = body.substring(7).trim();
