@@ -1135,6 +1135,7 @@ public class Active911ParserTable {
       "US/OR/Lincoln",                    "ORLincolnCounty",
       "US/OR/Linn",                       "ORLinnCountyB",
       "US/OR/LinnCountySheriff",          "ORLinnCountyB",
+      "US/OR/MarionCounty",               "ORLinnCountyB",
       "US/OR/Metcom",                     "ORMarionCountyA",
       "US/OR/MountainWaveSAR",            "ORMultnomahCountyC",
       "US/OR/MultnomahCounty",            "ORMultnomahCounty",
