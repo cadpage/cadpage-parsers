@@ -528,6 +528,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "AT-C6",      "Amb. Transport-code 3 requested",
       "AT-D1",      "Amb. Transport-cardiac or resp. arrest",
       "AT-D2",      "Amb. Transport-pt just resuscitated",
+      "BACK",       "Back Pain",
       "BACK-A1",    "Back Pain-non trauma",
       "BACK-A2",    "Back Pain-old trauma",
       "BACK-C1",    "Back Pain-suspected AAA",
