@@ -1545,6 +1545,7 @@ public class ParserList {
               ,"WVCabellCounty"                 ,"Cabell County, WV"
               ,"WVFayetteCounty"                ,"Fayette County, WV"
               ,"WVGrantCounty"                  ,"Grant County, WV"
+              ,"WVGreenbrierCounty"             ,"Greenbrier County, WV"
               ,"WVHampshireCounty"              ,"Hampshire County, WV"
               ,"WVHardyCounty"                  ,"Hardy County, WV"
               ,"WVHarrisonCounty"               ,"Harrison County, WV"
@@ -1595,6 +1596,7 @@ public class ParserList {
               ,"ZCAABLamontCounty"              ,"Lamont County, AB"
               ,"ZCAABRedDeerCounty"             ,"Red Deer County, AB"
               ,"ZCAABStrathconaCounty"          ,"Strathcona County, AB"
+              ,"ZCAABTaber"                     ,"Taber, AB"
           ),
           new ParserCategory("British Columbia, Canada"
               ,"ZCABCMidIslandRegion"           ,"Mid-Island Region, BC"
