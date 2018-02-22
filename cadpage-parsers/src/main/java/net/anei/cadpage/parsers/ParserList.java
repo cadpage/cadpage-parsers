@@ -1431,6 +1431,7 @@ public class ParserList {
               ,"VTGrandIsleCounty"              ,"Grand Isle County, VT"
               ,"VTHartford"                     ,"Hartford, VT"
               ,"VTLamoilleCounty"               ,"Lamoille County, VT"
+              ,"VTOrleansCounty"                ,"Orleans County, VT"
               ,"VTWindhamCounty"                ,"Windham County, VT"
               ,"VTWindsorCounty"                ,"Windsor County, VT"
           ),
