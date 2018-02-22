@@ -493,8 +493,8 @@ public class ParserList {
               ,"IAWorthCounty"                  ,"Worth County, IA"
           ),
           new ParserCategory("Kansas"
-              ,"KSAndersonCounty"               ,"Anderson County, KS"
               ,"KSAllenCounty"                  ,"Allen County, KS"
+              ,"KSAndersonCounty"               ,"Anderson County, KS"
               ,"KSAndover"                      ,"Andover, KS"
               ,"KSAtchisonCounty"               ,"Atchison County, KS"
               ,"KSBartonCounty"                 ,"Barton County, KS"
