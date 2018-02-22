@@ -220,6 +220,46 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       "STOWE",
 
       // Unincorporated community
-      "MOSCOW"
+      "MOSCOW",
+      
+      // Orleans County
+      // City
+      "NEWPORT",
+
+      // Towns
+      "ALBANY",
+      "BARTON",
+      "BROWNINGTON",
+      "CHARLESTON",
+      "COVENTRY",
+      "CRAFTSBURY",
+      "DERBY",
+      "GLOVER",
+      "GREENSBORO",
+      "HOLLAND",
+      "IRASBURG",
+      "JAY",
+      "LOWELL",
+      "MORGAN",
+      "TROY",
+      "WESTFIELD",
+      "WESTMORE",
+
+      // Villages
+      "BEEBE PLAIN",
+      "DERBY CENTER",
+      "DERBY LINE",
+      "NORTH TROY",
+      "ORLEANS",
+
+      // Census-designated places
+      "COVENTRY",
+      "GLOVER",
+      "GREENSBORO",
+      "GREENSBORO BEND",
+      "IRASBURG",
+      "LOWELL",
+      "NEWPORT CENTER",
+      "TROY"
   };
 }
