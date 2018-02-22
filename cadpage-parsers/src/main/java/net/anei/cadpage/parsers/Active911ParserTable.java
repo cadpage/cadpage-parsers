@@ -1348,6 +1348,7 @@ public class Active911ParserTable {
       "US/TX/FortBendCounty",             "TXFortBendCountyA",
       "US/TX/FreeportDispatch",           "TXBrazoriaCountyB",
       "US/TX/Gatesville",                 "TXGatesville",
+      "US/TX/GillespieCounty",            "TXGillespieCounty",
       "US/TX/GlennHeights",               "TXDallasCountyD",
       "US/TX/GreggCounty",                "TXGreggCounty",
       "US/TX/HarrisCounty",               "TXHarrisCounty",
