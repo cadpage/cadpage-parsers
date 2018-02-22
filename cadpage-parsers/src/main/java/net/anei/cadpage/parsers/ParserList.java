@@ -1336,6 +1336,7 @@ public class ParserList {
               ,"TXBexarCounty"                  ,"Bexar County, TX"
               ,"TXBrazoriaCounty"               ,"Brazoria County, TX"
               ,"TXBrazosCounty"                 ,"Brazos County, TX"
+              ,"TXBurnetCounty"                 ,"Burnet County, TX"
               ,"TXCarrollton"                   ,"Carrollton, TX"
               ,"TXCollinCounty"                 ,"Collin County, TX"
               ,"TXCookeCounty"                  ,"Cooke County, TX"
