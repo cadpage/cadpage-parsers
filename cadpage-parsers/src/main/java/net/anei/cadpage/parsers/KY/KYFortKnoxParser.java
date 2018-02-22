@@ -15,7 +15,7 @@ public class KYFortKnoxParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "monacoenterprises2014@gmail.com";
+    return "monacoenterprises2014@gmail.com,fkfd469@gmail.com";
   }
   
   @Override
