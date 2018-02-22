@@ -1126,6 +1126,7 @@ public class ParserList {
               ,"OHMorrowCounty"                 ,"Morrow County, OH"
               ,"OHMuskingumCounty"              ,"Muskingum County, OH"
               ,"OHNECC"                         ,"NECC, OH"
+              ,"OHNobleCounty"                  ,"Noble County, OH"
               ,"OHOxford"                       ,"Oxford, OH"
               ,"OHPerryCounty"                  ,"Perry County, OH"
               ,"OHPickawayCounty"               ,"Pickaway County, OH"
