@@ -1254,6 +1254,7 @@ public class Active911ParserTable {
       "US/SC/DorchesterCounty",           "SCDorchesterCounty",
       "US/SC/FairfieldCounty",            "SCFairfieldCounty",
       "US/SC/GeorgetownCounty",           "SCGeorgetownCounty",
+      "US/SC/GreenvilleCountyCAD",        "SCGreenvilleCounty",
       "US/SC/GreenwoodCounty",            "SCGreenwoodCounty",
       "US/SC/HartsvilleFD",               "SCDarlingtonCounty",
       "US/SC/JasperCounty",               "SCJasperCounty",
