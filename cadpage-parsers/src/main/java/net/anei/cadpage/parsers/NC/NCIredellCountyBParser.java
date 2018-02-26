@@ -14,6 +14,11 @@ public class NCIredellCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "@co.iredell.nc.us";
+  }
+  
+  @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split(";"), data);
   }

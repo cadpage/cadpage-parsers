@@ -8,11 +8,17 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class DispatchA29Parser extends SmartAddressParser {
+public class DispatchA29Parser extends FieldProgramParser {
+
+  public DispatchA29Parser(String[] cityList, String defCity, String defState) {
+    super(cityList, defCity, defState,
+          "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP UNIT:UNIT INFO:INFO");
+  }
   
-  private static final Pattern MARKER = Pattern.compile("^DISPATCH:(\\S+?(?: (?:FD|ALS|BLS))?) - (?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?(?:([A-Z]{2,4}:\\d{2}-\\d{6}) )?");
+  private static final Pattern MARKER1 = Pattern.compile("^DISPATCH:(?:([-_A-Z0-9]+)(?: |\n\n))?(?:([^-]\\S*:\\S+(?: (?:FD|ALS|BLS))?) )?");
+  private static final Pattern MARKER2 = Pattern.compile("(?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?(?:([A-Z]{2,4}:\\d{2}-\\d{6}) )?");
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
   private static final Pattern UNIT_INFO_PTN = Pattern.compile("[ /\n]+((?:\\b[A-Z\\d]+:[-_A-Z\\d]+(?: FD|-\\d| \\d(?=,)|)\\b,?)++)[ /\n]*");
   private static final Pattern NEW_LINE_PTN = Pattern.compile("\n+");
@@ -21,21 +27,32 @@ public class DispatchA29Parser extends SmartAddressParser {
   private static final Pattern DIR_OF_PTN = Pattern.compile("[/ ]+((?:N|S|E|W|NO|SO|EA|WE|NORTH|SOUTH|EAST|WEST) OF)[/ ]+");
   private static final Pattern CALL_ADDR_DELIM = Pattern.compile("/(?! *(?:AMBULANCE|MEDICAL|MISDIAL|RESCUE|SEIZURES))");
 
-  public DispatchA29Parser(String[] cityList, String defCity, String defState) {
-    super(cityList, defCity, defState);
-    setFieldList("UNIT DATE TIME ID CODE CALL ADDR APT CITY PLACE PHONE INFO");
-  }
-
   @Override
   public boolean parseMsg(String body, Data data) {
     
-    Matcher match = MARKER.matcher(body);
+    Matcher match = MARKER1.matcher(body);
     if (!match.find()) return false;
-    data.strUnit = match.group(1).trim();
-    data.strDate = getOptGroup(match.group(2));
-    data.strTime = getOptGroup(match.group(3));
-    data.strCallId = getOptGroup(match.group(4));
+    data.strSource = getOptGroup(match.group(1));
+    data.strUnit = getOptGroup(match.group(2));
     body = body.substring(match.end()).trim();
+    if (data.strSource.length() == 0 && data.strUnit.length() == 0) return false;
+    
+    boolean good = body.startsWith("- ");
+    if (good) body = body.substring(2).trim();
+    
+    if (body.startsWith("CALL:")) {
+      return super.parseMsg(body, data);
+    }
+    
+    match = MARKER2.matcher(body);
+    if (!match.lookingAt()) return false;
+    setFieldList("DATE TIME ID CODE CALL ADDR APT CITY PLACE PHONE INFO");
+    
+    data.strDate = getOptGroup(match.group(1));
+    data.strTime = getOptGroup(match.group(2));
+    data.strCallId = getOptGroup(match.group(3));
+    body = body.substring(match.end()).trim();
+    if (!good && data.strCallId.length() == 0) return false;
     
     body = body.replace("Apt/Unit", "Apt");
     
@@ -53,6 +70,9 @@ public class DispatchA29Parser extends SmartAddressParser {
       data.strSupp = body.substring(match.end());
       body = body.substring(0,match.start());
     }
+    
+  // Reduce multiple slashes to single slash
+  body = MULT_SLASH_PTN.matcher(body).replaceAll("/");
 
     // Look for a line break separating the call and address
     boolean lock = false;
@@ -78,9 +98,6 @@ public class DispatchA29Parser extends SmartAddressParser {
     
     // Otherwise, we have to do this the hard way
     else {
-        
-      // Reduce multiple slashes to single slash
-      body = MULT_SLASH_PTN.matcher(body).replaceAll("/");
       
       // Now things get complicated.
       // See if we can find an odd street number convention that marks the end of the
@@ -99,6 +116,7 @@ public class DispatchA29Parser extends SmartAddressParser {
     int pt = body.lastIndexOf(',');
     if (pt < 0) return false;
     String city = body.substring(pt+1).trim();
+    city = stripFieldStart(city, "/");
     Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city);
     if (!res.isValid()) {
       int pt2 = body.lastIndexOf(',', pt-1);
@@ -112,7 +130,7 @@ public class DispatchA29Parser extends SmartAddressParser {
       }
     }
     res.getData(data);
-    addPlace(res.getLeft(), data);
+    addPlace(stripFieldStart(res.getLeft(),"/"), data);
     body = body.substring(0,pt).trim();
     
     // OK, see what we can do with the address
@@ -163,6 +181,11 @@ public class DispatchA29Parser extends SmartAddressParser {
    return true;
  }
   
+  @Override
+  public String getProgram() {
+    return "SRC UNIT " + super.getProgram();
+  }
+  
   private void addUnit(String field, Data data) {
     Set<String> unitSet = new HashSet<String>();
     if (data.strUnit.length() > 0) unitSet.addAll(Arrays.asList(data.strUnit.split(",")));
@@ -183,4 +206,37 @@ public class DispatchA29Parser extends SmartAddressParser {
     data.strPlace = append(field, " - ", data.strPlace);
   }
   private static final Pattern CALLBK_PTN = Pattern.compile("\\bCALLBK=([-\\d]*)");
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("(\\d\\d:\\d\\d:\\d\\d)|[0-9:]*()", true);
+    if (name.equals("UNIT"))  return new MyUnitField();
+    return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_PTN.matcher(field);
+      if (match.lookingAt()) {
+        data.strCode = match.group(1);
+        field = field.substring(match.end()).trim();
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private class  MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      addUnit(field, data);
+    }
+  }
 }
