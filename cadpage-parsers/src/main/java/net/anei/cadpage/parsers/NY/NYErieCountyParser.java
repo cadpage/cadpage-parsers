@@ -11,6 +11,7 @@ public class NYErieCountyParser extends GroupBestParser {
            new NYErieCountyDParser(),
            new NYErieCountyEParser(),
            new NYErieCountyRedAlertParser(),
-           new NYErieCountyFParser());
+           new NYErieCountyFParser(),
+           new NYErieCountyGParser());
   }
 }
