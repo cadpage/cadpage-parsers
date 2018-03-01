@@ -13,6 +13,6 @@ public class NJBergenCountyParser extends GroupBestParser {
   public NJBergenCountyParser() {
     super(new NJBergenCountyAParser(), new NJBergenCountyBParser(), 
           new NJBergenCountyCParser(),
-          new NJBergenCountyGParser());
+          new NJBergenCountyFParser(), new NJBergenCountyGParser());
   }
 }
