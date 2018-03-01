@@ -28,6 +28,11 @@ public class INStarkeCountyParser extends DispatchA29Parser {
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+  
+  @Override
   public String getFilter() {
     return "DISPATCH@co.starke.in.us,messaging@iamresponding.com";
   }
@@ -54,11 +59,6 @@ public class INStarkeCountyParser extends DispatchA29Parser {
     }
     data.strCity = convertCodes(data.strCity.toUpperCase(), CITY_FIXES);
     return true;
-  }
-  
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
   }
 
   @Override
