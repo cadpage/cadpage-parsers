@@ -1466,6 +1466,7 @@ public class Active911ParserTable {
       "US/VA/MontgomeryCounty",           "VAMontgomeryCountyA",
       "US/VA/NewportNews",                "VANewportNews",
       "US/VA/Nrv",                        "VAMontgomeryCountyB",
+      "US/VA/PatrickCounty",              "VAPatrickCounty",
       "US/VA/PetersburgPD",               "VAPetersburg",
       "US/VA/PittsylvaniaCounty",         "VAPittsylvaniaCounty",
       "US/VA/PowhatanCounty",             "VAPowhatanCounty",

@@ -1489,6 +1489,7 @@ public class ParserList {
               ,"VANorthamptonCounty"            ,"Northampton County, VA"
               ,"VAOrangeCounty"                 ,"Orange County, VA"
               ,"VAPageCounty"                   ,"Page County, VA"
+              ,"VAPatrickCounty"                ,"Patrick County, VA"
               ,"VAPetersburg"                   ,"Petersburg, VA"
               ,"VAPittsylvaniaCounty"           ,"Pittsylvania County, VA"
               ,"VAPowhatanCounty"               ,"Powhatan County, VA"
