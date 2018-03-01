@@ -1159,6 +1159,7 @@ public class Active911ParserTable {
       "US/OR/WheelerCounty",              "ORWheelerCounty",
       "US/OR/Woodburn",                   "ORMarionCountyA",
       "US/OR/Yamhill",                    "ORYamhillCountyB",
+      "US/PA/ACDES",                      "PAYorkCountyD",
       "US/PA/AdamsCounty",                "PAAdamsCountyA",
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
       "US/PA/ArmstrongCounty",            "PAArmstrongCounty",
