@@ -9,13 +9,6 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchRedAlertParser extends SmartAddressParser {
-  
-  private static final Pattern TIME_MARK = Pattern.compile("\\. ?\\. ?([\\d:]+)$");
-  private static final Pattern LEAD_INTERSECT_PTN = Pattern.compile(".*(?: AND|[/&])", Pattern.CASE_INSENSITIVE);
-  private static final Pattern TRAIL_INTERSECT_PTN = Pattern.compile("(?:AND |[/&]).*", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CODE_PATTERN = Pattern.compile("\\b\\d{1,2}-?[A-Z]-?\\d{1,2}[A-Z]?\\b");
-  private static final Pattern XSTREET_PTN = Pattern.compile("(.*)\\(X-Streets:(.*)\\)");
-  private static final Pattern DIR_BOUND_PTN = Pattern.compile("#?\\b([NSEW])/(B)D?\\b");
 
   
   public DispatchRedAlertParser(String defCity, String defState) {
@@ -32,6 +25,14 @@ public class DispatchRedAlertParser extends SmartAddressParser {
   public String getFilter() {
     return "paging@alpinesoftware.com,@rednmxcad.com,REDALERT";
   }
+  
+  private static final Pattern TIME_MARK = Pattern.compile("\\. ?\\. ?([\\d:]+)$");
+  private static final Pattern END_ADDR_PTN = Pattern.compile(" S:| CROSS:| c/s:");
+  private static final Pattern LEAD_INTERSECT_PTN = Pattern.compile(".*(?: AND|[/&])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TRAIL_INTERSECT_PTN = Pattern.compile("(?:AND |[/&]).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CODE_PATTERN = Pattern.compile("\\b\\d{1,2}-?[A-Z]-?\\d{1,2}[A-Z]?\\b");
+  private static final Pattern XSTREET_PTN = Pattern.compile("(.*)\\(X-Streets:(.*)\\)");
+  private static final Pattern DIR_BOUND_PTN = Pattern.compile("#?\\b([NSEW])/(B)D?\\b");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -59,8 +60,8 @@ public class DispatchRedAlertParser extends SmartAddressParser {
     
     // Also must have at " at " keyword which we will change to "LOC:"
     // If there happen to be more than one, only change the last one
-    int pt = body.indexOf(" S:");
-    if (pt <0) pt = body.length();
+    match = END_ADDR_PTN.matcher(body);
+    int pt = match.find() ? match.start() : body.length();
     pt = body.lastIndexOf(" at ", pt);
     if (pt >= 0) {
       body = body.substring(0, pt) + " LOC: " + body.substring(pt+4);
