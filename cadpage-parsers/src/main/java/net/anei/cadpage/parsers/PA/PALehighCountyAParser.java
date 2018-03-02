@@ -20,7 +20,7 @@ public class PALehighCountyAParser extends DispatchPrintrakParser {
   
   @Override
   public String getFilter() {
-    return "911@lehighcounty.org,messaging@iamresponding.com";
+    return "911@lehighcounty.org,messaging@iamresponding.com,dispatch@uppersauconems.org";
   }
   
   @Override
