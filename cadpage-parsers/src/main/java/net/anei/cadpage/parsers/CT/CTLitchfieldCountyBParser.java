@@ -15,7 +15,7 @@ public class CTLitchfieldCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "winchesterpddispatch@yahoo.com";
+    return "winchesterpddispatch@gmail.com";
   }
   
   @Override
@@ -23,12 +23,10 @@ public class CTLitchfieldCountyBParser extends FieldProgramParser {
     return parseFields(body.split("\n"), data);
   }
   
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  
   @Override
   public Field getField(String name) {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
-    if (name.equals("TIME")) return new TimeField(TIME_FMT, true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 }
