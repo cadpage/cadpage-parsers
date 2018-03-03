@@ -22,7 +22,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@fcema.org";
+    return "dispatch@fcema.org,messaging@iamresponding.com";
   }
   
   private static final Pattern MARKER = Pattern.compile("(?:(?:FAYETTE|Fayette)-911/[A-Za-z0-9/\\\\]+\n)?\\[Fayette911\\]\n");
@@ -33,7 +33,9 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       subject = parts[0].trim();
       body = '[' + parts[1].trim() + "]\n" + body;
     }
-    if (!subject.equals("Dispatch")) return false;
+    if (!subject.equals("Dispatch")) {
+      data.strSource = subject;
+    }
     
     if (!body.startsWith("Call Time:")) {
       Matcher match = MARKER.matcher(body);
@@ -42,6 +44,11 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
     }
     
     return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   @Override
