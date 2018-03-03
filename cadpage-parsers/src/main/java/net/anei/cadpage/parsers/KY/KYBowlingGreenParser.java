@@ -10,7 +10,7 @@ public class KYBowlingGreenParser extends FieldProgramParser {
   
   public KYBowlingGreenParser() {
     super("BOWLING GREEN", "KY", 
-          "TIME:TIME! ALARM:PRI! LOC:ADDR! APT:APT? GPS! NAT:CALL! UNIT:UNIT! NOTES:INFO/S+ CROSS:X");
+          "TIME:TIME! ALARM:PRI! LOC:ADDR! APT:APT? GPS! NAT:CALL! UNIT:UNIT! NOTES:INFO/S+ CROSS:X INC:ID");
   }
   
   @Override
@@ -23,7 +23,7 @@ public class KYBowlingGreenParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Assigned to Incident (\\d{4}-\\d{5})");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Assigned to [Ii]ncident|User Note Added) (\\d{4}-\\d{5})");
   
   @Override
   public  boolean parseMsg(String subject, String body, Data data) {
