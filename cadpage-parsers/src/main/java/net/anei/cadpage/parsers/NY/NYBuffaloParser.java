@@ -16,7 +16,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
   
   @Override
   public String getFilter() {
-    return "2002000004";
+    return "2002000004,777";
   }
   
   @Override
