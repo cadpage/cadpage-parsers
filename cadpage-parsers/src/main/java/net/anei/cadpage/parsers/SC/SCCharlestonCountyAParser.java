@@ -19,6 +19,11 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
     // Strip off text msg heading
@@ -79,7 +84,7 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
       return true;
     }
     
-    else {
+    else if (p.checkAhead(34, "District ")){
       setFieldList("UNIT ID SRC CALL CODE ADDR X APT INFO PLACE");
       data.strUnit = p.get(14);
       data.strCallId = p.get(20);
@@ -99,6 +104,38 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
       if (body.length() < 130) data.expectMore = true;
       return true;
     }
+    
+    else {
+      setFieldList("CALL PLACE ADDR APT X GPS UNIT");
+      data.strCall = p.get(20);
+      if (p.check(" ")) return false;
+      boolean longForm = p.checkAhead(83, "   / ");
+      if (longForm) {
+        data.strPlace = p.get(15);
+      }
+      if (p.check(" ")) return false;
+      parseAddress(p.get(30), data);
+      if (longForm) {
+        data.strCross = p.get(30);
+      }
+      String gps1 = p.get(8);
+      if (!p.check("   / ")) return false;
+      String gps2 = p.get(8);
+      setGPSLoc(fmtGps(gps1)+','+fmtGps(gps2), data);
+      
+      
+      if (!p.check("  U:")) return false;
+      data.strUnit = p.get();
+      return true;
+    }
+  }
+  
+  private static String fmtGps(String gps) {
+    int pt = gps.length()-6;
+    if (pt > 0) {
+      gps = gps.substring(0,pt) + '.' + gps.substring(pt);
+    }
+    return gps;
   }
 
   private static final Pattern PREFIX_PTN = 
