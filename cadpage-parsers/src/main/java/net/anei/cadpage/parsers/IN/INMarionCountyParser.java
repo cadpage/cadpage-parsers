@@ -240,6 +240,10 @@ public class INMarionCountyParser extends MsgParser {
       "I70 077 RAMP A",                       "+39.751322,-86.227014",
       "I70 077 RAMP B",                       "+39.751810,-86.223286",
       
+      "RONALD REAGAN OFFRAM/I74 WB",          "+39.835114,-86.343693",
+      "RONALD REAGAN OFFRAM/I74 EB",          "+39.835114,-86.343693",
+
+      
       "59 I70 EB",                            "+39.613621,-86.479988",
       "59 I70 WB",                            "+39.613621,-86.479988",
       "60 I70 EB",                            "+39.616998,-86.469243",
