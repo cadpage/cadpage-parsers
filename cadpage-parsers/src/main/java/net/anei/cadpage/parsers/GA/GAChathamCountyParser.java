@@ -14,7 +14,8 @@ public class GAChathamCountyParser extends FieldProgramParser {
   
   public GAChathamCountyParser() {
     super("CHATHAM COUNTY", "GA",
-          "UNIT! RESPOND_TO:ADDR! APT:APT! PRI:PRI! COMPLAINT:CALL! CRN:ID! Name:NAME COMMENTS:INFO");
+          "UNIT! RESPOND_TO:ADDR! APT:APT! ( C/C:INFO! Name:NAME! " +
+                                          "| PRI:PRI! COMPLAINT:CALL! CRN:ID! Name:NAME ) COMMENTS:INFO");
   }
 
   private static final Pattern CRN_PATTERN
@@ -22,6 +23,7 @@ public class GAChathamCountyParser extends FieldProgramParser {
 +                         "COMPLETE/REFUSAL FOR|"
 +                         "COMPLETED +CALL\\s*\\/\\s*REFUSAL TIMES|"
 +                         "COMPLETE\\s*\\/\\s*REFUSAL)\\:(?:ADDRESS:)?([^:]*?)\\s*CRN\\:\\s*(\\d{4}(?:\\d|[A-Z])\\d{4}) +(.*)");
+  private static final Pattern DELIM = Pattern.compile("(?<! ) *(?=(?:RESPOND TO|APT|C/C|PRI|COMPLAINT|CRN|Name|COMMENTS):)");
   private static final Pattern TIMES_BRK_PTN = Pattern.compile("(?: +|(?<! |^))(?=(?:RECEIVED|DISPATCHED|ENROUTE|AT SCENE|DEPART|AT DEST|MILEAGE|CLEAR/CANC):)");
   private static final Pattern APT_PATTERN = Pattern.compile("(.*?)APT\\#?\\:?(.*)");
   
@@ -43,11 +45,8 @@ public class GAChathamCountyParser extends FieldProgramParser {
     } else {
       body = body.replace("PRI:", " APT: PRI:");
     }
-    body = body.replace("RESPOND TO:", " RESPOND TO:");
-    body = body.replace("CRN:", " CRN:");
-    body = body.replace("COMPLAINT:", " COMPLAINT:");
     body = body.replace("C/O:", "COMPLAINT:");
-    return super.parseMsg(body, data);
+    return parseFields(DELIM.split(body), data);
   }
   
   @Override
