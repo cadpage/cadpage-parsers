@@ -11,7 +11,7 @@ public class IADesMoinesCountyParser extends DispatchA47Parser {
   
   @Override
   public String getFilter() {
-    return "SWMAIL@BURLINGTONIOWA.ORG";
+    return "SWMAIL@BURLINGTONIOWA.ORG,swmail@descom.org";
   }
   
   private static final String[] CITY_LIST =new String[]{
