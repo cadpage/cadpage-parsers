@@ -5,22 +5,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class PAYorkCountyDParser extends FieldProgramParser {
   
   public PAYorkCountyDParser() {
     super("YORK COUNTY", "PA",
-          "DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT! UNIT+", FLDPROG_IGNORE_CASE);
+          "( SELECT/RR Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! CFS:CFS! TIMES/N+? " +
+          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT! UNIT+ )", 
+          FLDPROG_IGNORE_CASE);
     setupProtectedNames("FISH AND GAME");
   }
   
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL";
   }
   
+  
+  private HtmlDecoder decoder = null;
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<html>") || body.startsWith("<style")) {
+      if (decoder == null) decoder = new HtmlDecoder();
+      String[] flds = decoder.parseHtml(body);
+      if (flds == null) return false;
+      setSelectValue("RR");
+      data.msgType = MsgType.RUN_REPORT;
+      return parseFields(flds, data);
+    }
+    
+    setSelectValue("");
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("Station \\d+");
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]\\[\\d{4}\\](?:$| *[-\n]| {3})");
   private static final Pattern IAR_PTN1 = Pattern.compile("(?!:BOX:|box:).*\n.*\n.*");
@@ -72,6 +94,9 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("X_INFO")) return new MyCrossInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
+    
+    if (name.equals("CFS")) return new MyCFSField();
+    if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
   
@@ -192,6 +217,38 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
+    }
+  }
+  
+  private static final Pattern CFS_PTN = Pattern.compile(".*? Box: (.*?) (Received: .*)");
+  private class MyCFSField extends Field {
+    
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CFS_PTN.matcher(field);
+      if (!match.matches()) abort();
+      
+      data.strBox = match.group(1).trim();
+      data.strSupp = match.group(2);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "BOX INFO";
+    }
+  }
+  
+  private class MyTimesField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("SAVE PAPER") || field.startsWith("CONFIDENTIALITY NOTICE")) return false;
+      super.parse(field, data);
+      return true;
     }
   }
 }
