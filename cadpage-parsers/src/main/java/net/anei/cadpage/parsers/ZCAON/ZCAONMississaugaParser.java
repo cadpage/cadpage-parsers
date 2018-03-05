@@ -13,12 +13,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class ZCAONMississaugaParser extends FieldProgramParser {
   
-  private static final Pattern EXTRA_SPACES = Pattern.compile(" *\n *");
-  private static final Pattern MISSING_BREAK = Pattern.compile("(?<!\n)(?=Tac:|X1:|X2:|Map:|Inc:)");
-  private static final Pattern TAC_MISS_BREAK = Pattern.compile("(\nTac:\\S*?) +");
-  
-  private String selectType; 
-  
   public ZCAONMississaugaParser() {
     super(CITY_CODES, "PEEL REGIONAL MUNICIPALITY", "ON",
            "CALL? ( SELECT/REG ADDR/y! Map:MAP! Tac:CH! UNIT! X1:X? X2:X? Inc:ID! | SELECT/LOC ADDR/y! X1:X? X2:X? Map:MAP? Tac:CH! CALL Inc:ID | PLACE ADDR/y DATETIME! )");
@@ -33,10 +27,16 @@ public class ZCAONMississaugaParser extends FieldProgramParser {
   public String getLocName() {
     return "Mississauga, ON";
   }
+  
+  private static final Pattern EXTRA_SPACES = Pattern.compile(" *\n *");
+  private static final Pattern MISSING_BREAK = Pattern.compile("(?<!\n)(?=Tac:|X1:|X2:|Map:|Inc:)");
+  private static final Pattern TAC_MISS_BREAK = Pattern.compile("(\nTac:\\S*?) +");
+  
+  private String selectType; 
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    selectType = (body.indexOf('\n') > 0 ? "REG" : "COMP");
+    selectType = (body.contains("\n") ? "REG" : "COMP");
     body = EXTRA_SPACES.matcher(body).replaceAll("\n");
     body = MISSING_BREAK.matcher(body).replaceAll("\n");
     body = TAC_MISS_BREAK.matcher(body).replaceFirst("$1\n");
@@ -55,6 +55,7 @@ public class ZCAONMississaugaParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (selectType.equals("COMP")) return false;
+      if (field.contains("APT#") || field.contains(" <Apt.# >")) return false;
       parse(field, data);
       return true;
     }
@@ -87,6 +88,7 @@ public class ZCAONMississaugaParser extends FieldProgramParser {
       // Compressed form is a special case
       // Anything else should be passed to the superclass parse method
       if (!selectType.equals("COMP")) {
+        field = field.replace("[SP]APT#", "APT#").replaceAll("<Apt.# >", "APT#");
         super.parse(field, data);
         return;
       }

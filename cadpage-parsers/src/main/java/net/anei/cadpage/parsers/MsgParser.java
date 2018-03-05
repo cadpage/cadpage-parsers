@@ -1212,7 +1212,7 @@ public abstract class MsgParser {
    * @param parseCity true if cities should be parsed with dashes
    */
   private static final Pattern INTERSECT = Pattern.compile("/|&|@");
-  private static final Pattern APT = Pattern.compile("(?!^)(?!RMP|SUITES)((?:APTS|\\bAPT(?!S)|\\bUNIT|\\bSUITE|\\bROOM|\\bSTE|\\bRM|\\bFLOOR|\\bFLRS?|\\bLOT)(?![A-Z].)|#APT|#)[ #\\.:]*(.+)$",Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT = Pattern.compile("(?!^)(?!RMP|SUITES)((?:APTS|\\bAPT(?!S)|\\bUNIT|\\bSUITE|\\bROOM|\\bSTE|\\bRM|\\bFLOOR|\\bFLRS?|\\bLOT)(?![A-Z].)|#APT|#)[ #\\.:]*(.*)$",Pattern.CASE_INSENSITIVE);
   private static final Pattern DOT = Pattern.compile("\\.(?!\\d)");
   private static final Pattern DOUBLE_SLASH = Pattern.compile("//+");
   private static void parseAddress(String addressLine, MsgInfo.Data data, 
