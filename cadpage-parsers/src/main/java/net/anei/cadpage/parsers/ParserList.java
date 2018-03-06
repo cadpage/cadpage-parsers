@@ -1617,6 +1617,7 @@ public class ParserList {
           new ParserCategory("Ontario, Canada"
               ,"ZCAONChathamKent"               ,"Chatham-Kent, ON"
               ,"ZCAONMississauga"               ,"Mississauga, ON"
+              ,"ZCAONSimcoeCounty"              ,"Simcoe County, ON"
           ),
           new ParserCategory("Quebec, Canada"
               ,"ZCAQCQuebec"                    ,"Quebec, QC"
