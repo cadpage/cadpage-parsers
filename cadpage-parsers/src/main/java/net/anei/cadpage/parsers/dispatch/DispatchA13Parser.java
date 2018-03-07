@@ -318,7 +318,7 @@ public class DispatchA13Parser extends FieldProgramParser {
         }
         if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
         String place;
-        parseAddress(st, flags, addr, data);
+        if (addr != null) parseAddress(st, flags, addr, data);
         if (includeCall) {
           data.strCall = append(saveCall, " - ", data.strCall);
           place = data.strPlace;

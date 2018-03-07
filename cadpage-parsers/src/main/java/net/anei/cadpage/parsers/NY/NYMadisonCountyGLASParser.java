@@ -40,6 +40,8 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Greater Lenox") && !subject.equals("LINCOLN VOLUNTEER FIRE DEPT")) return false;
+    int pt = body.indexOf("\n\nATTENTION:");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     body = WIERD_CHAR_PTN.matcher(body).replaceAll("").trim();
     body = body.replace("Free Format Address:","Address:");
     body = body.replace("Response Type:", "Type:");
@@ -60,7 +62,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
       if (sPart1.startsWith("@")) {
         data.strPlace = sPart1.substring(1).trim(); 
         String sPart2 = "";
-        int pt = sPart1.indexOf(", ");
+        pt = sPart1.indexOf(", ");
         if (pt >= 0) {
           sPart2 = sPart1.substring(pt+2).trim();
           sPart1 = sPart1.substring(0,pt).trim();
@@ -84,7 +86,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
           String apt = "";
           if (sPart2.endsWith(" VILLAGE")) {
             sPart2 = sPart2.substring(0,sPart2.length() - 8).trim();
-            int pt = sPart2.lastIndexOf(',');
+            pt = sPart2.lastIndexOf(',');
             if (pt < 0) return false;
             data.strCity = sPart2.substring(pt+1).trim();
             apt = sPart2.substring(0,pt).trim(); 
@@ -103,7 +105,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
           StartType st = data.strName.length() > 0 ? StartType.START_ADDR : StartType.START_OTHER;
           sPart1 = sPart1.replace("\\", "&");
           if (data.strCity.length() == 0) {
-            int pt = sPart1.lastIndexOf(',');
+            pt = sPart1.lastIndexOf(',');
             if (pt >= 0) {
               String city = sPart1.substring(pt+1).trim();
               if (isCity(city)) {
@@ -121,7 +123,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
         
         else {
           String sPart2 = "";
-          int pt = sPart1.lastIndexOf(", ");
+          pt = sPart1.lastIndexOf(", ");
           if (pt >= 0) {
             sPart2 = sPart1.substring(pt+2).trim();
             sPart1 = sPart1.substring(0,pt).trim();
@@ -172,7 +174,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
       }
       
       // Check for truncated VILLAGE following city
-      int pt = data.strCity.lastIndexOf(' ');
+      pt = data.strCity.lastIndexOf(' ');
       if (pt >= 0) {
         String last = data.strCity.substring(pt+1).trim().toUpperCase();
         for (String city : new String[]{"VILLAGE", "INSIDE", "HAMLET"}) {
