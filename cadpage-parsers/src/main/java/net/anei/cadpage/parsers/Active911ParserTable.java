@@ -168,6 +168,7 @@ public class Active911ParserTable {
       "US/CA/ShastaCom911",               "CAShastaCountyB",
       "US/CA/ShastaCounty",               "CAShastaCountyA",
       "US/CA/SiskiyouCounty",             "CASiskiyouCounty",
+      "US/CA/SLUCAD",                     "CASanLuisObispoCountyA",
       "US/CA/SonomaCounty",               "CASonomaCounty",
       "US/CA/SouthBay",                   "CALosAngelesCountyB",
       "US/CA/StanislausCounty",           "CAStanislausCountyA",
