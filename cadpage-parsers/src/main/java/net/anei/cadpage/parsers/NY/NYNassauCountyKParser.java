@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NY;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -17,8 +18,11 @@ public class NYNassauCountyKParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,wantaghpaging@gmail.com,@wantaghfireinfo.com";
+    return "@firerescuesystems.xohost.com,wantaghpaging@gmail.com,@wantaghfireinfo.com,2083399144";
   }
+  
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
+  private static final Pattern SRC_MARKER_PTN = Pattern.compile("[A-Z]+: *\\((.*?)\\) *");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -26,7 +30,23 @@ public class NYNassauCountyKParser extends FieldProgramParser {
     // Reject NYNassauCountyH messages
     if (body.startsWith("**")) return false;
     
+    if (SUBJECT_PTN.matcher(subject).matches()) {
+      data.strSource = subject;
+    }
+    else {
+      Matcher match = SRC_MARKER_PTN.matcher(body);
+      if (match.lookingAt()) {
+        data.strSource = match.group(1).trim();
+        body = body.substring(match.end());
+      }
+    }
+    
     return parseFields(DELIM.split(body), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   @Override
