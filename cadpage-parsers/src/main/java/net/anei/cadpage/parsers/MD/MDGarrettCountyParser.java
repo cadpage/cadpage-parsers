@@ -15,7 +15,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
   
   public MDGarrettCountyParser() {
     super(CITY_LIST, "GARRETT COUNTY", "MD", 
-          "ADDR CITY? ( X | X1 X2 | ) CALL CALL2/SDS+? INFO/SDS+? UNIT_TIME! END");
+          "ADDR/S6 CITY? ( X | X1 X2 | ) CALL CALL2/SDS+? INFO/SDS+? UNIT_TIME! END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MULTI_WORD_STREET_LIST);
   }

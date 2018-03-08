@@ -60,12 +60,18 @@ public class ARSebastianCountyParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
+  private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:LOT|RM|ROOM|APT|SUITE) *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
-      super.parse(field, data);
+      Parser p = new Parser(field);
+      String apt = p.getLastOptional(",");
+      super.parse(p.get(), data);
+      Matcher match = APT_PREFIX_PTN.matcher(apt);
+      if (match.matches()) apt = match.group(1);
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
   

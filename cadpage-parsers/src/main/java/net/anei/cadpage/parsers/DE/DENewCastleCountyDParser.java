@@ -11,6 +11,7 @@ public class DENewCastleCountyDParser extends FieldProgramParser {
   public DENewCastleCountyDParser() {
     super("NEW CASTLE COUNTY", "DE",
           "CALL:CALL! ADDR:ADDR/S6! ( DCITY:CITY DCITY:ST | CITY:CITY ST:ST | ) APT:APT? PL:PLACE? XST:X? UNIT:UNIT? INFO:INFO? INFO+? DCITY:SKIP CITY:SKIP");
+    setupSpecialStreets("LANDERS SP");
   }
   
   @Override

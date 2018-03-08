@@ -2672,16 +2672,20 @@ public abstract class SmartAddressParser extends MsgParser {
       if (++ndx < tokens.length) {
         result.aptField = new FieldSpec(ndx, ++ndx);
         result.endAll = ndx;
-        return true;
+      } else {
+        result.endAll = tokens.length;
       }
+      return true;
     }
     
     else if (isType(ndx, ID_FLOOR)) {
       if (ndx+1 < tokens.length) {
         result.aptField = new FieldSpec(ndx, ndx+2);
         result.endAll = ndx+2;
-        return true;
+      } else {
+        result.endAll = tokens.length;
       }
+      return true;
     }
     
     else if (isAptToken(ndx)) {

@@ -13,7 +13,7 @@ public class NYJeffersonCountyAParser extends FieldProgramParser {
   
   public NYJeffersonCountyAParser() {
     super("JEFFERSON COUNTY", "NY",
-          "( SELECT/R Incident_#:SKIP! CAD_Call_ID_#:ID! Type:SKIP! Date/Time:DATETIME! Address:ADDR! Contact:NAME! Contact_Address:SKIP! Contact_Phone:PHONE1! Nature:CODE! Nature_Description:CALL! Determinant:SKIP! Determinant_Desc:SKIP! Complainant:SKIP! Comments:INFO! INFO/N+ " +
+          "( SELECT/R Incident_#:SKIP! CAD_Call_ID_#:ID! Type:SKIP! Date/Time:DATETIME! Address:ADDR1! Contact:NAME! Contact_Address:SKIP! Contact_Phone:PHONE1! Nature:CODE! Nature_Description:CALL! Determinant:SKIP! Determinant_Desc:SKIP! Complainant:SKIP! Comments:INFO! INFO/N+ " +
           "| CALL ADDR2! ( INFO2! END | X/Z? LATLON INFO2! END ) )");
   }
 
@@ -91,6 +91,7 @@ public class NYJeffersonCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("PHONE1")) return new MyPhone1Field();
+    if (name.equals("ADDR1")) return new MyAddress1Field();
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("LATLON")) return new MyLatLonField();
@@ -106,10 +107,42 @@ public class NYJeffersonCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern ADDR_PTN = Pattern.compile("\\(.\\)$");
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?|[A-Z])|(?:APT|RM|ROOM|LOT) *([A-Z] \\d+[A-Z]?|\\S+) *(.*)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?|[A-Z]|BLDG?[. ]+.*)|(?:APT|RM|ROOM|LOT) *([A-Z] \\d+[A-Z]?|\\S+) *(.*)");
   private static final Pattern ADDR_BOUND_PTN = Pattern.compile("[NSEW]B");
-  private class MyAddress2Field extends AddressField {
+  
+  private class MyAddress1Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String part : field.split(";")) {
+        part = part.trim();
+        if (data.strAddress.length() == 0) {
+          parseAddress(part, data);
+          continue;
+        }
+        Matcher match = ADDR_APT_PTN.matcher(part);
+        if (match.matches()) {
+          String apt = match.group(1);
+          if (apt == null) apt = match.group(2).replace(" ", "");
+          data.strApt = append(data.strApt, "-", apt);
+          part = getOptGroup(match.group(3));
+        }
+        part = stripFieldStart(part, "U:");
+        if (ADDR_BOUND_PTN.matcher(part).matches()) {
+          data.strAddress = append(data.strAddress, " ", part);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", part);
+        }
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
+    }
+  }
+  
+  private static final Pattern ADDR_PTN = Pattern.compile("\\(.\\)$");
+  private class MyAddress2Field extends MyAddress1Field {
     
     @Override
     public void parse(String field, Data data) {
@@ -117,27 +150,12 @@ public class NYJeffersonCountyAParser extends FieldProgramParser {
       if (match.find()) field = field.substring(0,match.start()).trim();
       Parser p = new Parser(field.trim());
       data.strCity = p.getLastOptional(':');
-      String place = p.getLastOptional(';');
-      parseAddress(p.get(), data);
-  
-      place = stripFieldStart(place, "U:");
-      match = ADDR_APT_PTN.matcher(place);
-      if (match.matches()) {
-        String apt = match.group(1);
-        if (apt == null) apt = match.group(2).replace(" ", "");
-        data.strApt = append(data.strApt, "-", apt);
-        place = getOptGroup(match.group(3));
-      }
-      if (ADDR_BOUND_PTN.matcher(place).matches()) {
-        data.strAddress = append(data.strAddress, " ", place);
-      } else {
-        data.strPlace = place;
-      }
+      super.parse(p.get(), data);
     }
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT PLACE CITY";
+      return super.getFieldNames() + " CITY";
     }
   }
   

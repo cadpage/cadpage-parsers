@@ -89,6 +89,7 @@ public class ZCAONMississaugaParser extends FieldProgramParser {
       // Anything else should be passed to the superclass parse method
       if (!selectType.equals("COMP")) {
         field = field.replace("[SP]APT#", "APT#").replaceAll("<Apt.# >", "APT#");
+        field = stripFieldEnd(field, " APT#");
         super.parse(field, data);
         return;
       }

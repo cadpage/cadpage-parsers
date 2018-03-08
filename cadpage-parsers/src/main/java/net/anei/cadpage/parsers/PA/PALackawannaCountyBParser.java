@@ -13,7 +13,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
   
   public PALackawannaCountyBParser() {
     super(CITY_CODES, "LACKAWANNA COUNTY", "PA", 
-          "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY! Muni:CITY! Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
+          "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
   }
   
   @Override
@@ -30,9 +30,18 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
   }
   
   private class MyCityField extends CityField {

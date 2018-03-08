@@ -15,7 +15,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   
   public MDBaltimoreCountyBParser() {
     super("BALTIMORE COUNTY", "MD",
-           "BOX:MAP CALL:CALL! ADDR:ADDR! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
+           "BOX:MAP CALL:CALL! ADDR:ADDR/S6! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
   }
   
   @Override
@@ -52,16 +52,17 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern UPDATED_LOC = Pattern.compile("[ \\*/]*\\bUPDATED LOC\\b[ \\*/]*");
+  private static final Pattern UPDATED_LOC = Pattern.compile("[ \\*/]*\\b((?:UPDATED|UPDATED|CORRECT(?:ED)?)(?: LOC(?:ATION)?)?)\\b[ \\*/]*");
   private static final Pattern DIR_BOUND = Pattern.compile("\\b([NSEW])/B\\b");
   private static final Pattern APT_MARKER = Pattern.compile(" +(APT|ROOM|RM|BLDG|SUITE|CONDO) +");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       
-      field = UPDATED_LOC.matcher(field).replaceAll("");
+      field = UPDATED_LOC.matcher(field).replaceAll(" ($1) ").trim();
       field = DIR_BOUND.matcher(field).replaceAll("$1B");
       field = field.replace('@', '&');
+      field = field.replace(" AT ", " & ");
       
       String apt = "";
       Matcher match = APT_MARKER.matcher(field);
@@ -126,6 +127,12 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
       field = field.replace('-', '/');
       super.parse(field, data);
     }
+  }
+  
+  @Override
+  public boolean isNotExtraApt(String apt) {
+    if (apt.startsWith("(")) return true;
+    return super.isNotExtraApt(apt);
   }
   
   @Override

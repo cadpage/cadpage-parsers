@@ -12,7 +12,7 @@ public class NJBurlingtonCountyDParser extends FieldProgramParser {
   
   public NJBurlingtonCountyDParser() {
     super("BURLINGTON COUNTY", "NJ",
-           "Call_Time:TIME! Incident_#:ID! Incident_Type:CALL! ( Located_Btwn:X! Nature:INFO! Quadrant:MAP | Quadrant:MAP Location:ADDR! Located_Btwn:X! Nature:INFO! )");
+           "Call_Time:TIME! Incident_#:ID! Incident_Type:CALL! ( Located_Btwn:X! Nature:INFO! Quadrant:MAP | Quadrant:MAP Location:ADDR/S6! Located_Btwn:X! Nature:INFO! )");
   }
   
   @Override
@@ -34,6 +34,13 @@ public class NJBurlingtonCountyDParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new MyIDField();
     return super.getField(name);
+  }
+  
+
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (apt.startsWith("(")) return true;
+    return super.isNotExtraApt(apt);
   }
 
   @Override
