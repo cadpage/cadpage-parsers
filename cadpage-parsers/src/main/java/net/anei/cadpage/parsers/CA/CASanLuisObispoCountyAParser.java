@@ -28,7 +28,7 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern DELIM = Pattern.compile("[;\n]");
+  private static final Pattern DELIM = Pattern.compile("[;\n]+");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -95,6 +95,7 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
       "MB",     "MORRO BAY",
       "PR",     "PASO ROBLES",
       "SL",     "SAN LUIS OBISPO",
+      "SLO",    "SAN LUIS OBISPO",
       "SLO_CO", "",
       "TEMP",   "TEMPLETON"
   });
