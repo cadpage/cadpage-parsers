@@ -1,8 +1,5 @@
 package net.anei.cadpage.parsers.CT;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -10,7 +7,7 @@ public class CTLitchfieldCountyBParser extends FieldProgramParser {
   
   public CTLitchfieldCountyBParser() {
     super("LITCHFIELD COUNTY", "CT", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! CROSS_STREET_1:X? CROSS_STREET_2:X? INFO:INFO/N+");
   }
   
   @Override
