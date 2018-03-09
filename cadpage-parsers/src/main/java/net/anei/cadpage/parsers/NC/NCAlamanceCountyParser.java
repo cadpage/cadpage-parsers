@@ -15,7 +15,7 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
   
   public NCAlamanceCountyParser() {
     super(CITY_CODES, "ALAMANCE COUNTY", "NC",
-           "ID?: CALL ADDR! APT? CITY/Y X X INFO+");
+           "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? INFO/N+");
   }
 
   @Override
@@ -25,21 +25,31 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    boolean good = false;
     if (subject.contains(";")) {
       int pt = body.indexOf(":CAD:");
       if (pt < 0) return false;
       pt += 5;
       body = body.substring(0,pt) + subject + ' ' +  body.substring(pt);
+      good = true;
+    } else if (body.startsWith("CAD:")) {
+      good = true;
+    } else {
+      body = "CAD:" + body;
+      if (subject.equals("Text Message")) good = true;
     }
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    return good || data.strCity.length() > 0 || isPositiveId();
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|UNIT|RM|ROOM|STE|#)[- ]*(.*)");
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
@@ -57,21 +67,42 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
       return "INFO APT";
     }
   }
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|UNIT|#)[- ]*(.*)");
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Radio Channel:")) {
+        data.strChannel = field.substring(14).trim();
+        return;
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CH " + super.getFieldNames();
+    }
+  }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BURL",  "BURLINGTON",
+      "ELON",  "ELON",
+      "GIB",   "GIBSONVILLE",
       "GRAH",  "GRAHAM",
       "GREE",  "GREEN LEVEL",
       "HAW",   "HAW RIVER",
-      "MEB",   "MEBANE",
-      "BURL",  "BURLINGTON",
-      "GIB",   "GIBSONVILLE",
-      "ELON",  "ELON",
       "LIB",   "LIBERTY",
-      "SWEP",  "SWEPSONVILLE",
+      "MEB",   "MEBANE",
       "SNOW",  "SNOW CAMP",
+      "SWEP",  "SWEPSONVILLE",
+      
+      // Chatham County
+      "PIT",   "PITTSBORO",
       
       // Guilford County
-      "WHIT",  "WHITSETT"
+      "WHIT",  "WHITSETT",
+      
+      // Orange County
+      "ORG",   "ORANGE COUNTY"
   });
 }
