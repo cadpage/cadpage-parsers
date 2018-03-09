@@ -22,7 +22,7 @@ public class PAJuniataCountyParser extends DispatchA48Parser {
 
   @Override
   public String getFilter() {
-    return "UNIATA911@Juniata.PA";
+    return "@Juniata.PA,@co.juniata.pa.us";
   }
   
   public static final String[] CITY_LIST = new String[]{

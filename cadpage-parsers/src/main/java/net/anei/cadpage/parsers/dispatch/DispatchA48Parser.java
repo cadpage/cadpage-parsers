@@ -259,20 +259,23 @@ public class DispatchA48Parser extends FieldProgramParser {
     boolean unitMark = false;
     for (String part : DATE_TIME_PTN.split(addr)) {
       part = part.trim();
+      
+      if (unitMark) {
+        int pt = part.indexOf(' ');
+        if (pt >= 0) part = part.substring(0,pt);
+        addUnit(part, data);
+        continue;
+      }
+      
+      match = DATE_TIME_UNIT_MARK_PTN.matcher(part);
+      unitMark = match.matches();
+      if (unitMark) part = match.group(1).trim();
+
       if (first) {
         first = false;
         addr = part;
-        match = DATE_TIME_UNIT_MARK_PTN.matcher(addr);
-        unitMark = match.matches();
-        if (unitMark) addr = match.group(1).trim();
       } else {
-        if (unitMark) {
-          int pt = part.indexOf(' ');
-          if (pt >= 0) part = part.substring(0,pt);
-          addUnit(part, data);
-        } else {
-          data.strSupp = append(data.strSupp, "\n", part);
-        }
+        data.strSupp = append(data.strSupp, "\n", part);
       }
     }
     
