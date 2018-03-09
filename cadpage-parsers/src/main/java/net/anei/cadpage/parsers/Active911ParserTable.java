@@ -766,6 +766,7 @@ public class Active911ParserTable {
       "US/MO/WayneCounty",                "MOWayneCounty",
       "US/MO/WCCD911",                    "MOWashingtonCounty",
       "US/MO/WCCD911IronCounty",          "MOIronCounty",
+      "US/MO/WebsterCounty",              "MOWebsterCounty",
       "US/MO/WrightCounty",               "MOWrightCounty",
       "US/MS/Biloxi",                     "MSBiloxi",
       "US/MS/CityofHernando",             "MSHernando",
