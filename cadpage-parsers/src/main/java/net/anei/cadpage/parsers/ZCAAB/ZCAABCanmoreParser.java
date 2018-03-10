@@ -16,14 +16,14 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  */
 public class ZCAABCanmoreParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d[AP]M) CALL (\\d\\d[a-z]\\d\\d[a-z]?|911test) AT (.+)");
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d[AP]M) CALL[ :](\\d\\d[a-z]\\d\\d[a-z]?|ambulance|911test) AT[ :](.+)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mmaa");
   
   private static final CodeTable STD_CODE_TABLE = new StandardCodeTable();
   
   public ZCAABCanmoreParser() {
     super("CANMORE", "AB");
-    setFieldList("TIME CODE CALL ADDR APT PLACE CITY");
+    setFieldList("TIME CODE CALL ADDR APT PLACE CITY ID UNIT");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -43,6 +43,8 @@ public class ZCAABCanmoreParser extends MsgParser {
     if (call == null) call = data.strCode;
     data.strCall = call;
     Parser p = new Parser(match.group(3).trim());
+    data.strUnit = p.getLastOptional(" UNIT:");
+    data.strCallId = p.getLastOptional(" EVENT NO:");
     String addr = p.get(',');
     if (addr.length() == 0) addr = p.get(',');
     addr = addr.replace('_', ' ');
