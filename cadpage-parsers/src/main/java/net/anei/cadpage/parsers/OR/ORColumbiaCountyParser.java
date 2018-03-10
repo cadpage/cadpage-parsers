@@ -11,11 +11,12 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
 
   public ORColumbiaCountyParser() {
     super("COLUMBIA COUNTY", "OR", 
-          "CALL! ( ADDR_TIME | ADDR! PLACE? ( CH! MAP_TIME! | MAP_TIME! ) ) X:X?");
+          "CALL! ( ADDR_TIME | ADDR! PLACE? ( CH! MAP_TIME! | MAP_TIME! ) ) X:X? INFO/N+");
   }
 
-  private static Pattern ID_PTN = Pattern.compile("(\\d{8}) +");
+  private static Pattern ID_PTN = Pattern.compile("([A-Z]{0,2}\\d{8,9}) +");
   private static Pattern MUTUAL_AID_FORMAT = Pattern.compile("([,A-Z0-9]+) (mutual aid to [A-Z0-9]+) at (.*?)(?:; *(.*?))? (for .*?)\\.");
+  private static Pattern BRK_PTN = Pattern.compile("\\[\\d\\]");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -40,6 +41,11 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
       return true;
     }
 
+    if (!body.contains("\n")) {
+      body = SP_CITY_PTN.matcher(body).replaceFirst("\n");
+      body = body.replace(" Map ", "\nMap ").replace(" X:", "\nX:");
+      body = BRK_PTN.matcher(body).replaceAll("\n");
+    }
     return super.parseFields(body.split("\n"), data);
   }
   
@@ -79,7 +85,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
 
   }
 
-  private static Pattern CITY_CODE = Pattern.compile("(?:([A-Z]*) *;)? *(.*?)");
+  private static Pattern CITY_CODE = Pattern.compile("(?:([ A-Z]*?) *;)? *(.*?)");
 
   private class MyAddressField extends AddressField {
 
@@ -128,7 +134,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     }
   }
 
-  private static Pattern MAP_TIME = Pattern.compile("(?:Map )?(.*?) +(\\d{2}:\\d{2}:\\d{2})");
+  private static Pattern MAP_TIME = Pattern.compile("(?:Map )?(.*?) +(\\d{2}:\\d{2}:\\d{2})|Map +(.*)");
 
   private class MyMapTimeField extends Field {
 
@@ -141,8 +147,13 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher mtMat = MAP_TIME.matcher(field);
       if (!mtMat.matches()) return false;
-      data.strMap = mtMat.group(1);
-      data.strTime = mtMat.group(2);
+      String map = mtMat.group(1);
+      if (map != null) {
+        data.strMap = map.trim();;
+        data.strTime = mtMat.group(2);
+      } else {
+        data.strMap = mtMat.group(3);
+      }
       return true;
     }
     
@@ -162,12 +173,15 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replaceAll("No X Street", "");
       field = field.replace(',', '/');
       field = stripFieldEnd(field, "/");
       field = stripFieldStart(field, "/");
       super.parse(field, data);
     }
   }
+  
+  private static final Pattern SP_CITY_PTN = Pattern.compile("[, ](?=COLUMBIA CITY|CLATSKAINE|CLATSKANIE|COLUMBIA|MULTNOMAH|PRESCOTT|RAINIER|SCAPPOOSE|ST HELENS|DEER ISLAND|VERNONIA|PORTLAND|WARREN)");
   
   //All codes excluding COL, MUL, and SCA are conjectures based on the format of the aforementioned three
   private static Properties CITY_CODES = buildCodeTable(new String[]{
@@ -180,7 +194,8 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
       "RAI", "RAINIER",
       "SCA", "SCAPPOOSE",
       "SH",  "ST HELENS",
-      "VER", "VERNONIA"
+      "VER", "VERNONIA",
+      "WCA", "WASHINGTON COUNTY"
   });
   
 }
