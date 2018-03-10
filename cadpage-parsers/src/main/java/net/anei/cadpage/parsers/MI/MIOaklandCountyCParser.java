@@ -15,7 +15,7 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
 
   MIOaklandCountyCParser(String defCity, String defState) {
     super(defCity, defState, 
-          "CODE ADDR ADDR2? APT? PLACE+? PHONE END");
+          "URL CODE ADDR ADDR2? APT? PLACE+? PHONE END");
   }
   
   @Override
@@ -25,19 +25,16 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@oakgov.com";
+    return "CAD_Do-Not-Reply@oakgov.com";
   }
-  
-  private static final String SIGNATURE = "https://apps.clemis.org/";
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith(SIGNATURE)) return false;
-    if (!body.startsWith(SIGNATURE)) return false;
     int pt = body.indexOf(" /");
     if (pt < 0) return false;
-    body = body.substring(pt+2).trim();
-    if (!parseFields(body.split("/"), data)) return false;
+    String[] flds = body.substring(pt).trim().split("/");
+    flds[0] = body.substring(0,pt).trim();
+    if (!parseFields(flds, data)) return false;
     data.strCall = convertCodes(data.strCode, CALL_CODES);
     return true;
   }
@@ -49,6 +46,7 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("URL")) return new InfoUrlField("https://apps.clemis.org/.*", true);
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("PLACE")) return new MyPlaceField();
