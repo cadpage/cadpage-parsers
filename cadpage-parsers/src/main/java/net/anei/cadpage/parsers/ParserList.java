@@ -1222,6 +1222,7 @@ public class ParserList {
               ,"PAFultonCounty"                 ,"Fulton County, PA"
               ,"PAGrantham"                     ,"Grantham, PA"
               ,"PAGreeneCounty"                 ,"Greene County, PA"
+              ,"PAHuntingdonCounty"             ,"Huntingdon County, PA"
               ,"PAJeffersonCounty"              ,"Jefferson County, PA"
               ,"PAJuniataCounty"                ,"Juniata County, PA"
               ,"PALackawannaCounty"             ,"Lackawanna County, PA"
