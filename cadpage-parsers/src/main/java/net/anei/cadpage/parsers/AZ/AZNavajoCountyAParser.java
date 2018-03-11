@@ -15,7 +15,7 @@ public class AZNavajoCountyAParser extends DispatchA27Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,noreply@pinetoplakesideaz.gov";
   }
   
   @Override
