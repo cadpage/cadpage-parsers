@@ -905,7 +905,7 @@ public class Active911ParserTable {
       "US/NJ/FairLawnPD",                 "NJBergenCountyG",
       "US/NJ/FortLeePolice",              "NJBergenCountyB",
       "US/NJ/FranklinLakes",              "NJBergenCountyF",
-      "US/NJ/GallowayTownship",           "NJAtlanticCountyC",
+      "US/NJ/GallowayTownship",           "NJAtlanticCountyB,NJAtlanticCountyC",
       "US/NJ/GloucesterCounty",           "NJGloucesterCountyA",
       "US/NJ/GloucesterERCAlert",         "GeneralAlert",
       "US/NJ/HamiltonTownship",           "NJAtlanticCountyB",
