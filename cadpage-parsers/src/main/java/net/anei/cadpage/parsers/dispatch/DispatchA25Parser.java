@@ -152,6 +152,7 @@ public class DispatchA25Parser extends FieldProgramParser {
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -227,6 +228,26 @@ public class DispatchA25Parser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("(?:RP )?Lat/Long: *(.*)");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        if (data.strGPSLoc.length() == 0) {
+          setGPSLoc(match.group(1), data);
+        }
+        return;
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS INFO";
     }
   }
 }
