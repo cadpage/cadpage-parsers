@@ -10,16 +10,17 @@ public class PACentreCountyBParser extends FieldProgramParser {
   
   public PACentreCountyBParser() {
     super("CENTRE COUNTY", "PA", 
-          "Box:BOX_CALL! CALL? PLACE? ADDRCITY! EMPTY+? MAP Name:NAME Due:UNIT END");
+          "Box:BOX_CALL! CALL? ADDRCITY! PLACE APT NAME Name:NAME Due:UNIT END");
   }
   
   @Override
   public String getFilter() {
-    return "alerts@centre.ealert911.com,dispatch@centrecountypa.gov";
+    return "alerts@centre.ealert911.com,dispatch@centrecountypa.gov,Centre County Alerts";
   }
   
   private static final Pattern HTTP_PTN = Pattern.compile("[ \n]http:");
   private static final Pattern PREFIX_PTN = Pattern.compile("(?:FD|EMS) (?=Box:)");
+  private static final Pattern FIX_CITY_PTN = Pattern.compile("(?:BL(?!AIR)|CT|CF|HT|UN(?!ION)) *(.*)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -32,19 +33,24 @@ public class PACentreCountyBParser extends FieldProgramParser {
     if (match.lookingAt()) body = body.substring(match.end());
     
     body = stripFieldEnd(body, ".");
-    body = body.replace(" Due:", "\nDue");
-    return parseFields(body.split("\n"), data);
+    body = body.replace(" Due:", "\nDue:");
+    if (!parseFields(body.split("\n"), data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " 0");
+    match = FIX_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) data.strCity = match.group(1);
+    return true;
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("BOX_CALL")) return new MyBoxCallField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|ROOM|RM|SUITE|UNIT) +(.*)|(.*)", true);
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
   
-  private static final Pattern BOX_CALL_PTN = Pattern.compile("(\\d{3,})(?: +(.*))?");
+  private static final Pattern BOX_CALL_PTN = Pattern.compile("(\\d{2,})(?: +(.*))?");
   private class MyBoxCallField extends Field {
 
     @Override
