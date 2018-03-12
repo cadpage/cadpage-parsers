@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Mendocino County, CA (A)
@@ -16,7 +17,8 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
   
   public CAMendocinoCountyAParser() {
     super(CITY_CODES, "MENDOCINO COUNTY", "CA",
-           "CALL ADDR! ( IDGPSUNIT! INFO/N+ |  ( ID INFO/N+ RA:MAP! GPS! UNIT! | INFO/N+ Map:MAP! GPS! INFO/N+? ( UNITID! | UNIT ID ) ) Cmd:CH! Tac:CH/L! Air:CH/L? INFO/N+? ( DATETIME | MAPURL ) )");
+           "( SELECT/RR ID CALL ADDR UNIT INFO! INFO/N+ " +
+           "| CALL ADDR! ( IDGPSUNIT! INFO/N+ |  ( ID INFO/N+ RA:MAP! GPS! UNIT! | INFO/N+ Map:MAP! GPS! INFO/N+? ( UNITID! | UNIT ID ) ) Cmd:CH! Tac:CH/L! Air:CH/L? INFO/N+? ( DATETIME | MAPURL ) ) )");
   }
   
   @Override
@@ -29,9 +31,18 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern RR_DELIM = Pattern.compile("[;\n]");
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
+    if (body.startsWith("CLOSE:")) {
+      body = body.substring(6).trim();
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("RR");
+      return parseFields(RR_DELIM.split(body), data);
+    } else {
+      setSelectValue("");
+      return parseFields(body.split(";"), data);
+    }
   }
   
   @Override
@@ -64,7 +75,7 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "PLACE ADDR CITY";
+      return "PLACE ADDR APT CITY";
     }
   }
   
