@@ -18,7 +18,9 @@ public class PAHuntingdonCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
+    return true;
   }
   
   @Override
