@@ -1385,7 +1385,7 @@ That may mean something has changed about your dispatch alerts and Cadpage is no
 
 Are dispatch alerts showing up in your message inbox?  If not, you have to talk to someone in your department about getting them sent to your phone.
 
-If they are showing up in your message inbox, but Cadpage is not picking them up, use the "Email the Developer" setting to send us a new support email right after Cadpage fails to pick up an alert. The email should include details about the last text message so we can figure out what needs to be done.
+If they are showing up in your message inbox, but Cadpage is not picking them up, use the "Email the Developer" setting to send us a new support email right after Cadpage fails to pick up an alert. The email should include details about the last text message so I can figure out what needs to be done.
 
 If Cadpage is picking up the alerts, but they are not mapping correctly, long press them and select "Report Problem" to send them to us.
 
