@@ -31,7 +31,7 @@ public class PACrawfordCountyParser extends DispatchB3Parser {
   
   @Override
   public String getFilter() {
-    return "OESCAD@WINDSTREAM.NET,CRAWFORD_COUNTY_911@oescad.com,CRAWFORD_COUNTY_911@CrawfordPA911.com,4702193542";
+    return "OESCAD@WINDSTREAM.NET,CRAWFORD_COUNTY_911@oescad.com,CRAWFORD_COUNTY_911@CrawfordPA911.com,4702193542,8573032010";
   }
   
   @Override
