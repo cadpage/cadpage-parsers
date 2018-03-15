@@ -14,7 +14,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
-           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID? INFO+ Units:UNIT UNIT+");
+           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
     setupCities(EXTRA_CITY_LIST);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
   }
@@ -123,8 +123,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("AT")) return new MyAtField();
     if (name.equals("XINFO")) return new MyCrossInfoField();
     if (name.equals("SRC")) return new SourceField("[A-Z]{3}\\d");
-    if (name.equals("BOX")) return new BoxField("\\d{5,6}(?: \\d{5,6})*|[A-Z]\\d{5}|[A-Z]{2,3}\\d{2,3}|\\d{3}[A-Z]\\d{2}", true);
-    if (name.equals("ID")) return new IdField("[A-Z]\\d{9}", true);
+    if (name.equals("BOX")) return new BoxField("\\d{5,6}(?: \\d{5,6})*|[A-Z]\\d{5}|[A-Z]{2,3}\\d{2,3}|\\d{3}[A-Z]\\d{2}|\\d{3}-\\d{2,3}", true);
+    if (name.equals("ID")) return new IdField("[A-Z]{1,5}\\d{9}", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);

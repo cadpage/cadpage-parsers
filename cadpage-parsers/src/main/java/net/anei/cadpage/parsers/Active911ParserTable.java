@@ -1237,6 +1237,7 @@ public class Active911ParserTable {
       "US/PA/PFDFireChester",             "PAChesterCountyD4,PAChesterCountyG,PAChesterCountyO,PAChesterCountyP",
       "US/PA/PhoenixFire",                "PASchuylkillCounty",
       "US/PA/PikeCounty",                 "PAPikeCountyB",
+      "US/PA/PittsburghBoF",              "PAAlleghenyCountyA",
       "US/PA/RHL61",                      "PADelawareCountyB",
       "US/PA/RidgeFireCompany",           "PAChesterCountyD4",
       "US/PA/SchuylkillCounty",           "PASchuylkillCounty",
