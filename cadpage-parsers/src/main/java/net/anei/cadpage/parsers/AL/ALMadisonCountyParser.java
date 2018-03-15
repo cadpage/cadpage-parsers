@@ -124,7 +124,9 @@ public class ALMadisonCountyParser extends FieldProgramParser {
             data.strApt = append(data.strApt, "-", match.group(1));
           } else {
             term = stripFieldStart(term, "@");
-            data.strPlace = append(data.strPlace, " - ", term);
+            if (!term.equals("PSI")) {
+              data.strPlace = append(data.strPlace, " - ", term);
+            }
           }
         }
       }
