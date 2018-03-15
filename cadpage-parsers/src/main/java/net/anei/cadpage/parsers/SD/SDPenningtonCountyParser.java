@@ -52,7 +52,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
     nextIntersect = false;
     String[] flds = body.split("\\|");
     if (flds.length >= 4) {
-      if (!parseFields(body.split("\\|"), 4, data)) return false;
+      if (!parseFields(flds, 4, data)) return false;
     }
     else if (subject.equalsIgnoreCase("Dispatch")) {
       if (!parseFireCall(body, data)) return false;
