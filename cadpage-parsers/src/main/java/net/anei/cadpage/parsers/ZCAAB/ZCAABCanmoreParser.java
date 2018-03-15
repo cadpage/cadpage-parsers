@@ -16,7 +16,7 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  */
 public class ZCAABCanmoreParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d[AP]M) CALL[ :](\\d\\d[a-z]\\d\\d[a-z]?|ambulance|911test) AT[ :](.+)");
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d[AP]M) CALL[ :](\\d\\d?[a-z]\\d\\d[a-z]?|ambulance|911test) AT[ :](.+)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mmaa");
   
   private static final CodeTable STD_CODE_TABLE = new StandardCodeTable();
