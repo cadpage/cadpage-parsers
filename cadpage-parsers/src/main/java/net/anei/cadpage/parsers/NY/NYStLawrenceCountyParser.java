@@ -14,7 +14,7 @@ public class NYStLawrenceCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "esspillmanalert@stlawco.org";
+    return "esspillmanalert@stlawco.org,@alert.active911.com";
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
