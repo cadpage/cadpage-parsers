@@ -76,7 +76,9 @@ public class COAdamsCountyParser extends MsgParser {
     if (!fp.check(" RADIO CHANNEL: ")) return false;
     data.strChannel = fp.get(7);
     fp.setOptional();
-    if (!fp.check("COMMENTS")) return false;
+    if (!fp.check("COMMENTS")) {
+      if (!fp.checkBlanks(23) || !fp.check("COMMENTS:")) return false;
+    }
     String info = fp.get();
     data.strSupp = INFO_JUNK_PTN.matcher(info).replaceAll("");
     return true;
