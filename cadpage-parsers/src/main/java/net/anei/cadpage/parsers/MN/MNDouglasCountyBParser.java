@@ -14,6 +14,6 @@ public class MNDouglasCountyBParser extends DispatchA70Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,cis@co.douglas.mn.us";
   }
 }
