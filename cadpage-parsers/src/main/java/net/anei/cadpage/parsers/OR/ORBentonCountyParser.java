@@ -17,23 +17,60 @@ public class ORBentonCountyParser extends FieldProgramParser {
   private static final CodeTable CALL_CODES = new StandardCodeTable(); 
   
   public ORBentonCountyParser() {
-    super("BENTON COUNTY", "OR",
+    super(CITY_LIST, "BENTON COUNTY", "OR",
           "INC:CALL! NAT:CODE? ADD:ADDR! APT:APT CITY:CITY! X:X MAP:MAP CFS:ID DIS:UNIT+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    setupSpecialStreets("HARLAN BURNT WOODS");
   }
   
   @Override
   public String getFilter() {
     return "Corvallis Alerts,alerts@corvallis.ealertgov.com";
   }
-  
+
+  private static final Pattern MP_PTN = Pattern.compile("[/ ]*(?:MP|Milepost) (\\d+)\\b *", Pattern.CASE_INSENSITIVE);
   private static final Pattern HIGHWAY_PTN = Pattern.compile("\\bHIGHWAY\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern CODE_PTN = Pattern.compile("\\d{1,2}([A-Z])\\d{1,2}[A-Z]?"); 
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (! subject.equals("Corvallis Alert")) return false;
-    if (!parseFields(body.split("\n"), data)) return false;
+    
+    // See if this is a standard alert
+    if (subject.equals("Corvallis Alert") && body.startsWith("INC:")) {
+      if (!parseFields(body.split("\n"), data)) return false;
+    }
+    
+    // Otherwise, see if we can decode a free format mutual aid dispatch
+    else {
+      if (!isPositiveId()) return false;
+      setFieldList("CALL ADDR APT CITY INFO");
+      
+      data.defCity = "";
+      
+      if (body.startsWith(subject)) subject = "";
+      if (subject.length() > 0) data.strCall = subject;
+      for (String line : body.split("\n")) {
+        if (data.strAddress.length() == 0) {
+          Result res = parseAddress(StartType.START_OTHER, line);
+          if (res.isValid()) {
+            res.getData(data);
+            String prefix = res.getStart();
+            if (data.strCall.length() == 0) data.strCall = prefix;
+            else data.strSupp = append(data.strSupp, "\n", prefix);
+            line = res.getLeft();
+            Matcher match = MP_PTN.matcher(line);
+            if (match.lookingAt()) {
+              data.strAddress = data.strAddress + " MP " + match.group(1);
+              line = line.substring(match.end());
+            }
+            line = stripFieldStart(line, ",");
+          }
+        }
+        if (data.strCall.length() == 0) data.strCall = line;
+        else data.strSupp = append(data.strSupp, "\n", line);
+      }
+      if (data.strAddress.length() == 0) return false;
+    }
     
     // Google has trouble with HIGHWAY 20, so change all highways to hwy
     data.strAddress = HIGHWAY_PTN.matcher(data.strAddress).replaceAll("HWY");
@@ -1833,4 +1870,25 @@ public class ORBentonCountyParser extends FieldProgramParser {
       "630-435", "PhilomathMaps/FireGridCommon/630-435.pdf",
       "630-450", "PhilomathMaps/FireGridCommon/630-450.pdf"
   });
+  
+  private static String[] CITY_LIST = new String[]{
+    "ADAIR",
+    "ALBANY",
+    "BLODGET",
+    "CORVALLIS",
+    "JUNCTION CITY",
+    "KINGS VALLEY",
+    "MONROE",
+    "PHILOMATH",
+    "SUMMIT",
+    "LANE CO",
+    "LANE COUNTY",
+    "LINN CO",
+    "LINN COUNTY",
+    "POLK CO",
+    "POLK COUNTY",
+    "LINCOLN CO",
+    "LINCOLN COUNTY"
+    
+  };
 }
