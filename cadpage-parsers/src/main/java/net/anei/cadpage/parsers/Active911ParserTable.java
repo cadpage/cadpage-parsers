@@ -1234,6 +1234,7 @@ public class Active911ParserTable {
       "US/PA/Padoh",                      "PABethlehem",
       "US/PA/PennBoroVFD",                "PAWestmorelandCounty",
       "US/PA/PerryCounty",                "PAPerryCounty",
+      "US/PA/PerrysvilleVFC",             "PAAlleghenyCountyA",
       "US/PA/PFDFireChester",             "PAChesterCountyD4,PAChesterCountyG,PAChesterCountyO,PAChesterCountyP",
       "US/PA/PhoenixFire",                "PASchuylkillCounty",
       "US/PA/PikeCounty",                 "PAPikeCountyB",

@@ -123,7 +123,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("AT")) return new MyAtField();
     if (name.equals("XINFO")) return new MyCrossInfoField();
     if (name.equals("SRC")) return new SourceField("[A-Z]{3}\\d");
-    if (name.equals("BOX")) return new BoxField("\\d{5,6}(?: \\d{5,6})*|[A-Z]\\d{5}|[A-Z]{2,3}\\d{2,3}|\\d{3}[A-Z]\\d{2}|\\d{3}-\\d{2,3}", true);
+    if (name.equals("BOX")) return new BoxField("\\d{5,6}(?: \\d{5,6})*|[A-Z]\\d{5}|[A-Z]{2,3}\\d{2,3}|\\d{3}[A-Z]\\d{2}|[EF]?\\d{3}-[A-Z0-9]{2,3}", true);
     if (name.equals("ID")) return new IdField("[A-Z]{1,5}\\d{9}", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
