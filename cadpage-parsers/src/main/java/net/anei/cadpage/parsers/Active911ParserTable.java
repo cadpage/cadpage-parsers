@@ -1147,6 +1147,7 @@ public class Active911ParserTable {
       "US/OR/JunctionCity",               "ORLaneCountyB",
       "US/OR/Klamath",                    "ORKlamathCounty",
       "US/OR/LakeCounty",                 "ORLakeCounty",
+      "US/OR/LakeOswego",                 "ORClackamasCountyA",
       "US/OR/LaneCounty",                 "ORLaneCountyA",
       "US/OR/Lincoln",                    "ORLincolnCounty",
       "US/OR/Linn",                       "ORLinnCountyB",
