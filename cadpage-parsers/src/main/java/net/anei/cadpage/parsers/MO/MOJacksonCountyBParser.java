@@ -23,7 +23,7 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
   
   private static Pattern BODY_DATETIME = Pattern.compile("(.*?)(\\d{2}/\\d{2}/\\d{2})? (\\d{2}:\\d{2}:\\d{2})"); //no space between BODY and DATE
   private static final Pattern RR_DELIM = Pattern.compile(" {3,}");
-  private static final Pattern DELIM = Pattern.compile(" *, *| *(?=Apt/Lot:|Location:)");
+  private static final Pattern DELIM = Pattern.compile(" *, *| +/// *| *(?=Apt/Lot:|Location:)");
   public boolean parseMsg(String body, Data data) {
     
     //parse trailing DATE? TIME
@@ -60,7 +60,7 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
     if (name.equals("ID3")) return new IdField("\\d\\d-\\d{6}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALLCODE")) return new MyCallCodeField();
-    if (name.equals("CH")) return new ChannelField("[A-Z]+-[A-Z0-9]+|", true); //only two examples, possibly numeric chars before the "-"?
+    if (name.equals("CH")) return new ChannelField("(?:(?:[A-Z]+-[A-Z0-9]+|OPS\\d+)\\b ?)*", true); //only two examples, possibly numeric chars before the "-"?
     if (name.equals("CASE")) return new IdField("Case# *((?:[A-Z]+-)?(?:\\d{2}-)?\\d+)", true);
     if (name.equals("ID2")) return new IdField("Response/PCR #(\\d+)", true);
     if (name.equals("TIMES")) return new MyTimesField();
