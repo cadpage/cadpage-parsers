@@ -6,15 +6,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
-public class VARoanokeCountyParser extends FieldProgramParser {
+public class VARoanokeCountyParser extends HtmlProgramParser {
   
   public VARoanokeCountyParser() {
     super("ROANOKE COUNTY", "VA", 
-          "UNIT CALL PLACE? ADDRCITY! X MAP END");
+          "( SELECT/1 UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
+          "| Call_Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! EMS_District:MAP! Fire_Quadrant:MAP/L! " + 
+              "CFS_Number:SKIP! Fire_Call_Type:CALL! Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
+              "Incident_Number(s):ID! Units_Assigned:UNIT! Fire_Radio_Channel:CH! INFO/N+ )");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -24,6 +27,17 @@ public class VARoanokeCountyParser extends FieldProgramParser {
     return "5403144404,Active911server@Vintonems.com,dispatch@roanokecountyva.gov,dispatchcalls@cavespringfire.org";
   }
   
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (subject.startsWith("Automatic R&R Notification:")) {
+      setSelectValue("2");
+      return super.parseHtmlMsg(subject, body, data);
+    } else {
+      setSelectValue("1");
+      return parseMsg(body, data);
+    }
+  }
+
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
   private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
   private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?(?:\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
@@ -64,7 +78,7 @@ public class VARoanokeCountyParser extends FieldProgramParser {
     
     // Now there is a new newline delimited format
     String[] flds = body.split("\n");
-    if (flds.length >= 4) {
+    if (flds.length >= 3) {
       if (!parseFields(flds, data)) return false;
       data.strCity = stripFieldStart(data.strCity, "Town of ");
       data.strCity = stripFieldStart(data.strCity, "City of ");
@@ -92,8 +106,15 @@ public class VARoanokeCountyParser extends FieldProgramParser {
     match = MASTER_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("UNIT CALL PLACE ADDR APT CITY X MAP DATE TIME");
-      data.strUnit = match.group(1);
-      parseAddress(StartType.START_CALL_PLACE, FLAG_NO_IMPLIED_APT | FLAG_NO_CITY, match.group(2).trim(), data);
+      String unit = match.group(1);
+      String addr = match.group(2).trim();
+      String call = CALL_LIST.getCode(unit);
+      if (call != null && call.equals(unit)) {
+        addr = append(unit, " ", addr);
+        unit = "";
+      }
+      data.strUnit = unit;
+      parseAddress(StartType.START_CALL_PLACE, FLAG_NO_IMPLIED_APT | FLAG_NO_CITY, addr, data);
       String city = match.group(3);
       city = stripFieldStart(city, "Town of");
       city = stripFieldStart(city, "City of");
@@ -157,7 +178,7 @@ public class VARoanokeCountyParser extends FieldProgramParser {
         data.strPlace = append(data.strPlace, " - ", match.group(2));
       } else { 
         cross = cross.replaceAll("  +", " / ");
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT, cross, data);
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT, cross, data);
         String left = getLeft();
         left = stripFieldStart(left, "-");
         if (left.startsWith("/")) {
@@ -215,6 +236,66 @@ public class VARoanokeCountyParser extends FieldProgramParser {
       }
     }
     return true;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String call = CALL_LIST.getCode(field);
+      if (call == null || !call.equals(field)) return false;
+      super.parse(field,  data);
+      return true;
+    }
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      field = field.replace('@', '&');
+      return super.checkParse(field, data);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ",");
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("Alerts:|Narrative:|\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d?:\\d\\d:\\d\\d");
+  private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[a-z]+ - +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
+      Matcher match = INFO_PREFIX_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      super.parse(field, data);
+    }
   }
   
   private static final Pattern GRANDIN_ROAD_EXT = Pattern.compile("\\b(GRANDIN ROAD) EXT\\b", Pattern.CASE_INSENSITIVE);

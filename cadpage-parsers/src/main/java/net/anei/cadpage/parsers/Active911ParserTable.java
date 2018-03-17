@@ -1495,6 +1495,7 @@ public class Active911ParserTable {
       "US/VA/Suffolk",                    "VASuffolk",
       "US/VA/SurryCounty",                "VASurryCounty",
       "US/VA/VintonEMS",                  "VARoanokeCounty",
+      "US/VA/VintonFAS",                  "VARoanokeCounty",
       "US/VA/WarrenCounty",               "VAWarrenCounty",
       "US/VA/WashingtonCounty",           "VAWashingtonCounty",
       "US/VA/WestmorelandCounty",         "VAWestmorelandCounty",
