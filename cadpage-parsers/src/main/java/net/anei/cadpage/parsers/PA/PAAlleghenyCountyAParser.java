@@ -21,7 +21,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CAD.Alert@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
+    return "@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
   }
 
   private static final Pattern ARCH_ST_EXT = Pattern.compile("\\b(ARCH ST) EXT\\b", Pattern.CASE_INSENSITIVE);
