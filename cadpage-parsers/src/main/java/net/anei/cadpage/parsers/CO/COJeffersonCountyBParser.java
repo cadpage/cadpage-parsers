@@ -33,7 +33,7 @@ public class COJeffersonCountyBParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "@jeffco.us";
+    return "@jeffco.us,jnicholaou@pleasantviewfire.org";
   }
   
   @Override

@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Jefferson County, CO
@@ -24,11 +26,27 @@ public class COJeffersonCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@c-msg.net,@westmetrofire.org";
+    return "@c-msg.net,@westmetrofire.org,messaging@iamresponding.com";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean revMsgOrder() { return true; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 135; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    int pt = body.indexOf("\n\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    if (!subject.equals("CAD Information")) data.strSource = subject;
     
     if (RUN_REPORT_PTN.matcher(body).matches()) {
       setFieldList("INFO");
@@ -53,7 +71,7 @@ public class COJeffersonCountyAParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " PLACE";
+    return "SRC " + super.getProgram() + " PLACE";
   }
 }
   
