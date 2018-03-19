@@ -9,7 +9,9 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   
   public PAChesterCountyD4Parser() {
     super("( SELECT/TEXT TIME? CALL ADDR BOX EMPTY+? DUP_ADDR! " + 
-          "| DISPATCH TIME CALL EMPTY? ( ADDRCITY! | ADDR! ) PLACE ( NAME PHONE! BOX? | NAME PHONE/Z BOX! | BOX | NAME ) EMPTY+? CITY? INFO/N+? ( DETAILS DATE? | DATE ) CITY UNIT? X INFO/N+ " + 
+          "| DISPATCH TIME CALL EMPTY? ( ADDRCITY! | ADDR! ) PLACE ( NAME PHONE! BOX? | NAME PHONE/Z BOX! | BOX | NAME ) EMPTY+? CITY? INFO/N+? ( DETAILS DATE? | DATE ) ( DUP_CALL ID? SKIP+? CITY | CITY_E ) EMPTY+? UNIT? EMPTY+? ( PLACE X | X | ) " +
+          "| DATE TIME DISPATCH CALL ADDR PLACE CITY X NAME PHONE BOX EMPTY INFO ID! " +
+          "| SKIP+? DISPATCH TIME CALL ADDR PLACE BOX EMPTY DATE CITY SKIP X TIME! " +
           ")");
   }
   
@@ -20,7 +22,6 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
 
   private static final Pattern TEXT_PTN = Pattern.compile("[A-Z]+ / +");
   private static final Pattern START_TIME_PTN = Pattern.compile("\\d\\d:\\d\\d \\*\\* "); 
-  private static final Pattern DETAILS_TO_FOLLOW = Pattern.compile("(?:\n| \\*\\* )(?: *DETAILS TO FOLLOW|TYP:).*? \\*\\*|\\n +\\*\\*", Pattern.DOTALL);
   private static final Pattern DELIM = Pattern.compile(" \\*\\*?(?= |$)");
 
   @Override
@@ -28,7 +29,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     
     // Eliminate PAChesterCountyO alerts.  These are dual format alerts, they start out looking like
     // PAChesterCountyD4 alerts but have PAChesterCountyO information appended
-    if (body.contains("Chester County Emergency Services Dispatch Report")) return false;
+    if (body.contains("Chester County Emergency Services Dispatch Report\n\nCall Time:")) return false;
     
     Matcher match = TEXT_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -46,8 +47,6 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
       }
      
       body = stripFieldStart(body, "Dispatch / ");
-      body = DETAILS_TO_FOLLOW.matcher(body).replaceFirst(" ** DETAILS TO FOLLOW **");
-      body = body.replace("\n", "");
     }
     return parseFields(DELIM.split(body, -1), data);
   }
@@ -60,19 +59,22 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DISPATCH")) return new SkipField("Dispatch", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d(?::\\d\\d)?", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if  (name.equals("DUP_ADDR")) return new MyDupAddressField();
-    if (name.equals("X")) return new CrossField("XXX.*&.*|");
+    if (name.equals("X")) return new CrossField(".* AND .*", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("BOX")) return new BoxField("\\d{4}", true);
-    if (name.equals("UNIT")) return new UnitField("\\d{2}|", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\d{2}|\\d{2,3}[A-Z]|[A-Z]+\\d+)\\b,?)*", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DETAILS")) return new SkipField("DETAILS TO FOLLOW", true);
+    if (name.equals("CITY_E")) return new MyCityEmptyField();
+    if (name.equals("ID")) return new IdField("[EF]\\d{8}", true);
+    if (name.equals("DUP_CALL")) return new MyDuplicateCallField();
     return super.getField(name);
   }
   
@@ -176,6 +178,29 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     public void parse(String field, Data data) {
       if (data.strCity.length() > 0) return;
       data.strCity = convertCodes(field, CITY_CODES);
+    }
+  }
+  
+  private class MyCityEmptyField extends MyCityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() == 0) return true;
+      return super.checkParse(field, data);
+    }
+  }
+  
+  private class MyDuplicateCallField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String call = stripFieldStart(data.strCall, "F-");
+      if (call.equals(field)) return true;
+      if (field.length() >= 6 && call.startsWith(field)) return true;
+      return false;
     }
   }
 } 
