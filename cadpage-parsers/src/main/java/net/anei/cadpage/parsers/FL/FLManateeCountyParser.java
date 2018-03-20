@@ -12,7 +12,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   
   public FLManateeCountyParser() {
     super(CITY_CODES, "MANATEE COUNTY", "FL",
-        "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! " + 
+        "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! BEAT:BOX " + 
                          "| Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
   }
 
@@ -62,27 +62,25 @@ public class FLManateeCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" *:[ @]*");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.* [A-Z]{2}) (\\d{5})");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       
-      Parser p = new Parser(field);
-      data.strPlace = p.getLastOptional(": @");
-      if (data.strPlace.length() > 0) {
-        data.strPlace = append(p.getLastOptional(": @"), " - ", data.strPlace);
-      } else {
-        data.strPlace = p.getLastOptional(':');
+      String[] parts = ADDR_DELIM_PTN.split(field);
+      field = parts[0];
+      for (int ndx = 1; ndx < parts.length; ndx++) {
+        data.strPlace = append(data.strPlace, " - ", parts[ndx]);
       }
       String zip = null;
-      field = p.get();
       Matcher match = ADDR_ZIP_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
         zip = match.group(2);
       }
       field = stripFieldEnd(field,  " EA");
-      p = new Parser(field);
+      Parser p = new Parser(field);
       String apt = p.getLastOptional(',');
       if (apt.length() == 0) apt = p.getLastOptional(';');
       super.parse(p.get(), data);
