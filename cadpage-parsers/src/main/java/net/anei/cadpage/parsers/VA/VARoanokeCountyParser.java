@@ -15,8 +15,9 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   public VARoanokeCountyParser() {
     super("ROANOKE COUNTY", "VA", 
           "( SELECT/1 UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
-          "| Call_Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! EMS_District:MAP! Fire_Quadrant:MAP/L! " + 
-              "CFS_Number:SKIP! Fire_Call_Type:CALL! Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
+          "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " + 
+              "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " + 
+              "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
               "Incident_Number(s):ID! Units_Assigned:UNIT! Fire_Radio_Channel:CH! INFO/N+ )");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -29,6 +30,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    body = body.replace("^", "");
     if (subject.startsWith("Automatic R&R Notification:")) {
       setSelectValue("2");
       return super.parseHtmlMsg(subject, body, data);
@@ -609,6 +611,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       "WIREDOWN",
       
       // One time call descriptions
-      "HIKER DRAGONS TOOTH"
+      "YOU CAN DIREGARD THE ACCIDENT CALL AT",
+      "APPROACH FROM CASTLEROCK/STONEYBROOK PER BATT"
   );
 }
