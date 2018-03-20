@@ -8,6 +8,7 @@ public class MTFlatheadCountyParser extends GroupBestParser {
   public MTFlatheadCountyParser() {
     super(new MTFlatheadCountyAParser(),
           new MTFlatheadCountyBParser(),
-          new MTFlatheadCountyCParser());
+          new MTFlatheadCountyCParser(),
+          new MTFlatheadCountyDParser());
   }
 }
