@@ -15,4 +15,9 @@ public class TXNacogdochesCountyParser extends DispatchA19Parser {
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
+  
+  @Override
+  public String getFilter() {
+    return "Dispatch@itvscan,donotreply@ci.nacogdoches.tx.us";
+  }
 }
