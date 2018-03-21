@@ -55,12 +55,30 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME1")) return new DateTimeField("\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d|", true);
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("MARKER")) return new SkipField(MARKER_TEXT, true);
     if (name.equals("ID2")) return new MyId2Field();
     if (name.equals("DATETIME2")) return new MyDateTime2Field();
     if (name.equals("INFO2")) return new MyInfo2Field();
     return super.getField(name);
+  }
+  
+  private class MyAddressField extends A7AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('\n');
+      if (pt >= 0) {
+        data.strPlace = field.substring(0,pt).trim();
+        field = field.substring(pt+1).trim();
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE? " + super.getFieldNames();
+    }
   }
   
   private class MyPhoneField extends PhoneField {

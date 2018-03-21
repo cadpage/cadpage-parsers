@@ -169,7 +169,7 @@ public class DispatchA7BaseParser extends FieldProgramParser {
   private static final Pattern CITY_CODE_PTN = Pattern.compile("(\\d{1,2})\\b *(.*)");
   private static final Pattern JUNK_PTN = Pattern.compile("[^A-Za-z0-9]+|[a-z]");
   
-  private class A7AddressField extends AddressField {
+  protected class A7AddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       parseAddressA7(field, data);
