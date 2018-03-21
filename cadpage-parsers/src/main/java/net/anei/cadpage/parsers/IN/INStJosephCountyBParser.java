@@ -92,8 +92,15 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (NOT_PLACE_PTN.matcher(field).matches()) return false;
-      super.parse(field, data);
+      parse(field, data);
       return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      String tmp = stripFieldStart(field, "<UNKNOWN>");
+      if (tmp.length() > 0) field = tmp;
+      super.parse(field, data);
     }
   }
   
