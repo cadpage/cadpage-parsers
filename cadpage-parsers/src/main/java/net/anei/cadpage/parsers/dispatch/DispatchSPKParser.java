@@ -375,9 +375,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
             dispatchTime = true;
             data.strDate = match.group(2);
             data.strTime = convertTime(match.group(3));
-          } else if (type.equals("Ready For Dispatch") || 
-                     type.equals("Ready_for_dispatch") || 
-                     type.equals("On Scene") ||
+          } else if (type.equals("On Scene") ||
                      type.equals("Closed")) data.msgType = MsgType.RUN_REPORT;  
         }
         times = times + '\n' + field;
@@ -445,6 +443,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   
   private static String convertTime(String time) {
     if (time.endsWith("M")) {
+      if (Integer.parseInt(time.substring(0, 2)) > 12) return time.substring(0, 8);
       try {
         time = TIME_FMT2.format(TIME_FMT1.parse(time));
       } catch (ParseException ex) {
