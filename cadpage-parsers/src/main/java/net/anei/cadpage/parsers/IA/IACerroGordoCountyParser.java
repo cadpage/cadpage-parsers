@@ -10,44 +10,89 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
   
   public IACerroGordoCountyParser() {
     super("CERRO GORDO COUNTY", "IA",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY ID:ID! INFO:INFO+");
+          "Message:INFO! Time:DATE_TIME_PLACE! Address:ADDRCITY! Nearest_intersection:X!");
   }
   
   @Override
-  public int getMapFlags() {
-    
-    // The GPS coordinates are not necessary all that good, but when they are present
-    // the only address is a street name, so go with the GPS coordinates
-    return MAP_FLG_PREFER_GPS;
+  public String getFilter() {
+    return "no-reply@zuercherportal.com";
   }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    return parseFields(body.split(";"), data);
+    if (!subject.startsWith("Call Type:")) return false;
+    data.strCall = subject.substring(10).trim();
+    body = stripFieldEnd(body, " Please respond immediately.");
+    int pt = body.lastIndexOf("\n\n");
+    if (pt >= 0) body = body.substring(pt+2).trim();
+    return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "CALL " + super.getProgram();
   }
   
   @Override
   public Field  getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("DATE_TIME_PLACE")) return new MyDateTimePlaceField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("Lat \\(([-+]?\\d{1,3}\\.\\d{5})\\) Lon \\(([-+]?\\d{1,3}\\.\\d{5})\\) *(.*)");
-  private class MyAddressField extends AddressField {
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ADDR_GPS_PTN.matcher(field);
-      if (match.matches()) {
-        data.strGPSLoc = match.group(1)+','+match.group(2);
-        if (data.strGPSLoc.equals("0.00000,0.00000")) data.strGPSLoc = "";
-        field = match.group(3);
-      }
+      if (field.equals("None")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PLACE_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
+  private class MyDateTimePlaceField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PLACE_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strPlace = match.group(3);
     }
     
     @Override
     public String getFieldNames() {
-      return "GPS " + super.getFieldNames();
+      return "DATE TIME PLACE";
+    }
+  }
+  
+  private static final Pattern ADDR_ST_ZIP = Pattern.compile("(.*), *([A-Z]{2})(?: (\\d{5}))?");
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      String zip = null;
+      Matcher match = ADDR_ST_ZIP.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strState = match.group(2);
+        zip = match.group(3);
+      }
+      super.parse(field, data);
+      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " ST";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "None");
+      super.parse(field, data);
     }
   }
 }
