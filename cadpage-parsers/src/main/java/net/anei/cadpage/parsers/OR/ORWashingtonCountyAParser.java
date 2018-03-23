@@ -71,6 +71,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     if (BAD_SUBJECT_PTN.matcher(subject).matches()) return false;
     
     body = stripFieldStart(body, "*");
+    body = stripFieldEnd(body, "\\");
     
     // Special recall format
     Matcher match = RECALL_PTN.matcher(body);
@@ -445,6 +446,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "HEMORRHAGE/LACERATION BETA",
       "HEMORRHAGE/LACERATION CHARLIE",
       "HEMORRHAGE/LACERATION DELTA",
+      "HIT AND RUN INJ",
       "HIT AND RUN,NON INJURY",
       "HOSP TXPORT C1",
       "ILLEGAL BURN",
@@ -587,6 +589,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "UNCON/FAINTING",
       "UNCONCIOUS",
       "UNCONCIOUS/FAINT",
+      "UNCONSCIOUS/FAINTING",
       "UNCONSCIOUS/FAINTING DELTA",
       "UNCONS/UNRESPONS",
       "UNCONSC/FAINTING",
