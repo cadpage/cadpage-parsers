@@ -108,7 +108,8 @@ public class NCMecklenburgCountyAParser extends MsgParser {
       "Fire", 
       "Scheduled",
       "Scheduled BLS",
-      "unkFire"
+      "unkFire",
+      "Zulu"
   }));
 
   private static final Properties CALL_CODES = buildCodeTable(new String[]{

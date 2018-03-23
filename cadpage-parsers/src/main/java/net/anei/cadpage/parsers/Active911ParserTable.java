@@ -850,6 +850,7 @@ public class Active911ParserTable {
       "US/NC/MartinCounty",               "NCMartinCountyB",
       "US/NC/McDowellCounty",             "NCMcDowellCounty",
       "US/NC/MecklenburgCounty",          "NCMecklenburgCounty",
+      "US/NC/MintHillVFD",                "NCMecklenburgCountyA",
       "US/NC/MitchellCounty",             "NCMitchellCounty",
       "US/NC/MontgomeryCounty",           "NCMontgomeryCounty",
       "US/NC/MooreCounty",                "NCMooreCounty",
