@@ -6,7 +6,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TXBurnetCountyParser extends FieldProgramParser {
   
   public TXBurnetCountyParser() {
-    super("BURNET COUNTY", "TX", 
+    this("BURNET COUNTY", "TX");
+  }
+  
+  public TXBurnetCountyParser(String defCity, String defState) {
+    super(defCity, defState, 
           "CFS:ID! CALLTYPE:CALL! PRIORITY:PRI! PLACE:PLACE! ADDRESS:ADDR! CITY:CITY! STATE:ST! ZIP:ZIP! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! INFO/N+ Name:NAME Phone:PHONE Address:SKIP ALERT:INFO/N+");
   }
   
