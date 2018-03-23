@@ -121,11 +121,13 @@ public class DispatchCiscoParser extends FieldProgramParser {
         data.strCross = "";
         parseAddress(StartType.START_ADDR, crossFlags | FLAG_ONLY_CITY | FLAG_CROSS_FOLLOWS, field, data);
         String cross = data.strCross;
+        String left = getLeft();
+        if (cross.length() == 0 && data.strCity.length() > 0 && left.length() == 0)  return;
         if (cross.length() == 0 || data.strCity.length() == 0) {
           data.strCity = saveCity;
         } else {
           data.strCross = "";
-          parseAddress(StartType.START_ADDR, crossFlags | FLAG_ONLY_CITY | FLAG_ANCHOR_END, getLeft(), data);
+          parseAddress(StartType.START_ADDR, crossFlags | FLAG_ONLY_CITY | FLAG_ANCHOR_END, left, data);
           data.strCross = append(cross, " / ", data.strCross);
           if (data.strCross.contains("/")) return;
           

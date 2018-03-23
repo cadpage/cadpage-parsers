@@ -111,10 +111,16 @@ public class OHMuskingumCountyAParser extends DispatchCiscoParser {
     
     // Other counties
     "COSHOCTON CTY",
+    "COSHOCTON COUNTY",
     "GUERNSEY CTY",
+    "GUERNSEY COUNTY",
     "NOBLE CTY",
+    "NOBLE COUNTY",
     "MORGAN CTY",
+    "MORGAN COUNTY",
     "PERRY CTY",
-    "LICKING CTY"
+    "PERRY COUNTY",
+    "LICKING CTY",
+    "LICKING COUNTY"
   };
 }
