@@ -725,7 +725,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       int flags = FLAG_AT_SIGN_ONLY;
-      if (trailField == null) flags = FLAG_ANCHOR_END;
+      if (trailField == null) flags |= FLAG_ANCHOR_END;
       flags |= getExtraParseAddressFlags();
       StartType st = noPlace ? StartType.START_ADDR : StartType.START_PLACE;
       parseAddress(st, flags, field, data);

@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class INJeffersonCountyParser extends DispatchEmergitechParser {
   
   public INJeffersonCountyParser() {
-    super(true, CITY_LIST, "JEFFERSON COUNTY", "IN");
+    super(true, CITY_LIST, "JEFFERSON COUNTY", "IN", TrailAddrType.PLACE);
   }
 
   @Override
