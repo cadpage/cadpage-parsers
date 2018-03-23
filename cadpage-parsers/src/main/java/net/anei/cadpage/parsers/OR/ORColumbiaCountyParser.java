@@ -13,8 +13,13 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     super("COLUMBIA COUNTY", "OR", 
           "CALL! ( ADDR_TIME | ADDR! PLACE? ( CH! MAP_TIME! | MAP_TIME! ) ) X:X? INFO/N+");
   }
+  
+  @Override
+  public String getFilter() {
+    return "CAD@columbia911.com";
+  }
 
-  private static Pattern ID_PTN = Pattern.compile("([A-Z]{0,2}\\d{8,9}) +");
+  private static Pattern ID_PTN = Pattern.compile("([A-Z]{0,5}\\d{7,9}) *(?!\\d)");
   private static Pattern MUTUAL_AID_FORMAT = Pattern.compile("([,A-Z0-9]+) (mutual aid to [A-Z0-9]+) at (.*?)(?:; *(.*?))? (for .*?)\\.");
   private static Pattern BRK_PTN = Pattern.compile("\\[\\d\\]");
 
@@ -63,6 +68,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CH")) return new ChannelField("TAC.*", true);
     if (name.equals("PLACE")) return new PlaceField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -181,12 +187,20 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern SP_CITY_PTN = Pattern.compile("[, ](?=COLUMBIA CITY|CLATSKAINE|CLATSKANIE|COLUMBIA|MULTNOMAH|PRESCOTT|RAINIER|SCAPPOOSE|ST HELENS|DEER ISLAND|VERNONIA|PORTLAND|WARREN)");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("A cellular re-bid ")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern SP_CITY_PTN = Pattern.compile("[, ]*(?=ALSTON|APIARY|BEAVER HOMES|BEAVER SPRINGS|BIRKENFELD|CANAAN|CHAPMAN|CLATSKANIE|CLATSKANIE HEIGHTS|CLEAR CREEK|COLUMBIA|COLUMBIA CITY|COREY HILL|DEER ISLAND|DELENA|GOBLE|GOBUL|INGLIS|KEASEY|KERRY|LINDBERGH|MARSHLAND|MAYGER|MCNULTY|MIST|MULTNOMAH|PITTSBURG|PORTLAND|PRESCOTT|QUINCY|RAINIER|REUBEN|RIVERSIDE|SCAPPOOSE|SOUTH SCAPPOOSE|SPITZENBERG|ST HELENS|TRENHOLM|VERNONIA|VERONIA|WARREN|WEST SAINT HELENS)");
   
   //All codes excluding COL, MUL, and SCA are conjectures based on the format of the aforementioned three
   private static Properties CITY_CODES = buildCodeTable(new String[]{
       "CC",  "COLUMBIA CITY",
-      "CLA", "CLATSKAINE",
+      "CLA", "CLATSKANIE",
       "CLT", "CLATSKANIE",
       "COL", "COLUMBIA",
       "MUL", "MULTNOMAH",
