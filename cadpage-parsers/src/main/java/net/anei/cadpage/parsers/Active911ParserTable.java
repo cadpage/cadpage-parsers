@@ -541,6 +541,7 @@ public class Active911ParserTable {
       "US/LA/LafourcheParish",            "LALafourcheParish",
       "US/LA/LivingstonCounty",           "LALivingstonParish",
       "US/LA/OuachitaParish",             "LAOuachitaParish",
+      "US/LA/PrairievilleFD",             "LAAscensionParish",
       "US/LA/StCharlesParish",            "LAStCharlesParish",
       "US/LA/StTammanyParish",            "LAStTammanyParish",
       "US/LA/TangipahoaParish",           "LATangipahoaParish",
