@@ -1579,6 +1579,7 @@ public class ParserList {
               ,"WIDouglasCounty"                ,"Douglas County"
               ,"WIEauClaire"                    ,"Eau Claire, WI"
               ,"WIFondDuLacCounty"              ,"Fond Du Lac County, WI"
+              ,"WIGrantCounty"                  ,"Grant County, WI"
               ,"WIKenoshaCounty"                ,"Kenosha County, WI"
               ,"WIOutagamieCounty"              ,"Outagamie County, WI"
               ,"WIOzaukeeCounty"                ,"Ozaukee County, WI"
