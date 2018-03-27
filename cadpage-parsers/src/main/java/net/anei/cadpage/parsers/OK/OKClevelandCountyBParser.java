@@ -35,7 +35,7 @@ public class OKClevelandCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa"); 
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -43,7 +43,12 @@ public class OKClevelandCountyBParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
   
