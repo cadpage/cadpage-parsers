@@ -13,7 +13,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
               "Address:EMPTY! PLACE! ADDR! Cross_Street:X! Location_Information:INFO! Development:INFO/N! Municipality:CITY! " + 
               "Caller_Information:INFO/N! Caller_Name:NAME! Caller_Phone_Number:PHONE! Alt_Phone_Number:SKIP! Caller_Address:SKIP! " + 
               "Caller_Source:SKIP! Units:UNIT! UNIT/S+ Event_Comments:INFO/N+ " + 
-          "| SKIP+? MARKER! Event_ID:EMPTY! ID! Event:EMPTY! ID2! Unit:EMPTY! UNIT! Dispatch_Time:EMPTY! DATETIME2! Event_Type:SKIP! " + 
+          "| SKIP+? Event_ID:EMPTY! ID! Event:EMPTY! ID2! Unit:EMPTY! UNIT! Dispatch_Time:EMPTY! DATETIME2! Event_Type:SKIP! " + 
               "Agency:SKIP! Agency:SKIP! Event_Sub-Type:EMPTY! CALL! Dispatch_Group:EMPTY! CH Address:EMPTY! ADDR! Location_Info:EMPTY! PLACE " + 
               "Cross_Street:EMPTY! X Municipality:EMPTY! CITY ESZ:EMPTY! MAP Development:EMPTY! MAP/L Beat:EMPTY! MAP/L " + 
               "Caller_Name:EMPTY! NAME Caller_Phone:EMPTY! PHONE SKIP+? Event_Comments%EMPTY INFO2/N+ )");
@@ -21,22 +21,27 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net";
+    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info";
   }
   
   private static HtmlDecoder decoder = new HtmlDecoder();
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    body = stripFieldEnd(body, "**");
+    int pt = body.indexOf("<style>\n");
+    if (pt >= 0) body = body.substring(pt);
     if (body.startsWith("<style>")) {
       setSelectValue("2");
       String[] flds = decoder.parseHtml(body);
       if (flds == null) return false;
+      if (flds[flds.length-1].endsWith("**")) {
+        flds[flds.length-1] = "";
+      }
       return parseFields(flds, data);
     }
     else {
       setSelectValue("1");
+      body = stripFieldEnd(body, "**");
       return super.parseHtmlMsg(subject, body, data);
     }
   }
