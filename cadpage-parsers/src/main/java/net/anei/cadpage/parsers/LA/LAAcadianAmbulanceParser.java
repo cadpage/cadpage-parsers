@@ -17,4 +17,9 @@ public class LAAcadianAmbulanceParser extends XXAcadianAmbulanceParser {
   public String getLocName() {
     return "Acadian Ambulance, LA";
   }
+  
+  @Override
+  public String getFilter() {
+    return "commcenter@acadian.com";
+  }
 }
