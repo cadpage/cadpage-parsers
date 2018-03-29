@@ -12,7 +12,7 @@ public class KSSumnerCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "sumner911cad@co.sumner.ks.us";
+    return "sumner911cad@co.sumner.ks.us,donotreply@mulvane.us";
   }
 
   @Override

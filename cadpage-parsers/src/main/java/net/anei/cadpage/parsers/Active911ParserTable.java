@@ -445,6 +445,7 @@ public class Active911ParserTable {
       "US/KS/CityofElkhart",              "KSMortonCounty",
       "US/KS/CityofEudora",               "KSEudora",
       "US/KS/CityofManhattan",            "KSRileyCounty",
+      "US/KS/CityofMulvane",              "KSSumnerCounty",
       "US/KS/CowleyCounty",               "KSCowleyCounty",
       "US/KS/FirePage",                   "KSWichita",
       "US/KS/HarveyCounty",               "KSHarveyCounty",
