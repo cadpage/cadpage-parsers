@@ -1441,6 +1441,7 @@ public class Active911ParserTable {
       "US/UT/SaltLakeCounty",             "UTSaltLakeCountyA",
       "US/UT/TooeleCounty",               "UTTooeleCounty",
       "US/UT/WeberCounty",                "UTWeberCounty",
+      "US/VA/AccomackCounty",             "VAAccomackCounty",
       "US/VA/AlbermarleCounty",           "VAAlbemarleCounty",
       "US/VA/Alexandria",                 "VAAlexandria",
       "US/VA/AppomattoxCounty",           "VAAppomattoxCounty",
