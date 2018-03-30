@@ -1414,7 +1414,7 @@ public class ParserList {
               ,"TXVillage"                      ,"Village, TX"
               ,"TXWalkerCounty"                 ,"Walker County, TX"
               ,"TXWebster"                      ,"Webster, TX"
-              ,"TXWharton"                      ,"Wharton, TX"
+              ,"TXWhartonCounty"                ,"Wharton County, TX"
               ,"TXWilliamsonCounty"             ,"Williamson County, TX"
               ,"TXWylie"                        ,"Wylie, TX"
           ),

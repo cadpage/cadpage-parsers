@@ -220,7 +220,8 @@ public class ManageParsers {
         "OHPrebleCountyA",    "OHPrebleCounty",          // 06/06/2017
         "OHPrebleCountyB",    "OHPrebleCounty",
         "CASanDiegoCountyB",  "CASanDiegoCountyA",       // 08/05/2017
-        "NCHavelock",         "NCCravenCounty"           // 02/18/2018
+        "NCHavelock",         "NCCravenCounty",          // 02/18/2018
+        "TXWharton",          "TXWhartonCounty"         // 03/29/2018  
   });
 
 }
