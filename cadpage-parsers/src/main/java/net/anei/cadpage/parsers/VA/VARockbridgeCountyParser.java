@@ -3,7 +3,6 @@ package net.anei.cadpage.parsers.VA;
 import java.util.Properties;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchDAPROParser;
 
 /**
@@ -22,15 +21,17 @@ public class VARockbridgeCountyParser extends DispatchDAPROParser {
   
   @Override
   public String getFilter() {
-    return "MAILBOX@Rockregional911.org";
+    return "MAILBOX@Rockregional911.org,MAILBOX@lexingtonva.gov";
   }
   
   private static final CodeSet CALL_SET = new CodeSet(
       "9-1-1 HANGUP WITH NO CONTACT",
       "ABDOMINAL PAIN",
+      "ACCIDENT FIRE DEPT ONLY",
       "ACCIDENT NO INJURY",
       "ACCIDENT WITH INJURY",
       "ALLERGIC REACTION",
+      "BRUSH FIRE GREATER THAN 25' AW",
       "BRUSH FIRE GREATER THAN 50' AW",
       "CHEST PAINS/CARDIAC",
       "CHIMNEY FIRE",
@@ -48,6 +49,7 @@ public class VARockbridgeCountyParser extends DispatchDAPROParser {
       "FRACTURE OR DISLOCATION",
       "HAZARDOUS MATERIALS CALL",
       "HEMMORHAGING",
+      "LACERATION",
       "MEDICAL ALARM/LIFELINE ALARM",
       "MENTAL HEALTH SUBJECT/TRANSPOR",
       "OVERDOSE",
@@ -65,7 +67,9 @@ public class VARockbridgeCountyParser extends DispatchDAPROParser {
       "UNKNOWN MEDICAL EMERGENCY",
       "UNRESPONSIVE",
       "VEHICLE FIRE",
-      "WEATHER RELATED CALL W/ NO DIS"
+      "WEATHER RELATED CALL W/ NO DIS",
+      "WEATHER RELATED FIRE DISPATCH",
+      "WIRE DOWN/TRANSFORMER FIRE"
       
   );
   
