@@ -24,8 +24,8 @@ public class DispatchDAPROParser extends FieldProgramParser {
     super(cityList, defCity, defState, PROGRAM_STR);
   }
   
-  private static final Pattern MARKER1 = Pattern.compile("(\\d+:)?MAILBOX:");
-  private static final Pattern MARKER2 = Pattern.compile("([-A-Z0-9]+) (?:(\\d{0,2}:\\d\\d) )?");
+  private static final Pattern MARKER1 = Pattern.compile("(?:\\d+:)?MAILBOX:");
+  private static final Pattern MARKER2 = Pattern.compile("(?:\\d+:)?([-A-Z0-9]+) (?:(\\d{0,2}:\\d\\d) )?");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {

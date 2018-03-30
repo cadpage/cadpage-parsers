@@ -1483,6 +1483,7 @@ public class Active911ParserTable {
       "US/VA/KingGeorgeCounty",           "VAKingGeorgeCounty",
       "US/VA/LoudounCounty",              "VALoudounCounty",
       "US/VA/LouisaCounty",               "VALouisaCounty",
+      "US/VA/LunenburgCounty",            "VALunenburgCounty",
       "US/VA/MecklenburgCounty",          "VAMecklenburgCounty",
       "US/VA/MontgomeryCounty",           "VAMontgomeryCountyA",
       "US/VA/NewportNews",                "VANewportNews",
