@@ -113,7 +113,8 @@ public class OHPortageCountyParser extends GroupBestParser {
     "BERLIN CENTER",
     
     // Trumbull County
-    "NEWTON FALLS"
+    "NEWTON FALLS",
+    "SOUTHINGTON TWP"
   };
 
 }
