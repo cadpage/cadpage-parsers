@@ -1,41 +1,40 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class ALHooverParser extends SmartAddressParser {
+public class ALHooverParser extends FieldProgramParser {
 
   public ALHooverParser() {
-    super("HOOVER", "AL");
-    setFieldList("UNIT ADDR APT TIME DATE CALL INFO PLACE ID X");
+    super("HOOVER", "AL", 
+          "CALL:CALL! ADDR:ADDRCITY! ADDITIONAL_INFORMATION:INFO! ID:ID! PRI:PRI! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:INFO/N! INFO/N+ CROSSSTREET:X!");
   }
-
-  private static Pattern MASTER = Pattern.compile("\'(?:Unit:(.*?))? *Loc:(.*?) *Time:(.*?) *Date:(.*?) *Inc:(.*?) *Addtl:(.*?) *(?:UnitSts:.*?)? *Venue:(?:HOOVER *)?(.*?) *Inc#:(.*?) *Between:(.*?)\'.*?");
-  private static Pattern SUBJECT = Pattern.compile("Robot ALERT ID-(\\d{9}) ACTIVE911  [A-Z0-9]+");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    //id from subject
-    Matcher sMat = SUBJECT.matcher(subject);
-    if (!sMat.matches()) return false;
-    data.strCallId = sMat.group(1);
-    
-    //fields from body
-    Matcher mat = MASTER.matcher(body);
-    if (!mat.matches()) return false;
-    data.strUnit = getOptGroup(mat.group(1));
-    parseAddress(mat.group(2), data);
-    data.strTime = mat.group(3);
-    data.strDate = mat.group(4);
-    data.strCall = mat.group(5);
-    data.strSupp = mat.group(6);
-    data.strPlace = mat.group(7);
-    data.strCallId = append(data.strCallId, " / ", mat.group(8));
-    data.strCross = mat.group(9);
-    return true;
+    if (!subject.equals("!CAD ALERT!")) return false;
+    return super.parseFields(body.split("\n"), data);
   }
-
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    return super.getField(name);
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa"); 
+  private class  MyDateTimeField extends DateTimeField {
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
+    }
+  }
 }
