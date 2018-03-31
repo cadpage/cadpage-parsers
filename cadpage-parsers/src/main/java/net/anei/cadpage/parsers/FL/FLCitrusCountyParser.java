@@ -136,6 +136,9 @@ public class FLCitrusCountyParser extends SmartAddressParser {
     "RED LEVEL",
     "SUGARMILL WOODS",
     
+    // Levy County
+    "INGLIS",
+    
     // Marion County
     "DUNNELLON"
   }; 
