@@ -9,8 +9,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SDMinnehahaCountyBParser extends FieldProgramParser {
   
   public SDMinnehahaCountyBParser() {
-    super("MINNEHAHA COUNTY", "SD", 
-          "SRC CALL CALL/SDS? ID ADDRCITY PLACE PLACE X!");
+    super("MINNEHAHA COUNTY", "SD",
+          "( ADDRCITY ( SRC | EMPTY ) CALL CALL/SDS? ID PLACE PLACE X X! UNIT! " +
+          "| SRC CALL CALL/SDS? ID ADDRCITY PLACE PLACE X X! ) END");
   }
   
   @Override
@@ -31,7 +32,7 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z0-9 ]+", true);
+    if (name.equals("SRC")) return new SourceField("[A-Z0-9 ]*", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ID")) return new IdField("CFS\\d{2}-\\d{6}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -50,6 +51,18 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
   private static final Pattern ADDR_ZIP_ST_PTN = Pattern.compile("(.*), ([A-Z]{2})(?: (\\d{5}))");
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("\\+\\d{2,3}\\.\\d{6}, *-\\d{2,3}\\.\\d{6}");
   private class MyAddressCityField extends AddressCityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.contains(",") && !field.contains("/")) return false;
+      parse(field, data);
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
       String zip = null;
