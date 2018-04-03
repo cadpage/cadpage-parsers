@@ -11,7 +11,7 @@ public class PAClarionCountyFParser extends FieldProgramParser {
   
   public PAClarionCountyFParser() {
     super("CLARION COUNTY", "PA", 
-          "( Address:ADDRCITY! Type:CALL! Xstreets:X! Narrative:INFO! INFO/N+ Common_Name:PLACE Caller_Name:NAME Caller_Phone:PHONE GPS:GPS END " + 
+          "( Address:ADDRCITY! Type:CALL! Xstreets:X! Narrative:INFO! INFO/N+ Common_Name:PLACE Caller_Name:NAME Caller_Phone:PHONE GPS:GPS Units:UNIT END " + 
           "| Report_Status:SKIP? Date/Time:DATETIME! CFS:SKIP! Incident_Numbers:ID! Caller:NAME! Caller_Phone:PHONE! Address:ADDRCITY " + 
                "Common_Name:PLACE? ( Lat/Lon:GPS! | Latitude:GPS1! Longitide:GPS2! ) CrossStreets:X? Fire_Call_Type:CALL! EMS_Call_Type:CALL/SLS! " + 
                "Fire_Quadrant:MAP! EMS_District:MAP/SLS! Unit_Status_Times:TIMES! Narrative:INFO INFO/N+ )");
