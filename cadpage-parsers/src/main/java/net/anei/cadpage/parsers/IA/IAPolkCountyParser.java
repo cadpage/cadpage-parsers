@@ -15,7 +15,8 @@ public class IAPolkCountyParser extends FieldProgramParser {
   
   public IAPolkCountyParser() {
     super(CITY_CODES, "POLK COUNTY", "IA",
-           "Location:ADDR/S! Type:CALL! Caller:NAME? Time:TIME%");
+           "Location:ADDR/S! ( Type:CALL! Caller:NAME? Time:TIME% " + 
+                            "| EID:ID! TYPE_CODE:CALL! TIME:TIME! ) END");
   }
   
   @Override
@@ -26,7 +27,7 @@ public class IAPolkCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() > 0) data.strSource = subject;
+    if (subject.length() > 0 && !subject.endsWith("CAD")) data.strSource = subject;
     if (!body.startsWith("Location:")) body = "Location: " + body; 
     if (!super.parseMsg(body, data)) return false;
     if (data.strName.endsWith(" CO")) data.strName += "UNTY";
@@ -55,32 +56,35 @@ public class IAPolkCountyParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(": @");
+      int pt = field.indexOf('@');
       String place = "";
       if (pt >= 0) {
-        place = field.substring(pt+3).trim();
-        field = field.substring(0,pt);
+        place = field.substring(pt+1).trim();
+        field = stripFieldEnd(field.substring(0,pt).trim(), ":");
+      }
+  
+      String apt = "";
+      if (!field.startsWith("LL(")) {
+        pt = field.lastIndexOf(',');
+        if (pt >= 0) {
+          apt = field.substring(pt+1).trim();
+          field = stripFieldEnd(field.substring(0,pt).trim(), ":");
+        }
+      }
+      
+      if (place.length() > 0) {
         int pt1 = field.lastIndexOf(' ');
         int pt2 = place.lastIndexOf(' ');
         if (pt1 >= 0 && pt2 >= 0 && field.substring(pt1).equals(place.substring(pt2))) {
           place = place.substring(0,pt2).trim();
-          if (place.endsWith("-")) place = place.substring(0,place.length()-1).trim();
+          place = stripFieldEnd(place, "-");
         }
-      }
-      
-      pt = field.lastIndexOf(',');
-      String apt = "";
-      if (pt >= 0) {
-        apt = field.substring(pt+1).trim();
-        field = field.substring(0,pt);
       }
       
       super.parse(field, data);
       
-      if (place.endsWith(data.strCity)) {
-        place = place.substring(0,place.length()-data.strCity.length()).trim();
-      }
-      if (place.endsWith("-")) place = place.substring(0,place.length()-1).trim();
+      place = stripFieldEnd(place, data.strCity);
+      place = stripFieldEnd(place, "-");
       
       data.strApt = append(data.strApt, " - ", apt);
       data.strPlace = place;
@@ -137,8 +141,8 @@ public class IAPolkCountyParser extends FieldProgramParser {
       "URBA", "URBANDALE",
       "WALN", "WALNUT TWP",
       "WASH", "WASHINGTON TWP",
-      "WEBS", "WEBSTER TWP",
       "WDSM", "WEST DES MOINES",
+      "WEBS", "WEBSTER TWP",
       "WIND", "WINDSOR HEIGHTS"
   });
   
