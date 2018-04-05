@@ -1,136 +1,65 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
+import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 /**
  * Boone County, MO
  */
-public class MOBooneCountyParser extends FieldProgramParser {
+public class MOBooneCountyParser extends DispatchOSSIParser {
   
   public MOBooneCountyParser() {
     super(CITY_CODES, "BOONE COUNTY", "MO",
-          "NEW_CALL ID ADDR/y APT GPS1 GPS2 ZIP PLACE X2 INFO/CS+? CALL DATE TIME SRC BOX UNIT PHONE! END");
+          "( CANCEL ADDR CITY! INFO/N+ " +
+          "| FYI? DATETIME ID ADDR ( CODE | PLACE CODE | CITY PLACE X X CODE ) CALL SRC! UNIT PHONE INFO/N+ )");
   }
   
   @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom(){
-      @Override public boolean splitBlankIns() { return false; }
-      @Override public boolean mixedMsgOrder() { return true; }
-    };
+  public String getFilter() {
+    return "CAD@boonecountymo.org";
   }
-
-  private static final Pattern START_NOTE_PTN = Pattern.compile(",(?:(NOTES \\*?)|[ A-Za-z]*\\bHSD +HSD:|CN MED |[ A-Za-z]+$) *");
-  private static final Pattern END_NOTE_PTN = Pattern.compile("\\(\\d{8}-\\d{3}\\)$");
   
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    // Look for 1 of 2 different NOTE indicators.  One of which should expect
-    // a particular terminator
-    String extraInfo = "";
-    Matcher match = START_NOTE_PTN.matcher(body);
-    if (match.find()) {
-      extraInfo = body.substring(match.end());
-      body = body.substring(0,match.start()).trim();
-      if (match.group(1) != null) {
-        if (!END_NOTE_PTN.matcher(extraInfo).find()) {
-          data.expectMore = true;
-        }
-      }
-    }
-    
-    if (!super.parseFields(body.split(",", -1), data)) return false;
-    return true;
+    return parseMsg("CAD:"+body, data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("NEW_CALL")) return new SkipField("NEW CALL|RE-ENCODE", true);
-    if (name.equals("ID")) return new IdField("\\d{9}", true);
-    if (name.equals("ZIP")) return new MyZipCityField();
-    if (name.equals("X2")) return new MyCross2Field();
-    if (name.equals("CALL")) return new MyCallCodeField();
-    if (name.equals("DATE"))  return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("SRC")) return new SourceField(".{2,3}|", true);
-    if (name.equals("PHONE")) return new PhoneField("|\\d{7}(?:\\d{3})?|\\d{3}-(?:\\d{3}-)?\\d{4}|\\d{6}-\\d{4}|[A-F]", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CODE"))  return new CodeField("\\d{1,3}[A-EO]\\d{1,2}[A-Z]?|[A-Z]{2,3}|TEST", true);
+    if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}", true);
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("UNIT")) return new UnitField("[A-Z0-9,]+", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
-  private class MyZipCityField extends Field {
-    
-    public MyZipCityField() {
-      super("\\d{5}|", true);
-    }
-  
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      if (data.strCity.length() == 0) {
-        data.strCity = field;
-      }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CITY";
-    }
-  }  
-  
-  private class MyCross2Field extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT, field);
-      if (res.isValid()) {
-        res.getData(data);
-        field = res.getLeft();
-      }
-      data.strSupp = append(data.strSupp, " / ", field);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "X INFO";
+      field = stripFieldStart(field, data.strCode);
+      super.parse(field, data);
     }
   }
   
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(\\S+)-(\\S.*)|(EMS\\.)");
-  private class MyCallCodeField extends CallField {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-  
-    @Override
-    public boolean checkParse(String field, Data data) {
-      
-      Matcher match = CALL_CODE_PTN.matcher(field);
-      if (!match.matches()) return false;
-      String code = match.group(1);
-      if (code == null) {
-        data.strCall = match.group(3);
-      } else { 
-        data.strCode = code;
-        data.strCall = match.group(2);
-      }
-      return true;
-    }
-    
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        if (line.startsWith("Radio Channel:")) {
+          data.strChannel = field.substring(14).trim();
+        } else {
+          data.strSupp = append(data.strSupp, "\n", line);
+        }
+      }
     }
     
     @Override
     public String getFieldNames() {
-      return "CODE CALL";
+      return super.getFieldNames() + " CH";
     }
   }
   
