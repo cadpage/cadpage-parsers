@@ -10,7 +10,7 @@ public class ORDeschutesCountyParser extends FieldProgramParser {
   
   public ORDeschutesCountyParser() {
     super("DESCHUTES COUNTY", "OR",
-          "CALL CALL+? PRI UNITSRC ADDR! MAP TIME");
+          "CALL CALL+? PRI UNITSRC ADDR! PLACE? MAP TIME");
     setupMultiWordStreets(
         "CATTLE DRIVE",
         "OLD BEND REDMOND"
@@ -46,7 +46,7 @@ public class ORDeschutesCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("PRI")) return new PriorityField("[A-Z][A-Z0-9]{0,3}|ASSTF", true);
+    if (name.equals("PRI")) return new PriorityField("[A-Z][A-Z0-9]{0,3}|\\dE|ASSTF", true);
     if (name.equals("UNITSRC")) return new UnitSourceField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("MAP")) return new MyMapField();
