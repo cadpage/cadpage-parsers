@@ -16,7 +16,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
           "| SKIP+? Event_ID:EMPTY! ID! Event:EMPTY! ID2! Unit:EMPTY! UNIT! Dispatch_Time:EMPTY! DATETIME2! Event_Type:SKIP! " + 
               "Agency:SKIP! Agency:SKIP! Event_Sub-Type:EMPTY! CALL! Dispatch_Group:EMPTY! CH Address:EMPTY! ADDR! Location_Info:EMPTY! PLACE " + 
               "Cross_Street:EMPTY! X Municipality:EMPTY! CITY ESZ:EMPTY! MAP Development:EMPTY! MAP/L Beat:EMPTY! MAP/L " + 
-              "Caller_Name:EMPTY! NAME Caller_Phone:EMPTY! PHONE SKIP+? Event_Comments%EMPTY INFO2/N+ )");
+              "Caller_Name:EMPTY! NAME Caller_Phone:EMPTY! PHONE Caller_Address:EMPTY! SKIP+? Event_Comments%EMPTY INFO2/N+ )");
   }
   
   @Override
