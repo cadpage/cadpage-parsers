@@ -45,6 +45,7 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
       data.strSource = subject;
       body = body.replace("\n\n", "\n");
       if (!body.contains("Dispatched")) body = "Dispatched\n" + body;
+      body = body.replace("=20\n", "");
     }
 
     if (!super.parseMsg(body, data)) return false;

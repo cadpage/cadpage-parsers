@@ -86,6 +86,10 @@ public class OHSummitCountyParser extends GroupBestParser {
     
     
     // Medina County
-    "WADSWORTH"  
+    "WADSWORTH",
+    
+    // Portage County
+    "AURORA",
+    "STREETSBORO"
   };
 }

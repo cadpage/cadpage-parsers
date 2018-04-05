@@ -55,7 +55,7 @@ Details on payment options are in the next email.
 * Not receiving runs/ calls, pages
 **************************************************************************
 
-Are dispatch alerts showing up in your message inbox?  If not then you need to talk to someone in your department about getting their alerts sent to you.
+Are dispatch alerts showing up in your message app?  If not then you need to talk to someone in your department about getting their alerts sent to you.
 
 If they are, can you use the "Email the Developer" setting to send us a new support email right after Cadpage fails to pick up an alert?
 

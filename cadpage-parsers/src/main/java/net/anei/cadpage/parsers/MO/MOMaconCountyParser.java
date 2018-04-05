@@ -34,7 +34,7 @@ public class MOMaconCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptPlaceField extends Field {
 
     @Override

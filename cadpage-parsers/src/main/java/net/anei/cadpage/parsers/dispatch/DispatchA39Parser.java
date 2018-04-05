@@ -83,6 +83,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*) (?:#|ROOM|APT) *(\\S+)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern LEFT_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?(?: +(.*))?");
   private class MyAddressField extends AddressField {
     
     @Override
@@ -123,12 +124,25 @@ public class DispatchA39Parser extends FieldProgramParser {
         }
       }
       field = p.get();
-      int flags = FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT | FLAG_ANCHOR_END;
+      int flags = FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT;
       if (!force) flags |= FLAG_CHECK_STATUS;
-      if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
+      if (data.strCity.length() > 0) flags |= FLAG_NO_CITY | FLAG_ANCHOR_END;
       Result res = parseAddress(StartType.START_ADDR, flags, field);
       if (!force && data.strCity.length() == 0 && !res.isValid()) return false;
       res.getData(data);
+      if ((flags & FLAG_ANCHOR_END) == 0) {
+        String left = res.getLeft();
+        if (left.length() > 0) {
+          match = LEFT_PTN.matcher(left);
+          if (match.matches()) {
+            data.strState = match.group(1);
+            apt = match.group(2);
+          } else {
+            data.strAddress = data.strCity = "";
+            parseAddress(field, data);
+          }
+        }
+      }
       if (apt != null) data.strApt = append(data.strApt, "-", apt);
       if (zip != null && data.strCity.length() == 0) data.strCity = zip;
       return true;
