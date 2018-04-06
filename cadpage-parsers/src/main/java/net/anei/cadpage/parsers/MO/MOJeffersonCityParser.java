@@ -25,7 +25,8 @@ public class MOJeffersonCityParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_DIRO;
   }
 
-  private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +[-+]?\\d{2,3}\\.\\d+ ++[-+]?\\d{2,3}\\.\\d+");
+  private static final Pattern TRAIL_ID_PTN = Pattern.compile(" +Incident # - (\\d{4}-\\d{8})$");
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +[-+]?\\d{2,3}\\.\\d+ ++[-+]?\\d{2,3}\\.\\d+$");
   private static final Pattern TRAIL_OPERATOR_PTN = Pattern.compile(" +[a-z]+$");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
 
@@ -34,7 +35,13 @@ public class MOJeffersonCityParser extends FieldProgramParser {
     
     if (!subject.equals("DONOTREPLY")) return false;
     
-    Matcher match = TRAIL_GPS_PTN.matcher(body);
+    Matcher match = TRAIL_ID_PTN.matcher(body);
+    if (match.find()) {
+      data.strCallId = match.group(1);
+      body = body.substring(0,match.start());
+    }
+    
+    match = TRAIL_GPS_PTN.matcher(body);
     if (match.find()) {
       setGPSLoc(match.group(), data);
       body = body.substring(0,match.start());
@@ -54,6 +61,6 @@ public class MOJeffersonCityParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " TIME GPS";
+    return super.getProgram() + " TIME GPS ID";
   }
 }
