@@ -132,6 +132,7 @@ public class Active911ParserTable {
       "US/CA/CityofSuisun",               "CASuisunCityB",
       "US/CA/CityofVacaville",            "CASolanoCountyB",
       "US/CA/CityofVerdugo",              "CALosAngelesCountyA",
+      "US/CA/ClarksburgFPD",              "CAYoloCountyB",
       "US/CA/ContraCostaCounty",          "CAContraCostaCountyA",
       "US/CA/CSB",                        "CASanBernardinoCountyB",
       "US/CA/ElDoradoCounty",             "CAElDoradoCounty",
