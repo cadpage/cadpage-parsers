@@ -423,6 +423,7 @@ public class Active911ParserTable {
       "US/IN/MiamiCounty",                "INMiamiCounty",
       "US/IN/ParkeCounty",                "INParkeCounty",
       "US/IN/PorterCounty",               "INPorterCounty",
+      "US/IN/PrairietonFire",             "INVigoCountyB",
       "US/IN/PulaskiCounty",              "INPulaskiCounty",
       "US/IN/PulaskiCountyEMS",           "INPulaskiCounty",
       "US/IN/RandolphCounty",             "INRandolphCounty",

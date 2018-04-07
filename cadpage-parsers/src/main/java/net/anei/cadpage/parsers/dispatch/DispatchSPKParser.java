@@ -371,12 +371,13 @@ public class DispatchSPKParser extends HtmlProgramParser {
         Matcher match = TIMES_PTN.matcher(field);
         if (match.matches()) {
           String type = match.group(1);
-          if (!dispatchTime && type.equals("Dispatched")) {
+          if (!dispatchTime && type.equalsIgnoreCase("Dispatched")) {
             dispatchTime = true;
             data.strDate = match.group(2);
             data.strTime = convertTime(match.group(3));
           } else if (type.equals("On Scene") ||
-                     type.equals("Closed")) data.msgType = MsgType.RUN_REPORT;  
+                     type.equals("Closed") ||
+                     type.equalsIgnoreCase("Available")) data.msgType = MsgType.RUN_REPORT;  
         }
         times = times + '\n' + field;
         return;
@@ -424,8 +425,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
           }
         }
         
-        if (field.equals("On Scene") || 
-            field.equals("Available")) data.msgType = MsgType.RUN_REPORT;
+        if (field.equalsIgnoreCase("On Scene") || 
+            field.equalsIgnoreCase("Available")) data.msgType = MsgType.RUN_REPORT;
         return;
       }
     }
