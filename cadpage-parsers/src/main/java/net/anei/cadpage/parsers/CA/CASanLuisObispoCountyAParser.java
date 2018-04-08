@@ -47,7 +47,7 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("ID")) return new IdField("Inc# +(.*)", true);
+    if (name.equals("ID")) return new IdField("Inc# *(.*)", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("GPS")) return new GPSField("<a href=\"http://maps.google.com/\\?q=([-+0-9\\.,]+)\">Map</a>", true);
     return super.getField(name);
