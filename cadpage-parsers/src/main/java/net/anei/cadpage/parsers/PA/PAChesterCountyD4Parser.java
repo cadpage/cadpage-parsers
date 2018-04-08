@@ -149,6 +149,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     }
   }
   
+  private static final Pattern INFO_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d:\\d\\d [a-z]{2}\\d{1,3} +");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -163,7 +164,12 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
         if (data.strPhone.length() == 0) data.strPhone = field.substring(4).trim();
       } else {
         if (field.startsWith("TXT:")) field = field.substring(4).trim();
-        super.parse(field, data);
+        for (String line : field.split("\n")) {
+          line = line.trim();
+          Matcher match = INFO_HEADER_PTN.matcher(line);
+          if (match.lookingAt()) line = line.substring(match.end());
+          data.strSupp = append(data.strSupp, "\n", line);
+        }
       }
     }
     
