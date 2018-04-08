@@ -1223,7 +1223,7 @@ public class Active911ParserTable {
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
       "US/PA/Km911",                      "PALebanonCounty",
-      "US/PA/LackawannaCounty",           "PALackawannaCountyA",
+      "US/PA/LackawannaCounty",           "PALackawannaCounty",
       "US/PA/LancasterCounty",            "PALancasterCounty",
       "US/PA/LawrenceCounty",             "PALawrenceCounty",
       "US/PA/LehighCounty",               "PALehighCountyA",
