@@ -725,6 +725,7 @@ public class Active911ParserTable {
       "US/MO/ClintonCounty",              "MOClintonCounty",
       "US/MO/ColeCounty",                 "MOColeCounty",
       "US/MO/CrawfordCounty",             "MOCrawfordCountyB",
+      "US/MO/DesPeres",                   "MOStLouisCountyI",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
       "US/MO/GreeneCounty",               "MOGreeneCounty",
       "US/MO/HarrisonCounty",             "MOHarrisonCounty",
