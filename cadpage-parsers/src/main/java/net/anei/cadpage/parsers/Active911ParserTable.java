@@ -1175,7 +1175,7 @@ public class Active911ParserTable {
       "US/OR/PrinevillePD",               "ORCrookCounty",
       "US/OR/ShermanCounty",              "ORShermanCounty",
       "US/OR/TillamookCounty",            "ORTillamookCounty",
-      "US/OR/UmatillaCounty",             "ORUmatillaACounty",
+      "US/OR/UmatillaCounty",             "ORUmatillaCountyA",
       "US/OR/WarmSprings",                "ORJeffersonCounty",
       "US/OR/WashingtonCounty",           "ORWashingtonCounty",
       "US/OR/WheelerCounty",              "ORWheelerCounty",
