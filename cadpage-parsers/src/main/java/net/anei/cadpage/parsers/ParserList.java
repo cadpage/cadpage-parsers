@@ -1165,6 +1165,7 @@ public class ParserList {
               ,"OKYukon"                        ,"Yukon, OK"
           ),
           new ParserCategory("Oregon"
+              ,"ORBakerCounty"                  ,"Baker County, OR"
               ,"ORBentonCounty"                 ,"Benton County, OR"
               ,"ORClackamasCounty"              ,"Clackamas County, OR"
               ,"ORClatsopCounty"                ,"Clatsop County, OR"

@@ -1141,6 +1141,7 @@ public class Active911ParserTable {
       "US/OK/MayesCounty",                "OKMayesCounty",
       "US/OK/SandSprings",                "OKSandSprings",
       "US/OR/Aurora",                     "ORMarionCountyA",
+      "US/OR/BakerCounty",                "ORBakerCounty",
       "US/OR/Benton",                     "ORBentonCounty",
       "US/OR/CityofSalem",                "ORMarionCountyB",
       "US/OR/ClackamasCounty",            "ORClackamasCountyA,ORClackamasCountyD",
