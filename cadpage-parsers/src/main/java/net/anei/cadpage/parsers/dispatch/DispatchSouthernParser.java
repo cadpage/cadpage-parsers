@@ -627,7 +627,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
           return;
         }
       }
-      sLeft = stripLeadPlace(sLeft, data, true);
+      sLeft = stripLeadPlace(sLeft, data, false);
       sLeft = stripFieldStart(sLeft, "AT ");
       sLeft = sLeft.replace(" X ", " / ");
       sLeft = stripFieldEnd(sLeft, " X");
@@ -641,7 +641,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         data.strName = cleanWirelessCarrier(getLeft());
         sLeft = null;
       } else {
-        sLeft = stripLeadPlace(sLeft, data, false);
+        sLeft = stripLeadPlace(sLeft, data, true);
         int pt = sLeft.indexOf(" X ");
         if (pt >= 0) {
           String save = sLeft.substring(0,pt).trim();
@@ -691,15 +691,17 @@ public class DispatchSouthernParser extends FieldProgramParser {
 
   private static final Pattern CROSS_MARK_PTN = Pattern.compile("[/]| X ");
   
-  private String stripLeadPlace(String field, Data data, boolean anchorEnd) {
+  private String stripLeadPlace(String field, Data data, boolean trailName) {
     
     if (!chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) return field;
     
     if (field.length() == 0 || Character.isDigit(field.charAt(0))) return field;
     
+    boolean anchorEnd = !trailName;
     int pt = field.length();
     Matcher match = CROSS_MARK_PTN.matcher(field);
-    if (match.find()) {
+    boolean crossMark = match.find();
+    if (crossMark) {
       anchorEnd = true;
       pt = match.start();
     }
@@ -720,9 +722,17 @@ public class DispatchSouthernParser extends FieldProgramParser {
       res.getData(tmpData);
       data.strPlace = append(data.strPlace, " - ", tmpData.strPlace);
       field = field.substring(tmpData.strPlace.length()).trim();
-      
+      return field;
     }
-    return field;
+    
+    if (field.startsWith("X ") || field.startsWith("/")) {
+      return field.substring(1).trim();
+    }
+    
+    if (crossMark || trailName) return field;
+    
+    data.strPlace = append(data.strPlace, " - ", field);
+    return "";
   }
 
   protected void parseExtra(String sExtra, Data data) {
