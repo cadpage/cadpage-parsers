@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.VA;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
 
@@ -9,7 +11,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
 public class VABotetourtCountyParser extends DispatchSouthernPlusParser {
   
   public VABotetourtCountyParser() {
-    super(CITY_LIST, "BOTETOURT COUNTY", "VA", DSFLAG_OPT_DISPATCH_ID | DSFLAG_TRAIL_PLACE | DSFLAG_FOLLOW_CROSS);
+    super(CITY_LIST, "BOTETOURT COUNTY", "VA", 
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_BAD_PLACE | DSFLG_OPT_X | DSFLG_ID | DSFLG_TIME);
     setupSpecialStreets("AVERY ROW", "LITTLE TIMBER RDG");
     removeWords("COURT", "PARKWAY", "PLACE", "RUN", "TER");
   }
@@ -23,6 +26,7 @@ public class VABotetourtCountyParser extends DispatchSouthernPlusParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     data.strCall = stripFieldEnd(data.strCall, "-");
+    data.strCity = convertCodes(data.strCity.toUpperCase(), FIX_CITY_TABLE);
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
     return true;
   }
@@ -68,11 +72,17 @@ public class VABotetourtCountyParser extends DispatchSouthernPlusParser {
     "VINTON",
     
     // Rockbridge County
+    "GLASGOW",
+    "GLASCOW",        // Misspelled
     "ROCKBRIDGE",
     "ROCKBRIDGE CO",
     "NATURAL BRIDGE STATION",
     
     // Independent cities
     "ROANOKE CITY"
-  }; 
+  };
+  
+  private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
+      "GLASCOW",    "GLASGOW"
+  });
 }
