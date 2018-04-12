@@ -10,7 +10,7 @@ public class COJeffersonCountyParser extends GroupBestParser {
 
   public COJeffersonCountyParser() {
     super(new COJeffersonCountyAParser(), new COJeffersonCountyBParser(),
-          new COJeffersonCountyCParser());
+          new COJeffersonCountyCParser(), new COJeffersonCountyDParser());
    }
 }
   

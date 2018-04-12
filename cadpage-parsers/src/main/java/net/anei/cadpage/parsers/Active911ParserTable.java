@@ -211,6 +211,7 @@ public class Active911ParserTable {
       "US/CO/Fountain",                   "COElPasoCountyC",
       "US/CO/FountainPD",                 "COElPasoCountyA",
       "US/CO/FremontCountySheriffsOffice","COFremontCounty",
+      "US/CO/Jeffcom911",                 "COJeffersonCounty",
       "US/CO/GarfieldCounty",             "COGarfieldCounty",
       "US/CO/GrandCounty",                "COGrandCounty",
       "US/CO/LarimerCounty",              "COLarimerCountyD",
