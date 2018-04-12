@@ -1,41 +1,43 @@
 package net.anei.cadpage.parsers.VA;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
+import java.util.regex.Pattern;
 
-public class VARadfordParser extends DispatchSouthernPlusParser {
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+
+public class VARadfordParser extends FieldProgramParser {
     
   public VARadfordParser() {
-    super(CITY_LIST, "RADFORD", "VA",
-          "ADDR/SP APT? X? NAME? ID CALL! INFO+");
+    super("RADFORD", "VA",
+          "CALL:CALL! ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! X:X? INFO:INFO! INFO/N+ END");
   }
+  
+  @Override
+  public String getFilter() {
+    return "Dispatch@radford.va.us";
+  }
+  
+  private static final Pattern DELIM = Pattern.compile(",?\n");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!body.startsWith("Dispatch:")) return false;
-    body = body.substring(9).trim();
-    if (subject.equals("Text Message")) subject = "";
-    return super.parseMsg(subject, body, data);
+    return parseFields(DELIM.split(body), data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("APT")) return new AptField("\\d{1,4}", true);
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
   
-  private class MyAddressField extends AddressField {
+  private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
+  
+  private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field,  "=");
-      field = stripFieldEnd(field, "=");
-      field = field.replace('=', '&');
+      field = field.replace("*", "").replaceAll("@", "/").replace("(Verify)", " ").trim();
+      field = MBLANK_PTN.matcher(field).replaceAll(" ");
       super.parse(field, data);
     }
   }
-
-  private static final String[] CITY_LIST = new String[]{
-    "RADFORD"
-  };
 }
