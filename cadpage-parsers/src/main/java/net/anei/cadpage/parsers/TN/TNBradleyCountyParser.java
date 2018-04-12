@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.TN;
 
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
 
@@ -15,7 +16,15 @@ public class TNBradleyCountyParser extends DispatchA3Parser {
   }
   
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (body.startsWith("Bradley CO 911:*")) {
+      body = "CLEVELANDTN911: " + body.replace("*", "* ");
+    }
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public String getFilter() {
-    return "777";
+    return "777,93001";
   }
 }
