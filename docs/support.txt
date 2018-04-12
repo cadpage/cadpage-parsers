@@ -59,6 +59,24 @@ Are dispatch alerts showing up in your message app?  If not then you need to tal
 
 If they are, can you use the "Email the Developer" setting to send us a new support email right after Cadpage fails to pick up an alert?
 
+**************************************************************************
+* MMS support enabled but not working
+**************************************************************************
+
+Dispatch is sending your dispatch alerts as MMS multi-media messages.  You do have Cadpage MMS support enabled, but it does not appear to be working.  This is not all that surprising.  Cadpage MMS support uses an undocumented back door API to the Google message app that requests it download a received MMS message content.  Sometimes it works, and sometimes it does not, especially when you have installed a different message app.
+
+There are two workarounds.  The first it to look through your message app settings looking for something that tells it to always download MMS message content.  With the current Google Messages app, this  is done by opening Settings, selecting Advanced Settings, then turning on the "Auto Download MMS" option.  Other message apps should have a similar setting somewhere.
+
+The other approach is only available if you have a Paid Cadpage Subscription.  This allows you to route your alerts through the Cadpage paging service which bypasses messaging altogether.  When you register with this service Cadpage assigns you a unique dispatch email address. It is up to you to get your dispatch alerts sent to this email address. Alerts sent to this address will be forwarded to Cadpage as direct pages.
+
+To start the paging service, open Cadpage Settings and select:
+
+    Direct Paging Venders > Cadpage Paging Service > Register
+
+You should shortly receive a registration confirmation popup that will display your dispatch email address. From there you will have the option to generate an email requesting that your dispatch alerts be sent to this address. Then fill in the address of your department IT person and send it.
+
+Good luck,
+-Ken
 
 **************************************************************************
 * Android Anti-virus rant
@@ -1398,59 +1416,6 @@ The best way to get them to us is to use the "Email the Developer" setting to se
 Good luck,
 -Ken
 
-
-******************************************************************
-** long list
-******************************************************************
-
-We have two different troubleshooting procedures. 
-
-If you are getting direct pages from Active911 or CodeMessaging, you should contact us for the direct page troubleshooting list.
-
-The following is a list for users who are getting regular text pages. This is a long list. Take it one step at a time. The important steps are the last two.  They send us information about your text pages so we can figure out what is wrong.
-
-Are alerts showing up in your message inbox.  If not then they probably are not being sent to your device and you need to talk to someone in your department about fixing that.
-
-Do you have Go SMS Pro or Handcent or AT&T Messenger installed?  They have proven to be incompatible with Cadpage. We keep the most recent version of Handcent that works with Cadpage on our Download page at http://www.cadpage.org/download-cadpage/
-
-If you are getting messages going through to your messaging app, check to make sure that they are not MMS messages.  You do this by long pressing on one of the messages and selecting view message details.  This should tell you whether or not the message is an SMS text message or an MMS message.  If it is an MMS message, you have to to enable MMS message processing in the location settings.  But first read all of the warnings and disclaimers at http://www.cadpage.org/faq/mms-message-support.
-
-Wait until the next text pages comes in.  If it still does not trigger CadPage, then use the Send Email to Developer feature to send us an email report.  This should include the most recently received text message, whether or not it was processed by CadPage, which gives us a lot of information we need to resolve the problem.
-
-If the messages are triggering CADpage, but will not allow you to select map option: Long press the message to open the Options menu and select the "Report Problem" menu item.  This will generate an email containing all of the information we should need to track down the problem with this message.  You can get the same menu options from the call history screen by long pressing one of the call entries.
-
-Take care, 
-Jean ~ Cadpage Administrator
-
-******************************************************************
-
-We have two different long and involved trouble shooting procedures.  The following is a list for users who are getting regular text pages.
-
-If you are getting direct pages from Active911 or CodeMessaging, you should contact us for the direct page troubleshooting list.
-
-This is a partial list of what the problem might be.  If you need more help, please use the Cadpage app, and from Settings, select Email the Developer. We can gain lots of information from the data that comes with that message.
-
-Do you have Go SMS Pro or Handcent or AT&T Messenger installed?  They have proven to be incompatible with Cadpage. We keep the most recent version of Handcent that works with Cadpage on our Download page at http://www.cadpage.org/download-cadpage/
-
-Are you getting text pages from your dispatch center?  CadPage works by processing those text messages, if you have not arranged to have them sent to your device, CadPage will not do anything for you.
-
-Take care, 
-Jean ~ Cadpage Administrator
-
-
-******************************************************************
-
-This looks like a text pages from Active911.  We do not have a parser for Active911 text pages because Active911 generally only sends text pages to dumb cell phones.  For Android phones running Cadpage, you should register as a direct paging device.
-
-First, either you or the person in your department who sets these things up should open the Active911 web site member access tab, switch to devices, and set your particular device up with a device type of Smartphone and a page type of Cadpage (Android).  There is a device key associated with your device that you will need for the next step.
-
-Next, open Cadpage settings and select
-Direct Paging Vendors > Active911.com > Register
-Follow the directions which including entering the two part device key.  If all goes well, Active911 will accept your registration and send a confirmation to Cadpage, which will display a note saying you are now registered for direct pages.
-
-Take care, 
--Ken
-
 ******************************************************************
 
 We need more information about your calls to figure out what is going wrong.
@@ -1472,17 +1437,6 @@ Have a nice day,
 
 ******************************************************************
 
-Next problem.  Even with the fixed parser, this call isn't mapping because it looks for an address on 
-SAW MILL RD
-which Google doesn't find because it thinks the street name is
-SAWMILL RD.
-
-If Google has the incorrect name (it happens) you should report it to them as a problem.  Find the location in maps.google.com and click on the Report a Problem link in the bottom right hand corner of the screen.  They will usually get it fixed in a month or so.
-
-On the other hand, if Google has the correct name, let us know and we can change the page parser to rename that street name if it sees it again.
-
-******************************************************************
-
 This call parsed fine (with the fixed logic) but it isn't mapping.  Google can't find an address for
 <<< LOCATION >>>
 
@@ -1491,23 +1445,6 @@ Does this address really exist? If it does, you short report this to Google as a
 If Dispatch has the address wrong, or if there is something we can do to come up with a search string that will locate the correct address.  Let us know what it is and we will try to make that adjustment in Cadpage.
 
 have a nice day,
--Ken
-
-******************************************************************
-* Alert tone cutting off after a second or two
-* Android version >= 4.0
-******************************************************************
-
-I have had the problem sporadically on my phone, but never been able to nail done what makes it happen or not happen.
-
-Searching the Internet came up with several references to the problem and a couple proposed solutions.  The one that is reported to consistently work is to open your message app, go into settings and turn "OFF" the "Delete old messages" setting.  Why this would affect Cadpage, especially when it is getting direct pages that have nothing to do with text messaging, is a complete mystery.
-
-It has also been recommended that you turn off motion setting
-To do that go bring up your System Settings and turn off the Motion menu in the System group.  That at least makes sense, though it isn't report to consistently fix the problem.
-
-Please let me know if either of these fix your problem.
-
-Take care, 
 -Ken
 
 ******************************************************************

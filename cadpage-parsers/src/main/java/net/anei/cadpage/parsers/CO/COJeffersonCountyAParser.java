@@ -43,7 +43,7 @@ public class COJeffersonCountyAParser extends FieldProgramParser {
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
     
-    int pt = body.indexOf("\n\n\n");
+    int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     
     if (!subject.equals("CAD Information")) data.strSource = subject;
@@ -56,7 +56,7 @@ public class COJeffersonCountyAParser extends FieldProgramParser {
     }
     
     body = body.replace("Map Pg", " Pg:").replace("Alarm#", " Case #:");
-    body = body.replace("Case#;", "Case #:");
+    body = body.replace("Case#;", "Case #:").replace("Case;", "Case #:");
     body = MISSING_COLON_PTN.matcher(body).replaceAll(":");
     body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
     body = body.replace(" Case#:", " Case #:");
