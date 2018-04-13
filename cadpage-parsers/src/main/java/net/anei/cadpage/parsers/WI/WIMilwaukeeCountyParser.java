@@ -20,7 +20,7 @@ public class WIMilwaukeeCountyParser extends DispatchA63Parser {
   private static final Properties CITY_CODES = buildCodeTable (new String[]{
     "FD", "MILWAKEE",
     "GL", "GLENDALE", 
-    "WF", "WHItEFISH BAY",
+    "WF", "WHITEFISH BAY",
     "RV", "RIVER HILLS",
     "BD", "BROWN DEER",
     "SH", "SHOREWOOD",
