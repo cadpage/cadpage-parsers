@@ -1,11 +1,27 @@
 package net.anei.cadpage.parsers.CA;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
 public class CASolanoCountyDParser extends DispatchA3Parser {
 
   public CASolanoCountyDParser() {
-    super(0, "SOLANO COUNTY", "CA");
+    super("SOLANO COUNTY", "CA",
+          "ID! Line2:ADDR! Line3:APT Line4:APT Line5:CITY! Line6:X! Line7:X! Line8:MAP! Line9:INFO1! Line10:CODE! Line11:CALL! Line12:NAME! Line13:PHONE! Line14:UNIT! Line15:MAP! Line16:INFO/N! Line17:INFO/N! Line18:INFO/N!",
+          FA3_NBH1_BOX | FA3_NBH2_BOX);
+    setBreakChar('=');
+  }
+  
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strCity.equals("VCVL")) data.strCity = "VACAVILLE";
+    return true;
   }
 
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{6}", true);
+    return super.getField(name);
+  }
 }

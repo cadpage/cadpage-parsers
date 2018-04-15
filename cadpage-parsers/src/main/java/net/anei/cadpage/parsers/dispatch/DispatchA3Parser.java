@@ -27,7 +27,7 @@ public class DispatchA3Parser extends FieldProgramParser {
   private static final int BASE_PLACE_OFF = 3;
   private static final int BASE_MAP = 4;
   private static final int BASE_CODE = 5;
-  
+  private static final int BASE_BOX = 6;
   
   private static final int NBH1_OFFSET = 0;
   private static final int NBH2_OFFSET = 4;
@@ -40,15 +40,17 @@ public class DispatchA3Parser extends FieldProgramParser {
   protected static final int FA3_NBH1_PLACE_OFF = BASE_PLACE_OFF << NBH1_OFFSET;
   protected static final int FA3_NBH1_MAP = BASE_MAP << NBH1_OFFSET;
   protected static final int FA3_NBH1_CODE = BASE_CODE << NBH1_OFFSET;
+  protected static final int FA3_NBH1_BOX = BASE_BOX << NBH1_OFFSET;
       
   protected static final int FA3_NBH2_INFO = BASE_INFO << NBH2_OFFSET;
-  protected static final int FA3_NBH2_MAP = BASE_MAP << NBH2_OFFSET;
   protected static final int FA3_NBH2_PLACE_OFF = BASE_PLACE_OFF << NBH2_OFFSET;
+  protected static final int FA3_NBH2_MAP = BASE_MAP << NBH2_OFFSET;
   protected static final int FA3_NBH2_CODE = BASE_CODE << NBH2_OFFSET;
+  protected static final int FA3_NBH2_BOX = BASE_BOX << NBH2_OFFSET;
   
   protected static final int FA3_NBH_INFO = FA3_NBH1_INFO | FA3_NBH2_INFO;
-  protected static final int FA3_NBH_MAP = FA3_NBH1_MAP | FA3_NBH2_MAP;
   protected static final int FA3_NBH_PLACE_OFF = FA3_NBH1_PLACE_OFF | FA3_NBH2_PLACE_OFF;
+  protected static final int FA3_NBH_MAP = FA3_NBH1_MAP | FA3_NBH2_MAP;
   protected static final int FA3_NBH_CODE = FA3_NBH1_CODE | FA3_NBH2_CODE;
   
   protected static final int FA3_LANDMARK_PLACE = BASE_PLACE << LANDMARK_OFFSET;
@@ -286,7 +288,7 @@ public class DispatchA3Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO MAP PLACE";
+      return "INFO MAP PLACE BOX?";
     }
   }
   
@@ -449,7 +451,7 @@ public class DispatchA3Parser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "DATE TIME X MAP PLACE INFO GPS";
+      return "DATE TIME X MAP PLACE INFO GPS BOX?";
     }
   }
   
@@ -544,6 +546,8 @@ public class DispatchA3Parser extends FieldProgramParser {
       return new InfoMapField();
     case BASE_CODE:
       return new InfoCodeField();
+    case BASE_BOX:
+      return new BoxField();
     default:
       return defaultField;
     }
