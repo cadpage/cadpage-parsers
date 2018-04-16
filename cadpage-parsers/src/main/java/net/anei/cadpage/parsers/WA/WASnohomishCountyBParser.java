@@ -10,7 +10,8 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   
   public WASnohomishCountyBParser() {
     super("SNOHOMISH COUNTY", "WA",
-           "CALL_CH CH? ADDRCITY/S6 MAP2/D? X_UNIT_INFO! INFO/S+");
+           "UNIT_CALL_CH CH? ADDRCITY/S6 MAP2/D? X_UNIT_INFO! INFO/S+");
+    setupSpecialStreets("AVE A");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
   }
   
@@ -27,8 +28,8 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL_CH")) return new MyCallChannelField();
-    if (name.equals("CH")) return new ChannelField("((?:FIRE|NC F) TAC \\d+(?:/\\d+)?|) */?", true);
+    if (name.equals("UNIT_CALL_CH")) return new MyUnitCallChannelField();
+    if (name.equals("CH")) return new ChannelField("\\*?((?:FIRE|NC F) TAC \\d+(?:/\\d+)?|) *[/*]?", true);
     if (name.equals("CALL")) return new CallField(">>([A-Z]+)<<", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("MAP2")) return new MapField("\\d{3}(?:[A-Z]\\d)?|", true);
@@ -37,7 +38,8 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   }
   
   private static final Pattern CALL_CHANNEL_PTN = Pattern.compile(">>([A-Z]+)<< *(.*)");
-  private class MyCallChannelField extends Field {
+  private static final Pattern UNIT_CALL_PTN = Pattern.compile(">>(.*)<<([A-Z]+)");
+  private class MyUnitCallChannelField extends Field {
     
     @Override public boolean canFail() {
       return true;
@@ -49,7 +51,12 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
       if (match.matches()) {
         data.strCall = match.group(1);
         data.strChannel = match.group(2);
+      } else if ((match = UNIT_CALL_PTN.matcher(field)).matches()) {
+        data.strUnit = match.group(1).trim();
+        data.strCall =  match.group(2).trim();
       } else {
+        field = stripFieldStart(field, "<<");
+        field = stripFieldEnd(field, ">>");
         data.strCall = field;
       }
       return true;
@@ -94,7 +101,7 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
       if (!cross.equals("No Cross Streets Found")) {
         data.strCross = cross;
       }
-      data.strUnit = match.group(2).trim();
+      data.strUnit = append(data.strUnit, " ", match.group(2).trim());
       data.strSupp = match.group(3).trim();
     }
 
@@ -104,6 +111,14 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern APT_DIROF_PTN = Pattern.compile("[NSEW]O .*");
+  
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (APT_DIROF_PTN.matcher(apt).matches()) return true;
+    return super.isNotExtraApt(apt);
+  }
+
   @Override
   public String adjustMapAddress(String addr) {
     // Usually PK means PIKE, but not here
