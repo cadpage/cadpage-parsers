@@ -330,6 +330,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "CHRI", "CHRISTINE/ND",
       "CLAY", "CLAY COUNTY/MN",
       "CLIF", "CLIFFORD/ND",
+      "COLG", "COLGATE/ND",
       "COMS", "COMSTOCK/MN",
       "CROM", "CROMWELL TOWNSHIP/MN",
       "DALE", "DALE/MN",
@@ -361,7 +362,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "HITT", "HITTERDAL/MN",
       "HOLY", "HOLY CROSS TOWNSHIP/MN",
       "HOPE", "HOPE/ND",
-      "HORA", "HORACE",
+      "HORA", "HORACE/ND",
       "HUMB", "HUMBOLDT TOWNSHIP/MN",
       "HUNT", "HUNTER/ND",
       "KEEN", "KEENE TOWNSHIP/MN",
@@ -378,11 +379,13 @@ public class NDCassCountyParser extends SmartAddressParser {
       "NORA", "HORACE/ND",
       "NROT", "NORTH RIVER/ND",
       "OAKP", "OAKPORT TOWNSHIP/MN",
+      "ORIS", "ORISKA/ND",
       "OXBO", "OXBOW/ND",
       "PAGE", "PAGE/ND",
       "PARK", "PARKE TOWNSHIP/MN",
       "PELI", "PELICAN RAPIDS/MN",
       "PERL", "PERLEY/MN",
+      "PILL", "PILLSBURY/ND",
       "PRAI", "PRAIRIE ROSE/ND",
       "PROS", "PROSPER/ND",
       "REIL", "REILE'S ACRES/ND",
@@ -399,6 +402,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "TOWE", "TOWER CITY/ND",
       "TWIN", "TWIN VALLEY/MN",
       "ULEN", "ULEN/MN",
+      "VALL", "VALLEY CITY/ND",
       "VIDI", "VIDING TOWNSHIP/MN",
       "WARR", "WARREN/MN",
       "WFGO", "WEST FARGO/ND",
@@ -421,6 +425,7 @@ public class NDCassCountyParser extends SmartAddressParser {
       "WILKCO",          "WILKIN COUNTY/MN",
       "WILKCO ROTHSAY",  "ROTHSAY/MN",
       "WOLVERTON",       "WOLVERTON/MN"
+      
 
   });
 }
