@@ -13,6 +13,11 @@ public class OHLorainCountyBParser extends DispatchInfoSysParser {
   }
   
   @Override
+  public String getFilter() {
+    return "Dispatch@Ohio.net";
+  }
+  
+  @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("From: MapUser")) return false;
     if (!super.parseMsg(body, data)) return false;
