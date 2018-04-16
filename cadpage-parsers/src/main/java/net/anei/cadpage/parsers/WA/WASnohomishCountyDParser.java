@@ -18,7 +18,7 @@ public class WASnohomishCountyDParser extends SmartAddressParser {
     return "noreply@snocom.org";
   }
   
-  private static final Pattern MASTER = Pattern.compile(">>>([A-Z]+)<<< ([,A-Z0-9]+) (.+?) ([A-Z][A-Z0-9]\\d{3}|[A-Z]{3}\\d[A-Z]{2}\\d)(?: ([A-Z]+ TAC \\d+))?(.*)");
+  private static final Pattern MASTER = Pattern.compile(">>>([A-Z]+)<<< ([,A-Z0-9]+) (.+?) ([A-Z][A-Z0-9]\\d{3}|[A-Z]{3}\\d[A-Z]{2}\\d|NORCOMSHO)(?: ([A-Z]+ TAC \\d+))?(.*)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -123,6 +123,8 @@ public class WASnohomishCountyDParser extends SmartAddressParser {
     "THREE LAKES",
     "VERLOT",
     "WARM BEACH",
-    "WOODS CREEK"
+    "WOODS CREEK",
+    
+    "KING COUNTY"
   };
 }
