@@ -14,7 +14,7 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
   
   @Override
   public String getFilter() {
-    return "Carter911@windstream.net";
+    return "Carter911@windstream.net,911@carterems.net";
   }
 
   @Override
