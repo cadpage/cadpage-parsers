@@ -12,7 +12,7 @@ public class MIMacombCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "RichmondPaging@comcast.net";
+    return "RichmondPaging@comcast.net,richmondpaging@gmail.com";
   }
   
   @Override
