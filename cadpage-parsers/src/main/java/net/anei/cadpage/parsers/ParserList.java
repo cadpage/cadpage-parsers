@@ -1065,7 +1065,9 @@ public class ParserList {
               ,"NCYanceyCounty"                 ,"Yancey County, NC"
           ),
           new ParserCategory("North Dakota"
+              ,"NDBillingsCounty"               ,"Billings County, ND"
               ,"NDCassCounty"                   ,"Cass County, ND"
+              ,"NDKidderCounty"                 ,"Kidder County, ND"
               ,"NDPierceCounty"                 ,"Pierce County, ND"
           ),
           new ParserCategory("Ohio"
