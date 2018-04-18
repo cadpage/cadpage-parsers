@@ -10,7 +10,7 @@ public class NYLivingstonCountyCParser extends FieldProgramParser {
   
   public NYLivingstonCountyCParser() {
     super(NYLivingstonCountyAParser.CITY_CODES, "LIVINGSTON COUNTY", "NY",
-          "Call_Type:CODE! Address:ADDRCITY! Common:PLACE! X-street:X! Name:NAME! Nature:CALL! UNIT! Narrative:INFO! INFO/N+");
+          "Call_Type:CODE! Address:ADDRCITY! Common:PLACE! X-street:X! Name:NAME! Nature:CALL! CR#:ID! Asg_Units:UNIT! Narrative:INFO! INFO/N+");
   }
   
   @Override
@@ -27,7 +27,16 @@ public class NYLivingstonCountyCParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("Asg Units +(.*)", true);
+    if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf("   ");
+      if (pt >= 0) field = field.substring(0, pt);
+      super.parse(field, data);
+    }
   }
 }
