@@ -726,6 +726,7 @@ public class Active911ParserTable {
       "US/MO/CityofStJoseph",             "MOBuchananCountyA",
       "US/MO/ClayCounty",                 "MOClayCounty",
       "US/MO/ClintonCounty",              "MOClintonCounty",
+      "US/MO/ClintonCountySheriff",       "MOClintonCounty",
       "US/MO/ColeCounty",                 "MOColeCounty",
       "US/MO/CrawfordCounty",             "MOCrawfordCountyB",
       "US/MO/DesPeres",                   "MOStLouisCountyI",
