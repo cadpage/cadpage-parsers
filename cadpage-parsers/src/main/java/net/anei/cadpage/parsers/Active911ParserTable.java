@@ -111,6 +111,7 @@ public class Active911ParserTable {
       "US/CA/AmadorCounty",               "CAAmadorCounty",
       "US/CA/Bducad",                     "CASanBernardinoCountyC",
       "US/CA/BDUcad",                     "CASanBernardinoCountyC",
+      "US/CA/Branciforte",                "CASantaCruzCountyC",
       "US/CA/Btucad",                     "CAButteCountyA",
       "US/CA/CalaverasCounty",            "CACalaverasCounty",
       "US/CA/CathedralCity",              "CACathedralCity",
