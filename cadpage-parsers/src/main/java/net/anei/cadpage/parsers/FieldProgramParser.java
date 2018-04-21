@@ -3037,16 +3037,30 @@ public class FieldProgramParser extends SmartAddressParser {
   public class SourceField extends Field {
     
     public SourceField() {};
+    
+    private String connector = null;
+
     public SourceField(String pattern) {
       super(pattern);
     }
+    
     public SourceField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
+    }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      connector = buildConnector(qual, null);
     }
 
     @Override
     public void parse(String field, Data data) {
-      data.strSource = field;
+      if (connector != null) {
+        data.strSource = append(data.strSource, connector, field);
+      } else {
+        data.strSource = field;
+      }
     }
     
     @Override
