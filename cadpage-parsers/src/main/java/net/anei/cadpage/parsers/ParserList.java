@@ -163,6 +163,7 @@ public class ParserList {
               ,"ARHotSpringCounty"              ,"Hot Spring County, AR"
               ,"ARPopeCounty"                   ,"Pope County, AR"
               ,"ARPulaskiCounty"                ,"Pulaski County, AR"
+              ,"ARSebastianCounty"              ,"Sebastian County, AR"
               ,"ARWashingtonCounty"             ,"Washington County, AR"
           ),
           new ParserCategory("California"
