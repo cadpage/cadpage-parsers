@@ -5,9 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 
 public class LATerrebonneParishBParser extends FieldProgramParser {
 
@@ -21,7 +19,7 @@ public class LATerrebonneParishBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "Zuercher@tpe911.com";
+    return "Zuercher@tpe911.com,tpe911@tpe911.org";
   }
 
   @Override
@@ -33,8 +31,27 @@ public class LATerrebonneParishBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("ST_X")) return new MyStateCrossField();
     return super.getField(name);
+  }
+  
+  private static final Pattern CODE_ADDR_PTN = Pattern.compile("(\\d+[A-Z]?) +(.*)");
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_ADDR_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE " + super.getFieldNames();
+    }
   }
   
   private static final Pattern ST_ZIP_X_PTN = Pattern.compile("([A-Z]{2}) \\d{5}\\b(?: +(.*))?");
