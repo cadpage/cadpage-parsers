@@ -37,6 +37,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("CANCEL")) return new MyCancelField();
     if (name.equals("CH")) return new ChannelField("OPS_\\d+", true);
     if (name.equals("SRC1")) return new SourceField("[A-Z]{1,4}");
     if (name.equals("SRC2")) return new SourceField("S\\d{2}|[A-Z]{4}");
@@ -45,6 +46,17 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+,[A-Z0-9,]+|[A-Z]+\\d+|[A-Z]+FD|MUT[A-Z0-9]+", true);
     return super.getField(name);
   }
+  
+  private class MyCancelField extends BaseCancelField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (super.checkParse(field, data)) return true;
+      if (!field.equals("WORKING FIRE")) return false;
+      data.strCall = field;
+      return true;
+    }
+  }
+  
   
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) (\\d{1,2}[A-Z]\\d{1,2})");
   private class MyCallField extends CallField {

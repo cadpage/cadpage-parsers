@@ -7,6 +7,7 @@ public class NYNiagaraCountyParser extends GroupBestParser {
   
   public NYNiagaraCountyParser() {
     super(new NYNiagaraCountyAParser(),
-           new NYNiagaraCountyBParser());
+          new NYNiagaraCountyBParser(),
+          new NYNiagaraCountyCParser());
   }
 }

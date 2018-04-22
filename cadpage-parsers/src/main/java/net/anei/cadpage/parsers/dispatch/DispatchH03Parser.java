@@ -24,7 +24,7 @@ public class DispatchH03Parser extends FieldProgramParser {
             "City:CITY! Building:APT! Subdivision:APT! Floor:APT! Apt/Unit:APT! Zip_Code:ZIP! Cross_Strs:X! Area:MAP! Sector:MAP/D! Beat:MAP/D! " +
             "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES! ) " +  
             "INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! " + 
-            "DASHES! ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES! | DASHES! ) UNITS_DISPATCHED:EMPTY! UNIT/S+? DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! " + 
+            "DASHES! ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES! | ) UNITS_DISPATCHED:EMPTY! UNIT/S+? DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! " + 
             "COMMENTS:EMPTY! INFO/N+? DASHES!");
   }
   
