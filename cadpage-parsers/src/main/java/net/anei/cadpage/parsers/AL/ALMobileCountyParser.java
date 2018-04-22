@@ -1081,7 +1081,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "BLAB", "BAYOU LA BATRE",
       "CHIC", "CHICKASAW",
       "CITR", "CITRONELLE",
-      "CITY", "CITY OF MOBILE",
+      "CITY", "MOBILE",
       "CNTY", "MOBILE COUNTY",
       "CREO", "CREOLA",
       "DAUP", "DAUPHIN ISLAND",
