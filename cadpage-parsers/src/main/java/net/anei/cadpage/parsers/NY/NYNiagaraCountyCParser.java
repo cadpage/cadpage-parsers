@@ -6,7 +6,7 @@ public class NYNiagaraCountyCParser extends DispatchProQAParser {
   
   public NYNiagaraCountyCParser() {
     super("NIAGARA COUNTY", "NY", 
-          "ID! CALL CALL/L+? TIME ADDR APT CITY! INFO/N+", true);
+          "ID! CALL CALL/L+? TIME ADDR APT CITY MAP! INFO/N+", true);
   }
   
   @Override
