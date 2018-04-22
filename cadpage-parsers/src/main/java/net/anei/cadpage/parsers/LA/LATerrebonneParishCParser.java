@@ -37,6 +37,10 @@ public class LATerrebonneParishCParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      if (field.startsWith("+")) {
+        data.strAddress = field;
+        return;
+      }
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       Matcher match = ST_ZIP_PTN.matcher(city);
