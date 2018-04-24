@@ -6,6 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class LATerrebonneParishParser extends GroupBestParser {
   
   public LATerrebonneParishParser() {
-    super(new LATerrebonneParishAParser(), new LATerrebonneParishBParser());
+    super(new LATerrebonneParishAParser(), new LATerrebonneParishBParser(),
+          new LATerrebonneParishCParser());
   }
 }

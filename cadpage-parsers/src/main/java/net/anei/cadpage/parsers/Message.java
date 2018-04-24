@@ -206,6 +206,7 @@ public class Message {
     Pattern.compile("^(?:([-\\w\\.]+@[-\\w\\.]+) +)?Subj(?:ect)?: *(.*)\n"),
     Pattern.compile("^(?:([^ ,;/]+) +)?S:(.*?)(?: +M:|\n)"), 
     Pattern.compile("^Fr:<(.*?)>?\nSu:(.*?)\nTxt: "),
+    Pattern.compile("From: *(.*) Subj: *(.*) Msg: *"),
     Pattern.compile("^prvs=[0-9a-f]{8,}=[\\w .<>@]*<([\\w.\\-]+@[\\w.]+)> *\\((.*?)\\)")
   };
   private static final Pattern[] S_M_PATTERNS = new Pattern[]{

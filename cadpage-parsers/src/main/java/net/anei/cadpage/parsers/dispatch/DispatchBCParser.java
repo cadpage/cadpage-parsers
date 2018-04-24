@@ -44,6 +44,7 @@ public class DispatchBCParser extends DispatchA3Parser {
     // Lately a lot of agencies have been mixing the standard HTML format we usually process with
     // a non-html version processed by DispatchA33Parser.  As a result, we split out non-html looking
     // messages and pass them to an auxiliary DispatchA33Parser subclass.
+    useAuxParser = false;
     if (!isHtmlMsg(body)) {
       useAuxParser = true;
       return auxA33Parser.parseThisMsg(subject,  body, data);

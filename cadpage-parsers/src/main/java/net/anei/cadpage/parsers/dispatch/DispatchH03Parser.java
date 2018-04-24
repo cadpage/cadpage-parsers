@@ -20,7 +20,12 @@ public class DispatchH03Parser extends FieldProgramParser {
   
   public DispatchH03Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
-          "SKIP+? DASHES INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! ( Location:ADDR! | Loc:ADDR! ) Loc_Name:PLACE! Loc_Descr:INFO! City:CITY! Building:APT! Subdivision:APT! Floor:APT! Apt/Unit:APT! Zip_Code:ZIP! Cross_Strs:X! Area:MAP! Sector:MAP/D! Beat:MAP/D! DASHES! INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! DASHES! UNITS_DISPATCHED:EMPTY! UNIT! DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! COMMENTS:EMPTY! INFO/N+? DASHES!");
+          "SKIP+? DASHES INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! ( Location:ADDR! | Loc:ADDR! ) Loc_Name:PLACE! Loc_Descr:INFO! " + 
+            "City:CITY! Building:APT! Subdivision:APT! Floor:APT! Apt/Unit:APT! Zip_Code:ZIP! Cross_Strs:X! Area:MAP! Sector:MAP/D! Beat:MAP/D! " +
+            "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES! ) " +  
+            "INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! " + 
+            "DASHES! ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES! | ) UNITS_DISPATCHED:EMPTY! UNIT/S+? DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! " + 
+            "COMMENTS:EMPTY! INFO/N+? DASHES!");
   }
   
   private HtmlDecoder decoder = new HtmlDecoder();
@@ -85,6 +90,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (name.equals("ZIP")) return new BaseZipField();
     if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("DASHES")) return new SkipField("-{10,}");
+    if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("ID2")) return new BaseIdField();
     return super.getField(name);
   }
@@ -106,6 +112,14 @@ public class DispatchH03Parser extends FieldProgramParser {
       if (!match.matches()) abort();
       setTime(TIME_FMT, match.group(1), data);
       data.strDate = match.group(2);
+    }
+  }
+  
+  private class BaseMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(",")) return;
+      super.parse(field, data);
     }
   }
   

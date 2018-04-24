@@ -477,10 +477,7 @@ public abstract class MsgParser {
   
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     boolean force = body.startsWith("<!DOCTYPE");
-    if (force) {
-      body = cleanDocHeaders(body);
-      if (body == null) return false;
-    }
+    if (force) body = cleanDocHeaders(body);
     body = decodeHtmlSequence(body);
     if (parseUntrimmedMsg(subject, body, data)) return true;
     if (force) {
@@ -512,7 +509,7 @@ public abstract class MsgParser {
         sb.append(match.replaceAll("").trim());
       }
     }
-    if (sb == null) return null;
+    if (sb == null) return body;
     return sb.toString();
   }
 
