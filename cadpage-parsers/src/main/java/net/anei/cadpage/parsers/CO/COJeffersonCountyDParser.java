@@ -10,7 +10,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   
   public COJeffersonCountyDParser() {
     super("JEFFERSON COUNTY", "CO", 
-          "CALL ADDR APT CITY X MAP GPS1/d GPS2/d UNIT EMPTY ID TIME! END");
+          "CALL ADDR APT CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID TIME! END");
   }
   
   @Override
@@ -31,7 +31,9 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    if (!parseFields(DELIM.split(body), data)) return false;
+    String[] flds = body.split("\n");
+    if (flds.length < 12) flds = DELIM.split(body);
+    if (!parseFields(flds, data)) return false;
     if (data.strCity.equals("UNINC JEFFERSON")) data.strCity = "JEFFERSON COUNTY";
     return true;
   }
