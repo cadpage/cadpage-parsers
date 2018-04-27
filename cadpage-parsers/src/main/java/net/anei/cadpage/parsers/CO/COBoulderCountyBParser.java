@@ -31,7 +31,7 @@ public class COBoulderCountyBParser extends FieldProgramParser {
 
 	private static Pattern MASTER1 = Pattern.compile("\\*{3} ADVISORY NOTIFICATION \\*{3}Inc #([A-Z]{3,4})(\\d{6}-\\d{6})Type:z?(.*)Addr:(.*)Unit:(.*)");
   private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
-	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|BLD|APT|LOC|INFO|TIME|UNITS|Map Page):");
+	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|APT|BLD|INFO|LOC|PROB|TIME|UNITS|Map Page):");
 
 	public boolean parseMsg(String body, Data data) {
 	  
