@@ -176,7 +176,7 @@ public class PAFranklinCountyBParser extends MsgParser {
   private boolean checkZipGPS(FParser fp, int ndx, int offset) {
     String zip = fp.lookahead(ndx, 5);
     if (ZIP_PTN.matcher(zip).matches()) return true;
-    if (zip.length() > 0) return false;
+    if (zip.length() > 0 && !zip.equals("0")) return false;
     String gps = fp.lookahead(ndx+5+offset, 20);
     return GPS_PTN.matcher(gps).matches();
   }
