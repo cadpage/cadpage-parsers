@@ -20,7 +20,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     return "911Text@911intn.org,@greatfallsmt.net";
   }
   
-  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([-A-Z0-9]+) ([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+|[^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)? (.*?) Map: *(.*?) Call Details: (.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d),? (?:([-A-Z0-9]+) )?(?:, )?([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+|[^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)?,? (.*?) (?:, )?Map: *(.*?) (?:, )?Call Details: (.*)");
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   
   @Override
@@ -37,7 +37,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
       if (!match.matches()) return false;
       data.strDate = match.group(1);
       data.strTime = match.group(2);
-      data.strCall = match.group(3);
+      data.strCall = getOptGroup(match.group(3));
       parseAddress(match.group(4).trim(), data);
       data.strCity = getOptGroup(match.group(5));
       data.strState = getOptGroup(match.group(6));
