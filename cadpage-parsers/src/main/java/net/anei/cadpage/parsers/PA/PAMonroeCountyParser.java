@@ -14,17 +14,16 @@ public class PAMonroeCountyParser extends SmartAddressParser {
   
   public PAMonroeCountyParser() {
     super("MONROE COUNTY", "PA");
-    setFieldList("SRC ID CODE CALL PLACE ADDR APT CITY X INFO");
     removeWords("ROAD", "FS", "SQ");
     setupSpecialStreets("SUNSET STRIP");
   }
   
   @Override
   public String getFilter() {
-    return "@monroeco911.com,12101,alert@monroe.alertpa.org,messaging@iamresponding.com,mcpaas6@rsix.roamsecure.net,no-reply@ecnalert.com";
+    return "@monroeco911.com,12101,alert@monroe.alertpa.org,messaging@iamresponding.com,mcpaas6@rsix.roamsecure.net,no-reply@ecnalert.com,no-reply@onsolve.com,notify@monroeco911.com";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("#\\S+  +(.*?) *CAD|([A-Z]{3,4}|Station +\\d+)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("INCIDENT UNIT HISTORY FOR: *(\\d+) +PAGE \\d+\n *DATE: *(\\d{6}) +CALLTYPE: *(\\S+) *\n");
   private static final Pattern NEWLINE_PTN = Pattern.compile(" *\n+ *");
   private static final Pattern MARKER = Pattern.compile("(?:CAD MSG[:\n]|(\\d{8})) \\*[DG] ([A-Z0-9]+) +");
   private static final Pattern FS_PTN = Pattern.compile("(FS \\d+) *@? *");
@@ -34,30 +33,31 @@ public class PAMonroeCountyParser extends SmartAddressParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    // See if we can find a source code in the subject
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (match.matches()) {
-      int ndx = 1;
-      do {
-        data.strSource = match.group(ndx++);
-      } while (data.strSource == null);
+    // See if this is a run report
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      setFieldList("ID DATE CODE CALL INFO");
+      data.strCallId = match.group(1);
+      String date = match.group(2);
+      data.strDate = date.substring(0,2)+'/'+date.substring(2,4)+'/'+date.substring(4,6);
+      data.strCode = match.group(3);
+      data.strCall = lookupCallCode(data.strCode);
+      for (String line : body.substring(match.end()).split("\n")) {
+        line = line.trim();
+        if (line.startsWith("INCIDENT UNIT HISTORY FOR:")) continue;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+      return true;
     }
 
     // Strip off any prefix
+    setFieldList("ID CODE CALL PLACE ADDR APT CITY X INFO");
     match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
+    
     data.strCallId = getOptGroup(match.group(1));
     data.strCode = match.group(2);
-    String call = CALL_CODES.getProperty(data.strCode);
-    if (call == null) {
-      int len1 = data.strCode.length()-1;
-      char chr = data.strCode.charAt(len1);
-      if (chr>='A' && chr<='Z') {
-        call = CALL_CODES.getProperty(data.strCode.substring(0,len1));
-      }
-    }
-    if (call == null) call = data.strCode;
-    data.strCall = call;
+    data.strCall = lookupCallCode(data.strCode);
     body = body.substring(match.end());
     int pt = body.indexOf("\nSent by");
     if (pt >= 0) body = body.substring(0,pt).trim();
@@ -114,6 +114,19 @@ public class PAMonroeCountyParser extends SmartAddressParser {
     data.strSupp = stripFieldStart(data.strSupp, "@");
     data.strSupp = stripFieldStart(data.strSupp, "/");
     return true;
+  }
+
+  private String lookupCallCode(String code) {
+    String call = CALL_CODES.getProperty(code);
+    if (call == null) {
+      int len1 = code.length()-1;
+      char chr = code.charAt(len1);
+      if (chr>='A' && chr<='Z') {
+        call = CALL_CODES.getProperty(code.substring(0,len1));
+      }
+    }
+    if (call == null) call = code;
+    return call;
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{

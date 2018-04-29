@@ -13,7 +13,7 @@ public class TNLoudonCountyParser extends DispatchSouthernPlusParser {
   
   @Override
   public String getFilter() {
-    return "@loudoncounty911.org,ldn911txt@gmail.com,777,9300,4702193752,8573031955,4702193970,2183500369,2183500365,2082524571";
+    return "@loudoncounty911.org,ldn911txt@gmail.com,777,9300,4702193752,8573031955,4702193970,2183500369,2183500365,2082524571,2082524592";
   }
   
   @Override
