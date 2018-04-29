@@ -452,6 +452,7 @@ public class ParserList {
               ,"INKnoxCounty"                   ,"Knox County, IN"
               ,"INKosciuskoCounty"              ,"Kosciusko County, IN"
               ,"INLakeCounty"                   ,"Lake County, IN"
+              ,"INLaporteCounty"                ,"Laporte County, IN"
               ,"INMadisonCounty"                ,"Madison County, IN"
               ,"INMarionCounty"                 ,"Marion County, IN"
               ,"INMarshallCounty"               ,"Marshall County, IN"
