@@ -594,6 +594,7 @@ public class ParserList {
           ),
           new ParserCategory("Louisiana"
               ,"LAAcadianAmbulance"             ,"Acadian Ambulance, LA"
+              ,"LAAllenParish"                  ,"Allen Parish, LA"
               ,"LAAscensionParish"              ,"Ascension Parish, LA"
               ,"LAAvoyellesParish"              ,"Avoyelles Parish, LA"
               ,"LABeauregardParish"             ,"Beauregard Parish, LA"
