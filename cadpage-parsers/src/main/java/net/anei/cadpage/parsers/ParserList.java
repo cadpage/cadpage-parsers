@@ -1163,6 +1163,7 @@ public class ParserList {
               ,"OKPayneCounty"                  ,"Payne County, OK"
               ,"OKPontotocCounty"               ,"Pontotoc County, OK"
               ,"OKPottawatomieCounty"           ,"Pottawatomie County, OK"
+              ,"OKSandSprings"                  ,"Sand Springs, OK"
               ,"OKSeminoleCounty"               ,"Seminole County, OK"
               ,"OKTinkerAFB"                    ,"Tinker AFB, OK"
               ,"OKTulsa"                        ,"Tulsa, OK"
