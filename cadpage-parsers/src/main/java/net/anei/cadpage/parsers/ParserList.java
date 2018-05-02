@@ -338,6 +338,7 @@ public class ParserList {
               ,"GACherokeeCounty"               ,"Cherokee County, GA"
               ,"GAClaytonCounty"                ,"Clayton County, GA"
               ,"GACoffeeCounty"                 ,"Coffee County, GA"
+              ,"GAColquittCounty"               ,"Colquitt County, GA"
               ,"GADadeCounty"                   ,"Dade County, GA"
               ,"GADecaturCounty"                ,"Decatur County, GA"
               ,"GADoolyCounty"                  ,"Dooly County, GA"
