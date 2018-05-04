@@ -1466,6 +1466,7 @@ public class Active911ParserTable {
       "US/VA/CampbellCounty",             "VACampbellCounty",
       "US/VA/CarolineCounty",             "VACarolineCounty",
       "US/VA/CityofArlington",            "VAArlingtonCounty",
+      "US/VA/CityofCaveSpring",           "VARoanokeCounty",
       "US/VA/CityofFredericksburg",       "VAFredericksburg",
       "US/VA/CityofHarrisonburg",         "VARockinghamCounty",
       "US/VA/CityofRadford",              "VARadford",

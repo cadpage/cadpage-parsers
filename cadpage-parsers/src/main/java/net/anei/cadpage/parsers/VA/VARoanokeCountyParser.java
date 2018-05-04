@@ -33,7 +33,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     body = body.replace("^", "");
     if (subject.startsWith("Automatic R&R Notification:")) {
       setSelectValue("2");
-      return super.parseHtmlMsg(subject, body, data);
+      return super.parseHtmlMsg(subject, body.replace(";\n", ""), data);
     } else {
       setSelectValue("1");
       return parseMsg(body, data);
@@ -41,8 +41,10 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   }
 
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
+  private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile("\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)$");
+  private static final Pattern DELIM = Pattern.compile(";?\n|; ");
   private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
-  private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?(?:\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
+  private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?");
   private static final Pattern NOT_DISPATCH_PTN = Pattern.compile("\\b(?:ADV|TRAINING)\\b");
   private static final Pattern DATE_TIME_PTN1 = Pattern.compile("[ \n]*([12]?\\d/\\d{1,2}/\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2} [AP]M)$");
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("[ \n]*([12]?\\d-[A-Z]{3}-\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2})$", Pattern.CASE_INSENSITIVE);
@@ -78,8 +80,17 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       body = body.substring(match.end()).trim();
     }
     
+    // Strip off trailing date.time field
+    match = TRAIL_DATE_TIME_PTN.matcher(body);
+    if (match.find()) {
+      body = body.substring(0, match.start()).trim();
+      data.strDate = match.group(1);
+      setTime(TIME_FMT1, match.group(2), data);
+    }
+    
     // Now there is a new newline delimited format
-    String[] flds = body.split("\n");
+    if (body.endsWith(";")) body += ' ';
+    String[] flds = DELIM.split(body);
     if (flds.length >= 3) {
       if (!parseFields(flds, data)) return false;
       data.strCity = stripFieldStart(data.strCity, "Town of ");
@@ -107,7 +118,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     // So can the second format
     match = MASTER_PTN2.matcher(body);
     if (match.matches()) {
-      setFieldList("UNIT CALL PLACE ADDR APT CITY X MAP DATE TIME");
+      setFieldList("UNIT CALL PLACE ADDR APT CITY X MAP");
       String unit = match.group(1);
       String addr = match.group(2).trim();
       String call = CALL_LIST.getCode(unit);
@@ -124,11 +135,6 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strCross = getOptGroup(match.group(4));
       if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
       data.strMap = getOptGroup(match.group(5));
-      String date = match.group(6);
-      if (date != null) {
-        data.strDate = date;
-        setTime(TIME_FMT1, match.group(7), data);
-      }
       return true;
     }
     
@@ -241,11 +247,18 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   }
   
   @Override
+  public String getProgram() {
+    return super.getProgram() + " DATE TIME";
+  }
+  
+  @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("NAME")) return new MyNameField();
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -288,6 +301,23 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     }
   }
   
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("No Cross Streets Found")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern ID_JUNK_PTN = Pattern.compile("\\[Incident not yet created \\d+\\]");
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      field = ID_JUNK_PTN.matcher(field).replaceAll("").trim();
+      super.parse(field, data);
+    }
+  }
+  
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("Alerts:|Narrative:|\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d?:\\d\\d:\\d\\d");
   private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[a-z]+ - +");
   private class MyInfoField extends InfoField {
@@ -314,6 +344,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "APPLE GROVE",
     "APPLE HARVEST",
     "AUTUMN PARK",
+    "AUTUMN WOOD",
     "BACK CREEK ORCHARD",
     "BEAR RIDG",
     "BEAR RIDGE",
@@ -326,6 +357,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "BOONES CHAPEL",
     "BOONES MILL",
     "BOTTOM CREEK",
+    "BOULDER TRAIL",
     "BRIAR HILL",
     "BROAD HILL",
     "BUCK MOUNTAIN",
@@ -337,10 +369,12 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "CARVINS COVE",
     "CASTLE HILL",
     "CASTLE ROCK",
+    "CATAWBA CREEK",
     "CATAWBA FOREST",
     "CATAWBA HOSPITAL",
     "CATAWBA VALLEY",
     "CAVE SPRING",
+    "CEDAR CREST",
     "CHARING CROSS",
     "CIRCLE BROOK",
     "CLEAR SPRING",
@@ -350,11 +384,13 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "COOK CREEK",
     "COTTAGE ROSE",
     "COTTON HILL",
+    "COUNTRY FARM",
     "COUNTRY HOMES",
     "CROWELL GAP",
     "CRYSTAL CREEK",
     "CYPRESS PARK",
     "DEER BRANCH",
+    "DEER HOLLOW",
     "DEER PATH",
     "DEER RIDGE",
     "DREWRYS HILL",
@@ -372,16 +408,19 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "FOREST EDGE",
     "FOREST VIEW",
     "FORT LEWIS CHURCH",
+    "FORT MASON",
     "FORTUNE RIDGE",
     "GARST CABIN",
     "GARST MILL PARK",
     "GARST MILL",
+    "GIVENS TYLER",
     "GLADE CREEK",
     "GLEN HAVEN",
     "GLEN HEATHER",
     "GOLDEN IVY",
     "GOLDEN OAK",
     "GORDON BROOK",
+    "GRAND RETREAT",
     "GRAVELLY RIDGE",
     "GREEN HOLLOW",
     "GREEN MEADOW",
@@ -409,12 +448,14 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "JUBAL EARLY",
     "K OLD CAVE SPRING",
     "KESSLER MILL",
+    "LA MARRE",
     "LAKE BACK O BEYOND",
     "LAUREL CREEK",
     "LAUREL GLEN",
     "LITTLE BEAR",
     "LITTLE CATAWBA CREEK",
     "LOCH HAVEN",
+    "LONG ACRE",
     "LOST MOUNTAIN",
     "LOST VIEW",
     "LOUISE WELLS",
@@ -423,6 +464,8 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "M GEORGETOWN",
     "MALLARD LAKE",
     "MANSARD SQUARE",
+    "MARSH WREN",
+    "MARTIN MCNEIL",
     "MARTINS CREEK",
     "MCVITTY FOREST",
     "MEADOW BRANCH",
@@ -470,9 +513,11 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "RED LANE",
     "RIDGELEA ESTATES",
     "ROBIN LYNN",
+    "SANTA ANITA",
     "SCARLET OAK",
     "SCENIC HILLS",
     "SCOTCH PINE",
+    "SCREECH OWL RD",
     "SHINGLE RIDGE",
     "SILVER LEAF",
     "SLEEPY HOLLOW",
@@ -500,6 +545,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "SUGAR LOAF MOUNTAIN",
     "SUGAR LOAF MOUNTEI^",
     "SUGAR RIDGE",
+    "SUN VALLEY",
     "SUNNY SIDE",
     "TANGLEWOOD EAST ENTRANCE",
     "TANGLEWOOD WEST ENTRANCE",
@@ -509,6 +555,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "TOWNE SQUARE",
     "TREE TOP CAMP",
     "TREE TOP",
+    "TURKEY HOLLOW",
     "TWELVE OCLOCK KNOB",
     "TWIN VIEWS",
     "TWINE HOLLOW",
@@ -534,6 +581,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "WOOD HAVEN",
     "WOODS CROSSING",
     "YELLOW MOUNTAIN"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
