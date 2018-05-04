@@ -18,6 +18,6 @@ public class TXNacogdochesCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@itvscan,donotreply@ci.nacogdoches.tx.us";
+    return "Dispatch@itvscan,donotreply@ci.nacogdoches.tx.us,Dispatch@mail.ci.nacogdoches.tx.us";
   }
 }
