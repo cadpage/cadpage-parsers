@@ -528,6 +528,7 @@ public class ParserList {
               ,"KSRileyCounty"                  ,"Riley County, KS"
               ,"KSRooksCounty"                  ,"Rooks County, KS"
               ,"KSSedgwickCounty"               ,"Sedgwick County, KS"
+              ,"KSSumnerCounty"                 ,"Sumner County, KS"
               ,"KSWichita"                      ,"Wichita, KS"
               ,"KSWyandotteCounty"              ,"Wyandotte County, KS"
           ),
