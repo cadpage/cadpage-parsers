@@ -283,7 +283,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "HEI", "HEIDELBERG",
       "HOM", "HOMESTEAD",
       "HSN", "HARRISON",
-      "IND", "INDIANIA",
+      "IND", "INDIANA",
       "ING", "INGRAM",
       "JEF", "JEFFERSON",
       "KEN", "KENNEDY",
