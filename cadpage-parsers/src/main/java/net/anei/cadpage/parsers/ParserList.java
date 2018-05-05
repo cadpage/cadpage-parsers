@@ -1297,6 +1297,7 @@ public class ParserList {
               ,"SCLeeCounty"                    ,"Lee County, SC"
               ,"SCLexingtonCounty"              ,"Lexington County, SC"
               ,"SCMarionCounty"                 ,"Marion County, SC"
+              ,"SCMarlboroCounty"               ,"Marlboro County, SC"
               ,"SCMcCormickCounty"              ,"McCormick County, SC"
               ,"SCNewberryCounty"               ,"Newberry County, SC"
               ,"SCOconeeCounty"                 ,"Oconee County, SC"
