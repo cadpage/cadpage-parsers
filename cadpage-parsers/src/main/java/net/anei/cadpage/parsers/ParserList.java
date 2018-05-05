@@ -577,6 +577,7 @@ public class ParserList {
               ,"KYMeadeCounty"                  ,"Meade County, KY"
               ,"KYMetcalfeCounty"               ,"Metcalfe County, KY"
               ,"KYMonroeCounty"                 ,"Monroe County, KY"
+              ,"KYMorganCounty"                 ,"Morgan County, KY"
               ,"KYMuhlenbergCounty"             ,"Muhlenberg County, KY"
               ,"KYMurrayCounty"                 ,"Murray County, KY"
               ,"KYOldhamCounty"                 ,"Oldham County, KY"
