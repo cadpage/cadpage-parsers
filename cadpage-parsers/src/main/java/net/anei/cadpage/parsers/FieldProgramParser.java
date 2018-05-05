@@ -3174,6 +3174,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class PriorityField extends Field {
     
+    private String append = null;
+    
     public PriorityField() {};
     public PriorityField(String pattern) {
       super(pattern);
@@ -3181,10 +3183,20 @@ public class FieldProgramParser extends SmartAddressParser {
     public PriorityField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, null);
+    }
 
     @Override
     public void parse(String field, Data data) {
-      data.strPriority = field;
+      if (append != null) {
+        data.strPriority = append(data.strPriority, append, field);
+      } else {
+        data.strPriority = field;
+      }
     }
     
     @Override
