@@ -9,7 +9,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
 
 /**
- * Mecosta County, MI
+Mecosta County, MI
+
  */
 public class MIMecostaCountyParser extends DispatchA3Parser {
   
@@ -17,7 +18,7 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
   private static final Pattern ADDR_L_CITY_PTN = Pattern.compile("([A-Z0-9 ]+)/L +CITY +", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([^/ ]+ CO)(?:UNTY)?(?: DISPATCH)?", Pattern.CASE_INSENSITIVE);
   
-  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|LT[RF]|M[AO][RF]|RC[RF]|MOTF|BR[FT][RF]|MARE|MTR|POSSE|TEST|70)";
+  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|L[TV][RF]|M[AO][RF]|RC[RF]|BR[FT][RF]|EDNR|MARE|MOTF|MTR|POSSE|TEST|70)";
   private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:(?!MR )|([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CLEAN_CROSS_PTN = Pattern.compile("[-/ ]*(.*?)[-/ ]*");
   
@@ -53,8 +54,7 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     
     // Check the alert marker
     Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end()).trim();
+    if (match.lookingAt()) body = body.substring(match.end()).trim();
     
     // First problem.  We have to replace double slashes with a single slash
     // in the address, but not in the info section where a double slash marks
@@ -194,7 +194,9 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     
     // Osceola County
     // Cities
+    "EVART",
     "EVART CITY",
+    "REED",
     "REED CITY",
 
     // Villages
@@ -232,8 +234,9 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
        "DOVER TWP",
     "WEXFORD COUNTY",
     
-    
     "ISABELLA COUNTY",
+    
+    "MISSAUKEE CO",
     
     "WINTERFIELD TWP"
   };
