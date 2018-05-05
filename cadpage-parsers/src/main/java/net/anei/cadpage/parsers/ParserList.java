@@ -496,6 +496,7 @@ public class ParserList {
               ,"IAWarrenCounty"                 ,"Warren County, IA"
               ,"IAWoodburyCounty"               ,"Woodbury County, IA"
               ,"IAWorthCounty"                  ,"Worth County, IA"
+              ,"IAWinnebagoCounty"              ,"Winnebago County, IA"
           ),
           new ParserCategory("Kansas"
               ,"KSAllenCounty"                  ,"Allen County, KS"
