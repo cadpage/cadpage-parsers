@@ -590,6 +590,7 @@ public class Active911ParserTable {
       "US/MD/SaintMarysCounty",           "MDSaintMarysCounty",
       "US/MD/TalbotCounty",               "MDTalbotCounty",
       "US/MD/WashingtonCounty",           "MDWashingtonCounty",
+      "US/MD/WashingtonCountyFranklin",   "MDWashingtonCounty",
       "US/MD/Webhostinghub",              "MDPrinceGeorgesCountyF",
       "US/MD/WicomicoCounty",             "MDWicomicoCountyA",
       "US/MD/WorcesterCounty",            "MDWorcesterCountyA,MDOceanCity",
