@@ -1,22 +1,47 @@
 package net.anei.cadpage.parsers.AL;
 
-import java.util.regex.Pattern;
-
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
-public class ALJeffersonCountyJParser extends DispatchSouthernParser {
+public class ALJeffersonCountyJParser extends FieldProgramParser {
     
   public ALJeffersonCountyJParser() {
-    super(ALJeffersonCountyParser.CITY_LIST, "JEFFERSON COUNTY", "AL",
-          DSFLG_ADDR | DSFLG_OPT_BAD_PLACE | DSFLG_ID | DSFLG_TIME); 
+    super("JEFFERSON COUNTY", "AL", 
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID! PRI:PRI! DATE:DATE? TIME:TIME! X:X? UNIT:UNIT? INFO:INFO/N+"); 
   }
   
-  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{2}-\\d{5}");
+  @Override
+  public String getFilter() {
+    return "administrator@trussville.org";
+  }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (! super.parseMsg(body, data)) return false;
-    return ID_PTN.matcher(data.strCallId).matches();
+    return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@',  '/');
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
   }
 }
