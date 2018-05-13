@@ -12,17 +12,18 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class MORayCountyParser extends SmartAddressParser {
   
-  private static final Pattern CROSS_DELIM_PTN = Pattern.compile(" +(\\d+(?:\\.\\d+)? mi [NSEW]{1,2})\\b");
-  
   public MORayCountyParser() {
     super("RAY COUNTY", "MO");
-    setFieldList("ADDR APT CALL X CITY");
+    setFieldList("ADDR APT CALL X CITY DATE TIME");
   }
   
   @Override
   public String getFilter() {
     return "dispatch@raycounty911.com";
   }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)\\b");
+  private static final Pattern CROSS_DELIM_PTN = Pattern.compile(" +(\\d+(?:\\.\\d+)? mi [NSEW]{1,2})\\b");
   
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -33,7 +34,16 @@ public class MORayCountyParser extends SmartAddressParser {
     // Leave address for a moment.  We won't know which how to parser it until
     // we figure out which of  two possible formats this is
     
-    String sLeft = p.get();
+    String sLeft = p.get(" Dispatch: ");
+    String sTimes = p.get();
+    if (sTimes.length() > 0) {
+      Matcher match = DATE_TIME_PTN.matcher(sTimes);
+      if (match.lookingAt()) {
+        data.strDate = match.group(1);
+        data.strTime = match.group(2);
+      }
+    }
+    
     while (true) {
       Matcher match = CROSS_DELIM_PTN.matcher(sLeft);
       if (!match.find()) break;
@@ -80,6 +90,7 @@ public class MORayCountyParser extends SmartAddressParser {
       "BACK PAIN (NON TRAUMATIC / NON RECENT)",
       "BREATHING PROBLEMS",
       "CARBON MONOXIDE/INHALTION/HAZMAT/CBRN",
+      "CARDIAC OR RESPIRATORY ARREST / DEATH",
       "CHEST PAIN (NON-TRAUMATIC)",
       "CONVULSIONS / SEIZURES",
       "DETAIL EMS",
@@ -89,17 +100,23 @@ public class MORayCountyParser extends SmartAddressParser {
       "DOMESTIC DISTURBANCE / VIOLENCE",
       "FALLS",
       "FIRE ALARM",
+      "FOLLOW UP",
       "GAS LEAK / GAS ODOR (NATURAL & LP GAS)",
+      "HAZMAT",
       "JUVENILE",
+      "HEADACHE",
       "HEART PROBLEMS / A.I.C.D.",
       "HEMORRHAGE / LACERATIONS",
       "MUTUAL AIDE / ASSIST OUTSIDE AGENCY EMS",
       "MISCELLANEOUS",
       "MUTUAL AIDE / ASSIST OUTSIDE AGENCY",
       "NAME AND NUMBER",
+      "ODOR (STRANGE/UNKNOWN)",
       "OUTSIDE FIRE",
       "OVERDOSE / POISONING (INGESTION)",
       "PREGNANCY/CHILDBIRTH/MISCARRIAGE",
+      "PSYCHIATRIC/ABNORMAL BEHAVIOR",
+      "PUBLIC SERVICE (WELFARE CHECK)",
       "SICK PERSON (SPECIFIC DIAGNOSIS)",
       "SMOKE INVESTIGATION (OUTSIDE)",
       "STAND BY",
@@ -112,6 +129,7 @@ public class MORayCountyParser extends SmartAddressParser {
       "TRAUMATIC INJURIES (SPECIFIC)",
       "TRANSFER/INTERFACILITY/PALLIATIVE CARE",
       "UNCONSCIOUS / FAINTING (NEAR)",
+      "UNKNOWN (3RD PARTY CALLER)",
       "UNKNOWN PROBLEM (MAN DOWN)",
       "VEHICLE FIRE"
   );

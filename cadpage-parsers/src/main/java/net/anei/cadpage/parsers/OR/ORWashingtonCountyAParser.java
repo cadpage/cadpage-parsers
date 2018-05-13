@@ -307,6 +307,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "BARN FIRE",
       "BEHAVIOR/PSYCH",
       "BEHAVIOR/PSYC C1",
+      "BEHAVIORAL HEALTH",
       "BLEEDG/AB BREATH",
       "BLEEDING PROBLEM",
       "BLEEDING/MINOR",
