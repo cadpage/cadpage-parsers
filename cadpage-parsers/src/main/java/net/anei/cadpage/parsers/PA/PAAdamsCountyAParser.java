@@ -1135,6 +1135,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "4820 OLD HARRISBURG RD APT 170",       "+39.943596,-77.155317",
       "4820 OLD HARRISBURG RD APT 171",       "+39.943756,-77.155399",
       
+      "3085 OLD ROUTE 30",                    "+39.897133,-77.416910",
+      
       "1365 RED HILL RD APT 1",               "+39.858341,-77.020454",
       "1365 RED HILL RD APT 2",               "+39.858279,-77.020351",
       "1365 RED HILL RD APT 3",               "+39.858197,-77.020280",
