@@ -21,7 +21,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "cad@uc.co.union.nc.us,cad@webmail.co.union.nc.us,cad@co.union.nc.us";
+    return "cad@uc.co.union.nc.us,cad@webmail.co.union.nc.us,cad@co.union.nc.us,CAD@unioncountync.gov";
   }
   
   @Override
