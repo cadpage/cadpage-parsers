@@ -1579,6 +1579,7 @@ public class Active911ParserTable {
       "US/WI/DouglasCounty",              "WIDouglasCounty",
       "US/WI/ElmGrove",                   "WIWaukeshaCountyC",
       "US/WI/FondDuLacCounty",            "WIFondDuLacCounty",
+      "US/WI/JanesvilleFD",               "WIRockCounty",
       "US/WI/KCCJS",                      "WIRacineCountyB,WIRacineCountyC",
       "US/WI/KenoshaCounty",              "WIKenoshaCounty",
       "US/WI/MukwonagoFire",              "WIWaukeshaCountyB",
