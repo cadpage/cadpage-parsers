@@ -16,7 +16,7 @@ public class PAArmstrongCountyBParser extends DispatchA9Parser {
   
   @Override
   public String getFilter() {
-    return "messaging@iamresponding.com";
+    return "messaging@iamresponding.com,911@co.armstrong.pa.us";
   }
   
   @Override
@@ -29,6 +29,7 @@ public class PAArmstrongCountyBParser extends DispatchA9Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "LEECHBURG BORO",    "LEECHBURG",
       "KISKI TWP",         "KISKIMINETAS TWP",
-      "KITTG BORO",        "KITTANNING"
+      "KITTG BORO",        "KITTANNING",
+      "KITTG TWP",         "KITTANNING TWP"
   });
 }
