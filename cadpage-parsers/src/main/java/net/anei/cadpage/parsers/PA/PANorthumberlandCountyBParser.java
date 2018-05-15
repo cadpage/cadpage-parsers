@@ -22,7 +22,12 @@ public class PANorthumberlandCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String body, MsgInfo.Data data) {
     int pt = body.indexOf("<div style=");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseFields(body.split("~"), data);
+    if (!super.parseFields(body.split("~"), data)) return false;
+    pt = data.strCity.indexOf('(');
+    if (pt >= 0) data.strCity = data.strCity.substring(0, pt).trim();
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
+    data.strCity = stripFieldStart(data.strCity, "MONROE/VILLAGE OF ");
+    return true;
   }
 
   @Override
