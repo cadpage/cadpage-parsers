@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgParser;
  */
 public class CAHumboldtCountyParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("RA: +([A-Z0-9]+); +([^;]+); +([^,]+?) +,([^ ]*?) +(?:; *(.*?))? +X: +(-?[ \\d\\.]+?) +Y: +(-?[ \\d\\.]+?) +Inc# +(\\d+); +([^;]+?) *; *(?:Descr: *)?(.*)");
+  private static final Pattern MASTER = Pattern.compile("RA: +([A-Z0-9]+); +([^;]+); +([^,]+?) +,([^ ]*?) +(?:; *(.*?))? +X: +(-?[ \\d\\.]+?) +Y: +(-?[ \\d\\.]+?) +Inc# +(\\d+); +([^;]+?) *; *(?:Descr: *)?(.*)", Pattern.DOTALL);
   
   public CAHumboldtCountyParser() {
     super("HUMBOLDT COUNTY", "CA");
