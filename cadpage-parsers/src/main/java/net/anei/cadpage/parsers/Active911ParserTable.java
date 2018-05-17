@@ -1530,6 +1530,7 @@ public class Active911ParserTable {
       "US/VT/FranklinCounty",             "VTFranklinCounty",
       "US/VT/GrandIsleCounty",            "VTGrandIsleCounty",
       "US/VT/Hartford",                   "VTHartford",
+      "US/VT/LamoilleCounty",             "VTLamoilleCounty",
       "US/VT/ManchesterPolice",           "VTBenningtonCounty",
       "US/VT/MremsDispatch911",           "VTAddisonCountyB",
       "US/VT/OrleansCounty",              "VTOrleansCounty",
