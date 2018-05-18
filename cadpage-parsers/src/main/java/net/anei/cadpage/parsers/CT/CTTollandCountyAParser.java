@@ -52,7 +52,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
         break;
       }
       
-      return false;
+      // But if we don't have anything, accept that too
     } while (false);
     
     // We are invoking the smart address parser strictly to find city, it
