@@ -30,6 +30,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
+  private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
   private static final Pattern FLR_PTN = Pattern.compile("(\\d+)(?:ST|ND|RD|TH) *(?:FLOOR|FLR?)");
   private static final Pattern APT_PTN = Pattern.compile("(?:UNIT|TRLR|TRAILER|APT|LOT|FLR?)[- ]*(.*)|[A-Z] *\\d*|\\d+[A-Z]?|\\d+FL");
   private static final Pattern TIME_PTN = Pattern.compile("\\b\\d\\d:\\d\\d\\b");
@@ -54,6 +55,9 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       
       // But if we don't have anything, accept that too
     } while (false);
+    
+    // Rule out variant of CTTollandCountyB
+    if (BAD_PTN.matcher(body).matches()) return false;
     
     // We are invoking the smart address parser strictly to find city, it
     // shouldn't have to do much parsing.  If it doesn't find a city, bail out.
