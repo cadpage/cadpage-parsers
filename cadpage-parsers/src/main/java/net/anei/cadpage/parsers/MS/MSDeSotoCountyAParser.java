@@ -114,6 +114,7 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
       "ACCIDENT W/OUT INJ",
       "ELECTICAL SHORT / NO SMOKE",
       "ELECTICAL SHORT/MO SMOKE",
+      "FALLS",
       "FIRE ALARM - COMMERCIAL",
       "FIRE ALARM RESIDENCE",
       "FIRE ALARM - RESIDENTIAL",
