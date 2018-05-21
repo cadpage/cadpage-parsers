@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,19 +15,37 @@ public class NCMaconCountyBParser extends FieldProgramParser {
           "ID CODE_CALL ADDRCITY! GPS? PHONE NAME BOX END");
   }
   
+  @Override
+  public String getFilter() {
+    return "4702193684";
+  }
+  
+  private static final Pattern SRC_DATE_PREFIX = Pattern.compile("([- A-Z0-9]+) TEXT:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern INFO_MARK_PTN = Pattern.compile("\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d [AP]M +"); 
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldEnd(body, "\nStop");
     body = stripFieldEnd(body, "~");
     int tlen;
     do {
       tlen = body.length();
       body = stripFieldEnd(body, "\nnull");
+      body = stripFieldEnd(body, "\nn");
     } while (body.length() < tlen);
     
+    body = stripFieldStart(body, "MACON 911: ");
+    Matcher match = SRC_DATE_PREFIX.matcher(body);
+    if (match.lookingAt()) {
+      data.strSource = match.group(1).trim();
+      data.strDate = match.group(2);
+      setTime(TIME_FMT, match.group(3), data);
+      body = body.substring(match.end());
+    }
+    
     String info = "";
-    Matcher match = INFO_MARK_PTN.matcher(body);
+    match = INFO_MARK_PTN.matcher(body);
     if (match.find()) {
       info = body.substring(match.end()).trim();
       body = body.substring(0,match.start()).trim();
@@ -39,7 +59,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " INFO";
+    return "SRC DATE TIME " + super.getProgram() + " INFO";
   }
   
   @Override
