@@ -164,15 +164,11 @@ public class ORBentonCountyParser extends FieldProgramParser {
   
   @Override
   public String adjustMapAddress(String addr, String city, boolean cross) {
-    if (city.equalsIgnoreCase("PHILOMATH") || city.equals("BLODGETT")) {
-      addr = HWY_20_PTN.matcher(addr).replaceAll("CORVALLIS-NEWPORT HWY");
-    }
     if (city.equalsIgnoreCase("PHILOMATH") || city.equals("ALSEA")) {
       addr = HWY_34_PTN.matcher(addr).replaceAll("ALSEA HWY");
     }
     return super.adjustMapAddress(addr);
   }
-  private static final Pattern HWY_20_PTN = Pattern.compile("\\bHWY +20\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern HWY_34_PTN = Pattern.compile("\\bHWY +34\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
