@@ -21,7 +21,7 @@ public class UTSaltLakeCountyBParser extends SmartAddressParser {
   }
   
   private static final Pattern MOVE_PTN = Pattern.compile("UNIT#:(\\S+) *, (Move from \\S+ *, To Post: \\S+) *, \\((.*)\\)");
-  private static final Pattern MASTER_PTN1 = Pattern.compile("UNIT# *(\\S+) RUN # (\\S+?) *LOC:(.*?)APT ?#(.*?)BLDG:(.*?)ADD LOC:(.*?)CROSS ST:(.*?)STYPE: *(\\S*) *PRIORITY: *(.*?) *INIT BY:.*");
+  private static final Pattern MASTER_PTN1 = Pattern.compile("UNIT# *(\\S+) RUN # (\\S*?) *LOC:(.*?)APT ?#(.*?)BLDG:(.*?)ADD LOC:(.*?)CROSS ST:(.*?)TYPE: *(\\S*) *PRIORITY: *(.*?) *INIT BY:.*");
   private static final Pattern MASTER_PTN2 = Pattern.compile("UNIT#:(\\S+) RUN#(\\S+) *, LOC:(.*?)APT#:(.*?)BLDG:(.*), ADD LOC:(.*?)CROSS ST:(.*?), PAT.COND(\\S*) *PRIORITY:(.*?), INIT.BY:.*?, ZIP:(.*?) LAT/LON(.*?)");
   private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3})(\\d{6}) ([-+]?\\d{2,3})(\\d{6})");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("UNIT#(\\S+) RUN#(\\S+) (RCVD:.*)");
@@ -89,6 +89,18 @@ public class UTSaltLakeCountyBParser extends SmartAddressParser {
       return true;
     }
     return false;
+  }
+  
+  private static final Pattern NORTH_TEMPLE_PTN = Pattern.compile("\\bNORTH TEMPLE\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SOUTH_TEMPLE_PTN = Pattern.compile("\\bSOUTH TEMPLE\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern WEST_TEMPLE_PTN = Pattern.compile("\\bWEST TEMPLE\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = NORTH_TEMPLE_PTN.matcher(addr).replaceAll("N TEMPLE");
+    addr = SOUTH_TEMPLE_PTN.matcher(addr).replaceAll("S TEMPLE");
+    addr = WEST_TEMPLE_PTN.matcher(addr).replaceAll("W TEMPLE");
+    return super.adjustMapAddress(addr);
   }
   
   private static CodeTable CALL_CODES = new StandardCodeTable();
