@@ -67,6 +67,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
   
   private static final String[] CITY_LIST = new String[]{
       "BUFFALO",
+      "ELMA",
       "HAMBURG",
       "NIAGARA FALLS"
   };
