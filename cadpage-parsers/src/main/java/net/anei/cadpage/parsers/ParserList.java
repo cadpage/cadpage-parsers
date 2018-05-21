@@ -136,6 +136,7 @@ public class ParserList {
               ,"ALMorganCounty"                 ,"Morgan County, AL"
               ,"ALOzark"                        ,"Ozark, AL"
               ,"ALPelham"                       ,"Pelham, AL"
+              ,"ALPikeCounty"                   ,"Pike County, AL"
               ,"ALRussellCounty"                ,"Russell County, AL"
               ,"ALShelbyCounty"                 ,"Shelby County, AL"
               ,"ALStClairCounty"                ,"St Clair County, AL"
