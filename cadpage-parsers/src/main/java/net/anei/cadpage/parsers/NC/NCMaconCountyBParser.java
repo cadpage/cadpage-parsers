@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NCMaconCountyBParser extends FieldProgramParser {
   
-  NCMaconCountyBParser() {
+  public NCMaconCountyBParser() {
     super("MACON COUNTY", "NC", 
           "ID CODE_CALL ADDRCITY! GPS? PHONE NAME BOX END");
   }
