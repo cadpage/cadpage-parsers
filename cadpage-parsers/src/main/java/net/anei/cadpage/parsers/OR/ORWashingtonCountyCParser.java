@@ -33,8 +33,9 @@ public class ORWashingtonCountyCParser extends MsgParser {
   }
   
   
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*)\\bUNIT: *([^ ]+) +INC#: *(\\d+) +((?:RCD|CLR):.*)");
-  private static final Pattern RR_BRK_PTN = Pattern.compile(" +(?=[A-Z]+:)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*)\\bUNIT: *(\\S+) +INC#: *(\\d+)[ .]+((?:DSP|RCD|CLR):.*)");
+  private static final Pattern RR_BRK_PTN = Pattern.compile("[ .]+(?=[A-Z]+:)");
+  private static final Pattern TEMP_PAGE_PTN = Pattern.compile("(.*?) \\.{3}Run:(\\S+) \\.{3}add:(.*)");
   private static final Pattern GEN_UNIT_PTN = Pattern.compile("UNIT[ :#]+(\\S+) +(.*)", Pattern.CASE_INSENSITIVE);
   
   @Override
@@ -57,9 +58,23 @@ public class ORWashingtonCountyCParser extends MsgParser {
     
     data.initialize(this);
     if (parseMsgFmt2(body, data)) return true;
+    
+    data.initialize(this);
+    if (parseMsgFmt3(body, data)) return true;
+    
+    data.initialize(this);
+    if (parseMsgFmt4(body, data)) return true;
+    
+    match = TEMP_PAGE_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ID ADDR APT");
+      data.strCall = match.group(1).trim();
+      data.strCallId =  match.group(2);
+      parseAddress(match.group(3).trim(), data);
+      return true;
+    }
 
     setFieldList("UNIT INFO");
-    data.initialize(this);
     data.msgType = MsgType.GEN_ALERT;
     match = GEN_UNIT_PTN.matcher(body);
     if (match.matches()) {
@@ -155,7 +170,70 @@ public class ORWashingtonCountyCParser extends MsgParser {
     }
     data.strCall = append(data.strCall, " - ", call);
     
-    setFieldList("UNIT ID PLACE ADDR APT CITY X PRI CODE CALL");
+    setFieldList("CALL UNIT ID PLACE ADDR APT CITY X PRI CODE CALL");
+    return true;
+  }
+  
+  private boolean parseMsgFmt3(String body, Data data) {
+    int pt = body.indexOf("UNIT:");
+    if (pt > 0 && pt <= 20) {
+      data.strCall = body.substring(0,pt).trim();
+      body = body.substring(pt);
+    }
+    FParser p = new FParser(body);
+    if (!p.check("UNIT:"))  return false;
+    data.strUnit = p.get(5);
+    if (!p.check("INC#:")) return false;
+    data.strCallId = p.get(8);
+    if (!p.check(" ")) return false;
+    data.strPlace = p.get(30);
+    String addr = p.get(30);
+    pt = addr.indexOf('[');
+    if (pt >= 0) {
+      data.strPlace = append(data.strPlace, " - ", addr.substring(pt+1).trim());
+      addr = addr.substring(0,pt).trim();
+    }
+    parseAddress(addr, data);
+    data.strApt= p.get();
+    
+    setFieldList("UNIT ID PLACE ADDR APT");
+    return true;
+  }
+  
+  private boolean parseMsgFmt4(String body, Data data) {
+    FParser p = new FParser(body);
+    String unit = p.get(6);
+    if (!p.check("INC#")) return false;
+    String id = p.get(7);
+    if (!p.check(" ADDY:")) return false;
+    String addr = p.get(30);
+    if (!p.check(" #")) return false;
+    String apt = p.get(10);
+    if (!p.check(" BLDG:")) return false;
+    apt = append(p.get(10), "-", apt);
+    if (!p.check(" CITY:")) return false;
+    String city = p.get(16);
+    if (!p.check(" LOC NAME:")) return false;
+    String place = p.get(30);
+    if (!p.check(" XST:")) return false;
+    String cross = p.get(30);
+    if (!p.check(" TYPE:")) return false;
+    String call = p.get(15);
+    if (!p.check(" PRI:")) return false;
+    String pri = p.get(29);
+    String info = p.get();
+    
+    setFieldList("UNIT ID ADDR APT CITY PLACE X CALL PRI INFO");
+    data.strUnit = unit;
+    data.strCallId = id;
+    parseAddress(addr, data);
+    data.strApt = append(data.strApt, "-", apt);
+    data.strCity = city;
+    data.strPlace = place;
+    data.strCross = cross;
+    data.strCall = call;
+    data.strPriority = pri;
+    data.strSupp = info;
     return true;
   }
   
