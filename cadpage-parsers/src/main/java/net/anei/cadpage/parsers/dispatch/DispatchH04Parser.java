@@ -3,11 +3,9 @@ package net.anei.cadpage.parsers.dispatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
-public class DispatchH04Parser extends HtmlProgramParser {
+public class DispatchH04Parser extends DispatchH05Parser {
   
   public DispatchH04Parser(String defCity, String defState) {
     super(defCity, defState, 
@@ -16,24 +14,7 @@ public class DispatchH04Parser extends HtmlProgramParser {
              "( PRI:PRI! | FIRE_PRIORITY:PRI! EMS_PRIORITY:PRI2! | ) DATE:DATETIME! " + 
              "( MAP:MAP! | FIRE_QUADRANT:MAP! EMS_District:MAP2! ) " + 
              "( UNIT:UNIT! | ASSIGNED_UNIT(s):UNIT! ) " + 
-             "( INFO:INFO! | NARRATIVE:INFO! ) INFO/N+");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "@rockwall.com";
-  }
-  
-  private String times;
-  
-  @Override
-  protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    times = null;
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
-    if (data.msgType == MsgType.RUN_REPORT) {
-      data.strSupp = append(times, "\n\n", data.strSupp);
-    }
-    return true;
+             "( INFO:INFO_BLK! | NARRATIVE:INFO_BLK! ) INFO_BLK/N+? TIMES+");
   }
 
   @Override
@@ -43,7 +24,6 @@ public class DispatchH04Parser extends HtmlProgramParser {
     if (name.equals("PRI2")) return new BasePriority2Field();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("MAP2")) return new BaseMap2Field();
-    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
   
@@ -89,45 +69,4 @@ public class DispatchH04Parser extends HtmlProgramParser {
       data.strMap = append(data.strMap, " / ", field);
     }
   }
-  
-  private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+|\\d\\d?:\\d\\d:\\d\\d");
-  private static final Pattern INFO_TIMES_MARK_PTN = Pattern.compile("\\d{5}: .*");
-  private class BaseInfoField extends InfoField {
-    
-    private boolean enabled = false;
-    
-    @Override
-    public void parse(String field, Data data) {
-      if (INFO_DATE_TIME_PTN.matcher(field).matches()) {
-        enabled = false;
-        return;
-      }
-      if (field.equals("-")) {
-        enabled = true;
-        return;
-      }
-      if (!enabled) {
-        int pt = field.indexOf(" - ");
-        if (pt >= 0) {
-          field = field.substring(pt+3).trim();
-          enabled = true;
-        }
-      }
-      
-      if (times == null && INFO_TIMES_MARK_PTN.matcher(field).matches()) {
-        times = field;
-        return;
-      }
-      
-      if (times != null) {
-        if (field.startsWith("Cleared:")) data.msgType = MsgType.RUN_REPORT;
-        times = append(times, "\n", field);
-      }
-      
-      else if (enabled) {
-        data.strSupp = append(data.strSupp, "\n", field);
-      }
-    }
-  }
-
 }
