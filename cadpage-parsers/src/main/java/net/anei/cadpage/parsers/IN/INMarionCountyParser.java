@@ -302,6 +302,8 @@ public class INMarionCountyParser extends MsgParser {
       
       "SR 267 ONRAMP EB & I74",               "+39.859832,-86.392501",
       "SR 267 ONRAMP WB & I74",               "+39.859832,-86.392501",
+      "SR 267 ONRAMP EB & I74 EB",            "+39.859832,-86.392501",
+      "SR 267 ONRAMP WB & I74 WB",            "+39.859832,-86.392501",
 
       "11 E NORTHFIELD DR",                   "+39.857278,-86.391256",
       "40 E NORTHFIELD DR",                   "+39.857289,-86.391114",
@@ -309,7 +311,8 @@ public class INMarionCountyParser extends MsgParser {
       "80 E NORTHFIELD DR",                   "+39.857289,-86.391114",
       "124 E NORTHFIELD DR",                  "+39.857308,-86.390631",
       "250 E NORTHFIELD DR",                  "+39.857062,-86.389243",
-      "301 E NORTHFIELD DR",                  "+39.856775,-86.388017",
+      "301 E NORTHFIELD DR",                  "+39.856775,-86.388017"
+      
       
   });
 
