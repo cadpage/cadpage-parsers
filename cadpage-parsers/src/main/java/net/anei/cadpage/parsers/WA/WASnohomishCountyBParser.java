@@ -23,7 +23,11 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("DISP")) return false;
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strCall.equals("FR") || data.strCall.equals("FC")) {
+      data.strCall = append(data.strCall, " ", data.strUnit);
+    }
+    return true;
   }
   
   @Override
