@@ -13,11 +13,13 @@ public class DispatchA57Parser extends FieldProgramParser {
   
   public DispatchA57Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE Map_Page:MAP? City:CITY Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+ " +
+          "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Address:ADDRCITY! " + 
+                "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
+                "| City:CITY Common_Name:PLACE Map_Page:MAP? Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH Narrative:INFO+ ) " +
           "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID UNIT! INFO/N+ )");
   }
   
-  private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Map Page:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
+  private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Map Page:|City:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
   private static final Pattern DELIM2 = Pattern.compile("\\s*;\\s*");
   
   @Override
@@ -36,6 +38,8 @@ public class DispatchA57Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -45,11 +49,22 @@ public class DispatchA57Parser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseDateTimeField extends DateTimeField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       data.strDate = match.group(1);
       setTime(TIME_FMT, match.group(2), data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
@@ -61,6 +76,14 @@ public class DispatchA57Parser extends FieldProgramParser {
       if (match.matches()) {
         field = match.group(1).trim();
         data.strPlace = match.group(2).trim();
+      } else {
+        int pt = field.indexOf(" - ");
+        if (pt >= 0) {
+          data.strPlace = field.substring(pt+3).trim();
+          field = field.substring(0, pt).trim();
+        } else {
+          field = stripFieldEnd(field, " -");
+        }
       }
       field = field.replace('@', '&');
       super.parse(field, data);
@@ -69,6 +92,14 @@ public class DispatchA57Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
+    }
+  }
+  
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ";");
+      super.parse(field, data);
     }
   }
   
@@ -87,12 +118,34 @@ public class DispatchA57Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,})([-+]\\d{2,3}\\.\\d{6,})");
+  private class BaseGPSField extends GPSField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (!match.matches()) return false;
+      setGPSLoc(match.group(1)+','+match.group(2), data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
   private static final Pattern INFO_CH_PTN = Pattern.compile("TAC\\d+");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (INFO_CH_PTN.matcher(field).matches()) {
         data.strChannel = append(data.strChannel, "/", field);
+        
       } else {
         data.strSupp = append(data.strSupp, "\n", field);
       }
