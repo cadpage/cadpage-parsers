@@ -727,7 +727,7 @@ public class Active911ParserTable {
       "US/MO/CityofFestus",               "MOFestusB",
       "US/MO/CityofMonett",               "MOMonett",
       "US/MO/CityofRolla",                "MOPhelpsCounty",
-      "US/MO/CityofStJoseph",             "MOBuchananCountyA",
+      "US/MO/CityofStJoseph",             "MOBuchananCountyA,MODekalbCounty",
       "US/MO/ClayCounty",                 "MOClayCounty",
       "US/MO/ClintonCounty",              "MOClintonCounty",
       "US/MO/ClintonCountySheriff",       "MOClintonCounty",
