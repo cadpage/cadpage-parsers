@@ -1535,6 +1535,7 @@ public class Active911ParserTable {
       "US/VT/ManchesterPolice",           "VTBenningtonCounty",
       "US/VT/MremsDispatch911",           "VTAddisonCountyB",
       "US/VT/OrleansCounty",              "VTOrleansCounty",
+      "US/VT/RandolphCenter",             "VTOrangeCounty",
       "US/VT/StowePS",                    "VTLamoilleCounty",
       "US/VT/UVM",                        "VTChittendenCountyC",
       "US/VT/ValcourNotification",        "VTLamoilleCounty",

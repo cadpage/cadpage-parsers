@@ -221,6 +221,42 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
 
       // Unincorporated community
       "MOSCOW",
+
+      
+      // Orange County
+      // Towns
+      "BRADFORD",
+      "BRAINTREE",
+      "BROOKFIELD",
+      "CHELSEA",
+      "CORINTH",
+      "FAIRLEE",
+      "NEWBURY",
+      "ORANGE",
+      "RANDOLPH",
+      "STRAFFORD",
+      "THETFORD",
+      "TOPSHAM",
+      "TUNBRIDGE",
+      "VERSHIRE",
+      "WASHINGTON",
+      "WEST FAIRLEE",
+      "WILLIAMSTOWN",
+
+      // Villages
+      "NEWBURY",
+      "WELLS RIVER",
+
+      // Census-designated places
+      "BRADFORD",
+      "CHELSEA",
+      "FAIRLEE",
+      "RANDOLPH",
+      "WILLIAMSTOWN",
+
+      // Unincorporated community
+      "POST MILLS",
+     
       
       // Orleans County
       // City
