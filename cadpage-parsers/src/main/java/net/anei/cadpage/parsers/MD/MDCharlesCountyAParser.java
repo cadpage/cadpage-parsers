@@ -194,6 +194,14 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
         field = field.substring(match.end());
       }
       
+      if (field.endsWith("]")) {
+        int pt = field.lastIndexOf('[');
+        if (pt >= 0) {
+          data.strCity = field.substring(pt+1, field.length()-1).trim();
+          field = field.substring(0, pt).trim();
+        }
+      }
+      
       int pt = field.indexOf(',');
       if (pt >= 0) {
         String place = field.substring(pt+1).trim();
@@ -408,7 +416,9 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "ALARM UNKNOWN MEDICAL ALS",
       "ALARM UNKNOWN MEDICAL BLS",
       "ALLERGIC REACTION ALS",
+      "ALLERGIC REACTION INEFFECTIVE BREATHING",
       "ALLERGIC REACTION BLS",
+      "ANIMAL BITE BLS",
       "ASSAULT ALS",
       "ASSAULT BLS",
       "ASSIST FIRE DEPARTMENT",
@@ -427,6 +437,7 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "BOAT OVERDUE OR FLARE",
       "BOAT PERSON IN WATER",
       "BRUSH FIRE (Class 1,2,3)",
+      "BRUSH FIRE (Class 4,5)",
       "BURN ALS",
       "BURN BLS",
       "CHEST PAINS ALS",                                                                                                        
@@ -500,6 +511,7 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "RESCUE BUILDING COLLAPSE",
       "RESCUE HIGH ANGLE",
       "RESCUE INACCESSIBLE TERRAIN",
+      "RESCUE OCC VEH IN WATER NO INJURY",
       "RESCUE OCC VEH IN WATER WITH INJURIES",
       "RESCUE PERSON IN WATER OR ICE",
       "RESCUE SUBJECT TRAPPED",
@@ -515,6 +527,7 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "SIT FND CALL CANCELLED NO UNIT ENROUTE",
       "SIT FND CALL CANCELLED UNIT ENROUTE",
       "SIT FND FALSE ALARM GOOD INTENT",
+      "SMOKE INVESTIGATION",
       "SPECIAL PLANNED EVENT",
       "STABBING ALS",
       "STABBING BLS",
@@ -523,6 +536,7 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "STANDBY FIRE",
       "STROKE ALS",
       "STROKE BLS",
+      "STRUC APPLIANCE MALF MF DWELLING",
       "STRUC APPLIANCE MALF SF DWELLING",
       "STRUC FIRE COMMERCIAL BLDG",
       "STRUC FIRE DETACHED SHED GARAGE",
@@ -530,6 +544,7 @@ public class MDCharlesCountyAParser extends FieldProgramParser {
       "STRUC FIRE HIGH LIFE HAZARD",
       "STRUC FIRE MF DWELLING",
       "STRUC FIRE PERSON TRAPPED MF COMM",
+      "STRUC FIRE PERSON TRAPPED SF DWELLING",
       "STRUC FIRE SF DWELLING",
       "STRUC ODOR OF SMOKE MF COMM BLDG",
       "STRUC ODOR OF SMOKE SF DWELLING",
