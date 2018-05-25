@@ -148,8 +148,8 @@ public class CASanJoaquinCountyParser extends FieldProgramParser {
           city = p.get(15);
         }
         if (!p.check("/GPS:")) break;
-        String gps = p.get(shortAddr ? 31 : 24);
-        if (!p.check("/")) break;
+        String gps = p.getOptional("/", 24, 25, 31);
+        if (gps == null) break;
         String info = p.get();
         
         setFieldList("UNIT CALL ADDR APT CITY GPS INFO");
@@ -502,7 +502,7 @@ public class CASanJoaquinCountyParser extends FieldProgramParser {
       String call, cross, apt1, apt2, city, gps, map, comment;
       if (p.check("**CANCEL RESPONSE**")) {
         call = "CANCEL - " + p.get(15);
-        if (!p.check("Tcr/")) break;
+        if (!p.check("Tcr/") && !p.check("TCR=")) break;
 
         setFieldList("UNIT ID PLACE ADDR APT CALL");
         data.strUnit = unit;
