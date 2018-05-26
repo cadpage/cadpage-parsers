@@ -41,6 +41,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     // Check for garbled prefix associated with IamResponding
+    boolean noBrkFmt = false;
     Matcher match = IAMR_PREFIX1.matcher(body);
     if (match.lookingAt()) {
       data.strSource = subject;
@@ -52,12 +53,23 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
         body = IAMR_BOX_PTN.matcher(body).replaceFirst(", RUN CARD: BOX ");
       }
       body = IAMR_COMMA_PTN.matcher(body).replaceAll("\n");
-      body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
+      if (!body.contains("\n")) {
+        noBrkFmt = true;
+        body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
+      }
       body = body.replaceAll(" , ", " ");
     }
     
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
     if (!super.parseMsg(subject, body, data)) return false;
+    
+    // Fix problems with no break format squeezing everything into the address
+    if (noBrkFmt) {
+      String addr = data.strAddress;
+      data.strAddress = "";
+      parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr, data);
+    }
+    
     
     // See if a doubled city name has been interpreted as an apt
     data.strApt = stripFieldStart(data.strApt, "TRL ");
