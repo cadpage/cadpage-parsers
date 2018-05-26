@@ -16,11 +16,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   
   public CTNewHavenCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "ID ( SELECT/1 ( CALL PLACE/Z ADDR1/Z APT/Z CITY/Z ZIP " +
-                        "| CALL ADDR1/Z APT/Z CITY/Z ZIP " +
-                        "| CODE? CALL ADDR1 CITY ) " +
-             "| CODE? CALL? PLACE/Z ADDR2 ) " + 
-          "( MAP_X UNIT/Z DATETIME! | UNIT/Z DATETIME! | DATETIME! ) INFO/N+");
+          "ID SELECT/1 ( CALL ADDR2 " +
+                      "| CALL PLACE/Z ADDR1/Z APT/Z CITY/Z ZIP " +
+                      "| CALL ADDR1/Z APT/Z CITY/Z ZIP " +
+                      "| CODE? CALL ADDR1 DUP? APT? CITY ) " +
+          "EMPTY+? ( MAP_X UNIT/Z DATETIME! | UNIT/Z DATETIME! | DATETIME! ) INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets(
@@ -41,11 +41,10 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern DELIM1 = Pattern.compile(" *\\| *");
-  private static final Pattern DELIM2 = Pattern.compile(" */ *");
   private static final Pattern MARKER = Pattern.compile("(\\d{10}) +(?:(S\\d{2}) +)?");
   private static final Pattern DATE_TIME_PTN = Pattern.compile(" +(\\d{6}) (\\d\\d:\\d\\d)(?:[ ,]|$)"); 
   private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile(" +\\d{6} [\\d:]+$| +\\d{1,6}$"); 
-  private static final Pattern PRI_MARKER = Pattern.compile(" - PRI (\\d) - ");
+  private static final Pattern PRI_MARKER = Pattern.compile("[- ]*\\b(?:P|PRI|PRIORITY)[- .]+(\\d)\\b[- ]*");
   private static final Pattern ADDR_ST_MARKER = Pattern.compile("(.*) (\\d{5} .*)");
   private static final Pattern I_NN_HWY_PTN = Pattern.compile("\\b(I-?\\d+) +HWY\\b");
   private static final Pattern ADDR_END_MARKER = Pattern.compile("Apt ?#:|(?=(?:Prem )?Map -)", Pattern.CASE_INSENSITIVE);
@@ -65,211 +64,202 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     
     // See if this is one of the delimited field formats
     String[] flds = DELIM1.split(body);
-    if (flds.length > 5) {
-      setSelectValue("1");
+    if (flds.length > 4) {
       if (!parseFields(flds, data)) return false;
     }
     
     else {
-      flds = DELIM2.split(body);
-      if (flds.length > 5) {
-        setSelectValue("2");
-        if (!parseFields(flds, data)) return false;
+      Matcher match = MARKER.matcher(body);
+      if (!match.lookingAt()) return false;
+      setFieldList("ID SRC CODE CALL PRI ADDR APT MAP X CITY UNIT DATE TIME INFO");
+      data.strCallId = match.group(1);
+      data.strSource = getOptGroup(match.group(2));
+      body = body.substring(match.end());
+      
+      match =  DATE_TIME_PTN.matcher(body);
+      if (match.find()) {
+        String date = match.group(1);
+        data.strDate = date.substring(2,4) + "/" + date.substring(4,6) + "/" + date.substring(0,2);
+        data.strTime = match.group(2);
+        data.strSupp = body.substring(match.end()).trim();
+        body = body.substring(0,match.start());
+      } else {
+        match = TRUNC_DATE_TIME_PTN.matcher(body);
+        if (match.find()) body = body.substring(0,match.start());
       }
       
-      else {
-        Matcher match = MARKER.matcher(body);
-        if (!match.lookingAt()) return false;
-        setFieldList("ID SRC CODE CALL PRI ADDR APT MAP X CITY UNIT DATE TIME INFO");
-        data.strCallId = match.group(1);
-        data.strSource = getOptGroup(match.group(2));
-        body = body.substring(match.end());
+      // Look for an identifiable end of address marker
+      //  Either an Apt or map construct
+      String field = null;
+      String apt = null;
+      match = ADDR_END_MARKER.matcher(body);
+      if (match.find()) {
+        field = body.substring(match.end()).trim();
+        body = body.substring(0,match.start()).trim();
         
-        match =  DATE_TIME_PTN.matcher(body);
-        if (match.find()) {
-          String date = match.group(1);
-          data.strDate = date.substring(2,4) + "/" + date.substring(4,6) + "/" + date.substring(0,2);
-          data.strTime = match.group(2);
-          data.strSupp = body.substring(match.end()).trim();
-          body = body.substring(0,match.start());
-        } else {
-          match = TRUNC_DATE_TIME_PTN.matcher(body);
-          if (match.find()) body = body.substring(0,match.start());
-        }
-        
-        // Look for an identifiable end of address marker
-        //  Either an Apt or map construct
-        String field = null;
-        String apt = null;
-        match = ADDR_END_MARKER.matcher(body);
-        if (match.find()) {
-          field = body.substring(match.end()).trim();
-          body = body.substring(0,match.start()).trim();
-          
-          // If this was an app construct, pull out the apartment
-          String mark = match.group();
-          if (mark.length() > 0) {
-            match = ADDR_END_MARKER.matcher(field);
-            if (match.find()) {
-              apt = field.substring(0,match.start()).trim();
-              field = field.substring(match.end()).trim();
-            } else {
-              match = APT_PTN.matcher(field);
-              if (match.lookingAt()) {
-                apt = match.group();
-                field = field.substring(match.end()).trim();
-              }
-            }
-          }
-        }
-        
-        body = cleanCity(body, data);
-        
-        // Now start working on the address
-        // by cleaning off priority marker and looking for a start address construct
-        StartType st = StartType.START_CALL;
-        match = PRI_MARKER.matcher(body);
-        if (match.find()) {
-          st = StartType.START_ADDR;
-          data.strCall = body.substring(0,match.start()).trim();
-          data.strPriority = match.group(1);
-          body = body.substring(match.end()).trim();
-        }
-        else if ((match = ADDR_ST_MARKER.matcher(body)).matches()) {
-          st = StartType.START_ADDR;
-          data.strCall = match.group(1).trim();
-          body = match.group(2);
-        }
-        
-        // Remove I-nn HWY construct that causes problems
-        body = I_NN_HWY_PTN.matcher(body).replaceAll("$1");
-        
-        // See what we can do with the address
-        int flags = FLAG_NO_IMPLIED_APT;
-        if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
-        if (field != null) flags |= FLAG_NO_CITY | FLAG_ANCHOR_END;
-        else flags |= FLAG_PAD_FIELD;
-        parseAddress(st, flags, body, data);
-        if (apt != null) data.strApt = append(data.strApt, "-", apt);
-        
-        // Several different cases to consider
-        // Case 1 - We found an address terminator earlier
-        // Everything will have to be parsed from the leftover field, including a
-        // possible city name
-        boolean noCross = false;
-        boolean parseCity = false;
-        if (field != null) {
-          parseCity = true;
-        }
-        
-        // Case 2 - we did not find an address terminator
-        else {
-          field = getLeft();
-          
-          // Case 2A - but we found a city
-          // In which case we need to parse cross street info from the pad field
-          // and the leftover field contains only unit info
-          if (data.strCity.length() > 0) {
-            
-            String pad = getPadField();
-
-            // If pad starts with a left paren, append parenthesised section to address.
-            if (pad.startsWith("(")) {
-              int pt = pad.lastIndexOf(')');
-              if (pt >= 0) {
-                data.strAddress = append(data.strAddress, " ", pad.substring(0, pt+1).trim());
-                pad = pad.substring(pt+1).trim();
-              }
-            }
-
-            // What is left is occasionally a city name, but usually a cross street
-            if (isCity(pad)) {
-              data.strCity = pad;
-            } else {
-              parseCross(pad, data);
-            }
-          }
-          
-          // Case 2A - no city
-          // Everything needs to be parsed from leftover field
-          // But we know that it does not contain a city name
-          else {
-            noCross = isMBlankLeft();
-          }
-        }
-        
-        // Of the three identified cases, option 2A is the only one that has
-        // parsed a city name, and is the only one that does not require us to
-        // parse information from the leftover field
-        if (data.strCity.length() == 0) {
-          
-          // Try to parse map information from leftover field
-          match = MAP_PFX_PTN.matcher(field);
-          if (match.lookingAt()) {
-            field = field.substring(match.end());
-            noCross = field.startsWith("   ");
-            field = field.trim();
-            match = MAP_PTN.matcher(field);
-            if (match.lookingAt()) {
-              data.strMap = stripFieldEnd(match.group().trim(), "&");
-              field = field.substring(match.end());
-              noCross = field.startsWith("  ");
-              field = field.trim();
-            }
-          }
-          
-          // Now we have to split what is left into a cross street and unit
-          // If there is a premium map marker between them, things get easy
-          field = stripFieldStart(field, "/");
-          match = MAP_EXTRA_PTN.matcher(field);
+        // If this was an app construct, pull out the apartment
+        String mark = match.group();
+        if (mark.length() > 0) {
+          match = ADDR_END_MARKER.matcher(field);
           if (match.find()) {
-            parseCross(field.substring(0, match.start()).trim(), data);
+            apt = field.substring(0,match.start()).trim();
             field = field.substring(match.end()).trim();
-            if (data.strMap.length() == 0) data.strMap = match.group(1).trim();
-          }
-          
-          // If not, our best approach is to looking for the first multiple blank delimiter.
-          // which is a heck of a lot easier to do now that double blanks are preserved by
-          // the getLeft() method.
-          else {
-            if (!noCross) {
-              int pt = field.indexOf("  ");
-              if (pt >= 0) {
-                String cross = field.substring(0,pt);
-                if (parseCity) {
-                  parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, cross, data);
-                  cross = getStart();
-                }
-                parseCross(cross, data);
-                field = field.substring(pt+2).trim();
-              }
-              
-              // If we didn't find one, we will have to use the smart address parser to figure out where
-              // the cross street information ends
-              else {
-                flags = FLAG_ONLY_CROSS;
-                if (parseCity) flags |= FLAG_ONLY_CITY;
-                Result res = parseAddress(StartType.START_ADDR, flags, field);
-                if (res.isValid()) {
-                  res.getData(data);
-                  field = res.getLeft();
-                }
-              }
+          } else {
+            match = APT_PTN.matcher(field);
+            if (match.lookingAt()) {
+              apt = match.group();
+              field = field.substring(match.end()).trim();
             }
           }
+        }
+      }
+      
+      body = cleanCity(body, data);
+      
+      // Now start working on the address
+      // by cleaning off priority marker and looking for a start address construct
+      StartType st = StartType.START_CALL;
+      match = PRI_MARKER.matcher(body);
+      if (match.find()) {
+        st = StartType.START_ADDR;
+        data.strCall = body.substring(0,match.start()).trim();
+        data.strPriority = match.group(1);
+        body = body.substring(match.end()).trim();
+      }
+      else if ((match = ADDR_ST_MARKER.matcher(body)).matches()) {
+        st = StartType.START_ADDR;
+        data.strCall = match.group(1).trim();
+        body = match.group(2);
+      }
+      
+      // Remove I-nn HWY construct that causes problems
+      body = I_NN_HWY_PTN.matcher(body).replaceAll("$1");
+      
+      // See what we can do with the address
+      int flags = FLAG_NO_IMPLIED_APT;
+      if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
+      if (field != null) flags |= FLAG_NO_CITY | FLAG_ANCHOR_END;
+      else flags |= FLAG_PAD_FIELD;
+      parseAddress(st, flags, body, data);
+      if (apt != null) data.strApt = append(data.strApt, "-", apt);
+      
+      // Several different cases to consider
+      // Case 1 - We found an address terminator earlier
+      // Everything will have to be parsed from the leftover field, including a
+      // possible city name
+      boolean noCross = false;
+      boolean parseCity = false;
+      if (field != null) {
+        parseCity = true;
+      }
+      
+      // Case 2 - we did not find an address terminator
+      else {
+        field = getLeft();
+        
+        // Case 2A - but we found a city
+        // In which case we need to parse cross street info from the pad field
+        // and the leftover field contains only unit info
+        if (data.strCity.length() > 0) {
           
-          // If we have not found a city, see if there is one here
-          if (parseCity && data.strCity.length() == 0) {
-            parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field, data);
-            if (data.strCity.length() > 0) field = getLeft();
+          String pad = getPadField();
+
+          // If pad starts with a left paren, append parenthesised section to address.
+          if (pad.startsWith("(")) {
+            int pt = pad.lastIndexOf(')');
+            if (pt >= 0) {
+              data.strAddress = append(data.strAddress, " ", pad.substring(0, pt+1).trim());
+              pad = pad.substring(pt+1).trim();
+            }
+          }
+
+          // What is left is occasionally a city name, but usually a cross street
+          if (isCity(pad)) {
+            data.strCity = pad;
+          } else {
+            parseCross(pad, data);
           }
         }
         
-        // Whatever is left becomes the unit
-        data.strUnit = field.replaceAll("  +", " ");
-        
-        data.strCity = convertCodes(data.strCity, CITY_CODES);
+        // Case 2A - no city
+        // Everything needs to be parsed from leftover field
+        // But we know that it does not contain a city name
+        else {
+          noCross = isMBlankLeft();
+        }
       }
+      
+      // Of the three identified cases, option 2A is the only one that has
+      // parsed a city name, and is the only one that does not require us to
+      // parse information from the leftover field
+      if (data.strCity.length() == 0) {
+        
+        // Try to parse map information from leftover field
+        match = MAP_PFX_PTN.matcher(field);
+        if (match.lookingAt()) {
+          field = field.substring(match.end());
+          noCross = field.startsWith("   ");
+          field = field.trim();
+          match = MAP_PTN.matcher(field);
+          if (match.lookingAt()) {
+            data.strMap = stripFieldEnd(match.group().trim(), "&");
+            field = field.substring(match.end());
+            noCross = field.startsWith("  ");
+            field = field.trim();
+          }
+        }
+        
+        // Now we have to split what is left into a cross street and unit
+        // If there is a premium map marker between them, things get easy
+        field = stripFieldStart(field, "/");
+        match = MAP_EXTRA_PTN.matcher(field);
+        if (match.find()) {
+          parseCross(field.substring(0, match.start()).trim(), data);
+          field = field.substring(match.end()).trim();
+          if (data.strMap.length() == 0) data.strMap = match.group(1).trim();
+        }
+        
+        // If not, our best approach is to looking for the first multiple blank delimiter.
+        // which is a heck of a lot easier to do now that double blanks are preserved by
+        // the getLeft() method.
+        else {
+          if (!noCross) {
+            int pt = field.indexOf("  ");
+            if (pt >= 0) {
+              String cross = field.substring(0,pt);
+              if (parseCity) {
+                parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, cross, data);
+                cross = getStart();
+              }
+              parseCross(cross, data);
+              field = field.substring(pt+2).trim();
+            }
+            
+            // If we didn't find one, we will have to use the smart address parser to figure out where
+            // the cross street information ends
+            else {
+              flags = FLAG_ONLY_CROSS;
+              if (parseCity) flags |= FLAG_ONLY_CITY;
+              Result res = parseAddress(StartType.START_ADDR, flags, field);
+              if (res.isValid()) {
+                res.getData(data);
+                field = res.getLeft();
+              }
+            }
+          }
+        }
+        
+        // If we have not found a city, see if there is one here
+        if (parseCity && data.strCity.length() == 0) {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field, data);
+          if (data.strCity.length() > 0) field = getLeft();
+        }
+      }
+      
+      // Whatever is left becomes the unit
+      data.strUnit = field.replaceAll("  +", " ");
+      
+      data.strCity = convertCodes(data.strCity, CITY_CODES);
     }
     
     // Clean up call code description
@@ -329,9 +319,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}");
     if (name.equals("CODE")) return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?");
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("ADDR1")) return new MyAddress1Field();
     if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("DUP")) return new MyDupField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("ZIP")) return new SkipField("\\d{5}");
     if (name.equals("MAP_X")) return new MyMapCrossField();
@@ -347,6 +339,24 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     addr = MBLANK_PTN.matcher(addr).replaceAll(" ");
     addr = LEAD_ZERO_PTN.matcher(addr).replaceFirst("");
     return addr;
+  }
+  
+  private static final Pattern CALL_PRI_PTN = Pattern.compile("(.*) P-(\\d)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CALL_PRI_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strPriority = match.group(2);
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL PRI";
+    }
   }
   
   private class MyPlaceField extends PlaceField {
@@ -394,6 +404,18 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY";
+    }
+  }
+  
+  private class MyDupField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.equals(getRelativeField(-1));
     }
   }
   
@@ -728,8 +750,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
-      "ABD PAIN/PROB P-1",
-      "ABD PAIN/PROB P-2",
+      "ABD PAIN/PROB",
       "ABNORMAL BREATHING DIFFICULTY SPEAKING - ASTHMA",
       "ACCIDENT - MV INJ ALPHA",
       "ACCIDENT - MV INJ BRAVO",
@@ -738,56 +759,96 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "ACCIDENT MV W/INJURIES",
       "ACTIVATED FIRE ALARM",
       "AFA",
+      "AFA - CHECK ALARM",
       "AFA - COMMERCIAL/INDUSTRIAL",
-      "AFA DAY RESPONSE",
+      "AFA - HIGH LIFE HAZARD",
       "AFA -  MULTI-FAMILY RESIDENTIAL",
-      "AFA NIGHT RESPONSE",
       "AFA - RESIDENTIAL",
+      "AFA DAY RESPONSE",
+      "AFA NIGHT RESPONSE",
       "AFA RESIDENTIAL",
+      "ALARM-FIRE",
       "ALARM - FIRE",
-      "ALLERG/STING P-1",
+      "ALARMS-HOLDUP/PANIC/DURESS",
+      "ALLERG/STING",
       "ALPHA MEDICAL",
       "ALS EMS RESPONSE",
+      "ANML BITE - SUPRFICIAL BITES",
       "ASSAULT - NOT DNGRS",
       "AUTO ACC RESPONSE",
       "AUTOMATIC FIRE ALARM",
+      "BACK PAIN",
       "BEHAVORIAL",
+      "BEHAVORIAL (UNKNOWN)",
       "BLS EMS RESPONSE",
-      "BREATH PROB P-1",
+      "BREATH PROB",
       "BRUSH FIRE",
+      "BRUSH FIRE/CAMP FIRE",
       "BRUSH FIRE TWIN",
+      "BUILDING DAMAGE",
       "BUILDING LOCKOUT",
+      "C.O. ALARM",
+      "CAR FIRE",
+      "CAR LOCKOUT",
       "CARBON MONOXIDE",
       "CARDIAC / RESP. ARREST",
       "CHARLIE MEDICAL",
       "CHARLIE MEDICAL TF1",
       "CHARLIE MEDICAL TF3",
       "CHARLIE MEDICAL TF4A",
-      "CHEST PAIN CLAMMY - PRI. 1 -",
+      "CHECK APPLIANCE",
+      "CHECK ELECTRICAL HAZARD",
+      "CHECK ELECTRICAL ODOR",
+      "CHECK ODOR - INSIDE",
+      "CHEST PAIN CLAMMY",
       "CHEST PAIN DIFFICULTY SPEAKING",
-      "CHEST PAIN P-1",
-      "CHEST PAIN  - PRIORITY 1 -",
-      "CHEST PAIN, SOB - PRI. 1 -",
+      "CHEST PAIN",
+      "CHEST PAIN, NOT ALERT",
+      "CHEST PAIN, SOB",
+      "CO ALARM (NO SYMPTOMS)",
       "CO ALARM NO/UNK MEDICAL SX",
-      "CODE P-1",
+      "CO ALARM NO MEDICAL SX -  MULTI-FAMILY RESIDENTIAL",
+      "CO DETECTOR/NO MED SYMPTOMS",
+      "CO W/O SYMPTOMS",
+      "CODE",
+      "COVER ASSIGNMENT (IN CITY)",
       "COVER/RELOCATE TO FIRE HQ",
       "DELTA MEDICAL TF1",
+      "DIABETIC",
       "DIABETIC (ALERT)",
-      "DIABETIC P-1",
+      "DIABETIC, AMS",
+      "DIABETIC, SOB",
       "DIFF. BREATHING",
-      "EFD IN PROGRESS",
-      "EMD IN PROGRESS",
-      "EMS INCIDENT",
+      "DIFF. BREATHING, NOT ALERT",
       "E-MUTUAL AID AMBULANCE REQUEST",
       "E-MUTUAL AID MEDIC INTERCEPT REQUEST",
+      "EFD IN PROGRESS",
+      "ELECTRICAL ISSUE - INVEST",
+      "ELEVATOR RESCUE",
+      "EMD IN PROGRESS",
+      "EMS ASSIST",
+      "EMS INCIDENT",
       "EPD IN PROGRESS",
-      "FAINTING >35 W/CARDIAC HX - PRI 1-",
+      "EYE INJURY (MEDICAL)",
+      "EYE PROB/INJ",
+      "F-BOAT COLLISION PEOPLE IN WATER - COASTAL",
+      "FAINTING >35 W/CARDIAC HX",
+      "FAINTING,  ALERT",
       "FALL",
       "FALL (NOT ALERT)",
-      "FALL P-2",
-      "FALL, POSS. DANG. AREA- PRI 1 -",
+      "FALL, POSS. DANG. AREA",
+      "FALL, PUB ASST",
       "FALL PUBLIC ASSIST(NO INJURY)",
       "FALL, UNKNOWN",
+      "FIRE - BRUSH FIRE",
+      "FIRE - BRUSH / OUTSIDE",
+      "FIRE - CO ALARM",
+      "FIRE - MV",
+      "FIRE - OTHER",
+      "FIRE - SMOKE/GAS INVEST INSIDE",
+      "FIRE - SMOKE/GAS INVEST OUTSIDE",
+      "FIRE - STRUCTURE FIRE",
+      "FIRE - VEHICLE",
       "FIRE ALARM",
       "FIRE ALARM  00B12",
       "FIRE ALARM COMMERCIAL",
@@ -796,36 +857,46 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FIRE ALARM-MULTIPLE DEVICES",
       "FIRE ALARM RESIDENTIAL (ONE & TWO FAMILY HOMES)",
       "FIRE APPLIANCE",
-      "FIRE - BRUSH FIRE",
-      "FIRE - CO ALARM",
-      "FIRE - MV",
-      "FIRE - OTHER WEST",
+      "FIRE DEPARTMENT UNLOCK",
+      "FIRE CALL",
       "FIRE OUT REPORT W/ ODOR OF SMOKE",
-      "FIRE - SMOKE/GAS INVEST INSIDE",
-      "FIRE - SMOKE/GAS INVEST OUTSIDE",
+      "FIRE RESPONSE MUTUAL AID",
       "FIRE STRUCTURE",
-      "FIRE - VEHICLE",
       "F-STRUCTURE FIRE - RESIDENTIAL",
+      "F-STRUCTURE FIRE (FIRE OUT)",
+      "F-STRUCTURE FIRE APPLIANCE (CONTAINED)",
+      "F-STRUCTURE FIRE RESIDENTIAL (SINGLE)",
+      "F-STRUCTURE FIRE RESIDENTIAL (MULTI)",
+      "F-STRUCTURE FIRE RESIDENTIAL (MULTI)    - ODOR OF SMOKE",
+      "F-STRUCTURE FIRE UNKNOWN SITUATION (INVESTIGATION)",
+      "FLUID SPILL",
       "FUEL SPILL",
       "FUEL SPILL - INLAND WATER - OUTSIDE",
       "FUEL SPILL - MINOR - OUTSIDE",
       "FUEL SPILL (SMALL LESS THAN 50G)",
+      "HAZMAT - ACTIVE CHEMICAL LEAK / SPILL",
       "HAZMAT - ACTIVE GAS LEAK",
       "HAZMAT-CONTAINED- CHEMICAL",
       "HAZMAT - INVESTIGATION",
-      "HEART PROB P-1",
+      "HAZMAT - UNCONTAINED",
+      "HEAD ACHE",
+      "HEART PROB",
       "HEAVY SMOKE INVESTIGATION OUTSIDE",
+      "HEM. / LAC. DIFF. BREATHING",
       "HEMORRHAGE THROUGH TUBES",
-      "HEMORR/LAC P-1",
-      "HEMORR/LAC P-2",
+      "HEMORR/LAC",
       "ILLEGAL BURNING",
-      "INJURY P-1",
-      "INTERFACILITY P2",
+      "INEFFECTIVE BREATHING",
+      "INJURY",
+      "INTERFACILITY",
       "INVESTIGATE(OTHER NON-EMERGENT)",
       "INVESTIGATION",
       "LIFT ASSIST",
       "LIFT ASSIST (NO FALL)",
       "LOCK IN/OUT - BUILDING",
+      "LOCK IN - VEHICLE",
+      "LOCKOUT/LOCKIN EMERGENCY",
+      "LOCKOUT - VEHICLE",
       "LONG FALL",
       "MARINE RESCUE",
       "MEDICAL ALARM ACTIVATION",
@@ -843,6 +914,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MEDICAL CALL CHARLIE RESPONSE",
       "MEDICAL CALL DELTA RESPONSE",
       "MEDICAL CALL ECHO RESPONSE",
+      "MEDICAL  CANTON",
       "MEDICAL-C RESPONSE",
       "MEDICAL-D RESPONSE",
       "MEDICAL EMERGENCY",
@@ -851,47 +923,70 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MEDICAL MEDC",
       "MEDICAL MEDD",
       "MEDICAL MEDE",
+      "MEDICAL ON UCH PROPERTIES",
+      "MEDICAL OTHER LOCATIONS NOT LISTED",
+      "MEDICAL SIMSBURY",
+      "MOTOR VEHICLE ACCIDENT",
       "MOTOR VEHICLE LOCK OUT",
       "MOUNTAIN / TECHNICAL RESCUE",
+      "MUTA - E-MUTUAL AID AMBULANCE REQUEST",
+      "MUTP - E-MUTUAL AID MEDIC INTERCEPT REQUEST",
       "MUTUAL AID",
       "MUTUAL AID - FIRE",
       "MUTUAL AID INCIDENT MEDICAL",
       "MUTUAL AID - MEDICAL",
       "MUTUAL AID PARAMEDIC",
+      "MUTUAL AID SOUTH",
       "MUTUAL AID STANDBY",
       "MV ACCIDENT WEST",
+      "MVA",
       "MVA/ INJURIES REPORTED - RADIO",
+      "MVA-ENTRAPMENT-RADIO",
+      "MVA (EXTRICATION OR ROLLOVER)",
       "MVA - INJURY",
+      "MVA - NO INJURY",
       "MVA-ROLLOVER - RADIO",
       "MVA W/ INJURIES",
       "MVA W/INJURIES",
       "MVA WITH INJURIES",
+      "MVA WITHOUT INJURIES",
       "MV CRASH-TRAFFIC CRASH (NO INJURY)",
       "MV CRASH-TRAFFIC CRASH (NO INJURY)-B",
       "MV CRASH-TRAFFIC CRASH (WITH INJURY)",
+      "MV CRASH-TRAFFIC CRASH (WITH INJURY)-B",
       "NATURAL GAS LEAK",
+      "NATURAL / LP GAS -  ODOR - MULTI-FAMILY RESIDENTIAL",
       "NATURAL / LP GAS - ODOR OUTSIDE",
       "NATURAL / LP GAS -  ODOR - RESIDENTIAL",
-      "OD/INGEST P-1",
+      "NATURAL/LP GAS - LEAK/ODOR - COMMERCIAL/INDUST BLDG",
+      "OD/INGEST",
+      "ODOR OF NATURAL GAS",
+      "ODOR OF SMOKE INDOORS",
+      "ODOR OF SMOKE OUTDOORS",
       "OMEGA MEDICAL",
       "OUTSIDE FIRE",
+      "OUTSIDE FIRE - EXTINGUISHED",
       "OUTSIDE FIRE - INVEST -UNKNOWN",
       "OVERDOSE UNCON.",
-      "PERSON DOWN P-2",
+      "PERSON DOWN",
       "PERSON STUCK IN ELEVATOR",
-      "POSS HEART, SOB- PRI 1 -",
-      "POST CHOKING - PRIORITY 2 -",
-      "POST SEIZURE - PRI. 1 -",
+      "POSS HEART",
+      "POSS HEART, SOB",
+      "POST CHOKING",
+      "POST SEIZURE",
       "PROPANE LEAK",
       "PUBLIC ASSIST",
       "PUBLIC ASSISTANCE FD",
       "PUBLIC SERVICE",
       "PUBLIC SERVICE (FIRE)",
+      "RESCUE - ELEVATOR ENTRAPMENT",
+      "RESIDENTIAL LOCKOUT",
       "RESET FIRE ALARM",
-      "SEIZURE P-1",
-      "SEIZURE(S) - PRI. 1 -",
+      "SEIZURE",
+      "SEIZURE(S)",
       "SERVICE CALL - NON-EMERGENCY",
       "SICK CALL",
+      "SICK CALL - ABNORMAL B/P",
       "SICK CALL, AMS",
       "SICK CALL,  COND 2-11 NOT IDENTIFIED",
       "SICK CALL DIFF BREATHING",
@@ -901,17 +996,20 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SICK CALL, NOT ALERT",
       "SICK CALL NOT WELL / ILL",
       "SICK CALL OTHER PAIN",
-      "SICK CALL P-1",
-      "SICK CALL P-2",
+      "SICK CALL VOMITING",
       "SICK PERSON NAUSEA",
       "SICK PERSON NO PRIORITY SYMPTOMS",
+      "SMOKE IN A BUILDING",
       "SMOKE INVESTIGATION INSIDE",
       "SMOKE ODOR INVESTIGATION",
+      "SPORTS EVENT DETAIL",
+      "STATE TASK FORCE 51 WEST",
       "STILL",
       "STILL - ONE ENGINE",
       "STROKE",
       "STROKE - NOT ALERT",
-      "STROKE/TIA P-1",
+      "STROKE - SPEECH PRBLM",
+      "STROKE/TIA",
       "STRUCTURE FIRE",
       "Structure Fire COMMERCIAL/  hazmat",
       "STRUCTURE FIRE COMMERCIAL/INDUSTRIAL",
@@ -921,16 +1019,24 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "STRUCTURE FIRE RESIDENTIAL (SINGLE)",
       "TEST - TEST1234567890",
       "TRAFFIC/TRANS ACCID/ INJURIES",
+      "Traffic Stop",
       "TRANSFORM FIRE",
       "TRAUMATIC INJ., NOT DANG.",
       "UNCON. EFF. BREATHING",
+      "UNCON/FAINT",
       "UNCON/FAINTING NOT ALERT",
-      "UNCON/FAINT P-1",
+      "UNCON/FAINTING, SOB",
+      "UNKNOWN",
+      "UNKNOWN - PT MOVING/TALKING",
+      "UNKNOWN MEDICAL",
       "VEHICLE FIRE",
       "WATER CONDITION",
+      "WATER PROBLEM RESIDENTIAL",
       "WATER RESCUE",
+      "WATERCRAFT OR BOATER IN DISTRESS",
       "WELFARE CHECK",
       "WELFARE CHECK - FD",
+      "WIRE DOWN",
       "WIRES DOWN",
       "WIRES DOWN/BURNING",
       "WIRES DOWN - CHECK FOR HAZARDS"
