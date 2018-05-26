@@ -12,7 +12,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
   
   public NCMaconCountyBParser() {
     super("MACON COUNTY", "NC", 
-          "ID CODE_CALL ADDRCITY! GPS? PHONE NAME BOX END");
+          "ID CODE_CALL ADDRCITY! GPS? PHONE NAME INFO/N+");
   }
   
   @Override
@@ -22,7 +22,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
   
   private static final Pattern SRC_DATE_PREFIX = Pattern.compile("([- A-Z0-9]+) TEXT:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private static final Pattern INFO_MARK_PTN = Pattern.compile("\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d [AP]M +"); 
+  private static final Pattern INFO_MARK_PTN = Pattern.compile("\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d (?:[AP]M )? *"); 
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -53,7 +53,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
     
     if (!parseFields(body.split("\n"), data)) return false;
     
-    data.strSupp = INFO_MARK_PTN.matcher(info).replaceAll("\n");
+    data.strSupp = append(data.strSupp, "\n", INFO_MARK_PTN.matcher(info).replaceAll("\n"));
     return true;
   }
   

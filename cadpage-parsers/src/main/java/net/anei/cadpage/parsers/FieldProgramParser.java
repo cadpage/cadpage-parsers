@@ -2778,6 +2778,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class BoxField extends Field {
     
+    private String append = null;
+    
     public BoxField() {};
     public BoxField(String pattern) {
       super(pattern);
@@ -2785,10 +2787,20 @@ public class FieldProgramParser extends SmartAddressParser {
     public BoxField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, null);
+    }
    
     @Override
     public void parse(String field, Data data) {
-      data.strBox = field;
+      if (append != null) {
+        data.strBox = append(data.strBox, append, field);
+      } else {
+        data.strBox = field;
+      }
     }
     
     @Override
