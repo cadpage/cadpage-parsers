@@ -28,12 +28,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
   @Override
   public String getFilter() {
-    return "adams911@adamscounty.us,messaging@iamresponding.com,777";
+    return "adams911@adamscounty.us,messaging@iamresponding.com,tnethknouse@gmail.com,777";
   }
   
   private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX )");
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
   private static final Pattern IAMR_COMMA_PTN = Pattern.compile("[ ,]*\n[ ,]*");
+  private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=LOC:) ");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
@@ -51,13 +52,14 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
         body = IAMR_BOX_PTN.matcher(body).replaceFirst(", RUN CARD: BOX ");
       }
       body = IAMR_COMMA_PTN.matcher(body).replaceAll("\n");
+      body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
       body = body.replaceAll(" , ", " ");
     }
     
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
     if (!super.parseMsg(subject, body, data)) return false;
     
-    // See if a doubled city name has been interpretted as an apt
+    // See if a doubled city name has been interpreted as an apt
     data.strApt = stripFieldStart(data.strApt, "TRL ");
     String apt = data.strApt;
     if (data.strCity.length() == 0) {
