@@ -52,7 +52,18 @@ public class DispatchA48Parser extends FieldProgramParser {
       public boolean check(DispatchA48Parser parser, String field) {
         return field.contains(",");
       }
+    }, 
+    
+    MAP("MAP", "MAP") {
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        data.strMap = field;
+      }
       
+      @Override
+      public boolean check(DispatchA48Parser parser, String field) {
+        return true;
+      }
     }, 
     
     X("X/Z+?", "X") {
