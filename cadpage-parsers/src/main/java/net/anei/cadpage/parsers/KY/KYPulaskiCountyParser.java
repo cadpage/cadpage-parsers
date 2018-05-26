@@ -14,7 +14,7 @@ public class KYPulaskiCountyParser extends DispatchA65Parser {
   
   @Override
   public String getFilter() {
-    return "pulaskicoky@911email.net,geoconex@nlamerica.com,6064258900@mms.cricketwireless.net,dispatch@911comm1.info";
+    return "pulaskicoky@911email.net,geoconex@nlamerica.com,6064258900@mms.cricketwireless.net,dispatch@911comm";
   }
   
   @Override
