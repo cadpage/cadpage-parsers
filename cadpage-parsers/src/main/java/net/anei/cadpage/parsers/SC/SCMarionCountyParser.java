@@ -53,8 +53,13 @@ public class SCMarionCountyParser extends DispatchA48Parser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+      "BOBBY L DAVIS",
       "BYPASS SAWYER",
+      "GOLDEN MACK",
       "HENRY MCGILL",
+      "MAIDEN DOWN",
+      "SAND HILL",
+      "WAVERLY WAY",
       "WEST MULLINS"
   };
   
