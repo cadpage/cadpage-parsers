@@ -17,8 +17,11 @@ public class MIMidlandCountyParser extends FieldProgramParser {
   
   MIMidlandCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "( ( UNIT_STAT! BUS:PLACE! | BUS:PLACE! ) ADDX:ADDR! APT:APT! CODE:CALL! http:GPS " +
-          "| CALL_ADDR! COMMENTS! INFO/N+? X? PLACE/SDS+? http:GPS ) END");
+          "( UNIT_STAT! ( BUS:PLACE! ADDX:ADDR! APT:APT! CODE:CALL! http:GPS " + 
+                       "| ADDR! APT:APT! CALL! http:GPS ) " +
+          "| BUS:PLACE! ADDX:ADDR! APT:APT! CODE:CALL! http:GPS " +
+          "| CALL_ADDR! COMMENTS! INFO/N+? X? PLACE/SDS+? http:GPS " + 
+          "| ADDR! APT:APT! CALL! http:GPS ) END");
   }
   
   @Override
@@ -69,7 +72,7 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("//maps.google.com/maps\\?q=([+-]\\d+\\.\\d{5})(?: +|%20)([+-]\\d+\\.\\d{5})");
+  private static final Pattern GPS_PTN = Pattern.compile("//maps.google.com/(?:maps)?\\?q=([+-]\\d+\\.\\d{5})(?: +|%20)([+-]\\d+\\.\\d{5})");
   private class MyGPSField extends GPSField {
     public void parse(String field, Data data) {
       Matcher match = GPS_PTN.matcher(field);
@@ -80,11 +83,22 @@ public class MIMidlandCountyParser extends FieldProgramParser {
   
   private class MyCallAddressField extends Field {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
       int pt = field.lastIndexOf(',');
-      if (pt < 0) abort();
+      if (pt < 0) return false;
       data.strCall = field.substring(0, pt).trim();
       parseAddress(field.substring(pt+1), data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
