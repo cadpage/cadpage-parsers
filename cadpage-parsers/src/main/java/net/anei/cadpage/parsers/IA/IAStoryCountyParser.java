@@ -19,9 +19,11 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() > 0  || body.startsWith("CANCEL;")) {
-      body = stripFieldStart(body, "CAD:");
-      body = "CAD:" + append(subject, ": ", body);
+    if (!subject.equals("Text Message")) {
+      if (subject.length() > 0  || body.startsWith("CANCEL;")) {
+        body = stripFieldStart(body, "CAD:");
+        body = "CAD:" + append(subject, ": ", body);
+      }
     }
     return super.parseMsg(body, data);
   }
