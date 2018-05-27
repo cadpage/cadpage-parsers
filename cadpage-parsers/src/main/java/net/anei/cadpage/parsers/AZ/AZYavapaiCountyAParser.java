@@ -14,7 +14,9 @@ public class AZYavapaiCountyAParser extends FieldProgramParser {
 
   public AZYavapaiCountyAParser() {
     super(CITY_CODES, "YAVAPAI COUNTY", "AZ",
-           "CT:ADDR/SC! BOX:BOX! ( DUE:UNIT! | CANCEL:CANCEL! )");
+           "CT:ADDR/S0C! BOX:BOX! ( DUE:UNIT! | CANCEL:CANCEL! )");
+    setupMultiWordStreets(MWORD_STREET_LIST);
+    addInvalidWords("Y");
   }
   
   @Override
@@ -105,6 +107,11 @@ public class AZYavapaiCountyAParser extends FieldProgramParser {
       "YARN", "YARNELL",
       "YAVA", "YAVA",
       "YAVC", "YAVAPAI COUNTY",
-
   });
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "CHERRY CREEK",
+      "MIDDLE VERDE",
+      "PIPE CREEK"
+  };
 }
