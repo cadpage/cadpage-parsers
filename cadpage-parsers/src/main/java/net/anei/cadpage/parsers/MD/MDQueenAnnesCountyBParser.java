@@ -412,14 +412,24 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
   );
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BARC", "BARCLAY",
       "CENT", "CENTREVILLE",
       "CHES", "CHESTER",
-      "CHTN", "CHTN",
+      "CHTN", "CHESTERTOWN",
       "CHUR", "CHURCH HILL",
+      "CRUM", "CRUMPTON",
       "GRAS", "GRASONVILLE",
-      "QUEE", "QUEEN ANNE",
+      "HEND", "HENDERSON",
+      "INGL", "INGLESIDE",
+      "MARY", "MARYDEL",
+      "MILL", "MILLINGTON",
+      "PRCE", "PRICE",
+      "QANN", "QUEEN ANNE",
+      "QUEE", "QUEENSTOWN",
       "STEV", "STEVENSVILLE",
-      "SUDL", "SUDLERSVILLE"
+      "SUDL", "SUDLERSVILLE",
+      "WYE",  "WYE MILLS"
+
   });
   
   private static final Properties MA_CITY_TABLE = buildCodeTable(new String[]{

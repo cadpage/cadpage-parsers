@@ -10,7 +10,7 @@ public class NCLeeCountyParser extends DispatchOSSIParser {
 
   public NCLeeCountyParser() {
     super("LEE COUNTY", "NC",
-          "FYI? UNIT CALL ADDR! X X INFO+");
+          "FYI? UNIT? CALL ADDR! X+? INFO/N+");
   }
 
   @Override
@@ -30,7 +30,7 @@ public class NCLeeCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new UnitField("[A-Z][A-Z0-9]+", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+|EMS", true);
     return super.getField(name);
   }
 }
