@@ -31,6 +31,10 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    int pt = body.indexOf("\n-- \n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+
     selectType = (body.contains("\n") ? "REG" : "COMP");
     body = EXTRA_SPACES.matcher(body).replaceAll("\n");
     body = MISSING_BREAK.matcher(body).replaceAll("\n");
