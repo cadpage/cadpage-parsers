@@ -66,10 +66,20 @@ public class NYBuffaloParser extends DispatchProQAParser {
   }
   
   private static final String[] CITY_LIST = new String[]{
+      "AMHERST",
       "BUFFALO",
+      "CHEEKTOWAGA",
+      "DEPEW",
+      "EAST AURORA",
       "ELMA",
+      "ELMA",
+      "EVANS",
       "HAMBURG",
+      "KENMORE",
+      "LACKAWANNA",
       "NIAGARA FALLS",
+      "NORTH COLLINS",
+      "SLOAN",
       "WEST SENECA"
   };
 }
