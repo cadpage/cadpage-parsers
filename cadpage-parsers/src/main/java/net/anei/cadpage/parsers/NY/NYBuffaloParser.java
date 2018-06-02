@@ -41,7 +41,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
     if (name.equals("PRI")) return new PriorityField("(\\d) .*", true);
     if (name.equals("JOB")) return new SkipField("\\d{4}-[A-Z]");
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
-    if (name.equals("CALL2")) return new CallField("(?!.* (?:Institute|Park|Center)$).*[a-z].*|GSW|", true);
+    if (name.equals("CALL2")) return new CallField("(?!.* (?:Institute|Park|Center|Room|Area)$).*[a-z].*|GSW|", true);
     if (name.equals("ALT_ID")) return new SkipField("\\d+", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     return super.getField(name);
@@ -69,6 +69,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
       "BUFFALO",
       "ELMA",
       "HAMBURG",
-      "NIAGARA FALLS"
+      "NIAGARA FALLS",
+      "WEST SENECA"
   };
 }
