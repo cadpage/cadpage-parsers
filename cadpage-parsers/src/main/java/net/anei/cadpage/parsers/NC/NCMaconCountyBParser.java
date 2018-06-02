@@ -20,7 +20,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
     return "4702193684";
   }
   
-  private static final Pattern SRC_DATE_PREFIX = Pattern.compile("([- A-Z0-9]+) TEXT:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern SRC_DATE_PREFIX = Pattern.compile("([- A-Z0-9]+) TEXT:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern INFO_MARK_PTN = Pattern.compile("\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d (?:[AP]M )? *"); 
   
@@ -40,8 +40,13 @@ public class NCMaconCountyBParser extends FieldProgramParser {
     if (match.lookingAt()) {
       data.strSource = match.group(1).trim();
       data.strDate = match.group(2);
-      setTime(TIME_FMT, match.group(3), data);
-      body = body.substring(match.end());
+      String time = match.group(3);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(3), data);
+      } else {
+        data.strTime = time;
+      }
+      body = body.substring(match.end()).trim();
     }
     
     String info = "";
