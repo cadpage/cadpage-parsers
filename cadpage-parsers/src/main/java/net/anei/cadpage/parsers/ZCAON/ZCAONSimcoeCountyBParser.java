@@ -11,21 +11,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 /**
  * 
  */
-public class ZCAONMississaugaParser extends FieldProgramParser {
+public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
   
-  public ZCAONMississaugaParser() {
-    super(CITY_CODES, "PEEL REGIONAL MUNICIPALITY", "ON",
+  public ZCAONSimcoeCountyBParser() {
+    super(CITY_CODES, "SIMCOE COUNTY", "ON",
            "CALL? ( SELECT/REG ADDR/y! Map:MAP! Tac:CH! UNIT! X1:X? X2:X? Inc:ID! | SELECT/LOC ADDR/y! X1:X? X2:X? Map:MAP? Tac:CH! CALL Inc:ID | PLACE ADDR/y DATETIME! )");
   }
   
   @Override
   public String getFilter() {
-    return "pager@rsar.ca";
-  }
-  
-  @Override
-  public String getLocName() {
-    return "Mississauga, ON";
+    return "pager@rsar.ca,peelfire@jrcnet.ca";
   }
   
   private static final Pattern EXTRA_SPACES = Pattern.compile(" *\n *");

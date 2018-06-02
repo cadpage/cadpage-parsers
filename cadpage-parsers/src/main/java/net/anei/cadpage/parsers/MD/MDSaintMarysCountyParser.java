@@ -234,6 +234,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22550 JOHNSON POND LANE",              "+38.286500,-76.550700",
       "44096 LOUISDALE RD",                   "+38.296261,-76.562480",
       "44100 LOUISDALE RD",                   "+38.295197,-76.558400",
+      "44994 NORRIS RD",                      "+38.273770,-76.507290",
       "44800 OAK CREST RD",                   "+38.311297,-76.527188",
       "22024 OXFORD CT",                      "+38.273351,-76.468718",
       "22025 OXFORD CT",                      "+38.273123,-76.468245",
