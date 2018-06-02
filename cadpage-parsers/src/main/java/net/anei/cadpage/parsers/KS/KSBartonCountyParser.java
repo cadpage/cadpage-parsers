@@ -13,7 +13,7 @@ public class KSBartonCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "bcso@ruraltel.net";
+    return "bcso@ruraltel.net,alerts@bartoncounty.org";
   }
   
   @Override
