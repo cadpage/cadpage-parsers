@@ -6,6 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class SCOconeeCountyParser extends GroupBestParser {
   
   public SCOconeeCountyParser() {
-    super(new SCOconeeCountyAParser(), new SCOconeeCountyBParser());
+    super(new SCOconeeCountyAParser(), new SCOconeeCountyBParser(),
+          new SCOconeeCountyCParser());
   }
 }
