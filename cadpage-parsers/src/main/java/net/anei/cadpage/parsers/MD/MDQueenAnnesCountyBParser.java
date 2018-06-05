@@ -14,7 +14,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
   public MDQueenAnnesCountyBParser() {
     super(CITY_CODES, "QUEEN ANNES COUNTY", "MD", 
           "( CT:ADDR/S0L! BOX:BOX! DUE:UNIT! END " +
-          "| Inc:ID! Call_Type:CODE! Call_Desc:CALL! Date:DATE! Time_Recv:TIME! Time_Clear:TIME_CLR! Box_Area:BOX! Station:SRC! Priority:PRI! Lat:GPS1! Long:GPS2! City:CITY! Location:ADDR/S0! Units:UNIT! Rmk:INFO/N+ From_CAD_User:SKIP )");
+          "| Inc:ID! Call_Type:CODE! Call_Desc:CALL! Date:DATE! Time_Recv:TIME! Time_Clear:TIME_CLR! Box_Area:BOX! Station:SRC! Priority:PRI! Lat:GPS1! Long:GPS2! City:CITY! Location:ADDR/S0! Units:UNIT! UNIT/S+ Rmk:INFO/N+ From_CAD_User:SKIP )");
     setupCallList(CALL_LIST);
     addNauticalTerms();
     removeWords("NEW");
