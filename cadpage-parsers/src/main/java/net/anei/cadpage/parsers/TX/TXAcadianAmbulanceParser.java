@@ -1,28 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-/*
-Acadian Ambulance, TX
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-
-public class TXAcadianAmbulanceParser extends TXBurnetCountyParser {
-
-  public TXAcadianAmbulanceParser() {
-    super("", "TX");
-  }
+/**
+ * Acadian Ambulance, TX
+ */
+public class TXAcadianAmbulanceParser extends GroupBestParser {
   
-  @Override
-  public String getLocName() {
-    return "Acadian Ambulance, TX";
-  }
-
-  @Override
-  public String getFilter() {
-    return "bastropactive911@gmail.com";
-  }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+  public TXAcadianAmbulanceParser() {
+    super(new TXAcadianAmbulanceAParser(), new TXAcadianAmbulanceBParser());
   }
 }

@@ -32,7 +32,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   private static final Pattern RUN_REPORT_DELIM = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)\\s*(?=[A-Z][A-Za-z]+:)");
   
   @Override
-  public boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
     data.strCallId = match.group(1);
