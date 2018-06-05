@@ -21,7 +21,7 @@ public class TXAcadianAmbulanceAParser extends XXAcadianAmbulanceParser {
   
   @Override
   public String getFilter() {
-    return "commcenteraustin@acadian.com";
+    return "commcenter@acadian.com,commcenteraustin@acadian.com";
   }
   
   @Override
