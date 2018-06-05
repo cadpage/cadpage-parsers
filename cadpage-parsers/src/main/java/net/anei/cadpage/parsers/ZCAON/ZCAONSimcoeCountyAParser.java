@@ -55,6 +55,7 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
   private static final String[] CITY_LIST = new String[]{
       "ADJALA-TOSORONTIO",
       "BARRIE",
+      "BRADFORD",
       "BRADFORD WEST GWILLIMBURY",
       "CLEARVIEW",
       "COLLINGWOOD",
@@ -74,7 +75,13 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
       
       // Grey County
       "BLUE MOUNTAINS",
-      "GREY HIGHLANDS"
+      "GREY HIGHLANDS",
       
+      // Muskoka Regioin
+      "BEAUSOLEIL",
+      "DUFFERIN",
+      "GEORGIAN BAY",
+      "HUNTSVILLE",
+      "LAKE OF BAYS"
   };
 }

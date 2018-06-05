@@ -9,6 +9,6 @@ public class COGrandCountyParser extends DispatchA55Parser {
   
   @Override
   public String getFilter() {
-    return "cadalerts@eforcesoftware.com,kfpd_dispatches@kremmlingfire.org,brady.mathis@gmail.com,brady.mathis@kremmlingfire.org";
+    return "cadalerts@eforcesoftware.com,kfpd_dispatches@kremmlingfire.org,brady.mathis@gmail.com,brady.mathis@kremmlingfire.org,eforce_alert@co.grand.co.us";
   }
 }
