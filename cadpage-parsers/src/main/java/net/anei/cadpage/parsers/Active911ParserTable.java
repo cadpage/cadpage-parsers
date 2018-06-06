@@ -771,6 +771,7 @@ public class Active911ParserTable {
       "US/MO/ShelbyCounty",               "MOShelbyCounty",
       "US/MO/SouthernBoone",              "MOBooneCounty",
       "US/MO/StCharlesCounty",            "MOStCharlesCounty",
+      "US/MO/SteGenevieveCounty",         "MOStGenevieveCountyB",
       "US/MO/StFrancoisCounty",           "MOStFrancoisCounty",
       "US/MO/StLouisCounty",              "MOStLouisCountyC",
       "US/MO/StoddEMS",                   "MOStoddardCounty",

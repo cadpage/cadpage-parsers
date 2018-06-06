@@ -8,6 +8,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class UTSaltLakeCountyBParser extends SmartAddressParser {
   
@@ -83,6 +84,7 @@ public class UTSaltLakeCountyBParser extends SmartAddressParser {
     
     if ((match = RUN_REPORT_PTN.matcher(body)).matches()) {
       setFieldList("UNIT ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
       data.strUnit = match.group(1);
       data.strCallId = match.group(2);
       data.strSupp = RUN_REPORT_BRK.matcher(match.group(3)).replaceAll("\n");
