@@ -4,11 +4,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser.Result;
-import net.anei.cadpage.parsers.SmartAddressParser.StartType;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
-
-
 
 public class OHKnoxCountyParser extends DispatchEmergitechParser {
   
@@ -16,7 +12,6 @@ public class OHKnoxCountyParser extends DispatchEmergitechParser {
     super(CITY_LIST, "KNOX COUNTY", "OH", TrailAddrType.PLACE_INFO);
     addSpecialWords("HYATT");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
-    
   }
 
   @Override
@@ -89,6 +84,7 @@ public class OHKnoxCountyParser extends DispatchEmergitechParser {
       "13141 HYATT RD",                       "+40.459844,-82.508014",
       "14991 OLD MANSFIELD RD",               "+40.452370,-82.487466",
       "8938 OVERLY RD",                       "+40.499124,-82.570308",
+      "11950 SOUTHBAY DR",                    "+40.491517,-82.525324",
       "11580 YANKEE ST",                      "+40.532342,-82.528948"
 
   });
