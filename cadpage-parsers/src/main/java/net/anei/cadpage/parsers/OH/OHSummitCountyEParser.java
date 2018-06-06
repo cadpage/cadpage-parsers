@@ -14,7 +14,7 @@ public class OHSummitCountyEParser  extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "administrator@ci.fairlawn.oh.us>";
+    return "administrator@ci.fairlawn.oh.us,administrator@fairlawn.us>";
   }
   
   @Override
