@@ -13,6 +13,7 @@ public class NJOceanCountyParser extends GroupBestParser {
   public NJOceanCountyParser() {
     super(new NJOceanCountyAParser(),
           new NJOceanCountyBParser(),
-          new NJOceanCountyCParser());
+          new NJOceanCountyCParser(),
+          new NJOceanCountyEParser());
   }
 }
