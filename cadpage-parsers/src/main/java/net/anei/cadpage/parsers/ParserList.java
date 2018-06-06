@@ -145,6 +145,7 @@ public class ParserList {
               ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
           new ParserCategory("Alaska"
+              ,"AKChugiak"                      ,"Chugiak, AK"
               ,"AKFairbanks"                    ,"Fairbanks, AK"
               ,"AKJuneau"                       ,"Juneau, AK"
               ,"AKKenaiPeninsulaBorough"        ,"Kenai Peninsula Borough, AK"
