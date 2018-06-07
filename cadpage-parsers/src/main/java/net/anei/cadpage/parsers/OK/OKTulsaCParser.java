@@ -21,12 +21,21 @@ public class OKTulsaCParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(DELIM.split(body), data);
+    return parseFields(DELIM.split(body, -1), data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("MAP")) return new MapField("MP +(.*)", true);
+    if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
+  }
+  
+  private class MyMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("NOT FOUND")) return;
+      field = stripFieldStart(field, "MP ");
+      super.parse(field, data);
+    }
   }
 }

@@ -1149,6 +1149,7 @@ public class Active911ParserTable {
       "US/OK/CityofTulsa",                "OKTulsaA",
       "US/OK/CityofYukon",                "OKYukon",
       "US/OK/FaxConnections",             "OKTulsaC",
+      "US/OK/FaxConnectionsWagonerCounty","OKTulsaC",
       "US/OK/LakewoodFD",                 "OKBryanCounty",
       "US/OK/LoveCounty",                 "OKLoveCounty",
       "US/OK/MayesCounty",                "OKMayesCounty",
