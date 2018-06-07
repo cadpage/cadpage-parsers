@@ -562,6 +562,7 @@ public class Active911ParserTable {
       "US/LA/WestFelicianaParish",        "LAWestFelicianaParish",
       "US/MA/Mvpsis",                     "MADukesCounty",
       "US/MA/NantucketCounty",            "MANantucketCounty",
+      "US/MA/Peabody",                    "MASussexCounty",
       "US/MD/AACounty",                   "MDAnneArundelCountyEMS2",
       "US/MD/ADSiCAD",                    "MDAnneArundelCountyADSiCAD",
       "US/MD/AlleganyCounty",             "MDAlleganyCounty",

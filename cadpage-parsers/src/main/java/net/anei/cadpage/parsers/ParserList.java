@@ -665,6 +665,7 @@ public class ParserList {
               ,"MADukesCounty"                  ,"Dukes County, MA"
               ,"MANantucketCounty"              ,"Nantucket County, MA"
               ,"MANorfolkCounty"                ,"Norfolk County, MA"
+              ,"MASussexCounty"                 ,"Sussex County, MA"
               ,"MAYarmouth"                     ,"Yarmouth, MA"
           ),
           new ParserCategory("Michigan"
