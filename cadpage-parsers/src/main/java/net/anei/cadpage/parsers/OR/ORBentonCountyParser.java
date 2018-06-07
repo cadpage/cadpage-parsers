@@ -90,9 +90,12 @@ public class ORBentonCountyParser extends FieldProgramParser {
       
       // Addresses on Airport east of Belfountain should be reported as in Corvallis
       if (EAST_AIRPORT_PTN.matcher(tmp).matches()) data.strCity = "CORVALLIS";
+    }
+    
+    else if (data.strCity.equals("KINGS VALLEY")) {
       
       // Some addresses on the east end of KV district are in Monmouth
-      if (EAST_MAXFIELD_CREEK_PTN.matcher(tmp).matches()) data.strCity = "MONMOUTH";
+      if (EAST_MAXFIELD_CREEK_PTN.matcher(data.strAddress).matches()) data.strCity = "MONMOUTH";
     }
     
     // See if we can use call code to improve call description
@@ -717,6 +720,35 @@ public class ORBentonCountyParser extends FieldProgramParser {
       "2888 NEWTON PLACE",            "44.541921,-123.343300",
       "2892 NEWTON PLACE",            "44.541921,-123.343300",
       "2890 NEWTON PLACE",            "44.541921,-123.343300",
+      
+      // North 7th & North 8th apts
+      "101 N 7TH ST",                 "44.540575,-123.376500",
+      "103 N 7TH ST",                 "44.540624,-123.376500",
+      "105 N 7TH ST",                 "44.540679,-123.376500",
+      "107 N 7TH ST",                 "44.540729,-123.376501",
+      "109 N 7TH ST",                 "44.540716,-123.376300",
+      "111 N 7TH ST",                 "44.540675,-123.376300",
+      "113 N 7TH ST",                 "44.540633,-123.376300",
+      "115 N 7TH ST",                 "44.540599,-123.376300",
+      "131 N 7TH ST",                 "44.540868,-123.376454",
+      "133 N 7TH ST",                 "44.540871,-123.376389",
+      "135 N 7TH ST",                 "44.540869,-123.376311",
+      "137 N 7TH ST",                 "44.540869,-123.376257",
+      
+      "124 N 8TH ST",                 "44.540709,-123.375710",
+      "126 N 8TH ST",                 "44.540666,-123.375709",
+      "128 N 8TH ST",                 "44.540666,-123.375709",
+      "130 N 8TH ST",                 "44.540574,-123.375712",
+      "132 N 8TH ST",                 "44.540726,-123.375926",
+      "134 N 8TH ST",                 "44.540666,-123.375928",
+      "136 N 8TH ST",                 "44.540624 -123.375932",
+      "138 N 8TH ST",                 "44.540584,-123.375934",
+      "140 N 8TH ST",                 "44.540895,-123.375605",
+      "142 N 8TH ST",                 "44.540894,-123.375686",
+      "144 N 8TH ST",                 "44.540894,-123.375739",
+      "146 N 8TH ST",                 "44.540900,-123.375811",
+      "148 N 8TH ST",                 "44.540910,-123.375868",
+      "150 N 8TH ST",                 "44.540918,-123.375933",
       
       // Grand View Mobile Park
       "502 N 8TH ST APT:1",           "44.543989,-123.375177",

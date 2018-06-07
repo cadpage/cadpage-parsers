@@ -1166,7 +1166,15 @@ public abstract class MsgParser {
     if (gpsLookupTable == null) return null;
     address = adjustGpsLookupAddress(address, apt, place);
     if (address == null) return null;
-    return gpsLookupTable.getProperty(address);
+    
+    String gps = gpsLookupTable.getProperty(address);
+    if (gps == null) {
+      int pt = address.indexOf(" APT:");
+      if (pt >= 0) {
+        gps = gpsLookupTable.getProperty(address.substring(0, pt).trim());
+      }
+    }
+    return gps;
   }
 
   /**
