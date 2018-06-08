@@ -14,7 +14,7 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
   
   public INKosciuskoCountyParser() {
     super(CITY_CODES, "KOSCIUSKO COUNTY", "IN",
-           "( CANCEL COUNTY? | FYI CALL ) COUNTY? ( CITY ADDR | ADDR! ( CITY APTPLACE | APTPLACE? CITY/Y ) INFO+ )");
+           "( CANCEL COUNTY? | FYI CALL ) COUNTY? ( CITY ADDR | ADDR! ( COUNTY2 | CITY APTPLACE | APTPLACE? CITY/Y ) INFO+ )");
   }
   
   @Override
@@ -31,7 +31,10 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() > 0 && body.startsWith("CAD:;")) {
+    if (subject.equals("Text Message")) {
+      if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    }
+    else if (subject.length() > 0 && body.startsWith("CAD:;")) {
       body = "CAD:" + subject + body.substring(3);
     }
     if (!super.parseMsg(body, data)) return false;
@@ -52,6 +55,7 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("COUNTY")) return new MyCountyField();
+    if (name.equals("COUNTY2")) return new CityField("[A-Z ]+ CO", true);
     if (name.equals("APTPLACE")) return new MyAptPlaceField();
     return super.getField(name);
   }
@@ -119,12 +123,15 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
       "KIM",  "KIMMELL",
       "LAR",  "LARWILL",
       "LEES", "LEESBURG",
+      "M",    "MONTONE",
       "MEN",  "MENTONE",
       "MENT", "MENTONE",
       "MILF", "MILFORD",
       "NAPP", "NAPPANEE",
       "N",    "NORTH WEBSTER",
+      "NMAN", "NORTH MANCHESTER",
       "NW",   "NORTH WEBSTER",
+      "PI",   "PIERCETON",
       "PIE",  "PIERCETON",
       "PIER", "PIERCETON",
       "PLY",  "PLYMOUTH",
@@ -133,6 +140,7 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
       "SID",  "SIDNEY",
       "SL",   "SILVER LAKE",
       "SWHT", "SOUTH WHITLEY",
+      "S",    "SYRACUSE",
       "SYR",  "SYRACUSE",
       "SYRA", "SYRACUSE",
       "TIPP", "TIPPECANOE",
