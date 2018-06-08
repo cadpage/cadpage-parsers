@@ -222,7 +222,9 @@ public class ManageParsers {
         "CASanDiegoCountyB",  "CASanDiegoCountyA",       // 08/05/2017
         "NCHavelock",         "NCCravenCounty",          // 02/18/2018
         "TXWharton",          "TXWhartonCounty",         // 03/29/2018
-        "ZCAONMississauga",   "ZCAONSimcoeCountyB"      // 06/01/2018
+        "ZCAONMississauga",   "ZCAONSimcoeCountyB",      // 06/01/2018
+        "OKTulsaA",           "OKTulsa",                 // 06/08/2018
+        "OKTulsaC",           "OKTulsa"
   });
 
 }
