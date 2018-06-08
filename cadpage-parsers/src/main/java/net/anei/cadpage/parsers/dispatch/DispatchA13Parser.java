@@ -84,7 +84,7 @@ public class DispatchA13Parser extends FieldProgramParser {
   }
   
   // SRCID field contains source and call ID
-  private static final Pattern SRCID_PTN = Pattern.compile("([A-Z0-9][- A-Za-z0-9]+)?:(\\d+(?::\\d+)?)|(([A-Z]{2,4})\\d{9})");
+  private static final Pattern SRCID_PTN = Pattern.compile("([A-Z0-9][- A-Za-z0-9]+)?:(\\d+[:0-9]*)|(([A-Z]{2,4})\\d{9})");
   private class SourceIdField extends Field {
     
     @Override
