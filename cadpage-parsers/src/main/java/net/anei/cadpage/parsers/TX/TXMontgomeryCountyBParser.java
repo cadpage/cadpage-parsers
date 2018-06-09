@@ -71,9 +71,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=[a-z])(?=[A-Z])|(?<= [A-Z])(?=[A-Z][a-z])");
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (!subject.equals("CAD Message")) return false;
+  protected boolean parseMsg(String body, Data data) {
     
     body = stripFieldStart(body, ",");
     
