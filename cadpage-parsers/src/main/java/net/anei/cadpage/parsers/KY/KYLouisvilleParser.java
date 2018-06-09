@@ -16,6 +16,7 @@ public class KYLouisvilleParser extends FieldProgramParser {
   public KYLouisvilleParser() {
     super(CITY_CODES, "LOUISVILLE", "KY",
            "Location:ADDR/S? JTN:PLACE? TYPE_CODE:CODE! SUB_TYPE:CALL! TIME:TIME? Comments:INFO INFO+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -28,6 +29,13 @@ public class KYLouisvilleParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
   
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("CODE")) return new MyCodeField();
@@ -195,7 +203,5 @@ public class KYLouisvilleParser extends FieldProgramParser {
       "WORH", "WORTHINGTON HILLS",
       "WTPK", "WATTERSON PARK",
       "WTWD", "WESTWOOD"
-
-
   });
 }

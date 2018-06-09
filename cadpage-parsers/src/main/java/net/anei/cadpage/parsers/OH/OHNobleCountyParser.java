@@ -16,7 +16,17 @@ public class OHNobleCountyParser extends DispatchA1Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0 && body.startsWith("ALRM LVL:")) subject = "Alert:";
+    if (subject.length() == 0) {
+      if (body.startsWith("Alert:")) {
+        int pt = body.indexOf('\n');
+        String tmp = body.substring(pt+1).trim();
+        if (tmp.startsWith("ALRM LVL:")) {
+          subject = body.substring(0,pt).trim();
+          body = tmp;
+        }
+      }
+      else if (body.startsWith("ALRM LVL:")) subject = "Alert:";
+    }
     return super.parseMsg(subject, body, data);
   }
   
