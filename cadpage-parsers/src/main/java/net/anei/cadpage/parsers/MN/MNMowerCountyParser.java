@@ -1,23 +1,69 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
-public class MNMowerCountyParser extends FieldProgramParser {
+public class MNMowerCountyParser extends DispatchA43Parser {
 
   public MNMowerCountyParser() {
-    super("MOWER COUNTY", "MN", 
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY? ID:ID! PRI:PRI? INFO:INFO/N+");
+    super(CITY_LIST, "MOWER COUNTY", "MN");
   }
   
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!parseFields(body.split(";"), data)) return false;
-    
-    // One agency likes to duplicate the city name in the address field :(
-    if (data.strCity.length() > 0) {
-      data.strAddress = stripFieldEnd(data.strAddress, " " + data.strCity);
-    }
-    return true;
-  }
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "ADAMS",
+      "AUSTIN",
+      "BROWNSDALE",
+      "DEXTER",
+      "ELKTON",
+      "GRAND MEADOW",
+      "LE ROY",
+      "LYLE",
+      "MAPLEVIEW",
+      "RACINE",
+      "ROSE CREEK",
+      "SARGEANT",
+      "TAOPI",
+      "WALTHAM",
+
+      // Townships
+      "ADAMS",
+      "AUSTIN",
+      "BENNINGTON",
+      "CLAYTON",
+      "DEXTER",
+      "FRANKFORD",
+      "GRAND MEADOW",
+      "LANSING",
+      "LE ROY",
+      "LODI",
+      "LYLE",
+      "MARSHALL",
+      "NEVADA",
+      "PLEASANT VALLEY",
+      "RACINE",
+      "RED ROCK",
+      "SARGEANT",
+      "UDOLPHO",
+      "WALTHAM",
+      "WINDOM",
+
+      // Census-designated place
+      "LANSING",
+
+      // Other unincorporated communities
+      "ANDYVILLE",
+      "CORNING",
+      "JOHNSBURG",
+      "MAYVILLE",
+      "NICOLVILLE",
+      "RAMSEY",
+      "RENOVA",
+      "VARCO",
+      
+      // Scott County
+      "PRIOR LAKE",
+      "SAVAGE",
+      "SHAKOPEE"
+  };
 }

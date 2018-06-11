@@ -746,6 +746,7 @@ public class ParserList {
               ,"MNItascaCounty"                 ,"Itasca County, MN"
               ,"MNKandiyohiCounty"              ,"Kandiyohi County, MN"
               ,"MNKoochichingCounty"            ,"Koochiching County, MN"
+              ,"MNLacQuiParleCounty"            ,"Lac Qui Parle County, MN"
               ,"MNLakeCounty"                   ,"Lake County, MN"
               ,"MNLakeOfTheWoodsCounty"         ,"Lake Of The Woods County, MN"
               ,"MNLeSueurCounty"                ,"Le Sueur County, MN"

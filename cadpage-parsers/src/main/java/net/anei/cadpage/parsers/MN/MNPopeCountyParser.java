@@ -1,16 +1,9 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
-public class MNPopeCountyParser extends FieldProgramParser {
+public class MNPopeCountyParser extends DispatchA43Parser {
   public MNPopeCountyParser() {
-    super("POPE COUNTY", "MN", 
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY? ID:ID! PRI:PRI? INFO:INFO+");
-  }
-  
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
+    super("POPE COUNTY", "MN");
   }
 }
