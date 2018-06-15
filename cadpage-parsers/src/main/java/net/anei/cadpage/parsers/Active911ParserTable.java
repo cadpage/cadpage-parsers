@@ -72,7 +72,7 @@ public class Active911ParserTable {
       "US/AL/LimestoneCounty",            "ALLimestoneCountyA",
       "US/AL/MadCo911",                   "ALMadisonCounty",
       "US/AL/MadisonCounty",              "ALMadisonCounty",
-      "US/AL/Malvern",                    "ALGenevaCountyB",
+      "US/AL/Malvern",                    "ALGenevaCountyC",
       "US/AL/MarionCounty",               "ALMarionCounty",
       "US/AL/MarshallCounty",             "ALMarshallCounty",
       "US/AL/MobileCounty",               "ALMobileCounty",
