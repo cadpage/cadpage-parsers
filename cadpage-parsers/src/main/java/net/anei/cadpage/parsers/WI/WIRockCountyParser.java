@@ -18,7 +18,7 @@ public class WIRockCountyParser extends DispatchH03Parser {
     return "RCCC@co.rock.wi.us";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,4})-Active911");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,4})-(?:Active911|IAMResp)");
 
   @Override
   public boolean parseHtmlMsg(String subject, String body, Data data) {
@@ -51,10 +51,14 @@ public class WIRockCountyParser extends DispatchH03Parser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BE", "BELOIT",
       "BT", "BELOIT",
       "JT", "JOHNSTOWN",
       "JV", "JANESVILLE",
       "HT", "HARMONY",
+      "LT", "LIMA",
+      "ML", "MILTON",
+      "MT", "MILTON",
       "RT", "ROCK"
   });
 }
