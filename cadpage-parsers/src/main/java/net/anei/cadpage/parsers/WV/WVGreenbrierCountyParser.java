@@ -13,7 +13,7 @@ public class WVGreenbrierCountyParser extends SmartAddressParser {
   
   public WVGreenbrierCountyParser() {
     super("GREENBRIER COUNTY", "WV");
-    setFieldList("DATE TIME CODE CALL ADDR APT CITY ST");
+    setFieldList("DATE TIME CODE CALL ADDR APT CITY ST INFO");
   }
   
   @Override
@@ -21,11 +21,20 @@ public class WVGreenbrierCountyParser extends SmartAddressParser {
     return "greenbrier@pagingpts.com";
   }
   
-  private static final Pattern MASTER = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d(?: [AP]M)?) ([A-Z]+) (\\d+ .*)");
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d(?: [AP]M)?) ([A-Z0-9/]+) (\\d+ .*)");
   private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+  private static final Pattern INFO_PFX_PTN = Pattern.compile("[A-Z, ]+\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d: *");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("(?:The|This) message was sent .*|\" on .*");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    String info = null;
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) {
+      info = body.substring(pt+2).trim();
+      body = body.substring(0, pt).trim();
+    }
     
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
@@ -50,6 +59,16 @@ public class WVGreenbrierCountyParser extends SmartAddressParser {
     data.strCity = city;
     addr = stripFieldStart(p.get(), "0 ");
     parseAddress(addr, data);
+    
+    if (info != null) {
+      for (String line : info.split("\n")) {
+        line = line.trim();
+        match = INFO_PFX_PTN.matcher(line);
+        if (match.lookingAt()) line = line.substring(match.end());
+        if (INFO_JUNK_PTN.matcher(line).matches()) continue;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+    }
 
     return true;
   }
