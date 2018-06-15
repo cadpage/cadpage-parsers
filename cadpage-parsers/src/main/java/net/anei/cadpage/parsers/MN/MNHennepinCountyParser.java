@@ -16,17 +16,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class MNHennepinCountyParser extends FieldProgramParser {
   
-  private static final Pattern FIELD_PTN = Pattern.compile(";\\s*([A-Z]+)-");
-  
   public MNHennepinCountyParser() {
     super(CITY_LIST, "HENNEPIN COUNTY", "MN",
-          "NAME LOC:ADDR! CITY:CITY? EVTYPE:CALL! COMMENTS:INFO");
+          "NAME ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " + 
+               "| ADDRESS:ADDR! APT#:APT! CITY:CITY! X_STREET:X! EVTYPE:CALL! INC#:ID! ) COMMENTS:INFO");
   }
   
   @Override
   public String getFilter() {
     return "sheriff.cadpaging@co.hennepin.mn.us,SHERIFF.CADPAGING@HENNEPIN.US";
   }
+  
+  private static final Pattern FIELD_PTN = Pattern.compile("; *((?:X )?[A-Z]+#?)-");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -152,6 +153,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_PFX_PTN = Pattern.compile("\\[\\d+\\] *(.*)");
   private static final Pattern INFO_CROSS_PTN = Pattern.compile(".*: ?cross streets ?: *(.*?)");
   private static final Pattern INFO_UNIT_PTN = Pattern.compile("Resources required for this event are: *(.*)");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d+ Nearby Events found .*");
@@ -161,8 +163,10 @@ public class MNHennepinCountyParser extends FieldProgramParser {
       
       for (String line : field.split("\n")) {
         String connect = "\n";
+        Matcher match = INFO_PFX_PTN.matcher(line);
+        if (match.matches()) line = match.group(1);
         for (String part : line.trim().split("  +")) {
-          Matcher match = INFO_CROSS_PTN.matcher(part);
+          match = INFO_CROSS_PTN.matcher(part);
           if (match.matches()) {
             data.strCross = match.group(1).trim();
             continue;
