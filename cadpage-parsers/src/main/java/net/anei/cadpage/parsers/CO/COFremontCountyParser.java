@@ -11,6 +11,6 @@ public class COFremontCountyParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "FRECOM911@FREMONTSO.COM";
+    return "FRECOM911@FREMONTSO.COM,FRECOM911@PUBLICSAFETYSOFTWARE.NET";
   }
 }

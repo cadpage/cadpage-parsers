@@ -1,34 +1,12 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
 
-public class MNCrowWingCountyParser extends FieldProgramParser {
+public class MNCrowWingCountyParser extends DispatchA43Parser {
   
   public MNCrowWingCountyParser() {
-    super(CITY_LIST, "CROW WING COUNTY", "MN",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR/S? CITY:CITY? ID:ID! PRI:PRI! INFO:INFO+");
-  }
-
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z]{3}\\d{10}", true);
-    if (name.equals("PRI")) return new PriorityField("\\d");
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-  
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      data.strSupp = append(data.strSupp, "; ", field);
-    }
+    super(CITY_LIST, "CROW WING COUNTY", "MN");
   }
   
   private static final String[] CITY_LIST = new String[]{

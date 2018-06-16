@@ -29,7 +29,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Message")) data.strSource = subject;
     
-    int pt = body.indexOf("\n\n");
+    int pt = body.indexOf("\n\nThis email");
     if (pt >= 0) body = body.substring(0,pt).trim();
     String[] flds = body.split("\n");
     if (flds.length < 12) flds = DELIM.split(body);
@@ -48,7 +48,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z]", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z]|NOT FOUND", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     return super.getField(name);
   }

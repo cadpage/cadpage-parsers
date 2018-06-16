@@ -2670,7 +2670,7 @@ public class FieldProgramParser extends SmartAddressParser {
       
     return field;
   }
-  private static final Pattern SPEC_APT_INTERSECT_PTN = Pattern.compile("(?!\\d/\\d$)(?:([A-Z0-9]{1,3}) *)?(?:[&/]|\\bAND\\b|\\bOFF\\b) *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SPEC_APT_INTERSECT_PTN = Pattern.compile("(?!\\d/\\d$|1/2\\b)(?:([A-Z0-9]{1,3}) *)?(?:[&/]|\\bAND\\b|\\bOFF\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_ADDR_PTN = Pattern.compile("(?:NORTH|SOUTH|EAST|WEST) OF .*");
   
   /**

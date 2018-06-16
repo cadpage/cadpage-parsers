@@ -1,17 +1,10 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
-public class MNRoseauCountyParser extends FieldProgramParser {
+public class MNRoseauCountyParser extends DispatchA43Parser {
   
   public MNRoseauCountyParser() {
-    super("ROSEAU COUNTY", "MN", 
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR/S6! CITY:CITY? ID:ID! INFO:INFO/N+");
-  }
-  
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
+    super("ROSEAU COUNTY", "MN");
   }
 }

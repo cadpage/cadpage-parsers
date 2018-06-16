@@ -16,7 +16,8 @@ public class VAAccomackCountyParser extends DispatchOSSIParser {
   
   public VAAccomackCountyParser(String county) {
     super(CITY_CODES, county, "VA",
-           "FYI? CALL ADDR! ( CITYST | CITY MAP MAP ) X X INFO+? ID");
+           "FYI? CALL ADDR! ( CITYST | CITY ( MAP MAP/C | ) | ) ( X/Z X/Z PLACE ID | X/Z X_PLACE/Z ID | X X? PLACE? ID | PLACE? ID ) END");
+    setupSpecialStreets("WILDLIFE LOOP ACCESS");
   }
   
   @Override
@@ -33,32 +34,38 @@ public class VAAccomackCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    boolean suspect = true;
     Matcher match = OPT_MARKER.matcher(body);
-    if (match.lookingAt()) body = body.substring(match.end());
-    return super.parseMsg(body, data);
+    if (match.lookingAt()) {
+      suspect = false;
+      body = body.substring(match.end());
+    }
+    
+    if (body.startsWith("CAD:")) {
+      suspect = false;
+    } else {
+      body = "CAD:" + body;
+    }
+    
+    if (!super.parseMsg(body, data)) return false;
+    return (!suspect || data.strCity.length() > 0 || data.strCallId.length() > 0);
   }
 
   @Override
   protected Field getField(String name) {
     if (name.equals("CITYST")) return new CityStField();
-    if (name.equals("MAP")) return new MyMapField();
-    if (name.equals("ID")) return new IdField("\\d{8,}");
+    if (name.equals("MAP")) return new MapField("[A-Z]\\d+(?:-[A-Z]?)?", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("X_PLACE")) return new MyCrossPlaceField();
+    if (name.equals("ID")) return new IdField("\\d{8,}", true);
     return super.getField(name);
   }
 
   // We need a special field parser to handle the CITYST field
   private class CityStField extends Field {
-
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (! field.contains(" ")) return false;
-      parse(field, data);
-      return true;
+    
+    public CityStField() {
+      super("[A-Z ]+ (?:DE|MD|VA)", true);
     }
 
     @Override
@@ -74,11 +81,37 @@ public class VAAccomackCountyParser extends DispatchOSSIParser {
     }
   }
   
-  // And we need a special MAP field that will append two map data fields
-  private class MyMapField extends MapField {
+  private class MyCrossField extends CrossField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (super.checkParse(field,  data)) return true;
+      if (field.equals("UNNAMED")) {
+        super.parse(field,  data);;
+        return true;
+      }
+      return false;
+    }
+  }
+  
+  private class MyCrossPlaceField extends MyCrossField {
+    
+    @Override
+    public boolean canFail() {
+      return false;
+    }
+    
     @Override
     public void parse(String field, Data data) {
-      data.strMap = append(data.strMap, ",", field);
+      if (isValidCrossStreet(field)) {
+        super.parse(field, data);
+      } else {
+        data.strPlace = field;
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "X PLACE";
     }
   }
   

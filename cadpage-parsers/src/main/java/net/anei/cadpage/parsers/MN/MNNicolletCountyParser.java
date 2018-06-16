@@ -1,18 +1,11 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
-public class MNNicolletCountyParser extends FieldProgramParser {
+public class MNNicolletCountyParser extends DispatchA43Parser {
   
   public MNNicolletCountyParser() {
-    super("NICOLLET COUNTY", "MN", 
-          "CALL:CALL! ADDR:ADDR/S6! CITY:CITY ID:ID! INFO:INFO/N+");
+    super("NICOLLET COUNTY", "MN");
     setupSpecialStreets("CHAPEL VIEW");
-  }
-  
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
   }
 }

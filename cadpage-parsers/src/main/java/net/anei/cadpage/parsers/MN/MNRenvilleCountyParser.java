@@ -1,18 +1,10 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
-public class MNRenvilleCountyParser extends FieldProgramParser {
+public class MNRenvilleCountyParser extends DispatchA43Parser {
   
   public MNRenvilleCountyParser() {
-    super("RENVILLE COUNTY", "MN", 
-          "CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY ID:ID! PRI:PRI INFO:INFO");
+    super("RENVILLE COUNTY", "MN");
   }
-  
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";", 6), data);
-  }
-
 }
