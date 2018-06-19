@@ -22,7 +22,7 @@ public class MSBiloxiParser extends DispatchA37Parser {
   
   @Override
   public String getFilter() { 
-    return "BiloxiDispatch@biloxi.ms.us"; 
+    return "BiloxiDispatch@biloxi.ms.us,Biloxi_Dispatch@biloxi.ms.us"; 
   }
   
   @Override
