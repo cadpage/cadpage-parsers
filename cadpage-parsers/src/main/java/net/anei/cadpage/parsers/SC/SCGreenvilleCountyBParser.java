@@ -6,22 +6,29 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SCGreenvilleCountyBParser extends FieldProgramParser {
   
   public SCGreenvilleCountyBParser() {
-    super("GREENVILLE COUNTY", "SC", 
-          "CALL ADDR CITY XINFO! END");
+    super(CITY_LIST, "GREENVILLE COUNTY", "SC", 
+          "CALL ADDR! CITY? XINFO END");
   }
   
   @Override
   public String getFilter() {
-    return "active911@parkerfd.com";
+    return "active911@parkerfd.com,@whfd.org";
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!body.startsWith(subject+';')) return false;
-    
+  protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("<img src=");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(body.split(";"), data);
+    if (!parseFields(body.split(";"), data)) return false;
+    if (data.strCity.length() == 0) {
+      pt = data.strAddress.lastIndexOf(':');
+      if (pt >= 0) {
+        data.strCity = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0, pt).trim();
+        return true;
+      }
+    }
+    return data.strCity.length() > 0 || isPositiveId();
   }
   
   @Override
@@ -33,6 +40,10 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
   private class MyCrossInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (data.strCity.length() == 0) {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field, data);
+        field = getLeft();
+      }
       if (field.startsWith("Between ")) {
         field = field.substring(8).trim();
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, field, data);
@@ -43,7 +54,43 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "X " + super.getFieldNames();
+      return "CITY X " + super.getFieldNames();
     }
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "FOUNTAIN INN",
+      "GREENVILLE",
+      "GREER",
+      "MAULDIN",
+      "SIMPSONVILLE",
+      "TRAVELERS REST",
+
+      // Census-designated places
+      "BEREA",
+      "CITY VIEW",
+      "DUNEAN",
+      "FIVE FORKS",
+      "GANTT",
+      "GOLDEN GROVE",
+      "JUDSON",
+      "PARKER",
+      "PIEDMONT",
+      "SANS SOUCI",
+      "MARIETTA",
+      "TAYLORS",
+      "TIGERVILLE",
+      "WADE HAMPTON",
+      "WARE PLACE",
+      "WELCOME",
+
+      // Unincorporated communities
+      "CLEVELAND",
+      "CONESTEE",
+      
+      ""    // Empty city is valid
+      
+  };
 }
