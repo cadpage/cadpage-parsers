@@ -816,7 +816,7 @@ public class ParserList {
               ,"MOColeCounty"                   ,"Cole County, MO"
               ,"MOCrawfordCounty"               ,"Crawford County, MO"
               ,"MODallasCounty"                 ,"Dallas County, MO"
-              ,"MODekalbCounty"                 ,"Dekalb County, MO"
+              ,"MODekalbCounty"                 ,"DeKalb County, MO"
               ,"MOFarmington"                   ,"Farmington, MO"
               ,"MOFestus"                       ,"Festus, MO"
               ,"MOFranklinCounty"               ,"Franklin County, MO"
