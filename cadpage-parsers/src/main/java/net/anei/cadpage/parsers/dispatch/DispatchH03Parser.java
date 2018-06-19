@@ -90,6 +90,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (name.equals("ZIP")) return new BaseZipField();
     if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("DASHES")) return new SkipField("-{10,}");
+    if (name.equals("X")) return new BaseCrossField();
     if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("ID2")) return new BaseIdField();
     return super.getField(name);
@@ -112,6 +113,14 @@ public class DispatchH03Parser extends FieldProgramParser {
       if (!match.matches()) abort();
       setTime(TIME_FMT, match.group(1), data);
       data.strDate = match.group(2);
+    }
+  }
+  
+  private class BaseCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      super.parse(field, data);
     }
   }
   
