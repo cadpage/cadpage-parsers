@@ -21,7 +21,7 @@ public class PADelawareCountyBParser extends FieldProgramParser {
   public PADelawareCountyBParser() {
     super(CITY_CODES, "DELAWARE COUNTY", "PA",
           "( SELECT/1 ADDR CITY/Z? CALL DATE TIME ID INFO/N+? ALERT! END " +
-          "| SELECT/2 ADDR2/S X1:XADDR? X2:X? Nature:CALL2! EID:SKIP? CALLER_NAME:NAME? CALLER_ADDR:SKIP? Time:TIME2 Notes:INFO? EID:SKIP? Inc:ID2 Beat:BOX Disp:UNIT " +
+          "| SELECT/2 ADDR2/S X1:XADDR? X2:X? Nature:CALL2! EID:SKIP? CALLER_NAME:NAME? CALLER_ADDR:SKIP? Time:TIME2 Notes:INFO? EID:SKIP? Inc:ID2? Beat:BOX? LL:GPS? Disp:UNIT " +
           "| ADDR:ADDR! CITY:CITY! CALL:CALL! DATE:DATE! TIME:TIME! ID:ID! INFO:INFO! CRITERIA:SKIP! STATION:SRC! )");
   }
   
