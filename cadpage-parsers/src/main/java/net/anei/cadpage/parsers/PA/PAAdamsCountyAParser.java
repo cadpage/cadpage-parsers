@@ -945,6 +945,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "245 NORRIS RD",                        "+39.982635,-77.379913",
       "250 NORRIS RD",                        "+39.983135,-77.380325",
       
+      "995 NEW RD A",                         "+39.911772,-77.377845",
+      "995 NEW RD B",                         "+39.912016,-77.376179",
+      "995 NEW RD C",                         "+39.912387,-77.375111",
+      "995 NEW RD D",                         "+39.911345,-77.372949",
+      "995 NEW RD E",                         "+39.911977,-77.375030",
+      "995 NEW RD F",                         "+39.911372,-77.375566",
+      
       "1075 OLD HARRISBURG RD APT 2",         "+39.850978,-77.217316",
       "1075 OLD HARRISBURG RD APT 4",         "+39.850964,-77.217130",
       "1075 OLD HARRISBURG RD APT 6",         "+39.850950,-77.216930",
