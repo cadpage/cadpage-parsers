@@ -1,15 +1,7 @@
 package net.anei.cadpage.parsers.OR;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
-
-
-
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -21,12 +13,14 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   public ORMarionCountyAParser() {
     super("MARION COUNTY", "OR",
-          "( SELECT/1 INFO:CALL! CALL1/SDS LOC:ADDRCITY1! CFS:SKIP! DATETIME! Units:UNIT! ID INFO/N+ " +
-          "| CALL2 ( ADDRCITY2 ( UNIT! ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) EMPTY+? UNIT ) " +
-                  "| CALL CH/Z ADDRCITY2 MAP UNIT " +
-                  "| CALL CH ADDRCITY2 MAP UNIT" +
-                  "| ADDRCITY2 ( UNIT! EMPTY? ( MAP | INFO MAP | ) | PLACE? MAP! ( CH | ALRM | ) UNIT ) ) INFO+ )");
+          "( SELECT/1 INFO:CALL! CALL1/SDS LOC:ADDRCITY1! CFS:SKIP! DATETIME! Units:UNITZ! ID INFO/N+ " +
+          "| CALL ADDRCITY2 ( MAP EMPTY+? CH? EMPTY+? UNIT? " + 
+                           "| ( APT UNIT | UNIT ) ( MAP | INFO MAP | INFO PLACE/Z MAP | ) ( CH | ALRM/SDS | ) " + 
+                           "| ( PLACE/Z APT INFO MAP | APT PLACE/Z MAP | APT_PLACE MAP | MAP | ) EMPTY+? CH? EMPTY+? UNIT? " + 
+                           ") " + 
+          ") INFO+");
     setupSaintNames("PAUL");
+    removeWords("ESTATES", "LANE", "ROAD");
   }
   
   @Override
@@ -34,7 +28,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     return "Dispatch@ci.woodburn.or.us";
   }
   
-  private static final Pattern MAP_PTN = Pattern.compile(":MAP::(\\d+[A-Z]?):");
+  private static final Pattern MAP_PTN = Pattern.compile(":MAP[-:]:(\\d+[A-Z]?):");
   private static final Pattern DELIM = Pattern.compile("(?<!LAT|LON):");
 
   @Override
@@ -82,32 +76,17 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL1")) return new SkipField("\\*{2} *(.*?) *\\*{2}", true);
     if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
-    
-    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("CH")) return new ChannelField("N\\d|", true);
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("UNIT")) return new MyUnitField(false);
+    if (name.equals("UNITZ")) return new MyUnitField(true);
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("MAP")) return new MapField("MAP-?(.*)", true);
-    if (name.equals("ALRM")) return new MyAlarmField();
+    if (name.equals("MAP")) return new MapField("MAP\\b-?(.*)", true);
+    if (name.equals("ALRM")) return new CallField("\\.(.* ALRM)", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-  
-  private class MyCall2Field extends CallField {
-    
-    public MyCall2Field() {
-      super();
-    }
-    
-    public MyCall2Field(String pattern, boolean hard) {
-      super(pattern, hard);
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      data.strCall = append(data.strCall, " - ", field);
-    }
   }
   
   private static final Pattern VALID_ADDR1_PTN = Pattern.compile("(.*?),([ A-Z]*)-(.*)");
@@ -131,23 +110,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     
   }
   
-  private static final Pattern VALID_ADDR2_PTN = Pattern.compile("[-@/ A-Z0-9]+,([A-Z ]+)|.*\\bMP\\b.*|.* COMPLEX|LAT:.* LON:.*", Pattern.CASE_INSENSITIVE);
   private class MyAddressCity2Field extends AddressCityField {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher match = VALID_ADDR2_PTN.matcher(field);
-      if (!match.matches())  return false;
-      String city = match.group(1);
-      if (city != null && !CITY_SET.contains(city.trim().toUpperCase())) return false;
-      parse(field, data);
-      return true;
-    }
     
     @Override
     public void parse(String field, Data data) {
@@ -170,11 +133,13 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|MCSO|RCO|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD|SEND_TRPD)(?:,.*)?");
+  private static final String UNIT_PTN_STR = "(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|AC|BLJ|DS|DT-LK-STPARK|JT|MCSO|ODF|PUBLWRKS|RCO|SEND_MAPD|SEND_[A-Z]+|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?";
+  private static final Pattern UNIT_PTN = Pattern.compile(UNIT_PTN_STR);
+  private static final Pattern UNITZ_PTN = Pattern.compile("|" + UNIT_PTN_STR);
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
   private class MyUnitField extends UnitField {
-    public MyUnitField() {
-      setPattern(UNIT_PTN);
+    public MyUnitField(boolean emptyOK) {
+      setPattern(emptyOK ? UNITZ_PTN : UNIT_PTN, true);
     }
     
     @Override
@@ -195,20 +160,39 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern APT1_PTN = Pattern.compile("(?:#[ #]*|(?:APT|LOT|SP|SPACE|RM|ROOM|UNIT)[ #]+)(.*)", Pattern.CASE_INSENSITIVE);
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT1_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern APT2_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-DF-H]|BLDG.*", Pattern.CASE_INSENSITIVE);
+  private class MyAptPlaceField extends MyPlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match =  APT1_PTN.matcher(field);
+      if (match.matches()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+      }
+      else if (APT2_PTN.matcher(field).matches()) {
+        data.strApt = append(data.strApt, "-", field);
+      } else {
+        super.parse(field, data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "APT " + super.getFieldNames();
+    }
+  }
+  
   private static final Pattern PLACE_PHONE_PTN = Pattern.compile("(.*?) +(\\d{3}[- ]?\\d{3}[- ]?\\d{4})");
   private class MyPlaceField extends PlaceField {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.startsWith("MAP")) return false;
-      parse(field, data);
-      return true;
-    }
     
     @Override 
     public void parse(String field, Data data) {
@@ -227,19 +211,46 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private class MyAlarmField extends MyCall2Field {
-    public MyAlarmField() {
-      super("\\.(.* ALRM)", true);
-    }
-  }
-  
-  private static final Pattern PHONE_PTN = Pattern.compile("\\d{10}");
+  private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("(\\d{2,3}\\.\\d{6,})/(-\\d{2,3}\\.\\d{6,})");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (PHONE_PTN.matcher(field).matches()) {
-        data.strPhone = field;
+      
+      if (data.strPhone.length() == 0) {
+        
+        Matcher match = PLACE_PHONE_PTN.matcher(field);
+        if (match.matches()) {
+          data.strPlace = append(data.strPlace, " - ", match.group(1));
+          data.strPhone = match.group(2);
+          return;
+        }
+        
+        match = PHONE_PTN.matcher(field);
+        if (match.matches()) {
+          data.strPhone = match.group(1);
+          field = match.group(2);
+        }
+      }
+      
+      if (field.equals(data.strAddress)) return;
+      
+      if (data.strMap.length() == 0) {
+        if (field.startsWith("MAP-")) {
+          data.strMap = field.substring(4).trim();
+          return;
+        }
+        
+        if ("MAP-".startsWith(field)) return;
+      }
+      
+      if (field.startsWith("BETWEEN ")) {
+        data.strCross = append(data.strCross, "/", field.substring(8).trim());
+        return;
+      }
+      
+      if (isValidCrossStreet(field)) {
+        data.strCross = append(data.strCross, "/", field);
         return;
       }
       
@@ -263,74 +274,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " PLACE PHONE GPS";
+      return super.getFieldNames() + " X PLACE PHONE GPS MAP";
     }
   }
-  
-  private static final Set<String> CITY_SET = new HashSet<String>(Arrays.asList(
-    
-    // Counties
-    "CLACKAMAS COUNTY",
-    "JEFFERSON COUNTY",
-    "LINN COUNTY",
-    "MARION COUNTY",
-    "POLK COUNTY",
-    "WASCO COUNTY",
-    "YAMHILL COUNTY",
-
-    // Cities
-    "AUMSVILLE",
-    "AURORA",
-    "DETROIT",
-    "DONALD",
-    "GATES",
-    "GERVAIS",
-    "HUBBARD",
-    "IDANHA",
-    "JEFFERSON",
-    "KEIZER",
-    "MILL CITY",
-    "MT ANGEL",
-    "ST PAUL",
-    "SALEM",
-    "SCOTTS MILLS",
-    "SILVERTON",
-    "STAYTON",
-    "SUBLIMITY",
-    "TURNER",
-    "WOODBURN",
-
-    // Unincorporated communities and CDPs
-    "BREITENBUSH",
-    "BROOKS",
-    "BUTTEVILLE",
-    "CHAMPOEG",
-    "CHEMAWA",
-    "CLEAR LAKE",
-    "FOUR CORNERS",
-    "HAYESVILLE",
-    "LABISH VILLAGE",
-    "MACLEAY",
-    "MARION",
-    "MCKEE",
-    "MEHAMA",
-    "MIDDLE GROVE",
-    "MONITOR",
-    "NIAGARA",
-    "NORTH HOWELL",
-    "PRATUM",
-    "ROSEDALE",
-    "SAINT BENEDICT",
-    "SAINT LOUIS",
-    "SHAW",
-    "TALBOT",
-    "WACONDA",
-    "WEST STAYTON",
-    
-    // Clackamas County
-    "MOLALLA",
-    
-    // Linn County
-    "LYONS"
-  ));
 }
