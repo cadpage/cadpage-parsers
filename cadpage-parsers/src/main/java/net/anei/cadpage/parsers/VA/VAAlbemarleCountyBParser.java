@@ -17,13 +17,13 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
   public VAAlbemarleCountyBParser() {
     super("ALBEMARLE COUNTY", "VA",
           "( HTML_ADDRCITY NATURE_UNIT_CROSS! INFO/N+ " +
-          "| SRC! INC:ID! TYP:CALL1! UNITS:UNIT! AD:ADDRCITY% APT:APT% CROSS_STREETS:X% NAME:NAME% NATURE:CALL/SDS% NARRATIVE:INFO/N+ ESN:BOX% DT:DATETIME% END )");
+          "| SRC! INC:ID! TYP:CALL1! UNITS:UNIT! AD:ADDRCITY% APT:APT% CROSS_STREETS:X% LAT:GPS1 LON:GPS2 NAME:NAME% NATURE:CALL/SDS% NARRATIVE:INFO/N+ ESN:BOX% DT:DATETIME% END )");
     setupProtectedNames("LEWIS AND CLARK");
   }
   
   @Override
   public String getFilter() {
-    return "cad2@acuecc.org,jplumb@albemarle.org";
+    return "cad2@acuecc.org,dpuckett@albemarle.org,jplumb@albemarle.org,powellbr@charlottesville.org";
   }
 
   @Override

@@ -41,7 +41,7 @@ public class VAAlbemarleCountyCParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X"))  return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d{1,3}(?:A|ALS|CHF|DUTY)?|COUNTY(?:BC\\d+|DUTY|FM)?)\\b[, ]*)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d{1,3}(?:A|ALS|CHF|DUTY)?|COUNTY(?:BC\\d+|DUTY|FM)?|VOL)\\b[, ]*)+", true);
     return super.getField(name);
   }
   
@@ -73,6 +73,7 @@ public class VAAlbemarleCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("Searching Cross Streets...")) return;
+      if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
     }
   }
