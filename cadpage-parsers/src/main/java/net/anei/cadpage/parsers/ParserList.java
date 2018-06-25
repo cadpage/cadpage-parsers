@@ -1632,8 +1632,9 @@ public class ParserList {
               ,"ZCAABTaber"                     ,"Taber, AB"
           ),
           new ParserCategory("British Columbia, Canada"
-              ,"ZCABCMidIslandRegion"           ,"Mid-Island Region, BC"
+              ,"ZCABCVancouverIsland"           ,"VancouverIsland, BC"
               ,"ZCABCNanaimo"                   ,"Nanaimo, BC"
+              ,"ZCABCPeaceRiverRegionalDistrict","Peace River Reginal District, BC"
               ,"ZCABCPrinceGeorge"              ,"Prince George, BC"
           ),
           new ParserCategory("Nova Scotia, Canada"
