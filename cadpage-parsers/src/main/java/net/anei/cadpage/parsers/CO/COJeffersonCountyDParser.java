@@ -23,7 +23,16 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern DELIM = Pattern.compile("[ ,],|,(?= |\\d\\d:\\d\\d$)");
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    // They **REALLY** mangled this
+    int pt = body.indexOf("\n\n<html>");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
+  private static final Pattern DELIM = Pattern.compile("[ ,],|,(?= |[_A-Z]+TAC\\d\\b|\\d\\d:\\d\\d$)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -48,7 +57,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z]|NOT FOUND", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z](?:-[A-Z])?|NOT FOUND", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
