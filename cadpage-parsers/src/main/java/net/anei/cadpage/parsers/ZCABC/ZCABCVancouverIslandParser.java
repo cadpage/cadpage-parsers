@@ -12,13 +12,13 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
 
   public ZCABCVancouverIslandParser() {
     this("", "BC");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   public ZCABCVancouverIslandParser(String defCity, String defState) {
     super(defCity, defState, "CALL? ADDR/ZSC CITY DATETIME!");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -28,7 +28,8 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
   
   @Override
   public String getLocName() {
-    return "Mid-Island Region, BC";
+    if (this.getClass() == ZCABCVancouverIslandParser.class) return "Vancouver Island, BC";
+    return super.getLocName();
   }
   
   private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SPROAT LAKE|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");

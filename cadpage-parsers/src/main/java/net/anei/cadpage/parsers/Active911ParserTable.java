@@ -23,6 +23,7 @@ public class Active911ParserTable {
       "CA/BC/Interlakes",                 "ZCABCPrinceGeorge",
       "CA/BC/MidIsland",                  "ZCABCVancouverIsland",
       "CA/BC/Nanaimo",                    "ZCABCNanaimo",
+      "CA/BC/NI911",                      "ZCABCPeaceRiverRegionalDistrict",
       "CA/BC/PrinceGeorge",               "ZCABCPrinceGeorge",
       "CA/ON/BarrieCAD",                  "ZCAONSimcoeCounty",
       "CA/ON/ChathamKent",                "ZCAONChathamKent",
