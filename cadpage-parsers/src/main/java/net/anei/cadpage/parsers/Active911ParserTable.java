@@ -469,6 +469,7 @@ public class Active911ParserTable {
       "US/KS/LeavenworthCounty",          "KSLeavenworthCounty",
       "US/KS/MarionCounty",               "KSMarionCounty",
       "US/KS/McPhersonCounty",            "KSMcPhersonCounty",
+      "US/KS/MiamiCounty",                "KSMiamiCounty",
       "US/KS/MontgomeryCounty",           "KSMontgomeryCounty",
       "US/KS/NeoshoCounty",               "KSNeoshoCounty",
       "US/KS/PottawatomieSheriff",        "KSPottawatomieCounty",
