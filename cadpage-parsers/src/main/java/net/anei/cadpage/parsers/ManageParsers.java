@@ -224,7 +224,8 @@ public class ManageParsers {
         "TXWharton",          "TXWhartonCounty",         // 03/29/2018
         "ZCAONMississauga",   "ZCAONSimcoeCountyB",      // 06/01/2018
         "OKTulsaA",           "OKTulsa",                 // 06/08/2018
-        "OKTulsaC",           "OKTulsa"
+        "OKTulsaC",           "OKTulsa",
+        "ZCABCMidIslandRegion","ZCABCVancouverIsland"   // 06/24/2018
   });
 
 }

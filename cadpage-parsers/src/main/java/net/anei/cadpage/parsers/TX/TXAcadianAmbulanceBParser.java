@@ -1,11 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
+import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
+
 /*
 Acadian Ambulance, TX
 
 */
 
-public class TXAcadianAmbulanceBParser extends TXBurnetCountyParser {
+public class TXAcadianAmbulanceBParser extends DispatchA72Parser {
 
   public TXAcadianAmbulanceBParser() {
     super("", "TX");

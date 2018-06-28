@@ -8,17 +8,17 @@ import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class ZCABCMidIslandRegionParser extends FieldProgramParser {
+public class ZCABCVancouverIslandParser extends FieldProgramParser {
 
-  public ZCABCMidIslandRegionParser() {
+  public ZCABCVancouverIslandParser() {
     this("", "BC");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
-  public ZCABCMidIslandRegionParser(String defCity, String defState) {
+  public ZCABCVancouverIslandParser(String defCity, String defState) {
     super(defCity, defState, "CALL? ADDR/ZSC CITY DATETIME!");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -28,10 +28,11 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
   
   @Override
   public String getLocName() {
-    return "Mid-Island Region, BC";
+    if (this.getClass() == ZCABCVancouverIslandParser.class) return "Vancouver Island, BC";
+    return super.getLocName();
   }
   
-  private static final Pattern SRC_PTN = Pattern.compile("(BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|COMOX|COURTENAY|CUMBERLAND|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|OYSTER RIVER|PT ALBERNI|PT HARDY|SPROAT LAKE|TOFINO|UCLUELET|UNION BAY) *(.*)");
+  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SPROAT LAKE|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("\\(?([-+]?[\\d:\\.]+),([-+]?[\\d:\\.]+)\\)");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private static final Pattern GPS_PTN2 = Pattern.compile("([-+]?\\d+)(\\d{6}),([-+]?\\d+)(\\d{6})");
@@ -65,7 +66,6 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
         setGPSLoc(match.group(1)+'.'+match.group(2)+','+match.group(3)+'.'+match.group(4), data);
       }
     }
-
     
     // GPS coordinates contain a comma which must be escaped
     body = GPS_PTN.matcher(body).replaceAll("($1|$2)");
@@ -126,7 +126,13 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
       if (!match.matches()) return false;
       data.strDate = match.group(1);
       data.strTime = match.group(2);
-      data.strUnit = getOptGroup(match.group(3));
+      String unit = getOptGroup(match.group(3));
+      int pt = unit.indexOf("X-ST:");
+      if (pt >= 0) {
+        data.strCross = unit.substring(pt+5).trim();
+        unit = unit.substring(0, pt).trim();
+      }
+      data.strUnit = unit;
       return true;
     }
     
@@ -137,20 +143,25 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "DATE TIME UNIT";
+      return "DATE TIME UNIT X";
     }
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ACLE BEACH",
     "AVRO ARROW",
+    "BAY VIEW",
     "BEAR CAT",
     "BEAVER CK",
     "BEAVER CREEK",
     "BEAVER HARBOUR",
+    "BEN HAPPNER",
     "BLACK BEAR",
+    "BLACK CREEK",
     "BLUE JAY",
     "BOMBER BASE",
+    "BOUCHER LAKE",
+    "BRIND AMOUR",
     "BUCKLEY BAY FRONTAGE",
     "BUCKLEY BAY",
     "BUENA VISTA",
@@ -160,6 +171,8 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
     "CHERRY CK",
     "CHERRY CREEK",
     "CHESTERMAN BEACH",
+    "CIFIC RIM",
+    "CIVIC CORE",
     "COAL HARBOUR",
     "COLLEGE CAMPUS",
     "COMOX LAKE",
@@ -172,16 +185,24 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
     "DISCOVERY HARBOUR",
     "DOLLY VARDEN",
     "DOVE CREEK",
+    "ELMA BAY",
+    "ESOWISTA IR",
     "FORBIDDEN PLATEAU",
     "FOREST GROVE",
     "GARTLEY POINT",
+    "GEORGIA STRAIT",
     "GLACIER VIEW",
     "GLEN EAGLE",
     "GOLD RIVER",
     "HARDY BAY",
+    "HART WABI",
+    "HIGH SALAL",
+    "HILLVIEW ACCESS",
     "HORNE LAKE",
     "INLAND ISLAND",
+    "IRACLE BEACH",
     "IRON RIVER",
+    "JAMES PAUL",
     "JENSEN COVE",
     "JENSENS BAY",
     "KEITH WAGNER",
@@ -190,18 +211,26 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
     "LACY LAKE",
     "LAKE TRAIL",
     "LEA SMITH",
+    "LITTLE BEAR",
     "LITTLE RIVER",
     "LITTLE TRIBUNE BAY",
     "LONE CONE",
     "LONG BEACH PARK ACCESS",
     "MACKENZIE BEACH",
     "MAPLE RIDGE",
+    "MARINE VISTA",
     "MARTIN PARK",
     "MCCOY LAKE",
     "MCIVOR LAKE",
+    "MEDICINE WOMAN",
+    "MEDICINE WOMEN",
+    "MIDDLE POINT",
     "MIRACLE BEACH",
+    "MOBERLY HEIGHTS",
     "MOX VALLEY",
     "MYSTERY BEACH",
+    "NORTH ACCESS",
+    "OCEAN PARK",
     "OYSTER GARDEN",
     "OYSTER RIVER",
     "PACIFIC RIM",
@@ -212,34 +241,41 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
     "PORT ALBERNI",
     "PORT AUGUSTA",
     "PT ALBERNI",
+    "R RIVER",
     "RADAR HILL",
+    "RALPH HUTTON",
     "RIVER BEND",
     "ROCK BAY",
     "ROY CREEK",
     "SALMON POINT",
     "SAND PINES",
     "SEA LION",
+    "SEA TERRACE",
     "SHINGLE SPIT",
     "SHIPS POINT",
     "SHOEMAKER BAY",
     "SHOOTING STAR",
+    "ST ANDREWS",
     "ST ANNS",
     "ST JOHN'S POINT",
     "ST JOHNS POINT",
     "STIRLING ARM",
+    "TATE CREEK",
     "TAYLOR ARM",
     "THE POINT",
     "TONQUIN PARK",
+    "TRADING POST",
     "TRIBUNE BAY PROVINCIAL",
     "TSULQUATE IR",
     "VALLEY VIEW",
+    "VETERANS MEMORIAL",
     "VILLAGE CONNECTER",
+    "VISTA BAY",
     "WALKER FRONTAGE",
     "WALTER GAGE",
     "WILLIAMS BEACH",
     "WILLIAMS BEACH",
     "YEW WOOD"
-
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -248,6 +284,7 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
       "ALARMS NON EMERGENCY",
       "ALARMS",
       "AVIATION INCIDENT",
+      "BEACH/BRUSH",
       "BEACH/BRUSH NON EMERG",
       "BEACH/BRUSH/MISC OUT EMERG",
       "BEACH/BRUSH/MISC OUT NON EMERG",
@@ -301,6 +338,7 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
       "NATURAL GAS/PROPANE",
       "OUTDOOR FIRE",
       "PUBLIC SERVICE",
+      "RESCUE -ELEVATOR",
       "RESCUE - ROAD",
       "RESCUE -CONFINED",
       "RESCUE -HIGH ANGLE",
@@ -310,7 +348,6 @@ public class ZCABCMidIslandRegionParser extends FieldProgramParser {
       "RESCUE LOW ANGLE/BCAS ASSIST",
       "RESCUE - ROAD",
       "RESCUE ROAD",
-      "RESCUE",
       "STRUCTURE - SMOKE",
       "STRUCTURE - SMOKE(FIRE IS OUT)",
       "STRUCTURE  - FIRE",
