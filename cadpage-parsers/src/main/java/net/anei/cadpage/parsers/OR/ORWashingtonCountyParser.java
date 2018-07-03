@@ -99,6 +99,7 @@ public class ORWashingtonCountyParser extends GroupBestParser {
     "SUBLIMITY",
     "THE DALLES",
     "TIGARD",
+    "TILLAMOOK",
     "TIMBER",
     "TROUTDALE",
     "TUALATIN",

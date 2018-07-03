@@ -20,7 +20,7 @@ public class ORYamhillCountyAParser extends DispatchA3Parser {
     return "CAD@newbergoregon.gov";
   }
 
-  private static Pattern MASTER = Pattern.compile("CAD:(.*?)(?: Line\\d+=)*(\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2} : pos\\d .*?)");
+  private static Pattern MASTER = Pattern.compile("CAD:(.*?)(?: Line\\d+=)*(\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2} : pos\\d .*?)?");
   private static Pattern END_UNIT_PTN = Pattern.compile("(.*) ([^ ]*\\b(?:MAPGR|[A-Z]+\\d+))");
   private static Pattern END_DIGIT_PTN = Pattern.compile("(.*)(\\d)");
   private static Pattern UNK_CALL_PTN = Pattern.compile("(.*?) ((?:(?:FIRE|RES|MVC) )?[^ ]+)");
@@ -35,7 +35,9 @@ public class ORYamhillCountyAParser extends DispatchA3Parser {
     
     // Cross street information is duplicated in both sections, but the second section is more reliable
     // so we will do it first.
-    if (!super.parseFields(new String[] { extra }, data)) return false;
+    if (extra != null) {
+      if (!super.parseFields(new String[] { extra }, data)) return false;
+    }
 
     // We will work the address field from the end.  Last token should be a comma separated unit field
     match = END_UNIT_PTN.matcher(addr);
