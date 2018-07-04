@@ -173,6 +173,7 @@ public class ORYamhillCountyAParser extends DispatchA3Parser {
       "SICKPERS",             "Sick Person",
       "STROKE",               "Stroke",
       "TOXIC",                "Toxic",
+      "TRANSFER",             "Transfer",
       "TRAUMA",               "Traumatic Injury",
       "UNCON",                "Unconscious",
       "UNKMED",               "Unknown Medical",

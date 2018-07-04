@@ -1359,6 +1359,7 @@ public class ParserList {
               ,"TXAransasCounty"                ,"Aransas County, TX"
               ,"TXBellCounty"                   ,"Bell County, TX"
               ,"TXBexarCounty"                  ,"Bexar County, TX"
+              ,"TXBosqueCounty"                 ,"Bosque County, TX"
               ,"TXBrazoriaCounty"               ,"Brazoria County, TX"
               ,"TXBrazosCounty"                 ,"Brazos County, TX"
               ,"TXBurnetCounty"                 ,"Burnet County, TX"
