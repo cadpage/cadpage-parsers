@@ -7,6 +7,7 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 public class NCMecklenburgCountyParser extends GroupBestParser {
   
   public NCMecklenburgCountyParser() {
-    super(new NCMecklenburgCountyAParser(), new GroupBlockParser(), new NCMecklenburgCountyBParser());
+    super(new NCMecklenburgCountyAParser(), new NCMecklenburgCountyCParser(), 
+          new GroupBlockParser(), new NCMecklenburgCountyBParser());
   }
 }
