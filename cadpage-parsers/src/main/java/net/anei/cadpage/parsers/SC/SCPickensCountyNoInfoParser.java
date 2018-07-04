@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * This a special Active911 only variant parser that is identical to the real SCPickensCounty parser
  * except that it return no supplemental information
  */
-public class SCPickensCountyNoInfoParser extends SCPickensCountyParser {
+public class SCPickensCountyNoInfoParser extends SCPickensCountyAParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
