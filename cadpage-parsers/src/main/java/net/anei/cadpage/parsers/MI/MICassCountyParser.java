@@ -1,15 +1,10 @@
 package net.anei.cadpage.parsers.MI;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA1Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class MICassCountyParser extends DispatchA1Parser {
+public class MICassCountyParser extends GroupBestParser {
   
   public MICassCountyParser() {
-    super("CASS COUNTY", "MI");
+    super(new MICassCountyAParser(), new MICassCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "Dispatcher@cassco.org,911_Copier@cassco.org,cpritchard@alertpss.com,dispatcher@porterfire.org,forwarding-noreply@google.com,riprun@cassco.org";
-  }
-}
+} 
