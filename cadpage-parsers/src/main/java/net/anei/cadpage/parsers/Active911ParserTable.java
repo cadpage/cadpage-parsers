@@ -1542,7 +1542,7 @@ public class Active911ParserTable {
       "US/VT/AddisonCounty",              "VTAddisonCounty",
       "US/VT/BurlingtonFD",               "VTChittendenCountyC",
       "US/VT/CaledoniaCounty",            "VTCaledoniaCounty",
-      "US/VT/ChittendenCounty",           "VTChittendenCounty",
+      "US/VT/ChittendenCounty",           "VTChittendenCountyA,VTChittendenCountyD",
       "US/VT/FranklinCounty",             "VTFranklinCounty",
       "US/VT/GrandIsleCounty",            "VTGrandIsleCounty",
       "US/VT/Hartford",                   "VTHartford",
