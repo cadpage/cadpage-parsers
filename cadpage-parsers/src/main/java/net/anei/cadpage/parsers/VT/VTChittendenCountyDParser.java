@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class VTChittendenCountyDParser extends FieldProgramParser {
   
   public VTChittendenCountyDParser() {
-    super("CHITTENDEN COUNTY", "VT", 
+    this("CHITTENDEN COUNTY");
+  }
+  
+  VTChittendenCountyDParser(String county) {
+    super(county, "VT",
           "CALL ADDR EMPTY X GPS! INFO/N+");
   }
   
@@ -18,6 +22,11 @@ public class VTChittendenCountyDParser extends FieldProgramParser {
     return "@alert.active911.com";
   }
   
+  @Override
+  public String getAliasCode() {
+    return "VTChittendenCountyD";
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\\|"), data);
@@ -44,6 +53,8 @@ public class VTChittendenCountyDParser extends FieldProgramParser {
           String apt = match.group(1);
           if (apt == null) apt = token;
           data.strApt = append(data.strApt, "-", apt);
+        } else if (token.startsWith("MM ") || token.startsWith("mm ")) {
+          data.strAddress = append(data.strAddress, " ", token);
         } else {
           data.strPlace = append(data.strPlace, " - ", token);
         }

@@ -1,8 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-public class VTWindhamCountyParser extends VTWindsorCountyParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Windham County, VT
+ */
+public class VTWindhamCountyParser extends GroupBestParser {
   
   public VTWindhamCountyParser() {
-    super("WINDHAM COUNTY");
+    super(new VTWindhamCountyAParser(), new VTWindhamCountyBParser());
   }
 }
