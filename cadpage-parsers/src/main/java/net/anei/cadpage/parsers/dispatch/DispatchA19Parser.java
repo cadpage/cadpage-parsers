@@ -76,6 +76,9 @@ public class DispatchA19Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       
+      // Reverse any accidently hash -> colon transformations
+      field = field.replace(": ", " # ");
+      
       Matcher match = ADDR_CITY_ST_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
