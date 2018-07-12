@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-
-
-public class VTGrandIsleCountyParser extends DispatchA19Parser {
+/**
+ * GrandIsle County, VT
+ */
+public class VTGrandIsleCountyParser extends GroupBestParser {
   
   public VTGrandIsleCountyParser() {
-    super("GRAND ISLE COUNTY", "VT");
+    super(new VTGrandIsleCountyAParser(), new VTGrandIsleCountyBParser());
   }
 }
