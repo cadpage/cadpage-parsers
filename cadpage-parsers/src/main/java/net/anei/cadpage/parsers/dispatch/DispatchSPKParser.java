@@ -92,7 +92,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CURDATETIME")) return new BaseDateTimeField();
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5,8}|\\d{8}-\\d{6}\\.\\d{3}|", true);
+    if (name.equals("ID")) return new IdField("\\d[-0-9]{8,}(?:\\.\\d{3})?|", true);
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("THRD_PRTY_INFO")) return new BaseThirdPartyInfoField();
     if (name.equals("DATA")) return new BaseDataField();
