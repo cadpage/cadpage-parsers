@@ -14,7 +14,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
   private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
-  private static final Pattern FIELD_BREAK = Pattern.compile(" (ACTIVE CALL|REPORTED|Type|Zone|Phone):");
+  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|Phone):");
   private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
   
   private boolean refLatLong = false; 
@@ -31,7 +31,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   
   public DispatchA19Parser(String defCity, String defState) {
     super(defCity, defState,
-           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! Contact:NAME? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO! Comments:INFO+ Receiving_and_Responding_Units:SKIP TIMES/N+ " +
+           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO! Comments:INFO+ Receiving_and_Responding_Units:SKIP TIMES/N+ " +
            "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO! INFO+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO? INFO+ Contact:NAME Phone:PHONE )");
   }
   
@@ -75,6 +75,9 @@ public class DispatchA19Parser extends FieldProgramParser {
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      
+      // Reverse any accidently hash -> colon transformations
+      field = field.replace(": ", " # ");
       
       Matcher match = ADDR_CITY_ST_PTN.matcher(field);
       if (match.matches()) {

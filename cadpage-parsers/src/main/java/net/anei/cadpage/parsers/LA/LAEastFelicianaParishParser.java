@@ -11,7 +11,7 @@ public class LAEastFelicianaParishParser extends FieldProgramParser {
   
   public LAEastFelicianaParishParser() {
     super("EAST FELICIANA PARISH", "LA",
-          "Address:ADDR! Type:CALL! Subtype:CALL/SDS? Incident_ID:ID! Time/Date:DATETIME!");
+          "( SELECT/2 SRC! dispatched:CALL! Address:ADDR! | Address:ADDR! Type:CALL!  ) Subtype:CALL/SDS? Incident_ID:ID! Time/Date:DATETIME!");
   }
   
   @Override
@@ -21,9 +21,14 @@ public class LAEastFelicianaParishParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("E911 Station Dispatch Notification")) return false;
-    String[] flds = body.split("\n");
-    if (flds.length >= 4) return parseFields(flds, data);
+    if (subject.equals("E911 Unit Dispatched Notification")) {
+      setSelectValue("2");
+    }
+    else if (subject.equals("E911 Station Dispatch Notification")) {
+      setSelectValue("1");
+    } else {
+      return false;
+    }
     return super.parseMsg(body, data);
   }
   

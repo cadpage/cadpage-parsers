@@ -1,19 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class VTWindsorCountyParser extends DispatchA19Parser {
+/**
+ * Windsor County, VT
+ */
+public class VTWindsorCountyParser extends GroupBestParser {
   
   public VTWindsorCountyParser() {
-    this("WINDSOR COUNTY");
-  }
-  
-  protected VTWindsorCountyParser(String county) {
-    super(county, "VT");
-  }
-  
-  @Override
-  public String getAliasCode() {
-    return "VTWindsorCounty";
+    super(new VTWindsorCountyAParser(), new VTWindsorCountyBParser());
   }
 }

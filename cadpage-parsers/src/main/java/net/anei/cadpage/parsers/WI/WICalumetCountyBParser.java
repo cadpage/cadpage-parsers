@@ -1,15 +1,16 @@
 package net.anei.cadpage.parsers.WI;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 
 
-public class WICalumetCountyBParser extends FieldProgramParser {
+public class WICalumetCountyBParser extends DispatchProQAParser {
   
   public WICalumetCountyBParser() {
     super("CALUMET COUNTY", "WI",
-          "ADDR PLACE APT? CITY CALL CALL+? ( NONE ID! TIME | ID! ( EMPTY NONE! TIME | ) ) INFO+");
+          "ADDR PLACE APT? CITY CALL CALL+? ( NONE ID! TIME | ID! ( EMPTY NONE! TIME | ) ) INFO+",
+          true);
   }
   
   @Override
@@ -20,9 +21,7 @@ public class WICalumetCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Gold Cross Alert")) return false;
-    if (!body.startsWith("RC:")) return false;
-    body = body.substring(3).trim();
-    return parseFields(body.split("/"), 5, data);
+    return parseMsg(body, data);
   }
   
   @Override
@@ -55,11 +54,4 @@ public class WICalumetCountyBParser extends FieldProgramParser {
       if (!checkParse(field, data)) abort();
     }
   }
-//  
-//  @Override
-//  public String adjustMapAddress(String sAddress) {
-//    if (W_DIGIT_PTN.matcher(sAddress).find()) sAddress = sAddress.substring(1);
-//    return sAddress;
-//  }
-//  private static final Pattern W_DIGIT_PTN = Pattern.compile("^W\\d+ ");
 }
