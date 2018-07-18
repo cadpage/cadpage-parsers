@@ -7,7 +7,7 @@ public class GADecaturCountyBParser extends FieldProgramParser {
   
   public GADecaturCountyBParser() {
     super(CITY_LIST, "DECATUR COUNTY", "GA", 
-          "ADDR/SXP EMPTY EMPTY EMPTY CALL! INFO/CS+");
+          "ADDR/SXP PLACE? EMPTY EMPTY EMPTY CALL! INFO/CS+");
   }
   
   @Override
@@ -18,6 +18,12 @@ public class GADecaturCountyBParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     return parseFields(body.split(","), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("PLACE")) return new PlaceField(".+", true);
+    return super.getField(name);
   }
   
   private static final String[] CITY_LIST = new String[]{
