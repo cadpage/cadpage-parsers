@@ -11,7 +11,7 @@ public class MICassCountyBParser extends DispatchOSSIParser {
   
   public MICassCountyBParser() {
     super(CITY_CODES, "CASS COUNTY", "MI", 
-        "CALL ADDR ( PLACE CITY! | CITY! | EMPTY+? ) X+? INFO/N+");
+        "CALL ADDR ( PLACE PLACE CITY! | PLACE CITY! | CITY! | EMPTY+? ) X+? INFO/N+");
   }
 
   @Override
