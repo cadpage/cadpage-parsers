@@ -17,9 +17,15 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@clinton-county.org";
+    return "CAD@clinton-county.org,CAD@shiawassee.net";
   }
   
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -27,7 +33,7 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
   
-  private static final Pattern CALL_PTN = Pattern.compile(".* [1-4]|FIRE .*|LIFT ASSIST.*|MUTUAL AID.*|PERSONAL INJURY.*|STRUCTURE FIRE|SUICIDE.*");
+  private static final Pattern CALL_PTN = Pattern.compile(".* [1-4]|FIRE .*|COMMUNITY POLICING|CARBON MONOXIDE.*|EMERGENCY SERVICES TEAM|HAZARDOUS MATERIALS|HIT AND RUN PI ACCIDENT|LIFT ASSIST.*|MEDICAL|MOUNTED DIVISION|MUTUAL AID.*|PERSONAL INJURY.*|POWER LINES DOWN|PSYCHIATRIC.*|ROAD CLOSED|STRUCTURE FIRE|SUICIDE.*|TRAINING.*|UNKNOWN ACCIDENT");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
