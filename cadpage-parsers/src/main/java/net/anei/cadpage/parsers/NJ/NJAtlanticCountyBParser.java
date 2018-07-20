@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.NJ;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchProphoenixParser;
 
 public class NJAtlanticCountyBParser extends DispatchProphoenixParser {
@@ -16,6 +17,16 @@ public class NJAtlanticCountyBParser extends DispatchProphoenixParser {
   }
   
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strAddress.endsWith(" EHT")) {
+      data.strAddress = data.strAddress.substring(0, data.strAddress.length()-4).trim();
+      data.strCity = "EGG HARBOR TWP";
+    }
+    return true;
+  }
+
+  @Override
   public String adjustMapAddress(String address) {
     address = stripFieldStart(address, "AREA ");
     return super.adjustMapAddress(address);
@@ -23,6 +34,7 @@ public class NJAtlanticCountyBParser extends DispatchProphoenixParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "EH", "EGG HARBOR",
+      "EHT", "EGG HARBOR TWP",
       "eh", "EGG HARBOR",
       "HT", "HAMILTON",
       "ht", "HAMILTON"
@@ -53,6 +65,7 @@ public class NJAtlanticCountyBParser extends DispatchProphoenixParser {
       "FOLSOM",
         "PENNY POT",
       "GALLOWAY TOWNSHIP",
+        "GALLOWAY",
         "ABSECON HIGHLANDS",
         "COLOGNE",
         "CONOVERTOWN",

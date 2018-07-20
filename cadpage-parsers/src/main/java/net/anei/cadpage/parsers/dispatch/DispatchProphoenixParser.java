@@ -24,7 +24,7 @@ public class DispatchProphoenixParser extends FieldProgramParser {
   public DispatchProphoenixParser(Properties cityCodes, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
           "( RR_MARK/R! EMPTY? FDID:SKIP! Incident#:ID! CFSCode:CALL1! Alarm:SKIP! District:SKIP! Receive_Source:SKIP! EMPTY? ADDR_INFO! EMPTY? Location:ADDR1! Common_Name:PLACE! CSZ:SKIP! Dispatch_Priority:PRI! Lat/Long:SKIP! EMPTY? INCIDENT_TIMES! EMPTY? INFO/N+? INCIDENT_COMMENTS " +
-          "| DATETIME CALL ADDR! CrossStreet1:X CrossStreet2:X CommonName:PLACE Units:UNIT/S+ Comments:INFO+ )");
+          "| DATETIME CALL ADDR! Latitude:GPS1 Longitude:GPS2 CrossStreet1:X CrossStreet2:X CommonName:PLACE Units:UNIT/S+ Comments:INFO+ )");
     this.cityCodes = cityCodes;
     this.hasCityList = (cityList != null);
   }
@@ -55,6 +55,8 @@ public class DispatchProphoenixParser extends FieldProgramParser {
       
       match = TRAILER_PTN.matcher(body);
       if (match.find()) body = body.substring(0,match.start());
+      
+      body = body.replace(" Longitude:", "\nLongitude:");
     }
     
     return parseFields(body.split("\n"), data);
@@ -228,6 +230,7 @@ public class DispatchProphoenixParser extends FieldProgramParser {
       
       // Ignore everything up to the last unit
       field = field.substring(lastPt).trim();
+      field = stripFieldStart(field, ";");
       
       if (field.startsWith(",")) field = field.substring(1).trim();
       
