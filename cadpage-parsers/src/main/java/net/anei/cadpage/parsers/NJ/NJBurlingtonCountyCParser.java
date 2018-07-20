@@ -34,6 +34,12 @@ public class NJBurlingtonCountyCParser extends DispatchA5Parser {
   private static final Pattern TN_PTN = Pattern.compile("\\bTN\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    body = stripFieldStart(body, "<br><br>");
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
     // Remove extraneous character sequences
