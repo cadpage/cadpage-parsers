@@ -12,7 +12,7 @@ public class CAYoloCountyBParser extends MsgParser {
   
   public CAYoloCountyBParser() {
     super("YOLO COUNTY", "CA");
-    setFieldList("CODE CALL ADDR APT SRC UNIT MAP GPS INFO");
+    setFieldList("CODE CALL PLACE ADDR APT SRC UNIT MAP GPS INFO");
   }
   
   @Override
@@ -43,11 +43,19 @@ public class CAYoloCountyBParser extends MsgParser {
     FParser p = new FParser(body);
     String call = p.get(30);
     int pt = call.indexOf(' ');
-    if (pt < 0) return false;
-    data.strCode = stripFieldStart(call.substring(0, pt).trim(), "*");
-    data.strCall = call.substring(pt+1).trim();
+    if (pt >= 0) {
+      data.strCode = stripFieldStart(call.substring(0, pt).trim(), "*");
+      data.strCall = call.substring(pt+1).trim();
+    } else {
+      data.strCode = data.strCall = call;
+    }
     
     if (p.check(";")) {
+      
+      if (p.checkAhead(30, ";")) {
+        data.strPlace = p.get(30);
+        if (!p.check(";")) return false;
+      }
       
       parseAddress(p.get(50), data);
       
