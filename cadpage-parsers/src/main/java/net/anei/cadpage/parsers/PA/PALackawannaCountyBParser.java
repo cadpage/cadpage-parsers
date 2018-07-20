@@ -13,7 +13,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
   
   public PALackawannaCountyBParser() {
     super(CITY_CODES, "LACKAWANNA COUNTY", "PA", 
-          "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
+          "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! APT_PLACE+ Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
   }
   
   @Override
@@ -32,6 +32,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
@@ -49,6 +50,26 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|SUITE) *(.*)|[A-Z]|\\d{1,4}[A-Z]?");
+  private class MyAptPlaceField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) {
+        String apt = match.group(1);
+        if (apt == null) apt = field;
+        data.strApt = append(data.strApt, "-", apt);
+      } else {
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "APT PLACE";
     }
   }
   
