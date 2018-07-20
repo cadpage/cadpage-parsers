@@ -1498,7 +1498,7 @@ public class Active911ParserTable {
       "US/VA/Esva911",                    "VANorthamptonCounty",
       "US/VA/FairfaxCounty",              "VAFairfaxCountyB",
       "US/VA/FloydCounty",                "VAFloydCounty",
-      "US/VA/FluvannaSheriff",            "VAFluvannaCountyB",
+      "US/VA/FluvannaSheriff",            "VAFluvannaCountyC",
       "US/VA/Franklin",                   "VAFranklinB",
       "US/VA/FranklinCounty",             "VAFranklinCountyB",
       "US/VA/Galax",                      "VAGalax",

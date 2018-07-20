@@ -34,6 +34,8 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new MyIdField();
+    if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -75,6 +77,22 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     }
   }
   
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyPhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+
   private static final Pattern INFO_PREFIX_PTN = Pattern.compile(" *(?:; |^)\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private class MyInfoField extends InfoField {
     @Override
