@@ -316,6 +316,7 @@ public class Active911ParserTable {
       "US/GA/Ledsportal",                 "GAFloydCounty",
       "US/GA/MeriweatherCounty",          "GAMeriwetherCounty",
       "US/GA/MFRE911",                    "GASchleyCounty",
+      "US/GA/MurrayCounty",               "GAMurrayCounty",
       "US/GA/PauldingCounty",             "GAPauldingCounty",
       "US/GA/PickensCo911",               "GAPickensCounty",
       "US/GA/PikeCounty",                 "GAPikeCounty",
