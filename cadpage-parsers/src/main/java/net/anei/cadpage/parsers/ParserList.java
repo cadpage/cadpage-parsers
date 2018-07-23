@@ -553,6 +553,7 @@ public class ParserList {
               ,"KYCarterCounty"                 ,"Carter County, KY"
               ,"KYChristianCounty"              ,"Christian County, KY"
               ,"KYClarkCounty"                  ,"Clark County, KY"
+              ,"KYClayCounty"                   ,"Clay County, KY"
               ,"KYDaviessCounty"                ,"Daviess County, KY"
               ,"KYErlangerDispatch"             ,"Erlanger Dispatch, KY"
               ,"KYFloydCounty"                  ,"Floyd County, KY"
