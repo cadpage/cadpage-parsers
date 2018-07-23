@@ -595,6 +595,7 @@ public class ParserList {
               ,"KYPulaskiCounty"                ,"Pulaski County, KY"
               ,"KYRobertsonCounty"              ,"Robertson County, KY"
               ,"KYRockCastleCounty"             ,"Rockcastle County, KY"
+              ,"KYRowenCounty"                  ,"Rowen County, KY"
               ,"KYScottCounty"                  ,"Scott County, KY"
               ,"KYShelbyCounty"                 ,"Shelby County, KY"
               ,"KYSimpsonCounty"                ,"Simpson County, KY"
