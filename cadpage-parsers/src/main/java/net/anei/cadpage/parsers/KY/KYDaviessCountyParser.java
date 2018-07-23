@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.KY;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ALPHONSUS", "ANTHONY", "BENEDICT", "JOSEPH", "LAWRENCE");
     removeWords("STREET");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -53,6 +55,16 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
     if (body.contains(" Cad:")) return true;
     return super.isPageMsg(body);
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "3510 BECKER DR",                       "+37.738627,-87.033110",
+      "3524 BECKER DR",                       "+37.738501,-87.392935",
+      "3529 BECKER DR",                       "+37.738822,-87.032719",
+      "3549 BECKER DR",                       "+37.738718,-87.032463",
+      "3556 BECKER DR",                       "+37.738331,-87.032540",
+      "3565 BECKER DR",                       "+37.738654,-87.032255",
+      "3570 BECKER DR",                       "+37.738237,-87.032356"
+  });
   
   private static final String[] MWORD_STREET_LIST = new String[]{
       "5TH STREET",
