@@ -487,6 +487,7 @@ public class Active911ParserTable {
       "US/KY/Barbourville",               "KYKnoxCounty",
       "US/KY/BarrenCounty",               "KYBarrenCounty",
       "US/KY/BooneCounty",                "KYBooneCountyA",
+      "US/KY/BourbonCounty",              "KYBourbonCountyB",
       "US/KY/BoydCounty",                 "KYBoydCounty",
       "US/KY/CallowayCounty",             "KYCallowayCounty",
       "US/KY/CampbellCounty",             "KYCampbellCounty",
