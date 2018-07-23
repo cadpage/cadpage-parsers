@@ -1,6 +1,7 @@
 
 package net.anei.cadpage.parsers.NC;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
@@ -10,7 +11,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
 public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
 
   public NCHertfordCountyBParser() {
-    super(CITY_LIST, "HERTFORD COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID | DSFLAG_BOTH_PLACE | DSFLAG_NO_NAME_PHONE);
+    super(CITY_LIST, "HERTFORD COUNTY", "NC", 
+          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_X |DSFLG_NAME | DSFLG_PHONE | DSFLG_ID | DSFLG_TIME);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "AHOSKIE COFIELD",
@@ -37,10 +39,13 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     return "@hertfordcountync.gov";
   }
   
+  private static final Pattern PREFIX_PTN = Pattern.compile("[A-Za-z0-9 ]+: *");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("HWY", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    Matcher match = PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) body = body.substring(match.end());
     if (!super.parseMsg(subject, body, data)) return false;
     if (data.strAddress.startsWith("LANDING ZONE ")) {
       data.strPlace = append("LANDING ZONE", " - ", data.strPlace);
