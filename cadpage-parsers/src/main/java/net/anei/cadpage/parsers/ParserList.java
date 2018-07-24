@@ -1173,6 +1173,7 @@ public class ParserList {
           ),
           new ParserCategory("Oklahoma"
               ,"OKBryanCounty"                  ,"Bryan County, OK"
+              ,"OKCanadianCounty"               ,"Canadian County, OK"
               ,"OKCarterCounty"                 ,"Carter County, OK"
               ,"OKCherokeeCounty"               ,"Cherokee County, OK"
               ,"OKClevelandCounty"              ,"Cleveland County, OK"
