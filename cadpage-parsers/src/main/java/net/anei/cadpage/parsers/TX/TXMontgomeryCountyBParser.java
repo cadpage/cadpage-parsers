@@ -18,7 +18,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   
   public TXMontgomeryCountyBParser() {
     super(CITY_LIST, "MONTGOMERY COUNTY", "TX",
-          "( Comment:INFO/G! ID:ID2! UNIT:UNIT2! " +
+          "( Comment:INFO/G! ID:ID2! ( UNIT:UNIT2! | UNIT2! ) " +
           "| ID:ID! PRI:PRI? UNIT:UNIT! PRI:PRI? CALL:CALL! ( NOTES:INFO/R! INFO/N+" + 
                                                            "| PLACE:PLACE! APT:APT? ADDR:ADDR! ( X-STREETS:X! MAP:MAP! CITY:CITY! CROSS_STREETS:SKIP? | CROSS_STREETS:X! MAP:MAP! CITY:CITY! CHANNEL:CH! | CITY:CITY! ( MAP:MAP! | ) | ) ( INFO:INFO! | GPS1! GPS2! ) ) " +
           "| ID UNIT! PRI:PRI! CALL! PLACE:PLACE! APT:APT? ADDR:ADDR! X-STREETS:X? MAP:MAP? CITY:CITY% GPS1 GPS2 )");
@@ -64,7 +64,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   private static final Pattern NOTIFICATION_PTN2 = Pattern.compile("ID#:(\\d\\d-\\d{6}) +; +\\d+\\) (.*)");
   
   private static final Pattern MISSING_SEMI_PTN = Pattern.compile("(?<!;) ++(?=\\d{8}\\b|NOTES:)|(?<![ 0-9])(?=\\d{8} +\\d{8}\\b)");
-  private static final Pattern COMMA_ID_PTN = Pattern.compile(", *ID:");
+  private static final Pattern COMMA_ID_PTN = Pattern.compile(", *ID:|,(?=\\d\\d-\\d{6}\\b)");
   private static final Pattern DELIM = Pattern.compile("[ ,]*; *");
 
   private static final Pattern ADDR_CODE_CALL_PTN = Pattern.compile("(.*?)([#\\*]\\d+|\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) *-[- ]*(.*)");
