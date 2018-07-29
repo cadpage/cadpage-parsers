@@ -51,4 +51,12 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
       if (!checkParse(field, data)) abort();
     }
   }
+  
+  private static final Pattern BUS127_PTN = Pattern.compile("\\bBUS *127", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = BUS127_PTN.matcher(addr).replaceAll("OLD US 27");
+    return addr;
+  }
 }
