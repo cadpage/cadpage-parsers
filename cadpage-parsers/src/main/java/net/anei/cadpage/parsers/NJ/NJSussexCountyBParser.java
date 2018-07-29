@@ -14,6 +14,6 @@ public class NJSussexCountyBParser extends DispatchA11Parser {
   
   @Override
   public String getFilter() {
-    return "paging@sussexcountysheriff.com";
+    return "paging@sussexcountysheriff.com,sussexco911@gmail.com";
   }
 }
