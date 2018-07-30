@@ -958,6 +958,7 @@ public class Active911ParserTable {
       "US/NJ/NPD",                        "NJSussexCountyA",
       "US/NJ/Nwbcd",                      "NJSussexCountyA",
       "US/NJ/OceanCounty",                "NJOceanCounty",
+      "US/NJ/OceanGatePD",                "NJOceanCountyC",
       "US/NJ/OCPD",                       "NJOceanCity",
       "US/NJ/SaddleRiverPD",              "NJBergenCountyC",
       "US/NJ/SalemCounty",                "NJSalemCountyC",
