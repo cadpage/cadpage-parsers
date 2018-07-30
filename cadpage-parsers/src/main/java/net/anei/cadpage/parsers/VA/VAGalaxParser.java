@@ -8,6 +8,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class VAGalaxParser extends GroupBestParser {
   
   public VAGalaxParser() {
-    super(new VAGalaxAParser(), new VAGalaxBParser());
+    super(new VAGalaxBParser());
   }
 }

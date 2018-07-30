@@ -48,5 +48,10 @@ public class NYDelawareCountyParser extends FieldProgramParser {
       data.strCity = city;
       parseAddress(p.get(), data);
     }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " ST";
+    }
   }
 }
