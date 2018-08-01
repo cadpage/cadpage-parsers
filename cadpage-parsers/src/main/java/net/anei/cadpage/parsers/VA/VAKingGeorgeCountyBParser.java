@@ -12,7 +12,7 @@ public class VAKingGeorgeCountyBParser extends FieldProgramParser {
   
   public  VAKingGeorgeCountyBParser() {
     super("KING GEORGE COUNTY", "VA", 
-          "CODE ADDR ( CITY ST_ZIP | ) X! ID? INFO/CS+");
+          "CODE ADDR ( CITY ST_ZIP | ) X! ID? EMPTY+? GPS1? GPS2? INFO/CS+");
   }
   
   @Override
@@ -46,6 +46,8 @@ public class VAKingGeorgeCountyBParser extends FieldProgramParser {
     if (name.equals("ST_ZIP"))  return new MyStateZipField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID"))  return new IdField("\\$([A-Z]{3}\\d{2}-\\d{6})", true);
+    if (name.equals("GPS1"))  return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
   
@@ -85,6 +87,13 @@ public class VAKingGeorgeCountyBParser extends FieldProgramParser {
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type, GPS_PTN, true);
     }
   }
 }
