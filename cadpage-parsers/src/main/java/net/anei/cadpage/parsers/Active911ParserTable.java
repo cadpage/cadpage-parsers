@@ -550,6 +550,7 @@ public class Active911ParserTable {
       "US/LA/AscensionParish",            "LAAscensionParish",
       "US/LA/AvoyellesCounty",            "LAAvoyellesParish",
       "US/LA/BeauregardParish",           "LABeauregardParish",
+      "US/LA/CalcasieuParish",            "LACalcasieuParish",
       "US/LA/CityofCovington",            "LAStTammanyParishB",
       "US/LA/CityofLakeCharles",          "LACalcasieuParish",
       "US/LA/EastFelicianaParish",        "LAEastFelicianaParish",
