@@ -29,17 +29,29 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     return super.parseMsg(subject, body, data);
   }
   
+  private static final Pattern COR_PTN = Pattern.compile("\\bCOR\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr =  COR_PTN.matcher(addr).replaceAll("CORNER");
+    return addr;
+  }
+  
   private static final String[] SPECIAL_STREET_LIST = new String[]{
       "BRAYBOURNE MAIN",
       "GREYHAWK COVE",
       "OXBOURNE",
       "MCA",
+      "MITHCELLS COR",
       "ROLLINS COVE",
       "SANDBOURNE",
       "WHITE HAWK CROSS"
   };
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+    "BELL RIDGE",
+    "BELL WOOD",
+    "BELMORE LAKES",
     "BILLY PAT",
     "BUSINESS CENTER",
     "CAMP CREEK",
@@ -47,26 +59,38 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "CARTER LANE",
     "CEDAR CREST",
     "CENTER HILL",
+    "CHAMBERLIN OAK",
     "CHAPEL RIDGE",
     "CRAFT GOODMAN FRONTAGE",
     "CREEK SIDE",
     "DEVON PARK",
+    "DEW BERRY",
+    "FARM POND",
     "FOX GLEN",
+    "FOX HUNT",
     "FOX HUNTERS",
     "FOX RUN",
     "GEE GEE",
+    "GRASS POND",
+    "GRAYS CREEK",
     "GREEN VILLAGE",
     "HACKS CROSS",
     "HAWKS CROSSING",
+    "HOLLY SPRINGS",
+    "HONEY SUCKLE",
     "HUNTERS HILL",
     "HWY 178",
     "HWY 302",
     "JOE LYON",
     "KYLE DURAN",
     "LAUREL HILL",
+    "LAZY CREEK",
+    "LOW BRIDGE",
     "MARY JANE",
     "METHODIST HOSPITAL",
     "OAK FOREST",
+    "OAK HEIGHTS",
+    "PARKVIEW OAKS",
     "PAUL COLEMAN",
     "PIGEON ROOST",
     "PLANTATION RIDGE",
@@ -78,18 +102,27 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "ROBERTSON GIN",
     "SANDIDGE CENTER",
     "SHADY GROVE",
+    "SHALLOW CREEK",
+    "SPRING CREEK",
     "SPRING HILL",
     "SPRING VALLEY",
     "ST ANDREWS",
     "ST MICHAEL THOMAS",
+    "STONE GARDEN",
+    "STONE PARK",
     "STONEY BROOK",
+    "STRAW BRIDGE",
+    "TALLY HO",
     "TIMBER OAKS",
     "TRINITY PARK",
     "WEDGE HILL",
-    "WHISPERING PINES"
+    "WHISPERING PINES",
+    "WIND PARK E"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "1 ABDOMINAL PAIN / PROBLEMS",
       "10 CHEST PAIN / DISCOMFORT",
       "12 CONVULSIONS / SEIZURES",
       "13 DIABETIC PROBLEMS",
@@ -97,6 +130,7 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
       "19 HEART PROBLEMS / A.I.C.D.",
       "20 HEAT / COLD EXPOSURE",
       "21 HEMORRHAGE / LACERATIONS",
+      "22 OTHER ENTRAPMENTS (NON MVA)",
       "26 SICK PERSON (SPECIFIC DIAG)",
       "28 STROKE (CVA) - TIA",
       "29 MVA WITH INJURIES",
@@ -112,9 +146,15 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
       "ACCIDENT W/INJURIES",
       "ACCIDENT W/INJURIES HOLLY",
       "ACCIDENT W/OUT INJ",
+      "ALL OTHER FIRE",
+      "ATTEMPT TO LOCATE",
+      "BREATHING PROBLEMS",
+      "CARBON MONOXIDE DETECTOR",
+      "DUMPSTER FIRE",
       "ELECTICAL SHORT / NO SMOKE",
       "ELECTICAL SHORT/MO SMOKE",
       "FALLS",
+      "FIRE ALARM BUSINESS",
       "FIRE ALARM - COMMERCIAL",
       "FIRE ALARM RESIDENCE",
       "FIRE ALARM - RESIDENTIAL",
@@ -125,7 +165,11 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
       "MEDICAL ALARM",
       "POWER LINE DOWN",
       "SICK CALL PERSON",
+      "SEIZURES/CONVULSIONS",
+      "STROKE/CVA",
       "STRUCTURE FIRE",
+      "TRANSFORMER FIRE",
+      "UNCONSCIOUS/FAINTING",
       "VEHICLE FIRE"
   );
 
@@ -159,6 +203,12 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "NESBIT",
     "NORFOLK",
     "PLEASANT HILL",
-    "WEST DAYS"
+    "WEST DAYS",
+    
+    // Marshall County
+    "BYHALIA",
+    
+    // Tate County
+    "INDEPENDENCE"
   };
 }
