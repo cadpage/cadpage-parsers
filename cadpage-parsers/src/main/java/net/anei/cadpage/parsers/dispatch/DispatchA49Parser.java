@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /*
 Lafayette Parish, LA
@@ -21,8 +22,9 @@ public class DispatchA49Parser extends FieldProgramParser {
 
   public DispatchA49Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
-        "( CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
-        "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
+          "( Call_Number:ID! Date/Time:DATETIME! Address:ADDR! " +
+          "| CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
+          "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
           "| DATE_TIME_SRC! Addr:ADDR/S! City:CITY? Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? ) REMARKS? EXTRA+ )");
     checkCity = cityCodes != null;
   }
@@ -32,11 +34,13 @@ public class DispatchA49Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = REMARKS_PTN.matcher(body).replaceFirst("$1:\n");
+    if (body.startsWith("Call Number:")) data.msgType = MsgType.RUN_REPORT;
     return parseFields(body.split("\n+"), data);
   }
   
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATE_TIME_SRC")) return new BaseDateTimeSourceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();

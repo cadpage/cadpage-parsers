@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.LA;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -20,12 +21,24 @@ public class LALivingstonParishParser extends DispatchA49Parser {
     return "cadalert@lafayettela.gov,alerts@carencrofd.org";
   }
 
-  private static final Pattern FIX_MARK_PTN = Pattern.compile("^(\\d\\d/\\d\\d/\\d{4} Time:\\d\\d:\\d\\d)\nEQ ID:(.*)\n");
+  private static final Pattern FIX_MARK_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4} Time:\\d\\d:\\d\\d)\n(?:EQ ID:(.*)\n)?");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Alert Recieved")) return false;
-    body = FIX_MARK_PTN.matcher(body).replaceFirst("Date:$1 Num:$2\n");
+    Matcher match = FIX_MARK_PTN.matcher(body);
+    if (match.lookingAt()) {
+      StringBuilder sb = new StringBuilder("Date:");
+      sb.append(match.group(1));
+      String num = match.group(2);
+      if (num != null) {
+        sb.append(" Num:");
+        sb.append(num);
+      }
+      sb.append('\n');
+      sb.append(body.substring(match.end()));
+      body = sb.toString();
+    }
     body = body.replace("\nRemarks >", "\nRemarks:\n>");
     return super.parseMsg(body, data);
   }
