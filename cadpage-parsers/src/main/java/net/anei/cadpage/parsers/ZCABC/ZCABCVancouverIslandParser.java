@@ -32,7 +32,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     return super.getLocName();
   }
   
-  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SPROAT LAKE|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
+  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SOINTULA|SPROAT LAKE|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("\\(?([-+]?[\\d:\\.]+),([-+]?[\\d:\\.]+)\\)");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private static final Pattern GPS_PTN2 = Pattern.compile("([-+]?\\d+)(\\d{6}),([-+]?\\d+)(\\d{6})");
@@ -149,6 +149,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
   
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ACLE BEACH",
+    "ARBUTUS BAY",
     "AVRO ARROW",
     "BAY VIEW",
     "BEAR CAT",
@@ -188,12 +189,15 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "ELMA BAY",
     "ESOWISTA IR",
     "FORBIDDEN PLATEAU",
+    "FORD S",
     "FOREST GROVE",
     "GARTLEY POINT",
     "GEORGIA STRAIT",
     "GLACIER VIEW",
     "GLEN EAGLE",
     "GOLD RIVER",
+    "GOOSE SPIT",
+    "GORDON CALDER",
     "HARDY BAY",
     "HART WABI",
     "HIGH SALAL",
@@ -202,6 +206,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "INLAND ISLAND",
     "IRACLE BEACH",
     "IRON RIVER",
+    "JACKFISH LAKE",
     "JAMES PAUL",
     "JENSEN COVE",
     "JENSENS BAY",
@@ -227,10 +232,12 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "MIDDLE POINT",
     "MIRACLE BEACH",
     "MOBERLY HEIGHTS",
+    "MOBERLY LAKE",
     "MOX VALLEY",
     "MYSTERY BEACH",
     "NORTH ACCESS",
     "OCEAN PARK",
+    "ORANGE POINT",
     "OYSTER GARDEN",
     "OYSTER RIVER",
     "PACIFIC RIM",
@@ -247,6 +254,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "RIVER BEND",
     "ROCK BAY",
     "ROY CREEK",
+    "ROYSTON SEASIDE",
     "SALMON POINT",
     "SAND PINES",
     "SEA LION",
@@ -259,6 +267,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "ST ANNS",
     "ST JOHN'S POINT",
     "ST JOHNS POINT",
+    "STAMP FALLS PROVINCIAL",
     "STIRLING ARM",
     "TATE CREEK",
     "TAYLOR ARM",
@@ -266,6 +275,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "TONQUIN PARK",
     "TRADING POST",
     "TRIBUNE BAY PROVINCIAL",
+    "TSOLUM RIVER",
     "TSULQUATE IR",
     "VALLEY VIEW",
     "VETERANS MEMORIAL",
@@ -276,6 +286,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "WILLIAMS BEACH",
     "WILLIAMS BEACH",
     "YEW WOOD"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -359,7 +370,8 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "STRUCTURE ODOUR",
       "STRUCTURE SMOKE",
       "TEST",
-      "TSUNAMI WARNING"
+      "TSUNAMI WARNING",
+      "WILDLAND FIRE"
   );
   
   @Override
