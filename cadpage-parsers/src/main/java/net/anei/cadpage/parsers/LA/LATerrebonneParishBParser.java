@@ -36,7 +36,7 @@ public class LATerrebonneParishBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CODE_ADDR_PTN = Pattern.compile("(\\d+[A-Z]?) +(.*)");
+  private static final Pattern CODE_ADDR_PTN = Pattern.compile("(\\d+\\(?[A-Z]?\\)?) +(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -74,17 +74,20 @@ public class LATerrebonneParishBParser extends FieldProgramParser {
       "ACCIDENT PEDESTRIAN",
       "ACCIDENT W/INJURY",
       "ACCIDENT W/O INJURY",
+      "ACCIDENT WITH INJURY",
       "ALARM - CARBON MONOXIDE",
       "ALARM - FIRE",
       "ARCING INSIDE",
       "ARCING OUTSIDE",
       "BUILDING OR STRUCTURE WEAKEND OR COLLASPED",
       "EXTRACATION RESCUE",
+      "EXTRICATION / RESCUE",
       "FIRE - DUMPSTER",
       "FIRE - GRASS",
       "FIRE - MOBILE PROPERTY",
       "FIRE - OUTSIDE RUBBISH",
       "FIRE - STRUCTURE",
+      "FIRE-STRUCTURE",
       "HAZARDOUS CONDITION",
       "MEDICAL ASSIST",
       "MEDICAL EMERGENCY",

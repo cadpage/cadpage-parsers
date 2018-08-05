@@ -220,6 +220,7 @@ public class LATerrebonneParishAParser extends DispatchA13Parser {
     "PICOU INDUSTRIAL",
     "PIER 56",
     "PIPING ROCK",
+    "PLANTATION GARDENS",
     "PORT AU PRINCE",
     "PRESQUE ISLE",
     "QUIET OAK",
