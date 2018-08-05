@@ -24,6 +24,7 @@ public class ORLaneCountyCParser extends DispatchA22Parser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CRE",   "CRESCENT",
       "LANE",  "LANE COUNTY",
       "OAK",   "OAKRIDGE",
       "WEF",   "WESTFIR"
