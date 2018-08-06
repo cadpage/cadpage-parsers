@@ -164,7 +164,18 @@ public class NCJonesCountyParser extends DispatchA3Parser {
     "RICHLANDS",
     
     // Wayne County
-    "SEVEN SPRINGS"
-
+    "BROGDEN",
+    "DUDLEY",
+    "ELROY",
+    "EUREKA",
+    "FREMONT",
+    "GOLDSBORO",
+    "GRANTHAM",
+    "MARMAR",
+    "MOUNT OLIVE",
+    "PIKEVILLE",
+    "ROSEWOOD",
+    "SEVEN SPRINGS",
+    "WALNUT CREEK"
   };
 }
