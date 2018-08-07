@@ -8,19 +8,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PADelawareCountyGParser extends FieldProgramParser {
   
-  private static final Pattern DELIM = Pattern.compile("\n|\\|");
-  
   public PADelawareCountyGParser() {
     super("DELAWARE COUNTY", "PA",
           "( CALL:CALL! ADDR:ADDR! CITY:CITY? ID:ID? DATE:DATE! TIME:TIME! UNIT:UNIT INFO:INFO+ " + 
           "| ADDR:ADDR! CITY:CITY? CALL:CALL? DATE:DATE? TIME:TIME? ID:ID? INFO:INFO INFO/N+? CRITERIA:SKIP STATION:SRC UNIT:UNIT " + 
-          "| DATE:DATE! CRITERIA:SKIP! STATION:SRC! UNIT:UNIT! )");
+          "| DATE:DATE! CRITERIA:SKIP! STATION:SRC? UNIT:UNIT? )");
   }
   
   @Override
   public String getFilter() {
     return "admin@springfieldems.com,alerts@delcodispatch.com";
   }
+  
+  private static final Pattern DELIM = Pattern.compile("\n|<?\\|");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
