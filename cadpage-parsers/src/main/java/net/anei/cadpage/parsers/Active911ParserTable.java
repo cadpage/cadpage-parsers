@@ -399,6 +399,7 @@ public class Active911ParserTable {
       "US/IL/StClairCounty",              "ILStClairCounty",
       "US/IL/SWCD911",                    "ILCookCountyE",
       "US/IL/Tazewell911",                "ILTazewellCounty",
+      "US/IL/TownofCicero",               "ILCookCountyF",
       "US/IL/WoodfordCounty",             "ILWoodfordCounty",
       "US/IN/AndersonFD",                 "INMadisonCountyC",
       "US/IN/BartholomewCounty",          "INBartholomewCounty",
