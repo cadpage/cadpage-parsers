@@ -19,7 +19,7 @@ public class CAMontereyCountyAParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "donotreply@co.monterey.ca.us,donotreply@co.monterey,MONTEREY911@CO.MONTEREY.CA.US>";
+    return "donotreply@co.monterey.ca.us,donotreply@co.monterey,MONTEREY911@CO.MONTEREY.CA.US";
   }
   
   @Override
@@ -30,10 +30,32 @@ public class CAMontereyCountyAParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    if (parseMsg4(body, data)) return true;
     if (parseMsg3(body, data)) return true;
     if (parseMsg1(subject, body, data)) return true;
     if (parseMsg2(body, data)) return true;
     return false;
+  }
+  
+  private boolean parseMsg4(String body, Data data) {
+    FParser fp = new FParser(body);
+    String src = fp.get(8);
+    if (!fp.check("  -  ")) return false;
+    String unit = fp.get(8);
+    if (!fp.check(" ") || fp.check(" ")) return false;
+    String call = fp.get(8);
+    if (!fp.check(" ") || fp.check(" ")) return false;
+    String addr = fp.get(100);
+    if (!fp.check(" ")) return false;
+    String cross = fp.get();
+    
+    setFieldList("SRC UNIT CALL ADDR APT X");
+    data.strSource = src;
+    data.strUnit = unit;
+    data.strCall = call;
+    parseAddress(addr, data);
+    data.strCross = cross;
+    return true;
   }
   
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d\\d?[A-Z]\\d\\d?[A-Z]?) +(.*)", Pattern.CASE_INSENSITIVE);
@@ -146,7 +168,6 @@ public class CAMontereyCountyAParser extends MsgParser {
     pt = fp.checkAhead("X STREETS", 92, 93);
     if (pt >= 0) {
 
-      int unitLen = pt-34;
       String unit = fp.get(29);
       if (!fp.check(" ")) return false;
       
