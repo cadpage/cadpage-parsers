@@ -1,6 +1,7 @@
 
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,6 +14,7 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
     super(CITY_LIST, "WATAUGA COUNTY", "NC",
           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_ID|DSFLG_TIME);
     setupMultiWordStreets(MWORD_STREET_LIST);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -77,6 +79,12 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
     data.strSupp = sExtra.substring(pt+1).trim();
   }
   
+  @Override
+  protected String adjustGpsLookupAddress(String address, String apt) {
+    if (apt.length() > 0) address = append(address, " ", "UNIT " + apt);
+    return address;
+  }
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ANDY HICKS",
     "APPLE ORCHARD",
@@ -343,4 +351,44 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
     "WILKES",
     "JOBS CABIN"
   };
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "142 EVENING VIEW LN UNIT CA4",         "+36.172670,-81.760410",
+      "164 EVENING VIEW LN UNIT CB1",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB2",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB3",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB4",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB5",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB6",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB7",         "+36.172530,-81.760080",
+      "164 EVENING VIEW LN UNIT CB8",         "+36.172530,-81.760080",
+      "119 FALCON TRC UNIT C111",             "+36.173320,-81.761770",
+      "119 FALCON TRC UNIT C112",             "+36.173320,-81.761770",
+      "119 FALCON TRC UNIT C121",             "+36.173320,-81.761770",
+      "119 FALCON TRC UNIT C122",             "+36.173320,-81.761770",
+      "119 FALCON TRC UNIT C131",             "+36.173320,-81.761770",
+      "119 FALCON TRC UNIT C132",             "+36.173320,-81.761770",
+      "135 FALCON TRC UNIT C211",             "+36.173110,-81.762090",
+      "135 FALCON TRC UNIT C212",             "+36.173110,-81.762090",
+      "135 FALCON TRC UNIT C221",             "+36.173110,-81.762090",
+      "135 FALCON TRC UNIT C222",             "+36.173110,-81.762090",
+      "135 FALCON TRC UNIT C231",             "+36.173110,-81.762090",
+      "135 FALCON TRC UNIT C232",             "+36.173110,-81.762090",
+      "155 FALCON TRC UNIT C311",             "+36.172990,-81.762380",
+      "155 FALCON TRC UNIT C312",             "+36.172990,-81.762380",
+      "155 FALCON TRC UNIT C321",             "+36.172990,-81.762380",
+      "155 FALCON TRC UNIT C322",             "+36.172990,-81.762380",
+      "155 FALCON TRC UNIT C331",             "+36.172990,-81.762380",
+      "155 FALCON TRC UNIT C332",             "+36.172990,-81.762380",
+      "171 FALCON TRC UNIT C411",             "+36.172930,-81.762700",
+      "171 FALCON TRC UNIT C412",             "+36.172930,-81.762700",
+      "171 FALCON TRC UNIT C421",             "+36.172930,-81.762700",
+      "171 FALCON TRC UNIT C422",             "+36.172930,-81.762700",
+      "171 FALCON TRC UNIT C431",             "+36.172930,-81.762700",
+      "171 FALCON TRC UNIT C432",             "+36.172930,-81.762700",
+      "193 HIDDEN VISTA",                     "+36.170390,-81.763960",
+      "231 INDIGO OVERLOOK UNIT 22A",         "+36.169730,-81.765860",
+      "231 INDIGO OVERLOOK UNIT 22B",         "+36.169690,-81.765970"
+     
+  });
 }
