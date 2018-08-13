@@ -96,6 +96,8 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
       "CENT",          "CENTREVILLE",
       "CHAN",          "CHANTILLY",
       "CLFT",          "CLIFTON",
+      "DLLS",          "DULLES",
+      "DUNN",          "DUNN LORING",
       "FLCH",          "FALLS CHURCH",
       "FRFX CITY",     "FAIRFAX CITY",
       "FRFX",          "FAIRFAX",
@@ -106,11 +108,13 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
       "LOCO",          "LOUDOUN",
       "LRTN",          "LORTON",
       "MCLN",          "MCLEAN",
+      "MOCO",          "MONTGOMERY COUNTY",
       "OKTN",          "OAKTON",
+      "PGCO",          "PRINCE GEORGE COUNTY",
+      "PWC",          "PRINCE WILLIAM COUNTY",
       "RSTN",          "RESTON",
       "SFLD",          "SPRINGFIELD",
       "VNNA",          "VIENNA",
       "VNNA TOWN",     "VIENNA"
-
   });
 }
