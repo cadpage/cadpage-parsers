@@ -23,12 +23,12 @@ public class ALJeffersonCountyDParser extends FieldProgramParser {
     
   @Override
   public String getFilter() {
-    return "dispatch@cob.org";
+    return "dispatch@cob.org,Dispatch@birminghamal.gov";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
+    if (!subject.equals("Dispatch") && !subject.equals("!")) return false;
     return parseFields(body.split("\n"), 5, data);
   }
   
