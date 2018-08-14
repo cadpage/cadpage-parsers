@@ -16,8 +16,7 @@ public class TXCookeCountyParser extends FieldProgramParser {
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD")) return false;
+  protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
 
