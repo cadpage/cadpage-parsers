@@ -10,7 +10,7 @@ public class MIGratiotCountyBParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "GratiotEMD@GratiotMI.com";
+    return "GratiotEMD@GratiotMI.com,mitchell_mattingly@yahoo.com,gratiot911cad@gratiotmi.com";
   }
 
 }
