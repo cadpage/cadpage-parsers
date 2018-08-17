@@ -34,6 +34,9 @@ public class PABerksCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
+    // Reject PABerksCountyD alerts
+    if (body.startsWith("Type:")) return false;
+    
     // Strip off message trailer(s)
     body = stripFieldStart(body, "Berks County DES:");
     int pt = body.indexOf("\n\nSent ");

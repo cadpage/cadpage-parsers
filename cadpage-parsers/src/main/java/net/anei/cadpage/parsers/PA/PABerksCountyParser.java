@@ -10,6 +10,7 @@ Berks County, PA
 public class PABerksCountyParser extends GroupBestParser {
   
   public PABerksCountyParser() {
-    super(new PABerksCountyAParser(), new PABerksCountyBParser());
+    super(new PABerksCountyAParser(), new PABerksCountyBParser(),
+          new PABerksCountyDParser());
   }
 }
