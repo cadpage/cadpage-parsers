@@ -13,6 +13,7 @@ public class MOHenryCountyParser extends DispatchA48Parser {
   private static final CodeSet CALL_LIST = new  CodeSet(
       
       "ASSIST",
+      "DEATH",
       "MVA",
       "MED",
       "TRANSPAT",
