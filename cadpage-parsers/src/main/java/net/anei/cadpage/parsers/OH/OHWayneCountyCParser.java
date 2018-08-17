@@ -24,6 +24,9 @@ public class OHWayneCountyCParser extends DispatchEmergitechParser {
   
   @Override
   public boolean parseMsg(String body, Data data) {
+    
+    body = stripFieldStart(body, "Wayne County:");
+    
     body = DASH_COUNTY_PTN.matcher(body).replaceAll(" ");
     if (!super.parseMsg(body, data)) return false;
     
