@@ -15,7 +15,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
   
   public NYGeneseeCountyParser() {
     super(CITY_LIST, "GENESEE COUNTY", "NY",
-          "( SELECT/3 CODE CALL ADDR3 X DATETIME! UNIT3 INFO/N+ " +
+          "( SELECT/3 CODE CALL ADDR3 X DATETIME! Dispatched_Units:UNIT! Stand-By_Units:SKIP? CFS:ID? INFO/N+ " +
           "| CALL1 PLACE ADDR1 APT? CALL2! X DATETIME ID% INFO+ )");
   }
   
@@ -144,7 +144,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("UNIT3")) return new UnitField("Dispatched(?: Units:)? *(.*)");
+    if (name.equals("UNIT3")) return new UnitField("Dispatched(?: Units:)? *(.*)", true);
     return super.getField(name);
   }
 
@@ -189,7 +189,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern ADDRESS3_PTN = Pattern.compile("([^*]*?)\\*([^,]*?), ([^,]*?),(?: (.*))?");
+  private static final Pattern ADDRESS3_PTN = Pattern.compile("([^*]*?)\\*([^,]*?),(?: ([^,]*?),)?(?: (.*))?");
   private class MyAddress3Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -197,7 +197,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       if (!match.matches()) abort();
       data.strPlace = match.group(1).trim();
       parseAddress(match.group(2).trim(), data);
-      data.strCity = match.group(3).trim();
+      data.strCity = getOptGroup(match.group(3));
       data.strApt = append(data.strApt, "-", getOptGroup(match.group(4)));
     }
     
