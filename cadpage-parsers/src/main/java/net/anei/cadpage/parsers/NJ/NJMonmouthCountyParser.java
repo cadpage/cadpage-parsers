@@ -11,6 +11,7 @@ Monmouth County, NJ
 public class NJMonmouthCountyParser extends GroupBestParser {
   
   public NJMonmouthCountyParser() {
-    super(new NJMonmouthCountyAParser(), new NJMonmouthCountyBParser());
+    super(new NJMonmouthCountyAParser(), new NJMonmouthCountyBParser(),
+          new NJMonmouthCountyCParser());
   }
 }

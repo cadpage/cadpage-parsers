@@ -972,6 +972,7 @@ public class Active911ParserTable {
       "US/NJ/TomsRiverPolice",            "NJOceanCountyB",
       "US/NJ/VernonPolice",               "NJSussexCountyC",
       "US/NJ/VinelandCity",               "NJCumberlandCountyB",
+      "US/NJ/UnionBeach",                 "NJMonmouthCountyC",
       "US/NJ/WarrenCounty",               "NJWarrenCounty",
       "US/NJ/WayneTownship",              "NJWayneTownship",
       "US/NJ/WestCaldwellPD",             "NJEssexCounty",
