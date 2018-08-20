@@ -534,6 +534,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.equals(UNIT_LABEL_STR)) return false;
+      if (INFO_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
     }

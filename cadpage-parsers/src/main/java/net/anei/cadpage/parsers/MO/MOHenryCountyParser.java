@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 public class MOHenryCountyParser extends DispatchA48Parser {
   
   public MOHenryCountyParser() {
-    super(CITY_LIST, "HENRY COUNTY", "MO", FieldType.X, A48_ONE_WORD_CODE);
+    super(CITY_LIST, "HENRY COUNTY", "MO", FieldType.PLACE, A48_ONE_WORD_CODE);
     setupCallList(CALL_LIST);
   }
   

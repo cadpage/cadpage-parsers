@@ -752,6 +752,7 @@ public class Active911ParserTable {
       "US/MO/DesPeres",                   "MOStLouisCountyI",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
       "US/MO/GreeneCounty",               "MOGreeneCounty",
+      "US/MO/HenryCounty",                "MOHenryCounty",
       "US/MO/HarrisonCounty",             "MOHarrisonCounty",
       "US/MO/Jackson",                    "MOCapeGirardeauCountyB",
       "US/MO/JasperCounty",               "MOJasperCounty",
