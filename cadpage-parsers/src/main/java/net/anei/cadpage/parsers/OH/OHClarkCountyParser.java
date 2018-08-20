@@ -12,7 +12,6 @@ public class OHClarkCountyParser extends GroupBestParser {
   public OHClarkCountyParser() {
     super(new OHClarkCountyAParser(), 
           new OHClarkCountyCParser(), new OHClarkCountyDParser(),
-          
           new GroupBlockParser(),  new OHClarkCountyBParser());
   }
   

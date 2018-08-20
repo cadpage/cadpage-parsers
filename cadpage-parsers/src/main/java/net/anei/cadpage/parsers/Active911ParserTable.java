@@ -1088,6 +1088,7 @@ public class Active911ParserTable {
       "US/OH/CityofTwinsburg",            "OHSummitCountyG",
       "US/OH/CityofVandalia",             "OHMontgomeryCountyB",
       "US/OH/CityofXenia",                "OHGreeneCounty",
+      "US/OH/ClarkCountyMadisonTWP",      "OHClarkCountyD",
       "US/OH/ClarkCounty",                "OHClarkCounty",
       "US/OH/ClermontCounty",             "OHClermontCounty",
       "US/OH/ClintonCounty",              "OHClintonCounty",
