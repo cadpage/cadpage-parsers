@@ -28,7 +28,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
   @Override
   public String getFilter() {
-    return "adams911@adamscounty.us,messaging@iamresponding.com,tnethknouse@gmail.com,777";
+    return "adams911@adamscounty.us,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
   }
   
   private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX )");
