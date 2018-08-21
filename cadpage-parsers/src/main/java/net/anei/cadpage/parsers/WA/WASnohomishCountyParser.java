@@ -10,6 +10,6 @@ public class WASnohomishCountyParser extends GroupBestParser {
   public WASnohomishCountyParser() {
     super(new WASnohomishCountyAParser(), new WASnohomishCountyBParser(), 
           new WASnohomishCountyCParser(), new WASnohomishCountyDParser(),
-          new WASnohomishCountyEParser());
+          new WASnohomishCountyEParser(), new WASnohomishCountyFParser());
   }
 }

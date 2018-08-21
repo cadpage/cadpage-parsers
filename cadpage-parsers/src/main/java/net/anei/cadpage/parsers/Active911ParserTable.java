@@ -1593,6 +1593,7 @@ public class Active911ParserTable {
       "US/WA/SNOCOM",                     "WASnohomishCountyD",
       "US/WA/SnohomishCounty",            "WASnohomishCountyA",
       "US/WA/SnohomishCountyNW",          "WASnohomishCountyB",
+      "US/WA/Snopac911",                  "WASnohomishCountyB,WASnohomishCountyF",
       "US/WA/SouthSound911",              "WAPierceCountyE",
       "US/WA/SpokaneCounty",              "WASpokaneCounty",
       "US/WA/StevensCounty",              "WAStevensCounty",
