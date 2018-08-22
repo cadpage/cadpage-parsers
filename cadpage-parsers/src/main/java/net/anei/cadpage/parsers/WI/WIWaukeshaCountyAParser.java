@@ -54,7 +54,7 @@ public class WIWaukeshaCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@iaralerts.com";
+    return "@iaralerts.com,DoNotReply@waukeshacounty.gov";
   }
 
   @Override
