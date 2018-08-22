@@ -1294,6 +1294,7 @@ public class ParserList {
               ,"SCAbbevilleCounty"              ,"Abbeville County, SC"
               ,"SCBerkeleyCounty"               ,"Berkeley County, SC"
               ,"SCAndersonCounty"               ,"Anderson County, SC"
+              ,"SCCalhounCounty"                ,"Calhoun County, SC"
               ,"SCCharlestonCounty"             ,"Charleston County, SC"
               ,"SCCherokeeCounty"               ,"Cherokee County, SC"
               ,"SCChesterCounty"                ,"Chester County, SC"
