@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class MNDodgeCountyParser extends DispatchA27Parser {
   
   public MNDodgeCountyParser() {
-    super("DODGE COUNTY", "MN", "\\d{8}");
+    super("DODGE COUNTY", "MN", "\\d{8}|RDM");
   }
   
   @Override
