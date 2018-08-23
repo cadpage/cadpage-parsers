@@ -4,6 +4,7 @@ package net.anei.cadpage.parsers.NC;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
@@ -68,15 +69,22 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
 
   @Override
   protected void parseExtra(String sExtra, Data data) {
-    int pt = sExtra.indexOf(' ');
-    if (pt < 0) {
-      data.strCall =  sExtra;
+    
+    String call = MWORD_CALL_LIST.getCode(sExtra.toUpperCase());
+    if (call != null) {
+      data.strCall = sExtra.substring(0,call.length());
+      data.strSupp = sExtra.substring(call.length()).trim();
       return;
     }
-    int pt2 = sExtra.indexOf('-', pt+1);
-    if (pt2 >= 0) pt = sExtra.lastIndexOf(' ', pt2);
-    data.strCall = sExtra.substring(0,pt).trim();
-    data.strSupp = sExtra.substring(pt+1).trim();
+
+    int pt = sExtra.indexOf(' ');
+    if (pt >= 0) {
+      data.strCall = sExtra.substring(0,pt);
+      data.strSupp = sExtra.substring(pt+1).trim();
+      return;
+    }
+    data.strCall =  sExtra;
+    return;
   }
   
   @Override
@@ -84,6 +92,14 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
     if (apt.length() > 0) address = append(address, " ", "UNIT " + apt);
     return address;
   }
+  
+  private static CodeSet MWORD_CALL_LIST = new CodeSet(new String[]{
+      "10-50 PI",
+      "ABDOMINAL PAIN",
+      "SICK PERSON",
+      "STRUCTURE FIRE",
+      "UNKNOWN PROBLEM (MAN DOWN)"
+  });
 
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ANDY HICKS",
