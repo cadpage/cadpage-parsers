@@ -41,9 +41,10 @@ public class INJeffersonCountyParser extends DispatchEmergitechParser {
       return true;
     }
     
-    if (subject.length() == 0) return false;
-    body = subject + ": " + body;
-    if (!body.contains("Nature:") && body.contains(" Location")) body = "Nature:" + body;
+    if (subject.length() > 0) {
+      body = subject + ": " + body;
+      if (!body.contains("Nature:") && body.contains(" Location")) body = "Nature:" + body;
+    }
     return super.parseMsg(body, data);
   }
 
