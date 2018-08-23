@@ -12,7 +12,7 @@ public class ALStClairCountyBParser extends DispatchSouthernParser {
 
   public ALStClairCountyBParser() {
     super(CITY_LIST, "ST CLAIR COUNTY", "AL", 
-          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_BAD_PLACE | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_ID | DSFLG_TIME);
+          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_BAD_PLACE | DSFLG_X | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_ID | DSFLG_TIME);
   }
   
   @Override
@@ -49,6 +49,8 @@ public class ALStClairCountyBParser extends DispatchSouthernParser {
     "SPRINGVILLE",
     "STEELE",
     "TRUSSVILLE",
+    "WATTSVILLE",
+    "WHITNEY",
     "VINCENT",
 
     "CROPWELL"
