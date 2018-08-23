@@ -16,7 +16,7 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
 
   @Override
   public String getFilter() {
-    return "CAD@haywoodnc.net";
+    return "CAD@haywoodnc.net,4702193544";
   }
   
   @Override
