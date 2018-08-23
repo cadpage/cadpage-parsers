@@ -604,6 +604,7 @@ public class ParserList {
               ,"KYShelbyCounty"                 ,"Shelby County, KY"
               ,"KYSimpsonCounty"                ,"Simpson County, KY"
               ,"KYSpencerCounty"                ,"Spencer County, KY"
+              ,"KYTaylorCounty"                 ,"Taylor County, KY"
               ,"KYToddCounty"                   ,"Todd County, KY"
               ,"KYTriggCounty"                  ,"Trigg County, KY"
               ,"KYTrimbleCounty"                ,"Trimble County, KY"

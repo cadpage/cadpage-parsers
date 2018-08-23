@@ -634,6 +634,7 @@ public class Active911ParserTable {
       "US/MI/IoniaCounty",                "MIIoniaCounty",
       "US/MI/IoscoCounty",                "MIIoscoCounty",
       "US/MI/Irisalert",                  "MIOaklandCountyB",
+      "US/MI/IsabellaCounty",             "MIIsabellaCountyA",
       "US/MI/JacksonCounty",              "MIJacksonCounty",
       "US/MI/KalamazooCity",              "MIKalamazooCounty",
       "US/MI/KentCity",                   "MIKentCounty",
