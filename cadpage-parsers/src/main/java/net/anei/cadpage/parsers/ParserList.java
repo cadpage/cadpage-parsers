@@ -142,6 +142,7 @@ public class ParserList {
               ,"ALShelbyCounty"                 ,"Shelby County, AL"
               ,"ALStClairCounty"                ,"St Clair County, AL"
               ,"ALTalladegaCounty"              ,"Talladega County, AL"
+              ,"ALTallapoosaCounty"             ,"Tallapoosa County, AL"
               ,"ALWalkerCounty"                 ,"Walker County, AL"
               ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
@@ -1405,6 +1406,7 @@ public class ParserList {
               ,"TXHarrisCountyNWEMS"            ,"Harris County NWEMS, TX"
               ,"TXHaysCounty"                   ,"Hays County, TX"
               ,"TXHelotes"                      ,"Helotes, TX"
+              ,"TXHendersonCounty"              ,"Henderson County, TX"
               ,"TXHoodCounty"                   ,"Hood County, TX"
               ,"TXHumble"                       ,"Humble, TX"
               ,"TXHuntCounty"                   ,"Hunt County, TX"
