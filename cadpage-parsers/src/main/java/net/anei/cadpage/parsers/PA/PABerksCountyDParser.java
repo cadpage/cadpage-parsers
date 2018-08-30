@@ -13,21 +13,29 @@ public class PABerksCountyDParser extends FieldProgramParser {
   
   public PABerksCountyDParser() {
     super("BERKS COUNTY", "PA",
-          "Type:CALL! Add:ADDRCITY! X-Sts:X! INFO/N+ NOC:CALL/SDS? Unit:UNIT! DATETIMEGPS! GPS? END");
+          "Type:CALL! Add:ADDRCITY! X-Sts:X! INFO/N+ NOC:CALL/SDS? Unit:UNIT% DATETIMEGPS% GPS? END");
   }
   
   @Override
   public String getFilter() {
-    return "berksalert@countyofberks.com";
+    return "berksalert@countyofberks.com,99538";
   }
   
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
+  
+  private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?<!\n)(Add:|NOC:|X-Sts:|Unit:)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (body.startsWith("Berks County DES: ")) {
+      subject = "Incident";
+      body = body.substring(18).trim();
+      body = MISSING_BRK_PTN.matcher(body).replaceAll("\n$1");
+    }
     
     if (!subject.equals("Incident")) return false;
     body = stripFieldEnd(body, "\n.");

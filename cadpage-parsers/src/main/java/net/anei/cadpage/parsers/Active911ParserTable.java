@@ -142,6 +142,7 @@ public class Active911ParserTable {
       "US/CA/ElDoradoCounty",             "CAElDoradoCounty",
       "US/CA/FresnoCounty",               "CAFresnoCounty",
       "US/CA/GBPD",                       "CAGroverBeach",
+      "US/CA/GonzalesFD",                 "CAMontereyCountyA",
       "US/CA/Hanford",                    "CAHanford",
       "US/CA/Hayward",                    "CAHayward",
       "US/CA/Jpapage",                    "CASanDiegoCountyA",

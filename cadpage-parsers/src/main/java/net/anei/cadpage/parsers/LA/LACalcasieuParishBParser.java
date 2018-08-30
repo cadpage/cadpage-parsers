@@ -47,8 +47,8 @@ public class LACalcasieuParishBParser extends DispatchOSSIParser {
       "DEQU", "DEQUINCY",
       "IOWA", "IOWA",
       "LAKE", "LAKE CHARLES",
-      "SULP", "SULPHUR",
       "STAR", "STARKS",
+      "SULP", "SULPHUR",
       "VINT", "VINTON",
       "WEST", "WESTLAKE"
   });
