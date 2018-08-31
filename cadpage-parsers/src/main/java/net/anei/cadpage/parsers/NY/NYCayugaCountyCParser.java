@@ -22,9 +22,17 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   private static final String MARKER = "Cayuga County E911: ";
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+  protected boolean parseMsg(String subject, String body, Data data) {
+    do {
+      if (body.startsWith(MARKER)) {
+        body = body.substring(MARKER.length()).trim();
+        break;
+      }
+      
+      if (subject.equals("From Cayuga County 911")) break;
+      
+      return false;
+    } while (false);
     int pt = body.indexOf("\nText Stop");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
@@ -34,10 +42,26 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{3,4}", true);
     if (name.equals("DISP")) return new SkipField("DISP", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("BOX")) return new BoxField("[A-Z0-9]+", true);
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]{3,7}", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      data.strCity = convertCodes(p.getLastOptional(','), CITY_CODES);
+      data.strPlace = p.getLastOptional(';');
+      parseAddress(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE CITY";
+    }
   }
   
   private static final Pattern TIME_DATE_PTN = Pattern.compile("(\\d\\d \\d\\d \\d\\d) (\\d\\d/\\d\\d/\\d{4}) - +(.*)");
@@ -62,7 +86,9 @@ public class NYCayugaCountyCParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CTT",    "CATO",
       "FHA",    "FAIR HAVEN",
+      "IRA",    "IRA",
       "STE",    "STERLING",
       "VIC",    "VICTORY",
       "WOL",    "WOLCOTT"

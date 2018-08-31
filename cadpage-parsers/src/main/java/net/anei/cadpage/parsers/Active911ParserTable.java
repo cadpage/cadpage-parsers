@@ -993,6 +993,7 @@ public class Active911ParserTable {
       "US/NY/Bridgehampton",              "NYSuffolkCountyC",
       "US/NY/BroomeCounty",               "NYBroomeCounty",
       "US/NY/BuffaloRuralMetro",          "NYErieCountyF",
+      "US/NY/CatoFD",                     "NYCayugaCountyC",
       "US/NY/CayugaCounty",               "NYCayugaCountyA",
       "US/NY/CentralIslip",               "NYSuffolkCountyK",
       "US/NY/ChenangoCounty",             "NYChenangoCounty",
