@@ -37,6 +37,10 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     }
     
     if (! subject.trim().equals("!")) return false;
+    
+    int pt = body.indexOf("\n\n\n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+    
     body = LAT_LON_PTN.matcher(body).replaceAll("LAT:$1 LON:$2");
     body = UNITS_PTN.matcher(body).replaceFirst("Units:");
     String[] flds = DELIM.split(body);
