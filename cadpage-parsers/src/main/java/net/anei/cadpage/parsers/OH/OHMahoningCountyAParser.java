@@ -38,7 +38,8 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     return new SplitMsgOptionsCustom();
   }
 
-  private static final Pattern MARK_ID_PTN = Pattern.compile("(\\d{3}):");
+  private static final Pattern MARK_ID_PTN = Pattern.compile("(\\d+):");
+  private static final Pattern MISSING_BRACKET_PTN = Pattern.compile("\\d+\\]");
   private static final Pattern CALL_OUT_PFX_PTN = Pattern.compile("[* ]*(?:(?:CALL OUTE?\\b[, ]*)+|MEDIC NEEDED|CORRECTED ADDRESS)[*: ]*");
   private static final Pattern BAD_UNIT_PFX_PTN = Pattern.compile("[A-Z0-9]+\\]");
   private static final Pattern N_GEORGETOWN_PTN = Pattern.compile(" \\(N\\.? GEORGETOWN\\) ");
@@ -56,6 +57,10 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
       if (subject.equals("NATURE") || subject.equals("LOCATION")) {
         subject = '[' + match.group(1) + "]- " + subject;
       }
+    }
+    
+    else if (MISSING_BRACKET_PTN.matcher(body).lookingAt()) {
+      body = '[' + body;
     }
     
     if (subject.endsWith("- CALL")) {
