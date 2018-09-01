@@ -33,7 +33,6 @@ public class ORDeschutesCountyParser extends FieldProgramParser {
     body = body.replace("NON-EMERGENCY", "NON%%EMERGENCY");
     body = body.replace("NON-INJURY", "NON%%INJURY");
     body = body.replace("Car-Bike", "Car%%Bike");
-    body = body.replace("20-22", "20%%22");
     body = body.replace("FOIN-FOLLETTE", "FOIN%%FOLLETTE");
     body = body.replace("Headache-No", "Headache%%No");
     body = body.replace("9-1-1", "9%%1%%1");
