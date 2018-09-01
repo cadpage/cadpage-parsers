@@ -17,8 +17,7 @@ public class TNBradleyCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("CLEVELANDTN911:")) return false;
-    body = body.substring(15).trim();
+    body = stripFieldStart(body, "CLEVELANDTN911:");
     return super.parseMsg(body, data);
   }
 
