@@ -17,7 +17,7 @@ public class MOStFrancoisCountyBParser extends FieldProgramParser {
   public MOStFrancoisCountyBParser(String defCity, String defState) {
     super(defCity, defState, 
          "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
-         "| CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT% INFO:INFO/N+ )");
+         "| CALL:CALL1! PLACE:PLACE ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT% INFO:INFO/N+ )");
   }
   
   @Override
@@ -53,14 +53,14 @@ public class MOStFrancoisCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL1")) return new MyCall1Field();
     if (name.equals("DATE"))  return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT2")) return new UnitField("[A-Z0-9]+:[A-Z0-9]+(?:,[A-Z0-9]+:[A-Z0-9]+)*", true);
     return super.getField(name);
   }
   
-  private class MyCallField extends CallField {
+  private class MyCall1Field extends CallField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf(' ');
