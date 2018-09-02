@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
 import net.anei.cadpage.parsers.GroupBestParser;
+import net.anei.cadpage.parsers.GroupBlockParser;
 
 /*
  * Columbiana County, OH
@@ -8,6 +9,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 public class OHColumbianaCountyParser extends GroupBestParser {
   public OHColumbianaCountyParser() {
-    super(new OHColumbianaCountyAParser(), new OHColumbianaCountyBParser());
+    super(new OHColumbianaCountyBParser(),
+          new GroupBlockParser(),
+          new OHColumbianaCountyAParser());
   }
 }
