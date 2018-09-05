@@ -44,6 +44,12 @@ public class PATiogaCountyParser extends DispatchA48Parser {
     );
   }
   
+  @Override
+  public String getFilter() {
+    return "@tiogacountypa.us";
+  }
+  
+  
   private static final Pattern TRAIL_NULL_PTN = Pattern.compile("(?:\\s+null)+$");
   
   
