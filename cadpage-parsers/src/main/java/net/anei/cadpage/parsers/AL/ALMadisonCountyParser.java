@@ -24,6 +24,7 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   ALMadisonCountyParser(String defCity, String defState) {
     super(CITY_TABLE, defCity, defState,
            "EVENT:ID? Loc:ADDR EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP%");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -159,6 +160,10 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     addr = PRIV_PTN.matcher(addr).replaceAll("").trim();
     return super.adjustMapAddress(addr);
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "2029 FLAGSTONE DR",                    "+34.692179,-86.720033"
+  });
   
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       "MAD",            "MADISON",
