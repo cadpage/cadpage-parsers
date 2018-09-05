@@ -39,11 +39,15 @@ public class MOStFrancoisCountyBParser extends FieldProgramParser {
       setSelectValue("1");
       data.strSource = match.group(1);
       body = body.substring(match.end());
-      return parseFields(body.split("\n"), data);
+     if (!parseFields(body.split("\n"), data)) return false;
     }
     
-    setSelectValue("2");
-    return parseFields(body.split("//"), data);
+    else {
+      setSelectValue("2");
+      if (!parseFields(body.split("//"), data)) return false;
+    }
+    data.strPlace = stripFieldStart(data.strPlace, "ALIAS=");
+    return true;
   }
   
   @Override
