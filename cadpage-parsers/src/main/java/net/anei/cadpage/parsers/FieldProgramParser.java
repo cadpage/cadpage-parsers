@@ -298,6 +298,12 @@ public class FieldProgramParser extends SmartAddressParser {
     this.cities.addAll(cities);
   }
 
+  @Override
+  protected void setupCities(Properties cityCodes) {
+    super.setupCities(cityCodes);
+    if (this.cityCodes == null) this.cityCodes = cityCodes;
+  }
+
   /**
    * Set the character used to mark the end of  keyword
    * @param breakChar new break character

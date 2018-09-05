@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
@@ -10,6 +13,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
   public PATiogaCountyParser() {
     super(CITY_LIST, "TIOGA COUNTY", "PA", FieldType.PLACE, A48_NO_CODE);
     setupCallList(CALL_LIST);
+    setupCities(CITY_CODES);
     setupMultiWordStreets(
         "ALDER RUN",
         "AMEIGH VALLEY",
@@ -40,11 +44,13 @@ public class PATiogaCountyParser extends DispatchA48Parser {
     );
   }
   
+  private static final Pattern TRAIL_NULL_PTN = Pattern.compile("(?:\\s+null)+$");
+  
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    while (body.endsWith(" null")) body = body.substring(0, body.length()-5).trim();
+    body = TRAIL_NULL_PTN.matcher(body).replaceFirst("");
     
     if (!super.parseMsg(subject, body, data)) return false;
     
@@ -261,4 +267,8 @@ public class PATiogaCountyParser extends DispatchA48Parser {
     // Potter County
     "HEBRON TWP"
   };
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BRO", "BROWN TWP"
+  });
 }

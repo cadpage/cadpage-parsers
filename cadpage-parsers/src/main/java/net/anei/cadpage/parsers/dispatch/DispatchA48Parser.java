@@ -27,7 +27,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   public static final int A48_OPT_ONE_WORD_CODE = 0x02;
   
   /**
-   * Flag indicating there is no call code.  Just a call desciption
+   * Flag indicating there is no call code.  Just a call description
    */
   public static final int A48_NO_CODE =           0x04;
   
