@@ -98,6 +98,12 @@ public class ALMorganCountyParser extends DispatchOSSIParser {
   }
   
   @Override
+  public String adjustMapAddress(String addr) {
+    addr = addr.replace("MARK SELBY PVT", "SELBY PVT");
+    return super.adjustMapAddress(addr);
+  }
+  
+  @Override
   public boolean checkCall(String field) {
     return (CALL_CAT_PTN.matcher(field).matches() ||
             CALL_LIST.contains(field));
