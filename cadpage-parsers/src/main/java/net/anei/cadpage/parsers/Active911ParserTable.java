@@ -1160,6 +1160,7 @@ public class Active911ParserTable {
       "US/OH/WarrenCountyLogis",          "OHWarrenCountyA",
       "US/OH/WarrenCountyZuercher",       "OHWarrenCountyE",
       "US/OH/WashingtonCountySheriff",    "OHWashingtonCountyA",
+      "US/OH/WayneCounty",                "OHWayneCountyC,OHWayneCountyE",
       "US/OH/WestChester",                "OHButlerCountyB",
       "US/OH/WoosterCity",                "OHWayneCountyD",
       "US/OH/WrightPatt",                 "OHMontgomeryCountyA",

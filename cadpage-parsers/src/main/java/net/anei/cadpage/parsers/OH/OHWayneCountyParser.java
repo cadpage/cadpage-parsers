@@ -12,6 +12,7 @@ public class OHWayneCountyParser extends GroupBestParser {
     super(new OHWayneCountyAParser(),
           new OHWayneCountyBParser(),
           new OHWayneCountyCParser(),
-          new OHWayneCountyDParser());
+          new OHWayneCountyDParser(),
+          new OHWayneCountyEParser());
   }
 }
