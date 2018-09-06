@@ -17,7 +17,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "4702193684";
+    return "4702193684,2183500429";
   }
   
   private static final Pattern SRC_DATE_PREFIX = Pattern.compile("([- A-Z0-9]+) TEXT:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d(?: [AP]M)?)");
