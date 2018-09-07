@@ -21,7 +21,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     return "dispatch@sccda.org,dispatch@sccmo.org,SCCEC_info@sccmo.org";
   }
   
-  private static final Pattern PRENOTE_PTN = Pattern.compile("\\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] \\[Notification\\] *(.*)");
+  private static final Pattern PRENOTE_PTN = Pattern.compile("\\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] (?:\\[Notification\\])? *(.*)");
   
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -91,8 +91,10 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       data.strCity = p.get(30);
       if (data.strCity.equalsIgnoreCase("Unincorporated")) data.strCity = "";
       if (p.check("GPS:")) {
-        String gps = p.get(3)+'.'+p.get(6);
-        if (!p.checkBlanks(3)) return false;
+        p.check(" ");
+        String gps = p.get(2)+'.'+p.get(6);
+        if (!p.checkBlanks(2)) return false;
+        p.check(" ");
         setGPSLoc(gps+','+p.get(3)+'.'+p.get(6), data);
         if (!p.checkBlanks(2)) return false;
       }
