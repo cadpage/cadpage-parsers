@@ -27,16 +27,22 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     
     // Strip off text msg heading
-    if (body.startsWith("/ Dispatch Info / ")) {
-      subject = "Dispatch Info";
-      body = body.substring(18).trim();
+    if (subject.length() == 0) {
+      body = stripFieldStart(body, "/ ");
+      if (body.startsWith("Dispatch Info / ")) {
+        subject = "Dispatch Info";
+        body = body.substring(16).trim();
+      }
+      else if (body.startsWith("CHARLESTON COUNTY: ")) {
+        subject = "Dispatch Info";
+        body = body.substring(19).trim();
+      }
     }
     
     // See if we can parse this as a fixed field message
     if (!parseFixedFieldMsg(subject, body, data)) {
       
       // No luck, try it as a variable length field message
-      data.initialize(this);
       body = body.replace(" Op Channel:", " Cmd Channel:")
                  .replace(" Cmnd Channel:", " Cmd Channel:")
                  .replace(" X Streets:", " X Street:");
@@ -49,93 +55,78 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
   }
 
   private boolean parseFixedFieldMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch Info") && !body.startsWith("CHARLESTON COUNTY: ")) return false;
-    FParser p = new FParser(body);
-    
-    int callLen;
-    if (p.check("Response Group*") || p.check("*")) callLen = 29;
-    else if (p.check("CHARLESTON COUNTY: ")) callLen = 30;
-    else callLen = -1;
-    if (callLen > 0) {
-      setFieldList("CALL ADDR APT X CH UNIT");
-      data.strCall = stripFieldStart(p.get(callLen), "*");
-      if (p.check(" ")) return false;
-      parseAddress(p.get(40), data);
+    if (!subject.equals("Dispatch Info")) return false;
+  
+    do {
+      FParser p = new FParser(body);
+      String call = stripFieldStart(p.get(30), "*");
+      if (p.check(" ")) break;
+      String addr = p.get(40);
+      String cross = "", channel, unit;
       if (p.check("X Streets:")) {
-        data.strCross = p.get(40);
+        cross = p.get(40);
         p.setOptional();
-        if (!p.check("Cmd Channel:")) return false;
-        data.strChannel = p.get(30);
-        if (!p.check("Unit Assigned:")) return false;
-        data.strUnit = p.get();
+        if (!p.check("Cmd Channel:")) break;
+        channel = p.get(30);
+        if (!p.check("Unit Assigned:")) break;
+        unit = p.get();
       } else if (p.check("X St:")) {
-        data.strCross = p.get(30);
+        cross = p.get(30);
         p.setOptional();
-        if (!p.check("Cmd Chan:")) return false;
-        data.strChannel = stripFieldStart(p.get(15), "_");
-        if (!p.check("Units:")) return false;
-        data.strUnit = p.get();
+        if (!p.check("Cmd Chan:")) break;
+        channel = stripFieldStart(p.get(15), "_");
+        if (!p.check("Units:")) break;
+        unit = p.get();
       } else if (p.check("C:")) {
-        data.strChannel = stripFieldStart(p.get(15), "_");
-        if (!p.check("U:")) return false;
-        data.strUnit = p.get();
-      } else return false;
+        channel = stripFieldStart(p.get(15), "_");
+        if (!p.check("U:")) break;
+        unit = p.get();
+      } else break;
+      
+      setFieldList("CALL ADDR APT X CH UNIT");
+      data.strCall = call;
+      parseAddress(addr, data);
+      data.strCross = cross;
+      data.strChannel = channel;
+      data.strUnit = unit;
       if (body.length() < 176) data.expectMore = true;
       return true;
-    }
+    } while (false);
     
-    else if (p.checkAhead(34, "District ")){
-      setFieldList("UNIT ID SRC CALL CODE ADDR X APT INFO PLACE");
-      data.strUnit = p.get(14);
-      data.strCallId = p.get(20);
+    FParser p = new FParser(body);
+    if (p.checkAhead(34, "District ")){
+      String unit = p.get(14);
+      String id = p.get(20);
       if (!p.check("District ")) return false;
-      data.strSource = p.get(3);
-      data.strCall = p.get(8);
-      data.strCode = p.get(10);
-      parseAddress(p.get(20), data);
+      String source = p.get(3);
+      String call = p.get(8);
+      String code = p.get(10);
+      String addr = p.get(20);
       if (!p.check("XS:")) return false;
-      data.strCross = p.get(34);
+      String cross = p.get(34);
       p.setOptional();
       if (!p.check("Apt/Bldg:")) return false;
-      data.strApt = p.get(13);
-      data.strSupp = p.get(30);
+      String apt = p.get(13);
+      String info = p.get(30);
       if (!p.check("Location Name:")) return false;
-      data.strPlace = p.get();
+      String place = p.get();
+      
+      setFieldList("UNIT ID SRC CALL CODE ADDR X APT INFO PLACE");
+      data.strUnit = unit;
+      data.strCallId = id;
+      data.strSource = source;
+      data.strCall = call;
+      data.strCode = code;
+      parseAddress(addr, data);
+      data.strCross = cross;
+      data.strApt = append(data.strApt, "-", apt);
+      data.strSupp = info;
+      data.strPlace = place;
       if (body.length() < 130) data.expectMore = true;
       return true;
     }
     
-    else {
-      setFieldList("CALL PLACE ADDR APT X GPS UNIT");
-      data.strCall = p.get(20);
-      if (p.check(" ")) return false;
-      boolean longForm = p.checkAhead(83, "   / ");
-      if (longForm) {
-        data.strPlace = p.get(15);
-      }
-      if (p.check(" ")) return false;
-      parseAddress(p.get(30), data);
-      if (longForm) {
-        data.strCross = p.get(30);
-      }
-      String gps1 = p.get(8);
-      if (!p.check("   / ")) return false;
-      String gps2 = p.get(8);
-      setGPSLoc(fmtGps(gps1)+','+fmtGps(gps2), data);
-      
-      
-      if (!p.check("  U:")) return false;
-      data.strUnit = p.get();
-      return true;
-    }
-  }
-  
-  private static String fmtGps(String gps) {
-    int pt = gps.length()-6;
-    if (pt > 0) {
-      gps = gps.substring(0,pt) + '.' + gps.substring(pt);
-    }
-    return gps;
+    return false;
   }
 
   private static final Pattern PREFIX_PTN = 
