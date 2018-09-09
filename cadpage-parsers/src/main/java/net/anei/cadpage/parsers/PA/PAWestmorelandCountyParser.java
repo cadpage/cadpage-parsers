@@ -162,6 +162,7 @@ public class PAWestmorelandCountyParser extends FieldProgramParser {
       "MANOR_B",     "MANOR",
       "MT_PLEAS_B",  "MT PLEASANT",
       "N_B_VERN_B",  "NORTH BELLE VERNON",
+      "N_FLOR_B",    "NEW FLORENCE",
       "N_IRWIN_B",   "NORTH IRWIN",
       "N_STANTN_B",  "NEW STANTON",
       "PENN_B",      "PENN",
