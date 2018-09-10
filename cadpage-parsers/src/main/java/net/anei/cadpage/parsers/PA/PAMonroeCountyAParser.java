@@ -4,23 +4,27 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.SmartAddressParser;
 
 
-
-public class PAMonroeCountyAParser extends SmartAddressParser {
+public class PAMonroeCountyAParser extends FieldProgramParser {
   
   public PAMonroeCountyAParser() {
-    super("MONROE COUNTY", "PA");
+    super("MONROE COUNTY", "PA",
+          "( Caller:NAME! Caller:PHONE! | ) " + 
+          "( Priority:PRI! CALL! ADDRCITY/S6! PLACE! X_ST:X! GPS! " +
+          "| CALL! CALL/SDS! ADDRCITY/ZS6! X_STS:X! GPS! " + 
+          "| CALL! CALL/SDS! ADDRCITY/ZS6! PLACE! X_STS:X! GPS! " + 
+          "| ADDRCITY/S6! Priority:PRI? CALL! PLACE! X_ST:X! GPS! ) INFO/N+");
     removeWords("ROAD", "FS", "SQ");
     setupSpecialStreets("SUNSET STRIP");
   }
   
   @Override
   public String getFilter() {
-    return "@monroeco911.com,12101,alert@monroe.alertpa.org,messaging@iamresponding.com,mcpaas6@rsix.roamsecure.net,no-reply@ecnalert.com,no-reply@onsolve.com,notify@monroeco911.com";
+    return "@monroeco911.com,12101,alert@monroe.alertpa.org,messaging@iamresponding.com,mcpaas6@rsix.roamsecure.net,no-reply@ecnalert.com,no-reply@onsolve.com";
   }
   
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("INCIDENT UNIT HISTORY FOR: *(\\d+) +PAGE \\d+\n *DATE: *(\\d{6}) +CALLTYPE: *(\\S+) *\n");
@@ -48,6 +52,11 @@ public class PAMonroeCountyAParser extends SmartAddressParser {
         data.strSupp = append(data.strSupp, "\n", line);
       }
       return true;
+    }
+    
+    if (body.contains("\nX ST:") || body.contains("\n X STS:")) {
+      body = stripFieldStart(body, "CAD MSG ");
+      return parseFields(body.split("\n"), data);
     }
 
     // Strip off any prefix
@@ -127,6 +136,37 @@ public class PAMonroeCountyAParser extends SmartAddressParser {
     }
     if (call == null) call = code;
     return call;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+  
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('/', ',');
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Unit:")) {
+        data.strUnit = append(data.strUnit, ",", field.substring(5).trim());
+      }
+      if (field.contains("/Cleared:")) data.msgType = MsgType.RUN_REPORT;
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "INFO UNIT";
+    }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{

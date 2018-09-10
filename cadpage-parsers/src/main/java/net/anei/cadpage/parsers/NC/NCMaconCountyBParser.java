@@ -36,6 +36,7 @@ public class NCMaconCountyBParser extends FieldProgramParser {
     } while (body.length() < tlen);
     
     body = stripFieldStart(body, "MACON 911: ");
+    body = stripFieldStart(body, "MACON CO 911: ");
     Matcher match = SRC_DATE_PREFIX.matcher(body);
     if (match.lookingAt()) {
       data.strSource = match.group(1).trim();

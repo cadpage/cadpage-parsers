@@ -10,8 +10,9 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class PAMonroeCountyBParser extends HtmlProgramParser {
   
   public PAMonroeCountyBParser() {
-    super("MONROE COUNTY", "PA", 
-        "CALL! ( ADDRCITY/Z X_STS:X | CALL/SDS+? DESC ADDRCITY/Z! X_STS:X! ) GPS! INFO/N+ INC#:ID! TIMES/N+");
+    super("MONROE COUNTY", "PA",
+          "CALL! Priority:PRI? ( STARS! INFO/N+? STARS! ADDRCITY X_STS:X! GPS! STARS! INFO/N+? STARS! Your_INC#:ID ID/S+? STARS! TIMES/N+ " +
+                              "| ( ADDRCITY/Z X_STS:X | CALL/SDS+? DESC ADDRCITY/Z! X_STS:X! ) GPS! INFO/N+ INC#:ID! TIMES/N+ )");
   }
   
   @Override
@@ -42,6 +43,7 @@ public class PAMonroeCountyBParser extends HtmlProgramParser {
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIMES")) return new MyTimesField();
+    if (name.equals("STARS")) return new SkipField("\\*{10,}");
     return super.getField(name);
   }
   
