@@ -671,6 +671,7 @@ public class Active911ParserTable {
       "US/MN/BlueEarthCounty",            "MNBlueEarthCounty",
       "US/MN/BrownCounty",                "MNBrownCounty",
       "US/MN/CarverCounty",               "MNCarverCounty",
+      "US/MN/CarverCountyNR",             "MNCarverCounty",
       "US/MN/CarverCountyTEST",           "MNCarverCounty",
       "US/MN/CassCounty",                 "MNCassCounty",
       "US/MN/CityofStLouisPark",          "MNStLouisPark",
