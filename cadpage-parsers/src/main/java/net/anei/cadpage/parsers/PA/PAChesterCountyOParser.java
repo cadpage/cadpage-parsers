@@ -104,7 +104,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
     }
   }
   
-  private static final Pattern DATE_TIME2_PTN = Pattern.compile("(\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) ED");
+  private static final Pattern DATE_TIME2_PTN = Pattern.compile("(\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ED)?");
   private class MyDateTime2Field extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
