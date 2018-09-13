@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
@@ -10,8 +12,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 public class NCPasquotankCountyParser extends DispatchOSSIParser {
   
   public NCPasquotankCountyParser() {
-    super("PASQUOTANK COUNTY", "NC",
-           "FYI? ( ADDR CALL | CALL ADDR ) INFO+");
+    super(CITY_CODES, "PASQUOTANK COUNTY", "NC",
+          "( CANCEL ADDR! CITY? INFO/N+ " +
+          "| FYI? ( ADDR CALL! | CALL ADDR! ) INFO/N+ )");
     addExtendedDirections();
   }
 
@@ -52,4 +55,8 @@ public class NCPasquotankCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ELIZ", "ELIZABETH CITY"
+  });
 }

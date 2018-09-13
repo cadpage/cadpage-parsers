@@ -898,6 +898,7 @@ public class Active911ParserTable {
       "US/NC/OnslowCounty",               "NCOnslowCounty",
       "US/NC/OrangeCounty",               "NCOrangeCounty",
       "US/NC/PamlicoCounty",              "NCPamlicoCounty",
+      "US/NC/PasquotankCounty",           "NCPasquotankCounty",
       "US/NC/PenderCounty",               "NCPenderCounty",
       "US/NC/PenderSheriff",              "NCPenderCounty",
       "US/NC/PersonCounty",               "NCPersonCounty",
