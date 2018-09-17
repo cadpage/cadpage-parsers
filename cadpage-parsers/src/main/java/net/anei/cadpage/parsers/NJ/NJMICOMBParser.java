@@ -34,6 +34,8 @@ public class NJMICOMBParser extends MsgParser {
     do {
       if (subject.equals("CAD Page")) break;
       
+      if (subject.equals("MICCOM CAD")) break;
+      
       if (body.startsWith("/ CAD Page / ")) {
         body = body.substring(13);
         break;
