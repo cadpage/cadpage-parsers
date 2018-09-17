@@ -20,7 +20,7 @@ public class CAStocktonBParser extends FieldProgramParser {
   
   public CAStocktonBParser() {
     super("STOCKTON", "CA", 
-          "TYPE:CALL! LOCATION:ADDR! Received:DATETIME! CFS:ID! Cross_Streets:X! APPARATUS:UNIT! Lat/Long:GPS! INFO+ ");
+          "TYPE:CALL! LOCATION:ADDR! Received:DATETIME! CFS:ID! APT:APT? Cross_Streets:X? APPARATUS:UNIT! Lat/Long:GPS! INFO+ ");
     subfieldMap = buildSubfieldMap();
     subfieldKeyPtn = buildSubfieldKeyPtn(subfieldMap);
   }
@@ -35,7 +35,7 @@ public class CAStocktonBParser extends FieldProgramParser {
     return new SplitMsgOptionsCustom();
   }
 
-  private static final Pattern MARKER = Pattern.compile("CAD Page for CFS [-0-9]+\\b *");
+  private static final Pattern MARKER = Pattern.compile("CAD Page for CFS [-0-9]+\\b:? *");
   private static final Pattern MISSING_BRK_PTN = Pattern.compile(" (?=(?:LOCATION|Received|CFS|Cross Streets|APPARATUS|Lat/Long|Notes) *:)");
   
   @Override
@@ -75,11 +75,15 @@ public class CAStocktonBParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\[\\d{1,2}\\] *");
+  
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "Notes:");
-      Matcher match = subfieldKeyPtn.matcher(field);
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      match = subfieldKeyPtn.matcher(field);
       String key = "INFO";
       int lastPt = 0;
       while (match.find()) {
