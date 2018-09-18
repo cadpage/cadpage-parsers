@@ -959,6 +959,7 @@ public class Active911ParserTable {
       "US/NJ/Linwood",                    "Cadpage2",
       "US/NJ/MarlboroPD",                 "NJMarlboro",
       "US/NJ/MercerCounty",               "NJMercerCountyB",
+      "US/NJ/MICCOM",                     "NJMICOMB",
       "US/NJ/Middle",                     "NJCapeMayCounty",
       "US/NJ/MonmouthCounty",             "NJMonmouthCountyA",
       "US/NJ/MorrisCounty",               "NJMorrisCountyA",
