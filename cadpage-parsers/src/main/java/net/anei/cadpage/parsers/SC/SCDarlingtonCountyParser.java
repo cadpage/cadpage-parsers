@@ -2,6 +2,8 @@
 package net.anei.cadpage.parsers.SC;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
@@ -11,8 +13,11 @@ public class SCDarlingtonCountyParser extends DispatchSouthernParser {
     super(CITY_LIST, "DARLINGTON COUNTY", "SC", DSFLAG_FOLLOW_CROSS);
   }
   
-  
-  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -20,8 +25,7 @@ public class SCDarlingtonCountyParser extends DispatchSouthernParser {
     
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("CAD:")) return false;
-    body = body.substring(4).trim();
+    body = stripFieldStart(body, "CAD:");
     return super.parseMsg(body, data);
   }
 
@@ -38,6 +42,10 @@ public class SCDarlingtonCountyParser extends DispatchSouthernParser {
     "LAMAR",
     "NORTH HARTSVILLE",
     "SOCIETY HILL",
+    
+    // Chesterfield County
+    "CHESTERFIELD",
+    "MCBEE",
     
     // Florence County
     "FLORENCE",
