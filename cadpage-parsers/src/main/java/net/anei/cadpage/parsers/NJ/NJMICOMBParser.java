@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * This may be obsolete and replaced by NJMICOMBParser, but we are not yet
@@ -51,16 +52,18 @@ public class NJMICOMBParser extends MsgParser {
     if ((substring(body, 10, 11).equals("@") || substring(body, 11, 12).equals("@")) && 
         substring(body, 42, 43).equals("#") && 
         substring(body, 53, 59).equals("Disp")) {
-      data.strCall = "RUN REPORT";
-      data.strPlace = body;
+      setFieldList("UNIT INFO ID");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strSupp = body;
       data.strCallId = substring(body, 33, 53);
       return true;
     }
 
     if (substring(body, 10, 19).equals("CANCEL: #") && 
         substring(body, 80, 87).equals("Disp:")) {
-      data.strCall = "RUN REPORT";
-      data.strPlace = body;
+      setFieldList("UNIT INFO ID");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strSupp = body;
       data.strCallId = substring(body, 19, 29);
       return true;
     }
