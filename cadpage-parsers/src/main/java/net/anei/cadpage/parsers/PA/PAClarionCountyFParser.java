@@ -18,6 +18,11 @@ public class PAClarionCountyFParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "clarioncounty911@oes.clarion.pa.us,rwolbert@oes.clarion.pa.us,clarioncounty911@dps.clarion.pa.us";
+  }
+  
+  @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
