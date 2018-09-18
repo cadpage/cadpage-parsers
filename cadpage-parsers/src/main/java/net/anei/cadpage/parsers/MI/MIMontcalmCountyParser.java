@@ -25,6 +25,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     saveAddress = null;
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     if (! super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) data.strCall = "EMS ALERT";
     return true;
