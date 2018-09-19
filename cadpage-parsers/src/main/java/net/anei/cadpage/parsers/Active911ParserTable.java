@@ -1583,6 +1583,7 @@ public class Active911ParserTable {
       "US/WA/CityofBuckleyFD",            "WAPierceCountyD,WAPierceCountyE",
       "US/WA/CityofFife",                 "WAPierceCountyC",
       "US/WA/ClallamCounty",              "WAClallamCounty",
+      "US/WA/ClarkCounty",                "WAClarkCounty",
       "US/WA/Cowlitz911",                 "WACowlitzCounty",
       "US/WA/CowlitzCounty",              "WACowlitzCounty",
       "US/WA/GraysHarborCounty",          "WAGraysHarborCounty",
