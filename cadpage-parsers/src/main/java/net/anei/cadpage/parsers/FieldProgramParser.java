@@ -1111,7 +1111,9 @@ public class FieldProgramParser extends SmartAddressParser {
       // But we still need to check for any unprocessed required fields
       while (result && step != null) {
         if (! step.checkFailure(data)) result = false;
-        step = step.getNextStep();
+        if (step.field != null && step.field instanceof EndField &&
+            step.succLink != null) step = step.succLink.step;
+        else step = step.getNextStep();
       }
       return true;
     }

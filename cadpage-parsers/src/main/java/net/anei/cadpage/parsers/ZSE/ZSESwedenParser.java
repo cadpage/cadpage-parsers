@@ -11,8 +11,8 @@ public class ZSESwedenParser extends FieldProgramParser {
   public ZSESwedenParser() {
     super("", "", CountryCode.SE,
     "( FROM!  Radiogruppsnamn:CH! ADDR X2? CITY DUPCITY? CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
-    "| ID CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
-    "| CALL CALL CALL ADDR CITY ( GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
+    "| ( ID | CH ID ) CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
+    "| CALL CALL CALL ADDR! CITY ( END | GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
   
   @Override
@@ -32,7 +32,7 @@ public class ZSESwedenParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!parseFields(body.split("\n"), 6, data)) return false;
+    if (!parseFields(body.split("\n"), 4, data)) return false;
     if (data.strCity.equals("-")) data.strCity = "";
     if (data.strPlace.equals(data.strCity)) data.strPlace = "";
     return true;
