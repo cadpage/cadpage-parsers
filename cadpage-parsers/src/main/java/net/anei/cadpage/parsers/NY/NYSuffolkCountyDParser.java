@@ -12,6 +12,6 @@ public class NYSuffolkCountyDParser extends DispatchRedAlert2Parser {
 
   @Override
   public String getFilter() {
-    return "paging@pjvac.org";
+    return "paging@pjvac.org,portjeffersonvac@rednmxcad.com";
   }
 }

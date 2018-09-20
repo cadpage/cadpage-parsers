@@ -1043,7 +1043,7 @@ public class Active911ParserTable {
       "US/NY/RocklandCounty",             "NYRocklandCountyB",
       "US/NY/Ronkonkoma",                 "NYSuffolkCountyB",
       "US/NY/RuralMetro",                 "NYOnondagaCountyMetroWest",
-      "US/NY/SCFRESpaging",               "NYSuffolkCountyA",
+      "US/NY/SCFRESpaging",               "NYSuffolkCountyA,NYSuffolkCountyD",
       "US/NY/SCFRESprinting",             "N/A",
       "US/NY/SteubenCounty",              "NYSteubenCounty",
       "US/NY/StLawrenceCounty",           "NYStLawrenceCounty",
