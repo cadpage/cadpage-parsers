@@ -974,6 +974,7 @@ public class Active911ParserTable {
       "US/NJ/SomersetCounty",             "NJSomersetCountyA",
       "US/NJ/SouthBrunswickPD",           "NJMiddlesexCountyB",
       "US/NJ/SpartaPD",                   "NJSussexCountyA",
+      "US/NJ/SussexCounty911",            "NJSussexCountyB",
       "US/NJ/SussexCountySheriff",        "NJSussexCountyB",
       "US/NJ/TomsRiverPolice",            "NJOceanCountyB",
       "US/NJ/VernonPolice",               "NJSussexCountyC",
