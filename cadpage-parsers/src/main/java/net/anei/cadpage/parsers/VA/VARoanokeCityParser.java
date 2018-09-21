@@ -19,7 +19,9 @@ public class VARoanokeCityParser extends DispatchPrintrakParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("E-911")) return false;
+    
+    if (!subject.equals("E-911") && !subject.startsWith("A911FEED:")) return false;
+    body = stripFieldStart(body, "A911FEED: ");
     
     // Regular Printrak format
     if (body.startsWith("PRI:")) return super.parseMsg(body, data);
