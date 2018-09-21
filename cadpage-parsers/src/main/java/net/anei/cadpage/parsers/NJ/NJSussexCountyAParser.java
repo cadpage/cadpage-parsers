@@ -34,7 +34,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@nwbcd.org,@englewoodpd.org,@enforsys.com";
+    return "@nwbcd.org,@englewoodpd.org,@enforsys.com,@atpdtext.org";
   }
 
   @Override
