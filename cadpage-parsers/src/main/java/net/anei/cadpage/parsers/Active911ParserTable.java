@@ -1276,6 +1276,7 @@ public class Active911ParserTable {
       "US/PA/LuzerneCounty",              "PALuzerneCounty",
       "US/PA/Lvh",                        "PALehighCountyB",
       "US/PA/LycomingCounty",             "PALycomingCounty",
+      "US/PA/McKeanCounty",               "PAMcKeanCounty",
       "US/PA/MercerCounty",               "PAMercerCounty",
       "US/PA/Messenger911",               "PADelawareCountyH",
       "US/PA/MessiahEMS",                 "PAGrantham",

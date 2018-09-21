@@ -20,7 +20,7 @@ public class PAMcKeanCountyParser extends MsgParser {
   }
   
   private static final Pattern UNIT_PTN = Pattern.compile("[_A-Z0-9]+");
-  private static final Pattern MASTER = Pattern.compile("([ A-Z]+) ([A-Z]+) \\(\\) Loc:(.*)");
+  private static final Pattern MASTER = Pattern.compile("([ /()A-Z]+) ([A-Z][A-Z0-9]+) \\(\\) Loc:(.*)");
   
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!UNIT_PTN.matcher(subject).matches()) return false;
@@ -39,6 +39,7 @@ public class PAMcKeanCountyParser extends MsgParser {
   
   private static final Properties SRC_CITY_TABLE = buildCodeTable(new String[]{
       "ELDAMB",   "ELDRED",
+      "OTAMB",    "OTTO TWP",
       "PAAS",     "PORT ALLEGANY"
   });
 }
