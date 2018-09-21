@@ -174,7 +174,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       super.parse(cross, data);
 
       place = EXPANDED_DASH_APT_PTN.matcher(place).replaceAll("$1-$2");
-      for (String part : place.split(" - ")) {
+      for (String part :  place.split(" - ")) {
         part = part.trim();
         Matcher match = X_APT_PTN.matcher(part);
         if (match.matches()) {
@@ -624,7 +624,8 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTBT", "BRUTUS",
       "OTCA", "CAYUGA",
       "OTCQ", "CONQUEST",
-      "OTCT", "CATO", "OTFL", "FLEMING",
+      "OTCT", "CATO", 
+      "OTFL", "FLEMING",
       "OTGN", "GENOA",
       "OTIR", "IRA",
       "OTLD", "LEDYARD",
@@ -634,7 +635,6 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTMO", "MORAVIA",
       "OTNI", "NILES",
       "OTOW", "OWASCO",
-      "OTSE", "SENNETT", // << old >>
       "OTSM", "SUMMERHILL",
       "OTSN", "SEMPRONIUS",
       "OTSO", "SCIPIO",
@@ -644,8 +644,9 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTVC", "VICTORY",
       "OTVN", "VENICE",
       "OVAU", "AURORA",
-      "OVCT", "CATO", "OVFH", "FAIR HAVEN",
-      "OVME", "MENTZ",
+      "OVCT", "CATO", 
+      "OVFH", "FAIR HAVEN",
+      "OVME", "MENTZ",    // or Meridian
       "OVMO", "MORAVIA",
       "OVPO", "PORT BYRON",
       "OVUS", "UNION SPRINGS",
@@ -704,13 +705,13 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OCRO", "ROME CITY", 
       "OCSH", "SHERRILL CITY", 
       "OCUT", "UTICA CITY",
-      "OTAN", "AUBURN", 
+      "OTAN", "AUBURN",   // or Annsville
       "OTAU", "AUGUSTA", 
       "OTAV", "AVA", 
       "OTBO", "BOONVILLE",
       "OTBR", "BRIDGEWATER",
       "OTCM", "CAMDEN",
-      "OTDE", "DERUYTER",
+      "OTDE", "DERUYTER",  // or Deerfield
       "OTFO", "FORESTPORT",
       "OTFR", "FLORENCE",
       "OTFY", "FLOYD",
@@ -744,7 +745,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVOC", "ONEIDA CASTLE",
       "OVOF", "ORISKANY FALLS",
       "OVOR", "ORISKANY",
-      "OVPR", "PREBLE",
+      "OVPR", "PREBLE",   // or PROSPECT
       "OVRE", "REMSEN",
       "OVSY", "SYLVAN BEACH",
       "OVVE", "VERNON",
@@ -756,7 +757,8 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "NAT", "ONONDAGA NATION",
       "SYR", "SYRACUSE CITY",
       "TCI", "CICERO",
-      "TCL", "CLAY", "TCM", "CAMILLUS",
+      "TCL", "CLAY", 
+      "TCM", "CAMILLUS",
       "TDW", "DEWITT",
       "TEB", "ELBRIDGE",
       "TFB", "FABIUS",
@@ -823,7 +825,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVPA", "PARISH",
       "OVPF", "PHOENIX",
       "OVPU", "PULASKI",
-      "OVSC", "SANDY CREEK" 
+      "OVSC", "SANDY CREEK"
   });
 
 }
