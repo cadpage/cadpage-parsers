@@ -553,6 +553,7 @@ public class ParserList {
               ,"KYBrackenCounty"                ,"Bracken County, KY"
               ,"KYBullittCounty"                ,"Bullit County, KY"
               ,"KYCallowayCounty"               ,"Calloway County, KY"
+              ,"KYCarlisleCounty"               ,"Carlisle County, KY"
               ,"KYCampbellCounty"               ,"Campbell County, KY"
               ,"KYCarrollCounty"                ,"Carroll County, KY"
               ,"KYCarterCounty"                 ,"Carter County, KY"

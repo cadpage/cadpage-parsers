@@ -21,7 +21,10 @@ public class KYCarlisleCountyParser extends DispatchA65Parser {
       "GEVEDEN",
       "MILBURN",
       "MISSISSIPPI",
-      "YELLOW DOG ROAD"
+      "YELLOW DOG ROAD",
+      
+      // Ballard County
+      "WICKLIFFE"
 
   };
 }
