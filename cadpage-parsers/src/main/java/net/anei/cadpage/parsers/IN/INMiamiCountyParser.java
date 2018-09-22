@@ -10,6 +10,6 @@ public class INMiamiCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@miamicountyin.gov";
+    return "noreply@miamicountyin.gov,mcgsmtp@gmail.com";
   }
 }
