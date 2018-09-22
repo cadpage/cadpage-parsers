@@ -1,13 +1,15 @@
 package net.anei.cadpage.parsers.IN;
 
 import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
 
 public class INCassCountyParser extends DispatchA29Parser {
 
   public INCassCountyParser() {
-    super(CITY_LIST, "STARKE COUNTY", "IN");
+    super(CITY_LIST, "CASS COUNTY", "IN");
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
@@ -15,18 +17,39 @@ public class INCassCountyParser extends DispatchA29Parser {
     return "e911.pagegate@co.cass.in.us";
   }
 
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    data.strSource = subject;
+    body = stripFieldStart(body, "e911.pagegate:");
+    if (body.startsWith("DISPATCH ")) body = "DISPATCH:" + body.substring(9).trim();
+    return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
+
   private static final CodeSet CALL_LIST = new CodeSet(
       
       "ALARM",
       "ACCIDENT (INJURIES)",
+      "DISORDERLY CONDUCT",
       "FIRE ALARM",
       "FIRE FIELD",
+      "FIRE-VEHICLE",
       "GAS SPILL",
       "INTOXICATED PERSON",
       "MEDICAL",
-      "TRAFFIC STOP"
-      
+      "SUICIDAL SUBJECT",
+      "SUSPICIOUS CIRCUMSTANCES",
+      "TRAFFIC STOP",
+      "TREES DOWN"
   );
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "DEER CREEK"
+  };
   
   private static final String[] CITY_LIST = new String[]{
       
