@@ -113,7 +113,10 @@ public class INCassCountyParser extends DispatchA29Parser {
           "MIAMI",
           "NOBLE",
           "TIPTON",
-          "WASHINGTON"
+          "WASHINGTON",
+          
+      // Howard County
+          "KOKOMO"
 
   
   };
