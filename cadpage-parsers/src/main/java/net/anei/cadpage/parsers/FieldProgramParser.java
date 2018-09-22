@@ -202,6 +202,9 @@ public class FieldProgramParser extends SmartAddressParser {
   // Flag indicating that keyword matches do not have to match case
   public static final int FLDPROG_IGNORE_CASE = 2;
   
+  // Flag indicating that double underscores are required to escape blanks in keywords
+  public static final int FLDPROG_DOUBLE_UNDERSCORE = 4;
+  
   // list of cities
   private Set<String> cities = null;
   
@@ -228,6 +231,9 @@ public class FieldProgramParser extends SmartAddressParser {
   
   // Case should be ignored when comparing keywords
   private boolean ignoreCase;
+  
+  // String sequence that escapes blanks in keywords
+  private String blankEscape; 
   
   private Map<String, Step> keywordMap = null;
   
@@ -352,6 +358,7 @@ public class FieldProgramParser extends SmartAddressParser {
     
     anyOrder = (flags & FLDPROG_ANY_ORDER) != 0;
     ignoreCase = (flags & FLDPROG_IGNORE_CASE) != 0;
+    blankEscape = (flags & FLDPROG_DOUBLE_UNDERSCORE) != 0 ? "__" : "_";
 
     if (program == null) return;
     
@@ -392,7 +399,7 @@ public class FieldProgramParser extends SmartAddressParser {
       List<String> tags = new ArrayList<String>();
       Matcher match = TAG_PTN.matcher(program);
       while (match.find()) {
-        String key = match.group(1).replace('_', ' ');
+        String key = match.group(1).replace(blankEscape, " ");
         if (ignoreCase) key = key.toUpperCase();
         tags.add(key);
       }
@@ -449,7 +456,7 @@ public class FieldProgramParser extends SmartAddressParser {
     // First pass through the field terms, constructing the appropriate field
     // and program step that will be used.
     for (int ndx = 0; ndx < fieldTerms.length; ndx++) {
-      FieldTermInfo info = new FieldTermInfo(fieldTerms[ndx]);
+      FieldTermInfo info = new FieldTermInfo(fieldTerms[ndx], blankEscape);
       if (anyOrder) {
         if (info.optional) {
           throw new RuntimeException("Any order parsers do not support optional fields:" + fieldTerms[ndx]);
@@ -886,7 +893,7 @@ public class FieldProgramParser extends SmartAddressParser {
     boolean emptyTag = false;
     char trigger = 0;
     
-    FieldTermInfo(String fieldTerm) {
+    FieldTermInfo(String fieldTerm, String blankEscape) {
       
       // If this is a conditional branch, just set the branch flag and return
       // The branch will be expanded later
@@ -897,11 +904,11 @@ public class FieldProgramParser extends SmartAddressParser {
       
       int st = fieldTerm.indexOf("%EMPTY");
       if (st > 0) {
-        tag = fieldTerm.substring(0,st).replace('_', ' ');
+        tag = fieldTerm.substring(0,st).replace(blankEscape, " ");
         emptyTag = true;
       } else {
         st = fieldTerm.indexOf(':');
-        if (st > 0) tag = fieldTerm.substring(0,st).replace('_', ' ');
+        if (st > 0) tag = fieldTerm.substring(0,st).replace(blankEscape, " ");
       }
       st++;
       
