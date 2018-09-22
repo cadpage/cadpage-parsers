@@ -344,7 +344,11 @@ public class DispatchA27Parser extends FieldProgramParser {
       
       if (unitMode == UnitMode.INFO) {
         token = INFO_JUNK_PTN.matcher(token).replaceAll("\n").trim();
-        if (!token.equals(".")) data.strSupp = append(data.strSupp, "\n", token);
+        if (token.startsWith("CPN:")) {
+          data.strPlace = append(data.strPlace, " - ", token.substring(4).trim());
+        } else if (!token.equals(".")) {
+          data.strSupp = append(data.strSupp, "\n", token);
+        }
       }
     }
   }
