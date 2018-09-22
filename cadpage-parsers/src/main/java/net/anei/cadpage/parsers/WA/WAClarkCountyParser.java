@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 
@@ -30,9 +31,10 @@ public class WAClarkCountyParser extends FieldProgramParser {
     
     Matcher match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
-      data.strCall = "GENERAL ALERT";
+      setFieldList("SRC INFO");
+      data.msgType = MsgType.GEN_ALERT;
       data.strSource = match.group(1);
-      data.strPlace = match.group(2);
+      data.strSupp = match.group(2);
       return true;
     }
     

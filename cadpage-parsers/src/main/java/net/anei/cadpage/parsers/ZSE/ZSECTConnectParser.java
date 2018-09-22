@@ -13,7 +13,12 @@ public class ZSECTConnectParser extends FieldProgramParser {
         "Presentationsgrupp:CALL! R_Adress:ADDR R_Plats:CITY R_Samhälle:CITY R_Pos-WSG84:GPS R_RAPS-grupp:CH R_HT-text__1:CALL R_HT-text__2:CALL R_HT-text__3:CALL R_Objekt:PLACE R_Adressbeskrivning:PLACE R_Nyckel:MAP R_Zon:UNIT R_HT-kommentar:INFO/N INFO/N", 
         FLDPROG_ANY_ORDER | FLDPROG_DOUBLE_UNDERSCORE);
   }
-  
+
+  @Override
+  public String getLocName() {
+    return "CT Connect";
+  }
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
