@@ -1469,6 +1469,7 @@ public class ParserList {
           ),
           new ParserCategory("Utah"
               ,"UTBoxElderCounty"               ,"Box Elder County, UT"
+              ,"UTCarbonCounty"                 ,"Carbon County, UT"
               ,"UTDavisCounty"                  ,"Davis County, UT"
               ,"UTSaltLakeCounty"               ,"Salt Lake County, UT"
               ,"UTSummitCounty"                 ,"Summit County, UT"
