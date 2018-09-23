@@ -407,6 +407,7 @@ public class ParserList {
           new ParserCategory("Illinois"
               ,"ILAdamsCounty"                  ,"Adams County, IL"
               ,"ILBooneCounty"                  ,"Boone County, IL"
+              ,"ILChampaignCounty"              ,"Champaign County, IL"
               ,"ILChampaignUrbana"              ,"Champaign-Urbana, IL"
               ,"ILChristianCounty"              ,"Christian County, IL"
               ,"ILClintonCounty"                ,"Clinton County, IL"
