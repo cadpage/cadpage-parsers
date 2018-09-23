@@ -941,7 +941,7 @@ public class Active911ParserTable {
       "US/NJ/AtPdText",                   "NJSussexCountyA",
       "US/NJ/BurlingtonCounty",           "NJBurlingtonCountyC",
       "US/NJ/CamdenCounty",               "NJCamdenCounty",
-      "US/NJ/CumberlandCounty",           "NJCumberlandCounty",
+      "US/NJ/CumberlandCounty",           "NJCumberlandCountyA",
       "US/NJ/DelranEmergency",            "NJBurlingtonCountyC",
       "US/NJ/Denville",                   "NJMorrisCountyA",
       "US/NJ/EggHarborTownship",          "NJAtlanticCountyA",
