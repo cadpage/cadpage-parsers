@@ -783,6 +783,7 @@ public class ParserList {
               ,"MNScottCounty"                  ,"Scott County, MN"
               ,"MNSherburneCounty"              ,"Sherburne County, MN"
               ,"MNSibleyCounty"                 ,"Sibley County, MN"
+              ,"MNStearnsCounty"                ,"Stearns County, MN"
               ,"MNStevensCounty"                ,"Stevens County, MN"
               ,"MNStLouisCounty"                ,"St Louis County, MN"
               ,"MNStLouisPark"                  ,"St Louis Park, MN"
