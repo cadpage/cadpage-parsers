@@ -731,6 +731,7 @@ public class ParserList {
               ,"MISaginawCounty"                ,"Saginaw County, MI"
               ,"MIShiawasseeCounty"             ,"Shiawassee County, MI"
               ,"MIStClairCounty"                ,"St Clair County, MI"
+              ,"MIVanBurenCounty"               ,"Van Buren County, MI"
               ,"MIWashtenawCounty"              ,"Washtenaw County, MI"
           ),
           new ParserCategory("Minnesota"
