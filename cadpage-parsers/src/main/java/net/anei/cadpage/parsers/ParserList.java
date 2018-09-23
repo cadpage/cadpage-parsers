@@ -715,6 +715,7 @@ public class ParserList {
               ,"MILenaweeCounty"                ,"Lenawee County, MI"
               ,"MILivingstonCounty"             ,"Livingston County, MI"
               ,"MILuceCounty"                   ,"Luce County, MI"
+              ,"MIMacombCounty"                 ,"Macomb County, MI"
               ,"MIMackinacCounty"               ,"Mackinac County, MI"
               ,"MIMarquetteCounty"              ,"Marquette County, MI"
               ,"MIMecostaCounty"                ,"Mecosta County, MI"
