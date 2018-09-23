@@ -1374,6 +1374,7 @@ public class ParserList {
               ,"TNWarrenCounty"                 ,"Warren County, TN"
               ,"TNWashingtonCounty"             ,"Washington County, TN"
               ,"TNWeakleyCounty"                ,"Weakley County, TN"
+              ,"TNWhiteCounty"                  ,"White County, TN"
               ,"TNWilliamsonCounty"             ,"Williamson County, TN"
           ),
           new ParserCategory("Texas"
