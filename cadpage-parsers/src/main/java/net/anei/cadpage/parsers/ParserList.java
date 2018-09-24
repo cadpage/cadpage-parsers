@@ -454,6 +454,7 @@ public class ParserList {
               ,"INDelawareCounty"               ,"Delaware County, IN"
               ,"INDouglasCounty"                ,"Douglas County, IN"
               ,"INElkhartCounty"                ,"Elkhart County, IN"
+              ,"INFloydCounty"                  ,"Floyd County, IN"
               ,"INGibsonCounty"                 ,"Gibson County, IN"
               ,"INGrantCounty"                  ,"Grant County, IN"
               ,"INHamiltonCounty"               ,"Hamilton County, IN"
