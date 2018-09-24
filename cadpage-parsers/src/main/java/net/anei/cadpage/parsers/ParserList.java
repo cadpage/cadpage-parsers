@@ -450,7 +450,7 @@ public class ParserList {
               ,"INCassCounty"                   ,"Cass County, IN"
               ,"INClayCounty"                   ,"Clay County, IN"
               ,"INDaviessCounty"                ,"Daviess County, IN"
-              ,"INDekalbCounty"                 ,"Dekalb County, IN"
+              ,"INDeKalbCounty"                 ,"DeKalb County, IN"
               ,"INDelawareCounty"               ,"Delaware County, IN"
               ,"INDouglasCounty"                ,"Douglas County, IN"
               ,"INElkhartCounty"                ,"Elkhart County, IN"
