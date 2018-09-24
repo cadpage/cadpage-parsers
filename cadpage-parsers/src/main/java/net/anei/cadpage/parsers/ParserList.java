@@ -811,6 +811,7 @@ public class ParserList {
               ,"MSNeshobaCounty"                ,"Neshoba County, MS"
               ,"MSNewtonCounty"                 ,"Newton County, MS"
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
+              ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
           ),
           new ParserCategory("Missouri"
               ,"MOAdairCounty"                  ,"Adair County, MO"
