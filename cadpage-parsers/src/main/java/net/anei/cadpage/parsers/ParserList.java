@@ -418,6 +418,7 @@ public class ParserList {
               ,"ILElgin"                        ,"Elgin, IL"
               ,"ILHancockCounty"                ,"Hancock County, IL"
               ,"ILIroquoisCounty"               ,"Iroquois County, IL"
+              ,"ILJacksonCounty"                ,"Jackson County, IL"
               ,"ILKaneCounty"                   ,"Kane County, IL"
               ,"ILKankakeeCounty"               ,"Kankakee County, IL"
               ,"ILLakeCounty"                   ,"Lake County, IL"
