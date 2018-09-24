@@ -1229,6 +1229,7 @@ public class ParserList {
               ,"ORJeffersonCounty"              ,"Jefferson County, OR"
               ,"ORJosephineCounty"              ,"Josephine County, OR"   
               ,"ORKlamathCounty"                ,"Klamath County, OR"
+              ,"ORLakeCounty"                   ,"Lake County, OR"
               ,"ORLakeOswego"                   ,"Lake Oswego, OR"
               ,"ORLaneCounty"                   ,"Lane County, OR"
               ,"ORLincolnCity"                  ,"Lincoln City, OR"
