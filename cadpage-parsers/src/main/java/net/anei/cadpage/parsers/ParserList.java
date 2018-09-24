@@ -1360,6 +1360,7 @@ public class ParserList {
               ,"TNCoffeeCounty"                 ,"Coffee County, TN"
               ,"TNCumberlandCounty"             ,"Cumberland County, TN"
               ,"TNDyerCounty"                   ,"Dyer County, TN"
+              ,"TNFranklinCounty"               ,"Franklin County, TN"
               ,"TNHamiltonCounty"               ,"Hamilton County, TN"
               ,"TNHumphreysCounty"              ,"Humphreys County, TN"
               ,"TNJeffersonCounty"              ,"Jefferson County, TN"
