@@ -7,7 +7,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class CAButteCountyParser extends GroupBestParser {
   public CAButteCountyParser() {
-    super(new CAButteCountyAParser(), 
+    super(new CAButteCountyAParser(),
+          new CAButteCountyBParser(),
           new CAButteCountyCParser());
   }
 }
