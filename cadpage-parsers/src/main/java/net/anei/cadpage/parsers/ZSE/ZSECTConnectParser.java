@@ -10,7 +10,7 @@ public class ZSECTConnectParser extends FieldProgramParser {
   
   public ZSECTConnectParser() {
     super("", "", CountryCode.SE, 
-        "Presentationsgrupp:CALL! R_Adress:ADDR R_Plats:CITY R_Samhälle:CITY R_Pos-WSG84:GPS R_RAPS-grupp:CH R_HT-text__1:CALL R_HT-text__2:CALL R_HT-text__3:CALL R_Objekt:PLACE R_Adressbeskrivning:PLACE R_Nyckel:MAP R_Zon:UNIT R_HT-kommentar:INFO/N INFO/N", 
+        "Presentationsgrupp:CALL! R_Adress:ADDR R_Plats:CITY R_Samhälle:CITY2 R_Pos-WSG84:GPS R_RAPS-grupp:CH R_HT-text__1:CALL R_HT-text__2:CALL R_HT-text__3:CALL R_Objekt:PLACE R_Adressbeskrivning:PLACE R_Nyckel:MAP R_Zon:UNIT R_HT-kommentar:INFO/N INFO/N", 
         FLDPROG_ANY_ORDER | FLDPROG_DOUBLE_UNDERSCORE);
   }
 
@@ -37,12 +37,12 @@ public class ZSECTConnectParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
   
-  private class MyCityField extends CityField {
+  private class MyCity2Field extends CityField {
     @Override
     public void parse(String field, Data data) {
       
