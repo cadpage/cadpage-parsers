@@ -1416,6 +1416,7 @@ public class ParserList {
               ,"TXHaysCounty"                   ,"Hays County, TX"
               ,"TXHelotes"                      ,"Helotes, TX"
               ,"TXHendersonCounty"              ,"Henderson County, TX"
+              ,"TXHidalgoCounty"                ,"Hidalgo County, TX"
               ,"TXHoodCounty"                   ,"Hood County, TX"
               ,"TXHumble"                       ,"Humble, TX"
               ,"TXHuntCounty"                   ,"Hunt County, TX"
