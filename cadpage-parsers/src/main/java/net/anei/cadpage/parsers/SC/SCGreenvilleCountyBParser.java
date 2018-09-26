@@ -1,12 +1,14 @@
 package net.anei.cadpage.parsers.SC;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class SCGreenvilleCountyBParser extends FieldProgramParser {
   
   public SCGreenvilleCountyBParser() {
-    super(CITY_LIST, "GREENVILLE COUNTY", "SC", 
+    super(CITY_LIST, "GREENVILLE COUNTY", "SC",
           "CALL ADDR! CITY? XINFO END");
   }
   
@@ -15,11 +17,13 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
     return "active911@parkerfd.com,@whfd.org";
   }
   
+  private static final Pattern DELIM = Pattern.compile(";|: ");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("<img src=");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    if (!parseFields(body.split(";"), data)) return false;
+    if (!parseFields(DELIM.split(body), data)) return false;
     if (data.strCity.length() == 0) {
       pt = data.strAddress.lastIndexOf(':');
       if (pt >= 0) {
@@ -33,8 +37,26 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("XINFO")) return new MyCrossInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.lastIndexOf('.');
+      if (pt >= 0) {
+        data.strCity = field.substring(pt+1).trim();
+        field = field.substring(0, pt).trim();
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY";
+    }
   }
   
   private class MyCrossInfoField extends InfoField {

@@ -71,6 +71,7 @@ public class SCGreenvilleCountyAParser extends DispatchOSSIParser {
       "PELZ", "PELZER",
       "PIED", "PIEDMONT",
       "SIMP", "SIMPSONVILLE",
+      "SLAT", "SLATER",
       "TRAV", "TRAVELERS REST",
       "TAYL", "TAYLORS"
   });
