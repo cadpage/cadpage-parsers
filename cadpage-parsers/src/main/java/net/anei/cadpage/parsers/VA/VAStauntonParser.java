@@ -47,6 +47,7 @@ public class VAStauntonParser extends DispatchOSSIParser {
       "102 BAYLOR ST BLDG 160",               "+38.168264,-79.070832",
       "102 BAYLOR ST BLDG 170",               "+38.168528,-79.070605",
       "102 BAYLOR ST BLDG 180",               "+38.168809,-79.070388",
+      "427 BETSY BELL RD",                    "+38.134096,-79.057905",
       "301 DEMING DR",                        "+38.155102,-79.068686",
       "315 DEMING DR",                        "+38.154895,-79.068319",
       "101 E FREDERICK ST",                   "+38.151074,-79.071442",
