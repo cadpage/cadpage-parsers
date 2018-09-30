@@ -17,9 +17,10 @@ public class ILMadisonCountyParser extends FieldProgramParser {
   
   public ILMadisonCountyParser() {
     super("MADISON COUNTY", "IL",
-          "( Call_Address:ADDRCITY! Radio_Channel:CH! Common_Name:PLACE! Cross_Streets:X! Local_Information:INFO! Custom_Layer:MAP! Census_Tract:MAP/D! Call_Type:CALL! Call_Priority:PRI! Call_Date/Time:DATETIME Nature_Of_Call:CALL! Units_Assigned:UNIT! Fire_Quadrant:SKIP! EMS_District:SKIP! Incident_Number(s):ID! Caller_Name:NAME! Caller_Phone:PHONE! Alerts:INFO/N! Narratives:INFO/N! " +
-          "| CALL_RECEIVED_AT? EMPTY? CALL EMPTY ( SELECT/1 ( PLACE EMPTY/Z ADDRCITY/nS6 EMPTY ( PHONE | X | APT ) | ADDRCITY/S6 EMPTY PLACE EMPTY APT EMPTY X ) EMPTY INFO EMPTY ID EMPTY! ( URL EMPTY! | ) " + 
-                                                "| ADDRCITY/S6 EMPTY PLACE EMPTY X APT EMPTY EMPTY ( TIMES! | INFO+? DATETIME EMPTY NAME EMPTY PHONE! ) ) TIMES+ )"); 
+          "( Fire_Call_Type:CALL! Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Nature_of_Call:CALL/SDS! Narrative:INFO! INFO/N+ Call_Date/Time:DATETIME! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:TIMES! Incident_Number:ID! Fire_Quadrant:SKIP! EMS_District:SKIP! Google_Map_Hyperlink:SKIP! " +
+          "| ( CALL_RECEIVED_AT EMPTY | ) CALL EMPTY ( SELECT/1 PLACE EMPTY/Z ADDRCITY/S6 EMPTY ( PHONE | X | APT ) EMPTY INFO/N+? ID EMPTY! TIMES+? INFO/N+ " + 
+                                                    "| ADDRCITY/S6 EMPTY PLACE EMPTY X EMPTY APT EMPTY EMPTY+? INFO/N+? DATETIME EMPTY NAME EMPTY PHONE! TIMES+ " + 
+                                                    ") TIMES+? )"); 
   }
   
   @Override
@@ -37,28 +38,37 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     if (!subject.startsWith("Automatic R&R Notification:")) return false;
 
     String fmtCode = "1";
-    int pt = subject.indexOf('|');
+    
+    int pt = body.indexOf("Fire Call Type:");
     if (pt >= 0) {
-      String tmp = '[' + subject.substring(pt+1).trim() + ']';
-      Matcher match = FIND_ID_PTN.matcher(tmp);
-      if (match.matches()) {
-        fmtCode = "2";
-        String id = match.group(1);
-        if (id != null) data.strCallId = id + ' ' + match.group(2);
-        body = stripFieldStart(body, ",");
-      }
+      body = body.substring(pt);
     }
     
-    while (true) {
-      Matcher match = FIND_ID_PTN.matcher(body);
-      if (!match.lookingAt()) {
-        if (fmtCode.equals("1") && !match.find()) fmtCode = "2";
-        break;
+    else {
+      
+      pt = subject.indexOf('|');
+      if (pt >= 0) {
+        String tmp = '[' + subject.substring(pt+1).trim() + ']';
+        Matcher match = FIND_ID_PTN.matcher(tmp);
+        if (match.matches()) {
+          fmtCode = "2";
+          String id = match.group(1);
+          if (id != null) data.strCallId = id + ' ' + match.group(2);
+          body = stripFieldStart(body, ",");
+        }
       }
-      fmtCode = "2";
-      String id = match.group(1);
-      if (id != null) data.strCallId = append(data.strCallId, ", ", id + ' ' + match.group(2));
-      body = body.substring(match.end());
+      
+      while (true) {
+        Matcher match = FIND_ID_PTN.matcher(body);
+        if (!match.lookingAt()) {
+          if (fmtCode.equals("1") && !match.find()) fmtCode = "2";
+          break;
+        }
+        fmtCode = "2";
+        String id = match.group(1);
+        if (id != null) data.strCallId = append(data.strCallId, ", ", id + ' ' + match.group(2));
+        body = body.substring(match.end());
+      }
     }
     
     timeInfo = "";
@@ -80,7 +90,7 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     return "ID? " + super.getProgram();
   }
   
-  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
   
   @Override
   public Field getField(String name) {
@@ -95,26 +105,16 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("TIMES")) return new MyTimesField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
   private static final Pattern ADDR_PHONE_PTN = Pattern.compile("(.*) (\\d{10})");
   private class MyAddressCityField extends AddressField {
     
-    private boolean checkBehind = false;
-    
     @Override
     public boolean canFail() {
       return true;
-    }
-    
-    @Override
-    public void setQual(String qual) {
-      if (qual != null && qual.startsWith("n")) {
-        checkBehind = true;
-        qual = qual.substring(1);
-      }
-      super.setQual(qual);
     }
     
     @Override
@@ -129,9 +129,8 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     
     private boolean checkParse(String field, Data data, boolean force) {
       
-      // If the alternative address field (2 fields behind us) is empty,
-      // force acceptence of this field
-      if (checkBehind && getRelativeField(-2).length() == 0) force = true;
+      // If duplicate of place name, erase place name
+      if (field.equals(data.strPlace)) data.strPlace = "";
       
       if (!field.equals("<UNKNOWN>")) {
         boolean good = false;
@@ -196,13 +195,26 @@ public class ILMadisonCountyParser extends FieldProgramParser {
   
   private class MyIdField extends IdField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String result = "";
       for (String part : field.split(", *")) {
         Matcher match = FIND_ID_PTN.matcher(part);
-        if (!match.matches()) abort();
+        if (!match.matches()) return false;
         String id = match.group(1);
-        if (id != null) data.strCallId = append(data.strCallId, ", ", id + ' ' + match.group(2));
+        if (id != null) result = append(result, ", ", id + ' ' + match.group(2));
       }
+      data.strCallId = append(data.strCallId, ", ", result);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
@@ -238,7 +250,8 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!field.startsWith("Unit:")) return false;
+      if (field.startsWith("http:")) return false;
+      if (INFO_MARK_PTN.matcher(field).lookingAt()) return false;
       parse(field, data);
       return true;
     }
@@ -251,6 +264,9 @@ public class ILMadisonCountyParser extends FieldProgramParser {
         timeInfo = append(timeInfo, "\n", field);
         return;
       }
+      
+      if (field.startsWith("http:")) return;
+      
       Matcher match = DISPATCH_TIME_PTN.matcher(field);
       if (match.matches()) {
         data.strDate = match.group(1);
@@ -264,6 +280,20 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "UNIT DATE TIME INFO";
+    }
+  }
+  
+  private static final Pattern INFO_MARK_PTN = Pattern.compile("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d [A-Za-z]+ - +");
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("http:")) return;
+      Matcher match = INFO_MARK_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end()).trim();
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
     }
   }
 }

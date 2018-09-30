@@ -18,7 +18,7 @@ public class ILMedstarParser extends DispatchProQAParser {
   
   @Override
   public String getFilter() {
-    return "emsdispatch@medstarems.net";
+    return "emsdispatch@medstarems.net,MedStar,1410";
   }
   
   @Override

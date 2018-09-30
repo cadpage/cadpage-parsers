@@ -370,6 +370,7 @@ public class Active911ParserTable {
       "US/IL/DownersGrove",               "ILDuPageCountyB",
       "US/IL/DuCommExtra",                "ILDuPageCountyA,ILDuPageCountyB,ILDuPageCountyD",
       "US/IL/DupageCounty",               "ILDuPageCountyA,ILDuPageCountyD",
+      "US/IL/EdwardsvilleCity",           "ILMadisonCounty",
       "US/IL/FairviewHeights",            "ILStClairCountyB",
       "US/IL/GlenCarbon",                 "ILMadisonCounty",
       "US/IL/GurneeFire",                 "ILLakeCountyB",
