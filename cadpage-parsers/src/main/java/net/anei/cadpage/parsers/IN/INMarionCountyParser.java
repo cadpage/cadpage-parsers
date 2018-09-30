@@ -499,6 +499,7 @@ public class INMarionCountyParser extends MsgParser {
       "CLR", "Clermont",
       "CLY", "Clayton",
       "CTV", "Coatsville",
+      "CUM", "Cumberland",
       "DAN", "Danville",
       "HOM", "Homecroft",
       "IND", "Indianapolis",
@@ -511,15 +512,15 @@ public class INMarionCountyParser extends MsgParser {
       "PLF", "Plainfield",
       "STI", "Stilesville",
 
-      "DEC", "Decatur TWP",
-      "FRA", "Franklin Township",
-      "LWR", "Lawrence TWP",
-      "PER", "Perry TWP",
-      "PIK", "Pike TWP",
+      "DEC", "Decatur Twp",
+      "FRA", "Franklin Twp",
+      "LWR", "Lawrence",
+      "PER", "Perry Twp",
+      "PIK", "Pike Twp",
       "SPD", "Speedway",
-      "WAR", "Warren TWP",
-      "WAS", "Washington TWP",
-      "WAY", "Wayne TWP",
+      "WAR", "Warren Twp",
+      "WAS", "Washington Twp",
+      "WAY", "Wayne Twp",
       
       "HAM", "Hamilton County"
   });
