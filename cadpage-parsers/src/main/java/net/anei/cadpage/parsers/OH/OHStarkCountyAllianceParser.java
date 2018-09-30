@@ -13,7 +13,7 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "dharpster@redcenter.us,nws@starksheriff.org,dispatch@alliancepolice.com";
+    return "dharpster@redcenter.us,nws@starksheriff.org,dispatch@alliancepolice.com,tacpaging.com";
   }
   static final String[] CITY_LIST = new String[]{
 
