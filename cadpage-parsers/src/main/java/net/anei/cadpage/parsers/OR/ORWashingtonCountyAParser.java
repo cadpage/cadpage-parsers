@@ -63,7 +63,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   
   private static final Pattern MASTER_PTN1 = Pattern.compile("([A-Z0-9]+\\**) - ([-A-Z0-9]{2,5}) \\((.*?)\\) (.*?)#([A-Z]{2}\\d+)\\b[, ]*(.*)");
   
-  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units resp[. ]+([A-Z0-9,]+) *(?:time: ?(\\d\\d:\\d\\d)Inc#([A-Z]*\\d+)(?: Apt(.*?))?(?:City(.*?))?(?: ?Lat(\\d{8,}) Lon(\\d{8,})(?: Comments *(.*))?)?|(\\[.*))");
+  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units resp[. ]+([A-Z0-9,]+) *(?:time: ?(\\d\\d:\\d\\d)Inc#([A-Z]*\\d+)(?: Apt(.*?))?(?:City(.*?))?(?: ?Lat(\\d{8,}) Lon(\\d{8,})(?: Comments *(.*))?)?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
   
   private static final Pattern MASTER_PTN5 = Pattern.compile("([A-Z]{2,6}\\**) - (.*?) Units ([,A-Z0-9]+) RP +(?:(.*?) +)?Comment(.*)");
   
@@ -131,6 +131,9 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       String info = match.group(13);
       if (info == null) info = match.group(14);
       if (info != null) data.strSupp = info.trim();
+      gps1 = match.group(15);
+      gps2 = match.group(16);
+      if (gps1 != null) setGPSLoc(convertGPS(gps1)+','+convertGPS(gps2), data);
       return true;
     }
     
