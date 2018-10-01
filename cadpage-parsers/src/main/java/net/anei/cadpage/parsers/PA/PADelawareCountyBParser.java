@@ -32,6 +32,11 @@ public class PADelawareCountyBParser extends FieldProgramParser {
       @Override public boolean mixedMsgOrder() { return true; }
     };
   }
+  
+  @Override
+  public String getFilter() {
+    return "@delcotextrelay.com,caddbserver@delco911alerts.com,delcopages@comcast.net";
+  }
 
   private static final Pattern DELIM2 = Pattern.compile("\n|\\s+(?=Dispatched:|Time Reported:)");
   private static final Pattern PREFIX_PTN = Pattern.compile("^\\d{7} ");
