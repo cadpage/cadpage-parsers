@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.ZSE;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +14,7 @@ public class ZSESwedenParser extends FieldProgramParser {
   public ZSESwedenParser() {
     super("", "", CountryCode.SE,
     "( FROM!  Radiogruppsnamn:CH! ADDR X2? CITY DUPCITY? CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
-    "| ( ID | CH ID ) CALL CALL CALL! Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
+    "| ( ID | CH ID ) ( CH ( CH CH+? CALL CALL+? | CALL CALL ) | CALL CALL CALL ) Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
     "| CALL CALL CALL ADDR! CITY ( END | GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
   
@@ -29,13 +32,23 @@ public class ZSESwedenParser extends FieldProgramParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
+  
+  private Set<String> channelSet = new HashSet<String>();
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    channelSet.clear();
     if (!parseFields(body.split("\n"), 4, data)) return false;
     if (data.strCity.equals("-")) data.strCity = "";
     if (data.strPlace.equals(data.strCity)) data.strPlace = "";
-    return true;
+    
+//    if (data.strGPSLoc.length() > 0) return true;
+    
+    String call = data.strCall;
+    if (call.length() == 0) return true;
+    int pt = call.indexOf(" / ");
+    if (pt >= 0) call = call.substring(0,pt).trim();
+    return CALL_SET.contains(call);
   };
   
   @Override
@@ -44,12 +57,14 @@ public class ZSESwedenParser extends FieldProgramParser {
     if (name.equals("DUPCITY")) return new MyDuplicateCityField();
     if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("ID")) return new IdField("\\d+");
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("INFO2")) return new ExtraInfoField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("SRC")) return new SourceField("\\d{3}-\\d{4}");
     if (name.equals("UNIT")) return new UnitField("\\d{3}-\\d{4}|MRSYDLB|MRSYDIB");
     if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("CH")) return new MyChannelField();
     return super.getField(name);
   }
   
@@ -85,6 +100,36 @@ public class ZSESwedenParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern CHANNEL_PTN = Pattern.compile(".* (?:RAPS-|raps |SjvIns-|SamvFlyg-)\\d+");
+  
+  private class MyChannelField extends ChannelField {
+    public MyChannelField() {
+      setPattern(CHANNEL_PTN, true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("raps ", "RAPS-");
+      if (channelSet.add(field)) {
+        data.strChannel = append(data.strChannel, " / ", field);
+      }
+    }
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!CALL_SET.contains(field)) return false;
+      parse(field, data);
+      return true;
+    }
+  }
+  
   // Sometimes the info field is split by a newline leaving a fragment that we have to
   // identify and merge back into the original info field. Detecting this situation is
   // a bit tricky.  Best bet is to look ahead to see if the source field is what it should
@@ -107,12 +152,13 @@ public class ZSESwedenParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("\\bRAPS\\b", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (INFO_CHANNEL_PTN.matcher(field).find()) {
-        data.strChannel = append(data.strChannel, " / ", field);
+      if (CHANNEL_PTN.matcher(field).matches()) {
+        if (channelSet.add(field)) {
+          data.strChannel = append(data.strChannel, " / ", field);
+        }
       } else {
         super.parse(field, data);
       }
@@ -177,4 +223,59 @@ public class ZSESwedenParser extends FieldProgramParser {
       if (!checkParse(field, data)) abort();
     }
   }
+  
+  private static final Set<String> CALL_SET = new HashSet<>(Arrays.asList(new String[]{
+      "--",
+      "Ambulansassistans",
+      "Annat",
+      "Automatlarm",
+      "Båtolycka",
+      "Brand",
+      "Brand i byggnad",
+      "Brand ute - container",
+      "Brand ute - fordon",
+      "Brand ute - övrigt",
+      "Brand ute - terräng",
+      "Djurräddning",
+      "DRH Test",
+      "Driftlarm",
+      "Drunkning",
+      "Dykolycka",
+      "Explosion",
+      "Fastklämd",
+      "Flyghändelse",
+      "Gräsbrand",
+      "Hinder på väg",
+      "Hissnödläge",
+      "Hot om suicid",
+      "Inbrott",
+      "Interna brandlarm",
+      "Interna brandlarm Via annan larmcentral(W)",
+      "Järnväg - brand",
+      "Järnväg - kollision/urspårning",
+      "Järnväg - övrigt",
+      "Järnväg - påkörd person",
+      "Lösa föremål",
+      "Olycka - trafik",
+      "Övrigt",
+      "Övrigt räddning",
+      "Påkörd person",
+      "Person i vatten",
+      "Person - svår belägenhet",
+      "Polis Räddning",
+      "Räddning provlarm",
+      "Röklukt - byggnad",
+      "Röklukt - ute",
+      "Sjukvårdslarm",
+      "Tekniskt fel",
+      "Trafikolycka - flera fordon",
+      "Trafikolycka - mindre motorfordon",
+      "Trafikolycka - påkörd person",
+      "Trafikolycka - singel",
+      "Utsläpp",
+      "Utsläpp farligt ämne - drivmedel",
+      "Utsläpp farligt ämne - gas",
+      "Utsläpp farligt ämne - övrigt",
+      "Vattenskada"
+  }));
 }

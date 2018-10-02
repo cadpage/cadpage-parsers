@@ -71,6 +71,7 @@ req=reregister  Used by Cadpage to report a change to the device registration ID
     userReq         "Y" is user requested registration request
                     "N" if automatic registration request
     transfer        "Y" Cadpage configuration has been copied from another device
+                    "R" Cadpage configuration has been copied from the same device
     
     If the transfer flag has been set, and the registration ID reported in   CadpageRegId differs
     from the one you already have on file for this account, then it can be safely assumed that
