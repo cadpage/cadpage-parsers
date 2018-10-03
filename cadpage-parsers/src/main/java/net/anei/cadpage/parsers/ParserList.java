@@ -1710,7 +1710,6 @@ public class ParserList {
           ),
           new ParserCategory("Sweden"
               ,"ZSESweden"                      ,"Sweden"
-              ,"ZSECTConnect"                   ,"CT Connect"
           ),
           new ParserCategory("United Kingdom"
               ,"ZUKShropshireCounty"            ,"Shropshire County, UK"

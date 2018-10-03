@@ -36,6 +36,7 @@ public class Active911ParserTable {
       "NZ/NI/Northland",                  "ZNZNewZealand",
       "NZ/NI/Rotorua",                    "ZNZNewZealand",
       "NZ/NI/Waikato",                    "ZNZNewZealand",
+      "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB",
       "US/AK/AnchorageChugiak",           "AKChugiak",
       "US/AK/CityofJuneau",               "AKJuneau",
       "US/AK/Fairbanks",                  "AKFairbanks",
@@ -1669,7 +1670,7 @@ public class Active911ParserTable {
       "Vendor/CTC/Default",               "MIInghamCountyC",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
-      "Vendor/Sweden/Zenit",              "ZSESweden"
+      "Vendor/Sweden/Zenit",              "ZSESwedenA"
   });
 
 }

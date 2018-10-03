@@ -224,7 +224,8 @@ public class ManageParsers {
         "ZCAONMississauga",   "ZCAONSimcoeCountyB",      // 06/01/2018
         "OKTulsaA",           "OKTulsa",                 // 06/08/2018
         "OKTulsaC",           "OKTulsa",
-        "ZCABCMidIslandRegion","ZCABCVancouverIsland"   // 06/24/2018
+        "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
+        "ZSECTConnect",       "ZSESwedenB"               // 10/02/2018
   });
 
 }

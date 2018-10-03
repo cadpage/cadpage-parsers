@@ -1,22 +1,20 @@
 package net.anei.cadpage.parsers.ZSE;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class ZSECTConnectParser extends FieldProgramParser {
+public class ZSESwedenBParser extends ZSESwedenBaseParser {
   
-  public ZSECTConnectParser() {
-    super("", "", CountryCode.SE, 
+  public ZSESwedenBParser() {
+    super("", "",
         "Presentationsgrupp:CALL! R_Adress:ADDR R_Plats:CITY R_Samhälle:CITY2 R_Pos-WSG84:GPS R_RAPS-grupp:CH R_HT-text__1:CALL R_HT-text__2:CALL R_HT-text__3:CALL R_Objekt:PLACE R_Adressbeskrivning:PLACE R_Nyckel:MAP R_Zon:UNIT R_HT-kommentar:INFO/N INFO/N", 
         FLDPROG_ANY_ORDER | FLDPROG_DOUBLE_UNDERSCORE);
   }
 
   @Override
   public String getLocName() {
-    return "CT Connect";
+    return "Contal";
   }
 
   @Override
@@ -38,7 +36,6 @@ public class ZSECTConnectParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CITY2")) return new MyCity2Field();
-    if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
   
@@ -51,33 +48,4 @@ public class ZSECTConnectParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
-  private static final Pattern GPS_PTN = Pattern.compile("La = (\\d+)(?:[^\\p{ASCII}]+| grader) ([\\d\\.,]+)'([NS]) +Lo = (\\d+)(?:[^\\p{ASCII}]+| grader) ([\\d\\.,]+)'([EW])");
-  private class MyGPSField extends GPSField {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      
-      if (field.length() == 0) return true;
-      Matcher match = GPS_PTN.matcher(field);
-      if (!match.matches()) return false;
-      
-      String gpsLoc = (match.group(3).charAt(0) == 'S' ? "-" : "+") + match.group(1) + ' ' + match.group(2) + ' ' +
-                      (match.group(6).charAt(0) == 'W' ? "-" : "+") + match.group(4) + ' ' + match.group(5);
-      gpsLoc = gpsLoc.replace(',', '.');
-      setGPSLoc(gpsLoc, data);
-      return true;
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-  }
-
 }
