@@ -56,6 +56,7 @@ public class PAErieCountyAParser extends DispatchB2Parser {
     } while (false);
 
     body = body.replace("=20", " ").trim();
+    body = body.replace("\n", " ");
     boolean result = super.parseMsg(body, data);
     if (result) {
       Matcher match = CITY_SUFFIX.matcher(data.strName);
@@ -79,6 +80,20 @@ public class PAErieCountyAParser extends DispatchB2Parser {
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
+  }
+  
+  private static final Pattern RT_89_PTN = Pattern.compile("\\bRTE? +89\\b");
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = RT_89_PTN.matcher(addr).replaceAll("PA 89");
+    return super.adjustMapAddress(addr);
+  }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("VENANGO TWP")) city = "VENANGO TOWNSHIP";
+    return city;
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
