@@ -18,14 +18,16 @@ public class ILMadisonCountyParser extends FieldProgramParser {
   public ILMadisonCountyParser() {
     super("MADISON COUNTY", "IL",
           "( Fire_Call_Type:CALL! Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Nature_of_Call:CALL/SDS! Narrative:INFO! INFO/N+ Call_Date/Time:DATETIME! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:TIMES! Incident_Number:ID! Fire_Quadrant:SKIP! EMS_District:SKIP! Google_Map_Hyperlink:SKIP! " +
-          "| ( CALL_RECEIVED_AT EMPTY | ) CALL EMPTY ( SELECT/1 PLACE EMPTY/Z ADDRCITY/S6 EMPTY ( PHONE | X | APT ) EMPTY INFO/N+? ID EMPTY! TIMES+? INFO/N+ " + 
-                                                    "| ADDRCITY/S6 EMPTY PLACE EMPTY X EMPTY APT EMPTY EMPTY+? INFO/N+? DATETIME EMPTY NAME EMPTY PHONE! TIMES+ " + 
-                                                    ") TIMES+? )"); 
+          "| ( CALL_RECEIVED_AT EMPTY | ) CALL EMPTY ( SELECT/1 PLACE EMPTY/Z ADDRCITY/S6 EMPTY ( ID EMPTY X! INFO/N+? TIMES+? " +
+                                                                                               "| ( PHONE | X | APT ) EMPTY INFO/ZN+? ID EMPTY! TIMES+? INFO/N+ ) " + 
+                                                    "| ADDRCITY/S6 EMPTY PLACE EMPTY X EMPTY APT EMPTY EMPTY+? INFO/ZN+? DATETIME EMPTY NAME EMPTY PHONE! TIMES+ " + 
+                                                    ") " + 
+          ")"); 
   }
   
   @Override
   public String getFilter() {
-    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandill.gov";
+    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov";
   }
 
   private static final Pattern DELIM = Pattern.compile("[, ]*\n *");
@@ -283,10 +285,24 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_END_PTN = Pattern.compile("[A-Z0-9]+: .*", Pattern.DOTALL);
   private static final Pattern INFO_MARK_PTN = Pattern.compile("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}");
   private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d [A-Za-z]+ - +");
   
   private class MyInfoField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (INFO_END_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("http:")) return;
