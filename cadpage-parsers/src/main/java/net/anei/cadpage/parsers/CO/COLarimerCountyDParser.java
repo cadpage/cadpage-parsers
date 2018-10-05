@@ -13,7 +13,7 @@ public class COLarimerCountyDParser extends DispatchA41Parser {
   
   @Override
   public String getFilter() {
-    return "crisppaging@fcgov.com";
+    return "crisppaging@fcgov.com,mregan@poudre-fire.org";
   }
   
   @Override
@@ -41,6 +41,7 @@ public class COLarimerCountyDParser extends DispatchA41Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FTC", "FORT COLLINS",
       "LFC", "FORT COLLINS",
-      "WEL", "WELLINGTON"
+      "WEL", "WELLINGTON",
+      "WLD", "WELD COUNTY"
   });
 }
