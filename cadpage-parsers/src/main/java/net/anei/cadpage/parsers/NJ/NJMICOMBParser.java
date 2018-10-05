@@ -13,8 +13,6 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class NJMICOMBParser extends MsgParser {
   
-  private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro|City))?(?: *\\([ A-Z]+\\))?$");
-  
   public NJMICOMBParser() {
     super("", "NJ");
   }
@@ -52,19 +50,23 @@ public class NJMICOMBParser extends MsgParser {
     if ((substring(body, 10, 11).equals("@") || substring(body, 11, 12).equals("@")) && 
         substring(body, 42, 43).equals("#") && 
         substring(body, 53, 59).equals("Disp")) {
-      setFieldList("UNIT INFO ID");
+      setFieldList("UNIT PLACE ID INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = body;
-      data.strCallId = substring(body, 33, 53);
+      data.strPlace = stripFieldStart(substring(body, 11, 42), "@");
+      data.strCallId = substring(body, 43, 53);
+      data.strSupp = substring(body, 53);
       return true;
     }
 
     if (substring(body, 10, 19).equals("CANCEL: #") && 
         substring(body, 80, 87).equals("Disp:")) {
-      setFieldList("UNIT INFO ID");
+      setFieldList("UNIT CALL ID CITY ADDR APT INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = body;
+      data.strCall = "CANCEL";
       data.strCallId = substring(body, 19, 29);
+      data.strCity = cleanCity(substring(body, 30, 50));
+      parseAddress(substring(body, 50, 80), data);
+      data.strSupp = substring(body, 80);
       return true;
     }
     
@@ -74,7 +76,7 @@ public class NJMICOMBParser extends MsgParser {
         substring(body, 150, 151).equals("@")) {
       setFieldList("UNIT ID CITY ADDR APT X CALL TIME");
       data.strCallId = substring(body, 19, 29);
-      data.strCity = CITY_SFX_PTN.matcher(substring(body, 30, 50)).replaceFirst("");
+      data.strCity = cleanCity(substring(body, 30, 50));
       parseAddress(substring(body, 50, 80), data);
       data.strApt = substring(body, 80, 90);
       data.strCross = substring(body, 90, 120);
@@ -89,7 +91,7 @@ public class NJMICOMBParser extends MsgParser {
       setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
       data.strCallId = substring(body, 11, 21);
       data.strCall = substring(body, 22, 52);
-      data.strCity = CITY_SFX_PTN.matcher(substring(body, 52, 72)).replaceFirst("");
+      data.strCity = cleanCity(substring(body, 52, 72));
       parseAddress(substring(body, 72, 102), data);
       data.strApt = substring(body, 102, 112);
       data.strName = substring(body, 120, 156).replaceAll(" +,", ", ");
@@ -98,5 +100,11 @@ public class NJMICOMBParser extends MsgParser {
     }
     
     return false;
+  }
+  
+  private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro|City))?(?: *\\([ A-Z]+\\))?$");
+  
+  private static String cleanCity(String city) {
+    return CITY_SFX_PTN.matcher(city).replaceFirst("");
   }
 }
