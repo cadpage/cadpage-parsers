@@ -55,7 +55,9 @@ public class ZNZNewZealandParser extends SmartAddressParser {
 
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean mixedMsgOrder() { return true; }
+    };
   }
 
   @Override
