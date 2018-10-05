@@ -42,50 +42,66 @@ public class NJMICOMBParser extends MsgParser {
         
       return false;
     } while (false);
-    
-    data.strUnit = substring(body, 0, 10);
+
+    FParser fp = new FParser(body);
+    data.strUnit = fp.get(10);
     
     // There are two flavors of run report, once for cancelled calls and one
     // for normal termination calls
-    if ((substring(body, 10, 11).equals("@") || substring(body, 11, 12).equals("@")) && 
-        substring(body, 42, 43).equals("#") && 
-        substring(body, 53, 59).equals("Disp")) {
+    if (fp.checkAhead(32, "#") && fp.checkAhead(43, " Disp")) {
       setFieldList("UNIT PLACE ID INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strPlace = stripFieldStart(substring(body, 11, 42), "@");
-      data.strCallId = substring(body, 43, 53);
-      data.strSupp = substring(body, 53);
+      data.strPlace = stripFieldStart(fp.get(32), "@");
+      if (!fp.check("#")) return false;
+      data.strCallId = fp.get(10);
+      if (!fp.check(" ")) return false;
+      data.strSupp = fp.get();
       return true;
     }
-
-    if (substring(body, 10, 19).equals("CANCEL: #") && 
-        substring(body, 80, 87).equals("Disp:")) {
+    
+    if (fp.check("CANCEL: #")) {
       setFieldList("UNIT CALL ID CITY ADDR APT INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strCall = "CANCEL";
-      data.strCallId = substring(body, 19, 29);
-      data.strCity = cleanCity(substring(body, 30, 50));
-      parseAddress(substring(body, 50, 80), data);
-      data.strSupp = substring(body, 80);
+      data.strCallId = fp.get(10);
+      if (!fp.check(" ")) return false;
+      data.strCity = cleanCity(fp.get(20));
+      parseAddress(fp.get(30), data);
+      data.strSupp = fp.get();
       return true;
     }
     
     // Now check for regular dispatch page
-
-    if (substring(body, 10, 19).equals("RESPOND:#") && 
-        substring(body, 150, 151).equals("@")) {
+    if (fp.check("RESPOND:#")) {
       setFieldList("UNIT ID CITY ADDR APT X CALL TIME");
-      data.strCallId = substring(body, 19, 29);
-      data.strCity = cleanCity(substring(body, 30, 50));
-      parseAddress(substring(body, 50, 80), data);
-      data.strApt = substring(body, 80, 90);
-      data.strCross = substring(body, 90, 120);
-      data.strCall = substring(body, 120, 150);
-      data.strTime = substring(body, 151, 157);
+      data.strCallId = fp.get(10);
+      if (!fp.check(" ")) return false;
+      data.strCity = cleanCity(fp.get(20));
+      parseAddress(fp.get(30), data);
+      if (fp.checkAhead(71, "@") && !fp.check(" ")) return false;
+      data.strApt = fp.get(10);
+      data.strCross = fp.get(30);
+      data.strCall = fp.get(30);
+      if (!fp.check("@ ")) return false;
+      data.strTime = fp.get(5);
       return true;
-    }    
+    }
     
     // Pt transfers have a different format
+    if (fp.check("#")) {
+      setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
+      data.strCallId = fp.get(10);
+      if (!fp.check(" ")) return false;
+      data.strCall = fp.get(30);
+      data.strCity = cleanCity(fp.get(20));
+      parseAddress(fp.get(30), data);
+      data.strApt = fp.get(10);
+      if (!fp.check("Patient:")) return false;
+      data.strName = fp.get(36).replaceAll(" +,", ", ");
+      data.strSupp = fp.get();
+      return true;
+    }
+    
     if (substring(body, 10, 11).equals("#") && 
         substring(body, 112, 120).equals("Patient:")) {
       setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
