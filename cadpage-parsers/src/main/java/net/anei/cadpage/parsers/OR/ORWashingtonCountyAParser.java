@@ -674,6 +674,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "PREG/CHILDBIRTH/MISCAR ECHO",
       "PREGNANCY C1",
       "PROWLER",
+      "PSYCH/AB BEH/SUICIDE ATT",
       "PSYCH/AB BEH/SUICIDE ATT ALPH",
       "PSYCH/AB BEH/SUICIDE ATT BRAVO",
       "PSYCH/AB BEH/SUICIDE ATT CHARLIE",

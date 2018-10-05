@@ -21,6 +21,10 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    // Eliminate SCGreenvilleCountyD alerts
+    if (body.endsWith("Emergency")) return false;
+
     int pt = body.indexOf("<img src=");
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!parseFields(DELIM.split(body), data)) return false;
