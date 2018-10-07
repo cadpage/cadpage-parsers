@@ -20,12 +20,14 @@ public class KYCampbellCountyParser extends DispatchA27Parser {
   }
   
   private static final Pattern LEAD_ZERO_PTN = Pattern.compile("\\b0+(?=\\d)");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {4,}");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     data.strCallId =  LEAD_ZERO_PTN.matcher(data.strCallId).replaceAll("");
     data.strUnit =  LEAD_ZERO_PTN.matcher(data.strUnit).replaceAll("");
+    data.strSupp = MSPACE_PTN.matcher(data.strSupp).replaceAll("\n");
     return true;
   }
 
