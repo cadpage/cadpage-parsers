@@ -15,7 +15,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
           "( ID CALL ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " + 
-          "| DATETIME CALL ADDR_CITY_X/SXa! Units:UNIT " + 
+          "| DATETIME CALL ADDR_CITY_X/SXa! X2? Units:UNIT? " + 
           "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " + 
           ") GPS1? GPS2? INFO/S+");
   }
@@ -61,6 +61,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("SRC")) return new SourceField("\\d{4}(?:, *\\d{4})*");
     if (name.equals("ID")) return new IdField("\\d+|ODF", true);
     if (name.equals("GPS1")) return new GPSField(1, GPS_PTN_STR, true);
@@ -129,6 +130,22 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private class MyCross2Field extends MyCrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (data.strCross.length() > 0) return false;
+      if (field.equals("No Cross Streets Found")) return true;
+      if (!field.contains(" / ")) return false;
+      parse(field, data);
+      return true;
     }
   }
   

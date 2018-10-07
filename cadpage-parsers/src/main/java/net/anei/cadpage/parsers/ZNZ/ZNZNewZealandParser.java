@@ -244,6 +244,8 @@ public class ZNZNewZealandParser extends SmartAddressParser {
       data.strPlace = "";
     }
     
+    if (data.strCallId.length() == 0) data.expectMore = true;
+    
     return true;
   }
   
