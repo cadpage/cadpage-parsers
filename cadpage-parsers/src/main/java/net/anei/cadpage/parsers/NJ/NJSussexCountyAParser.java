@@ -36,6 +36,8 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   public String getFilter() {
     return "@nwbcd.org,@englewoodpd.org,@enforsys.com,@atpdtext.org";
   }
+  
+  private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{3}This email");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -46,6 +48,9 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       if (! SUBJECT_PTN.matcher(subject).matches()) return false;
       data.strCallId = subject;
     }
+    
+    Matcher match = TRAIL_MARK_PTN.matcher(body);
+    if (match.find()) body = body.substring(0,match.start()).trim();
 
     String trailInfo = "";
     int pt = body.indexOf("\nActive Units:");
@@ -65,7 +70,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
     
     
     body = body.replace('\n', ' ');
-    Matcher match = MASTER_PTN.matcher(body);
+    match = MASTER_PTN.matcher(body);
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim().toUpperCase();
     String call = CALL_CODES.getProperty(data.strCall);
