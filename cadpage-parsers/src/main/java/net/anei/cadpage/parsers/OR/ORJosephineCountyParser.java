@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.OR;
 
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -15,7 +16,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
           "( ID CALL ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " + 
-          "| DATETIME CALL ADDR_CITY_X/SXa! X2? Units:UNIT? " + 
+          "| DATETIME CALL ADDR_CITY_X/SXa! X2? ( Units:UNIT | UNIT2? ) " + 
           "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " + 
           ") GPS1? GPS2? INFO/S+");
   }
@@ -66,6 +67,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d+|ODF", true);
     if (name.equals("GPS1")) return new GPSField(1, GPS_PTN_STR, true);
     if (name.equals("GPS2")) return new GPSField(2, GPS_PTN_STR, true);
+    if (name.equals("UNIT2")) return new UnitField("[A-Z0-9,]*", true);
     return super.getField(name);
   }
   
@@ -133,7 +135,8 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     }
   }
   
-  private class MyCross2Field extends MyCrossField {
+  private static final Pattern PLACE_X2_PTN = Pattern.compile("(.*[a-z]\\S*) *(.*)");
+  private class MyCross2Field extends CrossField {
     @Override
     public boolean canFail() {
       return true;
@@ -142,10 +145,23 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCross.length() > 0) return false;
-      if (field.equals("No Cross Streets Found")) return true;
+      if (field.endsWith("No Cross Streets Found")) {
+        data.strPlace = append(data.strPlace, " - ", field.substring(0, field.length()-22).trim());
+        return true;
+      }
       if (!field.contains(" / ")) return false;
+      Matcher match = PLACE_X2_PTN.matcher(field);
+      if (match.matches()) {
+        data.strPlace = append(data.strPlace, " - ", match.group(1));
+        field = match.group(2);
+      }
       parse(field, data);
       return true;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE X";
     }
   }
   
