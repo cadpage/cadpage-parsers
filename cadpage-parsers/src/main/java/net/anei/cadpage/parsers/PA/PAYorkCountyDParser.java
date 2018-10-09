@@ -15,14 +15,14 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   public PAYorkCountyDParser() {
     super("YORK COUNTY", "PA",
           "( SELECT/RR Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! CFS:CFS! TIMES/N+? " +
-          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT! UNIT+ )", 
+          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )", 
           FLDPROG_IGNORE_CASE);
     setupProtectedNames("FISH AND GAME");
   }
   
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL";
   }
   
   
@@ -67,7 +67,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       body = body.replace('\n', ' ');
     }
     
-    if (subject.equals("WMTFD")) {
+    if (subject.equals("WMTFD") || subject.equals("41 Wrightsville") || subject.equals("50 W Manchester")) {
       if (!BOX_PTN.matcher(body).lookingAt()) body = "box: " + body;
     }
     else if (subject.equals("Station 68")) {
@@ -154,7 +154,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
-      if (field.endsWith(" BORO")) field = field.substring(0,field.length()-5).trim();
+      if (field.toUpperCase().endsWith(" BORO")) field = field.substring(0,field.length()-5).trim();
       super.parse(field, data);
       if (data.strCity.equalsIgnoreCase("BALTIMORE COUNTY")) data.strState = "MD";
     }
