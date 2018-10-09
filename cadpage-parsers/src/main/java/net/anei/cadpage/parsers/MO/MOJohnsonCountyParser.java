@@ -28,7 +28,7 @@ public class MOJohnsonCountyParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
-    body = body.replace(" = ", " ");
+    body = body.replace("=\n", "");
     
     // New format
     if (body.startsWith("Dispatch,")) {
@@ -54,7 +54,7 @@ public class MOJohnsonCountyParser extends FieldProgramParser {
           data.strSupp = append(data.strSupp, ", ", part);
         }
       }
-      return true;
+      return data.strAddress.length() > 0;
     }
     
     do {
