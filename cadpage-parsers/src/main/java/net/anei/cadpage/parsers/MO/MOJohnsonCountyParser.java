@@ -14,7 +14,7 @@ public class MOJohnsonCountyParser extends FieldProgramParser {
  
   public MOJohnsonCountyParser() {
     super(CITY_LIST, "JOHNSON COUNTY", "MO", 
-          "SRC CALL ADDR CITY PLACE? DATETIME! END");
+          "SRC CALL ADDR CITY X/Z+? DATETIME! END");
   }
   
   @Override
@@ -28,10 +28,33 @@ public class MOJohnsonCountyParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
+    body = body.replace(" = ", " ");
+    
     // New format
     if (body.startsWith("Dispatch,")) {
+      subject = "Dispatch";
       body = body.substring(9).trim();
-      return parseFields(body.split(";"), data);
+    }
+    
+    if (subject.equals("Dispatch")) {
+      String[] flds = body.split(";");
+      if (flds.length >= 5) return parseFields(flds, data);
+      
+      setFieldList("CALL ADDR APT INFO");
+      for (String part : body.split(",")) {
+        part = part.trim();
+        if (data.strAddress.length() == 0) {
+          Result res = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ANCHOR_END, part);
+          if (res.isValid()) {
+            res.getData(data);
+            continue;
+          }
+          data.strCall = append(data.strCall, ", ", part);
+        } else {
+          data.strSupp = append(data.strSupp, ", ", part);
+        }
+      }
+      return true;
     }
     
     do {
