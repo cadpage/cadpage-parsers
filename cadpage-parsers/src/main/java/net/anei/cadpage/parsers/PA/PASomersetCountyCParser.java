@@ -12,7 +12,7 @@ public class PASomersetCountyCParser extends FieldProgramParser {
   
   public PASomersetCountyCParser() {
     super("SOMERSET COUNTY", "PA", 
-          "SRC? CFS_#:ID? Date/Time:DATETIME! Call_Type:CALL! Location:ADDRCITY! Additional_Location:APT_PLACE! Cross_Streets:X! Caller_Phone:PHONE! Caller_Name:NAME! Units:UNIT! Talkgroup:CH! Narrative:INFO! INFO/N+");
+          "SRC? CFS_#:ID? Date/Time:DATETIME! Call_Type:CALL! Location:ADDRCITY! Common_Name:PLACE? Additional_Location:APT_PLACE! Cross_Streets:X? Common_Name:PLACE? Caller_Phone:PHONE! Caller_Name:NAME! Units:UNIT! Talkgroup:CH! Narrative:INFO! INFO/N+");
   }
   
   @Override
