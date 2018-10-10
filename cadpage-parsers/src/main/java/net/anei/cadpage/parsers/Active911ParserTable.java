@@ -1350,7 +1350,7 @@ public class Active911ParserTable {
       "US/SC/SenacaPD",                   "SCOconeeCountyC",
       "US/SC/SpartanburgCounty",          "SCSpartanburgCounty",
       "US/SC/SumterCounty",               "SCSumterCountyA",
-      "US/SC/WHFD",                       "SCGreenvilleCountyB,SCGreenvilleCountyD",
+      "US/SC/WHFD",                       "SCGreenvilleCountyB",
       "US/SC/YorkCounty",                 "SCYorkCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
       "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
