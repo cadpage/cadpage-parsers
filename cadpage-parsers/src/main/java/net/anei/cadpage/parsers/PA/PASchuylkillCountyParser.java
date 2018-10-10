@@ -19,7 +19,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "llewellynscanner@hotmail.com,schuylkill.paging@gmail.com,good_intent@comcast.net,citizens65fc@gmail.com,pocsagpaging@comcast.net,Engine369@ptd.net,smf@schmobile.com,webfiredispatch@gmail.com,tslane@ptd.net,lt532@comcast.nets,daveyp@comcast.net,webfiredispatch@goodintentfire.com,wpfc37.relay@gmail.com,mcadoo.ems.alert@gmail.com,stclairems911@comcast.net,gifc.active911@comcast.net,gwfc6099@verizon.net";
+    return "llewellynscanner@hotmail.com,schuylkill.paging@gmail.com,good_intent@comcast.net,citizens65fc@gmail.com,pocsagpaging@comcast.net,Engine369@ptd.net,smf@schmobile.com,webfiredispatch@gmail.com,tslane@ptd.net,lt532@comcast.nets,daveyp@comcast.net,webfiredispatch@goodintentfire.com,wpfc37.relay@gmail.com,mcadoo.ems.alert@gmail.com,stclairems911@comcast.net,gifc.active911@comcast.net,gwfc6099@verizon.net,messaging@iamresponding.com";
   }
 
   private static final Pattern PREFIX_PTN1 = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (?:\\d\\d-\\d\\d-\\d\\d )?(?: ([A-Z]+)  )? *");
@@ -29,7 +29,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
   private static final Pattern MISSING_BREAK_PTN = Pattern.compile(" (?=FOR A:|TRUCKS:|TIME:)");
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
     Matcher match = PREFIX_PTN1.matcher(body);
     String time = null;
