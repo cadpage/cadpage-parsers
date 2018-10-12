@@ -27,7 +27,7 @@ public class PADauphinCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@c-msg.net,donotreply-911@dauphinc.org,messaging@iamresponding.com,pagermail@verizon.net";
+    return "@c-msg.net,donotreply-911@dauphinc.org,messaging@iamresponding.com,pagermail@verizon.net,@kpru.ac.th";
   }
   
   private static final Pattern SRC_PTN = Pattern.compile("^(\\d{7}) +");
