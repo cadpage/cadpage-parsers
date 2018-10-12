@@ -21,7 +21,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
           "( SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY X EMPTY MAP EMPTY UNIT END " + 
                       "| SRC INCIDENT_INFORMATION! DATE_&_TIME:DATETIME2! EMPTY! PROBLEM:CALL! EMPTY! ADDRESS:ADDRCITY! EMPTY! CHANNEL:CH! EMPTY! DIVISION:MAP! EMPTY! UNITS:UNIT! EMPTY! LOCATION_NAME:PLACE! EMPTY! LOCATION_TYPE:SKIP END " +
                       ") " + 
-          "| Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID! Units:UNIT! Notes:INFO " +
+          "| Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID? Units:UNIT! Notes:INFO " +
           "| DATETIME1? CALL1 CALL1? ADDR1 X_APT+? MAP_ID_UNIT! MAP_ID_UNIT+? INFO+ )");
   }
   
@@ -35,6 +35,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern PREFIX_PTN = Pattern.compile("\\*{2,} *([A-Za-z0-9 ]+?) *\\*{2,} +[A-Z0-9]+(?=Problem)");
+  private static final Pattern SIT_AWARENESS_PTN = Pattern.compile("BCLE SITUATIONAL AWARENESS ALERT\\.{5}(.*?) (Emergency|In Progress|Priority) ([A-Z0-9]+) (.*?)w/ cross streets:(.*?)\\| (.*)");
   private static final String MAP_PATTERN = "(\\d{3}[A-Z]\\d|SA\\d{3}(?:/[A-Z]\\d?)?|NOT FOUN)";
   private static final Pattern DASH_DELIM_PTN = Pattern.compile(" +- ");
   private static final Pattern PROTECT_KEYWORD = Pattern.compile("(?<=:)  +(?=[^ ])");
@@ -63,6 +64,8 @@ public class TXBexarCountyParser extends FieldProgramParser {
     
     // Check for latest new page format
     if (body.startsWith("Problem:")) {
+      body = body.replace("||** ", " Notes: **");
+      body = body.replaceAll("Mapgrid:", "MapGrid:");
       int pt = body.indexOf("Notes:");
       if (pt < 0) return false;
       String[] flds1 = DELIM_PTN2.split(body.substring(0,pt).trim());
@@ -71,6 +74,18 @@ public class TXBexarCountyParser extends FieldProgramParser {
       flds2[flds1.length] = body.substring(pt);
       if (!parseFields(flds2, data)) return false;
       data.strCall = append(prefix, " - ", data.strCall);
+      return true;
+    }
+    
+    // Check for new Situation Awareness format
+    match = SIT_AWARENESS_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL PRI ADDR APT X INFO");
+      data.strCall = match.group(1).trim();
+      data.strPriority  =match.group(2).substring(0,1)+'-'+match.group(3);
+      parseAddress(match.group(4).trim(), data);
+      data.strCross = match.group(5).trim();
+      data.strSupp = match.group(6).trim();
       return true;
     }
     
