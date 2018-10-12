@@ -84,6 +84,12 @@ public class ILMadisonCountyParser extends FieldProgramParser {
     if (data.strApt.length() > 0) {
       data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strApt);
     }
+    
+    // If no address, use cross streets
+    if (data.strAddress.length() == 0) {
+      parseAddress(data.strCross, data);
+      data.strCross = "";
+    }
     return true;
   }
   
