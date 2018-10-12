@@ -20,7 +20,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   
   VTLamoilleCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "SKIP SKIP SKIP SKIP SKIP SKIP Address:ADDRCITY Incident_Number:ID! Call_Type:CALL Narratives:INFO+");
+          "SKIP+ Address:ADDRCITY Incident_Number:ID! Call_Type:CALL Narratives:INFO+");
   }
   
   @Override
