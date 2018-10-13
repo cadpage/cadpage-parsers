@@ -10,8 +10,7 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
   
   public SDMinnehahaCountyBParser() {
     super("MINNEHAHA COUNTY", "SD",
-          "( ADDRCITY ( SRC | EMPTY ) CALL CALL/SDS? ID PLACE PLACE X X! UNIT! " +
-          "| SRC CALL CALL/SDS? ID ADDRCITY PLACE PLACE X X! ) END");
+          "ADDRCITY MAP CALL CALL/SDS? ID PLACE PLACE X X! UNIT! END");
   }
   
   @Override
@@ -32,11 +31,11 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z0-9 ]*", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ID")) return new IdField("CFS\\d{2}-\\d{6}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("X"))  return new MyCrossField();
     return super.getField(name);
   }
   
@@ -87,6 +86,14 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
   }
   
   private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
