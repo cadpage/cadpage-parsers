@@ -804,6 +804,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "2CO ALARM SOUNDING - NO SYMPTOMS",
+      "2FIRE - MISCELLANEOUS",
       "2MEDICAL - MISCELLANEOUS",
       "2MEDICAL - UNRESPONSIVE",
       "ABD PAIN/PROB P-2",
