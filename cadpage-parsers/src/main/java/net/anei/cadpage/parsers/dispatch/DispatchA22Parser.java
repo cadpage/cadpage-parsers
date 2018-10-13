@@ -30,6 +30,9 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "INCIDENT NEW\n");
     body = stripFieldStart(body, "UNIT DISPATCH\n");
+    body = stripFieldEnd(body, ",");
+    body = stripFieldEnd(body, "...");
+    body = stripFieldEnd(body, ",");
     
     // The standard format has line breaks between each field.  On some occasions these are replaced with
     // blanks and have to be manually restored.  Which requires the use of a source pattern to identify
