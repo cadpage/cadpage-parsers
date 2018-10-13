@@ -13,7 +13,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}(?: .*)?");
   private static final Pattern MASTER_PTN = 
-    Pattern.compile("([-/.A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
+    Pattern.compile("([-/.;A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
   private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
   private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
