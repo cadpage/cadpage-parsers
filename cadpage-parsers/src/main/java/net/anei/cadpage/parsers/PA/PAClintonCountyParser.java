@@ -13,6 +13,6 @@ public class PAClintonCountyParser extends DispatchA5Parser {
   
   @Override
   public String getFilter() {
-    return "@CLINTONCOUNTYPA.COM";
+    return "@CLINTONCOUNTYPA.COM,@S1014D6A";
   }
 }
