@@ -318,6 +318,7 @@ public class ParserList {
               ,"FLHolmesCounty"                 ,"Holmes County, FL"
               ,"FLLakeCounty"                   ,"Lake County, FL"
               ,"FLLeeCounty"                    ,"Lee County, FL"
+              ,"FLLeonCounty"                   ,"Leon County, FL"
               ,"FLLevyCounty"                   ,"Levy County, FL"
               ,"FLManateeCounty"                ,"Manatee County, FL"
               ,"FLMarionCounty"                 ,"Marion County, FL"

@@ -289,6 +289,7 @@ public class Active911ParserTable {
       "US/FL/HolmesCounty",               "FLHolmesCounty",
       "US/FL/JacksonCounty",              "FLJacksonCounty",
       "US/FL/LakeCounty",                 "FLLakeCounty",
+      "US/FL/LeonCounty",                 "FLLeonCounty",
       "US/FL/LevyCounty",                 "FLLevyCounty",
       "US/FL/ManateeCounty",              "FLManateeCounty",
       "US/FL/OkaloosaCounty",             "FLOkaloosaCounty",
