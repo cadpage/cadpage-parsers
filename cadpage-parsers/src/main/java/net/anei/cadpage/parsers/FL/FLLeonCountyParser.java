@@ -33,6 +33,7 @@ public class FLLeonCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
   
@@ -64,6 +65,15 @@ public class FLLeonCountyParser extends FieldProgramParser {
       } else {
         data.strCall = append(data.strCall, " - ", field);
       }
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
     }
   }
   
