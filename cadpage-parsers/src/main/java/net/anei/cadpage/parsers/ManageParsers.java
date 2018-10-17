@@ -173,39 +173,14 @@ public class ManageParsers {
   public static String convertLocationCode(String location, String subject, String body) {
     String result = OLD_CODE_TABLE.getProperty(location);
     if (result != null) return result;
-    
-    // There was a partial transfer of some NYNassauCountyD calls to NYNassauCountJ
-    // from 12/26/14
-    if (body != null && location.equals("NYNassauCountyD") && 
-        NOT_NASSAU_COUNTY_D.matcher(body).find()) return "NYNassauCountyJ";
 
     // And another from NYOneidaCounty to NYMadisonCountyB from 01/16/2018
     if (subject != null && location.equals("NYOneidaCounty") && subject.equals("SEVAC")) return "NYMadisonCountyB";
     return location;
   }
-  private static final Pattern NOT_NASSAU_COUNTY_D = Pattern.compile("[^\\*]CS:");
   
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "NCDavieCountyA",     "NCDavieCounty",          // 09/30/2013
-        "NCDavieCountyB",     "NCDavieCounty",          // 09/30/2013
-        "NJHudsonCounty",     "NJJCMCEMSHudCEN",        // 11/22/2013
-        "NJJCMCEMSHudCEN",    "NJJCMCEMSJerseyCity",    // 12/27/2013
-        "CTLitchfieldCountyB","CTNewMilford",           // 12/28/2013
-        "TXMontgomeryCountyC","TXMontgomeryCountyB",    // 02/26/2014
-        "VALexingtonRockbridgeCounty", "VARockbridgeCounty",   //03/05/2014
-        "MDHarford",          "MDHarfordCounty",        // 03/09/2014
-        "TXWilliamsonCountyA","TXWilliamsonCounty",     // 04/24/2014  
-        "TXWilliamsonCountyB","TXWilliamsonCounty",     // 04/24/2014
-        "VAPrinceWilliamCountyA","VAPrinceWilliamCounty",// 04/26/2014
-        "VAPrinceWilliamCountyB","VAPrinceWilliamCounty",// 04/26/2014
-        "TXCombine",          "TXKaufmanCounty",         // 06/03/2014
-        "PAChesterCountyK",   "PAChesterCountyD1",       // 07/22/2014
-        "OHHarveysburg",      "PAWarrenCountyC",         // 08/02/2014
-        "NJSalemCountyC",     "NJSalemCountyB",          // 01/14/2015
-        "NVWinnemuccaCounty", "NVHumboldtCounty",        // 01/17/2015
-        "NCHertfordCountyA",  "NCHertfordCountyB",       // 06/30/2015
-        "CARocklin",          "CAPlacerCounty",          // 09/07/2015
         "CAHaywardCounty",    "CAHayward",               // 02/16/2016
         "KYRockcastleCounty", "KYRockCastleCounty",
         "OHLimaCounty",       "OHLima",
@@ -225,7 +200,8 @@ public class ManageParsers {
         "OKTulsaA",           "OKTulsa",                 // 06/08/2018
         "OKTulsaC",           "OKTulsa",
         "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
-        "ZSECTConnect",       "ZSESweden"               // 10/02/2018
+        "ZSECTConnect",       "ZSESweden",               // 10/02/2018
+        "COJeffersonCountyB", "COJeffersonCountyD"      // 10/16/2018
   });
 
 }

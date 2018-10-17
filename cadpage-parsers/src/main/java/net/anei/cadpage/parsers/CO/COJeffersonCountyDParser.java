@@ -10,7 +10,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   
   public COJeffersonCountyDParser() {
     super("JEFFERSON COUNTY", "CO", 
-          "CALL ADDR APT CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID TIME! END");
+          "CALL ADDR APT CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID TIME! INFO/N+");
   }
   
   @Override

@@ -18,7 +18,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
   
   public PABeaverCountyParser() {
     super(CITY_CODES, "BEAVER COUNTY", "PA",
-           "EVENT_#:ID! LOC:ADDR/S? CALLER_NAME:NAME? CALLER_ADDR:ADDR/S? TYPE:CALL TIME:TIME! COMMENTS:INFO");
+           "EVENT_#:ID! LOC:ADDR/S? TYPE:CALL CALLER_NAME:NAME? CALLER_ADDR:ADDR/S? TIME:TIME! COMMENTS:INFO");
   }
   
   @Override
