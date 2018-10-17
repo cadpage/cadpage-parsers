@@ -10,6 +10,6 @@ public class MOHarrisonCountyParser extends DispatchBCParser {
    
   @Override
   public String getFilter() {
-    return "@grm.net";
+    return "HARCO911@GRM.NET";
   }
 }
