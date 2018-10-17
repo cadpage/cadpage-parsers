@@ -13,6 +13,7 @@ public class OHWayneCountyCParser extends DispatchEmergitechParser {
     super("Dispatch:", CITY_LIST, "WAYNE COUNTY", "OH", TrailAddrType.PLACE);
     addSpecialWords("COLUMBUS", "HARRISON");
     addExtendedDirections();
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -53,6 +54,12 @@ public class OHWayneCountyCParser extends DispatchEmergitechParser {
   public String getProgram() {
     return "UNIT CODE " + super.getProgram();
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "5429 DOVER RD",                        "+40.756419,-81.868609",
+      "10025 MCQUAID RD",                     "+40.805580,-81.796344",
+      "5710 S CARR RD",                       "+40.729948,-81.816083"
+  });
   
   private static final String[] CITY_LIST = new String[]{
     
