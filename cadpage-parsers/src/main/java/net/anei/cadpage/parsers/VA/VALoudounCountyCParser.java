@@ -10,8 +10,8 @@ public class VALoudounCountyCParser extends FieldProgramParser {
   
   public VALoudounCountyCParser() {
     super("LOUDOUN COUNTY", "VA", 
-          "( SELECT/1 ( CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+ B:BOX! LOW_CROSS_STREET:X! HIGH_CROSS_STREET:X! RADIO_CHANNELS:CH! FDIDs:SKIP! LATITUDE:GPS1 LONGITUDE:GPS2 " +
-                     "| There_is_a_current_incident_with_the_following_information:EMPTY Incident_Number:ID! Incident_Type:CALL! Modifying_Circumstance:CALL/SDS! Location:ADDR! City:CITY! Beat_Name:BOX! Low_Cross_Street:X! High_Cross_Street:X Units_Involved:UNIT! Radio_Channels:CH! Incident_Time:DATETIME3! FDIDs:SKIP! Incident_Location_on_Map:GPS3! ) " +
+          "( SELECT/1 ( CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+ B:BOX! ( CROSS_STREETS:X! | LOW_CROSS_STREET:X! HIGH_CROSS_STREET:X! ) RADIO_CHANNELS:CH! FDIDs:SKIP! LATITUDE:GPS1 LONGITUDE:GPS2 BUILDING:APT APARTMENT:APT END " +
+                     "| Incident_Number:ID! Incident_Type:CALL! Location:ADDR! City:CITY! Building:APT! Apartment:APT! Box_Area:BOX! Cross_Streets:X! Units_Involved:UNIT! Radio_Channels:CH! Incident_Time:DATETIME3! FDIDs:SKIP! Incident_Location_on_Map:GPS3! ) " +
           "| CALL ADDR ( X2! | APT X2! | APT PLACE X2! ) BOX! Units:UNIT! )");
   }
   
@@ -27,6 +27,7 @@ public class VALoudounCountyCParser extends FieldProgramParser {
   
   private static final Pattern MARKER2 = Pattern.compile("([A-Z]{4}-\\d{4}-\\d{8}):");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("(?: +|(?<! ))(?=TEXT:|PROBLEM:|CAD RESPONSE:|DISPATCH LEVEL:)|(?<=[\\.\\)])(?=\\d{1,2}\\.)");
+  private static final Pattern QUAL_PTN = Pattern.compile("^([A-Za-z ]+:) *\\[[^\\]]+\\]");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -54,6 +55,7 @@ public class VALoudounCountyCParser extends FieldProgramParser {
     } else {
       setSelectValue("1");
       body = body.replace(" City:", "\nCity:");
+      body = QUAL_PTN.matcher(body).replaceFirst("$1");
       return parseFields(body.split("\n+"), data);
     }
   }

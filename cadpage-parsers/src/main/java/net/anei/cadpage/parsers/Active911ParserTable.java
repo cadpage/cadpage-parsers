@@ -1541,7 +1541,7 @@ public class Active911ParserTable {
       "US/VA/IsleOfWrightCounty",         "VAIsleOfWightCounty",
       "US/VA/JamesCityCounty",            "VAJamesCityCounty",
       "US/VA/KingGeorgeCounty",           "VAKingGeorgeCounty",
-      "US/VA/LoudounCounty",              "VALoudounCounty",
+      "US/VA/LoudounCounty",              "VALoudounCountyC",
       "US/VA/LouisaCounty",               "VALouisaCounty",
       "US/VA/LunenburgCounty",            "VALunenburgCounty",
       "US/VA/MecklenburgCounty",          "VAMecklenburgCounty",
