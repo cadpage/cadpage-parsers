@@ -896,6 +896,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "DRWN-D4i",   "Poss Drowning - SCUBA accident - ice rescue",
       "DRWN-D4s",   "Poss Drowning - SCUBA accident - scuba accident",
       "DRWN-D4w",   "Poss Drowning - SCUBA accident - swift water ",
+      "ELECT",      "Electrical injury",
       "ELECT-C1",   "Poss Electrocution - pt alert",
       "ELECT-C1e",  "Poss Electrocution - pt alert - electrocution",
       "ELECT-C1l",  "Poss Electrocution - pt alert",
