@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -15,7 +17,10 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState, 
-          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP");
+          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
+              "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
+              "| CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP " + 
+              ") END");
     this.callCodes = callCodes;
   }
   
@@ -27,8 +32,10 @@ public class DispatchA52Parser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram().replace("CODE", "CODE CALL");
+    return super.getProgram().replace("CODE", "CODE CALL?");
   }
+  
+  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("EEEEEE, MMMM dd, yyyy hh:mm:ss aa");
   
   @Override
   public Field getField(String name) {
@@ -37,6 +44,7 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
+    if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT);
     return super.getField(name);
   }
   
