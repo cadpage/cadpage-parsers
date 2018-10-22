@@ -1032,7 +1032,7 @@ public class Active911ParserTable {
       "US/NY/NassauCountyFiretracker",    "NYNassauCountyFiretracker3",
       "US/NY/NassauCountyMeadowmerePark", "NYNassauCountyB",
       "US/NY/NassauCountyMimo",           "NYNassauCountyN",
-      "US/NY/NassauCountyWoodmere",       "NYNassauCountyB",
+      "US/NY/NassauCountyWoodmere",       "NYNassauCountyRedAlert",
       "US/NY/NiagaraCounty",              "NYNiagaraCountyB",
       "US/NY/OCLiverpool",                "NYOnondagaCountyA",
       "US/NY/OneidaIAR",                  "NYOneidaCounty",
