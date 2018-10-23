@@ -50,6 +50,9 @@ public class TNCumberlandCountyParser extends DispatchA65Parser {
       "RENEGADE MOUNTAIN",
       "WESTEL",
       
+      // Putnam County
+      "MONTEREY",
+      
       // Roane County
       "ROCKWOOD",
       
