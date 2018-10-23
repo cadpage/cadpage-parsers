@@ -68,7 +68,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     return fldList.toArray(new String[fldList.size()]);
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Dispatch Notification for Incident ([A-Z]{2,3}\\d{10,14})");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Dispatch Notification for Incident ([-A-Z0-9]{12,20})");
   private static final Pattern DELIM = Pattern.compile("\\s*\n\\s*");
 
   @Override
@@ -120,6 +120,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
   }
