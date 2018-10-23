@@ -17,7 +17,7 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "administrator@911.calhouncountyal.gov";
+    return "administrator@911.calhouncountyal.gov,cc911@911.calhouncountyal.gov";
   }
   
   @Override
