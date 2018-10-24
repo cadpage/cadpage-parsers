@@ -12,9 +12,15 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
   
   public INStJosephCountyBParser() {
     super("ST JOSEPH COUNTY", "IN",
-          "CALL DUP_CALL? ADDRCITY? ( UNIT! " +
-                                  " | DATEMARK " +
-                                  " | X? PLACE? SIMPLE? CH/L+? ( UNIT! | DATEMARK ) ) INFO/N+");
+          "( SELECT/2 ADDRCITY1 CALL X PLACE SIMPLE CH UNIT! INFO/N+? ( ID2 INFO/N+? GPS1 GPS2 | GPS1 GPS2 ) " +
+          "| ( ADDRCITY1 CALL DUP_CALL? " +
+            "| CALL DUP_CALL? ADDRCITY2? " + 
+            ") " + 
+            "( UNIT! " +
+            "| DATEMARK " +
+            "| X? PLACE? SIMPLE? CH/L+? ( UNIT! | DATEMARK ) " +
+            ") INFO2/N+? ( ID1 INFO/N+? GPS1 GPS2 | GPS1 GPS2 ) END " +
+          ")");
   }
   
   @Override
@@ -22,33 +28,51 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     return "@sjc911.com";
   }
   
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
   private boolean getInfo = false;
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     
-    if (!subject.startsWith("Automatic R&R Notification: ")) return false;
-    
     int pt = body.indexOf("\nIMPORTANT NOTICE!");
     if (pt >= 0) body = body.substring(0, pt).trim();
-
     getInfo = false;
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    
+    if (subject.startsWith("Automatic R&R Notification: ")) {
+      setSelectValue("1");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+    }
+    else if (subject.equals("!")) {
+      setSelectValue("2");
+      if (!parseFields(body.split("\n"), data)) return false;
+    }
+    else return false;
     if (data.strUnit.length() == 0) data.msgType = MsgType.RUN_REPORT;
     return true;
   }
+  
+  private static final String GPS_PTN = "-?\\d{2}\\.\\d{6,}|-361";
   
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DUP_CALL")) return new MyDupCallField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
+    if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("SIMPLE")) return new SkipField("Simple|Complex", true);
-    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]+\\d+[A-Z]?|[A-Z]+(?:FD|FDEN|FDCH|FDGR|FDRE|FDTA|FDTR|FOAM)|(?:NLF|OSOLO|POR)[A-Z]+|BTFDTA|BUTWPTA|CFDMULE|CLETWPCH|CLETWPTR|EDWEN|EDWTA|NLFDPOLK|SBFINVST|SBPConv|SMCAS|STARKEAMB|X+|mobile\\d+|Mutual Aid)\\b[, ]*)+", true);
+    if (name.equals("SIMPLE")) return new SkipField("Simple|Complex|Low|Medium", true);
+    if (name.equals("UNIT")) return new UnitField("|(?:(?:[A-Z]+\\d+[A-Z]?|[A-Z]+(?:FD|FDEN|FDCH|FDGR|FDRE|FDTA|FDTR|FOAM)|(?:NLF|OSOLO|POR)[A-Z]+|BTFDTA|BUTWPTA|CFDMULE|CLETWPCH|CLETWPTR|EDWEN|EDWTA|NLFDPOLK|SBFINVST|SBPConv|SMCAS|STARKEAMB|X+|mobile\\d+|Mutual Aid)\\b[, ]*)+", true);
     if (name.equals("DATEMARK")) return new SkipField("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}", true);
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("INFO2")) return new MyInfo2Field();
+    if (name.equals("GPS1")) return new GPSField(1, GPS_PTN, true);
+    if (name.equals("GPS2")) return new GPSField(2, GPS_PTN, true);
+    if (name.equals("ID1")) return new IdField("\\[.*\\]", true);
+    if (name.equals("ID2")) return new IdField("\\d{4}-\\d{8}\\b.*", true);
     return super.getField(name);
   }
   
@@ -83,16 +107,31 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     }
   }
   
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern VALID_ADDRESS_PTN = Pattern.compile("(?:<UNKNOWN>|\\d|LAT:).*|.*(?:,| at |\\bMM\\d+\\b).*");
+  
+  private class MyAddressCity1Field extends MyAddressCityField {
     @Override
-    public boolean canFail() {
+    public boolean checkParse(String field, Data data) {
+      if (PROQA_PTN.matcher(field).matches()) return false;
+      if (!PROQA_PTN.matcher(getRelativeField(+1)).matches() &&
+          !VALID_ADDRESS_PTN.matcher(field).matches()) return false;
+      parse(field, data);
       return true;
     }
-    
+  }
+  
+  private class MyAddressCity2Field extends MyAddressCityField {
     @Override
     public boolean checkParse(String field, Data data) {
       if (NOT_PLACE_PTN.matcher(field).matches()) return false;
       parse(field, data);
+      return true;
+    }
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public boolean canFail() {
       return true;
     }
     
@@ -112,6 +151,7 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.length() == 0) return true;
       if (field.equals("No Cross Streets Found")) return true;
       if (!field.contains("/")) return false;
       super.parse(field, data);
@@ -139,7 +179,7 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     }
   }
   
-  private class MyInfoField extends InfoField {
+  private class MyInfo2Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (getInfo) {
