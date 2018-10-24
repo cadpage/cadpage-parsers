@@ -1273,7 +1273,7 @@ public class Active911ParserTable {
       "US/PA/LackawannaCounty",           "PALackawannaCounty",
       "US/PA/LancasterCounty",            "PALancasterCounty",
       "US/PA/LawrenceCounty",             "PALawrenceCounty",
-      "US/PA/LehighCounty",               "PALehighCountyA",
+      "US/PA/LehighCounty",               "PALehighCountyA,PALehighCountyC",
       "US/PA/Lionville",                  "PAChesterCountyM",
       "US/PA/LowerAlsaceFC",              "PABerksCounty",
       "US/PA/LuzerneCounty",              "PALuzerneCounty",
