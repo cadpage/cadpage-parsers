@@ -890,21 +890,21 @@ public class ORBentonCountyParser extends FieldProgramParser {
   private static final String MAP_PAGE_BASE = "http://maps.co.benton.or.us/gisdata/Address/FireMapBooks/";
   
   private static final Properties MAP_PAGE_ADDR_TABLE = buildCodeTable(new String[]{
-      "1400 APPLEGATE ST",         "PhilomathMaps/APPLEGATE_CAMBRIDGE_APARTMENT.pdf",
-      "NEWTON PLACE",              "PhilomathMaps/ASHBROOK_VILLAGE.pdf",
-      "1284 N 19TH ST",            "PhilomathMaps/FOREST_MEADOW.pdf",
-      "502 N 8TH ST",              "PhilomathMaps/GRAND_VIEW_MOBILE_PARK.pdf",
-      "24617 STOVALL LN",          "PhilomathMaps/TIMsMOBILE_HOME_PARK.pdf",
-      "24671 STOVALL LN",          "PhilomathMaps/TIMsMOBILE_HOME_PARK.pdf",
-      "BARLOW RD",                 "PhilomathMaps/Pioneer Village.pdf",
-      "CLARK DR",                  "PhilomathMaps/Pioneer Village.pdf",
-      "CLARK PL",                  "PhilomathMaps/Pioneer Village.pdf",
-      "LEWIS DR",                  "PhilomathMaps/Pioneer Village.pdf",
-      "LEWIS PL",                  "PhilomathMaps/Pioneer Village.pdf",
-      "GREASY CREEK RD",           "PhilomathMaps/Pioneer Village.pdf",
-      "MCLOUGHLIN DR",             "PhilomathMaps/Pioneer Village.pdf",
-      "WHITMAN PL",                "PhilomathMaps/Pioneer Village.pdf",
-      "WHITMAN WAY",               "PhilomathMaps/Pioneer Village.pdf"
+      "1400 APPLEGATE ST",         "PhilomathMaps/FireGridCommon/APPLEGATE_CAMBRIDGE_APARTMENT.pdf",
+      "NEWTON PLACE",              "PhilomathMaps/FireGridCommon/ASHBROOK_VILLAGE.pdf",
+      "1284 N 19TH ST",            "PhilomathMaps/FireGridCommon/FOREST_MEADOW.pdf",
+      "502 N 8TH ST",              "PhilomathMaps/FireGridCommon/GRAND_VIEW_MOBILE_PARK.pdf",
+      "24617 STOVALL LN",          "PhilomathMaps/FireGridCommon/TIMsMOBILE_HOME_PARK.pdf",
+      "24671 STOVALL LN",          "PhilomathMaps/FireGridCommon/TIMsMOBILE_HOME_PARK.pdf",
+      "BARLOW RD",                 "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "CLARK DR",                  "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "CLARK PL",                  "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "LEWIS DR",                  "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "LEWIS PL",                  "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "GREASY CREEK RD",           "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "MCLOUGHLIN DR",             "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "WHITMAN PL",                "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
+      "WHITMAN WAY",               "PhilomathMaps/FireGridCommon/Pioneer Village.pdf"
   });
   
   private static final Properties MAP_PAGE_TABLE = buildCodeTable(new String[]{
