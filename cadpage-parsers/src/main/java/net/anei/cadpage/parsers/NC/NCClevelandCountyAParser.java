@@ -1,14 +1,13 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
@@ -20,9 +19,10 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
   private boolean bracket = false;
   
   public NCClevelandCountyAParser() {
-    super("CLEVELAND COUNTY", "NC",
-           "( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDR! ADDR2? ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO+");
-    setupMultiWordStreets("SANDY RUN CHURCH");
+    super(CITY_LIST, "CLEVELAND COUNTY", "NC",
+          "( UNIT ENROUTE ADDR CITY_CODE CALL! END " +
+          "| ( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDR! ADDR2? ( SKIP CITY | ) ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO/N+ )");
+    setupMultiWordStreets("OAK GROVE-CLOVER HILL CH", "SANDY RUN CHURCH");
   }
   
   @Override
@@ -43,6 +43,8 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ENROUTE")) return new SkipField("Enroute");
+    if (name.equals("CITY_CODE")) return new MyCityCodeField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
     if (name.equals("CALL")) return new MyCallField();
@@ -51,6 +53,13 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyCityCodeField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strCity = convertCodes(field, CITY_CODES);
+    }
   }
   
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]{1,2}[FP]D|\\d{3,4}|[A-Z]+\\d+");
@@ -62,7 +71,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       // Like a county name
       String county = COUNTY_CODES.getProperty(field.toUpperCase());
       if (county != null) {
-        data.strCity = county;
+        if (data.strCity.length() == 0) data.strCity = county;
         return;
       }
       
@@ -78,7 +87,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "NAME UNIT CITY";
+      return "NAME UNIT CITY?";
     }
   }
   
@@ -149,41 +158,47 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
    * @return converted text message
    */
   private String fixBody(String body) {
+    if (body.contains(",Enroute,")) {
+      return body.replace(',', ';');
+    }
     StringBuilder sb = new StringBuilder(body);
     int st = 0;
+    String hypWord = null;
     for (int pt = 0; pt < sb.length(); pt++) {
       char chr = sb.charAt(pt);
       if (chr == '[') break;
-      if (chr == ' ' || chr == ':') st = pt+1;
+      if (chr == ' ' || chr == ':' || chr == '/') {
+        st = pt+1;
+        hypWord = null;
+      }
       else if (chr == '-') {
-        String prevWord = sb.substring(st,pt);
-        String postWord = HYPHENATED_WORD_MAP.get(prevWord);
-        if (postWord == null || !sb.substring(pt+1).startsWith(postWord)) {
+        if (st >= 0) {
+          if (hypWord == null) hypWord = HYPHENATED_WORD_SET.getCode(body.substring(st));
+          if (hypWord != null && st + hypWord.length() <= pt) hypWord = null;
+          if (hypWord == null) st = -1;
+        }
+        if (hypWord == null) {
           sb.setCharAt(pt, ';');
           st = pt+1;
+          hypWord = null;
         }
       }
     }
     return sb.toString().replace(";;", ";");
   }
   
-  private static final Map<String,String> HYPHENATED_WORD_MAP = new HashMap<String,String>();
-  static {
-    for (String word : new String[]{
+  private static CodeSet HYPHENATED_WORD_SET = new CodeSet(
         "10-50",
         "BELWOOD-LAWNDALE",
+        "CASAR-BELWOOD",
         "CASAR-LAWNDALE",
         "FALLSTON-WACO",
+        "GROVE-CLOVER",
+        "PENN-DALE",
+        "REFUSED-NOISE",
         "TASTE-T-DRIVE",
         "T-Mobile"
-        }) {
-      for (int pt = 0; pt<word.length(); pt++) {
-        if (word.charAt(pt) == '-') {
-          HYPHENATED_WORD_MAP.put(word.substring(0,pt), word.substring(pt+1));
-        }
-      }
-    }
-  }
+  );
   
   private static Properties COUNTY_CODES = buildCodeTable(new String[]{
       "LINCOLN COUNTY",    "LINCOLN COUNTY",
@@ -199,9 +214,12 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(new String[]{
       "10-50 PI",
       "50PD",
+      "911",
       "A B PAIN",
+      "ALARM/RE",
       "ALREACT",
       "AN/BITE",
+      "ARMED PE",
       "ASSAULT",
       "ASSIST O",
       "AST/EMS",
@@ -212,6 +230,10 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "DEATH",
       "DIABETIC",
       "DIF BREA",
+      "DIR TRAF",
+      "DISPUTE",
+      "DOCAPPT",
+      "ELECTROC",
       "EM/TRANS",
       "FALL",
       "FIRE ALA",
@@ -230,25 +252,82 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "FIRE/TRA",
       "FIRE/VEH",
       "FIRE/WG",
+      "FIRE/MISCELLANEOUS",
+      "FIRE/VEHICLE",
+      "FIRE/WOODS/GRASS",
       "FIREAPT",
       "HEADACHE",
       "HEART PR",
       "HEAT/COL",
       "HEM/LAC",
+      "INVESTIG",
       "OT MED",
       "OT25",
       "OVERDOSE",
       "PREGNANC",
       "PSYC PBM",
       "R/TRANS",
+      "REFUSED-NOISE",
       "SEIZURES",
+      "SHOOT",
       "SICKNESS",
       "STAB/SHT",
       "STEMI",
       "STROKE",
+      "SUSP VEH",
       "TRAUMA",
+      "TRESPASS",
       "UNCONSCI",
       "UNDER CONTROL",
       "UNK MED"
   }));
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CASR", "CASAR",
+      "CHER", "CHERRYVILLE",
+      "ELLE", "ELLENBORO",
+      "GROV", "GROVER",
+      "KMTN", "KINGS MOUNTAIN",
+      "LAWD", "LAWNDALE",
+      "MOSB", "MOORESBORO",
+      "SHE0", "SHELBY",
+      "VALE", "VALE"
+  });
+  
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "KINGS MOUNTAIN",
+      "SHELBY",
+
+      // Towns
+      "BELWOOD",
+      "BOILING SPRINGS",
+      "CASAR",
+      "EARL",
+      "FALLSTON",
+      "GROVER",
+      "KINGSTOWN",
+      "LATTIMORE",
+      "LAWNDALE",
+      "MOORESBORO",
+      "PATTERSON SPRINGS",
+      "POLKVILLE",
+      "WACO",
+
+      // Census-designated place
+      "LIGHT OAK",
+
+      // Unincorporated community
+      "TOLUCA",
+      
+      // Gaston County
+      "CHERRYVILLE",
+      
+      // Lincoln County
+      "VALE",
+      
+      //  Rutherford County
+      "ELLENBORO"
+  };
 }
