@@ -15,7 +15,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   
   public static final int A20_UNIT_LABEL_REQ = 1;
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(Dispatched Call|Closing Info)(?:, Unit: ([-A-Z0-9]+))? \\(([-A-Z0-9]*)\\)(?:\\|.*)?");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(Dispatched Call|Closing Info)(?:, Unit: ([-A-Z0-9]+))? \\(([-A-Z0-9 ]*)\\)(?:\\|.*)?");
   
   private Properties codeLookupTable;
   
@@ -35,7 +35,7 @@ public class DispatchA20Parser extends FieldProgramParser {
 
   public DispatchA20Parser(Properties codeLookupTable, String defCity, String defState, int flags) {
     super(defCity, defState,
-           "ADDRCITYST PLACE X APT CODE! MAP ID? INFO");
+           "ADDRCITYST PLACE X APT CALL! MAP ID? INFO/N+");
     this.codeLookupTable = codeLookupTable;
     this.unitLabelReq = (flags & A20_UNIT_LABEL_REQ) != 0;
   }
@@ -59,7 +59,6 @@ public class DispatchA20Parser extends FieldProgramParser {
     else if (!unitLabelReq) data.strUnit = unit2;
     if (body.endsWith("*")) body = body + " ";
     if (!parseFields(body.split(" \\* ", -1), 5, data)) return false;
-    if (data.strCall.length() == 0) data.strCall = "ALERT";
     return true;
   }
   
@@ -72,7 +71,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStField();
     if (name.equals("ID")) return new IdField("#(\\d+)", true);
-    if (name.equals("CODE")) return new MyCodeField();
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -106,38 +105,41 @@ public class DispatchA20Parser extends FieldProgramParser {
     }
   }
   
-  private class MyCodeField extends CodeField {
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      super.parse(field, data);
-      if (codeLookupTable != null) data.strCall = convertCodes(field, codeLookupTable);
+      if (codeLookupTable != null) {
+        data.strCode = field;
+        data.strCall = convertCodes(field, codeLookupTable);
+      } else {
+        data.strCall = field;
+      }
     }
     
     @Override
     public String getFieldNames() {
-      return (codeLookupTable == null ? "CODE" : "CODE CALL");
+      return "CODE CALL";
     }
   }
   
-  private static final Pattern INFO_DELIM = Pattern.compile(" *\n+ *|  +| *, *(?!.*\\.$)");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("\n| {3,}");
   private static final Pattern UNIT_PTN = Pattern.compile("ENG .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern GPS_PTN = Pattern.compile("(?:LAT|LON):(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern APT_PTN = Pattern.compile("\\d+ ?[A-Z]?|ROOM.*|RM.*|BLDG.*", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       String gpsLoc = "";
-      for (String line : INFO_DELIM.split(field)) {
+      for (String line : INFO_BRK_PTN.split(field)) {
+        line = line.trim();
         if (line.startsWith("Service Class:")) continue;
         if ("Service Class:".startsWith(line)) continue;
         int pt = line.indexOf("Cellular E911 Call:");
         if (pt == 0) continue;
         if (pt > 0) line = line.substring(0,pt).trim();
+        if ("Cellular E911 Call:".startsWith(line)) continue;
         Matcher match;
         if (UNIT_PTN.matcher(line).matches()) {
           data.strUnit = line;
-        } else if (APT_PTN.matcher(line).matches()) {
-          data.strApt = append(data.strApt, "-", line); 
         } else if ((match = GPS_PTN.matcher(line)).matches()) {
           gpsLoc = append(gpsLoc, ",", match.group(1)); 
         } else if (data.strCall.length() == 0) {

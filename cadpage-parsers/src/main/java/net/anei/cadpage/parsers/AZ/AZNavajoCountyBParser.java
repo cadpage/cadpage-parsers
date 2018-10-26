@@ -16,14 +16,16 @@ public class AZNavajoCountyBParser extends DispatchA20Parser {
   
   @Override
   public String getFilter() {
-    return "@ci.show-low.ca.us";
+    return "@ci.show-low.ca.us,police@stpd.org";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("\\([A-Z]+\\)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("\\([A-Z ]+\\)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!SUBJECT_PTN.matcher(subject).matches()) return false;
-    return super.parseMsg("Dispatched Call ()", body, data);
+    if (SUBJECT_PTN.matcher(subject).matches()) subject = "Dispatched Call " + subject;
+    if (! super.parseMsg(subject, body, data)) return false;
+    data.strUnit = "";
+    return true;
   }
 }

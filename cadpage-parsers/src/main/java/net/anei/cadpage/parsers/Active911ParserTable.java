@@ -112,6 +112,7 @@ public class Active911ParserTable {
       "US/AZ/RuralMetro",                 "AZYavapaiCountyD",
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",
       "US/AZ/ShowLowPD",                  "AZNavajoCountyB",
+      "US/AZ/STPD",                       "AZNavajoCountyB",
       "US/CA/AmadorCounty",               "CAAmadorCounty",
       "US/CA/Bducad",                     "CASanBernardinoCountyC",
       "US/CA/BDUcad",                     "CASanBernardinoCountyC",
