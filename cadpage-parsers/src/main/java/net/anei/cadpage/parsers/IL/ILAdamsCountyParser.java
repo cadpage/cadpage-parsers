@@ -13,7 +13,7 @@ public class ILAdamsCountyParser extends FieldProgramParser {
 
   public ILAdamsCountyParser() {
     super("ADAMS COUNTY", "IL",
-          "CALL! Units:UNIT! ADDR/S6! APT City:CITY? Cross_Streets:X X INFO+");
+          "CALL! Units:UNIT! ADDR/S6! APT City:CITY? Cross_Streets:X Comments:INFO? INFO/N+");
   } 
   
   @Override
@@ -48,14 +48,34 @@ public class ILAdamsCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" and ", " & ");
+      super.parse(field, data);
+    }
   }
   
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       field = field.replace('*', '/');
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_MARK_PTN = Pattern.compile("\\[[ :A-Za-z0-9]+\\] *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_MARK_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
       super.parse(field, data);
     }
   }
