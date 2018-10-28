@@ -10,7 +10,7 @@ public class DispatchA65Parser extends FieldProgramParser {
   
   public DispatchA65Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState, 
-          "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY! EMPTY+? ( SRC! END | CITY? ADDR! APT? CS:X? EMPTY+? SRC END )");
+          "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY! EMPTY+? ( SRC! END | CITY? ADDR! DUP? APT? CS:X? EMPTY+? SRC END )");
   }
 
   @Override
@@ -25,7 +25,8 @@ public class DispatchA65Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|(\\d{1,4})");
+    if (name.equals("DUP")) return new MyDupField();
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|([A-Z]?\\d{1,4} *[A-Z]?)");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
@@ -101,6 +102,18 @@ public class DispatchA65Parser extends FieldProgramParser {
       } else {
         super.parse(field, data);
       }
+    }
+  }
+  
+  private class MyDupField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.length() > 0 && field.equals(getRelativeField(-1));
     }
   }
   

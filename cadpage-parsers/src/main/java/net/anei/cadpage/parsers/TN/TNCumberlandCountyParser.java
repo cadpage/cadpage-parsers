@@ -14,7 +14,7 @@ public class TNCumberlandCountyParser extends DispatchA65Parser {
   
   @Override
   public String getFilter() {
-    return "@911email.net,@911email.org,e911@cumberlandtn911.org";
+    return "@911email.net,@911email.org,e911@cumberlandtn911.org,Dispatch@Etowah911.info";
   }
   
   @Override
