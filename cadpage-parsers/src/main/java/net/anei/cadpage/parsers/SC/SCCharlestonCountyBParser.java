@@ -20,7 +20,6 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("PURVIS_ENS") && !subject.equals("PURVIS")) return false;
     body = stripFieldStart(body, ":");
     return parseFields(body.split("\n"), data);
   }
