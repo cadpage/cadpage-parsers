@@ -10,7 +10,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   public SCCharlestonCountyBParser() {
     super("CHARLESTON COUNTY", "SC", 
-          "UNIT ADDR X/Z? CITY CALL! CH! ID! DATETIME");
+          "UNIT ADDR APT? X/Z+? CITY CALL! CH! ID! DATETIME");
   }
   
   @Override
@@ -27,6 +27,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d\\d-\\d{7}", true);
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM) +(.+)");
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CH")) return new ChannelField("(?:Incident Channel:|INC-) *(.*)", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
