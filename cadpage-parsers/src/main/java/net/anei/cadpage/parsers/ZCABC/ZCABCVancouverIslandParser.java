@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.ZCABC;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -112,7 +114,8 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:BC )?(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)(?: +(.*))?");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:BC )?(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d(?: [ap]m)?) *(.*)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     
     @Override 
@@ -125,7 +128,12 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return false;
       data.strDate = match.group(1);
-      data.strTime = match.group(2);
+      String time = match.group(2);
+      if (time.endsWith("m")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = match.group(2);
+      }
       String unit = getOptGroup(match.group(3));
       int pt = unit.indexOf("X-ST:");
       if (pt >= 0) {
