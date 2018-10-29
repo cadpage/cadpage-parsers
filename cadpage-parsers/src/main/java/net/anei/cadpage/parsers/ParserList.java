@@ -258,6 +258,7 @@ public class ParserList {
               ,"COPitkinCounty"                 ,"Pitkin County, CO"
               ,"COPuebloCounty"                 ,"Pueblo County, CO"
               ,"CORioBlancoCounty"              ,"Rio Blanco County, CO"
+              ,"CORouttCounty"                  ,"Routt County, CO"
               ,"COSanJuanCounty"                ,"San Juan County, CO"
               ,"COSanMiguelCounty"              ,"San Miguel County, CO"
               ,"COTellerCounty"                 ,"Teller County, CO"
