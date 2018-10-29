@@ -15,7 +15,7 @@ public class FLPutnamCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@putnamsheriff.org";
+    return "@putnamsheriff.org,dispatch@pertdispatch.com";
   }
   
   @Override
