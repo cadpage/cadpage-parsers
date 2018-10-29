@@ -56,7 +56,7 @@ public class DispatchProQAParser extends FieldProgramParser {
   private static final Pattern MARKER = Pattern.compile("(?:- part 1 of 1[\\s/]+)?(?:RC: *(?:\\d*(?:-[A-Z])?/)?)? *");
   private static final Pattern UNASSIGNED_MARKER = Pattern.compile("Job# *[^ ]* *\\(Run# (\\d+)\\) at [0-9:]+ was unassigned\\.");
   private static final Pattern RUN_REPORT_MARKER1 = Pattern.compile("(?:(?:Job# *)?\\d+(?:-[A-Z])?/ *)?Run# *(\\d+) */ *(?:(was Canceled: .*?)/)? *((?:CALL:)?\\d\\d:\\d\\d/ ?(?:DISP:)?\\d\\d:\\d\\d/ ?.*)");
-  private static final Pattern RUN_REPORT_MARKER2 = Pattern.compile("Inc# *[^ ]* */ *Run# *(\\d+) was (?:cancelled|completed) */ *([A-Za-z0-9]+) */ *(.*)");
+  private static final Pattern RUN_REPORT_MARKER2 = Pattern.compile("Inc# *[^ ]* */ *Run# *(\\d+) was (?:cancelled|completed) */ *([A-Za-z0-9]*) */ *(.*)");
   private static final Pattern GEN_ALERT_PTN1 = Pattern.compile("Go to post .*");
   private static final Pattern GEN_ALERT_PTN2 = Pattern.compile("Job# *[^ ]* *\\(Run# (\\d+)\\) *(.*)");
 
