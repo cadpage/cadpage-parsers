@@ -33,6 +33,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
   public boolean parseMsg(String subject, String body, Data data) {
     
     if (subject.startsWith("Alert:")) return false;
+    if (body.startsWith("LOC:")) return false;
 
     boolean mark = body.startsWith("911-CENTER:");
     if (mark) body = body.substring(11).trim();
