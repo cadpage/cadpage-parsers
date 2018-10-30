@@ -19,7 +19,8 @@ public class NJOceanCountyCParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Message from HipLink")) return false;
+    if (!subject.equals("Email Copy Message From Hiplink") && 
+        !subject.equals("Message from HipLink")) return false;
     return parseFields(body.split("\n"), data);
   }
   
