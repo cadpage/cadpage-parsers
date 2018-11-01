@@ -59,7 +59,7 @@ public class CORouttCountyParser extends FieldProgramParser {
     return parseFields(body.split("\n"), data);
   }
   
-  private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("(?:\n \\d{4} [A-Z][a-z]+)+$");
+  private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("(?:\n *\\d{4} [A-Z][a-z]+)+$");
   
   private String cleanPart(String line) {
     Matcher match = TRAIL_JUNK_PTN.matcher(line);
