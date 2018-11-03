@@ -18,29 +18,34 @@ public class ZNZNewZealandParser extends SmartAddressParser {
   private static final Pattern WRAP_BRK_PTN = Pattern.compile("(#F\\d+)(?=\\()");
   private static final Pattern END_PAGE_BREAK = Pattern.compile("#F\\d+(?=\n)");
   private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" +- ([A-Z]+)$");
+  private static final Pattern TRAIL_TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
   
-  private static final Pattern UNIT_CODE_PTN = Pattern.compile("^(?:\\(?([A-Z0-9, ]+)([\\)\\.]) *)?(?:([^-.]+?)[- ]+?)?([A-Z0-9/]+-[A-Z0-9]+) +");
+  private static final Pattern UNIT_PTN = Pattern.compile("\\(?([A-Z0-9, ]+)([\\)\\.]) *");
+  private static final Pattern CODE_PTN1 = Pattern.compile("(?:([^-.]+?)[- ]+?)?([A-Z0-9/]+-[A-Z0-9]+) +");
+  private static final Pattern CODE_PTN2 = Pattern.compile("(?:([- /A-Z0-9]+) - )?((?!AREA)[A-Z]{3,6}\\d?|SPRNKLR|FIRETEST) +");
   private static final Pattern LEAD_UNIT_PTN = Pattern.compile("[A-Z]+\\d+");
-  private static final Pattern ALARM_TYPE_PTN = Pattern.compile("^\\((Alarm Type [-A-Z0-9/ ]+)\\) *");
-  private static final Pattern BOX_PTN = Pattern.compile("^\\(Box ([-A-Z0-9 &]+)\\) *");
-  private static final Pattern AK_PTN = Pattern.compile("^(AK\\d+[A-Z]? .*? > [A-Z]+\\)) +(?:AK\\d+[A-Z]? +)? *");
-  private static final Pattern EXTRA_PTN = Pattern.compile("^([- A-Z0-9:&]+)\\.\\.? *");
-  private static final Pattern EXTRA_PTN2 = Pattern.compile("^([- A-Z0-9:&]+)\\.\\.?(?=#)");
-  private static final Pattern NEAR_OFF_PTN = Pattern.compile("^((?:NEAR|OFF) [- A-Z0-9\\?]+)\\. *");
-  private static final Pattern XSTR_PTN = Pattern.compile("^\\(XStr *([-A-Z0-9/ ]*)\\) *");
-  private static final Pattern DOT_DOT_PTN = Pattern.compile("^\\.(.*)\\. *");
-  private static final Pattern GPS_PTN = Pattern.compile("^\\(x-?(\\d+) ?y-?(\\d+)\\) *");
-  private static final Pattern ID_PTN = Pattern.compile("#(F\\d+)$");
+  private static final Pattern ALARM_TYPE_PTN = Pattern.compile("\\((Alarm Type [-A-Z0-9/ ]+)\\) *");
+  private static final Pattern BOX_PTN = Pattern.compile("\\(Box ([-A-Z0-9 &]+)\\) *");
+  private static final Pattern AK_PTN = Pattern.compile("(AK\\d+[A-Z]? .*? > [A-Z]+\\)) +(?:AK\\d+[A-Z]? +)? *");
+  private static final Pattern EXTRA_PTN = Pattern.compile("([- A-Z0-9:&]+)\\.\\.? *");
+  private static final Pattern EXTRA_PTN2 = Pattern.compile("([- A-Z0-9:&]+)\\.\\.?(?=#)");
+  private static final Pattern NEAR_OFF_PTN = Pattern.compile("((?:NEAR|OFF) [- A-Z0-9\\?]+)\\. *");
+  private static final Pattern XSTR_PTN = Pattern.compile("\\(XStr *([-A-Z0-9/ ]*)\\) *");
+  private static final Pattern DOT_DOT_PTN = Pattern.compile("\\.(.*)\\. *");
+  private static final Pattern GPS_PTN = Pattern.compile("\\(x-?(\\d+) ?y-?(\\d+)\\) *");
+  private static final Pattern ID_PTN = Pattern.compile("#(F\\d+(?: \\d+)?)$");
   
   private static final Pattern UNKNNNNN = Pattern.compile("\\bUNKN\\d{4}\\b");
   private static final Pattern DOUBLED_ADDRESS = Pattern.compile("(\\d+) .* (\\1\\b.*)");
   private static final Pattern PLACE_APT_PTN = Pattern.compile("\\d{1,5}[A-Z]?|[A-Z]");
 
   public ZNZNewZealandParser() {
-    super(CITY_LIST, "", "", CountryCode.NZ);
+    super("", "", CountryCode.NZ);
+    removeWords("TE");
+    setupCities(CITY_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
-    setupProtectedNames("NO 3");
-    setFieldList("UNIT CODE BOX PLACE ADDR APT CITY INFO X CALL GPS ID SRC");
+    setupProtectedNames("NO 3", "BLUE LAKE TOP 10 HOLIDAY PARK");
+    setFieldList("UNIT CODE BOX PLACE ADDR APT CITY INFO X CALL GPS ID TIME SRC");
   }
   
   @Override
@@ -79,6 +84,9 @@ public class ZNZNewZealandParser extends SmartAddressParser {
       }
     }
     
+    int pt = body.indexOf("\n Please do not reply");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     Matcher match = POR_FIRE_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start());
     
@@ -97,52 +105,73 @@ public class ZNZNewZealandParser extends SmartAddressParser {
       body = body.substring(0,match.start());
     }
     
-    match = UNIT_CODE_PTN.matcher(body);
-    if (!match.find()) return false;
-    String unit = match.group(1);
-    if (unit != null) {
-      unit = unit.trim();
-      if (match.group(2).equals(".")) {
-        data.strCall = unit;
-      } else {
-        data.strUnit = unit;
-      }
-    }
-    String call = getOptGroup(match.group(3));
-    data.strCode = match.group(4).trim();
-    body = body.substring(match.end());
-
-    if (call.endsWith(" STN") || call.equals("STN")) {
-      data.strCode = "STN " + data.strCode;
-      int len = call.length()-4;
-      if (len < 0) len = 0;
-      call = call.substring(0,len).trim();
-    }
-    if (data.strUnit.length() == 0 && LEAD_UNIT_PTN.matcher(call).matches()) {
-      data.strUnit = call;
-    } else { 
-      data.strCall = append(data.strCall, " / ", call);
+    match = TRAIL_TIME_PTN.matcher(body);
+    if (match.find()) {
+      data.strTime = match.group(1);
+      body = body.substring(0,match.start());
     }
     
+    match = UNIT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      String unit = match.group(1);
+      if (unit != null) {
+        unit = unit.trim();
+        if (match.group(2).equals(".")) {
+          data.strCall = unit;
+        } else {
+          data.strUnit = unit;
+        }
+      }
+      body = body.substring(match.end());
+    }
+    
+    match = CODE_PTN1.matcher(body);
+    if (match.lookingAt()) {
+      String call = getOptGroup(match.group(1));
+      data.strCode = match.group(2).trim();
+      body = body.substring(match.end());
+  
+      if (call.endsWith(" STN") || call.equals("STN")) {
+        data.strCode = "STN " + data.strCode;
+        int len = call.length()-4;
+        if (len < 0) len = 0;
+        call = call.substring(0,len).trim();
+      }
+      if (data.strUnit.length() == 0 && LEAD_UNIT_PTN.matcher(call).matches()) {
+        data.strUnit = call;
+      } else { 
+        data.strCall = append(data.strCall, " / ", call);
+      }
+    }
+    
+    else if ((match = CODE_PTN2.matcher(body)).lookingAt()) {
+      String call = match.group(1);
+      if (call != null) data.strCall = append(data.strCall, " / ", call);
+      data.strCode = match.group(2);
+      body = body.substring(match.end());
+    }
+    
+    else return false;
+    
     match = ALARM_TYPE_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       data.strCall = append(data.strCall, " / ", match.group(1).trim());
       body = body.substring(match.end());
     }
     
     match = BOX_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       data.strBox = match.group(1).trim();
       body = body.substring(match.end());
     }
     
     match = AK_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       data.strPlace = match.group(1).trim();
       body = body.substring(match.end());
     }
     
-    int pt = body.indexOf('.');
+    pt = body.indexOf('.');
     if (pt < 0) return false;
     String sAddr = body.substring(0,pt).trim();
     body = body.substring(pt+1).trim();
@@ -151,18 +180,29 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     StartType st = (data.strPlace.length() > 0 ? StartType.START_ADDR : StartType.START_PLACE);
     parseAddress(st, FLAG_CHECK_STATUS | FLAG_EMPTY_ADDR_OK | FLAG_ANCHOR_END, sAddr, data);
     
-    // They commonly specify double cities, we want the innermost city name
-    if (data.strAddress.length() > 0) {
-      parseAddress(StartType.START_ADDR, FLAG_EMPTY_ADDR_OK | FLAG_ANCHOR_END, data.strAddress, data);
-    } else {
-      if (isCity(data.strPlace)) {
-        data.strCity = data.strPlace;
+    // if no address found, see if the place not is really a city
+    if (data.strAddress.length() == 0) {
+        data.strAddress = data.strPlace;
         data.strPlace = "";
-      }
+    } 
+    
+    // They commonly specify double cities, we want the innermost city name
+    if (data.strCity.length() > 0) {
+      parseAddress(StartType.START_ADDR, FLAG_EMPTY_ADDR_OK | FLAG_ANCHOR_END, data.strAddress, data);
     }
     
+    // If we did not find a city, try parsing a city from middle of string
+    // followed by call description
+    else {
+      String addr = data.strAddress;
+      data.strAddress = "";
+      parseAddress(StartType.START_ADDR, addr, data);
+      data.strCall = append(data.strCall, " / ", getLeft());
+    }
+    data.strAddress = stripFieldEnd(data.strAddress, " NULL");
+    
     match = EXTRA_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       String tmp = match.group(1).trim();
       body = body.substring(match.end());
       
@@ -175,20 +215,20 @@ public class ZNZNewZealandParser extends SmartAddressParser {
       }
       
       match = EXTRA_PTN.matcher(body);
-      if (match.find()) {
+      if (match.lookingAt()) {
         data.strSupp = match.group(1).trim();
         body = body.substring(match.end());
       }
     }
     
     match = NEAR_OFF_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       data.strPlace = append(data.strPlace, " ", match.group(1).trim());
       body = body.substring(match.end());
     }
     
     match = XSTR_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       String cross = match.group(1).trim();
       body = body.substring(match.end());
       cross = stripFieldEnd(cross, "/");
@@ -196,13 +236,13 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     }
     
     match = DOT_DOT_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       data.strCall = append(data.strCall, " / ", match.group(1).trim());
       body = body.substring(match.end());
     }
     
     match = GPS_PTN.matcher(body);
-    if (match.find()) {
+    if (match.lookingAt()) {
       String x = match.group(1);
       String y = match.group(2);
       if (!x.equals("0") || !y.equals("0")) {
@@ -219,7 +259,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     
     match = ID_PTN.matcher(body);
     if (match.find()) {
-      data.strCallId = match.group(1);
+      data.strCallId = match.group(1).replaceAll(" ", "");
       body = body.substring(0,match.start()).trim();
     } else {
       body = stripFieldEnd(body, "#");
@@ -244,7 +284,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
       data.strPlace = "";
     }
     
-    if (data.strCallId.length() == 0) data.expectMore = true;
+    if (data.strCallId.length() < 8) data.expectMore = true;
     
     return true;
   }
@@ -331,32 +371,61 @@ public class ZNZNewZealandParser extends SmartAddressParser {
   });
   
   static final String[] MWORD_STREET_LIST = new String[]{
+    "ABEL SMITH",
     "ABEL TASMAN",
+    "ACACIA BAY",
+    "AHI KAA",
+    "ALAN MURRAY",
+    "ALLEN MILLS",
     "ANISEED VALLEY",
     "ANZAC VALLEY",
     "AOTEA",
+    "ARMS PARK",
+    "AVONDAL E",
+    "AWAHURI FEILDING",
     "BADDELEYS BEACH",
+    "BALLANCE GORGE",
+    "BALLANCE VALLEY",
     "BAY VIEW",
     "BEACH WATER",
     "BEATRICE TINSLEY",
+    "BELLA VISTA",
     "BING LUCAS",
+    "BLACK PINE",
+    "BOOM ROCK",
     "BRICK BAY",
+    "BRUCE MACGREGOR",
+    "BRUCE MCLAREN",
     "BRUCE WALLACE",
     "BRYLEE DRIVE RESERVE BRYLEE",
+    "CABBAGE TREE",
     "CABLE BAY",
+    "CENTRAL PARK",
     "CHELTENHAM HUNTERVILLE",
     "CHURCH BAY",
+    "COWAN BAY",
     "CROWN LYNN",
+    "CROWNTHORPE SETTLEMENT",
     "DAN TORI",
     "DAVID WILLIAM",
+    "DE MERLE",
     "DEEP CREEK",
+    "DESERT GOLD",
+    "DON MCKINNON",
     "DRIFT BAY",
     "EAST COAST",
     "EAST TAMAKI",
     "ELLERSLIE RACECOURSE",
+    "EMERALD GLADE",
+    "FAIR VIEW",
+    "FAIRY SPRINGS",
+    "FIVE MILE",
+    "FLAG RANGE",
     "FORREST HILL",
+    "FORT RICHARD",
     "FRANCES BROWN",
     "GEORGE BOLT MEMORIAL",
+    "GLEN BROOK",
     "GLEN NEVIS STATION",
     "GORDON CRAIG",
     "GOVERNOR FITZROY",
@@ -365,60 +434,109 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "GREAT NORTH",
     "GREAT SOUTH",
     "GULF HARBOUR",
-    "GYMNASIUM TE NGAE",
+    "HALL BLOCK",
+    "HAMPTON HILL",
+    "HAWEA MOTOR CAMP",
     "HAYS CREEK",
     "HECTOR LANG",
     "HENRY CHARLES",
+    "HUDSON BAY",
     "HUGO JOHNSTON",
+    "HUKA FALLS",
     "HUNTERS PARK",
+    "ISLAND VIEW",
+    "IVER TRASK",
+    "JACKS BUSH",
     "JAMES COOK",
+    "JOAN WALLACE",
     "JOHNSON POINT",
+    "JOSEPH BANKS",
+    "KAHIKATEA FLAT",
     "KAIPARA COAST",
+    "KAIPARA FLATS",
+    "KAIPARA HILLS",
     "KAIPARA VIEW",
+    "KAWAHA POINT",
     "KAWAU VIEW",
+    "KHYBER PASS",
+    "KOMOKORIKI HILL",
+    "L PHILLIPS",
+    "LAKE HAWEA-ALBERT TOWN",
     "LINCOLN PARK",
+    "LOGAN CAMERON",
     "LONELY TRACK",
+    "LONG MILE",
     "LONGFORD PARK",
     "MAHURANGI EAST",
     "MAHURANGI WEST",
+    "MAIDA VALE",
+    "MAIN NORTH",
     "MAIN SOUTH",
     "MAN OWAR BAY",
     "MANGAWHAI HEADS",
+    "MARGARET REEVE",
     "MARINE VIEW",
+    "MARKET COVE",
     "MARTINS BAY",
+    "MARY ANN",
     "MATAKOHE EAST",
     "MATAKOHE WHARF",
+    "MATE URLICH",
     "MAUNGAREI MEMORIAL",
     "MAXWELL STATION",
     "MCWHIRTERS FARM",
     "MOE HAU",
+    "MOTUEKA VALLEY",
     "MOUNT EDEN",
     "MOUNT SMART",
+    "MT EDGCUMBE",
     "MYSTERY CREEK",
+    "NGA MANU RESERVE",
     "NGARUNUI BEACH",
     "NICK JOHNSTONE",
     "NORTH EYRE",
     "NORTH PARK",
     "NOVA SCOTIA",
+    "OAK RIVER",
     "OCEAN VIEW",
+    "OFF ROAD",
+    "OKAREKA LOOP",
+    "OKAWA BAY",
+    "OKERE FALLS",
     "ONEHUNGA HARBOUR",
     "ONEROA VILLAGE",
     "OTEHA VALLEY",
     "OTOTOKA BEACH",
+    "PACIFIC COAST",
     "PAEKAKARIKI HILL",
+    "PAORA HAPI",
+    "PAPAMOA BEACH",
+    "PARADISE VALLEY",
+    "PARK POINT",
     "PEKA PEKA",
+    "PIEMELON BAY",
     "PIGEON MOUNTAIN",
     "PT CHEV",
+    "PT ENGLAND",
     "PUHI HUIA",
     "PYES PA",
+    "RANGITAIKI SCHOOL",
+    "RANGITATAU EAST",
+    "RANGIURU BAY",
     "RAUPO WHARF",
     "RED HIBISCUS",
     "RED HILLS",
+    "RICHARD PEARSE",
+    "RIFLE RANGE",
     "RIRIA KEREOPA MEMORIAL",
     "ROBERT MCKEEN",
     "RON KEAT",
     "RUAWAI SCHOOL",
     "RUAWAI WHARF",
+    "SAN IGNACIO",
+    "SAN PABLO",
+    "SAN SEBASTIAN",
+    "SAN VALENTINO",
     "SANDY BEACH",
     "SCHOLLUM ACCESS",
     "SEA VIEW",
@@ -429,12 +547,26 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "SMITH CANAL",
     "SNELLS BEACH",
     "SOUTH HEAD",
+    "SOUTH TITIRANGI",
+    "SPENCER RUSSELL",
     "ST HILL",
+    "ST LUKES",
+    "ST MARYS",
+    "TAKAPUNA",
+    "TAPAPA WEST",
     "TAURANGA DIRECT",
+    "TE AHU AHU",
+    "TE AKAU",
     "TE ARA",
+    "TE ARAWI",
     "TE ATATU",
+    "TE AWE AWE",
     "TE HAPUA",
     "TE HENGA",
+    "TE HEUHEU",
+    "TE HIKO",
+    "TE HUTEWAI",
+    "TE KAPA",
     "TE KOWHAI",
     "TE MAKIRI",
     "TE MANGA",
@@ -443,29 +575,44 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "TE MOANA",
     "TE NGAE",
     "TE ONE",
+    "TE PAI",
     "TE POI SOUTH",
     "TE PUIA",
+    "TE RIMU",
     "TE TOKI",
     "TE TUHI",
     "TE WAIROA",
     "TE WHAU",
+    "TE WIRIHANA",
     "TI RAKAU",
     "TIRI VIEW",
     "TITAHI BAY",
     "TRAVIS VIEW",
     "TREBLE CONE SKI FIELD ACCESS",
+    "TRIG HILL",
+    "TROUNSON PARK",
     "TWO CHAIN",
+    "UTAUT - WAIKANAEFIRE A",
+    "VINEGAR HILL",
+    "VIV DAVIE-MARTIN",
     "WAIKANAE PARK PARK",
+    "WAIKITE VALLEY",
+    "WAIOTAPU LOOP",
+    "WAIPA STATE MILL",
+    "WAIWHIU CONICAL PEAK",
     "WALTER FRANK",
     "WALTER MACDONALD",
     "WANAKA-MOUNT ASPIRING",
     "WATT LIVINGSTONE",
+    "WEST COAST",
+    "WEST TAMAKI",
+    "WESTERN BAY",
     "WHIRINAKI VALLEY",
     "WHITFORD BROWN",
     "WI NEERA",
     "WILLIAM PICKERING",
-    "WILLIAM SOUTER"
-
+    "WILLIAM SOUTER",
+    "WIRI STATION"
   };
 
   static final String[] CITY_LIST = new String[]{
@@ -502,20 +649,25 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "ARDMORE",
     "ARKLES BAY",
     "ARMY BAY",
+    "ARO VALLEY",
     "ARROWTOWN",
     "ARUNDEL",
     "ASCOT PARK",
     "ASHBURTON",
     "ASHHURST",
     "ASHLEY",
+    "ATIAMURI",
     "AUCKLAND AIRPORT",
     "AUCKLAND CENTRAL",
     "AUCKLAND",
     "AUROA",
     "AVONDALE",
     "AWANUI",
+    "AWAPUNI",
+    "AWATOTO",
     "BALCLUTHA",
     "BALFOUR",
+    "BALLANCE",
     "BALMORAL",
     "BARRYTOWN",
     "BAYSWATER",
@@ -539,12 +691,15 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "BOTANY DOWNS",
     "BRIGHTON",
     "BRIGHTWATER",
+    "BROADLANDS FOREST",
     "BROADWOOD",
     "BROOKBY",
     "BROWNS BAY",
+    "BRUNSWICK",
     "BUCKLANDS BEACH",
     "BULLS",
     "BUNNYTHORPE",
+    "CAMBERLEY",
     "CAMBRIDGE",
     "CAMPBELLS BAY",
     "CANNONS CREEK",
@@ -554,6 +709,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "CASTOR BAY",
     "CHAPEL DOWNS",
     "CHARING CROSS",
+    "CHARTWELL",
     "CHATSWOOD",
     "CHEVIOT",
     "CHRISTCHURCH",
@@ -567,13 +723,16 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "COATESVILLE",
     "COBDEN",
     "COCKLE BAY",
+    "COLLEGE ESTATE",
     "COLLINGWOOD",
     "COLVILLE",
     "CONIFER GROVE",
     "COROGLEN",
     "COROMANDEL",
+    "CROFTON DOWNS",
     "CROMWELL",
     "CROWN HILL",
+    "CROWNTHORPE",
     "CULVERDEN",
     "CUST",
     "CUTHILL",
@@ -589,6 +748,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "DUNEDIN",
     "DUNTROON",
     "DURIE HILL",
+    "EAST PARKVALE",
     "EAST TAMAKI HEIGHTS",
     "EAST TAMAKI",
     "EASTBOURNE",
@@ -611,14 +771,18 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "FAIRVIEW DOWNS",
     "FAIRVIEW HEIGHTS",
     "FAIRVIEW",
+    "FAIRY SPRINGS",
     "FARM COVE",
     "FAVONA",
     "FEATHERSTON",
     "FEILDING",
+    "FENTON PARK",
+    "FERNHILL",
     "FIVONA",
     "FLAMBORO HEIGHTS",
     "FLAT BUSH",
     "FLAXMERE",
+    "FORDLANDS",
     "FORREST HILL",
     "FOX GLACIER",
     "FOXTON BEACH",
@@ -627,6 +791,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "FRANKTON",
     "FRANZ JOSEF",
     "FREEMANS BAY",
+    "FRIMLEY",
     "GERALDINE",
     "GISBORNE",
     "GLEN EDEN",
@@ -660,14 +825,16 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "HALCOMBE",
     "HALF MOON BAY",
     "HALSWELL",
+    "HAMILTON",
     "HAMILTON CENTRAL",
     "HAMILTON CITY",
-    "HAMILTON",
+    "HAMILTON LAKE",
     "HAMPDEN",
     "HAMURANA",
     "HANMER SPRINGS",
     "HARI HARI",
     "HASTINGS",
+    "HAUMOANA",
     "HAUPIRI",
     "HAVELOCK NORTH",
     "HAVELOCK",
@@ -688,12 +855,15 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "HILL PARK",
     "HILLCREST",
     "HILLSBOROUGH",
+    "HILLTOP",
     "HINUERA",
     "HOBSONVILLE",
     "HOKITIKA",
+    "HOKOWHITU",
     "HOPE",
     "HOREKE",
     "HOROHORO",
+    "HOROKIWI",
     "HOUHORA",
     "HOWICK",
     "HOWICK",
@@ -708,6 +878,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "INANGAHUA JUNCTION",
     "INGLEWOOD",
     "INVERCARGILL",
+    "IWITAHI",
     "JACOBS RIVER",
     "JOHNSONVILLE",
     "KAIAPOI",
@@ -730,17 +901,23 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "KARAPIRO",
     "KARETU",
     "KARITANE",
+    "KARORI",
     "KATIKATI",
     "KAUKAPAKAPA",
     "KAURI",
     "KAWAHA POINT",
     "KAWAKAWA",
     "KAWERAU",
+    "KAWHIA",
+    "KELBURN",
     "KELSTON",
     "KENEPURU",
     "KENNEDY BAY",
+    "KENSINGTON",
     "KERIKERI",
     "KIHIKIHI",
+    "KAINGAROA FOREST",
+    "KILBIRNIE",
     "KINGSLAND",
     "KINGSTON",
     "KINLEITH",
@@ -750,10 +927,12 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "KOKOPU",
     "KONINI",
     "KOROMIKO",
+    "KOUTU",
     "KUMARA",
     "KUMEU",
     "KUROW",
     "LAINGHOLM",
+    "LAKE OKAREKA",
     "LAKE ROTOMA",
     "LANGS BEACH",
     "LAWRENCE",
@@ -764,6 +943,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "LICHFIELD",
     "LINCOLN",
     "LINKWATER",
+    "LINTON CAMP",
     "LITTLE RIVER",
     "LONG BAY",
     "LONGFORD PARK",
@@ -772,12 +952,15 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "LUGGATE",
     "LUMSDEN",
     "LYNFIELD",
+    "LYNMORE",
     "LYTTELTON",
     "MAHIA PARK",
+    "MAHORA",
     "MAHURANGI EAST",
     "MAIRANGI BAY",
     "MAKAHU",
     "MAMAKU",
+    "MAKARAU",
     "MANAIA",
     "MANAIA",
     "MANAKAU",
@@ -802,15 +985,18 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "MANUREWA",
     "MANUTAHI",
     "MAPUA",
+    "MARAENUI",
     "MARAETAI",
     "MARAETAI",
     "MARCO",
     "MARLBOROUGH",
     "MAROMAKU",
+    "MAROTIRI",
     "MARSDEN BAY",
     "MARTINBOROUGH",
     "MARTON",
     "MARUIA",
+    "MARYBANK",
     "MASSEY",
     "MASTERTON",
     "MATAKANA",
@@ -827,7 +1013,9 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "MAUNGATAPERE",
     "MAUNGATAUTARI",
     "MAUNGATUROTO",
+    "MARAENUI",
     "MAXWELL",
+    "MAYFAIR",
     "MAYFIELD",
     "MAYMORN",
     "MEADOWBANK",
@@ -842,6 +1030,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "MIDHIRST",
     "MILFORD",
     "MILLERS FLAT",
+    "MILSON",
     "MILTON",
     "MIMI",
     "MISSION BAY",
@@ -849,6 +1038,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "MOENUI",
     "MOERAKI",
     "MOEREWA",
+    "MOKAI",
     "MOKAU",
     "MOKOIA",
     "MORNINGSIDE",
@@ -857,13 +1047,16 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "MOSSBURN",
     "MOTATAU",
     "MOTUEKA",
+    "MOTUTERE",
     "MOUNT ALBERT",
     "MOUNT ASPIRING",
+    "MOUNT COOK",
     "MOUNT EDEN",
     "MOUNT MAUNGANUI",
     "MOUNT ROSKILL",
     "MOUNT SOMERS",
     "MOUNT WELLINGTON",
+    "MOUREA",
     "MURCHISON",
     "MURPHYS HEIGHTS",
     "MURRAYS BAY",
@@ -879,13 +1072,17 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "NEW PLYMOUTH",
     "NEW WINDSOR",
     "NEWMARKET",
-    "NEWTON",
+    "NEWTOWN",
     "NGAERE",
+    "NGAIO",
+    "NGAKURU",
     "NGAMATAPOURI",
     "NGAPARA",
     "NGAPUNA",
     "NGARUAWAHIA",
     "NGATAKI",
+    "NGATIRA",
+    "NGAURANGA",
     "NGAWARO",
     "NGONGOTAHA VALLEY",
     "NGONGOTAHA",
@@ -899,12 +1096,15 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "NORTHCOTE POINT",
     "NORTHCOTE",
     "NORTHCROSS",
+    "NUKUHAU",
     "OAKLEIGH",
     "OAKURA",
+    "OMAHA",
     "OAMARU",
     "OBAN",
     "OHAEAWAI",
     "OHAKUNE",
+    "OHAKURI",
     "OHANGAI",
     "OHAUPO",
     "OHOKA",
@@ -913,6 +1113,9 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "OHURA",
     "OKAIHAU",
     "OKATO",
+    "OKERE FALLS",
+    "OKOIA",
+    "OKOROIRE",
     "OMANAIA",
     "OMARAMA",
     "OMATA",
@@ -937,6 +1140,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "ORERE POINT",
     "OREWA",
     "OROMAHOE",
+    "OROPI",
     "ORUAITI",
     "OSTEND",
     "OTAHUHU",
@@ -954,6 +1158,8 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "OXFORD",
     "PAEKAKARIKI HILL",
     "PAEKAKARIKI",
+    "PAENGAROA",
+    "PAERATA",
     "PAEROA",
     "PAHIATUA",
     "PAHUREHURE",
@@ -961,17 +1167,22 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "PAKARAKA",
     "PAKIRI",
     "PAKOTAI",
+    "PAKOWHAI",
     "PAKURANGA HEIGHTS",
     "PAKURANGA",
     "PALM BEACH",
     "PALMERSTON NORTH",
+    "PALMERSTON NORTH CITY",
     "PALMERSTON",
     "PAMAPURIA",
     "PANGURU",
+    "PANDORA",
     "PANMURE",
     "PAPAKURA",
     "PAPAKURA",
     "PAPAMOA",
+    "PAPAMOA BEACH",
+    "PAPARANGI",
     "PAPAROA",
     "PAPARORE",
     "PAPATOETOE",
@@ -982,6 +1193,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "PAREMATA",
     "PAREMOREMO",
     "PAREORA",
+    "PARIKINO",
     "PARNELL",
     "PAROA",
     "PARUA BAY",
@@ -996,15 +1208,20 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "PIARERE",
     "PICTON",
     "PIHA",
+    "PIHAMA",
     "PINEHILL",
     "PIOPIO",
+    "PIPITEA",
     "PIPIWAI",
+    "PIRIMAI",
     "PIRONGIA",
     "PLEASANT POINT",
     "PLIMMERTON",
     "POHUEHUE",
     "POINT CHEVALIER",
     "POINT ENGLAND",
+    "POKENO",
+    "POMARE",
     "PONSONBY",
     "PORAITI",
     "PORCHESTER PARK",
@@ -1017,9 +1234,12 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "PORTLAND",
     "PORTOBELLO",
     "PUHINUI",
+    "PUHOI",
+    "PUKEHANGI",
     "PUKEKOHE",
     "PUKEPOTO",
     "PUKERUA BAY",
+    "PUKETAPU",
     "PUKEURI",
     "PURUA",
     "PUTARURU",
@@ -1028,14 +1248,19 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "RAGLAN",
     "RAHOTU",
     "RAI VALLEY",
+    "RAINBOW POINT",
     "RAMARAMA",
     "RANDWICK PARK",
     "RANFURLY",
+    "RANGATIRA PARK",
     "RANGIORA",
     "RANUI",
     "RAPAURA",
+    "RATANA",
     "RATAPIKO",
     "RAUMATI",
+    "RAUMATI BEACH",
+    "RAUREKA",
     "RAWENE",
     "RAWHITIROA",
     "RED HILL",
@@ -1044,6 +1269,8 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "REEFTON",
     "REMUERA",
     "RENWICK",
+    "REPOROA",
+    "RICHMOND HEIGHTS",
     "RICHMOND PARK",
     "RICHMOND",
     "RIVERHEAD",
@@ -1054,10 +1281,12 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "ROLLESTON",
     "ROSEDALE",
     "ROSEHILL",
+    "ROSLYN",
     "ROSS",
     "ROTHESAY BAY",
     "ROTOITI FOREST",
     "ROTOKAWA",
+    "ROTOMA",
     "ROTORUA",
     "ROXBURGH",
     "ROYAL OAK",
@@ -1073,6 +1302,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "SAINT HELIERS",
     "SAINT JOHNS HILL",
     "SAINT JOHNS",
+    "SAINT LEONARDS",
     "SAINT MARYS BAY",
     "SANDRINGHAM",
     "SANDSPIT",
@@ -1085,6 +1315,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "SHANNON",
     "SHEFFIELD",
     "SHELLY PARK",
+    "SHERENDEN",
     "SILKWOOD HEIGHTS",
     "SILVERDALE",
     "SNELLS BEACH",
@@ -1106,6 +1337,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "STANLEY BAY",
     "STANMORE BAY",
     "STIRLING",
+    "STOKE",
     "STRATFORD",
     "SUNNYNOOK",
     "SUNNYVALE",
@@ -1113,15 +1345,19 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "SWANNANOA",
     "SWANSON",
     "TAHAROA",
+    "TAHEKE",
     "TAIERI MOUTH",
     "TAIHAPE",
+    "TAIPA",
     "TAIPA-MANGONUI",
     "TAIRUA",
     "TAKAKA",
     "TAKANINI",
     "TAKAPUNA",
+    "TAKAPUWAHIA",
     "TAMAKI",
     "TAMATEA",
+    "TANGIMOANA",
     "TANGITERORIA",
     "TANGOWAHINE",
     "TAPANUI",
@@ -1130,6 +1366,8 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "TAPORA",
     "TAPU",
     "TARADALE",
+    "TARAWERA",
+    "TAUHARA",
     "TAUHOA",
     "TAUMARUNUI",
     "TAUPAKI",
@@ -1163,9 +1401,11 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "TE PURU",
     "TE RERENGA",
     "TEMUKA",
+    "TERRACE END",
     "THAMES",
     "THE GARDENS",
     "THREE KINGS",
+    "TIHOI",
     "TIKIPUNGA",
     "TIKITERE",
     "TIKORANGI",
@@ -1177,9 +1417,11 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "TITAHI BAY",
     "TITIRANGI",
     "TITOKI",
+    "TOKAANU",
     "TOKANUI",
     "TOKARAHI",
     "TOKO",
+    "TOKOMARU",
     "TOKOROA",
     "TOLAGA BAY",
     "TOMARATA",
@@ -1189,8 +1431,11 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "TUAKAU",
     "TUAMARINA",
     "TUATAPERE",
+    "TUKI TUKI",
     "TURANGI",
     "TUSCANY ESTATE",
+    "TWO MILE BAY",
+    "TWYFORD",
     "TWIZEL",
     "UMAWERA",
     "UNSWORTH HEIGHTS",
@@ -1199,6 +1444,8 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "UPPER MOUTERE",
     "URENUI",
     "URUTI",
+    "UTUHINA",
+    "VICTORIA",
     "WADDINGTON",
     "WAHAROA",
     "WAIAKE",
@@ -1220,22 +1467,28 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WAIMA",
     "WAIMAHIA LANDING",
     "WAIMANGAROA",
+    "WAIMARAMA",
     "WAIMATE NORTH",
     "WAIMATE",
     "WAIMAUKU",
     "WAINGARO",
     "WAINUI",
     "WAINUIOMATA",
+    "WAIOHIKI",
     "WAIONEKE",
+    "WAIORUA BAY",
+    "WAIOTAPU",
     "WAIOTIRA",
     "WAIOURU",
     "WAIPAWA",
     "WAIPU",
     "WAIPUKURAU",
+    "WAIPUNGA",
     "WAIRAKEI",
     "WAIRAU VALLEY",
     "WAIRAU VALLEY",
     "WAIROA",
+    "WAITAHANUI",
     "WAITAHUNA",
     "WAITAKERE",
     "WAITANGIRUA",
@@ -1252,8 +1505,9 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WALLACETOWN",
     "WALTON",
     "WANAKA",
-    "WANGANUI EAST",
     "WANGANUI",
+    "WHANGANUI AIRPORT",
+    "WANGANUI EAST",
     "WARD",
     "WARDVILLE",
     "WARKWORTH",
@@ -1266,6 +1520,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WELLINGTON CITY",
     "WELLINGTON",
     "WELLSFORD",
+    "WEST END",
     "WEST HARBOUR",
     "WESTERN HEIGHTS",
     "WESTERN SPRINGS",
@@ -1277,6 +1532,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WESTPORT",
     "WEYMOUTH",
     "WHAKAMARU",
+    "WHAKATU",
     "WHAKAREWAREWA",
     "WHAKATANE",
     "WHANANAKI",
@@ -1284,9 +1540,11 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WHANGAMATA",
     "WHANGAMOMONA",
     "WHANGANUI",
+    "WHANGANUI EAST",
     "WHANGAREI HEADS",
     "WHANGAREI",
     "WHANGARURU",
+    "WHAREWAKA",
     "WHATAROA",
     "WHATUWHIWHI",
     "WHENUAKITE",
@@ -1308,6 +1566,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "WIRI",
     "WOODEND",
     "WOODHILL",
+    "WOODRIDGE",
     "WOODVILLE",
     "WYNDHAM",
 
@@ -1315,7 +1574,7 @@ public class ZNZNewZealandParser extends SmartAddressParser {
     "ASHBURTON DISTRICT",
     "BULLER DISTRICT",
     "CARTERTON DISTRICT",
-    "CENTRAL HAWKE'S BAY DISTRICT",
+    "CENTRAL HAWKES BAY DISTRICT",
     "CENTRAL OTAGO DISTRICT",
     "CLUTHA DISTRICT",
     "FAR NORTH DISTRICT",

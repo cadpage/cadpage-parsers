@@ -1162,6 +1162,10 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     
     // Clean up any protected names in any fields
+    if (result.callPrefix != null) result.callPrefix = unprotectNames(result.callPrefix);
+    if (result.placePrefix != null) result.placePrefix = unprotectNames(result.placePrefix);
+    if (result.stdPrefix != null) result.stdPrefix = unprotectNames(result.stdPrefix);
+    if (result.trailPlace != null) result.trailPlace = unprotectNames(result.trailPlace);
     if (result.startFld != null) result.startFld = unprotectNames(result.startFld);
     if (result.left != null) result.left = unprotectNames(result.left);
     if (result.tokens != null) {
