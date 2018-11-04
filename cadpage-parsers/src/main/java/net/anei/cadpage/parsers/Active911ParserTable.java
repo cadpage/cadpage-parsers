@@ -1623,6 +1623,7 @@ public class Active911ParserTable {
       "US/WA/WhitmanCounty",              "WAWhitmanCounty",
       "US/WA/YakimaCounty",               "WAYakimaCounty",
       "US/WI/Bayside",                    "WIMilwaukeeCounty",
+      "US/WI/BeloitFD",                   "WIRockCounty",
       "US/WI/BrownCounty",                "WIBrownCountyA",
       "US/WI/CityofLakeGeneva",           "WIWalworthCounty",
       "US/WI/DaneCounty",                 "WIDaneCounty",

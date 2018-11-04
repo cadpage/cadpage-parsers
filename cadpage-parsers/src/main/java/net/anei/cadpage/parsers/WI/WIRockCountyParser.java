@@ -18,7 +18,7 @@ public class WIRockCountyParser extends DispatchH03Parser {
     return "RCCC@co.rock.wi.us";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,4})-(?:Active911|IAMResp)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,4})-(?:Active911|IAMResp|eRespond)");
 
   @Override
   public boolean parseHtmlMsg(String subject, String body, Data data) {
