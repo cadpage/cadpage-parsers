@@ -53,12 +53,15 @@ public class WIRockCountyParser extends DispatchH03Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BE", "BELOIT",
       "BT", "BELOIT",
+      "JN", "JOHNSTOWN",
       "JT", "JOHNSTOWN",
       "JV", "JANESVILLE",
       "HT", "HARMONY",
+      "LP", "LA PRAIRIE",
       "LT", "LIMA",
       "ML", "MILTON",
       "MT", "MILTON",
-      "RT", "ROCK"
+      "RT", "ROCK",
+      "TU", "TURTLE"
   });
 }
