@@ -20,7 +20,7 @@ public class NCCravenCountyDParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@cravencountync.gov";
+    return "dispatch@cravencountync.gov,dispatch@newbernnc.gov";
   }
   
   @Override
