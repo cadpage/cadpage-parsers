@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class NCDavidsonCountyAParser extends NCGuilfordCountyParser {
+public class NCDavidsonCountyAParser extends NCGuilfordCountyAParser {
 
   public NCDavidsonCountyAParser() {
     super("DAVIDSON COUNTY", "NC");

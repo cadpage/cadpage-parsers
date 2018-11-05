@@ -32,6 +32,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Zip Code:", getField("ZIP"));
     FIELD_MAP.put("Community:", getField("CITY"));
     FIELD_MAP.put("Location Information:", getField("PLACE"));
+    FIELD_MAP.put("Location and POI Information", getField("PLACE"));
+    FIELD_MAP.put("Incident Number:", getField("ID"));
     FIELD_MAP.put("L/L:", getField("GPS"));
     FIELD_MAP.put("Cross Street:", getField("X"));
     FIELD_MAP.put("Apartment:", getField("APT"));
@@ -45,6 +47,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Caller Location:", getField("CALLER_LOC"));
     FIELD_MAP.put("Created By:", getField("SKIP"));
     FIELD_MAP.put("Responding Units:", getField("UNIT"));
+    FIELD_MAP.put("Areas:", getField("MAP"));
   }
 
   private Field lastFld;
