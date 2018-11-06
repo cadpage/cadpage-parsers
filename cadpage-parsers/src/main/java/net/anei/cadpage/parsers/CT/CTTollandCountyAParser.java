@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CT;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +16,6 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   
   public CTTollandCountyAParser() {
     super(CTTollandCountyParser.CITY_LIST, "TOLLAND COUNTY", "CT");
-    setFieldList("SRC ADDR APT CITY PLACE CALL TIME X ID");
     removeWords("COURT", "KNOLL", "ROAD", "STREET", "TERRACE");
     addRoadSuffixTerms("CMNS", "COMMONS");
     setupSaintNames("PHILIPS");
@@ -31,10 +32,13 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
+  
+  private static final Pattern MASTER1 = Pattern.compile("([^,]*?)(?:, ([A-Za-z ]+))? / (.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (\\d{4}-\\d{8}\\b.*)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  
+  private static final Pattern MASTER2 = Pattern.compile("(.*?) (\\d\\d:\\d\\d)(?: (.*?))?(?: (\\d{4}-\\d{8}))?");
   private static final Pattern FLR_PTN = Pattern.compile("(\\d+)(?:ST|ND|RD|TH) *(?:FLOOR|FLR?)");
   private static final Pattern APT_PTN = Pattern.compile("(?:UNIT|TRLR|TRAILER|APT|LOT|FLR?)[- ]*(.*)|[A-Z] *\\d*|\\d+[A-Z]?|\\d+FL");
-  private static final Pattern TIME_PTN = Pattern.compile("\\b\\d\\d:\\d\\d\\b");
-  private static final Pattern ID_PTN = Pattern.compile("\\b\\d{4}-\\d{8}$");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -59,92 +63,105 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     // Rule out variant of CTTollandCountyB
     if (BAD_PTN.matcher(body).matches()) return false;
     
-    // We are invoking the smart address parser strictly to find city, it
-    // shouldn't have to do much parsing.  If it doesn't find a city, bail out.
-    // The slash confuses the parse logic, so switch it to something unusual
-    // Ditto for parrens
-    body = FLR_PTN.matcher(body).replaceAll("FLR $1");
-    body = escape(body);
-    parseAddress(StartType.START_ADDR, FLAG_EMPTY_ADDR_OK, body, data);
-    if (data.strCity.length() == 0) return false;
-    String sAddr = unescape(data.strAddress);
-    data.strApt = unescape(data.strApt);
-    body = unescape(getLeft());
+    body = body.replace('\n', ' ');
     
-    // Address always has a slash, which the address parser turned to an ampersand
-    // What is in front of that becomes the address
-    int pt = sAddr.indexOf('/');
-    if (pt >= 0) {
-      
-      // Use smart address parser to extract trailing apt
-      parseAddress(StartType.START_ADDR, FLAG_NO_CITY, sAddr.substring(0,pt).trim(), data);
-      data.strApt = append(data.strApt, " - ", getLeft());
-      
-      sAddr = sAddr.substring(pt+1).trim();
-      sAddr = stripFieldEnd(sAddr, "/");
-      
-      // if what comes after the slash is a street name
-      // If not, put it in the apt field
-      Matcher match = APT_PTN.matcher(sAddr);
-      if (match.matches()) {
-        String apt = match.group(1);
-        if (apt == null) apt = sAddr;
-        if (!data.strApt.equals(apt)) data.strApt = append(apt, "-", data.strApt);
-      }
-      else if (isValidAddress(sAddr)) {
-        data.strAddress = append(data.strAddress, " & ", sAddr);
-      } else {
-        data.strPlace = append(data.strPlace, " - ", sAddr);
-      }
-    }
-    
-    // Once in a blue moon, the slash ends up in the apartment field
-    else if (data.strApt.endsWith("/")) {
-      data.strApt = data.strApt.substring(0,data.strApt.length()-1).trim();
-    } else {
-      pt = data.strApt.indexOf('/');
-      if (pt >= 0) {
-        data.strApt = append(data.strApt.substring(0,pt).trim(), " - ", data.strApt.substring(pt+1).trim());
-      }
-    }
-    
-    // Everything from city to time field is the call description
-    body = stripFieldStart(body, "*");
-    Matcher match = TIME_PTN.matcher(body);
-    if (match.find()) {
-      data.strTime = match.group().replace(" ", "");
-      String cross = body.substring(match.end()).trim();
-      body = body.substring(0,match.start()).trim();
-      
-      // What is left should be a cross street
-      cross = stripFieldStart(cross, "Cross Street ");
-      
-      // Strip ID from end of what is left
-      match = ID_PTN.matcher(cross);
-      if (match.find()) {
-        data.strCallId = match.group();
-        cross = cross.substring(0,match.start()).trim();
-      }
-      
+    // Check for variant 1 format
+    Matcher match = MASTER1.matcher(body);
+    if (match.matches()) {
+      setFieldList("ADDR APT CITY CALL X UNIT DATE TIME ID");
+      parseAddress(match.group(1).trim(), data);
+      data.strCity = getOptGroup(match.group(2));
+      data.strCall = match.group(3).trim();
+      String cross = getOptGroup(match.group(4));
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
+      data.strUnit = getOptGroup(match.group(5));
+      data.strDate = match.group(6);
+      setTime(TIME_FMT, match.group(7), data);
+      data.strCallId = match.group(8);
+      return true;
     }
     
-    // See if we can split the remaining body into place name, call, and info
-    for (int j = 0; j<body.length()-2; j++) {
-      if (Character.isLetter(body.charAt(j))) {
-        String call = CALL_LIST.getCode(body.substring(j), true);
-        if (call != null) {
-          String place = stripFieldEnd(body.substring(0,j).trim(), "<New Call>");
-          data.strPlace = append(data.strPlace, " - ", place);
-          data.strCall = body.substring(j);
-          return true;
+    match = MASTER2.matcher(body);
+    if (match.matches()) {
+      setFieldList("SRC ADDR APT CITY PLACE CALL TIME X ID");
+      body = match.group(1).trim();
+      data.strTime = match.group(2);
+      String cross = getOptGroup(match.group(3));
+      cross = stripFieldStart(cross, "Cross Street");
+      if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
+      data.strCallId = getOptGroup(match.group(4));
+      
+      // We are invoking the smart address parser strictly to find city, it
+      // shouldn't have to do much parsing.  If it doesn't find a city, bail out.
+      // The slash confuses the parse logic, so switch it to something unusual
+      // Ditto for parrens
+      body = FLR_PTN.matcher(body).replaceAll("FLR $1");
+      body = escape(body);
+      parseAddress(StartType.START_ADDR, FLAG_EMPTY_ADDR_OK, body, data);
+      String sAddr = unescape(data.strAddress);
+      data.strApt = unescape(data.strApt);
+      body = unescape(getLeft());
+      
+      // Address always has a slash, which the address parser turned to an ampersand
+      // What is in front of that becomes the address
+      int pt = sAddr.indexOf('/');
+      if (pt >= 0) {
+        
+        // Use smart address parser to extract trailing apt
+        parseAddress(StartType.START_ADDR, FLAG_NO_CITY, sAddr.substring(0,pt).trim(), data);
+        data.strApt = append(data.strApt, " - ", getLeft());
+        
+        sAddr = sAddr.substring(pt+1).trim();
+        sAddr = stripFieldEnd(sAddr, "/");
+        
+        // if what comes after the slash is a street name
+        // If not, put it in the apt field
+        match = APT_PTN.matcher(sAddr);
+        if (match.matches()) {
+          String apt = match.group(1);
+          if (apt == null) apt = sAddr;
+          if (!data.strApt.equals(apt)) data.strApt = append(apt, "-", data.strApt);
+        }
+        else if (isValidAddress(sAddr)) {
+          data.strAddress = append(data.strAddress, " & ", sAddr);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", sAddr);
         }
       }
+      
+      // Once in a blue moon, the slash ends up in the apartment field
+      else if (data.strApt.endsWith("/")) {
+        data.strApt = data.strApt.substring(0,data.strApt.length()-1).trim();
+      } else {
+        pt = data.strApt.indexOf('/');
+        if (pt >= 0) {
+          data.strApt = append(data.strApt.substring(0,pt).trim(), " - ", data.strApt.substring(pt+1).trim());
+        }
+        else body = stripFieldStart(body, "/");
+      }
+      
+      // Everything from city to time field is the call description
+      body = stripFieldStart(body, "*");
+      
+      // See if we can split the remaining body into place name, call, and info
+      for (int j = 0; j<body.length()-2; j++) {
+        if (Character.isLetter(body.charAt(j))) {
+          String call = CALL_LIST.getCode(body.substring(j), true);
+          if (call != null) {
+            String place = body.substring(0,j).trim();
+            data.strPlace = append(data.strPlace, " - ", place);
+            data.strCall = body.substring(j);
+            return true;
+          }
+        }
+      }
+      
+      // No go, just assign everything as the call description
+      data.strCall = body;
+      return true;
     }
     
-    // No go, just assign everything as the call description
-    data.strCall = body;
-    return true;
+    return false;
   }
   
   private static final String[] ESCAPE_CODES = new String[]{
@@ -183,6 +200,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   });
 
   private static final CodeSet CALL_LIST = new CodeSet(
+      "<New Call>",
       "Active Violence/Shooter",
       "Aircraft Accident",
       "ALS",
@@ -214,6 +232,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Smoke/Odor Investigation",
       "Standby",
       "Structure Fire",
+      "THIS IS ONLY A TEST",
       "Tree/Wires Down",
       "Unknown Type Fire",
       "Vehicle Accident W/O Injuries",
