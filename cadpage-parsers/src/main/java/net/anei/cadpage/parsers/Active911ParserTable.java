@@ -303,6 +303,7 @@ public class Active911ParserTable {
       "US/GA/ButtsCounty",                "GAButtsCounty",
       "US/GA/CamdenCounty",               "GACamdenCountyA",
       "US/GA/CarrollCounty",              "GACarrollCounty",
+      "US/GA/ClaytonCounty",              "GAClaytonCounty",
       "US/GA/ColquittCounty",             "GAColquittCounty",
       "US/GA/DoolyCounty",                "GADoolyCounty",
       "US/GA/EffinghamCounty",            "GAEffinghamCounty",

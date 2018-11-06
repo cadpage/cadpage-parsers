@@ -13,7 +13,14 @@ public class GAClaytonCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@co.clayton.ga.us";
+    return "CAD@claytoncountyga.gov";
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("Text Message")) return false;
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    return super.parseMsg(body, data);
   }
 
   public class UnitCallField extends CallField {
