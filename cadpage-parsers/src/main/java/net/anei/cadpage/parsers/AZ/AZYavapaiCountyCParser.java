@@ -95,7 +95,8 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
     }
   }
   
-  private static Pattern DT_OPERATOR = Pattern.compile("(\\d{2} \\d{2} \\d{2}) (\\d{2}/\\d{2}/\\d{4}) - .*?, .* \\(.*\\)");
+  private static final Pattern DT_OPERATOR = Pattern.compile("(\\d{2} \\d{2} \\d{2}) (\\d{2}/\\d{2}/\\d{4}) - .*?, .* \\(.*\\)");
+  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,}[, ]+[-+]?\\d{2,3}\\.\\d{6,}\\b) *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -106,6 +107,9 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
           data.strTime = mat.group(1).replace(" ", ":");
           data.strDate = mat.group(2);
         }
+      } else if ((mat = GPS_PTN.matcher(field)).lookingAt()) {
+        setGPSLoc(mat.group(1), data);
+        field = field.substring(mat.end()).trim();
       } else {
         super.parse(field, data);
       }
@@ -113,7 +117,7 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "TIME DATE "+super.getFieldNames();
+      return "TIME DATE GPS "+super.getFieldNames();
     }
   }
   
