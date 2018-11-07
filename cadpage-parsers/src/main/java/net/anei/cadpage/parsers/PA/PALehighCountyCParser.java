@@ -11,8 +11,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PALehighCountyCParser extends FieldProgramParser {
   
   public PALehighCountyCParser() {
-    super("LEHIGH COUNTY", "PA", 
+    super(CITY_LIST, "LEHIGH COUNTY", "PA", 
           "CALL! Address:ADDRCITY! XSt:X! INFO/N+ Assigned_Units:UNIT! GPS_DATE_TIME! END");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@lehighcounty.org";
   }
   
   private static final Pattern DELIM = Pattern.compile(" \\| |\n");
@@ -29,24 +34,21 @@ public class PALehighCountyCParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CITY_PTN = Pattern.compile("(LOWER MACUNGIE)\\b *(.*)");
-  
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      String city = null;
       int pt = field.indexOf(',');
-      if (pt < 0) abort();
-      String addr = field.substring(0, pt).trim();
-      String city = field.substring(pt+1).trim();
-      addr = addr.replace('@',  '&');
-      parseAddress(addr, data);
+      if (pt >= 0) {
+        city = field.substring(pt+1).trim();
+        field = field.substring(0, pt).trim();
+      }
+      field = field.replace('@',  '&');
+      parseAddress(field, data);
 
-      Matcher match = CITY_PTN.matcher(city);
-      if (match.matches()) {
-        data.strCity = match.group(1);
-        data.strPlace = match.group(2);
-      } else {
-        data.strPlace = city;
+      if (city != null) {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+        data.strPlace = getLeft();
       }
     }
     
@@ -56,7 +58,7 @@ public class PALehighCountyCParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern GPS_DATE_TIME_PTN = Pattern.compile("([-+]?\\d{2}\\.\\d{6,} [-+]?\\d{2}\\.\\d{6,}) +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern GPS_DATE_TIME_PTN = Pattern.compile("(?:-361 -361|([-+]?\\d{2}\\.\\d{6,} [-+]?\\d{2}\\.\\d{6,})) +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private class MyGPSDateTimeField extends Field {
@@ -65,15 +67,113 @@ public class PALehighCountyCParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = GPS_DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
-      setGPSLoc(match.group(1), data);
+      String gps = match.group(1);
+      if (gps != null) setGPSLoc(match.group(1), data);
       data.strDate = match.group(2);
-      setTime(TIME_FMT, match.group(3), data);
+      String time = match.group(3);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(3), data);
+      } else {
+        data.strTime = time;
+      }
     }
 
     @Override
     public String getFieldNames() {
       return "GPS DATE TIME";
     }
-    
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+
+        // Cities
+        "ALLENTOWN",
+        "BETHLEHEM",
+
+        // Boroughs
+        "ALBURTIS",
+        "CATASAUQUA",
+        "COOPERSBURG",
+        "COPLAY",
+        "EMMAUS",
+        "FOUNTAIN HILL",
+        "MACUNGIE",
+        "SLATINGTON",
+
+        // Townships
+        "HANOVER",
+        "HEIDELBERG",
+        "LOWER MACUNGIE",
+        "LOWER MILFORD",
+        "LOWHILL",
+        "LYNN",
+        "NORTH WHITEHALL",
+        "SALISBURY",
+        "SOUTH WHITEHALL",
+        "UPPER MACUNGIE",
+        "UPPER MILFORD",
+        "UPPER SAUCON",
+        "WASHINGTON",
+        "WEISENBERG",
+        "WHITEHALL",
+
+        // Census-designated places
+        "ANCIENT OAKS",
+        "BREINIGSVILLE",
+        "CEMENTON",
+        "CETRONIA",
+        "DESALES UNIVERSITY",
+        "DORNEYVILLE",
+        "EGYPT",
+        "FULLERTON",
+        "HOKENDAUQUA",
+        "LAURYS STATION",
+        "NEW TRIPOLI",
+        "SCHNECKSVILLE",
+        "SLATEDALE",
+        "STILES",
+        "TREXLERTOWN",
+        "WESCOSVILLE",
+
+        // Unincorporated communities
+        "BALLIETTSVILLE",
+        "CENTER VALLEY",
+        "COLESVILLE",
+        "EAST TEXAS",
+        "EMERALD",
+        "EVERGREEN PARK",
+        "FOGELSVILLE",
+        "GAUFF HILL",
+        "GERMANSVILLE",
+        "GUTHSVILLE",
+        "HENSINGERSVILLE",
+        "HOSENSACK",
+        "IRONTON",
+        "KUHNSVILLE",
+        "LANARK",
+        "LIMEPORT",
+        "LOCUST VALLEY",
+        "LYNNPORT",
+        "MECHANICSVILLE",
+        "MEYERSVILLE",
+        "NEFFS",
+        "NEW SMITHVILLE",
+        "OLD ZIONSVILLE",
+        "OREFIELD",
+        "PLEASANT CORNERS",
+        "POWDER VALLEY",
+        "SCHERERSVILLE",
+        "SCHOENERSVILLE",
+        "SHIMERVILLE",
+        "SUMMIT LAWN",
+        "VERA CRUZ",
+        "WALBERT",
+        "WANAMAKERS",
+        "WERLEYS CORNER",
+        "WEST CATASAUQUA",
+        "ZIONSVILLE",
+        
+        // Northampton County
+        "WALNUTPORT"
+  };
 }
