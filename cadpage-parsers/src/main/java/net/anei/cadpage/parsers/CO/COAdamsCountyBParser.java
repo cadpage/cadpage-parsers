@@ -173,7 +173,8 @@ public class COAdamsCountyBParser extends FieldProgramParser {
     return CALL_LIST;
   }
 
-  private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(       "267 Unconscious/Fainting (Near)",
+  private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(       
+      "267 Unconscious/Fainting (Near)",
       "279 Assist - Lift Assist",
       "279 Sick Person (Spec. Diagnosis)",
       "282 Assist - Lift Assist",
@@ -182,6 +183,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "Abdominal Pain/Problem",
       "Alarm-Fire Alarm Commercial",
       "Alarm-Fire Alarm Residential",
+      "Alarm-Fire Alarm High Occupa",
       "Allergies/Envenomation",
       "Assault/Sexual Assault",
       "Assist - Lift Assist",
@@ -205,6 +207,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "Hemorrhage/Lacerations",
       "Highway",
       "Injuries",
+      "Invest - Hazmat",
       "Invest - Odor Commercial",
       "Invest - Smoke Outside",
       "Line Down / Transformer",
@@ -217,6 +220,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "Non-injury",
       "Overdose/Poisoning (Ingestion)",
       "Psych/Abn Behavior/Suicide Att",
+      "Resc - Animal Rescue",
       "Rollover",
       "SF - Res Str Fire Reported",
       "Sick Person (Spec. Diagnosis)",
@@ -226,6 +230,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "Traumatic Injuries (Specific)",
       "Unconscious/Fainting (Near)",
       "x17B-Falls",
+      "x26A-Sick Person",
       "x6C-Breathing Problems",
       "x6D-Breathing Problems",
       "x9E-Cardiac/Resp Arrest"

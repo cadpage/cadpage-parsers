@@ -15,20 +15,27 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
     setupMultiWordStreets(
         "A PARK",
         "BIG LAUREL",
+        "BLUE BIRD",
+        "COAL RIVER",
         "DR STEELE FARM",
         "END OF MONDAY",
         "HILL VIEW",
         "INDIAN VALLEY",
+        "JOSH BRANCH CEMETARY",
+        "LEES LAKE",
         "LINCOLN PANTHER",
         "LOWER MUD RIVER",
         "MARY JANE",
+        "MIDWAY SCHOOL",
         "MUD RIVER",
         "ONE MILE",
         "PIN OAK",
+        "ROBERT C BYRD",
         "SILVER MINE",
         "SLASH BR BELLOMY",
         "STONES TRAILER",
         "SUGAR TREE",
+        "TIMBER WOLF",
         "UPPER MUD RIVER",
         "WEST PARK"
     );
@@ -59,6 +66,12 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
   }
   private static final Pattern TO_PTN = Pattern.compile(" +TO +", Pattern.CASE_INSENSITIVE);
   
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("FEZ")) city = "BRANCHLAND";
+    return city;
+  }
+  
   private static CodeSet CALL_LIST = new CodeSet(
       "AUTO ACCIDENT NO INJURIES",
       "AUTO ACCIDENT UNKNOWN INJURIES",
@@ -70,6 +83,7 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
       "CARDIAC ARREST",
       "CHEST PAINS",
       "CODE 3 DIFFICULTY BREATHING",
+      "CODE 3 TRAUMA",
       "CODE3 UNCONSCIOUS/UNRESPONSIVE",
       "FIRE INVESTIGATION",
       "FLASH FLOOD WARNING",
@@ -79,19 +93,25 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
       "LANDING ZONE SECURED",
       "LINE DOWN",
       "LOCK OUT WITH ENTRAPMENT",
+      "MENTAL PATIENT",
       "OTHER FIRE CALL",
       "OVERDOSE",
+      "PEDESTRIAN HIT",
       "PUBLIC ASSISTANCE NON EMERGENC",
       "RELEASED FROM",
+      "SEIZURES",
       "SHOOTING",
       "SICK UNKNOWN",
       "SMOKE INVESTIGATION",
       "STRUCTURE FIRE",
+      "TEST",
       "TRAFFIC PROBLEM",
       "TRAILER FIRE",
+      "TRASH FIRE",
       "TRAUMA",
       "TREE DOWN",
-      "VEHICLE FIRE"
+      "VEHICLE FIRE",
+      "WATER RESCUE"
   );
   
   private static final String[] CITY_LIST = new String[]{
@@ -111,6 +131,7 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
     "DOLLIE",
     "EDEN PARK",
     "FERRELLSBURG",
+    "FEZ",
     "FOURTEEN",
     "FRY",
     "GILL",
@@ -124,17 +145,25 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
     "PLEASANT VIEW",
     "RANGER",
     "RECTOR",
+    "SIAS",
     "SOD",
     "SPURLOCKVILLE",
     "SUMERCO",
     "SWEETLAND",
     "WARREN",
     "WEWANTA",
+    "WOODVILLE",
     "YAWKEY",
     
     "CABELL COUNTY",
-    "CULLODEN",
+      "CULLODEN",
     
-    "PUTNAM COUNTY"
+    "LOGAN COUNTY",
+    
+    "PUTNAM COUNTY",
+    
+    "KANAWHA COUNTY",
+      "ALUM CRK",
+      "TORNADO"
   };
 }

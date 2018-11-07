@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.NY;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +12,7 @@ public class NYDelawareCountyParser extends FieldProgramParser {
   
   public NYDelawareCountyParser() {
     super("DELAWARE COUNTY", "NY", 
-          "CALL ADDRCITY ID! CALLER:NAME! END");
+          "( DATETIME | EMPTY | ) CALL ADDRCITY ( PLACE! DATETIME! XST1:X_CITY! | ( XST1:X! XST2:X! | ID! ) CALLER:NAME! ) END");
   }
   
   @Override
@@ -27,9 +29,34 @@ public class NYDelawareCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new IdField("CAD\\d\\d-\\d{6}", true);
+    if (name.equals("X_CITY")) return new MyCrossCity();
     return super.getField(name);
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
   
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
@@ -52,6 +79,15 @@ public class NYDelawareCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST";
+    }
+  }
+  
+  private class MyCrossCity extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
     }
   }
 }

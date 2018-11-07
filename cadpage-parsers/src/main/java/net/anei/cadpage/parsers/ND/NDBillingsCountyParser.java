@@ -60,6 +60,8 @@ public class NDBillingsCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern BOUND_PTN = Pattern.compile("[NSEW]B");
+  
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -93,9 +95,24 @@ public class NDBillingsCountyParser extends FieldProgramParser {
       
       if (place != null) {
         for (String part : place.split(":")) {
-          data.strPlace = append(data.strPlace, " - ", stripFieldStart(part.trim(), "@"));
+          part = part.trim();
+          if (part.length() == 0) continue;
+          if (data.strCity.length() == 0 && isCity(data.strAddress)) {
+            data.strCity = data.strAddress;
+            data.strAddress = "";
+            parseAddress(part, data);
+          } else if (data.strPlace.length() == 0 && BOUND_PTN.matcher(part).matches()) {
+            data.strAddress = append(data.strAddress, " ", part);
+          } else {
+            data.strPlace = append(data.strPlace, " - ", stripFieldStart(part.trim(), "@"));
+          }
         }
       }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE CITY";
     }
   }
   
@@ -125,6 +142,57 @@ public class NDBillingsCountyParser extends FieldProgramParser {
     "SCORIA POINT CORNER",
     "SIX MILE CORNER",
     "SULLY SPRINGS",
+    
+    // Divide County
+    
+    // Cities
+    "CROSBY",
+    "NOONAN",
+    "AMBROSE",
+    "FORTUNA",
+
+    // Townships
+    "ALEXANDRIA",
+    "AMBROSE",
+    "BLOOMING PRAIRIE",
+    "BLOOMING VALLEY",
+    "BORDER",
+    "BURG",
+    "CLINTON",
+    "COALFIELD",
+    "DANEVILLE",
+    "DE WITT",
+    "ELKHORN",
+    "FERTILE VALLEY",
+    "FILLMORE",
+    "FRAZIER",
+    "FREDERICK",
+    "GARNET",
+    "GOOSENECK",
+    "HAWKEYE",
+    "HAYLAND",
+    "LINCOLN VALLEY",
+    "LONG CREEK",
+    "MENTOR",
+    "PALMER",
+    "PLUMER",
+    "SIOUX TRAIL",
+    "SMOKY BUTTE",
+    "STONEVIEW",
+    "TROY",
+    "TWIN BUTTE",
+    "UPLAND",
+    "WESTBY",
+    "WRITING ROCK",
+
+    // Unincorporated communities
+    "ALKABO",
+    "BOUNTY",
+    "COLGAN",
+    "JUNO",
+    "KERMIT",
+    "PAULSON",
+    "STADY ",
     
     // Kidder County
     
@@ -183,7 +251,20 @@ public class NDBillingsCountyParser extends FieldProgramParser {
     "KICKAPOO",
     "SOUTH KIDDER",
     
+    // Burleigh County
+    "DRISCOLL",
+    
+    // Golden Valley County
+    "BEACH",
+    
+    // LaMoure County
+    "JUD",
+    
+    // McHenry County
+    "DRAKE",
+    
     // McKenzie County
+    "GRASSY BUTTE",
     "WATFORD CITY",
     
     // Hettinger County
@@ -191,6 +272,11 @@ public class NDBillingsCountyParser extends FieldProgramParser {
     
     // Stark County
     "BELFIELD",
-    "SOUTH HEART"
+    "DISCKINSON",
+    "SOUTH HEART",
+    
+    // Stutsman County
+    "MEDINA",
+    "WOODWORTH"
   }; 
 }

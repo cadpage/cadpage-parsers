@@ -25,9 +25,7 @@ public class TXBellCountyParser extends FieldProgramParser {
   
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom(){
-      
-    };
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
