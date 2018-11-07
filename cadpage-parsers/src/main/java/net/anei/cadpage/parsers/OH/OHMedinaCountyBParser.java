@@ -50,7 +50,7 @@ public class OHMedinaCountyBParser extends DispatchEmergitechParser {
       "28D",      "Fire - Dumpster/Trash",
       "28G",      "Fire - Grass/Brush",
       "28SC",     "Fire - Commercial Structure",
-      "28SR",     "Fire - Residential Structure",  // <<<
+      "28SR",     "Fire - Residential Structure",
       "28TEST",   "Fire Alarm Testing",
       "28U",      "Fire - Utility Pole/Transformer",
       "28V",      "Fire - Vehicle",
@@ -81,13 +81,13 @@ public class OHMedinaCountyBParser extends DispatchEmergitechParser {
       "GAS WELL", "Fire - Gas Well",
       "GASLEAK",  "Gas Leak (Natural/Fuel)",
       "GASSMELL", "Smell Of Gas In The Area",
-      "GASWELL",  "Gas Well Fire",  // <<<
+      "GASWELL",  "Gas Well Fire",
       "HAZMAT",   "Spill",
       "MISC",     "Miscellaneous",
       "SBA",      "Stand By Assist",
       "SMOKE",    "Smoke Investigation",
       "WATER",    "Water Problem",
-      "WEATHER",  "Weather Related Incident",  // <<<
+      "WEATHER",  "Weather Related Incident",
       "WELFARE",  "Welfare Check",
       "WIRES",    "Wires Down Or Sparking "
 
