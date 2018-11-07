@@ -1115,6 +1115,7 @@ public class ParserList {
           new ParserCategory("North Dakota"
               ,"NDBillingsCounty"               ,"Billings County, ND"
               ,"NDCassCounty"                   ,"Cass County, ND"
+              ,"NDDivideCounty"                 ,"Divide County, ND"
               ,"NDKidderCounty"                 ,"Kidder County, ND"
               ,"NDPierceCounty"                 ,"Pierce County, ND"
           ),
