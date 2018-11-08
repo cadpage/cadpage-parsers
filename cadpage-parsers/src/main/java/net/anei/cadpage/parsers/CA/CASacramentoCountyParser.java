@@ -54,7 +54,7 @@ public class CASacramentoCountyParser extends MsgParser {
     if (!map.equals(",")) data.strMap = map;
     parseAddress(match.group(5).replace('.', ' ').trim(), data);
     data.strCity = convertCodes(match.group(6), CITY_CODES);
-    data.strUnit = match.group(7).trim();
+    data.strUnit = match.group(7).trim().replace("+", "");
     return true;
   }
   
