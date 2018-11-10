@@ -160,7 +160,7 @@ public class Message {
     Pattern.compile("_(\\d) of (\\d)\\s*$"),
     Pattern.compile(" \\(0(\\d)/0(\\d)\\)\\s*$"),
     Pattern.compile("\\(Part (\\d) of (\\d)\\)? +POR[A-Z0-9]+FIRE$"),
-    Pattern.compile("\\(Part (\\d) of (\\d)\\)")
+    Pattern.compile("\\(Part (\\d) of (\\d)\\)$")
   };
   private static final Pattern[] MSG_HEADER_PTNS = new Pattern[]{
     Pattern.compile("^(000\\d)/(000\\d)\\b"),
@@ -170,6 +170,7 @@ public class Message {
     Pattern.compile("^(\\d)/(\\d)\n+"),
     Pattern.compile("^(\\d)/(\\d)(?![/\\d])"),
     Pattern.compile("^(?:\\(Con't\\) )?(\\d) of (\\d)\n"),
+    Pattern.compile("[ A-Z]+ CAD: *(\\d)of(\\d):"),
     Pattern.compile("^(\\d)/(\\d)(?=\\d{3,}:)"),  // This one is scarry !!!
     Pattern.compile("^[A-Z]+ +\\((\\d)/(\\d)\\) +(.*?) +STOP\\s*$"),
     Pattern.compile("^\\( *([^\\)]*?) +(\\d) *of *(\\d)\\)(.*)\\s*$", Pattern.DOTALL)

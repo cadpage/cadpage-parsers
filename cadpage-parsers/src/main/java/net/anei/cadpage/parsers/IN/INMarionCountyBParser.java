@@ -21,6 +21,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "PUBLIC SAFETY CAD:");
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
     body = body.substring(match.end());
