@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
 public class INMarionCountyBParser extends DispatchA52Parser {
@@ -17,6 +19,13 @@ public class INMarionCountyBParser extends DispatchA52Parser {
     return "MotorolaCAD@page.indy.gov,CAD@page.indy.gov";
   }
   
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
+
   private static final Pattern MARKER = Pattern.compile("(?:Motorola )?CAD: *");
   
   @Override
