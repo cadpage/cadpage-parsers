@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class SCBerkeleyCountyParser extends DispatchB2Parser {
 
   public SCBerkeleyCountyParser() {
-    super(CITY_LIST, "BERKELEY COUNTY", "SC", B2_FORCE_CALL_CODE | B2_SEPARATE_APT_FLD | B2_DELIM_ONLY);
+    super(CITY_LIST, "BERKELEY COUNTY", "SC", B2_SEPARATE_APT_FLD | B2_DELIM_ONLY);
     setupCallList((CodeSet)null);
   }
   
