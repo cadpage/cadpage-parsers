@@ -34,6 +34,7 @@ public class NJMICOMBParser extends MsgParser {
       if (subject.equals("CAD Page")) break;
       
       if (subject.equals("MICCOM CAD")) break;
+      if (subject.equals("MICCOM")) break;
       
       if (body.startsWith("/ CAD Page / ")) {
         body = body.substring(13);
@@ -87,6 +88,32 @@ public class NJMICOMBParser extends MsgParser {
       return true;
     }
     
+    // Another variate of the regular dispatch report.  This is probably a fixed position alert like the
+    // others, but we loose the spacing when it is broken into two messages.  Fortunately the break always
+    // occurs in the samem place.
+    if (fp.check("RESP: ")) {
+      setFieldList("UNIT CITY ADDR APT X CALL ID TIME");
+      data.strCity = cleanCity(fp.get(15));
+      if (!fp.check(" ")) return false;
+      parseAddress(fp.get(30), data);
+      if (!fp.check("BLDG:")) return false;
+      data.strApt = append(data.strApt, "-", fp.get(5));
+      if (!fp.check("APT:")) return false;
+      body = fp.get();
+      int pt = body.indexOf("Cross-");
+      if (pt < 0) return false;
+      data.strApt = append(data.strApt, "-", body.substring(0, pt).trim());
+      fp = new FParser(body.substring(pt+6));
+      data.strCross = fp.get(30);
+      if (!fp.check(" ")) return false;
+      data.strCall = fp.get(30);
+      if (!fp.check("#")) return false;
+      data.strCallId = fp.get(10);
+      if (!fp.check(" @")) return false;
+      data.strTime = fp.get(4);
+      return true;
+    }
+    
     // Pt transfers have a different format
     if (fp.check("#")) {
       setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
@@ -121,6 +148,8 @@ public class NJMICOMBParser extends MsgParser {
   private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro|City))?(?: *\\([ A-Z]+\\))?$");
   
   private static String cleanCity(String city) {
-    return CITY_SFX_PTN.matcher(city).replaceFirst("");
+    city = CITY_SFX_PTN.matcher(city).replaceFirst("");
+    if (city.endsWith(" Tw")) city += 'p';
+    return city;
   }
 }
