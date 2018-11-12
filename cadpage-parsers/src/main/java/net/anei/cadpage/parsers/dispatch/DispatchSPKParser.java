@@ -3,8 +3,11 @@ package net.anei.cadpage.parsers.dispatch;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -25,39 +28,38 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-         "CURDATETIME! Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA+?  INFO/N<+", 
+         "CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+? INFO/N<+?", 
          "table|tr");
-    FIELD_MAP.put("Location:", getField("ADDRCITY"));
-    FIELD_MAP.put("Intersection:", getField("SKIP"));
-    FIELD_MAP.put("Zip Code:", getField("ZIP"));
-    FIELD_MAP.put("Community:", getField("CITY"));
-    FIELD_MAP.put("Location Information:", getField("PLACE"));
+    FIELD_MAP.put("Location", getField("ADDRCITY"));
+    FIELD_MAP.put("Intersection", getField("SKIP"));
+    FIELD_MAP.put("Zip Code", getField("ZIP"));
+    FIELD_MAP.put("Community", getField("CITY"));
+    FIELD_MAP.put("Location Information", getField("PLACE"));
     FIELD_MAP.put("Location and POI Information", getField("PLACE"));
-    FIELD_MAP.put("Incident Number:", getField("ID"));
-    FIELD_MAP.put("L/L:", getField("GPS"));
-    FIELD_MAP.put("Cross Street:", getField("X"));
-    FIELD_MAP.put("Apartment:", getField("APT"));
-    FIELD_MAP.put("Apt:", getField("APT"));
-    FIELD_MAP.put("Building:", getField("BLDG"));
-    FIELD_MAP.put("Bldg:", getField("BLDG"));
+    FIELD_MAP.put("Incident Number", getField("ID"));
+    FIELD_MAP.put("L/L", getField("GPS"));
+    FIELD_MAP.put("Cross Street", getField("X"));
+    FIELD_MAP.put("Apartment", getField("APT"));
+    FIELD_MAP.put("Apt", getField("APT"));
+    FIELD_MAP.put("Building", getField("BLDG"));
+    FIELD_MAP.put("Bldg", getField("BLDG"));
     FIELD_MAP.put("Caller information", getField("EMPTY"));
-    FIELD_MAP.put("Caller Source:", getField("SKIP"));
-    FIELD_MAP.put("Caller Phone:", getField("PHONE"));
-    FIELD_MAP.put("Caller Name:",  getField("NAME"));
-    FIELD_MAP.put("Caller Location:", getField("CALLER_LOC"));
-    FIELD_MAP.put("Created By:", getField("SKIP"));
-    FIELD_MAP.put("Responding Units:", getField("UNIT"));
-    FIELD_MAP.put("Areas:", getField("MAP"));
+    FIELD_MAP.put("Caller Source", getField("SKIP"));
+    FIELD_MAP.put("Caller Phone", getField("PHONE"));
+    FIELD_MAP.put("Caller Name",  getField("NAME"));
+    FIELD_MAP.put("Caller Location", getField("CALLER_LOC"));
+    FIELD_MAP.put("Created By", getField("SKIP"));
+    FIELD_MAP.put("Responding Units", getField("UNIT"));
+    FIELD_MAP.put("Areas", getField("MAP"));
   }
 
-  private Field lastFld;
   private String callerLocField;
   
   private boolean dispatchTime;
   private String times;
   private Set<String> unitSet = new HashSet<String>();
   
-  private enum InfoType { CAD_TIMES, REMARKS, UNIT_INFO, UNIT_STATUS };
+  private enum InfoType { CAD_TIMES, REMARKS, UNIT_INFO, UNIT_INFO2, UNIT_STATUS };
   private InfoType infoType;
   private int colNdx;
   
@@ -69,7 +71,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
         !subject.contains(" gets ") &&
         !subject.contains("has a Service Request status change")) return false;
     
-    lastFld = null;
     callerLocField = null;
     dispatchTime = false;
     times = null;
@@ -189,8 +190,10 @@ public class DispatchSPKParser extends HtmlProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (INFO_KEYWORDS.containsKey(field)) return false;
+      String key = stripFieldEnd(field, ":");
+      if (INFO_KEYWORDS.containsKey(key)) return false;
       if (field.startsWith("POI Information:")) return false;
+      if (field.startsWith("This message")) return false;
       parse(field, data);
       return true;
     }
@@ -198,23 +201,23 @@ public class DispatchSPKParser extends HtmlProgramParser {
     @Override
     public void parse(String field, Data data) {
       
-      // See if field contains a recognized keyword
-      int pt = field.indexOf(':');
-      if (pt >= 0) {
-        procFld = FIELD_MAP.get(field.substring(0,pt+1));
-        if (procFld != null) field = field.substring(pt+1).trim();
-      } else {
-        procFld = FIELD_MAP.get(field);
-        if (procFld != null) field = "";
+      if (field.startsWith("<|") && field.endsWith("|>")) {
+        if (field.endsWith("table|>")) procFld = null;
+        return;
       }
       
-      // If it did, clear the last field processed.  If it did not
-      // use the last field to process this
-      if (procFld != null) {
-        lastFld = null;
+      // See if field contains a recognized keyword
+      Field tmpFld;
+      int pt = field.indexOf(':');
+      if (pt >= 0) {
+        tmpFld = FIELD_MAP.get(field.substring(0,pt));
+        if (tmpFld != null) field = field.substring(pt+1).trim();
       } else {
-        procFld = lastFld;
+        tmpFld = FIELD_MAP.get(field);
+        if (tmpFld != null) field = "";
       }
+      
+      if (tmpFld != null) procFld = tmpFld;
       
       // If we have a field processor, invoke it to process this field
       if (procFld != null) {
@@ -266,7 +269,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private class BaseZipField extends CityField {
     @Override
     public void parse(String field, Data data) {
-      lastFld = this;
       if (data.strCity.length() > 0) return;
       data.strCity = field;
     }
@@ -276,8 +278,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
     
     @Override
     public void parse(String field, Data data) {
-      
-      lastFld = this;
       
       // Cross streets tend to be duplicated a lot :(
       if (field.length() == 0) return;
@@ -324,26 +324,47 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private static final Pattern TIMES_PTN = Pattern.compile("Call (.*?) Time: +(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final Pattern INFO_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class BaseInfoField extends InfoField {
+    
+    boolean unitTag = false;
+    String unit = null;
+    List<String> statusList = null;
+    boolean statusLock = false;
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("This message")) return false;
+      parse(field, data);
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
       
       // Special Html tag processing
       if (field.startsWith("<|") && field.endsWith("|>")) {
-        if (field.equals("<|/table|>")) {
+        if (field.equals("<|/table|>") && infoType != InfoType.UNIT_INFO2) {
           infoType = InfoType.REMARKS;
           colNdx = -1;
         }
         else if (field.equals("<|tr|>")) {
           colNdx = 0;
+          if (statusList != null) statusLock = true;
         }
         return;
       }
       if (colNdx >= 0) colNdx++;
       
-      InfoType tmp = INFO_KEYWORDS.get(field);
-      if (tmp != null || INFO_KEYWORDS.containsKey(field) ||
+      String key = stripFieldEnd(field, ":");
+      InfoType tmp = INFO_KEYWORDS.get(key);
+      if (tmp != null || INFO_KEYWORDS.containsKey(key) ||
           field.startsWith("POI Information:")) {
         infoType = tmp;
+        if (infoType == InfoType.UNIT_INFO && !field.endsWith(":")) infoType = InfoType.UNIT_INFO2;
         if (infoType != null) {
           switch (infoType) {
           case CAD_TIMES:
@@ -359,6 +380,15 @@ public class DispatchSPKParser extends HtmlProgramParser {
             if (times == null) times = field;
             else times = times + '\n' + field;
             colNdx = -1;
+            break;
+            
+          case UNIT_INFO2:
+            if (times == null) times = field;
+            else times = times + '\n' + field;
+            colNdx = -1;
+            unitTag = false;
+            unit = null;
+            statusList = null;
             break;
             
           default:
@@ -431,6 +461,42 @@ public class DispatchSPKParser extends HtmlProgramParser {
         if (field.equalsIgnoreCase("On Scene") || 
             field.equalsIgnoreCase("Available")) data.msgType = MsgType.RUN_REPORT;
         return;
+      
+      case UNIT_INFO2:
+        if (colNdx == 1) {
+          if (field.equals("Unit")) {
+            unitTag = true;
+            statusList = null;
+            return;
+          }
+          
+          if (unit != null && UNIT_STATUS_SET.contains(field)) {
+            statusList = new ArrayList<>();
+            statusList.add(field);
+            statusLock = false;
+            return;
+          }
+        }
+        
+        if (unitTag) {
+          unitTag = false;
+          unit = field;
+          addUnit(field, data);
+          return;
+        }
+        
+        if (statusList != null) {
+          if (!statusLock) {
+            statusList.add(field);
+          } else if (INFO_TIME_PTN.matcher(field).matches()) {
+            if (colNdx <= statusList.size()) {
+              String status = statusList.get(colNdx-1);
+              String line = field + "   " + unit + "   " + status;
+              times = append(times, "\n", line);
+              if (status.equals("ON SCENE") || status.equals("AVAILABLE")) data.msgType = MsgType.RUN_REPORT;
+            }
+          }
+        }
       }
     }
     
@@ -459,25 +525,28 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm:ss aa");
   private static final DateFormat TIME_FMT2 = new SimpleDateFormat("HH:mm:ss");
   
+  private static final Set<String> UNIT_STATUS_SET = new HashSet<String>(Arrays.asList(
+      "DISPATCHED", "EN ROUTE", "ON SCENE", "AVAILABLE"
+  ));
+  
   private static final Map<String, InfoType> INFO_KEYWORDS = new HashMap<String,InfoType>();
   static {
     INFO_KEYWORDS.put("CAD Times", InfoType.CAD_TIMES);
-    INFO_KEYWORDS.put("CAD Times:", InfoType.CAD_TIMES);
     
-    INFO_KEYWORDS.put("Remarks/Narratives:", InfoType.REMARKS);
-    INFO_KEYWORDS.put("Notices:", InfoType.REMARKS);
-    INFO_KEYWORDS.put("Notes:", InfoType.REMARKS);
-    INFO_KEYWORDS.put("EMS DISPATCH PROTOCOL:", InfoType.REMARKS);
-    INFO_KEYWORDS.put("Dispatch:", InfoType.REMARKS);
+    INFO_KEYWORDS.put("Remarks/Narratives", InfoType.REMARKS);
+    INFO_KEYWORDS.put("Notices", InfoType.REMARKS);
+    INFO_KEYWORDS.put("Notes", InfoType.REMARKS);
+    INFO_KEYWORDS.put("EMS DISPATCH PROTOCOL", InfoType.REMARKS);
+    INFO_KEYWORDS.put("Dispatch", InfoType.REMARKS);
 
-    INFO_KEYWORDS.put("Unit Information:", InfoType.UNIT_INFO);
+    INFO_KEYWORDS.put("Unit Information", InfoType.UNIT_INFO);
     
-    INFO_KEYWORDS.put("Unit Status:", InfoType.UNIT_STATUS);
+    INFO_KEYWORDS.put("Unit Status", InfoType.UNIT_STATUS);
     
-    INFO_KEYWORDS.put("POI Information:", null);
-    INFO_KEYWORDS.put("Priors:", null);
-    INFO_KEYWORDS.put("Case Numbers:", null);
-    INFO_KEYWORDS.put("Incident Log:", null);
+    INFO_KEYWORDS.put("POI Information", null);
+    INFO_KEYWORDS.put("Priors", null);
+    INFO_KEYWORDS.put("Case Numbers", null);
+    INFO_KEYWORDS.put("Incident Log", null);
   }
   
   @Override
