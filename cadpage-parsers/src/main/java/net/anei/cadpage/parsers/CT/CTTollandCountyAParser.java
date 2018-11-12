@@ -33,7 +33,8 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
   
-  private static final Pattern MASTER1 = Pattern.compile("([^,]*?)(?:, ([A-Za-z ]+))? / (.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (\\d{4}-\\d{8}\\b.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)(?: (\\d{4}-\\d{8}\\b.*))?");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Sta\\d+)\\b,?)+)"); 
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private static final Pattern MASTER2 = Pattern.compile("(.*?) (\\d\\d:\\d\\d)(?: (.*?))?(?: (\\d{4}-\\d{8}))?");
@@ -68,16 +69,47 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     // Check for variant 1 format
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("ADDR APT CITY CALL X UNIT DATE TIME ID");
-      parseAddress(match.group(1).trim(), data);
-      data.strCity = getOptGroup(match.group(2));
-      data.strCall = match.group(3).trim();
-      String cross = getOptGroup(match.group(4));
+      setFieldList("ADDR APT CITY PLACE CALL X UNIT DATE TIME ID");
+      body = match.group(1).trim();
+      String cross = getOptGroup(match.group(2));
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
-      data.strUnit = getOptGroup(match.group(5));
-      data.strDate = match.group(6);
-      setTime(TIME_FMT, match.group(7), data);
-      data.strCallId = match.group(8);
+      data.strUnit = getOptGroup(match.group(3));
+      data.strDate = match.group(4);
+      setTime(TIME_FMT, match.group(5), data);
+      data.strCallId = getOptGroup(match.group(6));
+      
+      match = TRAIL_UNIT_PTN.matcher(body);
+      if (match.matches()) {
+        body = match.group(1).trim();
+        data.strUnit = append(match.group(2).trim(), ",", data.strUnit);
+      }
+    
+      int pt = body.indexOf(',');
+      if (pt >= 0) {
+        parseAddress(body.substring(0,pt).trim(), data);
+        body = body.substring(pt+1).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, body, data);
+        body = getLeft();
+        body = stripFieldStart(body, "/");
+        String left = parseCallDesc(body, data);
+        if (left != null) {
+          parsePlace(left, data);
+        } else {
+          data.strCall = body;
+        }
+      }
+      
+      else {
+        String left = parseCallDesc(body, data);
+        if (left != null) {
+          left = stripFieldEnd(left, "/");
+          parseAddress(StartType.START_ADDR, FLAG_NO_CITY, left, data);
+          parsePlace(getLeft(), data);
+        } else {
+          parseAddress(StartType.START_ADDR, FLAG_NO_CITY, body, data);
+          data.strCall = getLeft();
+        }
+      }
       return true;
     }
     
@@ -143,25 +175,52 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       // Everything from city to time field is the call description
       body = stripFieldStart(body, "*");
       
-      // See if we can split the remaining body into place name, call, and info
-      for (int j = 0; j<body.length()-2; j++) {
-        if (Character.isLetter(body.charAt(j))) {
-          String call = CALL_LIST.getCode(body.substring(j), true);
-          if (call != null) {
-            String place = body.substring(0,j).trim();
-            data.strPlace = append(data.strPlace, " - ", place);
-            data.strCall = body.substring(j);
-            return true;
-          }
-        }
+      String left = parseCallDesc(body, data);
+      if (left != null) {
+        parsePlace(left, data);
+      }  else {
+        data.strCall = body;
       }
-      
-      // No go, just assign everything as the call description
-      data.strCall = body;
       return true;
     }
     
     return false;
+  }
+  
+  /**
+   * Search message text for known call description
+   * @param body message text
+   * @param data data object
+   * @return remainder of text string if call found, null otherwise
+   */
+  private String parseCallDesc(String body, Data data) {
+    int pt = body.indexOf("<New Call>");
+    if (pt >= 0) {
+      data.strCall = body.substring(pt+10).trim();
+      return body.substring(0, pt).trim();
+    }
+    
+    for (int j = 0; j<body.length()-2; j++) {
+      if (Character.isLetter(body.charAt(j))) {
+        String call = CALL_LIST.getCode(body.substring(j), true);
+        if (call != null) {
+          data.strCall = body.substring(j);
+          return body.substring(0, j).trim();
+        }
+      }
+    }
+    return null;
+  }
+  
+  private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?)\\b(?:UNIT|APT|(?=BLDG)) *(.*)");
+  
+  private void parsePlace(String place, Data data) {
+    Matcher match = PLACE_APT_PTN.matcher(place);
+    if (match.matches()) {
+      place = match.group(1).trim();
+      data.strApt = append(data.strApt, "-", match.group(2));
+    }
+    data.strPlace = append(data.strPlace, " - ", place);
   }
   
   private static final String[] ESCAPE_CODES = new String[]{
@@ -205,6 +264,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Aircraft Accident",
       "ALS",
       "Appliance Fire",
+      "AREA OF DOT GARAGE",
       "BLS",
       "Bomb Threat",
       "Brush Fire",
@@ -216,6 +276,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Dumpster/Debris Fire",
       "Electrical Fire",
       "Fire Alarm",
+      "Fire Alarm-Commercial",
       "Fuel Spill",
       "Hazardous Materials",
       "Lift Assist",

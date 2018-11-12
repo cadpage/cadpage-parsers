@@ -57,10 +57,6 @@ public class CTTollandCountyParser extends GroupBestParser {
     "WINDSOR LOCKS EAST",
     
     // New London County
-    "LEBANON",
-    
-    // Tolland County
-    "VERNON"
-    
+    "LEBANON"
   };
 }
