@@ -44,11 +44,28 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CLIF", "CLIFF VILLAGE",
+      "DEAC", "DENNIS ACRES",
+      "DIAM", "DIAMOND",
+      "FAIR", "FAIRVIEW",
       "GOOD", "GOODMAN",
+      "GRAN", "GRANBY",
+      "GRFS", "GREAT FALLS",
       "JOPL", "JOPLIN",
+      "LEAW", "LEAWOOD",
+      "LOMA", "LOMA LINDA",
       "NEOS", "NEOSHO",
-      "NEWT", "NEWTON",
+      "NEWA", "NEWTONIA",
+      "NEWT", "NEWTON COUNTY",
+      "RACI", "RACINE",
       "REDI", "REDINGS MILL",
-      "SENE", "SENECA"
+      "RITC", "RITCHEY",
+      "SAGI", "SAGINAW",
+      "SENE", "SENECA",
+      "SHOA", "SHOAL CREEK DRIVE",
+      "SHOE", "SHOAL CREEK ESTATES",
+      "STAR", "STARK CITY",
+      "STEL", "STELLA",
+      "WENT", "WENTWORTH"
   });
 }
