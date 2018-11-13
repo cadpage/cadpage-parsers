@@ -293,6 +293,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Smoke/Odor Investigation",
       "Standby",
       "Structure Fire",
+      "test call only",
       "THIS IS ONLY A TEST",
       "Tree/Wires Down",
       "Unknown Type Fire",

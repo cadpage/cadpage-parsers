@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
@@ -551,30 +552,24 @@ public class DispatchSPKParser extends HtmlProgramParser {
   
   @Override
   protected boolean parseFields(String[] fields, Data data) {
-    fixKeywords(fields, FIX_KEYWORD_TABLE);
+    fixKeywords(fields);
     return super.parseFields(fields, data);
   }
 
-  private static void fixKeywords(String[] fields, String[] table) {
-    int fNdx = 0;
-    for (int tNdx = 0; tNdx<table.length; tNdx += 2) {
-      String search = table[tNdx];
-      String replace = table[tNdx+1];
-      boolean found = true;
-      for (int ndx = fNdx; ndx<fields.length; ndx++) {
-        String fld = fields[ndx];
-        if (fld.startsWith(search)) {
-          found = true;
-          fields[ndx] = replace + fld.substring(search.length());
-          fNdx = ndx+1;
-          break;
+  private static void fixKeywords(String[] fields) {
+    for (int ndx = 0; ndx < fields.length; ndx++) {
+      String field = fields[ndx];
+      if (field.startsWith("Autosend.") || field.startsWith("autosend.") || field.startsWith("call")) {
+        CodeTable.Result res = FIX_KEYWORD_TABLE.getResult(field);
+        if (res != null) {
+          field = res.getDescription() + field.substring(res.getCode().length());
+          fields[ndx] = field;
         }
       }
-      if (!found && tNdx == 0) return;
     }
   }
   
-  private static final String[] FIX_KEYWORD_TABLE = new String[]{
+  private static final CodeTable FIX_KEYWORD_TABLE = new CodeTable(
     "autosend.incident.header",                 "As of",
     "autosend.incident.incidentInformation",    "Incident Information",
     "autosend.incident.tracking.number",        "CAD Incident ",
@@ -582,16 +577,34 @@ public class DispatchSPKParser extends HtmlProgramParser {
     "autosend.incident.location",               "Location",
     "autosend.incident.community",              "Community",
     "Autosend.Options.locationInformation",     "Location Information",
+    "Autosend.Options.crossStreet",             "Cross Street",
+    "Autosend.Options.apartment",               "Apartment",
+    "Autosend.Options.building",                "Building",
+    "autosend.incident.callerInformation",      "Caller information",
+    "Autosend.Options.callerPhone",             "Caller Phone",
+    "Autosend.Options.callerName",              "Caller Name",
+    "Autosend.Options.callerLocation",          "Caller Location",
+    "autosend.incident.location",               "Location",
+    "autosend.incident.community",              "Community",
     "Autosend.Options.incidentTimes",           "CAD Times",
     "callCreatedTime",                          "Call Created Time",
     "callStatusTime",                           "Call Dispatched Time",
+    "Autosend.Options.time",                    "Incident Creation Time",
+    "Autosend.Options.unitStatus",              "Unit Status",
+    "autosend.incident.logs.dateTime",          "Date/Time",
+    "autosend.unit.history.unit",               "Unit",
+    "autosend.unit.history.unitStatus",         "Status",
+    "autosend.unit.history.unitLocation",       "Unit Location/Remarks",
     "Autosend.Options.unitInformation",         "Unit Information",
     "autosend.unit.history.unit",               "Unit",
     "autosend.unit.information.unitOrg",        "Org",
     "autosend.unit.information.name",           "Name",
     "autosend.unit.information.area",           "Area",
     "autosend.unit.information.types",          "Types",
+    "Autosend.Options.caseNumbers",             "Case Numbers",
+    "Autosend.Options.log",                     "Incident Log",
+    "Autosend.Options.respondingUnits",         "Responding Units",
     "Autosend.Options.narratives",              "Remarks/Narratives",
     "Autosend.Options.notices",                 "Notices"
-  };
+  );
 }
