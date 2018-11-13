@@ -27,7 +27,7 @@ public class ILRandolphCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911mcsd@gmail.com";
+    return "911mcsd@gmail.com,@monroecountyil.gov";
   }
   
   @Override

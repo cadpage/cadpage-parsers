@@ -90,13 +90,14 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "ATAS",   "ATASCADERO",
-      "CMB",    "CAMBRIA",
-      "MB",     "MORRO BAY",
-      "PR",     "PASO ROBLES",
-      "SL",     "SAN LUIS OBISPO",
-      "SLO",    "SAN LUIS OBISPO",
-      "SLO_CO", "",
-      "TEMP",   "TEMPLETON"
+      "ATAS",     "ATASCADERO",
+      "CMB",      "CAMBRIA",
+      "MB",       "MORRO BAY",
+      "PR",       "PASO ROBLES",
+      "SAN_MIG",  "SAN MIGUEL",
+      "SL",       "SAN LUIS OBISPO",
+      "SLO_CO",   "SAN LUIS OBISPO COUNTY",
+      "TEMP",     "TEMPLETON",
+
   });
 }
