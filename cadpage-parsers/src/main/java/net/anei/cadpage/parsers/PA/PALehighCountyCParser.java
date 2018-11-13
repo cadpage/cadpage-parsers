@@ -12,7 +12,7 @@ public class PALehighCountyCParser extends FieldProgramParser {
   
   public PALehighCountyCParser() {
     super(CITY_LIST, "LEHIGH COUNTY", "PA", 
-          "CALL! Address:ADDRCITY! XSt:X! INFO/N+ Assigned_Units:UNIT! GPS_DATE_TIME! END");
+          "CALL! Address:ADDRCITY! XSt:X! INFO/N+ Assigned_Units:UNIT! ( GPS_DATE_TIME! | GPS1 GPS2 DATETIME! ) END");
   }
   
   @Override
@@ -20,10 +20,11 @@ public class PALehighCountyCParser extends FieldProgramParser {
     return "dispatch@lehighcounty.org";
   }
   
-  private static final Pattern DELIM = Pattern.compile(" \\| |\n");
+  private static final Pattern DELIM = Pattern.compile(" ?\\| ");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace('\n', ' ');
     return parseFields(DELIM.split(body), data);
   }
   
@@ -31,6 +32,7 @@ public class PALehighCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS_DATE_TIME")) return new MyGPSDateTimeField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
   
@@ -62,25 +64,52 @@ public class PALehighCountyCParser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private class MyGPSDateTimeField extends Field {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
 
     @Override
-    public void parse(String field, Data data) {
+    public boolean checkParse(String field, Data data) {
       Matcher match = GPS_DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       String gps = match.group(1);
       if (gps != null) setGPSLoc(match.group(1), data);
       data.strDate = match.group(2);
       String time = match.group(3);
       if (time.endsWith("M")) {
-        setTime(TIME_FMT, match.group(3), data);
+        setTime(TIME_FMT, time, data);
       } else {
         data.strTime = time;
       }
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
     public String getFieldNames() {
       return "GPS DATE TIME";
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher  match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
   
