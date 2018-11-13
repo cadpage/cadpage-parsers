@@ -29,7 +29,7 @@ public class DispatchChiefPagingParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     String[]  subFlds = subject.split("\\|");
     if (subFlds.length > 2) return false;
-    if (!subFlds[0].equals("Chief Alert") && !subFlds[0].equals("Chief ALT")) return false;
+    if (!subFlds[0].equals("Chief Alert") && !subFlds[0].equals("Chief ALT") && !subFlds[0].equals("!")) return false;
     Matcher match = LEAD_JUNK_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end()); 
     if (subFlds.length > 1) data.strSource = subFlds[1].trim();
