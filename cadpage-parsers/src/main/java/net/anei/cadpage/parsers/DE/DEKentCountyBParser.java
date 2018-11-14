@@ -20,6 +20,10 @@ public class DEKentCountyBParser extends DispatchChiefPagingParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    // Rule out DEKentCountyE alerts
+    if (body.startsWith("Call Type:")) return false;
+    
     if (!super.parseMsg(subject,  body, data)) return false;
     DEKentCountyBaseParser.adjustCityState(data);
     return true;
