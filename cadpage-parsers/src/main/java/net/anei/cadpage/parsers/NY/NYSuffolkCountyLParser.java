@@ -10,7 +10,7 @@ public class NYSuffolkCountyLParser extends MsgParser {
   
   public NYSuffolkCountyLParser() {
     super("SUFFOLK COUNTY", "NY");
-    setFieldList("TIME CALL ADDR APT CITY INFO");
+    setFieldList("TIME CALL ADDR APT CITY ST INFO");
   }
   
   @Override
@@ -18,11 +18,11 @@ public class NYSuffolkCountyLParser extends MsgParser {
     return "alertpage@alertpage.net";
   }
   
-  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d): ([-/ A-Za-z0-9]*?); (.*?), ([ A-Z]+?) \\((.*)\\)");
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d:\\d\\d): ([-/ A-Za-z0-9]*?); (.*?), ([ A-Z]+?)(?:, ([A-Z]{2}))? \\((.*)\\)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("Dispatches from Suffolk County Fire,")) return false;
+    if (!subject.startsWith("Dispatches from ")) return false;
     
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
@@ -34,7 +34,8 @@ public class NYSuffolkCountyLParser extends MsgParser {
     if (data.strCall.length() == 0) data.strCall = "ALERT";
     parseAddress(match.group(3).trim(), data);
     data.strCity = match.group(4).trim();
-    data.strSupp = match.group(5);
+    data.strState = getOptGroup(match.group(5));
+    data.strSupp = match.group(6);
     return true;
   }
 

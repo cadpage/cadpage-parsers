@@ -1019,7 +1019,7 @@ public class Active911ParserTable {
       "US/NY/EastHamptonVillage",         "NYSuffolkCountyH",
       "US/NY/Erie",                       "NYErieCountyF",
       "US/NY/FingerLakesAmbulance",       "NYOntarioCountyB",
-      "US/NY/FireRescueSystems",          "NYSuffolkCountyB,NYSuffolkCountyF",
+      "US/NY/FireRescueSystems",          "NYSuffolkCountyB,NYSuffolkCountyF,NYSuffolkCountyL",
       "US/NY/FireRescueSystemsSuffolkCounty","NYSuffolkCountyG,NYSuffolkCountyL",
       "US/NY/FlandersFD",                 "NYSuffolkCountyA",
       "US/NY/FultonCounty",               "NYFultonCounty",
