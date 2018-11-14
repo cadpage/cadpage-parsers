@@ -73,7 +73,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       body = match.group(1).trim();
       String cross = getOptGroup(match.group(2));
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
-      data.strUnit = getOptGroup(match.group(3));
+      data.strUnit = cvtUnitCodes(getOptGroup(match.group(3)));
       data.strDate = match.group(4);
       setTime(TIME_FMT, match.group(5), data);
       data.strCallId = getOptGroup(match.group(6));
@@ -81,7 +81,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       match = TRAIL_UNIT_PTN.matcher(body);
       if (match.matches()) {
         body = match.group(1).trim();
-        data.strUnit = append(match.group(2).trim(), ",", data.strUnit);
+        data.strUnit = append(cvtUnitCodes(match.group(2).trim()), ",", data.strUnit);
       }
     
       int pt = body.indexOf(',');
@@ -257,50 +257,86 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "EXIT 65",  "41.826197, -72.487915"
 
   });
-
+  
+  private String cvtUnitCodes(String units) {
+    StringBuilder sb = new StringBuilder();
+    for (String unit : units.split(",")) {
+      unit = convertCodes(unit.trim(), UNIT_CODES);
+      if (sb.length() > 0) sb.append(',');
+      sb.append(unit);
+    }
+    return sb.toString();
+  }
+  
+  private static final Properties UNIT_CODES = buildCodeTable(new String[]{
+      "41CT",     "Chief_Tone",
+      "41GT123",  "Stations_123",
+      "41GT45",   "Stations_45",
+      "41OT",     "Officers",
+      "41FP",     "Fire_Police"
+   });
+  
   private static final CodeSet CALL_LIST = new CodeSet(
       "<New Call>",
       "Active Violence/Shooter",
       "Aircraft Accident",
+      "ALS - DIAL",
       "ALS",
       "Appliance Fire",
+      "Appliance Malfunction",
       "AREA OF DOT GARAGE",
       "BLS",
       "Bomb Threat",
       "Brush Fire",
       "CARDIAC ARREST",
+      "Cardiac Arrest",
       "Chimney Fire",
       "CO No Symptoms",
       "CO With Symptoms",
       "Cover Assignment",
+      "Diesel Fuel Spill",
       "Dumpster/Debris Fire",
       "Electrical Fire",
+      "Fire Alarm - Commercial",
+      "Fire Alarm - Residential",
       "Fire Alarm",
       "Fire Alarm-Commercial",
       "Fuel Spill",
+      "Gasoline Spill",
       "Hazardous Materials",
       "Lift Assist",
+      "LPG Natural Gas/Propane Leak Exterior",
       "Machinery Entrapment",
       "Mutual Aid Fire",
       "Natural Gas/Propane Leak",
-      "Officer Call",
       "OFFICER CALL TN.",
+      "Officer Call",
       "Outside Fire",
+      "Search & Rescue",
       "Search and Rescue",
       "Service Call",
       "Smoke Detector Activation",
       "Smoke In Building",
+      "Smoke in the Building - Commercial",
+      "Smoke in the Building - Residential",
       "Smoke/Odor Investigation",
       "Standby",
       "Structure Fire",
+      "Structure Fire - Commercial",
+      "Structure Fire - Residential",
       "test call only",
       "THIS IS ONLY A TEST",
       "Tree/Wires Down",
       "Unknown Type Fire",
+      "Vehicle Accident - DIAL",
+      "Vehicle Accident / Head On",
+      "Vehicle Accident W/ ALS",
       "Vehicle Accident W/O Injuries",
+      "Vehicle Accident w/o Injury",
       "Vehicle Accident",
       "Vehicle Accident/HeadOn",
       "Vehicle Fire",
+      "Water Rescue",
       "Wires Burning/Arcing"
   );
 }
