@@ -19,7 +19,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
   
   public CASanBernardinoCountyAParser() {
     super("SAN BERNARDINO COUNTY", "CA",
-          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! ( UNITS:UNIT CALL_INFO:INFO | UNIT COMMENTS:INFO ) LAT/LON:GPS");
+          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! ( UNITS:UNIT CALL_INFO:INFO | UNIT LAT/LON:GPS COMMENTS:INFO ) END");
   }
   
   @Override
@@ -56,6 +56,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     
     if (body.startsWith("|")) body = body.substring(1).trim();
     body = body.replace(">XST:", ">X ST:");
+    body = body.replace(" COMMENTS:", ">COMMENTS:");
     if (parseFields(body.split(">"), data)) {
       if (data.strPlace.equals("WESTERN ARIZONA REGIONAL") ||
           data.strAddress.equalsIgnoreCase("2735 Silver Creek Rd")) {
@@ -467,6 +468,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "ALL-E1",     "Allergic Reaction-not breathing",
       "ALL-E1i",    "Allergic Reaction-not breathing - injection administered",
       "ALL-E1m",    "Allergic Reaction-not breathing - medication administered",
+      "ANML",       "Animal Bite",
       "ANML-A1",    "Animal Bite - non-dangerous body area",
       "ANML-A3",    "Animal Bite - superficial bite",
       "ANML-B1",    "Animal Bite - poss dangerous body area",
