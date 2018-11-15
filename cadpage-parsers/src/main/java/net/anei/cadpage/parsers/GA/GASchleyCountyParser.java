@@ -60,19 +60,55 @@ public class GASchleyCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(\\d{1,4}[A-Z]?|[A-Z])|(?:APT|LOT|RM|ROOM) +(.*)");
+  
   // Address field may have appended place name
   private class MyAddressField extends AddressField {
     
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      super.parse(p.get("[@"), data);
-      data.strPlace = p.get('[');
+      int iSt = 0;
+      do {
+        int iEnd = field.indexOf('[', iSt);
+        if (iEnd < 0) iEnd = field.length();
+        String part = field.substring(iSt,  iEnd).trim();
+        if (part.length() > 0) {
+          if (iSt == 0) {
+            super.parse(part, data);
+          } else {
+            char code = part.charAt(0);
+            if (code == ':' || code=='@' || code == ';') {
+              part = part.substring(1).trim();
+            }
+            if (code != ':') {
+              Matcher match = ADDR_APT_PTN.matcher(part);
+              if (match.matches()) {
+                code = ':';
+                part = match.group(1);
+                if (part == null) part = match.group(2);
+              }
+            }
+            switch (code) {
+            case ':':
+              data.strApt = append(data.strApt, "-", part);
+              break;
+              
+            case '@':
+              data.strPlace = append(data.strPlace, " - ", part);
+              break;
+            
+            default:
+              data.strSupp = append(data.strSupp, "\n", part);
+            }
+          }
+        }
+        iSt = iEnd+1;
+      } while (iSt < field.length());
     }
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " PLACE";
+      return super.getFieldNames() + " PLACE INFO?";
     }
   }
   
