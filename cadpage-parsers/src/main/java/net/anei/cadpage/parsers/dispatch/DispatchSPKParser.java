@@ -324,12 +324,14 @@ public class DispatchSPKParser extends HtmlProgramParser {
   
   private static final Pattern TIMES_PTN = Pattern.compile("Call (.*?) Time: +(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final Pattern INFO_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final Pattern INFO_KEYWORD_PTN = Pattern.compile("(Callback|Caller Name|Problem|Responding Units)(?:: *(.*))?");
   private class BaseInfoField extends InfoField {
     
     boolean unitTag = false;
     String unit = null;
     List<String> statusList = null;
     boolean statusLock = false;
+    String infoKeyword = null;
     
     @Override
     public boolean canFail() {
@@ -350,6 +352,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
       if (field.startsWith("<|") && field.endsWith("|>")) {
         if (field.equals("<|/table|>") && infoType != InfoType.UNIT_INFO2) {
           infoType = InfoType.REMARKS;
+          infoKeyword = null;
           colNdx = -1;
         }
         else if (field.equals("<|tr|>")) {
@@ -392,6 +395,9 @@ public class DispatchSPKParser extends HtmlProgramParser {
             statusList = null;
             break;
             
+          case REMARKS:
+            infoKeyword = null;
+            
           default:
           }
         }
@@ -418,18 +424,20 @@ public class DispatchSPKParser extends HtmlProgramParser {
         
       case REMARKS:
         if (INFO_TIME_PTN.matcher(field).matches()) return;
-        if (field.startsWith("Responding Units:")) {
-          for (String unit : field.substring(17).split(",")) {
-            addUnit(unit.trim(), data);
+        match = INFO_KEYWORD_PTN.matcher(field);
+        if (match.matches()) {
+          String keyword = match.group(1);
+          field = match.group(2);
+          if (field != null) {
+            parseInfoField(keyword, field, data);
+          } else {
+            infoKeyword = keyword;
           }
-        } else if (field.startsWith("Caller Name:")) {
-          data.strName = cleanWirelessCarrier(field.substring(12).trim());
-        } else if (field.startsWith("Problem:")) {
-          field = field.substring(8).trim();
-          if (data.strCall.equals("PRO QA IN PROGESS")) data.strCall = field;
-          else data.strCall = append(data.strCall, " - ", field);
-        } else if (field.startsWith("Callback:")) {
-          data.strPhone = field.substring(9).trim();
+        }
+        else if (infoKeyword != null) {
+          parseInfoField(infoKeyword, field, data);
+          infoKeyword = null;
+          return;
         } else if (!field.equals("Number of patients: 1")) {
           super.parse(field, data);
         }
@@ -498,6 +506,32 @@ public class DispatchSPKParser extends HtmlProgramParser {
             }
           }
         }
+      }
+    }
+    
+    private void parseInfoField(String keyword, String field, Data data) {
+      switch (keyword) {
+      case "Callback":
+        data.strPhone = field;
+        break;
+        
+      case "Caller Name":
+        data.strName = cleanWirelessCarrier(field);
+        break;
+        
+      case "Problem":
+        if (data.strCall.equals("PRO QA IN PROGESS")) data.strCall = field;
+        else data.strCall = append(data.strCall, " - ", field);
+        break;
+        
+      case "Responding Units":
+        for (String unit : field.split(",")) {
+          addUnit(unit.trim(), data);
+        }
+        break;
+        
+        default:
+          throw new RuntimeException("unexpected keyword:" + keyword);
       }
     }
     
