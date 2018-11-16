@@ -31,27 +31,29 @@ public class DispatchSPKParser extends HtmlProgramParser {
     super(cityCodes, defCity, defState,
          "CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+? INFO/N<+?", 
          "table|tr");
-    FIELD_MAP.put("Location", getField("ADDRCITY"));
-    FIELD_MAP.put("Intersection", getField("SKIP"));
-    FIELD_MAP.put("Zip Code", getField("ZIP"));
-    FIELD_MAP.put("Community", getField("CITY"));
-    FIELD_MAP.put("Location Information", getField("PLACE"));
-    FIELD_MAP.put("Location and POI Information", getField("PLACE"));
-    FIELD_MAP.put("Incident Number", getField("ID"));
-    FIELD_MAP.put("L/L", getField("GPS"));
-    FIELD_MAP.put("Cross Street", getField("X"));
+    FIELD_MAP.put("Alias", getField("PLACE"));
     FIELD_MAP.put("Apartment", getField("APT"));
     FIELD_MAP.put("Apt", getField("APT"));
-    FIELD_MAP.put("Building", getField("BLDG"));
-    FIELD_MAP.put("Bldg", getField("BLDG"));
-    FIELD_MAP.put("Caller information", getField("EMPTY"));
-    FIELD_MAP.put("Caller Source", getField("SKIP"));
-    FIELD_MAP.put("Caller Phone", getField("PHONE"));
-    FIELD_MAP.put("Caller Name",  getField("NAME"));
-    FIELD_MAP.put("Caller Location", getField("CALLER_LOC"));
-    FIELD_MAP.put("Created By", getField("SKIP"));
-    FIELD_MAP.put("Responding Units", getField("UNIT"));
     FIELD_MAP.put("Areas", getField("MAP"));
+    FIELD_MAP.put("Bldg", getField("BLDG"));
+    FIELD_MAP.put("Building", getField("BLDG"));
+    FIELD_MAP.put("Caller information", getField("EMPTY"));
+    FIELD_MAP.put("Caller Location", getField("CALLER_LOC"));
+    FIELD_MAP.put("Caller Name",  getField("NAME"));
+    FIELD_MAP.put("Caller Phone", getField("PHONE"));
+    FIELD_MAP.put("Caller Source", getField("SKIP"));
+    FIELD_MAP.put("Community", getField("CITY"));
+    FIELD_MAP.put("Created By", getField("SKIP"));
+    FIELD_MAP.put("Cross Street", getField("X"));
+    FIELD_MAP.put("Incident Disposition:", getField("SKIP"));
+    FIELD_MAP.put("Incident Number", getField("ID"));
+    FIELD_MAP.put("Intersection", getField("SKIP"));
+    FIELD_MAP.put("L/L", getField("GPS"));
+    FIELD_MAP.put("Location and POI Information", getField("PLACE"));
+    FIELD_MAP.put("Location Information", getField("PLACE"));
+    FIELD_MAP.put("Location", getField("ADDRCITY"));
+    FIELD_MAP.put("Responding Units", getField("UNIT"));
+    FIELD_MAP.put("Zip Code", getField("ZIP"));
   }
 
   private String callerLocField;
@@ -182,7 +184,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
    */
   private class BaseDataField extends Field {
     
-    Field procFld;
+    private Field procFld;
+    private Field prevFld;
     
     @Override
     public boolean canFail() {
@@ -221,8 +224,10 @@ public class DispatchSPKParser extends HtmlProgramParser {
       if (tmpFld != null) procFld = tmpFld;
       
       // If we have a field processor, invoke it to process this field
-      if (procFld != null) {
+      if (procFld != null && field.length() > 0) {
         procFld.parse(field, data);
+        prevFld = procFld;
+        procFld = null;
       }
     }
 
@@ -234,7 +239,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     
     @Override
     public Field getProcField() {
-      return procFld;
+      return prevFld;
     }
   }
   
@@ -325,6 +330,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private static final Pattern TIMES_PTN = Pattern.compile("Call (.*?) Time: +(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final Pattern INFO_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final Pattern INFO_KEYWORD_PTN = Pattern.compile("(Callback|Caller Name|Problem|Responding Units)(?:: *(.*))?");
+  private static final Pattern CALL_STATUS_TIME_PTN = Pattern.compile("Call [A-Za-z ]+ Time");
   private class BaseInfoField extends InfoField {
     
     boolean unitTag = false;
@@ -370,6 +376,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
         infoType = tmp;
         if (infoType == InfoType.UNIT_INFO && !field.endsWith(":")) infoType = InfoType.UNIT_INFO2;
         if (infoType != null) {
+          statusList = null;
           switch (infoType) {
           case CAD_TIMES:
             if (times == null) times = field;
@@ -392,7 +399,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
             colNdx = -1;
             unitTag = false;
             unit = null;
-            statusList = null;
             break;
             
           case REMARKS:
@@ -408,23 +414,43 @@ public class DispatchSPKParser extends HtmlProgramParser {
       
       switch (infoType) {
       case CAD_TIMES:
-        Matcher match = TIMES_PTN.matcher(field);
-        if (match.matches()) {
-          String type = match.group(1);
-          if (!dispatchTime && type.equalsIgnoreCase("Dispatched")) {
-            dispatchTime = true;
-            data.strDate = match.group(2);
-            data.strTime = convertTime(match.group(3));
-          } else if (type.equals("On Scene") ||
-                     type.equals("Closed") ||
-                     type.equalsIgnoreCase("Available")) data.msgType = MsgType.RUN_REPORT;  
+        if (colNdx == 1 && CALL_STATUS_TIME_PTN.matcher(field).matches()) {
+          statusList = new ArrayList<String>();
+          statusLock = false;
         }
-        times = times + '\n' + field;
+        
+        if (statusList != null) {
+          if (!statusLock) {
+            statusList.add(field);
+          } else if (INFO_TIME_PTN.matcher(field).matches()) {
+            if (colNdx <= statusList.size()) {
+              String status = statusList.get(colNdx-1);
+              times = append(times, "\n", status + ": " + field);
+              if (status.equals("Call Closed Time")) data.msgType = MsgType.RUN_REPORT;
+              if (status.equals("Call Reopened Time")) data.msgType = MsgType.PAGE;
+            }
+          }
+        }
+  
+        else {
+          Matcher match = TIMES_PTN.matcher(field);
+          if (match.matches()) {
+            String type = match.group(1);
+            if (!dispatchTime && type.equalsIgnoreCase("Dispatched")) {
+              dispatchTime = true;
+              data.strDate = match.group(2);
+              data.strTime = convertTime(match.group(3));
+            } else if (type.equals("On Scene") ||
+                       type.equals("Closed") ||
+                       type.equalsIgnoreCase("Available")) data.msgType = MsgType.RUN_REPORT;  
+          }
+          times = times + '\n' + field;
+        }
         return;
         
       case REMARKS:
         if (INFO_TIME_PTN.matcher(field).matches()) return;
-        match = INFO_KEYWORD_PTN.matcher(field);
+        Matcher match = INFO_KEYWORD_PTN.matcher(field);
         if (match.matches()) {
           String keyword = match.group(1);
           field = match.group(2);
