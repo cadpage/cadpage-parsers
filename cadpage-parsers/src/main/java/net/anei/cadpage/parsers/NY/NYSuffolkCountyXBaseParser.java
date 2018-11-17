@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class NYSuffolkCountyXBaseParser extends FieldProgramParser {
   
-  private static final Pattern DELIM = Pattern.compile("\\*\\* |\n+\\*\\*|\n");
+  private static final Pattern DELIM = Pattern.compile("\\*\\* |\n+ *\\*\\*|\n");
   
     public NYSuffolkCountyXBaseParser(String defCity, String defState, String program) {
       super(defCity, defState, program);
