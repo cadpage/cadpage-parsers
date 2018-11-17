@@ -27,7 +27,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@TollandCounty911.org,@TollandCounty911.com,messaging@iamresponding.com";
+    return "@TollandCounty911.org,@TollandCounty911.com,messaging@iamresponding.com,777";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
@@ -64,6 +64,9 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     // Rule out variant of CTTollandCountyB
     if (BAD_PTN.matcher(body).matches()) return false;
     
+    int pt = body.indexOf("\nText STOP");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     body = body.replace('\n', ' ');
     
     // Check for variant 1 format
@@ -84,7 +87,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
         data.strUnit = append(cvtUnitCodes(match.group(2).trim()), ",", data.strUnit);
       }
     
-      int pt = body.indexOf(',');
+      pt = body.indexOf(',');
       if (pt >= 0) {
         parseAddress(body.substring(0,pt).trim(), data);
         body = body.substring(pt+1).trim();
@@ -136,7 +139,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       
       // Address always has a slash, which the address parser turned to an ampersand
       // What is in front of that becomes the address
-      int pt = sAddr.indexOf('/');
+      pt = sAddr.indexOf('/');
       if (pt >= 0) {
         
         // Use smart address parser to extract trailing apt
