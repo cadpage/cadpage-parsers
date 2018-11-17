@@ -45,7 +45,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Community", getField("CITY"));
     FIELD_MAP.put("Created By", getField("SKIP"));
     FIELD_MAP.put("Cross Street", getField("X"));
-    FIELD_MAP.put("Incident Disposition:", getField("SKIP"));
+    FIELD_MAP.put("Incident Creation Date",  getField("SKIP"));
+    FIELD_MAP.put("Incident Disposition", getField("SKIP"));
     FIELD_MAP.put("Incident Number", getField("ID"));
     FIELD_MAP.put("Intersection", getField("SKIP"));
     FIELD_MAP.put("L/L", getField("GPS"));
@@ -227,7 +228,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
       if (procFld != null && field.length() > 0) {
         procFld.parse(field, data);
         prevFld = procFld;
-        procFld = null;
+        if (!(procFld instanceof CrossField)) procFld = null;
       }
     }
 
