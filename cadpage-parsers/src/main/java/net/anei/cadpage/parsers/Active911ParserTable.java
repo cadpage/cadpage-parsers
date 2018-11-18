@@ -768,7 +768,7 @@ public class Active911ParserTable {
       "US/MO/JeffersonCity",              "MOJeffersonCity",
       "US/MO/JeffersonCounty",            "MOJeffersonCounty",
       "US/MO/Kirkwood",                   "MOStLouisCountyG",
-      "US/MO/LincolnCounty",              "MOLincolnCounty",
+      "US/MO/LincolnCounty",              "MOLincolnCounty,MOStCharlesCounty",
       "US/MO/LouisianaPD",                "MOPikeCountyA",
       "US/MO/MaconCounty",                "MOMaconCounty",
       "US/MO/MadisonCounty",              "MOMadisonCounty",

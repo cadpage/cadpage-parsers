@@ -32,7 +32,7 @@ public class NJSomersetCountyAParser extends MsgParser {
   public boolean parseMsg(String body, Data data) {
 
     Matcher match = MARKER.matcher(body);
-    if (!match.find()) return false;
+    if (!match.lookingAt()) return false;
     data.strSource = getOptGroup(match.group(1));
     data.strCallId = match.group(2);
     data.strDate = match.group(3);

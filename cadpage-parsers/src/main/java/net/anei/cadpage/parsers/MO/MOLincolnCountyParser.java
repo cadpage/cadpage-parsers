@@ -27,7 +27,7 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "lincolncounty911@LC911Dispatch.org,messaging@iamresponding.com";
+    return "lincolncounty911@LC911Dispatch.org,lincolncounty911@lcsomo.com,messaging@iamresponding.com,EnterpolAlerts@PikeCountySO.or";
   }
   
   private static final Pattern ELSBERRY_PTN = Pattern.compile("(NEW .*)(?: - |, )(Elsberry).?");
@@ -35,6 +35,8 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    subject = stripFieldStart(subject, "[txtinfo]");
     
     // Elsberry Fire has a slight variant on one of the unusual alternate formats
     Matcher match = ELSBERRY_PTN.matcher(body);
@@ -83,6 +85,8 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "911 HANG UP/ACCIDENTAL",
       "AMBULANCE TRANSFER",
       "ABDOMINAL PAIN/PROBLEMS",
+      "ADMIN/REPO/EXTRA PATROL/CIVIL",
+      "AIRCRAFT EMERGENCY",
       "ALARM",
       "ALARM - FIRE & DETECTORS",
       "ALARM - RESIDENTIAL",
@@ -93,10 +97,11 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "ASSIST - CITIZEN",
       "ASSIST - OTHER AGENCY",
       "BREATHING PROBLEMS",
+      "C&I DRIVER",
       "CARDIAC OF RESPIRATORY ARREST",
       "CHECK WELL BEING",
       "CHEST PAIN (NON-TRAUMATIC)",
-      "C&I DRIVER",
+      "CHOKING",
       "CITIZEN ASSIST/SERVICE CALL",
       "CONTROL BURN",
       "CONTROL BURN NOTICE",
@@ -107,16 +112,23 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "EXTRICATION/ENTRAPPED",
       "FALLS",
       "FIRE",
+      "FOLLOW UP",
+      "FUEL SPILL",
       "GAS LEAK/GAS ODOR",
       "HEART PROBLEMS/A.I.C.D.",
       "HEMORRHAGE/LACERATION",
       "INFORMATION",
+      "INTERFACILITY EVAL/TRANSFER",
       "JUVENILE CALL",
       "HAZARD - CONDITIONS",
       "HAZMAT",
       "MEDICAL - AID",
+      "MISSING/RUNAWAY/FOUND PERSON",
       "MISSING PERSON",
       "MOTOR VEHICLE ACCIDENT REPORT",
+      "MOTOR VEHICLE COLLISION",
+      "MOTOR VEHICLE COLLISION (LAW)",
+      "MOTOR VEHICLE COLLISION (MED)",
       "MOTOR VEHICLE SLIDE OFF",
       "MOTOR VEHICLE VS. DEER",
       "MUTUAL AID/ASSIST OUTSIDE AGENCY",
@@ -129,22 +141,29 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "OVER DOSE",
       "OVERDOSE/POISONING (INGESTION)",
       "PSYCHIATRIC/ABNORMAL BEHAVIOR",
+      "ROAD CLOSED",
       "SICK PERSON",
       "SMOKE INVESTIGATION (OUTSIDE)",
       "SPECIAL ASSIGNMENT",
       "SPECIAL EVENTS",
       "STROKE",
       "STRUCTURE FIRE",
+      "SUICIDAL PERSON/ATT. SUICIDE",
       "SUICIDE",
       "SUSPICIOUS ACTIVITY",
+      "TEST (FIRE) TEST CALL*******",
+      "TEST (FIRE) TEST TONES******",
       "TEST LINCOLN CO 911",
+      "THEFT - EARLIER",
       "THREAT SUICIDE",
-      "TRAFFIC HAZARD",
       "TRAFFIC/TRANSPORT ACCIDENTS",
+      "TRAFFIC HAZARD",
+      "TRAFFIC VIOL/HAZARD/ABANDONED",
       "TRAINING",
       "TRAUMATIC INJURIES (SPECIFIC)",
       "TRESPASSING",
       "UNCONSCIOUS/FAINTING (NEAR)",
+      "UNKNOWN (3RD PARTY)",
       "UNKNOWN PROBLEMS (MAN DOWN)",
       "UNKNOWN TROUBLE",
       "UTILITY OUTAGE OR PROBLEM",
