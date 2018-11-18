@@ -19,27 +19,25 @@ public class OHWayneCountyEParser extends MsgParser {
     return "noreply@zuercherportal.com";
   }
   
-  private static final Pattern DATE_TIME_MARK_PTN = Pattern.compile(" +(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) - +");
+  private static final Pattern DATE_TIME_MARK_PTN = Pattern.compile(" +(?:(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) - +|None\\b *)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile(" +\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d +");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2}) +(\\d{5})");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() == 0) return false;
     data.strCall = subject;
   
     String addr;
     Matcher match = DATE_TIME_MARK_PTN.matcher(body);
-    if (match.find()) {
-      addr = body.substring(0, match.start());
-      data.strDate = match.group(1);
+    if (!match.find()) return false;
+    addr = body.substring(0, match.start());
+    String date = match.group(1);
+    if (date != null) {
+      data.strDate = date;
       data.strTime = match.group(2);
-      data.strSupp = DATE_TIME_PTN.matcher(body.substring(match.end())).replaceAll("\n");
-    } else {
-      if (!body.endsWith(" None")) return false;
-      addr = body.substring(0, body.length()-5).trim();
     }
+    data.strSupp = DATE_TIME_PTN.matcher(body.substring(match.end())).replaceAll("\n");
     
     Parser p = new Parser(addr);
     String city = p.getLastOptional(',');
@@ -54,7 +52,7 @@ public class OHWayneCountyEParser extends MsgParser {
     data.strCity = city;
     
     parseAddress(p.get(), data);
-    return true;
+    return (data.strCall.length() > 0 || data.strCity.length() > 0);
   }
   
 
