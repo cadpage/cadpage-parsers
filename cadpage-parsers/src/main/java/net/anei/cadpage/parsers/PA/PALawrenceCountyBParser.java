@@ -11,7 +11,7 @@ public class PALawrenceCountyBParser extends DispatchH03Parser {
   
   @Override
   public String getFilter() {
-    return "37114.37C@leoc.net,37114.37C@RCAD911.com";
+    return "C@leoc.net,@RCAD911.com";
   }
 
   @Override
