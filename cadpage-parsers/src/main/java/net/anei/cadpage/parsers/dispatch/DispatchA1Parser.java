@@ -24,7 +24,7 @@ public class DispatchA1Parser extends FieldProgramParser {
   public DispatchA1Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
            "( CANCEL_INCIDENT:ID! LOC:ADDR/S! UNITS:UNIT! CALL! INFO/N+ " +
-           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X INCIDENT:ID? COM:INFO INFO+? CT:INFO INFO+? UNITS:UNIT INCIDENT:ID DATE/TIME:DATETIME RPT_#:EMPTY ID )");
+           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X INCIDENT:ID? COM:INFO INFO+? CT:INFO INFO+? UNITS:UNIT INCIDENT:ID UNITS:UNIT DATE/TIME:DATETIME http:GPS RPT_#:EMPTY ID )");
   }
   
   @Override
@@ -34,6 +34,7 @@ public class DispatchA1Parser extends FieldProgramParser {
       data.strCall = subject.substring(6).trim();
       if (data.strCall.length() == 0) data.strCall = "ALERT";
       body = body.replace(", RUN CARD:", "\nRUN CARD:");
+      body = body.replaceAll("https:", "http:");
       return parseFields(body.split("\n"), data);
     }
     
@@ -53,6 +54,7 @@ public class DispatchA1Parser extends FieldProgramParser {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("ID")) return new IdField("[E|F]=(.*)");
     return super.getField(name);
   }
@@ -117,26 +119,27 @@ public class DispatchA1Parser extends FieldProgramParser {
     }
   }
   
-  // This should be the address field.  But check to see if the place field
-  // in front of it makes a better address
-  private class MyAddressField extends AddressField {
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (data.strPlace.length() > 0) {
-        int chk1 = checkAddress(data.strPlace);
-        if (chk1 > STATUS_MARGINAL && chk1 > checkAddress(field)) {
-          String tmp = data.strPlace;
-          data.strPlace = "";
-          super.parse(tmp, data);
-          return false;
-        }
-      }
-      super.parse(field, data);
-      return true;
-    }
-  }
+//  // This should be the address field.  But check to see if the place field
+//  // in front of it makes a better address
+//  private class MyAddressField extends AddressField {
+//    @Override
+//    public boolean checkParse(String field, Data data) {
+//      if (data.strPlace.length() > 0) {
+//        int chk1 = checkAddress(data.strPlace);
+//        if (chk1 > STATUS_MARGINAL && chk1 > checkAddress(field)) {
+//          String tmp = data.strPlace;
+//          data.strPlace = "";
+//          super.parse(tmp, data);
+//          return false;
+//        }
+//      }
+//      super.parse(field, data);
+//      return true;
+//    }
+//  }
   
-  private static final Pattern APT_PATTERN = Pattern.compile("(?:APT|ROOM|RM|STE(?![A-Z]))[-:]? *(.*)|(LOT *.*|.* (?:APT|ROOM|RM|STE(?![A-Z])|bHALLWAY)\\b.*|\\d+[A-Z]?|[A-Z])");
+  private static final Pattern APT_PATTERN = Pattern.compile("(?:APT|ROOM|RM|STE(?![A-Z])|SUITE?|UNIT)[-:]? *(.*)|(LOT *.*|.* (?:APT|ROOM|RM|STE(?![A-Z])|HALLWAY)\\b.*|\\d+[A-Z]?|[A-Z])");
+  private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
   private class MyAptField extends AptField {
 
     @Override
@@ -162,8 +165,12 @@ public class DispatchA1Parser extends FieldProgramParser {
           break;
         }
         
+        // Check next field.  if it looks like a zip code, this field must be a city, not an apt
+        String nextFld = getRelativeField(+1);
+        if (ZIP_PTN.matcher(nextFld).matches()) return false;
+        
         // If next field does not start with BTWN, it must be a city and we must be an apt
-        if (!getRelativeField(+1).startsWith("BTWN:")) break;
+        if (!nextFld.startsWith("BTWN:")) break;
 
         // Otherwise see if this field looks like a city
         if (checkCityField(field)) return false;
@@ -239,5 +246,16 @@ public class DispatchA1Parser extends FieldProgramParser {
   @Override
   public String getProgram() {
     return "CALL " + super.getProgram();
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("//maps\\.google\\.com.*?q=loc:([-+]?\\d{2,3}\\.\\d{6,})\\+([-+]?\\d{2,3}\\.\\d{6,})");
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (match.matches()) {
+        super.parse(match.group(1)+','+match.group(2), data);
+      }
+    }
   }
 }

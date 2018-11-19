@@ -12,4 +12,9 @@ public class OHHuronCountyParser extends DispatchA1Parser {
   public String getFilter() {
     return "@alertsmtp.huroncountyema.org";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 }

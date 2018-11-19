@@ -33,15 +33,6 @@ public class OHWayneCountyAParser extends SmartAddressParser {
         break;
       }
       
-      // Anything starting with (Dispatch Message) should go to the B parser
-      if (subject.equals("Dispatch Message")) return false;
-      
-      // Anything starting with Dispatch: should go to the C parser
-      if (body.startsWith("Dispatch:")) return false;
-      
-      // Anything starting with CALL: should go to the D parser
-      if (body.contains("CALL:")) return false;
-      
       // We'll take it as long as caller identified this as a dispatch msg :(
       if (isPositiveId()) break; 
       return false;
