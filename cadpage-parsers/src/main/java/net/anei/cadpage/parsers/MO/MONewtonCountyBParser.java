@@ -1,8 +1,6 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
@@ -12,7 +10,16 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
   public MONewtonCountyBParser() {
     super(CITY_CODES, "NEWTON COUNTY", "MO", 
           "( CANCEL ADDR CITY! " +
-          "| FYI CALL ADDR CITY APT! INFO/N+ )");
+          "| FYI ( ADDR/Z CITY APT? X+? ( GPS1 GPS2 | ) CALL! " +
+                "| CALL PLACE ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +
+                "| CALL ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +
+                "| ADDR CITY? APT? X+? ( GPS1 GPS2 | ) CALL! " +
+                "| CALL PLACE? ADDR! CITY X+?  ( GPS1 GPS2 | ) " + 
+                ") INFO/N+ " + 
+          ")");
+    
+    setupCities("NEWTON COUNTY");
+    setupCityValues(CITY_CODES);
     
   }
   
@@ -24,21 +31,24 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
+    body = body.replace("=\n", " ");
     body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("APT")) return new AptField("(?:RM|ROOM|APT|LOT) *(.*)", true);
+    if (name.equals("GPS1")) return new GPSField(1, "[-+]?\\d{2,3}\\.\\d*");
     return super.getField(name);
   }
   
-  private static final Pattern APT_PTN = Pattern.compile("(?:RM|ROOM|APT|LOT) *(.*)");
-  private class MyAptField extends AptField {
+  private class MyPlaceField extends PlaceField {
+    @Override
     public void parse(String field, Data data) {
-      Matcher match = APT_PTN.matcher(field);
-      if (match.matches()) field = match.group(1);
+      // if Same as following address field, disregard
+      if (field.equals(getRelativeField(+1))) return;
       super.parse(field, data);
     }
   }
