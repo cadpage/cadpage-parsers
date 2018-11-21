@@ -570,6 +570,7 @@ public class ParserList {
               ,"KYClarkCounty"                  ,"Clark County, KY"
               ,"KYClayCounty"                   ,"Clay County, KY"
               ,"KYDaviessCounty"                ,"Daviess County, KY"
+              ,"KYEdmonsonCounty"               ,"Edmonson County, KY"
               ,"KYErlangerDispatch"             ,"Erlanger Dispatch, KY"
               ,"KYFloydCounty"                  ,"Floyd County, KY"
               ,"KYFortKnox"                     ,"Fort Knox, KY"
