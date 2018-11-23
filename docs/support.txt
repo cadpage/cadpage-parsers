@@ -1,25 +1,11 @@
 **************************************************************************
-* No email address & Android 6.0 & GET_ACCOUNTS permission denied
+* Permission crash processing MMS alert
 **************************************************************************
+Darn, this is turning out to be a difficult problem to address.  The last release does have logic to correct it, but it does not run until you manually launch Cadpage.   Until you do that, it will still crash when an MMS message is processed.
 
-You presumably do have a configured email address, but you have not
-granted Cadpage permission to access your account information.  Without
-that access, Cadpage does not know who you are and can not confirm
-whether or not you have a free subscription.
+So, you should be able to fix things by manually launching the Cadpage app.  It should tell you that you need to grant Cadpage permission to access SMS messages.  Once you grant that, everything should be OK.
 
-Cadpage needs the GET_ACCOUNTS permission to process your free
-subscription request.  It would have prompted you to grant this
-permission the first time you tried to send us a support email or
-recalculate your payment status.  But if you declined that request, and
-checked the "Never ask again" box, you will never again be prompted to
-grant be permission.  If this is the case, the only way to fix things is
-to open the main Android settings and select
-Apps > Cadpage > Permissions
-then enable the "Contact" permission.
-
-Then, open Cadpage Settings and select Payment Status > Recalculate Payment Status
-
-Good luck,
+Sorry for the inconvenience,
 -Ken
 
 **************************************************************************

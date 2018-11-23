@@ -75,13 +75,4 @@ public class CAHumboldtCountyParser extends MsgParser {
     }
     return true;
   }
-  
-  @Override
-  public String adjustMapCity(String city) {
-    return convertCodes(city, MAP_CITY_TABLE);
-  }
-  
-  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "KNEELAND",   "BAYSIDE"
-  }); 
 }
