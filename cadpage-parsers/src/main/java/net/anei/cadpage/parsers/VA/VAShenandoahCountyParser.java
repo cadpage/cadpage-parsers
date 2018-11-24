@@ -3,18 +3,14 @@ package net.anei.cadpage.parsers.VA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
 
-public class VAShenandoahCountyParser extends SmartAddressParser {
-  
-  private static final Pattern GPS_PTN = Pattern.compile(" *(?:(3[89]\\.\\d{4,} +-78\\.\\d{4,})|-361 +-361)\\b *");
+public class VAShenandoahCountyParser extends HtmlProgramParser {
   
   public VAShenandoahCountyParser() {
-    super(CITY_LIST, "SHENANDOAH COUNTY", "VA");
-    setupCallList(CALL_LIST);
-    setFieldList("CALL PLACE ADDR APT GPS CITY UNIT X");
+    super("SHENANDOAH COUNTY", "VA", 
+          "DATETIME CALL ADDRCITY! Cross_Street:X! GPS UNIT! END");
   }
   
   @Override
@@ -26,100 +22,52 @@ public class VAShenandoahCountyParser extends SmartAddressParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch Information")) return false;
-    Matcher match = GPS_PTN.matcher(body);
-    if (!match.find()) return false;
-    
-    String addr = body.substring(0,match.start());
-    String gps = match.group(1);
-    String extra = body.substring(match.end());
-    
-    if (gps != null) setGPSLoc(gps, data);
-    parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_FALLBACK_ADDR | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
-    
-    // Unit names like CO47 look like county roads, so we will tell the address parser that 
-    // the city may be followed by cross streets
-    parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY | FLAG_CROSS_FOLLOWS, extra, data);
-    if (data.strCity.equalsIgnoreCase("COUNTY")) data.strCity = "";
-    
-    extra = getLeft();
-    if (!isMBlankLeft()) {
-      Parser p = new Parser(extra);
-      data.strUnit = p.get("  ");
-      extra = p.get();
-    }
-    if (!extra.equals("No Cross Streets Found")) data.strCross = extra;
-    return true;
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!subject.startsWith("Automatic R&R Notification:")) return false;
+    return super.parseHtmlMsg(subject, body, data);
   }
   
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "Altered Mental Status",
-      "ALTERED MENTAL STATUS",
-      "Cardiac Arrest",
-      "Cardiac Emergency",
-      "CARDIAC EMERGENCY",
-      "Choking",
-      "CHOKING",
-      "Diabetic Emergency",
-      "DIABETIC EMERGENCY",
-      "Difficulty Breathing",
-      "DIFFICULTY BREATHING",
-      "Fire Alarm",
-      "FIRE ALARM",
-      "General Illness",
-      "GENERAL ILLNESS",
-      "Injured Person",
-      "INJURED PERSON",
-      "Medical Alarm",
-      "MEDICAL ALARM",
-      "MVC",
-      "Public Service",
-      "PUBLIC SERVICE",
-      "Suicide Attempt/Completed",
-      "SUICIDE ATTEMPT/COMPLETED",
-      "Vehicle Fire",
-      "VEHICLE FIRE"
-);
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("GPS")) return new MyGPSField();
+    return super.getField(name);
+  }
   
-  private static final String[] CITY_LIST = new String[]{
-
-    // Incorporated towns
-    "STRASBURG",
-    "WOODSTOCK",
-    "NEW MARKET",
-    "MOUNT JACKSON",
-    "EDINBURG",
-    "TOMS BROOK",
-
-    // Unincorporated communities
-    "ALONZAVILLE",
-    "BASYE-BRYCE MOUNTAIN",
-    "BOWMANS CROSSING",
-    "CALVARY",
-    "CARMEL",
-    "CLARY",
-    "COLUMBIA FURNACE",
-    "CONICVILLE",
-    "DETRICK",
-    "FISHERS HILL",
-    "FORESTVILLE",
-    "HAMBURG",
-    "HAWKINSTOWN",
-    "LEBANON CHURCH",
-    "MAURERTOWN",
-    "MOUNT CLIFTON",
-    "MOUNT OLIVE",
-    "ORANDA",
-    "ORKNEY SPRINGS",
-    "QUICKSBURG",
-    "SAINT LUKE",
-    "SAUMSVILLE",
-    "WHEATFIELD",
-    
-    // County names
-    "COUNTY"
-  };
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+    }
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String addr = p.get(',').replace('@', '&');
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
+      data.strCity = p.get(',');
+      if (data.strCity.equalsIgnoreCase("County")) data.strCity = "";
+      String apt = p.get();
+      if (!apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
+    }
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("Lat: *(.*) Long: *(.*)");
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (!match.matches()) abort();
+      setGPSLoc(match.group(1)+','+match.group(2), data);
+    }
+  }
 }

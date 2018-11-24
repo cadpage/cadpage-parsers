@@ -1562,6 +1562,7 @@ public class Active911ParserTable {
       "US/VA/RoanokeCounty",              "VARoanokeCounty",
       "US/VA/RockbridgeCounty",           "VARockbridgeCounty",
       "US/VA/RockinghamCounty",           "VARockinghamCounty",
+      "US/VA/ShenandoahCounty",           "VAShenandoahCounty",
       "US/VA/SouthamptonCounty",          "VASouthamptonCounty",
       "US/VA/SpotsylvaniaCounty",         "VASpotsylvaniaCounty",
       "US/VA/StaffordCounty",             "VAStaffordCounty",
