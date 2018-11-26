@@ -21,7 +21,7 @@ public class NYErieCountyRedAlertParser extends DispatchRedAlertParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@townofhamburgny.com,dispatch@townofhamburg.com,hamburg@rednmxcad.com";
+    return "dispatch@townofhamburgny.com,dispatch@townofhamburg.com,hamburg@rednmxcad.com,777";
   }
   
   @Override
