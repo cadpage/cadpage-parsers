@@ -1,14 +1,4 @@
 **************************************************************************
-* Permission crash processing MMS alert
-**************************************************************************
-Darn, this is turning out to be a difficult problem to address.  The last release does have logic to correct it, but it does not run until you manually launch Cadpage.   Until you do that, it will still crash when an MMS message is processed.
-
-So, you should be able to fix things by manually launching the Cadpage app.  It should tell you that you need to grant Cadpage permission to access SMS messages.  Once you grant that, everything should be OK.
-
-Sorry for the inconvenience,
--Ken
-
-**************************************************************************
 No email address - wanting to pay with check
 
 
