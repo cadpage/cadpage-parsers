@@ -232,7 +232,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       body = "As of 99/99/99 99:" + body; 
     }
     
-    // Another varation on same theme
+    // Another variation on same theme
     else if (subject.length() == 0 && TRUNC_HEADER_PTN2.matcher(body).lookingAt()) {
       body = "As of 99/99/99 99:99:99 " + body.substring(2); 
     }
