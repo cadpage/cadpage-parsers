@@ -34,7 +34,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
   
   private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)(?: (\\d{4}-\\d{8}\\b.*))?");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Sta\\d+)\\b,?)+)"); 
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Lifestar|Sta\\d+)\\b,?)+)"); 
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private static final Pattern MASTER2 = Pattern.compile("(.*?) (\\d\\d:\\d\\d)(?: (.*?))?(?: (\\d{4}-\\d{8}))?");
@@ -289,6 +289,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Appliance Malfunction",
       "AREA OF DOT GARAGE",
       "BLS",
+      "BIOLER ROOM Smoke In Building-Commercial",
       "Bomb Threat",
       "Brush Fire",
       "CARDIAC ARREST",
