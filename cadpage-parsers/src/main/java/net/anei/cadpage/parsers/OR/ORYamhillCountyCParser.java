@@ -1,9 +1,11 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
@@ -24,11 +26,20 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
     return new SplitMsgOptionsCustom();
   }
 
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* CALL TIMES \\* Run #:([A-Z]+-[-0-9]+) +Add: *(.*?) +(Disp:\\d\\d:\\d\\d:\\d\\d.*)");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
   private static final Pattern DELIM = Pattern.compile("\\* ");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Inform CAD Page")) return false;
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      parseAddress(match.group(2), data);
+      data.strSupp = MSPACE_PTN.matcher(match.group(3)).replaceAll("\n");
+      return true;
+    }
     return parseFields(DELIM.split(body), data);
   }
 }

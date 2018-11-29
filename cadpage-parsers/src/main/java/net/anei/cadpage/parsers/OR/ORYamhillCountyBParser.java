@@ -7,25 +7,17 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ORYamhillCountyBParser extends FieldProgramParser {
-  
-  private static final Pattern DELIM = Pattern.compile("\\* ");
 
   public ORYamhillCountyBParser() {
     super(CITY_CODES, "YAMHILL COUNTY", "OR",
-          "ID ADDR APT EMPTY CITY ADDR X MAP EMPTY EMPTY CALL EMPTY EMPTY UNIT! INFO+");
+          "ID ADDR APT EMPTY CITY ADDR X MAP EMPTY CODE CALL EMPTY EMPTY UNIT! INFO/N+");
   }
   
   @Override
   public String getFilter() {
     return "YCOM@ycom.org";
   }
-  
-  @Override
-  public String adjustMapCity(String city) {
-    if (city.equalsIgnoreCase("COVE ORCHARD")) city = "YAMHILL";
-    if (city.equalsIgnoreCase("MCCOY")) city = "RICKREALL";
-    return super.adjustMapCity(city);
-  }
+  private static final Pattern DELIM = Pattern.compile("\\*[ \n]");
 
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -33,7 +25,10 @@ public class ORYamhillCountyBParser extends FieldProgramParser {
     if (!body.startsWith("YCOM:")) return false;
     body = body.substring(5).trim();
     if (body.endsWith("*")) body += ' ';
-    if (super.parseFields(DELIM.split(body), data)) return true;
+    if (super.parseFields(DELIM.split(body), data)) {
+      if (data.strCode.equals(data.strCall)) data.strCode = "";
+      return true;
+    }
     data.parseGeneralAlert(this, body.trim());
     return true;
   }
@@ -44,11 +39,22 @@ public class ORYamhillCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("COVE ORCHARD")) city = "YAMHILL";
+    if (city.equalsIgnoreCase("MCCOY")) city = "RICKREALL";
+    return super.adjustMapCity(city);
+  }
+  
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "YCTY",   "YAMHILL COUNTY",
-        "COVE", "COVE ORCHARD",
+        "CARL",   "CARLTON",
+        "COVE",   "COVE ORCHARD",
+        "YAM",    "YAMHILL",
       "PCTY",   "POLK COUNTY",
-        "MCCY",  "MCCOY"
+        "MCCY",   "MCCOY",
+      "WCTY",   "WASHINGTON COUNTY"
   });
   
 }
