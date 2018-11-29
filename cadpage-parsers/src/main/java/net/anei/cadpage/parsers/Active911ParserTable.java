@@ -657,6 +657,7 @@ public class Active911ParserTable {
       "US/MI/MidlandCounty",              "MIMidlandCounty",
       "US/MI/MontcalmCounty",             "MIMontcalmCounty",
       "US/MI/MontcalmCountyFire",         "MIMontcalmCounty",
+      "US/MI/NewBuffaloTwp",              "MIBerrienCounty",
       "US/MI/OaklandCounty",              "MIOaklandCountyC",
       "US/MI/OaklandCountyURL",           "MIOaklandCountyC",
       "US/MI/OttawaCounty",               "MIOttawaCounty",
