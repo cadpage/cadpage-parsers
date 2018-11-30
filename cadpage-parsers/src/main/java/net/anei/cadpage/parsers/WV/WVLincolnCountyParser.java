@@ -14,6 +14,7 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
     super("LINCOLN 911:", CITY_LIST, "LINCOLN COUNTY", "WV", B2_OPT_CALL_CODE);
     setupMultiWordStreets(
         "A PARK",
+        "BALL PARK",
         "BIG LAUREL",
         "BLUE BIRD",
         "COAL RIVER",
@@ -22,8 +23,10 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
         "HILL VIEW",
         "INDIAN VALLEY",
         "JOSH BRANCH CEMETARY",
+        "LADY BUG",
         "LEES LAKE",
         "LINCOLN PANTHER",
+        "LOW GAP",
         "LOWER MUD RIVER",
         "MARY JANE",
         "MIDWAY SCHOOL",
@@ -35,9 +38,11 @@ public class WVLincolnCountyParser extends DispatchB2Parser {
         "SLASH BR BELLOMY",
         "STONES TRAILER",
         "SUGAR TREE",
+        "TEN MILE",
         "TIMBER WOLF",
         "UPPER MUD RIVER",
         "WEST PARK"
+
     );
     setupCallList(CALL_LIST);
     setupDoctorNames("STEELE");
