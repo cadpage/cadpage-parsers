@@ -14,8 +14,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NJSussexCountyCParser extends FieldProgramParser {
   
   public NJSussexCountyCParser() {
-    super("SUSSEX COUNTY", "NJ",
-           "ID DATETIME ADDR Int/Cross:X? CALL! Notes:INFO? INFO/N+");
+    this("SUSSEX COUNTY", "NJ");
+  }
+  
+  public NJSussexCountyCParser(String defCity, String defState) {
+    super(defCity, defState,
+          "ID DATETIME ADDR Int/Cross:X? CALL! Notes:INFO? INFO/N+");
   }
   
   @Override
