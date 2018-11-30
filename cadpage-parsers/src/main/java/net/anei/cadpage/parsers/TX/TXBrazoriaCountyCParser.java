@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA59Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
 
-public class TXBrazoriaCountyCParser extends DispatchA59Parser {
+public class TXBrazoriaCountyCParser extends DispatchA72Parser {
   
   public TXBrazoriaCountyCParser() {
     super("BRAZORIA COUNTY", "TX");
@@ -10,6 +10,6 @@ public class TXBrazoriaCountyCParser extends DispatchA59Parser {
   
   @Override
   public String getFilter() {
-    return "dispatch@oystercreekpd.com";
+    return "oystercreekpolice@gmail.com";
   }
 }
