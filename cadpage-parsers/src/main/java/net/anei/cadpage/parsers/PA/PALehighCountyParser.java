@@ -12,6 +12,7 @@ public class PALehighCountyParser extends GroupBestParser {
   public PALehighCountyParser() {
     super(new PALehighCountyAParser(),
            new PALehighCountyBParser(),
-           new PALehighCountyCParser());
+           new PALehighCountyCParser(),
+           new PALehighCountyDParser());
   }
 }

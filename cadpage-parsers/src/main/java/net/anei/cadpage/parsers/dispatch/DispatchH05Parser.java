@@ -22,7 +22,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchH05Parser extends HtmlProgramParser {
   
   public DispatchH05Parser(String defCity, String defState, String program) {
-    super(defCity, defState, program);
+    this(defCity, defState, program, null);
+  }
+  
+  public DispatchH05Parser(String defCity, String defState, String program, String userTags) {
+    super(defCity, defState, program, userTags);
   }
   
   private String times;
