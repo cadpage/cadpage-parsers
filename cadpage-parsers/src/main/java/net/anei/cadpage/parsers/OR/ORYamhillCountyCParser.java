@@ -34,6 +34,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
+      setFieldList("ID ADDR APT INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
       parseAddress(match.group(2), data);
