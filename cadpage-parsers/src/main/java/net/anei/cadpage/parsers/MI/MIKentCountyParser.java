@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MI;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,7 @@ public class MIKentCountyParser extends DispatchPremierOneParser {
 
   public MIKentCountyParser() {
     super("KENT COUNTY", "MI");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -33,4 +35,9 @@ public class MIKentCountyParser extends DispatchPremierOneParser {
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "I-96 EB WO DEAN LAKE-GT",      "+43.01519,-85.61512",
+      "I-96 EB WO FULTON",            "+42.96480,-85.58169"
+  });
 }
