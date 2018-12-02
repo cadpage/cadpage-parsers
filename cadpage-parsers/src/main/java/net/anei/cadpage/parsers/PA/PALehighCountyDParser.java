@@ -48,7 +48,6 @@ public class PALehighCountyDParser extends DispatchH05Parser {
     if (name.equals("MARKER")) return new SkipField("LEHIGH COUNTY COMMUNICATIONS / 9-1-1 RIP AND RUN NOTIFICATION", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("X")) return new MyCrossField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("CALL1")) return new MyCall1Field();
     if (name.equals("UNIT")) return new MyUnitField();
@@ -60,14 +59,6 @@ public class PALehighCountyDParser extends DispatchH05Parser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
-      super.parse(field, data);
-    }
-  }
-  
-  private class MyCrossField extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
     }
   }
