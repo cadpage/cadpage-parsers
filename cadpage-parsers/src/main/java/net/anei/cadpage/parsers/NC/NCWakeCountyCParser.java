@@ -7,7 +7,7 @@ public class NCWakeCountyCParser extends FieldProgramParser {
   
   public NCWakeCountyCParser() {
     super("WAKE COUNTY", "NC", 
-          "CALL:CALL! PLACE:PLACE ADDR:ADDR! CITY:CITY! XY:GPS ID:ID! PRI:PRI! DATE:DATE! TIME:TIME UNIT:UNIT! INFO:INFO/N+");
+          "CALL:CALL! PLACE:PLACE ADDR:ADDR! APT:APT CITY:CITY! XY:GPS ID:ID! PRI:PRI! DATE:DATE! TIME:TIME UNIT:UNIT X:X INFO:INFO/N+");
   }
   
   @Override
@@ -25,6 +25,7 @@ public class NCWakeCountyCParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
@@ -33,6 +34,14 @@ public class NCWakeCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '/');
       super.parse(field, data);
     }
   }
