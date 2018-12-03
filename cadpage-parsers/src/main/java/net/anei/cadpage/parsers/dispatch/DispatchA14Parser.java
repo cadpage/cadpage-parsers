@@ -260,7 +260,6 @@ public class DispatchA14Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       String saveCity = data.strCity;
-      data.strAddress = data.strApt = data.strCity = "";
       String place = "";
       int pt = field.indexOf('@');
       if (pt >= 0) {
@@ -271,6 +270,7 @@ public class DispatchA14Parser extends FieldProgramParser {
       
       Matcher match = ADDR_MARK_PTN.matcher(field);
       if (match.find()) {
+        data.strAddress = data.strApt = data.strCity = "";
         super.parse(field.substring(0,match.start()).trim(), data);
         int last = -1;
         boolean cross = false;
@@ -284,7 +284,13 @@ public class DispatchA14Parser extends FieldProgramParser {
         appendField(cross, field.substring(last), data);
       }
       
+      else if (field.startsWith("/")) {
+        if (data.strCity.length() == 0) {
+          data.strCity = convertCodes(field.substring(1).trim(), cityCodes);
+        }
+      }
       else {
+        data.strAddress = data.strApt = data.strCity = "";
         super.parse(field, data);
       }
       

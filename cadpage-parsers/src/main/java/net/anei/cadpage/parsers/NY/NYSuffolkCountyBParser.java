@@ -24,6 +24,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   }
   
   private static final Pattern SRC_PTN = Pattern.compile("([A-Z]{2,5}): *(?:\\(\\1\\) *)?");
+  private static final Pattern SUB_SRC_PTN = Pattern.compile("[A-Z]{2,5}");
   private static final Pattern LETTER_PTN = Pattern.compile("[A-Z]");
   private static final Pattern DIR_SLASH_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
   private static final Pattern DOUBLE_CALL_PTN = Pattern.compile("\\*\\*\\*([\\w/ ]+)\\*\\*\\* +\\*\\*\\*([\\w/ ]+) *\\*\\*\\* +([A-Z]{4}) +");
@@ -31,7 +32,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
   private static final Pattern NK_PTN = Pattern.compile("\\bNK\\b");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
 
     body = stripFieldStart(body, "/ no subject / ");
     
@@ -45,6 +46,8 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
     if (match.lookingAt()) {
       data.strSource = match.group(1);
       body = body.substring(match.end());
+    } else if (SUB_SRC_PTN.matcher(subject).matches()) {
+      data.strSource = subject;
     }
     
     body = DIR_SLASH_BOUND_PTN.matcher(body).replaceAll("$1B");
