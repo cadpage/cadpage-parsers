@@ -11,7 +11,7 @@ public class WVMineralCountyBParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "xdc@mineralcounty911.com,dispatchfire@comcast.net";
+    return "xdc@mineralcounty911.com,dispatchfire@comcast.net,mineraldispatch@gmail.com";
   }
 
   @Override

@@ -26,7 +26,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD|Company +([^ ]+)");
-  private static final Pattern ENROUTE_PTN = Pattern.compile("(\\d\\d:\\d\\d) +([A-Z0-9]+) +(Is Enroute) To: (.*)");
+  private static final Pattern ENROUTE_PTN = Pattern.compile("(\\d\\d:\\d\\d) +([-A-Z0-9]+) +(Is Enroute) To: (.*)");
   private static final Pattern MARKER = Pattern.compile("(\\d\\d:\\d\\d) #(\\d+) +");
   private static final Pattern MASTER2 = Pattern.compile("(\\d\\d?:\\d\\d?:\\d\\d?) +(.*) ([A-Z]{2}\\d{10})");
 
