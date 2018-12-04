@@ -227,7 +227,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   }
   
   private static final String[] ESCAPE_CODES = new String[]{
-    "/", "\\s",
+    "/", " ",
     "(", "\\lp",
     ")", "\\rp",
     "[", "\\lb",
@@ -309,7 +309,9 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Gasoline Spill",
       "Hazardous Materials",
       "Lift Assist",
+      "LPG / Natural Gas Leak Interior",
       "LPG Natural Gas/Propane Leak Exterior",
+      "LPG / Natural Gas Leak Exterior",
       "Machinery Entrapment",
       "Mutual Aid Fire",
       "Natural Gas/Propane Leak",
