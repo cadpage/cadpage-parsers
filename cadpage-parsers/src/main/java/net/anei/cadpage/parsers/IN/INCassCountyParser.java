@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.IN;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
@@ -17,11 +19,14 @@ public class INCassCountyParser extends DispatchA29Parser {
     return "e911.pagegate@co.cass.in.us";
   }
 
+  private static Pattern DIR_OF_PTN = Pattern.compile("\\b([NSEW])/O\\b");
+  
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     data.strSource = subject;
     body = stripFieldStart(body, "e911.pagegate:");
     if (body.startsWith("DISPATCH ")) body = "DISPATCH:" + body.substring(9).trim();
+    body = DIR_OF_PTN.matcher(body).replaceAll("$1O");
     return super.parseMsg(body, data);
   }
   
