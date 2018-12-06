@@ -16,7 +16,9 @@ public class PAElkCountyParser extends FieldProgramParser {
   
   public  PAElkCountyParser() {
     super(CITY_TABLE, "ELK COUNTY", "PA",
-          "Inc_Code:CALL! Address:ADDR! City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME END");
+          "Inc_Code:CALL! Address:ADDRCITY! ( Common_Name:PLACE! Units:UNIT! Cross_Streets:X! " + 
+                                           "| City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME " + 
+                                           ") END");
   }
   
   @Override
