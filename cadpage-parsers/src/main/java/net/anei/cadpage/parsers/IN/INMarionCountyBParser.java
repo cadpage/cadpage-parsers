@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 public class INMarionCountyBParser extends DispatchA52Parser {
   
   public INMarionCountyBParser() {
-    super("MARION COUNTY", "IN");
+    super(null,ZIP_LOOKUP_TABLE, "MARION COUNTY", "IN");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -38,6 +38,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
     if (!match.lookingAt()) return false;
     body = body.substring(match.end());
     if (!super.parseMsg(body, data)) return false;
+    data.strUnit = data.strUnit.replace(", ", ",");
     data.strUnit = UNIT_PFX_PTN.matcher(data.strUnit).replaceAll("");
     return true;
   }
@@ -1610,7 +1611,86 @@ public class INMarionCountyBParser extends DispatchA52Parser {
       "16312 TERMINAL WAY",                   "+39.714466,-86.298459",
       "16315 TERMINAL WAY",                   "+39.714466,-86.298459",
       "17324 TERMINAL WAY",                   "+39.714466,-86.298459"
-     
+  });
+  
+  private static final Properties ZIP_LOOKUP_TABLE =  buildCodeTable(new String[]{
+      "46077", "Zionsville",
+      "46103", "Amo",
+      "46107", " Beech Grove",
+      "46112", "Brownsburg",
+      "46113", "Camby",
+      "46118", "Clayton",
+      "46121", "Coatsville",
+      "46122", "Danville",
+      "46123", "Avon",
+      "46147", "Jamestown",
+      "46149", "Lizton",
+      "46158", "Mooresville",
+      "46165", "North Salem",
+      "46167", "Pittsboro",
+      "46168", "Plainfield",
+      "46180", "Stilesville",
+      "46183", "West Newton",
+      "46201", "Indianapolis",
+      "46202", "Indianapolis",
+      "46203", "Indianapolis",
+      "46204", "Indianapolis",
+      "46205", "Indianapolis",
+      "46206", "Indianapolis",
+      "46207", "Indianapolis",
+      "46208", "Indianapolis",
+      "46209", "Indianapolis",
+      "46211", "Indianapolis",
+      "46214", "Indianapolis",
+      "46216", "Indianapolis",
+      "46217", "Indianapolis",
+      "46218", "Indianapolis",
+      "46219", "Indianapolis",
+      "46220", "Indianapolis",
+      "46221", "Indianapolis",
+      "46222", "Indianapolis",
+      "46223", "Indianapolis",
+      "46224", "Indianapolis",
+      "46225", "Indianapolis",
+      "46226", "Indianapolis",
+      "46227", "Indianapolis",
+      "46228", "Indianapolis",
+      "46229", "Indianapolis",
+      "46230", "Indianapolis",
+      "46231", "Indianapolis",
+      "46234", "Indianapolis",
+      "46235", "Indianapolis",
+      "46236", "Indianapolis",
+      "46237", "Indianapolis",
+      "46239", "Indianapolis",
+      "46240", "Indianapolis",
+      "46241", "Indianapolis",
+      "46242", "Indianapolis",
+      "46244", "Indianapolis",
+      "46247", "Indianapolis",
+      "46249", "Indianapolis",
+      "46250", "Indianapolis",
+      "46251", "Indianapolis",
+      "46253", "Indianapolis",
+      "46254", "Indianapolis",
+      "46255", "Indianapolis",
+      "46256", "Indianapolis",
+      "46259", "Indianapolis",
+      "46260", "Indianapolis",
+      "46262", "Indianapolis",
+      "46266", "Indianapolis",
+      "46268", "Indianapolis",
+      "46274", "Indianapolis",
+      "46275", "Indianapolis",
+      "46277", "Indianapolis",
+      "46278", "Indianapolis",
+      "46282", "Indianapolis",
+      "46283", "Indianapolis",
+      "46285", "Indianapolis",
+      "46291", "Indianapolis",
+      "46295", "Indianapolis",
+      "46296", "Indianapolis",
+      "46298", "Indianapolis"
   });
 
 }

@@ -16,11 +16,18 @@ public class DispatchA52Parser extends FieldProgramParser {
   }
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
-    super(defCity, defState, 
-          "LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
-              "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
-              "| CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP " + 
-              ") END");
+    this(callCodes, null, defCity, defState);
+  }
+
+  public DispatchA52Parser(Properties callCodes, Properties cityCodes, String defCity, String defState) {
+    super(cityCodes, defCity, defState, 
+          "( TYPN:CALL! MODCIR:CODE! AD:PLACE! LOC:ADDR! APT:APT! CRSTR:X! UNS:UNIT! TIME:DATETIME3% INC:ID% ZIP:ZIP% GRIDREF:MAP% " + 
+          "| LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
+                "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
+                "| CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP " +
+                ") " +
+          ") END");
+          
     this.callCodes = callCodes;
   }
   
@@ -45,6 +52,7 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT);
+    if (name.equals("ZIP")) return new MyZipField();
     return super.getField(name);
   }
   
@@ -112,6 +120,14 @@ public class DispatchA52Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (data.strCallId.length() > 0) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyZipField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCity.length() > 0) return;
       super.parse(field, data);
     }
   }
