@@ -67,7 +67,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
   
   private static final Pattern BASE_ADDR_X_PTN = Pattern.compile("([^,/;]+?(?:1/2)?) *(?:\\(([^()]*)\\))?(?: *; *(.*))?");
   private static final Pattern BASE_ADDR_INTERSECT_PTN = Pattern.compile("[^,/()]+/[^,()]*");
-  private static final Pattern ADDR_CITY_APT_ZIP_X_PTN = Pattern.compile("([^,]*), ([^,]*?)(?:, \\d{5})?(?: #(?:APT)? ([^ ]+))?(?: +\\(([^()]*)\\)?)?");
+  private static final Pattern ADDR_CITY_APT_X_ZIP_PTN = Pattern.compile("([^,]*), ([^,]*?)(?:, \\d{5})?(?: #(?:APT)? ([^ ]+))?(?: +\\(([^()]*)\\)?)?(?: +(\\d{5}))?");
   private static final Pattern ADDR_CITY_INTERSECT_PTN = Pattern.compile("([^,]*?), ([^,/]+?)/([^,]+?), ([ A-Z]+)");
 
   private boolean parseCallAddress(boolean parseCall, String field, Data data) {
@@ -116,13 +116,15 @@ public class OHLickingCountyParser extends FieldProgramParser {
     String addr;
     String addr2 = null;
     String apt = null;
-    match = ADDR_CITY_APT_ZIP_X_PTN.matcher(field);
+    match = ADDR_CITY_APT_X_ZIP_PTN.matcher(field);
     if (match.matches()) {
       
       addr = match.group(1).trim();
       data.strCity = match.group(2).trim();
       apt = match.group(3);
       String cross = getOptGroup(match.group(4));
+      String zip = match.group(5);
+      if (data.strCity.length() == 0) data.strCity = zip;
       int pt = cross.indexOf(';');
       if (pt >= 0) {
         data.strPlace = cross.substring(pt+1).trim();
@@ -166,7 +168,12 @@ public class OHLickingCountyParser extends FieldProgramParser {
           }
         }
       }
-      parseAddress(addr, data);
+      StartType st = data.strPlace.length() > 0 ? StartType.START_ADDR : StartType.START_PLACE;
+      parseAddress(st, FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
+      if (data.strAddress.length() == 0) {
+        parseAddress(data.strPlace, data);
+        data.strPlace = "";
+      }
     } else {
       String token = null;
       if (addr.endsWith(")")) {
@@ -418,6 +425,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN-EMS",
+      "ALARM COMMERCIAL / HIGH LIFE-FIRE",
       "ALARM COMMERCIAL FIRE-FIRE",
       "ALARM LIMITED RESOURCE-FIRE",
       "ALARM HIGH LIFE / VALUE-FIRE",
