@@ -11,6 +11,11 @@ public class SCChesterfieldCountyParser extends DispatchSouthernParser {
         DSFLG_UNIT1 | DSFLG_ID | DSFLG_TIME | DSFLG_PROC_EMPTY_FLDS);
   }
 
+  @Override
+  public String getFilter() {
+    return "E911@shtc.net";
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
       //TOWNS

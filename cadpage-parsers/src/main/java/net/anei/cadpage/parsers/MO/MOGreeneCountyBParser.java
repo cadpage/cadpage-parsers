@@ -20,6 +20,7 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "GRN_Alert@springfieldmo.gov:");
+    body = stripFieldStart(body, "GRN_Alert:");
     if (body.startsWith(":")) body = "LOC" + body;
     else if (!body.startsWith("LOC:")) body = "LOC:"+ body;
     return parseMsg(body, data);
@@ -30,11 +31,17 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
     return MAP_FLG_KEEP_STATE_HIGHWAY;
   }
 
+  private static final Pattern HOUSE_NUM_PTN = Pattern.compile("(?:1|\\d{3,5}) +");
   @Override
-  public String adjustMapAddress(String sAddress) {
+  public String adjustMapAddress(String sAddress, boolean cross) {
     sAddress = FARM_ROAD.matcher(sAddress).replaceAll("$1 FARM ROAD $2");
     sAddress = STATE_HWY.matcher(sAddress).replaceAll("$1 STATE HIGHWAY $2");
     sAddress = STATE_HWY_HWY.matcher(sAddress).replaceAll("$1");
+    
+    // Cross streets include a house number that is not useful for this purpose
+    if (cross) {
+      sAddress = HOUSE_NUM_PTN.matcher(sAddress).replaceFirst("");
+    }
     return sAddress;
   }
 

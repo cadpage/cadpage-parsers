@@ -227,7 +227,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   }
   
   private static final String[] ESCAPE_CODES = new String[]{
-    "/", " ",
+    "/", "\\s",
     "(", "\\lp",
     ")", "\\rp",
     "[", "\\lb",

@@ -34,6 +34,7 @@ public class DispatchA52Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
+    if (body.startsWith("LOC:APPROX LOC:")) body = body.substring(11);
     return super.parseMsg(body, data);
   }
   

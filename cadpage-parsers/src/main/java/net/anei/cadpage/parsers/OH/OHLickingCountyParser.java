@@ -68,6 +68,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
   private static final Pattern BASE_ADDR_X_PTN = Pattern.compile("([^,/;]+?(?:1/2)?) *(?:\\(([^()]*)\\))?(?: *; *(.*))?");
   private static final Pattern BASE_ADDR_INTERSECT_PTN = Pattern.compile("[^,/()]+/[^,()]*");
   private static final Pattern ADDR_CITY_APT_X_ZIP_PTN = Pattern.compile("([^,]*), ([^,]*?)(?:, \\d{5})?(?: #(?:APT)? ([^ ]+))?(?: +\\(([^()]*)\\)?)?(?: +(\\d{5}))?");
+  private static final Pattern NOT_LEAD_PLACE_PTN = Pattern.compile("(?:\\d|RAMP|SR\\b).*");
   private static final Pattern ADDR_CITY_INTERSECT_PTN = Pattern.compile("([^,]*?), ([^,/]+?)/([^,]+?), ([ A-Z]+)");
 
   private boolean parseCallAddress(boolean parseCall, String field, Data data) {
@@ -170,9 +171,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
       }
       StartType st = data.strPlace.length() > 0 ? StartType.START_ADDR : StartType.START_PLACE;
       parseAddress(st, FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
-      if (data.strAddress.length() == 0) {
-        parseAddress(data.strPlace, data);
-        data.strPlace = "";
+      if (data.strAddress.length() == 0 || NOT_LEAD_PLACE_PTN.matcher(data.strPlace).matches()) {
+        data.strPlace = data.strAddress = "";
+        parseAddress(addr, data);
       }
     } else {
       String token = null;
