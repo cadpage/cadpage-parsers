@@ -1,45 +1,16 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgParser;
+/*
+McKean County, PA
+ */
 
-public class PAMcKeanCountyParser extends MsgParser {
+
+public class PAMcKeanCountyParser extends GroupBestParser {
   
   public PAMcKeanCountyParser() {
-    super("MCKEAN COUNTY", "PA");
-    setFieldList("UNIT CALL SRC CITY ADDR APT");
+    super(new PAMcKeanCountyAParser(),
+          new PAMcKeanCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "alerts@mckeancounty.ealertgov.com";
-  }
-  
-  private static final Pattern UNIT_PTN = Pattern.compile("[_A-Z0-9]+");
-  private static final Pattern MASTER = Pattern.compile("([ /()A-Z]+) ([A-Z][A-Z0-9]+) \\(\\) Loc:(.*)");
-  
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!UNIT_PTN.matcher(subject).matches()) return false;
-    data.strUnit = subject;
-    
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    data.strCall = match.group(1).trim();
-    data.strSource = match.group(2).trim();
-    parseAddress(match.group(3).trim(), data);
-    
-    String city =  SRC_CITY_TABLE.getProperty(data.strSource);
-    if (city != null) data.strCity = city;
-    return true;
-  }
-  
-  private static final Properties SRC_CITY_TABLE = buildCodeTable(new String[]{
-      "ELDAMB",   "ELDRED",
-      "OTAMB",    "OTTO TWP",
-      "PAAS",     "PORT ALLEGANY"
-  });
 }
