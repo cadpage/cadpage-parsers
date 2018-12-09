@@ -26,8 +26,8 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
     return new SplitMsgOptionsCustom();
   }
 
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* CALL TIMES \\* Run #:([A-Z]+-[-0-9]+) +Add: *(.*?) +(Disp:\\d\\d:\\d\\d:\\d\\d.*)");
-  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* CALL TIMES \\* Run #:([A-Z]+-[-0-9]+) +Add: *(.*?) {3,}(.*)");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern DELIM = Pattern.compile("\\* ");
   
   @Override
