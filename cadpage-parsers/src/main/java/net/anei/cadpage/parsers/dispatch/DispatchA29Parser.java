@@ -203,6 +203,7 @@ public class DispatchA29Parser extends FieldProgramParser {
       data.strPhone = match.group(1);
       field = append(field.substring(0,match.start()).trim(), " ", field.substring(match.end()).trim());
     }
+    field = stripFieldStart(field, "ALIAS=");
     data.strPlace = append(field, " - ", data.strPlace);
   }
   private static final Pattern CALLBK_PTN = Pattern.compile("\\bCALLBK=([-\\d]*)");

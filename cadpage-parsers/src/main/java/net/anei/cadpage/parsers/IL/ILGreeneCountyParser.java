@@ -1,5 +1,9 @@
 package net.anei.cadpage.parsers.IL;
 
+import java.util.Properties;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
 
 public class ILGreeneCountyParser extends DispatchA29Parser {
@@ -12,6 +16,28 @@ public class ILGreeneCountyParser extends DispatchA29Parser {
   public String getFilter() {
     return "DISPATCH@jacksonvilleil.com.com";
   }
+  
+  @Override
+  public boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    data.strCity = convertCodes(data.strCity.toUpperCase(), MISSPELLED_CITY_TABLE);
+    return true;
+  }
+
+  private static final Pattern STATE_PTN = Pattern.compile("\\bSTATE +(?:RTE +)?(\\d+)\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = super.adjustMapAddress(addr);
+    addr = STATE_PTN.matcher(addr).replaceAll("IL $1");
+    return addr;
+  }
+  
+  private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
+      "CAROLLTON",      "CARROLLTON",
+      "CARROLTON",      "CARROLLTON",
+      "HWITE HALL",     "WHITE HALL"
+  });
 
 
   private static final String[] CITY_LIST = new String[]{
@@ -19,6 +45,8 @@ public class ILGreeneCountyParser extends DispatchA29Parser {
   // CITIES
 
       "CARROLLTON",
+      "CAROLLTON",  // Misspelled
+      "CARROLTON",  // Misspelled
       "GREENFIELD",
       "ROODHOUSE",
       "WHITE HALL",
@@ -54,7 +82,17 @@ public class ILGreeneCountyParser extends DispatchA29Parser {
       "RUBICON",
       "WALKERVILLE",
       "WHITE HALL",
+      "HWITE HALL",   // Misspelled
       "WOODVILLE",
-      "WRIGHTS"
+      "WRIGHTS",
+      
+      // Calhoun County
+      "KAMPSVILLE",
+      
+      // Jersey County
+      "JERSEYVILLE",
+      
+      // ?????
+      "ELDRIDGE"
   };
 }

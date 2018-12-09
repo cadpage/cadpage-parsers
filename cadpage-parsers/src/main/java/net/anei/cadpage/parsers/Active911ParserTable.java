@@ -379,6 +379,7 @@ public class Active911ParserTable {
       "US/IL/EdwardsvilleCity",           "ILMadisonCounty",
       "US/IL/FairviewHeights",            "ILStClairCountyB",
       "US/IL/GlenCarbon",                 "ILMadisonCounty",
+      "US/IL/GreeneCounty",               "ILGreeneCounty",
       "US/IL/GurneeFire",                 "ILLakeCountyB",
       "US/IL/HancockCounty",              "ILHancockCounty",
       "US/IL/JacksonCounty",              "ILJacksonCounty",
