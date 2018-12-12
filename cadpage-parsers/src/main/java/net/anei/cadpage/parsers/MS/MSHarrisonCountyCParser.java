@@ -45,7 +45,7 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S3",   "STOPPING VIOLATOR",
       "S4",   "SERVING WARRANT",
       "S4S",  "SERVING PROCESS",
-      "S5",   "CHECKIGN VACANT HOUSE",
+      "S5",   "CHECKING VACANT HOUSE",
       "S6",   "ASSISTING MOTORIST",
       "S7",   "ARMED ROBBERY",
       "S8",   "ARMED ROBBERY IN PROGRESS",

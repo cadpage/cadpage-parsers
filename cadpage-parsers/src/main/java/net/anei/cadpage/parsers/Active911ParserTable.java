@@ -817,6 +817,7 @@ public class Active911ParserTable {
       "US/MS/Biloxi",                     "MSBiloxi",
       "US/MS/CityofHernando",             "MSHernando",
       "US/MS/DesotoCounty",               "MSDeSotoCountyA",
+      "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/PicayunePolice",             "MSPearlRiverCounty",
       "US/MS/Southaven",                  "MSDeSotoCountyB",
