@@ -201,7 +201,8 @@ public class ManageParsers {
         "OKTulsaC",           "OKTulsa",
         "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
         "ZSECTConnect",       "ZSESweden",               // 10/02/2018
-        "COJeffersonCountyB", "COJeffersonCountyD"      // 10/16/2018
+        "COJeffersonCountyB", "COJeffersonCountyD",      // 10/16/2018
+        "WIKenoshaCountyE",   "WIKenoshaCountyD"        // 12/13/2018
   });
 
 }
