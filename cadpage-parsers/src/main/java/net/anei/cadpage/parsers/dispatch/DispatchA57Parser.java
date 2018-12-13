@@ -16,7 +16,7 @@ public class DispatchA57Parser extends FieldProgramParser {
           "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Radio_Channel:CH? Address:ADDRCITY! " + 
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
                 "| City:CITY Common_Name:PLACE Map_Page:MAP? Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH? Narrative:INFO+ ) " +
-          "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID UNIT! INFO/N+ )");
+          "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
   
   private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Map Page:|City:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
@@ -45,7 +45,7 @@ public class DispatchA57Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseDateTimeField extends DateTimeField {
     @Override
@@ -58,7 +58,12 @@ public class DispatchA57Parser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return false;
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
       return true;
     }
     
