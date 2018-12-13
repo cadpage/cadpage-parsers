@@ -14,15 +14,10 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  */
 public class NYOnondagaCountyAParser extends FieldProgramParser {
 
-  private static final Pattern MARKER = Pattern
-      .compile("^(?:(?:(?:I/)?CAD MSG )?([A-Z]+) +)?(\\d\\d:\\d\\d:\\d\\d) +");
-
-  private static final Pattern CITY_EXP_PTN = Pattern
-      .compile("\\b(TMA),[A-Z]\\b");
-
   public NYOnondagaCountyAParser() {
     super(CITY_CODES, "ONONDAGA COUNTY", "NY",
         "ADDR/SXa XTS:X! P:PRI Lev:SKIP X:INFO Disp:UNIT%");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -54,6 +49,12 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       }
     };
   }
+
+  private static final Pattern MARKER = Pattern
+      .compile("^(?:(?:(?:I/)?CAD MSG )?([A-Z]+) +)?(\\d\\d:\\d\\d:\\d\\d) +");
+
+  private static final Pattern CITY_EXP_PTN = Pattern
+      .compile("\\b(TMA),[A-Z]\\b");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -826,6 +827,10 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVPF", "PHOENIX",
       "OVPU", "PULASKI",
       "OVSC", "SANDY CREEK"
+  });
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "STRAWBERRY LN & SALT SPRINGS RD",         "43.027955,-75.954269",
   });
 
 }
