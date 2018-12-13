@@ -19,7 +19,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "911@ci.ravenna.oh.us";
+    return "911@ci.ravenna.oh.us,info@sundance-sys.com";
   }
   
   @Override
@@ -36,12 +36,13 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZERO")) return new SkipField("0?");
     return super.getField(name);
   }
 
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\**(.*)\\**)?\\b([A-Z0-9]{1,5})-(.*)");
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?) +)?\\b([A-Z0-9]{1,7})-(.*)");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
@@ -55,8 +56,9 @@ public class OHPortageCountyAParser extends FieldProgramParser {
         if (!field.startsWith("-")) return false;
         field = field.substring(1).trim();
       } else {
-        data.strCode = match.group(2);
-        field = append(getOptGroup(match.group(1)), " - ", match.group(3).trim());
+        data.strCode = match.group(3);
+        field = append(getOptGroup(match.group(1)), " - ", getOptGroup(match.group(2)));
+        field = append(getOptGroup(field), " - ", match.group(4).trim());
       }
       data.strCall = append(data.strCall, ", ", field);
       return true;
@@ -70,6 +72,14 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     @Override 
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("`")) return;
+      super.parse(field, data);
     }
   }
   
