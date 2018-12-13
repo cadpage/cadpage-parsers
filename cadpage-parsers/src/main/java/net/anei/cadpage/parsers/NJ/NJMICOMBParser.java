@@ -6,11 +6,6 @@ import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
-/**
- * This may be obsolete and replaced by NJMICOMBParser, but we are not yet
- * convinced of that
- */
-
 public class NJMICOMBParser extends MsgParser {
   
   public NJMICOMBParser() {
