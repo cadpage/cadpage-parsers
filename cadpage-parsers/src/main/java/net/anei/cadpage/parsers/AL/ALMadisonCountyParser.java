@@ -23,13 +23,13 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   
   ALMadisonCountyParser(String defCity, String defState) {
     super(CITY_TABLE, defCity, defState,
-           "EVENT:ID? Loc:ADDR EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP%");
+           "EVENT:ID? Loc:ADDR! Mun:CITY Xstreets:X? EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP%");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
   public String getFilter() {
-    return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org,cad.page@hsv.madco911.com";
+    return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org,cad.page@hsv.madco911.com,pageout@hsv.madco911.com";
   }
   
   @Override
@@ -47,7 +47,7 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (body.startsWith("/ ")) body = body.substring(2).trim();
+    body = stripFieldStart(body, "/ ");
     do {
       if (subject.contains(CAD_MARKER)) break;
       
@@ -103,6 +103,14 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     return super.getProgram() + " INFO UNIT";
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("CALL")) return new MyCallField();
+    return super.getField(name);
+  }
+  
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)");
   private static final Pattern COLON_PTN = Pattern.compile(" *: *");
@@ -139,18 +147,20 @@ public class ALMadisonCountyParser extends FieldProgramParser {
     }
   }
   
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
+  
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = convertCodes(field, TYPE_CODES);
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CALL")) return new MyCallField();
-    return super.getField(name);
   }
   
   private static final Pattern PRIV_PTN = Pattern.compile("\\bPRIV\\b", Pattern.CASE_INSENSITIVE);
