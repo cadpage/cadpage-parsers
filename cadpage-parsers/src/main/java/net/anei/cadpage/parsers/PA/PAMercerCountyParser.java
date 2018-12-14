@@ -25,7 +25,7 @@ public class PAMercerCountyParser extends DispatchA50Parser {
   
   @Override
   public String getFilter() {
-    return "@mcc.co.mercer.pa.us";
+    return "@mcc.co.mercer.pa.us,911-CENTER@leoc.net";
   }
   
   private static final Pattern CO_911_PTN = Pattern.compile("(.*?)[- ]+9-?1-?1");
