@@ -6,7 +6,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 public class PALawrenceCountyBParser extends DispatchH03Parser {
   
   public PALawrenceCountyBParser() {
-    super("LAWRENCE COUNTY", "PA");
+    this("LAWRENCE COUNTY", "PA");
+  }
+  
+  PALawrenceCountyBParser(String defCity, String defState) {
+    super(defCity, defState);
   }
   
   @Override
