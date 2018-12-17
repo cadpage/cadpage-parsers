@@ -802,7 +802,7 @@ public class Active911ParserTable {
       "US/MO/StCharlesCounty",            "MOStCharlesCounty",
       "US/MO/SteGenevieveCounty",         "MOSteGenevieveCountyB",
       "US/MO/StFrancoisCounty",           "MOStFrancoisCounty",
-      "US/MO/StLouisCounty",              "MOStLouisCountyC,MOStLousCountyJ",
+      "US/MO/StLouisCounty",              "MOStLouisCountyC,MOStLouisCountyJ",
       "US/MO/StoddEMS",                   "MOStoddardCounty",
       "US/MO/StoneCounty",                "MOStoneCountyC",
       "US/MO/SullivanCounty",             "MOSullivanCounty",
