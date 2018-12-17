@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MOStLouisCountyFParser extends FieldProgramParser {
 
   public MOStLouisCountyFParser() {
-    super("ST LOUIS COUNTY", "MO", "ADDR/SC! Description:INFO CrossStreets:X");
+    super("ST LOUIS COUNTY", "MO", "ADDR/SC! Description:INFO! CrossStreets:X!");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "BRENTWOOD PROMENADE",
