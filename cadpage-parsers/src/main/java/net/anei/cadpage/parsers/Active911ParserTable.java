@@ -1318,7 +1318,7 @@ public class Active911ParserTable {
       "US/PA/TrappeIAR",                  "PAChesterCountyL",
       "US/PA/UnionCounty",                "PAUnionCounty",
       "US/PA/ValleyAmbAut",               "PAAlleghenyCountyC",
-      "US/PA/VenangoCounty",              "PAVenangoCountyB",
+      "US/PA/VenangoCounty",              "PAVenangoCountyB,PAVenangoCountyC",
       "US/PA/WarrenCounty",               "PAWarrenCounty",
       "US/PA/WashingtonCounty",           "PAWashingtonCounty",
       "US/PA/WayneCounty",                "PAWayneCounty",
