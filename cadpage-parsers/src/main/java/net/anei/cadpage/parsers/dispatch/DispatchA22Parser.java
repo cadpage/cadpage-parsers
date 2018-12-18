@@ -15,16 +15,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 abstract public class DispatchA22Parser extends FieldProgramParser {
   
-  private static Pattern KEYWORD_PTN1 = Pattern.compile("(?<=\n(?:UNITS|EVENT #|PRIORITY|LOCATION|CITY|APT|PREMISE|COMMENT))(?!:)");
-  
   public DispatchA22Parser(String defCity, String defState) {
     this(null, defCity, defState);
   }
   
   public DispatchA22Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-          "EVENT_PAGE? DATETIME! UNITS:UNIT? ( EVENT_#:IDSRC! | SRC ) CALL/SDS! PRIORITY:PRI? ( LOCATION:ADDR! CITY:CITY APT:APT PREMISE:PLACE? COMMENT:INFO | ADDR ( CITY:CITY! | CITY! ) APT:APT ) INFO+");
+          "EVENT_PAGE? DATETIME! UNITS:UNIT? IDSRC! CALL/SDS! ( PRIORITY:PRI | PRI:PRI | ) ( LOCATION:ADDR! CITY:CITY APT:APT PREMISE:PLACE? | ADDR ( CITY:CITY! | CITY! ) APT:APT? ) INFO+");
   }
+  
+  private static Pattern KEYWORD_PTN1 = Pattern.compile("(?<=\n(?:UNITS|EVENT #|PRI|PRIORITY|LOCATION|CITY|APT|PREMISE|COMMENT))(?!:)");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -50,27 +50,29 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{1,2}/\\d{1,2}/\\d{4}) (\\d{4})");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(.*?)-)?(\\d{1,2}/\\d{1,2}/\\d{4}) (\\d{4})");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      String time = match.group(2);
+      data.strCall = append(data.strCall, " - ", getOptGroup(match.group(1)));
+      data.strDate = match.group(2);
+      String time = match.group(3);
       data.strTime = time.substring(0,2) + ':' + time.substring(2,4);
     }
   }
   
-  private static final Pattern ID_SRC_PTN = Pattern.compile("(\\d{10}) (.*)");
+  private static final Pattern ID_SRC_PTN = Pattern.compile("(\\d{10})(?: +(.*))");
   private class MyIdSourceField extends Field {
     
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "EVENT_#:");
       Matcher match = ID_SRC_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
-        data.strSource =  match.group(2).trim();
+        data.strSource =  getOptGroup(match.group(2));
       }
       data.strCallId = field;
     }
@@ -81,10 +83,12 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern COMMENT_PTN = Pattern.compile("^COMMENT[: ] *");
   private static final Pattern INFO_GPS_PTN = Pattern.compile("[-+]\\d{2,3}\\.\\d{6}[, ]+[-+]\\d{2,3}\\.\\d{6}");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      field = COMMENT_PTN.matcher(field).replaceFirst("");
       Matcher match= INFO_GPS_PTN.matcher(field);
       if (match.matches()) {
         setGPSLoc(field, data);
