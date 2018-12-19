@@ -14,9 +14,10 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   
   public NCUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "NC",
-           "( CANCEL ADDR CITY2 INFO+ | FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CUSTOM? INFO+? DATETIME ID? PLACE )");
+           "( CANCEL ADDR CITY2 INFO+ | FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO+? DATETIME ID? UNIT )");
     setupSaintNames("JOHNS", "SIMONS");
     setupProtectedNames("BURGESS AND HELMS", "SUGAR AND WINE");
+    setupMultiWordStreets("INDIAN TRAIL FAIRVIEW");
   }
   
   @Override
@@ -37,6 +38,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   protected Field getField(String name) {
     if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{2,4}", true);
+    if (name.equals("CH")) return new ChannelField("[A-M][-A-Z0-9]{1,5}|.* OPS .*", true);
     if (name.equals("CUSTOM")) return new CustomField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d");
@@ -56,7 +58,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   // previous source field to figure out which department this is and what
   // they want us to do with it.
   
-  private static final Pattern SRC_CHANNEL_PTN = Pattern.compile("S\\d\\d");
+  private static final Pattern SRC_CHANNEL_PTN = Pattern.compile("S\\d\\d|CH *\\d");
   private class CustomField extends Field {
     
     @Override
@@ -66,7 +68,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (field.length() > 6 || field.contains(" ")) return false;
+      if (field.length() > 6 || field.contains(" ")  && !field.startsWith("CH ")) return false;
       parse(field, data);
       return true;
     }
@@ -82,7 +84,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "UNIT CH";
+      return "CH UNIT?";
     }
   }
   
@@ -100,7 +102,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "X PLACE INFO";
+      return "PLACE X INFO";
     }
   }
   
