@@ -24,7 +24,7 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
           "EVENT_PAGE? DATETIME! UNITS:UNIT? IDSRC! CALL/SDS! ( PRIORITY:PRI | PRI:PRI | ) ( LOCATION:ADDR! CITY:CITY APT:APT PREMISE:PLACE? | ADDR ( CITY:CITY! | CITY! ) APT:APT? ) INFO+");
   }
   
-  private static Pattern KEYWORD_PTN1 = Pattern.compile("(?<=\n(?:UNITS|EVENT #|PRI|PRIORITY|LOCATION|CITY|APT|PREMISE|COMMENT))(?!:)");
+  private static Pattern KEYWORD_PTN1 = Pattern.compile("(?<=\n(?:UNITS|EVENT #|PRIORITY|PRI|LOCATION|CITY|APT|PREMISE|COMMENT))(?![:A-Z])");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -63,18 +63,19 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern ID_SRC_PTN = Pattern.compile("(\\d{10})(?: +(.*))");
+  private static final Pattern ID_SRC_PTN = Pattern.compile("(\\d{10})(?: +(.*))?");
   private class MyIdSourceField extends Field {
     
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "EVENT_#:");
+      field = stripFieldStart(field, "EVENT #:");
       Matcher match = ID_SRC_PTN.matcher(field);
       if (match.matches()) {
-        field = match.group(1).trim();
+        data.strCallId = match.group(1).trim();
         data.strSource =  getOptGroup(match.group(2));
+      } else {
+        data.strSource = field;
       }
-      data.strCallId = field;
     }
     
     @Override
@@ -89,6 +90,7 @@ abstract public class DispatchA22Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = COMMENT_PTN.matcher(field).replaceFirst("");
+      if ("COMMENT".startsWith(field)) return;
       Matcher match= INFO_GPS_PTN.matcher(field);
       if (match.matches()) {
         setGPSLoc(field, data);
