@@ -98,27 +98,40 @@ public class DispatchA25Parser extends FieldProgramParser {
         }
       }
       
-      pt = addr.indexOf(" - ");
-      if (pt >= 0) {
-        data.strCall = addr.substring(0,pt).trim();
+      do {
         CodeSet callList = getCallList();
         if (callList != null) {
-          String call = callList.getCode(data.strCall.toUpperCase(), true);
+          String call = callList.getCode(addr.toUpperCase(), true);
           if (call != null) {
-            data.strPlace = data.strCall.substring(call.length()).trim();
-            data.strCall = data.strCall.substring(0, call.length());
+            data.strCall = addr.substring(0, call.length());
+            addr = addr.substring(call.length());
+            pt = addr.indexOf(" - ");
+            if (pt >= 0) {
+              data.strPlace = addr.substring(0,pt).trim();
+              parseAddress(addr.substring(pt+3).trim(), data);
+            } else {
+              parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr, data);
+            }
+            break;
           }
         }
-        parseAddress(addr.substring(pt+3).trim(), data);
-      } else {
-        parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
-        if (data.strAddress.length() == 0) {
-          if (data.strPlace.length() == 0) return false;
-          parseAddress(data.strPlace, data);
-          data.strPlace = "";
+        
+        pt = addr.indexOf(" - ");
+        if (pt >= 0) {
+          data.strCall = addr.substring(0,pt).trim();
+          parseAddress(addr.substring(pt+3).trim(), data);
+          break;
         }
-      }
       
+        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
+      } while (false);
+
+      if (data.strAddress.length() == 0) {
+        if (data.strPlace.length() == 0) return false;
+        parseAddress(data.strPlace, data);
+        data.strPlace = "";
+      }
+
       data.strApt = append(data.strApt, "-", apt);
       
       // See if place looks like it should really be prefixed to the address

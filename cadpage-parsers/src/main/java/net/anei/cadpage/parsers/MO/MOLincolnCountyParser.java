@@ -45,39 +45,56 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
     // Fix dir/o construct
     body = DIRO_PTN.matcher(body).replaceAll("$1$2");
     
+    // We have to eliminate the call description taht includes a dash delimiter
+    body =  body.replace("", "");
+    
     // TODO Auto-generated method stub
     return super.parseMsg(subject, body, data);
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+      "APPLE GROVE",
+      "BEAU MAYE",
       "BLUE BUNTING",
       "BURR OAK",
       "CAP AU GRIS",
       "CHAPMAN FARM",
       "COLLEGE CAMPUS",
+      "COLTON JESSE",
       "CORNER STONE CHURCH",
       "DEER RUN",
       "DEER VALLEY",
-      "EAST SIDE OF",
+      "DUNCAN MANSION",
       "ELM TREE",
       "FOX RUN",
+      "FRIENDSHIP VILLAGE",
+      "HAWKS RIDGE",
       "HICKORY HILL",
       "HIDDEN VALLEY",
       "HIGH COUNTRY",
+      "LIDDIE LOU",
       "MARKET PLACE",
+      "MARY TOM",
       "MEADOW RIDGE",
       "MOORE SCHOOL",
       "MOSCOW MILLS",
+      "NO WHITE",
       "OAK BEND",
       "PEBBLE CREEK",
       "PEINE LAKES",
       "PIN OAK",
       "PUMP HOUSE",
+      "SADDLEBACK RIDGE",
+      "SITTON BRANCH",
       "SNOW HILLS",
       "SPRING HOUSE",
       "ST STEPHEN",
+      "TAYLOR SCHOOL",
       "THORNHILL CEMETERY",
-      "WEST LOOP"
+      "WEST LOOP",
+      "WHITE WILDLIFE",
+      "WINDY HILL"
+
   };
 
   
@@ -107,12 +124,14 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "CONTROL BURN NOTICE",
       "CONVULSIONS/SEIZURES",
       "DIABETIC PROBLEMS",
+      "DISABLED VEHICLE",
       "DOMESTIC DISTURBANCE/VIOLENCE",
       "ELECTRICAL HAZARD",
       "EXTRICATION/ENTRAPPED",
       "FALLS",
       "FIRE",
       "FOLLOW UP",
+      "FOLLOW UP - INVESTIGATION",
       "FUEL SPILL",
       "GAS LEAK/GAS ODOR",
       "HEART PROBLEMS/A.I.C.D.",
