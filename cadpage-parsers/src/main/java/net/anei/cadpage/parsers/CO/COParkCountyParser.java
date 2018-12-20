@@ -21,7 +21,7 @@ public class COParkCountyParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "parkcodispatch@parkco.us";
+    return "parkcodispatch@parkco.us,777";
   }
 
   @Override

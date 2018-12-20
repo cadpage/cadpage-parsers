@@ -16,7 +16,8 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
   public TXHarrisCountyESD1BParser() {
     super("HARRIS COUNTY", "TX",
            "( CODE_CALL ADDR1? ADDR UNIT! KM:MAP! Xst's:X " + 
-           "| ID/Z ADDRCH! ADDR+? Cross_Streets:X Key_Map:MAP " +
+           "| ID/Z ADDRCH! ADDR+? Cross_Streets:X ( Map:MAP | Key_Map:MAP ) Zip:ZIP Lat:GPS1/d Lon:GPS2/d" +
+           "| ID/Z Unit:UNIT! Type:CODE! Problem:CALL! Loc:ADDR! Apt:APT! Bldg:PLACE! ( Map:MAP! | Key_Map:MAP! ) Cross_Streets:X! Box_#:BOX! Zip:ZIP! Lat:GPS1/d! Lon:GPS2/d! Notes:INFO " +
            "| ( ID UNIT2? | UNIT ) CODE CALL! PREALERT? ADDR1? ADDR! Apt:APT! Bldg:PLACE Key_Map:MAP% Cross_Streets:X Box_#:BOX )");
   }
   
@@ -27,10 +28,10 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
   
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
   
-  private static final Pattern REPORT_PTN = Pattern.compile("ID#:([^ ]+) *- *UNIT:([^ ]+) *- *(.*)");
+  private static final Pattern REPORT_PTN = Pattern.compile("(?:\\*\\*(Call Completed|Call Cancelled|Times at Hospital) - ?)?ID#:([^ ]+) *- *UNIT:([^ ]+) *- *(.*)");
   private static final Pattern TIME_DELIM_PTN = Pattern.compile(" +- *");
   
   @Override
@@ -38,15 +39,22 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     
     Matcher match = REPORT_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("ID UNIT INFO");
+      setFieldList("CALL ID UNIT INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strCallId = match.group(1);
-      data.strUnit = match.group(2);
-      data.strSupp = TIME_DELIM_PTN.matcher(match.group(3)).replaceAll("\n");
+      data.strCall = getOptGroup(match.group(1));
+      data.strCallId = match.group(2);
+      data.strUnit = match.group(3);
+      data.strSupp = TIME_DELIM_PTN.matcher(match.group(4)).replaceAll("\n");
       return true;
     }
+    body = stripFieldStart(body, "**Incident Info - ");
+    body = stripFieldStart(body, "**Address Update:  ");
     return parseFields(splitFields(body), data);
   }
+  
+  private static final Pattern ID_PTN = Pattern.compile("(ID#:?\\d\\d-\\d\\d-\\d+) *-");
+  private static final Pattern ZIP_PTN = Pattern.compile("[- ]+(Zip:)");
+  private static final Pattern KEY_SPLIT_PTN = Pattern.compile(" +(?=(?:Lat|Lon|Notes):)");
   
   private String[] splitFields(String body) {
     List<String> flds = new ArrayList<String>();
@@ -55,10 +63,18 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
       flds.add(match.group(1));
       body = body.substring(match.end());
     }
+    String extra = null;
+    match = ZIP_PTN.matcher(body);
+    if (match.find()) {
+      extra = body.substring(match.start(1));
+      body = body.substring(0, match.start());
+    }
     flds.addAll(Arrays.asList(body.split("-")));
+    if (extra != null) {
+      flds.addAll(Arrays.asList(KEY_SPLIT_PTN.split(extra)));
+    }
     return flds.toArray(new String[flds.size()]);
   }
-  private static final Pattern ID_PTN = Pattern.compile("(ID#:?\\d\\d-\\d\\d-\\d+) *-");
 
   @Override
   public String getProgram() {
@@ -78,6 +94,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PREALERT")) return new PreAlertField();
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("ZIP")) return new MyZipField();
     return super.getField(name);
   }
   
@@ -163,7 +180,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|NWREH|[A-Z]{4}HOME|[A-Z]{2}FD");
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|\\d{4}|BOX|NWREH|[A-Z]{4}HOME|[A-Z]{2}FD");
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -224,6 +241,14 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       data.strApt = append(field, "-", data.strApt);
+    }
+  }
+  
+  private class MyZipField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCity.length() > 0) return;
+      super.parse(field, data);
     }
   }
 }
