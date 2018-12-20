@@ -42,6 +42,7 @@ public class SCCalhounCountyParser extends DispatchA48Parser {
       "GAS LEAK/PROPANE",
       "GUNSHOT WOUND",
       "PAIN",
+      "RESPIRATORY DISTRESS",
       "ROAD BLOCKAGE",
       "STRUCTURE FIRE",
       "SUSPICIOUS ACTIVITY",
