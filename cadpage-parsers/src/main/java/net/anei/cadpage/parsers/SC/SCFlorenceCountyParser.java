@@ -1,35 +1,26 @@
 package net.anei.cadpage.parsers.SC;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchBParser;
+import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 
-public class SCFlorenceCountyParser extends DispatchBParser {
+public class SCFlorenceCountyParser extends DispatchSouthernParser {
  
   public SCFlorenceCountyParser() {
-    super(-1, CITY_CODES, "FLORENCE COUNTY", "SC");
-  }
-  
-  @Override
-  protected boolean isPageMsg(String body) {
-    return true;
+    super(CITY_LIST, "FLORENCE COUNTY", "SC", DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME);
+    setupMultiWordStreets("I M GRAHAM");
+    removeWords("COURT", "HEIGHTS", "PLACE", "STREET");
   }
   
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    // See if this is one of our pages
-    if (! body.startsWith("FLORENCE CO 911:") && !body.startsWith("FLORENCE_CO_911")) return false;
-    body = body.substring(16);
-    int pt = body.indexOf('>');
-    if (pt >= 0) data.strCode = body.substring(0,pt).trim();
-    
-    // Call superclass parser
-    return super.parseMsg(body, data) && data.strCallId.length() > 0;
+    body = stripFieldStart(body, "CFS Location:");
+    return super.parseMsg(body, data);
   }
   
-  private static final String[] CITY_CODES = new String[]{
+  private static final String[] CITY_LIST = new String[]{
     "COWARD",
     "EFFINGHAM",
     "FLORENCE",
@@ -40,6 +31,19 @@ public class SCFlorenceCountyParser extends DispatchBParser {
     "PAMPLICO",
     "QUINBY",
     "SCRANTON",
-    "TIMMONSVILLE"
+    "TIMMONSVILLE",
+    
+    // Charleston County
+    "CHARLESTON",
+    
+    // Darlingon County
+    "LAMAR",
+    
+    // Sumter County
+    "SUMTER",
+    
+    // Williamsburg County
+    "WILLIAMSBURG",
+    "HEMINGWAY"
   };
 }
