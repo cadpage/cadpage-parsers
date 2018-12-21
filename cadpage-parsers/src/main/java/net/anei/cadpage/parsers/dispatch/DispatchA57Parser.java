@@ -74,7 +74,7 @@ public class DispatchA57Parser extends FieldProgramParser {
   }
   
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("(.*)\\((.*)\\)");
-  private static final Pattern ADDR_PLACE_PTN2 = Pattern.compile("(.*?)(?::| - )(.*)");
+  private static final Pattern ADDR_PLACE_PTN2 = Pattern.compile("(.*?)(?:(?<!LAT|LON):| - )(.*)");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
