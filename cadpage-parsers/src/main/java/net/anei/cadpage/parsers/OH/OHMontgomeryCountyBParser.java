@@ -1,54 +1,23 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.dispatch.DispatchCiscoParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 /**
  * Montgomery County, OH
  */
-public class OHMontgomeryCountyBParser extends DispatchCiscoParser {
+public class OHMontgomeryCountyBParser extends DispatchA19Parser {
   
   public OHMontgomeryCountyBParser() {
-    super(CITY_LIST, "MONTGOMERY COUNTY", "OH");
+    super("MONTGOMERY COUNTY", "OH");
   }
   
   @Override
   public String getFilter() {
-    return "ciscopaging@vandaliaohio.org";
+    return "DISPATCH@vandaliaohio.org";
   }
   
-  private static final String[] CITY_LIST = new String[]{
-
-    "BROOKVILLE",
-    "BUTLER",
-    "CARLISLE",
-    "CENTERVILLE",
-    "CLAY",
-    "CLAYTON",
-    "DAYTON",
-    "ENGLEWOOD",
-    "FARMERSVILLE",
-    "GERMAN",
-    "GERMANTOWN",
-    "HARRISON",
-    "HUBER HEIGHTS",
-    "JACKSON",
-    "JEFFERSON",
-    "KETTERING",
-    "MIAMI",
-    "MIAMISBURG",
-    "MORAINE",
-    "NEW LEBANON",
-    "OAKWOOD",
-    "PERRY",
-    "PHILLIPSBURG",
-    "RIVERSIDE",
-    "SPRINGBORO",
-    "TROTWOOD",
-    "UNION",
-    "VANDALIA",
-    "VERONA",
-    "WASHINGTON",
-    "WEST CARROLLTON"
-
-  };
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 }
