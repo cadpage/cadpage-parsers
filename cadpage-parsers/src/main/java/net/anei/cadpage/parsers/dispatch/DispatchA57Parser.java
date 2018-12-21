@@ -74,6 +74,7 @@ public class DispatchA57Parser extends FieldProgramParser {
   }
   
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("(.*)\\((.*)\\)");
+  private static final Pattern ADDR_PLACE_PTN2 = Pattern.compile("(.*?)(?::| - )(.*)");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -81,14 +82,12 @@ public class DispatchA57Parser extends FieldProgramParser {
       if (match.matches()) {
         field = match.group(1).trim();
         data.strPlace = match.group(2).trim();
+      } 
+      else if ((match = ADDR_PLACE_PTN2.matcher(field)).matches()) { 
+        field = match.group(1).trim();
+        data.strPlace = match.group(2).trim();
       } else {
-        int pt = field.indexOf(" - ");
-        if (pt >= 0) {
-          data.strPlace = field.substring(pt+3).trim();
-          field = field.substring(0, pt).trim();
-        } else {
-          field = stripFieldEnd(field, " -");
-        }
+        field = stripFieldEnd(field, " -");
       }
       field = field.replace('@', '&');
       super.parse(field, data);
