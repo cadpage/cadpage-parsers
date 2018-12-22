@@ -9,8 +9,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class MIEmmetCountyParser extends DispatchOSSIParser {
   
-  private static final Pattern MARKER = Pattern.compile("^CAD:MSG:", Pattern.CASE_INSENSITIVE);
-  
   public MIEmmetCountyParser() {
     this("EMMET COUNTY", "MI");
   }
@@ -29,10 +27,12 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   public String getFilter() {
     return "CAD@cce911.com";
   }
+  
+  private static final Pattern CAD_MARKER = Pattern.compile("(?:\\d+:)?CAD:");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = MARKER.matcher(body).replaceFirst("CAD:");
+    if (!CAD_MARKER.matcher(body).lookingAt()) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
   
