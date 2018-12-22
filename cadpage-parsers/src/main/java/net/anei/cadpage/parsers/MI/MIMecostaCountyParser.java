@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
@@ -12,36 +13,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 Mecosta County, MI
 
  */
-public class MIMecostaCountyParser extends DispatchA3Parser {
-  
-  private static final Pattern MARKER = Pattern.compile("Meceola[ _]Dispatch:");
-  private static final Pattern ADDR_L_CITY_PTN = Pattern.compile("([A-Z0-9 ]+)/L +CITY +", Pattern.CASE_INSENSITIVE);
-  private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([^/ ]+ CO)(?:UNTY)?(?: DISPATCH)?", Pattern.CASE_INSENSITIVE);
-  
-  private static final String UNIT_SUBPTN = "(?:\\d{3,4}|\\d*[A-Z]+\\d+|\\d+[A-Z]+|[BCEFHLMTW][RF]|BR[RF]P?|CT[RF]|L[TV][RF]|M[AO][RF]|RC[RF]|BR[FT][RF]|EDNR|MARE|MOTF|MTR|POSSE|TEST|70)";
-  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:(?!MR )|([^:]+?) )("+UNIT_SUBPTN+"(?:,"+UNIT_SUBPTN+")*(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CLEAN_CROSS_PTN = Pattern.compile("[-/ ]*(.*?)[-/ ]*");
-  
-// This was a failed attempt to come up with a Name/Unit expression that was not quite a rigid as the above.  It failed to properly identify distinguish "DIKE,BEV" as a non-unit.  
-//  private static final Pattern NAME_UNIT_PTN = Pattern.compile("(?:(?!MR )|([^:]+?) )((?:[A-Z0-9]+,[A-Z0-9]+,[A-Z0-9,]+[A-Z0-9]|(?:[A-Z0-9]{1,4}|POSSE|[A-Z]+\\d+),(?:[A-Z0-9]{1,4}|POSSE|[A-Z]+\\d+)|"+UNIT_SUBPTN+")(?: OR)?)(?: |$)(.*)", Pattern.CASE_INSENSITIVE);
-
-  
-  private Field infoField;
+public class MIMecostaCountyParser extends FieldProgramParser {
   
   public MIMecostaCountyParser() {
     this("MECOSTA COUNTY", "MI");
   }
   
   public MIMecostaCountyParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState, "");
-    infoField = getField("INFO");
-    setFieldList("ADDR APT CITY CALL NAME UNIT " + infoField.getFieldNames());
-    setupSaintNames("CLAIR", "ONGE");
+    super(defCity, defState, 
+          "ADDR ( CITY ST_ZIP? | ) X APT_PLACE CALL UNIT! ( NONE END | INFO/CS+ )");
   }
   
   @Override
   public String getFilter() {
-    return "Meceola Dispatch@MCD911.org";
+    return "zuercher@mcd911.org";
   }
 
   @Override
@@ -50,200 +35,105 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
-    // Check the alert marker
-    Matcher match = MARKER.matcher(body);
-    if (match.lookingAt()) body = body.substring(match.end()).trim();
+    if (!subject.startsWith("Respond:")) return false;
+    data.strCall = subject.substring(8).trim();
     
-    // First problem.  We have to replace double slashes with a single slash
-    // in the address, but not in the info section where a double slash marks
-    // the end of a cross street.  We don't know for certain where the info
-    // section starts, but we will do the best we can by making the replacement
-    // only up to the the first cross street marker.
-    int pt = body.toUpperCase().indexOf("CROSS STREETS:");
-    if (pt < 0) pt = body.length();
-    body = body.substring(0,pt).replace("//","/") + body.substring(pt);
-    
-    // Check for special address construct
-    match = ADDR_L_CITY_PTN.matcher(body);
-    if (match.lookingAt()) {
-      data.strAddress = match.group(1).trim();
-      body = body.substring(match.end());
-    }
-    
-    // Otherwise, parse address from start of message.  We absolutely count
-    // on a city field terminating the address.  But if we do not find one
-    // on the first pass, try again looking for a city in isolation from the
-    // surrounding text
-    else {
-      parseAddress(StartType.START_ADDR, body, data);
-      if (data.strCity.length() == 0) {
-        data.strAddress = data.strApt = "";
-        parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY, body, data);
-        if (data.strCity.length() == 0) return false;
-        parseAddress(getStart(), data);
-      }
-      body = getLeft();
-
-      // Make any necessary city adjustments
-      data.strCity = stripFieldEnd(data.strCity, " VLG");
-      if (data.strCity.equals("CITY")) data.strCity = "";
-    }
-    
-    // Next identify the call code/description.  Usually one word, unless
-    // it is in our list of multi word call descriptions
-    String call = MWORD_CALL_LIST.getCode(body, true);
-    if (call != null) {
-      data.strCall = call;
-      body = body.substring(call.length()).trim();
-    } else {
-      pt = body.indexOf(' ');
-      if (pt < 0) return false;
-      data.strCall = body.substring(0,pt);
-      body = body.substring(pt+1).trim();
-    }
-    
-    //   Next are name and unit fields
-    String name;
-    match = NAME_UNIT_PTN.matcher(body);
-    if (match.matches()) {
-      name = stripFieldEnd(getOptGroup(match.group(1)), "-");
-      data.strUnit = match.group(2);
-      body = match.group(3).trim();
-    } else if (body.startsWith("MR ")) {
-      name = "";
-      data.strUnit = "MR";
-      body = body.substring(3).trim();
-    } else {
-      return false;
-    }
-    
-    // See if the name includes a county
-    match = NAME_COUNTY_PTN.matcher(name);
-    if (match.matches()) {
-      name = match.group(1);
-      String city = match.group(2).toUpperCase() + "UNTY";
-      if (!data.strCity.equals(city)) {
-        data.strCity = append(data.strCity, ", ", city);
-      }
-    }
-    data.strName = cleanWirelessCarrier(name);
-    
-    // Check for some things that can not possibly be units
-    if (data.strUnit.startsWith("pos") || data.strUnit.startsWith("Line")) return false;
-    
-    // That was the hard part
-    // We use the superclass field processing logic to handle the info section
-    infoField.parse(body, data);
-    
-    // Clean up cross street info
-    match = CLEAN_CROSS_PTN.matcher(data.strCross);
-    if (match.matches()) data.strCross = match.group(1);
-    
-    return true;
+    return parseFields(body.split(","), data);
   }
   
-  private static final CodeSet MWORD_CALL_LIST = new CodeSet(
-      "ALARM F",
-      "ALARM G",
-      "ALARM M",
-      "ALARM M MEDICAL ALERT",
-      "ASSIST D",
-      "ASSIST M",
-      "FIRE GRASS",
-      "FIRE STRUCT",
-      "FIRE VEHICLE",
-      "HOT SHEET"
-  );
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("ST_ZIP")) return new MyStateZipField();
+    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("NONE")) return new SkipField("None", true);
+    return super.getField(name);
+  }
   
-  private static final String[] CITY_LIST = new String[]{
+  private class MyCityField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.contains("(")) return false;
+      if (field.contains(" and ")) return false;
+      parse(field,  data);
+      return true;
+    }
+  }
+  
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private class MyStateZipField extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ST_ZIP_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strState = match.group(1);
+      if (data.strCity.length() == 0) data.strCity = getOptGroup(match.group(2));
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ST CITY?";
+    }
+  }
+  
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)|(\\d{1,5}[A-Z]?|[A-Z])");
+  private class MyAptPlaceField extends Field {
 
-    // Mecosta County
-    // Cities
-    "BIG RAPIDS",
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) {
+        String apt = match.group(1);
+        if (apt == null) apt = match.group(2);
+        data.strApt = append(data.strApt, "-", apt);
+      } else {
+        data.strPlace = field;
+      }
+    }
 
-    // Villages
-    "BARRYTON VLG",
-    "MECOSTA VLG",
-    "MORLEY VLG",
-    "STANWOOD VLG",
-
-    //Unincorporated communities
-    "ALTONA",
-    "CANADIAN LAKES",
-    "REMUS VLG",
-
-    // Townships
-    "AETNA TWP",
-    "AUSTIN TWP",
-    "BIG RAPIDS TWP",
-    "CHIPPEWA TWP",
-    "COLFAX TWP",
-    "DEERFIELD TWP",
-    "FORK TWP",
-    "GRANT TWP",
-    "GREEN TWP",
-    "HINTON TWP",
-    "MARTINY TWP",
-    "MECOSTA TWP",
-    "MILLBROOK TWP",
-    "MORTON TWP",
-    "SHERIDAN TWP",
-    "WHEATLAND TWP",
+    @Override
+    public String getFieldNames() {
+      return "APT PLACE";
+    }
     
-    // Osceola County
-    // Cities
-    "EVART",
-    "EVART CITY",
-    "REED",
-    "REED CITY",
-
-    // Villages
-    "HERSEY VLG",
-    "LEROY VLG",
-    "MARION VLG",
-    "TUSTIN VLG",
-
-    // Unincorporated community
-    "SEARS",
-
-    // Townships
-    "BURDELL TWP",
-    "CEDAR TWP",
-    "EVART TWP",
-    "HARTWICK TWP",
-    "HERSEY TWP",
-    "HIGHLAND TWP",
-    "LEROY TWP",
-    "LINCOLN TWP",
-    "MARION TWP",
-    "MIDDLE BRANCH TWP",
-    "ORIENT TWP",
-    "OSCEOLA TWP",
-    "RICHMOND TWP",
-    "ROSE LAKE TWP",
-    "SHERMAN TWP",
-    "SYLVAN TWP",
-    
-    "CITY",
-    
-    "CLARE COUNTY",
-    
-    "LAKE COUNTY",
-    "CHASE",
-    
-    "NEWAYGO COUNTY",
-       "NORWICH",
-       
-    "LAKE COUNTY",
-       "DOVER TWP",
-    "WEXFORD COUNTY",
-    
-    "ISABELLA COUNTY",
-    
-    "MISSAUKEE CO",
-    
-    "WINTERFIELD TWP"
-  };
+  }
+  
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",").replace(';', ',');
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_DATETIME_PTN = Pattern.compile("(?:^|; +)\\d\\d?/\\d\\d?/\\d\\d +\\d\\d?:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      field = INFO_DATETIME_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
+    }
+  }
 }
