@@ -33,6 +33,8 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!CAD_MARKER.matcher(body).lookingAt()) body = "CAD:" + body;
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0, pt).trim();
     return super.parseMsg(body, data);
   }
   

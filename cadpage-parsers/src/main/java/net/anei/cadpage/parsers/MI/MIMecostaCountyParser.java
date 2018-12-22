@@ -227,9 +227,15 @@ public class MIMecostaCountyParser extends DispatchA3Parser {
     "SYLVAN TWP",
     
     "CITY",
+    
     "CLARE COUNTY",
+    
+    "LAKE COUNTY",
+    "CHASE",
+    
     "NEWAYGO COUNTY",
        "NORWICH",
+       
     "LAKE COUNTY",
        "DOVER TWP",
     "WEXFORD COUNTY",
