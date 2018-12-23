@@ -35,6 +35,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
   private static final Pattern IAMR_COMMA_PTN = Pattern.compile("[ ,]*\n[ ,]*");
   private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=LOC:) ");
+  private static final Pattern SUB_SRC_PTN = Pattern.compile("[A-Z]{1,5}");
+  private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" -(?: ([A-Za-z ]+))?$");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
@@ -44,7 +46,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     boolean noBrkFmt = false;
     Matcher match = IAMR_PREFIX1.matcher(body);
     if (match.lookingAt()) {
-      data.strSource = subject;
+      if (SUB_SRC_PTN.matcher(subject).matches()) data.strSource = subject;
       subject = "Alert: " + match.group(1).trim();
       body = body.substring(match.end()).trim();
       if (body.startsWith(":")) {
@@ -58,6 +60,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
         body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
       }
       body = body.replaceAll(" , ", " ");
+      
+      match = TRAIL_SRC_PTN.matcher(body);
+      if (match.find()) {
+        String src = match.group(1);
+        if (src != null) data.strSource = src;
+        body = body.substring(0, match.start()).trim();
+      }
     }
     
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
@@ -100,7 +109,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   
   @Override
   public String getProgram() {
-    return "SRC " + super.getProgram().replace("CITY", "CITY ST");
+    String program = super.getProgram();
+    if (!program.contains("CITY")) {
+      program = program.replaceAll("ADDR", "ADDR CITY ST");
+    } else {
+      program = program.replace("CITY", "CITY ST");
+    }
+    return "SRC " + program;
   }
   
   @Override
