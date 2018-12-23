@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.VA;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
                "|  CANCEL ADDR SKIP " + 
                "| CALL ( ADDR | PLACE ADDR | ADDR ) " +
                "| ADDR APT? DIST? ( CALL! | X X? CALL! | PLACE X X? CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) ( X X? | ) ) INFO/N+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
     addRoadSuffixTerms("CRES");
   }
   
@@ -121,6 +123,11 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
     if (call.equals("CANCEL") || call.equals("BOLO") || call.startsWith("BE ON THE LOOKOUT")) return true;
     return CALL_SET.contains(call);
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "3377 HOMESTEAD DR",                    "+36.788948,-76.864822",
+      "9033 MARGARET DR",                     "+36.842812,-76.772552"
+  });
 
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
       "1050",
