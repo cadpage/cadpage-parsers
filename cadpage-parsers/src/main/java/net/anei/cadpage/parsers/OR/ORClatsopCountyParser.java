@@ -8,85 +8,75 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class ORClatsopCountyParser extends SmartAddressParser {
+public class ORClatsopCountyParser extends FieldProgramParser {
 
   public ORClatsopCountyParser() {
-    super("CLATSOP COUNTY", "OR");
-    setFieldList("CALL ADDR APT PLACE INFO");
+    super(CITY_LIST, "CLATSOP COUNTY", "OR", 
+          "ADDR! ( CITY | ADDR2/Z CITY | ADDR2? ) CALL/SLS+ ");
     setupSpecialStreets("PROMENADE");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
   public String getFilter() {
-    return "@cityofseaside.us,@astoria.or.us";
+    return "cmireporting@astoria.or.us,lewisandclarkfd@astoria.or.us";
   }
 
   private static final Pattern PROM_PTN = Pattern.compile("\\bPROM\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern AVE_PTN1 = Pattern.compile(".* (?:AVE|AVENUE)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern AVE_PTN2 = Pattern.compile("([A-Z])\\b(?: +#?(\\d+))?(?: +(.*))?", Pattern.CASE_INSENSITIVE);
   
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     //require subject
     if (subject.length() == 0) return false;
+    data.strCall = subject;
     
     // Expand PROM -> PROMONADE
     subject = PROM_PTN.matcher(subject).replaceAll("PROMENADE");
     body = PROM_PTN.matcher(body).replaceAll("PROMENADE");
-
-    // split body to fields
-    String[] fields = body.split("/");
-    boolean slashDelim = true;
-    if (fields.length == 1 && body.contains("\n")) {
-      slashDelim = false;
-      fields = body.split("\n");
+    if (!parseFields(body.split("/"), data)) return false;
+    
+    // Try to rule out random messages containing a slash
+    if (data.strCity.length() > 0) return true;
+    for (String call : data.strCall.split("/")) {
+      if (CALL_SET.contains(call.trim().toUpperCase())) return true;
+    }
+    return false;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "CALL " + super.getProgram();
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR2")) return new MyAddress2Field();
+    return super.getField(name);
+  }
+  
+  private static final Pattern AVE_ST_PTN = Pattern.compile("(?:AVE|AVENUE) +[A-Z]", Pattern.CASE_INSENSITIVE);
+  private class MyAddress2Field extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
     }
     
-    // trim fields
-    for (int i = 0; i < fields.length; i++) fields[i] = fields[i].trim();
-    
-    // Sometimes call and address in subject and first field are reversed :(
-    Result res1 = parseAddress(StartType.START_ADDR, subject);
-    Result res2 = parseAddress(StartType.START_ADDR, fields[0]);
-    if (!CALL_SET.contains(subject) && 
-        (CALL_SET.contains(fields[0].toUpperCase()) || res1.getStatus() > res2.getStatus())) {
-      data.strCall = fields[0];
-      res2 = res1;
-    } else {
-      data.strCall = subject;
-    }
-    
-    // reject if unknown source and strCall
-    if (!isPositiveId() && !CALL_SET.contains(data.strCall.toUpperCase())) return false;
-
-    // Parse address data
-    // AVENUE X street names usually get split up and have to be repaired :(
-    res2.getData(data);
-    String left = res2.getLeft();
-    if (AVE_PTN1.matcher(data.strAddress).matches()) {
-      Matcher match = AVE_PTN2.matcher(left);
-      if (match.matches()) {
-        data.strAddress = data.strAddress + ' ' + match.group(1);
-        data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
-        left = getOptGroup(match.group(3));
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (AVE_ST_PTN.matcher(field).matches() || isValidAddress(field)) {
+        parse(field, data);
+        return true;
+      } else {
+        return false;
       }
     }
-    data.strPlace = left;
-
-    // second body field and rest
-    int st = 1;
-    if (slashDelim && fields.length > 1) {
-      // if we split by \ there's a chance second field is an intersection component
-      if (checkAddress(fields[1]) >= STATUS_STREET_NAME) {
-        data.strAddress = append(data.strAddress, " & ", fields[1]);
-        st = 2;
-      }
-    } 
-    for (int i = st; i < fields.length; i++) data.strSupp = append(data.strSupp, " / ", fields[i]);
     
-    return true;
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = append(data.strAddress, " & ", field);
+    }
   }
   
   @Override
@@ -345,18 +335,120 @@ public class ORClatsopCountyParser extends SmartAddressParser {
   });
   
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
+      "1 VEH MVA",
       "2 VEH MVA",
+      "ARCING TRANSFORMERS",
+      "ALARM ACTIVATION",
+      "ALARM FIRE",
+      "ASSIST RENDERED",
+      "BACK PAIN",
+      "BLADDER INF",
+      "BRUSH FIRE",
+      "CHEMICAL",
+      "CHIM FIRE",
       "CHIMNEY FIRE",
+      "DIFFICULTY BREATHING",
+      "DISTURBANCE",
+      "ELDERLY FALL PT HEAD INJ",
+      "EMERG MEDICAL RESPONSE",
+      "EMS",
+      "EXTRICATION",
+      "FALL PT",
+      "FIRE",
       "FIRE ALARM",
       "FIRE CALL",
+      "FIRE INVESTIGATION",
+      "GEN MED ALARM",
+      "GRASS",
+      "HEAD INJ",
+      "INFANT LOCKED IN VEH",
+      "INFORMATION",
+      "LIFT ASSIST",
+      "LINE DOWN",
+      "LIVE POWER LINE DOWN",
+      "LOW 02",
       "MALE NOT BREATHING",
       "MEDICAL",
       "MEDICAL CALL",
+      "MOTOR VEH ACCIDENT",
+      "MVA",
+      "MVA UNK INJ",
+      "ODOR GAS",
+      "OTHER ALL",
+      "POSS CODE 99",
       "POSS STROKE",
+      "PUBLIC ASSIST",
       "RESCUE CALL",
-      "SEISURE PATIENT",
+      "SEIZURE",
+      "SEIZURE PATIENT",
+      "SMOKE",
+      "STRUC FIRE 1ST",
+      "SUSP CIRCUMSTANCES",
+      "SVR ABD PAIN",
+      "TEST",
+      "TEST CALL TEST CALL",
+      "TRAFFIC ROADS",
+      "TREE DOWN",
+      "TREE DOWN IN ROADWAY",
+      "TREE FALL ON HOME",
       "TWO VEHICL AIC",
-      "WATER FLOW ALARM"
+      "UNK MED",
+      "UNK TYP UTIL POLE DOWN",
+      "UNRESP",
+      "VEH FIRE",
+      "VEHICLE FIRE",
+      "WATER FLOW ALARM",
+      "WATER RESCUE",
+      "WELFARE CHECK"
   ));
   
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "ASTORIA",
+      "CANNON BEACH",
+      "GEARHART",
+      "SEASIDE",
+      "WARRENTON",
+
+      // Census-designated places
+      "JEFFERS GARDEN",
+      "WESTPORT",
+
+      // Unincorporated communities
+      "ARCH CAPE",
+      "BRADWOOD",
+      "BROWNSMEAD",
+      "CARNAHAN",
+      "CLIFTON",
+      "ELSIE",
+      "FERN HILL",
+      "FORT STEVENS",
+      "GRAND RAPIDS",
+      "HAMLET",
+      "HAMMOND",
+      "JEWELL",
+      "JEWELL JUNCTION",
+      "KNAPPA",
+      "LUKARILLA",
+      "MELVILLE",
+      "MILES CROSSING",
+      "MISHAWAKA",
+      "NAVY HEIGHTS",
+      "NECANICUM",
+      "OKLAHOMA HILL",
+      "OLNEY",
+      "SKIPANON",
+      "SUNSET BEACH",
+      "SURF PINES",
+      "SVENSEN",
+      "SVENSEN JUNCTION",
+      "TAYLORVILLE",
+      "TOLOVANA PARK",
+      "TONGUE POINT VILLAGE",
+      "UNIONTOWN",
+      "VESPER",
+      "VINEMAPLE",
+      "WAUNA"
+  };
 }
