@@ -17,7 +17,7 @@ public class VALoudounCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "LCe911@loudoun.gov,@everbridge.net,dispatchpager@webserver.sterlingfire.org,89361";
+    return "LCe911@loudoun.gov,@everbridge.net,dispatchpager@webserver.sterlingfire.org,89361,87844";
   }
   
   @Override
