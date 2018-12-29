@@ -1281,6 +1281,7 @@ public class Active911ParserTable {
       "US/PA/JuniataCounty",              "PAJuniataCounty",
       "US/PA/Km911",                      "PALebanonCounty",
       "US/PA/LackawannaCounty",           "PALackawannaCounty",
+      "US/PA/LackTuscarora",              "PAJuniataCounty",
       "US/PA/LancasterCounty",            "PALancasterCounty",
       "US/PA/LawrenceCounty",             "PALawrenceCounty",
       "US/PA/LehighCounty",               "PALehighCountyA,PALehighCountyC",
