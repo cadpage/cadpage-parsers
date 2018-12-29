@@ -641,6 +641,7 @@ public class ParserList {
               ,"LALivingstonParish"             ,"Livingston Parish, LA"
               ,"LAOuachitaParish"               ,"Ouachita Parish, LA"
               ,"LAStCharlesParish"              ,"St Charles Parish, LA"
+              ,"LARapidesParish"                ,"Rapides Parish, LA"
               ,"LAStJamesParish"                ,"St James Parish, LA"
               ,"LAStTammanyParish"              ,"St Tammany Parish, LA"
               ,"LATangipahoaParish"             ,"Tangipahoa Parish, LA"
