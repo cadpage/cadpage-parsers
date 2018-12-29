@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 public class ALMarshallCountyCParser extends DispatchA65Parser {
@@ -13,6 +15,15 @@ public class ALMarshallCountyCParser extends DispatchA65Parser {
     return "dispatch@911email.org,ispatch@911email.net,geoconex@nlamerica.com,dispatch@911comm2.info,dispatch@Marshall-AL-911.info";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitKeepLeadBreak() { return true; }
+    };
+  }
+
+
+
   private static final String[] CITY_LIST = new String[]{
     
     // Cities
@@ -55,6 +66,7 @@ public class ALMarshallCountyCParser extends DispatchA65Parser {
     "CROSSVILLE",
     
     // Jackson County
-    "SCOTTSBORO"
+    "SCOTTSBORO",
+    "SWEARENGIN"
   };
 }
