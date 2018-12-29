@@ -79,6 +79,7 @@ public class Active911ParserTable {
       "US/AL/MarshallCounty",             "ALMarshallCounty,ALMorganCounty",
       "US/AL/MobileCounty",               "ALMobileCounty",
       "US/AL/MorganCounty",               "ALMorganCounty",
+      "US/AL/Prattville",                 "ALAutaugaCounty",
       "US/AL/PrichardFire",               "ALMobileCounty",
       "US/AL/RUSCO911",                   "ALRussellCountyB",
       "US/AL/RussellCounty",              "ALRussellCountyA",

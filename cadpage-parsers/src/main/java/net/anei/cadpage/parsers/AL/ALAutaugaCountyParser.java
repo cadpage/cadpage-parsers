@@ -11,21 +11,17 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
   
   public ALAutaugaCountyParser() {
     super(CITY_CODES, "AUTAUGA COUNTY", "AL", 
-          "CALL ADDRCITY SRC UNIT! INFO/N+");
+          "SKIP CALL ADDRCITY SRC UNIT! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "page@prattvilleal.gov";
+    return "@prattvilleal.gov";
   }
-  
-  private static final Pattern MARKER = Pattern.compile("sdspage2732778 +METC\\d+\n");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end()).trim();
+    body = stripFieldStart(body, "sdspage2732778 ");
     return parseFields(body.split("\n"), data);
   }
   
@@ -37,6 +33,7 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|UNIT) +(.*)|(\\d{1,4}[A-Z]?|[A-Z])");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -45,9 +42,21 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
       while (true) {
         String place = p.getLastOptional(';');
         if (place.length() == 0) break;
-        data.strPlace = append(place, " - ", data.strPlace);
+        Matcher match = APT_PTN.matcher(place);
+        if (match.matches()) {
+          String apt = match.group(1);
+          if (apt == null) apt = match.group(2);
+          data.strApt = append(data.strApt, "-", apt);
+        } else {
+          data.strPlace = append(place, " - ", data.strPlace);
+        }
       }
       parseAddress(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE CITY";
     }
   }
   
