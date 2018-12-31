@@ -238,6 +238,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     // Unincorporated communities
     "ACHOR",
     "BAYARD",
+    "BERLIN CENTER",
     "CANNONS MILL",
     "CHAMBERSBURG",
     "CLARKSON",
@@ -312,10 +313,11 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
     "FARRELL",
     "WHEATLAND",
     "WEST MIDDLESEX",
-
+    
     // Portage County
     "DEERFIELD",
     "DEERFIELD TWP",
+    "DIAMOND",
     "PALMYRA",
     "PALMYRA TWP",
     
@@ -373,6 +375,8 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   private static final Properties CITY_FIXES = buildCodeTable(new String[]{
       "DAMUSCUS",       "DAMASCUS"
   });
+
+  
   
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "6A",    "Accident With Injury",
