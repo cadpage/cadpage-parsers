@@ -84,12 +84,19 @@ public class ALMadisonCountyParser extends FieldProgramParser {
         term = term.trim();
         if (term.length() == 0) continue;
         if (!isUnit) {
-          if (term.equals("[Remark]")) continue;
-          if (term.equals("[Unit]")) {
+          if (term.equalsIgnoreCase("[Remark]")) continue;
+          if (term.equalsIgnoreCase("[Unit]")) {
             isUnit = true;
-            continue;
           }
-          data.strSupp = append(data.strSupp, "\n", term);
+          else if (term.startsWith("Problem:")) {
+            data.strCall = append(data.strCall, " - ", term.substring(8).trim());
+          }
+          else if (data.strCode.length() == 0 && term.startsWith("Dispatch CAD Code:")) {
+            data.strCode = term.substring(18).trim();
+          }
+          else {
+            data.strSupp = append(data.strSupp, "\n", term);
+          }
         } else {
           data.strUnit = append(data.strUnit, ",", term);
         }
@@ -100,7 +107,7 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " INFO UNIT";
+    return super.getProgram() + " CALL? CODE? INFO UNIT";
   }
   
   @Override
