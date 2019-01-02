@@ -17,7 +17,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
   
   @Override
   public String getFilter() {
-    return "lcfc73@fdcms.info,adi62@ridgefirecompany.com,adi62P@ridgefirecompany.com,firepaging@comcast.net,49dispatch@gmail.com,dispatch@ebfc49.org,87emsdispatch@gmail.com,FameDispatch@fdcms2.info";
+    return "lcfc73@fdcms.info,adi62@ridgefirecompany.com,adi62P@ridgefirecompany.com,firepaging@comcast.net,49dispatch@gmail.com,dispatch@ebfc49.org,87emsdispatch@gmail.com,FameDispatch@fdcms2.info,kimbertonfire@gmail.com,dispatch@diverescue77.org";
   }
 
   private static final Pattern TEXT_PTN = Pattern.compile("[A-Z]+ / +");
@@ -62,7 +62,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d(?::\\d\\d)?", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if  (name.equals("DUP_ADDR")) return new MyDupAddressField();
-    if (name.equals("X")) return new CrossField(".* AND .*", true);
+    if (name.equals("X")) return new CrossField(".* AND .*");
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new MyPhoneField();
@@ -73,7 +73,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DETAILS")) return new SkipField("DETAILS TO FOLLOW", true);
     if (name.equals("CITY_E")) return new MyCityEmptyField();
-    if (name.equals("ID")) return new IdField("[EF]\\d{8}", true);
+    if (name.equals("ID")) return new IdField("[EF]\\d{8}|", true);
     if (name.equals("DUP_CALL")) return new MyDuplicateCallField();
     return super.getField(name);
   }
