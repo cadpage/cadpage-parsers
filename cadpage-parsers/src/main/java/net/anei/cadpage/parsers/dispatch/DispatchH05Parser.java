@@ -103,7 +103,7 @@ public class DispatchH05Parser extends HtmlProgramParser {
   private class BaseTimesField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("Cleared:")) data.msgType = MsgType.RUN_REPORT;
+      if (field.startsWith("Cleared:") || field.startsWith("Cleared at:")) data.msgType = MsgType.RUN_REPORT;
       if (times == null) {
         times = field;
       } else {
