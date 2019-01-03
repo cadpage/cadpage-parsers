@@ -16,6 +16,7 @@ public class PAChesterCountyRParser extends PAChesterCountyBaseParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
+    if (body.startsWith("Dispatch")) return false;
     return parseFields(body.split("\n"), data);
   }
 }

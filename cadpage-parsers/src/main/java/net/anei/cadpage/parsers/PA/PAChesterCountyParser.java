@@ -11,6 +11,7 @@ public class PAChesterCountyParser extends GroupBestParser {
   
   public PAChesterCountyParser() {
     super(new PAChesterCountyGParser(),  // PAChesterCountyG is the gold standard
+          new GroupBlockParser(),
           new PAChesterCountyOParser(),  // PAChesterCountyO comes in second
           new GroupBlockParser(),        // If it works, don't bother with anything else  
           
