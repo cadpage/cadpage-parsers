@@ -929,6 +929,7 @@ public class Active911ParserTable {
       "US/NC/SampsonCounty",              "NCSampsonCounty",
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
       "US/NC/StokesCounty",               "NCStokesCounty",
+      "US/NC/TownOfCary",                 "NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
       "US/NC/UnionCounty",                "NCUnionCounty",
       "US/NC/USAMobility",                "NCWayneCountyA",
