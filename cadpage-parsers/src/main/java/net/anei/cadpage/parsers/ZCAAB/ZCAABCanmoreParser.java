@@ -16,10 +16,6 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  */
 public class ZCAABCanmoreParser extends MsgParser {
   
-  private static final Pattern MASTER = Pattern.compile("(\\d\\d?:\\d\\d(?::\\d\\d )?[AP]M) CALL[ :](\\d\\d?[a-z]\\d\\d[a-z]?|ambulance|911test) AT[ :](.+)");
-  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mmaa");
-  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm:ss aa");
-  
   private static final CodeTable STD_CODE_TABLE = new StandardCodeTable();
   
   public ZCAABCanmoreParser() {
@@ -32,6 +28,11 @@ public class ZCAABCanmoreParser extends MsgParser {
   public String getFilter() {
     return "@fresc.ca";
   }
+  
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d?:\\d\\d(?::\\d\\d )?[AP]M) CALL[ :](\\d\\d?[a-z]\\d\\d[a-z]?|ambulance|911test) AT[ :](.+)");
+  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mmaa");
+  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm:ss aa");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|ROOM|UNIT|LOT)(?![A-Z]) *(.*)|(\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE); 
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -55,10 +56,18 @@ public class ZCAABCanmoreParser extends MsgParser {
     String addr = p.get(',');
     if (addr.length() == 0) addr = p.get(',');
     addr = addr.replace('_', ' ');
-    if (addr.startsWith("*")) addr = addr.substring(1);
+    addr = stripFieldStart(addr, "*");
     parseAddress(addr.trim(), data);
-    data.strCity = p.getLast(',');
-    data.strPlace = p.get();
+    data.strCity = stripFieldStart(p.getLast(','), "md of ");
+    String place = p.get();
+    match = APT_PTN.matcher(place);
+    if (match.matches()) {
+      place = match.group(1);
+      if (place == null) place = match.group(2);
+      data.strApt = append(data.strApt, "-", place);
+    } else {
+      data.strPlace = place;
+    }
     return true;
   }
   

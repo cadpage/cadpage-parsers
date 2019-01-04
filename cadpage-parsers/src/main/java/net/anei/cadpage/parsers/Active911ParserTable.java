@@ -15,7 +15,7 @@ public class Active911ParserTable {
       "AU/SA/MountBarker",                "ZAUMountBarker",
       "AU/SA/Whyalla",                    "ZAUWhyalla",
       "CA/AB/ClearwaterCounty",           "ZCAABClearwaterCounty",
-      "CA/AB/FrescCA",                    "ZCAABCanmore",
+      "CA/AB/FrescCA",                    "ZCAABCanmore,ZCAABCalgary",
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
       "CA/AB/RedDeerCounty",              "ZCAABRedDeerCounty",
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",

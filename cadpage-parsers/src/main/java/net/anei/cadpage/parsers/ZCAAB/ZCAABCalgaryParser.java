@@ -15,17 +15,18 @@ public class ZCAABCalgaryParser extends FieldProgramParser {
   public ZCAABCalgaryParser() {
     super(CITY_TABLE, "CALGARY", "AB",
            "Add:ADDR/S4 Map:MAP Det:CALL! FireTAC:CH Evt:ID!");
+    setupCities(CITY_LIST);
   }
 
   @Override
   public String getFilter() {
-    return "Fire-EMSCADTeam@calgary.ca";
+    return "Fire-EMSCADTeam@calgary.ca,disp@calgary.ca";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if(!subject.equals("CAD SMS Event")) return false;
+    if(!subject.equals("CAD SMS Event") && !subject.equals("IPS I/Page Notification")) return false;
     
     int info = body.indexOf("\n\n\n");
     if(info >= 0) {
@@ -74,7 +75,15 @@ public class ZCAABCalgaryParser extends FieldProgramParser {
         }
         data.strPlace = place;
       }
+      String apt = "";
+      pt = field.lastIndexOf(',');
+      if (pt < 0) pt = field.lastIndexOf(';'); 
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
@@ -238,5 +247,9 @@ public class ZCAABCalgaryParser extends FieldProgramParser {
       "WHEA",  "Wheatland County",
       "WTRV",  "Water Valley"
   });
+  
+  private static final String[] CITY_LIST = new String[]{
+      "CANMORE"
+  };
   
 }
