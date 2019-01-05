@@ -10,11 +10,11 @@ public class OHLovelandParser extends DispatchA1Parser {
   
   public OHLovelandParser() {
     this("LOVELAND", "OH");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   protected OHLovelandParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
     addExtendedDirections();
   }
   
