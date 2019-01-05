@@ -212,7 +212,8 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
-  private static final Pattern GPS_PTN = Pattern.compile("(\\d{2,3}\\.\\d{6,})/(-\\d{2,3}\\.\\d{6,})");
+  private static final Pattern GPS_PTN = Pattern.compile("(-?\\d{2,3}\\.\\d{6,})[/\\\\](-?\\d{2,3}\\.\\d{6,})");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{8}\\b.*");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -260,6 +261,11 @@ public class ORMarionCountyAParser extends FieldProgramParser {
         return;
       }
       
+      if (data.strCallId.length() == 0 && ID_PTN.matcher(field).matches()) {
+        data.strCallId = field;
+        return;
+      }
+      
       
       if (data.strPlace.length() == 0) {
         match = PLACE_PHONE_PTN.matcher(field);
@@ -274,7 +280,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " X PLACE PHONE GPS MAP";
+      return super.getFieldNames() + " X PLACE PHONE GPS MAP ID";
     }
   }
 }
