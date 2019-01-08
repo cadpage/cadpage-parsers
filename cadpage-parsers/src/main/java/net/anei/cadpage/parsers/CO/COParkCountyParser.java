@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class COParkCountyParser extends SmartAddressParser {
   
-  private static final Pattern MARKER = Pattern.compile("CAD[ /]+");
+  private static final Pattern MARKER = Pattern.compile("(?:\\(CAD\\) +|CAD[ /]+)");
   private static final Pattern PLACE_PTN = Pattern.compile("(.*)\\((.*)\\)(.*)");
   
   public COParkCountyParser() {
@@ -25,16 +25,27 @@ public class COParkCountyParser extends SmartAddressParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
     // There should be a marker, but very occasionally there is not
-    Matcher match = MARKER.matcher(body);
-    if (match.lookingAt()) body = body.substring(match.end());
-    else if (!isPositiveId()) return false;
+    body = stripFieldStart(body, "Park County Government:");
+    do {
+      Matcher match = MARKER.matcher(body);
+      if (match.lookingAt()) {
+        body = body.substring(match.end());
+        break;
+      }
+      
+      if (subject.equals("CAD")) break;
+      
+      if (isPositiveId()) break;
+      
+      return false;
+    } while (false);
     
     // We have a couple tricks.  First look for a place name in parens.  If found
     // it also marks the beginning of the call description
-    match = PLACE_PTN.matcher(body);
+    Matcher match = PLACE_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1).trim();
       data.strPlace = match.group(2).trim();
@@ -103,6 +114,7 @@ public class COParkCountyParser extends SmartAddressParser {
       "ACCIDENT/ CRASH",
       "ACCIDENT/CRASH",
       "ACCIDETN/CRASH",
+      "ACCIDENT/MOTOR VEHICLE",
       "ALARM CARBON MONOXIDE",
       "ALARM FIRE",
       "ALARM SMOKE",
