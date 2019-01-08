@@ -20,7 +20,7 @@ public class PAElkCountyParser extends FieldProgramParser {
   
   PAElkCountyParser(String defCity, String defState) {
     super(CITY_TABLE, defCity, defState,
-          "( Inc_Code:CALL! Address:ADDRCITY! ( Common_Name:PLACE! Units:UNIT! Cross_Streets:X% " + 
+          "( Inc_Code:CALL! Address:ADDRCITY! ( Common_Name:PLACE! ( Units:UNIT! Cross_Streets:X% | Cross_Streets:X! Units:UNIT% ) " + 
                                              "| City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME " + 
                                              ") " + 
           "| CALL! Address:ADDRCITY! Common_Name:PLACE! Units:UNIT! Cross_St:X! " + 
