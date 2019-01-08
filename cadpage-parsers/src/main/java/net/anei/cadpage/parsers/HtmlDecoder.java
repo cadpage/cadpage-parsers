@@ -35,14 +35,24 @@ public class HtmlDecoder {
   
   private static final char EOL = (char)-1;
   
+  private boolean preserveWhitespace = false;
+  
   // Primary map that tells us how to process HTML tags
   private Map<String, Integer> tagDictionary = new HashMap<String,Integer>();
   
   public HtmlDecoder() {
-    this(null);
+    this(null, false);
+  }
+  
+  public HtmlDecoder(boolean preserveWhitespace) {
+    this(null, preserveWhitespace);
   }
   
   public HtmlDecoder(String userTags) {
+    this(userTags, false);
+  }
+  
+  public HtmlDecoder(String userTags, boolean preserveWhitespace) {
     setTagFlags(HTML_FLAG_SKIP_DATA, "head", "style");
     setTagFlags(HTML_FLAG_LINE_BREAK, "br");
     setTagFlags(HTML_FLAG_FIELD_BREAK, 
@@ -54,6 +64,7 @@ public class HtmlDecoder {
     if (userTags != null) {
       setTagFlags(HTML_FLAG_USER_BREAK | HTML_FLAG_FIELD_BREAK, userTags.split("\\|"));
     }
+    this.preserveWhitespace = preserveWhitespace;
   }
   
   
@@ -61,6 +72,10 @@ public class HtmlDecoder {
     for (String tag : tags) {
       tagDictionary.put(tag, flags);
     }
+  }
+  
+  public void setPreserveWhitespace(boolean preserveWhitespace) {
+    this.preserveWhitespace = preserveWhitespace;
   }
 
   // Working variables
@@ -191,8 +206,8 @@ public class HtmlDecoder {
       // we are in a nested <pre> block
       if (Character.isWhitespace(chr)) {
         
-        // Normal procesing just sets teh space flag
-        if (nestedPreCnt == 0) {
+        // Normal processing just sets teh space flag
+        if (!preserveWhitespace && nestedPreCnt == 0) {
           if (curField.length() > 0) space = true;
         }
         

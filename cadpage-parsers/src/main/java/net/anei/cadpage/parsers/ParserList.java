@@ -527,6 +527,7 @@ public class ParserList {
               ,"KSBrownCounty"                  ,"Brown County, KS"
               ,"KSButlerCounty"                 ,"Butler County, KS"
               ,"KSCowleyCounty"                 ,"Cowley County, KS"
+              ,"KSCrawfordCounty"               ,"Crawford County, KS"
               ,"KSEllisCounty"                  ,"Ellis County, KS"
               ,"KSEudora"                       ,"Eudora, KS"
               ,"KSFordCounty"                   ,"Ford County, KS"

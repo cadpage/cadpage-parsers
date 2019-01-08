@@ -35,6 +35,10 @@ public class HtmlProgramParser extends FieldProgramParser {
     super(cityCode, defCity, defState, prog);
     decoder = new HtmlDecoder(userTags);
   }
+  
+  public void setPreserveWhitespace(boolean preserveWhiteSpace) {
+    decoder.setPreserveWhitespace(preserveWhiteSpace);
+  }
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {

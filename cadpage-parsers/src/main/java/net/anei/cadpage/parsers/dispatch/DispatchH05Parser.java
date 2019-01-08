@@ -21,12 +21,18 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchH05Parser extends HtmlProgramParser {
   
+  private boolean accumulateUnits = false;
+  
   public DispatchH05Parser(String defCity, String defState, String program) {
     this(defCity, defState, program, null);
   }
   
   public DispatchH05Parser(String defCity, String defState, String program, String userTags) {
     super(defCity, defState, program, userTags);
+  }
+  
+  public void setAccumulateUnits(boolean accumulateUnits) {
+    this.accumulateUnits = accumulateUnits;
   }
   
   private String times;
@@ -103,12 +109,24 @@ public class DispatchH05Parser extends HtmlProgramParser {
   private class BaseTimesField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      
+      if (accumulateUnits && field.startsWith("Unit:")) {
+        data.strUnit = append(data.strUnit, ",", field.substring(5).trim());
+      }
+      
       if (field.startsWith("Cleared:") || field.startsWith("Cleared at:")) data.msgType = MsgType.RUN_REPORT;
       if (times == null) {
         times = field;
       } else {
         times = append(times, "\n", field);
       }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      String result = super.getFieldNames();
+      if (accumulateUnits) result = "UNIT " + result;
+      return result;
     }
   }
 }
