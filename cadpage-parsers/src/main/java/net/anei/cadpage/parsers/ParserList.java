@@ -466,6 +466,7 @@ public class ParserList {
               ,"INHowardCounty"                 ,"Howard County, IN"
               ,"INJacksonCounty"                ,"Jackson County, IN"
               ,"INJasperCounty"                 ,"Jasper County, IN"
+              ,"INJayCounty"                    ,"Jay County, IN"
               ,"INJeffersonCounty"              ,"Jefferson County, IN"
               ,"INJohnsonCounty"                ,"Johnson County, IN"
               ,"INKnoxCounty"                   ,"Knox County, IN"
