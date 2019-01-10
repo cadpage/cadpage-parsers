@@ -1,5 +1,5 @@
 ***************************************************************************
-There is a bug in the Cadpage permission logic that I need to track down.  But the quick workaround is to manually grant Cadpage permission to access external storage.
+Still working on this.  Currently arguing over whether it is a bug in Cadpage or a bug in the most recent versions of Android.  In any case, the quick workaround is to manually grant Cadpage permission to access external storage.
 
 Open the main system settings and select
 Apps & Notifications > Cadpage > Permissions
@@ -7,6 +7,7 @@ and make sure that the "Storage" permission is enabled.
 
 Good luck,
 -Ken
+
 
 **************************************************************************
 No email address - wanting to pay with check
