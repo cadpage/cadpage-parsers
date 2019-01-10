@@ -43,6 +43,9 @@ public class COParkCountyParser extends SmartAddressParser {
       return false;
     } while (false);
     
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     // We have a couple tricks.  First look for a place name in parens.  If found
     // it also marks the beginning of the call description
     Matcher match = PLACE_PTN.matcher(body);
