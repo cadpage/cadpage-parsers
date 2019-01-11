@@ -1187,6 +1187,7 @@ public class Active911ParserTable {
       "US/OH/WashingtonCountySheriff",    "OHWashingtonCountyA",
       "US/OH/WayneCounty",                "OHWayneCountyC,OHWayneCountyE",
       "US/OH/WestChester",                "OHButlerCountyB",
+      "US/OH/WhitewaterTwp",              "OHHamiltonCountyA",
       "US/OH/WillowickCAD",               "OHLakeCountyC",
       "US/OH/WoosterCity",                "OHWayneCountyD",
       "US/OH/WrightPatt",                 "OHMontgomeryCountyA",
