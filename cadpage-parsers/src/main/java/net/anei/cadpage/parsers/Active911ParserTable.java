@@ -993,6 +993,7 @@ public class Active911ParserTable {
       "US/NJ/SaddleRiverPD",              "NJBergenCountyC",
       "US/NJ/SalemCounty",                "NJSalemCountyC",
       "US/NJ/SomersetCounty",             "NJSomersetCountyA",
+      "US/NJ/SomersetCountyDiscard",      "NJSomersetCountyA",
       "US/NJ/SouthBrunswickPD",           "NJMiddlesexCountyB",
       "US/NJ/SpartaPD",                   "NJSussexCountyA",
       "US/NJ/SussexCounty911",            "NJSussexCountyB",
