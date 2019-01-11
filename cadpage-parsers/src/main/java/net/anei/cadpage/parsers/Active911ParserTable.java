@@ -1272,6 +1272,7 @@ public class Active911ParserTable {
       "US/PA/DauphinCounty",              "PADauphinCounty",
       "US/PA/DelawareCounty",             "PADelawareCountyB,PADelawareCountyG",
       "US/PA/DelcomDispatch",             "PADelawareCountyB,PADelawareCountyG",
+      "US/PA/DelcoMedia",                 "PADelawareCountyB",
       "US/PA/DelcoTextRelay",             "PADelawareCountyB",
       "US/PA/Ecm",                        "PAAlleghenyCountyB",
       "US/PA/ElkCounty",                  "PAElkCounty",
