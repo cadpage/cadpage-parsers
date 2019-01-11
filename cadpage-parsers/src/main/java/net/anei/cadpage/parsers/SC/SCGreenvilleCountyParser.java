@@ -7,6 +7,7 @@ public class SCGreenvilleCountyParser extends GroupBestParser {
   
   public SCGreenvilleCountyParser() {
     super(new SCGreenvilleCountyAParser(), 
-          new SCGreenvilleCountyBParser());
+          new SCGreenvilleCountyBParser(),
+          new SCGreenvilleCountyDParser());
   }
 }

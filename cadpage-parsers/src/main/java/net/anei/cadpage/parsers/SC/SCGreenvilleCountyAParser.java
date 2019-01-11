@@ -17,6 +17,11 @@ public class SCGreenvilleCountyAParser extends DispatchOSSIParser {
   }
   
   @Override
+  public String getFilter() {
+    return "@greenvillecounty.org";
+  }
+  
+  @Override
   protected boolean parseMsg(String body, Data data) {
     if (body.startsWith("CAUTION: ")) {
       int pt = body.indexOf("\n\n\n");
