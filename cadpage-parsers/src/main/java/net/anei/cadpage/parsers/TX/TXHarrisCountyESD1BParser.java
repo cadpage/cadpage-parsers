@@ -17,7 +17,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     super("HARRIS COUNTY", "TX",
            "( CODE_CALL ADDR1? ADDR UNIT! KM:MAP! Xst's:X " + 
            "| ID/Z ADDRCH! ADDR+? Cross_Streets:X ( Map:MAP | Key_Map:MAP ) Zip:ZIP Lat:GPS1/d Lon:GPS2/d" +
-           "| ID/Z Unit:UNIT! Type:CODE! Problem:CALL! Loc:ADDR! Apt:APT! Bldg:PLACE! ( Map:MAP! | Key_Map:MAP! ) Cross_Streets:X! Box_#:BOX! Zip:ZIP! Lat:GPS1/d! Lon:GPS2/d! Notes:INFO " +
+           "| ID/Z ( Unit:UNIT! Type:CODE! | Type:CODE! ) Problem:CALL! Loc:ADDR! Apt:APT! Bldg:PLACE! EMPTY? ( Map:MAP! | Key_Map:MAP! ) Cross_Streets:X! Box_#:BOX! Zip:ZIP! Lat:GPS1/d! Lon:GPS2/d! Notes:INFO " +
            "| ( ID UNIT2? | UNIT ) CODE CALL! PREALERT? ADDR1? ADDR! Apt:APT! Bldg:PLACE Key_Map:MAP% Cross_Streets:X Box_#:BOX )");
   }
   
