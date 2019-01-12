@@ -7,4 +7,9 @@ public class VTChittendenCountyAParser extends DispatchA19Parser {
   public VTChittendenCountyAParser() {
     super("CHITTENDEN COUNTY", "VT");
   }
+  
+  @Override
+  public String getFilter() {
+    return "@alert.active911.com";
+  }
 }
