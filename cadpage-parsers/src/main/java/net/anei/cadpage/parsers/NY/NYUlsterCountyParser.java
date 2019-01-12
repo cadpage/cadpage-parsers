@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.NY;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,25 +10,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Ulster County, NY
  */
 public class NYUlsterCountyParser extends FieldProgramParser {
-  
-  private static final Pattern MARKER = Pattern.compile("\\(\\(\\d+\\)[-/ A-Z0-9]*\\)");
 
   public NYUlsterCountyParser() {
-    super("ULSTER COUNTY", "NY",
-           "Unit:UNIT! UnitSts:SKIP Loc:ADDR/SXa! XSts:X! Common:PLACE Venue:CITY Inc:CALL! Date:DATE Time:TIME Addtl:INFO Nature:INFO CNTX:INFO", FLDPROG_ANY_ORDER);
+    super(CITY_LIST, "ULSTER COUNTY", "NY",
+          "Inc:CALL! Loc:ADDR_CITY_X! Common:PLACE/SDS! Nature:CALL/SDS? Original_Call_Time:DATETIME");
   }
   
   @Override
   public String getFilter() {
-    return "cad@co.ulster.ny.us,777";
+    return "dispatch@co.ulster.ny.us,777";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (!subject.equals("Dispatch")) return false;
 
     body = body.replace("\n", "");
-    Matcher match = MARKER.matcher(body);
-    if (match.find()) body = body.substring(match.end()).trim();
     if (!super.parseMsg(body, data)) return false;
 
     data.strCity = data.strCity.replaceAll(" +", " ");
@@ -38,69 +35,123 @@ public class NYUlsterCountyParser extends FieldProgramParser {
     return true;
   }
   
-  private static final Pattern TIME_PTN = Pattern.compile("^\\d\\d:\\d\\d\\b");
-  private class MyTimeField extends TimeField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = TIME_PTN.matcher(field);
-      if (!match.find()) return;
-      data.strTime = match.group();
-      data.strSupp = field.substring(match.end()).trim();
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "TIME INFO";
-    }
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR_CITY_X")) return new MyAddressCityCrossField();
+    if  (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
+    return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d)");
-  private class MyInfoField extends InfoField {
+  private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" *, +");
+  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*) (\\d{10})");
+  private class MyAddressCityCrossField extends AddressField {
+    
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (match.matches()) {
-        data.strDate = match.group(1);
-        data.strTime = match.group(2);
-      } else {
-        super.parse(field, data);
+      field = stripFieldEnd(field, ",");
+      String[] parts = ADDR_DELIM_PTN.split(field);
+      super.parse(parts[0], data);
+      if (parts.length > 1) {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, parts[1], data);
+        String left = getLeft();
+        if (left.length() > 0) {
+          Matcher match = NAME_PHONE_PTN.matcher(left);
+          if (match.matches()) {
+            data.strName = match.group(1).trim();
+            data.strPhone = match.group(2);
+          } else if (left.contains("/")) {
+            data.strCross = left;
+          } else if (left.contains(",")) {
+            data.strName = left;
+          } else {
+            data.strPlace = left;
+          }
+        }
+      }
+      for (int ndx = 2; ndx < parts.length; ndx++) {
+        data.strCross = append(data.strCross, ", ", parts[ndx]);
       }
     }
     
     @Override
     public String getFieldNames() {
-      return "INFO DATE TIME";
+      return "ADDR APT CITY NAME PHONE PLACE X";
     }
   }
   
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
-    if (name.equals("TIME")) return new MyTimeField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-  
-  private class MyCallField extends CallField {
-    @Override
-    public void parse(String field, Data data) {
-      data.strCall = convertCodes(field, CALL_CODES);
-    }
-  }
-  
-  private static final Properties CALL_CODES = buildCodeTable(new String[]{
-      "Autoalarm",  "Automatic Alarm (Smoke Detector Activation)",
-      "Crit/345",   "Medical",
-      "Elec/Outdr", "Tree on Wires",
-      "Haz Mat",    "Hazardous Materials Call",
-      "Med Alarm",  "Lifeline activation (Medical)",
-      "PDAA",       "Property Damage Auto Accident",
-      "PIAA/040",   "Vehicle Accident w/injuries",
-      "Public Svc", "Public Service Call",
-      "Struct Fir", "Structure Fire",
-      "Unkwn Fire", "Unknown Type of Fire",
-      "Veh Fire",   "Vehicle Fire"
+  private static final String[] CITY_LIST = new String[]{
       
-  });
+      // Cities
+      "KINGSTON",
+
+      // Towns
+      "DENNING",
+      "ESOPUS",
+      "GARDINER",
+      "HARDENBURGH",
+      "HURLEY",
+      "KINGSTON",
+      "LLOYD",
+      "MARBLETOWN",
+      "MARLBOROUGH",
+      "NEW PALTZ",
+      "OLIVE",
+      "PLATTEKILL",
+      "ROCHESTER",
+      "ROSENDALE",
+      "SAUGERTIES",
+      "SHANDAKEN",
+      "SHAWANGUNK",
+      "ULSTER",
+      "WAWARSING",
+      "WOODSTOCK",
+
+      // Villages
+      "ELLENVILLE",
+      "NEW PALTZ",
+      "SAUGERTIES",
+
+      // Census-designated places
+      "ACCORD",
+      "CLINTONDALE",
+      "CRAGSMOOR",
+      "EAST KINGSTON",
+      "GARDINER",
+      "GLASCO",
+      "HIGH FALLS",
+      "HIGHLAND",
+      "HILLSIDE",
+      "HURLEY",
+      "KERHONKSON",
+      "LAKE KATRINE",
+      "LINCOLN PARK",
+      "MALDEN-ON-HUDSON",
+      "MARLBORO",
+      "MILTON",
+      "NAPANOCH",
+      "PHOENICIA",
+      "PINE HILL",
+      "PLATTEKILL",
+      "PORT EWEN",
+      "RIFTON",
+      "ROSENDALE HAMLET",
+      "SAUGERTIES SOUTH",
+      "SHOKAN",
+      "STONE RIDGE",
+      "TILLSON",
+      "WALKER VALLEY",
+      "WALLKILL",
+      "WATCHTOWER",
+      "WEST HURLEY",
+      "WOODSTOCK",
+      "ZENA",
+
+      // Hamlets
+      "BEARSVILLE",
+      "BIG INDIAN",
+      "BOICEVILLE",
+      "BROWNS STATION",
+      "CENTERVILLE",
+      "CHICHESTER",
+  };
 }
