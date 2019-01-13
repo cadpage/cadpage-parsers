@@ -244,6 +244,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     }
   }
   
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) Apartment: *(.*)");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -252,8 +253,15 @@ public class DispatchSPKParser extends HtmlProgramParser {
       // always seems to be a cell tower location that we can ignore
       // Unless the first address is UNKNOWN in which case, accept the second one
       if (data.strAddress.length() == 0 || data.strAddress.equals("UNKNOWN")) {
+        Matcher match = ADDR_APT_PTN.matcher(field);
+        String apt = "";
+        if (match.matches()) {
+          field = match.group(1).trim();
+          apt = match.group(2);
+        }
         data.strAddress = "";
         super.parse(field, data);
+        data.strApt = append(data.strApt, "-", apt);
       }
     }
   }
