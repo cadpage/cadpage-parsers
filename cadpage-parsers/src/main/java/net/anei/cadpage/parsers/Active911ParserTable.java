@@ -853,7 +853,7 @@ public class Active911ParserTable {
       "US/MT/GallatinCounty",             "MTGallatinCounty",
       "US/MT/GreatFalls",                 "MTCascadeCountyB",
       "US/MT/HavrePolice",                "MTHillCounty",
-      "US/MT/LewisandClarkCounty",        "MTLewisAndClarkCountyA",
+      "US/MT/LewisandClarkCounty",        "MTLewisAndClarkCounty",
       "US/MT/MissoulaCounty",             "MTMissoulaCounty",
       "US/MT/ParkCounty",                 "MTParkCounty",
       "US/MT/RavalliCounty",              "MTRavalliCounty",

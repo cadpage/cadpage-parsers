@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MT;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +11,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MTLewisAndClarkCountyAParser extends FieldProgramParser {
   
   public MTLewisAndClarkCountyAParser() {
-    super("LEWIS AND CLARK COUNTY", "MT",
-           "UNITS:UNIT! CFS:ID! TYP:CALL! LOC:ADDR! BUSN:PLACE APT:APT CMP:NAME PHONE:PHONE CMNTS:INFO+ MEDS:SKIP MAP:MAP MAP+? TERM INFO+");
+    super(CITY_CODES, "LEWIS AND CLARK COUNTY", "MT",
+           "UNITS:UNIT! CFS:ID! TYP:CALL! LOC:ADDRCITY! BUSN:PLACE APT:APT CMP:NAME PHONE:PHONE CMNTS:INFO+ MEDS:SKIP MAP:MAP MAP+? TERM INFO+");
   }
   
   private static final Pattern MARKER = Pattern.compile("HELENA 911[: ] *(?:\\(.*?\\) *)?");
@@ -52,5 +53,17 @@ public class MTLewisAndClarkCountyAParser extends FieldProgramParser {
     if (name.equals("TERM")) return new SkipField("\\*{5,}", true);
     return super.getField(name);
   }
-  
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "[]",     "",
+      "[AUG]",  "AUGUSTA",
+      "[CAS]",  "CASCADE",
+      "[CCR]",  "CANYON CREEK",
+      "[CRG]",  "CRAIG",
+      "[EHEL]", "EAST HELENA",
+      "[HLN]",  "HELENA",
+      "[LN]",   "LINCOLN",
+      "[MARY]", "MARYSVILLE",
+      "[WCR]",  "WOLF CREEK"
+  });
 }
