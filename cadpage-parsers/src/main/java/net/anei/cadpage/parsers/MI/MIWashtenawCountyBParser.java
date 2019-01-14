@@ -12,7 +12,6 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   public MIWashtenawCountyBParser() {
     super("WASHTENAW COUNTY", "MI", 
           "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! PRI:PRI! DATE:DATETIME! INFO:INFO!");
-    setFieldList("ID PRI CALL ADDR APT CITY");
   }
   
   @Override
@@ -21,7 +20,9 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed) - (\\d+)");
-  private static final Pattern MASTER = Pattern.compile("New Incident:\n(.*?) - (.*?) at(?: (.*?)(?:, (.*?))?(?: (\\d{5}))?)?");
+  private static final Pattern MASTER = Pattern.compile("New Incident:\n(.*?) - (.*?) at(?: (.*))?");
+  private static final Pattern TRAIL_ST_ZIP_PTN = Pattern.compile("(.*?)(?:, *([A-Z]{2}))?(?: +(\\d{5}))");
+  private static final Pattern ADDR_DELIM = Pattern.compile(" *, *");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -32,16 +33,62 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     
     if (body.startsWith("CALL:")) {
       body = body.replace("ID:", " ID:");
-      return super.parseMsg(body, data);
+      if (!super.parseMsg(body, data)) return false;
     }
     
-    match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    data.strPriority = match.group(1);
-    data.strCall = match.group(2);
-    parseAddress(getOptGroup(match.group(3)), data);
-    data.strCity = getOptGroup(match.group(4));
-    if (data.strCity.length() == 0) data.strCity = getOptGroup(match.group(5));
+    else {
+      setFieldList("ID PRI CALL PLACE ADDR APT CITY ST");
+      
+      match = MASTER.matcher(body);
+      if (!match.matches()) return false;
+      data.strPriority = match.group(1);
+      data.strCall = match.group(2);
+      String addr = getOptGroup(match.group(3));
+      int pt = addr.indexOf('(');
+      if (pt >= 0) {
+        data.strPlace = addr.substring(0,pt).trim();
+        int pt2 = addr.indexOf(')', pt+1);
+        if (pt2 < 0) return false;
+        addr = addr.substring(pt+1, pt2).trim();
+      }
+      
+      String zip = null;
+      match = TRAIL_ST_ZIP_PTN.matcher(addr);
+      if (match.matches()) {
+        addr = match.group(1).trim();
+        data.strState = getOptGroup(match.group(2));
+        zip = match.group(3);
+      }
+      
+      String[] parts = ADDR_DELIM.split(addr);
+      switch (parts.length) {
+      case 1:
+        if (data.strPlace.length() > 0) {
+          parseAddress(data.strPlace, data);
+          data.strCity = parts[0];
+          data.strPlace = "";
+        } else {
+          parseAddress(parts[0], data);
+        }
+        break;
+      
+      case 2:
+        parseAddress(parts[0], data);
+        data.strCity = parts[1];
+        break;
+        
+      case 3:
+        parseAddress(parts[0], data);
+        data.strPlace = append(parts[1], " - ", data.strPlace);
+        data.strCity = parts[2];
+        break;
+      
+      default:
+        return false;
+      }
+      
+      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    }
     
     if (type.equals("Incident Completed")) {
       data.msgType = MsgType.RUN_REPORT;
