@@ -19,7 +19,7 @@ public class MNAnokaCountyBParser extends MsgParser {
     return "InformCAD@paging.acw-psds.org";
   }
   
-  private static final Pattern LEAD_ID_PTN = Pattern.compile("[A-Z]{2}\\d{8}");
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("[A-Z]{2}[A-Z0-9]\\d{7}");
   private static final Pattern INFO_SKIP_PTN = Pattern.compile("\\[\\d\\]");
   private static final Pattern TRAIL_ID_PTN = Pattern.compile("(.*)(\\d{2}[A-Z]-[A-Z]{2}\\d{4})");
   private static final Pattern ID_PTN = Pattern.compile("\\d{11}");
@@ -73,10 +73,14 @@ public class MNAnokaCountyBParser extends MsgParser {
     data.strPlace = p.get(20);
     data.strCity = p.get(20);
     
+    p.setOptional();
     if (!p.check("[1] ")) {
       data.strMap = p.get(10);
       if (data.strMap.equals("NOT FOUND")) data.strMap = "";
-      p.check("[1] ");
+      if (!p.check("[1] ")) {
+        data.strSource = p.get(30);
+        if (!p.check("[1] ")) return false;
+      }
     }
     
     String info = p.get(496);
