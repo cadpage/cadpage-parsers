@@ -25,7 +25,7 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@cce911.com";
+    return "CAD@cce911.com,8329061348";
   }
   
   private static final Pattern CAD_MARKER = Pattern.compile("(?:\\d+:)?CAD:");

@@ -1,4 +1,13 @@
 ***************************************************************************
+I believe this has been "fixed" in the latest 2.0.4-12 version of Cadpage.  But I need some help to confirm that.
+
+Could you install the latest Cadpage upgrade from Google Play Store, then open Cadpage Notification Settings and use the "Test Notification" setting to confirm that your alert notification works as expected?
+
+The problem has been reported by a number of users, all running Android 9 on some flavor of Pixel device.  Curiously, I have been unable to duplicate the problem on my own Pixel running Android 9.  The problem seems to have started when I published a Cadpage version targeting Android 9 and I am hoping it goes away when I backed that change out of the latest Cadpage release.
+
+Thanks for reporting this,
+-Ken
+***************************************************************************
 Still working on this.  Currently arguing over whether it is a bug in Cadpage or a bug in the most recent versions of Android.  In any case, the quick workaround is to manually grant Cadpage permission to access external storage.
 
 Open the main system settings and select
