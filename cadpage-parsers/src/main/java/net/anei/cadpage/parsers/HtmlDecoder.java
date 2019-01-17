@@ -245,6 +245,13 @@ public class HtmlDecoder {
    */
   private String getHtmlTag() {
     int savePos = pos;
+    
+    if (checkNext("!--")) {
+      int tmp = body.indexOf("-->", pos);
+      pos = tmp < 0 ? body.length() : tmp+3;
+      return "!----";
+    }
+    
     StringBuilder sb = new StringBuilder();
     char chr = getNextChar();
     if (chr == '?') {
@@ -341,6 +348,12 @@ public class HtmlDecoder {
     curField.setLength(0);
     lineBreak = false;
     space = false;
+  }
+  
+  private boolean checkNext(String field) {
+    if (!body.substring(pos).startsWith(field)) return false;
+    pos += field.length();
+    return true;
   }
 
   /**

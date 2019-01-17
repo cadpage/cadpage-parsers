@@ -6,6 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class CTNorthwestPublicSafetyParser extends GroupBestParser {
   
   public CTNorthwestPublicSafetyParser() {
-    super(new CTNorthwestPublicSafetyAParser(), new CTNorthwestPublicSafetyBParser());
+    super(new CTNorthwestPublicSafetyAParser(), 
+          new CTNorthwestPublicSafetyBParser(),
+          new CTNorthwestPublicSafetyCParser());
   }
 }
