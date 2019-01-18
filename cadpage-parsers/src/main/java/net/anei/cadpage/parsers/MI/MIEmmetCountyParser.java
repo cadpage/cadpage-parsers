@@ -15,7 +15,7 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   
   MIEmmetCountyParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-           "ID?:( CANCEL ADDR! CITY? | FYI ( ADDR/Z CITY CALL | ADDRCITY CALL | CALL SRC ADDR/Z! CITY? | CALL ADDR/Z X/Z CITY | CALL ADDR/Z! CITY | CADDR1 CADDR2 ) ) SRC? INFO+");
+           "ID?:( CANCEL ADDR! CITY? INFO/N+ | FYI ( CALL ADDR/Z! CITY | ADDR/Z CITY | ADDR | CALL ADDR ) ) SRC? INFO/N+? ( CITY SRC2 | SRC2 ) END");
   }
   
   @Override
@@ -43,21 +43,33 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
     if (name.equals("CADDR1")) return new CallAddressField();
     if  (name.equals("CADDR2")) return new SkipField();
-    if (name.equals("SRC")) return new MySourceField();
+    if (name.equals("UNK")) return new AddressField("UNK", true);
+    if (name.equals("SRC")) return new MySourceField(1);
+    if (name.equals("SRC2")) return new MySourceField(2);
+    if (name.equals("CITY")) return new MyCityField();
     return super.getField(name);
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (data.strCity.length() > 0) return false;
+      return super.checkParse(field, data);
+    }
   }
   
   // If we do not recognize a city code, it will be processed as a source field.
   // If the real source field finds the source field is already set, reject so
   // someone will bring the missing city code to our notice
   private class MySourceField extends SourceField {
-    public MySourceField() {
-      super("[A-Z]{3,4}", true);
+    public MySourceField(int type) {
+      super(type == 1 ? "[A-Z]{3,4}" : "[A-Z]{1,4}", true);
     }
     
     @Override
     public void parse(String field, Data data) {
       if (field.length() > 0 && data.strSource.length() > 0) abort();
+      if (field.length() < 3) return;
       super.parse(field, data);
     }
   }
@@ -93,6 +105,12 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
     }
   }
   
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("BOYNE VALLEY TWP")) city = "BOYNE VALLEY TOWNSHIP";
+    return city;
+  }
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       
       // Charlevoix County
@@ -121,7 +139,7 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
       "BGR",  "BEAUGRAND TWP",
       "BNT",  "BENTON TWP",
       "BRT",  "BURT TWP",
-      "CH",  "CHEBOYGAN CITY",
+      "CH",   "CHEBOYGAN CITY",
       "CHB",  "CHEBOYGAN",
       "ELL",  "ELLIS TWP",
       "FRS",  "FOREST TWP",
@@ -130,9 +148,11 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
       "IND",  "INDIAN RIVER",
       "INV",  "INVERNESS TWP",
       "KHL",  "KOEHLER TWP",
-      "MC",  "MACKINAW CITY",
+      "MC",   "MACKINAW CITY",
+      "MCT",  "MACKINAW TWP",
       "MLL",  "MULLET TWP",
       "MNR",  "MUNRO TWP",
+      "MNT",  "MENTOR TWP",
       "NND",  "NUNDA TWP",
       "TSC",  "TUSCARORA TWP",
       "WLK",  "WALKER TWP",
@@ -140,14 +160,16 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
       "WVR",  "WAVERLY TWP",
       
       // Emmet County
-      
       "BH",   "RESORT TWP",   // ???????
       "BV",   "BAY VIEW",
       "HS",   "HARBOR SPRINGS",
 
       "ALN",  "ALANSON",
+      "BLS",  "BLISS TWP",
       "BRC",  "BEAR CREEK TWP",
+      "CCE",  "EMMET COUNTY",  // ????
       "CNT",  "CENTER TWP",
+      "CRP",  "CARP LAKE",
       "CRS",  "CROSS VILLAGE TWP",
       "FRN",  "FRIENDSHIP TWP",
       "HYS",  "HAYES TWP",
