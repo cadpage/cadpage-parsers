@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.VA;
 
 import net.anei.cadpage.parsers.GroupBestParser;
+import net.anei.cadpage.parsers.GroupBlockParser;
 
 /**
  * Prince Edward County, VA
@@ -8,6 +9,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class VAPrinceEdwardCountyParser extends GroupBestParser {
   
   public VAPrinceEdwardCountyParser() {
-    super(new VAPrinceEdwardCountyAParser(), new VAPrinceEdwardCountyBParser());
+    super(new VAPrinceEdwardCountyBParser(),
+          new GroupBlockParser(),
+          new VAPrinceEdwardCountyAParser());
   }
 }
