@@ -125,8 +125,11 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "214 EAST ST",                          "+36.978188,-76.645103",
+      "315 EAST ST",                          "+36.979602,-76.646173",
       "3377 HOMESTEAD DR",                    "+36.788948,-76.864822",
-      "9033 MARGARET DR",                     "+36.842812,-76.772552"
+      "9033 MARGARET DR",                     "+36.842812,-76.772552",
+      "314 MIDDLE ST",                        "+36.979919,-76.646790"
   });
 
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
