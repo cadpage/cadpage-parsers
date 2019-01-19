@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.MD;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,12 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
       data.strAddress = data.strPlace;
       data.strPlace = "";
     }
+    
+    String mapCode = data.strMap;
+    int pt = mapCode.indexOf('-');
+    if (pt >= 0) mapCode = mapCode.substring(0, pt);
+    String city = MAP_CITY_TABLE.getProperty(mapCode);
+    if (city != null) data.strCity = city;
     return true;
   }
   
@@ -141,4 +148,58 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern GR_PTN = Pattern.compile("\\bGR\\b");
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "001", "TOWSON",
+      "002", "PIKESVILLE",
+      "003", "WOODLAWN",
+      "004", "CATONSVILLE",
+      "005", "HALETHORPE",
+      "006", "DUNDALK",
+      "007", "ESSEX",
+      "008", "BALTIMORE",
+      "009", "BALTIMORE",
+      "010", "PARKVILLE",
+      "011", "BALTIMORE",
+      "012", "MIDDLE RIVER",
+      "013", "BALTIMORE",
+      "014", "BALTIMORE",
+      "015", "DUNDALK",
+      "016", "BALTIMORE",
+      "017", "TIMONIUM",
+      "018", "RANDALLSTOWN",
+      "019", "OWINGS MILLS",
+      "020", "WHITE MARSH",
+      "021", "MIDDLE RIVER",
+      "026", "SPARROWS POINT",
+      "027", "DUNDALK",
+      "028", "BALTIMORE",
+      "029", "TOWSON",
+      "030", "LUTHERVILLE",
+      "031", "OWINGS MILLS",
+      "032", "PIKESVILLE",
+      "033", "WOODLAWN",
+      "035", "ARBUTUS",
+      "036", "LANSDOWNE",
+      "037", "BALTIMORE",
+      "038", "GLEN ARM",
+      "039", "COCKEYSVILLE",
+      "040", "GLYNDON",
+      "041", "REISTERSTOWN",
+      "044", "MONKTON",
+      "045", "FREELAND",
+      "046", "RANDALLSTOWN",
+      "047", "PHOENIX",
+      "048", "KINGSVILLE",
+      "049", "SPARKS",
+      "050", "OWINGS MILLS",
+      "051", "ESSEX",
+      "054", "MIDDLE RIVER",
+      "055", "PERRY HALL",
+      "056", "RANDALLSTOWN",
+      "057", "SPARROWS POINT",
+      "060", "PARKTON",
+      "074", "MIDDLE RIVER",
+      "085", "UPPERCO"
+  });
 }
