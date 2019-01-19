@@ -207,20 +207,24 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     }
   }
   
-  private class BaseTimeField extends TimeField {
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(?:(\\d\\d/\\d\\d/\\d{4})|.*) +)?(\\d\\d:\\d\\d(?::\\d\\d)?)\\b *(.*)");
+  private class BaseTimeField extends Field {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(' ');
-      if (pt >= 0) {
-        data.strUnit = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
-      }
-      super.parse(field, data);
+      
+      // Date time fields tend to be garbled
+      // so just ignore anything that does not make sense
+      if (field.length() == 0) return;
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return;
+      data.strDate = getOptGroup(match.group(1));
+      data.strTime = match.group(2);
+      data.strUnit = match.group(3);
     }
     
     @Override 
     public String getFieldNames() {
-      return "TIME UNIT";
+      return "DATE TIME UNIT";
     }
   }
   

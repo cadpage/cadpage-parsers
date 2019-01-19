@@ -31,6 +31,13 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
   }
   
   @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n<div");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     
     int pt = body.indexOf("\n******");
