@@ -12,7 +12,7 @@ public class NYDelawareCountyParser extends FieldProgramParser {
   
   public NYDelawareCountyParser() {
     super("DELAWARE COUNTY", "NY", 
-          "( DATETIME | EMPTY | ) CALL ADDRCITY ( PLACE! DATETIME! XST1:X_CITY! | ( XST1:X! XST2:X! | ID! ) CALLER:NAME! ) END");
+          "( DATETIME | EMPTY | ) CODE? CALL ADDRCITY ( PLACENAME/Z! DATETIME! XST1:X_CITY! | ( XST1:X! XST2:X! | ID! ) CALLER:PLACENAME! ) END");
   }
   
   @Override
@@ -30,12 +30,20 @@ public class NYDelawareCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("CODE"))  return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new IdField("CAD\\d\\d-\\d{6}", true);
     if (name.equals("X_CITY")) return new MyCrossCity();
     return super.getField(name);
   }
   
+  @Override
+  protected boolean checkPlace(String field) {
+    if (field.endsWith(" HOME")) return true;
+    if (field.equals("ADT ALARMS")) return true;
+    return super.checkPlace(field);
+  }
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
