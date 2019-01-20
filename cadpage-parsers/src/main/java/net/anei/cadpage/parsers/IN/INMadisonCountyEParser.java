@@ -12,7 +12,7 @@ public class INMadisonCountyEParser extends DispatchH05Parser {
   
   @Override
   public String getFilter() {
-    return "@madisoncounty.in.gov";
+    return "@madisoncounty.in.gov,cfs@madisoncountypaging.com";
   }
   
   @Override
