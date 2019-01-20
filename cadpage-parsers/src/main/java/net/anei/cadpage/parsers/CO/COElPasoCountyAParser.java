@@ -1,35 +1,44 @@
 package net.anei.cadpage.parsers.CO;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgParser;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 
-public class COElPasoCountyAParser extends MsgParser {
+public class COElPasoCountyAParser extends FieldProgramParser {
   
   private static final Pattern JUNK_PTN = Pattern.compile("\\[[_A-Za-z]+\\]\\d+ chars\\.");
   
   private static final Pattern MASTER = 
-      Pattern.compile("(?:(FC PMO):|\\[([-A-Z0-9 ]+): *([^\\]]*?)\\]) *([^~]*?)~([^~]+?)~([^#]+?)\\.?#([^~]*?)~([^~]*?)~(?:x:([^~]*?)(?:   +~?|~|$))?(?:ALRM:([\\d ])~)?(?:CMD:([^~]*)~?)?(?:([-A-Z0-9]+))?(?: +[A-Z0-9]+)?(?: +~(\\d{8,9}) +~(\\d{6,9}))? *~*");
+      Pattern.compile("(?:(FC PMO):|\\[([-A-Z0-9 ]+): *([^\\]]*?)\\]) *");
   
-  private static final Pattern MASTER2 =
-      Pattern.compile("INFO from EPSO: (.*?)  (.*?)  (.*?)  (.*?)  +(?:JURIS: )?(.*?)(?:  ALRM: (\\d*))?(?: *CMD:(.*))?");
-  
-  private static final Pattern MASTER3 = 
-      Pattern.compile("([ A-Z]+) - (.*?)  +(.*?) - (.*)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([A-Z]{2,4}\\d{11}) +(.*?) +(D:.*) +(E:.*?) +(S:.*?) +(T:.*?) +(AD:.*?) +(C:.*?) +(Page Req Time:.*)");
   
   private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d");
   
   public COElPasoCountyAParser() {
-    super("EL PASO COUNTY", "CO");
+    super("EL PASO COUNTY", "CO",
+          "UNIT CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) END");
   }
   
   @Override
   public String getFilter() {
-    return "ept@ept911.info";
+    return "ept@ept911.info,ept@elpasoteller911.org";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 155; }    };
   }
   
   @Override
@@ -53,8 +62,7 @@ public class COElPasoCountyAParser extends MsgParser {
     
     // Not everyone is using it, but see if this is the new standard dispatch format
     Matcher match = MASTER.matcher(body);
-    if (match.matches()) {
-      setFieldList("SRC MAP UNIT CALL ADDR APT PLACE X PRI INFO ID GPS");
+    if (match.lookingAt()) {
       String src = match.group(1);
       if (src != null) {
         data.strSource = src;
@@ -62,55 +70,28 @@ public class COElPasoCountyAParser extends MsgParser {
         data.strSource = match.group(2).trim();
         data.strMap = match.group(3).trim();
       }
-      data.strUnit = match.group(4).trim();
-      data.strCall = match.group(5).trim();
-      String addr = match.group(6).trim();
-      addr =stripFieldStart(addr, "0 ");
-      parseAddress(addr, data);
-      data.strApt = match.group(7).trim();
-      data.strPlace = match.group(8).trim();
-      data.strCross = getOptGroup(match.group(9));
-      data.strPriority = getOptGroup(match.group(10));
-      data.strSupp = getOptGroup(match.group(11));
-      data.strCallId = getOptGroup(match.group(12));
-      String gps1 = match.group(13);
-      String gps2 = match.group(14);
-      if (gps1 != null && gps2 != null) {
-        setGPSLoc(convGPS(gps1)+','+convGPS(gps2), data);
+      body = body.substring(match.end());
+      return parseFields(body.split("~"), data);
+    }
+    
+    match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID ADDR APT INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      parseAddress(match.group(2), data);
+      for (int ndx = 3; ndx <= match.groupCount(); ndx++) {
+        String time = match.group(ndx);
+        if (!time.endsWith(":")) data.strSupp = append(data.strSupp, "\n", time);
       }
       return true;
     }
-    
-    match = MASTER2.matcher(body);
-    if (match.matches()) {
-      setFieldList("CALL ADDR APT PLACE SRC PRI UNIT");
-      data.strCall = match.group(1).trim();
-      parseAddress(match.group(2).trim(), data);
-      data.strApt = match.group(3).trim();
-      data.strPlace = match.group(4).trim();
-      data.strSource = match.group(5).trim();
-      data.strPriority = getOptGroup(match.group(6));
-      data.strUnit = getOptGroup(match.group(7));
-      return true;
-    }
-    
-    match = MASTER3.matcher(body + ' ');
-    if (match.matches()) {
-      setFieldList("SRC CALL ADDR APT INFO NAME PHONE");
-      data.strSource = match.group(1);
-      data.strCall = match.group(2);
-      parseAddress(match.group(3).trim(), data);
-      Parser p = new Parser(' ' + match.group(4));
-      data.strPhone = p.getLastOptional(" PH ");
-      data.strName = p.getLastOptional(" RP ");
-      data.strSupp = p.get();
-      return true;
-    }
-    
+   
     FParser p = new FParser(body);
     if (p.check("INFO from EPSO:")) {
-      setFieldList("CALL ADDR APT PLACE CITY PRI INFO");
+      setFieldList("CALL ADDR APT PLACE CITY PRI UNIT");
       data.strCall = p.get(30);
+      if (p.check(" ")) return false;
       parseAddress(p.get(30), data);
       if (p.checkAhead(105, "JURIS:")) p.skip(50);
       data.strApt = p.get(5);
@@ -122,13 +103,31 @@ public class COElPasoCountyAParser extends MsgParser {
       } else {
         city = p.get(50);
       }
-      if (!city.equals("EPSO Unincorporated Area")) data.strCity = city;
-      if (!p.check("ALRM:")) return false;
+      data.strCity = cvtJurisCity(city);
+      if (!p.check("ALRM:")) {
+        if (p.check("ALRM")) {
+          data.expectMore = true;
+          return true;
+        }
+        return false;
+      }
       if (!p.check("CMD:")) {
         data.strPriority = p.get(1);
         if (!p.check("CMD:")) return false;
       }
-      data.strSupp = p.get();
+      data.strUnit = p.get();
+      return true;
+    }
+    
+    if (p.check("FROM EPSO REF:")) {
+      setFieldList("CALL ADDR APT CITY ID");
+      data.strCall = p.get(30);
+      if (p.check(" ")) return false;
+      parseAddress(p.get(90), data);
+      if (!p.check("JURIS:")) return false;
+      data.strCity = cvtJurisCity(p.get(30));
+      if (p.check(" ")) return false;
+      data.strCallId = p.get();
       return true;
     }
     
@@ -172,10 +171,40 @@ public class COElPasoCountyAParser extends MsgParser {
     
     return false;
   }
-
-  private String convGPS(String gps) {
-    int pt = gps.length()-6;
-    if (pt < 2) return "";
-    return gps.substring(0,pt) + '.' + gps.substring(pt);
+  
+  @Override
+  public String getProgram() {
+    return "SRC MAP " + super.getProgram();
   }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
+    if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
+    return super.getField(name);
+  }
+  
+  private class MyGPSTruncField extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField()) return false;
+      if (!NUMERIC.matcher(field).matches()) return false;
+      if (field.length() == 0 || field.length() >= 8) return false;
+      data.expectMore = true;
+      return true;
+    }
+  }
+  
+  private String cvtJurisCity(String city) {
+    return convertCodes(city, JURIS_CITY_TABLE);
+  }
+  
+  private static final Properties JURIS_CITY_TABLE = buildCodeTable(new String[]{
+      "El Paso County SO",              "El Paso County",
+      "EPSO Unincorporated Area",       ""
+  });
 }

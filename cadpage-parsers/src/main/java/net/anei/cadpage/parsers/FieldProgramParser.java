@@ -3272,6 +3272,7 @@ public class FieldProgramParser extends SmartAddressParser {
    * GPS field processor
    */
   
+  private static final Pattern LONG_GPS_PTN = Pattern.compile("\\b(\\d{1,3})(\\d{6})\\b");
   private String saveGPSLoc = "";
   public class GPSField extends Field {
     
@@ -3329,8 +3330,7 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public void parse(String field, Data data) {
       if (addDec) {
-        int pt = field.length() - 6;
-        if (pt >= 0) field = field.substring(0,pt)+'.'+field.substring(pt);
+        field = LONG_GPS_PTN.matcher(field).replaceAll("$1.$2");
       }
       switch (type) {
       case 1:
