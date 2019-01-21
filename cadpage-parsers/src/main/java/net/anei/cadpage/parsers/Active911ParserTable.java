@@ -1615,7 +1615,7 @@ public class Active911ParserTable {
       "US/VA/WestmorelandCounty",         "VAWestmorelandCounty",
       "US/VA/WytheCounty",                "VAWytheCounty",
       "US/VT/AddisonCounty",              "VTAddisonCounty",
-      "US/VT/BurlingtonFD",               "VTChittendenCountyC",
+      "US/VT/BurlingtonFD",               "VTChittendenCountyE",
       "US/VT/CaledoniaCounty",            "VTCaledoniaCounty",
       "US/VT/ChittendenCounty",           "VTChittendenCountyA,VTChittendenCountyD",
       "US/VT/FranklinCounty",             "VTFranklinCounty",
