@@ -16,7 +16,7 @@ public class MOWashingtonCountyParser extends FieldProgramParser {
     
   public MOWashingtonCountyParser() {
     super("WASHINGTON COUNTY", "MO", 
-          "ADDR/SZ? CALL! Description:INFO! Dispatch:DATETIME! UNIT! END");
+          "ADDR/SZ? CALL! Description:INFO! INFO/N+ Dispatch:DATETIME! UNIT! END");
   }
   
   @Override
