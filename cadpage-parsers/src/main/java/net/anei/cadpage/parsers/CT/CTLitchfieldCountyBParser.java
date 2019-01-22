@@ -22,8 +22,18 @@ public class CTLitchfieldCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" X ", " & ");
+      field = stripFieldStart(field, "X ");
+      super.parse(field,  data);;
+    }
   }
 }
