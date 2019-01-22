@@ -353,6 +353,7 @@ public class NCSampsonCountyParser extends DispatchSouthernParser {
     "MARY MARSH",
     "MAURICE PATE",
     "MAXTON BASS",
+    "MB BENNETT",
     "MCGEE CHURCH",
     "MCKOY LOOP",
     "MEADOW OAK",
