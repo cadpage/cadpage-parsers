@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-/*
-Macon county, GA
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class GAMaconCountyParser extends GASchleyCountyParser {
+/**
+ * Macon County, GA
+ */
+public class GAMaconCountyParser extends GroupBestParser {
   
   public GAMaconCountyParser() {
-    super("MACON COUNTY");
+    super(new GAMaconCountyAParser(), new GAMaconCountyBParser());
   }
 }
