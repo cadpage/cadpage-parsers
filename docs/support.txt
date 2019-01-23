@@ -38,17 +38,19 @@ If they are, can you use the "Email the Developer" setting to send us a new supp
 * MMS support enabled but not working
 **************************************************************************
 
-Dispatch is sending your dispatch alerts as MMS multi-media messages.  You do have Cadpage MMS support enabled, but it does not appear to be working.  This is not all that surprising.  Cadpage MMS support uses an undocumented back door API to the Google message app that requests it download a received MMS message content.  Sometimes it works, and sometimes it does not, especially when you have installed a different message app.
+Dispatch is sending your alerts as MMS multi-media messages instead of the simpler SMS text messages.  You do have Cadpage MMS message support enabled, but it does not appear to be working properly.  This is not uncommon, Cadpage MMS support has always been a bit dodgy.
 
-There are two workarounds.  The first it to look through your message app settings looking for something that tells it to always download MMS message content.  With the current Google Messages app, this  is done by opening Settings, selecting Advanced Settings, then turning on the "Auto Download MMS" option.  Other message apps should have a similar setting somewhere.
-
-The other approach is only available if you have a Paid Cadpage Subscription.  This allows you to route your alerts through the Cadpage paging service which bypasses messaging altogether.  When you register with this service Cadpage assigns you a unique dispatch email address. It is up to you to get your dispatch alerts sent to this email address. Alerts sent to this address will be forwarded to Cadpage as direct pages.
+Since you are paying for a Cadpage subscription, you might want to consider switching to using the Cadpage Paging Service to deliver your alerts.  This will send alerts to your phone through the data network, avoiding all of the hassles involved with text messaging.  It would also leave you positioned to avoid the fallout if Google carries through with plans to prohibit Cadpage from processing text messages on March 9.
 
 To start the paging service, open Cadpage Settings and select:
 
     Direct Paging Venders > Cadpage Paging Service > Register
 
-You should shortly receive a registration confirmation popup that will display your dispatch email address. From there you will have the option to generate an email requesting that your dispatch alerts be sent to this address. Then fill in the address of your department IT person and send it.
+You should shortly receive a registration confirmation popup that will display your dispatch email address. From there you will have the option to generate an email requesting that your dispatch alerts be sent to this address. Then fill in the address of your department IT person and send it.  Any alerts sent to that dispatch address will be automatically forwarded to Cadpage on your device.
+
+If you would rather pursue getting Cadpage MMS processing to work, you need to look through your message app setting looking for something that tells it to always download MMS message content.  With the current Google Messages app, this  is done by opening Settings, selecting Advanced Settings, then turning on the "Auto Download MMS" option.  Other message apps should have a similar setting somewhere.
+
+If you are using a different message app, let us know what it is so I can check and make sure I can get Cadpage to work with it.  Unless it is Verizon messenger which appears to have gone out of it's way to make sure that Cadpage does not get it's MMS message notifications.  With Verizon Messenger, we recommend uninstalling or disabling the app and installing a different message app.
 
 Good luck,
 -Ken
