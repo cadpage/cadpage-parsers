@@ -114,7 +114,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
       data.strSource = match.group(1);
       body = match.group(2);
     }
-    body = body.replace(" CMTS:", " CMT1:").replace("CMT:",  " CMT1:").replace("AD:", " AD:").replace("UNITS:", " UNTS:").replace(" X-ST:", " XST:");
+    body = body.replace(" CMTS:", " CMT1:").replace("CMT:",  " CMT1:").replace("AD:", " AD:").replace("UNTS:",  " UNTS:").replace("UNITS:", " UNTS:").replace(" X-ST:", " XST:");
     body = body.replace("TYP:", " TYP:");
     body = body.replace(" CALLER / STATEMENT:", " CALLER STATEMENT:");
     body = body.replace(" CALLER CMT2:", " CMT2:");
@@ -207,7 +207,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(?:(\\d\\d/\\d\\d/\\d{4})|.*) +)?(\\d\\d:\\d\\d(?::\\d\\d)?)\\b *(.*)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(?:(\\d\\d/\\d\\d/\\d{4})|.*) +)?(\\d\\d:\\d\\d(?::\\d\\d)?)(?![:0-9]) *(.*)");
   private class BaseTimeField extends Field {
     @Override
     public void parse(String field, Data data) {
