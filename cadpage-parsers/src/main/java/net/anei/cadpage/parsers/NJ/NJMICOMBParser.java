@@ -3,6 +3,8 @@ package net.anei.cadpage.parsers.NJ;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgParser;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
@@ -23,6 +25,14 @@ public class NJMICOMBParser extends MsgParser {
   }
 
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+  
+  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d|");
+  private static final Pattern SPACE_COMMA_PTN = Pattern.compile(" *, *");
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
     do {
@@ -32,15 +42,53 @@ public class NJMICOMBParser extends MsgParser {
       if (subject.equals("MICCOM")) break;
       
       if (body.startsWith("/ CAD Page / ")) {
-        body = body.substring(13);
+        body = body.substring(13).trim();
+        break;
+      }
+      
+      if (body.startsWith("CAD Page / ")) {
+        body = body.substring(11).trim();
+        break;
+      }
+      
+      if (body.startsWith("MICCOM / ")) {
+        body = body.substring(9).trim();
         break;
       }
         
       return false;
     } while (false);
+    
+    // Fix problem with fixed length message split across two messages.
+    if (substring(body, 10, 16).equals("RESP:")) {
+      if (body.length() < 128) {
+        data.expectMore = true;
+      } else {
+        int pt2 = body.indexOf(" Cross-");
+        if (pt2 < 10) return false;
+        int pt1 = pt2;
+        if (substring(body, pt1-9, pt1).equals(" MICCOM /")) pt1 -= 9;
+        StringBuffer sb = new StringBuffer(body.substring(0, pt1));
+        while (sb.length() < 127) sb.append(' ');
+        sb.append(body.substring(pt2));
+        body = sb.toString();
+      }
+    }
 
     FParser fp = new FParser(body);
     data.strUnit = fp.get(10);
+    
+    // New run report format
+    if (fp.check("@")) {
+      setFieldList("UNIT ID PLACE ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strPlace = fp.getOptional("#", 21, 31);
+      if (data.strPlace == null) return false;
+      data.strCallId = fp.get(10);
+      if (!fp.check(" ")) return false;
+      data.strSupp = fp.get();
+      return true;
+    }
     
     // There are two flavors of run report, once for cancelled calls and one
     // for normal termination calls
@@ -64,10 +112,40 @@ public class NJMICOMBParser extends MsgParser {
       data.strCity = cleanCity(fp.get(20));
       parseAddress(fp.get(30), data);
       data.strSupp = fp.get();
+      if (data.strSupp.endsWith("Cxl Rsn:")) data.expectMore = true;
       return true;
     }
     
-    // Now check for regular dispatch page
+    // Check for new regular dispatch page
+    if (fp.check("RESP: ")) {
+      setFieldList("UNIT CITY ADDR APT PLACE X CALL ID TIME NAME");
+      data.strCity = cleanCity(fp.get(15));
+      if (!fp.check(" ")) return false;
+      if (fp.check(" ")) return false;
+      parseAddress(fp.get(30), data);
+      if (!fp.check("BLDG:")) return false;
+      data.strApt = append(data.strApt, "-", fp.get(4));
+      if (!fp.check(" APT:")) return false;
+      data.strApt = append(data.strApt, "-", fp.get(10));
+      if (!fp.check(" ")) return false;
+      data.strPlace = fp.get(40);
+      fp.setOptional();
+      if (!fp.check(" Cross-")) return false;
+      data.strCross = fp.get(30);
+      if (!fp.check(" ")) return false;
+      data.strCall = fp.get(30);
+      fp.check(" ");
+      if (!fp.check("#")) return false;
+      data.strCallId = fp.get(10);
+      if (!fp.check(" @")) return false;
+      String time = fp.get(5);
+      if (!TIME_PTN.matcher(time).matches()) return false;
+      saveTime(time, data);
+      data.strName = SPACE_COMMA_PTN.matcher(fp.get()).replaceAll(", ");
+      return true;
+    }
+    
+    // Now check for old regular dispatch page
     if (fp.check("RESPOND:#")) {
       setFieldList("UNIT ID CITY ADDR APT X CALL TIME");
       data.strCallId = fp.get(10);
@@ -79,33 +157,9 @@ public class NJMICOMBParser extends MsgParser {
       data.strCross = fp.get(30);
       data.strCall = fp.get(30);
       if (!fp.check("@ ")) return false;
-      data.strTime = fp.get(5);
-      return true;
-    }
-    
-    // Another variate of the regular dispatch report.  This is probably a fixed position alert like the
-    // others, but we loose the spacing when it is broken into two messages.  Fortunately the break always
-    // occurs in the samem place.
-    if (fp.check("RESP: ")) {
-      setFieldList("UNIT CITY ADDR APT X CALL ID TIME");
-      data.strCity = cleanCity(fp.get(15));
-      if (!fp.check(" ")) return false;
-      parseAddress(fp.get(30), data);
-      if (!fp.check("BLDG:")) return false;
-      data.strApt = append(data.strApt, "-", fp.get(5));
-      if (!fp.check("APT:")) return false;
-      body = fp.get();
-      int pt = body.indexOf("Cross-");
-      if (pt < 0) return false;
-      data.strApt = append(data.strApt, "-", body.substring(0, pt).trim());
-      fp = new FParser(body.substring(pt+6));
-      data.strCross = fp.get(30);
-      if (!fp.check(" ")) return false;
-      data.strCall = fp.get(30);
-      if (!fp.check("#")) return false;
-      data.strCallId = fp.get(10);
-      if (!fp.check(" @")) return false;
-      data.strTime = fp.get(4);
+      String time = fp.get(5);
+      if (!TIME_PTN.matcher(time).matches()) return false;
+      saveTime(time, data);
       return true;
     }
     
@@ -140,11 +194,25 @@ public class NJMICOMBParser extends MsgParser {
     return false;
   }
   
-  private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro|City))?(?: *\\([ A-Z]+\\))?$");
+  private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro?|City|Villa))?(?: *\\([ A-Z]+\\))?$");
   
   private static String cleanCity(String city) {
     city = CITY_SFX_PTN.matcher(city).replaceFirst("");
     if (city.endsWith(" Tw")) city += 'p';
+    if (city.endsWith(" Town")) city += "ship";
     return city;
+  }
+  
+  private static void saveTime(String time, Data data) {
+    
+    // Save time field.  For interfacility transfers, the is the requested transfer time
+    // not the actual dispatch time.
+    
+    if (time.length() == 0) return;
+    if (data.strCall.equals("Trans/Interfacility/Palliative")) {
+      data.strCall = data.strCall + " @" + time;
+    } else {
+      data.strTime = time;
+    }
   }
 }
