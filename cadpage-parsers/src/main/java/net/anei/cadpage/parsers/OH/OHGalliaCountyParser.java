@@ -77,12 +77,19 @@ public class OHGalliaCountyParser extends DispatchEmergitechParser {
     "KERR",
     "PATRIOT",
     
+    // Jackson County
+    "JACKSON CO",
+    "JACKSON COUNTY",
+    
     // Mason County, WV
     "MASON CO",
+    "MASON COUNTY",
+    "GALLIPOLIS FERRY",
     "POINT PLEASANT"
   };
   
   private static Set<String> WV_CITY_TABLE = new HashSet<String>(Arrays.asList(
+      "GALLIPOLIS FERRY",
       "MASON COUNTY",
       "POINT PLEASANT"
   ));

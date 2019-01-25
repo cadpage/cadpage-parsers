@@ -1155,7 +1155,7 @@ public class Active911ParserTable {
       "US/OH/EatonPolice",                "OHPrebleCounty",
       "US/OH/Fairfield",                  "OHFairfieldCounty",
       "US/OH/FultonCounty",               "OHFultonCounty",
-      "US/OH/GalliaCounty",               "OHGalliaCounty",
+      "US/OH/GalliaCounty",               "OHGalliaCounty,OHMahoningCountyA",
       "US/OH/GeaugaCounty",               "OHGeaugaCountyB",
       "US/OH/GermantownFD",               "OHMontgomeryCountyC2",
       "US/OH/GrangerFD",                  "OHMedinaCountyB",
