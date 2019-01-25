@@ -55,6 +55,15 @@ public class OHLawrenceCountyParser extends DispatchEmergitechParser {
   }
   private static final Pattern PVT_DR_PTN = Pattern.compile("^.*\\bPVT DR \\d+\\b");
   
+  @Override
+  public String adjustMapCity(String city) {
+    
+    // It works this way.  Don't ask why!
+    if (city.equals("PERRY TWP")) city = "IRONTON";
+    return city;
+  }
+  
+  
   private static final String[] CITY_LIST = new String[]{
     
     "IRONTON",
