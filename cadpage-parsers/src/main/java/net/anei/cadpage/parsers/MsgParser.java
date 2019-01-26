@@ -1793,6 +1793,10 @@ public static void addCodeTable(Properties props, String[] table) {
      spt += len;
    }
    
+   public boolean atEnd() {
+     return spt >= line.length();
+   }
+   
    /**
     * Trim fixed label to match end of text string if optional flag is set
     * @param offset offset from current position
