@@ -1,39 +1,47 @@
 package net.anei.cadpage.parsers.VA;
 
-import java.util.Properties;
-
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchDAPROParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
 /**
  * Wythe County, VA
  */
-public class VAWytheCountyParser extends DispatchDAPROParser {
+public class VAWytheCountyParser extends FieldProgramParser {
   
   public VAWytheCountyParser() {
-    super(CITY_CODE_TABLE, "WYTHE COUNTY", "VA");
-    setupCallList(CALL_SET);
+    super("WYTHE COUNTY", "VA", 
+          "CALL! ADDR! ID! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "MAILBOX@wytheco.org";
+    return "RIPNRUN@WYTHECO.ORG";
   }
-   
-  private static final CodeSet CALL_SET = new CodeSet(
-    "ACCIDENT NONREPORTABLE",
-    "ACCIDENT REPORTABLE",
-    "ASSIST OTHER AGENCY",
-    "DIABETIC",
-    "FIRE ALARM",
-    "GENERAL ILLNESS",
-    "VEHICLE FIRE"
-    
-  );
   
-  private static final Properties CITY_CODE_TABLE =
-    buildCodeTable(new String[]{
-        "MAX", "MAX MEADOWS",
-        "WYT", "WYTHEVILLE"
-    });
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    return parseFields(body.split("\\|"), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID")) return new IdField("\\d\\d-\\d{6}", true);
+    return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      data.strCity = p.getLastOptional(':');
+      data.strPlace = p.getLastOptional(';');
+      parseAddress(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE CITY";
+    }
+  }
 }
