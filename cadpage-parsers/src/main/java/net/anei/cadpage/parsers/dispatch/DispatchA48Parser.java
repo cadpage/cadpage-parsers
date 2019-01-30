@@ -24,7 +24,12 @@ public class DispatchA48Parser extends FieldProgramParser {
   /**
    * Flag indicating the call description may be a single word code
    */
-  public static final int A48_OPT_ONE_WORD_CODE = 0x02;
+  public static final int A48_OPT_CODE = 0x02;
+  
+  /**
+   * Flag indicating the call description may be a single word code
+   */
+  public static final int A48_OPT_ONE_WORD_CODE = A48_OPT_CODE | A48_ONE_WORD_CODE;
   
   /**
    * Flag indicating there is no call code.  Just a call description
@@ -108,7 +113,6 @@ public class DispatchA48Parser extends FieldProgramParser {
         parser.addCrossStreet(cross, data);
         setNameField(field, data);
       }
-      
     },
     
     PLACE("PLACE? APT?", "PLACE APT") {
@@ -121,6 +125,23 @@ public class DispatchA48Parser extends FieldProgramParser {
           field = p.get();
         }
         data.strPlace = field;
+      }
+    },
+    
+    PLACE_X("PLACE? X+?", "PLACE X") {   // Not currently supported for field delimited format
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        
+        boolean startSlash = field.startsWith("/");
+        if (startSlash) field = field.substring(1).trim();
+        
+        StartType st = startSlash ? StartType.START_ADDR : StartType.START_PLACE;
+        int flags = FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_CROSS_FOLLOWS | FLAG_ANCHOR_END;
+        parser.parseAddress(st, flags, field, data);
+        String cross = data.strCross;
+        data.strCross = "";
+        if (startSlash) cross = '/' + cross;
+        parser.addCrossStreet(cross, data);
       }
     },
     
@@ -153,7 +174,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     
   private FieldType fieldType;
   private boolean oneWordCode;
-  private boolean optOneWordCode;
+  private boolean optCode;
   private boolean noCode;
   private Properties callCodes;
   private Pattern unitPtn;
@@ -183,7 +204,7 @@ public class DispatchA48Parser extends FieldProgramParser {
           append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL ) UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
-    optOneWordCode = (flags & A48_OPT_ONE_WORD_CODE) != 0;
+    optCode = (flags & A48_OPT_CODE) != 0;
     noCode = (flags & A48_NO_CODE) != 0;
     this.unitPtn = unitPtn;
     this.callCodes = callCodes;
@@ -298,17 +319,19 @@ public class DispatchA48Parser extends FieldProgramParser {
     int flags = FLAG_START_FLD_REQ;
     
     if (!noCode) {
-      if (optOneWordCode || !oneWordCode) data.strCode = p.getOptional(" - ");
+      if (optCode || !oneWordCode) data.strCode = p.getOptional(" - ");
       if (data.strCode.length() == 0) {
-        if (!optOneWordCode && !oneWordCode) return false;
-        st = StartType.START_ADDR;
-        flags = 0;
-        String code  = p.get(' ');
-        if (callCodes != null) {
-          data.strCode = code;
-          data.strCall = convertCodes(code, callCodes);
-        } else {
-          data.strCall = code;
+        if (!optCode && !oneWordCode) return false;
+        if (oneWordCode) { 
+          st = StartType.START_ADDR;
+          flags = 0;
+          String code  = p.get(' ');
+          if (callCodes != null) {
+            data.strCode = code;
+            data.strCall = convertCodes(code, callCodes);
+          } else {
+            data.strCall = code;
+          }
         }
       }
     }
@@ -367,9 +390,12 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     addr = cleanWirelessCarrier(addr, true);
     
-    int pt = addr.lastIndexOf(',');
+    int pt = addr.indexOf(',');
     if (pt >= 0) {
-      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, addr.substring(pt+1).trim(), data);
+      int cityFlags = FLAG_ONLY_CITY;
+      if (fieldType == FieldType.NONE) cityFlags |= FLAG_ANCHOR_END;
+      flags |= getExtraParseAddressFlags();
+      parseAddress(StartType.START_ADDR, cityFlags, addr.substring(pt+1).trim(), data);
       if (data.strCity.length() > 0) {
         extra = stripFieldStart(getLeft(), data.strCity);
         
@@ -454,7 +480,7 @@ public class DispatchA48Parser extends FieldProgramParser {
         data.strCall = field;
         return;
       }
-      if (optOneWordCode || !oneWordCode) {
+      if (optCode || !oneWordCode) {
         int pt = field.indexOf(" - ");
         if (pt >= 0) {
           data.strCode = field.substring(0,pt).trim();
@@ -463,7 +489,7 @@ public class DispatchA48Parser extends FieldProgramParser {
         }
       }
       
-      if (!optOneWordCode && !oneWordCode) abort();
+      if (!optCode && !oneWordCode) abort();
       if (callCodes != null) {
         data.strCode = field;
         data.strCall = convertCodes(field, callCodes);

@@ -14,6 +14,7 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
     super(CITY_LIST, "HARDY COUNTY", "WV", FieldType.X_NAME,
           Pattern.compile("[A-Z]\\d+[A-Z]?|\\d{4}"));
     setupCallList(CALL_CODE);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
@@ -21,10 +22,34 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
     return "Hardy911@hardynet.com,HARDYCOE911@hardynet.com";
   }
   
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "APPALACHIAN CORR",
+      "APPLE TREE",
+      "ASHTON WOODS",
+      "COLD SPRINGS",
+      "CRAB APPLE",
+      "DEAD END",
+      "DOVER HOLLOW",
+      "DUMPLING RUN",
+      "FOREST GLEN",
+      "FORK ESTATES",
+      "JENKINS RUN",
+      "MILL ISLAND",
+      "REYNOLDS GAP",
+      "ROBERT C BYRD INDUSTRIAL PARK",
+      "SILVER OAK",
+      "WATER STREET",
+      "WHITE TAIL"
+  };
+  
   private static final CodeSet CALL_CODE = new CodeSet(
+      "ABDOMINAL PAIN",
       "ALLERGIC REACTION",
       "BREATHING PROBLEMS",
+      "CARBON MONOXIDE ALARM",
+      "CARBON MONOXIDE- NO SYMPTOMS",
       "CARDIAC ARREST",
+      "CARDIAC EMERGENCY",
       "CHOKING",
       "DEAD ON ARRIVAL",
       "DOMESTIC REPORT",
@@ -32,6 +57,7 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
       "FALL",
       "FIRE ALARM",
       "FIRE GENERIC",
+      "FLU FIRE",
       "GAS LEAK",
       "GENERAL ILLNESS",   
       "MEDICAL ALARM",
@@ -39,6 +65,7 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
       "MOTOR VEHICLE ACCIDENT", 
       "MUTUAL AID",
       "ORDER INVESTIGATION/COMPLAINT",
+      "RUBBISH/TRASH FIRE",
       "RUNAWAY/MISSING JUVENILE",
       "SMOKE INVESTIGATION",
       "TRANSPORT PRISONER",
