@@ -2,19 +2,21 @@ package net.anei.cadpage.parsers.VA;
 
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class VADanvilleParser extends DispatchOSSIParser {
   
   public VADanvilleParser() {
     super("DANVILLE", "VA",
-        // A complicated way to do CALL PLACE? ADDR X X
-          "CALL ( PLACE ADDR/Z X/Z X/Z ENDMARK " +
-               "| ADDR! X X END " +
-               "| ADDR/Z X! X END " +
-               "| ADDR/Z! END " +
-               "| PLACE ADDR! X X END )");
+        // A complicated way to do FYI? CALL CODE? PLACE? ADDR X X
+          "FYI? CALL CODE? ( PLACE ADDR/Z X/Z X/Z ENDMARK " +
+                          "| ADDR! X X END " +
+                          "| ADDR/Z X! X END " +
+                          "| ADDR/Z! END " +
+                          "| PLACE ADDR! X X END )");
   }
   
   @Override
@@ -41,8 +43,22 @@ public class VADanvilleParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+  
+  private class MyCodeField extends CodeField {
+    public MyCodeField() {
+      super("\\d{1,3}[A-Z]\\d{1,2}[A-Z]?", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      String call = CALL_CODE_TABLE.getCodeDescription(field);
+      if (call != null) data.strCall = call;
+    }
   }
   
   private class MyCrossField extends CrossField {
@@ -54,4 +70,6 @@ public class VADanvilleParser extends DispatchOSSIParser {
       return true;
     }
   }
+  
+  private static final CodeTable CALL_CODE_TABLE = new StandardCodeTable();
 }

@@ -1571,6 +1571,7 @@ public class Active911ParserTable {
       "US/VA/CityofStaunton",             "VAStaunton",
       "US/VA/CityofWaynesboro",           "VAWaynesboroB",
       "US/VA/CulpeperCounty",             "VACulpeperCounty",
+      "US/VA/Danville",                   "VADanville",
       "US/VA/DickensonCounty",            "VADickensonCounty",
       "US/VA/DinwiddieCounty",            "VADinwiddieCounty",
       "US/VA/Esva911",                    "VANorthamptonCounty",
