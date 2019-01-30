@@ -18,19 +18,20 @@ public class GAHoustonCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "4702193729";
+    return "4702193729,cad@houstoncountye911.com";
   }
   
   @Override
-  public boolean parseMsg(String body, Data data) {
+  public boolean parseMsg(String subject, String body, Data data) {
     
     // Seriously message up reformatting needs to be reversed :(
     // They duplicated the message text and truncated both of parts at different
     // places.  We will pick whichever is longer
     Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    String subject = "CAD:" + match.group(1).trim();
-    body = match.group(2).trim();
+    if (match.matches()) {
+      subject = "CAD:" + match.group(1).trim();
+      body = match.group(2).trim();
+    }
     if (subject.length() > body.length()) body = subject;
     
     // Regular parser can do the rest
@@ -48,6 +49,7 @@ public class GAHoustonCountyParser extends DispatchOSSIParser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BON", "BONAIRE",
       "BYR", "BYRON",
-      "PRY", "PERRY"
+      "PRY", "PERRY",
+      "WR",  "WARNER ROBINS"
   });
 }
