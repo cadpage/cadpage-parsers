@@ -13,6 +13,11 @@ public class PAJuniataCountyParser extends DispatchA48Parser {
     super(CITY_LIST, "JUNIATA COUNTY", "PA", FieldType.X_NAME, A48_OPT_ONE_WORD_CODE,
           Pattern.compile("[A-Z]+\\d+(?:-\\d)?|POWER|PSPL"));
   }
+
+  @Override
+  public String getFilter() {
+    return "@Juniata.PA,@co.juniata.pa.us";
+  }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -20,11 +25,6 @@ public class PAJuniataCountyParser extends DispatchA48Parser {
     return super.parseMsg(subject, body, data);
   }
 
-  @Override
-  public String getFilter() {
-    return "@Juniata.PA,@co.juniata.pa.us";
-  }
-  
   public static final String[] CITY_LIST = new String[]{
     // Boroughs
     "MIFFLIN",

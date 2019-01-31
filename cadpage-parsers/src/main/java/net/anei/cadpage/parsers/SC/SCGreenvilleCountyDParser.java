@@ -21,7 +21,11 @@ public class SCGreenvilleCountyDParser extends MsgParser {
   private static final Pattern APT_PTN = Pattern.compile("\\d{1,5}[A-Z]?|[A-Z]");
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.length() > 0) return false;
+    if (body.startsWith("CAD:")) return false;
+    
     FParser fp = new FParser(body);
     
     int priPos = findPriorityAt(fp, 85, 115);

@@ -28,7 +28,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
     return "@frontier.com";
   }
 
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+|MEDIC", Pattern.CASE_INSENSITIVE);
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+(?:-\\d+)?|MEDIC", Pattern.CASE_INSENSITIVE);
   private static final Pattern COUNTY_PTN = Pattern.compile("^(HARDY|FRED|FREDERICK|MINERAL|ALLEGANY|MORGAN) ", Pattern.CASE_INSENSITIVE);
   
   @Override

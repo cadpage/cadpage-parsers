@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
  */
 public class WVGrantCountyAParser extends DispatchA48Parser {
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY)\\b"); 
+  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|SOUTHG)\\b"); 
   
   public WVGrantCountyAParser() {
     super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.PLACE_X, A48_OPT_CODE, UNIT_PTN);
@@ -44,20 +44,6 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
     
     if (info != null) data.strSupp = append(data.strSupp, "\n", info);
     
-    String cross2 = "";
-    while (data.strCross.length() > 0) {
-      pt = data.strCross.indexOf('/');
-      int pt2 = pt + 1;
-      if (pt < 0) pt = pt2 = data.strCross.length();
-      cross2 = append(cross2, " / ", data.strCross.substring(0, pt).trim());
-      String tmp = data.strCross.substring(pt2).trim();
-      data.strCross = "";
-      if (tmp.length() > 0) {
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_NO_CITY | FLAG_ANCHOR_END, tmp, data);
-      }
-    }
-    data.strCross = cross2;
-    
     return true;
   }
   
@@ -73,6 +59,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+      "BAYARD CEMETERY",
       "BIG HILL",
       "CHERRY RIDGE",
       "CLARKS VIEW",

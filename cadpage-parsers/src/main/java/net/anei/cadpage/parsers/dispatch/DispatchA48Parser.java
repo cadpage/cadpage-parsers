@@ -44,7 +44,11 @@ public class DispatchA48Parser extends FieldProgramParser {
   public enum FieldType { 
     NONE("", "") {
       @Override
-      public void parse(DispatchA48Parser parser, String field, Data data) {}
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        if (field.length() > 0) {
+          data.strSupp = append(field, "\n", data.strSupp);
+        }
+      }
     }, 
     
     NAME("NAME", "NAME") {
@@ -74,15 +78,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     X("X/Z+?", "X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        boolean startSlash = field.startsWith("/");
-        if (startSlash) field = field.substring(1).trim();
-        int flags = FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_CROSS_FOLLOWS | FLAG_ANCHOR_END;
-        flags |= parser.getExtraParseAddressFlags();
-        parser.parseAddress(StartType.START_ADDR, flags, field, data);
-        String cross = data.strCross;
-        data.strCross = "";
-        if (startSlash) cross = '/' + cross;
-        parser.addCrossStreet(cross, data);
+        parser.parseCrossStreet(false,  false, field, data);
       }
       
       @Override
@@ -94,24 +90,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     X_NAME("X_NAME/Z+?", "X NAME") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        
-        boolean startSlash = field.startsWith("/");
-        if (startSlash) field = field.substring(1).trim();
-        
-        String cross = "";
-        while (field.length() > 0) {
-          int flags = FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_CROSS_FOLLOWS;
-          flags |= parser.getExtraParseAddressFlags();
-          Result res = parser.parseAddress(StartType.START_ADDR, flags, field);
-          if (!res.isValid()) break;
-          res.getData(data);
-          cross = append(cross, " / ", data.strCross);
-          data.strCross = "";
-          field = res.getLeft();
-        } 
-        if (startSlash) cross = '/' + cross;
-        parser.addCrossStreet(cross, data);
-        setNameField(field, data);
+        parser.parseCrossStreet(false, true, field, data);
       }
     },
     
@@ -131,17 +110,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     PLACE_X("PLACE? X+?", "PLACE X") {   // Not currently supported for field delimited format
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        
-        boolean startSlash = field.startsWith("/");
-        if (startSlash) field = field.substring(1).trim();
-        
-        StartType st = startSlash ? StartType.START_ADDR : StartType.START_PLACE;
-        int flags = FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_CROSS_FOLLOWS | FLAG_ANCHOR_END;
-        parser.parseAddress(st, flags, field, data);
-        String cross = data.strCross;
-        data.strCross = "";
-        if (startSlash) cross = '/' + cross;
-        parser.addCrossStreet(cross, data);
+        parser.parseCrossStreet(true, false, field, data);
       }
     },
     
@@ -216,9 +185,9 @@ public class DispatchA48Parser extends FieldProgramParser {
   private static final Pattern TRUNC_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d \\d{4}-\\d{8} ");
   private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8} ");
   private static final Pattern MASTER_PTN = Pattern.compile("(?:CAD:[-_A-Za-z0-9]* |[- A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) (?:([AP]M) )?(\\d{4}-\\d{5,8}) (.*)");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+(\\w+)");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+([-\\w]+)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?\\b");
-  private static final Pattern DATE_TIME_UNIT_MARK_PTN = Pattern.compile("(.*?)(?: \\d\\d?/\\d\\d?/\\d\\d)? Date/Time Unit Status Unit Location/Remarks");
+  private static final Pattern DATE_TIME_UNIT_MARK_PTN = Pattern.compile("(.*?)(?: \\d\\d?/\\d\\d?/\\d\\d)? Date/Time.*");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern TRAIL_DATE_PTN = Pattern.compile("(.*) \\d\\d/\\d\\d/\\d\\d");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[ ,]+");
@@ -390,33 +359,33 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     addr = cleanWirelessCarrier(addr, true);
     
-    int pt = addr.indexOf(',');
-    if (pt >= 0) {
+    
+    int pt2 = addr.indexOf(',');
+    while (pt2 >= 0) {
+      int pt = pt2;
+      
+      // Check for duplicated address and city
+      String addr1 = addr.substring(0,pt).trim();
+      pt2 = addr.indexOf(',', pt+1);
+      if (pt2 >= 0) {
+        String addr2 = addr.substring(pt+1, pt2).trim();
+        int ix = findMatch(addr1, addr2);
+        if (ix == 0 || addr.substring(pt2+1).trim().startsWith(addr2.substring(0, ix))) pt = pt2;
+      }
       int cityFlags = FLAG_ONLY_CITY;
-      if (fieldType == FieldType.NONE) cityFlags |= FLAG_ANCHOR_END;
       flags |= getExtraParseAddressFlags();
       parseAddress(StartType.START_ADDR, cityFlags, addr.substring(pt+1).trim(), data);
       if (data.strCity.length() > 0) {
         extra = stripFieldStart(getLeft(), data.strCity);
         
         addressParsed = true;
-        addr = addr.substring(0,pt).trim().replace('@', '&');
+        addr = addr1.trim().replace('@', '&');
         if (st == StartType.START_ADDR){
           parseAddress(addr, data);
         } else {
           parseAddress(st, flags | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
         }
-        
-        // Check for duplicated city/address
-        pt = data.strAddress.indexOf(',');
-        if (pt >= 0) {
-          String tmp1 = data.strAddress.substring(0,pt).trim();
-          String tmp2 = data.strAddress.substring(pt+1).trim();
-          if (tmp1.equals(tmp2) ||
-              tmp2.startsWith(data.strCity) && tmp2.endsWith(tmp1)) {
-            data.strAddress = tmp1;
-          }
-        }
+        break;
       }
     }
     
@@ -425,6 +394,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       parseAddress(st, flags, addr, data);
       extra = getLeft();
     }
+    primeCrossStreets(data.strAddress);
     
     match = TRAIL_DATE_PTN.matcher(extra);
     if (match.matches()) extra = match.group(1).trim();
@@ -433,6 +403,17 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     if (data.strCall.equals(data.strCode)) data.strCode = "";
     return true;
+  }
+  
+  private int findMatch(String field1, String field2) {
+    int len1 = field1.length();
+    int len2 = field2.length();
+    int limit = Math.min(len1, len2);
+    int ix;
+    for (ix = 1; ix <= limit; ix++) {
+      if (field1.charAt(len1-ix) != field2.charAt(len2-ix)) break;
+    }
+    return len2-ix+1;
   }
   
   @Override
@@ -445,6 +426,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{8}", true);
     if (name.equals("CALL")) return new BaseCallField();
+    if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
     if (name.equals("SKIPCITY")) return new BaseSkipCityField();
     if (name.equals("X_NAME")) return new BaseCrossNameField();
@@ -501,6 +483,14 @@ public class DispatchA48Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+  
+  private class BaseAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      primeCrossStreets(data.strAddress);
     }
   }
   
@@ -629,6 +619,49 @@ public class DispatchA48Parser extends FieldProgramParser {
       if (pt >= 0) field = field.substring(0,pt).trim();
       addUnit(field, data);
     }
+  }
+  
+  private void primeCrossStreets(String addr) {
+    String[] parts = addr.split("&");
+    if (parts.length == 1) return;
+    for (String part : parts) {
+      part = part.trim();
+      crossSet.add(part);
+    }
+  }
+  
+  private void parseCrossStreet(boolean leadPlace, boolean trailName, String field, Data data) {
+    
+    boolean startSlash = field.startsWith("/");
+    if (startSlash) field = field.substring(1).trim();
+
+    StartType st = leadPlace & !startSlash ? StartType.START_PLACE : StartType.START_ADDR;
+    int flags = FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_CROSS_FOLLOWS;
+    flags |= getExtraParseAddressFlags();
+    
+    String cross = "";
+    while (field.length() > 0) {
+      Result res = parseAddress(st, flags, field);
+      st = StartType.START_ADDR;
+      if (!res.isValid()) break;
+      res.getData(data);
+      cross = append(cross, " / ", data.strCross);
+      data.strCross = "";
+      field = res.getLeft();
+    }
+
+    if (field.length() > 0) {
+      if (trailName) {
+        setNameField(field, data);
+      } else if (leadPlace && cross.length() == 0) {
+        data.strPlace = field;
+      } else {
+        cross = append(cross, " / ", field);
+      }
+    }
+
+    if (startSlash) cross = '/' + cross;
+    addCrossStreet(cross, data);
   }
   
   private void addCrossStreet(String field, Data data) {

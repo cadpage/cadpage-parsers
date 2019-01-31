@@ -7,9 +7,8 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 public class SCGreenvilleCountyParser extends GroupBestParser {
   
   public SCGreenvilleCountyParser() {
-    super(new SCGreenvilleCountyDParser(),
-          new GroupBlockParser(),
-          new SCGreenvilleCountyAParser(), 
-          new SCGreenvilleCountyBParser());
+    super(new SCGreenvilleCountyAParser(), 
+          new SCGreenvilleCountyBParser(),
+          new SCGreenvilleCountyDParser());
   }
 }
