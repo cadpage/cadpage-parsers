@@ -20,7 +20,13 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
-           "FYI? ( CALL ADDR! CITY DIST? INFO+ | ADDR APT? ( SELECT/EMS PLACE+? ( CODE | UNIT CODE? ) CALL! CODE END | SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END | CITY? PLACE+? CALL/Z END ) )");
+           "FYI? ( CALL ADDR! CITY? SRC? DIST? INFO/N+ " +
+                "| UNIT_CH ADDR! CITY DIST? INFO/N+ " + 
+                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? ( CODE | UNIT CODE? ) CALL! CODE END " + 
+                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " + 
+                                  "| CITY? PLACE+? CALL/Z END " + 
+                                  ") " + 
+                ")");
   }
   
   @Override
@@ -78,6 +84,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("UNIT_CH"))  return new MyUnitChannelField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DIST")) return new PlaceField("DIST:.*");
     if (name.equals("PLACE")) return new MyPlaceField();
@@ -97,8 +104,14 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      Matcher match = CALL_CODE_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCall = match.group(1).trim();
+        data.strCode = match.group(2);
+        return true;
+      }
       if (selectValue.equals("CALL") || CALL_LIST.contains(field)) {
-        parse(field, data);
+        data.strCall = field;
         return true;
       }
       return false;
@@ -117,6 +130,34 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return "CALL CODE?";
+    }
+  }
+  
+  private static final Pattern UNIT_CHANNEL_PTN = Pattern.compile("\\{([A-Z0-9]+)\\} EVENT CHANNEL (\\d+)");
+  private class MyUnitChannelField extends Field {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = UNIT_CHANNEL_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strUnit = match.group(1);
+      data.strChannel = match.group(2);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT CH";
     }
   }
   
@@ -219,7 +260,9 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   private static final Set<String> CALL_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "ABDOMINAL PAIN",
       "ALARMS",
+      "ALLERGIES/ENVENOMATIO",
       "ALLERGIES/ENVENOMATIONS",
+      "ANIMAL",
       "ANIMAL BITES/ATTACKS",
       "ARSON",
       "ASSAULT/SEXUAL ASSALUT",
@@ -245,6 +288,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "DOMESTIC DISTURBANCE/ VIOLENCE",
       "DRIVING UNDER THE INFLUENCE",
       "DROWNING/DIVING/SCUBA ACCIDENT",
+      "DRUGS",
       "ELECTRICAL HAZARD",
       "ELECTROCUTION AND LIGHTNING",
       "ELEVATOR /ESCUALTOR RESCUE",
@@ -292,6 +336,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "TRAUMATIC INJURIES",
       "UNCONSCIOUS FAINTING",
       "UNKNOWN PROBLEM MAN DOWN",
+      "UNKNOWN (3RD PARTY)",
       "VEHICLE FIRE",
       "WALK-UP",
       "WATER RESCUE",
@@ -299,13 +344,36 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   }));
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "JAX",  "JACKSONVILLE",
+      "BAYB", "BAYBORO",
+      "BEUL", "BEULAVILLE",
+      "BUR",  "BURGAW",
+      "CHIN", "CHINQUAPIN",
+      "CL",   "CAMP LEJEUNE",
+      "EI",   "EMERALD ISLE",
+      "GOLD", "GOLDSBORO",
+      "HAMO", "HAMPSTEAD",
       "HR",   "HOLLY RIDGE",
       "HUB",  "HUBERT",
+      "JAX",  "JACKSONVILLE",
+      "KEN",  "KENANSVILLE",
+      "KIN",  "KINSTON",
       "MAY",  "MAYSVILLE",
+      "MH",   "MAPLE HILL",
+      "MOR",  "MOREHEAD CITY",
+      "MP",   "MIDWAY PARK",
+      "NEWB", "NEW BERN",
+      "NP",   "NEWPORT",
+      "NTB",  "NORTH TOPSAIL BEACH",
+      "PINK", "PINK HILL",
+      "POL",  "POLLOCKVILLE",
       "RICH", "RICHLANDS",
+      "SC",   "SURF CITY",
+      "SF",   "SNEADS FERRY",
+      "SOU",  "SOUTHPORT",
+      "SWAN", "SWANSBORO",
       
       // Carteret County
       "CEDAR POINT",    "CEDAR POINT"
+
   });
 }
