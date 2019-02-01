@@ -31,9 +31,18 @@ public class PAClarionCountyGParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE"))  return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      PAClarionCountyParser.fixCity(data);
+    }
   }
   
   private static final Pattern PLACE_PTN = Pattern.compile("\\d+ +(.*)");
