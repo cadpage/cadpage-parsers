@@ -325,6 +325,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "VOWINCKEL",
       
       // Armstrong County
+      "ARMSTRONG COUNTY",
       "HOVEY TWP",
       "PERRY TWP",
       "BRADYS BEND TWP",
@@ -339,6 +340,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "SOUTH BETHLEHEM",
       
       // Butler County
+      "BUTLER COUNTY",
       "ALLEGHANY TWP",
       "ALLEGHENY TWP",
       "ALLEGHENNY TWP",
@@ -350,6 +352,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "EAU CLAIRE",
       
       // Forest County
+      "FOREST COUNTY",
       "BARNETT TWP",
       "HARMONY TWP",
       "HICKORY TWP",
@@ -361,6 +364,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "JENKS TWP",
       
       // Jefferson County
+      "JEFFERSON COUNTY",
       "BARNETT TWP",
       "ELDRED TWP",
       "UNION TWP",
@@ -371,6 +375,7 @@ public class PAClarionCountyEParser extends FieldProgramParser {
       "SUMMERVILLE",
       
       // Venango County
+      "VENANGO COUNTY",
       "SCRUBGRASS TWP",
       "RICHLAND TWP",
       "ROCKLAND TWP",

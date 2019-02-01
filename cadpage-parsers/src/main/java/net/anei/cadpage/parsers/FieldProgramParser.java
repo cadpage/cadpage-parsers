@@ -2726,7 +2726,7 @@ public class FieldProgramParser extends SmartAddressParser {
       Matcher match = APT2_PTN.matcher(field);
       if (match.matches()) {
         String tmp = match.group(1);
-        if (tmp != null) field = null;
+        if (tmp != null) field = tmp;
       }
       super.parse(field, data);
     }
