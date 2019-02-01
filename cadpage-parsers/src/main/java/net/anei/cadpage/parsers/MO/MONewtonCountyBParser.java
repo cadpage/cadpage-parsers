@@ -25,7 +25,7 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@nc-cdc.org";
+    return "CAD@nc-cdc.org,911@nc-cdc.org";
   }
   
   @Override
