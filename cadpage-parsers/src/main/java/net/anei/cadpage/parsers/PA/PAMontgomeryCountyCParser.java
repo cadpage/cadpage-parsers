@@ -26,16 +26,23 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@c-msg.net,eoccomm@montcopa.org";
+    return "@c-msg.net,eoccomm@montcopa.org,montcopage@comcast.net";
   }
+  
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("\\d{7} +");
 
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
     
-    body = stripFieldStart(body, "MCDPS CAD MESSAGE ");
+    Matcher match = LEAD_ID_PTN.matcher(body);
+    if (match.matches()) {
+      body = body.substring(match.end());
+    } else {
+      body = stripFieldStart(body, "MCDPS CAD MESSAGE ");
+    }
     
     // Check for an uncommon variant
-    Matcher match = MASTER1.matcher(body);
+    match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("TIME ID ADDR APT CITY PLACE CALL");
       data.strTime = match.group(1);
