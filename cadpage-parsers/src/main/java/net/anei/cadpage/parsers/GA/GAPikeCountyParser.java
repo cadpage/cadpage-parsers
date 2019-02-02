@@ -17,7 +17,7 @@ public class GAPikeCountyParser extends DispatchB2Parser {
   
   @Override
   public String getFilter() {
-    return "PIKE_COUNTY_E-911@bellsouth.net";
+    return "PIKE_COUNTY_E-911@bellsouth.net,PIKE_COUNTY_E-911@pikecoes.com";
   }
   
   @Override
