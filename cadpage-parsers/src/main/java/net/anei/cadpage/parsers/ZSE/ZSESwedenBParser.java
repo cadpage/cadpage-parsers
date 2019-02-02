@@ -16,6 +16,11 @@ public class ZSESwedenBParser extends ZSESwedenBaseParser {
   public String getLocName() {
     return "Contal";
   }
+  
+  @Override
+  public String getFilter() {
+    return "Larmserver@kallareetuna.se,noreply.larm@nerikesbrandkar.se";
+  }
 
   @Override
   public int getMapFlags() {
