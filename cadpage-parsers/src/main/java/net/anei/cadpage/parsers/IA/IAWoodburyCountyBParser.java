@@ -7,8 +7,8 @@ public class IAWoodburyCountyBParser extends FieldProgramParser {
   
   public IAWoodburyCountyBParser() {
     super("WOODBURY COUNTY", "IA", 
-          "ID DATE/d TIME CALL ( UNIT1 ADDR CITY PLACE? X/Z+? INFO/Z EMPTY/Z END " + 
-                              "| ADDR CITY PLACE? X/Z+? INFO/Z UNIT/SZ EMPTY/Z! END )");
+        "ID DATE/d TIME CALL UNIT ADDR CITY ( EMPTY PLACE | ) X/Z+? EMPTY EMPTY+? INFO EMPTY END");
+//                              "| ADDR CITY PLACE? X/Z+? INFO/Z UNIT/SZ EMPTY/Z! END )");
   }
   
   @Override
