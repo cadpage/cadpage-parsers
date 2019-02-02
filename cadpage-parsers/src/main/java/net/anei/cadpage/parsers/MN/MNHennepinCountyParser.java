@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,26 +20,27 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   
   public MNHennepinCountyParser() {
     super(CITY_LIST, "HENNEPIN COUNTY", "MN",
-          "NAME ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " + 
-               "| ADDRESS:ADDR! APT#:APT! CITY:CITY! X_STREET:X! EVTYPE:CALL! INC#:ID! ) COMMENTS:INFO");
+          "( NAME:NAME! ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " + 
+                       "| ADDRESS:ADDR! APT#:APT! CITY:CITY! XSTREET:X! EVTYPE:CALL! INC#:ID! " + 
+                       ") COMMENTS:INFO/N+ " +
+          "| INC#:ID! ADDRESS:ADDR! EVTYPE:CALL! INFO/RN+ " +
+          ")");
+    setBreakChar('-');
   }
   
   @Override
   public String getFilter() {
     return "sheriff.cadpaging@co.hennepin.mn.us,SHERIFF.CADPAGING@HENNEPIN.US";
   }
-  
-  private static final Pattern FIELD_PTN = Pattern.compile("; *((?:X )?[A-Z]+#?)-");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    if (!body.startsWith("NAME-")) return false;
-    body = body.substring(5).trim();
+    int pt = body.indexOf("\n\n--");
+    if (pt >= 0) body = body.substring(0, pt).trim();
     
-    // Convert wierd field delimiters to standard colon terminated keywords
-    body = FIELD_PTN.matcher(body).replaceAll(" $1: ");
-    if (!super.parseMsg(body, data)) return false;
+    body = body.replace(" X STREET-", " XSTREET-");
+    if (!super.parseFields(splitFields(body), data)) return false;
     
     // If we did not find a city, check the name to see if it looks like
     // a neighboring county dispatch center
@@ -49,6 +52,29 @@ public class MNHennepinCountyParser extends FieldProgramParser {
     return true;
   }
   private static final Pattern COUNTY_NAME_PTN = Pattern.compile("\\b(ANOKA|RAMSEY|DAKOTA|SCOTT|CARVER|WRIGHT)\\b", Pattern.CASE_INSENSITIVE);
+  
+  /**
+   * Break message body into list of fields
+   * @param body message body
+   * @return array of fields
+   */
+  private static String[] splitFields(String body) {
+    List<String> fields = new ArrayList<>();
+    int last = 0;
+    boolean semiBreak = true;
+    for (int pt = 0; pt < body.length(); pt++) {
+      char chr = body.charAt(pt);
+      if (chr == ';' && semiBreak || chr == '\n') {
+        fields.add(body.substring(last, pt).trim());
+        last = pt+1;
+      }
+      else if (semiBreak) {
+        if (body.substring(pt).startsWith("COMMENTS-")) semiBreak = false;
+      }
+    }
+    fields.add(body.substring(last).trim());
+    return fields.toArray(new String[0]);
+  }
   
   @Override
   public Field getField(String name) {
@@ -154,37 +180,34 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern INFO_PFX_PTN = Pattern.compile("\\[\\d+\\] *(.*)");
-  private static final Pattern INFO_CROSS_PTN = Pattern.compile(".*: ?cross streets ?: *(.*?)");
-  private static final Pattern INFO_UNIT_PTN = Pattern.compile("Resources required for this event are: *(.*)");
+  private static final Pattern INFO_CROSS_PTN = Pattern.compile(".*: ?cross streets ?: *(.*)");
+  private static final Pattern INFO_UNIT_PTN = Pattern.compile("Resources required for this event are: *(.*?);?");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d+ Nearby Events found .*");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
-      for (String line : field.split("\n")) {
-        String connect = "\n";
-        Matcher match = INFO_PFX_PTN.matcher(line);
-        if (match.matches()) line = match.group(1);
-        for (String part : line.trim().split("  +")) {
-          match = INFO_CROSS_PTN.matcher(part);
-          if (match.matches()) {
-            data.strCross = match.group(1).trim();
-            continue;
-          }
-          match = INFO_UNIT_PTN.matcher(part);
-          if (match.matches()) {
-            data.strUnit = append(data.strUnit, " ", match.group(1));
-            continue;
-          }
-          if (INFO_JUNK_PTN.matcher(part).matches()) continue;
-          if (data.strAddress.length() > 0) {
-            if (data.strAddress.startsWith(part)) continue;
-            if (part.startsWith(data.strAddress)) continue;
-          }
-          if (part.length() > 0) {
-            data.strSupp = append(data.strSupp, connect, part);
-            connect = "  ";
-          }
+      String connect = "\n";
+      Matcher match = INFO_PFX_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      for (String part : field.trim().split("  +")) {
+        match = INFO_CROSS_PTN.matcher(part);
+        if (match.matches()) {
+          data.strCross = match.group(1).trim();
+          continue;
+        }
+        match = INFO_UNIT_PTN.matcher(part);
+        if (match.matches()) {
+          data.strUnit = append(data.strUnit, " ", match.group(1));
+          continue;
+        }
+        if (INFO_JUNK_PTN.matcher(part).matches()) continue;
+        if (data.strAddress.length() > 0) {
+          if (data.strAddress.startsWith(part)) continue;
+          if (part.startsWith(data.strAddress)) continue;
+        }
+        if (part.length() > 0) {
+          data.strSupp = append(data.strSupp, connect, part);
+          connect = "  ";
         }
       }
     }
