@@ -1352,6 +1352,7 @@ public class Active911ParserTable {
       "US/PA/SchuylkillCounty",           "PASchuylkillCounty",
       "US/PA/SnyderCounty",               "PASnyderCounty",
       "US/PA/SomersetCounty",             "PASomersetCountyC",
+      "US/PA/SomersetCountyCaller",       "PASomersetCountyC",
       "US/PA/SomersetCountySecond",       "PASomersetCountyC",
       "US/PA/Springfield",                "PADelawareCountyG",
       "US/PA/Swift911",                   "PANorthumberlandCounty",
