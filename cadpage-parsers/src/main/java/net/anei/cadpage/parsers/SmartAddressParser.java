@@ -234,12 +234,9 @@ public abstract class SmartAddressParser extends MsgParser {
   public static final int FLAG_PREF_TRAILING_BOUND = 0x20000000;
   
   /**
-   * Flag indicating the information following the address is restricted
-   * to simple information (ie not suplamental info).  Specifically, this
-   * means the address can be terminated with an apartment or cross street 
-   * keyword when no city is found
+   * Flag indicating the commas should be accepted in the address field
    */
-  public static final int FLAG_SIMPLE_FOLLOWS = 0x40000000;
+  public static final int FLAG_ACCEPT_COMMA = 0x40000000;
 
   // Flag combination that indicates we are processing some kind of pad field
   // Rechecking the apt is treated as a flavor of pad field
@@ -1968,7 +1965,7 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     
     // When we get here, 
-    // startAddress points to beginning of address
+    // sAddr points to beginning of address
     // ndx points past the end of the road
     
     // We have a naked road parse
@@ -2302,9 +2299,6 @@ public abstract class SmartAddressParser extends MsgParser {
     boolean padField = isFlagSet(FLAG_PAD_FIELD | FLAG_PAD_FIELD_EXCL_CITY);
     boolean cityOnly = isFlagSet(FLAG_ONLY_CITY);
     boolean nearToEnd = isFlagSet(FLAG_NEAR_TO_END);
-    
-    // If FLAG_SIMPLE_FOLLOWS is set, for city option from 1 to 2
-    if (cityOpt == 1 && isFlagSet(FLAG_SIMPLE_FOLLOWS)) cityOpt = 2;
 
     // Starting at or after the end of the field is usually an automatic failure
     // But if the anchor end flag is set, and ending here will produce a
@@ -2412,8 +2406,11 @@ public abstract class SmartAddressParser extends MsgParser {
       // without finding anything, or encountered a non-address character
       // fail here
       if (addrFld && lastField == startField) {
-        if (tmpNdx != ndx) return false;
-        if (isType(ndx, ID_NOT_ADDRESS)) return false;
+        if (tmpNdx != ndx) {
+            if (!isFlagSet(FLAG_ACCEPT_COMMA)) return false;
+        } else {
+          if (isType(ndx, ID_NOT_ADDRESS)) return false;
+        }
       }
       ndx = tmpNdx;
     }
@@ -2924,8 +2921,8 @@ public abstract class SmartAddressParser extends MsgParser {
         boolean number = false;
         while (++end - start <= 3) {
           
-          // A mile marker in the middle of the street name is verbotten
-          if (isType(end, ID_MILE_MARKER)) return -1;
+          // Invalid token or mile marker rejects everything
+          if (isType(end, ID_NOT_ADDRESS | ID_MILE_MARKER)) return -1;
           
           // An intersection marker marks the end of things
           if (findConnector(end)>=0) break;

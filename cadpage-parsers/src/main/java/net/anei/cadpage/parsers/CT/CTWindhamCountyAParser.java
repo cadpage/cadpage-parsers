@@ -18,7 +18,6 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
 
   CTWindhamCountyAParser(String defCity, String defState) {
     super(defCity, defState);
-    setFieldList("SRC UNIT CH PRI INFO CALL ADDR PLACE APT CITY ST X TIME");
     setupMultiWordStreets(MWORD_STREET_LIST);
     addRoadSuffixTerms("DRIVE");
     removeWords("BUS");
@@ -29,11 +28,16 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     return "qvecpaging@qvec.org,messaging@iamresponding.com";
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("([ A-Za-z0-9]+?)  +");
-  private static final Pattern CHANNEL_PTN = Pattern.compile("(UHF-\\d|\\d\\d\\.\\d\\d|\\d{3}|\\b(?:EKONK|KILLINGLY|UNION|THOMPSON) \\d{3}|HIGH-BAND) +");
+  private static final Pattern UNIT_PTN = Pattern.compile("([-,. A-Za-z0-9]+?)  +");
+  private static final Pattern CHANNEL_PTN = Pattern.compile("/? *(UHF[- ]?\\d+|(?:(?:OP|OPER) *)?\\d\\d\\.\\d\\d|\\d{3}|\\b(?:EKONK|FRANKLIN|KILLINGLY|PMKN HILL|THOMPSON|UNION) \\d{3}|HIGH-BAND)[-/ ]+", Pattern.CASE_INSENSITIVE);
   private static final Pattern PRIORITY_PTN = Pattern.compile("^PRI +(\\d) +");
-  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d");
-  private static final Pattern ADDR_DEL_PTN = Pattern.compile(" \\* |\n");
+  private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile(" +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)$");
+  private static final Pattern TRAIL_TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
+  private static final Pattern TRAIL_DATE_TIME_FRAG_PTN = Pattern.compile(" +[ :/0-9]+$");
+  
+  private static final Pattern APT1_PTN = Pattern.compile("(?:APT|APARTMENT|ROOM|RM|UNIT|LOT)[- ]*(\\S+)\\b[-/ ]*", Pattern.CASE_INSENSITIVE);
+  
+  private static final Pattern ADDR_DEL_PTN = Pattern.compile(" \\*(?: |$)|\n");
   private static final Pattern RESERVE_CALL_PTN = Pattern.compile(".*(?:CALL FROM|ALERT|ALARM|APPLIANCE FIRE|FALL INJURY|INJURED PERSON|LIFT ASSIST|VEHICLE ACCIDENT)\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|APARTMENT|ROOM|RM|UNIT|LOT)[- ]*(.*)|\\d{1,5}|[A-Z]|[A-Z]-?\\d{1,5}|.* (?:FLR|FLOOR)|WING .*", Pattern.CASE_INSENSITIVE);
   
@@ -63,98 +67,175 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
       body = body.substring(match.end()).trim();
     }
     
-    // Everything is option, but we had it find **SOMETHING** we recognize
-    if (data.strUnit.length() == 0 && data.strChannel.length() == 0 && data.strPriority.length() == 0) return false;
-    
-    Parser p = new Parser(body);
-    String sAddr = p.get("(X-STS ");
-    data.strCross = p.get(')');
-    String sTime = p.get();
-    if (TIME_PTN.matcher(sTime).matches()) data.strTime = sTime;
-    
-    // New format > call * address * place city
-    // alternate format call \n address \n place city
-    // old format > call address / place city
-    sAddr = stripFieldStart(sAddr, "/");
-    String sPlaceCity;
-    String[] flds = ADDR_DEL_PTN.split(sAddr);
-    if (flds.length == 3 || flds.length == 4) {
-      int pt = 0;
-      if (flds.length == 4) data.strSupp = flds[pt++].trim();
-      data.strCall = flds[pt++].trim();
-      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, flds[pt++].trim(), data);
-      sPlaceCity = flds[pt++].trim();
-    }
-    
-    else {
-      int pt = sAddr.lastIndexOf(" / ");
-      if (pt < 0) return false;
-      sPlaceCity = sAddr.substring(pt+3).trim();
-      sAddr = sAddr.substring(0,pt).trim();
-      
-      // There has been a problem with some call descriptions that contains things that look like
-      // an address, so we try to identify and parser those out.
-      String reserveCall = "";
-      int flags = FLAG_START_FLD_REQ;
-      match = RESERVE_CALL_PTN.matcher(sAddr);
+    if (data.strChannel.length() == 0) {
+      match = CHANNEL_PTN.matcher(body);
       if (match.lookingAt()) {
-        reserveCall = match.group();
-        sAddr = sAddr.substring(match.end()).trim();
-        flags = 0;
+        data.strChannel = match.group(1);
+        body = body.substring(match.end());
       }
-      parseAddress(StartType.START_CALL, flags | FLAG_IGNORE_AT | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, sAddr, data);
-      if (reserveCall.length() > 0 && data.strAddress.length() == 0) {
-        parseAddress(data.strCall, data);
-        data.strCall = "";
-      }
-      data.strCall = append(reserveCall, " ", data.strCall);
     }
-    data.strCall = data.strCall.replaceAll("  +", " ");
     
-    String city = CITY_SET.getCode(sPlaceCity.toUpperCase(), true);
-    if (city != null) {
-      int pt = sPlaceCity.length()-city.length();
-      data.strCity = sPlaceCity.substring(pt);
-      sPlaceCity = sPlaceCity.substring(0,pt).trim();
-    }
-    if (sPlaceCity.length() > 0) {
+    body = stripFieldStart(body, "/");
+    body = stripFieldStart(body, "-");
+    
+    // Look for trailing date/time
+    // And try to identify with of two basic formats this is
+    int type;
+    match = TRAIL_DATE_TIME_PTN.matcher(body);
+    if (match.find()) {
+      type = 1;
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      body = body.substring(0, match.start());
+    } else if ((match = TRAIL_TIME_PTN.matcher(body)).find()) {
+      type = 2;
+      data.strTime = match.group(1);
+      body = body.substring(0, match.start());
+    } 
+    else { 
+      match = TRAIL_DATE_TIME_FRAG_PTN.matcher(body);
+      if (match.find()) body = body.substring(0,match.start());
       
-      // Intersections sometimes bleed into the place name :(
-      if (checkAddress(data.strAddress) == STATUS_STREET_NAME) {
-        Result res = parseAddress(StartType.START_ADDR, sPlaceCity);
-        if (res.getStatus() == STATUS_STREET_NAME) {
-          String tmp = data.strAddress;
-          data.strAddress = "";
-          res.getData(data);
-          data.strAddress = append(tmp, " & ", data.strAddress);
-          sPlaceCity = res.getLeft();
-        }
+      if (body.contains("(X-ST")) type = 2;
+      else if (body.contains(",")) type = 1;
+      else return false;
+    }
+    
+    // Everything is optional, but we had it find **SOMETHING** we recognize
+    if (data.strUnit.length() == 0 && data.strChannel.length() == 0 && 
+        data.strPriority.length() == 0 && data.strDate.length() == 0) return false;
+    
+    if (type == 1) {
+      setFieldList("SRC UNIT CH PRI CALL ADDR CITY APT PLACE X DATE TIME");
+      String apt = "";
+      match = APT1_PTN.matcher(body);
+      if (match.lookingAt()) {
+        apt = match.group(1);
+        body = body.substring(match.end());
       }
-      match = APT_PTN.matcher(sPlaceCity);
-      if (match.matches()) {
-        String tmp = match.group(1);
-        if (tmp == null) tmp = sPlaceCity;
-        data.strApt = append(data.strApt, "-", tmp);
-      } else {
-        int pt = sPlaceCity.lastIndexOf('/');
-        if (pt >= 0) {
-          String tmp = sPlaceCity.substring(pt+1).trim();
-          match = APT_PTN.matcher(tmp);
-          if (match.matches()) {
-            String tmp2 = match.group(1);
-            if (tmp2 == null) tmp2 = tmp;
-            data.strApt = append(data.strApt, "-", tmp2);
-            sPlaceCity = sPlaceCity.substring(0,pt).trim();
+      Parser p = new Parser(body+' ');
+      data.strCall = p.get(" * ");
+      String addr = p.get(" * ");
+      if (addr.length() == 0) return false;
+      String cross = p.get();
+      
+      int pt = addr.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strCity = addr.substring(pt+1).trim();
+        addr =  addr.substring(0, pt).trim();
+      }
+      parseAddress(addr, data);
+      data.strApt = append(apt, "-", data.strApt);
+      
+      match = APT1_PTN.matcher(cross);
+      if (match.lookingAt()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+        cross = cross.substring(match.end());
+      }
+      String place = cross;
+      cross = "";
+      while (place.length() > 0) {
+        data.strPlace = data.strCross = "";
+        parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_IGNORE_AT | FLAG_ACCEPT_COMMA | FLAG_ANCHOR_END, place, data);
+        if (data.strCross.length() == 0) break;
+        cross = append(data.strCross, ", ", cross);
+        place = data.strPlace;
+      }
+      data.strCross = cross;
+      return true;
+    }
+
+    else {
+      setFieldList("SRC UNIT CH PRI INFO CALL ADDR PLACE APT CITY ST X TIME");
+      Parser p = new Parser(body+' ');
+      String sAddr = p.get("(X-STS ");
+      data.strCross = p.get(')');
+      if (p.get().length() > 0) return false;
+      
+      // New format > call * address * place city
+      // alternate format call \n address \n place city
+      // old format > call address / place city
+      sAddr = stripFieldStart(sAddr, "/");
+      String sPlaceCity;
+      String[] flds = ADDR_DEL_PTN.split(sAddr, -1);
+      if (flds.length == 3 || flds.length == 4) {
+        int pt = 0;
+        if (flds.length == 4) data.strSupp = flds[pt++].trim();
+        data.strCall = flds[pt++].trim();
+        parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, flds[pt++].trim(), data);
+        sPlaceCity = flds[pt++].trim();
+      }
+      
+      else {
+        int pt = sAddr.lastIndexOf(" / ");
+        if (pt < 0) return false;
+        sPlaceCity = sAddr.substring(pt+3).trim();
+        sAddr = sAddr.substring(0,pt).trim();
+        
+        // There has been a problem with some call descriptions that contains things that look like
+        // an address, so we try to identify and parser those out.
+        String reserveCall = "";
+        int flags = FLAG_START_FLD_REQ;
+        match = RESERVE_CALL_PTN.matcher(sAddr);
+        if (match.lookingAt()) {
+          reserveCall = match.group();
+          sAddr = sAddr.substring(match.end()).trim();
+          flags = 0;
+        }
+        parseAddress(StartType.START_CALL, flags | FLAG_IGNORE_AT | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, sAddr, data);
+        if (reserveCall.length() > 0 && data.strAddress.length() == 0) {
+          parseAddress(data.strCall, data);
+          data.strCall = "";
+        }
+        data.strCall = append(reserveCall, " ", data.strCall);
+      }
+      data.strCall = data.strCall.replaceAll("  +", " ");
+      
+      String city = CITY_SET.getCode(sPlaceCity.toUpperCase(), true);
+      if (city != null) {
+        int pt = sPlaceCity.length()-city.length();
+        data.strCity = sPlaceCity.substring(pt);
+        sPlaceCity = sPlaceCity.substring(0,pt).trim();
+      }
+      if (sPlaceCity.length() > 0) {
+        
+        // Intersections sometimes bleed into the place name :(
+        if (checkAddress(data.strAddress) == STATUS_STREET_NAME) {
+          Result res = parseAddress(StartType.START_ADDR, sPlaceCity);
+          if (res.getStatus() == STATUS_STREET_NAME) {
+            String tmp = data.strAddress;
+            data.strAddress = "";
+            res.getData(data);
+            data.strAddress = append(tmp, " & ", data.strAddress);
+            sPlaceCity = res.getLeft();
           }
         }
-        data.strPlace = sPlaceCity;
+        match = APT_PTN.matcher(sPlaceCity);
+        if (match.matches()) {
+          String tmp = match.group(1);
+          if (tmp == null) tmp = sPlaceCity;
+          data.strApt = append(data.strApt, "-", tmp);
+        } else {
+          int pt = sPlaceCity.lastIndexOf('/');
+          if (pt >= 0) {
+            String tmp = sPlaceCity.substring(pt+1).trim();
+            match = APT_PTN.matcher(tmp);
+            if (match.matches()) {
+              String tmp2 = match.group(1);
+              if (tmp2 == null) tmp2 = tmp;
+              data.strApt = append(data.strApt, "-", tmp2);
+              sPlaceCity = sPlaceCity.substring(0,pt).trim();
+            }
+          }
+          data.strPlace = sPlaceCity;
+        }
       }
+      
+      String st = CITY_ST_TABLE.getProperty(data.strCity.toUpperCase());
+      if (st != null) data.strState = st;
+      
+      return true;
     }
-    
-    String st = CITY_ST_TABLE.getProperty(data.strCity.toUpperCase());
-    if (st != null) data.strState = st;
-    
-    return true;
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
@@ -163,15 +244,18 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "ASHFORD CENTER",
     "ATTAWAUGAN CROSSING",
     "AUTUMN VIEW",
+    "BABBITT HILL",
     "BAILEY HILL",
     "BARBER HILL",
     "BARLOW CEMETERY",
     "BARTLETT MEADOW",
     "BEACH POND",
     "BEAVER DAM",
+    "BIG HORN",
     "BLACK ROCK",
     "BLACKMER DOWNS",
     "BRAATEN HILL",
+    "BRADFORD CORNER",
     "BRANDY HILL",
     "BRAYMAN HOLLOW",
     "BREAKNECK HILL",
@@ -182,6 +266,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "BULL HILL",
     "BUNDY HILL",
     "BUNGAY HILL",
+    "BUSHNELL HOLLOW",
     "CAMP YANKEE",
     "CAT HOLLOW",
     "CENTER CEMETERY",
@@ -190,6 +275,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "CHANDLER SCHOOL",
     "CHASE HILL",
     "CHENEY MILL",
+    "CHERRY HILL",
     "CHERRY TREE CORNER",
     "CHESTNUT HILL",
     "CHILD DOME",
@@ -218,6 +304,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "FALLS BASHIN",
     "FIRE TOWER",
     "FOUR SEASONS",
+    "FROG POND",
     "GAY HEAD",
     "GENERAL LYON",
     "GRAND VIEW",
@@ -232,6 +319,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "INDIAN INN",
     "INDIAN RUN",
     "INDIAN SPRINGS",
+    "JARED HALL HILL",
     "JOHN PERRY",
     "KENNERSON RESERVOIR",
     "KILLINGLY COMMONS",
@@ -247,28 +335,35 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "LONG POND",
     "LOUISA VIENS",
     "LOWELL DAVIS",
+    "LYON HILL",
     "MARGARET HENRY",
     "MASON HILL",
     "MILL BRIDGE",
     "MOOSUP POND",
     "OLDE MEADOW",
     "OLEAROS HILL",
+    "OWEN ADAM",
     "OWL NEST",
     "PAINE DISTRICT",
     "PARENT HILL",
     "PINE CREST",
+    "PINE GROVE",
     "PINE HOLLOW",
     "PLEASANT VIEW",
     "POLE BRIDGE",
     "POND FACTORY",
+    "POND HILL",
+    "POND VIEW",
     "PORTER PLAIN",
     "PRESTON ALLEN",
     "PROVIDENCE PIKE BAILEY HILL",
     "PULPIT ROCK",
+    "PUMPKIN HILL",
     "QUADDICK MOUNTAIN",
     "QUADDICK TOWN FARM",
     "RATHBUN HILL",
     "RED BRIDGE",
+    "RED CEDAR",
     "REDHEAD HILL",
     "RIFLE RANGE",
     "RILEY CHASE",
@@ -285,6 +380,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "SCHOOL HOUSE",
     "SHAILOR HILL",
     "SHEPARD HILL",
+    "SNAKE MEADOW HILL",
     "SNAKE MEADOW",
     "SPRAGUE HILL",
     "SPRING HILL",
@@ -294,17 +390,23 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     "SUNSET HILL",
     "TAFT POND",
     "THOMPSON HILL",
+    "TOTEM POLE",
     "TOWN FARM",
     "TOWN HOUSE",
+    "TPKE CAROL",
     "TPKE WALKER",
+    "TRANSFER STATION",
     "TUCKER DISTRICT",
     "TUFT HILL",
+    "TUNK CITY",
     "TUNNEL HILL",
     "VALLEY VIEW",
     "WEST COVE",
     "WETHERELL HILL",
     "WHIP POOR WILL",
+    "WOLF DEN",
     "YOSEMITE VALLEY"
+
   };
   
   private static final ReverseCodeSet CITY_SET = new ReverseCodeSet(
