@@ -18,6 +18,7 @@ public class NCPittCountyAParser extends FieldProgramParser {
            "SRC! Rcvd:DATETIME! Rsn:CALL! CALL/SDS+ Note:INFO! INFO/SLLS+ Adr:ADDR");
     addExtendedDirections();
     setupMultiWordStreets("MARTIN LUTHER KING JR", "STOKETOWN ST JOHN");
+    removeWords("-");
   }
   
   @Override

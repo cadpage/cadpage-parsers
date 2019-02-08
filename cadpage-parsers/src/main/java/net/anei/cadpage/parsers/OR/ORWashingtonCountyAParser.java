@@ -248,7 +248,14 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       field = field.replace("/No X Street", "");
       parseAddress(StartType.START_CALL, flags, field, data);
       data.strCross = cleanCross(data.strCross);
-      if ((flags & FLAG_PAD_FIELD) != 0) data.strCross = append(data.strCross, " / ", cleanCross(getPadField()));
+      if ((flags & FLAG_PAD_FIELD) != 0) {
+        String pad = getPadField();
+        if (pad.equalsIgnoreCase("MP")) {
+          data.strAddress = append(data.strAddress, " ", pad);
+        } else {
+          data.strCross = append(data.strCross, " / ", cleanCross(pad));
+        }
+      }
     }
     
     @Override

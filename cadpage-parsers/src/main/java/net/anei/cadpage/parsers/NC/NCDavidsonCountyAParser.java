@@ -8,6 +8,7 @@ public class NCDavidsonCountyAParser extends NCGuilfordCountyAParser {
 
   public NCDavidsonCountyAParser() {
     super("DAVIDSON COUNTY", "NC");
+    removeWords("-");
   }
   
   @Override

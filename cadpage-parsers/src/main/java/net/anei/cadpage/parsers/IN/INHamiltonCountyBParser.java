@@ -136,12 +136,20 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
     }
   }
   
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("AIRPORT")) city = "INDIANAPOLIS";
+    return city;
+  }
+  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ADVN", "ADVANCE",
+      "AIR",  "AIRPORT",
       "ALEX", "ALEXANDRIA",
       "ANDR", "ANDERSON",
       "ARC",  "ARCADIA",
       "ATL",  "ATLANTA",
+      "AVN",  "AVON",
       "AVON", "AVON",
       "BBRG", "BROWNSBURG",
       "BGRV", "BEECH GROVE",
@@ -155,6 +163,7 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
       "COAT", "COATSVILLE",
       "CRTH", "CARTHAGE",
       "DANV", "DANVILLE",
+      "DEC",  "DECATUR",
       "ELWD", "ELWOOD",
       "FIS",  "FISHERS",
       "FMNT", "FAIRMOUNT",
@@ -185,6 +194,7 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
       "NOB",  "NOBLESVILLE",
       "NSLM", "NORTH SALEM",
       "PEND", "PENDLETON",
+      "PIK",  "PIKE",
       "PITT", "PITTSBORO",
       "PLNF", "PLAINFIELD",
       "ROSS", "ROSSVILLE",
@@ -192,10 +202,13 @@ public class INHamiltonCountyBParser extends DispatchOSSIParser {
       "SHE",  "SHERIDAN",
       "SHRL", "SHIRLEY",
       "SHRP", "SHARPSVILLE",
+      "SPD",  "SPEEDWAY",
       "STIL", "STILESVILLE",
       "SUMM", "SUMMITVILLE",
       "THRN", "THORNTOWN",
       "TIPT", "TIPTON",
+      "WAR",  "WARREN PARK",
+      "WAY",  "WAYNE",
       "WES",  "WESTFIELD",
       "WHTN", "WHITESTOWN",
       "WILK", "WILKINSON",

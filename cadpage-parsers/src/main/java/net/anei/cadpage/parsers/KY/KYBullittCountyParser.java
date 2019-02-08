@@ -28,7 +28,11 @@ public class KYBullittCountyParser extends DispatchB2Parser {
     if (!super.parseAddrField(field, data)) return false;
     if (data.strApt.startsWith("-")) {
       String place = data.strApt.substring(1).trim();
-      data.strPlace = append(data.strPlace, " - ", place);
+      if (isValidAddress(place)) {
+        data.strAddress = append(data.strAddress, " & ", place);
+      } else {
+        data.strPlace = append(data.strPlace, " - ", place);
+      }
       data.strApt = "";
     }
     return true;

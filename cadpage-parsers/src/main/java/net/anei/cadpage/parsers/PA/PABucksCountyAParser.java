@@ -34,8 +34,8 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
     
     body = stripFieldStart(body, "911:");
     body = stripFieldStart(body, "Text:");
-    
-    if (body.endsWith("=")) body = body.substring(0,body.length()-1).trim();
+
+    body = stripFieldEnd(body, "=");
     int pt = body.lastIndexOf('=');
     if (pt >= 100) body = body.substring(0,pt) + body.substring(pt+1);
     pt = body.indexOf("\n*****");

@@ -13,6 +13,7 @@ public class OHClarkCountyBParser extends SmartAddressParser {
     super(OHClarkCountyParser.CITY_LIST, "CLARK COUNTY", "OH");
     setFieldList("PLACE ADDR APT CITY X CALL INFO ID");
     removeWords("CL", "UNIT");
+    allowBadChars("()");
   }
   private static final Pattern MASTER = Pattern.compile("-?(.*?)(?:-(\\d{4}))?");
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");

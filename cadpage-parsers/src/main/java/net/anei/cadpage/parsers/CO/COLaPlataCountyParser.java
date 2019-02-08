@@ -16,6 +16,7 @@ public class COLaPlataCountyParser extends FieldProgramParser {
   public COLaPlataCountyParser() {
     super("LA PLATA COUNTY", "CO",
            "SRC UNIT CALL ADDR INFO+");
+    allowBadChars("()");
   }
   
   @Override

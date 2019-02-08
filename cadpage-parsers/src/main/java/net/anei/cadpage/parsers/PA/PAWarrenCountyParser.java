@@ -9,7 +9,9 @@ public class PAWarrenCountyParser extends DispatchCiscoParser {
   
   public PAWarrenCountyParser() {
     super("WARREN COUNTY", "PA");
-    }
+    allowBadChars("()");
+    setupSpecialStreets("PAGE HOLLOW");
+  }
   
   @Override
   public String getFilter() {

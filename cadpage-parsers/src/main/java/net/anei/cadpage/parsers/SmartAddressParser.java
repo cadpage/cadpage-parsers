@@ -2922,7 +2922,7 @@ public abstract class SmartAddressParser extends MsgParser {
         while (++end - start <= 3) {
           
           // Invalid token or mile marker rejects everything
-          if (isType(end, ID_NOT_ADDRESS | ID_MILE_MARKER)) return -1;
+          if (isType(end, ID_NOT_ADDRESS | ID_MILE_MARKER)) return failIndex;
           
           // An intersection marker marks the end of things
           if (findConnector(end)>=0) break;
