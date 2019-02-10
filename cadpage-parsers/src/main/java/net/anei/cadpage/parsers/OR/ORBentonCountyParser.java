@@ -857,6 +857,8 @@ public class ORBentonCountyParser extends FieldProgramParser {
       "1400 APPLEGATE ST APT:1340",   "44.538874,-123.366783",
       "1400 APPLEGATE ST APT:1370",   "44.538874,-123.366783",
       
+      "1250 ADAMS ST",                "44.543512,-123.304196"     // Access via Industrial Way
+      
   });
   
   @Override
