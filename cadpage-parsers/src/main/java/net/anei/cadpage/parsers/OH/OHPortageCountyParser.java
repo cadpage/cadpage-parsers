@@ -84,6 +84,7 @@ public class OHPortageCountyParser extends GroupBestParser {
     "PARIS",
     "RANDOLPH",
     "ROOTSTOWN",
+    "ROOTSOWN",   // Misspelled
     "SHALERSVILLE",
     "SUFFIELD",
 

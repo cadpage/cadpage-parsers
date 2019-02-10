@@ -10,11 +10,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHPortageCountyAParser extends FieldProgramParser {
   
-  private static final Pattern MARKER = Pattern.compile("^[A-Z0-9\\.]+: +", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MARKER1 = Pattern.compile(".*?\\b(?=CALL:)");
+  private static final Pattern MARKER2 = Pattern.compile("[A-Z0-9\\.]+: +", Pattern.CASE_INSENSITIVE);
   
   public OHPortageCountyAParser() {
     super(OHPortageCountyParser.CITY_LIST, "PORTAGE", "OH",
-          "PREFIX? CALL ZERO? ADDR! PLACE? CITY/Y INFO+");
+          "( SELECT/1 PREFIX CALL:CALL/SDS! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+ " +
+          "| PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+ )");
   }
   
   @Override
@@ -25,8 +27,17 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     
-    Matcher match = MARKER.matcher(body);
-    if (match.find()) body = body.substring(match.end());
+    Matcher match = MARKER1.matcher(body);
+    if (match.lookingAt()) {
+      setSelectValue("1");
+      int pt = match.end();
+      if (pt >= 0) body = body.substring(0, pt) + '\n' + body.substring(pt);
+      return parseFields(body.split("\n"), data);
+    }
+    
+    setSelectValue("2");
+    match = MARKER2.matcher(body);
+    if (match.lookingAt()) body = body.substring(match.end());
     if (!parseFields(body.split(","), data)) return false;
     data.strCity = OHPortageCountyParser.fixCity(data.strCity);
     return true;
@@ -35,15 +46,15 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField();
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZERO")) return new SkipField("0?");
     return super.getField(name);
   }
 
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?) +)?\\b([A-Z0-9]{1,7})-(.*)");
-  private class MyCallField extends CallField {
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?)[ \\.]+)?([A-Z0-9]{0,7})-([A-Z].*|)");
+  private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
