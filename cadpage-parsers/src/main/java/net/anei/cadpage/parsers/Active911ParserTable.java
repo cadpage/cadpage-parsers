@@ -333,7 +333,7 @@ public class Active911ParserTable {
       "US/GA/RabunCounty",                "GARabunCounty",
       "US/GA/SouthsideFire",              "GAChathamCounty",
       "US/GA/StephensCounty",             "GAStephensCounty",
-      "US/GA/SumterCounty",               "GASumterCounty",
+      "US/GA/SumterCounty",               "GASumterCounty,GAMaconCountyB",
       "US/GA/TalbotCounty",               "GATalbotCounty",
       "US/GA/TaylorCounty",               "GATaylorCounty",
       "US/GA/ThompsonMcDuffie",           "GAMcDuffieCounty",

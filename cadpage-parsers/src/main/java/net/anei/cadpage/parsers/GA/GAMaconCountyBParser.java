@@ -13,6 +13,11 @@ public class GAMaconCountyBParser extends DispatchA73Parser {
   }
   
   @Override
+  public String getFilter() {
+    return "@alert.active911.com,middleflint@mfre911.com";
+  }
+  
+  @Override
   public String getAliasCode() {
     return "GAMaconCountyB";
   }
