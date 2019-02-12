@@ -11,12 +11,14 @@ public class NYBuffaloParser extends DispatchProQAParser {
   
   public NYBuffaloParser() {
     super(CITY_LIST, "BUFFALO", "NY",
-          "JOB? PRI? CODE_CALL CALL2/L+? ADDR APT APT/L+? CITY ALT_ID INFO/N+? TIME! INFO/N+", true);
+          "( CALL CALL/L TIME ADDR APT CITY ZIP CALL/L! " +
+          "| JOB? PRI? CODE_CALL CALL2/L+? ADDR APT APT/L+? CITY ALT_ID INFO/N+? TIME! " + 
+          ") INFO/N+", true);
   }
   
   @Override
   public String getFilter() {
-    return "2002000004,777";
+    return "2002000004,777,Do.Not.Reply@tcaems.com";
   }
   
   private static final Pattern PREFIX_PTN = Pattern.compile("([A-Z0-9]+): +(?=RC:)");
@@ -44,6 +46,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
     if (name.equals("CALL2")) return new CallField("(?!.* (?:Institute|Park|Center|Room|Area)$).*[a-z].*|GSW|", true);
     if (name.equals("ALT_ID")) return new SkipField("\\d+", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("ZIP")) return new SkipField("\\d{5}", true);
     return super.getField(name);
   }
   

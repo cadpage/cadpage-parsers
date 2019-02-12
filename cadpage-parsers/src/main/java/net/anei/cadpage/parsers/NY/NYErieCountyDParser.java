@@ -7,9 +7,6 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-
-
-
 public class NYErieCountyDParser extends MsgParser {
 
   private static final Pattern CALL_PTN = Pattern.compile("[A-Z]{3}");
