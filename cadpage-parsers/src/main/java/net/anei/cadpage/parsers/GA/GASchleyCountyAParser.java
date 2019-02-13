@@ -18,7 +18,7 @@ public class GASchleyCountyAParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "@alert.active911.com";
+    return "@alert.active911.com,middleflint@mfre911.com";
   }
   
   @Override
