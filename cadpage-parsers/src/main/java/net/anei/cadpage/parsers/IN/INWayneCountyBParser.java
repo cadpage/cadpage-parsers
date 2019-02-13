@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.IN;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +18,7 @@ public class INWayneCountyBParser extends DispatchA3Parser {
   public INWayneCountyBParser () {
     super("WAYNE COUNTY", "IN", 
           "SKIP+? ID! Date/Time_Received:EMPTY! DATETIME! Complaint:EMPTY! CALL! Caller:EMPTY! NAME_PHONE! Address:EMPTY! ADDR! INFO<+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -173,6 +175,10 @@ public class INWayneCountyBParser extends DispatchA3Parser {
       return super.getFieldNames() + " UNIT";
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "401 E MAIN ST",                        "+39.828242,-84.895781"
+  });
   
   private static final Set<String> CITIES = new HashSet<String>(Arrays.asList(new String[]{
       
