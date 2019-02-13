@@ -18,7 +18,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net";
+    return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net,WARRENCO911@OMNIGO.COM";
   }
   
   @Override
