@@ -29,32 +29,66 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-         "CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+? INFO/N<+?", 
+         "CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+?", 
          "table|tr");
-    FIELD_MAP.put("Alias", getField("PLACE"));
-    FIELD_MAP.put("Apartment", getField("APT"));
-    FIELD_MAP.put("Apt", getField("APT"));
-    FIELD_MAP.put("Areas", getField("MAP"));
-    FIELD_MAP.put("Bldg", getField("BLDG"));
-    FIELD_MAP.put("Building", getField("BLDG"));
-    FIELD_MAP.put("Caller information", getField("EMPTY"));
-    FIELD_MAP.put("Caller Location", getField("CALLER_LOC"));
-    FIELD_MAP.put("Caller Name",  getField("NAME"));
-    FIELD_MAP.put("Caller Phone", getField("PHONE"));
-    FIELD_MAP.put("Caller Source", getField("SKIP"));
-    FIELD_MAP.put("Community", getField("CITY"));
-    FIELD_MAP.put("Created By", getField("SKIP"));
-    FIELD_MAP.put("Cross Street", getField("X"));
-    FIELD_MAP.put("Incident Creation Date",  getField("SKIP"));
-    FIELD_MAP.put("Incident Disposition", getField("SKIP"));
-    FIELD_MAP.put("Incident Number", getField("ID"));
-    FIELD_MAP.put("Intersection", getField("SKIP"));
-    FIELD_MAP.put("L/L", getField("GPS"));
-    FIELD_MAP.put("Location and POI Information", getField("PLACE"));
-    FIELD_MAP.put("Location Information", getField("PLACE"));
-    FIELD_MAP.put("Location", getField("ADDRCITY"));
-    FIELD_MAP.put("Responding Units", getField("UNIT"));
-    FIELD_MAP.put("Zip Code", getField("ZIP"));
+    
+    Field addrCityField = getField("ADDRCITY");
+    Field aptField = getField("APT");
+    Field bldgField = getField("BLDG");
+    Field callerLocField = getField("CALLER_LOC");
+    Field cityField = getField("CITY");
+    Field crossField = getField("X");
+    Field emptyField = getField("EMPTY");
+    Field idField = getField("ID");
+    Field GPSField = getField("GPS");
+    Field mapField = getField("MAP");
+    Field nameField = getField("NAME");
+    Field phoneField = getField("PHONE");
+    Field placeField = getField("PLACE");
+    Field skipField = getField("SKIP");
+    Field unitField = getField("UNIT");
+    Field zipField = getField("ZIP");
+    
+    Field infoField = getField("INFO");
+    
+    FIELD_MAP.put("Alias", placeField);
+    FIELD_MAP.put("ANI/ALI Info", skipField);
+    FIELD_MAP.put("Apartment", aptField);
+    FIELD_MAP.put("Apt", aptField);
+    FIELD_MAP.put("Areas", mapField);
+    FIELD_MAP.put("Bldg", bldgField);
+    FIELD_MAP.put("Building", bldgField);
+    FIELD_MAP.put("Caller information", emptyField);
+    FIELD_MAP.put("Caller Location", callerLocField);
+    FIELD_MAP.put("Caller Name",  nameField);
+    FIELD_MAP.put("Caller Phone", phoneField);
+    FIELD_MAP.put("Caller Source", skipField);
+    FIELD_MAP.put("Community", cityField);
+    FIELD_MAP.put("Created By", skipField);
+    FIELD_MAP.put("Cross Street", crossField);
+    FIELD_MAP.put("Incident Creation Date",  skipField);
+    FIELD_MAP.put("Incident Disposition", skipField);
+    FIELD_MAP.put("Incident Number", idField);
+    FIELD_MAP.put("Intersection", skipField);
+    FIELD_MAP.put("Intersections", skipField);
+    FIELD_MAP.put("L/L", GPSField);
+    FIELD_MAP.put("Location and POI Information", placeField);
+    FIELD_MAP.put("Location Information", placeField);
+    FIELD_MAP.put("Media Attached To Incident", skipField);
+    FIELD_MAP.put("Name", skipField);
+    FIELD_MAP.put("Notes", skipField);
+    FIELD_MAP.put("Notices", skipField);
+    FIELD_MAP.put("POI Information", placeField);
+    FIELD_MAP.put("Priors", skipField);
+    FIELD_MAP.put("Location", addrCityField);
+    FIELD_MAP.put("Responding Units", unitField);
+    FIELD_MAP.put("Service Reqeuests", skipField);
+    FIELD_MAP.put("Wrecker Info", skipField);
+    FIELD_MAP.put("Zip Code", zipField);
+    
+    for (String infoKeyword : INFO_KEYWORDS.keySet()) {
+      FIELD_MAP.put(infoKeyword, infoField);
+    }
   }
 
   private String callerLocField;
@@ -195,9 +229,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      String key = stripFieldEnd(field, ":");
-      if (INFO_KEYWORDS.containsKey(key)) return false;
-      if (field.startsWith("POI Information:")) return false;
       if (field.startsWith("This message")) return false;
       parse(field, data);
       return true;
@@ -207,28 +238,41 @@ public class DispatchSPKParser extends HtmlProgramParser {
     public void parse(String field, Data data) {
       
       if (field.startsWith("<|") && field.endsWith("|>")) {
-        if (field.endsWith("table|>")) procFld = null;
-        return;
+        if (procFld != null) {
+          if (procFld instanceof BaseInfoField) {
+            procFld.parse(field, data);
+          } else {
+            if (field.endsWith("table|>")) procFld = null;
+          }
+          return;
+        }
       }
       
       // See if field contains a recognized keyword
-      Field tmpFld;
-      int pt = field.indexOf(':');
-      if (pt >= 0) {
-        tmpFld = FIELD_MAP.get(field.substring(0,pt));
-        if (tmpFld != null) field = field.substring(pt+1).trim();
-      } else {
-        tmpFld = FIELD_MAP.get(field);
-        if (tmpFld != null) field = "";
+      // There are some conflicts between the general field recognized keywords and
+      // the info field recognized keywords.  So we first check to see if  we are processing
+      // info field and if this is info keyword, do not check for the general data keyword
+      field = stripFieldStart(field, "- ");
+      if (!(procFld instanceof BaseInfoField &&
+          ( field.equals("Name") || INFO_KEYWORD_PTN.matcher(field).matches()))) {
+        Field tmpFld;
+        int pt = field.indexOf(':');
+        if (pt >= 0) {
+          tmpFld = FIELD_MAP.get(field.substring(0,pt));
+          if (tmpFld != null  && !(tmpFld instanceof BaseInfoField)) field = field.substring(pt+1).trim();
+        } else {
+          tmpFld = FIELD_MAP.get(field);
+          if (tmpFld != null && !(tmpFld instanceof BaseInfoField)) field = "";
+        }
+        
+        if (tmpFld != null) procFld = tmpFld;
       }
-      
-      if (tmpFld != null) procFld = tmpFld;
       
       // If we have a field processor, invoke it to process this field
       if (procFld != null && field.length() > 0) {
         procFld.parse(field, data);
         prevFld = procFld;
-        if (!(procFld instanceof CrossField)) procFld = null;
+        if (!(procFld instanceof CrossField || procFld instanceof BaseInfoField)) procFld = null;
       }
     }
 
@@ -348,16 +392,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
     boolean statusLock = false;
     String infoKeyword = null;
     
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.startsWith("This message")) return false;
-      parse(field, data);
-      return true;
+    public BaseInfoField() {
+      setQual("N");
     }
     
     @Override

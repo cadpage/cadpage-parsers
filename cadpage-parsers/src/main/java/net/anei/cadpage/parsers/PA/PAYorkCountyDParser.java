@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.PA;
 
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +23,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com";
   }
   
   
@@ -251,4 +252,51 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       return true;
     }
   }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "CARROLL",              "DILLSBURG",
+      "CHANCEFORD",           "BROGUE",
+      "CODORUS",              "GLENVILLE",
+      "CONEWAGO",             "YORK",
+      "CROSS ROAD",           "CROSS ROADS",
+      "EAST HOPEWELL",        "CROSS ROADS",
+      "EAST MANCHESTER",      "MOUNT WOLF",
+      "FAIRVIEW",             "NEW CUMBERLAND",
+      "FAWN GROVE",           "FAWN GROVE",
+      "FAWN",                 "FAWN GROVE",
+      "FRANKLIN",             "DILLSBURG",
+      "HEIDELBERG",           "PORTERS",
+      "HELLAM",               "HALLAM",
+      "HOPEWELL",             "STEWARTSTOWN",
+      "JACKSON",              "SPRING GOVE",
+      "LOWER CHANCEFORD",     "AIRVILLE",
+      "LOWER WINDSOR",        "WRIGHTSVILLE",
+      "MANHEIM",              "GLENVILLE",
+      "MONAGHAN",             "DILLSBURG",
+      "MOUNT WOLF",           "MOUNT WOLF",
+      "NEWBERRY",             "ETTERS",
+      "NORTH CODORUS",        "SPRING GROVE",
+      "NORTH HOPEWELL",       "FELTON",
+      "NORTH YORK",           "NORTH YORK",
+      "PARADISE",             "ABBOTTSTOWN",
+      "PEACH BOTTOM",         "DELTA",
+      "PENN",                 "HANOVER",
+      "SPRING GARDEN",        "YORK",
+      "SPRINGETTSBURG",       "YORK",
+      "SPRINGFIELD",          "SEVEN VALLEYS",
+      "WARRINGTON",           "WELLSVILLE",
+      "WASHINGTON",           "EAST BERLIN",
+      "WEST MANCHESTER",      "YORK",
+      "WEST MANHEIM",         "HANOVER",
+      "WEST YORK",            "YORK",
+      "YORK CITY",            "YORK",
+      "YORK HAVEN",           "YORK HAVEN",
+      "YORK",                 "DALLASTOWN",
+      "YORKANA",              "YORKANA"
+  });
 }

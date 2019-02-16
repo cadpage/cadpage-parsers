@@ -237,6 +237,9 @@ public class FieldProgramParser extends SmartAddressParser {
   
   private Map<String, Step> keywordMap = null;
   
+  // Overall parser state information
+  private State state;
+  
   // List of step fields executed in the process of parsing a text string
   // This is used by the getProgram() method to calculate a field
   // order list that can be used to generate a test for this parsing
@@ -1063,9 +1066,9 @@ public class FieldProgramParser extends SmartAddressParser {
       return true;
     }
     
-    State state = new State();
+    state = new State(fields);
     if (state.link(startLink)) return false;
-    do {} while (!state.exec(fields, data));
+    do {} while (!state.exec(data));
     return state.getResult();
   }
   
@@ -1076,6 +1079,28 @@ public class FieldProgramParser extends SmartAddressParser {
     private Step step = null ;
     private Step lastStep = null;
     private boolean result = true;
+    private final String[] fields;
+    
+    public State(String[] fields) {
+      this.fields = fields;
+    }
+    
+    public String getField(int ndx) {
+      if (ndx < 0 || ndx >= fields.length) return "";
+      return fields[ndx];
+    }
+    
+    public String getRelativeField(int offset) {
+      return getField(index+offset).trim();
+    }
+    
+    public int getFieldCount() {
+      return fields.length;
+    }
+
+    public boolean isLastField(int ndx) {
+      return index + ndx >= fields.length;
+    }
     
     public int getIndex() {
       return index;
@@ -1111,8 +1136,8 @@ public class FieldProgramParser extends SmartAddressParser {
       return step == null;
     }
     
-    public boolean exec(String[] fields, Data data) {
-      if (!step.process(this, fields, data)) return false;
+    public boolean exec(Data data) {
+      if (!step.process(data)) return false;
       
       // Parse state engine has completed
       // But we still need to check for any unprocessed required fields
@@ -1474,15 +1499,13 @@ public class FieldProgramParser extends SmartAddressParser {
 
     /**
      * Execute the program starting with this step.
-     * @param flds Array of fields being processed
-     * @param ndx current field index
      * @param data Data object being set up
      * @param lastStep most recently executed step
      * @return the next link to be processed, or 
      * SUCCESS to indicate a successful parse, or 
      * FAILURE to indicate a parse failure
      */
-    public boolean process(State state, String[] flds, Data data) {
+    public boolean process(Data data) {
 
       int ndx = state.getIndex();
       Step lastStep = state.getLastStep();
@@ -1493,8 +1516,8 @@ public class FieldProgramParser extends SmartAddressParser {
       // do not want to confuse the final field that step is supposed to get.
       int origNdx = ndx;
       if (!htmlTag && field != null) {
-        while (ndx < flds.length) {
-          String fld = flds[ndx];
+        while (ndx < state.getFieldCount()) {
+          String fld = state.getField(ndx);
           if (!fld.startsWith("<|") || !fld.endsWith("|>")) break;
           ndx++;
         }
@@ -1504,7 +1527,7 @@ public class FieldProgramParser extends SmartAddressParser {
       fieldIndex = ndx;
 
       // Have we passed the end of the data stream
-      if (ndx >= flds.length) {
+      if (ndx >= state.getFieldCount()) {
         
         // And this is not an end or select field (which need no data to work with)
         if (field == null || ! (field instanceof EndField || field instanceof SelectField)) {
@@ -1538,7 +1561,7 @@ public class FieldProgramParser extends SmartAddressParser {
       // Tag processing is suppressed for Select field steps since they really
       // do no field processing
       Step procStep = this;
-      String curFld = ndx < flds.length ? flds[ndx] : "";
+      String curFld = state.getField(ndx);
       if (!doNotTrim) curFld = curFld.trim();
       if (parseTags && !(field instanceof SelectField)) {
         Step startStep = this;
@@ -1620,7 +1643,7 @@ public class FieldProgramParser extends SmartAddressParser {
           // Data field is not tagged
           // If it is the last field, check to see if it might be a truncated
           // tag for a future step.  If it is, we are finished
-          if (ndx == flds.length-1 && curFld.length() > 0) {
+          if (ndx == state.getFieldCount()-1 && curFld.length() > 0) {
             Step tStep = procStep;
             while (tStep != null) {
               if (tStep.tag != null && tStep.tag.startsWith(curFld)) return true;
@@ -1654,14 +1677,14 @@ public class FieldProgramParser extends SmartAddressParser {
             if (tStep != null && tStep.tag == null) {
               if (tStep.htmlTag || tStep.field == null) ndx = origNdx;
               ndx += inc;
-              curFld = flds[ndx].trim();
+              curFld = state.getField(ndx).trim();
               procStep = tStep;
               break;
             }
           }
 
           // Still no luck, Skip this data field and go on to the next one
-          if (++ndx >= flds.length) {
+          if (++ndx >= state.getFieldCount()) {
             
             // There is no data field matching this steps tag
             // If the tagged field is not flagged as optional then the assumption
@@ -1683,16 +1706,16 @@ public class FieldProgramParser extends SmartAddressParser {
             // any required fields
             if (startStep == null) return true;
           }
-          curFld = flds[ndx].trim();
+          curFld = state.getField(ndx).trim();
           continue;
         }
       }
       state.setIndex(ndx);
       state.setStep(procStep);
-      return procStep.process2(state, curFld, flds, data);
+      return procStep.process2(curFld, data);
     }
 
-    public boolean process2(State state, String curFld, String[] flds, Data data) {
+    public boolean process2(String curFld, Data data) {
       
       // Get current field and state information
       int ndx = state.getIndex();
@@ -1709,7 +1732,6 @@ public class FieldProgramParser extends SmartAddressParser {
       boolean success = true;
       try {
         if (field != null) {
-          field.setFieldList(flds, ndx);
           if (tag == null && failLink != null) {
             success = field.doCheckParse(curFld, data);
           }
@@ -1923,9 +1945,6 @@ public class FieldProgramParser extends SmartAddressParser {
     private Pattern pattern = null;
     private boolean hardPattern = false;
     
-    private String[] fieldList;
-    private int index;
-    
     // default constructor
     public Field() {}
 
@@ -2004,11 +2023,6 @@ public class FieldProgramParser extends SmartAddressParser {
      */
     public boolean canFail() {
       return false;
-    }
-    
-    public void setFieldList(String[] fieldList, int index) {
-      this.fieldList = fieldList;
-      this.index = index;
     }
 
     /**
@@ -2099,9 +2113,7 @@ public class FieldProgramParser extends SmartAddressParser {
      * @return value of requested field if it exists, empty string if it does not
      */
     protected String getRelativeField(int ndx) {
-      ndx += index;
-      if (ndx < 0 || ndx >= fieldList.length) return "";
-      return fieldList[ndx].trim();
+      return state.getRelativeField(ndx);
     }
     
     /**
@@ -2116,7 +2128,7 @@ public class FieldProgramParser extends SmartAddressParser {
      * @return true if we are ndx fields from the end of the message
      */
     protected boolean isLastField(int ndx) {
-      return index + ndx >= fieldList.length;
+      return state.isLastField(ndx);
     }
     
     /**
