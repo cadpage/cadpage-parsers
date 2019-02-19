@@ -529,7 +529,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
         
         if (colNdx == 2) addUnit(field, data);
         
-        if (!dispatchTime && field.equals("Dispatched")) {
+        if (!dispatchTime) {
           match = INFO_TIME_PTN.matcher(getRelativeField(-2));
           if (match.matches()) {
             dispatchTime = true;
