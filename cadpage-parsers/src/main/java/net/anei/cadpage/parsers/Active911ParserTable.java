@@ -1501,6 +1501,7 @@ public class Active911ParserTable {
       "US/TX/LakeWorth",                  "TXTarrantCountyC",
       "US/TX/Lampasas",                   "TXLampasasCounty",
       "US/TX/LeonCounty",                 "TXLeonCounty",
+      "US/TX/Longview",                   "TXGreggCounty",
       "US/TX/LubbockCounty",              "TXLubbockCountyA",
       "US/TX/Lufkin",                     "TXLufkin",
       "US/TX/ManvelPD",                   "TXBrazoriaCountyA",
