@@ -22,7 +22,7 @@ public class DispatchA29Parser extends FieldProgramParser {
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
   private static final Pattern UNIT_INFO_PTN = Pattern.compile("[ /\n]+((?:\\b[A-Z\\d]+:[-_A-Z\\d]+(?: FD|-\\d| \\d(?=,)|)\\b,?)++)[ /\n]*");
   private static final Pattern NEW_LINE_PTN = Pattern.compile("\n+");
-  private static final Pattern HOUSE_NUMBER_PTN = Pattern.compile("[ /]*\\b(?<!(?:\\b(?:RT|US|HWY|APT)|#) ?)([-*0-9]+) *([NSEW]|BLK|BLOCK|), +");
+  private static final Pattern HOUSE_NUMBER_PTN = Pattern.compile("[ /]*\\b(?<!(?:\\b(?:RT|US|HWY|APT|RM)|#) ?)([-*0-9]+) *([NSEW]|BLK|BLOCK|), +");
   private static final Pattern MULT_SLASH_PTN = Pattern.compile("//+");
   private static final Pattern DIR_OF_PTN = Pattern.compile("[/ ]+((?:N|S|E|W|NO|SO|EA|WE|NORTH|SOUTH|EAST|WEST) OF)[/ ]+");
   private static final Pattern CALL_ADDR_DELIM = Pattern.compile("/(?! *(?:AMBULANCE|MEDICAL|MISDIAL|RESCUE|SEIZURES))");

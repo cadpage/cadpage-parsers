@@ -26,6 +26,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
   public boolean parseMsg(String body, Data data) {
     body = ST_BERN_PTN.matcher(body).replaceAll("ST_BERN");
     body = body.replace("BLK DIMD", "BLK_DIMD");
+    body = body.replace(":#", ":");
     if (!super.parseMsg(body, data)) return false;
     int pt = data.strAddress.indexOf(',');
     if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
@@ -49,28 +50,44 @@ public class INVermillionCountyParser extends DispatchA29Parser {
   }
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "ABDOMINAL PAIN",
+      "ALARM-BURGLAR-RESIDENTIAL",
       "ARSON",
+      "ASSIST ANOTHER AGENCY",
       "ASSAULT",
       "CHECK WELL BEING",
       "CHEST PAINS",
+      "CO2 DETECTOR ALARM",
+      "DOMESTIC COMPLAINT",
       "RESCUE/AMBULANCE",
       "FIRE-BRUSH",
       "FIRE-GENERAL",
+      "FIRE-HAZMATS INVOLVED",
       "FIRE-STRUCTURE",
       "FIRE-VEHICLE",
       "FIRE ALARM",
       "GAS ODOR",
       "GAS SPILL",
+      "HARRASSMENT",
+      "INMATE DOWN",
+      "JUVENILE PROBLEMS",
       "LIFTING ASSISTANCE",
       "MEDICAL",
+      "MENTAL SUBJECT",
       "OVERDOSE",
       "PERSON DOWN",
+      "POPULAR ST IN ALLY WAY",
+      "POSS. HEART ATTACK",
+      "SEIZURES",
       "SPEAK TO OFFICER",
       "SUICIDAL SUBJECT",
       "SUSPICIOUS PERSON",
       "TRAFFIC ACCIDENT-INJURIES",
       "TRAFFIC ACCIDENT-PROPERTY DAMAGE",
-      "UNATTENDED DEATH"
+      "TROUBLE BREATHING",
+      "UNATTENDED DEATH",
+      "UNRESPONSIVE/UNCONCIOUS",
+      "UNWANTED SUBJECT - REMOVE"
   );
 
   private static final String[] CITY_LIST = new String[]{
