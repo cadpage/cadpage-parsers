@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SCGreenvilleCountyBParser extends FieldProgramParser {
   
   public SCGreenvilleCountyBParser() {
-    super(CITY_LIST, "GREENVILLE COUNTY", "SC",
+    super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC",
           "CALL ADDR! CITY? XINFO END");
   }
   
@@ -24,6 +24,9 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
     
     // Eliminate SCGreenvilleCountyD alerts
     if (body.endsWith("Emergency")) return false;
+    
+    // Eliminate SCGreenvilleCountyE alerts
+    if (body.contains(" [1] ")) return false;
 
     int pt = body.indexOf("<img src=");
     if (pt >= 0) body = body.substring(0,pt).trim();
@@ -83,40 +86,4 @@ public class SCGreenvilleCountyBParser extends FieldProgramParser {
       return "CITY X " + super.getFieldNames();
     }
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-      
-      // Cities
-      "FOUNTAIN INN",
-      "GREENVILLE",
-      "GREER",
-      "MAULDIN",
-      "SIMPSONVILLE",
-      "TRAVELERS REST",
-
-      // Census-designated places
-      "BEREA",
-      "CITY VIEW",
-      "DUNEAN",
-      "FIVE FORKS",
-      "GANTT",
-      "GOLDEN GROVE",
-      "JUDSON",
-      "PARKER",
-      "PIEDMONT",
-      "SANS SOUCI",
-      "MARIETTA",
-      "TAYLORS",
-      "TIGERVILLE",
-      "WADE HAMPTON",
-      "WARE PLACE",
-      "WELCOME",
-
-      // Unincorporated communities
-      "CLEVELAND",
-      "CONESTEE",
-      
-      ""    // Empty city is valid
-      
-  };
 }
