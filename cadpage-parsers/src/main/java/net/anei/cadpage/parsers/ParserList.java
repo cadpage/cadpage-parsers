@@ -825,6 +825,7 @@ public class ParserList {
               ,"MSNewtonCounty"                 ,"Newton County, MS"
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
+              ,"MSRankinCounty"                 ,"Rankin County, MS"
           ),
           new ParserCategory("Missouri"
               ,"MOAdairCounty"                  ,"Adair County, MO"
