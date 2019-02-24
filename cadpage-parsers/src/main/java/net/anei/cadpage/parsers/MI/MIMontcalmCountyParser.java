@@ -12,7 +12,9 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "MONTCALM COUNTY", "MI",
           "( CANCEL ADDR CITY/Y " + 
           "| FYI? ( ( ID2 UNIT? | UNIT ) CALL ADDR! DUPADDR? ( CITY/Y! | SKIP CITY/Y! | SKIP EMPTY/Z CITY/Y! | CITY? ) X+? ( SKIP ID | ID? ) " + 
-                 "| DATETIME? ADDR CITY? ( ID | CALL! X+? ) ) ) INFO/N+");
+                 "| ( DATETIME ADDR | ADDR ID? DATETIME? ) CITY? ( ID | CALL! X+? ) " + 
+                 ") " + 
+          ") INFO/N+");
   }
   
   @Override
