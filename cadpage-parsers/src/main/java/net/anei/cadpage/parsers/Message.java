@@ -655,7 +655,6 @@ public class Message {
   
   private void addSubject(String subject) {
     subject = subject.trim();
-    if (subject.length() == 0) return;
     if (subject.equals("FWD:") || subject.equals("FW:")) return;
     
     for (Pattern ptn : SUBJECT_HEADER_PTNS) {
@@ -667,7 +666,6 @@ public class Message {
         else subject = subject.substring(0,match.start()).trim();
       }
     }
-    if (subject.length() == 0) return;
     if (parseSubject.length() == 0) parseSubject = subject;
     else parseSubject = parseSubject + '|' + subject;
   }
