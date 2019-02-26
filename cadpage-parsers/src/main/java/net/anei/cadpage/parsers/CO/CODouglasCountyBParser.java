@@ -16,7 +16,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "Group_Page_Notification@usamobility.net";
+    return "Group_Page_Notification@usamobility.net,smfrrelay@smfra.com";
   }
   
   private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(?:(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *)?(.*)");
@@ -25,7 +25,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
   private static final Pattern FALLBACK_PTN = Pattern.compile("(.*?) +([A-Z]{2}[-/ A-Z0-9]+)");
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     
     int pt = body.indexOf(" Received");
     if (pt >= 0) body = body.substring(0,pt).trim();
