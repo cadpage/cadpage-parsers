@@ -10,6 +10,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
+  public PAMontgomeryCountyCParser() {
+    super(PAMontgomeryCountyParser.CITY_CODES, "MONTGOMERY COUNTY", "PA",
+        "ADDR/S TRUCKS:UNITADDR? XST:X! MUN:CITY? NAT:CALL! BOX:BOX ADC:MAP I#:ID TIME:TIME NOTES:INFO TRUCKS:UNIT");
+   }
+
+  @Override
+  public String getFilter() {
+    return "@c-msg.net,eoccomm@montcopa.org,montcopage@comcast.net";
+  }
+  
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{7}) +");
+  private static final Pattern LEAD_EVENT_PTN = Pattern.compile("EVENT: *([EF]\\d{7}) +/([A-Z]{4}) +");
+  private static final Pattern LEAD_APT_PTN = Pattern.compile("#(\\S+) +");
   private static final Pattern MASTER1 = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) #(F\\d{7}) at (.*?), Note:(.*) -");
   private static final Pattern DATE_TIME_MARKER = Pattern.compile("^(\\d\\d:\\d\\d:\\d\\d) (?:(\\d\\d-\\d\\d-\\d\\d) )?+(?:EVENT: *([A-Z]\\d+) +)?");
   private static final Pattern SPECIAL_ALERT1_PTN = Pattern.compile("^#([A-Z]\\d+) at (.*?), Note: (.*)");
@@ -19,23 +32,15 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
   private static final Pattern START_UNIT_MARK_PTN = Pattern.compile("(?:[A-Z0-9,]+,)?\\d+-\\d[ ,].*");
   private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
   
-  public PAMontgomeryCountyCParser() {
-    super(PAMontgomeryCountyParser.CITY_CODES, "MONTGOMERY COUNTY", "PA",
-        "ADDR/S TRUCKS:UNITADDR? XST:X! MUN:CITY? NAT:CALL! BOX:BOX ADC:ID TIME:TIME NOTES:INFO TRUCKS:UNIT");
-   }
-
-  @Override
-  public String getFilter() {
-    return "@c-msg.net,eoccomm@montcopa.org,montcopage@comcast.net";
-  }
-  
-  private static final Pattern LEAD_ID_PTN = Pattern.compile("\\d{7} +");
-
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
     
     Matcher match = LEAD_ID_PTN.matcher(body);
-    if (match.matches()) {
+    if (match.lookingAt()) {
+      data.strCallId = match.group(1);
+      body = body.substring(match.end());
+    } else if ((match = LEAD_EVENT_PTN.matcher(body)).lookingAt()) {
+      data.strCallId = match.group(1);
       body = body.substring(match.end());
     } else {
       body = stripFieldStart(body, "MCDPS CAD MESSAGE ");
@@ -81,6 +86,12 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
     
     // Process regular alerts
     
+    match = LEAD_APT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strApt = match.group(1);
+      body = body.substring(match.end());
+    }
+    
     // One agency seems to have dropped the TRUCKS: label, figuring out when it
     // is needed is a hassle
     if (subject.length() == 0 && !body.contains("TRUCKS:") &&
@@ -90,6 +101,7 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
     body = body.replace(",MAP/BOX-PLAN:", " BOX:");
     body = body.replace(", MAP/BOX:", " BOX:");
+    body = body.replace(",I#", " I#:");
     body = COMMA_DELIM.matcher(body).replaceAll(" ");
     if (super.parseMsg(body, data)) {
       if (data.strAddress.length() == 0 || data.strAddress.equals("&")) {
@@ -186,7 +198,7 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return "TIME DATE ADDR " + super.getProgram();
+    return "TIME? DATE? ID? ADDR " + super.getProgram();
   }
   
   @Override
