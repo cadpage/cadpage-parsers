@@ -10,7 +10,9 @@ public class NCYadkinCountyParser extends FieldProgramParser {
   
   public NCYadkinCountyParser() {
     super(CITY_LIST, "YADKIN COUNTY", "NC", 
-          "ADDR/SP! X? CODE? CALL! geo:GPS? INFO+");
+          "( CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID! PRI:PRI_CODE! DATE:DATE! TIME:TIME! X:X1? INFO:INFO/N+" +
+          "| ADDR2/SP! X? CODE? CALL! geo:GPS? " + 
+          ") INFO/N+");
   }
   
   @Override
@@ -23,7 +25,7 @@ public class NCYadkinCountyParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  public static Pattern ID_EXTRACTOR = Pattern.compile("(.*?) *OCA: *(\\d{7})");
+  public static Pattern ID_EXTRACTOR = Pattern.compile("(.*?) *OCA: *(\\d{7}|\\d{2}-\\d{6})");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
@@ -36,28 +38,68 @@ public class NCYadkinCountyParser extends FieldProgramParser {
     
     // Rule out OSSI based pages
     if (!subject.equals("Text Message") && body.startsWith("CAD:")) return false;;
-        
-    //remove OCA: blah and pass blah to callID
-    Matcher idMat = ID_EXTRACTOR.matcher(body);
-    if (idMat.matches()) {
-      body = idMat.group(1);
-      data.strCallId = idMat.group(2);
+    
+    // Two different formats
+    if (body.startsWith("CALL:")) {
+      if (!parseFields(body.split("\n"), data)) return false;
     }
-
-    if (!parseFields(body.split(";"), data)) return false;
+    
+    else {
+          
+      //remove OCA: blah and pass blah to callID
+      Matcher idMat = ID_EXTRACTOR.matcher(body);
+      if (idMat.matches()) {
+        body = idMat.group(1);
+        data.strCallId = idMat.group(2);
+      }
+  
+      if (!parseFields(body.split(";"), data)) return false;
+    }
+    
     if (data.strCity.equalsIgnoreCase("BOONEVILLE")) data.strCity = "BOONVILLE";
     return true;
   }
   
   @Override public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("PRI_CODE")) return new MyPriorityCodeField();
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("X1")) return new MyCross1Field();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("CODE")) return new CodeField("[MF]DL +(.*)", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
+  private static final Pattern PRI_CODE_PTN = Pattern.compile("(.*) (\\d\\d?[A-Z]\\d\\d?[A-Z]?)");
+  private class MyPriorityCodeField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = PRI_CODE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCode = match.group(2);
+      }
+      data.strPriority = field;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PRI CODE";
+    }
+  }
+  
+  private class MyCross1Field extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '/');
+      super.parse(field, data);
+    }
+  }
+  
   private static final Pattern TRAIL_PAREN_PTN = Pattern.compile("(.*?)\\((.*)\\)");
-  private class MyAddressField extends AddressField {
+  private class MyAddress2Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
       String trailer = null;
@@ -96,7 +138,7 @@ public class NCYadkinCountyParser extends FieldProgramParser {
   }
   
   private static Pattern CROSS_PTN = Pattern.compile("(.*?)(?: +\\(Verify\\))? *\\bX\\b *(.*?)(?: +\\(Verify\\))?");
-  private class MyCrossField extends CrossField {
+  private class MyCross2Field extends CrossField {
     
     @Override
     public boolean canFail() {
@@ -115,6 +157,22 @@ public class NCYadkinCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("OCA:")) {
+        data.strCallId = append(data.strCallId, "/", field.substring(4).trim());
+      } else {
+        super.parse(field,  data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ID? " + super.getFieldNames();
     }
   }
   
@@ -187,7 +245,5 @@ public class NCYadkinCountyParser extends FieldProgramParser {
     
     // Surry County
     "ELKIN"
-    
   };
-
 }
