@@ -11,7 +11,8 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   
   public MIWashtenawCountyBParser() {
     super("WASHTENAW COUNTY", "MI", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! PRI:PRI! DATE:DATETIME! INFO:INFO!");
+          "( CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! PRI:PRI! DATE:DATETIME! INFO:INFO! " +
+          "| INCIDENT_COMPLETE! Location:ADDRCITY! Location_Comment:PLACE! Nature:CALL! INFO/N+ )");
   }
   
   @Override
@@ -19,7 +20,7 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     return "noreply@emergenthealth.org";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed) - (\\d+)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
   private static final Pattern MASTER = Pattern.compile("New Incident:\n(.*?) - (.*?) at(?: (.*))?");
   private static final Pattern TRAIL_ST_ZIP_PTN = Pattern.compile("(.*?)(?:, *([A-Z]{2}))?(?: +(\\d{5}))");
   private static final Pattern ADDR_DELIM = Pattern.compile(" *, *");
@@ -36,15 +37,26 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
       if (!super.parseMsg(body, data)) return false;
     }
     
+    else if (body.startsWith("Incident ")) {
+      if (!super.parseFields(body.split("\n"), data)) return false;
+    }
+    
     else {
-      setFieldList("ID PRI CALL PLACE ADDR APT CITY ST");
+      setFieldList("PRI CALL PLACE ADDR APT CITY ST INFO");
       
       match = MASTER.matcher(body);
       if (!match.matches()) return false;
       data.strPriority = match.group(1);
       data.strCall = match.group(2);
       String addr = getOptGroup(match.group(3));
-      int pt = addr.indexOf('(');
+      
+      int pt = addr.indexOf(" -  - ");
+      if (pt >= 0) {
+        data.strSupp = addr.substring(pt+6).trim();
+        addr = addr.substring(0,pt).trim();
+      }
+      
+      pt = addr.indexOf('(');
       if (pt >= 0) {
         data.strPlace = addr.substring(0,pt).trim();
         int pt2 = addr.indexOf(')', pt+1);
@@ -92,6 +104,9 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     
     if (type.equals("Incident Completed")) {
       data.msgType = MsgType.RUN_REPORT;
+    } else if (type.equals("Incident Cancelled")) {
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCall = append("Cancelled", " - ", data.strCall);
     } else if (type.equals("Update to Incident")) {
       data.strCall = append("(UPDATE)", " ", data.strCall);
     }
@@ -99,9 +114,15 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public String getProgram() {
+    return "ID " + super.getProgram();
+  }
+  
+  @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("INCIDENT_COMPLETE")) return new SkipField("Incident \\d+ Completed", true);
     return super.getField(name);
   }
   
