@@ -10,7 +10,7 @@ public class ILStClairCountyCParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "ELLEVILLEPD@PUBLICSAFETYSOFTWARE.NET,CENCOM@CO.ST-CLAIR.IL.US";
+    return "ELLEVILLEPD@PUBLICSAFETYSOFTWARE.NET,CENCOM@CO.ST-CLAIR.IL.US,BELLEVILLEPD@OMNIGO.COM";
   }
 
 }
