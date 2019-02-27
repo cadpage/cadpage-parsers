@@ -196,7 +196,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
       "051", "ESSEX",
       "054", "MIDDLE RIVER",
       "055", "PERRY HALL",
-      "056", "RANDALLSTOWN",
+      "056", "REISTERSTOWN",
       "057", "SPARROWS POINT",
       "060", "PARKTON",
       "074", "MIDDLE RIVER",
