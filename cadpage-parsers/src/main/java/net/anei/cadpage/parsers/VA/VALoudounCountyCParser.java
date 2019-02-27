@@ -67,10 +67,20 @@ public class VALoudounCountyCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("X2")) return new CrossField("btwn\\b[ /]*(.*)", true); 
     if (name.equals("DATETIME3")) return new MyDateTime3Field();
     if (name.equals("GPS3")) return new MyGPS3Field();
     return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
   }
   
   private static final Pattern GPS_PTN = Pattern.compile("\\?center=([-+]?\\d{2,3}\\.\\d{6,},[-+]?\\d{2,3}\\.\\d{6,})&");
@@ -84,7 +94,7 @@ public class VALoudounCountyCParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d{1,2}:\\d\\d:\\d\\d)\\.\\d*-04:00");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d{1,2}:\\d\\d:\\d\\d)\\.\\d*-0[45]:00");
   private class MyDateTime3Field extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
