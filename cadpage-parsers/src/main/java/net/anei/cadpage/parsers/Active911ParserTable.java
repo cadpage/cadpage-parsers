@@ -662,6 +662,7 @@ public class Active911ParserTable {
       "US/MI/CharlevoixCounty",           "MICharlevoixCounty",
       "US/MI/CharlevoixCountyDispatch",   "MICharlevoixCounty",
       "US/MI/Chippewa",                   "MIChippewaCounty",
+      "US/MI/CityofAnnArbor",             "MIWashtenawCounty",
       "US/MI/ClareCounty",                "MIClareCounty",
       "US/MI/ClintonCounty",              "MIClintonCounty",
       "US/MI/EatonCounty",                "MIEatonCounty",
