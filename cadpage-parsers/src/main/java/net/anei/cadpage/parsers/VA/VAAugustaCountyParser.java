@@ -1,8 +1,6 @@
 package net.anei.cadpage.parsers.VA;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +20,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
   }
   
   public VAAugustaCountyParser(String defCity, String defState) {
-    super(defCity, defState,
+    super(CITY_LIST, defCity, defState,
            "FYI? CALL! ( ADDR/SZ! END | PLACE? ADDR/S! MAP? INFO+ )");
     removeWords("MALL");
   }
@@ -55,7 +53,9 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       body = "CAD:" + body.substring(pt+1);
     }
     body = DELIM_PTN.matcher(body).replaceAll(";");
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    data.strCity = convertCodes(data.strCity.toUpperCase(), CITY_CODES);
+    return true;
   }
 
   @Override
@@ -82,11 +82,11 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
     
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(" - ");
+      int pt = field.indexOf("- ");
       if (pt >= 0) {
-        String city = field.substring(pt+3).trim();
+        String city = field.substring(pt+2).trim();
         field = field.substring(0,pt).trim();
-        if (CITY_SET.contains(city.toUpperCase())) {
+        if (isCity(city)) {
           data.strCity = city;
         } else {
           data.strPlace = append(data.strPlace, " - ", city);
@@ -125,7 +125,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
   
   // Info field contains all kinds of sloppy stuff
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:ROOM|RM|APT) *(.*)");
-  private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("CNTY-.*|SEOC|WEOC");
+  private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("CNTY-.*|MED-\\d|HRECC?|SEOC|WEOC");
   private static final Pattern INFO_MAP_PTN = Pattern.compile("\\d{2,3}-\\d{2}");
   private class MyInfoField extends InfoField {
     
@@ -155,14 +155,13 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           data.strChannel = fld;
           continue;
         }
-        
-        int pt = fld.indexOf('(');
-        if (pt >= 0) {
-          String city = fld.substring(0,pt).trim();
-          if (CITY_SET.contains(city.toUpperCase())) {
-            data.strCity = city;
-            continue;
-          }
+
+        String city = field;
+        int pt = city.indexOf('(');
+        if (pt >= 0) city = city.substring(0,pt).trim();
+        if (isCity(city)) {
+          data.strCity = city;
+          continue;
         }
         
         int addrStat = checkAddress(fld);
@@ -195,10 +194,75 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Set<String> CITY_SET = new HashSet<String>(Arrays.asList(
-      "FISHERSVILLE",
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
       "STAUNTON",
-      "WAYNSBORO"
-  ));
+      "WAYNESBORO",
+      
+      // Towns
+      "CRAIGSVILLE",
+      "GRO",
+      "GROTTOES",
+
+      // Census-designated places
+      "AUGUSTA SPRINGS",
+      "CHURCHVILLE",
+      "CRIMORA",
+      "DEERFIELD",
+      "DOOMS",
+      "GREENVILLE",
+      "HARRISTON",
+      "FISHERSVILLE",
+      "JOLIVUE",
+      "LYNDHURST",
+      "MIDDLEBROOK",
+      "MOUNT SIDNEY",
+      "NEW HOPE",
+      "SHERANDO",
+      "STUARTS DRAFT",
+      "VERONA",
+      "WEYERS CAVE",
+      "WINTERGREEN",
+
+      // Other unincorporated communities
+      "FORT DEFIANCE",
+      "LOVE",
+      "MOUNT SOLON",
+      "SPOTTSWOOD",
+      "SWOOPE",
+      "WEST AUGUSTA",
+      
+      // Albemarle County
+      "ALBEMARLE",
+      "ALBEMARLE COUNTY",
+      "AFTON",
+      
+      // Bath County
+      "BATH",
+      "BATH COUNTY",
+      
+      // Highland County
+      "HIGH",
+      "HIGHLAND",
+      "HIGHLAND COUNTY",
+      
+      // Rockbridge County
+      "ROCKBRIDGE",
+      "ROCKBRIDGE COUNTY",
+      "GOSHEN",
+      "RAPHINE",
+      
+      //  Rockingham County
+      "ROCKINGHAM",
+      "ROCKINGHAM COUNTY",
+      "BRIDGEWATER",
+      "MT CRAWFORD"
+  };
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "GRO",  "GROTTOES",
+      "HIGH", "HIGHLAND COUNTY"
+  });
   
 }
