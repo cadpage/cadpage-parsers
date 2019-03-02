@@ -12,7 +12,7 @@ public class ALBibbCountyParser extends FieldProgramParser {
   
   public ALBibbCountyParser() {
     super("BIBB COUNTY", "AL", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! INFO:INFO!");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! INFO:INFO/N");
   }
   
   @Override
