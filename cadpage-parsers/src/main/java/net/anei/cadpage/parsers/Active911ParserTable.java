@@ -1188,6 +1188,7 @@ public class Active911ParserTable {
       "US/OH/MeigsCounty",                "OHMeigsCounty",
       "US/OH/MercerCounty",               "OHMercerCounty",
       "US/OH/MiamiCounty",                "OHMiamiCountyB",
+      "US/OH/MiddleburgHeights",          "OHCuyahogaCountyA",
       "US/OH/MorrowCounty",               "OHMorrowCountyA",
       "US/OH/MuskingumCounty",            "OHMuskingumCounty",
       "US/OH/NobleCounty",                "OHNobleCounty",
