@@ -10,7 +10,7 @@ public class ALMarshallCountyDParser extends FieldProgramParser {
   
   public ALMarshallCountyDParser() {
     super("MARSHALL COUNTY", "AL", 
-          "ID CALL ADDRCITY INFO/N+");
+          "ID CALL ADDRCITY! INFO/N+");
   }
   
   @Override
@@ -22,7 +22,9 @@ public class ALMarshallCountyDParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
-    return parseFields(body.split("\n"), data);
+    String[] flds = body.split("\n");
+    if (flds.length < 3) flds = body.split("\\|");
+    return parseFields(flds, data);
   }
   
   @Override
