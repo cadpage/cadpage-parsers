@@ -179,7 +179,23 @@ public class ALMadisonCountyParser extends FieldProgramParser {
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      "2029 FLAGSTONE DR",                    "+34.692179,-86.720033"
+      "2029 FLAGSTONE DR",                    "+34.692179,-86.720033",
+      "100 KENWORTH CT",                      "+34.733952,-86.756533",
+      "102 KENWORTH CT",                      "+34.734207,-86.756528",
+      "104 KENWORTH CT",                      "+34.734444,-86.756519",
+      "106 KENWORTH CT",                      "+34.734686,-86.756533",
+      "107 KENWORTH CT",                      "+34.734743,-86.757148",
+      "108 KENWORTH CT",                      "+34.734888,-86.756513",
+      "109 KENWORTH CT",                      "+34.734961,-86.757184",
+      "110 KENWORTH CT",                      "+34.735112,-86.756542",
+      "111 KENWORTH CT",                      "+34.735200,-86.757172",
+      "112 KENWORTH CT",                      "+34.735297,-86.756521",
+      "113 KENWORTH CT",                      "+34.735461,-86.757175",
+      "114 KENWORTH CT",                      "+34.735513,-86.756531",
+      "115 KENWORTH CT",                      "+34.735713,-86.757196",
+      "116 KENWORTH CT",                      "+34.735718,-86.756503",
+      "117 KENWORTH CT",                      "+34.735870,-86.756995",
+      "118 KENWORTH CT",                      "+34.735882,-86.756690"
   });
   
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
