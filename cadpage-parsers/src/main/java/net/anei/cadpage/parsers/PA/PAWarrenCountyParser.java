@@ -1,21 +1,12 @@
 package net.anei.cadpage.parsers.PA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchCiscoParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Warren County, PA
- */
-public class PAWarrenCountyParser extends DispatchCiscoParser {
+public class PAWarrenCountyParser extends GroupBestParser {
   
   public PAWarrenCountyParser() {
-    super("WARREN COUNTY", "PA");
-    allowBadChars("()");
-    setupSpecialStreets("PAGE HOLLOW");
+    super(new PAWarrenCountyAParser(), 
+          new PAWarrenCountyBParser());
   }
   
-  @Override
-  public String getFilter() {
-    return "mnoe@warren-county.net,wc911text@warren-county.net";
-  }
 }
-  
