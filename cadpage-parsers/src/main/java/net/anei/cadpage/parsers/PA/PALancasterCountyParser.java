@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
   public PALancasterCountyParser() {
     super(CITY_LIST, "LANCASTER COUNTY", "PA",
            "CITY ADDR! X/Z+? UNIT TIME%");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -297,4 +299,8 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "DAUPHIN LONDONDERRY TWP"
 
   };
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "1117 LONG LN",                       "+40.075855,-76.524121"
+  });
 }
