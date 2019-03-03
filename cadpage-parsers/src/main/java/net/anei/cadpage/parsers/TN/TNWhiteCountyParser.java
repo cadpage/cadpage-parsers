@@ -29,10 +29,12 @@ public class TNWhiteCountyParser extends DispatchA65Parser {
       "BON AIR",
       "DOYLE",
       "CASSVILLE",
+      "COOKEVILLE",
       "DEROSSETT",
       "QUEBECK",
       "RAVENSCROFT",
       "SPARTA",
+      "SPENCER",
       "WALLING",
       "YANKEETOWN"
 
