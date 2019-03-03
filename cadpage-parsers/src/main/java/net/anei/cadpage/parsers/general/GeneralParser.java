@@ -126,7 +126,7 @@ public class GeneralParser extends SmartAddressParser {
     if (!isPageMsg(subject, body)) return false;
     
     // Starting with CAD: confuses things
-    if (body.startsWith("CAD:")) body = body.substring(4).trim();
+    body = stripFieldStart(body, "CAD:");
     
     // Strip out any date and time fields
     Matcher match = DATE_PATTERN.matcher(body);
