@@ -184,6 +184,8 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "44665 BARNES AND YEH LANE",            "+38.286400,-76.531600",
       "44683 BARNES AND YEH LANE",            "+38.285600,-76.530600",
       "46155 CARVER SCHOOL BL",               "+38.250002,-76.480090",
+      "43950 CASEYS LN",                      "+38.283806,-76.556252",
+      "48017 CROSS MANOR RD",                 "+38.159970,-76.414850",
       "45910 FOXCHASE DR",                    "+38.255517,-76.489115",
       "45915 FOXCHASE DR",                    "+38.255538,-76.488573",
       "45925 FOXCHASE DR",                    "+38.255976,-76.488343",
@@ -252,9 +254,10 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22027 OXFORD CT",                      "+38.273178,-76.468065",
       "22028 OXFORD CT",                      "+38.273434,-76.468369",
       "22030 OXFORD CT",                      "+38.273478,-76.468200",
+      "48676 PACKER CT",                      "+38.155650,-76.391350",
       "42831 THERESAS WY",                    "+38.368228,-76.595153",
       "22589 THREE NOTCH RD",                 "+38.287556,-76.480120",
-      "45462 WEST MEATH WAY" ,                "+38.288942,-76.503772",
+      "45462 WEST MEATH WAY",                 "+38.288942,-76.503772",
       "45472 WEST MEATH WAY",                 "+38.288764,-76.503479",
       "45482 WEST MEATH WAY",                 "+38.288690,-76.503104",
       "45485 WEST MEATH WAY",                 "+38.288198,-76.503089",
@@ -264,8 +267,6 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "45512 WEST MEATH WAY",                 "+38.288355,-76.502034",
       "45521 WEST MEATH WAY",                 "+38.287701,-76.502262",
       "45522 WEST MEATH WAY",                 "+38.288337,-76.501659"
-
-
   });
   
   private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{
