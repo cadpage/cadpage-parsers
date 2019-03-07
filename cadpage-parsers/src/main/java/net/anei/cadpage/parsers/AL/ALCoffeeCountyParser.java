@@ -14,6 +14,6 @@ public class ALCoffeeCountyParser extends DispatchA27Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,active911@enterprisepd.com";
   }
 }

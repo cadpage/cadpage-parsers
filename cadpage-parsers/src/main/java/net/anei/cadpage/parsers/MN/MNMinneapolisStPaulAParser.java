@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ public class MNMinneapolisStPaulAParser extends DispatchPrintrakParser {
   
   public MNMinneapolisStPaulAParser() {
     super("MINNEAPOLIS", "MN");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -66,4 +68,13 @@ public class MNMinneapolisStPaulAParser extends DispatchPrintrakParser {
       return "PLACE ID";
     }
   }
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "1400 100TH ST W",                      "+44.822875,-93.297565"
+  });
 }
