@@ -25,13 +25,15 @@ public class MOOsageCountyParser extends DispatchGlobalDispatchParser {
   
   @Override
   public String getFilter() {
-    return "sms911@socket.net";
+    return "sms911@socket.net,osage911sms@gmail.com";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     subject = subject.trim();
-    if (!subject.equals("OsageCo 911 EOC") && !subject.equals("OsageCounty 911/EOC")) return false;
+    if (!subject.equals("OsageCo 911 EOC") && 
+        !subject.equals("OsageCounty 911/EOC") &&
+        !subject.equals("Osage 911/EOC")) return false;
     if (!body.contains(" CrossStreets:")) {
       setFieldList("ADDR APT CITY CALL");
       
