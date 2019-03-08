@@ -134,7 +134,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     
     address = address.toUpperCase();
     address = ROAD_PTN.matcher(address).replaceAll("RD");
-    address = append(address, " APT ", apt);
+    apt = apt.toUpperCase();
+    if (!apt.startsWith("STATION")) address = append(address, " APT ", apt);
     return address;
   }
 
@@ -638,15 +639,15 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       
       "35 BUCHANAN VALLEY RD",                "+39.898566,-77.424744",
       "750 BUCHANAN VALLEY RD",               "+39.915944,-77.414232",
-      "760A BUCHANAN VALLEY RD",              "+39.914429,-77.418715",
-      "760B BUCHANAN VALLEY RD",              "+39.916906,-77.417225",
-      "760C BUCHANAN VALLEY RD",              "+39.914316,-77.419894",
-      "760D BUCHANAN VALLEY RD",              "+39.915228,-77.419009",
-      "760E BUCHANAN VALLEY RD",              "+39.913950,-77.419092",
-      "760F BUCHANAN VALLEY RD",              "+39.915729,-77.414698",
-      "760G BUCHANAN VALLEY RD",              "+39.916322,-77.417798",
-      "760J BUCHANAN VALLEY RD",              "+39.915797,-77.416159",
-      "760K BUCHANAN VALLEY RD",              "+39.916346,-77.416320",
+      "760 BUCHANAN VALLEY RD APT A",         "+39.914429,-77.418715",
+      "760 BUCHANAN VALLEY RD APT B",         "+39.916906,-77.417225",
+      "760 BUCHANAN VALLEY RD APT C",         "+39.914316,-77.419894",
+      "760 BUCHANAN VALLEY RD APT D",         "+39.915228,-77.419009",
+      "760 BUCHANAN VALLEY RD APT E",         "+39.913950,-77.419092",
+      "760 BUCHANAN VALLEY RD APT F",         "+39.915729,-77.414698",
+      "760 BUCHANAN VALLEY RD APT G",         "+39.916322,-77.417798",
+      "760 BUCHANAN VALLEY RD APT J",         "+39.915797,-77.416159",
+      "760 BUCHANAN VALLEY RD APT K",         "+39.916346,-77.416320",
       "3025 BUCHANAN VALLEY RD",              "+39.943260,-77.345375",
       "3027 BUCHANAN VALLEY RD",              "+39.942745,-77.346352",
       "3029 BUCHANAN VALLEY RD",              "+39.942226,-77.345573",
@@ -738,21 +739,23 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "6361 CHAMBERSBURG RD",                 "+39.900336,-77.441261",
       "6375 CHAMBERSBURG RD",                 "+39.900823,-77.442375",
 
+      "5370 CARLISLE PIKE",                   "+39.929068,-77.056612",
+      
       "141 CHURCH RD",                        "+39.900087,-77.421367",
-      "165A CHURCH RD",                       "+39.899824,-77.420725",
-      "165B CHURCH RD",                       "+39.899042,-77.420330",
-      "165C CHURCH RD",                       "+39.898734,-77.420892",
-      "165D CHURCH RD",                       "+39.898690,-77.420035",
-      "165E CHURCH RD",                       "+39.898587,-77.421634",
-      "165F CHURCH RD",                       "+39.899111,-77.421558",
-      "165G CHURCH RD",                       "+39.898882,-77.422639",
-      "165H CHURCH RD",                       "+39.898744,-77.422950",
-      "165I CHURCH RD",                       "+39.898973,-77.423232",
-      "165J CHURCH RD",                       "+39.898102,-77.422665",
-      "165K CHURCH RD",                       "+39.898484,-77.424084",
-      "165L CHURCH RD",                       "+39.897952,-77.424510",
-      "165M CHURCH RD",                       "+39.899413,-77.422548",
-      "165N CHURCH RD",                       "+39.898236,-77.421687",
+      "165 CHURCH RD APT A",                  "+39.899824,-77.420725",
+      "165 CHURCH RD APT B ",                 "+39.899042,-77.420330",
+      "165 CHURCH RD APT C",                  "+39.898734,-77.420892",
+      "165 CHURCH RD APT D",                  "+39.898690,-77.420035",
+      "165 CHURCH RD APT E",                  "+39.898587,-77.421634",
+      "165 CHURCH RD APT F",                  "+39.899111,-77.421558",
+      "165 CHURCH RD APT G",                  "+39.898882,-77.422639",
+      "165 CHURCH RD APT H",                  "+39.898744,-77.422950",
+      "165 CHURCH RD APT I",                  "+39.898973,-77.423232",
+      "165 CHURCH RD APT J",                  "+39.898102,-77.422665",
+      "165 CHURCH RD APT K",                  "+39.898484,-77.424084",
+      "165 CHURCH RD APT L",                  "+39.897952,-77.424510",
+      "165 CHURCH RD APT M",                  "+39.899413,-77.422548",
+      "165 CHURCH RD APT N",                  "+39.898236,-77.421687",
       
       "11 DALE RD",                           "+39.957422,-77.360099",
       "375 DALE RD",                          "+39.957512,-77.360893",
@@ -775,8 +778,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "59 DEW DROP LN",                       "+39.866838,-77.234625",
       "61 DEW DROP LN",                       "+39.866851,-77.234685",
       "63 DEW DROP LN",                       "+39.866862,-77.234745",
-      "65A DEW DROP LN",                      "+39.866835,-77.234813",
-      "65B DEW DROP LN",                      "+39.866901,-77.234792",
+      "65 DEW DROP LN APT A",                 "+39.866835,-77.234813",
+      "65 DEW DROP LN APT B",                 "+39.866901,-77.234792",
       "71 DEW DROP LN",                       "+39.866899,-77.234971",
       "73 DEW DROP LN",                       "+39.866924,-77.235030",
       "75 DEW DROP LN",                       "+39.866939,-77.235093",
@@ -785,31 +788,39 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "81 DEW DROP LN",                       "+39.866979,-77.235273",
       "83 DEW DROP LN",                       "+39.866994,-77.235336",
       "85 DEW DROP LN",                       "+39.867016,-77.235410",
+
+      "38 E KING ST",                         "+39.887325,-76.983848",
+
+      "101 E LOCUST ST",                      "+39.936040,-76.978708",
       
-      "660B GREEN SPRINGS RD",                "+39.859952,-76.994721",
-      "660C GREEN SPRINGS RD",                "+39.858016,-76.994626",
-      "660E GREEN SPRINGS RD",                "+39.863810,-76.993926",
-      "660F GREEN SPRINGS RD",                "+39.859165,-76.995674",
-      "660G GREEN SPRINGS RD",                "+39.861015,-76.995065",
-      "660H GREEN SPRINGS RD",                "+39.857223,-76.997741",
-      "660I GREEN SPRINGS RD",                "+39.856169,-76.996640",
-      "660J GREEN SPRINGS RD",                "+39.858844,-76.997347",
-      "660K GREEN SPRINGS RD",                "+39.858491,-76.997357",
-      "660M GREEN SPRINGS RD",                "+39.862518,-76.996385",
-      "660N GREEN SPRINGS RD",                "+39.861885,-76.994248",
-      "660P GREEN SPRINGS RD",                "+39.863181,-76.992984",
+      "10 ELM AVE",                           "+39.808790,-77.132452",
+      
+      "1001 FIVE POINTS RD",                  "+39.756792,-77.410452",
+      
+      "660 GREEN SPRINGS RD APT B",           "+39.859952,-76.994721",
+      "660 GREEN SPRINGS RD APT C",           "+39.858016,-76.994626",
+      "660 GREEN SPRINGS RD APT E",           "+39.863810,-76.993926",
+      "660 GREEN SPRINGS RD APT F",           "+39.859165,-76.995674",
+      "660 GREEN SPRINGS RD APT G",           "+39.861015,-76.995065",
+      "660 GREEN SPRINGS RD APT H",           "+39.857223,-76.997741",
+      "660 GREEN SPRINGS RD APT I",           "+39.856169,-76.996640",
+      "660 GREEN SPRINGS RD APT J",           "+39.858844,-76.997347",
+      "660 GREEN SPRINGS RD APT K",           "+39.858491,-76.997357",
+      "660 GREEN SPRINGS RD APT M",           "+39.862518,-76.996385",
+      "660 GREEN SPRINGS RD APT N",           "+39.861885,-76.994248",
+      "660 GREEN SPRINGS RD APT P",           "+39.863181,-76.992984",
       "801 GREEN SPRINGS RD",                 "+39.853835,-76.992256",
-      "801A GREEN SPRINGS RD",                "+39.852291,-76.992718",
-      "801C GREEN SPRINGS RD",                "+39.850928,-76.988587",
-      "801D GREEN SPRINGS RD",                "+39.850329,-76.987704",
-      "801F GREEN SPRINGS RD",                "+39.848785,-76.990800",
-      "950A GREEN SPRINGS RD",                "+39.860467,-76.989941",
-      "950B GREEN SPRINGS RD",                "+39.859749,-76.991877",
-      "950C GREEN SPRINGS RD",                "+39.859630,-76.993490",
-      "950D GREEN SPRINGS RD",                "+39.860013,-76.992367",
-      "950E GREEN SPRINGS RD",                "+39.860807,-76.991471",
-      "950F GREEN SPRINGS RD",                "+39.863178,-76.990871",
-      "950G GREEN SPRINGS RD",                "+39.861735,-76.992026",
+      "801 GREEN SPRINGS RD APT A",           "+39.852291,-76.992718",
+      "801 GREEN SPRINGS RD APT C",           "+39.850928,-76.988587",
+      "801 GREEN SPRINGS RD APT D",           "+39.850329,-76.987704",
+      "801 GREEN SPRINGS RD APT F",           "+39.848785,-76.990800",
+      "950 GREEN SPRINGS RD APT A",           "+39.860467,-76.989941",
+      "950 GREEN SPRINGS RD APT B",           "+39.859749,-76.991877",
+      "950 GREEN SPRINGS RD APT C",           "+39.859630,-76.993490",
+      "950 GREEN SPRINGS RD APT D",           "+39.860013,-76.992367",
+      "950 GREEN SPRINGS RD APT E",           "+39.860807,-76.991471",
+      "950 GREEN SPRINGS RD APT F",           "+39.863178,-76.990871",
+      "950 GREEN SPRINGS RD APT G",           "+39.861735,-76.992026",
       
       "2160 HANOVER RD APT 1",                "+39.817463,-77.166396",
       "2160 HANOVER RD APT 2",                "+39.817582,-77.166213",
@@ -857,12 +868,12 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2160 HANOVER RD APT 42",               "+39.819141,-77.166192",
       "2160 HANOVER RD APT 43",               "+39.819268,-77.166026",
       
-      "474A HERSHEY HEIGHTS RD",              "+39.836508,-76.989463",
-      "474B HERSHEY HEIGHTS RD",              "+39.836550,-76.990459",
-      "474C HERSHEY HEIGHTS RD",              "+39.838155,-76.990776",
-      "474D HERSHEY HEIGHTS RD",              "+39.841224,-76.987455",
-      "474F HERSHEY HEIGHTS RD",              "+39.837769,-76.991808",
-      "474H HERSHEY HEIGHTS RD",              "+39.840730,-76.989999",
+      "474 HERSHEY HEIGHTS RD APT A",         "+39.836508,-76.989463",
+      "474 HERSHEY HEIGHTS RD APT B",         "+39.836550,-76.990459",
+      "474 HERSHEY HEIGHTS RD APT C",         "+39.838155,-76.990776",
+      "474 HERSHEY HEIGHTS RD APT D",         "+39.841224,-76.987455",
+      "474 HERSHEY HEIGHTS RD APT F",         "+39.837769,-76.991808",
+      "474 HERSHEY HEIGHTS RD APT H",         "+39.840730,-76.989999",
       
       "135 HILLTOP LN",                       "+39.947586,-77.317333",
       "151 HILLTOP LN",                       "+39.948700,-77.318170",
@@ -958,6 +969,28 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "90 KNIGHT RD APT 58",                  "+39.776701,-77.232934",
       "90 KNIGHT RD APT 59",                  "+39.776591,-77.232768",
       "90 KNIGHT RD APT 60",                  "+39.776437,-77.232599",
+
+      "492 LAKE MEADE DR",                    "+39.973933,-77.036627",
+      
+      "2440 LOW DUTCH RD LOT 1",              "+39.794938,-77.180313",
+      "2440 LOW DUTCH RD LOT 2",              "+39.795853,-77.180508",
+      "2440 LOW DUTCH RD LOT 3",              "+39.795388,-77.180418",
+      "2440 LOW DUTCH RD LOT 4",              "+39.795830,-77.180356",
+      "2440 LOW DUTCH RD LOT 5",              "+39.795480,-77.180158",
+      "2440 LOW DUTCH RD LOT 6",              "+39.795276,-77.180212",
+      "2440 LOW DUTCH RD LOT 7",              "+39.795168,-77.180663",
+      "2440 LOW DUTCH RD LOT 8",              "+39.795495,-77.180637",
+      "2440 LOW DUTCH RD LOT 9",              "+39.795457,-77.179972",
+      
+      "315 MENGUS MILL RD APT A",             "+39.735216,-77.092838",
+      "315 MENGUS MILL RD APT C",             "+39.735993,-77.094529",
+      "315 MENGUS MILL RD APT D",             "+39.736044,-77.094995",
+      "315 MENGUS MILL RD APT E",             "+39.735104,-77.095773",
+      "315 MENGUS MILL RD APT F",             "+39.735909,-77.093877",
+      "315 MENGUS MILL RD APT G",             "+39.736023,-77.095995",
+      "315 MENGUS MILL RD APT H",             "+39.736191,-77.096433",
+      "315 MENGUS MILL RD APT L",             "+39.736088,-77.095568",
+      "315 MENGUS MILL RD APT M",             "+39.734428,-77.095869",
       
       "110 MISTY RIDGE RD",                   "+39.868094,-77.237054",
       "112 MISTY RIDGE RD",                   "+39.868090,-77.236961",
@@ -1009,7 +1042,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "320 MISTY RIDGE RD",                   "+39.868455,-77.236905",
       "322 MISTY RIDGE RD",                   "+39.868398,-77.236942",
       "324 MISTY RIDGE RD",                   "+39.868334,-77.236981",
-      
+
+      "1975 MOUNT HOPE RD APT E",             "+39.804200,-77.437200",
+
       "65 MOUNTAIN VIEW DR",                  "+39.991625,-77.400380",
       "79 MOUNTAIN VIEW DR",                  "+39.991150,-77.400116",
       "80 MOUNTAIN VIEW DR",                  "+39.991909,-77.399704",
@@ -1017,7 +1052,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "132 MOUNTAIN VIEW DR",                 "+39.991944,-77.397665",
       "145 MOUNTAIN VIEW DR",                 "+39.991469,-77.398314",
       "199 MOUNTAIN VIEW DR",                 "+39.992324,-77.398695",
-      
+
+      "21 N BOLTON ST",                       "+39.864105,-77.057834",
+
       "45 NORRIS RD",                         "+39.978325,-77.385147",
       "56 NORRIS RD",                         "+39.979015,-77.385529",
       "66 NORRIS RD",                         "+39.979429,-77.385009",
@@ -1586,12 +1623,14 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "34 SUNNIE WAY",                        "+39.867163,-77.235005",
       "36 SUNNIE WAY",                        "+39.867182,-77.235065",
       "38 SUNNIE WAY",                        "+39.867212,-77.235124",
-      "40A SUNNIE WAY",                       "+39.867238,-77.235188",
-      "40B SUNNIE WAY",                       "+39.867184,-77.235208",
+      "40 SUNNIE WAY APT A",                  "+39.867238,-77.235188",
+      "40 SUNNIE WAY APT B",                  "+39.867184,-77.235208",
       "42 SUNNIE WAY",                        "+39.867227,-77.235257",
       "44 SUNNIE WAY",                        "+39.867249,-77.235315",
       
       "225 VILLAGE DR",                       "+39.864515,-77.023866",
+      
+      "120 WILDERNESS LN",                    "+39.804200,-77.437200",
       
       "SKI LIBERTY - STATION 1A",             "+39.762931,-77.375453",
       "SKI LIBERTY - STATION 1B",             "+39.762314,-77.374811",
@@ -1599,6 +1638,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
+      
   });
 
   private static final String[] CITY_LIST = new String[]{
