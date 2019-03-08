@@ -95,6 +95,11 @@ public class MSRankinCountyParser extends DispatchProQAParser {
     "CROSSGATES FARM",
     "DOBSON",
     "ROBINHOOD/SHADY LAKES",
-    "VALUE"
+    "VALUE",
+    
+    
+    // Madison County
+    "MADISON",
+    "RIDGELAND"
   };
 }
