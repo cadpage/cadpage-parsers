@@ -9,8 +9,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 public class MSRankinCountyParser extends DispatchProQAParser {
   
   public MSRankinCountyParser() {
-    super(CITY_LIST, "RANKIN COUNTY", "MS", 
+    this("RANKIN COUNTY");
+  }
+  
+  MSRankinCountyParser(String county) {
+    super(CITY_LIST, county, "MS", 
           "UNKNOWN ID! TIME CALL PRI ADDR PLACE_APT PLACE_APT+? CITY! INFO/N+? CALL/SDS! END", true);
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "MSRankinCounty";
   }
   
   @Override
@@ -55,6 +64,7 @@ public class MSRankinCountyParser extends DispatchProQAParser {
   }
   private static final String[] CITY_LIST = new String[]{
     
+    // Rankin County
     // Cities
     "BRANDON",
     "FLOWOOD",
@@ -99,7 +109,58 @@ public class MSRankinCountyParser extends DispatchProQAParser {
     
     
     // Madison County
+    "CANTON",
     "MADISON",
-    "RIDGELAND"
+    "RIDGELAND",
+
+    // Towns
+    "FLORA",
+
+    // Census-designated place
+    "KEARNEY PARK",
+    "ANNADALE",
+    "ANDERSON",
+
+    // Other uincorporated communities
+    "CAMDEN",
+    "FARMHAVEN",
+    "GLUCKSTADT",
+    "LIVINGSTON",
+    "SHARON",
+    "WAY",
+
+    // Ghost town
+    "BEATTIES BLUFF",
+    "STOKES",
+    
+    // Yazoo County
+    "YAZOO CITY",
+
+    // Towns
+    "BENTONIA",
+
+    // Villages
+    "EDEN",
+    "SATARTIA",
+
+    // Unincorporated communities
+    "ANDING",
+    "BENTON",
+    "CARTER",
+    "HOLLY BLUFF",
+    "HOPEWELL LANDING",
+    "LITTLE YAZOO",
+    "MIDWAY",
+    "OIL CITY",
+    "SCOTLAND",
+    "TINSLEY",
+    "VAUGHAN",
+
+    // Ghost towns
+    "CLAIBORNESVILLE",
+    "HILTON",
+    "LIVERPOOL",
+    "PEARCE",
+    "PLUMVILLE"
   };
 }

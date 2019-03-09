@@ -817,8 +817,9 @@ public class ParserList {
               ,"MSDeSotoCounty"                 ,"DeSoto County, MS"
               ,"MSHarrisonCounty"               ,"Harrison County, MS"
               ,"MSHernando"                     ,"Hernando, MS"
-              ,"MSLafayetteCounty"			  	,"Lafayette County, MS"
+              ,"MSLafayetteCounty"			  	    ,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"
+              ,"MSMadisonCounty"                ,"Madison County, MS"
               ,"MSMarionCounty"                 ,"Marion County, MS"
               ,"MSMonroeCounty"                 ,"Monroe County, MS"
               ,"MSNeshobaCounty"                ,"Neshoba County, MS"
@@ -826,6 +827,7 @@ public class ParserList {
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"
+              ,"MSYazooCounty"                  ,"Yazoo County, MS"
           ),
           new ParserCategory("Missouri"
               ,"MOAdairCounty"                  ,"Adair County, MO"
