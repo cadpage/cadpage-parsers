@@ -1,12 +1,21 @@
+
 **************************************************************************
-Hi folks,
+**************************************************************************
+OK, this gets a bit complicated.
 
-Alas, I still can not publish Cadpage updates through the play store.  Google is supposed to be working fixing this.  But you all need an update now and I have no idea how long it will take before normal Play Store service is restored.
+First question.  When you say that you are not receiving text messages, do you mean they are not showing up in your message app at aoo, or that they are showing up but Cadpage is not picking them up.  If they are not showing up in your message app, then you need to talk to someone in your department about getting them sent to your phone.
 
-The latest version of Cadpage has been installed web site and can be downloaded and installed from there.  The link and instructions can be found at 
-http://www.cadpage.org/download-cadpage
+Most likely they are showing up in your message app but Cadpage is not picking them up.  It is not doing that because you have disabled Cadpage message support.  To turn on Cadpage message support, open Cadpage Location settings and change the "Message Type Processed" setting to include SMS and/or MMS messages, which you are currently receiving.
 
-Good luck,
+This where things get complicated.  You have installed the latest Cadpage release from which the critical bits of Cadpage SMS/MMS message processing have been removed.  Those important bits have been moved into a new Cadpage message support app that has to be downloaded and installed from our web site.  As soon as you enabled Cadpage message processing, Cadpage will detect that the you do not have that support app installed and pop up a window that will give you two choices
+1) Turn off Cadpage message processing, or
+2) Install the message support app.
+
+This window should have been displayed when you first installed the latest Cadpage release and you probably picked the first option.  Which would explain how Cadpage message processing got to be disabled now.   You need to pick the second option which will take you to a web page that explains how to download and install the message support app.
+
+All of this complicated stuff is necessary because Google has decided that apps distributed through their play store will no longer be allowed to access incoming text messages.  This all lets me continue to distribute Cadpage and it's updates through their Play Store while continuing to process text messages.
+
+Sorry for the extra complicatedness,
 -Ken
 **************************************************************************
 No email address - wanting to pay with check
