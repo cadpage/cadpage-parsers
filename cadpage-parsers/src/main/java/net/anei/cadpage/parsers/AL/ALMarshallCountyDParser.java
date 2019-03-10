@@ -15,13 +15,19 @@ public class ALMarshallCountyDParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@Marshall-AL-911.info,dispatch@Herkimer-NY-911.info";
+    return "dispatch";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
+    body = stripFieldStart(body,  "1/1:");
     String[] flds = body.split("\n");
     if (flds.length < 3) flds = body.split("\\|");
     return parseFields(flds, data);

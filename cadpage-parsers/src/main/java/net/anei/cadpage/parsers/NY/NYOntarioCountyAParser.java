@@ -117,6 +117,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
       "BRISTOL",
       "CANADICE",
       "CANANDAIGUA",
+      "E BLOOMFIELD",
       "EAST BLOOMFIELD",
       "FARMINGTON",
       "GENEVA",

@@ -271,7 +271,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "FOX", "FOX CHAPEL",
       "FPB", "FRANKLIN PARK",
       "FRZ", "FRAZER",
-      "FWD", "FORWARD",
+      "FWD", "FORWARD TWP",
       "FWN", "FAWN",
       "GLA", "GLASSPORT",
       "GLE", "GLENFIELD",
