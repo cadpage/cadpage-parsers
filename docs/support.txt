@@ -2924,7 +2924,7 @@ Have a nice day,
 *************************************************************************
 Q: Can you do a test page some time today?
 
-A: You, or your deparment's Active911 administrator, can send yourself a
+A: You, or your department's Active911 administrator, can send yourself a
 text page from the Active911.com website.  Go to the member information area and
 select the device tab.  Beside each configured device there is a row of
 three icons.  The middle one is used to send that device a text message.
