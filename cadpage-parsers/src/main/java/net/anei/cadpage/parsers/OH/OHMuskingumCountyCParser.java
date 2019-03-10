@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.OH;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -10,7 +11,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
   
   public OHMuskingumCountyCParser() {
     super("MUSKINGUM COUNTY", "OH", 
-          "Address:ADDRCITY/S6! CALL_DATETIME_ID! Cross_Streets:X! Incident_number:ID2! Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
+          "Address:ADDRCITY/S6! CALL_DATETIME_ID! Cross_Streets:X! Incident_number:ID2? Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
   }
   
   @Override
@@ -34,10 +35,23 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
       if (data.strApt.length() > 0) {
         data.strCity = stripFieldEnd(data.strCity, data.strApt);
       }
+      String city = CITY_SET.getCode(data.strCity);
+      if (city == null) {
+        data.strPlace = data.strCity;
+        data.strCity = "";
+      } else {
+        data.strPlace = data.strCity.substring(city.length()).trim();
+        data.strCity = city;
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + "  PLACE";
     }
   }
   
-  private static final Pattern CALL_DATETIME_ID_PTN = Pattern.compile("Call Type:(.*)Date/Time:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) *CFS#:(.*)");
+  private static final Pattern CALL_DATETIME_ID_PTN = Pattern.compile("Call Type:(.*)Date/Time:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)(?: *CFS#:(.*))?");
   private class MyCallDateTimeIdField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -46,7 +60,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
       data.strCall =  match.group(1).trim();
       data.strDate = match.group(2);
       data.strTime = match.group(3);
-      data.strCallId = match.group(4).trim();
+      data.strCallId = getOptGroup(match.group(4));
     }
 
     @Override
@@ -76,4 +90,86 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
       }
     }
   }
+  
+  private static CodeSet CITY_SET = new CodeSet(
+      
+      // Cities
+      "ZANESVILLE",
+
+      // Villages
+      "ADAMSVILLE",
+      "DRESDEN",
+      "FRAZEYSBURG",
+      "FULTONHAM",
+      "GRATIOT",
+      "NEW CONCORD",
+      "NORWICH",
+      "PHILO",
+      "ROSEVILLE",
+      "SOUTH ZANESVILLE",
+
+      // Townships
+      "ADAMS",
+      "BLUE ROCK",
+      "BRUSH CREEK",
+      "CASS",
+      "CLAY",
+      "FALLS",
+      "HARRISON",
+      "HIGHLAND",
+      "HOPEWELL",
+      "JACKSON",
+      "JEFFERSON",
+      "LICKING",
+      "MADISON",
+      "MEIGS",
+      "MONROE",
+      "MUSKINGUM",
+      "NEWTON",
+      "PERRY",
+      "RICH HILL",
+      "SALEM",
+      "SALT CREEK",
+      "SPRINGFIELD",
+      "UNION",
+      "WASHINGTON",
+      "WAYNE",
+
+      // Census-designated places
+      "DUNCAN FALLS",
+      "EAST FULTONHAM",
+      "NORTH ZANESVILLE",
+      "PLEASANT GROVE",
+      "TRINWAY",
+
+      // Other unincorporated communities
+      "ADAMS MILLS",
+      "BLOOMFIELD",
+      "BLUE ROCK",
+      "BRIDGEVILLE",
+      "CHANDLERSVILLE",
+      "COAL HILL",
+      "DILLON FALLS",
+      "ELLIS",
+      "FREELAND",
+      "GAYSPORT",
+      "GILBERT",
+      "HIGH HILL",
+      "HOPEWELL",
+      "IRVILLE",
+      "LICKING VIEW",
+      "MATTINGLY SETTLEMENT",
+      "MEADOW FARM",
+      "MUSEVILLE",
+      "NASHPORT",
+      "OTSEGO",
+      "RIX MILLS",
+      "RURALDALE",
+      "SONORA",
+      "STOVERTOWN",
+      "SUNDALE",
+      "WHITE COTTAGE",
+      "YOUNG HICKORY",
+      "ZENO"
+  );
 }

@@ -24,11 +24,19 @@ public class DispatchH05Parser extends HtmlProgramParser {
   private boolean accumulateUnits = false;
   
   public DispatchH05Parser(String defCity, String defState, String program) {
-    this(defCity, defState, program, null);
+    this(null, defCity, defState, program, null);
+  }
+  
+  public DispatchH05Parser(String[] cityList, String defCity, String defState, String program) {
+    this(cityList, defCity, defState, program, null);
   }
   
   public DispatchH05Parser(String defCity, String defState, String program, String userTags) {
-    super(defCity, defState, program, userTags);
+    this(null, defCity, defState, program, userTags);
+  }
+  
+  public DispatchH05Parser(String[] cityList, String defCity, String defState, String program, String userTags) {
+    super(cityList, defCity, defState, program, userTags);
   }
   
   public void setAccumulateUnits(boolean accumulateUnits) {
