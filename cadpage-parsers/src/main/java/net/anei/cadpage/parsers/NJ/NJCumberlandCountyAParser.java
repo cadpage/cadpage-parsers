@@ -43,7 +43,7 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
       // City is in front in parenthesis
       Matcher match = ADDR_PTN.matcher(field);
       if (match.find()) {
-        data.strCity = match.group(1);
+        data.strCity = stripFieldEnd(match.group(1), " BORO");
         field = field.substring(match.end()).trim();
       }
       
