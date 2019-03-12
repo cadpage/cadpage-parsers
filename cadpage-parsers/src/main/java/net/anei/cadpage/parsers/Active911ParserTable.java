@@ -435,6 +435,7 @@ public class Active911ParserTable {
       "US/IN/GrantCounty",                "INGrantCounty",
       "US/IN/HamiltonCounty",             "INHamiltonCounty",
       "US/IN/HancockCounty",              "INHancockCounty",
+      "US/IN/HarrisonCounty",             "INHarrisonCounty",
       "US/IN/Indianapolis",               "INMarionCounty",
       "US/IN/JacksonCounty",              "INJacksonCountyB",
       "US/IN/JasperCounty",               "INJasperCounty",
