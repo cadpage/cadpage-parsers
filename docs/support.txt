@@ -1,5 +1,17 @@
-
 **************************************************************************
+* Cadpage not alerting on Samsung device
+**************************************************************************
+Another user resolved a similar issue on a Samsung device by adding
+Cadpage and the Cadpage Message support app to a list of unmonitored
+apps in battery settings.  This seems to be something unique to Samsung
+devices, I do not have any such settings on my stock Google devices.
+
+Open your main android settings and select
+Device Maintenance > Battery > Unmonitored apps
+Then add the Cadpage and the Cadpage Message Support apps.
+
+Good luck,
+-Ken
 **************************************************************************
 OK, this gets a bit complicated.
 
