@@ -34,7 +34,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@nwbcd.org,@englewoodpd.org,@enforsys.com,@atpdtext.org,wcpdicm@enforsys.com";
+    return "@nwbcd.org,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com";
   }
   
   private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{3}This email");
