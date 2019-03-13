@@ -26,6 +26,7 @@ public class MNCarverCountyParser extends DispatchA27Parser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      "10TH ST E & FOX RUN RD",           "+44.840082, -93.786578"
+      "HIGHWAY 212 & HIGHWAY 284",        "+44.765305,-93.781210",
+      "10TH ST E & FOX RUN RD",           "+44.840082,-93.786578"
   });
 }
