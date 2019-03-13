@@ -12,7 +12,7 @@ public class TXTarrantCountyBParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "dispatch@nrhfd.com";
+    return "dispatch@nrhfd.com,DISPATCH";
   }
   
   @Override
