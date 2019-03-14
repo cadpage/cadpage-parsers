@@ -219,6 +219,7 @@ public class Active911ParserTable {
       "US/CO/ElPasoCounty",               "COElPasoCountyA",
       "US/CO/EPT911",                     "COElPasoCountyA",
       "US/CO/FortCarsonPD",               "COElPasoCountyA",
+      "US/CO/FortCarsonSpecial",          "COElPasoCountyA",
       "US/CO/Fountain",                   "COElPasoCountyC",
       "US/CO/FountainPD",                 "COElPasoCountyA",
       "US/CO/FremontCountySheriffsOffice","COFremontCounty",
