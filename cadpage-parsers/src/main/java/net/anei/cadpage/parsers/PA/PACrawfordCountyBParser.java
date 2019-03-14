@@ -7,12 +7,17 @@ public class PACrawfordCountyBParser extends FieldProgramParser {
   
   public PACrawfordCountyBParser() {
     super("CRAWFORD COUNTY", "PA", 
-          "Inc_Code:CALL! Address:ADDRCITY! Common_Name:PLACE! Name:NAME Units:UNIT Cross_Streets:X! Grid:MAP END");
+          "Date_Time:DATETIME? Inc_Code:CALL! Address:ADDRCITY! Common_Name:PLACE! Name:NAME Units:UNIT Cross_Streets:X! Grid:MAP Maps:MAP/L GPS? Long:SKIP END");
   }
   
   @Override
   public String getFilter() {
     return "alerts@crawfordcounty.ealertgov.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -25,6 +30,7 @@ public class PACrawfordCountyBParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("GPS")) return new GPSField("Lat:.* Long:.*", true);
     return super.getField(name);
   }
   
