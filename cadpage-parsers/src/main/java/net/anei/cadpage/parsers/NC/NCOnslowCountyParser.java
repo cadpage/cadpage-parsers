@@ -22,7 +22,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
            "FYI? ( CALL ADDR! CITY? SRC? DIST? INFO/N+ " +
                 "| UNIT_CH ADDR! CITY DIST? INFO/N+ " + 
-                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? ( CODE | UNIT CODE? ) CALL! CODE END " + 
+                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " + 
                                   "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " + 
                                   "| CITY? PLACE+? CALL/Z END " + 
                                   ") " + 
@@ -74,7 +74,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     
     // Call description really should be a required field.  But it is occasionally missing
     // so we will accept calls without it if they have been positively ID's
-    return (data.strCall.length() > 0 || isPositiveId() && data.strCity.length() > 0);
+    return (data.strCall.length() > 0 || isPositiveId() && data.strAddress.length() > 0);
   }
 
   @Override
@@ -133,7 +133,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     }
   }
   
-  private static final Pattern UNIT_CHANNEL_PTN = Pattern.compile("\\{([A-Z0-9]+)\\} EVENT CHANNEL (\\d+)");
+  private static final Pattern UNIT_CHANNEL_PTN = Pattern.compile("(?:\\{([A-Z0-9]+)\\} )?EVENT CHANNEL (\\d+)");
   private class MyUnitChannelField extends Field {
     
     @Override
@@ -145,7 +145,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = UNIT_CHANNEL_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strUnit = match.group(1);
+      data.strUnit = getOptGroup(match.group(1));
       data.strChannel = match.group(2);
       return true;
     }
@@ -164,8 +164,11 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
-      if (UNIT_PTN.matcher(field).matches()) {
-        data.strUnit = append(data.strUnit, "-", field);
+      if (CODE_PTN.matcher(field).matches()) {
+        data.strCode = field;
+      }
+      else if (UNIT_PTN.matcher(field).matches()) {
+        data.strUnit = append(data.strUnit, ",", field);
       } else {
         super.parse(field, data);
       }
@@ -241,7 +244,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     
     @Override
     public void parse(String field, Data data) {
-      data.strUnit = append(data.strUnit, "-", field);
+      data.strUnit = append(data.strUnit, ",", field);
     }
   }
   
@@ -259,7 +262,9 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   
   private static final Set<String> CALL_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "ABDOMINAL PAIN",
+      "AIRCRAFT EMERGENCY",
       "ALARMS",
+      "ALARMS PD",
       "ALLERGIES/ENVENOMATIO",
       "ALLERGIES/ENVENOMATIONS",
       "ANIMAL",
@@ -334,6 +339,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "TRAFFIC VIOLATION/ COMPLAINT",
       "TRANSFER INTERFACILITY",
       "TRAUMATIC INJURIES",
+      "TRESPASSING/ UNWANTED",
       "UNCONSCIOUS FAINTING",
       "UNKNOWN PROBLEM MAN DOWN",
       "UNKNOWN (3RD PARTY)",
@@ -370,10 +376,10 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SC",   "SURF CITY",
       "SF",   "SNEADS FERRY",
       "SOU",  "SOUTHPORT",
+      "STEL", "STELLA",
       "SWAN", "SWANSBORO",
       
       // Carteret County
       "CEDAR POINT",    "CEDAR POINT"
-
   });
 }
