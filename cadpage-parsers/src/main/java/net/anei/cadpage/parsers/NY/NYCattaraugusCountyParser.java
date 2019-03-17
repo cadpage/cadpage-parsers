@@ -18,12 +18,12 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
   
   public NYCattaraugusCountyParser() {
     super(CITY_CODES, "CATTARAUGUS COUNTY", "NY",
-           "Unit:UNIT? Loc:ADDRCITY/S6! Between:X! CN:PLACE CTV:CITY Type:CALL Date:DATE Time:TIME Info:INFO Caller:NAME Inc:ID%");
+           "SRC Unit:UNIT? Loc:ADDRCITY/S6! Between:X! CN:PLACE CTV:CITY Type:CALL Date:DATE Time:TIME Info:INFO Caller:NAME Inc:ID%");
   }
   
   @Override
   public String getFilter() {
-    return "911@cattco.org,messaging@iamresponding.com,777,888";
+    return "911@cattco.org,messaging@iamresponding.com,777,888,0583";
   }
   
   private static Pattern MARKER = Pattern.compile("CATTARAUGUS COUNTY SHERIFF:? *");
@@ -33,7 +33,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
     Matcher match = MARKER.matcher(body);
     if (match.lookingAt()) {
@@ -46,8 +46,16 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
           if (chr == '(') parenCnt++;
           else if (chr == ')') parenCnt--;
         }
+        subject = body.substring(1,pt-1).trim();
         body = body.substring(pt).trim();
       }
+    }
+    
+    // Silly IAR edits :(
+    if (subject.equals("WVFD")) {
+      body = subject + " Loc:" + body.replace("\\u0000", "")
+                                     .replace("\n`\nBtw:", " Between:")
+                                     .replaceAll("\n`\n", " ");
     }
     
     body = body.replace(" Inc#:", " Inc:");
@@ -92,8 +100,11 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("SRC")) return new SourceField("[A-Z0-9]{2,5}");
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("DATE")) return new MyDateTimeField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
@@ -103,6 +114,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       address = field;
+      field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
@@ -126,6 +138,20 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4})|(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match =  DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      if (data.strDate == null) {
+        data.strDate = match.group(2);
+        setTime(TIME_FMT, match.group(3), data);
+      }
     }
   }
   
