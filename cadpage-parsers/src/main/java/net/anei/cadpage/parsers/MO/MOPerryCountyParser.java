@@ -12,6 +12,6 @@ public class MOPerryCountyParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "louisianapd.dispatch@gmail.com";
+    return "louisianapd.dispatch@gmail.com,PERRY@OMNIGO.COM";
   }
 }
