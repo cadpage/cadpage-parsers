@@ -40,6 +40,7 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern INFO_SPLIT_PTN = Pattern.compile("\n|(?=\\[\\d{1,2}\\])");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[\\d\\d/\\d\\d/\\d{4} .*\\]|\\[.* are related\\.\\]|\\*\\* EMD .*|\\(Cloned from.*\\)");
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|#) *(.*)");
   private static final Pattern INFO_PHONE_PTN = Pattern.compile("\\d{3}[- ]\\d{3}[- ]\\d{4}");
@@ -53,44 +54,49 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
       
       if (data.strSupp.length() == 0) gpsLoc = null;
       
-      field = stripFieldEnd(field, ",");
-      
-      if (INFO_JUNK_PTN.matcher(field).matches()) return;
-      
-      if (field.startsWith("Landmark:")) {
-        field = stripFieldStart(field, ",");
-        field = stripFieldStart(field, "-");
-        data.strPlace = append(data.strPlace, " - ", field.substring(9).trim());
-        return;
-      }
-      
-      field = stripFieldStart(field, "Landmark Comment:");
-      field = stripFieldStart(field, "Geo Comment:");
-      
-      Matcher match = INFO_APT_PTN.matcher(field);
-      if (match.matches()) {
-        data.strApt = append(data.strApt, "-", match.group(1));
-        return;
-      }
-      
-      if (INFO_PHONE_PTN.matcher(field).matches()) {
-        data.strPhone = field;
-        return;
-      }
-      
-      match = INFO_GPS_PTN.matcher(field);
-      if (match.matches()) {
-        String gps = match.group(1);
-        if (gpsLoc == null) {
-          gpsLoc = gps;
-        } else {
-          setGPSLoc(gpsLoc+','+match.group(1), data);
-          gpsLoc = null;
+      for (String line : INFO_SPLIT_PTN.split(field)) {
+        line = line.trim();
+        if (line.length() == 0) continue;
+        
+        line = stripFieldEnd(line, ",");
+        
+        if (INFO_JUNK_PTN.matcher(line).matches()) return;
+        
+        if (line.startsWith("Landmark:")) {
+          line = stripFieldStart(line, ",");
+          line = stripFieldStart(line, "-");
+          data.strPlace = append(data.strPlace, " - ", line.substring(9).trim());
+          continue;
         }
-        return;
+        
+        line = stripFieldStart(line, "Landmark Comment:");
+        line = stripFieldStart(line, "Geo Comment:");
+        
+        Matcher match = INFO_APT_PTN.matcher(line);
+        if (match.matches()) {
+          data.strApt = append(data.strApt, "-", match.group(1));
+          continue;
+        }
+        
+        if (INFO_PHONE_PTN.matcher(line).matches()) {
+          data.strPhone = line;
+          continue;
+        }
+        
+        match = INFO_GPS_PTN.matcher(line);
+        if (match.matches()) {
+          String gps = match.group(1);
+          if (gpsLoc == null) {
+            gpsLoc = gps;
+          } else {
+            setGPSLoc(gpsLoc+','+match.group(1), data);
+            gpsLoc = null;
+          }
+          continue;
+        }
+        
+        data.strSupp = append(data.strSupp, "\n", line);
       }
-
-      super.parse(field, data);
     }
     
     @Override
