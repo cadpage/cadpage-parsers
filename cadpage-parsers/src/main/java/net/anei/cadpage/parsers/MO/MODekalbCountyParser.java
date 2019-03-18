@@ -10,7 +10,7 @@ public class MODekalbCountyParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "DEKALBCODISPATCH@PUBLICSAFETYSOFTWARE.NET";
+    return "DEKALBCODISPATCH@PUBLICSAFETYSOFTWARE.NET,DEKALBCODISPATCH@OMNIGO.COM";
   }
 
 }
