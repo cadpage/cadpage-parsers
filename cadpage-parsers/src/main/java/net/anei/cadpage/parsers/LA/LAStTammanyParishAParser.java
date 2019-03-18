@@ -24,7 +24,7 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@dapage.net";
+    return "@dapage.net,@stfd.dapage.net,@stfpd1.dapage.net";
   }
   
   @Override
