@@ -98,4 +98,9 @@ public class NYDelawareCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return addr.replace("COUNTY HIGHWAY", "COUNTY ROAD");
+  }
 }
