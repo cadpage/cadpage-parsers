@@ -51,7 +51,9 @@ public class ORMarionCountyAParser extends FieldProgramParser {
       
       return false;
     } while (false);
-    
+
+    partGPS = null;
+
     if (body.startsWith("INFO:")) {
       setSelectValue("1");
       return parseFields(body.split("\n"), data);
@@ -135,7 +137,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final String UNIT_PTN_STR = "(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|AC|BLJ|DS|DT-LK-STPARK|JT|MCSO|MP|ODF|PUBLWRKS|RCO|SEND_MAPD|SEND_[A-Z]+|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?";
+  private static final String UNIT_PTN_STR = "(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|AC|BLJ|DS|DT-LK-STPARK|JT|MCDUTY|MCSO|MP|ODF|PUBLWRKS|RCO|SEND_MAPD|SEND_[A-Z]+|TONE-ON-HOUSE|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?";
   private static final Pattern UNIT_PTN = Pattern.compile(UNIT_PTN_STR);
   private static final Pattern UNITZ_PTN = Pattern.compile("|" + UNIT_PTN_STR);
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
@@ -215,7 +217,9 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("(-?\\d{2,3}\\.\\d{6,})[/\\\\](-?\\d{2,3}\\.\\d{6,})");
+  private static final Pattern GPS_PTN2 = Pattern.compile("-?\\d{2,3}\\.\\d{6,}");
   private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{8}\\b.*");
+  private String partGPS = null;
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -263,11 +267,19 @@ public class ORMarionCountyAParser extends FieldProgramParser {
         return;
       }
       
+      if (GPS_PTN2.matcher(field).matches()) {
+        if (partGPS == null) {
+          partGPS = field;
+        } else {
+          setGPSLoc(partGPS+','+field, data);
+        }
+        return;
+      }
+      
       if (data.strCallId.length() == 0 && ID_PTN.matcher(field).matches()) {
         data.strCallId = field;
         return;
       }
-      
       
       if (data.strPlace.length() == 0) {
         match = PLACE_PHONE_PTN.matcher(field);
