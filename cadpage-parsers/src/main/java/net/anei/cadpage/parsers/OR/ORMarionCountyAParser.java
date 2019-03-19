@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
           ") INFO+");
     setupSaintNames("PAUL");
     removeWords("ESTATES", "LANE", "ROAD");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -283,4 +285,8 @@ public class ORMarionCountyAParser extends FieldProgramParser {
       return super.getFieldNames() + " X PLACE PHONE GPS MAP ID";
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "286 HIGH ST",                          "+44.710392,-123.008581"
+  });
 }
