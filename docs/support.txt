@@ -621,7 +621,7 @@ Thanks for PayPal or helping with a location
 Thanks for your PayPal payment! You have been added to a paid subscriber list with a one-year Cadpage subscription.
 
 Please:
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings, Select General Settings and press Payment Status, then press "Recalculate Payment Status"
 
 Please let us know if you ever have any problems with Cadpage.
 
@@ -740,7 +740,7 @@ for FREE
 
 You have been registered as a free subscriber to Cadpage for at least one full year. 
 
-Please: Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Please: Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 Positive reviews from free Cadpage subscribers are much appreciated. There is an item toward the bottom of the Settings menu that gets you started on writing a Cadpage review.
 
@@ -753,7 +753,7 @@ extension of free subscription
 
 Your free Cadpage subscription has been extended for at least another year.
 
-Please: Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Please: Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 Positive reviews from free Cadpage subscribers are much appreciated. There is an item toward the bottom of the Settings menu that gets you started on writing a Cadpage review.
 
