@@ -10,6 +10,11 @@ public class KYRockCastleCountyParser extends DispatchA48Parser {
   }
   
   @Override
+  public String getFilter() {
+    return "PageGate@windstream.net";
+  }
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     data.strSource = data.strName;

@@ -11,13 +11,13 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   
   public MIWashtenawCountyBParser() {
     super("WASHTENAW COUNTY", "MI", 
-          "( CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! PRI:PRI! DATE:DATETIME! INFO:INFO! " +
-          "| INCIDENT_COMPLETE! Location:ADDRCITY! Location_Comment:PLACE! Nature:CALL! INFO/N+ )");
+          "( CALL:CALL! PLACE:PLACE? ADDR:ADDRCITY! ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME? INFO:INFO? Additional_Info:INFO?" +
+          "| INCIDENT_COMPLETE! Location:ADDRCITY! Location_Comment:PLACE! Nature:CALL? INFO/N+ )");
   }
   
   @Override
   public String getFilter() {
-    return "noreply@emergenthealth.org";
+    return "noreply@emergenthealth.org,cadpaging@emergenthealth.org";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
@@ -33,8 +33,14 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     data.strCallId = match.group(2);
     
     if (body.startsWith("CALL:")) {
-      body = body.replace("ID:", " ID:");
-      if (!super.parseMsg(body, data)) return false;
+      String[] flds = body.split("\n");
+      if (flds.length >= 3) {
+        if (!parseFields(flds, data)) return false;
+      }
+      else {
+        body = body.replace("ID:", " ID:");
+        if (!super.parseMsg(body, data)) return false;
+      }
     }
     
     else if (body.startsWith("Incident ")) {
@@ -115,7 +121,7 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram();
+    return "CALL? ID " + super.getProgram();
   }
   
   @Override

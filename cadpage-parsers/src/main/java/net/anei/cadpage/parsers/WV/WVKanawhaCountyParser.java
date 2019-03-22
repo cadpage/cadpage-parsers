@@ -13,7 +13,7 @@ public class WVKanawhaCountyParser extends SmartAddressParser {
   
   public WVKanawhaCountyParser() {
     super("KANAWHA COUNTY", "WV");
-    setFieldList("CALL ADDR APT CITY PLACE DATE TIME ID");
+    setFieldList("CALL ADDR APT CITY PLACE DATE TIME INFO ID");
   }
   
   @Override
@@ -46,11 +46,10 @@ public class WVKanawhaCountyParser extends SmartAddressParser {
   }
   
   private static final Pattern MASTER2 = 
-      Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?) reported at (.+?)(?:@([^,]*)?)?(?:(?:/? in |, +)(.+?))?(?:\\((.*?)\\))? on (\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d [AP]M)?)(?: +Call (?:#|Number:) *(.*))?");
+      Pattern.compile("(?:Metro911:|Metro CAD Alert:)?(.+?)\\sreported at\\s+(.+?)(?:@([^,]*)?)?(?:(?:/? in |, +)(.+?))?(?:\\((.*?)\\))?\\s+on\\s(\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d [AP]M|:\\d\\d)?)(?s:\\s(.*?))??(?:\\s+Call (?:#|Number:) *(.*))?");
   private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private boolean parseMsg2(String body, Data data) {
-    body = body.replace('\n', ' ');
     Matcher match = MASTER2.matcher(body);
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
@@ -69,7 +68,17 @@ public class WVKanawhaCountyParser extends SmartAddressParser {
     } else {
       data.strTime = time;
     }
-    data.strCallId = getOptGroup(match.group(8));
+    data.strSupp = getOptGroup(match.group(8));
+    data.strCallId = getOptGroup(match.group(9));
+    
+    // Remove partial Call # label from comments
+    if (data.strCallId.length() == 0) {
+      int pt = data.strSupp.lastIndexOf('\n');
+      if (pt >= 0) {
+        String lastLine = data.strSupp.substring(pt+1).trim();
+        if ("Call # ".startsWith(lastLine)) data.strSupp = data.strSupp.substring(0, pt).trim();
+      }
+    }
     return true;
   }
   

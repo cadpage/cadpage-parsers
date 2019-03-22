@@ -21,7 +21,7 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   public DispatchA52Parser(Properties callCodes, Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
-          "( TYPN:CALL! MODCIR:CODE! AD:PLACE! LOC:ADDR! APT:APT! CRSTR:X! UNS:UNIT! TIME:DATETIME3% INC:ID% ZIP:ZIP% GRIDREF:MAP% " + 
+          "( TYPN:CALL! MODCIR:CODE? AD:PLACE! LOC:ADDR! APT:APT? CRSTR:X? UNS:UNIT! TIME:DATETIME3% INC:ID% ZIP:ZIP% GRIDREF:MAP% " + 
           "| LOC:ADDR! AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
                 "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
                 "| CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP " +
