@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -12,7 +13,7 @@ public class CAYoloCountyBParser extends MsgParser {
   
   public CAYoloCountyBParser() {
     super("YOLO COUNTY", "CA");
-    setFieldList("CODE CALL PLACE ADDR APT SRC UNIT MAP GPS INFO");
+    setFieldList("DATE TIME ID CODE CALL PLACE ADDR APT CITY UNIT MAP GPS INFO");
   }
   
   @Override
@@ -26,6 +27,7 @@ public class CAYoloCountyBParser extends MsgParser {
   }
   
   private static final Pattern INFO_BRK_PTN = Pattern.compile("\\[\\d+\\]");
+  private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)(?:;(\\d+))? *;");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -38,6 +40,14 @@ public class CAYoloCountyBParser extends MsgParser {
     for (int jj = 1; jj<flds.length; jj++) {
       String fld = flds[jj].trim();
       data.strSupp = append(data.strSupp, "\n", fld);
+    }
+    
+    Matcher match = DATE_TIME_ID_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strCallId = getOptGroup(match.group(3));
+      body = body.substring(match.end());
     }
     
     FParser p = new FParser(body);
@@ -60,15 +70,20 @@ public class CAYoloCountyBParser extends MsgParser {
       parseAddress(p.get(50), data);
       
       if (!p.check(";")) return false;
-      data.strSource = p.get(35);
+      String apt = p.getOptional(";", 5, 6);
+      if (apt != null) {
+        data.strApt = append(data.strApt, "-", apt);
+      }
+      
+      data.strCity = p.get(35);
       
       if (!p.check(";")) return false;
       data.strUnit = p.get(30);
       
+      p.setOptional();
       if (!p.check(";")) return false;
       data.strMap = p.get(5);
       
-      p.setOptional();
       if (!p.check(";")) return false;
       String gps1 = p.get(10);
       if (!p.check(";")) return false;
