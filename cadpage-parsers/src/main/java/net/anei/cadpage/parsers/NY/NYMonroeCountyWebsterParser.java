@@ -23,7 +23,7 @@ public class NYMonroeCountyWebsterParser extends DispatchA7BaseParser {
   
   @Override
   public String getFilter() {
-    return "@rednmxcad.com,messaging@iamresponding.com,pagerchanges@monroecounty.gov";
+    return "@rednmxcad.com,messaging@iamresponding.com,pagerchanges@monroecounty.gov,CAD@monroecounty.gov";
   }
 
   @Override

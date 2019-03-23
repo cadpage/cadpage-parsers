@@ -77,8 +77,9 @@ req=reregister  Used by Cadpage to report a change to the device registration ID
     from the one you already have on file for this account, then it can be safely assumed that
     someone has used the Android 6 backup/restore feature to copy an existing Cadpage configuration
     to another device.  Because allowing two devices to exist with Cadpage configured to use the
-    same direct paging account information is a bad idea, it is strongly advised that you push an
-    "UNREGISTER" message to the old registration ID before continuing to process this request.
+    same direct paging account information is a bad idea, it is strongly advised that you take some 
+    corrective action, like assigning a new account/token combination and using the REGISTER request
+    to push that back to this device.
     
     Return an 200 - OK if successful
               299 - registration is successful, but the registration ID we passed is known 
