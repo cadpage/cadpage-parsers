@@ -17,7 +17,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
   
   @Override
   public String getFilter() {
-    return "cccademail@camdencounty.com";
+    return "cccademail@camdencounty.com,cccalert@camdencodps.org";
   }
   
   private static final Pattern TRAIL_BOUND_PTN = Pattern.compile(" +[NSEW]B$");

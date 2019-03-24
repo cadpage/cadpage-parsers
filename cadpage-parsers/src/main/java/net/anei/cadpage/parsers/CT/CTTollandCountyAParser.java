@@ -338,6 +338,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Vehicle Accident - DIAL",
       "Vehicle Accident / Head On",
       "Vehicle Accident W/ ALS",
+      "Vehicle Accident W/ ALS HEAD INJ",
       "Vehicle Accident W/O Injuries",
       "Vehicle Accident w/o Injury",
       "Vehicle Accident/HeadOn",
