@@ -4,6 +4,7 @@ package net.anei.cadpage.parsers.NC;
  * Union County, NC
  */
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -14,7 +15,11 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   
   public NCUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "NC",
-           "( CANCEL ADDR CITY2 INFO+ | FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO+? DATETIME ID? UNIT )");
+           "( CANCEL ADDR CITY2 INFO+ " + 
+           "| FYI? ( UNIT_CALL ADDR CITY2 PLACE2 " + 
+                  "| ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO+? DATETIME ID? UNIT " +
+                  ") END " +
+           ")");
     setupSaintNames("JOHNS", "SIMONS");
     setupProtectedNames("BURGESS AND HELMS", "SUGAR AND WINE");
     setupMultiWordStreets("INDIAN TRAIL FAIRVIEW");
@@ -36,7 +41,9 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("UNIT_CALL")) return new MyUnitCallField();
     if (name.equals("CITY2")) return new MyCity2Field();
+    if (name.equals("PLACE2")) return new MyPlace2Field();
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{2,4}", true);
     if (name.equals("CH")) return new ChannelField("[A-M][-A-Z0-9]{1,5}|.* OPS .*", true);
     if (name.equals("CUSTOM")) return new CustomField();
@@ -46,10 +53,46 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
   
+  private static final Pattern UNIT_CALL_PTN = Pattern.compile("\\{([A-Z0-9 ]+)\\} *(.*)");
+  private class MyUnitCallField extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = UNIT_CALL_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strUnit = match.group(1).trim();
+      data.strCall = match.group(2);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "UNIT CALL";
+    }
+  }
+  
   private class MyCity2Field extends CityField {
     @Override
     public void parse(String field, Data data) {
       data.strCity = convertCodes(field, CITY_CODES);
+    }
+  }
+  
+  private Pattern PLACE_DIR_PTN = Pattern.compile(" *\\([NSEW]\\) *");
+  private class MyPlace2Field extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = PLACE_DIR_PTN.matcher(field).replaceAll("");
+      super.parse(field, data);
     }
   }
   
@@ -145,6 +188,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
       "WAX", "WAXHAW",
       "WED", "WEDDINGTON",
       "WES", "WESLEY CHAPEL",
+      "WES1","WESLEY CHAPEL",
       "WIN", "WINGATE"
   });
 }
