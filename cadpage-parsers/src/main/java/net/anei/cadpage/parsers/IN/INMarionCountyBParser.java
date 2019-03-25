@@ -30,6 +30,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
 
   private static final Pattern MARKER = Pattern.compile("(?:Motorola )?CAD: *");
   private static final Pattern UNIT_PFX_PTN = Pattern.compile("[A-Z]+/");
+  private static final Pattern MAP_CROSS_PTN = Pattern.compile("(\\d{5}[NS] \\d{5}[EW])\\b *(.*)");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -38,9 +39,21 @@ public class INMarionCountyBParser extends DispatchA52Parser {
     if (!match.lookingAt()) return false;
     body = body.substring(match.end());
     if (!super.parseMsg(body, data)) return false;
+    
     data.strUnit = data.strUnit.replace(", ", ",");
     data.strUnit = UNIT_PFX_PTN.matcher(data.strUnit).replaceAll("");
+    
+    match = MAP_CROSS_PTN.matcher(data.strCross);
+    if (match.matches()) {
+      if (data.strMap.length() == 0) data.strMap = match.group(1);
+      data.strCross = match.group(2);
+    }
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("X", "MAP? X");
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
