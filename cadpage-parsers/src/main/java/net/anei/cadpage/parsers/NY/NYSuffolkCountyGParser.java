@@ -85,18 +85,31 @@ public class NYSuffolkCountyGParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern MASTER = Pattern.compile("(.*?) TOA: (\\d\\d:\\d\\d) (\\d\\d-\\d\\d-\\d\\d) ([^a-z]*?) (?:CS: ([^a-z]*?) )?(\\S*[a-z].*?) (\\d{4}-\\d{6})(?: +(.*))?");
+  private static final Pattern MASTER = Pattern.compile("(.*?) TOA: (\\d\\d:\\d\\d) (\\d\\d-\\d\\d-\\d\\d) (?:default )?([^a-z]*?) (?:CS: ([^a-z]*?) )?(\\S*[a-z].*?) (\\d{4}-\\d{6})(?: +(.*))?");
   
   private boolean parseNewFormat(String body, Data data) {
     
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    setFieldList("CALL TIME DATE ADDR APT PLACE X SRC ID INFO");
+    setFieldList("CALL TIME DATE ADDR APT CITY ST PLACE X SRC ID INFO");
     data.strCall = match.group(1).trim();
     data.strTime = match.group(2);
     data.strDate = match.group(3).replace('-', '/');
-    parseAddress(StartType.START_ADDR, match.group(4).trim(), data);
-    data.strPlace = getLeft();
+    String addr = match.group(4).trim();
+    if (addr.contains("\"")) {
+      Parser p = new Parser(addr);
+      data.strPlace = p.getLastOptional("\"");
+      String city = p.getLastOptional(',');
+      if (city.equals("NY")) {
+        data.strState = city;
+        city = p.getLastOptional(',');
+      }
+      data.strCity = city;
+      parseAddress(p.get(), data);
+    } else {
+      parseAddress(StartType.START_ADDR, addr, data);
+      data.strPlace = getLeft();
+    }
     String cross = getOptGroup(match.group(5));
     cross = stripFieldEnd(cross, "/");
     cross = stripFieldStart(cross, "/");
