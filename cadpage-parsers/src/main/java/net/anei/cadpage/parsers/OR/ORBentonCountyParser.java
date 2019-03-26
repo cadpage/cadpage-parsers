@@ -893,7 +893,7 @@ public class ORBentonCountyParser extends FieldProgramParser {
   }
   private static final Pattern STREET_ONLY_PTN = Pattern.compile("\\d+ +(.*)");
 
-  private static final String MAP_PAGE_BASE = "http://maps.co.benton.or.us/gisdata/Address/FireMapBooks/";
+  private static final String MAP_PAGE_BASE = "http://gis.co.benton.or.us/gisdata/Address/FireMapBooks/";
   
   private static final Properties MAP_PAGE_ADDR_TABLE = buildCodeTable(new String[]{
       "1400 APPLEGATE ST",         "PhilomathMaps/FireGridCommon/APPLEGATE_CAMBRIDGE_APARTMENT.pdf",
