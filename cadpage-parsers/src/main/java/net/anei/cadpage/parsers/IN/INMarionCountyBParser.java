@@ -18,7 +18,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
   
   @Override
   public String getFilter() {
-    return "MotorolaCAD@page.indy.gov,CAD@page.indy.gov";
+    return "MotorolaCAD@page.indy.gov,CAD@page.indy.gov,777";
   }
   
   
