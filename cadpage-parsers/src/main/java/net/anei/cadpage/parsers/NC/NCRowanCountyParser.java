@@ -16,6 +16,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
            "FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO/Z+? NAME PH");
     setupSpecialStreets("NEW ST");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -332,6 +333,10 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       return super.getFieldNames() + " CH";
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "485 CEDAR SPRINGS RD",                 "+35.630400,-80.534079"
+  });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CHGV", "CHINA GROVE",
