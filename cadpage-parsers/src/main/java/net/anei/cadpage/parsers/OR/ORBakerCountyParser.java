@@ -10,6 +10,7 @@ public class ORBakerCountyParser extends FieldProgramParser {
   public ORBakerCountyParser() {
     super(CITY_CODES, "BAKER COUNTY", "OR", 
           "ADDR CITY DATE TIME UNIT UNIT UNIT UNIT CALL! END");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -35,6 +36,10 @@ public class ORBakerCountyParser extends FieldProgramParser {
       data.strUnit = append(data.strUnit, " ", field);
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "337 2ND STREET",                       "+44.766027,-117.169473"
+  });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BAK",  "BAKER CITY",
