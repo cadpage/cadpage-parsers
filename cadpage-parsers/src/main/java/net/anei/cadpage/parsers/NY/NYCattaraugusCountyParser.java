@@ -53,7 +53,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
     
     // Silly IAR edits :(
     if (subject.equals("WVFD")) {
-      body = subject + " Loc:" + body.replace("\\u0000", "")
+      body = subject + " Loc:" + body.replace("\u0000", "")
                                      .replace("\n`\nBtw:", " Between:")
                                      .replaceAll("\n`\n", " ");
     }
