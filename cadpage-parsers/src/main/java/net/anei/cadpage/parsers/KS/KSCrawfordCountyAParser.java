@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 public class KSCrawfordCountyAParser extends DispatchH05Parser {
   
   public KSCrawfordCountyAParser() {
-    super("CRAWFORD COUNTY", "KS", 
+    super(CITY_LIST, "CRAWFORD COUNTY", "KS", 
           "JUNK+? CALL_ADDR_CITY_X HTTP INFO_BLK/Z+? ID! TIMES+");
     setPreserveWhitespace(true);
     setAccumulateUnits(true);
@@ -74,6 +74,13 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       } else {
         parseAddress(StartType.START_CALL, FLAG_ANCHOR_END, field, data);
       }
+      
+      if (data.strCross.length() == 0 && data.strCity.length() > 0) {
+        String city = data.strCity;
+        data.strCity = "";
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+        data.strCross = getLeft();
+      }
     }
 
     @Override
@@ -136,4 +143,60 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       return "NAME PHONE ID";
     }
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "ARMA",
+      "ARCADIA",
+      "CHEROKEE",
+      "FRONTENAC",
+      "GIRARD",
+      "HEPLER",
+      "MCCUNE",
+      "MULBERRY",
+      "PITTSBURG",
+      "WALNUT",
+      
+      // Townships
+      "BAKER",
+      "CRAWFORD",
+      "GRANT",
+      "LINCOLN",
+      "OSAGE",
+      "SHERIDAN",
+      "SHERMAN",
+      "WALNUT",
+      "WASHINGTON",
+
+      // Census-designated places
+      "CHICOPEE",
+      "FRANKLIN",
+
+      // Other unincorporated places
+      "BEULAH",
+      "BRAZILTON",
+      "CAMP 50",
+      "CAPALDO",
+      "CATO",
+      "CORNELL",
+      "CROWEBURG",
+      "CURRANVILLE",
+      "DUNKIRK",
+      "ENGLEVALE",
+      "FARLINGTON",
+      "FOXTOWN",
+      "FULLER",
+      "GREENBUSH",
+      "GROSS",
+      "KIRKWOOD",
+      "KLONDIKE",
+      "MIDWAY",
+      "MONMOUTH",
+      "OPOLIS",
+      "RADLEY",
+      "RINGO",
+      "SOUTH RADLEY",
+      "YALE"
+  };
 }
