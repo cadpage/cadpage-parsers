@@ -95,7 +95,12 @@ public class NCWataugaCountyParser extends DispatchSouthernParser {
   
   private static CodeSet MWORD_CALL_LIST = new CodeSet(new String[]{
       "10-50 PI",
+      "10-65/ ARMED ROBBERY",
+      "911 HANG UP",
+      "911 OPEN LINE",
       "ABDOMINAL PAIN",
+      "ELEVATOR-ESCALATOR TEST",
+      "FUEL-SPILL DIESEL",
       "SICK PERSON",
       "STRUCTURE FIRE",
       "UNKNOWN PROBLEM (MAN DOWN)"
