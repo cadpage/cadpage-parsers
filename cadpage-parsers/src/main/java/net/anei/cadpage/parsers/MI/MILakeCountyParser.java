@@ -12,7 +12,8 @@ public class MILakeCountyParser extends DispatchOSSIParser {
   
   public MILakeCountyParser() {
     super(CITY_CODES, "LAKE COUNTY", "MI",
-          "FYI CALL ADDR! ( END | X/Z+? CITY! END )");
+          "( CANCEL ADDR CITY! INFO/N+ " + 
+          "| FYI? CALL ADDR! ( END | X/Z+? CITY END ) )");
   }
   
   @Override
@@ -21,12 +22,39 @@ public class MILakeCountyParser extends DispatchOSSIParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "B",    "BALDWIN",            
+      "BA",   "BALDWIN",
+      "BAL",  "BALDWIN",
       "BALD", "BALDWIN",
+      "C",    "",
+      "CH",   "CHASE",
+      "CHA",  "CHASE",
+      "CHAS", "CHASE",
+      "CH",   "CHERRY VALLEY",
+      "CHE",  "CHERRY VALLEY",
       "CHER", "CHERRY VALLEY",
+      "P",    "",
+      "PE",   "PEACOCK",
+      "PEA",  "PEACOCK",
       "PEAC", "PEACOCK",
+      "PI",   "PINORA",
+      "PIN",  "PINORA",
+      "PINO", "PINORA",
+      "PL",   "PLEASANT PLAINS",
+      "PLE",  "PLEASANT PLAINS",
       "PLEA", "PLEASANT PLAINS",
+      "S",    "SWEETWATER",
+      "SW",   "SWEETWATER",
+      "SWE",  "SWEETWATER",
       "SWEE", "SWEETWATER",
-      "YATE", "YATES"
+      "Y",    "YATES",
+      "YA",   "YATES",
+      "YAT",  "YATES",
+      "YATE", "YATES",
+      "W",    "WEBBER",
+      "WE",   "WEBBER",
+      "WEB",  "WEBBER",
+      "WEBB", "WEBBER"
   });
   
 }

@@ -19,7 +19,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
   
   public MIMecostaCountyParser(String defCity, String defState) {
     super(defCity, defState, 
-          "ADDR ( CITY ST_ZIP? | ) X APT_PLACE CALL UNIT! ( NONE END | INFO/CS+ )");
+          "ADDR ( CITY ST_ZIP? | ) X APT_PLACE ( CALL2 | APT_PLACE NAME/CS+? CALL2 ) UNIT! ( NONE END | INFO/CS+ )");
   }
   
   @Override
@@ -46,8 +46,10 @@ public class MIMecostaCountyParser extends FieldProgramParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ST_ZIP")) return new MyStateZipField();
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
+    if (name.equals("NAME")) return new MyNameField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("NONE")) return new SkipField("None", true);
     return super.getField(name);
   }
@@ -62,12 +64,13 @@ public class MIMecostaCountyParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (field.contains("(")) return false;
       if (field.contains(" and ")) return false;
+      if (field.length() == 0 && getRelativeField(+2).equals(data.strCall)) return false;
       parse(field,  data);
       return true;
     }
   }
   
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?-?");
   private class MyStateZipField extends Field {
     @Override
     public boolean canFail() {
@@ -106,7 +109,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
         if (apt == null) apt = match.group(2);
         data.strApt = append(data.strApt, "-", apt);
       } else {
-        data.strPlace = field;
+        data.strPlace = append(data.strPlace, " - ", field);
       }
     }
 
@@ -114,7 +117,14 @@ public class MIMecostaCountyParser extends FieldProgramParser {
     public String getFieldNames() {
       return "APT PLACE";
     }
-    
+  }
+  
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
   }
   
   private class MyUnitField extends UnitField {
@@ -122,6 +132,23 @@ public class MIMecostaCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.replace("; ", ",").replace(';', ',');
       super.parse(field, data);
+    }
+  }
+  
+  private class MyCall2Field extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.equals(data.strCall);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
