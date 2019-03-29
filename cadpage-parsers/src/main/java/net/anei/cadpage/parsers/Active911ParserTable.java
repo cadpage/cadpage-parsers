@@ -1679,6 +1679,7 @@ public class Active911ParserTable {
       "US/WA/StevensCounty",              "WAStevensCounty",
       "US/WA/StevensCountyNoNotes",       "WAStevensCounty",
       "US/WA/ThurstonCounty",             "WAThurstonCounty",
+      "US/WA/ThurstonCountyMedicOne",     "WAThurstonCounty",
       "US/WA/USAMobility",                "WAPierceCountyA",
       "US/WA/ValleyCom",                  "WAKingCountyC",
       "US/WA/WallaWallaCounty",           "WAWallaWallaCounty",
