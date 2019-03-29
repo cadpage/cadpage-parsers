@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.OR;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -9,7 +10,7 @@ public class ORBakerCountyParser extends FieldProgramParser {
   
   public ORBakerCountyParser() {
     super(CITY_CODES, "BAKER COUNTY", "OR", 
-          "ADDR CITY DATE TIME UNIT UNIT UNIT UNIT CALL! END");
+          "ADDR CITY DATE TIME UNIT UNIT UNIT UNIT CALL! CALL/S+? MAP END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -20,12 +21,16 @@ public class ORBakerCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.length() > 50 && body.charAt(50) == '~') {
+      body = body.substring(0, 50) + body.substring(51);
+    }
     return parseFields(body.split("~"), data);
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) new MyUnitField();
+    if (name.equals("MAP")) return new MapField("\\d{3,4}");
     return super.getField(name);
   }
   
@@ -37,8 +42,17 @@ public class ORBakerCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern STREET_PTN = Pattern.compile("\\bSTREET\\b");
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    address = address.toUpperCase();
+    address = STREET_PTN.matcher(address).replaceAll("ST");
+    return address;
+  }
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      "337 2ND STREET",                       "+44.766027,-117.169473"
+      "337 2ND ST",                           "+44.766027,-117.169473"
   });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -52,7 +66,8 @@ public class ORBakerCountyParser extends FieldProgramParser {
       "HER",  "HEREFORD",
       "HUN",  "HUNTINGTON",
       "ONT",  "ONTARIO",
-      "NOR",  "NOR",
+      "OXB",  "OXBOW",
+      "NOR",  "NORTH POWDER",
       "RIC",  "RICHLAND",
       "SUM",  "SUMPTER",
       "UNI",  "UNITY"
