@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -7,7 +10,7 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
   
   public CAMontereyCountyBParser() {
     super("MONTEREY COUNTY", "CA", 
-          "( RES:UNIT! CLOSE:ID! CALL! ADDRCITY! DSP:TIME! AIQ:SKIP! END " +
+          "( RES:UNIT! CLOSE:ID! CALL! ADDRCITY! INFO/R! INFO/N+ " +
           "| CALL ADDRCITY UNIT PLACE X MAP GPS! ID! Tac:CH! AIR/N GRD/N UNIT! INFO/N )");
   }
   
@@ -31,6 +34,7 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("Inc# +(\\d{6})", true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS")) return new GPSField("X:.* Y:.*", true);
     if (name.equals("AIR")) return new InfoField("Air:.*", true);
@@ -39,11 +43,33 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{1,2})-(\\d{1,2})-(\\d{1,2}:\\d{2})");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1)+'/'+match.group(2);
+      data.strTime = match.group(3);
+    }
+    
+  }
+  
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf('@');
+      if (pt >= 0) {
+        data.strPlace = field.substring(0, pt).trim();
+        field = field.substring(pt+1).trim();
+      }
       super.parse(field, data);
       data.strCity = data.strCity.replace('_', ' ');
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
   
