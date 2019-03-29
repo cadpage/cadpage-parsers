@@ -42,7 +42,7 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME_CH")) return new MyDateTimeChannelField();
     if (name.equals("UNIT_CALL_CH")) return new MyUnitCallChannelField();
-    if (name.equals("UNIT")) return new UnitField("(?:\\b\\d?[A-Z]+\\d+\\b(?:, *)?)+", false);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b\\d?[A-Z]+\\d+[A-Z]?\\b(?:, *)?)+", false);
     if (name.equals("CH")) return new ChannelField(CHANNEL_PTN_STR, true);
     if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
