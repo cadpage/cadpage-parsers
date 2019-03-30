@@ -15,11 +15,11 @@ import net.anei.cadpage.parsers.ReverseCodeTable;
  */
 public class CASanBernardinoCountyAParser extends FieldProgramParser {
   
-  private static final Pattern GEN_ALT_UNIT_PTN = Pattern.compile("^([A-Z]+\\d+)[A-Z]?\\b");
+  private static final Pattern GEN_ALT_UNIT_PTN = Pattern.compile("^([A-Z]+\\d+)[A-Z]?\\b", Pattern.CASE_INSENSITIVE);
   
   public CASanBernardinoCountyAParser() {
     super("SAN BERNARDINO COUNTY", "CA",
-          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! ( UNITS:UNIT CALL_INFO:INFO | UNIT LAT/LON:GPS COMMENTS:INFO ) END");
+          "CALL! ADDR! CITY_EXT LOC_INFO:PLACE AGN_MAP:MAP! X_ST:X! ( UNITS:UNIT CALL_INFO:INFO | UNIT LAT/LON:GPS COMMENTS:INFO ) INFO/N+");
   }
   
   @Override
@@ -107,10 +107,18 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ID_CALL_PTN = Pattern.compile("CAD:(\\d+-\\d+) *(.*)");
   private class MyCallField extends CallField {
     
     @Override
     public void parse(String field, Data data) {
+      
+      Matcher match = ID_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCallId = match.group(1);
+        field = match.group(2);
+      }
+      
       field = stripFieldEnd(field, "-");
       String key = field;
       String extra = "";
@@ -134,6 +142,11 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
         field = field + " - " + desc;
       }
       super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ID " + super.getFieldNames();
     }
   }
   
