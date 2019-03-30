@@ -18,13 +18,20 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
   
   public ARHotSpringCountyParser() {
     super("HOT SPRING COUNTY", "AR", 
-          "( CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID? DATE:DATETIME! INFO:INFO! INFO/N+ " + 
-          "| Category:CALL! Address:ADDR2! Intersection:X? Business_Name:PLACE! Event_#:ID! Date_/_Time:DATETIME! Notes:INFO )");
+          "( RUN_REPORT/R RUN_REPORT! CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross-Street:X! ( Notes:INFO! | INFO:INFO! ) " +
+          "| CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID? PRI:PRI? DATE:DATETIME! TIME:TIME? X:X? INFO:INFO! " + 
+          "| Category:CALL! Address:ADDR2! Intersection:X? Business_Name:PLACE! Event_#:ID! Date_/_Time:DATETIME! Notes:INFO " + 
+          ") INFO/N+? CAD END");
   }
   
   @Override
   public String getFilter() {
     return "DISPATCH@HOTSPRINGDEM.ORG";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   @Override
@@ -64,7 +71,10 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("CALL:")) {
+    int pt = body.indexOf('�');
+    if (pt >= 0) body = body.substring(0, pt).trim();
+    
+    if (body.startsWith("CALL:") || body.startsWith("RUN REPORT")) {
       return super.parseFields(body.split("\n"), data);
     }
     
@@ -78,11 +88,14 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("RUN_REPORT")) return new SkipField("RUN REPORT");
     if (name.equals("CALL"))  return new MyCallField();
     if (name.equals("ADDR2"))  return new MyAddress2Field();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("CAD")) return new IdField("CAD#[- ]+(.*)", true);
     return super.getField(name);
   }
   
@@ -128,7 +141,7 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4})(?: (\\d\\d?:\\d\\d:\\d\\d [AP]M))?");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -136,21 +149,16 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time != null) setTime(TIME_FMT, time, data);
     }
   }
   
-  private class MyInfoField extends InfoField {
+  private class MyCrossField extends CrossField {
     @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.startsWith("©")) return false;
-      parse(field, data);
-      return true;
+    public void parse(String field, Data data) {
+      field = field.replace('@', '/');
+      super.parse(field, data);
     }
   }
   
