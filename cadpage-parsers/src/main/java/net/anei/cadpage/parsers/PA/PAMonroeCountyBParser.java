@@ -11,8 +11,8 @@ public class PAMonroeCountyBParser extends HtmlProgramParser {
   
   public PAMonroeCountyBParser() {
     super("MONROE COUNTY", "PA",
-          "CALL! Priority:PRI? ( STARS! INFO/N+? STARS! ADDRCITY X_STS:X! GPS! STARS! INFO/N+? STARS! Your_INC#:ID ID/S+? STARS! TIMES/N+ " +
-                              "| ( ADDRCITY/Z X_STS:X | CALL/SDS+? DESC ADDRCITY/Z! X_STS:X! ) GPS! INFO/N+ INC#:ID! TIMES/N+ )");
+          "CALL! Priority:PRI? ( STARS! INFO/N+? STARS! PLACE? ADDRCITY/ZS6 X_STS:X! GPS! STARS! INFO/N+? STARS! Your_INC#:ID ID/S+? STARS! TIMES/N+ " +
+                              "| ( ADDRCITY/Z X_STS:X | CALL/SDS+? DESC ADDRCITY/ZS6! X_STS:X! ) GPS! INFO/N+ INC#:ID! TIMES/N+ )");
   }
   
   @Override
@@ -39,12 +39,26 @@ public class PAMonroeCountyBParser extends HtmlProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DESC")) return new MyDescField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIMES")) return new MyTimesField();
     if (name.equals("STARS")) return new SkipField("\\*{10,}");
     return super.getField(name);
+  }
+  
+  private Pattern END_APT_LABEL_PTN = Pattern.compile("(.*?) +(?:#?APT:?|#|#?LOT|RM|ROOM:?|SP|STE|SUITE|UNIT)");
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      if (data.strApt.length() > 0) {
+        data.strCity = stripFieldEnd(data.strCity, data.strApt);
+        Matcher match = END_APT_LABEL_PTN.matcher(data.strCity);
+        if (match.matches()) data.strCity = match.group(1);
+      }
+    }
   }
   
   private class MyDescField extends InfoField {
