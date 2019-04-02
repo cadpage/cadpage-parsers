@@ -6,41 +6,52 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Fresno County, CA
  */
 public class CAFresnoCountyParser extends FieldProgramParser {
   
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Unit:(.+?) +Incident #:(\\d+) +(.*)");
-  private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<=\\b\\d\\d:\\d\\d:\\d\\d)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:Unit:(.+?)[, ]+)?(?:EMS|Incident )#:(\\d+)[ ,]+(.*)");
+  private static final Pattern RUN_REPORT_BRK = Pattern.compile(" +,");
   
   public CAFresnoCountyParser() {
     super("FRESNO COUNTY", "CA",
           "( Unit:UNIT! Pri:PRI! Loc:ADDR! MapPage:MAP Apt:APT! City:CITY? Nature:CALL% Zone:MAP% EMS#:ID% XStreet:X% " +
-           "| CALL! For:UNIT! Zone:MAP_ADDR! Apt:APT! Between:X! Location_Name:PLACE! )");
+           "| CALL! For:UNIT! ( Zone:MAP_ADDR! | Dist:MAP Address:ADDR ) Apt:APT! Between:X! Location_Name:PLACE! )");
   }
   
   @Override
   public String getFilter() {
-    return "VCMail@co.fresno.ca.us";
+    return "VCMail@co.fresno.ca.us,VCMail@fresnocountyca.gov";
   }
   
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
+  
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public int splitBreakLength() { return 255; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("VisiCad Email")) return false;
-    if (body.startsWith("Unit:")) {
+    if (body.startsWith("Unit:") || body.startsWith("EMS#:")) {
       Matcher match = RUN_REPORT_PTN.matcher(body);
       if (match.matches()) {
         setFieldList("UNIT ID INFO");
         data.msgType = MsgType.RUN_REPORT;
-        data.strUnit = match.group(1).trim();
+        data.strUnit = getOptGroup(match.group(1));
         data.strCallId = match.group(2);
         data.strSupp = RUN_REPORT_BRK.matcher(match.group(3)).replaceAll("\n");
         return true;
@@ -50,7 +61,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
     }
     
     else {
-      body = body.replace(" Dist:",  " Zone:").replace("Location Name:", " Location Name:");
+      body = body.replace("Location Name:", " Location Name:");
       if (super.parseMsg(body, data)) return true;
     }
     
@@ -77,7 +88,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern ADDR_MAP_PTN = Pattern.compile("^(?:(\\d{5})|NOT FOUND) +");
+  private static final Pattern ADDR_MAP_PTN = Pattern.compile("^(?:(\\d{5}|\\d\\d-\\d{4}[A-Z]?)|NOT FOUND) +");
   private class MyMapAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
