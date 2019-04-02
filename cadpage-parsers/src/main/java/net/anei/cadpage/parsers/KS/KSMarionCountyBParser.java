@@ -7,7 +7,7 @@ public class KSMarionCountyBParser extends FieldProgramParser {
   
   public KSMarionCountyBParser() {
     super("MARION COUNTY", "KS", 
-          "ID CALL ADDR GPS1 GPS2 CITY ST END");
+          "ID CALL ADDR! GPS1 GPS2 CITY ST END");
   }
   
   @Override
@@ -23,6 +23,6 @@ public class KSMarionCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatched Unit Email Notification")) return false;
-    return parseFields(body.split(";"), data);
+    return parseFields(body.split(";",-1), data);
   }
 }
