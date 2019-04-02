@@ -17,6 +17,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
           "| FYI? ( DATETIME CALL CH? ADDR! X+? INFO+ " +
                  "| DIGIT CALL ( PRI/Z UNIT UNIT+? CH? ADDR! X+? EXTRA+? DATETIME | DIGIT? CH? ADDR! X+? EXTRA+? ( PRI | UNIT ) UNIT+? DATETIME ) EXTRA+? ID ) )");
     setupMultiWordStreets("A T ALLEN SCHOOL");
+    setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
   }
   
   @Override
