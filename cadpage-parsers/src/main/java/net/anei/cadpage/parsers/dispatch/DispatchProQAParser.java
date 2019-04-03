@@ -116,7 +116,7 @@ public class DispatchProQAParser extends FieldProgramParser {
 
     // Everything else is variable
     body = body.replace("ProQA comments:", "/");
-    String[] lines = delimPattern.split(body);
+    String[] lines = delimPattern.split(body, -1);
     return parseFields(lines, data);
   }
   

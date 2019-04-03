@@ -9,7 +9,7 @@ public class WICalumetCountyBParser extends DispatchProQAParser {
   
   public WICalumetCountyBParser() {
     super("CALUMET COUNTY", "WI",
-          "ADDR PLACE APT? CITY CALL CALL+? ( NONE ID! TIME | ID! ( EMPTY NONE! TIME | ) ) INFO+",
+          "ADDR PLACE APT? CITY CALL CALL+? ( NONE ID! EMPTY? TIME | ID! ( EMPTY NONE! TIME | ) ) INFO+",
           true);
   }
   

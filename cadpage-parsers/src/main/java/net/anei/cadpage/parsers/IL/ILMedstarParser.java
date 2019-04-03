@@ -44,6 +44,8 @@ public class ILMedstarParser extends DispatchProQAParser {
     @Override
     public void parse(String field, Data data) {
       
+      if (field.length() == 0) return;
+      
       // See if it has a room signature
       if (APT_PAT.matcher(field).matches()) {
         data.strApt = append(data.strApt, "-", field);
