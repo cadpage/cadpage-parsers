@@ -1,13 +1,14 @@
 **************************************************************************
 * Cadpage not alerting on Samsung device
 **************************************************************************
-Samsung users have been reporting problems with the latest versions of Cadpage not picking up text alerts that can be resolved by adding the Cadpage message support app to the list of devices that are not monitored as excess battery consumers.  To fix that
+Another user resolved a similar issue on a Samsung device by adding
+Cadpage and the Cadpage Message support app to a list of unmonitored
+apps in battery settings.  This seems to be something unique to Samsung
+devices, I do not have any such settings on my stock Google devices.
 
 Open your main android settings and select
 Device Maintenance > Battery > Unmonitored apps
 Then add the Cadpage and the Cadpage Message Support apps.
-
-If that does not fix the problem, open Cadpage general settings and use the "Email the Developer" setting to send us a new support email right after Cadpage fails to pick up an alert.
 
 Good luck,
 -Ken
@@ -699,7 +700,7 @@ Your current Cadpage subscription will transfer easily to a new phone, as long a
 If those are true, then all you need to do after installing Cadpage on your new phone is this:
 Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
 
-If that fails, please email us again using the Cadpage app.  Go to Settings, Select Email the Developer, and include the configuration information.
+If that fails, please email us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer, and include the configuration information.
 
 Please note, if you have changed your phone number, you will need to contact your Dispatch Center so your text messages can be sent to the correct number.
 
@@ -829,7 +830,7 @@ I found your free Cadpage subscription of _________, which is effective at least
 Please be sure to install the newest version of Cadpage.  Then:
 Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. 
 
-If that fails, please contact us again using the Cadpage app.  Go to Settings, select Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
 Take care,
 Jean ~ Cadpage Administrator
@@ -844,7 +845,7 @@ I found your free Cadpage subscription of ______.  However, your Cadpage User em
 
 Please: 
 Go into Cadpage settings, press Payment Status and then Recalculate Payment Status.
-If that fails, please contact us again using the Cadpage app.  Go to Settings, select Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
 Take care, 
 Jean ~ Cadpage Administrator
@@ -880,7 +881,7 @@ I found your Google Play Store payment record of ______.  However, your Cadpage 
 Please: 
 Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. This reloads your payment status from the market which will usually fix things.
 
-If that fails, please contact us again using the Cadpage app.  Go to Settings, select Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app. Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
 Thanks so much for your support,
 Jean ~ Cadpage Administrator
@@ -892,7 +893,7 @@ I found your Google Play Store payment record of _________, and have re-register
 Please be sure to install the newest version of Cadpage.  Then:
 Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. This reloads your payment status from the market which will usually fix things.
 
-If that fails, please contact us again using the Cadpage app.  Go to Settings, select Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
 Thanks so much for your support,
 Jean ~ Cadpage Administrator
