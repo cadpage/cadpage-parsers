@@ -10,7 +10,7 @@ public class KYGarrardCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "noreply@interact911.com";
+    return "noreply@interact911.com,noreply@public-safety-cloud.com";
   }
   
 }
