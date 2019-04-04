@@ -5,12 +5,13 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class MDMontgomeryCountyCParser extends FieldProgramParser {
   
   public MDMontgomeryCountyCParser() {
     super("MONTGOMERY COUNTY", "MD", 
-          "ID CALL ADDR! Apt/Suite:APT? PLACE Box_Area:BOX! TG/CH:CH? Units:UNIT! END");
+          "ID CALL ADDR! Apt/Suite:APT? PLACE ( Box_Area:BOX! | Area:MAP! Beat:MAP/L! ) TG/CH:CH? Units:UNIT! END");
   }
   
   @Override
@@ -23,10 +24,20 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
     
     if (body.startsWith("<!doctype html>\n")) {
       int pt1 = body.indexOf("CAD MSG:");
-      if (pt1 < 0) return false;
-      int pt2 = body.indexOf("</p>\n");
-      if (pt2 < 0) return false;
-      body = body.substring(pt1, pt2).trim();
+      if (pt1 >= 0) {
+        int pt2 = body.indexOf("</p>\n", pt1);
+        if (pt2 < 0) return false;
+        body = body.substring(pt1, pt2).trim();
+      } else {
+        pt1 = body.indexOf("MESSAGE:");
+        if (pt1 >= 0) {
+          int pt2 = body.indexOf('\n', pt1);
+          if (pt2 < 0) return false;
+          body = body.substring(pt1, pt2).trim();
+        } else {
+          return false;
+        }
+      }
       return parseMsg(body, data);
     }
     
@@ -35,9 +46,18 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("CAD MSG:")) return false;
-    body = body.substring(8).trim();
-    return parseFields(body.split(" \\* "), data);
+    if (body.startsWith("CAD MSG:")) {
+      body = body.substring(8).trim();
+      return parseFields(body.split(" \\* "), data);
+    }
+    
+    if (body.startsWith("MESSAGE:")) {
+      setFieldList("INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body.substring(8).trim();
+      return true;
+    }
+    return false;
   }
   
   @Override
