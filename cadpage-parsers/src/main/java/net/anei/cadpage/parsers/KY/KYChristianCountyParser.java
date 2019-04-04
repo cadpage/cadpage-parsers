@@ -13,6 +13,6 @@ public class KYChristianCountyParser extends DispatchA27Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,noreply@hopkinsvilleky.us,noreply@cis.com";
   }
 }
