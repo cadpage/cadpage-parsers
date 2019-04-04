@@ -10,6 +10,6 @@ public class KSMiamiCountyParser extends DispatchA72Parser {
   
   @Override
   public String getFilter() {
-    return "tpsadmin@micosheriff.org";
+    return "tpsadmin@micosheriff.org,notify@sheriffmiamicountyks.gov,notify@micoso.org";
   }
 }
