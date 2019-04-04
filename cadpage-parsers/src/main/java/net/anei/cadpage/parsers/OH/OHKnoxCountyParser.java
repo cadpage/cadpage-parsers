@@ -63,6 +63,9 @@ public class OHKnoxCountyParser extends DispatchEmergitechParser {
     
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
     
+    // Don't ask me why, but this works
+    if (data.strCity.equals("MONROE TWP")) data.strCity = "MT VERNON";
+    
     return true;
   }
   
