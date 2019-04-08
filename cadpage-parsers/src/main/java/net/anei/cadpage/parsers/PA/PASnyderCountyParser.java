@@ -15,6 +15,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
 
   public PASnyderCountyParser() {
     super(CITY_LIST, "SNYDER COUNTY", "PA", B2_FORCE_CALL_CODE);
+    setupDoctorNames("SODHI");
   }
   
   @Override
@@ -130,6 +131,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "BORO OF THOMPSONTOWN",
     
     "MCALISTERVILLE",
+    "MCALLISTERVILLE",
     "MEXICO",
     "RICHFIELD",
     
@@ -139,6 +141,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "ARMAGH TWP",
     "BROWN TWP",
     "DECATUR TWP",
+    "DECATOR TWP",  // misspelled
     "DECATURE TWP",  // Misspelled
     "DERRY TWP",
     
@@ -160,6 +163,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "DERRY VALLEY TWP",
     "LIBERTY TWP",
     "LIMESTONE TWP",
+    "MAHONING TWP",
     
     "DANVILLE",
     "DANVILLE BORO",
@@ -178,6 +182,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "JORDAN TWP",
     "LEWIS TWP",
     "LITTLE MAHONOY TWP",
+    "LOWER AUGUST TWP",
     "LOWER AUGUSTA TWP",
     "LOWER MAHONOY TWP",
     "MT CARMEL TWP",
@@ -289,6 +294,7 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     
     "HARLETON",
     "HARLETON BORO",
+    "HARTLETON BORO",
     "BORO OF HARLETON",
     "LEWISBURG",
     "LEWISBURG BORO",
@@ -301,13 +307,23 @@ public class PASnyderCountyParser extends DispatchB3Parser {
     "BORO OF MILTOON",
     "NEW BERLIN",
     "NEW BERLIN BORO",
+    "NEWNEW BERLIN BORO",
     "BORO OF NEW BERLIN",
     
-    "LINNTOWN"
+    "LINNTOWN",
+    
+    // Far far away
+    "HORSHUM CITY"
  };
   
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{
+      "DECATOR TWP",        "DECATUR TWP",
       "DECATURE TWP",       "DECATUR TWP",
+      "HARTLETON",          "HARLETON",
+      "HORSHUM CITY",       "HORSHAM",
+      "LOWER AUGUST TWP",   "LOWER AUGUSTA TWP",
+      "MCALLISTERVILLE",    "MCALISTERVILLE",
+      "NEWNEW BERLIN",      "NEW BERLIN",
       "SELINGROVE",         "SELINSGROVE"
   });
   
