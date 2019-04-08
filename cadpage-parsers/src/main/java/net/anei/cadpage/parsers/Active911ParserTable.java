@@ -123,6 +123,7 @@ public class Active911ParserTable {
       "US/CA/CalaverasCounty",            "CACalaverasCounty",
       "US/CA/CathedralCity",              "CACathedralCity",
       "US/CA/CDFandGrassValleyECC",       "CAPlacerCountyA",
+      "US/CA/ChinoValleyFireDistrict",    "CASanBernardinoCountyA",
       "US/CA/CityofBenicia",              "CASolanoCountyC",
       "US/CA/CityofChico",                "CAButteCountyC",
       "US/CA/CityofChowchilla",           "CAMaderaCounty",
