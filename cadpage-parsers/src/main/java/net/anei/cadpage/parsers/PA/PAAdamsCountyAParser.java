@@ -982,6 +982,27 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2440 LOW DUTCH RD LOT 8",              "+39.795495,-77.180637",
       "2440 LOW DUTCH RD LOT 9",              "+39.795457,-77.179972",
       
+      "35 MAPLE ST APT 1",                    "+39.809062,-77.135295",
+      "35 MAPLE ST APT 2",                    "+39.809123,-77.135252",
+      "35 MAPLE ST APT 3",                    "+39.809184,-77.135197",
+      "35 MAPLE ST APT 4",                    "+39.809249,-77.135173",
+      "35 MAPLE ST APT 5",                    "+39.809330,-77.135126",
+      "35 MAPLE ST APT 6",                    "+39.809397,-77.135090",
+      "35 MAPLE ST APT 7",                    "+39.809434,-77.135030",
+      "35 MAPLE ST APT 8",                    "+39.809501,-77.134990",
+      "35 MAPLE ST APT 9",                    "+39.809597,-77.135051",
+      "35 MAPLE ST APT 10",                   "+39.809624,-77.135140",
+      "35 MAPLE ST APT 11",                   "+39.809628,-77.135223",
+      "35 MAPLE ST APT 12",                   "+39.809657,-77.135308",
+      "35 MAPLE ST APT 14",                   "+39.809551,-77.135490",
+      "35 MAPLE ST APT 15",                   "+39.809516,-77.135509",
+      "35 MAPLE ST APT 16",                   "+39.809462,-77.135511",
+      "35 MAPLE ST APT 17",                   "+39.809371,-77.135573",
+      "35 MAPLE ST APT 18",                   "+39.809332,-77.135607",
+      "35 MAPLE ST APT 19",                   "+39.809296,-77.135625",
+      "35 MAPLE ST APT 20",                   "+39.809243,-77.135635",
+      "35 MAPLE ST APT 13",                   "+39.809591,-77.135452",
+      
       "315 MENGUS MILL RD APT A",             "+39.735216,-77.092838",
       "315 MENGUS MILL RD APT C",             "+39.735993,-77.094529",
       "315 MENGUS MILL RD APT D",             "+39.736044,-77.094995",
@@ -1054,6 +1075,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "199 MOUNTAIN VIEW DR",                 "+39.992324,-77.398695",
 
       "21 N BOLTON ST",                       "+39.864105,-77.057834",
+      
+      "995 NEW RD APT A",                     "+39.911772,-77.377845",
+      "995 NEW RD APT B",                     "+39.912016,-77.376179",
+      "995 NEW RD APT C",                     "+39.912387,-77.375111",
+      "995 NEW RD APT D",                     "+39.911345,-77.372949",
+      "995 NEW RD APT E",                     "+39.911977,-77.375030",
+      "995 NEW RD APT F",                     "+39.911372,-77.375566",
 
       "45 NORRIS RD",                         "+39.978325,-77.385147",
       "56 NORRIS RD",                         "+39.979015,-77.385529",
@@ -1076,13 +1104,6 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "238 NORRIS RD",                        "+39.982742,-77.380974",
       "245 NORRIS RD",                        "+39.982635,-77.379913",
       "250 NORRIS RD",                        "+39.983135,-77.380325",
-      
-      "995 NEW RD APT A",                     "+39.911772,-77.377845",
-      "995 NEW RD APT B",                     "+39.912016,-77.376179",
-      "995 NEW RD APT C",                     "+39.912387,-77.375111",
-      "995 NEW RD APT D",                     "+39.911345,-77.372949",
-      "995 NEW RD APT E",                     "+39.911977,-77.375030",
-      "995 NEW RD APT F",                     "+39.911372,-77.375566",
       
       "1075 OLD HARRISBURG RD APT 2",         "+39.850978,-77.217316",
       "1075 OLD HARRISBURG RD APT 4",         "+39.850964,-77.217130",
@@ -1638,7 +1659,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
-      
+     
   });
 
   private static final String[] CITY_LIST = new String[]{
