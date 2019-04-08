@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-/*
-Webster county, GA
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class GAWebsterCountyParser extends GASchleyCountyAParser {
+/**
+ * Webster County, GA
+ */
+public class GAWebsterCountyParser extends GroupBestParser {
   
   public GAWebsterCountyParser() {
-    super("WEBSTER COUNTY");
+    super(new GAWebsterCountyAParser(), new GAWebsterCountyBParser());
   }
 }

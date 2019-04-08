@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-/*
-Marion county, GA
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class GAMarionCountyParser extends GASchleyCountyAParser {
+/**
+ * Marion County, GA
+ */
+public class GAMarionCountyParser extends GroupBestParser {
   
   public GAMarionCountyParser() {
-    super("MARION COUNTY");
+    super(new GAMarionCountyAParser(), new GAMarionCountyBParser());
   }
 }
