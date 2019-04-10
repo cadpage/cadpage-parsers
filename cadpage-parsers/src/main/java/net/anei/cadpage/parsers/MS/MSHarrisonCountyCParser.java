@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.MS;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
@@ -8,18 +9,21 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 public class MSHarrisonCountyCParser extends DispatchA48Parser {
   
   public MSHarrisonCountyCParser() {
-    super(MSHarrisonCountyParser.CITY_LIST, "HARRISON COUNTY", "MS", FieldType.NONE, A48_ONE_WORD_CODE);
+    super(MSHarrisonCountyParser.CITY_LIST, "HARRISON COUNTY", "MS", FieldType.X, A48_ONE_WORD_CODE);
   }
   
   @Override
   public String getFilter() {
-    return "S6ONDISPATCH@harrisoncountysheriff.com";
+    return "ONDISPATCH@harrisoncountysheriff.com";
   }
+  
+  private static final Pattern TRAIL_NULL_PTN = Pattern.compile("(?:\\s+null)+$");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
+    body = TRAIL_NULL_PTN.matcher(body).replaceFirst("");
     if (!super.parseMsg(subject, body, data)) return false;
     data.strCode = data.strCall;
     String code = data.strCode;
