@@ -8,6 +8,11 @@ public class UTSaltLakeCountyAParser extends FieldProgramParser {
   public UTSaltLakeCountyAParser() {
     super("SALT LAKE COUNTY", "UT", "ID! DATETIME! CALL! ( PLACE ADDR/Z APT! X/Z? SRC! | ADDR/Z APT! X/Z? SRC! | PLACE ADDR/Z X/Z SRC! | ADDR/Z SRC! | ADDR/Z X SRC! | PLACE ADDR/Z SRC! ) CODE INFO+");
   }
+  
+  @Override
+  public String getFilter() {
+    return "fsa@slcfire.com,alerts@slcgov.com";
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
