@@ -12,7 +12,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
 
   public ZSESwedenAParser() {
     super("", "", 
-    "( FROM!  Radiogruppsnamn:CH! ADDR X2? CITY DUPCITY? CALL! INFO Kompletterande_kategoritext:INFO/N+ " +
+    "( FROM!  Radiogruppsnamn:CH! ADDR PLACE CITY PLACE? CALL! CALL CALL INFO/N+? Kompletterande_kategoritext:INFO! INFO/N+ " +
     "| ( ID | CH ID ) ( CH ( CH CH+? CALL CALL+? | CALL CALL ) | CALL CALL CALL ) Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
     "| CALL CALL CALL ADDR! CITY ( END | GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
@@ -51,9 +51,8 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
   @Override
   public Field getField(String name) {
     if (name.equals("FROM")) return new SourceField("Från +(.*)", true);
-    if (name.equals("DUPCITY")) return new MyDuplicateCityField();
-    if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("ID")) return new IdField("\\d+");
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("INFO2")) return new ExtraInfoField();
@@ -63,35 +62,11 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
     return super.getField(name);
   }
   
-  private class MyDuplicateCityField extends SkipField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      return field.equals(data.strCity);
-    }
-  }
-  
-  private class MyCross2Field extends CrossField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!field.startsWith("mellan ")) return false;
-      field = field.substring(7).trim().replace(" - ", " / ");
-      super.parse(field, data);
-      return true;
-    }
-    
+  private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      if (data.strPlace.equals(data.strCity)) data.strPlace = "";
+      super.parse(field, data);
     }
   }
   
@@ -134,6 +109,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("")) return;
       if (isValidChannel(field)) {
         addChannel(field, data);
       } else {
