@@ -31,7 +31,7 @@ public class DispatchA32Parser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Perform Page")) return false;
+    if (!subject.endsWith("Page")) return false;
     addressPlaceFields.clear();
     return parseFields(body.split("\n"), data);
   }
@@ -107,7 +107,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Za-z ]+), +([A-Z]{2})");
+  private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Za-z ]+), +([A-Z]{2})(?: +(\\d{5}))?");
   private class MyCityStateField extends Field {
     
     @Override
@@ -121,6 +121,10 @@ public class DispatchA32Parser extends FieldProgramParser {
       if (!match.matches()) return false;
       data.strCity = match.group(1).trim();
       data.strState = match.group(2);
+      if (data.strCity.length() == 0) {
+        String zip = match.group(3);
+        if (zip != null) data.strCity = zip;
+      }
       return true;
     }
 
