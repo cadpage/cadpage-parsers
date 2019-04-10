@@ -15,7 +15,7 @@ public class COTellerCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "ept@ept911.info";
+    return "ept@ept911.info,ept@elpasoteller911.org";
   }
   
   @Override
