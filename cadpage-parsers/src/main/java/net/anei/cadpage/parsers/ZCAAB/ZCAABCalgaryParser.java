@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 /**
  * Calgary, AB, CA
  */
@@ -33,6 +34,12 @@ public class ZCAABCalgaryParser extends FieldProgramParser {
       body = body.substring(0, info);
     }
     
+    if (!body.startsWith("Add:")) {
+      setFieldList("INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body;
+      return true;
+    }
     return super.parseMsg(subject, body, data);
   } 
   
