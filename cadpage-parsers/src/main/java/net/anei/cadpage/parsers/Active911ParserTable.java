@@ -621,6 +621,8 @@ public class Active911ParserTable {
       "US/MD/BaltimoreCountyCmsg",        "MDBaltimoreCountyB",
       "US/MD/CalvertCounty",              "MDCalvertCounty",
       "US/MD/CalvertAdvanced",            "MDCalvertCounty",
+      "US/MD/CalvertCountyDunkirk",       "MDCalvertCounty",
+      "US/MD/CalvertCountySolomons",      "MDCalvertCounty",
       "US/MD/CarrollAlert",               "MDCarrollCountyA",
       "US/MD/CarrollCounty",              "MDCarrollCountyA",
       "US/MD/CarrollCountyShort",         "MDCarrollCountyA",
