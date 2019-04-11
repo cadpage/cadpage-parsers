@@ -30,6 +30,22 @@ All of this complicated stuff is necessary because Google has decided that apps 
 Sorry for the extra complicatedness,
 -Ken
 **************************************************************************
+No active email address
+
+You do have a current Cadpage subscription that expires on____________. Cadpage did not find it because it because you have not given Cadpage permission to use your email account information, which it needs to find  subscriptions on our backup authorization server.
+
+To fix that, open Cadpage General Settings, select "Billing Account" and then select the jay1629@gmail.com account.
+
+Then select
+Payment Status > Recalculate Payment Status
+
+That should restore your paid subscription status.
+
+Thanks for your support,
+-Ken
+
+
+**************************************************************************
 No email address - wanting to pay with check
 
 
