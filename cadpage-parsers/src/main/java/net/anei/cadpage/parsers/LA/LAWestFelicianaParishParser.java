@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class LAWestFelicianaParishParser extends DispatchB2Parser {
 		
   public LAWestFelicianaParishParser() {
-    super("911CENTER:", CITY_LIST, "WEST FELICIANA PARISH", "LA", B2_OPT_CALL_CODE);
+    super("911CENTER:", CITY_LIST, "WEST FELICIANA PARISH", "LA", B2_FORCE_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("FRANCISVILLE");
@@ -54,6 +54,7 @@ public class LAWestFelicianaParishParser extends DispatchB2Parser {
       "ABDOMINAL/BACK PAIN",
       "ACCIDENT INJURIES UNKNOWN",
       "ACCIDENT WITH INJURIES",
+      "ALLERGIC REACTION",
       "AIRPLANE CRASH",
       "ANIMAL/HUMAN BITE",
       "AUTO ACCIDENT NO INJURIES",
@@ -84,6 +85,7 @@ public class LAWestFelicianaParishParser extends DispatchB2Parser {
       "PATIENT TRANSFER",
       "POSSIBLE DEATH",
       "POSSIBLE DROWNING",
+      "PREGNANCY CHILDBIRTH",
       "PREGNANCY/LABOR CALL",
       "PUBLIC ASSIST",
       "REPORT OF FALLEN SUBJECT",
@@ -97,6 +99,7 @@ public class LAWestFelicianaParishParser extends DispatchB2Parser {
       "SEIZURE",
       "SICK PERSON",
       "SILENT ALARM",
+      "SPECIAL DETAIL",
       "STROKE",
       "STROKE/CVA",
       "STRUCTURE FIRE",
