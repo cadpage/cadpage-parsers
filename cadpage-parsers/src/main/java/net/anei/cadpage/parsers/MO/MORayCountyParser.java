@@ -81,11 +81,13 @@ public class MORayCountyParser extends SmartAddressParser {
       "10-50 TRAFFIC/TRANSPORT INCIDENT (CRASH)",
       "10-50 TRAFFIC & TRANSPORTATION INCIDENTS",
       "10-96 MENTAL DISORDER (BEHAVIORAL)",
+      "9-1-1 HANG UP",
       "ABDOMINAL PAIN / PROBLEMS",
       "ALARMS",
       "ALLERGIES / ENVENOMATIONS",
       "ANIMAL",
       "ANIMAL BITES / ATTACKS",
+      "ASSAULT",
       "ASSAULT/SEXUAL ASSAULT",
       "BACK PAIN (NON TRAUMATIC / NON RECENT)",
       "BREATHING PROBLEMS",
@@ -98,6 +100,8 @@ public class MORayCountyParser extends SmartAddressParser {
       "DIABETIC PROBLEM",
       "DISTURBANCE / NUISANCE",
       "DOMESTIC DISTURBANCE / VIOLENCE",
+      "DRUGS",
+      "ELECTRICAL HAZARD",
       "FALLS",
       "FIRE ALARM",
       "FOLLOW UP",
@@ -119,6 +123,7 @@ public class MORayCountyParser extends SmartAddressParser {
       "PUBLIC SERVICE (WELFARE CHECK)",
       "SICK PERSON (SPECIFIC DIAGNOSIS)",
       "SMOKE INVESTIGATION (OUTSIDE)",
+      "STAB/GUNSHOT/PENETRATING TRAUMA",
       "STAND BY",
       "STROKE (CVA)",
       "STROKE (CVA) / TRANSIENT ATTACK (TIA)",
@@ -131,6 +136,7 @@ public class MORayCountyParser extends SmartAddressParser {
       "UNCONSCIOUS / FAINTING (NEAR)",
       "UNKNOWN (3RD PARTY CALLER)",
       "UNKNOWN PROBLEM (MAN DOWN)",
-      "VEHICLE FIRE"
+      "VEHICLE FIRE",
+      "WATER RESCUE"
   );
 }
