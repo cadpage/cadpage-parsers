@@ -19,7 +19,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
   
   @Override
   public String getFilter() {
-    return "3315,@zenit.sosalarm.se";
+    return "3315,@zenit.sosalarm.se,Larmserver@kallareetuna.se";
   }
 
   @Override
@@ -39,7 +39,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
     if (data.strPlace.equals(data.strCity)) data.strPlace = "";
     
     // Comment out following line to check call table
-    if (data.strGPSLoc.length() > 0) return true;
+//    if (data.strGPSLoc.length() > 0) return true;
     
     String call = data.strCall;
     if (call.length() == 0) return true;
@@ -184,23 +184,32 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
       "Olycka - trafik",
       "Övrigt",
       "Övrigt räddning",
+      "Pågående dödligt våld",
       "Påkörd person",
       "Person i vatten",
       "Person - svår belägenhet",
       "Polis Räddning",
+      "R��ddning provlarm",
+      "Räddning - övrigt",
       "Räddning provlarm",
+      "Ras/skred",
+      "Restvärde",
       "Röklukt - byggnad",
       "Röklukt - ute",
+      "Sensorlarm utan talkontakt",
       "Sjukvårdslarm",
+      "Soteld",
       "Tekniskt fel",
       "Trafikolycka - flera fordon",
       "Trafikolycka - mindre motorfordon",
       "Trafikolycka - påkörd person",
       "Trafikolycka - singel",
       "Utsläpp",
+      "Utsläpp/Explosion",
       "Utsläpp farligt ämne - drivmedel",
       "Utsläpp farligt ämne - gas",
       "Utsläpp farligt ämne - övrigt",
+      "Vädervarning",
       "Vattenskada"
   }));
 }
