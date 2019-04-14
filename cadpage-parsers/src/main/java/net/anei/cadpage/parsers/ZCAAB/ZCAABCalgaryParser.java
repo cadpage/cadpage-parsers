@@ -34,7 +34,7 @@ public class ZCAABCalgaryParser extends FieldProgramParser {
       body = body.substring(0, info);
     }
     
-    if (!body.startsWith("Add:")) {
+    if (!body.startsWith("Add:") && !body.startsWith("Map:")) {
       setFieldList("INFO");
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body;
