@@ -399,7 +399,7 @@ Take care,
 
 ******************************************************************
 
-OK, let's try this:  Go to Cadpage settings and press Payment Status, then Recalculate Payment Status, then immediately scroll to the bottom of the menu and select Email the Developer to send us an email from Cadpage.
+OK, let's try this:  Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status, then immediately scroll to the bottom of the menu and select Email the Developer to send us an email from Cadpage.
 
 This will send us an email to confirm what your Cadpage User email address is, as well as lots of other information to help us solve this.
 
@@ -618,7 +618,7 @@ Jean ~ Cadpage Administrator
 Thanks for your PayPal payment! You have been added to a paid subscriber list with a one-year Cadpage subscription.
 
 Please: 
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If that fails, it is likely because your PayPal account is not how Cadpage knows you.  
 
@@ -637,7 +637,7 @@ Thanks for PayPal or helping with a location
 Thanks for your PayPal payment! You have been added to a paid subscriber list with a one-year Cadpage subscription.
 
 Please:
-Go to Cadpage Settings, Select General Settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 Please let us know if you ever have any problems with Cadpage.
 
@@ -649,7 +649,7 @@ Jean ~ Cadpage Administrator
 Thanks for your PayPal payment! Your Cadpage subscription has been renewed for another year.
 
 Please:
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 Please let us know if you ever have any problems with Cadpage.
 
@@ -661,7 +661,7 @@ Jean ~ Cadpage Administrator
 Thanks for your email.  You are now fully registered on our paid subscriber list for a one-year Cadpage subscription.  
 
 Please:
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 You no longer need the authorization code I gave you previously.
 
@@ -674,7 +674,7 @@ Department subscription; 30% off
 I have registered your department members with a one-year Cadpage subscription.  
 
 Their instructions are as follows:
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 I have attached an invoice that reflects the members involved, the term of service and the amount payable.  For ___ subscriptions, 
 your total cost will be ________________.
@@ -714,7 +714,7 @@ Your current Cadpage subscription will transfer easily to a new phone, as long a
 2. Your Cadpage User email address is the same one you used before.
 
 If those are true, then all you need to do after installing Cadpage on your new phone is this:
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If that fails, please email us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer, and include the configuration information.
 
@@ -743,7 +743,7 @@ Jean ~ Cadpage Administrator
 
 ******************************************************************
 These have all been added to a paid subscriber list.  They can update their payment status as follows...
-Go to Cadpage settings and press Payment Status, then press "Recalculate Payment Status"
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If this does not work, it probably means we got a phone number wrong.  In that case, they should go into Cadpage settings and press Payment Status, then I've made a PayPal payment, to send us an email.
 
@@ -816,7 +816,7 @@ Have you recently changed your email address?  Most of our accounts are register
 
 Approximately when was your last payment?  A Cadpage subscription is $9.99 per year.  Is it possible that your subscription has expired?
 
-It may not be necessary to locate that payment.  Go to Cadpage Settings and select Payment Status > Recalculate Payment Status
+It may not be necessary to locate that payment. Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If that does not work, try logging in to wallet.google.com or paypal.com.  From there you should be able to look up your Cadpage purchase and send us the date, time and transaction ID, and whether it was PayPal or Play Store.
 
@@ -832,7 +832,7 @@ Jean ~ Cadpage Administrator
 I found your free Cadpage subscription of _____.  
 
 Please:
-Go into Cadpage settings and press Payment Status > Recalculate Payment Status
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If you are having other difficulties with Cadpage, please let us know.
 
@@ -844,7 +844,7 @@ Jean ~ Cadpage Administrator
 I found your free Cadpage subscription of _________, which is effective at least until _________.
 
 Please be sure to install the newest version of Cadpage.  Then:
-Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. 
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
@@ -860,7 +860,7 @@ Since your DEMO period is longer than the remaining time on your subscription, t
 I found your free Cadpage subscription of ______.  However, your Cadpage User email address has changed.  I have updated your account with your current email address.
 
 Please: 
-Go into Cadpage settings, press Payment Status and then Recalculate Payment Status.
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
 Take care, 
@@ -895,7 +895,7 @@ Have a nice day,
 I found your Google Play Store payment record of ______.  However, your Cadpage User email address has changed.  I have updated your account with your current email address.
 
 Please: 
-Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. This reloads your payment status from the market which will usually fix things.
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
 If that fails, please contact us again using the Cadpage app. Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
@@ -907,7 +907,7 @@ Jean ~ Cadpage Administrator
 I found your Google Play Store payment record of _________, and have re-registered your account on our backup server.
 
 Please be sure to install the newest version of Cadpage.  Then:
-Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. This reloads your payment status from the market which will usually fix things.
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
 If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
 
@@ -921,7 +921,7 @@ DEMO is longer than remaining subscription
 
 I found your Google Play Store payment record of ______. 
 
-Go into Cadpage settings, press Payment Status and then Recalculate Payment Status. This reloads your payment status from the market which will usually fix things.
+Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
 The most likely reason that your Status is now back to DEMO, is that the 30-day trial is longer than the time remaining on your subscription, which is due to expire on __________.
 
@@ -1059,7 +1059,7 @@ Take care,
 
 No problem. I have added your name and current User email address to a backup authorization server.  
 
-Please try again:  Go into Settings, press Payment Status and then Recalculate Payment Status,
+Please try again:  Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 As always, please let us know of any further difficulties. 
 
