@@ -100,7 +100,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private enum InfoType { CAD_TIMES, REMARKS, UNIT_INFO, UNIT_INFO2, UNIT_STATUS };
   private InfoType infoType;
   private int colNdx;
-  
+
+  private static final Pattern SUBJECT_UNIT_PTN = Pattern.compile("Unit (.*?) from .*");
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
@@ -109,17 +110,22 @@ public class DispatchSPKParser extends HtmlProgramParser {
         !subject.contains(" gets ") &&
         !subject.contains("has a Service Request status change")) return false;
     
+    unitSet.clear();
     callerLocField = null;
     dispatchTime = false;
     times = null;
-    unitSet.clear();
     infoType = null;
     colNdx = -1;
     
     if (!super.parseHtmlMsg(subject, body, data)) return false;
 
     if (data.strCall.length() == 0) data.strCall = "ALERT";
-    
+
+    Matcher match = SUBJECT_UNIT_PTN.matcher(subject);
+    if (match.matches()) {
+      addUnit(match.group(1).trim(), data);
+    }
+
     if (data.strAddress.length() == 0 && callerLocField != null) parseAddress(callerLocField, data);
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     unitSet.clear();
@@ -128,7 +134,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " CALL";
+    return "UNIT? " + super.getProgram() + " CALL";
   }
 
   @Override
