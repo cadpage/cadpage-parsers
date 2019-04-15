@@ -302,6 +302,7 @@ public class GAWhiteCountyParser extends DispatchA48Parser {
       "LOST PERSON",
       "MA",
       "MECHANICAL BREAKDOWN",
+      "MEDICAL ALERT",
       "MEDICAL ALARM ACTIVATION",
       "MEET IN PERSON",
       "MENTAL DISORDER PATIENT",

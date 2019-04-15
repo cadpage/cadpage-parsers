@@ -2,6 +2,8 @@ package net.anei.cadpage.parsers.CA;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * San Diego County, CA
@@ -14,7 +16,7 @@ public class CASanDiegoCountyCParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "FCC@SDFD.com";
+    return "FCC@SANNET.GOV";
   }
   
   @Override
@@ -23,8 +25,16 @@ public class CASanDiegoCountyCParser extends FieldProgramParser {
   }
 
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public int splitBreakLength() { return 150; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
-    body = body.replace(" DIST:", "\\DIST:").replace(" F:", "\\F:");
+    body = body.replace("DIST:", "\\DIST:").replace(" F:", "\\F:");
     String[] field = body.split("\\\\ *");
     return parseFields(field, data);
   }
