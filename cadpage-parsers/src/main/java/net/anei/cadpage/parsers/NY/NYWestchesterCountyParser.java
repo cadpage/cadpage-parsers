@@ -14,8 +14,8 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class NYWestchesterCountyParser extends FieldProgramParser {
   
   public NYWestchesterCountyParser() {
-    super(CITY_CODES, "WESTCHESTER COUNTY", "NY",
-           "ADDR Cross:X! Type:CALL! CALL Time_out:TIME Area:CITY lev:PRI Comments:INFO% INFO+");
+    super("WESTCHESTER COUNTY", "NY",
+          "ADDR Cross:X! Type:CALL! CALL Time_out:TIME Area:MAP lev:PRI Comments:INFO% INFO+");
   }
   
   @Override
@@ -94,9 +94,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
         data.strAddress = data.strPlace;
         data.strPlace = "";
       }
-      if (data.strCity.endsWith("_T")) {
-        data.strCity = data.strCity.substring(0,data.strCity.length()-2);
-      }
+      data.strCity = stripFieldEnd(data.strCity, "_T");
       data.strCity = data.strCity.replace('_', ' ');
     }
 
@@ -149,6 +147,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       "ARCHV",      "ARCHVILLE",
       "ARDSL",      "ARDSLEY",
       "ARMNK",      "ARMONK",
+      "AMTW",       "MAMARONECK",
       "BANKS",      "BANKSVILLE",
       "BEDHL",      "BEDFORD HILLS",
       "BEDVL",      "BEDFORD",
@@ -172,6 +171,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       "IRVNG",      "IRVINGTON",
       "KATNH",      "KATONAH",
       "LARCH",      "LARCHMONT",
+      "LEWIS",      "LEWISBORO",
       "MAMTW",      "MAMARONECK",
       "MAMVL",      "MAMARONECK",
       "MILLW",      "MILLWOOD",
@@ -182,6 +182,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       "NROCH",      "NEW ROCHELLE",
       "SLPHL",      "SLEEPY HOLLOW",
       "NOWPL",      "NORTH WHITE PLAINS",
+      "NSALM",      "NORTH SALEM",
       "OSSNG",      "OSSINING",
       "PKSKL",      "PEEKSKILL",
       "PELHM",      "PELHAM",
@@ -189,6 +190,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       "POCHL",      "POCANTICO HILLS",
       "PORTC",      "PORT CHESTER",
       "PNDRG",      "POUND RIDGE",
+      "PURCH",      "PURCHASE",
       "PVILL",      "PLEASANTVILLE",
       "RYBRK",      "RYE BROOK",
       "RYE",        "RYE",
@@ -201,6 +203,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       "VERPL",      "VERPLANCK",
       "WHRSN",      "WEST HARRISON",
       "WHPLN",      "WHITE PLAINS",
+      "WSEMS",      "", // Armonk & Beford hills & white plains & Somers & Valhalla
       "YKTWN",      "YORKTOWN",
       "YNKRS",      "YONKERS",
       "BUCHN",      "BUCHANAN",
