@@ -144,9 +144,11 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   
   @Override
   public String adjustMapAddress(String addr) {
+    addr = GN_PTN.matcher(addr).replaceAll("GREEN");
     addr = GR_PTN.matcher(addr).replaceAll("GARTH");
     return super.adjustMapAddress(addr);
   }
+  private static final Pattern GN_PTN = Pattern.compile("\\bGN\\b");
   private static final Pattern GR_PTN = Pattern.compile("\\bGR\\b");
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
