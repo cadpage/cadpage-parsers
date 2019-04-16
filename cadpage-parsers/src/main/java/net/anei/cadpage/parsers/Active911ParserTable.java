@@ -484,6 +484,7 @@ public class Active911ParserTable {
       "US/KS/CityofMulvane",              "KSSumnerCounty",
       "US/KS/CowleyCounty",               "KSCowleyCounty",
       "US/KS/CrawfordCounty",             "KSCrawfordCountyA",
+      "US/KS/EllisCounty",                "KSEllisCounty",
       "US/KS/FirePage",                   "KSWichita",
       "US/KS/FrontKS",                    "KSCrawfordCountyB",
       "US/KS/HarveyCounty",               "KSHarveyCounty",
