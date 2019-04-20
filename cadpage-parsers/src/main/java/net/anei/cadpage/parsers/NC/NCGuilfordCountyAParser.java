@@ -23,7 +23,7 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
   
   protected NCGuilfordCountyAParser(String defCity, String defState) {
     super(defCity, defState,
-          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? Radio_Channel:CH? XINFO+ )");
+          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? Radio_Channel:CH? XINFO+? GPS1 GPS2 )");
   }
   
   @Override
@@ -52,11 +52,15 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
     
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    body = body.replace("\\40", " ");
     if (!super.parseMsg(body, data)) return false;
     
     // If out of county mutual aid call, cancel the default county
     if (data.strSource.startsWith("ALCO")) data.strCity = "ALAMANCE COUNTY";
     else if (data.strCall.equals("MUTUAL")) data.defCity = "";
+    pt = data.strCity.indexOf(" / ");
+    if (pt >= 0) data.strCity = data.strCity.substring(0,pt);
     return true;
   }
 
@@ -79,6 +83,8 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("XINFO")) return new CrossInfoField();
     if (name.equals("UNIT")) return new UnitField("(?!OPS)(?:[A-Z]+\\d+|[A-Z]{1,3}FD)(?:,(?:[A-Z]+\\d+|[A-Z]{1,3}FD))*", true);
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
   
@@ -255,9 +261,9 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
         data.strCity = city;
       } else if (CITY_SET.contains(field)) {
         data.strCity = field;
-      } else if (field.startsWith("TAC ")) {
+      } else if (field.startsWith("TAC ") || field.startsWith("tac ")) {
         data.strChannel = field;
-      } else if (data.strChannel.length() == 0 && INFO_CH_PTN.matcher(field).matches()) {
+      } else if (INFO_CH_PTN.matcher(field).matches()) {
         data.strChannel = "TAC " + field;
       } else if (data.strCode.length() == 0 && CODE_PTN.matcher(field).matches()) {
         data.strCode = field;
@@ -274,6 +280,47 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
     }
   }
   
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
+  private static final Pattern GPS_TRUNC_PTN = Pattern.compile("[-+]?[\\.\\d]+|[-+]");
+  private class MyGPSField extends GPSField {
+    
+    private int type;
+    
+    public MyGPSField(int type) {
+      super(type);
+      this.type = type;
+    }
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField(+2)) return false;
+      if (GPS_PTN.matcher(field).matches()) {
+        super.parse(field, data);
+        return true;
+      }
+      
+      if (!GPS_TRUNC_PTN.matcher(field).matches()) return false;
+      if (type == 1 && !field.startsWith("3")) return false;
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  @Override
+  public String postAdjustMapAddress(String sAddress) {
+    sAddress = sAddress.replace("STATE 68", "NC-68");
+    return super.postAdjustMapAddress(sAddress);
+  }
+
   public static boolean isCityCode(String code) {
     return CITY_CODES.getProperty(code) != null;
   }
@@ -393,6 +440,7 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
 
       // Unincorporated communities
       "BROWN SUMMIT",
+      "BROWNS SUMMIT",
       "CLIMAX",
       "COLFAX",
       "MONTICELLO",
@@ -404,7 +452,10 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
       "THOMASVILLE",
       
       // Forsyth County
+      "BELEWS CREEK",
+      "BELEWS CREEK / FORSY",
       "KERNERSVILLE",
+      
       
       // Guilford County
       "SEDALIA",
