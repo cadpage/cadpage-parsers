@@ -1,7 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -11,7 +10,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   
   public NCPittCountyBParser() {
     super(CITY_CODES, "PITT COUNTY", "NC", 
-          "( CANCEL ADDR CITY! " +
+          "( CANCEL ( ADDRCITY! | ADDR CITY! ) " +
           "| UNIT/Z STATUS/R ADDR CITY CALL/SDS! END " +
           "| CALL PLACE? ( ADDRCITY ( DATETIME! | IDQ ( EMPTY/Z PRI | PRIQ EMPTY? ) DATETIME! ) " + 
                         "| ADDR/Z PLACE ID/Z CITY DATE TIME! " +
@@ -41,12 +40,16 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     
     body = stripFieldStart(body, "_");
     
+    body = body.replace('\ufffd', ' ');
+    
     if (body.contains(",Enroute,")) {
       return parseFields(body.split(","), data);
     }
     
     body = "CAD:" + body;
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strCall.startsWith("OUTSIDE COUNTY")) data.defCity = "";
+    return true;
   }
   
   @Override
@@ -56,7 +59,9 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CANCEL")) return new BaseCancelField("County Working Incident|ELECTRIC UTILITIES|GAS WATER ELECTRIC|INVESTIGATOR NOTIFIED|MEDICAL EXAMINER|NCDOT NOTIFIED|PATIENT EXTRICATED|RED CROSS|STAGING IN THE AREA|UTILITY GAS|UTILITY WATER|EASTCARE (?:DISPATCHED|CANCELLED|STANDBY)|[A-Z]+ WORKING INCIDENT");
     if (name.equals("STATUS")) return new CallField("Enroute", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new IdField("\\d{11}", true);
     if (name.equals("IDQ")) return new IdField("\\d{11}|", true);
     if (name.equals("CITYQ")) return new MyCityField();
@@ -69,6 +74,14 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     if (name.equals("CH")) return new ChannelField("(TAC.*|A\\d{1,2})|Radio Channel: *(.*)");
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("LL:")) return false;
+      return super.checkParse(field, data);
+    }
   }
   
   private class MyCityField extends CityField {

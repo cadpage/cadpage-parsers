@@ -214,8 +214,21 @@ public class DispatchOSSIParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CANCEL_PTN = Pattern.compile("(?:\\{([A-Z0-9]+)\\} *)?(CANCEL\\b.*|CODE RED|CONFIRMED FIRE.*|EASTCARE CANCELLED|EASTCARE STANDBY|ELECTRIC UTILITIES|FIRE OUT|FIRE UNDER CONTROL|GAS WATER ELECTRIC|INVESTIGATOR NOTIFIED|RED CROSS|STAGING IN THE AREA|UNDER CONTROL|UNITS RESPOND CODE 1|UTILITY GAS)");
+  private static final Pattern UNIT_PFX_PTN = Pattern.compile("(?:\\{([A-Z0-9,]+)\\} *)(.*)");
+  private static final Pattern CANCEL_PTN = Pattern.compile("(CANCEL\\b.*|CODE RED|CONFIRMED FIRE.*|FIRE OUT|FIRE UNDER CONTROL|UNDER CONTROL|UNITS RESPOND CODE 1)");
   protected class BaseCancelField extends CallField {
+    
+    private Pattern extraPattern;
+    
+    public BaseCancelField() {
+      this(null);
+    }
+    
+    public BaseCancelField(String pattern) {
+      this.extraPattern = (pattern == null ? null : Pattern.compile(pattern));
+    }
+    
+    
     @Override
     public boolean canFail() {
       return true;
@@ -223,10 +236,19 @@ public class DispatchOSSIParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      Matcher match = CANCEL_PTN.matcher(field);
-      if (!match.matches()) return false;
-      data.strUnit = getOptGroup(match.group(1));
-      data.strCall = match.group(2).trim();
+      String unit = null;
+      Matcher match = UNIT_PFX_PTN.matcher(field);
+      if (match.matches()) {
+        unit = match.group(1);
+        field = match.group(2);
+      }
+      match = CANCEL_PTN.matcher(field);
+      if (!match.matches()) {
+        if (extraPattern == null) return false;
+        if (!extraPattern.matcher(field).matches()) return false;
+      }
+      if (unit != null) data.strUnit = unit;
+      data.strCall = field;
       return true;
     }
     
