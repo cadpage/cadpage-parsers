@@ -10,7 +10,7 @@ public class CORioBlancoCountyParser extends DispatchA55Parser {
   
   @Override
   public String getFilter() {
-    return "cadalerts@eforcesoftware.com";
+    return "cadalerts@eforcesoftware.com,cadalerts@messaging.eforcesoftware.net";
   }
 
   @Override
