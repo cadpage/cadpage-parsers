@@ -32,7 +32,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
   
-  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Z]{1,4}))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
+  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD:(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Z]{1,4}))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -40,11 +40,14 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     // Parse special auto-notification alert
     Matcher match = AUTO_NOTIFICATION_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL UNIT ADDR APT CITY GPS");
-      data.strCall = "AUTO ALERT";
-      data.strUnit = match.group(1);
-      parseAddress(match.group(2).trim(), data);
-      String city =match.group(3);
+      setFieldList("ID CODE CALL ADDR APT CITY GPS");
+      data.strCallId = getOptGroup(match.group(1));
+      data.strCode = match.group(2);
+      String call = lookupCallCode(data.strCode);
+      if (call == null) call = data.strCode;
+      data.strCall = call;
+      parseAddress(match.group(3).trim(), data);
+      String city = match.group(4);
       if (city != null) {
         String tmp = CITY_CODES.getCodeDescription(city, true);
         if (tmp != null) city = tmp;
@@ -53,8 +56,8 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       setGPSLoc(convGPS(match.group(4))+','+convGPS(match.group(5)), data);
       return true;
     }
-    
-    if (body.startsWith("|")) body = body.substring(1).trim();
+
+    body = stripFieldStart(body, "CONFIRM RESPONSE");
     body = body.replace(">XST:", ">X ST:");
     body = body.replace(" COMMENTS:", ">COMMENTS:");
     if (parseFields(body.split(">"), data)) {
@@ -108,6 +111,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern ID_CALL_PTN = Pattern.compile("CAD:(\\d+-\\d+) *(.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(.*?)(?: *- +| +- *)(.*)");
   private class MyCallField extends CallField {
     
     @Override
@@ -120,33 +124,32 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       }
       
       field = stripFieldEnd(field, "-");
-      String key = field;
-      String extra = "";
-      int pt = key.indexOf(' ');
-      if (pt >= 0) {
-        key = field.substring(0,pt);
-        if (key.endsWith("-")) key = key.substring(0,key.length()-1).trim();
-        extra = field.substring(pt+1).trim();
-        if (extra.startsWith("-")) extra = extra.substring(1).trim();
+      String code;
+      match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        code = match.group(1);
+        field = match.group(2);
+      } else {
+        code = field;
+        field = "";
       }
-      String desc = TYPE_CODES.getProperty(key);
-      if (desc == null) {
-        int pt2 = key.indexOf('-');
-        if (pt2 >= 0) {
-          String key2 = key.substring(0,pt2);
-          desc = TYPE_CODES.getProperty(key2);
-        }
-      }
+      String desc = lookupCallCode(code);
       if (desc != null) {
-        if (desc.startsWith(extra)) field = key;
-        field = field + " - " + desc;
+        if (desc.startsWith(field)) {
+          field = desc;
+        } else {
+          field = append(field, " - ", desc);
+        }
+      } else if (field.length() == 0) {
+        field = code;
       }
-      super.parse(field, data);
+      data.strCode = code;
+      data.strCall = field;
     }
     
     @Override
     public String getFieldNames() {
-      return "ID " + super.getFieldNames();
+      return "ID CODE CALL";
     }
   }
   
@@ -439,6 +442,23 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "YVYC", "YUCCA VALLEY"
   );
   
+  @Override
+  public boolean checkCall(String code) {
+    return lookupCallCode(code) != null;
+  }
+  
+  private String lookupCallCode(String code) {
+    code = code.replace("_", "-");
+    String desc = TYPE_CODES.getProperty(code);
+    if (desc != null) return desc;
+    int pt = code.indexOf('-');
+    if (pt >= 0) {
+      String code2 = code.substring(0,pt);
+      desc = TYPE_CODES.getProperty(code2);
+    }
+    return desc;
+  }
+  
   private static final Properties TYPE_CODES = buildCodeTable(new String[]{
       "AB",         "Animal Bite",
       "ABD",        "Abdominal Pain",
@@ -634,6 +654,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "BURN-D4f",   "Burn Victim-diff speaking - fire present",
       "BURN-D4w",   "Burn Victim-diff speaking - fireworks",
       "CA",         "Commercial Alarm",
+      "CARE TRANSP","CARE Transport",
       "CHOKE",      "Choking Victim",
       "CHOKE-A1",   "Subject no longer choking",
       "CHOKE-A1c",  "Subject no longer choking - candy/sweets/gum",
@@ -944,6 +965,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "ELECT-E1l",  "Electrocution - not breathing",
       "ELEV-MA",    "Elevator Rescue with injury",
       "ELEV-RQ",    "Elevator Rescue no injury",
+      "ETA",        "ETA",
       "EYE",        "Eye Problems",
       "EYE-A1",     "Moderate eye injury",
       "EYE-A2",     "Minor eye injury",
@@ -1040,6 +1062,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "GEH",        "Env Health Incident",
       "GEM",        "Emergency Medical Incident",
       "GHZ",        "Hazardous Materials Incident",
+      "GLAW",       "Law",
       "GMH",        "Medical Helicopter Incident",
       "GMI",        "Miscellaneous Incident",
       "GMU",        "Out-of-System Mutual Aid",
@@ -1122,6 +1145,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "GSW-D5s",    "Gunshot - multiple victims - stab",
       "GSW-D5x",    "Gunshot - multiple victims - self-inflicted gunshot (intentional)",
       "GSW-D5y",    "Gunshot - multiple victims - self-inflected knife/stab wound (intentional)",
+      "GWX",        "Weather",
       "HA",         "Headache",
       "HCE",        "Heat or Cold Exposure",
       "HCE-A1",     "Heat or Cold Exp - pt alert",
@@ -1142,6 +1166,8 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "HCE-D2",     "Heat or Cold Exposure - mult victims",
       "HCE-D2c",    "Heat or Cold Exposure - mult victims - cold exposure",
       "HCE-D2h",    "Heat or Cold Exposure - mult victims - heat exposure",
+      "Hea",        "Heart Problem",
+      "HEAD",       "Headache",
       "HEAD-A1",    "Headache - Breathing Normally",
       "HEAD-A1d",   "Headache - Breathing Normally - partial evidence (greater then 3 hours)",
       "HEAD-A1e",   "Headache - Breathing Normally - partial evidence (unknown time frame)",
@@ -1261,6 +1287,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "HEAD-C7x",   "Headache + ALOC - no test evidence (less then 3 hours)",
       "HEAD-C7y",   "Headache + ALOC - no test evidence (greater then 3 hours)",
       "HEAD-C7z",   "Headache + ALOC - no test evidence (unknown time frame)",
+      "HEART",      "Heart problem",
       "HEART-A1",   "Heart rate < 50 or > 130",
       "HEART-A2",   "Chest pain w/ no symptoms",
       "HEART-C1",   "Heart prob + firing of AICD",
@@ -1396,6 +1423,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "INH-O1s",    "CO detector - no symptoms - suicide attempt (only carbon monoxide)",
       "INH-O1t",    "CO detector - no symptoms - suicide attempt (other toxic substances)",
       "INH-O1u",    "CO detector - no symptoms - unknown",
+      "JUMP",       "Jumper",
       "MA",         "Medical Aid",
       "MCI",        "Multi-Casualty Incident",
       "MOVUP",      "Moveup and Cover",
@@ -1667,7 +1695,8 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "STAB-D5",    "Stabbing - multiple victims",
       "STAB-D5",    "Stabbing - multiple victims - stab",
       "STAB-D5g",   "Stabbing - multiple victims - gunshot",
-      "STEMI",      "STEMI Transport",
+      "STEMI TRANS","STEMI Transport",
+      "STROKE TRAN","Stroke Transport",
       "SWTR",       "Swift Water Rescue",
       "SZ",         "Seizures",
       "SZ-A1",      "Seizures - not seizing now",
@@ -1707,6 +1736,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "TIF",        "Freeway TC w/Injuries",
       "TO",         "TC w Vehicle Over the Side",
       "TOF",        "Freeway TC Over the side",
+      "TP-AUTO-PED","Auto-Pedestrian Accident",
       "TRAUMA",     "Traumatic Injuries",
       "TRAUMA-A1",  "Traumatic Inj. - non dangerous body area",
       "TRAUMA-A2",  "Traumatic Inj. + 6 hours",
