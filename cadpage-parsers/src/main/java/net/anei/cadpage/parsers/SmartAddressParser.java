@@ -535,7 +535,7 @@ public abstract class SmartAddressParser extends MsgParser {
       setupDictionary(ID_ROUTE_PFX, "M");
     }
     setupDictionary(ID_PURE_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW");
-    setupDictionary(ID_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW", "NB", "EB", "SB", "WB", "EXT", 
+    setupDictionary(ID_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW", "NB", "EB", "SB", "WB", "EXT", "EXTENSION", 
                                   "NORTHBOUND", "EASTBOUND", "SOUTHBOUND", "WESTBOUND", "BUS");
     setupDictionary(ID_OPT_ROAD_PFX, "OLD", "NEW", "UPPER", "LOWER", "MC");
     setupDictionary(ID_CONNECTOR, "AND", "/", "&");
