@@ -1350,6 +1350,7 @@ public class Active911ParserTable {
       "US/PA/MessiahEMS",                 "PAGrantham",
       "US/PA/MifflinCounty",              "PAMifflinCounty",
       "US/PA/MonroeCounty",               "PAMonroeCounty",
+      "US/PA/MonroeCountyCoolbaughTwp",   "PAMonroeCounty",
       "US/PA/Monroeville",                "PAMonroeville",
       "US/PA/MontcoPage",                 "PAMontgomeryCountyC",
       "US/PA/MontgomeryCounty",           "PAMontgomeryCountyC",
