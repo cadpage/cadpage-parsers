@@ -16,18 +16,37 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
     }
   }
 
-  private static final Pattern TEXAS_CITY_PTN = Pattern.compile("(.*?) +(?:TX|TEXAS)", Pattern.CASE_INSENSITIVE);
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    Matcher match = TEXAS_CITY_PTN.matcher(data.strCity);
-    if (match.matches()) data.strCity = match.group(1);
-    return true;
-  }
-
   @Override
   public String getFilter() {
     return "wilmerfd@cityofwilmer.net,crimes@seagoville.us";
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d+)- *(.*)");
+  private static final Pattern TEXAS_CITY_PTN = Pattern.compile("(.*?) +(?:TX|TEXAS)", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.length() > 0 && body.startsWith("-")) {
+      body = subject + '\n' + body;
+    }
+    
+    if (!super.parseMsg(body, data)) return false;
+    
+    Matcher match = CODE_CALL_PTN.matcher(data.strCall);
+    if (match.matches()) {
+      data.strCode = match.group(1);
+      data.strCall = match.group(2);
+    }
+    
+    match = TEXAS_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) data.strCity = match.group(1);
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "CODE " + super.getProgram();
   }
 
   private static String[] CITY_LIST = new String[]{
