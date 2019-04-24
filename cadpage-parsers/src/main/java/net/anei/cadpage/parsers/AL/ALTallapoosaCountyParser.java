@@ -7,7 +7,7 @@ public class ALTallapoosaCountyParser extends FieldProgramParser {
   
   public ALTallapoosaCountyParser() {
     super("TALLAPOOSA COUNTY", "AL", 
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO/N+");
   }
   
   @Override
