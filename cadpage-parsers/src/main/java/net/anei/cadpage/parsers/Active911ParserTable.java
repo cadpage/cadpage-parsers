@@ -564,6 +564,7 @@ public class Active911ParserTable {
       "US/KY/KSPP3",                      "KYStatePolice",
       "US/KY/KSPP5",                      "KYStatePolice",
       "US/KY/KSPP6",                      "KYStatePolice",
+      "US/KY/FranklinCounty",             "KYFranklinCountyB",
       "US/KY/KSPP9",                      "KYStatePolice",
       "US/KY/LarueCounty",                "KYLaRueCounty",
       "US/KY/LawrenceCounty",             "KYLawrenceCounty",

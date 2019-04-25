@@ -10,7 +10,7 @@ public class DispatchA74Parser extends FieldProgramParser {
   
   public DispatchA74Parser(String defCity, String defState) {
     super(defCity, defState, 
-          "ID CALL ADDRCITY! INFO/N+");
+          "ID CALL! ADDRCITY INFO/N+");
   }
   
   @Override
@@ -23,14 +23,12 @@ public class DispatchA74Parser extends FieldProgramParser {
     
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     body = stripFieldStart(body,  "1/1:");
-    String[] flds = body.split("\n");
-    if (flds.length < 3) flds = body.split("\\|");
-    return parseFields(flds, data);
+    return parseFields(body.split("\n"), data);
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("CAD #(\\d{4,8}-\\d{6}):", true);
+    if (name.equals("ID")) return new IdField("CAD #(\\d{2,8}-\\d+):", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
