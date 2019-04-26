@@ -17,6 +17,7 @@ public class PAWashingtonCountyParser extends FieldProgramParser {
     setupSpecialStreets("NEW ALY");
     setupCityValues(CITY_CODES);
     setupCities(CITY_LIST);
+    removeWords("EXTENSION");
   }
   
   @Override
