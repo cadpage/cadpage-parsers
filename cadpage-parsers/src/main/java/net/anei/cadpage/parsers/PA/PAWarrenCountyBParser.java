@@ -10,7 +10,7 @@ public class PAWarrenCountyBParser extends FieldProgramParser {
   
   public PAWarrenCountyBParser() {
     super("WARREN COUNTY", "PA", 
-          "Inc_Code:CALL! Address:ADDRCITY! Common_Name:PLACE! Units:UNIT! Cross_Streets:X END");
+          "Inc_Code:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Units:UNIT! Cross_Streets:X END");
   }
   
   @Override
