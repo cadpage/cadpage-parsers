@@ -28,7 +28,7 @@ public class CAShastaCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "vtext.com@gmail.com,5304482408,5304109246,cad@fire.ca.gov";
+    return "vtext.com@gmail.com,5304482408,5304109246,cad@fire.ca.gov,admin@streetwisecadfeed.com";
   }
   
   @Override
