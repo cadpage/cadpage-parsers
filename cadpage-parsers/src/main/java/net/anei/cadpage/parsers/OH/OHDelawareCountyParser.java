@@ -14,4 +14,9 @@ public class OHDelawareCountyParser extends DispatchA1Parser {
   public String getFilter() {
     return "del-911@co.delaware.oh.us";
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return addr.replace("S OLD 3C HWY", "S OLD 3C RD");
+  }
 }
