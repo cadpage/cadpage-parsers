@@ -31,8 +31,8 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
     if (call == null) {
       int len = code.length();
       if (len > 0 && Character.isAlphabetic(code.charAt(len-1))) {
-        code = code.substring(0,len-1);
-        call = CALL_CODES.getProperty(code);
+        code =code.substring(0,len-1);
+        call =CALL_CODES.getProperty(code);
       }
     }
     if (call != null) data.strCall = call;
@@ -43,11 +43,14 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S1",   "ACCIDENT",
       "S1S",  "ACCIDENT WITH INJURY",
       "S1F",  "ACCIDENT WITH FATALITY",
+      "S12",  "ASSAULT",
+      "S15",  "BOMB THREAT",
+      "S1S",  "MOTOR VEHICLE COLLISION",
       "S1SF", "ACCIDENT WITH FATALITY",
       "S1SX", "ACCIDENT WITH ENTRAPMENT",
-      "S2",   "ALARM",
-      "S2F",  "FIRE ALARM",
-      "S2M",  "MEDICAL ALARM",
+      "S2",   "FIRE ALARM ACTIVATION",
+      "S2F",  "FIRE ALARM ACTIVATION",
+      "S2M",  "MEDICAL ALARM ACTIVATION",
       "S3",   "STOPPING VIOLATOR",
       "S4",   "SERVING WARRANT",
       "S4S",  "SERVING PROCESS",
@@ -66,7 +69,9 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S17",  "BURGLARY IN PROGRESS",
       "S18",  "CUP OF COFFEE",
       "S19",  "CARRYING CONCEALED WEAPON",
-      "S20",  "COMPLAINT",
+      "S20",  "GENERAL COMPLAINT",
+      "S20W", "WELFARE CONCERN",
+      "S20",  "GENERAL COMPLAINT",
       "S21",  "CONTRIBUTING TO DELINQUENCY",
       "S22",  "CHECKING BUILDINGS",
       "S23",  "CITIZEN HOLDING SUSPECT",
@@ -76,20 +81,20 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S27",  "DISCHARGING FIREARMS",
       "S28",  "DISCHARGING FIREWORKS",
       "S29",  "DISTRUBING THE PEACE",
-      "S30",  "DRUG VIOLATION",
-      "S31",  "DRUNK",
+      "S30",  "DRUG OVERDOSE",
+      "S31",  "SUBJECT UNDER THE INFLUENCE",
       "S32",  "DRUNK AND DISORDERLY",
       "S33",  "ESCAPE",
       "S34",  "FIGHT",
       "S35",  "PARKING VIOLATION",
-      "S36",  "FIRE",
+      "S36",  "GENERAL FIRE",
       "S36G", "GRASS FIRE",
       "S36S", "STRUCTURE FIRE",
       "S36V", "VEHICLE FIRE",
       "S36W", "WILDLAND FIRE",
       "S37",  "FORGERY",
       "S38",  "GAMBLING",
-      "S39",  "HIT & RUN",
+      "S39",  "HIT AND RUN",
       "S40",  "IMPERSONATING OFFICER",
       "S41",  "INDECENT EXPOSURE",
       "S42",  "ABANDONED/STRIPPED VEHICLE",
@@ -97,7 +102,7 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S44",  "MAD ANIMAL",
       "S45",  "MALICIOUS MISCHIEF",
       "S46",  "MAN WITH A GUN",
-      "S47",  "MENTAL CASE",
+      "S47",  "PSYCHIATRIC PATIENT",
       "S48",  "HOMICIDE",
       "S49",  "MAN WITH A KNIFE",
       "S50",  "OFFICER NEEDS ASSISTANCE",
@@ -114,7 +119,7 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S61",  "STRONG ARMED ROBBERY",
       "S62",  "SHOOTING",
       "S63",  "DROWNING",
-      "S64",  "SUICIDE",
+      "S64",  "SUICIDE THREAT/ATTEMPT",
       "S64A", "SUICIDE ATTEMPT",
       "S65",  "REFUELING AT STATION",
       "S66",  "SUSPICIOUS PERSON/VEHICLE",
@@ -130,7 +135,8 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S77",  "JUVENILE PROBLEM",
       "S78",  "LIVESTOCK COMPLAINT",
       "S79",  "DOMESTIC DISPUTE",
-      "S80",  "MISSING/FOUND CHILD",
+      "S80",  "MISSING PERSON",
+      "S80J", "MISSING JUVENILE",
       "S81",  "MAIL TAMPERING",
       "S82",  "ACCIDENT (OTHER THAN VEHICULAR)",
       "S83",  "OBSCENE./HARRASSING PHONE CALL",
@@ -138,5 +144,5 @@ public class MSHarrisonCountyCParser extends DispatchA48Parser {
       "S85",  "AIRCRAFT INCIDENT",
       "S86",  "CIVIL DISTURBANCE",
       "S911", "911 CALL"
-  });
+});
 }
