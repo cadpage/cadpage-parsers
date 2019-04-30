@@ -28,7 +28,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
   @Override
   public String getFilter() {
-    return "adams911@adamscounty.us,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
+    return "adams911@adamscounty.us,adams911.com,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
   }
   
   private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX )");
@@ -408,7 +408,21 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "26.2 US 15 SB",                        "+40.031700,-77.082000",
       "26.4 US 15 SB",                        "+40.034100,-77.079900",
       "26.6 US 15 SB",                        "+40.036600,-77.078000",
+
+      "1 ADAMS CT",                           "+39.836460,-77.207260",
+      "2 ADAMS CT",                           "+39.836624,-77.207664",
+      "3 ADAMS CT",                           "+39.836536,-77.207214",
+      "4 ADAMS CT",                           "+39.836700,-77.207630",
+      "5 ADAMS CT",                           "+39.836597,-77.207140",
+      "6 ADAMS CT",                           "+39.836760,-77.207600",
+      "7 ADAMS CT",                           "+39.836670,-77.207110",
+      "8 ADAMS CT",                           "+39.836820,-77.207565",
+      "9 ADAMS CT",                           "+39.836685,-77.207040",
+      "10 ADAMS CT",                          "+39.836880,-77.207535",
+      "11 ADAMS CT",                          "+39.836770,-77.207060",
+      "12 ADAMS CT",                          "+39.836952,-77.207535",
       
+      "595 BIGLERVILLE RD",                   "+39.840600,-77.229900",
       "2215 BIGLERVILLE RD APT A",            "+39.889921,-77.245541",
       "2215 BIGLERVILLE RD APT B",            "+39.889910,-77.245265",
       "2215 BIGLERVILLE RD APT C",            "+39.889934,-77.245094",
@@ -1479,6 +1493,35 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "203 RIFE RD APT 61",                   "+39.949134,-76.978474",
       "203 RIFE RD APT 62",                   "+39.949281,-76.978657",
       "203 RIFE RD APT 63",                   "+39.948971,-76.978977",
+
+      "140 ROBBINS LN",                       "+39.898393,-77.370943",
+      
+      "12 ROBERT CURTIS DR",                  "+39.837270,-77.207820",
+      "14 ROBERT CURTIS DR",                  "+39.837257,-77.207890",
+      "15 ROBERT CURTIS DR",                  "+39.837630,-77.208015",
+      "16 ROBERT CURTIS DR",                  "+39.837254,-77.207960",
+      "17 ROBERT CURTIS DR",                  "+39.837627,-77.208110",
+      "18 ROBERT CURTIS DR",                  "+39.837246,-77.208060",
+      "19 ROBERT CURTIS DR",                  "+39.837610,-77.208170",
+      "20 ROBERT CURTIS DR",                  "+39.837246,-77.208115",
+      "21 ROBERT CURTIS DR",                  "+39.837597,-77.208260",
+      "22 ROBERT CURTIS DR",                  "+39.837220,-77.208200",
+      "23 ROBERT CURTIS DR",                  "+39.837578,-77.208330",
+      "25 ROBERT CURTIS DR",                  "+39.837580,-77.208405",
+      "43 ROBERT CURTIS DR",                  "+39.837110,-77.209060",
+      "45 ROBERT CURTIS DR",                  "+39.837060,-77.209040",
+      "47 ROBERT CURTIS DR",                  "+39.836994,-77.209010",
+      "48 ROBERT CURTIS DR",                  "+39.837080,-77.208550",
+      "49 ROBERT CURTIS DR",                  "+39.836950,-77.208984",
+      "50 ROBERT CURTIS DR",                  "+39.837013,-77.208530",
+      "51 ROBERT CURTIS DR",                  "+39.836903,-77.208984",
+      "52 ROBERT CURTIS DR",                  "+39.836967,-77.208480",
+      "53 ROBERT CURTIS DR",                  "+39.836810,-77.208940",
+      "54 ROBERT CURTIS DR",                  "+39.836900,-77.208466",
+      "55 ROBERT CURTIS DR",                  "+39.836760,-77.208916",
+      "56 ROBERT CURTIS DR",                  "+39.836840,-77.208435",
+      "58 ROBERT CURTIS DR",                  "+39.836780,-77.208440",
+      "80 ROBERT CURTIS DR",                  "+39.836777,-77.208057",
       
       "SHIPPENSBURG RD & RIDGE RD",           "+39.998500,-77.409600",
       
@@ -1632,6 +1675,20 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       
       "1 STONEHOUSE CT",                      "+39.900256,-77.440230",
       
+      "2 STRABAN CT",                         "+39.836243,-77.207680",
+      "4 STRABAN CT",                         "+39.836193,-77.207710",
+      "5 STRABAN CT",                         "+39.836365,-77.208200",
+      "6 STRABAN CT",                         "+39.836150,-77.207730",
+      "7 STRABAN CT",                         "+39.836308,-77.208230",
+      "8 STRABAN CT",                         "+39.836105,-77.207760",
+      "9 STRABAN CT",                         "+39.836260,-77.208250",
+      "10 STRABAN CT",                        "+39.836067,-77.207790",
+      "11 STRABAN CT",                        "+39.836205,-77.208280",
+      "12 STRABAN CT",                        "+39.836000,-77.207830",
+      "13 STRABAN CT",                        "+39.836143,-77.208310",
+      "14 STRABAN CT",                        "+39.835934,-77.207880",
+      "15 STRABAN CT",                        "+39.836090,-77.208350",
+      
       "12 SUNNIE WAY",                        "+39.867003,-77.234337",
       "14 SUNNIE WAY",                        "+39.867018,-77.234388",
       "16 SUNNIE WAY",                        "+39.867034,-77.234455",
@@ -1646,12 +1703,27 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "38 SUNNIE WAY",                        "+39.867212,-77.235124",
       "40 SUNNIE WAY APT A",                  "+39.867238,-77.235188",
       "40 SUNNIE WAY APT B",                  "+39.867184,-77.235208",
+      "40A SUNNIE WAY",                       "+39.867238,-77.235188",
+      "40B SUNNIE WAY",                       "+39.867184,-77.235208",
       "42 SUNNIE WAY",                        "+39.867227,-77.235257",
       "44 SUNNIE WAY",                        "+39.867249,-77.235315",
       
       "225 VILLAGE DR",                       "+39.864515,-77.023866",
       
       "120 WILDERNESS LN",                    "+39.804200,-77.437200",
+
+      "2080 YORK RD APT 8",                   "+39.851442,-77.169941",
+      "2080 YORK RD APT A",                   "+39.851057,-77.170197",
+      "2080 YORK RD APT B",                   "+39.851170,-77.169833",
+      "2080 YORK RD APT C",                   "+39.851231,-77.169534",
+      "2080 YORK RD APT D",                   "+39.851281,-77.169324",
+      "2080 YORK RD APT E",                   "+39.850889,-77.170048",
+      "2080 YORK RD APT F",                   "+39.851609,-77.169192",
+      "2080 YORK RD APT G",                   "+39.851295,-77.170085",
+      "2080 YORK RD APT H",                   "+39.851353,-77.170459",
+      "2080 YORK RD APT I",                   "+39.851525,-77.169445",
+      "2080 YORK RD APT J",                   "+39.851164,-77.170490",
+      "2080 YORK RD APT L",                   "+39.851441,-77.169833",
       
       "SKI LIBERTY - STATION 1A",             "+39.762931,-77.375453",
       "SKI LIBERTY - STATION 1B",             "+39.762314,-77.374811",
@@ -1659,7 +1731,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
-     
+      
   });
 
   private static final String[] CITY_LIST = new String[]{

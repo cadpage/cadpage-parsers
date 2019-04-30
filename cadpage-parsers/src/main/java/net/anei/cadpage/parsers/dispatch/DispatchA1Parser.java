@@ -24,7 +24,7 @@ public class DispatchA1Parser extends FieldProgramParser {
   public DispatchA1Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, 
            "( CANCEL_INCIDENT:ID! LOC:ADDR/S! UNITS:UNIT! CALL! INFO/N+ " +
-           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X INCIDENT:ID? COM:INFO INFO+? CT:INFO INFO+? UNITS:UNIT INCIDENT:ID UNITS:UNIT DATE/TIME:DATETIME http:GPS RPT_#:EMPTY ID )");
+           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X INCIDENT:ID? COM:INFO INFO+? CT:INFO INFO+? UNITS:UNIT INCIDENT:ID UNITS:UNIT RC:CH DATE/TIME:DATETIME http:GPS RPT_#:EMPTY ID )");
   }
   
   @Override
