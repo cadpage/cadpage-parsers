@@ -17,14 +17,15 @@ public class DispatchA32Parser extends FieldProgramParser {
   
   public DispatchA32Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "( ADDR CALL! " + 
-          "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! ) District:MAP? ID? PLACE+? ADDR/Z CITY_ST! " + 
+          "( GEN_INFO/G DATETIME2 District:MAP? " +
+          "| ADDR CALL! " + 
+          "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! | CALL/SDS CALL/SDS DATETIME2 ) District:MAP? ID? ( SELECT/ADDRTAG PLACE+? Addr:ADDR! INFO+? CITY_ST! | PLACE+? ADDR/Z CITY_ST! ) ID? " + 
                  "| ( ADDR_PL ADDR_PL ADDR_PL2 CITY! " + 
                    "| ADDR_PL ADDR_PL2 CITY! " + 
                    "| ADDR/Z CITY! " + 
-                   "| PLACE ADDR! INFO " + 
-                   "| ADDR! INFO " + 
-                   ") District:MAP? INFO+? DATETIME " + 
+                   "| PLACE ADDR! " + 
+                   "| ADDR! " + 
+                   ") INFO+? ( CITY District:MAP? INFO+? DATETIME | District:MAP INFO+? DATETIME | DATETIME ) " + 
                  ") " + 
           ") INFO+");
   }
@@ -33,24 +34,34 @@ public class DispatchA32Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.endsWith("Page")) return false;
     addressPlaceFields.clear();
-    return parseFields(body.split("\n"), data);
+    String[] flds = body.split("\n");
+    setSelectValue("");
+    for (String fld : flds) {
+      if (fld.startsWith("Addr:")) {
+        setSelectValue("ADDRTAG");
+        break;
+      }
+    }
+    return parseFields(flds, data);
   }
   
   public Field getField(String name) {
+    if (name.equals("GEN_INFO")) return new CallField("GENERAL INFO");
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d");
-    if (name.equals("DATETIME2")) return new MyDateTime2Field();
+    if (name.equals("DATETIME2")) return new BaseDateTime2Field();
     if (name.equals("ID")) return new IdField("\\d\\d-\\d+", true);
-    if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CITY_ST")) return new MyCityStateField();
-    if (name.equals("ADDR_PL")) return new MyAddressPlaceField(false);
-    if (name.equals("ADDR_PL2")) return new MyAddressPlaceField(true);
+    if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("CITY_ST")) return new BaseCityStateField();
+    if (name.equals("ADDR_PL")) return new BaseAddressPlaceField(false);
+    if (name.equals("ADDR_PL2")) return new BaseAddressPlaceField(true);
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
   
   private static final Pattern DATETIME2_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d[AP]M)");
   private static final DateFormat DATETIME2_FMT = new SimpleDateFormat("hh:mmaa");
-  private class MyDateTime2Field extends DateTimeField {
+  private class BaseDateTime2Field extends DateTimeField {
     
     @Override
     public boolean canFail() {
@@ -73,7 +84,7 @@ public class DispatchA32Parser extends FieldProgramParser {
   }
   
   private static final Pattern PLACE_APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM)[ #]*(.*)|\\d{1,4}[A-Z]?", Pattern.CASE_INSENSITIVE);
-  private class MyPlaceField extends PlaceField {
+  private class BasePlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = PLACE_APT_PTN.matcher(field);
@@ -93,7 +104,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     }
   }
   
-  private class MyAddressField extends AddressField {
+  private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "Addr:");
@@ -108,7 +119,7 @@ public class DispatchA32Parser extends FieldProgramParser {
   }
   
   private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Za-z ]+), +([A-Z]{2})(?: +(\\d{5}))?");
-  private class MyCityStateField extends Field {
+  private class BaseCityStateField extends Field {
     
     @Override
     public boolean canFail() {
@@ -141,10 +152,10 @@ public class DispatchA32Parser extends FieldProgramParser {
   
   private static final Pattern CROSS_PTN = Pattern.compile("(?:X|BETWEEN) +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern PLACE_PTN = Pattern.compile("[A-Z \\.\\+/]+");
-  private class MyAddressPlaceField extends Field {
+  private class BaseAddressPlaceField extends Field {
     private boolean done;
     
-    public MyAddressPlaceField(boolean done) {
+    public BaseAddressPlaceField(boolean done) {
       this.done = done;
     }
 
@@ -191,6 +202,15 @@ public class DispatchA32Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "PLACE X ADDR APT INFO";
+    }
+  }
+
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} \\d{4} [A-Za-z, ]+");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
+      data.strSupp = append(data.strSupp, "\n", field);
     }
   }
 }

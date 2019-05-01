@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.CT;
 
 
-import net.anei.cadpage.parsers.dispatch.DispatchA16Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
 /**
  * New London County, CT
  */
-public class CTNewLondonCountyAParser extends DispatchA16Parser {
+public class CTNewLondonCountyAParser extends DispatchA32Parser {
   
   public CTNewLondonCountyAParser() {
     super(CITY_LIST, "NEW LONDON COUNTY", "CT");
@@ -13,7 +13,7 @@ public class CTNewLondonCountyAParser extends DispatchA16Parser {
 
   @Override
   public String getFilter() {
-    return "@montville-ct.org,dispatch@mail.eastlyme911.gov,ledyard911@ct.org";
+    return "ledyard911@ct.org,LEDYARD-911@LEDYARDCT.ORG";
   }
  
   private static final String[] CITY_LIST= new String[]{
