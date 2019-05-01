@@ -75,6 +75,9 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     // Reject anything for ORWashingtonCountyB or ORWashingtonCountyC
     if (BAD_SUBJECT_PTN.matcher(subject).matches()) return false;
     
+    // Reject anything from ORMultnomahCountyD
+    if (body.contains("CALL:")) return false;
+    
     body = stripFieldStart(body, "*");
     body = stripFieldEnd(body, "\\");
     
