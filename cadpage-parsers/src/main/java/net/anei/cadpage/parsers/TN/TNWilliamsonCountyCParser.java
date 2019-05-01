@@ -13,12 +13,12 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
   public TNWilliamsonCountyCParser() {
     super(TNWilliamsonCountyParser.CITY_LIST, "WILLIAMSON COUNTY", "TN", 
           "( PN:CALL! ADD:ADDR! ( END | ( XST:X! | CITY:CITY! LAT:GPS1/d! LON:GPS2/d! APT:APT! X_ST:X! LOCATION:PLACE! TIME:DATETIME! CN:ID! ) UNITS:UNIT! END ) " +
-          "| CALL! ADD:ADDR/S! LAT:GPS1/d! LON:GPS2_ID/d! UNITS:UNIT! LOC:PLACE! END )");
+          "| CALL! ADD:ADDR/S! X:X? LAT:GPS1/d! LON:GPS2/d! TAC:CH? #:ID! UNITS:UNIT! LOC:PLACE! END )");
   }
   
   @Override
   public String getFilter() {
-    return "911-Center@williamson-tn.org,911-center@brentwoodtn.gov";
+    return "911-Center@williamson-tn.org,911-center@brentwoodtn.gov,911-Center@williamsoncounty-tn.gov";
   }
   
   @Override
@@ -33,6 +33,7 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
     int pt = body.indexOf("\n\n_____");
     if (pt >= 0) body = body.substring(0, pt).trim();
     body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
+    body = body.replace("ADD:",  " ADD:").replace(" #", " #:");
     return super.parseMsg(body, data);
   }
   
@@ -40,7 +41,6 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("GPS2_ID")) return new MyGPS2IdField();
     return super.getField(name);
   }
   
@@ -73,27 +73,6 @@ public class TNWilliamsonCountyCParser extends FieldProgramParser {
       if (!match.matches()) abort();
       data.strDate = match.group(1);
       setTime(TIME_FMT, match.group(2), data);
-    }
-  }
-  
-  private class MyGPS2IdField extends GPSField {
-    
-    public MyGPS2IdField() {
-      super(2);
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      int pt = field.indexOf('#');
-      if (pt < 0) abort();
-      data.strCallId = field.substring(pt+1).trim();
-      field = field.substring(0,pt).trim();
-      super.parse(field, data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "GPS ID";
     }
   }
 }
