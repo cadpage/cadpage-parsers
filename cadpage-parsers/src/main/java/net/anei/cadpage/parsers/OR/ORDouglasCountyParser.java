@@ -21,7 +21,7 @@ public class ORDouglasCountyParser extends FieldProgramParser {
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     body = stripFieldEnd(body, "...");
     int pt = body.indexOf("\n--");
     if (pt >= 0) body = body.substring(0,pt).trim();
