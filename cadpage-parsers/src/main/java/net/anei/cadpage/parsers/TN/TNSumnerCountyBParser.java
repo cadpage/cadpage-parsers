@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TN;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,7 @@ public class TNSumnerCountyBParser extends FieldProgramParser {
     return "2083399423";
   }
   
-  private static final Pattern MASTER = Pattern.compile("CALL ALERT: (.*?) CALL TYPE:? (.*)");
+  private static final Pattern MASTER = Pattern.compile("CALL ALERT:? (.*?) CALL TYPE:? (.*?)(?: ([A-Z]{3,5}-\\d{2}-\\d{6}))?");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -26,12 +27,15 @@ public class TNSumnerCountyBParser extends FieldProgramParser {
     body = body.substring(18).trim();
     Matcher match = MASTER.matcher(body);
     if (match.matches()) {
-      setFieldList("ADDR CITY CALL");
+      setFieldList("ADDR CITY CALL ID");
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(1).trim(), data);
       data.strCall = match.group(2).trim();
-      return true;
+      data.strCallId = match.group(3);
+    } else {
+      if (!parseFields(body.split(" :-"), data)) return false;
     }
-    return parseFields(body.split(" :-"), data);
+    data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
+    return true;
   }
   
   private static final Pattern PVT_PTN = Pattern.compile(" *\\bPVT\\b *", Pattern.CASE_INSENSITIVE);
@@ -42,12 +46,17 @@ public class TNSumnerCountyBParser extends FieldProgramParser {
     return super.adjustMapAddress(addr);
   }
   
+  private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
+      "HENDERSONVIL", "HENDERSONVILLE"
+  });
+  
   private static final String[] CITY_LIST = new String[]{
 
       // Cities
       "GALLATIN",
       "GOODLETTSVILLE",
       "HENDERSONVILLE",
+      "HENDERSONVIL",
       "MILLERSVILLE",
       "MITCHELLVILLE",
       "PORTLAND",
