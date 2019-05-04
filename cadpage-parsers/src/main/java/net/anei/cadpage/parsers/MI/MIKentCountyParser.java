@@ -5,9 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchPremierOneParser;
+import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 
-public class MIKentCountyParser extends DispatchPremierOneParser {
+public class MIKentCountyParser extends DispatchH03Parser {
 
   public MIKentCountyParser() {
     super("KENT COUNTY", "MI");
@@ -22,15 +22,15 @@ public class MIKentCountyParser extends DispatchPremierOneParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) (?:Med|Fire) Alert");
 
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
     
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     data.strSource = match.group(1).trim();
-    
-    return super.parseFields(body.split("\n"), data);
+
+    return super.parseHtmlMsg(subject, body, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
