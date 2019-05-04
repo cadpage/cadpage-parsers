@@ -86,7 +86,10 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       }
       return true;
     }
-   
+
+    body = stripFieldStart(body, "~");
+    body = stripFieldEnd(body, "~");
+    
     FParser p = new FParser(body);
     if (p.check("INFO from EPSO:")) {
       setFieldList("CALL ADDR APT PLACE CITY PRI UNIT");
