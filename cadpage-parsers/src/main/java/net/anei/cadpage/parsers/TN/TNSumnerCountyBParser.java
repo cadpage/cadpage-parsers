@@ -30,7 +30,7 @@ public class TNSumnerCountyBParser extends FieldProgramParser {
       setFieldList("ADDR CITY CALL ID");
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(1).trim(), data);
       data.strCall = match.group(2).trim();
-      data.strCallId = match.group(3);
+      data.strCallId = getOptGroup(match.group(3));
     } else {
       if (!parseFields(body.split(" :-"), data)) return false;
     }
