@@ -10,7 +10,7 @@ public class COElPasoCountyBParser extends FieldProgramParser {
 
   public COElPasoCountyBParser() {
     super("EL PASO COUNTY", "CO",
-          "CODE_UNIT ADDR PLACE? ( MAP CALL ID TIME! | MAP_TIME CALL ID! ) END");
+          "CODE_UNIT EMPTY? ADDR PLACE? ( MAP CH | CH ) CALL ID TIME! END");
   }
   
   @Override
@@ -24,6 +24,7 @@ public class COElPasoCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CODE_UNIT")) return new MyCodeUnitField();
     if (name.equals("MAP")) return new MapField("Map +([A-Z]\\d{1,2})", true);
+    if (name.equals("CH")) return new ChannelField("Radio +(.*)", true);
     if (name.equals("MAP_TIME")) return new MyMapTimeField();
     if (name.equals("ID")) return new IdField("Report +(.*)", true);
     if (name.equals("TIME")) return new TimeField("Time (\\d\\d:\\d\\d:\\d\\d)", true);
