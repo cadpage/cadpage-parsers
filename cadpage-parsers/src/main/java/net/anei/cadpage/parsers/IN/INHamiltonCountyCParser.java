@@ -8,8 +8,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class INHamiltonCountyCParser extends FieldProgramParser {
   
   public INHamiltonCountyCParser() {
-    super("HAMILTON COUNTY", "IN", 
-          "Call_Type:CALL! Status:SKIP! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! City:CITY! Nature_of_Call:CALL/SDS! Units:UNIT! Quadrant:MAP! Narrative:SKIP! CC_Text:CALL/SDS Caller_Statement:INFO Coord:GPS ID END");
+    super("HAMILTON COUNTY", "IN",
+          "NOC:CALL! Status:SKIP! Call_Type:CALL/SDS! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersections:X! Quad:MAP! Units:UNIT! Narrative:INFO! CC_Text:CALL/SDS Caller_Statement:INFO/N Dispatch_Code:CODE INFO/N+ Coord:GPS Inc_#:ID END");
   }
   
   @Override
@@ -22,12 +22,10 @@ public class INHamiltonCountyCParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern DELIM = Pattern.compile("\n|(?=Common Name:|Additional Location Info:)");
+  private static final Pattern DELIM = Pattern.compile("\n+|(?=Common Name:|CC Text:)");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("HAMILTON COUNTY:\n")) return false;
-    body = body.substring(17).trim();
     return parseFields(DELIM.split(body), data);
   }
   
@@ -35,7 +33,7 @@ public class INHamiltonCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("CODE")) return new MyCodeField();
     return super.getField(name);
   }
   
@@ -55,13 +53,11 @@ public class INHamiltonCountyCParser extends FieldProgramParser {
     }
   }
   
-  private class MyIdField extends IdField {
+  private class MyCodeField extends CodeField {
     @Override
     public void parse(String field, Data data) {
-      if (!field.startsWith("Inc#")) abort();
-      field = field.substring(4).trim();
-      int pt = field.indexOf('(');
-      if (pt >= 0) field = field.substring(0, pt).trim();
+      int pt = field.indexOf(' ');
+      if (pt >= 0) field = field.substring(0, pt);
       super.parse(field, data);
     }
   }
