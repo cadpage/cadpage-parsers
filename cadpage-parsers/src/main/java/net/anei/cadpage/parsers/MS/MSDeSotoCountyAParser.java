@@ -49,6 +49,9 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
   };
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+    "ALLEN GLEN",
+    "ALLEN RIDGE",
+    "AUTUMN POINT",
     "BELL RIDGE",
     "BELL WOOD",
     "BELMORE LAKES",
@@ -85,11 +88,13 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "KYLE DURAN",
     "LAUREL HILL",
     "LAZY CREEK",
+    "LEIGH ANN",
     "LOW BRIDGE",
     "MARY JANE",
     "METHODIST HOSPITAL",
     "OAK FOREST",
     "OAK HEIGHTS",
+    "OAK LEAF",
     "PARKVIEW OAKS",
     "PAUL COLEMAN",
     "PIGEON ROOST",
@@ -100,6 +105,7 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "RED BANKS",
     "REGAL BEND",
     "ROBERTSON GIN",
+    "ROLLING HILLS",
     "SANDIDGE CENTER",
     "SHADY GROVE",
     "SHALLOW CREEK",
@@ -112,13 +118,15 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
     "STONE PARK",
     "STONEY BROOK",
     "STRAW BRIDGE",
+    "SUMMERS CREEK",
+    "SUMMERS PLACE",
     "TALLY HO",
+    "TERRY CHASE JUDITH",
     "TIMBER OAKS",
     "TRINITY PARK",
     "WEDGE HILL",
     "WHISPERING PINES",
     "WIND PARK E"
-
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -199,6 +207,7 @@ public class MSDeSotoCountyAParser extends DispatchB2Parser {
       "DROWNING",
       "DROWNING/DIVING ACCIDENT",
       "DUMPSTER FIRE",
+      "ELECTRIC POWER LINE DOWN",
       "ELECTRICAL SHORT / NO SMOKE",
       "ELECTRICAL SHORT/NO SMOKE",
       "ELECTROCUTION/LIGHTNING",
