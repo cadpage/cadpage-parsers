@@ -24,6 +24,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
 
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=Mutual Aid/Assist Outside Agen|Motor Vehicle Collision/Injury|Struct Fire Resi Single Family|Vehicle Fire Comm/Box/Mot Home)(?! )");
   private static final Pattern MASTER1 = Pattern.compile("(.*?)\\(C\\) (.*?) ((?:Non-)?Emergency) (\\d{4}-\\d{6})\\b *(.*)");
+  private static final Pattern CITY_DASH_PTN = Pattern.compile("(?<=[A-Z])-(?= )");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("\\[1?\\d\\]");
   private static final Pattern INFO_GPS_PTN = Pattern.compile(".*\\bLAT: ([-+]?\\d{2,3}\\.\\d{6,}) LON: ([-+]?\\d{2,3}\\.\\d{6,})\\b.*"); 
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*+ADD'L Wireless Info : .*|Automatic Case Number\\(s\\) issued for Incident #.*|\\*+Class of Seri?vi?ce.*");
@@ -59,6 +60,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
         String cityPlace = body.substring(pt+3).trim();
         body = body.substring(0, pt).trim();
         parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
+        cityPlace = CITY_DASH_PTN.matcher(cityPlace).replaceFirst("");
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityPlace, data);
         data.strPlace = getLeft();
       } else {
