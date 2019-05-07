@@ -828,6 +828,7 @@ public class ParserList {
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"
+              ,"MSTateCounty"                   ,"Tate County, MS"
               ,"MSYazooCounty"                  ,"Yazoo County, MS"
           ),
           new ParserCategory("Missouri"
