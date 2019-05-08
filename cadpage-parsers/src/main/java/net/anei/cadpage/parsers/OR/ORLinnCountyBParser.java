@@ -87,12 +87,12 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
     if (name.equals("LCITY")) return new MyLongCityField();
-    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYO|MILL|SWH", true);
-    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYO|MILL|SWH|", true);
+    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG", true);
+    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG|", true);
     if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
     if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|", true);
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|LEB|SDIVEL?|SH1ST|SWH)\\b,?)+", true);
-    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|LEB|SDIVEL?|SH1ST|SWH)\\b,?)+|", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+", true);
+    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+", false);
     if (name.equals("PH")) return new PhoneField("(?:541|503|800|818|866|888)\\d{7}|", true);
@@ -178,12 +178,23 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\](?=\n|$)");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\]$");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      field = INFO_JUNK_PTN.matcher(field).replaceAll("");
-      super.parse(field, data);
+      for (String line : field.split("\n")) {
+        line = INFO_JUNK_PTN.matcher(line).replaceAll("");
+        if (line.startsWith("Radio Channel:")) {
+          data.strChannel = line.substring(14).trim();
+        } else {
+          data.strSupp = append(data.strSupp, "\n", line);
+        }
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CH " + super.getFieldNames();
     }
   }
   
