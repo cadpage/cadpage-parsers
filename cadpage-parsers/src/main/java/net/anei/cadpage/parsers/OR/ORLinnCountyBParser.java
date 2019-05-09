@@ -89,7 +89,6 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("REF")) return new InfoField("\\(S\\).*", true);
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("LCITY")) return new MyLongCityField();
     if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG", true);
     if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG|", true);
     if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
@@ -186,19 +185,6 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "PLACE X";
-    }
-  }
-  
-  private class MyLongCityField extends CityField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.length() <= 3) return false;
-      return super.checkParse(field, data);
     }
   }
   
