@@ -14,7 +14,9 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   public ORLinnCountyBParser() {
     super(CITY_CODES, "LINN COUNTY", "OR", 
           "( CANCEL ADDR/S CITY! INFO/N+ " +
-          "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " + 
+          "| CALL ADDR/Z CITY_CODE INFO/N+ " +
+          "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " +
+          "| INFO INFO/Z+? ( PHONE DATETIME ID | DATETIME ID | ID ) " + 
           "| FYI? CALL ( ADDR/S! | PLACE ADDR/S! | EMPTY_PLACE ADDR/S! | ADDR/S! ) APT? REF? " +
           
                 // These branches have to be sorted by the number of fixed non-decision fields appear before
@@ -44,18 +46,18 @@ public class ORLinnCountyBParser extends FieldProgramParser {
                 "| X CITY? MAPQ? CODEQ? UNITQ? " +
                 "| PLACE MAP CODEQ? UNITQ? | MAP CODEQ? UNITQ? | PLACE CODE UNITQ? | CODE UNITQ? | PLACE UNIT | UNIT? " + 
                 ") UNITQ/C+? ( DATETIME " + 
-                            "| INFO ( CH/Z EMPTY/Z NAME PH/Z SKIP DATETIME " +
-                                   "| CH/Z NAME PH/Z SKIP DATETIME " +
-                                   "| NAME PH/Z SKIP DATETIME " +
-//                                   "| SKIP DATETIME " + 
-                                   "| NAME PH DATETIME " + 
-                                   "| PH SKIP? DATETIME " +
-                                   "| CH SKIP? DATETIME " +
-                                   "| DATETIME " +
-                                   "| NAME PH SKIP+ " +
-                                   "| PH SKIP+ " +
-                                   "| SKIP+ " + 
-                                   ") " +
+                            "| INFO/Z ( CH/Z EMPTY/Z INFO/Z PH/Z SKIP DATETIME " +
+                                     "| CH/Z INFO/Z PH/Z SKIP DATETIME " +
+                                     "| INFO/Z PH/Z SKIP DATETIME " +
+//                                     "| SKIP DATETIME " + 
+                                     "| INFO/Z PH DATETIME " + 
+                                     "| PH SKIP? DATETIME " +
+                                     "| CH SKIP? DATETIME " +
+                                     "| DATETIME " +
+                                     "| INFO/Z PH SKIP+ " +
+                                     "| PH SKIP+ " +
+                                     "| SKIP+ " + 
+                                     ") " +
                             ") ID ID2? PRI+? UNIT/C+ " + 
           ")");
     setupCityValues(CITY_CODES);
@@ -77,6 +79,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CITY_CODE")) return new MyCityCodeField();
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
     if (name.equals("ENROUTE")) return new CallField("Enroute", true);
     if (name.equals("FYI")) return new SkipField("FYI:|Update:");
@@ -94,13 +97,34 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+", true);
     if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("CH")) return new ChannelField("F\\d+", false);
+    if (name.equals("CH")) return new ChannelField("F\\d+|OPS", false);
     if (name.equals("PH")) return new PhoneField("(?:541|503|800|818|866|888)\\d{7}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new IdField("20\\d{8}");
     if (name.equals("ID2")) return new SkipField("\\d*", true);
     if (name.equals("PRI")) return new SkipField("\\d{0,1}");
     return super.getField(name);
+  }
+  
+  private class MyCityCodeField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() > 4) return false;
+      String city = CITY_CODES.getProperty(field);
+      if (city == null) return false;
+      data.strCity = city;
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
   
   private class MyEmptyPlaceField extends SkipField {
@@ -178,12 +202,24 @@ public class ORLinnCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\]$");
+  private static final Pattern INFO_DELIM_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\]\\s*|\n");
   private class MyInfoField extends InfoField {
     @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.contains("\n") && !field.endsWith("]")) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
     public void parse(String field, Data data) {
-      for (String line : field.split("\n")) {
-        line = INFO_JUNK_PTN.matcher(line).replaceAll("");
+      for (String line : INFO_DELIM_PTN.split(field)) {
+        line = stripFieldStart(line, "[PROQA]");
         if (line.startsWith("Radio Channel:")) {
           data.strChannel = line.substring(14).trim();
         } else {
@@ -270,6 +306,7 @@ public class ORLinnCountyBParser extends FieldProgramParser {
   });
   
   private static final String[] CITY_LIST = new String[]{
-      "MCKENZIE"
+      "MCKENZIE",
+      "JUNCTION CITY"
   };
 }
