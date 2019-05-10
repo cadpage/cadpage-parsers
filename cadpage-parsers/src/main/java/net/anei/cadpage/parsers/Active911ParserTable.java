@@ -1601,6 +1601,7 @@ public class Active911ParserTable {
       "US/VA/DinwiddieCounty",            "VADinwiddieCounty",
       "US/VA/Esva911",                    "VANorthamptonCounty",
       "US/VA/FairfaxCounty",              "VAFairfaxCountyB",
+      "US/VA/FauquierCounty",             "VAFauquierCounty",
       "US/VA/FloydCounty",                "VAFloydCounty",
       "US/VA/FluvannaSheriff",            "VAFluvannaCountyC",
       "US/VA/Franklin",                   "VAFranklinB",

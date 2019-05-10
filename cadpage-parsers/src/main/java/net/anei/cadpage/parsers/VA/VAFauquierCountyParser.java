@@ -27,6 +27,7 @@ public class VAFauquierCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new CallField("[-/, A-Z0-9]+", true);
     if (name.equals("BOX")) return new BoxField("\\d[A-Z0-9]{3}|[A-Z]\\d{3}");
     if (name.equals("UNIT")) return new UnitField("(?:CO|ST)\\d+");
     return super.getField(name);
