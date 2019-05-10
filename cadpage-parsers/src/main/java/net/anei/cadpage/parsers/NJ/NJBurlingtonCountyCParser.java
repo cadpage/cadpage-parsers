@@ -24,7 +24,7 @@ public class NJBurlingtonCountyCParser extends DispatchA5Parser {
   
   @Override
   public String getFilter() {
-    return "@CO.BURLINGTON.NJ.US,PSGIBE@SYSI.CO.BURLINGTON.NJ.US,messaging@iamresponding.com";
+    return "@CO.BURLINGTON.NJ.US,PSGIBE@SYSI.CO.BURLINGTON.NJ.US,messaging@iamresponding.com,@accounts.google.com,@gmail.com";
   }
   
   @Override
