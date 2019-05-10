@@ -19,12 +19,12 @@ public class ORJeffersonCountyParser extends DispatchA22Parser {
   
   @Override
   public String getAliasCode() {
-    return "ORJeffersonCounty,eis@wstribes.org";
+    return "ORJeffersonCounty";
   }
 
   @Override
   public String getFilter() {
-    return "april.steam@tcdispatch.org";
+    return "april.steam@tcdispatch.org,eis@wstribes.org,cad@frontier911.org";
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
