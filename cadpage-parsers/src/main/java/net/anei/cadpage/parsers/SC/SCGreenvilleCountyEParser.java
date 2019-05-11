@@ -14,7 +14,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
     super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
-    removeWords("GATEWAY", "PLACE");
+    removeWords("GATEWAY", "PLACE", "ROAD");
   }
   
   @Override
@@ -34,8 +34,13 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    // Rule out some other alert formats
+    if (body.startsWith("CAD:")) return false;
+    
 
     body = stripFieldStart(body, "*");
+    body = body.replace(" GREER` ", " GREER ");
     Matcher match = MASTER2.matcher(body);
     if (match.matches()) {
       setFieldList("CALL ADDR APT CITY UNIT");
@@ -55,18 +60,22 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       return true;
     }
 
+    boolean good = false;
     String extra = null;
     match = INFO_DELIM_PTN.matcher(body);
     if (match.find()) {
+      good = true;
       extra = body.substring(match.end()).trim();
       body = body.substring(0, match.start());
       if (body.endsWith(" ") || body.contains("   ")) return false;
     }
     
+    if (body.contains(";")) return false;
     body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
     
     match = MASTER1.matcher(body);
     if (match.matches()) {
+      good = true;
       setFieldList("CALL CITY ADDR APT PLACE PRI ID X GPS INFO");
       data.strCall = match.group(1).trim();
       String cityAddr = match.group(2).trim();
@@ -88,6 +97,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       setFieldList("CALL ADDR APT CITY PLACE GPS INFO");
       int pt = body.indexOf("(C)");
       if (pt >= 0) {
+        good = true;
         String cityPlace = body.substring(pt+3).trim();
         body = body.substring(0, pt).trim();
         parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
@@ -97,6 +107,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       } else {
         parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_IGNORE_AT, body, data);
         data.strPlace = getLeft();
+        if (data.strCity.length() > 0) good = true;
       }
     }
     
@@ -123,7 +134,7 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       }
     }
     
-    return true;
+    return good;
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
