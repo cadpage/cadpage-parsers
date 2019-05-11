@@ -1,24 +1,13 @@
 package net.anei.cadpage.parsers.PA;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
-
-public class PAUnionCountyParser extends DispatchSPKParser {
+public class PAUnionCountyParser extends PASnyderCountyBParser {
   
   public PAUnionCountyParser() {
-    super("UNION COUNTY", "PA");
+    super("UNION COUNTY");
   }
   
   @Override
   public String getFilter() {
     return "cademail@unionco.org";
   }
-
-  @Override
-  protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
-    if (data.strCity.equalsIgnoreCase("CENTRE")) data.strCity = "CENTRE TWP";
-    return true;
-  }
-
 }
