@@ -6,7 +6,7 @@ public class INHamiltonCountyParser extends GroupBestParser {
   
   public INHamiltonCountyParser() {
     super(new INHamiltonCountyAParser(), new INHamiltonCountyBParser(), 
-          new INHamiltonCountyCParser(), new INHamiltonCountyDParser());
+          new INHamiltonCountyCParser());
   }
 
 }

@@ -3,9 +3,6 @@ package net.anei.cadpage.parsers;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
-
-
 
 /**
  * This class takes care of allocating the correct parser for a location code
@@ -202,7 +199,8 @@ public class ManageParsers {
         "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
         "ZSECTConnect",       "ZSESweden",               // 10/02/2018
         "COJeffersonCountyB", "COJeffersonCountyD",      // 10/16/2018
-        "WIKenoshaCountyE",   "WIKenoshaCountyD"        // 12/13/2018
+        "WIKenoshaCountyE",   "WIKenoshaCountyD",        // 12/13/2018
+        "INHamiltonCountyD",  "INHamiltonCountyC"       // 05/11/2019
   });
 
 }
