@@ -63,7 +63,8 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
       "3549 BECKER DR",                       "+37.738718,-87.032463",
       "3556 BECKER DR",                       "+37.738331,-87.032540",
       "3565 BECKER DR",                       "+37.738654,-87.032255",
-      "3570 BECKER DR",                       "+37.738237,-87.032356"
+      "3570 BECKER DR",                       "+37.738237,-87.032356",
+      "16097 HIGHWAY 69 N",                   "+37.626447,-86.731523"
   });
   
   private static final String[] MWORD_STREET_LIST = new String[]{
