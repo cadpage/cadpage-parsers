@@ -19,30 +19,55 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "InformCADPaging@Greenvillecounty.org";
+    return "InformCADPaging@Greenvillecounty.org,@whfd.org";
   }
 
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=Mutual Aid/Assist Outside Agen|Motor Vehicle Collision/Injury|Struct Fire Resi Single Family|Vehicle Fire Comm/Box/Mot Home)(?! )");
-  private static final Pattern MASTER1 = Pattern.compile("(.*?)\\(C\\) (.*?) ((?:Non-)?Emergency) (\\d{4}-\\d{6})\\b *(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(.*?)\\(C\\) (.*?)((?:Non-)?Emergency|Bravo) (\\d{4,6}-\\d{6})\\b *(.*)");
+  private static final Pattern MASTER2 = Pattern.compile("Incident Type:(.*?) Location:(.*)");
+  private static final Pattern INFO_DELIM_PTN = Pattern.compile(" \\[\\d+\\] ");
   private static final Pattern CITY_DASH_PTN = Pattern.compile("(?<=[A-Z])-(?= )");
+  private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d{1,5}[A-Z]?|[A-Z]");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("\\[1?\\d\\]");
   private static final Pattern INFO_GPS_PTN = Pattern.compile(".*\\bLAT: ([-+]?\\d{2,3}\\.\\d{6,}) LON: ([-+]?\\d{2,3}\\.\\d{6,})\\b.*"); 
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*+ADD'L Wireless Info : .*|Automatic Case Number\\(s\\) issued for Incident #.*|\\*+Class of Seri?vi?ce.*");
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf(" [1] ");
-    if (pt < 0) return false;
-    
-    String extra = body.substring(pt+5).trim();
-    body = body.substring(0, pt);
-    if (body.endsWith(" ") || body.contains("   ")) return false;
+
+    body = stripFieldStart(body, "*");
+    Matcher match = MASTER2.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ADDR APT CITY UNIT");
+      data.strCall = match.group(1).trim();
+      String addr = match.group(2).trim();
+      int pt = addr.indexOf("(C)");
+      if (pt >= 0) {
+        String cityUnit = addr.substring(pt+3).trim();
+        addr = addr.substring(0,pt).trim();
+        parseAddress(addr, data);
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityUnit, data);
+        data.strUnit = getLeft();
+      } else {
+        parseAddress(StartType.START_ADDR,addr, data);
+        data.strUnit = getLeft();
+      }
+      return true;
+    }
+
+    String extra = null;
+    match = INFO_DELIM_PTN.matcher(body);
+    if (match.find()) {
+      extra = body.substring(match.end()).trim();
+      body = body.substring(0, match.start());
+      if (body.endsWith(" ") || body.contains("   ")) return false;
+    }
     
     body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
     
-    Matcher match = MASTER1.matcher(body);
+    match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL CITY ADDR APT PRI ID X GPS INFO");
+      setFieldList("CALL CITY ADDR APT PLACE PRI ID X GPS INFO");
       data.strCall = match.group(1).trim();
       String cityAddr = match.group(2).trim();
       data.strPriority = match.group(3);
@@ -50,39 +75,52 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       data.strCross = match.group(5);
       
       parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityAddr, data);
-      parseAddress(getLeft(), data);
+      parseAddress(StartType.START_ADDR, FLAG_NO_CITY, getLeft(), data);
+      data.strPlace = getLeft();
+      if (data.strAddress.length() == 0) {
+        String addr = data.strCall;
+        data.strCall = "";
+        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
+      }
     }
     
     else {
       setFieldList("CALL ADDR APT CITY PLACE GPS INFO");
-      pt = body.indexOf("(C)");
+      int pt = body.indexOf("(C)");
       if (pt >= 0) {
         String cityPlace = body.substring(pt+3).trim();
         body = body.substring(0, pt).trim();
-        parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
+        parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
         cityPlace = CITY_DASH_PTN.matcher(cityPlace).replaceFirst("");
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityPlace, data);
         data.strPlace = getLeft();
       } else {
-        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_IGNORE_AT, body, data);
+        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_IGNORE_AT, body, data);
         data.strPlace = getLeft();
       }
     }
     
-    for (String part : INFO_BRK_PTN.split(extra)) {
-      part = part.trim();
-      part = stripFieldEnd(part, ",");
-      part = stripFieldEnd(part, "[Shared]");
-      
-      match = INFO_GPS_PTN.matcher(part);
-      if (match.matches()) {
-        setGPSLoc(match.group(1)+','+match.group(2), data);
-        continue;
+    if (APT_PTN.matcher(data.strPlace).matches()) {
+      data.strApt = append(data.strApt, "-", data.strPlace);
+      data.strPlace = "";
+    }
+    
+    if (extra != null) {
+      for (String part : INFO_BRK_PTN.split(extra)) {
+        part = part.trim();
+        part = stripFieldEnd(part, ",");
+        part = stripFieldEnd(part, "[Shared]");
+        
+        match = INFO_GPS_PTN.matcher(part);
+        if (match.matches()) {
+          setGPSLoc(match.group(1)+','+match.group(2), data);
+          continue;
+        }
+        
+        if (INFO_JUNK_PTN.matcher(part).matches()) continue;
+        
+        data.strSupp = append(data.strSupp, "\n", part);
       }
-      
-      if (INFO_JUNK_PTN.matcher(part).matches()) continue;
-      
-      data.strSupp = append(data.strSupp, "\n", part);
     }
     
     return true;
@@ -282,24 +320,47 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       "ALARM MULTI OCCUPANCY",
       "ALARM RESIDENTIAL",
       "ALLERGIES/ENVENOMATIONS",
+      "ANIMAL BITE/ATTACK",
+      "ASSAULT/SEXUAL ASSAU",
       "ASSAULT/SEXUAL ASSAULT",
       "BACK PAIN (NON TRAUMATIC)",
+      "BREATHING PROB_D1",
       "BREATHING PROBLEMS",
+      "ALARM CARBON MONOXID",
       "CARDIAC/RESP ARREST",
+      "CARDIAC/RESP. ARRES",
+      "CARDIAC/RESP. ARREST",
       "CHEST PAIN / CHEST D",
       "CHEST PAIN / CHEST DISCOMFOR",
       "CHOKING",
       "CITIZEN ASSIST/SERVI",
+      "CITIZEN ASSIST/SERVI",
       "CITIZEN ASSIST/SERVICE CALL",
+      "CO/INHALATION/HAZMAT",
+      "CONFINED SPACE/STRUCT COLLAPSE(A)",
       "CONVULSIONS/SEIZURES",
       "DIABETIC PROBLEMS",
       "ELECTRICAL HAZARD",
+      "ELECTROCUTION/LIGHTN",
+      "ELEVATOR/ESCALATOR RESCUE",
+      "EMS STANDBY",
       "EXPLOSION",
       "EYE PROBLEM/INJURY",
+      "FALL_A2",
+      "FALL_B1",
+      "FALL_D4",
       "FALLS",
+      "FUEL SPILL/FUEL ODOR",
       "GAS LEAK/GAS ODOR",
+      "GSW/PENETRATING_D2-G",
+      "GSW/PENETRATING_D4-G",
+      "HAZMAT",
+      "HEADACHE",
       "HEART PROBLEMS",
+      "HEAT/COLD EXPOSURE",
+      "HEMORRHAGE/LACERATIO",
       "HEMORRHAGE/LACERATION",
+      "INACCESSIBLE/ENTRAPMENT",
       "MEDICAL ALARM",
       "MOTOR VEHICLE COLL W/ ENTRAP",
       "MOTOR VEHICLE COLLIS",
@@ -311,14 +372,20 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       "OUTSIDE FIRE DUMPSTER/RUBISH",
       "OUTSIDE FIRE WADE",
       "OUTSIDE FIRE WILDLAND",
+      "OVERDOSE/POISON_D1",
       "OVERDOSE/POISONING",
+      "OVERDOSE/POISONING_D1",
       "PREGNANCY/CHILDBIRTH",
       "PSYCHIATRIC/ABNORMAL BEHAVIOR",
+      "SEIZURE_D2",
       "SICK PERSON",
+      "SMOKE INVESTIGATION",
       "SMOKE INVESTIGATION OUTSIDE",
+      "STAB/GSW/PENETRATING",
       "STAB/GSW/PENETRATING INJURY",
       "STROKE/TIA",
       "STRUCT FIRE HIGH LIFE HAZARD",
+      "STRUCT FIRE RESI MUL",
       "STRUCT FIRE RESI MULTI FAMILY",
       "STRUCT FIRE RESI SINGLE FAMILY",
       "STRUCTURE FIRE COMMERCIAL",
@@ -329,6 +396,8 @@ public class SCGreenvilleCountyEParser extends SmartAddressParser {
       "UNCONSCIOUS/FAINTING",
       "UNKNOWN PROBLEM",
       "VEHICLE FIRE",
-      "VEHICLE FIRE COMM/BOX/MOT HOME"
+      "VEHICLE FIRE COMM/BOX/MOT HOME",
+      "WATER RESCUE/SINKING VEHICLE",
+      "WATERCRAFT EMERG/COLLISION"
  );
 }

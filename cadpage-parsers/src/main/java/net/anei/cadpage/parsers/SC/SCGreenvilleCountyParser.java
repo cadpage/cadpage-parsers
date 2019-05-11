@@ -53,6 +53,7 @@ public class SCGreenvilleCountyParser extends GroupBestParser {
       
       // Spartanburg County
       "CAMPOBELLO",
+      "GREER",
       "LANDRUM",
       "WOODRUFF",
       
