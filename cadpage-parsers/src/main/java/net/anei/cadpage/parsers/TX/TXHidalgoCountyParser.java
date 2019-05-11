@@ -10,6 +10,11 @@ public class TXHidalgoCountyParser extends DispatchA37Parser {
    }
   
   @Override
+  public String getFilter() {
+    return "PHARRDispatch@yourdomain.com";
+  }
+  
+  @Override
   protected boolean parseMessageField(String field, Data data) {
     data.strSupp = field;
     return true;
