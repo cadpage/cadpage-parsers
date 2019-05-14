@@ -14,14 +14,14 @@ public class OHLorainCountyBParser extends DispatchInfoSysParser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@Ohio.net";
+    return "info@sundance-sys.com";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("From: MapUser")) return false;
     if (!super.parseMsg(body, data)) return false;
-    data.strCall = stripFieldStart(data.strCall, "-");
+    data.strCall = stripFieldStart(data.strCall, data.strCode+'-');
     return true;
   }
 
@@ -84,6 +84,7 @@ public class OHLorainCountyBParser extends DispatchInfoSysParser {
     "PITTSFIELD",
     
     // Cayahoga County
+    "BAY VILLAGE",
     "NORTH OLMSTED"
   };
 }

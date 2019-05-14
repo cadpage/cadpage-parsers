@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.GroupBestParser;
 
 /*
@@ -84,12 +86,36 @@ public class OHSummitCountyParser extends GroupBestParser {
     "SPRINGFIELD TNSP",
     "TWINSBURG TNSP",
     
+    // Unincorporated areas
+    "BOTZUM",
+    "BRANDYWINE",
+    "EVERETT",
+    "GHENT",
+    "GREENSBURG",
+    "MONTROSE",
+    "MYERSVILLE",
+    
+    // Neighborhoods
+    "NOGLE",
     
     // Medina County
     "WADSWORTH",
+    "RITTMAN",
+    "SHARON",
     
     // Portage County
     "AURORA",
-    "STREETSBORO"
+    "STREETSBORO",
+    
+    // Starke County
+    "UNIONTOWN"
   };
+  
+  static String fixMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "NOGLE",        "NORTON",
+  });
 }
