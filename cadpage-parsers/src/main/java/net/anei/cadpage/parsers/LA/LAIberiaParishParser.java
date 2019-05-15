@@ -12,6 +12,6 @@ public class LAIberiaParishParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "info@lamsgs.com";
+    return "info@lamsgs.com,info@embmsgs.com";
   }
 }
