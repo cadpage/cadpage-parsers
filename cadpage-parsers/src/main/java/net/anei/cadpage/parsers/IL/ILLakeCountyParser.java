@@ -5,7 +5,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class ILLakeCountyParser extends GroupBestParser {
   
   public ILLakeCountyParser() {
-    super(new ILLakeCountyAParser(), new ILLakeCountyBParser());
+    super(new ILLakeCountyAParser(), 
+          new ILLakeCountyBParser(),
+          new ILLakeCountyDParser());
 
   }
 }

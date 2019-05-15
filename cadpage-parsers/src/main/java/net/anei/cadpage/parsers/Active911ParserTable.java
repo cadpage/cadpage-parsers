@@ -411,6 +411,7 @@ public class Active911ParserTable {
       "US/IL/PrairieDuPont",              "ILStClairCountyA,ILStClairCountyC",
       "US/IL/Quadcom911",                 "ILKaneCountyD",
       "US/IL/RandolphCounty",             "ILRandolphCountyA",
+      "US/IL/RedCenter",                  "ILLakeCountyD",
       "US/IL/ShelbyCounty",               "ILShelbyCounty",
       "US/IL/SheldonDistrict",            "ILIroquoisCounty",
       "US/IL/Skokie",                     "ILCookCountyB",
