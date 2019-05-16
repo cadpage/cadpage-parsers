@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.dispatch;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -24,7 +25,8 @@ public class DispatchA52Parser extends FieldProgramParser {
           "( TYPN:CALL! MODCIR:CODE? AD:PLACE! LOC:ADDR! APT:APT? CRSTR:X? UNS:UNIT! TIME:DATETIME3% INC:ID% ZIP:ZIP% GRIDREF:MAP% " + 
           "| LOC:ADDR! CITY:CITY AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
                 "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
-                "| CMT:INFO! CC:SKIP? CC_TEXT:CALL CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID UNS:UNIT TYPN:SKIP TIME:SKIP " +
+                "| CMT:INFO! CC:SKIP? CC_TEXT:CALL PROBLEM:INFO? CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID ( TIME:DATETIME3 TYPN:CALL CITY:CITY ZIP:ZIP UNS:UNIT " + 
+                                                                                                                          "| UNS:UNIT TYPN:CALL TIME:SKIP ) " +
                 ") " +
           ") END");
           
@@ -53,6 +55,7 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT);
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZIP")) return new MyZipField();
     return super.getField(name);
   }
@@ -93,17 +96,19 @@ public class DispatchA52Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
+      field = MSPACE_PTN.matcher(field).replaceAll(" ");
       if (data.strCode.length() == 0) {
         data.strCode = data.strCall;
         data.strCall = field;
       } else if (data.strCode.equals(data.strCall)) {
         data.strCall = field;
-      } else {
-        data.strCall = append(data.strCall, " - ", field);
+      } else if (data.strCall.length() == 0) {
+        data.strCall = field;
       }
     }
   }
@@ -121,6 +126,15 @@ public class DispatchA52Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (data.strCallId.length() > 0) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('/');
+      if (pt >= 0) field = field.substring(pt+1).trim();
       super.parse(field, data);
     }
   }
