@@ -94,12 +94,12 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     if (name.equals("REF")) return new InfoField("\\(S\\).*", true);
     if (name.equals("PLACE_ADDR")) return new MyPlaceAddressField();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|\\d{3}-\\d{3}|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG", true);
-    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|\\d{3}-\\d{3}|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG|", true);
+    if (name.equals("MAP")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG", true);
+    if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HBRG|LEB|LCJ|LCSO|LYON?|MILL|SODA|SWH|TANG|", true);
     if (name.equals("CODE")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
     if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|", true);
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+", true);
-    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+|", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|PHILO|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+", true);
+    if (name.equals("UNITQ")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|CE|HBRG|MILC|LEB|LYON|ODF|PHILO|SDIVEL?|SH1ST|SWH|TANG)\\b,?)+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+|OPS", false);
     if (name.equals("PH")) return new PhoneField("(?:541|503|800|818|866|888)\\d{7}|", true);

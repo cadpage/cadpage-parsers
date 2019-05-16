@@ -1847,9 +1847,11 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALB",  "ALBANY",
+      "BLOD", "BLODGETT",  //???
       "BROW", "BROWNSVILLE",
       "CASC", "CASCADIA",
       "COR",  "CORVALLIS",
+      "CORV", "CORVALLIS",
       "FSTR", "FOSTER",
       "GATE", "GATES",
       "HALS", "HALSEY",
@@ -1857,11 +1859,14 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "IDAN", "IDAHNA",
       "IND",  "INDEPENDENCE",
       "JEFF", "JEFFERSON",
+      "KVAL", "KINGS VALLEY", //???
       "LEB",  "LEBANON",
       "LYON", "LYONS",
       "LYONS","LYONS",
       "MBG",  "MILLERSBURG",
       "MILL", "MILL CITY",
+      "MONR", "MONROE",     //???
+      "PHIL", "PHILOMATH",  //??
       "SCIO", "SCIO",
       "SHED", "SHEDD",
       "SILV", "SILVERTON",
