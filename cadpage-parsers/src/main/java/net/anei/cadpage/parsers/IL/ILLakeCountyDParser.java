@@ -17,7 +17,7 @@ public class ILLakeCountyDParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@redcenter.org";
+    return "dispatch@redcenter.org,777";
   }
   
   @Override
