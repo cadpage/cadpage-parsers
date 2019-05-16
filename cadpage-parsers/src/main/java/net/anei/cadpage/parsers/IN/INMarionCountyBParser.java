@@ -18,7 +18,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
   
   @Override
   public String getFilter() {
-    return "MotorolaCAD@page.indy.gov,CAD@page.indy.gov,777";
+    return "CAD@page.indy.gov,777";
   }
   
   
@@ -1629,7 +1629,7 @@ public class INMarionCountyBParser extends DispatchA52Parser {
   private static final Properties ZIP_LOOKUP_TABLE =  buildCodeTable(new String[]{
       "46077", "Zionsville",
       "46103", "Amo",
-      "46107", " Beech Grove",
+      "46107", "Beech Grove",
       "46112", "Brownsburg",
       "46113", "Camby",
       "46118", "Clayton",

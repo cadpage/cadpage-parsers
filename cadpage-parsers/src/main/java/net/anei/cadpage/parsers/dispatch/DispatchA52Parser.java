@@ -21,14 +21,9 @@ public class DispatchA52Parser extends FieldProgramParser {
   }
 
   public DispatchA52Parser(Properties callCodes, Properties cityCodes, String defCity, String defState) {
-    super(cityCodes, defCity, defState, 
-          "( TYPN:CALL! MODCIR:CODE? AD:PLACE! LOC:ADDR! APT:APT? CRSTR:X? UNS:UNIT! TIME:DATETIME3% INC:ID% ZIP:ZIP% GRIDREF:MAP% " + 
-          "| LOC:ADDR! CITY:CITY AD:PLACE? DESC:PLACE? BLD:APT? FLR:APT? APT:APT? CRSTR:X TYP:CODE1 MODCIR:CODE2 " + 
-                "( TIME:DATETIME3! UNS:UNIT! TYPN:CALL! INC:ID!" +
-                "| CMT:INFO! CC:SKIP? CC_TEXT:CALL PROBLEM:INFO? CC:INFO/N? CASE__#:ID? USER_ID:SKIP? CREATED:SKIP? INC:ID ( TIME:DATETIME3 TYPN:CALL CITY:CITY ZIP:ZIP UNS:UNIT " + 
-                                                                                                                          "| UNS:UNIT TYPN:CALL TIME:SKIP ) " +
-                ") " +
-          ") END");
+    super(cityCodes, defCity, defState,
+          "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR! BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
+          "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE); 
           
     this.callCodes = callCodes;
   }
@@ -36,8 +31,12 @@ public class DispatchA52Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
+    body = stripFieldStart(body, ":");
     if (body.startsWith("LOC:APPROX LOC:")) body = body.substring(11);
-    return super.parseMsg(body, data);
+    if (!body.startsWith("LOC:") && !body.startsWith("TYPN")) return false;
+    body = body.replace("LOC DESC:", "LOCDESC:");
+    if (!super.parseMsg(body, data)) return false;
+    return (data.strCall.length() > 0);
   }
   
   @Override
@@ -52,11 +51,13 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("CODE1")) return new MyCode1Field();
     if (name.equals("CODE2")) return new MyCode2Field();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZIP")) return new MyZipField();
+    if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
   }
   
@@ -85,7 +86,10 @@ public class DispatchA52Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
       
-      if (data.strCode.length() == 0) {
+      if (getRelativeField(-1).startsWith("TYPN:")) {
+        data.strCode = field;
+      }
+      else if (data.strCode.length() == 0) {
         data.strCall = append(data.strCall, " ", field);
       }
       else if (data.strCall.equals(data.strCode)) {
@@ -109,7 +113,28 @@ public class DispatchA52Parser extends FieldProgramParser {
         data.strCall = field;
       } else if (data.strCall.length() == 0) {
         data.strCall = field;
+      } else if (field.startsWith(data.strCall)) {
+        data.strCall = field;
+      } else if (data.strCall.startsWith(field)) {
+      } else {
+        data.strSupp = append(data.strSupp, "\n", field);
       }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL INFO?";
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strAddress.equals("APPROX")) {
+        field = append("(APPROX)", " ", field);
+        data.strAddress = "";
+      }
+      super.parse(field, data);
     }
   }
 
@@ -144,6 +169,15 @@ public class DispatchA52Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (data.strCity.length() > 0) return;
       super.parse(field, data);
+    }
+  }
+  
+  private class MyMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (field.equals(data.strMap)) return;
+      data.strMap = append(data.strMap, "-", field);
     }
   }
 }

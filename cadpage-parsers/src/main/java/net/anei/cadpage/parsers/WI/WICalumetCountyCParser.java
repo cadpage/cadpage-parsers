@@ -25,7 +25,7 @@ public class WICalumetCountyCParser extends DispatchA52Parser {
   
   @Override
   public String getFilter() {
-    return "hiplink@foxcomm-wi.com";
+    return "Hiplink@co.calumet.wi.us";
   }
   
   @Override

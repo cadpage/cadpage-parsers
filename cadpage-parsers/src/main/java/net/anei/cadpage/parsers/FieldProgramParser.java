@@ -1006,6 +1006,7 @@ public class FieldProgramParser extends SmartAddressParser {
   protected boolean parseFields(String[] fields, Data data) {
     
     fieldRecord = new Field[fields.length];
+    state = new State(fields);
     
     // If we are running in any field order mode, things get a lot easier
     if (anyOrder) {
@@ -1046,6 +1047,7 @@ public class FieldProgramParser extends SmartAddressParser {
         // and use it to process this value
         if (step.field != null) {
           try {
+            state.setIndex(fldNdx);
             step.field.parse(value, data);
           } catch (FieldProgramException ex) {
             return false;
@@ -1066,7 +1068,6 @@ public class FieldProgramParser extends SmartAddressParser {
       return true;
     }
     
-    state = new State(fields);
     if (state.link(startLink)) return false;
     do {} while (!state.exec(data));
     return state.getResult();
