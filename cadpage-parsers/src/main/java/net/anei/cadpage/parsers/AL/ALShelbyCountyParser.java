@@ -23,6 +23,7 @@ public class ALShelbyCountyParser extends FieldProgramParser {
   public ALShelbyCountyParser() {
     super("SHELBY COUNTY", "AL",
           "( Unit(s)_Assigned:UNIT ID | ID DATETIME | DATETIME ID ) SRC CALL ADDR! APT X EXTRA INFO/N+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupProtectedNames("EGG AND BUTTER");
     setupSpecialStreets("FREDERICK PASS");
     removeWords("EST", "LA");
@@ -406,5 +407,9 @@ public class ALShelbyCountyParser extends FieldProgramParser {
       "WEST", "WESTOVER",
       "WILJ", "WILSONVILLE",
       "WILS", "WILSONVILLE"
+  });
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "4151 HWY 280",                         "+33.333901,-86.421549"
   });
 }
