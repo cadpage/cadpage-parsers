@@ -16,12 +16,6 @@ public class UTWeberCountyBParser extends DispatchA11Parser {
     return "spillman@weber911.org";
   }
   
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Weber/Morgan 911")) return false;
-    return super.parseMsg(body, data);
-  }
-  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FW",  "FARR WEST",
       "HAR", "HARRISVILLE",
