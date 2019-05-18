@@ -379,26 +379,28 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   
   
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
-      "6A",    "Accident With Injury",
-      "F29",   "Medical Call W/O AFD Response",
-      "F30",   "Transfer To Lanes - Log Reason",
-      "F31",   "Medical Call With AFD Response",
-      "F42",   "Fire/Burning Complaint",
+      "6A",    "Accident with Injury",
+      "F29",   "Medical Call without FD Response",
+      "F30",   "Transfer to Lanes",
+      "F31",   "Medical Call with FD Response",
+      "F40",   "Arson Call Out",
+      "F42",   "Burning Complaint",
       "F86",   "Odor Complaint",
-      "F87",   "Fire Department Call",
+      "F87",   "Misc. FD Call",
       "F88",   "Township Fuel Spills",
-      "F89",   "Fire Department Freeway Call",
+      "F89",   "Freeway Call",
       "F90",   "Fire Drill",
       "F91",   "Structure Fire",
       "F92",   "Vehicle Fire",
-      "F93",   "Grass/Bush Fire",
-      "F94",   "Jaws Of Life Call",
+      "F93",   "Grass/Brush Fire",
+      "F94",   "Jaws Call",
       "F95",   "Dumpster Fire Near Building",
       "F96",   "Dumpster Fire Not Near Building",
       "F97",   "Fire Alarm",
-      "F97A",  "Fire Alarm/Trouble Position",
-      "F98",   "Fire Department Mutual Aid",
+      "F97A",  "Trouble Alarm",
+      "F98",   "Mutual Aid",
       "F99",   "Chemical Spill",
-      "F101",  "Carbon Monoxide Check"
+      "F101",  "Carbon Monoxide Check",
+      "F102",  "Water Rescue"
   });
 }
