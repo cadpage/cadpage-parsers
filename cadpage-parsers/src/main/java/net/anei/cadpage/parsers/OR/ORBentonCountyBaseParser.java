@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
 
-//  Map pages can be found at http://maps.co.benton.or.us/gisdata/Address/FireMapBooks/
+//  Map pages can be found at http://gis.co.benton.or.us/gisdata/Address/FireMapBooks/
 
 public class ORBentonCountyBaseParser extends FieldProgramParser {
   

@@ -22,7 +22,7 @@ public class INShelbyCountyAParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "ShelbyCoCAD@in.gov,interact@hancockcoingov.org";
+    return "ShelbyCoCAD@in.gov,interact@hancockcoingov.org,shelbycad@citycounty.local>";
   }
   
   @Override
