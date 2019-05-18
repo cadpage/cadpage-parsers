@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgParser;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
@@ -11,7 +13,7 @@ public class MNAnokaCountyBParser extends MsgParser {
   
   public MNAnokaCountyBParser() {
     super("ANOKA COUNTY", "MN");
-    setFieldList("ID CODE CALL ADDR APT PLACE CITY MAP INFO SRC");
+    setFieldList("ID CODE CALL ADDR APT PLACE CITY INFO MAP GPS");
   }
   
   @Override
@@ -19,6 +21,16 @@ public class MNAnokaCountyBParser extends MsgParser {
     return "InformCAD@paging.acw-psds.org";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean noParseSubjectFollow() { return true; }
+    };
+  }
+
+  private static final Pattern TRAIL_MAP_GPS_PTN = 
+      Pattern.compile("(?:[A-Z].{30}\\d{8}  \\d{8}|(?:Andover|Blaine|Centennial|Columbia Heights|Coon Rapids|East Bethel|Fridley|Forest Lake|Ham Lake|Isanti Fire|Lino Lakes|Linwood|Oak Grove|Ramsey|SLP/MV|White Bear Lake Fire) \\S+|Anoka|Bethel|Champlin|Forest Lake|Hilltop|Hugo Fire|Lake Johanna Fire|Lexington|Nowthen|Oak Grove Law|St Francis)$");
   private static final Pattern LEAD_ID_PTN = Pattern.compile("[A-Z]{2}[A-Z0-9]\\d{7}");
   private static final Pattern INFO_SKIP_PTN = Pattern.compile("\\[\\d\\]");
   private static final Pattern TRAIL_ID_PTN = Pattern.compile("(.*)(\\d{2}[A-Z]-[A-Z]{2}\\d{4})");
@@ -28,6 +40,24 @@ public class MNAnokaCountyBParser extends MsgParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("CAD Paging")) return false;
+    
+    // Fix the missing blank gap that occurs when a very long alert is split between multiple messages
+    
+    if (isMultiMsg()) {
+      Matcher match = TRAIL_MAP_GPS_PTN.matcher(body);
+      if (match.find()) {
+        int pt = body.indexOf("[1]");
+        if (pt >= 0) {
+          pt += 500;
+          String tail = match.group();
+          StringBuilder sb = new StringBuilder(body);
+          sb.setLength(sb.length()-tail.length());
+          while (sb.length() < pt) sb.append(' ');
+          sb.append(tail);
+          body = sb.toString();
+        }
+      }
+    }
     
     FParser p = new FParser(body);
     
@@ -78,13 +108,18 @@ public class MNAnokaCountyBParser extends MsgParser {
       data.strMap = p.get(10);
       if (data.strMap.equals("NOT FOUND")) data.strMap = "";
       if (!p.check("[1] ")) {
-        data.strSource = p.get(30);
+        data.strMap = p.get(30);
         if (!p.check("[1] ")) return false;
       }
     }
     
     String info = p.get(496);
-    data.strSource = p.get();
+    data.strMap = p.get(30);
+    String gps1 = p.get(8);
+    if (!p.check("  ")) return false;
+    String gps2 = p.get(8);
+    setGPSLoc(cvtGps(gps1)+','+cvtGps(gps2), data);
+    
     info = INFO_SKIP_PTN.matcher(info).replaceAll("").trim();
     if (data.strCallId.length() == 0) {
       Matcher match = TRAIL_ID_PTN.matcher(info);
@@ -94,6 +129,14 @@ public class MNAnokaCountyBParser extends MsgParser {
       }
     }
     data.strSupp = info;
+    
+    if (data.strMap.length() == 0) data.expectMore = true;
     return true;
+  }
+  
+  private static String cvtGps(String gps) {
+    int pt = gps.length()-6;
+    if (pt >= 0) gps = gps.substring(0, pt)+'.'+gps.substring(pt+1);
+    return gps;
   }
 }

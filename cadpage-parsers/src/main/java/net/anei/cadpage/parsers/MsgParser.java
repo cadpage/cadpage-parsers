@@ -217,6 +217,11 @@ public abstract class MsgParser {
    * have the results from a previous parser.
    */
   public static final int PARSE_FLG_REPARSE = 0x04;
+  
+  /**
+   * Parse flag indicating message is the result of merging two or more alert messages
+   */
+  public static final int PARSE_FLG_MULTI = 0x08;
 
   /**
    * Force flag forces processing of message
@@ -473,6 +478,10 @@ public abstract class MsgParser {
     if (getFilter().length() <= 1) return false;
     
     return true;
+  }
+  
+  public boolean isMultiMsg() {
+    return ((parseFlags & PARSE_FLG_MULTI) != 0);
   }
   
   protected boolean parseHtmlMsg(String subject, String body, Data data) {

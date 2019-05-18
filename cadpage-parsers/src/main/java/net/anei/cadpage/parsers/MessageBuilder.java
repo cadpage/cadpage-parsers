@@ -36,7 +36,7 @@ public class MessageBuilder {
     // Life gets easy if there is only one message
     if (msgList.length == 1) {
       Message msg = msgList[0];
-      return bldMessage(msg.getFromAddress(), msg.getSubject(false), msg.getMessageBody(true, false));
+      return bldMessage(msg.getFromAddress(), msg.getSubject(false), msg.getMessageBody(true, false), false);
     }
     
     // Reverse the message order is so requested
@@ -213,11 +213,14 @@ public class MessageBuilder {
    * @param fromAddress message sender
    * @param subject message subject
    * @param body the text message
+   * @param multi true if message text is an accumulation of multiple alert messages
    * @return result Message object
    */
-  private Message bldMessage(String fromAddress, String subject, String body) {
+  private Message bldMessage(String fromAddress, String subject, String body, boolean multi) {
     Message result = new Message(false, fromAddress, subject, body, options);
-    parser.isPageMsg(result, MsgParser.PARSE_FLG_FORCE | MsgParser.PARSE_FLG_SKIP_FILTER);
+    int flags = MsgParser.PARSE_FLG_FORCE | MsgParser.PARSE_FLG_SKIP_FILTER;
+    if (multi) flags |= MsgParser.PARSE_FLG_MULTI;
+    parser.isPageMsg(result, flags);
     return result;
   }
   
@@ -274,6 +277,6 @@ public class MessageBuilder {
       sb.append(msgText);
       lastLen = msgText.length();
     }
-    return bldMessage(fromAddress, subject, sb.toString());
+    return bldMessage(fromAddress, subject, sb.toString(), msgList.length > 1);
   }
 }
