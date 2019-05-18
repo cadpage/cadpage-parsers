@@ -15,6 +15,11 @@ public class PASnyderCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "CSR911@csr911.org";
+  }
+  
+  @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
