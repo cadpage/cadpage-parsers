@@ -975,7 +975,7 @@ public class Active911ParserTable {
       "US/NC/SampsonCountyNewton",        "NCSampsonCounty",
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
       "US/NC/StokesCounty",               "NCStokesCounty",
-      "US/NC/TownOfCary",                 "NCWakeCountyB",
+      "US/NC/TownOfCary",                 "NCWakeCountyA,NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
       "US/NC/UnionCounty",                "NCUnionCounty",
       "US/NC/USAMobility",                "NCWayneCountyA",

@@ -217,6 +217,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       "FC",     "FRANKLIN COUNTY",
       "GC",     "GRANVILLE COUNTY",
       "JC",     "JOHNSTON COUNTY",
+      "NC",     "NASH COUNTY"
       
 
   });
