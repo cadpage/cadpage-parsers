@@ -20,7 +20,7 @@ public class WIDaneCountyParser extends FieldProgramParser {
     return "tritech@countyofdane.com";
   }
   
-  private static Pattern MASTER = Pattern.compile("Response Info Page: Municipality (?:[A-Z]+-(.*?) (?:City|Town|Village) )?(?:(.*) )?At +(.*?) +cross of(?: +(.*?))? +a +(.*?) +response for[ \\.]+(?:(\\d\\w+)-)?(.*?) *\\. Units assigned to alarm: +(.*)");
+  private static Pattern MASTER = Pattern.compile("Response Info Page: Municipality (?:[A-Z]+-(.*?) (?:City|Town|Village) )?(?:(.*) )?At +(.*?) +[Cc]ross of(?: +(.*?))? +a +(.*?) +response for[ \\.]+(?:(\\d\\w+)-)?(.*?) *\\. Units assigned to alarm: +(.*)");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -36,6 +36,7 @@ public class WIDaneCountyParser extends FieldProgramParser {
       data.strCity = getOptGroup(mat.group(1));
       data.strPlace = getOptGroup(mat.group(2));
       parseAddress(mat.group(3).trim(), data);
+      data.strApt = stripFieldStart(data.strApt, ":");
       data.strCross = getOptGroup(mat.group(4));
       data.strPriority = mat.group(5);
       data.strCode = getOptGroup(mat.group(6));
