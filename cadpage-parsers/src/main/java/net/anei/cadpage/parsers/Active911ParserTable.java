@@ -812,6 +812,7 @@ public class Active911ParserTable {
       "US/MO/DekalbCoDispatch",           "MODekalbCounty",
       "US/MO/DesPeres",                   "MOStLouisCountyI",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
+      "US/MO/GasconadeCounty",            "MOGasconadeCounty",
       "US/MO/GreeneCounty",               "MOGreeneCounty",
       "US/MO/HenryCounty",                "MOHenryCounty",
       "US/MO/HarrisonCounty",             "MOHarrisonCounty",
