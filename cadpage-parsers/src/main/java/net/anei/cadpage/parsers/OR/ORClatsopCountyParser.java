@@ -13,7 +13,7 @@ public class ORClatsopCountyParser extends FieldProgramParser {
 
   public ORClatsopCountyParser() {
     super(CITY_LIST, "CLATSOP COUNTY", "OR", 
-          "ADDR! ( CITY | ADDR2/Z CITY | ADDR2? ) CALL/SLS+ ");
+          "ADDRCITY! ( CITY | ADDRCITY2/Z CITY | ADDRCITY2? ) CALL/SLS! CALL/SLS+ ");
     setupSpecialStreets("PROMENADE");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
@@ -24,6 +24,7 @@ public class ORClatsopCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern PROM_PTN = Pattern.compile("\\bPROM\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DELIM = Pattern.compile("(?<!\\d)/|/(?!\\d)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -31,10 +32,22 @@ public class ORClatsopCountyParser extends FieldProgramParser {
     if (subject.length() == 0) return false;
     data.strCall = subject;
     
+    // Clean out GNUGPL headers and trailers
+    if (body.startsWith("X-Mailer:")) {
+      int pt = body.indexOf("\nContent-Disposition:");
+      if (pt < 0) return false;
+      pt = body.indexOf('\n', pt+14);
+      if (pt < 0) return false;
+      while (pt < body.length() && body.charAt(pt) == '\n') pt++;
+      int ept = body.indexOf('\n', pt);
+      if (ept < 0) ept = body.length();
+      body = body.substring(pt, ept).trim();
+    }
+    
     // Expand PROM -> PROMONADE
     subject = PROM_PTN.matcher(subject).replaceAll("PROMENADE");
     body = PROM_PTN.matcher(body).replaceAll("PROMENADE");
-    if (!parseFields(body.split("/"), data)) return false;
+    if (!parseFields(DELIM.split(body, -1), data)) return false;
     
     // Try to rule out random messages containing a slash
     if (data.strCity.length() > 0) return true;
@@ -51,12 +64,12 @@ public class ORClatsopCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     return super.getField(name);
   }
   
   private static final Pattern AVE_ST_PTN = Pattern.compile("(?:AVE|AVENUE) +[A-Z]", Pattern.CASE_INSENSITIVE);
-  private class MyAddress2Field extends AddressField {
+  private class MyAddressCity2Field extends AddressCityField {
     @Override
     public boolean canFail() {
       return true;
@@ -64,8 +77,16 @@ public class ORClatsopCountyParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (AVE_ST_PTN.matcher(field).matches() || isValidAddress(field)) {
+      String city = null;
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        city = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      if (city != null && isCity(city) ||
+          AVE_ST_PTN.matcher(field).matches() || isValidAddress(field)) {
         parse(field, data);
+        if (city != null) data.strCity = city;
         return true;
       } else {
         return false;
