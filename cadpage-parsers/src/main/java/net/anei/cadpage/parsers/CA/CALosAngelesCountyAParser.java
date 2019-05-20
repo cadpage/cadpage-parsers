@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 /**
@@ -25,6 +27,11 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
     return "Verdugo@VerdugoFire.com,ljensen034m@gmail.com,landon034@icloud.com";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
