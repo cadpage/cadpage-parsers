@@ -172,12 +172,13 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "MRV", "MONROVIA",
       "MTB", "MONTEBELLO",
       "PAS", "PASADENA",
+      "SFS", "SANTA FE SPRINGS",
       "SGB", "SAN GABRIEL",
       "SMD", "SIERRA MADRE",
       "SNM", "SAN MARINO",
-      "SFS", "SANTA FE SPRINGS",
       "SPS", "SOUTH PASADENA",
       "VER", "VERNON"
+
   });
   
   private static Properties CALL_CODES = buildCodeTable(new String[]{
