@@ -170,14 +170,14 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL ) UNIT/S+");
+          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL | ) UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
     noCode = (flags & A48_NO_CODE) != 0;
     this.unitPtn = unitPtn;
     this.callCodes = callCodes;
-    fieldList = ("DATE TIME ID CODE CALL ADDR APT CITY NAME " + fieldType.getFieldList() + " UNIT INFO").replace("  ", " ");
+    fieldList = ("DATE TIME ID CODE CALL ADDR X? APT PLACE? CITY NAME " + fieldType.getFieldList() + " UNIT INFO").replace("  ", " ");
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("As of \\d\\d?/\\d\\d?/\\d\\d \\d\\d(:\\d\\d:\\d\\d( [AP]M)?)?");
