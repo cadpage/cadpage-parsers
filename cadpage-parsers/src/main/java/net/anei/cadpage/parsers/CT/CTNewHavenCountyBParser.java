@@ -906,6 +906,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FALL, PUB ASST - PRI 2 -",
       "FALL PUBLIC ASSIST(NO INJURY)",
       "FALL, UNKNOWN",
+      "FALL, UNKNOWN - PRI 1 -",
       "FIRE - BRUSH FIRE",
       "FIRE - BRUSH / OUTSIDE",
       "FIRE - CO ALARM",
