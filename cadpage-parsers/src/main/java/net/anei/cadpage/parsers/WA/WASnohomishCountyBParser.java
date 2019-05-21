@@ -23,7 +23,7 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "NoReply@snopac911.us";
+    return "NoReply@snopac911.us,NoReply@snosafe.org";
   }
 
   @Override

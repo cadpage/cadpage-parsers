@@ -13,6 +13,11 @@ public class ALJeffersonCountyHParser extends DispatchSouthernParser {
           DSFLG_ADDR|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_ID|DSFLG_TIME);
   }
   
+  @Override
+  public String getFilter() {
+    return "dispatch@cityofirondaleal.gov";
+  }
+  
   private static final Pattern OCA_PTN = Pattern.compile("\\bOCA: *[\\d-]+$");
   private static final Pattern MM_PTN = Pattern.compile(" MM, *");
   private static final Pattern UNIT_CALL_PTN = Pattern.compile("(\\d\\d) +(.*)");
