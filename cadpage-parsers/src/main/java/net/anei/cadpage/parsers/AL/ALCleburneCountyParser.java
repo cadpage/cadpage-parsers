@@ -1,23 +1,20 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
 
-public class ALCleburneCountyParser extends DispatchBCParser {
+public class ALCleburneCountyParser extends DispatchA74Parser {
   public ALCleburneCountyParser() {
     super("CLEBURNE COUNTY", "AL");
-  }
-   
-  @Override
-  protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (subject.equals("Run Report")) data.msgType = MsgType.RUN_REPORT;
-    return super.parseHtmlMsg(subject, body, data);
   }
 
   @Override
   public String getFilter() {
-    return "911@CLEBURNECOUNTY.US";
+    return "Dispatch@CleburneCo911.info";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 }
