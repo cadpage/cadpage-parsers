@@ -134,6 +134,10 @@ public class DispatchA48Parser extends FieldProgramParser {
       return fieldList;
     }
     
+    public boolean isRepeat() {
+      return fieldProg.endsWith("+?");
+    }
+    
     public abstract void parse(DispatchA48Parser parser, String field, Data data);
     
     public boolean check(DispatchA48Parser parser, String field) {
@@ -170,7 +174,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL | ) UNIT/S+");
+          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isRepeat() ? "" : "| ") + ") UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
