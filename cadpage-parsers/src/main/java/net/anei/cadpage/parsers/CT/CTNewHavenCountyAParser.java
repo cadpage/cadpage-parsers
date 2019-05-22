@@ -27,11 +27,6 @@ public class CTNewHavenCountyAParser extends DispatchRedAlertParser {
   }
   
   @Override
-  public String getFilter() {
-    return "guilfordfd@rednmxcad.com";
-  }
-  
-  @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
     // Eliminate CTNewHavenCountyA messages
