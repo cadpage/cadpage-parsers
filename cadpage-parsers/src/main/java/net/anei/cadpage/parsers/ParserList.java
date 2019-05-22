@@ -1718,6 +1718,9 @@ public class ParserList {
               ,"ZAUCadpage2"                    ,"Standard Cadpage Format B"
               ,"ZAUCadpage3"                    ,"Standard Cadpage Format C"
           ),
+          new ParserCategory("Estonia"
+              ,"ZEECadpage2"                    ,"Standard Cadpage Format B"
+          ),
           new ParserCategory("New Zealand"
               ,"ZNZAuckland"                    ,"Auckland, NZ"
               ,"ZNZNewZealand"                  ,"New Zealand"
@@ -1726,6 +1729,7 @@ public class ParserList {
           ),
           new ParserCategory("Sweden"
               ,"ZSESweden"                      ,"Sweden"
+              ,"ZSECadpage2"                    ,"Standard Cadpage Format B"
           ),
           new ParserCategory("United Kingdom"
               ,"ZUKShropshireCounty"            ,"Shropshire County, UK"
