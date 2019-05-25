@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 
@@ -27,6 +29,11 @@ public class PABeaverCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
+  @Override
   public String adjustMapCity(String city) {
     if (city.equals("OUT OF COUNTY")) city = "";
     return super.adjustMapCity(city);
@@ -35,6 +42,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.length() >= 1135 && body.length() < 1160) data.expectMore = true;
     body = stripFieldStart(body,"DISPATCH ALERT, ");
     body = MISSING_LOC_PTN.matcher(body).replaceFirst("$1 LOC: ");
     body = body.replace(" Type:", " TYPE:").replace("CALLER NAME:", " CALLER NAME:");
