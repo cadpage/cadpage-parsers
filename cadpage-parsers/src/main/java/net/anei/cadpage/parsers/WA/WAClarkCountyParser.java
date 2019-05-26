@@ -41,7 +41,11 @@ public class WAClarkCountyParser extends FieldProgramParser {
     body = body.replace(" UNITS:", " Disp:");
     
     if (!super.parseMsg(body, data)) return false;
-    if (data.strCity.equals("Clark County")) data.strCity = "";
+    
+    if (data.strCity.length() == 0 && data.strMap.length() > 0) {
+      String city = MAP_CITY_TABLE.getProperty(data.strMap);
+      if (city != null) data.strCity = city;
+    }
     return true;
   }
   
@@ -108,6 +112,85 @@ public class WAClarkCountyParser extends FieldProgramParser {
       return "CH CALL";
     }
   }
+  
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "1301", "Camas",
+      "1302", "Camas",
+      "1303", "Camas",
+      "1304", "Camas",
+      "1305", "Camas",
+      "1308", "Camas",
+      "1313", "Camas",
+      "1314", "Camas",
+      "1315", "Camas",
+      "1316", "Camas",
+      "1317", "Camas",
+      "1318", "Camas",
+      "1401", "Washougal",
+      "1402", "Washougal",
+      "1403", "Washougal",
+      "1404", "Washougal",
+      "1405", "Washougal",
+      "1406", "Washougal",
+      "1407", "Washougal",
+      "1408", "Washougal",
+      "1409", "Washougal",
+      "1410", "Washougal",
+      "1411", "Washougal",
+      "1412", "Washougal",
+      "1413", "Washougal",
+      "1414", "Washougal",
+      "1415", "Washougal",
+      "1416", "Washougal",
+      "1417", "Washougal",
+      "1418", "Washougal",
+      "2311", "Camas",
+      "2312", "Camas",
+      "2314", "Camas",
+      "2315", "Camas",
+      "2321", "Camas",
+      "2322", "Camas",
+      "2323", "Camas",
+      "2324", "Camas",
+      "2325", "Camas",
+      "2326", "Camas",
+      "2327", "Camas",
+      "2328", "Camas",
+      "2332", "Camas",
+      "2333", "Camas ",
+      "2334", "Camas",
+      "2335", "Camas",
+      "2336", "Washougal",
+      "2403", "Washougal",
+      "2404", "Washougal",
+      "2405", "Washougal",
+      "2406", "Washougal",
+      "2407", "Washougal",
+      "2409", "Washougal",
+      "2410", "Washougal",
+      "2415", "Washougal",
+      "2416", "Washougal",
+      "2417", "Washougal",
+      "2418", "Washougal",
+      "2419", "Washougal",
+      "2420", "Washougal",
+      "2421", "Washougal",
+      "2422", "Washougal",
+      "2423", "Washougal",
+      "2424", "Washougal",
+      "2425", "Washougal",
+      "2426", "Washougal",
+      "2427", "Washougal",
+      "2428", "Washougal",
+      "2429", "Washougal",
+      "2430", "Washougal",
+      "2431", "Washougal",
+      "2432", "Washougal",
+      "2433", "Washougal",
+      "2434", "Washougal",
+      "2435", "Washougal",
+      "2436", "Washougal"
+  });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BG",   "Battleground",

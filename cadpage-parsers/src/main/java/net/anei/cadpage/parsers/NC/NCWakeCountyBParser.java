@@ -21,7 +21,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "CAD@townofcary.org";
+    return "CAD@townofcary.org,cad.dispatching@townofcary.org";
   }
   
   @Override
