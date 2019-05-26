@@ -138,7 +138,7 @@ public class Active911ParserTable {
       "US/CA/CityofRoseville",            "CAPlacerCountyC",
       "US/CA/CityofSanLuisObispo",        "CASanLuisObispoCountyB",
       "US/CA/CityofSLakeTahoe",           "CASouthLakeTahoe",
-      "US/CA/CityofSuisun",               "CASuisunCityB",
+      "US/CA/CityofSuisun",               "CASolanoCountyA",
       "US/CA/CityofVacaville",            "CASolanoCountyB",
       "US/CA/CityofVerdugo",              "CALosAngelesCountyA",
       "US/CA/ClarksburgFPD",              "CAYoloCountyB",
