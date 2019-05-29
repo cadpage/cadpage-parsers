@@ -31,8 +31,8 @@ public class DispatchA19Parser extends FieldProgramParser {
   
   public DispatchA19Parser(String defCity, String defState) {
     super(defCity, defState,
-           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO? Comments:INFO INFO+? TIME_MARK TIMES/N+ " +
-           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO? INFO+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO? INFO+ Contact:NAME Phone:PHONE )");
+           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
+           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
   
   @Override
@@ -144,7 +144,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
   private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
   private static final Pattern PHONE_GPS_PTN = Pattern.compile("CALLBACK=([-()\\d]+) LAT=([-+]\\d+\\.\\d+) LON=([-+]\\d+\\.\\d+) UNC=\\d+");
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile("ProQA Fire.*");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("ProQA Fire.*|[A-Za-z0-9 ]+:");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
