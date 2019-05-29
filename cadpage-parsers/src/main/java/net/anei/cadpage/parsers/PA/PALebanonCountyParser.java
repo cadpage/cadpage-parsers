@@ -1,10 +1,12 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Lebanon County, PA
@@ -13,8 +15,8 @@ public class PALebanonCountyParser extends SmartAddressParser {
 
   public PALebanonCountyParser() {
     super("LEBANON COUNTY", "PA");
-    setFieldList("SRC TIME DATE CITY ADDR APT PLACE X PRI CALL UNIT BOX");
-    removeWords("ALY");
+    setFieldList("SRC TIME DATE ADDR APT CITY X PLACE PRI CALL CH UNIT BOX INFO");
+    removeWords("ALY", "PLAZA", "TERRACE");
   }
   
   @Override
@@ -27,258 +29,142 @@ public class PALebanonCountyParser extends SmartAddressParser {
     return "km911alert@gmail.com,km911@fastmail.fm,7176798487";
   }
   
-  private static final Pattern DATE_TIME_PREFIX_PTN = Pattern.compile("(\\d{7}) +(\\d\\d:\\d\\d:\\d\\d) +(\\d\\d-\\d\\d-\\d\\d) +[-A-Z0-9]+ +ALPHA +\\d+ +");
   private static final Pattern SUBJECT_PTN = Pattern.compile("([ A-Za-z0-9]+)@(\\d\\d:\\d\\d)");
-  private static final Pattern SRC_TIME_PFX_PTN = Pattern.compile("([ A-Za-z0-9]+)@(\\d\\d:\\d\\d) / +");
-  private static final Pattern CALL_PREFIX_PTN = Pattern.compile("(?:Med Class(\\d) |((?:MED|MVA|TRAF|TRANSFER|Land Search&Rescue) )|(?<=[ a-z]|^|PLAZA|AUTOMOTIVE)((?!APT)[A-Z]{2,6} ?-(?!Box) ?))");
-  private static final Pattern BOX_PTN =  Pattern.compile(" (?:(?:Box|BOX) ?([-0-9]+)|Fire-Box (?:([-0-9]+) )?EMS-Box(?: ([-0-9]+))?)\\b");
-  private static final Pattern TAIL_CLASS_PTN = Pattern.compile("\\bClass (\\d) [Ff]or EMS\\b");
-  private static final Pattern UNIT_PTN = Pattern.compile("(?: +|^)([A-Z]+[0-9]+(?:-[0-9]+){0,2}|[0-9]+[A-Z]+|FG[ -]?\\d+)$", Pattern.CASE_INSENSITIVE);
-  private static final Pattern FG_UNIT_PTN = Pattern.compile("(FG) (\\d+)");
+  private static final Pattern CALL_PREFIX_PTN = Pattern.compile(" (?:Med Class(\\d) |((?:<Call Type>|\\(Call Type\\)|Aircraft|CARDIAC|CHEST PAIN|DIFFICULTY|FIRE|GENERAL|MED|MVA|Non-Emergency|[Ss]ick [Pp]erson|Stand-by|TRAF|Traffic|TRANSFER|Land Search&Rescue|Unresponsive)[- ])|(?<=[ a-z]|^|PLAZA|AUTOMOTIVE)((?!APT)[A-Z]{2,6} ?-(?!Box) ?))");
+  private static final Pattern COUNTY_CITY_PTN = Pattern.compile("(?:([BDLS]C) )?(?:City of ([A-Z]+)|((?:(?:NORTH|SOUTH|EAST|WEST|UPPER|LOWER) )?(?:(?:LITTLE|MOUNT|MT|NEW|PORT|ST) )?(?:[A-Z]+|COLD SPRING|DEER LAKE|PALO ALTO|SCHUYLKILL HAVEN|PINE GROVE|SINKING SPRING|TERRE HILL) (?:BORO(?:UGH)?|TWP|TOWNSHIP|CITY)))\\b *", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BOX_PTN =  Pattern.compile(" Fire-Box (?:([-0-9]+) )?EMS-Box(?: ([-0-9]+))?");
+  private static final Pattern CLASS_PTN = Pattern.compile("(?:[* ]+|^)(?:EMS|Med) [Cc]lass ?(\\d)[* ]+");
+  private static final Pattern DELIMS = Pattern.compile("[, ]+");
+  private static final Pattern CH_PTN = Pattern.compile("(FG)[- 0]*(\\d+)\\b *");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?:[, ]+|^)([A-Z]+[0-9]+(?:-\\d+|ST\\d){0,2}|[0-9]+[A-Z]+|\\d+-\\d*|DUTY?|L|NOPD|PSP-N|REQ|SQ|FG[ -]?\\d+)$", Pattern.CASE_INSENSITIVE);
 
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
     
-    int pt = body.indexOf('\n');
+    int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     
-    // Remove date/time prefix
-    Matcher match = DATE_TIME_PREFIX_PTN.matcher(body);
-    if (match.lookingAt()) {
-      data.strSource = match.group(1);
-      data.strTime = match.group(2);
-      data.strDate = match.group(3).replace('-', '/');
-      body = body.substring(match.end());
-    }
-    
-    else if ((match = SUBJECT_PTN.matcher(subject)).matches()) {
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (match.matches()) {
       data.strSource = match.group(1).toUpperCase().replace(" ", "");
       data.strTime = match.group(2);
     }
     
-    else if ((match = SRC_TIME_PFX_PTN.matcher(body)).lookingAt()) {
-      data.strSource = match.group(1).toUpperCase().replace(" ", "");
-      data.strTime = match.group(2);
-      body = body.substring(match.end());
-    }
-    
-    body = stripFieldStart(body, "[");
-    
-    // Try to parser city and county from beginning of text
-    body = parseCityAndCountyPrefix(body, data);
-    
-    // Then look for a priority/call prefix pattern that marks the
+    // Look for a priority/call prefix pattern that marks the
     // end of the address
     match = CALL_PREFIX_PTN.matcher(body);
-    if (!match.find()) return false;
+    if (!match.find()) {
+      if (data.strSource.length() == 0) return false;
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body;
+      return true;
+    }
+    
     String sAddress = body.substring(0,match.start()).trim();
     data.strPriority = getOptGroup(match.group(1));
     String sCallPfx = match.group(2);
     if (sCallPfx == null) sCallPfx = match.group(3);
     String sTail = body.substring(match.end()).trim();
     
-    // If we did not find a city/county at beginning of text, see if
-    // we can find one at the end of the identified address
-    if (data.strCity.length() == 0) {
-      sAddress = parseCityAndCountySuffix(sAddress, data);
-    }
+    // Looks like we can usually count on a comma separator following the address
+    pt = sAddress.indexOf(',');
+    if (pt < 0) {
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, sAddress, data);
+    } else { 
+      String sAddr = sAddress.substring(0,pt).trim().replace('@', '&');
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, sAddr, data); 
+      sAddress = sAddress.substring(pt+1).trim();
 
-    pt = sAddress.indexOf('@');
-    if (pt < 0) pt = sAddress.indexOf('=');
-    if (pt >= 0) {
-      data.strPlace = sAddress.substring(pt+1).trim();
-      sAddress = sAddress.substring(0,pt).trim();
-      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, sAddress, data);
-    } else {
-      parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT, sAddress, data);
-      data.strPlace = append(data.strPlace, " - ", getLeft());
-    }
-    if (data.strPlace.startsWith ("AT ")) {
-      String cross = data.strPlace.substring(3).trim();
-      if (cross.startsWith("MM ")) {
-        data.strAddress = append(data.strAddress, " ", cross);
-      } else {
-        data.strCross = cross;
+      // We usually have pretty good luck using a pattern to identify the country and city
+      match = COUNTY_CITY_PTN.matcher(sAddress);
+      if (!match.lookingAt()) {
+        
+        // If that did not work, see if it starts at the next comma
+        // and make this segment an apartment
+        pt = sAddress.indexOf(',');
+        if (pt < 0) return false;
+        data.strApt = append(data.strApt, "-", sAddress.substring(0,pt).trim());
+        sAddress = sAddress.substring(pt+1).trim();
+
+        match = COUNTY_CITY_PTN.matcher(sAddress);
+        if (!match.lookingAt()) return false;
       }
-      data.strPlace = "";
-    } else  {
-      data.strPlace = stripFieldStart(data.strPlace, "* ");;
+      
+      String county = match.group(1);
+      String city = match.group(2);
+      if (city == null) city = match.group(3);
+      if (county != null) city = city + ", " + COUNTY_CODES.getProperty(county);
+      data.strCity = city;
+      
+      sAddress = sAddress.substring(match.end());
+      while (sAddress.length() > 0) {
+        Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, sAddress);
+        if (!res.isValid()) break;
+        String save = data.strCross;
+        res.getData(data);
+        data.strCross = append(save, ", ", data.strCross);
+        sAddress = res.getLeft();
+      }
+      data.strPlace = sAddress;
     }
 
-    String sCall;
+    // That is it for the address section, now work on the tail including the call description
+    // Start by stripping off the combined box number
+
     match = BOX_PTN.matcher(sTail);
     if (! match.find()) {
-      sCall = sTail;
-      sTail = "";
+      pt = sTail.indexOf(" Fire-");
+      if (pt >= 0) sTail = sTail.substring(0,pt).trim();
     } else {
-      sCall = sTail.substring(0,match.start()).trim();
-      String sBox = match.group(1);
-      if (sBox == null) {
-        String fireBox = match.group(2);
-        String emsBox =  match.group(3);
-        fireBox = (fireBox != null ? "Fire:"+fireBox : "");
-        emsBox = (emsBox != null ? "EMS:" + emsBox : "");
-        sBox = append(fireBox, " ", emsBox);
-      }
-      data.strBox = sBox;
-      sTail = sTail.substring(match.end()).trim();
-      sTail = stripFieldStart(sTail, "-");
+      String fireBox = match.group(1);
+      String emsBox =  match.group(2);
+      fireBox = (fireBox != null ? "Fire:"+fireBox : "");
+      emsBox = (emsBox != null ? "EMS:" + emsBox : "");
+      data.strBox = append(fireBox, " ", emsBox);
+      sTail = sTail.substring(0,match.start()).trim();
     }
 
-    // Class priority and units can be found before or after the box fields :(
+    // If there is a class priority it separates the call description from the units
+    String unit = "";
     if (sTail.length() > 0) {
-      match = TAIL_CLASS_PTN.matcher(sTail);
-      if (match.lookingAt()) {
-        data.strPriority = match.group(1);
-        sTail = sTail.substring(match.end()).trim();
-      }
-      data.strUnit = FG_UNIT_PTN.matcher(sTail.toUpperCase()).replaceAll("$1-$2");
-    }
-    
-    else {
-      match = TAIL_CLASS_PTN.matcher(sCall);
+      match = CLASS_PTN.matcher(sTail);
       if (match.find()) {
         data.strPriority = match.group(1);
-        data.strUnit = sCall.substring(match.end()).trim().toUpperCase();
-        sCall = sCall.substring(0,match.start()).trim();
+        unit = sTail.substring(match.end()).trim().toUpperCase();
+        sTail = sTail.substring(0, match.start()).trim();
+        unit = DELIMS.matcher(unit).replaceAll(" ").trim();
       }
+    
+      // If there is not class priority, we need to strip off individual units
       
       else {
         while (true) {
-          match = UNIT_PTN.matcher(sCall);
+          match = UNIT_PTN.matcher(sTail);
           if (!match.find()) break;
-          data.strUnit = append(match.group(1).toUpperCase().replace(' ', '-'), " ", data.strUnit);
-          sCall = sCall.substring(0,match.start()).trim();
+          unit = append(match.group(1).toUpperCase().replace(' ', '-'), " ", unit);
+          sTail = sTail.substring(0,match.start()).trim();
         }
       }
+
+      // Strip leading channel from unit info
+      while ((match = CH_PTN.matcher(unit)).lookingAt()) {
+        data.strChannel = match.group(1) + '-' + match.group(2);
+        unit = unit.substring(match.end());
+      }
+      data.strUnit = unit;
     }
     
-    data.strCall = ((sCallPfx == null ? "" : sCallPfx) + sCall).trim();
+    data.strCall = ((sCallPfx == null ? "" : sCallPfx) + sTail).trim();
     if (data.strCall.length() == 0) data.strCall = "Med";
     
     // Make some validity checks to require **SOMETHING** beyond a simple call prefix match
     return data.strCity.length() > 0 || data.strBox.length() > 0 || data.strUnit.length() > 0;
   }
   
-  private String parseCityAndCountyPrefix(String address, Data data) {
-    
-    CityParser p = new CityParser(address);
-    
-    // Look for a county prefix and city prefixs
-    String county = p.getCounty(0);
-    String city = p.getCity(0);
-    
-    // If we did not find anything, return failure
-    if (county == null && city == null) return address;
-
-    // If we found a city, but no county, see if the county follows the city
-    if (city != null && county == null) {
-      county = p.getCounty(0);
-      // Sometimes there is a different township behind the county, which we ignore
-      if (county != null) p.getCity(0);
-    }
-    
-    // if we did not find a city, but there was a county prefix in front of it
-    // we get a bit less strict about what qualifies as a city
-    else if (county != null && city == null) {
-      city = p.getSpecialCity(0);
-    }
-    
-    buildCityName(city, county, data);
-    
-    // And return whatever is left
-    return p.getAddress();
-  }
-  
-  private String parseCityAndCountySuffix(String address, Data data) {
-    
-    CityParser p = new CityParser(address);
-    
-    String county = p.getCounty(1);
-    String city = p.getCity(1);
-    
-    if (county == null && city == null) return address;
-    
-    if (county != null && city ==  null) {
-      city = p.getSpecialCity(1);
-    }
-    
-    buildCityName(city, county, data);
-    
-    // And return whatever is left
-    return p.getAddress();
-  }
-
-  public void buildCityName(String city, String county, Data data) {
-    // Finally put it all together
-    if (city == null) city = "";
-    if (county != null) {
-      city = append(city, ", ", county + " COUNTY");
-    }
-    data.strCity = city.toUpperCase();
-  }
-  
-  // Extracting the city from front or back of an identified address line is complicated enough to
-  // rate it's own class
-
-  private static final String DELIM = "\\W+";
-  private static final String COUNTY_PTN_S = "(BERKS|DAUPHIN|LANCASTER|SCHUYLKILL)(?: CO(?:UNTY|UTNY)?)?";
-  private static final Pattern[] COUNTY_PTNS = new Pattern[]{
-    Pattern.compile("^"+COUNTY_PTN_S+DELIM, Pattern.CASE_INSENSITIVE),
-    Pattern.compile(DELIM+COUNTY_PTN_S+"$", Pattern.CASE_INSENSITIVE)
-  };
-  
-  private static final String CITY_PTN_S = "(?:City of ([A-Z]+)|((?:(?:[NO]ORTH|SOUTH|EAST|WEST|UPPER|LOWER) )?(?:(?:LITTLE|MOUNT|MT|NEW|PORT|ST) )?(?:[A-Z]+|COLD SPRING|DEER LAKE|PALO ALTO|SCHUYLKILL HAVEN|PINE GROVE|SINKING SPRING|TERRE HILL) (?:BORO(?:UGH)?|TWP|TOWNSHIP|CITY)))";
-  private static final Pattern[] CITY_PTNS = new Pattern[]{
-    Pattern.compile("^"+CITY_PTN_S+DELIM, Pattern.CASE_INSENSITIVE),
-    Pattern.compile(DELIM+CITY_PTN_S+"$", Pattern.CASE_INSENSITIVE)
-  };
-  private static final String SPECIAL_CITY_PTN_S = "((?:(?:[NO]ORTH|SOUTH|EAST|WEST|UPPER|LOWER) )?(?:(?:LITTLE|MOUNT|MT|NEW|PORT|ST) )?[A-Z]+)";
-  private static final Pattern[] SPECIAL_CITY_PTNS = new Pattern[]{
-    Pattern.compile("^"+SPECIAL_CITY_PTN_S+DELIM, Pattern.CASE_INSENSITIVE),
-    Pattern.compile(DELIM+SPECIAL_CITY_PTN_S+"$", Pattern.CASE_INSENSITIVE)
-  };
-  
-  private static class CityParser {
-    private String address;
-    
-    public CityParser(String address) {
-      this.address = address;
-    }
-    
-    public String getCounty(int ndx) {
-      Matcher match =  COUNTY_PTNS[ndx].matcher(address);
-      if (!match.find()) return null;
-      trimAddress(match);
-      return match.group(1).toUpperCase();
-    }
-    
-    public String getCity(int ndx) {
-      Matcher match = CITY_PTNS[ndx].matcher(address);
-      if (!match.find()) return null;
-      trimAddress(match);
-      String city = match.group(1);
-      if (city != null) return city.toUpperCase();
-      city = match.group(2).toUpperCase();
-      city = stripFieldEnd(city, "BORO");
-      city = stripFieldEnd(city, "BOROUGH");
-      return city;
-    }
-    
-    public String getSpecialCity(int ndx) {
-      Matcher match = SPECIAL_CITY_PTNS[ndx].matcher(address);
-      if (!match.find()) return null;
-      trimAddress(match);
-      return match.group(1).toUpperCase();
-    }
-    
-    public String getAddress() {
-      return address;
-    }
-
-    private void trimAddress(Matcher match) {
-      if (match.start() == 0) address = address.substring(match.end());
-      else if (match.end() == address.length()) address = address.substring(0,match.start());
-    }
-  }
+  private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
+      "BC", "BERKS COUNTY",
+      "DC", "DAUPHIN COUNTY",
+      "LC", "LANCASTER COUNTY",
+      "SC", "SCHUYLKILL COUNTY"
+  });
 }
