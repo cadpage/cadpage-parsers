@@ -1685,6 +1685,7 @@ public class Active911ParserTable {
       "US/WA/KlickitatCounty",            "WAKlickitatCounty",
       "US/WA/LewisCounty",                "WALewisCounty",
       "US/WA/Medapoint",                  "WASnohomishCountyC",
+      "US/WA/MPTech",                     "WASnohomishCountyC",
       "US/WA/OkanoganCounty",             "WAOkanoganCounty",
       "US/WA/PendOreilleCounty",          "WAPendOreilleCounty",
       "US/WA/PierceCounty",               "WAPierceCountyD,WAPierceCountyE",
