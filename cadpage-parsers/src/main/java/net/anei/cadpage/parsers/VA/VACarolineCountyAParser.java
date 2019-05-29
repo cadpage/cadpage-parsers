@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgParser;
+import net.anei.cadpage.parsers.SmartAddressParser;
 
-public class VACarolineCountyAParser extends MsgParser {
+public class VACarolineCountyAParser extends SmartAddressParser {
   
   public VACarolineCountyAParser() {
     super("CAROLINE COUNTY", "VA");
     setFieldList("DATE TIME ID CALL ADDR APT CITY PLACE INFO UNIT");
   }
   
-  private static final Pattern MASTER = Pattern.compile("(?:superuser|ACTIVE 911-([A-Z0-9]+))?:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (\\d{12}) ([A-Z0-9]+) ([^,]+), *(.+?) (Call Created Time.*:(?: \\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b)?) *(.*)");
-  private static final Pattern INFO_SPLIT_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d) +");
+  private static final Pattern MASTER = Pattern.compile("(?:superuser|ACTIVE 911-(?:CountyW|([A-Z0-9]+)))?:As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (\\d{12}) ([A-Z0-9]+) (.*?) (Created:\\d\\d:\\d\\d(?: +[A-Za-z ]+:\\d\\d:\\d\\d)+)\\b *(.*)");
+  private static final Pattern INFO_SPLIT_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d) +");
   private static final Pattern UNIT_SPLIT_PTN = Pattern.compile("[, ]+");
   
   @Override
@@ -33,21 +33,37 @@ public class VACarolineCountyAParser extends MsgParser {
     data.strTime = match.group(3);
     data.strCallId = match.group(4);
     data.strCall = match.group(5);
-    parseAddress(match.group(6).trim(), data);
-    String cityPlace = match.group(7).trim();
-    String city = CITY_LIST.getCode(cityPlace);
-    if (city != null) {
-      data.strCity = city;
-      data.strPlace = cityPlace.substring(city.length()).trim();
-    } else {
-//      return false;
-      data.strCity = cityPlace;
-    }
+    String addr = match.group(6);
     
-    data.strSupp = INFO_SPLIT_PTN.matcher(match.group(8).trim()).replaceAll("\n");
-    unit = match.group(9);
+    data.strSupp = INFO_SPLIT_PTN.matcher(match.group(7).trim()).replaceAll("\n");
+    unit = match.group(8);
     for (String unt : UNIT_SPLIT_PTN.split(unit)) {
       addUnit(unt, unitSet, data);
+    }
+
+    if (data.strCall.equals("MA")) {
+      int pt = addr.indexOf(" IN ");
+      if (pt < 0) return false;
+      parseAddress(StartType.START_ADDR, addr.substring(0,pt).trim(), data);
+      String city = getLeft();
+      if (city.length() > 0) {
+        data.strCity = city;
+      } else {
+        data.strCity = addr.substring(pt+4).trim();
+      }
+    } else {
+      int pt = addr.indexOf(',');
+      if (pt < 0) return false;
+      parseAddress(addr.substring(0,pt).trim(), data);
+      String cityPlace = addr.substring(pt+1).trim();
+      String city = CITY_LIST.getCode(cityPlace);
+      if (city != null) {
+        data.strCity = city;
+        data.strPlace = cityPlace.substring(city.length()).trim();
+      } else {
+        data.strCity = cityPlace;
+        return false;
+      }
     }
     return true;
   }
@@ -203,6 +219,10 @@ public class VACarolineCountyAParser extends MsgParser {
       "YOUNG CORNER",
       
       // Hanover County
-      "HANOVER"
+      "DOSWELL",
+      "HANOVER",
+      
+      // Independent cities
+      "FREDERICKSBURG"
   );
 }
