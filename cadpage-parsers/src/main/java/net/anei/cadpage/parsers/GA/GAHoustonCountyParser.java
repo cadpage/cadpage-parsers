@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class GAHoustonCountyParser extends DispatchOSSIParser {
   
-  private static final Pattern MASTER = Pattern.compile("HOUSTON COUNTY 911:? \\((.*?)\\) (CAD:.*)");
+  private static final Pattern MASTER = Pattern.compile("HOUSTON COUNTY 911:? \\((.*?)\\) (CAD:.*)", Pattern.DOTALL);
   
   public GAHoustonCountyParser() {
     super(CITY_CODES, "HOUSTON COUNTY", "GA",
