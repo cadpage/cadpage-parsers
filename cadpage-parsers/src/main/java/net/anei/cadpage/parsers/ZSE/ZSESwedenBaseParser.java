@@ -33,7 +33,7 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CHANNEL_PTN = Pattern.compile(".* (?:RAPS-|raps |SjvIns-|SamvFlyg-)\\d+");
+  private static final Pattern CHANNEL_PTN = Pattern.compile(".* (?:RAPS-|raps |SjvIns-|SamvFlyg-)\\d+|E-tunaIns");
   
   protected boolean isValidChannel(String field) {
     return CHANNEL_PTN.matcher(field).matches();
@@ -83,5 +83,90 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
+  }
+
+  /**
+   * Clean up extraneous line breaks from message body
+   * @param body original message body
+   * @param keyLen length of expected field label
+   * @return adjust message body
+   */
+  String cleanFixedLabelBreaks(String body, int keyLen) {
+    
+    if (body.length() <= keyLen) return null;
+    if (body.charAt(keyLen) != ':') return null;
+    
+    StringBuilder sb = null;
+    int lastPt = 0;
+    
+    // OK, lets start through message
+    for (int pos = 0; pos < body.length(); pos++) {
+      
+      // Everything is peachy until we find a line break;
+      if (body.charAt(pos) == '\n') {
+        
+        // The only legitimate line breaks are followed by a colon
+        // keylen characters ahead.  Not counting any intervening line breaks
+        // which are not legitimate and will need to be removed.
+        boolean removeBreak = false;
+        int keyPt = pos+1;
+        char chr = 0;
+        
+        for (int keyCnt = 0; keyCnt < keyLen; keyCnt++) {
+          if (++keyPt >= body.length()) {
+            chr = 0;
+            break;
+          }
+          chr = body.charAt(keyPt);
+          if (removeBreak && chr == ':') break;
+          while (chr == '\n') {
+            keyPt++;
+            removeBreak = true;
+            chr = (keyPt < body.length() ? body.charAt(keyPt) : 0);
+          }
+        }
+        
+        // If the last character was a colon, this was a legitimate line break and should
+        // remain, and if no breaks were found in the  keyword, then nothing needs to be done
+        // and we can just skip over the identified keyword
+        if (chr == ':' && !removeBreak) {
+          pos = keyPt;
+        }
+        
+        // Otherwise, we are going to have to remove something.  Which means it is time
+        // to update the StringBuilder object
+        else {
+          if (sb == null) {
+            sb = new StringBuilder();
+            lastPt = 0;
+          }
+          sb.append(body.substring(lastPt, pos));
+          lastPt = pos;
+          
+          //  If we did not find a colon at the right spot, this is a bad line break
+          // and we will simply skip over it
+          if (chr != ':') {
+            lastPt++;
+          }
+          
+          // Otherwise, we need to remove any line breaks from the identified keyword
+          // and skip over it
+          else {
+            sb.append('\n');
+            sb.append(body.substring(pos+1, keyPt+1).replace("\n", ""));
+            pos = keyPt;
+            lastPt = keyPt+1;
+          }
+        }
+      }
+    }
+    
+    // We are done!!!
+    // If not adjustments are required, return the original message
+    if (sb == null) return body;
+    
+    // Otherwise close out the builder and return the adjusted message body
+    sb.append(body.substring(lastPt));
+    return sb.toString();
   }
 }

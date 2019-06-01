@@ -7,6 +7,7 @@ public class ZSESwedenParser extends GroupBestParser {
     super(new ZSESwedenAParser(), 
           new ZSESwedenBParser(), 
           new ZSESwedenCParser(),
-          new ZSESwedenDParser());
+          new ZSESwedenDParser(),
+          new ZSESwedenEParser());
   }
 }
