@@ -36,7 +36,7 @@ public class Active911ParserTable {
       "NZ/NI/Northland",                  "ZNZNewZealand",
       "NZ/NI/Rotorua",                    "ZNZNewZealand",
       "NZ/NI/Waikato",                    "ZNZNewZealand",
-      "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB",
+      "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB,ZSESwedenE",
       "US/AK/AnchorageChugiak",           "AKChugiak",
       "US/AK/CityofJuneau",               "AKJuneau",
       "US/AK/Fairbanks",                  "AKFairbanks",
