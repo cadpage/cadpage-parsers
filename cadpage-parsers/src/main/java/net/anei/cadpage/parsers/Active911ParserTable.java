@@ -301,6 +301,7 @@ public class Active911ParserTable {
       "US/FL/PalmBeachCounty",            "FLPalmBeachCounty",
       "US/FL/PutnamSheriff",              "FLPutnamCounty",
       "US/FL/RegionalPsi",                "FLBrowardCounty",
+      "US/FL/RegionalPsiSecond",          "FLBrowardCounty",
       "US/FL/SeminoleCounty",             "FLSeminoleCounty",
       "US/FL/WashingtonCountySheriff",    "FLWashingtonCounty",
       "US/GA/BarrowCounty",               "GABarrowCounty",

@@ -21,7 +21,7 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
   
   @Override
   public String getFilter() {
-    return "CAD@Sheriff.org,CAD_Notify@regionalpsi.net";
+    return "CAD@Sheriff.org,CAD_Notify@regionalpsi.net,bsocad@southfloridarest.org";
   }
 
   @Override
@@ -31,12 +31,22 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
     };
   }
   
-  private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?) +([A-Z]{2}/[ A-Z]+)");
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+  
+  private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[- ]* +([A-Z]{2}/[ A-Z]+)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf("\n\n");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+    int pt = body.indexOf("\n\n\n--");
+    if (pt >= 0) {
+      int pt2 = body.indexOf(" TYPN:", pt);
+      String trail = pt2 >= 0 ? body.substring(pt2) : null;
+      body = body.substring(0,pt).trim();
+      if (trail != null) body = body + trail;
+    }
     Matcher match = TRAIL_CH_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1);
@@ -44,7 +54,10 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
     } else {
       data.expectMore = true;
     }
-    return super.parseMsg(body, data);
+    body = body.replace("DROP TIME:", "DROP_TIME:");
+    if (!super.parseMsg(body, data)) return false;
+    data.strSupp = data.strSupp.replace("DROP_TIME:", "DROP TIME:");
+    return true;
   }
   
   @Override

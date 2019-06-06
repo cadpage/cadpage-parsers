@@ -78,7 +78,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
             "( TIME:TIME_INFO! TYP:CALL " +
             "| PRI:PRI INC:ID " +
                 "( AD:ADDR! LOC:CITY TIME:TIME_INFO! TYP:CALL " +
-                "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! DESC:INFO! TYP:CODE! TYPN:CALL! CMT1:INFO/N! TIME:DATETIME UNS:UNIT " +
+                "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! CITY:CITY LAT:GPS1 LONG:GPS2 DESC:PLACE! TYP:CODE! TYPN:CALL% CMT1:INFO/N% CC_TEXT:CALL3 PROBLEM:INFO/N CAD_RESPONSE:PRI DISPATCH_LEVEL:CODE2 TIME:DATETIME UNS:UNIT " +
                                       "| DESC:CALL! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N+ " + 
                                       ") " +
                 "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
@@ -90,7 +90,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
         : null);    
     return setExpectFlag(program, expTerm);
   }
-
+  
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("(?:([-A-Z0-9]+) +)?TIME: *(\\d\\d:\\d\\d)\\b *(.*)", Pattern.DOTALL);
   private static final Pattern BREAK_PTN = Pattern.compile(" *[\n\t]+ *");
   private static final Pattern SRC_PTN = Pattern.compile("([^:]+?) +([A-Z0-9]+:.*)");
@@ -118,6 +118,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     body = body.replace("TYP:", " TYP:");
     body = body.replace(" CALLER / STATEMENT:", " CALLER STATEMENT:");
     body = body.replace(" CALLER CMT2:", " CMT2:");
+    body = body.replace(" CAD RESPONSE TIME:", " TIME:");
     return super.parseMsg(body.trim(), data);
   }
   
@@ -138,6 +139,8 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("TIME_INFO")) return new BaseTimeInfoField();
     if (name.equals("CALL2")) return new BaseCall2Field();
+    if (name.equals("CALL3")) return new BaseCall3Field();
+    if (name.equals("CODE2"))  return new BaseCode2Field();
     if (name.equals("PLACE2")) return new BasePlace2Field();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("UNIT")) return new BaseUnitField();
@@ -248,8 +251,28 @@ public class DispatchPrintrakParser extends FieldProgramParser {
   private class BaseCall2Field extends CallField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("**")) field = field.substring(2).trim();
+      field = stripFieldStart(field, "**");
       data.strCall = field;
+    }
+  }
+  
+  private class BaseCall3Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      
+      // Second call field generally duplicates the first one.
+      // Take whichever is the longer
+      if (field.length() <= data.strCall.length())  return;
+      data.strCall = field;
+    }
+  }
+  
+  private class BaseCode2Field extends CodeField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(' ');
+      if (pt >= 0) field = field.substring(0, pt);
+      data.strCode = append(data.strCode, "/", field);
     }
   }
   
@@ -296,7 +319,9 @@ public class DispatchPrintrakParser extends FieldProgramParser {
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("UNKNOWN /")) field = field.substring(9).trim();
+      field = stripFieldStart(field, "UNKNOWN /");
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
   }
