@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
 
@@ -123,6 +122,8 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     if (city.equalsIgnoreCase("KINGS VAL")) city = "PHILOMATH";
     return city;
   }
+  
+  private static final Pattern STREET_APT_PTN = Pattern.compile("(\\d+)-(\\d+)( +.*)");
 
   @Override
   protected String adjustGpsLookupAddress(String address, String apt) {
@@ -137,6 +138,13 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     }
     
     address = address.replace("24671 STOVALL LN", "24617 STOVALL LN");
+    if (apt.length() == 0) {
+      Matcher match = STREET_APT_PTN.matcher(address);
+      if (match.matches()) {
+        address = match.group(1) + match.group(3);
+        apt = match.group(2);
+      }
+    }
     if (apt.length() > 0) {
       apt = apt.toUpperCase();
       if (apt.startsWith("LOT")) apt = apt.substring(3).trim();
