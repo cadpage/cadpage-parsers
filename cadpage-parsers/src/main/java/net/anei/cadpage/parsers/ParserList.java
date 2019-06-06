@@ -1430,6 +1430,7 @@ public class ParserList {
               ,"TXFlowerMound"                  ,"Flower Mound, TX"
               ,"TXFortBendCounty"               ,"Fort Bend County, TX"
               ,"TXFortWorth"                    ,"Fort Worth, TX"
+              ,"TXFranklinCounty"               ,"Franklin County, TX"
               ,"TXGainesville"                  ,"Gainesville, TX"
               ,"TXGalvestonCounty"              ,"Galveston County, TX"
               ,"TXGatesville"                   ,"Gatesville, TX"
