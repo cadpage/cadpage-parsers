@@ -46,6 +46,8 @@ public class FLOkaloosaCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID"))  return new IdField("[A-Z]{4}\\d{2}CAD\\d{6}", true);
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CROSS")) return new MyCrossField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("TIMES")) return new MyTimesField();
@@ -59,6 +61,22 @@ public class FLOkaloosaCountyParser extends FieldProgramParser {
       for (String unit : field.split(" +")) {
         unitSet.add(unit);
       }
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("SCENIC HIGHWAY", "HIGHWAY");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("SCENIC HIGHWAY", "HIGHWAY");
+      super.parse(field, data);
     }
   }
   
