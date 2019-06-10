@@ -34,6 +34,7 @@ public class Active911ParserTable {
       "NZ/General/RegionTwo",             "ZNZNewZealand",
       "NZ/NI/Auckland",                   "ZNZNewZealand",
       "NZ/NI/Northland",                  "ZNZNewZealand",
+      "NZ/NI/OkereFalls",                 "ZNZNewZealand",
       "NZ/NI/Rotorua",                    "ZNZNewZealand",
       "NZ/NI/Waikato",                    "ZNZNewZealand",
       "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB,ZSESwedenE",
