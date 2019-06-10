@@ -765,7 +765,7 @@ public abstract class MsgParser {
    * @param keyWords list of expected keywords
    * @return Properties object containing the parsed key: value pairs
    */
-  protected static Properties parseMessage(String body, String[] keyWords) {
+  protected Properties parseMessage(String body, String[] keyWords) {
 
     Properties props = new Properties();
     String[] flds = parseMessageFields(body, keyWords);
@@ -788,7 +788,7 @@ public abstract class MsgParser {
    * @param keyWords list of expected keywords
    * @return Array of data fields broken up by defined keywords
    */
-  protected static String[] parseMessageFields(String body, String[] keyWords) {
+  protected String[] parseMessageFields(String body, String[] keyWords) {
     return parseMessageFields(body, keyWords, ':', false, false);
   }
 
@@ -802,8 +802,8 @@ public abstract class MsgParser {
    * @param ignoreCase true if case should be ignored when comparing keywords
    * @return Array of data fields broken up by defined keywords
    */
-  protected static String[] parseMessageFields(String body, String[] keyWords, 
-      char breakChar, boolean anyOrder, boolean ignoreCase) {
+  protected String[] parseMessageFields(String body, String[] keyWords, 
+                                        char breakChar, boolean anyOrder, boolean ignoreCase) {
 
     List<String> fields = new ArrayList<String>();
     int iKey = -1;  // Current key table pointer
@@ -844,6 +844,7 @@ public abstract class MsgParser {
           String keyword = body.substring(iTempPt, ipt);
           if (ignoreCase) keyword = keyword.toUpperCase();
           if (!keyword.equals(key)) continue;
+          if (rejectBreakKeyword(keyword)) continue;
           iNxtKey = ndx;
           iEndPt = iTempPt;
           break;
@@ -902,6 +903,16 @@ public abstract class MsgParser {
     } while (iNxtKey >= 0);
 
     return fields.toArray(new String[fields.size()]);
+  }
+
+  /**
+   * Allows parse subclasses to reject keywords that should only
+   * be recognized in certain circumstances
+   * @param key keyword being checked
+   * @return true keyword should be rejected
+   */
+  protected boolean rejectBreakKeyword(String key) {
+    return false;
   }
 
   /**

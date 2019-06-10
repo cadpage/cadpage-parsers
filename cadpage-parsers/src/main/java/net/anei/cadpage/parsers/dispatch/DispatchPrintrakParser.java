@@ -61,28 +61,31 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     this(cityList, defCity, defState, null, flags);
   }
   
+  private boolean useCmt1Call;
+  
   public DispatchPrintrakParser(Properties cityCodes, String defCity, String defState, String expTerm, int flags) {
     super(cityCodes, defCity, defState, getProgramStr(expTerm, flags));
+    useCmt1Call = (flags & FLG_USE_CMT1_CALL) != 0;
   }
   
   public DispatchPrintrakParser(String[] cityList, String defCity, String defState, String expTerm, int flags) {
     super(cityList, defCity, defState, getProgramStr(expTerm, flags));
+    useCmt1Call = (flags & FLG_USE_CMT1_CALL) != 0;
   }
   
   private static String getProgramStr(String expTerm, int flags) {
-    String cmt1Fld = ((flags & FLG_USE_CMT1_CALL) != 0 ? "CALL2" : "INFO");
 
     int version = (flags & FLG_VERSION_MASK);
     String program = 
         (version == FLG_VERSION_1 ?
             "( TIME:TIME_INFO! TYP:CALL " +
-            "| PRI:PRI INC:ID " +
+            "| PRI:PRI1 INC:ID " +
                 "( AD:ADDR! LOC:CITY TIME:TIME_INFO! TYP:CALL " +
-                "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! CITY:CITY LAT:GPS1 LONG:GPS2 DESC:PLACE! TYP:CODE! TYPN:CALL% CMT1:INFO/N% CC_TEXT:CALL3 PROBLEM:INFO/N CAD_RESPONSE:PRI DISPATCH_LEVEL:CODE2 TIME:DATETIME UNS:UNIT " +
-                                      "| DESC:CALL! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N+ " + 
-                                      ") " +
-                "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:" + cmt1Fld +  
-                  " Original_Location:PLACE2? CMT2:INFO/N CMT3:INFO/N CMT4:INFO/N CMT5:INFO/N Original_Location:PLACE2? CE:INFO? CMT2:INFO CALLER_STATEMENT:INFO? STATEMENT:INFO? TIME:TIME UNTS:UNIT XST:X XST2:X UNTS:UNIT XST:X XST2:X " + 
+                "| LOC:ADDR! AD:PLACE! ( APT:APT! CRSTR:X! CITY:CITY LAT:GPS1 LONG:GPS2 DESC:PLACE! TYP:CODE! TYPN:CALL% CMT1:INFO/N% CC_TEXT:CALL3 PROBLEM:INFO2/N CAD_RESPONSE:PRI2 DISPATCH_LEVEL:CODE2 TIME:DATETIME " +
+                                      "| DESC:PLACE! BLD:APT! FLR:APT/D? APT:APT/D! TYP:CODE! MODCIR:CALL/SDS! CMT1:INFO/N " + 
+                                      ") UNS:UNIT " +
+                "| CODE:CODE TYP:CALL! BLD:APT APT:APT AD:ADDR! APT:APT ( CTY:CITY | CITY:CITY ) MAP:MAP LOC:PLACE CALLER:NAME XST:X CN:NAME CMT1:INFO/1N" +  
+                  " CMT2:INFO/N CMT3:INFO/N CMT4:INFO/N CMT5:INFO/N CMT6:INFO/N CMT7:INFO/N CMT8:INFO/N CMT9:INFO/N CE:INFO? CMT2:INFO TIME:TIME UNTS:UNIT XST:X XST2:X UNTS:UNIT XST:X XST2:X " + 
                 ") " + 
            ") END"
         : version == FLG_VERSION_2 ?
@@ -92,9 +95,11 @@ public class DispatchPrintrakParser extends FieldProgramParser {
   }
   
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("(?:([-A-Z0-9]+) +)?TIME: *(\\d\\d:\\d\\d)\\b *(.*)", Pattern.DOTALL);
-  private static final Pattern BREAK_PTN = Pattern.compile(" *[\n\t]+ *");
-  private static final Pattern SRC_PTN = Pattern.compile("([^:]+?) +([A-Z0-9]+:.*)");
-  
+  private static final Pattern BREAK_PTN = Pattern.compile(" *[\n]+ *");
+  private static final Pattern SRC_PTN = Pattern.compile("([^:]+?)(?: +|\n)([A-Z0-9]+:.*)", Pattern.DOTALL);
+
+  private boolean rejectLatLongKeywords;
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     
@@ -108,7 +113,8 @@ public class DispatchPrintrakParser extends FieldProgramParser {
       return true;
     }
     
-    body = BREAK_PTN.matcher(body).replaceAll(" ");
+    body = body.replace('\t', ' ');
+    body = BREAK_PTN.matcher(body).replaceAll("\n");
     match = SRC_PTN.matcher(body);
     if (match.matches()) {
       data.strSource = match.group(1);
@@ -118,7 +124,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     body = body.replace("TYP:", " TYP:");
     body = body.replace(" CALLER / STATEMENT:", " CALLER STATEMENT:");
     body = body.replace(" CALLER CMT2:", " CMT2:");
-    body = body.replace(" CAD RESPONSE TIME:", " TIME:");
+    rejectLatLongKeywords = true;
     return super.parseMsg(body.trim(), data);
   }
   
@@ -127,22 +133,29 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
   
+  @Override
+  protected boolean rejectBreakKeyword(String key) {
+    if (key.equals("LAT") || key.equals("LONG")) return rejectLatLongKeywords;
+    if (rejectLatLongKeywords && key.equals("CRSTR")) rejectLatLongKeywords = false;
+    return false;
+  }
+  
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("EEEEEE, MMM dd, yyyy hh:mm:ss aa");
   
   @Override
   public Field getField(String name) {
-    if (name.equals("PRI")) return new BasePriorityField();
+    if (name.equals("PRI1")) return new BasePriorityField();
+    if (name.equals("PRI2")) return new BasePriority2Field();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("TIME_INFO")) return new BaseTimeInfoField();
-    if (name.equals("CALL2")) return new BaseCall2Field();
     if (name.equals("CALL3")) return new BaseCall3Field();
     if (name.equals("CODE2"))  return new BaseCode2Field();
-    if (name.equals("PLACE2")) return new BasePlace2Field();
     if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("INFO2")) return new BaseInfo2Field();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("X")) return new BaseCrossField();
     return super.getField(name);
@@ -166,10 +179,35 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     }
   }
   
+  private class BasePriority2Field extends PriorityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('\n', ' ');
+      int pt = field.indexOf(' ');
+      if (pt >= 0) {
+        String left = field.substring(pt+1).trim();
+        field = field.substring(0, pt);
+        if (!"DISPATCH LEVEL".startsWith(left)) {
+          data.strSupp = append(data.strSupp, "\n", left);
+        }
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PRI INFO";
+    }
+  }
+  
   private static final Pattern APT_PTN = Pattern.compile("\\b(?:APT|RM|UNIT) +([-A-Z0-9]+)$", Pattern.CASE_INSENSITIVE);
   private class BaseAddressField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      if (field.startsWith("LAT:")) {
+        data.strAddress =  field.replaceAll("<", "").replaceAll(">", "");
+        return;
+      }
       String apt = "";
       Matcher match = APT_PTN.matcher(field);
       if (match.find()) {
@@ -193,12 +231,26 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern PLACE_PHONE_PTN = Pattern.compile("\\d{10}");
+  private static final Pattern PLACE_GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{2}\\.\\d{2}) +([-+]?\\d{2,3}\\.\\d{2}\\.\\d{2})");
   private class BasePlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("<UNKNOWN>")) return;
+      Matcher match;
       if (field.startsWith("CALLBK=")) {
         data.strPhone = field.substring(7).trim();
+      } else if (PLACE_PHONE_PTN.matcher(field).matches()) {
+        data.strPhone = field;
+      } else if (field.startsWith("LAT:")) {
+        if (data.strGPSLoc.length() == 0) {
+          setGPSLoc(field.replace("<", "").replaceAll(">", ""), data);
+        }
+      } else if ((match = PLACE_GPS_PTN.matcher(field)).matches()) {
+        if (data.strGPSLoc.length() == 0) {
+          field = (match.group(1)+','+match.group(2)).replace('.', ' ');;
+          setGPSLoc(field, data);
+        }
       } else {
         super.parse(field, data);
       }
@@ -206,7 +258,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "PLACE PHONE";
+      return "PLACE PHONE GPS";
     }
   }
   
@@ -236,7 +288,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       int pt = field.indexOf(' ');
       if (pt >= 0) {
-        data.strSupp = append(data.strSupp, " / ", field.substring(pt+1).trim());
+        data.strSupp = append(data.strSupp, "\n", field.substring(pt+1).trim());
         field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
@@ -245,14 +297,6 @@ public class DispatchPrintrakParser extends FieldProgramParser {
     @Override 
     public String getFieldNames() {
       return "TIME INFO";
-    }
-  }
-  
-  private class BaseCall2Field extends CallField {
-    @Override
-    public void parse(String field, Data data) {
-      field = stripFieldStart(field, "**");
-      data.strCall = field;
     }
   }
   
@@ -270,37 +314,87 @@ public class DispatchPrintrakParser extends FieldProgramParser {
   private class BaseCode2Field extends CodeField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(' ');
+      int pt = field.indexOf('\n');
+      if (pt >= 0) {
+        String trail = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        data.strSupp = append(data.strSupp, "\n", trail);
+      }
+      
+      pt = field.indexOf(' ');
       if (pt >= 0) field = field.substring(0, pt);
       data.strCode = append(data.strCode, "/", field);
     }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE INFO";
+    }
   }
   
-  private class BasePlace2Field extends PlaceField {
+  class BaseInfoField extends InfoField {
+    
+    private boolean cmt1;
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      cmt1 = qual != null && qual.contains("1");
+    }
+
     @Override
     public void parse(String field, Data data) {
-      if (data.strPlace.length() == 0) {
-        super.parse(field, data);
-      } else {
-        if (field.startsWith(data.strPlace)) {
-          field = field.substring(data.strPlace.length()).trim();
-          data.strSupp = append(data.strSupp, " / ", field);
+      field = field.replace(" CMT:", "\n");
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        if (line.startsWith("INCIDENT CLONED FROM ")) continue;
+        if (line.startsWith("Original Date/Time for ")) continue;
+        if (line.startsWith("IAAssocInc")) continue;
+        if (line.startsWith("Parent Inc ")) continue;
+        if (line.startsWith("Child Inc ")) continue;
+        if (line.startsWith("SiblingInc ")) continue;
+        if (line.startsWith("Initial Field Initiate ")) continue;
+        if ("Original Location ".startsWith(line)) continue;
+        int pt = line.indexOf("Original Location :");
+        if (pt >= 0) {
+          if (pt > 0) data.strSupp = append(data.strSupp, "\n", line.substring(0,pt).trim());
+          line = line.substring(pt+19).trim();
+          if (data.strPlace.length() == 0) {
+            data.strPlace = line;
+            continue;
+          } else if (!line.startsWith(data.strPlace)) {
+            continue;
+          } else {
+            line = line.substring(data.strPlace.length()).trim();
+          }
+        }
+        
+        if (useCmt1Call && cmt1) {
+          line = stripFieldStart(line, "**");
+          if (line.length() > 0) data.strCall = line;
+        } else {
+          data.strSupp = append(data.strSupp, "\n", line);
         }
       }
     }
     
     @Override
     public String getFieldNames() {
-      return "PLACE INFO";
+      return super.getFieldNames() + " PLACE";
     }
   }
   
-  class BaseInfoField extends InfoField {
+  class BaseInfo2Field extends BaseInfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("INCIDENT CLONED FROM ")) return;
-      if (field.startsWith("Original Date/Time for ")) return;
-      super.parse(field,  data);
+      int pt = field.lastIndexOf('\n');
+      if (pt >= 0) {
+        String left = field.substring(pt+1).trim();
+        if ("CAD RESPONSE".startsWith(left)) {
+          field = field.substring(0, pt).trim();
+        }
+      }
+      super.parse(field, data);
     }
   }
   

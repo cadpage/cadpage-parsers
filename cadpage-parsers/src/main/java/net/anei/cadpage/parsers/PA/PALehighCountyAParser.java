@@ -25,6 +25,7 @@ public class PALehighCountyAParser extends DispatchPrintrakParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace("\n", "");
     if (!super.parseMsg(body, data)) return false;
     data.strUnit = UNIT_PFX_PTN.matcher(data.strUnit).replaceAll("");
     return true;
