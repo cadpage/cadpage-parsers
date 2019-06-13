@@ -72,6 +72,8 @@ public class PADauphinCountyParser extends FieldProgramParser {
       return true;
     }
     
+    body = stripFieldStart(body, "CRITICAL MSG:");
+    
     setSelectValue("");
     match = SPECIAL_PTN.matcher(body);
     if (match.matches()) {
