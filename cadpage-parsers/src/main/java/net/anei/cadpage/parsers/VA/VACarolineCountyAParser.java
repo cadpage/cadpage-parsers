@@ -53,17 +53,20 @@ public class VACarolineCountyAParser extends SmartAddressParser {
       }
     } else {
       int pt = addr.indexOf(',');
-      if (pt < 0) return false;
-      parseAddress(addr.substring(0,pt).trim(), data);
-      String cityPlace = addr.substring(pt+1).trim();
-      String city = CITY_LIST.getCode(cityPlace);
-      if (city != null) {
-        data.strCity = city;
-        data.strPlace = cityPlace.substring(city.length()).trim();
-      } else {
-        data.strCity = cityPlace;
-        return false;
+      if (pt >= 0) {
+        String cityPlace = addr.substring(pt+1).trim();
+        addr = addr.substring(0,pt).trim();
+        
+        String city = CITY_LIST.getCode(cityPlace);
+        if (city != null) {
+          data.strCity = city;
+          data.strPlace = cityPlace.substring(city.length()).trim();
+        } else {
+          data.strCity = cityPlace;
+          return false;
+        }
       }
+      parseAddress(addr, data);
     }
     return true;
   }
