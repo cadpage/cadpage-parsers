@@ -1754,6 +1754,7 @@ public class Active911ParserTable {
       "US/WV/PocahontasCounty",           "WVPocahontasCounty",
       "US/WV/RaleighCounty",              "WVRaleighCounty",
       "US/WV/RoaneCounty",                "WVRoaneCounty",
+      "US/WV/SHENTEL",                    "WVPendletonCounty",
       "US/WV/WoodCounty",                 "WVWoodCounty",
       "US/WV/Wyoming",                    "WVWyomingCounty",
       "US/WY/ParkCounty",                 "WYParkCounty",
