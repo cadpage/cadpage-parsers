@@ -36,6 +36,8 @@ public class DispatchA48Parser extends FieldProgramParser {
    */
   public static final int A48_NO_CODE =           0x04;
   
+  private static final Pattern GPS_PTN = Pattern.compile(" *([-+]?\\b\\d{2,3}\\.\\d{4,} +[-+]?\\d{2,3}\\.\\d{4,})\\b *");
+  
   /**
    * Enum parameter indicating what kind of information comes between the
    * address and the unit headings.
@@ -78,7 +80,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     X("X/Z+?", "X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        parser.parseCrossStreet(false,  false, field, data);
+        parser.parseCrossStreet(false, false,  false, field, data);
       }
       
       @Override
@@ -90,7 +92,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     X_NAME("X_NAME/Z+?", "X NAME") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        parser.parseCrossStreet(false, true, field, data);
+        parser.parseCrossStreet(false, false, true, field, data);
       }
     },
     
@@ -110,7 +112,21 @@ public class DispatchA48Parser extends FieldProgramParser {
     PLACE_X("PLACE? X+?", "PLACE X") {   // Not currently supported for field delimited format
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        parser.parseCrossStreet(true, false, field, data);
+        parser.parseCrossStreet(false, true, false, field, data);
+      }
+    },
+    
+    GPS_PLACE_X("GPS? PLACE? X+?", "GPS PLACE X") {  // Also not supported for field delimited format
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        parser.parseCrossStreet(true, true, false, field, data);
+      }
+      
+      @Override
+      public int find(String field) {
+        Matcher match = GPS_PTN.matcher(field);
+        if (match.find()) return match.start();
+        return -1;
       }
     },
     
@@ -142,6 +158,10 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     public boolean check(DispatchA48Parser parser, String field) {
       return false;
+    }
+    
+    public int find(String field) {
+      return -1;
     }
   };
     
@@ -394,9 +414,15 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
     
     if (!addressParsed) {
+      int pt = fieldType.find(addr);
+      if (pt >= 0) {
+        extra = addr.substring(pt).trim();
+        addr = addr.substring(0,pt).trim();
+        flags |= FLAG_ANCHOR_END;
+      }
       addr = addr.replace('@', '&');
       parseAddress(st, flags, addr, data);
-      extra = getLeft();
+      if (extra == null) extra = getLeft();
     }
     primeCrossStreets(data.strAddress);
     
@@ -433,6 +459,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
     if (name.equals("SKIPCITY")) return new BaseSkipCityField();
+    if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("X_NAME")) return new BaseCrossNameField();
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("APT")) return new BaseAptField();
@@ -521,6 +548,12 @@ public class DispatchA48Parser extends FieldProgramParser {
       if (field.length() == 0) return true;
       if (field.equalsIgnoreCase(data.strCity)) return true;
       return false;
+    }
+  }
+  
+  private class BaseGPSField extends GPSField {
+    public BaseGPSField() {
+      setPattern(GPS_PTN, true);
     }
   }
   
@@ -634,7 +667,15 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
   
-  private void parseCrossStreet(boolean leadPlace, boolean trailName, String field, Data data) {
+  private void parseCrossStreet(boolean leadGPS, boolean leadPlace, boolean trailName, String field, Data data) {
+    
+    if (leadGPS) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (match.lookingAt()) {
+        setGPSLoc(match.group(1), data);
+        field = field.substring(match.end());
+      }
+    }
     
     boolean startSlash = field.startsWith("/");
     if (startSlash) field = field.substring(1).trim();

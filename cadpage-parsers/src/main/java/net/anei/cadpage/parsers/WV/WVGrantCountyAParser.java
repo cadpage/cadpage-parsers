@@ -12,10 +12,10 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
  */
 public class WVGrantCountyAParser extends DispatchA48Parser {
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|SOUTHG)\\b"); 
+  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|HELOCOPTER|SOUTHG)\\b"); 
   
   public WVGrantCountyAParser() {
-    super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.PLACE_X, A48_OPT_CODE, UNIT_PTN);
+    super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.GPS_PLACE_X, A48_NO_CODE, UNIT_PTN);
     setupCallList(CALL_CODE);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -26,9 +26,15 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
     body = body.replace(" WV - -", "").replace("FIRST ENERGY", "FIRST_ENERGY");
+    body = body.replace(" 400 TEXT ", " ").replaceAll(" EMS TEXT ", " ");
     
     Matcher match = UNIT_PTN.matcher(body);
     int lastCommaPt = body.indexOf(',');
@@ -59,36 +65,63 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
   }
   
   private static final String[] MWORD_STREET_LIST = new String[]{
+      
       "BAYARD CEMETERY",
+      "BENSENHAVER HL RIDGE",
       "BIG HILL",
+      "BIG RUN",
+      "BIG SKY",
+      "CAMP ECHO",
       "CHERRY RIDGE",
       "CLARKS VIEW",
+      "DEEP SPRING",
+      "DOLLY SODS",
+      "GAP MOUNTAIN",
       "GEORGE WASHIGNTON",
       "GEORGE WASHINGTON",
+      "GOLDEN TROUT",
+      "H L",
+      "HAVEN FARMS",
       "HENRY DOBBIN",
       "HIGH POINT",
       "HIGH VALLEY",
       "JOHNSON RUN",
       "JORDAN RUN",
       "KUHN MINE",
+      "LAKE RETREAT",
+      "LAUREL DALE",
       "LAUREL RUN",
+      "LIMESTONE HAUL",
+      "LIVING SPRINGS",
       "LUNICE CREEK",
+      "MAPLE HILL",
+      "MARVIN BERGDOLL",
       "MILL CREEK",
       "MISS LIZZY",
+      "MOUNTAIN LAKE RETREAT",
       "MOUNTAIN VIEW",
       "NOBLE FIR",
       "PAPERBACK MAPLE",
       "PATTERSON CREEK",
       "PETERSBURG GAP",
+      "PINK ALT",
+      "POOR FARM",
+      "PORT REPUBLIC",
+      "POWER STATION",
+      "RECREATION SITE",
       "RED BARN",
+      "SHOOKS GAP",
+      "SITES TOWN",
       "SKY VALLEY",
       "SMOKE HOLE",
+      "SPRING RUN",
       "WELTON ORCHARD",
       "WINDY HILL",
       "YUCKY RUN"
   };
   
   private static final CodeSet CALL_CODE = new CodeSet(
+      "ABBACKP",
       "BLEEDNOTRAUMA",
       "BREATHDIFF",
       "BREATHING DIFFICULTY/TROUBLE BREATHING/SHORT OF BREATH-SOB/DIFFICULTY BREATHING",
@@ -97,7 +130,9 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "CHESTHEART",
       "COALARM",
       "CONTROLLED BURN",
+      "DIABET",
       "DIABETIC EMERGENCY / LOW BLOOD SUGAR / HIGH BLOOD SUGAR / GLUCOSE LEVEL",
+      "DOM",
       "ELECTRICAL FIRE",
       "EMSASSIST",
       "EMSTRANS",
@@ -105,7 +140,10 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "FALL",
       "FIRE ALARM/AUTOMATIC FIRE ALARM/COMMERCIAL FIRE ALARM/RESIDENTIAL FIRE ALARM",
       "FIRE STANDBY",
+      "FIREALARM",
       "FLUEFIRE",
+      "GYNBIRTH",
+      "HIT N RUN",
       "LANDING ZONE SETUP",
       "LMISC",
       "LZSET",
@@ -114,22 +152,31 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "MISC CALL NOT LAW ENFORCEMENT",
       "MOTOR VEHICLE CRASH WITH INJURY OR ENTRAPMET ACCIDENT",
       "MUT AID EMS",
+      "MUT AID FIRE",
       "MVC",
       "MVCINJ",
+      "ODOR OF GAS",
+      "ODPOISON",
       "PROCESS",
+      "PUBSER",
+      "RDHAZ",
       "SEIZURE",
       "SICK",
       "SMELL ODOR-GAS OUTDOORS",
+      "SMOKE",
       "SMOKE INVESTIGATION OUTDOORS",
+      "STABBING/GUNSHOT",
       "STROKE",
       "STROKE/SLURRED SPEECH/DROOPING",
       "STRUCTURE FIRE",
       "TEST CALL",
       "TRAUMA",
       "TRAUMATIC INJURY",
+      "TS",
       "UNCONS UNRESPONSIVE",
       "UNCONSCIOUS/UNRESPONSIVE/",
       "UNCONSCIOUS/UNRESPONSIVE/SYNCOPE",
+      "UTILITY",
       "VEHICLE ACCIDENT-NO INJURY OR ENTRAPMENT MOTOR VEHCLE CRASH",
       "VEHICLE FIRE",
       "WELFARE"
@@ -167,7 +214,10 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       // Mineral County
       "BURLINGTON",
       "KEYSER",
-      "NEW CREEK"
+      "NEW CREEK",
+      
+      // Pendleton County
+      "UPPER TRACT"
 
   };
 }

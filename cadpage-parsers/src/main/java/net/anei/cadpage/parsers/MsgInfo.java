@@ -507,7 +507,11 @@ public class MsgInfo {
         Matcher match = CROSS_DELIM.matcher(sCross);
         if (match.find()) {
           sCross = sCross.substring(0,match.start()).trim();
-          if (sCross.equals(sAddr)) sCross = strCross.substring(match.end()).trim(); 
+          if (sCross.equals(sAddr)) {
+            int pt1 = match.end();
+            int pt2 = match.find() ? match.start() : sCross.length();
+            sCross = strCross.substring(pt1, pt2).trim(); 
+          }
         }
         
         // Don't use DEAD END or like phrases
