@@ -344,6 +344,7 @@ public class Active911ParserTable {
       "US/GA/ThompsonMcDuffie",           "GAMcDuffieCounty",
       "US/GA/ThomsonFD",                  "GAMcDuffieCounty",
       "US/GA/TiftCounty",                 "GATiftCounty",
+      "US/GA/TownsCounty",                "GATownsCounty",
       "US/GA/WaltonCounty",               "GAWaltonCounty",
       "US/GA/WebsterCounty",              "GAWebsterCounty",
       "US/GA/WhiteCounty",                "GAWhiteCounty",

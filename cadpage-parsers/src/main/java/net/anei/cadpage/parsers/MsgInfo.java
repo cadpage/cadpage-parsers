@@ -506,12 +506,13 @@ public class MsgInfo {
         if (parser != null) sCross = parser.adjustMapAddress(sCross, strCity, true);
         Matcher match = CROSS_DELIM.matcher(sCross);
         if (match.find()) {
-          sCross = sCross.substring(0,match.start()).trim();
-          if (sCross.equals(sAddr)) {
+          String sTemp = sCross.substring(0,match.start()).trim();
+          if (sTemp.equals(sAddr)) {
             int pt1 = match.end();
             int pt2 = match.find() ? match.start() : sCross.length();
-            sCross = strCross.substring(pt1, pt2).trim(); 
+            sTemp = strCross.substring(pt1, pt2).trim(); 
           }
+          sCross = sTemp;
         }
         
         // Don't use DEAD END or like phrases
