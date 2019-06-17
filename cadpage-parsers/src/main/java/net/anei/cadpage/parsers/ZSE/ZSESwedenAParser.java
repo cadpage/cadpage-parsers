@@ -19,7 +19,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
   
   @Override
   public String getFilter() {
-    return "3315,@zenit.sosalarm.se,Larmserver@kallareetuna.se";
+    return "3315,46730120451,@zenit.sosalarm.se,Larmserver@kallareetuna.se";
   }
 
   @Override
