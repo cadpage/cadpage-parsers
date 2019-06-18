@@ -22,7 +22,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@chagrinfallspd.com,dispatcher@bhpd.org,dispatch@secc-911.org,PRDC@parma.com,dispatch@waltonhillsohio.gov,@cox.net,PRDC@parmajustice.net,DISPATCH@MAYFIELDVILLAGE.COM,dispatch@beachwoodohio.com,dispatch@prdc.net,broadviewheightspd@cox.net,dispatch@cvdispatch.net,CECOMS@cvdispatch.net,dispatch@hhdispatch.net,dispatch@hhdispatch.net,dispatch@highlandheights.com,dispatch@prdc.org,broadview@tacpaging.com,middleburg@tacpaging.com";
+    return "broadview@tacpaging.com,cvd2-dispatch@cvdispatch.net,dispatch@secc-911.org,dispatch@hhdispatch.net,dispatch@prdc.net,dispatch@highlandheights.com,info@sundance-sys.com,dispatch@waltonhillsohio.gov,dispatch@beachwoodohio.com,middleburg@tacpaging.com";
   }
   
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
@@ -30,6 +30,10 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
   
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
+    if (subject.length() == 0 && body.startsWith("Dispatch Message:")) {
+      subject = "Dispatch Message";
+      body = body.substring(17).trim();
+    }
     body = stripFieldStart(body, "**TEST ACTIVE911**\n");
     body = DIR_BOUND_PTN.matcher(body).replaceAll("$1B");
     if (!super.parseUntrimmedMsg(subject, body, data)) return false;
