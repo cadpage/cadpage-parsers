@@ -11,7 +11,8 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   
   public MIWashtenawCountyBParser() {
     super("WASHTENAW COUNTY", "MI", 
-          "( CALL:CALL! PLACE:PLACE? ADDR:ADDRCITY! ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME? INFO:INFO? Additional_Info:INFO?" +
+          "( Call:CALL! Incident:ID! Address:ADDRCITY! Coordinates:GPS! Address_Comment:PLACE! Resource:UNIT! Response:PRI! Notes:INFO! INFO/N+ " +
+          "| CALL:CALL! PLACE:PLACE? ADDR:ADDRCITY! ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME? INFO:INFO? Additional_Info:INFO?" +
           "| INCIDENT_COMPLETE! Location:ADDRCITY! Location_Comment:PLACE! Nature:CALL? INFO/N+ )");
   }
   
@@ -32,7 +33,7 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     String type = match.group(1);
     data.strCallId = match.group(2);
     
-    if (body.startsWith("CALL:")) {
+    if (body.startsWith("CALL:") || body.startsWith("Call:")) {
       String[] flds = body.split("\n");
       if (flds.length >= 3) {
         if (!parseFields(flds, data)) return false;
@@ -127,6 +128,7 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INCIDENT_COMPLETE")) return new SkipField("Incident \\d+ Completed", true);
     return super.getField(name);
@@ -144,6 +146,14 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
       if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    }
+  }
+  
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(';', ',');
+      super.parse(field, data);
     }
   }
   
