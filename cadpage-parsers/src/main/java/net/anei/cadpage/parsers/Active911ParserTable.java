@@ -1219,6 +1219,7 @@ public class Active911ParserTable {
       "US/OH/PerryCounty",                "OHPerryCounty",
       "US/OH/PerryTwp",                   "OHStarkCountyCencomm",
       "US/OH/PickawayCounty",             "OHPickawayCounty",
+      "US/OH/PortageCounty",              "OHPortageCountyB",
       "US/OH/PrebleCounty",               "OHPrebleCounty",
       "US/OH/RichfieldPD",                "OHSummitCountyG",
       "US/OH/RichlandCounty",             "OHRichlandCounty",

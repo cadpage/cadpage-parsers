@@ -17,7 +17,7 @@ public class OHPortageCountyBParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "garrettsvilledispatch@gmail.com";
+    return "garrettsvilledispatch@gmail.com,mantua@tacpaging.com";
   }
   
   @Override
