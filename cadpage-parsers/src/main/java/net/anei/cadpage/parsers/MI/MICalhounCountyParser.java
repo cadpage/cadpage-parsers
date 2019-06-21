@@ -37,8 +37,8 @@ public class MICalhounCountyParser extends GroupBestParser {
       "FT", "FREDONIA TWP",
       "HC", "HILLSDALE COUNTY",
       "HO", "HOMER",
+      "HP", "HOMER TWP",
       "HT", "HOMER TWP",
-//      "HP", "HOMER TWP",
       "JC", "JACKSON COUNTY",
       "KC", "KALAMAZOO COUNTY",
       "LE", "LEE TWP",
@@ -48,10 +48,14 @@ public class MICalhounCountyParser extends GroupBestParser {
       "MT", "MARSHALL TWP",
       "NT", "NEWTON TWP",
       "PT", "PENNFIELD TWP",
+      "RC", "BRANCH COUNTY",
+      "SC", "ST JOSEPH COUNTY",
       "SF", "SPRINGFIELD",
       "ST", "SHERIDAN TWP",
       "TK", "TEKONSHA",
       "TT", "TEKONSHA TWP",
-      "VA", "ATHENS"
+      "UC", "UNION CITY",
+      "VA", "ATHENS",
+
   });
 }
