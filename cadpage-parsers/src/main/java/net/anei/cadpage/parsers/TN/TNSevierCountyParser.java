@@ -10,8 +10,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class TNSevierCountyParser extends DispatchSouthernParser {
   
   public TNSevierCountyParser() {
-    super(CITY_LIST, "SEVIER COUNTY", "TN",
-          "CANCEL? ADDR X/Z? ID! TIME? CALL/SDS INFO");
+    super(CITY_LIST, "SEVIER COUNTY", "TN", 
+          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_ID );
     removeWords("COVE", "GATEWAY", "LA", "MALL", "PARKWAY", "ROAD");
     setupSpecialStreets("NBOUND SPUR", "PARKWAY");
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -22,10 +22,22 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
     return "Central_Dispatch@mydomain.com,Central_Dispatch@seviercountytn.org";
   }
   
+  private static final Pattern CALL_PFX_PTN = Pattern.compile("((?:PER [ A-Z]+ )?(?:CANCEL|CXC?LD?|CSL)[/ ]*(?:ANY )?(?:FURTHER RES?PONSE|RESPONSE|ALL RESPONSE|ALL UNITS|MUTUAL AIDE RESPONSE|CALL(?: CXL| CANCEL|/FALSE)?)?(?:[ /]*(?:FALSE ALARM|False Alarm|NON-INJ|-N))?(?:[ /]*PER (?:EMS ON SCENE|ALARM CO|[^ ]+))?)[-:/ ]*");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
+    String callPfx = null;
+    Matcher match = CALL_PFX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      callPfx = match.group(1).trim();
+      body = body.substring(match.end());
+    }
     body = stripFieldStart(body, "CFS Closed:");
+    body = stripFieldStart(body, "CFS Location:");
+    int pt = body.indexOf(" OCA:");
+    if (pt >= 0) body = body.substring(0, pt).trim(); 
     if (!super.parseMsg(body, data)) return false;
+    if (callPfx != null) data.strCall = append(callPfx, " - ", data.strCall);
     data.strCity = convertCodes(data.strCity, CITY_CODES);
     return true;
   }
@@ -37,15 +49,13 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new MyCancelField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
-  private static final Pattern CANCEL_PTN = Pattern.compile("((?:PER [ A-Z]+ )?(?:CANCEL|CXC?LD?|CSL)[/ ]*(?:ANY )?(?:FURTHER RES?PONSE|RESPONSE|ALL RESPONSE|ALL UNITS|MUTUAL AIDE RESPONSE|CALL(?: CXL| CANCEL|/FALSE)?)?(?:[ /]*(?:FALSE ALARM|False Alarm|NON-INJ|-N))?(?:[ /]*PER (?:EMS ON SCENE|ALARM CO|[^ ]+))?)[-:/ ]*");
   private class MyCancelField extends CallField {
     public MyCancelField() {
-      setPattern(CANCEL_PTN, true);
+      setPattern(CALL_PFX_PTN, true);
     }
   }
   
@@ -54,7 +64,7 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
     @Override
     public void parse(String field, Data data) {
       
-      Matcher match = CANCEL_PTN.matcher(field);
+      Matcher match = CALL_PFX_PTN.matcher(field);
       if (match.lookingAt()) {
         data.strCall = match.group(1).trim();
         field = field.substring(match.end());
@@ -85,6 +95,14 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
     @Override
     public String getFieldNames() {
       return "PLACE ADDR APT CITY";
+    }
+  }
+  
+  private class MyInfoField extends BaseInfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("http://")) return;
+      super.parse(field, data);
     }
   }
 
