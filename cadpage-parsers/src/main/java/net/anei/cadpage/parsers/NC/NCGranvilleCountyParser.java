@@ -1,11 +1,13 @@
 package net.anei.cadpage.parsers.NC;
 
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
@@ -15,10 +17,8 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
   
   public NCGranvilleCountyParser() {
     super(CITY_LIST, "GRANVILLE COUNTY", "NC", 
-           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_X|DSFLG_OPT_NAME|DSFLG_OPT_PHONE|DSFLG_OPT_CODE|DSFLG_TIME);
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(MWORD_STREET_LIST);
-    setupSpecialStreets("CREEDMOOR CITY LIMITS", "STEM CITY LIMITS");
+           DSFLG_PROC_EMPTY_FLDS|DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_X|DSFLG_NAME|DSFLG_PHONE|DSFLG_CODE|DSFLG_TIME);
+    setCallCodePtn("\\d{2}");
   }
 
   @Override
@@ -27,7 +27,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
   }
   
   private static final Pattern NUMBER_DR_PTN = Pattern.compile("# *(\\d+ DR\\b)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([A-Z]+ COUNTY)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([A-Z]+) (?:CO|COUNTY|911)", Pattern.CASE_INSENSITIVE);
   
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -41,229 +41,28 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     data.strCity = data.strCity.replace('-', ' ');
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITY_TABLE);
 
-    data.strName = data.strName.replace('-', ' ');
-    Matcher match = NAME_COUNTY_PTN.matcher(data.strName);
-    if (match.matches()) {
-      data.strName = match.group(1);
-      if (data.strCity.length() == 0) data.strCity = match.group(2);
+    if (data.strName.length() > 0) {
+      data.strName = data.strName.replace('-', ' ');
+      Matcher match = NAME_COUNTY_PTN.matcher(data.strName);
+      if (match.matches()) {
+        data.strName = match.group(1);
+        if (data.strCity.length() == 0) data.strCity = match.group(2) + " COUNTY";
+      }
+      else if (data.strCity.length() == 0 && isCity(data.strName)) {
+        data.strCity = data.strName;
+        data.strName = "";
+      }
     }
+    
+    if (VA_CITIES.contains(data.strCity)) data.strState = "VA";
     
     return true;
   }
   
-  private static final String[] MWORD_STREET_LIST = new String[]{
-      "ADAMS MOUNTAIN",
-      "ALLEN CREEK",
-      "ANTLER WAY",
-      "B CLARK",
-      "BATTLE CAVINESS",
-      "BAXTER HUFF",
-      "BEAVER DAM",
-      "BEAVER POND",
-      "BEN THORP",
-      "BLUE BELL",
-      "BLUE CREEK",
-      "BOB DANIEL",
-      "BODIE CURRIN",
-      "BRASGG VALLEY",
-      "BRUCE GARNER",
-      "BULLOCK CHURCH",
-      "CAMP KANATA",
-      "CASTLE ROCK",
-      "CEDAR CREEK",
-      "DENNY FARM",
-      "EAST BAY",
-      "ELAM CURRIN",
-      "EMERALD CREST",
-      "ESTES CROSSING",
-      "FERN HOLLOW",
-      "FITCH OAKLEY",
-      "FLAT ROCK",
-      "GARNER TERRACE",
-      "GENE HOBGOOD",
-      "GLEN HAVEN",
-      "GOLDEN FOREST",
-      "GOOCHS MILL",
-      "GORDON MOORE",
-      "GRAHAM HOBGOOD",
-      "GRAHAM SHERRON",
-      "GROVE HILL",
-      "HAWLEY SCHOOL",
-      "HAYES FARM",
-      "HOLLY CREEK",
-      "HUGH DAVIS",
-      "HUNTERS RIDGE",
-      "JOE PEED",
-      "JOE PRUITT",
-      "JOHN SANDLING",
-      "JOHNSON CREEK FARM",
-      "JONAH DAVIS",
-      "KNOTTY PINE",
-      "LESTER MCFARLAND",
-      "LITTLE MOUNTAIN",
-      "LITTLE SATTERWHITE",
-      "LONESOME DOVE",
-      "LYON SERVICE STATION",
-      "LYON STATION",
-      "MARY LEE",
-      "MAYS STORE",
-      "MOLLIE MOONEY",
-      "MORNING STAR",
-      "MOSS LEDFORD",
-      "OXFORD RIDGE",
-      "PARROTT HOLLOW",
-      "PHILO WHITE",
-      "PINE RIDGE",
-      "PINE TOWN",
-      "PINE VALLEY",
-      "PIXLEY PRITCHARD",
-      "PLEASANTS RIDGE",
-      "QUEEN ANNE",
-      "RAVEN WOOD",
-      "RED BUD",
-      "RED PINE",
-      "REEDY BRANCH",
-      "REEDY CREEK",
-      "ROBIN HOOD",
-      "ROCK BOTTOM",
-      "ROCK SPRING CHURCH",
-      "ROCKY RIDGE",
-      "ROGERS FARM",
-      "ROGERS POINTE",
-      "SAM MOSS HAYES",
-      "SAM MOSS-HAYES",
-      "SER J",
-      "SHEP ROYSTER",
-      "SIR WALTER",
-      "SLEEPY HOLLOW",
-      "SMITH CREEK",
-      "ST LUCY",
-      "STERLING CREEK",
-      "STOOL TREE",
-      "SUGAR MAPLE",
-      "SUITTS STORE",
-      "SUMMER SPRINGS",
-      "SUMMIT RIDGE",
-      "SUNRISE RIDGE",
-      "TALLY HO",
-      "TAR RIVER",
-      "THOLLIE GREEN",
-      "THOMAS STORE",
-      "TOMMIE DANIEL",
-      "TREE TOP",
-      "VIRGINIA PINE",
-      "WALNUT CREEK",
-      "WAYSIDE FARM",
-      "WES SANDLING",
-      "WHEELER POND",
-      "WHITE PINE",
-      "WILD GOOSE",
-      "WILLOW CREEK",
-      "WINDING ACRES",
-      "WINDING CREEK",
-      "WINGATE CREEK",
-      "WOODLAND CHURCH"
-  };
-
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ACCIDENT-FATALITY",
-      "ACCIDENT-PERSONAL INJURY",
-      "ACCIDENT-PERSONAL-INJURY",
-      "ACCIDENT-PROPERTY DAMAGE",
-      "ACCIDENT-PROPERTY-DAMAGE",
-      "ACCIDENT UNKNOWN",
-      "ACCIDENT-UNKNOWN",
-      "ALERT",
-      "ALLERGIC REACTION",
-      "ALLERGIC-REACTION",
-      "ASSIST-OUTSIDE-AGENCY",
-      "ASSIST-PERSONS",
-      "BACK-PAINS",
-      "BURN",
-      "CHEST PAINS",
-      "CHEST-PAINS",
-      "CO2 MONITOR ACTIVATION",
-      "CO2-MONITOR-ACTIVATION",
-      "DECEASED PERSON",
-      "DECEASED-PERSON",
-      "DIABETIC CALL",
-      "DIABETIC-CALL",
-      "DOMESTIC-PROBLEM",
-      "FALL (PERSON HAS FALLEN)",
-      "FALL-(PERSON-HAS-FALLEN)",
-      "FIRE ALARM",
-      "FIRE-ALARM",
-      "FIRE ALARM KEYPAD FIRE",
-      "FIRE-ALARM-KEYPAD-FIRE",
-      "FIRE ALARM PULL STATION ALARM",
-      "FIRE-ALARM-PULL-STATION-ALARM",
-      "FIRE (GRASS-WOODS)",
-      "FIRE-(GRASS-WOODS)",
-      "FIRE (OTHER/UNKNOWN)",
-      "FIRE-(OTHER/UNKNOWN)",
-      "FIRE (REKINDLE)",
-      "FIRE-(REKINDLE)",
-      "FIRE (STRUCTURE",
-      "FIRE (STRUCTURE)",
-      "FIRE-(STRUCTURE)",
-      "FIRE (STRUCTURE) MUTUAL AID.",
-      "FIRE-(STRUCTURE)-MUTUAL-AID.",
-      "FIRE (VEHICLE)",
-      "FIRE (VEHICLE) RV ON FIRE",
-      "FIRE-(VEHICLE)-RV-ON-FIRE",
-      "FIRE-ALARM",
-      "FIRE-(GRASS-WOODS)",
-      "FIRE-(OTHER/UNKNOWN)",
-      "FIRE-(REKINDLE)",
-      "FIRE-(STRUCTURE)",
-      "FIRE-(STRUCTURE) STOVE FIRE",
-      "FIRE-(VEHICLE)",
-      "FUEL SPILL",
-      "FUEL-SPILL",
-      "GAS-SMELL/LEAK",
-      "HEART ATTACK",
-      "HEART PROBLEMS",
-      "HEART-ATTACK",
-      "HEART-PROBLEMS",
-      "HEMORRHAGING-CALL",
-      "INJURED-PERSON",
-      "INVESTIGATION",
-      "LIFTING-ASSISTANCE",
-      "MISSING-PERSON",
-      "OB CALL",
-      "OB-CALL",
-      "PAIN",
-      "PAIN-CALL",
-      "POWER-LINES-DOWN",
-      "RESPIRATORY DISTRESS",
-      "RESPIRATORY-DISTRESS",
-      "SEIZURE",
-      "SHORTNESS OF BREATH",
-      "SHORTNESS-OF-BREATH",
-      "SICK CALL",
-      "SICK-CALL",
-      "SMOKE-INVESTIGATION",
-      "STAND-BY-(SPECIFY-REASON)",
-      "STROKE",
-      "SUICIDE-ATTEMPT",
-      "TEST-CALL",
-      "UNCONSCIOUS PERSON",
-      "UNCONSCIOUS-PERSON",
-      "UNKNOWN EMS CALL",
-      "UNKNOWN-EMS-CALL",
-      "ACCIDENT-UNKNOWN",
-      "UNRESPONSIVE PERSON",
-      "UNRESPONSIVE-PERSON",
-      
-      // One time events
-      "GARAGE",
-      "SMOKE IN THE AREA",
-      "WHITE TRUCK RED JEEP"
-  );
-  
-  private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
-      "CREEMDOOR",    "CREEDMOOR"
-  });
+  @Override
+  public String getProgram() {
+    return super.getProgram().replaceAll("CITY", "CITY ST");
+  }
   
   private static final String[] CITY_LIST = new String[]{
     
@@ -308,6 +107,11 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "FRANKLINTON",
     "YOUNGSVILLE",
     
+    // Mecklenburg County, VA
+    "MECKLENBURG",
+    "MECKLENBURG CO",
+    "MECKLENBURG-CO",
+    
     // Person County
     "PERSON",
     "PERSON CO",
@@ -341,6 +145,16 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "RALEIGH",
     "ROLESVILLE",
     "WAKE FOREST"
-    
   };
+  
+  private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
+      "CREEMDOOR",    "CREEDMOOR"
+  });
+  
+  private static final Set<String> VA_CITIES = new HashSet<String>(
+      Arrays.asList(new String[]{
+          "MECKLENBURG",
+          "MECKLENBURG CO"
+      })
+  );
 }
