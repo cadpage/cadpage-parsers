@@ -117,6 +117,7 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
       "FL",      "Flooding",
       "HAZ",     "Haz-mat Incident",
       "LZ",      "Landing Zone",
+      "MU",      "Move Up",
       "PH",      "Pan Handler",
       "PS",      "Public Service",
       "REPO",    "Vehicle Repossessed",

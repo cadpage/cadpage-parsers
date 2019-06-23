@@ -9,13 +9,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 /**
- * fAlamance county, NC
+ * Alamance county, NC
  */
 public class NCAlamanceCountyParser extends DispatchOSSIParser {
   
   public NCAlamanceCountyParser() {
     super(CITY_CODES, "ALAMANCE COUNTY", "NC",
-           "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? INFO/N+");
+          "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? INFO/N+");
   }
 
   @Override
