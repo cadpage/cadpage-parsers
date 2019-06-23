@@ -14,7 +14,11 @@ public class FLOkaloosaCountyParser extends FieldProgramParser {
   
   public FLOkaloosaCountyParser() {
     super(CITY_CODES, "OKALOOSA COUNTY", "FL", 
-          "Incident:ID? Run_Zone:MAP? Complaint:CALL? Unit:UNIT? Address:ADDR/S6! Cross_Street:X Place:PLACE Map:GPS Units:TIMES/N+");
+          "Incident:ID Run_Zone:MAP Complaint:CALL Unit:UNIT " +
+             "( Station:SRC! Complaint:CALL! Address:ADDR/S6! Cross_Street:X! Place:PLACE! " +
+             "| Address:ADDR/S6! Cross_Street:X Place:PLACE " + 
+             "| Location:ADDR? Place:PLACE! Apt/Lot:APT! Run_Zone:MAP! City:CITY! Cross_Street1:X! Cross_Street2:X! Complaint:CALL? " +
+             ") Map:GPS Units:TIMES/N+");
     setupCities(CITY_LIST);
     setupSpecialStreets("CALLE DE TALENCIA");
   }
@@ -30,16 +34,27 @@ public class FLOkaloosaCountyParser extends FieldProgramParser {
     
     if (body.startsWith("ncident:")) {
       body = 'I' + body;
+    } else if (body.startsWith("cident:")) {
+      body = "In" + body;
+    } else if (body.startsWith("IIncident:")) {
+      body = body.substring(1);
     } else if (body.startsWith("omplaint:")) {
       body = 'C' + body;
     }
     
     unitSet.clear();
     try {
-      return parseFields(body.split("\n"), data);
+      if (parseFields(body.split("\n"), data)) return true;
     } finally {
       unitSet.clear();
     }
+    
+    // If that did not work, try looking for a generic dispatch alert
+    if (body.contains("\n"))  return false;
+    setFieldList("CALL ADDR APT CITY INFO");
+    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ, body, data);
+    data.strSupp = getLeft();
+    return isValidAddress();
   }
   
   @Override
@@ -81,7 +96,7 @@ public class FLOkaloosaCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern PLACE_STREET_PREFIX_PTN = Pattern.compile("\\d+[A-Z]? ");
-  private static final Pattern PLACE_PHONE_PTN = Pattern.compile("(.*?) +(\\d{3}-\\d{4})");
+  private static final Pattern PLACE_PHONE_PTN = Pattern.compile("(.*?) +(\\d{3}[- ](?:\\d{3}[- ])?\\d{4})");
   private static final Pattern PLACE_APT_PTN = Pattern.compile(" UNIT +(\\S+)\\b");
   private static final Pattern PLACE_ST_ZIP_PTN = Pattern.compile("(.*) FL +(\\d{5})"); 
   private class MyPlaceField extends PlaceField {
