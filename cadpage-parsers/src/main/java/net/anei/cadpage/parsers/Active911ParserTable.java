@@ -152,6 +152,7 @@ public class Active911ParserTable {
       "US/CA/GonzalesFD",                 "CAMontereyCountyA",
       "US/CA/Hanford",                    "CAHanford",
       "US/CA/Hayward",                    "CAHayward",
+      "US/CA/HumboldtCounty",             "CAHumboldtCounty",
       "US/CA/Jpapage",                    "CASanDiegoCountyA",
       "US/CA/KernCounty",                 "CAKernCounty",
       "US/CA/LakeCounty",                 "CALakeCounty",
