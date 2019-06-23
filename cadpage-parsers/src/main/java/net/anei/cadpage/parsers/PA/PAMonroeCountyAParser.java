@@ -15,6 +15,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     super("MONROE COUNTY", "PA",
           "( Caller:NAME! Caller:PHONE! | ) " + 
           "( Priority:PRI! CALL! ADDRCITY/S6! PLACE! X_ST:X! GPS! " +
+          "| CALL! ADDRCITY/ZS6! X_STS:X! GPS! " + 
           "| CALL! CALL/SDS! ADDRCITY/ZS6! X_STS:X! GPS! " + 
           "| CALL! CALL/SDS! ADDRCITY/ZS6! PLACE! X_STS:X! GPS! " + 
           "| ADDRCITY/S6! Priority:PRI? CALL! PLACE! X_ST:X! GPS! ) INFO/N+");
