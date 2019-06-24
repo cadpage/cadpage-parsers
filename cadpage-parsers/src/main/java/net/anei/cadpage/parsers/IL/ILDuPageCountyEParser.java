@@ -19,6 +19,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
     super(defCity, defState, 
           "ADDR ID DATETIME CALL! X INFO! INFO/D+? GPS Disp:UNIT EMPTY? END");
     setupCityValues(CITY_CODES);
+    setupGpsLookupTable(ILDuPageCountyParser.GPS_LOOKUP_TABLE);
   }
   
   @Override

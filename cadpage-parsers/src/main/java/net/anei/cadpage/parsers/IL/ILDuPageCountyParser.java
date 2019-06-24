@@ -8,7 +8,8 @@ public class ILDuPageCountyParser extends GroupBestParser {
   
   public ILDuPageCountyParser() {
     super(new ILDuPageCountyAParser(), new ILDuPageCountyBParser(), 
-          new ILDuPageCountyCParser(), new ILDuPageCountyDParser());
+          new ILDuPageCountyCParser(), new ILDuPageCountyDParser(),
+          new ILDuPageCountyEParser());
   }
 
   public static String adjustGpsLookupAddr(String addr) {
