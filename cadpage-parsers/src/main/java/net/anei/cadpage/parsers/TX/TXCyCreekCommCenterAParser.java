@@ -114,7 +114,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     body = MISSED_COLON_PTN.matcher(body).replaceAll(":");
     if (!super.parseMsg(body, data)) return false;
     
-    if (data.strCity.length() == 0 && data.strCall.contains("MA-MUTUAL AID")) data.strCity = "HOUSTON";
+    if (data.strCity.length() == 0 && data.strCall.startsWith("MUTUAL AID")) data.strCity = "HOUSTON";
     
     // Misspelled street name check
     data.strAddress = fixAddress(data.strAddress);
@@ -134,9 +134,28 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+  
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(\\S.*)");
+  private class MyCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
 
   private static final Pattern VAL_PTN = Pattern.compile("\\bVAL\\b", Pattern.CASE_INSENSITIVE);
