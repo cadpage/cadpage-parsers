@@ -15,7 +15,7 @@ public class CTFairfieldCountyBParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "swrcc@dmsct.net";
+    return "swrcc@dmsct.net,swrccpaging@swrcc.org";
   }
 
   private static Pattern MASTER = Pattern.compile("(?:MEMS:([^\\|]*?)\\| )?(.*?) - (.*?) --(?:Disp |DISP |CMED)@ (\\d{2}:\\d{2})");
