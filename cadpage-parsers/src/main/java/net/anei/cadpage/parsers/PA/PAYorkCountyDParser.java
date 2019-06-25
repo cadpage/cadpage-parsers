@@ -259,7 +259,6 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   }
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "CARROLL",              "DILLSBURG",
       "CHANCEFORD",           "BROGUE",
       "CODORUS",              "GLENVILLE",
       "CONEWAGO",             "YORK",
