@@ -434,6 +434,7 @@ public class Active911ParserTable {
       "US/IN/BrownCounty",                "INBrownCounty",
       "US/IN/CataractVFD",                "INOwenCounty",
       "US/IN/ClayCoCAD",                  "INClayCounty",
+      "US/IN/DavidsonCounty",             "INBrownCounty",
       "US/IN/DaviessCounty",              "INDaviessCounty",
       "US/IN/DeKalbCounty",               "INDeKalbCounty",
       "US/IN/DelawareCounty",             "INDelawareCounty",

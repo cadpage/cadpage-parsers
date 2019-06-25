@@ -20,6 +20,8 @@ public class VAHalifaxCountyParser extends DispatchA47Parser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n---\n");
+    if (pt >= 0) body = body.substring(0, pt).trim();
     body = body.replace("\n\n", "\n");
     if (!super.parseMsg(subject, body, data)) return false;
     if (data.strCity.toUpperCase().startsWith("TURBEVILLE")) data.strCity = data.strCity.substring(0,10);
