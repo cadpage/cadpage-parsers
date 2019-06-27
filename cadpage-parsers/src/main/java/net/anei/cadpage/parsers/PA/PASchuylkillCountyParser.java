@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 /**
  * Schuylkill County, PA
@@ -19,7 +21,16 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "llewellynscanner@hotmail.com,schuylkill.paging@gmail.com,good_intent@comcast.net,citizens65fc@gmail.com,pocsagpaging@comcast.net,Engine369@ptd.net,smf@schmobile.com,webfiredispatch@gmail.com,tslane@ptd.net,lt532@comcast.nets,daveyp@comcast.net,webfiredispatch@goodintentfire.com,wpfc37.relay@gmail.com,mcadoo.ems.alert@gmail.com,stclairems911@comcast.net,gifc.active911@comcast.net,gwfc6099@verizon.net,messaging@iamresponding.com";
+    return "llewellynscanner@hotmail.com,schuylkill.paging@gmail.com,good_intent@comcast.net,citizens65fc@gmail.com,pocsagpaging@comcast.net,Engine369@ptd.net,smf@schmobile.com,webfiredispatch@gmail.com,tslane@ptd.net,lt532@comcast.nets,daveyp@comcast.net,webfiredispatch@goodintentfire.com,wpfc37.relay@gmail.com,mcadoo.ems.alert@gmail.com,stclairems911@comcast.net,gifc.active911@comcast.net,gwfc6099@verizon.net,messaging@iamresponding.com,lieutenant701@ptd.net";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean splitKeepLeadBreak() { return true; }
+      @Override public boolean mixedMsgOrder() { return true; }
+    };
   }
 
   private static final Pattern PREFIX_PTN1 = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (?:\\d\\d-\\d\\d-\\d\\d )?(?: ([A-Z]+)  )? *");
@@ -30,6 +41,20 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    int pt = body.indexOf("\n\n---\n");
+    if (pt >= 0) {
+      String tail = body.substring(pt);
+      body = body.substring(0,pt).trim();
+      if (isMultiMsg()) {
+        pt = body.indexOf(tail);
+        if (pt >= 0) {
+          body = body.substring(0,pt) + body.substring(pt+tail.length());
+        }
+      }
+    }
+    
+    if (!isMultiMsg() && body.length() >= 238) data.expectMore = true;
     
     Matcher match = PREFIX_PTN1.matcher(body);
     String time = null;
@@ -46,14 +71,12 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     match = REPAGE_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
     
-    int pt = body.indexOf("\n\n---\n");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    
     match = SRC_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1).trim();
       data.strSource = match.group(2);
     }
+    body = body.replace("FOR \nA:", "FOR A:");
     body = MISSING_BREAK_PTN.matcher(body).replaceAll("\n");
     if (!super.parseFields(body.split("\n"), data)) return false;
     if (time != null) data.strTime = time;
@@ -77,18 +100,25 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern ADDR_TWSP_PTN = Pattern.compile("\\bTWSP\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_INTERSECT_PTN = Pattern.compile("(.*?)-(\\d\\d)/(.*)");
+  private static final Pattern ADDR_INTERSECT_PTN = Pattern.compile("(.*?)-(\\d\\d)(?:_HOLD)?/(.*)");
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?)-(\\d\\d) (\\(.*\\))");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("1 THE ROCK-SCHUYLKILL BERKS LINE")) {
+      if (field.startsWith("1 THE ROCK-SCHUYLKILL BERKS LINE")) {
         data.strAddress = field;
         return;
       }
+      
       field = ADDR_TWSP_PTN.matcher(field).replaceAll("TWP");
       Matcher match = ADDR_INTERSECT_PTN.matcher(field); 
       if (match.matches()) {
         parseAddress(match.group(1).trim() + " & " + match.group(3).trim(), data);
+        data.strCity = convertCodes(match.group(2), CITY_CODES);
+      }
+      
+      else if ((match = ADDR_CITY_PTN.matcher(field)).matches()) {
+        parseAddress(match.group(1).trim() + " " + match.group(3), data);
         data.strCity = convertCodes(match.group(2), CITY_CODES);
       }
       
@@ -342,6 +372,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     
     // Dauphin County
     "DAUPHIN COUNTY",
+    "BERRYSBURG",
     "JACKSON TWP",
     "JEFFERSON TWP",
     "GRATZ",
