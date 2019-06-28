@@ -1124,6 +1124,7 @@ public class Active911ParserTable {
       "US/NY/SteubenCounty",              "NYSteubenCounty",
       "US/NY/StLawrenceCounty",           "NYStLawrenceCounty",
       "US/NY/SuffolkCounty",              "NYSuffolkCountyA,NYSuffolkCountyC",
+      "US/NY/SullivanCounty",             "NYSullivanCounty",
       "US/NY/SyrUnivAmb",                 "NYOnondagaCountyE",
       "US/NY/UlsterCounty",               "NYUlsterCounty",
       "US/NY/WashingtonCounty",           "NYWashingtonCounty",

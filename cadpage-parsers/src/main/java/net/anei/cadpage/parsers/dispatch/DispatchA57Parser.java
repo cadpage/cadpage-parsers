@@ -15,7 +15,7 @@ public class DispatchA57Parser extends FieldProgramParser {
     super(defCity, defState,
           "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Radio_Channel:CH? Address:ADDRCITY! " + 
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
-                "| City:CITY Common_Name:PLACE Map_Page:MAP? Closest_Intersection:X EMPTY+? Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? Narrative:INFO/N? Status:SKIP? Quadrant:MAP District:MAP Beat:MAP CFS_Number:SKIP? Primary_Incident:ID CFS_Number:SKIP? Radio_Channel:CH? Narrative:INFO+ ) " +
+                "| City:CITY Common_Name:PLACE Map_Page:MAP? Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N INFO/N+ | ) Status:SKIP? Quadrant:MAP District:MAP Beat:MAP Lat_and_Long:GPS CFS_Number:ID/L? Primary_Incident:ID/L CFS_Number:ID/L? Radio_Channel:CH? Narrative:INFO+ ) " +
           "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
   
