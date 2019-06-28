@@ -1226,6 +1226,7 @@ public class ParserList {
               ,"OKPottawatomieCounty"           ,"Pottawatomie County, OK"
               ,"OKSandSprings"                  ,"Sand Springs, OK"
               ,"OKSeminoleCounty"               ,"Seminole County, OK"
+              ,"OKSequoyahCounty"               ,"Sequoyah County, OK"
               ,"OKTinkerAFB"                    ,"Tinker AFB, OK"
               ,"OKTulsa"                        ,"Tulsa, OK"
               ,"OKYukon"                        ,"Yukon, OK"

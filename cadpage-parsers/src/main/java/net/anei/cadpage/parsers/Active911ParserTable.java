@@ -1297,6 +1297,7 @@ public class Active911ParserTable {
       "US/OR/PolkCounty",                 "ORPolkCounty",
       "US/OR/PortlandAMR",                "ORClackamasCountyC",
       "US/OR/PrinevillePD",               "ORCrookCounty",
+      "US/OK/SequoyahCounty",             "OKSequoyahCounty",
       "US/OR/ShermanCounty",              "ORShermanCounty",
       "US/OR/TillamookCounty",            "ORTillamookCounty",
       "US/OR/TosohQuartz",                "ORMultnomahCountyD",
