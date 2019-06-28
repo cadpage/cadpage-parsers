@@ -324,6 +324,7 @@ public class Active911ParserTable {
       "US/GA/HabershamCounty",            "GAHabershamCounty",
       "US/GA/HallCounty",                 "GAHallCounty",
       "US/GA/HartCounty",                 "GAHartCounty",
+      "US/GA/HenryCounty",                "GAHenryCountyB",
       "US/GA/JacksonCounty",              "GAJacksonCounty",
       "US/GA/JasperCounty",               "GAJasperCounty",
       "US/GA/JeffersonCounty",            "GAJeffersonCounty",
