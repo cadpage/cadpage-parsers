@@ -549,6 +549,7 @@ public class Active911ParserTable {
       "US/KY/HardinCounty",               "KYHardinCounty",
       "US/KY/HarrisonCounty",             "KYHarrisonCountyB",
       "US/KY/HendersonCounty",            "KYHendersonCounty",
+      "US/KY/KentonCincinnati",           "OHCincinnati",
       "US/KY/KentonCounty",               "KYKentonCounty",
       "US/KY/KentonCountyAlexandria",     "KYKentonCounty",
       "US/KY/KentonCountyBromley",        "KYKentonCounty",

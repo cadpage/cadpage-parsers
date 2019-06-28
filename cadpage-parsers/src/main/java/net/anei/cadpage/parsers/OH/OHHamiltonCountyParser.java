@@ -9,6 +9,12 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class OHHamiltonCountyParser extends GroupBestParser {
   
   public OHHamiltonCountyParser() {
-    super(new OHHamiltonCountyAParser(), new OHHamiltonCountyBParser());
+    super(new OHHamiltonCountyAParser(), new OHHamiltonCountyBParser(),
+          new OHCincinnatiParser());
+  }
+
+  @Override
+  public String getLocName() {
+    return "Hamilton County, OH";
   }
 }

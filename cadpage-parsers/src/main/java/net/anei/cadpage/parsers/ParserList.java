@@ -1144,6 +1144,7 @@ public class ParserList {
               ,"OHCarrollCounty"                ,"Carroll County, OH"
               ,"OHCenterville"                  ,"Centerville, OH"
               ,"OHChampaignCounty"              ,"Champaign County, OH"
+              ,"OHCincinnati"                   ,"Cincinnati, OH"
               ,"OHClarkCounty"                  ,"Clark County, OH"
               ,"OHClermontCounty"               ,"Clermont County, OH"
               ,"OHClintonCounty"                ,"Clinton County, OH"
