@@ -99,7 +99,6 @@ public class DispatchSouthernParser extends FieldProgramParser {
   // In undelimited format, not info fileds, evertyhing goes into call description
   public static final int DSFLG_NO_INFO =             0x00000001;
 
-  
   // Old flags are a complicated mess, which is why they are depreciated
   
   // Flag indicating  a leading dispatch name is required
@@ -107,6 +106,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   
   // Flag indicating a leading dispatch name is optional
   public static final int DSFLAG_OPT_DISPATCH_ID = 0x02;
+  
   
   // Flag indicating that the call ID is optional
   public static final int DSFLAG_ID_OPTIONAL = 0x08;

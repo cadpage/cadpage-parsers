@@ -1653,6 +1653,7 @@ public class Active911ParserTable {
       "US/VA/PrinceEdwardCounty",         "VAPrinceEdwardCounty,VALunenburgCountyB",
       "US/VA/PrinceWilliamCounty",        "VAPrinceWilliamCounty",
       "US/VA/RoanokeCounty",              "VARoanokeCounty",
+      "US/VA/RoanokeCountyCarilion",      "VAGilesCounty",
       "US/VA/RockbridgeCounty",           "VARockbridgeCounty",
       "US/VA/RockinghamCounty",           "VARockinghamCounty,VALexington",
       "US/VA/ShenandoahCounty",           "VAShenandoahCounty",

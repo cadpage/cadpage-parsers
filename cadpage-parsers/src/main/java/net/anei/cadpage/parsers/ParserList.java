@@ -1554,6 +1554,7 @@ public class ParserList {
               ,"VAFrederickCounty"              ,"Frederick County, VA"
               ,"VAFredericksburg"               ,"Fredericksburg, VA"
               ,"VAGalax"                        ,"Galax, VA"
+              ,"VAGilesCounty"                  ,"Giles County, VA"
               ,"VAGloucesterCounty"             ,"Gloucester County, VA"
               ,"VAGoochlandCounty"              ,"Goochland County, VA"
               ,"VAGraysonCounty"                ,"Grayson County, VA"
