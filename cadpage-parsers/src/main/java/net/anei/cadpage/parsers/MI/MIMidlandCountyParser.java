@@ -91,6 +91,13 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       int pt = field.lastIndexOf(',');
       if (pt < 0) return false;
+      
+      // Sometimes intersections contains a comma and might be
+      // mistaken for a call/address field.  So check the next field
+      // to rule that out
+      if (getRelativeField(+1).startsWith("APT:")) return false;
+      
+      // We are good to go
       data.strCall = field.substring(0, pt).trim();
       parseAddress(field.substring(pt+1), data);
       return true;
@@ -107,7 +114,7 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern COMMENTS_PTN = Pattern.compile("(\\d\\d?:\\d\\d) *COMMENTS:");
+  private static final Pattern COMMENTS_PTN = Pattern.compile("(\\d\\d?:\\d\\d)(?: *COMMENTS:)?");
   private class MyCommentsField extends TimeField {
     @Override
     public void parse(String field, Data data) {

@@ -8,6 +8,6 @@ public class MIIoniaCountyParser extends MIMidlandCountyParser {
   
   @Override
   public String getFilter() {
-    return "cfs-noreply@ioniacounty.org";
+    return "cfs-noreply@ioniacounty.org,dispatch@barry911.org";
   }
 }
