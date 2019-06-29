@@ -22,6 +22,11 @@ public class TXMidlothianParser extends DispatchA18Parser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.startsWith("CAUTION: ")) {
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      body = body.substring(pt+1).trim();
+    }
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equals("NONE")) data.strCity = "";
     return true;
