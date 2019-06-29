@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,6 +14,7 @@ public class MNDodgeCountyParser extends DispatchA27Parser {
   
   public MNDodgeCountyParser() {
     super("DODGE COUNTY", "MN", "\\d{8}|RDM");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -28,5 +30,17 @@ public class MNDodgeCountyParser extends DispatchA27Parser {
     data.strUnit = UNIT_ZEROS_PTN.matcher(data.strUnit).replaceAll("");
     return true;
   }
+  
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "24304 555TH ST",                       "+44.145333,-92.750888",
+      "141 COUNTY RD 12",                     "+44.061981,-92.757681"
+
+  });
   
 }
