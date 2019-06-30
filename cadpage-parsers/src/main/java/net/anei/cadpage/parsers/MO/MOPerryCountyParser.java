@@ -1,17 +1,11 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
 
-public class MOPerryCountyParser extends DispatchA33Parser {
-  
-  
+public class MOPerryCountyParser extends GroupBestParser {
+
   public MOPerryCountyParser() {
-    super("PERRY COUNTY", "MO");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "louisianapd.dispatch@gmail.com,PERRY@OMNIGO.COM";
+    super(new MOPerryCountyAParser(), new MOPerryCountyBParser());
   }
 }

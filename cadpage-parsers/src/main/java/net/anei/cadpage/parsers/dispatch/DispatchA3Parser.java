@@ -190,7 +190,7 @@ public class DispatchA3Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{2,6}-\\d{4,}|\\d{11,12}|", true);
+    if (name.equals("ID")) return new IdField("\\d{2,6}-\\d{4,}[A-Z]?|\\d{11,12}|", true);
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CH")) return new BaseChannelField();
     if (name.equals("X")) return new BaseCrossField();
