@@ -1439,6 +1439,7 @@ public class ParserList {
               ,"TXGalvestonCounty"              ,"Galveston County, TX"
               ,"TXGatesville"                   ,"Gatesville, TX"
               ,"TXGillespieCounty"              ,"Gillespie County, TX"
+              ,"TXGladewater"                   ,"Gladewater, TX"
               ,"TXGreggCounty"                  ,"Gregg County, TX"
               ,"TXHarrisCounty"                 ,"Harris County, TX"
               ,"TXHarrisCountyESD1"             ,"Harris County ESD1, TX"

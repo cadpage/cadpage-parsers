@@ -1526,7 +1526,7 @@ public class Active911ParserTable {
       "US/TX/Gatesville",                 "TXGatesville",
       "US/TX/GillespieCounty",            "TXGillespieCounty",
       "US/TX/GlennHeights",               "TXDallasCountyD",
-      "US/TX/GreggCounty",                "TXGreggCounty",
+      "US/TX/GreggCounty",                "TXGreggCounty,TXGladewater",
       "US/TX/HarrisCounty",               "TXHarrisCounty",
       "US/TX/HarrisCountyEC",             "TXHarrisCountyESD1B",
       "US/TX/HarrisCountyNWEMS",          "TXHarrisCountyNWEMS",
