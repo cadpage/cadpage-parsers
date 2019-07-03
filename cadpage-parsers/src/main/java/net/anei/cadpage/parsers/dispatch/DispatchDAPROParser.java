@@ -82,7 +82,8 @@ public class DispatchDAPROParser extends FieldProgramParser {
     
     body = body.replace(" Run# ", " Run: ");
     
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    return mark || data.strCallId.length() > 0;
   }
   
   @Override

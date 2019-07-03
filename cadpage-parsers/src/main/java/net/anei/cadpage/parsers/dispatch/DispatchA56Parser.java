@@ -100,7 +100,7 @@ public class DispatchA56Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("([A-Z0-9 ]+:[-A-Z0-9 ]+)(?: (?:Dispatch|DISPATCH|Disp))?");
+  private static final Pattern UNIT_PTN = Pattern.compile("([A-Z0-9 ]+:[-A-Z0-9 ]+?)");
   private static final Pattern UNIT_PTN2 = Pattern.compile("[-A-Z0-9: ]+");
   private class BaseUnitField extends UnitField {
     @Override
@@ -113,24 +113,17 @@ public class DispatchA56Parser extends FieldProgramParser {
       String[] units = field.split(",");
       for (int j = 0; j<units.length; j++) {
         String unit = units[j];
-        Matcher match = UNIT_PTN.matcher(unit);
-        if (match.matches()) {
-          unit = match.group(1);
-        }
-          // Releax rules for last unit in last field that might have been truncated
-        else {
-          if (j == 0 || j != units.length-1 || !isLastField()) return false;
-          int pt = unit.indexOf(' ');
-          if (pt >= 0) {
-            if (!"DISPATCH".startsWith(unit.substring(pt+1).toUpperCase())) return false;
-            unit = unit.substring(0,pt);
+        int pt = unit.lastIndexOf(' ');
+        if (pt >= 0) {
+          if ("DISPATCH".startsWith(unit.substring(pt+1).toUpperCase())) {
+            unit = unit.substring(0,pt).trim();
           }
-          if (!UNIT_PTN2.matcher(unit).matches()) return false;
         }
-        units[j] = unit;
-      }
-      
-      for (String unit : units) {
+        
+        // Releax rules for last unit in last field that might have been truncated
+        Pattern unitPtn = (j == 0 || j != units.length-1 || !isLastField()) ? UNIT_PTN : UNIT_PTN2;
+        if (!unitPtn.matcher(unit).matches()) return false;
+
         unit = unit.trim().replace(' ', '_');
         if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
       }
