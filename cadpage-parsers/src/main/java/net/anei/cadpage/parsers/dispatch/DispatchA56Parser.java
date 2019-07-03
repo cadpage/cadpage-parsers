@@ -12,11 +12,11 @@ public class DispatchA56Parser extends FieldProgramParser {
 
   public DispatchA56Parser(String defCity, String defState) {
     super(defCity, defState, 
-          "UNIT ( DATETIME CODECALL LOCATION PLACE? UNIT! | CODECALL LOCATION! ) INFO+");
+          "UNIT ( DATETIME CODECALL LOCATION APT? PLACE? UNIT! | CODECALL LOCATION! ) INFO+");
   }
   
   private static Pattern MASTER1 = Pattern.compile("DISPATCH:(.*?) - (\\d{2}/\\d{2} \\d{2}:\\d{2}) - (.+)", Pattern.DOTALL);
-  private static Pattern MASTER2 = Pattern.compile("DISPATCH:(\\S+(?: Dispatch)?) - ([- :A-Z0-9]+)/(.+)", Pattern.DOTALL);
+  private static Pattern MASTER2 = Pattern.compile("DISPATCH:([-A-Z0-9: ]+?(?: Dispatch)?) - ([- :A-Z0-9]+)/(.+)", Pattern.DOTALL);
   private static final Pattern DELIM = Pattern.compile("\n\n|//");
   
   private Set<String> unitSet = new HashSet<String>();
@@ -39,15 +39,44 @@ public class DispatchA56Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("(\\d{2}/\\d{2} \\d{2}:\\d{2})", true);
-    if (name.equals("CODECALL")) return new MyCodeCallField();
-    if (name.equals("LOCATION")) return new MyLocField(); //ADDR APT? CITY
-    if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("CODECALL")) return new BaseCodeCallField();
+    if (name.equals("LOCATION")) return new BaseLocField();
+    if (name.equals("APT")) return new AptField("\\d{1,4}[A-Z]?|[A-Z]", true);
+    if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("UNIT")) return new BaseUnitField();
     return super.getField(name);
   }
   
+  private static final Pattern ID_CALL = Pattern.compile("([ A-Z]+):(\\d{2}-\\d{4,})\\s+(.*)");
+  private static final Pattern CODE_CALL = Pattern.compile("(\\d+)\\s+(.+)");
+  private class BaseCodeCallField extends Field {
+    @Override public void parse(String field, Data data) {
+      
+      // Extract source and call ID
+      Matcher mat = ID_CALL.matcher(field);
+      if (mat.matches()) {
+        if (data.strSource.length() == 0) data.strSource = mat.group(1).trim();
+        data.strCallId = mat.group(2);
+        field = mat.group(3);
+      }
+      
+      //numeric CODE precedes CALL
+      mat = CODE_CALL.matcher(field);
+      if (mat.matches()) {
+        data.strCode = mat.group(1);
+        data.strCall = mat.group(2);
+      } else {
+        data.strCall = field;
+      }
+    }
+
+    @Override public String getFieldNames() {
+      return "SRC ID CODE CALL";
+    }
+  }
+  
   private static final Pattern EXTRA_COMMA_PTN = Pattern.compile(" *, *");
-  private class MyLocField extends AddressField {
+  private class BaseLocField extends AddressField {
     @Override public void parse(String field, Data data) {
       Parser p = new Parser(field);
       //last field is always city
@@ -64,32 +93,16 @@ public class DispatchA56Parser extends FieldProgramParser {
     }
   }
   
-  private static Pattern CODE_CALL = Pattern.compile("(\\d+)\\s+(.+)");
-  private class MyCodeCallField extends Field {
-    @Override public void parse(String field, Data data) {
-      //numeric CODE precedes CALL
-      Matcher mat = CODE_CALL.matcher(field);
-      if (mat.matches()) {
-        data.strCode = mat.group(1);
-        data.strCall = mat.group(2);
-      } else data.strCall = field;
-    }
-
-    @Override public String getFieldNames() {
-      return "CODE CALL";
-    }
-  }
-  
-  private class MyPlaceField extends PlaceField {
+  private class BasePlaceField extends PlaceField {
     @Override public void parse(String field, Data data) {
       field = stripFieldStart(field, "ALIAS=");
       super.parse(field, data);
     }
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("([A-Z0-9 ]+:[-A-Z0-9]+)(?: (?:Dispatch|DISPATCH|Disp))?");
+  private static final Pattern UNIT_PTN = Pattern.compile("([A-Z0-9 ]+:[-A-Z0-9 ]+)(?: (?:Dispatch|DISPATCH|Disp))?");
   private static final Pattern UNIT_PTN2 = Pattern.compile("[-A-Z0-9: ]+");
-  private class MyUnitField extends UnitField {
+  private class BaseUnitField extends UnitField {
     @Override
     public boolean canFail() {
       return true;
@@ -118,6 +131,7 @@ public class DispatchA56Parser extends FieldProgramParser {
       }
       
       for (String unit : units) {
+        unit = unit.trim().replace(' ', '_');
         if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
       }
       return true;

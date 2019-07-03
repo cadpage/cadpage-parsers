@@ -21,6 +21,13 @@ public class INGrantCountyParser extends DispatchA56Parser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("FIRE")) data.strSource = subject;
+    
+    if (body.startsWith("CAUTION:")) {
+      int pt = body.indexOf("\n\n\n");
+      if (pt < 0) return false;
+      body = body.substring(pt+3).trim();
+    }
+    
     if (!super.parseMsg(body, data)) return false;
     Matcher match = MAP_PLACE_PTN.matcher(data.strPlace);
     if (match.matches()) {
