@@ -17,7 +17,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
 
   public ALJeffersonCountyCParser() {
     super("JEFFERSON COUNTY", "AL",
-          "( CALL ADDRCITY/SXP | ADDRCITY/SXP CALL! ) JUNK X:X? Units:UNIT! Created:DATETIME! Pri_Inc:ID! N:INFO/N+");
+          "( CALL ADDRCITY/SXP | ADDRCITY/SXP CALL! ) JUNK X:X? Units:UNIT! Created:DATETIME_ID! Pri_Inc:ID! N:INFO/N+");
   }
     
   @Override
@@ -43,7 +43,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("JUNK")) return new SkipField("|@.*", true);
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("DATETIME_ID")) return new MyDateTimeIdField();
     if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
@@ -115,15 +115,20 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) *#(\\d*)");
+  private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) *#(\\d*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private class MyDateTimeField extends DateTimeField {
+  private class MyDateTimeIdField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
+      Matcher match = DATE_TIME_ID_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
       data.strCallId = match.group(3);
     }
     
