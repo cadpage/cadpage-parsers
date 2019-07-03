@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
@@ -11,6 +13,7 @@ public class OHAllenCountyBParser extends DispatchEmergitechParser {
   
   public OHAllenCountyBParser() {
     super(CITY_LIST, "ALLEN COUNTY", "OH", TrailAddrType.PLACE);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -21,12 +24,16 @@ public class OHAllenCountyBParser extends DispatchEmergitechParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    // Units get incorrectly identified as the subject and have to be restoredd
+    // Units get incorrectly identified as the subject and have to be restored
     if (subject.length() > 0 && body.startsWith("-")) {
       body = '[' + subject + ']' + body;
     }
     return super.parseMsg(body, data);
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "2277 W BREESE RD",                     "+40.686152,-84.146268"
+  });
 
   private static final String[] CITY_LIST = new String[]{
     
