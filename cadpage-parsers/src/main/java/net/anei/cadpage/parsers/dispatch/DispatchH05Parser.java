@@ -48,8 +48,13 @@ public class DispatchH05Parser extends HtmlProgramParser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Automatic R&R Notification")) return false;
+    return super.parseHtmlMsg(subject, body, data);
+  }
+  
+  @Override
+  protected boolean parseFields(String[] flds, Data data) {
     times = null;
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (!super.parseFields(flds, data)) return false;
     if (data.msgType == MsgType.RUN_REPORT && times != null) {
       data.strSupp = append(times, "\n\n", data.strSupp);
     }
