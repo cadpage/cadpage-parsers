@@ -194,8 +194,6 @@ public class ManageParsers {
         "NCHavelock",         "NCCravenCounty",          // 02/18/2018
         "TXWharton",          "TXWhartonCounty",         // 03/29/2018
         "ZCAONMississauga",   "ZCAONSimcoeCountyB",      // 06/01/2018
-        "OKTulsaA",           "OKTulsa",                 // 06/08/2018
-        "OKTulsaC",           "OKTulsa",
         "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
         "ZSECTConnect",       "ZSESweden",               // 10/02/2018
         "COJeffersonCountyB", "COJeffersonCountyD",      // 10/16/2018
