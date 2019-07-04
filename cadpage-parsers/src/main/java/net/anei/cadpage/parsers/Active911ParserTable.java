@@ -806,6 +806,7 @@ public class Active911ParserTable {
       "US/MO/CentraliaPD",                "MOCentralia",
       "US/MO/CentralJacksonCounty",       "MOJacksonCountyB",
       "US/MO/ChillicothePD",              "MOLivingstonCounty",
+      "US/MO/ChristianHospitalEMS",       "MOStLouisCountyC",
       "US/MO/ChristianCounty",            "MOChristianCounty",
       "US/MO/CityofBranson",              "MOBranson",
       "US/MO/CityofCameron",              "MOCameron",
