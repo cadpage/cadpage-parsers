@@ -4,21 +4,21 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
 
 
-public class TXTarrantCountyCParser extends DispatchA18Parser {
+public class TXTarrantCountyEParser extends DispatchA18Parser {
   
-  public TXTarrantCountyCParser() {
+  public TXTarrantCountyEParser() {
     super(TXTarrantCountyParser.CITY_LIST, "TARRANT COUNTY","TX");
   }
  
   @Override
   public String getFilter() {
-    return "crimespage@lakeworthtx.org";
+    return "cad@evermantx.net";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf("\n\n\n");
-    if (pt >= 0) body = body.substring(0, pt).trim();
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.length() == 0 || !body.startsWith("-")) return false;
+    body = subject + '\n' + body;
     return super.parseMsg(body, data);
   }
 }
