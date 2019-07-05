@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 /**
@@ -17,7 +19,7 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
   
   public MIHillsdaleCountyParser() {
     super("HILLSDALE COUNTY", "MI", 
-          "CALL ADDR ( X | CITY ST_ZIP? X ) DATETIME!");
+          "CALL ADDR ( X | CITY ST_ZIP? PLACE? X ) DATETIME!");
   }
   
   @Override
@@ -25,6 +27,14 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
     return "hccd@co.hillsdale.mi.us";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom() {
+      @Override public int splitBreakLength() { return 130; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
   @Override
   public boolean parseMsg(String body, Data data) {
     return parseFields(body.split(","), data);
