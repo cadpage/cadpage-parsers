@@ -219,7 +219,6 @@ public class NDCassCountyParser extends FieldProgramParser {
       "RIVE", "RIVERTON TOWNSHIP/MN",
       "ROGE", "ROGERS/ND",
       "ROLL", "ROLLAG/MN",
-      "RRON", "FRONTIER/ND",
       "RUST", "RUSTAD CITY/ND",
       "SABI", "SABIN/MN",
       "SHEL", "SHELDON/ND",

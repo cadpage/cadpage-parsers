@@ -14,9 +14,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MDSaintMarysCountyParser extends SmartAddressParser {
   
-  private static final Pattern MARKER = Pattern.compile("\\b\\d\\d:\\d\\d:\\d\\d\\*");
-  private static final Pattern PLACE = Pattern.compile("\\*\\*([^*]+)\\*\\*");
-  
   public MDSaintMarysCountyParser() {
     super("SAINT MARYS COUNTY", "MD");
     setFieldList("TIME CALL ADDR APT X PLACE CITY UNIT INFO");
@@ -28,6 +25,10 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
   public String getFilter() {
     return "mplus@co.saint-marys.md.us,mplus@STMARYSMD.COM,777,888";
   }
+  
+  private static final Pattern MARKER = Pattern.compile("\\b\\d\\d:\\d\\d:\\d\\d\\*");
+  private static final Pattern PLACE = Pattern.compile("\\*\\*([^*]+)\\*\\*");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +(?=\\d{1,2}\\. )");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -148,7 +149,10 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
         
       case 5:
         // Description
-        data.strSupp = append(data.strSupp, " / ", fld);
+        if (fld.startsWith("1. ")) {
+          fld = INFO_BRK_PTN.matcher(fld).replaceAll("\n");
+        }
+        data.strSupp = append(data.strSupp, "\n", fld);
         ndx--;
         break;
       }
