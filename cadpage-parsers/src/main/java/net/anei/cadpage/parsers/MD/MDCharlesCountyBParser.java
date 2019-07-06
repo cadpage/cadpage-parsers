@@ -91,7 +91,7 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
   private class MyInfoUrlField extends InfoUrlField {
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!field.startsWith("mdft.us/?")) return false;
+      if (!field.startsWith("mdfire.com/?") && !field.startsWith("mdft.us/?")) return false;
       field = "http://" + field;
       super.parse(field, data);
       return true;
