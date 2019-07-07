@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,12 +13,12 @@ public class COMesaCountyAParser extends FieldProgramParser {
   
   public COMesaCountyAParser() {
     super("MESA COUNTY", "CO",
-          "ID Call_Type:CALL! Location:ADDR/SXx! Apt/Unit:APT? Lat/Long:GPS? Closest_Intersection:X? Call_Time:DATETIME! Narrative:INFO");
+          "ID Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X? Call_Time:DATETIME! Narrative:INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "Dispatch@ci.grandjct.co.us";
+    return "aegisadmin@gjcity.org";
   }
   
   @Override
@@ -32,10 +34,21 @@ public class COMesaCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{8}", true);
+    if (name.equals("ID")) return new MyIdField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+  
+  private static final Pattern ID_JUNK_PTN = Pattern.compile(" \\([A-Z0-9]+\\)");
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!field.startsWith("INC# ")) abort();
+      field = field.substring(5).trim();
+      field = ID_JUNK_PTN.matcher(field).replaceAll("");
+      super.parse(field, data);
+    }
   }
   
   private class MyCrossField extends CrossField {
@@ -49,15 +62,15 @@ public class COMesaCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      data.strTime = match.group(2);
-      data.strSupp = match.group(3);
+      setTime(TIME_FMT, match.group(2), data);
     }
     
     @Override
