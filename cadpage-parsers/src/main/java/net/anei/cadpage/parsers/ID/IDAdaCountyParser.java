@@ -12,11 +12,13 @@ public class IDAdaCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad@gocai.com";
+    return "cad@gocai.com,active911@co.gem.id.us,dispatch@co.fremont.id.us";
   }
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
   }
 
