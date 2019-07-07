@@ -33,7 +33,7 @@ public class DispatchA11Parser extends FieldProgramParser {
     if (name.equals("PAGED")) return new SkipField("PAGED|ASSGN", true);
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("UNIT")) return new UnitField("[-A-Z0-9]+", false);
-    if (name.equals("ID")) return new IdField("\\d{2}[A-Z]{2,4}\\d+");
+    if (name.equals("ID")) return new IdField("\\d{2}[A-Z]{1,4}-?\\d+");
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     return super.getField(name);
