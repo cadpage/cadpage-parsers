@@ -523,6 +523,8 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "BULTER TWP",     "BUTLER TWP",
       "CATA B",         "CATAWISSA",
       "CATA T",         "CATAWISSA TWP",
+      "CLEV",           "CLEVELAND TWP",
+      "CLEVELAN",       "CLEVELAND TWP",
       "CLEVELAND",      "CLEVELAND TWP",
       "COOPER",         "COOPER TWP",
       "DAVIDSON",       "DAVIDSON TWP",
@@ -566,6 +568,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "WASHNGTON",      "WASHINGTON TWP",
       
       "FAIRMOUNT TWP LUZE CO",    "FAIRMOUNT TWP"
+
   });
 
 }
