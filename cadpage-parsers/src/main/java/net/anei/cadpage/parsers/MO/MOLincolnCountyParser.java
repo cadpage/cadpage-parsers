@@ -130,6 +130,7 @@ public class MOLincolnCountyParser extends DispatchA25Parser {
       "EXTRICATION/ENTRAPPED",
       "FALLS",
       "FIRE",
+      "FIRE-CARBON MONOXIDE ALARM",
       "FOLLOW UP",
       "FOLLOW UP - INVESTIGATION",
       "FUEL SPILL",
