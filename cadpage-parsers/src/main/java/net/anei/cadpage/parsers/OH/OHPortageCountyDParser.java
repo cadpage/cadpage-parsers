@@ -5,24 +5,32 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 
 public class OHPortageCountyDParser extends DispatchH05Parser {
-
+  
   public OHPortageCountyDParser() {
-    super("PORTAGE COUNTY", "OH",
+    this("PORTAGE COUNTY", "OH");
+  }
+
+  public OHPortageCountyDParser(String defCity, String defState) {
+    super(defCity, defState,
           "( U_DATETIME U_ADDRESS U_NAME U_PHONE U_CFS_NUMBER U_PLACE U_X U_CALL U_ID! " +
           "| Date/time:DATETIME! Address:ADDRCITY! Caller_Name:NAME! Caller_phone:PHONE! CFS_Number:SKIP! Common_Name:PLACE! Cross_Streets:X! Call_Type:CALL! Incident_Number:ID! " + 
           ") Narrative%EMPTY! INFO_BLK/Z+? Status_Times%EMPTY! TIMES/Z+? U_UNIT!");
   }
   
+  public String getAliasCode() {
+    return "OHPortageCountyD";
+  }
+  
   @Override
   public String getFilter() {
-    return "@kent.edu";
+    return "@kent.edu,@stow.oh.us";
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("U_DATETIME")) return new DateTimeField("Date/time *(\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d)", true);
-    if (name.equals("U_ADDRESS")) return new AddressField("Address *(.*)", true);
+    if (name.equals("U_ADDRESS")) return new AddressCityField("Address *(.*)", true);
     if (name.equals("U_NAME")) return new NameField("Caller Name *(.*)", true);
     if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("U_PHONE")) return new MyPhoneField("Caller phone *(.*)", true);
