@@ -330,7 +330,7 @@ public class Active911ParserTable {
       "US/GA/JeffersonCounty",            "GAJeffersonCounty",
       "US/GA/Ledsportal",                 "GAFloydCounty",
       "US/GA/MaconCounty",                "GAMaconCountyB",
-      "US/GA/MaconCountyFire",            "GAMaconCountyA",
+      "US/GA/MaconCountyFire",            "GAMaconCounty",
       "US/GA/MarionCounty",               "GAMarionCounty",
       "US/GA/MeriweatherCounty",          "GAMeriwetherCounty",
       "US/GA/MFRE911",                    "GASchleyCounty",
