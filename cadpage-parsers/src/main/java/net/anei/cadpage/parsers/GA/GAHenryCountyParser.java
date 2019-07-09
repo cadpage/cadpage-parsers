@@ -8,6 +8,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class GAHenryCountyParser extends GroupBestParser {
   
   public GAHenryCountyParser() {
-    super(new GAHenryCountyAParser(), new GAHenryCountyBParser());
+    super(new GAHenryCountyAParser(), 
+          new GAHenryCountyBParser(),
+          new GAHenryCountyCParser());
   }
 }
