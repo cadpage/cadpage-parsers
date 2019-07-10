@@ -1675,6 +1675,7 @@ public class Active911ParserTable {
       "US/VT/BurlingtonFD",               "VTChittendenCountyE",
       "US/VT/CaledoniaCounty",            "VTCaledoniaCounty",
       "US/VT/ChittendenCounty",           "VTChittendenCountyA,VTChittendenCountyD",
+      "US/VT/CityofUnderhill",            "VTChittendenCountyA",
       "US/VT/FranklinCounty",             "VTFranklinCounty",
       "US/VT/GrandIsleCounty",            "VTGrandIsleCounty",
       "US/VT/Hartford",                   "VTHartford",
