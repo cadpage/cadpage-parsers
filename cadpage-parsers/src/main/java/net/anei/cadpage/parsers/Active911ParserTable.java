@@ -635,6 +635,7 @@ public class Active911ParserTable {
       "US/MD/ADSiCAD",                    "MDAnneArundelCountyADSiCAD",
       "US/MD/AlleganyCounty",             "MDAlleganyCounty",
       "US/MD/BaltimoreCountyCmsg",        "MDBaltimoreCountyB",
+      "US/MD/Bittinger",                  "MDGarrettCounty",
       "US/MD/CalvertAdvanced",            "MDCalvertCounty",
       "US/MD/CalvertCounty",              "MDCalvertCounty",
       "US/MD/CalvertCountyALS",           "MDCalvertCounty",
