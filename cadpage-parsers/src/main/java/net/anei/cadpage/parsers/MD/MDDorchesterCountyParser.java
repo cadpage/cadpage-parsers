@@ -15,6 +15,7 @@ public class MDDorchesterCountyParser extends FieldProgramParser {
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupMapAdjustReplacements(
+        "BLTW",                     "BELTWAY",
         "BY-P",                     "BYPASS",
         "DORCHESTER SQUARE MALL",   "DORCHESTER SQUARE",
         "EAST NEW MARKET HURL",     "EAST NEW MARKET HURLOCK",
