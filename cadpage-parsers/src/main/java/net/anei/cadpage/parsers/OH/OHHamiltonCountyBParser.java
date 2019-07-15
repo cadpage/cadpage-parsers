@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +13,7 @@ public class OHHamiltonCountyBParser extends FieldProgramParser {
   public OHHamiltonCountyBParser() {
     super("HAMILTON COUNTY", "OH",
           "DATETIME CALL! ADDR CITY INFO/N+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -83,4 +85,49 @@ public class OHHamiltonCountyBParser extends FieldProgramParser {
       return "INFO ID UNIT";
     }
   }
+  
+  private static final Pattern GPS_BOX_PTN = Pattern.compile("\\bIR\\d\\d|SR\\d\\d\\b");
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    Matcher match = GPS_BOX_PTN.matcher(address);
+    if (match.find()) address = match.group();
+    return address;
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "IR60",                                 "+39.145352,-84.455978",
+      "IR61",                                 "+39.146120,-84.454971",
+      "IR62",                                 "+39.146785,-84.453336",
+      "IR63",                                 "+39.147337,-84.451525",
+      "IR64",                                 "+39.147859,-84.450050",
+      "IR65",                                 "+39.148481,-84.448419",
+      "IR66",                                 "+39.149239,-84.446617",
+      "IR67",                                 "+39.150066,-84.444915",
+      "IR68",                                 "+39.151252,-84.443814",
+      "IR69",                                 "+39.152564,-84.442976",
+      "IR70",                                 "+39.153716,-84.442255",
+      "IR71",                                 "+39.155062,-84.441185",
+      "IR72",                                 "+39.156040,-84.440075",
+      "IR73",                                 "+39.157445,-84.439015",
+      "IR74",                                 "+39.158576,-84.438083",
+      "IR75",                                 "+39.159552,-84.437447",
+      "IR76",                                 "+39.161183,-84.436577",
+      "IR77",                                 "+39.162459,-84.435166",
+      "SR12",                                 "+39.168125,-84.466254",
+      "SR13",                                 "+39.166470,-84.463158",
+      "SR14",                                 "+39.165676,-84.459239",
+      "SR15",                                 "+39.165134,-84.457370",
+      "SR16",                                 "+39.164662,-84.455382",
+      "SR17",                                 "+39.164302,-84.453570",
+      "SR18",                                 "+39.163941,-84.451839",
+      "SR19",                                 "+39.163861,-84.449986",
+      "SR20",                                 "+39.163400,-84.448241",
+      "SR21",                                 "+39.163146,-84.445872",
+      "SR22",                                 "+39.163177,-84.444402",
+      "SR23",                                 "+39.163626,-84.442203",
+      "SR24",                                 "+39.164192,-84.440953",
+      "SR25",                                 "+39.164550,-84.439354",
+      "SR26",                                 "+39.164293,-84.437196"
+  });
 }
