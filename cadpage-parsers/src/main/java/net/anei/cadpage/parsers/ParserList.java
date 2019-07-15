@@ -1421,6 +1421,7 @@ public class ParserList {
               ,"TXCarrollton"                   ,"Carrollton, TX"
               ,"TXCollinCounty"                 ,"Collin County, TX"
               ,"TXCookeCounty"                  ,"Cooke County, TX"
+              ,"TXCoryellCounty"                ,"Coryell County, TX"
               ,"TXCrowley"                      ,"Crowley, TX"
               ,"TXCyCreekCommCenter"            ,"Cy Creek Comm Center, TX"
               ,"TXCyFair"                       ,"Cypress-Harris, TX"

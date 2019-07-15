@@ -1513,6 +1513,7 @@ public class Active911ParserTable {
       "US/TX/CityofWylie",                "TXCollinCountyA",
       "US/TX/CollinCounty",               "TXCollinCounty",
       "US/TX/CookeCounty",                "TXCookeCounty",
+      "US/TX/CoryellCounty",              "TXCoryellCounty",
       "US/TX/CyCreekCommCenter",          "TXCyCreekCommCenter",
       "US/TX/CyFairVFD",                  "TXCyFair",
       "US/TX/DallasCounty",               "TXDallasCountyC",
