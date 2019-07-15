@@ -17,6 +17,7 @@ public class Active911ParserTable {
       "CA/AB/ClearwaterCounty",           "ZCAABClearwaterCounty",
       "CA/AB/FrescCA",                    "ZCAABCanmore,ZCAABCalgary",
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
+      "CA/AB/ParklandCounty",             "ZCAABLeducCounty",
       "CA/AB/RedDeerCounty",              "ZCAABRedDeerCounty",
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",
       "CA/AB/StAlbert",                   "ZCAABEdmonton",
