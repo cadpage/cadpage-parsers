@@ -18,7 +18,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   }
   
   protected ZCAABRedDeerCountyParser(String defCity) {
-    super(defCity, "AB");
+    super(CITY_LIST, defCity, "AB");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -45,6 +45,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
     
     if (!super.parseMsg(body,  data)) return false;
     
+    data.strCity = data.strCity.replace('_', ' ');
     Matcher match = CLEAN_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
     return true;
@@ -85,5 +86,75 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "4501 53 ST",                           "+51.788254,-114.094224",
       "4550 53 ST",                           "+51.788715,-114.094699",
       "50 ST",                                "+51.788461,-114.091142"
-  }); 
+  });
+  
+  private static final String[] CITY_LIST = new String[]{
+      "AIRDRIE",
+      "ARDROSSAN",
+      "BENTLEY",
+      "BIG VALLEY",
+      "BIRCHCLIFF",
+      "BLACKFALDS",
+      "BLUFFTON",
+      "BOWDEN",
+      "BRUDERHEIM",
+      "CAROLINE",
+      "CARSTAIRS",
+      "CLEARWATER COUNTY",
+      "COUNTY OF MINBURN NO 27",
+      "CREMONA",
+      "CROSSFIELD",
+      "DELBURNE",
+      "DIDSBURY",
+      "EDMONTON",
+      "ELK ISLAND",
+      "ELNORA",
+      "FORT SASKATCHEWAN",
+      "GWYNNE",
+      "INNISFAIL",
+      "JARVIS BAY",
+      "HUXLEY",
+      "KNEEHILL COUNTY",
+      "LACOMBE",
+      "LACOMBE COUNTY",
+      "LAMONT",
+      "LAMONT COUNTY",
+      "LAVOY",
+      "LEDUC",
+      "LEDUC COUNTY",
+      "LESLIEVILLE",
+      "MARKERVILLE",
+      "MINBURN",
+      "MINBURN COUNTY",
+      "MOUNTAIN VIEW COUNTY",
+      "MUNDARE",
+      "NORGLENWOLD",
+      "OLDS",
+      "PARKLAND BEACH",
+      "PONOKA",
+      "PONOKA COUNTY",
+      "RED DEER",
+      "RED DEER COUNTY",
+      "RED_DEER_COUNTY",
+      "REDWATER",
+      "RIMBEY",
+      "ROCKY MOUNTAIN HOUSE",
+      "ROCKY VIEW COUNTY",
+      "SHERWOOD PARK",
+      "SPRINGBROOK",
+      "SPRUCE VIEW",
+      "STETTLER",
+      "STURGEON COUNTY",
+      "SUNDRE",
+      "ST ALBERT",
+      "STARLAND COUNTY",
+      "STRATHCONA COUNTY",
+      "SYLVAN LAKE",
+      "THREE HILLS",
+      "TORRINGTON",
+      "TROCHU",
+      "VEGREVILLE",
+      "WETASKIWIN",
+      "WETASKIWIN COUNTY"
+  };
 }

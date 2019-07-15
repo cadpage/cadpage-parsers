@@ -1692,6 +1692,7 @@ public class ParserList {
               ,"ZCAABCalgary"                   ,"Calgary, AB"
               ,"ZCAABCanmore"                   ,"Canmore, AB"
               ,"ZCAABClearwaterCounty"          ,"Clearwater County, AB"
+              ,"ZCAABEdmonton"                  ,"Edmonton, AB"
               ,"ZCAABLacombeCounty"             ,"Lacombe County, AB"
               ,"ZCAABLamontCounty"              ,"Lamont County, AB"
               ,"ZCAABRedDeerCounty"             ,"Red Deer County, AB"

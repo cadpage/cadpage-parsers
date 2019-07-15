@@ -19,6 +19,7 @@ public class Active911ParserTable {
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
       "CA/AB/RedDeerCounty",              "ZCAABRedDeerCounty",
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",
+      "CA/AB/StAlbert",                   "ZCAABEdmonton",
       "CA/AB/Taber",                      "ZCAABTaber",
       "CA/BC/Interlakes",                 "ZCABCPrinceGeorge",
       "CA/BC/MidIsland",                  "ZCABCVancouverIsland",
