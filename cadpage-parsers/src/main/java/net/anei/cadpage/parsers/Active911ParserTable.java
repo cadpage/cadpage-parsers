@@ -1633,6 +1633,7 @@ public class Active911ParserTable {
       "US/VA/FranklinCounty",             "VAFranklinCountyC",
       "US/VA/Galax",                      "VAGalax",
       "US/VA/GalaxGraysonCounty",         "VAGalax",
+      "US/VA/GilesCounty",                "VAGilesCounty",
       "US/VA/GloucesterCounty",           "VAGloucesterCounty",
       "US/VA/GoochlandCounty",            "VAGoochlandCounty",
       "US/VA/GraysonCounty",              "VAGraysonCounty",
