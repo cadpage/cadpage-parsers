@@ -48,7 +48,16 @@ public class DispatchH05Parser extends HtmlProgramParser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Automatic R&R Notification")) return false;
-    return super.parseHtmlMsg(subject, body, data);
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (data.strCall.length() == 0) {
+      data.strCall = stripFieldStart(subject.substring(26).trim(), ":");;
+    }
+    return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "CALL? " + super.getProgram();
   }
   
   @Override

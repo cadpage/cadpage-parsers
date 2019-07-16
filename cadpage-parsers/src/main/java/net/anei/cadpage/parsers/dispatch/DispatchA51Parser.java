@@ -13,7 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA51Parser extends FieldProgramParser {
   
   protected DispatchA51Parser(String defCity, String defState) {
-    super(defCity, defState,
+    this(null, defCity, defState);
+  }
+  
+  protected DispatchA51Parser(String[] cityCodes, String defCity, String defState) {
+    super(cityCodes, defCity, defState,
           "( Sent:DATETIME3 INFO/G! INFO/N+ " +
           "| SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ " +
           "| DATETIME CALL ADDRCITY INFO/N+ " +
@@ -78,11 +82,16 @@ public class DispatchA51Parser extends FieldProgramParser {
     
   }
   
-  private static Pattern STATE_CODE_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
+  private static Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)");
   private static Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      
+      Matcher match = TRAIL_SEMI_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      
       if (field.endsWith(")")) {
         if (field.startsWith("LL(")) {
           data.strAddress = field;
@@ -95,27 +104,33 @@ public class DispatchA51Parser extends FieldProgramParser {
         }
       }
       String apt = "";
+      match = STATE_CODE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strState = match.group(2);
+      }
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       if (city.startsWith("Unit ")) {
         data.strApt = city.substring(5).trim();
         city = p.getLastOptional(',');
       }
-      if (STATE_CODE_PTN.matcher(city).matches()) {
-        data.strState = city;
-        city = p.getLastOptional(',');
-      }
       data.strCity = city;
       
       field = p.get();
-      Matcher match = APT_PTN.matcher(field);
+      match = APT_PTN.matcher(field);
       if (match.matches()) {
         data.strApt = append(match.group(1), "-", data.strApt);
         field = match.group(2);
       }
       int pt = field.indexOf(',');
       if (pt >= 0) field = field.substring(0,pt);
-      parseAddress(field.replace('\\', '/'), data);
+      field = field.replace('\\', '/');
+      if (data.strCity.length() == 0) {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+      } else {
+        parseAddress(field, data);
+      }
       data.strApt = append(data.strApt, "-", apt);
     }
     
