@@ -10,4 +10,8 @@ public class ZCAABEdmontonParser extends ZCAABRedDeerCountyParser {
   public ZCAABEdmontonParser() {
     super("EDMONTON");
   }
+  
+  public String getFilter() {
+    return "FireDispatch@stalbert.ca";
+  }
 }

@@ -56,6 +56,11 @@ public class DispatchH05Parser extends HtmlProgramParser {
   }
   
   @Override
+  public String getProgram() {
+    return "CALL? " + super.getProgram();
+  }
+  
+  @Override
   protected boolean parseFields(String[] flds, Data data) {
     times = null;
     if (!super.parseFields(flds, data)) return false;
