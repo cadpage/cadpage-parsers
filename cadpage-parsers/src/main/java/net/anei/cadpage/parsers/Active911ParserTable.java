@@ -1753,7 +1753,7 @@ public class Active911ParserTable {
       "US/WI/RockCounty",                 "WIRockCounty",
       "US/WI/SheboyganCounty",            "WISheboyganCounty",
       "US/WI/WaukeshaCounty",             "WIWaukeshaCountyA",
-      "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB",
+      "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB,WIWinnebagoCountyC",
       "US/WV/BerkeleyCounty",             "WVBerkeleyCounty",
       "US/WV/BooneCounty",                "WVBooneCounty",
       "US/WV/CabellCounty",               "WVCabellCounty",
