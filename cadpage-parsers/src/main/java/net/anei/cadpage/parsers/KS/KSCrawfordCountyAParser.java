@@ -32,7 +32,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("JUNK")) return new SkipField("\\*+EXTERNAL\\*+|This is an EXTERNAL EMAIL.*|", true);
     if (name.equals("CALL_ADDR_CITY_X")) return new MyCallAddressCityCrossField();
-    if (name.equals("HTTP")) return new SkipField("http://.*", true);
+    if (name.equals("HTTP")) return new SkipField("https?://.*", true);
     if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
