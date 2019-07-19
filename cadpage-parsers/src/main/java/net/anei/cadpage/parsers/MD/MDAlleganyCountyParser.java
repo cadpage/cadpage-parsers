@@ -26,7 +26,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD|Company +([^ ]+)");
-  private static final Pattern ENROUTE_PTN = Pattern.compile("(\\d\\d:\\d\\d) +([-A-Z0-9]+) +(Is Enroute) To: (.*)");
+  private static final Pattern ENROUTE_PTN = Pattern.compile("(\\d\\d:\\d\\d) +([-A-Z0-9]+) +(Is Enroute) To: +(.*)");
   private static final Pattern MARKER = Pattern.compile("(\\d\\d:\\d\\d) #(\\d+) +");
   private static final Pattern MASTER2 = Pattern.compile("(\\d\\d?:\\d\\d?:\\d\\d?) +(.*) ([A-Z]{2}\\d{10})");
 
@@ -37,7 +37,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
     if (!match.matches()) return false;
     data.strSource = getOptGroup(match.group(1));
     
-    match = ENROUTE_PTN.matcher(body);
+    match = ENROUTE_PTN.matcher(body.replace("\n", ""));
     if (match.matches()) {
       setFieldList("TIME UNIT CALL PLACE ADDR APT CITY");
       data.msgType = MsgType.RUN_REPORT;
@@ -112,6 +112,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
   
   public boolean parseAddressField(boolean parseCall, String field, Data data) {
 
+    field = MBLANK_PTN.matcher(field).replaceAll(" ");
     StartType st = StartType.START_PLACE;
     int flags = 0;
     if (parseCall) {
@@ -160,7 +161,6 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
     match = PLACE_ADDR_APT_PTN.matcher(field);
     if (match.matches()) {
       String callPlace = getOptGroup(match.group(1));
-      callPlace = MBLANK_PTN.matcher(callPlace).replaceAll(" ");
       field = match.group(2).trim();
       apt = append(match.group(3).trim(), "-", apt);
       
@@ -264,7 +264,9 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "BLAN AVON",
       "BLOOMING FIELDS",
       "BLUE VALLEY",
+      "BOTTLE RUN",
       "BROKEN HART MINE",
+      "BRUCE HOUSE",
       "BURKE HILL",
       "BURNING MINES",
       "BURTON PARK",
@@ -272,10 +274,13 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "CABIN RUN",
       "CAMPERS HILL",
       "CANAL FERRY",
+      "CANAL PERRY",
       "CANNON RUN",
       "CARL HARVEY",
       "CASH VALLEY",
+      "CESNICK FARM",
       "CHESTNUT GROVE",
+      "CHISHOLM LINE",
       "CHURCH HILL",
       "CLEMENT ARMSTRONG",
       "COON CLUB",
@@ -305,6 +310,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "HIGH ROCK",
       "HIGHLAND ESTATES",
       "HOFFMAN HOLLOW",
+      "HOOKER HOLLOW",
       "IRONS MOUNTAIN",
       "KENNELLS MILL",
       "KNOBLEY VIEW",
@@ -314,25 +320,33 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "LAUREL RUN CEMETARY",
       "LAUREL RUN",
       "LOG TRAIL",
+      "MAPLE LEAF",
       "MARSH MANOR",
       "MEXICO FARMS",
       "MILL RUN",
       "MOUNT PLEASANT",
       "MOUNT SAVAGE",
       "NAVES CROSS",
+      "NORTH BRANCH",
       "OAKLAWN EXT",
       "OCEAN HILL",
       "OLD MINING",
       "ORCHARD MEWS",
       "PALO ALTO",
+      "PARADISE HILL",
       "PEA VINE",
+      "PINE HILL",
       "PINE RIDGE",
       "PINEY MOUNTAIN",
       "PITTSBURGH PLATE GLA",
+      "PLAINS OF MOAB",
       "PLEASANT VIEW",
       "POMPEY SMASH",
+      "POND HILL",
+      "POTOMAC HOLLOW",
       "POTOMAC VIEW",
       "QUARRY RIDGE",
+      "QUEEN ROCK",
       "QUEENS POINT",
       "RECREATION AREA",
       "RED ROCK",
@@ -345,6 +359,8 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "SAVAGE RIVER",
       "SCIENCE PARK",
       "SELDOM SEEN",
+      "SHADOE HOLLOW",
+      "SILVER POINT",
       "SIRES MOUNTAIN",
       "SISLER HILL",
       "SMITH HILL",
@@ -372,8 +388,10 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "WASHINGTON HOLLOW",
       "WATER STATION RUN",
       "WELSH HILL",
+      "WHISPERING PINES",
       "WHITE CHURCH",
       "WILLOW BROOK",
+      "WILLOW CREST",
       "WINEBRENNER HILL",
       "WING RIDGE",
       "WOOD ROSE",
@@ -382,10 +400,12 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
   
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 INFORMATION CALL",
+      "911 TEST CALL",
       "911 TEST CALL TEST PAGE DO NOT RESPOND",
       "ABDOM PAINS ALS",
       "ABDOM PAINS BLS",
       "ABDOMINAL /BACK PAIN",
+      "ABDOMINAL PAINS",
       "ACCIDENT NOT LISTED",
       "ACCIDENT PD",
       "ACCIDENT PED STRUCK",
@@ -393,7 +413,9 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "ADDITIONAL 911 CALL NEW/",
       "AIRCRAFT EMERGENCY",
       "ALLERGIC /MED REACT",
+      "ALLERGIC REACT ALS",
       "ALTERD LEVEL OF CONS",
+      "ALTERED LOC ALS",
       "APARTMENT FIRE",
       "ASSAULT MEDICAL",
       "AUTO ALARM BUSINESS",
@@ -404,6 +426,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "BACK PAIN BLS",
       "BARN FIRE",
       "BEHAVORIAL EMERGENCY",
+      "BEHAVIORAL EMERG BLS",
       "BLEEDING INJURY ALS",
       "BLEEDING INJURY BLS",
       "BLEEDING NON TRAUMA",
@@ -414,15 +437,18 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "BURNS THERM,ELEC,CHE",
       "BUSINESS FIRE",
       "CARDIAC",
+      "CARDIAC EMERG ALS",
       "CHEST PAINS ALS",
       "CHEST PAINS BLS",
       "CHEST PAINS, HEART",
+      "CO DETECTOR COMM",
       "CHOKING",
       "CHOKING PATIENT ALS",
       "CHOKING PATIENT BLS",
       "CO DETECTOR RES",
       "COLLAPSED STRUCTURE",
       "CPR FULL ARREST HOT",
+      "CVA/STROKE ALS",
       "DEFAULT EMD",
       "DIABETIC",
       "DIABETIC EMERG ALS",
@@ -442,8 +468,10 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "FRACTURE/EXTREMITY",
       "GARAGE FIRE COMM",
       "GARAGE FIRE RESIDENT",
+      "GENERAL UTIL PAGE",
       "GRINDER PUMP ACTIVAT",
       "GROUND LEVEL FALL",
+      "GUNSHOT WOUND",
       "HEADACHE",
       "HOUSE FIRE",
       "LACERATION",
@@ -465,7 +493,10 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "OTHER HAZMAT",
       "OUTSIDE EXPLOSION",
       "OVERDOSE, POISONING",
+      "OVERDOSE/POISON ALS",
       "RESCUE CALL",
+      "SEARCH",
+      "SCHOOL FIRE",
       "SEIZURE",
       "SERVICE CALL NOT LIS",
       "SHED FIRE",
@@ -484,12 +515,14 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
       "TREE DOWN",
       "TRUCK FIRE",
       "UNABLE TO WALK",
+      "UNCONSCIOUS",
       "UNCONSCIOUS ALS",
       "UNCONSCIOUS BLS",
       "UNCONSCIOUS, UNRESPO",
       "UNCONSCIOUS/FAINTING",
       "UTILITIES",
       "VEHICLE BRAKES FIRE",
+      "VEHICLE LEAKING FUEL",
       "WATER LEAK",
       "WATER RESCUE",
       "XFER MINERAL",
