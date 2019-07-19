@@ -1359,7 +1359,7 @@ public class Active911ParserTable {
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
-      "US/PA/Km911",                      "PALebanonCounty",
+      "US/PA/Km911",                      "PALebanonCounty,PADauphinCountyB",
       "US/PA/LackawannaCounty",           "PALackawannaCounty",
       "US/PA/LackTuscarora",              "PAJuniataCounty",
       "US/PA/LancasterCounty",            "PALancasterCounty",
