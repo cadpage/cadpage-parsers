@@ -914,6 +914,7 @@ public class Active911ParserTable {
       "US/NC/CarteretCounty",             "NCCarteretCounty",
       "US/NC/CaswellCounty",              "NCCaswellCounty",
       "US/NC/CatawbaCounty",              "NCCatawbaCounty",
+      "US/NC/CatawbaCountyHickory",       "NCCatawbaCounty",
       "US/NC/ChathamCounty",              "NCChathamCounty",
       "US/NC/Cherokee911",                "NCCherokee",
       "US/NC/CherokeeCounty",             "NCCherokeeCounty",
