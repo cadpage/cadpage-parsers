@@ -93,6 +93,16 @@ public class DispatchA3Parser extends FieldProgramParser {
     this(version, cityCodes, defCity, defState, 0);
   }
   
+  public DispatchA3Parser(int version, String defCity, String defState, int flags) {
+    this(version, (String)null, defCity, defState, flags);
+  }
+  
+  
+  public DispatchA3Parser(int version, String[] cityList, String defCity, String defState, int flags) {
+    this(version, (Properties)null, defCity, defState, flags);
+    setupCities(cityList);
+  }
+  
   public DispatchA3Parser(int version, Properties cityCodes, String defCity, String defState, int flags) {
     super(cityCodes, defCity, defState, null);
     if (version < 0) {
@@ -190,7 +200,7 @@ public class DispatchA3Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{2,6}-\\d{4,}[A-Z]?|\\d{8}|\\d{11,12}|", true);
+    if (name.equals("ID")) return new IdField("\\d{2,6}-\\d{4,}[A-Z]?|\\d{8,12}|", true);
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CH")) return new BaseChannelField();
     if (name.equals("X")) return new BaseCrossField();
