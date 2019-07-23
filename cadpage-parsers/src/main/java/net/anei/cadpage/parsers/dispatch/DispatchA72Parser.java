@@ -27,12 +27,26 @@ public class DispatchA72Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("ZIP")) return new BaseZipField();
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+  
+  private class BasePlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = setGPSLoc(field, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS PLACE";
+    }
   }
   
   private class BaseAddressField extends AddressField {

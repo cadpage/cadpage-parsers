@@ -13,6 +13,11 @@ public class TXFranklinCountyParser extends DispatchA72Parser {
   public String getFilter() {
     return "franklin@co.franklin.tx.us";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
