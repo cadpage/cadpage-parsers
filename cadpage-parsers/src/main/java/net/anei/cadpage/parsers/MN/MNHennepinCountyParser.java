@@ -80,6 +80,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -176,6 +177,14 @@ public class MNHennepinCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
       data.strCity = convertCodes(field, CITY_CODES);
+    }
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "FD ");
+      super.parse(field, data);
     }
   }
   
