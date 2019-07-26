@@ -123,9 +123,12 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
   }
   
   private static String fixAddress(String addr) {
-    return MITTLESTED_PTN.matcher(addr).replaceAll("MITTLESTEDT");
+    addr = MITTLESTED_PTN.matcher(addr).replaceAll("MITTLESTEDT");
+    addr = KINGSCOTE_PTN.matcher(addr).replaceAll("KINGSCOATE");
+    return addr;
   }
   private static final Pattern MITTLESTED_PTN = Pattern.compile("\\bMITTLESTED\\b");
+  private static final Pattern KINGSCOTE_PTN = Pattern.compile("\\bKINGSCOTE\\b");
   
   @Override
   public String getProgram() {

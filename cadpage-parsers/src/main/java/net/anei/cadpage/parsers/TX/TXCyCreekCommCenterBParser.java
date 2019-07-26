@@ -21,7 +21,9 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace(" CN - ", " CN: ");
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    data.strAddress = data.strAddress.replace("KINGSCOTE DR", "KINGSCOATE DR");
+    return true;
   }
   
   @Override
