@@ -9,13 +9,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class IDTwinFallsCountyCParser extends FieldProgramParser {
   
   public IDTwinFallsCountyCParser() {
-    super("TWIN FALLS COUNTY", "ID", 
+    this("TWIN FALLS COUNTY", "ID");
+  }
+  
+  public IDTwinFallsCountyCParser(String defCity, String defState) {
+    super(defCity, defState, 
           "UNIT ID CALL ADDRCITY PLACE INFO! END");
   }
   
   @Override
   public String getFilter() {
     return "cad@sircomm.com";
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "IDTwinFallsCountyC";
   }
   
   @Override

@@ -5,6 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class IDGoodingCountyParser extends GroupBestParser {
   
   public IDGoodingCountyParser() {
-   super(new IDGoodingCountyAParser(), new IDGoodingCountyBParser());
+   super(new IDGoodingCountyAParser(), 
+         new IDGoodingCountyBParser(),
+         new IDGoodingCountyCParser());
   }
 }
