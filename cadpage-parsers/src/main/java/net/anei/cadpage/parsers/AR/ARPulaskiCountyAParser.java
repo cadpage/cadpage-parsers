@@ -34,7 +34,7 @@ public class ARPulaskiCountyAParser extends DispatchSouthernParser {
     return true;
   }
   
-  private static final String[] MWORD_STREET_LIST = new String[]{
+  static final String[] MWORD_STREET_LIST = new String[]{
     "BELL FLOWER",
     "BISHOP LINDSEY",
     "BROKEN ARROW",

@@ -31,11 +31,21 @@ public class DispatchA46Parser extends SmartAddressParser {
   private static Pattern BODY_PTN2 = Pattern.compile("(?:A\\b(?:\\(n\\))? *)?(.*?) has been reported at (.*?)");
   private static Pattern ADDR_PTN2A = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
+  private static Pattern ADDR_PTN3 = Pattern.compile("(.*?)[, ]+#?(\\d{2}-\\d+)(\\*.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-
+    
+    
     // We handle two page formats, believed to be two versions of the same CAD system
+    // But both of them can be followed by new line separated information
+    String info = "";
+    int pt = body.indexOf('\n');
+    if (pt >= 0) {
+      info = body.substring(pt+1).trim().replaceAll("\n\n+", "\n");
+      body = body.substring(0,pt).trim();
+    }
+
     Matcher mat = SUBJECT_PTN1.matcher(subject);
     if (mat.matches()) {
       setFieldList("SRC CODE ID CALL PLACE ADDR APT CITY ST INFO");
@@ -44,12 +54,6 @@ public class DispatchA46Parser extends SmartAddressParser {
       data.strCall = mat.group(2);
       data.strCallId = mat.group(3);
       String subAddr = mat.group(4);
-      
-      int pt = body.indexOf('\n');
-      if (pt >= 0) {
-        data.strSupp = body.substring(pt+1).trim().replaceAll("\n\n+", "\n");
-        body = body.substring(0,pt).trim();
-      }
   
       // parse any unfound info from body and save body's trail
       mat = BODY_PTN1.matcher(body);
@@ -93,12 +97,13 @@ public class DispatchA46Parser extends SmartAddressParser {
           data.strSupp = getLeft();
         }
       }
+      data.strSupp = append(data.strSupp, "\n", info);
       return true;
     }
     
     mat = SUBJECT_PTN2.matcher(subject);
     if (mat.matches()) {
-      setFieldList("SRC CODE CALL ADDR APT CITY ST ID INFO");
+      setFieldList("SRC CODE CALL ADDR PLACE? X? APT CITY ST ID INFO");
       
       data.strSource = getOptGroup(mat.group(1));
       String code = mat.group(2);
@@ -132,8 +137,15 @@ public class DispatchA46Parser extends SmartAddressParser {
         data.strState = mat.group(3);
         if (data.strCallId.length() == 0) data.strCallId = getOptGroup(mat.group(4));
         data.strSupp = getOptGroup(mat.group(5)).replaceAll("  +", " ");
+      } else if ((mat = ADDR_PTN3.matcher(addr)).matches()) {
+        addr = mat.group(1).trim().replace('@',  '&');
+        parseAddress(st, flags | FLAG_ANCHOR_END, addr, data);
+        data.strCallId = mat.group(2);
+        data.strSupp = mat.group(3);
+        
       } else {
         if (st == StartType.START_CALL) return false;
+        addr = addr.replace('@', '&');
         parseAddress(st, flags, addr, data);
         String left = getLeft();
         left = stripFieldStart(left, "-");
@@ -147,6 +159,7 @@ public class DispatchA46Parser extends SmartAddressParser {
           data.strCall = call;
         }
       }
+      data.strSupp = append(data.strSupp, "\n", info);
       return true;
     }
     

@@ -111,7 +111,7 @@ public class Active911ParserTable {
       "US/AR/LifeNetEms",                 "ARGarlandCountyA",
       "US/AR/PopeCounty",                 "ARPopeCounty",
       "US/AR/PulaskiCounty",              "ARPulaskiCounty",
-      "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyB",
+      "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyB,ARPulaskiCountyC",
       "US/AZ/CityofCottonwood",           "AZYavapaiCountyC",
       "US/AZ/CityofShowLow",              "AZNavajoCountyB",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",
