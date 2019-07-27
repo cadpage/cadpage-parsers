@@ -29,7 +29,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-         "CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+?", 
+         "( SELECT/1 Incident_Information%EMPTY! Event_Code:CALL! Incident_Number:ID! Location_Information%EMPTY! LOCATION! LOCATION_X? ( Remarks/Narratives%EMPTY! INFO1/N+? | ) Responding_Units%EMPTY! UNIT! SKIP+? LINE_MARK! " +
+         "| CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+? )", 
          "table|tr");
     
     Field addrCityField = getField("ADDRCITY");
@@ -102,6 +103,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   private int colNdx;
 
   private static final Pattern SUBJECT_UNIT_PTN = Pattern.compile("Unit (.*?) from .*");
+  private static final Pattern DELIM = Pattern.compile(" *\n[* ]*");
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
@@ -117,7 +119,13 @@ public class DispatchSPKParser extends HtmlProgramParser {
     infoType = null;
     colNdx = -1;
     
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (body.startsWith("Incident Information\n")) {
+      setSelectValue("1");
+      if (!parseFields(DELIM.split(body), data)) return false;
+    } else {
+      setSelectValue("2");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+    }
 
     if (data.strCall.length() == 0) data.strCall = "ALERT";
 
@@ -139,6 +147,11 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("LINE_MARK")) return new SkipField("_{5,}", true);
+    if (name.equals("LOCATION")) return new AddressCityField("Location +(.*)", true);
+    if (name.equals("LOCATION_X")) return new CrossField("Location Information +(.*)", true);
+    if (name.equals("INFO1")) return new BaseInfo1Field();
+    
     if (name.equals("CURDATETIME")) return new BaseDateTimeField();
     if (name.equals("ID")) return new IdField("\\d[-0-9]{8,}(?:\\.\\d{3})?|", true);
     if (name.equals("CALL")) return new BaseCallField();
@@ -157,6 +170,30 @@ public class DispatchSPKParser extends HtmlProgramParser {
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
+  
+  private static final Pattern DATE_TIME_PREFIX_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d +\\d\\d?:\\d\\d:\\d\\d +");
+  private class BaseInfo1Field extends InfoField {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("Responding Units")) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PREFIX_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      super.parse(field, data);
+    }
+  }
+      
   
   private static final Pattern DATE_TIME_PTN = Pattern.compile("As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class BaseDateTimeField extends DateTimeField {
