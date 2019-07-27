@@ -1708,6 +1708,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "42 SUNNIE WAY",                        "+39.867227,-77.235257",
       "44 SUNNIE WAY",                        "+39.867249,-77.235315",
       
+      "1280 TRACT RD",                        "+39.766947,-77.345261",
+      
       "225 VILLAGE DR",                       "+39.864515,-77.023866",
       
       "120 WILDERNESS LN",                    "+39.804200,-77.437200",
