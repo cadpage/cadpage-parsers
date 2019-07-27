@@ -317,7 +317,7 @@ public class Active911ParserTable {
       "US/GA/ClaytonCounty",              "GAClaytonCounty",
       "US/GA/ColquittCounty",             "GAColquittCounty",
       "US/GA/DoolyCounty",                "GADoolyCounty",
-      "US/GA/EffinghamCounty",            "GAEffinghamCounty",
+      "US/GA/EffinghamCounty",            "GAEffinghamCountyA",
       "US/GA/EffinghamSheriffs",          "GAEffinghamCountyB",
       "US/GA/EmanuelCounty",              "GAEmanuelCounty",
       "US/GA/FanninCounty",               "GAFanninCounty",
