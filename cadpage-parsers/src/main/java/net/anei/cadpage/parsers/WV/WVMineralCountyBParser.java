@@ -20,7 +20,10 @@ public class WVMineralCountyBParser extends DispatchSPKParser {
     // Subject is sometimes removed, in which case we will cludge it 
     if (subject.length() == 0) subject = " gets ";
     
-    return super.parseHtmlMsg(subject, body, data);
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    
+    if (data.strPlace.equals("WV - -")) data.strPlace = "";
+    return true;
   }
   
 }

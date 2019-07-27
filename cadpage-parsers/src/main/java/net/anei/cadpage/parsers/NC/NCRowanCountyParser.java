@@ -340,6 +340,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CHGV", "CHINA GROVE",
+      "CITYL","COMM_L",
       "CLEV", "CLEVELAND",
       "CLVD", "CLEVELAND",
       "COOL", "COOLEEMEE",             
@@ -353,6 +354,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       "MOCK", "MOCKSVILLE",
       "MOOR", "MOORESVILLE",
       "MTUL", "MT ULLA",
+      "NWLN", "NEW LONDON",
       "RICH", "RICHFIELD",
       "ROCK", "ROCKWELL",
       "SALS", "SALISBURY",
