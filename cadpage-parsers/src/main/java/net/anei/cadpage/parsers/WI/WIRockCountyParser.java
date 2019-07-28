@@ -43,25 +43,38 @@ public class WIRockCountyParser extends DispatchH03Parser {
     
   }
   
-  @Override
-  public String adjustMapCity(String city) {
-    // Rock town gets confused with Rock county if we do not qualify it
-    if (city.equals("ROCK")) city = "ROCK,ROCK COUNTY";
-    return city;
-  }
-  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "AT", "AVON TOWN",
       "BE", "BELOIT",
-      "BT", "BELOIT",
-      "HT", "HARMONY",
-      "JN", "JOHNSTOWN",
-      "JT", "JOHNSTOWN",
+      "BH", "BRODHEAD",
+      "BR", "BROOKLYN",
+      "BT", "BELOIT TOWN",
+      "CL", "CLINTON",
+      "CN", "CENTER TOWN",
+      "CT", "CLINTON TOWN",
+      "DC", "DANE COUNTY",
+      "ED", "EDGERTON",
+      "EV", "EVANSVILLE",
+      "FO", "FOOTVILLE",
+      "FT", "FULTON TOWN",
+      "HT", "HARMONY TOWN",
+      "JN", "JOHNSTOWN TOWN",
+      "JT", "JANESVILLE TOWN",
       "JV", "JANESVILLE",
-      "LP", "LA PRAIRIE",
-      "LT", "LIMA",
+      "LP", "LAPRARIE TOWN",
+      "LT", "LIMA TOWN",
+      "MG", "MAGNOLIA TOWN",
       "ML", "MILTON",
-      "MT", "MILTON",
-      "RT", "ROCK",
-      "TU", "TURTLE"
+      "MT", "MILTON TOWN",
+      "NT", "NEWARK TOWN",
+      "OR", "ORFORDVILLE",
+      "PL", "PLYMOUTH TOWN",
+      "PT", "PORTER TOWN",
+      "RT", "ROCK TOWN",
+      "SP", "SPRING VALLEY TOWN",
+      "TU", "TURTLE TOWN",
+      "UT", "UNION TOWN",
+      "WN", "WINNEBEGAO COUNTY"
+      
   });
 }
