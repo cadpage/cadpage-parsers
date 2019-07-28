@@ -341,6 +341,7 @@ public class Active911ParserTable {
       "US/GA/PickensCo911",               "GAPickensCounty",
       "US/GA/PikeCounty",                 "GAPikeCounty",
       "US/GA/RabunCounty",                "GARabunCounty",
+      "US/GA/SeminoleCounty",             "GASeminoleCounty",
       "US/GA/SouthsideFire",              "GAChathamCounty",
       "US/GA/StephensCounty",             "GAStephensCounty",
       "US/GA/SumterCounty",               "GASumterCounty,GAMaconCountyB",

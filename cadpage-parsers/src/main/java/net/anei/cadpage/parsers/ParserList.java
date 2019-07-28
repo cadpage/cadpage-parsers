@@ -382,6 +382,7 @@ public class ParserList {
               ,"GAPikeCounty"                   ,"Pike County, GA"
               ,"GARabunCounty"                  ,"Rabun County, GA"
               ,"GASchleyCounty"                 ,"Schley County, GA"
+              ,"GASeminoleCounty"               ,"Seminole County, GA"
               ,"GASmyrna"                       ,"Smyrna, GA"
               ,"GAStephensCounty"               ,"Stephens County, GA"
               ,"GASumterCounty"                 ,"Sumter County, GA"
