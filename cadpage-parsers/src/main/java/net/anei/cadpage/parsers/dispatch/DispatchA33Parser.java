@@ -24,7 +24,8 @@ public class DispatchA33Parser extends FieldProgramParser {
 
   public DispatchA33Parser(String defCity, String defState, int flags) {
     super(defCity, defState, 
-          "Event_No:ID! Status:SKIP! Disposition:SKIP! Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! Ward:SKIP! Intersection:X? Open:DATETIME1! Dispatch:DATETIME1! Law_Enf.:SKIP! Enroute:DATETIME2! Fire:SKIP! Arrival:DATETIME2! EMS:SKIP! Departure:DATETIME3? Source:SKIP? Closed:DATETIME3! Source:SKIP? Name_Address_Phone%EMPTY NAME_PHONE Business%EMPTY PLACE Vehicle(s)%EMPTY Incident_Notes:INFO/N+");
+          "Event_No:ID! ( Status:SKIP! Disposition:SKIP! Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! Ward:SKIP! Intersection:X? Open:DATETIME1! Dispatch:DATETIME1! Law_Enf.:SKIP! Enroute:DATETIME2! Fire:SKIP! Arrival:DATETIME2! EMS:SKIP! Departure:DATETIME3? Source:SKIP? Closed:DATETIME3! Source:SKIP? Name_Address_Phone%EMPTY NAME_PHONE Business%EMPTY PLACE Vehicle(s)%EMPTY Incident_Notes:INFO/N+ " +
+                       "| Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! ESZ:MAP/L! Ward:SKIP! Intersection:X? Date_/_Time%EMPTY! Open:DATETIME1! )");
     this.fixLineBreaks = (flags & A33_FIX_LINE_BREAKS) != 0;
   }
 
