@@ -13,7 +13,7 @@ public class NCWarrenCountyParser extends DispatchSouthernParser {
 
   public NCWarrenCountyParser() {
     super(CITY_LIST, "WARREN COUNTY", "NC", 
-          DSFLG_ADDR|DSFLG_OPT_CODE|DSFLG_ID|DSFLG_TIME);
+          DSFLG_ADDR|DSFLG_OPT_CODE|DSFLG_OPT_X|DSFLG_OPT_ID|DSFLG_TIME);
   }
   
   @Override
@@ -22,7 +22,6 @@ public class NCWarrenCountyParser extends DispatchSouthernParser {
   }
   
   private static final Pattern DISPATCH_PTN = Pattern.compile(" +[A-Za-z]+\\d+$");
-  private static final Pattern MASTER2 = Pattern.compile("(.*?) (20\\d{3,}) (.*)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -45,12 +44,10 @@ public class NCWarrenCountyParser extends DispatchSouthernParser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-    
     "ALBERTA",
     "AURELIAN SPRINGS",
     "BOYDTON",
     "BRINKLEYVILLE",
-    "BRODNAX",
     "BRODNAX",
     "BUNN",
     "CENTERVILLE",
@@ -65,6 +62,7 @@ public class NCWarrenCountyParser extends DispatchSouthernParser {
     "HALIFAX",
     "HEATHSVILLE",
     "HENDERSON",
+    "HENRICO",
     "HOBGOOD",
     "HOLLISTER",
     "JACKSON",
@@ -94,5 +92,6 @@ public class NCWarrenCountyParser extends DispatchSouthernParser {
     "WISE",
     "WOODLAND",
     "YOUNGSVILLE",
+    "ZEBULON"
   };
 }

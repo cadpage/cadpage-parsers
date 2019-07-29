@@ -558,6 +558,8 @@ public class DispatchSouthernParser extends FieldProgramParser {
   public String getProgram() {
     return super.getProgram() + " CALL";
   }
+  
+  private static final Pattern MM_MARK_PTN = Pattern.compile("MM(?: +\\d+)?\\b *");
 
   protected void parseMain(String sAddr, Data data) {
     // First half contains address, optional place/name, and possibly an MDL call code
@@ -581,12 +583,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (leadOne) data.strAddress = append("1", " ", data.strAddress);
     String sLeft = getLeft();
     
-    if (sLeft.equals("MM")) {
-      data.strAddress = append(data.strAddress, " ", "MM");
-      sLeft = "";
-    } else if (sLeft.startsWith("MM ")) {
-      data.strAddress = append(data.strAddress, " ", "MM");
-      sLeft = sLeft.substring(3).trim();
+    Matcher match = MM_MARK_PTN.matcher(sLeft);
+    if (match.lookingAt()) {
+      data.strAddress = append(data.strAddress, " ", match.group());
+      sLeft = sLeft.substring(match.end());
     }
     
     // If everything went to place, move it back to address
@@ -598,7 +598,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     // Processing what is left gets complicated
     // First strip anything that looks like a trailing phone number
     if (chkFlag(DSFLG_PHONE | DSFLG_OPT_PHONE)) {
-      Matcher match = PHONE_PTN.matcher(sLeft);
+      match = PHONE_PTN.matcher(sLeft);
       if (match.find()) {
         data.strPhone = match.group();
         sLeft = sLeft.substring(0,match.start()).trim();
@@ -619,7 +619,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     
     // if cross street information follows the address, process that
     if (chkFlag(DSFLG_X | DSFLG_OPT_X) && !chkFlag(DSFLG_NAME | DSFLG_OPT_NAME)) {
-      Matcher match = EXTRA_CROSS_PTN.matcher(sLeft);
+      match = EXTRA_CROSS_PTN.matcher(sLeft);
       if (match.matches()) {
         sLeft = match.group(1).trim();
         if (data.strCity.length() == 0) {
