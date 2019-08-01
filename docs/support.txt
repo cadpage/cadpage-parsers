@@ -4245,6 +4245,42 @@ Have a nice day,
 -Ken
 
 **************************************************************************************
+* Support app install instructions - Android 9 with Chrome
+**************************************************************************************
+Sorry you are having trouble installing the message support app.
+ 
+Unfortunately detailed instructions vary depending on on what version of Android you are running and which web browser you are using.  This is what works for Android 9 using the Chrome web browser.
+
+1) Open Cadpage it should display a warning that you need to install the Cadpage message support app.
+2) Select "Install Cadpage support app".
+3) This takes you to a web page with detailed instructions on how to download and install the support app. Click on the cadpage-support.apk link
+4) If Chrome asks for permission to access your files, grant it
+5) Select "Download" to download the cadpage-support.apk file.
+6) Chrome displays a warning that this type of file can harm your device.  Select "OK".
+7) Once the support app is downloaded, select "Open"
+8) Next you will probably see a warning that your phone is not allowed to install unknown apps from this source.  Select "Settings".
+9) Turn on the "Allow from this Source" setting and press the back key
+10) Now you will be asked if you want to install the Cadpage Msg Support app.  Select "Install".
+11) Once the app is installed, select "Open"
+12) The first thing that happens when you open the support app is that it will ask you to allow it to send and view SMS messages.  Select "Allow".
+13) Cadpage should open and function normally.
+
+But!!! We had to enable the install apps from an unknown source option, which can be dangerous.  You are strongly advised to go through some extra steps to turn that off.
+1) Open your Android system settings
+2) Select "Apps & Notifications"
+3) Select "Chrome"
+4) Select "Advanced"
+5) Select "Install unknown apps"
+6) Turn off the "Allow from this source" option
+
+If you run into trouble at any point, get a screen capture by long pressing the power button and selecting "Screen Capture".  Then send that to us.
+
+Sorry that this is all so complicated.  I keep trying to get Google to consider allowing Cadpage to "officially" process text messages on it's own, but I have not been able to get through the process to get considered by a real human :(
+
+Good luck,
+-Ken
+
+**************************************************************************************
 Useful search expressions...
 ^ +"ADDR:.*\r?\n(?: +"(?:MADDR|APT|X):.*\r?\n)*+(?! +"CITY:)
 ***************************************************************************************
