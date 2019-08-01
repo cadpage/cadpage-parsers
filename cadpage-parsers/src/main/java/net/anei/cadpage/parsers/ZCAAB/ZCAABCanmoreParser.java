@@ -171,7 +171,7 @@ public class ZCAABCanmoreParser extends FieldProgramParser {
       "cors",     "corners",
       "cp",       "camp",
       "cpe",      "cape",
-      "cr",       "creek",
+      "cr",       "crescent",
       "crcl",     "circle",
       "crcle",    "circle",
       "crecent",  "crescent",

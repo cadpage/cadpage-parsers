@@ -127,7 +127,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 
   @Override
   protected String adjustGpsLookupAddress(String address, String apt) {
-    address = address.toUpperCase();
+    address = address.toUpperCase().replace("& MP", "MP");
     if (address.contains(" MP ")) {
       address = address.replace("EDDYVILLE-BLODGETT HWY ", "HWY 180 ")
                        .replace("TERRITORIAL RD ",         "HWY 200 ")
