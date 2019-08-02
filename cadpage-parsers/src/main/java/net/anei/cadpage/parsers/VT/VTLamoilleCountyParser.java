@@ -42,6 +42,8 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
     if (data.msgType == MsgType.RUN_REPORT) {
       data.strSupp = append(timeString, "\n", data.strSupp);
     }
+    
+    data.strAddress = data.strAddress.replace("Glen Dr", "Glenn Dr");
     return true;
   }
   
