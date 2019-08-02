@@ -23,6 +23,8 @@ public class ILTazewellCountyParser extends DispatchOSSIParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() > 0 && body.startsWith("CAD:")) {
       body = "CAD:" + subject + ": " + body.substring(4);
+    } else if (body.startsWith("FYI:")) {
+      body = "CAD:" + body;
     }
     return super.parseMsg(body, data);
   }
