@@ -96,6 +96,7 @@ public class DispatchA67Parser extends FieldProgramParser {
   private static Pattern CALL_CHG_PTN = Pattern.compile("(CALL CHGFROM [A-Z0-9]+ TO [A-Z0-9]+)/");
   private static Pattern SLASH_DELIM = Pattern.compile("/");
   private static Pattern EXC_DELIM = Pattern.compile("!");
+  private static Pattern PIPE_DELIM = Pattern.compile("\\|");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -113,8 +114,25 @@ public class DispatchA67Parser extends FieldProgramParser {
     
     if (body.length() < 10) return false;
     char delim = body.charAt(9);
-    if (delim != '!' && delim != '/') return false;
-    Pattern delimPtn = delim == '/' ? SLASH_DELIM : EXC_DELIM;
+    Pattern delimPtn;
+    switch (delim) {
+    
+    case '/':
+      delimPtn = SLASH_DELIM;
+      break;
+      
+    case '|':
+      delimPtn = PIPE_DELIM;
+      break;
+      
+    case '!':
+      delimPtn = EXC_DELIM;
+      break;
+      
+    default:
+      return false;
+    
+    }
     setSelectValue(singleCall || delim == '!' ? "A" : "B");
     if (!parseFields(delimPtn.split(body), data)) return false;
     if (chgInfo != null) data.strSupp = append(chgInfo, "\n", data.strSupp);
