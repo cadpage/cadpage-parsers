@@ -234,6 +234,7 @@ public class Active911ParserTable {
       "US/CO/Jeffcom911",                 "COJeffersonCountyD",
       "US/CO/LarimerCounty",              "COLarimerCountyD",
       "US/CO/Metcom911",                  "COArapahoeCounty",
+      "US/CO/MoffatCounty",               "COMoffatCounty",
       "US/CO/MontezumaCounty",            "COMontezumaCounty",
       "US/CO/MorganCounty",               "COMorganCounty",
       "US/CO/NorthglennAmbulance",        "CONorthglennEMS",
