@@ -49,6 +49,8 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
       data.strSource = subject;
     }
     
+    body = body.replace(" \n ", " * ");
+    
     Matcher  match = UNIT_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strUnit = match.group(1);
@@ -101,7 +103,7 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
       else return false;
     }
     
-    // Everything is optional, but we had it find **SOMETHING** we recognize
+    // Everything is optional, but we have to find **SOMETHING** we recognize
     if (data.strUnit.length() == 0 && data.strChannel.length() == 0 && 
         data.strPriority.length() == 0 && data.strDate.length() == 0) return false;
     
@@ -114,10 +116,10 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
         body = body.substring(match.end());
       }
       Parser p = new Parser(body+' ');
-      data.strCall = p.get(" * ");
+      data.strCall = stripFieldStart(p.get(" * "), "* ");
       String addr = p.get(" * ");
       if (addr.length() == 0) return false;
-      String cross = p.get();
+      String cross = p.get().replace('*', '/');
       
       int pt = addr.lastIndexOf(',');
       if (pt >= 0) {
