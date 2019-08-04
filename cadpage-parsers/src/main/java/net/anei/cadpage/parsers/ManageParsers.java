@@ -198,7 +198,9 @@ public class ManageParsers {
         "ZSECTConnect",       "ZSESweden",               // 10/02/2018
         "COJeffersonCountyB", "COJeffersonCountyD",      // 10/16/2018
         "WIKenoshaCountyE",   "WIKenoshaCountyD",        // 12/13/2018
-        "INHamiltonCountyD",  "INHamiltonCountyC"       // 05/11/2019
+        "INHamiltonCountyD",  "INHamiltonCountyC",       // 05/11/2019
+        "TNWashingtonCountyA","TNWashingtonCounty",      // 08/03/2019
+        "TNWashingtonCountyB","TNWashingtonCOunty"      // 08/03/2019
   });
 
 }

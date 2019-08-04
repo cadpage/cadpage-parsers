@@ -1480,6 +1480,7 @@ public class Active911ParserTable {
       "US/TN/RoaneCounty",                "TNRoaneCounty",
       "US/TN/SevierCounty",               "TNSevierCounty",
       "US/TN/Traumasoft",                 "TNCockeCounty",
+      "US/TN/WashingtonCounty",           "TNWashingtonCounty",
       "US/TN/WarrenCounty",               "TNWarrenCounty",
       "US/TN/WeakleyCounty",              "TNWeakleyCounty",
       "US/TN/WhiteCounty",                "TNWhiteCounty",
