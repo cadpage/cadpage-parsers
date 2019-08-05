@@ -57,6 +57,7 @@ public class NCStanlyCountyParser extends DispatchOSSIParser {
     if (name.equals("ADDR1")) return new MyAddress1Field();
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
   
@@ -82,7 +83,7 @@ public class NCStanlyCountyParser extends DispatchOSSIParser {
       int addrNdx = addressList.size()-1;
       if (addrNdx < 0) abort();
       String sAddr = addressList.get(addrNdx);
-      if (addrNdx > 0 && isStreetName(sAddr)) {
+      if (addrNdx > 0 && isStreetName(sAddr, true)) {
         sAddr = addressList.get(--addrNdx) + " & " + sAddr;
       }
       parseAddress(sAddr, data);
@@ -123,14 +124,25 @@ public class NCStanlyCountyParser extends DispatchOSSIParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!isStreetName(field)) return false;
+      if (!isStreetName(field, true)) return false;
       data.strAddress = append(data.strAddress, " & ", field);
       return true;
     }
   }
   
-  private boolean isStreetName(String field) {
-    return  checkAddress(field) == STATUS_STREET_NAME || 
+  private class MyCrossField extends CrossField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isStreetName(field, false)) return false;
+      parse(field, data);
+      return true;
+    }
+  }
+  
+  private boolean isStreetName(String field, boolean strict) {
+    int stat = checkAddress(field);
+    return  stat == STATUS_STREET_NAME ||
+            !strict && stat == STATUS_INTERSECTION || 
             field.contains("BUSINESS 52") ||
             field.equals("COUNTY LINE");
   }
