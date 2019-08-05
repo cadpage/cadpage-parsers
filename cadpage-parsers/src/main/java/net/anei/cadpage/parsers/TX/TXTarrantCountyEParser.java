@@ -12,7 +12,7 @@ public class TXTarrantCountyEParser extends DispatchA18Parser {
  
   @Override
   public String getFilter() {
-    return "cad@evermantx.net";
+    return "cad@evermantx.net,cad@evermanfire.org,cadeverman@gmail.com";
   }
 
   @Override
