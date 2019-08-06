@@ -200,7 +200,8 @@ public class ManageParsers {
         "WIKenoshaCountyE",   "WIKenoshaCountyD",        // 12/13/2018
         "INHamiltonCountyD",  "INHamiltonCountyC",       // 05/11/2019
         "TNWashingtonCountyA","TNWashingtonCounty",      // 08/03/2019
-        "TNWashingtonCountyB","TNWashingtonCOunty"      // 08/03/2019
+        "TNWashingtonCountyB","TNWashingtonCounty",      // 08/03/2019
+        "TNWashingtonCOunty", "TNWashingtonCounty",      // 008/06/2019  *oops*
   });
 
 }
