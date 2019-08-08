@@ -17,7 +17,17 @@ public class GADecaturCountyBParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String body, Data data) {
+    int pt = body.lastIndexOf(" OCA: ");
+    if (pt >= 0) {
+      data.strCallId = body.substring(pt+6).trim();
+      body = body.substring(0,pt).trim();
+    }
     return parseFields(body.split(","), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " ID";
   }
   
   @Override
@@ -58,6 +68,9 @@ public class GADecaturCountyBParser extends FieldProgramParser {
       "VADA",
 
       // Ghost town
-      "MIRIAM"
+      "MIRIAM",
+      
+      // Grady County
+      "CAIRO"
   };
 }
