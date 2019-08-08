@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.NY;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,12 +15,12 @@ public class NYRocklandCountyCParser extends FieldProgramParser {
   
   public NYRocklandCountyCParser() {
     super("ROCKLAND COUNTY", "NY",
-        "Addr:ADDR! X_St:X Name:NAME Phone:PHONE Comp:CALL");
+        "Addr:ADDR! X_St:X Name:NAME Phone:PHONE Comp:CALL? DATETIME? ");
   }
   
   @Override
   public String getFilter() {
-    return "dispatch@hatzolohems.org";
+    return "dispatch@hatzolohems.org,Dispatch";
   }
   
   @Override
@@ -40,6 +42,14 @@ public class NYRocklandCountyCParser extends FieldProgramParser {
     
     if (body.startsWith("Add:")) body = "Addr:" + body.substring(4);
     return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    return super.getField(name);
   }
   
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|#) *(.*)|[A-Z]?\\d+[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
@@ -79,15 +89,31 @@ public class NYRocklandCountyCParser extends FieldProgramParser {
   }
   
   @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("X")) return new MyCrossField();
-    return super.getField(name);
-    
-  }
-  
-  @Override
   public String getProgram() {
     return "ID " + super.getProgram();
+  }
+  
+  private static final Pattern DATE_TIME_PTN =  Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) - (\\d\\d?:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+  private class MyDateTimeField extends DateTimeField {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
 }
