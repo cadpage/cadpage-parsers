@@ -1341,7 +1341,7 @@ public class Active911ParserTable {
       "US/PA/CambriaCounty",              "PACambriaCounty",
       "US/PA/CarrollValleyBoro",          "PAAdamsCountyA",
       "US/PA/CentreCounty",               "PACentreCounty",
-      "US/PA/ChesterCounty",              "PAChesterCountyN,PAChesterCountyP",
+      "US/PA/ChesterCounty",              "PAChesterCountyN,PAChesterCountyP,PALancasterCounty",
       "US/PA/ChesterCountyIAR",           "PAChesterCountyL",
       "US/PA/CityofModerna",              "PAChesterCountyD1",
       "US/PA/ClarionCounty",              "PAClarionCounty",
