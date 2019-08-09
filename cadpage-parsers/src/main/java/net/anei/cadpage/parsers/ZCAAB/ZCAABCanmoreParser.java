@@ -77,7 +77,7 @@ public class ZCAABCanmoreParser extends FieldProgramParser {
         place = match.group(1);
         if (place == null) place = match.group(2);
         data.strApt = append(data.strApt, "-", place);
-      } else {
+      } else if (!place.equals("u:0 c:90")){
         data.strPlace = place;
       }
     }
