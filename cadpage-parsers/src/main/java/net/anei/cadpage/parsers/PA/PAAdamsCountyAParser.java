@@ -809,6 +809,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       
       "10 ELM AVE",                           "+39.808790,-77.132452",
       
+      "2527 EMMISTSBURG RD",                  "+39.771667,-77.278929",
+      
       "1001 FIVE POINTS RD",                  "+39.756792,-77.410452",
       
       "660 GREEN SPRINGS RD APT B",           "+39.859952,-76.994721",
