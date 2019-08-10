@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
 
@@ -28,8 +30,15 @@ public class TXMidlothianParser extends DispatchA18Parser {
       body = body.substring(pt+1).trim();
     }
     if (!super.parseMsg(body, data)) return false;
+    data.strAddress = cleanStreetName(data.strAddress);
+    data.strCross = cleanStreetName(data.strCross);
     if (data.strCity.equals("NONE")) data.strCity = "";
     return true;
+  }
+  
+  private static final Pattern WOOD_ST_PTN = Pattern.compile("\\b(OAK|SHADOW) (WOOD)\\b", Pattern.CASE_INSENSITIVE);
+  private String cleanStreetName(String addr) {
+    return WOOD_ST_PTN.matcher(addr).replaceAll("$1$2");
   }
   
   private static String[] CITY_LIST = new String[]{
