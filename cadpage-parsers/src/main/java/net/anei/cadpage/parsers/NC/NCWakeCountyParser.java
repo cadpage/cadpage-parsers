@@ -6,7 +6,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NCWakeCountyParser extends GroupBestParser {
   
   public NCWakeCountyParser() {
-    super(new NCWakeCountyAParser(), new NCWakeCountyBParser(), new NCWakeCountyCParser());
+    super(new NCWakeCountyAParser(), 
+          new NCWakeCountyBParser(), 
+          new NCWakeCountyCParser(),
+          new NCWakeCountyDParser());
   }
 
   @Override
