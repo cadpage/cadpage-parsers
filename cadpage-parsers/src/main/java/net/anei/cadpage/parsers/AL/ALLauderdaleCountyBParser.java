@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Lauderdale County, AL (B)
@@ -24,6 +25,20 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
     return "@everbridge.net,89361,87844";
   }
   
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<!doctype html>")) {
+      int pt1 = body.indexOf("<!-- Messages start-->\n");
+      if (pt1 >= 0) {
+        pt1 += 23;
+        int pt2 = body.indexOf("<!-- Messages end-->\n", pt1);
+        if (pt2 < 0) return false;
+        body = body.substring(pt1, pt2);
+      }
+    }
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,3}\\d{8}) EV- +.*");
   private static final Pattern MASTER = Pattern.compile("([A-Z]{2,3}\\d{8}) EV- .*? - ((?:Pri|Address)-.*)");
 
@@ -41,6 +56,17 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
         data.strCallId = match.group(1);
         body = match.group(2);
         break;
+      }
+      
+      if (isPositiveId()) {
+        setFieldList("INFO");
+        data.msgType = MsgType.GEN_ALERT;
+        for (String line : body.split("\n")) {
+          line = line.trim();
+          if (line.startsWith("<a ")) continue;
+          data.strSupp = append(data.strSupp, "\n", line);
+        }
+        return true;
       }
       
       return false;
