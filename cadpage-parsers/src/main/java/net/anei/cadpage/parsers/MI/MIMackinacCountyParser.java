@@ -1,7 +1,10 @@
 package net.anei.cadpage.parsers.MI;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class MIMackinacCountyParser extends MIIronCountyParser {
@@ -11,6 +14,20 @@ public class MIMackinacCountyParser extends MIIronCountyParser {
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
+  private static final Pattern SUPPORT_PTN = Pattern.compile("CAD:([A-Z0-9]+),Enroute,([^,]+),[A-Z]+,(.*)");
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    Matcher match = SUPPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT ADDR APT CALL");
+      data.strUnit = match.group(1);
+      parseAddress(match.group(2).trim(), data);
+      data.strCall = match.group(3);
+      return true;
+    }
+    return super.parseMsg(body, data);
+  }
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     return US2_PTN.matcher(address).replaceAll("US 2");
