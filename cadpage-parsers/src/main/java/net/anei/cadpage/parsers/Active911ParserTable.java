@@ -1012,6 +1012,7 @@ public class Active911ParserTable {
       "US/NC/WilsonCounty",               "NCWilsonCounty",
       "US/NC/YadkinCounty",               "NCYadkinCounty",
       "US/NC/YanceyCounty",               "NCYanceyCounty",
+      "US/NC/Zebulon",                    "NCWakeCountyA,NCWakeCountyD",
       "US/ND/BillingsCounty",             "NDBillingsCounty",
       "US/ND/CassCounty",                 "NDCassCounty",
       "US/ND/CityofFargo",                "NDCassCounty",
