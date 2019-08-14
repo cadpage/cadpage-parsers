@@ -1360,6 +1360,7 @@ public class Active911ParserTable {
       "US/PA/FayetteCountyEMA",           "PAFayetteCountyC",
       "US/PA/FDCMS",                      "PAChesterCountyO,GroupBlock,PAChesterCountyF",
       "US/PA/Firepaging",                 "PAChesterCountyD4",
+      "US/PA/FishervilleVFC",             "PADauphinCountyA",
       "US/PA/FlourtownFire",              "PAMontgomeryCountyD",
       "US/PA/FranklinCounty",             "PAFranklinCounty",
       "US/PA/FranklinCountyChambersburgFD","PAFranklinCountyB",
