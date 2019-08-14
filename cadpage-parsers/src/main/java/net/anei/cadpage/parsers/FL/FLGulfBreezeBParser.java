@@ -17,7 +17,7 @@ public class FLGulfBreezeBParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "FFIRE@gulfbreezefl.gov,noreply@gulfbreezepolice.com";
+    return "FFIRE@gulfbreezefl.gov,noreply@gulfbreezepolice.com,Some.One@YourOrg.com";
   }
 
   private static final Pattern GPS_MARK_PTN = Pattern.compile(" *(?:\\||\\[[ \\(]+\\]) *");
@@ -105,6 +105,7 @@ public class FLGulfBreezeBParser extends MsgParser {
       "GULF BREEZE PKWY M.V.A.",
       "Hazmat Incident",
       "MEDIAN M.V.A.",
+      "MEDICAL ASSIST",
       "MEDICAL CALL",
       "MOTOR VEHICLE ACCIDENT BOX ALARM EXTRACATION",
       "PENSACOLA BEACH FOR AGENCY ASSIST TO FIRE/EMS BOX ALARM",
