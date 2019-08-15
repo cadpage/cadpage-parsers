@@ -28,8 +28,8 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     return "qvecpaging@qvec.org,messaging@iamresponding.com";
   }
   
-  private static final Pattern UNIT_PTN = Pattern.compile("([-,. A-Za-z0-9]+?)  +");
-  private static final Pattern CHANNEL_PTN = Pattern.compile("/? *(UHF[- ]?\\d+|(?:(?:OP|OPER) *)?\\d\\d\\.\\d\\d|\\d{3}|\\b(?:EKONK|FRANKLIN|KILLINGLY|PMKN HILL|THOMPSON|UNION) \\d{3}|HIGH-BAND)[-/ ]+", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NEW_UNIT_PTN = Pattern.compile("([,A-Z0-9]+) +");
+  private static final Pattern CHANNEL_PTN = Pattern.compile("/? *((?:(?:OP|OPER) *)?(?:UHF(?:[- ]?\\d+(?:\\.\\d\\d)?)?|\\d{2,3}.\\d\\d|\\d{3}|\\b(?:EKONK|FRANKLIN|KILL|KILLINGLY|PU?MKN HILL|PUMPK HILL|PUMPKIN|THOMP|THOMPSON|UNION)[- ]\\d{3}|HIGH-BAND))[-/ ]+", Pattern.CASE_INSENSITIVE);
   private static final Pattern PRIORITY_PTN = Pattern.compile("^PRI +(\\d) +");
   private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile(" +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)$");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
@@ -51,32 +51,32 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
     
     body = body.replace(" \n ", " * ");
     
-    Matcher  match = UNIT_PTN.matcher(body);
-    if (match.lookingAt()) {
-      data.strUnit = match.group(1);
-      body = body.substring(match.end());
-    }
+    Matcher  match = NEW_UNIT_PTN.matcher(body);
+    if (!match.lookingAt()) return false;
+    data.strUnit = match.group(1);
+    body = body.substring(match.end());
     
     match = CHANNEL_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strChannel = match.group(1);
       body = body.substring(match.end());
-    }
+    } 
     
     match = PRIORITY_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strPriority = match.group(1);
       body = body.substring(match.end()).trim();
-    }
-    
-    if (data.strChannel.length() == 0) {
-      match = CHANNEL_PTN.matcher(body);
-      if (match.lookingAt()) {
-        data.strChannel = match.group(1);
-        body = body.substring(match.end());
+      
+      if (data.strChannel.length() == 0) {
+        match = CHANNEL_PTN.matcher(body);
+        if (match.lookingAt()) {
+          data.strChannel = match.group(1);
+          body = body.substring(match.end());
+        }
       }
     }
     
+    body = stripFieldStart(body, "|");
     body = stripFieldStart(body, "/");
     body = stripFieldStart(body, "-");
     
@@ -103,10 +103,6 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
       else return false;
     }
     
-    // Everything is optional, but we have to find **SOMETHING** we recognize
-    if (data.strUnit.length() == 0 && data.strChannel.length() == 0 && 
-        data.strPriority.length() == 0 && data.strDate.length() == 0) return false;
-    
     if (type == 1) {
       setFieldList("SRC UNIT CH PRI CALL ADDR CITY APT PLACE X DATE TIME");
       String apt = "";
@@ -114,6 +110,14 @@ public class CTWindhamCountyAParser extends SmartAddressParser {
       if (match.lookingAt()) {
         apt = match.group(1);
         body = body.substring(match.end());
+        
+        if (data.strChannel.length() == 0) {
+          match = CHANNEL_PTN.matcher(body);
+          if (match.lookingAt()) {
+            data.strChannel = match.group(1);
+            body = body.substring(match.end());
+          }
+        }
       }
       Parser p = new Parser(body+' ');
       data.strCall = stripFieldStart(p.get(" * "), "* ");

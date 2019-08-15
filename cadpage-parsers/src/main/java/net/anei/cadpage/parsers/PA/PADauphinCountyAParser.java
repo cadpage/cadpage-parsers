@@ -41,6 +41,8 @@ public class PADauphinCountyAParser extends FieldProgramParser {
     
     if (subject.startsWith("Automatic R&R Notification:")) return false;
     
+    body = stripFieldEnd(body, "=20");
+    
     String[] flds = subject.split("\\|");
     if (flds[flds.length-1].equals("!")) {
       if (flds.length > 1) data.strSource = flds[0];

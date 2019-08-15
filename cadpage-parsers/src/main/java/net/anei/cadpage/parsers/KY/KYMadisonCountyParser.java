@@ -23,6 +23,8 @@ public class KYMadisonCountyParser extends DispatchA27Parser {
   
   @Override
   protected String adjustGpsLookupAddress(String address) {
+    address = address.toUpperCase();
+    if (address.contains("WELLS RD")) return "WELLS RD";
     Matcher match = I75_MM_PTN.matcher(address);
     if (match.matches()) address = match.group(1);
     return super.adjustGpsLookupAddress(address);
@@ -69,7 +71,9 @@ public class KYMadisonCountyParser extends DispatchA27Parser {
       "I75 101", "37.92318,-84.37008",
       "I75 102", "37.93628,-84.37782",
       "I75 103", "37.94960,-84.38571",
-      "I75 104", "37.96370,-84.38873"
+      "I75 104", "37.96370,-84.38873",
+      
+      "WELLS RD", "37.878589,-84.335884"
   });
  
 }

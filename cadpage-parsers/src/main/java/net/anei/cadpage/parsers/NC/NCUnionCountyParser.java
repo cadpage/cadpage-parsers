@@ -15,10 +15,8 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   
   public NCUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "NC",
-           "( CANCEL ADDR CITY2 INFO+ " + 
-           "| FYI? ( UNIT_CALL ADDR CITY2 PLACE2 " + 
-                  "| ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO+? DATETIME ID? UNIT " +
-                  ") END " +
+           "( CANCEL ADDR CITY2 PLACE2 " + 
+           "| FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO1/N+? DATETIME ID? UNIT Radio_Channel:CH INFO/N+ END " +
            ")");
     setupSaintNames("JOHNS", "SIMONS");
     setupProtectedNames("BURGESS AND HELMS", "SUGAR AND WINE");
@@ -41,16 +39,23 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("CANCEL")) return new MyCancelField();
     if (name.equals("UNIT_CALL")) return new MyUnitCallField();
     if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("PLACE2")) return new MyPlace2Field();
     if (name.equals("SRC")) return new SourceField("[A-Z0-9]{2,4}", true);
-    if (name.equals("CH")) return new ChannelField("[A-M][-A-Z0-9]{1,5}|.* OPS .*", true);
+    if (name.equals("CH")) return new MyChannelField();
     if (name.equals("CUSTOM")) return new CustomField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("INFO1")) return new MyInfo1Field();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d");
     if (name.equals("ID")) return new IdField("\\d{5,}", true);
     return super.getField(name);
+  }
+  
+  private class MyCancelField extends BaseCancelField {
+    public MyCancelField() {
+      super("CPR IN PROGRESS|RETONE COMPLETE|STAGING RECOMMENDED");
+    }
   }
   
   private static final Pattern UNIT_CALL_PTN = Pattern.compile("\\{([A-Z0-9 ]+)\\} *(.*)");
@@ -131,7 +136,21 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     }
   }
   
-  private class MyInfoField extends InfoField {
+  private class MyChannelField extends ChannelField {
+    
+    MyChannelField() {
+      super("[A-M][-A-Z0-9]{1,5}|.* OPS .*", false);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strChannel.length() > 0) return;
+      super.parse(field, data);
+    }
+    
+  }
+  
+  private class MyInfo1Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (isValidAddress(field)) {
@@ -145,7 +164,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "PLACE X INFO";
+      return "PLACE X INFO?";
     }
   }
   
