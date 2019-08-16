@@ -8,6 +8,6 @@ public class FLHolmesCountyParser extends FLBayCountyParser {
   
   @Override
   public String getFilter() {
-    return "PAGING@HOLMESCOSHERIFF.ORG";
+    return "PAGING@HOLMESCOSHERIFF.ORG,paging@holmesso.org";
   }
 }
