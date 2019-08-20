@@ -19,7 +19,7 @@ public class ORDeschutesCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "911@deschutes.org";
+    return "911@deschutes.org,7017710262";
   }
 
   @Override
