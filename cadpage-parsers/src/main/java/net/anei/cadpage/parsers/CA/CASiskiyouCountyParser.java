@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class CASiskiyouCountyParser extends FieldProgramParser {
   public CASiskiyouCountyParser() {
     super(CITY_CODES, "SISKIYOU COUNTY", "CA",
-          "ID CALL ADDRCITY PLACE X GPS UNIT! INFO+");
+          "ID CALL ADDRCITY PLACE X CH/L+? UNIT! INFO+? X:GPS1 Y:GPS2");
   }
   
   @Override
@@ -36,9 +36,10 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("Inc# +(.*)", true);
     if (name.equals("PLACE")) return new MyPlace();
     if (name.equals("ADDRCITY")) return new MyAddrCity();
-    if (name.equals("ID")) return new IdField("Inc# +(.*)");
+    if (name.equals("CH")) return new ChannelField("(?:Cmd|Tac): *(.*)", true);
     if (name.equals("UNIT")) return new MyUnit();
     return super.getField(name);
   }
@@ -49,10 +50,11 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.trim();
       Matcher m = PLACE_PATTERN.matcher(field);
-      if (m.matches())
+      if (m.matches()) {
         data.strApt = m.group(1);
-      else
+      } else {
         super.parse(field, data);
+      }
     }
     
     @Override
