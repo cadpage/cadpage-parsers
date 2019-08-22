@@ -10,7 +10,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   
   public SCPickensCountyBParser() {
     super("PICKENS COUNTY", "SC", 
-          "Location:ADDRCITY! ( Location_info:X! | Common_Location:X! ) CAD_Code:ID! Received:SKIP! Units:UNIT! Box_Alarm:BOX? Caller_Name:NAME? Caller:PHONE? Contact:SKIP? Case_Number:ID/L! Notes:INFO/N+");
+          "Location:ADDRCITY! ( Location_info:X! | Common_Location:X! ) CAD_Code:ID! Received:SKIP! Units:UNIT! Priority:PRI? Box_Alarm:BOX? Caller_Name:NAME? Caller:PHONE? Contact:SKIP? Case_Number:ID/L! Notes:INFO/N+");
     setupProtectedNames("J AND D DR", "LOVE AND CARE RD");
   }
   
