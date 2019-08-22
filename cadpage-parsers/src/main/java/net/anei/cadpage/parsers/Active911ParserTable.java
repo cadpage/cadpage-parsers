@@ -1206,7 +1206,7 @@ public class Active911ParserTable {
       "US/OH/GalliaCounty",               "OHGalliaCounty,OHMahoningCountyA",
       "US/OH/GeaugaCounty",               "OHGeaugaCountyB",
       "US/OH/GermantownFD",               "OHMontgomeryCountyC2",
-      "US/OH/GrangerFD",                  "OHMedinaCountyB",
+      "US/OH/GrangerFD",                  "OHMedinaCountyB,OHMedinaCountyD",
       "US/OH/HamiltonCounty",             "OHHamiltonCountyA",
       "US/OH/HamiltonFD",                 "OHButlerCountyA",
       "US/OH/Harveysburg",                "OHWarrenCountyC",
