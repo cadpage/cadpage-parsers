@@ -13,7 +13,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
   
   public ORYamhillCountyCParser() {
     super("YAMHILL COUNTY", "OR", 
-          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross_Street:X? MAP:MAP% UNIT:UNIT% " + 
+          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross_Street:X? MAP:MAP% UNIT:UNIT%  NARR:INFO/N " + 
           "| CALL ADDR PLACE! Caller:NAME! Caller_#:PHONE! Units:UNIT! ) END");
   }
   
@@ -24,12 +24,15 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
   
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public int splitBreakLength() { return 400; }
+      @Override public int splitBreakPad() { return 5; }
+    };
   }
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* ?CALL TIMES ?\\* ?Run #:((?:[A-Z]+-)?[-0-9]*) +Add: *?(.*?) +?((?:Call Rec:|Call Received:|Disp:).*)");
   private static final Pattern RR_BRK_PTN = Pattern.compile("(?:[* ]+|(?<!(?:^|[* \n])))(?=(?:Disp|Enr|Onscene|Avail|Unit):)");
-  private static final Pattern DELIM = Pattern.compile("\\* ");
+  private static final Pattern DELIM = Pattern.compile("\\* | +(?=NARR:)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -52,5 +55,26 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
     setSelectValue("1");
     body = body.replace("*Cross Street:", "* Cross Street:");
     return parseFields(DELIM.split(body), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+  
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("(?=\\[\\d{1,2}\\] )");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[\\d{1,2}\\]");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String line : INFO_BRK_PTN.split(field)) {
+        line =  line.trim();
+        line = stripFieldEnd(line, ",");
+        line = stripFieldEnd(line, "[Shared]");
+        if (INFO_JUNK_PTN.matcher(line).matches()) continue;
+        super.parse(line, data);
+      }
+    }
   }
 }
