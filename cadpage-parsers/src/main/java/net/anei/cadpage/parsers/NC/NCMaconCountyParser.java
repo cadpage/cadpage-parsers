@@ -6,6 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NCMaconCountyParser extends GroupBestParser {
   
   public NCMaconCountyParser() {
-    super(new NCMaconCountyAParser(), new NCMaconCountyBParser());
+    super(new NCMaconCountyAParser(), 
+          new NCMaconCountyBParser(),
+          new NCMaconCountyCParser());
   }
 }

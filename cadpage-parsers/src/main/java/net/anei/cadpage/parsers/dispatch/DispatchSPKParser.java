@@ -166,6 +166,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     if (name.equals("BLDG")) return new BaseBuildingField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("PHONE")) return new BasePhoneField();
     
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -276,6 +277,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
       parse(field, data);
       return true;
     }
+    
 
     @Override
     public void parse(String field, Data data) {
@@ -420,6 +422,14 @@ public class DispatchSPKParser extends HtmlProgramParser {
       for (String unit : field.split(",")) {
         addUnit(unit.trim(), data);
       }
+    }
+  }
+  
+  private class BasePhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("-")) return;
+      super.parse(field, data);
     }
   }
   
