@@ -68,9 +68,11 @@ public class NCCravenCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CALL_ID_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strCall = match.group(1);
-      data.strCallId = match.group(2);
+      if (match.matches()) {
+        data.strCall = match.group(1);
+        field = match.group(2);
+      }
+      data.strCallId = field;
     }
     
     @Override
