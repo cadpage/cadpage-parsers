@@ -73,6 +73,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Intersection", skipField);
     FIELD_MAP.put("Intersections", skipField);
     FIELD_MAP.put("L/L", GPSField);
+    FIELD_MAP.put("Location", addrCityField);
     FIELD_MAP.put("Location and POI Information", placeField);
     FIELD_MAP.put("Location Information", placeField);
     FIELD_MAP.put("Media Attached To Incident", skipField);
@@ -81,7 +82,6 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Notices", skipField);
     FIELD_MAP.put("POI Information", placeField);
     FIELD_MAP.put("Priors", skipField);
-    FIELD_MAP.put("Location", addrCityField);
     FIELD_MAP.put("Responding Units", unitField);
     FIELD_MAP.put("Service Reqeuests", skipField);
     FIELD_MAP.put("Wrecker Info", skipField);
@@ -469,7 +469,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
       
       String key = stripFieldEnd(field, ":");
       InfoType tmp = INFO_KEYWORDS.get(key);
-      if (tmp != null || INFO_KEYWORDS.containsKey(key) ||
+      if ((tmp != null || INFO_KEYWORDS.containsKey(key)) && 
+          (infoType != InfoType.UNIT_INFO2 || !field.equals("Case Numbers")) ||
           field.startsWith("POI Information:")) {
         infoType = tmp;
         if (infoType == InfoType.UNIT_INFO && !field.endsWith(":")) infoType = InfoType.UNIT_INFO2;
