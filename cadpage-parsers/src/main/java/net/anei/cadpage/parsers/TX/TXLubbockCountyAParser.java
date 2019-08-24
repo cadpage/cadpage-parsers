@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,7 @@ public class TXLubbockCountyAParser extends FieldProgramParser{
   public TXLubbockCountyAParser() {
     super("LUBBOCK COUNTY", "TX",
       "( SELECT/DISREGARD Location:ADDRCITY/S! | UNIT! Call_Sheet:SKIP! Location:ADDRCITY/S! Type_of_call:CALL! ) INFO+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   public String getFilter() {
@@ -77,4 +79,9 @@ public class TXLubbockCountyAParser extends FieldProgramParser{
     return super.adjustMapAddress(addr);
   }
   private static final Pattern AVE_X_ST_PTN = Pattern.compile("\\b(AVE [A-Z]) ST\\b");
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "6407 N CR 3000",             "+33.660638,-101.733152"
+
+  });
 }

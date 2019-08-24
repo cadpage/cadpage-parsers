@@ -31,6 +31,11 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n<div");
     if (pt >= 0) body = body.substring(0,pt).trim();
@@ -54,6 +59,14 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
     
     return true;
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = CTH_PTN.matcher(addr).replaceAll("COUNTY ROAD");
+    return super.adjustMapAddress(addr);
+  }
+  private static final Pattern CTH_PTN = Pattern.compile("\\bCTH\\b", Pattern.CASE_INSENSITIVE);
+  
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       // Brown County
       "ASHW", "ASHWAUBENON",

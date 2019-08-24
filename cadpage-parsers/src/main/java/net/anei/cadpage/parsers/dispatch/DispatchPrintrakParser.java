@@ -208,6 +208,13 @@ public class DispatchPrintrakParser extends FieldProgramParser {
         data.strAddress =  field.replaceAll("<", "").replaceAll(">", "");
         return;
       }
+      
+      int pt = field.indexOf(" LAT:");
+      if (pt >= 0) {
+        setGPSLoc(field.substring(pt+1), data);
+        field = field.substring(0,pt).trim();
+      }
+      
       String apt = "";
       Matcher match = APT_PTN.matcher(field);
       if (match.find()) {
@@ -220,6 +227,11 @@ public class DispatchPrintrakParser extends FieldProgramParser {
         super.parse(field, data);
       }
       data.strApt = append(data.strApt, " - ", apt);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS?";
     }
   }
   
