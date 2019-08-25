@@ -262,6 +262,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22028 OXFORD CT",                      "+38.273434,-76.468369",
       "22030 OXFORD CT",                      "+38.273478,-76.468200",
       "48676 PACKER CT",                      "+38.155650,-76.391350",
+      "43738 STEPHENSON DR",                  "+38.198215,-76.563438",
       "42831 THERESAS WY",                    "+38.368228,-76.595153",
       "22589 THREE NOTCH RD",                 "+38.287556,-76.480120",
       "45462 WEST MEATH WAY",                 "+38.288942,-76.503772",
