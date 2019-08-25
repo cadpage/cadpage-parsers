@@ -1472,6 +1472,7 @@ public class ParserList {
               ,"TXMansfield"                    ,"Mansfield, TX"
               ,"TXManvel"                       ,"Manvel, TX"
               ,"TXMcLennanCounty"               ,"McLennan County, TX"
+              ,"TXMidlandCounty"                ,"Midland County, TX"
               ,"TXMidlothian"                   ,"Midlothian, TX"
               ,"TXMissouriCity"                 ,"Missouri City, TX"
               ,"TXMontgomeryCounty"             ,"Montgomery County, TX"
