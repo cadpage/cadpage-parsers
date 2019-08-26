@@ -2468,14 +2468,15 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public String getFieldNames() {
-      StringBuilder sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder("ALERT?");
       if (startType == null) {
-        sb.append("ADDR APT");
+        sb.append(" ADDR APT");
         if (incCity) sb.append(" CITY");
       }
       
       else {
         if (startField != null) {
+          sb.append(' ');
           sb.append(startField);
         }
         sb.append(" ADDR APT PLACE? X? ");

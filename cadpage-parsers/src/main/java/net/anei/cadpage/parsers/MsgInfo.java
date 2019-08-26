@@ -75,6 +75,7 @@ public class MsgInfo {
   private String strDate;
   private String strTime;
   private String strInfoURL;
+  private String strAlert;
   private String defCity;
   private String defState;
   private MsgParser.CountryCode countryCode;
@@ -131,6 +132,7 @@ public class MsgInfo {
     public String strDate;
     public String strTime;
     public String strInfoURL;
+    public String strAlert;
     public String defCity;
     public String defState;
     public MsgParser.CountryCode countryCode;
@@ -178,6 +180,7 @@ public class MsgInfo {
       strDate = "";
       strTime = "";
       strInfoURL = "";
+      strAlert = "";
       defCity = "";
       defState="";
       countryCode = MsgParser.CountryCode.US;
@@ -256,6 +259,7 @@ public class MsgInfo {
     strDate = info.strDate;
     strTime = info.strTime;
     strInfoURL = info.strInfoURL;
+    strAlert = info.strAlert;
     defCity = info.defCity;
     defState = info.defState;
     countryCode = info.countryCode;
@@ -1068,6 +1072,13 @@ public class MsgInfo {
   }
   
   /**
+   * @return alert field
+   */
+  public String getAlert() {
+    return strAlert;
+  }
+  
+  /**
    * @return the default city 
    */
   public String getDefCity() {
@@ -1160,6 +1171,7 @@ public class MsgInfo {
     if (strDate.length() > 0) result += 10;
     if (strTime.length() > 0) result += 10;
     if (strInfoURL.length() > 0) result += 5;
+    if (strAlert.length() > 0) result += 20;
     if (incomplete ^ expectMore) result--;
     return result;
   }
@@ -1174,6 +1186,7 @@ public class MsgInfo {
     addInfo(sb, "Type", msgType.toString());
     addInfo(sb, "Call", strCall);
     addInfo(sb, "Place", strPlace);
+    addInfo(sb, "Alert", strAlert);
     addInfo(sb, "Addr", strAddress);
     addInfo(sb, "MapAddr", strBaseMapAddress);
     addInfo(sb, "City", strCity);

@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,6 +70,13 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
         }
         data.strCall = call;
       }
+    }
+    
+    // See if we have a bridge alert associated with this address
+    Map<String, Bridge> bridgeTable = CITY_BRIDGE_STATUS.get(data.strCity);
+    if (bridgeTable != null) {
+      Bridge bridge = bridgeTable.get(data.strAddress);
+      if (bridge != null) data.strAlert = bridge.getMessage();
     }
   }
   
@@ -808,6 +817,87 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1250 ADAMS ST",                "44.543512,-123.304196"     // Access via Industrial Way
       
   });
+
+  private static enum Bridge {
+    
+    OK("Bridge safe to cross"),
+    TENDER("Restricted Bridge - No Tenders!!"),
+    ENGINE("Restricted Bridge - No Engines or Tenders!!"),
+    BAD("Restricted Bridge - Do not cross!!");
+    
+    private String message;
+    
+    Bridge(String message) {
+      this.message = message;
+    }
+    
+    public String getMessage() {
+      return message;
+    }
+  }
+  
+  private static final Map<String, Bridge> CORV_BRIDGE_STATUS = new HashMap<>();
+  private static final Map<String, Bridge> PHIL_BRIDGE_STATUS = new HashMap<>();
+  private static final Map<String, Map<String, Bridge>> CITY_BRIDGE_STATUS = new HashMap<>();
+  
+  static {
+    PHIL_BRIDGE_STATUS.put("29263 BEAVER CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("36078 BLAKESLEY CREEK RD", Bridge.TENDER);
+    PHIL_BRIDGE_STATUS.put("34633 BLAKESLEY CREEK RD", Bridge.TENDER);
+    PHIL_BRIDGE_STATUS.put("30874 BOTKIN RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("808 CATTLE RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("1019 CATTLE RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("31122 CEDAR CREEK RD", Bridge.BAD);
+    CORV_BRIDGE_STATUS.put("29691 CRONN RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("29634 CRONN RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("29657 CRONN RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("29691 CRONN RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("24882 DECKER RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("24689 GRANGE HALL RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("24650 GRANGE HALL RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("24654 GRANGE HALL RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("24660 GRANGE HALL RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("24650 GRANGE HALL RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23712 GRAY CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23734 GRAY CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23737 GRAY CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23744 GRAY CREEK RD", Bridge.BAD);
+    CORV_BRIDGE_STATUS.put("26197 GREENBERRY RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("26335 GREENBERRY RD", Bridge.OK);
+    CORV_BRIDGE_STATUS.put("23754 HENDERSON RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("24236 HWY 34", Bridge.TENDER);
+    PHIL_BRIDGE_STATUS.put("24588 HWY 34", Bridge.TENDER);
+    PHIL_BRIDGE_STATUS.put("24594 HWY 34", Bridge.TENDER);
+    PHIL_BRIDGE_STATUS.put("34318 IRIS CIRCLE", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23703 KNOWLTON LN", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("35163 LILLIAN DR", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("24807 MCCORMICK LN", Bridge.TENDER);
+    CORV_BRIDGE_STATUS.put("24670 STARR CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23989 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23991 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23935 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23911 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23877 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23879 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23668 WOODS CREEK RD", Bridge.ENGINE);
+    PHIL_BRIDGE_STATUS.put("23670 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23654 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23592 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("23476 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23414 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("23416 WOODS CREEK RD", Bridge.OK);
+    PHIL_BRIDGE_STATUS.put("22794 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("22796 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("22972 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("22974 WOODS CREEK RD", Bridge.BAD);
+    PHIL_BRIDGE_STATUS.put("22530 WOODS CREEK RD", Bridge.BAD);
+    
+    
+    CITY_BRIDGE_STATUS.put("CORVALLIS", CORV_BRIDGE_STATUS);
+    CITY_BRIDGE_STATUS.put("PHILOMATH", PHIL_BRIDGE_STATUS);
+
+  }
+  
 //  
 //  @Override
 //  public MapPageStatus getMapPageStatus() {
