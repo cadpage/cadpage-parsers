@@ -13,7 +13,7 @@ public class OHPortageCountyParser extends GroupBestParser {
   
   public OHPortageCountyParser() {
     super(new OHPortageCountyAParser(), new OHPortageCountyBParser(), new OHPortageCountyCParser(),
-        new OHPortageCountyDParser(), 
+        new OHPortageCountyDParser(), new OHPortageCountyFParser(), 
         new GroupBlockParser(), new OHPortageCountyCencommParser());
   }
   

@@ -1184,7 +1184,7 @@ public class Active911ParserTable {
       "US/OH/CityofRavenna",              "OHPortageCountyA",
       "US/OH/CityofShakerHeights",        "OHCuyahogaCountyA",
       "US/OH/CityofShawnee",              "OHAllenCountyB",
-      "US/OH/CityofStow",                 "OHSummitCountyC,OHSummitCountyD",
+      "US/OH/CityofStow",                 "OHSummitCountyC,OHSummitCountyD,OHSummitCountyF",
       "US/OH/CityofTrenton",              "OHTrenton",
       "US/OH/CityofTwinsburg",            "OHSummitCountyG",
       "US/OH/CityofVandalia",             "OHMontgomeryCountyB",

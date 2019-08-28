@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -14,7 +16,7 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
     super(defCity, defState,
           "( U_DATETIME U_ADDRESS U_NAME U_PHONE U_CFS_NUMBER U_PLACE U_X U_CALL U_ID! " +
           "| Date/time:DATETIME! Address:ADDRCITY! Caller_Name:NAME! Caller_phone:PHONE! CFS_Number:SKIP! Common_Name:PLACE! Cross_Streets:X! Call_Type:CALL! Incident_Number:ID! " + 
-          ") Narrative%EMPTY! INFO_BLK/Z+? Status_Times%EMPTY! TIMES/Z+? U_UNIT!");
+          ") ( Narrative%EMPTY! | Narrative:EMPTY! ) INFO_BLK/Z+? ( Status_Times%EMPTY! | Status_Times:EMPTY! ) TIMES/Z+? U_UNIT! U_ALERT? INFO2/N+");
   }
   
   public String getAliasCode() {
@@ -23,7 +25,7 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
   
   @Override
   public String getFilter() {
-    return "@kent.edu,@stow.oh.us";
+    return "dispatch@kent.edu.ahenterly@stow.oh.us";
   }
   
   @Override
@@ -39,7 +41,9 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
     if (name.equals("U_X")) return new CrossField("Cross Streets *(.*)", true);
     if (name.equals("U_CALL")) return new CallField("Call Type *(.*)", true);
     if (name.equals("U_ID")) return new IdField("Incident Number *(.*)", true);
-    if (name.equals("U_UNIT")) return new UnitField("Units Assigned *(.+)", true);
+    if (name.equals("U_UNIT")) return new UnitField("Units Assigned:? *(.+)", true);
+    if (name.equals("U_ALERT")) return new AlertField("Alerts:? *(.*)", true);
+    if (name.equals("INFO2")) return new MyInfo2Field();
     return super.getField(name);
   }
   
@@ -55,6 +59,15 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
     
     public void parse(String field, Data data) {
       if (field.equals("() -")) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("- \\d+ -");
+  private class MyInfo2Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
       super.parse(field, data);
     }
   }

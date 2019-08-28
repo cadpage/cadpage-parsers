@@ -3637,6 +3637,42 @@ public class FieldProgramParser extends SmartAddressParser {
       return "URL";
     }
   }
+
+  /**
+   * Map field processor
+   */
+  public class AlertField extends Field {
+    
+    private String append = "-";
+
+    public AlertField() {};
+    public AlertField(String pattern) {
+      super(pattern);
+    }
+    public AlertField(String pattern, boolean hardPattern) {
+      super(pattern, hardPattern);
+    }
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, "-");
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (append != null) {
+        data.strAlert = append(data.strMap, append, field);
+      } else {
+        data.strAlert = field;
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ALERT";
+    }
+  }
   
   /**
    * Skip field processor
@@ -3874,6 +3910,7 @@ public class FieldProgramParser extends SmartAddressParser {
     if (name.equals("DATETIME")) return new DateTimeField();
     if (name.equals("TIMEDATE")) return new TimeDateField();
     if (name.equals("URL")) return new InfoUrlField();
+    if (name.equals("ALERT")) return new AlertField();
     if (name.equals("SKIP")) return new SkipField();
     if (name.equals("INTLS")) return new InitialsField();
     if (name.equals("EMPTY")) return new EmptyField();

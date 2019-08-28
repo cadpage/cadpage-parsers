@@ -821,9 +821,9 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
   private static enum Bridge {
     
     OK("Bridge safe to cross"),
-    TENDER("Restricted Bridge - No Tenders!!"),
-    ENGINE("Restricted Bridge - No Engines or Tenders!!"),
-    BAD("Restricted Bridge - Do not cross!!");
+    TENDER("Restricted Bridge - No Tenders"),
+    ENGINE("Restricted Bridge - No Engines or Tenders"),
+    BAD("Restricted Bridge - Do not cross");
     
     private String message;
     
