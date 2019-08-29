@@ -15,7 +15,7 @@ public class INLakeCountyParser extends FieldProgramParser {
   }
   
   public String getFilter() {
-      return "hiplink@lakecountysheriff.com";
+      return "hiplink@lakecountysheriff.com,hiplink@lcec911.org";
     }
   
   protected boolean parseMsg(String subject, String body, Data data) {
