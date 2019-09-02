@@ -15,7 +15,7 @@ public class KSRiceCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "enterpolalerts@rcsoks.org";  
+    return "enterpolalerts@rcsoks.org,general@ricecounty.us";  
   }
 
   @Override

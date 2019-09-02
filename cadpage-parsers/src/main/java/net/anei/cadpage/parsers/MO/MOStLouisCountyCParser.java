@@ -11,7 +11,7 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
   public MOStLouisCountyCParser() {
     super("ST LOUIS COUNTY", "MO", 
-        "( SELECT/2 UNIT_RESP! On:CALL! AT:ADDR! APT:APT? BUS:PLACE? CHL:CH! FD:SRC " +
+        "( SELECT/2 UNIT_RESP On:CALL! AT:ADDR! APT:APT? BUS:PLACE? CHL:CH! FD:SRC " +
         "| CALL! AT:ADDR! APT:APT? BUS:PLACE? XST:X BUS:PLACE? )");
   }
   
@@ -26,13 +26,13 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
   }
   
   private static final Pattern BAD_MSG_PTN = Pattern.compile(".* AT .* BUS:.*Units:");
-  private static final Pattern RESPONDING_PTN = Pattern.compile("\\S+ (?:Is|Are) Responding .*");
+  private static final Pattern RESPONDING_PTN = Pattern.compile("(.*?) (?:Is|Are) Responding (.*?) (?=On:)");
   private static final Pattern CHANNEL_PTN = Pattern.compile("(?:TAC: *)?((?:CC911 )?(?:SO|NO) - (?:S MAIN F|N MAIN F|FTAC \\d{2}))");
   private static final Pattern DUP_ALERT_PTN = Pattern.compile("(.*?(?: \\[ | Units:) *[^ ]*).*(?: \\[ | Units:) *[^ ]*(.*)");
   private static final Pattern ID_PTN = Pattern.compile(" *(?:Incident:)?(\\d{2}-\\d+)$");
   private static final Pattern TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
   private static final Pattern LAT_LONG_PTN = Pattern.compile("(?:(38)(\\d{6}) +(\\d{2})(\\d{6})| 0 0)$");
-  private static final Pattern SRC_UNIT_PTN = Pattern.compile(" *(?:FD: *)?(\\d\\d\\b|(?:Affton|Brentwood|City of St Loui|Crestwood FD|Eureka|Fenton|Fenton FPD|Franklin|Jefferson|Kirkwood|Ladue|Lemay|Mehlville|Olivette|Shrewsbury|St Charles|St Louis City|St Louis|Webster Groves)(?: FPD)?)(?: *(?:\\[ ?|Units: )? *((?:(?:(?:STL )?[A-Za-z0-9]+|AB \\d+|GTWY \\d+|\\d+ DUTY|NEED (?:AMB|EMS|MED)(?: \\d+)?)\\b,?)+))?$");
+  private static final Pattern SRC_UNIT_PTN = Pattern.compile(" *(?:FD: *)?(\\d\\d\\b|(?:Affton|Brentwood|City of St Loui|Crestwood FD|Eureka|Fenton|Fenton FPD|Franklin|Jefferson|Kirkwood|Ladue|Lemay|Mehlville|Olivette|Shrewsbury|St Charles|St Louis City|St Louis|Webster Groves)(?: FPD)?)(?: *(?:\\[ ?|Units: )? *((?:(?:(?:STL )?[A-Za-z0-9]+|AB \\d+|GTWY \\d+|\\d+ DUTY|METRO AIR|NEED (?:A|AMB|EMS|MED)(?: \\d+)?|Rescue Dut)\\b,?)+))?$");
   private static final Pattern BAD_AT_PTN = Pattern.compile("(.*?[a-z ])AT(.*)");
   
   @Override
@@ -40,15 +40,21 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
     
     if (BAD_MSG_PTN.matcher(body).matches()) return false;
     
-    if (RESPONDING_PTN.matcher(body).matches()) {
+    body = stripFieldEnd(body, "AT:");
+    
+    Matcher match = RESPONDING_PTN.matcher(body);
+    if (match.lookingAt()) {
       setSelectValue("2");
+      data.strUnit = match.group(1).replace(' ', '_');
+      data.strSupp = match.group(2);
+      body = body.substring(match.end());
       return super.parseMsg(body, data);
     }
     
     setSelectValue("1");
     
     // Occasionally calls are duplicated and we need to cut out the duplicated content :(
-    Matcher match = DUP_ALERT_PTN.matcher(body);
+    match = DUP_ALERT_PTN.matcher(body);
     if (match.matches())  body = match.group(1) + match.group(2);
     
     // Channels tend to show up in the middle of things
@@ -145,19 +151,11 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
     }
   }
   
-  private class MyUnitResponseField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      int pt = field.indexOf(' ');
-      if (pt < 0) abort();
-      data.strUnit = field.substring(0, pt);
-      field = field.substring(pt+1).trim();
-      super.parse(field, data);
-    }
+  private class MyUnitResponseField extends SkipField {
     
     @Override
     public String getFieldNames() {
-      return "UNIT " + super.getFieldNames();
+      return "UNIT INFO";
     }
   }
   
