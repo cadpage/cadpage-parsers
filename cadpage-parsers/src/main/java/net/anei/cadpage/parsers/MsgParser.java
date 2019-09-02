@@ -822,7 +822,7 @@ public abstract class MsgParser {
       // matches an available keyword
       while (true) {
 
-        // Find the next colon character, if there isn't one, bail out
+        // Find the next break character, if there isn't one, bail out
         int iDataPt = iColonPt+1;
         iColonPt = body.indexOf(breakChar, iDataPt);
         if (iColonPt < 0) break;
@@ -836,17 +836,23 @@ public abstract class MsgParser {
           String key = keyWords[ndx];
           int len = key.length();
           int iTempPt = ipt - len;
+          int iTemp2Pt = iTempPt;
           if (iTempPt < iDataPt) continue;
           if (iTempPt > iDataPt) {
             char chr = body.charAt(iTempPt-1);
-            if (!Character.isWhitespace(chr)) continue;
-          }
+            if (breakChar == ')') {
+              if (chr != '(') continue;
+              iTemp2Pt--;
+            } else {
+              if (!Character.isWhitespace(chr)) continue;
+            }
+          } else if (breakChar == ')') continue;
           String keyword = body.substring(iTempPt, ipt);
           if (ignoreCase) keyword = keyword.toUpperCase();
           if (!keyword.equals(key)) continue;
           if (rejectBreakKeyword(keyword)) continue;
           iNxtKey = ndx;
-          iEndPt = iTempPt;
+          iEndPt = iTemp2Pt;
           break;
         }
 
@@ -866,14 +872,21 @@ public abstract class MsgParser {
         // the message body looks like a truncated available keyword.
         // if it is, we will trim that part off.
         iEndPt = body.length();
-        int iTempPt = iEndPt;
-        String[] trailers = new String[]{null, null, null};
-        for (int cnt = 0; cnt < trailers.length; cnt++) {
-          iTempPt = body.lastIndexOf(' ', iTempPt-1);
-          if (iTempPt < 0) break;
-          String key = body.substring(iTempPt+1);
-          if (ignoreCase) key = key.toUpperCase();
-          trailers[cnt] = key;
+        String[] trailers;
+        if (breakChar == ')') {
+          trailers = new String[]{null};
+          int iTempPt = body.lastIndexOf('(');
+          if (iTempPt >= 0) trailers[0] = body.substring(iTempPt+1);
+        } else {
+          int iTempPt = iEndPt;
+          trailers = new String[]{null, null, null};
+          for (int cnt = 0; cnt < trailers.length; cnt++) {
+            iTempPt = body.lastIndexOf(' ', iTempPt-1);
+            if (iTempPt < 0) break;
+            String key = body.substring(iTempPt+1);
+            if (ignoreCase) key = key.toUpperCase();
+            trailers[cnt] = key;
+          }
         }
         boolean found = false;
         for (int ndx = iKey+1; ndx < keyWords.length; ndx++) {
@@ -893,7 +906,7 @@ public abstract class MsgParser {
       //   iNxtKey  Next keyword index (or -1 if none)
       //   iStartPt Start of data field associated with iKey
       //   iEndPt   End of data field associated with iKey
-      //   iColonPn Colon terminating next keyword
+      //   iColonPn break character terminating next keyword
 
       // Save current field and get ready to start looking for the
       // end of the next keyword

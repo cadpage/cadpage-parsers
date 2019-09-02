@@ -1015,20 +1015,22 @@ public class FieldProgramParser extends SmartAddressParser {
       initStepScan();
       
       // Loop through all of the fields
+      boolean parenKey = breakChar == ')';
+      int iStartKey = parenKey ? 1 : 0;
       int fldNdx = 0;
       for (String field : fields) {
         
         // Break field into keyword and value
         field = field.trim();
-        int pt = field.indexOf(breakChar);
-        String tag, value;
-        if (pt < 0) {
-          tag = "";
-          value = field;
-        } else {
-          tag = field.substring(0, pt).trim();
-          if (ignoreCase) tag = tag.toUpperCase();
-          value = field.substring(pt+1).trim();
+        String tag = "";
+        String value = field;
+        if (!parenKey || field.startsWith("("))  {
+          int pt = field.indexOf(breakChar);
+          if (pt >= 0) {
+            tag = field.substring(iStartKey, pt).trim();
+            if (ignoreCase) tag = tag.toUpperCase();
+            value = field.substring(pt+1).trim();
+          }
         }
         
         // Get the field associated with this keyword
@@ -1567,6 +1569,8 @@ public class FieldProgramParser extends SmartAddressParser {
       if (parseTags && !(field instanceof SelectField)) {
         Step startStep = this;
         int startNdx = ndx;
+        boolean parenBreak = breakChar == ')';
+        int iStartKey = parenBreak ? 1 : 0;
         while (true) {
           
           // See if data field is tagged
@@ -1574,12 +1578,14 @@ public class FieldProgramParser extends SmartAddressParser {
           procStep = startStep;
           String curTag = null;
           String curVal = null;
-          int pt = curFld.indexOf(breakChar);
-          if (pt >= 0) {
-            curTag = curFld.substring(0, pt).trim();
-            if (ignoreCase) curTag = curTag.toUpperCase();
-            curVal = curFld.substring(pt+1);
-            if (!doNotTrim) curVal = curVal.trim();
+          if (!parenBreak || curFld.startsWith("(")) {
+            int pt = curFld.indexOf(breakChar);
+            if (pt >= 0) {
+              curTag = curFld.substring(iStartKey, pt).trim();
+              if (ignoreCase) curTag = curTag.toUpperCase();
+              curVal = curFld.substring(pt+1);
+              if (!doNotTrim) curVal = curVal.trim();
+            }
           }
           
           // If this is an optional tagged step, take failure branch
