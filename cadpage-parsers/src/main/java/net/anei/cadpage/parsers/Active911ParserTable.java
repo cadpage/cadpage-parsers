@@ -326,6 +326,7 @@ public class Active911ParserTable {
       "US/GA/EmanuelCounty",              "GAEmanuelCounty",
       "US/GA/FanninCounty",               "GAFanninCounty",
       "US/GA/ForsythCounty",              "GAForsythCounty",
+      "US/GA/FranklinCounty",             "GAFranklinCounty",
       "US/GA/GordonCounty",               "GAGordonCounty",
       "US/GA/HabershamCounty",            "GAHabershamCounty",
       "US/GA/HallCounty",                 "GAHallCounty",
