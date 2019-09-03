@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ALMadisonCountyBParser extends FieldProgramParser {
 
-  ALMadisonCountyBParser() {
+  public ALMadisonCountyBParser() {
     this("MADISON COUNTY", "AL");
   }
 
