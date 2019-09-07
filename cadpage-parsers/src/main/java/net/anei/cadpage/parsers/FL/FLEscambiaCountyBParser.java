@@ -24,7 +24,7 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     if (!body.startsWith("Escambia County Public Safety: ")) return false;
     body = body.substring(31).trim();
-    body = stripFieldEnd(body, " Text STOP to opt out");
+    body = stripFieldEnd(body, "Text STOP to opt out");
     if (body.startsWith("*"))  body = ' ' + body;
     if (!parseFields(body.split(" \\*"), data)) return false;
     String call = CALL_TABLE.getCodeDescription(data.strCode);
