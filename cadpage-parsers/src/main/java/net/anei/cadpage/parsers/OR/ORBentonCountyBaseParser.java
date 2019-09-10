@@ -146,7 +146,6 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       return address;
     }
     
-    address = address.replace("24671 STOVALL LN", "24617 STOVALL LN");
     if (apt.length() == 0) {
       Matcher match = STREET_APT_PTN.matcher(address);
       if (match.matches()) {
@@ -154,6 +153,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
         apt = match.group(2);
       }
     }
+    address = address.replace("24671 STOVALL LN", "24617 STOVALL LN");
     if (apt.length() > 0) {
       apt = apt.toUpperCase();
       if (apt.startsWith("LOT")) apt = apt.substring(3).trim();
