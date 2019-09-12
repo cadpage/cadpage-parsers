@@ -33,6 +33,15 @@ public class KYEdmonsonCountyParser extends DispatchA65Parser {
       "SWEEDEN",
       "WINDYVILLE",
       
+      //  Barren County
+      "PARK CITY",
+      
+      // Butler County
+      "BUTLER CO",
+      
+      // Hart County
+      "CUB RUN",
+      
       // Warren County
       "BOWLING GREEN",
       "OAKLAND",
