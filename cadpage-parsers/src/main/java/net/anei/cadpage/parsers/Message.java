@@ -502,11 +502,7 @@ public class Message {
     int spt = 0;
     boolean extFrom = false;
     while (true) {
-      while (spt < body.length()) {
-        char chr = body.charAt(spt);
-        if (chr != ' ' && chr != '\t') break;
-        spt++;
-      }
+      while (spt < body.length() && Character.isWhitespace(body.charAt(spt))) spt++;
       int ept = spt;
       while (ept < body.length() && body.charAt(ept) != '\n') ept++;
       if (ept == body.length()) break;

@@ -41,7 +41,7 @@ public class NYSuffolkCountyHParser extends FieldProgramParser {
     
     // New line break delimited format
     String[] flds = body.split("\n");
-    if (flds.length >= 5) {
+    if (flds.length >= 4) {
       if (!parseFields(flds, data)) return false;
     }
     
@@ -72,7 +72,7 @@ public class NYSuffolkCountyHParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_PTN = Pattern.compile("([A-Z]{2}) +(.*)");
+  private static final Pattern ADDR_PTN = Pattern.compile("([A-Z]{2,3}) +(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -89,10 +89,13 @@ public class NYSuffolkCountyHParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AM", "AMAGANSETT",
-      "EH", "EAST HAMPTON",
-      "MO", "MONTAUK",
-      "SP", "SPRINGS AMGANSETT"
+      "AM",  "AMAGANSETT",
+      "EH",  "EAST HAMPTON",
+      "EVH", "EAST HAMPTON",
+      "MO",  "MONTAUK",
+      "SH",  "SAG HARBOR",
+      "SHV", "SAG HARBOR",
+      "SP",  "SPRINGS AMGANSETT"
   });
   
   private static final String[] CITY_LIST = new String[]{
