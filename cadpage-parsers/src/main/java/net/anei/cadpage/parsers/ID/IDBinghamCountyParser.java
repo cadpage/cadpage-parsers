@@ -6,13 +6,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class IDBinghamCountyParser extends FieldProgramParser {
   
   public IDBinghamCountyParser() {
-    super("BINGHAM COUNTY", "ID", 
+    this("BINGHAM COUNTY", "ID");
+  }
+  
+  public IDBinghamCountyParser(String defCity, String defState) {
+    super(defCity, defState, 
           "ID:ID! CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! LAT:GPS1! LONG:GPS2! PRI:PRI! DATE:DATE! TIME:TIME! INFO:INFO! INFO/N+ UNIT:UNIT!");
   }
   
   @Override
   public String getFilter() {
     return "cad@co.bingham.id.us";
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "IDBinghamCounty";
   }
   
   @Override

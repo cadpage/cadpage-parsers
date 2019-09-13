@@ -403,6 +403,7 @@ public class ParserList {
               ,"IDBinghamCounty"                ,"BinghamCounty, ID"
               ,"IDBlaineCounty"                 ,"Blaine County, ID"
               ,"IDBonnerCounty"                 ,"Bonner County, ID"
+              ,"IDFremontCounty"                ,"Fremont County, ID"
               ,"IDGoodingCounty"                ,"Gooding County, ID"
               ,"IDJeromeCounty"                 ,"Jerome County, ID"
               ,"IDKootenaiCounty"               ,"Kootenai County, ID"
