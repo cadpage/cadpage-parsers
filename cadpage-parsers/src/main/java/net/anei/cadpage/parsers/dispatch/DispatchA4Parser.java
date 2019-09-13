@@ -19,7 +19,7 @@ public class DispatchA4Parser extends FieldProgramParser {
     super(defCity, defState,
           "( SELECT/NEW CALL ADDR! APT | " + 
           (version == 2 ? "CALL! EMPTY! CITY! ADDR/SP! Apt:APT! Cross_Streets:X"
-                        : "CALL! ADDR1! Apt:APT! CITY! GPS? PLACE Cross_Streets:X") + " ) ");
+                        : "CALL! ADDR1! Apt:APT! CITY GPS? PLACE Cross_Streets:X") + " ) ");
   }
 
   @Override
