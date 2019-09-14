@@ -14,7 +14,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
-           "FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO/Z+? NAME PH");
+          "( CANCEL ADDR! CITY? XPLACE+ " +
+          "| FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO/Z+? ( NAME PH | MAP_CH_UNIT MAP_CH_UNIT+? ) )");
     setupSpecialStreets("NEW ST");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
@@ -26,13 +27,21 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean noParseSubjectFollow() { return true; }
+    };
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     boolean ok = body.startsWith("CAD:");
     if (!ok) body = "CAD:" + body;
+    if (subject.equals("Cleveland FD")) {
+      data.expectMore = true;
+      body = body.replace('\n', ';');
+    }
+    body = body.replace("SECOND DISPATCH/", "SECOND DISPATCH;");
+    body = body.replace("WORKING FIRE/", "WORKING FIRE;");
     if (!super.parseMsg(body, data)) return false;
     
     // If we didn't have the CAD: prefix and don't have a city, this is just
@@ -40,7 +49,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     if (!ok && data.strCity.length() == 0) return false;
     
     // If the Apt looks like an NCDavidsonCountyA city code, reject
-    if (data.strApt.length() > 0 && NCDavidsonCountyAParser.isCityCode(data.strApt)) return false;
+    if (data.strPlace.length() == 0 && data.strApt.length() > 0 && NCDavidsonCountyAParser.isCityCode(data.strApt)) return false;
     
     if (data.strCity.equals("OUT OF COUNTY")) {
       data.defCity = "";
@@ -57,6 +66,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   @Override
   protected Field getField(String name) {
+    if (name.equals("CANCEL")) return new BaseCancelField("COMMND STFF NOTFID\\b.*|CONFIRMED DOA|CPR IN PROGRESS|DUPLICATE PAGE|OFF DUTY PERSONNEL NOTIFY|.*\\bRADIO ACTIVATED|SECOND DISPATCH");
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
@@ -67,11 +77,11 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
   
-  private static final Pattern BAD_CALL_PTN = Pattern.compile("[^ ]/[^ ]+/[^ ]|^[A-Z]\\d+[A-Z]?-");
+  private static final Pattern BAD_CALL_PTN = Pattern.compile("[^\\(]*[^ ]/[^ ]+/[^ ].*|[A-Z]\\d+[A-Z]?-.*");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      if (BAD_CALL_PTN.matcher(field).find()) abort();
+      if (BAD_CALL_PTN.matcher(field).matches()) abort();
       super.parse(field, data);
     }
   }
@@ -365,6 +375,9 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       "CON",  "CONCORD",
       "CONC", "CONCORD",
       "MP",   "MT PLEASANT",
+      
+      // Iredell County, NC
+      "STA",  "STATESVILLE",
       
       // Out of County
       "OOC",  "OUT OF COUNTY"
