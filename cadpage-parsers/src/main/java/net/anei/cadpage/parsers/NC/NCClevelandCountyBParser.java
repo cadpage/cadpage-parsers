@@ -13,11 +13,16 @@ public class NCClevelandCountyBParser extends DispatchOSSIParser {
   public String getFilter() {
     return "CAD@cityofshelby.com";
   }
-  
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Text Message")) return false;
+  protected boolean parseMsg(String body, Data data) {
+    
+    // Reject NCClevelandCountyA alerts
+    if (!body.contains(";")) return false;
+
+
     return super.parseMsg(body, data);
   }
-
+  
+  
 }

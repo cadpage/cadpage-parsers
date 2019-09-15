@@ -934,7 +934,7 @@ public class Active911ParserTable {
       "US/NC/CherokeeDispatch",           "NCCherokeeCounty",
       "US/NC/CityofLumberton",            "NCLumberton",
       "US/NC/CityofRockyMount",           "NCRockyMount",
-      "US/NC/CityofShelby",               "NCClevelandCountyB",
+      "US/NC/CityofShelby",               "NCClevelandCounty",
       "US/NC/CityofThomasville",          "NCDavidsonCountyA",
       "US/NC/ClayCounty",                 "NCClayCounty",
       "US/NC/ClevelandCounty",            "NCClevelandCountyA",

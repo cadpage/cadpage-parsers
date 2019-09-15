@@ -32,7 +32,14 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("Text Message")) return false;
+    
+    // Reject NCClevelandCountyB messages
+    if (subject.length() > 0) {
+      if (subject.equals("Text Message")) return false;
+      if (!body.startsWith("CAD:")) return false;
+      if (body.substring(4).startsWith(subject)) return false;
+    }
+    
     body = fixBody(body);
     bracket = false;
     bracketTrigger = null;
@@ -225,6 +232,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "AST/EMS",
       "BACK PAI",
       "C/R/ARRE",
+      "CM/HAZMA",
       "CHEST PA",
       "CHOKING",
       "DEATH",
@@ -232,9 +240,11 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "DIF BREA",
       "DIR TRAF",
       "DISPUTE",
+      "DISTURB",
       "DOCAPPT",
       "ELECTROC",
       "EM/TRANS",
+      "EMD",
       "FALL",
       "FIRE ALA",
       "FIRE PD",
@@ -252,7 +262,9 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "FIRE/TRA",
       "FIRE/VEH",
       "FIRE/WG",
+      "FIRE/INVESTIGATION",
       "FIRE/MISCELLANEOUS",
+      "FIRE/MOBILE HOME",
       "FIRE/VEHICLE",
       "FIRE/WOODS/GRASS",
       "FIREAPT",
@@ -261,12 +273,14 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "HEAT/COL",
       "HEM/LAC",
       "INVESTIG",
+      "MISS PER",
       "OT MED",
       "OT25",
       "OVERDOSE",
       "PREGNANC",
       "PSYC PBM",
       "R/TRANS",
+      "REC PROP",
       "REFUSED-NOISE",
       "SEIZURES",
       "SHOOT",
@@ -279,7 +293,8 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "TRESPASS",
       "UNCONSCI",
       "UNDER CONTROL",
-      "UNK MED"
+      "UNK MED",
+      "WEL CHK"
   }));
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
