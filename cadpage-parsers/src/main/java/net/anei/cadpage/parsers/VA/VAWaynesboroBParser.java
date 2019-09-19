@@ -11,9 +11,8 @@ public class VAWaynesboroBParser extends DispatchOSSIParser {
   
   public VAWaynesboroBParser() {
     super(CITY_CODES, "WAYNESBORO", "VA",
-          "( CANCEL ADDR CITY " +  
+          "( CANCEL ADDR CITY? WAYNDIST:SKIP? " +  
           "| FYI CALL ADDR! X_PLACE+? CITY " + 
-          "| UNIT_CALL ADDR CITY? WAYNDIST:SKIP? " +
           ") INFO/N+");
   }
   
@@ -34,7 +33,6 @@ public class VAWaynesboroBParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("UNIT_CALL")) return new MyUnitCallField();
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
     return super.getField(name);
   }
@@ -53,23 +51,6 @@ public class VAWaynesboroBParser extends DispatchOSSIParser {
       data.strApt = append(apt, "-", data.strApt);
     }
     
-  }
-  
-  private static final Pattern UNIT_CALL_PTN = Pattern.compile("\\{([A-Z0-9]+)\\} *(.*)");
-  private class MyUnitCallField extends Field {
-
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = UNIT_CALL_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strUnit = match.group(1);
-      data.strCall = match.group(2);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "UNIT CALL";
-    }
   }
   
   private class MyCrossPlaceField extends Field {

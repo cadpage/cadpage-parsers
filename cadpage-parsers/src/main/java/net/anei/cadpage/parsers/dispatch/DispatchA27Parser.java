@@ -36,7 +36,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! TIMES+ ) Unit(s)_responded:UNIT+");
+          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+ ) Unit(s)_responded:UNIT+");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
   
@@ -60,9 +60,10 @@ public class DispatchA27Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
       if (name.equals("ADDRCITY")) return new BaseAddressField();
-      if (name.equals("DUP")) return new DuplField();
-      if (name.equals("SRC")) return new BaseSrcField();
+      if (name.equals("DUP")) return new BaseDuplField();
       if (name.equals("MASH")) return new BaseMashField();
+      if (name.equals("SRC")) return new BaseSrcField();
+      if (name.equals("ID")) return new BaseIdField();
       if (name.equals("TIMES")) return new BaseTimesField();
       if (name.equals("UNIT")) return new BaseUnitField();
     return super.getField(name);
@@ -94,7 +95,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
 
-  private class DuplField extends SkipField {
+  private class BaseDuplField extends SkipField {
     
     @Override
     public boolean canFail() {
@@ -202,7 +203,15 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern TIMES_PTN = Pattern.compile("([ \\w]+): (\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private class BaseIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCallId.length() > 0) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern TIMES_PTN = Pattern.compile("([ \\w]+): (\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)|Dispo");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseTimesField extends InfoField {
     @Override
@@ -226,8 +235,14 @@ public class DispatchA27Parser extends FieldProgramParser {
               data.msgType = MsgType.RUN_REPORT;
             }
           }
+          times = append(times, "\n", line);
+        } else if (line.startsWith("Disposition:")) {
+          times = append(times, "\n", line);
+        } else if (line.startsWith("CPN:")) {
+            data.strPlace = append(data.strPlace, " - ", line.substring(4).trim());
+        } else {
+          data.strSupp = append(data.strSupp, "\n", line);
         }
-        times = append(times, "\n", line);
       }
     }
     
@@ -258,6 +273,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   private void parseUnitField(boolean runReport, String field, Data data) {
     
     // Break field up into \n delimited tokens
+    String info = "";
     for (String token : field.split("\n")) {
       token = token.trim();
       if (token.length() == 0) continue;
@@ -266,8 +282,8 @@ public class DispatchA27Parser extends FieldProgramParser {
       // Check for tokens that force a mode switch
       if (token.equals("Incident Time:")) {
         if (unitMode == UnitMode.INFO) {
-          data.strPlace = append(data.strPlace, " - ", data.strSupp);
-          data.strSupp = "";
+          data.strPlace = append(data.strPlace, " - ", info);
+          info = "";
         }
         times = token;
         data.msgType = MsgType.RUN_REPORT;
@@ -278,8 +294,8 @@ public class DispatchA27Parser extends FieldProgramParser {
       Matcher match = GPS_PTN.matcher(token);
       if (match.lookingAt()) {
         if (unitMode == UnitMode.INFO) {
-          data.strPlace = append(data.strPlace, " - ", data.strSupp);
-          data.strSupp = "";
+          data.strPlace = append(data.strPlace, " - ", info);
+          info = "";
         }
 
         gps = match.group(1);
@@ -347,10 +363,11 @@ public class DispatchA27Parser extends FieldProgramParser {
         if (token.startsWith("CPN:")) {
           data.strPlace = append(data.strPlace, " - ", token.substring(4).trim());
         } else if (!token.equals(".")) {
-          data.strSupp = append(data.strSupp, "\n", token);
+          info = append(info, "\n", token);
         }
       }
     }
+    data.strSupp = append(data.strSupp, "\n", info);
   }
   private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?"); 
   private static final Pattern GPS_TRAIL_PTN = Pattern.compile(" *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b");

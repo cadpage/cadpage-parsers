@@ -236,7 +236,6 @@ public class DispatchOSSIParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      String unit = null;
       Matcher match = UNIT_PFX_PTN.matcher(field);
       if (match.matches()) {
         data.strUnit = match.group(1);
@@ -248,7 +247,6 @@ public class DispatchOSSIParser extends FieldProgramParser {
         if (extraPattern == null) return false;
         if (!extraPattern.matcher(field).matches()) return false;
       }
-      if (unit != null) data.strUnit = unit;
       data.strCall = field;
       return true;
     }

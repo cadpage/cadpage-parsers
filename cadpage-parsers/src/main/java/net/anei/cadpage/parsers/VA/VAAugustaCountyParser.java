@@ -44,6 +44,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
         !subject.equals("Text Message") &&
         !subject.equals("%Text Message%") &&
         !subject.equals("%Augusta 911%")) return false;
+    if (body.startsWith("CAD:CANCEL;")) return false;
     
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();

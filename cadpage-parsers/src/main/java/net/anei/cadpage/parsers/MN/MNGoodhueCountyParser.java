@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 /**
@@ -21,4 +22,12 @@ public class MNGoodhueCountyParser extends DispatchA27Parser {
   public int getMapFlags() {
     return MAP_FLG_SUPPR_CR;
   }
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n\nNOTICE:");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(subject, body, data);
+  }
+  
 }

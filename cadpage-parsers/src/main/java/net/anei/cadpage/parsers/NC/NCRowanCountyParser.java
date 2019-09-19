@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +17,10 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
           "( CANCEL ADDR! CITY? XPLACE+ " +
-          "| FYI? CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) XPLACE+? ( INFO | MAP_CH_UNIT MAP_CH_UNIT+? ) INFO/Z+? ( NAME PH | MAP_CH_UNIT MAP_CH_UNIT+? ) )");
+          "| FYI? ( ADDR/Z CITY! " +
+                 "| ( ADDR | CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
+                 ") XPLACE+? INFO/N INFO/NZ+? NAME PH " + 
+          ")");
     setupSpecialStreets("NEW ST");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
@@ -31,6 +36,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       @Override public boolean noParseSubjectFollow() { return true; }
     };
   }
+  
+  private static Set<String> unitSet = new HashSet<>();
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,6 +49,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     }
     body = body.replace("SECOND DISPATCH/", "SECOND DISPATCH;");
     body = body.replace("WORKING FIRE/", "WORKING FIRE;");
+    unitSet.clear();
+    lastIdField = false;
     if (!super.parseMsg(body, data)) return false;
     
     // If we didn't have the CAD: prefix and don't have a city, this is just
@@ -50,6 +59,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     
     // If the Apt looks like an NCDavidsonCountyA city code, reject
     if (data.strPlace.length() == 0 && data.strApt.length() > 0 && NCDavidsonCountyAParser.isCityCode(data.strApt)) return false;
+    if (data.strApt.equals("CSI")) return false;
     
     if (data.strCity.equals("OUT OF COUNTY")) {
       data.defCity = "";
@@ -67,11 +77,11 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("CANCEL")) return new BaseCancelField("COMMND STFF NOTFID\\b.*|CONFIRMED DOA|CPR IN PROGRESS|DUPLICATE PAGE|OFF DUTY PERSONNEL NOTIFY|.*\\bRADIO ACTIVATED|SECOND DISPATCH");
+    if (name.equals("CALL_PAGE")) return new CallField("PAGE / CALL .*", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("XPLACE")) return new MyCrossPlaceField();
-    if (name.equals("MAP_CH_UNIT")) return new MyMapChannelUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("PH")) return new PhoneField("\\d{10}", true);
     return super.getField(name);
@@ -98,7 +108,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
         
         // Cities that look like directions is a feature of Davidson County alerts
         if (BAD_CITY_PTN.matcher(data.strCity).find()) abort();
-        if (isValidAddress(data.strCity)) abort();
+        if (isValidCrossStreet(data.strCity)) abort();
         if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
       }
       if (field.endsWith(" DR DR") || field.endsWith(" RD RD")) {
@@ -171,7 +181,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       Matcher match = CODE_DESC_PTN.matcher(field);
       if (match.matches()) {
         data.strCode = match.group(1);
-        data.strSupp = match.group(2);
+        data.strSupp = append(data.strSupp, "\n", match.group(2));
         return;
       }
       
@@ -197,68 +207,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     
     @Override
     public String getFieldNames() {
-      return "CODE INFO " + super.getFieldNames() + " X PHONE";
-    }
-  }
-  
-  private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
-  private static final Pattern CHANNEL_PTN = Pattern.compile("OPS.*");
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
-  private static final Pattern ID_PTN = Pattern.compile("\\d{8}");
-  private class MyMapChannelUnitField extends Field {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (data.strMap.length() == 0) {
-        Matcher match = MAP_PTN.matcher(field);
-        if (match.matches()) {
-          data.strMap = field;
-          return true;
-        }
-      }
-      
-      if (data.strChannel.length() == 0) {
-        Matcher match = CHANNEL_PTN.matcher(field);
-        if (match.matches()) {
-          data.strChannel = field;
-          return true;
-        }
-      }
-      
-      if (data.strUnit.length() == 0) {
-        Matcher match = UNIT_PTN.matcher(field);
-        if (match.matches()) {
-          data.strUnit = field;
-          return true;
-        }
-      }
-      
-      if (ID_PTN.matcher(field).matches()) {
-        data.strCallId = field;
-        return true;
-      }
-      
-      if (field.startsWith("**")) {
-        data.strSupp = field;
-        return true;
-      }
-      
-      return false;
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "MAP CH UNIT ID INFO";
+      return "CODE INFO? " + super.getFieldNames() + " X PHONE";
     }
   }
   
@@ -278,7 +227,11 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       }
       
       else {
-        processPart(field, data);
+        if (data.strCall.length() == 0 || data.strCall.startsWith("PAGE / CALL")) {
+          data.strCall = field;
+        } else {
+          processPart(field, data);
+        }
       }
     }
 
@@ -300,20 +253,27 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       if (apt) {
         if (!part.equals(data.strApt)) data.strApt = append(data.strApt, "-", part);
       }
-      else if (!part.equals(data.strPlace)) {
+      else if (!data.strPlace.endsWith(part)) {
         data.strPlace = append(data.strPlace, " - ", part);
       }
     }
     
     @Override
     public String getFieldNames() {
-      return "PLACE APT";
+      return "PLACE? APT";
     }
   }
   
-  private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b|\\bLOCATED\\b).*");
+  private boolean lastIdField = false;
+  
+  private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
+  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{8,9}");
+  private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bACTIVATION\\b|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b - |\\bLOCATED\\b|\\bUDTS:|\\bREF\\b|\\bREFERENCE\\b|\\bREQUESTING\\b).*");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("Radio Channel: *(.*)");
+  private static final Pattern SHORT_PLACE_PTN = Pattern.compile("[- A-Z0-9()#&`']{1,40}");
   private class MyInfoField extends InfoField {
+    
     @Override
     public boolean canFail() {
       return true;
@@ -321,26 +281,95 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (field.contains("(S)")) return false;
-      if (!field.contains(" ")) return false;
-      if (field.length() < 50 && !OPT_INFO_PTN.matcher(field).matches()) return false;
-      parse(field, data);
+      return checkParse(field, data, false);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      checkParse(field, data, true);
+    }
+    
+    private boolean checkParse(String field, Data data, boolean force) {
+      
+      if (field.length() == 0) {
+        lastIdField = false;
+        return force;
+      }
+      
+      if (field.startsWith("{FROM ") || field.startsWith("{Call created") || 
+          field.equals("}") || field.startsWith("Event spawned")) {
+        lastIdField = false;
+        return true;
+      }
+      
+      if (ID_PTN.matcher(field).matches()) {
+        if (data.strCallId.length() == 0) data.strCallId = field;
+        lastIdField = true;
+        return true;
+      }
+      boolean setPlace = lastIdField;
+      lastIdField = false;
+      
+      if (data.strMap.length() == 0) {
+        Matcher match = MAP_PTN.matcher(field);
+        if (match.matches()) {
+          data.strMap = field;
+          return true;
+        }
+      }
+      
+      Matcher match = UNIT_PTN.matcher(field);
+      if (match.matches()) {
+        addUnit(field, data);
+        return true;
+      }
+      
+      if (field.startsWith("**")) {
+        data.strSupp = append(data.strSupp, "\n", field);
+        return true;
+      }
+
+      if (! force) {
+        if (field.contains("(S)")) return false;
+        if (!field.contains(" ")) return false;
+        if (field.length() < 50 && !OPT_INFO_PTN.matcher(field).matches()) return false;
+      }
+      
+      match = INFO_CHANNEL_PTN.matcher(field);
+      if (match.matches()) {
+        addUnit(match.group(1), data);
+        return true;
+      }
+      
+      if (data.strCall.length() == 0 || data.strCall.startsWith("PAGE / CALL ")) {
+        data.strCall = field;
+        return true;
+      }
+      
+      if (setPlace && SHORT_PLACE_PTN.matcher(field).matches()) {
+        data.strPlace = append(data.strPlace, " - ", field);
+      } else {
+        super.parse(field, data);
+      }
       return true;
     }
     
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = INFO_CHANNEL_PTN.matcher(field);
-      if (match.matches()) {
-        data.strChannel = match.group(1);
-        return;
+    private void addUnit(String field, Data data) {
+      for (String unit : field.split(",")) {
+        unit = unit.trim();
+        if (unit.length() == 0) continue;
+        if (!unitSet.add(unit)) continue;
+        if (unit.startsWith("OPS")) {
+          data.strChannel = append(data.strChannel, ",", unit);
+        } else {
+          data.strUnit = append(data.strUnit, ",", unit);
+        }
       }
-      super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CH";
+      return "CALL? MAP CH UNIT ID PLACE INFO";
     }
   }
   

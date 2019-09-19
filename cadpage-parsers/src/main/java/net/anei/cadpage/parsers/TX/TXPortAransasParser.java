@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class TXPortAransasParser extends DispatchA27Parser {
   
   public TXPortAransasParser() {
-    super("PORT ARANSAS", "TX", "\\d{8}");
+    super("PORT ARANSAS", "TX", "\\d{8}|PAEMS");
   }
   
   @Override

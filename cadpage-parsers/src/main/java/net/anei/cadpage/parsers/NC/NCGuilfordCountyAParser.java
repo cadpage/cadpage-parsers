@@ -23,7 +23,7 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
   
   protected NCGuilfordCountyAParser(String defCity, String defState) {
     super(defCity, defState,
-          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? Radio_Channel:CH? XINFO+? GPS1 GPS2 )");
+          "FYI? ID? ( CALL PRI ADDR EXTRA? X/Z+? UNIT INFO/N+ | ( CALL2 ADDR! | PRI/Z MUTUAL ADDR! | ( SRC SRC PRI | PRI? ) CODE? CALL ADDR! ) CODE? CITY? ( PLACE ID | ID? ) EXTRA? ( X X? | PLACE X X? | ) CODE? CITY? ( PRI UNIT? SRC SRC | ) XINFO+? UNIT CITY? Radio_Channel:CH? XINFO+? GPS1 GPS2 )");
   }
   
   @Override
@@ -56,11 +56,16 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
     body = body.replace("\\40", " ");
     if (!super.parseMsg(body, data)) return false;
     
+    // More logic to reject NCRowanCounty calls
+    if (data.strCallId.startsWith("704") ||
+        data.strCallId.startsWith("864")) return false;
+    
     // If out of county mutual aid call, cancel the default county
     if (data.strSource.startsWith("ALCO")) data.strCity = "ALAMANCE COUNTY";
     else if (data.strCall.equals("MUTUAL")) data.defCity = "";
     pt = data.strCity.indexOf(" / ");
     if (pt >= 0) data.strCity = data.strCity.substring(0,pt);
+    
     return true;
   }
 
@@ -270,7 +275,7 @@ public class NCGuilfordCountyAParser extends DispatchOSSIParser {
       } else if (data.strCall.length() == 0) {
         data.strCall = field;
       } else {
-        data.strSupp = append(data.strSupp, " / ", field);
+        data.strSupp = append(data.strSupp, "\n", field);
       }
     }
     
