@@ -7,5 +7,10 @@ public class KYMartinCountyParser extends DispatchA71Parser {
   public KYMartinCountyParser() {
     super("MARTIN COUNTY", "KY");
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
 }
