@@ -18,7 +18,7 @@ public class IDGoodingCountyBParser extends DispatchA22Parser {
   
   @Override
   public String getFilter() {
-    return "PagingService@sircomm.com,Paging@sircomm.com";
+    return "PagingService@sircomm.com,Paging@sircomm.com,cad@sircomm.com";
   }
 
   @Override
