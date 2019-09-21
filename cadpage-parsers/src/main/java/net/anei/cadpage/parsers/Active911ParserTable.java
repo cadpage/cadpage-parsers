@@ -1506,7 +1506,7 @@ public class Active911ParserTable {
       "US/TX/BellCounty",                 "TXBellCounty",
       "US/TX/BexarCounty",                "TXBexarCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
-      "US/TX/Burleson",                   "TXJohnsonCountyA",
+      "US/TX/Burleson",                   "TXJohnsonCountyA,TXBurlesonCounty",
       "US/TX/BurnetCounty",               "TXBurnetCounty",
       "US/TX/Carrollton",                 "TXCarrollton",
       "US/TX/CityofBryan",                "TXBrazosCounty",
