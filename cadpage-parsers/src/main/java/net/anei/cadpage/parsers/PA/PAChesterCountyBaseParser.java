@@ -479,6 +479,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "THORNB", "THORNBURY TWP",
       "TREDY",  "TREDYFFRIN TWP",
       "TREDYF", "TREDYFFRIN TWP",
+      "UPRO",   "UPPER PROVIDENCE TWP",
       "UPPPRO", "UPPER PROVIDENCE TWP",
       "UPROXF", "UPPER OXFORD TWP",
       "UPUWCH", "UPPER UWCHLAN TWP",
