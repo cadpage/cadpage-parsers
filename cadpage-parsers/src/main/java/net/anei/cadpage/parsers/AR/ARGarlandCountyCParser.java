@@ -10,6 +10,6 @@ public class ARGarlandCountyCParser extends DispatchA46Parser {
 
   @Override
   public String getFilter() {
-    return "24111-d2Ms@alert.active911.com,hotsprings@pagingpts.com>";
+    return "hotsprings@pagingpts.com>";
   }
 }

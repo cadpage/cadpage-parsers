@@ -32,6 +32,7 @@ public class DispatchA46Parser extends SmartAddressParser {
   private static Pattern ADDR_PTN2A = Pattern.compile("([^,]*),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static Pattern ADDR_PTN3 = Pattern.compile("(.*?)[, ]+#?(\\d{2}-\\d+)(\\*.*)");
+  private static Pattern INFO_HEAD_PTN = Pattern.compile(".*?\\b\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d [AP]M: *(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,7 +43,7 @@ public class DispatchA46Parser extends SmartAddressParser {
     String info = "";
     int pt = body.indexOf('\n');
     if (pt >= 0) {
-      info = body.substring(pt+1).trim().replaceAll("\n\n+", "\n");
+      info = body.substring(pt+1).trim();
       body = body.substring(0,pt).trim();
     }
 
@@ -159,7 +160,14 @@ public class DispatchA46Parser extends SmartAddressParser {
           data.strCall = call;
         }
       }
-      data.strSupp = append(data.strSupp, "\n", info);
+      
+      for (String line : info.split("\n+")) {
+        line = line.trim();
+        Matcher match = INFO_HEAD_PTN.matcher(line);
+        if (match.matches()) line = match.group(1);
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+      
       return true;
     }
     
