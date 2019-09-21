@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,11 +122,12 @@ public class DispatchA33Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseDateTimeField extends DateTimeField {
     private int type;
     
     public BaseDateTimeField(int type) {
-      super("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d|", true);
       this.type = type;
     }
     
@@ -133,8 +136,17 @@ public class DispatchA33Parser extends FieldProgramParser {
       String line = getRelativeField(0);
       times = append(times, "\n", line);
       if (field.length() == 0) return;
+      
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
       if (type == 1) {
-        super.parse(field, data);
+        data.strDate = match.group(1);
+        String time = match.group(2);
+        if (time.endsWith("M")) {
+          setTime(TIME_FMT, time, data);
+        } else {
+          data.strTime = time;
+        }
       } else if (type == 3) {
         data.msgType = MsgType.RUN_REPORT;
       }
