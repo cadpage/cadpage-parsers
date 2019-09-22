@@ -15,7 +15,7 @@ public class ALColbertCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "colbertcoal@911email.net,e-alerts@colbert911.org";
+    return "colbertcoal@911email.net,e-alerts@colbert911.org,DISPATCH";
   }
 
   @Override
