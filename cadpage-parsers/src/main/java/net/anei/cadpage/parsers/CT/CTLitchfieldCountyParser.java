@@ -77,6 +77,7 @@ public class CTLitchfieldCountyParser extends GroupBestParser {
     "WINCHESTER",
     "WINSTED",
     "WOODBURY",
+    "WOLCOTT",
     
     "GRANVILLE MA",
     "NEW MARLBORO MA",

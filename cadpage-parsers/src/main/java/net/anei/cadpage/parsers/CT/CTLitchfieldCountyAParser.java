@@ -4,15 +4,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
-public class CTLitchfieldCountyAParser extends SmartAddressParser {
+public class CTLitchfieldCountyAParser extends FieldProgramParser {
   
   
   public CTLitchfieldCountyAParser() {
-    super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT");
+    super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT", 
+          "ADDR ADDR_EXT? ( SELECT/1 PLACE ( EMPTY PLACE | CITY PLACE | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ID? GPS1 GPS2 ID X1 APT1 " +
+                         "| CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
+                         ") END");
     addExtendedDirections();
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupProtectedNames(PROTECTED_STREET_LIST);
@@ -23,6 +26,11 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
   @Override
   public String getFilter() {
     return "@everbridge.net,@lcd911.com,89361";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
   
   private static final Pattern HTML_MASK_PTN = Pattern.compile("\n +<p>(.*)</p>\n");
@@ -37,10 +45,10 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     return parseMsg(subject, body, data);
   }
 
-  private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO (.*?)(?:,|,? (\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|)) *(?::|--| -)(\\d\\d:\\d\\d)(?:(?: ([A-Z]\\d{2}-\\d+)|\\*\\*), *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))| *\\(.*\\))?");
-  private static final Pattern MISMATCH_PAREN_PTN = Pattern.compile("[^\\(\\)]*\\).*");
+  private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO +(.*?)(?::|--| -)(\\d\\d:\\d\\d)\\b\\**(.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(.*) RESPOND TO +(.*)");
   
-  private static final Pattern MASTER2 = Pattern.compile("(.+?)-(?!Dwelling)(.+)-(.*?) *\\*\\*\\* (\\d\\d:\\d\\d)---");
+  private static final Pattern MASTER3 = Pattern.compile("(.+?)-(?!Dwelling)(.+)-(.*?) *\\*\\*\\* (\\d\\d:\\d\\d)---");
   private static final Pattern MAU_HILL = Pattern.compile("^(.*) MAUWEEHOO H(?:IL)?L (.*)$");
   private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
   
@@ -50,46 +58,184 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     body = body.replace('\n', ' ');
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("SRC ADDR X PLACE APT CITY ST CALL CODE TIME ID GPS");
+      setSelectValue("1");
       data.strSource = match.group(1).trim();
-      String sAddr = match.group(2).trim();
-      data.strCode = getOptGroup(match.group(3));
-      data.strTime = match.group(4);
-      data.strCallId = getOptGroup(match.group(5));
-      String gps = match.group(6);
-      if (gps != null) setGPSLoc(gps, data);
-      
-      Parser p = new Parser(sAddr);
-      data.strCall = p.getLast(", ");
-      while (MISMATCH_PAREN_PTN.matcher(data.strCall).matches()) {
-        String tmp = p.getLast(", ");
-        if (tmp.length() == 0) return false;
-        data.strCall = tmp + ", " + data.strCall;
-      }
-      data.strPlace = p.getLast(", ");
-      sAddr = p.get();
-      if (sAddr.length() == 0) return false;
-      parseAddressField(sAddr, data);
-      return true;
+      if (parseBody(match.group(2) + ',' + match.group(3) + ',' + match.group(4).replace(" CROSS STREET ", ", CS= "), data)) return true;;
     }
     
-    match = MASTER2.matcher(body);
-    if (match.matches()) {
+    else if ((match = MASTER2.matcher(body)).matches()) {
+      setSelectValue("2");
+      data.strSource = match.group(1).trim();
+      if (parseBody(match.group(2), data)) return true;
+    }
+    
+    else if ((match = MASTER3.matcher(body)).matches()) {
       setFieldList("CALL ADDR X PLACE APT CITY ST PLACE TIME");
       
       data.strCall = match.group(1).trim();
       parseAddressField(match.group(2).trim(), data);
       data.strPlace = append(data.strPlace, " - ", match.group(3).trim());
       data.strTime = match.group(4);
-      
       return true;
     }
+    
     setFieldList("CALL INFO");
     data.msgType = MsgType.GEN_ALERT;
     data.strCall = subject;
     data.strSupp = body;
     return true;
   }
+
+  private boolean parseBody(String body, Data data) {
+    String info = null;
+    int pt = body.indexOf(" Hydrants:");
+    if (pt >= 0) {
+      info = body.substring(pt+10).trim();
+      body = body.substring(0,pt).trim();
+    }
+    if (parseFields(body.split(","), data)) {
+      if (info != null) data.strSupp = append(data.strSupp, "\n", info);
+      return true;
+    }
+    data.initialize(this);
+    return false;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram() + " INFO";
+  }
+  
+  private static final String CODE_PTN_STR = "\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|";
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR_EXT")) return new MyAddressExtField();
+    if (name.equals("PLACE"))  return new MyPlaceField();
+    if (name.equals("CALL_CODE")) return new MyCallCodeField();
+    if (name.equals("CODE")) return new CodeField(CODE_PTN_STR, true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("X1")) return new CrossField("CS= *(.*)", true);
+    if (name.equals("APT1")) return new AptField("Apt *(.*)", true);
+    return super.getField(name);
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      parseAddressField(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE? X? CITY ST";
+    }
+  }
+  
+  /**
+   * This field picks up the occasional framentary place/city combination
+   * that got seperatd from the address field because it contained an
+   * extraneous comma
+   */
+  private class MyAddressExtField extends CityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      int pt = field.indexOf("  ");
+      if (pt < 0) return false;
+      String place = field.substring(0,pt);
+      String city = field.substring(pt+2).trim();
+      if (!super.checkParse(city, data)) return false;
+      data.strPlace = append(data.strPlace, ", ", place);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE CITY";
+    }
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (ADDR_APT_PTN.matcher(field).matches()) {
+        data.strApt = append(data.strApt, "-", field);
+      } else if (!data.strPlace.contains(field)){
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
+    }
+  }
+  
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) (" + CODE_PTN_STR + ')');
+  private class MyCallCodeField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CALL_CODE_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCall = append(data.strCall, ", ", match.group(1).trim());
+        data.strCode = match.group(2);
+        return true;
+      }
+      
+      // Check to see if this is a call that does  not have a accompanying code
+      if (field.startsWith("W-")) {
+        data.strCall = append(data.strCall, ", ", field);
+        return true;
+      }
+      return false;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL CODE";
+    }
+  }
+  
+  private class MyIdField extends IdField {
+    public MyIdField() {
+      super("[A-Z]?\\d{2}-\\d+|", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}|0");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type, GPS_PTN, true);
+    }
+  }
+  
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}|[A-Z]");
 
   private void parseAddressField(String sAddr, Data data) {
     Matcher match;
@@ -99,12 +245,10 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     
     // There is a street called MAUWEEHOO HILL (or HL) that just confuses
     // the heck out of the smart parser so we will make some special checks for it
-    if (data.strPlace.length() == 0) {
-      match = MAU_HILL.matcher(data.strAddress);
-      if (match.find()) {
-        data.strAddress = match.group(1) + " MAUWEEHOO HILL";
-        sPlace = match.group(2);
-      }
+    match = MAU_HILL.matcher(data.strAddress);
+    if (match.find()) {
+      data.strAddress = match.group(1) + " MAUWEEHOO HILL";
+      sPlace = match.group(2);
     }
     
     // OK, there can be some strange things in the pad field
@@ -130,16 +274,15 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
     }
     
     // Now use the smart addresss parser to separate the place name from the cross street
-    String savePlace = data.strPlace;
-    data.strPlace = "";
-    Result res = parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_ANCHOR_END, chkCross);
+    Result res = parseAddress(StartType.START_OTHER, FLAG_ONLY_CROSS | FLAG_ANCHOR_END, chkCross);
     if (res.isValid()) {
       res.getData(data);
+      sPlace = res.getStart();
     } else {
-      data.strPlace = chkCross;
+      sPlace = chkCross;
     }
     
-    data.strPlace = stripFieldEnd(data.strPlace, "&");
+    sPlace = stripFieldEnd(sPlace, "&");
     
     // Append the extra paren info the the cross street if we found one
     // or to the place name if we did not
@@ -147,16 +290,23 @@ public class CTLitchfieldCountyAParser extends SmartAddressParser {
       if (data.strCross.length() > 0) {
         data.strCross = append(data.strCross, " ", extra);
       } else {
-        data.strPlace = append(data.strPlace, " ", extra);
+        sPlace = append(sPlace, " ", extra);
       }
     }
     
-    // If we had a place name before going into this logic, the field we
-    //  just parsed as a place should really be an apartment
-    if (savePlace.length() > 0) {
-      data.strApt = data.strPlace;
-      data.strPlace = savePlace;
+    // If the original address and cross street are both single streets, 
+    // combine them into an intersection
+    if (getStatus() == STATUS_STREET_NAME &&  res.getStatus() == STATUS_STREET_NAME) {
+      data.strAddress = data.strAddress + " & " + data.strCross;
+      data.strCross = "";
     }
+    
+    if (ADDR_APT_PTN.matcher(sPlace).matches()) {
+      data.strApt = append(data.strApt, "-", sPlace);
+    } else {
+      data.strPlace = sPlace;
+    }
+
     CTLitchfieldCountyParser.fixCity(data);
   }
   
