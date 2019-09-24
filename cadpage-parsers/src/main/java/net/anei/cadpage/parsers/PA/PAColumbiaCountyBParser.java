@@ -34,7 +34,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS (\\d{6}-\\d{1,3})");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS ([EF]?\\d{6}-\\d{1,3})");
   private static final Pattern RESPONDING_UNITS_PTN = Pattern.compile("Responding Unit\\(s\\):(?: +Units:)?");
   private static final Pattern BRK_PTN = Pattern.compile("\n|(?<!\n)(?=Disp Time:)");
   private static final Pattern NAME_CITY_PTN = Pattern.compile("(.*) 911");
