@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.OR;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -11,39 +13,110 @@ public class ORTillamookCountyParser extends SmartAddressParser {
   
   public ORTillamookCountyParser() {
     super(CITY_LIST, "TILLAMOOK COUNTY", "OR");
-    setFieldList("CALL ADDR APT PLACE CITY INFO");
+    setFieldList("UNIT CALL ADDR APT PLACE CITY GPS INFO");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
+        "ALDER COVE",
+        "BEULAH REED",
+        "BEAVER DAM",
         "BIG TROUT",
+        "CAPE KIWANDA BEACH ACCESS",
         "CAPE KIWANDA",
         "CAPE LOOKOUT",
         "CEDAR CREEK",
         "DORY POINTE",
         "EAST BEAVER CREEK",
+        "FALCON COVE",
+        "FALL CREEK",
+        "FARMER CREEK",
+        "GODS VALLEY",
+        "HAPPY CAMP",
+        "HERON VIEW",
+        "KILCHIS FOREST",
+        "KILCHIS RIVER",
+        "LIARS LAIR",
+        "LITTLE NESTUCCA RIVER",
+        "LONG PRAIRIE",
+        "MAROLF LOOP",
+        "MAXWELL MOUNTAIN",
+        "MCCORMICK LOOP",
         "MOON CREEK",
+        "MUESIAL CREEK",
+        "NEAHKAHNIE CREEK",
+        "NECARNEY CITY",
+        "NESKOWIN TRACE",
         "NESTUCCA RIDGE",
-        "WHISKEY CREEK"
+        "NESTUCCA RIVER",
+        "NETARTS BOAT BASIN",
+        "NETARTS BAY",
+        "PACIFIC OVERLOOK",
+        "PINE RIDGE",
+        "SLAB CREEK",
+        "SOLLIE SMITH",
+        "SOUTH BEACH",
+        "VISTA VIEW",
+        "WEE WILLIE",
+        "WEST END OF CRAB",
+        "WHEELER MOHLER",
+        "WHISKEY CREEK",
+        "WILSON RIVER"
     );
+    setupSpecialStreets("5TH STREET LOOP", "5TH STREET LP");
+    setupDoctorNames("SOANS");
+    addInvalidWords("IN", "_");
   }
   
   @Override
   public String getFilter() {
     return "5038122399@vzwpix.com";
   }
+  
+  private static final Pattern LEAD_UNIT_PTN = Pattern.compile("(?:\\d{2,4} )+");
+  private static final Pattern GPS_PTN = Pattern.compile(" *(?:LAT/LONG?|/)? *\\b([-+]?\\d{2,3}\\.\\d{5,})[,~ ]+([-+]?\\d{2,3}\\.\\d{5,})\\b *");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    body = body.replace('\n', ' ');
-    int pt = body.length();
-    while (true) {
-      parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_IGNORE_AT, body.substring(0,pt), data);
-      if (data.strCity.length() > 0) break;
-      if (!isValidAddress()) return false;
-      pt = data.strCall.length();
-      data.strCall = data.strAddress = data.strApt = data.strCross = "";
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (!subject.equals("!")) return false;
+    
+    Matcher match = GPS_PTN.matcher(body);
+    if (match.find()) {
+      setGPSLoc(match.group(1)+','+match.group(2), data);
+      body = body.substring(0,match.start()) + ' ' + body.substring(match.end());
     }
-    data.strSupp = getLeft() + body.substring(pt);
-    return isValidAddress();
+  
+    String info = null;
+    int pt = body.indexOf('\n');
+    if (pt >= 0) {
+      info = body.substring(pt+1);
+      body = body.substring(0,pt).trim();
+    }
+    
+    match = LEAD_UNIT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strUnit = match.group().trim();
+      body = body.substring(match.end()).trim();
+    }
+    
+    pt = body.indexOf("<UNKNOWN>");
+    if (pt >= 0) {
+      data.strCall = body.substring(0,pt).trim();
+      data.strAddress = "<UNKNOWN>";
+      data.strSupp = body.substring(pt+9).trim();
+    }
+    
+    else {
+      parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_EMPTY_ADDR_OK | FLAG_RECHECK_APT | FLAG_IGNORE_AT | FLAG_CROSS_FOLLOWS, body, data);
+      if (data.strAddress.length() == 0 && data.strCity.length() == 0) return false;
+      data.strSupp = getLeft();
+    }
+    
+    if (info != null) {
+      for (String line : info.split("\n")) {
+        data.strSupp = append(data.strSupp, "\n", line.trim());
+      }
+    }
+    return true;
   }
   
   @Override
@@ -92,6 +165,8 @@ public class ORTillamookCountyParser extends SmartAddressParser {
     "MANHATTAN BEACH",
     "MEDA",
     "MOHLER",
+    "NECARNEY CITY",
+    "NEAHKAHNIE",
     "NEAHKAHNIE BEACH",
     "NEDONNA BEACH",
     "NESKOWIN",
@@ -104,23 +179,48 @@ public class ORTillamookCountyParser extends SmartAddressParser {
     "TIERRA DEL MAR",
     "TWIN ROCKS",
     "WATSECO",
-    "WOODS"
+    "WINEMA",
+    "WOODS",
+    
+    // Clatsop County
+    "CLATSOP",
+    "CANNON BEACH",
+    "HUGG POINT STATE PARK",
+    "INDIAN BEACH"
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "ALARM",
+      "ANIMAL",
+      "ASSAULT",
       "ASSIST",
+      "BURN COMPLAINTS",
+      "CONTACT",
+      "DEATH",
       "DISTURBANCE",
       "FIRE",
       "FIRE ALARM",
+      "HARASSMENT",
       "HAZ-MAT",
+      "HIT AND RUN",
+      "INCOMPLETE 911",
+      "INFO",
+      "JUVENILE",
       "MAN DOWN",
       "MEDICAL",
+      "MISSING PERSON",
       "MVA",
       "REC ACCIDENT",
+      "RESCUE",
       "ROAD HAZARD",
       "SUICIDAL",
+      "SUSPICIOUS",
+      "STRUCTURE FIRE",
       "TOW",
+      "TRANSPORT",
+      "UNCON/NOT BREATHING",
       "UNKNOWN",
+      "UTILITY ASSIST",
       "WATER RESCUE"
   );
 }
