@@ -6,7 +6,7 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
   
   public MIShiawasseeCountyParser() {
     super("SHIAWASSEE COUNTY", "MI", 
-          "SRC? UNIT? CALL ADDR! ( X X? | PLACE X X? | ) CH? INFO+");
+          "SRC? CALL ADDR! X+? SRC? INFO/N+? ( DATETIME UNIT | UNIT ) UNIT/C+");
     setupSaintNames("MARYS");
   }
   
@@ -18,8 +18,8 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{1,2}[FP]D", true);
-    if (name.equals("UNIT")) return new UnitField("[A-Z]{1,2}[FP]D\\d*(?:,[A-Z0-9]+)*");
-    if (name.equals("CH")) return new ChannelField("FG ?\\d+", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b[A-Z]{3,4}\\d*\\b,?)+");
     
     return super.getField(name);
   }
