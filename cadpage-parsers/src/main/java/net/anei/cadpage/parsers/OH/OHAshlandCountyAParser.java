@@ -15,7 +15,7 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   
   @Override
   public String getFilter() {
-    return "911@ashlandcountysheriff.org";
+    return "911@ashlandcountysheriff.org,no-reply@zuercherportal.com,noreply@zuercherportal.com";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("\\d{4}");
