@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class LALafourcheParishParser extends SmartAddressParser {
 
   public LALafourcheParishParser() {
-    super("LAFOURCHE PARISH", "LA");
+    super(CITY_LIST, "LAFOURCHE PARISH", "LA");
     setFieldList("ID CALL ADDR APT CITY DATE TIME INFO");
   }
   
@@ -23,9 +23,9 @@ public class LALafourcheParishParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA;
   }
   
-  public final static Pattern SUBJECT_PTN = Pattern.compile("(\\d\\d-\\d+) - *(.*)");
+  public final static Pattern SUBJECT_PTN = Pattern.compile("(\\d\\d-\\d+(?:-[A-Z]{3})?) - *(.*)");
   private static final Pattern LA_ZIP_PTN = Pattern.compile(", *LA(?: (\\d{5}))?\\b");
-  public final static Pattern DATE_TIME_PTN = Pattern.compile("(?: +|^)(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) - *");
+  public final static Pattern DATE_TIME_PTN = Pattern.compile("[; ]*\\b(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)\\b[- ]*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -38,6 +38,12 @@ public class LALafourcheParishParser extends SmartAddressParser {
     
     body = stripFieldStart(body, "Intersection of ");
     body = stripFieldEnd(body, " None");
+    
+    String[] parts = DATE_TIME_PTN.split(body);
+    if (parts.length == 0) return true;
+    body = parts[0];
+    
+    
     Matcher match = LA_ZIP_PTN.matcher(body);
     if (match.find()) {
       String zip = match.group(1);
@@ -51,61 +57,76 @@ public class LALafourcheParishParser extends SmartAddressParser {
       }
       if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
       parseAddress(addr, data);
-      
-      match = DATE_TIME_PTN.matcher(info);
-      int last = 0;
-      while (match.find()) {
-        data.strDate = getOptGroup(match.group(1));
-        data.strTime =  getOptGroup(match.group(2));
-        parseInfo(info.substring(last, match.start()).trim(), data);
-        last = match.end();
-      }
-      parseInfo(info.substring(last), data);
-      return true;
+      parseInfo(info, data);
     }
     
     else {
-      match = DATE_TIME_PTN.matcher(body);
-      int last = 0;
-      while (match.find()) {
-        String part = body.substring(last, match.start()).trim();
-        data.strDate = getOptGroup(match.group(1));
-        data.strTime =  getOptGroup(match.group(2));
-        if (last == 0) {
-          parseAddress(StartType.START_ADDR, part, data);
-          part = getLeft();
-        }
-        parseInfo(part, data);
-        last = match.end();
+      String info;
+      int pt = body.indexOf(',');
+      if (pt >= 0) {
+        parseAddress(body.substring(0,pt).trim(), data);
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, body.substring(pt+1).trim(), data);
+        info = getLeft();
+      } else {
+        parseAddress(StartType.START_ADDR, body, data);
+        info = getLeft();
       }
-      String part = body.substring(last).trim();
-      if (last == 0) {
-        parseAddress(StartType.START_ADDR, part, data);
-        part = getLeft();
-      }
-      
-      parseInfo(body.substring(last), data);
-      return true;
+      parseInfo(info, data);
     }
+    
+    for (int ndx = 1; ndx < parts.length; ndx++) {
+      parseInfo(parts[ndx], data);
+    }
+    return true;
   }
   
   private void parseInfo(String info, Data data) {
-    for (String part : info.split(";")) {
-      part = part.trim();
-      part = stripFieldEnd(part, ";");
-      if (data.strCall.length() == 0) {
-        data.strCall = part;
-      } else {
-        data.strSupp = append(data.strSupp, "\n", part);
-      }
+    info = info.trim();
+    info = stripFieldEnd(info, ";");
+    if (data.strCall.length() == 0) {
+      data.strCall = info;
+    } else {
+      data.strSupp = append(data.strSupp, "\n", info);
     }
   }
   
   @Override
   public String adjustMapAddress(String sAddress) {
-    
     // Replace "BY-PASS" with "BYPASS" (special case)
     sAddress = sAddress.replace("BY-PASS", "BYPASS");
     return sAddress;
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+      
+      // Cities
+      "THIBODAUX",
+
+      // Towns
+      "GOLDEN MEADOW",
+      "LOCKPORT",
+
+      // Census-designated places
+      "BAYOU BLUE",
+      "BAYOU COUNTRY CLUB",
+      "CHACKBAY",
+      "CHOCTAW",
+      "CUT OFF",
+      "DES ALLEMANDS",
+      "GALLIANO",
+      "KRAEMER",
+      "LAFOURCHE CROSSING",
+      "LAROSE",
+      "LOCKPORT HEIGHTS",
+      "MATHEWS",
+      "PORT FOURCHON",
+      "RACELAND",
+
+      // Other areas
+      "GHEENS",
+      "LEEVILLE",
+
+      // Terrebonne parish
+      "SCHRIEVER"
+  };
 }
