@@ -13,7 +13,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}(?: .*)?");
   private static final Pattern MASTER_PTN = 
-    Pattern.compile("([-/.;A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
+    Pattern.compile("([-/.;&A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
   private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
   private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
@@ -34,10 +34,10 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@nwbcd.org,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com";
+    return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov";
   }
   
-  private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{3}This email");
+  private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{1,3}This\\semail");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
