@@ -11,12 +11,14 @@ public class VADanvilleAParser extends DispatchOSSIParser {
   
   public VADanvilleAParser() {
     super("DANVILLE", "VA",
-        // A complicated way to do FYI? CALL CODE? PLACE? ADDR X X
-          "FYI? CALL CODE? ( PLACE ADDR/Z X/Z X/Z ENDMARK " +
-                          "| ADDR! X X END " +
-                          "| ADDR/Z X! X END " +
+        // A complicated way to do FYI? CALL CODE? PLACE? ADDR X? X? ID
+          "FYI? CALL CODE? ( PLACE ADDR/Z X/Z X/Z ID " +
+                          "| ADDR! ( X/Z X/Z ID | X/Z ID | ID | X+ ) " +
+                          "| ADDR/Z X! ( X ID | ID | X ) " +
+                          "| ADDR/Z! ID " +
                           "| ADDR/Z! END " +
-                          "| PLACE ADDR! X X END )");
+                          "| PLACE ADDR! X/Z+? ID " +
+                          ") END");
   }
   
   @Override
@@ -35,6 +37,7 @@ public class VADanvilleAParser extends DispatchOSSIParser {
     // We want to throw in something here that rejects VAPittsylvaniaCounty alerts that
     // have a very similar format
     if (data.strCall.equals("CANCEL")) return false;
+    if (data.strCallId.startsWith("20")) return false;
     if (BAD_CALL_PTN.matcher(data.strCall).matches()) return false;
     if (BAD_FIELD_PTN.matcher(data.strCross).matches()) return false;
     if (BAD_FIELD_PTN.matcher(data.strAddress).matches()) return false;
@@ -45,6 +48,7 @@ public class VADanvilleAParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ID")) return new IdField("\\d{10}");
     return super.getField(name);
   }
   

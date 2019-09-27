@@ -14,7 +14,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
   private static final Pattern LEADER = Pattern.compile("^\\d+:(?!CAD:)");
   public VAPittsylvaniaCountyParser() {
     super(CITY_CODES, "PITTSYLVANIA COUNTY", "VA",
-           "ID?: EMPTY? ( CANCEL ADDR! CITY?| FYI? CALL ADDR! ( CITY! ID? | ID! ) X? X? ) INFO+");
+          "ID?: EMPTY? ( CANCEL ADDR! CITY?| FYI? CALL ADDR! ( CITY! ID? | ID! ) X? X? ) INFO+");
     setupProtectedNames("OAKS AND STANFIELD", "R AND L SMITH");
   }
   
