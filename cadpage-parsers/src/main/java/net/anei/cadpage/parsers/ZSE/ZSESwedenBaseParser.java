@@ -146,6 +146,7 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
           //  If we did not find a colon at the right spot, this is a bad line break
           // and we will simply skip over it
           if (chr != ':') {
+            if (body.charAt(pos-1) != ' ') sb.append(' ');
             lastPt++;
           }
           
