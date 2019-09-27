@@ -1041,7 +1041,9 @@ public class FieldProgramParser extends SmartAddressParser {
           value = field;
           step = keywordMap.get("");
         }
-        if (step == null) return false;
+        if (step == null) {
+          return false;                               // BEAKPOINT
+        }
         
         // Flag step as processed
         step.markChecked();
@@ -1052,7 +1054,7 @@ public class FieldProgramParser extends SmartAddressParser {
             state.setIndex(fldNdx);
             step.field.parse(value, data);
           } catch (FieldProgramException ex) {
-            return false;
+            return false;                               // BREAKPOINT
           }
           fieldRecord[fldNdx++] = step.field.getProcField();
         }
