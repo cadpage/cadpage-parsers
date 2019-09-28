@@ -280,7 +280,7 @@ public class Active911ParserTable {
       "US/DE/ChiefMsg",                   "DESussexCountyA",
       "US/DE/DelawareCounty",             "Cadpage2",
       "US/DE/Dover",                      "DEKentCountyB,DEKentCountyF",
-      "US/DE/NewCastle911",               "DENewCastleCountyE",
+      "US/DE/NewCastle911",               "DENewCastleCountyE,DEKentCountyF",
       "US/DE/NewCastleCounty",            "DENewCastleCounty",
       "US/DE/NewCastleCountycmsg",        "DENewCastleCountyB,DENewCastleCountyD",
       "US/DE/NW911",                      "DENewCastleCountyE",
