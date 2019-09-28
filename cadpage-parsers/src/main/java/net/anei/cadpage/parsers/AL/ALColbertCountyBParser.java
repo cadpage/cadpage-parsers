@@ -10,7 +10,7 @@ public class ALColbertCountyBParser extends FieldProgramParser {
   
   public ALColbertCountyBParser() {
     super("COLBERT COUNTY", "AL", 
-          "ID! TYPE:CALL! LOC:ADDR! CITY:CITY! GPS UNIT:UNIT! Comments:INFO/N+");
+          "ID TYPE:CALL! LOC:ADDR! CITY:CITY! GPS UNIT:UNIT! Comments:INFO/N+");
   }
   
   @Override
