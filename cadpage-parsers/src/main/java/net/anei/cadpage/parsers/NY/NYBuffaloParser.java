@@ -18,7 +18,7 @@ public class NYBuffaloParser extends DispatchProQAParser {
   
   @Override
   public String getFilter() {
-    return "2002000004,777,Do.Not.Reply@tcaems.com";
+    return "2002000004,777,tcaems.com";
   }
   
   private static final Pattern PREFIX_PTN = Pattern.compile("([A-Z0-9]+): +(?=RC:)");
