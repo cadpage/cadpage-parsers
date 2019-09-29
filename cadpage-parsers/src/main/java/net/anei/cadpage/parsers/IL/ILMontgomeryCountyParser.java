@@ -12,11 +12,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class ILMontgomeryCountyParser extends DispatchEmergitechParser {
   
   public ILMontgomeryCountyParser() {
-    super("911:", CITY_LIST, "MONTGOMERY COUNTY", "IL");
+    super("911:", CITY_LIST, "MONTGOMERY COUNTY", "IL", TrailAddrType.INFO);
   }
   
   public String getFilter() {
-    return "911@911.montgomeryco.com";
+    return "911@911.montgomeryco.com,911@montgomeryco.co";
   }
   
   private static final Pattern EXTRA_PTN = Pattern.compile("(911:\\[.*?\\]- )(.*?) - (NATURE:.*)");
