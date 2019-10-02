@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA53Parser;
 
-public class TXGladewaterParser extends DispatchA19Parser {
+public class TXGladewaterParser extends DispatchA53Parser {
   
   public TXGladewaterParser() {
     super("GLADEWATER", "TX");
@@ -10,7 +10,7 @@ public class TXGladewaterParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@responsemaster.net";
+    return "@cityofgladewater.com";
   }
 
 }
