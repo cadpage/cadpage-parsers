@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.PA;
 import java.util.Properties;
 
 import net.anei.cadpage.parsers.GroupBestParser;
+import net.anei.cadpage.parsers.GroupBlockParser;
 
 /*
 Allegheny County, PA
@@ -12,7 +13,11 @@ Allegheny County, PA
 public class PAAlleghenyCountyParser extends GroupBestParser {
   
   public PAAlleghenyCountyParser() {
-    super(new PAAlleghenyCountyAParser(), new PAAlleghenyCountyBParser(), new PAAlleghenyCountyCParser());
+    super(new PAAlleghenyCountyAParser(), 
+          new PAAlleghenyCountyBParser(), 
+          new PAAlleghenyCountyCParser(),
+          new GroupBlockParser(),
+          new PAAlleghenyCountyDParser());
   }
   
   static final Properties GPS_TABLE_LOOKUP = buildCodeTable(new String[]{
