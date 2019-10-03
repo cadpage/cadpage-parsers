@@ -11,7 +11,17 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
 
   public FLPalmBeachCountyParser() {
     super(CITY_CODES, "PALM BEACH COUNTY", "FL", 
-          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE Map_page:MAP! Map_Coord:MAP! Talk_Group:CH? TIME:TIME! Disp:UNIT? UNIT+");
+          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? Map_page:MAP? Map_Coord:MAP? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Disp:UNIT! UNIT/S+");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "FIRE-ALERT-CAD@pbcgov.org";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
   
   private static Pattern DOTDOTDOT = Pattern.compile("\\.{3,}");
@@ -19,12 +29,12 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     //check subject
-    if (!subject.equals("Page Notification")) return false;
+    if (!subject.equals("IPS I/Page Notification")) return false;
     
     //remove \\.{3,}
     body = DOTDOTDOT.matcher(body).replaceAll(" ");
     
-    body = body.replace("Disp:", ",Disp:");
+    body = body.replace(" Disp:", ",Disp:").replace(" lat/lon:", ",lat/lon:");
     
     return parseFields(body.split(","), data);
   }
@@ -36,7 +46,6 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("TIME")) return new TimeField("\\d{2}:\\d{2}:\\d{2}", true);
-    if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
 
@@ -46,14 +55,24 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      super.parse(p.get(COLON_AT_PTN), data);
-      data.strPlace = p.get(":APT ").trim();
-      data.strApt = p.get();
+      String addr = p.get(COLON_AT_PTN);
+      String place = p.get(":APT ").trim();
+      String apt = p.get();
+      
+      String city = CITY_CODES.getProperty(addr);
+      if (city != null) {
+        data.strCity = city;
+        addr = place;
+        place = "";
+      }
+      super.parse(addr, data);
+      data.strPlace = append(data.strPlace, " - ", place);
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR CITY APT PLACE";
+      return "ADDR CITY PLACE APT";
     }
   }
   
@@ -83,40 +102,38 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     }
   }
   
-  private class MyUnitField extends UnitField {
-    @Override
-    public void parse(String field, Data data) {
-      data.strUnit = append(data.strUnit, " ", field);
-    }
-  }
-  
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "SPB",   "South Palm Beach",
-      "NPB",   "North Palm Beach",
-      "HB",    "Highland Beach",
-      "LW",    "Lake Worth",
-      "PBS",   "Palm Beach Shores",
-      "PBG",   "Palm Beach Gardens",
-      "JB",    "Juno Beach",
-      "LG",    "Loxahatchee Groves",
-      "JP",    "Jupiter",
-      "GR",    "Glren Ridge",
       "BG",    "Belle Glade",
-      "DB",    "Delray Beach",
-      "RB",    "Riviera Beach",
-      "WPB",   "West Palm Beach",
-      "PB",    "Palm Beach",
-      "LCS",   "Lake Clark Shores",
-      "MP",    "Mangonia Park",
-      "LP",    "Lake Park",
       "BR",    "Boca Raton",
-      "PBC",   "Palm Beach County",
+      "CL",    "Cloud Lake",
+      "DB",    "Delray Beach",
+      "GA",    "Green Acres",
+      "GR",    "Glren Ridge",
+      "HB",    "Highland Beach",
+      "JB",    "Juno Beach",
       "JIC",   "Jupiter Inlet Beach Colony",
-      "SB",    "South Bay",
-      "RPB",   "Royal Palm Beach",
-      "PS",    "Palm Springs",
+      "JP",    "Jupiter",
+      "LAN",   "Lantana",
+      "LCS",   "Lake Clark Shores",
+      "LG",    "Loxahatchee Groves",
+      "LP",    "Lake Park",
+      "LW",    "Lake Worth",
+      "MC",    "Martin County",
+      "MP",    "Mangonia Park",
+      "NPB",   "North Palm Beach",
       "OR",    "Ocean Ridge",
-      "CL",    "Cloud Lake"
+      "PB",    "Palm Beach",
+      "PBC",   "Palm Beach County",
+      "PBG",   "Palm Beach Gardens",
+      "PBS",   "Palm Beach Shores",
+      "PS",    "Palm Springs",
+      "RB",    "Riviera Beach",
+      "RPB",   "Royal Palm Beach",
+      "SB",    "South Bay",
+      "SPB",   "South Palm Beach",
+      "TQ",    "Tequesta",
+      "WL",    "Wellington",
+      "WPB",   "West Palm Beach"
   });
 }
 
