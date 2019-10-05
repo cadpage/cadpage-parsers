@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.HtmlProgramParser;
@@ -24,19 +25,27 @@ public class DispatchH05Parser extends HtmlProgramParser {
   private boolean accumulateUnits = false;
   
   public DispatchH05Parser(String defCity, String defState, String program) {
-    this(null, defCity, defState, program, null);
+    this((String[])null, defCity, defState, program, null);
   }
   
   public DispatchH05Parser(String[] cityList, String defCity, String defState, String program) {
     this(cityList, defCity, defState, program, null);
   }
   
+  public DispatchH05Parser(Properties cityCodes, String defCity, String defState, String program) {
+    this(cityCodes, defCity, defState, program, null);
+  }
+  
   public DispatchH05Parser(String defCity, String defState, String program, String userTags) {
-    this(null, defCity, defState, program, userTags);
+    this((String[])null, defCity, defState, program, userTags);
   }
   
   public DispatchH05Parser(String[] cityList, String defCity, String defState, String program, String userTags) {
     super(cityList, defCity, defState, program, userTags);
+  }
+  
+  public DispatchH05Parser(Properties cityCodes, String defCity, String defState, String program, String userTags) {
+    super(cityCodes, defCity, defState, program, userTags);
   }
   
   public void setAccumulateUnits(boolean accumulateUnits) {
