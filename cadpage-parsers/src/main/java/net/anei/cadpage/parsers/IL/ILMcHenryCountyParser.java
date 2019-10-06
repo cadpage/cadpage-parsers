@@ -11,7 +11,7 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
   
   public ILMcHenryCountyParser() {
     super("MCHENRY COUNTY", "IL",
-           "OCA:ID? Type:CALL! OCA:ID? Date:DATETIME! Loca:ADDR! Apt:APT? City:CITY! Cros:X INFO+ Dist:MAP NAR:INFO/N+");
+          "OCA:ID? Type:CALL! OCA:ID? Date:DATETIME! Loca:ADDR! Apt:APT? City:CITY! Cros:X INFO+ Dist:MAP NAR:INFO/N+");
   }
   
   @Override
@@ -35,9 +35,19 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private static final Pattern CALL_PFX_PTN = Pattern.compile("^\\d+");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = CALL_PFX_PTN.matcher(field).replaceFirst("");
+      super.parse(field, data);
+    }
   }
   
   private static final Pattern INFO_SPLIT_PTN = Pattern.compile("\n|(?=\\[\\d{1,2}\\])");
