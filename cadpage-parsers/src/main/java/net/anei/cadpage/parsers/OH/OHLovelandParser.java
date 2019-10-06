@@ -44,7 +44,7 @@ public class OHLovelandParser extends DispatchA1Parser {
 
   @Override
   public String adjustMapAddress(String addr) {
-    return TR_PTN.matcher(addr).replaceAll("TERRACE");
+    return TR_PTN.matcher(addr).replaceAll("TRACE");
   }
   private static final Pattern TR_PTN = Pattern.compile("\\bTR\\b", Pattern.CASE_INSENSITIVE);
 
