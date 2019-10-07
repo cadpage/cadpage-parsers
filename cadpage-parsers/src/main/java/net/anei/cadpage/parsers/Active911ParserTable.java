@@ -862,7 +862,7 @@ public class Active911ParserTable {
       "US/MO/MorganCounty",               "MOMorganCounty",
       "US/MO/NewtonCounty",               "MONewtonCounty",
       "US/MO/NodawayCounty",              "MONodawayCounty",
-      "US/MO/OsageCounty",                "MOOsageCounty",
+      "US/MO/OsageCounty",                "MOOsageCounty,MOGasconadeCounty",
       "US/MO/PerryCounty",                "MOPerryCounty",
       "US/MO/PikeCounty",                 "MOPikeCountyB",
       "US/MO/PikeCountyIncLog",           "MOPikeCountyB",

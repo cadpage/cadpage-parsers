@@ -79,6 +79,13 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
   
   @Override
   public boolean parseMsg(String body, Data data) {
+   
+    String prefix = "";
+    if (body.startsWith("SECOND PAGE")) {
+      prefix = "SECOND PAGE";
+      body = body.substring(11).trim();
+    }
+    
     Matcher match = CALL_NUMBER_PTN.matcher(body);
     if (match.find()) {
       data.strCallId = match.group(1);
@@ -120,12 +127,13 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     if (! super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) return false;
     if (data.strCity.length() == 0 && data.strUnit.length() == 0 && data.strCross.length() == 0 && !body.contains(" Description:")) return false;
+    data.strCall = append(prefix, " - ", data.strCall);
     return true;
   }
   
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram();
+    return "ID? " + super.getProgram();
   }
   
   @Override
