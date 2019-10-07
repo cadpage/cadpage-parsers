@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
     for (String city : CITY_LIST) {
       setupCities(city + " TX", city + " TEXAS");
     }
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -41,6 +43,8 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
     
     match = TEXAS_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
+    
+    if (data.strPlace.equalsIgnoreCase("TEXAS")) data.strPlace = "";
     return true;
   }
   
@@ -93,4 +97,8 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
       "SAND BRANCH"
 
   };
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "5900 S IH 45",         "+32.587831,-96.675068"
+  });
 }
