@@ -11,7 +11,10 @@ public class ALColbertCountyCParser extends FieldProgramParser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.length() > 0 && body.startsWith("//")) {
+      body = "From CAD(" + subject + ") " + body;
+    }
     return parseFields(body.split(" // "), data);
   }
   
