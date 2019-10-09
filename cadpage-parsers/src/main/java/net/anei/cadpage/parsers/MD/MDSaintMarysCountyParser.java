@@ -181,6 +181,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "45325 ABELL HOUSE LN",                 "+38.298550,-76.508292",
       "44100A LOUISDALE RD",                  "+38.294415,-76.558088",
       "44100B LOUISDALE RD",                  "+38.293484,-76.558780",
       "44605 BARNES AND YEH LANE",            "+38.289400,-76.532300",
