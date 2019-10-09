@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.MT;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +10,7 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
   
   public MTCascadeCountyBParser() {
     super("CASCADE COUNTY", "MT", 
-          "DATETIME EMPTY? ( ID UNIT_CALL | UNIT_CALL EMPTY+? ID? ) EMPTY+? Caller_Name:NAME? Caller_Phone:PHONE? EMPTY+? ADDRCITY! DUP_ADDR? APT_PLACE? INFO/N+");
+          "DATETIME CALL ( GPS1 GPS2 | ADDR ) ( ID! | ST_ZIP ID! | CITY ST_ZIP? ID! ) ID/S+? NONE Map:MAP! Call_Details:INFO/CS+");
   }
   
   @Override
@@ -20,80 +18,82 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     return "911Text@911intn.org,@greatfallsmt.net";
   }
   
-  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d),? (?:([-A-Z0-9]+) )?(?:, )?([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+|[^,]+)(?:, ([A-Z ]+)(?:, (MT) \\d{5})?)?,? (.*?) (?:, )?Map: *(.*?) (?:, )?Call Details: (.*)");
-  private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
-  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\nCity of Great Falls");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    if (subject.startsWith("Automatic R&R Notification")) {
-      return parseFields(body.split("\n+"), data);
+    body = body.replace("SEARCH & RESCUE", "S&R");
+    if (!parseFields(body.split(", "), data)) return false;
+    if (subject.length() > 0 && 
+        (data.strCall.length() == 0 || data.strCall.equals("WEATHER"))) {
+      data.strCall = subject;
     }
-    
-    if (subject.equals("Emergency Call")) {
-      setFieldList("DATE TIME CALL ADDR APT CITY ST ID MAP INFO");
-      Matcher match = MASTER2.matcher(body);
-      if (!match.matches()) return false;
-      data.strDate = match.group(1);
-      data.strTime = match.group(2);
-      data.strCall = getOptGroup(match.group(3));
-      parseAddress(match.group(4).trim(), data);
-      data.strCity = getOptGroup(match.group(5));
-      data.strState = getOptGroup(match.group(6));
-      data.strCallId = match.group(7).replaceAll("; ", " ");
-      data.strMap = match.group(8).trim();
-      for (String info : match.group(9).split("; ")) {
-        info = info.trim();
-        if (info.equals("None")) continue;
-        info = INFO_DATE_TIME_PTN.matcher(info).replaceFirst("");
-        data.strSupp = append(data.strSupp, "\n", info);
-      }
-      return true;
-    }
-    
-    return false;
+    return true;
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("UNIT_CALL")) return new MyUnitCallField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("ST_ZIP")) return new MyStateZipField();
     if (name.equals("ID")) return new MyIdField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("DUP_ADDR")) return new MyDupAddressField();
-    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
+    if (name.equals("NONE")) return new SkipField("None", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private class MyDateTimeField extends DateTimeField {
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private class MyStateZipField extends Field {
     @Override
-    public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+    public boolean canFail() {
+      return true;
     }
-  }
-  
-  private class MyUnitCallField extends Field {
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.length() == 0) return true;
+      Matcher match = ST_ZIP_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strState = match.group(1);
+//      if (data.strCity.length() == 0) data.strCity = getOptGroup(match.group(2));
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(',');
-      if (pt < 0) abort();
-      data.strUnit = field.substring(0,pt).trim();
-      data.strCall = field.substring(pt+1).trim();
+      if (!checkParse(field, data)) abort();
     }
     
     @Override
     public String getFieldNames() {
-      return "UNIT CALL";
+      return "ST CITY?";
     }
   }
   
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d+\\.\\d+");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      if (data.strGPSLoc.length() > 0) {
+        data.strAddress = data.strGPSLoc;
+        data.strGPSLoc = "";
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR";
+    }
+  }
+  
+  private static final Pattern ID_PTN = Pattern.compile("(?:\\b[A-Z&]{2,4}\\d{2}-\\d{5}\\b(?:; )?)+");
   private class MyIdField extends IdField {
     @Override
     public boolean canFail() {
@@ -102,58 +102,10 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!field.startsWith("[") || !field.endsWith("]")) return false;
-      field = field.replace("[", "").replaceAll("]",  "");
-      data.strCallId = field;
-      return true;
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-  }
-  
-  private class MyAddressCityField extends AddressCityField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.startsWith("LAT:")) {
-        data.strAddress = field;
-        return;
-      }
-      field = field.replace('@', '&');
+      Matcher match = ID_PTN.matcher(field);
+      if (!match.matches()) return false;
+      field = field.replace("; ", " ");
       super.parse(field, data);
-    }
-  }
-  
-  private class MyDupAddressField extends SkipField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      return field.equals(getRelativeField(-1));
-    }
-  }
-  
-  private static final Pattern APT_PTN = Pattern.compile("\\d+[A-Z]?|1/2");
-  private class MyAptPlaceField extends Field {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.startsWith("http://")) return false;
-      if (field.startsWith("[")) return false;
-      if (APT_PTN.matcher(field).matches()) {
-        data.strApt = append(data.strApt, "-", field);
-      } else {
-        data.strPlace = field;
-      }
       return true;
     }
     
@@ -161,18 +113,20 @@ public class MTCascadeCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
-    @Override
-    public String getFieldNames() {
-      return "APT PLACE";
-    }
   }
-
+  
+  private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("http://")) return;
-      super.parse(field, data);
+      String info = "";
+      for (String line : field.split("; ")) {
+        line = line.trim();
+        if (line.equals("None")) continue;
+        line = INFO_DATE_TIME_PTN.matcher(line).replaceFirst("");
+        info = append(info, "\n", line);
+      }
+      super.parse(info, data);
     }
   }
   
