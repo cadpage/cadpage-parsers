@@ -20,6 +20,11 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
     return super.parseMsg(body, data);
@@ -40,13 +45,23 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("((?:\\d{2}\\.\\d{6})(-\\d{2}\\.\\d{6})|NoneNone) +(.*)");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private static final Pattern ADDR_ST_PTN = Pattern.compile("[A-Z]{2}");
   private class MyAddressCityField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      
+      Matcher match = ADDR_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        String gps1 = match.group(1);
+        String gps2 = match.group(2);
+        field = match.group(3);
+        if (gps1 != null) setGPSLoc(gps1+','+gps2, data);
+      }
+      
       String zip = null;
-      Matcher match = ADDR_ZIP_PTN.matcher(field);
+      match = ADDR_ZIP_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
         zip = match.group(2);
@@ -65,7 +80,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY ST";
+      return "GPS ADDR APT CITY ST";
     }
   }
   
