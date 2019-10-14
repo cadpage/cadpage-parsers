@@ -41,6 +41,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("CH")) return new MyChannelField();
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
   
@@ -67,12 +68,6 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     }
   }
   
-  @Override
-  public String adjustMapAddress(String address) {
-    return CORD_PTN.matcher(address).replaceAll("");
-  }
-  private static final Pattern CORD_PTN = Pattern.compile("\\bCORD\\b");
-  
   private class MyChannelField extends ChannelField {
     @Override
     public void parse(String field, Data data) {
@@ -81,4 +76,19 @@ public class INMadisonCountyCParser extends FieldProgramParser {
       data.strChannel = append(data.strChannel, "/", field);
     }
   }
+  
+  private static final Pattern ID_JUNK_PTN = Pattern.compile(" *\\(\\w+\\)");
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      field = ID_JUNK_PTN.matcher(field).replaceAll("");
+      super.parse(field, data);
+    }
+  }
+  
+  @Override
+  public String adjustMapAddress(String address) {
+    return CORD_PTN.matcher(address).replaceAll("");
+  }
+  private static final Pattern CORD_PTN = Pattern.compile("\\bCORD\\b");
 }
