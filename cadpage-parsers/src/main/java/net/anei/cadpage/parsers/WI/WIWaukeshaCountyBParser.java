@@ -7,4 +7,9 @@ public class WIWaukeshaCountyBParser extends DispatchProphoenixParser {
   public WIWaukeshaCountyBParser() {
     super("WAUKESHA COUNTY", "WI");
   }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@mukwonagofire.org,systemadmin@mkpd.org";
+  }
 }
