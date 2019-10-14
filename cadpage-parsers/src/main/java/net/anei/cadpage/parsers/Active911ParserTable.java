@@ -1063,6 +1063,7 @@ public class Active911ParserTable {
       "US/NJ/Middle",                     "NJCapeMayCounty",
       "US/NJ/MonmouthCounty",             "NJMonmouthCountyA",
       "US/NJ/MorrisCounty",               "NJMorrisCountyA",
+      "US/NJ/MountHollyFire",             "NJBurlingtonCountyH",
       "US/NJ/MountLaurelTwp",             "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/NCPD",                       "NJEssexCounty",
       "US/NJ/NPD",                        "NJSussexCountyA",
