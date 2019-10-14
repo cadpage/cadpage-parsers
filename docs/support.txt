@@ -1501,33 +1501,65 @@ If that isn't it, I need to see a copy of the system log recording one of these 
 Take care,
 -Ken
 
-****************************************************************************
-** Help needed - no initial setup
-****************************************************************************
-Thanks for trying out Cadpage.
+******************************************************************
+*** For NEW messages:
 
-Cadpage only works if you are a member of a fire department or other emergency response organization, and your department is sending you dispatch alerts when they are dispatched to a call.  If you are not already receiving those dispatch alerts (usually as text messages) you need to talk to someone in your department about getting alerts sent to your phone.
+Cadpage will not do anything with your current settings.
 
-When you start Cadpage, it will determine that some initial setup work is needed, and enters a welcome menu that asks how you are receiving your dispatch alerts.  If you are receiving text alerts, select that option.
+The intended purpose of Cadpage is to support emergency responders who get text pages from a central dispatch center when they are asked to respond to an emergency.  Cadpage takes those pages, displays the information from them, and gives the user the option to bring up a Google map showing the location of the incident.Then they can ask for directions to that location.
 
-Next it will tell you that Cadpage can not process text messages without
-the help a an auxiliary support app.  When you select "Install Support
-App" it takes you to a web page with instructions on how to download and
-install the support app.
+First, make sure you are getting text pages sent to your phone when a call is toned out.  If you are not, talk to someone in your department about getting that set up.
 
-Once you do that, it will ask to to specify your current location.  It
-needs this information to determine how to recognize and process your
-text dispatch alerts.
+Next, go into the Cadpage location settings, select a single location, and then see if we have a location set up for where you happen to live or work.  If we do, select it and see if things start working.
 
-After that, Cadpage should start working.  If it still fails to pick up
-alerts, open Cadpage General Settings and use the "Email the Developer"
-setting to send us a new support email.
+If not, please let us know if you would like the details of setting up a new location.
 
-The need for an auxiliary support app is unfortunate, but necessary because Google no longer allows regular play store apps to access incoming text messages.  We got around that restriction by moving the prohibited functionality into a support app that has to be downloaded and installed manually.
+In the meantime, try using the general location setting.  Set the From: filter to whoever appears in the From: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support. 
 
-Good luck,
+Please contact us again if you still have difficulties with Cadpage.
+
+Take care, 
+Jean ~ Cadpage Administrator
+
+******************************************************************
+
+The intended purpose of Cadpage is to support emergency responders who get text pages from a central dispatch center when they are asked to respond to an emergency.  Cadpage takes those pages, displays the information from them, and gives the user the option to bring up a Google map showing the location of the incident.  Then they can ask for directions to that location.
+
+******************************************************************
+
+*** For NEW user in non-English speaking countries or obvious newbies
+
+Cadpage will not do anything with your current settings.
+
+The intended purpose of Cadpage is to support emergency responders who get text pages from a central dispatch center when they are asked to respond to an emergency.  Cadpage takes those pages, displays the information from them, and gives the user the option to bring up a Google map showing the location of the incident and then they can ask for directions to that location.
+
+Please email us again if you would like to know how to set up Cadpage for your location.  We have very little experience writing a location parser in any language other than English, but we would be happy to give it a try in your language.  We would need help with translating text.
+
+Take care,
+Jean ~ Cadpage Administrator
+
+******************************************************************
+BRAND NEW USERS
+
+Cadpage will not do anything with the default, out of the box, settings.
+You have to give it some information to identify your text pages.
+
+Go into the Cadpage location settings, select a single location, and
+then see if we have a location set up for where you happen to live or
+work.  If we do, select it and see if things start working.
+
+If not, please let us know if you would like the details of setting up a
+new location.
+
+In the meantime, try using the general location setting.  Set the From:
+filter to whoever appears in the From: field of your page text messages.
+ That will usually give you some degree of functionality while you are
+waiting for full location support.
+
+Please contact us again if you still have difficulties.  The best way to do this is use the Email the Developer item in the main settings menu.
+
+Take care, 
 -Ken
-
 
 ****************************************************************************
 
