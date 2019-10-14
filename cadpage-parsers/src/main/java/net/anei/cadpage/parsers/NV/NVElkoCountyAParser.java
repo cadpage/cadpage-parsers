@@ -20,7 +20,7 @@ public class NVElkoCountyAParser extends DispatchA9Parser {
   
   @Override
   public String getFilter() {
-    return "ElkoDispatch@ci.elko.nv.us";
+    return "ElkoDispatch@ci.elko.nv.us,ElkoDispatch@elkocitynv.gov";
   }
 
   @Override
