@@ -835,6 +835,7 @@ public class Active911ParserTable {
       "US/MO/ClintonCountySheriff",       "MOClintonCounty",
       "US/MO/ColeCounty",                 "MOColeCounty",
       "US/MO/CrawfordCounty",             "MOCrawfordCountyB",
+      "US/MO/DallasCounty",               "MODallasCounty",
       "US/MO/DekalbCoDispatch",           "MODekalbCounty",
       "US/MO/DesPeres",                   "MOStLouisCountyI",
       "US/MO/FranklinCounty",             "MOFranklinCounty",

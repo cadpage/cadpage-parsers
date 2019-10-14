@@ -11,6 +11,6 @@ public class MODallasCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "Alerts@dallascomo911.us";
+    return "EnterpolAlerts@dallascomo911.us";
   }
 }
