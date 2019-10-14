@@ -23,6 +23,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     setupSaintNames("PAUL");
     removeWords("ESTATES", "LANE", "ROAD");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    addRoadSuffixTerms("WY");
   }
   
   @Override
@@ -218,7 +219,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
-  private static final Pattern GPS_PTN = Pattern.compile("(-?\\d{2,3}\\.\\d{6,})[/\\\\](-?\\d{2,3}\\.\\d{6,})");
+  private static final Pattern GPS_PTN = Pattern.compile("(.*?)(-?\\d{2,3}\\.\\d{6,})[/\\\\](-?\\d{2,3}\\.\\d{6,})");
   private static final Pattern GPS_PTN2 = Pattern.compile("-?\\d{2,3}\\.\\d{6,}");
   private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{8}\\b.*");
   private String partGPS = null;
@@ -253,20 +254,10 @@ public class ORMarionCountyAParser extends FieldProgramParser {
         if ("MAP-".startsWith(field)) return;
       }
       
-      if (field.startsWith("BETWEEN ")) {
-        data.strCross = append(data.strCross, "/", field.substring(8).trim());
-        return;
-      }
-      
-      if (isValidCrossStreet(field)) {
-        data.strCross = append(data.strCross, "/", field);
-        return;
-      }
-      
       Matcher match = GPS_PTN.matcher(field);
       if (match.matches()) {
-        setGPSLoc(match.group(1)+','+match.group(2), data);
-        return;
+        field = match.group(1).trim();
+        setGPSLoc(match.group(2)+','+match.group(3), data);
       }
       
       if (GPS_PTN2.matcher(field).matches()) {
@@ -275,6 +266,18 @@ public class ORMarionCountyAParser extends FieldProgramParser {
         } else {
           setGPSLoc(partGPS+','+field, data);
         }
+        return;
+      }
+      
+      if (field.startsWith("BETWEEN ")) {
+        data.strCross = append(data.strCross, "/", field.substring(8).trim());
+        return;
+      }
+      
+      int pt = field.indexOf(',');
+      String tmp = (pt >= 0 ? field.substring(0,pt).trim() : field);
+      if (isValidCrossStreet(tmp)) {
+        data.strCross = append(data.strCross, "/", field);
         return;
       }
       
