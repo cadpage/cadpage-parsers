@@ -18,7 +18,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "9 11";
+    return "9 11,911@ncso.sc.gov";
   }
   
   private static final Pattern DELIM = Pattern.compile("\\n{1,2}");
