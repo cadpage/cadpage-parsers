@@ -8,9 +8,9 @@ public class PAErieCountyParser extends GroupBestParser {
     super(new PAErieCountyAParser(), 
           new PAErieCountyBParser(), 
           new PAErieCountyCParser(),
-          new PAErieCountyEmergyCareParser());
+          new PAErieCountyEmergyCareParser(),
+          new PAErieCountyDParser());
   }
-  
   
   public static final String[] CITY_LIST = new String[]{
     "CORRY",
@@ -57,7 +57,26 @@ public class PAErieCountyParser extends GroupBestParser {
     
     // Crawford County
     "CRAWFORD",
-    "CRAWFORD COUNTY"
+    "CRAWFORD CO",
+    "CRAWFORD COUNTY",
+    "CAMBRIDGE TWP",
+      "CAMBRIDGE SPRINGS",
+    "BEAVER TWP",
+      "SPRINGBORO",
+    "BLOOMFIELD TWP",
+      "LINCOLNVILLE",
+    "CUSSEWAGO TWP",
+    "ROCKDALE TWP",
+    "SPARTA TWP",
+      "SPARTANSBURG",
+    "SPRING TWP",
+    "VENANGO TWP",
+    
+    // Warren County
+    "WARREN",
+    "WARREN CO",
+    "WARREN COUNTY",
+    "COLUMBUS TWP",
+    "SPRING CREEK TWP"
   };
-
 }
