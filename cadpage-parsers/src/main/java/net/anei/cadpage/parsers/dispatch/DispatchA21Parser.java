@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 abstract public class DispatchA21Parser extends MsgParser {
@@ -22,7 +23,7 @@ abstract public class DispatchA21Parser extends MsgParser {
   
   public DispatchA21Parser(Properties cityCodes, Properties callCodes, String defCity, String defState) {
     super(defCity, defState);
-    setFieldList("TIME DATE ID CODE CALL ADDR APT CITY PLACE UNIT");
+    setFieldList("TIME DATE ID CODE CALL ADDR APT CITY PLACE UNIT INFO");
     this.cityCodes = cityCodes;
     this.callCodes = callCodes;
   }
@@ -35,7 +36,11 @@ abstract public class DispatchA21Parser extends MsgParser {
     data.strDate = match.group(2).replace('-', '/');
     
     match = MASTER_PTN.matcher(body);
-    if (!match.matches()) return false;
+    if (!match.matches()) {
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body;
+      return true;
+    }
     data.strCallId = match.group(1);
     String code = match.group(2);
     if (callCodes == null) {
