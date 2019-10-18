@@ -1005,6 +1005,7 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   protected boolean parseFields(String[] fields, Data data) {
     
+    gpsFldCnt = 0;
     fieldRecord = new Field[fields.length];
     state = new State(fields);
     
@@ -3295,6 +3296,7 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   
   private static final Pattern LONG_GPS_PTN = Pattern.compile("\\b(\\d{1,3})(\\d{6})\\b");
+  private int gpsFldCnt = 0;
   private String saveGPSLoc = "";
   public class GPSField extends Field {
     
@@ -3354,7 +3356,14 @@ public class FieldProgramParser extends SmartAddressParser {
       if (addDec) {
         field = LONG_GPS_PTN.matcher(field).replaceAll("$1.$2");
       }
-      switch (type) {
+      int tmp;
+      if (type == 3) {
+        tmp = ++gpsFldCnt;
+        if (tmp > 2) return;
+      } else {
+        tmp = type;
+      }
+      switch (tmp) {
       case 1:
         saveGPSLoc = field;
         break;
@@ -3913,6 +3922,7 @@ public class FieldProgramParser extends SmartAddressParser {
     if (name.equals("GPS")) return new GPSField();
     if (name.equals("GPS1")) return new GPSField(1);
     if (name.equals("GPS2")) return new GPSField(2);
+    if (name.equals("GPS3")) return new GPSField(3);
     if (name.equals("DATE")) return new DateField();
     if (name.equals("TIME")) return new TimeField();
     if (name.equals("DATETIME")) return new DateTimeField();
