@@ -11,7 +11,7 @@ public class COGilpinCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "CAD@co.gilpin.co.u";
+    return "CAD@co.gilpin.co.us";
   }
 
 }
