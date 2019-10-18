@@ -241,6 +241,7 @@ public class ParserList {
               ,"COElbertCounty"                 ,"Elbert County, CO"
               ,"COFremontCounty"                ,"Fremont County, CO"
               ,"COGarfieldCounty"               ,"Garfield County, CO"
+              ,"COGilpinCounty"                 ,"Gilpin County, CO"
               ,"COGolden"                       ,"Golden County, CO"
               ,"COGrandCounty"                  ,"Grand County, CO"
               ,"COGunnisonCounty"               ,"Gunnison County, CO"
