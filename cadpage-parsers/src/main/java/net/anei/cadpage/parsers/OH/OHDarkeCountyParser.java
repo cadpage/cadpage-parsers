@@ -12,7 +12,7 @@ public class OHDarkeCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "rroberts@darkecountysheriff.org";
+    return "rroberts@darkecountysheriff.org,streborz@centurylink.net";
   }
   
   @Override
