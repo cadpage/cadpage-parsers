@@ -27,7 +27,7 @@ public class ILMadisonCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu";
+    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,ripnrun@madisonco.com";
   }
 
   private static final Pattern DELIM = Pattern.compile("[, ]*\n *");
