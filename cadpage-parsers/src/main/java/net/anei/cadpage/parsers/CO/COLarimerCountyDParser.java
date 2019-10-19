@@ -18,7 +18,7 @@ public class COLarimerCountyDParser extends DispatchA41Parser {
   
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
   
   @Override
@@ -43,6 +43,7 @@ public class COLarimerCountyDParser extends DispatchA41Parser {
       "LFC", "FORT COLLINS",
       "LLV", "LOVELAND",
       "LOV", "LOVELAND",
+      "LNW", "LIVERMORE",
       "TIM", "TIMNATH",
       "WEL", "WELLINGTON",
       "WLD", "WELD COUNTY",

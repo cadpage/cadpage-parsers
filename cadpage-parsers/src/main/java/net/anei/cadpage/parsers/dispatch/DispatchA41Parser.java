@@ -51,7 +51,7 @@ public class DispatchA41Parser extends FieldProgramParser {
     sb.append("CODE! ");
     if ((flags & A41_FLG_ID) != 0) sb.append("ID ");
     else if ((flags & A41_FLG_NO_CALL) == 0) sb.append("CALL ");
-    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ID1 GPS1 GPS2 ID2? Unit:UNIT UNIT+");
+    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) Unit:UNIT UNIT+");
     return sb.toString();
   }
 
@@ -114,8 +114,10 @@ public class DispatchA41Parser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("[A-Z]{2}\\d{9}");
     if (name.equals("ID1")) return new IdField("\\d{10}", true);
     if (name.equals("ID2")) return new BaseId2Field();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("UNIT")) return new BaseUnitField();
-    if (name.equals("TIMESTAMP")) return new SkipField("\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d", true);
+//    if (name.equals("TIMESTAMP")) return new SkipField("\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
   
@@ -289,6 +291,14 @@ public class DispatchA41Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       data.strCallId = append(field, "/", data.strCallId);
+    }
+  }
+  
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
   }
   
