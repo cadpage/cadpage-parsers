@@ -240,7 +240,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       "DP",     "DEER PARK",
       "EL",     "EL LAGO",
       "ETJ",    "SUGAR LAND",
-      "FB",     "FOREST BEND",
+      "FB",     "HARRIS COUNTY", // "FOREST BEND",
       "FW",     "FRIENDSWOOD",
       "GACO",   "GALVESTON COUNTY",
       "GALV",   "GALVESTON",
