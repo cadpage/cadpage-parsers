@@ -5,12 +5,21 @@ import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 public class TNFranklinCountyParser extends DispatchA74Parser {
   
   public TNFranklinCountyParser() {
-    super("FRANKLIN COUNTY", "TN");
+    this("FRANKLIN COUNTY", "TN");
+  }
+  
+  public TNFranklinCountyParser(String defCity, String defState) {
+    super(defCity, defState);
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "TNFranklinCounty";
   }
   
   @Override
   public String getFilter() {
-    return "Dispatch@FranklinTN911.info";
+    return "Dispatch@GrundyTN911.info";
   }
   
   @Override
