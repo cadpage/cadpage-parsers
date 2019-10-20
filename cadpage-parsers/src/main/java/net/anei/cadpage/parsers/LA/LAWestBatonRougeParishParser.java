@@ -39,11 +39,17 @@ public class LAWestBatonRougeParishParser extends DispatchA13Parser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
   
+  private static final Pattern TERM_PTN = Pattern.compile("(?:</?[-\\w]+ */?>)+");
   private static final Pattern MARKER = Pattern.compile("[ A-Z]+:\\d{4}:[:0-9]+\n");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Notification")) return false;
+    
+    if (body.startsWith("<")) {
+      body = TERM_PTN.matcher(body).replaceAll(" ").trim();
+    }
+    
     Matcher match = MARKER.matcher(body);
     boolean good = match.lookingAt();
     if (!good) {
