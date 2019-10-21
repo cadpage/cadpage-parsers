@@ -31,7 +31,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     return "adams911@adamscounty.us,adams911.com,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
   }
   
-  private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX )");
+  private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX |CANCEL INCIDENT:)");
+  private static final Pattern IAMR_CANCEL_MASTER = Pattern.compile("(.*?) (LOC:.*?) (UNITS: *\\S+?) (.*)");
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
   private static final Pattern IAMR_COMMA_PTN = Pattern.compile("[ ,]*\n[ ,]*");
   private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=LOC:) ");
@@ -47,25 +48,34 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     Matcher match = IAMR_PREFIX1.matcher(body);
     if (match.lookingAt()) {
       if (SUB_SRC_PTN.matcher(subject).matches()) data.strSource = subject;
-      subject = "Alert: " + match.group(1).trim();
+      String call = match.group(1).trim();
       body = body.substring(match.end()).trim();
-      if (body.startsWith(":")) {
-        body = "RUN CARD:" + body.substring(1);
-      } else {
-        body = IAMR_BOX_PTN.matcher(body).replaceFirst(", RUN CARD: BOX ");
-      }
-      body = IAMR_COMMA_PTN.matcher(body).replaceAll("\n");
-      if (!body.contains("\n")) {
-        noBrkFmt = true;
-        body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
-      }
-      body = body.replaceAll(" , ", " ");
-      
+
       match = TRAIL_SRC_PTN.matcher(body);
       if (match.find()) {
         String src = match.group(1);
         if (src != null) data.strSource = src;
         body = body.substring(0, match.start()).trim();
+      }
+
+      if (body.startsWith("CANCEL INCIDENT:")) {
+        subject = "APSS Cancel Message";
+        match = IAMR_CANCEL_MASTER.matcher(body);
+        if (!match.matches()) return false;
+        body = match.group(1)+'\n'+match.group(2)+'\n'+match.group(3)+'\n'+call;
+      } else {
+        subject = "Alert: " + call;
+        if (body.startsWith(":")) {
+          body = "RUN CARD:" + body.substring(1);
+        } else {
+          body = IAMR_BOX_PTN.matcher(body).replaceFirst(", RUN CARD: BOX ");
+        }
+        body = IAMR_COMMA_PTN.matcher(body).replaceAll("\n");
+        if (!body.contains("\n")) {
+          noBrkFmt = true;
+          body = IAMR_MISSING_BRK_PTN.matcher(body).replaceAll("\n");
+        }
+        body = body.replaceAll(" , ", " ");
       }
     }
     

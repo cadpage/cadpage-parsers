@@ -16,8 +16,7 @@ public class WAPierceCountyParser extends GroupBestParser {
   
   public WAPierceCountyParser() {
     super(new WAPierceCountyAParser(), new WAPierceCountyBParser(), 
-          new WAPierceCountyCParser(), new WAPierceCountyDParser(),
-          new WAPierceCountyEParser());
+          new WAPierceCountyCParser(), new WAPierceCountyEParser());
   }
   
   static String adjustMapAddressCommon(String sAddress) {

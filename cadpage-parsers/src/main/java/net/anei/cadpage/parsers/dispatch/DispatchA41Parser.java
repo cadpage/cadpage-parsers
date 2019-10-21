@@ -51,7 +51,7 @@ public class DispatchA41Parser extends FieldProgramParser {
     sb.append("CODE! ");
     if ((flags & A41_FLG_ID) != 0) sb.append("ID ");
     else if ((flags & A41_FLG_NO_CALL) == 0) sb.append("CALL ");
-    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) Unit:UNIT UNIT+");
+    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) INFO/CS+ Unit:UNIT UNIT+");
     return sb.toString();
   }
 
@@ -114,10 +114,9 @@ public class DispatchA41Parser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("[A-Z]{2}\\d{9}");
     if (name.equals("ID1")) return new IdField("\\d{10}", true);
     if (name.equals("ID2")) return new BaseId2Field();
-    if (name.equals("GPS1")) return new MyGPSField(1);
-    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("GPS1")) return new MyGPS1Field();
+    if (name.equals("GPS2")) return new MyGPS2Field();
     if (name.equals("UNIT")) return new BaseUnitField();
-//    if (name.equals("TIMESTAMP")) return new SkipField("\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
   
@@ -294,11 +293,31 @@ public class DispatchA41Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
-  private class MyGPSField extends GPSField {
-    public MyGPSField(int type) {
-      super(type);
-      setPattern(GPS_PTN, true);
+  private static final Pattern GPS1_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
+  private class MyGPS1Field extends GPSField {
+    public MyGPS1Field() {
+      super(1);
+      setPattern(GPS1_PTN, true);
+    }
+  }
+  
+  private static final Pattern GPS2_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{5,}) *(.*)");
+  private class MyGPS2Field extends GPSField {
+    public MyGPS2Field() {
+      super(2);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS2_PTN.matcher(field);
+      if (!match.matches()) abort();
+      super.parse(match.group(1), data);
+      data.strSupp = append(data.strSupp, "\n", match.group(2));
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "GPS INFO?";
     }
   }
   
