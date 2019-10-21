@@ -16,12 +16,12 @@ public class TNFranklinCountyParser extends DispatchA74Parser {
   public String getAliasCode() {
     return "TNFranklinCounty";
   }
-  
+
   @Override
   public String getFilter() {
-    return "Dispatch@GrundyTN911.info";
+    return "Dispatch@FranklinTN911.info";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
