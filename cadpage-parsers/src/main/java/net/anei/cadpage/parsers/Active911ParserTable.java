@@ -1604,6 +1604,7 @@ public class Active911ParserTable {
       "US/TX/OysterCreekPD",              "TXBrazoriaCountyC",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
       "US/TX/Richardson",                 "TXDallasCountyE",
+      "US/TX/Roanoke",                    "TXRoanoke",
       "US/TX/RockwallCounty",             "TXRockwallCountyC",
       "US/TX/Rosenburg",                  "TXRosenberg",
       "US/TX/RoyseCity",                  "TXRoyseCity",
