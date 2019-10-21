@@ -1427,6 +1427,7 @@ public class ParserList {
               ,"TXBurlesonCounty"               ,"Burleson County, TX"
               ,"TXBurnetCounty"                 ,"Burnet County, TX"
               ,"TXCarrollton"                   ,"Carrollton, TX"
+              ,"TXCherokeeCounty"               ,"Cherokee County, TX"
               ,"TXCollinCounty"                 ,"Collin County, TX"
               ,"TXCookeCounty"                  ,"Cooke County, TX"
               ,"TXCoryellCounty"                ,"Coryell County, TX"
