@@ -1054,6 +1054,7 @@ public class Active911ParserTable {
       "US/NJ/HamiltonTownship",           "NJAtlanticCountyB",
       "US/NJ/HopatcongPD",                "NJSussexCountyD",
       "US/NJ/HunterdonCounty",            "NJHunterdonCounty",
+      "US/NJ/InfoMap911",                 "NJBergenCountyA",
       "US/NJ/JacksonTwpPolice",           "NJOceanCountyE",
       "US/NJ/JeffersonPolice",            "NJMorrisCountyB",
       "US/NJ/LifeCommCad",                "NJMercerCountyA",
