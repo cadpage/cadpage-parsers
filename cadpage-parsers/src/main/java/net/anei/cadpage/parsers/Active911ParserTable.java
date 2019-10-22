@@ -1378,6 +1378,7 @@ public class Active911ParserTable {
       "US/PA/DelcoTextRelay",             "PADelawareCountyB",
       "US/PA/Ecm",                        "PAAlleghenyCountyB",
       "US/PA/ElkCounty",                  "PAElkCounty",
+      "PAErieCountyDParser",              "PAErieCountyDParser",
       "US/PA/FayetteCounty",              "PAFayetteCountyC",
       "US/PA/FayetteCountyEMA",           "PAFayetteCountyC",
       "US/PA/FDCMS",                      "PAChesterCountyO,GroupBlock,PAChesterCountyF",
