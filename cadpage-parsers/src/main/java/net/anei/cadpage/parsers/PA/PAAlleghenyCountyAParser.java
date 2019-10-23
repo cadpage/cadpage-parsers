@@ -102,7 +102,12 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
     
     body = body.replace(" Unit:", " Units:");
-    return parseFields(body.split(","), 5, data);
+    if (!parseFields(body.split(","), 5, data)) return false;
+    if (data.strPlace.startsWith("GAP - GREAT ALLEGHENY PASSAGE - ")) {
+      data.strAddress = data.strPlace;
+      data.strPlace = "";
+    }
+    return true;
   }
   
   @Override
