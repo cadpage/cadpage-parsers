@@ -15,6 +15,7 @@ public class NCStokesCountyParser extends FieldProgramParser {
   public NCStokesCountyParser() {
     super(CITY_CODES, "STOKES COUNTY", "NC", 
           "SRC ( STA ID TIME/RN+ | SRC CALL ADDRCITY UNIT! INFO/N+ )");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -112,6 +113,10 @@ public class NCStokesCountyParser extends FieldProgramParser {
       return "INFO ID DATE TIME";
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "100 STOKES DR",                        "+36.265710,-80.384445"
+  });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "DAN", "Danbury",
