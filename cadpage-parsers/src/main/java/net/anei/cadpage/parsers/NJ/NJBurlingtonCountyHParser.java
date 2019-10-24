@@ -20,14 +20,27 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     return "@co.burlington.nj.us";
   }
   
+  private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
+  
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    if (subject.equals("Station 261")) {
+      data.strSource = subject;
+      return parseFields(SPEC_DELIM.split(body), data);
+    }
+    
     if (subject.startsWith("[")) {
       int pt = subject.indexOf(']');
       if (pt < 0) return false;
       subject = subject.substring(pt+1).trim();
     }
     return super.parseHtmlMsg(subject, body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC? " + super.getProgram();
   }
 
   @Override
