@@ -34,7 +34,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov";
+    return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov,donotreply@Enfwebmail.onmicrosoft.com>";
   }
   
   private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{1,3}This\\semail");
