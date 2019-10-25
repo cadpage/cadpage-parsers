@@ -498,6 +498,13 @@ public class DispatchA13Parser extends FieldProgramParser {
         }
         data.strCross = sb.toString();
       }
+      
+      // If the address is a naked ampersand, try to parse the address from the place field
+      if (data.strAddress.equals("&") && data.strPlace.length() > 0) {
+        data.strAddress = "";
+        parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, data.strPlace, data);
+        data.strPlace = "";
+      }
     }
     
     private String stripApt(String part, Data data) {

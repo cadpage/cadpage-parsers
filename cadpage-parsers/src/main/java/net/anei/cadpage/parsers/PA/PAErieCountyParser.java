@@ -8,8 +8,8 @@ public class PAErieCountyParser extends GroupBestParser {
     super(new PAErieCountyAParser(), 
           new PAErieCountyBParser(), 
           new PAErieCountyCParser(),
-          new PAErieCountyEmergyCareParser(),
-          new PAErieCountyDParser());
+          new PAErieCountyDParser(),
+          new PAErieCountyEmergyCareParser());
   }
   
   public static final String[] CITY_LIST = new String[]{
