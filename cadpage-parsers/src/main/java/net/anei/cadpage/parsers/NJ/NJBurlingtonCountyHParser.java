@@ -11,7 +11,10 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   
   public NJBurlingtonCountyHParser() {
     super(CITY_CODES, "BURLINGTON COUNTY", "NJ", 
-          "RADIO_CHANNEL:CH? TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! \"LOCAL_INFO\":PLACE! CROSS_STREETS:X! NAME:NAME! ADDRESS:SKIP! PHONE:PHONE! NARRATIVE:EMPTY! INFO_BLK+ NATURE:EMPTY? ALERTS:ALERT! FINAL_REPRT:SKIP! https:QUERY!");
+          "RADIO_CHANNEL:CH? TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " + 
+          "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " + 
+          "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:SKIP | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:SKIP ) https:QUERY!");
+    setAccumulateUnits(true);
     setupMultiWordStreets("REV DR ML KING JR");
   }
   
@@ -48,6 +51,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("MAP"))  return new MyMapField();
     if (name.equals("QUERY")) return new MyQueryField();
     return super.getField(name);
   }
@@ -74,8 +78,8 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
         Matcher match = CITY_PTN.matcher(city);
         if (match.matches()) {
           data.strCity = convertCodes(match.group(1), CITY_CODES);
-//          if (NUMERIC.matcher(data.strCity).matches()) abort();
           city = match.group(2);
+//          if (NUMERIC.matcher(data.strCity).matches()) abort();
         }
         if (city.length() > 0) {
           match = APT_PTN.matcher(city);
@@ -90,6 +94,26 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, ",");
+      super.parse(field, data);
+    }
+  }
+  
+  
+  private class MyMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf("EMS GRID:");
+      if (pt >= 0) {
+        String fireMap = field.substring(0,pt).trim();
+        String emsMap = field.substring(pt+9).trim();
+        if (fireMap.equals(emsMap)) {
+          field = fireMap;
+        } else {
+          if (fireMap.length() > 0) fireMap = "F:" + fireMap;
+          if (emsMap.length() > 0) emsMap = "E:" + emsMap;
+          field = append(fireMap, " ", emsMap);
+        }
+      }
       super.parse(field, data);
     }
   }
@@ -136,6 +160,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "10", "MAPLE SHADE TWP",
       "11", "DELANCO TWP",
+      "12", "BEVERLY",
       "13", "LUMBERTON TWP",
       "14", "EDGEWATER PARK TWP",
       "16", "WILLINGBORO TWP",
@@ -163,8 +188,10 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       "40", "ROEBLING",
       "41", "WRIGHTSTOWN",
       "42", "TUCKERTON",
-      "44", "FIELDSBORO",
       "43", "TABERNACLE TWP",
+      "44", "FIELDSBORO",
+      "45", "EGG HARBOR CITY",
+      "46", "WRIGHTSTOWN",
       "50", "MOUNT HOLLY TWP",
       "60", "BORDENTOWN",
       "70", "RIVERSIDE TWP",
