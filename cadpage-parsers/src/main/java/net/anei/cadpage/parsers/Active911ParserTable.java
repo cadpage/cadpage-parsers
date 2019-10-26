@@ -1494,6 +1494,7 @@ public class Active911ParserTable {
       "US/TN/CampbellCounty",             "TNCampbellCounty",
       "US/TN/CarterCounty",               "TNCarterCounty",
       "US/TN/CityofKingsport",            "TNKingsport",
+      "US/TN/ClaiborneCounty",            "TNClaiborneCounty",
       "US/TN/ClayCounty",                 "TNClayCounty",
       "US/TN/CoffeeCounty",               "TNCoffeeCounty",
       "US/TN/CumberlandCounty",           "TNCumberlandCounty",
