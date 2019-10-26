@@ -4,9 +4,9 @@ import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA76Parser;
 
-public class VAPatrickCountyBParser extends DispatchA76Parser {
+public class VAAmeliaCountyBParser extends DispatchA76Parser {
 
-  public VAPatrickCountyBParser() {
+  public VAAmeliaCountyBParser() {
     super("PATRICK COUNTY", "VA");
   }
   
