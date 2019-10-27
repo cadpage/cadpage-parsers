@@ -119,7 +119,7 @@ public class DispatchA13Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern STATUS_PTN = Pattern.compile("\\b(?:Dispatched|Req[ _]?Dispatch|(Acknowledge|Enroute|En Route Hosp|Responding|On *Scene|Standing ?By|Stack|In Command|Staged|Staging|ArrivedAtDestination|Transport)|(Disposed|Terminated))\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern STATUS_PTN = Pattern.compile("\\b(?:Dispatched|Req[ _]?Dispatch|(Acknowledge|Enroute|En Route Hosp|Responding|On *Scene|Standby|Standing ?By|Stack|In Command|Staged|Staging|ArrivedAtDestination|Transport)|(Disposed|Terminated))\\b", Pattern.CASE_INSENSITIVE);
   private class BaseStatusField extends Field {
     @Override
     public void parse(String field, Data data) {

@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NYMadisonCountyGLASParser extends FieldProgramParser {
   
-  private static final Pattern WIERD_CHAR_PTN = Pattern.compile("=(?:20|EF|BB|BF)");
+  private static final Pattern WIERD_CHAR_PTN = Pattern.compile("=(?:09|20|EF|BB|BF)");
   private static final Pattern DELIM = Pattern.compile("\n+");
   private static final Pattern MASTER = Pattern.compile("(?:([A-Z0-9]+)-)?(.*?)\n+(.*?)(?: \\((.*?)\\)?)?");
   private static final Pattern CITY_APT_PTN = Pattern.compile("(.*?)(?:(?:VILLAGE|HAMLET))?(?: +APT | *#(?:APT )?) *(.+)");
@@ -17,7 +17,8 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
 
   public NYMadisonCountyGLASParser() {
     super(CITY_LIST, "MADISON COUNTY", "NY",
-          "Number:ID? Address:ADDR! Type:CALL!");
+          "( Location:ADDR! Type:CALL! StatusTime:DATETIME! Agency_Name:UNIT! Incident_Notes%EMPTY! INFO/N+ " +
+          "| Number:ID? Address:ADDR! Type:CALL! )");
     setupMultiWordStreets(
         "DITCH BANK",
         "INDIAN OPENING",
@@ -46,7 +47,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
     body = body.replace("Free Format Address:","Address:");
     body = body.replace("Response Type:", "Type:");
     
-    if (body.startsWith("Number:") || body.startsWith("Address:")) {
+    if (body.startsWith("Location:") || body.startsWith("Number:") || body.startsWith("Address:")) {
       if (!super.parseFields(DELIM.split(body), data)) return false;
     }
     
@@ -194,6 +195,8 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("GLAS:(\\d{4}:\\d{6})");
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -213,7 +216,7 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
         extra = '(' + match.group(1) + ')';
         field = append(field.substring(0,match.start()), " ", field.substring(match.end()));
       }
-      parseAddress(StartType.START_ADDR, FLAG_CROSS_FOLLOWS, field, data);
+      parseAddress(StartType.START_PLACE, FLAG_CROSS_FOLLOWS, field, data);
       
       if (extra != null) data.strAddress = append(data.strAddress, " ", extra);
       
@@ -228,6 +231,8 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
         data.strApt = append(data.strApt, " ", match.group(1));
         left = left.substring(match.end());
       }
+      left = stripFieldStart(left, "(");
+      left = stripFieldEnd(left, ")");
       left = stripFieldStart(left, "/");
       left = stripFieldEnd(left, "/");
       data.strCross = left;
@@ -235,7 +240,19 @@ public class NYMadisonCountyGLASParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT PLACE CITY X";
+      return "PLACE ADDR APT CITY X";
+    }
+  }
+  
+  private Pattern INFO_JUNK_PTN = Pattern.compile("TimeStamp\\s+Info");
+  private Pattern INFO_PFX_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d\\s+(.*)");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches())  return;
+      Matcher match = INFO_PFX_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
     }
   }
   
