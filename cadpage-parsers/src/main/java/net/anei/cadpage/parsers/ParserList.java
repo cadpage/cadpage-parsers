@@ -1581,7 +1581,7 @@ public class ParserList {
               ,"VAIsleOfWightCounty"            ,"Isle of Wight County, VA"
               ,"VAJamesCityCounty"              ,"James City County, VA"
               ,"VAKingGeorgeCounty"             ,"King George County, VA"
-              ,"VAKingWillliamCounty"           ,"King William County, VA"
+              ,"VAKingWilliamCounty"            ,"King William County, VA"
               ,"VALexington"                    ,"Lexington, VA"
               ,"VALoudounCounty"                ,"Loudoun County, VA"
               ,"VALouisaCounty"                 ,"Louisa County, VA"
