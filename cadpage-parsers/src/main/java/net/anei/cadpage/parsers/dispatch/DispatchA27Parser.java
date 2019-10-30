@@ -36,7 +36,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+ ) Unit(s)_responded:UNIT+");
+          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+ ) Unit(s)_responded:UNIT? UNIT+");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
   
