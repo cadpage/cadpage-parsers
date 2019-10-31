@@ -14,6 +14,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCRowanCountyParser extends DispatchOSSIParser {
   
+  private int year;
+  
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
           "( CANCEL ADDR! CITY? XPLACE+ " +
@@ -268,7 +270,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   
   private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
   private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
-  private static final Pattern ID_PTN = Pattern.compile("\\d{8,9}");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{6,9}");
   private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bACTIVATION\\b|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b - |\\bLOCATED\\b|\\bUDTS:|\\bREF\\b|\\bREFERENCE\\b|\\bREQUESTING\\b).*");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("Radio Channel: *(.*)");
   private static final Pattern SHORT_PLACE_PTN = Pattern.compile("[- A-Z0-9()#&`']{1,40}");
