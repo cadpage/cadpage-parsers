@@ -14,8 +14,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCRowanCountyParser extends DispatchOSSIParser {
   
-  private int year;
-  
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
           "( CANCEL ADDR! CITY? XPLACE+ " +
