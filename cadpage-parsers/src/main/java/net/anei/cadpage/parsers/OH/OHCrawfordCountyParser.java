@@ -10,6 +10,6 @@ public class OHCrawfordCountyParser extends DispatchA1Parser {
   
   @Override
   public String getFilter() {
-    return "crawfordcountysheriffohio.com";
+    return "ccsheriffalerts@crawfordcountysheriffohio.com>";
   }
 }

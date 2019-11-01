@@ -87,6 +87,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
       "CAM","Campbell County",
       
       // Henry County
+      "HEN","Henry County",
       "AXT","Axton",
       
       "FRA","Franklin County",
