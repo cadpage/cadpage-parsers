@@ -12,6 +12,6 @@ public class MOAudrainCountyParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "CAD@AUDRAIN911.ORG";
+    return "iti_notifications@audrain911.org";
   }
 }
