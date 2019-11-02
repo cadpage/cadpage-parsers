@@ -64,9 +64,14 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
       "AVL", "AUTAUGAVILLE",
       "BIL", "BILLINGSLEY",
       "DEA", "DEATSVILLE",
+      "IND", "INDEPENDENCE",
+      "JON", "JONES",
       "MAR", "MARBURY",
       "PRA", "PRATTVILLE",
-      "VER", "VERBENA"
+      "SEL", "SELMA",
+      "STA", "",
+      "VER", "VERBENA",
+      "WHI", "WHITE CITY"
   });
 
 }
