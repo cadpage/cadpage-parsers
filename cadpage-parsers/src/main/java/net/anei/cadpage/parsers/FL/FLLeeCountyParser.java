@@ -6,6 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class FLLeeCountyParser extends GroupBestParser {
   
   public FLLeeCountyParser() {
-    super(new FLLeeCountyAParser(), new FLLeeCountyBParser());
+    super(new FLLeeCountyAParser(), 
+          new FLLeeCountyBParser(),
+          new FLLeeCountyCParser());
   }
 } 

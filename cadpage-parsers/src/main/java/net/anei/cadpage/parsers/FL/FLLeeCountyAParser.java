@@ -18,7 +18,8 @@ public class FLLeeCountyAParser extends DispatchPrintrakParser {
   public String getFilter() {
     return "leecontrol@leegov";
   }
-  
+
+
   private static final Pattern ID_PTN = Pattern.compile("Msg ID: *([\\S]*?)\n");
   private static final Pattern SRC_PTN = Pattern.compile("([A-Z]+) +");
   
