@@ -11,7 +11,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
   
   public TXGalvestonCountyParser() {
     super(CITY_CODES, "GALVESTON COUNTY", "TX",
-          "( CANCEL ADDR CITY! | FYI CALL ( ADDR! | PLACE ADDR! | ADDR! ) CITY? ID? PRI? DATETIME? ) INFO/N+");
+          "( CANCEL ADDR CITY! | FYI CALL ( ADDR! | PLACE ADDR! | ADDR! ) CITY? ID? PRI? DATETIME? ) INFO/N+? SRC END");
     setupCityValues(CITY_CODES);
     setupCities(CITY_LIST);
   }
@@ -23,9 +23,8 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (subject.length() > 0) body = subject + ": " + body;
-    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+
+    if (body.startsWith("CAD\n") || body.startsWith("CAD ")) body = "CAD:" + body.substring(4); 
     return super.parseMsg(body, data);
   }
   
@@ -36,6 +35,7 @@ public class TXGalvestonCountyParser extends DispatchOSSIParser {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("UNIT")) return new UnitField("[A-Z]{4}", true);
     return super.getField(name);
   }
 

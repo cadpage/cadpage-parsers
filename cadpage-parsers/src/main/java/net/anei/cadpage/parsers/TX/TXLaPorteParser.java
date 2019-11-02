@@ -22,9 +22,10 @@ public class TXLaPorteParser extends DispatchOSSIParser {
   
   protected TXLaPorteParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-          "( KEMA_FMT KEMA_ADDR/aS9CI | " +
-          "FYI ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ | " +
-          "CANCEL ADDR! CITY? ) INFO+");
+          "( KEMA_FMT KEMA_ADDR/aS9CI " +
+          "| CANCEL ADDR! CITY? " + 
+          "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ " +
+          ") INFO+");
   }
   
   @Override
@@ -71,6 +72,8 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       if (match.find()) body = body.substring(match.end()).trim();
       body = LINE_BRK_PTN.matcher(body).replaceAll(" ");
     }
+    
+    if (body.startsWith("CAD ") || body.startsWith("CAD\n")) body = "CAD:" + body.substring(4); 
     
     // Both cases invoke the superclass parseMsg method
     return super.parseMsg(body, data);
@@ -250,6 +253,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       "HO",     "NASSAU BAY",
       "JAMA",   "JAMAICA BEACH",
       "KH",     "KEMAH",
+      "LAMA",   "LA MARQUE",
       "LC",     "LEAGUE CITY",
       "LP",     "LA PORTE",
       "MP",     "MORGANS POINT",
@@ -263,6 +267,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       "SL",     "SUGAR LAND",
       "ST",     "STAFFORD",
       "SO",     "HARRIS COUNTY",
+      "TC",     "TEXAS CITY",
       "TL",     "SEABROOK",   // ???
       "WB",     "WEBSTER",
       
