@@ -565,6 +565,7 @@ public class ParserList {
           new ParserCategory("Kentucky"
               ,"KYAllenCounty"                  ,"Allen County, KY"
               ,"KYAndersonCounty"               ,"Anderson County, KY"
+              ,"KYBallardCounty"                ,"Ballard County, KY"
               ,"KYBarrenCounty"                 ,"Barren County, KY"
               ,"KYBooneCounty"                  ,"Boone County, KY"
               ,"KYBourbonCounty"                ,"Bourbon County, KY"

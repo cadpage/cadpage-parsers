@@ -530,6 +530,7 @@ public class Active911ParserTable {
       "US/KS/WyandotteCounty",            "KSWyandotteCounty",
       "US/KY/AllenCounty",                "KYAllenCounty",
       "US/KY/AndersonCounty",             "KYAndersonCounty",
+      "US/KY/BallardCounty",              "KYBallardCounty",
       "US/KY/Barbourville",               "KYKnoxCounty",
       "US/KY/BarrenCounty",               "KYBarrenCounty",
       "US/KY/BooneCounty",                "KYBooneCountyA",
