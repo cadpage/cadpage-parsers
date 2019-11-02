@@ -1251,6 +1251,7 @@ public class Active911ParserTable {
       "US/OH/MayfieldVillage",            "OHCuyahogaCountyA",
       "US/OH/MCSO",                       "OHMontgomeryCountyC2",
       "US/OH/MedinaCounty",               "OHMedinaCountyB,OHMedinaCountyD",
+      "US/OH/MedinaCountyFire",           "OHMedinaCountyD",
       "US/OH/MeigsCounty",                "OHMeigsCounty",
       "US/OH/MercerCounty",               "OHMercerCounty",
       "US/OH/MiamiCounty",                "OHMiamiCountyB",
