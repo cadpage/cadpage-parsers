@@ -190,6 +190,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "44683 BARNES AND YEH LANE",            "+38.285600,-76.530600",
       "46155 CARVER SCHOOL BL",               "+38.250002,-76.480090",
       "43950 CASEYS LN",                      "+38.283806,-76.556252",
+      "25390 COLTON POINT RD",                "+38.360118,-76.706042",
       "48017 CROSS MANOR RD",                 "+38.159970,-76.414850",
       "23520 FDR BOULEVARD",                  "+38.303844,-76.524341",
       "23550 FDR BOULEVARD",                  "+38.304432,-76.524862",
