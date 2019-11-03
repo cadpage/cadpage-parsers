@@ -338,6 +338,11 @@ public class DispatchA27Parser extends FieldProgramParser {
       // times mode
       case TIMES:
         times = append(times, "\n", token);
+        if (token.endsWith("Incident Re-Opened")) {
+          data.msgType = MsgType.PAGE;
+        } else if (token.endsWith("Incident Closed")) {
+          data.msgType = MsgType.RUN_REPORT;
+        }
         break;
         
       // GPS mode;
