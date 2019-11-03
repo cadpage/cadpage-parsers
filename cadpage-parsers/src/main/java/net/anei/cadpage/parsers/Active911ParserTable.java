@@ -583,6 +583,7 @@ public class Active911ParserTable {
       "US/KY/KentonCountyRylandHeights",  "KYKentonCounty",
       "US/KY/KentonCountyTaylorMill",     "KYKentonCounty",
       "US/KY/KentonCountyWalton",         "KYKentonCounty",
+      "US/KY/KnottCounty",                "KYKnottCounty",
       "US/KY/KSPP1",                      "KYStatePolice",
       "US/KY/KSPP12",                     "KYStatePolice",
       "US/KY/KSPP13",                     "KYStatePolice",

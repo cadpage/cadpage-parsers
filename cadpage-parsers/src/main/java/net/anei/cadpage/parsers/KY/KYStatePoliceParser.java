@@ -14,9 +14,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchB3Parser;
 
 public class KYStatePoliceParser extends DispatchB3Parser {
   
-  private static final Pattern REJECT_PREFIX_PTN = Pattern.compile("(?:CARROLLCOUNTY911|HARRISON_COUNTY_911|PIKEVILLE9-1-1):");
-  private static final Pattern PREFIX_PTN = Pattern.compile("(?:KSP CAMPBELLSBURG|KSP DRY RIDGE E-911|KSP FRANKFORT|KSP POST 9|911-CENTER):");
-  
   private boolean srcFound;
   
   public KYStatePoliceParser() {
@@ -47,6 +44,9 @@ public class KYStatePoliceParser extends DispatchB3Parser {
   public String getLocName() {
     return "Kentucky State Police";
   }
+  
+  private static final Pattern REJECT_PREFIX_PTN = Pattern.compile("(?:CARROLLCOUNTY911|HARRISON_COUNTY_911|PIKEVILLE9-1-1):");
+  private static final Pattern PREFIX_PTN = Pattern.compile("(?:KSP CAMPBELLSBURG|KSP DRY RIDGE E-911|KSP FRANKFORT|KSP POST 9|911-CENTER):");
   
   @Override
   public String getFilter() {

@@ -602,6 +602,7 @@ public class ParserList {
               ,"KYJohnsonCounty"                ,"Johnson County, KY"
               ,"KYKentonCounty"                 ,"Kenton County, KY"
               ,"KYStatePolice"                  ,"Kentucky State Police, KY"
+              ,"KYKnottCounty"                  ,"Knott County, KY"
               ,"KYKnoxCounty"                   ,"Knox County, KY"
               ,"KYLaRueCounty"                  ,"LaRue County, KY"
               ,"KYLawrenceCounty"               ,"Lawrence County, KY"
