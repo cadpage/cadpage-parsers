@@ -13,7 +13,7 @@ public class NCMaconCountyAParser extends DispatchB3Parser {
   private static final Pattern PRIMARY_PREFIX_PTN = Pattern.compile("MACON 911:? MACON911:(?:MACON911 )?|911 CENTER:|MACON911[: ]");
  
   public NCMaconCountyAParser() {
-    super(PRIMARY_PREFIX_PTN, CITY_LIST, "MACON COUNTY", "NC");
+    super(PRIMARY_PREFIX_PTN, NCMaconCountyParser.CITY_LIST, "MACON COUNTY", "NC");
     removeWords("DRIVE");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -163,22 +163,4 @@ public class NCMaconCountyAParser extends DispatchB3Parser {
       "VEHICLE ACCIDENT",
       "VEHICLE FIRE"
   );
-
-  private static final String[] CITY_LIST = new String[]{
-    "FRANKLIN", 
-    "HIGHLANDS", 
-    "OTTO",
-    "FRANKLIN TWP", 
-    "HIGHLANDS TWP", 
-    "SUGARFORK TWP", 
-    "BURNINGTOWN TWP",
-    "CARTOOGECHAYE TWP", 
-    "ELLIJAY TWP", 
-    "MILLSHOAL TWP",
-    "NANTAHALA TWP", 
-    "SMITHBRIDGE TWP",
-    
-    // Cherokee County
-    "TOPTON"
-  };
 }

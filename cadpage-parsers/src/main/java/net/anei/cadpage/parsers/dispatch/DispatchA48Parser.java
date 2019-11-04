@@ -208,7 +208,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private static final Pattern PREFIX_PTN = Pattern.compile("(?!\\d\\d:)([- A-Za-z0-9]+: *)(.*)");
   private static final Pattern TRUNC_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d \\d{4}-\\d{8} ");
   private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8} ");
-  private static final Pattern MASTER_PTN = Pattern.compile("(?:CAD:[-_A-Za-z0-9]* |[- A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) (?:([AP]M) )?(\\d{4}-\\d{5,8}) (.*)");
+  private static final Pattern MASTER_PTN = Pattern.compile("(?:CAD:[-_A-Za-z0-9]* |[- A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) (?:([AP]M) )? *(\\d{4}-\\d{5,8}) (.*)");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+([-\\w]+)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?\\b");
   private static final Pattern DATE_TIME_UNIT_MARK_PTN = Pattern.compile("(.*?)(?: \\d\\d?/\\d\\d?/\\d\\d)? Date/Time.*");
