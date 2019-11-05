@@ -37,6 +37,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   public static final int A48_NO_CODE =           0x04;
   
   private static final Pattern GPS_PTN = Pattern.compile(" *([-+]?\\b\\d{2,3}\\.\\d{4,} +[-+]?\\d{2,3}\\.\\d{4,})\\b *");
+  private static final Pattern PHONE_PTN = Pattern.compile("(?:(\\d{3}-\\d{3}-\\d{4})\\b|- -) *");
   
   /**
    * Enum parameter indicating what kind of information comes between the
@@ -128,6 +129,25 @@ public class DispatchA48Parser extends FieldProgramParser {
         if (match.find()) return match.start();
         return -1;
       }
+    },
+    
+    GPS_PHONE_NAME("GPS? PHONE? NAME", "GPS PHONE NAME") {   // Also not supported for field delimited format
+
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        Matcher match = GPS_PTN.matcher(field);
+        if (match.lookingAt()) {
+          parser.setGPSLoc(match.group(1), data);
+          field = field.substring(match.end());
+        }
+        match = PHONE_PTN.matcher(field);
+        if (match.lookingAt()) {
+          data.strPhone = getOptGroup(match.group(1));
+          field = field.substring(match.end());
+        }
+        data.strName = field;
+      }
+      
     },
     
     TRASH("SKIP", "") {
