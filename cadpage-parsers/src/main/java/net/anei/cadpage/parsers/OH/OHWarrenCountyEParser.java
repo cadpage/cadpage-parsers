@@ -23,6 +23,9 @@ public class OHWarrenCountyEParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) return false;
     data.strCall = subject;
+    
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(DELIM.split(body), data);
   }
   
