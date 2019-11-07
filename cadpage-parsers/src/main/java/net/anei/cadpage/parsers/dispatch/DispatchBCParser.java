@@ -34,12 +34,23 @@ public class DispatchBCParser extends DispatchA3Parser {
     auxA33Parser = new AuxA33Parser(defCity, defState, flags);
   }
   
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Event Number *(\\d{4}-\\d+)\\n");
   private static final Pattern BR_TAG = Pattern.compile("</?br/?>", Pattern.CASE_INSENSITIVE);
   
   private String times;
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    // Check for run report
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      setFieldList("CALL ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCall = subject;
+      data.strSupp = body.substring(match.end()).trim();
+      return true;
+    }
     
     // Lately a lot of agencies have been mixing the standard HTML format we usually process with
     // a non-html version processed by DispatchA33Parser.  As a result, we split out non-html looking

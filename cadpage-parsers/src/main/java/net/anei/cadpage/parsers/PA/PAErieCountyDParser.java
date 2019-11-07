@@ -10,7 +10,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
   
   public PAErieCountyDParser() {
     super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA");
-    setFieldList("SRC DATE TIME PRI CALL CODE ADDR CITY PLACE X INFO GPS");
+    setFieldList("SRC DATE TIME PRI CALL CODE ADDR CITY APT PLACE X INFO GPS");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("RIDGE");
   }
@@ -26,7 +26,8 @@ public class PAErieCountyDParser extends SmartAddressParser {
   }
   
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Za-z ]+");
-  private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*?) -?(\\d{1,2}) (.*?) Lat:(.*?) Lon:(.*)");
+  private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*?) -?(\\d{1,2}) (.*)");
+  private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM) (\\S+) *(.*)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -41,7 +42,12 @@ public class PAErieCountyDParser extends SmartAddressParser {
     data.strCall = match.group(4).trim();
     data.strCode = match.group(5);
     String addr = match.group(6);
-    setGPSLoc(match.group(7)+','+match.group(8), data);
+    
+    Parser p = new Parser(addr);
+    addr = p.get(" Lat:");
+    String gps1 = p.get(" Lon:");
+    String gps2 = p.get();
+    setGPSLoc(gps1+','+gps2, data);
     
     addr = stripFieldStart(addr, "UNKNOWN ");
     addr = addr.replace('@', '/');
@@ -60,6 +66,12 @@ public class PAErieCountyDParser extends SmartAddressParser {
       if (res.isValid()) {
         res.getData(data);
         addr = res.getLeft();
+        
+        match = APT_PTN.matcher(data.strPlace);
+        if (match.matches()) {
+          data.strApt = append(data.strApt, "-", match.group(1));
+          data.strPlace = match.group(2);
+        }
       }
     }
     data.strSupp = addr;
