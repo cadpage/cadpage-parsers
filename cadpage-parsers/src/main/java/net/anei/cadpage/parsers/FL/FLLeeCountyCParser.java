@@ -12,12 +12,13 @@ public class FLLeeCountyCParser extends FieldProgramParser {
   
   public FLLeeCountyCParser() {
     super("LEE COUNTY", "FL", 
-          "INC#:ID TYP:CALL! PRI:PRI! LOC:ADDR! ( TIME/DATE:DATETIME! | TIME:TIME! ) Comments:INFO Disp:UNIT%");
+          "INC#:ID TYP:CALL! PRI:PRI! LOC:ADDR! ( DATE-TIME:DATETIME! | TIME/DATE:DATETIME! | TIME:TIME! ) Comments:INFO Disp:UNIT%");
   }
 
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
+      @Override public boolean revMsgOrder() { return true; }
       @Override public boolean mixedMsgOrder() { return true; }
     };
   }
