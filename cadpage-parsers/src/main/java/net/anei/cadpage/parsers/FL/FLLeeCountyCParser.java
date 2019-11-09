@@ -16,6 +16,11 @@ public class FLLeeCountyCParser extends FieldProgramParser {
   }
 
   @Override
+  public String getFilter() {
+    return "leecontrol@leegov.com";
+  }
+  
+  @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean revMsgOrder() { return true; }
