@@ -26,7 +26,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
   }
   
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Za-z ]+");
-  private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*?) -?(\\d{1,2}) (.*)");
+  private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(?:(\\*[A-Z]+)|(.*?) -?(\\d{1,2})) (.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM) (\\S+) *(.*)");
   
   @Override
@@ -39,9 +39,12 @@ public class PAErieCountyDParser extends SmartAddressParser {
     data.strDate = match.group(1);
     data.strTime = match.group(2);
     data.strPriority = getOptGroup(match.group(3));
-    data.strCall = match.group(4).trim();
-    data.strCode = match.group(5);
-    String addr = match.group(6);
+    data.strCall = match.group(4);
+    if (data.strCall == null) {
+      data.strCall = match.group(5).trim();
+      data.strCode = match.group(6);
+    }
+    String addr = match.group(7);
     
     Parser p = new Parser(addr);
     addr = p.get(" Lat:");
