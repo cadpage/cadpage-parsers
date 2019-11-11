@@ -8,7 +8,7 @@ public class VAFauquierCountyParser extends DispatchOSSIParser {
   
   public VAFauquierCountyParser() {
     super("Fauquier County", "VA",
-        "BOX? CALL! ADDR! X/Z+? UNIT CH");
+        "BOX? CALL! UNIT? ADDR! X/Z+? SRC CH");
   }
 
   @Override
@@ -28,8 +28,9 @@ public class VAFauquierCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new CallField("[-/, A-Z0-9]+", true);
-    if (name.equals("BOX")) return new BoxField("\\d[A-Z0-9]{3}|[A-Z]\\d{3}");
-    if (name.equals("UNIT")) return new UnitField("(?:CO|ST)\\d+");
+    if (name.equals("BOX")) return new BoxField("\\d[A-Z0-9]{3}|[A-Z]\\d{3}", true);
+    if (name.equals("UNIT")) return new UnitField("[^ ]+", true);
+    if (name.equals("SRC")) return new SourceField("(?:CO|ST)\\d+|\\d{4}", true);
     return super.getField(name);
   }
 }
