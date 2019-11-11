@@ -40,6 +40,7 @@ public class DispatchA74Parser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "INTERSECTION:");
       Matcher match = ADDR_CITY_PTN.matcher(field);
       String apt = null;
       if (match.matches()) {

@@ -175,7 +175,7 @@ public class Message {
     Pattern.compile("^[A-Z]+ +\\((\\d)/(\\d)\\) +(.*?) +STOP\\s*$"),
     Pattern.compile("^\\( *([^\\)]*?) +(\\d) *of *(\\d)\\)(.*)\\s*$", Pattern.DOTALL)
   };
-  private static final Pattern MSG_HEADER_FINAL_PTN = Pattern.compile("^(\\d)/(\\d) +");
+  private static final Pattern MSG_HEADER_FINAL_PTN = Pattern.compile("^(\\d)/(\\d)[: ] *");
   private static final Pattern[] SUBJECT_HEADER_PTNS = new Pattern[]{
     Pattern.compile("^(\\d)/(\\d)$"),
     Pattern.compile("^(\\d) *of *(\\d)\\b *"),

@@ -16,7 +16,9 @@ public class ALMarshallCountyDParser extends DispatchA74Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    body = body.replace('|', '\n');
+    if (body.contains(":|")) {
+      body = body.replace("\n", "").replace('|', '\n');
+    }
     return super.parseMsg(subject, body, data);
   }
   
