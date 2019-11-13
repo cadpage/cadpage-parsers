@@ -13,7 +13,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   
   public CTLitchfieldCountyAParser() {
     super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT", 
-          "ADDR ADDR_EXT? ( SELECT/1 PLACE ( EMPTY PLACE | CITY PLACE | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ID? GPS1 GPS2 ID X1 APT1 " +
+          "ADDR ADDR_EXT? ( SELECT/1 PLACE ( EMPTY PLACE | CITY PLACE | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ( JUNK | JUNK1 SKIP+? JUNK2! | ( EMPTY ID ID/L | ID? GPS1 GPS2 ID/L ) X1 APT1 ) " +
                          "| CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
                          ") END");
     addExtendedDirections();
@@ -116,7 +116,10 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     if (name.equals("CALL_CODE")) return new MyCallCodeField();
     if (name.equals("CODE")) return new CodeField(CODE_PTN_STR, true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
-    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("JUNK")) return new SkipField("\\(.*\\)", true);
+    if (name.equals("JUNK1")) return new SkipField("\\(.*", true);
+    if (name.equals("JUNK2")) return new SkipField(".*\\)", true);
+    if (name.equals("ID")) return new IdField("[A-Z]?\\d{2}-\\d+|", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("X1")) return new CrossField("CS= *(.*)", true);
@@ -213,18 +216,6 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CALL CODE";
-    }
-  }
-  
-  private class MyIdField extends IdField {
-    public MyIdField() {
-      super("[A-Z]?\\d{2}-\\d+|", true);
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      if (field.length() == 0) return;
-      super.parse(field, data);
     }
   }
   
