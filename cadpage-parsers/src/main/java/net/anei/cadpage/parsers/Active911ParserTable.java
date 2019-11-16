@@ -1596,6 +1596,7 @@ public class Active911ParserTable {
       "US/TX/Katy",                       "TXCyCreekCommCenter",
       "US/TX/KaufmanCounty",              "TXKaufmanCountyA",
       "US/TX/KendallCounty",              "TXKendallCounty",
+      "US/TX/KerrCounty",                 "TXKerrCounty",
       "US/TX/LakeWorth",                  "TXTarrantCountyC",
       "US/TX/Lampasas",                   "TXLampasasCounty",
       "US/TX/LeonCounty",                 "TXLeonCounty",

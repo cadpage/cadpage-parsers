@@ -1470,6 +1470,7 @@ public class ParserList {
               ,"TXKaufmanCounty"                ,"Kaufman County, TX"
               ,"TXKeller"                       ,"Keller, TX"
               ,"TXKendallCounty"                ,"Kendall County, TX"
+              ,"TXKerrCOunty"                   ,"Kerr County, TX"
               ,"TXKilgore"						          ,"Kilgore, TX"
               ,"TXLampasasCounty"               ,"Lampasas County, TX"
               ,"TXLaPorte"                      ,"La Porte, TX"
