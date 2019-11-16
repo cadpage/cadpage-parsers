@@ -833,6 +833,7 @@ public class Active911ParserTable {
       "US/MO/CityofCameron",              "MOCameron",
       "US/MO/CityofFarmington",           "MOFarmington",
       "US/MO/CityofFestus",               "MOFestusB",
+      "US/MO/CityofLiberty",              "MOClayCountyA",
       "US/MO/CityofLS",                   "MOJacksonCountyC",
       "US/MO/CityofMonett",               "MOMonett",
       "US/MO/CityofRolla",                "MOPhelpsCounty",
