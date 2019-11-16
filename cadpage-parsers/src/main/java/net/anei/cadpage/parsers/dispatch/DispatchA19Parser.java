@@ -147,16 +147,24 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
+  private static final Pattern DATE_TIME_OPER1_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
+  private static final Pattern DATE_TIME_OPER2_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) [ A-Z]+(?::|From:.*)");
   private static final Pattern PHONE_GPS_PTN = Pattern.compile("CALLBACK=([-()\\d]+) LAT=([-+]\\d+\\.\\d+) LON=([-+]\\d+\\.\\d+) UNC=\\d+");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("ProQA Fire.*|[A-Za-z0-9 ]+:");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_OPER_PTN.matcher(field);
+      Matcher match = DATE_TIME_OPER1_PTN.matcher(field);
       if (match.matches()) {
         data.strTime = match.group(1);
         data.strDate = match.group(2);
+        return;
+      }
+      
+      match = DATE_TIME_OPER2_PTN.matcher(field);
+      if (match.matches()) {
+        data.strDate = match.group(1);
+        data.strTime = match.group(2);
         return;
       }
       
