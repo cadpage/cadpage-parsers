@@ -631,6 +631,7 @@ public class Active911ParserTable {
       "US/LA/Hammond",                    "LATangipahoaParishB",
       "US/LA/IberiaParish",               "LAIberiaParish",
       "US/LA/JeffersonParish",            "LAJeffersonParish",
+      "US/LA/JeffersonDavishParish",      "LAJeffersonDavisParish",
       "US/LA/LafayetteParish",            "LALafayetteParish",
       "US/LA/LafourcheParish",            "LALafourcheParish",
       "US/LA/LivingstonCounty",           "LALivingstonParish",

@@ -6,6 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class LACalcasieuParishParser extends GroupBestParser {
   
   public LACalcasieuParishParser() {
-    super(new LACalcasieuParishAParser(), new LACalcasieuParishBParser());
+    super(new LACalcasieuParishAParser(), 
+          new LACalcasieuParishBParser(),
+          new LACalcasieuParishCParser());
   }
 }

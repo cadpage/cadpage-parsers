@@ -649,6 +649,7 @@ public class ParserList {
               ,"LAEastFelicianaParish"          ,"East Feliciana Parish, LA"
               ,"LAIberiaParish"                 ,"Iberia Parish, LA"
               ,"LAJeffersonParish"              ,"Jefferson Parish, LA"
+              ,"LAJeffersonDavisParish"         ,"Jefferson Davis Parish, LA"
               ,"LALafayetteParish"              ,"Lafayette Parish, LA"
               ,"LALafourcheParish"              ,"Lafourche Parish, LA"
               ,"LALivingstonParish"             ,"Livingston Parish, LA"

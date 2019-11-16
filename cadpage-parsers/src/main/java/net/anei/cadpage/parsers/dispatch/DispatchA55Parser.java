@@ -10,7 +10,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL/SDS? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Disposition:SKIP Lat/Long:GPS Zip:ZIP Subgrid_Grid_District:MAP Notes:INFO/N+");
+          "Call_Type:CALL/SDS? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP Notes:INFO/N+");
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
@@ -31,6 +31,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZIP")) return new MyZipField();
+    if (name.equals("MP")) return new MyMilePostField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -61,12 +62,34 @@ public class DispatchA55Parser extends FieldProgramParser {
     }
   }
   
+  private class MyMilePostField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() > 0) {
+        data.strAddress = append(data.strAddress, " ", "MP:" + field);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR?";
+    }
+  }
+  
+  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d) \\(.*\\)");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("(.*)\\b(OPS *\\d+)", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     
     @Override
     public void parse(String field, Data data) {
-      Matcher match = INFO_CHANNEL_PTN.matcher(field);
+      Matcher match = DATE_TIME_OPER_PTN.matcher(field);
+      if (match.matches()) {
+        data.strDate = match.group(1);
+        data.strTime = match.group(2);
+        return;
+      }
+      
+      match = INFO_CHANNEL_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
         data.strChannel = match.group(2).toUpperCase();
@@ -77,7 +100,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "INFO CH";
+      return "DATE TIME INFO CH";
     }
   }
 }
