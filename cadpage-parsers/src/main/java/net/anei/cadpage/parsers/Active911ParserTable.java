@@ -1084,6 +1084,7 @@ public class Active911ParserTable {
       "US/NJ/OCPD",                       "NJOceanCity",
       "US/NJ/PalmyraAmbulance",           "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/PalmyraFire",                "NJBurlingtonCountyC,NJBurlingtonCountyH",
+      "US/NJ/Rutgers",                    "NJMiddlesexCountyE",
       "US/NJ/SaddleRiverPD",              "NJBergenCountyC",
       "US/NJ/SalemCounty",                "NJSalemCountyC",
       "US/NJ/SomersetCounty",             "NJSomersetCountyA",

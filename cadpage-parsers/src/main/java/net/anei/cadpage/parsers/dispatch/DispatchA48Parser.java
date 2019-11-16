@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Base parser for centers using Countryside software
@@ -244,7 +245,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) {
       if (match.group(1) != null) {
-        if (!body.startsWith("As of")) body = subject + '\n' + body;
+        if (!body.startsWith("As of ") && !body.contains(":As of ")) body = subject + '\n' + body;
         subject = "";
       }
       else {
@@ -489,7 +490,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(?:CAD:|[-A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(?:CAD:|[-_ A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class BaseDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
@@ -498,7 +499,12 @@ public class DispatchA48Parser extends FieldProgramParser {
       data.strDate = match.group(1);
       String time = match.group(2);
       if (time.endsWith("M")) {
-        setTime(TIME_FMT, time, data);
+        int hour = Integer.parseInt(time.substring(0, time.indexOf(':')));
+        if (hour >= 13) {
+          data.strTime = time.substring(0, time.length()-3);
+        } else {
+          setTime(TIME_FMT, time, data);
+        }
       } else {
         data.strTime = time;
       }
@@ -620,6 +626,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern INFO_TIMES_PTN = Pattern.compile("[A-Za-z ]+: *\\d\\d:\\d\\d");
   private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
   private static final Pattern INFO_TRUNC_PTN = Pattern.compile("\\d{1,2}[/:][ 0-9:/]*");
   private class BaseInfoField extends InfoField {
@@ -630,11 +637,19 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      Matcher match = INFO_PTN.matcher(field);
-      if (!match.matches()) {
-        return INFO_TRUNC_PTN.matcher(field).matches();
+      if (data.msgType != MsgType.RUN_REPORT) {
+        Matcher match = INFO_TIMES_PTN.matcher(field);
+        if (match.matches()) {
+          data.msgType = MsgType.RUN_REPORT;
+        }
+        else {
+          match = INFO_PTN.matcher(field);
+          if (!match.matches()) {
+            return INFO_TRUNC_PTN.matcher(field).matches();
+          }
+          field = match.group(1);
+        }
       }
-      field = match.group(1);
       if (field != null) super.parse(field, data);
       return true;
     }
