@@ -225,6 +225,7 @@ public class Active911ParserTable {
       "US/CO/Eforcesoftware",             "CORioBlancoCounty",
       "US/CO/ElPasoCounty",               "COElPasoCountyA",
       "US/CO/EPT911",                     "COElPasoCountyA",
+      "US/CO/FederalHeightsFire",         "COAdamsCountyC",
       "US/CO/FortCarsonPD",               "COElPasoCountyA",
       "US/CO/FortCarsonSpecial",          "COElPasoCountyA",
       "US/CO/Fountain",                   "COElPasoCountyC",
