@@ -65,8 +65,10 @@ public class DispatchA55Parser extends FieldProgramParser {
   private class MyMilePostField extends Field {
     @Override
     public void parse(String field, Data data) {
-      if (field.length() > 0) {
-        data.strAddress = append(data.strAddress, " ", "MP:" + field);
+      if (field.length() > 0 && !data.strAddress.contains(" MM")) {
+        if (checkAddress(data.strAddress) < STATUS_INTERSECTION) {
+          data.strAddress = append(data.strAddress, " ", "MM " + field);
+        }
       }
     }
     
@@ -76,7 +78,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d) \\(.*\\)");
+  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d(?::\\d\\d)?) \\(.*\\)");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("(.*)\\b(OPS *\\d+)", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     

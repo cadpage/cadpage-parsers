@@ -287,17 +287,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     match = MASTER_PTN.matcher(body);
     if (!match.matches()) return false;
     setFieldList(fieldList);
-    data.strDate = match.group(1);
-    if (data.strDate.startsWith("99/")) data.strDate = "";
-    String time = match.group(2);
-    if (!time.startsWith("99:")) {
-      String time_qual = match.group(3);
-      if (time_qual != null) {
-        setTime(TIME_FMT, time + ' ' + time_qual, data);
-      } else {
-        data.strTime = time;
-      }
-    }
+    parseDateTime(match.group(1), match.group(2), match.group(3), data);
     data.strCallId = match.group(4);
     String addr = match.group(5).trim();
     
@@ -456,6 +446,24 @@ public class DispatchA48Parser extends FieldProgramParser {
     return true;
   }
   
+  private void parseDateTime(String date, String time, String time_qual, Data data) {
+    
+    if (!date.startsWith("99/")) data.strDate = date;
+    
+    if (!time.startsWith("99:")) {
+      if (time_qual != null) {
+        int hour = Integer.parseInt(time.substring(0, time.indexOf(':')));
+        if (hour >= 13) {
+          data.strTime = time;
+        } else {
+          setTime(TIME_FMT, time + ' ' + time_qual, data);
+        }
+      } else {
+        data.strTime = time;
+      }
+    }
+  }
+  
   private int findMatch(String field1, String field2) {
     int len1 = field1.length();
     int len2 = field2.length();
@@ -490,24 +498,13 @@ public class DispatchA48Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(?:CAD:|[-_ A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(?:CAD:|[-_ A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?");
   private class BaseDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN2.matcher(field);
       if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      String time = match.group(2);
-      if (time.endsWith("M")) {
-        int hour = Integer.parseInt(time.substring(0, time.indexOf(':')));
-        if (hour >= 13) {
-          data.strTime = time.substring(0, time.length()-3);
-        } else {
-          setTime(TIME_FMT, time, data);
-        }
-      } else {
-        data.strTime = time;
-      }
+      parseDateTime(match.group(1), match.group(2), match.group(3), data);
     }
   }
   
