@@ -445,6 +445,9 @@ public class FieldProgramParser extends SmartAddressParser {
     
     // Empty string is a special, easily handled, case
     if (program.length() == 0) {
+      if (failStep != null) {
+        throw new RuntimeException("Deferred optional status of was not resolved by empty program");
+      }
       headLink.setLink(tail);
       return;
     }

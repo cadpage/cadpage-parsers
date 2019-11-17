@@ -60,11 +60,6 @@ public class DispatchA48Parser extends FieldProgramParser {
       public void parse(DispatchA48Parser parser, String field, Data data) {
         setNameField(field, data);
       }
-      
-      @Override
-      public boolean check(DispatchA48Parser parser, String field) {
-        return field.contains(",");
-      }
     }, 
     
     MAP("MAP", "MAP") {
@@ -72,22 +67,12 @@ public class DispatchA48Parser extends FieldProgramParser {
       public void parse(DispatchA48Parser parser, String field, Data data) {
         data.strMap = field;
       }
-      
-      @Override
-      public boolean check(DispatchA48Parser parser, String field) {
-        return true;
-      }
     }, 
     
     X("X/Z+?", "X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
         parser.parseCrossStreet(false, false,  false, field, data);
-      }
-      
-      @Override
-      public boolean check(DispatchA48Parser parser, String field) {
-        return parser.isValidAddress(field);
       }
     },
     
@@ -132,7 +117,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     },
     
-    GPS_PHONE_NAME("GPS? PHONE? NAME", "GPS PHONE NAME") {   // Also not supported for field delimited format
+    GPS_PHONE_NAME("GPS? PHONE? NAME/Z?", "GPS PHONE NAME") {
 
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
@@ -171,15 +156,11 @@ public class DispatchA48Parser extends FieldProgramParser {
       return fieldList;
     }
     
-    public boolean isRepeat() {
-      return fieldProg.endsWith("+?");
+    public boolean isDeferredDecision() {
+      return fieldProg.endsWith("?") && fieldProg.contains("/Z");
     }
     
     public abstract void parse(DispatchA48Parser parser, String field, Data data);
-    
-    public boolean check(DispatchA48Parser parser, String field) {
-      return false;
-    }
     
     public int find(String field) {
       return -1;
@@ -215,7 +196,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isRepeat() ? "" : "| ") + ") UNIT/S+");
+          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
@@ -492,6 +473,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("X_NAME")) return new BaseCrossNameField();
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("APT")) return new BaseAptField();
+    if (name.equals("PHONE")) return new BasePhoneField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("UNIT_LABEL")) return new BaseUnitLabelField();
     if (name.equals("UNIT")) return new BaseUnitField();
@@ -620,6 +602,31 @@ public class DispatchA48Parser extends FieldProgramParser {
   private class BaseAptField extends AptField {
     public BaseAptField() {
       setPattern(APT_PTN, true);
+    }
+  }
+  
+  private class BasePhoneField extends PhoneField {
+    
+    public BasePhoneField() {
+      super(null);
+    }
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = PHONE_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strPhone = getOptGroup(match.group(1));
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
   
