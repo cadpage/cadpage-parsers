@@ -173,6 +173,10 @@ public class ManageParsers {
 
     // And another from NYOneidaCounty to NYMadisonCountyB from 01/16/2018
     if (subject != null && location.equals("NYOneidaCounty") && subject.equals("SEVAC")) return "NYMadisonCountyB";
+    
+    // And from NCMaconCountyB to NCMaconCountyD on 11/17/2019
+    if (location.equals("NCMaconCountyB") && body.startsWith("MACON")) location = "NCMaconCountyD";
+    
     return location;
   }
   

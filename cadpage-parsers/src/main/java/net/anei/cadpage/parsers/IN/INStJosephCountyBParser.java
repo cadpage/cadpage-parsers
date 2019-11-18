@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.IN;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,13 +14,17 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
   
   public INStJosephCountyBParser() {
     super("ST JOSEPH COUNTY", "IN",
-          "( SELECT/2 ADDRCITY1 CALL X PLACE SIMPLE CH UNIT! INFO/N+? ( ID2 INFO/N+? GPS1 GPS2 | GPS1 GPS2 ) " +
+          "( SELECT/2 ADDRCITY1 CALL X PLACE SIMPLE CH UNIT2! INFO/N+? ( ID2 INFO/N+? GPS1 GPS2 | GPS1 GPS2 ) " +
+          "| SELECT/3 TIMEDATE3! Location:EMPTY! ADDR! Loc_Name:EMPTY! PLACE Loc_Descr:EMPTY! INFO City:EMPTY! CITY Building:EMPTY! APT Subdivision:EMPTY! APT Floor:EMPTY! APT Apt/Unit:EMPTY! APT " + 
+                     "Zip_Code:EMPTY! ZIP Cross_Strs:EMPTY! X Area:EMPTY! MAP Sector:EMPTY! MAP/D Beat:EMPTY! MAP/D Map_Book:EMPTY! BOX3+? Inc_#:EMPTY! SKIP Inc_#:EMPTY! ID! Priority:EMPTY! PRI " + 
+                     "Inc_Type:EMPTY! CODE3 Descr:EMPTY! CALL! Mod_Circum:EMPTY! Created:EMPTY! Caller:EMPTY! NAME Phone:EMPTY! PHONE UNITS_DISPATCHED:EMPTY! UNIT! " + 
+                     "COMMENTS:EMPTY! INFO PREMISE_HAZARD:EMPTY! ALERT " +
           "| ( ADDRCITY1 CALL DUP_CALL? " +
             "| CALL DUP_CALL? ADDRCITY2? " + 
             ") " + 
-            "( UNIT! " +
+            "( UNIT2! " +
             "| DATEMARK " +
-            "| X? PLACE? SIMPLE? CH/L+? ( UNIT! | DATEMARK ) " +
+            "| X? PLACE? SIMPLE? CH/L+? ( UNIT2! | DATEMARK ) " +
             ") INFO2/N+? ( ID1 INFO/N+? GPS1 GPS2 | GPS1 GPS2 ) END " +
           ")");
   }
@@ -34,6 +40,8 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
   }
   
   private boolean getInfo = false;
+  
+  private static final Pattern DASH_PTN = Pattern.compile("-{4,}");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
@@ -44,18 +52,32 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     
     if (subject.startsWith("Automatic R&R Notification: ")) {
       setSelectValue("1");
-      if (!super.parseHtmlMsg(subject, body, data)) return false;
+      return super.parseHtmlMsg(subject, body, data);
     }
     else if (subject.equals("!")) {
       setSelectValue("2");
       if (!parseFields(body.split("\n"), data)) return false;
+      if (data.strUnit.length() == 0) data.msgType = MsgType.RUN_REPORT;
+      return true;
+    }
+    else if (subject.length() > 0) {
+      data.strSource = subject;
+      setSelectValue("3");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+      if (DASH_PTN.matcher(data.strPhone).matches()) data.strPhone = "";
+      if (DASH_PTN.matcher(data.strSupp).matches()) data.strSupp = "";
+      if (DASH_PTN.matcher(data.strUnit).matches()) data.strUnit = "";
+      return true;
     }
     else return false;
-    if (data.strUnit.length() == 0) data.msgType = MsgType.RUN_REPORT;
-    return true;
   }
   
-  private static final String GPS_PTN = "-?\\d{2}\\.\\d{6,}|-361";
+  @Override
+  public String getProgram() {
+    return "SRC? " + super.getProgram();
+  }
+  
+  private static final String GPS_PTN = "-?\\d{2}\\.\\d{4,}|-361";
   
   @Override
   public Field getField(String name) {
@@ -66,13 +88,17 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("SIMPLE")) return new SkipField("Simple|Complex|Low|Medium|High", true);
-    if (name.equals("UNIT")) return new UnitField("|(?:(?:[A-Z]+\\d+[A-Z]?|[A-Z]+(?:FD|FDEN|FDCH|FDGR|FDRE|FDTA|FDTR|FOAM)|(?:NLF|OSOLO|POR)[A-Z]+|BTFDTA|BUTWPTA|CFDMULE|CLETWPCH|CLETWPTR|EDWEN|EDWTA|NLFDPOLK|SBFINVST|SBPConv|SMCAS|STARKEAMB|X+|mobile\\d+|Mutual Aid)\\b[, ]*)+", true);
+    if (name.equals("UNIT2")) return new UnitField("|(?:(?:[A-Z]+\\d+[A-Z]?|[A-Z]+(?:FD|FDEN|FDCH|FDGR|FDRE|FDTA|FDTR|FOAM)|(?:NLF|OSOLO|POR)[A-Z]+|BTFDTA|BUTWPTA|CFDMULE|CLETWPCH|CLETWPTR|EDWEN|EDWTA|NLFDPOLK|SBFINVST|SBPConv|SMCAS|STARKEAMB|X+|mobile\\d+|Mutual Aid)\\b[, ]*)+", true);
     if (name.equals("DATEMARK")) return new SkipField("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}", true);
     if (name.equals("INFO2")) return new MyInfo2Field();
     if (name.equals("GPS1")) return new GPSField(1, GPS_PTN, true);
     if (name.equals("GPS2")) return new GPSField(2, GPS_PTN, true);
     if (name.equals("ID1")) return new IdField("\\[.*\\]", true);
     if (name.equals("ID2")) return new IdField("\\d{4}-\\d{8}\\b.*", true);
+    if (name.equals("TIMEDATE3")) return new MyTimeDate3Field();
+    if (name.equals("ZIP")) return new MyZipField();
+    if (name.equals("BOX3")) return new MyBox3Field();
+    if (name.equals("CODE3"))  return new MyCode3Field();
     return super.getField(name);
   }
   
@@ -107,7 +133,7 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     }
   }
   
-  private static final Pattern VALID_ADDRESS_PTN = Pattern.compile("(?:<UNKNOWN>|\\d|LAT:).*|.*(?:,| at |\\bMM\\d+\\b).*");
+  private static final Pattern VALID_ADDRESS_PTN = Pattern.compile("(?:<UNKNOWN>|\\d|LAT:).*|.*(?:,| at |\\bMM\\d+\\b).*|.*/.*");
   
   private class MyAddressCity1Field extends MyAddressCityField {
     @Override
@@ -196,9 +222,70 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     return field;
   }
   
+  private static final Pattern TIME_DATE_3_PTN = Pattern.compile("(\\d\\d?:\\d\\d:\\d\\d [AP]M) (\\d\\d?/\\d\\d?/\\d{4})");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa"); 
+  private class MyTimeDate3Field extends TimeDateField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = TIME_DATE_3_PTN.matcher(field);
+      if (!match.matches()) abort();
+      setTime(TIME_FMT, match.group(1), data);
+      data.strDate = match.group(2);
+    }
+  }
+
+  private class MyZipField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCity.length() == 0) {
+        data.strCity = field;
+      }
+    }
+  }
+  
+  private class MyBox3Field extends BoxField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (DASH_PTN.matcher(field).matches()) return false;
+      
+      if (!field.equals("RESPONSEGRID") && !field.equals(",")) {
+        super.parse(field, data);
+      }
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  private class MyCode3Field extends CodeField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('-');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
+  }
+  
   @Override
-  public String adjustMapAddress(String addr) {
-    addr = stripFieldStart(addr, "<UNKNOWN>");
+  public String adjustMapAddress(String addr, boolean cross) {
+    if (cross) {
+      int pt = addr.indexOf('/');
+      if (pt > 0) addr = addr.substring(0,pt).trim();
+      if (checkAddress(addr) == STATUS_FULL_ADDRESS) {
+        pt = addr.indexOf(' ');
+        if (pt >= 0) addr = addr.substring(pt+1).trim();
+      }
+    } else {
+      addr = stripFieldStart(addr, "<UNKNOWN>");
+    }
     return super.adjustMapAddress(addr);
   }
 

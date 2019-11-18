@@ -13,6 +13,7 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
   public GAFranklinCountyParser() {
     super(CITY_LIST, "FRANKLIN COUNTY", "GA", 
           DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_TIME);
+    setupSaintNames("MARYS");
   }
   
   @Override
@@ -38,6 +39,18 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
     return FLAG_IMPLIED_INTERSECT;
   }
   
+  @Override
+  public String adjustMapAddress(String sAddress,  boolean cross) {
+    if (cross) {
+      int pt = sAddress.indexOf('/');
+      if (pt >= 0) sAddress = sAddress.substring(0,pt).trim();
+      if (checkAddress(sAddress) == STATUS_FULL_ADDRESS) {
+        pt = sAddress.indexOf(' ');
+        if (pt >= 0) sAddress = sAddress.substring(pt+1).trim();
+      }
+    }
+    return super.adjustMapAddress(sAddress, cross);
+  }
   private static final String[] CITY_LIST = new String[]{
     "CANON",
     "CARNESVILLE",
@@ -48,7 +61,10 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
     "ROYSTON",
     
     // Jackson County
-    "COMMERCE"
+    "COMMERCE",
+    
+    // Stephens County
+    "TOCCOA"
   };
 
 }

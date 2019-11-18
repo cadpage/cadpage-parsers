@@ -9,7 +9,9 @@ public class COAdamsCountyParser extends GroupBestParser {
   
 
   public COAdamsCountyParser() {
-    super(new COAdamsCountyAParser(), new COAdamsCountyBParser());
+    super(new COAdamsCountyAParser(), 
+          new COAdamsCountyBParser(),
+          new COAdamsCountyCParser());
    }
 }
   
