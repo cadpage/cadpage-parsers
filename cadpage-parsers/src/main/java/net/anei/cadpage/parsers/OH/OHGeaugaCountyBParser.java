@@ -37,6 +37,7 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   
+  private static final Pattern ADDR_DELIM = Pattern.compile("[:;,]");
   private static final Pattern ADDR_APT1_PTN = Pattern.compile("\\b(?:Apt|Rm|Room|Lot|Suite)\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT2_PTN = Pattern.compile("(.*?) {2,}(\\d{1,3}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT3_PTN = Pattern.compile("\\d{1,3}[A-Z]?|[A-Z]$", Pattern.CASE_INSENSITIVE);
@@ -47,12 +48,10 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
 
+      String[] terms = ADDR_DELIM.split(field);
       String apt = "";
-      while (true) {
-        int pt = field.lastIndexOf(';');
-        if (pt < 0) break;
-        String term = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
+      for (int termNdx = terms.length-1; termNdx > 0; termNdx--) {
+        String term = terms[termNdx].trim();
         Matcher match = ADDR_APT1_PTN.matcher(term);
         if (match.find()) {
           String lead = term.substring(0, match.start()).trim();
@@ -77,7 +76,7 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
           }
         }
       }
-      super.parse(field, data);
+      super.parse(terms[0], data);
       data.strApt = append(data.strApt, "-", apt);
     }
     
@@ -113,7 +112,7 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
         // For each starting word, retrieve remainder of data field
         // If resulting length is less than 5, give up
         String tmp = field2.substring(pt).toUpperCase();
-        if (tmp.length() < 5) break;
+        if (tmp.length() < 4) break;
 
         // See if remainder is in our city table
         tmp = checkCity(tmp);
@@ -151,6 +150,7 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
       // the field remained might be a truncated city name.  If it
       // matches, save this as the city and return the field city prefix
       city = city.toUpperCase();
+      if (city.equals("OOGC")) return "Chargrin Falls";
       for (String tCity : CITY_LIST) {
         if (tCity.toUpperCase().startsWith(city)) return tCity;
       }
@@ -241,6 +241,7 @@ public class OHGeaugaCountyBParser extends FieldProgramParser {
     // Cuyahoga County
     "Cuyahoga County",
     "Bentleyville",
+    "oogc",                // Chargrin Falls
     "Chargrin Falls",
     "Chargrin Falls Twp",
     "Mayfield",
