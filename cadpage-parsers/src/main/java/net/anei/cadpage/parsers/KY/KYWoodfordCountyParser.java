@@ -102,6 +102,7 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
       "F1VEH",  "Fire-Vehicle",
       "FALRM",  "Fire Alarm",
       "FASST",  "Fire Assist Other Agency",
+      "FEMS",   "FEMS",
       "FCARB",  "Carbon Monoxide Detector",
       "FGRAS",  "Fire-Grass Fire",
       "FHAZ",   "Hazmat Run",
@@ -114,6 +115,7 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
   private static final String[] CITY_LIST = new String[]{
     
     // Cities
+    "LEXINGTON",
     "MIDWAY",
     "VERSAILLES",
 
