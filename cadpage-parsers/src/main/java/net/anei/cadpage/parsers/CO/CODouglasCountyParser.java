@@ -9,7 +9,9 @@ public class CODouglasCountyParser extends GroupBestParser {
   
 
   public CODouglasCountyParser() {
-    super(new CODouglasCountyAParser(), new CODouglasCountyBParser());
+    super(new CODouglasCountyAParser(), 
+          new CODouglasCountyBParser(),
+          new CODouglasCountyCParser());
    }
 }
   

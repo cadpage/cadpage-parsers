@@ -221,7 +221,7 @@ public class Active911ParserTable {
       "US/CO/CSPSanJuanCounty",           "COSanJuanCounty",
       "US/CO/DeltaCountyAmbulance",       "CODeltaCounty",
       "US/CO/DivideFPD",                  "COTellerCounty",
-      "US/CO/DouglasCounty",              "CODouglasCountyA",
+      "US/CO/DouglasCounty",              "CODouglasCountyA,CODouglasCountyC",
       "US/CO/Eforcesoftware",             "CORioBlancoCounty",
       "US/CO/ElPasoCounty",               "COElPasoCountyA",
       "US/CO/EPT911",                     "COElPasoCountyA",
