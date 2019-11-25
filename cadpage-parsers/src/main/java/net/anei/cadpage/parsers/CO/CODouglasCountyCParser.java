@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CODouglasCountyCParser extends FieldProgramParser {
   
-  CODouglasCountyCParser() {
+  public CODouglasCountyCParser() {
     super("DOUGLAS COUNTY", "CO", 
           "CALL! LOC_Name:ADDR! Units:UNIT! Time:DATETIME! Quadrant:MAP! GPS! END");
   }
