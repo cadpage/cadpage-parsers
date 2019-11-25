@@ -167,7 +167,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile("(?:-- +)?\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d Disp +\\S+[- ]*|[- ]+");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("(?:-- +)?(?:From )?\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d Disp +\\S+[- ]*|[- ]+");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {

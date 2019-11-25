@@ -11,7 +11,7 @@ public class OHSummitCountyGParser  extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@twinsburg.local,@richfieldpd.us";
+    return "dispatch@twinsburg.local,@richfieldpd.us,Dispatch@macedonia.oh.us";
   }
   
   @Override

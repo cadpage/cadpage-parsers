@@ -1208,6 +1208,7 @@ public class Active911ParserTable {
       "US/OH/CityofKent",                 "OHPortageCountyD",
       "US/OH/CityofKettering",            "OHMontgomeryCountyD",
       "US/OH/CityofLima",                 "OHLima",
+      "US/OH/CityofMacedonia",            "OHSummitCountyG",
       "US/OH/CityofMonroe",               "OHMonroe",
       "US/OH/CityofNorwood",              "OHHamiltonCountyB",
       "US/OH/CityofOxford",               "OHOxford",
