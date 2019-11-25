@@ -14,6 +14,11 @@ public class KYMeadeCountyParser extends FieldProgramParser {
   public KYMeadeCountyParser() {
     super(CITY_LIST, "MEADE COUNTY", "KY", "CALL! CALL+? ( GADDR GADDR X! | ADDR/Zs X! | ADDR/Zs CITY ST? X! ) INFO+");
   }
+  
+  @Override
+  public String getFilter() {
+    return "911notify@bbtel.com";
+  }
 
   private static Pattern SOURCE = Pattern.compile("(.*?) *\\*{2}(.*)\\*{2}");
 
@@ -152,17 +157,24 @@ public class KYMeadeCountyParser extends FieldProgramParser {
     "EKRON", 
     "FLAHERTY",
     "FORT KNOX",
-    "GUSTON", 
-    "KY",
+    "GUSTON",
+    "IRVINGTON",
     "MULDRAUGH", 
     "PAYNEVILLE",
+    "RADCLIFF",
     "RHODELIA",
-    "VINE GROVE" };
+    "VINE GROVE",
+    "WEBSTER"
+  };
   
   Set<String> KNOWN_CALLS = new HashSet<String>(Arrays.asList(
-      "MANUFACTURING", 
-      "POSSESSION",
+      "ETC.",
       "FIELD",
-      "WOODS"));
+      "JUVENILE",
+      "MANUFACTURING", 
+      "MENTAL",
+      "POSSESSION",
+      "WOODS"
+   ));
 
 }
