@@ -1985,6 +1985,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     "JUNCTION CITY",
     "KINGS VALLEY",
     "MCKENZIE",
+    "MONMOUTH",
     "MONROE",
     "PHILOMATH",
     "SUMMIT",

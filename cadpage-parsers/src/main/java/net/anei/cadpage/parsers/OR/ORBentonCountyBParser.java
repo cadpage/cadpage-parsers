@@ -107,8 +107,8 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     if (name.equals("MAPQ")) return new MapField("\\d{3,4}|\\d{3}[-A-D]|ALB|CMF|HALS|HBRG|LEB|LCJ|LCSO|LYON?|MILB|MILL|SODA|SWH|TANG|", true);
     if (name.equals("CODEX")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
     if (name.equals("CODEQ")) return new CodeField("(?i)\\d\\d?[A-Z]\\d\\d?[A-Z]?|", true);
-    if (name.equals("UNITX")) return new UnitField("[A-Z]+\\d+[A-Z]{0,2}|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|ALS|ALSEA|CE|DET|HBRG|MILB|MILC|LEB|LYON|ODFS?|PHILO|NE|NW|SDIVEL?|SH1ST|SWH|TANG|[A-Z0-9]+,[A-Z0-9,]+", true);
-    if (name.equals("UNITQ")) return new UnitField("[A-Z]+\\d+[A-Z]{0,2}|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|ALS|ALSEA|CE|DET|HBRG|MILB|MILC|LEB|LYON|ODFS?|PHILO|NE|NW|SDIVEL?|SH1ST|SWH|TANG|[A-Z0-9]+,[A-Z0-9,]+|", true);
+    if (name.equals("UNITX")) return new UnitField("[A-Z]+\\d+[A-Z]{0,2}|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|ADAIR|ADF|ALS|ALSEA|BLF|CE|DET|JEF|HALS|HBRG|KVF|LEB|LYON|MFD|MILB|MILC|MONROE|ODFS?|PHILO|NE|NW|SDIVEL?|SH1ST|SWH|TANG|[A-Z0-9]+,[A-Z0-9,]+", true);
+    if (name.equals("UNITQ")) return new UnitField("[A-Z]+\\d+[A-Z]{0,2}|\\d{3}|[A-Z]{1,3}FD|ST[A-Z]|ADAIR|ADF|ALS|ALSEA|BLF|CE|DET|JEF|HALS|HBRG|KVF|LEB|LYON|MFD|MILB|MILC|MONROE|ODFS?|PHILO|NE|NW|SDIVEL?|SH1ST|SWH|TANG|[A-Z0-9]+,[A-Z0-9,]+|", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CH")) return new ChannelField("F\\d+|OPS", false);
     if (name.equals("PH")) return new PhoneField("(?:541|503|800|818|866|888)\\d{7}|", true);
