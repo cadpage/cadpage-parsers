@@ -80,10 +80,11 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Name", skipField);
     FIELD_MAP.put("Notes", skipField);
     FIELD_MAP.put("Notices", skipField);
+    FIELD_MAP.put("Persons", skipField);
     FIELD_MAP.put("POI Information", placeField);
     FIELD_MAP.put("Priors", skipField);
     FIELD_MAP.put("Responding Units", unitField);
-    FIELD_MAP.put("Service Reqeuests", skipField);
+    FIELD_MAP.put("Service Requests", skipField);
     FIELD_MAP.put("Wrecker Info", skipField);
     FIELD_MAP.put("Zip Code", zipField);
     
@@ -287,7 +288,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
           if (procFld instanceof BaseInfoField) {
             procFld.parse(field, data);
           } else {
-            if (field.endsWith("table|>")) procFld = null;
+            if (field.equals("<|/table|>")) procFld = null;
           }
           return;
         }
