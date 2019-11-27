@@ -11,8 +11,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
 public class TXDallasCountyBParser extends DispatchA18Parser {
   
   public TXDallasCountyBParser() {
-    super(CITY_LIST, "DALLAS COUNTY","TX");
-    for (String city : CITY_LIST) {
+    super(TXDallasCountyParser.CITY_LIST, "DALLAS COUNTY","TX");
+    for (String city : TXDallasCountyParser.CITY_LIST) {
       setupCities(city + " TX", city + " TEXAS");
     }
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
@@ -52,51 +52,6 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
   public String getProgram() {
     return "CODE " + super.getProgram();
   }
-
-  private static String[] CITY_LIST = new String[]{
-
-      //cities
-      
-      "BALCH SPRINGS",
-      "CEDAR HILL",
-      "CARROLLTON",
-      "COCKRELL HILL",
-      "COMBINE",
-      "COPPELL",
-      "DALLAS",
-      "DESOTO",
-      "DUNCANVILLE",
-      "FARMERS BRANCH",
-      "FERRIS",
-      "GARLAND",
-      "GLENN HEIGHTS",
-      "GRAND PRAIRIE",
-      "GRAPEVINE",
-      "HUTCHINS",
-      "IRVING",
-      "LANCASTER",
-      "LEWISVILLE",
-      "MESQUITE",
-      "OVILLA",
-      "RICHARDSON",
-      "ROWLETT",
-      "SACHSE",
-      "SEAGOVILLE",
-      "UNIVERSITY PARK",
-      "WILMER",
-      "WYLIE",
-
-      //towns
-      
-      "ADDISON",
-      "HIGHLAND PARK",
-      "SUNNYVALE",
-
-  //Unincorporated community
-
-      "SAND BRANCH"
-
-  };
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "5900 S IH 45",         "+32.587831,-96.675068"
