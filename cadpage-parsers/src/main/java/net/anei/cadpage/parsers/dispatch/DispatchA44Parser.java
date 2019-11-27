@@ -21,23 +21,26 @@ public class DispatchA44Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z]{2}-\\d{2}-\\d+", true);
+    if (name.equals("ID")) return new IdField("(?:[A-Z]{2}-)?\\d{2}-\\d+", true);
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("CITY_ST")) return new MyCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private static Pattern CODE_CALL_PTN = Pattern.compile("([^ ]+) +(.*?)");
+  private static Pattern CODE_CALL_PTN = Pattern.compile("(\\S+) +(.*?)");
 
   private class MyCodeCallField extends Field {
 
     @Override
     public void parse(String field, Data data) {
       Matcher mat = CODE_CALL_PTN.matcher(field);
-      if (!mat.matches()) abort();
-      data.strCode = mat.group(1);
-      data.strCall = mat.group(2);
+      if (mat.matches()) {
+        data.strCode = mat.group(1);
+        data.strCall = mat.group(2);
+      } else {
+        data.strCall = field;
+      }
     }
 
     @Override
