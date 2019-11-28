@@ -34,6 +34,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
          "table|tr");
     
     Field addrCityField = getField("ADDRCITY");
+    Field alertField = getField("ALERT");
     Field aptField = getField("APT");
     Field bldgField = getField("BLDG");
     Field callerLocField = getField("CALLER_LOC");
@@ -67,6 +68,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Community", cityField);
     FIELD_MAP.put("Created By", skipField);
     FIELD_MAP.put("Cross Street", crossField);
+    FIELD_MAP.put("Driveway Safety Info", alertField);
+    FIELD_MAP.put("EMS Information", infoField);
     FIELD_MAP.put("Incident Creation Date",  skipField);
     FIELD_MAP.put("Incident Disposition", skipField);
     FIELD_MAP.put("Incident Number", idField);
