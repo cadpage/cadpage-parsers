@@ -14,7 +14,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
   
   public PALancasterCountyParser() {
     super(CITY_LIST, "LANCASTER COUNTY", "PA",
-           "CITY ADDR! X/Z+? UNIT TIME%");
+           "( COVER_CALL ID CALL | ) CITY ADDR! X/Z+? UNIT TIME% END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
@@ -34,9 +34,14 @@ public class PALancasterCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (! body.contains("~")) return false;
-    data.strSource = subject;
+    if (!subject.startsWith("Cover Call Notification")) data.strSource = subject;
     
+    if (subject.equals("22")) {
+      body = body.replace('\n', '~');
+    }
+
+    if (! body.contains("~")) return false;
+
     int pt = body.lastIndexOf('^');
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace(" BOROUGH", " BORO").replace(" TOWNSHIP", " TWP");
@@ -50,9 +55,10 @@ public class PALancasterCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("COVER_CALL")) return new SkipField("Cover Call Notification", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+[,A-Z0-9]*");
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
@@ -64,15 +70,17 @@ public class PALancasterCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.length() > 0) {
-        Matcher match = CITY_DELIM.matcher(field);
-        if (match.find()) {
-          data.strCall = field.substring(0,match.start()).trim();
-          data.strCity = field.substring(match.end()).trim();
-        } else {
-          parseAddress(StartType.START_CALL, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
-          if (data.strCity.length() == 0) abort();
+        if (data.strCall.length() == 0) {
+          Matcher match = CITY_DELIM.matcher(field);
+          if (match.find()) {
+            data.strCall = field.substring(0,match.start()).trim();
+            data.strCity = field.substring(match.end()).trim();
+          } else {
+            parseAddress(StartType.START_CALL, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
+            if (data.strCity.length() == 0) abort();
+          }
         }
-        match = CITY_ST_PTN.matcher(data.strCity);
+        Matcher match = CITY_ST_PTN.matcher(data.strCity);
         if (match.matches()) {
           data.strCity = match.group(1);
           data.strState = match.group(2);
@@ -105,9 +113,25 @@ public class PALancasterCountyParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d:\\d\\d");
-  private static final Pattern PART_TIME_PTN = Pattern.compile("[\\d:]*");
-  private class MyTimeField extends TimeField {
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+[,A-Z0-9]*|(?:ENGINE|TANKER|SQUAD).*");
+  private static final Pattern COMMA_PTN = Pattern.compile(" *, +");
+  private class MyUnitField extends UnitField {
+    public MyUnitField() {
+      setPattern(UNIT_PTN, true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = COMMA_PTN.matcher(field).replaceAll(",");
+      field = stripFieldEnd(field, ",");
+      field = field.replace(' ',  '_');
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern TIME_PTN = Pattern.compile("(?:(\\d{4}-\\d\\d?-\\d\\d?) )?(\\d\\d:\\d\\d:\\d\\d)(?:\\.\\d+)?");
+  private static final Pattern PART_TIME_PTN = Pattern.compile("[-\\d:]*");
+  private class MyTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
       return true;
@@ -115,8 +139,13 @@ public class PALancasterCountyParser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
-      if (TIME_PTN.matcher(field).matches()) {
-        data.strTime = field;
+      Matcher match = TIME_PTN.matcher(field);
+      if (match.matches()) {
+        String date = match.group(1);
+        if (date != null) {
+          data.strDate = date.substring(5).replace('-', '/') + '/' + date.substring(0,4);
+        }
+        data.strTime = match.group(2);;
         return true;
       }
       return PART_TIME_PTN.matcher(field).matches();
