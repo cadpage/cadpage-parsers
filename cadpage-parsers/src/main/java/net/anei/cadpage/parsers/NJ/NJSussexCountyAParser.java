@@ -11,13 +11,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NJSussexCountyAParser extends SmartAddressParser {
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}(?: .*)?");
-  private static final Pattern MASTER_PTN = 
-    Pattern.compile("([-/.;&A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
-  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
-  private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
-  private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
-  
   public NJSussexCountyAParser() {
     this("SUSSEX COUNTY", "NJ");
   }
@@ -37,7 +30,15 @@ public class NJSussexCountyAParser extends SmartAddressParser {
     return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov,donotreply@Enfwebmail.onmicrosoft.com>";
   }
   
+  
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,5}-?[A-Z]?\\d{4}-?\\d{5,6}(?: .*)?");
   private static final Pattern TRAIL_MARK_PTN = Pattern.compile("[-.\\s]*\n\\*{1,3}This\\semail");
+  private static final Pattern UNIT_JUNK_PTN = Pattern.compile(" - (?:CAR|RESCUE|ENGINE|TOWER|TRUCK|TENDER) \\d+");
+  private static final Pattern MASTER_PTN = 
+    Pattern.compile("([-/.,;&A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
+  private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
+  private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -58,6 +59,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       String unit = body.substring(pt+14).trim();
       body = body.substring(0, pt).trim();
       
+      unit = UNIT_JUNK_PTN.matcher(unit).replaceAll("");
       pt = unit.indexOf(" - ");
       if (pt >= 0) {
         trailInfo = unit.substring(pt+3).trim();
@@ -65,7 +67,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       } else {
         unit = stripFieldEnd(unit, "-");
       }
-      data.strUnit = unit;
+      data.strUnit = unit.replace(' ', '_');
     }
     
     
