@@ -89,25 +89,33 @@ public class NCTransylvaniaCountyParser extends FieldProgramParser {
   });
   
   private static final String[] CITY_LIST = new String[]{
-    "CASHIERS",
-    "CONNESTEE",
-    "CONNESTEE FALLS",
-    "BALSAM GROVE",
-    "BREVARD",
-    "BREVARD CITY",
-    "ETOWAH",
-    "LAKE TOXAWAY",
-    "LITTLE RIVER",
-    "MILLS RIVER",
-    "NORTH TRANSYLVANIA",
-    "PENROSE",
-    "PISGAH FOREST",
-    "PISGAH NATIONAL FOREST",
-    "ROSMAN",
-    "SAPPHIRE",
-    "SHERWOOD FOREST",
-    
-    "JACKSON COUNTY"
+      "BALSAM GROVE",
+      "BREVARD",
+      "BREVARD CITY",
+      "CASHIERS",
+      "CATHEY'S CREEK",
+      "CEDAR MOUNTAIN",
+      "CONNESTEE",
+      "CONNESTEE FALLS",
+      "DUNN'S ROCK",
+      "EASTATOE",
+      "ETOWAH",
+      "GLOUCESTER",
+      "LAKE TOXAWAY",
+      "LITTLE RIVER",
+      "MILLS RIVER",
+      "NORTH TRANSYLVANIA",
+      "PENROSE",
+      "PICKENS",
+      "PISGAH FOREST",
+      "PISGAH NATIONAL FOREST",
+      "QUEBEC",
+      "ROSMAN",
+      "SAPPHIRE",
+      "SHERWOOD FOREST",
+      "TRANSYLVANIA",
+      
+      "JACKSON COUNTY"
   };
 
 }
