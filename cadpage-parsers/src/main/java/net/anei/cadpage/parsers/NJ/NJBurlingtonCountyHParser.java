@@ -23,7 +23,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     return "@co.burlington.nj.us";
   }
   
-  private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
+  private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n|<br>|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
