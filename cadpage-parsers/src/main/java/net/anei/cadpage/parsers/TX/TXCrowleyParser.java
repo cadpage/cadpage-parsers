@@ -18,13 +18,16 @@ public class TXCrowleyParser extends DispatchA18Parser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     if (body.startsWith("CAUTION:")) {
       int pt = body.indexOf("\n\n");
       if (pt < 0) return false;
       body = body.substring(pt+2).trim();
     }
-    if (!super.parseMsg(body, data)) return false;
+    if (subject.length() > 0) {
+      body = append(subject, "\n", body);
+    }
+    if (!super.parseMsg(subject, body, data)) return false;
     String city = MISSPELLED_CITIES.getProperty(data.strCity.toUpperCase());
     if (city != null) data.strCity = city;
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";

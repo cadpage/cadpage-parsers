@@ -30,7 +30,7 @@ public class DispatchA18Parser extends FieldProgramParser {
 
   private static final Pattern FIX_BROKEN_INFO_PTN = Pattern.compile("([A-Za-z]+:.*[^\\]])\n(.*\\[\\d\\d:\\d\\d:\\d\\d\\])");
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\nDisclaimer");
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = FIX_BROKEN_INFO_PTN.matcher(body).replaceAll("$1$2");
