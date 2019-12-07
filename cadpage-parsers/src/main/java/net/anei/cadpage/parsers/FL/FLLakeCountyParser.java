@@ -16,7 +16,7 @@ public class FLLakeCountyParser extends FieldProgramParser {
   }
   
   public String getFilter() {
-    return "@lakeems.org,777";
+    return "@lakeems.org,tap@yourdomain.com,777";
   }
   
   public int getMapFlags() {
