@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA46Parser;
 public class TXAransasCountyParser extends DispatchA46Parser {
 
   public TXAransasCountyParser() {
-    super("ARANSAS COUNTY", "TX");
+    super(CITY_LIST, "ARANSAS COUNTY", "TX");
   }
   
   @Override
@@ -27,4 +27,23 @@ public class TXAransasCountyParser extends DispatchA46Parser {
     if (city.equals("N Ocl") || city.equals("S Ocl")) return "Rockport";
     return super.adjustMapCity(city);
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+      "ARANSAS COUNTY",
+      
+      // Cities
+      "ARANSAS PASS",
+      "CORPUS CHRISTI",
+      "ROCKPORT",
+
+      // Towns
+      "FULTON",
+
+      // Census-designated places
+      "HOLIDAY BEACH",
+      "LAMAR",
+
+      // Ghost towns
+      "ARANSAS CITY"
+  };
 }
