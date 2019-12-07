@@ -24,8 +24,7 @@ public class WIRockCountyParser extends DispatchH03Parser {
   public boolean parseHtmlMsg(String subject, String body, Data data) {
     
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strSource = match.group(1);
+    if (match.matches()) data.strSource = match.group(1);
     
     return super.parseHtmlMsg(subject, body, data);
   }
