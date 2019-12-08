@@ -39,6 +39,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new MyIdField();
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -105,6 +106,17 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String unit : field.split("; *")) {
+        unit = unit.trim();
+        unit = stripFieldStart(unit, "-");
+        data.strUnit = append(data.strUnit, ",", unit);
+      }
     }
   }
 
