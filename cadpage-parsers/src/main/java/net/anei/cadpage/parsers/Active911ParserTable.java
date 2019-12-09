@@ -540,6 +540,7 @@ public class Active911ParserTable {
       "US/KY/BourbonCounty",              "KYBourbonCountyB",
       "US/KY/BoydCounty",                 "KYBoydCounty",
       "US/KY/BoydCountyEMS",              "KYBoydCounty",
+      "US/KY/CaldwellCounty",             "KYCaldwellCounty",
       "US/KY/CallowayCounty",             "KYCallowayCounty",
       "US/KY/CampbellCounty",             "KYCampbellCounty",
       "US/KY/CarrollCounty",              "KYCarrollCountyB",

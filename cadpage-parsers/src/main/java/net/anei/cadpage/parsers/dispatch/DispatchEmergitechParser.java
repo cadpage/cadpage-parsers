@@ -145,6 +145,17 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   }
   
   /** 
+   * @param cityList list of cities
+   * @param defCity default city
+   * @param defState default state
+   * @param flags parser flags
+   * @param taType trailing address type
+   */
+  public DispatchEmergitechParser(String[] cityList, String defCity, String defState, int flags, TrailAddrType taType) {
+    this((String[])null, false, (int[])null, cityList, defCity, defState, flags, taType);
+  }
+  
+  /** 
    * @param optUnit true if unit information is optional
    * @param cityList list of cities
    * @param defCity default city
