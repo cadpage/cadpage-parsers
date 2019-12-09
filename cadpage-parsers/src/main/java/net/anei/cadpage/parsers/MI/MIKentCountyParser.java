@@ -25,7 +25,7 @@ public class MIKentCountyParser extends DispatchH03Parser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     
-    if (subject.equals("BURN PERMIT")) {
+    if (subject.equalsIgnoreCase("BURN PERMIT")) {
       setFieldList("CALL INFO");
       data.msgType = MsgType.GEN_ALERT;
       data.strCall = subject;

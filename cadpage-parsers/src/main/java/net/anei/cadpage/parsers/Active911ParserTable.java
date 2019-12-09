@@ -705,6 +705,7 @@ public class Active911ParserTable {
       "US/MI/BarryCounty",                "MIBarryCounty",
       "US/MI/BayCounty",                  "MIBayCounty",
       "US/MI/BerrienCounty",              "MIBerrienCounty",
+      "US/MI/CaledoniaTwp",               "MIKentCounty",
       "US/MI/CalhounCounty",              "MICalhounCounty",
       "US/MI/CassCounty",                 "MICassCounty",
       "US/MI/CharlevoixCounty",           "MICharlevoixCounty",
