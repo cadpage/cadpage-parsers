@@ -1481,6 +1481,7 @@ public class Active911ParserTable {
       "US/SC/GreenvilleCounty",           "SCGreenvilleCountyE",
       "US/SC/GreenvilleCountyCAD",        "SCGreenvilleCountyE",
       "US/SC/GreenwoodCounty",            "SCGreenwoodCounty",
+      "US/SC/HardeevilleFD",              "SCJasperCounty",
       "US/SC/HartsvilleFD",               "SCDarlingtonCounty",
       "US/SC/JasperCounty",               "SCJasperCounty",
       "US/SC/JointBaseFireEmergencyServices","SCCharlestonCountyA",
