@@ -1762,7 +1762,7 @@ public class Active911ParserTable {
       "US/VT/WindhamCounty",              "VTWindhamCounty",
       "US/VT/WindsorCounty",              "VTWindsorCounty",
       "US/WA/BentonCounty",               "WABentonCounty",
-      "US/WA/CityofBuckleyFD",            "WAPierceCountyD,WAPierceCountyE",
+      "US/WA/CityofBuckleyFD",            "WAPierceCountyE",
       "US/WA/CityofFife",                 "WAPierceCountyC",
       "US/WA/ClallamCounty",              "WAClallamCounty",
       "US/WA/ClarkCounty",                "WAClarkCounty",
