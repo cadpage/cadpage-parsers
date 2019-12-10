@@ -11,7 +11,9 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
   
   public TXParkerCountyBParser() {
     super(CITY_CODES, "PARKER COUNTY", "TX",
-          "CALL ADDR CITY/Y! X/Z+? ( CH SRC UNIT! | SRC UNIT! | UNIT! | END ) INFO/N+");
+          "( SELECT/STATUS UNIT CALL ADDR CITY/Y CALL2 " +
+          "| CALL ADDR CITY/Y! X+? INFO/N+? ( CH SRC UNIT! | SRC UNIT! | UNIT! | END ) MAP? Radio_Channel:CH " + 
+          ") INFO/N+");
   }
   
   @Override
@@ -20,16 +22,30 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
   }
   
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("CAD:"))  body = "CAD:" + body;
-    return super.parseMsg(body, data);
+    if (body.contains(",Enroute,")) {
+      setSelectValue("STATUS");
+      return parseFields(body.split(","), data);
+    } else {
+      if (!body.startsWith("CAD:"))  body = "CAD:" + body;
+      setSelectValue("");
+      return super.parseMsg(body, data);
+    }
   }
   
   @Override
   public Field getField(String name) {
-    if (name.equals("CH")) return new ChannelField("TAC\\d+|WP?FD", true);
+    if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("CH")) return new ChannelField("TAC\\d*|WP?FD", true);
     if (name.equals("SRC")) return new SourceField("ST\\d+|TC\\d+", true);
     if (name.equals("UNIT")) return new UnitField("(?:\\b[A-Z]+\\d+\\b,?)+", true);
     return super.getField(name);
+  }
+  
+  private class MyCall2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strCall = append(data.strCall, " for ", field);
+    }
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -37,6 +53,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
       "AZL", "AZLE",
       "CRE", "CRESSON",
       "FTW", "FORT WORTH",
+      "LIP", "LIPAN",
       "MIL", "MILLSAP",
       "POL", "POOLVILLE",
       "SPT", "SPRINGTOWN",

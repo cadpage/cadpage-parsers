@@ -1586,6 +1586,7 @@ public class Active911ParserTable {
       "US/TX/FireComm",                   "TXHidalgoCounty",
       "US/TX/FlightVector",               "TXFlightVector",
       "US/TX/FortBendCounty",             "TXFortBendCountyA",
+      "US/TX/FortWorthFD",                "TXParkerCountyB",
       "US/TX/FranklinCounty",             "TXFranklinCounty",
       "US/TX/FreeportDispatch",           "TXBrazoriaCountyB",
       "US/TX/Gatesville",                 "TXGatesville",
