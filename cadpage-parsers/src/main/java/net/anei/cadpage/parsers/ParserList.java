@@ -387,6 +387,7 @@ public class ParserList {
               ,"GASeminoleCounty"               ,"Seminole County, GA"
               ,"GASmyrna"                       ,"Smyrna, GA"
               ,"GAStephensCounty"               ,"Stephens County, GA"
+              ,"GAStewartCounty"                ,"Stewart County, GA"
               ,"GASumterCounty"                 ,"Sumter County, GA"
               ,"GATalbotCounty"                 ,"Talbot County, GA"
               ,"GATaylorCounty"                 ,"Taylor County, GA"
