@@ -8,8 +8,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class OHAthensCountyParser extends DispatchEmergitechParser {
   
   public OHAthensCountyParser() {
-    super(new String[]{"911_Dispatch:", "ohac911-dpfeiffer:"}, 
-          false, null, CITY_LIST, "ATHENS COUNTY", "OH", TrailAddrType.INFO);
+    super(true, CITY_LIST, "ATHENS COUNTY", "OH");
     setupMultiWordStreets(MWORD_STREET_LIST);
     addSpecialWords("COLUMBUS");
     setupSpecialStreets("LIGHTFRITZ RIDGE", "OREGON RIDGE", "COURT");
@@ -17,12 +16,12 @@ public class OHAthensCountyParser extends DispatchEmergitechParser {
   
   @Override
   public String getFilter() {
-    return "911_Dispatch@athensoh.org";
+    return "no-reply-zuercher@athens911.com,911_Dispatch@athensoh.org";
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Text Message")) return false;
+  protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "911_Dispatch:");
     if (!super.parseMsg(body, data)) return false;
     if (data.strApt.startsWith("CALLBK=")) {
       data.strPhone = data.strApt.substring(7).trim();

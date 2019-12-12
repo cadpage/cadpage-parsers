@@ -488,7 +488,8 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   public DispatchEmergitechParser(String[] prefixList, boolean optUnit, int[] extraSpacePosList,
                                   String[] cityList, String defCity, String defState, int flags, TrailAddrType taType) {
     super(cityList, defCity, defState,
-          "( SELECT/2 CALL:CALL! PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
+          "( SELECT/3 Call:ID! NATURE:CALL! PLACE:ADDRCITY! COMMENTS:INFO3! INFO3/N+ LAT:GPS1 LONG:GPS2 " +
+          "| SELECT/2 CALL:CALL! PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
           "| Nature:CALL Location:ADDR/S2! Comments:INFO " + 
           "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+ ( LOCATION:ADDR2! | PLACE:ADDR2! | ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO )");
     this.extraSpacePosList = extraSpacePosList;
@@ -571,6 +572,11 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     
     
     // See if this is the new fangled dash delimited format.  Makes things so much easier
+    if (body.contains(";PLACE:")) {
+      setSelectValue("3");
+      return parseFields(body.split(";"), data);
+    }
+    
     setSelectValue("1");
     if (body.contains(" - LOCATION:") || body.contains(" - PLACE:") || body.contains(" - NATURE:")) {
       if (body.endsWith("-")) body += ' ';
@@ -725,10 +731,33 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATE2")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME2")) return new TimeField(TIME_FMT, true);
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("ADDR2")) return new BaseAddressField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("INFO3")) return new BaseInfo3Field();
     return super.getField(name);
+  }
+  
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*), *([A-Z]{2})(?: +(\\d{5}))?");
+  private class BaseAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      String zip = null;
+      Matcher match = ADDR_ST_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strState = match.group(2);
+        zip = match.group(3);
+      }
+      super.parse(field, data);
+      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " ST";
+    }
   }
   
   private static final Pattern ADDR_BRK_PTN = Pattern.compile(" - |\n");
@@ -916,6 +945,17 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "GPS PHONE INFO";
+    }
+  }
+
+  private static final Pattern INFO3_HEADER_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - +(.*)");
+  private class BaseInfo3Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      Matcher match = INFO3_HEADER_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
     }
   }
 }
