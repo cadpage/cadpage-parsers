@@ -179,7 +179,7 @@ public class Message {
   private static final Pattern[] SUBJECT_HEADER_PTNS = new Pattern[]{
     Pattern.compile("^(\\d)/(\\d)$"),
     Pattern.compile("^(\\d) *of *(\\d)\\b *"),
-    Pattern.compile(" *(?:- part )?\\b(\\d) *of *(\\d)$"),
+    Pattern.compile(" *(?:- part )?\\b(\\d) *of *(\\d)(?: Texts)?$"),
     Pattern.compile("^\\[(\\d)(?:/|of| +of +)(\\d)\\] *"),
     Pattern.compile("^\\((\\d)(?:/|of| +of +)(\\d)\\) *"),
     Pattern.compile(" *\\[(\\d)(?:/|of| +of +)(\\d)\\]$"),
