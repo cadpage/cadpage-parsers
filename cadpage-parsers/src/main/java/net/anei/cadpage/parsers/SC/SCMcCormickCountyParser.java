@@ -26,6 +26,9 @@ public class SCMcCormickCountyParser extends DispatchA65Parser {
       "CLARKS HILL",
       "MODOC",
       "MOUNT CARMEL",
-      "WILLINGTON"
+      "WILLINGTON",
+      
+      // Greenwood County
+      "TROY"
   };
 }
