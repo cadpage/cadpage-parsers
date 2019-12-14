@@ -1,17 +1,11 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
 
-public class MOScottCountyParser extends DispatchA33Parser {
-  
-  
+public class MOScottCountyParser extends GroupBestParser {
+
   public MOScottCountyParser() {
-    super("SCOTT COUNTY", "MO");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "SCOTTCITY@PUBLICSAFETYSOFTWARE.NET";
+    super(new MOScottCountyAParser(), new MOScottCountyBParser());
   }
 }
