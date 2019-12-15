@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class CAYoloCountyBParser extends MsgParser {
   public CAYoloCountyBParser() {
     super("YOLO COUNTY", "CA");
     setFieldList("DATE TIME ID CODE CALL PLACE ADDR APT CITY UNIT MAP GPS INFO");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -119,4 +121,13 @@ public class CAYoloCountyBParser extends MsgParser {
     if (pt >= 0) field = field.substring(0, pt) + '.' + field.substring(pt);
     return field;
   }
+  
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "36530 CR 21",                          "+38.685510,-121.834450"
+  });
 }
