@@ -1046,7 +1046,7 @@ public class FieldProgramParser extends SmartAddressParser {
           step = keywordMap.get("");
         }
         if (step == null) {
-          return false;                               // BEAKPOINT
+          return false;                               // BREAKPOINT
         }
         
         // Flag step as processed

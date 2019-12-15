@@ -872,7 +872,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected boolean isValidAddress(String address, int extra) {
     return parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_STRICT_SUFFIX | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).isValid(extra);
   }
-  
+
   /**
    * Determine if a string looks like a cross street
    * @param address Address string to be checked
@@ -890,7 +890,8 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if valid cross street
    */
   protected boolean isValidCrossStreet(String address, int extra) {
-    return parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ONLY_CROSS | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).isValid(extra);
+    int status = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ONLY_CROSS | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).getStatus();
+    return status == STATUS_STREET_NAME || status == STATUS_INTERSECTION;
   }
   
   /**

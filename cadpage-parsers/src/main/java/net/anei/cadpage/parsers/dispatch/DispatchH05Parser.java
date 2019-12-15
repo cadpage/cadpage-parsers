@@ -71,6 +71,7 @@ public class DispatchH05Parser extends HtmlProgramParser {
   
   @Override
   protected boolean parseFields(String[] flds, Data data) {
+    infoFirst = true;
     times = null;
     if (!super.parseFields(flds, data)) return false;
     if (data.msgType == MsgType.RUN_REPORT && times != null) {
@@ -95,11 +96,20 @@ public class DispatchH05Parser extends HtmlProgramParser {
     }
   }
 
+  private boolean infoFirst = true;
+  private boolean infoEnabled = false;
+
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+|\\d\\d?:\\d\\d:\\d\\d");
   private static final Pattern INFO_TIMES_MARK_PTN = Pattern.compile("[A-Z0-9]+: .*");
-  private class BaseInfoBlockField extends InfoField {
+  protected class BaseInfoBlockField extends InfoField {
     
-    private boolean enabled = false;
+    private boolean optInfo = false;
+    
+    @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      optInfo = qual != null && qual.contains("I");
+    }
     
     @Override
     public boolean canFail() {
@@ -115,23 +125,30 @@ public class DispatchH05Parser extends HtmlProgramParser {
     
     @Override
     public void parse(String field, Data data) {
+      
+      if (infoFirst) {
+        infoEnabled = optInfo;
+        infoFirst = false;
+      }
+      
       if (INFO_DATE_TIME_PTN.matcher(field).matches()) {
-        enabled = false;
+        infoEnabled = false;
         return;
       }
+      
       if (field.equals("-")) {
-        enabled = true;
+        infoEnabled = true;
         return;
       }
-      if (!enabled) {
+      if (!infoEnabled) {
         int pt = field.indexOf(" - ");
         if (pt >= 0) {
           field = field.substring(pt+3).trim();
-          enabled = true;
+          infoEnabled = true;
         }
       }
       
-      if (enabled) {
+      if (infoEnabled) {
         data.strSupp = append(data.strSupp, "\n", field);
       }
     }
