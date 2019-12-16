@@ -29,7 +29,7 @@ public class NYMadisonCountyCParser extends FieldProgramParser {
     
     do {
       
-      if (subject.equals("SEVAC")) {
+      if (subject.equals("SEVAC") || subject.equals("Greater Lenox")) {
         body = JUNK_PTN.matcher(body).replaceAll("");
         break;
       }
@@ -60,18 +60,28 @@ public class NYMadisonCountyCParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      
+      String apt = "";
+      int pt = field.lastIndexOf(';');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+
       if (field.endsWith(")")) {
-        int pt = field.indexOf('(');
+        pt = field.indexOf('(');
         if (pt >= 0) {
-          data.strCross = field.substring(pt+1, field.length()-1).trim();
+          String cross = field.substring(pt+1, field.length()-1).trim();
+          cross = stripFieldStart(cross, "/");
+          cross = stripFieldEnd(cross, "/");
+          data.strCross = cross;
           field = field.substring(0, pt).trim();
         }
       }
       
-      String apt = "";
-      int pt = field.indexOf('#');
+      pt = field.indexOf('#');
       if (pt >= 0) {
-        apt = field.substring(pt+1).trim();
+        apt = append(field.substring(pt+1).trim(), "-", apt);
         field = field.substring(0,pt).trim();
       }
       
