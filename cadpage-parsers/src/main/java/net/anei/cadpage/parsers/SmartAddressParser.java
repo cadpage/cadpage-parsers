@@ -890,7 +890,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if valid cross street
    */
   protected boolean isValidCrossStreet(String address, int extra) {
-    int status = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ONLY_CROSS | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).getStatus();
+    int status = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ONLY_CROSS | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).getStatus(extra);
     return status == STATUS_STREET_NAME || status == STATUS_INTERSECTION;
   }
   
