@@ -1,6 +1,6 @@
 package net.anei.cadpage.parsers.KY;
 
-public class KYShelbyCountyParser extends KYStatePoliceParser {
+public class KYShelbyCountyParser extends KYStatePoliceAParser {
   
   public KYShelbyCountyParser() {
     super("SHELBY COUNTY");

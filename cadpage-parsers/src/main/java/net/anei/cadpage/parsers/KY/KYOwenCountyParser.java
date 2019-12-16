@@ -1,13 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-public class KYOwenCountyParser extends KYStatePoliceParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+
+public class KYOwenCountyParser extends GroupBestParser {
   
   public KYOwenCountyParser() {
-    super("OWEN COUNTY");
-  }
-  
-  @Override
-  public String getLocName() {
-    return "Owen County, KY";
+    super(new KYOwenCountyAParser(), new KYOwenCountyBParser());
   }
 }

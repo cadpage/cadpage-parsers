@@ -1,13 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-public class KYTrimbleCountyParser extends KYStatePoliceParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+
+public class KYTrimbleCountyParser extends GroupBestParser {
   
   public KYTrimbleCountyParser() {
-    super("TRIMBLE COUNTY");
-  }
-  
-  @Override
-  public String getLocName() {
-    return "Trimble County, KY";
+    super(new KYTrimbleCountyAParser(), new KYTrimbleCountyBParser());
   }
 }
