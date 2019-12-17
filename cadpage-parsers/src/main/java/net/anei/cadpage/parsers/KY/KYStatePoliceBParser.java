@@ -16,7 +16,7 @@ public class KYStatePoliceBParser extends DispatchSPKParser {
   public String getAliasCode() {
     return "KYStatePoliceB";
   }
-  
+
   @Override
   public String getFilter() {
     return "Ksp.NGCAD@ky.gov";

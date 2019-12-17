@@ -8,4 +8,9 @@ public class KYStatePoliceParser extends GroupBestParser {
   public KYStatePoliceParser() {
     super(new KYStatePoliceAParser(), new KYStatePoliceBParser());
   }
+
+  @Override
+  public String getLocName() {
+    return "Kentucky State Police";
+  }
 }

@@ -39,12 +39,7 @@ public class KYStatePoliceAParser extends DispatchB3Parser {
   public String getAliasCode() {
     return "KYStatePoliceA";
   }
-  
-  @Override
-  public String getLocName() {
-    return "Kentucky State Police";
-  }
-  
+
   private static final Pattern REJECT_PREFIX_PTN = Pattern.compile("(?:CARROLLCOUNTY911|HARRISON_COUNTY_911|PIKEVILLE9-1-1):");
   private static final Pattern PREFIX_PTN = Pattern.compile("(?:KSP CAMPBELLSBURG|KSP DRY RIDGE E-911|KSP FRANKFORT|KSP POST 9|911-CENTER):");
   
