@@ -37,7 +37,7 @@ public class CadpageParserBase  extends FieldProgramParser{
     setMap("CITY");
     setMap("ST");
     setMap("APT");
-    setMap("X");
+    setMap("X",     "XST");
     setMap("BOX");
     setMap("MAP");
     setMap("CH");
