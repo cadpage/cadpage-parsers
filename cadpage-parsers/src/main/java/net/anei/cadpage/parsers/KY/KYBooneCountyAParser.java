@@ -13,12 +13,19 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class KYBooneCountyAParser extends FieldProgramParser {
   
-  private static final String MARKER = "IPS I/Page Notification";
-  
   public KYBooneCountyAParser() {
-    super(CITY_CODES, "BOONE COUNTY", "KY",
+    this("BOONE COUNTY", "KY");
+  }
+  
+  public KYBooneCountyAParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState,
           "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP% Event_Type:SKIP%");
     setupCityValues(CITY_CODES);
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "KYBooneCountyA";
   }
   
   @Override
@@ -32,6 +39,8 @@ public class KYBooneCountyAParser extends FieldProgramParser {
       @Override public boolean splitBlankIns() { return false; }
     };
   }
+  
+  private static final String MARKER = "IPS I/Page Notification";
 
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
@@ -45,13 +54,22 @@ public class KYBooneCountyAParser extends FieldProgramParser {
       return false;
     } while (false);
     
-    return super.parseMsg(body,  data);
+    if (!super.parseMsg(body,  data)) return false;
+    if (data.strAddress.length() == 0) {
+      data.strAddress = data.strCity;
+      data.strCity = "";
+    }
+    return true;
   }
   
   @Override
+  protected int getExtraParseAddressFlags() {
+    return FLAG_EMPTY_ADDR_OK;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -84,27 +102,6 @@ public class KYBooneCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR CITY PLACE APT";
-    }
-  }
-  
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*) - *(?:SECTOR )?(?:[NSEW]|[NS][EW]) +(.*)");
-  private class MyAddress2Field extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      if (data.strAddress.length() > 0) return;
-      int flags = FLAG_ANCHOR_END;
-      Matcher match = ADDR_CITY_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strCity = match.group(2);
-        flags |= FLAG_NO_CITY;
-      }
-      parseAddress(StartType.START_ADDR, flags, field, data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CITY";
     }
   }
   

@@ -6,8 +6,7 @@ public class INBooneCountyParser extends GroupBestParser {
   
   public INBooneCountyParser() {
     super(new INBooneCountyAParser(),
-          new INBooneCountyBParser(),
-          new INBooneCountyCParser());
+          new INBooneCountyBParser());
   }
 
 }
