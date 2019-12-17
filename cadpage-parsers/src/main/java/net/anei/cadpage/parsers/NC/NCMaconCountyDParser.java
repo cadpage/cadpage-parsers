@@ -22,6 +22,8 @@ public class NCMaconCountyDParser extends DispatchA48Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    body = body.replace('¿', ' ');
     body = stripFieldEnd(body, "Stop");
     body = stripFieldEnd(body, "~");
     int tlen;
