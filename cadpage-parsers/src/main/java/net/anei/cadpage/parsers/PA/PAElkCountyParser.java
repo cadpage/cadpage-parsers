@@ -41,7 +41,11 @@ public class PAElkCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("Inc:", "Inc Code:").replace(" Add:", "\nAddress:").replace("\nXSt:", "\nCross Streets:");
-    return parseFields(body.split("\n"), 4, data);
+    if (body.contains("\n")) {
+      return parseFields(body.split("\n"), 4, data);
+    } else {
+      return super.parseMsg(body, data);
+    }
   }
   
   @Override
