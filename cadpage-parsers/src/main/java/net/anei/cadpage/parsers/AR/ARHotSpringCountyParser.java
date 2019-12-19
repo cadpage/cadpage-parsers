@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.ReverseCodeSet;
 
 public class ARHotSpringCountyParser extends FieldProgramParser {
@@ -19,8 +20,9 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
   public ARHotSpringCountyParser() {
     super("HOT SPRING COUNTY", "AR", 
           "( RUN_REPORT/R RUN_REPORT! CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross-Street:X! ( Notes:INFO! | INFO:INFO! ) " +
-          "| CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID? PRI:PRI? DATE:DATETIME! TIME:TIME? X:X? INFO:INFO! " + 
+          "| CALL:CALL! PLACE:PLACE? ADDR:ADDR! Cross-Streeet:X? CITY:CITY! XY:GPS? ID:ID? PRI:PRI? DATE:DATETIME? TIME:TIME? X:X? INFO:INFO! " + 
           "| Category:CALL! Address:ADDR2! Intersection:X? Business_Name:PLACE! Event_#:ID! Date_/_Time:DATETIME! Notes:INFO " + 
+          "| LOCATION:ADDRCITYST! CALL_TYPE:CALL! CALLER:NAME! CALL_TIME:DATETIME3 CAD_NUMBER:ID! CALL_NOTES:INFO3 RUN_TIMES:TIMES3 END! " +
           ") INFO/N+? CAD END");
   }
   
@@ -68,18 +70,27 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
     
     return super.parseHtmlMsg(subject, body, data);
   }
+  
+  private static final Pattern MARKER = Pattern.compile("(PLEASE RESPOND IMMEDIATELY|RUN REPORT) +(?=LOCATION:)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf('�');
     if (pt >= 0) body = body.substring(0, pt).trim();
     
-    if (body.startsWith("CALL:") || body.startsWith("RUN REPORT")) {
+    if (body.startsWith("CALL:") || body.startsWith("RUN REPORT\n")) {
       return super.parseFields(body.split("\n"), data);
     }
     
     if (body.startsWith("Category:")) {
       body = body.replace('\n', ' ');
+      return super.parseMsg(body, data);
+    }
+    
+    Matcher match = MARKER.matcher(body);
+    if (match.lookingAt()) {
+      if (match.group(1).equals("RUN REPORT")) data.msgType = MsgType.RUN_REPORT;
+      body = body.substring(match.end());
       return super.parseMsg(body, data);
     }
     
@@ -95,6 +106,10 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("DATETIME3")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d\\d +\\d\\d?:\\d\\d", true);
+    if (name.equals("INFO3")) return new MyInfo3Field();
+    if (name.equals("TIMES3")) return new MyTimes3Field();
     if (name.equals("CAD")) return new IdField("CAD#[- ]+(.*)", true);
     return super.getField(name);
   }
@@ -159,6 +174,49 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.replace('@', '/');
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private class MyAddressCityStateField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(',');
+      Matcher match = ADDR_ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        data.strState =  match.group(1);
+        String zip =  match.group(2);
+        city = p.getLastOptional(',');
+        if (city.length() == 0 && zip != null) city = zip;
+      }
+      data.strCity = city;
+      parseAddress(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY ST";
+    }
+  }
+  
+  private static final Pattern INFO3_BRK_PTN = Pattern.compile("(?:^|; *)\\d\\d?/\\d\\d/\\d\\d \\d\\d?:\\d\\d:\\d\\d - +");
+  private class MyInfo3Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String part : INFO3_BRK_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", part.trim());
+      }
+    }
+  }
+  
+  private class MyTimes3Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.msgType != MsgType.RUN_REPORT) return;
+      for (String part : field.split(";")) {
+        data.strSupp = append(data.strSupp, "\n", part.trim());
+      }
     }
   }
   
