@@ -102,6 +102,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = ID_JUNK_PTN.matcher(field).replaceAll("");
+      if (field.equals("/")) return;
       super.parse(field, data);
     }
   }
