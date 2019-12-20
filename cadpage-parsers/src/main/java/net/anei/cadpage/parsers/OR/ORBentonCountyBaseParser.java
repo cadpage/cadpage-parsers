@@ -556,7 +556,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 501 MP 9",                 "44.29708259800,-123.65049069200",
       
       // Google just has this geocoded wrong :(
-      "204 N 9TH ST",                 "44.541761,-123.374025",
+      "206 N 9TH ST",                 "44.541761,-123.374025",
       
       // Apt location info src: gis.co.benton.or.us/GISDataDownload/Address/FireMapBooks/PhilomathMaps/
       // Forest Meadows trailer park
