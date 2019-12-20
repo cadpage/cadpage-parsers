@@ -126,6 +126,7 @@ public class DispatchA48Parser extends FieldProgramParser {
           parser.setGPSLoc(match.group(1), data);
           field = field.substring(match.end());
         }
+        field = stripFieldStart(field, "1-");
         match = PHONE_PTN.matcher(field);
         if (match.lookingAt()) {
           data.strPhone = getOptGroup(match.group(1));
@@ -618,6 +619,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      field = stripFieldStart(field, "1-");
       Matcher match = PHONE_PTN.matcher(field);
       if (!match.matches()) return false;
       data.strPhone = getOptGroup(match.group(1));
