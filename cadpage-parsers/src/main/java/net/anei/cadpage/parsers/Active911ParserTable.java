@@ -1147,7 +1147,7 @@ public class Active911ParserTable {
       "US/NY/Lewis911",                   "NYLewisCounty",
       "US/NY/LimaVFD",                    "NYLivingstonCountyA",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",
-      "US/NY/MadisonCounty",              "NYMadisonCountyB",
+      "US/NY/MadisonCounty",              "NYMadisonCountyB,NYMadisonCountyC",
       "US/NY/MonroeCounty",               "NYMonroeCountyWebster",
       "US/NY/NassauCountyElmont",         "NYNassauCountyElmont",
       "US/NY/NassauCountyFiretracker",    "NYNassauCountyFiretracker3",
