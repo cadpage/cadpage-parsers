@@ -27,25 +27,21 @@ public class NYMadisonCountyCParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
-    do {
-      
-      if (subject.equals("SEVAC") || subject.equals("Greater Lenox")) {
-        body = JUNK_PTN.matcher(body).replaceAll("");
-        break;
-      }
-      
-      if (subject.equals("Notification")) {
-        Matcher match = MARKER.matcher(body);
-        if (!match.lookingAt()) return false;
-        body = body.substring(match.end());
-        break;
-      }
-      
-      return false;
-      
-    } while (false);
+    if (subject.equals("Notification")) {
+      Matcher match = MARKER.matcher(body);
+      if (!match.lookingAt()) return false;
+      body = body.substring(match.end());
+    } else {
+      data.strSource = subject;
+      body = JUNK_PTN.matcher(body).replaceAll("");
+    }
     
     return parseFields(body.split("\n"), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   @Override
