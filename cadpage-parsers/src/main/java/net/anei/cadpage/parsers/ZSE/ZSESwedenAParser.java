@@ -39,7 +39,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
     if (data.strPlace.equals(data.strCity)) data.strPlace = "";
     
     // Comment out following line to check call table
-//    if (data.strGPSLoc.length() > 0) return true;
+    if (data.strGPSLoc.length() > 0) return true;
     
     String call = data.strCall;
     if (call.length() == 0) return true;
@@ -171,6 +171,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
       "Fastklämd",
       "Flyghändelse",
       "Gräsbrand",
+      "Hjärtstopp",
       "Hinder på väg",
       "Hissnödläge",
       "Hot om suicid",
