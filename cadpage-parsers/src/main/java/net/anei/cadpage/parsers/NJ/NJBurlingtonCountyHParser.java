@@ -11,9 +11,12 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   
   public NJBurlingtonCountyHParser() {
     super(CITY_CODES, "BURLINGTON COUNTY", "NJ", 
-          "RADIO_CHANNEL:CH? TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " + 
-          "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " + 
-          "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:SKIP | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:SKIP ) https:QUERY!");
+          "FINAL? RADIO_CHANNEL:CH? " + 
+              "( TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " + 
+                "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " + 
+                "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:SKIP | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:SKIP ) https:QUERY! " + 
+              "| CALL! CALL2+ INC_NUMBER:EMPTY! ID! ADDRCITY! CROSS_STREETS:EMPTY! X! NAME:NAME! ADDRESS:SKIP! PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT! ALERTS:EMPTY! ALERT/N+ " + 
+              ")");
     setAccumulateUnits(true);
     setupMultiWordStreets("REV DR ML KING JR");
   }
@@ -38,6 +41,9 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       if (pt < 0) return false;
       subject = subject.substring(pt+1).trim();
     }
+    
+    int pt = body.indexOf("\nThe information in this e-mail");
+    if (pt >= 0) body = body.substring(0,pt);
     return super.parseHtmlMsg(subject, body, data);
   }
   
@@ -48,11 +54,13 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("FINAL")) return new SkipField("Final", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("MAP"))  return new MyMapField();
     if (name.equals("QUERY")) return new MyQueryField();
+    if (name.equals("CALL2")) return new MyCall2Field();
     return super.getField(name);
   }
   
@@ -139,6 +147,19 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     @Override
     public String getFieldNames() {
       return "CITY ST";
+    }
+  }
+  
+  private class MyCall2Field extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(getRelativeField(-1))) return;
+      super.parse(field,  data);
     }
   }
   
