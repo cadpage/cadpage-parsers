@@ -380,6 +380,7 @@ public class Active911ParserTable {
       "US/ID/BinghamCounty",              "IDBinghamCounty",
       "US/ID/BlaineCounty",               "IDBlaineCounty",
       "US/ID/BonnerCounty",               "IDBonnerCounty",
+      "US/ID/BoundarySheriff",            "IDBoundaryCounty",
       "US/ID/FremontCounty",              "IDFremontCounty",
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/MadisonCounty",              "IDMadisonCounty",
