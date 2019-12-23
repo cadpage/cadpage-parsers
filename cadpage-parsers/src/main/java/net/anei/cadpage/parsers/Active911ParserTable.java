@@ -473,6 +473,7 @@ public class Active911ParserTable {
       "US/IN/LakeCounty",                 "INLakeCounty",
       "US/IN/LaporteCounty",              "INLaporteCounty",
       "US/IN/MadisonCounty",              "INMadisonCountyB,INMadisonCountyC",
+      "US/IN/MadisonCountyCentralDispatch","INMadisonCountyC",
       "US/IN/MadisonCountyAHIMT",         "INMadisonCountyC",
       "US/IN/MadisonCountyLapel",         "ALMadisonCounty", 
       "US/IN/MarshallCounty",             "INMarshallCounty",
