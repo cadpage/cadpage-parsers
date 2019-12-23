@@ -863,6 +863,7 @@ public class Active911ParserTable {
       "US/MO/JasperCounty",               "MOJasperCounty",
       "US/MO/JeffersonCity",              "MOJeffersonCity",
       "US/MO/JeffersonCounty",            "MOJeffersonCounty",
+      "US/MO/JeffersonCountyHealthDept",  "MOJeffersonCounty",
       "US/MO/Kirkwood",                   "MOStLouisCountyG",
       "US/MO/LeesSummit",                 "MOJacksonCountyC",
       "US/MO/LincolnCounty",              "MOLincolnCounty,MOStCharlesCounty",
