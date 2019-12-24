@@ -245,6 +245,7 @@ public class Active911ParserTable {
       "US/CO/NWSAlert",                   "StandardNationalWeatherService",
       "US/CO/OlatheFire",                 "COMontroseCounty",
       "US/CO/PitkinCounty",               "COPitkinCounty",
+      "US/CO/RioGrandeounty",             "CORioGrandeCounty",
       "US/CO/SanMiguelCounty",            "COSanMiguelCounty",
       "US/CO/TellerCounty",               "COTellerCounty",
       "US/CO/USAMobility",                "CODouglasCountyB",
