@@ -1785,6 +1785,7 @@ public class Active911ParserTable {
       "US/WA/Medapoint",                  "WASnohomishCountyC",
       "US/WA/MPTech",                     "WASnohomishCountyC",
       "US/WA/OkanoganCounty",             "WAOkanoganCounty",
+      "US/WA/OlympiaFD",                  "WAThurstonCounty",
       "US/WA/PendOreilleCounty",          "WAPendOreilleCounty",
       "US/WA/PierceCounty",               "WAPierceCountyD,WAPierceCountyE",
       "US/WA/RiverComm911",               "WAChelanCounty",
