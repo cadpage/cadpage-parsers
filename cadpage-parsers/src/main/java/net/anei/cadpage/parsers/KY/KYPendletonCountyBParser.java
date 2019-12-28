@@ -9,6 +9,6 @@ public class KYPendletonCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "noreply@interact911.com,noreply@public-safety-cloud.com";
+    return "noreply@interact911.com,noreply@public-safety-cloud.com,Ksp.NGCAD@ky.gov";
   }
 }
