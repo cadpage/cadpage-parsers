@@ -32,12 +32,16 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(':');
-      if (pt > 0) {
-        data.strCode = field.substring(0,pt).trim();
-        field = field.substring(pt+1).trim();
+      if (field.equals(":")) {
+        data.strCall = "ALERT";
+      } else {
+        int pt = field.indexOf(':');
+        if (pt > 0) {
+          data.strCode = field.substring(0,pt).trim();
+          field = field.substring(pt+1).trim();
+        }
+        data.strCall = field;
       }
-      data.strCall = field;
     }
     
     @Override
