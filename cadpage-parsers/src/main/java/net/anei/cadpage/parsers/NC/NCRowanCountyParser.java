@@ -17,8 +17,9 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   public NCRowanCountyParser() {
     super(CITY_CODES, "ROWAN COUNTY", "NC",
           "( CANCEL ADDR! CITY? XPLACE+ " +
-          "| FYI? ( ADDR/Z CITY! " +
-                 "| ( ADDR | CALL ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
+          "| FYI? ( BAD_ID " + 
+                 "| ADDR/Z CITY! " +
+                 "| ( ADDR | CALL P? ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
                  ") XPLACE+? INFO/N INFO/NZ+? NAME PH " + 
           ")");
     setupSpecialStreets("NEW ST");
@@ -54,8 +55,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     if (!super.parseMsg(body, data)) return false;
     
     // If we didn't have the CAD: prefix and don't have a city, this is just
-    // to chancy to accept
-    if (!ok && data.strCity.length() == 0) return false;
+    // to chancy to accept.  Unless this was flagged as a prealert.  We will take that.
+    if (!ok && data.strCity.length() == 0 && !data.strCall.endsWith("(PREALERT)")) return false;
     
     // If the Apt looks like an NCDavidsonCountyA city code, reject
     if (data.strPlace.length() == 0 && data.strApt.length() > 0 && NCDavidsonCountyAParser.isCityCode(data.strApt)) return false;
@@ -77,6 +78,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("CANCEL")) return new BaseCancelField("COMMND STFF NOTFID\\b.*|CONFIRMED DOA|CPR IN PROGRESS|DUPLICATE PAGE|OFF DUTY PERSONNEL NOTIFY|.*\\bRADIO ACTIVATED|SECOND DISPATCH");
+    if (name.equals("BAD_ID")) return new MyBadIdField();
+    if (name.equals("P")) return new MyPrealertField();
     if (name.equals("CALL_PAGE")) return new CallField("PAGE / CALL .*", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
@@ -85,6 +88,39 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("PH")) return new PhoneField("\\d{10}", true);
     return super.getField(name);
+  }
+  
+  /*
+   * If we find an ID field, the means this is really a NCStanlyCounty alert, and we should reject it.
+   */
+  private class MyBadIdField extends SkipField {
+    MyBadIdField() {
+      super("\\d{3,}", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      abort();
+    }
+  }
+  
+  private class MyPrealertField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.equals("P")) return false;
+      data.strCall = append(data.strCall, " ", "(PREALERT)");
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
   
   private static final Pattern BAD_CALL_PTN = Pattern.compile("[^\\(]*[^ ]/[^ ]+/[^ ].*|[A-Z]\\d+[A-Z]?-.*");
@@ -267,7 +303,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   private boolean lastIdField = false;
   
   private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
-  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
+  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|tac.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
   private static final Pattern ID_PTN = Pattern.compile("\\d{6,9}");
   private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bACTIVATION\\b|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b - |\\bLOCATED\\b|\\bUDTS:|\\bREF\\b|\\bREFERENCE\\b|\\bREQUESTING\\b).*");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("Radio Channel: *(.*)");
@@ -359,7 +395,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
         unit = unit.trim();
         if (unit.length() == 0) continue;
         if (!unitSet.add(unit)) continue;
-        if (unit.startsWith("OPS")) {
+        if (unit.startsWith("OPS") || unit.startsWith("tac")) {
           data.strChannel = append(data.strChannel, ",", unit);
         } else {
           data.strUnit = append(data.strUnit, ",", unit);
