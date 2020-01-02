@@ -12,6 +12,7 @@ public class NCEdgecombeCountyAParser extends FieldProgramParser {
   public NCEdgecombeCountyAParser() {
     super(NCEdgecombeCountyParser.CITY_LIST, "EDGECOMBE COUNTY", "NC",
           "( CITY | ADDR/S6 APT EMPTY CITY ) EMPTY EMPTY EMPTY INFO ( ROAD_CLOSED EMPTY CALL/SDS | EMPTY CALL EMPTY ) EMPTY UNIT! INFO/N+");
+    removeWords("ROAD");
   }
   
   @Override
@@ -19,11 +20,11 @@ public class NCEdgecombeCountyAParser extends FieldProgramParser {
     return "@co.edgecombe.nc.us";
   }
   
-  private static final Pattern MARKER1 = Pattern.compile("Edgecombe(?:911|Central):(\\d{9})?\\s+");
+  private static final Pattern MARKER1 = Pattern.compile("Edgecombe(?:911|Central):(\\d{9}\\b)?\\s*");
   private static final Pattern MARKER2 = Pattern.compile("(\\d{9}): +");
   private static final Pattern CALL_CODE_UNIT_PTN = Pattern.compile("(.*) CODE (\\d) (.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CALL_UNIT_PTN = Pattern.compile("(.*?) ([A-Z]*\\d[ ,A-Z0-9]*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CHANNEL_PTN = Pattern.compile("EVT?(?: CH)? ?\\d+", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CHANNEL_PTN = Pattern.compile("\\bEVT?(?: CH)? ?\\d+$", Pattern.CASE_INSENSITIVE);
   
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -46,7 +47,6 @@ public class NCEdgecombeCountyAParser extends FieldProgramParser {
     }
     
     else {
-      if (bad) return false;
       
       setFieldList("ADDR APT CH CITY CALL PRI UNIT INFO");
       int pt = body.indexOf(" Medical:");
@@ -54,9 +54,12 @@ public class NCEdgecombeCountyAParser extends FieldProgramParser {
         data.strSupp = body.substring(pt+1);
         body = body.substring(0,pt).trim();
       }
+      body = stripFieldStart(body, ":");
       parseAddress(StartType.START_ADDR, body.replace(" @ ", " / ").replace("//", "/"), data);
       body = getLeft();
       if (body.length() == 0) return false;
+      
+      if (bad && data.strCity.length() == 0) return false;
       
       // If there is a priority field separating the call description and units
       // things are easy
@@ -80,9 +83,18 @@ public class NCEdgecombeCountyAParser extends FieldProgramParser {
     }
     
     data.strUnit = data.strUnit.replace(' ', '_');
-    if (CHANNEL_PTN.matcher(data.strApt).matches()) {
-      data.strChannel = data.strApt;
-      data.strApt = "";
+    
+    if (data.strApt.length() > 0) {
+      if (CHANNEL_PTN.matcher(data.strApt).matches()) {
+        data.strChannel = data.strApt;
+        data.strApt = "";
+      }
+    } else {
+      match = CHANNEL_PTN.matcher(data.strAddress);
+      if (match.find()) {
+        data.strChannel = match.group();
+        data.strAddress = stripFieldEnd(data.strAddress.substring(0,match.start()).trim(), ":");
+      }
     }
     return true;
   }

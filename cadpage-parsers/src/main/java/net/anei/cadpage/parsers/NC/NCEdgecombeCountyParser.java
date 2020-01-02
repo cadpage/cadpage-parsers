@@ -39,6 +39,9 @@ public class NCEdgecombeCountyParser extends GroupBestParser {
     "COKEY TWP",
     "UPPER TOWN CREEK TWP",
     
+    // Hallifax County
+    "HOBGOOD",
+    
     // Nash County
     "NASHVILLE",
 
