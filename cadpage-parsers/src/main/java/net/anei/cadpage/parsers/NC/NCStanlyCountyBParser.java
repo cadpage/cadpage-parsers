@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -12,9 +14,15 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
   
   public NCStanlyCountyBParser() {
     super(CITY_LIST, "STANLY COUNTY", "NC",
-          "( UNIT_CALL ADDR CITY_PLACE X+? " +
-          "| FYI? ID? CODE_CALL ADDR CITY/Y! ( PLACE APT X+? | APT X+? | INFO1 | PLACE INFO1 | X X? | PLACE X+? " + 
-          ") INFO/N+ )");
+          "( UNIT ENROUTE ADDR CITY2 CALL! END " +
+          "| CANCEL ADDR CITY_PLACE! X+? " +
+          "| FYI? ID? CODE_CALL ADDR! ( END " + 
+                                     "| APT CITY/Y! " +
+                                     "| PLACE CITY/Y! " +
+                                     "| CITY/Y! " +
+                                     ") ( PLACE APT X+? | APT X+? | INFO1 | PLACE INFO1 | X X? | PLACE X+? ) " + 
+          ") INFO/N+");
+    setupMultiWordStreets("DR MARTIN LUTHER KING JR");
     addRoadSuffixTerms("CONNECTOR");
   }
   
@@ -24,8 +32,25 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
   }
   
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (body.contains(",Enroute,")) body = body.replace(',', ';');
+    if (!super.parseMsg(body, data)) return false;
+    
+    // Eliminate some NCStanlyCountA alerts that get through
+    if (data.strCity.length() == 0 && 
+        (data.strCall.contains("/") || data.strDate.length() > 0)) return false;
+    return true;
+  }
+
+  @Override
   public Field getField(String name) {
-    if (name.equals("UNIT_CALL")) return new MyUnitCallField();
+    if (name.equals("ENROUTE")) return new CallField("Enroute");
+    if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("CITY_PLACE")) return new MyCityPlaceField();
     if (name.equals("ID")) return new IdField("\\d{3,}");
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
@@ -34,35 +59,21 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     return super.getField(name);
   }
   
-  private static final Pattern UNIT_CALL_PTN = Pattern.compile("\\{(\\S+)\\} *(.*)");
-  private class MyUnitCallField extends Field {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher match = UNIT_CALL_PTN.matcher(field);
-      if (!match.matches()) return false;
-      data.strUnit = match.group(1);
-      data.strCall = match.group(2);
-      return true;
-    }
-
+  private class MyCity2Field extends Field {
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      String city = CITY_CODES.getProperty(field);
+      if (city == null) abort();
+      data.strCity = city;
     }
-
+    
     @Override
     public String getFieldNames() {
-      return "UNIT CALL";
+      return "CITY";
     }
   }
   
-  private static final Pattern APT_PTN = Pattern.compile("(?:ROOM|APT|LOT|RM) +(.*)");
+  private static final Pattern APT_PTN = Pattern.compile("(?:ROOM|APT|LOT|RM) +(.*)|[A-Z]?\\d{1,4}[A-Z]?");
   
   private class MyCityPlaceField extends Field {
     @Override
@@ -75,7 +86,9 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
         }
         Matcher match = APT_PTN.matcher(field);
         if (match.matches()) {
-          data.strApt = append(data.strApt, "-", match.group(1));
+          String apt = match.group(1);
+          if (apt != null) field = apt;
+          data.strApt = append(data.strApt, "-", field);
         } else {
           data.strPlace = field;
         }
@@ -116,7 +129,9 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = APT_PTN.matcher(field);
       if (!match.matches()) return false;
-      super.parse(match.group(1), data);
+      String apt = match.group(1);
+      if (apt != null) field = apt;
+      super.parse(field, data);
       return true;
     }
   }
