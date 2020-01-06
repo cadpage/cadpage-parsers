@@ -12,7 +12,7 @@ public class ZSESwedenAParser extends ZSESwedenBaseParser {
 
   public ZSESwedenAParser() {
     super("", "", 
-    "( FROM!  Radiogruppsnamn:CH! ADDR PLACE CITY PLACE? CALL! CALL CALL INFO/N+? Kompletterande_kategoritext:INFO! INFO/N+ " +
+    "( FROM!  Radiogruppsnamn:CH! ADDR ( CITY CALL! | PLACE CITY PLACE? CALL! ) CALL CALL INFO/N+? Kompletterande_kategoritext:INFO! INFO/N+ " +
     "| ( ID | CH ID ) ( CH ( CH CH+? CALL CALL+? | CALL CALL ) | CALL CALL CALL ) Händelsebeskrivning:INFO? INFO2? ADDR CITY! SRC Larmkategori_namn:PRI? PositionWGS84:GPS! Stationskod:SKIP? Larmkategori_namn:PRI? Händelsebeskrivning:INFO INFO+ " + 
     "| CALL CALL CALL ADDR! CITY ( END | GPS INFO/N+ | INFO+? SRC UNIT! UNIT/S+? GPS ) ) END");
   }
