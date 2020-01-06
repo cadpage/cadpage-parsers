@@ -9,15 +9,15 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXTarrantCountyParser extends GroupBestParser {
   
   public TXTarrantCountyParser() {
-    super(new TXTarrantCountyAParser(), new TXTarrantCountyBParser(),
-          new TXTarrantCountyCParser(), new TXTarrantCountyDParser(),
-          new TXTarrantCountyEParser());
+    super(new TXTarrantCountyAParser(), new TXTarrantCountyBParser(), 
+          new TXTarrantCountyCParser(), new TXTarrantCountyDParser());
   }
 
   static String[] CITY_LIST = new String[]{
+      
+      "TARRANT COUNTY",
     
       //Cities
-
       "ARLINGTON",
       "AZLE",
       "BEDFORD",
@@ -53,7 +53,6 @@ public class TXTarrantCountyParser extends GroupBestParser {
       "WHITE SETTLEMENT",
 
       //Towns
-
       "EDGECLIFF VILLAGE",
       "FLOWER MOUND",
       "LAKESIDE",
@@ -63,7 +62,6 @@ public class TXTarrantCountyParser extends GroupBestParser {
       "WESTOVER HILLS",
 
       //Census-designated places
-
       "BRIAR",
       "EAGLE MOUNTAIN",
       "PECAN ACRES",
@@ -71,7 +69,6 @@ public class TXTarrantCountyParser extends GroupBestParser {
       
 
       //Unincorporated communities
-
       "ALLIANCE",
       "AVONDALE",
       "BOSS",
@@ -81,7 +78,6 @@ public class TXTarrantCountyParser extends GroupBestParser {
       "LAKE SHORE ESTATES",
 
       //Historical communities
-
       "BELT JUNCTION",
       "BIRDS",
       "BISBEE",
@@ -91,7 +87,33 @@ public class TXTarrantCountyParser extends GroupBestParser {
       "EDERVILLE",
       "GARDEN ACRES",
       "HANDLEY",
-      "JOHNSONS STATION"
+      "JOHNSONS STATION",
+      
+      // Dallas County
+      "CEDAR HILL",
+      "DESOTO",
+      "DUNCANVILLE",
+      "FERRIS",
+      "GLENN HEIGHTS",
+      "LANCASTER",
+      "OVILLA",
+      
+      // Ellis County
+      "MIDLOTHIAN",
+      "OAK LEAF",
+      "PALMER",
+      "RED OAK",
+      "WAXAHACHIE",
+      
+      // Johnson COunty
+      "VENUS",
+      
+      // Guadalupe County
+      "MCQUEENEY",
+      "SEGUIN",
+      
+      // No city
+      "NONE"
   };
 
 }

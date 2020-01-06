@@ -9,16 +9,27 @@ public class TXTarrantCountyCParser extends DispatchA18Parser {
   public TXTarrantCountyCParser() {
     super(TXTarrantCountyParser.CITY_LIST, "TARRANT COUNTY","TX");
   }
- 
-  @Override
-  public String getFilter() {
-    return "crimespage@lakeworthtx.org";
-  }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf("\n\n\n");
+  public String getFilter() {
+    return "crimes@cityofkeller.com,crimes@benbrook-tx.gov,active911@sansompark.org,crimespage@lakeworthtx.org,cad@evermantx.net,cad@evermanfire.org,cadeverman@gmail.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA;
+  }
+  
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    int pt = body.indexOf("\n\nCONFIDENTIALITY");
     if (pt >= 0) body = body.substring(0, pt).trim();
-    return super.parseMsg(body, data);
+    
+    if (body.startsWith("-")) body = subject + '\n' + body;
+    
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strCity.equals("NONE")) data.strCity = "";
+    return true;
   }
 }

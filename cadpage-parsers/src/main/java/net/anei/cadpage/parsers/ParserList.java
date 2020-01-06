@@ -1472,7 +1472,6 @@ public class ParserList {
               ,"TXHutchins"                     ,"Hutchins, TX"
               ,"TXJohnsonCounty"                ,"Johnson County, TX"
               ,"TXKaufmanCounty"                ,"Kaufman County, TX"
-              ,"TXKeller"                       ,"Keller, TX"
               ,"TXKendallCounty"                ,"Kendall County, TX"
               ,"TXKerrCounty"                   ,"Kerr County, TX"
               ,"TXKilgore"						          ,"Kilgore, TX"
