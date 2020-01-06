@@ -750,6 +750,8 @@ public class Active911ParserTable {
       "US/MI/NewBuffaloTwp",              "MIBerrienCounty",
       "US/MI/OaklandCounty",              "MIOaklandCountyC",
       "US/MI/OaklandCountyURL",           "MIOaklandCountyC",
+      "US/MI/OgemawCounty",               "MIOgemawCounty",
+      "US/MI/OgemawCountyFire",           "MIOgemawCounty",
       "US/MI/OttawaCounty",               "MIOttawaCounty",
       "US/MI/RichmondFDDelimited",        "MIMacombCounty",
       "US/MI/RoscommonCounty",            "MIRoscommonCounty",
