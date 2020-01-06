@@ -1258,7 +1258,7 @@ public class Active911ParserTable {
       "US/OH/HuronCounty",                "OHHuronCounty",
       "US/OH/JeffersonCounty",            "OHJeffersonCounty",
       "US/OH/KnoxCounty",                 "OHKnoxCounty",
-      "US/OH/LakeCounty",                 "OHLakeCountyB",
+      "US/OH/LakeCounty",                 "OHLakeCountyA,OHLakeCountyB",
       "US/OH/LakeCountyMentorFD",         "OHLakeCountyB",
       "US/OH/LawrenceCounty",             "OHLawrenceCounty",
       "US/OH/LickingCounty",              "OHLickingCounty",
