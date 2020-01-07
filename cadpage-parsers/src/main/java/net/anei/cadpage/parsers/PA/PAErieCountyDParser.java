@@ -17,7 +17,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "snpp@eriecountypa.gov,messaging@iamresponding.com";
+    return "snpp@eriecountypa.gov,messaging@iamresponding.com,777";
   }
   
   @Override

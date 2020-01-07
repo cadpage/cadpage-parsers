@@ -3979,19 +3979,28 @@ Thanks for trying Cadpage,
 **************************************************************************
 * Old Cadpage users - split messages
 **************************************************************************
+Hi Folks,
 
-It has been a while since we last heard from you.  And it looks like your department switched to using Active911 some time back.  Please note that Cadpage works quite well with the Active911 paging service.  You can use it instead of, or in addition to, the Active911 android app.  We have some features that the Active911 app still lacks -- more flexible notification options, for example.  The main reason you would probably want to try it is because dispatch seems to be splitting long alerts up into multiple messages.  Cadpage has logic to try and merge those back into a single alert.
+We have been reaching out to Cadpage users that we haven't heard from for a while, partly to see how Cadpage is working for you now. And if your department is one of many that have since switched to using Active911, we want to make sure everyone knows that Cadpage can be used with the Active911 service instead of, or in addition to the Android Active911 app. There is no additional charge for using Cadpage in this manner.
 
-If you are not currently using Cadpage and would like to try it.  You can install Cadpage from the Google Play Store.  Then open Cadpage settings and select
-Direct Paging Vendors > Active911 > Register
-You then have to enter the same Active911 device activation code that you used to register the Active911 app.
+We do have some features that the Active911 app still lacks -- more flexible notification options, for example. But the main reason you would probably want to try Cadpage is because we use a different set of message parsers. For most locations, this does not make a lot of difference. But <<<***>>> makes a habit of splitting long alert messages into two or more alerts.   Cadpage can merge these messages back into a single alert.  The Active911 app lacks that capability.
 
-Once you do this, Active911 alerts will be picked up by Cadpage and will not be sent to the Active911 app.  If you launch the Active911 app manually, it will query their servers and update the displayed call history after a few seconds.   The split message merge logic in Cadpage is activated automatically.
+If you are not currently using Cadpage and would like to try it. You can install Cadpage from the Google Play Store.  The first time you open Cadpage it will display a welcome message and give you some options on how you receive dispatch alerts.  You want to select
+"My Department Uses Active911"
+Next select
+"Register with Active911"
+This takes to you an Active911 registration page where you need to enter the same Active911 device activation code that you used to register the Active911 app.
 
-If you have any questions, or if there is anything you would like to see added to the Cadpage feature set, by all means feel free to contact us.
+Once you do this, Active911 alerts will be picked up by Cadpage and will not be sent to the Active911 app.  If you have any problems with the way Cadpage displays or maps any alert, long press the alert and select "Report Problem" to send it to us.
+
+If you want to continue to use the Active911 app along with Cadpage you can.  Active911 will not trigger when an alert comes in.  But you can configure an "Active911" menu button to show up in the Cadpage main button menu.  When you use that to launch the Active911 app manually, it will query their servers and update the displayed call history after a few seconds.  You need to avoid launching the Active911 app from the launcher window.  It will work properly, but it will also grab the alerts so they no longer go to Cadpage.
+
+If you find you would rather use the Active911 app by itself, just uninstall the Cadpage app and launch the Active911 app.
+
+If the Active911 app has any trouble displaying or mapping any alert, you really should report that to Active911 support.  You can call them at (541) 223-7992 or email support@active911.com.  They will need the Active911 # number and a description of what is wrong.  Getting responders to the correct location is a responsibility that we both take very seriously.  But we can not fix problems if nobody tells us about them.
 
 Have a great day,
--Ken
+-Ken 
 
 **************************************************************************
 * Old Cadpage users - better parser
@@ -4001,8 +4010,6 @@ Hi Folks,
 We have been reaching out to Cadpage users that we haven't heard from for a while, partly to see how Cadpage is working for you now. And if your department is one of many that have since switched to using Active911, we want to make sure everyone knows that Cadpage can be used with the Active911 service instead of, or in addition to the Android Active911 app. There is no additional charge for using Cadpage in this manner.
 
 We do have some features that the Active911 app still lacks -- more flexible notification options, for example. But the main reason you would probably want to try Cadpage is because we use a different set of message parsers. For most locations, this does not make a lot of difference. However, for <<<***>>> County, Cadpage parsers are probably going to be more reliable.
-
-Actually, right now, the Cadpage message parsers are going to be a lot more reliable.  Dispatch makes life complicated by using slashes to separate data fields that may, themselves, contain slashes.  Getting the information separated out when the call description or address fields contain a slash gets really complicated.  And right now, Active911 does not appear to know they have that problem abd I expect those calls to not map very well.  This is a temporary situation, I am also passing this information on to their support staff and expect they will do something to address it in the next day or so.  But even at their best, there are going to be some calls that Cadpage handles properly that Active911 does not.
 
 If you are not currently using Cadpage and would like to try it. You can install Cadpage from the Google Play Store.  The first time you open Cadpage it will display a welcome message and give you some options on how you receive dispatch alerts.  You want to select
 "My Department Uses Active911"
