@@ -25,7 +25,7 @@ public class TXCyFairParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CAD@CYFAIRVFD.ORG";
+    return "CAD@CYFAIRVFD.ORG,CAD@CYFAIRFD.ORG";
   }
 
   @Override
