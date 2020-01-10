@@ -1741,11 +1741,10 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       
       "SKI LIBERTY - STATION 1A",             "+39.762931,-77.375453",
       "SKI LIBERTY - STATION 1B",             "+39.762314,-77.374811",
-      "SKI LIBERTY - STATION 2",              "+39.762314,-77.374811",
+      "SKI LIBERTY - STATION 2",              "+39.755893,-77.362693",
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
-      
   });
 
   private static final String[] CITY_LIST = new String[]{
