@@ -1456,6 +1456,7 @@ public class Active911ParserTable {
       "US/PA/RHL61",                      "PADelawareCountyB",
       "US/PA/RidgeFireCompany",           "PAChesterCountyD4",
       "US/PA/SchuylkillCounty",           "PASchuylkillCounty",
+      "US/PA/SenecaVFD",                  "PAVenangoCountyC",
       "US/PA/SnyderCounty",               "PASnyderCounty",
       "US/PA/SomersetCounty",             "PASomersetCountyC",
       "US/PA/SomersetCountyCaller",       "PASomersetCountyC",
