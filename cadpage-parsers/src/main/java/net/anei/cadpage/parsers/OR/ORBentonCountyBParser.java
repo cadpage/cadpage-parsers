@@ -67,6 +67,12 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     
     @Override
     public boolean checkParse(String field, Data data) {
+      
+      // Out of county M/A
+      if (field.length() == 0 && getRelativeField(+1).length() == 0) {
+        data.defCity = "";
+        return true;
+      }
       String city = cvtCityCode(field);
       if (city == null) return false;
       data.strCity = city;
