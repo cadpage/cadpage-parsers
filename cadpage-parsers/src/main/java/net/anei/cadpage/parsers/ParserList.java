@@ -1682,6 +1682,7 @@ public class ParserList {
               ,"WVRaleighCounty"                ,"Raleigh County, WV"
               ,"WVRichieCounty"                 ,"Richie County, WV"
               ,"WVRoaneCounty"                  ,"Roane County, WV"
+              ,"WVWetzelCounty"                 ,"Wetzel County, WV"
               ,"WVWoodCounty"                   ,"Wood County, WV"
               ,"WVWyomingCounty"                ,"Wyoming County, WV"
           ),
