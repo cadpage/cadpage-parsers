@@ -920,6 +920,7 @@ public class Active911ParserTable {
       "US/MS/DesotoCounty",               "MSDeSotoCountyA,MSTateCounty",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
+      "US/MS/OliveBranch",                "MSDesotoCountyA",
       "US/MS/PicayunePolice",             "MSPearlRiverCounty",
       "US/MS/Southaven",                  "MSDeSotoCountyB",
       "US/MT/CityofBlackEagle",           "MTCascadeCounty",
