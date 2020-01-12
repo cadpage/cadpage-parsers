@@ -10,17 +10,24 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
  
   public MOPhelpsCountyParser() {
     super("PHELPS COUNTY", "MO",
-          "CFS:ID! Incident_Code:CALL! Address:ADDRCITY! Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
+          "CFS:ID! Incident_Code:CALL! Address:ADDRCITY! Closest_Intersection:X? Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
   }
   
   public String getFilter() {
     return "no-reply@zuercherportal.com";
   }
-  
+
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
   
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = body.replace(" Cross streets:", " Closest Intersection:");
+    body = body.replace(",Long:", " Long:");
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();

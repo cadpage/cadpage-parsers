@@ -16,15 +16,18 @@ public class NCAnsonCountyParser extends DispatchSouthernParser {
           DSFLG_ADDR | DSFLG_ID | DSFLG_TIME);
   }
   
+  private static final Pattern MARKER = Pattern.compile("notifyuser:|911:");
+  
   @Override
   public String getFilter() {
-    return "chyatt@ansonvillefire.com,notifyuser@co.anson.nc.us";
+    return "chyatt@ansonvillefire.com,notifyuser@co.anson.nc.us,911@co.anson.nc.us";
   }
   
   @Override
   public boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("notifyuser:")) return false;
-    body = body.substring(11).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end()).trim();
     if (! super.parseMsg(body, data)) return false;
     if (data.strAddress.startsWith("0 ")) data.strAddress = data.strAddress.substring(2).trim();
     return true;
