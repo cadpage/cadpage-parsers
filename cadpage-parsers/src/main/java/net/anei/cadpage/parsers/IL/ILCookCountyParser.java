@@ -8,7 +8,7 @@ public class ILCookCountyParser extends GroupBestParser {
     super(new ILCookCountyAParser(), new ILCookCountyBParser(), new ILCookCountyCParser(), 
           new ILCookCountyDParser(), new ILCookCountyEParser(), new ILCookCountyFParser(),
           new ILCookCountyGParser(), new ILCookCountyHParser(), new ILCookCountyIParser(),
-          new ILCookCountyJParser(), new ILCookCountyKParser());
+          new ILCookCountyJParser(), new ILCookCountyKParser(), new ILCookCountyLParser());
 
   }
 }

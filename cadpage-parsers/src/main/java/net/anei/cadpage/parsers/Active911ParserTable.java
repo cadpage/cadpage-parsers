@@ -391,6 +391,7 @@ public class Active911ParserTable {
       "US/IL/AddisonConsolidatedDispatch","ILDuPageCountyA,ILDuPageCountyD,ILDuPageCountyE",
       "US/IL/AlortonFD",                  "ILStClairCountyC",
       "US/IL/BooneCounty",                "ILBooneCounty",
+      "US/IL/CalComm911",                 "ILCookCountyL",
       "US/IL/ChicagoHeights",             "ILCookCountyH",
       "US/IL/ChristianCounty",            "ILChristianCounty",
       "US/IL/CityofColumbia",             "ILColumbia",
