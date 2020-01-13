@@ -26,7 +26,7 @@ public class ILLakeCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_CITY_APT_PTN = Pattern.compile("(.*?)-(?:UNINC. )?([A-Z][A-Z ]+)(?:[- ]+(\\d.*))?");
+  private static final Pattern ADDR_CITY_APT_PTN = Pattern.compile("(.*?)-(?:UNINC. )?([A-Z][A-Z ]+)(?:[- ]+([A-Z]?\\d.*[-A-Z]?))?");
   
   private class MyAddressCityField extends AddressCityField {
     @Override
