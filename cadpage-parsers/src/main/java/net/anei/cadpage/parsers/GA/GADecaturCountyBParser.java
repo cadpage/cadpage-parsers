@@ -12,7 +12,7 @@ public class GADecaturCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dg911@decaturcountyga.gov,Decatur 911 Alert System,2299992137";
+    return "dg911@decaturcountyga.gov,2299992137";
   }
   
   @Override
