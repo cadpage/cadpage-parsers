@@ -71,6 +71,6 @@ public class OHLakeCountyAParser extends FieldProgramParser {
       "PA", "PAINSVILLE",
       "PE", "PERRY",
       "PC", "PAINSVILLE",
-      "PV", "PERRY",
+      "PV", "PERRY"
   });
 }
