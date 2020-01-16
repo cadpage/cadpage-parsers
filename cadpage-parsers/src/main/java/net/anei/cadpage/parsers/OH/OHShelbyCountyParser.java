@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -10,6 +11,7 @@ public class OHShelbyCountyParser extends FieldProgramParser {
   public OHShelbyCountyParser() {
     super(CITY_LIST, "SHELBY COUNTY", "OH",
            "ID TIME? CALL ADDR/S PLACENAME");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -124,4 +126,28 @@ public class OHShelbyCountyParser extends FieldProgramParser {
     "TROY",
     "NEW KNOXVILLE"
   };
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "99 N I-75",                            "+40.396092,-84.160201",
+      "100 N I-75",                           "+40.398207,-84.161508",
+      "101 N I-75",                           "+40.412300,-84.166812",
+      "102 N I-75",                           "+40.438418,-84.168167",
+      "103 N I-75",                           "+40.441189,-84.169173",
+      "104 N I-75",                           "+40.467331,-84.168360",
+      "105 N I-75",                           "+40.469947,-84.169145",
+      "106 N I-75",                           "+40.496942,-84.169135",
+      "107 N I-75",                           "+40.511515,-84.169147",
+      "108 N I-75",                           "+40.526111,-84.169301",
+      "99 S I-75",                            "+40.395980,-84.162411",
+      "100 S I-75",                           "+40.398207,-84.161508",
+      "101 S I-75",                           "+40.412300,-84.166812",
+      "102 S I-75",                           "+40.439692,-84.170227",
+      "103 S I-75",                           "+40.441189,-84.169173",
+      "104 S I-75",                           "+40.468800,-84.170034",
+      "105 S I-75",                           "+40.469947,-84.169145",
+      "106 S I-75",                           "+40.496917,-84.169436",
+      "107 S I-75",                           "+40.511500,-84.169448",
+      "108 S I-75",                           "+40.526104,-84.169625"
+      
+  });
 }
