@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 public class KYCarterCountyParser extends DispatchEmergitechParser {
   
   public KYCarterCountyParser() {
-    super("Carter911:", 0, CITY_LIST, "CARTER COUNTY", "KY");
+    super(":", 0, CITY_LIST, "CARTER COUNTY", "KY");
   }
   
   @Override
@@ -20,8 +20,8 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!super.parseMsg(subject, body, data)) return false;
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
     data.strCode = data.strCall;
     data.strCall = convertCodes(data.strCode, CALL_CODES);
