@@ -277,7 +277,6 @@ public class ParserList {
               ,"CTColchesterEmergComm"          ,"Colchester Emergency Communications, CT"
               ,"CTEastLyme"                     ,"East Lyme, CT"
               ,"CTFairfieldCounty"              ,"Fairfield County, CT"
-              ,"CTGroton"                       ,"Groton, CT"
               ,"CTHartfordCounty"               ,"Hartford County, CT"
               ,"CTLitchfieldCounty"             ,"Litchfield County, CT"
               ,"CTMadison"                      ,"Madison, CT"

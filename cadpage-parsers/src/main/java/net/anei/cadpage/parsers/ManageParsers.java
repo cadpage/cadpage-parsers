@@ -207,7 +207,8 @@ public class ManageParsers {
         "TNWashingtonCountyB","TNWashingtonCounty",      // 08/03/2019
         "TNWashingtonCOunty", "TNWashingtonCounty",      // 08/06/2019  *oops*
         "TXKeller",           "TXTarrantCounty",         // 01/05/2020
-        "TXTarrantCountyE",   "TXTarrantCountyC"
+        "TXTarrantCountyE",   "TXTarrantCountyC",
+        "CTGroton",           "CTNewLondonCounty"        // 01/18/2020
   });
 
 }
