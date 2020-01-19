@@ -11,6 +11,7 @@ public class PADauphinCountyParser extends GroupBestParser {
   
   public PADauphinCountyParser() {
     super(new PADauphinCountyAParser(),
-          new PADauphinCountyBParser());
+          new PADauphinCountyBParser(),
+          new PADauphinCountyCParser());
   }
 }
