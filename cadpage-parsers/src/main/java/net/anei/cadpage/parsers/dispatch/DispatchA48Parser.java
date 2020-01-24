@@ -465,7 +465,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{8}", true);
+    if (name.equals("ID")) return new IdField("\\d{4}-?\\d{8}", true);
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
