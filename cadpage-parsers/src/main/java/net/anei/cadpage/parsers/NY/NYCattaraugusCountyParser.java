@@ -108,14 +108,32 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
-  
-  // Address field just remembers the address field
+
+  private static final Pattern ADDR_PLACE_APT_PTN = Pattern.compile("(.*?) *\\bAPT\\b *(.*)");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       address = field;
+      String apt = "";
+      int pt = field.indexOf('*');
+      if (pt >= 0) {
+        String place = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        Matcher match = ADDR_PLACE_APT_PTN.matcher(place);
+        if (match.matches()) {
+          place = match.group(1);
+          apt = match.group(2);
+        }
+        data.strPlace = place;
+      }
       field = field.replace('@', '&');
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY PLACE APT";
     }
   }
   
