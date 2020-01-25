@@ -842,6 +842,7 @@ public class ParserList {
               ,"MSNewtonCounty"                 ,"Newton County, MS"
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
+              ,"MSPontotocCounty"               ,"Pontotoc County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"
               ,"MSTateCounty"                   ,"Tate County, MS"
               ,"MSYazooCounty"                  ,"Yazoo County, MS"
