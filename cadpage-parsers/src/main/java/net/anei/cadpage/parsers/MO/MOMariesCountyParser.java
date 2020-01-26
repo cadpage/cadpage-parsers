@@ -11,6 +11,6 @@ public class MOMariesCountyParser extends DispatchA25Parser {
   
   @Override
   public String getFilter() {
-    return "cademailalert@mariesco.org";
+    return "cademailalert@mariesco.org,dispatch@mariescountymo.gov";
   }
 }
