@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class DispatchA39Parser extends FieldProgramParser {
 
-  private static final String PROGRAM_STR = "DEMPTY+? CALL? ADDR/iS6! APT? INFO/N+";
+  private static final String PROGRAM_STR = "DEMPTY+? ( ADDR/iS6! | CALL ADDR/iS6! | CALL CALL ADDR/iS6! | CALL ADDR/iS6! ) APT? INFO/N+";
   
   private Properties cityCodes;
 
@@ -41,15 +41,15 @@ public class DispatchA39Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("DEMPTY")) return new MyDoubleEmptyField();
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DEMPTY")) return new BaseDoubleEmptyField();
+    if (name.equals("CALL")) return new BaseCallField();
+    if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
   
-  private class MyDoubleEmptyField extends SkipField {
+  private class BaseDoubleEmptyField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
@@ -62,13 +62,15 @@ public class DispatchA39Parser extends FieldProgramParser {
   }
   
   private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (\\d{7,10})");
-  private class MyCallField extends CallField {
+  private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = CALL_ID_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strCallId = match.group(2);
+      if (data.strCallId.length() == 0) {
+        Matcher match = CALL_ID_PTN.matcher(field);
+        if (match.matches()) {
+          field = match.group(1).trim();
+          data.strCallId = match.group(2);
+        }
       }
       super.parse(field, data);
     }
@@ -84,7 +86,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private static final Pattern LEFT_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?(?: +(.*))?");
-  private class MyAddressField extends AddressField {
+  private class BaseAddressField extends AddressField {
     
     @Override
     public boolean checkParse(String field, Data data) {
@@ -113,23 +115,27 @@ public class DispatchA39Parser extends FieldProgramParser {
       }
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
+      String state = "";
       if (city.length() > 0) {
         if (STATE_PTN.matcher(city).matches()) {
-          data.strState = city;
+          state = city;
           city = p.getLastOptional(',');
-        }
-        if (city.length() > 0) {
-          if (cityCodes != null) city = convertCodes(city, cityCodes);
-          data.strCity = city;
         }
       }
       field = p.get();
       int flags = FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT;
       if (!force) flags |= FLAG_CHECK_STATUS;
-      if (data.strCity.length() > 0) flags |= FLAG_NO_CITY | FLAG_ANCHOR_END;
+      if (city.length() > 0) flags |= FLAG_NO_CITY | FLAG_ANCHOR_END;
       Result res = parseAddress(StartType.START_ADDR, flags, field);
-      if (!force && data.strCity.length() == 0 && !res.isValid()) return false;
+      if (!force && zip == null && !res.isValid()) return false;
       res.getData(data);
+      
+      if (city.length() > 0) {
+        if (cityCodes != null) city = convertCodes(city, cityCodes);
+        data.strCity = city;
+      }
+      data.strState = state;
+      
       if ((flags & FLAG_ANCHOR_END) == 0) {
         String left = res.getLeft();
         if (left.length() > 0) {
@@ -150,7 +156,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY ST";
+      return "ADDR X? APT CITY ST";
     }
   }
   

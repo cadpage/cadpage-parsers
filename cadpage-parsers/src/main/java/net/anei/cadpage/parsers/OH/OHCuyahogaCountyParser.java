@@ -63,6 +63,9 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
       "HIGHLAND HIL",  "HIGHLAND HILLS",
       "HUNTING VALL",  "HUNTING VALLEY",
       "MAYFIELD",      "MAYFIELD",
+      "MAYFIELD HTS",  "MAYFIELD HEIGHTS",
+      "MAYFIELD VILLAGE", "MAYFIELD",
+      "MAYFIELD VLG",  "MAYFIELD",
       "MORELAND HIL",  "MORELAND HILLS",
       "NEWBURGH HEI",  "NEWBURGH HEIGHTS",
       "NEWBURGH HTS",  "NEWBURGH HEIGHTS",
@@ -70,11 +73,15 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
       "NORTH RANDAL",  "NORTH RANDALL",
       "NORTHFIELD VIL","NORTHFIELD",
       "OAKWOOD VIL",   "OAKWOOD",
+      "OAKWOOD VILLAGE", "OAKWOOD",
       "ORANGE VILLA",  "ORANGE",
 
       //TOWNSHIPS
       "CHAGRIN FALL",  "CHAGRIN FALLS TWP",
       "OLMSTED",       "OLMSTED TWP",
+      
+      // Lake County
+      "WLBY HILLS",    "WILLOUGHBY HILLS"
 
   });
   

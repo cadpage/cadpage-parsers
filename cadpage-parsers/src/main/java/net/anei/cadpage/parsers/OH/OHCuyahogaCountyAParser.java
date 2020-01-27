@@ -22,11 +22,13 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   @Override
   public String getFilter() {
-    return "broadview@tacpaging.com,cvd2-dispatch@cvdispatch.net,dispatch@secc-911.org,dispatch@hhdispatch.net,dispatch@prdc.net,dispatch@highlandheights.com,info@sundance-sys.com,dispatch@waltonhillsohio.gov,dispatch@beachwoodohio.com,middleburg@tacpaging.com";
+    return "@tacpaging.com,cvd2-dispatch@cvdispatch.net,dispatch@secc-911.org,dispatch@hhdispatch.net,dispatch@prdc.net,dispatch@waltonhillsohio.gov,dispatch@beachwoodohio.com";
   }
   
-  private static final Pattern DIR_BOUND_PTN = Pattern.compile("\\b([NSEW])/B\\b");
+  private static final Pattern DIR_BOUND_PTN1 = Pattern.compile("(?:\\b|(?<=\\d))([NSEW])/B\\b");
+  private static final Pattern DIR_BOUND_PTN2 = Pattern.compile("/ (NORTHBOUND|EASTBOUND|SOUTHBOUND|WESTBOUND)\\b");
   private static final Pattern OOC_CITY_PTN = Pattern.compile("\\b(?:BEDFORD|GARFIELD HTS|NEWBURG|RICHFIELD|STRONGSVILLE)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern EW_CITY_PTN = Pattern.compile(".*\\d.*");
   
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
@@ -35,13 +37,23 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
       body = body.substring(17).trim();
     }
     body = stripFieldStart(body, "**TEST ACTIVE911**\n");
-    body = DIR_BOUND_PTN.matcher(body).replaceAll("$1B");
+    body = DIR_BOUND_PTN1.matcher(body).replaceAll("$1B");
+    body = DIR_BOUND_PTN2.matcher(body).replaceAll("$1");
     if (!super.parseUntrimmedMsg(subject, body, data)) return false;
     
     // Mutual aid calls always have a city field in the info section
     if (data.strCity.length() == 0) {
       Matcher match = OOC_CITY_PTN.matcher(data.strSupp);
       if (match.find()) data.strCity = match.group();
+    }
+    
+    // More weird constructs
+    Matcher match = EW_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) {
+      String city = data.strCity;
+      data.strCity = "";
+      parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, city, data);
+      data.strApt = append(data.strApt, "-", getStart());
     }
     return true;
   }
