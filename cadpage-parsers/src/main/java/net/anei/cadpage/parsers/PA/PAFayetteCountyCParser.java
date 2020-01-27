@@ -22,7 +22,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@fcema.org,messaging@iamresponding.com";
+    return "dispatch@fcema.org,messaging@iamresponding.com,alerts@fcema.ealertgov.com";
   }
   
   private static final Pattern MARKER = Pattern.compile("(?:(?:FAYETTE|Fayette)-911/[A-Za-z0-9/\\\\]+\n)?\\[Fayette911\\]\n");
