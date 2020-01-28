@@ -714,7 +714,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       return field.substring(pt+1).trim();
     }
     
-    int flags = FLAG_ONLY_CROSS;
+    int flags = FLAG_ONLY_CROSS | FLAG_IGNORE_AT;
     if (anchorEnd) flags |= FLAG_ANCHOR_END;
     Result res = parseAddress(StartType.START_PLACE, flags, part);
     if (res.isValid()) {
