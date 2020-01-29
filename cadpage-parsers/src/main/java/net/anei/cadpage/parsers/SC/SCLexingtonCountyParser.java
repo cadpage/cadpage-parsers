@@ -29,7 +29,7 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}", true);
+    if (name.equals("SRC")) return new SourceField("(?!MVC)[A-Z]{3,4}", true);
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
     if (name.equals("UNIT")) return new UnitField("(?:IBAT|[A-Z]+\\d+)(?:,[A-Z0-9]+)*", true);
     if (name.equals("INFO")) return new MyInfoField();
@@ -75,8 +75,21 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BA", "BATESBURG",
+      "BL", "BATESBURG LEESVILE",
+      "CA", "CAYCE",
+      "CH", "CHAPIN",
       "CO", "COLUMBIA",
+      "GA", "GASTON",
+      "GI", "GILBERT",
       "IR", "IRMO",
-      "LX", "LEXINGTON"
+      "LE", "LEESVILLE",
+      "LX", "LEXINGTON",
+      "PE", "PELION",
+      "PI", "PINE RIDGE",
+      "SC", "SOUTH CONGAREE",
+      "SP", "SPRINGDALE",
+      "SW", "SWANSEA",
+      "WC", "WEST COLUMBIA"
   }); 
 }
