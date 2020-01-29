@@ -14,8 +14,8 @@ public class COAdamsCountyBParser extends FieldProgramParser {
   
   public COAdamsCountyBParser() {
     super("ADAMS COUNTY", "CO", 
-          "( NEW_ADDR ID MAP ( ID8/L ID9/L OLD_ADDR | OLD_ADDR ID8/L ID9/L ) APT PLACE! EMPTY CALL/SDS UNIT " +
-          "| ID MAP ADDR ID8/L ID9/L APT EMPTY PLACE CALL UNIT! " + 
+          "( NEW_ADDR ID MAP ( ID8/L ID9/L OLD_ADDR | OLD_ADDR ID8/L ID9/L ) APT ( EMPTY PLACE! | PLACE! EMPTY ) CALL/SDS UNIT " +
+          "| ID? MAP ADDR ID8/L ID9/L APT EMPTY PLACE CALL UNIT? " + 
           ") CASE/L? CMD:CH END");
   }
   
@@ -29,6 +29,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
       @Override public int splitBreakLength() { return 150; }
       @Override public int splitBreakPad() { return 1; }
     };
@@ -36,10 +37,9 @@ public class COAdamsCountyBParser extends FieldProgramParser {
 
   private static final String MAP_PTN_STR = "([A-Z]-\\d{1,2}-[A-Z](?:-[A-Z])?)";
   private static final Pattern MASTER1 = Pattern.compile("([A-Z ]+?) -(.*?) " + MAP_PTN_STR + " (.*)");
-  private static final Pattern MASTER2 = Pattern.compile("([A-Z ]+) RESPOND(.*?) " + MAP_PTN_STR + " (.*?) Cmnd Chnl:(.*)");
-  private static final Pattern MASTER3 = Pattern.compile(MAP_PTN_STR + " (.*?) ?([A-Z]+\\d+(?:,[A-Z0-9,]*)?)");
+  private static final Pattern MASTER2 = Pattern.compile("([A-Z ]+)RESPOND(.*?)" + MAP_PTN_STR + " (.*?) Cmnd Chnl:(.*)");
+  private static final Pattern MASTER3 = Pattern.compile(MAP_PTN_STR + " (.*?)(?: ?([A-Z]+\\d+(?:,[A-Z0-9,]*)?))?");
   private static final Pattern ADDR_PLACE_PTN1 = Pattern.compile("(.*?) \\((.*)\\)");
-  private static final Pattern ADDR_PLACE_PTN2 = Pattern.compile("(.*?) ((?:[A-Z]{3,}|U\\.S\\.)[-&. A-Z]*)");
   private static final Pattern PLACE_CALL_PTN1 = Pattern.compile("\\((.*)\\) *(.*)");
   private static final Pattern PLACE_CALL_PTN2 = Pattern.compile("([-&. A-Z]*[A-Z]{3,}(?<!MVA)) *(.*)");
   
@@ -49,6 +49,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
     
     if (!subject.equals("Metcom Info:")) return false;
     
+    body = stripFieldStart(body, "Resp.Info:");
     String[] flds = body.split("\\|", -1);
     if (flds.length > 3) {
       return parseFields(flds, data);
@@ -80,22 +81,26 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       setFieldList("MAP ADDR APT PLACE CALL UNIT");
       data.strMap = match.group(1);
       String addrCall = match.group(2).trim();
-      data.strUnit = match.group(3);
+      data.strUnit = getOptGroup(match.group(3));
       
       String call = CALL_LIST.getCode(addrCall);
       if (call != null) {
         data.strCall = call;
-        String addr = addrCall.substring(0, addrCall.length()-call.length()).trim();
+        String addr = addrCall.substring(0, addrCall.length()-call.length());
+        if (addr.endsWith("UPDATE - ")) {
+          data.strCall = "UPDATE - " + data.strCall;
+          addrCall = addrCall.substring(0, addrCall.length()-9);
+        }
+        addrCall = addrCall.trim();
         match = ADDR_PLACE_PTN1.matcher(addr);
         if (match.matches()) {
-          addr = match.group(1).trim();
+          parseAddress(match.group(1).trim(), data);
           data.strPlace = match.group(2).trim();
         }
-        else if ((match = ADDR_PLACE_PTN2.matcher(addr)).matches()) {
-          addr = match.group(1).trim();
-          data.strPlace = match.group(2).trim();
+        else {
+          parseAddress(StartType.START_ADDR, addr, data);
+          data.strPlace = getLeft();
         }
-        parseAddress(addr, data);
         return true;
       } else {
         parseAddress(StartType.START_ADDR, addrCall, data);
@@ -121,7 +126,8 @@ public class COAdamsCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("NEW_ADDR"))  return new MyNewAddressField();
     if (name.equals("OLD_ADDR")) return new MyOldAddressField();
-    if (name.equals("ID")) return new IdField("(?:Resp\\.Info:)?(\\d{4}-\\d{7})", true);
+    if (name.equals("MAP")) return new MapField(MAP_PTN_STR, true);
+    if (name.equals("ID")) return new IdField("(\\d{4}-\\d{7})", true);
     if (name.equals("ID8")) return new IdField("\\d{8}");
     if (name.equals("ID9")) return new IdField("\\d{9}");
     if (name.equals("UNIT")) return new MyUnitField();
@@ -162,6 +168,18 @@ public class COAdamsCountyBParser extends FieldProgramParser {
   
   private class MyUnitField extends UnitField {
     @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("Case#")) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
       super.parse(field, data);
@@ -181,6 +199,7 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "282 Traumatic Injuries (Specific)",
       "305 Hemorrhage/Lacerations",
       "Abdominal Pain/Problem",
+      "Abdominal Pain/Problems",
       "Alarm-Fire Alarm Commercial",
       "Alarm-Fire Alarm Residential",
       "Alarm-Fire Alarm High Occupa",
@@ -197,19 +216,24 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "Falls",
       "Fire - Brush Fire Hwy",
       "Fire - Brush Fire Large",
-      "Fire-Brush Fire Large",
       "Fire - Brush Fire Small",
       "Fire - Commercial Carrier Fire",
       "Fire - Illegal Burn",
       "Fire - Outside Fire",
       "Fire - Unknown Fire",
-      "Fire - Vehicle Fire Hwy",
+      "Fire-Brush Fire Large",
+      "Fire-Brush Fire Small",
+      "Fire-Illegal Burn",
+      "Fire-Vehicle Fire",
+      "Gas-Commercial Leak",
+      "Heat/Cold Exposure",
       "Hemorrhage/Lacerations",
       "Highway",
       "Injuries",
       "Invest - Hazmat",
       "Invest - Odor Commercial",
       "Invest - Smoke Outside",
+      "Invest-Odor Commercial",
       "Line Down / Transformer",
       "Medical Assist",
       "Medical-Highway",
@@ -217,16 +241,24 @@ public class COAdamsCountyBParser extends FieldProgramParser {
       "MVA Injuries",
       "MVA Non-injury",
       "MVA Rollover",
+      "MVA Traffic Pedestrian Accidnt",
+      "MVA Unknown Injuries",
       "Non-injury",
       "Overdose/Poisoning (Ingestion)",
       "Psych/Abn Behavior/Suicide Att",
+      "Psych Problems",
       "Resc - Animal Rescue",
       "Rollover",
       "SF - Res Str Fire Reported",
+      "SF-Outbuilding Fire",
+      "SF-Res Structure Fire Reported",
       "Sick Person (Spec. Diagnosis)",
+      "Sick Person (Specific Diag)",
       "Special Event Coverage",
       "Standby In The Area",
+      "Standby InThe Area",
       "Stroke(CVA)",
+      "Test Call (Do Not Dispatch)",
       "Traumatic Injuries (Specific)",
       "Unconscious/Fainting (Near)",
       "x17B-Falls",
