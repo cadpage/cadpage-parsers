@@ -18,12 +18,13 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
   public CAMendocinoCountyAParser() {
     super(CITY_CODES, "MENDOCINO COUNTY", "CA",
            "( SELECT/RR ID CALL ADDR UNIT INFO! INFO/N+ " +
+           "| SELECT/2 CALL ADDR Cross-Street:X! Remarks:INFO! INFO/N+? GPS! Resources:UNIT! Cmd:CH! Tac:CH/L " + 
            "| CALL ADDR! ( IDGPSUNIT! INFO/N+ |  ( ID INFO/N+ RA:MAP! GPS! UNIT! | INFO/N+ Map:MAP! GPS! INFO/N+? ( UNITID! | UNIT ID ) ) Cmd:CH! Tac:CH/L! Air:CH/L? INFO/N+? ( DATETIME | MAPURL ) ) )");
   }
   
   @Override
   public String getFilter() {
-    return "meucad@fire.ca.gov,@albionfire.com";
+    return "meucad@fire.ca.gov,lnucad@fire.ca.gov,@albionfire.com";
   }
   
   @Override
@@ -39,8 +40,16 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
       setSelectValue("RR");
       return parseFields(RR_DELIM.split(body), data);
+    }
+    int semiBrk = body.indexOf(';');
+    if (semiBrk < 0) semiBrk = Integer.MAX_VALUE;
+    int lineBrk = body.indexOf('\n');
+    if (lineBrk < 0) lineBrk = Integer.MAX_VALUE;
+    if (lineBrk <= semiBrk) {
+      setSelectValue("2");
+      return parseFields(body.split("\n"), data);
     } else {
-      setSelectValue("");
+      setSelectValue("1");
       return parseFields(body.split(";"), data);
     }
   }
@@ -69,7 +78,7 @@ public class CAMendocinoCountyAParser extends FieldProgramParser {
       }
       Parser p = new Parser(field);
       data.strPlace = append(p.getOptional('@'), " / ", data.strPlace);
-      data.strCity = convertCodes(p.getLastOptional(','), CITY_CODES);
+      data.strCity = convertCodes(p.getLastOptional(','), CITY_CODES).replace('_', ' ');
       parseAddress(p.get(), data);
     }
     

@@ -13,7 +13,7 @@ public class CAMendocinoCountyBParser extends DispatchA9Parser {
   
   @Override
   public String getFilter() {
-    return "gambleb@co.mendocino.ca.us";
+    return "gambleb@co.mendocino.ca.us,wpdrecords@mendocinocounty.org";
   }
 }
 
