@@ -16,7 +16,7 @@ public class PACumberlandCountyParser extends DispatchArchonixParser {
   
   @Override
   public String getFilter() {
-    return "ccpaeoc@comcast.net,EP911@ccpa.net";
+    return "ccpaeoc@comcast.net,EP911@ccpa.net,dispatch@cgfrems.org";
   }
   
   @Override
