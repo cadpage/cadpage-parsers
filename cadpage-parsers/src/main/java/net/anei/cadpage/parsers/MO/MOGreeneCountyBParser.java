@@ -64,6 +64,7 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
       "FHZMAT",   "HAZARDOUS MATERIALS",
       "FMCI",     "MASS CASUALTY INCIDENT",
       "FMVA",     "MOTOR VEHICLE ACCIDENT",
+      "FODOR",    "ODOR INVESTIGATION",
       "FOTS",     "FIRE OUTSIDE",
       "FOUT",     "FIRE EXTINGUISHED",
       "FPLANE",   "AIRCRAFT EMERGENCY",
