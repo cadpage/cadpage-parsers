@@ -23,7 +23,7 @@ public class NHHanoverParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@HANOVER.PD,HDISPATCH@HOLLISNH.ORG,messaging@iamresponding.com.hanoverpaging@hanovernh.org,amherstdispatch@amherstnh.gov,hanoverpaging@hanovernh.org,dispatch@lebnh.net,bedforddispatch@gmail.com,npd03773@gmail.com,charlestowndispatch@gmail.com";
+    return "DISPATCH@HANOVER.PD,HDISPATCH@HOLLISNH.ORG,DISPATCH@LEBANONNH.GOV,messaging@iamresponding.com.hanoverpaging@hanovernh.org,amherstdispatch@amherstnh.gov,hanoverpaging@hanovernh.org,dispatch@lebnh.net,bedforddispatch@gmail.com,npd03773@gmail.com,charlestowndispatch@gmail.com";
   }
 
   @Override
