@@ -60,7 +60,6 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new AptField("# *(.*)|([A-Z]?\\d{1,5}[A-Z]?)", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CH")) return new ChannelField("(?:T?G?|FX)[A-F]\\d{1,2}", true);
@@ -68,13 +67,6 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
-  }
-  
-  private class MyAddressField extends AddressField {
-    @Override
-    public String getFieldNames() {
-      return "PLACE " + super.getFieldNames();
-    }
   }
   
   // Cross field only exist if it has the correct keyword
