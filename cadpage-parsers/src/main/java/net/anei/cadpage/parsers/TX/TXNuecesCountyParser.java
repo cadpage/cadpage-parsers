@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,8 +13,8 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class TXNuecesCountyParser extends FieldProgramParser {
   
   public TXNuecesCountyParser() {
-    super("NUECES COUNTY", "TX",
-           "CALL! ALRM:SKIP! PRI:PRI! ESZ:UNIT! TIME:TIME? EV:ID");
+    super(CITY_CODES, "NUECES COUNTY", "TX",
+          "CALL! ALRM:SKIP! PRI:PRI! ESZ:UNIT! TIME:TIME? EV:ID");
   }
   
   
@@ -29,7 +30,7 @@ public class TXNuecesCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ccpdpaging@cctexas.com";
+    return "ccpdpaging@cctexas.com,CCPDPaging@corpuschristi.onmicrosoft.com";
   }
   
   @Override
@@ -125,20 +126,16 @@ public class TXNuecesCountyParser extends FieldProgramParser {
         apt = match.group(2);
       }
       field = stripFieldEnd(field, " NUECS");
-      if (field.endsWith(" CC")) {
-        data.strCity = "CORPUS CHRISTI";
-        field = field.substring(0, field.length()-3).trim();
-      }
+      parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
+      field = stripFieldEnd(getStart(), " OCL");
       String alias = null;
       pt = field.indexOf(": alias ");
       if (pt >= 0) {
         alias = field.substring(pt+8).trim();
         field = field.substring(0,pt).trim();
         field = stripFieldEnd(field, " NUECS");
-        if (field.endsWith(" CC")) {
-          data.strCity = "CORPUS CHRISTI";
-          field = field.substring(0, field.length()-3).trim();
-        }
+        parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
+        field = stripFieldEnd(getStart(), " OCL");
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
@@ -152,4 +149,19 @@ public class TXNuecesCountyParser extends FieldProgramParser {
       return "ADDR CITY APT PLACE";
     }
   }
+  
+  private static final Pattern HWY_N_FWY_PTN = Pattern.compile("\\b(HWY \\d+) FWY\\b");
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return HWY_N_FWY_PTN.matcher(addr).replaceAll("$1");
+  }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BISH",   "BISHOP",
+      "CC",     "CORPUS CHRISTI",
+      "KLEBG",  "KLEBERG COUNTY",
+      "ROBS",   "ROBSTOWN",
+      "TIER",   "TIERRA GRANDE"
+  });
 }
