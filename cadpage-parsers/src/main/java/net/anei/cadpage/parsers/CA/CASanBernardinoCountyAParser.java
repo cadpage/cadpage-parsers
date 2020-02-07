@@ -460,6 +460,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
   }
   
   private static final Properties TYPE_CODES = buildCodeTable(new String[]{
+      "1099",       "10-99 - Code 3 request for Law Enforcement",
       "AB",         "Animal Bite",
       "ABD",        "Abdominal Pain",
       "ABD-A1",     "Abdominal Pain-BLS",
