@@ -4329,6 +4329,20 @@ Good luck,
 -Ken
 
 **************************************************************************************
+* MMS security violation
+**************************************************************************************
+
+Darn, forgot something important with the new MMS logic.  With the result that it does not work on any device except the one I happened to have used to test it with :(
+
+The good news is that I did anticipate something like this and provided a quick way to turn it off.  You need to open Cadpage settings and select
+General Settings > Payment Status > I have an authorization code
+
+and enter the code "oldmms".
+
+Sorry about that,
+-Ken
+
+**************************************************************************************
 Useful search expressions...
 ^ +"ADDR:.*\r?\n(?: +"(?:MADDR|APT|X):.*\r?\n)*+(?! +"CITY:)
 ***************************************************************************************
