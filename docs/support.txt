@@ -4329,18 +4329,22 @@ Good luck,
 -Ken
 
 **************************************************************************************
-* MMS security violation
+* MMS not working
 **************************************************************************************
 
-Darn, forgot something important with the new MMS logic.  With the result that it does not work on any device except the one I happened to have used to test it with :(
+So, you turn out to be one of three users who are reporting problems with the problematic MMS message processing logic that Cadpage has been using.  Just in time for me to roll out the new improved MMS processing logic that will no longer require the services of the real message app to access the MMS message content.  I just published a beta version of Cadpage with the new logic.  It should be available in a couple hours.
 
-The good news is that I did anticipate something like this and provided a quick way to turn it off.  You need to open Cadpage settings and select
-General Settings > Payment Status > I have an authorization code
+First, you have make sure that you are a Cadpage beta tester.  To do that, open the Google Play Store app and select the Cadpage page.  Toward the bottom of the screen, there should a "Join the Beta".  Click the "Join" button, then back out of the Cadpage page and reselect it.  You should now tell you that you are a beta tester and the new Cadpage beta version should be available to install.
 
-and enter the code "oldmms".
+There will be new "Use old MMS Content Download Logic" setting in the Cadpage location settings.  It defaults to on for existing Cadpage users and off for new users on the theory that most existing users are happy with the way Cadpage processing MMS messages and don't want to be bothered with upgrading the message support app.  But you are not satisfied with the existing MMS processing logic, so you should turn the "Use old MMS content download logic" setting off.
 
-Sorry about that,
--Ken
+As soon as you do this, Cadpage will warn you that you need to upgrade the message support app.  Select the "Install Support app" button, then click on one of the cadpage-support.apk buttons and follow the directions to download and install the new support app.
+
+That should do it.  If you still have problems with Cadpage picking up the dispatch alerts, use the "Email the Developer" setting to send us another support email.
+
+Good luck,
+-Ken 
+
 
 **************************************************************************************
 Useful search expressions...
