@@ -33,6 +33,9 @@ public class TXDallasCountyBParser extends DispatchA18Parser {
       body = subject + '\n' + body;
     }
     
+    int pt = body.indexOf("\n---\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     if (!super.parseMsg(body, data)) return false;
     
     Matcher match = CODE_CALL_PTN.matcher(data.strCall);
