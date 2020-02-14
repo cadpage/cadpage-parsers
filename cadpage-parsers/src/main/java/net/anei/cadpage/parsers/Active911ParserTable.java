@@ -596,7 +596,7 @@ public class Active911ParserTable {
       "US/KY/KSPP1",                      "KYStatePoliceA",
       "US/KY/KSPP12",                     "KYStatePolice",
       "US/KY/KSPP13",                     "KYStatePoliceA",
-      "US/KY/KSPP3",                      "KYStatePoliceA",
+      "US/KY/KSPP3",                      "KYStatePolice",
       "US/KY/KSPP5",                      "KYStatePolice",
       "US/KY/KSPP6",                      "KYStatePoliceA",
       "US/KY/KSPP9",                      "KYStatePoliceA",
