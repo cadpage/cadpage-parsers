@@ -27,14 +27,15 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@TollandCounty911.org,@TollandCounty911.com,messaging@iamresponding.com,777";
+    return "@TollandCounty911.org,@TollandCounty911.com,messaging@iamresponding.com,noreply@everbridge.net,777";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
   
-  private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)(?: (\\d{4}-\\d{8}\\b.*))?");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Lifestar|Sta\\d+)\\b,?)+)"); 
+  private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: (\\d{4}-\\d{8}\\b.*))?");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Lifestar|Sta\\d+)(?:-RIT)?\\b,?)+)");
+  private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[-/ ]*\\b(\\d\\d\\.\\d\\d(?:[-/., ]+(?:(?:[A-Z]+ )?F/?G|VFG|TAC[- ]*\\S+))?)\\b *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private static final Pattern MASTER2 = Pattern.compile("(.*?) (\\d\\d:\\d\\d)(?: (.*?))?(?: (\\d{4}-\\d{8}))?");
@@ -72,19 +73,35 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     // Check for variant 1 format
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("ADDR APT CITY PLACE CALL X UNIT DATE TIME ID");
+      setFieldList("ADDR APT CITY PLACE CALL CH X UNIT DATE TIME ID");
       body = match.group(1).trim();
       String cross = getOptGroup(match.group(2));
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
       data.strUnit = cvtUnitCodes(getOptGroup(match.group(3)));
       data.strDate = match.group(4);
-      setTime(TIME_FMT, match.group(5), data);
+      String time = match.group(5);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
       data.strCallId = getOptGroup(match.group(6));
       
       match = TRAIL_UNIT_PTN.matcher(body);
       if (match.matches()) {
         body = match.group(1).trim();
         data.strUnit = append(cvtUnitCodes(match.group(2).trim()), ",", data.strUnit);
+      }
+      
+      String postCall = "";
+      match = TRAIL_CH_PTN.matcher(body);
+      if (match.matches()) {
+        String tmp = match.group(3);
+        if (tmp.length() == 0 || tmp.startsWith("*") || tmp.startsWith("-")) {
+          body = match.group(1).trim();
+          data.strChannel = match.group(2);
+          if (tmp.length() > 0) postCall = tmp.substring(1).trim();
+        }
       }
     
       pt = body.indexOf(',');
@@ -113,6 +130,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
           data.strCall = getLeft();
         }
       }
+      data.strCall = append(data.strCall, " - ", postCall);
       return true;
     }
     
@@ -215,9 +233,23 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     return null;
   }
   
-  private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?)\\b(?:UNIT|APT|(?=BLDG)) *(.*)");
   
   private void parsePlace(String place, Data data) {
+    if (data.strChannel.length() == 0) {
+      Matcher match = TRAIL_CH_PTN.matcher(place);
+      if (match.matches()) {
+        parsePlace2(match.group(1), data);
+        data.strChannel = match.group(2);
+        parsePlace2(match.group(3), data);
+        return;
+      }
+    }
+    parsePlace2(place, data);
+  }
+  
+  private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?)\\b(?:UNIT|APT|(?=BLDG)) *(.*)");
+  
+  private void parsePlace2(String place, Data data) {
     Matcher match = PLACE_APT_PTN.matcher(place);
     if (match.matches()) {
       place = match.group(1).trim();
@@ -305,6 +337,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Fire Alarm - Residential",
       "Fire Alarm",
       "Fire Alarm-Commercial",
+      "Fire Alarm-Residential",
       "Fuel Spill",
       "Gasoline Spill",
       "Hazardous Materials",
@@ -323,6 +356,8 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Service Call",
       "Smoke Detector Activation",
       "Smoke In Building",
+      "Smoke In Building-Commercial",
+      "Smoke In Building-Residential",
       "Smoke in the Building - Commercial",
       "Smoke in the Building - Residential",
       "Smoke/Odor Investigation",
