@@ -26,6 +26,7 @@ public class PAChesterCountyPParser extends PAChesterCountyBaseParser {
       parseAddress(data.strCross, data);
       data.strCross = "";
     }
+    if (data.strCross.equals("&")) data.strCross = "";
     return true;
   }
   
@@ -36,7 +37,7 @@ public class PAChesterCountyPParser extends PAChesterCountyBaseParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*?) *\\b([A-Z]+) (?:CHEST|BERKS|CECIL|DELAW|LANCA|MONTG|NEWCA) (DE|MD|PA)");
+  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*?) *\\b([A-Z]+) (?:CHEST|BERKS|CECIL|DELAW|LANCA|MONTG|NEWCA) (DE|MD|PA):?");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
