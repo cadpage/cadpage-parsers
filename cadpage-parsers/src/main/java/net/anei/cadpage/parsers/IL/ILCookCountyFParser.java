@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.IL;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,8 @@ public class ILCookCountyFParser extends DispatchA27Parser {
       data.strPhone = match.group(1);
       data.strSupp = data.strSupp.substring(match.end());
     }
+    
+    data.strSource = convertCodes(data.strSource, SRC_CODES);
     return true;
   }
   
@@ -34,4 +37,19 @@ public class ILCookCountyFParser extends DispatchA27Parser {
   public String getProgram() {
     return super.getProgram().replaceAll("INFO", "PHONE INFO");
   }
+  
+  private static final Properties SRC_CODES = buildCodeTable(new String[]{
+      "Cicero 911 Dispatch",        "C911",
+      "Cicero FD",                  "CCFD",
+      "Cicero PD",                  "CCPD",
+      "Franklin Park FD",           "FPFD",
+      "Melrose Park FD",            "MPFD",
+      "Melrose Park Public Safety", "MPPS",
+      "Mobile Stroke Unit 1",       "MSU1",
+      "River Grove FD",             "RGFD",
+      "Stickney 911 Dispatch",      "S911",
+      "Stickney FD",                "STFD",
+      "Stone Park FD",              "SPFD"
+      
+  });
 }
