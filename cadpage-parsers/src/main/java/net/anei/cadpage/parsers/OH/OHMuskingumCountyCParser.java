@@ -11,7 +11,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
   
   public OHMuskingumCountyCParser() {
     super("MUSKINGUM COUNTY", "OH", 
-          "Address:ADDRCITY/S6! CALL_DATETIME_ID! Cross_Streets:X! Incident_number:ID2? Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
+          "Address:ADDRCITY/S6! CALL_DATETIME_ID! Alert:ALERT? Cross_Streets:X! Incident_number:ID2? Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
   }
   
   @Override
