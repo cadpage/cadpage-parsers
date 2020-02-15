@@ -131,6 +131,15 @@ public class CTTollandCountyAParser extends SmartAddressParser {
         }
       }
       data.strCall = append(data.strCall, " - ", postCall);
+      
+      if (data.strChannel.length() == 0) {
+        match = TRAIL_CH_PTN.matcher(data.strCross);
+        if (match.matches()) {
+          data.strCross = match.group(1);
+          data.strChannel = match.group(2);
+          parsePlace(match.group(3), data);
+        }
+      }
       return true;
     }
     
