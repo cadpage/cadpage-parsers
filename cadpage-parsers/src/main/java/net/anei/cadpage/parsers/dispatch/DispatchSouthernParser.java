@@ -398,8 +398,8 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callCodePtn = callCodePtn;
   }
 
-  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+:)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
-  private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(?:[A-Z]+:)?CFS: *(\\S+?)[;, ] *Unit: *([^,;]+?)[;, ] *(Status:.*?)[;,]?(?: Note: *(.*))?");
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+: *)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})(?: ([^;]+))?[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d\\|");
+  private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(?:[A-Z]+:)?CFS: *(\\S+?)[;, ](?:([^;]+)[;, ])?(?: [;, ])? *Unit: *([^,;]+?)[;, ] *(Status:.*?)[;,]?(?: Note: *(.*))?");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
   private static final Pattern OCA_TRAIL_PTN = Pattern.compile("\\bOCA: *([-A-Z0-9]+)$");
@@ -415,21 +415,23 @@ public class DispatchSouthernParser extends FieldProgramParser {
     
     Matcher match = RUN_REPORT_PTN1.matcher(body);
     if (match.lookingAt()) {
-      setFieldList("ID INFO");
+      setFieldList("ID CALL INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
-      data.strSupp = body.substring(match.start(2)).replace('|', '\n').trim();
+      data.strCall = getOptGroup(match.group(2));
+      data.strSupp = body.substring(match.start(3)).replace('|', '\n').trim();
       return true;
     }
     
     match = RUN_REPORT_PTN2.matcher(body);
     if (match.matches()) {
-      setFieldList("ID UNIT INFO");
+      setFieldList("ID CALL UNIT INFO");
       data.msgType= MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
-      data.strUnit = match.group(2);
-      data.strSupp = match.group(3).replaceAll(", +", "\n");
-      data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(4)));
+      data.strCall = getOptGroup(match.group(2));
+      data.strUnit = match.group(3);
+      data.strSupp = match.group(4).replaceAll(", +", "\n");
+      data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(5)));
       return true;
     }
     
