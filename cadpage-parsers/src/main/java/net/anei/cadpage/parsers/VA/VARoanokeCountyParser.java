@@ -15,6 +15,8 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   public VARoanokeCountyParser() {
     super("ROANOKE COUNTY", "VA", 
           "( SELECT/1 UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
+          "| SELECT/3 Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:CALL/SDS! " +
+              "Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP3! District:MAP3! Beat:MAP3! CFS_Number:SKIP! Primary_Incident:ID! Radio_Channel:CH! Narrative:INFO/N+ " +
           "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " + 
               "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " + 
               "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
@@ -35,14 +37,14 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       setSelectValue("2");
       return super.parseHtmlMsg(subject, body.replace(";\n", ""), data);
     } else {
-      setSelectValue("1");
+      setSelectValue(subject.equals("Emergency Call") ? "3" : "1");
       return parseMsg(body, data);
     }
   }
 
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
   private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile("\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)$");
-  private static final Pattern DELIM = Pattern.compile(";?\n|; ");
+  private static final Pattern DELIM = Pattern.compile(";?\n|;");
   private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
   private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?");
   private static final Pattern NOT_DISPATCH_PTN = Pattern.compile("\\b(?:ADV|TRAINING)\\b");
@@ -259,6 +261,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("MAP3")) return new MyMap3Field();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -315,6 +318,15 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     public void parse(String field, Data data) {
       field = ID_JUNK_PTN.matcher(field).replaceAll("").trim();
       super.parse(field, data);
+    }
+  }
+  
+  private class MyMap3Field extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "TOWN OF ");
+      field = stripFieldEnd(field, "CITY OF ");
+      data.strMap = append(field, "/", data.strMap);
     }
   }
   
