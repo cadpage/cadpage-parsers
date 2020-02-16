@@ -14,9 +14,10 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
   
   public VARoanokeCountyParser() {
     super("ROANOKE COUNTY", "VA", 
-          "( SELECT/1 UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
-          "| SELECT/3 Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:CALL/SDS! " +
-              "Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP3! District:MAP3! Beat:MAP3! CFS_Number:SKIP! Primary_Incident:ID! Radio_Channel:CH! Narrative:INFO/N+ " +
+          "( SELECT/1 ( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:CALL/SDS! " +
+                        "Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP3! District:MAP3! Beat:MAP3! CFS_Number:SKIP! Primary_Incident:ID! Radio_Channel:CH! Narrative:INFO/N+ " +
+                     "| UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
+                     ") " +
           "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " + 
               "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " + 
               "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
@@ -37,7 +38,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       setSelectValue("2");
       return super.parseHtmlMsg(subject, body.replace(";\n", ""), data);
     } else {
-      setSelectValue(subject.equals("Emergency Call") ? "3" : "1");
+      setSelectValue("1");
       return parseMsg(body, data);
     }
   }
