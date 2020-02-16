@@ -18,7 +18,7 @@ public class NCMaconCountyDParser extends DispatchA48Parser {
   }
   
   private static final Pattern LEAD_SRC_PTN = Pattern.compile("([A-Z ]+) TEXT:");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(" {2,}([ A-Z0-9,]+)$");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(?:\n *| {2,})([ A-Z0-9,]+)$");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
