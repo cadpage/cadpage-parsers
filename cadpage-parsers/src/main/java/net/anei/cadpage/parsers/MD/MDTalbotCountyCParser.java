@@ -10,6 +10,6 @@ public class MDTalbotCountyCParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "talbot.notifications@gmail.com";
+    return "@talbotdes.org";
   }
 }
