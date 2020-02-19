@@ -19,11 +19,16 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    // Reject MOChristiainCounty alerts
+    if (subject.equals("INC:")) return false;
+    
     body = stripFieldStart(body, "GRN_Alert@springfieldmo.gov:");
     body = stripFieldStart(body, "GRN_Alert:");
     if (body.startsWith(":")) body = "LOC" + body;
     else if (!body.startsWith("LOC:")) body = "LOC:"+ body;
-    return parseMsg(body, data);
+    if (!parseMsg(body, data)) return false;
+    return data.strAddress.length() > 0;
   }
   
   @Override
