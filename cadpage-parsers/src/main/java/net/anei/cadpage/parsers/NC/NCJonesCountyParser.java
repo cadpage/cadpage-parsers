@@ -13,7 +13,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
   }
 
   public NCJonesCountyParser(String defCity, String defState) {
-    super("Communication:", CITY_LIST, defCity, defState, 
+    super(CITY_LIST, defCity, defState, 
           "MASH! Line16:INFO! Line17:INFO! Line18:INFO!");
     addExtendedDirections();
     setBreakChar('=');
@@ -33,6 +33,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Communication:");
     return super.parseMsg(body, data, false);
   }
 
