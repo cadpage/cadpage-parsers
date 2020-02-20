@@ -13,7 +13,7 @@ public class OHMontgomeryCountyBParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@vandaliaohio.org";
+    return "DISPATCH@vandaliaohio.org,dispatch-noreply@ketteringoh.org";
   }
   
   @Override

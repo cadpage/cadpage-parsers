@@ -1220,7 +1220,7 @@ public class Active911ParserTable {
       "US/OH/CityofGreen",                "OHSummitCountyF",
       "US/OH/CityofHuberHeights",         "OHMontgomeryCountyA",
       "US/OH/CityofKent",                 "OHPortageCountyD",
-      "US/OH/CityofKettering",            "OHMontgomeryCountyD",
+      "US/OH/CityofKettering",            "OHMontgomeryCountyB",
       "US/OH/CityofLima",                 "OHLima",
       "US/OH/CityofMacedonia",            "OHSummitCountyG",
       "US/OH/CityofMonroe",               "OHMonroe",
