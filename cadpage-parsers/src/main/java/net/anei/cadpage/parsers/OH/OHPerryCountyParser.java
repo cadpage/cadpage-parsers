@@ -12,7 +12,7 @@ public class OHPerryCountyParser extends DispatchA75Parser {
   
   @Override
   public String getFilter() {
-    return "PerryCountyDispatch@PerryCountyOhio.Net";
+    return "PerryCountyDispatch@PerryCountyOhio.Net,JCPC911@perryco.org";
   }
 
   @Override
