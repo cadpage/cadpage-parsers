@@ -11,6 +11,11 @@ public class OHMadisonCountyParser extends DispatchA1Parser {
   public OHMadisonCountyParser() {
     super("MADISON COUNTY", "OH"); 
   }
+
+  @Override
+  public String getFilter() {
+    return "mcsocad@madisonsheriff.org,777";
+  }
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -21,10 +26,5 @@ public class OHMadisonCountyParser extends DispatchA1Parser {
       body = body.substring(pt+1).trim();
     }
     return super.parseMsg(subject, body, data);
-  }
-
-  @Override
-  public String getFilter() {
-    return "mcsocad@madisonsheriff.org,777";
   }
 }
