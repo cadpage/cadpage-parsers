@@ -23,13 +23,13 @@ public class TXMidlothianParser extends DispatchA18Parser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     if (body.startsWith("CAUTION: ")) {
       int pt = body.indexOf('\n');
       if (pt < 0) return false;
       body = body.substring(pt+1).trim();
     }
-    if (!super.parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
     data.strAddress = cleanStreetName(data.strAddress);
     data.strCross = cleanStreetName(data.strCross);
     if (data.strCity.equals("NONE")) data.strCity = "";

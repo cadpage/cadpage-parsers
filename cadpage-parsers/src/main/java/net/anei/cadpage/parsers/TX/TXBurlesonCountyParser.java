@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
 
 public class TXBurlesonCountyParser extends DispatchA18Parser {
@@ -12,13 +11,6 @@ public class TXBurlesonCountyParser extends DispatchA18Parser {
   @Override
   public String getFilter() {
     return "calwellactive911@gmail.com";
-  }
-  
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0) return false;
-    body = subject + '\n' + body;
-    return super.parseMsg(body, data);
   }
 
   private static final String[] CITY_LIST = new String[]{

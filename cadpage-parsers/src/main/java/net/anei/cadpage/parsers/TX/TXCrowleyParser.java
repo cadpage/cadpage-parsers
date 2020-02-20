@@ -24,9 +24,6 @@ public class TXCrowleyParser extends DispatchA18Parser {
       if (pt < 0) return false;
       body = body.substring(pt+2).trim();
     }
-    if (subject.length() > 0) {
-      body = append(subject, "\n", body);
-    }
     if (!super.parseMsg(subject, body, data)) return false;
     String city = MISSPELLED_CITIES.getProperty(data.strCity.toUpperCase());
     if (city != null) data.strCity = city;

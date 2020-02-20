@@ -25,10 +25,7 @@ public class TXTarrantCountyCParser extends DispatchA18Parser {
     
     int pt = body.indexOf("\n\nCONFIDENTIALITY");
     if (pt >= 0) body = body.substring(0, pt).trim();
-    
-    if (body.startsWith("-")) body = subject + '\n' + body;
-    
-    if (!super.parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
     if (data.strCity.equals("NONE")) data.strCity = "";
     return true;
   }

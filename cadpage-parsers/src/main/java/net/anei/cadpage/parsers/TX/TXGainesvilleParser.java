@@ -21,8 +21,8 @@ public class TXGainesvilleParser extends DispatchA18Parser {
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
     if (data.strCity.equalsIgnoreCase("GAINSVILLE")) data.strCity = "GAINESVILLE";
     return true;
   }

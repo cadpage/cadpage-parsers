@@ -14,10 +14,7 @@ public class TXParkerCountyDParser extends DispatchA18Parser {
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n\n___");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    if (subject.length() > 0 && body.startsWith("-")) {
-      body = subject + '\n' + body;
-    }
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
 
   @Override

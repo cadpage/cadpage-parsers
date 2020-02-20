@@ -27,7 +27,8 @@ public class TXSeabrookParser extends DispatchA18Parser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (SUBJECT_SRC_PTN.matcher(subject).matches()) data.strSource = subject;
-    return super.parseMsg(body, data);
+    subject = "";
+    return super.parseMsg(subject, body, data);
   }
   
   @Override

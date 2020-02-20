@@ -21,8 +21,8 @@ public class TXHutchinsParser extends DispatchA18Parser {
   }
  
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
     if (data.strApt.length() > 0) {
       if (data.strAddress.endsWith(" IH")) {
         data.strAddress = data.strAddress.substring(0, data.strAddress.length()-1) + ' ' + data.strApt;

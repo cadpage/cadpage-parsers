@@ -29,10 +29,19 @@ public class DispatchA18Parser extends FieldProgramParser {
   }
 
   private static final Pattern FIX_BROKEN_INFO_PTN = Pattern.compile("([A-Za-z]+:.*[^\\]])\n(.*\\[\\d\\d:\\d\\d:\\d\\d\\])");
+  
+  
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.length() > 0) {
+      if (!body.startsWith(subject)) body = subject + '\n' + body;
+    }
+
     int pt = body.indexOf("\nDisclaimer");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+    if (pt >= 0) {
+      body = body.substring(0,pt).trim();
+    }
     body = FIX_BROKEN_INFO_PTN.matcher(body).replaceAll("$1$2");
     return parseFields(body.split("\n"), 4, data);
   }
@@ -233,7 +242,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([A-Za-z0-9,]+)");
+  private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([-A-Za-z0-9,]+)");
   private class MyIdUnitField extends Field {
     
     @Override
