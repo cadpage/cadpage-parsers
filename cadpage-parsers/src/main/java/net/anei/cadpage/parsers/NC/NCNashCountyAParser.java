@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3AParser;
 public class NCNashCountyAParser extends DispatchA3AParser {
   
   public NCNashCountyAParser() {
-    super(CITY_LIST, "NASH COUNTY", "NC");
+    super(NCNashCountyParser.CITY_LIST, "NASH COUNTY", "NC");
     setFieldList("ID ADDR APT CH CITY X PLACE CODE CALL NAME UNIT PHONE INFO " + getFieldList());
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -127,7 +127,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
           city = flds[spt++];
         }
       }
-      data.strCity = convertCodes(data.strCity, CITY_FIXES);
+      data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
       
       // Now lets start working from the end.
       // First check for truncated date field
@@ -309,7 +309,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       parseCallInfo(true, left, data);
     }
     data.strAddress = data.strAddress.replace("LEEGETT", "LEGGETT");
-    data.strCity = convertCodes(data.strCity, CITY_FIXES);
+    data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
     return true;
   }
   
@@ -920,90 +920,4 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       isCode = !isCode;
     }
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-    
-      //  Cities
-      "BAILEY",
-      "CASTALIA",
-      "CASTLIA",          // Typo
-      "DORTCHES",
-      "ELM CITY",
-      "MIDDLESEX",
-      "MOMEYER",
-      "NASHVILLE",
-      "RED OAK",
-      "ROCKY MOUNT",
-      "SHARPSBURG",
-      "SPRING HOPE",
-      "WHITAKERS",
-      "ZEBULON",
-      
-      // Townships
-      "BAILEY",
-      "BATTLEBORO",
-      "CASTALIA",
-      "COOPERS",
-      "DRY WELLS",
-      "FERRELLS",
-      "GRIFFINS",
-      "JACKSON",
-      "MANNINGS",
-      "NASHVILLE",
-      "NORTH WHITAKERS",
-      "OAK LEVEL",
-      "RED OAK",
-      "ROCKY MOUNT",
-      "SPRING HOPE",
-      "SOUTH WHITAKERS",
-      "STONY CREEK",
-      
-      // Franklin County
-      "LOUISBURG",
-      
-      // Halifax county
-      "AURELIAN SPRINGS",
-      "BRINKLEYVILLE",
-      "HEATHSVILLE",
-      "ENFIELD",
-      "HALIFAX",
-      "HOBGOOD",
-      "LITTLETON",
-      "HOLLISTER",
-      "ROANOKE RAPIDS",
-      "SCOTLAND NECK",
-      "SOUTH ROSEMARY",
-      "SOUTH WELDON",
-      "WELDON",
-
-      "BUTTERWOOD",
-      "CONOCONNARA",
-      "FAUCETT",
-      "PALMYRA",
-      "ROSENEATH",
-      
-      // Wilson County
-      "ELM CITY",
-      "SIMS",
-      "SIMMS",       // Misspelled
-      "WILSON",
-      
-      // Counties
-      "EDGECOMBE CO",
-      "FRANKLIN CO",
-      "JOHNSTON CO",
-      "HALIFAX CO",
-      "WARREN CO",
-      "WILSON CO",
-      
-      // ???
-      "VIRGINIA"
-      
-  };
-  
-  private static final Properties CITY_FIXES = buildCodeTable(new String[]{
-      "CASTLIA",       "CASTALIA",
-      "SIMMS",         "SIMS",
-      "EDGECOMBE CO",  "EDGECOMBE COUNTY"
-  });
 }

@@ -9,20 +9,27 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NCNashCountyCParser extends FieldProgramParser {
   
   public NCNashCountyCParser() {
-    super("NASH COUNTY", "NC", 
+    super(NCNashCountyParser.CITY_LIST, "NASH COUNTY", "NC", 
           "CALL ADDRCITY PLACE GPS1 GPS2 NAME UNIT/C+? ID DATETIME! INFO/N+");
   }
   
+  @Override
   public String getFilter() {
     return "donotreply@nashcountync.gov";
   }
   
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+  
+  private String tmpSubject;
+  
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) return false;
-    if (!parseFields(body.split(";"), data)) return false;
-    if (data.strCall.length() == 0) data.strCall = subject;
-    return true;
+    tmpSubject = subject;
+    return parseFields(body.split(";"), data);
   }
   
   @Override
@@ -35,28 +42,46 @@ public class NCNashCountyCParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_ZIP_CH_PTN = Pattern.compile("(.*?)(?: +(\\d{5}))?(?: +(TAC\\d+))?");
-  private static final Pattern ST_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern ADDR_CH_PTN = Pattern.compile("(.*?) (TAC[- ]*\\d+)\\b *(.*)");
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), *([A-Z]{2})\\b(?: +(\\d{5}))?(?: (.*?))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      String zip = null;
-      Matcher match = ADDR_ZIP_CH_PTN.matcher(field);
+      if (data.strCall.length() == 0) data.strCall = tmpSubject;
+      
+      String callExt2 = "";
+      Matcher match = ADDR_CH_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
-        zip =  match.group(2);
-        data.strChannel = match.group(3);
+        data.strChannel = match.group(2);
+        callExt2 = match.group(3);
       }
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      if (ST_PTN.matcher(city).matches()) {
-        data.strState = city;
-        city = p.getLastOptional(',');
+
+      String callExt;
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        parseAddress(field.substring(0,pt).trim(), data);
+        field = field.substring(pt+1).trim();
+        
+        match = ADDR_ST_ZIP_PTN.matcher(field);
+        if (match.matches()) {
+          data.strCity = match.group(1).trim();
+          data.strState = match.group(2);
+          callExt = getOptGroup(match.group(4));
+        } else {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, field, data);
+          callExt = getLeft();
+        }
       }
-      if (city.length() == 0 && zip != null) city = zip;
-      data.strCity = city;
       
-      parseAddress(p.get(), data);
+      else {
+        parseAddress(StartType.START_ADDR, field, data);
+        callExt = getLeft();
+      }
+      
+      data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
+      if (!callExt.equals("None")) data.strCall = append(data.strCall, " - ", callExt);
+      if (!callExt2.equals("None")) data.strCall = append(data.strCall, " - ", callExt2);
     }
     
     @Override
