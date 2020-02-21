@@ -5,17 +5,38 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class NCBrunswickCountyCParser extends FieldProgramParser {
   
   public NCBrunswickCountyCParser() {
     super("BRUNSWICK COUNTY", "NC", 
-          "CALL:CODE_CALL! PLACE:PLACE! ADDR:ADDRCITY! XY:GPS! ID:ID! DATETIME:DATETIME! UNITS:UNIT! X:X! INFO:INFO! Notes:INFO2/N! TAC_Channel:CH! ProQA:INFO3/N! Map_Information:INFO3/N! Nearest_Intersection:INFO3/N! END");
+          "CALL:CODE_CALL! PLACE:PLACE! ADDR:ADDRCITY! XY:GPS! ID:ID! DATETIME:DATETIME! UNITS:UNIT! UNIT/C+ X:X! INFO:INFO! Additional_Location_Details:INFO3/N! Notes:INFO2/N INFO/N+ TAC_Channel:CH! Map_Info:INFO3/N Nearest_Intersection:SKIP! END");
   }
   
   @Override
   public String getFilter() {
     return "no-reply@zuercherportal.com";
+  }
+
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(\\d\\d-\\d+) - Run Report;\n");
+  private static final Pattern DELIM = Pattern.compile(";|\\s+(?=Additional Location Details:|Notes:|Code:|TAC Channel:|Map Info:|Nearest Intersection:|\\d+\\. )");
+  
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.lookingAt()) {
+      setFieldList("ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      body = body.substring(match.end()).trim();
+      for (String line : body.split("\n")) {
+        if (line.contains("Dispatched")) line = line.replace("; ", "\n");
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+      return true;
+    }
+    return parseFields(DELIM.split(body), data);
   }
   
   @Override
@@ -73,6 +94,7 @@ public class NCBrunswickCountyCParser extends FieldProgramParser {
   public class MyInfo2Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("None")) return;
       for (String line : INFO_HEADER_PTN.split(field)) {
         super.parse(line, data);
       }
