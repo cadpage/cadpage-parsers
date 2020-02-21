@@ -25,7 +25,9 @@ public class ORDouglasCountyParser extends FieldProgramParser {
     body = stripFieldEnd(body, "...");
     int pt = body.indexOf("\n--");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    data.strAddress = data.strAddress.replace("138W", "138 W");
+    return true;
   }
   
   @Override
