@@ -4,24 +4,20 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA47Parser;
 
-public class VAMecklenburgCountyParser extends DispatchA47Parser {
+public class VAMecklenburgCountyParser extends FieldProgramParser {
   
   public VAMecklenburgCountyParser() {
-    super("MECK 911", CITY_LIST, "MECKLENBURG COUNTY", "VA", "[A-Z]{1,3}\\d{1,3}|\\d{3}|CO#\\d+|[A-Z]{2}FD|[A-Z]{2}RS|CBURN\\d?|BYLS|LGFR|ROAD\\d+|VSP");
+    super("MECKLENBURG COUNTY", "VA", 
+          "DATETIME CALL ADDRCITY PLACE X CALL/SDS! UNIT ID  EMPTY+ END");
   }
   
   @Override
-  public String getFilter() {
-    return "swpage2@vameck911.com,@mecklenburgva.com";
-  }
-  
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    body = body.replaceAll("\\n{2,}", "\\n");
-    if (!super.parseMsg(subject, body, data)) return false;
+  protected boolean parseMsg(String body, Data data) {
+    if (body.endsWith(":"))  body = body + '\n';
+    if (!parseFields(body.split(":?\n"), data)) return false;
     if (data.strCity.equals("MECK CO")) data.strCity = "MECKLENBURG COUNTY";
     else if (data.strCity.equals("BRUN CO")) data.strCity = "BRUNSWICK COUNTY";
     else if (data.strCity.equals("LACROSSE")) data.strCity = "LA CROSSE";
@@ -79,63 +75,24 @@ public class VAMecklenburgCountyParser extends DispatchA47Parser {
   private enum DIGITS {O, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE};
   
   @Override
-  public String adjustMapCity(String city) {
-    return convertCodes(city, CITY_MAP_TABLE);
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
+    return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("No Cross Streets Found")) return;
+      super.parse(field,  data);
+    }
   }
   
   @Override
-  public String getProgram() {
-    return super.getProgram().replace("CITY", "PLACE CITY");
+  public String adjustMapCity(String city) {
+    return convertCodes(city, CITY_MAP_TABLE);
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-      
-      // Cities
-      "CHASE CITY",
-
-      //Towns
-
-      "BOYDTON",
-      "BRACEY",
-      "BRODNAX",
-      "CLARKSVILLE",
-      "LA CROSSE",
-      "LACROSSE",
-      "SKIPWITH",
-      "SOUTH HILL",
-
-      // Unincorporated[edit]
-
-      "BASKERVILLE",
-      "BUFFALO JUNCTION",
-      "NELSON",
-      "SHINY ROCK",
-
-      // County
-      "MECK CO",
-      "BRUN CO",
-      "BRUNSWICK CO",
-      "BRUNSWICK COUNTY",
-      "LUNENBURG CO",
-      
-      // Brunswick County
-      "BRUNSWICK",
-      
-      // Subdivisions
-      "NEWTONS M H PK",
-      "AMERICAMPS",
-      "CHAMPION FOREST",
-      "HOLLY GROVE SUB",
-      "JOYCEVILLE SUBD",
-      "RIVER RIDGE SUB",
-      "TANGLEWOOD SHORES ASSOCIATION",
-      "TANGLEWOOD SUB",
-      "HILLCREST MHP",
-      "GREAT CREEK SUB",
-      "PINE CREEK APTS",
-      "MORRISTOWN SUBD",
-      "PLANTERWOOD APT"
-  };
   
   private static final Properties CITY_MAP_TABLE = buildCodeTable(new String[]{
       "NEWTONS M H PK",     "BUFFALO JUNCTION",
