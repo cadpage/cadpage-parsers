@@ -10,7 +10,7 @@ public class MIBarryCountyBParser extends FieldProgramParser {
   
   public MIBarryCountyBParser() {
     super(CITY_LIST, "BARRY COUNTY", "MI", 
-          "Location:ADDR! Cross_Streets:X! Use_Caution:CAUTION! Location_Alerts:ALERT/SDS! Zone:MAP? Call_Details:INFO! #:ID!");
+          "Location:ADDR! Cross_Streets:X! Use_Caution:CAUTION! Location_Alerts:ALERT/SDS! ESN:BOX? Zone:MAP? Call_Details:INFO! #:ID!");
   }
   
   @Override
