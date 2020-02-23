@@ -34,6 +34,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
     
     if (SUBJECT_SRC_PTN.matcher(subject).matches() && !subject.equals("Text Message")) data.strSource = subject;
     
+    body = body.replace(" \n", " ").replace('\n', ' ');
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strDate = match.group(1);
