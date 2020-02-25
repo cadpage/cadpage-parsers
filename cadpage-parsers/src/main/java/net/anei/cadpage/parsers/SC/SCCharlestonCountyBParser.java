@@ -10,7 +10,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   public SCCharlestonCountyBParser() {
     super("CHARLESTON COUNTY", "SC", 
-          "UNIT ADDR APT? X/Z+? CITY CALL! CH! ID! DATETIME");
+          "UNIT ADDR APT? X/Z+? CITY CALL! CH! ID! DATETIME END");
   }
   
   @Override
@@ -20,6 +20,7 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    body = stripFieldStart(body, "Purvis:");
     body = stripFieldStart(body, ":");
     return parseFields(body.split("\n"), data);
   }
@@ -42,14 +43,25 @@ public class SCCharlestonCountyBParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d)");
+  private static final Pattern DATE_TIME_PTN1 = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)");
+  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d) +(\\d\\d?:\\d\\d:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(2)+'/'+match.group(3)+'/'+match.group(1);
-      data.strTime = match.group(4);
+      Matcher match = DATE_TIME_PTN1.matcher(field);
+      if (match.matches()) {
+        data.strDate = match.group(1);
+        data.strTime = match.group(2);
+        return;
+      }
+      
+      match = DATE_TIME_PTN2.matcher(field);
+      if (match.matches()) {
+        data.strDate = match.group(2)+'/'+match.group(3)+'/'+match.group(1);
+        data.strTime = match.group(4);
+        return;
+      }
+      abort();
     }
   }
   
