@@ -1,0 +1,137 @@
+Payment Status
+  
+Support and Feedback
+  Email the Developer
+  Write a Cadpage review
+  <advanced>
+  Message Report Limit
+  Billing Account
+
+Enable Cadpage
+
+Alert Source (was msg type processed)
+  <advanced>
+  Use old MMS content download logic (suppress if MMS not enabled)
+  Suppress duplicate calls
+  
+Location info (suppress unless needed)
+  Current Location
+  Select Single Location
+  Select Multiple Locations
+  <Advanced>
+  Override Location Filter
+    From: (Filter)
+  Override Default City/State
+    Default City or County
+    Default State
+
+Enable Notification
+  Vibrate
+  Override Cadpage Audio Alert
+    Override Volume Control
+    Override do not disturb status
+    Loop Alert Sound
+  Play Cadpage Alert Tones
+  Notification Sound
+  Alert Duration
+  Repeat Alert
+    Repeat Interval
+  Test Notification
+  <advanced>
+  ALert Delay
+  Show Ack Button when needed
+  
+History Display Options
+  History Limit
+  Delete unopened calls
+  Include address in call history
+  Text Size
+  
+Call Display Options
+  Show popup
+    Restrict in call (suppress in Android 10)
+  Show page source
+  Display personal info
+
+Mapping options
+  Map network status
+  GPS mapping option
+  <Advanced>
+  Mapping App Option
+  Map Navigate Option
+ 
+Direct Paging Vendors
+  Cadpage Paging
+  Codemessaging.net
+  Active911
+  Reconnect Direct Paging
+  <Advanced>
+  Override Vendor Location
+  Report Position when responding
+  Override Default City/State
+    Default City or County
+    Default State
+
+Other Information
+  Disclaimer
+  Privacy Policy
+  FAQ
+  About
+  What's New?
+  Cadpage and Active911 apps 
+  
+<advanced>
+Filter Options
+  General Alert Options
+  Run Report Options
+  
+Radio Scanner Options
+  Auto Open Scanner Channel
+  Scanner Channel
+  Scanner Channel Timeout
+
+Button Configuration
+  Main Button Menu
+    Button 1 Configuration
+    Button 2 Configuration
+    Button 3 Configuration
+    Button 4 Configuration
+    Button 5 Configuration
+    Button 6 Configuration
+    Include Alternate Map Button
+    Include Map Page Button
+    
+  Response Button Menu
+    Direct paging message menu
+    
+    Response Button Menu
+      Response Button 1
+        Response Type
+        Button Description
+        Button Phone Code
+      Response Button 2
+        Ditto
+      Response Button 3
+        Ditto
+      Response Button 4
+        Ditto
+      Response Button 5
+        Ditto
+      Response Button 6
+        Ditto
+    
+    Regular Buttons
+      Button 1 Configuration
+      Button 2 Configuration
+      Button 3 Configuration
+    
+Split Alert Merge Options
+  Override Active911 Split Alert Settings
+  Check for Split Direct Pages
+  Split message timeout
+  Split message minimum count
+  Reverse split msg order
+  Mixed split msg order
+  Insert Blanks in split msgs
+  Split msg check sender addr
+  Split msg keep lead breaks
