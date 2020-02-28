@@ -14,7 +14,7 @@ public class MSRankinCountyParser extends DispatchProQAParser {
   
   MSRankinCountyParser(String county) {
     super(CITY_LIST, county, "MS", 
-          "UNKNOWN ID! TIME CALL PRI ADDR PLACE_APT PLACE_APT+? CITY! INFO/N+? CALL/SDS! END", true);
+          "UNKNOWN? ID! TIME CALL PRI ADDR PLACE_APT PLACE_APT+? CITY! INFO/N+? CALL/SDS! ( END | PROQA_DET ) INFO/N+", true);
   }
   
   @Override
@@ -39,6 +39,7 @@ public class MSRankinCountyParser extends DispatchProQAParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("PRI")) return new PriorityField("(\\d) - Priority.*", true);
     if (name.equals("PLACE_APT")) return new MyPlaceAptField();
+    if (name.equals("PROQA_DET")) return new SkipField("<PROQA_DET>", true); 
     return super.getField(name);
   }
   
