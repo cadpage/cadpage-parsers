@@ -1,11 +1,4 @@
 Payment Status
-  
-Support and Feedback
-  Email the Developer
-  Write a Cadpage review
-  <advanced>
-  Message Report Limit
-  Billing Account
 
 Enable Cadpage
 
@@ -38,7 +31,7 @@ Enable Notification
     Repeat Interval
   Test Notification
   <advanced>
-  ALert Delay
+  Alert Delay
   Show Ack Button when needed
   
 History Display Options
@@ -71,6 +64,13 @@ Direct Paging Vendors
   Override Default City/State
     Default City or County
     Default State
+
+Support and Feedback
+  Write a Cadpage review
+  Email the Developer
+  <advanced>
+  Message Report Limit
+  Billing Account
 
 Other Information
   Disclaimer
