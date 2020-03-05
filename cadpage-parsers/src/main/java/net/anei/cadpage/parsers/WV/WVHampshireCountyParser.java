@@ -25,7 +25,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
   
   @Override
   public String getFilter() {
-    return "@frontier.com";
+    return "@frontier.com,@hardynet.com";
   }
 
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+(?:-\\d+)?|\\d+-\\d+|MEDIC", Pattern.CASE_INSENSITIVE);
