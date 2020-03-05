@@ -12,7 +12,7 @@ public class VALunenburgCountyBParser extends FieldProgramParser {
   
   public VALunenburgCountyBParser() {
     super("LUNENBURG COUNTY", "VA", 
-          "UNIT CALL ADDRCITY ID DATETIME! END");
+          "UNIT CALL ADDRCITY ID DATETIME! X END");
   }
   
   @Override
