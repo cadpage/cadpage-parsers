@@ -47,6 +47,7 @@ public class GAHoustonCountyParser extends DispatchOSSIParser {
   }
       
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ELK", "ELKO",
       "BON", "BONAIRE",
       "BYR", "BYRON",
       "PRY", "PERRY",
