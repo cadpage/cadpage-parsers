@@ -19,7 +19,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
           "( CANCEL ADDR! CITY? XPLACE+ " +
           "| FYI? ( BAD_ID " + 
                  "| ADDR/Z CITY! " +
-                 "| ( ADDR | CALL P? ADDR! ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
+                 "| ( ADDR | CALL P? ADDR! UNIT? ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
                  ") XPLACE+? INFO/N INFO/NZ+? NAME PH " + 
           ")");
     setupSpecialStreets("NEW ST");
@@ -83,6 +83,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     if (name.equals("CALL_PAGE")) return new CallField("PAGE / CALL .*", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("XPLACE")) return new MyCrossPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -233,7 +234,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
         field = field.substring(0,field.length()-3);
       }
       if (field.endsWith("CREEK") || field.endsWith("XING") || isValidAddress(field)) {
-        data.strCross = append(data.strCross, " / ", field);
+        data.strCross = append(data.strCross, " & ", field);
         return;
       } 
       
@@ -300,10 +301,27 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     }
   }
   
+  private class MyUnitField extends Field {
+    
+    public MyUnitField() {
+      setPattern(UNIT_PTN, true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      addUnit(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CH UNIT";
+    }
+  }
+  
   private boolean lastIdField = false;
   
   private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
-  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|tac.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[A-Z0-9,]+|[A-Z]{2}|DCC");
+  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|tac.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[-A-Z0-9,]+|[A-Z]{2}|DCC");
   private static final Pattern ID_PTN = Pattern.compile("\\d{6,9}");
   private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bACTIVATION\\b|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b - |\\bLOCATED\\b|\\bUDTS:|\\bREF\\b|\\bREFERENCE\\b|\\bREQUESTING\\b).*");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("Radio Channel: *(.*)");
@@ -371,6 +389,11 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
         if (field.length() < 50 && !OPT_INFO_PTN.matcher(field).matches()) return false;
       }
       
+      if (isValidAddress(field)) {
+        data.strCross = append(data.strCross, " & ", field);
+        return true;
+      }
+      
       match = INFO_CHANNEL_PTN.matcher(field);
       if (match.matches()) {
         addUnit(match.group(1), data);
@@ -389,23 +412,23 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       }
       return true;
     }
-    
-    private void addUnit(String field, Data data) {
-      for (String unit : field.split(",")) {
-        unit = unit.trim();
-        if (unit.length() == 0) continue;
-        if (!unitSet.add(unit)) continue;
-        if (unit.startsWith("OPS") || unit.startsWith("tac")) {
-          data.strChannel = append(data.strChannel, ",", unit);
-        } else {
-          data.strUnit = append(data.strUnit, ",", unit);
-        }
-      }
-    }
 
     @Override
     public String getFieldNames() {
-      return "CALL? MAP CH UNIT ID PLACE INFO";
+      return "CALL? MAP CH UNIT ID PLACE INFO X";
+    }
+  }
+  
+  private void addUnit(String field, Data data) {
+    for (String unit : field.split(",")) {
+      unit = unit.trim();
+      if (unit.length() == 0) continue;
+      if (!unitSet.add(unit)) continue;
+      if (unit.startsWith("OPS") || unit.startsWith("tac")) {
+        data.strChannel = append(data.strChannel, ",", unit);
+      } else {
+        data.strUnit = append(data.strUnit, ",", unit);
+      }
     }
   }
   
