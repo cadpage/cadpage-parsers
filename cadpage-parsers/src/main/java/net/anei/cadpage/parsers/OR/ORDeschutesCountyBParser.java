@@ -7,12 +7,12 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
   
   public ORDeschutesCountyBParser() {
     super("DESCHUTES COUNTY", "OR", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_ST:X! ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:INFO! INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY/S6! CROSS_ST:X! ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:INFO! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "cad@dc911sd.org,70177";
+    return "cad@dc911sd.org,7017710262";
   }
 
   @Override
@@ -29,9 +29,19 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      field = field.replace('@',  '/');
+      super.parse(field, data);
+    }
   }
   
   private class MyInfoField extends InfoField {
