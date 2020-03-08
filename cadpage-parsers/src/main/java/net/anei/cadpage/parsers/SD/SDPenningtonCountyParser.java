@@ -165,7 +165,6 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         }
         match = INFO_DATE_TIME_PTN.matcher(part);
         if (match.matches()) {
-          data.expectMore = false;
           data.strDate = match.group(1);
           data.strTime = match.group(2);
           data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(3)));
