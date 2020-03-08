@@ -16,7 +16,7 @@ public class WVWetzelCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,wcemt9@hotmail.com";
   }
   
   private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (CFS\\d+)");
