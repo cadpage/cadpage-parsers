@@ -22,7 +22,7 @@ public class MOMoniteauCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CAD@MONITEAU911.COM";
+    return "CAD@MONITEAU911.COM,CADMONITEAU911@OMNIGO.COM";
   }
   
   @Override
