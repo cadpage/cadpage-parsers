@@ -15,6 +15,7 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class SDPenningtonCountyParser extends FieldProgramParser {
   
   private boolean nextIntersect;
+  private String gpsField;
   
   public SDPenningtonCountyParser() {
     super(CITY_LIST, "PENNINGTON COUNTY", "SD",
@@ -50,6 +51,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
     if (pt >= 0) body = body.substring(0,pt).trim();
     
     nextIntersect = false;
+    gpsField = null;
     String[] flds = body.split("\\|");
     if (flds.length >= 4) {
       if (!parseFields(flds, 4, data)) return false;
@@ -124,6 +126,8 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   
   private static final Pattern INFO_INTERSECT_PTN= Pattern.compile("Nearest Inter +- *(.*)");
   private static final Pattern INFO_AND_PTN = Pattern.compile("\\bAND\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern INFO_GPS_PTN1 = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,}[ ,]+[-+]?\\d{2,3}\\.\\d{6,})(?:[ /]+(.*))?");
+  private static final Pattern INFO_GPS_PTN2 = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) +(\\d\\d:\\d\\d(?::\\d\\d)?)(?: +- *(.*))?");
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(\\S+)");
   private static final String TRUNC_DATE_TIME_MARK = "NN/NN/NN NN:NN:NN";
@@ -148,6 +152,26 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         field  = stripFieldStart(field, "/");
         field = stripFieldEnd(field, "/");
         data.strCross = append(data.strCross, " / ", field);
+        return;
+      }
+      
+      match = INFO_GPS_PTN1.matcher(field);
+      if (match.matches()) {
+        if (data.strGPSLoc.length() == 0) setGPSLoc(match.group(1), data);
+        field = match.group(2);
+        if (field ==  null) return;
+      }
+      
+      match = INFO_GPS_PTN2.matcher(field);
+      if (match.matches()) {
+        if (data.strGPSLoc.length() == 0) {
+          if (gpsField == null) {
+            gpsField = field;
+          } else {
+            setGPSLoc(gpsField + ',' + field, data);
+            gpsField = null;
+          }
+        }
         return;
       }
       
