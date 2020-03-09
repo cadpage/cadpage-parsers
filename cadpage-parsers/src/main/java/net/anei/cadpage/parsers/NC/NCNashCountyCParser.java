@@ -10,7 +10,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
   
   public NCNashCountyCParser() {
     super(NCNashCountyParser.CITY_LIST, "NASH COUNTY", "NC", 
-          "CALL ADDRCITY PLACE GPS1 GPS2 NAME UNIT/C+? ID DATETIME! INFO/N+");
+          "CALL ADDRCITY CH? PLACE GPS1 GPS2 NAME UNIT/C+? ID DATETIME! INFO/N+");
   }
   
   @Override
@@ -29,12 +29,20 @@ public class NCNashCountyCParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) return false;
     tmpSubject = subject;
-    return parseFields(body.split(";"), data);
+    String[] flds = body.split(";");
+    if (flds.length < 8) {
+      if (body.endsWith(":")) body += ' ';
+      flds = body.split(": ");
+    }
+    if (!parseFields(flds, data)) return false;
+    data.strUnit = data.strUnit.replace("; ", ",");
+    return true;
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("CH")) return new ChannelField("(TAC.*)|None()");
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("ID"))  return new IdField("CFS\\d\\d-\\d{6}", true);
