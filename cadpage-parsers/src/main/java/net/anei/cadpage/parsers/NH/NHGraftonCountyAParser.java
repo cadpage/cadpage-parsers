@@ -8032,7 +8032,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "8 PLEASANT ST",                        "+43.755940,-71.691155",
         "9 PLEASANT ST",                        "+43.755869,-71.691331",
         "10 PLEASANT ST",                       "+43.756039,-71.691392",
-        "11 PLEASANT ST",                       "+43.756004,-71.691727",
+        "11 PLEASANT ST",                       "+43.443972,-71.642581",        
         "12 PLEASANT ST",                       "+43.756128,-71.691883",
         "13 PLEASANT ST",                       "+43.756039,-71.692024",
         "14 PLEASANT ST",                       "+43.756054,-71.692169",
