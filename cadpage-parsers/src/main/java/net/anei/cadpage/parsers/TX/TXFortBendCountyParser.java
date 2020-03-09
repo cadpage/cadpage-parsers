@@ -14,19 +14,30 @@ public class TXFortBendCountyParser extends GroupBestParser {
   }
   
   static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ARC", "ARCOLA",
       "BEA", "BEASLEY",
-      "EB", "EAST BERNARD", 
+      "BRK", "BROOKSHIRE",
+      "DAM", "DAMON",
+      "EB",  "EAST BERNARD", 
+      "FAI", "FAIRCHILDS",
+      "FRS", "FRESNO",
       "FUL", "FULSHEAR",
+      "GUY", "GUY",
       "HOU", "HOUSTON",
       "KEN", "KENDLETON",
       "KTY", "KATY",
+      "MOC", "MISSOURI CITY",
+      "MP",  "MEADOWS PLACE",
       "NDV", "NEEDVILLE",
+      "ORC", "ORCHARD",
+      "PL",  "PEARLAND",
       "PLK", "PLEAK",
       "RIC", "RICHMOND",
       "ROS", "ROSENBERG",
+      "RSH", "ROSHARON",
       "SIM", "SIMONTON",
+      "STF", "STAFFORD",
       "SUG", "SUGAR LAND",
-      "WAL", "WALLIS",
+      "WAL", "WALLIS"
   });
-
 }
