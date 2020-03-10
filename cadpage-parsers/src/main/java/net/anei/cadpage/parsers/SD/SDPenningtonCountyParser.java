@@ -371,6 +371,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "FUEL",
       "FUEL-C",
       "GRASSF",
+      "GRASSF-D8",
       "GRASSF2",
       "GSW",
       "HEAD",
