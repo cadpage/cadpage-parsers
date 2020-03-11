@@ -27,6 +27,9 @@ public class INVigoCountyBParser extends DispatchSPKParser {
     
     // Turn HLF -> 1/2
     data.strAddress = HLF_PATTERN.matcher(data.strAddress).replaceAll("1/2");
+    
+    // Fix city name
+    if (data.strCity.equals("W TERRE HAUTE")) data.strCity = "WEST TERRE HAUTE";
     return true;
   }
 }
