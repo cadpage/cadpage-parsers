@@ -1,3 +1,7 @@
+This license is the GNU Lessor General Public License described below, plus
+one additional restriction.  Users of Cadpage Parsing Library may not pursue any 
+patent or copyright enforcement action against any other users of this library.
+
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
