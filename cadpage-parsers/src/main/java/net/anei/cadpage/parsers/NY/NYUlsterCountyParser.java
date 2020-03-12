@@ -13,7 +13,9 @@ public class NYUlsterCountyParser extends FieldProgramParser {
 
   public NYUlsterCountyParser() {
     super(CITY_LIST, "ULSTER COUNTY", "NY",
-          "Inc:CALL! Loc:ADDR_CITY_X! Common:PLACE/SDS! Nature:CALL/SDS? Original_Call_Time:DATETIME");
+          "Inc:CALL! ( SELECT/1 Loc:ADDRCITY! Additional:INFO! Int:X!" +
+                    "| Loc:ADDR_CITY_X! " + 
+                    ") Common:PLACE/SDS! Nature:CALL/SDS? Original_Call_Time:DATETIME END");
   }
   
   @Override
@@ -27,6 +29,7 @@ public class NYUlsterCountyParser extends FieldProgramParser {
     if (!subject.equals("Dispatch")) return false;
 
     body = body.replace("\n", "");
+    setSelectValue(body.contains(" Additional:") ? "1" : "2");
     if (!super.parseMsg(body, data)) return false;
 
     data.strCity = data.strCity.replaceAll(" +", " ");
@@ -38,6 +41,7 @@ public class NYUlsterCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR_CITY_X")) return new MyAddressCityCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
     if  (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
@@ -76,6 +80,14 @@ public class NYUlsterCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY NAME PHONE PLACE X";
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
     }
   }
   
