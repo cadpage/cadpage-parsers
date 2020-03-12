@@ -39,6 +39,13 @@ public class NYSuffolkCountyHParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CALL")) return false;
     
+    // Strip off html header
+    if (body.startsWith("<meta ")) {
+      int pt = body.indexOf('>');
+      if (pt < 0) return false;
+      body = body.substring(pt+1).trim();
+    }
+    
     // New line break delimited format
     String[] flds = body.split("\n");
     if (flds.length >= 4) {
