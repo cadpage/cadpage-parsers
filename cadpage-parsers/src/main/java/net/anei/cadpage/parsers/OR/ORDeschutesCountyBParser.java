@@ -7,7 +7,7 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
   
   public ORDeschutesCountyBParser() {
     super("DESCHUTES COUNTY", "OR", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY/S6! CROSS_ST:X! ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:INFO! INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY/S6! CROSS_ST:X! ID:ID% DATE:DATETIME% UNIT:UNIT% INFO:INFO% INFO/N+");
   }
   
   @Override
