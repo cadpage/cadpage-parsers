@@ -44,6 +44,10 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
       if (pt < 0) return false;
       body = body.substring(pt+1).trim();
     }
+    
+    // Reject COJeffersonCountyE 
+    if (body.startsWith("Unit:")) return false;
+
     body = stripFieldStart(body, "Incident Notification:");
     
     int pt = body.indexOf("\n\nThis email");
