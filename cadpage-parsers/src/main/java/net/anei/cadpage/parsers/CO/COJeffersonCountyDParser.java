@@ -10,7 +10,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   
   public COJeffersonCountyDParser() {
     super("JEFFERSON COUNTY", "CO", 
-          "CALL ADDR APT CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID TIME! INFO/N+");
+          "CALL ADDR APT CITY X ( MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID DATETIME! | UNIT UNIT/C+? ID DATETIME! ) INFO/N+");
   }
   
   @Override
@@ -32,14 +32,24 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     return super.parseHtmlMsg(subject, body, data);
   }
   
+  private static final Pattern DELIM = Pattern.compile(" \\|(?= )|\n");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
     if (!subject.equals("CAD Message")) data.strSource = subject;
+    
+    if (body.startsWith("CAUTION: ")) {
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      body = body.substring(pt+1).trim();
+    }
+    body = stripFieldStart(body, "Incident Notification:");
     
     int pt = body.indexOf("\n\nThis email");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    String[] flds = body.split("\n");
-    if (flds.length < 12) flds = body.split(",");
+    String[] flds = DELIM.split(body);
+    if (flds.length < 8) flds = body.split(",");
     if (!parseFields(flds, data)) return false;
     if (data.strCity.equals("UNINC JEFFERSON")) data.strCity = "JEFFERSON COUNTY";
     return true;
@@ -55,7 +65,8 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z](?:-[A-Z]+)?", true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
   
@@ -81,6 +92,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Apt:");
       Matcher match = APT_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       super.parse(field, data);
@@ -94,6 +106,33 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d(?:/\\d{4})?) (\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d)");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      String date =  match.group(1);
+      if (date != null) {
+        data.strDate = date;
+        data.strTime = match.group(2);
+      } else {
+        data.strTime = match.group(3);
+      }
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 }

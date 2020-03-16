@@ -46,7 +46,7 @@ public class COJeffersonCountyEParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z]", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z](?:-[A-Z]+)?", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
