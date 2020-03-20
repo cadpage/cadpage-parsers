@@ -25,16 +25,25 @@ public class NCNashCountyCParser extends FieldProgramParser {
   
   private String tmpSubject;
   
+  private static final Pattern FIND_DELIM_PTN = Pattern.compile("\\bCFS\\d\\d-\\d{6}([:;])");
+  
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) return false;
     tmpSubject = subject;
-    String[] flds = body.split(";");
-    if (flds.length < 8) {
+    
+    // They switched delimiters from a semicolon to a colon-space recently
+    // We still want to process both formats, but spurious colons and semicolons make the
+    // usual approach of trying both and seeing which one has the most fields unfeasible.  So
+    // instead, look fo rthe required ID field and see what delimiter follows it.
+    Matcher match = FIND_DELIM_PTN.matcher(body);
+    if (!match.find()) return false;
+    String delim = match.group(1);
+    if (delim.equals(":")) {
+      delim += ' ';
       if (body.endsWith(":")) body += ' ';
-      flds = body.split(": ");
     }
-    if (!parseFields(flds, data)) return false;
+    if (!parseFields(body.split(delim), data)) return false;
     data.strUnit = data.strUnit.replace("; ", ",");
     return true;
   }
