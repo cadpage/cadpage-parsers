@@ -28,7 +28,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Za-z ]+");
   private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*)");
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?) -(\\d{1,3})\\b *(.*)");
-  private static final Pattern CALL_ADDR_PTN = Pattern.compile("(.*? (?:ALPHA|BRAVO|CHARLIE|DELTA|ECHO)(?: (?:ENTRAPMENT|HIGH MECHANISM|PINNED|STRUCT|UNK|\\d COM / INDUST|\\d SINGLE RES))?) (.*)");
+  private static final Pattern CALL_ADDR_PTN = Pattern.compile("(.*? (?:ALPHA|BRAVO|CHARLIE|DELTA|ECHO)(?: (?:ENTRAPMENT|HIGH MECHANISM|PINNED|STRUCT|UNK|\\d COM / INDUST|\\d SINGLE RES|\\d MULTI RES|\\d+ OVER WATER|\\d+ UNKNOWN))?) (.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM) (\\S+) *(.*)", Pattern.CASE_INSENSITIVE);
   
   @Override
@@ -95,7 +95,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       if (addr.startsWith("No Cross Streets Found")) {
         addr =  addr.substring(22).trim();
       } else {
-        Result res = parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS, addr);
+        Result res = parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_IGNORE_AT, addr);
         if (res.isValid()) {
           res.getData(data);
           addr = res.getLeft();
@@ -122,6 +122,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       "CARRIAGE HILL",
       "CHERRY HILL",
       "CIDER MILL",
+      "CLAIR WRIGHT",
       "COVINGTON VALLEY",
       "CROSS STATION",
       "EDGE PARK",
@@ -130,6 +131,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       "FAIR OAKS",
       "FIELD VALLEY",
       "FOREST GLEN",
+      "FOREST HOME",
       "FOX HOLLOW",
       "FRANKLIN CENTER",
       "GENEVA MARIE",
@@ -151,16 +153,24 @@ public class PAErieCountyDParser extends SmartAddressParser {
       "LAKE FRONT",
       "LAKE PLEASANT",
       "LAKE SHORE",
+      "LIFELINE BRIDGE",
       "LONE PINE",
       "MANCHESTER BEACH",
+      "MANCHESTER FARMS",
+      "MAPLE LAWN",
       "MCGAHEN HILL",
+      "MILLER HILL",
+      "MILLER STATION",
+      "MOUNT PLEASANT",
       "NASH HILL",
       "NICKLE PLATE",
+      "OAK TREE",
       "OLD RIDGE",
       "OLD STATE",
       "OLD WATTSBURG",
       "OLD ZUCK",
       "PARK S CREEK",
+      "PEBBLE CREEK",
       "PENELEC PARK",
       "PIN OAK",
       "PINE LEAF",
@@ -169,6 +179,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       "RILEY SIDING",
       "SHERROD HILL",
       "SHORT HARE",
+      "SHREVE RIDGE",
       "SPIRIT HILL",
       "SPRING LAKE",
       "SPRING VALLEY",
@@ -185,7 +196,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       "WASHINGTON TOWNE",
       "WOLF RUN VILLAGE",
       "WOLF RUN",
-      "WOODLAND HILL"
+      "WOODLAND HILL",
+      "YORKTOWN CENTER"
   };
-
 }

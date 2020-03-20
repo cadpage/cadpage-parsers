@@ -2196,7 +2196,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (sAddr > start && isType(sAddr-1, ID_OPT_ROAD_PFX)) sAddr--;
     
     // If road starts with a direction, back up one place
-    if (sAddr > start && isType(sAddr, ID_DIRECTION)) sAddr--;
+//    if (sAddr > start && isType(sAddr, ID_DIRECTION)) sAddr--;
     return sAddr;
   }
   
