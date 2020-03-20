@@ -16,7 +16,7 @@ public class TXSmithCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "Dgeneric@smith-county.com";
+    return "Dgeneric@smith-county.com,.pphosted.com";
   }
 
   private static final Pattern SUBJ_PTN = Pattern.compile("(DISPATCH) +(?=Incident #)");

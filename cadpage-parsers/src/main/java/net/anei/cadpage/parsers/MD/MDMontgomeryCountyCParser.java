@@ -11,7 +11,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
   
   public MDMontgomeryCountyCParser() {
     super("MONTGOMERY COUNTY", "MD", 
-          "ID CALL ADDR! Apt/Suite:APT? PLACE ( Box_Area:BOX! | Area:MAP! Beat:MAP/L! ) TG/CH:CH? Units:UNIT! END");
+          "ID CALL ADDR! Apt/Suite:APT? PLACE ( Box_Area:BOX! | Area:MAP! Beat:MAP/L! ) X/Y:GPS? TG/CH:CH? Units:UNIT! END");
   }
   
   @Override
@@ -64,6 +64,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("F\\d{10}");
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
   
@@ -73,6 +74,14 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = APT_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" / ", ",");
       super.parse(field, data);
     }
   }
