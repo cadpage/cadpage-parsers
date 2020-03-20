@@ -234,7 +234,7 @@ public class Active911ParserTable {
       "US/CO/GarfieldCounty",             "COGarfieldCounty",
       "US/CO/GrandCounty",                "COGrandCounty",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
-      "US/CO/LarimerCounty",              "COLarimerCountyD",
+      "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",
       "US/CO/Metcom911",                  "COArapahoeCounty",
       "US/CO/MoffatCounty",               "COMoffatCounty",
       "US/CO/MontezumaCounty",            "COMontezumaCounty",
