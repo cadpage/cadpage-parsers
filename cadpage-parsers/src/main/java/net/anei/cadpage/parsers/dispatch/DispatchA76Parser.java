@@ -10,7 +10,10 @@ public class DispatchA76Parser extends FieldProgramParser {
 
   public DispatchA76Parser(String defCity, String defState) {
     super(defCity, defState, 
-          "( SRC_CALL | SRC CALL ) ADDRCITY! XST:X! NOTES:INFO/N+ UNITS:UNIT");
+          "( SRC_CALL | SRC CALL ) ADDRCITY! ( XST:X! ID? NOTES:INFO/N+ UNITS:UNIT  END" +
+                                            "| ID ( XST:X! NOTES:INFO/N+ UNITS:UNIT END " + 
+                                                 "| INFO/N+? X END ) )"
+    );
   }
   
   @Override
@@ -23,12 +26,12 @@ public class DispatchA76Parser extends FieldProgramParser {
     if (name.equals("SRC_CALL")) return new BaseSourceCallField();
     if (name.equals("SRC")) return new SourceField("([- A-Z0-9]+):?", true);
     if (name.equals("ADDRCITY"))  return new BaseAddressCityField();
-    if (name.equals("ID")) return new IdField("[A-Z]+\\d{2}-\\d{6}", true);
+    if (name.equals("ID")) return new IdField("\\$?([A-Z]*\\d{2}-\\d{4,6})", true);
     if (name.equals("X")) return new BaseCrossField();
     return super.getField(name);
   }
   
-  private static final Pattern SRC_CALL_PTN = Pattern.compile("([A-Z0-9 _]+): +(\\S.*)");
+  private static final Pattern SRC_CALL_PTN = Pattern.compile("([-A-Z0-9 _]+): +(\\S.*)");
   private class BaseSourceCallField extends Field {
     @Override
     public boolean canFail() {
@@ -60,6 +63,7 @@ public class DispatchA76Parser extends FieldProgramParser {
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, " -");
       Matcher match = ADDR_ZIP_PTN.matcher(field);
       String zip = null;
       if (match.matches()) {
@@ -86,6 +90,19 @@ public class DispatchA76Parser extends FieldProgramParser {
   }
   
   private class BaseCrossField extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField()) return false;
+      if (!field.contains("//"))  return false;
+      parse(field, data);
+      return true;
+    }
+    
     @Override
     public void parse(String field, Data data) {
       field = field.replace("//", "/");
