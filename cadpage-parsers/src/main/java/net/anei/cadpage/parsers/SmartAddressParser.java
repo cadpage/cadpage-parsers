@@ -2177,6 +2177,15 @@ public abstract class SmartAddressParser extends MsgParser {
    */
   private int stretchRoadPrefix(int start, int sAddr) {
     
+    // If we are backed up against hard start position, nothing to check
+    if (sAddr == start) return sAddr;
+    
+    // Ditto if preceding token is not legitimate address
+    if (isType(sAddr-1, ID_NOT_ADDRESS)) return sAddr;
+    
+    // If read name starts with a direction, back up one
+    if (isType(sAddr, ID_DIRECTION)) sAddr--;
+    
     // If road starts with a common street name prefix, back up one place
     if (sAddr > start && isType(sAddr-1, ID_STREET_NAME_PREFIX)) sAddr--;
     
@@ -2194,9 +2203,6 @@ public abstract class SmartAddressParser extends MsgParser {
     
     // No luck, see if the previous token is a possible road prefix
     if (sAddr > start && isType(sAddr-1, ID_OPT_ROAD_PFX)) sAddr--;
-    
-    // If road starts with a direction, back up one place
-//    if (sAddr > start && isType(sAddr, ID_DIRECTION)) sAddr--;
     return sAddr;
   }
   
@@ -2580,8 +2586,8 @@ public abstract class SmartAddressParser extends MsgParser {
     // Is this a potential ambiguous road suffix
     if (!isType(ndx, ID_AMBIG_ROAD_SFX)) return false;
     
-    // If the previous word cannot be an address, answer is no
-    if (isType(ndx-1,ID_NOT_ADDRESS)) return false;
+    // If the previous word cannot be an address or is a direction, answer is no
+    if (isType(ndx-1,ID_NOT_ADDRESS | ID_DIRECTION)) return false;
     
     // One more special case, if there might not be a delimiter
     // between the start field and address, and the previous word

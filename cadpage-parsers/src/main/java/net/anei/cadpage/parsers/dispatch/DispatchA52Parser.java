@@ -36,7 +36,13 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (!body.startsWith("LOC:") && !body.startsWith("TYPN")) return false;
     body = body.replace("LOC DESC:", "LOCDESC:");
     if (!super.parseMsg(body, data)) return false;
-    return (data.strCall.length() > 0);
+    if (data.strCall.length() == 0) return false;
+    if (data.strAddress.length() == 0 && data.strGPSLoc.length() > 0) {
+      int pt = data.strGPSLoc.indexOf(',');
+      data.strAddress = "LAT:" + data.strGPSLoc.substring(0,pt) + " LONG:" + data.strGPSLoc.substring(pt+1);
+      data.strGPSLoc = "";
+    }
+    return true;
   }
   
   @Override
@@ -58,6 +64,8 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZIP")) return new MyZipField();
     if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
   
@@ -178,6 +186,19 @@ public class DispatchA52Parser extends FieldProgramParser {
       if (field.length() == 0) return;
       if (field.equals(data.strMap)) return;
       data.strMap = append(data.strMap, "-", field);
+    }
+  }
+  
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "<");
+      field = stripFieldEnd(field, ">");
+      super.parse(field, data);
     }
   }
 }
