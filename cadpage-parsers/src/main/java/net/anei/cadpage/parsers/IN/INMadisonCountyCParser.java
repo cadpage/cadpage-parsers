@@ -14,8 +14,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class INMadisonCountyCParser extends FieldProgramParser {
   
   public INMadisonCountyCParser() {
-    super("MADISON COUNTY", "IN",
-          "( DATE:DATETIME! CFS#:SKIP? PLACE:PLACE! ADDR:ADDRCITY! ( CROSS_STREETS:X! CALL:CALL! UNIT:UNIT! | CALL:CALL! UNIT:UNIT! CROSS_STREETS:X! ) ALARM_LEVEL:PRI? INFO:INFO! FIRE_RD:CH! EMS_RD:CH ( CAD_#:ID! GPS_LAT:GPS1! GPS_LON:GPS2! NARRATIVE:INFO/N! INFO/N+ | RUN_#:ID! NARRATIVE:INFO/N! INFO/N+ CALLER-NAME:NAME! CALLER-PHONE:PHONE! CAD_#:SKIP! ALL_INCIDENTS:ID! GPS_LAT:GPS1! GPS_LON:GPS2! ) " +
+    super(INMadisonCountyParser.CITY_LIST, "MADISON COUNTY", "IN",
+          "( DATE:DATETIME! CFS#:SKIP? PLACE:PLACE! ADDR:ADDRCITY! ( CROSS_STREETS:X! CALL:CALL! UNIT:UNIT! | CALL:CALL! UNIT:UNIT! CROSS_STREETS:X! ) ALARM_LEVEL:PRI? INFO:INFO! FIRE_RD:CH! EMS_RD:CH ( INCIDENT#:ID! GPS_LAT:GPS1! GPS_LON:GPS2! NARRATIVE:INFO/N! INFO/N+ | RUN_#:ID! NARRATIVE:INFO/N! INFO/N+ CALLER-NAME:NAME! CALLER-PHONE:PHONE! CAD_#:SKIP! ALL_INCIDENTS:ID! GPS_LAT:GPS1! GPS_LON:GPS2! ) " +
           "| CALL:CALL! DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY! INFO:INFO? ( MAP:MAP! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! X:X! SOURCE:SKIP! | UNIT:UNIT! X:X! MAP:MAP! ) CALLER-NAME:NAME! CALLER-PHONE:PHONE! INCIDENT#:SKIP! OTHER_INCIDENT#:SKIP? DISTRICT:SKIP? BEAT:MAP! LOCATION_DETAILS:INFO/N+ NARRATIVE:INFO/N+ RADIO_CHANNEL:CH ) END");
   }
   
@@ -32,7 +32,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CFS")) return false;
-    body = body.replace("\nINTERSECTION:", "\nX:");
+    body = body.replace("\nCAD #:", "\nINCIDENT#:");
     return super.parseFields(body.split("\n"), data);
   }
   
@@ -65,11 +65,62 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     
   }
   
+  private static final Pattern CORD_ST_PTN = Pattern.compile("\\b[NS] +CORD \\d+ [EW]\\b");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace('@', '&');
-      super.parse(field, data);
+      String addr = null;
+      String addr2 = null;
+      String place = null;
+      for (String part : field.split(",")) {
+        part = part.trim();
+        if (part.length() == 0) continue;
+        if (addr == null) {
+          addr = part;
+          addr2 = part.replace('@', '&');
+        }
+        else if (part.equals("IN")) {
+          data.strState = part;
+        }
+        else {
+          if (data.strCity.length() == 0) {
+            parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, part, data);
+            part = getLeft();
+          }
+          if (place == null) {
+            place = part;
+            if (data.strCity.length() == 0) {
+              String part2 = part.replace('@', '&');
+              if (myCheckAddress(part2) > myCheckAddress(addr2)) {
+                place = addr;
+                addr = part;
+                addr2 = part2;
+              }
+            }
+          } else {
+            place = append(place, ", ", part);
+          }
+        }
+      }
+      if (addr2 == null) return;
+      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr2, data);
+      if (place != null) {
+        if (data.strCity.length() == 0) {
+          data.strCity = place;
+        } else {
+          data.strPlace = append(data.strPlace, " - ", place);
+        }
+      }
+    }
+    
+    private int myCheckAddress(String address) {
+      if (CORD_ST_PTN.matcher(address).find()) return STATUS_FULL_ADDRESS;
+      return checkAddress(address);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY ST PLACE";
     }
   }
   

@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class INMadisonCountyBParser extends FieldProgramParser {
   
   public INMadisonCountyBParser() {
-    super(CITY_LIST, "MADISON COUNTY", "IN",
+    super(INMadisonCountyParser.CITY_LIST, "MADISON COUNTY", "IN",
           "Call_Type:CALL! Address:ADDRCITY! Units:UNIT! Nature:INFO Info:INFO Narr:INFO Call_#:ID Call_Date/Time:DATETIME Priority:PRI Common_Name:PLACE Intersection:X City:CITY Beat:MAP2 Quadrant:MAP1 District:SKIP Source:SKIP Radio_Channel:CH Incident_#:ID",
           FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE);
   }
@@ -142,79 +142,4 @@ public class INMadisonCountyBParser extends FieldProgramParser {
     return CORD_PTN.matcher(address).replaceAll("");
   }
   private static final Pattern CORD_PTN = Pattern.compile("\\bCORD\\b");
-  
-  private static final String[] CITY_LIST = new String[]{
-    
-      // Cities and towns
-      "ALEXANDRIA",
-      "ANDERSON",
-      "CHESTERFIELD",
-      "COUNTRY CLUB HEIGHTS",
-      "EDGEWOOD",
-      "ELWOOD",
-      "FRANKTON",
-      "INGALLS",
-      "LAPEL",
-      "MARKLEVILLE",
-      "ORESTES",
-      "PENDLETON",
-      "RIVER FOREST",
-      "SUMMITVILLE",
-      "WOODLAWN HEIGHTS",
-
-      // Unincorporated towns
-      "ALFONT",
-      "ALLIANCE",
-      "BLOOMER",
-      "COLLEGE CORNER",
-      "DUNDEE",
-      "EDGEWOOD VILLAGE",
-      "EMPORIA",
-      "FISHERSBURG",
-      "FLORIDA",
-      "GEHRING AND GUMZ DITCH",
-      "GIMCO CITY",
-      "HAMILTON",
-      "HARDSCRABBLE",
-      "HUNTSVILLE",
-      "IDLEWOLD",
-      "LEISURE",
-      "LINWOOD",
-      "MOONSVILLE",
-      "NEW COLUMBUS",
-      "NORTH ANDERSON",
-      "PERKINSVILLE",
-      "PROSPERITY",
-      "RIGDON",
-      "SOUTH ELWOOD",
-      "SUNVIEW",
-  
-      // Townships
-      "ADAMS",
-      "ANDERSON",
-      "BOONE",
-      "DUCK CREEK",
-      "FALL CREEK",
-      "GREEN",
-      "JACKSON",
-      "LAFAYETTE",
-      "MONROE",
-      "PIPE CREEK",
-      "RICHLAND",
-      "STONY CREEK",
-      "UNION",
-      "VAN BUREN",
-      
-      // Delaware County
-      "DALEVILLE",
-      
-      // Grant County
-      "FAIRMOUNT",
-      
-      // Hamilton County
-      "NOBLESVILLE",
-      
-      // Hancock County
-      "FORTVILLE"
-  };
 }
