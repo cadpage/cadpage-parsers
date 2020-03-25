@@ -33,7 +33,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     Matcher match = MARKER1.matcher(body);
     if (!match.find()) return false;
     data.strSource = getOptGroup(match.group(1));
-    data.strUnit = getOptGroup(match.group(2));
+    data.strUnit = getOptGroup(match.group(2)).replace(" ", "");
     body = body.substring(match.end()).trim();
     if (data.strSource.length() == 0 && data.strUnit.length() == 0) return false;
     
