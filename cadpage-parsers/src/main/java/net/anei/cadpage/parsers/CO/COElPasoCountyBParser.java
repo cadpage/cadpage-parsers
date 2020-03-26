@@ -14,6 +14,11 @@ public class COElPasoCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "cad@springsgov.com,cad@coloradosprings.gov";
+  }
+  
+  @Override
   protected boolean parseMsg(String body, Data data) {
     if (!body.startsWith("77777711*")) return false;
     body = body.substring(9).trim();
