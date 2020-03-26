@@ -43,6 +43,7 @@ public class COLarimerCountyDParser extends DispatchA41Parser {
       "LFC", "FORT COLLINS",
       "LLV", "LOVELAND",
       "LOV", "LOVELAND",
+      "LPC", "BELLVUE",
       "LNW", "LIVERMORE",
       "TIM", "TIMNATH",
       "WEL", "WELLINGTON",
