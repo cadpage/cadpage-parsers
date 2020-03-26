@@ -57,6 +57,7 @@ public class DispatchProQAParser extends FieldProgramParser {
   private static final Pattern UNASSIGNED_MARKER = Pattern.compile("Job# *[^ ]* *\\(Run# (\\d+)\\) at [0-9:]+ was unassigned\\.");
   private static final Pattern RUN_REPORT_MARKER1 = Pattern.compile("(?:(?:Job# *)?\\d+(?:-[A-Z])?/ *)?Run# *(\\d+) */ *(?:(was Canceled: .*?)/)? *((?:CALL:)?\\d\\d:\\d\\d/ ?(?:DISP:)?\\d\\d:\\d\\d/ ?.*)");
   private static final Pattern RUN_REPORT_MARKER2 = Pattern.compile("Inc# *[^ ]* */ *Run# *(\\d+) was (?:cancelled|completed) */ *([A-Za-z0-9]*) */ *(.*)");
+  private static final Pattern RUN_REPORT_MARKER3 = Pattern.compile("RC:Run# *(\\d+)/((?:=CALL:).*)");
   private static final Pattern GEN_ALERT_PTN1 = Pattern.compile("Go to post .*");
   private static final Pattern GEN_ALERT_PTN2 = Pattern.compile("Job# *[^ ]* *\\(Run# (\\d+)\\) *(.*)");
 
@@ -95,6 +96,15 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.strCallId = match.group(1);
       data.strUnit = match.group(2);
       data.strSupp = addTimeLabels(match.group(3).trim(), false);
+      return true;
+    }
+    
+    match = RUN_REPORT_MARKER3.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      data.strSupp = match.group(2).replace('/', '\n');
       return true;
     }
     

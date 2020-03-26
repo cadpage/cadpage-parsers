@@ -7,7 +7,7 @@ public class NYErieCountyHParser extends DispatchProQAParser {
   
   public NYErieCountyHParser() {
     super("ERIE COUNTY", "NY", 
-          "ID! CALL CALL/L+? TIME ADDR APT CITY ZIP CALL/L INFO/N+", true);
+          "ID! CALL CALL/L+? TIME ADDR APT CITY ZIP CALL/L! INFO/N+", true);
   }
   
   @Override
@@ -18,6 +18,7 @@ public class NYErieCountyHParser extends DispatchProQAParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!body.startsWith("TWIN CITY CAD: ")) return false;
+    body = stripFieldEnd(body, "\nSTOP");
     body = body.substring(15).trim();
     return super.parseMsg(body, data);
   }
