@@ -5,7 +5,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
 
 public class MOBarryCountyCParser extends DispatchSPKParser {
   public MOBarryCountyCParser() {
-    super("BARRY COUNTY", "MO");
+    this("BARRY COUNTY", "MO");
+  }
+  
+  MOBarryCountyCParser(String defCity, String defState) {
+    super(defCity, defState);
     setupGpsLookupTable(MOBarryCountyParser.GPS_LOOKUP_TABLE);
   }
 
@@ -20,7 +24,7 @@ public class MOBarryCountyCParser extends DispatchSPKParser {
   }
 
   @Override
-  public boolean parseHtmlMsg(String subject, String body, Data data) {
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
     if (data.strCity.equalsIgnoreCase("COUNTY")) data.strCity = "";
     return true;

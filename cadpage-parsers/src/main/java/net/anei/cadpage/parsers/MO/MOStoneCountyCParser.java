@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class MOStoneCountyCParser extends DispatchSPKParser {
+public class MOStoneCountyCParser extends MOBarryCountyCParser {
   public MOStoneCountyCParser() {
     super("STONE COUNTY", "MO");
   }
@@ -11,4 +11,10 @@ public class MOStoneCountyCParser extends DispatchSPKParser {
   public String getFilter() {
     return "stoneco911@gmail.com";
   }
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    return super.parseHtmlMsg(subject, body, data);
+  }
+  
 }
