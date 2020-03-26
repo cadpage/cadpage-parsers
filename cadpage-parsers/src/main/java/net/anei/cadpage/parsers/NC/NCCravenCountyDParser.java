@@ -13,7 +13,9 @@ public class NCCravenCountyDParser extends FieldProgramParser {
   
   public NCCravenCountyDParser() {
     super("CRAVEN COUNTY", "NC", 
-          "CALL ADDRCITY/S X GPS PLACE MAP MAP/L UNIT! Narrataive:INFO/N+");
+          "( Location:ADDRCITY/S! X GPS! OCA:ID! CALL3 PLACE! Dispatched_Units:CH! " +
+          "| CALL CALL2! Location:ADDRCITY/S! X GPS! OCA:ID! PLACE " + 
+          ") MAP MAP/L UNIT! Narrative:INFO/N+");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("COUNTY");
   }
@@ -36,10 +38,31 @@ public class NCCravenCountyDParser extends FieldProgramParser {
   
   @Override
   public Field getField(String  name) {
+    if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("CALL3")) return new MyCall3Field();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+  
+  private class MyCall2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strCall)) return;
+      data.strCall = append(data.strCall, " / ", field);
+    }
+  }
+  
+  private class MyCall3Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strCall = field;
+      int pt = data.strCallId.lastIndexOf(field);
+      if (pt >= 0) {
+        data.strCallId = data.strCallId.substring(pt + field.length()).trim();
+      }
+    }
   }
   
   private class MyAddressCityField extends AddressCityField {
@@ -58,11 +81,13 @@ public class NCCravenCountyDParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("(-\\d{2}\\.\\d{4,})(\\d{2}\\.\\d{4,})");
+  private static final Pattern GPS_PTN = Pattern.compile("(-?\\d{2}\\.\\d{4,}) ?(-?\\d{2}\\.\\d{4,})");
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
+      if (field.equals("-361 -361")) return;
+      if (field.equals("-361-361")) return;
       Matcher match = GPS_PTN.matcher(field);
       if (!match.matches()) abort();
       super.parse(match.group(1)+','+match.group(2), data);
