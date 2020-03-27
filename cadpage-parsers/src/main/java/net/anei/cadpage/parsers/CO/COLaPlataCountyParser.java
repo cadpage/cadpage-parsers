@@ -15,7 +15,7 @@ public class COLaPlataCountyParser extends FieldProgramParser {
   
   public COLaPlataCountyParser() {
     super("LA PLATA COUNTY", "CO",
-           "SRC UNIT CALL ADDR INFO+");
+           "SRC UNIT CALL ADDR INFO/N+");
     allowBadChars("()");
   }
   
@@ -28,6 +28,10 @@ public class COLaPlataCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("Message from HipLink")) return false;
+    
+    int pt = body.indexOf("\nIn accordance with");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     return parseFields(body.split("\n"), data);
   }
   
