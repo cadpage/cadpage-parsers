@@ -28,24 +28,32 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
 
   @Override
   public String getFilter() {
-    return "@ashtabulacounty.us,@countycad.us";
+    return "@ashtabulacounty.us,@countycad.us,777";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]+): (.*)");
+  private static final Pattern SRC_PTN = Pattern.compile("([ A-Z]+): +(.*)");
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
+    String subCall = null;
+    Matcher match = SRC_PTN.matcher(subject);
+    if (match.matches()) {
+      data.strSource = match.group(1).trim().replace(' ', '_');
+      subCall = match.group(2);
+    } else if ((match = SRC_PTN.matcher(body)).matches()) {
+      data.strSource = match.group(1).trim().replace(' ', '_');;
+      body = match.group(2);
+    }
+    
     if (!super.parseMsg(body, data)) return false;
     
-    data.strCity = stripFieldEnd(data.strCity, " TWP");
-    
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (match.matches()) {
-      data.strSource = match.group(1);
+    if (subCall != null) {
       data.strCode = data.strCall;
-      data.strCall = match.group(2);
+      data.strCall = subCall;
     }
+    
+    data.strCity = stripFieldEnd(data.strCity, " TWP");
     return true;
   }
   
