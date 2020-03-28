@@ -10,7 +10,7 @@ public class MIOgemawCountyParser extends DispatchOSSIParser {
   
   public MIOgemawCountyParser() {
     super("OGEMAW COUNTY", "MI", 
-          "( CANCEL ADDR SKIP " +
+          "( CANCEL ADDR! SKIP " +
           "| FYI? CALL ADDR! X+? " + 
           ") INFO/N+");
   }
@@ -20,9 +20,11 @@ public class MIOgemawCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    data.strSource = getOptGroup(match.group(1));
-    body = "CAD:" + body.substring(match.end());
+    if (match.lookingAt()) {
+      data.strSource = getOptGroup(match.group(1));
+      body = body.substring(match.end());
+    }
+    body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
   
