@@ -189,6 +189,7 @@ public class DispatchA29Parser extends FieldProgramParser {
   private void addUnit(String field, Data data) {
     Set<String> unitSet = new HashSet<String>();
     if (data.strUnit.length() > 0) unitSet.addAll(Arrays.asList(data.strUnit.split(",")));
+    field = field.replace(" ", "");
     for (String unit : field.split(",")) {
       if (!unitSet.contains(unit)) {
         unitSet.add(unit);

@@ -28,6 +28,7 @@ public class GADadeCountyAParser extends SmartAddressParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     if (!subject.equals("!")) return false;
+    if (body.contains("\n")) return false;
     
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_CROSS_FOLLOWS | FLAG_IGNORE_AT, body, data);
     if (data.strAddress.length() == 0) return false;
