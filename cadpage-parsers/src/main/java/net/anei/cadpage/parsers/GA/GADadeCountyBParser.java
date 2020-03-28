@@ -7,7 +7,7 @@ public class GADadeCountyBParser extends DispatchH05Parser {
   
   public  GADadeCountyBParser() {
     super("DADE COUNTY", "GA",
-          "( SELECT/1 Date:DATETIME! Fire_Call:CALL_TYPE! EMS_Call:CALL_TYPE! Addr:ADDRCITY/S6! Common_Name:PLACE! Cross_St:X! Nature_of_Call:CALL/SDS! Unit:UNIT! Primary_Incident:ID! Info:INFO! INFO/N+ " + 
+          "( SELECT/1 Date:DATETIME! Fire_Call:CALL_TYPE! EMS_Call:CALL_TYPE! Addr:ADDRCITY/S6! Common_Name:PLACE! City:CITY Cross_St:X! Nature_of_Call:CALL/SDS? Unit:UNIT! Primary_Incident:ID! Info:INFO! INFO/N+ " + 
           "| DATETIME ID2 ADDRCITY2/S6 FIRE_CALL_TYPE EMS_CALL_TYPE! UNIT TABLE! TIMES+? TABLE< INFO_BLK+ )", "table");
   }
   
@@ -36,6 +36,7 @@ public class GADadeCountyBParser extends DispatchH05Parser {
     if (name.equals("CALL_TYPE")) return new MyCallTypeField(null);
     if (name.equals("FIRE_CALL_TYPE")) return new MyCallTypeField("Fire Call Type");
     if (name.equals("EMS_CALL_TYPE")) return new MyCallTypeField("EMS Call Type");
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("TABLE")) return new SkipField("<table>");
     return super.getField(name);
   }
@@ -54,6 +55,14 @@ public class GADadeCountyBParser extends DispatchH05Parser {
         field = field.substring(label.length()).trim();
       }
       if (!field.equals(data.strCall)) data.strCall = append(data.strCall, "/", field);
+    }
+  }
+  
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      super.parse(field, data);
     }
   }
 }
