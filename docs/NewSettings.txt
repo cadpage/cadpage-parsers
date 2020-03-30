@@ -11,7 +11,6 @@ Location info (suppress unless needed)
   Current Location
   Select Single Location
   Select Multiple Locations
-  <Advanced>
   Override Location Filter
     From: (Filter)
   Override Default City/State
@@ -49,7 +48,6 @@ Call Display Options
 Mapping options
   Map network status
   GPS mapping option
-  <Advanced>
   Mapping App Option
   Map Navigate Option
  
