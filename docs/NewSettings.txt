@@ -2,22 +2,26 @@ Payment Status
 
 Enable Cadpage
 
-Alert Source (was msg type processed)
+Alert Source
+  Alert Source (was msg type processed)
   <advanced>
   Use old MMS content download logic (suppress if MMS not enabled)
   Suppress duplicate calls
-  
-Location info (suppress unless needed)
+
+Current Location (suppress unless needed)
   Current Location
   Select Single Location
   Select Multiple Locations
-  Override Location Filter
-    From: (Filter)
-  Override Default City/State
+  Sender Filter
+    Override Sender Filter
+    Sender Filter
+  Default City/State
+    Override default City/State
     Default City or County
     Default State
 
-Enable Notification
+Notifications on/off
+  Enable Notification
   Vibrate
   Override Cadpage Audio Alert
     Override Volume Control
