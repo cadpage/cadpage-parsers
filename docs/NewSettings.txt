@@ -22,10 +22,11 @@ Current Location (suppress unless needed)
 
 Notifications on/off
   Enable Notification
+  Override do not disturb status
   Vibrate
-  Override Cadpage Audio Alert
+  Override System Audio Alert
+    Override System Audio Alert
     Override Volume Control
-    Override do not disturb status
     Loop Alert Sound
   Play Cadpage Alert Tones
   Notification Sound
@@ -45,7 +46,7 @@ History Display Options
   
 Call Display Options
   Show popup
-    Restrict in call (suppress in Android 10)
+  Restrict in call (suppress in Android 10)
   Show page source
   Display personal info
 
@@ -70,7 +71,6 @@ Direct Paging Vendors
 Support and Feedback
   Write a Cadpage review
   Email the Developer
-  <advanced>
   Message Report Limit
   Billing Account
 
@@ -127,7 +127,7 @@ Button Configuration
       Button 2 Configuration
       Button 3 Configuration
     
-Split Alert Merge Options
+Split Alert Merge Options  (only if SMS enabled)
   Override Active911 Split Alert Settings
   Check for Split Direct Pages
   Split message timeout
