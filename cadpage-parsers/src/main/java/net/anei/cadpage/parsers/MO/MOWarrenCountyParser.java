@@ -12,13 +12,13 @@ public class MOWarrenCountyParser extends FieldProgramParser {
 
   public MOWarrenCountyParser() {
     super(CITY_TABLE, "WARREN COUNTY", "MO", 
-          "ADDRCITY CALL! DATETIME? INFO/N+");
+          "( ID1 ID2/L | ) ADDRCITY CALL! DATETIME? INFO/N+");
     setupSpecialStreets("BROOKVIEW");
   }
   
   @Override
   public String getFilter() {
-    return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net,WARRENCO911@OMNIGO.COM";
+    return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net,WARRENCO911@OMNIGO.COM,WARRENEMS@OMNIGO.COM";
   }
   
   @Override
@@ -31,6 +31,8 @@ public class MOWarrenCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ID1")) return new IdField("\\d{4}-\\d+", true);
+    if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}");
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -101,6 +103,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (INFO_DASH_PTN.matcher(field).matches()) return;
+      field = stripFieldStart(field, "LOCATION NOTES:");
       super.parse(field, data);
     }
   }
