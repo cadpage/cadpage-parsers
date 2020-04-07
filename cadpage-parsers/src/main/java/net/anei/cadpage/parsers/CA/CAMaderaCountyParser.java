@@ -15,7 +15,7 @@ public class CAMaderaCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "donotreply@cityofchowchilla.org";
+    return "@CityOfChowchilla.org";
   }
   
   @Override
