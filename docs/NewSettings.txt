@@ -20,7 +20,24 @@ Current Location (suppress unless needed)
     Default City or County
     Default State
 
-Notifications on/off
+Notifications on/off (new)
+  Enable Notification
+  Override do not disturb status
+  Vibrate
+  Override System Audio Alert
+    Override System Audio Alert
+    Override Volume Control
+    Loop Alert Sound
+    Play Cadpage Alert Tones
+    Notification Sound
+  Alert Duration
+  Repeat Interval
+  Test Notification
+  <advanced>
+  Alert Delay
+  Show Ack Button when needed
+
+Notifications on/off (old)
   Enable Notification
   Override do not disturb status
   Vibrate
@@ -31,13 +48,12 @@ Notifications on/off
   Play Cadpage Alert Tones
   Notification Sound
   Alert Duration
-  Repeat Alert
-    Repeat Interval
+  Repeat Interval
   Test Notification
   <advanced>
   Alert Delay
   Show Ack Button when needed
-  
+
 History Display Options
   History Limit
   Delete unopened calls
