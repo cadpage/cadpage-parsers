@@ -1,15 +1,20 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchPremierOneParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class CORioGrandeCountyParser extends DispatchPremierOneParser {
+/**
+ * Rio Grande County, CO
+ */
+public class CORioGrandeCountyParser extends GroupBestParser {
   
+
   public CORioGrandeCountyParser() {
-    super("RIO GRANDE COUNTY", "CO");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "@state.co.us";
-  }
+    super(new CORioGrandeCountyAParser(), new CORioGrandeCountyBParser());
+   }
 }
+  
+
+
+
+
+
