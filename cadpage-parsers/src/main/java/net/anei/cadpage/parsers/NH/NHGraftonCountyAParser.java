@@ -8458,7 +8458,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "103 RIVER RUN RD",                     "+43.924023,-71.674690",
         "10 RIVER ST",                          "+43.704572,-71.629409",
         "14 RIVER ST",                          "+43.704849,-71.629012",
-        "24 RIVER ST",                          "+43.704242,-71.628465",
+        "24 RIVER ST",                          "+43.443033,-71.648112",
         "28 RIVER ST",                          "+43.705351,-71.628319",
         "32 RIVER ST",                          "+43.705826,-71.627565",
         "36 RIVER ST",                          "+43.706561,-71.626584",
