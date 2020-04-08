@@ -156,7 +156,5 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     
     // Gasconade County
     "HERMANN"
-    
-    
   };
 }

@@ -2,11 +2,7 @@ Payment Status
 
 Enable Cadpage
 
-Alert Source
-  Alert Source (was msg type processed)
-  <advanced>
-  Use old MMS content download logic (suppress if MMS not enabled)
-  Suppress duplicate calls
+Alert Source (was msg type processed)
 
 Current Location (suppress unless needed)
   Current Location
@@ -142,7 +138,11 @@ Button Configuration
       Button 1 Configuration
       Button 2 Configuration
       Button 3 Configuration
-    
+
+Message processing options
+  Use old MMS content download logic (suppress if MMS not enabled)
+  Suppress duplicate calls
+
 Split Alert Merge Options  (only if SMS enabled)
   Override Active911 Split Alert Settings
   Check for Split Direct Pages
