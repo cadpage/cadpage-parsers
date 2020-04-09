@@ -27,7 +27,15 @@ public class MOBarryCountyCParser extends DispatchSPKParser {
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
     if (data.strCity.equalsIgnoreCase("COUNTY")) data.strCity = "";
+    
+    if (data.strSupp.contains("Dispatch Code: 36A03")) {
+      data.strPriority = "COVID-19 ALERT";
+    }
     return true;
   }
   
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " PRI";
+  }
 }
