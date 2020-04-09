@@ -2,7 +2,7 @@ Payment Status
 
 Enable Cadpage
 
-Alert Source (was msg type processed)
+Alert Message Type (was msg type processed)
 
 Current Location (suppress unless needed)
   Current Location
