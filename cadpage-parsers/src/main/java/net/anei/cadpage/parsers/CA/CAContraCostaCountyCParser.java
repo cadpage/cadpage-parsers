@@ -12,7 +12,7 @@ public class CAContraCostaCountyCParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "srvfire@dapage.net";
+    return "srvfire@dapage.net,srvfire@srvfire.dapage.net";
   }
   
   @Override
@@ -24,6 +24,7 @@ public class CAContraCostaCountyCParser extends MsgParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD_ACTIVE911")) return false;
     
+    body = stripFieldStart(body, "-Type: ");
     body = stripFieldEnd(body, "/TT CAD");
     FParser fp = new FParser(body);
     if (!fp.check("***CAD***")) return false;
