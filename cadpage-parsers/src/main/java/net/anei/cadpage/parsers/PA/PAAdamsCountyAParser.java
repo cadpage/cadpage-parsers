@@ -1020,6 +1020,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "35 MAPLE ST APT 10",                   "+39.809624,-77.135140",
       "35 MAPLE ST APT 11",                   "+39.809628,-77.135223",
       "35 MAPLE ST APT 12",                   "+39.809657,-77.135308",
+      "35 MAPLE ST APT 13",                   "+39.809591,-77.135452",
       "35 MAPLE ST APT 14",                   "+39.809551,-77.135490",
       "35 MAPLE ST APT 15",                   "+39.809516,-77.135509",
       "35 MAPLE ST APT 16",                   "+39.809462,-77.135511",
@@ -1027,7 +1028,6 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "35 MAPLE ST APT 18",                   "+39.809332,-77.135607",
       "35 MAPLE ST APT 19",                   "+39.809296,-77.135625",
       "35 MAPLE ST APT 20",                   "+39.809243,-77.135635",
-      "35 MAPLE ST APT 13",                   "+39.809591,-77.135452",
       
       "315 MENGUS MILL RD APT A",             "+39.735216,-77.092838",
       "315 MENGUS MILL RD APT C",             "+39.735993,-77.094529",
@@ -1372,7 +1372,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "4820 OLD HARRISBURG RD APT 135",       "+39.944099,-77.154121",
       "4820 OLD HARRISBURG RD APT 136",       "+39.942259,-77.153593",
       "4820 OLD HARRISBURG RD APT 137",       "+39.942407,-77.153683",
-      "4820 OLD HARRISBURG RD APT 138",       "+39.942554,-77.153754",
+      "1075 OLD HARRISBURG RD APT 138",       "+39.851228,-77.213762",
       "4820 OLD HARRISBURG RD APT 139",       "+39.942705,-77.153843",
       "4820 OLD HARRISBURG RD APT 140",       "+39.942870,-77.153926",
       "4820 OLD HARRISBURG RD APT 141",       "+39.943028,-77.154002",
@@ -1667,6 +1667,19 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "1760 SHRIVERS CORNER RD APT 181",      "+39.885671,-77.165296",
       "1760 SHRIVERS CORNER RD APT 182",      "+39.885815,-77.165333",
       "1760 SHRIVERS CORNER RD APT 183",      "+39.886046,-77.165329",
+
+      "660 GREEN SPRINGS RD APT B",           "+39.859952,-76.994721",
+      "660 GREEN SPRINGS RD APT C",           "+39.858016,-76.994626",
+      "660 GREEN SPRINGS RD APT E",           "+39.863810,-76.993926",
+      "660 GREEN SPRINGS RD APT F",           "+39.859165,-76.995674",
+      "660 GREEN SPRINGS RD APT G",           "+39.861015,-76.995065",
+      "660 GREEN SPRINGS RD APT H",           "+39.857223,-76.997741",
+      "660 GREEN SPRINGS RD APT I",           "+39.856169,-76.996640",
+      "660 GREEN SPRINGS RD APT J",           "+39.858844,-76.997347",
+      "660 GREEN SPRINGS RD APT K",           "+39.858491,-76.997357",
+      "660 GREEN SPRINGS RD APT M",           "+39.862518,-76.996385",
+      "660 GREEN SPRINGS RD APT N",           "+39.861885,-76.994248",
+      "660 GREEN SPRINGS RD APT P",           "+39.863181,-76.992984",
       
       "1 STONEBROOK DR",                      "+39.901752,-77.442432",
       "2 STONEBROOK DR",                      "+39.901864,-77.442409",
@@ -1748,6 +1761,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
+      
   });
 
   private static final String[] CITY_LIST = new String[]{
