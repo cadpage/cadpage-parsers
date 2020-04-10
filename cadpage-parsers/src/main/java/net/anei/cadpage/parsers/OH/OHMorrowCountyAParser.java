@@ -17,7 +17,7 @@ public class OHMorrowCountyAParser extends DispatchA1Parser {
   
   @Override
   public String getFilter() {
-    return "mc911@rrohio.com";
+    return "mc911@rrohio.com,911text@rrohio.com,911text@mcems.net";
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
