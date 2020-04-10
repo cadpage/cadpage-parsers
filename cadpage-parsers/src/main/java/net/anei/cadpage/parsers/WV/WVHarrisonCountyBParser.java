@@ -5,17 +5,21 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class WVHarrisonCountyBParser extends SmartAddressParser {
+public class WVHarrisonCountyBParser extends FieldProgramParser {
   
   public WVHarrisonCountyBParser() {
     this("HARRISON COUNTY", "WV");
   }
   
   protected WVHarrisonCountyBParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState);
-    setFieldList("ID DATE TIME CALL ADDR APT CITY UNIT");
+    super(CITY_LIST, defCity, defState, 
+          "Call_Number:ID! Primary_Incident_Number:SKIP! All_Incident_Numbers:SKIP! ESN:MAP! District:MAP/L! Received:SKIP! Caller:NAME! Call_Taker:SKIP! " +
+              "City:CITY! State:ST! ZIP_Code:ZIP! Place:PLACE! Address:ADDR! Apt:APT! Floor:APT! Phone:PHONE! Nature:CALL! Discipline:SKIP! Agency:SKIP! " + 
+              "Location:PLACE! Landmark:PLACE! Caller_Address:SKIP! Description:INFO! INFO/N+ ( Location_Alert_Info:ALERT! Units:UNIT! END | TIMES/N+ )");
+    
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -27,21 +31,34 @@ public class WVHarrisonCountyBParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@centrale911.com";
+    return "harrison@911page.net";
   }
-  
+
+  private static final Pattern DELIM = Pattern.compile("\n| +(?=District:|State:|ZIP Code:|Floor:|Phone:|Discipline:|Agency:)");
   private static final Pattern SALEM_UNIT_PTN = Pattern.compile("\\b(SALEM|STA) (\\d{2})\\b");
-  private static final Pattern MASTER = Pattern.compile("Call Number: *(\\d+) +(?:Call Received Time: (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d) +)?(.*?)((?: (?:[A-Z]+\\d+|\\d{3,4}|[A-Z]{2,}FD|AIREVAC|DOH|RCSO))+)");
+  private static final Pattern MASTER = Pattern.compile("Call Number: *(\\d+) +(?:Call Received Time: (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d) +)?(.*?)((?: (?:[A-Z]+\\d+|\\d{3,4}|[A-Z]{2,}FD|DOHPUB|AIREVAC|DOH|RCSO))+)");
   private static final Pattern MBLANK_PTN = Pattern.compile("  +");
   private static final Pattern COUNTY_ABRV_PTN = Pattern.compile("(.*) (?:DODD|HARR|RITC)");
+  
+  private String times;
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
     
     body = SALEM_UNIT_PTN.matcher(body).replaceAll("$1$2");
+    
+    if (body.contains("\n")) {
+      times = "";
+      if (!parseFields(DELIM.split(body), data)) return false;
+      if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n\n", data.strSupp);
+      return true;
+    }
+
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
+    setFieldList("ID DATE TIME CALL ADDR APT CITY UNIT");
+    
     data.strCallId = match.group(1);
     data.strDate = getOptGroup(match.group(2));
     data.strTime = getOptGroup(match.group(3));
@@ -59,6 +76,44 @@ public class WVHarrisonCountyBParser extends SmartAddressParser {
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
     
     return true;
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("TIMES")) return new MyTimesField();
+    return super.getField(name);
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("Unit:") || field.startsWith("Event Type:")) return false;
+      parse(field, data);
+      return true;
+    }
+  }
+  
+  private class MyTimesField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      if (field.startsWith("Event Type:")) {
+        data.strSupp = append(data.strSupp, "\n", field);
+      } else if (field.startsWith("Unit List ")) {
+        data.strUnit = field.substring(10).trim();
+      } else if (field.startsWith("Unit:")) {
+        data.msgType = MsgType.RUN_REPORT;
+        times = append(times, "\n\n", field);
+      } else {
+        times = append(times, "\n", field);
+      }
+    }
   }
   
   @Override
@@ -100,12 +155,14 @@ public class WVHarrisonCountyBParser extends SmartAddressParser {
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
+      "911 HANG UP",
       "ABDOMINAL /BACK PAIN",
       "ASSIST OTHER AGENCY/OFFICER",
       "ATV/FARM VEH ACCIDENT",
       "AUTO/MVA NO INJURIES",
       "AUTO/MVA WITH ENTRAPMENT",
       "AUTO/MVA WITH INJURIES",
+      "AUTO/PEDESTRIAN ACCIDENT",
       "BREATHING DIFFICULTY",
       "BRUSH FIRE",
       "CARDIAC ARREST",
@@ -114,39 +171,52 @@ public class WVHarrisonCountyBParser extends SmartAddressParser {
       "CO INVESTIGATION W/NO PATIENTS",
       "CO INVESTIGATION",
       "CONTROLLED BURN",
+      "DIABETIC EMERGENCY",
       "DISABLED VEH/SIG 20",
+      "DOA/DOS/UNATTENDED DEATH",
       "ELECTRICAL FIRE IN STRUCTURE/EXPOSURE",
       "ELECTRICAL FIRE OUTSIDE STRUCTURE",
       "ELECTRICAL FIRE OUTSIDE STRUCTURE",
       "ELECTRICAL FIRE",
       "EXPLOSION/SIG 82",
+      "FALLS/ACCIDENTS",
       "FIRE ALARM INVESTIGATION",
       "FLOODING",
+      "FOLLOW UP INVESTIGATION",
+      "GENERAL OES",
+      "HAZ MATERIALS LEAK/SPILL",
       "HEAD INJURY",
       "HEMORRHAGE/BLEEDING",
       "MISSING JUVENILE/SIG 61A",
+      "LOCK OUT",
       "NATURAL GAS/OIL LEAK",
       "NON EMERGENCY",
+      "NOSE BLEED",
       "OBSTETRICS/BIRTH",
       "ODOR INVESTIGATION",
       "OIL OR GAS FIRE",
+      "OVERDOSE",
       "PERSONAL INJURY",
       "POWER LINES DOWN",
       "POWER LINES",
       "PUBLIC SERVICE",
       "ROADWAY OBSTRUCTION",
+      "ROADWAY  OBSTRUCTION",
       "ROADWAY",
       "SECURITY ALARM INVESTIGATION",
       "SEIZURES",
+      "SICK/UNKNOWN",
       "SMOKE INVESTIGATION",
+      "STANDBY",
       "STROKE/CVA",
       "STRUCTURE COLLAPSE",
       "STRUCTURE FIRE - REKINDLE",
       "STRUCTURE FIRE",
       "TEST/TRAINING",
       "TRANSPORTATION ACCIDENT RT 50 W/ENTRAPMENT",
+      "TRANSPORTATION ACCIDENT RT 50 W/FATALITY",
       "TRANSPORTATION ACCIDENT RT 50 W/INJURIES",
-      "TRANSPORTATION ACCIDENT RT 50 W/NO INJURIES",
+      "TRANSPORTATION ACCIDENT RT 50 NO INJURI",
       "TRANSPORTATION ACCIDENT/WITH ENTRAPMENT",
       "TRANSPORTATION ACCIDENT/WITH INJURIES",
       "TRANSPORTATION ACCIDENT/WITH NO INJURIES",

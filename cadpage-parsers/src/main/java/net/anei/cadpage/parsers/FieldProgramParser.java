@@ -2562,7 +2562,7 @@ public class FieldProgramParser extends SmartAddressParser {
     }
   }
   
-  private static final Pattern ZIP_PATTERN = Pattern.compile("\\d{5}");
+  private static final Pattern ZIP_PATTERN = Pattern.compile("\\d{5}|");
   public class ZipField extends Field {
     
     @Override
@@ -2573,7 +2573,7 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (! ZIP_PATTERN.matcher(field).matches()) return false;
-      data.strCity = field;
+      if (data.strCity.length() == 0) data.strCity = field;
       return true;
     }
 
