@@ -3,15 +3,13 @@ package net.anei.cadpage.parsers.TN;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
 
-
-public class TNRoaneCountyParser extends FieldProgramParser {
+public class TNRoaneCountyParser extends DispatchA71Parser {
   
   public TNRoaneCountyParser() {
-    super("ROANE COUNTY", "TN", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! Unit:UNIT? INFO:INFO/N+");
+    super("ROANE COUNTY", "TN");
   }
   
   @Override
@@ -21,7 +19,6 @@ public class TNRoaneCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Roane County TN 911 Center")) return false;
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
