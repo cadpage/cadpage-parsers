@@ -32,8 +32,9 @@ public class MOWarrenCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID1")) return new IdField("\\d{4}-\\d+", true);
-    if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}");
+    if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}|\\d{2}-\\d{4}[A-Z]{4}|", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("CALL")) return new CallField("[-/& A-Za-z0-9]+", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
