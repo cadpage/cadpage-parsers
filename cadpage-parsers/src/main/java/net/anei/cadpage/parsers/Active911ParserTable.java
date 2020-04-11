@@ -1361,6 +1361,7 @@ public class Active911ParserTable {
       "US/OR/MiltonFreewater",            "ORUmatillaCountyB",
       "US/OR/MountainWaveSAR",            "ORMultnomahCountyC",
       "US/OR/MultnomahCounty",            "ORMultnomahCounty",
+      "US/OR/NetartsOceanside",           "ORTillamookCounty",
       "US/OR/NewbergFire",                "ORYamhillCountyA",
       "US/OR/Oakridge",                   "ORLaneCountyC",
       "US/OR/Pacific",                    "ORJosephineCounty",
