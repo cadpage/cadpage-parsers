@@ -8,9 +8,9 @@ Current Location (suppress unless needed)
   Current Location
   Select Single Location
   Select Multiple Locations
-  Sender Filter
-    Override Sender Filter
-    Sender Filter
+  Sender Address Filter
+    Override Sender Address Filter
+    Sender Address Filter
   Default City/State
     Override default City/State
     Default City or County
