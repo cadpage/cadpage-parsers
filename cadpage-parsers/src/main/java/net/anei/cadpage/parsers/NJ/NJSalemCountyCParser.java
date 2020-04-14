@@ -9,8 +9,17 @@ import net.anei.cadpage.parsers.MsgParser;
 public class NJSalemCountyCParser extends MsgParser {
   
   public NJSalemCountyCParser() {
-    super("SALEM COUNTY", "NJ");
+    this("SALEM COUNTY", "NJ");
+  }
+  
+  public NJSalemCountyCParser(String defCity, String defState) {
+    super(defCity, defState);
     setFieldList("ID CALL PLACE ADDR APT CITY ST UNIT INFO");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "NJSalemCountyC";
   }
   
   @Override
@@ -18,8 +27,8 @@ public class NJSalemCountyCParser extends MsgParser {
     return "E_Messaging@salemcountynj.gov";
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{2,3}-\\d{4}-\\d{5}");
-  private static final Pattern MASTER = Pattern.compile("([- A-Z]+) @ (.*?), (.*?)(?: \n(.*))?");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{2,3}-\\d{4}-\\d{5,6}");
+  private static final Pattern MASTER = Pattern.compile("([-;/ A-Z]+) @ (.*?), (.*?)(?: \n(.*))?", Pattern.DOTALL);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([ A-Z]+) (NJ|DE)\\b *\\d{0,5}");
   
   @Override
