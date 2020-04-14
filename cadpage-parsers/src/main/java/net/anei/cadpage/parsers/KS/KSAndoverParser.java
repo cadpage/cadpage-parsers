@@ -16,6 +16,7 @@ public class KSAndoverParser extends DispatchGlobalDispatchParser {
         "CEDAR RIDGE",
         "HARVEST RIDGE",
         "HEATHER LAKE",
+        "KERRY LYNN",
         "SANTA FE LAKE",
         "WAGON WHEEL"
     );
@@ -60,6 +61,8 @@ public class KSAndoverParser extends DispatchGlobalDispatchParser {
       "FIRE - BUILDING FIRE RESIDENTIAL",                                                                       
       "FIRE - CHECK A FIRE THAT IS OUT",
       "FIRE - CHECK ELEC WIRING/APPLIANCE",
+      "FIRE - CO DETECTOR ACTIVATION",
+      "FIRE - FUEL WASH DOWN",
       "FIRE - HAZ-MAT RESPONSE",                                                                                
       "FIRE - LANDING ZONE",
       "FIRE - MEDICAL RESPONSE",

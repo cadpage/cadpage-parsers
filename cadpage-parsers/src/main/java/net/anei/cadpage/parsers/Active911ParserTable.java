@@ -500,6 +500,7 @@ public class Active911ParserTable {
       "US/IN/WhitleyCounty",              "INWhitleyCounty",
       "US/KS/AllenCounty911",             "KSAllenCounty",
       "US/KS/AndersonCounty",             "KSAndersonCounty",
+      "US/KS/CityofAndover",              "KSAndover",
       "US/KS/AugustaDPS",                 "KSButlerCountyC",
       "US/KS/BartonCounty",               "KSBartonCounty",
       "US/KS/BourbonCounty",              "KSBourbonCounty",
