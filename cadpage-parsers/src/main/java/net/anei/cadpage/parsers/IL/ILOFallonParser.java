@@ -15,6 +15,6 @@ public class ILOFallonParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "OFALLON@PUBLICSAFETYSOFTWARE.NET,CENCOM@CO.ST-CLAIR.IL.US";
+    return "OFALLON@PUBLICSAFETYSOFTWARE.NET,CENCOM@CO.ST-CLAIR.IL.US,NOREPLYOFALLON@itiusa.com";
   }
 }

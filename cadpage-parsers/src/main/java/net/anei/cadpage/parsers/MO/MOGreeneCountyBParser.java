@@ -14,7 +14,7 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
   
   @Override
   public String getFilter() {
-    return "grn_alret@springfieldmo.gov";
+    return "GRN_Alert@springfieldmo.gov";
   }
   
   @Override
