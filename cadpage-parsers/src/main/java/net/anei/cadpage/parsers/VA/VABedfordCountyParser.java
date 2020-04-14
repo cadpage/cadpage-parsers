@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.VA;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -10,7 +12,7 @@ public class VABedfordCountyParser extends FieldProgramParser {
   
   public VABedfordCountyParser() {
     super(CITY_LIST, "BEDFORD COUNTY", "VA",
-           "CALL#:ID! LOC:ADDR/S! COMP:CALL!");
+          "CALL#:ID! LOC:ADDR/S! COMP:CALL!");
   }
   
   @Override
@@ -18,12 +20,31 @@ public class VABedfordCountyParser extends FieldProgramParser {
     return "Bedford";
   }
   
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:\\b(?:[A-Z]*\\d+|FMO|SOC)\\b,?)+)");
+  
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!body.startsWith("Bedford911:")) return false;
     body = body.substring(11).trim();
     body = body.replace('\n', ' ');
+    
+    Parser p = new Parser(body);
+    data.strPlace = p.getLastOptional(" Line20=");
+    data.strSupp = p.getLastOptional(" Line19=");
+    body = p.get();
+    
+    Matcher match = TRAIL_UNIT_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1).trim();
+      data.strUnit = match.group(2);
+    }
+    
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " UNIT INFO PLACE";
   }
 
   @Override
