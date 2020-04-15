@@ -7,7 +7,7 @@ public class NCNashCountyBParser extends DispatchA3Parser {
 
   public NCNashCountyBParser() {
     super("", "NASH COUNTY", "NC", 
-          "Line2:ADDR! Line3:APT! Line4:APT! Line5:CITY! Line6:X! Line7:X! Line8:EMPTY! Line9:INFO! Line10:CODE! Line11:CALL! Line12:NAME Line13:PHONE Line14:UNIT Line15:INFO2 Line16:INFO2 Line17:INFO2 Line18:INFO");
+          "Line2:ADDR! Line3:APT! Line4:APT! Line5:CITY! Line6:X! Line7:X! Line8:MAP! Line9:INFO! Line10:CODE! Line11:CALL! Line12:NAME Line13:PHONE Line14:UNIT Line15:INFO2 Line16:INFO2 Line17:INFO2 Line18:INFO");
     setBreakChar('=');
   }
   
