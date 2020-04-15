@@ -66,16 +66,19 @@ public class INHarrisonCountyParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CEN", "CENTRAL",
       "COR", "CORYDON",
+      "CRA", "CRANDALL",
       "DEP", "DEPAUW",
+      "ELI", "ELIZABETH",
+      "LAC", "LACONIA",
       "LAN", "LANESVILLE",
+      "MAU", "MAUCKPORT",
+      "MIL", "MILLTOWN",
       "NMT", "NEW MIDDLETOWN",
       "NSA", "NEW SALISBURY",
-      "RAM", "RAMSEY",
-
-      // Boone County
-      "ELI", "ELIZABETH",
-      "LAC", "LACONIA"
+      "PAL", "PALMYRA",
+      "RAM", "RAMSEY"
   });
 
 }
