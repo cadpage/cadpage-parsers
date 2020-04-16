@@ -1475,6 +1475,7 @@ public class Active911ParserTable {
       "US/PA/UnionCounty",                "PAUnionCounty",
       "US/PA/ValleyAmbAut",               "PAAlleghenyCountyC",
       "US/PA/VenangoCounty",              "PAVenangoCountyB,PAVenangoCountyC",
+      "US/PA/WarminsterFD",               "PABucksCountyB",
       "US/PA/WarrenCounty",               "PAWarrenCounty",
       "US/PA/WashingtonCounty",           "PAWashingtonCounty,PAAlleghenyCountyD",
       "US/PA/WayneCounty",                "PAWayneCounty",
