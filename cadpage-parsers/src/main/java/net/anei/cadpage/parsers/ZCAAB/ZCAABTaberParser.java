@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.ZCAAB;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -15,13 +18,14 @@ public class ZCAABTaberParser extends FieldProgramParser {
     return "inetmaint@taber.ca";
   }
   
-  private static final String MARKER = ">>> TABER 911 NOTIFICATION <<<\n=========================================\n";
+  private static final Pattern MARKER = Pattern.compile(">>> .*? NOTIFICATION <<<\n=========================================\n");;
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Create Event")) return false;
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end()).trim();
     int pt = body.indexOf("\n\n---");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
@@ -37,6 +41,14 @@ public class ZCAABTaberParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      
+      // Check for GPS coordinates
+      if (field.startsWith(":@:")) { 
+        data.strAddress = field.substring(3).trim();
+        return;
+      }
+      
+      field = stripFieldStart(field, "::Nearest:");
       field = stripFieldStart(field, "@");
       String city = null;
       int pt = field.indexOf(',');
@@ -45,7 +57,7 @@ public class ZCAABTaberParser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
       }
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
-      if (data.strCity.length() == 0) {
+      if (data.strCity.length() == 0 && city != null) {
         pt = city.indexOf(',');
         if (pt >= 0) city = city.substring(0,pt).trim();
         data.strCity = city;
@@ -90,6 +102,39 @@ public class ZCAABTaberParser extends FieldProgramParser {
     "SCOPE",
 
     // Other places
-    "ASKOW"
+    "AGRICULTURE RESEARCH",
+    "ALBION RIDGE",
+    "ASKOW",
+    "BARONS",
+    "BROXBURN",
+    "CHIN",
+    "COALDALE",
+    "COALHURST",
+    "COMMERCE",
+    "DIAMOND CITY",
+    "EASTVIEW ACRES",
+    "FAIRVIEW",
+    "GHENT",
+    "IRON SPRINGS",
+    "KIPP",
+    "LENZIE",
+    "LETHBRIDGE",
+    "MCDERMOTT",
+    "MCDERMOTT SUBDIVISION",
+    "MONARCH",
+    "NOBLEFORD",
+    "PICTURE BUTTE",
+    "PIYAMI",
+    "SHAUGHNESSY",
+    "STEWART",
+    "STEWART SIDING",
+    "SUNSET ACRES",
+    "TEMPEST",
+    "TENNION",
+    "TURIN",
+    "WESTVIEW ACRES",
+    "WHITNEY",
+    "WILSON",
+    "WILSON SIDING"
   };
 }

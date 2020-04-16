@@ -202,6 +202,7 @@ public class ALDothanBParser extends FieldProgramParser {
     "MERRITTS CROSSROADS",
     "PANSEY",
     "REHOBETH",
+    "SLOCOMB",
     "SOUTHERN JUNCTION",
     "TAYLOR",
     "WEBB",
