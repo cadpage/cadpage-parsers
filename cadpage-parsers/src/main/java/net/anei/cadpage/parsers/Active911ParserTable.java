@@ -496,6 +496,7 @@ public class Active911ParserTable {
       "US/IN/VermillionCounty",           "INVermillionCounty",
       "US/IN/VigoCounty",                 "INVigoCounty",
       "US/IN/WabashCounty",               "INWabashCounty",
+      "US/IN/WashingtonCounty",           "INWashingtonCounty",
       "US/IN/WayneCounty",                "INWayneCountyB",
       "US/IN/WhitleyCounty",              "INWhitleyCounty",
       "US/KS/AllenCounty911",             "KSAllenCounty",

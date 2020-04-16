@@ -503,6 +503,7 @@ public class ParserList {
               ,"INVermillionCounty"             ,"Vermillion County, IN"
               ,"INVigoCounty"                   ,"Vigo County, IN"
               ,"INWabashCounty"                 ,"Wabash County, IN"
+              ,"INWashingtonCounty"             ,"Washington County, IN"
               ,"INWayneCounty"                  ,"Wayne County, IN"
               ,"INWhitleyCounty"                ,"Whitley County, IN"
           ),
