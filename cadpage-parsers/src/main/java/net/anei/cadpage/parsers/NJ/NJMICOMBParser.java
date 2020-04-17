@@ -128,9 +128,10 @@ public class NJMICOMBParser extends MsgParser {
       if (!fp.check(" APT:")) return false;
       data.strApt = append(data.strApt, "-", fp.get(10));
       if (!fp.check(" ")) return false;
-      data.strPlace = fp.get(40);
       fp.setOptional();
-      if (!fp.check(" Cross-")) return false;
+      String place = fp.getOptional(" Cross-", 40, 50);
+      if (place == null) place = fp.get();
+      data.strPlace = place;
       data.strCross = fp.get(30);
       if (!fp.check(" ")) return false;
       data.strCall = fp.get(30);
