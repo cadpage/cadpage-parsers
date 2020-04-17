@@ -26,7 +26,11 @@ public class NJMICOMBParser extends MsgParser {
 
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public int splitBreakLength() { return 160; }
+      @Override public int splitBreakPad() { return 2; }
+    };
   }
   
   private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d|");
@@ -53,25 +57,47 @@ public class NJMICOMBParser extends MsgParser {
       
       if (body.startsWith("MICCOM / ")) {
         body = body.substring(9).trim();
+        body = body.replace("MICCOM / ", " ");
         break;
       }
         
       return false;
     } while (false);
     
-    // Fix problem with fixed length message split across two messages.
+    // Fix problems with fixed length message split across two messages.
     if (substring(body, 10, 16).equals("RESP:")) {
-      if (body.length() < 128) {
+      if (body.length() <= 160) {
         data.expectMore = true;
       } else {
-        int pt2 = body.indexOf(" Cross-");
+        int pt2 = body.indexOf("Cross-");
         if (pt2 < 10) return false;
-        int pt1 = pt2;
-        if (substring(body, pt1-9, pt1).equals(" MICCOM /")) pt1 -= 9;
-        StringBuffer sb = new StringBuffer(body.substring(0, pt1));
-        while (sb.length() < 127) sb.append(' ');
-        sb.append(body.substring(pt2));
-        body = sb.toString();
+        if (pt2 < 138) {
+          StringBuffer sb = new StringBuffer(body.substring(0, pt2));
+          while (sb.length() < 138) sb.append(' ');
+          sb.append(body.substring(pt2));
+          body = sb.toString();
+        }
+        
+        else {
+          if (body.length() >= 160) {
+            char chr1 = body.charAt(159);
+            char chr2 = body.charAt(160);
+            if (chr1 >= 'a' && chr1 <= 'z' && chr2 >= 'A' && chr2 <= 'Z') {
+              body = body.substring(0,160) + ' ' + body.substring(160);
+            }
+          }
+          
+          int pt3 = body.indexOf(" #", 137);
+          if (pt3 >= 0) {
+            pt3 -= 29;
+            if (pt3 < 175) {
+              StringBuffer sb = new StringBuffer(body.substring(0, pt3));
+              while (sb.length() < 175) sb.append(' ');
+              sb.append(body.substring(pt3));
+              body = sb.toString();
+            }
+          }
+        }
       }
     }
 
