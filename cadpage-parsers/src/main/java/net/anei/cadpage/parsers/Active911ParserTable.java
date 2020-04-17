@@ -322,6 +322,7 @@ public class Active911ParserTable {
       "US/GA/CarrollCounty",              "GACarrollCounty",
       "US/GA/ClaytonCounty",              "GAClaytonCounty",
       "US/GA/ColquittCounty",             "GAColquittCounty",
+      "US/GA/DawsonCounty",               "GADawsonCounty",
       "US/GA/DecaturCounty",              "GADecaturCountyC",
       "US/GA/DoolyCounty",                "GADoolyCounty",
       "US/GA/EffinghamCounty",            "GAEffinghamCountyA",
