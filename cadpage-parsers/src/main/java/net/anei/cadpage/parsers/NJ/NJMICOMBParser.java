@@ -146,6 +146,7 @@ public class NJMICOMBParser extends MsgParser {
     if (fp.check("RESP: ")) {
       setFieldList("UNIT CITY ADDR APT PLACE X CALL ID TIME NAME");
       data.strCity = cleanCity(fp.get(15));
+      if (data.strCity.endsWith(" T")) data.strCity += "wp";
       if (!fp.check(" ")) return false;
       if (fp.check(" ")) return false;
       parseAddress(fp.get(30), data);
