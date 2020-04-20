@@ -20,7 +20,7 @@ public class PABradfordCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "bradfordpa911@911email.net,geoconex@nlamerica.com,911comm1.info,911com3.info,dispatch@bradfordco911.info";
+    return "@bradfordco.org,bradfordpa911,@911email.net,@nlamerica.com,911comm1.info,@911comm3.info,@911comm2.info,911com3.info,@Bradfordco911.info";
   }
 
   @Override
