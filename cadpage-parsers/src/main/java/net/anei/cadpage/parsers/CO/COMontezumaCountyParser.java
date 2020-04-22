@@ -1,35 +1,20 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA67Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class COMontezumaCountyParser extends DispatchA67Parser {
+/**
+ * Montezuma County, CO
+ */
+public class COMontezumaCountyParser extends GroupBestParser {
   
-  public  COMontezumaCountyParser() {
-    super(":", CITY_LIST, "MONTEZUMA COUNTY", "CO", A67_OPT_PLACE | A67_OPT_CROSS,
-          "CORTEZ|DOLORES|LEW-ARR|MANCOS|MVP|PLV|RICO", ".*");
-    removeWords("RR");   // RR is a unit, not a cross street
-  }
-  
-  @Override
-  public String getFilter() {
-    return "cadalerts@messaging.eforcesoftware.net";
-  }
-  
-  private static final String[] CITY_LIST = new String[]{
-      "ARRIOLA",
-      "CAHONE",
-      "CORTEZ",
-      "DOLORES",
-      "LEWIS",
-      "MANCOS",
-      "MESA VERDE",
-      "PLEASANT VIEW",
-      "TOWAOC",
-      "YELLOW JACKET",
-      
-      // Delores County
-      "CAHONE",
-      "DOVE CREEK",
-      "RICO"
-  };
+
+  public COMontezumaCountyParser() {
+    super(new COMontezumaCountyAParser(), new COMontezumaCountyBParser());
+   }
 }
+  
+
+
+
+
+
