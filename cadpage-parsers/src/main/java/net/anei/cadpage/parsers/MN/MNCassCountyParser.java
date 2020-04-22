@@ -15,7 +15,7 @@ public class MNCassCountyParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "no-reply@ledsportal.com";
+    return "no-reply@ledsportal.com,zuercher.cass@co.cass.mn.us";
   }
   
   private static final Pattern MASTER = Pattern.compile("(.*?) RESPOND(?: (?:None|(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) - *(.*)))?");
