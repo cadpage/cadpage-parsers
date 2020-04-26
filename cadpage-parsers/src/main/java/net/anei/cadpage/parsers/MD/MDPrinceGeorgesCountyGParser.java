@@ -60,6 +60,7 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
   
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("APT")) return new AptField("# *(.*)|([A-Z]?\\d{1,5}[A-Z]?)", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CH")) return new ChannelField("(?:T?G?|FX)[A-F]\\d{1,2}", true);
@@ -67,6 +68,24 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
+  }
+  
+  private class MyCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      String call = CALL_CODES.getProperty(field);
+      if (call != null) {
+        data.strCode = field;
+        data.strCall = call;
+      } else {
+        data.strCall = field;
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
   
   // Cross field only exist if it has the correct keyword
@@ -125,6 +144,78 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
       }
     }
   }
+  
+  private static final Properties CALL_CODES = buildCodeTable(new String[]{
+      "ACTIVEA1",      "UNCONFIRMED ACTIVE ASSAILANT",
+      "ACTIVEA2",      "CONFIRMED ACTIVE ASSAILANT",
+      "ALS+",          "Medical Local Expanded",
+      "ALS0",          "Medical Local",
+      "ALS1",          "Medical Local",
+      "ALS2",          "Medical Local Expanded",
+      "BARI",          "BARRICADED SUBJECT",
+      "BLS+",          "BLS W/Assistance",
+      "BLS0",          "BLS PROCEED",
+      "BLS1",          "BLS RESPOND",
+      "BOMB0",         "BOMB- UNVERIFIED PACKAGE OR HAZARD",
+      "BOMB1",         "BOMB/HAZARDOUS DEVICE INVESTIGATION",
+      "BOMB2",         "SUSPECTED BOMB/HAZARDOUS DEVICE",
+      "BOMB3",         "BOMB/HAZARDOUS DEVICE",
+      "COLAP1",        "TREE ON A HOUSE INVESTIGATION",
+      "COLAP2",        "VEHICLE INTO STRUCTURE W/O INJURIES",
+      "COLAP3",        "VEHICLE INTO STRUCTURE W/ INJURIES",
+      "COLAP4",        "STRUCTURE ENTRAPMENT OVER WATER WITH INJURIES",
+      "COLAPO",        "TRENCH NOTIFICATION",
+      "CONFSP4",       "TRENCH/CONFINED SPACE/BUILDING COLLAPSE W/ ENTRAPMENT",
+      "EXPLOD5",       "EXPLOSION",
+      "GASLK1",        "GAS LEAK OUTSIDE",
+      "GASLK2",        "GAS LEAK OUTSIDE W/SICK PEOPLE",
+      "GASLK3",        "STREET ALARM- GAS LEAK INSIDE OR OUTSIDE",
+      "GASLK4",        "STREET ALARM- GAS LEAK INSIDE W/SICK PEOPLE ",
+      "HARES4",        "HIGH ANGLE RESCUE",
+      "HAZBOX",        "HAZARDOUS MATERIALS- BOX ALARM",
+      "HAZINV",        "NON-EMERGENT HAZARDOUS MATERIALS INVESTIGATION",
+      "HAZLOC",        "HAZARDOUS MATERIALS- STREET ALARM",
+      "HAZSER",        "NON-EMERGENT HAZARDOUS MATERIALS SERVICE CALL",
+      "INVEST1",       "FIRE ALARM SYSTEM INVESTIGATION",
+      "INVEST2",       "HIGH RISK INVESTIGATION",
+      "INVEST3",       "VEHICLE FIRE/VEHICLE INCIDENT",
+      "INVEST4",       "CO DETECTOR W/SICK PEOPLE",
+      "INVEST5",       "LOCK OUT W/FOOD ON THE STOVE",
+      "METRO",         "RESCUE LOCAL- TRAIN DERAILMENT AND OR FIRE",
+      "METRO/TRAINS",  "TRAIN OR TRACK BED INCIDENT",
+      "OUTSID1",       "OUTSIDE/BRUSH FIRE NON-RURAL",
+      "OUTSID3",       "BRUSH FIRE/RURAL",
+      "PALNE1",        "AIRCRAFT DOWN INVESTIGATION",
+      "PLANE0",        "LOW FLYING PLANE INCIDENT",
+      "PLANE2",        "SMALL AIRCRAFT DOWN",
+      "PLANE3",        "AIRCRAFT DOWN INVOLVING WATER",
+      "PLANE4",        "LARGE AIRCRAFT DOWN",
+      "RESCUE1",       "RESCUE LOCAL",
+      "RESCUE2",       "RESCUE LOCAL WITH ENTRAPMENT",
+      "RESCUE3",       "LIMITED ACCESS HIGHWAY INCIDENT",
+      "RESCUE4",       "LIMITED ACCESS HIGHWAY INCIDENT W/ENTRAPMENT",
+      "RESCUE5",       "WOODROW WILSON BRIDGE INCIDENT",
+      "RESCUE6",       "WOODROW WILSON BRIDGE INCIDENT W/ENTRAPMENT",
+      "RESCUE7",       "RESCUE LOCAL W/ SERIOUS INJURIES",
+      "SERV1",         "NON-EMERGENT SERVICE CALL",
+      "SERV2",         "NON-EMERGENT LOCK OUT",
+      "STRUCF1",       "APPLIANCE/FIRE OUT",
+      "STRUCF2",       "STREET ALARM- FIRE",
+      "STRUCF3",       "STREET ALARM- FIRE W/INJURIES",
+      "STRUCF4",       "BOX ALARM- HOUSE FIRE",
+      "STRUCF5",       "BOX ALARM- HOUSE FIRE W/PEOPLE TRAPPED",
+      "STRUCF6",       "BOX ALARM- HIGH RISE FIRE",
+      "STRUCF7",       "BOX ALARM- HIGH RISE FIRE W/PEOPLE TRAPPED",
+      "TRAIN",         "TRAIN DERAILMENT",
+      "WATER0",        "NON-EMERGENT WATER INCIDENT",
+      "WATER1",        "VEHICLE IN THE WATER INVESTIGATION",
+      "WATER2",        "ANIMAL IN THE WATER INCIDENT",
+      "WATER3",        "POOL INCIDENT-DROWNING",
+      "WATER4",        "WATER RESCUE/NON-POOL INCIDENT",
+      "WATER5",        "WATER INCIDENT- TECHNICAL INCIDENT",
+      "WATER6",        "PEOPLE IN THE WATER INCIDENT",
+      "WATER7",        "BOAT FIRE- WATER OR DOCK"
+  });
   
   private static final Properties MA_CITY_TABLE = buildCodeTable(new String[]{
       "MAAA", "ANNE ARUNDEL COUNTY",
