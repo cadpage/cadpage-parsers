@@ -25,7 +25,7 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@starksheriff.org,@redcenter.us,@neo-comm.org,7127390583,messaging@iamresponding.com,@cantonohio.gov,@ci.minerva.oh.us,777";
+    return "@starksheriff.org,@redcenter.us,@neo-comm.org,7127390583,messaging@iamresponding.com,@cantonohio.gov,@ci.minerva.oh.us,starkcountycad@gmail.com,777";
   }
   
   @Override
