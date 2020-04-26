@@ -105,7 +105,7 @@ public class ManageParsers {
         pkg = location.substring(0,2);
       } else if (location.startsWith("Dispatch")) {
         pkg = "dispatch";
-      } else if (location.startsWith("General") || location.startsWith("Standard")) {
+      } else if (location.startsWith("General") || location.startsWith("Standard") || location.equals("AiviaAED")) {
         pkg = "general";
       }
     }

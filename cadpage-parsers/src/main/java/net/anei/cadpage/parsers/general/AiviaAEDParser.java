@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class AIVIAParser extends FieldProgramParser {
+public class AiviaAEDParser extends FieldProgramParser {
   
-  public AIVIAParser() {
+  public AiviaAEDParser() {
     super("", "", 
           "CALL1! Date/Hour:DATETIME! CALL/SDS ADDR ZIP_CITY!");
   }

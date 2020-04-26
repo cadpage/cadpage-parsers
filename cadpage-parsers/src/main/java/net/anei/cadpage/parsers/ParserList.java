@@ -17,7 +17,7 @@ public class ParserList {
       return parserList;
     }
     
-    private ParserCategory(String name, Object ... objs) {
+    ParserCategory(String name, Object ... objs) {
       this.name = name;
       List<ParserEntry> entryList = new ArrayList<ParserEntry>();
       int ndx = 0;
@@ -106,7 +106,7 @@ public class ParserList {
               ,"Cadpage3"                       ,"Standard Cadpage Format C"
               ,"StandardNationalWeatherService" ,"National Weather Service"
               ,"StandardSpottedDog"             ,"Spotted Dog Technologies"
-              ,"AIVIA AED"                      ,"AIVIA"
+              ,"AiviaAED"                       ,"Aivia AED"
           ),
           new ParserCategory("Alabama"
               ,"ALAutaugaCounty"                ,"Autauga County, AL"
