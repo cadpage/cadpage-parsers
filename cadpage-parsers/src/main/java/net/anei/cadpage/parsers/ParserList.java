@@ -106,6 +106,7 @@ public class ParserList {
               ,"Cadpage3"                       ,"Standard Cadpage Format C"
               ,"StandardNationalWeatherService" ,"National Weather Service"
               ,"StandardSpottedDog"             ,"Spotted Dog Technologies"
+              ,"AIVIA AED"                      ,"AIVIA"
           ),
           new ParserCategory("Alabama"
               ,"ALAutaugaCounty"                ,"Autauga County, AL"
