@@ -7,6 +7,7 @@ public class NYSullivanCountyParser extends GroupBestParser {
   
   public NYSullivanCountyParser() {
     super(new NYSullivanCountyAParser(),
-          new NYSullivanCountyBParser());
+          new NYSullivanCountyBParser(),
+          new NYSullivanCountyCParser());
   }
 }
