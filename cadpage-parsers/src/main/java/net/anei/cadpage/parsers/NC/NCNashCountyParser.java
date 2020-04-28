@@ -51,6 +51,7 @@ public class NCNashCountyParser extends GroupBestParser {
       "STONY CREEK",
       
       // Franklin County
+      "BUNN",
       "LOUISBURG",
       
       // Halifax county

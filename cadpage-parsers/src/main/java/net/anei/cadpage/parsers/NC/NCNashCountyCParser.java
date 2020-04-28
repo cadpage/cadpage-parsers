@@ -10,7 +10,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
   
   public NCNashCountyCParser() {
     super(NCNashCountyParser.CITY_LIST, "NASH COUNTY", "NC", 
-          "CALL NONE? ADDRCITY CH? PLACE GPS1 GPS2 NAME UNIT/C+? ID DATETIME! INFO/N+");
+          "CALL CALL2? ADDRCITY MISC? PLACE GPS1 GPS2 NAME? UNIT/C+? ID DATETIME! INFO/N+");
   }
   
   @Override
@@ -29,20 +29,21 @@ public class NCNashCountyCParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0) return false;
     tmpSubject = subject;
     
     // They switched delimiters from a semicolon to a colon-space recently
     // We still want to process both formats, but spurious colons and semicolons make the
     // usual approach of trying both and seeing which one has the most fields unfeasible.  So
-    // instead, look fo rthe required ID field and see what delimiter follows it.
+    // instead, look for the required ID field and see what delimiter follows it.
     Matcher match = FIND_DELIM_PTN.matcher(body);
     if (!match.find()) return false;
     String delim = match.group(1);
     if (delim.equals(":")) {
       delim += ' ';
       if (body.endsWith(":")) body += ' ';
+      body = body.replace(" RM: ", " RM ").replace(" FLOOR: ", " FLOOR ");
     }
+    getMiscField().reset();
     if (!parseFields(body.split(delim), data)) return false;
     data.strUnit = data.strUnit.replace("; ", ",");
     return true;
@@ -50,30 +51,21 @@ public class NCNashCountyCParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("NONE")) return new SkipField("None", true);
+    if (name.equals("CALL2")) return new CallField("([-A-Z]+)|None()", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("CH")) return new ChannelField("(TAC.*)|None()");
+    if (name.equals("MISC")) return getMiscField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("NAME")) return new NameField("()None|([^0-9;]+|.*[^;] .*)", true);
     if (name.equals("ID"))  return new IdField("CFS\\d\\d-\\d{6}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d?:\\d\\d", true);
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_CH_PTN = Pattern.compile("(.*?) (TAC[- ]*\\d+)\\b *(.*)");
   private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), *([A-Z]{2})\\b(?: +(\\d{5}))?(?: (.*?))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       if (data.strCall.length() == 0) data.strCall = tmpSubject;
-      
-      String callExt2 = "";
-      Matcher match = ADDR_CH_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strChannel = match.group(2);
-        callExt2 = match.group(3);
-      }
 
       String callExt;
       int pt = field.indexOf(',');
@@ -81,7 +73,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
         parseAddress(field.substring(0,pt).trim(), data);
         field = field.substring(pt+1).trim();
         
-        match = ADDR_ST_ZIP_PTN.matcher(field);
+        Matcher match = ADDR_ST_ZIP_PTN.matcher(field);
         if (match.matches()) {
           data.strCity = match.group(1).trim();
           data.strState = match.group(2);
@@ -93,30 +85,87 @@ public class NCNashCountyCParser extends FieldProgramParser {
       }
       
       else {
-        parseAddress(StartType.START_ADDR, field, data);
-        callExt = getLeft();
+        Result res = parseAddress(StartType.START_ADDR, field);
+        if (res.isValid()) {
+          res.getData(data);
+          callExt = res.getLeft();
+        } else {
+          Matcher match = MISC_START_PTN.matcher(field);
+          if (match.find()) {
+            callExt = field.substring(match.start());
+            field = field.substring(0,match.start()).trim();
+          } else {
+            callExt = "";
+          }
+          parseAddress(field, data);
+        }
       }
       
       data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
-      if (!callExt.equals("None")) data.strCall = append(data.strCall, " - ", callExt);
-      if (!callExt2.equals("None")) data.strCall = append(data.strCall, " - ", callExt2);
+      if (callExt.length() > 0) getMiscField().parse(callExt, data);
     }
     
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " ST CH";
+      return "ADDR CITY ST " + getMiscField().getFieldNames();
+    }
+  }
+  
+  
+  private MyMiscField miscField;
+  
+  public MyMiscField getMiscField() {
+    if (miscField == null) miscField = new MyMiscField();
+    return miscField;
+  }
+
+  private static final Pattern MISC_TAC_PTN = Pattern.compile("(.*?)[- /]*((?:FRANKLIN COUNTY )?TAC[- /]*\\d*)[-/ ]*(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MISC_APT_PTN = Pattern.compile("(.*?)[- /]*\\b(?:APT|ROOM|RM|LOT|UNI?T) +(?!IS)(\\S+) *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MISC_START_PTN = Pattern.compile("\\b(?:(?:FRANKLIN COUNTY )?TAC|APT|ROOM|RM|LOT|UNI?T)", Pattern.CASE_INSENSITIVE);
+  private class MyMiscField extends Field {
+    
+    private boolean used;
+    
+    public void reset() {
+      used = false;
+    }
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (used) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      used = true;
+      if (field.equals("None")) return;
+      Matcher match = MISC_TAC_PTN.matcher(field);
+      if (match.matches()) {
+        data.strChannel = match.group(2);
+        field = append(match.group(1), " ", match.group(3));
+      }
+      match = MISC_APT_PTN.matcher(field);
+      if (match.matches()) {
+        data.strApt = append(data.strApt, "-", match.group(2));
+        field = append(match.group(1), " ", match.group(3));
+      }
+      data.strCall = append(data.strCall, " - ", field);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CH APT CALL";
     }
   }
   
   private class MyPlaceField extends PlaceField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("None")) return;
-      super.parse(field, data);
-    }
-  }
-  
-  private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
