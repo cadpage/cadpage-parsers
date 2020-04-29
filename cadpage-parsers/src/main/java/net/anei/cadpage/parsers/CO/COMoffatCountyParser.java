@@ -10,6 +10,6 @@ public class COMoffatCountyParser extends DispatchPremierOneParser {
   
   @Override
   public String getFilter() {
-    return "CG@state.co.us";
+    return "CG@state.co.us,CG@csp.noreply";
   }
 }
