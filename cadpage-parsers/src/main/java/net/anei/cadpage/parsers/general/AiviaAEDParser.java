@@ -16,7 +16,12 @@ public class AiviaAEDParser extends FieldProgramParser {
   @Override public String getFilter() {
     return "supervisionaivianet@hd1py.com";
   }
-  
+
+  @Override
+  public String getLocName() {
+    return "Avida AED";
+  }
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Aivia ")) return false;
