@@ -10,6 +10,6 @@ Adams County, PA
 public class PAAdamsCountyParser extends GroupBestParser {
   
   public PAAdamsCountyParser() {
-    super(new PAAdamsCountyAParser(), new PAAdamsCountyBParser());
+    super(new PAAdamsCountyAParser(), new PAAdamsCountyBParser(), new PAAdamsCountyCParser());
   }
 }

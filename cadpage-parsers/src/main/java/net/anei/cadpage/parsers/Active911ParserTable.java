@@ -1467,6 +1467,7 @@ public class Active911ParserTable {
       "US/PA/PittsburghBoF",              "PAAlleghenyCountyA",
       "US/PA/RHL61",                      "PADelawareCountyB",
       "US/PA/RidgeFireCompany",           "PAChesterCountyD4",
+      "US/PA/RuralValleyFire",            "PAAdamsCountyC",
       "US/PA/SchuylkillCounty",           "PASchuylkillCounty",
       "US/PA/SenecaVFD",                  "PAVenangoCountyC",
       "US/PA/SnyderCounty",               "PASnyderCounty",

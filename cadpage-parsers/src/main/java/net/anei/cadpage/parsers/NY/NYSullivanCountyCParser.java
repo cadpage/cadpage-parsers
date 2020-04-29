@@ -15,16 +15,24 @@ public class NYSullivanCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "777";
+    return "911@co.sullivan.ny.us,777";
   }
   
   private static final String MARKER = "Sullivan County 911: (911 Page) ";
   private static final Pattern DELIM = Pattern.compile("\n| +(?=(?:Fire Call Type|EMS Call Type|Address|Common Name|Closest Intersection|Additional Location Info|Assigned Units|Narrative):)");
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+  protected boolean parseMsg(String subject, String body, Data data) {
+    do {
+      if (subject.equals("911 Page")) break;
+      
+      if (body.startsWith(MARKER)) {
+        body = body.substring(MARKER.length()).trim();
+        break;
+      }
+      
+      return false;
+    } while (false);
     return parseFields(DELIM.split(body), data);
   }
   
