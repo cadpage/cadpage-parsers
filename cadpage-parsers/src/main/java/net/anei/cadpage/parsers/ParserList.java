@@ -1678,6 +1678,7 @@ public class ParserList {
               ,"WVLincolnCounty"                ,"Lincoln County, WV"
               ,"WVMarionCounty"                 ,"Marion County, WV"
               ,"WVMasonCounty"                  ,"Mason County, WV"
+              ,"WVMercerCounty"                 ,"Mercer County, WV"
               ,"WVMineralCounty"                ,"Mineral County, WV"
               ,"WVMorganCounty"                 ,"Morgan County, WV"
               ,"WVPendletonCounty"              ,"Pendleton County, WV"

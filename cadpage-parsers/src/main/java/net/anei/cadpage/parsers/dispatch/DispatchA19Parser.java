@@ -57,6 +57,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new BaseIdField();
+    if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("X")) return new BaseCrossField();
@@ -73,6 +74,14 @@ public class DispatchA19Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       data.strCallId = append(data.strCallId, "/", field);
+    }
+  }
+  
+  private class BaseTimeDateField extends TimeDateField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      super.parse(field, data);
     }
   }
   
