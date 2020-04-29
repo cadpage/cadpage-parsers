@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.VA;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
@@ -7,8 +9,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 public class VAPetersburgParser extends DispatchOSSIParser {
   
   public VAPetersburgParser() {
-    super("PETERSBURG", "VA",
-          "( CANCEL ADDR SKIP! | FYI CALL PRI? ADDR! X X ) INFO");
+    super(CITY_CODES, "PETERSBURG", "VA",
+          "( CANCEL ADDR CITY! | FYI CALL PRI? ADDR! CITY? X X? ) INFO/N+");
   }
   
   @Override
@@ -18,7 +20,7 @@ public class VAPetersburgParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf('\n');
+    int pt = body.indexOf("\nThis e-mail");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(body, data);
   }
@@ -28,4 +30,8 @@ public class VAPetersburgParser extends DispatchOSSIParser {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     return super.getField(name);
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+    "PTBG", "PETERSBURG"
+  });
 }
