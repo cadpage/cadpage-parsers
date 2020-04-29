@@ -16,6 +16,12 @@ public class TXRuskCountyAParser extends DispatchSouthernParser {
   }
   
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "CFS:");
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "PLACE X CITY");
   }
