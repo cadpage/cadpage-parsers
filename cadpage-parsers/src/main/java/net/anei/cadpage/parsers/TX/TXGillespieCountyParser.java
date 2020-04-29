@@ -24,7 +24,7 @@ public class TXGillespieCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cadpage@gillespiecounty.org";
+    return "cadpage@gillespiecounty.org,no-reply@rr.com";
   }
   
   private static final Pattern DELIM = Pattern.compile("\n+");
