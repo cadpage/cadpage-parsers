@@ -10,7 +10,9 @@ public class VAPetersburgParser extends DispatchOSSIParser {
   
   public VAPetersburgParser() {
     super(CITY_CODES, "PETERSBURG", "VA",
-          "( CANCEL ADDR CITY! | FYI CALL PRI? ADDR! CITY? X X? ) INFO/N+");
+          "( CANCEL ADDR CITY! | FYI CALL PRI? ADDR! CITY? ( X X? | ) ) INFO/N+");
+    setupSpecialStreets("BOULEVARD");
+    removeWords("NEW");
   }
   
   @Override
@@ -28,8 +30,16 @@ public class VAPetersburgParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
+//    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
+//  
+//  private class MyCrossField extends CrossField {
+//    @Override
+//    public boolean checkParse(String field, Data data) {
+//      if (field.equals("NEW ST")) {
+//    }
+//  }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
     "PTBG", "PETERSBURG"
