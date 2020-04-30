@@ -1058,6 +1058,7 @@ public class Active911ParserTable {
       "US/ND/CityofFargo",                "NDCassCounty",
       "US/ND/KidderCounty",               "NDKidderCounty",
       "US/ND/PierceCounty",               "NDPierceCounty",
+      "US/ND/RichlandCounty",             "NDRichlandCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
       "US/NH/GraftonCounty",              "NHGraftonCountyB",
       "US/NH/Hanover",                    "NHHanover,Cadpage2",

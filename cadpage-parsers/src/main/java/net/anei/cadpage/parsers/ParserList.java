@@ -1148,6 +1148,7 @@ public class ParserList {
               ,"NDDivideCounty"                 ,"Divide County, ND"
               ,"NDKidderCounty"                 ,"Kidder County, ND"
               ,"NDPierceCounty"                 ,"Pierce County, ND"
+              ,"NDRichlandCounty"               ,"Richland County, ND"
           ),
           new ParserCategory("Ohio"
               ,"OHAdamsCounty"                  ,"Adams County, OH"
