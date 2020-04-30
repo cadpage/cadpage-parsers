@@ -305,7 +305,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
       // info field and if this is info keyword, do not check for the general data keyword
       field = stripFieldStart(field, "- ");
       if (!(procFld instanceof BaseInfoField &&
-          ( field.equals("Name") || INFO_KEYWORD_PTN.matcher(field).matches()))) {
+          ( field.equals("Name") || field.startsWith("Priority:")|| INFO_KEYWORD_PTN.matcher(field).matches()))) {
         Field tmpFld;
         int pt = field.indexOf(':');
         if (pt >= 0) {
