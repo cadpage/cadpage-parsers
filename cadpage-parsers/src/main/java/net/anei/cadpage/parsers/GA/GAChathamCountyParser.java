@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 /**
@@ -17,6 +18,13 @@ public class GAChathamCountyParser extends DispatchProQAParser {
           "ID! ID2/L ADDR APT CITY GPS1 GPS2 UNIT CALL! INFO/N+", true);
   }
   
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    if (data.msgType == MsgType.RUN_REPORT && data.strSupp.startsWith("Alert:")) data.msgType = MsgType.GEN_ALERT;
+    return true;
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID2")) return new IdField("E2020(.*)|", true);
