@@ -30,7 +30,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
          "( SELECT/1 Incident_Information%EMPTY! Event_Code:CALL! Incident_Number:ID! Location_Information%EMPTY! LOCATION! LOCATION_X? ( Remarks/Narratives%EMPTY! INFO1/N+? | ) Responding_Units%EMPTY! UNIT! SKIP+? LINE_MARK! " +
-         "| CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) Priority:PRI? Incident_Disposition:SKIP? DATA<+? )", 
+         "| CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) DATA<+? )", 
          "table|tr");
     
     Field addrCityField = getField("ADDRCITY");
@@ -47,6 +47,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     Field nameField = getField("NAME");
     Field phoneField = getField("PHONE");
     Field placeField = getField("PLACE");
+    Field priorityField = getField("PRI");
     Field skipField = getField("SKIP");
     Field unitField = getField("UNIT");
     Field zipField = getField("ZIP");
@@ -86,6 +87,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     FIELD_MAP.put("Persons", skipField);
     FIELD_MAP.put("POI Information", placeField);
     FIELD_MAP.put("Priors", skipField);
+    FIELD_MAP.put("Priority", priorityField);
     FIELD_MAP.put("Responding Units", unitField);
     FIELD_MAP.put("Service Requests", skipField);
     FIELD_MAP.put("Wrecker Info", skipField);
