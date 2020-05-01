@@ -16,10 +16,10 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "911@missoulaonthealert.com";
+    return "911@missoulaonthealert.com,911Alerts@missoulacounty.us";
   }
   
-  private static final Pattern MARKER = Pattern.compile("(\\d{4}), Call # (\\d+) +");
+  private static final Pattern MARKER = Pattern.compile("(?:(\\d{4}), )?Call # (\\d+) +");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -28,7 +28,7 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
     
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
-    data.strSource = match.group(1);
+    data.strSource = getOptGroup(match.group(1));
     data.strCallId = match.group(2);
     body = body.substring(match.end());
     
