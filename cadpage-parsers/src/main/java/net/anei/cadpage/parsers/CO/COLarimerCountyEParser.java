@@ -56,6 +56,7 @@ public class COLarimerCountyEParser extends FieldProgramParser {
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "MAP:");
       if (field.equals("NOT FOUND")) return;
       super.parse(field, data);
     }
