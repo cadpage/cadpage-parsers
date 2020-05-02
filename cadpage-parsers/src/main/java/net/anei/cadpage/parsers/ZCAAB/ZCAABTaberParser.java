@@ -37,32 +37,56 @@ public class ZCAABTaberParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-  
+
+  private static final Pattern PREFIX_PTN = Pattern.compile("^[: ]*(?:Nearest:|)[ :@]*");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*): (\\S+)");
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       
       // Check for GPS coordinates
-      if (field.startsWith(":@:")) { 
-        data.strAddress = field.substring(3).trim();
+      field = PREFIX_PTN.matcher(field).replaceFirst("");
+      if (GPS_PATTERN.matcher(field).matches()) {
+        data.strAddress = field;
         return;
       }
       
-      field = stripFieldStart(field, "::Nearest:");
-      field = stripFieldStart(field, "@");
+      String apt = "";
+      Matcher match = ADDR_APT_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        apt = match.group(2);
+      }
+
       String city = null;
       int pt = field.indexOf(',');
       if (pt >= 0) {
         city = field.substring(pt+1).trim();
         field = field.substring(0,pt).trim();
+        pt = city.indexOf("  ");
+        if (pt >= 0) city = city.substring(0,pt).trim();
       }
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
-      if (data.strCity.length() == 0 && city != null) {
+      if (data.strCity.length() > 0) {
+        data.strAddress = stripFieldEnd(data.strAddress, data.strCity);
+      } else if (city != null) {
         pt = city.indexOf(',');
         if (pt >= 0) city = city.substring(0,pt).trim();
         data.strCity = city;
       }
+      pt = data.strCity.indexOf(" RURAL");
+      if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
+      if (data.strCity.equals("TABOR TABOR")) data.strCity = "TABOR";
       
+      if (apt.length() == 0) {
+        match = ADDR_APT_PTN.matcher(data.strAddress);
+        if (match.matches()) {
+          data.strAddress = match.group(1).trim();
+          apt = match.group(2);
+        }
+      }
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
   
@@ -74,10 +98,18 @@ public class ZCAABTaberParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern RNG_RD_PTN = Pattern.compile("\\bRNG RD\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return RNG_RD_PTN.matcher(addr).replaceAll("RANGE RD");
+  }
+  
   private static final String[] CITY_LIST = new String[]{
 
     //Towns
     "TABER",
+    "TABER RURAL",
     "VAUXHALL",
 
     // Villages
@@ -86,7 +118,9 @@ public class ZCAABTaberParser extends FieldProgramParser {
     // Hamlets
     "ENCHANT",
     "GRASSY LAKE",
+    "GRASSY LAKE RURAL",
     "HAYS",
+    "HAYS RURAL",
     "JOHNSONS ADDITION",
     "PURPLE SPRINGS",
 
