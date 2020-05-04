@@ -881,6 +881,7 @@ public class ParserList {
               ,"MOGreeneCounty"                 ,"Greene County, MO"
               ,"MOHarrisonCounty"               ,"Harrison County, MO"
               ,"MOHenryCounty"                  ,"Henry County,  MO"
+              ,"MOHowardCounty"                 ,"Howard County, MO"
               ,"MOHowellCounty"                 ,"Howell County, MO"
               ,"MOIronCounty"                   ,"Iron County, MO"
               ,"MOJacksonCounty"                ,"Jackson County, MO"
