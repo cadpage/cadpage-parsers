@@ -1667,6 +1667,7 @@ public class ParserList {
               ,"WVBerkeleyCounty"               ,"Berkeley County, WV"
               ,"WVBooneCounty"                  ,"Boone County, WV"
               ,"WVCabellCounty"                 ,"Cabell County, WV"
+              ,"WVClayCounty"                   ,"Clay County, WV"
               ,"WVFayetteCounty"                ,"Fayette County, WV"
               ,"WVGrantCounty"                  ,"Grant County, WV"
               ,"WVGreenbrierCounty"             ,"Greenbrier County, WV"

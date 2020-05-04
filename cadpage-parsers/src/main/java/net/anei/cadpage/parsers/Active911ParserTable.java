@@ -1855,6 +1855,7 @@ public class Active911ParserTable {
       "US/WV/CabellCounty",               "WVCabellCounty",
       "US/WV/Centrale911",                "WVHarrisonCountyB",
       "US/WV/Centrale911RitchieCounty",   "WVRichieCounty",
+      "US/WV/ClayCounty",                 "WVClayCounty",
       "US/WV/GrantCounty",                "WVGrantCounty",
       "US/WV/GreenbrierCounty",           "WVGreenbrierCounty",
       "US/WV/HampshireCounty",            "WVHampshireCounty",
