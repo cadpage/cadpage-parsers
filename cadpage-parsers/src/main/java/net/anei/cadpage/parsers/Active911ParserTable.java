@@ -69,6 +69,7 @@ public class Active911ParserTable {
       "US/AL/ElbaDispatch",               "ALCoffeeCountyB",
       "US/AL/EmergencyCallWorx",          "ALBaldwinCounty",
       "US/AL/EtowahCounty",               "ALEtowahCountyB,ALEtowahCountyC",
+      "US/AL/FranklinCounty",             "ALFranklinCounty",
       "US/AL/Gardendale",                 "ALJeffersonCountyH",
       "US/AL/GurleyPD",                   "ALMadisonCountyB",
       "US/AL/Hoover",                     "ALHoover",

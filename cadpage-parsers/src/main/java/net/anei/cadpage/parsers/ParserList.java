@@ -124,6 +124,7 @@ public class ParserList {
               ,"ALDallasCounty"                 ,"Dallas County, AL"
               ,"ALDothan"                       ,"Dothan, AL"
               ,"ALEtowahCounty"                 ,"Etowah County, AL"
+              ,"ALFranklinCounty"               ,"Franklin County, AL"
               ,"ALGenevaCounty"                 ,"Geneva County, AL"
               ,"ALHenryCounty"                  ,"Henry County, AL"
               ,"ALHoover"                       ,"Hoover, AL"
