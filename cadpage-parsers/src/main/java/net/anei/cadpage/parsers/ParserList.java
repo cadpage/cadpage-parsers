@@ -1560,6 +1560,7 @@ public class ParserList {
               ,"VAAppomattoxCounty"             ,"Appomattox County, VA"
               ,"VAArlingtonCounty"              ,"Arlington County, VA"
               ,"VAAugustaCounty"                ,"Augusta County, VA"
+              ,"VABathCounty"                   ,"Bath County, VA"
               ,"VABedfordCounty"                ,"Bedford County, VA"
               ,"VABotetourtCounty"              ,"Botetourt County, VA"
               ,"VABrunswickCounty"              ,"Brunswick County, VA"
