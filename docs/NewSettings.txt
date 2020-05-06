@@ -50,13 +50,13 @@ Notifications on/off (old)
   Alert Delay
   Show Ack Button when needed
 
-History Display Options
+Call History Options
   History Limit
   Delete unopened calls
   Include address in call history
   Text Size
   
-Call Display Options
+Call Detail Options
   Show popup
   Restrict in call (suppress in Android 10)
   Show page source
@@ -74,8 +74,12 @@ Direct Paging Vendors
   Active911
   Reconnect Direct Paging
   <Advanced>
-  Override Vendor Location
   Report Position when responding
+  Override Vendor Location
+    Override Vendor Location
+    Current Location
+    Select Single Location
+    Select Multiple Locations
   Override Default City/State
     Default City or County
     Default State

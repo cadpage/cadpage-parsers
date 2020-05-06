@@ -161,7 +161,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       return address;
     }
     
-    else return null;
+    else return address;
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
@@ -814,7 +814,13 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1400 APPLEGATE ST APT:1340",   "44.538874,-123.366783",
       "1400 APPLEGATE ST APT:1370",   "44.538874,-123.366783",
       
-      "1250 ADAMS ST",                "44.543512,-123.304196"     // Access via Industrial Way
+      "1250 ADAMS ST",                "44.543512,-123.304196",     // Access via Industrial Way
+      
+      "24377 PENLAND DR",             "44.483433,-123.397590",
+      "24505 PENLAND DR",             "44.484959,-123.390387",
+      "24604 PENLAND DR",             "44.479962,-123.391941",
+      
+      "24634 RICHLAND LANE",          "44.478346,-123.394360"
       
   });
 
