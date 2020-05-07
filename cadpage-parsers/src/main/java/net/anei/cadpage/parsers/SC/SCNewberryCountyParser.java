@@ -11,7 +11,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SCNewberryCountyParser extends FieldProgramParser {
 
   public SCNewberryCountyParser() {
-    super("NEWBERRY COUNTY", "SC", "DATETIME CALL CODE ADDR! INFO+");
+    super("NEWBERRY COUNTY", "SC", 
+          "DATETIME ID? CALL CODE ADDR! INFO+");
     setupMultiWordStreets("C AND D");
     setupProtectedNames("C AND D");
   }
@@ -47,6 +48,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("ID")) return new IdField("CAD No - (.*)", true);
     if (name.equals("CODE")) return new MyCodeField("Event Code - (.*)", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new CallField("(?:Description - )?(.*)", true);
