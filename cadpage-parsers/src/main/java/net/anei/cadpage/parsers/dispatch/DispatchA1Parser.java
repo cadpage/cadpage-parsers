@@ -30,6 +30,14 @@ public class DispatchA1Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
+    if (subject.length() == 0 && (body.startsWith("Alert:") || body.startsWith("Cancel Message"))) {
+      int pt = body.indexOf('\n');
+      if (pt >= 0) {
+        subject = body.substring(0,pt).trim();
+        body = body.substring(pt+1).trim();
+      }
+    }
+    
     if (subject.startsWith("Alert:")) {
       data.strCall = subject.substring(6).trim();
       if (data.strCall.length() == 0) data.strCall = "ALERT";
