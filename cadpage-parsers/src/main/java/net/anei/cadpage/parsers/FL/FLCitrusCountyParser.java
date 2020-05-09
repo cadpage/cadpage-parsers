@@ -25,7 +25,7 @@ public class FLCitrusCountyParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "777,888,ddevoe@sheriffcitrus.org,CitrusCountyFireRescue@ccso.com,2183500403";
+    return "777,888,ddevoe@sheriffcitrus.org,CitrusCountyFireRescue@ccso.com,alerts@citruscountyfire.com,2183500403";
   }
   
   @Override
