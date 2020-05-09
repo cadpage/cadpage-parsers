@@ -27,7 +27,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@washco-md.net,@c-msg.net,TextAlert@sems79.org,@alert.active911.com";
+    return "Dispatch@washco-md.net,cadnotifications@washco-md.net,@c-msg.net,TextAlert@sems79.org,@alert.active911.com";
   }
   
   @Override
