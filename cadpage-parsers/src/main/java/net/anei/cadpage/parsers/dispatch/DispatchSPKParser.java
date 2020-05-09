@@ -125,6 +125,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
     infoType = null;
     colNdx = -1;
     
+    prevFld = procFld = null;
+    
     if (body.startsWith("Incident Information\n")) {
       setSelectValue("1");
       if (!parseFields(DELIM.split(body), data)) return false;
@@ -264,13 +266,13 @@ public class DispatchSPKParser extends HtmlProgramParser {
     }
   }
   
+  private Field procFld;
+  private Field prevFld;
+  
   /**
    * This class handles a large collection of data field that can come in any order.  
    */
   private class BaseDataField extends Field {
-    
-    private Field procFld;
-    private Field prevFld;
     
     @Override
     public boolean canFail() {
