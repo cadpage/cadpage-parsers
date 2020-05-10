@@ -38,10 +38,12 @@ public class MNDodgeCountyParser extends DispatchA27Parser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "416 9TH ST W",                         "+44.071160,-92.761986",
       "24304 555TH ST",                       "+44.145333,-92.750888",
       "1000 BLANCH CT",                       "+44.072252,-92.754519",
       "1003 BLANCH CT",                       "+44.072405,-92.754666",
       "141 COUNTY RD 12",                     "+44.061981,-92.757681"
+
   });
   
 }
