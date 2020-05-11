@@ -50,11 +50,28 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("ID")) return new IdField("CAD No - (.*)", true);
-    if (name.equals("CODE")) return new MyCodeField("Event Code - (.*)", true);
+    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CALL")) return new CallField("(?:Description - )?(.*)", true);
+    if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
+  }
+  
+  private class MyIdField extends IdField {
+    public MyIdField() {
+      super("CAD No - (.*)", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = stripTrailingChannel(field, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ID CH";
+    }
   }
   
   private static Pattern DATE_TIME_PTN = Pattern.compile("Date/Time Sent - (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
@@ -72,16 +89,19 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   // crossroad follows address
   private static Pattern ADDR_CROSS = Pattern.compile("Location - *(.*)");
   private static Pattern CROSS = Pattern.compile(" cross ", Pattern.CASE_INSENSITIVE);
-  private static Pattern APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?)|(?:APT|ROOM|RM|LOT) +([^ ]+) *(.*)");
+  private static Pattern ADDR_SLASH_PTN = Pattern.compile(" */ *");
+  private static Pattern APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?)|(?:APT|ROOM|RM|LOT) *([^ ]+) *(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Matcher mat = ADDR_CROSS.matcher(field);
       if (!mat.matches()) abort();
       field = mat.group(1).trim();
+      field = stripTrailingChannel(field, data);
       field = field.replace("C&D", "C AND D");
       String[] fields = CROSS.split(field);
       String addr = fields[0].trim();
+      addr = ADDR_SLASH_PTN.matcher(addr).replaceAll("/");
       int pt = addr.indexOf("  ");
       if (pt >= 0) {
         String info = addr.substring(pt+2).trim();
@@ -105,16 +125,44 @@ public class SCNewberryCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " INFO X";
+      return super.getFieldNames() + " INFO X CH";
     }
   }
   
-  //theres an instance of "Event Code - 1025  TOOK MEDICATION" that this class takes care of
-  private static Pattern CODE_INFO = Pattern.compile("(\\d{4}|SIG\\d+) *(.*)");
+  private class MyCallField extends CallField {
+    public MyCallField() {
+      super("(?:Description - )?(.*)", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = stripTrailingChannel(field, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL CH";
+    }
+  }
+ 
+  private static final Pattern OPS_PTN = Pattern.compile("(.*?)[ /]*\\b(OPS *\\d+)\\b[- ]*(.*)", Pattern.CASE_INSENSITIVE);
+  
+  private String stripTrailingChannel(String field, Data data) {
+    Matcher match = OPS_PTN.matcher(field);
+    if (match.matches()) {
+      field = append(match.group(1), " / ", match.group(3));
+      data.strChannel = match.group(2);
+    }
+    return field;
+  }
+  
+  // There is an instance of "Event Code - 1025  TOOK MEDICATION" that this class takes care of
+  private static Pattern CODE_INFO = Pattern.compile("(\\d{3,4}|SIG\\d+) *(.*)");
   private class MyCodeField extends CodeField {
-    // extended constructor to keep validation patterns in one place
-    public MyCodeField(String vPattern, boolean hard) {
-      super(vPattern, hard);
+
+    public MyCodeField() {
+      super("Event Code - (.*)", true);
     }
 
     @Override
@@ -122,7 +170,8 @@ public class SCNewberryCountyParser extends FieldProgramParser {
       Matcher mat = CODE_INFO.matcher(field);
       if (!mat.matches()) abort();
       super.parse(mat.group(1), data);
-      data.strCall = append(data.strCall, " / ", mat.group(2));
+      String call = stripTrailingChannel(mat.group(2), data);
+      data.strCall = append(data.strCall, " / ", call);
     }
 
     @Override
