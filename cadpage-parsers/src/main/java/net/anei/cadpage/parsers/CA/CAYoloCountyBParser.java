@@ -20,7 +20,7 @@ public class CAYoloCountyBParser extends MsgParser {
   
   @Override
   public String getFilter() {
-    return "YECA_CAD@yeca911.org";
+    return "YECA_CAD@yeca911.org,YECA_CAD@yolo911.org";
   }
   
   @Override
@@ -77,6 +77,7 @@ public class CAYoloCountyBParser extends MsgParser {
         data.strApt = append(data.strApt, "-", apt);
       }
       
+      p.setOptional();
       data.strCity = p.get(35);
       
       if (!p.check(";")) return false;
