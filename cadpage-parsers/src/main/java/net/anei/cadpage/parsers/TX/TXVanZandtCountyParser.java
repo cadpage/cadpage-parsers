@@ -29,10 +29,18 @@ public class TXVanZandtCountyParser extends SmartAddressParser {
   private static final Pattern VZCR_PTN = Pattern.compile("\\bVZ(?:CR)?(?=\\b|\\d+)", Pattern.CASE_INSENSITIVE);
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end()).trim();
+  protected boolean parseMsg(String subject, String body, Data data) {
+    do {
+      if (subject.equals("Text Message")) break;
+      
+      Matcher match = MARKER.matcher(body);
+      if (match.lookingAt()) {
+        body = body.substring(match.end()).trim();
+        break;
+      }
+      
+      return false;
+    } while (false);
     
     body = VZCR_PTN.matcher(body).replaceAll("CR");
     parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_NO_IMPLIED_APT, body, data);
