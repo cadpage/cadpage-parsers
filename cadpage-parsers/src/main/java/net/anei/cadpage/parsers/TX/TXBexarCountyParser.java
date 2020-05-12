@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Bexar County, TX
@@ -18,11 +19,12 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   public TXBexarCountyParser() {
     super("BEXAR COUNTY", "TX",
-          "( SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY X EMPTY MAP EMPTY UNIT END " + 
+          "( SELECT/3 CALL! INFO! INFO/N+ Units_Assigned:UNIT! INFO/N+ " +
+          "| SELECT/2  ( INCIDENT_NOTIFICATION! CALL EMPTY ADDR EMPTY X EMPTY MAP EMPTY UNIT END " + 
                       "| SRC INCIDENT_INFORMATION! DATE_&_TIME:DATETIME2! EMPTY! PROBLEM:CALL! EMPTY! ADDRESS:ADDRCITY! EMPTY! CHANNEL:CH! EMPTY! DIVISION:MAP! EMPTY! UNITS:UNIT! EMPTY! LOCATION_NAME:PLACE! EMPTY! LOCATION_TYPE:SKIP END " +
                       ") " + 
-          "| Problem:CALL! Address:ADDR! Cross:X! MapGrid:MAP! Case_Number:ID? Units:UNIT! Notes:INFO " +
-          "| DATETIME1? CALL1 CALL1? ADDR1 X_APT+? MAP_ID_UNIT! MAP_ID_UNIT+? INFO+ )");
+          "| Problem:CALL! Address:ADDR1B! Cross:X! MapGrid:MAP! Case_Number:ID? Units:UNIT! Notes:INFO1 " +
+          "| DATETIME1? CALL1 CALL1? ADDR1A X_APT+? MAP_ID_UNIT! MAP_ID_UNIT+? INFO1+ )");
   }
   
   public String getFilter() {
@@ -34,8 +36,9 @@ public class TXBexarCountyParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern RR_DELIM_PTN = Pattern.compile(" *__ *| *_(?=Miles Traveled :)");
   private static final Pattern PREFIX_PTN = Pattern.compile("\\*{2,} *([A-Za-z0-9 ]+?) *\\*{2,} +[A-Z0-9]+(?=Problem)");
-  private static final Pattern SIT_AWARENESS_PTN = Pattern.compile("BCLE SITUATIONAL AWARENESS ALERT\\.{5}(.*?) (Emergency|In Progress|Priority) ([A-Z0-9]+) (.*?)w/ cross streets:(.*?)\\| (.*)");
+  private static final Pattern SIT_AWARENESS_PTN = Pattern.compile("BCLE SITUATIONAL AWARENESS ALERT\\.{5}(.*?) (00|Emergency|In Progress|Non-Emergency|Priority) *([A-Z0-9]+) +(.*?)w/ cross streets:(.*?)\\| Responding Units:(\\S+) +(.*)");
   private static final String MAP_PATTERN = "(\\d{3}[A-Z]\\d|SA\\d{3}(?:/[A-Z]\\d?)?|NOT FOUN)";
   private static final Pattern DASH_DELIM_PTN = Pattern.compile(" +- ");
   private static final Pattern PROTECT_KEYWORD = Pattern.compile("(?<=:)  +(?=[^ ])");
@@ -52,6 +55,12 @@ public class TXBexarCountyParser extends FieldProgramParser {
     if (body.startsWith("|")) {
       setSelectValue("2");
       return parseFields(body.substring(1).trim().split("\\|"), data);
+    }
+    
+    if (body.contains("__Units Assigned :")) {
+      setSelectValue("3");
+      data.msgType = MsgType.RUN_REPORT;
+      return parseFields(RR_DELIM_PTN.split(body), data);
     }
     
     setSelectValue("1");
@@ -80,12 +89,13 @@ public class TXBexarCountyParser extends FieldProgramParser {
     // Check for new Situation Awareness format
     match = SIT_AWARENESS_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL PRI ADDR APT X INFO");
+      setFieldList("CALL PRI ADDR APT X UNIT INFO");
       data.strCall = match.group(1).trim();
-      data.strPriority  =match.group(2).substring(0,1)+'-'+match.group(3);
+      data.strPriority  = match.group(2).substring(0,1)+'-'+match.group(3);
       parseAddress(match.group(4).trim(), data);
       data.strCross = match.group(5).trim();
-      data.strSupp = match.group(6).trim();
+      data.strUnit = match.group(6).trim();
+      data.strSupp = match.group(7).trim();
       return true;
     }
     
@@ -117,10 +127,11 @@ public class TXBexarCountyParser extends FieldProgramParser {
     if (name.startsWith("T") && name.length()==2) return new SkipField(name, true);
     if (name.equals("DATETIME1")) return new MyDateTime1Field();
     if (name.equals("CALL1")) return new MyCallField();
-    if (name.equals("ADDR1")) return new MyAddressField();
+    if (name.equals("ADDR1A")) return new MyAddress1AField();
+    if (name.equals("ADDR1B")) return new MyAddress1BField();
     if (name.equals("X_APT")) return new MyCrossAptField();
     if (name.equals("MAP_ID_UNIT")) return new MyMapIdUnitField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("INFO1")) return new MyInfo1Field();
     return super.getField(name);
   }
   
@@ -176,7 +187,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
   private static final Pattern SPEC_CALL_DESC_PTN = 
       Pattern.compile("^(?:Witness?|Inspection Fol[a-z]*|Investigation Foll|Special Assignment|SELF INITIATED ACT|Assist Other Agenc|Inspection Fire Wa)(?=[A-Z0-9 ])");
   private static final Pattern IH_PTN = Pattern.compile("\\bIh\\b", Pattern.CASE_INSENSITIVE);
-  private class MyAddressField extends AddressField {
+  private class MyAddress1AField extends AddressField {
     @Override
     public boolean checkParse(String field, Data data) {
 
@@ -236,6 +247,27 @@ public class TXBexarCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
+  private class MyAddress1BField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(',');
+      if (STATE_PTN.matcher(city).matches()) {
+        data.strState = city;
+        city = p.getLastOptional(',');
+      }
+      if (city.equals("UBC")) city = "SAN ANTONIO";
+      data.strCity = city;
+      super.parse(p.get(), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY ST";
+    }
+  }
+  
   private static final Pattern APT_PTN = Pattern.compile("(?:Apt|RM|#) *(.*)|(SUITE.*)");
   private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d");
   private class MyCrossAptField extends Field {
@@ -267,7 +299,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
   
   private static final Pattern MAP_ID_UNIT_PATTERN = 
       Pattern.compile(MAP_PATTERN + "|Case|([A-Z]{3,4}-\\d{4}-\\d{6,}|\\d{4}-(?:\\d{3}|[A-Z]{2})-\\d+|\\d{4}-\\d{7}-[A-Z]{3,4})(?: +Dept[ -](.*))?|Dept[ -]+([^ \\*]+?)([ \\*].*|)");
-  private class MyMapIdUnitField extends MyInfoField {
+  private class MyMapIdUnitField extends MyInfo1Field {
     
     @Override
     public boolean canFail() {
@@ -315,18 +347,40 @@ public class TXBexarCountyParser extends FieldProgramParser {
   }
   
   // Info field tries to clean up some of the more useless information
-  private static final Pattern INFO_DEPT_PTN = Pattern.compile("^Dept[ -]+([^ \\*]+?)(?:[ \\*]|$)");
+  private static final Pattern INFO_CH_APT_PTN = Pattern.compile("_Channel: *(\\S*) *_ Apt # if avail:");
+  private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)");
+  private static final Pattern INFO_DEPT_PTN = Pattern.compile("Dept[ -]+([^ \\*]+?)(?:[ \\*]|$)");
   private static final Pattern ACADIAN_PTN = Pattern.compile("(?:\\bACADIAN:|\\[ProQA Script\\]) *");
   private static final Pattern SPEC_INFO_PTN = Pattern.compile("(?<=^|,) *Unit: *([^ ]+)\\b|" +                                // Unit:
                                                                   "(?<=^|,) *Dispatch code: *([^ ]+)\\b|" +                       // Dispatch code:
                                                                   "(?:(?:^|,)[^,]*?)?\\b([A-Z]{3,4}-\\d{4}-\\d{6,})\\b[^,]*");    // Call ID
   private static final Pattern TRASH_PTN = Pattern.compile("(?:^|,) *(?:A cellular re-bid |check the ANI/ALI |Invalid address received:|Automatic Case |\\[ProQA Session Aborted\\]|Transferred incident:|Acknowledgement Received |Reference Number:|status change to |This incident [-A-Z0-9]+ has been sent to |ACADIAN HAS CHANGED )[^,]*");
   private static final Pattern TRIM_PTN = Pattern.compile("^[, \\.]+|[, \\.]+$");
-  private class MyInfoField extends InfoField {
+  private class MyInfo1Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = INFO_DEPT_PTN.matcher(field);
-      if (match.find()) {
+      Matcher match = INFO_CH_APT_PTN.matcher(field);
+      if (match.lookingAt()) {
+        data.strChannel = match.group(1);
+        int pt1 = match.end();
+        int pt2 = pt1 + 12;
+        String apt = substring(field, pt1, pt2);
+        field = substring(field, pt2);
+        match = INFO_APT_PTN.matcher(apt);
+        if (match.matches()) apt = match.group(1);
+        if (!apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
+      }
+      else if (field.startsWith("Channel:")) {
+        int pt2 = field.indexOf(' ', 8);
+        if (pt2 >= 0) {
+          data.strChannel = field.substring(8, pt2);
+          field = field.substring(pt2+1).trim();
+        } else {
+          data.strChannel = field.substring(8);
+          return;
+        }
+      }
+      else if ((match = INFO_DEPT_PTN.matcher(field)).lookingAt()) {
         data.strUnit = append(data.strUnit, " ", match.group(1));
         field = field.substring(match.end()).trim();
       }
@@ -353,7 +407,7 @@ public class TXBexarCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "UNIT CODE ID INFO";
+      return "CH APT UNIT CODE ID INFO";
     }
   }
   
