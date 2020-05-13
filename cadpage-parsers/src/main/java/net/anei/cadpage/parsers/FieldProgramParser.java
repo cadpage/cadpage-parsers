@@ -3083,6 +3083,19 @@ public class FieldProgramParser extends SmartAddressParser {
       return null;
     }
   }
+  
+  public class LabelInfoField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() == 0) return;
+      data.strSupp = append(data.strSupp, "\n", getRelativeField(0));
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "INFO";
+    }
+  }
 
   /**
    * Source field processor
@@ -3916,6 +3929,7 @@ public class FieldProgramParser extends SmartAddressParser {
     if (name.equals("PHONE")) return new PhoneField();
     if (name.equals("INFO")) return new InfoField();
     if (name.equals("UNK")) return new UnknownField();    // For unknown fields never known to be non-empty
+    if (name.equals("LINFO")) return new LabelInfoField();
     if (name.equals("SRC")) return new SourceField();
     if (name.equals("CODE")) return new CodeField();
     if (name.equals("NAME")) return new NameField();
