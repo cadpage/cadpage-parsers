@@ -521,6 +521,7 @@ public class ParserList {
               ,"IAJacksonCounty"                ,"Jackson County, IA"
               ,"IAJasperCounty"                 ,"Jasper County, IA"
               ,"IAJohnsonCounty"                ,"Johnson County, IA"
+              ,"IAMarionCounty"                 ,"Marion County, IA"
               ,"IAMitchellCounty"               ,"Mitchell County, IA"
               ,"IAMuscatineCounty"              ,"Muscatine County, IA"
               ,"IAPolkCounty"                   ,"Polk County, IA"
