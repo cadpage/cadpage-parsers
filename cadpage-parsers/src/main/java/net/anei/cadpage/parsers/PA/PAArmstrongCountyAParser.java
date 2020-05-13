@@ -41,8 +41,6 @@ public class PAArmstrongCountyAParser extends FieldProgramParser {
       body = stripFieldEnd(body, " stop");
     }
     
-    // There are two different formats we process.
-    // First look for the current one
     if (!subject.equals("Dispatch")) return false;
     Matcher match = MARKER_PATTERN1.matcher(body);
     if (!match.find()) return false;
