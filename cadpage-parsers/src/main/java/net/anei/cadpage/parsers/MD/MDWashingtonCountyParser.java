@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
@@ -20,7 +21,9 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
  
   public MDWashingtonCountyParser() {
     super(CITY_LIST, "WASHINGTON COUNTY", "MD",
-        "ADDR/SXP CITY? ( PLACE X | X | ) CALL! CALL+? ( TRAIL1% END | UNIT UNIT+? ( TRAIL2% END | INFO+? TRAIL3% END ) )");
+        "( INFO/G END " +
+        "| ADDR/SXP CITY? ( PLACE X | X | ) CALL! CALL+? ( TRAIL1% END | UNIT UNIT+? ( TRAIL2% END | INFO1+? TRAIL3% END ) ) " + 
+        ")");
     addExtendedDirections();
     removeWords("CV");
   }
@@ -66,6 +69,8 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     // Split body into fields separated by  -
     if (!parseFields(DELIM.split(body), data)) return false;
     
+    if (data.msgType == MsgType.GEN_ALERT && !isPositiveId()) return false;
+    
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
     String state = CITY_STATE_TABLE.getProperty(data.strCity.toUpperCase());
     if (state != null) data.strState = state;
@@ -83,7 +88,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("INFO1")) return new MyInfo1Field();
     if (name.equals("TRAIL1")) return new TrailField(1);
     if (name.equals("TRAIL2")) return new TrailField(2);
     if (name.equals("TRAIL3")) return new TrailField(3);
@@ -178,7 +183,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     }
   }
   
-  private class MyInfoField extends InfoField {
+  private class MyInfo1Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
       data.strSupp = append(data.strSupp," - ", field);
