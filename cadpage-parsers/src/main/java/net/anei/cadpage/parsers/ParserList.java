@@ -1436,6 +1436,7 @@ public class ParserList {
               ,"TXAcadianAmbulance"             ,"Acadian Ambulance, TX"
               ,"TXAngleton"                     ,"Angleton, TX"
               ,"TXAransasCounty"                ,"Aransas County, TX"
+              ,"TXAtascosaCounty"               ,"Atascosa County, TX"
               ,"TXBellCounty"                   ,"Bell County, TX"
               ,"TXBexarCounty"                  ,"Bexar County, TX"
               ,"TXBosqueCounty"                 ,"Bosque County, TX"
