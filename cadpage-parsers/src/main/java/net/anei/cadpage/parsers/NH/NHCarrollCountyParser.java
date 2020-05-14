@@ -8,6 +8,6 @@ public class NHCarrollCountyParser extends NHGraftonCountyBParser {
   
   @Override
   public String getFilter() {
-    return "wfrpaging@gmail.com";
+    return "wfrpaging@gmail.com,dispatch@carrollcountynh.net";
   }
 }

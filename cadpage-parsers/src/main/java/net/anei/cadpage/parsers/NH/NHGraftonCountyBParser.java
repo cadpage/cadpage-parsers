@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NH;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
 
 public class NHGraftonCountyBParser extends DispatchA32Parser {
@@ -22,8 +23,18 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
     return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com";
   }
   
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("CCSO")) subject += " Page";
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, "Sheriff");
+    return true;
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
+    "GRAFTON COUNTY",
+    
     // Cities
     "LEBANON",
 
@@ -99,6 +110,8 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
     
 
     // Carroll County
+    "CARROLL COUNTY",
+    
     // Cities
       "ALBANY",
       "BARTLETT",
