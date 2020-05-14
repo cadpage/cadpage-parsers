@@ -45,24 +45,60 @@ public class INHarrisonCountyParser extends FieldProgramParser {
     if (name.equals("PAGED")) return new SkipField("PAGED", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+|[A-Z]{3}", true);
-    if (name.equals("MAP")) return new MapField("\\d{2,4}[A-Z]?|0", true);
+    if (name.equals("MAP")) return new MapField("\\d{2,4}[A-Z]?|0|\\d{5}|HCSD\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|LOT|ROOM) +(.*)|[A-Z]?\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      String apt = "";
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       data.strCity = convertCodes(city, CITY_CODES);
-      data.strPlace = p.getLastOptional(';');
+      while (true) {
+        String place = p.getLastOptional(';');
+        if (place.length() == 0) break;
+        Matcher match = APT_PTN.matcher(place);
+        if (match.matches()) {
+          String tmp = match.group(1);
+          if (tmp != null) place = tmp;
+          apt = append(place, "-", apt);
+        } else {
+          data.strPlace = append(place, " - ", data.strPlace);
+        }
+      }
       parseAddress(p.get(), data);
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
+  }
+  
+  private static final Pattern CALLBACK_PTN = Pattern.compile("CALLBACK=(.*?) LAT=(.*?) LON=(.*?) UNC=.*");
+  private class MyInfoField extends InfoField {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CALLBACK_PTN.matcher(field);
+      if (match.matches()) {
+        data.strPhone = match.group(1);
+        setGPSLoc(match.group(2)+','+match.group(3), data);
+      } else {
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PHONE GPS";
+    }
+    
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
