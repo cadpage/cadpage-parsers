@@ -401,7 +401,11 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     "SUVER",
     "VALLEY JUNCTION",
     "VALSETZ",
-    "ZENA"
+    "ZENA",
+    
+    // Lane County
+    "LANE COUNTY"
+    
   };
 
 }

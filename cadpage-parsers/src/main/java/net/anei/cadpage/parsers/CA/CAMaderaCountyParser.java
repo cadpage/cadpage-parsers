@@ -10,7 +10,7 @@ public class CAMaderaCountyParser extends FieldProgramParser {
   
   public CAMaderaCountyParser() {
     super("MADERA COUNTY", "CA", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! EVENT_#:ID! PRI:PRI! DATE:DATE! TIME:TIME INFO/N+");
+          "CALL ADDR CITY! INFO/N+");
   }
   
   @Override
@@ -18,9 +18,19 @@ public class CAMaderaCountyParser extends FieldProgramParser {
     return "@CityOfChowchilla.org";
   }
   
+  private static final Pattern SUBJECT_ID_PTN = Pattern.compile("(?:CAD EVENT NUMBER|EVENT) +(\\d+)");
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n+"), data);
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    if (subject.length() == 0) return false;
+    Matcher match = SUBJECT_ID_PTN.matcher(subject);
+    if (match.matches()) data.strCallId = match.group(1);
+    
+    int pt = body.indexOf("\n\n");
+    if(pt < 0) return false;
+    body = body.substring(0,pt).trim();
+    
+    return parseFields(body.split(";"), data);
   }
   
   @Override
