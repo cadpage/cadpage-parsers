@@ -34,6 +34,11 @@ public class CAMaderaCountyParser extends FieldProgramParser {
   }
   
   @Override
+  public String getProgram() {
+    return "ID " + super.getProgram();
+  }
+  
+  @Override
   public Field getField(String name) {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new MyTimeField();
