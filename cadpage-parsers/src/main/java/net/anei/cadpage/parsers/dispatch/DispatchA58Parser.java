@@ -19,11 +19,11 @@ public class DispatchA58Parser extends SmartAddressParser {
 
   public DispatchA58Parser(String expSubject, Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState);
-    setFieldList("CALL ADDR APT CITY UNIT X");
+    setFieldList("ID CALL ADDR APT CITY UNIT X");
     this.expSubject = expSubject;
   }
 
-  private static Pattern MASTER = Pattern.compile("Event Notice: (.*?) at (?:\\(Location Not Entered\\)|(.*?,  .*?)|(.*?)) *(?:/FD: *(.*?))?(?:/Location not matched in geo file|/(.*?))?/by .*");
+  private static Pattern MASTER = Pattern.compile("(?:(\\d+[-A-Z0-9]+): )?Event Notice: (.*?) at (?:\\(Location Not Entered\\)|(.*?,  .*?)|(.*?)) *(?:/FD: *(.*?))?(?:/Location not matched in geo file|/(.*?))?/by .*");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -32,24 +32,22 @@ public class DispatchA58Parser extends SmartAddressParser {
     
     Matcher mat = MASTER.matcher(body);
     if (!mat.matches()) return false;
+    data.strCallId = getOptGroup(mat.group(1));
+    data.strCall = mat.group(2).trim();
     
-    //CALL
-    data.strCall = mat.group(1).trim();
-    
-    //ADDR
-    String addr = mat.group(2);
+    String addr = mat.group(3);
     if (addr != null) {
       addr = addr.replace(",  ", " & ");
     } else {
-      addr = mat.group(3);
+      addr = mat.group(4);
     }
     if (addr != null) {
       parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr.trim(), data);
     }
     
     //UNIT CROSS
-    data.strUnit = getOptGroup(mat.group(4));
-    data.strCross = getOptGroup(mat.group(5));
+    data.strUnit = getOptGroup(mat.group(5));
+    data.strCross = getOptGroup(mat.group(6));
     return true;
   }
 }
