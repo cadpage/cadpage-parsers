@@ -1381,6 +1381,7 @@ public class Active911ParserTable {
       "US/OR/NewbergFire",                "ORYamhillCountyA",
       "US/OR/Oakridge",                   "ORLaneCountyC",
       "US/OR/Pacific",                    "ORJosephineCounty",
+      "US/OR/PendletonFAD",               "ORUmatillaCountyA",
       "US/OR/PolkCounty",                 "ORPolkCounty",
       "US/OR/PortlandAMR",                "ORClackamasCountyC",
       "US/OR/PrinevillePD",               "ORCrookCounty",
