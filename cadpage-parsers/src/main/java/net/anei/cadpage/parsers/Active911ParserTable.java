@@ -1300,6 +1300,7 @@ public class Active911ParserTable {
       "US/OH/MiddleburgHeights",          "OHCuyahogaCountyA",
       "US/OH/MorrowCounty",               "OHMorrowCountyA",
       "US/OH/MuskingumCounty",            "OHMuskingumCounty",
+      "US/OH/NewFranklinFD",              "OHSummitCountyH",
       "US/OH/NobleCounty",                "OHNobleCounty",
       "US/OH/PerryCounty",                "OHPerryCounty",
       "US/OH/PerryTwp",                   "OHStarkCountyCencomm",
