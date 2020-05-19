@@ -8,9 +8,6 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
-/**
- * Butte County, CA
- */
 public class DispatchA20Parser extends FieldProgramParser {
   
   public static final int A20_UNIT_LABEL_REQ = 1;
@@ -70,7 +67,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStField();
-    if (name.equals("ID")) return new IdField("#(\\d+)", true);
+    if (name.equals("ID")) return new IdField("#(\\d+)|([0-9a-f]{24})", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);

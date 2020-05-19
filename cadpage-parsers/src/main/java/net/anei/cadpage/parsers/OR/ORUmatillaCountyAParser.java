@@ -14,12 +14,14 @@ public class ORUmatillaCountyAParser extends DispatchA20Parser {
   
   @Override
   public String getFilter() {
-    return "notifier@umatillacounty.net,dpspagesa@ctuir.org";
+    return "notifier@umatillacounty.net,dpspagesa@ctuir.org,admin@pfdstaff.org";
   }
  
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("(ACTIVE)")) subject = "Dispatched Call (XXX)";
+    if (subject.equals("(ACTIVE)") || subject.equals("RECALL") || subject.equals("GENERAL ALARM")) {
+      subject = "Dispatched Call (XXX)";
+    }
     else if (subject.startsWith("(ACTIVE)|")) {
       subject = "Dispatched Call (XXX)|" + subject.substring(9);
     }
