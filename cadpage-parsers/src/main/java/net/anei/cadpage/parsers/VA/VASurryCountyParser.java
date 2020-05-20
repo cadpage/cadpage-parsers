@@ -23,6 +23,7 @@ public class VASurryCountyParser extends DispatchDAPROParser {
   
   private static final CodeSet CALL_SET = new CodeSet(
       "ABDOMINAL PAIN",
+      "ALTERED MENTAL STATUS",
       "CHEST PAIN/HEART ATTACK",
       "CITIZEN ASSIST",
       "DIFFICULTY BREATHING",
@@ -34,6 +35,7 @@ public class VASurryCountyParser extends DispatchDAPROParser {
       "PAIN",
       "SICK",
       "STRUCTURE FIRE",
+      "TEST CALL",
       "UNCONSCIOUS/UNRESPONSIVE"
   );
   
