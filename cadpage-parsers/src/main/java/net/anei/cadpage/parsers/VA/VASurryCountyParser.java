@@ -41,8 +41,10 @@ public class VASurryCountyParser extends DispatchDAPROParser {
   
   private static final Properties CITY_CODE_TABLE =
     buildCodeTable(new String[]{
+        "CLA", "CLAREMONT",
         "DEN", "DENDRON",
         "ELB", "ELBERON",
+        "SMI", "SMITHFIELD",
         "SPR", "SPRING GROVE",
         "SUR", "SURRY",
         "WAV", "WAVERLY"
