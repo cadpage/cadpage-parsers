@@ -15,11 +15,11 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  */
 public class CALosAngelesCountyAParser extends FieldProgramParser {
   
-  private static final Pattern MARKER = Pattern.compile("^(\\w+):(?:(\\d\\d/\\d\\d/\\d\\d) )?(\\d\\d:\\d\\d(?::\\d\\d)?)/");
+  private static final Pattern MARKER = Pattern.compile("^(\\w+):[ /]*(?:(\\d\\d/\\d\\d/\\d\\d) )?(\\d\\d:\\d\\d(?::\\d\\d)?)/");
   
   public CALosAngelesCountyAParser() {
     super(CITY_CODES, "LOS ANGELES COUNTY", "CA",
-           "ALARM CALL ADDRCITY+? X INFO+? MAP ID INFO2+");
+           "ALARM CALL ADDRCITY+? X1 ( X/ZSLS PLACE UNIT MAP ID | PLACE UNIT MAP ID ) INFO2+");
   }
   
   @Override
@@ -53,6 +53,17 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
     return "SRC DATE TIME " + super.getProgram();
   }
   
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ALARM")) return new MyAlarmField();
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X1")) return new MyCross1Field();
+    if (name.equals("ID")) return new IdField("[A-Z]{3}\\d{3,}", true);
+    if (name.equals("INFO2")) return new MyInfo2Field();
+    return super.getField(name);
+  }
+ 
   @Override
   public String adjustMapAddress(String sAddress) {
     return FWY_PTN.matcher(sAddress).replaceAll("RT $1");
@@ -109,7 +120,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern X_MARKER = Pattern.compile("^(?:btwn |low xst:)");
-  private class MyCrossField extends CrossField {
+  private class MyCross1Field extends CrossField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
@@ -119,43 +130,15 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]\\d{1,3}");
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      if (UNIT_PTN.matcher(field).matches()) {
-        data.strUnit = append(data.strChannel, "/", field);
-      } else {
-        data.strSupp = append(data.strSupp, "/", field);
-      }
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "INFO UNIT";
-    }
-  }
 
   private class MyInfo2Field extends InfoField {
     
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("EMS INFO:")) field = field.substring(9).trim();
+      field = stripFieldStart(field, "EMS INFO:");
+      field = stripFieldStart(field, "Remarks:");
       data.strSupp = append(data.strSupp, " / ", field);
     }
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ALARM")) return new MyAlarmField();
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("ID")) return new IdField("[A-Z]{3}\\d{3,}", true);
-    if (name.equals("INFO2")) return new MyInfo2Field();
-    return super.getField(name);
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
