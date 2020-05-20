@@ -1720,6 +1720,7 @@ public class ParserList {
               ,"WIWinnebagoCounty"              ,"Winnebago County, WI"
           ),
           new ParserCategory("Wyoming"
+              ,"WYBigHornCounty"                ,"Big Horn County, WY"
               ,"WYNatronaCounty"                ,"Natrona County, WY"
               ,"WYParkCounty"                   ,"Park County, WY"
               ,"WYSubletteCounty"               ,"Sublette County, WY"

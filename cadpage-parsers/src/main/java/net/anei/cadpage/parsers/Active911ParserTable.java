@@ -1890,6 +1890,7 @@ public class Active911ParserTable {
       "US/WV/WetzelCounty",               "WVWetzelCounty",
       "US/WV/WoodCounty",                 "WVWoodCounty",
       "US/WV/Wyoming",                    "WVWyomingCounty",
+      "US/WY/BigHornCounty",              "WYBigHornCounty",
       "US/WY/ParkCounty",                 "WYParkCounty",
       "US/WY/SubletteCounty",             "WYSubletteCounty",
       "Utility/General/Default",          "General",
