@@ -14,7 +14,7 @@ public class KSLeavenworthCountyParser extends DispatchProphoenixParser {
   
   @Override
   public String getFilter() {
-    return "FireDispatch@firstcity.org";
+    return "FireDispatch@firstcity.org,YSALERT@LEAVENWORTHCOUNTY.GOV";
   }
 
   @Override
