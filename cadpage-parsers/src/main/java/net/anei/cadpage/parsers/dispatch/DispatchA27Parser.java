@@ -36,7 +36,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+ ) Unit(s)_responded:UNIT? UNIT+");
+          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) Unit(s)_responded:UNIT? UNIT+");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
   
@@ -215,6 +215,18 @@ public class DispatchA27Parser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseTimesField extends InfoField {
     @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("E911 CLASS:")) return false;
+      parse(field, data);
+      return true;
+    }
+    
+    @Override
     public void parse(String field, Data data) {
       for (String line : field.split("\n")) {
         line = line.trim();
@@ -374,7 +386,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
     data.strSupp = append(data.strSupp, "\n", info);
   }
-  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?"); 
+  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{5,6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?"); 
   private static final Pattern GPS_TRAIL_PTN = Pattern.compile(" *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d{4} +\\d\\d?:\\d\\d:\\d\\d : \\S+\\] *");
 }
