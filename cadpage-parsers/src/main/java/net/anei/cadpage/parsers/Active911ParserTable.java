@@ -462,6 +462,7 @@ public class Active911ParserTable {
       "US/IN/DaviessCounty",              "INDaviessCounty",
       "US/IN/DeKalbCounty",               "INDeKalbCounty",
       "US/IN/DelawareCounty",             "INDelawareCounty",
+      "US/IN/ElkhartCounty",              "INElkhartCounty",
       "US/IN/EMGSVCS",                    "INHenryCounty",
       "US/IN/FishersFD",                  "INHamiltonCounty",
       "US/IN/FloydCounty",                "INFloydCounty",
