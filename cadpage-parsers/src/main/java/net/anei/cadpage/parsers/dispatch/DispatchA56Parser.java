@@ -120,9 +120,10 @@ public class DispatchA56Parser extends FieldProgramParser {
           }
         }
         
-        // Releax rules for last unit in last field that might have been truncated
+        // Relax rules for last unit in last field that might have been truncated
         Pattern unitPtn = (j == 0 || j != units.length-1 || !isLastField()) ? UNIT_PTN : UNIT_PTN2;
-        if (!unitPtn.matcher(unit).matches()) return false;
+        if (!unitPtn.matcher(unit).matches()) 
+          return false;
 
         unit = unit.trim().replace(' ', '_');
         if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
