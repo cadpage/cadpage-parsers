@@ -10,11 +10,11 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
 
   public ORColumbiaCountyParser() {
     super("COLUMBIA COUNTY", "OR", 
-          "ID_CALL_UNIT_CITY ADDR! Apartment:APT! MAP! X:X! INFO/N+");
+          "ID_CALL_UNIT_CITY ADDR APT! MAP? X:X! COMMENTS:INFO? INFO/N+");
   }
   
   private static Pattern MUTUAL_AID_FORMAT = Pattern.compile("([,A-Z0-9]+) (mutual aid to [A-Z0-9]+) at (.*?)(?:; *(.*?))? (for .*?)\\.");
-  private static final Pattern DELIM = Pattern.compile(" ;| (?=Map |X:)|[ ,](?=\\[\\d{1,2}\\] )");
+  private static final Pattern DELIM = Pattern.compile(" ;| (?=Map |X:|COMMENTS:)|[ ,](?=\\[\\d{1,2}\\] )");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -38,7 +38,8 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID_CALL_UNIT_CITY")) return new MyIdCallUnitCityField();
-    if (name.equals("MAP")) return new MapField("Map +(.*)");
+    if (name.equals("APT")) return new AptField("Apartment:? *(.*)", true);
+    if (name.equals("MAP")) return new MapField("Map +(.*)", true);
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
