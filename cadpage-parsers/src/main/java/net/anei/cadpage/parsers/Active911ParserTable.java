@@ -616,6 +616,7 @@ public class Active911ParserTable {
       "US/KY/LoganCounty",                "KYLoganCounty",
       "US/KY/Louisville",                 "KYLouisville",
       "US/KY/MadisonCounty",              "KYMadisonCounty",
+      "US/KY/MadisonvillePD",             "KYHopkinsCounty",
       "US/KY/MarshallCountyFire",         "KYMarshallCounty",
       "US/KY/MartinCounty",               "KYMartinCounty",
       "US/KY/McLeanCounty",               "KYMcLeanCounty",
