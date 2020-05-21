@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ALTalladegaCountyParser extends FieldProgramParser {
   public ALTalladegaCountyParser() {
     super(CITY_LIST, "TALLADEGA COUNTY", "AL",
-          "ADDR/S16 ID TIME CALL! geo:GPS? INFO+");
+          "ADDR/S16 UNIT? ID TIME CALL! geo:GPS? INFO+");
     setupCities(MISSPELLED_CITY_TABLE);
     setupMultiWordStreets("FERRY ROAD");
     setupProtectedNames("1/4");
