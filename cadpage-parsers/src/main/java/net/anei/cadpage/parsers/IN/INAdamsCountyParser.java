@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
@@ -26,6 +28,7 @@ public class INAdamsCountyParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+    data.strAddress = fixAddress(data.strAddress);
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
     if (OHIO_CITY_LIST.contains(data.strCity)) data.strState = "OH";
     return true;
@@ -34,6 +37,41 @@ public class INAdamsCountyParser extends DispatchOSSIParser {
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
+  }
+  
+  private static final Pattern DIR_RT_PTN = Pattern.compile("\\b([NSEW]) (\\d+)");
+  private String fixAddress(String addr) {
+    Matcher match = DIR_RT_PTN.matcher(addr);
+    if (match.find()) {
+      StringBuffer sb = new StringBuffer();
+      do {
+        String dir = match.group(1);
+        String num = match.group(2);
+        String type;
+        switch (Integer.parseInt(num)) {
+        case 27:
+        case 33:
+        case 224:
+          type = "US";
+          break;
+          
+        case 101:
+        case 115:
+        case 124:
+        case 218:
+          type = "IN";
+          break;
+        
+        default:
+          type = null;
+        }
+        if (type != null) match.appendReplacement(sb, dir + ' ' + type + ' ' + num);
+        
+      } while (match.find());
+      match.appendTail(sb);
+      addr = sb.toString();
+    }
+    return addr;
   }
   
   @Override
