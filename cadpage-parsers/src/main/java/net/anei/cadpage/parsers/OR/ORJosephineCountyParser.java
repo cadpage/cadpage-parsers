@@ -15,7 +15,9 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
-          "( ID CALL ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " + 
+          "( ID CALL ( DATETIME ADDRCITY/S6 CITY PLACE X UNIT! END " +  
+                    "| ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " +
+                    ") " +
           "| DATETIME_CALL CALL2? ADDR_CITY_X/SXa! X2? ( Units:UNIT | UNIT2? ) " + 
           "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " + 
           ") GPS1? GPS2? Notes:INFO? INFO/S+");
@@ -52,8 +54,12 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     body = LAT_LON_PTN.matcher(body).replaceAll("LAT:$1 LON:$2");
     body = UNITS_PTN.matcher(body).replaceFirst("Units:");
     body = GPS_PTN.matcher(body).replaceFirst(": $1: $2: ");
-    String[] flds = DELIM.split(body);
-    if (flds.length < 3) flds = DELIM2.split(body);
+    
+    String[] flds = body.split(";", -1);
+    if (flds.length < 8) {
+      flds = DELIM.split(body);
+      if (flds.length < 3) flds = DELIM2.split(body);
+    }
     if (!parseFields(flds, data)) return false;
     data.strAddress = LAT_LON_PTN2.matcher(data.strAddress).replaceFirst("LAT: $1, LON: $2");
     return true;
