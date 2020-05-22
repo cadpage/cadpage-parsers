@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -8,6 +10,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
   public OHSummitCountyHParser() {
     super("SUMMIT COUNTY", "OH", 
           "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -33,4 +36,8 @@ public class OHSummitCountyHParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "7854 MAIN STREET",                     "+40.926976,-81.629593"
+  });
 }
