@@ -14,7 +14,7 @@ public class OHWarrenCountyEParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,zuercher@lebanonohio.gov";
   }
   
   private static final Pattern DELIM = Pattern.compile("(?<!\\d):|:(?!\\d)");
