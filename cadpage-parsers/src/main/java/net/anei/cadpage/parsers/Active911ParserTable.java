@@ -1443,7 +1443,6 @@ public class Active911ParserTable {
       "US/PA/FultonCounty",               "PAFultonCounty",
       "US/PA/GladwyneFire",               "PAMontgomeryCountyD",
       "US/PA/GoodFellowshipAmbulance",    "PAChesterCountyO",
-      "US/OR/GrantsPass",                 "ORJospehineCounty",
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
