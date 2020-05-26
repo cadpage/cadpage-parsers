@@ -11,7 +11,7 @@ Current Location (suppress unless needed)
   Sender Address Filter
     Override Sender Address Filter
     Sender Address Filter
-  Default City/State
+  Override Default City/State
     Override default City/State
     Default City or County
     Default State
@@ -49,6 +49,11 @@ Notifications on/off (old)
   <advanced>
   Alert Delay
   Show Ack Button when needed
+
+Screen Control Options  (Remove in Android 10)
+  Screen Timeout
+  Screen on for Popup
+  Dim Popup Screen
 
 Call History Options
   History Limit
@@ -145,9 +150,11 @@ Button Configuration
 
 Message processing options
   Use old MMS content download logic (suppress if MMS not enabled)
+  MMS Download timeout
   Suppress duplicate calls
+  Pass thru SMS (remove if no longer supported)
 
-Split Alert Merge Options  (only if SMS enabled)
+Split Alert Merge Options
   Override Active911 Split Alert Settings
   Check for Split Direct Pages
   Split message timeout
