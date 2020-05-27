@@ -1,49 +1,60 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class KYLawrenceCountyParser extends DispatchB2Parser {
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+
+public class KYLawrenceCountyParser extends FieldProgramParser {
   
   public KYLawrenceCountyParser() {
-    super("LAWRENCE_911:",CITY_LIST, "LAWRENCE COUNTY", "KY");
+    super("LAWRENCE COUNTY", "KY", 
+          "CALL:CALL! Desc:CALL2! PLACE:ADDRCITY! ID:ID! INFO:INFO! INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "LAWRENCE_911@lycomonline.com,Interact@lycomonline.com";
+    return "dispatch@911comm3.info";
   }
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    if (data.strCity.endsWith(" WAYNE CO")) {
-      data.strCity = data.strCity.substring(0,data.strCity.length()-9).trim();
-      data.strState = "WV";
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("CAD DISPATCH")) return false;
+    return parseFields(body.split(";"), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL2")) return new MyCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    return super.getField(name);
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strCall)) return;
+      data.strCall = append(data.strCall, " - ", field);
     }
-    data.strName = stripFieldEnd(data.strName, "APPALACHIAN WIRELESS");
-    data.strAddress = stripFieldEnd(data.strAddress, "APPALACHIAN WIRELESS");
-    
-    return true;
   }
   
-  @Override
-  public String getProgram() {
-    return super.getProgram().replace("CITY", "CITY ST");
+  private static final Pattern ADDR_ID_GPS_PTN = Pattern.compile("(.*?)(?: \\[(\\d+)\\])?(?: *\\(([^()]+)\\))?");
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDR_ID_GPS_PTN.matcher(field);
+      if (!match.matches()) abort();
+      field = match.group(1).trim();
+      data.strBox = getOptGroup(match.group(2));
+      String gps = match.group(3);
+      if (gps != null) setGPSLoc(gps, data);
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " BOX GPS";
+    }
   }
-
-  private static final String[] CITY_LIST = new String[]{
-    "BLAINE",
-    "LOUISA",
-    "LOWMANSVILLE",
-    "FALLSBURG",
-    "WEBBVILLE",
-    "KISE",
-    "CHERRYVILLE",
-    "ULYSSES",
-
-    "FT GAY WAYNE CO"
-    };
-
-
 }
