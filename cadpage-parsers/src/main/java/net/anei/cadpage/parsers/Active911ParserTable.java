@@ -441,6 +441,7 @@ public class Active911ParserTable {
       "US/IL/Quadcom911",                 "ILKaneCountyD",
       "US/IL/RandolphCounty",             "ILRandolphCountyA",
       "US/IL/RedCenter",                  "ILLakeCountyD",
+      "US/IL/RobinsonPolice",             "ILCrawfordCounty",
       "US/IL/ShelbyCounty",               "ILShelbyCounty",
       "US/IL/SheldonDistrict",            "ILIroquoisCounty",
       "US/IL/Skokie",                     "ILCookCountyB",

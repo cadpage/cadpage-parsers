@@ -428,6 +428,7 @@ public class ParserList {
               ,"ILClintonCounty"                ,"Clinton County, IL"
               ,"ILColumbia"                     ,"Columbia, IL"
               ,"ILCookCounty"                   ,"Cook County, IL"
+              ,"ILCrawfordCounty"               ,"Crawford County, IL"
               ,"ILDuPageCounty"                 ,"DuPage County, IL"
               ,"ILElgin"                        ,"Elgin, IL"
               ,"ILGreeneCounty"                 ,"Greene County, IL"
