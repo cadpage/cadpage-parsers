@@ -700,12 +700,13 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (field.length() == 0 || Character.isDigit(field.charAt(0))) return field;
     
     boolean anchorEnd = !trailName;
-    int pt = field.length();
-    Matcher match = CROSS_MARK_PTN.matcher(field);
-    boolean crossMark = match.find();
+    int pt = field.indexOf(" X ");
+    if (pt < 0) pt = field.indexOf('/');
+    boolean crossMark = (pt >= 0);
     if (crossMark) {
       anchorEnd = true;
-      pt = match.start();
+    } else {
+      pt = field.length();
     }
     
     String part = field.substring(0,pt).trim();
