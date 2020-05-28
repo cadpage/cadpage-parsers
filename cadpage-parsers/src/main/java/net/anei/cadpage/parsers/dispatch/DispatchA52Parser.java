@@ -5,27 +5,42 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA52Parser extends FieldProgramParser {
   
   private Properties callCodes;
+  private CodeTable callTable;
 
   public DispatchA52Parser(String defCity, String defState) {
-    this(null, defCity, defState);
+    this(null, null, null, defCity, defState);
   }
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
-    this(callCodes, null, defCity, defState);
+    this(callCodes, null, null, defCity, defState);
+  }
+
+  public DispatchA52Parser(CodeTable codeTable, String defCity, String defState) {
+    this(null, codeTable, null, defCity, defState);
   }
 
   public DispatchA52Parser(Properties callCodes, Properties cityCodes, String defCity, String defState) {
+    this(callCodes, null, cityCodes, defCity, defState);
+  }
+
+  public DispatchA52Parser(CodeTable codeTable, Properties cityCodes, String defCity, String defState) {
+    this(null, codeTable, cityCodes, defCity, defState);
+  }
+
+  private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
           "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR! BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
           "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP LAT:GPS1 LONG:GPS2", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE); 
           
     this.callCodes = callCodes;
+    this.callTable = callTable;
   }
   
   @Override
@@ -75,16 +90,23 @@ public class DispatchA52Parser extends FieldProgramParser {
       field = stripFieldStart(field, "*M*");
       field = stripFieldEnd(field, "-");
       super.parse(field, data);
-      if (callCodes == null) {
-        data.strCall = data.strCode;
-        data.strCode = "";
-      } else {
+      if (callCodes != null) {
         String call = callCodes.getProperty(data.strCode);
         if (call != null) {
           data.strCall = call;
         } else {
           data.strCall = data.strCode;
         }
+      } else if (callTable != null) {
+        String call = callTable.getCodeDescription(data.strCode);
+        if (call != null) {
+          data.strCall = call;
+        } else {
+          data.strCall = data.strCode;
+        }
+      } else {
+        data.strCall = data.strCode;
+        data.strCode = "";
       }
     }
   }

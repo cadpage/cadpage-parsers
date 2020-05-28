@@ -1042,6 +1042,7 @@ public class StandardCodeTable extends CodeTable {
         "76C01",  "Bomb Threat - Suspect caller",
         
         // 77. Motor Vehicle Collisioin
+        "77",     "Motor vehicle collision - Prealert",
         "77O01",  "Motor vehicle collision - Vehicle blocking traffic",
         "77O02",  "Motor vehicle collision - No injuries and no hazard",
         "77A00",  "Motor vehicle collision",

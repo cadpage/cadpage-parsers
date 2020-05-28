@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 public class INMarionCountyBParser extends DispatchA52Parser {
   
   public INMarionCountyBParser() {
-    super(null,ZIP_LOOKUP_TABLE, "MARION COUNTY", "IN");
+    super((Properties)null, ZIP_LOOKUP_TABLE, "MARION COUNTY", "IN");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
