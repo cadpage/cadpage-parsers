@@ -95,6 +95,6 @@ public class ZCAONChathamKentParser extends FieldProgramParser {
       "ROM", "ROMNEY TWP",
       "TLB", "TILBURY EAST TWP",
       "WLC", "WALLACEBURG",
-      "ZON", "ZONE TWP",
+      "ZON", "ZONE TWP"
   });
 }
