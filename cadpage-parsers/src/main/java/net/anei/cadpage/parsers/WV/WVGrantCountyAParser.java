@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
  */
 public class WVGrantCountyAParser extends DispatchA48Parser {
   
-  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|HELOCOPTER|SOUTHG)\\b"); 
+  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|GRANTCOMM|HELOCOPTER|SOUTHG)\\b", Pattern.CASE_INSENSITIVE); 
   
   public WVGrantCountyAParser() {
     super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.GPS_PLACE_X, A48_NO_CODE, UNIT_PTN);
@@ -29,14 +29,19 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
+  private static final Pattern MARKER = Pattern.compile("CAD:([A-Za-z_]+) (?:\\d{3}|EMS) TEXT +");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    body = body.replace(" WV - -", "").replace("FIRST ENERGY", "FIRST_ENERGY");
-    body = body.replace(" 400 TEXT ", " ").replaceAll(" EMS TEXT ", " ");
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    String source = match.group(1);
+    body = body.substring(match.end());
     
-    Matcher match = UNIT_PTN.matcher(body);
+    body = body.replace(" WV - -", "").replace("FIRST ENERGY", "FIRST_ENERGY");
+    
+    match = UNIT_PTN.matcher(body);
     int lastCommaPt = body.indexOf(',');
     int pt = -1;
     while (match.find()) pt = match.end();
@@ -48,6 +53,8 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
     
     if (!super.parseMsg(subject, body, data)) return false;
     
+    data.strSource = source;
+    
     if (info != null) data.strSupp = append(data.strSupp, "\n", info);
     
     return true;
@@ -55,7 +62,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
   
   @Override
   public String getProgram() {
-    return super.getProgram() + " INFO";
+    return "SRC " + super.getProgram() + " INFO";
   }
   
   @Override
