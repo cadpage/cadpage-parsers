@@ -1017,6 +1017,7 @@ public class Active911ParserTable {
       "US/NC/LenoirCounty",               "NCLenoirCountyB",
       "US/NC/LincolnCounty",              "NCLincolnCounty",
       "US/NC/MaconCounty",                "NCMaconCounty",
+      "US/NC/MadisonCounty",              "NCMadisonCountyB",
       "US/NC/MartinCounty",               "NCMartinCountyB",
       "US/NC/McDowellCounty",             "NCMcDowellCounty",
       "US/NC/MecklenburgCounty",          "NCMecklenburgCounty",
