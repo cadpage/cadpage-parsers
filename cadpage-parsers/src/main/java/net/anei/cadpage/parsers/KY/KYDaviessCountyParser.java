@@ -284,6 +284,7 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
       "FIRE ARM DISCHARGING",
       "FIRE CHIMNEY",
       "FIRE DUMPSTER",
+      "FIRE FIELD",
       "FIRE POLE",
       "FIRE STRUCTURE",
       "FIRE TREE",

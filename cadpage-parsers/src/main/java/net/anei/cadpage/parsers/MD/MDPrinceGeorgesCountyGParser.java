@@ -146,6 +146,7 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
   }
   
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
+      "2ALARM",               "2ND ALARM",
       "ACC W INJ",            "PERSONAL INJURY ACCIDENT",
       "ACTIVEA1",             "ACTIVE SHOOTER",
       "ACTIVEA2",             "ACTIVE SHOOTER",
@@ -365,6 +366,7 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
       "WATER6",               "WATER RESCUE-BOAT IN DISTRESS",
       "WATER7",               "BOAT FIRE",
       "WFD",                  "WORKING FIRE DISPATCH",
+      "WI",                   "WORKING INCIDENT",
       "WIREDN",               "ELECTRICAL HAZARD/WIRES DOWN",
       "WORKING CODE",         "WORKING CODE",
       "WTASKH",               "WATER SUPPLY TASK FORCE",
