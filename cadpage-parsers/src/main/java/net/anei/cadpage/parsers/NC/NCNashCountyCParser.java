@@ -46,6 +46,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
     getMiscField().reset();
     if (!parseFields(body.split(delim), data)) return false;
     data.strUnit = data.strUnit.replace("; ", ",");
+    if (data.strSupp.equals("None")) data.strSupp = "";
     return true;
   }
   

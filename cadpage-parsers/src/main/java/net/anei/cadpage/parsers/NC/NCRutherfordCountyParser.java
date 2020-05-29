@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -18,6 +19,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     return "paging@rutherfordcountync.gov,8284295922";
   }
   
+  private static final Pattern PREFIX_PTN = Pattern.compile("To - (\\w+)\n\\s*");
   private static final Pattern KEYWORD_DELIM = Pattern.compile("(?<=Location|APT/ROOM|City|Call Type|Line11|Units)[^*]");
   
   @Override
@@ -33,11 +35,23 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
         break;
       }
       if (subject.endsWith("PageGate")) break;
+      
+      Matcher match = PREFIX_PTN.matcher(body);
+      if (match.lookingAt()) {
+        data.strSource = match.group(1);
+        body = body.substring(match.end()).replace("\n", "");
+        break;
+      }
       return false;
     } while (false);
     
     body = body.replaceAll("\n", "");
     body = KEYWORD_DELIM.matcher(body).replaceAll(":");
     return super.parseFields(body.split("\\*"), data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 }

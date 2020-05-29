@@ -30,6 +30,8 @@ public class OHLovelandParser extends DispatchA1Parser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    
+    body = stripFieldStart(body, "AUTOMATED MESSAGE DO NOT REPLY\n");
     if (subject.length() == 0)
       if (body.startsWith("Alert:")) {
         int pt = body.indexOf('\n');
