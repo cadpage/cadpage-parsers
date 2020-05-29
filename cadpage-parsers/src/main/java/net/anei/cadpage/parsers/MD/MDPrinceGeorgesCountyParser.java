@@ -9,6 +9,7 @@ public class MDPrinceGeorgesCountyParser extends GroupBestParser {
           new MDPrinceGeorgesCountyDParser(),
           new MDPrinceGeorgesCountyEParser(),
           new MDPrinceGeorgesCountyFParser(),
-          new MDPrinceGeorgesCountyGParser());
+          new MDPrinceGeorgesCountyGParser(),
+          new MDPrinceGeorgesCountyHParser());
   }
 }
