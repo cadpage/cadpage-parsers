@@ -1550,6 +1550,7 @@ public class Active911ParserTable {
       "US/SC/SumterCounty",               "SCSumterCountyA",
       "US/SC/TaylorsFire",                "SCGreenvilleCountyE",
       "US/SC/WHFD",                       "SCGreenvilleCountyE",
+      "US/SC/WHFDGreenville",             "SCGreenvilleCountyE",
       "US/SC/YorkCounty",                 "SCYorkCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
       "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
