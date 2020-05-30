@@ -195,10 +195,16 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern COVID_PTN = Pattern.compile("COVID (?:NEG(?:ATIVE)?|POS(?:ITIVE)?)|(?:NEG(?:ATIVE)?|POS(?:ITIVE)?) COVID");
   private static final Pattern PHONE_PTN = Pattern.compile("\\d{10}");
   private class MyCrossInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      Matcher match = COVID_PTN.matcher(field);
+      if (match.lookingAt()) {
+        data.strAlert = match.group();
+        field = field.substring(match.end()).trim();
+      }
       if (field.startsWith("btwn ")) {
         data.strCross = field.substring(5).trim();
       } else if (PHONE_PTN.matcher(field).matches()) {
@@ -211,7 +217,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "X PHONE INFO";
+      return "ALERT X PHONE INFO";
     }
   }
   
