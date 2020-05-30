@@ -15,7 +15,7 @@ public class NJMorrisCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "DataExport@jeffersonpolice.com";
+    return "DataExport@jeffersonpolice.com,donotreply@lawsoftweb.onmicrosoft.com";
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("Incident# : *\\S+ Resource# : *(\\S+) For Activity Dispatch Resource");
