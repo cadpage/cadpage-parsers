@@ -40,6 +40,8 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
   @Override
   public boolean parseMsg(String body, Data data) {
     
+    body = stripFieldStart(body, "Dispatch\n");
+    
     Matcher match = ID_PTN.matcher(body);
     if (!match.lookingAt()) return false;
     data.strCallId = match.group(1);
