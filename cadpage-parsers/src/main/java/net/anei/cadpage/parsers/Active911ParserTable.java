@@ -848,6 +848,7 @@ public class Active911ParserTable {
       "US/MO/BridgetonPD",                "MOStLouisCountyH",
       "US/MO/BuchananCounty",             "MOBuchananCountyB",
       "US/MO/CaldwellCounty",             "MOCaldwellCounty",
+      "US/MO/CaldwellSheriff",            "MOCaldwellCounty",
       "US/MO/CallawayCounty",             "MOCallawayCounty",
       "US/MO/CamdenCounty",               "MOCamdenCounty",
       "US/MO/CarrollCounty",              "MOCarrollCounty",
