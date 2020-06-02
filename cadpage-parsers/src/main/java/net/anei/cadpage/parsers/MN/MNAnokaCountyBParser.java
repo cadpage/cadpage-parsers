@@ -13,7 +13,7 @@ public class MNAnokaCountyBParser extends MsgParser {
   
   public MNAnokaCountyBParser() {
     super("ANOKA COUNTY", "MN");
-    setFieldList("ID CODE CALL ADDR APT PLACE CITY INFO MAP GPS");
+    setFieldList("ID CODE CALL ADDR APT PLACE CITY NAME INFO MAP GPS");
   }
   
   @Override
@@ -104,17 +104,19 @@ public class MNAnokaCountyBParser extends MsgParser {
     data.strCity = p.get(20);
     
     p.setOptional();
+    
     if (!p.check("[1] ")) {
-      data.strMap = p.get(10);
-      if (data.strMap.equals("NOT FOUND")) data.strMap = "";
-      if (!p.check("[1] ")) {
-        data.strMap = p.get(30);
-        if (!p.check("[1] ")) return false;
+      if (p.checkAhead(10,  "[1] ")) {
+        data.strMap = p.get(10);
+        if (data.strMap.equals("NOT FOUND")) data.strMap = "";
+      } else {
+        data.strName = cleanWirelessCarrier(p.get(80));
       }
+      if (!p.check("[1] ")) return false;
     }
     
     String info = p.get(496);
-    data.strMap = p.get(30);
+    data.strMap = append(data.strMap, "/", p.get(30));
     String gps1 = p.get(8);
     if (!p.check("  ")) return false;
     String gps2 = p.get(8);
