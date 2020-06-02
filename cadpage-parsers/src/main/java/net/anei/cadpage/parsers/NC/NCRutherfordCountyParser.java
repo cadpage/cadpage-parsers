@@ -11,7 +11,8 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
   
   public NCRutherfordCountyParser() {
     super("RUTHERFORD COUNTY", "NC",
-           "Location:ADDR! APT/ROOM:APT? City:CITY! Call_Type:CALL! Line11:INFO? Units:UNIT!");
+          "( Location:ADDR! APT/ROOM:APT? City:CITY! Call_Type:CALL! Line11:INFO? Units:UNIT! " + 
+          "| City:CITY! Call_Type:CALL! Units:UNIT! END )");
   }
   
   @Override
@@ -19,7 +20,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     return "paging@rutherfordcountync.gov,8284295922";
   }
   
-  private static final Pattern PREFIX_PTN = Pattern.compile("To - (\\w+)\n\\s*");
+  private static final Pattern PREFIX_PTN = Pattern.compile("To - (\\w+)\\s+");
   private static final Pattern KEYWORD_DELIM = Pattern.compile("(?<=Location|APT/ROOM|City|Call Type|Line11|Units)[^*]");
   
   @Override
@@ -42,6 +43,9 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
         body = body.substring(match.end()).replace("\n", "");
         break;
       }
+      
+      if (body.startsWith("City=")) break;
+      
       return false;
     } while (false);
     
