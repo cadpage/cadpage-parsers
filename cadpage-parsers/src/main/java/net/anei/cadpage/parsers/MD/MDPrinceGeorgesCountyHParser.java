@@ -20,5 +20,10 @@ public class MDPrinceGeorgesCountyHParser extends DispatchFastAlertParser {
     if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(subject, body, data);
   }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return MDPrinceGeorgesCountyParser.adjustMapAddressCommon(addr);
+  }
 
 }

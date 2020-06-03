@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MD;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.GroupBestParser;
 
 public class MDPrinceGeorgesCountyParser extends GroupBestParser {
@@ -11,5 +13,14 @@ public class MDPrinceGeorgesCountyParser extends GroupBestParser {
           new MDPrinceGeorgesCountyFParser(),
           new MDPrinceGeorgesCountyGParser(),
           new MDPrinceGeorgesCountyHParser());
+  }
+  
+  private static final Pattern BALT_WASH_PKY = Pattern.compile("(?:BALT WASH|BW|BMW)/s*(?:PKY)?");
+  
+  static String adjustMapAddressCommon(String addr) {
+    addr = addr.replace("CAP BELT OL", "CAPITAL BELTWAY OUTER LOOP")
+               .replace("CAP BELT IL", "CAPITAL BELTWAY INNER LOOP");
+    addr = BALT_WASH_PKY.matcher(addr).replaceAll("BALTIMORE WASHINGTON PARKWAY");
+    return addr;
   }
 }

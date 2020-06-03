@@ -147,6 +147,11 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
     }
   }
   
+  @Override
+  public String adjustMapAddress(String addr) {
+    return MDPrinceGeorgesCountyParser.adjustMapAddressCommon(addr);
+  }
+  
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "2ALARM",               "2ND ALARM",
       "ACC W INJ",            "PERSONAL INJURY ACCIDENT",
