@@ -492,6 +492,7 @@ public class ParserList {
               ,"INMarionCounty"                 ,"Marion County, IN"
               ,"INMarshallCounty"               ,"Marshall County, IN"
               ,"INMiamiCounty"                  ,"Miami County, IN"
+              ,"INMorganCounty"                 ,"Morgan County, IN"
               ,"INNobleCounty"                  ,"Noble County, IN"
               ,"INOwenCounty"                   ,"Owen County, IN"
               ,"INParkeCounty"                  ,"Parke County, IN"
