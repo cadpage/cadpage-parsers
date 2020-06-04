@@ -21,6 +21,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   public MNHennepinCountyParser() {
     super(CITY_LIST, "HENNEPIN COUNTY", "MN",
           "( NAME:NAME! ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " + 
+                       "| PH#:PHONE! ADDRSS:ADDR! APT#:APT! CITY:CITY! X_ST:X! EVTYPE:CALL! INC#:ID! " +
                        "| ADDRESS:ADDR! APT#:APT! CITY:CITY! XSTREET:X! EVTYPE:CALL! INC#:ID! " + 
                        ") COMMENTS:INFO/N+ " +
           "| INC#:ID! ADDRESS:ADDR! EVTYPE:CALL! INFO/RN+ " +
@@ -36,7 +37,8 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    int pt = body.indexOf("\n\n--");
+    int pt = body.indexOf("\n\n\n");
+    if (pt < 0) pt = body.indexOf("\n\n--");
     if (pt >= 0) body = body.substring(0, pt).trim();
     
     body = body.replace(" X STREET-", " XSTREET-");

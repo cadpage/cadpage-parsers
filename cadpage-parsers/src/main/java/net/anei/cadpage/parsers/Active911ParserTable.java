@@ -794,6 +794,7 @@ public class Active911ParserTable {
       "US/MN/CityofStLouisPark",          "MNStLouisPark",
       "US/MN/CottonwoodCounty",           "MNCottonwoodCounty",
       "US/MN/CrowWingCounty",             "MNCrowWingCounty",
+      "US/MN/CrystalPD",                  "MNHennepinCounty",
       "US/MN/DakotaCounty",               "MNDakotaCounty",
       "US/MN/DodgeCounty",                "MNDodgeCounty",
       "US/MN/DouglasCounty",              "MNDouglasCounty",
