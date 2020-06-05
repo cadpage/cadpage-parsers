@@ -13,7 +13,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
 
   public SCNewberryCountyParser() {
     super("NEWBERRY COUNTY", "SC", 
-          "DATETIME ID? CALL CODE ADDR! INFO+");
+          "DATETIME ID? CALL CODE ADDR! UNIT? INFO+");
     setupMultiWordStreets("C AND D");
     setupProtectedNames("C AND D");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
@@ -54,6 +54,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("UNIT")) return new UnitField("Responders - *(.*)", true);
     return super.getField(name);
   }
   
