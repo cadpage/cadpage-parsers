@@ -7,7 +7,7 @@ public class ILMonroeCountyParser extends FieldProgramParser {
 
   public ILMonroeCountyParser() {
     super(CITY_LIST, "MONROE COUNTY", "IL", 
-          "ID ADDR/S6! CALL INFO/N+");
+          "( WARNING EMPTY+? | ) ID ADDR/S6! CALL INFO/N+");
   } 
 
   @Override
@@ -24,6 +24,7 @@ public class ILMonroeCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("WARNING")) return new SkipField("WARNING:.*", true);
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}", true);
     return super.getField(name);
   }
