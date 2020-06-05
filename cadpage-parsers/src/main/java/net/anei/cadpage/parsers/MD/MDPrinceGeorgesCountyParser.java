@@ -15,7 +15,7 @@ public class MDPrinceGeorgesCountyParser extends GroupBestParser {
           new MDPrinceGeorgesCountyHParser());
   }
   
-  private static final Pattern BALT_WASH_PKY = Pattern.compile("(?:BALT WASH|BW|BMW)/s*(?:PKY)?");
+  private static final Pattern BALT_WASH_PKY = Pattern.compile("\\b(?:(?:BALT WASH|BW|BMW)/s*(?:PK[WY])?)\\b");
   
   static String adjustMapAddressCommon(String addr) {
     addr = addr.replace("CAP BELT OL", "CAPITAL BELTWAY OUTER LOOP")
