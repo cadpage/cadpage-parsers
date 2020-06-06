@@ -10,6 +10,6 @@ public class KSLabetteCountyParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@LABETTECOUNTY.COM";
+    return "DISPATCH@LABETTECOUNTY.COM,LABETTECOUNTY@OMNIGO.COM";
   }
 }
