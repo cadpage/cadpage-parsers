@@ -8,6 +8,6 @@ public class MOMorganCountyBParser extends MOMoniteauCountyParser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@MORGAN-COUNTY.ORG";
+    return "DISPATCH@MORGAN-COUNTY.ORG,DISPATCH@OMNIGO.COM";
   }
 }
