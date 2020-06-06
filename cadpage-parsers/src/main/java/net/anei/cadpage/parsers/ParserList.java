@@ -187,6 +187,7 @@ public class ParserList {
               ,"CAHanford"                      ,"Hanford, CA"
               ,"CAHayward"                      ,"Hayward, CA"
               ,"CAHumboldtCounty"               ,"Humboldt County, CA"
+              ,"CAInyoCounty"                   ,"Inyo County, CA"
               ,"CAKernCounty"                   ,"Kern County, CA"
               ,"CALakeCounty"                   ,"Lake County, CA"
               ,"CALosAngelesCounty"             ,"Los Angeles County, CA"
