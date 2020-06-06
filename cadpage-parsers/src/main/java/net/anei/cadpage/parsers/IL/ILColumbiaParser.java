@@ -10,7 +10,7 @@ public class ILColumbiaParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "COLUMBIA@PUBLICSAFETYSOFTWARE.NET";
+    return "COLUMBIA@PUBLICSAFETYSOFTWARE.NET,COLUMBIA@OMNIGO.COM";
   }
 
 }

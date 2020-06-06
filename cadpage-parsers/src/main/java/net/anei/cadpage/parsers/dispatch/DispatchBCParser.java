@@ -163,6 +163,11 @@ public class DispatchBCParser extends DispatchA3Parser {
         data.msgType = MsgType.RUN_REPORT;
       }
     }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " INFO?";
+    }
   }
   
   private static final Pattern CROSS_DIR_PTN = Pattern.compile("[NSEW]/?B");

@@ -407,6 +407,7 @@ public class Active911ParserTable {
       "US/IL/CityofJoppa",                "ILMassacCounty",
       "US/IL/CityofMountOlive",           "ILMacoupinCounty",
       "US/IL/ClintonCounty",              "ILClintonCounty",
+      "US/IL/Columbia",                   "ILColumbia",
       "US/IL/CookCounty",                 "ILCookCountyC",
       "US/IL/CottageHillsFD",             "ILMadisonCounty",
       "US/IL/DownersGrove",               "ILDuPageCountyB",
