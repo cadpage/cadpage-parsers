@@ -14,6 +14,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
     super(CITY_CODES, "MANATEE COUNTY", "FL",
         "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! BEAT:BOX " + 
                          "| Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -63,7 +64,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" *:[ @]*");
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.* [A-Z]{2}) (\\d{5})");
+  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -168,6 +169,10 @@ public class FLManateeCountyParser extends FieldProgramParser {
       return "APT PLACE";
     }
   }
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "2303 1ST ST E",                        "+27.479214,-82.562549"
+  });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AM",   "Anna Maria",
