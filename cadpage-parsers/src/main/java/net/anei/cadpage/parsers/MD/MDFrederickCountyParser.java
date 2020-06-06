@@ -62,9 +62,9 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       }
     }
     
-    int pt = body.lastIndexOf(" ... http");
+    int pt = body.lastIndexOf("... http");
     if (pt >= 0) {
-      data.strInfoURL = body.substring(pt+5);
+      data.strInfoURL = body.substring(pt+4);
       body = body.substring(0,pt).trim();
     }
 
@@ -92,9 +92,10 @@ public class MDFrederickCountyParser extends FieldProgramParser {
   }
   
   // Address field gets complicated
-  private static final Pattern MUT_AID_PTN = Pattern.compile("(.*?):? @MA ([A-Z]+(?: CO)?)[ :\\*;/@]*(.*?)(?:[:@](.*))?");
+  private static final Pattern MUT_AID_PTN = Pattern.compile("(.*?):? @MA[- ]([A-Z]+(?: (?:CO|CNTY))?)[ :\\*;/@]*(.*?)(?:[:@](.*))?");
   private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("(ENGINE \\S+) +(.*)");
   private static final Pattern NOT_TRAIL_PLACE_PTN = Pattern.compile(".*MM|.*\\bMILE MARKER|OFF .*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[, ]+APT *(\\S*)");
   private static final Pattern PLACE_MARK_PTN2 = Pattern.compile("[\\*;]");
   private static final Pattern APT_PTN = Pattern.compile("(?:RM|LOT|ROOM|APT|UNIT)[- ]*(.*)|\\d{1,4}[A-Z]?|[A-Z]|IAO", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
@@ -173,6 +174,12 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         if (pt >= 0) {
           extra = field.substring(pt+1).trim();
           field = field.substring(0,pt).trim();
+        }
+        
+        match = ADDR_APT_PTN.matcher(field);
+        if (match.matches()) {
+          field = match.group(1);
+          data.strApt = match.group(2);
         }
         
         // Strip off possibly multiple city codes
@@ -977,6 +984,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         "NEWM",   "New Market",
         "ROSE",   "Rosemont",
         "THUR",   "Thurmont",
+        "URBA",   "Urbana",
         "WACO",   "Washington County",
         "WALK",   "Walkersville",
         "WASH",   "Washington County", 
@@ -1030,6 +1038,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         "MYERSVILLE",          "Myersville",
         "NEW MARKET",          "New Market",
         "NEW MIDWAY",          "New Midway",
+        "NEWWINDSOR CNWI",     "New Windsor",
         "PETERSVILLE",         "Petersville",
         "POINT OF ROCKS",      "Point of Rocks",
         "ROCKY RIDGE",         "Rocky Ridge",
