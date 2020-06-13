@@ -34,28 +34,68 @@ public class DispatchBCParser extends DispatchA3Parser {
     auxA33Parser = new AuxA33Parser(defCity, defState, flags);
   }
   
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Event Number *(\\d{4}-\\d+)\\n");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Event Number *(\\d{4}-\\d+[A-Z]*)\\n");
   private static final Pattern BR_TAG = Pattern.compile("</?br/?>", Pattern.CASE_INSENSITIVE);
   
   private String times;
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
+
+    useAuxParser = false;
+
     // Check for run report
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.lookingAt()) {
-      setFieldList("CALL ID INFO");
-      data.msgType = MsgType.RUN_REPORT;
+      setFieldList("CALL ID ADDR APT CITY ST INFO");
       data.strCall = subject;
-      data.strSupp = body.substring(match.end()).trim();
+      data.strCallId = match.group(1);
+      
+      boolean first = true;
+      boolean parseData = true;
+      for (String line : body.substring(match.end()).trim().split("\n")) {
+        line = line.trim();
+        if (first && line.equals("Log Date / TimeActivity Note")) {
+          data.msgType = MsgType.RUN_REPORT;
+          parseData = false;
+        }
+        first = false;
+        if (parseData) {
+          if (line.startsWith("Category")) {
+            data.strCall = line.substring(8).trim();
+            continue;
+          } 
+          if (line.startsWith("Sub Category")) {
+            data.strCall = append(data.strCall, " / ", line.substring(12).trim());
+            continue;
+          } 
+          if (line.startsWith("Street")) {
+            parseAddress(line.substring(6).trim(), data);
+            continue;
+          }
+          if (line.startsWith("City")) {
+            data.strCity = line.substring(4).trim();
+            continue;
+          }
+          if (line.startsWith("State")) {
+            data.strState = line.substring(5).trim();
+            continue;
+          }
+          if (line.startsWith("Zip Code")) {
+            if (data.strCity.length() == 0) data.strCity = line.substring(8).trim();
+            continue;
+          }
+          parseData = false;
+        }
+        if (line.contains("Event Closed Disposition")) data.msgType = MsgType.RUN_REPORT;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
       return true;
     }
     
     // Lately a lot of agencies have been mixing the standard HTML format we usually process with
     // a non-html version processed by DispatchA33Parser.  As a result, we split out non-html looking
     // messages and pass them to an auxiliary DispatchA33Parser subclass.
-    useAuxParser = false;
     if (!isHtmlMsg(body)) {
       useAuxParser = true;
       return auxA33Parser.parseThisMsg(subject,  body, data);
