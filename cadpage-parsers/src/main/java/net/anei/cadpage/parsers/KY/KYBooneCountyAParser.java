@@ -30,7 +30,7 @@ public class KYBooneCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "jfussinger@bcpscc.org";
+    return "jfussinger@bcpscc.org,bcpsccky@gmail.com";
   }
   
   @Override
