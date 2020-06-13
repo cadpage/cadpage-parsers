@@ -21,7 +21,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "cfs@madisoncountypaging.com";
+    return "cfs@madisoncountypaging.com,@madisoncounty.in.gov";
   }
   
   @Override
