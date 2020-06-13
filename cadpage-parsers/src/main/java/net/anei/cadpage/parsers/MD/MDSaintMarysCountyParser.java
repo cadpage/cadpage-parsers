@@ -268,6 +268,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "22030 OXFORD CT",                      "+38.273478,-76.468200",
       "48676 PACKER CT",                      "+38.155650,-76.391350",
       "23060 PARK PLACE WAY",                 "+38.299107,-76.510502",
+      "17814 PINEY POINT RD",                 "+38.157170,-76.520433",
       "43738 STEPHENSON DR",                  "+38.198215,-76.563438",
       "42831 THERESAS WY",                    "+38.368228,-76.595153",
       "22589 THREE NOTCH RD",                 "+38.287556,-76.480120",
