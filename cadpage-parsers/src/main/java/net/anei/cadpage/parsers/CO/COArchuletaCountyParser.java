@@ -28,7 +28,7 @@ public class COArchuletaCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("ID")) return new IdField("#([A-Z]{3}\\d\\d-\\d{6})", true);
+    if (name.equals("ID")) return new IdField("#([A-Z]{0,3}\\d\\d-\\d{5,6})", true);
     return super.getField(name);
   }
   

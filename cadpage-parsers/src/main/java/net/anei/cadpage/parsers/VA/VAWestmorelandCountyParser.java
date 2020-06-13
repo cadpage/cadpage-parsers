@@ -7,7 +7,7 @@ public class VAWestmorelandCountyParser extends FieldProgramParser {
   
   public VAWestmorelandCountyParser() {
     super("WESTMORELAND COUNTY", "VA", 
-          "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT? INFO:INFO/N+");
+          "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! NAME:NAME? PHONE:PHONE? X:X? UNIT:UNIT? INFO:INFO/N+");
   }
   
   @Override
@@ -18,6 +18,7 @@ public class VAWestmorelandCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
@@ -26,6 +27,14 @@ public class VAWestmorelandCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '/');
       super.parse(field, data);
     }
   }
