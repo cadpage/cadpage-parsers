@@ -10,7 +10,7 @@ public class MTFlatheadCountyCParser extends DispatchH04Parser {
   
   @Override
   public String getFilter() {
-    return "911@flatheadoes.mt.gov";
+    return "911@flatheadoes.mt.gov,@flathead911.mt.gov>";
   }
   
   @Override

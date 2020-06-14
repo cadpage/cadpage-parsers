@@ -15,7 +15,7 @@ public class MTFlatheadCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "mt1callbackup@bullittmail.com";
+    return "mt1callbackup@bullittmail.com,mtonecall@montanasky.net";
   }
   
   @Override
