@@ -10,6 +10,6 @@ public class MONodawayCountyParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "JS239@MARYVILLEDPS.COM,NCAD@BC-EMS.COM,NODAWAYCOJAIL@GMAIL.COM";
+    return "JS239@OMNIGO.COM,JS239@MARYVILLEDPS.COM,NCAD@BC-EMS.COM,NODAWAYCOJAIL@GMAIL.COM,RUGBYFINN@GMAIL.COM,RUBYFINN@GMAIL.COM";
   }
 }

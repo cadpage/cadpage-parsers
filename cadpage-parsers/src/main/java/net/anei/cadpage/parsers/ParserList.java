@@ -1137,6 +1137,7 @@ public class ParserList {
               ,"NCStanlyCounty"                 ,"Stanly County, NC"
               ,"NCStokesCounty"                 ,"Stokes County, NC"
               ,"NCSurryCounty"                  ,"Surry County, NC"
+              ,"NCSwainCounty"                  ,"Swain County, NC"
               ,"NCTransylvaniaCounty"           ,"Transylvania County, NC"
               ,"NCUnionCounty"                  ,"Union County, NC"
               ,"NCVanceCounty"                  ,"Vance County, NC"  

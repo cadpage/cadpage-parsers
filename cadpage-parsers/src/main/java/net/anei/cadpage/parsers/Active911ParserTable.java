@@ -1056,6 +1056,7 @@ public class Active911ParserTable {
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
       "US/NC/StanlyCounty",               "NCStanlyCounty",
       "US/NC/StokesCounty",               "NCStokesCounty",
+      "US/NC/SwainCounty",                "NCSwainCounty",
       "US/NC/TarboroFD",                  "NCEdgecombeCountyB",
       "US/NC/TownOfCary",                 "NCWakeCountyA,NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
