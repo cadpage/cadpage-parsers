@@ -27,13 +27,14 @@ public class MTFlatheadCountyDParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final String MARKER = "SMS Notification 2017\n\n";
+  private static final Pattern MARKER = Pattern.compile("(?:SMS Notification 2017|Paging Group Notification 2019)\n\n");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Information")) return false;
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end()).trim();
     return parseFields(body.split("\n"), data);
   }
   
@@ -44,7 +45,7 @@ public class MTFlatheadCountyDParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -52,7 +53,12 @@ public class MTFlatheadCountyDParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
 }
