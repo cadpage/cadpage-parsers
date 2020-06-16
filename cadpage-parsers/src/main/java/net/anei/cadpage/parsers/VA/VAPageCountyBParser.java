@@ -9,7 +9,7 @@ public class VAPageCountyBParser extends DispatchSouthernParser {
     
   public VAPageCountyBParser() {
     super(CITY_LIST, "PAGE COUNTY", "VA", 
-          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_X | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_UNIT1 | DSFLG_ID );
+          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_UNIT1 | DSFLG_ID );
   }
   
   @Override

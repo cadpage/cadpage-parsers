@@ -691,8 +691,6 @@ public class DispatchSouthernParser extends FieldProgramParser {
     return field;
   }
 
-  private static final Pattern CROSS_MARK_PTN = Pattern.compile("[/]| X ");
-  
   private String stripLeadPlace(String field, Data data, boolean trailName) {
     
     if (!chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) return field;
@@ -904,6 +902,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (NOT_NAME_PTN.matcher(field).matches()) return false;
+      if (chkFlag(DSFLG_UNIT1) && NOT_NAME_PTN.matcher(getRelativeField(+1)).matches()) return false;
       parse(field, data);
       return true;
     }
