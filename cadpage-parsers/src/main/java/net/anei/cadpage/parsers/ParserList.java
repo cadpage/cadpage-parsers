@@ -1533,7 +1533,6 @@ public class ParserList {
               ,"TXTravisCounty"                 ,"Travis County, TX"
               ,"TXVanAlstyne"                   ,"Van Alstyne, TX"
               ,"TXVanZandtCounty"               ,"Van Zandt County, TX"
-              ,"TXVillage"                      ,"Village, TX"
               ,"TXWalkerCounty"                 ,"Walker County, TX"
               ,"TXWebster"                      ,"Webster, TX"
               ,"TXWhartonCounty"                ,"Wharton County, TX"
