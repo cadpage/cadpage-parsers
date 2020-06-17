@@ -429,6 +429,7 @@ public class Active911ParserTable {
       "US/IL/LakeCounty",                 "ILLakeCountyA",
       "US/IL/MacoupinCounty",             "ILMacoupinCounty",
       "US/IL/MadisonCounty",              "ILMadisonCounty",
+      "US/IL/MassacCounty",               "ILMassacCounty",
       "US/IL/McHenryCounty",              "ILMcHenryCounty",
       "US/IL/Mcsd911",                    "ILMonroeCounty",
       "US/IL/Medstar",                    "ILMedstar",
