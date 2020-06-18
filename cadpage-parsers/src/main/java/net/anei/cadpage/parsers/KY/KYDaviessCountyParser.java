@@ -325,6 +325,7 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
       "MAN WITH WEAPON",
       "MEDICAL ALARM",
       "MEDICAL EMERGENCY",
+      "MEDICAL FALL EMERGENCY",
       "MEDICAL UNKNOWN",
       "MENTAL COMPLAINT",
       "MESSAGE DELIVERY",
