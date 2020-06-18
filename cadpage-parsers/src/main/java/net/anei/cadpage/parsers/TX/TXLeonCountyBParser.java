@@ -8,11 +8,11 @@ public class TXLeonCountyBParser extends DispatchA64Parser{
 
   public TXLeonCountyBParser() {
     this("LEON COUNTY", "TX");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   protected TXLeonCountyBParser(String defCity, String defState) {
     super(defCity, defState);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   public String getAliasCode() {
