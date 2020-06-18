@@ -75,7 +75,7 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
     }
   }
   
-  private static final Pattern I_20_26_PTN = Pattern.compile("(\\d{2,3})(\\d\\d) (20|26) [EW]");
+  private static final Pattern I_20_26_PTN = Pattern.compile("(\\d{2,3})(\\d\\d) (20|26) [EW](?: &.*)?");
   
   @Override
   protected String adjustGpsLookupAddress(String address) {
