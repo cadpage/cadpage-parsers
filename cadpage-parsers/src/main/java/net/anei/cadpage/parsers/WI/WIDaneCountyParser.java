@@ -113,6 +113,8 @@ public class WIDaneCountyParser extends FieldProgramParser {
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "109 BLUE SPRUCE LN",                   "+43.170516,-89.071778",
+      "1514 HELEN LN",                        "+43.157506,-89.123846",
+      "1521 HELEN LN",                        "+43.157536,-89.124953",
       "4749 MARTY DR",                        "+43.108255,-89.204149",
       "1166 I90 EB",                          "+43.380601,-89.463239",
       "1168 I90 EB",                          "+43.378088,-89.461980",
