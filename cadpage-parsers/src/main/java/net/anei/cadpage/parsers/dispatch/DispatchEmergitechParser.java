@@ -489,7 +489,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
                                   String[] cityList, String defCity, String defState, int flags, TrailAddrType taType) {
     super(cityList, defCity, defState,
           "( SELECT/3 Call:ID! NATURE:CALL! PLACE:ADDRCITY! COMMENTS:INFO3! INFO3/N+ LAT:GPS1 LONG:GPS2 " +
-          "| SELECT/2 CALL:CALL! PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
+          "| SELECT/2 CALL:CALL PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
           "| Nature:CALL Location:ADDR/S2! Comments:INFO " + 
           "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+ ( LOCATION:ADDR2! | PLACE:ADDR2! | ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO )");
     this.extraSpacePosList = extraSpacePosList;
