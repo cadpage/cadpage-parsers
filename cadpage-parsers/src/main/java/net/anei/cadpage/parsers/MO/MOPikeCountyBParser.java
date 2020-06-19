@@ -1,7 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
 
-public class MOPikeCountyBParser extends MOLincolnCountyParser {
+public class MOPikeCountyBParser extends MOLincolnCountyAParser {
   
   public MOPikeCountyBParser() {
     super("PIKE COUNTY", "MO");
