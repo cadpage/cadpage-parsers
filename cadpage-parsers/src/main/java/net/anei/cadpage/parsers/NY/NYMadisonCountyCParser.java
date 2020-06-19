@@ -27,6 +27,7 @@ public class NYMadisonCountyCParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
+    body = body.replace("\u00bf", "");
     if (subject.equals("Notification")) {
       Matcher match = MARKER.matcher(body);
       if (!match.lookingAt()) return false;
