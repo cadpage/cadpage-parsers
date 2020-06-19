@@ -13,7 +13,7 @@ public class CASolanoCountyAParser extends DispatchA20Parser {
   
   @Override
   public String getFilter() {
-    return "irimssec@fairfield.ca.gov,@ci.vallejo.ca.us,@cityofvallejo.net,rimspaging@gmail.com,noreply-rims@fairfieldgov.onmicrosoft.com";
+    return "irimssec@fairfield.ca.gov,@ci.vallejo.ca.us,@cityofvallejo.net,rimspaging@gmail.com,noreply-rims@fairfieldgov.onmicrosoft.com,@cityofvacaville.com";
   }
   
   @Override
