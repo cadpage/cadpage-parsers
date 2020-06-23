@@ -11,6 +11,7 @@ public class PANorthamptonCountyParser extends GroupBestParser {
   
   public PANorthamptonCountyParser() {
     super(new PANorthamptonCountyAParser(),
-           new PANorthamptonCountyBParser());
+          new PANorthamptonCountyBParser(),
+          new PANorthamptonCountyCParser());
   }
 }
