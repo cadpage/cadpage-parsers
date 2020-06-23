@@ -22,11 +22,12 @@ public class CAMaderaCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.length() == 0) return false;
-    Matcher match = SUBJECT_ID_PTN.matcher(subject);
-    if (match.matches()) data.strCallId = match.group(1);
+    if (subject.length() > 0) {
+      Matcher match = SUBJECT_ID_PTN.matcher(subject);
+      if (match.matches()) data.strCallId = match.group(1);
+    }
     
-    int pt = body.indexOf("\n\n");
+    int pt = body.indexOf("\n");
     if(pt < 0) return false;
     body = body.substring(0,pt).trim();
     
