@@ -620,6 +620,7 @@ public class Active911ParserTable {
       "US/KY/KSPP9",                      "KYStatePolice",
       "US/KY/LarueCounty",                "KYLaRueCounty",
       "US/KY/LawrenceCounty",             "KYLawrenceCounty",
+      "US/KY/LedbetterTone",              "KYLivingstonCounty",
       "US/KY/LincolnCounty",              "KYLincolnCounty",
       "US/KY/LoganCounty",                "KYLoganCounty",
       "US/KY/Louisville",                 "KYLouisville",
