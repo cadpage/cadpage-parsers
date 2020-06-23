@@ -21,7 +21,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
+    body = stripFieldStart(body, "MONTGOMERY CAD MSG\n");
     if (body.startsWith("<!doctype html>\n")) {
       int pt1 = body.indexOf("CAD MSG:");
       if (pt1 >= 0) {
@@ -46,6 +46,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "");
     if (body.startsWith("CAD MSG:")) {
       body = body.substring(8).trim();
       return parseFields(body.split(" \\* "), data);
