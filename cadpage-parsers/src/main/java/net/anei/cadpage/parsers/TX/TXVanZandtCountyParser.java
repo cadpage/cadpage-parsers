@@ -17,7 +17,7 @@ public class TXVanZandtCountyParser extends SmartAddressParser {
   }
   
   public String getFilter() {
-    return "DoNotReply@mcspage.com";
+    return "DoNotReply@mcspage.com,@co.wood.tx.us";
   }
   
   @Override
