@@ -418,6 +418,7 @@ public class Active911ParserTable {
       "US/IL/ETSB911",                    "ILDuPageCountyE",
       "US/IL/FairviewHeights",            "ILStClairCountyB",
       "US/IL/GlenCarbon",                 "ILMadisonCounty",
+      "US/IL/GraniteCity",                "ILMadisonCountyA",
       "US/IL/GreeneCounty",               "ILGreeneCounty",
       "US/IL/GurneeFire",                 "ILLakeCountyB",
       "US/IL/HancockCounty",              "ILHancockCounty",

@@ -14,7 +14,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
   
   public ILMadisonCountyAParser() {
     super("MADISON COUNTY", "IL",
-          "( MITCHELL_FIRE Fire_Call_Type:CALL! Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Nature_of_Call:CALL/SDS! Narrative:INFO_BLK! INFO_BLK+ Call_Date/Time:SKIP! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:TIMES! TIMES+ Incident_Number:ID! Fire_Quadrant:SKIP! EMS_District:SKIP! Google_Map_Hyperlink:SKIP! " +
+          "( NEW_SRC Fire_Call_Type:CALL! Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Nature_of_Call:CALL/SDS! Narrative:INFO_BLK! INFO_BLK+ Call_Date/Time:SKIP! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:TIMES! TIMES+ Incident_Number:ID! Fire_Quadrant:SKIP! EMS_District:SKIP! Google_Map_Hyperlink:SKIP! " +
           "| CALL_RECEIVED_AT? CALL ( PLACE ADDRCITY/S6 ID? X? " + 
                                    "| ADDRCITY/S6 ( ID X? | ( PLACE X | X | PLACE X/L | X/L | ) ) " +
                                    "| ADDRCITY/ZS6 PLACE X " + 
@@ -31,14 +31,14 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
   
   @Override
   public String getFilter() {
-    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org";
+    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,@granitecity.illinois.gov";
   }
 
   private static final Pattern FIND_ID_PTN = Pattern.compile("\\[(?:(\\d{4}-\\d{8})|Incident not yet created) ([A-Z]+\\d+)\\][ ,]*");
   
   @Override
   public Field getField(String name) {
-    if (name.equals("MITCHELL_FIRE")) return new SkipField("Mitchel Fire R&R.*", true);
+    if (name.equals("NEW_SRC")) return new SourceField("(.*?) R&R from New World Systems", true);
     if (name.equals("CALL_RECEIVED_AT")) return new SkipField("(?i)Call Rece?ie?ved at", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
