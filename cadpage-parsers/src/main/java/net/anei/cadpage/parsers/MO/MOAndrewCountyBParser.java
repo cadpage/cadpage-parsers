@@ -10,6 +10,6 @@ public class MOAndrewCountyBParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@ANDREWCOUNTY.COM";
+    return "DISPATCH@ANDREWCOUNTY.COM,NOREPLY@OMNIGO.COM";
   }
 }

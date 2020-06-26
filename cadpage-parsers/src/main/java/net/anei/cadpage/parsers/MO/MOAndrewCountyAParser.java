@@ -10,6 +10,6 @@ public class MOAndrewCountyAParser extends DispatchA33Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@ANDREWCOUNTY.COM";
+    return "DISPATCH@ANDREWCOUNTY.COM,NOREPLY@OMNIGO.COM";
   }
 }
