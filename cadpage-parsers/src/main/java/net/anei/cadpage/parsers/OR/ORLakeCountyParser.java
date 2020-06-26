@@ -13,6 +13,6 @@ public class ORLakeCountyParser extends DispatchA22Parser {
   
   @Override
   public String getFilter() {
-    return "Dispatch@LCETS.net,Dispatch@psnet.us";
+    return "Dispatch@LCETS.net,Dispatch@psnet.us,donotreply@townoflakeview.org";
   }
 }
