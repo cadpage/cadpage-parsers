@@ -16,7 +16,9 @@ public class INMadisonCountyCParser extends FieldProgramParser {
   public INMadisonCountyCParser() {
     super(INMadisonCountyParser.CITY_LIST, "MADISON COUNTY", "IN",
           "( DATE:DATETIME! CFS#:SKIP? PLACE:PLACE! ADDR:ADDRCITY! ( CROSS_STREETS:X! CALL:CALL! UNIT:UNIT! | CALL:CALL! UNIT:UNIT! CROSS_STREETS:X! ) ALARM_LEVEL:PRI? INFO:INFO! FIRE_RD:CH! EMS_RD:CH? EMPTY+? ( INCIDENT#:ID! GPS_LAT:GPS1! GPS_LON:GPS2! NARRATIVE:INFO/N! INFO/N+ | RUN_#:ID! NARRATIVE:INFO/N! INFO/N+ CALLER-NAME:NAME! CALLER-PHONE:PHONE! CAD_#:SKIP! ALL_INCIDENTS:ID! GPS_LAT:GPS1! GPS_LON:GPS2! ) " +
-          "| CALL:CALL! DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY! INFO:INFO? ( MAP:MAP! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! X:X! SOURCE:SKIP! | UNIT:UNIT! X:X! MAP:MAP! ) CALLER-NAME:NAME! CALLER-PHONE:PHONE! INCIDENT#:SKIP! OTHER_INCIDENT#:SKIP? DISTRICT:SKIP? BEAT:MAP! LOCATION_DETAILS:INFO/N+ NARRATIVE:INFO/N+ RADIO_CHANNEL:CH ) END");
+          "| CALL:CALL! DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY! INFO:INFO? ( MAP:MAP! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! X:X! SOURCE:SKIP! | UNIT:UNIT! X:X! MAP:MAP! ) CALLER-NAME:NAME! CALLER-PHONE:PHONE! INCIDENT#:SKIP! OTHER_INCIDENT#:SKIP? DISTRICT:SKIP? BEAT:MAP! LOCATION_DETAILS:INFO/N+ NARRATIVE:INFO/N+ RADIO_CHANNEL:CH " +
+          "| PLACE:PLACE! ADDR:ADDRCITY! CROSS_STREETS:X! CALL:CALL! UNIT:UNIT! ALARM_LEVEL:PRI! INFO:INFO! INFO/N+ FIRE_RD:CH! INCIDENT#:ID! OTHER_INCIDENTS#:SKIP! GPS_LAT:GPS1! GPS_LON:GPS2! HASHES! NARRATIVE:INFO/N+ " +
+          ") END");
   }
   
   @Override
@@ -30,8 +32,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
   }
   
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CFS")) return false;
+  protected boolean parseMsg(String body, Data data) {
     body = body.replace("\nCAD #:", "\nINCIDENT#:");
     body = body.replace("\nPRIMARY INCIDENT:", "\nINCIDENT#:");
     return super.parseFields(body.split("\n"), data);
@@ -45,6 +46,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("CH")) return new MyChannelField();
     if (name.equals("ID")) return new MyIdField();
+    if (name.equals("HASHES")) return new SkipField("#{4,}", true);
     return super.getField(name);
   }
   
