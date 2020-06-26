@@ -130,6 +130,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
+      if (field.contentEquals("None")) return;
       field = field.replace("; ", ",").replace(';', ',');
       super.parse(field, data);
     }
@@ -156,7 +157,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("None")) return;
+      field = stripFieldStart(field, "None");
       field = INFO_DATETIME_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);
     }

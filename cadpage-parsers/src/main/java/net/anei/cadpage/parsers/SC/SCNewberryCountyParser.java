@@ -40,7 +40,9 @@ public class SCNewberryCountyParser extends FieldProgramParser {
         data.strSource = subject.replaceAll("ST +", "ST");
       }
     }
-    return parseFields(DELIM.split(body), data);
+    if (!parseFields(DELIM.split(body), data)) return false;
+    data.strUnit = data.strUnit.replace(' ', '_');
+    return true;
   }
   
   @Override public String getProgram() {
