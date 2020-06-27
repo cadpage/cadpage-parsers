@@ -17,7 +17,7 @@ public class INBartholomewCountyParser extends DispatchOSSIParser {
   
   @Override
   public String getFilter() {
-    return "bcpaging@bartholomew.in.gov";
+    return "bcpaging@bartholomew.in.gov,8123418140";
   }
   
   @Override
