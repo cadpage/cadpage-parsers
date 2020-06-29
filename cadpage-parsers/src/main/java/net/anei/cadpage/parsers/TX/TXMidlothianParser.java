@@ -19,7 +19,7 @@ public class TXMidlothianParser extends DispatchA18Parser {
  
   @Override
   public String getFilter() {
-    return "need@midlothian.tx.us";
+    return "need@midlothian.tx.us,Crimes.Alerts@midlothian.tx.us";
   }
   
   @Override
