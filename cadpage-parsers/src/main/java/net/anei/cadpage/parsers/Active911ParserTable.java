@@ -3,11 +3,11 @@ package net.anei.cadpage.parsers;
 import java.util.Properties;
 
 public class Active911ParserTable {
-  
+
   public static String convert(String name) {
     return POLY_CODE_TABLE.getProperty(name);
   }
-  
+
   static final Properties POLY_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
       "Active911Summary",                 "GeneralAlert",
       "AU/NewSouthWales/CumberlandPDW",   "ZAUNewSouthWalesB",
@@ -221,6 +221,7 @@ public class Active911ParserTable {
       "US/CO/CityofGunnison",             "COGunnisonCounty",
       "US/CO/CityofLoveland",             "COLarimerCountyA",
       "US/CO/CityofThornton",             "COThornton",
+      "US/CO/ConejosCounty",              "COConejosCounty",
       "US/CO/ColoradoSprings",            "COElPasoCountyB",
       "US/CO/Crisppaging",                "COLarimerCountyC",
       "US/CO/CSPSanJuanCounty",           "COSanJuanCounty",
@@ -492,7 +493,7 @@ public class Active911ParserTable {
       "US/IN/MadisonCounty",              "INMadisonCountyB,INMadisonCountyC",
       "US/IN/MadisonCountyAHIMT",         "INMadisonCountyC,INMadisonCountyE",
       "US/IN/MadisonCountyCentralDispatch","INMadisonCountyC",
-      "US/IN/MadisonCountyLapel",         "ALMadisonCounty", 
+      "US/IN/MadisonCountyLapel",         "ALMadisonCounty",
       "US/IN/MarshallCounty",             "INMarshallCounty",
       "US/IN/MiamiCounty",                "INMiamiCounty",
       "US/IN/Mooresville",                "INMorganCounty",

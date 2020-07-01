@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParserList {
-  
+
   public static class ParserCategory {
     final private String name;
     final private ParserEntry[] parserList;
-    
+
     public String getName() {
       return name;
     }
-    
+
     public ParserEntry[] getParserList() {
       return parserList;
     }
-    
+
     ParserCategory(String name, Object ... objs) {
       this.name = name;
       List<ParserEntry> entryList = new ArrayList<ParserEntry>();
@@ -29,7 +29,7 @@ public class ParserList {
           entryList.add(new ParserEntry((String)next, (String)objs[ndx++]));
         }
       }
-      
+
       this.parserList = entryList.toArray(new ParserEntry[entryList.size()]);
     }
 
@@ -41,40 +41,40 @@ public class ParserList {
       sb.append("}\n");
     }
   }
-  
+
   public static class ParserEntry {
     final private ParserCategory category;
     final private String parserName;
     final private String locName;
-    
+
     public boolean isCategory() {
       return category != null;
     }
-    
+
     public ParserCategory getCategory() {
       return category;
     }
-    
+
     public String getParserName() {
       return parserName;
     }
-    
+
     public String getLocName() {
       return locName;
     }
-    
+
     private ParserEntry(String parserName, String locName) {
       this.category = null;
       this.parserName = parserName;
       this.locName = locName;
     }
-    
+
     private ParserEntry(ParserCategory category) {
       this.category = category;
       this.parserName = null;
       this.locName = null;
     }
-    
+
     private void toStringBuilder(StringBuilder sb) {
       if (isCategory()) {
         category.toStringBuilder(sb);
@@ -86,15 +86,15 @@ public class ParserList {
       }
     }
   }
-  
+
   public static void main(String[] args) {
     StringBuilder sb = new StringBuilder();
     MASTER_LIST.toStringBuilder(sb);
     System.out.print(sb.toString());
   }
- 
-  
-  public static final ParserCategory MASTER_LIST = 
+
+
+  public static final ParserCategory MASTER_LIST =
       new ParserCategory("MASTER PARSER LIST",
           new ParserCategory("General location"
               ,"General"                        ,"Generic Location"
@@ -155,7 +155,7 @@ public class ParserList {
               ,"AKFairbanks"                    ,"Fairbanks, AK"
               ,"AKJuneau"                       ,"Juneau, AK"
               ,"AKKenaiPeninsulaBorough"        ,"Kenai Peninsula Borough, AK"
-              ,"AKMatanuskaSusitnaBorough"      ,"Matanuska Susitna Borough, AK"  
+              ,"AKMatanuskaSusitnaBorough"      ,"Matanuska Susitna Borough, AK"
           ),
           new ParserCategory("Arizona"
               ,"AZMaricopaCounty"               ,"Maricopa County, AZ"
@@ -236,6 +236,7 @@ public class ParserList {
               ,"COBoulderCounty"                ,"Boulder County, CO"
               ,"COBroomfieldCounty"             ,"Broomfield County, CO"
               ,"COChaffeeCounty"                ,"Chaffee County, CO"
+              ,"COConejosCounty"                ,"Conejos County, CO"
               ,"CODeltaCounty"                  ,"Delta County, CO"
               ,"CODenver"                       ,"Denver, CO"
               ,"CODouglasCounty"                ,"Douglas County, CO"
@@ -414,7 +415,7 @@ public class ParserList {
               ,"IDGoodingCounty"                ,"Gooding County, ID"
               ,"IDJeromeCounty"                 ,"Jerome County, ID"
               ,"IDKootenaiCounty"               ,"Kootenai County, ID"
-              ,"IDLincolnCounty"                ,"Lincoln County, ID" 
+              ,"IDLincolnCounty"                ,"Lincoln County, ID"
               ,"IDMadisonCounty"                ,"Madison County, ID"
               ,"IDShoshoneCounty"               ,"Shoshone County, ID"
               ,"IDTetonCounty"                  ,"Teton County, ID"
@@ -865,7 +866,7 @@ public class ParserList {
               ,"MOBarryCounty"                  ,"Barry County, MO"
               ,"MOBentonCounty"                 ,"Benton County, MO"
               ,"MOBooneCounty"                  ,"Boone County, MO"
-              ,"MOBranson"                      ,"Branson, MO" 
+              ,"MOBranson"                      ,"Branson, MO"
               ,"MOBuchananCounty"               ,"Buchanan County, MO"
               ,"MOCaldwellCounty"               ,"Caldwell County, MO"
               ,"MOCallawayCounty"               ,"Callaway County, MO"
@@ -1141,7 +1142,7 @@ public class ParserList {
               ,"NCSwainCounty"                  ,"Swain County, NC"
               ,"NCTransylvaniaCounty"           ,"Transylvania County, NC"
               ,"NCUnionCounty"                  ,"Union County, NC"
-              ,"NCVanceCounty"                  ,"Vance County, NC"  
+              ,"NCVanceCounty"                  ,"Vance County, NC"
               ,"NCWakeCounty"                   ,"Wake County, NC"
               ,"NCWarrenCounty"                 ,"Warren County, NC"
               ,"NCWashingtonCounty"             ,"Washington County, NC"
@@ -1228,7 +1229,7 @@ public class ParserList {
               ,"OHPortageCounty"                ,"Portage County, OH"
               ,"OHPrebleCounty"                 ,"Preble County, OH"
               ,"OHRichlandCounty"               ,"Richland County, OH"
-              ,"OHShelbyCounty"                 ,"Shelby County, OH"            
+              ,"OHShelbyCounty"                 ,"Shelby County, OH"
               ,"OHStarkCounty"                  ,"Stark County, OH"
               ,"OHSugarCreek"                   ,"Sugar Creek Twns, OH"
               ,"OHSummitCounty"                 ,"Summit County, OH"
@@ -1274,7 +1275,7 @@ public class ParserList {
               ,"ORHoodRiverCounty"              ,"Hood River County, OR"
               ,"ORJacksonCounty"                ,"Jackson County, OR"
               ,"ORJeffersonCounty"              ,"Jefferson County, OR"
-              ,"ORJosephineCounty"              ,"Josephine County, OR"   
+              ,"ORJosephineCounty"              ,"Josephine County, OR"
               ,"ORKlamathCounty"                ,"Klamath County, OR"
               ,"ORLakeCounty"                   ,"Lake County, OR"
               ,"ORLakeOswego"                   ,"Lake Oswego, OR"
