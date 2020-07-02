@@ -10,12 +10,12 @@ public class MOHarrisonCountyParser extends DispatchBCParser {
     super("HARRISON COUNTY", "MO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-   
+
   @Override
   public String getFilter() {
-    return "HARCO911@GRM.NET,HARRISON911@PUBLICSAFETYSOFTWARE.NET";
+    return "HARCO911@GRM.NET,HARRISON911@PUBLICSAFETYSOFTWARE.NET,HCSO@OMNIGO.COM";
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "24475 E 225TH AVE",                    "+40.360419,-93.996812",
       "1011 MAIN ST",                         "+40.383097,-93.936801"
