@@ -13,21 +13,21 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MOMonettParser extends FieldProgramParser{
 
   private static final Pattern ALPHA_CHECK_PTN = Pattern.compile(".*[A-Za-z].*");
-  
+
   public MOMonettParser() {
     super("MONETT", "MO",
       "Address:ADDRCITY! Category:CALL! SubCategory:CALL! Open:DATETIME! Dispatch:DATETIME! Enroute:SKIP! Arrival:SKIP! Closed:SKIP! NAME+? INFOMAP+");
   }
 
 public String getFilter() {
-    return "monettpd@cityofmonett.com,911EMAMONETTLAWCO@CITYOFMONETT.COM";
+    return "monettpd@cityofmonett.com,911EMAMONETTLAWCO@CITYOFMONETT.COM,911MONETTLAWCO@OMNIGO.COM";
   }
 
 protected boolean parseMsg(String subject, String body, Data data) {
-  
+
   int appendedNotes = body.indexOf("\n****** Appended notes from Work Area");
   if (appendedNotes >= 0) body = body.substring(0, appendedNotes).trim();
-  
+
   body = body.replace("", "").trim();
   int partCheck = body.indexOf("Address:");
   if (partCheck != body.lastIndexOf("Address:")) {
@@ -40,7 +40,7 @@ protected boolean parseMsg(String subject, String body, Data data) {
         parts[i] = parts[i].substring(oldInfo);
         int shortest = Math.min(parts[1].length(), parts[i].length());
         int a = 0;
-        for ( ; a < shortest; a++) { 
+        for ( ; a < shortest; a++) {
           if (parts[1].charAt(a) != parts[i].charAt(a)) break;
         }
         if (a < shortest) a = parts[i].substring(0,a).lastIndexOf("\n")+1;
@@ -51,29 +51,29 @@ protected boolean parseMsg(String subject, String body, Data data) {
   }
   return parseFields(body.split("\n"), 2, data);
 }
-  
+
   private class MyCallField extends CallField {
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
     }
   }
-  
+
   private class MyNameField extends NameField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.contains(",") || !ALPHA_CHECK_PTN.matcher(field).find()) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strName = data.strName.trim();
@@ -82,9 +82,9 @@ protected boolean parseMsg(String subject, String body, Data data) {
       data.strName = append(data.strName, " / ", field);
     }
   }
-  
+
   private class MyInfoMapField extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
       field = cleanWirelessCarrier(field);
@@ -100,13 +100,13 @@ protected boolean parseMsg(String subject, String body, Data data) {
         data.strSupp = append (data.strSupp, " / ", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE MAP INFO";
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
