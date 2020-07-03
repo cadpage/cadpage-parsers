@@ -4,14 +4,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
 
 
 public class MOScottCountyAParser extends DispatchA33Parser {
-  
-  
+
+
   public MOScottCountyAParser() {
     super("SCOTT COUNTY", "MO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "SCOTTCITY@PUBLICSAFETYSOFTWARE.NET";
+    return "SCOTTCITY@PUBLICSAFETYSOFTWARE.NET,SCOTTCITY@itiusa.com";
   }
 }
