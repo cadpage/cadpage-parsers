@@ -1,8 +1,5 @@
 package net.anei.cadpage.parsers.NY;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -13,11 +10,9 @@ public class NYUlsterCountyParser extends FieldProgramParser {
 
   public NYUlsterCountyParser() {
     super(CITY_LIST, "ULSTER COUNTY", "NY",
-          "Inc:CALL! ( SELECT/1 Loc:ADDRCITY! Additional:INFO! Int:X!" +
-                    "| Loc:ADDR_CITY_X! " + 
-                    ") Common:PLACE/SDS! Nature:CALL/SDS? Original_Call_Time:DATETIME END");
+          "Inc:CALL! Lvl:PRI? Loc:ADDRCITY! Additional:INFO! Int:X! Common:PLACE/SDS! Nature:CALL/SDS? Original_Call_Time:DATETIME END");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@co.ulster.ny.us,777";
@@ -25,11 +20,10 @@ public class NYUlsterCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("Dispatch")) return false;
 
     body = body.replace("\n", "");
-    setSelectValue(body.contains(" Additional:") ? "1" : "2");
     if (!super.parseMsg(body, data)) return false;
 
     data.strCity = data.strCity.replaceAll(" +", " ");
@@ -37,52 +31,14 @@ public class NYUlsterCountyParser extends FieldProgramParser {
     else if (data.strCity.equalsIgnoreCase("Out of Cty")) data.strCity = "";
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR_CITY_X")) return new MyAddressCityCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if  (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
-  private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" *, +");
-  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*) (\\d{10})");
-  private class MyAddressCityCrossField extends AddressField {
-    
-    @Override
-    public void parse(String field, Data data) {
-      field = stripFieldEnd(field, ",");
-      String[] parts = ADDR_DELIM_PTN.split(field);
-      super.parse(parts[0], data);
-      if (parts.length > 1) {
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, parts[1], data);
-        String left = getLeft();
-        if (left.length() > 0) {
-          Matcher match = NAME_PHONE_PTN.matcher(left);
-          if (match.matches()) {
-            data.strName = match.group(1).trim();
-            data.strPhone = match.group(2);
-          } else if (left.contains("/")) {
-            data.strCross = left;
-          } else if (left.contains(",")) {
-            data.strName = left;
-          } else {
-            data.strPlace = left;
-          }
-        }
-      }
-      for (int ndx = 2; ndx < parts.length; ndx++) {
-        data.strCross = append(data.strCross, ", ", parts[ndx]);
-      }
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CITY NAME PHONE PLACE X";
-    }
-  }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -90,9 +46,9 @@ public class NYUlsterCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "KINGSTON",
 
