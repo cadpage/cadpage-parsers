@@ -12,18 +12,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SCNewberryCountyParser extends FieldProgramParser {
 
   public SCNewberryCountyParser() {
-    super("NEWBERRY COUNTY", "SC", 
+    super("NEWBERRY COUNTY", "SC",
           "DATETIME ID? CALL CODE ADDR! UNIT? INFO+");
     setupMultiWordStreets("C AND D");
     setupProtectedNames("C AND D");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "9 11,911@ncso.sc.gov";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("\\n{1,2}");
 
   @Override
@@ -44,7 +44,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
     data.strUnit = data.strUnit.replace(' ', '_');
     return true;
   }
-  
+
   @Override public String getProgram() {
     return "SRC " + super.getProgram();
   }
@@ -59,25 +59,25 @@ public class SCNewberryCountyParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new UnitField("Responders - *(.*)", true);
     return super.getField(name);
   }
-  
+
   private class MyIdField extends IdField {
     public MyIdField() {
       super("CAD No - (.*)", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripTrailingChannel(field, data);
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID CH";
     }
   }
-  
-  private static Pattern DATE_TIME_PTN = Pattern.compile("Date/Time Sent - (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
+
+  private static Pattern DATE_TIME_PTN = Pattern.compile("[a-z]*Date/Time Sent - (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d [AP]M)");
   private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -131,26 +131,26 @@ public class SCNewberryCountyParser extends FieldProgramParser {
       return super.getFieldNames() + " INFO X CH";
     }
   }
-  
+
   private class MyCallField extends CallField {
     public MyCallField() {
       super("(?:Description - )?(.*)", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripTrailingChannel(field, data);
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL CH";
     }
   }
- 
+
   private static final Pattern OPS_PTN = Pattern.compile("(.*?)[ /]*\\b(OPS *\\d+)\\b[- ]*(.*)", Pattern.CASE_INSENSITIVE);
-  
+
   private String stripTrailingChannel(String field, Data data) {
     Matcher match = OPS_PTN.matcher(field);
     if (match.matches()) {
@@ -159,7 +159,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
     }
     return field;
   }
-  
+
   // There is an instance of "Event Code - 1025  TOOK MEDICATION" that this class takes care of
   private static Pattern CODE_INFO = Pattern.compile("(\\d{3,4}|SIG\\d+) *(.*)");
   private class MyCodeField extends CodeField {
@@ -182,7 +182,7 @@ public class SCNewberryCountyParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern I_26_PTN = Pattern.compile("\\bI26\\b");
 
   @Override
