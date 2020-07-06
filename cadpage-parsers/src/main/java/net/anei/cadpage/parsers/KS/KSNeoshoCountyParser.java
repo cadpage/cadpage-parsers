@@ -1,17 +1,11 @@
 package net.anei.cadpage.parsers.KS;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
+public class KSNeoshoCountyParser extends GroupBestParser {
 
-public class KSNeoshoCountyParser extends DispatchA33Parser {
-  
   public KSNeoshoCountyParser() {
-    super("NEOSHO COUNTY", "KS");
+    super(new KSNeoshoCountyAParser(), new KSNeoshoCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "NEOSHO911@ACEKS.COM";
-  }
-  
- }
+
+}

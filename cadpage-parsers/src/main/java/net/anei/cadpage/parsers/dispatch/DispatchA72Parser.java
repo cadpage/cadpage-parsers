@@ -7,12 +7,12 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA72Parser extends FieldProgramParser {
-  
+
   public DispatchA72Parser(String defCity, String defState) {
-    super(defCity, defState, 
-        "CFS:ID! CALLTYPE:CALL! PRIORITY:PRI! PLACE:PLACE! ADDRESS:ADDR! CITY:CITY! STATE:ST! ZIP:ZIP! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! INFO/N+");
+    super(defCity, defState,
+        "CFS:ID! CALLTYPE:CALL! PRIORITY:PRI! PLACE:PLACE! ADDRESS:ADDR! CITY:CITY! STATE:ST! ZIP:ZIP! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! INFO/N+ ALERT:ALERT");
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("CFS: ")) return false;
@@ -24,7 +24,7 @@ public class DispatchA72Parser extends FieldProgramParser {
     parseAddress(addr, data);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("PLACE")) return new BasePlaceField();
@@ -35,20 +35,20 @@ public class DispatchA72Parser extends FieldProgramParser {
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
-  
+
   private class BasePlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       field = setGPSLoc(field, data);
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "GPS PLACE";
     }
   }
-  
+
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -57,17 +57,17 @@ public class DispatchA72Parser extends FieldProgramParser {
         if (data.strPlace.length() == 0) data.strPlace = field.substring(0,pt).trim();
         field = field.substring(pt+1).trim();
       }
-      
+
       // We will fix this later
       data.strAddress = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private class BaseZipField extends ZipField {
     @Override
     public void parse(String field, Data data) {
@@ -78,23 +78,23 @@ public class DispatchA72Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern INFO_LABEL_PTN = Pattern.compile("([A-Za-z]+): *(.*)");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
+
       boolean suppress = false;
       field = stripFieldStart(field, ",");
       for (String part : field.split(",")) {
         part = part.trim();
-        
+
         if (part.startsWith("Email sent to ")) suppress = true;
         if (suppress) {
           if (part.endsWith(" for Active 911")) suppress = false;
           continue;
         }
-        
+
         if (part.startsWith("911 Call Received ")) continue;
 
         Matcher match = INFO_LABEL_PTN.matcher(part);
@@ -102,7 +102,7 @@ public class DispatchA72Parser extends FieldProgramParser {
           String key = match.group(1).toUpperCase();
           String value = match.group(2);
           switch (key) {
-          
+
           case "NAME":
             if (data.strName.length() == 0) data.strName = cleanWirelessCarrier(value);
             continue;
@@ -110,20 +110,20 @@ public class DispatchA72Parser extends FieldProgramParser {
           case "PHONE":
             if (data.strPhone.length() == 0) data.strPhone = value;
             continue;
-            
+
           case "CONTACT":
           case "ADDRESS":
             continue;
           }
         }
-        
+
         if (part.equals("CALLER CREATED")) continue;
         if (part.equals("ALERT:")) continue;
-        
+
         data.strSupp = append(data.strSupp, "\n", part);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "NAME PHONE INFO";
