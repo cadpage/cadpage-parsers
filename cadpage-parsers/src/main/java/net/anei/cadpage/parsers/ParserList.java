@@ -376,6 +376,7 @@ public class ParserList {
               ,"GAJacksonCounty"                ,"Jackson County, GA"
               ,"GAJasperCounty"                 ,"Jasper County, GA"
               ,"GAJeffersonCounty"              ,"Jefferson County, GA"
+              ,"GALamarCounty"                  ,"Lamar County, GA"
               ,"GALibertyCounty"                ,"Liberty County, GA"
               ,"GAMaconCounty"                  ,"Macon County, GA"
               ,"GAMarionCounty"                 ,"Marion County, GA"

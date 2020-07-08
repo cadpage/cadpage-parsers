@@ -1650,7 +1650,7 @@ public static void addCodeTable(Properties props, String[] table) {
 
    return body;
  }
- private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|O|P|PRE|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+ private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
  private static final Pattern END_BR_PTN = Pattern.compile("< */(?:br|p) *>", Pattern.CASE_INSENSITIVE);
