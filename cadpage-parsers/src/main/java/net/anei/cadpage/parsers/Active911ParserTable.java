@@ -1788,7 +1788,7 @@ public class Active911ParserTable {
       "US/VA/MecklenburgCounty",          "VAMecklenburgCounty",
       "US/VA/MontgomeryCounty",           "VAMontgomeryCountyA",
       "US/VA/NewportNews",                "VANewportNews",
-      "US/VA/Nrv",                        "VAMontgomeryCountyB",
+      "US/VA/Nrv",                        "VAMontgomeryCountyB,VAMontgomeryCountyC",
       "US/VA/PatrickCounty",              "VAPatrickCounty",
       "US/VA/Petersburg",                 "VAPetersburg",
       "US/VA/PetersburgPD",               "VAPetersburg",
