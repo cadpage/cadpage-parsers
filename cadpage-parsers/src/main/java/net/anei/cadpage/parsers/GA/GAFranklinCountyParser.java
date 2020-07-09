@@ -9,18 +9,18 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
  * Franklin County, GA
  */
 public class GAFranklinCountyParser extends DispatchSouthernParser {
-  
+
   public GAFranklinCountyParser() {
-    super(CITY_LIST, "FRANKLIN COUNTY", "GA", 
-          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_TIME);
+    super(CITY_LIST, "FRANKLIN COUNTY", "GA",
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_ID | DSFLG_TIME);
     setupSaintNames("MARYS");
   }
-  
+
   @Override
   public String getFilter() {
     return "FC911@franklincountyga.com,FC911@gumlog.net,7064911018@mms.firstnet-mail.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!body.startsWith("FC911:")) return false;
@@ -38,7 +38,7 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
   protected int getExtraParseAddressFlags() {
     return FLAG_IMPLIED_INTERSECT;
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress,  boolean cross) {
     if (cross) {
@@ -59,10 +59,10 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
     "LAVONIA",
     "MARTIN",
     "ROYSTON",
-    
+
     // Jackson County
     "COMMERCE",
-    
+
     // Stephens County
     "TOCCOA"
   };
