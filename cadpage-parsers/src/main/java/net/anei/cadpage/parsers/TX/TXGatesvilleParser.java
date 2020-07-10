@@ -1,20 +1,23 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA37Parser;
 
 public class TXGatesvilleParser extends DispatchA37Parser {
 
   public TXGatesvilleParser() {
-    super("GatesvilleDispatch", CITY_LIST, "GATESVILLE", "TX");
+    super(null, CITY_LIST, "GATESVILLE", "TX");
   }
 
+  private static final Pattern PREFIX = Pattern.compile("GFD:(?:ems)?active911 Gatesville Dispatch |GatesvilleDispatch:");
   @Override
   public boolean parseMsg(String body, Data data) {
-    if (body.startsWith("GFD:active911 Gatesville Dispatch ")) {
-      body = "GatesvilleDispatch:" + body.substring(34);
-    }
-    // TODO Auto-generated method stub
+    Matcher match = PREFIX.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end()).trim();
     return super.parseMsg(body, data);
   }
 
