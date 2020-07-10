@@ -10,11 +10,20 @@ public class TXGatesvilleParser extends DispatchA37Parser {
   }
 
   @Override
+  public boolean parseMsg(String body, Data data) {
+    if (body.startsWith("GFD:active911 Gatesville Dispatch ")) {
+      body = "GatesvilleDispatch:" + body.substring(34);
+    }
+    // TODO Auto-generated method stub
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   protected boolean parseMessageField(String field, Data data) {
     data.strSupp = field;
     return true;
   }
-  
+
   @Override
   protected boolean parseLocationField(String field, Data data) {
     int pt = field.lastIndexOf('-');
@@ -32,10 +41,10 @@ public class TXGatesvilleParser extends DispatchA37Parser {
         return true;
       }
     }
-    
+
     return super.parseLocationField(field, data);
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " PLACE INFO";
