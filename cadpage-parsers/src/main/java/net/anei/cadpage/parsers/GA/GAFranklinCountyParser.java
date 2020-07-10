@@ -12,7 +12,7 @@ public class GAFranklinCountyParser extends DispatchSouthernParser {
 
   public GAFranklinCountyParser() {
     super(CITY_LIST, "FRANKLIN COUNTY", "GA",
-          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_ID | DSFLG_TIME);
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_ID | DSFLG_TIME);
     setupSaintNames("MARYS");
   }
 
