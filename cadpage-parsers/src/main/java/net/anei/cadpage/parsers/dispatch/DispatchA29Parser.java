@@ -13,8 +13,10 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 public class DispatchA29Parser extends FieldProgramParser {
 
   public DispatchA29Parser(String[] cityList, String defCity, String defState) {
-    super(cityList, defCity, defState,
-          "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP UNIT:UNIT INFO:INFO");
+    super(cityList, defCity, defState, null);
+
+    String extra = (getExtraParseAddressFlags() & FLAG_IMPLIED_INTERSECT) != 0 ? "/i" : "";
+    setProgram("CALL:CALL! PLACE:PLACE? ADDR:ADDR"+extra+"! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP UNIT:UNIT INFO:INFO", 0);
   }
 
   private static final Pattern MARKER1 = Pattern.compile("^DISPATCH[:\n](?:([-_A-Z0-9]+)(?: |\n\n))?(?:([^-]\\S*: *\\S+(?: (?:FD|ALS|BLS))?) )?");
@@ -40,6 +42,8 @@ public class DispatchA29Parser extends FieldProgramParser {
     boolean good = body.startsWith("- ");
     if (good) body = body.substring(2).trim();
 
+    body = body.replace("Apt/Unit", "Apt");
+
     if (body.startsWith("CALL:")) {
       return super.parseMsg(body, data);
     }
@@ -53,8 +57,6 @@ public class DispatchA29Parser extends FieldProgramParser {
     data.strCallId = getOptGroup(match.group(3));
     body = body.substring(match.end()).trim();
     if (!good && data.strCallId.length() == 0) return false;
-
-    body = body.replace("Apt/Unit", "Apt");
 
     // Split of call code
     match = CODE_PTN.matcher(body);
@@ -134,11 +136,10 @@ public class DispatchA29Parser extends FieldProgramParser {
     body = body.substring(0,pt).trim();
 
     // OK, see what we can do with the address
-    int flags = 0;
+    int flags = FLAG_ANCHOR_END;
     if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
-    flags |= FLAG_ANCHOR_END;
     if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
-
+    flags |= getExtraParseAddressFlags();
 
    // Dispatch doesn't (or didn't) use the normal & or / intersection convention, the
    // use long NORTH OF type constucts.  To get these through the

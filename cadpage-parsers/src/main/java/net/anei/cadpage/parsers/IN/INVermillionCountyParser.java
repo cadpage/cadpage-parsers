@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.IN;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -10,12 +11,14 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
 
 public class INVermillionCountyParser extends DispatchA29Parser {
-  
+
   public INVermillionCountyParser() {
     super(CITY_LIST, "VERMILLION COUNTY", "IN");
+    setupCities(MISSPELLED_CITIES);
     setupCallList(CALL_LIST);
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@vcsheriff.com";
@@ -31,24 +34,41 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     int pt = data.strAddress.indexOf(',');
     if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
     data.strCity = data.strCity.toUpperCase();
-    if (data.strCity.equals("FAIRVIEW")) data.strCity = "FAIRVIEW PARK";
+    data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
     if (IL_CITY_SET.contains(data.strCity)) data.strState = "IL";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replaceAll("CITY", "CITY ST");
   }
-  
+
+  @Override
+  protected int getExtraParseAddressFlags() {
+    return FLAG_IMPLIED_INTERSECT;
+  }
+
   private static Pattern STREET_TH_PTN = Pattern.compile("\\b(\\d{4,}) *TH\\b");
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = STREET_TH_PTN.matcher(addr).replaceAll("$1");
     return super.adjustMapAddress(addr);
   }
-  
+
+  private static final String[] MWORD_STREET_LIST = new String[] {
+      "CROWN HILL",
+      "GENEAVA HILLS",
+      "GENEVA HILLS",
+      "HAZEL BLUFF",
+      "LAKE VIEW",
+      "SAINT PAUL",
+      "SILVER ISLAND",
+      "STILL ALARM KIBBY ST PIKE"
+
+  };
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
       "ALARM-BURGLAR-RESIDENTIAL",
@@ -63,6 +83,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
       "FIRE-BRUSH",
       "FIRE-GENERAL",
       "FIRE-HAZMATS INVOLVED",
+      "FIRE-LINE TROUBLE/STILL ALARM",
       "FIRE-STRUCTURE",
       "FIRE-VEHICLE",
       "FIRE ALARM",
@@ -78,14 +99,18 @@ public class INVermillionCountyParser extends DispatchA29Parser {
       "PERSON DOWN",
       "POPULAR ST IN ALLY WAY",
       "POSS. HEART ATTACK",
+      "POSS. STROKE",
+      "POWER FAILURE",
       "SEIZURES",
       "SPEAK TO OFFICER",
       "SUICIDAL SUBJECT",
       "SUSPICIOUS PERSON",
       "TRAFFIC ACCIDENT-INJURIES",
       "TRAFFIC ACCIDENT-PROPERTY DAMAGE",
+      "TRAFFIC HAZARD",
       "TROUBLE BREATHING",
       "UNATTENDED DEATH",
+      "UNKNOWN PROBLEM",
       "UNRESPONSIVE/UNCONCIOUS",
       "UNWANTED SUBJECT - REMOVE"
   );
@@ -120,13 +145,13 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "TORONTO",
     "TREE SPRING",
     "UNIVERSAL",
-    
+
     "CLINTON TWP",
     "EUGENE TWP",
     "HELT TWP",
     "HIGHLAND TWP",
     "VERMILLION TWP",
-    
+
     // Edgar County, IL
     "EDGAR CO",
     "BROULETTS CREEK TWP",
@@ -136,14 +161,15 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "ROSS TWP",
     "PRAIRIE TWP",
     "CHRISMAN",
-    
+
     // Fountain County
+    "COVINGTON",
     "FOUNTAIN CO",
     "FULTON TWP",
     "TROY TWP",
     "WABASH TWP",
     "CONVINGTON",
-    
+
     // Parke County
     "PARKE CO",
     "LIBERTY TWP",
@@ -160,7 +186,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "ROSEDALE",
     "SYLVANIA",
     "TANGIER",
-    
+
     // Vermilion County, IL
     "VERMILION CO",
     "DANVILLE TWP",
@@ -175,7 +201,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "RIDGE FARM",
     "TILTON",
     "WESTVILLE",
-    
+
     // Vigo County
     "VIGO CO",
     "FAYETTE TWP",
@@ -184,7 +210,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "NEW GOSHEN",
     "SHEPARDSVILLE",
     "VIGO",
-    
+
     // Warren County
     "WARREN CO",
     "KENT TWP",
@@ -193,7 +219,12 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "FOSTER",
     "STATE LINE CITY"
   };
-  
+
+  private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
+      "CHRISTMAN",      "CHRISMAN",
+      "FAIRVIEW",       "FAIRVIEW PARK"
+  });
+
   private static final Set<String> IL_CITY_SET = new HashSet<String>(Arrays.asList(
       // Edgar County, IL
       "EDGAR CO",
@@ -204,7 +235,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
       "ROSS TWP",
       "PRAIRIE TWP",
       "CHRISMAN",
-      
+
       // Vermilion County, IL
       "VERMILION CO",
       "DANVILLE TWP",
