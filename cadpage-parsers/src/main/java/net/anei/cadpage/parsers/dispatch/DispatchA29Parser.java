@@ -16,7 +16,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     super(cityList, defCity, defState,
           "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP UNIT:UNIT INFO:INFO");
   }
-  
+
   private static final Pattern MARKER1 = Pattern.compile("^DISPATCH[:\n](?:([-_A-Z0-9]+)(?: |\n\n))?(?:([^-]\\S*: *\\S+(?: (?:FD|ALS|BLS))?) )?");
   private static final Pattern MARKER2 = Pattern.compile("(?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?(?:([A-Z]{2,4}:\\d{2}-\\d{6}) )?");
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
@@ -29,40 +29,40 @@ public class DispatchA29Parser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = MARKER1.matcher(body);
     if (!match.find()) return false;
     data.strSource = getOptGroup(match.group(1));
     data.strUnit = getOptGroup(match.group(2)).replace(" ", "");
     body = body.substring(match.end()).trim();
     if (data.strSource.length() == 0 && data.strUnit.length() == 0) return false;
-    
+
     boolean good = body.startsWith("- ");
     if (good) body = body.substring(2).trim();
-    
+
     if (body.startsWith("CALL:")) {
       return super.parseMsg(body, data);
     }
-    
+
     match = MARKER2.matcher(body);
     if (!match.lookingAt()) return false;
     setFieldList("DATE TIME ID CODE CALL ADDR APT CITY PLACE PHONE INFO");
-    
+
     data.strDate = getOptGroup(match.group(1));
     data.strTime = getOptGroup(match.group(2));
     data.strCallId = getOptGroup(match.group(3));
     body = body.substring(match.end()).trim();
     if (!good && data.strCallId.length() == 0) return false;
-    
+
     body = body.replace("Apt/Unit", "Apt");
-    
+
     // Split of call code
     match = CODE_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strCode = match.group(1);
       body = body.substring(match.end());
     }
-    
+
     // Look for unit field.  If found is separates sup info from rest of call
     match = UNIT_INFO_PTN.matcher(body);
     if (match.find()) {
@@ -70,7 +70,7 @@ public class DispatchA29Parser extends FieldProgramParser {
       data.strSupp = body.substring(match.end());
       body = body.substring(0,match.start());
     }
-    
+
   // Reduce multiple slashes to single slash
   body = MULT_SLASH_PTN.matcher(body).replaceAll("/");
 
@@ -88,17 +88,17 @@ public class DispatchA29Parser extends FieldProgramParser {
         addPlace(parts[2].trim(), data);
         if (parts.length >= 4) return false;
       }
-      
+
       // Remove comma following house number
       match = HOUSE_NUMBER_PTN.matcher(body);
       if (match.lookingAt()) {
         body = append(append(match.group(1), " ", match.group(2)), " ", body.substring(match.end()));
       }
     }
-    
+
     // Otherwise, we have to do this the hard way
     else {
-      
+
       // Now things get complicated.
       // See if we can find an odd street number convention that marks the end of the
       // call description
@@ -109,7 +109,7 @@ public class DispatchA29Parser extends FieldProgramParser {
         st = StartType.START_ADDR;
       }
     }
-    
+
     // There is always a comma followed by a (possibly empty) city and optional place name
     // Very occasionally, the comma is part of the place name field, so we also check for
     // a city name following the second comma.
@@ -132,14 +132,14 @@ public class DispatchA29Parser extends FieldProgramParser {
     res.getData(data);
     addPlace(stripFieldStart(res.getLeft(),"/"), data);
     body = body.substring(0,pt).trim();
-    
+
     // OK, see what we can do with the address
     int flags = 0;
     if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
     flags |= FLAG_ANCHOR_END;
     if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
-    
-    
+
+
    // Dispatch doesn't (or didn't) use the normal & or / intersection convention, the
    // use long NORTH OF type constucts.  To get these through the
    // smart address parser, we need to replace them all with &
@@ -153,7 +153,7 @@ public class DispatchA29Parser extends FieldProgramParser {
    }
    body = body.replace('@', '&');
    parseAddress(st, flags, body, data);
-   
+
    // Sometimes there is a slash delimiter marking the end of the call description.  It is not
    // always there, and we couldn't check for it earlier lest we confuse an intersection address
    // for the delimiter.  But now that we have done the best we could with the address, see if
@@ -180,12 +180,12 @@ public class DispatchA29Parser extends FieldProgramParser {
    }
    return true;
  }
-  
+
   @Override
   public String getProgram() {
     return "SRC UNIT " + super.getProgram();
   }
-  
+
   private void addUnit(String field, Data data) {
     Set<String> unitSet = new HashSet<String>();
     if (data.strUnit.length() > 0) unitSet.addAll(Arrays.asList(data.strUnit.split(",")));
@@ -208,7 +208,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     data.strPlace = append(field, " - ", data.strPlace);
   }
   private static final Pattern CALLBK_PTN = Pattern.compile("\\bCALLBK=([-\\d]*)");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -217,7 +217,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     if (name.equals("UNIT"))  return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -228,13 +228,13 @@ public class DispatchA29Parser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class  MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
