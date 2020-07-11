@@ -4,7 +4,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class VAMontgomeryCountyCParser extends DispatchH05Parser {
 
-  VAMontgomeryCountyCParser() {
+  public VAMontgomeryCountyCParser() {
     super("MONTGOMERY COUNTY","VA", null);
     setProgram("RUN__REPORT%EMPTY! ADDR:ADDRCITY! CALL:CALL! PLACE:PLACE! ID:ID! INCIDENT_NUMBERS:ID! INCIDENT__TIMES:EMPTY! TIMES+? END_TIMES",
                FLDPROG_DOUBLE_UNDERSCORE);
