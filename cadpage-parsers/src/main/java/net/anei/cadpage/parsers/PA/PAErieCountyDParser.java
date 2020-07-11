@@ -3,46 +3,59 @@ package net.anei.cadpage.parsers.PA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
 
-public class PAErieCountyDParser extends SmartAddressParser {
-  
+public class PAErieCountyDParser extends FieldProgramParser {
+
   public PAErieCountyDParser() {
-    super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA");
-    setFieldList("SRC DATE TIME PRI CALL CODE ADDR CITY APT PLACE X INFO GPS");
+    super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA",
+          "Date/Time:DATETIME! Priority:PRI! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Lat:GPS1! Lon:GPS2! Tactical:CH! " +
+          "Incident_#:ID Narrative:INFO! CC_Text:INFO/N Caller_Statement:INFO/N");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("RIDGE");
   }
-  
+
   @Override
   public String getFilter() {
     return "snpp@eriecountypa.gov,messaging@iamresponding.com,777";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Za-z ]+");
-  private static final Pattern MASTER = Pattern.compile("snpp:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*)");
+  private static final Pattern MASTER = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*)");
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?) -(\\d{1,3})\\b *(.*)");
   private static final Pattern CALL_ADDR_PTN = Pattern.compile("(.*? (?:ALPHA|BRAVO|CHARLIE|DELTA|ECHO)(?: (?:ENTRAPMENT|HIGH MECHANISM|PINNED|STRUCT|UNK|\\d COM / INDUST|\\d SINGLE RES|\\d MULTI RES|\\d+ OVER WATER|\\d+ UNKNOWN))?) (.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM) (\\S+) *(.*)", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (SUBJECT_SRC_PTN.matcher(subject).matches() && !subject.equals("Text Message")) data.strSource = subject;
-    
+
     body = body.replace(" \n", " ").replace('\n', ' ');
+
+    if (!body.startsWith("snpp:")) return false;
+    body = body.substring(5).trim();
+
+    // Is this the new labeled format?
+    if (body.startsWith("Date/Time:")) {
+      return super.parseMsg(body, data);
+    }
+
+    // Otherwise parse the old style messages
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
+
+    setFieldList("DATE TIME PRI CALL CODE ADDR CITY APT PLACE X INFO GPS");
     data.strDate = match.group(1);
     data.strTime = match.group(2);
     data.strPriority = getOptGroup(match.group(3));
-    
+
     Parser p = new Parser(match.group(4));
     String addr = p.get(" Lat:");
     String gps1 = p.get(" Lon:");
@@ -68,7 +81,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
       data.strCall = match.group(1);
       addr = stripFieldStart(match.group(2), data.strCall);
       addr = stripFieldStart(addr, "UNKNOWN ");
-    } 
+    }
     else {
       int pt = addr.indexOf(" UNKNOWN ");
       if (pt >= 0) {
@@ -76,9 +89,9 @@ public class PAErieCountyDParser extends SmartAddressParser {
         addr = addr.substring(pt+9).trim();
       }
     }
-    
-    StartType st = data.strCall.length() > 0 ? StartType.START_ADDR : StartType.START_CALL; 
-    
+
+    StartType st = data.strCall.length() > 0 ? StartType.START_ADDR : StartType.START_CALL;
+
     addr = addr.replace('@', '/');
     int pt = addr.indexOf(',');
     if (pt >= 0) {
@@ -99,7 +112,7 @@ public class PAErieCountyDParser extends SmartAddressParser {
         if (res.isValid()) {
           res.getData(data);
           addr = res.getLeft();
-          
+
           match = APT_PTN.matcher(data.strPlace);
           if (match.matches()) {
             data.strApt = append(data.strApt, "-", match.group(1));
@@ -109,10 +122,61 @@ public class PAErieCountyDParser extends SmartAddressParser {
       }
     }
     data.strSupp = addr;
-    
+
     return true;
   }
-  
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    return super.getField(name);
+  }
+
+  private static final Pattern CALL_CODE_PTN2 = Pattern.compile("(.*) -(\\d{2,3})");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ",");
+      Matcher match =  CALL_CODE_PTN2.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCode = match.group(2);
+      }
+      super.parse(field,  data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CALL CODE";
+    }
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        String city = field.substring(pt+1).trim();
+        field = field.substring(0, pt).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+        data.strPlace = getLeft();
+      }
+      parseAddress(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY PLACE?";
+    }
+  }
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "BEAR CREEK",
       "BEAR RUN",
