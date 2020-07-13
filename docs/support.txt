@@ -746,7 +746,6 @@ These have all been added to a paid subscriber list.  They can update their paym
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If this does not work, it probably means we got a phone number wrong.  In that case, they should go into Cadpage settings and press Payment Status, then I've made a PayPal payment, to send us an email.
-
 Thanks for your support,
 -Ken
 
