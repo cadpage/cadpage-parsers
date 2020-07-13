@@ -10,8 +10,8 @@ public class PAErieCountyDParser extends FieldProgramParser {
 
   public PAErieCountyDParser() {
     super(PAErieCountyParser.CITY_LIST, "ERIE COUNTY", "PA",
-          "Date/Time:DATETIME! Priority:PRI! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Lat:GPS1! Lon:GPS2! Tactical:CH! " +
-          "Incident_#:ID Narrative:INFO! CC_Text:INFO/N Caller_Statement:INFO/N");
+          "Date/Time:DATETIME! Priority:PRI! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Lat:GPS1 Lon:GPS2 Tactical:CH " +
+          "Incident_#:ID Narrative:INFO CC_Text:INFO/N Caller_Statement:INFO/N");
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("RIDGE");
   }
