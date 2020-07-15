@@ -1072,7 +1072,7 @@ public class Active911ParserTable {
       "US/NC/UnionCounty",                "NCUnionCounty",
       "US/NC/USAMobility",                "NCWayneCountyA",
       "US/NC/VanceCounty",                "NCVanceCountyC",
-      "US/NC/WakeCounty",                 "NCWakeCountyA,NCWakeCountyB",
+      "US/NC/WakeCounty",                 "NCWakeCounty",
       "US/NC/WarrenCounty",               "NCWarrenCounty",
       "US/NC/WashingtonCounty",           "NCWashingtonCounty",
       "US/NC/WataugaCounty",              "NCWataugaCounty",
