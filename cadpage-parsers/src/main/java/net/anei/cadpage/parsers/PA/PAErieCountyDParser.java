@@ -27,6 +27,7 @@ public class PAErieCountyDParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Za-z ]+");
+  private static final Pattern BRK_PTN = Pattern.compile("(?:=20)? *\n");
   private static final Pattern MASTER = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (?:(High|Medium|Low) )?(.*)");
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?) -(\\d{1,3})\\b *(.*)");
   private static final Pattern CALL_ADDR_PTN = Pattern.compile("(.*? (?:ALPHA|BRAVO|CHARLIE|DELTA|ECHO)(?: (?:ENTRAPMENT|HIGH MECHANISM|PINNED|STRUCT|UNK|\\d COM / INDUST|\\d SINGLE RES|\\d MULTI RES|\\d+ OVER WATER|\\d+ UNKNOWN))?) (.*)");
@@ -37,7 +38,7 @@ public class PAErieCountyDParser extends FieldProgramParser {
 
     if (SUBJECT_SRC_PTN.matcher(subject).matches() && !subject.equals("Text Message")) data.strSource = subject;
 
-    body = body.replace(" \n", " ").replace('\n', ' ');
+    body = BRK_PTN.matcher(body).replaceAll(" ");
 
     if (!body.startsWith("snpp:")) return false;
     body = body.substring(5).trim();
