@@ -1,39 +1,28 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
 
-public class KYHarrisonCountyBParser extends DispatchB2Parser {
-  
+public class KYHarrisonCountyBParser extends DispatchA65Parser {
+
   public KYHarrisonCountyBParser() {
-    super("HARRISON_COUNTY_911:", CITY_LIST, "HARRISON COUNTY", "KY");
-    setupMultiWordStreets(
-        "BOWMANS MILL",
-        "DIVIDING RIDGE",
-        "FARMER TRAIL",
-        "GRAYS RUN",
-        "HINTON SADIEVILLE",
-        "INDIAN CREEK",
-        "KELLER WAITS",
-        "LICKING VALLEY",
-        "MOUTH OF CEDAR",
-        "NEWTOWN LEESBURG",
-        "OAK RIDGE",
-        "ODDVILLE SUNRISE",
-        "OFF ANTIOCH RICHLAND",
-        "SNAKE LICK",
-        "STRINGTOWN WEBBER",
-        "WAGNORS CHAPEL"
-    );
+    super(CITY_LIST, "HARRISON COUNTY", "KY");
   }
-  
+
   @Override
   public String getFilter() {
-    return "HARRISON_COUNTY_911@cynthianaky.com";
+    return "dispatch@911comm2.info";
   }
-  
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (! super.parseMsg(subject, body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " PD");
+    return true;
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
     "BERRY",
@@ -60,30 +49,13 @@ public class KYHarrisonCountyBParser extends DispatchB2Parser {
     "RUTLAND",
     "SHADYNOOK",
     "SHAWHAN",
-    "SUNRISE"
+    "SUNRISE",
+
+    // Pendleton County
+    "FALMOUTH",
+
+    // Bourboun County
+    "PARIS",
+    "PARIS PD"
   };
- 
-  @Override
-  protected CodeSet buildCallList() {
-    return new CodeSet(
-        "CONTROL BURN",
-        "MEDICAL EMERGENCY",
-        "SICK PERSON",
-        "STROKE / CVA",
-        "ODOR/GAS INVESTIGATION",
-        "UNCONSCIOUS / FAINTING",
-        "BREATHING PROBLEMS", 
-        "CHEST PAIN",
-        "BACK PAIN",
-        "FALL ON PRIVATE PROPERTY",
-        "STRUCTURE FIRE",
-        "LOCKOUT VEHICLE -HOUSE",
-        "SEIZURE-CONVULSIONS",
-        "FIRE (UNSPECIFIED OR UNKNOWN)",
-        "DIABETIC PROBLEMS",
-        "BLEEDING LACERATIONS",
-        "ACCIDENT W/INJURIES",
-        "POISONING / INGESTION"
-    );
- }
 }
