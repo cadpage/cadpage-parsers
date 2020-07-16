@@ -13,7 +13,7 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
     super(MOStLouisCountyParser.CITY_LIST, "ST LOUIS COUNTY", "MO", "Call_Received_Time:DATE_TIME_CALL! ADDR/S! UNIT_PLACE! Description:INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "ECDC@rejis.org,Admin@east-central.org";
@@ -81,7 +81,7 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "121 BLUE",                             "+38.648645,-90.314927",
       "123 BLUE",                             "+38.649523,-90.314770",
@@ -107,6 +107,7 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
       "144 GREEN",                            "+38.649904,-90.307470",
       "195 GREEN",                            "+38.649485,-90.307028",
       "196 GREEN",                            "+38.649607,-90.307663",
+      "225 GREEN",                            "+38.649900,-90.307700",
       "254 GREEN",                            "+38.649559,-90.309023",
       "416 GREEN",                            "+38.649984,-90.307883",
       "101 ORANGE",                           "+38.645755,-90.311876",
