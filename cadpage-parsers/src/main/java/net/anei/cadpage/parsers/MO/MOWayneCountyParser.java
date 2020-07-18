@@ -12,6 +12,6 @@ public class MOWayneCountyParser extends DispatchA33Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@wccd911.org,WAYNECODISPATCH@itiusa.com";
+    return "dispatch@wccd911.org,WAYNECODISPATCH@itiusa.com,WAYNECODISPATCH@OMNIGO.COM";
   }
 }
