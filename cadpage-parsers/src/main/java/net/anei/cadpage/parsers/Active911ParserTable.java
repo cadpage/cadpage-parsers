@@ -268,6 +268,7 @@ public class Active911ParserTable {
       "US/CT/DMS",                        "CTFairfieldCountyB",
       "US/CT/EastHavenPolice",            "CTNewHavenCountyB",
       "US/CT/EastLyme",                   "CTEastLyme",
+      "US/CT/Farmington",                 "CTHartfordCountyFarmington",
       "US/CT/Groton",                     "CTNewLondonCountyC",
       "US/CT/HartfordCounty",             "CTHartfordCountyFarmington",
       "US/CT/LitchfieldCounty",           "CTLitchfieldCountyA",
