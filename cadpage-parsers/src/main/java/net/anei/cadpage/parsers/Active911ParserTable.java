@@ -106,6 +106,7 @@ public class Active911ParserTable {
       "US/AR/CaveSpringsFD",              "ARBentonCountyA,ARBentonCountyD",
       "US/AR/CentralEMS",                 "ARWashingtonCountyB",
       "US/AR/CityofRogers",               "ARBentonCountyB",
+      "US/AR/DallasCounty",               "ARDallasCounty",
       "US/AR/FountainLake",               "ARGarlandCountyA",
       "US/AR/FSEMS",                      "ARSebastianCounty",
       "US/AR/FSEMS",                      "ARSebastianCounty",

@@ -166,6 +166,7 @@ public class ParserList {
           ),
           new ParserCategory("Arkansas"
               ,"ARBentonCounty"                 ,"Benton County, AR"
+              ,"ARDallasCounty"                 ,"Dallas County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
               ,"ARGrantCounty"                  ,"Grant County, AR"
               ,"ARHotSpringCounty"              ,"Hot Spring County, AR"
