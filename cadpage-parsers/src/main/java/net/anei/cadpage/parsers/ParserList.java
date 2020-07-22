@@ -322,6 +322,7 @@ public class ParserList {
               ,"FLEscambiaCounty"               ,"Escambia County, FL"
               ,"FLGulfBreeze"                   ,"Gulf Breeze, FL"
               ,"FLJacksonCounty"                ,"Jackson County, FL"
+              ,"FLHardeeCounty"                 ,"Hardee County, FL"
               ,"FLHendryCounty"                 ,"Hendry County, FL"
               ,"FLHernandoCounty"               ,"Hernando County, FL"
               ,"FLHolmesCounty"                 ,"Holmes County, FL"
