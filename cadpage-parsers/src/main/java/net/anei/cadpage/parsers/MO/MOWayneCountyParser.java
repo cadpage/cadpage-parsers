@@ -1,9 +1,9 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
 
-public class MOWayneCountyParser extends DispatchA33Parser {
+public class MOWayneCountyParser extends DispatchBCParser {
 
 
   public MOWayneCountyParser() {
