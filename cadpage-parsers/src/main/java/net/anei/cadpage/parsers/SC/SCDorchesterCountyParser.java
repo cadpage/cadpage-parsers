@@ -1,19 +1,11 @@
 package net.anei.cadpage.parsers.SC;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA38Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
 
+public class SCDorchesterCountyParser extends GroupBestParser {
 
-public class SCDorchesterCountyParser extends DispatchA38Parser {
-  
   public SCDorchesterCountyParser() {
-    super("DORCHESTER COUNTY", "SC");
-    setupMultiWordStreets("OLD ST GEORGE");
+    super(new SCDorchesterCountyAParser(), new SCDorchesterCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "dispatch@dorchestercounty.net";
-  }
-
 }
