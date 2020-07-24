@@ -8,20 +8,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchArchonixParser;
 
 
 public class NJCamdenCountyAParser extends DispatchArchonixParser {
-  
+
   public NJCamdenCountyAParser() {
-    super(CITY_CODES, "CAMDEN COUNTY", "NJ");
+    super(CITY_CODES, null, "CAMDEN COUNTY", "NJ", ARCH_FLG_OPT_CITY);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupSaintNames("JOHN", "MARK", "MORITZ");
   }
-  
+
   @Override
   public String getFilter() {
     return "cccademail@camdencounty.com,cccalert@camdencodps.org";
   }
-  
+
   private static final Pattern TRAIL_BOUND_PTN = Pattern.compile(" +[NSEW]B$");
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = TRAIL_BOUND_PTN.matcher(address).replaceFirst("");
@@ -439,7 +439,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "4370 ACE",                             "+39.764755,-75.044729",
       "4380 ACE",                             "+39.765997,-75.045759",
       "4390 ACE",                             "+39.767126,-75.046819",
-      
+
       "00 ACE CN",                            "+39.363258,-74.442814",
       "01 ACE CN",                            "+39.360980,-74.440570",
       "02 ACE CN",                            "+39.361832,-74.441989",
@@ -457,7 +457,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "20 ACE CN",                            "+39.378065,-74.431000",
       "21 ACE CN",                            "+39.379217,-74.429879",
       "22 ACE CN",                            "+39.380489,-74.429039"
-    
+
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
