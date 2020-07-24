@@ -398,6 +398,7 @@ public class Active911ParserTable {
       "US/ID/BonnerCounty",               "IDBonnerCounty",
       "US/ID/BoundarySheriff",            "IDBoundaryCounty",
       "US/ID/FremontCounty",              "IDFremontCounty",
+      "US/ID/IdahoCounty",                "IDIdahoCounty",
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/MadisonCounty",              "IDMadisonCounty",
       "US/ID/ShoshoneCounty",             "IDShoshoneCountyB",
