@@ -533,6 +533,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "DAYTON HILL",
       "DEER POND",
       "DEER RUN",
+      "DIAMOND GLEN",
       "DORAL FARM",
       "DUNBAR HILL",
       "DUNNE WOOD",
@@ -570,6 +571,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "GLEN HAVEN",
       "GLEN RIDGE",
       "GRAHM MANOR",
+      "GRASSY HILL",
       "GRAY FOX",
       "GRAY LEDGE",
       "GREAT HILL",
@@ -612,6 +614,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "INDIAN SPRINGS",
       "ISLAND VIEW",
       "JIM CALHOUN",
+      "JOHN STEELE",
       "JOHNNYCAKE MTN",
       "JONES HILL",
       "JUNIPER POINT",
@@ -739,6 +742,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SPRING COVE",
       "SPRING ROCK",
       "ST MONICA",
+      "ST SYLVAN",
       "STONE HILL",
       "STONY CREEK",
       "STONY HILL",
@@ -747,6 +751,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SUNSET HILL",
       "SUNSET MANOR",
       "SYBIL CREEK",
+      "TALCOTT GLEN",
       "TALCOTT NOTCH",
       "TEDWIN FARMS",
       "TEN ROD",
@@ -800,6 +805,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "WOODCHUCK HILL",
       "WOODS HILL",
       "YOUNG'S APPLE ORCHARD"
+
   };
   
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -828,6 +834,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "AFA RESIDENTIAL",
       "ALARM-FIRE",
       "ALARM - FIRE",
+      "ALARM - MEDICAL",
       "ALARMS-HOLDUP/PANIC/DURESS",
       "ALLERG/STING",
       "ALPHA MEDICAL",
@@ -852,6 +859,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "CAR LOCKOUT",
       "CARBON MONOXIDE",
       "CARDIAC / RESP. ARREST",
+      "CELLAR PUMP/WATER EMERGENCY",
       "CHARLIE MEDICAL",
       "CHARLIE MEDICAL TF1",
       "CHARLIE MEDICAL TF3",
@@ -910,6 +918,8 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FIRE - BRUSH FIRE",
       "FIRE - BRUSH / OUTSIDE",
       "FIRE - CO ALARM",
+      "FIRE - EMS MUTUAL AID",
+      "FIRE - MUTUAL AID",
       "FIRE - MV",
       "FIRE - OTHER",
       "FALL - PRI 2 -",
