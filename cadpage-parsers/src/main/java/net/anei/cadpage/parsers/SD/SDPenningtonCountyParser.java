@@ -48,7 +48,8 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     
     int pt = body.indexOf("\n\n\n");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+    boolean complete = pt >= 0;
+    if (complete) body = body.substring(0,pt).trim();
     
     nextIntersect = false;
     gpsField = null;
@@ -77,6 +78,9 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       parseAddress(data.strCross, data);
       data.strCross = "";
     }
+    
+    if (complete) data.expectMore = false;
+    
     return true;
   }
   
@@ -191,7 +195,9 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         if (match.matches()) {
           data.strDate = match.group(1);
           data.strTime = match.group(2);
-          data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(3)));
+          String extra = getOptGroup(match.group(3));
+          data.strSupp = append(data.strSupp, "\n", extra);
+          if (data.strTime.length() <= 5 && extra.length() == 0) data.expectMore = false;
           continue;
         }
         data.expectMore = true;
@@ -203,7 +209,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
     
     @Override
     public String getFieldNames() {
-      return "INFO X APT DATE TIME";
+      return "INFO X APT GPS DATE TIME";
     }
   }
 
