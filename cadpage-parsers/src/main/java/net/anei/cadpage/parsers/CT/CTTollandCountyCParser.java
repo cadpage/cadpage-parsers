@@ -7,12 +7,12 @@ public class CTTollandCountyCParser extends FieldProgramParser {
   
   public CTTollandCountyCParser() {
     super("TOLLAND COUNTY", "CT", 
-          "Address:ADDRCITY! Location_Info:INFO! INFO/N+ Call_Type:CALL! X-Sts:X! Date/Time:DATETIME Incident_#:ID! ID+");
+          "Address:ADDRCITY! Location_Info:INFO! INFO/N+ Call_Type:CALL! Nature:CALL/SDS X-Sts:X! Date/Time:DATETIME Incident_#:ID! ID+");
   }
   
   @Override
   public String getFilter() {
-    return "messaging@iamresponding.com";
+    return "messaging@iamresponding.com,777";
   }
   
   @Override
