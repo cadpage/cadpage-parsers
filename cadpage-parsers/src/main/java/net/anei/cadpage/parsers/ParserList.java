@@ -1244,6 +1244,7 @@ public class ParserList {
               ,"OHWarrenCounty"                 ,"Warren County, OH"
               ,"OHWashingtonCounty"             ,"Washington County, OH"
               ,"OHWayneCounty"                  ,"Wayne County, OH"
+              ,"OHWilliamsCounty"               ,"Williams County, OH"
           ),
           new ParserCategory("Oklahoma"
               ,"OKBryanCounty"                  ,"Bryan County, OK"
