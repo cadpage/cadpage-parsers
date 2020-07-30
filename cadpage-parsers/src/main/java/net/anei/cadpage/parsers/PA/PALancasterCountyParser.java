@@ -11,18 +11,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Lancaster County, PA
  */
 public class PALancasterCountyParser extends FieldProgramParser {
-  
+
   public PALancasterCountyParser() {
     super(CITY_LIST, "LANCASTER COUNTY", "PA",
            "( COVER_CALL ID CALL | ) CITY ADDR! X/Z+? UNIT TIME% END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "911@lcwc911.us,messaging@iamresponding.com,@everbridge.net,@den.everbridge.net,@den2.everbridge.net,@smtpic-ne.prd1.everbridge.net,141000,89361";
   }
-  
+
   private static final Pattern XML_COMMENT_PTN = Pattern.compile("<!--.*?-->");
 
   @Override
@@ -33,9 +33,9 @@ public class PALancasterCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.startsWith("Cover Call Notification")) data.strSource = subject;
-    
+
     if (subject.equals("22")) {
       body = body.replace('\n', '~');
     }
@@ -47,12 +47,12 @@ public class PALancasterCountyParser extends FieldProgramParser {
     body = body.replace(" BOROUGH", " BORO").replace(" TOWNSHIP", " TWP");
     return parseFields(body.split("~"), 3, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("COVER_CALL")) return new SkipField("Cover Call Notification", true);
@@ -62,7 +62,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CITY_DELIM = Pattern.compile("\n| / ");
   private static final Pattern CITY_ST_PTN = Pattern.compile("(.*) (DE|MD|PA)");
   private static final Pattern COUNTY_CITY_PTN = Pattern.compile("(?:CHESTER|DAUPHIN|LEBANON) (?!COUNTY)(.*)");
@@ -90,20 +90,20 @@ public class PALancasterCountyParser extends FieldProgramParser {
         data.strCity = stripFieldEnd(data.strCity, " BORO");
         if (data.strCity.startsWith("LANC") && !data.strCity.endsWith(" TWP")) data.strCity = "LANCASTER";
       }
-      
+
       if (data.strCall.length() == 0) {
         data.strCall = data.strSource;
         data.strSource = "";
         if (data.strCall.length() == 0) abort();
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL CITY ST";
     }
   }
-  
+
   private static Pattern LANC_PTN = Pattern.compile("\\bLANC\\b", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
@@ -112,14 +112,14 @@ public class PALancasterCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+[,A-Z0-9]*|(?:ENGINE|TANKER|SQUAD).*");
   private static final Pattern COMMA_PTN = Pattern.compile(" *, +");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
       setPattern(UNIT_PTN, true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = COMMA_PTN.matcher(field).replaceAll(",");
@@ -128,7 +128,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern TIME_PTN = Pattern.compile("(?:(\\d{4}-\\d\\d?-\\d\\d?) )?(\\d\\d:\\d\\d:\\d\\d)(?:\\.\\d+)?");
   private static final Pattern PART_TIME_PTN = Pattern.compile("[-\\d:]*");
   private class MyTimeField extends DateTimeField {
@@ -136,7 +136,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = TIME_PTN.matcher(field);
@@ -150,19 +150,19 @@ public class PALancasterCountyParser extends FieldProgramParser {
       }
       return PART_TIME_PTN.matcher(field).matches();
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     return ROUTE_30_PTN.matcher(address).replaceAll("US 30");
   }
   private static final Pattern ROUTE_30_PTN = Pattern.compile("\\b(?:RT|ROUTE) *30\\b");
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "1 COLONIAL CREST DR",                  "+40.075698,-76.356599",
       "2 COLONIAL CREST DR",                  "+40.075811,-76.356390",
@@ -876,7 +876,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
       "145 WELSH DR",                         "+40.075048,-76.358901",
       "147 WELSH DR",                         "+40.075048,-76.358901"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Cities
@@ -884,7 +884,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "LANC CITY",
     "LANCASTER",
     "LANCASTER CITY",
-    
+
     // Boroughs
     "ADAMSTOWN BORO",
     "AKRON BORO",
@@ -904,7 +904,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "QUARRYVILLE BORO",
     "STRASBURG BORO",
     "TERRE HILL BORO",
-    
+
     // Townships
     "BART TWP",
     "BRECKNOCK TWP",
@@ -947,7 +947,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "WEST EARL TWP",
     "WEST HEMPFIELD TWP",
     "WEST LAMPETER TWP",
-    
+
     // Census-designated places
     "BAINBRIDGE",
     "BIRD-IN-HAND",
@@ -993,7 +993,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "WASHINGTON BORO",
     "WILLOW STREET",
     "WITMER",
- 
+
     // Other communities
     "BAUSMAN",
     "BROWNSTOWN",
@@ -1024,7 +1024,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "SILVER SPRING",
     "TALMAGE",
     "WHITE HORSE",
-    
+
     // Other counties
     "BERKS COUNTY",
     "BUCKS COUNTY",
@@ -1033,9 +1033,10 @@ public class PALancasterCountyParser extends FieldProgramParser {
     "CUMBERLAND COUNTY",
     "DAUPHIN COUNTY",
     "LEBANON COUNTY",
+    "LUZERNE COUNTY",
     "NEW CASTLE COUNTY DE",
     "YORK COUNTY",
-    
+
     "CHESTER ATGLEN BORO",
     "LEBANON SOUTH LONDONDERRY TWP",
     "DAUPHIN CONEWAGO TWP",
