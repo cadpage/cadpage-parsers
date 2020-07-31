@@ -321,6 +321,7 @@ public class ParserList {
               ,"FLCrestview"                    ,"Crestview, FL"
               ,"FLEscambiaCounty"               ,"Escambia County, FL"
               ,"FLGulfBreeze"                   ,"Gulf Breeze, FL"
+              ,"FLGulfCounty"                   ,"Gulf County, FL"
               ,"FLJacksonCounty"                ,"Jackson County, FL"
               ,"FLHardeeCounty"                 ,"Hardee County, FL"
               ,"FLHendryCounty"                 ,"Hendry County, FL"

@@ -309,6 +309,7 @@ public class Active911ParserTable {
       "US/FL/CollierCounty",              "FLCollierCounty",
       "US/FL/EscambiaCounty",             "FLEscambiaCounty",
       "US/FL/GulfBreezePolice",           "FLGulfBreezeB",
+      "US/FL/GulfCounty",                 "FLGulfCounty",
       "US/FL/HardeeCounty",               "FLHardeeCounty",
       "US/FL/Hendry",                     "FLHendryCounty",
       "US/FL/HernandoSheriff",            "FLHernandoCounty",
