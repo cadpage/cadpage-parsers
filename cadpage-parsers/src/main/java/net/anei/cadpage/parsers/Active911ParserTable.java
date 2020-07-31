@@ -1388,6 +1388,7 @@ public class Active911ParserTable {
       "US/OR/Aurora",                     "ORMarionCountyA",
       "US/OR/BakerCounty",                "ORBakerCounty",
       "US/OR/Benton",                     "ORBentonCounty",
+      "US/OR/Brookings",                  "ORCurryCounty",
       "US/OR/CityofSalem",                "ORMarionCountyB",
       "US/OR/ClackamasCounty",            "ORClackamasCountyA,ORClackamasCountyD",
       "US/OR/ClatsopCounty",              "ORClatsopCounty",

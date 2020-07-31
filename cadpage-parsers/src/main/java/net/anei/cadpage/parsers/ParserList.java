@@ -1275,6 +1275,7 @@ public class ParserList {
               ,"ORClatsopCounty"                ,"Clatsop County, OR"
               ,"ORColumbiaCounty"               ,"Columbia County, OR"
               ,"ORCrookCounty"                  ,"Crook County, OR"
+              ,"ORCurryCounty"                  ,"Curry County, OR"
               ,"ORDeschutesCounty"              ,"Deschutes County, OR"
               ,"ORDouglasCounty"                ,"Douglas County, OR"
               ,"ORGilliamCounty"                ,"Gilliam County, OR"
