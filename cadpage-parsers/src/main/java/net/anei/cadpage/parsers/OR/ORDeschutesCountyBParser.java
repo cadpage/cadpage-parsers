@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -30,7 +32,7 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -41,6 +43,20 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
       field = stripFieldEnd(field, ",");
       field = field.replace('@',  '/');
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      
+      // Forgive a badly formatted date/time field if it is the last field and probably truncated
+      if (DATE_TIME_PTN.matcher(field).matches()) {
+        super.parse(field, data);
+      } else {
+        if (!isLastField()) abort();
+      }
     }
   }
   
