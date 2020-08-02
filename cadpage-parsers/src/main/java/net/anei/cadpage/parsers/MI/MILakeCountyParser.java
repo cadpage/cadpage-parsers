@@ -33,6 +33,8 @@ public class MILakeCountyParser extends DispatchOSSIParser {
       "CH",   "CHERRY VALLEY",
       "CHE",  "CHERRY VALLEY",
       "CHER", "CHERRY VALLEY",
+      "EDEN", "EDEN",
+      "ELK",  "ELK",
       "P",    "",
       "PE",   "PEACOCK",
       "PEA",  "PEACOCK",
