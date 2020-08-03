@@ -1401,6 +1401,7 @@ public class ParserList {
               ,"SCRichlandCounty"               ,"Richland County, SC"
               ,"SCSpartanburgCounty"            ,"Spartanburg County, SC"
               ,"SCSumterCounty"                 ,"Sumter County, SC"
+              ,"SCWilliamsburgCounty"           ,"Williamsburg County, SC"
               ,"SCYorkCounty"                   ,"York County, SC"
           ),
           new ParserCategory("South Dakota"
