@@ -649,7 +649,7 @@ public class Active911ParserTable {
       "US/KY/MuhlenbergCounty",           "KYMuhlenbergCounty",
       "US/KY/MurrayCounty",               "KYMurrayCounty",
       "US/KY/Nexigen",                    "Cadpage2",
-      "US/KY/OldhamCounty",               "KYOldhamCountyA",
+      "US/KY/OldhamCounty",               "KYOldhamCountyC",
       "US/KY/PendletonCounty",            "KYPendletonCountyB",
       "US/KY/PointPleasantFire",          "KYKentonCountyC",
       "US/KY/PowellCounty",               "KYPowellCounty",

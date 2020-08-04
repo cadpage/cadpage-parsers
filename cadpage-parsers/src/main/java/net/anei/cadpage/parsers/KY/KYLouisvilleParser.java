@@ -12,23 +12,23 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
  * Louisville, KY
  */
 public class KYLouisvilleParser extends FieldProgramParser {
-  
+
   public KYLouisvilleParser() {
     super(CITY_CODES, "LOUISVILLE", "KY",
            "Location:ADDR/S? JTN:PLACE? TYPE_CODE:CODE! SUB_TYPE:CALL! TIME:TIME? Comments:INFO INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "MetroSafeTech@louisvilleky.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n\n");
@@ -44,16 +44,16 @@ public class KYLouisvilleParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCodeField extends CodeField {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
       String call = CALL_CODES.getCodeDescription(field);
-      if (call != null) data.strCall = call; 
+      if (call != null) data.strCall = call;
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -66,7 +66,7 @@ public class KYLouisvilleParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -87,19 +87,19 @@ public class KYLouisvilleParser extends FieldProgramParser {
         data.strCity = data.strCity.substring(pt+1);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       DispatchProQAParser.parseProQAData(false, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE INFO";
@@ -107,13 +107,13 @@ public class KYLouisvilleParser extends FieldProgramParser {
   }
 
   private static CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "LEFLORE AVE",                          "+38.130719,-85.875992",
       "MISTY LN",                             "+38.130724,-85.876780",
       "TALLAHATCHEE ST",                      "+38.130719,-85.875992",
       "YAZOO ST",                             "+38.130656,-85.876378",
-      
+
       "10300 LA PLAZA DR",                    "+38.406946,-85.871035",
       "10301 LA PLAZA DR",                    "+38.106763,-85.870535",
       "10302 LA PLAZA DR",                    "+38.106760,-85.871122",
@@ -148,6 +148,7 @@ public class KYLouisvilleParser extends FieldProgramParser {
       "10417 LA PLAZA DR",                    "+38.104416,-85.871978",
       "10418 LA PLAZA DR",                    "+38.104413,-85.872620",
       "10419 LA PLAZA DR",                    "+38.104199,-85.872130",
+      "10620 MORAINE CIR",                    "+38.269389,-85.560232",
       "3402 SOUTHMEADE CIR",                  "+38.154698,-85.822535",
       "3403 SOUTHMEADE CIR",                  "+38.154974,-85.821994",
       "3405 SOUTHMEADE CIR",                  "+38.155102,-85.822243",
@@ -173,7 +174,7 @@ public class KYLouisvilleParser extends FieldProgramParser {
       "3432 SOUTHMEADE CIR",                  "+38.156417,-85.821296",
       "3433 SOUTHMEADE CIR",                  "+38.155928,-85.821332",
       "3434 SOUTHMEADE CIR",                  "+38.156346,-85.821052"
-      
+
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
