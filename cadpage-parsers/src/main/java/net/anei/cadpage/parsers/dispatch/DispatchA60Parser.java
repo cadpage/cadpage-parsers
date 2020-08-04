@@ -55,7 +55,7 @@ public class DispatchA60Parser extends FieldProgramParser {
   }
 
   private static final Pattern LOG_PATTERN
-    = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) -(?: LOG -)? *");
+    = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) -(?: LOG -)? *", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
