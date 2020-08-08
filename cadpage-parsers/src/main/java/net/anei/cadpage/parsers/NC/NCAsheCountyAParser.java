@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCAsheCountyAParser extends DispatchSouthernParser {
 
   public NCAsheCountyAParser() {
-    super(CITY_LIST, "ASHE COUNTY", "NC", 
+    super(CITY_LIST, "ASHE COUNTY", "NC",
           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_CODE|DSFLG_ID|DSFLG_TIME);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets("VIRGINIA ST LINE");
@@ -20,44 +20,44 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
     addExtendedDirections();
     removeWords("ALLEY", "CIRCLE", "PARKWAY", "PLACE", "RUN", "SQUARE", "TERRACE");
   }
-  
+
   @Override
   public String getFilter() {
     return "@washconc.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(?:(\\S+) - +)?(.*?)[-/ ]*");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
-    
+
     // Clean up call
     Matcher match = CODE_CALL_PTN.matcher(data.strCall);
     if (match.matches()) { // Always matches
       data.strCode = getOptGroup(match.group(1));
       data.strCall = match.group(2);
     }
-    
+
     // Fix mispelled city names
     data.strCity = convertCodes(data.strCity.toUpperCase(), FIX_CITY_TABLE);
-    
+
     // Check for out of state locations
     String state = CITY_ST_TABLE.getProperty(data.strCity);
     if (state != null) data.strState = state;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "X " + super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   @Override
   protected boolean isNotExtraApt(String apt) {
     if (apt.startsWith("(") && apt.endsWith(")")) return true;
@@ -65,7 +65,7 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
     if (apt.equals("RD")) return true;
     return super.isNotExtraApt(apt);
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     int pt = addr.indexOf('&');
@@ -80,7 +80,7 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
   }
 
   // Only need to keep track of street names with 4 or more words
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ALBERT PHIPPS",
     "ASHE COUNTY HIGH SCHOOL",
@@ -277,7 +277,7 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
     "WORTH CHAPEL",
     "Z SEXTON"
 };
-  
+
   private static final Properties CITY_ST_TABLE = buildCodeTable(new String[]{
       "GRAYSON COUNTY",    "VA",
       "GRAYSON",           "VA",
@@ -291,10 +291,10 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
   });
 
   private static final String[] CITY_LIST = new String[]{
-    
+
       "ASHE COUNTY",
       "ASHE",
-      
+
       //Towns
       "JEFFERSON",
       "LANSING",
@@ -342,7 +342,7 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
       "STURGILLS",
       "TODD",
       "WARRENSVILLE",
-      
+
       // Alleghany County
       "ALLEGHANY COUNTY",
       "ALLEGHANY",
@@ -351,7 +351,7 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
       "PINEY CREEK",
       "PRATHERS CREEK",
       "SPARTA",
-      
+
       // Wataugua County
       "WATAUGUA COUNTY",
       "WATAUGUA",
@@ -361,23 +361,23 @@ public class NCAsheCountyAParser extends DispatchSouthernParser {
       "NORTH FORK",
       "STONY FORK",
       "ZIONVILLE",
-      
+
       // Wilkes County
       "WILKES COUNTY",
       "WILKES",
       "ELK",
       "JOBS CABIN",
       "UNION",
-      
+
       // Other counties
-      
+
       "GRAYSON COUNTY",
       "GRAYSON",
-      
+
       "JOHNSON COUNTY",
       "JOHNSON",
       "MOUNTAIN CITY",
-      
+
       // Washington County is on the other side of the state
       // But someone they have one department there (Creswell VFD)
       "WASHINGTON COUNTY",
