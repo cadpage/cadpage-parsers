@@ -782,6 +782,7 @@ public class ParserList {
               ,"MIStClairCounty"                ,"St Clair County, MI"
               ,"MIVanBurenCounty"               ,"Van Buren County, MI"
               ,"MIWashtenawCounty"              ,"Washtenaw County, MI"
+              ,"MIWayneCounty"                  ,"Wayne County, MI"
           ),
           new ParserCategory("Minnesota"
               ,"MNAnokaCounty"                  ,"Anoka County, MN"

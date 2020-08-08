@@ -794,6 +794,7 @@ public class Active911ParserTable {
       "US/MI/RoscommonCounty",            "MIRoscommonCounty",
       "US/MI/SaginawChippewa",            "MIIsabellaCountyB",
       "US/MI/SaginawCounty",              "MISaginawCounty",
+      "US/MI/SEMTOC",                     "MIWayneCounty",
       "US/MI/ShiawasseeCounty",           "MIShiawasseeCounty",
       "US/MI/SpartaFD",                   "MIKentCounty",
       "US/MI/StClairCounty",              "MIStClairCounty",
