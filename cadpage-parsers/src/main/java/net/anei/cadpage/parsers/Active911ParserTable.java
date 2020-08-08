@@ -1508,6 +1508,7 @@ public class Active911ParserTable {
       "US/PA/OxfordFire",                 "PAChesterCountyO",
       "US/PA/Padoh",                      "PABethlehem",
       "US/PA/PennBoroVFD",                "PAWestmorelandCountyA",
+      "US/PA/PennsylvaniaAmbulance",      "PALackawannaCountyB",
       "US/PA/PerryCounty",                "PAPerryCounty",
       "US/PA/PerrysvilleVFC",             "PAAlleghenyCountyA",
       "US/PA/PFDFireChester",             "PAChesterCountyG,PAChesterCountyO,GroupBlock,PAChesterCountyD4,PAChesterCountyP",
