@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCWakeCountyBParser extends DispatchOSSIParser {
-  
+
   public NCWakeCountyBParser() {
     super(CITY_CODES, "CARY", "NC",
           "( CANCEL ADDR CITY PLACE " +
@@ -23,7 +23,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
   public String getFilter() {
     return "CAD@townofcary.org,cad.dispatching@townofcary.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -58,7 +58,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
-  
+
   private class MyCancelField extends BaseCancelField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -68,8 +68,8 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
-  
+
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) (\\d{1,2}[A-Z]\\d{1,2})");
   private class MyCallField extends CallField {
     @Override
@@ -81,45 +81,97 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL CODE";
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
   private class MyGPSField extends GPSField {
-    
+
     public MyGPSField(int type) {
       super(type);
     }
-    
+
     public boolean canFail() {
       return true;
     }
-    
+
     public boolean checkParse(String field, Data data) {
       field = field.replace(" ", "");
       if (!GPS_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
     }
-    
+
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   // City codes are only used for CANCEL messages :(
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ANG",  "ANGIER",
       "APEX", "APEX",
+      "ASHE", "ASHEBORO",
+      "AUTR", "AUTRYVILLE",
+      "BOON", "BOONVILLE",
+      "BROD", "BROADWAY",
+      "BUNN", "BUNN",
+      "BURL", "BURLINGTON",
       "CARY", "CARY",
+      "CHAP", "CHAPEL HILL",
+      "CHAR", "CHARLOTTE",
+      "CLAY", "CLAYTON",
+      "CLIN", "CLINTON",
+      "COAT", "COATS",
+      "CUYA", "CUYAHOGA",
+      "DUNN", "DUNN",
+      "DURH", "DURHAM",
+      "EDEN", "EDEN",
+      "ELM",  "ELM CITY",
+      "ENFI", "ENFIELD",
+      "ERWI", "ERWIN",
+      "FAY",  "FAYETTEVILLE",
+      "FOUR", "FOUR OAKS",
+      "FUQU", "FUQUAY VARINA",
+      "GARN", "GARNER",
+      "GRAH", "GRAHAM",
+      "GRVL", "GREENVILLE",
+      "HOLL", "HOLLY SPRINGS",
+      "KILL", "KILL DEVIL HILLS",
+      "KNIG", "KNIGHTDALE",
+      "LILL", "LILLINGTON",
+      "MARY", "MARYSVILLE",
+      "MEBA", "MEBANE",
       "MIDD", "MIDDLE CREEK",
       "MORR", "MORRISVILLE",
+      "NASH", "NASHVILLE",
+      "NB",   "NEW BERN",
+      "NEW",  "NEW HILL",
+      "NEWT", "NEWTON GROVE",
+      "PITT", "PITTSBORO",
+      "QUCR", "QUEEN CREEK",
+      "RALE", "RALEIGH",
+      "RESE", "RESEACH TRIANGLE PARK",
+      "ROCK", "ROCKY MOUNT",
+      "ROLE", "ROLESVILLE",
+      "ROUG", "ROUGEMONT",
+      "SANF", "SANFORD",
+      "SILE", "SILER CITY",
+      "SMIT", "SMITHFIELD",
+      "SPHO", "SPRING HOPE",
+      "WAKE", "WAKE FORREST",
       "WEND", "WENDELL",
+      "WHPL", "WHITE PLAINS",
+      "WILL", "WILLOW SPRINGS",
+      "WILS", "WILSON",
+      "YOUN", "YOUNGSVILLE",
       "ZEBU", "ZEBULON"
+
   });
 }
