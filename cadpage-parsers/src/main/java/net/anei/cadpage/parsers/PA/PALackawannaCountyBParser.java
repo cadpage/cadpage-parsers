@@ -10,24 +10,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PALackawannaCountyBParser extends FieldProgramParser {
-  
+
   public PALackawannaCountyBParser() {
-    super(CITY_CODES, "LACKAWANNA COUNTY", "PA", 
+    super(CITY_CODES, "LACKAWANNA COUNTY", "PA",
           "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! APT_PLACE+ Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
   }
-  
+
   @Override
   public String getFilter() {
     return "aegispage@lackawannacounty.org";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
     body = body.replace(" Muni:", "\nMuni:");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -36,7 +36,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -44,7 +44,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -52,7 +52,7 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|SUITE) *(.*)|[A-Z]|\\d{1,4}[A-Z]?");
   private class MyAptPlaceField extends Field {
     @Override
@@ -66,14 +66,14 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
         data.strPlace = append(data.strPlace, " - ", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT PLACE";
     }
   }
-  
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -81,10 +81,15 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, field, data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "2",  "South Abington Twp",
       "4",  "Clarks Summit",
