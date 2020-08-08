@@ -13,14 +13,14 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 public class COElPasoCountyAParser extends FieldProgramParser {
-  
+
   public COElPasoCountyAParser() {
     super("EL PASO COUNTY", "CO",
           "ID? SRC_UNIT ( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
                        "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
                        ") END");
   }
-  
+
   @Override
   public String getFilter() {
     return "ept@ept911.info,ept@elpasoteller911.org";
@@ -33,17 +33,25 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       @Override public boolean mixedMsgOrder() { return true; }
       @Override public int splitBreakLength() { return 155; }    };
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:([A-Z]{2,4}\\d{11}|\\d{6}-\\d{5}) +)?(.*?) +(D:.*?) *(E:.*?) *(S:.*?) *(PTC:.*?) *(T:.*?) *(AD:.*?) *(C:.*?) *(Page Req Time:.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
+    if (body.startsWith("RGROUP:[")) {
+      int pt1 = 8;
+      int pt2 = body.indexOf(']', pt1);
+      if (pt2 < 0) return false;
+      subject = body.substring(pt1, pt2).trim();
+      body = body.substring(pt2+1).trim();
+    }
+
     // One page format requires using the original subject
     if (subject.startsWith("INFO from EPSO:")) {
       setFieldList("CALL ADDR APT PLACE CITY PRI");
@@ -60,14 +68,14 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       data.strPriority = p.get();
       return true;
     }
-    
+
     // Otherwise square bracket got turned into a subject and needs to be turned back
     if (subject.length() > 0) {
       body = '[' + subject + "] " + body;
     } else if (body.startsWith("[") && !body.contains("]")) {
       body = body.substring(1).trim();
     }
-    
+
     FParser p = new FParser(body);
     if (p.check("To CSFD from EPSO:")) {
       data.strUnit = p.get(100);
@@ -80,7 +88,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
         data.strChannel = p.get(12);
         data.strSupp = p.get();
         return true;
-      } else { 
+      } else {
         parseAddress(p.get(60), data);
         if (!p.check(" ~")) return false;
         setFieldList("UNIT ADDR APT CALL CH GPS INFO");
@@ -96,13 +104,13 @@ public class COElPasoCountyAParser extends FieldProgramParser {
         return true;
       }
     }
-    
+
     // Not everyone is using it, but see if this is the new standard dispatch format
     String[] flds = body.split("~", -1);
     if (flds.length >= 5) {
       return parseFields(flds, data);
     }
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("ID ADDR APT INFO");
@@ -120,7 +128,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
     body = stripFieldStart(body, "~");
     body = stripFieldEnd(body, "~");
-    
+
     if (p.check("FROM EPSO REF:")) {
       setFieldList("CALL ADDR APT PLACE CITY ID UNIT");
       data.strCall = p.get(30);
@@ -135,10 +143,10 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       data.strUnit = p.get();
       return true;
     }
-    
+
     return false;
   }
-  
+
   private String cvtGpsCoord(String fld) {
     int pt = fld.length()-6;
     if (pt >= 0) {
@@ -172,13 +180,13 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return "SRC UNIT";
     }
   }
-  
+
   private class MyGPSTruncField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     public boolean checkParse(String field, Data data) {
       if (!isLastField()) return false;
       if (!NUMERIC.matcher(field).matches()) return false;
@@ -187,11 +195,11 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private String cvtJurisCity(String city) {
     return convertCodes(city, JURIS_CITY_TABLE);
   }
-  
+
   private static final Properties JURIS_CITY_TABLE = buildCodeTable(new String[]{
       "El Paso County SO",              "El Paso County",
       "EPSO Unincorporated Area",       "",
