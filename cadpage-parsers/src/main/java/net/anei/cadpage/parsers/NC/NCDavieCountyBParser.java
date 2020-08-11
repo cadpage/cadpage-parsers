@@ -19,7 +19,7 @@ public class NCDavieCountyBParser extends MsgParser {
     return "no-reply@daviecountync.gov";
   }
 
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(";? +(\\d{1,4}[A-Z]{0,2}|[A-Z]{2,5}\\d+)$");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(";? +(\\d{1,4}[A-Z]{0,2}\\d?|[A-Z]{2,5}\\d+|[A-Z]{2}\\d{2}[A-Z]{1,2}|FDALLCALL)$");
   private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(.*) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\d{11}) (.*)");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("([^,]+), *([A-Z ]*)(?:, *([A-Z]{2}) +(?:(\\d{5}) +)?|\\b +)");
