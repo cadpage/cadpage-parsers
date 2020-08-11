@@ -12,21 +12,21 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * San Bernardino County, CA
  */
 public class CASanBernardinoCountyCParser extends FieldProgramParser {
-  
+
   private static final Pattern SUBJ_SRC_PTN = Pattern.compile("[A-Z]{3,4}");
   private static final Pattern GPS_PTN = Pattern.compile("\\?q=(-?\\d+\\.\\d{6},-?\\d+.\\d{6})\\b");
-  
+
   public CASanBernardinoCountyCParser() {
     super("SAN BERNARDINO COUNTY", "CA",
           "( SELECT/RR CLOSE:UNIT! TIMES! Location:ADDRCITY " +
           "| CALL PLACE? ADDRCITY/Z! CROSS:X! RA:MAP! MAP:MAP! UNIT INFO! )");
   }
-  
+
   @Override
   public String getFilter() {
     return "bducad@FIRE.CA.GOV,messaging@iamresponding.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
@@ -34,19 +34,19 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (SUBJ_SRC_PTN.matcher(subject).matches()) {
       data.strSource = subject;
     }
-    
+
     if (body.startsWith("CLOSE:")) {
       data.msgType = MsgType.RUN_REPORT;
       setSelectValue("RR");
       return parseFields(body.split("\n"), data);
     }
-    
+
     setSelectValue("");
-    
+
     int pt = body.lastIndexOf(" <a");
     if (pt >= 0) {
       Matcher match = GPS_PTN.matcher(body.substring(pt));
@@ -55,16 +55,16 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       }
       body = body.substring(0,pt).trim();
     }
-    body = body.replace(")- ", ") - "); 
+    body = body.replace(")- ", ") - ");
     body = body.replace("- CROSS:", " - CROSS:");
     return parseFields(body.split(" - "), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram() + " GPS";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -73,7 +73,7 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ID_CALL_PTN = Pattern.compile("Inc#(.*);(.*)");
   private class MyCallField extends CallField {
     @Override
@@ -83,7 +83,7 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
         data.strCallId = match.group(1).trim();
         field = match.group(2).trim();
       }
-      
+
       String call = CALL_CODES.getProperty(field);
       if (call != null) {
         data.strCode = field;
@@ -97,35 +97,35 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       return "ID CODE CALL";
     }
   }
-  
+
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("(.*?)\\((.*)\\)");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      
+
       int pt = field.indexOf('@');
       if (pt >= 0) {
         data.strPlace = append(data.strPlace, " - ", field.substring(0,pt).trim());
         field = field.substring(pt+1).trim();
       }
-      
+
       Matcher match = ADDR_PLACE_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
         data.strPlace = append(data.strPlace, " - ", match.group(2).trim());
       }
-      
+
       super.parse(field, data);
       data.strCity = data.strCity.toUpperCase().replace('_', ' ');
       data.strCity = convertCodes(data.strCity, CITY_CODES);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -136,13 +136,13 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       data.strChannel = append(ch1, "/", ch2);
       super.parse(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "X CH MAP";
     }
   }
-  
+
   private static final Pattern TIMES_BRK_PTN = Pattern.compile(" *; *");
   private class MyTimesField extends InfoField {
     @Override
@@ -150,13 +150,13 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       data.strSupp = TIMES_BRK_PTN.matcher(field).replaceAll("\n");
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     city = stripFieldEnd(city, " AREA");
     return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "AB",         "Animal Bite",
       "ABD",        "Abdominal Pain",
@@ -341,10 +341,12 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       "FALL-D5",    "Fall Victim - long fall",
       "FAR",        "Fire Alarm with Reset",
       "FC",         "Structure Fire: Commercial",
+      "FCL",        "Commercial Structure Fire, low response",
       "FD",         "Dumpster Fire",
       "FG",         "Vegetation Fire",
       "FH",         "Hay Fire",
       "FI",         "Improvement Fire",
+      "FLS",        "Structure Fire, low response",
       "FR",         "Refuse Fire",
       "FS",         "Structure Fire: Residential",
       "FT",         "Motorhome/Truck/Bus Fire",
@@ -565,15 +567,15 @@ public class CASanBernardinoCountyCParser extends FieldProgramParser {
       "UNKM-D1",    "Unkn prob - life status questionable",
       "WS",         "Water Salvage",
       "ZAP",        "Outside Electrical Incident"
-     
+
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BIG BEAR CA",    "BIG BEAR LAKE",
       "MORONGO",        "MORONGO VALLEY",
       "DHSP",           "DESERT HOT SPRINGS"
   });
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "ARROWBEAR",      "RUNNING SPRINGS"
   });
