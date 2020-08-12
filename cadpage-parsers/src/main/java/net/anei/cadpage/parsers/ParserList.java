@@ -526,6 +526,7 @@ public class ParserList {
               ,"IADallasCounty"                 ,"Dallas County, IA"
               ,"IADesMoinesCounty"              ,"Des Moines County, IA"
               ,"IADickinsonCounty"              ,"Dickinson County, IA"
+              ,"IDDubuqueCounty"                ,"Dubuque County, IA"
               ,"IAHancockCounty"                ,"Hancock County, IA"
               ,"IAJacksonCounty"                ,"Jackson County, IA"
               ,"IAJasperCounty"                 ,"Jasper County, IA"
