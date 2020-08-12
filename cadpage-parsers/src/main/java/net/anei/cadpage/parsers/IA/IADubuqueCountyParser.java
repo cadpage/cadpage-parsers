@@ -10,6 +10,11 @@ public class IADubuqueCountyParser extends DispatchOSSIParser {
   }
 
   @Override
+  public String getFilter() {
+    return "CAD@cityofdubuque.org";
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     return super.getField(name);
