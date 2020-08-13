@@ -8,39 +8,42 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 /**
- * Grant County, WV (A) 
+ * Grant County, WV (A)
  */
 public class WVGrantCountyAParser extends DispatchA48Parser {
-  
-  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|GRANTCOMM|HELOCOPTER|SOUTHG)\\b", Pattern.CASE_INSENSITIVE); 
-  
+
+  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|GRANTCOMM|HELOCOPTER|SOUTHG)\\b", Pattern.CASE_INSENSITIVE);
+
   public WVGrantCountyAParser() {
     super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.GPS_PLACE_X, A48_NO_CODE, UNIT_PTN);
     setupCallList(CALL_CODE);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
-    return "CAD@hardynet.com";
+    return "CAD@hardynet.com,PETERSBURGFIRE@hardynet.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MARKER = Pattern.compile("CAD:([A-Za-z_]+) (?:\\d{3}|EMS) TEXT +");
+  private static final Pattern MARKER = Pattern.compile("CAD:([A-Za-z_]+) (?:\\d{3}|EMS) TEXT +|([ A-Z]+):");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
+    String source = null;
     Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    String source = match.group(1);
-    body = body.substring(match.end());
-    
+    if (match.lookingAt()) {
+      source = match.group(1);
+      if (source == null) source = match.group(2).trim();
+      body = body.substring(match.end());
+    }
+
     body = body.replace(" WV - -", "").replace("FIRST ENERGY", "FIRST_ENERGY");
-    
+
     match = UNIT_PTN.matcher(body);
     int lastCommaPt = body.indexOf(',');
     int pt = -1;
@@ -50,29 +53,29 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       info = body.substring(pt+1).trim();
       body = body.substring(0, pt);
     }
-    
+
     if (!super.parseMsg(subject, body, data)) return false;
-    
-    data.strSource = source;
-    
+
+    if (source != null) data.strSource = source;
+
     if (info != null) data.strSupp = append(data.strSupp, "\n", info);
-    
+
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram() + " INFO";
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = address.replace("PAPERBACK MAPLE ST", "MAPLE ST");
     return super.adjustMapAddress(address);
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
-      
+
       "BAYARD CEMETERY",
       "BENSENHAVER HL RIDGE",
       "BIG HILL",
@@ -126,7 +129,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "WINDY HILL",
       "YUCKY RUN"
   };
-  
+
   private static final CodeSet CALL_CODE = new CodeSet(
       "ABBACKP",
       "BLEEDNOTRAUMA",
@@ -217,12 +220,12 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "SCHERR",
       "WILLIAMSPORT",
       "WILSONIA",
-          
+
       // Mineral County
       "BURLINGTON",
       "KEYSER",
       "NEW CREEK",
-      
+
       // Pendleton County
       "UPPER TRACT"
 
