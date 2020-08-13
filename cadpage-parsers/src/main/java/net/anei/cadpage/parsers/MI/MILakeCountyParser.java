@@ -9,54 +9,61 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Lake County, MI
  */
 public class MILakeCountyParser extends DispatchOSSIParser {
-  
+
   public MILakeCountyParser() {
     super(CITY_CODES, "LAKE COUNTY", "MI",
-          "( CANCEL ADDR CITY! INFO/N+ " + 
+          "( CANCEL ADDR CITY! INFO/N+ " +
           "| FYI? CALL ADDR! ( END | X/Z+? CITY END ) )");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@co.lake.mi.us";
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "B",    "BALDWIN",            
+      "B",    "BALDWIN",
       "BA",   "BALDWIN",
       "BAL",  "BALDWIN",
       "BALD", "BALDWIN",
       "C",    "",
-      "CH",   "CHASE",
-      "CHA",  "CHASE",
-      "CHAS", "CHASE",
-      "CH",   "CHERRY VALLEY",
-      "CHE",  "CHERRY VALLEY",
-      "CHER", "CHERRY VALLEY",
-      "EDEN", "EDEN",
-      "ELK",  "ELK",
+      "CH",   "CHASE TWP",
+      "CHA",  "CHASE TWP",
+      "CHAS", "CHASE TWP",
+      "CH",   "CHERRY VALLEY TWP",
+      "CHE",  "CHERRY VALLEY TWP",
+      "CHER", "CHERRY VALLEY TWP",
+      "EDEN", "EDEN TWP",
+      "ELK",  "ELK TWP",
+      "I",    "IRONS",
+      "IR",   "IRONS",
+      "IRO",  "IRONS",
+      "IRON", "IRONS",
       "P",    "",
-      "PE",   "PEACOCK",
-      "PEA",  "PEACOCK",
-      "PEAC", "PEACOCK",
+      "PE",   "PEACOCK TWP",
+      "PEA",  "PEACOCK TWP",
+      "PEAC", "PEACOCK TWP",
       "PI",   "PINORA",
-      "PIN",  "PINORA",
-      "PINO", "PINORA",
-      "PL",   "PLEASANT PLAINS",
-      "PLE",  "PLEASANT PLAINS",
-      "PLEA", "PLEASANT PLAINS",
-      "S",    "SWEETWATER",
-      "SW",   "SWEETWATER",
-      "SWE",  "SWEETWATER",
-      "SWEE", "SWEETWATER",
-      "Y",    "YATES",
-      "YA",   "YATES",
-      "YAT",  "YATES",
-      "YATE", "YATES",
-      "W",    "WEBBER",
-      "WE",   "WEBBER",
-      "WEB",  "WEBBER",
-      "WEBB", "WEBBER"
+      "PIN",  "PINORA TWP",
+      "PINO", "PINORA TWP",
+      "PL",   "PLEASANT PLAINS TWP",
+      "PLE",  "PLEASANT PLAINS TWP",
+      "PLEA", "PLEASANT PLAINS TWP",
+      "S",    "",
+      "SA",   "SAUBLE TWP",
+      "SAU",  "SAUBLE TWP",
+      "SAUB", "SAUBLE TWP",
+      "SW",   "SWEETWATER TWP",
+      "SWE",  "SWEETWATER TWP",
+      "SWEE", "SWEETWATER TWP",
+      "W",    "WEBBER TWP",
+      "WE",   "WEBBER TWP",
+      "WEB",  "WEBBER TWP",
+      "WEBB", "WEBBER TWP",
+      "Y",    "YATES TWP",
+      "YA",   "YATES TWP",
+      "YAT",  "YATES TWP",
+      "YATE", "YATES TWP"
   });
-  
+
 }
