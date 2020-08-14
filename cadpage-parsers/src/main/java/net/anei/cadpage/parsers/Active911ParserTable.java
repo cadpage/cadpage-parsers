@@ -964,7 +964,7 @@ public class Active911ParserTable {
       "US/MO/WrightCounty",               "MOWrightCounty",
       "US/MS/Biloxi",                     "MSBiloxi",
       "US/MS/CityofHernando",             "MSHernando",
-      "US/MS/DesotoCounty",               "MSDeSotoCountyA,MSTateCounty",
+      "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",

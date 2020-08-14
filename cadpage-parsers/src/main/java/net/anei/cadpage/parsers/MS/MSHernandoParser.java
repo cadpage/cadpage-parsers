@@ -7,11 +7,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 public class MSHernandoParser extends DispatchB2Parser {
-  
+
   private static final Pattern DIR_SLASH_OF_PTN = Pattern.compile("\\b([NSEW])/([BO])\\b");
 
   public MSHernandoParser() {
-    super("E-911:", MSDeSotoCountyAParser.CITY_LIST, "HERNANDO", "MS");
+    super("E-911:", MSDeSotoCountyBParser.CITY_LIST, "HERNANDO", "MS");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
         "BLACK HAWK",
@@ -24,7 +24,7 @@ public class MSHernandoParser extends DispatchB2Parser {
         "VALLEY GATE"
     );
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
       "ACCIDENT UNKOWN INJURIES",
@@ -40,7 +40,7 @@ public class MSHernandoParser extends DispatchB2Parser {
       "SICK CALL PERSON",
       "UNCONSCIOUS/FAINTING",
       "WELFARE CONCERN"
-          
+
   );
 
   @Override
