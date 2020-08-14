@@ -226,6 +226,7 @@ public class MILeelanauCountyParser extends GroupBestParser {
     "007", "NORTHPORT",
     "008", "OMENA",
     "009", "SUTTONS BAY",
-    "010", "TRAVERSE CITY"
+    "010", "TRAVERSE CITY",
+    "014", ""   // Unknown
   });
 }

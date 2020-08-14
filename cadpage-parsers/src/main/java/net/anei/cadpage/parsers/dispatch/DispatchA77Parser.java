@@ -6,27 +6,27 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA77Parser extends FieldProgramParser {
-  
+
   private String marker;
   private Properties cityCodes;
-  
+
   public DispatchA77Parser(String marker, Properties cityCodes, String defCity, String defState) {
-    super(defCity, defState, 
-          "CALL ADDRCITY! ( CALL/SDS Cross_Street:X GPS1 GPS2 " +
-                         "| Cross_Street:X GPS1 GPS2 " +
-                         "| GPS1 GPS2 " +
-                         "| CALL/SDS GPS1 GPS2 " +
-                         ") END");
+    super(defCity, defState,
+          "CALL ADDRCITY! ( CALL/SDS Cross_Street:X GPS1 GPS2 END " +
+                         "| Cross_Street:X GPS1 GPS2 END " +
+                         "| GPS1/Z GPS2/Z END " +
+                         "| CALL/SDS X/Z? GPS1/Z GPS2/Z END " +
+                         ")");
     this.marker = marker;
     this.cityCodes = cityCodes;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals(marker)) return false;
-    return parseFields(body.split("\\|"), data);
+    return parseFields(body.split("\\|", -1), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -35,7 +35,7 @@ public class DispatchA77Parser extends FieldProgramParser {
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends Field {
 
     @Override
@@ -50,9 +50,9 @@ public class DispatchA77Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
-    
+
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -60,10 +60,10 @@ public class DispatchA77Parser extends FieldProgramParser {
       super.parse(field, data);;
     }
   }
-  
+
   private class MyGPSField extends GPSField {
     MyGPSField(int type) {
-      super(type, "[-+]?\\d{2,3}\\.\\d{6,}|-361", true);
+      super(type, "[-+]?\\d{2,3}\\.\\d{6,}|-361|", true);
     }
   }
 }
