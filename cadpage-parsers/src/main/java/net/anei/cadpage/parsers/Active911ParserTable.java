@@ -257,6 +257,7 @@ public class Active911ParserTable {
       "US/CO/PitkinCounty",               "COPitkinCounty",
       "US/CO/RioGrandeounty",             "CORioGrandeCountyA",
       "US/CO/SanMiguelCounty",            "COSanMiguelCounty",
+      "US/CO/StadiumMedical",             "CODenverB",
       "US/CO/TellerCounty",               "COTellerCounty",
       "US/CO/USAMobility",                "CODouglasCountyB",
       "US/CO/Vail",                       "COEagleCounty",
