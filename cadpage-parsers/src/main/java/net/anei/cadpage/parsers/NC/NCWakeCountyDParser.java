@@ -9,9 +9,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
 
 public class NCWakeCountyDParser extends FieldProgramParser {
-  
+
   public NCWakeCountyDParser() {
-    super("WAKE COUNTY", "NC", 
+    super("WAKE COUNTY", "NC",
           "Call:CALL! Place:PLACE! Addr:ADDR! City:CITY! ID:ID! Pri:PRI! Date:DATE! Time:TIME! Map:MAP! Unit:UNIT! Info:INFO! TAC:CH");
   }
 
@@ -19,13 +19,14 @@ public class NCWakeCountyDParser extends FieldProgramParser {
   public String getFilter() {
     return "ECCDISPATCH@rwecc.net";
   }
-  
+
+  private static final Pattern DELIM = Pattern.compile(" *(?=(?:Place|Addr|City|ID|Pri|Date|Time|Map|Unit|Info|TAC):)");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = body.replace("Time:", " Time:").replace("Map:", " Map:");
-    return super.parseMsg(body,  data);
+    return parseFields(DELIM.split(body),  data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -34,11 +35,11 @@ public class NCWakeCountyDParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final CodeTable CODE_TABLE = new StandardCodeTable();
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?) (\\d\\d?[A-Z]\\d\\d?[A-Z]?)");
-      
+
   private class MyCallField extends Field {
 
     @Override
@@ -58,7 +59,7 @@ public class NCWakeCountyDParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]*\\[\\d{1,2}\\] +");
   private static final Pattern INFO_SUBBRK_PTN = Pattern.compile(" +(?=\\d{1,2}\\. +)");
   private class MyInfoField extends InfoField {
@@ -76,7 +77,7 @@ public class NCWakeCountyDParser extends FieldProgramParser {
         data.strSupp = append(data.strSupp, "\n", part);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";
