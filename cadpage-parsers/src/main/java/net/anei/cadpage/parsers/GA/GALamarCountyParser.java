@@ -26,9 +26,14 @@ public class GALamarCountyParser extends DispatchA78Parser {
     if (!super.parseMsg(subject, body, data)) return false;
     String code = data.strCall;
     data.strCode = code;
-    Matcher match = CODE_PTN.matcher(code);
-    if (match.matches()) code = match.group(1);
     String call = CALL_CODES.getProperty(code);
+    if (call == null) {
+      Matcher match = CODE_PTN.matcher(code);
+      if (match.matches()) {
+        code = match.group(1);
+        call = CALL_CODES.getProperty(code);
+      }
+    }
     if (call != null) data.strCall = call;
     return true;
   }
@@ -109,6 +114,9 @@ public class GALamarCountyParser extends DispatchA78Parser {
       "68",  "Dispatch Information",
       "69",  "Message Received",
       "70",  "Fire",
+      "70B", "Brush Fire",
+      "70S", "Structure Fire",
+      "70V", "Vehicle Fire",
       "71",  "Damage to Property",
       "72",  "Harassing Phone Calls",
       "73",  "DUI Test",
