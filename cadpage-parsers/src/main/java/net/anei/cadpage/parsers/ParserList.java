@@ -1529,6 +1529,7 @@ public class ParserList {
               ,"TXNuecesCounty"                 ,"Nueces County, TX"
               ,"TXOverton"                      ,"Overton, TX"
               ,"TXParkerCounty"                 ,"Parker County, TX"
+              ,"TXPolkCounty"                   ,"Polk County, TX"
               ,"TXPortAransas"                  ,"Port Aransas, TX"
               ,"TXRoanoke"                      ,"Roanoke, TX"
               ,"TXRockwallCounty"               ,"Rockwall County, TX"

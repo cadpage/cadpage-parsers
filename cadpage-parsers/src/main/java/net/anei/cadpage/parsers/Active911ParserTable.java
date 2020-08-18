@@ -1720,6 +1720,7 @@ public class Active911ParserTable {
       "US/TX/OssiCAD",                    "TXLaPorte",
       "US/TX/OysterCreekPD",              "TXBrazoriaCountyC",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
+      "US/TX/PolkCounty",                 "TXPolkCounty",
       "US/TX/PortIsabel",                 "TXCameronCounty",
       "US/TX/Richardson",                 "TXDallasCountyE",
       "US/TX/Roanoke",                    "TXRoanoke",
