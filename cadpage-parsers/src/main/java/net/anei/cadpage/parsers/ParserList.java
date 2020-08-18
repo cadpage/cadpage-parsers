@@ -1586,6 +1586,7 @@ public class ParserList {
               ,"VABedfordCounty"                ,"Bedford County, VA"
               ,"VABotetourtCounty"              ,"Botetourt County, VA"
               ,"VABrunswickCounty"              ,"Brunswick County, VA"
+              ,"VABuckinghamCounty"             ,"Buckingham County, VA"
               ,"VACampbellCounty"               ,"Campbell County, VA"
               ,"VACarolineCounty"               ,"Caroline County, VA"
               ,"VACarrollCounty"                ,"Carroll County, VA"
