@@ -15,25 +15,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCOnslowCountyParser extends DispatchOSSIParser {
-  
+
   private String selectValue;
-  
+
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
            "FYI? ( CALL ADDR! CITY? SRC? DIST? INFO/N+ " +
-                "| UNIT_CH ADDR! CITY DIST? INFO/N+ " + 
-                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " + 
-                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " + 
-                                  "| CITY? PLACE+? CALL/Z END " + 
-                                  ") " + 
+                "| UNIT_CH ADDR! CITY DIST? INFO/N+ " +
+                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " +
+                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " +
+                                  "| CITY? PLACE+? CALL/Z END " +
+                                  ") " +
                 ")");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@onslowcountync.gov";
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = MAIN_ST_EX.matcher(address).replaceAll("MAIN ST EXT");
@@ -43,7 +43,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   private static final Pattern MAIN_ST_EX = Pattern.compile("\\bMAIN ST EX\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern WILLIAMS_ST_EX = Pattern.compile("\\bWILLIAMS ST EX\\b", Pattern.CASE_INSENSITIVE);
 
-  
+
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
 
   @Override
@@ -71,7 +71,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       }
     }
     if (!super.parseFields(fields, data)) return false;
-    
+
     // Call description really should be a required field.  But it is occasionally missing
     // so we will accept calls without it if they have been positively ID's
     return (data.strCall.length() > 0 || isPositiveId() && data.strAddress.length() > 0);
@@ -94,14 +94,14 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     if (name.equals("CODE")) return new MyCodeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) (\\d{1,3}-?[A-Z]-?\\d{1,2}-?[A-Za-z]?|\\d{4})");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CALL_CODE_PTN.matcher(field);
@@ -116,7 +116,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       }
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = CALL_CODE_PTN.matcher(field);
@@ -126,21 +126,21 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL CODE?";
     }
   }
-  
+
   private static final Pattern UNIT_CHANNEL_PTN = Pattern.compile("(?:\\{([A-Z0-9]+)\\} )?EVENT CHANNEL (\\d+)");
   private class MyUnitChannelField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = UNIT_CHANNEL_PTN.matcher(field);
@@ -160,7 +160,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       return "UNIT CH";
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -173,27 +173,27 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
         super.parse(field, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE UNIT?";
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|SUITE) *(.*)|\\d+|H-?\\d{1,2}|[A-D]");
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // See if we match the master apartment pattern
       Matcher match = APT_PTN.matcher(field);
       if (!match.matches()) return false;
-      
+
       // Match succeeded, but there are two possible outcomes.  If this had
       // some kind of apartment prefix, take it as gospel
       String apt = match.group(1);
@@ -201,16 +201,16 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
         data.strApt = apt;
         return true;
       }
-      
+
       // If we are processing the EMS format, we have to take some additional
       // steps to distinguish apt fields from unit fields.  if not, then this is
       // an APT field
-      
+
       if (!selectValue.equals("EMS")) {
         data.strApt = field;
         return true;
       }
-      
+
       // The EMS format has a unit field coming up that looks a lot like an apt field.
       // The only way we can determine if this is an apartment
       // field is by looking at the next two fields to see if one of them looks
@@ -228,38 +228,38 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private static final Pattern SOURCE_PTN = Pattern.compile("[A-Z]{1,2}FD|OCRS|WCF2");
   private class MySourceField extends SourceField {
     public MySourceField() {
       setPattern(SOURCE_PTN, true);
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("\\d{1,2}[A-Z]?|[A-Z]{2}FD|WCF2");
   private class MyUnitField extends UnitField {
     public MyUnitField() {
       setPattern(UNIT_PTN, true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, ",", field);
     }
   }
-  
-  private static final Pattern CODE_PTN = Pattern.compile("\\d{1,3}[A-Z]\\d{1,2}[A-Za-z]?"); 
+
+  private static final Pattern CODE_PTN = Pattern.compile("\\d{1,3}[A-Z]\\d{1,2}[A-Za-z]?");
   private class MyCodeField extends CodeField {
     public MyCodeField() {
       setPattern(CODE_PTN, true);
     }
   }
-  
+
   @Override
   public CodeSet getCallList() {
     return new TestCodeSet(CALL_LIST);
   }
-  
+
   private static final Set<String> CALL_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "ABDOMINAL PAIN",
       "AIRCRAFT EMERGENCY",
@@ -319,6 +319,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "ODOR",
       "OUTSIDE FIRE",
       "OVERDOSE/POISONING",
+      "PANDEMIC/EPIDEMIC/OUTBREAK",
       "PREGNANCY",
       "PSYCHIATRIC/ABNORMAL BEHAV",
       "SICK PERSON",
@@ -348,7 +349,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "WATER RESCUE",
       "WATERCRAFT IN DISTRESS"
   }));
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BAYB", "BAYBORO",
       "BEUL", "BEULAVILLE",
@@ -378,7 +379,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SOU",  "SOUTHPORT",
       "STEL", "STELLA",
       "SWAN", "SWANSBORO",
-      
+
       // Carteret County
       "CEDAR POINT",    "CEDAR POINT"
   });
