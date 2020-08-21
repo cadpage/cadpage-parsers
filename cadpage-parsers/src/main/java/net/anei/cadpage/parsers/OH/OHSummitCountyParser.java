@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHSummitCountyParser extends GroupBestParser {
-  
+
   public OHSummitCountyParser() {
     super(new OHSummitCountyAParser(),
            new OHSummitCountyBParser(),
@@ -21,8 +21,8 @@ public class OHSummitCountyParser extends GroupBestParser {
            new OHSummitCountyHParser(),
            new OHHudsonParser());
   }
-  
-  
+
+
   @Override
   public String getLocName() {
     return "Summit County, OH";
@@ -30,7 +30,7 @@ public class OHSummitCountyParser extends GroupBestParser {
 
 
   static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "AKRON",
     "BARBERTON",
@@ -45,7 +45,7 @@ public class OHSummitCountyParser extends GroupBestParser {
     "STOW",
     "TALLMADGE",
     "TWINSBURG",
-    
+
     // Villages
     "BOSTON HEIGHTS",
     "BOSTON HTS",
@@ -57,7 +57,7 @@ public class OHSummitCountyParser extends GroupBestParser {
     "REMINDERVILLE",
     "RICHFIELD",
     "SILVER LAKE",
-    
+
     // Townships
     "BATH",
     "BOSTON",
@@ -86,7 +86,7 @@ public class OHSummitCountyParser extends GroupBestParser {
     "SAGAMORE HILLS TNSP",
     "SPRINGFIELD TNSP",
     "TWINSBURG TNSP",
-    
+
     // Unincorporated areas
     "BOTZUM",
     "BRANDYWINE",
@@ -95,27 +95,27 @@ public class OHSummitCountyParser extends GroupBestParser {
     "GREENSBURG",
     "MONTROSE",
     "MYERSVILLE",
-    
+
     // Neighborhoods
     "NOGLE",
-    
+
     // Medina County
     "WADSWORTH",
     "RITTMAN",
     "SHARON",
-    
+
     // Portage County
     "AURORA",
     "STREETSBORO",
-    
+
     // Starke County
     "UNIONTOWN"
   };
-  
+
   static String fixMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "NOGLE",        "NORTON",
   });
