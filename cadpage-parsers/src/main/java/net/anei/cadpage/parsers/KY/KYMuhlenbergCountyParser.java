@@ -1,32 +1,15 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Muhlenberg County, KY
- */
-public class KYMuhlenbergCountyParser extends DispatchEmergitechParser {
-  
+
+public class KYMuhlenbergCountyParser extends GroupBestParser {
+
   public KYMuhlenbergCountyParser() {
-    super(CITY_LIST, "MUHLENBERG COUNTY", "KY");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "pagegate@muhlenberg911.org";
+    super(new KYMuhlenbergCountyAParser(), new KYMuhlenbergCountyBParser());
   }
 
-  @Override
-  public boolean parseMsg(String body, Data data) {
-    
-    // Occasionally the extra pace goes in 66 instead of 67.
-    // But that only seems to happen to one word, so we will fix it here
-    body = body.replace(" B ETWEEN ", " BETWEEN ");
-    return super.parseMsg(body, data);
-  }
-
-  private static final String[] CITY_LIST = new String[]{
+  static final String[] CITY_LIST = new String[]{
     "BEECH CREEK",
     "BEECHMONT",
     "BELTON",
@@ -40,6 +23,9 @@ public class KYMuhlenbergCountyParser extends DispatchEmergitechParser {
     "GRAHAM",
     "GREENVILLE",
     "POWDERLY",
-    "SOUTH CARROLLTON"
+    "SOUTH CARROLLTON",
+
+    // Logan County
+    "LEWISBURG"
   };
 }

@@ -8,9 +8,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA65Parser extends FieldProgramParser {
-  
+
   public DispatchA65Parser(String[] cityList, String defCity, String defState) {
-    super(cityList, defCity, defState, 
+    super(cityList, defCity, defState,
           "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY EMPTY+? ( SRC END | CITY? ADDR DUP? APT? CS:X? EMPTY+? SRC END )");
   }
 
@@ -23,18 +23,18 @@ public class DispatchA65Parser extends FieldProgramParser {
     if (data.strAddress.length() == 0) data.msgType = MsgType.GEN_ALERT;
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DUP")) return new MyDupField();
-    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|([A-Z]?\\d{1,4} *[A-Z]?)");
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|([A-Z]?\\d{1,4} *[A-Z]?)|[A-Z]");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CITY_ST_PTN = Pattern.compile("(.*), *([A-Z]{2})");
   private static final Pattern BORO_PTN = Pattern.compile("([ A-Z]+) (?:BORO|BOROUGH)");
   private static final Pattern TWP_PTN = Pattern.compile(".* (?:TWP|TOWNSHIP)");
@@ -44,12 +44,12 @@ public class DispatchA65Parser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     public boolean checkParse(String field, Data data) {
-      
+
       field = field.toUpperCase();
       field = stripFieldEnd(field, ",");
-      
+
       boolean force = false;
       Matcher match = CITY_ST_PTN.matcher(field);
       if (match.matches()) {
@@ -57,19 +57,19 @@ public class DispatchA65Parser extends FieldProgramParser {
         data.strState = match.group(2);
         force = true;
       }
-      
+
       match = BORO_PTN.matcher(field);
       if (match.matches()) {
         data.strCity = match.group(1).trim();
         return true;
       }
-      
+
       match = TWP_PTN.matcher(field);
       if (match.matches()) {
         data.strCity = field;
         return true;
       }
-      
+
       match = COUNTY_PTN.matcher(field);
       if (match.matches()) {
         String city = match.group(1);
@@ -80,23 +80,23 @@ public class DispatchA65Parser extends FieldProgramParser {
         }
         return true;
       }
-      
+
       if (force) {
         super.parse(field, data);
         return true;
       }
-      
+
       else {
         return super.checkParse(field, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY ST";
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -107,19 +107,19 @@ public class DispatchA65Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyDupField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return field.length() > 0 && field.equals(getRelativeField(-1));
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -129,7 +129,7 @@ public class DispatchA65Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MySourceField extends SourceField {
     @Override
     public void parse(String field, Data data) {
