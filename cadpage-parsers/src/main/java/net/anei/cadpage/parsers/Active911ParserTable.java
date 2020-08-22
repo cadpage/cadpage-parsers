@@ -1028,6 +1028,7 @@ public class Active911ParserTable {
       "US/NC/FayettevilleCumberland",     "NCCumberlandCounty",
       "US/NC/ForsythCounty",              "NCForsythCounty",
       "US/NC/FranklinCounty",             "NCFranklinCounty",
+      "US/NC/GarnerFire",                 "NCWakeCountyD",
       "US/NC/GastonCounty",               "NCGastonCounty",
       "US/NC/GatesCounty",                "NCGatesCounty",
       "US/NC/GranvilleCounty",            "NCGranvilleCounty",

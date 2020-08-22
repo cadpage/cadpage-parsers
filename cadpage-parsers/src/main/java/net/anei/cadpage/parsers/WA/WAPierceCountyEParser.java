@@ -13,30 +13,30 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Pierce County, WA
  */
 public class WAPierceCountyEParser extends FieldProgramParser {
-  
+
   public WAPierceCountyEParser() {
-    super(CITY_CODES, "PIERCE COUNTY", "WA", 
+    super(CITY_CODES, "PIERCE COUNTY", "WA",
           "( T:CALL! ST:CALL/D! P:PRI! L:PRI/D! Location:ADDR/S? DG:CH! Map:MAP Units:SKIP! Time:TIME! E#:ID? Lat:GPS1? Long:GPS2? Disp:UNIT! " +
           "| Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! Map_Page:MAP Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT! ) END");
   }
-  
+
   @Override
   public String getFilter() {
     return "Dispatcher@SouthSound911.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("(?:(.*?) )?Original message from terminal \\S+  -  (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)  .* \\(\\d+\\):(?: +(.*))?", Pattern.DOTALL);
   private static final SimpleDateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("SouthSound911 Page Notification")) return false;
-    
+
     Matcher match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("DATE TIME INFO");
@@ -52,7 +52,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(4)));
       return true;
     }
-    
+
     body = body.replace("FireComm", "Firecomm");
     body = body.replaceAll("Lat::", "Lat:");
     if (!super.parseMsg(body, data)) return false;
@@ -63,19 +63,19 @@ public class WAPierceCountyEParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -94,18 +94,18 @@ public class WAPierceCountyEParser extends FieldProgramParser {
         data.strAddress = append(data.strAddress, " ", '('+alias+')');
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT PLACE";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
     return WAPierceCountyParser.adjustMapAddressCommon(sAddress);
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "AFA-CO",                     "CARBON MONOXIDE ALARM",
       "AFA-COM",                    "COMMERCIAL FIRE ALARM",
@@ -418,7 +418,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
 
 
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AI AI","ANDERSON ISLAND",
       "AI",   "ANDERSON ISLAND",
