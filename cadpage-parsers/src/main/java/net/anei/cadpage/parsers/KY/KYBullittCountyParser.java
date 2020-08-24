@@ -1,187 +1,73 @@
 package net.anei.cadpage.parsers.KY;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 
-public class KYBullittCountyParser extends DispatchB2Parser {
+public class KYBullittCountyParser extends FieldProgramParser {
 
   public KYBullittCountyParser() {
-    super("BULLITT CO 911:||BULLITT_CO_911:", CITY_LIST, "BULLITT COUNTY", "KY");
-    setupCallList(CALL_LIST);
-    setupSaintNames("CLAIRE");
-    removeWords("LOT");
+    super("BULLITT COUNTY", "KY", 
+          "ID CALL ADDRCITYST NAME PHONE DATETIME! INFO/N+");
   }
   
   public String getFilter() {
-    return "@c-msg.net";
-  }
-  
-  private static final Pattern ADDR_AT_PTN = Pattern.compile("@|\\bAT(?!&T)\\b", Pattern.CASE_INSENSITIVE);
-  
-  @Override
-  protected boolean parseAddrField(String field, Data data) {
-    field = ADDR_AT_PTN.matcher(field).replaceAll("/");
-    if (!super.parseAddrField(field, data)) return false;
-    if (data.strApt.startsWith("-")) {
-      String place = data.strApt.substring(1).trim();
-      if (isValidAddress(place)) {
-        data.strAddress = append(data.strAddress, " & ", place);
-      } else {
-        data.strPlace = append(data.strPlace, " - ", place);
-      }
-      data.strApt = "";
-    }
-    return true;
+    return "911@bullittky.gov";
   }
   
   @Override
-  public int getExtraParseAddressFlags() {
-    return FLAG_RECHECK_APT;
+  protected boolean parseMsg(String body, Data data) {
+    if (body.endsWith("|")) body += ' ';
+    return parseFields(body.split(" \\| "), data);
   }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("[#$]([A-Z]{2,5}\\d{2}-\\d{6})", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    return super.getField(name);
+  }
+  
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private class MyAddressCityStateField extends Field {
 
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "911 CALL / HANG UP",
-      "911 CALL (STATIC ON LINE)",
-      "ABANDONED VEHICLE / NOT STOLEN",
-      "ADMINISTRATIVE",
-      "ADMINISTRATIVE DUTIES",
-      "ALARM / BURGLAR",
-      "ALARM / FIRE",
-      "ALARM / MEDICAL",
-      "ALARM / PANIC/HOLD UP",
-      "ALCOHOL INTOXICATED",
-      "ALLERGIC REACTION",
-      "ANIMAL COMPLAINTS",
-      "ASSAULT",
-      "ASSIST",
-      "ATTEMPT TO LOCATE",
-      "BACK INJURY",
-      "BLEEDING",
-      "BRUSH/GRASS/MULCH/WOODS",
-      "BURGLARY REPORT",
-      "BURN VICTIM",
-      "CALL SUBJECT",
-      "CALL SUBJECT CALL FOR",
-      "CARDIAC ARREST",
-      "CHEST PAIN",
-      "CHILD LOCKED IN VEHICLE",
-      "CODE ENFORCEMENT",
-      "COMMUNITY POLICING",
-      "COURT",
-      "CRIMINAL MISCHIEF",
-      "DARE SCHOOL DETAIL",
-      "DEBRIS IN ROADWAY",
-      "DECEASED SUBJECT",
-      "DIABETIC EMERGENCY",
-      "DIFFICULTY BREATHING",
-      "DISORDERLY PERSON",
-      "DISPUTE",
-      "DOMESTIC",
-      "DRUG INVESTIGATION",
-      "DRUNK DRIVER",
-      "ELECTRICUTION",
-      "EMS CALL",
-      "EXTRA PATROL",
-      "FALL WITH INJURY",
-      "FIRE DEPARTMENT CALL",
-      "FIRE INVESTIGATION",
-      "FIRE / STRUCTURE",
-      "FIRE / VEHICLE",
-      "FOLLOW-UP",
-      "HARASSMENT",
-      "HEADACHE",
-      "HEART PROBLEMS",
-      "HIT & RUN",
-      "HOUSE WATCH",
-      "ILLEGAL OR UNATTENDED FIRE",
-      "INJURED PERSON",
-      "INJURY ACCIDENT",
-      "INVESTIGATION",
-      "LAW ENFORCEMENT CALL",
-      "LINES DOWN POWER/PHONE/CABLE",
-      "LOUD PERSON OR PARTY",
-      "MEET WITH SUBJECT",
-      "MEET WITH SUBJECT CALL FOR",
-      "MENTAL PERSON",
-      "MISSING PERSON",
-      "MITIGATION",
-      "MOTORIST ASSIST",
-      "NATURAL OR LP GAS LEAK",
-      "NO INJURY ACCIDENT",
-      "OPEN DOOR",
-      "OUT OF CONTROL JUVENILE",
-      "OVERDOSE",
-      "PAPER SERVICE",
-      "PARKING VIOLATION",
-      "PEDESTRIAN STOP",
-      "PHYSICAL ABUSE",
-      "PROPERTY DAMAGE REPORT",
-      "PROWLER",
-      "PT ASSIST NOT INJURED",
-      "PURSUIT / FOOT - VEHICLE",
-      "ROAD RAGE",
-      "SEARCH / RESCUE",
-      "SEIZURE",
-      "SERVICE OF EPO",
-      "SEXUAL ABUSE",
-      "SHOOTING",
-      "SHOPLIFTING",
-      "SICK PERSON",
-      "SMOKE INVESTIGATION",
-      "SMOKE INVESTIGATION",
-      "SPEEDING COMPLAINT",
-      "STABBING",
-      "SUBJECT TRANSPORT",
-      "SUBJECT W/GUN",
-      "SUICIDAL SUBJECT",
-      "SUICIDE ATTEMPT",
-      "SUSPICIOUS VEHICLE",
-      "SUSP INDIVIDUAL",
-      "SUSP INDIVIDUAL (CLI)",
-      "TEST",
-      "THEFT REPORT",
-      "THEFT REPORT HICKORY",
-      "THREATENING",
-      "TOW LOT ADMINISTRATION",
-      "TRAFFIC CONTROL",
-      "TRAFFIC HAZARD (INCLD WATER)",
-      "TRAFFIC STOP (CLI)",
-      "TRANSFER JEWISH SOUTH",
-      "TRASH/DUMPSTER FIRE",
-      "TREE DOWN",
-      "UNCONCIOUS PERSON",
-      "WARRANT DETAIL",
-      "WATER RESCUE",
-      "WELFARE CHECK"
-  );
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String zip = null;
+      String city = p.getLastOptional(',');
+      Matcher match = ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        data.strState = match.group(1);
+        zip = match.group(2);
+        city = p.getLastOptional(',');
+      }
+      if (city.length() == 0 && zip != null) city = zip;
+      data.strCity = city;
+      parseAddress(p.get(), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY ST";
+    }
+  }
   
-  private static final String[] CITY_LIST =new String[]{
-      "BROOKS", 
-      "BROWNINGTON", 
-      "CLERMONT", 
-      "FOX CHASE", 
-      "HEBRON ESTATES", 
-      "HILLVIEW", 
-      "HUNTERS HOLLOW" ,
-      "LEBANON JUNCTION", 
-      "MOUNT WASHINGTON", 
-      "MT WASHINGTON", 
-      "PIONEER VILLAGE", 
-      "SHEPHERDSVILLE",
-      "SOLITUDE", 
-      "TAYLORSVILLE",
-    
-      "LOUISVILLE",
-      "LOUISVILLLE",  // Misspelled
-      
-      // Hardin County
-      "WEST POINT",
-      
-      // Nelson County
-      "COXS CREEK"
-  };
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
+    }
+  }
 }
