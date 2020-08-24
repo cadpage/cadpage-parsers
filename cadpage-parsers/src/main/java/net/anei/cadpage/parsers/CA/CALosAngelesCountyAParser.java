@@ -113,8 +113,20 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       
       String saveAddr = data.strAddress;
       data.strAddress = "";
+      String place = null;
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        int pt2 = field.indexOf('(', pt);
+        if (pt2 >= 0) {
+          place = stripFieldEnd(field.substring(pt2+1), ")");
+          field = field.substring(0,pt2).trim();
+        }
+        pt2 = field.indexOf('<', pt);
+        if (pt2 >= 0) field = field.substring(0,pt2).trim();
+      }
       if (!super.checkParse(field, data)) parseAddress(field, data);
       data.strAddress = append(saveAddr, " & ", data.strAddress);
+      if (place != null) data.strPlace = append(data.strPlace, " - ", place);
       return true;
     }
   }
@@ -127,6 +139,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       Matcher match = X_MARKER.matcher(field);
       if (!match.find()) abort();
       field = field.substring(match.end()).trim();
+      field = stripFieldEnd(field, "&");
       super.parse(field, data);
     }
   }
@@ -143,6 +156,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALH", "ALHAMBRA",
+      "ANF", "ANF",
       "ARC", "ARCADIA",
       "BRK", "BURBANK",
       "BUR", "BURBANK AIRPORT",
@@ -155,6 +169,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "MRV", "MONROVIA",
       "MTB", "MONTEBELLO",
       "PAS", "PASADENA",
+      "SBG", "SAN GABRIEL",
       "SFS", "SANTA FE SPRINGS",
       "SGB", "SAN GABRIEL",
       "SMD", "SIERRA MADRE",
