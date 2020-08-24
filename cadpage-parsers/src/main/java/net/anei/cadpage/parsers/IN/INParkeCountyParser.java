@@ -15,6 +15,6 @@ public class INParkeCountyParser extends DispatchA56Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@bloomingdaletel.com,DISPATCH@parkecounty-in.gov";
+    return "DISPATCH@bloomingdaletel.com,DISPATCH@parkecounty-in.gov,parkecountydispatch911@gmail.com";
   }
 }
