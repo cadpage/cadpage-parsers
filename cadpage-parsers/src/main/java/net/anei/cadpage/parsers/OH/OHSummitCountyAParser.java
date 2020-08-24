@@ -29,18 +29,26 @@ public class OHSummitCountyAParser extends FieldProgramParser {
     return "info@sundance-sys.com";
   }
   
+  private static final Pattern PREFIX_PTN = Pattern.compile("\\*([- /A-Z]+)\\* +");
+  
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.contains("WadsTextSender") && !subject.equals("Alert Notification")) return false;
+    if (!subject.startsWith("From:") && !subject.equals("Alert Notification")) return false;
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
+    String prefix = "";
+    Matcher match = PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      prefix = match.group(1).trim();
+      body = body.substring(match.end());
+    }
     if (!parseFields(body.split(","), 5, data)) return false;
     
     // Special case - For Mutual aid calls the place name and address field both contain the name of the
     // the response city, the response address is in the info field.
     if (data.strAddress.equalsIgnoreCase(data.strPlace)) {
       String city = data.strAddress;
-      Matcher match = CITY_TRAILER_PTN.matcher(city);
+      match = CITY_TRAILER_PTN.matcher(city);
       if (match.find()) city = city.substring(0,match.start());
       if (isCity(city)) {
         data.strAddress = data.strPlace = "";
@@ -68,6 +76,7 @@ public class OHSummitCountyAParser extends FieldProgramParser {
       }
     }
     
+    data.strCall = append(prefix, " - ", data.strCall);
     return true;
   }
   private static final Pattern CITY_TRAILER_PTN = Pattern.compile(" +(?:CITY|TOWN|TOWNSHIP|VILLAGE)$", Pattern.CASE_INSENSITIVE);
