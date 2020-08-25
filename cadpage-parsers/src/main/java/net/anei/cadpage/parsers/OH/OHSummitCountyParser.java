@@ -101,6 +101,8 @@ public class OHSummitCountyParser extends GroupBestParser {
 
     // Medina County
     "WADSWORTH",
+    "WADSWORTH TWP",
+    "WADSWORTH TOWNSHIP",
     "RITTMAN",
     "SHARON",
 
