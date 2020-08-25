@@ -36,7 +36,7 @@ public class OHHudsonParser extends FieldProgramParser {
     if (name.equals("NUM")) return new NumberField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("SRC")) return new SourceField("(?:HUDSON|Hudson|BOSTON HEIGHTS)? ?(?:EMS|FIRE|F?\\d+[A-Z]?)", true);
+    if (name.equals("SRC")) return new SourceField("(?:HUDSON|Hudson|BOSTON HEIGHTS)? ?(?:EMS|FIRE|F?\\d+[A-Z]?)|HUDSON[A-Z]*", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
