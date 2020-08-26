@@ -196,6 +196,7 @@ public class Active911ParserTable {
       "US/CA/SLUCAD",                     "CASanLuisObispoCountyA",
       "US/CA/SonomaCounty",               "CASonomaCounty",
       "US/CA/SouthBay",                   "CALosAngelesCountyB",
+      "US/CA/SpringValley",               "CASantaClaraCountyC",
       "US/CA/StanislausCounty",           "CAStanislausCountyA",
       "US/CA/StanislausCountyTiburon",    "CAStanislausCountyA",
       "US/CA/StanislausCountyVRECC",      "CAStanislausCountyB",
