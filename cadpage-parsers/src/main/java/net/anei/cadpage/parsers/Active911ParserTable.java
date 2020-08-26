@@ -599,6 +599,7 @@ public class Active911ParserTable {
       "US/KY/Dunmor",                     "KYMuhlenbergCountyB",
       "US/KY/EastGoldenPondVFD",          "KYTriggCounty",
       "US/KY/EdmonsonCounty",             "KYEdmonsonCounty",
+      "US/KY/ElliotCounty",               "KYElliottCounty",
       "US/KY/ErlangerPD",                 "KYErlangerDispatch",
       "US/KY/FranklinCounty",             "KYFranklinCountyB",
       "US/KY/FultonCounty",               "KYFultonCounty",

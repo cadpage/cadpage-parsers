@@ -602,6 +602,7 @@ public class ParserList {
               ,"KYClayCounty"                   ,"Clay County, KY"
               ,"KYDaviessCounty"                ,"Daviess County, KY"
               ,"KYEdmonsonCounty"               ,"Edmonson County, KY"
+              ,"KYElliottCounty"                ,"Elliott County, KY"
               ,"KYErlangerDispatch"             ,"Erlanger Dispatch, KY"
               ,"KYFloydCounty"                  ,"Floyd County, KY"
               ,"KYFortKnox"                     ,"Fort Knox, KY"
