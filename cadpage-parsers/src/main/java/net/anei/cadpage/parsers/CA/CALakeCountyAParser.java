@@ -11,32 +11,32 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Lake County, CA
  */
 public class CALakeCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("Dispatched Call \\(([A-Z]+)\\)");
   private static final Pattern E911_INFO_PTN = Pattern.compile("(?:\n+Cellular E911 Call: \nLat:([-+]?\\d+\\.\\d+) +Lon:([-+]?\\d+\\.\\d+))?\nService Class: .*$");
   private static final Pattern DELIM = Pattern.compile("(?<= )\\*(?= )");
-  
+
   public CALakeCountyAParser() {
     super(CITY_CODES, "LAKE COUNTY", "CA",
            "ADDR PLACE X APT CITY? CALL! APT ID? INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "lakecounty.dispatch@lakecountyca.gov,cloverdalepaging@gmail.com";
+    return "lakecounty.dispatch@lakecountyca.gov,cloverdalepaging@gmail.com,@ci.cloverdale.ca.us";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return D_ALBERT_PTN.matcher(addr).replaceAll("D ALBERT");
   }
   private static final Pattern D_ALBERT_PTN = Pattern.compile("\\bD'ALBERT\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapCity(String city) {
     city = stripFieldEnd(city, "(Unincorporated)");
@@ -47,7 +47,7 @@ public class CALakeCountyAParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) data.strSource = match.group(1);
-    
+
     match = E911_INFO_PTN.matcher(body);
     if (match.find()) {
       String lat = match.group(1);
@@ -55,15 +55,15 @@ public class CALakeCountyAParser extends FieldProgramParser {
       if (lat != null) setGPSLoc(lat+','+lon, data);
       body = body.substring(0,match.start()).trim();
     }
-    
+
     return parseFields(DELIM.split(body), 5, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram() + " GPS";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -72,7 +72,7 @@ public class CALakeCountyAParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("#(\\d+)", true);
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -83,27 +83,27 @@ public class CALakeCountyAParser extends FieldProgramParser {
       field = p.get();
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY";
     }
   }
-  
+
   // City field doesn't exist if it was entered as part of the address
   private class MyCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCity.length() > 0) return false;
       return super.checkParse(field, data);
     }
   }
-  
+
   // Call field expands call codes
   private class MyCallCode extends CallField {
     @Override
@@ -115,7 +115,7 @@ public class CALakeCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CB", "Cobb",
       "CL", "Clearlake",
@@ -136,7 +136,7 @@ public class CALakeCountyAParser extends FieldProgramParser {
       "WP", "Whispering Pines",
       "WS", "Witter Springs",
   });
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "FDAA", "Auto Accident",
       "FDBT", "Bomb Threat",
