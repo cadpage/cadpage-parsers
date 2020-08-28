@@ -12,7 +12,7 @@ public class TXWilliamsonCountyParser extends DispatchOSSIParser {
 
   public TXWilliamsonCountyParser() {
     super(CITY_CODES, "WILLIAMSON COUNTY", "TX", 
-          "( CANCEL! | FYI? CALL! ) PRI? ADDR/S! CITY? PLACE_MAP? UNIT END");
+          "( CANCEL! | FYI? CALL! ) PRI? ADDR/S! CITY? PLACE_MAP? UNIT/C+");
   }
   
   @Override protected boolean parseMsg(String subject, String body, Data data) {
