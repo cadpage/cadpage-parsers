@@ -22,7 +22,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
 
   @Override
   public String getFilter() {
-    return "CAD@hardynet.com,PETERSBURGFIRE@hardynet.com";
+    return "@hardynet.com";
   }
 
   @Override
@@ -39,7 +39,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
     if (match.lookingAt()) {
       source = match.group(1);
       if (source == null) source = match.group(2).trim();
-      body = body.substring(match.end());
+      body = body.substring(match.end()).trim();
     }
 
     body = body.replace(" WV - -", "").replace("FIRST ENERGY", "FIRST_ENERGY");
@@ -137,6 +137,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "BREATHING DIFFICULTY/TROUBLE BREATHING/SHORT OF BREATH-SOB/DIFFICULTY BREATHING",
       "BRUSH FIRE/GRASS FIRE/WOODS FIRE",
       "BRUSH FIRE/GRASS FIRE/WOODS FIRE HARDY CO",
+      "BRUSHFIRE",
       "CHESTHEART",
       "COALARM",
       "CONTROLLED BURN",
@@ -180,6 +181,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "STROKE/SLURRED SPEECH/DROOPING",
       "STRUCTURE FIRE",
       "TEST CALL",
+      "TRANSLIV",
       "TRAUMA",
       "TRAUMATIC INJURY",
       "TS",
