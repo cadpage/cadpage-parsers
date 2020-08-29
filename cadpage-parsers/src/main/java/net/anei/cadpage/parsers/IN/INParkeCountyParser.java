@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.IN;
 
 
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA56Parser;
 
 /**
@@ -15,6 +16,13 @@ public class INParkeCountyParser extends DispatchA56Parser {
   
   @Override
   public String getFilter() {
-    return "DISPATCH@bloomingdaletel.com,DISPATCH@parkecounty-in.gov,parkecountydispatch911@gmail.com";
+    return "DISPATCH@bloomingdaletel.com,DISPATCH@parkecounty-in.gov,parkecountydispatch911@gmail.com,DISPATCHtext@parkecounty-in.gov,ParkeCountyDispatch@outlook.com";
   }
+
+  @Override
+  public boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("DISPATCH:")) body = "DISPATCH:" + body;
+    return super.parseMsg(body, data);
+  }
+   
 }
