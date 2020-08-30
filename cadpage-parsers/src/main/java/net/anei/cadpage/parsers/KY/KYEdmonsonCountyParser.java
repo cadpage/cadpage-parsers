@@ -10,7 +10,7 @@ public class KYEdmonsonCountyParser extends DispatchA65Parser {
   
   @Override
   public String getFilter() {
-    return "dispatch";
+    return "dispatch,@edmonsoncoe911.info";
   }
   
   
