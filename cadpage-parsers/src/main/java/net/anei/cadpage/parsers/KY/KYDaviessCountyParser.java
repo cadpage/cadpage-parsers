@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class KYDaviessCountyParser extends DispatchB2Parser {
   
   public KYDaviessCountyParser() {
-    super(CITY_LIST, "DAVIESS COUNTY", "KY", B2_OPT_CALL_CODE);
+    super(CITY_LIST, "DAVIESS COUNTY", "KY", B2_FORCE_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ALPHONSUS", "ANTHONY", "BENEDICT", "JOSEPH", "LAWRENCE");
@@ -46,7 +46,17 @@ public class KYDaviessCountyParser extends DispatchB2Parser {
     // These are the only folks I know who split up US highway prefixes
     body = US_PTN.matcher(body).replaceAll("US");
     body = body.replace('\n', ' ');
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    
+    // Older calls used to have optional codes, new calls drop the > symbol and
+    // must be parsed with forced codes.  The maximum legitimate code length is 6,
+    // if it longer than that, assume it was really one of the older calls lacking
+    // a call code.
+    if (data.strCode.length() > 6) {
+      data.strCall = append(data.strCode, " ", data.strCall);
+      data.strCode = "";
+    }
+    return true;
   }
   
   @Override
