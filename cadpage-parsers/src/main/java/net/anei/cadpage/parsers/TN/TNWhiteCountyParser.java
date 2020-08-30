@@ -13,7 +13,7 @@ public class TNWhiteCountyParser extends DispatchA65Parser {
   
   @Override
   public String getFilter() {
-    return "whitecotn@911email.net,dispatch@911comm2.info,dispatch@whitecounty-tn-911.info";
+    return "whitecotn@911email.net,dispatch@911comm2.info,dispatch@whitecounty-tn-911.info,@whitecoe911.info";
   } 
   
   @Override
