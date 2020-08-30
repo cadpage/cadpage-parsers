@@ -92,6 +92,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "DURHAM CO",
     "DURHAM-CO",
     "DURHAM COUNTY",
+    "BAHAMA",
     "CARR",
     "FALLS LAKE",
     "GORMAN",
