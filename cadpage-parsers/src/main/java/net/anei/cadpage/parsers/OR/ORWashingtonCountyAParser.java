@@ -19,16 +19,13 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * 
  */
 public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
-  
-  private String version;
-
   public ORWashingtonCountyAParser() {
     this("WASHINGTON COUNTY", "OR");
   }
   
   public ORWashingtonCountyAParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-          "( SELECT/1 ADDR1/SC! MAP:MAP UNIT:UNIT! | " +
+          "( SELECT/1 ( CODE_CALL! AT:ADDR! X:X! CITY:CITY! | ADDR1/SC! ) MAP:MAP UNIT:UNIT! | " +
             "ADDRCITY SRC! ( MAP:MAP X2 | ) DASH? PLACE2 NAME2! )");
     setupCities(ORWashingtonCountyParser.CITY_LIST);
     setupCallList(CALL_LIST);
@@ -102,7 +99,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     // Another alternate format
     match = MASTER_PTN1.matcher(body);
     if (match.matches()) {
-      version = "2";
+      setSelectValue("2");
       data.strUnit = match.group(1);
       data.strCode = match.group(2);
       data.strCall = match.group(3).trim();
@@ -167,7 +164,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       return true;
     }
 
-    version = "1";
+    setSelectValue("1");
     body = body.replace(" UNITS:", " UNIT:");
     return super.parseMsg(body, data);
   }
@@ -188,18 +185,16 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   @Override
   public String getProgram() {
     String result = super.getProgram();
+    String version= getSelectValue();
     if (version != null && version.equals("2")) result = "UNIT CODE CALL " + result + " ID INFO";
     return result;
-  }
-  
-  @Override
-  protected String getSelectValue() {
-    return version;
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("ADDR1")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("PLACE2")) return new MyPlace2Field();
@@ -207,7 +202,25 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([-A-Z0-9]{2,6}) - +(.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([-A-Z0-9]{2,6}\\**) - +(.*)");
+  private class MyCodeCallField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private static final Pattern DIR_OF_SLASH_PTN = Pattern.compile("\\b([NSEW] *OF) */ *");
   private class MyAddressField extends AddressField {
@@ -249,6 +262,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       }
       field = DIR_OF_SLASH_PTN.matcher(field).replaceAll("$1 ").trim();
       field = field.replace("/No X Street", "");
+      field = field.replace(" No X Street", "");
       parseAddress(StartType.START_CALL, flags, field, data);
       data.strCross = cleanCross(data.strCross);
       if ((flags & FLAG_PAD_FIELD) != 0) {
@@ -264,6 +278,14 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL ADDR APT X CITY";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = cleanCross(field);
+      super.parse(field, data);
     }
   }
   
@@ -354,6 +376,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "ALLERGIES/ENVENOMATIONS BRAVO",
       "ALLERGIES/ENVENOMATIONS CHARLIE",
       "ALLERGIES/ENVENOMATIONS DELTA",
+      "ALLERGIC REACTION C1",
       "ALLERGY PROBLEM",
       "ALLERGY/ALT LOC",
       "AMR TRANSPORT",
@@ -524,6 +547,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "DUMPSTER FIRE",
       "ELDER ABUSE OR NEGLECT",
       "ELECTRICAL FIRE",
+      "ELECTROCUTION/LIGHTNING D",
       "EXTRA PATROL",
       "EXTRA PATROL COMPLETED",
       "EXTRA PATROL REQUEST",
@@ -606,6 +630,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "HEMORRHAGE/LACERATION CHARLIE",
       "HEMORRHAGE/LACERATION DELTA",
       "HEMORRHAGE/LACERATION ECHO",
+      "HIT / RUN NON-INJ",
       "HIT / RUN NON-INJURY",
       "HIT AND RUN INJ",
       "HIT AND RUN,NON INJURY",
@@ -625,6 +650,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "LANDING ZONE",
       "LIFT ASSIST",
       "LOCKOUT",
+      "MARINE ASSIST NON-IMMINE",
       "MARINE RESCUE",
       "MARINE RESCUE 1",
       "MARINE RESCUE 2",
@@ -728,6 +754,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "SICK PERSON-ECHO RESPONSE",
       "SICK PERSON C1",
       "SICK PERSON/UNKO",
+      "SMOKE IN THE AREA",
       "SMOKE INVESTIGAT",
       "SMOKE SMELL",
       "SPILL, FUEL/UNK",
@@ -841,11 +868,17 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   
   private static String[] MWORD_STREET_LIST = new String[]{
       "ALDER CREST",
+      "ANNIE LOU",
+      "ARBOR CROSSING",
       "ARCHERY SUMMIT",
       "ASH CREEK",
       "BAKER TRAIL",
+      "BALM GROVE",
       "BARLOW TRAIL",
+      "BARTON PARK",
+      "BAY CREEK",
       "BAY MEADOWS",
+      "BAY POINT",
       "BEACH PLUM",
       "BEAVERTON HILLSDALE",
       "BEE HILL",
@@ -857,10 +890,12 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "BREYMAN ORCHARDS",
       "BRIGHTWOOD BRIDGE",
       "BRIGHTWOOD LOOP",
+      "BUCK BRUSH",
       "BUD SMITH",
       "BULL MOUNTAIN",
       "BUXTON LOOKOUT",
       "CARMEN HEIGHTS",
+      "CARPENTER CREEK",
       "CASCADIA VILLAGE",
       "CEDAR CANYON",
       "CEDAR FALLS",
@@ -872,6 +907,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "CLAPSHAW HILL",
       "CLARK HILL",
       "CLAY HORSE",
+      "CLEVELAND BAY",
       "COLLINS LAKE",
       "COPPER BEECH",
       "CORBETT HILL",
@@ -879,13 +915,20 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "CORNELIUS SCHEFFLIN",
       "COUGAR RIDGE",
       "COUNTRY CLUB",
+      "COURTING HILL",
+      "COVEY RUN",
       "CREAMERY CREEK",
       "CROOKED FINGER",
       "CROSS CREEK",
+      "DAIRY CREEK",
       "DAVID HILL",
       "DAWSON CREEK",
       "DAY HILL",
+      "DEL RIO",
+      "DIAMOND HEAD",
       "DICKEY PRAIRIE",
+      "DOG RIDGE",
+      "DUNDEE LANDING",
       "EAGLE CREEK",
       "EAGLE CREST",
       "EAGLE VIEW",
@@ -901,20 +944,25 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "FIR GROVE",
       "FIVE OAKS",
       "FLYING FEATHER",
+      "FOREST GALE",
       "FOREST HILL",
       "FOX FARM",
+      "FRYER HILL",
       "FULQUARTZ LANDING",
       "GALES CREEK",
       "GARDEN MEADOW",
       "GLEN ECHO",
       "GLEN HAVEN",
+      "GOODIN CREEK",
       "GOVERNMENT CAMP",
       "GRAHAMS FERRY",
       "GREEN MOUNTAIN",
+      "GREEN VALLEY",
       "GREENWAY SW HALL",
       "HAZEL DELL",
       "HAZEL FERN",
       "HERB HILL",
+      "HIDDEN CREEK",
       "HIDDEN SPRINGS",
       "HOLLY RIDGE",
       "HOLY NAMES",
@@ -928,6 +976,8 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "JACKSON SCHOOL",
       "JEREMY LOVELESS",
       "JOHN LEE",
+      "JOHN OLSEN",
+      "JOHNSON CREEK",
       "JOHNSON SCHOOL",
       "KALAHARI RIDGE",
       "KANSAS CITY",
@@ -939,13 +989,16 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "KNOX RIDGE",
       "KRUSE OAKS",
       "KRUSE WAY",
+      "KRUSE WOODS",
       "LADD HILL",
       "LAKE GROVE",
       "LAKE SHORE",
       "LILAC HILL",
       "LOLO PASS",
+      "LONG FARM",
       "LOST PARK",
       "LYNDA MAY",
+      "MCCORMICK HILL",
       "MCKENZIE VALLEY",
       "MEADOW GRASS",
       "MEADOW LARK",
@@ -966,11 +1019,16 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "OATFIELD HILL",
       "ORENCO GARDENS",
       "ORENCO STATION",
+      "OSWEGO POINTE",
       "PACIFIC HWY FRONTAGE",
       "PALISADES CREST",
       "PALISADES TERRACE",
+      "PAREN SPRINGS",
+      "PARK ENTRANCE",
       "PARRETT MOUNTAIN",
       "PARRETT MTN",
+      "PATTON VALLEY",
+      "PEBBLE CREEK",
       "PERRY VICKERS",
       "PETES MOUNTAIN",
       "PLEASANT HILL",
@@ -985,6 +1043,9 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "RISING STAR",
       "RIVER BEND",
       "ROBERT MOORE",
+      "ROCK CREEK",
+      "ROSE BIGGI",
+      "ROY ROGERS",
       "ROYAL VILLA",
       "ROYAL WOODLANDS",
       "RUSS WILCOX",
@@ -993,6 +1054,10 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "SCHOLLS FERRY",
       "SCOGGINS VALLEY",
       "SEVEN OAKS",
+      "SHADOW WOOD",
+      "SHERMAN COOPER",
+      "SIERRA VISTA",
+      "SILVER OAK",
       "SINGING WOODS",
       "SNOWBERRY RIDGE",
       "SOUTH FORK GALES CREEK",
@@ -1005,11 +1070,16 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "STAG HOLLOW",
       "STAR MOORING",
       "STOREY BURN",
+      "SUMMIT POINTE",
       "SUNNY HILL",
+      "SUNSET CORNELIUS",
+      "SUNSET MP 50 NW SELLERS",
       "TAM O SHANTER",
       "TERRA FERN",
       "TEUFEL HILL",
       "THE GREENS",
+      "TOWN CENTER",
+      "TRILLIUM LAKE",
       "TRYON HILL",
       "TUALATIN SHERWOOD",
       "TUALATIN VALLEY",
@@ -1020,7 +1090,10 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "UNION MILLS",
       "VALERIA VIEW",
       "VIEW CREST",
+      "VILLAGE PARK",
+      "VIOLA WELCH",
       "VISION RIDGE",
+      "WAGON WHEEL",
       "WARDEN HILL",
       "WARM SPRINGS",
       "WEST A",
@@ -1031,9 +1104,11 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "WEST UNION",
       "WESTWARD HO",
       "WILD ROSE",
+      "WILDCAT MOUNTAIN",
       "WILLAMETTE FALLS",
       "WILSON RIVER",
       "WILSON SCHOOL",
+      "WIND RIDGE",
       "WIND SONG",
       "WITCH HAZEL",
       "WORDEN HILL",
