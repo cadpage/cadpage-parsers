@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class NCNashCountyCParser extends FieldProgramParser {
   
@@ -24,6 +25,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
   }
   
   private String tmpSubject;
+  private String times;
   
   private static final Pattern FIND_DELIM_PTN = Pattern.compile("\\bCFS\\d\\d-\\d{6}([:;])");
   
@@ -44,9 +46,11 @@ public class NCNashCountyCParser extends FieldProgramParser {
       body = body.replace(" RM: ", " RM ").replace(" FLOOR: ", " FLOOR ");
     }
     getMiscField().reset();
+    times = "";
     if (!parseFields(body.split(delim), data)) return false;
     data.strUnit = data.strUnit.replace("; ", ",");
     if (data.strSupp.equals("None")) data.strSupp = "";
+    if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(data.strSupp, "\n", times);
     return true;
   }
   
@@ -57,6 +61,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
     if (name.equals("MISC")) return getMiscField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("NAME")) return new NameField("()None|([^0-9;]+|.*[^;] .*)", true);
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ID"))  return new IdField("CFS\\d\\d-\\d{6}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d?:\\d\\d", true);
     return super.getField(name);
@@ -171,6 +176,28 @@ public class NCNashCountyCParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern UNIT_PTN = Pattern.compile("(\\S+): *(.*)");
+  private static final Pattern UNIT_TIME_PTN = Pattern.compile("(?:Assigned|Enroute|Arrived|Completed) *(.*)");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = UNIT_PTN.matcher(field);
+      if (match.matches()) {
+        data.strUnit = append(data.strUnit, ",", match.group(1));
+        times = append(times, "\n", match.group(2));
+        return;
+      }
+      match = UNIT_TIME_PTN.matcher(field);
+      if (match.matches()) {
+        if (match.group(1).length() == 0) return;
+        times = append(times, "\n", field);
+        if (field.startsWith("Completed")) data.msgType = MsgType.RUN_REPORT;
+        return;
+      }
+      data.strUnit = append(data.strUnit, ",", field);
     }
   }
 }
