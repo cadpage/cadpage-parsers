@@ -3018,6 +3018,14 @@ public class FieldProgramParser extends SmartAddressParser {
     public IdField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
+    
+    public IdField(Pattern pattern) {
+      super(pattern);
+    }
+    
+    public IdField(Pattern pattern, boolean hardPattern) {
+      super(pattern, hardPattern);
+    }
 
     @Override
     public void setQual(String qual) {

@@ -227,7 +227,13 @@ public class DispatchA48Parser extends FieldProgramParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) {
       if (match.group(1) != null) {
-        if (!body.startsWith("As of ") && !body.contains(":As of ")) body = subject + ' ' + body;
+        if (!body.startsWith("As of ") && !body.contains(":As of ")) {
+          match = ID_PTN.matcher(body);
+          if (!match.lookingAt()) return false;
+          if (body.length() <= match.end()) return false;
+          char delim = body.charAt(match.end());
+          body = subject + delim + body;
+        }
         subject = "";
       }
       else {
@@ -461,11 +467,13 @@ public class DispatchA48Parser extends FieldProgramParser {
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
+  
+  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-?\\d{8}\\b");
 
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
-    if (name.equals("ID")) return new IdField("\\d{4}-?\\d{8}", true);
+    if (name.equals("ID")) return new IdField(ID_PTN, true);
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
