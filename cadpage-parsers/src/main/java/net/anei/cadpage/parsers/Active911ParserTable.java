@@ -1017,6 +1017,7 @@ public class Active911ParserTable {
       "US/NC/ClayCounty",                 "NCClayCounty",
       "US/NC/ClaytonFD",                  "NCWakeCountyD",
       "US/NC/ClevelandCounty",            "NCClevelandCountyA",
+      "US/NC/ClevelandFD",                "NCWakeCountyD",
       "US/NC/CliffsideAreaFD",            "NCRutherfordCounty",
       "US/NC/ColumbusCounty",             "NCColumbusCounty",
       "US/NC/Concord",                    "NCCabarrusCounty",
