@@ -11,13 +11,17 @@ public class TXVanAlstyneParser extends FieldProgramParser {
   public TXVanAlstyneParser() {
     super("VAN ALSTYNE", "TX", "TYPE:CALL! LOC:ADDRCITY! TXT:INFO? INFO+");
   }
-
-  private static final Pattern MULTISPACE = Pattern.compile(" {2,}");
   
+  private static final Pattern MARKER = Pattern.compile("From:\\d{4}\nMsg: *");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    // check subj
-    if (!subject.equals("CAD")) return false;
+
+    if (!subject.equals("Dispatch Message")) return false;
+    
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end());
     
     return parseFields(body.split("\n"), data);
   }
@@ -55,6 +59,8 @@ public class TXVanAlstyneParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
+
+  private static final Pattern MULTISPACE = Pattern.compile(" {2,}");
   
   private class MyAddressCityField extends AddressCityField {
 
