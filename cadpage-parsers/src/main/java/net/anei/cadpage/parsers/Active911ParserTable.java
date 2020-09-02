@@ -1911,6 +1911,7 @@ public class Active911ParserTable {
       "US/WA/WallaWallaCounty",           "WAWallaWallaCounty",
       "US/WA/WestPierceCounty",           "WAPierceCountyE",
       "US/WA/WhitmanCounty",              "WAWhitmanCounty",
+      "US/WA/Woodinville",                "WAKingCountyA",
       "US/WA/YakimaCounty",               "WAYakimaCounty",
       "US/WI/Bayside",                    "WIMilwaukeeCounty",
       "US/WI/BeloitFD",                   "WIRockCounty",
