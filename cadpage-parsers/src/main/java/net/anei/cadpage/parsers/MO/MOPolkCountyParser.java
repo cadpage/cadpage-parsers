@@ -52,12 +52,24 @@ public class MOPolkCountyParser extends FieldProgramParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ALDR", "ALDRICH",
       "BOLI", "BOLIVAR",
       "BRIG", "BRIGHTON",
+      "BUFF", "BUFFALO",
+      "DUNN", "DUNNEGAN",
+      "FAIR", "FAIR PLAY",
+      "FLEM", "FLEMINGTON",
+      "FRGO", "FAIR GROVE",
       "HALF", "HALFWAY",
       "HUMA", "HUMANSVILLE",
+      "LOUI", "LOUISBURG",
       "MORR", "MORRISVILLE",
-      "URBA", "HALFWAY",  // ????
-      "WILL", "BRIGHTON"  // ????
+      "PLEA", "PLEASANT HOPE",
+      "POLK", "POLK",
+      "STOC", "STOCKTON",
+      "URBA", "URBANA",
+      "WALN", "WALNUTGROVE",
+      "WILL", "WILLARD"
+      
   });
 }
