@@ -3757,7 +3757,7 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public void parse(String field, Data data) {
       if (append != null) {
-        data.strAlert = append(data.strMap, append, field);
+        data.strAlert = append(data.strAlert, append, field);
       } else {
         data.strAlert = field;
       }
