@@ -1410,6 +1410,7 @@ public class Active911ParserTable {
       "US/OR/ClackamasCounty",            "ORClackamasCountyA,ORClackamasCountyD",
       "US/OR/ClatsopCounty",              "ORClatsopCounty",
       "US/OR/ColumbiaCounty",             "ORColumbiaCounty",
+      "US/OR/ColumbiaCountyFire",         "ORColumbiaCounty",
       "US/OR/DeschutesCounty",            "ORDeschutesCounty",
       "US/OR/DouglasCounty",              "ORDouglasCounty",
       "US/OR/GilliamCounty",              "ORGilliamCounty",

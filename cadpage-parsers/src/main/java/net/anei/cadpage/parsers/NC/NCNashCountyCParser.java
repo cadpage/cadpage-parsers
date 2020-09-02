@@ -49,7 +49,6 @@ public class NCNashCountyCParser extends FieldProgramParser {
     times = "";
     if (!parseFields(body.split(delim), data)) return false;
     data.strUnit = data.strUnit.replace("; ", ",");
-    if (data.strSupp.equals("None")) data.strSupp = "";
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(data.strSupp, "\n", times);
     return true;
   }
@@ -64,6 +63,7 @@ public class NCNashCountyCParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ID"))  return new IdField("CFS\\d\\d-\\d{6}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d?:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -198,6 +198,14 @@ public class NCNashCountyCParser extends FieldProgramParser {
         return;
       }
       data.strUnit = append(data.strUnit, ",", field);
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
     }
   }
 }
