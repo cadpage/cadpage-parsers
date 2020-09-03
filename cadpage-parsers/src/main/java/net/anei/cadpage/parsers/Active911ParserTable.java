@@ -1266,7 +1266,7 @@ public class Active911ParserTable {
       "US/OH/Beachwood",                  "OHCuyahogaCountyA",
       "US/OH/Beavercreek",                "OHGreeneCountyB",
       "US/OH/BelmontCounty",              "OHBelmontCounty",
-      "US/OH/BelprePD",                   "OHWashingtonCountyD",
+      "US/OH/BelprePD",                   "OHWashingtonCountyB",
       "US/OH/BrownCounty",                "OHBrownCounty",
       "US/OH/Brunswick",                  "OHMedinaCountyC",
       "US/OH/ButlerCountySheriff",        "OHButlerCountyA",

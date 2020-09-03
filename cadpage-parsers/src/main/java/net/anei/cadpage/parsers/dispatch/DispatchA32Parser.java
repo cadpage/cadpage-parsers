@@ -59,7 +59,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern DATETIME2_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d[AP]M)");
+  private static final Pattern DATETIME2_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d[AP]M)", Pattern.CASE_INSENSITIVE);
   private static final DateFormat DATETIME2_FMT = new SimpleDateFormat("hh:mmaa");
   private class BaseDateTime2Field extends DateTimeField {
     
