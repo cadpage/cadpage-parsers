@@ -6,12 +6,15 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class PACumberlandCountyBParser extends FieldProgramParser {
 
   public PACumberlandCountyBParser() {
     super(CITY_CODES, "CUMBERLAND COUNTY", "PA",
-          "CALL! Alarm:PRI! Loc:ADDR/S! X:X! Box:BOX! Lat/Lon:GPS! Time:DATETIME! MI#:ID! Disp:UNIT! END");
+          "CALL! Alarm:PRI! Loc:ADDR/S X:X! Box:BOX! Lat/Lon:GPS! Time:DATETIME! MI#:ID! Disp:UNIT! END");
     setupCities(CITY_LIST);
   }
 
@@ -19,12 +22,38 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
   public String getFilter() {
     return "ep911@ccpa.net,dispatch@cgfrems.org";
   }
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean revMsgOrder() { return true;   }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 300; }
+      @Override public int splitBreakPad() { return 1; }
+    };
+  }
+
+
+
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([EF]\\d{8});(\\S+) AVAILABLE;(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.endsWith("IPS I/Page Notification")) return false;
+    
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID UNIT INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      data.strUnit = match.group(2);
+      data.strSupp = match.group(3).replace(';', '\n').trim();
+      return true;
+    }
     return super.parseMsg(body, data);
   }
 
