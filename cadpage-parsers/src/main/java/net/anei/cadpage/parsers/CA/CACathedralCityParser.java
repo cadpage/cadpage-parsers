@@ -14,7 +14,7 @@ public class CACathedralCityParser extends DispatchA58Parser {
   
   @Override
   public String getFilter() {
-    return "hostmaster@cathedralcity.gov,cyrunpaging@gmail.com";
+    return "hostmaster@cathedralcity.gov,cyrunpaging@gmail.com,no-reply@mark43.com";
   }
   
   @Override
