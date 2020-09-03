@@ -12,6 +12,6 @@ public class MOScottCountyAParser extends DispatchA33Parser {
 
   @Override
   public String getFilter() {
-    return "SCOTTCITY@PUBLICSAFETYSOFTWARE.NET,SCOTTCITY@itiusa.com";
+    return "SCOTTCITY@PUBLICSAFETYSOFTWARE.NET,SCOTTCITY@itiusa.com,@OMNIGO.COM";
   }
 }
