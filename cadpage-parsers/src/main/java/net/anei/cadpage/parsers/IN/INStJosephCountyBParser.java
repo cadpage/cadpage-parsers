@@ -98,7 +98,8 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     if (name.equals("TIMEDATE3")) return new MyTimeDate3Field();
     if (name.equals("ZIP")) return new MyZipField();
     if (name.equals("BOX3")) return new MyBox3Field();
-    if (name.equals("CODE3"))  return new MyCode3Field();
+    if (name.equals("CODE3")) return new MyCode3Field();
+    if (name.equals("ALERT")) return new MyAlertField();
     return super.getField(name);
   }
   
@@ -270,6 +271,14 @@ public class INStJosephCountyBParser extends HtmlProgramParser {
     public void parse(String field, Data data) {
       int pt = field.indexOf('-');
       if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyAlertField extends AlertField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("TYPE")) return;
       super.parse(field, data);
     }
   }
