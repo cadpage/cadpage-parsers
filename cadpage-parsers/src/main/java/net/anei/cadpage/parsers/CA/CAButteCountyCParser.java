@@ -12,7 +12,7 @@ public class CAButteCountyCParser extends DispatchH02Parser {
   
   @Override
   public String getFilter() {
-    return "SHERIFFOFFICE@GIBSONCOUNTY-IN.GOV,SUPPORT@PARRISHCONSULTING.ORG";
+    return "CPDADMIN_NOREPLY@CHICOCA.GOV";
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{

@@ -13,8 +13,10 @@ public class DispatchH02Parser extends HtmlProgramParser {
   private Properties cityCodes;
   
   public DispatchH02Parser(Properties cityCodes, String defCity, String defState) {
-    super(cityCodes, defCity, defState, 
-          "Communications%EMPTY! Dispatch%EMPTY! Incident#:ID! Report#:SKIP! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! City:CITY Addt_Address:ADD_ADDR! Cross:X! X+ Subdivision:SUBDIV! RA:CH! Neighborhood:CITY2! Notes:INFO+ Hot_Spot:INFO/N! INFO/N+ Premise:INFO/N! Units:UNIT!");
+    super(cityCodes, defCity, defState,
+          "( SELECT/UPDATE Action:SKIP! Date:DATE! Time_Out:TIME! Incident:ID! Nature:CALL! Address:ADDR! City:CITY! Cross:X! Business:PLACE! Units:UNIT! OtherUnits:UNIT/C! Notes:INFO/N+ " + 
+          "| Communications%EMPTY! Dispatch%EMPTY! Incident#:ID! Report#:SKIP! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! City:CITY " + 
+            "Addt_Address:ADD_ADDR! Cross:X! X+ Subdivision:SUBDIV! RA:CH! Neighborhood:CITY2! Notes:INFO+ Hot_Spot:INFO/N! INFO/N+ Premise:INFO/N! Units:UNIT! )");
     this.cityCodes = cityCodes;
   }
 
@@ -23,7 +25,14 @@ public class DispatchH02Parser extends HtmlProgramParser {
   
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+
+    if (body.startsWith("Action:")) {
+      setSelectValue("UPDATE");
+      body = body.replace(" Time Out:", "\nTime Out:").replace(" City:", "\nCity:");
+      return parseFields(body.split("\n"), data);
+    }
     
+    setSelectValue("");
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     if (!match.group(1).equals("Dispatch")) {
@@ -40,6 +49,8 @@ public class DispatchH02Parser extends HtmlProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("ADD_ADDR")) return new BaseAddAddressField();
     if (name.equals("SUBDIV")) return new BaseSubdivisionField();
     if (name.equals("CITY2")) return new BaseCity2Field();
