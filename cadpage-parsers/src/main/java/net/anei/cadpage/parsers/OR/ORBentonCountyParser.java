@@ -9,7 +9,6 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 
 public class ORBentonCountyParser extends GroupBestParser {
   public ORBentonCountyParser() {
-    super(new ORBentonCountyAParser(), new ORBentonCountyBParser(),
-          new GroupBlockParser(), new ORBentonCountyCParser());
+    super(new ORBentonCountyBParser(), new GroupBlockParser(), new ORBentonCountyCParser());
   }
 }

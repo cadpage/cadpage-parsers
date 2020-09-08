@@ -814,6 +814,23 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1400 APPLEGATE ST APT:1340",   "44.538874,-123.366783",
       "1400 APPLEGATE ST APT:1370",   "44.538874,-123.366783",
       
+      // Oak Springs Apartments
+      "1913 COLLEGE ST",              "44.541651,-123.358562",
+      "1915 COLLEGE ST",              "44.541637,-123.358384",
+      "1917 COLLEGE ST",              "44.541950,-123.358325",
+      "1919 COLLEGE ST",              "44.541965,-123.358529",
+      "1921 COLLEGE ST",              "44.542292,-123.358250",
+      "1923 COLLEGE ST",              "44.542435,-123.358229",
+      "1925 COLLEGE ST",              "44.542552,-123.357913",
+      "1927 COLLEGE ST",              "44.542439,-123.357900",
+      "1929 COLLEGE ST",              "44.542236,-123.357908",
+      "1931 COLLEGE ST",              "44.542119,-123.357924",
+      "1933 COLLEGE ST",              "44.541870,-123.357897",
+      "1935 COLLEGE ST",              "44.541709,-123.357924",
+      "1937 COLLEGE ST",              "44.541592,-123.357916",
+      "1939 COLLEGE ST",              "44.541366,-123.357903",
+      "1941 COLLEGE ST",              "44.541215,-123.357930",
+      
       "1250 ADAMS ST",                "44.543512,-123.304196",     // Access via Industrial Way
       
       "24377 PENLAND DR",             "44.483433,-123.397590",
