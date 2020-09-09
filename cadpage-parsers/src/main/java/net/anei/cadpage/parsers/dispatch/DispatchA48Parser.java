@@ -286,6 +286,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     boolean first = true;
     boolean unitMark = false;
+    Boolean unitFound = false;
     for (String part : DATE_TIME_PTN.split(addr)) {
       part = part.trim();
 
@@ -297,7 +298,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
       
       if (fieldType == FieldType.INFO && data.strUnit.length() == 0) {
-        part = parseUnitInfo(part, data);
+        part = parseUnitInfo(part, data, unitFound);
       }
 
       match = DATE_TIME_UNIT_MARK_PTN.matcher(part);
@@ -312,7 +313,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     }
 
-    if (fieldType != FieldType.INFO) addr = parseUnitInfo(addr, data);
+    if (fieldType != FieldType.INFO) addr = parseUnitInfo(addr, data, unitFound);
 
     Parser p = new Parser(fixCallAddress(addr));
 
@@ -340,14 +341,16 @@ public class DispatchA48Parser extends FieldProgramParser {
     addr = p.get();
 
     // If we didn't find a unit, try a couple backup routines
-    if (unitPtn != null && data.strUnit.isEmpty()) {
-      while (true) {
-        match = TRAIL_UNIT_PTN.matcher(addr);
-        if (!match.matches()) break;
-        String unit = match.group(2);
-        if (!unitPtn.matcher(unit).matches()) break;
-        addr = match.group(1);
-        data.strUnit = append(unit, " ", data.strUnit);
+    if (unitPtn != null) {
+      if (!unitFound) {
+        while (true) {
+          match = TRAIL_UNIT_PTN.matcher(addr);
+          if (!match.matches()) break;
+          String unit = match.group(2);
+          if (!unitPtn.matcher(unit).matches()) break;
+          addr = match.group(1);
+          data.strUnit = append(unit, " ", data.strUnit);
+        }
       }
 
       if (data.strUnit.isEmpty()) {
@@ -447,7 +450,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
   
-  private String parseUnitInfo(String field, Data data) {
+  private String parseUnitInfo(String field, Data data, Boolean unitFound) {
     int pt = field.lastIndexOf(" Unit Org Name Area Types ");
     if (pt < 0) {
       pt = field.lastIndexOf(" Unit");
@@ -463,14 +466,17 @@ public class DispatchA48Parser extends FieldProgramParser {
     field = field.substring(0,pt).trim();
     
     if (unitPtn == null) {
+      if (!unitInfo.isEmpty()) unitFound = true;
       pt = unitInfo.indexOf(' ');
       if (pt >= 0) unitInfo = unitInfo.substring(0,pt);
       data.strUnit = unitInfo;
     } else if (unitInfo.length() > 0) {
       for (String unit : unitInfo.split(" +")) {
-        if (unitPtn.matcher(unit).matches()) addUnit(unit, data);
+        if (unitPtn.matcher(unit).matches()) {
+          unitFound = true;
+          addUnit(unit, data);
+        }
       }
-    } else {
     }
     
     return field;
