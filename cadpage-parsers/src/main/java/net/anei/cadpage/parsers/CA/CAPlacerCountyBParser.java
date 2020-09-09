@@ -46,6 +46,7 @@ public class CAPlacerCountyBParser extends DispatchA20Parser {
       "HZL",      "HAZMAT - LOW",
       "LAND",     "LANDING ZONE",
       "MAID",     "MEDICAL AID",
+      "MAID2",    "MEDICAL AID",
       "MDOWN",    "MAN DOWN",
       "MUTAID",   "MUTUAL AID REQUEST",
       "PAST",     "PUBLIC ASSIST",
