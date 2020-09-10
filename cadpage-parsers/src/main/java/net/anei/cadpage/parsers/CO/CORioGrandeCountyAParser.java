@@ -10,6 +10,6 @@ public class CORioGrandeCountyAParser extends DispatchPremierOneParser {
   
   @Override
   public String getFilter() {
-    return "@state.co.us";
+    return "@state.co.us,@csp.noreply";
   }
 }
