@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.StandardCodeTable;
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -85,11 +87,15 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       return true;
     }
     
-    setFieldList("CALL INFO");
-    data.msgType = MsgType.GEN_ALERT;
-    data.strCall = subject;
-    data.strSupp = body;
-    return true;
+    if (isPositiveId()) {
+      setFieldList("CALL INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strCall = subject;
+      data.strSupp = body;
+      return true;
+    }
+    
+    return false;
   }
 
   private boolean parseBody(String body, Data data) {
@@ -100,7 +106,13 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       body = body.substring(0,pt).trim();
     }
     if (parseFields(body.split(","), data)) {
+      
       if (info != null) data.strSupp = append(data.strSupp, "\n", info);
+      
+      if (!data.strCode.isEmpty()) {
+        String call = CALL_CODES.getCodeDescription(data.strCode.replace("-",  ""));
+        if (call != null) data.strCall = call;
+      }
       return true;
     }
     data.initialize(this);
@@ -510,4 +522,6 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     "WISHING WILL",
     "WORDEN POINT"
   };
+  
+  private static final CodeTable CALL_CODES = new StandardCodeTable();
 }

@@ -357,8 +357,8 @@ public class ALShelbyCountyParser extends FieldProgramParser {
       "ALA", "ALABASTER",
       "BES", "BESSEMER",
       "BFD", "BRIERFIELD",
-      "BIB", "BIBB COUNTY",      
       "BHM", "BIRMINGHAM",
+      "BIB", "BIBB COUNTY",      
       "CAL", "CALERA",
       "CHL", "CHELSEA",
       "COL", "COLUMBIANA",
@@ -370,14 +370,15 @@ public class ALShelbyCountyParser extends FieldProgramParser {
       "MAY", "MAYLENE",
       "MON", "MONTEVALLO",
       "PEH", "PELHAM",
+      "PEL", "PELHAM",
       "SAG", "SAGINAW",
       "SHE", "SHELBY",
       "STE", "STERRETT",
-      "VES", "VESTAVIA HILLS",
       "VAN", "VANDIVER",
+      "VES", "VESTAVIA HILLS",
       "VIN", "VINCENT",
       "WES", "WESTOVER",
-      "WIL", "WILSONVILLE",
+      "WIL", "WILSONVILLE"
   });
   
   private static final Properties CITY_SUBCODES = buildCodeTable(new String[]{
