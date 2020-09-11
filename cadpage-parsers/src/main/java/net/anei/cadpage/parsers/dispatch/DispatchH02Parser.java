@@ -51,11 +51,20 @@ public class DispatchH02Parser extends HtmlProgramParser {
   public Field getField(String name) {
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("ADD_ADDR")) return new BaseAddAddressField();
     if (name.equals("SUBDIV")) return new BaseSubdivisionField();
     if (name.equals("CITY2")) return new BaseCity2Field();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('\t', '/');
+      super.parse(field, data);
+    }
   }
   
   private static final Pattern AA_PTN = Pattern.compile("\\(S\\) *(.*?) *\\(N\\) *(.*)");
