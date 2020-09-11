@@ -1,13 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-public class KYBrackenCountyParser extends KYStatePoliceAParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+
+public class KYBrackenCountyParser extends GroupBestParser {
   
   public KYBrackenCountyParser() {
-    super("BRACKEN COUNTY");
-  }
-  
-  @Override
-  public String getLocName() {
-    return "Bracken County, KY";
+    super(new KYBrackenCountyAParser(), new KYBrackenCountyBParser());
   }
 }
