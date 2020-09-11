@@ -24,7 +24,7 @@ public class CACathedralCityParser extends DispatchA58Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("CCPD Alliance Message")) subject = "PSPD Auto Paging";
+    if (subject.equals("CCPD Alliance Message") || subject.equals("Event Notification")) subject = "PSPD Auto Paging";
     return super.parseMsg(subject, body, data);
   }
 
@@ -36,7 +36,8 @@ public class CACathedralCityParser extends DispatchA58Parser {
   }
 
   private static Properties CITY_CODES = buildCodeTable(new String[] { 
-      "CTHDRL CTY",   "Cathedral City" 
+      "CTHDRL CTY",         "Cathedral City", 
+      "CATHEDRAL CITY CA",  "Cathedral City"
   });
 
 }

@@ -23,7 +23,7 @@ public class DispatchA58Parser extends SmartAddressParser {
     this.expSubject = expSubject;
   }
 
-  private static Pattern MASTER = Pattern.compile("(?:(\\d+[-A-Z0-9]+): )?Event Notice: (.*?) at (?:\\(Location Not Entered\\)|(.*?,  .*?)|(.*?)) *(?:/FD: *(.*?))?(?:/Location not matched in geo file|/(.*?))?/by .*");
+  private static Pattern MASTER = Pattern.compile("(?:(\\d+[-A-Z0-9]+): )?Event Notice: (.*?) at (?:\\(Location Not Entered\\)|(.*?,  .*?)|(.*?)) *(?:/FD: *(.*?)|/no unit provided|)(?:/Location not matched in geo file|/free-text location notes|/(.*?))?/(?:no call taker provided|by .*)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
