@@ -3,13 +3,16 @@ package net.anei.cadpage.parsers.OH;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHWarrenCountyEParser extends FieldProgramParser {
   
   public OHWarrenCountyEParser() {
     super("WARREN COUNTY", "OH", 
-          "ADDR PLACE X INFO+? UNIT ID EMPTY END");
+          "( SELECT/RR UNITS_RESPONDED_TO_CFS_ON:DATETIME! INCIDENT_CODE:CALL! ADDITIONAL_INCIDENT_CODE(s):SKIP! DISPOSITION:SKIP! " +
+                      "CFS_LOCATION:ADDR! CROSS_STREETS:X! CFS_DETAILS:INFO! UNITS_ASSIGNED_TO_CFS:UNIT! FIRE_DEPARTMENT_CFS_NUMBER:ID! " +
+          "| ADDR PLACE X INFO+? UNIT ID! EMPTY END )");
   }
   
   @Override
@@ -21,17 +24,24 @@ public class OHWarrenCountyEParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0) return false;
-    data.strCall = subject;
     
-    int pt = body.indexOf("\n\n");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(DELIM.split(body), data);
+    if (subject.length() == 0) return false;
+    if (subject.startsWith("CFS - Completed - #")) {
+      data.msgType = MsgInfo.MsgType.RUN_REPORT;
+      setSelectValue("RR");
+      return parseFields(body.split("\n+"), data);
+    } else {
+      data.strCall = subject;
+      setSelectValue("");
+      int pt = body.indexOf("\n\n");
+      if (pt >= 0) body = body.substring(0,pt).trim();
+      return parseFields(DELIM.split(body, -1), data);
+    }
   }
   
   @Override
   public String getProgram() {
-    return "CALL " + super.getProgram();
+    return "CALL? " + super.getProgram();
   }
   
   @Override

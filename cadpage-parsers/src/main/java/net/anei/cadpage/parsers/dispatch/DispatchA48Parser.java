@@ -226,6 +226,13 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   private Set<String> crossSet;
   private Set<String> unitSet;
+  
+  private static class Flag {
+    boolean flag;
+    private Flag(boolean flag) { this.flag = flag; }
+    boolean getFlag() { return flag; }
+    void setFlag(boolean flag) { this.flag = flag; }
+  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -286,7 +293,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     boolean first = true;
     boolean unitMark = false;
-    Boolean unitFound = false;
+    Flag unitFound = new Flag(false);
     for (String part : DATE_TIME_PTN.split(addr)) {
       part = part.trim();
 
@@ -342,7 +349,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     // If we didn't find a unit, try a couple backup routines
     if (unitPtn != null) {
-      if (!unitFound) {
+      if (!unitFound.getFlag()) {
         while (true) {
           match = TRAIL_UNIT_PTN.matcher(addr);
           if (!match.matches()) break;
@@ -450,7 +457,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
   
-  private String parseUnitInfo(String field, Data data, Boolean unitFound) {
+  private String parseUnitInfo(String field, Data data, Flag unitFound) {
     int pt = field.lastIndexOf(" Unit Org Name Area Types ");
     if (pt < 0) {
       pt = field.lastIndexOf(" Unit");
@@ -466,14 +473,14 @@ public class DispatchA48Parser extends FieldProgramParser {
     field = field.substring(0,pt).trim();
     
     if (unitPtn == null) {
-      if (!unitInfo.isEmpty()) unitFound = true;
+      if (!unitInfo.isEmpty()) unitFound.setFlag(true);;
       pt = unitInfo.indexOf(' ');
       if (pt >= 0) unitInfo = unitInfo.substring(0,pt);
       data.strUnit = unitInfo;
     } else if (unitInfo.length() > 0) {
       for (String unit : unitInfo.split(" +")) {
         if (unitPtn.matcher(unit).matches()) {
-          unitFound = true;
+          unitFound.setFlag(true);
           addUnit(unit, data);
         }
       }
