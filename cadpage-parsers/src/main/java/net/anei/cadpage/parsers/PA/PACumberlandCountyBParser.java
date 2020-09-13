@@ -36,7 +36,8 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
 
 
 
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("([EF]\\d{8});(\\S+) AVAILABLE;(.*)");
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("([EF]\\d{8});(\\S+) AVAILABLE;(.*)");
+  private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(\\S+) AVAILABLE;([EF]\\d{8});(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -45,7 +46,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     
-    Matcher match = RUN_REPORT_PTN.matcher(body);
+    Matcher match = RUN_REPORT_PTN1.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
       data.msgType = MsgType.RUN_REPORT;
@@ -54,6 +55,17 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       data.strSupp = match.group(3).replace(';', '\n').trim();
       return true;
     }
+    
+    match = RUN_REPORT_PTN2.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strUnit = match.group(1);
+      data.strCallId = match.group(2);
+      data.strSupp = match.group(3).replace(';', '\n').trim();
+      return true;
+    }
+    
     return super.parseMsg(body, data);
   }
 
