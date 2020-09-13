@@ -36,6 +36,8 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
+    body = stripFieldStart(body, "Failed to fetch website: ");
+    
     body = WIRELESS_REBID_PTN.matcher(body).replaceAll("\n");
 
     // Fix weird trailing address/city mess
