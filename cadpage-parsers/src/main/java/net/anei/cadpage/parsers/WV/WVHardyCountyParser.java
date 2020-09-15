@@ -7,8 +7,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WVHardyCountyParser extends GroupBestParser {
   
   public WVHardyCountyParser() {
-    super(new WVHardyCountyAParser(), 
-           new WVHardyCountyBParser(),
-           new WVHardyCountyCParser());
+    super(new WVHardyCountyBParser(),
+          new WVHardyCountyCParser());
   }
 }
