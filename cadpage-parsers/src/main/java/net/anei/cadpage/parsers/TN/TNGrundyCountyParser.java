@@ -8,7 +8,7 @@ public class TNGrundyCountyParser extends TNFranklinCountyParser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@GrundyTN911.info";
+    return "Dispatch@GrundyTN911.info,dispatch@grundytn911.info";
   }
 
   @Override
