@@ -641,7 +641,6 @@ public class ParserList {
               ,"KYMonroeCounty"                 ,"Monroe County, KY"
               ,"KYMorganCounty"                 ,"Morgan County, KY"
               ,"KYMuhlenbergCounty"             ,"Muhlenberg County, KY"
-              ,"KYMurrayCounty"                 ,"Murray County, KY"
               ,"KYOldhamCounty"                 ,"Oldham County, KY"
               ,"KYOwenCounty"                   ,"Owen County, KY"
               ,"KYPendletonCounty"              ,"Pendleton County, KY"
