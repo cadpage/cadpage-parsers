@@ -633,6 +633,7 @@ public class ParserList {
               ,"KYLouisville"                   ,"Louisville, KY"
               ,"KYLyonCounty"                   ,"Lyon County, KY"
               ,"KYMadisonCounty"                ,"Madison County, KY"
+              ,"KYMagoffinCounty"               ,"Magoffin County, KY"
               ,"KYMarshallCounty"               ,"Marshall County, KY"
               ,"KYMartinCounty"                 ,"Martin County, KY"
               ,"KYMcLeanCounty"                 ,"McLean County, KY"
