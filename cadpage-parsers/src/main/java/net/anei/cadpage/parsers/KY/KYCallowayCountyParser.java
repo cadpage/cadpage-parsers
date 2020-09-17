@@ -14,11 +14,6 @@ public class KYCallowayCountyParser extends DispatchA27Parser {
   }
   
   @Override
-  public String getAliasCode() {
-    return "KYCallowayCounty";
-  }
-  
-  @Override
   public String getFilter() {
     return "noreply@cisusa.org";
   }
