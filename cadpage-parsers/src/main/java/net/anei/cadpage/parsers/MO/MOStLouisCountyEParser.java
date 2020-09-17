@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +38,8 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern DATE_TIME_CALL_PATTERN = Pattern.compile(" *(\\d{1,2}/\\d{1,2}/\\d{4}) *(\\d{2}:\\d{2}:\\d{2}) *(.*?)");
+  private static final Pattern DATE_TIME_CALL_PATTERN = Pattern.compile(" *(\\d{1,2}/\\d{1,2}/\\d{4}) *(\\d{1,2}:\\d{2}:\\d{2}(?: [AP]M)?) *(.*?)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
 
   private class MyDateTimeCallField extends Field {
     @Override
@@ -44,7 +47,12 @@ public class MOStLouisCountyEParser extends FieldProgramParser {
       Matcher mat = DATE_TIME_CALL_PATTERN.matcher(field);
       if (!mat.matches()) abort();
       data.strDate = mat.group(1);
-      data.strTime = mat.group(2);
+      String time = mat.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
       data.strCall = mat.group(3);
     }
 

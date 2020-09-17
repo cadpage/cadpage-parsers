@@ -910,6 +910,7 @@ public class Active911ParserTable {
       "US/MO/DekalbCoDispatch",           "MODekalbCounty",
       "US/MO/DesPeres",                   "MOStLouisCountyI",
       "US/MO/DunklinCounty",              "MODunklinCounty",
+      "US/MO/EasternCentral",             "MOStLouisCountyE",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
       "US/MO/GasconadeCounty",            "MOGasconadeCounty",
       "US/MO/GreeneCounty",               "MOGreeneCounty",
