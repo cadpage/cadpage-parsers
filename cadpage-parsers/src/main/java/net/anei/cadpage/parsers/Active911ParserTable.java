@@ -739,7 +739,7 @@ public class Active911ParserTable {
       "US/MD/KentCounty",                 "MDKentCounty",
       "US/MD/LineboroVFD",                "MDCarrollCountyA",
       "US/MD/MontgomeryCounty",           "MDMontgomeryCountyC",
-      "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty",
+      "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty,MDMontgomeryCountyC",
       "US/MD/PrinceGeorgesCountyGlennDale","MDPrinceGeorgesCountyG",
       "US/MD/PrintManager",               "MDAnneArundelCountyAnnapolis",
       "US/MD/QueenAnnesCounty",           "MDQueenAnnesCounty",
