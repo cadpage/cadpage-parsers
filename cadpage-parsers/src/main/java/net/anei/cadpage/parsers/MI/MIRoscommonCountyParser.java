@@ -78,19 +78,31 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "AUS",  "AUSABLE TWP",
+      "AUSA", "AUSABLE TWP",
+      "BAC",  "BACKUS TWP",
+      "BACK", "BACKUS TWP",
       "DEN",  "DENTON TWP",
       "DENT", "DENTON TWP",
+      "GAP1", "GERRISH TWP",
+      "GAP2", "GERRISH TWP",
+      "GAP3", "GERRISH TWP",
+      "GER",  "GERRISH TWP",
       "GERR", "GERRISH TWP",
+      "HIG",  "HIGGINS TWP",
       "HIGG", "HIGGINS TWP",
+      "LAK",  "LAKE TWP",
       "LAKE", "LAKE TWP",
       "LYO",  "LYON TWP",
       "LYON", "LYON TWP",
+      "MAR",  "MARKEY TWP",
       "MARK", "MARKEY TWP",
+      "NES",  "NESTER TWP",
       "NEST", "NESTER TWP",
+      "RIC",  "RICHFIELD TWP",
       "RICH", "RICHFIELD TWP",
       "ROS",  "ROSCOMMON TWP",
       "ROSC", "ROSCOMMON TWP",
       "VILL", "ROSCOMMON"
-
   });
 }
