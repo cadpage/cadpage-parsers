@@ -10,7 +10,12 @@ public class CAHaywardParser extends FieldProgramParser {
 
   public CAHaywardParser() {
     super("HAYWARD", "CA", 
-          "ADDRCITY X X/Z? GPS1 GPS2 PLACE CALL DATETIME INFO/N+? UNIT END");
+          "ADDRCITY X X/Z? GPS1 GPS2 PLACE CODE CALL DATETIME INFO/N+? UNIT ID SKIP END");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "dispatch@hayward-ca.gov";
   }
 
   @Override
@@ -30,9 +35,18 @@ public class CAHaywardParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS1")) return new GPSField(1, GPS_PTN, true);
     if (name.equals("GPS2")) return new GPSField(2, GPS_PTN, true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d{1,2}/\\d{1,2}/\\d{4} +\\d{1,2}:\\d{2}:\\d{2}", true);
     return super.getField(name);
+  }
+  
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
   }
 }
