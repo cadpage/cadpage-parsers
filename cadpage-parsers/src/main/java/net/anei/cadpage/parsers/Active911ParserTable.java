@@ -223,7 +223,7 @@ public class Active911ParserTable {
       "US/CO/CityofGolden",               "COGolden",
       "US/CO/CityofGrandJunction",        "COMesaCounty",
       "US/CO/CityofGunnison",             "COGunnisonCounty",
-      "US/CO/CityofLoveland",             "COLarimerCountyA",
+      "US/CO/CityofLoveland",             "COLarimerCountyF",
       "US/CO/CityofThornton",             "COThornton",
       "US/CO/ColoradoSprings",            "COElPasoCountyB",
       "US/CO/ConejosCounty",              "COConejosCounty",
