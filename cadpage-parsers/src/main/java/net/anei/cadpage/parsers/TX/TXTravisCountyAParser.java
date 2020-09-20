@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.TX;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +50,7 @@ public class TXTravisCountyAParser extends MsgParser {
     }
     match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("INFO SRC CALL MAP CH ADDR APT ID UNIT");
+      setFieldList("INFO SRC CALL MAP CH ADDR CITY APT ID UNIT");
       
       data.strSource = match.group(1);
       data.strCall = match.group(2).trim();
@@ -64,7 +65,7 @@ public class TXTravisCountyAParser extends MsgParser {
     
     match = MASTER2.matcher(body);
     if (match.matches()) {
-      setFieldList("INFO SRC CALL PRI MAP ADDR APT X CH TIME ID UNIT");
+      setFieldList("INFO SRC CALL PRI MAP ADDR CITY APT X CH TIME ID UNIT");
       
       data.strSource = match.group(1);
       data.strCall = match.group(2).trim();
@@ -88,7 +89,7 @@ public class TXTravisCountyAParser extends MsgParser {
     
     match = MASTER3.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL MAP CH ADDR APT UNIT ID");
+      setFieldList("CALL MAP CH ADDR CITY APT UNIT ID");
       data.strCall = match.group(1);
       data.strMap = match.group(2);
       data.strChannel = match.group(3).trim();
@@ -100,4 +101,24 @@ public class TXTravisCountyAParser extends MsgParser {
     
     return false;
   }
+  
+  @Override
+  public void parseAddress(String addr, Data data) {
+    int pt = addr.lastIndexOf(',');
+    if (pt >= 0) {
+      data.strCity = convertCodes(addr.substring(pt+1).trim(), CITY_CODES);
+      addr = addr.substring(0,pt).trim();
+    }
+    super.parseAddress(addr, data);
+  }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BAS", "BASTROP COUNTY",
+      "BLC", "BLANCO COUNTY",
+      "BUC", "BURNET COUNTY",
+      "CAC", "CALDWELL COUNTY",
+      "HAC", "HAYS COUNTY",
+      "TC",  "TRAVIS COUNTY",
+      "WSC", "WILLIAMSON COUNTY"
+  });
 }
