@@ -92,6 +92,8 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      
+      field = field.replace("_TOWNSHIP", " TWP").replace("_BOROUGH", "");
 
       String countyCode = null;
       Matcher match = OOC_PFX_PTN.matcher(field);
@@ -113,6 +115,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
 
       if (data.strCity.length() > 0) {
         data.strCity = stripFieldEnd(data.strCity, " BORO");
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, data.strAddress, data);
       } else if (countyCode != null) {
         String city = COUNTY_CODES.getProperty(countyCode);
         if (city != null) data.strCity = city;
@@ -142,6 +145,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       "CUMB", "CUMBERLAND COUNTY",
       "DAUP", "DAUPHIN COUNTY",
       "FRAN", "FRANKLIN COUNTY",
+      "YORK", "YORK COUNTY",
 
       "CA CUMB", "CARLISLE",
       "CH CUMB", "CAMP HILL",
@@ -180,7 +184,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       "WP CUMB", "WEST PENNSBORO TWP",
 
       // York County codes
-      "MON",             "MONAGHAN TWP"
+      "MON",               "MONAGHAN TWP"
   });
 
   private static final String[] CITY_LIST = new String[]{
@@ -233,12 +237,25 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       "LATIMORE TWP",
 
       // Franklin County
+      "FANNETT TWP",
+      "HAMILTON TWP",
+      "LETTERKENNY TWP",
       "LURGAN TWP",
+      "METAL TWP",
+      "GREENE TWP",
+      "GUILFORD TWP",
+        "CHAMBERSBURG",
+        "FAYETTEVILLE",
+      "QUINCY TWP",
+        "MONT ALTO",
       "SOUTHAMPTON TWP",
         "SHIPPENSBURG",
         "SHIPPENSBURG BORO",
         "ORRSTOWN",
-        "ORRSTOWN BORO"
+        "ORRSTOWN BORO",
+      "WASHINGTON TWP",
+        "ROUZERVILLE",
+        "WAYNESBORO"
   };
 
   private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
