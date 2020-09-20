@@ -154,21 +154,25 @@ public class MOJeffersonCountyParser extends FieldProgramParser {
     "WACO", "",   // ???
 
     "ARNOLD",           "ARNOLD",
+    "BARNHART",         "BARNHART",
     "BYRNES MILL",      "BYRNES MILL",
-    "HILLSBORO",        "HILLSBORO",
-    "DESOTO",           "DESOTO",
-    "JEFFERSON COUNTY", "",
-    "FESTUS",           "FESTUS",
-    "HERCULANEUM",      "HERCULANEUM",
-    "PEVELY",           "PEVELY",
+    "CEDARHILL",        "CEDAR HILL",
+    "CRYSTALCT",        "CRYSTAL CITY",
     "CRYSTAL CITY",     "CRYSTAL CITY",
+    "DESOTO",           "DESOTO",
+    "DITTMER",          "DITTMER",
+    "FENTON",           "FENTON",
+    "FESTUS",           "FESTUS",
+    "HERCU",            "HERCULANEUM",
+    "HERCULANEUM",      "HERCULANEUM",
+    "HIGH RIDGE",       "HIGH RIDGE",
+    "HILLSBORO",        "HILLSBORO",
+    "HOUSESPRG",        "HOUSE SPRINGS",
+    "HOUSE SPRINGS",    "HOUSE SPRINGS",
+    "IMPERIAL",         "IMPERIAL",
+    "JEFFERSON COUNTY", "",
     "KIMMSWICK",        "KIMMSWICK",
     "OLYMPIAN VILLAGE", "OLYMPIAN VILLAGE",
-    
-    "FENTON",           "FENTON",
-    "HIGH RIDGE",       "HIGH RIDGE",
-    "HOUSE SPRINGS",    "HOUSE SPRINGS"
-    
-
+    "PEVELY",           "PEVELY",
   });
 }
