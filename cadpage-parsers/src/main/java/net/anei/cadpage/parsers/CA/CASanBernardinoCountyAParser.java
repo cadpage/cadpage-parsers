@@ -449,17 +449,19 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
   
   private String lookupCallCode(String code) {
     code = code.replace("_", "-");
-    String desc = TYPE_CODES.getProperty(code);
+    String desc = CALL_CODES.getProperty(code);
     if (desc != null) return desc;
     int pt = code.indexOf('-');
     if (pt >= 0) {
       String code2 = code.substring(0,pt);
-      desc = TYPE_CODES.getProperty(code2);
+      desc = CALL_CODES.getProperty(code2);
     }
     return desc;
   }
   
-  private static final Properties TYPE_CODES = buildCodeTable(new String[]{
+  // This table is also used by CASanBernardinoC
+  
+  static final Properties CALL_CODES = buildCodeTable(new String[]{
       "1099",       "10-99 - Code 3 request for Law Enforcement",
       "AB",         "Animal Bite",
       "ABD",        "Abdominal Pain",
@@ -514,9 +516,9 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "ANML-D7",    "Animal Bite - multiple animal attack",
       "AO",         "Aircraft Crash off Airport",
       "AP",         "Aircraft Crash on Airport",
-      "APH",        "SCLA response: High",
-      "APL",        "SCLA response: Low",
-      "APM",        "SCLA response: Medium",
+      "APH",        "Airport response: High",
+      "APL",        "Airport response: Low",
+      "APM",        "Airport Response - Medium",
       "AS",         "Aircraft Standby",
       "ASLT",       "Assault",
       "ASLT A2",    "Assault A-2 - Non-Recent (>6hrs)",
