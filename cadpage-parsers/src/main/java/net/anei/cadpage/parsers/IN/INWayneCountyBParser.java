@@ -23,7 +23,7 @@ public class INWayneCountyBParser extends DispatchA3Parser {
   
   @Override
   public String getFilter() {
-    return "911@wayneco.us";
+    return "911@wayneco.us,root@co.wayne.in.us";
   }
   
   private enum InfoType { INFO, UNITS_ASSGN };
@@ -199,6 +199,7 @@ public class INWayneCountyBParser extends DispatchA3Parser {
     "ECONOMY",
     "FOUNTAIN CITY",
     "GREENS FORK",
+    "GREENSFORK",   
     "HAGERSTOWN",
     "MILTON",
     "RICHMOND",
@@ -230,5 +231,11 @@ public class INWayneCountyBParser extends DispatchA3Parser {
     "WASHINGTON",
     "WAYNE",
     "WEBSTER",
+    
+    // Fulton County???
+    "PERSHING",
+    
+    // Union County
+    "BROWNSVILLE"
   }));
 }
