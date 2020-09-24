@@ -1,15 +1,13 @@
 package net.anei.cadpage.parsers.OK;
 
-import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class OKCanadianCountyParser extends DispatchBCParser {
-  
+/**
+Canadian County, OK
+
+ */
+public class OKCanadianCountyParser extends GroupBestParser {
   public OKCanadianCountyParser() {
-    super("CANADIAN COUNTY", "OK");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "@cityofelreno.com";
+    super(new OKCanadianCountyAParser(), new OKCanadianCountyBParser());
   }
 }
