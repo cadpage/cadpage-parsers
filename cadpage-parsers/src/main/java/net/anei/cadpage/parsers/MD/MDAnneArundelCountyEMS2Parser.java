@@ -10,7 +10,9 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
   
   public MDAnneArundelCountyEMS2Parser() {
     super(CITY_LIST, "ANNE ARUNDEL COUNTY", "MD", 
-          "ID CALL ADDR/SXP GPS MAP X1 X2 UNIT Notes:INFO! INFO/N+");
+          "( Call_Category:SKIP! Location:ADDR! Business/Bldg:PLACE! Apartment:APT! Cross_Streets:X! Longitude:GPS1! Latitude:GPS2! Nature:CALL1! " +
+            "Date_&_Time:DATETIME1! Box_Area:BOX! Map_Page:MAP! Caution_Notes:ALERT! System_Notes:INFO! " +
+          "| ID2 CALL2 ADDR/SXP GPS2 MAP2 X1 X2 UNIT2 Notes:INFO! ) INFO/N+");
   }
   
   @Override
@@ -23,33 +25,70 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
   
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Assigned to Incident \\d{5,}");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Assigned to Incident (\\d{5,})");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
+    data.strCallId = match.group(1);
     
     return parseFields(body.split("\n"), data);
   }
   
   @Override
+  public String getProgram() {
+    return "ID? " + super.getProgram();
+  }
+  
+  @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("INCIDENT (\\d{5,})", true);
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("GPS")) return new GPSField("COORDINATES\\b *(.*)");
-    if (name.equals("MAP")) return new MyMapChannelField();
+    if (name.equals("CALL1")) return new MyCall1Field();
+    if (name.equals("DATETIME1")) return new MyDateTime1Field();
+    if (name.equals("ID2")) return new IdField("INCIDENT (\\d{5,})", true);
+    if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("GPS2")) return new GPSField("COORDINATES\\b *(.*)");
+    if (name.equals("MAP2")) return new MyMapChannel2Field();
     if (name.equals("X1")) return new CrossField("FIRST CROSS STREET\\b *(.*)");
     if (name.equals("X2")) return new CrossField("SECOND CROSS STREET\\b *(.*)");
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("UNIT2")) return new MyUnit2Field();
     return super.getField(name);
   }
   
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("CODE (\\S+) - (.*?)(?: ALARM (\\d+))?");
-  private class MyCallField extends Field {
+  private static final Pattern CODE_CALL_PTN1 = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +(.*)");
+  private class MyCall1Field extends Field {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = CODE_CALL_PTN.matcher(field);
+      Matcher match = CODE_CALL_PTN1.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN1 = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}),? +(\\d\\d:\\d\\d:\\d\\d)");
+  private class MyDateTime1Field extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN1.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+    }
+  }
+  
+  private static final Pattern CODE_CALL_PTN2 = Pattern.compile("CODE (\\S+) - (.*?)(?: ALARM (\\d+))?");
+  private class MyCall2Field extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN2.matcher(field);
       if (!match.matches()) abort();
       data.strCode = match.group(1);
       data.strCall = match.group(2);
@@ -63,7 +102,7 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
   }
   
   private static final Pattern MAP_CH_PTN = Pattern.compile("Grid +(\\S*) +Map +AreaArea +(\\S*) +CHANNEL\\b *(.*)");
-  private class MyMapChannelField extends Field {
+  private class MyMapChannel2Field extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = MAP_CH_PTN.matcher(field);
@@ -78,7 +117,7 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
     }
   }
   
-  private class MyUnitField extends UnitField {
+  private class MyUnit2Field extends UnitField {
     @Override
     public void parse(String field, Data data) {
       if (!field.startsWith("APPARATUSAPPARATUS ")) abort();
