@@ -11,7 +11,8 @@ public class COLarimerCountyFParser extends FieldProgramParser {
 
   public COLarimerCountyFParser() {
     super("LARIMER COUNTY", "CO", 
-          "( SELECT/RR INFO1/N+ " +
+          "( SELECT/RR ( Call_Complete:ADDR! INFO1/N+? Run_#:ID END " + 
+                      "| INFO1/N+ ) " +
           "| CALL! Address:ADDR! Apt:APT! Loc:PLACE! TlkGp:CH! Units:UNIT! Notes:INFO! INFO/ Lat:GPS1/d Long:GPS2/d END )");
   }
   
@@ -23,7 +24,7 @@ public class COLarimerCountyFParser extends FieldProgramParser {
     if (match.lookingAt()) {
       setBreakChar('/');
       setSelectValue("");
-    } else if (body.startsWith("Transport Times:")) {
+    } else if (body.startsWith("Transport Times:") || body.startsWith("Call Complete:")) {
       data.msgType = MsgType.RUN_REPORT;
       setBreakChar(':');
       setSelectValue("RR");

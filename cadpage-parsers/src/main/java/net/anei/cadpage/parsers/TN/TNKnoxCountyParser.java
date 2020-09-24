@@ -13,7 +13,9 @@ public class TNKnoxCountyParser extends FieldProgramParser {
   
   public TNKnoxCountyParser() {
     super(CITY_CODES, "KNOX COUNTY", "TN",
-          "Location:ADDR/S! Xstreet1:X! Xstreet2:X! TYPE_CODE:CODE! Event_Description:CALL? SUB_TYPE:CODE/SDS! TIME:TIME%");
+          "Location:ADDR/S! ( EID:ID! TYPE_CODE:CODE! TIME:TIME! CALLER_NAME:NAME! CALLER_ADDR:SKIP! SUB_TYPE:CALL! " + 
+                           "| Xstreet1:X! Xstreet2:X! TYPE_CODE:CODE! Event_Description:CALL? SUB_TYPE:CODE/SDS! TIME:TIME% ) END");
+    
   }
   
   @Override
