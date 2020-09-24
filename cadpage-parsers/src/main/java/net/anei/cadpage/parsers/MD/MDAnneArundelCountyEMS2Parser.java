@@ -10,8 +10,9 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
   
   public MDAnneArundelCountyEMS2Parser() {
     super(CITY_LIST, "ANNE ARUNDEL COUNTY", "MD", 
-          "( Call_Category:SKIP! Location:ADDR! Business/Bldg:PLACE! Apartment:APT! Cross_Streets:X! Longitude:GPS1! Latitude:GPS2! Nature:CALL1! " +
-            "Date_&_Time:DATETIME1! Box_Area:BOX! Map_Page:MAP! Caution_Notes:ALERT! System_Notes:INFO! " +
+          "( SELECT/1 Incident_Number:ID? Call_Category:SKIP! Priority:PRI1? Location:ADDR! Business/Bldg:PLACE! Apartment:APT! Cross_Streets:X! " +
+            "Longitude:GPS1! Latitude:GPS2! Nature:CALL1! Date_&_Time:DATETIME1! Box_Area:BOX! " + 
+            "( Tac_Ch:CH Apparatus:UNIT! Calltaker:SKIP! Dispatcher:SKIP! | Map_Page:MAP! ) Caution_Notes:ALERT! System_Notes:INFO! " +
           "| ID2 CALL2 ADDR/SXP GPS2 MAP2 X1 X2 UNIT2 Notes:INFO! ) INFO/N+");
   }
   
@@ -33,6 +34,8 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
     if (!match.matches()) return false;
     data.strCallId = match.group(1);
     
+    setSelectValue(body.startsWith("Incident Number:") || body.startsWith("Call Category:") ? "1" : "2");
+    body = body.replace(" Tac Ch:", "\nTac Ch:");
     return parseFields(body.split("\n"), data);
   }
   
@@ -43,8 +46,10 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("PRI1")) return new MyPriority1Field();
     if (name.equals("CALL1")) return new MyCall1Field();
     if (name.equals("DATETIME1")) return new MyDateTime1Field();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID2")) return new IdField("INCIDENT (\\d{5,})", true);
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("GPS2")) return new GPSField("COORDINATES\\b *(.*)");
@@ -55,7 +60,15 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern CODE_CALL_PTN1 = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +(.*)");
+  private class MyPriority1Field extends PriorityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" Alarm: ", "-");
+      super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern CODE_CALL_PTN1 = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +(.*)", Pattern.CASE_INSENSITIVE);
   private class MyCall1Field extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -77,10 +90,19 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
   private class MyDateTime1Field extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals(",")) return;
       Matcher match = DATE_TIME_PTN1.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
       data.strTime = match.group(2);
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "&");
+      super.parse(field, data);
     }
   }
   
