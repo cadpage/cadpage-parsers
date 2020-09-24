@@ -29,13 +29,13 @@ public class TXTravisCountyAParser extends MsgParser {
   private static final Pattern COMMENT_PTN = Pattern.compile("Comment: (.*?), (From - .*?)(?: From - .*)?");
   
   private static final Pattern MASTER1 = 
-      Pattern.compile("From -([A-Z0-9]+) Dispatch - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) On -([ A-Z0-9]*) - AT -(.+?) - INC# =>(\\d+) Case Num:([- A-Z0-9]*) For -([A-Z0-9,]+)");
+      Pattern.compile("From -([A-Z0-9]+) Dispatch - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) ?On -([ A-Z0-9]*) - AT -(.+?) - INC# =>(\\d+) Case Num:([- A-Z0-9]*) For -([A-Z0-9,]+)");
   
   private static final Pattern MASTER2 = 
-      Pattern.compile("From - ?([A-Z0-9]+) - ?\\d ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]+)");
+      Pattern.compile("From - ?([A-Z0-9]+) - ?\\d ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]*)");
   
   private static final Pattern MASTER3 = 
-      Pattern.compile("(?:INCIDENT ASSIGNED TO YOU!!*|Response Info from Dispatch) - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) FC=(.+?)- AT -(.*?) - ASSIGNED UNITS=>([A-Z0-9,]+)- INC# =>(\\d+)");
+      Pattern.compile("(?:INCIDENT ASSIGNED TO YOU!!*|Response Info from Dispatch) - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) FC=(.+?)- AT -(.*?) - ASSIGNED UNITS=>([A-Z0-9,]+) ?- INC# =>(\\d+)");
   
   private static final Pattern CROSS_PTN = Pattern.compile("(?:(?:N?o )?CrossStreet Found)?/?(.*?)/?(?:No CrossStreet Found)?");
   
