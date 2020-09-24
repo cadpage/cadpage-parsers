@@ -12,6 +12,7 @@ public class MOStLouisCountyParser extends GroupBestParser {
         new MOStLouisCountyEParser(), new MOStLouisCountyFParser(),
         new MOStLouisCountyGParser(), new MOStLouisCountyHParser(),
         new MOStLouisCountyIParser(), new MOStLouisCountyJParser(),
+        new MOStLouisCountyKParser(),
         
         // The C parser is getting to be to promiscuous :(
         new GroupBlockParser(), new MOStLouisCountyCParser());
