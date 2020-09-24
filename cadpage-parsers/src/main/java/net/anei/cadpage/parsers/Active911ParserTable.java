@@ -1562,6 +1562,7 @@ public class Active911ParserTable {
       "US/PA/WashingtonCounty",           "PAWashingtonCounty,PAAlleghenyCountyD",
       "US/PA/WayneCounty",                "PAWayneCounty",
       "US/PA/WestmorelandCounty",         "PAWestmorelandCountyA",
+      "US/PA/WestShoreBF",                "PACumberlandCountyB",
       "US/PA/WyomingCounty",              "PAWyomingCounty",
       "US/PA/YorkCounty",                 "PAYorkCountyD",
       "US/RI/CentralFalls",               "RIProvidenceCounty",
