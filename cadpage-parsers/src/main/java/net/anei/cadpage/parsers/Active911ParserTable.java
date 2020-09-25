@@ -226,6 +226,7 @@ public class Active911ParserTable {
       "US/CO/CityofGunnison",             "COGunnisonCounty",
       "US/CO/CityofLoveland",             "COLarimerCountyF",
       "US/CO/CityofThornton",             "COThornton",
+      "US/MO/ClayCountyOmnigo",           "MOClayCountyD",
       "US/CO/ColoradoSprings",            "COElPasoCountyB",
       "US/CO/ConejosCounty",              "COConejosCounty",
       "US/CO/Crisppaging",                "COLarimerCountyC",
