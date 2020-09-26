@@ -13,8 +13,8 @@ public class TNKnoxCountyParser extends FieldProgramParser {
   
   public TNKnoxCountyParser() {
     super(CITY_CODES, "KNOX COUNTY", "TN",
-          "Location:ADDR/S! ( EID:ID! TYPE_CODE:CODE! TIME:TIME! CALLER_NAME:NAME! CALLER_ADDR:SKIP! SUB_TYPE:CALL! " + 
-                           "| Xstreet1:X! Xstreet2:X! TYPE_CODE:CODE! Event_Description:CALL? SUB_TYPE:CODE/SDS! TIME:TIME% ) END");
+          "Location:ADDR/S! ( EID:ID! TYPE_CODE:CODE! TIME:TIME! CALLER_NAME:NAME! CALLER_ADDR:SKIP! SUB_TYPE:CALL% Disp:UNIT " + 
+                           "| Xstreet1:X! Xstreet2:X! TYPE_CODE:CODE! Event_Description:CALL? SUB_TYPE:CODE/SDS% TIME:TIME% ) END");
     
   }
   
@@ -29,6 +29,8 @@ public class TNKnoxCountyParser extends FieldProgramParser {
       @Override public boolean splitBlankIns() { return false; }
       @Override public boolean revMsgOrder() { return true; }
       @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 160; }
+      @Override public int splitBreakPad() { return 1; }
     };
   }
 
