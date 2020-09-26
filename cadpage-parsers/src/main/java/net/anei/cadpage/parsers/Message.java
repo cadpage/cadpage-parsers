@@ -214,7 +214,7 @@ public class Message {
   private static final Pattern[] S_M_PATTERNS = new Pattern[]{
     Pattern.compile("^SUBJ: *(.*)\n(?:MSG:)?"),
   };
-  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^no subject / ");
+  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("no subject / |Failed to fetch website: ");
   
   private void preParse(String fromAddress, String subject, String body, SplitMsgOptions options) {
     

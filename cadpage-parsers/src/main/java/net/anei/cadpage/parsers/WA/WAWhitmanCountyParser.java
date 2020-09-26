@@ -26,8 +26,6 @@ public class WAWhitmanCountyParser extends DispatchA11Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     
-    body = stripFieldStart(body, "Failed to fetch website:");
-    
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       data.strCall = "RUN REPORT";

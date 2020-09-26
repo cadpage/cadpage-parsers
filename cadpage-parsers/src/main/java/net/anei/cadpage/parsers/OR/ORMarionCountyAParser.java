@@ -52,8 +52,6 @@ public class ORMarionCountyAParser extends FieldProgramParser {
       
       return false;
     } while (false);
-
-    body = stripFieldStart(body, "Failed to fetch website:");
     
     partGPS = null;
 
