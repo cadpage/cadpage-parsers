@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -25,9 +27,14 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "CAD@johnstonnc.com,93001";
+    return "CAD@johnstonnc.com,duane1409@gmail.com,93001";
   }
   
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   @Override
   public boolean parseMsg(String body, Data data) {
     
