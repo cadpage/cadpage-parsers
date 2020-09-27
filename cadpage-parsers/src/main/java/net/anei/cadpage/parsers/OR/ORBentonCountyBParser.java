@@ -114,6 +114,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
   }
   
   private static final Pattern INFO_DELIM_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\]\\s*|\n");
+  private static final Pattern CODE_PTN = Pattern.compile("\\d{1,2}[A-EO]\\d{1,2}[A-Z]?", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
     @Override
     public boolean canFail() {
@@ -132,7 +133,10 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       String delim = "; ";
       for (String line : INFO_DELIM_PTN.split(field)) {
         line = stripFieldStart(line, "[PROQA]");
-        if (line.startsWith("Radio Channel:")) {
+        if (data.strCode.length() == 0 && CODE_PTN.matcher(line).matches()) {
+          data.strCode = line;
+        }
+        else if (line.startsWith("Radio Channel:")) {
           data.strChannel = line.substring(14).trim();
         } else {
           data.strSupp = append(data.strSupp, delim, line);
