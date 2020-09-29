@@ -92,9 +92,17 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern PVTNNNN_PTN = Pattern.compile("\\b(?:PVT|PRIVATE DR) *(\\d+)\\b", Pattern.CASE_INSENSITIVE);
+  
   @Override
   public String adjustMapAddress(String address) {
     return PVTNNNN_PTN.matcher(address).replaceAll("PVT DRIVE $1");
   }
-  private static final Pattern PVTNNNN_PTN = Pattern.compile("\\b(?:PVT|PRIVATE DR) *(\\d+)\\b", Pattern.CASE_INSENSITIVE);
+
+  // Google has problems mapping STATE BB.  This seems to be limited to this one highway
+  
+  @Override
+  public String postAdjustMapAddress(String sAddress) {
+    return sAddress.replace("STATE BB", "STATE HWY BB");
+  }
 }
