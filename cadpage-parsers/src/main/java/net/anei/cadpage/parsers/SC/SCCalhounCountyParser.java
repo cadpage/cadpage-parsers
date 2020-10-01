@@ -10,7 +10,7 @@ public class SCCalhounCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "cad@calhouscsheriff.com";
+    return "cad@calhouscsheriff.com,cad@calhounscsheriff.com";
   }
 
   @Override
