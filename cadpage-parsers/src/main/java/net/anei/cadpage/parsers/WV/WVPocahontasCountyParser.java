@@ -11,6 +11,6 @@ public class WVPocahontasCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@pocahontasemergency.com";
+    return "@pocahontasemergency.com,@alert.active911.com";
   }
 }
