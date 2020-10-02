@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.UT;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -16,12 +18,17 @@ public class UTSaltLakeCountyAParser extends FieldProgramParser {
   public String getFilter() {
     return "fsa@slcfire.com,alerts@slcgov.com";
   }
+  
+  private static final Pattern SUBJECT_PTN = Pattern.compile(".*(?:ALERT|String Match) - +(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    int pi = subject.indexOf("ALERT -");
-    if (pi >= 0) data.strUnit = subject.substring(pi + 8);
-    else return false;
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (match.matches()) {
+      data.strUnit = match.group(1);
+    } else {
+      return false;
+    }
 
     return parseFields(body.split("\n"), data);
   }
@@ -37,8 +44,7 @@ public class UTSaltLakeCountyAParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}", true);
     if (name.equals("APT")) return new AptField("Unit +(.*)", true);
     if (name.equals("X")) return new CrossField("\\d+ [NSEW](?: - \\d+ [NSEW])?", true);
-    if (name.equals("SRC")) return new SourceField("CF|SF", true);
-    if (name.equals("CODE")) return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?", true);
+    if (name.equals("SRC")) return new SourceField("[CDSU]F|JW|SS", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
