@@ -37,13 +37,8 @@ public class CTTollandCountyParser extends GroupBestParser {
 
     "UCONN",
     
-    // Windham county
-    "ASHFORD",
-    "EASTFORD",
-    "NORTH WINDHAM",
-    "WILLIMANTIC",
-    "WINDHAM",
-    "WOODSTOCK",
+    // Fairfield County
+    "NEWTOWN",
     
     // Hartford County
     "BROAD BROOK",
@@ -57,6 +52,14 @@ public class CTTollandCountyParser extends GroupBestParser {
     "WINDSOR LOCKS EAST",
     
     // New London County
-    "LEBANON"
+    "LEBANON",
+    
+    // Windham county
+    "ASHFORD",
+    "EASTFORD",
+    "NORTH WINDHAM",
+    "WILLIMANTIC",
+    "WINDHAM",
+    "WOODSTOCK"
   };
 }

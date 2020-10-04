@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
  */
 public class WVGrantCountyAParser extends DispatchA48Parser {
 
-  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,2}\\d+[A-Z]?|[A-Z]{1,3}EMS|77\\d|FIRST_ENERGY|GRANTCOMM|HELOCOPTER|SOUTHG)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern UNIT_PTN = Pattern.compile("\\b(?:[A-Z]{1,5}\\d+[A-Z]{0,2}|[A-Z]{1,3}EMS|(?:Response)?\\d{2}M?|77\\d|EMS|FIRST_ENERGY|GRANTCOMM|HELOCOPTER|SOUTHG)\\b", Pattern.CASE_INSENSITIVE);
 
   public WVGrantCountyAParser() {
     super(CITY_LIST, "GRANT COUNTY", "WV", FieldType.GPS_PLACE_X, A48_NO_CODE, UNIT_PTN);
@@ -218,18 +218,23 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "MAYSVILLE",
       "MEDLEY",
       "MOUNT STORM",
+      "MT STORM",
       "OLD ARTHUR",
       "SCHERR",
       "WILLIAMSPORT",
       "WILSONIA",
+      
+      // Hardy County
+      "MOOREFIELD",
 
       // Mineral County
       "BURLINGTON",
+      "ELK GARDIN",
       "KEYSER",
       "NEW CREEK",
 
       // Pendleton County
+      "SENECA ROCKS",
       "UPPER TRACT"
-
   };
 }
