@@ -254,6 +254,7 @@ public class Active911ParserTable {
       "US/CO/MoffatCounty",               "COMoffatCounty",
       "US/CO/MontezumaCounty",            "COMontezumaCounty",
       "US/CO/MorganCounty",               "COMorganCounty",
+      "US/CO/MountainViewFR",             "COBoulderCountyB",
       "US/CO/NorthglennAmbulance",        "CONorthglennEMS",
       "US/CO/NorthMetroFire",             "COBroomfieldCounty",
       "US/CO/NWSAlert",                   "StandardNationalWeatherService",
