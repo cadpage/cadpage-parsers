@@ -96,7 +96,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
           String tempCode = cityCode;
           if (tempCode.length() > 2) tempCode = stripFieldEnd(tempCode, "U");
           String city = CITY_CODES.getProperty(tempCode);
-          if (city != null) {
+          if (city != null && (!tempCode.equals("LN") || isValidAddress(field))) {
             data.strCity = city;
             data.strPlace = stripFieldEnd(data.strPlace, '-' + cityCode);
           } else {
@@ -228,7 +228,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "LG",   "LA GRANGE",
       "LI",   "LISLE",
       "LM",   "LEMONT",
-//      "LN",   "LYONS",
+      "LN",   "LYONS",
       "LO",   "LOMBARD",
       "LP",   "LAGRANGE PARK",
       "LW",   "LISLE- WOODRIDGE",
