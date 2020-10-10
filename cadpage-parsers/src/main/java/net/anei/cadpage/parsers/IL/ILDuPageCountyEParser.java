@@ -16,7 +16,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
   }
   
   public ILDuPageCountyEParser(String defCity, String defState) {
-    super(defCity, defState, 
+    super(LONG_CITY_CODES, defCity, defState, 
           "ADDR ID DATETIME CALL! X INFO! INFO/D+? GPS Disp:UNIT EMPTY? END");
     setupCityValues(CITY_CODES);
     setupGpsLookupTable(ILDuPageCountyParser.GPS_LOOKUP_TABLE);
@@ -58,7 +58,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_CITY_MAP_PTN = Pattern.compile("(.*?)(?:[- ]([A-Z]{2,4}))?(?:[;,](?:(?:APT|LOT|RM|ROOM|UNIT) +)?([-A-Z0-9]+?)(?: \\2)?)?((?: (?:[A-Z]{1,2}\\d{1,3}[A-Z]?|\\d{2,3}[A-Z]|\\d{4}|[A-Z]{2,3}PD)){2})?");
+  private static final Pattern ADDR_CITY_MAP_PTN = Pattern.compile("(.*?)(?:[- ]([A-Z]{2,4}))?(?:[;,](?:(?:APT|LOT|RM|ROOM|STE|UNIT) +)?([- A-Z0-9]+?)(?: \\2)?)?((?: (?:[A-Z]{1,2}\\d{1,3}[A-Z]?|\\d{2,3}[A-Z]|\\d{4}|[A-Z]{2,3}PD)){2})?");
   private static final Pattern DOTS_PTN = Pattern.compile("\\.{2,}");
   private class MyAddressField extends AddressField {
     @Override
@@ -81,7 +81,9 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       }
       
       field = p.get(':');
+      
       data.strPlace = stripFieldStart(p.get(), "@").replaceAll(": @", " - ");
+      
       if (gpsLoc != null) field = gpsLoc + field;
       field = DOTS_PTN.matcher(field).replaceAll(" ");
       String apt2 = null;
@@ -96,7 +98,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
           String tempCode = cityCode;
           if (tempCode.length() > 2) tempCode = stripFieldEnd(tempCode, "U");
           String city = CITY_CODES.getProperty(tempCode);
-          if (city != null && (!tempCode.equals("LN") || isValidAddress(field))) {
+          if (city != null && (!tempCode.equals("LN") && !tempCode.equals("ST") || isValidAddress(field))) {
             data.strCity = city;
             data.strPlace = stripFieldEnd(data.strPlace, '-' + cityCode);
           } else {
@@ -189,7 +191,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "EB",   "ELBURN",
       "ED",   "EAST DUNDEE",
       "EF",   "ELMHURST",
-      "EG",   "ELK GROVE VILLAGE",  // Not ELGIN
+      "EG",   "ELGIN",
       "EK",   "ELK GROVE VILLAGE",
       "EL",   "ELMHURST",
       "EN",   "ELGIN",
@@ -241,7 +243,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "MP",   "MELROSE PARK",
       "MT",   "MOUNT PROSPECT",
       "MW",   "MAYWOOD",
-      "NA",   "NORTH AURORA",  // was NAPERVILLE
+      "NA",   "NORTH AURORA",
       "NH",   "NORTHWEST HOMER",
       "NL",   "NORTHLAKE",
       "NP",   "NORTH PALOS",
@@ -298,10 +300,13 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "WP",   "WESTERN SPRINGS",
       "WR",   "WARRENVILLE",
       "WS",   "WESTERN SPRINGS",
-      "WT",   "WESTCHESTER",       // Was WHEELING
+      "WT",   "WESTCHESTER",
       "WV",   "WARRENVILLE",
       "WY",   "WILL COUNTY",
       "YC",   "YORK CENTER"
-
+  });
+   
+  private static final Properties LONG_CITY_CODES = buildCodeTable(new String[]{
+      "WEST SPRING",      "WESTERN SPRINGS"
   });
 }
