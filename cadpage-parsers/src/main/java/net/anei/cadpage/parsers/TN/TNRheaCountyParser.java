@@ -5,6 +5,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TNRheaCountyParser extends GroupBestParser {
   
   public TNRheaCountyParser() {
-    super(new TNRheaCountyAParser(), new TNRheaCountyBParser());
+    super(new TNRheaCountyAParser(), new TNRheaCountyBParser(), new TNRheaCountyCParser());
   }
 }
