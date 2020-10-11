@@ -1471,6 +1471,7 @@ public class Active911ParserTable {
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
       "US/PA/ArmstrongCounty",            "PAArmstrongCounty",
       "US/PA/BeaverCounty",               "PABeaverCounty",
+      "US/PA/BedfordCounty",              "PABedfordCounty",
       "US/PA/BerksCounty",                "PABerksCounty",
       "US/PA/BerwynFire",                 "PAChesterCountyD1",
       "US/PA/BlairCounty",                "PABlairCounty",

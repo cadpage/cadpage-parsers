@@ -1308,6 +1308,7 @@ public class ParserList {
               ,"PAAlleghenyCounty"              ,"Allegheny County, PA"
               ,"PAArmstrongCounty"              ,"Armstrong County, PA"
               ,"PABeaverCounty"                 ,"Beaver County, PA"
+              ,"PABedfordCounty"                ,"Bedford County, PA"
               ,"PABerksCounty"                  ,"Berks County, PA"
               ,"PABethlehem"                    ,"Bethlehem, PA"
               ,"PABlairCounty"                  ,"Blair County, PA"
