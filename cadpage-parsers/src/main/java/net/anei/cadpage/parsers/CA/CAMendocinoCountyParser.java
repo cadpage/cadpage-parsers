@@ -7,6 +7,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class CAMendocinoCountyParser extends GroupBestParser {
   public CAMendocinoCountyParser() {
-    super(new CAMendocinoCountyAParser(), new CAMendocinoCountyBParser());
+    super(new CAMendocinoCountyAParser(), new CAMendocinoCountyBParser(), new CAMendocinoCountyCParser());
   }
 }
