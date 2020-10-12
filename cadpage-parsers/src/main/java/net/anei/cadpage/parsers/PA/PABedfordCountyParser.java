@@ -10,13 +10,15 @@ public class PABedfordCountyParser extends DispatchH05Parser {
   
   public PABedfordCountyParser() {
     super("BEDFORD COUNTY", "PA", 
-          "BEDFORD_COUNTY%EMPTY MASH1 ADDR_ID TIMES! TIMES+? GPS!");
+          "BEDFORD_COUNTY%EMPTY MASH1 MASH2 ( GPS1 GPS2 | ) INFO_BLK+? TIMES+? GMAP!");
     setAccumulateUnits(true);
+    setupProtectedNames("W & W");
+    setupMultiWordStreets(MWORD_STREET_LIST);
   }
   
   @Override
   public String getFilter() {
-    return "ADnoreply@bedfordcountypa.org";
+    return "CADnoreply@bedfordcountypa.org";
   }
   
   @Override
@@ -27,8 +29,10 @@ public class PABedfordCountyParser extends DispatchH05Parser {
   @Override
   public Field getField(String name) {
     if (name.equals("MASH1")) return new MyMash1Field();
-    if (name.equals("ADDR_ID")) return new MyAddressIdField();
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("MASH2")) return new MyMash2Field();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("GMAP")) return new SkipField("https://www.google.com/maps.*", true);
     return super.getField(name);
   }
   
@@ -59,42 +63,71 @@ public class PABedfordCountyParser extends DispatchH05Parser {
     }
   }
   
-  private static final Pattern CLEAN_ID_PTN = Pattern.compile(" *\\[Incident not yet created \\d+\\],?");
-  private class MyAddressIdField extends AddressCityField {
+  private static final Pattern MASH2_PTN = Pattern.compile("(.*?)(\\[.*\\])(.*)");
+  private class MyMash2Field extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf('[');
-      if (pt >= 0) {
-        data.strCallId = cleanIdField(field.substring(pt));
-        field = field.substring(0,pt).trim();
-      }
-      super.parse(field, data);
+      Matcher match = MASH2_PTN.matcher(field);
+      if (!match.matches()) abort();
+      super.parse(match.group(1).trim(), data);
+      data.strCallId = cleanIdField(match.group(2));
+      parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS, match.group(3).trim(), data);
     }
     
     private String cleanIdField(String field) {
-      return CLEAN_ID_PTN.matcher(field).replaceAll("");
+      field = field.replace("[", "").replace("]",  "");
+      StringBuilder sb = new StringBuilder();
+      for (String id : field.split(",")) {
+        id = id.trim();
+        if (id.startsWith("Incident not yet created")) continue;
+        int pt = id.indexOf(' ');
+        if (pt >= 0) id = id.substring(0,pt);
+        if (sb.length() > 0) sb.append(", ");
+        sb.append(id);
+      }
+      return sb.toString();
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY ID";
+      return "ADDR APT CITY ID PLACE X";
     }
   }
   
-  private static final Pattern GPS_PTN = Pattern.compile("http://maps.google.com/maps\\?q=loc:(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
   private class MyGPSField extends GPSField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher match = GPS_PTN.matcher(field);
-      if (!match.matches()) return false;
-      field = match.group(1).replace("+-", ",-");
-      super.parse(field, data);
-      return true;
+    public MyGPSField(int type) {
+      super(type, GPS_PTN, true);
     }
   }
+  
+  private static final String[] MWORD_STREET_LIST = new String[]{
+      "BARNETTS RUN",
+      "BLACK BEAR",
+      "BLACK OAK",
+      "BUCK VALLEY",
+      "CAMP GROUND",
+      "COON HOLLOW",
+      "FOX SQUIRREL",
+      "FRANKLIN MILLS",
+      "GEM BRIDGE",
+      "GREAT COVE",
+      "GREEN LANE",
+      "HONEY ROCK",
+      "LAUREL RIDGE",
+      "LOCUST GROVE",
+      "MCKEES GAP",
+      "MILL HILL",
+      "PIGEON COVE",
+      "PLEASANT GROVE",
+      "PLEASANT RIDGE",
+      "QUARRY HILL",
+      "SHADED ACRES",
+      "SIPES MILL",
+      "SPOTTED FAWN",
+      "TALL SPRUCE",
+      "TIMBER RIDGE",
+      "WENDING WAY",
+      "WOLF HOLLOW"
+  };
 }
