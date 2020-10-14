@@ -19,7 +19,7 @@ public class KYKentonCountyAParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@kentoncounty.org";
+    return "@kentoncounty.org";
   }
   
   @Override

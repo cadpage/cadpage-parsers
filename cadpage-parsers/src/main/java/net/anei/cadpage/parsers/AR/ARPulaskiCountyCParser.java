@@ -34,7 +34,7 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
     if (pt >= 0) {
       data.strChannel = body.substring(pt+13).trim();
       body = stripFieldEnd(body.substring(0,pt), "Respond");
-    }
+    } else return false;
     
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;

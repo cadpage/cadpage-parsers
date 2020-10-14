@@ -19,14 +19,23 @@ public class SCYorkCountyParser extends FieldProgramParser {
           ") INC#:ID! END");
   }
   
-  private static final Pattern PREFIX_PTN = Pattern.compile("((?:Initial|2nd) Dispatch) +|(Short Report) - +|(Call Complete) - +");
+  @Override
+  public String getFilter() {
+    return "paging@yorkcountygov.com";
+  }
+  
+  private static final Pattern PREFIX_PTN = Pattern.compile("(?:((?:Initial|2nd) Dispatch)|(Short Report)|(Call Complete))[- ]*");
   
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     
     Matcher match = PREFIX_PTN.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end());
+    if (match.lookingAt()) {
+      body = body.substring(match.end());
+    } else {
+      match = PREFIX_PTN.matcher(subject);
+      if (!match.matches()) return false;
+    }
     String selectValue = (match.group(1) != null ? "1" : match.group(2) != null ? "2" : "3");
     setSelectValue(selectValue);
     if (selectValue.equals("3")) data.msgType = MsgType.RUN_REPORT;
