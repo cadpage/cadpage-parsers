@@ -10,7 +10,7 @@ public class TNRheaCountyCParser extends FieldProgramParser {
   
   public TNRheaCountyCParser() {
     super("RHEA COUNTY", "TN", 
-          "ID CALL ADDRCITY EMPTY! END");
+          "ID CALL ADDRCITY INFO/N+");
   }
   
   @Override
