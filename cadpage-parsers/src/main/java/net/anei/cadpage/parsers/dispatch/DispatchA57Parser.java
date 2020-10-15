@@ -13,13 +13,16 @@ public class DispatchA57Parser extends FieldProgramParser {
   
   public DispatchA57Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Radio_Channel:CH? Address:ADDRCITY! " + 
+          "( SELECT/1 Call_Time:DATETIME? Call_Type:CALL! Radio_Channel:CH? Address:ADDRCITY/S6! " + 
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
-                "| City:CITY Common_Name:PLACE Map_Page:MAP? Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N INFO/N+ | ) Status:SKIP? Quadrant:MAP District:MAP Beat:MAP Lat_and_Long:GPS CFS_Number:ID/L? Primary_Incident:ID/L CFS_Number:ID/L? Radio_Channel:CH? Narrative:INFO+ ) " +
+                "| City:CITY Common_Name:PLACE Custom_Layer:MAP? Map_Page:MAP? ( Latt:GPS1! Long:GPS2 | ) Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? " + 
+                      "( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N | Nar:INFO/N | ) INFO/N+ Status:SKIP? ( Fire_Box:BOX EMS_District:MAP | Quadrant:MAP District:MAP ) Beat:MAP " + 
+                      "Lat_and_Long:GPS CFS_Number:ID1? Primary_Incident:ID2/L CFS_Number:ID1? Radio_Channel:CH? ( Nar:INFO | Narrative:INFO ) INFO/N+ " + 
+                ") " +
           "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
   
-  private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|Map Page:|City:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|District:|Beat:|Narrative)");
+  private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n)(?=Call Type:|Address:|Common Name:|City:|Custom Layer:|Map Page:|Latt:|(?<!Lat and )Long:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|Fire Box:|(?:EMS )?District:|Beat:|Narr:|Narrative)");
   private static final Pattern DELIM2 = Pattern.compile("\\s*;\\s*");
   
   @Override
@@ -37,10 +40,13 @@ public class DispatchA57Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("MAP")) return new BaseMapField();
+    if (name.equals("ID1")) return new BaseId1Field();
+    if (name.equals("ID2")) return new BaseId2Field();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
@@ -99,6 +105,14 @@ public class DispatchA57Parser extends FieldProgramParser {
     }
   }
   
+  private class BasePlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ":");
+      super.parse(field, data);
+    }
+  }
+  
   private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -140,6 +154,32 @@ public class DispatchA57Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  private class BaseId1Field extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!data.strCallId.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
+  
+  private class BaseId2Field extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      StringBuilder sb = new StringBuilder();
+      for ( String id : field.split(",")) {
+        id = id.trim();
+        id = stripFieldStart(id, "[");
+        id = stripFieldEnd(id, "]");
+        if (id.startsWith("Incident not yet created")) continue;
+        int pt = id.indexOf(' ');
+        if (pt >= 0) id = id.substring(0,pt);
+        if (sb.length() > 0) sb.append(',');
+        sb.append(id);
+      }
+      data.strCallId = sb.toString();
     }
   }
   

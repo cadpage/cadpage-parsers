@@ -17,7 +17,13 @@ public class KSButlerCountyBParser extends DispatchA57Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+    
     if (data.strCity.equals("County")) data.strCity = "";
+    
+    if (data.strAddress.startsWith("MM") && !data.strApt.isEmpty()) {
+      data.strAddress = data.strAddress + ' ' + data.strApt;
+      data.strApt = "";
+    }
     return true;
   }
 
