@@ -11,9 +11,7 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
   
   public ARPulaskiCountyCParser() {
     super("PULASKI COUNTY", "AR");
-    setFieldList("ID CALL ADDR PLACE APT CITY ST CH");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(ARPulaskiCountyAParser.MWORD_STREET_LIST);
+    setFieldList("ID CALL ADDR PLACE APT CITY ST CH INFO");
   }
   
   @Override
@@ -22,7 +20,9 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
   }
   
   private static final Pattern ID_PTN = Pattern.compile("CFS\\d{4}-\\d{5}");
-  private static final Pattern MASTER = Pattern.compile("([^,]+)(?:, *([A-Z ]+))??(?:, *([A-Z]{2})(?: (\\d{5}))?)?(?: ([ A-Z0-9]*?))?");
+  private static final Pattern CH_PTN = Pattern.compile("(\\d+|[A-Z]{2,4} (?:FIRE )?\\d+|ONE)\\b *(.*)");
+  private static final Pattern CANCEL_PTN = Pattern.compile("(.*) (CANCEL(?: RESPONSE)?)");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -30,38 +30,41 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
     if (!ID_PTN.matcher(subject).matches()) return false;
     data.strCallId = subject;
     
+    String cancel = "";
     int pt = body.indexOf(" Fire Channel");
     if (pt >= 0) {
-      data.strChannel = body.substring(pt+13).trim();
-      body = stripFieldEnd(body.substring(0,pt), "Respond");
-    } else return false;
+      String channel = body.substring(pt+13).trim();
+      body = body.substring(0,pt).trim();
+      Matcher match = CH_PTN.matcher(channel);
+      if (match.matches()) {
+        data.strChannel = match.group(1);
+        channel = match.group(2);
+      }
+      data.strSupp = stripFieldStart(channel, "/");
+    }
     
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    parseAddress(StartType.START_CALL, FLAG_RECHECK_APT | FLAG_ANCHOR_END, match.group(1).trim(), data);
-    data.strCity = getOptGroup(match.group(2));
-    data.strState = getOptGroup(match.group(3));
-    String zip = match.group(4);
-    if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
-    data.strChannel = append(data.strChannel, "/", getOptGroup(match.group(5)));
-    return true;
+    else {
+      Matcher match = CANCEL_PTN.matcher(body);
+      if (!match.matches()) return false;
+      body = match.group(1).trim();
+      cancel = match.group(2);
+    }
+    
+    Parser p = new Parser(body);
+    data.strCall = append(cancel, " - ", p.get(','));
+    String addr = p.get(',');
+    if (addr.length() == 0) return false;
+    parseAddress(addr.replace('@',  '&'), data);
+    
+    String city = p.getLast(',');
+    Matcher match = ST_ZIP_PTN.matcher(city);
+    if (match.matches()) {
+      data.strState = match.group(1);
+      String zip = match.group(2);
+      city = p.getLast(',');
+      if (city.isEmpty() && zip != null) city = zip;
+    }
+    data.strCity = city;
+    return p.get().isEmpty();
   }
-  
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ACCIDENT INJURY",
-      "CHEMICAL SPILL",
-      "FALL",
-      "FIRE GRASS/WOODS",
-      "FIRE OTHER STRUCTURE",
-      "FIRE RESIDENTIAL",
-      "FIRE VEHICLE",
-      "ILLEGAL BURN",
-      "MEDICAL EMERGENCY",
-      "NATURAL DISASTER",
-      "SHOOTING",
-      "SUICIDE ATTEMPT",
-      "Suicide Threats",
-      "SUSPICIOUS PERSON",
-      "WELFARE CONCERN"
-  );
 }
