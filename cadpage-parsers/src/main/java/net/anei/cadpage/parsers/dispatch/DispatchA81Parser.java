@@ -13,7 +13,7 @@ public class DispatchA81Parser extends MsgParser {
     setFieldList("CALL ID DATE TIME ADDR APT CITY ST");
   }
   
-  private static final Pattern MASTER = Pattern.compile("([A-Z]{3}\\d{10}) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
+  private static final Pattern MASTER = Pattern.compile("([A-Z]{3}\\d{10}) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*?)(?: [A-Z]{2,4} - Assign .*)?");
   private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))");
   
   @Override
