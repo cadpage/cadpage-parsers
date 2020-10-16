@@ -24,7 +24,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
     return "paging@yorkcountygov.com";
   }
   
-  private static final Pattern PREFIX_PTN = Pattern.compile("(?:((?:Initial|2nd) Dispatch)|(Short Report)|(Call Complete))[- ]*");
+  private static final Pattern PREFIX_PTN = Pattern.compile("(?:((?:Initial|2nd|3rd|4th) Dispatch)|(Short Report)|(Call Complete))[- ]*");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
