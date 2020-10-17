@@ -1815,6 +1815,7 @@ public class Active911ParserTable {
       "US/VA/CityofRoanoke",              "VARoanokeCity",
       "US/VA/CityofStaunton",             "VAStaunton",
       "US/VA/CityofWaynesboro",           "VAWaynesboroB",
+      "US/VA/CraigCounty",                "VACraigCounty",
       "US/VA/CulpeperCounty",             "VACulpeperCounty",
       "US/VA/Danville",                   "VADanville",
       "US/VA/DickensonCounty",            "VADickensonCounty",
