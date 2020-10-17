@@ -7,7 +7,7 @@ public class MOWebsterCountyBParser extends DispatchA81Parser {
   public MOWebsterCountyBParser() {
     super("WEBSTER COUNTY", "MO");
   }
-  
+
   @Override
   public String getFilter() {
     return "cadalerts@webster911.org";
