@@ -193,7 +193,7 @@ public class Active911ParserTable {
       "US/CA/SantaCruzCounty",            "CASantaCruzCounty",
       "US/CA/SantaCruzlimited",           "CASantaCruzCountyA",
       "US/CA/ShastaCom911",               "CAShastaCountyB,CAShastaCountyC",
-      "US/CA/ShastaCounty",               "CAShastaCountyA",
+      "US/CA/ShastaCounty",               "CAShastaCountyA,CAShastaCountyE",
       "US/CA/SiskiyouCounty",             "CASiskiyouCounty",
       "US/CA/SLUCAD",                     "CASanLuisObispoCountyA",
       "US/CA/SonomaCounty",               "CASonomaCounty",

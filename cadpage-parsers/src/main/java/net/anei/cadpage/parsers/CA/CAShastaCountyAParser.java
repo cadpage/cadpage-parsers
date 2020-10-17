@@ -55,7 +55,7 @@ public class CAShastaCountyAParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
     }
     
-    else if ((pt = body.indexOf("   X:")) >= 0) {
+    else if ((pt = body.indexOf("  X:")) >= 0) {
       setSelectValue("V3");
       body = body.substring(0,pt) + ';' + body.substring(pt);
     }
@@ -73,8 +73,8 @@ public class CAShastaCountyAParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ID1")) return new IdField("Inc# +(\\d+)", true);
-    if (name.equals("ID2")) return new IdField("Incident #(\\d+)", true);
+    if (name.equals("ID1")) return new IdField("Inc# *(\\d*)", true);
+    if (name.equals("ID2")) return new IdField("Incident #(\\d*)", true);
     if (name.equals("ID3")) return new IdField("([A-Z]{5} \\d+)\\]", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR0")) return new MyAddressField(0);
