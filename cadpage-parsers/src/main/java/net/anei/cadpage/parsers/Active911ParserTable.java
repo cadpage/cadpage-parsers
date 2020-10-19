@@ -1975,6 +1975,7 @@ public class Active911ParserTable {
       "US/WV/Metro911",                   "WVKanawhaCounty",
       "US/WV/MineralCounty",              "WVMineralCounty",
       "US/WV/MorganCounty",               "WVMorganCounty",
+      "US/WV/NicholasCounty",             "WVNicholasCounty",
       "US/WV/PocahontasCounty",           "WVPocahontasCounty",
       "US/WV/RaleighCounty",              "WVRaleighCounty",
       "US/WV/RoaneCounty",                "WVRoaneCounty",

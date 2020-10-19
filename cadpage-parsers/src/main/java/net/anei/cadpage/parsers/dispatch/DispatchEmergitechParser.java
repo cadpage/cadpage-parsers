@@ -848,7 +848,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   private static final Pattern INFO_GPS_PTN6 = Pattern.compile("ALT#(\\d{3}-\\d{3}-\\d{4})([-+]\\d{1,3}\\.\\d{5,7})([-+]\\d{1,3}\\.\\d{5,7})");
   private static final Pattern INFO_GPS_PTN7 = Pattern.compile("X=([+-]?[0-9\\.]+)Y=([+-]?[0-9\\.]+)CF=\\d+%UF=\\d+MZ=[0-9\\.]*M");
   private static final Pattern INFO_GPS_PTN8 = Pattern.compile("=([+-]?[0-9\\.]+) Y=([+-]?[0-9\\.]+) F= *\\d+% UF= *\\d*\\b *");
-  private static final Pattern INFO_GPS_PTN9 = Pattern.compile("(?:(\\(\\d{3}\\)\\d{3}-\\d{4}))?LAT:([-+]?\\d{3}\\.\\d{5,6})LON:([-+]?\\d{3}\\.\\d{5,6})(?:ELV:\\d*)?COF:\\d*COP:(?:0+|\\d{2})");
+  private static final Pattern INFO_GPS_PTN9 = Pattern.compile("(?:(\\(\\d{3}\\)\\d{3}-\\d{4}))?LAT:([-+]?\\d{3}\\.\\d{5,6}|)LON:([-+]?\\d{3}\\.\\d{5,6}|)(?:ELV(?::\\d*|))?COF:(?:\\d*|)COP:(?:0+|\\d{2}|)");
   private static final Pattern INFO_GPS_PTN10 = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{5,6})([-+]\\d{3}\\.\\d{5,6})\\b");
   private static final Pattern INFO_GPS_PTN11 = Pattern.compile("CALLBK=(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{6})([-+]\\d{3}\\.\\d{6})(?:CF=\\d{1,3}%)?");
   private static final Pattern INFO_GPS_TRUNC = Pattern.compile("ALT#[=(]|CF=|X=CALLBK=");

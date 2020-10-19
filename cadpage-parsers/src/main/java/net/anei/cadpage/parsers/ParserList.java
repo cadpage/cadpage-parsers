@@ -1714,6 +1714,7 @@ public class ParserList {
               ,"WVMercerCounty"                 ,"Mercer County, WV"
               ,"WVMineralCounty"                ,"Mineral County, WV"
               ,"WVMorganCounty"                 ,"Morgan County, WV"
+              ,"WVNicholasCounty"               ,"Nicholas County, WV"
               ,"WVPendletonCounty"              ,"Pendleton County, WV"
               ,"WVPocahontasCounty"             ,"Pocahontas County, WV"
               ,"WVPrestonCounty"				        ,"Preston County, WV"
