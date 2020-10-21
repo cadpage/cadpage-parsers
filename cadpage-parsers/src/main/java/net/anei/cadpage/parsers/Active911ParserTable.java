@@ -682,6 +682,7 @@ public class Active911ParserTable {
       "US/KY/Wittensville",               "KYJohnsonCounty",
       "US/KY/WoodburnVFD",                "KYBowlingGreen",
       "US/KY/WoodfordCounty",             "KYWoodfordCounty",
+      "US/LA/Acadian",                    "LAAcadian",
       "US/LA/AllenCounty",                "LAAllenParish",
       "US/LA/AscensionParish",            "LAAscensionParish",
       "US/LA/AvoyellesCounty",            "LAAvoyellesParish",

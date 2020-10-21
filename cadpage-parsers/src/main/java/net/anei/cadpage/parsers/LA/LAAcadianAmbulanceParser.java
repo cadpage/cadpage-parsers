@@ -20,6 +20,6 @@ public class LAAcadianAmbulanceParser extends XXAcadianAmbulanceParser {
   
   @Override
   public String getFilter() {
-    return "commcenter@acadian.com";
+    return "@acadian.com";
   }
 }
