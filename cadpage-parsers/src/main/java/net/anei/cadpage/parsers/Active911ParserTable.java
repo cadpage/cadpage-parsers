@@ -604,6 +604,7 @@ public class Active911ParserTable {
       "US/KY/CityofRadcliff",             "KYHardinCountyD",
       "US/KY/ClarkCounty",                "KYClarkCounty",
       "US/KY/ClayCounty",                 "KYClayCounty",
+      "US/KY/Corbin",                     "KYKnoxCountyC",
       "US/KY/Dunmor",                     "KYMuhlenbergCountyB",
       "US/KY/EastGoldenPondVFD",          "KYTriggCounty",
       "US/KY/EdmonsonCounty",             "KYEdmonsonCounty",
