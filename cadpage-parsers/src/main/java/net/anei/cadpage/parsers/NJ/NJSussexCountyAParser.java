@@ -27,7 +27,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   
   @Override
   public String getFilter() {
-    return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov,donotreply@Enfwebmail.onmicrosoft.com";
+    return "@nwbcd.org,@middle,@englewoodpd.org,@enforsys.com,@atpdtext.org,alerts@atpd.org,wcpdicm@enforsys.com,@Enfwebmail.onmicrosoft.com,ems911page@twpoceannj.gov,donotreply@Enfwebmail.onmicrosoft.com,westcaldwellpd@enfwebmail.onmicrosoft.com";
   }
   
   

@@ -21,6 +21,7 @@ public class ALShelbyCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    subject = stripFieldStart(subject, "RE:");
     if (!subject.startsWith("Event-")) return false;
     return parseFields(body.split("\n"), data);
   }
