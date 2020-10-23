@@ -1673,7 +1673,7 @@ public class Active911ParserTable {
       "US/TX/BurnetCounty",               "TXBurnetCounty",
       "US/TX/Carrollton",                 "TXCarrollton",
       "US/TX/CherokeeCounty",             "TXCherokeeCounty",
-      "US/TX/CIMA",                       "TXCyCreekCommCenterC",
+      "US/TX/CIMA",                       "TXCyCreekCommCenterA",
       "US/TX/CityofBryan",                "TXBrazosCounty",
       "US/TX/CityofCommerce",             "TXHuntCounty",
       "US/TX/CityofCorpusChristi",        "TXNuecesCounty",
