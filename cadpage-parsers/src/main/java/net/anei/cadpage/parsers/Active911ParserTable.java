@@ -1978,6 +1978,7 @@ public class Active911ParserTable {
       "US/WV/LincolnCounty",              "WVLincolnCounty",
       "US/WV/MarionCounty",               "WVMarionCounty",
       "US/WV/MasonCounty",                "WVMasonCounty",
+      "US/WV/McDowellCounty",             "WVMcDowellCounty",
       "US/WV/MercerCounty",               "WVMercerCounty",
       "US/WV/Metro911",                   "WVKanawhaCounty",
       "US/WV/MineralCounty",              "WVMineralCounty",

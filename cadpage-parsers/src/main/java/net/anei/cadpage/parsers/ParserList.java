@@ -1683,6 +1683,7 @@ public class ParserList {
               ,"WAKlickitatCounty"              ,"Klickitat County, WA"
               ,"WALewisCounty"                  ,"Lewis County, WA"
               ,"WAMasonCounty"                  ,"Mason County, WA"
+              ,"WVMcDowellCounty"               ,"McDowell County, WA"
               ,"WAOkanoganCounty"               ,"Okanogan County, WA"
               ,"WAPendOreilleCounty"            ,"Pend Oreille County, WA"
               ,"WAPierceCounty"                 ,"Pierce County, WA"
