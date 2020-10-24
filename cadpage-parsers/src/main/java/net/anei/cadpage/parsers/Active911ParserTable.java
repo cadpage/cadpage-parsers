@@ -597,6 +597,7 @@ public class Active911ParserTable {
       "US/KY/CarterCounty",               "KYCarterCounty",
       "US/KY/ChristianCounty",            "KYChristianCounty",
       "US/KY/CityofBowlingGreen",         "KYBowlingGreen",
+      "US/KY/CityofCarlisle",             "KYNicholasCounty",
       "US/KY/CityofEdmonton",             "KYMetcalfeCounty",
       "US/KY/CityofMorehead",             "KYRowenCounty",
       "US/KY/CityofOwensboro",            "KYDaviessCounty",
