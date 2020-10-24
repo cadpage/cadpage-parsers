@@ -2591,6 +2591,7 @@ public class FieldProgramParser extends SmartAddressParser {
   /**
    * Field containing address and city separated by a comma
    */
+  private static final Pattern GPS_COMPONENT_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}\\)?");
   public class AddressCityField extends AddressField {
 
     public AddressCityField() {};
@@ -2605,19 +2606,28 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      int pt = field.lastIndexOf(',');
-      if (pt < 0) return false;
-      parse(field.substring(0,pt).trim(), data);
-      cityField.parse(field.substring(pt+1).trim(), data);
-      return true;
+      return parse(field, data, false);
     }
 
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      cityField.parse(p.getLastOptional(','), data);
-      setNoCity(field.endsWith(","));
-      super.parse(p.get(), data);
+      parse(field, data, true);
+    }
+
+    private boolean parse(String field, Data data, boolean force) {
+      
+      int pt = field.lastIndexOf(',');
+      if (pt >= 0) {
+        String city = field.substring(pt+1).trim();
+        if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
+          cityField.parse(city, data);
+          field = field.substring(0,pt).trim();
+        }
+      }
+      else if (!force) return false;
+
+      super.parse(field, data);
+      return true;
     }
 
     @Override
@@ -2654,15 +2664,18 @@ public class FieldProgramParser extends SmartAddressParser {
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
-      Matcher match = ST_ZIP_PTN.matcher(city);
-      if (match.matches()) {
-        data.strState = match.group(1);
-        String zip = match.group(2);
-        city = p.getLastOptional(',');
-        if (city.length() == 0 && zip != null) city = zip;
+      if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
+        Matcher match = ST_ZIP_PTN.matcher(city);
+        if (match.matches()) {
+          data.strState = match.group(1);
+          String zip = match.group(2);
+          city = p.getLastOptional(',');
+          if (city.length() == 0 && zip != null) city = zip;
+        }
+        cityField.parse(city, data);
+        field = p.get();
       }
-      cityField.parse(city, data);
-      parseAddress(p.get(), data);
+      parseAddress(field, data);
     }
 
     protected void parseAddress(String field, Data data) {
