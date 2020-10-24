@@ -9,7 +9,8 @@ public class NCWakeCountyParser extends GroupBestParser {
     super(new NCWakeCountyAParser(), 
           new NCWakeCountyBParser(), 
           new NCWakeCountyCParser(),
-          new NCWakeCountyDParser());
+          new NCWakeCountyDParser(),
+          new NCWakeCountyEParser());
   }
 
   @Override
