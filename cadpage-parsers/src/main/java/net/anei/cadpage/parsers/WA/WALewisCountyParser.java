@@ -16,7 +16,7 @@ public class WALewisCountyParser extends FieldProgramParser {
   
   public WALewisCountyParser() {
     super("LEWIS COUNTY", "WA",
-           "ASSIGNED? SRC ( FIPO DATETIME | TIMEDATE ) CALL ADDR! INFO+? ID GPS1 GPS2");
+           "PREFIX? SRC ( FIPO DATETIME | TIMEDATE ) CALL/SDS ADDR! INFO+? ID GPS1 GPS2");
   }
   
   @Override
@@ -84,7 +84,7 @@ public class WALewisCountyParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("ASSIGNED")) return new SkipField("Assigned");
+    if (name.equals("PREFIX")) return new MyPrefixField();
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("FIPO")) return new SkipField("fipo", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
@@ -94,6 +94,34 @@ public class WALewisCountyParser extends FieldProgramParser {
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
+  }
+  
+  private class MyPrefixField extends Field {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("Callback")) {
+        data.strCall = field;
+        return true;
+      } else {
+        return field.equals("Assigned");
+      }
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return null;
+    }
   }
   
   private class MySourceField extends SourceField {
