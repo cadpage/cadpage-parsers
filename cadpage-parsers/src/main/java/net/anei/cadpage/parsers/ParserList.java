@@ -190,6 +190,7 @@ public class ParserList {
               ,"CAHumboldtCounty"               ,"Humboldt County, CA"
               ,"CAInyoCounty"                   ,"Inyo County, CA"
               ,"CAKernCounty"                   ,"Kern County, CA"
+              ,"CAKingsCounty"                  ,"Kings County, CA"
               ,"CALakeCounty"                   ,"Lake County, CA"
               ,"CALosAngelesCounty"             ,"Los Angeles County, CA"
               ,"CAMaderaCounty"                 ,"Madera County, CA"

@@ -171,6 +171,7 @@ public class Active911ParserTable {
       "US/CA/Jpapage",                    "CASanDiegoCountyA",
       "US/CA/KernCounty",                 "CAKernCounty",
       "US/CA/LakeCounty",                 "CALakeCounty",
+      "US/CA/LemooreVFD",                 "CAKingsCounty",
       "US/CA/LifecommCellPaging",         "CASanJoaquinCounty",
       "US/CA/LincolnPD",                  "CAPlacerCountyB",
       "US/CA/LosAngelesCounty",           "CALosAngelesCountyA,CALosAngelesCountyC",
