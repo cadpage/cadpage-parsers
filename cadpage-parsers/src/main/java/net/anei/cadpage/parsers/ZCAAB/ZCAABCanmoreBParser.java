@@ -16,7 +16,7 @@ public class ZCAABCanmoreBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "disp@calgary.ca>";
+    return "disp@calgary.ca";
   }
   
   @Override
