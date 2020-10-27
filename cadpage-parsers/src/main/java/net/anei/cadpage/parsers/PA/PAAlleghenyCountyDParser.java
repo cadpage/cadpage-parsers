@@ -13,6 +13,7 @@ public class PAAlleghenyCountyDParser extends DispatchProQAParser {
     super("ALLEGHENY COUNTY", "PA", 
           "CALL CALL/L+? ADDR/Z APT CITY! ZIP ( UNKNOWN | NAME NAME/CS ) INFO/L+", true);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
+    setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
   }
   
   @Override

@@ -17,6 +17,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
            "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
     setupCities(EXTRA_CITY_LIST);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
+    setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
   }
   
   @Override

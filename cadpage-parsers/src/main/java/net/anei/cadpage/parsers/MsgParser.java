@@ -252,7 +252,11 @@ public abstract class MsgParser {
   // Parser specific table of GPS coordinates associated with
   // specific addresses (typically mile markers)
   private Properties gpsLookupTable = null;
-
+  
+  // Parser specific table of GPS coordinates associated with
+  // specific place names
+  private Properties placeGpsLookupTable =  null;
+  
   // Save parse flags so we can check message status from methods that
   // were not passed the parse flags
   private int parseFlags;
@@ -292,6 +296,14 @@ public abstract class MsgParser {
    */
   protected void setupGpsLookupTable(Properties gpsLookupTable) {
     this.gpsLookupTable = gpsLookupTable;
+  }
+
+  /**
+   * Set up GPS place lookup table
+   * @param gpsLookupTable table of GPS coordinates keyed by address string
+   */
+  protected void setupPlaceGpsLookupTable(Properties placeGpsLookupTable) {
+    this.placeGpsLookupTable = placeGpsLookupTable;
   }
 
   /**
@@ -1197,6 +1209,10 @@ public abstract class MsgParser {
   }
 
   public String lookupGpsCoordinates(String address, String apt, String place) {
+    if (placeGpsLookupTable != null && !place.isEmpty()) {
+      String gps = placeGpsLookupTable.getProperty(place);
+      if (gps != null) return gps;
+    }
     if (gpsLookupTable == null) return null;
     address = adjustGpsLookupAddress(address, apt, place);
     if (address == null) return null;
