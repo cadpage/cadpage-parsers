@@ -1360,7 +1360,7 @@ public class Active911ParserTable {
       "US/OH/LSFD",                       "OHLoveland,AiviaAED",
       "US/OH/LucasCounty",                "OHLucasCounty",
       "US/OH/MadisonCounty",              "OHMadisonCounty",
-      "US/OH/MahoningCounty",             "OHMahoningCountyA",
+      "US/OH/MahoningCounty",             "OHMahoningCountyA,OHMahoningCountyC",
       "US/OH/MarionCounty",               "OHMarionCounty",
       "US/OH/MayfieldVillage",            "OHCuyahogaCountyA",
       "US/OH/MCSO",                       "OHMontgomeryCountyC2",

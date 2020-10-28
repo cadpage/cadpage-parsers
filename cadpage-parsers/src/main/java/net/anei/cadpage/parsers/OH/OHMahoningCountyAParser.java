@@ -30,7 +30,7 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
 
   @Override
   public String getFilter() {
-    return "BPD911@twp.boardman.oh.us,canfieldpd@ci.canfield.oh.us,jonracco25@yahoo.com,@sebringohio.net,@sebringohiopolice.com,@zoominternet.net";
+    return "BPD911@twp.boardman.oh.us,canfieldpd@ci.canfield.oh.us,jonracco25@yahoo.com,@sebringohio.net,@sebringohiopolice.com,@zoominternet.net,@canfield.gov";
   }
   
   @Override
