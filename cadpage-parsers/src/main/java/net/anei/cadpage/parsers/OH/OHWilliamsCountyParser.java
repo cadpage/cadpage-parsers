@@ -1,23 +1,15 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class OHWilliamsCountyParser extends FieldProgramParser {
+/*
+ * Williams County, OH
+ */
 
+public class OHWilliamsCountyParser extends GroupBestParser {
+  
   public OHWilliamsCountyParser() {
-    super("WILLIAMS COUNTY", "OH",
-          "FIRE_CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! INFO:INFO/N+");
+    super(new OHWilliamsCountyAParser(),
+          new OHWilliamsCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "BryanCAD,info@sundance-sys.com";
-  }
-
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
-  }
-
 }
