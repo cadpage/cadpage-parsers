@@ -170,6 +170,16 @@ public class FLManateeCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern ST_62_PTN = Pattern.compile("\\b(?:ST|SR|FL) +62\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapAddress(String address, String city, boolean cross) {
+    if (city.equalsIgnoreCase("PARRISH")) {
+      address = ST_62_PTN.matcher(address).replaceAll("WAUCHULA RD");
+    }
+    return address;
+  }
+  
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "2303 1ST ST E",                        "+27.479214,-82.562549"
   });
