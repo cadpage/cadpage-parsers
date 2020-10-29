@@ -174,10 +174,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   
   @Override
   public String adjustMapAddress(String address, String city, boolean cross) {
-    if (city.equalsIgnoreCase("PARRISH")) {
-      address = ST_62_PTN.matcher(address).replaceAll("WAUCHULA RD");
-    }
-    return address;
+    return ST_62_PTN.matcher(address).replaceAll("WAUCHULA RD");
   }
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
