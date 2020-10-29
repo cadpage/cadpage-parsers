@@ -8,15 +8,70 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 /**
  * Baltimore County, MD
  */
 public class MDBaltimoreCountyBParser extends FieldProgramParser {
   
+  private static Field infoField = null;
+  
+  private class RunReportEntry {
+    String key;
+    Field field;
+    String label;
+    
+    public RunReportEntry(String key) {
+      this(key, null, null);
+    }
+    
+    public RunReportEntry(String key, String field) {
+      this(key, field, null);
+    }
+    
+    public RunReportEntry(String key, String field, String label) {
+      this.key = key;
+      if ("INFO".equals(field)) {
+        if (infoField == null) {
+          infoField = getField(field);
+          infoField.setQual("N");
+        }
+        this.field = infoField;
+      } else {
+        this.field = field == null ? null : getField(field);
+      }
+      this.label = label;
+    }
+    
+    public void parse(String value, Data data) {
+      if (field == null) return;
+      if (value.isEmpty()) return;
+      if (label != null) value = label + ": " + value;
+      field.parse(value, data);
+    }
+  }
+  
+  private static RunReportEntry[] runRptTable;
+  
   public MDBaltimoreCountyBParser() {
     super("BALTIMORE COUNTY", "MD",
            "BOX:MAP CALL:CALL! ADDR:ADDR/S6! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
+    runRptTable = new RunReportEntry[] {
+      new RunReportEntry("b ", "MAP"),
+      new RunReportEntry(" cc# ", "ID"),
+      new RunReportEntry(" unit ", "UNIT"),
+      new RunReportEntry("\n"),
+      new RunReportEntry("\nl ", "ADDR"),
+      new RunReportEntry("\n"),
+      new RunReportEntry("\n\nd ", "INFO", "Dispatched"),
+      new RunReportEntry(" e ", "INFO", "Enroute"),
+      new RunReportEntry("\n\na ", "INFO", "Arrived"),
+      new RunReportEntry(" t ", "INFO", "Transport"),
+      new RunReportEntry("\n\nh ", "INFO", "Hospital"),
+      new RunReportEntry(" c ", "INFO", "Cleared"),
+      new RunReportEntry("\n\ntitle ", "CALL")
+    };
   }
   
   @Override
@@ -27,21 +82,52 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('', '\'');
-    if (!parseFields(body.split("\n"), data)) return false;
     
-    // Address and place names get crossed when we deal with interchanges or mile markers
-    if (data.strPlace.contains(" MM ") || data.strPlace.contains(" BET ")) {
-      data.strCross = data.strAddress.replace('*', '/');
-      data.strAddress = data.strPlace;
-      data.strPlace = "";
+    if (body.startsWith("b ")) {
+      
+      setFieldList("MAP ID UNIT ADDR APT CITY INFO CALL");
+      data.msgType = MsgType.RUN_REPORT;
+      if (!parseRunReport(body, data)) return false;
+    }
+
+    else {
+      if (!parseFields(body.split("\n"), data)) return false;
+      
+      // Address and place names get crossed when we deal with interchanges or mile markers
+      if (data.strPlace.contains(" MM ") || data.strPlace.contains(" BET ")) {
+        data.strCross = data.strAddress.replace('*', '/');
+        data.strAddress = data.strPlace;
+        data.strPlace = "";
+      }
     }
     
     String mapCode = data.strMap;
     int pt = mapCode.indexOf('-');
     if (pt >= 0) mapCode = mapCode.substring(0, pt);
+    mapCode = stripFieldStart(mapCode, "0");
     String city = MAP_CITY_TABLE.getProperty(mapCode);
     if (city != null) data.strCity = city;
     return true;
+  }
+  
+  private boolean parseRunReport(String body, Data data) {
+    try {
+      RunReportEntry lastEntry = null;
+      Parser p = new Parser(body);
+      for (RunReportEntry entry : runRptTable) {
+        String val = p.getRequired(entry.key);
+        if (val == null) return false;
+        
+        if (lastEntry != null) {
+          lastEntry.parse(val, data);
+        }
+        lastEntry = entry;
+      }
+      lastEntry.parse(p.get(), data);
+      return true;
+    } catch (FieldProgramException ex) {
+      return false;
+    }
   }
   
   @Override
@@ -152,56 +238,56 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
   private static final Pattern GR_PTN = Pattern.compile("\\bGR\\b");
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "001", "TOWSON",
-      "002", "PIKESVILLE",
-      "003", "WOODLAWN",
-      "004", "CATONSVILLE",
-      "005", "HALETHORPE",
-      "006", "DUNDALK",
-      "007", "ESSEX",
-      "008", "BALTIMORE",
-      "009", "BALTIMORE",
-      "010", "PARKVILLE",
-      "011", "BALTIMORE",
-      "012", "MIDDLE RIVER",
-      "013", "BALTIMORE",
-      "014", "BALTIMORE",
-      "015", "DUNDALK",
-      "016", "BALTIMORE",
-      "017", "TIMONIUM",
-      "018", "RANDALLSTOWN",
-      "019", "OWINGS MILLS",
-      "020", "WHITE MARSH",
-      "021", "MIDDLE RIVER",
-      "026", "SPARROWS POINT",
-      "027", "DUNDALK",
-      "028", "BALTIMORE",
-      "029", "TOWSON",
-      "030", "LUTHERVILLE",
-      "031", "OWINGS MILLS",
-      "032", "PIKESVILLE",
-      "033", "WOODLAWN",
-      "035", "ARBUTUS",
-      "036", "LANSDOWNE",
-      "037", "BALTIMORE",
-      "038", "GLEN ARM",
-      "039", "COCKEYSVILLE",
-      "040", "GLYNDON",
-      "041", "REISTERSTOWN",
-      "044", "MONKTON",
-      "045", "FREELAND",
-      "046", "RANDALLSTOWN",
-      "047", "PHOENIX",
-      "048", "KINGSVILLE",
-      "049", "SPARKS",
-      "050", "OWINGS MILLS",
-      "051", "ESSEX",
-      "054", "MIDDLE RIVER",
-      "055", "PERRY HALL",
-      "056", "REISTERSTOWN",
-      "057", "SPARROWS POINT",
-      "060", "PARKTON",
-      "074", "MIDDLE RIVER",
-      "085", "UPPERCO"
+      "01", "TOWSON",
+      "02", "PIKESVILLE",
+      "03", "WOODLAWN",
+      "04", "CATONSVILLE",
+      "05", "HALETHORPE",
+      "06", "DUNDALK",
+      "07", "ESSEX",
+      "08", "BALTIMORE",
+      "09", "BALTIMORE",
+      "10", "PARKVILLE",
+      "11", "BALTIMORE",
+      "12", "MIDDLE RIVER",
+      "13", "BALTIMORE",
+      "14", "BALTIMORE",
+      "15", "DUNDALK",
+      "16", "BALTIMORE",
+      "17", "TIMONIUM",
+      "18", "RANDALLSTOWN",
+      "19", "OWINGS MILLS",
+      "20", "WHITE MARSH",
+      "21", "MIDDLE RIVER",
+      "26", "SPARROWS POINT",
+      "27", "DUNDALK",
+      "28", "BALTIMORE",
+      "29", "TOWSON",
+      "30", "LUTHERVILLE",
+      "31", "OWINGS MILLS",
+      "32", "PIKESVILLE",
+      "33", "WOODLAWN",
+      "35", "ARBUTUS",
+      "36", "LANSDOWNE",
+      "37", "BALTIMORE",
+      "38", "GLEN ARM",
+      "39", "COCKEYSVILLE",
+      "40", "GLYNDON",
+      "41", "REISTERSTOWN",
+      "44", "MONKTON",
+      "45", "FREELAND",
+      "46", "RANDALLSTOWN",
+      "47", "PHOENIX",
+      "48", "KINGSVILLE",
+      "49", "SPARKS",
+      "50", "OWINGS MILLS",
+      "51", "ESSEX",
+      "54", "MIDDLE RIVER",
+      "55", "PERRY HALL",
+      "56", "REISTERSTOWN",
+      "57", "SPARROWS POINT",
+      "60", "PARKTON",
+      "74", "MIDDLE RIVER",
+      "85", "UPPERCO"
   });
 }
