@@ -29,6 +29,8 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "CAN",  "CANFIELD"
+      "BOA",  "BOARDMAN TWP",
+      "CAN",  "CANFIELD TWP",
+      "GRE",  "GREEN TWP"
   });
 }

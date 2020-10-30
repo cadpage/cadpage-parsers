@@ -1301,7 +1301,7 @@ public class Active911ParserTable {
       "US/OH/Circleville",                "OHPickawayCounty",
       "US/OH/CityofAvonLake",             "OHLorainCountyA",
       "US/OH/CityofBroadviewHeights",     "OHCuyahogaCountyA",
-      "US/OH/CityofCanfield",             "OHMahoningCountyA",
+      "US/OH/CityofCanfield",             "OHMahoningCountyA,OHMahoningCountyC",
       "US/OH/CityofCenterville",          "OHCenterville",
       "US/OH/CityofFairborn",             "OHGreeneCountyB",
       "US/OH/CityofFairfield",            "OHFairfield",
