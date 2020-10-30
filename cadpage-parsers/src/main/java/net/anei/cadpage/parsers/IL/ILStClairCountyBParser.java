@@ -13,12 +13,12 @@ public class ILStClairCountyBParser extends FieldProgramParser {
   
   public ILStClairCountyBParser() {
     super("ST CLAIR COUNTY", "IL",
-          "CALL:CALL! PLACE:PLACE! PLACE+ ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATETIME! INFO:INFO! INFO/S+");
+          "CALL:CALL! CALL/S+ PLACE:PLACE! PLACE+ ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATETIME! INFO:INFO! INFO/S+");
   }
    
   @Override
   public String getFilter() {
-    return "FAIRVIEWHEIGHTS@PUBLICSAFETYSOFTWARE.NET";
+    return "FAIRVIEWHEIGHTS@PUBLICSAFETYSOFTWARE.NET,OFALLON@itiusa.com";
   }
 
   @Override
