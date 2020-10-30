@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.WA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,8 +16,8 @@ public class WALewisCountyParser extends FieldProgramParser {
   private static final Pattern MASTER = Pattern.compile("(.*) - [A-Z][a-z]+, +[A-Z][a-z]+", Pattern.DOTALL);
   
   public WALewisCountyParser() {
-    super("LEWIS COUNTY", "WA",
-           "PREFIX? SRC ( FIPO DATETIME | TIMEDATE ) CALL/SDS ADDR! INFO+? ID GPS1 GPS2");
+    super(CITY_CODES, "LEWIS COUNTY", "WA",
+          "PREFIX? SRC ( FIPO DATETIME | TIMEDATE ) CALL/SDS ADDR/S! ( CITY | PLACE_APT CITY | PLACE APT CITY | PLACE_CITY | PLACE APT_CITY | ) INFO+? ID GPS1 GPS2");
   }
   
   @Override
@@ -89,6 +90,9 @@ public class WALewisCountyParser extends FieldProgramParser {
     if (name.equals("FIPO")) return new SkipField("fipo", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("TIMEDATE")) return new TimeDateField("\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("PLACE_APT")) return new MyPlaceAptField();
+    if (name.equals("PLACE_CITY")) return new MyPlaceCityField();
+    if (name.equals("APT_CITY")) return new MyAptCityField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("D\\d{8}", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
@@ -132,6 +136,87 @@ public class WALewisCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
+  private class MyPlaceAptField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (APT_PTN.matcher(field).matches()) {
+        data.strApt = append(data.strApt, "-", field);
+      } else {
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "PLACE APT";
+    }
+  }
+  
+  private class MyPlaceCityField extends MyPlaceAptField {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String tmp = parseCity(field, data);
+      if (tmp == null) return false;
+      super.parse(tmp, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY";
+    }
+  }
+  
+  private class MyAptCityField extends AptField {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      String tmp = parseCity(field, data);
+      if (tmp == null) return false;
+      super.parse(tmp, data);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY";
+    }
+  }
+
+  private static final Pattern FIELD_CITY_PTN = Pattern.compile("(.*) (?!DOT|MIN)([A-Z]{3})");
+
+  private String parseCity(String field, Data data) {
+    if (!data.strCity.isEmpty()) return null;
+    Matcher match = FIELD_CITY_PTN.matcher(field);
+    if (!match.matches()) return null;
+    String city = CITY_CODES.getProperty(match.group(2));
+    if (city == null) return null;
+    data.strCity = city;
+    return match.group(1).trim();
+  }
+  
   private static final Pattern INFO_TIME_DATE_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
   private class MyInfoField extends InfoField {
     @Override
@@ -165,4 +250,77 @@ public class WALewisCountyParser extends FieldProgramParser {
       }
     }
   }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ABD", "ABERDEEN",
+      "ADN", "ADNA",
+      "AMS", "AMSTERDAM",
+      "ASH", "ASHFORD",
+      "BOI", "BOISTFORT",
+      "BOW", "BOW",
+      "BUC", "BUCODA",
+      "CAS", "CASTLE ROCK",
+      "CDA", "COEUR D'ALENE",
+      "CEN", "CENTRALIA",
+      "CHE", "CHEHALIS",
+      "CIN", "CINEBAR",
+      "CIS", "CISPUS",
+      "CLE", "CLEARWATER",
+      "CUR", "CURTIS",
+      "DOT", "DOTY",
+      "DRY", "DRYAD",
+      "EIN", "EINDHOVEN",
+      "ELB", "ELBE",
+      "ELM", "ELMA",
+      "ETH", "ETHEL",
+      "FOP", "FORDS PRAIRIE",
+      "FOR", "FORKS",
+      "GAL", "GALVIN",
+      "GLE", "GLENOMA",
+      "HOQ", "HOQUIAM",
+      "KAL", "KALAMA",
+      "KEL", "KELSO",
+      "LAC", "LACEY",
+      "LEW", "LEWIS COUNTY",
+      "LOG", "LOGAN",
+      "LON", "LONGVIEW",
+      "MAC", "MARY'S CORNER",
+      "MAR", "MARYSVILLE",
+      "MAY", "MAYFIELD",
+      "MIN", "MINERAL",
+      "MLC", "MOSES LAKE",
+      "MON", "MONTESANO",
+      "MOR", "MORTON",
+      "MOS", "MOSSY ROCK",
+      "NA5", "CHEHALIS",
+      "NAP", "NAPAVINE",
+      "OAK", "OAKVILLE",
+      "OHA", "OHANAPECOSH",
+      "OLY", "OLYMPIA",
+      "ONA", "ONALASKA",
+      "PAC", "PACKWOOD",
+      "PEE", "PE ELL",
+      "PIE", "PIERCE COUNTY",
+      "PLU", "PLUVIUS",
+      "RAN", "RANDALL",
+      "RAY", "RAYMOND",
+      "REN", "RENTON",
+      "ROC", "ROCHESTER",
+      "RYD", "RYDERWOOD",
+      "SAL", "SALKUM",
+      "SEA", "SEATTLE",
+      "SIL", "SILVER CREEK",
+      "TAC", "TACOMA",
+      "TEN", "TENINO",
+      "TOL", "TOLEDO",
+      "TOU", "TOUTLE",
+      "TUM", "TUMWATER",
+      "VAD", "VADER",
+      "VAN", "VANCOUVER",
+      "WEN", "WENATCHEE",
+      "WHI", "WHITE PASS",
+      "WIN", "WINLOCK",
+      "YAK", "YAKIMA",
+      "YEL", "YELM"
+  });
 }
