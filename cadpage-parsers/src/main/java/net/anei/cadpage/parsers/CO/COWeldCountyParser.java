@@ -37,13 +37,19 @@ public class COWeldCountyParser extends FieldProgramParser {
     
     body = stripFieldStart(body, "Dispatch / ");
     body = stripFieldEnd(body, " UNSUBSCRIBE");
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    
+    // OUT city code seems to mean generic out of state
+    if (data.strCity.equals("OUT")) {
+      data.strCity = data.defCity = data.defState = "";
+    }
+    return true;
   }
   
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField(false);
-    if (name.equals("D")) return new SkipField("D", true);
+    if (name.equals("D")) return new SkipField("D|2NDPG", true);
     if (name.equals("CALL2")) return new MyCallField(true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -316,10 +322,12 @@ public class COWeldCountyParser extends FieldProgramParser {
       "ERI", "ERIE",
       "EVA", "EVANS",
       "EVS", "EVANSTON",
+      "FC",  "FORT COLLINS",
       "FIR", "FIRESTONE",
       "FRE", "FREDERICK",
       "FTL", "FORT LUPTON",
       "GAL", "GALETON",
+      "GAR", "GARDEN CITY",
       "GIC", "GILCREST",
       "GIL", "GILCREST",
       "GRE", "GREELEY",
@@ -328,6 +336,7 @@ public class COWeldCountyParser extends FieldProgramParser {
       "HIL", "HILL N PARK",
       "HUD", "HUDSON",
       "JOH", "JOHNSTOWN",
+      "KEE", "KEENESBURG",
       "KER", "KERSEY",
       "LAF", "LAFAYETTE",
       "LAS", "LA SALLE",
@@ -338,10 +347,13 @@ public class COWeldCountyParser extends FieldProgramParser {
       "LUC", "LUCERNE",
       "MEA", "MEAD",
       "MIL", "MILLIKEN",
+      "NEW", "NEW RAYMER",
       "NIW", "NIWOT",
+      "OUT", "OUT",   // out of state???
       "PIE", "PIERCE",
       "PLA", "PLATTEVILLE",
       "SEV", "SEVERANCE",
+      "STO", "STONEHAM",
       "WEL", "WELD COUNTY",
       "WIN", "WINDSOR"
   });
