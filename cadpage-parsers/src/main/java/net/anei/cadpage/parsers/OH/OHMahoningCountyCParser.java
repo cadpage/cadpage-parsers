@@ -29,8 +29,19 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "BOA",  "BOARDMAN TWP",
-      "CAN",  "CANFIELD TWP",
-      "GRE",  "GREEN TWP"
+      "AUS", "AUSTINTOWN TWP",
+      "BEA", "BEAVER TWP",
+      "BER", "BERLIN TWP",
+      "BOA", "BOARDMAN TWP",
+      "CAN", "CANFIELD TWP",
+      "COI", "COITSVILLE TWP",
+      "ELL", "ELLSWORTH TWP",
+      "GOS", "GOSHEN TWP",
+      "GRE", "GREEN TWP",
+      "JAC", "JACKSON TWP",
+      "MIL", "MILTON TWP",
+      "POL", "POLAND TWP",
+      "SMI", "SMITH TWP",
+      "SPR", "SPRINGFIELD TWP"
   });
 }
