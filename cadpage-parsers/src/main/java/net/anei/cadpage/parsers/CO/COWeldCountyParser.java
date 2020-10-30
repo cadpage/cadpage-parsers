@@ -37,6 +37,8 @@ public class COWeldCountyParser extends FieldProgramParser {
     
     body = stripFieldStart(body, "Dispatch / ");
     body = stripFieldEnd(body, " UNSUBSCRIBE");
+    int pt = body.indexOf("\nText STOP");
+    if (pt >= 0)  body = body.substring(0,pt).trim();
     if (!parseFields(body.split("\n"), data)) return false;
     
     // OUT city code seems to mean generic out of state
