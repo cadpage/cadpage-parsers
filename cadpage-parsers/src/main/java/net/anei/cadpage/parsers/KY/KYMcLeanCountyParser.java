@@ -29,6 +29,7 @@ public class KYMcLeanCountyParser extends DispatchEmergitechParser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
       "ANNOUNCEMENT",
+      "ARREST BLOTTER",
       "ASSAULT",
       "AUTO ACCIDENT - NO INJURY",
       "AUTO ACCIDENT NO INJURIES",
@@ -38,7 +39,10 @@ public class KYMcLeanCountyParser extends DispatchEmergitechParser {
       "BREATHING PROBLEMS",
       "BURNING - CONTROLLED",
       "CHEST PAIN",
+      "COMPLAINT",
+      "DEER/VEH/DEAD",
       "DIABETIC PROBLEM",
+      "EXTRA PATROL",
       "FALL",
       "FALLS - GROUND LEVEL - OTHER",
       "FIRE - REKINDLE",
@@ -56,15 +60,20 @@ public class KYMcLeanCountyParser extends DispatchEmergitechParser {
       "SUICIDE",
       "SUICIDE-ATTEMPT",
       "SUICIDE-THREATENING",
+      "SUSPICIOUS PERSON",
+      "SUSPICIOUS VEHICLE",
       "ROAD CLOSED",
       "STAND BY/RESPOND",
       "TEST",
       "TRANSFER PATIENT",
       "UNKNOWN MEDICAL EMERGENCY",
       "UNRESPONSIVE",
+      "VEH/ANIMAL",
+      "VEHICLE INSPECTION",
       "WALK-IN",
       "WEATHER",
-      "WEATHER ALERT"
+      "WEATHER ALERT",
+      "WELL BEING CHECK"
   );
   
   private static final String[] CITY_LIST = new String[]{
