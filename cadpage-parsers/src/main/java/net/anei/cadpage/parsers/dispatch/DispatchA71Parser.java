@@ -28,7 +28,7 @@ public class DispatchA71Parser extends FieldProgramParser {
     return super.getField(name);
   }
   
-  private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR|SEC [NSEW]{1,2})", Pattern.CASE_INSENSITIVE);
   
   private class BaseAddressField extends AddressField {
     @Override
