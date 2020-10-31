@@ -14,7 +14,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
     super("FAYETTE COUNTY", "PA", 
           "( Date/Time:DATETIME! Call_Type:CALL! Location:ADDRCITY! Additional_Location:ADD_INFO! Cross_Streets:X! Caller_Name:NAME! " + 
               "( Narrative:INFO! INFO/N+ Units:UNIT! Talkgroup:CH! END " + 
-              "| Caller_Phone:PHONE? Units:UNIT! Talkgroup:CH! Narrative:INFO! INFO/N+ ) " + 
+              "| Caller_Phone:PHONE? Units:UNIT! Talkgroup:CH! Narrative:INFO! Common_Name:PLACE? Latitude:GPS1? Longitude:GPS2? INFO/N+ ) " + 
           "| Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:ADD_INFO! " + 
               "Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP! District:MAP/L! Beat:MAP/L! " + 
               "CFS_Number:ID! Primary_Incident:SKIP! Radio_Channel:CH! Narrative:INFO! INFO/N+ )");
