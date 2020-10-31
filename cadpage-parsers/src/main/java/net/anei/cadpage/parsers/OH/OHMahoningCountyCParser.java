@@ -10,8 +10,18 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 public class OHMahoningCountyCParser extends DispatchA19Parser {
   
   public OHMahoningCountyCParser() {
-    super(CITY_CODES, "MAHONING COUNTY", "OH");
+    this("MAHONING COUNTY", "OH");
   }
+  
+  public OHMahoningCountyCParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState);
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "OHMahoningCountyC";
+  }
+  
   
   @Override
   public String getFilter() {
