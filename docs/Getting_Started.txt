@@ -34,7 +34,7 @@ how to install that.
 
 1.1) You will need to bump the default heap allocation.  Find the eclipse.ini file and edit two lines to read
 -Xms512m
--Xmx4g
+-Xmx8g
 
 2)You need to install the standalone Android SDK tools.  Instructions on doing this can be found at 
 http://developer.android.com/sdk/installing/index.html?pkg=tools.
