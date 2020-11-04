@@ -367,6 +367,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "FIRE ISLAND",
       "FIRE ROAD",
       "FISH THICKET",
+      "FLORAL PARK",
       "FLOWER HILL",
       "FLOYD BENNETT",
       "FORT SALONGA",
@@ -704,7 +705,6 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "WOODS END",
       "YAPHANK MIDDLE ISLAND",
       "YAPHANK WOODS"
-    
   };
   
   static final CodeSet CALL_LIST = new CodeSet(
@@ -726,6 +726,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "BLEEDING / LACERATIONS",
       "BURNS (SCALDS) / EXPLOSION (BLAST)",
       "BURNS (SCALDS) / EXPLOSION (BLAST) MASTIC",
+      "BURNS / EXPLOSION",
       "CARBON MONOXIDE / INHALATION / HAZMAT / CBRN",
       "CARDIAC ARREST",
       "CARDIAC OR RESPIRATORY ARREST / DEATH",
@@ -776,6 +777,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "SICK",
       "SMOKE INVESTIGATION (OUTSIDE)",
       "STABBING / GUNSHOT / PENETRATING TRAUMA",
+      "STROKE (CVA) / (TIA)",
       "STROKE (CVA) / TRANSIENT ISCHEMIC ATTACK (TIA)",
       "STRUCTURE FIRE",
       "STRUCTURE FIRE - PULLBOX",
@@ -785,8 +787,10 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "TRAFFIC / TRANSPORTATION INCIDENTS",
       "TRAFFIC / TRANSPORTATION INCIDENTS JAMES",
       "TRAFFIC / TRANSPORTATION INCIDENTS MIDDLE",
+      "TRAUMATIC INJ",
       "TRAUMATIC INJURY (SPECIFIC)",
       "UNCONSCIOUS / FAINTING (NEAR)",
+      "UNK PROBLEM (PERSON DOWN)",
       "UNKNOWN PROBLEM",
       "UNKNOWN PROBLEM (PERSON DOWN)",
       "VEHICLE FIRE",
