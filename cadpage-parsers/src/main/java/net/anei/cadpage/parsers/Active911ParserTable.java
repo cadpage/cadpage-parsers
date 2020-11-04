@@ -1429,6 +1429,7 @@ public class Active911ParserTable {
       "US/OK/LakewoodFD",                 "OKBryanCounty",
       "US/OK/LoveCounty",                 "OKLoveCounty",
       "US/OK/MayesCounty",                "OKMayesCounty",
+      "US/OK/OklahomaCounty",             "OKOklahomaCountyB",
       "US/OK/SandSprings",                "OKSandSprings",
       "US/OK/SequoyahCounty",             "OKSequoyahCounty",
       "US/OR/Aurora",                     "ORMarionCountyA",
