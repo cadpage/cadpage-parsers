@@ -9,7 +9,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
   
   public OHSummitCountyHParser() {
     super("SUMMIT COUNTY", "OH", 
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
