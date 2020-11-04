@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +13,7 @@ public class ALShelbyCountyBParser extends FieldProgramParser {
   
   public ALShelbyCountyBParser() {
     super(CITY_CODES, "SHELBY COUNTY", "AL",
-          "CALL:CALL! ADDR:ADDR/S! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X! END");
+          "CALL:CALL! ADDR:ADDR/S! CITY:CITY! ID:ID! PRI:PRI! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X! LATLONG:GPS SentTime:DATETIME END");
   }
   
   @Override
@@ -31,6 +33,7 @@ public class ALShelbyCountyBParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
   
@@ -86,6 +89,18 @@ public class ALShelbyCountyBParser extends FieldProgramParser {
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      setTime(TIME_FMT, match.group(2), data);
     }
   }
   
