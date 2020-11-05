@@ -485,6 +485,7 @@ public class ParserList {
               ,"INHamiltonCounty"               ,"Hamilton County, IN"
               ,"INHancockCounty"                ,"Hancock County, IN"
               ,"INHarrisonCounty"               ,"Harrison County, IN"
+              ,"INHendricksCounty"              ,"Hendricks County, IN"
               ,"INHenryCounty"                  ,"Henry County, IN"
               ,"INHowardCounty"                 ,"Howard County, IN"
               ,"INJacksonCounty"                ,"Jackson County, IN"
