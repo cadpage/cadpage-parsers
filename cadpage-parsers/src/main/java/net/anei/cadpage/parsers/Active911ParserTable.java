@@ -1109,6 +1109,7 @@ public class Active911ParserTable {
       "US/NC/RoCoAnEn",                   "NCRowanCounty",
       "US/NC/RowanCounty",                "NCRowanCounty",
       "US/NC/RutherfordCounty",           "NCRutherfordCounty",
+      "US/NC/RWECC",                      "NCWakeCountyA,NCWakeCountyE",
       "US/NC/SampsonCounty",              "NCSampsonCounty",
       "US/NC/SampsonCountyNewton",        "NCSampsonCounty",
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
