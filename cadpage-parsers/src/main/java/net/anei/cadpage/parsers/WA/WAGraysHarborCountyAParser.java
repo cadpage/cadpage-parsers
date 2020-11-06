@@ -1,69 +1,55 @@
 package net.anei.cadpage.parsers.WA;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
-public class WAGraysHarborCountyAParser extends FieldProgramParser {
+public class WAGraysHarborCountyAParser extends DispatchA19Parser {
 
   public WAGraysHarborCountyAParser() {
-    super("GRAYS HARBOR COUNTY", "WA",
-      "CALL ( Xst:X | EMPTY ) ID!");
+    super(CITY_CODES, "GRAYS HARBOR COUNTY", "WA");
   }
 
   @Override
-  public String getProgram() {
-    return "UNIT CODE ADDR APT CITY PLACE " + super.getProgram();
+  public String getFilter() {
+    return "noreply@gh911.org";
   }
-  
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    subject = subject.split("\\|")[0];
-    if (!parseSubject(subject, data)) return false;
-    if (data.strCode.equals("")) {
-      setFieldList("INFO");
-      data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = body;
-      return true;
-    }
-    return parseFields(body.split("\n"), data);
+    if (!subject.equals("Rip-n-run Report")) return false;
+    int pt = body.indexOf("\n\n");
+    if (pt < 0) return false;
+    if (!body.substring(0,pt).equals("*** NEW RAPID NOTIFICATION REPORT ***")) return false;
+    body = body.substring(pt+2).trim();
+
+    int pt1 = body.indexOf("\n Nature:") + 1;
+    if (pt1 <= 0) return false;
+    int pt2 = body.indexOf("\nCross Streets:", pt1) + 1;
+    if (pt2 <= 0) return false;
+    int pt3 = body.indexOf("\nINCIDENT # ", pt2) + 1;
+    if (pt3 <= 0) return false;
+    int pt4 = body.indexOf("\nResponding Units:", pt3) + 1;
+    if (pt4 <= 0) return false;
+    int pt5 = body.indexOf("\nComments:", pt4) + 1;
+    if (pt5 <= 0) return false;
+    body = body.substring(0,pt1) +
+           body.substring(pt3,pt4) +
+           body.substring(pt1,pt2) +
+           body.substring(pt4,pt5) +
+           body.substring(pt2,pt3) +
+           body.substring(pt5);
+    return super.parseMsg(subject, body, data);
   }
 
-  private static final Pattern SUBJECT_PATTERN
-  = Pattern.compile("([^-]+?) - ?([^-]*?) - ?(.+?)(?:--(.*))?");
-  private boolean parseSubject(String subject, Data data) {
-    Matcher m = SUBJECT_PATTERN.matcher(subject);
-    if (m.matches()) {
-      data.strUnit = m.group(1).trim();
-      data.strCode = m.group(2).trim();
-      if (data.strCode.length() > 0) {
-        String addr = m.group(3).trim();
-        data.strPlace = getOptGroup(m.group(4));
-        
-        int pt = addr.lastIndexOf(',');
-        if (pt >= 0) {
-          data.strCity = convertCodes(addr.substring(pt+1).trim(), CITY_CODES);
-          addr = addr.substring(0,pt).trim();
-        }
-        parseAddress(addr, data);
-      }
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  protected Field getField(String name) {
-    if (name.equals("ID")) return new IdField("#([A-Z]{2}\\d{5} \\d{4})", true);
-    return super.getField(name);
-  }
-  
   private static Properties CITY_CODES = buildCodeTable(new String[] {
-      
+
       // Cities
       "ABD", "ABERDEEN",
       "COS", "COSMOPOLIS",
@@ -75,7 +61,7 @@ public class WAGraysHarborCountyAParser extends FieldProgramParser {
       "OCC", "OCEAN SHORES",
       "OCS", "OCEAN SHORES",
       "WES", "WESTPORT",
-      
+
 /*
   Census-designated places
 
