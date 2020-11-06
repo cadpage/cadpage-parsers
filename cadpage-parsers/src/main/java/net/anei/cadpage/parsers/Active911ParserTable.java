@@ -523,6 +523,7 @@ public class Active911ParserTable {
       "US/IN/MarshallCounty",             "INMarshallCounty",
       "US/IN/MiamiCounty",                "INMiamiCounty",
       "US/IN/Mooresville",                "INMorganCounty",
+      "US/IN/MooresvilleFD",              "INMorganCounty",
       "US/IN/NotreDame",                  "INStJosephCountyC",
       "US/IN/ParkeCounty",                "INParkeCounty",
       "US/IN/PorterCounty",               "INPorterCounty",
