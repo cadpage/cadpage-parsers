@@ -13,22 +13,24 @@ public class SCYorkCountyParser extends FieldProgramParser {
 
   public SCYorkCountyParser() {
     super("YORK COUNTY", "SC",
-          "( SELECT/3 ADDRCITY!" +
-          "| SELECT/2 UNIT! LOC:ADDRCITY! NAR:INFO2! " + 
-          "| UNIT! P:PRI! LOC:ADDRCITY! X:X! NAR:INFO " + 
+          "( SELECT/4 UNIT CALL ADDR! " +
+          "| SELECT/3 ADDRCITY!" +
+          "| SELECT/2 UNIT! LOC:ADDRCITY! NAR:INFO2! " +
+          "| UNIT! P:PRI! LOC:ADDRCITY! X:X! NAR:INFO " +
           ") INC#:ID! END");
   }
-  
+
   @Override
   public String getFilter() {
     return "paging@yorkcountygov.com";
   }
-  
-  private static final Pattern PREFIX_PTN = Pattern.compile("(?:((?:Initial|2nd|3rd|4th) Dispatch)|(Short Report)|(Call Complete))[- ]*");
-  
+
+  private static final Pattern PREFIX_PTN = Pattern.compile("(?:((?:Initial|2nd|3rd|4th) Dispatch)|(Short Report)|(Call Complete)|(UC/Cancel Further Response))[- ]*");
+  private static final Pattern STAR_DELIM = Pattern.compile("\\*(?! \\d+\\.)");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     Matcher match = PREFIX_PTN.matcher(body);
     if (match.lookingAt()) {
       body = body.substring(match.end());
@@ -36,10 +38,17 @@ public class SCYorkCountyParser extends FieldProgramParser {
       match = PREFIX_PTN.matcher(subject);
       if (!match.matches()) return false;
     }
+    if (match.group(4) != null) {
+      setSelectValue("4");
+      if (!parseFields(STAR_DELIM.split(body), data)) return false;
+      data.strCall = append("CANCEL", " - ", data.strCall);
+      return true;
+    }
     String selectValue = (match.group(1) != null ? "1" : match.group(2) != null ? "2" : "3");
     setSelectValue(selectValue);
     if (selectValue.equals("3")) data.msgType = MsgType.RUN_REPORT;
-    
+
+    body = body.replace("X:", " X:");
     return super.parseMsg(body, data);
   }
 
@@ -51,8 +60,8 @@ public class SCYorkCountyParser extends FieldProgramParser {
     if (name.equals("INFO2")) return new MyInfo2Field();
     return super.getField(name);
   }
-  
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?"); 
+
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
   private class MyAddressCityField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -68,18 +77,18 @@ public class SCYorkCountyParser extends FieldProgramParser {
       data.strCity = city;
       super.parse(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY  ST";
     }
   }
-  
+
   private static final Pattern CH_PREFIX_PTN = Pattern.compile("TAC|COMM", Pattern.CASE_INSENSITIVE);
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Parser p = new Parser(field);
       data.strCross = p.get('*');
       data.strPlace = p.get('*');
@@ -97,7 +106,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
           data.strCall = append(data.strCall, " - ", channel);
         }
         data.strName = p.get();
-  
+
         if (data.strPlace.length() > 0) {
           String tmp = new Parser(data.strPlace).get(' ');
           int ipt = data.strCity.indexOf(" " + tmp);
@@ -105,30 +114,31 @@ public class SCYorkCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "X PLACE CITY CALL CH NAME";
     }
   }
-  
+
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf("***");
+      if (pt < 0) pt = field.indexOf(" * ");
       if (pt >= 0) {
         setGPSLoc(field.substring(pt+3).trim(), data);
         field = field.substring(0,pt).trim();
       }
       super.parse(field,data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID GPS";
     }
   }
-  
+
   private class MyInfo2Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -142,7 +152,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CH";
