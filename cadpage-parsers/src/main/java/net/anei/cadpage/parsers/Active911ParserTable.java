@@ -998,6 +998,7 @@ public class Active911ParserTable {
       "US/MS/CityofHernando",             "MSHernando",
       "US/MS/CityofLouisville",           "MSWinstonCounty",
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
+      "US/MS/Gulfport",                   "MSHarrisonCountyB",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",
