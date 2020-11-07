@@ -10,17 +10,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Washington County, TN
  */
 public class TNWashingtonCountyParser extends FieldProgramParser {
-  
+
   public TNWashingtonCountyParser() {
-    super("WASHINGTON COUNTY", "TN", 
-          "CALL UNIT2? ADDR PLACE_X/Z+? MAP_TIME! END");
+    super("WASHINGTON COUNTY", "TN",
+          "CALL UNIT2? ADDR PLACE_X/Z+? MAP_TIME! GPS1/d GPS2/d END");
   }
-  
+
   @Override
   public String getFilter() {
     return "JCFDTEXT@johnsoncitytn.org,CAD@wc911.org";
   }
-  
+
   private static final Pattern HWY_11E_PTN = Pattern.compile("(HIGHWAY|HWY|US) +11 E\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern BRK_TIME_PTN = Pattern.compile(" \\d\\d?:\\d\\d:\\d\\d\\b");
   private static final String EXTRA = "Think green: ";
@@ -40,7 +40,7 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
 
     body = body.replace("(-1)", "");
     body = HWY_11E_PTN.matcher(body).replaceAll("$1 11E");
-    
+
     String tBody = body;
     if (tBody.contains("\n")) {
       pt = tBody.indexOf("\nXstr ");
@@ -51,13 +51,13 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
           tBody = tBody.substring(0,match.start()) + '\n' + tBody.substring(match.start()+1);
         }
       }
-      
+
       String[] flds = tBody.split("\n");
       if (flds.length >= 3) {
         return parseFields(flds, data);
       }
     }
-    
+
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
 
@@ -69,7 +69,7 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
     data.strCross = getOptGroup(match.group(4)).replaceAll(" *- *", " & ");
     data.strMap = getOptGroup(match.group(5));
     data.strTime = match.group(6);
-    
+
     match = SIGNAL_PTN.matcher(addr);
     if (match.matches()) addr = match.group(1);
     pt = addr.indexOf(';');
@@ -81,19 +81,19 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
       data.strPlace = getLeft();
     }
     if (data.strApt.equals("0")) data.strApt = "";
-    
+
     return true;
   }
-  
+
   @Override
   public Field getField(String  name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("UNIT2")) return new Unit2Field();
     if (name.equals("PLACE_X")) return new MyPlaceCrossField();
-    if (name.equals("MAP_TIME")) return new MyMapTimeField(); 
+    if (name.equals("MAP_TIME")) return new MyMapTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_PTN = Pattern.compile("(.*?)(?: ((?: ?\\b(?:[A-Z]{1,3}FD|[A-Z]+[0-9]+|\\d{3}|AGENCY|R10LVFD)\\b)+(?:,[,A-Z0-9]+)?))?(?: \\[([,0-9]+)\\])?");
   private class MyCallField extends Field {
 
@@ -113,16 +113,16 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
       return "CALL UNIT";
     }
   }
-  
+
   // UNIT2 Lists units if there wern'e included in the CPU field
   private static final Pattern UNIT_PTN = Pattern.compile("(?:[A-Z]+[0-9]+|AGENCY|[A-Z]{1,3}FD)(?:,[,A-Z0-9]+)?");
   private class Unit2Field extends UnitField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strUnit.length() > 0) return false;
@@ -163,22 +163,22 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
         data.strPlace = append(data.strPlace, " - ", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE GPS X";
     }
   }
-  
+
   private static final Pattern MAP_TIME_PTN = Pattern.compile("(?:Map ([-A-Za-z0-9,/ ]+) )?(\\d\\d?:\\d\\d:\\d\\d)(?: Case)?(?: (\\d*))?(?: Rcvd.*)?");
   private static final Pattern MAP_TIME_TRUNC_PTN = Pattern.compile("Map ([^:]+)(?: [0-9:]+)?");
   private class MyMapTimeField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = MAP_TIME_PTN.matcher(field);
@@ -188,7 +188,7 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
         data.strCallId = append(data.strCallId, "/", getOptGroup(match.group(3)));
         return true;
       }
-      
+
       if (field.equals("Map")) return true;
       match = MAP_TIME_TRUNC_PTN.matcher(field);
       if (!match.matches()) return false;
@@ -205,7 +205,7 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
     public String getFieldNames() {
       return "MAP TIME ID";
     }
-    
+
   }
 
   @Override
@@ -217,5 +217,5 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
   public String postAdjustMapAddress(String sAddress) {
     return sAddress.replace("OLD_STATE_ROUTE", "OLD STATE ROUTE");
   }
-  
+
 }
