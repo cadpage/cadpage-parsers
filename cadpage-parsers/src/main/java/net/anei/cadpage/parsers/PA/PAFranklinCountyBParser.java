@@ -8,28 +8,28 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAFranklinCountyBParser extends MsgParser {
-  
+
   public PAFranklinCountyBParser() {
     super("FRANKLIN COUNTY", "PA");
   }
-  
+
   @Override
   public String getFilter() {
     return "cadpaging@franklincountypa.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Paging")) return false;
-    
+
     FParser fp = new FParser(body);
-    
-    if (checkZipGPS(fp, 470, 40)) {  
+
+    if (checkZipGPS(fp, 470, 40)) {
       setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH ID");
       data.strCall = fp.get(20);
       parseAddress(fp.get(50), data);
@@ -50,8 +50,8 @@ public class PAFranklinCountyBParser extends MsgParser {
       data.strCallId = fp.get();
       return true;
     }
-    
-    if (checkZipGPS(fp, 449, 40)) {  
+
+    if (checkZipGPS(fp, 449, 40)) {
       setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH ID");
       data.strCall = fp.get(20);
       parseAddress(fp.get(50), data);
@@ -71,8 +71,8 @@ public class PAFranklinCountyBParser extends MsgParser {
       data.strCallId = fp.get();
       return true;
     }
-    
-    if (checkZipGPS(fp, 95, 40)) {  
+
+    if (checkZipGPS(fp, 95, 40)) {
       setFieldList("CALL ADDR APT CITY X GPS MAP UNIT CH");
       data.strCall = fp.get(20);
       parseAddress(fp.get(55), data);
@@ -89,7 +89,7 @@ public class PAFranklinCountyBParser extends MsgParser {
       if (ch.length() > 0) data.strChannel = ch;
       return true;
     }
-    
+
     if (fp.checkAhead(70, "Apt.")) {
       setFieldList("UNIT CALL ADDR APT CITY X GPS MAP");
       data.strUnit = fp.get(10).replace('-', '_');;
@@ -125,7 +125,7 @@ public class PAFranklinCountyBParser extends MsgParser {
       data.strMap = fp.get(20);
       return true;
     }
-    
+
     String call = fp.get(30);
     String addr = fp.get(30);
     if (addr.length() == 0) {
@@ -151,7 +151,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     if (!fp.checkBlanks(370)) return false;
     data.strApt = append(fp.get(10), "-", fp.get(10));
     data.strCity = fixCity(fp.get(35));
-    
+
     String zip = fp.lookahead(0, 10);
     if (ZIP_PTN.matcher(zip).matches()) {
       if (data.strCity.length() == 0) data.strCity = zip;
@@ -170,7 +170,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     data.strSupp = fp.get();
     return true;
   }
-  
+
   private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
   private static final Pattern GPS_PTN = Pattern.compile("\\d{8}  \\d{8}|0         0");
   private boolean checkZipGPS(FParser fp, int ndx, int offset) {
@@ -180,13 +180,13 @@ public class PAFranklinCountyBParser extends MsgParser {
     String gps = fp.lookahead(ndx+5+offset, 20);
     return GPS_PTN.matcher(gps).matches();
   }
-  
+
   private String fixCity(String city) {
     city = stripFieldEnd(city, " BORO");
     city = stripFieldEnd(city, " Boro");
     return city;
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)");
   private boolean parseDateTime(FParser fp, Data data) {
     String dateTime = fp.lookahead(0, 19);
@@ -197,7 +197,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     data.strTime = match.group(2);
     return true;
   }
-  
+
   private boolean parseGPS(FParser fp, Data data) {
     String gps1 = fp.get(8);
     if (!fp.check("  ")) return false;
@@ -214,7 +214,7 @@ public class PAFranklinCountyBParser extends MsgParser {
     setGPSLoc(gps1+','+gps2, data);
     return true;
   }
-  
+
   private static final Pattern GPS_COORD_PTN = Pattern.compile("(\\d\\d)(\\d{6})");
   private String cvtGps(String coord) {
     Matcher match = GPS_COORD_PTN.matcher(coord);
