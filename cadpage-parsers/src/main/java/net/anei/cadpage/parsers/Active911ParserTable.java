@@ -1010,6 +1010,7 @@ public class Active911ParserTable {
       "US/MT/GreatFalls",                 "MTCascadeCountyB",
       "US/MT/HavrePolice",                "MTHillCounty",
       "US/MT/KIC",                        "MTFlatheadCountyC,MTFlatheadCountyE",
+      "US/MT/LakeCounty",                 "MTLakeCounty",
       "US/MT/LewisandClarkCounty",        "MTLewisAndClarkCounty",
       "US/MT/MissoulaCounty",             "MTMissoulaCounty",
       "US/MT/ParkCounty",                 "MTParkCounty",

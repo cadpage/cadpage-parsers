@@ -955,6 +955,7 @@ public class ParserList {
               ,"MTFlatheadCounty"               ,"Flathead County, MT"
               ,"MTGallatinCounty"               ,"Gallatin County, MT"
               ,"MTHillCounty"                   ,"Hill County, MT"
+              ,"MTLakeCounty"                   ,"Lake County, MT"
               ,"MTLewisAndClarkCounty"          ,"Lewis And Clark County, MT"
               ,"MTMissoulaCounty"               ,"Missoula County, MT"
               ,"MTParkCounty"                   ,"Park County, MT"
