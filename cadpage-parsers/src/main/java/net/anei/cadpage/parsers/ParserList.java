@@ -911,6 +911,7 @@ public class ParserList {
               ,"MOJeffersonCity"                ,"Jefferson City, MO"
               ,"MOJeffersonCounty"              ,"Jefferson County, MO"
               ,"MOJohnsonCounty"                ,"Johnson County, MO"
+              ,"MOLacledeCounty"                ,"Laclede County, MO"
               ,"MOLawrenceCounty"               ,"Lawrence County, MO"
               ,"MOLincolnCounty"                ,"Lincoln County, MO"
               ,"MOLivingstonCounty"             ,"Livingston County, MO"
