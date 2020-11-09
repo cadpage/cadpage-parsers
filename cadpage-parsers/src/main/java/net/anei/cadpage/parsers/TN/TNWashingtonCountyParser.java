@@ -21,6 +21,11 @@ public class TNWashingtonCountyParser extends FieldProgramParser {
     return "JCFDTEXT@johnsoncitytn.org,CAD@wc911.org";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern HWY_11E_PTN = Pattern.compile("(HIGHWAY|HWY|US) +11 E\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern BRK_TIME_PTN = Pattern.compile(" \\d\\d?:\\d\\d:\\d\\d\\b");
   private static final String EXTRA = "Think green: ";
