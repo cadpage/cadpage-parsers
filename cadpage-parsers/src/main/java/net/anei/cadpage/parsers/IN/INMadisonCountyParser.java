@@ -3,16 +3,16 @@ package net.anei.cadpage.parsers.IN;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 public class INMadisonCountyParser extends GroupBestParser {
-  
+
   public INMadisonCountyParser() {
-    super(new INMadisonCountyAParser(), 
-          new INMadisonCountyBParser(), 
+    super(new INMadisonCountyAParser(),
+          new INMadisonCountyBParser(),
           new INMadisonCountyCParser(),
           new INMadisonCountyEParser());
   }
-  
+
   static final String[] CITY_LIST = new String[]{
-    
+
       // Cities and towns
       "ALEXANDRIA",
       "ANDERSON",
@@ -56,7 +56,7 @@ public class INMadisonCountyParser extends GroupBestParser {
       "RIGDON",
       "SOUTH ELWOOD",
       "SUNVIEW",
-  
+
       // Townships
       "ADAMS",
       "ANDERSON",
@@ -72,20 +72,21 @@ public class INMadisonCountyParser extends GroupBestParser {
       "STONY CREEK",
       "UNION",
       "VAN BUREN",
-      
+
       // Delaware County
       "DALEVILLE",
-      
+      "GASTON",
+
       // Grant County
       "FAIRMOUNT",
-      
+
       // Hamilton County
       "ATLANTA",
       "NOBLESVILLE",
 
       // Henry County
       "MIDDLETOWN",
-      
+
       // Hancock County
       "FORTVILLE"
   };
