@@ -5,21 +5,21 @@ import java.util.Properties;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class PAFranklinCountyCParser extends DispatchA19Parser {
-  
+
   public PAFranklinCountyCParser() {
     super(CITY_CODES, "FRANKLIN COUNTY", "PA");
   }
-  
+
   @Override
   public String getFilter() {
     return "FlexRapidNotification@dccnotify.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ADM", "ADAMS COUNTY",
       "ALG", "ALLEGANY COUNTY",
@@ -38,10 +38,12 @@ public class PAFranklinCountyCParser extends DispatchA19Parser {
       "CUM", "CUMBERLAND COUNTY",
       "DAU", "DAUPHIN COUNTY",
       "FAN", "FANNETT TWP",
+      "FRA", "FRANKLIN",
       "FRE", "FREDERICK COUNTY",
       "FUL", "FULTON COUNTY",
       "GAR", "GARRETT COUNTY",
       "GRC", "GREENCASTLE",
+      "GSC", "GREENCASTLE",
       "GRE", "GREENE TWP",
       "GUI", "GUILFORD TWP",
       "HAM", "HAMILTON TWP",

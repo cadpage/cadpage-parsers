@@ -12,46 +12,46 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Base class for parsing Spillman CAD system alerts
  */
 public class DispatchA19Parser extends FieldProgramParser {
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
   private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
   private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|Phone):");
   private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
-  
-  private boolean refLatLong = false; 
+
+  private boolean refLatLong = false;
   private double refLat;
   private double refLong;
   private String times;
-  
+
   public DispatchA19Parser(String defCity, String defState, double refLat, double refLong) {
     this(defCity, defState);
     refLatLong = true;
     this.refLat = refLat;
     this.refLong = refLong;
   }
-  
+
   public DispatchA19Parser(String defCity, String defState) {
     this(null, defCity, defState);
   }
-  
+
   public DispatchA19Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
           "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) data.strCallId = match.group(1);
-    
+
     if (body.startsWith("TIME - ")) {
       int pt = body.indexOf('\n');
       if (pt < 0) return false;
       body = body.substring(pt+1).trim();
     }
-    
+
     times = "";
     body = HASH_DELIM.matcher(body).replaceAll(":");
     body = FIELD_BREAK.matcher(body).replaceAll("\n$1:");
@@ -59,7 +59,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new BaseIdField();
@@ -75,14 +75,14 @@ public class DispatchA19Parser extends FieldProgramParser {
     if (name.equals("TIMES")) return new BaseTimesField();
     return super.getField(name);
   }
-  
+
   private class BaseIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
       data.strCallId = append(data.strCallId, "/", field);
     }
   }
-  
+
   private class BaseTimeDateField extends TimeDateField {
     @Override
     public void parse(String field, Data data) {
@@ -90,23 +90,23 @@ public class DispatchA19Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)[: ]*(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Reverse any accidently hash -> colon transformations
       field = field.replace(": ", " # ");
-      
+
       Matcher match = ADDR_CITY_ST_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
         data.strCity = match.group(2).trim();
         data.strState = match.group(3);
       }
-      
+
       String apt = null;
       String place = null;
       int pt = field.lastIndexOf(';');
@@ -137,11 +137,11 @@ public class DispatchA19Parser extends FieldProgramParser {
         }
       }
       if (place != null) data.strPlace = place;
-      
+
       super.parse(field, data);
       if (apt != null && !apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     private String checkApt(String field) {
       Matcher match = ADDR_APT_PTN.matcher(field);
       if (match.matches()) {
@@ -155,7 +155,7 @@ public class DispatchA19Parser extends FieldProgramParser {
       }
       return null;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR PLACE APT CITY ST";
@@ -175,32 +175,32 @@ public class DispatchA19Parser extends FieldProgramParser {
         data.strDate = match.group(2);
         return;
       }
-      
+
       match = DATE_TIME_OPER2_PTN.matcher(field);
       if (match.matches()) {
         data.strDate = match.group(1);
         data.strTime = match.group(2);
         return;
       }
-      
+
       match = PHONE_GPS_PTN.matcher(field);
       if (match.matches()) {
         data.strPhone = match.group(1);
         setGPSLoc(match.group(2) + "," + match.group(3), data);
         return;
       }
-      
+
       if (INFO_JUNK_PTN.matcher(field).matches()) return;
-      
+
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO TIME DATE GPS";
     }
   }
-  
+
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -215,15 +215,15 @@ public class DispatchA19Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern LAT_LON_PTN = Pattern.compile("Lat= *(\\S*) +Lon= *(\\S*)");
   private class BaseLatLonField extends GPSField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = LAT_LON_PTN.matcher(field);
@@ -231,12 +231,12 @@ public class DispatchA19Parser extends FieldProgramParser {
       setGPSLoc(match.group(1)+','+match.group(2), data);
       return true;
     }
-    
+
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   // Internal spillman X-Y Coordinates
   private static final Pattern XYPOS_PTN = Pattern.compile("xpos: *([-+]?\\d+) +ypos: *([-+]?\\d+)");
   private class BaseXYPosField extends GPSField {
@@ -251,7 +251,7 @@ public class DispatchA19Parser extends FieldProgramParser {
       data.strGPSLoc = String.format(Locale.US, "%+8.6f,%+8.6f", lat, lon);
     }
   }
-  
+
   private static final Pattern XYCOORD_PTN = Pattern.compile("([-+]?\\d{7,}|) +YCoords: *([-+]?\\d{7,}|)");
   private class BaseXYCoordField extends GPSField {
     @Override
@@ -264,7 +264,7 @@ public class DispatchA19Parser extends FieldProgramParser {
       if (lat.length() == 0 || lon.length() == 0) return;
       setGPSLoc(normalize(lat) + ',' + normalize(lon), data);
     }
-    
+
     private String normalize(String field) {
       int pt = 0;
       char chr = field.charAt(pt);
@@ -277,17 +277,32 @@ public class DispatchA19Parser extends FieldProgramParser {
       return field.substring(0,pt) + '.' + field.substring(pt);
     }
   }
-  
+
   // phone field has to contain a digit
   private static final Pattern LEGIT_PHONE_PTN = Pattern.compile(".*\\d.*");
   private class BasePhoneField extends PhoneField {
     @Override
     public void parse(String field, Data data) {
+
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        if (data.strGPSLoc.isEmpty()) {
+          String gps = field.substring(pt+1).trim();
+          setGPSLoc(gps, data);
+        }
+        field = field.substring(0,pt).trim();
+      }
+
       if (!LEGIT_PHONE_PTN.matcher(field).matches()) return;
       super.parse(field, data);
     }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS?";
+    }
   }
-  
+
   private static final Pattern TIMES_PTN = Pattern.compile("(\\S+ +[A-Z]+ +\\d\\d:\\d\\d:\\d\\d +\\d\\d/\\d\\d/\\d\\d)\\b *.*");
   private class BaseTimesField extends InfoField {
     @Override
