@@ -14,10 +14,10 @@ public class MOLacledeCountyParser extends DispatchA33Parser {
 
   @Override
   public String getFilter() {
-    return "LACLEDECOES@OMNIGO.COM>";
+    return "LACLEDECOES@OMNIGO.COM";
   }
 
-  private static final Pattern CROSS_TYPE_PTN = Pattern.compile("(.*?)(?:CON|COUNTY|RURAL|ION|EEN|UT|HWES|(?<=\\b(?:AVE?|DR|LN|MO|RD|ST|\\d+|^))[EH])");
+  private static final Pattern CROSS_TYPE_PTN = Pattern.compile("(.*?)(?:CON|COUNTY|RURAL|ION|EEN|UT|HWES|(?<=\\b(?:AVE?|DR|LN|MO|RD|ST|\\d{1,3}|^))[EH])");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
