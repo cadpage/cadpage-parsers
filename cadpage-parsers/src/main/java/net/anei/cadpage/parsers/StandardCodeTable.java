@@ -4,18 +4,18 @@ import java.util.Properties;
 
 /**
  * Code table containing the predefined standard MPDS medical and fire codes
- * 
+ *
  * The information used to build this table is copyrighted by
  * Priority Dispatch Corporation
  * http://www.prioritydispatch.net/
- * 
- * 
+ *
+ *
  */
 public class StandardCodeTable extends CodeTable {
-  
+
   public StandardCodeTable(String ... table) {
     super(
-        
+
         // 1. Abdominal Pain/Problems
         "01",       "Abdominal pain - Prealert",
         "01D01",    "Abdominal Pain - Not alert",
@@ -28,8 +28,8 @@ public class StandardCodeTable extends CodeTable {
         "01C06",    "Abdominal Pain - Females with pain above navel > 45",
         "01A01",    "Abdominal Pain",
         "01A02",    "Abdominal Pain - Testicle or groin pain (male)",
-        
-        /// 2. Allergies(Reactions)/Envenomations (Stings/Bites) 
+
+        /// 2. Allergies(Reactions)/Envenomations (Stings/Bites)
         "02",       "Alergic reaction - Prealert",
         "02E01",    "Allergic reaction - Ineffective breathing",
         "02D01",    "Allergic reaction - Not alert",
@@ -41,8 +41,8 @@ public class StandardCodeTable extends CodeTable {
         "02B01",    "Allergic reaction - Unknown status",
         "02A01",    "Allergic reaction - No difficulty breathing/swallowing",
         "02A02",    "Spider bite",
-        
-        // 3. Animal Bites/Attacks 
+
+        // 3. Animal Bites/Attacks
         "03",       "Animal bite - Prealert",
         "03D01",    "Animal bite - Arrest",
         "03D02",    "Animal bite - Unconscious",
@@ -60,7 +60,7 @@ public class StandardCodeTable extends CodeTable {
         "03A02",    "Animal bite - Non-recent injuries (≥6 hours)",
         "03A03",    "Animal bite - Superficial injuries",
 
-        //4. Assault/Sexual Assault 
+        //4. Assault/Sexual Assault
         "04",       "Assault - Prealert",
         "04D01",    "Assault - Arrest",
         "04D02",    "Assault - Unconscious",
@@ -73,8 +73,8 @@ public class StandardCodeTable extends CodeTable {
         "04A01",    "Assault - Not dangerous body area with deformity",
         "04A02",    "Assault - Not dangerous body area",
         "04A03",    "Assault - Non-recent injuries (≥6 hours)",
-        
-        // 5. Back Pain (Non-Traumatic or Non-Recent Trauma) 
+
+        // 5. Back Pain (Non-Traumatic or Non-Recent Trauma)
         "05",       "Back pain - Prealert",
         "05D01",    "Back Pain - Not alert",
         "05D02",    "Back Pain - Ashen or gray color reported >= 50",
@@ -84,8 +84,8 @@ public class StandardCodeTable extends CodeTable {
         "05C04",    "Back Pain - Non-Traumatic or Non-Recent Trauma - Difficulty breathing",
         "05A01",    "Back Pain - Non-traumatic",
         "05A02",    "Non-recent traumatic back pain (≥6 hours)",
-        
-        // 6. Breathing Problems 
+
+        // 6. Breathing Problems
         "06",       "Breathing Problems - Prealert",
         "06E01",    "Breathing Problems - Ineffective breathing",
         "06D01",    "Breathing Problems - Not alert",
@@ -95,8 +95,8 @@ public class StandardCodeTable extends CodeTable {
         "06D05",    "Breathing Problems - Tracheostomy (obvious distress)",
         "06C01",    "Breathing Problems - Abnormal breathing",
         "06C02",    "Breathing Problems - Tracheostomy (no obvious distress)",
-        
-        // 7. Burns (Scalds)/Explosions 
+
+        // 7. Burns (Scalds)/Explosions
         "07",       "Burns - Prealert",
         "07E01",    "Burns - Person on fire",
         "07D01",    "Burns - Multiple victims",
@@ -115,8 +115,8 @@ public class StandardCodeTable extends CodeTable {
         "07A03",    "Burns - Minor burns",
         "07A04",    "Burns - Sunburn",
         "07A05",    "Burns - Non-recent (>= 6 hours)",
-        
-        //8. Carbon Monoxide/Inhalation/Hazmat 
+
+        //8. Carbon Monoxide/Inhalation/Hazmat
         "08",       "Carbon Monoxide - Prealert",
         "08D01",    "Carbon Monoxide - Unconscious",
         "08D02",    "Carbon Monoxide - Arrest",
@@ -128,8 +128,8 @@ public class StandardCodeTable extends CodeTable {
         "08B01",    "Carbon Monoxide - Alert without difficulty breathing",
         "08O01",    "CO detector alarm (without priority symptoms)",
         "08O02",    "CO detector alarm (no scene contact)",
-        
-        /// 9. Cardiac or Respiratory Arrest/Death 
+
+        /// 9. Cardiac or Respiratory Arrest/Death
         "09",       "Cardiac or Respiratory Arrest - Prealert",
         "09E01",    "Suspected workable arrest – Not breathing at all",
         "09E02",    "Suspected workable arrest – Uncertain Breathing",
@@ -154,8 +154,8 @@ public class StandardCodeTable extends CodeTable {
         "09O01X",   "Expected death: Terminal illness",
         "09O01Y",   "Expected death: DNR",
         "09O01Z",   "Expected death: Condition Z User Defined",
-               
-        // 10. Chest pain 
+
+        // 10. Chest pain
         "10",        "Chest Pain - Prealert",
         "10D01",     "Chest Pain - Not alert",
         "10D02",     "Chest Pain - Difficulty speaking between breaths",
@@ -167,14 +167,14 @@ public class StandardCodeTable extends CodeTable {
         "10C03",     "Chest Pain - Breathing normally ≥35",
         "10A01",     "Chest Pain - Breathing normally <35",
 
-        ///11. Choking 
+        ///11. Choking
         "11",        "Choking - Prealert",
         "11E01",     "Choking - Complete obstruction/inefective breathing",
         "11D01",     "Choking - Abnormal breathing (partial obstruction)",
         "11D02",     "Choking - Not alert",
         "11A01",     "Choking - Not choking now",
 
-        // 12. Convulsions/Seizures 
+        // 12. Convulsions/Seizures
         "12",        "Convulsions/Seizure - Prealert",
         "12D01",     "Convulsions/Seizure - Not breathing",
         "12D02",     "Convulsions/Seizure - Continuous or multiple seizures",
@@ -194,7 +194,7 @@ public class StandardCodeTable extends CodeTable {
         "12A04",     "Convulsions/Seizure - Focal/absence seizure (alert)",
         "12A05",     "Convulsions/Seizure - Impending seizure (aura)",
 
-        // 13. Diabetic Problems 
+        // 13. Diabetic Problems
         "13",        "Diabetic Problem - Prealert",
         "13D01",     "Diabetic Problem - Unconscious",
         "13C01",     "Diabetic Problem - Not alert",
@@ -202,7 +202,7 @@ public class StandardCodeTable extends CodeTable {
         "13C03",     "Diabetic Problem - Abnormal breathing",
         "13A01",     "Diabetic Problem - Alert and behaving normally",
 
-        // 14. Drowning (Near)/Diving/Scuba Accident 
+        // 14. Drowning (Near)/Diving/Scuba Accident
         "14",        "Drowning - Prealert",
         "14E01",     "Drowning - Arrest (out of water)",
         "14E02",     "Drowning - Underwater (domestic rescue)",
@@ -218,7 +218,7 @@ public class StandardCodeTable extends CodeTable {
         "14B03",     "Drowning - Unknown status",
         "14A01",     "Drowning - Alert and breathing normally (no injuries and out of water)",
 
-        // 15. Electrocution/Lightning 
+        // 15. Electrocution/Lightning
         "15",        "Electrocution - Prealert",
         "15E01",     "Electrocution - Not breathing/ineffective breathing",
         "15D01",     "Electrocution - Multiple victims",
@@ -232,15 +232,15 @@ public class StandardCodeTable extends CodeTable {
         "15D09",     "Electrocution - Unknown status",
         "15C01",     "Electrocution - Alert and breathing normally",
 
-        // 16. Eye Problems/Injuries 
+        // 16. Eye Problems/Injuries
         "16",        "Eye Injury - Prealert",
         "16D01",     "Eye Injuries - Not alert",
         "16B01",     "Eye Injuries - Severe",
         "16A01",     "Eye Injuries - Moderate",
         "16A02",     "Eye Injuries - Minor",
         "16A03",     "Eye Injuries - Medical problem",
-        
-        // 17. Falls 
+
+        // 17. Falls
         "17",        "Fall - Prealert",
         "17D01",     "Fall - Extreme fall (>30ft)",
         "17D02",     "Fall - Arrest",
@@ -255,8 +255,8 @@ public class StandardCodeTable extends CodeTable {
         "17A02",     "Fall - Not dangerous body area",
         "17A03",     "Fall - Not recent (>= 6 hours)",
         "17A04",     "Fall - Public assist (no injuries and no priority symptoms)",
-        
-        // 18. Headache 
+
+        // 18. Headache
         "18",        "Headache - Prealert",
         "18C01",     "Headache - Not alert",
         "18C02",     "Headache - Abnormal breathing",
@@ -268,7 +268,7 @@ public class StandardCodeTable extends CodeTable {
         "18B01",     "Headache - Unknown status",
         "18A01",     "Headache - Breathing normally",
 
-        // 19. Heart Problems/AICD (Automatic Implanted Cardiac Defibrillator) 
+        // 19. Heart Problems/AICD (Automatic Implanted Cardiac Defibrillator)
         "19",        "Heart Problem - Prealert",
         "19D01",     "Heart Problem - Not alert",
         "19D02",     "Heart Problem - Difficulty speaking between breaths",
@@ -285,7 +285,7 @@ public class StandardCodeTable extends CodeTable {
         "19A01",     "Heart Problem - Heart rate >= 50 and < 130",
         "19A02",     "Heart Problem - Chest pain/discomfort < 35",
 
-        // 20. Heat/Cold Exposure 
+        // 20. Heat/Cold Exposure
         "20",        "Exposure - Prealert",
         "20D01",     "Exposure - Not alert",
         "20D02",     "Exposure - Multiple victims (w/ priority symptoms)",
@@ -294,7 +294,7 @@ public class StandardCodeTable extends CodeTable {
         "20B02",     "Exposure - Unknown status",
         "20A01",     "Exposure - Alert",
 
-        // 21. Hemorrhage/Lacerations 
+        // 21. Hemorrhage/Lacerations
         "21",        "Hemorrhage/Laceration - Prealert",
         "21D01",     "Hemorrhage/Laceration - Arrest",
         "21D02",     "Hemorrhage/Laceration - Unconscioius",
@@ -311,7 +311,7 @@ public class StandardCodeTable extends CodeTable {
         "21A01",     "Not dangerous hemorrhage",
         "21A02",     "Minor hemorrhage",
 
-        // 22. Industrial/Machinery Accidents 
+        // 22. Industrial/Machinery Accidents
         "22",        "Industrial/Machinery Accident - Prealert",
         "22D01",     "Industrial/Machinery Accident - Entrapment",
         "22D02",     "Industrial/Machinery Accident - Trench collapse",
@@ -324,7 +324,7 @@ public class StandardCodeTable extends CodeTable {
         "22B03",     "Industrial/Machinery Accident - Unknown status",
         "22A01",     "Industrial/Machinery Accident - No longer trapped (no inj)",
 
-        // 23. Overdose/Poisoning (Ingestion) 
+        // 23. Overdose/Poisoning (Ingestion)
         "23",        "Poisoning - Prealert",
         "23D01",     "Overdose/Poisoning - Unconscious",
         "23D02",     "Overdose/Poisoning - Changing color",
@@ -339,7 +339,7 @@ public class StandardCodeTable extends CodeTable {
         "23B01",     "Overdose (without priority symptoms)",
         "23O01",     "Poisoning (without priority symptoms)",
 
-        // 24. Pregnancy/Childbirth/Miscarriage 
+        // 24. Pregnancy/Childbirth/Miscarriage
         "24",        "Pregnancy/Childbirth - Prealert",
         "24D01",     "Childbirth - Breech or cord",
         "24D02",     "Childbirth - Head visible or out",
@@ -358,7 +358,7 @@ public class StandardCodeTable extends CodeTable {
         "24A02",     "Miscarriage - Confirmed STILLBIRTH situation (>= 6mo/24wks and no complications)",
         "24O01",     "Pregnancy - Waters broken",
 
-        // 25. Psychiatric/Abnormal Behavior/Suicide Attempt 
+        // 25. Psychiatric/Abnormal Behavior/Suicide Attempt
         "25",        "Psychiatric/Suicide - Prealert",
         "25D01",     "Psychiatric/Suicide - Not alert",
         "25D02",     "Psychiatric/Suicide - Dangerous hemorrhage",
@@ -371,8 +371,8 @@ public class StandardCodeTable extends CodeTable {
         "25B06",     "Psychiatric/Suicide - Unknown status",
         "25A01",     "Psychiatric/Suicide - Non-suicidal and alert",
         "25A02",     "Psychiatric/Suicide - Suicidal (non threatening) and alert",
-        
-        // 26. Sick Person (Specific Diagnosis) 
+
+        // 26. Sick Person (Specific Diagnosis)
         "26",        "Sick - Prealert",
         "26D01",     "Sick - Not alert",
         "26C01",     "Sick - Altered level of conciousness",
@@ -420,7 +420,7 @@ public class StandardCodeTable extends CodeTable {
         "26O27",     "Sick - Toothache",
         "26O28",     "Sick - Wound infected",
 
-        // 27. Stab/Gunshot/Penetrating Trauma 
+        // 27. Stab/Gunshot/Penetrating Trauma
         "27",        "Penetrating Trauma - Prealert",
         "27D01",     "Penetrating Trauma - Arrest",
         "27D02",     "Penetrating Trauma - Unconscious",
@@ -435,7 +435,7 @@ public class StandardCodeTable extends CodeTable {
         "27B05",     "Penetrating Trauma - Obvious death",
         "27A01",     "Penetrating Trauma - Non-recent (≥6 hours) peripheral wounds",
 
-        //28. Stroke (CVA) 
+        //28. Stroke (CVA)
         "28",        "Stroke - Prealert",
         "28C01",     "Stroke - Not alert",
         "28C02",     "Stroke - Abnormal breathing",
@@ -451,7 +451,7 @@ public class StandardCodeTable extends CodeTable {
         "28C12",     "Stroke - Unknown status",
         "28A01",     "Stroke - Breathing normally <35",
 
-        // 29. Traffic/Transportation Accidents 
+        // 29. Traffic/Transportation Accidents
         "29",        "MVA - Prealert",
         "29D01",     "Major incident",
         "29D01A",    "Major incident: Aircraft",
@@ -489,7 +489,7 @@ public class StandardCodeTable extends CodeTable {
         "29A02",     "MVA - No injuries reported (unconfirmed or >= 5 persons involved",
         "29O01",     "MVA - No injuries (confirmed for up to 4 persons)",
 
-        // 30. Traumatic Injuries (Specific) 
+        // 30. Traumatic Injuries (Specific)
         "30",        "Trauma - Prealert",
         "30D01",     "Trauma - Arrest",
         "30D02",     "Trauma - Unconscious",
@@ -502,8 +502,8 @@ public class StandardCodeTable extends CodeTable {
         "30A01",     "Trauma - Not dangerous body area with deformity",
         "30A02",     "Trauma - Not dangerous body area",
         "30A03",     "Trauma - Non-recent injuries (≥6 hours)",
-        
-        // 31. Unconscious/Fainting (Near) 
+
+        // 31. Unconscious/Fainting (Near)
         "31",        "Unconscious/Fainting - Prealert",
         "31E01",     "Unconscious - Ineffective breathing",
         "31D01",     "Unconscious - Agonal/Ineffective breathing",
@@ -524,8 +524,8 @@ public class StandardCodeTable extends CodeTable {
         "32B02",     "Medical Nature Unknown - Medical alert notification",
         "32B03",     "Medical Nature Unknown",
         "32B04",     "Medical Nature Unknown - Callers language not understood",
-        
-        //33. Transfer/Interfacility/Palliative Care 
+
+        //33. Transfer/Interfacility/Palliative Care
         "33",        "Transfer - Prealert",
         "33D01",     "Transfer - Suspected cardiac or respiratory arrest",
         "33D02",     "Transfer - Just resuscitated and/or defibrillated (external)",
@@ -539,7 +539,7 @@ public class StandardCodeTable extends CodeTable {
         "33A01",     "Transfer - Acuity I (no priority symptoms)",
         "33A02",     "Transfer - Acuity II (no priority symptoms)",
         "33A03",     "Transfer - Acuity III (no priority symptoms)",
-        
+
         //34. ACN (Automatic crash notification)
         "34",        "ACN - Prealert",
         "34D01",     "ACN - High mechanism",
@@ -560,7 +560,7 @@ public class StandardCodeTable extends CodeTable {
         "34B05",     "ACN - Unknown situation",
         "34A01",     "ACN - Not dangerous injuries",
         "34O01",     "ACN - No injuries",
-        
+
         //36. Pandemic/Epidemic/Outbreak
         "36D01",     "Epidemic - Ineffective breathing with flu symptoms",
         "36D02",     "Epidemic - Difficulty speaking between breaths with flu symptoms",
@@ -574,8 +574,8 @@ public class StandardCodeTable extends CodeTable {
         "36A01",     "Epidemic - Chest pain/discomfort <35 with single flu smymptom",
         "36A02",     "Epidemic - Chest pain/discomfort <35 with multiple flu smymptoms",
         "36A03",     "Epidemic - Flue symptoms only",
-        
-        //37. Interfacility Evaluation/Transfer 
+
+        //37. Interfacility Evaluation/Transfer
         "37",        "Evaluation - Prealert",
         "37D01",     "Evaluation - Not breathing/ineffective breathing",
         "37D02",     "Evaluation - Evaluation",
@@ -595,7 +595,7 @@ public class StandardCodeTable extends CodeTable {
         "37A02",     "Evaluation - Transfer level I",
         "37A03",     "Evaluation - Transfer level II",
         "37A04",     "Evaluation - Transfer level III",
-        
+
         // 51. Aircraft Emergency
         "51",     "Aircraft Emergency - Prealert",
         "51O01",  "Aircraft Emergency - Airborne Aircraft",
@@ -613,7 +613,7 @@ public class StandardCodeTable extends CodeTable {
         "51D04",  "Aircraft Emergency - Coastal water aircraft emergency",
         "51D05",  "Aircraft Emergency - Inland water aircraft emergency",
         "51D06",  "Aircraft Emergency - Oceanic water aircraft emergency",
-        
+
         // 52. Alarms
         "52",     "Alarms - Prealert",
         "52O01",  "Alarms - Burglary/intrusion, etc",
@@ -639,7 +639,7 @@ public class StandardCodeTable extends CodeTable {
         "52C02",  "Alarms - High Rise",
         "52C03",  "Alarms - Commercial/industrial building",
         "52C04",  "Alarms - Residential (multiple)",
-        
+
         // 53. Citizen assist/service call
         "53",     "Citizen assist/service call - Prealert",
         "53O01",  "Citizen assist/service call - Locked out of vehicle (unoccupied)",
@@ -665,7 +665,7 @@ public class StandardCodeTable extends CodeTable {
         "53C00",  "Citizen assist/service call",
         "53C01",  "Citizen assist/service call - Water problem with electrical hazard",
         "53C02",  "Citizen assist/service call - Service call (multiple units)",
-        
+
         // 54. Confined Space/structure collapse
         "54",     "Confined space/structure collapse - Prealert",
         "54B01",  "Confined space/structure collapse - Entrapment (unconfirmed)",
@@ -675,7 +675,7 @@ public class StandardCodeTable extends CodeTable {
         "54D00",  "Confined Space/structure collapse",
         "54D01",  "Confined Space/structure collapse - Entrapment (confirmed)",
         "54D02",  "Confined Space/structure collapse - Entrapment (confirmed) w/ hazardous materials",
-        
+
         // 55. Electrical Hazard
         "55",     "Electrical Hazard - Prealert",
         "55A01",  "Electrical Hazard - Transformer Outside",
@@ -692,7 +692,7 @@ public class StandardCodeTable extends CodeTable {
         "55C03",  "Electrical Hazard - Substation/Distribution Station",
         "55C04",  "Electrical Hazard - Underground Electrical Problem (vault/manhole)",
         "55C05",  "Electrical Hazard - Solar farm",
-        
+
         // 56. Elevator/Escalator Rescue
         "56",     "Elevator/Escalator Rescue - Prealert",
         "56O01",  "Elevator/Escalator Rescue - Elevator malfunction - no occupants inside",
@@ -706,7 +706,7 @@ public class StandardCodeTable extends CodeTable {
         "56D00",  "Elevator/Escalator Rescue",
         "56D01",  "Elevator/Escalator Rescue - Escalator entrapment with injuries",
         "56D02",  "Elevator/Escalator Rescue - Elevator accident",
-        
+
         // 57. Explosion
         "57",     "Explosion - Prealert",
         "57B01",  "Explosion - Vehicle explosion",
@@ -727,7 +727,7 @@ public class StandardCodeTable extends CodeTable {
         "57D09",  "Explosion - Commercial vehicle",
         "57D10",  "Explosion - Large fuel/fire load vehicle",
         "57D11",  "Explosion - Mobile home, house trailer, portable office",
-        
+
         // 58. Extrication/Entrapped
         "58",     "Extrication/Entrapped (Machinery, Veh) - Prealert",
         "58O01",  "Extrication/Entrapped (Machinery, Veh) - No longer trapped",
@@ -741,7 +741,7 @@ public class StandardCodeTable extends CodeTable {
         "58C01",  "Extrication/Entrapped (Unkn body part)",
         "58D00",  "Extrication/Entrapped (Machinery, Veh)",
         "58D01",  "Extrication/Entrapped (Machinery, Veh) - Entrapment (except peripheral)",
-        
+
         // 59. Fuel Spill
         "59",     "Fuel Spill - Prealert",
         "59O01",  "Fuel Spill - Minor Spill",
@@ -758,7 +758,7 @@ public class StandardCodeTable extends CodeTable {
         "59D02",  "Fuel Spill - Inland water",
         "59D03",  "Fuel Spill - Oceanic water",
         "59D04",  "Fuel Spill - Sewer/Drain",
-        
+
         // 60. Gas leak/Gas odor
         "60",     "Gas leak/Gas odor - Prealert",
         "60B01",  "Gas leak/Gas odor - Outside residential line",
@@ -776,7 +776,7 @@ public class StandardCodeTable extends CodeTable {
         "60D02",  "Gas leak/Gas odor - High rise",
         "60D03",  "Gas leak/Gas odor - Commercial/industrial building",
         "60D04",  "Gas leak/Gas odor - Residential (multiple)",
-        
+
         // 61. HazMat
         "61",     "HazMat - Prealert",
         "61A01",  "HazMat - Abaondoned waste",
@@ -793,7 +793,7 @@ public class StandardCodeTable extends CodeTable {
         "61D04",  "HazMat - Uncontained chemical suicide",
         "61D05",  "Hazmat - Oceanic water",
         "61D06",  "Hazmat - Sewer Drain",
-        
+
         // 62. High Angle Rescue
         "62",     "High Angle Rescue - Prealert",
         "62B01",  "High Angle Rescue - Unknown situation",
@@ -804,7 +804,7 @@ public class StandardCodeTable extends CodeTable {
         "62D03",  "High Angle Rescue - High angle w/ single injured person",
         "62D04",  "High Angle Rescue - High angle w/ multiple injured persons",
         "62D05",  "High Angle Rescue - unknown # of injuries",
-        
+
         // 63. Lightning Strike
         "63",     "Lightning Strike - Prealert",
         "63B01",  "Lightning Strike - Residential (single)",
@@ -820,7 +820,7 @@ public class StandardCodeTable extends CodeTable {
         "63C03",  "Lightning Strike - Commercial/ industrial building",
         "63C04",  "Lightning Strike - Residential (multiple)",
         "63C05",  "Lightning Strike - Outdoor Event (sporting event/concert/campground)",
-        
+
         // 64. Marine Fire
         "64",     "Marine Fire - Prealert",
         "64B01",  "Marine Fire - Extinguished fire",
@@ -835,7 +835,7 @@ public class StandardCodeTable extends CodeTable {
         "64D07",  "Marine Fire - Oceanic water",
         "64D08",  "Marine Fire - Inland water",
         "64D09",  "Marine Fire - Dry dock/on land",
-        
+
         // 65. Mutual aid/Assist outside agency
         "65",     "Mutual aid/Assist outside agency - Prealert",
         "65A01",  "Mutual aid/Assist outside agency - Mutual aid to incident (multiple units - cold)",
@@ -850,7 +850,7 @@ public class StandardCodeTable extends CodeTable {
         "65D00",  "Mutual aid/Assist outside agency",
         "65D01",  "Mutual aid/Assist outside agency - Mutual aide to incident (multiple units - hot)",
         "65D02",  "Mutual aid/Assist outside agency - Assist outside agency (multiple units - hot)",
-        
+
         // 66. Odor
         "66",     "Odor - Prealert",
         "66A01",  "Odor - Odor inside",
@@ -862,7 +862,7 @@ public class StandardCodeTable extends CodeTable {
         "66C02",  "Odor - Odor inside with multiple sick persons",
         "66C03",  "Odor - Odor outside with single sick person",
         "66C04",  "Odor - Odor outside with multiple sick persons",
-        
+
         // 67. Outside Fire
         "67",     "Outside Fire - Prealert",
         "67O01",  "Outside Fire - Controlled Burn",
@@ -883,14 +883,14 @@ public class StandardCodeTable extends CodeTable {
         "67D05",  "Outside Fire - Refinery/Tank farm/Fuel storage",
         "67E00",  "Outside Fire",
         "67E01",  "Outside Fire - Person on fire (outside)",
-        
+
         // 68. Smoke Investigation
         "68",     "Smoke Investigation - Prealert",
         "68A01",  "Smoke Investigation (outside) - Light smoke",
         "68A02",  "Smoke Investigation (outside) - Odor of smoke",
         "68C00",  "Smoke Investigation (outside)",
         "68C01",  "Smoke Investigation (outside) - Heavy smoke",
-        
+
         // 69. Structure Fire
         "69",     "Structure Fire - Prealert",
         "69C01",  "Structure Fire - Appliance (contained)",
@@ -921,7 +921,7 @@ public class StandardCodeTable extends CodeTable {
         "69E10",  "Structure Fire - Mobile home, house trailer portable office",
         "69E11",  "Structure Fire - Building/Structure over water",
         "69E12",  "Structure Fire - Unknown building/structure type",
-        
+
         // 70. Trail and Rail collision/derailment
         "70",     "Trail and Rail collision/derailment - Prealert",
         "70C01",  "Trail and Rail collision/derailment - Large fuel/fire load vehicle on tracks",
@@ -938,7 +938,7 @@ public class StandardCodeTable extends CodeTable {
         "70D07",  "Trail and Rail collision/derailment - Collision/derailment in tunnel",
         "70D08",  "Trail and Rail collision/derailment - Collision/derailment on bridge/trestle",
         "70D09",  "Trail and Rail collision/derailment - Collision/derailment into/over water",
-        
+
         // 71. Vehicle Fire
         "71",     "Vehicle Fire - Prealert",
         "71A01",  "Vehicle Fire - Vehicle fire (extinguished)",
@@ -960,7 +960,7 @@ public class StandardCodeTable extends CodeTable {
         "71D05",  "Vehicle Fire - Large fuel",
         "71D06",  "Vehicle Fire - Agricultural/Farm/Excavation machinery",
         "71E01",  "Vehicle Fire - occupants trapped",
-        
+
         // 72. Water Rescue
         "72",     "Water Rescue - Prealert",
         "72A01",  "Water Rescue - Animal rescue",
@@ -985,7 +985,7 @@ public class StandardCodeTable extends CodeTable {
         "72E00",  "Water Rescue",
         "72E01",  "Water Rescue - Sinking vehicle",
         "72E02",  "Water Rescue - Vehicle in floodwater (threatened)",
-        
+
         // 73. Watercraft in distress
         "73",     "Watercraft in distress - Prealert",
         "73A01",  "Watercraft in distress - Watercraft welfare check",
@@ -1000,7 +1000,7 @@ public class StandardCodeTable extends CodeTable {
         "73D03",  "Watercraft in distress - Flare sighting (red or orange)",
         "73D04",  "Watercraft in distress - Collision",
         "73D05",  "Watercraft in distress - Unknown situation",
-        
+
         // 74. Suspicious package/bomb thread
         "74",     "Suspicious package/bomb threat - Prealert",
         "74A01",  "Suspicious package/bomb threat - Ordnance/Explosives found",
@@ -1019,7 +1019,7 @@ public class StandardCodeTable extends CodeTable {
         "74D04",  "Suspicious package/bomb threat - Suspicious package w/ multiple sick/injured persons",
         "74D05",  "Suspicious package/bomb threat - Military ordnance/explosives found with single sick/injured person",
         "74D06",  "Suspicious package/bomb threat - Military ordnance/explosives found with multiple sick/injured persons",
-        
+
         // 75. Train and rail fire
         "75",     "Train and rail fire - Prealert",
         "75O01",  "Train and rail fire - Moving train",
@@ -1034,13 +1034,13 @@ public class StandardCodeTable extends CodeTable {
         "75D06",  "Train and rail fire - Train fire in tunnel",
         "75D07",  "Train and rail fire - Train fire on bridge/trestle",
         "75D08",  "Train and rail fire - Train fire into/over water",
-        
+
         // 76. Bomb threat
         "76",     "Bomb Threat - Prealert",
         "76B01",  "Bomb Threat",
         "76C00",  "Bomb Threat",
         "76C01",  "Bomb Threat - Suspect caller",
-        
+
         // 77. Motor Vehicle Collisioin
         "77",     "Motor vehicle collision - Prealert",
         "77O01",  "Motor vehicle collision - Vehicle blocking traffic",
@@ -1066,7 +1066,7 @@ public class StandardCodeTable extends CodeTable {
         "77D09",  "Motor vehicle collision - Unstable vehicle",
         "77D10",  "Motor vehicle collision - Commercial vehicle",
         "77E01",  "Motor vehicle collision - On fire and occupants trapped",
-        
+
         // 78. Backcounty rescue
         "78",        "Backcountry Rescue - Prealert",
         "78B01",     "Backcountry Rescue - Unknown situation (investigation)",
@@ -1146,16 +1146,16 @@ public class StandardCodeTable extends CodeTable {
         "83D03",     "Weather/Disaster Situations - Immediate Danger",
         "83D04",     "Weather/Disaster Situations - Critical Infrastructure",
         "83O01",     "Weather/Disaster Situations - Referral",
-        
+
         "90",     "Cardiac/Respiratory Arrest - Not breathing",
         "900",    "Cardiac/Respiratory Arrest - Breathing uncertain",
         "9000",   "Cardiac/Respiratory Arrest - Hanging",
         "90000",  "Cardiac/Respiratory Arrest - Strangulation",
         "900000", "Cardiac/Respiratory Arrest - Suffocation",
         "9000000","Cardiac/Respiratory Arrest - Underwater"
-        
+
     );
-    
+
     // Append any parser specific codes
     if (table.length % 2 != 0) {
       throw new RuntimeException("CodeTable constructor must have even number of of entries");
@@ -1170,11 +1170,11 @@ public class StandardCodeTable extends CodeTable {
     String expCode = expand(code);
     Result res =  super.getResult(expCode, false);
     if (res == null) return null;
-    
+
     // Prealert codes don't count unless they are an exact match
     String resCode =  res.getCode();
     if (resCode.length() <= 2 && !code.equals(resCode)) return null;
-    
+
     // If the code found did not include a suffix, see if the following
     // character matches something in the expanded determinate table
     if (resCode.length() == 5 && expCode.length() > 5) {
@@ -1188,13 +1188,13 @@ public class StandardCodeTable extends CodeTable {
         }
       }
     }
-    
+
     // Check that code is properly terminated
     int resLen = resCode.length();
     if (reqSpace) {
       if (expCode.length() != resLen && expCode.charAt(resLen) == ' ') return null;
     }
-    
+
     int codeLength = resLen - (expCode.length() - code.length());
     res.setCode(code.substring(0,codeLength));
     return res;
@@ -1206,14 +1206,14 @@ public class StandardCodeTable extends CodeTable {
    * @return expanded code
    */
   private String expand(String code) {
-    
+
     // Start by removing spurious dashes
     code = code.replace("-",  "");
-        
+
     if (code.length() == 0 || !Character.isDigit(code.charAt(0))) return code;
-    
+
     if (code.length() < 3) {
-      if (code.length() == 1) return '0' + code; 
+      if (code.length() == 1) return '0' + code;
       char chr2 = Character.toUpperCase(code.charAt(1));
       if (chr2 < 'A' || chr2 > 'Z') return code;
       return "0" + code.charAt(0) + chr2;
@@ -1224,7 +1224,7 @@ public class StandardCodeTable extends CodeTable {
     char chr1, chr2, chr3;
     chr1 = code.charAt(ndx++);
     chr2 = code.charAt(ndx++);
-    
+
     if (Character.isDigit(chr2)) {
       chr3 = code.charAt(ndx++);
     } else {
@@ -1237,7 +1237,7 @@ public class StandardCodeTable extends CodeTable {
     sb.append(chr1);
     sb.append(chr2);
     sb.append(chr3);
-    
+
     if (ndx >= code.length()) return code;
     chr1 = code.charAt(ndx++);
     if (!Character.isDigit(chr1)) return code;
@@ -1252,26 +1252,26 @@ public class StandardCodeTable extends CodeTable {
     sb.append(chr1);
     sb.append(chr2);
     if (chr3 > 0) sb.append(Character.toUpperCase(chr3));
-    
+
     return sb.toString() + code.substring(ndx);
   }
 
   private static final Properties EXPANDED_DETERMINATE_CODES = MsgParser.buildCodeTable(new String[]{
       "02I", "Injection recomended",
       "02M", "Medication recomended",
-      
+
       "04A", "Assault",
       "04S", "Sexual assault",
       "04T", "Stun gun",
-      
+
       "06A", "Asthma",
       "06E", "COPD",
       "06O", "Other lung prob",
-      
+
       "07E", "Explosion",
       "07F", "Fire present",
       "07W", "Fireworks",
-      
+
       "08C", "Chemical",
       "08B", "Biological",
       "08R", "Radiological",
@@ -1281,32 +1281,32 @@ public class StandardCodeTable extends CodeTable {
       "08S", "Suicide attempt(CO)",
       "08T", "Suicide attempt(not CO)",
       "08U", "Unknown",
-      
+
       "11F", "Food",
       "11O", "Object/toy",
       "11C", "Candy/Sweets/Gum",
       "11M", "Milk",
       "11U", "Unknown",
-      
+
       "12E", "Epileptic or previous seizure",
-      
+
       "13C", "Combative",
-      
+
       "14D", "Diving injury",
       "14F", "Flood rescue",
       "14I", "Ice rescue",
       "14S", "SCUBA accident",
       "14W", "Swift water rescue",
-      
+
       "15E", "Electrocution",
       "15L", "Lightning",
-      
+
       "17A", "Acceessibility concern",
       "17E", "Environmental problems",
       "17G", "On ground or floor",
       "17J", "Jumper",
       "17P", "Public place",
-      
+
       "18C", "Partial evidence (< T hours)",
       "18D", "Partial evidence (> T hours)",
       "18E", "Partial evidence (unknown time)",
@@ -1322,37 +1322,39 @@ public class StandardCodeTable extends CodeTable {
       "18L", "< T hours",
       "18G", "> T hours",
       "18Z", "Unknown time",
-      
+
       "20H", "Heat exposure",
       "20C", "Cold exposure",
-      
+
       "21M", "Medical",
       "21T", "Trauma",
-      
+
       "22A", "Above ground",
       "22B", "Below ground",
       "22M", "Multiple victims",
       "22X", "Above ground multiple victims",
       "22Y", "Below ground multiple victims",
-      
+
       "23A", "Accidental",
       "23I", "Intentional",
       "23V", "Violent or combative",
       "23W", "Weapons",
-      
+
       "24M", "Multiple Birth",
-      
+
       "25V", "Violent",
       "25W", "Weapons",
       "25B", "Violent and weapons",
-      
+
+      "26C", "Possible Covid-19",
+
       "27S", "Stab",
       "27G", "Gunshot",
       "27P", "Penetrating wound",
       "27I", "Impalled",
       "27X", "Self inflicted GSW",
       "27Y", "Self inflicted stab",
-      
+
       "28C", "Partial evidence (< T hours)",
       "28D", "Partial evidence (> T hours)",
       "28E", "Partial evidence (unknown time)",
@@ -1368,30 +1370,30 @@ public class StandardCodeTable extends CodeTable {
       "28L", "< T hours",
       "28G", "> T hours",
       "28Z", "Unknown time",
-      
+
       "29V", "Multiple patients",
       "29U", "Unknown # patients",
       "29Y", "Multipel pts and response reqd",
       "29X", "Unknown # pts and response reqd",
-      
+
       "33T", "Transfer",
       "33P", "Pallative Care",
-      
+
       "36S", "Level 0 (Surveillance only)",
       "36A", "Level 1 (low triage)",
       "36B", "Level 2 (moderate triage)",
       "36C", "Level 3 (high triage)",
-      
+
       "37A", "Additional personnel",
       "37S", "Special equipment",
       "37B", "Additional personel and special equip",
-      
+
       "51L", "Large",
       "51S", "Small",
       "51C", "Cargo",
       "51M", "Military",
       "51U", "Unknown",
-      
+
       "52C", "Carbon Monoxide",
       "52G", "General/Fire",
       "52H", "Heat Detector",
@@ -1405,7 +1407,7 @@ public class StandardCodeTable extends CodeTable {
       "52W", "Waterflow/Sprinkler",
       "52X", "CO/Industrial gas with single sick person",
       "52Y", "CO/Industrial gas with multiple sick persons",
-      
+
       "54A", "Avalanche",
       "54C", "Confined Space",
       "54H", "Sinkhole",
@@ -1419,15 +1421,15 @@ public class StandardCodeTable extends CodeTable {
       "55P", "Power disconnected",
       "55X", "Single injured person",
       "55Y", "Multiple injured persons",
-      
+
       "57F", "Fire",
       "57G", "Fire w/ single injured person",
       "57H", "Fire w/ multiple injured perons",
       "57X", "Single injured person",
       "57Y", "Multiple injured persons",
-      
+
       "58H", "Hazmat",
-      
+
       "59I", "Inside",
       "59O", "Outside",
       "59U", "Unknown",
@@ -1435,26 +1437,26 @@ public class StandardCodeTable extends CodeTable {
       "59W", "Inside and multiple sick/injured perons",
       "59X", "Outside and sick/injured person",
       "59Y", "Outside and multiple sick/injured persons",
-      
+
       "60O", "Odor only",
       "60V", "Odor with single sick/injured person",
       "60W", "Odor with multiple sick/injured persons",
       "60X", "Single sick/injured person",
       "60Y", "Multiple sick/injured persons",
-      
+
       "61B", "Biological",
       "61C", "Chemical",
       "61N", "Nuclear",
       "61R", "Radiological",
       "61U", "Unknown",
-      
+
       "62A", "Above grade",
       "62B", "Below grade",
       "62W", "Above water",
-      
+
       "63X", "Single injured person",
       "63Y", "Multiple injured persons",
-      
+
       "64L", "Large (>= 50 ft)",
       "64M", "Medium (25-49 feet)",
       "64S", "Small (< 25 ft)",
@@ -1464,7 +1466,7 @@ public class StandardCodeTable extends CodeTable {
       "64W", "Medium and multiple injured persons",
       "64X", "Small and single injured person",
       "64Y", "Small and multiple injured persons",
-      
+
       "67A", "Threatening animals",
       "67B", "Threatening buildings",
       "67O", "Threatening other",
@@ -1474,7 +1476,7 @@ public class StandardCodeTable extends CodeTable {
       "67V", "Threatening vehicle",
       "67X", "Single injured person",
       "67Y", "Multiple injured persons",
-      
+
       "69R", "Trapped person(s)",
       "69O", "Odor of smoke",
       "69I", "Single injured person",
@@ -1483,7 +1485,7 @@ public class StandardCodeTable extends CodeTable {
       "69F", "Burned food (1st party)",
       "69T", "Trapped in building fire",
       "69P", "Person on fire (inside)",
-      
+
       "70C", "Cable car",
       "70F", "Freight train",
       "70L", "Light rail",
@@ -1493,7 +1495,7 @@ public class StandardCodeTable extends CodeTable {
       "70S", "Subway",
       "70T", "Trolley",
       "70U", "Unknown",
-      
+
       "71A", "Alternative fuel",
       "71H", "Hazmat",
       "71M", "Alternative fuel and hazmat",
@@ -1505,11 +1507,11 @@ public class StandardCodeTable extends CodeTable {
       "71W", "Alternative fuel and hazmat with mutliple injured persons",
       "71X", "Single injured person",
       "71Y", "Multiple injured persons",
-      
+
       "72M", "Multiple peson rescue",
       "72X", "Single injured person",
       "72Y", "Multiple injured persons",
-      
+
       "73C", "Costal",
       "73I", "Inland",
       "73O", "Oceanic",
@@ -1519,14 +1521,14 @@ public class StandardCodeTable extends CodeTable {
       "73W", "Inland with multiple sick/injured persons",
       "73X", "Oceanic with single sick/injured person",
       "73Y", "Oceanic with multiple sick/injured persons",
-      
+
       "74C", "Commercial/industrial building",
       "74G", "Govenrment building",
       "74H", "High life hazard/high rise",
       "74N", "Non-dwelling building/structure",
       "74O", "Open area",
       "74R", "Reidential building",
-      
+
       "75C", "Cable car",
       "75F", "Freight train",
       "75L", "Light rail",
@@ -1536,14 +1538,14 @@ public class StandardCodeTable extends CodeTable {
       "75S", "Subway",
       "75T", "Trolley",
       "75U", "Unknown",
-      
+
       "76C", "Commercial/industrial building",
       "76G", "Government building",
       "76H", "High life hazard/high rise",
       "76N", "Non-dwelling building/structure",
       "76O", "Open area",
       "76R", "Residential building",
-      
+
       "77M", "Multiple vehicles",
       "77F", "Fire",
       "77H", "Hazmat",
