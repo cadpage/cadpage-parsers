@@ -1534,6 +1534,7 @@ public class Active911ParserTable {
       "US/PA/GladwyneFire",               "PAMontgomeryCountyD",
       "US/PA/GoodFellowshipAmbulance",    "PAChesterCountyO",
       "US/PA/GreeneCounty",               "PAGreeneCounty",
+      "US/PA/HawthornFD",                 "PAArmstrongCountyB",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
       "US/PA/Km911",                      "PALebanonCounty,PADauphinCountyB",
