@@ -67,6 +67,7 @@ public class Active911ParserTable {
       "US/AL/CleburneCounty",             "ALCleburneCounty",
       "US/AL/CoffeeCounty",               "ALCoffeeCountyA",
       "US/AL/Colbert",                    "ALColbertCounty",
+      "US/AL/CoosaCounty",                "ALCoosaCounty",
       "US/AL/CullmanCounty",              "ALCullmanCounty",
       "US/AL/DallasCounty",               "ALDallasCounty",
       "US/AL/Dothan",                     "ALDothan",
