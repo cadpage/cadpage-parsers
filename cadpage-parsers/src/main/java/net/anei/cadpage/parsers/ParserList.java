@@ -365,6 +365,7 @@ public class ParserList {
               ,"GADoolyCounty"                  ,"Dooly County, GA"
               ,"GADoughertyCounty"              ,"Dougherty County, GA"
               ,"GAEffinghamCounty"              ,"Effingham County, GA"
+              ,"GAElbertCouty"                  ,"Elbert County, GA"
               ,"GAEmanuelCounty"                ,"Emanuel County, GA"
               ,"GAEvansCounty"                  ,"Evans County, GA"
               ,"GAFanninCounty"                 ,"Fannin County, GA"
