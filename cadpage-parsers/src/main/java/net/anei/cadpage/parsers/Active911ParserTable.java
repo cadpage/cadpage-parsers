@@ -1299,6 +1299,7 @@ public class Active911ParserTable {
       "US/OH/AuglaizeCounty",             "OHAuglaizeCounty",
       "US/OH/Beachwood",                  "OHCuyahogaCountyA",
       "US/OH/Beavercreek",                "OHGreeneCountyB",
+      "US/OH/BellefontaineCAD",           "OHLoganCountyD",
       "US/OH/BelmontCounty",              "OHBelmontCounty",
       "US/OH/BelprePD",                   "OHWashingtonCountyB",
       "US/OH/BrownCounty",                "OHBrownCounty",
