@@ -642,6 +642,7 @@ public class ParserList {
               ,"KYMeadeCounty"                  ,"Meade County, KY"
               ,"KYMetcalfeCounty"               ,"Metcalfe County, KY"
               ,"KYMonroeCounty"                 ,"Monroe County, KY"
+              ,"KYMontgomeryCounty"             ,"Montgomery County, KY"
               ,"KYMorganCounty"                 ,"Morgan County, KY"
               ,"KYMuhlenbergCounty"             ,"Muhlenberg County, KY"
               ,"KYNicholasCounty"               ,"Nicholas County, KY"

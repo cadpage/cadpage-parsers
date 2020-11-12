@@ -671,6 +671,7 @@ public class Active911ParserTable {
       "US/KY/MeadeCounty",                "KYMeadeCounty",
       "US/KY/MonacoEnterprises",          "KYFortKnox",
       "US/KY/MonroeCounty",               "KYMonroeCounty",
+      "US/KY/MontgomeryCounty",           "KYMontgomeryCounty",
       "US/KY/MorganCounty",               "KYMorganCounty",
       "US/KY/MuhlenbergCounty",           "KYMuhlenbergCountyA",
       "US/KY/MurrayCounty",               "KYCallowayCounty",
