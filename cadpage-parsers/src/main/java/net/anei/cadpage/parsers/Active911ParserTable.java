@@ -1432,6 +1432,7 @@ public class Active911ParserTable {
       "US/OK/CityofNorman",               "OKClevelandCountyB",
       "US/OK/CityofStillwater",           "OKPayneCounty",
       "US/OK/CityofTulsa",                "OKTulsa",
+      "US/OK/CityofWoodford",             "OKCarterCountyC",
       "US/OK/CityofYukon",                "OKYukon",
       "US/OK/FaxConnections",             "OKTulsa",
       "US/OK/FaxConnectionsWagonerCounty","OKTulsa",

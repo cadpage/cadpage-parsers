@@ -8,6 +8,6 @@ Carter County, OK
  */
 public class OKCarterCountyParser extends GroupBestParser {
   public OKCarterCountyParser() {
-    super(new OKCarterCountyAParser(), new OKCarterCountyBParser());
+    super(new OKCarterCountyAParser(), new OKCarterCountyBParser(), new OKCarterCountyCParser());
   }
 }
