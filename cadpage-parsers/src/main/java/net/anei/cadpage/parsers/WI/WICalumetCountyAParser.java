@@ -8,33 +8,33 @@ import net.anei.cadpage.parsers.dispatch.DispatchPrintrakParser;
 
 
 
-public class WICalumetCountyAParser extends DispatchPrintrakParser {  
-  
+public class WICalumetCountyAParser extends DispatchPrintrakParser {
+
   private static final Pattern HOUSE_NBR_PTN = Pattern.compile("^([NWSE])(\\d+)\\b");
-  
+
   public WICalumetCountyAParser() {
     this("CALUMET COUNTY");
   }
-  
+
   public WICalumetCountyAParser(String county) {
     super(CITY_TABLE, county, "WI");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "WICalumetCountyA";
   }
-  
+
   @Override
   public String getFilter() {
-    return "Admin.Foxcomm@co.calumet.wi.us,finstad_rr@co.brown.wi.us";
+    return "Admin.Foxcomm@co.calumet.wi.us,finstad_rr@co.brown.wi.us,@browncountywi.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n<div");
@@ -44,29 +44,29 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     int pt = body.indexOf("\n******");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     if (!super.parseMsg(body, data)) return false;
-    
+
     // There are two address adjustments that need to be made.
     // First need to insert a space into a N3345 type address
     data.strAddress = HOUSE_NBR_PTN.matcher(data.strAddress).replaceFirst("$1 $2");
-    
+
     // Next we have to replace "CTY TK" with "COUNTY RD"
     data.strAddress = data.strAddress.replaceFirst("CTY TK", "COUNTY RD");
-    
+
     return true;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = CTH_PTN.matcher(addr).replaceAll("COUNTY ROAD");
     return super.adjustMapAddress(addr);
   }
   private static final Pattern CTH_PTN = Pattern.compile("\\bCTH\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       // Brown County
       "ASHW", "ASHWAUBENON",
@@ -93,7 +93,7 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
       "GLEN", "GLENMORE",
       "HOLL", "HOLLAND",
       "MORR", "MORRISON",
-      
+
       // Calumet County
       "CMBT", "BROTHERTON",
       "CMCB", "BRILLION",
@@ -112,7 +112,7 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
       "CMVH", "HILBERT",
       "CMVP", "POTTER",
       "CMVS", "STOCKBRIDGE",
-      
+
       // Outagamie County
       "APPL", "APPLETON",
       "KAUC", "KAUKAUNA",
@@ -133,13 +133,13 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
       "KAUT", "KAUKAUNA",
       "KIMV", "KIMBERLY",
       "LIBT", "LIBERTY",
-      "LTCV", "LITTLE CHUTE", 
+      "LTCV", "LITTLE CHUTE",
       "MPCT", "MAPLE CREEK",
       "ONET", "ONEIDA",
       "OSBT", "OSBORN",
       "SEYT", "SEYMOUR",
       "VANT", "VANDENBROEK",
-      
+
       // Winnebago County
       "WALG", "ALOGMA",
       "WBLA", "BLACK WOLF",
