@@ -9,26 +9,26 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class IDMadisonCountyParser extends FieldProgramParser {
-  
+
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-  
+
   public IDMadisonCountyParser() {
     super(CITY_LIST, "MADISON COUNTY", "ID",
           "ID CALL ADDR/S INFO UNIT DATETIME! NAME PHONE GPS1 GPS2");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("New CAD Alert")) return false;
     body = body.replace("//", "/").replaceAll(" {2,}", " ");
     return parseFields(body.split(";"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -36,7 +36,7 @@ public class IDMadisonCountyParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d{6}", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern MAP_PATTERN
     = Pattern.compile("(.*)\\bMAP(.*)");
   private class MyAddressField extends AddressField {
@@ -49,13 +49,13 @@ public class IDMadisonCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames()+" MAP";
     }
   }
-  
+
   private static final String[] CITY_LIST = {
     // Adjacent counties
     "FREMONT COUNTY",
