@@ -1456,6 +1456,7 @@ public class ParserList {
               ,"TNRheaCounty"                   ,"Rhea County, TN"
               ,"TNRoaneCounty"                  ,"Roane County, TN"
               ,"TNSevierCounty"                 ,"Sevier County, TN"
+              ,"TNSMithCounty"                  ,"Smith County, TN"
               ,"TNSumnerCounty"                 ,"Sumner County, TN"
               ,"TNUnionCounty"                  ,"Union County, TN"
               ,"TNWarrenCounty"                 ,"Warren County, TN"
