@@ -1877,6 +1877,7 @@ public class Active911ParserTable {
       "US/VA/LoudounCounty",              "VALoudounCountyC",
       "US/VA/LouisaCounty",               "VALouisaCounty",
       "US/VA/LunenburgCounty",            "VALunenburgCountyA",
+      "US/VA/MadisonCounty",              "VAMadisonCounty",
       "US/VA/MecklenburgCounty",          "VAMecklenburgCounty",
       "US/VA/MontgomeryCounty",           "VAMontgomeryCountyA",
       "US/VA/NewportNews",                "VANewportNews",
