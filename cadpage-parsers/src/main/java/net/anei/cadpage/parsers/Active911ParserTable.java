@@ -235,6 +235,7 @@ public class Active911ParserTable {
       "US/CO/CityofThornton",             "COThornton",
       "US/CO/ColoradoSprings",            "COElPasoCountyB",
       "US/CO/ConejosCounty",              "COConejosCounty",
+      "US/CO/CSPCostillaCounty",          "COCostillaCounty",
       "US/CO/Crisppaging",                "COLarimerCountyC",
       "US/CO/CSPSanJuanCounty",           "COSanJuanCounty",
       "US/CO/DeltaCountyAmbulance",       "CODeltaCounty",
