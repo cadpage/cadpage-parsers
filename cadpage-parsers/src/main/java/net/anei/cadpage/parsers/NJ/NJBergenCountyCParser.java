@@ -11,13 +11,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NJBergenCountyCParser extends FieldProgramParser {
 
   public NJBergenCountyCParser() {
-    super("BERGEN COUNTY", "NJ", 
+    super("BERGEN COUNTY", "NJ",
           "CAD#:ID! Date:DATE! Time:TIME! Address:ADDR! Type_of_Fire_Response:CALL! Type_of_Service:CITY! Notes:INFO! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "srpd2srfd@saddleriver.org";
+    return "srpd2srfd@saddleriver.org,DoNotReply@lawsoftweb.onmicrosoft.com";
   }
 
   @Override
@@ -36,13 +36,13 @@ public class NJBergenCountyCParser extends FieldProgramParser {
     if (name.equals("CITY")) return new MyCityField();
     return super.getField(name);
   }
-  
+
   private static final Pattern SHORT_TIME_PTN = Pattern.compile("(\\d\\d?:\\d\\d) ([AP]M)");
   private class MyTimeField extends TimeField {
     public MyTimeField() {
       super(TIME_FMT, true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = SHORT_TIME_PTN.matcher(field);
@@ -51,7 +51,7 @@ public class NJBergenCountyCParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
   }
 
   private class MyCityField extends CityField {
