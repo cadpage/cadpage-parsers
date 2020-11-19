@@ -1401,7 +1401,7 @@ public class Active911ParserTable {
       "US/OH/PrebleCounty",               "OHPrebleCounty",
       "US/OH/RichfieldPD",                "OHSummitCountyG",
       "US/OH/RichlandCounty",             "OHRichlandCounty",
-      "US/OH/Sebring",                    "OHMahoningCountyA",
+      "US/OH/Sebring",                    "OHMahoningCountyC",
       "US/OH/Secc911",                    "OHCuyahogaCountyA",
       "US/OH/SharonTwp",                  "OHMedinaCountyB,OHMedinaCountyD",
       "US/OH/ShelbyCounty",               "OHShelbyCounty",
