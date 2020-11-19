@@ -690,6 +690,7 @@ public class Active911ParserTable {
       "US/KY/ToddCounty",                 "KYToddCounty",
       "US/KY/TriggCounty",                "KYTriggCounty",
       "US/KY/WestKnoxVFD",                "KYKnoxCountyB,KYKnoxCountyC",
+      "US/KY/WhitleyCounty",              "KYWhitleyCounty",
       "US/KY/Wittensville",               "KYJohnsonCounty",
       "US/KY/WoodburnVFD",                "KYBowlingGreen",
       "US/KY/WoodfordCounty",             "KYWoodfordCounty",
