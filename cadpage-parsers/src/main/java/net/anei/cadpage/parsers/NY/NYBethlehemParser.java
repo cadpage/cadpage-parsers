@@ -7,18 +7,18 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
  * Bethlehem, NY
  */
 public class NYBethlehemParser extends DispatchH05Parser {
-    
+
   public NYBethlehemParser() {
-    super("BETHLEHEM", "NY", 
-          "Date/Time:DATETIME! Incident_Number:ID! Priority:PRI! Business_Name_if_Applicable:PLACE! Address:ADDRCITY/S6! Google_Maps:EMPTY! GPS:GPS! " + 
+    super("BETHLEHEM", "NY",
+          "Date/Time:DATETIME! Incident_Number:ID! Priority:PRI! EMS_District:MAP? Business_Name_if_Applicable:PLACE! Address:ADDRCITY/S6! Google_Maps:EMPTY! GPS:GPS! " +
              "Nature_of_Call:CALL! EMS_Call_Type:PRI/L! EMS_Description:SKIP! Radio_Channel%EMPTY! Units:UNIT! INFO_BLK");
   }
-  
+
   @Override
   public String getFilter() {
     return "@TOWNOFBETHLEHEM.ORG";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -33,8 +33,8 @@ public class NYBethlehemParser extends DispatchH05Parser {
     data.strCity = stripFieldEnd(data.strCity, data.strApt);
     return true;
   }
-  
-  @Override 
+
+  @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d)", true);
     return super.getField(name);
