@@ -6,10 +6,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
 public class NCNorthamptonCountyParser extends DispatchA3Parser {
 
-  private static final String PREFIX = "Northampton911:*";
-
   public NCNorthamptonCountyParser() {
-    super(1, PREFIX, "NORTHAMPTON COUNTY", "NC");
+    super(1, "NORTHAMPTON COUNTY", "NC");
   }
 
   @Override
@@ -19,7 +17,7 @@ public class NCNorthamptonCountyParser extends DispatchA3Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.contains("INTERNAL") && ! body.startsWith(PREFIX)) body = PREFIX + body;
+    body = stripFieldStart(body, "Northampton911:");
     return super.parseMsg(body, data);
   }
 }
