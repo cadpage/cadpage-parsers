@@ -19,7 +19,7 @@ public class NCNorthamptonCountyParser extends DispatchA3Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("INTERNAL") && ! body.startsWith(PREFIX)) body = PREFIX + body;
+    if (subject.contains("INTERNAL") && ! body.startsWith(PREFIX)) body = PREFIX + body;
     return super.parseMsg(body, data);
   }
 }
