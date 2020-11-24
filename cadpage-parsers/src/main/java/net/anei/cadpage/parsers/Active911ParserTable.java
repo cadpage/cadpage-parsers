@@ -181,6 +181,7 @@ public class Active911ParserTable {
       "US/CA/Meucad",                     "CAMendocinoCounty",
       "US/CA/MidCoastFire",               "CAMontereyCountyB",
       "US/CA/ModocCounty",                "CAModocCounty",
+      "US/CA/MonoCounty",                 "CAMonoCounty",
       "US/CA/Monterey",                   "CAMontereyCountyA",
       "US/CA/NapaCounty",                 "CANapaCounty",
       "US/CA/Neucad",                     "CAPlacerCountyA",

@@ -198,6 +198,7 @@ public class ParserList {
               ,"CAMarinCounty"                  ,"Marin County, CA"
               ,"CAMendocinoCounty"              ,"Mendocino County, CA"
               ,"CAModocCounty"                  ,"Modoc County, CA"
+              ,"CAMonoCounty"                   ,"Mono County, CA"
               ,"CAMontecito"                    ,"Montecito, CA"
               ,"CAMontereyCounty"               ,"Monterey County, CA"
               ,"CANapa"                         ,"Napa, CA"

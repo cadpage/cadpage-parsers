@@ -60,7 +60,7 @@ If you use the Google Play Store payment option mentioned in my next email, you 
 
 If you decide to send a check via SNAIL mail, then you will need to do the following:
 
-Cadpage needs the GET_ACCOUNTS permission to process your subscription request. 
+Cadpage needs the GET_ACCOUNTS permission to process your subscription request.
 It would have prompted you to grant this
 permission the first time you tried to send us a support email or
 recalculate your payment status.  But if you declined that request, and
@@ -171,7 +171,7 @@ And the Cadpage paging service is free if you have a paid Cadpage
 subscription, so why not try it!
 
 Thanks for your inquiry!
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ***************************************************************************
@@ -211,7 +211,7 @@ Another alternative would be to use the spam blocking or blacklisting features o
 
 You can also use a new "Alert Delay" setting in Notification Settings to delay the Cadpage alert notification by a few seconds.  If your message app is also sounding an audio alert, delaying the Cadpage alert so that it happens after the message app alerts prevents it from being silenced by the message app alert.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ****************************************************************************
@@ -219,7 +219,7 @@ Effect of 4.4:
 
 It just means that text alerts that you get
 from Dispatch will show up in your message inbox as well as triggering
-Cadpage. 
+Cadpage.
 
 ****************************************************************************
 Not a PAID subscriber but has 4.4
@@ -247,7 +247,7 @@ It looks like you installed and registered the Active911 app on your device.  Th
 Direct Paging Vendors > Active911.com > Register
 Then enter the same activation code you used to register the Active911 app (___________).
 
-Once you register Cadpage with the Active911 servers, you should be able to use both the Cadpage and Active911 apps to process the same calls.  Details on how this works can be found at 
+Once you register Cadpage with the Active911 servers, you should be able to use both the Cadpage and Active911 apps to process the same calls.  Details on how this works can be found at
 http://www.cadpage.org/faq/cadpage-and-active911
 
 Take care,
@@ -329,7 +329,7 @@ Use the Email the Developer setting to generate another email to us.  While this
 
 In the file manager, navigate to the Download folder on your SD card.  Exactly where this is differs from phone to phone.  The SD card might be  mounted as /sdcard or /sdcard0 or /storage/sdcard0.  Where ever it is, it should have a Download folder, which hopefully will contain a file named bugreport.cadpage.gz.  Long press that file and select it, confirm that that file has been attached to your email and send it.
 
-Take care, 
+Take care,
 -Ken
 
 ***************************************************************************
@@ -355,7 +355,7 @@ To do that, go into Cadpage Settings and select
 Direct paging Vendors > CodeMessaging.net > Register
 and follow the directions.
 
-Long technical answer:  CodeMessaging has been switching to a new model where they run the Cadpage text parsers on their servers and send the page information in a standard Cadpage defined page format that is in no way related to the page format dispatch uses to send the original page information.  If you try to process their text pages using the standard Harford, MD location, it will not work.  That location code expects the pages to be formated the way Harford dispatch sends them, which is no longer the case.  It will work if you go into Location Settings and set the location to 
+Long technical answer:  CodeMessaging has been switching to a new model where they run the Cadpage text parsers on their servers and send the page information in a standard Cadpage defined page format that is in no way related to the page format dispatch uses to send the original page information.  If you try to process their text pages using the standard Harford, MD location, it will not work.  That location code expects the pages to be formated the way Harford dispatch sends them, which is no longer the case.  It will work if you go into Location Settings and set the location to
 Select Single Location > General Location > Standard Cadpage Format A
 
 But, life gets so much simpler for all concerned if you switch to using direct paging, which handles all of these details.
@@ -394,7 +394,7 @@ So what can you do, there are a few choices:
 3) You use the Handcent settings to blacklist the email/phone number dispatch uses to send you pages.  Then it nicely drops those calls back to Cadpage.
 4) You can go to our download page at http://www.cadpage.org/download-cadpage/ where we keep the most recent version of Handcent that plays nicely with Cadpage.  Install that and things should work nicely.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -426,7 +426,7 @@ Active911 is a messaging service that can push pages from dispatch to cell phone
 
 ******************************************************************
 
-You or your department have apparently paid for Active911, but you need to re-register your phone with Active911 to enable direct paging. 
+You or your department have apparently paid for Active911, but you need to re-register your phone with Active911 to enable direct paging.
 
 Here are the details. If you have your activation code of letters and numbers, jump to step 3 below.
 
@@ -449,17 +449,17 @@ Jean ~ Cadpage Administrator
 ** Already has activation code or switch to Android with Active911
 ******************************************************************
 
-Your department has apparently paid for Active911, but you need to register your phone to enable direct paging with Cadpage.  
+Your department has apparently paid for Active911, but you need to register your phone to enable direct paging with Cadpage.
 
 Open the Cadpage settings on your phone.  Select Direct Paging Vendors > Active911.com > Register
 
-This takes you to a web page where you need to enter the two-part device code.  
+This takes you to a web page where you need to enter the two-part device code.
 
-Your device code is: 
+Your device code is:
 
 If all goes well, Cadpage will display a notice that your Active911 direct paging connection has been activated.
 
-At this point, Active911 will start sending you pages through the Internet data network instead of using SMS text pages. 
+At this point, Active911 will start sending you pages through the Internet data network instead of using SMS text pages.
 
 Please let me know if you still have problems with Cadpage or the registration process.
 
@@ -522,7 +522,7 @@ This could be one of two different problems.
 
 Which is your situation?
 
-Take care, 
+Take care,
 -Ken
 
 **********************************************************************
@@ -538,7 +538,7 @@ in any position to validate that.
 If you really cannot get the activation code from your admin you should
 probably call the Active911 support line and ask them what you can do.
 
-Take care, 
+Take care,
 -Ken
 
 ************************************************************************
@@ -569,7 +569,7 @@ Jean ~ Cadpage Administrator
 Subsequent payments of $9.99 are set up as maintenance fees.   If you stop installing  the weekly Cadpage updates when the subscription expires, you are not required to pay for subsequent years.
 
  You can continue to use Cadpage after the expiration date as long as you do not install a release published after that date.
- 
+
 ******************************************************************
 renew department subscriptions
 
@@ -577,7 +577,7 @@ Your one-year anniversary for Cadpage for your department was _________.  You an
 
 Please let me know if you need any updates on your department subscription.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
@@ -600,30 +600,30 @@ Jean ~ Cadpage Administrator
 
 Thanks for your PayPal payment!
 
-Unfortunately, your PayPal account is most likely not how Cadpage knows you.  
+Unfortunately, your PayPal account is most likely not how Cadpage knows you.
 
 PLEASE follow these instructions:
-Go to Cadpage settings> Payment status > Hey, I've already paid for this > Send Email 
+Go to Cadpage settings> Payment status > Hey, I've already paid for this > Send Email
 
 This will generate an email with the correct email account (usually a gmail account) we need for your registration.
 
 In the meantime, I can give you a 30-day extension.  To get that, go into the Cadpage settings, press the Payment Status item, then the "I have an authorization code" button, and enter an authorization code of
-is BJRUOODA or bjruooda.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days. 
+is BJRUOODA or bjruooda.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
-Thanks again for your support, 
+Thanks again for your support,
 Jean ~ Cadpage Administrator
 
 ****************************************************************
 
 Thanks for your PayPal payment! You have been added to a paid subscriber list with a one-year Cadpage subscription.
 
-Please: 
+Please:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
-If that fails, it is likely because your PayPal account is not how Cadpage knows you.  
+If that fails, it is likely because your PayPal account is not how Cadpage knows you.
 
 PLEASE follow these instructions:
-Go to Cadpage settings> Payment status > Hey, I've already paid for this > Send Email 
+Go to Cadpage settings> Payment status > Hey, I've already paid for this > Send Email
 
 This will generate an email with the correct email account (usually a gmail account) we need for your registration.
 
@@ -641,7 +641,7 @@ Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment
 
 Please let us know if you ever have any problems with Cadpage.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
@@ -653,30 +653,30 @@ Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment
 
 Please let us know if you ever have any problems with Cadpage.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
 
-Thanks for your email.  You are now fully registered on our paid subscriber list for a one-year Cadpage subscription.  
+Thanks for your email.  You are now fully registered on our paid subscriber list for a one-year Cadpage subscription.
 
 Please:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 You no longer need the authorization code I gave you previously.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
 Department subscription; 30% off
 
-I have registered your department members with a one-year Cadpage subscription.  
+I have registered your department members with a one-year Cadpage subscription.
 
 Their instructions are as follows:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
-I have attached an invoice that reflects the members involved, the term of service and the amount payable.  For ___ subscriptions, 
+I have attached an invoice that reflects the members involved, the term of service and the amount payable.  For ___ subscriptions,
 your total cost will be ________________.
 
 Please let us know if you ever have any difficulties or questions concerning Cadpage.
@@ -720,7 +720,7 @@ If that fails, please email us again using the Cadpage app.  Go to Settings > Ge
 
 Please note, if you have changed your phone number, you will need to contact your Dispatch Center so your text messages can be sent to the correct number.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 *********************************************************************************
@@ -729,7 +729,7 @@ I noted that your PayPal payment amounted to only $1.00, while a Cadpage subscri
 
 If you need other payment options, or your have some hardship in paying, please let me know.
 
-Thanks for your support, 
+Thanks for your support,
 Jean
 
 *******************************************************************
@@ -753,7 +753,7 @@ Thanks for your support,
 for FREE
 ***********
 
-You have been registered as a free subscriber to Cadpage for at least one full year. 
+You have been registered as a free subscriber to Cadpage for at least one full year.
 
 Please: Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
@@ -783,7 +783,7 @@ The usual, and preferred method of purchasing a Cadpage subscription is through 
 Payment Status > Purchase through Android Market.  Often you can pay through your phone service at Google Play Store.
 Purchases made this way will update your payment status almost immediately.
 
-If that does not work, the web page at 
+If that does not work, the web page at
 http://www.cadpage.org/financial-support/paypal-payments
 has  instructions on how to make PayPal or Snail Mail payments
 
@@ -800,16 +800,16 @@ We would really love to have departments sponsor Cadpage for their members. We o
 Also, if your department uses Active911 or CodeMessaging, then Cadpage is free if you use direct paging.
 
 In the meantime, I can give you a 30-day extension.  To get that, go into the Cadpage settings, press the Payment Status item, then the "I have an authorization code" button, and enter an authorization code of
-YYUTAAGA or yyutaaga.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days. 
+YYUTAAGA or yyutaaga.    It is a time-sensitive code, and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
 
-I am unable to find a Cadpage payment from you. Some details would help me find your account.  
+I am unable to find a Cadpage payment from you. Some details would help me find your account.
 
-How did you pay -- through Google Play Store, PayPal, or by check?  We are unable to search Google Play Store accounts by name; only by email address.  If you paid via PayPal or check, under what name was the payment made?  
+How did you pay -- through Google Play Store, PayPal, or by check?  We are unable to search Google Play Store accounts by name; only by email address.  If you paid via PayPal or check, under what name was the payment made?
 
 Have you recently changed your email address?  Most of our accounts are registered with User email addresses.
 
@@ -828,14 +828,14 @@ Jean ~ Cadpage Administrator
 
 *********************************************************************
 
-I found your free Cadpage subscription of _____.  
+I found your free Cadpage subscription of _____.
 
 Please:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
 If you are having other difficulties with Cadpage, please let us know.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 **********************************************************************
@@ -845,7 +845,7 @@ I found your free Cadpage subscription of _________, which is effective at least
 Please be sure to install the newest version of Cadpage.  Then:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
-If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information.
 
 Take care,
 Jean ~ Cadpage Administrator
@@ -858,11 +858,11 @@ Since your DEMO period is longer than the remaining time on your subscription, t
 
 I found your free Cadpage subscription of ______.  However, your Cadpage User email address has changed.  I have updated your account with your current email address.
 
-Please: 
+Please:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
-If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
@@ -877,7 +877,7 @@ Cadpage is free for direct paging users.
 
 This should only take a few seconds. If that fails, please let us know.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
@@ -893,10 +893,10 @@ Have a nice day,
 
 I found your Google Play Store payment record of ______.  However, your Cadpage User email address has changed.  I have updated your account with your current email address.
 
-Please: 
+Please:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
-If that fails, please contact us again using the Cadpage app. Go to Settings > General Settings > Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app. Go to Settings > General Settings > Email the Developer and include the configuration information.
 
 Thanks so much for your support,
 Jean ~ Cadpage Administrator
@@ -908,7 +908,7 @@ I found your Google Play Store payment record of _________, and have re-register
 Please be sure to install the newest version of Cadpage.  Then:
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
-If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information. 
+If that fails, please contact us again using the Cadpage app.  Go to Settings > General Settings > Email the Developer and include the configuration information.
 
 Thanks so much for your support,
 Jean ~ Cadpage Administrator
@@ -918,7 +918,7 @@ Jean ~ Cadpage Administrator
 DEMO is longer than remaining subscription
 ***********************************************************************
 
-I found your Google Play Store payment record of ______. 
+I found your Google Play Store payment record of ______.
 
 Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status.   This reloads your payment status from the market which will usually fix things.
 
@@ -928,7 +928,7 @@ It is still the same great app, just limited in time until you will be reminded 
 
 Please let me know how I can help you successfully continue to use Cadpage.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 **************************************************************************
@@ -943,7 +943,7 @@ It is still the same great app, just limited in time until you will be reminded 
 
 Please let me know how I can help you successfully continue to use Cadpage.
 
-Thanks so much for your support, 
+Thanks so much for your support,
 Jean ~ Cadpage Administrator
 
 ****************************************************************
@@ -976,14 +976,14 @@ $9.99 per year is way out of line for what you normally expect to pay for a gene
 It is unfortunate that we have to ask people already volunteering so much time and energy to pay us for a cool app.  The reality is that maintaining and continually developing Cadpage is more than a full time job. We have to pay our bills somehow, and Google takes their share.
 
 The yearly cost is maintenance for the app. There are dispatch centers out there that change their message formats; upgrades to Google maps; upgrades to Android systems; upgrades to Android phones. Cadpage is an extremely high maintenance app. We put out weekly releases to try and keep up.
-Most of 
-Our policy for free subscriptions is based on hardship, not on being a volunteer.  Both my husband and I are volunteers with our local fire department, so we understand the time, expense and effort involved. 
+Most of
+Our policy for free subscriptions is based on hardship, not on being a volunteer.  Both my husband and I are volunteers with our local fire department, so we understand the time, expense and effort involved.
 
 We would really love to have departments sponsor Cadpage for their members.  But we have no way of contacting them, except through staff and volunteers.  We offer departments a 30% discount or more!  Details can be found at http://www.cadpage.org/financial-support/other-support-options.
 
 In the interest of helping communities, we offer a  number of approved ways to run Cadpage without paying anything.
 
-1) You may request a free subscription, but you have to include a reasonable reason for not being able to afford $9.99 per year.  
+1) You may request a free subscription, but you have to include a reasonable reason for not being able to afford $9.99 per year.
 
 2) You can simply reinstall Cadpage every 30 days.
 
@@ -991,7 +991,7 @@ In the interest of helping communities, we offer a  number of approved ways to r
 
 4) There is an old unsupported version of Cadpage available on the Cadpage download page at http://www.cadpage.org/download-cadpage.  This version will not bug you about paying for it.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ****************************************************
@@ -1029,7 +1029,7 @@ Jean ~ Cadpage Administrator
 ******************************************************************
 
 Try logging in to wallet.google.com and see if there is something that needs to be set up there.  If you don't have a wallet account, you may need to set one up.  If you have a wallet account set up with credit card or payment info, go back to your phone and open the Market app.  Then press
-menu > accounts 
+menu > accounts
 And make sure the account listed is the one you set up in wallet.google.com
 
 Hopefully that will let you make Play Store purchases.  If it doesn't let us know and we will try to work something else out.
@@ -1037,7 +1037,7 @@ Hopefully that will let you make Play Store purchases.  If it doesn't let us kno
 If you need a 30-day extension, open the Cadpage settings and press Payment Status, then press the "I have an authorization code" button, and enter an authorization code of
  WPDQGPDA or wpdqgpda.  It is a time-sensitive code and will expire by midnight on ____.  Once you use it, it will be good for about 30 days.
 
-Thanks for your support, 
+Thanks for your support,
 -Ken
 
 ******************************************************************
@@ -1046,7 +1046,7 @@ If you can't map calls, Cadpage isn't really working and you shouldn't  have to 
 
 So we need to fix things.  I can give you a 30-day extension to give us time to work on it.  To get this, open the Cadpage settings and press Payment Status, then press the "I have an authorization code" button, and enter an authorization code of
  WPDQGPDA or wpdqgpda.   It is a time-sensitive code and will expire by midnight on ___.  Once you use it, it will be good for about 30 days.
- 
+
 Next, you need to send me the information on the calls that are not mapping.  You do this by long pressing the call and selecting Report Problem from the menu list.  That generates an email to us with lots of cool technical information needed to figure out what is wrong.
 
 If Cadpage is missing calls entirely, go into Settings and press the Email the Developer settings as soon as possible.  The email that generates includes information about the most recently received text message.  Which will hopefully be enough to help me figure out what is wrong.
@@ -1056,20 +1056,20 @@ Take care,
 
 ******************************************************************
 
-No problem. I have added your name and current User email address to a backup authorization server.  
+No problem. I have added your name and current User email address to a backup authorization server.
 
 Please try again:  Go to Cadpage Settings > General Settings > Payment Status > Recalculate Payment Status
 
-As always, please let us know of any further difficulties. 
+As always, please let us know of any further difficulties.
 
-Thanks for your support, 
+Thanks for your support,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
 ** Release info
 ******************************************************************
 
-This will be fixed in the next release.  
+This will be fixed in the next release.
 
 The weekly release schedule has gotten rather irregular of late.  Next one will probably be out this weekend.  If you want it earlier than that this should be in beta release at http://www.cadpage.org/download-cadpage tomorrow morning.
 
@@ -1078,7 +1078,7 @@ Take care,
 
 ******************************************************************
 
-This will be fixed in the next release.  
+This will be fixed in the next release.
 
 Weekly releases are generally published on Saturday.  If you want it earlier than that this should be in beta release at http://www.cadpage.org/download-cadpage tomorrow morning.
 
@@ -1150,7 +1150,7 @@ This isn't the text format we are expecting for <<LOCATION>>.  This happens all 
 
 ******************************************************************************
 
-This isn't one of the many text formats we are expecting for Suffolk County.  Apparently dispatch changed the way page are sent and  we need to write a new parser for you.  
+This isn't one of the many text formats we are expecting for Suffolk County.  Apparently dispatch changed the way page are sent and  we need to write a new parser for you.
 
 ******************************************************************************
 Details on setting up a new location
@@ -1242,7 +1242,7 @@ Thanks a bunch,
 
 ***************************************************************************
 * Cadpage is not registered with Active911
-* Registration ID is not null 
+* Registration ID is not null
 * Swift shows correct page type and registration ID
 ******************************************************************
 
@@ -1274,12 +1274,12 @@ Power down your device, remove the SD card, then power it up and
 register Cadpage with Active911.  I have no idea why this would make any
 difference, but it got one user up and running.
 
-Take care, 
+Take care,
 -Ken
 
 ***************************************************************************
 * Active911 user not receiving pages
-* Cadpage shows it is registered with Active911 
+* Cadpage shows it is registered with Active911
 * Swift shows correct page type and registration ID
 ******************************************************************
 
@@ -1289,7 +1289,7 @@ First, you can go into Cadpage settings and select
 Direct Paging Vendors > Reconnect Direct Paging
 We do not know why, but doing this usually fixes this kind of problem.
 
-Then get whoever sets up your device with Active911 to use the Active911 web page to send a test message to your phone. 
+Then get whoever sets up your device with Active911 to use the Active911 web page to send a test message to your phone.
 
 If you do get the test page, but still do not receive real dispatch alerts, then something about your Active911 settings, probably the duty status, is preventing them from sending dispatch pages to you.  If your department Active911 administrator cannot figure out what that is, try contacting Active911 support for help.
 
@@ -1299,7 +1299,7 @@ Good luck,
 -Ken
 
 ******************************************************************
-* Text paging delays 
+* Text paging delays
 ******************************************************************
 
 You are getting text pages, and the only reason Cadpage alerting will be delayed for text pages is because the messages are just not arriving at your device in a timely fashion.  If you want to prove this, go into Cadpage Additional Settings and check the box labeled "Pass Calls through to SMS Client".  With that set, all calls will be passed to your message inbox in addition to alerting Cadpage and you can confirm the extent to which the messages are delayed.
@@ -1310,7 +1310,7 @@ You can also try sending yourself text messages when these delays are observed t
 
 It might be worth considering switching to another messaging service.  CodeMessaging.net and Active911.com are reasonably priced and can push pages to your device without relying on text messaging and will probably fix your delay problem.  Unless the dispatch center is slow getting the pages out, in which case they have logs to prove that and some clout to take the issue up with dispatch IT people.  And Cadpage doesn't bug you about paying for a subscription when you are getting direct pages from them.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -1332,14 +1332,14 @@ Take care,
 
 It looks like you have run into a new Google registration problem.  We are still trying to get a handle on how to deal with it.  Lacking any other great ideas at this point, can you try uninstalling and re-installing Cadpage.  That seems to have worked for at least one other user.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
 ** Recent PHONE_REGISTRATION_ERROR
 ** Null RegistrationID
 ** Cadpage version < 1.6.29
-****************************************************************** 
+******************************************************************
 
 Something has been going haywire with the Google infrastructure supporting direct paging some time ago.  It only impacts a small percentage of direct paging users, but that is small comfort to those who are impacted.  We have been complaining to Google but so far have not gotten any response.
 
@@ -1355,7 +1355,7 @@ Take care,
 ** Null RegistrationID
 ** Cadpage version >= 1.6.29
 ******************************************************************
- 
+
 It looks like you are one of the users who cannot get the Google registration you need to implement direct paging.  Usually just retrying it a few times is enough to get things working.  But sometimes more serious measures are called for.
 
 If you have not tried it yet, try uninstalling and re-installing Cadpage.  You will have to register your device with CodeMessaging or Active911 again, hoping it succeeds this time.
@@ -1381,7 +1381,7 @@ Next, go back to Cadpage Settings and try to register with Active911/Code Messag
 
 If that does not work, we are down to recommending a factory reset.  This a rather drastic solution, but it has, thus far, always resolved this particular problem.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -1392,12 +1392,12 @@ Duplicate messages are fairly common for new Active911 users.   Some time back, 
 
 You have to talk to someone in your department about stopping the original text pages.  Probably the same person who got them sent to your phone in the first place.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
 
-Your phone is running Android 2.1.  Direct Paging relies on a Google messaging service that is only supported for 2.2 and up.  
+Your phone is running Android 2.1.  Direct Paging relies on a Google messaging service that is only supported for 2.2 and up.
 
 Your options are limited.  First check to see if your vendor has any system upgrades available
 main > Menu > Settings > Software Update > Check New
@@ -1447,7 +1447,7 @@ If you have calls that are not mapping, long press the call and select "Report P
 
 If Cadpage is missing calls entirely, go into settings and press the Email the Developer setting as soon as possible.  The email that generates includes information about the most recently received text message..
 
-Take care, 
+Take care,
 
 -Ken
 
@@ -1513,11 +1513,11 @@ Next, go into the Cadpage location settings, select a single location, and then 
 
 If not, please let us know if you would like the details of setting up a new location.
 
-In the meantime, try using the general location setting.  Set the From: filter to whoever appears in the From: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support. 
+In the meantime, try using the general location setting.  Set the From: filter to whoever appears in the From: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support.
 
 Please contact us again if you still have difficulties with Cadpage.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
@@ -1557,7 +1557,7 @@ waiting for full location support.
 
 Please contact us again if you still have difficulties.  The best way to do this is use the Email the Developer item in the main settings menu.
 
-Take care, 
+Take care,
 -Ken
 
 ****************************************************************************
@@ -1595,7 +1595,7 @@ a messaging service that has some other way to push pages to the phone app.
 
 **********************************************************************
 
-We deal with Cadpage, an exclusively Android app.  
+We deal with Cadpage, an exclusively Android app.
 
 There are 2 main options for iPhone Users:
 
@@ -1604,13 +1604,13 @@ However, you will still need a messaging service like Active911 or CodeMessaging
 
 2.  If you sign up with Active911.com as your paging service, they have their own IPhone app that pretty much does what Cadpage does on Android phones.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ******************************************************************
 Need to contact iphone app service
 
-We deal with Cadpage, an exclusively Android app. 
+We deal with Cadpage, an exclusively Android app.
 
 You are likely using at least one of the 2 main options for iPhone Users:
 
@@ -1670,15 +1670,15 @@ Cadpage is an Android app that generally will not run on a PC system.  We do hav
 
 We don't officially support this, and it is a lot of work to set up.  But it can and has been done.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
 
-This is a known bug in Android 2.2, you can track its status at 
+This is a known bug in Android 2.2, you can track its status at
 http://code.google.com/p/android/issues/detail?id=10238&can=1&q=ArrayIndexOutOfBoundsException%20MotionEvent&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -1689,7 +1689,7 @@ But nothing seems to be happening with it, unsurprising as developers aren't all
 
 If you can get a Android upgrade from your vender, most people are on 2.2 by now, I would install that.  Otherwise you might want to consider rooting your phone and installing your own Android system.  Failing that, you will probably just have to live with this.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -1721,7 +1721,7 @@ Does it happen every time you get a CAD page, or only this particular message?  
 
 Something that would really help is to install an application viewer (I use LogcatVW), and use that to capture and report the contents of your system log just after a crash.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************
@@ -1788,7 +1788,7 @@ Sorry for the bad news,
 
 ***************************************************************************
 
-Google can't find an address of  
+Google can't find an address of
 
 If there really is such an address, you can report it as a mapping problem by finding the correct location in Google maps and clicking the "Report a Problem" link in the lower right hand corner.
 
@@ -1815,7 +1815,7 @@ Some users, at some times, have gotten text messages with the line breaks intact
 
 Someone needs to track down how these dispatch alerts get generated and talk someone into changing things.  If the unidentified forwarding service will either leave the line breaks in place, or replace them with something else, all will be well. If Dispatch can use some other character to separate data fields in the dispatch alerts, it won't matter what the forwarding service does with them.
 
-Take care, 
+Take care,
 -Ken
 
 ***************************************************************************
@@ -1849,11 +1849,11 @@ But what we really want you to do is request a new location for your area.  That
 
 To add a new location we need 5-10 sample text messages from your dispatch.  Please include what County/City/Company these pages are for so we can place it in the right grouping. Please try to include 1-2 calls with intersections so we can parse those correctly. Include any details you can regarding how the messages are formatted. If possible please include what email the messages come from.
 
-We also need to know what agency is generating these messages and some idea of what other departments receive the same message formats.  If you can identify the CAD software that is sending your text pages that would help a lot.   
+We also need to know what agency is generating these messages and some idea of what other departments receive the same message formats.  If you can identify the CAD software that is sending your text pages that would help a lot.
 
 All of this needs to be emailed to are main support address support@cadpage.org.  If they are already in Cadpage call history, long press each call and select "Report Problem" to send them to us.  Otherwise, you can forward text messages to that address, or copy and past them into a regular email or generate an email in Cadpage which will include the last text message.  Once we have this information we can add the location to the list.
 
-In the meantime, try using the general location setting and set the from: filter to whoever appears in the from: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support. 
+In the meantime, try using the general location setting and set the from: filter to whoever appears in the from: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support.
 
 Have a nice day,
 -Ken
@@ -1884,7 +1884,7 @@ In the grasping at straws category, try cycling power on the device.  It's worke
 
 If that doesn't work, we're going to have to look at your system log.  Try installing a log view (I use LogcatVW), and use that to capture and report the contents of your system log just after you get a Cadpage alert.
 
-Take care, 
+Take care,
 -Ken
 
 ****************************************************************************
@@ -1897,7 +1897,7 @@ We haven't heard from anyone who wants to develop a Blackberry version.  That's 
 
 Thanks for your inquiry!
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ****************************************************************************
@@ -1922,13 +1922,13 @@ Or you can ask us to send you an invoice
 
 ******************************************************************************
 ** Response Button Setup **
-  
+
 If you want to report your responding status to IamResponding, you can configure Cadpage to call the phone number that IamResponding give you.  To do that, go into Cadpage settings and select
 Additional Settings > Button Configuration > Response Button Menu
 and set the Button 2 Phone/Code setting to the number you would like to call.
-  
+
 If you want, you can get more complicated and set up multiple response buttons with different titles calling different phone numbers.  If you do, make sure you leave one button with no PhoneCode setting that you can use to close the response button menu without calling anybody.
-  
+
 Have a nice day,
 -Ken
 
@@ -1944,14 +1944,14 @@ The latest versions of Cadpage trap the abort.  So it does not crash on you.  Bu
 
 We do have our own internal paging service now which gives you another way to workaround this issue.  Since you are a paid subscriber, you can register with that paging service and it will create a personal dispatch email address for you.  If you have your dispatch alerts sent to that email address, they will be forwarded to Cadpage through the mobile data network.  Since no text or MMS messaging is involved, any problems with processing MMS messages are sidestepped.
 
-Take care, 
+Take care,
 -Ken
 
 ******************************************************************************
 
 Dear ____ Department --
 
-I have been doing some internal auditing of our Cadpage app and found that there is no record of your payment.  
+I have been doing some internal auditing of our Cadpage app and found that there is no record of your payment.
 
 I have the following members registered as Cadpage Users as of __________:
 
@@ -1983,7 +1983,7 @@ This used to be a common problem, one that we have never really gotten a good ha
 
 When you have the Override Notification setting checked, Cadpage skips the usual notification procedure and instead uses the Media Player to play are specific alert tone at full volume.  One some devices, the Media Player apparently cannot play our alert ringtone and Cadpage crashes.  Exactly why only those few devices are impacted remains a mystery.  The simple workaround is to turn off the Override Notification setting in Notification Settings.
 
-Take care, 
+Take care,
 -Ken
 
 *************************************************************************
@@ -2011,15 +2011,15 @@ All is working as it should.  You have a paid subscription that will expire on 3
 
 The process isn't perfect, since you don't see the paid subscription expiration warning, you don't get informed that you can continue to run Cadpage beyond that date as long as you do not install a released published after that date.  But that still is an option.
 
-Hope that all made sense, 
+Hope that all made sense,
 Ken
 
 *********************
 Cadpage For IOS
 
-support emails can be sent to support@apprhythmia.com , and feedback can be sent to feedback@apprhythmia.com. 
+support emails can be sent to support@apprhythmia.com , and feedback can be sent to feedback@apprhythmia.com.
 
-I am going to work on getting a full FAQ together today, and will let you know when it's available. 
+I am going to work on getting a full FAQ together today, and will let you know when it's available.
 
 Thank you again!
 Jesse
@@ -2057,10 +2057,10 @@ sound problems
 Restarting your phone seems to fix most odd sound problems.  That's
 about all the advice we have.
 
-Take care, 
+Take care,
 -Ken
 
-in response to question: 
+in response to question:
 > The sound does not play when I receive a call. It use to work. My phone
 > just updated the software also. After the update the sound worked once
 > and does not work now. Please help
@@ -2136,9 +2136,9 @@ Well, Cadpage For IOS is a different company run by a fellow named Jesse.  His c
 
 We are Cadpage for Android phones, and have a deal with Active911 and CodeMessaging.  If you pay for one of those services, and use direct paging, then Cadpage is free.  Not so with Cadpage For IOS.  Jesse runs that separately.
 
-Active911 is generally $12 per year, and deals with individuals as well as departments.  CodeMessaging is paid by departments, and starts at $29.99 per month.  Active911 also has an app for IOS devices to use in conjuction with the messaging service.  
+Active911 is generally $12 per year, and deals with individuals as well as departments.  CodeMessaging is paid by departments, and starts at $29.99 per month.  Active911 also has an app for IOS devices to use in conjuction with the messaging service.
 
-In summary, your iphone User is on his own, unless your department switches to a messaging service as I have mentioned above. 
+In summary, your iphone User is on his own, unless your department switches to a messaging service as I have mentioned above.
 
 I hope this helps.  It has been an interesting time in this business!  We would be glad to help you if you decide to transition to Active911 or CodeMessaging, as we do get paid through them as well.
 
@@ -2151,12 +2151,12 @@ So, here are the details in setting up the same email address for use on the sec
 
 In your second phone, go to Android settings --- Accounts -- Add new account --- select Google --- existing --- email.
 
-Enter your Cadpage User email address: 
+Enter your Cadpage User email address:
 nightrh@gmail.com
 
 Then you may need to enter a password.
 
-Please note that the instructions may vary a bit depending on the type of second phone you have.  
+Please note that the instructions may vary a bit depending on the type of second phone you have.
 
 ***************************************************************
 fix this up?:
@@ -2230,7 +2230,7 @@ implementing the Cadpage direct paging interface.  And thus far, they
 have expressed no interest in doing that.  Feel free to contact them
 about your wishes.
 
-Take care, 
+Take care,
 -Ken
 
 
@@ -2331,7 +2331,7 @@ pages out, in which case they have logs to prove that and some clout to
 take the issue up with dispatch IT people.  And Cadpage doesn't bug you
 about paying for a subscription when you are getting direct pages from them.
 
-Take care, 
+Take care,
 -Ken
 
 ***************************************************************
@@ -2341,7 +2341,7 @@ Go into Cadpage Settings and select
 Direct Paging Vendors > Reconnect Direct Paging
 That usually takes care of direct paging delays.  You, or the Active911 administrator for your department, can test this by logging in to the Active911 web site and sending yourself a test message.
 
-Take care, 
+Take care,
 -Ken
 
 *************************************************************
@@ -2385,7 +2385,7 @@ Q"
 ********************************************************************************
 SPONSOR by Cadpage -- for General Location; foreign (non-Canada) locations
 
-You may continue with the SPONSORed Cadpage by using the General location setting and set the From: filter to whoever appears in the From: field of your page text messages. 
+You may continue with the SPONSORed Cadpage by using the General location setting and set the From: filter to whoever appears in the From: field of your page text messages.
 
 *********************************************************************************
 Well, when you go into Cadpage, you probably have a list of past calls, named Call History.
@@ -2415,13 +2415,13 @@ something.  You need to long press all of the calls that are not mapping
 and select "Report Problem" to generate an email to us with details
 about that call.
 
-Take care, 
+Take care,
 -Ken
 ********************************************************************************
 
 Can you long press a couple of these calls and select "Report Problem" to send them to us?
 
-Take care, 
+Take care,
 -Ken
 
 > I get text mesg but when i click on more info button a widow opens to show responce but nothing populates
@@ -2444,14 +2444,14 @@ Direct Paging Vendors > Reconnect Direct Paging
 You may have to try this 3-4 times before it is accepted.  If it consistently fails, use the Email the Developer feature to ask for help, the log included in that message may be helpful.
 
 Take care,
--Ken 
+-Ken
 *********************************************************************************
 
 Ah yes, the dreaded PHONE_REGISTRATION_ERROR problem, that started about 2 weeks ago.
 
 Ken has released a new Cadpage update to handle this.  First, Please install the latest Cadpage release.
 
-Then, you will need to register again with Active911.  
+Then, you will need to register again with Active911.
 
 If you are already registered successfully, you will need to go into Cadpage settings and select
 Direct Paging Vendors > Reconnect Direct Paging
@@ -2462,7 +2462,7 @@ Thanks for your patience,
 Jean ~ Cadpage Administrator
 
 *********************************************************************************
-The intended purpose of Cadpage is to support emergency responders who get text pages from a central dispatch center when they are asked to respond to an emergency.  
+The intended purpose of Cadpage is to support emergency responders who get text pages from a central dispatch center when they are asked to respond to an emergency.
 
 We do not support the sending of these confidential dispatch messages to social media like Twitter.  It would not be professional, or courteous to the patients we serve.
 
@@ -2526,10 +2526,10 @@ Cadpage will be of little use to you.
 *********************************************************************************
 ** Inexplicable StackOverflowError
 *********************************************************************************
-The launcher and twlauncher get or become corrupt, causes Cadpage to crash and have the problems that were in my log. To fix the problem, you have to delete the launcher's cache, then delete and reinstall Cadpage.  One you restart your Android device, you have to select launcher.  
+The launcher and twlauncher get or become corrupt, causes Cadpage to crash and have the problems that were in my log. To fix the problem, you have to delete the launcher's cache, then delete and reinstall Cadpage.  One you restart your Android device, you have to select launcher.
 
 *********************************************************************************
-Cadpage (free) v1.4.42 
+Cadpage (free) v1.4.42
 
 The free version of Cadpage you are currently running is unsupported. And lacks the basic support reporting features I need to figure out what is wrong.
 
@@ -2569,12 +2569,12 @@ Hope that helps,
 -Ken
 
 *************************************************************************************
-Q:  I was wondering why their is only notification sounds that are the same notification sounds that are the default sounds of android phone whereas 
-the iPhone has notifications that sound like a department pager etc that are through cad page 
+Q:  I was wondering why their is only notification sounds that are the same notification sounds that are the default sounds of android phone whereas
+the iPhone has notifications that sound like a department pager etc that are through cad page
 
 
 A: Different environments.  From what I understand, the IOS environment forces developers to provide your own notification sounds and makes it difficult to use system sponsored oens.  The Android environment makes it difficult
- to provide your own notification sounds and easy to use the system predefined ones.  I was thinking of adding an option to install all of the Active911 notification sounds in the Android system where they would be available 
+ to provide your own notification sounds and easy to use the system predefined ones.  I was thinking of adding an option to install all of the Active911 notification sounds in the Android system where they would be available
  to everyone.  But like so many other things I just don't have time to get to it.
 
 Have fun,
@@ -2583,7 +2583,7 @@ Have fun,
 Q:  Whenever I get a call via cadpage it says "general alert" and nothing else.
 > No map / location or call type. This seems to only be happening on the
 > Sprint network in my area. Should I be talking with Sprint or my local
-> emergency manager? 
+> emergency manager?
 
 A:  Can you pick some of the calls that this is happening to, long press them and select "Report Problem" to send them to us.
 
@@ -2622,13 +2622,13 @@ Have a nice day,
 -Ken
 
 ************************************************************************************
-not refunding 
+not refunding
 
 Please allow me to explain the fee for our Cadpage app.  Because it is a high maintenance app, continually in development, our $9.99 fee is a per-year subscription.  You have not purchased the app, but I did find your subscription payment of ____________.  You apparently used Cadpage for over 8 months.
 
-Also, when you pay through Google Play Store, Google takes 30% of that $9.99. With Google, we cannot do partial refunds, so we would be losing out of most of our $7 gain. 
+Also, when you pay through Google Play Store, Google takes 30% of that $9.99. With Google, we cannot do partial refunds, so we would be losing out of most of our $7 gain.
 
-Therefore our policy is to refund subscriptions 6 months old or less. 
+Therefore our policy is to refund subscriptions 6 months old or less.
 I regret to say that we will not refund your $9.99 payment, but if you are really in a hardship situation, please let us know.
 
 Thanks for your support and your understanding,
@@ -2641,14 +2641,14 @@ Cadpage can handle multiple departments easily enough.
 
 If your departments support text pages, you have to make arrangements to have their text pages sent to your phone.  Then just select the appropriate location(s) in Cadpage to cover your text page department.
 
-If your departments get pages through Active911, it is a simple matter to have your device added to the  device lists for both departments. 
+If your departments get pages through Active911, it is a simple matter to have your device added to the  device lists for both departments.
 
 Take care,
 Jean, Asssistant to Ken Corbin
 
 
 ***********************************************************************************
-Explanation of CodeMessaging and Active911 
+Explanation of CodeMessaging and Active911
 
 Cadpage, as a standalone app, has no addition features beyond what you
 get during the evaluation demo.  And no additional costs beyond the
@@ -2673,7 +2673,7 @@ service.
 
 Have a nice day,
 *****************************************************************************
-SPonsored;  lots of null fields; 
+SPonsored;  lots of null fields;
 
 Q: My paging is not working it stopped working after the update...
 
@@ -2773,7 +2773,7 @@ settings and select
 Direct Paging Vendors > Reconnect Direct Paging
 We do not know why, but doing this usually fixes the problem.
 
-Take care, 
+Take care,
 ****************************************************************************
 
 notification when phone is muted
@@ -2782,7 +2782,7 @@ Go into Notification settings and check the box
 labeled, "Override Notifications.  It is not as flexible as the regular
 notificiaton process.  But it does alert you when the phone is muted.
 
-Take care, 
+Take care,
 -Ken
 ****************************************************************************
 mile markers
@@ -2797,7 +2797,7 @@ the  mile markers.  Ideally you should have two sets of coordinates for
 each Interstate mile marker, one for eastbound and another for westbound
 lanes.
 
-Take care, 
+Take care,
 -Ken
 **********************************************
 Q:How do I register through I am responding?
@@ -2810,7 +2810,7 @@ where you can indicate your responding status by phoning one or more
 special phone numbers.  Cadpage can be configured to call those numbers
 when you press a predefined response button.
 
-Take care, 
+Take care,
 -Ken
 
 ********************************************************
@@ -2906,7 +2906,7 @@ sending them.  If you do this, please include your name and/or email
 address.  We sometimes have trouble matching forwarded texts messages
 with your emails.
 
-Take care, 
+Take care,
 -Ken
 *************************************************************************
 download updates
@@ -2965,7 +2965,7 @@ text page from the Active911.com website.  Go to the member information area and
 select the device tab.  Beside each configured device there is a row of
 three icons.  The middle one is used to send that device a text message.
 
-Take care, 
+Take care,
 -Ken
 **************************************************************************
 Connect back to Cadpage with Active911
@@ -3033,7 +3033,7 @@ If things still do not work, or if generated test messages do not make
 it to your device, use the Email the Developer feature to send us
 another email.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ********************************************************************************
@@ -3075,7 +3075,7 @@ Active911.com, that can push pages to Cadpage without relying on text
 messages.  Which has some advantages such as allowing Cadpage to work on
 Android tablets that can not process text messages.
 
-Take care, 
+Take care,
 
 
 **************************************************************************
@@ -3246,7 +3246,7 @@ Have a nice day,
 mapping problem
 
 Q: When pressing map on the call notification the proper
-> location is not displayed. 
+> location is not displayed.
 
 A:  Can you long press any call that is not mapping properly and select
 "report Problem" to send it to us?
@@ -3318,7 +3318,7 @@ default message app is just going to go away.  Options are going to be
 3) switch to using a direct paging vendor (currently CodeMessaging.net
 or Active911.com) to deliver pages to Cadpage.
 
-Take care, 
+Take care,
 
 ************************************************************************
 mapping problems
@@ -3326,7 +3326,7 @@ mapping problems
 A: Have them long press the calls that are not mapping and select "Report
 Problem" to send them to us.
 
-Take care, 
+Take care,
 -Ken
 Q >  A Member is only receiving general alerts and doesn't
 > have the map option. Do you have any suggestions?
@@ -3362,7 +3362,7 @@ You need to long press all of the calls that are not mapping and select
 "Report Problem" to send them to us.  With that I can figure out what we
 need to do to fix things.
 
-Take care, 
+Take care,
 -Ken
 ****************************************************************************
 
@@ -3389,7 +3389,7 @@ it does not, use the Email the Developer feature to send us another
 Email right after Cadpage fails to pick up one of your pages.
 
 ********************************************************************************
-expiration; keep using Cadpage; no further payment 
+expiration; keep using Cadpage; no further payment
 
 It looks like you have a subscription paid through ___________,  Which
 basically means you have already paid for any and all Cadpage releases
@@ -3441,13 +3441,13 @@ If not, please let us know if you would like the details of setting up a new loc
 
 In the meantime, try using the general location setting.  Set the From: filter to whoever appears in the From: field of your page text messages.  That will usually give you some degree of functionality while you are waiting for full location support.
 
-3.  If you paid for Active911, a messaging service, you will need to register your phone. 
+3.  If you paid for Active911, a messaging service, you will need to register your phone.
 
 Please contact us again if you still have difficulties.  Please use the Cadpage app to send an email:  Select Settings, then Email the Developer with configuration information.
 
 **************************************************************************************
 
-Welcome to Cadpage! 
+Welcome to Cadpage!
 
 Please note that our Cadpage app is for Android devices only.  You'll need another option if you have an iPhone or Windows phone.
 
@@ -3460,13 +3460,13 @@ First, make sure you are getting text pages sent to your phone when a call is to
 
 Next, go into the Cadpage location settings, select a single location, and then see if we have a location set up for where you happen to live or work. We do have Warren County, NY as one of our supported locations.
 
-Cadpage will give you a free 30-day DEMO.  It is the same great app as the "pro" version, and after your DEMO expires, there are some payment options.  A one-year subscription to Cadpage is $9.99. 
+Cadpage will give you a free 30-day DEMO.  It is the same great app as the "pro" version, and after your DEMO expires, there are some payment options.  A one-year subscription to Cadpage is $9.99.
 
 Let's see how the DEMO goes first before we tackle the payment.
 
 Please contact us again if you still have difficulties or questions concerning Cadpage.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 *********************************************************************************************8888
@@ -3657,7 +3657,7 @@ be forwarded to your device through the mobile data networks.  Since no
 text messages are involved in this, the service works on devices that
 can not process text messages.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 
@@ -3678,9 +3678,9 @@ from Cadpage (we have configurable buttons to make this easier) it will
 pull the latest alert information from their servers and display the
 latest alerts after a few seconds.
 
-Then you have your department stop sending you the text alerts.  
+Then you have your department stop sending you the text alerts.
 
-Take care, 
+Take care,
 
 ********************************************************************
 Q: will cadpage work on on straight talk service
@@ -3690,7 +3690,7 @@ mapping features, which are the primary reason why people want Cadpage,
 require an internet connection.  The Internet connection can be provided
 through a local WiFi hotspot if you do not have a carrier data plan.
 
-Take care, 
+Take care,
 
 *******************************************************
 
@@ -3700,14 +3700,14 @@ posted Jan 14, 2012, 5:14 PM by Derrick Bennett
 There are now 2 versions of CadPage on the android market. One is called Cadpage (free) and is just that. Free forever with all the features and abilities that CadPage has had. It will
  continue to receive updates and new locations but will be slightly behind the main version on release dates. The standard version of Cadpage is also in the android market and will continue
   to receive weekly updates including fixes and new locations. This version also has additional functionality of now supporting CodeMessaging.net and Active911.com messaging services. These
-services now work with CadPage and do not use SMS for delivering messages. 
+services now work with CadPage and do not use SMS for delivering messages.
 
 For the Latest news and headlines please check the facebook page. We update this page as often as we can but the facebook page gets the immediate updates when a new version goes out.
 
 Also for those that keep asking and begging Ken has started working on an IPhone version with some other helpful people. So when that is available we will post more information here.
 
 ************************************************************************
-SPONSOR - no location 
+SPONSOR - no location
 
 You are using the generic location, which is always a hit or miss
 proposition.  There must be something in you dispatch alerts that the
@@ -3897,7 +3897,7 @@ Their theft prevention feature is useful, but there are better theft prevention 
 The permissions requested by Cadpage, and why we need them, are documented at http://www.cadpage.org/faq/permissions.  We do  not access the contact list, we do retrieve your configured email address and phone number to look up your payment subscription status on our authorization server.  We also access the Internet to support direct paging.  A permission scanner finding an app that retrieves your contact name/email/phone number and can potentially send that information to a remote server does have a legitimate reason to raise an alarm.
 
 But you do not need a special app to do that.  You have to approve the app permissions when the app is installed.  Or when any future update requests new permissions.  You can get the current permission list about any app from the application manager.  Just open system settings and select
-Application Manager > (app in question) 
+Application Manager > (app in question)
 and scroll down to read the requested permissions.  If you want to see something really alarming, look up the permissions granted to Norton Antivirus.  To be fair, they need to use things like access to the camera and microphone to help you surreptitiously track down a missing phone.  You just have to trust them not to use those capabilities when you do not want them to.
 
 You are registered to receive direct pages from CodeMessaging.  If you are also getting text alerts from someone else, there are a number of reasons why text alerts might be delayed or missed.  For problem with direct pages, open Cadpage Settings and select
@@ -3953,7 +3953,7 @@ If that works, please send me another request for a free Cadpage subscription, a
 
 If there is no supported location for your area, or if the selected location does not work, you can help us set up a new location parser to cover your messages. To do that, long press all of the calls that you currently have in Cadpage call history and select "Report Problem" to send them to us. In exchange for your help setting this up, we will grant you a one-year paid Cadpage subscription.
 
-Take care, 
+Take care,
 Jean ~ Cadpage Administrator
 
 ************************************************************************
@@ -3999,7 +3999,7 @@ If you find you would rather use the Active911 app by itself, just uninstall the
 If the Active911 app has any trouble displaying or mapping any alert, you really should report that to Active911 support.  You can call them at (541) 223-7992 or email support@active911.com.  They will need the Active911 # number and a description of what is wrong.  Getting responders to the correct location is a responsibility that we both take very seriously.  But we can not fix problems if nobody tells us about them.
 
 Have a great day,
--Ken 
+-Ken
 
 **************************************************************************
 * Old Cadpage users - better parser
@@ -4025,7 +4025,7 @@ If you find you would rather use the Active911 app by itself, just uninstall the
 If the Active911 app has any trouble displaying or mapping any alert, you really should report that to Active911 support.  You can call them at (541) 223-7992 or email support@active911.com.  They will need the Active911 # number and a description of what is wrong.  Getting responders to the correct location is a responsibility that we both take very seriously.  But we can not fix problems if nobody tells us about them.
 
 Have a great day,
--Ken 
+-Ken
 **************************************************************************
 * Old Cadpage users - equivalent functionality
 **************************************************************************
@@ -4123,7 +4123,7 @@ I hope that clarifies the major options available to your department.
 Please let me know if you need further information, or would like to
 register your department with Cadpage.
 
-Thanks for your consideration, 
+Thanks for your consideration,
 Jean ~ Cadpage Administrator
 *************************************************************************************
 * no User email address
@@ -4258,7 +4258,7 @@ Have a nice day,
 * Support app install instructions - Android 9 with Chrome
 **************************************************************************************
 Sorry you are having trouble installing the message support app.
- 
+
 Unfortunately detailed instructions vary depending on on what version of Android you are running and which web browser you are using.  This is what works for Android 9 using the Chrome web browser.
 
 1) Open Cadpage it should display a warning that you need to install the Cadpage message support app.
@@ -4302,10 +4302,10 @@ If you are receiving those alerts, then you need to tell Cadpage to process them
 
 When you open the Cadpage app, it should display a "Welcome to Cadpage" screen and warn you that nothing will happen with your current settings.
 
-Assuming that you are receiving text alerts, select 
+Assuming that you are receiving text alerts, select
 My department sends me text alerts
 
-That takes you to the "Text dispatch alerts" screen.  Select 
+That takes you to the "Text dispatch alerts" screen.  Select
 Enable Cadpage text message processing
 
 This should take you to the "Install Cadpage Message support screen which warns you that Cadpage is no longer allowed to process incoming text messages and that you must install an auxiliary support app  to allow this functionality.  Select
@@ -4342,12 +4342,24 @@ As soon as you do this, Cadpage will warn you that you need to upgrade the messa
 That should do it.  If you still have problems with Cadpage picking up the dispatch alerts, use the "Email the Developer" setting to send us another support email.
 
 Good luck,
--Ken 
+-Ken
+
+**************************************************************************************
+* Cadpage registration with Active911 no longer works
+**************************************************************************************
+
+Active911 should have this fixed in a day or so.  Until there, there is a workaround
+
+1) Ask Cadpage to register with Active911
+2) When you get the 404 error, click on the web link at the top of the screen.
+3) This should display your page history.  The first line will read "Error".  Click the pencil icon at the far right of that line
+4) This will make the web link at the top of the screen editable.  You have to drag the cursor from to the beginning of the very long URL and change the initial "www" to "console"
+5) Send that, then continue the regular registration process.
 
 **************************************************************************************
 * Hey Google!!
 **************************************************************************************
-To assist firefighters and other emergency responders in navigating to the scene of an emergency 911 alert.  As a secondary feature, one dispatch service would like to display a map of current responder locations to assist fireground officers in managing the incident scene.  Cadpage supports this by reporting the current location to this dispatch service.  There are multiple safeguards to ensure that the user is aware that this is happening and can turn if off if desired.  
+To assist firefighters and other emergency responders in navigating to the scene of an emergency 911 alert.  As a secondary feature, one dispatch service would like to display a map of current responder locations to assist fireground officers in managing the incident scene.  Cadpage supports this by reporting the current location to this dispatch service.  There are multiple safeguards to ensure that the user is aware that this is happening and can turn if off if desired.
 
 In normal operation, a user receive an alert, then press a button that launches the Google map app to provide navigation directions to the incident scene.  While the user is very aware that Cadpage is operating and most believe that Cadpage is provding the navigation directions, the fact that the map app is running in the foreground relegates Cadpage to a background status.  Without current background location access, it will be unable to provide the dispatch service with accurate location data.
 

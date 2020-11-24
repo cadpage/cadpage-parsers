@@ -9,13 +9,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA20Parser extends FieldProgramParser {
-  
+
   public static final int A20_UNIT_LABEL_REQ = 1;
-  
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(Dispatched Call|Closing Info)(?:, Unit: ([-A-Z0-9]+))? \\(([-A-Z0-9 ]*)\\)(?:\\|.*)?");
-  
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(Dispatched Call|Closing Info)(?:, Unit: ([- A-Z0-9]+))? \\(([-A-Z0-9 ]*)\\)(?:\\|.*)?");
+
   private Properties codeLookupTable;
-  
+
   private boolean unitLabelReq;
 
   public DispatchA20Parser(String defCity, String defState) {
@@ -25,7 +25,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   public DispatchA20Parser(String defCity, String defState, int flags) {
     this(null, defCity, defState, flags);
   }
-  
+
   public DispatchA20Parser(Properties codeLookupTable, String defCity, String defState) {
     this(codeLookupTable, defCity, defState, 0);
   }
@@ -36,10 +36,10 @@ public class DispatchA20Parser extends FieldProgramParser {
     this.codeLookupTable = codeLookupTable;
     this.unitLabelReq = (flags & A20_UNIT_LABEL_REQ) != 0;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Replace paren terms that might have gotten stripped off the beginning
     // of the message
     String[] subParts = subject.split("\\|");
@@ -58,12 +58,12 @@ public class DispatchA20Parser extends FieldProgramParser {
     if (!parseFields(body.split(" \\* ", -1), 5, data)) return false;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "UNIT " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStField();
@@ -95,13 +95,13 @@ public class DispatchA20Parser extends FieldProgramParser {
       super.parse(addr, data);
       data.strCity = city;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY ST";
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -112,13 +112,13 @@ public class DispatchA20Parser extends FieldProgramParser {
         data.strCall = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("\n| {3,}");
   private static final Pattern UNIT_PTN = Pattern.compile("ENG .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern GPS_PTN = Pattern.compile("(?:LAT|LON):(.*)", Pattern.CASE_INSENSITIVE);
@@ -138,7 +138,7 @@ public class DispatchA20Parser extends FieldProgramParser {
         if (UNIT_PTN.matcher(line).matches()) {
           data.strUnit = line;
         } else if ((match = GPS_PTN.matcher(line)).matches()) {
-          gpsLoc = append(gpsLoc, ",", match.group(1)); 
+          gpsLoc = append(gpsLoc, ",", match.group(1));
         } else if (data.strCall.length() == 0) {
           data.strCall = line;
         } else {
@@ -147,7 +147,7 @@ public class DispatchA20Parser extends FieldProgramParser {
       }
       setGPSLoc(gpsLoc, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT APT CALL GPS INFO";
