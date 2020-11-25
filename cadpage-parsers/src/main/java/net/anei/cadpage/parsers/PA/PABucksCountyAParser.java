@@ -10,12 +10,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Bucks County, PA
  */
 public class PABucksCountyAParser extends PABucksCountyBaseParser {
-  
+
   public PABucksCountyAParser() {
     super("SRC type:CALL! Box:BOX? adr:ADDR! aai:AAI box:BOX map:MAP tm:TIME% TEXT:INFO? Run:UNIT");
     setupSpecialStreets("CUL DE SAC");
   }
-  
+
   @Override
   public String getFilter() {
     return "8276,@bnn.us,iamresponding.com,Bucks RSAN,@alert.bucksema.org,1210,@co.bucks.pa.us,@buckscounty.org,@everbridge.net,@buckscounty.gov";
@@ -31,7 +31,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     body = stripFieldStart(body, "911:");
     body = stripFieldStart(body, "Text:");
 
@@ -44,19 +44,19 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
     if (pt >= 0) body = body.substring(0,pt).trim();
     else {
       Matcher match = TRAIL_URL_PTN.matcher(body);
-      if (match.matches()) { 
+      if (match.matches()) {
         body = match.group(1).trim();
         data.strInfoURL = match.group(2);
       }
     }
     String saveBody = body;
-    
+
     Matcher match = STATION_PTN.matcher(subject);
     if (match.matches()) {
       data.strSource = match.group(1).trim();
       body = body.replace("\nBox:", " Box:").replace("\nAddr:", " adr:").replace("\nBtwn:", " btwn:").replace("\nText:", " Text:").replace('\n', ' ');
     }
-    
+
     boolean mark2 = false;
     match = MARKER1.matcher(body);
     if (match.matches()) {
@@ -70,7 +70,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
         body = match.group(1) + " type:" + match.group(2) + " " + body.substring(match.end()).replace('\n', ' ').trim();
       }
     }
-    
+
     body = NAKED_DATE_TIME.matcher(body).replaceFirst(" tm: $0");
     body = body.replace(" Adr:", " adr:").replace(" stype:", " type:").replace(" saai:", " aai:").replace(" Text:", " aai:").trim();
     if (super.parseMsg(body, data)) {
@@ -80,7 +80,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       }
       return true;
     }
-    
+
     // Parse failure - but see if this is one of two kinds of recognized general message
     if (subject.equals("Important message from Bucks County RSAN")) {
       data.parseGeneralAlert(this, saveBody);
@@ -91,7 +91,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       data.strDate = match.group(1);
       data.strTime = match.group(2);
     } else return false;
-    
+
     //  See if the general alert data (in the place field) has a leading station code
     setFieldList("DATE TIME SRC INFO");
     match = SRC_MARKER.matcher(data.strSupp);
@@ -106,7 +106,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   public String getProgram() {
     return "SRC UNIT " + super.getProgram() + " URL";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -117,9 +117,9 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
-    
+
     @Override
     public void parse(String field, Data data) {
       String desc = TYPE_CODES.getProperty(field);
@@ -127,7 +127,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern MULT_COMMA_PTN = Pattern.compile(",,+");
   private static final Pattern BAD_CITY_PTN = Pattern.compile(".*[-\\*].*|.*? .*? .*? .*? .*");
   private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\b(XSTRT:|low xst:|XSTS[,: ])", Pattern.CASE_INSENSITIVE);
@@ -139,18 +139,18 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   private static final Pattern TRAIL_RES_PTN = Pattern.compile("(.*) RESD?");
   private static final Pattern KEEP_CROSS_PTN = Pattern.compile("&.*|BY|EXIT.*|ON .*|CROSSING");
   private static final Pattern TRAIL_DIR_PTN = Pattern.compile("(.*) ([NSEW]|[NS][EW])");
-  
+
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String sAddr, Data data) {
-      
+
       // Not the usual parseAddress method, this one is in the PABucksCountyBaseParser class
       sAddr = MULT_COMMA_PTN.matcher(sAddr).replaceAll(",");
       sAddr = CROSS_MARK_PTN.matcher(sAddr).replaceFirst("btwn:");
       sAddr = MISSING_BLANK_PTN.matcher(sAddr).replaceAll(" ");
       parseAddressA7(sAddr, data);
-      
+
       if (data.strCity.length() > 0) {
         if (BAD_CITY_PTN.matcher(data.strCity).matches()) {
           String city = data.strCity;
@@ -158,7 +158,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
           parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
           data.strSupp = append(data.strSupp, " / ", getLeft());
         }
-        
+
         int pt = data.strCity.indexOf(',');
         if (pt >= 0) {
           data.strState = data.strCity.substring(pt+1);
@@ -166,20 +166,20 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
         }
         data.strCity = stripFieldEnd(data.strCity, " BORO");
       }
-      
+
       Matcher match = PLACE_ADDR_PTN.matcher(data.strAddress);
       if (match.matches()) {
         data.strPlace = append(match.group(1).trim(), " - ", data.strPlace);
         data.strAddress = match.group(2).trim();
       }
-      
+
       match = PHONE_PTN.matcher(data.strCross);
       if (match.matches()) {
         data.strCross =  match.group(1).trim();
         data.strPhone = match.group(2);
         data.strName = match.group(3);
       }
-    
+
       String cross = data.strCross;
       data.strCross = "";
       parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, cross, data);
@@ -216,13 +216,13 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       }
       if (data.strPhone.equals("NO PHONE NUMBER")) data.strPhone = "";
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames() + " CITY ST X PHONE NAME INFO";
     }
   }
-  
+
   private static final Pattern COMMA_PTN = Pattern.compile(" *,[ ,]*");
   private static final Pattern DASH_PTN = Pattern.compile(" *- *");
   private static final Pattern XSTR_PTN = Pattern.compile("(?:XST(?:R[ST]?)?|XST|XCROSS|XSTREET|X)[-: ]+(.*)");
@@ -236,24 +236,24 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       boolean checkAddress = data.strPlace.length() == 0 &&
                              data.strCity.length() == 0 &&
                              !isValidAddress(data.strAddress);
-      
+
       // Look for GPS coordinates
       field = setGPSLoc(field, data);
-      
+
       String result = "";
       for (String part : COMMA_PTN.split(field)) {
-        
+
         if (part.startsWith("BOX ")) {
           data.strBox = part.substring(4).trim();
           continue;
         }
-        
+
         Matcher match = XSTR_PTN.matcher(part);
         if (match.matches()) {
           data.strCross = append(data.strCross, " / ", match.group(1));
           continue;
         }
-        
+
         if (data.strCity.length() == 0) {
           // here we will check for a dash separator :(
           String city = null;
@@ -280,19 +280,19 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
             if (part == null) continue;
           }
         }
-        
+
         if (part.equals("NY") || part.equals("NJ")) {
           data.strState = part;
           continue;
         }
-        
+
         if (checkAddress && isValidAddress(part)) {
           data.strPlace = data.strAddress;
           data.strAddress = "";
           parseAddress(part, data);
           continue;
         }
-        
+
         match = COVER_PTN.matcher(field);
         if (match.find()) {
           String code = match.group(1);
@@ -302,18 +302,18 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
             break;
           }
         }
-        
+
         result = append(result, ", ", part);
       }
       super.parse(result, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE BOX ADDR CITY ST X GPS INFO";
     }
   }
-  
+
   private class MyBoxField extends BoxField {
     @Override
     public void parse(String field, Data data) {
@@ -321,9 +321,9 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       super.parse(field, data);
     }
   }
-    
+
   private class MyTimeField extends TimeField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
@@ -335,13 +335,13 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       data.strTime = token;
       data.strCallId = p.get();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME ID";
     }
   }
-  
+
   private static final Pattern LEAD_COMMA_PTN = Pattern.compile("^[, ]+");
   private static final Pattern TRAIL_COMMA_PTN = Pattern.compile("[, ]+$");
   private class MyInfoField extends InfoField {
@@ -353,13 +353,13 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       field = COMMA_PTN.matcher(field).replaceAll(", ");
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "GPS INFO";
     }
   }
-  
+
   private static final Properties TYPE_CODES = buildCodeTable(new String[]{
       "AIRC",     "AIRPLANE CRASH (TAC)",
       "ACARDA",   "CARDIAC/RESPIRATORY ARREST",
@@ -388,6 +388,8 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       "FDWL",     "DWELLING FIRE (TAC)",
       "FEXP",     "EXPLOSION (LOC)",
       "FEMS",     "FIRE ASSIST EMS (LOC)",
+      "FEMSA",    "FIRE ASSIST EMS ALS",
+      "FEMSB",    "FIRE ASSIST EMS BLS",
       "FGARAG",   "GARAGE FIRE (TAC)",
       "FGRILL",   "GRILL FIRE (LOC)",
       "FHAZ",     "HAZMAT FIXED LOCATION (TAC)",

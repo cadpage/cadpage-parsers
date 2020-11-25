@@ -4,18 +4,18 @@ import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 public class ALDallasCountyParser extends DispatchA48Parser {
-  
+
   public ALDallasCountyParser() {
     super(CITY_LIST, "DALLAS COUNTY", "AL", FieldType.X, A48_NO_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "@bellsouth.net";
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "BARRETT CREEK",
       "BOB WHITE",
@@ -33,7 +33,7 @@ public class ALDallasCountyParser extends DispatchA48Parser {
       "ST ANDREWS",
       "ST PHILLIPS"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "CHECK OUT",
       "FALARM",
@@ -57,9 +57,9 @@ public class ALDallasCountyParser extends DispatchA48Parser {
       "VEHICLE FIRE",
       "WOODS FIRE"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "SELMA",
       "VALLEY GRANDE",
