@@ -59,6 +59,7 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     // And convert comment marks to line breaks
     body = DATE_TIME_MARK_PTN.matcher(body).replaceAll("\n");
     if (! super.parseMsg(body, data)) return false;
+    if (data.strCallId.equals("0")) data.strCallId = "";
     return true;
   }
 
