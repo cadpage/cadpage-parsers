@@ -215,7 +215,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("As of \\d\\d?/\\d\\d?/\\d\\d \\d\\d(:\\d\\d:\\d\\d( [AP]M)?)?");
   private static final Pattern PREFIX_PTN = Pattern.compile("(?!\\d\\d:)([- A-Za-z0-9]+: *)(.*)");
   private static final Pattern TRUNC_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d \\d{4}-\\d{8} ");
-  private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8} ");
+  private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8}(\\s)");
   private static final Pattern MASTER_PTN = Pattern.compile("(?:CAD:[-_A-Za-z0-9]* |[- A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) (?:([AP]M) )? *(\\d{4}-\\d{5,8}) (.*)");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+([-\\w]+)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?\\b");
@@ -226,7 +226,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   private Set<String> crossSet;
   private Set<String> unitSet;
-  
+
   private static class Flag {
     boolean flag;
     private Flag(boolean flag) { this.flag = flag; }
@@ -268,8 +268,8 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
 
     // Another variation on same theme
-    else if (subject.length() == 0 && TRUNC_HEADER_PTN2.matcher(body).lookingAt()) {
-      body = "As of 99/99/99 99:99:99 " + body.substring(2);
+    else if (subject.length() == 0 && (match = TRUNC_HEADER_PTN2.matcher(body)).lookingAt()) {
+      body = "As of 99/99/99 99:99:99" + match.group(1) + body.substring(2);
     }
 
     if (!subject.startsWith("As of") && !subject.equals("ALERT MESSAGE") && !subject.equals("Text Message")) data.strSource = subject;
@@ -303,7 +303,7 @@ public class DispatchA48Parser extends FieldProgramParser {
         addUnit(part, data);
         continue;
       }
-      
+
       if (fieldType == FieldType.INFO && data.strUnit.length() == 0) {
         part = parseUnitInfo(part, data, unitFound);
       }
@@ -456,7 +456,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private String parseUnitInfo(String field, Data data, Flag unitFound) {
     int pt = field.lastIndexOf(" Unit Org Name Area Types ");
     if (pt < 0) {
@@ -468,10 +468,10 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
       return field;
     }
-    
+
     String unitInfo = field.substring(pt+26).trim();
     field = field.substring(0,pt).trim();
-    
+
     if (unitPtn == null) {
       if (!unitInfo.isEmpty()) unitFound.setFlag(true);;
       pt = unitInfo.indexOf(' ');
@@ -485,7 +485,7 @@ public class DispatchA48Parser extends FieldProgramParser {
         }
       }
     }
-    
+
     return field;
   }
 
@@ -504,7 +504,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("\\d{4}-?\\d{8}\\b");
 
   @Override

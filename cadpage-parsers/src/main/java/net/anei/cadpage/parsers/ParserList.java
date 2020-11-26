@@ -625,6 +625,7 @@ public class ParserList {
               ,"KYHartCounty"                   ,"Hart County, KY"
               ,"KYHendersonCounty"              ,"Henderson County, KY"
               ,"KYHenryCounty"                  ,"Henry County, KY"
+              ,"KYHickmanCounty"                ,"Hickman County, KY"
               ,"KYHopkinsCounty"                ,"Hopkins County, KY"
               ,"KYJohnsonCounty"                ,"Johnson County, KY"
               ,"KYKentonCounty"                 ,"Kenton County, KY"
