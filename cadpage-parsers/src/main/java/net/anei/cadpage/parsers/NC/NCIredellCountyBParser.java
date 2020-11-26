@@ -8,21 +8,21 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCIredellCountyBParser extends DispatchOSSIParser {
-  
+
   public NCIredellCountyBParser() {
-    super(CITY_CODES, "IREDELL COUNTY", "NC", 
-          "FYI? ( UNIT/Z ENROUTE ADDR CITY CALL SRC END " + 
+    super(CITY_CODES, "IREDELL COUNTY", "NC",
+          "FYI? ( UNIT/Z ENROUTE ADDR CITY CALL SRC END " +
                "| CALL ADDR/Z CITY/Y! INFO/N+? ( UNIT2 SRC | SRC ) END " +
                "| UNIT1? CALL PRI ADDR! X X INFO/N+? ( UNIT2 SRC | SRC ) END )");
   }
-  
+
   @Override
   public String getFilter() {
     return "@co.iredell.nc.us";
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9]+");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (UNIT_PTN.matcher(subject).matches()) data.strUnit = subject;
@@ -34,12 +34,12 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   @Override
   public String getProgram() {
     return "UNIT? " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new SkipField("Enroute", true);
@@ -49,20 +49,20 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
     if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
   }
-  
+
   private static final Pattern UNIT_PTN2 = Pattern.compile("[A-Z]{3,4}|[A-Z]+[,0-9][A-Z0-9,]*");
   private class MyUnit1Field extends UnitField {
     public MyUnit1Field() {
       setPattern(UNIT_PTN2, true);
     }
   }
-  
+
   private class MyUnit2Field extends UnitField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isLastField(+2)) return false;
@@ -70,20 +70,20 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static Pattern SRC_PTN = Pattern.compile("[a-z]+\\d*");
   private class MySourceField extends SourceField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isLastField()) return false;
@@ -91,16 +91,17 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CLE", "CLEVELANE",
+      "DAV", "DAVIDSON",
       "HAM", "HAMPTONVILLE",
       "HAR", "HARMONY",
       "MOC", "MOCKSVILLE",

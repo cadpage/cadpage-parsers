@@ -240,6 +240,7 @@ public class ParserList {
               ,"COBoulderCounty"                ,"Boulder County, CO"
               ,"COBroomfieldCounty"             ,"Broomfield County, CO"
               ,"COChaffeeCounty"                ,"Chaffee County, CO"
+              ,"COClearCreekCounty"             ,"Clear Creek County, CO"
               ,"COConejosCounty"                ,"Conejos County, CO"
               ,"COCostillaCounty"               ,"Costilla County, CO"
               ,"CODeltaCounty"                  ,"Delta County, CO"
