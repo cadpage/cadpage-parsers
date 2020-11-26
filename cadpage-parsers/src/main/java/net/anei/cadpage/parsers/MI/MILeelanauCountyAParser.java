@@ -19,7 +19,7 @@ public class MILeelanauCountyAParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "outgoing@co.leelanau.mi.us";
+    return "outgoing@co.leelanau.mi.us,outgoing@leelanau.gov";
   }
 
   @Override
