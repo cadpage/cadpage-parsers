@@ -4357,6 +4357,20 @@ Active911 should have this fixed in a day or so.  Until there, there is a workar
 5) Send that, then continue the regular registration process.
 
 **************************************************************************************
+* Not receiving CodeMessaging alerts
+**************************************************************************************
+
+CodeMessaging occasionally forgets how to communicate with Cadpage.  Especially after you transfer the Cadpage configuration to a new phone, or restore it from a backup after doing a factory reset on an existing phone.  In any case, the first thing to try is unregistering and then re-registering Cadpage with CodeMessaging.
+
+To do that, open Capage settings and select
+Direct Paging Vendors > CodeMessaging > Unregister > Register
+
+then go through the regular registration process.  If, at any point, you are asked if you are already receiving CodeMessaging alerts, the correct answer is always YES.
+
+Good luck,
+-Ken
+
+**************************************************************************************
 * Hey Google!!
 **************************************************************************************
 To assist firefighters and other emergency responders in navigating to the scene of an emergency 911 alert.  As a secondary feature, one dispatch service would like to display a map of current responder locations to assist fireground officers in managing the incident scene.  Cadpage supports this by reporting the current location to this dispatch service.  There are multiple safeguards to ensure that the user is aware that this is happening and can turn if off if desired.
