@@ -8,19 +8,19 @@ import java.util.Properties;
  * This class takes care of allocating the correct parser for a location code
  */
 public class ManageParsers {
-  
+
   // The name of the general alert parser code
   private static final String ALERT_PARSER = "GeneralAlert";
-  
+
   // Table mapping known location codes to their corresponding parser
   private Map<String, MsgParser> parserMap = new HashMap<String, MsgParser>();
-  
+
   private String curLocCode = null;
   private MsgParser curParser = null;
- 
+
   // Private constructor, no body can build this except getInstance()
   private ManageParsers() {}
-  
+
   /**
    * Get parser corresponding to location code
    * @param location requested location code or null to use current config setting
@@ -29,7 +29,7 @@ public class ManageParsers {
   public MsgParser getParser(String location) {
     return getParser(location, null, null);
   }
-  
+
   /**
    * Get parser corresponding to location code
    * @param location requested location code or null to use current config setting
@@ -37,27 +37,27 @@ public class ManageParsers {
    * @return requested parser
    */
   public MsgParser getParser(String location, String subject, String body) {
-    
+
     // No real parser codes start with "X".  If we are given one, then it
     // must come from Active911 which sometimes adds an "X" prefix for their
     // own purposes
     if (location != null && location.startsWith("X")) location = location.substring(1);
-    
+
     // Convert any old codes that have been renamed to new values
     location = convertLocationCode(location, subject, body);
-    
+
     // First level cache.  If location code matches what we have stored for
     // the current location code, return the current parser
     if (location.equals(curLocCode)) return curParser;
-    
+
     // Second level cache, see if it is the our table of parsers by location
     MsgParser parser = parserMap.get(location);
     if (parser == null) {
-      
+
       // Otherwise we need to create a new parser
       // First see if there are multiple location parsers
       if (location.contains(",")) {
-        
+
         // If there are, call ourselves recursively to allocate each
         // individual parser
         String[] locationList = location.split(",");
@@ -67,7 +67,7 @@ public class ManageParsers {
         }
         parser = new GroupBestParser(parserList);
       }
-      
+
       // Otherwise find the parser class and instantiate it
       else {
         String className = getParserClassname(location);
@@ -77,24 +77,24 @@ public class ManageParsers {
           throw new RuntimeException("Failed to instantiate " + className + '\n' + ex.getMessage(), ex);
         }
       }
-      
-      // Then save the location and parser in our parser table 
+
+      // Then save the location and parser in our parser table
       parserMap.put(location, parser);
     }
-    
+
     // Before we return the parser we found, save parser in primary cache
     curLocCode = location;
     curParser = parser;
     return parser;
   }
-  
+
   /**
    * Get fully qualified parser class name associated with location
    * @param location requested location
    * @return parser class name
    */
   private String getParserClassname(String location) {
-    
+
     String pkg = null;
     if (location.length() >= 3) {
       if (location.startsWith("ZCA")) {
@@ -121,37 +121,37 @@ public class ManageParsers {
     return sb.toString();
 
   }
-  
+
   /**
    * @return parser used to process general alerts (no parsing no address)
    */
   public MsgParser getAlertParser() {
     return getParser(ALERT_PARSER);
   }
-  
+
   /**
    * Return location name associated with location code
    * @param location location code
-   * @return location name 
+   * @return location name
    */
   public String getLocName(String location) {
-    
+
     // Location shouldn't be null, but upstream bugs are setting it this
     // so at least don't die over it
     if (location == null) return "";
-    
+
     return getParser(location).getLocName();
   }
-  
+
   private static ManageParsers instance = new ManageParsers();
-  
+
   /**
    * @return singleton instance of ManageParsers
    */
   public static ManageParsers getInstance() {
     return instance;
   }
-  
+
   /**
    * Convert old codes that have been renamed to something else
    * @param location requested location code
@@ -160,7 +160,7 @@ public class ManageParsers {
   public static String convertLocationCode(String location) {
     return convertLocationCode(location, null, null);
   }
-  
+
   /**
    * Convert old codes that have been renamed to something else
    * @param location requested location code
@@ -173,13 +173,13 @@ public class ManageParsers {
 
     // And another from NYOneidaCounty to NYMadisonCountyB from 01/16/2018
     if (subject != null && location.equals("NYOneidaCounty") && subject.equals("SEVAC")) return "NYMadisonCountyB";
-    
+
     // And from NCMaconCountyB to NCMaconCountyD on 11/17/2019
     if (location.equals("NCMaconCountyB") && body.startsWith("MACON")) location = "NCMaconCountyD";
-    
+
     return location;
   }
-  
+
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
         "CAHaywardCounty",    "CAHayward",               // 02/16/2016
@@ -189,7 +189,7 @@ public class ManageParsers {
         "SCAndersonCountyD",  "SCCharlestonCountyB",     // 08/31/2016
         "TXSanMarcosCounty",  "TXHaysCountyC",           // 09/28/2016
         "ILWoodfordCountyA",  "ILWoodfordCounty",        // 10/01/2016
-        "ILWoodfordCountyB",  "ILWOodfordCounty",       
+        "ILWoodfordCountyB",  "ILWOodfordCounty",
         "NYSuffolkCountyI",   "NYSuffolkCountyF",        // 01/21/2017
         "CAYebaCounty",       "CAYubaCounty",            // 04/10/2017
         "OHPrebleCountyA",    "OHPrebleCounty",          // 06/06/2017
@@ -209,7 +209,8 @@ public class ManageParsers {
         "TXKeller",           "TXTarrantCounty",         // 01/05/2020
         "TXTarrantCountyE",   "TXTarrantCountyC",
         "CTGroton",           "CTNewLondonCounty",       // 01/18/2020
-        "ILRandolphCountyB",  "ILMonroeCounty"          // 01/29/2020
+        "ILRandolphCountyB",  "ILMonroeCounty",          // 01/29/2020
+        "NCStanlyCountyA",    "NCStanlyCountyB"         // 11/28/2020
   });
 
 }
