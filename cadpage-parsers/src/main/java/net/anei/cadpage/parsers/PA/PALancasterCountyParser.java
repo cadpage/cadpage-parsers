@@ -37,7 +37,8 @@ public class PALancasterCountyParser extends FieldProgramParser {
     if (!subject.startsWith("Cover Call Notification")) data.strSource = subject;
 
     if (subject.equals("22")) {
-      body = body.replace('\n', '~');
+      body = fixBrunnervilleFC(body);
+      if (body == null) return false;
     }
 
     if (! body.contains("~")) return false;
@@ -51,6 +52,29 @@ public class PALancasterCountyParser extends FieldProgramParser {
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
+  }
+
+  private static Pattern SPLIT_DATE_PTN = Pattern.compile("\n(\\d{4})\n(\\d\\d?)\n(\\d\\d?) ");
+
+  private String fixBrunnervilleFC(String body) {
+    // This is a mess!!!
+
+    // Fix date where dashes have been turned into line breaks
+    body = SPLIT_DATE_PTN.matcher(body).replaceFirst("\n$1-$2-$3 ");
+
+    // Try to find the city field terminated by a newline.  All newlines up to this point
+    // turn into spaces.  All newlines beyond this point turn into '~'
+    int lpt = 0;
+    int pt;
+    while ((pt = body.indexOf('\n', lpt)) >= 0) {
+      String part = body.substring(lpt, pt).trim();
+      part = part.replace(" BOROUGH", " BORO").replace(" TOWNSHIP", " TWP");
+      Result res = parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, part);
+      if (!res.getCity().isEmpty()) break;
+      lpt = pt+1;
+    }
+    if (pt < 0) return null;
+    return body.substring(0,pt).replace('\n', ' ') + '~' + body.substring(pt+1).replace('\n', '~');
   }
 
   @Override
