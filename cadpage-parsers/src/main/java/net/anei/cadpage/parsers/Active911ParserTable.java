@@ -275,6 +275,7 @@ public class Active911ParserTable {
       "US/CO/Vail",                       "COEagleCounty",
       "US/CO/VictorVFD",                  "COTellerCounty",
       "US/CO/WeldCounty",                 "COWeldCounty",
+      "US/CO/WestDouglasCounty",          "CODouglasCountyB",
       "US/CO/WestMetroFire",              "COJeffersonCounty",
       "US/CT/BethelPD",                   "CTBethel",
       "US/CT/Cheshire",                   "CTCheshire",

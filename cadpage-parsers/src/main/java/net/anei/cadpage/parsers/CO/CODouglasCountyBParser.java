@@ -11,80 +11,69 @@ public class CODouglasCountyBParser extends FieldProgramParser {
 
   public CODouglasCountyBParser() {
     super("DOUGLAS COUNTY", "CO",
-          "CALL+? MAP ADDR APT PLACE UNIT/C+");
+          "MAP ( GPS ADDR2 | ADDR GPS APT APT ) PLACE CALL ID! END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "Group_Page_Notification@usamobility.net,smfrrelay@smfra.com";
+    return "smfrrelay@smfra.com";
   }
-  
-  private static final Pattern MASTER1 = Pattern.compile("([^:]+): *(?:(\\d\\d/\\d\\d) +(\\d\\d:\\d\\d)\\b *)?(.*)");
-  private static final Pattern MASTER2 = Pattern.compile("([A-Z]{2}-\\d\\d-[A-Z]) +(.*?) +([A-Z0-9,]+)");
-  private static final Pattern ADDR_STREET_DASH_PTN = Pattern.compile("(\\d+) - (\\d+ .*)");
-  private static final Pattern FALLBACK_PTN = Pattern.compile("(.*?) +([A-Z]{2}[-/ A-Z0-9]+)");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    
-    int pt = body.indexOf(" Received");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    
-    Matcher match = MASTER1.matcher(body);
-    if (!match.matches()) return false;
-    data.strSource = match.group(1);
-    data.strDate = getOptGroup(match.group(2));
-    data.strTime = getOptGroup(match.group(3));
-    body = match.group(4);
-    
-    if (body.startsWith("/")) {
-      return parseFields(body.substring(1).split("/"), data);
-    }
-    
-    match = MASTER2.matcher(body);
-    if (!match.matches()) return false;
-    
-    setFieldList("MAP ADDR APT CALL UNIT");
-
-    data.strMap = match.group(1);
-    String addr = match.group(2).trim();;
-    data.strUnit = match.group(3);
-    
-    // Try using smart address parser to break out address and call description
-    match = ADDR_STREET_DASH_PTN.matcher(addr);
-    if (match.matches()) addr = match.group(1)+ '-' +  match.group(2);
-    parseAddress(StartType.START_ADDR, addr, data);
-    data.strCall = getLeft();
-    if (data.strCall.length() > 0) return true;
-    
-    // No go, try a fall back pattern that counts on the call description being upper case
-    // and the address being camel case
-    data.strAddress = "";
-    match = FALLBACK_PTN.matcher(addr);
-    if (!match.matches()) return false;
-    parseAddress(match.group(1), data);
-    data.strCall = match.group(2);
-    return true;
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
-  
+
+  private static final Pattern MARKER = Pattern.compile("(?:Resp\\.Info|Address Changed): *");
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    if (!subject.equals("Metcom Info:")) return false;
+
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = body.substring(match.end());
+
+    return parseFields(body.split("\\|"), data);
+  }
+
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("MAP")) return new MapField("[A-Z]{2}-\\d{2}-[A-Z]|NOT FOUN", true);
-    if (name.equals("UNIT")) return new UnitField("[,A-z0-9]+", true);
+    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("ID")) return new IdField("\\d{2}-[A-Z]{2}-\\d{6}", true);
     return super.getField(name);
   }
-  
-  @Override
-  public String getProgram() {
-    return "SRC DATE TIME " + super.getProgram();
-  }
-  
-  private class MyCallField extends CallField {
+
+  private static final Pattern GPS_PTN = Pattern.compile("(\\d{2,3})(\\d{6}) +(\\d{2,3})(\\d{6})");
+  private class MyGPSField extends GPSField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (!match.matches()) return false;
+      setGPSLoc(match.group(1)+'.'+match.group(2)+','+match.group(3)+'.'+match.group(4), data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
-      data.strCall = append(data.strCall, "/", field);
+      if (!checkParse(field, data)) abort();
     }
   }
-  
+
+  private class MyAddress2Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(':');
+      if (pt >= 0) field = field.substring(pt+1).trim();
+      super.parse(field, data);
+    }
+  }
 }
