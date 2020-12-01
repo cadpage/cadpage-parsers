@@ -1086,6 +1086,7 @@ public class Active911ParserTable {
       "US/NC/HertfordCounty",             "NCHertfordCountyB",
       "US/NC/HighPoint",                  "NCGuilfordCounty",
       "US/NC/HokeCounty",                 "NCHokeCounty",
+      "US/NC/HopkinsFD",                  "NCWakeCountyA",
       "US/NC/HydeCounty",                 "NCHydeCounty",
       "US/NC/IredellCounty",              "NCIredellCounty",
       "US/NC/JacksonCounty",              "NCJacksonCounty",
