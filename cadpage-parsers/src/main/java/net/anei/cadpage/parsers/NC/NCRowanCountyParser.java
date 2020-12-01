@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -40,6 +41,8 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
 
   private static Set<String> unitSet = new HashSet<>();
 
+  private static final Pattern ADDR_CITY_FALLBACK_PTN = Pattern.compile("(.*) (KNA|DAVIE|IREDELL)");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     boolean ok = body.startsWith("CAD:");
@@ -53,6 +56,16 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
     unitSet.clear();
     lastIdField = false;
     if (!super.parseMsg(body, data)) return false;
+
+    // If we didn't find a city, see if there was onen at the end of the address
+    if (data.strCity.isEmpty()) {
+      Matcher match = ADDR_CITY_FALLBACK_PTN.matcher(data.strAddress);
+      if (match.matches()) {
+        data.strAddress = match.group(1).trim();
+        data.strCity = match.group(2);
+        if (data.strCity.equals("KNA")) data.strCity = "KANNAPOLIS";
+      }
+    }
 
     // If we didn't have the CAD: prefix and don't have a city, this is just
     // to chancy to accept.  Unless this was flagged as a prealert.  We will take that.
@@ -170,6 +183,11 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+
+      // If this is a forbidden city code that identifies this as some other
+      // page format, unconditionally fail!!
+      if (BAD_CITY_CODES.contains(field)) abort();
+
       field = field.replace("`", "");
       String city;
       if (field.length() <= 5) {
@@ -465,10 +483,22 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
       "CONC", "CONCORD",
       "MP",   "MT PLEASANT",
 
+      // Davidson County, NC
+      "LINW", "LINWOOD",
+
       // Iredell County, NC
       "STA",  "STATESVILLE",
+      "STAT", "STATESVILLE",
 
       // Out of County
       "OOC",  "OUT OF COUNTY"
   });
+
+  // City codes that belong to some other page format.
+  private static final Set<String> BAD_CITY_CODES = new HashSet<String>(Arrays.asList(
+      "LEX",
+      "MIS",
+      "NEW",
+      "RFD"
+  ));
 }
