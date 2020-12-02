@@ -9,17 +9,19 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CTNewHavenCountyBParser extends FieldProgramParser {
-  
+
   public CTNewHavenCountyBParser() {
     this("NORTH BRANFORD", "CT");
   }
-  
+
   public CTNewHavenCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "ID SELECT/1 ( CALL ADDR2 " +
-                      "| CALL PLACE/Z ADDR1/Z APT/Z CITY/Z ZIP " +
-                      "| CALL ADDR1/Z APT/Z CITY/Z ZIP " +
-                      "| CODE? CALL ADDR1 DUP? APT? CITY ) " +
+          "ID CODE? CALL ( PLACE/Z ADDR1/Z APT/Z CITY/Z ZIP " +
+                        "| ADDR1/Z APT/Z CITY/Z ZIP " +
+                        "| PLACE/Z ADDR1/Z APT/Z CITY " +
+                        "| ADDR1/Z APT/Z CITY " +
+                        "| ADDR2 " +
+                        "| ADDR1 DUP? APT? CITY ) " +
           "EMPTY+? ( MAP_X UNIT/Z DATETIME! | UNIT/Z DATETIME! | DATETIME! ) INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -29,12 +31,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
         "NORTH WINDHAM LINE"
      );
   }
-  
+
   @Override
   public String getAliasCode() {
     return "CTNewHavenCountyB";
   }
-  
+
   @Override
   public String getFilter() {
     return "FirePaging@hamdenfirefighters.org,paging@branfordfire.com,paging@easthavenfire.com,paging@easthavenpolice.com,paging@mail.nbpolicect.org,paging@nbpolicect.org,noreply@nexgenpss.com,pdpaging@farmington-ct.org,noreply@whpd.com,page@watertownctpd.com,FirePaging@hamdenfirefighters.org,paging@townofstratford.com,ngpager@rockyhillct.gov,pubsafetypaging@uconn.edu,publicsafety@uchc.edu";
@@ -42,31 +44,31 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 
   private static final Pattern DELIM1 = Pattern.compile(" *\\| *");
   private static final Pattern MARKER = Pattern.compile("(\\d{10}) +(?:(S\\d{2}) +)?");
-  private static final Pattern DATE_TIME_PTN = Pattern.compile(" +(\\d{6}) (\\d\\d:\\d\\d)(?:[ ,]|$)"); 
-  private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile(" +\\d{6} [\\d:]+$| +\\d{1,6}$"); 
+  private static final Pattern DATE_TIME_PTN = Pattern.compile(" +(\\d{6}) (\\d\\d:\\d\\d)(?:[ ,]|$)");
+  private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile(" +\\d{6} [\\d:]+$| +\\d{1,6}$");
   private static final Pattern ADDR_ST_MARKER = Pattern.compile("(.*) (\\d{5} .*)");
   private static final Pattern I_NN_HWY_PTN = Pattern.compile("\\b(I-?\\d+) +HWY\\b");
   private static final Pattern ADDR_END_MARKER = Pattern.compile("Apt ?#:|(?=(?:Prem )?Map -)", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_PTN = Pattern.compile("\\S+(?: \\d+)?\\b");
   private static final Pattern MAP_PFX_PTN = Pattern.compile("(?: *(?:Prem )?Map -*)+", Pattern.CASE_INSENSITIVE);
-  private static final Pattern MAP_PTN = Pattern.compile("(?:\\d{1,2}(?:[ ,+]+\\d{1,4})?(?:[- ]*[A-Z]{2} *\\d{1,3})?|[- ]*[A-Z]{2} *\\d{1,3}|(?:[CMT]-?\\d+(?:, [A-Z]\\d[A-Z])?\\b[ &]*)+)\\b *");
+  private static final Pattern MAP_PTN = Pattern.compile("(?:\\d{1,2}(?:[ ,+]+\\d{1,4})?(?:[- ]*\\d?[A-Z]{2} *\\d{1,3})?|[- ]*[A-Z]{2} *\\d{1,3}|(?:[CMT]-?\\d+(?:, [A-Z]\\d[A-Z])?\\b[ &]*)+)\\b *");
   private static final Pattern MAP_EXTRA_PTN = Pattern.compile("\\(Prem Map -*(.*?)\\)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*) - (\\d{1,2}[A-Z]\\d{1,2}[A-Z]?)");
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) - (.*)");
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     body = stripFieldStart(body, "no subject / ");
-    
+
     body = body.replace('\n', ' ');
-    
+
     // See if this is one of the delimited field formats
     String[] flds = DELIM1.split(body);
     if (flds.length > 4) {
       if (!parseFields(flds, data)) return false;
     }
-    
+
     else {
       Matcher match = MARKER.matcher(body);
       if (!match.lookingAt()) return false;
@@ -74,7 +76,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       data.strCallId = match.group(1);
       data.strSource = getOptGroup(match.group(2));
       body = body.substring(match.end());
-      
+
       match =  DATE_TIME_PTN.matcher(body);
       if (match.find()) {
         String date = match.group(1);
@@ -86,7 +88,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
         match = TRUNC_DATE_TIME_PTN.matcher(body);
         if (match.find()) body = body.substring(0,match.start());
       }
-      
+
       // Look for an identifiable end of address marker
       //  Either an Apt or map construct
       String field = null;
@@ -95,7 +97,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       if (match.find()) {
         field = body.substring(match.end()).trim();
         body = body.substring(0,match.start()).trim();
-        
+
         // If this was an app construct, pull out the apartment
         String mark = match.group();
         if (mark.length() > 0) {
@@ -112,9 +114,9 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           }
         }
       }
-      
+
       body = cleanCity(body, data);
-      
+
       // Now start working on the address
       StartType st = StartType.START_CALL;
       match = ADDR_ST_MARKER.matcher(body);
@@ -123,10 +125,10 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
         data.strCall = match.group(1).trim();
         body = match.group(2);
       }
-      
+
       // Remove I-nn HWY construct that causes problems
       body = I_NN_HWY_PTN.matcher(body).replaceAll("$1");
-      
+
       // See what we can do with the address
       int flags = FLAG_NO_IMPLIED_APT;
       if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
@@ -134,7 +136,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       else flags |= FLAG_PAD_FIELD;
       parseAddress(st, flags, body, data);
       if (apt != null) data.strApt = append(data.strApt, "-", apt);
-      
+
       // Several different cases to consider
       // Case 1 - We found an address terminator earlier
       // Everything will have to be parsed from the leftover field, including a
@@ -144,16 +146,16 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       if (field != null) {
         parseCity = true;
       }
-      
+
       // Case 2 - we did not find an address terminator
       else {
         field = getLeft();
-        
+
         // Case 2A - but we found a city
         // In which case we need to parse cross street info from the pad field
         // and the leftover field contains only unit info
         if (data.strCity.length() > 0) {
-          
+
           String pad = getPadField();
 
           // If pad starts with a left paren, append parenthesised section to address.
@@ -172,7 +174,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
             parseCross(pad, data);
           }
         }
-        
+
         // Case 2A - no city
         // Everything needs to be parsed from leftover field
         // But we know that it does not contain a city name
@@ -180,12 +182,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           noCross = isMBlankLeft();
         }
       }
-      
+
       // Of the three identified cases, option 2A is the only one that has
       // parsed a city name, and is the only one that does not require us to
       // parse information from the leftover field
       if (data.strCity.length() == 0) {
-        
+
         // Try to parse map information from leftover field
         match = MAP_PFX_PTN.matcher(field);
         if (match.lookingAt()) {
@@ -200,7 +202,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
             field = field.trim();
           }
         }
-        
+
         // Now we have to split what is left into a cross street and unit
         // If there is a premium map marker between them, things get easy
         field = stripFieldStart(field, "/");
@@ -210,7 +212,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           field = field.substring(match.end()).trim();
           if (data.strMap.length() == 0) data.strMap = match.group(1).trim();
         }
-        
+
         // If not, our best approach is to looking for the first multiple blank delimiter.
         // which is a heck of a lot easier to do now that double blanks are preserved by
         // the getLeft() method.
@@ -226,7 +228,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
               parseCross(cross, data);
               field = field.substring(pt+2).trim();
             }
-            
+
             // If we didn't find one, we will have to use the smart address parser to figure out where
             // the cross street information ends
             else {
@@ -240,7 +242,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
             }
           }
         }
-        
+
         // If we have not found a city, see if there is one here
         if (parseCity && data.strCity.length() == 0) {
           parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY, field, data);
@@ -250,13 +252,14 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           }
         }
       }
-      
+
       // Whatever is left becomes the unit
+      field = stripFieldEnd(field, ",");
       data.strUnit = field.replaceAll("  +", " ");
-      
+
       data.strCity = convertCodes(data.strCity, CITY_CODES);
     }
-    
+
     // Clean up call code description
     Matcher match = CODE_CALL_PTN.matcher(data.strCall);
     if (match.matches()) {
@@ -274,14 +277,9 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       }
     }
 
-//    if (data.strCode.length() > 0) {
-//      String call = CALL_CODES.getCodeDescription(data.strCode, true);
-//      if (call != null) data.strCall = call;
-//    }
-    
     return true;
   }
-    
+
   private static final Pattern CROSS_SLASH_PTN = Pattern.compile(" */ *");
 
   private void parseCross(String cross, Data data) {
@@ -292,12 +290,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     cross = CROSS_SLASH_PTN.matcher(cross).replaceAll(" / ");
     data.strCross = append(data.strCross, " / ", cross);
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
   }
-  
+
   private String cleanCity(String addr, Data data) {
     addr = SR_PTN.matcher(addr).replaceAll("SQ");
     Matcher match = CITY_CODE_PTN.matcher(addr);
@@ -309,7 +307,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   }
   private static final Pattern SR_PTN = Pattern.compile("\\bSR\\b");
   private static final Pattern CITY_CODE_PTN = Pattern.compile(" *: *(FARM|UNVL)\\b *");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}");
@@ -325,16 +323,16 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private Pattern LEAD_ZERO_PTN = Pattern.compile("^0+");
-  
+
   private String cleanAddress(String addr) {
     addr = MBLANK_PTN.matcher(addr).replaceAll(" ");
     addr = LEAD_ZERO_PTN.matcher(addr).replaceFirst("");
     return addr;
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -343,7 +341,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyAddress1Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -358,43 +356,55 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = cleanAddress(field);
+      String zip = null;
       Matcher match = ADDRESS_ZIP_PTN.matcher(field);
-      if (!match.matches()) return false;
-      field = match.group(1).trim();
-      String zip = match.group(2);
-      
-      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
-      if (data.strCity.length() == 0) data.strCity = zip;
+      if (match.matches()) {
+        field = match.group(1).trim();
+        zip = match.group(2);
+      }
+
+      Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field);
+      boolean noCity = res.getCity().isEmpty();
+      if (zip == null && noCity) return false;
+      res.getData(data);;
+      if (noCity) data.strCity = zip;
+
+      // If there was no zip code, there probably is a doubled up city
+      if (zip == null) {
+        field = data.strAddress;
+        data.strAddress = "";
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+      }
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY";
     }
   }
-  
+
   private class MyDupField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return field.equals(getRelativeField(-1));
     }
   }
-  
+
   private static final Pattern APT_PTN2 = Pattern.compile("(?:APT|RM|ROOM|LOT|UNIT)#? *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
@@ -404,7 +414,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyMapCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -417,36 +427,37 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           field = field.substring(match.end()).trim();
         }
       }
-      
+
       match = MAP_EXTRA_PTN.matcher(field);
       if (match.find()) {
         field = field.substring(0,match.start()).trim();
         if (data.strMap.length() == 0) data.strMap = match.group(1).trim();
       }
-      data.strCross = field;
+      data.strCross = stripFieldStart(field, "&");
     }
-    
+
     @Override
     public String getFieldNames() {
       return "MAP X";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
       field = MBLANK_PTN.matcher(field).replaceAll(" ");
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(\\d\\d[-/]\\d\\d[-/]\\d{4}) (\\d\\d:\\d\\d(?::\\d\\d)?)\\b.*");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN2.matcher(field);
@@ -455,13 +466,13 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       data.strTime = match.group(2);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = GILBERT_EXT.matcher(address).replaceAll("GILBERT RD EXT");
@@ -472,6 +483,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 //  private static CodeTable CALL_CODES = new StandardCodeTable();
 
   private static final String[] MWORD_STREET_LIST = new String[]{
+      "ALEX WARFIELD",
       "ALLINGS CROSSING",
       "APPLE HILL",
       "ASBURY RIDGE",
@@ -489,6 +501,8 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "BEAVER HEAD",
       "BEL AIRE",
       "BELLA VISTA",
+      "BENHAM HILL",
+      "BERRY PATCH",
       "BIDWELL FARM",
       "BIRCH KNOLL",
       "BLACKS HILL",
@@ -497,17 +511,23 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "BOOTH HILL",
       "BOSTON POST",
       "BOULDER RIDGE",
+      "BOWHAY HILL",
       "BREEZY HILL",
       "BRIAR HILL",
       "BROCKETTS POINT",
       "BRUSHY PLAIN",
       "BUENA VISTA",
+      "BULL HILL",
       "BUNKER HILL",
       "BURNT HILL",
+      "BURR HILL",
+      "BUSHY HILL",
       "BUSINESS PARK",
       "BUTTON SHOP",
+      "CANDLE LITE",
       "CANTON SPRINGS",
       "CAPTAIN THOMAS",
+      "CARRIAGE HILL",
       "CEDAR HILL",
       "CEDAR HOLLOW",
       "CEDAR KNOLLS",
@@ -515,26 +535,35 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "CEDAR SWAMP",
       "CENTURY HILLS",
       "CHARLTON HILL",
+      "CHARTER OAK",
       "CHERRY ANN",
       "CHERRY HILL",
+      "CHIN CLIFT",
       "CIDER MILL",
       "CINNAMON RDG BARNS HILL",
       "CLEAR LAKE",
       "CLINT ELDREDGE",
+      "CODFISH FALLS",
       "COLD SPRING",
       "COLT HWY",
       "COMMERCE CENTER",
       "COOPER HILL",
       "COPE FARMS",
       "COPPER BEECH",
+      "CORPORATE RIDGE",
       "COSEY BEACH",
+      "COUNTRY HILL",
+      "COUNTRY SIDE",
+      "CPTH CELERON",
       "DANIELS FARM",
       "DAY SPRING",
       "DAYTON HILL",
+      "DEER PATH",
       "DEER POND",
       "DEER RUN",
       "DIAMOND GLEN",
       "DORAL FARM",
+      "DOWN DRAFT",
       "DUNBAR HILL",
       "DUNNE WOOD",
       "EAST GATE",
@@ -542,8 +571,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "EAST MAIN",
       "EAST ROCK PARK",
       "EAST SHORE",
+      "EAST WEST SPRING",
+      "EASY RUDDER",
       "ELI YALE",
       "ELM COMMONS",
+      "FALCON RIDGE",
       "FANS ROCK",
       "FARM GLEN",
       "FARM RIVER",
@@ -551,6 +583,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FARMINGTON CHASE",
       "FAWN HILL",
       "FELLSMERE FARM",
+      "FIELD ROCK",
       "FIELD STONE",
       "FIRST AVE FIRST",
       "FISHER HILL",
@@ -570,6 +603,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "GLEN DEVON",
       "GLEN HAVEN",
       "GLEN RIDGE",
+      "GOLDEN HILL",
       "GRAHM MANOR",
       "GRASSY HILL",
       "GRAY FOX",
@@ -580,10 +614,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "GREEN GARDEN",
       "GREEN GLEN",
       "GREEN HILL",
+      "GULF BROOK",
       "HALF ACRE",
       "HALF KING",
       "HALL ACRES",
       "HAMDEN HILLS",
+      "HAMMER MILL",
       "HANES HILL",
       "HANG DOG",
       "HANKS HILL",
@@ -591,10 +627,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "HART RIDGE",
       "HAYCOCK POINT",
       "HEMLOCK NOTCH",
+      "HERITAGE HILL",
       "HICKORY HILL",
       "HIDDEN BROOK",
       "HIDDEN OAK",
       "HIGH HILL",
+      "HIGH MEADOW",
       "HIGH POINT",
       "HIGH RIDGE",
       "HIGH TOP",
@@ -606,17 +644,21 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "HOPE HILL",
       "HORSEBARN HILL",
       "HOTCHKISS GROVE",
+      "HUCKLEBERRY HILL",
       "HUNTER'S RIDGE",
       "HUNTERS CROSSING BARNES HILL",
+      "HUNTING LODGE",
       "HUNTINGTON OLD GREEN",
       "INDIAN HILL",
       "INDIAN NECK",
       "INDIAN SPRINGS",
+      "INDIAN WOODS",
       "ISLAND VIEW",
       "JIM CALHOUN",
       "JOHN STEELE",
       "JOHNNYCAKE MTN",
       "JONES HILL",
+      "JOYCE II",
       "JUNIPER POINT",
       "KATHERINE GAYLORD",
       "KATIE JOE",
@@ -630,9 +672,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "LAKE GARDA",
       "LANES POND",
       "LANTERN VIEW",
+      "LAUREL HILL",
       "LEEDER HILL",
       "LEETES ISLAND",
       "LINDEN POINT",
+      "LINSLEY LAKE",
       "LITTLE BAY",
       "LITTLE OAK",
       "LITTLEBROOK CROSSING",
@@ -640,6 +684,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "LONG HILL CROSS",
       "LONG HILL",
       "MALLARD BROOK",
+      "MANSFIELD CITY",
       "MANSFIELD GROVE",
       "MAPLE RIDGE",
       "MARY BELLE",
@@ -647,8 +692,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MEETING HOUSE HILL",
       "MILL PLAIN",
       "MILL POND HEIGHTS",
+      "MILL POND",
+      "MILL ROCK",
       "MILLER FARMS",
       "MOUNT CARMEL",
+      "MOUNT HOPE",
       "MOUNT PLEASANT",
       "MOUNTAIN SPRING",
       "MOUNTAIN TOP PASS",
@@ -674,9 +722,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "OAK HILL",
       "OAK HOLLOW",
       "OAK RIDGE",
+      "OLDE POND",
       "OPENING HILL",
       "ORCHARD HILL",
       "OXEN HILL",
+      "PARISH FARM",
       "PARK POND",
       "PARK RIDGE",
       "PARKER FARMS",
@@ -686,6 +736,9 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "PAWSON PARKWAY",
       "PAWSON TRAIL",
       "PEAT MEADOW",
+      "PEMBROKE HILL",
+      "PERRY MERRILL",
+      "PIN OAK",
       "PINE HOLLOW",
       "PINE HURST",
       "PINE ORCHARD",
@@ -697,6 +750,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "POND VIEW",
       "POPLAR HILL",
       "PORTAGE CROSSING",
+      "POWDER MILL",
       "PRATTLING POND",
       "PROSPECT HILL",
       "PUNCH BROOK",
@@ -704,23 +758,31 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "QUARRY DOCK",
       "QUEEN'S PEAK",
       "RED OAK HILL",
+      "RED ROCK",
+      "RED STONE",
       "REEDS GAP",
       "RES LEDGEWOOD",
       "ROBERT FROST",
+      "ROCK HOUSE",
       "ROCK PASTURE",
       "ROCKY LEDGE",
+      "ROCKY RIDGE",
       "ROLLING WOOD",
       "ROSE HILL",
+      "ROYAL OAK",
       "SAGAMORE COVE",
+      "SANTA FE",
       "SAW MILL",
       "SCHOOL GROUND",
       "SCHOOL HOUSE",
       "SCOTT SWAMP",
       "SEA HILL",
       "SECRET LAKE",
+      "SHINGLE HILL",
       "SHINGLE MILL",
       "SHORT BEACH",
       "SHORT ROCKS",
+      "SIDE HILL",
       "SILAS DEANE",
       "SILVER SANDS",
       "SILVERMINE ACRES",
@@ -728,6 +790,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SKIFF ST EXT",
       "SKY VIEW",
       "SLEEPING GIANT",
+      "SOUND VIEW",
       "SOUNDVIEW VIEW",
       "SOUTH EAGLEVILLE",
       "SOUTH END",
@@ -736,34 +799,48 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SOUTH MONTOWESE",
       "SOUTH QUAKER",
       "SOUTH RIDGE",
+      "SOUTH SHORE",
       "SOUTH STRONG",
       "SPENO RDG FRANCE",
       "SPICE BUSH",
       "SPRING COVE",
+      "SPRING GARDEN",
       "SPRING ROCK",
+      "SQUAW BROOK",
+      "ST ANDREWS",
       "ST MONICA",
       "ST SYLVAN",
+      "STILL HILL",
       "STONE HILL",
+      "STONE RIDGE",
       "STONY CREEK",
       "STONY HILL",
+      "SUGAR CAMP",
       "SUMMER ISLAND",
+      "SUNNY MEADOW",
       "SUNSET BEACH",
       "SUNSET HILL",
       "SUNSET MANOR",
       "SYBIL CREEK",
+      "TALCOTT FOREST",
       "TALCOTT GLEN",
       "TALCOTT NOTCH",
+      "TALL PINES",
       "TEDWIN FARMS",
       "TEN ROD",
       "THE MEWS CENTURY HILLS",
       "THIMBLE FARMS",
       "THIMBLE ISLAND",
+      "THISTLE MEADOW",
+      "THOMPSON HILL",
       "TIMBER BROOK",
       "TOWERS LOOP",
       "TOWN FARM",
       "TOWN LINE",
       "TOWNE HOUSE",
+      "TOWNER SWAMP",
       "TRAP FALLS",
+      "TROTTERS GLEN",
       "TROUT BROOK",
       "TUNXIS MEAD",
       "TUNXIS VILLAGE",
@@ -771,6 +848,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "TWIN LAKE",
       "TWIN LAKES",
       "TWO MILE",
+      "UCONN HEALTH",
       "VALLE VIEW",
       "VALLEY BROOK",
       "VALLEY VIEW",
@@ -780,6 +858,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "WARNER HILL",
       "WASHINGTON MANOR",
       "WATCH HILL",
+      "WATERING POND",
       "WAVERLY PARK",
       "WESLEY HEIGHTS",
       "WEST AVON",
@@ -790,32 +869,39 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "WEST FARMS",
       "WEST GATE",
       "WEST MAIN",
+      "WEST MEATH",
       "WEST MOUNTAIN",
+      "WEST POINT",
       "WEST SIDE",
       "WEST SLOPE",
       "WEST SPRING",
+      "WEST TODD",
       "WEST WOODS",
       "WHISPERING HILLS",
       "WHITE HOLLOW",
       "WHITE PLAINS",
+      "WHITING FARM",
+      "WILLOW BROOK",
       "WINDMILL HILL",
       "WOLCOTT WOODS",
       "WOLF PIT",
       "WOOD ACRES",
       "WOODCHUCK HILL",
+      "WOODS EDGE",
       "WOODS HILL",
       "YOUNG'S APPLE ORCHARD"
-
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "2CO ALARM SOUNDING - NO SYMPTOMS",
       "2FIRE - MISCELLANEOUS",
       "2MEDICAL - MISCELLANEOUS",
       "2MEDICAL - UNRESPONSIVE",
+      "ABD PAIN/PROB- P-1 NOT ALERT",
       "ABD PAIN/PROB P-2",
       "ABDOMINAL PAIN - PRI 1 -",
       "ABDOMINAL PAIN - PRI 2 -",
+      "ABDOMINAL PAIN-FEMALE FAINTING/NEAR FAINT 12-50-PRI 1 -",
       "ABNORMAL BREATHING DIFFICULTY SPEAKING - ASTHMA",
       "ACCIDENT - MV INJ ALPHA",
       "ACCIDENT - MV INJ BRAVO",
@@ -828,6 +914,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "AFA - COMMERCIAL/INDUSTRIAL",
       "AFA - HIGH LIFE HAZARD",
       "AFA -  MULTI-FAMILY RESIDENTIAL",
+      "AFA - MULTI-FAMILY RESIDENTIAL",
       "AFA - RESIDENTIAL",
       "AFA DAY RESPONSE",
       "AFA NIGHT RESPONSE",
@@ -841,15 +928,21 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "ALS EMS RESPONSE",
       "ANML BITE - SUPRFICIAL BITES - PRI 2 -",
       "ASSAULT - NOT DNGRS",
+      "ASSAULT/SEX ASSAULT POSS DANG. BODY AREA",
       "AUTO ACC RESPONSE",
       "AUTOMATIC FIRE ALARM",
+      "AUTOMATIC FIRE ALARM - COMMERCIAL",
+      "BACK PAIN P-1",
       "BACK PAIN - PRI 2",
       "BEHAVORIAL",
       "BEHAVORIAL (UNKNOWN) - PRI 1 -",
+      "BEHAVORIAL - UNKNOWN - PRI 1",
       "BLS EMS RESPONSE",
       "BREATH PROB P-1",
       "BREATH PROB- P-1 ABNORMAL",
+      "BREATH PROB- P-1 NOT ALERT",
       "BRUSH FIRE",
+      "BRUSH FIRE - UNKNOWN",
       "BRUSH FIRE/CAMP FIRE",
       "BRUSH FIRE TWIN",
       "BUILDING DAMAGE",
@@ -869,6 +962,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "CHECK ELECTRICAL ODOR",
       "CHECK ODOR - INSIDE",
       "CHEST PAIN P-1",
+      "CHEST PAIN- P-1 BREATH NORMALLY = 35",
       "CHEST PAIN- P-1 CLAMMY OR COLD SWEATS",
       "CHEST PAIN  - PRIORITY 1 -",
       "CHEST PAIN CLAMMY - PRI. 1 -",
@@ -877,48 +971,76 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "CHEST PAIN, SOB - PRI. 1 -",
       "CO ALARM (NO SYMPTOMS)",
       "CO ALARM NO/UNK MEDICAL SX",
+      "CO ALARM NO MEDICAL SX - HIGH RISE",
       "CO ALARM NO MEDICAL SX -  MULTI-FAMILY RESIDENTIAL",
+      "CO ALARM NO MEDICAL SX - MULTI-FAMILY RESIDENTIAL",
+      "CO ALARM W/ MEDICAL SX",
       "CO DETECTOR/NO MED SYMPTOMS",
       "CO W/O SYMPTOMS",
       "CODE P-1",
       "COVER ASSIGNMENT (IN CITY)",
       "COVER/RELOCATE TO FIRE HQ",
+      "DANGEROUS CONDITION",
       "DELTA MEDICAL TF1",
       "DIABETIC",
+      "DIABETIC P-1",
+      "DIABETIC- P-1 NOT ALERT",
+      "DIABETIC- P-2 ALERT AND NORMAL",
       "DIABETIC (ALERT)  - PRI 2 -",
       "DIABETIC, AMS - PRI 1 -",
       "DIABETIC, SOB - PRI 1 -",
       "DIFF. BREATHING - PRI 1 -",
       "DIFF. BREATHING, NOT ALERT - PRI 1 -",
+      "DIFF. BREATHING-DIFF SPEAKING - PRI 1 -",
       "E-MUTUAL AID AMBULANCE REQUEST",
       "E-MUTUAL AID MEDIC INTERCEPT REQUEST",
       "EFD IN PROGRESS",
       "ELECTRICAL ISSUE - INVEST",
+      "ELEVATOR PROBLEM - W/ OCCUPANTS",
       "ELEVATOR RESCUE",
       "EMD IN PROGRESS",
       "EMS ASSIST",
       "EMS INCIDENT",
+      "ENTRAPMENT (NO MEDICAL OR HAZARD)",
       "EPD IN PROGRESS",
       "EYE INJURY (MEDICAL) - PRI 2 -",
       "EYE PROB/INJ- P-2 MOD EYE INJURIES",
       "F-BOAT COLLISION PEOPLE IN WATER - COASTAL",
+      "F-STRUCTURE FIRE BUILDING/STRUCTURE OVER WATER TRAPPED",
+      "F-STRUCTURE FIRE RESIDENTIAL (MULTI.)",
+      "F-STRUCTURE FIRE RESIDENTIAL (SING.)",
+      "F-STRUCTURE FIRE RESIDENTIAL (SING.) ODOR ONLY",
+      "F-STRUCTURE FIRE RESIDENTIAL (SING.) TRAPPED",
       "FAINTING >35 W/CARDIAC HX",
       "FAINTING,  ALERT",
       "FAINTING,  ALERT - PRI 2 -",
+      "FAINTING -  ALERT >35 - PRI 2",
       "FALL P-1",
+      "FALL- P-1 NOT ALERT  STILL DOWN",
+      "FALL- P-1  UNKNOWN STILL DOWN",
       "FALL P-2",
+      "FALL- P-2 LIFT ASSIST  STILL DOWN",
+      "FALL- P-2 NO DANG BODY AREA W/ DEFORM",
+      "FALL- P-2 NOT DANG BODY AREA",
+      "FALL- P-2 NOT DANG BODY AREA STILL DOWN",
       "FALL- P-2 POSS DANG BODY AREA  STILL DOWN",
       "FALL - PRI 2 -",
       "FALL (NOT ALERT)",
+      "FALL - NON DANGEROUS PRI 2",
+      "FALL - NON RECENT PRI 2",
+      "FALL - POSS. DANG. AREA- PRI 1",
       "FALL, POSS. DANG. AREA- PRI 1 -",
+      "FALL - PUB ASST - PRI 2",
       "FALL, PUB ASST - PRI 2 -",
       "FALL PUBLIC ASSIST(NO INJURY)",
       "FALL, UNKNOWN",
+      "FALL -  UNKNOWN - PRI 1",
       "FALL, UNKNOWN - PRI 1 -",
       "FIRE - BRUSH FIRE",
       "FIRE - BRUSH / OUTSIDE",
       "FIRE - CO ALARM",
       "FIRE - EMS MUTUAL AID",
+      "FIRE - FLUID SPILL",
       "FIRE - MUTUAL AID",
       "FIRE - MV",
       "FIRE - OTHER",
@@ -937,7 +1059,9 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FIRE APPLIANCE",
       "FIRE DEPARTMENT UNLOCK",
       "FIRE CALL",
+      "FIRE CALL UCH",
       "FIRE OUT REPORT W/ ODOR OF SMOKE",
+      "FIRE RESPONSE - ODOR OF SMOKE",
       "FIRE RESPONSE MUTUAL AID",
       "FIRE STRUCTURE",
       "F-STRUCTURE FIRE - RESIDENTIAL",
@@ -953,26 +1077,36 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FUEL SPILL - INLAND WATER - OUTSIDE",
       "FUEL SPILL - MINOR - OUTSIDE",
       "FUEL SPILL (SMALL LESS THAN 50G)",
+      "GAS ODOR (INSIDE)",
+      "GAS ODOR (OUTSIDE)",
       "HAZMAT - ACTIVE CHEMICAL LEAK / SPILL",
       "HAZMAT - ACTIVE GAS LEAK",
       "HAZMAT-CONTAINED- CHEMICAL",
       "HAZMAT - INVESTIGATION",
       "HAZMAT - UNCONTAINED",
       "HEAD ACHE P-1",
+      "HEAD ACHE- P-2 BREATHING NORMALLY",
+      "HEMORR/LAC- P-1 POSSIBLY DANGEROUS  MEDICAL",
       "HEART PROB",
+      "HEART PROB- P-1 CLAMMY OR COLD SWEATS",
+      "HEART PROBLEMS - SOB- PRI 1",
       "HEAVY SMOKE INVESTIGATION OUTSIDE",
       "HEM. / LAC. DIFF. BREATHING - PRI 1 -",
+      "HEM. / LAC. SERIOUS BLEED - PRI 1",
+      "HEM. / LAC. -  NON DANGEROUS  PRI 2",
       "HEMORRHAGE THROUGH TUBES",
       "HEMORR/LAC P-1",
       "HEMORR/LAC- P-1 NOT ALERT  MEDICAL",
       "ILLEGAL BURNING",
       "INEFFECTIVE BREATHING - PRI 1 -",
       "INJURY P-1",
+      "INLAND WATER RESCUE",
       "INTERFACILITY",
       "INVESTIGATE(OTHER NON-EMERGENT)",
       "INVESTIGATION",
       "LIFT ASSIST",
       "LIFT ASSIST (NO FALL)",
+      "LIGHT SMOKE INVESTIGATION OUTSIDE",
       "LOCK IN/OUT - BUILDING",
       "LOCK IN - VEHICLE",
       "LOCKOUT/LOCKIN EMERGENCY",
@@ -983,6 +1117,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MEDICAL BRAVO",
       "MEDICAL CHARLIE",
       "MEDICAL DELTA",
+      "MEDICAL ALARM ACTIVATION - PRI 1",
       "MEDICAL ALARM ACTIVATION - PRI 1 -",
       "MEDICAL ALERT ALARM (NO VOICE)",
       "MEDICAL - ALS CALL",
@@ -1007,9 +1142,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MEDICAL MEDC",
       "MEDICAL MEDD",
       "MEDICAL MEDE",
+      "MEDICAL -MUTUAL AID UCH",
       "MEDICAL ON UCH PROPERTIES",
       "MEDICAL OTHER LOCATIONS NOT LISTED",
       "MEDICAL SIMSBURY",
+      "MEDICAL TRANSPORT UCH",
+      "MEDICAL UCH",
       "MOTOR VEHICLE ACCIDENT",
       "MOTOR VEHICLE LOCK OUT",
       "MOUNTAIN / TECHNICAL RESCUE",
@@ -1028,6 +1166,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MVA-ENTRAPMENT-RADIO",
       "MVA (EXTRICATION OR ROLLOVER)",
       "MVA - INJURY",
+      "MVA - MINOR INJURY",
       "MVA - NO INJURY",
       "MVA-ROLLOVER - RADIO",
       "MVA W/ INJURIES",
@@ -1039,39 +1178,67 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "MV CRASH-TRAFFIC CRASH (WITH INJURY)",
       "MV CRASH-TRAFFIC CRASH (WITH INJURY)-B",
       "NATURAL GAS LEAK",
+      "NATURAL / LP GAS - ODOR - COMMERCIAL/INDUSTRIAL BUILDING -",
       "NATURAL / LP GAS -  ODOR - MULTI-FAMILY RESIDENTIAL",
       "NATURAL / LP GAS - ODOR OUTSIDE",
+      "NATURAL / LP GAS - ODOR - RESIDENTIAL",
       "NATURAL / LP GAS -  ODOR - RESIDENTIAL",
       "NATURAL/LP GAS - LEAK/ODOR - COMMERCIAL/INDUST BLDG",
+      "NATURAL/LP GAS TANK - OUTSIDE - < 5 GALS - ODOR ONLY",
+      "NATURAL/LP GAS TANK - OUTSIDE - > 5 GALS - ODOR ONLY",
       "OD/INGEST P-1",
+      "ODOR OF BURNING",
       "ODOR OF NATURAL GAS",
       "ODOR OF SMOKE INDOORS",
       "ODOR OF SMOKE OUTDOORS",
       "OMEGA MEDICAL",
       "OUTSIDE FIRE",
       "OUTSIDE FIRE - EXTINGUISHED",
+      "OUTSIDE FIRE - INVEST",
       "OUTSIDE FIRE - INVEST -UNKNOWN",
+      "OUTSIDE FIRE - OTHER",
+      "OUTSIDE FIRE - UNKNOWN",
+      "OVERDOSE - NOT ALERT - PRI 1",
       "OVERDOSE UNCON.",
+      "PANDEMIC - DIFF SPEAK BETWEEN BREATH - PRI 1",
+      "PANDEMIC - FLU SYMPTOMS ONLY - PRI 2",
+      "PANDEMIC - HIGH RISK - PRI 1",
+      "PANDEMIC - SOB W/FLU SYMPTOMS - PRI 1",
+      "PANDEMIC - SOB W/MULTI FLU - PRI 1",
+      "PANDEMIC - SOB W/SINGLE FLU - PRI 1",
+      "PERSON DOWN- P-1 MEDICAL ALARMNOTIFICATIONS NO INFO",
       "PERSON DOWN P-2",
       "PERSON STUCK IN ELEVATOR",
       "POSS HEART - PRI 1 -",
       "POSS HEART, SOB",
       "POST CHOKING",
+      "POST CHOKING - PRIORITY 2 -",
       "POST SEIZURE",
+      "PREG./CHILDBIRTH - ABD PAIN <6 MOS - PRI 1",
       "PROPANE LEAK",
       "PUBLIC ASSIST",
+      "PUBLIC ASSIST - ENGINE",
+      "PUBLIC ASSIST -  RESCUE",
       "PUBLIC ASSISTANCE FD",
       "PUBLIC SERVICE",
       "PUBLIC SERVICE (FIRE)",
+      "RAPID INTERVENTION TEAM",
+      "REPORT OF SMOKE IN AREA",
       "RESCUE - ELEVATOR ENTRAPMENT",
       "RESIDENTIAL LOCKOUT",
       "RESET FIRE ALARM",
       "SEIZURE P-1",
+      "SEIZURE P-2",
       "SEIZURE(S)",
       "SERVICE CALL - NON-EMERGENCY",
       "SICK CALL P-1",
+      "SICK CALL- P-1 NOT ALERT",
       "SICK CALL P-2",
+      "SICK CALL- P-2 BLOOD PRESSURE ABNORMALITY NO SX",
+      "SICK CALL- P-2 GENERAL WEAKNESS",
       "SICK CALL- P-2 NO PRIORITY SYMPTOMS",
+      "SICK CALL- P-2 UNKNOWN",
+      "SICK CALL - ABNORMAL B/P - PRI 2",
       "SICK CALL - ABNORMAL B/P - PRI 2 -",
       "SICK CALL, AMS - PRI 1 -",
       "SICK CALL,  COND 2-11 NOT IDENTIFIED",
@@ -1079,9 +1246,13 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SICK CALL - DIZZINESS - PRI 2 -",
       "SICK CALL, GEN. WEAKNESS",
       "SICK CALL IMMOBILITY",
+      "SICK CALL - NOT ALERT  - PRI 1",
       "SICK CALL, NOT ALERT",
       "SICK CALL NOT WELL / ILL",
+      "SICK CALL - NOT WELL / ILL - PRI 2",
       "SICK CALL OTHER PAIN",
+      "SICK CALL - OTHER PAIN - PRI 2",
+      "SICK CALL - UNKNOWN - PRI 1",
       "SICK CALL VOMITING - PRI 2 -",
       "SICK PERSON NAUSEA",
       "SICK PERSON NO PRIORITY SYMPTOMS",
@@ -1091,32 +1262,43 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SPORTS EVENT DETAIL",
       "STATE TASK FORCE 51 WEST",
       "STILL",
+      "STILL ASSIGNMENT",
       "STILL - ONE ENGINE",
       "STROKE",
       "STROKE - NOT ALERT",
+      "STROKE - SPEECH PROBLEM - PRI 1",
       "STROKE - SPEECH PRBLM - PRI 1 -",
       "STROKE/TIA P-1",
       "STRUCTURE FIRE",
-      "Structure Fire COMMERCIAL/  hazmat",
+      "STRUCTURE FIRE COMMERCIAL/  HAZMAT",
       "STRUCTURE FIRE COMMERCIAL/INDUSTRIAL",
       "STRUCTURE FIRE RESIDENTIAL (MULTI)",
-      "Structure Fire Residential (multi)   -Trapped (s)",
-      "Structure Fire Residential (single)",
+      "STRUCTURE FIRE RESIDENTIAL (MULTI)   -TRAPPED (S)",
       "STRUCTURE FIRE RESIDENTIAL (SINGLE)",
+      "STRUCTURE FIRE RESIDENTIAL (SINGLE)",
+      "SUICIDE / ATTEMPT",
+      "TASK FORCE 1 TO BERLIN/NEWINGTON",
       "TEST - TEST1234567890",
       "TRAFFIC/TRANS ACCID/ INJURIES",
-      "Traffic Stop",
+      "TRAFFIC STOP",
       "TRANSFORM FIRE",
       "TRAUMATIC INJ., NOT DANG.",
+      "UCH FD-BEHAVIORAL INTERVENTION",
+      "UNCON. - SOB - PRI 1",
       "UNCON. EFF. BREATHING",
+      "UNCON/FAINT P-1",
       "UNCON/FAINT- P-1 NOT ALERT",
+      "UNCON/FAINT- P-1 UNCON -- ABNORMAL BREATHING",
       "UNCON/FAINTING NOT ALERT - PRI 1 -",
       "UNCON/FAINTING, SOB - PRI 1 -",
       "UNKNOWN",
+      "UNKNOWN - PT MOVING/TALKING - PRI 2",
       "UNKNOWN - PT MOVING/TALKING - PRI 2 -",
       "UNKNOWN MEDICAL - PRI 1",
       "VEHICLE FIRE",
+      "WATER EMERGENCY",
       "WATER CONDITION",
+      "WATER PROBLEM",
       "WATER PROBLEM RESIDENTIAL",
       "WATER RESCUE",
       "WATERCRAFT OR BOATER IN DISTRESS",
@@ -1129,7 +1311,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   );
 
   private static final String[] CITY_LIST = new String[]{
-      
+
       // New Haven County
       "BURLINGTON",
       "BRANFORD",
@@ -1149,16 +1331,16 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "WEST HARTFORD",
       "WEST HAVEN",
       "WLFD",
-      
+
       // Fairfield County
-      "BRIDGEPORT",  
+      "BRIDGEPORT",
       "EASTON",
       "MONROE",
       "SHELTON",
       "STRATFORD",
       "TRUMBULL",
       "WESTON",
-      
+
       // Hartford County
       "AVON",
       "BERLIN",
@@ -1192,11 +1374,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "WINDSOR",
       "WINDSOR LOCKS",
       "WINDSOR LOCKS EAST",
-      
+
       // Middlesex County
       "CROMWELL",
       "DURHAM",
-      
+
       // Litchfield County
       "TORRINGTON",
 
@@ -1236,11 +1418,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           "WINSTED",
       "WOODBURY",
           "HOTCHKISSVILLE",
-      
+
       // New London County
       "FRANKLIN",
       "LEBANON",
-      
+
       // Tolland County
       "ANDOVER",
       "BOLTON",
@@ -1264,11 +1446,11 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "CENTRAL SOMERS",
       "ROCKVILLE",
       "MASHAPAUG",
-      
+
       "WAREHOUSE POINT",
 
       "UCONN",
-      
+
       // Windham county
       "ASHFORD",
       "BROOKLYN",
@@ -1302,7 +1484,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
           "SOUTH WOODSTOCK"
 
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FARM", "FARMINGTON",
       "UNVL", "UNIONVILLE",
