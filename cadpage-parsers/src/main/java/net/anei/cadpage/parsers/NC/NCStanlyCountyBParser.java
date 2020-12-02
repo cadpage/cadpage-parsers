@@ -39,10 +39,19 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     return new SplitMsgOptionsCustom();
   }
 
+  private static final Pattern BAD_PLACE_PTN = Pattern.compile("20\\d{4,8}");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
+
+    // Exclude NCRowanCounty alerts
+    if (body.startsWith("CAD:PAGE / CALL ")) return false;
+
     if (body.contains(",Enroute,")) body = body.replace(',', ';');
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+
+    // Exclude NCRowanCounty alerts
+    return !BAD_PLACE_PTN.matcher(data.strPlace).matches();
   }
 
   @Override
