@@ -1447,6 +1447,7 @@ public class ParserList {
               ,"TNFranklinCounty"               ,"Franklin County, TN"
               ,"TNGrundyCounty"                 ,"Grundy County, TN"
               ,"TNHamiltonCounty"               ,"Hamilton County, TN"
+              ,"TNHawkinsCounty"                ,"Hawkins County, TN"
               ,"TNHaywoodCounty"                ,"Haywood County, TN"
               ,"TNHumphreysCounty"              ,"Humphreys County, TN"
               ,"TNJeffersonCounty"              ,"Jefferson County, TN"

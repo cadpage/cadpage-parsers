@@ -1677,6 +1677,7 @@ public class Active911ParserTable {
       "US/TN/FranklinCounty",             "TNFranklinCounty",
       "US/TN/GrundyCounty",               "TNGrundyCounty",
       "US/TN/HamiltonCounty",             "TNHamiltonCountyC",
+      "US/TN/HawkinsCounty",              "TNHawkinsCounty",
       "US/TN/HaywoodCounty",              "TNHaywoodCounty",
       "US/TN/JeffersonCounty",            "TNJeffersonCounty",
       "US/TN/KnoxCounty",                 "TNKnoxCounty",
