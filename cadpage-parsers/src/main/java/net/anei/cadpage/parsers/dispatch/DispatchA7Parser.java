@@ -6,10 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA7BaseParser;
 
 public class DispatchA7Parser extends DispatchA7BaseParser {
-  
+
   // Bit flag indicating that the city code found in the address line
   // is not really a city code and should be treated as part of the map code
   public static final int A7_FLG_ADDR_MAP_CODE = 1;
@@ -18,15 +17,15 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
   private Properties cityCodes = null;
   private Set<String> citySet = null;
   private boolean passThrough = false;
-  
+
   public DispatchA7Parser(Set<String> citySet, Properties cityCodes, String defCity, String defState, int flags) {
     super(defCity, defState, null);
     this.citySet = citySet;
     this.cityCodes = cityCodes;
     this.flags = flags;
   }
-  
-  public DispatchA7Parser(int initCityIndex, String[] cityIndex, Properties cityCodes, 
+
+  public DispatchA7Parser(int initCityIndex, String[] cityIndex, Properties cityCodes,
                           String defCity, String defState, String program) {
     super(initCityIndex, cityIndex, cityCodes, defCity, defState, program);
     passThrough = (program != null);
@@ -34,15 +33,15 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
   }
 
   private static final Pattern SOFT_BREAK_PTN = Pattern.compile("\n(?=[^/ ])");
-  
+
   private static final Pattern ID_PTN = Pattern.compile("\\bInc(?:ident)? History(?: for)?:? #([A-Z]+\\d+)\\b.*\n");
   private static final Pattern STATE_DATE_TIME_PTN = Pattern.compile("([A-Z][a-z]+)(?:  +(\\d\\d/\\d\\d/\\d\\d) +(\\d\\d:\\d\\d:\\d\\d)\\b.*)?");
-  
+
   private static final Pattern CALL_PTN1 = Pattern.compile("Initial Type: [^ ]+ +Final Type: ([^ ]+) +\\((.*)\\)");
-  private static final Pattern PRI_PTN1 = Pattern.compile("Initial Priority: [A-Z0-9] +Final Priority: ([A-Z0-9])"); 
+  private static final Pattern PRI_PTN1 = Pattern.compile("Initial Priority: [A-Z0-9] +Final Priority: ([A-Z0-9])");
   private static final Pattern CALL_PRI_PTN2 = Pattern.compile("Final Type: ([^ ]+) *\\((.*?)\\) +Pri: ([A-Z0-9])\\b.*");
   private static final Pattern PRIMARY_UNIT_PTN = Pattern.compile(".* Primary Unit:(.*?)( +Rsp:.*)?");
-  
+
   private static final Pattern BOX_PTN1 = Pattern.compile("Police BOX: *[^ ]* +Fire BOX: *([^ ]*) +EMS BOX: *([^ ]*)");
   private static final Pattern BOX_PTN2 = Pattern.compile("Police +BLK: [^ ]* +Fire +BLK: *([^ ]*)");
   private static final Pattern BOX_PTN2B = Pattern.compile("EMS +BLK: ([^ ]*) +DSP +BLK: ?[^ ]*");
@@ -50,7 +49,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
   private static final Pattern MAP_LAT_LONG_PTN1 = Pattern.compile("Group: (.*?) +Section: (\\S*) +Map: (\\S*) +X: *(\\d*) +Y: *(\\d*)");
   private static final Pattern MAP_LAT_LONG_PTN2 = Pattern.compile("Group: (.*?) +Beat: (\\S*) +Map Page: (\\S*) +Lat: +([-+][\\.0-9]+)? Long: ?([-+][\\.0-9]+)?");
   private static final Pattern ADDR_CROSS_PTN = Pattern.compile("Loc: *(.*?) *(?:high xst: (.*?) *)?");
-  
+
   private static final Pattern COMMUNITY_PTN = Pattern.compile("Community: +(.*?)");
   private static final Pattern MUNICIPALITY_PTN = Pattern.compile("AKA: *(.*?) +Municipality: +(.*?) +Dev:.*");
   private static final Pattern LOC_INFO_PTN = Pattern.compile("Loc Info: *(.*?)");
@@ -62,20 +61,20 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
   private static final Pattern NAME_ADDR_PHONE_PTN = Pattern.compile("Name: *(.*?) +(?:ADDR|Addr): (.*?) +(?:PH|Phone): *(.*?)");
   private static final Pattern NAME_PHONE_PTN = Pattern.compile("Name: *(.*?) +CC: .*? +Phone: *(.*?)");
   private static final Pattern ADDR_PTN = Pattern.compile("Addr: *(.*?)");
-  
+
   private static final Pattern ENTRY_MARK_PTN = Pattern.compile("/\\d++\\?? +(?:\\([A-Z0-9 ]+\\) +)?[*$]?([A-Z]+):?(?: {6,}(.*?) *| {1,5}([A-Z0-9]+)\\b.*)?");
   private static final Pattern ENTRY_GPS_PTN = Pattern.compile("([-+]\\d{3}\\.\\d{6,} +[-+]\\d{3}\\.\\d{6,})\\b[ ,]*");
-  private static final Pattern CONT_MARK_PTN = Pattern.compile(" {30,}(.*?) *"); 
-  
+  private static final Pattern CONT_MARK_PTN = Pattern.compile(" {30,}(.*?) *");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     // Bucks County has a problem.   They have a base county parser class that sometimes wants to use our
     // parser, and sometimes does not.  We solve this by allowing them to pass a program string to the
     // superclass constructor, and if that program string is not null, we just invoke the superclass
     // parser
     if (passThrough) return super.parseMsg(body, data);
-    
+
     setFieldList("SRC ID DATE TIME CODE CALL PRI UNIT BOX MAP GPS ADDR APT CITY ST X PLACE NAME PHONE INFO");
 
     // They insert their own wraparound soft breaks, which we need to remove
@@ -83,13 +82,13 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
     if (!body.contains("\nDispatched")) {
       body = SOFT_BREAK_PTN.matcher(body).replaceAll(" ");
     }
-    
+
     // We have to find an ID pattern
     Parser p = new Parser(body);
     Matcher match =  p.getMatcher(ID_PTN);
     if (match ==  null) return false;
     data.strCallId = match.group(1);
-    
+
     // Process the state/date/time block
     // Extract dispatch date and time for Received, Entered, and Dispatched lines
     // If any other line is found with a date and time, turn this into a run report
@@ -130,26 +129,26 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       line = p .getLine();
       if (line.length() == 0) return false;
     }
-    
+
     // There are two variations on the next block of information
     match = CALL_PTN1.matcher(line);
     if (match.matches()) {
       data.strCode = match.group(1);
       data.strCall = match.group(2).trim();
-      
+
       match = getMatchLine(p, PRI_PTN1);
       if (match == null) return false;
       data.strPriority = match.group(1);
-      
+
       // We don't process alarm levels
       p.getLine();
-      
+
       // Retrieve unit field from disposition line
       match = getMatchLine(p, PRIMARY_UNIT_PTN);
       if (match == null) return false;
       data.strUnit = match.group(1).trim();
     }
-    
+
     // Process the second variant of call priority information
     else {
       match = getMatchLine(p, CALL_PRI_PTN2);
@@ -158,12 +157,12 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       data.strCall = match.group(2).trim();
       data.strPriority = match.group(3);
     }
-    
+
     // In either case, strip trailing asterisk from call description
     if (data.strCall.endsWith("*")) {
       data.strCall = data.strCall.substring(0,data.strCall.length()-1).trim();
     }
-    
+
     // And there are a couple variations of the box, map, and GPS information
     line = p.getLine();
     if (line == null) return false;
@@ -174,7 +173,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       if (match == null) return false;
       parseMapLatLongLine(match, data, true);
     }
-    
+
     else if ((match = BOX_PTN2.matcher(line)).matches()) {
       String fireBox = match.group(1);
       line = p.getLine();
@@ -182,7 +181,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       match = BOX_PTN2B.matcher(line);
       if (!match.matches()) return false;
       parseBox(fireBox, match.group(1), data);
-      
+
       line = skipBlankLines(p);
       if (line == null) return false;
       match = MAP_LAT_LONG_PTN2.matcher(line);
@@ -195,7 +194,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       data.strMap = match.group(3);
       p.getLine();
     }
-    
+
     // Time to process the address line
     line = skipBlankLines(p);
     if (line == null) return false;
@@ -203,13 +202,13 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
     if (!match.matches()) return false;
     parseAddressA7(match.group(1).trim(), data);
     data.strCross = append(data.strCross, " & ", getOptGroup(match.group(2)));
-    
+
     // See if the city code found here should be treated as a map code
     if ((flags & A7_FLG_ADDR_MAP_CODE) != 0) {
       data.strMap = append(data.strCity, "-", data.strMap);
       data.strCity = "";
     }
-    
+
     // Now things start to get optional
     line = p.getLine();
     if (line == null) return false;
@@ -217,14 +216,14 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       line = p.getLine();
       if (line == null)  return false;
     }
-    
+
     if (line.startsWith("Intr Info:")) {
       line = p.getLine();
       if (line == null) return false;
     }
-    
+
     // Process community line
-    match = COMMUNITY_PTN.matcher(line); 
+    match = COMMUNITY_PTN.matcher(line);
     if (match.matches()) {
       String place = match.group(1);
       if (citySet != null && citySet.contains(place)) {
@@ -235,7 +234,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       line = p.getLine();
       if (line == null) return false;
     }
-    
+
     match = MUNICIPALITY_PTN.matcher(line);
     if (match.matches()) {
       data.strPlace = append(data.strPlace, " - ", match.group(1).trim());
@@ -244,7 +243,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       line = p.getLine();
       if (line == null) return false;
     }
-    
+
     match = LOC_INFO_PTN.matcher(line);
     if (match.matches()) {
       String place = "";
@@ -283,7 +282,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       line = p.getLine();
       if (line == null) return false;
     }
-    
+
     // If we got a city, do some extra processing on it
     if (data.strCity.length() > 0) {
       String city = data.strCity;
@@ -295,7 +294,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       }
       data.strCity = city;
     }
-    
+
     // Two different versions of caller name/address/phone
     match = NAME_ADDR_PHONE_PTN.matcher(line);
     if (match.matches()) {
@@ -303,20 +302,20 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       parseAddrLine(match.group(2).trim(), data);
       data.strPhone = append(data.strPhone, " / ", match.group(3).trim());
     }
-    
+
     else if ((match = NAME_PHONE_PTN.matcher(line)).matches()) {
       data.strName = cleanWirelessCarrier(match.group(1).trim());
       data.strPhone = append(data.strPhone, " / ", match.group(2).trim());
-      
+
       line = p.getLine();
       if (line == null) return false;
       match = ADDR_PTN.matcher(line);
       if (!match.matches()) return false;
       parseAddrLine(match.group(1).trim(), data);
     }
-    
+
     else return false;
-    
+
     //  Start processing unit history lines
     boolean entry = false;
     String priUnit = data.strUnit;
@@ -348,7 +347,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
           }
         }
       }
-      
+
       else if ((match = CONT_MARK_PTN.matcher(line)).matches()) {
         String text = match.group(1);
         if (entry) {
@@ -358,7 +357,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       }
       else break;
     }
-    
+
     return true;
   }
 
@@ -369,7 +368,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       if (line.length() > 0) return line;
     }
   }
-  
+
   /***
    * Read line line from parser and match against pattern
    * @param p parser
@@ -399,7 +398,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       if (match.matches()) return match;
     }
   }
-  
+
   private void parseBox(String fireBox, String emsBox, Data data) {
     fireBox = fireBox.trim();
     emsBox = emsBox.trim();
@@ -412,10 +411,10 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       data.strBox = append(fireBox, " ", emsBox);
     }
   }
-  
+
   private void parseMapLatLongLine(Matcher match, Data data, boolean xy) {
     data.strMap = match.group(3);
-    
+
     String lat = match.group(4);
     String lon = match.group(5);
     if (!isValidCoord(lat) || !isValidCoord(lon)) return;
@@ -425,7 +424,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
       setGPSLoc(lat + ',' + lon, data);
     }
   }
-  
+
   private boolean isValidCoord(String coord) {
     if (coord == null) return false;
     if (coord.length() == 0) return false;
@@ -433,7 +432,7 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
     if (coord.length() < 7) return false;
     return true;
   }
-  
+
   private String fixCoord(String coord) {
     int insPt = coord.length()-5;
     return coord.substring(0,insPt) + '.' + coord.substring(insPt);
@@ -446,4 +445,3 @@ public class DispatchA7Parser extends DispatchA7BaseParser {
   }
 
 }
-  

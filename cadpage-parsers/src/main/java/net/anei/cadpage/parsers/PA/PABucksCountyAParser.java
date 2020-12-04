@@ -14,6 +14,7 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   public PABucksCountyAParser() {
     super("SRC type:CALL! Box:BOX? adr:ADDR! aai:AAI box:BOX map:MAP tm:TIME% TEXT:INFO? Run:UNIT");
     setupSpecialStreets("CUL DE SAC");
+    setupCities(CITY_LIST);
   }
 
   @Override
@@ -129,8 +130,8 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
   }
 
   private static final Pattern MULT_COMMA_PTN = Pattern.compile(",,+");
-  private static final Pattern BAD_CITY_PTN = Pattern.compile(".*[-\\*].*|.*? .*? .*? .*? .*");
-  private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\b(XSTRT:|low xst:|XSTS[,: ])", Pattern.CASE_INSENSITIVE);
+//   private static final Pattern BAD_CITY_PTN = Pattern.compile(".*[-\\*].*|.*? .*? .*? .*? .*");
+  private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\b(XSTRT:|XCROS:|low xst:|XSTS?[,: ]|X STR )", Pattern.CASE_INSENSITIVE);
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=#)");
   private static final Pattern PLACE_ADDR_PTN = Pattern.compile("([^,]+),([^,]+)");
   private static final Pattern PHONE_PTN = Pattern.compile("(.*?)[- #;,'/]+(\\d{3}[-. ]?\\d{3}[-. ]?\\d{4}|NO PHONE NUMBER)\\b(?: RESD?[:= ]| */)? *(.*)");
@@ -151,20 +152,27 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       sAddr = MISSING_BLANK_PTN.matcher(sAddr).replaceAll(" ");
       parseAddressA7(sAddr, data);
 
-      if (data.strCity.length() > 0) {
-        if (BAD_CITY_PTN.matcher(data.strCity).matches()) {
-          String city = data.strCity;
-          data.strCity = "";
-          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
-          data.strSupp = append(data.strSupp, " / ", getLeft());
-        }
+      if (!data.strCity.isEmpty() && data.strCross.isEmpty() && !data.strCity.contains(",")) {
 
-        int pt = data.strCity.indexOf(',');
-        if (pt >= 0) {
-          data.strState = data.strCity.substring(pt+1);
-          data.strCity = data.strCity.substring(0,pt);
+        String city = data.strCity;
+        data.strCity = "";
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+        if (!data.strCity.isEmpty()) {
+          data.strCross = getLeft();
+        } else {
+          parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, city, data);
+          if (!data.strCity.isEmpty()) {
+            data.strCross = getStart();
+          } else {
+            data.strCity = city;
+          }
         }
-        data.strCity = stripFieldEnd(data.strCity, " BORO");
+      }
+
+      int pt = data.strCity.indexOf(',');
+      if (pt >= 0) {
+        data.strState = data.strCity.substring(pt+1);
+        data.strCity = data.strCity.substring(0,pt);
       }
 
       Matcher match = PLACE_ADDR_PTN.matcher(data.strAddress);
@@ -479,4 +487,210 @@ public class PABucksCountyAParser extends PABucksCountyBaseParser {
       "ESPEC",      "STANDBY / SPECIAL ASSIGNMENT (EMS)",
       "MALRM",      "MEDICAL ALARM"
   });
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Boroughs
+      "BRISTOL",
+      "CHALFONT",
+      "DOYLESTOWN",
+      "DUBLIN",
+      "HULMEVILLE",
+      "IVYLAND",
+      "LANGHORNE",
+      "LANGHORNE MANOR",
+      "MORRISVILLE",
+      "NEW BRITAIN",
+      "NEW HOPE",
+      "NEWTOWN",
+      "PENNDEL",
+      "PERKASIE",
+      "QUAKERTOWN",
+      "RICHLANDTOWN",
+      "RIEGELSVILLE",
+      "SELLERSVILLE",
+      "SILVERDALE",
+      "TELFORD",
+      "TRUMBAUERSVILLE",
+      "TULLYTOWN",
+      "YARDLEY",
+
+      // Townships
+      "BEDMINSTER TWP",
+      "BEDMINSTER",
+      "BENSALEM TWP",
+      "BENSALEM",
+      "BRIDGETON TWP",
+      "BRIDGETON",
+      "BRISTOL TWP",
+      "BRISTOL",
+      "BUCKINGHAM TWP",
+      "BUCKINGHAM",
+      "DOYLESTOWN TWP",
+      "DOYLESTOWN",
+      "DURHAM TWP",
+      "DURHAM",
+      "EAST ROCKHILL TWP",
+      "EAST ROCKHILL",
+      "FALLS TWP",
+      "FALLS",
+      "HAYCOCK TWP",
+      "HAYCOCK",
+      "HILLTOWN TWP",
+      "HILLTOWN",
+      "LOWER MAKEFIELD TWP",
+      "LOWER MAKEFIELD",
+      "LOWER SOUTHAMPTON TWP",
+      "LOWER SOUTHAMPTON",
+      "MIDDLETOWN TWP",
+      "MIDDLETOWN",
+      "MILFORD TWP",
+      "MILFORD",
+      "NEW BRITAIN TWP",
+      "NEW BRITAIN",
+      "NEWTOWN TWP",
+      "NEWTOWN",
+      "NOCKAMIXON TWP",
+      "NOCKAMIXON",
+      "NORTHAMPTON TWP",
+      "NORTHAMPTON",
+      "PLUMSTEAD TWP",
+      "PLUMSTEAD",
+      "RICHLAND TWP",
+      "RICHLAND",
+      "SOLEBURY TWP",
+      "SOLEBURY",
+      "SPRINGFIELD TWP",
+      "SPRINGFIELD",
+      "TINICUM TWP",
+      "TINICUM",
+      "UPPER MAKEFIELD TWP",
+      "UPPER MAKEFIELD",
+      "UPPER SOUTHAMPTON TWP",
+      "UPPER SOUTHAMPTON",
+      "WARMINSTER TWP",
+      "WARMINSTER",
+      "WARRINGTON TWP",
+      "WARRINGTON",
+      "WARWICK TWP",
+      "WARWICK",
+      "WEST ROCKHILL TWP",
+      "WEST ROCKHILL",
+      "WRIGHTSTOWN TWP",
+      "WRIGHTSTOWN",
+
+  // Census-designated places
+      "BRITTANY FARMS-THE HIGHLANDS",
+      "CHURCHVILLE",
+      "CORNWELLS HEIGHTS",
+      "CROYDON",
+      "EDDINGTON",
+      "FAIRLESS HILLS",
+      "FEASTERVILLE",
+      "LEVITTOWN",
+      "MILFORD SQUARE",
+      "NEWTOWN GRANT",
+      "PLUMSTEADVILLE",
+      "RICHBORO",
+      "SPINNERSTOWN",
+      "TREVOSE",
+      "VILLAGE SHIRES",
+      "WARMINSTER HEIGHTS",
+      "WOODBOURNE",
+      "WOODSIDE",
+
+  // Unincorporated communities
+      "ALMONT",
+      "ANDALUSIA",
+      "APPLEBACHSVILLE",
+      "AQUETONG",
+      "ARGUS",
+      "BEDMINSTER",
+      "BLOOMING GLEN",
+      "BRICK TAVERN",
+      "BRYN GWELED",
+      "BUCKINGHAM",
+      "BUCKSVILLE",
+      "CALIFORNIA",
+      "CARVERSVILLE",
+      "CENTER BRIDGE",
+      "DANBORO",
+      "DOLINGTON",
+      "DURHAM",
+      "ELEPHANT",
+      "ERWINNA",
+      "EUREKA",
+      "FALLSINGTON",
+      "FERNDALE",
+      "FINLAND",
+      "FOREST GROVE",
+      "FOUNTAINVILLE",
+      "FURLONG",
+      "GALLOWS HILL",
+      "GARDENVILLE",
+      "GERYVILLE",
+      "HAGERSVILLE",
+      "HARRIMAN",
+      "HARROW",
+      "HARTSVILLE",
+      "HIGHLAND PARK",
+      "HIGHTON",
+      "HILLSIDE VILLAGE",
+      "HILLTOP",
+      "HILLTOWN",
+      "HINKLETOWN",
+      "HOLICONG",
+      "HOOD",
+      "JAMISON",
+      "JOHNSVILLE",
+      "KINTNERSVILLE",
+      "KULPS CORNER",
+      "LAHASKA",
+      "LINE LEXINGTON",
+      "LODI",
+      "LOUX CORNER",
+      "LUMBERVILLE",
+      "MAPLE BEACH",
+      "MECHANICSVILLE",
+      "MOUNT PLEASANT",
+      "NESHAMINY FALLS",
+      "NEWVILLE",
+      "OAKFORD",
+      "OTTSVILLE",
+      "OXFORD VALLEY",
+      "PALETOWN",
+      "PASSER",
+      "PENNS PARK",
+      "PINEVILLE",
+      "PIPERSVILLE",
+      "PLEASANT VALLEY",
+      "POINT PLEASANT",
+      "REVERE",
+      "RUSHLAND",
+      "SHELLY",
+      "SOLEBURY",
+      "SOUTHAMPTON",
+      "SPRINGTOWN",
+      "STRAWNTOWN",
+      "UHLERSTOWN",
+      "UNIONVILLE",
+      "UPPER BLACK EDDY",
+      "WASHINGTON CROSSING",
+      "WHITE HORSE",
+      "WRIGHTSTOWN",
+      "WYCOMBE",
+      "ZIONHILL",
+
+      // Lehigh County
+      "COOPERSBURG",
+
+      // Montgomery County
+      "COLMAR",
+      "MARLBORO",
+      "MARLBORO TWP",
+      "MONTGOMERY TWP",
+
+      // Northampton Couty
+      "HELLERTOWN"
+  };
 }
