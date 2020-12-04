@@ -7,6 +7,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class CASanLuisObispoCountyParser extends GroupBestParser {
   public CASanLuisObispoCountyParser() {
-    super(new CASanLuisObispoCountyAParser(), new CASanLuisObispoCountyBParser());
+    super(new CASanLuisObispoCountyAParser(),
+          new CASanLuisObispoCountyBParser(),
+          new CASanLuisObispoCountyCParser());
   }
 }

@@ -140,6 +140,7 @@ public class Active911ParserTable {
       "US/CA/CathedralCity",              "CACathedralCity",
       "US/CA/CDFandGrassValleyECC",       "CAPlacerCountyA",
       "US/CA/ChinoValleyFireDistrict",    "CASanBernardinoCountyA",
+      "US/CA/CityofAtascadero",           "CASanLuisObispoCountyC",
       "US/CA/CityofBenicia",              "CASolanoCountyC",
       "US/CA/CityofChico",                "CAButteCountyC",
       "US/CA/CityofChowchilla",           "CAMaderaCounty",
