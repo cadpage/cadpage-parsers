@@ -30,7 +30,7 @@ public class PALebanonCountyParser extends SmartAddressParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("([ A-Za-z0-9]+)@(\\d\\d:\\d\\d)");
-  private static final Pattern CALL_PREFIX_PTN = Pattern.compile(" (?:Med Class ?(\\d+) |((?:<Call Type>|\\(Call Type\\)|Aircraft|BOX IN SERVICE|CARDIAC|CHEST PAIN|DIFFICULTY|FIRE|\\b(?:[A-Z][a-z]+ )?Fire Company Transfer|GENERAL|MED|MVA|Non-Emergency|PC U|[Ss]ick [Pp]erson|Stand-by|TRAF|Traffic|TRANSFER|Transfer|Land Search&Rescue|Unresponsive)[- ])|(?<=[ a-z]|^|PLAZA|AUTOMOTIVE|SCHOOL)((?!APT|ST)[A-Z]{2,6} ?-(?!Box) ?))");
+  private static final Pattern CALL_PREFIX_PTN = Pattern.compile(" (?:Med Class ?(\\d+) |((?:<Call Type>|\\(Call Type\\)|Aircraft|BOX IN SERVICE|CARDIAC|CHEST PAIN|DIFFICULTY|FIRE|\\b(?:[A-Z][a-z]+ )?Fire Company Transfer|GENERAL|MED|MVA|Non-Emergency|PC U|[Ss]ick [Pp]erson|Stand-by|TEST CALL|TRAF|Traffic|TRANSFER|Transfer|Land Search&Rescue|Unresponsive)[- ])|(?<=[ a-z]|^|PLAZA|AUTOMOTIVE|SCHOOL)((?!APT|ST)[A-Z]{2,6} ?-(?!Box) ?))");
   private static final Pattern CALL_PREFIX_PTN2 = Pattern.compile(" *(?:FIRE )?(?:AFA|AIRCFT|BC|MV|SC) ?- *");
   private static final Pattern BOX_PTN =  Pattern.compile(" Fire-Box (?:([-0-9]+) )?EMS-Box(?: ([-0-9]+))?");
   private static final Pattern CLASS_PTN = Pattern.compile("(?:[* ]+|^)(?:EMS|Med) Class ?(\\d)[* ]+", Pattern.CASE_INSENSITIVE);
