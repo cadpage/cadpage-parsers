@@ -23,7 +23,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ept@ept911.info,ept@elpasoteller911.org";
+    return "ept@ept911.info,ept@elpasoteller911.org,alerts@eptpaging.info";
   }
 
   @Override
