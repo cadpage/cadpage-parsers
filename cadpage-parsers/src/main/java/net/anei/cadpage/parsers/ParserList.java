@@ -792,6 +792,7 @@ public class ParserList {
               ,"MIRichmond"                     ,"Richmond, MI"
               ,"MIRoscommonCounty"              ,"Roscommon County, MI"
               ,"MISaginawCounty"                ,"Saginaw County, MI"
+              ,"MISchoolcraftCounty"            ,"Schoolcraft County, MI"
               ,"MIShiawasseeCounty"             ,"Shiawassee County, MI"
               ,"MIStClairCounty"                ,"St Clair County, MI"
               ,"MIVanBurenCounty"               ,"Van Buren County, MI"
