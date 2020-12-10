@@ -800,7 +800,7 @@ public class Active911ParserTable {
       "US/MI/EatonCounty",                "MIEatonCounty",
       "US/MI/EmmetCounty",                "MIEmmetCounty",
       "US/MI/Firemodules",                "MIOaklandCountyB",
-      "US/MI/GogebicCounty",              "MIGogebicCounty",
+      "US/MI/GogebicCounty",              "MIGogebicCounty,MIWayneCounty",
       "US/MI/GrandTraverse",              "MIGrandTraverseCounty",
       "US/MI/GrandTraverseAttachment",    "MIGrandTraverseCounty",
       "US/MI/GratiotCounty",              "MIGratiotCounty",

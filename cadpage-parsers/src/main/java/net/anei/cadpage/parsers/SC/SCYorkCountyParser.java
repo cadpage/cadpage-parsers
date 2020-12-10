@@ -16,7 +16,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
           "( SELECT/4 UNIT CALL ADDR! " +
           "| SELECT/3 ADDRCITY!" +
           "| SELECT/2 UNIT! LOC:ADDRCITY! NAR:INFO2! " +
-          "| UNIT! P:PRI! LOC:ADDRCITY! X:X! NAR:INFO " +
+          "| UNIT! P:PRI! LOC:ADDRCITY! X:X! NAR:INFO/N " +
           ") INC#:ID! END");
   }
 
@@ -101,8 +101,12 @@ public class SCYorkCountyParser extends FieldProgramParser {
             data.strCall = append(data.strCall, " - ", stripFieldStart(channel.substring(pt+1).trim(), "/"));
             channel = channel.substring(0, pt).trim();
           }
-        data.strChannel = channel;
-        } else {
+          data.strChannel = channel;
+        }
+        else if (channel.startsWith("NAR:")) {
+          data.strSupp = channel.substring(4).trim();
+        }
+        else {
           data.strCall = append(data.strCall, " - ", channel);
         }
         data.strName = p.get();
