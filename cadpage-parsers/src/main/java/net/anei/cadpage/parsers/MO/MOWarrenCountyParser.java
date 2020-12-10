@@ -11,28 +11,34 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MOWarrenCountyParser extends FieldProgramParser {
 
   public MOWarrenCountyParser() {
-    super(CITY_TABLE, "WARREN COUNTY", "MO", 
+    super(CITY_TABLE, "WARREN COUNTY", "MO",
           "( ID1 ID2/L | ) ADDRCITY CALL! DATETIME? INFO/N+");
     setupSpecialStreets("BROOKVIEW");
   }
-  
+
   @Override
   public String getFilter() {
     return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net,WARRENCO911@OMNIGO.COM,WARRENEMS@OMNIGO.COM";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     // Pretty loose format, so check for a positive ID
     if (!isPositiveId()) return false;
+
+    if (body.startsWith("WARNING: ")) {
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      body = body.substring(pt+1).trim();
+    }
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID1")) return new IdField("\\d{4}-\\d+", true);
-    if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}|\\d{2}-\\d{4}[A-Z]{4}|", true);
+    if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}|\\d{2}-\\d{4,5}[A-Z]{2,4}|", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CALL")) return new CallField("[-/& A-Za-z0-9]+", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -44,7 +50,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // We can usually, but not always, count on a double
       // space delimiter between the address and city
       int pt = field.lastIndexOf("  ");
@@ -64,7 +70,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT X CITY";
@@ -76,14 +82,14 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     if (apt.startsWith("OFF")) return true;
     return super.isNotExtraApt(apt);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("Call Received on (\\d\\d/\\d\\d/\\d{4}) @ (\\d\\d?:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
@@ -92,7 +98,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
       data.strTime = match.group(2);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
@@ -108,10 +114,10 @@ public class MOWarrenCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final String[] CITY_TABLE = new String[]{
     "WARREN COUNTY",
-    
+
     // Cities and towns
     "FORISTELL",
     "INNSBROOK",
@@ -121,7 +127,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     "TRUESDALE",
     "WARRENTON",
     "WRIGHT CITY",
-    
+
     // Unincorporated communities
     "ASPENHOFF",
     "DUTZOW",
@@ -129,32 +135,32 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     "MINDEN",
     "NEW TRUXTON",
     "TRELOAR",
-    
+
     // Franklin County
     "WASHINGTON",
-    
+
     // Lincoln County
     "HAWK POINT",
     "TROY",
     "TRUXTON",
-    
+
     // Montgomery County
     "JONESBURG",
     "NEW FLORENCE",
-    
+
     // St Charles County
     "LAKE ST LOUIS",
     "NEW MELLE",
     "OFALLON",
     "ST CHARLES",
     "WENTZVILLE",
-    
+
     // Independent cities
     "ST LOUIS",
-    
+
     // Places recognized by Google
     "LAKE SHERWOOD",
-    
+
     // Gasconade County
     "HERMANN"
   };
