@@ -6,22 +6,22 @@ import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 /**
- * Hardy County, WV (B) 
+ * Hardy County, WV (B)
  */
 public class WVHardyCountyBParser extends DispatchA48Parser {
-  
+
   public WVHardyCountyBParser() {
     super(CITY_LIST, "HARDY COUNTY", "WV", FieldType.X_NAME,
           Pattern.compile("[A-Z]\\d+[A-Z]?|\\d{4}"));
     setupCallList(CALL_CODE);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
-    return "Hardy911@hardynet.com,HARDYCOE911@hardynet.com";
+    return "Hardy911@hardynet.com,HARDYCOE911@hardynet.com,OnDispatch@hardynet.com";
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "APPALACHIAN CORR",
       "APPLE TREE",
@@ -55,7 +55,7 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
       "WATER STREET",
       "WHITE TAIL"
   };
-  
+
   private static final CodeSet CALL_CODE = new CodeSet(
       "ABDOMINAL PAIN",
       "ALLERGIC REACTION",
@@ -75,10 +75,10 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
       "FIRE GENERIC",
       "FLU FIRE",
       "GAS LEAK",
-      "GENERAL ILLNESS",   
+      "GENERAL ILLNESS",
       "MEDICAL ALARM",
       "MISSING PERSON REPORT",
-      "MOTOR VEHICLE ACCIDENT", 
+      "MOTOR VEHICLE ACCIDENT",
       "MUTUAL AID",
       "ORDER INVESTIGATION/COMPLAINT",
       "RUBBISH/TRASH FIRE",
@@ -94,9 +94,9 @@ public class WVHardyCountyBParser extends DispatchA48Parser {
       "VEHICLE FIRE",
       "WELFARE CHECK",
       "WIRES DOWN (NO FIRE)"
-      
+
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     "ARKANSAS",
