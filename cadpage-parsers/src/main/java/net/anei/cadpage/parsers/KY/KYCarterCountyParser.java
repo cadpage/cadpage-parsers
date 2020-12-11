@@ -9,11 +9,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
  * Carter County,KY
  */
 public class KYCarterCountyParser extends DispatchEmergitechParser {
-  
+
   public KYCarterCountyParser() {
     super(":", 0, CITY_LIST, "CARTER COUNTY", "KY");
   }
-  
+
   @Override
   public String getFilter() {
     return "Carter911@windstream.net,911@carterems.net";
@@ -27,7 +27,7 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
     data.strCall = convertCodes(data.strCode, CALL_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
@@ -39,7 +39,7 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
     if (apt.endsWith("MM")) return true;
     return super.isNotExtraApt(apt);
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "6",       "Aircraft Crash",
       "12",      "Burglary",
@@ -151,7 +151,7 @@ public class KYCarterCountyParser extends DispatchEmergitechParser {
       "CARTER",
       "GRAYSON",
       "OLIVE HILL",
-      
+
       "ELLIOTT CO"
   };
 }
