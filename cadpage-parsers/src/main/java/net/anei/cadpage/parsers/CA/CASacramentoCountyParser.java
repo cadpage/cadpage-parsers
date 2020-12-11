@@ -14,37 +14,37 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  * Sacramento County, CA
  */
 public class CASacramentoCountyParser extends MsgParser {
-  
+
   private static final Pattern MASTER = Pattern.compile("([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]*,[A-Z0-9]*)\\(([^,\\)]+),([A-Z]+)\\)\\((.*?)(?:\\).*)?");
-  
+
   public CASacramentoCountyParser() {
     super("SACRAMENTO COUNTY", "CA");
     setFieldList("SRC CODE CALL CH MAP ADDR APT CITY UNIT INFO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "@CAD.GOV";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("CAD PAGE-Do not reply")) return false;
-    
+
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) {
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body;
       return true;
     }
-    
+
     data.strSource = match.group(1);
     data.strCode = match.group(2);
     data.strCall = CALL_CODES.getCodeDescription(data.strCode);
@@ -57,20 +57,20 @@ public class CASacramentoCountyParser extends MsgParser {
     data.strUnit = match.group(7).trim().replace("+", "");
     return true;
   }
-  
+
   private static final Pattern EW_PTN = Pattern.compile("\\bEW\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = EW_PTN.matcher(addr).replaceAll("EXP");
     return super.adjustMapAddress(addr);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "7 ARP",                                "+38.600628,-121.506951",
       "21 ARP",                               "+38.600802,-121.509487",
@@ -196,6 +196,7 @@ public class CASacramentoCountyParser extends MsgParser {
       "3001 ARP",                             "+38.707341,-121.156487",
       "3025 ARP",                             "+38.706769,-121.169437",
       "3090 ARP",                             "+38.670750,-121.189611",
+      "2300 AUBURN BL",                       "+38.626000,-121.409400",
       "EB B80 AT 10TH ST",                    "+38.565521,-121.500610",
       "EB B80 AT 15TH ST",                    "+38.564156,-121.495605",
       "EB B80 AT 16TH ST",                    "+38.563309,-121.492378",
@@ -2362,7 +2363,7 @@ public class CASacramentoCountyParser extends MsgParser {
       "WB US50 WO WHITE ROCK RD PED OC",      "+38.584976,-121.297462",
       "WB US50 WO ZINFANDEL RD",              "+38.584976,-121.297462"
   });
-  
+
   private static CodeTable CALL_CODES = new StandardCodeTable(
       "1",    "ABDOMINAL PAIN",
       "10",   "CHEST PAIN",
@@ -2462,14 +2463,14 @@ public class CASacramentoCountyParser extends MsgParser {
       "WR1",  "STILL WATER RESCUE",
       "WR2",  "FLOWING WATER RESCUE"
   );
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANT", "ANTELOPE",
       "ARD", "ARDEN-ARCADE",
       "CAR", "CARMICHAEL",
       "CIT", "CITRUS HEIGHTS",
       "CLF", "SACRAMENTO",           // ????
-      "COS", "COSUMNES",       
+      "COS", "COSUMNES",
       "COU", "COURTLAND",
       "DEL", "DELTA",
       "EEG", "EAST ELK GROVE",
@@ -2504,7 +2505,7 @@ public class CASacramentoCountyParser extends MsgParser {
       "WLT", "WILTON",
       "WSC", "WEST SACRAMENTO"
   });
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "ARDEN-ARCADE", "ARDEN",
       "COSUMNES",     "SLOUGHHOUSE",
