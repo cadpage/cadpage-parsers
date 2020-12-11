@@ -10,62 +10,75 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class PACambriaCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern MARKER1 = Pattern.compile("\\d\\d");
   private static final Pattern MARKER2 = Pattern.compile("^\\d\\d ");
   private static final Pattern BAR_PTN = Pattern.compile("([ \n])\\| ");
-  
+
   public PACambriaCountyParser() {
     super(CITY_CODES, "CAMBRIA COUNTY", "PA",
-           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS");
+           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS? EMPTY+? GPS");
   }
-  
+
   @Override
   public String getFilter() {
     return "alerts@cambria.ealertgov.com,Cambria 9-1-1,messaging@iamresponding.com,90360";
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (MARKER1.matcher(subject).matches()) {
       Matcher match = MARKER2.matcher(body);
       if (!match.find()) return false;
       body = body.substring(match.end()).trim();
     }
-    
+
     body = body.replace("Location:", "Add:");
     String[] flds = body.split("\\|");
     if (flds.length < 5) flds = body.split("\n\\|?");
     if (flds.length < 5) flds = body.split("  ");
     if (flds.length >= 5) {
-      return parseFields(flds, data);
-    }
-    body = BAR_PTN.matcher(body).replaceAll("$1Sta: ");
-    if (body.endsWith("|")) body = body.substring(0,body.length()-1).trim();
-    flds = body.split("\n");
-    if (flds.length >= 5) {
-      return parseFields(flds, data);
+      if (!parseFields(flds, data)) return false;
     } else {
-      return super.parseMsg(body.replace('\n', ' '), data);
+      body = BAR_PTN.matcher(body).replaceAll("$1Sta: ");
+      if (body.endsWith("|")) body = body.substring(0,body.length()-1).trim();
+      flds = body.split("\n");
+      if (flds.length >= 5) {
+        if (!parseFields(flds, data)) return false;
+      } else {
+        if (!super.parseMsg(body.replace('\n', ' '), data)) return false;
+      }
     }
+    data.strCity = stripFieldEnd(data.strCity, " Cambria County");
+    data.strCity = stripFieldEnd(data.strCity, " Boro");
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
+    return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATE")) return new MyDateField();
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("(\\d\\d:\\d\\d:\\d\\d)(?:;.*)?", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("GPS")) return new GPSField("https?://maps.google.com/\\?q=(.*)", true);
     return super.getField(name);
   }
-  
-  private static final Pattern DATE_PTN1 = Pattern.compile("\\d\\d/\\d\\d/\\d\\d");
+
+  private static final Pattern DATE_PTN1 = Pattern.compile("\\d\\d/\\d\\d/\\d\\d(?:\\d\\d)?");
   private static final Pattern DATE_PTN2 = Pattern.compile("(\\d\\d)(\\d\\d)(\\d\\d)");
   private class MyDateField extends DateField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf(';');
+      if (pt >= 0) field = field.substring(0,pt).trim();
       if (DATE_PTN1.matcher(field).matches()) {
         super.parse(field, data);
       } else {
@@ -75,7 +88,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Za-z0-9]+)-(.*)");
   private class MyCallField extends CallField {
     @Override
@@ -87,13 +100,13 @@ public class PACambriaCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern NOT_CITY_PTN = Pattern.compile(".*EXIT.*");
   private class MyAddressField extends AddressField {
     @Override
@@ -107,9 +120,9 @@ public class PACambriaCountyParser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
         break;
       }
-      
+
       super.parse(field, data);
-      
+
       if (data.strCity.length() == 0 || data.strCity.endsWith(" COUNTY")) {
         int pt = data.strAddress.lastIndexOf("- ");
         if (pt >= 0) {
@@ -122,18 +135,18 @@ public class PACambriaCountyParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern CITY_CODE_PTN = Pattern.compile("-[A-Z]{2,4} ");
   private static final Pattern CITY_CODE_END_PTN = Pattern.compile("-[A-Z]{0,4}$");
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      field = CITY_CODE_PTN.matcher(field).replaceAll(" & ");
+      field = CITY_CODE_PTN.matcher(field).replaceAll(" / ");
       field = CITY_CODE_END_PTN.matcher(field).replaceAll("");
-      super.parse(field.trim(), data);
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ADAM", "ADAMS TWP",
       "AL",   "ALLEGHENY TWP",
@@ -204,11 +217,11 @@ public class PACambriaCountyParser extends FieldProgramParser {
       "WS",   "WEST TAYLOR TWP",
       "WT",   "WASHINGTON TWP",
       "WTAY", "WEST TAYLOR TWP",
-      
+
       "CLF",  "CLEARFIELD COUNTY",
       "SOM",  "SOMERSET COUNTY"
   });
-  
+
   private static final String[] CITY_LIST = new String[] {
     "CENTRAL CITY"
   };
