@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class MDCarrollCountyBParser extends FieldProgramParser {
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Station (\\d\\d) ALERT!! \\(#?(F?\\d+)\\)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Station (\\d\\d) ALERT!! \\(#?(E?F?\\d+)\\)");
 
   public MDCarrollCountyBParser() {
     super("CARROLL COUNTY", "MD",
@@ -41,6 +41,10 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
 
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
+
+    int pt = body.indexOf("\n\n___");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
     data.strSource = match.group(1);
     data.strCallId = match.group(2);
     body = body.replaceAll("  +", " ");
@@ -64,7 +68,7 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
 
   // Box field behaves normally unless this is a mutual aid call
   // in which case it becomes a county code
-  private static final Pattern BOX_PTN = Pattern.compile("\\d{3,}");
+  private static final Pattern BOX_PTN = Pattern.compile("\\d{3,}[A-Z]{0,2}");
   private class MyBoxField extends BoxField {
 
     @Override
