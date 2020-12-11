@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class Message {
-  
+
   // pre-parse message information
   private String parseAddress;
   private String parseSubject;
@@ -30,14 +30,14 @@ public class Message {
     if (subject == null) subject = "";
     if (body == null) body = "";
     if (options == null) options = new SplitMsgOptionsCustom();
-    
+
     // Remove byte order mark from anywhere in text.  Generally it only occurs
     // at the beginning, but we have had a case where a prefix was prepended to
     // a string starting with a byte order mark, so get rid of it wherever it
     // might occur
     body = body.replace("\uFEFF", "");
-    
-    
+
+
     // Decode base64 alerts
     if (body.startsWith("77u/")) {
       body = body.substring(4);
@@ -50,20 +50,20 @@ public class Message {
 
     // Replace some odd unicode characters with their closest ASCII equivalents
     body = demimic(body);
-    
+
     if (options.subjectColonField()) {
       this.parseAddress = fromAddress;
       this.parseSubject = "";
       if (subject.length() > 0) body = (subject + ": " + body).trim();
       this.parseMessageBody = body;
     }
-    
+
     else if (! preParse) {
       this.parseAddress = fromAddress;
       this.parseSubject = subject;
       this.parseMessageBody = finish(body, options);
-    } 
-    
+    }
+
     else {
       preParse(fromAddress, subject, body, options);
     }
@@ -73,15 +73,15 @@ public class Message {
     StringBuilder sb = new StringBuilder();
     for (char chr : body.toCharArray()) {
       switch (Character.getType(chr)) {
-      
+
       case Character.SPACE_SEPARATOR:
         chr = ' ';
         break;
-        
+
       case Character.DASH_PUNCTUATION:
         chr = '-';
         break;
-        
+
       case Character.LINE_SEPARATOR:
       case Character.PARAGRAPH_SEPARATOR:
         chr = '\n';
@@ -91,34 +91,34 @@ public class Message {
     }
     return sb.toString();
   }
-  
+
   public String getFromAddress() {
     return parseAddress;
   }
-  
+
   public String getSubject() {
     return parseSubject;
   }
-  
+
   public String getSubject(boolean follow) {
     if (msgIndex > 0) follow = (msgIndex > 1);
     if (follow && parseSubjectFollow != null) return parseSubjectFollow;
     return parseSubject;
   }
-  
+
   public void setMessageBody(String body) {
     parseMessageBody = body;
     info = null;
   }
-  
+
   public String getMessageBody() {
     return getMessageBody(false, false);
   }
-  
+
   public String getMessageBody(boolean keepLeadBreak) {
     return getMessageBody(keepLeadBreak, false);
   }
-  
+
   public String getMessageBody(boolean keepLeadBreak, boolean follow) {
     if (msgIndex > 0) follow = (msgIndex > 1);
     String body = follow && parseMessageBodyFollow != null ? parseMessageBodyFollow : parseMessageBody;
@@ -128,15 +128,15 @@ public class Message {
     sb.append(body);
     return sb.toString();
   }
-  
+
   public int getMsgIndex() {
     return msgIndex;
   }
-  
+
   public int getMsgCount() {
     return msgCount;
   }
-  
+
   /**
    * Called by test code to retrieve value set as the location code
    * @return location code saved by setLocationCode
@@ -145,7 +145,7 @@ public class Message {
     if (info == null) return null;
     return info.getParserCode();
   }
-  
+
   // Patterns used to perform front end descrambling
   private static final Pattern SUBJECT_EMAIL_PTN = Pattern.compile("Forwarded Message from ([^ ]+)");
   private static final Pattern RETURN_PTN = Pattern.compile("\r+\n|\n\r+|\r");
@@ -186,8 +186,8 @@ public class Message {
   };
   private static final Pattern OPT_OUT_PTN = Pattern.compile("TXT STOP.*$");
   private static final Pattern CONT_PTN = Pattern.compile(" ?\\(C.* \\d\\d? of \\d\\d?");
-  
-  private static final Pattern[] EMAIL_PATTERNS = new Pattern[]{ 
+
+  private static final Pattern[] EMAIL_PATTERNS = new Pattern[]{
     Pattern.compile("^(?:\\*.*\\*)?([-\\w\\.]+@[-\\w]+\\.[-\\w\\.]+)(?: +/ +(?:no subject +)?/ +)"),
     Pattern.compile(" - Sender: *([-\\w\\.]+@[-\\w\\.]+) *\n"),
     Pattern.compile("^(?:[-=.+_a-z0-9]*[0-9a-f]{8,}[-=.+_a-z0-9]*=)?((?:[\\w.!\\-]+\\w|\\\"[\\w\\.!\\- ]+\\\")@[-\\w]+\\.[-\\w\\.]+)[\\s:]"),
@@ -206,7 +206,7 @@ public class Message {
   private static final Pattern MULTI_MSG_BREAK_PATTERN = Pattern.compile(" \\(Con't\\) \\d of \\d ");
   private static final Pattern[] E_S_M_PATTERNS = new Pattern[]{
     Pattern.compile("^(?:([-\\w\\.]+@[-\\w\\.]+) +)?Subj(?:ect)?: *(.*)\n"),
-    Pattern.compile("^(?:([^ ,;/]+) +)?S:(.*?)(?: +M:|\n)"), 
+    Pattern.compile("^(?:([^ ,;/]+) +)?S:(.*?)(?: +M:|\n)"),
     Pattern.compile("^Fr:<(.*?)>?\nSu:(.*?)\nTxt: "),
     Pattern.compile("From: *(.*) Subj: *(.*) Msg: *"),
     Pattern.compile("^prvs=[0-9a-f]{8,}=[\\w .<>@]*<([\\w.\\-]+@[\\w.]+)> *\\((.*?)\\)")
@@ -214,12 +214,12 @@ public class Message {
   private static final Pattern[] S_M_PATTERNS = new Pattern[]{
     Pattern.compile("^SUBJ: *(.*)\n(?:MSG:)?"),
   };
-  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("no subject / |Failed to fetch website: ");
-  
+  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("no subject / |Failed to fetch website: |WARNING: The sender of this email could not be validated.*?\n+");
+
   private void preParse(String fromAddress, String subject, String body, SplitMsgOptions options) {
-    
+
     boolean keepLeadBreak = options.splitKeepLeadBreak();
-    
+
     // default address and subject to obvious values
     parseSubject = "";
     Matcher match = SUBJECT_EMAIL_PTN.matcher(subject);
@@ -229,20 +229,20 @@ public class Message {
       parseAddress = fromAddress;
       addSubject(subject);
     }
-    
+
     // Get rid of any \r characters
     body = RETURN_PTN.matcher(body).replaceAll("\n");
-    
+
     // Start by decoding common HTML sequences
     body = trimLead(body, keepLeadBreak);
-    
+
     // Change spurious '¡' characters back to the @ there were originally intended to be
     body = body.replace('¡', '@');
-    
+
     // Remove trailing disclaimer(s)
     match = DISCLAIMER_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start()).trim();
-    
+
     // See if we can find a trailing message index/count indicator
     // which may determine whether or not we clean the leading subject constructs
     // from the front of this message
@@ -254,23 +254,23 @@ public class Message {
       msgCount = Integer.parseInt(match.group(2));
       body = trimLead(body.substring(0,match.start()),keepLeadBreak);
     }
-    
+
     body = cleanParenSubject(body, options);
-    
+
     // Drop FWD: prefix
     match = FORWARD_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end()).trim();
-    
+
     // Drop leading underscore line
     match = LEAD_UNDERSCORE_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
-    
+
     // See if we can parse this as an Email message header
     if (parseEmailHeaders(body, keepLeadBreak)) return;
-    
+
     body = trimLead(body, keepLeadBreak);
     if (body.startsWith("Pagecopy-")) body = body.substring(9);
-    
+
     // If we did not find a trailing index indicator, see if we can find
     // any leading index indicators
     if (!trailIndexFound) {
@@ -283,7 +283,7 @@ public class Message {
             String tmp = match.group(ndx++);
             if (!tmp.equals("- part")) addSubject(tmp);
           }
-        } 
+        }
         else if (match.groupCount() == 3) {
           parseAddress = match.group(ndx++);
         }
@@ -304,18 +304,18 @@ public class Message {
         if (body.startsWith("/ ")) body = trimLead(body.substring(2), keepLeadBreak);
       }
     }
-    
+
     // Get rid of leading quoted blanks
     match = LEAD_BLANK.matcher(body);
     if (match.find()) body = trimLead(body.substring(match.end()), keepLeadBreak);
-    
+
     // And trailing opt out message
     match = OPT_OUT_PTN.matcher(body);
     if (match.find()) body = trimLead(body.substring(0,match.start()), keepLeadBreak);
-    
+
     // Dummy loop we can break out of
     do {
-      
+
       /* Decode patterns that look like this.....
       1 of 3
       FRM:CAD@livingstoncounty.livco
@@ -325,9 +325,9 @@ public class Message {
       20:08:59 SPHILLIPS] CALLER LIVES NEXT DOOR TO THE ADDRESS OF THE WATER MAINBREAK [12/10/10 20:04:40 HROSSNER] CALLER ADV OF A WATER MAIN
       (Con 3 of 3
       BREAK(End)
-      
+
       Or This
-      
+
       FRM:e@fireblitz.com <Body%3AFRM%3Ae@fireblitz.com>
       MSG:48: TOWNHOUSE FIRE
       E818 BO802
@@ -338,7 +338,7 @@ public class Message {
       int pt1 = -1;
       if (body.startsWith("FR:")) {
         pt1 = 3;
-      } 
+      }
       else if (body.startsWith("FRM:")) {
         pt1 = 4;
       } else if (EMAIL_PFX_PATTERN.matcher(body).find()) {
@@ -391,7 +391,7 @@ public class Message {
           }
         }
       }
-      
+
       /* Decode patterns that look like this (same as above with line breaks removed)
         1 of 2 FRM:ics.gateway@wylietexas.gov SUBJ:Message From Wylie MSG:12030523 RESCUE-TRAPPED PERSON(S) TONY LN / N HIGHWAY 66 IN FATE [FAFD (Con't) 2 of 2 GRID: F121] UNITS: FATEFD ROMED1 ST RMK: <NONE> CFS RMK 12:48 VEHICLE ON ITS SIDE AND OCCP TRAPPED {WYPCCOM05 12:48}(End)
       */
@@ -402,7 +402,7 @@ public class Message {
         body = MULTI_MSG_BREAK_PATTERN.matcher(match.group(3)).replaceAll(" ").trim();
         break;
       }
-      
+
       /* Decode patterns that look like this
         Dispatch@ci.waynesboro.va.us <Body%3ADispatch@ci.waynesboro.va.us> Msg: Dispatch:2ND CALL 1001 HOPEMAN PKWY, ZAP12 INJURIES FROM PREVIOUS MVA
       */
@@ -415,7 +415,7 @@ public class Message {
           break;
         }
       }
-      
+
       /* Decode patterns that look like this
        * "HC@hamilton-co.org\nMSG:\nHC:ODOR OF GAS 393 PROVIDENCE WY SHRN NEXT TO TRAILER..... CHARLES SOILBACK ** SMELL OF GAS ** SEE MALE COMPL REF ODOR OF NATURAL GAS LEAK FROM A POSS 1 INCH PIPE COMIN",
        */
@@ -425,7 +425,7 @@ public class Message {
         body = trimLead(body.substring(ipt+6), keepLeadBreak);
         break;
       }
-      
+
       /* Decode patterns that contain an email address, subject, and message
        * S:subject M:msg
        */
@@ -438,7 +438,7 @@ public class Message {
         body = trimLead(body.substring(match.end()), keepLeadBreak);
         if (from != null) break;
       }
-      
+
       /* Decode patterns that contain an subject and message
        */
       else {
@@ -450,8 +450,8 @@ public class Message {
           break;
         }
       }
-    
-      
+
+
       /* Decode patterns that match EMAIL_PATTERN, which is basically an email address
        * followed by one of a set of known delimiters
        */
@@ -463,13 +463,13 @@ public class Message {
       }
 
     } while (false);
-    
+
     // Clean up general leading junk
     match = LEAD_JUNK_PTN.matcher(body);
     if (match.lookingAt()) body = trimLead(body.substring(match.end()), keepLeadBreak);
-    
+
     body = finish(body, options);
-    
+
     // Make one last check for a message index that might have been masked
     // by parenthesized subjects
     if (msgIndex < 0 && parseSubject.length() > 0) {
@@ -481,13 +481,13 @@ public class Message {
       }
     }
     parseMessageBody = body;
-    
+
     // If we extracted an empty address from the text string, restore the
     // original address
     if (parseAddress.length() == 0) parseAddress = fromAddress;
   }
 
-  
+
   /**
    * Try to parse message an an email message with regular email headers
    * @param body message body
@@ -498,7 +498,7 @@ public class Message {
     String address = "";
     String subject = "";
     int headerCnt = 0;
-    
+
     int spt = 0;
     boolean extFrom = false;
     while (true) {
@@ -506,7 +506,7 @@ public class Message {
       int ept = spt;
       while (ept < body.length() && body.charAt(ept) != '\n') ept++;
       if (ept == body.length()) break;
-      
+
       String line = body.substring(spt, ept).trim();
       if (extFrom && line.endsWith(">")) {
         address = address + line;
@@ -528,7 +528,7 @@ public class Message {
       }
       spt = ept+1;
     }
-    
+
     if (headerCnt < 3) return false;
     if (address.length() > 0) parseAddress = address;
     if (subject.length() > 0) parseSubject = subject;
@@ -553,7 +553,7 @@ public class Message {
     }
     return str.substring(pt);
   }
-  
+
   /**
    * Perform final message parsing.  This is the last preparse steps that should
    * be done even when no preparsing is requested.  It is used to back out
@@ -566,18 +566,18 @@ public class Message {
   private String finish(String body, SplitMsgOptions options) {
 
     body = cleanParenSubject(body, options);
-    
+
     Matcher match = EMAIL_PFX_PATTERN.matcher(body);
     if (match.find()) {
       parseAddress = match.group(1).trim();
       body = trimLead(body.substring(match.end()), true);
     }
-    
+
     if (body.startsWith("MSG:")) body = trimLead(body.substring(4), true);
-    
+
     match = FWD_PTN.matcher(parseSubject);
     if (match.find()) parseSubject = parseSubject.substring(match.end()).trim();
-    
+
     // Last check, if we ended up with no message, use the last subject as the message
     if (body.length() == 0) {
       int pt = parseSubject.lastIndexOf('|');
@@ -589,7 +589,7 @@ public class Message {
         parseSubject = "";
       }
     }
-    
+
     parseSubject = MsgParser.decodeHtmlSequence(parseSubject);
     return body;
   }
@@ -598,7 +598,7 @@ public class Message {
     // Finally, leading values in square or round brackets are turned into
     // message subjects.  There may be more than one of these, in which case
     // the will be accumulated in parseSubject separated by pipe symbols
-    
+
     // If the split message option to not parse subjects in following messages is
     // enabled, then all of this logic should be suppressed for any messages in
     // an bundle following the first one.  The problem is, we do not know for sure
@@ -610,19 +610,19 @@ public class Message {
       parseMessageBodyFollow = body;
       parseSubjectFollow = parseSubject;
     }
-    
+
     // First skip leading dots and spaces
     int pt1 = 0;
     while (pt1 < body.length() && " .".indexOf(body.charAt(pt1))>=0) pt1++;
     while (pt1 < body.length()) {
       while (pt1 < body.length() && body.charAt(pt1) == ' ') pt1++;
       if (pt1 >= body.length()) break;
-      
+
       if (body.substring(pt1).startsWith("(Con't)")) break;
 
       char d1 = body.charAt(pt1);
       if (d1 != '(' && d1 != '[') break;
-      
+
       char d2 = (d1 == '(' ? ')' : ']');
       int level = 0;
       int pt2;
@@ -639,24 +639,24 @@ public class Message {
       if (pt2 >= body.length()) break;
     }
     body = trimLead(body.substring(pt1), true);
-    
+
     // If we didn't change anything, then reset any saved following msg information
     if (saveFollow && pt1 == 0) {
       parseMessageBodyFollow = parseSubjectFollow = null;
     }
     return body;
   }
-  
+
   private void trimLast(StringBuilder sb, String endCode) {
     int len = sb.length()-endCode.length();
     if (len < 0) return;
     if (sb.substring(len).equals(endCode)) sb.setLength(len);
   }
-  
+
   private void addSubject(String subject) {
     subject = subject.trim();
     if (subject.equals("FWD:") || subject.equals("FW:")) return;
-    
+
     for (Pattern ptn : SUBJECT_HEADER_PTNS) {
       Matcher match = ptn.matcher(subject);
       if (match.find()) {
@@ -669,7 +669,7 @@ public class Message {
     if (parseSubject.length() == 0) parseSubject = subject;
     else parseSubject = parseSubject + '|' + subject;
   }
-  
+
   private Matcher findPattern(String field, Pattern[] ptns) {
     for (Pattern ptn : ptns) {
       Matcher match = ptn.matcher(field);
@@ -679,7 +679,7 @@ public class Message {
   }
 
   /**
-   * Set parsed message information 
+   * Set parsed message information
    * @param msgInfo
    */
   public void setInfo(MsgInfo msgInfo) {
@@ -687,27 +687,27 @@ public class Message {
   }
 
   /**
-   * @return the parsed information object associated with this object 
+   * @return the parsed information object associated with this object
    * created by a previous call to MsgParser.isPageMsg(Message msg, int parserFlags)
    */
   public MsgInfo getInfo() {
     return info;
   }
-  
+
   /**
    * Determine if message is expecting a suplemental message
    * @param options Split message processing options
    * @return true if it is
    */
   public boolean expectMore(SplitMsgOptions options) {
-    
+
     // The rules change if the message parts may be misordered
     if (options.revMsgOrder() || options.mixedMsgOrder()) {
-      
+
       // In which case, parse failure or general alert result may be a partial message
       if (info == null || info.getMsgType() == MsgType.GEN_ALERT) return true;
     }
-    
+
     // If message matches expected break length, within the pad fudge factor, expect more to come
     int breakLen = options.splitBreakLength();
     if (breakLen > 0) {
@@ -746,7 +746,7 @@ public class Message {
       match.appendTail(sb);
       message = sb.toString();
     }
-    match = UNPRINTABLE.matcher(message); 
+    match = UNPRINTABLE.matcher(message);
     if (match.find()) {
       StringBuffer sb = new StringBuffer();
       do {
@@ -758,7 +758,7 @@ public class Message {
     }
     return message;
   }
-  
+
   /**
    * Determine if message needs to be reparsed after a split message option change
    * @param changeCode Level of split message option change<br>
