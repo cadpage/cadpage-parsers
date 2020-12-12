@@ -21,6 +21,8 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     return "DISPATCH@WARRENCOUNTY911.ORG,WarrenCo911@publicsafetysoftware.net,WARRENCO911@OMNIGO.COM,WARRENEMS@OMNIGO.COM";
   }
 
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("(\\d{5}) .*");
+
   @Override
   public boolean parseMsg(String body, Data data) {
 
@@ -32,7 +34,10 @@ public class MOWarrenCountyParser extends FieldProgramParser {
       if (pt < 0) return false;
       body = body.substring(pt+1).trim();
     }
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    Matcher match =  ZIP_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) data.strCity = match.group(1);
+    return true;
   }
 
   @Override
@@ -136,6 +141,12 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     "NEW TRUXTON",
     "TRELOAR",
 
+    // Boone County
+    "COLUMBIA",
+
+    // Calloway County
+    "FULTON",
+
     // Franklin County
     "WASHINGTON",
 
@@ -152,6 +163,7 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     "LAKE ST LOUIS",
     "NEW MELLE",
     "OFALLON",
+    "ORCHARD FARM",
     "ST CHARLES",
     "WENTZVILLE",
 
@@ -162,6 +174,9 @@ public class MOWarrenCountyParser extends FieldProgramParser {
     "LAKE SHERWOOD",
 
     // Gasconade County
-    "HERMANN"
+    "HERMANN",
+
+    // Misc zip codes
+    "63301"
   };
 }
