@@ -17,7 +17,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
 
   public PACambriaCountyParser() {
     super(CITY_CODES, "CAMBRIA COUNTY", "PA",
-           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS? EMPTY+? GPS");
+           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Cross:X? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS? EMPTY+? GPS%");
   }
 
   @Override
@@ -40,8 +40,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
     }
 
     body = body.replace("Location:", "Add:");
-    String[] flds = body.split("\\|");
-    if (flds.length < 5) flds = body.split("\n\\|?");
+    String[] flds = body.split("\n *\\|?");
     if (flds.length < 5) flds = body.split("  ");
     if (flds.length >= 5) {
       if (!parseFields(flds, data)) return false;
