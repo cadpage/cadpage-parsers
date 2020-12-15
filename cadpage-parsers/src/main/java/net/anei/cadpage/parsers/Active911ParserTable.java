@@ -1255,6 +1255,7 @@ public class Active911ParserTable {
       "US/NY/CortlandCounty",             "NYCortlandCountyC",
       "US/NY/Cutchogue",                  "NYSuffolkCountyC",
       "US/NY/DelawareCounty",             "NYDelawareCounty",
+      "US/NY/DelmarEMS",                  "NYBethlehem",
       "US/NY/EastHamptonVillage",         "NYSuffolkCountyH",
       "US/NY/Erie",                       "NYErieCountyF",
       "US/NY/FingerLakesAmbulance",       "NYOntarioCountyB",
