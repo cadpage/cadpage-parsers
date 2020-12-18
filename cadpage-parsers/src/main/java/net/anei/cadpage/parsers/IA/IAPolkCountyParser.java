@@ -12,23 +12,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Polk County, IA (Grimes Fire & Rescue)
  */
 public class IAPolkCountyParser extends FieldProgramParser {
-  
+
   public IAPolkCountyParser() {
     super(CITY_CODES, "POLK COUNTY", "IA",
-           "Location:ADDR/S! ( Type:CALL! Caller:NAME? Time:TIME% " + 
+           "Location:ADDR/S! ( Type:CALL! Caller:NAME? Time:TIME% " +
                             "| EID:ID! TYPE_CODE:CALL! TIME:TIME! ) END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "777,888,messaging@iamresponding.com";
+    return "777,888,messaging@iamresponding.com,@dallascountyiowa.gov";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.length() > 0 && !subject.endsWith("CAD")) data.strSource = subject;
-    if (!body.startsWith("Location:")) body = "Location: " + body; 
+    if (!body.startsWith("Location:")) body = "Location: " + body;
     if (!super.parseMsg(body, data)) return false;
     if (data.strName.endsWith(" CO")) data.strName += "UNTY";
     else if (COUNTY_SET.contains(data.strName)) data.strName += " COUNTY";
@@ -40,19 +40,19 @@ public class IAPolkCountyParser extends FieldProgramParser {
       }
      data.strName = "";
     }
-    
+
     if (data.strPlace.length() == 0 && !data.strName.contains(",")) {
       data.strPlace = data.strName;
       data.strName = "";
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -62,7 +62,7 @@ public class IAPolkCountyParser extends FieldProgramParser {
         place = field.substring(pt+1).trim();
         field = stripFieldEnd(field.substring(0,pt).trim(), ":");
       }
-  
+
       String apt = "";
       if (!field.startsWith("LL(")) {
         pt = field.lastIndexOf(',');
@@ -71,7 +71,7 @@ public class IAPolkCountyParser extends FieldProgramParser {
           field = stripFieldEnd(field.substring(0,pt).trim(), ":");
         }
       }
-      
+
       if (place.length() > 0) {
         int pt1 = field.lastIndexOf(' ');
         int pt2 = place.lastIndexOf(' ');
@@ -80,31 +80,31 @@ public class IAPolkCountyParser extends FieldProgramParser {
           place = stripFieldEnd(place, "-");
         }
       }
-      
+
       super.parse(field, data);
-      
+
       place = stripFieldEnd(place, data.strCity);
       place = stripFieldEnd(place, "-");
-      
+
       data.strApt = append(data.strApt, " - ", apt);
       data.strPlace = place;
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       data.strPlace = append(data.strPlace, " / ", field);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     return super.getField(name);
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALLE", "ALLEMAN",
       "ALLT", "ALLEN TWP",
@@ -145,14 +145,14 @@ public class IAPolkCountyParser extends FieldProgramParser {
       "WEBS", "WEBSTER TWP",
       "WIND", "WINDSOR HEIGHTS"
   });
-  
+
   private static final Set<String> COUNTY_SET = new HashSet<String>(Arrays.asList(
-      "BOONE", 
-      "DALLAS", 
-      "JASPER", 
-      "MADISON", 
-      "MARION", 
-      "STORY", 
+      "BOONE",
+      "DALLAS",
+      "JASPER",
+      "MADISON",
+      "MARION",
+      "STORY",
       "WARREN"
   ));
 }
