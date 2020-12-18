@@ -8,28 +8,28 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class OHMahoningCountyCParser extends DispatchA19Parser {
-  
+
   public OHMahoningCountyCParser() {
     this("MAHONING COUNTY", "OH");
   }
-  
+
   public OHMahoningCountyCParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "OHMahoningCountyC";
   }
-  
-  
+
+
   @Override
   public String getFilter() {
-    return "noreply@canfield.local";
+    return "noreply@canfield.local,noreply@boardman.gov";
   }
-  
+
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*) \\d{5}");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
