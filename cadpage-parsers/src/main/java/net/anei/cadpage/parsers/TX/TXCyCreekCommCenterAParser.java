@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Cy Creek Comm Center
  */
 public class TXCyCreekCommCenterAParser extends FieldProgramParser {
-  
+
   private static final Pattern PART_MARKER = Pattern.compile("^\\d\\d:\\d\\d ");
   private static final Pattern DATE_PTN = Pattern.compile("(\\d+)/(\\d+)");
   private static final Pattern MARKER1 = Pattern.compile("(?:/ (?:(?:no subject|Text Message) / )?)?(?:(\\d\\d/\\d\\d) )?(?:(\\d\\d:\\d\\d) )?(?:Inc: *(\\d*);)?");
@@ -21,17 +21,17 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
   private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile("(?<=:(?:\\d\\d:\\d\\d:\\d\\d)?) +");
   private static final Pattern MISSED_COLON_PTN = Pattern.compile("(?<=Map)(?=\\d)");
   private static final Pattern TRAILER = Pattern.compile(" +(\\d{8,}) *$");
-  
+
   public TXCyCreekCommCenterAParser() {
     super("HARRIS COUNTY", "TX",
-          "Inc:ID? ADDR! Map:MAP! Sub:PLACE? Juris:SRC? Nat:CALL! Units:UNIT% X-St:X");
+          "Inc:ID? ADDR! Map:MAP! Sub:PLACE? Juris:SRC? Nat:CALL! Units:UNIT% X-St:X NOTES:INFO");
   }
-  
+
   @Override
   public String getFilter() {
     return "CommCenter@ccems.com,93001,777,888,messaging@iamresponding.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -39,7 +39,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
 
   @Override
   protected Data parseMsg(Message msg, int parseFlags) {
-    
+
     // Sometimes the date is include in parenthesis, where it will be
     // misinterpreted as a subject or message index :(
     String body = msg.getMessageBody();
@@ -70,14 +70,14 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Strip message prefix
     body = stripFieldStart(body, "/ Text Message /");
     body = stripFieldStart(body, "CommCenter@ccems.com:");
-    
+
     if (subject.equals("Text Message")) subject = "";
     data.strSource = subject;
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -87,20 +87,20 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
       data.strSupp = RUN_REPORT_BRK_PTN.matcher(match.group(3)).replaceAll("\n");
       return true;
     }
-    
+
     match = MARKER1.matcher(body);
     if (!match.lookingAt()) return false;  // Never happens anymore
     data.strDate = getOptGroup(match.group(1));
     data.strTime = getOptGroup(match.group(2));
     data.strCallId = getOptGroup(match.group(3));
     body = body.substring(match.end()).trim();
-    
+
     match = TRAILER.matcher(body);
     if (match.find()) {
       data.strCallId = match.group(1);
       body = body.substring(0,match.start());
     }
-    
+
     if (data.strCallId.length() == 0) {
       match = MARKER2.matcher(body);
       if (match.lookingAt()) {
@@ -108,20 +108,23 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
         body = body.substring(match.end());
       }
     }
-    
+
     if (body.startsWith("Repage:")) body = body.substring(7).trim();
-    
+
     body = MISSED_COLON_PTN.matcher(body).replaceAll(":");
+
+    // Preserve final N in cross street
+    if (body.endsWith(" N") && !body.contains("NOTES:")) body += " NOTES:";
     if (!super.parseMsg(body, data)) return false;
-    
+
     if (data.strCity.length() == 0 && data.strCall.startsWith("MUTUAL AID")) data.strCity = "HOUSTON";
-    
+
     // Misspelled street name check
     data.strAddress = fixAddress(data.strAddress);
     data.strCross = fixAddress(data.strCross);
     return true;
   }
-  
+
   private static String fixAddress(String addr) {
     addr = MITTLESTED_PTN.matcher(addr).replaceAll("MITTLESTEDT");
     addr = KINGSCOTE_PTN.matcher(addr).replaceAll("KINGSCOATE");
@@ -129,12 +132,12 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
   }
   private static final Pattern MITTLESTED_PTN = Pattern.compile("\\bMITTLESTED\\b");
   private static final Pattern KINGSCOTE_PTN = Pattern.compile("\\bKINGSCOTE\\b");
-  
+
   @Override
   public String getProgram() {
     return "SRC DATE TIME " + super.getProgram() + " ID";
   }
-    
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -142,7 +145,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(\\S.*)");
   private class MyCallField extends Field {
     @Override
@@ -180,13 +183,13 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
       data.strPlace = append(data.strPlace, " - ", p.get(';'));
       data.strApt = p.get();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY PLACE APT";
     }
   }
-  
+
   private static final Pattern CROSS_DASH_PTN = Pattern.compile("(\\d+) - (\\d+ .*)");
   private class MyCrossField extends CrossField {
     @Override
