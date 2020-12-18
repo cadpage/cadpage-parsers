@@ -5,19 +5,31 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class MOScottCountyBParser extends FieldProgramParser {
+public class MOScottCountyBParser extends HtmlProgramParser {
 
   public MOScottCountyBParser() {
     super("SCOTT COUNTY", "MO",
-          "ID DATETIME! Situation:CALL! Address:ADDRCITY! CALL/SDS Notes:INFO/N+");
+          "ID DATETIME! ( SELECT/HTML Situation:EMPTY! CALL! Address:EMPTY! ADDRCITY! Notes:EMPTY! INFO/N+? COPYRIGHT! " +
+                       "| Situation:CALL! Address:ADDRCITY! CALL/SDS Notes:INFO/N+ )");
   }
 
   @Override
   public String getFilter() {
     return "SIKESTONDPS@OMNIGO.COM";
+  }
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<html>")) {
+      setSelectValue("HTML");
+      return super.parseHtmlMsg(subject, body, data);
+    } else {
+      setSelectValue("");
+      return parseMsg(body, data);
+    }
   }
 
   @Override
@@ -30,6 +42,7 @@ public class MOScottCountyBParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d\\d-\\d{5}", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("COPYRIGHT")) return new SkipField("©.*", true);
     return super.getField(name);
   }
 
