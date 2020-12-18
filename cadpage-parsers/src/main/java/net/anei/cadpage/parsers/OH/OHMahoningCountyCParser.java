@@ -25,7 +25,7 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@canfield.local,noreply@boardman.gov";
+    return "noreply@canfield.local,noreply@boardman.gov,@alert.active911.com";
   }
 
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*) \\d{5}");
@@ -43,15 +43,23 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
       "BEA", "BEAVER TWP",
       "BER", "BERLIN TWP",
       "BOA", "BOARDMAN TWP",
+      "BMN", "BOARDMAN",
       "CAN", "CANFIELD TWP",
       "COI", "COITSVILLE TWP",
+      "CRA", "CRAIG BEACH",
+      "DEE", "DEERFIELD TWP",
       "ELL", "ELLSWORTH TWP",
       "GOS", "GOSHEN TWP",
       "GRE", "GREEN TWP",
+      "GRN", "GREEN TWP",
       "JAC", "JACKSON TWP",
+      "LEE", "LEETONIA",
       "MIL", "MILTON TWP",
+      "PAL", "PALMYRA TWP",
       "POL", "POLAND TWP",
+      "SAL", "SALEM",
       "SMI", "SMITH TWP",
-      "SPR", "SPRINGFIELD TWP"
+      "SPR", "SPRINGFIELD TWP",
+      "WAS", "WASHINGTONVILLE"
   });
 }

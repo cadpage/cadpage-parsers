@@ -6,36 +6,35 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class MONewtonCountyBParser extends DispatchOSSIParser {
-  
+
   public MONewtonCountyBParser() {
-    super(CITY_CODES, "NEWTON COUNTY", "MO", 
+    super(CITY_CODES, "NEWTON COUNTY", "MO",
           "( CANCEL ADDR CITY! " +
           "| FYI ( ADDR/Z CITY APT? X+? ( GPS1 GPS2 | ) CALL! " +
                 "| CALL PLACE ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +
                 "| CALL ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +
                 "| ADDR CITY? APT? X+? ( GPS1 GPS2 | ) CALL! " +
-                "| CALL PLACE? ADDR! CITY X+?  ( GPS1 GPS2 | ) " + 
-                ") INFO/N+ " + 
+                "| CALL PLACE? ADDR! CITY X+?  ( GPS1 GPS2 | ) " +
+                ") INFO/N+ " +
           ")");
-    
+
     setupCities("NEWTON COUNTY");
     setupCityValues(CITY_CODES);
-    
+
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@nc-cdc.org,911@nc-cdc.org";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Text Message")) return false;
     body = body.replace("=\n", " ");
     body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("PLACE")) return new MyPlaceField();
@@ -43,7 +42,7 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
     if (name.equals("GPS1")) return new GPSField(1, "[-+]?\\d{2,3}\\.\\d*");
     return super.getField(name);
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -52,7 +51,7 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CLIF", "CLIFF VILLAGE",
       "DEAC", "DENNIS ACRES",
