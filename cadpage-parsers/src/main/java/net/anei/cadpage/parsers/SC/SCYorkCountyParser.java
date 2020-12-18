@@ -121,7 +121,7 @@ public class SCYorkCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "X PLACE CITY CALL CH NAME";
+      return "X PLACE CITY CALL CH NAME INFO?";
     }
   }
 
