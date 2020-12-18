@@ -4375,7 +4375,7 @@ Good luck,
 **************************************************************************************
 To assist firefighters and other emergency responders in navigating to the scene of an emergency 911 alert.  As a secondary feature, one dispatch service would like to display a map of current responder locations to assist fireground officers in managing the incident scene.  Cadpage supports this by reporting the current location to this dispatch service.  There are multiple safeguards to ensure that the user is aware that this is happening and can turn if off if desired.
 
-In normal operation, a user receive an alert, then press a button that launches the Google map app to provide navigation directions to the incident scene.  While the user is very aware that Cadpage is operating and most believe that Cadpage is provding the navigation directions, the fact that the map app is running in the foreground relegates Cadpage to a background status.  Without current background location access, it will be unable to provide the dispatch service with accurate location data.
+In normal operation, a user will receive an alert, then press a button that launches a map app to provide navigation directions to the incident scene.  While the user is very aware that Cadpage is operating and most believe that Cadpage is provding the navigation directions, the fact that the map app is running in the foreground relegates Cadpage to a background status.  Without current background location access, it will be unable to provide the dispatch service with accurate location data.ata.
 
 **************************************************************************************
 Useful search expressions...
