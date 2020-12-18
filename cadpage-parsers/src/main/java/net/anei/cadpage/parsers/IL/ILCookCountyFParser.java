@@ -8,16 +8,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 public class ILCookCountyFParser extends DispatchA27Parser {
-  
+
   public ILCookCountyFParser() {
     super("COOK COUNTY", "IL", "[A-Z]+\\d*");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@cisusa.org,noreply@everbridge.net";
   }
-  
+
   private static final Pattern PHONE_INFO_PTN = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})\\b *");
 
   @Override
@@ -28,16 +28,16 @@ public class ILCookCountyFParser extends DispatchA27Parser {
       data.strPhone = match.group(1);
       data.strSupp = data.strSupp.substring(match.end());
     }
-    
+
     data.strSource = convertCodes(data.strSource, SRC_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replaceAll("INFO", "PHONE INFO");
   }
-  
+
   private static final Properties SRC_CODES = buildCodeTable(new String[]{
       "Cicero 911 Dispatch",        "C911",
       "Cicero FD",                  "CCFD",
@@ -50,6 +50,6 @@ public class ILCookCountyFParser extends DispatchA27Parser {
       "Stickney 911 Dispatch",      "S911",
       "Stickney FD",                "STFD",
       "Stone Park FD",              "SPFD"
-      
+
   });
 }
