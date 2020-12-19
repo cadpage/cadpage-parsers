@@ -1516,6 +1516,7 @@ public class ParserList {
               ,"TXHarrisCounty"                 ,"Harris County, TX"
               ,"TXHarrisCountyESD1"             ,"Harris County ESD1, TX"
               ,"TXHarrisCountyNWEMS"            ,"Harris County NWEMS, TX"
+              ,"TXHarrisonCounty"               ,"Harrison County, TX"
               ,"TXHaysCounty"                   ,"Hays County, TX"
               ,"TXHelotes"                      ,"Helotes, TX"
               ,"TXHendersonCounty"              ,"Henderson County, TX"

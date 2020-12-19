@@ -1767,6 +1767,7 @@ public class Active911ParserTable {
       "US/TX/HarrisCounty",               "TXHarrisCountyA",
       "US/TX/HarrisCountyEC",             "TXHarrisCountyESD1B",
       "US/TX/HarrisCountyNWEMS",          "TXHarrisCountyNWEMS",
+      "US/TX/HarrisonCounty",             "TXHarrisonCounty",
       "US/TX/HaysUSA",                    "KSEllisCounty",
       "US/TX/Helotes",                    "TXHelotes",
       "US/TX/HumblePolice",               "TXHumbleB",
