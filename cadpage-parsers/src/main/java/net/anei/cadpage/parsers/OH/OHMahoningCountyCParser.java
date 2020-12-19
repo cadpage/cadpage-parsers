@@ -42,8 +42,8 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
       "AUS", "AUSTINTOWN TWP",
       "BEA", "BEAVER TWP",
       "BER", "BERLIN TWP",
-      "BOA", "BOARDMAN TWP",
       "BMN", "BOARDMAN",
+      "BOA", "BOARDMAN TWP",
       "CAN", "CANFIELD TWP",
       "COI", "COITSVILLE TWP",
       "CRA", "CRAIG BEACH",
@@ -61,5 +61,6 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
       "SMI", "SMITH TWP",
       "SPR", "SPRINGFIELD TWP",
       "WAS", "WASHINGTONVILLE"
+
   });
 }
