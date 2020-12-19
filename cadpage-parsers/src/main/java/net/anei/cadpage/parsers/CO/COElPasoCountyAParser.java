@@ -144,6 +144,16 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    if (p.check("REF:")) {
+      setFieldList("CALL ADDR APT");
+      data.strCall = p.get(33);
+      if (!p.check("THE LOC HAS CHANGED TO:")) return false;
+      parseAddress(p.get(30), data);
+      if (!p.check("#")) return false;
+      data.strApt = p.get();
+      return true;
+    }
+
     return false;
   }
 

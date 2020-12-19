@@ -9,9 +9,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCHaywoodCountyParser extends DispatchSouthernParser {
-  
+
   public NCHaywoodCountyParser() {
-    super(null, "HAYWOOD COUNTY", "NC", 
+    super(null, "HAYWOOD COUNTY", "NC",
                 DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_X | DSFLG_OPT_CODE | DSFLG_TIME | DSFLG_NO_INFO);
     removeWords("COUNTY", "COVE", "PARK");
     setupCities(CITY_LIST);
@@ -23,7 +23,7 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
   public String getFilter() {
     return "CAD@haywoodnc.net,4702193544";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "CAD:");
@@ -35,19 +35,19 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
     }
     return true;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return STONEY_PK_PTN.matcher(addr).replaceAll("STONEY PARK");
   }
   private static final Pattern STONEY_PK_PTN = Pattern.compile("\\bSTONEY +PK\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("NEWPORT")) city = "HAYWOOD COUNTY";
     return city;
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "ABBEYS COVE",
       "ABBOTT MOORE",
@@ -660,7 +660,7 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
       "ZEMRY CALDWELL",
       "ZEPHIE SPRINGS"
   };
-  
+
   private static String[] CITY_LIST = new String[]{
     "CANTON",
     "CLYDE",
@@ -669,12 +669,12 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
     "NEWPORT",
     "WAYNESVILLE",
     "WEST CANTON",
-    
+
     "BUNCOMBE",
     "BALSAM",
     "CANDLER",
     "ENKA",
     "LEICESTER"
   };
-  
+
 }
