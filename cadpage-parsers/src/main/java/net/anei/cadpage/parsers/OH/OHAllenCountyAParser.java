@@ -14,7 +14,7 @@ public class OHAllenCountyAParser extends FieldProgramParser {
   public OHAllenCountyAParser() {
     super(CITY_LIST, "ALLEN COUNTY", "OH",
           "( Call:CODE_CALL! Place:PLACE! Addr:ADDRCITY/S6! ( Cross:X! | ID:ID! Pri:PRI! ) Date:DATETIME! Map:MAP! Unit:UNIT! Info:INFO! INFO/N+ Radio_Channel:CH! Alarm_Level:PRI/L! " +
-          "| ADDRCITY2/S6 ID DATETIME CALL X UNIT MAP MAP/L GPS! ) END");
+          "| ADDRCITY2/S6 ID DATETIME CALL X UNIT MAP MAP_INFO GPS! ) END");
   }
 
   @Override
@@ -41,6 +41,7 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("MAP_INFO")) return new MyMapInfoField();
     return super.getField(name);
   }
 
@@ -94,6 +95,26 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     public String getFieldNames() {
       return super.getFieldNames() + " CITY PLACE";
     }
+  }
+
+  private static final Pattern MAP_INFO_PTN = Pattern.compile("([A-Z]{3,4} \\d(?:-\\d)?|[A-Z][a-z]+ FD|[A-Z]{1,3}FD) *(.*)");
+  private class MyMapInfoField extends InfoField {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = MAP_INFO_PTN.matcher(field);
+      if (match.matches()) {
+        data.strMap = append(data.strMap, "/", match.group(1));
+        field = match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "MAP " + super.getFieldNames();
+    }
+
   }
 
   private static final String[] CITY_LIST = new String[] {
