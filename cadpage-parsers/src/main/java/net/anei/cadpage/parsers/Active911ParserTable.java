@@ -70,6 +70,7 @@ public class Active911ParserTable {
       "US/AL/CoosaCounty",                "ALCoosaCounty",
       "US/AL/CullmanCounty",              "ALCullmanCounty",
       "US/AL/DallasCounty",               "ALDallasCounty",
+      "US/AL/DeKalbCounty",               "ALDeKalbCounty",
       "US/AL/Dothan",                     "ALDothan",
       "US/AL/ElbaDispatch",               "ALCoffeeCountyB",
       "US/AL/ElbowPD",                    "ALCoffeeCountyB",

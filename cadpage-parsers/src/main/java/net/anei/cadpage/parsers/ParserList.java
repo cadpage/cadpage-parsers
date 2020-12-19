@@ -123,6 +123,7 @@ public class ParserList {
               ,"ALCoosaCounty"                  ,"Coosa County, AL"
               ,"ALCullmanCounty"                ,"Cullman County, AL"
               ,"ALDallasCounty"                 ,"Dallas County, AL"
+              ,"ALDeKalbCounty"                 ,"DeKalb County, AL"
               ,"ALDothan"                       ,"Dothan, AL"
               ,"ALEtowahCounty"                 ,"Etowah County, AL"
               ,"ALFranklinCounty"               ,"Franklin County, AL"
