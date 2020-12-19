@@ -1689,6 +1689,7 @@ public class Active911ParserTable {
       "US/TN/MorganCounty",               "TNMorganCounty",
       "US/TN/OakRidge",                   "TNOakRidge",
       "US/TN/Overton",                    "TNOvertonCounty",
+      "US/TN/PutnamCounty",               "TNPutnamCounty",
       "US/TN/RoaneCounty",                "TNRoaneCounty",
       "US/TN/SevierCounty",               "TNSevierCounty",
       "US/TN/SmithCounty",                "TNSmithCounty",
