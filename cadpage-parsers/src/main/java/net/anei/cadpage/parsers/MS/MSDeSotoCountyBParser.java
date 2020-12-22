@@ -8,6 +8,11 @@ public class MSDeSotoCountyBParser extends DispatchA48Parser {
     super(CITY_LIST, "DESOTO COUNTY", "MS", FieldType.X, A48_NO_CODE);
   }
 
+  @Override
+  public String getFilter() {
+    return "@southaven.org";
+  }
+
   static final String[] CITY_LIST = new String[]{
 
     // Cities
