@@ -24,9 +24,9 @@ public class MDFrederickCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "www.codemessaging.net,CAD@psb.net,@c-msg.net,messaging@iamresponding.com,IntergraphNotificati@frederickcountymd.gov,89361";
+    return "www.codemessaging.net,CAD@psb.net,@c-msg.net,messaging@iamresponding.com,IntergraphNotificati@frederickcountymd.gov,88911,89361";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -46,7 +46,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       subject = body.substring(0,pt).trim();
       body = body.substring(pt+1).trim();
     }
-    
+
     if (subject.length() > 0) {
       String[] subjects = subject.split("\\|");
       if (subjects.length > 2) return false;
@@ -61,7 +61,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         data.strTime = match.group(2);
       }
     }
-    
+
     int pt = body.lastIndexOf("... http");
     if (pt >= 0) {
       data.strInfoURL = body.substring(pt+4);
@@ -70,7 +70,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
 
     body = body.replace("MAP:", " MAP:");
     if (!super.parseMsg(body, data)) return false;
-    
+
     // Parser is getting pretty sloppy, anything starting with CT: will pass
     // this.  Let's make sure they have at least one additional field
     return data.strTime.length() > 0 ||
@@ -78,19 +78,19 @@ public class MDFrederickCountyParser extends FieldProgramParser {
             data.strMap.length() > 0 ||
             data.strUnit.length() > 0;
   }
-  
+
   @Override
   public String getProgram() {
     return "DATE TIME " + super.getProgram() + " URL";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   // Address field gets complicated
   private static final Pattern MUT_AID_PTN = Pattern.compile("(.*?):? @MA[- ]([A-Z]+(?: (?:CO|CNTY))?)[ :\\*;/@]*(.*?)(?:[:@](.*))?");
   private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("(ENGINE \\S+) +(.*)");
@@ -99,10 +99,10 @@ public class MDFrederickCountyParser extends FieldProgramParser {
   private static final Pattern PLACE_MARK_PTN2 = Pattern.compile("[\\*;]");
   private static final Pattern APT_PTN = Pattern.compile("(?:RM|LOT|ROOM|APT|UNIT)[- ]*(.*)|\\d{1,4}[A-Z]?|[A-Z]|IAO", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // Eliminate multiple blanks
       field = field.replaceAll("  +", " ");
 
@@ -118,13 +118,13 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         data.strCity = convertCodes(match.group(2).trim(), CITY_CODES);
         String addr = getOptGroup(match.group(3));
         String place = match.group(4);
-        
+
         match = UNIT_PREFIX_PTN.matcher(addr);
         if (match.matches()) {
           data.strCall = append(data.strCall, " - ", match.group(1));
           addr = match.group(2);
         }
-        
+
         if (place != null) {
           addr = stripCity(addr, data);
           parseAddress(addr, data);
@@ -149,9 +149,9 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           }
         }
       }
-  
+
       else {
-        
+
         // Not mutual aid.
         // See if there is a / default marker.  If there is it marks the end of the call description
         StartType st = StartType.START_CALL;
@@ -161,37 +161,37 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           data.strCall = field.substring(0,pt).trim();
           field = field.substring(pt+9).trim();
         }
-        
+
         // Look for a trailing place name
         pt = field.indexOf("LL(");
         if (pt >= 0) {
           pt = field.indexOf(')', pt+3);
         }
         if (pt < 0) pt = 0;
-        
+
         String extra = null;
         pt = field.indexOf(':', pt);
         if (pt >= 0) {
           extra = field.substring(pt+1).trim();
           field = field.substring(0,pt).trim();
         }
-        
+
         match = ADDR_APT_PTN.matcher(field);
         if (match.matches()) {
           field = match.group(1);
           data.strApt = match.group(2);
         }
-        
+
         // Strip off possibly multiple city codes
         field = stripCity(field, data);
-        
+
         int flags = FLAG_NO_CITY;
         if (st == StartType.START_CALL) flags |= FLAG_START_FLD_REQ;
         if (data.strPlace.length() > 0) flags |= FLAG_ANCHOR_END;
         if (data.strApt.length() > 0) flags |= FLAG_NO_IMPLIED_APT;
         parseAddress(st, flags, field, data);
         if (data.strPlace.length() == 0) data.strPlace = getLeft();
-        
+
         if (extra != null) {
           for (String part : extra.split(":")) {
             part = part.trim();
@@ -218,7 +218,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           }
         }
       }
-      
+
       // If no address (it happens) substitute the place name
       if (data.strAddress.length() == 0) {
         String addr = data.strPlace;
@@ -231,7 +231,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         addr = stripCity(addr, data);
         parseAddress(addr, data);
       }
-      
+
       // check for combined address and place name
       int pt = data.strAddress.indexOf(" - ");
       if (pt >= 0) {
@@ -250,7 +250,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           data.strAddress = sPart2;
         }
       }
-      
+
       // See of this an out of state city
       pt = data.strCity.indexOf(',');
       if (pt >= 0) {
@@ -258,9 +258,9 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         data.strCity = data.strCity.substring(0,pt);
       }
     }
-    
+
     private String stripCity(String field, Data data) {
-      
+
       Matcher match = PLACE_MARK_PTN2.matcher(field);
       if (match.find()) {
         String part = field.substring(match.end()).trim();
@@ -274,7 +274,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
           data.strPlace = append(data.strPlace, " - ", part);
         }
       }
-      
+
       while (true) {
         Result res = parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field);
         if (res.getCity().length() == 0) break;
@@ -285,13 +285,13 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       }
       return field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL ADDR APT CITY ST PLACE";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -301,7 +301,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final String[] MWORD_STREETS = new String[]{
     "ADAMSTOWN COMMONS",
     "ADDISON WOODS",
@@ -639,7 +639,7 @@ public class MDFrederickCountyParser extends FieldProgramParser {
     "YELLOW SPRINGS",
     "YOUNG FAMILY"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 HANG UP INVESTIGATION",
       "ABDOMINAL PAIN",
@@ -932,8 +932,8 @@ public class MDFrederickCountyParser extends FieldProgramParser {
       "WIRES DOWN",
       "WOODS FIRE"
   );
-  
-  private static final Properties CITY_CODES = 
+
+  private static final Properties CITY_CODES =
     buildCodeTable(new String[]{
         "ADAM",   "Adams County,PA",
         "ADAMCO", "Adams County,PA",
@@ -1002,11 +1002,11 @@ public class MDFrederickCountyParser extends FieldProgramParser {
         "URBA",   "Urbana",
         "WACO",   "Washington County",
         "WALK",   "Walkersville",
-        "WASH",   "Washington County", 
-        "WASHCO", "Washington County", 
-        "WASH CO","Washington County", 
+        "WASH",   "Washington County",
+        "WASHCO", "Washington County",
+        "WASH CO","Washington County",
         "WOOD",   "Woodsboro",
-        
+
         "ADAMS COUNTY",        "Adams County,PA",
         "ADAMSTOWN",           "Adamstown",
         "BALLENGER CREEK",     "Ballenger Creek",

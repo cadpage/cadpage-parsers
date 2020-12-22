@@ -20,7 +20,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911@lcwc911.us,messaging@iamresponding.com,@everbridge.net,@den.everbridge.net,@den2.everbridge.net,@smtpic-ne.prd1.everbridge.net,141000,89361,88911";
+    return "911@lcwc911.us,messaging@iamresponding.com,@everbridge.net,@den.everbridge.net,@den2.everbridge.net,@smtpic-ne.prd1.everbridge.net,141000,88911,89361";
   }
 
   private static final Pattern XML_COMMENT_PTN = Pattern.compile("<!--.*?-->");

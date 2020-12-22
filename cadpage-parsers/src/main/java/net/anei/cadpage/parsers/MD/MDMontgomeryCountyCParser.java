@@ -8,17 +8,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class MDMontgomeryCountyCParser extends FieldProgramParser {
-  
+
   public MDMontgomeryCountyCParser() {
-    super("MONTGOMERY COUNTY", "MD", 
+    super("MONTGOMERY COUNTY", "MD",
           "ID CALL ADDR! Apt/Suite:APT? PLACE ( Box_Area:BOX! | Area:MAP! Beat:MAP/L! ) X/Y:GPS? TG/CH:CH? Units:UNIT! END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "noreply@everbridge.net,89361";
+    return "noreply@everbridge.net,88911,89361";
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "MONTGOMERY CAD MSG\n");
@@ -40,7 +40,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
       }
       return parseMsg(body, data);
     }
-    
+
     return super.parseHtmlMsg(subject, body, data);
   }
 
@@ -51,7 +51,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
       body = body.substring(8).trim();
       return parseFields(body.split(" \\* "), data);
     }
-    
+
     if (body.startsWith("MESSAGE:")) {
       setFieldList("INFO");
       data.msgType = MsgType.GEN_ALERT;
@@ -60,7 +60,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
     }
     return false;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("F\\d{10}");
@@ -68,7 +68,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|SUITE|RM|ROOM|UNIT)[ #]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
@@ -78,7 +78,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
