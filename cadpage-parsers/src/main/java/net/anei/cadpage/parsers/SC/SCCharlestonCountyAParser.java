@@ -49,6 +49,7 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
                  .replace(" X Streets:", " X Street:");
       if (! super.parseMsg(body, data)) return false;
     }
+    if (data.msgType == MsgType.GEN_ALERT) return true;
     if (data.strCall.length() == 0) return false;
     if (data.strAddress.length() == 0 && !data.strCall.equals("Times")) return false;
     data.strChannel = stripFieldStart(data.strChannel, "_");
@@ -83,6 +84,34 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
           String value = p.get(8);
           if (parseLabeledField(key, value, data) && ndx >= 6) data.msgType = MsgType.RUN_REPORT;
         }
+        return true;
+      }
+
+      if (p.checkAhead(20, "Unit:")) {
+        setFieldList("ID UNIT INFO ADDR APT");
+        data.msgType = MsgType.GEN_ALERT;
+        data.strCallId = p.get(20);
+        if (!p.check("Unit:")) return false;
+        data.strUnit = p.get(10);
+        data.strSupp = p.get(64);
+        if (!p.check("Address:")) return false;
+        parseAddress(p.get(), data);
+        return true;
+      }
+
+      if (p.checkAhead(116, " U:")) {
+        setFieldList("CALL APT ADDR X GPS UNIT");
+        data.strCall = p.get(19);
+        String apt = p.get(15);
+        parseAddress(p.get(30), data);
+        data.strApt = append(data.strApt, "-", apt);
+        data.strCross = p.get(30);
+        String gps1 = p.get(8);
+        if (!p.check("   / ")) return false;
+        String gps2 = p.get(8);
+        setGPSLoc(cvtGpsCoord(gps1)+','+cvtGpsCoord(gps2), data);
+        if (!p.check("  U:")) return false;
+        data.strUnit = p.get();
         return true;
       }
 
@@ -156,6 +185,12 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
     }
 
     return false;
+  }
+
+  private String cvtGpsCoord(String gps) {
+    int pt = gps.length() - 6;
+    if (pt < 0) return gps;
+    return gps.substring(0,pt)+'.'+gps.substring(pt);
   }
 
   private boolean parseLabeledField(String key, String value, Data data) {

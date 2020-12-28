@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 //  Map pages can be found at http://gis.co.benton.or.us/gisdata/Address/FireMapBooks/
 
 public class ORBentonCountyBaseParser extends FieldProgramParser {
-  
+
   public ORBentonCountyBaseParser(String defCity, String program) {
     super(CITY_CODES, defCity, "OR", program);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
@@ -26,15 +26,15 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
   }
 
   private static final Pattern HIGHWAY_PTN = Pattern.compile("\\bHIGHWAY\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CODE_PTN = Pattern.compile("\\d{1,2}([A-Z])\\d{1,2}[A-Z]?"); 
-  private static final CodeTable CALL_CODES = new StandardCodeTable(); 
+  private static final Pattern CODE_PTN = Pattern.compile("\\d{1,2}([A-Z])\\d{1,2}[A-Z]?");
+  private static final CodeTable CALL_CODES = new StandardCodeTable();
 
   protected void fixAddress(Data data) {
-    
+
     // Google has trouble with HIGHWAY 20, so change all highways to hwy
     data.strAddress = HIGHWAY_PTN.matcher(data.strAddress).replaceAll("HWY");
     data.strCross = HIGHWAY_PTN.matcher(data.strCross).replaceAll("HWY");
-    
+
     // Now for some special fixes to work around Dispatch map issues
     if (data.strCity.equals("PHILOMATH")) {
       data.strAddress = data.strAddress.replace("MELVILL CRESCENT AV","MELVILL CRESCENT");
@@ -46,17 +46,17 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
           break;
         }
       }
-      
+
       // Addresses on Airport east of Belfountain should be reported as in Corvallis
       if (EAST_AIRPORT_PTN.matcher(tmp).matches()) data.strCity = "CORVALLIS";
     }
-    
+
     else if (data.strCity.equals("KINGS VALLEY")) {
-      
+
       // Some addresses on the east end of KV district are in Monmouth
       if (EAST_MAXFIELD_CREEK_PTN.matcher(data.strAddress).matches()) data.strCity = "MONMOUTH";
     }
-    
+
     // See if we can use call code to improve call description
     if (data.strCode.length() > 0) {
       String call = CALL_CODES.getCodeDescription(data.strCode);
@@ -71,7 +71,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
         data.strCall = call;
       }
     }
-    
+
     // See if we have a bridge alert associated with this address
     Map<String, Bridge> bridgeTable = CITY_BRIDGE_STATUS.get(data.strCity);
     if (bridgeTable != null) {
@@ -79,12 +79,12 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       if (bridge != null) data.strAlert = bridge.getMessage();
     }
   }
-  
+
   protected String cvtCityCode(String field) {
     if (field.length() > 4) return null;
     return CITY_CODES.getProperty(field);
   }
-  
+
   private static final Properties PRIORITY_TABLE = buildCodeTable(new String[]{
       "A", "ALPHA",
       "B", "BRAVO",
@@ -93,7 +93,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "E", "ECHO",
       "O", "OMEGA"
   });
-  
+
   // List of streets that extend wholly or partly into a region that Google does
   // not recognize as part of Philomath
   private static final String[] NOT_IN_PHILOMATH = new String[]{
@@ -109,10 +109,10 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     "PETERSON",
     "STARR CREEK"
   };
-  
+
   private static final Pattern EAST_AIRPORT_PTN = Pattern.compile("\\d{4} +(?:SW +)?AIRPORT\\b.*");
   private static final Pattern EAST_MAXFIELD_CREEK_PTN = Pattern.compile("[2-9]\\d{4} MAXFIELD CREEK\\b.*|.*\\bWARD RD\\b.*");
-  
+
   @Override
   public String adjustMapAddress(String addr, String city, boolean cross) {
     if (city.equalsIgnoreCase("PHILOMATH") || city.equals("ALSEA")) {
@@ -125,13 +125,13 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
   }
   private static final Pattern HWY_34_PTN = Pattern.compile("\\bHWY +34\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern HWY_20_PTN = Pattern.compile("\\bHWY +20\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("KINGS VAL")) city = "PHILOMATH";
     return city;
   }
-  
+
   private static final Pattern STREET_APT_PTN = Pattern.compile("(\\d+)-(\\d+)( +.*)");
 
   @Override
@@ -145,7 +145,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
                        .replace(" AND MP ", " MP ");
       return address;
     }
-    
+
     if (apt.length() == 0) {
       Matcher match = STREET_APT_PTN.matcher(address);
       if (match.matches()) {
@@ -160,12 +160,12 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       address = address + " APT:" + apt;
       return address;
     }
-    
+
     else return address;
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      
+
       "AIRPORT AVE SW MP 1",          "44.50831045300,-123.28893578500",
       "AIRPORT AVE SW MP 2",          "44.50599610300,-123.30664291000",
       "AIRPORT AVE SW MP 3",          "44.49760877800,-123.31662440900",
@@ -173,12 +173,12 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "AIRPORT AVE SW MP 5",          "44.49571751100,-123.36006076700",
       "AIRPORT AVE SW MP 6",          "44.49679480300,-123.37899839800",
       "AIRPORT AVE SW MP 7",          "44.49687746000,-123.39960030300",
-      
+
       "ALEXANDER RD MP 1",            "44.63993142700,-123.44982095400",
       "ALEXANDER RD MP 2",            "44.65214941400,-123.45493089400",
       "ALEXANDER RD MP 3",            "44.66541132400,-123.45337802500",
       "ALEXANDER RD MP 4",            "44.67251549200,-123.46839168300",
-      
+
       "ALPINE RD MP 1",               "44.33061503800,-123.31245246800",
       "ALPINE RD MP 2",               "44.32679888800,-123.33013541100",
       "ALPINE RD MP 3",               "44.32918668400,-123.34876820600",
@@ -186,7 +186,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "ALPINE RD MP 5",               "44.32613654500,-123.38743951200",
       "ALPINE RD MP 6",               "44.31974978900,-123.40408460400",
       "ALPINE RD MP 7",               "44.30596676300,-123.40872550600",
-      
+
       "BELLFOUNTAIN RD MP 1",         "44.52944131300,-123.33445485100",
       "BELLFOUNTAIN RD MP 2",         "44.51540382000,-123.33768125000",
       "BELLFOUNTAIN RD MP 3",         "44.50124289900,-123.33769022600",
@@ -204,17 +204,17 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "BELLFOUNTAIN RD MP 15",        "44.34325817300,-123.35955445100",
       "BELLFOUNTAIN RD MP 16",        "44.32920000600,-123.36060867700",
       "BELLFOUNTAIN RD MP 17",        "44.31435071800,-123.36144394600",
-      
+
       "CHERRY CREEK RD MP 1",         "44.29738598700,-123.32114861100",
       "CHERRY CREEK RD MP 2",         "44.29511186800,-123.33911360100",
       "CHERRY CREEK RD MP 3",         "44.29395580700,-123.35624824100",
-      
+
       "DAWSON RD MP 1",               "44.36044501400,-123.30896511200",
       "DAWSON RD MP 2",               "44.36094021200,-123.32883665800",
       "DAWSON RD MP 3",               "44.36214725000,-123.34790781500",
       "DAWSON RD MP 4",               "44.36369749700,-123.36801439500",
       "DAWSON RD MP 5",               "44.36030617600,-123.38673787500",
-      
+
       "DECKER RD MP 1",               "44.48621671100,-123.43086772100",
       "DECKER RD MP 2",               "44.47439976200,-123.43084787100",
       "DECKER RD MP 3",               "44.47120377200,-123.41249630900",
@@ -222,11 +222,11 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "DECKER RD MP 5",               "44.45936953400,-123.37984079000",
       "DECKER RD MP 6",               "44.45779721800,-123.36092390800",
       "DECKER RD MP 7",               "44.45799768300,-123.34389740000",
-      
+
       "EVERGREEN RD MP 1",            "44.51926640600,-123.38670681600",
       "EVERGREEN RD MP 2",            "44.51045998900,-123.39835089900",
       "EVERGREEN RD MP 3",            "44.50395139000,-123.41291554900",
-      
+
       "HARRIS RD MP 1",               "44.57846431900,-123.43973645300",
       "HARRIS RD MP 2",               "44.57736034900,-123.45352738100",
       "HARRIS RD MP 3",               "44.58462259400,-123.46790902300",
@@ -234,7 +234,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HARRIS RD MP 5",               "44.57341922600,-123.49822170600",
       "HARRIS RD MP 6",               "44.58305474000,-123.51029788400",
       "HARRIS RD MP 7",               "44.58296971100,-123.52154170000",
-      
+
       "HOSKINS RD MP 1",              "44.67411498000,-123.45503414900",
       "HOSKINS RD MP 2",              "44.67758329200,-123.47201400700",
       "HOSKINS RD MP 3",              "44.67605003500,-123.48909764500",
@@ -242,25 +242,25 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HOSKINS RD MP 5",              "44.67115688300,-123.51658313600",
       "HOSKINS RD MP 6",              "44.66583338700,-123.53430321000",
       "HOSKINS RD MP 7",              "44.66060189400,-123.55018396900",
-      
+
       "INDEPENDENCE HWY NW MP 1",     "44.64915406100,-123.18314655900",
       "INDEPENDENCE HWY NW MP 2",     "44.66472095500,-123.18119377300",
       "INDEPENDENCE HWY NW MP 3",     "44.67864039700,-123.18072488000",
       "INDEPENDENCE HWY NW MP 4",     "44.69383788900,-123.18255652000",
       "INDEPENDENCE HWY NW MP 5",     "44.70626418800,-123.18285397600",
       "INDEPENDENCE HWY NW MP 6",     "44.72012537900,-123.18202918200",
-      
+
       "KIGER ISLAND DR SE MP 1",      "44.52190136700,-123.25153670200",
       "KIGER ISLAND DR SE MP 2",      "44.51817010000,-123.23607742400",
       "KIGER ISLAND DR SE MP 3",      "44.50496566600,-123.23122565400",
       "KIGER ISLAND DR SE MP 4",      "44.49691832600,-123.22149092600",
-      
+
       "LLEWELLYN RD MP 1",            "44.47761595100,-123.29320502400",
       "LLEWELLYN RD MP 2",            "44.47760105400,-123.31349348600",
       "LLEWELLYN RD MP 3",            "44.47408263500,-123.33252274600",
       "LLEWELLYN RD MP 4",            "44.47260839600,-123.35216317600",
       "LLEWELLYN RD MP 5",            "44.47259533000,-123.37236848900",
-      
+
       "LOBSTER VALLEY RD MP 1",       "44.29355120500,-123.67643200900",
       "LOBSTER VALLEY RD MP 2",       "44.29305804800,-123.69374464700",
       "LOBSTER VALLEY RD MP 3",       "44.28842411000,-123.71163500600",
@@ -272,18 +272,18 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "LOBSTER VALLEY RD MP 9",       "44.32387964600,-123.77778122800",
       "LOBSTER VALLEY RD MP 10",      "44.32845096800,-123.79299064900",
       "LOBSTER VALLEY RD MP 11",      "44.33382913300,-123.81050425400",
-      
+
       "LUCKIAMUTE RD MP 1",           "44.69022690100,-123.47034814800",
       "LUCKIAMUTE RD MP 2",           "44.70118410800,-123.48191932100",
       "LUCKIAMUTE RD MP 3",           "44.71091548700,-123.49072332000",
       "LUCKIAMUTE RD MP 4",           "44.71921375300,-123.50700099100",
-      
+
       "MARYS RIVER RD MP 1",          "44.64469340200,-123.56882343600",
       "MARYS RIVER RD MP 2",          "44.65746213500,-123.56500909100",
       "MARYS RIVER RD MP 3",          "44.67063604900,-123.57130477800",
       "MARYS RIVER RD MP 4",          "44.68468965600,-123.57073946100",
       "MARYS RIVER RD MP 5",          "44.69912004900,-123.57268637500",
-      
+
       "MARYS PEAK RD MP 1",           "44.471537,-123.508819",
       "MARYS PEAK RD MP 2",           "44.473696,-123.521651",
       "MARYS PEAK RD MP 3",           "44.472716,-123.536457",
@@ -293,28 +293,28 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "MARYS PEAK RD MP 7",           "44.504800,-123.568085",
       "MARYS PEAK RD MP 8",           "44.508550,-123.573343",
       "MARYS PEAK RD MP 9",           "44.512681,-123.555897",
-      
+
       "MAXFIELD CREEK RD MP 1",       "44.69357114100,-123.41201987100",
       "MAXFIELD CREEK RD MP 2",       "44.69882047900,-123.39355055900",
       "MAXFIELD CREEK RD MP 3",       "44.70748088500,-123.38329536400",
       "MAXFIELD CREEK RD MP 4",       "44.71531982500,-123.36662231300",
       "MAXFIELD CREEK RD MP 5",       "44.72061320500,-123.35303908700",
-      
+
       "MC FARLAND RD MP 1",           "44.37856464200,-123.30963476400",
       "MC FARLAND RD MP 2",           "44.37266527500,-123.32735757000",
       "MC FARLAND RD MP 3",           "44.36433790200,-123.33546698000",
       "MC FARLAND RD MP 4",           "44.35082979300,-123.33393538200",
       "MC FARLAND RD MP 5",           "44.33616709500,-123.33265805000",
-      
+
       "NORTON CREEK RD MP 1",         "44.61272791800,-123.50958393900",
       "NORTON CREEK RD MP 2",         "44.62468567900,-123.51430585300",
       "NORTON CREEK RD MP 3",         "44.63865432000,-123.51192499800",
-      
+
       "OLD PEAK RD MP 1",             "44.54062664100,-123.40973424000",
       "OLD PEAK RD MP 2",             "44.54305382400,-123.42226602200",
       "OLD PEAK RD MP 3",             "44.53991542200,-123.43456168400",
       "OLD PEAK RD MP 4",             "44.53480426500,-123.45132064800",
-      
+
       "OLD RIVER RD MP 1",            "44.37824764400,-123.27021664000",
       "OLD RIVER RD MP 2",            "44.36609965600,-123.26043376200",
       "OLD RIVER RD MP 3",            "44.34964206600,-123.26811349300",
@@ -323,16 +323,16 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "OLD RIVER RD MP 6",            "44.31889680700,-123.25010674100",
       "OLD RIVER RD MP 7",            "44.30466679200,-123.24642380200",
       "OLD RIVER RD MP 8",            "44.29511560000,-123.23844172800",
-      
+
       "SOAP CREEK RD MP 2",           "44.67605029400,-123.25999317100",
       "SOAP CREEK RD MP 3",           "44.66808994100,-123.27340538100",
       "SOAP CREEK RD MP 4",           "44.65612152700,-123.28479649900",
       "SOAP CREEK RD MP 5",           "44.64749769300,-123.29733928500",
-      
+
       "SOUTH FORK RD MP 1",           "44.35990805500,-123.58677961500",
       "SOUTH FORK RD MP 2",           "44.35122987300,-123.57614621300",
       "SOUTH FORK RD MP 3",           "44.34097409300,-123.56529725800",
-      
+
       "SPRINGHILL DR MP 1",           "44.65549307700,-123.10229845900",
       "SPRINGHILL DR MP 2",           "44.67095085000,-123.10107449400",
       "SPRINGHILL DR MP 3",           "44.67661688000,-123.11776769400",
@@ -340,11 +340,11 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "SPRINGHILL DR MP 5",           "44.69015416700,-123.14384461100",
       "SPRINGHILL DR MP 6",           "44.70285573400,-123.15346997900",
       "SPRINGHILL DR MP 7",           "44.71120163800,-123.16800001600",
-      
+
       "SULPHUR SPRINGS RD NW MP 1",   "44.63481834500,-123.28546005200",
       "SULPHUR SPRINGS RD NW MP 2",   "44.64233173000,-123.29945004400",
       "SULPHUR SPRINGS RD NW MP 3",   "44.64317752200,-123.31537656700",
-      
+
       "WOODS CREEK RD MP 1",          "44.55200846400,-123.42881658700",
       "WOODS CREEK RD MP 2",          "44.54495567600,-123.44586376100",
       "WOODS CREEK RD MP 3",          "44.54533808700,-123.46500880300",
@@ -352,13 +352,13 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "WOODS CREEK RD MP 5",          "44.54476588300,-123.50227982900",
       "WOODS CREEK RD MP 6",          "44.54166651200,-123.51961544000",
       "WOODS CREEK RD MP 7",          "44.53598272400,-123.53625997100",
-      
+
       "TAMPICO RD MP 1",              "44.68230346700,-123.23696940200",
       "TAMPICO RD MP 2",              "44.69371527900,-123.25005619000",
       "TAMPICO RD MP 3",              "44.69799583500,-123.26850486000",
       "TAMPICO RD MP 4",              "44.70415549800,-123.28616100100",
       "TAMPICO RD MP 5",              "44.71472182600,-123.29902336200",
-      
+
       "HWY 20 MP 1",                  "44.57715399300,-123.24723317500",
       "HWY 20 MP 2",                  "44.58696073300,-123.23291189700",
       "HWY 20 MP 3",                  "44.59836680300,-123.22322478200",
@@ -396,7 +396,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 20 MP 54",                 "44.55384716500,-123.30242441200",
       "HWY 20 MP 55",                 "44.55457227500,-123.28264783300",
       "HWY 20 MP 56",                 "44.55757240100,-123.26303320400",
-      
+
       "HWY 34 MP 0",                  "44.56698878900,-123.25812151600",
       "HWY 34 MP 1",                  "44.56391322900,-123.23866530300",
       "HWY 34 MP 2",                  "44.56404516300,-123.21851114000",
@@ -451,7 +451,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 34 MP 56",                 "44.51872444900,-123.42534530500",
       "HWY 34 MP 57",                 "44.52744978800,-123.40932573400",
       "HWY 34 MP 58",                 "44.53494137400,-123.39278537900",
-      
+
       "HWY 99W MP 67",                "44.79690550100,-123.22815225600",
       "HWY 99W MP 68",                "44.78251780700,-123.22903679600",
       "HWY 99W MP 69",                "44.76802529500,-123.22737116500",
@@ -500,7 +500,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 99W MP 108",               "44.23889964300,-123.21299031600",
       "HWY 99W MP 109",               "44.22602410500,-123.20500562700",
       "HWY 99W MP 110",               "44.21157090200,-123.20416139700",
-      
+
       // EDDYVILLE-BLODGETT HWY
       "HWY 180 MP 8",                 "44.65540654500,-123.67728177700",
       "HWY 180 MP 9",                 "44.64955537100,-123.66062423500",
@@ -514,7 +514,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 180 MP 17",                "44.61622638000,-123.54008256100",
       "HWY 180 MP 18",                "44.61022600800,-123.52863455600",
       "HWY 180 MP 19",                "44.59847108100,-123.52477981100",
-      
+
       // TERRITORIAL RD
       "HWY 200 MP 1",                 "44.29875482400,-123.29538290400",
       "HWY 200 MP 2",                 "44.28424383800,-123.29540124900",
@@ -523,7 +523,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 200 MP 5",                 "44.24134833900,-123.28550278300",
       "HWY 200 MP 6",                 "44.22662261700,-123.28643029400",
       "HWY 200 MP 7",                 "44.21297414500,-123.28646354100",
-      
+
       // KINGS VALLEY HWY
       "HWY 223 MP 14",                "44.79455068900,-123.40323560000",
       "HWY 223 MP 15",                "44.78189629400,-123.41036909100",
@@ -543,7 +543,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 223 MP 29",                "44.61993186900,-123.42594365600",
       "HWY 223 MP 30",                "44.60604062500,-123.42694651300",
       "HWY 223 MP 31",                "44.59292907800,-123.42820135200",
-      
+
       // ALSEA-DEADWOOD HWY
       "HWY 501 MP 1",                 "44.36729491800,-123.59892225000",
       "HWY 501 MP 2",                 "44.35437254900,-123.60877513000",
@@ -554,7 +554,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "HWY 501 MP 7",                 "44.30712287800,-123.64217459200",
       "HWY 501 MP 8",                 "44.30016811900,-123.63734864800",
       "HWY 501 MP 9",                 "44.29708259800,-123.65049069200",
-      
+
       // Apt location info src: gis.co.benton.or.us/GISDataDownload/Address/FireMapBooks/PhilomathMaps/
       // Forest Meadows trailer park
       "1284 N 19TH ST APT:1",         "44.553062,-123.356871",
@@ -632,7 +632,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1284 N 19TH ST APT:126",       "44.552687,-123.360100",
       "1284 N 19TH ST APT:128",       "44.552827,-123.360188",
       "1284 N 19TH ST APT:130",       "44.552912,-123.360239",
-      
+
       // Ashbrook Village
       "2802 NEWTON PLACE",            "44.542156,-123.343491",
       "2804 NEWTON PLACE",            "44.542156,-123.343491",
@@ -681,7 +681,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "2888 NEWTON PLACE",            "44.541921,-123.343300",
       "2892 NEWTON PLACE",            "44.541921,-123.343300",
       "2890 NEWTON PLACE",            "44.541921,-123.343300",
-      
+
       // North 7th & North 8th apts
       "101 N 7TH ST",                 "44.540575,-123.376500",
       "103 N 7TH ST",                 "44.540624,-123.376500",
@@ -695,7 +695,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "133 N 7TH ST",                 "44.540871,-123.376389",
       "135 N 7TH ST",                 "44.540869,-123.376311",
       "137 N 7TH ST",                 "44.540869,-123.376257",
-      
+
       "124 N 8TH ST",                 "44.540709,-123.375710",
       "126 N 8TH ST",                 "44.540666,-123.375709",
       "128 N 8TH ST",                 "44.540666,-123.375709",
@@ -710,7 +710,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "146 N 8TH ST",                 "44.540900,-123.375811",
       "148 N 8TH ST",                 "44.540910,-123.375868",
       "150 N 8TH ST",                 "44.540918,-123.375933",
-      
+
       // Grand View Mobile Park
       "502 N 8TH ST APT:1",           "44.543989,-123.375177",
       "502 N 8TH ST APT:2",           "44.543989,-123.375177",
@@ -747,7 +747,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "502 N 8TH ST APT:33",          "44.545042,-123.375306",
       "502 N 8TH ST APT:34",          "44.545135,-123.375330",
       "502 N 8TH ST APT:35",          "44.545301,-123.375416",
-      
+
       // Tims Mobile Home Park
       "24617 STOVALL LN APT:1",       "44.538710,-123.392419",
       "24617 STOVALL LN APT:2",       "44.538653,-123.392269",
@@ -778,7 +778,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "24617 STOVALL LN APT:30",      "44.538994,-123.391810",
       "24617 STOVALL LN APT:31",      "44.539032,-123.391987",
       "24617 STOVALL LN APT:32",      "44.539070,-123.392159",
-      
+
       // Cambridge apts
       "1400 APPLEGATE ST APT:238",    "44.538542,-123.367005",
       "1400 APPLEGATE ST APT:240",    "44.538542,-123.367005",
@@ -813,7 +813,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1400 APPLEGATE ST APT:1380",   "44.538874,-123.366783",
       "1400 APPLEGATE ST APT:1340",   "44.538874,-123.366783",
       "1400 APPLEGATE ST APT:1370",   "44.538874,-123.366783",
-      
+
       // Oak Springs Apartments
       "1913 COLLEGE ST",              "44.541651,-123.358562",
       "1915 COLLEGE ST",              "44.541637,-123.358384",
@@ -830,39 +830,39 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1937 COLLEGE ST",              "44.541592,-123.357916",
       "1939 COLLEGE ST",              "44.541366,-123.357903",
       "1941 COLLEGE ST",              "44.541215,-123.357930",
-      
+
       "1250 ADAMS ST",                "44.543512,-123.304196",     // Access via Industrial Way
-      
+
       "24377 PENLAND DR",             "44.483433,-123.397590",
       "24505 PENLAND DR",             "44.484959,-123.390387",
       "24604 PENLAND DR",             "44.479962,-123.391941",
-      
+
       "24634 RICHLAND LANE",          "44.478346,-123.394360"
-      
+
   });
 
   private static enum Bridge {
-    
+
     OK("Bridge safe to cross"),
     TENDER("Restricted Bridge - No Tenders"),
     ENGINE("Restricted Bridge - No Engines or Tenders"),
     BAD("Restricted Bridge - Do not cross");
-    
+
     private String message;
-    
+
     Bridge(String message) {
       this.message = message;
     }
-    
+
     public String getMessage() {
       return message;
     }
   }
-  
+
   private static final Map<String, Bridge> CORV_BRIDGE_STATUS = new HashMap<>();
   private static final Map<String, Bridge> PHIL_BRIDGE_STATUS = new HashMap<>();
   private static final Map<String, Map<String, Bridge>> CITY_BRIDGE_STATUS = new HashMap<>();
-  
+
   static {
     PHIL_BRIDGE_STATUS.put("29263 BEAVER CREEK RD", Bridge.BAD);
     PHIL_BRIDGE_STATUS.put("35633 BLAKESLEY CREEK RD", Bridge.TENDER);
@@ -913,14 +913,14 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     PHIL_BRIDGE_STATUS.put("23935 WOODS CREEK RD", Bridge.BAD);
     PHIL_BRIDGE_STATUS.put("23989 WOODS CREEK RD", Bridge.OK);
     PHIL_BRIDGE_STATUS.put("23991 WOODS CREEK RD", Bridge.OK);
-    
-    
+
+
     CITY_BRIDGE_STATUS.put("CORVALLIS", CORV_BRIDGE_STATUS);
     CITY_BRIDGE_STATUS.put("PHILOMATH", PHIL_BRIDGE_STATUS);
 
   }
-  
-//  
+
+//
 //  @Override
 //  public MapPageStatus getMapPageStatus() {
 //    return MapPageStatus.ANY;
@@ -928,33 +928,33 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //
 //  @Override
 //  public String getMapPageURL(MsgInfo info) {
-//    
+//
 //    // Look for an address specific map page first
 //    String addr = adjustGpsLookupAddress(info.getAddress(), "");
 //    if (addr == null) addr = info.getAddress();
 //    String url = MAP_PAGE_ADDR_TABLE.getProperty(addr);
 //    if (url != null) return MAP_PAGE_BASE + url;
-//    
+//
 //    // Try a street only map page
 //    Matcher match = STREET_ONLY_PTN.matcher(addr);
 //    if (match.matches()) {
 //      url = MAP_PAGE_ADDR_TABLE.getProperty(match.group(1));
 //      if (url != null) return MAP_PAGE_BASE + url;
 //    }
-//    
+//
 //    // No luck, look for a gneral map page
 //    String map = info.getMap();
 //    if (map.length() == 0) return null;
 //    url = MAP_PAGE_TABLE.getProperty(map);
 //    if (url != null) return MAP_PAGE_BASE + url;
-//    
+//
 //    // Still no luck, return null
 //    return null;
 //  }
 //  private static final Pattern STREET_ONLY_PTN = Pattern.compile("\\d+ +(.*)");
 //
 //  private static final String MAP_PAGE_BASE = "http://gis.co.benton.or.us/gisdata/Address/FireMapBooks/";
-//  
+//
 //  private static final Properties MAP_PAGE_ADDR_TABLE = buildCodeTable(new String[]{
 //      "1400 APPLEGATE ST",         "PhilomathMaps/FireGridCommon/APPLEGATE_CAMBRIDGE_APARTMENT.pdf",
 //      "NEWTON PLACE",              "PhilomathMaps/FireGridCommon/ASHBROOK_VILLAGE.pdf",
@@ -972,9 +972,9 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "WHITMAN PL",                "PhilomathMaps/FireGridCommon/Pioneer Village.pdf",
 //      "WHITMAN WAY",               "PhilomathMaps/FireGridCommon/Pioneer Village.pdf"
 //  });
-//  
+//
 //  private static final Properties MAP_PAGE_TABLE = buildCodeTable(new String[]{
-//      
+//
 //      "645-300", "AdairMaps/FireGridCommon/645-300.pdf",
 //      "645-315", "AdairMaps/FireGridCommon/645-315.pdf",
 //      "645-330", "AdairMaps/FireGridCommon/645-330.pdf",
@@ -1032,7 +1032,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "735-285", "AdairMaps/FireGridCommon/735-285.pdf",
 //      "735-300", "AdairMaps/FireGridCommon/735-300.pdf",
 //      "735-315", "AdairMaps/FireGridCommon/735-315.pdf",
-//      
+//
 //      "285-645", "AlseaMaps/FireGridCommon/285-645.pdf",
 //      "285-660", "AlseaMaps/FireGridCommon/285-660.pdf",
 //      "285-675", "AlseaMaps/FireGridCommon/285-675.pdf",
@@ -1158,7 +1158,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "465-510", "AlseaMaps/FireGridCommon/465-510.pdf",
 //      "465-525", "AlseaMaps/FireGridCommon/465-525.pdf",
 //      "465-540", "AlseaMaps/FireGridCommon/465-540.pdf",
-//      
+//
 //      "570-480", "BlodgettSummitMaps/FireGridCommon/570-480.pdf",
 //      "570-495", "BlodgettSummitMaps/FireGridCommon/570-495.pdf",
 //      "570-510", "BlodgettSummitMaps/FireGridCommon/570-510.pdf",
@@ -1230,7 +1230,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "660-600", "BlodgettSummitMaps/FireGridCommon/660-600.pdf",
 //      "675-570", "BlodgettSummitMaps/FireGridCommon/675-570.pdf",
 //      "675-585", "BlodgettSummitMaps/FireGridCommon/675-585.pdf",
-//      
+//
 //      "495-285", "CorvallisMaps/FireGridCommon/495-285.pdf",
 //      "495-300", "CorvallisMaps/FireGridCommon/495-300.pdf",
 //      "495-315", "CorvallisMaps/FireGridCommon/495-315.pdf",
@@ -1574,7 +1574,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "660-255", "CorvallisMaps/FireGridCommon/660-255.pdf",
 //      "660-270", "CorvallisMaps/FireGridCommon/660-270.pdf",
 //      "660-285", "CorvallisMaps/FireGridCommon/660-285.pdf",
-//      
+//
 //      "630-420", "HoskinsKingsValleyMaps/FireGridCommon/630-420.pdf",
 //      "630-435", "HoskinsKingsValleyMaps/FireGridCommon/630-435.pdf",
 //      "630-450", "HoskinsKingsValleyMaps/FireGridCommon/630-450.pdf",
@@ -1644,7 +1644,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "750-525", "HoskinsKingsValleyMaps/FireGridCommon/750-525.pdf",
 //      "750-540", "HoskinsKingsValleyMaps/FireGridCommon/750-540.pdf",
 //      "750-555", "HoskinsKingsValleyMaps/FireGridCommon/750-555.pdf",
-//      
+//
 //      "285-210", "MonroeFireDistrictMaps/FireGridCommon/285-210.pdf",
 //      "285-225", "MonroeFireDistrictMaps/FireGridCommon/285-225.pdf",
 //      "285-240", "MonroeFireDistrictMaps/FireGridCommon/285-240.pdf",
@@ -1801,8 +1801,8 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 //      "420-405", "MonroeFireDistrictMaps/FireGridCommon/420-405.pdf",
 //      "420-420", "MonroeFireDistrictMaps/FireGridCommon/420-420.pdf",
 //      "420-435", "MonroeFireDistrictMaps/FireGridCommon/420-435.pdf",
-//      
-//      
+//
+//
 //      "435-330", "PhilomathMaps/FireGridCommon/435-330.pdf",
 //      "435-345", "PhilomathMaps/FireGridCommon/435-345.pdf",
 //      "435-375", "PhilomathMaps/FireGridCommon/435-375.pdf",
@@ -1997,7 +1997,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "SWH",  "SWEET HOME",
       "TANG", "TANGENT"
   });
-  
+
   private static String[] CITY_LIST = new String[]{
     "ADAIR",
     "ALBANY",
@@ -2020,6 +2020,6 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
     "POLK COUNTY",
     "LINCOLN CO",
     "LINCOLN COUNTY"
-    
+
   };
 }
