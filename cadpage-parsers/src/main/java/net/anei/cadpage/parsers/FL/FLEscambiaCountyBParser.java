@@ -20,8 +20,6 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
     return "7017710278";
   }
 
-  private CodeTable CALL_TABLE = new StandardCodeTable();
-
   @Override
   protected boolean parseMsg(String body, Data data) {
 
@@ -35,7 +33,7 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
     }
     if (body.startsWith("*"))  body = ' ' + body;
     if (!parseFields(body.split(" \\*"), data)) return false;
-    String call = CALL_TABLE.getCodeDescription(data.strCode);
+    String call = FLEscambiaCountyParser.CALL_CODES.getCodeDescription(data.strCode);
     if (call !=  null) data.strCall = call;
     return true;
   }

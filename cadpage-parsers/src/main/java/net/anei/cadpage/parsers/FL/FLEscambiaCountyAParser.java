@@ -7,19 +7,19 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class FLEscambiaCountyAParser extends FieldProgramParser {
-  
+
   public FLEscambiaCountyAParser() {
-    super("ESCAMBIA COUNTY", "FL", 
+    super("ESCAMBIA COUNTY", "FL",
           "( SELECT/R Rep#:SKIP! TIMES/RN+ | REP#:SKIP! BLDG:PLACE! LOC:ADDR! APT:APT! XST:X! NAT:CALL! INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "no-reply@myescambia.com";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("(Assigned to Incident|Incident Closed) (\\d{10})");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) {
@@ -33,14 +33,17 @@ public class FLEscambiaCountyAParser extends FieldProgramParser {
     if (!match.matches()) return false;
     setSelectValue(match.group(1).startsWith("I") ? "R" : "P");
     data.strCallId = match.group(2);
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    String call = FLEscambiaCountyParser.CALL_CODES.getCodeDescription(data.strCode);
+    if (call != null) data.strCall = call;
+    return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("X")) return new MyCrossField();
@@ -48,7 +51,7 @@ public class FLEscambiaCountyAParser extends FieldProgramParser {
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -57,7 +60,7 @@ public class FLEscambiaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CALL_PTN = Pattern.compile("(\\d\\d?[A-Z]\\d\\d?[A-Z]?) - +(.*)");
   private class MyCallField extends CallField {
     @Override
@@ -69,7 +72,7 @@ public class FLEscambiaCountyAParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
