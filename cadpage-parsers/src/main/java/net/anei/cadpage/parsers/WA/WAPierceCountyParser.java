@@ -13,12 +13,13 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Pierce County, WA
  */
 public class WAPierceCountyParser extends GroupBestParser {
-  
+
   public WAPierceCountyParser() {
-    super(new WAPierceCountyAParser(), new WAPierceCountyBParser(), 
-          new WAPierceCountyCParser(), new WAPierceCountyEParser());
+    super(new WAPierceCountyAParser(), new WAPierceCountyBParser(),
+          new WAPierceCountyCParser(), new WAPierceCountyEParser(),
+          new WAPierceCountyFParser());
   }
-  
+
   static String adjustMapAddressCommon(String sAddress) {
     sAddress = STATE_HWY_KP_PTN.matcher(sAddress).replaceAll("$1");
     StringBuffer sb = new StringBuffer();
@@ -39,7 +40,7 @@ public class WAPierceCountyParser extends GroupBestParser {
   });
 
   static final Set<String> CITY_SET = new HashSet<String>(Arrays.asList(new String[]{
-      
+
       // Census Designated Communities
       "ALDER",
       "ALDERTON",
@@ -95,7 +96,7 @@ public class WAPierceCountyParser extends GroupBestParser {
       "WAUNA",
       "WILKESON",
       "WOLLOCHET",
-      
+
       // Other communities
       "AMERICAN LAKE",
       "ARLETTA",

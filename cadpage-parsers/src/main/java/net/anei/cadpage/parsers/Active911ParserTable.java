@@ -1963,7 +1963,7 @@ public class Active911ParserTable {
       "US/WA/OkanoganCounty",             "WAOkanoganCounty",
       "US/WA/OlympiaFD",                  "WAThurstonCounty",
       "US/WA/PendOreilleCounty",          "WAPendOreilleCounty",
-      "US/WA/PierceCounty",               "WAPierceCountyE",
+      "US/WA/PierceCounty",               "WAPierceCountyE,WAPierceCountyF",
       "US/WA/RiverComm911",               "WAChelanCounty",
       "US/WA/SNOCOM",                     "WASnohomishCountyD",
       "US/WA/SnohomishCounty",            "WASnohomishCountyA",

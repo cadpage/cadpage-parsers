@@ -16,8 +16,10 @@ public class WAPierceCountyEParser extends FieldProgramParser {
 
   public WAPierceCountyEParser() {
     super(CITY_CODES, "PIERCE COUNTY", "WA",
-          "( T:CALL! ST:CALL/D! P:PRI! L:PRI/D! Location:ADDR/S? DG:CH! Map:MAP Units:SKIP! Time:TIME! E#:ID? Lat:GPS1? Long:GPS2? Disp:UNIT! " +
-          "| Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! Map_Page:MAP Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT! ) END");
+          "( T:CALL! ST:CALL/D! P:PRI! L:PRI/D! Location:ADDR/S? DG:CH! Map:MAP Units:SKIP! Time:TIME! E#:ID? Lat:GPS1? Long:GPS2? Disp:UNIT " +
+          "| Type:CALL! SubType:CALL/D! Priority:PRI! Alarm_Level:PRI/D! Location:ADDR/S! DGroup:CH! Map_Page:MAP Units:SKIP! Time:TIME! EventNum:ID? Lat:GPS1? Long:GPS2? Disp:UNIT! " +
+          "| Location:ADDR/S! EID:ID! TYPE_CODE:CALL! DG:CH! TIME:TIME! T:CALL/SDS! ST:CALL/D! P:PRI! L:PRI/D! Location:SKIP! Map:MAP! Units:SKIP! Time:SKIP! E#:ID! Lat:GPS1! Long:GPS2! " +
+          ") END");
   }
 
   @Override
@@ -419,7 +421,7 @@ public class WAPierceCountyEParser extends FieldProgramParser {
 
   });
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AI AI","ANDERSON ISLAND",
       "AI",   "ANDERSON ISLAND",
       "AUB",  "AUBURN",
