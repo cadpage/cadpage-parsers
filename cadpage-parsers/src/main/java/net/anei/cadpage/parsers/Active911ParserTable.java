@@ -1178,7 +1178,7 @@ public class Active911ParserTable {
       "US/NJ/DelancoEMS",                 "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/DelranEmergency",            "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/Denville",                   "NJMorrisCountyA",
-      "US/NJ/EggHarborTownship",          "NJAtlanticCountyA",
+      "US/NJ/EggHarborTownship",          "NJAtlanticCountyA,NJCumberlandCountyA",
       "US/NJ/EndeavorEmergencySquad",     "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/EveshamFireRescue",          "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/FairLawnPD",                 "NJBergenCountyG",

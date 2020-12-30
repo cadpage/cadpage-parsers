@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.CT;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     setupProtectedNames(PROTECTED_STREET_LIST);
     setupSpecialStreets("EAST ST", "WEST RD");
     setupSaintNames("ONGE");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -522,6 +524,14 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     "WISHING WILL",
     "WORDEN POINT"
   };
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "80 CHESTNUT ST",                       "+41.923967,-73.065305",
+      "936 MAIN ST",                          "+41.930890,-73.080258",
+      "80 S MAIN ST",                         "+41.917116,-73.056438"
+
+  });
+
 
   private static final CodeTable CALL_CODES = new StandardCodeTable();
 }
