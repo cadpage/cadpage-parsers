@@ -8,11 +8,11 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHLickingCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern IAR_MASTER_PTN = Pattern.compile("([-/ A-Z0-9]+)\n(.*)");
 
   public OHLickingCountyParser() {
-    super(CITY_LIST, "LICKING COUNTY", "OH", 
+    super(CITY_LIST, "LICKING COUNTY", "OH",
           "SequenceNumber:ID? Nature:CALL! Talkgroup:CH! FreeFormatAddress:ADDR! AddressType:SKIP! Business:PLACE! XCoordinate:GPS1? YCoordinate:GPS2? CAD_Zone:MAP! Units:UNIT/S+ Notes:INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -20,9 +20,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "notif@domain.com,messaging@iamresponding.com,notif@mecc911.org,WASST@MIFFLIN-OH.GOV";
+    return "notif@domain.com,messaging@iamresponding.com,notif@mecc911.org,WASST@MIFFLIN-OH.GOV,911dispatch@lcounty.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -36,7 +36,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (body.startsWith("SequenceNumber:") || body.startsWith("Nature:")) {
       return parseFields(body.split("\n+"), data);
     }
@@ -48,7 +48,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
         body = body.substring(2).trim();
         break;
       }
-      
+
       if (isPositiveId()) {
         Matcher match = IAR_MASTER_PTN.matcher(body);
         if (match.matches()) {
@@ -57,14 +57,14 @@ public class OHLickingCountyParser extends FieldProgramParser {
           break;
         }
       }
-      
+
       return false;
-      
+
     } while (false);
-    
+
     return parseCallAddress(data.strCall.length() == 0, body, data);
   }
-  
+
   private static final Pattern BASE_ADDR_X_PTN = Pattern.compile("([^,/;]+?(?:1/2)?) *(?:\\(([^()]*)\\))?(?: *; *(.*))?");
   private static final Pattern BASE_ADDR_INTERSECT_PTN = Pattern.compile("[^,/()]+/[^,()]*");
   private static final Pattern ADDR_CITY_APT_X_ZIP_PTN = Pattern.compile("([^,]*), ([^,]*?)(?:, \\d{5})?(?: #(?:APT)? ([^ ]+))?(?: +\\(([^()]*)\\)?)?(?: +(\\d{5}))?");
@@ -72,7 +72,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
   private static final Pattern ADDR_CITY_INTERSECT_PTN = Pattern.compile("([^,]*?), ([^,/]+?)/([^,]+?), ([ A-Z]+)");
 
   private boolean parseCallAddress(boolean parseCall, String field, Data data) {
-    
+
     Matcher match = BASE_ADDR_X_PTN.matcher(field);
     if (match.matches()) {
       String addr = match.group(1).trim();
@@ -92,13 +92,13 @@ public class OHLickingCountyParser extends FieldProgramParser {
         place = place.substring(0,pt).trim();
       }
       data.strPlace = append(place, " - ", data.strPlace);
-      
+
       if (data.strCity.length() > 0 && data.strAddress.contains("&")) {
         data.strAddress = data.strAddress.replace(' ' + data.strCity + " &", " &");
       }
       return true;
     }
-    
+
     if (BASE_ADDR_INTERSECT_PTN.matcher(field).matches()) {
       String addr = "";
       StartType st = parseCall ? StartType.START_CALL : StartType.START_ADDR;
@@ -113,13 +113,13 @@ public class OHLickingCountyParser extends FieldProgramParser {
       data.strAddress = addr;
       return true;
     }
-    
+
     String addr;
     String addr2 = null;
     String apt = null;
     match = ADDR_CITY_APT_X_ZIP_PTN.matcher(field);
     if (match.matches()) {
-      
+
       addr = match.group(1).trim();
       data.strCity = match.group(2).trim();
       apt = match.group(3);
@@ -135,7 +135,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       cross = stripFieldEnd(cross, "/");
       data.strCross = cross;
     }
-    
+
     else if ((match = ADDR_CITY_INTERSECT_PTN.matcher(field)).matches()) {
       addr =  match.group(1).trim();
       String city1 = match.group(2).trim();
@@ -143,9 +143,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
       String city2 = match.group(4).trim();
       if (city1.equals(city2)) data.strCity = city1;
     }
-    
+
     else return false;
-    
+
     if (data.strPlace.length() == 0) {
       String city = data.strCity;
       data.strCity = "";
@@ -156,7 +156,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
         data.strCity = city;
       }
     }
-    
+
     addr = stripFieldEnd(addr, "#");
     if (!parseCall) {
       if (addr.startsWith("@")) {
@@ -191,26 +191,26 @@ public class OHLickingCountyParser extends FieldProgramParser {
     if (apt != null) data.strApt = append(data.strApt, "-", apt);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       if (!parseCallAddress(false, field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY PLACE X";
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -222,13 +222,13 @@ public class OHLickingCountyParser extends FieldProgramParser {
       data.strApt = stripFieldEnd(data.strApt, field);
     }
   }
-  
-  
+
+
   @Override
   public String adjustMapAddress(String addr) {
     return addr.replace("NORTH ST RD", "NORTH ST");
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "AULD RIDGE",
     "BASH LANE",
@@ -392,7 +392,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "SHELL BEACH",
     "SHERWOOD DOWNS",
     "SLEEPY HOLLOW",
-    "SMITHS MILL", 
+    "SMITHS MILL",
     "SMOKEY ROW",
     "SOUTH BANK",
     "SOUTH FORK",
@@ -423,7 +423,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
     "WILKINS RUN",
     "WILLOW RIDGE"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN-EMS",
       "ALARM COMMERCIAL / HIGH LIFE-FIRE",
@@ -491,6 +491,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "SEIZURE-EMS",
       "SERVICE RUN",
       "SHOOTING-EMS",
+      "SICK PERSON-EMS",
       "STROKE / CVA-EMS",
       "TEST CALL",
       "TRAFFIC ACCIDENT",
@@ -512,9 +513,9 @@ public class OHLickingCountyParser extends FieldProgramParser {
   );
 
   private static final String[] CITY_LIST = new String[]{
-    
+
       "LICKING COUNTY",
-      
+
       "ALEXANDRIA",
       "BUCKEYE LAKE",
       "GRANVILLE",
@@ -531,7 +532,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "REYNOLDSBURG",
       "ST LOUISVILLE",
       "UTICA",
-  
+
       "BENNINGTON TWP",
       "BOWLING GREEN TWP",
       "BURLINGTON TWP",
@@ -557,7 +558,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "ST ALBANS TWP",
       "UNION TWP",
       "WASHINGTON TWP",
-  
+
       "BEECHWOOD TRAILS",
       "GRANVILLE SOUTH",
       "HARBOR HILLS",
@@ -565,17 +566,17 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "ETNA",
       "HOMER",
       "JACKSONTOWN",
-      
+
       // Coshocton County
       "COSHOCTON COUNTY",
       "PIKE TWP",
-      
+
       // Delaware County
       "HARLEM TWP",
       "DELAWARE COUNTY",
       "PORTER TWP",
       "TRENTON TWP",
-      
+
       // Fairfield County
       "FAIRFIELD COUNTY",
       "BALTIMORE",
@@ -587,7 +588,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "LIBERTY TWP",
       "VIOLET TWP",
       "WALNUT TWP",
-      
+
       // Franklin County
       "FRANKLIN COUNTY",
       "JEFFERSON",
@@ -595,7 +596,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "NEW ALBANY",
       "JEFFERSON TWP",
       "PLAIN TWP",
-      
+
       // Knox County
       "KNOX COUNTY",
       "CENTERBURG",
@@ -606,14 +607,14 @@ public class OHLickingCountyParser extends FieldProgramParser {
       "MARTINSBURG TWP",
       "MILFORD TWP",
       "MILLER TWP",
-      
+
       // Muskingum County
       "MUSKINGUM COUNTY",
       "FRAZEYSBURG",
       "JACKSON TWP",
       "LICKING TWP",
       "HOPEWELL TWP",
-      
+
       // Perry County
       "PERRY COUNTY",
       "GLENFORD",
