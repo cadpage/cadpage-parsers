@@ -1287,6 +1287,7 @@ public class ParserList {
               ,"OKSequoyahCounty"               ,"Sequoyah County, OK"
               ,"OKTinkerAFB"                    ,"Tinker AFB, OK"
               ,"OKTulsa"                        ,"Tulsa, OK"
+              ,"OKWoodsCounty"                  ,"Woods County, OK"
               ,"OKYukon"                        ,"Yukon, OK"
           ),
           new ParserCategory("Oregon"
