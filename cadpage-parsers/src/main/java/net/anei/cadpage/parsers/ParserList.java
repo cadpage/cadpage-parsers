@@ -407,6 +407,7 @@ public class ParserList {
               ,"GASumterCounty"                 ,"Sumter County, GA"
               ,"GATalbotCounty"                 ,"Talbot County, GA"
               ,"GATaylorCounty"                 ,"Taylor County, GA"
+              ,"GATelfairCounty"                ,"Telfair County, GA"
               ,"GATiftCounty"                   ,"Tift County, GA"
               ,"GATownsCounty"                  ,"Towns County, GA"
               ,"GAWalkerCounty"                 ,"Walker County, GA"
