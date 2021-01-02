@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.dispatch;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
@@ -10,7 +11,7 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA52Parser extends FieldProgramParser {
-  
+
   private Properties callCodes;
   private CodeTable callTable;
 
@@ -37,16 +38,19 @@ public class DispatchA52Parser extends FieldProgramParser {
   private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
           "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR! BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
-          "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP LAT:GPS1 LONG:GPS2", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE); 
-          
+          "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP LAT:GPS1 LONG:GPS2", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE);
+
     this.callCodes = callCodes;
     this.callTable = callTable;
   }
-  
+
+  private static final Pattern PREFIX_PTN = Pattern.compile("[a-z0-9]*: *");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
-    body = stripFieldStart(body, ":");
+    Matcher match = PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) body = body.substring(match.end());
     if (body.startsWith("LOC:APPROX LOC:")) body = body.substring(11);
     if (!body.startsWith("LOC:") && !body.startsWith("TYPN")) return false;
     body = body.replace("LOC DESC:", "LOCDESC:");
@@ -59,14 +63,14 @@ public class DispatchA52Parser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CODE", "CODE CALL?");
   }
-  
+
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("EEEEEE, MMMM dd, yyyy hh:mm:ss aa");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CODE1")) return new MyCode1Field();
@@ -83,7 +87,7 @@ public class DispatchA52Parser extends FieldProgramParser {
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
-  
+
   private class MyCode1Field extends CodeField {
     @Override
     public void parse(String field, Data data) {
@@ -110,12 +114,12 @@ public class DispatchA52Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyCode2Field extends CodeField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
-      
+
       if (getRelativeField(-1).startsWith("TYPN:")) {
         data.strCode = field;
       }
@@ -129,7 +133,7 @@ public class DispatchA52Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private class MyCallField extends CallField {
     @Override
@@ -150,13 +154,13 @@ public class DispatchA52Parser extends FieldProgramParser {
         data.strSupp = append(data.strSupp, "\n", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL INFO?";
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -176,7 +180,7 @@ public class DispatchA52Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
@@ -184,7 +188,7 @@ public class DispatchA52Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -193,7 +197,7 @@ public class DispatchA52Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyZipField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -201,7 +205,7 @@ public class DispatchA52Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -210,12 +214,12 @@ public class DispatchA52Parser extends FieldProgramParser {
       data.strMap = append(data.strMap, "-", field);
     }
   }
-  
+
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "<");
