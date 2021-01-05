@@ -14,32 +14,32 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
  */
 
 public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
-  
+
   private static final Pattern GENERAL_ALERT_PTN = Pattern.compile("CFS: *(\\d+);Unit: *(.*?);Status: *(.*?);Note: *(.*)");
   private static final Pattern ADDR_EXIT_PTN = Pattern.compile("(\\d+ +EXIT) +(.*)");
 
   public ALChiltonCountyParser() {
     super(CITY_LIST, "CHILTON COUNTY", "AL",
-        DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_BAD_PLACE | DSFLG_OPT_X | DSFLG_OPT_UNIT1 | DSFLG_ID | DSFLG_TIME,
+        DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_BAD_PLACE | DSFLG_OPT_X | DSFLG_OPT_UNIT1 | DSFLG_OPT_ID | DSFLG_TIME,
         ".*Fire|[A-Z ]+ FIRE|[a-z][a-z0-9_]+|.*\\b(?:BATT|BRUSH TK|CAR|CORONER|EMA|ENG|GRASS|PCO|PT|RESCUE|SERVICE|TANKER) [-0-9]+[A-Z]?|CARE|EMA|RPS");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@chiltoncounty.org,dispatch@dispatch.ccso911.net,4702193605";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
     body = stripFieldStart(body, "dispatch:");
-    
+
     Matcher match = GENERAL_ALERT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -49,14 +49,14 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
       data.strSupp = append(match.group(3), " - ", match.group(4));
       return true;
     }
-    
+
     body = body.replace('\\', '/');
     body = body.replaceAll("\\bCOUNTY RD\\b", "CO");
     if (body.startsWith("/")) body = body.substring(1).trim();
     if (! super.parseMsg(subject, body, data)) return false;
-    
+
     data.strAddress = data.strAddress.replaceAll("\\bCO\\b", "COUNTY RD");
-    
+
     match = ADDR_EXIT_PTN.matcher(data.strAddress);
     if (match.matches()) {
       data.strPlace = append(data.strPlace, " ", match.group(1));
@@ -64,7 +64,7 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
     }
     return true;
   }
-  
+
   @Override
   protected int getExtraParseAddressFlags() {
     return FLAG_IGNORE_AT | FLAG_CROSS_FOLLOWS;
@@ -108,7 +108,7 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
       "225 I 65", "33.055557,-86.727639",
       "226 I 65", "33.069199,-86.730036"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
     "CLANTON",
     "ISABELLA",
@@ -118,18 +118,18 @@ public class ALChiltonCountyParser extends DispatchSouthernPlusParser {
     "STANTON",
     "THORSBY",
     "VERBENA",
-    "BILLINGSLEY", 
-    
+    "BILLINGSLEY",
+
     // Autauga County
     "MARBURY",
-    
+
     // Bibb County
     "LAWLEY",
     "RANDOLPH",
-    
+
     // Dallas County
     "PLANTERSVILLE",
-    
+
     // Shelby County
     "CALERA",
     "MONTEVALLO"
