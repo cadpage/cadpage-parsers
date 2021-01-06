@@ -2003,6 +2003,7 @@ public class Active911ParserTable {
       "US/WI/PepinCounty",                "WIPeppinCounty",
       "US/WI/RacineCounty",               "WIRacineCounty",
       "US/WI/RockCounty",                 "WIRockCounty",
+      "US/WI/SawyerCounty",               "WISawyerCounty",
       "US/WI/SheboyganCounty",            "WISheboyganCounty",
       "US/WI/WaukeshaCounty",             "WIWaukeshaCountyA",
       "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB,WIWinnebagoCountyC",
