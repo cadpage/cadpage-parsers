@@ -1,16 +1,16 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
 
-public class MODallasCountyParser extends DispatchA25Parser {
-  
+public class MODallasCountyParser extends DispatchBCParser {
+
   public MODallasCountyParser() {
     super("DALLAS COUNTY", "MO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "EnterpolAlerts@dallascomo911.us";
+    return "NOREPLY@OMNIGO.COM";
   }
 }
