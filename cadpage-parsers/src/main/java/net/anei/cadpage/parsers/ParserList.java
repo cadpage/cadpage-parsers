@@ -1768,6 +1768,7 @@ public class ParserList {
               ,"WIPeppinCounty"                 ,"Peppin County, WI"
               ,"WIRacineCounty"                 ,"Racine County, WI"
               ,"WIRockCounty"                   ,"Rock County, WI"
+              ,"WISawyerCounty"                 ,"Sawyer County, WI"
               ,"WISheboyganCounty"              ,"Sheboygan County, WI"
               ,"WIWalworthCounty"               ,"Walworth County, WI"
               ,"WIWaukeshaCounty"               ,"Waukesha County, WI"
