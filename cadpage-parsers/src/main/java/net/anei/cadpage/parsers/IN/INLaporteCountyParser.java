@@ -13,11 +13,11 @@ public class INLaporteCountyParser extends DispatchSPKParser {
   public String getFilter() {
     return "interact@lcso.in.gov";
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "ROLNG PRAIRIE",    "ROLLING PRAIRIE",
       "KINGSFORD HTS",    "KINGSFORD HEIGHTS",
       "MCCY",             "MICHIGAN CITY",
-      "LACROSSE",         "LA CROSSE"
+      "LACROSSE",         "LA CROSSE",
+      "ROLNG PRAIRIE",    "ROLLING PRAIRIE"
   });
 }
