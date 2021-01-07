@@ -30,7 +30,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    body = body.replace("<tr>", "<br>");
+    body = body.replace("<tr>", "<br>").replace("<td>", "<br>");
     return super.parseHtmlMsg(subject, body, data);
   }
 
@@ -196,6 +196,7 @@ public class OHLickingCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
 
@@ -223,6 +224,13 @@ public class OHLickingCountyParser extends FieldProgramParser {
     }
   }
 
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("DISPATCHED")) return;
+      super.parse(field, data);
+    }
+  }
 
   @Override
   public String adjustMapAddress(String addr) {
