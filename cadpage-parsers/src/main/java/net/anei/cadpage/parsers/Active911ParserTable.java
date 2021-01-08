@@ -620,6 +620,7 @@ public class Active911ParserTable {
       "US/KY/ClarkCounty",                "KYClarkCounty",
       "US/KY/ClayCounty",                 "KYClayCounty",
       "US/KY/Corbin",                     "KYKnoxCountyC",
+      "US/KY/CynthianaFD",                "KYHarrisonCountyB",
       "US/KY/Dunmor",                     "KYMuhlenbergCountyB",
       "US/KY/EastGoldenPondVFD",          "KYTriggCounty",
       "US/KY/EdmonsonCounty",             "KYEdmonsonCounty",

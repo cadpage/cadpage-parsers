@@ -4,10 +4,10 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NCPamlicoCountyParser extends FieldProgramParser {
-  
+
   public NCPamlicoCountyParser() {
-    super(CITY_LIST, "PAMLICO COUNTY", "NC", 
-          "ADDR/S X EMPTY EMPTY EMPTY? ID CALL! INFO+");
+    super(CITY_LIST, "PAMLICO COUNTY", "NC",
+          "ADDR/S CODE EMPTY EMPTY CALL! INFO+");
   }
 
   @Override
@@ -16,28 +16,15 @@ public class NCPamlicoCountyParser extends FieldProgramParser {
     if (data.strCity.equalsIgnoreCase("VANDERMORE")) data.strCity = "VANDEMERE";
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{6,}", true);
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CODE")) return new CodeField("[FLM]DL +(.*)", false);
     return super.getField(name);
   }
-  
-  private class MyCrossField extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replace("*", "");
-      field = field.replace(" X ", " / ");
-      field = stripFieldStart(field, "X ");
-      field = stripFieldEnd(field, " X");
-      super.parse(field, data);
-    }
-  }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Towns
     "ALLIANCE",
     "ARAPAHOE",
@@ -62,7 +49,7 @@ public class NCPamlicoCountyParser extends FieldProgramParser {
     "OLYMPIA",
     "REELSBORO",
     "WHORTONSVILLE",
-    
+
     // Craven County
     "NEW BERN",
   };

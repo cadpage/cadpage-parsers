@@ -29,7 +29,7 @@ public class DispatchA65Parser extends FieldProgramParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DUP")) return new MyDupField();
-    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|([A-Z]?\\d{1,4} *[A-Z]?)|[A-Z]");
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|RM|ROOM|STE)[:# ]+(.*)|([A-Z]?\\d{1,4} *[A-Z]?)|[A-Z]{1,2}");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
