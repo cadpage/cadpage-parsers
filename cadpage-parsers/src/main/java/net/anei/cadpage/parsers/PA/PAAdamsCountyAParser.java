@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA1Parser;
  * Adams County, PA
  */
 public class PAAdamsCountyAParser extends DispatchA1Parser {
-  
+
   public PAAdamsCountyAParser() {
     super(CITY_LIST, "ADAMS COUNTY", "PA");
     for (String city : CITY_LIST) {
@@ -30,7 +30,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   public String getFilter() {
     return "adams911@adamscounty.us,adams911.com,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
   }
-  
+
   private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX |CANCEL INCIDENT:)");
   private static final Pattern IAMR_CANCEL_MASTER = Pattern.compile("(.*?) (LOC:.*?) (UNITS: *\\S+?) (.*)");
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
@@ -39,10 +39,14 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   private static final Pattern SUB_SRC_PTN = Pattern.compile("[A-Z]{1,5}");
   private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" -(?: ([A-Za-z ]+))?$");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern[] ADDR_APT_PTNS = new Pattern[] {
+      Pattern.compile("(\\d+) ([A-DF-MO-R]) (.*)", Pattern.CASE_INSENSITIVE),
+      Pattern.compile("(\\d+) ([EN]) (BRYSONIA WENKSVILLE RD|BUCHANAN VALLEY RD|CHAMBERSBURG RD|CHURCH RD|GREEN SPRINGS RD|MENGUS MILL RD|MOUNT HOPE RD|NEW RD|OLD ROUTE 30|SHIPPENSBURG RD|GREEN SPRINGS RD|YORK RD)")
+  };
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Check for garbled prefix associated with IamResponding
     boolean noBrkFmt = false;
     Matcher match = IAMR_PREFIX1.matcher(body);
@@ -78,18 +82,18 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
         body = body.replaceAll(" , ", " ");
       }
     }
-    
+
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     // Fix problems with no break format squeezing everything into the address
     if (noBrkFmt) {
       String addr = data.strAddress;
       data.strAddress = "";
       parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr, data);
     }
-    
-    
+
+
     // See if a doubled city name has been interpreted as an apt
     data.strApt = stripFieldStart(data.strApt, "TRL ");
     String apt = data.strApt;
@@ -105,18 +109,38 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
         }
       }
     }
-    
+
+    // Check for an alpha apt following the street number
+    // Special check for specific streets required for apt E :(
+    if (data.strApt.isEmpty()) {
+      String addr = data.strAddress;
+      addr = ROAD_PTN.matcher(addr).replaceAll("RD");
+      boolean found = false;
+      for (Pattern ptn : ADDR_APT_PTNS) {
+        match = ptn.matcher(addr);
+        if (match.matches()) {
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        data.strApt = match.group(2);
+        data.strAddress = match.group(1) + ' ' + match.group(3);
+      }
+    }
+
     String city = data.strCity.toUpperCase();
     city = stripFieldEnd(city, " BORO");
     city = convertCodes(city, MISTYPED_CITIES);
     if (city.endsWith(" CO")) city += "UNTY";
     data.strCity = city;
     if (MD_CITIES.contains(city)) data.strState = "MD";
-    
+
     data.strSupp = data.strSupp.replace(" / ", "\n");
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     String program = super.getProgram();
@@ -127,21 +151,21 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     }
     return "SRC " + program;
   }
-  
+
   @Override
   protected int getExtraParseAddressFlags() {
     return FLAG_RECHECK_APT;
   }
-  
+
   private static final Pattern SKI_LIBERTY_PTN = Pattern.compile("SKI LIBERTY - STATION [A-Z0-9]+\\b");
-  private static final Pattern ROAD_PTN = Pattern.compile("\\bROAD\\b");
-  
+  private static final Pattern ROAD_PTN = Pattern.compile("\\bROAD\\b", Pattern.CASE_INSENSITIVE);
+
   @Override
   protected String adjustGpsLookupAddress(String address, String apt, String place) {
-    
+
     Matcher match = SKI_LIBERTY_PTN.matcher(place);
     if (match.lookingAt()) return match.group();
-    
+
     address = address.toUpperCase();
     address = ROAD_PTN.matcher(address).replaceAll("RD");
     apt = apt.toUpperCase();
@@ -431,7 +455,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "10 ADAMS CT",                          "+39.836880,-77.207535",
       "11 ADAMS CT",                          "+39.836770,-77.207060",
       "12 ADAMS CT",                          "+39.836952,-77.207535",
-      
+
       "595 BIGLERVILLE RD",                   "+39.840600,-77.229900",
       "2215 BIGLERVILLE RD APT A",            "+39.889921,-77.245541",
       "2215 BIGLERVILLE RD APT B",            "+39.889910,-77.245265",
@@ -523,7 +547,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2215 BIGLERVILLE RD APT 83",           "+39.890094,-77.243828",
       "2215 BIGLERVILLE RD APT 84",           "+39.890086,-77.243685",
       "2215 BIGLERVILLE RD APT 85",           "+39.890560,-77.244795",
-      
+
       "500 BOYDS SCHOOL RD APT 101",          "+39.858648,-77.232787",
       "500 BOYDS SCHOOL RD APT 102",          "+39.858648,-77.232787",
       "500 BOYDS SCHOOL RD APT 103",          "+39.858648,-77.232787",
@@ -573,7 +597,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "500 BOYDS SCHOOL RD APT 705",          "+39.858165,-77.232209",
       "500 BOYDS SCHOOL RD APT 706",          "+39.858165,-77.232209",
       "500 BOYDS SCHOOL RD APT 707",          "+39.858165,-77.232209",
-      
+
       "45 BROWNS DAM RD APT 1C",              "+39.919864,-77.051002",
       "45 BROWNS DAM RD APT 2",               "+39.919891,-77.051490",
       "45 BROWNS DAM RD APT 2C",              "+39.919805,-77.051188",
@@ -660,7 +684,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "999 BRYSONIA WENKSVILLE RD APT C",     "+39.975121,-77.311005",
       "999 BRYSONIA WENKSVILLE RD APT D",     "+39.975643,-77.310242",
       "999 BRYSONIA WENKSVILLE RD APT E",     "+39.976128,-77.309647",
-      
+
       "35 BUCHANAN VALLEY RD",                "+39.898566,-77.424744",
       "750 BUCHANAN VALLEY RD",               "+39.915944,-77.414232",
       "760 BUCHANAN VALLEY RD APT A",         "+39.914429,-77.418715",
@@ -677,7 +701,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "3029 BUCHANAN VALLEY RD",              "+39.942226,-77.345573",
       "3031 BUCHANAN VALLEY RD",              "+39.942863,-77.344696",
       "3049 BUCHANAN VALLEY RD",              "+39.944103,-77.346886",
-      
+
       "721 CHAMBERSBURG RD APT A",            "+39.840970,-77.256860",
       "721 CHAMBERSBURG RD APT B",            "+39.840970,-77.256860",
       "721 CHAMBERSBURG RD APT C",            "+39.840970,-77.256860",
@@ -694,7 +718,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "721 CHAMBERSBURG RD APT N",            "+39.840746,-77.257036",
       "721 CHAMBERSBURG RD APT O",            "+39.840746,-77.257036",
       "721 CHAMBERSBURG RD APT P",            "+39.840746,-77.257036",
-      
+
       "723 CHAMBERSBURG RD APT A",            "+39.842000,-77.256443",
       "723 CHAMBERSBURG RD APT B",            "+39.842000,-77.256443",
       "723 CHAMBERSBURG RD APT C",            "+39.842000,-77.256443",
@@ -707,7 +731,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "723 CHAMBERSBURG RD APT J",            "+39.841913,-77.256292",
       "723 CHAMBERSBURG RD APT K",            "+39.841913,-77.256292",
       "723 CHAMBERSBURG RD APT L",            "+39.841913,-77.256292",
-      
+
       "725 CHAMBERSBURG RD APT A",            "+39.841872,-77.256913",
       "725 CHAMBERSBURG RD APT B",            "+39.841872,-77.256913",
       "725 CHAMBERSBURG RD APT C",            "+39.841872,-77.256913",
@@ -724,7 +748,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "725 CHAMBERSBURG RD APT N",            "+39.842109,-77.256730",
       "725 CHAMBERSBURG RD APT O",            "+39.842109,-77.256730",
       "725 CHAMBERSBURG RD APT P",            "+39.842109,-77.256730",
-      
+
       "727 CHAMBERSBURG RD APT A",            "+39.841474,-77.257199",
       "727 CHAMBERSBURG RD APT B",            "+39.841474,-77.257199",
       "727 CHAMBERSBURG RD APT C",            "+39.841474,-77.257199",
@@ -737,7 +761,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "727 CHAMBERSBURG RD APT J",            "+39.841584,-77.257132",
       "727 CHAMBERSBURG RD APT K",            "+39.841584,-77.257132",
       "727 CHAMBERSBURG RD APT L",            "+39.841584,-77.257132",
-      
+
       "729 CHAMBERSBURG RD APT A",            "+39.840987,-77.257537",
       "729 CHAMBERSBURG RD APT B",            "+39.840987,-77.257537",
       "729 CHAMBERSBURG RD APT C",            "+39.840987,-77.257537",
@@ -754,7 +778,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "729 CHAMBERSBURG RD APT N",            "+39.841226,-77.257347",
       "729 CHAMBERSBURG RD APT O",            "+39.841226,-77.257347",
       "729 CHAMBERSBURG RD APT P",            "+39.841226,-77.257347",
-      
+
       "731 CHAMBERSBURG RD",                  "+39.841900,-77.257200",
       "6236 CHAMBERSBURG RD",                 "+39.898845,-77.438248",
       "6240 CHAMBERSBURG RD",                 "+39.898943,-77.438357",
@@ -763,9 +787,17 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "6361 CHAMBERSBURG RD",                 "+39.900336,-77.441261",
       "6375 CHAMBERSBURG RD",                 "+39.900823,-77.442375",
 
+      "6491 CHAMBERSBURG RD APT B",           "+39.900837,-77.447470",
+      "6491 CHAMBERSBURG RD APT C",           "+39.901345,-77.447208",
+      "6491 CHAMBERSBURG RD APT D",           "+39.901436,-77.446525",
+      "6491 CHAMBERSBURG RD APT E",           "+39.902056,-77.446663",
+      "6491 CHAMBERSBURG RD APT G",           "+39.901906,-77.445753",
+      "6491 CHAMBERSBURG RD APT H",           "+39.903495,-77.445432",
+
       "5370 CARLISLE PIKE",                   "+39.929068,-77.056612",
-      
+
       "141 CHURCH RD",                        "+39.900087,-77.421367",
+
       "165 CHURCH RD APT A",                  "+39.899824,-77.420725",
       "165 CHURCH RD APT B ",                 "+39.899042,-77.420330",
       "165 CHURCH RD APT C",                  "+39.898734,-77.420892",
@@ -780,10 +812,12 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "165 CHURCH RD APT L",                  "+39.897952,-77.424510",
       "165 CHURCH RD APT M",                  "+39.899413,-77.422548",
       "165 CHURCH RD APT N",                  "+39.898236,-77.421687",
-      
+
+      "1178 CHURCH RD APT A",                "+39.919431,-77.399077",
+
       "11 DALE RD",                           "+39.957422,-77.360099",
       "375 DALE RD",                          "+39.957512,-77.360893",
-      
+
       "12 DEW DROP LN",                       "+39.867517,-77.234061",
       "14 DEW DROP LN",                       "+39.867470,-77.234032",
       "16 DEW DROP LN",                       "+39.867427,-77.234012",
@@ -816,13 +850,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "38 E KING ST",                         "+39.887325,-76.983848",
 
       "101 E LOCUST ST",                      "+39.936040,-76.978708",
-      
+
       "10 ELM AVE",                           "+39.808790,-77.132452",
-      
+
       "2527 EMMISTSBURG RD",                  "+39.771667,-77.278929",
-      
+
       "1001 FIVE POINTS RD",                  "+39.756792,-77.410452",
-      
+
       "660 GREEN SPRINGS RD APT B",           "+39.859952,-76.994721",
       "660 GREEN SPRINGS RD APT C",           "+39.858016,-76.994626",
       "660 GREEN SPRINGS RD APT E",           "+39.863810,-76.993926",
@@ -847,7 +881,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "950 GREEN SPRINGS RD APT E",           "+39.860807,-76.991471",
       "950 GREEN SPRINGS RD APT F",           "+39.863178,-76.990871",
       "950 GREEN SPRINGS RD APT G",           "+39.861735,-76.992026",
-      
+
       "2160 HANOVER RD APT 1",                "+39.817463,-77.166396",
       "2160 HANOVER RD APT 2",                "+39.817582,-77.166213",
       "2160 HANOVER RD APT 3",                "+39.817761,-77.166033",
@@ -893,21 +927,21 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2160 HANOVER RD APT 41",               "+39.819018,-77.166334",
       "2160 HANOVER RD APT 42",               "+39.819141,-77.166192",
       "2160 HANOVER RD APT 43",               "+39.819268,-77.166026",
-      
+
       "474 HERSHEY HEIGHTS RD APT A",         "+39.836508,-76.989463",
       "474 HERSHEY HEIGHTS RD APT B",         "+39.836550,-76.990459",
       "474 HERSHEY HEIGHTS RD APT C",         "+39.838155,-76.990776",
       "474 HERSHEY HEIGHTS RD APT D",         "+39.841224,-76.987455",
       "474 HERSHEY HEIGHTS RD APT F",         "+39.837769,-76.991808",
       "474 HERSHEY HEIGHTS RD APT H",         "+39.840730,-76.989999",
-      
+
       "135 HILLTOP LN",                       "+39.947586,-77.317333",
       "151 HILLTOP LN",                       "+39.948700,-77.318170",
       "195 HILLTOP LN",                       "+39.948537,-77.318942",
       "350 HILLTOP LN",                       "+39.948290,-77.323761",
       "395 HILLTOP LN",                       "+39.949304,-77.322172",
       "451 HILLTOP LN",                       "+39.951347,-77.323050",
-      
+
       "10 HIRSCHMANN RD",                     "+39.977633,-77.384637",
       "11 HIRSCHMANN RD",                     "+39.976860,-77.383156",
       "50 HIRSCHMANN RD",                     "+39.978443,-77.383385",
@@ -929,12 +963,12 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "404 HIRSCHMANN RD",                    "+39.977249,-77.372986",
       "430 HIRSCHMANN RD",                    "+39.976593,-77.373451",
       "460 HIRSCHMANN RD",                    "+39.975838,-77.373672",
-      
+
       "20 INTERFAITH LN",                     "+39.867800,-77.047900",
       "22 INTERFAITH LN",                     "+39.867800,-77.047900",
       "24 INTERFAITH LN",                     "+39.867900,-77.048000",
       "26 INTERFAITH LN",                     "+39.867900,-77.048000",
-      
+
       "90 KNIGHT RD APT 1",                   "+39.779823,-77.233360",
       "90 KNIGHT RD APT 2",                   "+39.779882,-77.233563",
       "90 KNIGHT RD APT 3",                   "+39.779928,-77.233806",
@@ -997,7 +1031,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "90 KNIGHT RD APT 60",                  "+39.776437,-77.232599",
 
       "492 LAKE MEADE DR",                    "+39.973933,-77.036627",
-      
+
       "2440 LOW DUTCH RD LOT 1",              "+39.794938,-77.180313",
       "2440 LOW DUTCH RD LOT 2",              "+39.795853,-77.180508",
       "2440 LOW DUTCH RD LOT 3",              "+39.795388,-77.180418",
@@ -1007,7 +1041,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2440 LOW DUTCH RD LOT 7",              "+39.795168,-77.180663",
       "2440 LOW DUTCH RD LOT 8",              "+39.795495,-77.180637",
       "2440 LOW DUTCH RD LOT 9",              "+39.795457,-77.179972",
-      
+
       "35 MAPLE ST APT 1",                    "+39.809062,-77.135295",
       "35 MAPLE ST APT 2",                    "+39.809123,-77.135252",
       "35 MAPLE ST APT 3",                    "+39.809184,-77.135197",
@@ -1028,7 +1062,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "35 MAPLE ST APT 18",                   "+39.809332,-77.135607",
       "35 MAPLE ST APT 19",                   "+39.809296,-77.135625",
       "35 MAPLE ST APT 20",                   "+39.809243,-77.135635",
-      
+
       "315 MENGUS MILL RD APT A",             "+39.735216,-77.092838",
       "315 MENGUS MILL RD APT C",             "+39.735993,-77.094529",
       "315 MENGUS MILL RD APT D",             "+39.736044,-77.094995",
@@ -1038,7 +1072,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "315 MENGUS MILL RD APT H",             "+39.736191,-77.096433",
       "315 MENGUS MILL RD APT L",             "+39.736088,-77.095568",
       "315 MENGUS MILL RD APT M",             "+39.734428,-77.095869",
-      
+
       "110 MISTY RIDGE RD",                   "+39.868094,-77.237054",
       "112 MISTY RIDGE RD",                   "+39.868090,-77.236961",
       "114 MISTY RIDGE RD",                   "+39.868110,-77.236883",
@@ -1092,6 +1126,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
       "1975 MOUNT HOPE RD APT E",             "+39.804200,-77.437200",
 
+      "390 MOUNTAIN RD APT A",               "+39.938766,-77.401935",
+      "390 MOUNTAIN RD APT B",               "+39.938666,-77.401921",
+
       "65 MOUNTAIN VIEW DR",                  "+39.991625,-77.400380",
       "79 MOUNTAIN VIEW DR",                  "+39.991150,-77.400116",
       "80 MOUNTAIN VIEW DR",                  "+39.991909,-77.399704",
@@ -1101,13 +1138,19 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "199 MOUNTAIN VIEW DR",                 "+39.992324,-77.398695",
 
       "21 N BOLTON ST",                       "+39.864105,-77.057834",
-      
-      "995 NEW RD APT A",                     "+39.911772,-77.377845",
-      "995 NEW RD APT B",                     "+39.912016,-77.376179",
-      "995 NEW RD APT C",                     "+39.912387,-77.375111",
-      "995 NEW RD APT D",                     "+39.911345,-77.372949",
-      "995 NEW RD APT E",                     "+39.911977,-77.375030",
-      "995 NEW RD APT F",                     "+39.911372,-77.375566",
+
+      "995 NEW RD APT A",                    "+39.911772,-77.377845",
+      "995 NEW RD APT B",                    "+39.912016,-77.376179",
+      "995 NEW RD APT C",                    "+39.912387,-77.375111",
+      "995 NEW RD APT D",                    "+39.911345,-77.372949",
+      "995 NEW RD APT E",                    "+39.911977,-77.375030",
+      "995 NEW RD APT F",                    "+39.911372,-77.375566",
+      "995 NEW RD APT G",                    "+39.913773,-77.369747",
+
+      "65 NEWMAN RD APT A",                  "+39.895188,-77.428082",
+      "65 NEWMAN RD APT B",                  "+39.895151,-77.428117",
+      "65 NEWMAN RD APT C",                  "+39.895111,-77.428151",
+      "65 NEWMAN RD APT D",                  "+39.895071,-77.428184",
 
       "45 NORRIS RD",                         "+39.978325,-77.385147",
       "56 NORRIS RD",                         "+39.979015,-77.385529",
@@ -1130,7 +1173,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "238 NORRIS RD",                        "+39.982742,-77.380974",
       "245 NORRIS RD",                        "+39.982635,-77.379913",
       "250 NORRIS RD",                        "+39.983135,-77.380325",
-      
+
       "1075 OLD HARRISBURG RD APT 2",         "+39.850978,-77.217316",
       "1075 OLD HARRISBURG RD APT 4",         "+39.850964,-77.217130",
       "1075 OLD HARRISBURG RD APT 6",         "+39.850950,-77.216930",
@@ -1238,7 +1281,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2581 OLD HARRISBURG RD APT 47",        "+39.889038,-77.190667",
       "2581 OLD HARRISBURG RD APT 48",        "+39.889121,-77.190851",
       "2581 OLD HARRISBURG RD APT 49",        "+39.889182,-77.191080",
-      
+
       "4820 OLD HARRISBURG RD APT 1",         "+39.943761,-77.150533",
       "4820 OLD HARRISBURG RD APT 2",         "+39.943884,-77.150609",
       "4820 OLD HARRISBURG RD APT 3",         "+39.944006,-77.150700",
@@ -1406,12 +1449,24 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "4820 OLD HARRISBURG RD APT 169",       "+39.943444,-77.155203",
       "4820 OLD HARRISBURG RD APT 170",       "+39.943596,-77.155317",
       "4820 OLD HARRISBURG RD APT 171",       "+39.943756,-77.155399",
-      
+
+      "3505 OLD ROUTE 30 APT 1",              "+39.899524,-77.432310",
+      "3505 OLD ROUTE 30 APT 2",              "+39.899649,-77.432282",
+      "3505 OLD ROUTE 30 APT 3",              "+39.899765,-77.432261",
+      "3505 OLD ROUTE 30 APT 4",              "+39.900000,-77.432169",
+
+      "3465 OLD ROUTE 30 APT C",             "+39.900061,-77.430176",
+      "3465 OLD ROUTE 30 APT D",             "+39.899640,-77.430184",
+      "3465 OLD ROUTE 30 APT E",             "+39.899880,-77.430136",
+      "3465 OLD ROUTE 30 APT F",             "+39.901004,-77.430904",
+      "3465 OLD ROUTE 30 APT G",             "+39.900585,-77.430767",
+
+      "3475 OLD ROUTE 30",                    "+39.899155,-77.431474",
       "3085 OLD ROUTE 30",                    "+39.897133,-77.416910",
-      
+
       "3851 PINE GROVE RD",                   "+39.979919,-77.386187",
       "3865 PINE GROVE RD",                   "+39.980430,-77.385791",
-      
+
       "1365 RED HILL RD APT 1",               "+39.858341,-77.020454",
       "1365 RED HILL RD APT 2",               "+39.858279,-77.020351",
       "1365 RED HILL RD APT 3",               "+39.858197,-77.020280",
@@ -1510,7 +1565,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "203 RIFE RD APT 63",                   "+39.948971,-76.978977",
 
       "140 ROBBINS LN",                       "+39.898393,-77.370943",
-      
+
       "12 ROBERT CURTIS DR",                  "+39.837270,-77.207820",
       "14 ROBERT CURTIS DR",                  "+39.837257,-77.207890",
       "15 ROBERT CURTIS DR",                  "+39.837630,-77.208015",
@@ -1537,9 +1592,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "56 ROBERT CURTIS DR",                  "+39.836840,-77.208435",
       "58 ROBERT CURTIS DR",                  "+39.836780,-77.208440",
       "80 ROBERT CURTIS DR",                  "+39.836777,-77.208057",
-      
+
       "SHIPPENSBURG RD & RIDGE RD",           "+39.998500,-77.409600",
-      
+
       "1855 SHIPPENSBURG RD",                 "+39.978882,-77.391242",
       "1935 SHIPPENSBURG RD APT 11",          "+39.979863,-77.394016",
       "1935 SHIPPENSBURG RD APT A",           "+39.978890,-77.395348",
@@ -1586,7 +1641,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2630 SHIPPENSBURG RD APT O",           "+39.990487,-77.408421",
       "2630 SHIPPENSBURG RD APT P",           "+39.989871,-77.408037",
       "2634 SHIPPENSBURG RD",                 "+39.994100,-77.402500",
-      
+
       "1760 SHRIVERS CORNER RD APT 102",      "+39.885262,-77.166745",
       "1760 SHRIVERS CORNER RD APT 103",      "+39.885077,-77.166719",
       "1760 SHRIVERS CORNER RD APT 104",      "+39.884954,-77.166700",
@@ -1680,7 +1735,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "660 GREEN SPRINGS RD APT M",           "+39.862518,-76.996385",
       "660 GREEN SPRINGS RD APT N",           "+39.861885,-76.994248",
       "660 GREEN SPRINGS RD APT P",           "+39.863181,-76.992984",
-      
+
       "1 STONEBROOK DR",                      "+39.901752,-77.442432",
       "2 STONEBROOK DR",                      "+39.901864,-77.442409",
       "8 STONEBROOK DR",                      "+39.901892,-77.441883",
@@ -1700,9 +1755,9 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "33 STONEBROOK DR",                     "+39.901358,-77.440904",
       "36 STONEBROOK DR",                     "+39.901461,-77.440451",
       "38 STONEBROOK DR",                     "+39.901334,-77.440286",
-      
+
       "1 STONEHOUSE CT",                      "+39.900256,-77.440230",
-      
+
       "2 STRABAN CT",                         "+39.836243,-77.207680",
       "4 STRABAN CT",                         "+39.836193,-77.207710",
       "5 STRABAN CT",                         "+39.836365,-77.208200",
@@ -1716,7 +1771,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "13 STRABAN CT",                        "+39.836143,-77.208310",
       "14 STRABAN CT",                        "+39.835934,-77.207880",
       "15 STRABAN CT",                        "+39.836090,-77.208350",
-      
+
       "12 SUNNIE WAY",                        "+39.867003,-77.234337",
       "14 SUNNIE WAY",                        "+39.867018,-77.234388",
       "16 SUNNIE WAY",                        "+39.867034,-77.234455",
@@ -1735,11 +1790,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "40B SUNNIE WAY",                       "+39.867184,-77.235208",
       "42 SUNNIE WAY",                        "+39.867227,-77.235257",
       "44 SUNNIE WAY",                        "+39.867249,-77.235315",
-      
+
       "1280 TRACT RD",                        "+39.766947,-77.345261",
-      
+
       "225 VILLAGE DR",                       "+39.864515,-77.023866",
-      
+
       "120 WILDERNESS LN",                    "+39.804200,-77.437200",
 
       "2080 YORK RD APT 8",                   "+39.851442,-77.169941",
@@ -1754,18 +1809,18 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
       "2080 YORK RD APT I",                   "+39.851525,-77.169445",
       "2080 YORK RD APT J",                   "+39.851164,-77.170490",
       "2080 YORK RD APT L",                   "+39.851441,-77.169833",
-      
+
       "SKI LIBERTY - STATION 1A",             "+39.762931,-77.375453",
       "SKI LIBERTY - STATION 1B",             "+39.762314,-77.374811",
       "SKI LIBERTY - STATION 2",              "+39.755893,-77.362693",
       "SKI LIBERTY – STATION 3",              "+39.759810,-77.363275",
       "SKI LIBERTY – STATION 4",              "+39.762617,-77.368438",
       "SKI LIBERTY – STATION 5",              "+39.763964,-77.374466"
-      
+
   });
 
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Boroughs
     "ABBOTTSTOWN BORO",
     "ARENDTSVILLE BORO",
@@ -1820,11 +1875,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     "MCKNIGHTSTOWN",
     "ORRTANNA",
     "TABLE ROCK",
-    
+
     // Cumberland County
     "CUMBERLAND COUNTY",
     "CUMBERLAND CO",
-    
+
     // Boroughs
     "CAMP HILL BORO",
     "CARLISLE BORO",
@@ -1877,11 +1932,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     "GRANTHAM",
     "SUMMERDALE",
     "LISBURN",
-    
+
     // Franklin County
     "FRANKLIN COUNTY",
     "FRANKLIN CO",
-    
+
     // Boroughs
     "CHAMBERSBURG BORO",
     "GREENCASTLE BORO",
@@ -1919,11 +1974,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     "SCOTLAND",
     "STATE LINE",
     "WAYNE HEIGHTS",
-    
+
     // York County
     "YORK COUNTY",
     "YORK CO",
-    
+
     // City
     "YORK",
 
@@ -2069,13 +2124,13 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
 
   };
-  
+
   private static final Set<String> MD_CITIES = new HashSet<String>(Arrays.asList(
-      
-    // Carroll County  
+
+    // Carroll County
     "CARROLL COUNTY",
     "CARROLL CO",
-    
+
     // Cities
     "WESTMINSTER",
     "MOUNT AIRY",
@@ -2118,11 +2173,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     "UNIONTOWN",
     "YOUNG MANS FANCY",
 
-    
+
     // Frederick County
     "FREDERICK COUNTY",
     "FREDERICK CO",
-    
+
     // Cities
     "BRUNSWICK",
     "FREDERICK",
@@ -2179,7 +2234,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     // Washington County
     "WASHINGTON COUNTY",
     "WASHINGTON CO",
-    
+
     "BOONSBORO",
     "CASCADE",
     "CLEAR SPRING",
@@ -2191,7 +2246,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     "SMITHSBURG",
     "WILLIAMSPORT"
   ));
-  
+
   private static final Properties MISTYPED_CITIES = buildCodeTable(new String[]{
     "BERWICK",         "BERWICK TWP",
     "CARROL TWP",      "CARROLL TWP",
