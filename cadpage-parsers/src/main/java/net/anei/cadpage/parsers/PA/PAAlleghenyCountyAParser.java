@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Allegheny County, PA
  */
 public class PAAlleghenyCountyAParser extends FieldProgramParser {
-  
+
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
            "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
@@ -19,7 +19,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
     setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
@@ -34,7 +34,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     sAddress = BUTLER_STREET_EXT.matcher(sAddress).replaceAll("$1");
     return super.adjustMapAddress(sAddress);
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("ALLEGHENY COUNTY 911:? :|:");
   private static final Pattern TRAILER_PTN = Pattern.compile(" +- +From \\d+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b.*$");
   private static final Pattern MOVE_UP_PTN = Pattern.compile("MOVE-UP: +([A-Z0-9]+) +to +([A-Z0-9]+)\\.?");
@@ -42,10 +42,10 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Undo some IAR edits :(
     if (subject.equals("Station 125")) body = body.replace('\n', ',');
-    
+
     // There are a number of different message markers
     do {
       Matcher match = MARKER.matcher(body);
@@ -53,19 +53,19 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
         body = body.substring(match.end()).trim();
         break;
       }
-      
+
       if (body.startsWith("MOVE-UP")) break;
-      
+
       if (subject.endsWith(" Station")) break;
-        
+
       // And sometimes there is no signature whatsoever
-      
+
     } while (false);
-    
+
     // Drop anything beyond a line break
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     // Remove trailing stuff that we aren't interested in
     Matcher match = TRAILER_PTN.matcher(body);
     if (match.find()) {
@@ -73,15 +73,15 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       data.strTime = match.group(2);
       body = body.substring(0,match.start()).trim();
     }
-    
-    // If it isn't there or is truncated, remove what we 
+
+    // If it isn't there or is truncated, remove what we
     // do find and set the possibly incomplete data flag
     else {
       data.expectMore = true;
       pt = body.indexOf(" - From");
       if (pt >= 0) body = body.substring(0, pt).trim();
     }
-    
+
     // MOVE-UP is a special case
     match = MOVE_UP_PTN.matcher(body);
     if (match.matches()) {
@@ -90,7 +90,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       data.strUnit = match.group(1);
       return true;
     }
-    
+
     // MOVE-UPS is an even specialer case
     if (body.startsWith("MOVE-UPS:")) {
       setFieldList("CALL UNIT DATE TIME");
@@ -101,7 +101,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       }
       return true;
     }
-    
+
     body = body.replace(" Unit:", " Units:");
     if (!parseFields(body.split(","), 5, data)) return false;
     if (data.strPlace.startsWith("GAP - GREAT ALLEGHENY PASSAGE - ")) {
@@ -110,7 +110,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " DATE TIME";
@@ -135,14 +135,14 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends  CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, ", ", field);
     }
   }
-  
+
   // Stock address field is fine, but we want test generator to know
   // that this might be a place field
   private class MyAddressField extends AddressField {
@@ -151,7 +151,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -161,19 +161,19 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       return false;
     }
   }
-  
+
   private class MyDupAddressField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return field.equals(getRelativeField(-2));
     }
   }
-  
+
   // AT field is option and hold the real address
   // if present, the previous address turns into a place name
   private class MyAtField extends AddressField {
@@ -181,7 +181,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override public boolean checkParse(String field, Data data) {
       if (!field.startsWith("at ")) return false;
       data.strPlace = data.strAddress;
@@ -189,13 +189,13 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       super.parse(field.substring(3).trim(), data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern COVID_PTN = Pattern.compile("COVID (?:NEG(?:ATIVE)?|POS(?:ITIVE)?)|(?:NEG(?:ATIVE)?|POS(?:ITIVE)?) COVID");
   private static final Pattern PHONE_PTN = Pattern.compile("\\d{10}");
   private class MyCrossInfoField extends InfoField {
@@ -215,13 +215,13 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
         super.parse(field, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ALERT X PHONE INFO";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -229,14 +229,14 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
     }
   }
-  
+
   private static Properties CITY_CODES = buildCodeTable(new String[]{
       "ALE", "ALEPPO",
       "AS",  "ASPINWALL",
@@ -345,8 +345,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "SHP", "SHARPSBURG",
       "SHT", "SEWICKLEY HEIGHTS",
       "SPB", "SPRINGDALE",
-      "SPK", "SOUTH PARK ",
-      "SPT", "SPRINGDALE TWP.",
+      "SPK", "SOUTH PARK",
+      "SPT", "SPRINGDALE TWP",
       "STO", "STOWE",
       "SVS", "SOUTH VERSAILLES",
       "SWS", "SWISSVALE",
@@ -370,12 +370,12 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "WTK", "WHITAKER",
       "WVW", "WEST VIEW",
   });
-  
+
   private static final String[] EXTRA_CITY_LIST = new String[]{
-    
+
     // Armstrong County
     "FREEPORT",
-    
+
     // Butler County
     "ADAMS TWP",
     "MIDDLESEX TWP"

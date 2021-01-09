@@ -40,7 +40,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" -(?: ([A-Za-z ]+))?$");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern[] ADDR_APT_PTNS = new Pattern[] {
-      Pattern.compile("(\\d+) ([A-DF-MO-R]) (.*)", Pattern.CASE_INSENSITIVE),
+      Pattern.compile("(\\d+) ([A-DF-MO-R]) ((?!AVE?|ST).*)", Pattern.CASE_INSENSITIVE),
       Pattern.compile("(\\d+) ([EN]) (BRYSONIA WENKSVILLE RD|BUCHANAN VALLEY RD|CHAMBERSBURG RD|CHURCH RD|GREEN SPRINGS RD|MENGUS MILL RD|MOUNT HOPE RD|NEW RD|OLD ROUTE 30|SHIPPENSBURG RD|GREEN SPRINGS RD|YORK RD)")
   };
 
