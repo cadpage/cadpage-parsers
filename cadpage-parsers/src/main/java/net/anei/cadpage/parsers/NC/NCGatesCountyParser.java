@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.NC;
 
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
@@ -10,9 +12,10 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
  */
 
 public class NCGatesCountyParser extends DispatchSouthernParser {
-  
+
   public NCGatesCountyParser() {
     super(CALL_LIST, CITY_LIST, "GATES COUNTY", "NC", DSFLAG_CROSS_NAME_PHONE | DSFLAG_FOLLOW_CROSS);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupMultiWordStreets(
         "ACORN HILL",
         "ADAM SWAMP",
@@ -31,7 +34,7 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
   public String adjustMapAddress(String addr) {
     return addr.replace(" TRLR PARK", " TR PARK");
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (body.startsWith("0 ")) body = body.substring(2).trim();
@@ -42,7 +45,7 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("APT", "APT MAP");
@@ -51,7 +54,7 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
   private static final String[] CITY_LIST = new String[] {
     //City
     "GATESVILLE",
-    
+
     // Townships
     "GATESVILLE",
     "HALL",
@@ -60,15 +63,15 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
     "HOLLY GROVE",
     "HUNTERS MILL",
     "MINTONSVILLE",
-    
+
     // County Districts
     "GATESVILLE",
     "EURE",
     "GATES",
     "SUNBURY",
     "HOBBSVILLE",
-    
-    // Unincorporated  
+
+    // Unincorporated
     "CORAPEAKE",
     "EASON CROSSROADS",
     "EURE",
@@ -77,17 +80,17 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
     "MINTONSVILLE",
     "SELWIN",
     "TARHEEL",
-    
+
     // Perquimans County
     "BELVIDERE",
     "HERTFORD",
     "WINFALL",
-    
+
     // Chowan County
     "EDENTON"
-    
+
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "Breathing Problems",
       "Diabetic",
@@ -98,4 +101,9 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
       "Non Emergency Transport",
       "Vehicle Fire"
   );
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "19 ROBERT ROBINSON LN",                "+36.458840,-76.673580",
+      "22 ROBERT ROBINSON LN",                "+36.458330,-76.673730"
+  });
 }
