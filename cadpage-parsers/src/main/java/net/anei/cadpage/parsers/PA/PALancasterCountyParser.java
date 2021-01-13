@@ -39,6 +39,8 @@ public class PALancasterCountyParser extends FieldProgramParser {
     if (subject.equals("22")) {
       body = fixBrunnervilleFC(body);
       if (body == null) return false;
+    } else if (subject.equals("Station24")) {
+      body = body.replace('\n', '~');
     }
 
     if (! body.contains("~")) return false;
