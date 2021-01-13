@@ -11,25 +11,26 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Eaton County, MI
  */
 public class MIIsabellaCountyAParser extends DispatchOSSIParser {
-  
+
   public MIIsabellaCountyAParser() {
     super(CITY_CODES, "ISABELLA COUNTY", "MI",
-           "( CANCEL | FYI? CALL ) ( ADDR/Z CITY! | ADDR2/S! ) X+? INFO+");
+           "( CANCEL | FYI? CALL ) ( ADDR/Z CITY! | ADDR2/S! ) X+? INFO/N+? ID UNIT END");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@isabellacounty.org";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new IdField("\\d{1,6}");
     return super.getField(name);
   }
-  
+
   private class MyAddress2Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -46,21 +47,21 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = stripFieldStart(field, "crosses of ");
       return super.checkParse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[\\.,]");
   private class MyInfoField extends InfoField {
     @Override
@@ -84,7 +85,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALMA",  "ALMA",
       "RMS",   "REMUS",
@@ -107,7 +108,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
       "WDM",   "WEIDMAN",
       "WNN",   "WINN",
       "LMS",   "LOOMIS",
-      
+
       "MECOSTA CO",      "MECOSTA COUNTY",
       "MIDLAND CO",      "MIDLAND COUNTY"
   });
