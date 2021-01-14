@@ -11,23 +11,28 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class SCLancasterCountyBParser extends FieldProgramParser {
-  
+
   public SCLancasterCountyBParser() {
-    super("LANCASTER COUNTY", "SC", 
-          "DATETIME ADDRCITY PLACE BOX SPEC X CALL EMPTY UNIT! INFO/N+");
+    super("LANCASTER COUNTY", "SC",
+          "DATETIME ADDRCITY CH PLACE BOX SPEC X CALL EMPTY UNIT! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@lanc911.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Incident Notification"))  return false;
+    if (!subject.equals("Incident Notification")) data.strSource = subject;
     return parseFields(body.split("\n"), data);
   }
-  
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -37,8 +42,8 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -46,10 +51,15 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, field, data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -57,16 +67,16 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern SPEC_CITY_ST_PTN = Pattern.compile("(.*) ([NS]C)");
   private class MySpecialField extends Field {
     @Override
     public void parse(String field, Data data) {
-      
+
       // This can be all kinds of things
       // Check for nothing
       if (field.length() == 0) return;
-      
+
       // Try city/state
       Matcher match = SPEC_CITY_ST_PTN.matcher(field);
       if (match.matches()) {
@@ -77,13 +87,13 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
 
       // If it is entirely contained in the following cross street field, ignore it
       if (getRelativeField(+1).indexOf(field) >= 0) return;
-      
+
       // If it looks like a legitimate address, put it in the cross stree field
       if (isValidAddress(field)) {
         data.strCross = field;
         return;
       }
-      
+
       // Otherwise treat it as a place field
       data.strPlace = append(data.strPlace, " - ", field);
     }
@@ -93,7 +103,7 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
       return "PLACE X CITY ST";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -101,23 +111,23 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
       data.strCross = append(data.strCross, ", ", field);
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
-      
+
       // Use the parsed unit information to strip the extraneous unit stuff
       // off the end of the call field :(
       data.strUnit = data.strUnit.replace(" ", "");
       String[] units = data.strUnit.split(",");
       Arrays.sort(units, new Comparator<String>(){
-        @Override 
+        @Override
         public int compare(String s1, String s2) {
           return s2.length() - s1.length();
         }
       });
-      
+
       while (true) {
         boolean found = false;
         for (String unit : units) {
@@ -134,7 +144,7 @@ public class SCLancasterCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("INDIAN LAND")) return "FORT MILL";
