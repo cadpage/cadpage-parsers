@@ -88,28 +88,29 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALMA",  "ALMA",
-      "RMS",   "REMUS",
-      "BLA",   "BLANCHARD",
-      "MP",    "MT PLEASANT",
-      "RSB",   "ROSEBUSH",
-      "CLR",   "CLARE",
-      "SHP",   "SHEPHERD",
       "BEAV",  "BEVERTON",
+      "BLA",   "BLANCHARD",
       "BRY",   "BARRYTON",
       "CLM",   "COLEMAN",
+      "CLR",   "CLARE",
       "EDM",   "EDMORE",
       "FRW",   "FARWELL",
       "LKE",   "LAKE",
       "LKI",   "LAKE ISABELLA",
+      "LMS",   "LOOMIS",
       "LVW",   "LAKEVIEW",
+      "MP",    "MT PLEASANT",
+      "RMS",   "REMUS",
+      "RSB",   "ROSEBUSH",
       "RVD",   "RIVERDALE",
+      "SHP",   "SHEPHERD",
       "STL",   "ST LOUIS",
       "VEST",  "VESTABURG",
       "WDM",   "WEIDMAN",
       "WNN",   "WINN",
-      "LMS",   "LOOMIS",
 
       "MECOSTA CO",      "MECOSTA COUNTY",
       "MIDLAND CO",      "MIDLAND COUNTY"
+
   });
 }

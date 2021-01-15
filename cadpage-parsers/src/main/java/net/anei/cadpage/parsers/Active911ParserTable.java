@@ -923,6 +923,7 @@ public class Active911ParserTable {
       "US/MO/CarrollCounty",              "MOCarrollCounty",
       "US/MO/CentraliaPD",                "MOCentralia",
       "US/MO/CentralJacksonCounty",       "MOJacksonCountyB",
+      "US/MO/CityofChaffee",              "MOScottCountyC",
       "US/MO/ChillicothePD",              "MOLivingstonCounty",
       "US/MO/ChristianCounty",            "MOChristianCounty",
       "US/MO/ChristianHospitalEMS",       "MOStLouisCountyC",
