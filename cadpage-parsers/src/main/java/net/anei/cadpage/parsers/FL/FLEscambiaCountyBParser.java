@@ -1,15 +1,13 @@
 package net.anei.cadpage.parsers.FL;
 
-import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.StandardCodeTable;
 
 public class FLEscambiaCountyBParser extends FieldProgramParser {
 
   public FLEscambiaCountyBParser() {
     super("ESCAMBIA COUNTY", "FL",
-          "( SELECT/NEW ID UNIT ADDR APT PLACE X X CODE CALL CITY END " +
+          "( SELECT/NEW ID ID/L UNIT ADDR APT APT PLACE X X CODE CALL CITY! GPS1 GPS2 END " +
           "| Rep#:ID INFO/NR! INFO/N+ " +
           "| ID ADDR APT X X CODE CALL! END " +
           ")");
@@ -18,6 +16,11 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "7017710278";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -32,7 +35,7 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
       setSelectValue("NEW");
     }
     if (body.startsWith("*"))  body = ' ' + body;
-    if (!parseFields(body.split(" \\*"), data)) return false;
+    if (!parseFields(body.split(" \\*", -1), data)) return false;
     String call = FLEscambiaCountyParser.CALL_CODES.getCodeDescription(data.strCode);
     if (call !=  null) data.strCall = call;
     return true;
@@ -40,7 +43,7 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{10}(?:-\\d{3})?|", true);
+    if (name.equals("ID")) return new IdField("A{0,2}\\d{9,10}(?:-\\d{3})?|", true);
     return super.getField(name);
   }
 
