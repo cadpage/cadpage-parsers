@@ -571,6 +571,7 @@ public class Active911ParserTable {
       "US/KS/CrawfordCounty",             "KSCrawfordCountyA",
       "US/KS/EllisCounty",                "KSEllisCounty",
       "US/KS/FirePage",                   "KSWichita,KSSedgwickCounty",
+      "US/KS/FranklinCounty",             "KSFranklinCounty",
       "US/KS/FrontKS",                    "KSCrawfordCountyB",
       "US/KS/HarveyCounty",               "KSHarveyCounty",
       "US/KS/HarveyCounty",               "KSHarveyCounty",

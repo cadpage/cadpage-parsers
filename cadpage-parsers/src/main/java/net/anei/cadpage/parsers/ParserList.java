@@ -567,6 +567,7 @@ public class ParserList {
               ,"KSEllisCounty"                  ,"Ellis County, KS"
               ,"KSEudora"                       ,"Eudora, KS"
               ,"KSFordCounty"                   ,"Ford County, KS"
+              ,"KSFranklinCounty"               ,"Franklin County, KS"
               ,"KSHarveyCounty"                 ,"Harvey County, KS"
               ,"KSJacksonCounty"                ,"Jackson County, KS"
               ,"KSJohnsonCounty"                ,"Johnson County, KS"
