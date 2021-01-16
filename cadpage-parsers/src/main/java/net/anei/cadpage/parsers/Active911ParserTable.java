@@ -725,6 +725,7 @@ public class Active911ParserTable {
       "US/LA/PrairievilleFD",             "LAAscensionParish",
       "US/LA/RapidesParish",              "LARapidesParish",
       "US/LA/StCharlesParish",            "LAStCharlesParish",
+      "US/LA/StGeorgeFire",               "LAEastBatonRougeParish",
       "US/LA/StTammanyParish",            "LAStTammanyParish",
       "US/LA/TangipahoaParish",           "LATangipahoaParish",
       "US/LA/TerrebonneParish",           "LATerrebonneParish",
