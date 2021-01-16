@@ -78,6 +78,7 @@ public class Active911ParserTable {
       "US/AL/EtowahCounty",               "ALEtowahCountyB,ALEtowahCountyC",
       "US/AL/FranklinCounty",             "ALFranklinCounty",
       "US/AL/Gardendale",                 "ALJeffersonCountyH",
+      "US/AL/GenevaCounty",               "ALGenevaCountyC",
       "US/AL/GurleyPD",                   "ALMadisonCountyB",
       "US/AL/Hoover",                     "ALHoover",
       "US/AL/Irondale",                   "ALJeffersonCountyH",

@@ -8,20 +8,20 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgParser;
 
 public class ALGenevaCountyCParser extends MsgParser {
-  
+
   public ALGenevaCountyCParser() {
     super("GENEVA COUNTY", "AL");
     setFieldList("CALL ADDR APT CITY ST INFO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatch@34central.com";
+    return "dispatch@34central.com,cad@34central.com";
   }
-  
+
   private static final Pattern MSG_MARKER_PTN = Pattern.compile(";? \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - message - ");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
@@ -30,7 +30,7 @@ public class ALGenevaCountyCParser extends MsgParser {
       if (!parts[0].endsWith(" None")) return false;
       parts[0] =  parts[0].substring(0, parts[0].length()-5).trim();
     }
-    
+
     boolean first = true;
     for (String part : parts) {
       part = part.trim();
