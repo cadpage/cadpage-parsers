@@ -12,7 +12,7 @@ public class OHTrumbullCountyParser extends FieldProgramParser {
 
   public OHTrumbullCountyParser() {
     super("TRUMBULL COUNTY", "OH",
-           "ADDR PLACE? CALL! UNIT X! INFO+");
+           "ADDR PLACE? CALL! UNIT X! INFO+? GPS1 GPS2 END");
   }
 
   @Override
@@ -33,6 +33,8 @@ public class OHTrumbullCountyParser extends FieldProgramParser {
   protected Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
 
@@ -72,5 +74,13 @@ public class OHTrumbullCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{8,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type, GPS_PTN, true);
+    }
+
   }
 }
