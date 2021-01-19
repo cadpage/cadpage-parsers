@@ -7,19 +7,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgParser;
 
 public class MSPontotocCountyParser extends MsgParser {
-  
+
   public MSPontotocCountyParser() {
     super("PONTOTOC COUNTY", "MS");
     setFieldList("CALL ADDR APT DATE TIME");
   }
-  
+
   @Override
   public String getFilter() {
-    return "noreply@emergencycallworx.com";
+    return "noreply@emergencycallworx.com,4693809763";
   }
-  
+
   private static final Pattern MASTER = Pattern.compile("at (.*) (\\d\\d-\\d\\d-\\d\\d) (\\d\\d:\\d\\d)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() == 0) return false;
