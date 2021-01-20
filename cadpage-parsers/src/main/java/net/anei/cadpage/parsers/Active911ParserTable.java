@@ -1086,6 +1086,7 @@ public class Active911ParserTable {
       "US/NC/EdgecombeCounty",            "NCEdgecombeCountyA",
       "US/NC/FayettevilleCumberland",     "NCCumberlandCounty",
       "US/NC/ForsythCounty",              "NCForsythCounty",
+      "US/NC/FourOaksFD",                 "NCJohnstonCounty",
       "US/NC/FranklinCounty",             "NCFranklinCounty",
       "US/NC/GarnerFire",                 "NCWakeCountyD",
       "US/NC/GastonCounty",               "NCGastonCounty",
