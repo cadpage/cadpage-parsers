@@ -5,10 +5,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 /**
- * Prince Georges County, MD (variant E)
+ * Prince Georges County, MD (variant G)
  */
 public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParser {
 
@@ -25,14 +26,22 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    boolean keep = false;
     if (body.startsWith("<!doctype html>\n")) {
       Matcher match = HTML_FILTER_PTN.matcher(body);
       if (!match.find()) return false;
       body = match.group(1).trim();
       body = body.replace("\n<br>", " ").replace("\n", " ").replace("<br>", " ");
+      keep = true;
     }
 
-    return super.parseHtmlMsg(subject, body, data);
+    if (super.parseHtmlMsg(subject, body, data)) return true;
+
+    if (!keep) return false;
+    setFieldList("INFO");
+    data.msgType = MsgType.GEN_ALERT;
+    data.strSupp = body;
+    return true;
   }
 
   private static final Pattern ID_PTN = Pattern.compile("(PF\\d{14}): *");
