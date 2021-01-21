@@ -1963,6 +1963,7 @@ public class Active911ParserTable {
       "US/WA/ClarkCounty",                "WAClarkCounty",
       "US/WA/Cowlitz911",                 "WACowlitzCounty",
       "US/WA/CowlitzCounty",              "WACowlitzCounty",
+      "US/WA/EastPierceFire",             "WAPierceCountyF",
       "US/WA/GraysHarborCounty",          "WAGraysHarborCounty",
       "US/WA/IslandCounty",               "WAIslandCounty",
       "US/WA/JeffersonCounty",            "WAJeffersonCounty",
