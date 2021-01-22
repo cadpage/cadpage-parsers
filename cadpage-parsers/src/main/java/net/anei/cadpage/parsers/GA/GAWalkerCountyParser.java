@@ -5,19 +5,23 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 public class GAWalkerCountyParser extends FieldProgramParser {
 
   public GAWalkerCountyParser() {
     super(CITY_LIST, "WALKER COUNTY", "GA",
-          "CALL ADDR/S69 CITY SRC! Quadrant:MAP! GPS ID! END");
+          "CALL CALL/CS+? ADDR/ZS69 CITY/Y UNIT! UNIT/C+ Quadrant:MAP! GPS ID! END");
   }
 
   @Override
   public String getFilter() {
     return "dispatch@walkerga.org,4702193948";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern DELIM = Pattern.compile(",| +(?=Quadrant:)");
