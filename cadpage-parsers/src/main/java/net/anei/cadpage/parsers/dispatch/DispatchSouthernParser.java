@@ -9,23 +9,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchSouthernParser extends FieldProgramParser {
-  
+
   /*
-   * This does get complicated....  
+   * This does get complicated....
    * The field sequence can be delimited by commas, semicolons, or
    * blanks.  Generally the parser will work the same field sequence regardless of
    * the field delimiters, though obviously a lot of work has to go into processing
    * alerts with blank field delimiters
-   * 
+   *
    * The field sequence is always the same, fields may be always present, always absent,
    * or optional depending on what flags are passed to the constructor
-   * 
+   *
    * The basic field sequence is
    * Dispatcher ID
    * Address, apt, city and possibly place
    * State
-   * one of 
-   *   misused call field or 
+   * one of
+   *   misused call field or
    *   misused place field or
    *    cross street
    *    name
@@ -36,14 +36,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
    * Time
    * Call
    * Info
-   * 
-   * There are two sets of constructor flags.  The old set evolved slowly over time 
+   *
+   * There are two sets of constructor flags.  The old set evolved slowly over time
    * and became increasingly unwieldy.  It is in the process of being replaced by the
    * new constructor flag sequence.  Some flag values are shared between the two sets
    * the presence of an DSFLG_ADDR uniquely identifies a set of new constructor flags
    */
-  
-  
+
+
   // New Constructor flags.  With these flags, fields are only present if specifically flagged
   // except for the call description and info fields which are always present.  The different
   // Address place fields needs some further explanation
@@ -54,40 +54,40 @@ public class DispatchSouthernParser extends FieldProgramParser {
   // will be considered a place information rather than name information
   public static final int DSFLG_DISP_ID =             0x80000000;
   public static final int DSFLG_OPT_DISP_ID =         0x40000000;
-  
+
   public static final int DSFLG_ADDR =                0x20000000;
   public static final int DSFLG_ADDR_LEAD_PLACE =     0x10000000;
   public static final int DSFLG_ADDR_TRAIL_PLACE =    0x08000000;
   public static final int DSFLG_ADDR_TRAIL_PLACE2 =   0x04000000;
   public static final int DSFLG_ADDR_NO_IMPLIED_APT = 0x02000000;
-  
+
 //  public static final int DSFLG_STATE =               0x01000000;
   public static final int DSFLG_OPT_STATE =           0x00800000;
-  
+
   public static final int DSFLG_BAD_CALL =            0x00400000;
 //  public static final int DSFLG_OPT_BAD_CALL =        0x00200000;
-  
+
   public static final int DSFLG_BAD_PLACE =           0x00100000;
   public static final int DSFLG_OPT_BAD_PLACE =       0x00080000;
-  
+
   public static final int DSFLG_X =                   0x00040000;
   public static final int DSFLG_OPT_X =               0x00020000;
-  
+
   public static final int DSFLG_NAME =                0x00010000;
   public static final int DSFLG_OPT_NAME =            0x00008000;
-  
+
   public static final int DSFLG_PHONE =               0x00004000;
   public static final int DSFLG_OPT_PHONE =           0x00002000;
-  
+
   public static final int DSFLG_CODE =                0x00001000;
   public static final int DSFLG_OPT_CODE =            0x00000800;
-  
+
   public static final int DSFLG_UNIT1 =               0x00000400;
   public static final int DSFLG_OPT_UNIT1 =           0x00000200;
-  
+
   public static final int DSFLG_ID =                  0x00000100;
   public static final int DSFLG_OPT_ID =              0x00000080;
-  
+
   public static final int DSFLG_TIME =                0x00000040;
   public static final int DSFLG_OPT_TIME =            0x00000020;
 
@@ -95,104 +95,104 @@ public class DispatchSouthernParser extends FieldProgramParser {
   // Process empty delimited fields instead of ignoring them
   // this should be the default, but is not for historical reasons
   public static final int DSFLG_PROC_EMPTY_FLDS =     0x00000002;
-  
+
   // In undelimited format, not info fileds, evertyhing goes into call description
   public static final int DSFLG_NO_INFO =             0x00000001;
 
   // Old flags are a complicated mess, which is why they are depreciated
-  
+
   // Flag indicating  a leading dispatch name is required
   public static final int DSFLAG_DISPATCH_ID = 0x01;
-  
+
   // Flag indicating a leading dispatch name is optional
   public static final int DSFLAG_OPT_DISPATCH_ID = 0x02;
-  
-  
+
+
   // Flag indicating that the call ID is optional
   public static final int DSFLAG_ID_OPTIONAL = 0x08;
-  
+
   // Flag indicating a place name may precede the address
   // And Name/Phone number follows address
   public static final int DSFLAG_LEAD_PLACE = 0x010;
-  
+
   // Flag indicating cross street information follows the address instead of
   // the usual name & phone
   public static final int DSFLAG_FOLLOW_CROSS = 0x20;
-  
+
   // Flag indicating address will be followed by cross street, and then the usual
   // name & phone
   public static final int DSFLAG_CROSS_NAME_PHONE = 0x40;
-  
+
   // Flag indicating there is no name and phone following the address
   public static final int DSFLAG_NO_NAME_PHONE = 0x80;
-  
+
   // Flag indicating we should not check for implied non-numeric apartments
   public static final int DSFLAG_NO_IMPLIED_APT = 0x100;
-  
+
   // Flag indicating call description follows address
   public static final int DSFLAG_FOLLOW_CALL = 0x200;
-  
+
   // Flag indicating optional unit designation precedes call ID
   public static final int DSFLAG_LEAD_UNIT = 0x400;
-  
+
   // Flag indicating place name can be in front of and behind the address
   public static final int  DSFLAG_BOTH_PLACE = 0x800;
-  
+
   // Flag indicating there is no place name
   public static final int DSFLAG_NO_PLACE = 0x1000;
-  
+
   // Flag indicating a place follows the address, even in field delimited mode
   // This is the default behavior in space delimited mode
   public static final int DSFLAG_TRAIL_PLACE = 0x2000;
-  
+
   // Flag indicating a state may follow the address
   public static final int DSFLAG_STATE = 0x4000;
-  
+
   // Flag indicating time is optional :(
   public static final int DSFLAG_TIME_OPTIONAL = 0x8000;
-  
+
   // Flag indicating place field following address is a place field
   public static final int DSFLAG_PLACE_FOLLOWS = 0x10000;
-  
+
   // Flag indicating that we will never have a call ID field
   public static final int DSFLAG_NO_ID = 0x20000;
-  
+
 
   private boolean parseFieldOnly;
-  
+
   private int flags;
-  
+
   private Pattern callCodePtn;
   private CodeSet callSet;
   private Pattern unitPtn;
-  
+
   private String defaultFieldList;
-  
+
   public DispatchSouthernParser(String[] cityList, String defCity, String defState) {
     this(null, cityList, defCity, defState, DSFLAG_DISPATCH_ID, null);
   }
-  
+
   public DispatchSouthernParser(String[] cityList, String defCity, String defState, int flags) {
     this(null, cityList, defCity, defState, flags, null);
   }
-  
+
   public DispatchSouthernParser(String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
     this(null, cityList, defCity, defState, flags, unitPtnStr);
   }
-  
+
   public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags) {
     this(callSet, cityList, defCity, defState, flags, null);
   }
-  
+
   public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
     super(cityList, defCity, defState, "");
     this.parseFieldOnly = false;
     this.callSet = callSet;
-    
+
     this.flags = convertFlags(flags);
-    
+
     this.unitPtn = (unitPtnStr == null ? null : Pattern.compile(unitPtnStr));
-    
+
     // Program string needs to be built at run time
     StringBuilder sb = new StringBuilder();
     sb.append("ADDR/S2");
@@ -204,12 +204,12 @@ public class DispatchSouthernParser extends FieldProgramParser {
     else if (chkFlag(DSFLG_BAD_PLACE | DSFLG_OPT_BAD_PLACE)) {
       appendTerm(sb, "PLACE", DSFLG_BAD_PLACE, DSFLG_OPT_BAD_PLACE);
     }
-    
+
     appendTerm(sb, "X", DSFLG_X, DSFLG_OPT_X);
-    
+
     if (chkFlag(DSFLG_NAME)) sb.append(" NAME NAME+?");
     else if (chkFlag(DSFLG_OPT_NAME)) sb.append(" NAME+?");
-    
+
     appendTerm(sb, "PHONE", DSFLG_PHONE, DSFLG_OPT_PHONE);
 
     if (chkFlag(DSFLG_CODE)) sb.append(" CODE! CODE+? PARTCODE?");
@@ -220,7 +220,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         sb.append(" CODE+? PARTCODE?");
       }
     }
-    
+
     appendTerm(sb, "UNIT", DSFLG_UNIT1, DSFLG_OPT_UNIT1);
     appendTerm(sb, "ID", DSFLG_ID, DSFLG_OPT_ID);
     appendTerm(sb, "TIME", DSFLG_TIME,  DSFLG_OPT_TIME);
@@ -229,7 +229,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     program = fixProgram(program);
 //    System.out.println(program);
     setProgram(program, 0);
-    
+
     // For non-delimited alerts, build a list of field terms
     sb = new StringBuilder();
     if (chkFlag(DSFLG_ADDR_LEAD_PLACE)) sb.append("PLACE ");
@@ -246,34 +246,34 @@ public class DispatchSouthernParser extends FieldProgramParser {
     sb.append(" CODE CALL INFO ID");
     defaultFieldList = sb.toString();
   }
-  
+
   /**
    * Convert old deprecated flags to new flags
    * @param flags flags to be converted
    * @return properly converted flags
    */
   private static int convertFlags(int flags) {
-    
+
     // If new constructor flags, nothing needs to be done
     if ((flags & DSFLG_ADDR) != 0) return flags;
-    
+
     // Otherwise, we have to go to work
     int nflgs = 0;
     if (chkFlag(flags, DSFLAG_DISPATCH_ID)) nflgs |= DSFLG_DISP_ID;
     if (chkFlag(flags, DSFLAG_OPT_DISPATCH_ID)) nflgs |= DSFLG_OPT_DISP_ID;
-    
+
     nflgs |= DSFLG_ADDR;
     if (chkFlag(flags, DSFLAG_LEAD_PLACE)) nflgs |= DSFLG_ADDR_LEAD_PLACE;
     if (chkFlag(flags, DSFLAG_TRAIL_PLACE)) nflgs |= DSFLG_ADDR_TRAIL_PLACE;
     if (chkFlag(flags, DSFLAG_BOTH_PLACE)) nflgs |= DSFLG_ADDR_LEAD_PLACE|DSFLG_ADDR_TRAIL_PLACE;
     if (!chkFlag(flags, (DSFLAG_LEAD_PLACE|DSFLAG_TRAIL_PLACE|DSFLAG_NO_PLACE|DSFLAG_PLACE_FOLLOWS|DSFLAG_FOLLOW_CROSS|DSFLAG_CROSS_NAME_PHONE))) nflgs |= DSFLG_ADDR_TRAIL_PLACE;
     if (chkFlag(flags, DSFLAG_NO_IMPLIED_APT)) nflgs |= DSFLG_ADDR_NO_IMPLIED_APT;
-    
+
     if (chkFlag(flags, DSFLAG_STATE)) nflgs |= DSFLG_OPT_STATE;
-    
+
     if (chkFlag(flags, DSFLAG_FOLLOW_CALL)) nflgs |= DSFLG_BAD_CALL;
     if (chkFlag(flags, DSFLAG_PLACE_FOLLOWS)) nflgs |= DSFLG_OPT_BAD_PLACE;
-    
+
     if (chkFlag(flags, DSFLAG_FOLLOW_CROSS)) {
       nflgs |= DSFLG_OPT_X;
     } else if (chkFlag(flags, DSFLAG_CROSS_NAME_PHONE)) {
@@ -281,20 +281,20 @@ public class DispatchSouthernParser extends FieldProgramParser {
     } else if (!chkFlag(flags, DSFLAG_NO_NAME_PHONE)) {
       nflgs |= DSFLG_OPT_NAME|DSFLG_OPT_PHONE;
     }
-    
+
     nflgs |= DSFLG_OPT_CODE;
-    
+
     if (chkFlag(flags, DSFLAG_LEAD_UNIT)) nflgs |= DSFLG_OPT_UNIT1;
-    
+
     if (!chkFlag(flags, DSFLAG_NO_ID)) {
-      nflgs |= (chkFlag(flags, DSFLAG_ID_OPTIONAL)) ? DSFLG_OPT_ID : DSFLG_ID; 
+      nflgs |= (chkFlag(flags, DSFLAG_ID_OPTIONAL)) ? DSFLG_OPT_ID : DSFLG_ID;
     }
-    
+
     nflgs |= (chkFlag(flags, DSFLAG_TIME_OPTIONAL)) ? DSFLG_OPT_TIME : DSFLG_TIME;
-    
+
     return nflgs;
   }
-  
+
   private void appendTerm(StringBuilder sb, String term, int reqFlag, int optFlag) {
     if (chkFlag(reqFlag | optFlag)) {
       sb.append(' ');
@@ -302,15 +302,15 @@ public class DispatchSouthernParser extends FieldProgramParser {
       sb.append(chkFlag(optFlag) ? '?' : '!');
     }
   }
-  
+
   private boolean chkFlag(int mask) {
     return chkFlag(flags, mask);
   }
-  
+
   private static boolean chkFlag(int flags, int mask) {
     return ((flags & mask) != 0);
   }
-  
+
   private static final Pattern OPT_PLACE_PTN = Pattern.compile(" PLACE\\? ((?:[A-Z]+\\? )+[A-Z]+!)");
 
   /**
@@ -319,30 +319,30 @@ public class DispatchSouthernParser extends FieldProgramParser {
    * @return fixed program string
    */
   private static String fixProgram(String program) {
-    
+
     // An optional place name followed by an optional field does not work.
     // But if that is followed by a required field, we can use that required field
     // to identify when a place field exists.
     Matcher match = OPT_PLACE_PTN.matcher(program);
     if (match.find()) {
-      
+
       // fldList contains the string of optional fields following the PLACE? field, plus
       // a trailing required field.  That sequence needs to be turned into one big
       // conditional branch statement
       String fldList = match.group(1);
-      
+
       // Start building the conditional branch statement
       StringBuilder sb = new StringBuilder(program.substring(0,match.start()));
       String connect = " ( ";
       int spt = 0;
-      
+
       // Looping through each term in fldList
       do {
-        
+
         // For each term, we build a tList list which consists of
         // 1) the current term from the field list, stripped of
         //    the trailing question mark
-        // 2) All of the following terms from the field list 
+        // 2) All of the following terms from the field list
         int ept = fldList.indexOf(' ', spt);
         String tList;
         if (ept < 0) {
@@ -351,29 +351,29 @@ public class DispatchSouthernParser extends FieldProgramParser {
         } else {
           tList = fldList.substring(spt, ept-1) + fldList.substring(ept);
         }
-        
+
         // Bumpt spt to the next field term
         spt = ept + 1;
-        
+
         // Next we add two branches to are conditional branch statement
         // The first consist of the constructed tList
         // The second consists of a PLACE term followed by the constructted tList
         sb.append(connect);
         connect = " | ";
-        
+
         sb.append(tList);
         sb.append(connect);
         sb.append("PLACE ");
         sb.append(tList);
       } while (spt < fldList.length());
-      
+
       // Finish off by closing the conditional branch construct and appendig the
       // rest of the additional statement
       sb.append(" )");
       sb.append(program.substring(match.end()));
       program = sb.toString();
     }
-    
+
     // Fix PHONE - ID combination
     program = program.replace(" PHONE? ID! ", " ( PHONE/Z ID! | ID! ) ");
     return program;
@@ -389,11 +389,11 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callSet = callSet;
     super.setupCallList(callSet);
   }
-  
+
   protected void setCallCodePtn(String callCodePtn) {
     setCallCodePtn(callCodePtn == null ? null : Pattern.compile(callCodePtn));
   }
-  
+
   protected void setCallCodePtn(Pattern callCodePtn) {
     this.callCodePtn = callCodePtn;
   }
@@ -412,7 +412,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = RUN_REPORT_PTN1.matcher(body);
     if (match.lookingAt()) {
       setFieldList("ID CALL INFO");
@@ -422,7 +422,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strSupp = body.substring(match.start(3)).replace('|', '\n').trim();
       return true;
     }
-    
+
     match = RUN_REPORT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("ID CALL UNIT INFO");
@@ -434,7 +434,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(5)));
       return true;
     }
-    
+
     // Message must always start with dispatcher ID, which we promptly discard
     if (chkFlag(DSFLG_DISP_ID | DSFLG_OPT_DISP_ID)) {
       match = LEAD_PTN.matcher(body);
@@ -442,18 +442,18 @@ public class DispatchSouthernParser extends FieldProgramParser {
         body = body.substring(match.end()).trim();
       } else if (!chkFlag(DSFLG_OPT_DISP_ID)) return false;
     }
-    
+
     boolean procEmptyFields = chkFlag(DSFLG_PROC_EMPTY_FLDS);
-    
+
     if (parseFieldOnly || !chkFlag(DSFLG_TIME | DSFLG_OPT_TIME)) {
       if (!parseDelimitedFields(procEmptyFields || parseFieldOnly, body, data)) return false;
       if (!parseFieldOnly) {
         if (data.strCallId.length() == 0 && data.strTime.length() == 0 && data.strCode.length() == 0 && data.strGPSLoc.length() == 0) return false;
       }
     }
-    
+
     else {
-      
+
       // See if this looks like one of the new comma delimited page formats
       // If it is, let FieldProgramParser handle it.
       match = NAKED_TIME_PTN.matcher(body);
@@ -468,16 +468,16 @@ public class DispatchSouthernParser extends FieldProgramParser {
           if (!procEmptyFields) delim += '+';
           if (!parseFields(body.split(delim), data)) return false;
         }
-        
+
         // Blank delimited fields get complicated
-        // We already found a time field.  Use that to split the message 
-        // into and address and extra versions 
+        // We already found a time field.  Use that to split the message
+        // into and address and extra versions
         else {
           setFieldList(defaultFieldList);
           data.strTime = match.group(2);
           String sAddr = body.substring(0,match.start()).trim();
           String sExtra = body.substring(match.end()).trim();
-          
+
           // See if there is an ID field immediate in front of the time field
           if (chkFlag(DSFLG_ID | DSFLG_OPT_ID)) {
             match = ID_PTN.matcher(sAddr);
@@ -486,14 +486,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
               sAddr = sAddr.substring(0,match.start()).trim();
             } else if (chkFlag(DSFLG_ID)) return false;
           }
-          
+
           // See if there is a labeled OCA field at the end of the extra block
           match = OCA_TRAIL_PTN.matcher(sExtra);
           if (match.find()) {
             data.strCallId = match.group(1).trim();
             sExtra = sExtra.substring(0,match.start()).trim();
           }
-          
+
           if (sAddr.length() > 0) {
             parseMain(sAddr, data);
             parseExtra(sExtra, data);
@@ -503,14 +503,14 @@ public class DispatchSouthernParser extends FieldProgramParser {
         }
       }
     }
-    
+
     // set an call description if we do not have one
     if (data.strCall.length() == 0 && data.strSupp.length() == 0) data.strCall= "ALERT";
-    
+
     // Remove any asterisks or verify markers from cross street info
     data.strCross = data.strCross.replace("*", "");
     data.strCross = VERIFY_X_PTN.matcher(data.strCross).replaceAll(" ").trim();
-    
+
     // Apparently there is no way to not enter a street number, entering 0 or 1 is the accepted
     // workaround.
     if (data.strAddress.startsWith("1 ") || data.strAddress.startsWith("0 ")) {
@@ -521,7 +521,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         data.strCross = "";
       }
     }
-    
+
     //  Occasional implied intersections end up in the apt field
     if (data.strApt.length() > 0) {
       int status = checkAddress(data.strApt);
@@ -533,7 +533,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         data.strApt = "";
       }
     }
-    
+
     return true;
   }
 
@@ -555,12 +555,12 @@ public class DispatchSouthernParser extends FieldProgramParser {
     }
     return parseFields(flds, data);
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " CALL";
   }
-  
+
   private static final Pattern MM_MARK_PTN = Pattern.compile("MM(?: +\\d+)?\\b *");
 
   protected void parseMain(String sAddr, Data data) {
@@ -584,19 +584,19 @@ public class DispatchSouthernParser extends FieldProgramParser {
     parseAddress(st, flags, sAddr, data);
     if (leadOne) data.strAddress = append("1", " ", data.strAddress);
     String sLeft = getLeft();
-    
+
     Matcher match = MM_MARK_PTN.matcher(sLeft);
     if (match.lookingAt()) {
       data.strAddress = append(data.strAddress, " ", match.group());
       sLeft = sLeft.substring(match.end());
     }
-    
+
     // If everything went to place, move it back to address
     if (st == StartType.START_PLACE && data.strAddress.length() == 0) {
       parseAddress(data.strPlace, data);
       data.strPlace = "";
     }
-    
+
     // Processing what is left gets complicated
     // First strip anything that looks like a trailing phone number
     if (chkFlag(DSFLG_PHONE | DSFLG_OPT_PHONE)) {
@@ -604,21 +604,21 @@ public class DispatchSouthernParser extends FieldProgramParser {
       if (match.find()) {
         data.strPhone = match.group();
         sLeft = sLeft.substring(0,match.start()).trim();
-      } 
+      }
     }
-    
+
     // If this is a (misused) call description, make it so
     if (chkFlag(DSFLG_BAD_CALL)) {
       data.strCall = stripCallCode(sLeft, data);
       return;
     }
-    
+
     // Ditto for a misused place name
     if (chkFlag(DSFLG_BAD_PLACE | DSFLG_OPT_BAD_PLACE)) {
       data.strPlace = sLeft;
       return;
     }
-    
+
     // if cross street information follows the address, process that
     if (chkFlag(DSFLG_X | DSFLG_OPT_X) && !chkFlag(DSFLG_NAME | DSFLG_OPT_NAME)) {
       match = EXTRA_CROSS_PTN.matcher(sLeft);
@@ -635,8 +635,8 @@ public class DispatchSouthernParser extends FieldProgramParser {
       sLeft = stripFieldEnd(sLeft, " X");
       data.strCross = append(data.strCross, " & ", sLeft);
       return;
-    } 
-    
+    }
+
     if (chkFlag(DSFLG_X | DSFLG_OPT_X)) {
       if (sLeft.startsWith("X ")) {
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS, sLeft.substring(2).trim(), data);
@@ -655,7 +655,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         }
       }
     }
-    
+
     // Otherwise, if the place name isn't located in front of the address
     // assume whatever follows it is a place name
     if (sLeft != null) {
@@ -671,7 +671,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
           data.strPlace = append(data.strPlace, " - ", sLeft);
         }
       }
-  
+
       // Otherwise assume it is a name followed by an optional phone number
       else {
         data.strName = cleanWirelessCarrier(sLeft);
@@ -692,11 +692,11 @@ public class DispatchSouthernParser extends FieldProgramParser {
   }
 
   private String stripLeadPlace(String field, Data data, boolean trailName) {
-    
+
     if (!chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) return field;
-    
+
     if (field.length() == 0 || Character.isDigit(field.charAt(0))) return field;
-    
+
     boolean anchorEnd = !trailName;
     int pt = field.indexOf(" X ");
     if (pt < 0) pt = field.indexOf('/');
@@ -706,7 +706,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     } else {
       pt = field.length();
     }
-    
+
     String part = field.substring(0,pt).trim();
     pt = part.indexOf('@');
     if (pt < 0) pt = part.indexOf('*');
@@ -714,7 +714,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strPlace = append(data.strPlace, " - ", field.substring(0,pt).trim());
       return field.substring(pt+1).trim();
     }
-    
+
     int flags = FLAG_ONLY_CROSS | FLAG_IGNORE_AT;
     if (anchorEnd) flags |= FLAG_ANCHOR_END;
     Result res = parseAddress(StartType.START_PLACE, flags, part);
@@ -725,31 +725,31 @@ public class DispatchSouthernParser extends FieldProgramParser {
       field = field.substring(tmpData.strPlace.length()).trim();
       return field;
     }
-    
+
     if (field.startsWith("X ") || field.startsWith("/")) {
       return field.substring(1).trim();
     }
-    
+
     if (crossMark || trailName) return field;
-    
+
     data.strPlace = append(data.strPlace, " - ", field);
     return "";
   }
 
   protected void parseExtra(String sExtra, Data data) {
-    
+
     if (chkFlag(DSFLG_BAD_CALL)) {
       data.strSupp = sExtra;
       return;
     }
-    
+
     sExtra = stripCallCode(sExtra, data);
-    
+
     if (chkFlag(DSFLG_NO_INFO)) {
       data.strCall = sExtra;
       return;
     }
-    
+
     if (callSet != null) {
       String call = callSet.getCode(sExtra, true);
       if (call != null) {
@@ -758,7 +758,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         return;
       }
     }
-    
+
     Matcher match = CALL_PTN.matcher(sExtra);
     if (match.find() && match.end() > 0 && match.end() < sExtra.length()) {
       String sCall = match.group(1).trim();
@@ -777,19 +777,19 @@ public class DispatchSouthernParser extends FieldProgramParser {
         return;
       }
     }
-    
+
     if (sExtra.length() <= 30) {
       data.strCall = sExtra;
       return;
     }
-    
+
     match = CALL_BRK_PTN.matcher(sExtra);
     if (match.find() && match.start() <= 30) {
       data.strCall = sExtra.substring(0,match.start()).trim();
       data.strSupp = sExtra.substring(match.end()).trim();
       return;
     }
-    
+
     data.strSupp = sExtra;
   }
 
@@ -802,22 +802,22 @@ public class DispatchSouthernParser extends FieldProgramParser {
     parseAddress(StartType.START_CALL_PLACE, FLAG_AT_SIGN_ONLY | FLAG_RECHECK_APT, sExtra, data);
     data.strSupp = getLeft();
   }
-  
+
   //  Classes for handling the new comma delimited format
-  
+
   private class BaseCrossField extends CrossField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.contains(" X ") && !field.startsWith("X ") && !field.endsWith(" X")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = field.replace(" X ", " / ");
@@ -828,7 +828,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
@@ -844,7 +844,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (name.equals("ID2")) return new IdField("\\d{6}-\\d{2,4}");
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CNCT_PTN = Pattern.compile("(?:[/&]|AND\\b) *(.*)", Pattern.CASE_INSENSITIVE);
   protected class BaseAddressField extends AddressField {
     @Override
@@ -868,7 +868,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         data.strAddress = append("1", " ", data.strAddress);
       } else {
         super.parse(field, data);
-        
+
         // If we pulled a place name from the front fo the string, see if
         // it looks like a legitimate address that got mangled by something
         // further back
@@ -890,7 +890,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       }
     }
   }
-  
+
   // Name field continues until it finds a phone number, call number, or time
   private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d|");
   class BaseNameField extends NameField {
@@ -898,7 +898,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (NOT_NAME_PTN.matcher(field).matches()) return false;
@@ -906,54 +906,56 @@ public class DispatchSouthernParser extends FieldProgramParser {
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strName = append(data.strName, ", ", cleanWirelessCarrier(field));
     }
   }
-  
+
   private class BaseCodeField extends CodeField {
     public BaseCodeField() {
       super("[FML]DL *(.*)|", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (data.strCode.length() == 0) super.parse(field, data);
     }
   }
-  
+
   private class BaseUnitField extends UnitField {
     public BaseUnitField() {
       setPattern(unitPtn, true);
     }
   }
-  
+
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("(?:geo:|https://maps.google.com/\\?q=)(.*?)(?:&.*)?");
   private static final Pattern INFO_PRI_PTN = Pattern.compile("\\d");
   protected class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
-      if (field.startsWith("geo:")) {
-        field = setGPSLoc(field.substring(4).trim(), data);
+
+      Matcher match = INFO_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(match.group(1), data);
         return;
       }
-      
+
       if (data.strCall.length() == 0) {
         data.strCall = stripCallCode(field, data);
         return;
       }
-      
-      if (data.strSupp.length() == 0 && data.strPriority.length() == 0 && 
+
+      if (data.strSupp.length() == 0 && data.strPriority.length() == 0 &&
           INFO_PRI_PTN.matcher(field).matches()) {
         data.strPriority = field;
         return;
       }
-      
+
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT CODE CALL PRI GPS INFO";
