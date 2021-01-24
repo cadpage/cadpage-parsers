@@ -16,7 +16,7 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
 
   public ALLauderdaleCountyBParser() {
     super(ALLauderdaleCountyAParser.CITY_TABLE, "LAUDERDALE COUNTY", "AL",
-        "Pri:SRC? Address:ADDR/S! Time:TIME! Cross_Streets:X! Event_Type:CALL! Re:INFO!");
+        "Pri:SRC? Address:ADDR/S! Time:TIME! Cross_Streets:X! Event_Type:CALL! Re:INFO");
     setBreakChar('-');
   }
 
@@ -40,7 +40,8 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,3}\\d{8}) EV- +.*");
-  private static final Pattern MASTER = Pattern.compile("([A-Z]{2,3}\\d{8}) EV- .*? - ((?:Pri|Address)-.*)");
+  private static final Pattern MASTER = Pattern.compile("([A-Z]{2,4}\\d{8}) EV- .*?(?: - |\n)((?:Pri|Address)-.*)");
+  private static final Pattern URL_PTN = Pattern.compile("(.*?)[ .]+(https?://.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -72,12 +73,18 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
       return false;
     } while (false);
 
+    Matcher match = URL_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1);
+      data.strInfoURL = match.group(2);
+    }
+
     return super.parseMsg(body, data);
   }
 
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram();
+    return "ID " + super.getProgram() + " URL";
   }
 
   @Override
