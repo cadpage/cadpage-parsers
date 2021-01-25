@@ -44,21 +44,26 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
       data.strCross = "";
     }
 
-    // Replace certain small towns or subdivisions with Google parameter
-    String cityAlt = CITY_TABLE.getProperty(data.strCity);
-    if(cityAlt != null && cityAlt.length() > 0) {
-      data.strPlace = data.strCity;
-      data.strCity = cityAlt;
-    }
-
     return true;
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("SRC_X")) return new MySourceCrossField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM) *(.*)");
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
   }
 
   /***
@@ -91,18 +96,30 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " X MAP";
+      return super.getFieldNames() + " MAP X";
     }
 
     @Override
     public boolean canFail() {
       return true;
     }
+  }
 
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "NARR");
+      super.parse(field, data);
+    }
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, CITY_TABLE);
   }
 
   // Lookup table for Google city designations
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-    "ST JOE", "6"
+    "ST JOE", "PEARL RIVER"
   });
 }
