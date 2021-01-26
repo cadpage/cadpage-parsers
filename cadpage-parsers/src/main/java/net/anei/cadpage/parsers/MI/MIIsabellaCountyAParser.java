@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 /**
@@ -14,7 +15,9 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
 
   public MIIsabellaCountyAParser() {
     super(CITY_CODES, "ISABELLA COUNTY", "MI",
-           "( CANCEL | FYI? CALL ) ( ADDR/Z CITY! | ADDR2/S! ) X+? INFO/N+? ID UNIT END");
+           "( UNIT ENROUTE ADDR CITY CALL/SDS " +
+           "| ( CANCEL | FYI? CALL ) ( ADDR/Z CITY! | ADDR2/S! ) X+? INFO/N+? ID UNIT " +
+           ") END");
   }
 
   @Override
@@ -23,7 +26,17 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   }
 
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (body.contains(",Enroute,")) {
+      data.msgType = MsgType.GEN_ALERT;
+      body = body.replace(',', ';');
+    }
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public Field getField(String name) {
+    if (name.equals("ENROUTE")) return new CallField("Enroute");
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
