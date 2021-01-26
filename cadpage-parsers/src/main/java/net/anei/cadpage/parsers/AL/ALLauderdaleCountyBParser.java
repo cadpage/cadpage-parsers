@@ -39,7 +39,7 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
     return super.parseHtmlMsg(subject, body, data);
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,3}\\d{8}) EV- +.*");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,5}\\d{8}) EV- +.*");
   private static final Pattern MASTER = Pattern.compile("([A-Z]{2,4}\\d{8}) EV- .*?(?: - |\n)((?:Pri|Address)-.*)");
   private static final Pattern URL_PTN = Pattern.compile("(.*?)[ .]+(https?://.*)");
 
