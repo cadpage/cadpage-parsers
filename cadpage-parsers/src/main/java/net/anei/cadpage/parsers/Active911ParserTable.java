@@ -215,6 +215,7 @@ public class Active911ParserTable {
       "US/CA/Suisun",                     "CASuisunCityA",
       "US/CA/TulareCounty",               "CATulareCountyA",
       "US/CA/TuolumneCounty",             "CATuolumneCounty",
+      "US/CA/UkiahValleyFireAuthority",   "CAMendocinoCountyA",
       "US/CA/VacavilleFD",                "CASolanoCountyA,CASolanoCountyD",
       "US/CA/Vallejo",                    "CASolanoCountyA",
       "US/CA/VRECC",                      "CASanJoaquinCounty",
