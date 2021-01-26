@@ -20,6 +20,11 @@ public class OHTrumbullCountyParser extends FieldProgramParser {
     return "911no@co.trumbull.oh.us";
   }
 
+  @Override
+  public int  getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern DELIM = Pattern.compile("\\*{2,}");
 
   @Override
