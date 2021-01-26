@@ -920,6 +920,7 @@ public class Active911ParserTable {
       "US/MO/BarryCounty",                "MOBarryCountyC",
       "US/MO/BentonCounty",               "MOBentonCounty",
       "US/MO/BridgetonPD",                "MOStLouisCountyH",
+      "US/MO/BuffaloCityFireRescue",      "MODallasCounty",
       "US/MO/BuchananCounty",             "MOBuchananCountyB",
       "US/MO/CaldwellCounty",             "MOCaldwellCounty",
       "US/MO/CaldwellSheriff",            "MOCaldwellCounty",
