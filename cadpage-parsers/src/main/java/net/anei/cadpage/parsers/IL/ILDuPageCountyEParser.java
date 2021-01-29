@@ -10,33 +10,33 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ILDuPageCountyEParser extends FieldProgramParser {
-  
+
   public ILDuPageCountyEParser() {
     this("DUPAGE COUNTY", "IL");
   }
-  
+
   public ILDuPageCountyEParser(String defCity, String defState) {
-    super(LONG_CITY_CODES, defCity, defState, 
+    super(LONG_CITY_CODES, defCity, defState,
           "ADDR ID DATETIME CALL! X INFO! INFO/D+? GPS Disp:UNIT EMPTY? END");
     setupCityValues(CITY_CODES);
     setupGpsLookupTable(ILDuPageCountyParser.GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ILDuPageCountyE";
   }
-  
+
   @Override
   public String getFilter() {
     return "alerts@etsb911.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
@@ -47,7 +47,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -57,7 +57,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
     if (name.equals("GPS")) return new GPSField("[-+]?\\d{2}\\.\\d{2,} [-+]?\\d{2}\\.\\d{2,}|0 0", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_MAP_PTN = Pattern.compile("(.*?)(?:[- ]([A-Z]{2,4}))?(?:[;,](?:(?:APT|LOT|RM|ROOM|STE|UNIT) +)?([- A-Z0-9]+?)(?: \\2)?)?((?: (?:[A-Z]{1,2}\\d{1,3}[A-Z]?|\\d{2,3}[A-Z]|\\d{4}|[A-Z]{2,3}PD)){2})?");
   private static final Pattern DOTS_PTN = Pattern.compile("\\.{2,}");
   private class MyAddressField extends AddressField {
@@ -79,11 +79,11 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
         p = new Parser(field);
         apt = "";
       }
-      
+
       field = p.get(':');
-      
+
       data.strPlace = stripFieldStart(p.get(), "@").replaceAll(": @", " - ");
-      
+
       if (gpsLoc != null) field = gpsLoc + field;
       field = DOTS_PTN.matcher(field).replaceAll(" ");
       String apt2 = null;
@@ -114,13 +114,13 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       if (apt2 != null) data.strApt = append(data.strApt, "-", apt2);
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY MAP PLACE APT";
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{2}(?:\\d\\d)?) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
@@ -137,7 +137,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -146,7 +146,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AD",   "ADDISON",
       "AE",   "",
@@ -266,7 +266,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "RF",   "ROSELLE",
       "RG",   "RIVER GROVE",
       "RM",   "ROLLING MEADOWS",
-      "RO",   "ROSELLE",       // Not ROSEMONT
+      "RO",   "ROSELLE",
       "RP",   "ROBERTS PARK",
       "RR",   "RIVERSIDE",
       "RS",   "ROSELEE",
@@ -305,7 +305,7 @@ public class ILDuPageCountyEParser extends FieldProgramParser {
       "WY",   "WILL COUNTY",
       "YC",   "YORK CENTER"
   });
-   
+
   private static final Properties LONG_CITY_CODES = buildCodeTable(new String[]{
       "WEST SPRING",      "WESTERN SPRINGS"
   });
