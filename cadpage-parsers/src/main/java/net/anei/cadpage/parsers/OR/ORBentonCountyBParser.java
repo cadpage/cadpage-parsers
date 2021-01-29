@@ -4,22 +4,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
-  
+
   public ORBentonCountyBParser() {
     this("BENTON COUNTY");
   }
-  
+
   public ORBentonCountyBParser(String defCity) {
-    super(defCity, 
+    super(defCity,
           "( CANCEL ADDR/S CITY! INFO/N+ " +
           "| CALL ADDR/Z CITY_CODE INFO/N+ " +
           "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " +
-          "| INFO INFO/Z+? ( PHONE DATETIME ID! | DATETIME ID! | ID! ) " + 
-          "| FYI? CALL PLACE ADDR/SZ X/Z X/Z CITY MAP CODE UNIT UNIT/C INFO! ( PLACE END | INFO+? PLACE PHONE DATETIME ID ID2 END ) " +
+          "| INFO INFO/Z+? ( PHONE DATETIME ID! | DATETIME ID! | ID! ) " +
+          "| FYI? CALL PLACE ADDR/S X X ( INFO INFO+ " +
+                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( PLACE END | INFO+? PLACE PHONE DATETIME ID ID2 END ) ) " +
           ")");
   }
 
@@ -27,7 +29,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORBentonCountyB";
@@ -35,17 +37,27 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+
+    // DHS Fax Reports contains all kind of very sensitive details about possible child abuse
+    // cases that nobody has any business nowing about.
+    if (body.startsWith("DHS FAX REPORT")) {
+      setFieldList("CALL");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strCall = "DHS FAX REPORT";
+      return true;
+    }
+
     if (body.contains(",Enroute,")) return parseFields(body.split(","), data);
-    
+
     if (!parseFields(body.split(";", -1), data)) return false;
     fixAddress(data);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CITY_CODE")) return new MyCityCodeField();
-    if (name.equals("CANCEL")) return new CallField("CANCEL", true);
+    if (name.equals("CANCEL")) return new CallField("CANCEL|RECALL ALARM", true);
     if (name.equals("ENROUTE")) return new CallField("Enroute", true);
     if (name.equals("FYI")) return new SkipField("FYI:|Update:");
     if (name.equals("ADDR")) return new MyAddressField();
@@ -53,21 +65,21 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("PH")) return new PhoneField("\\d{10}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("ID")) return new IdField("\\d+", true);
+    if (name.equals("ID")) return new IdField("\\d+", false);
     if (name.equals("ID2")) return new SkipField("\\d*", true);
     if (name.equals("PRI")) return new SkipField("\\d{0,1}");
     return super.getField(name);
   }
-  
+
   private class MyCityCodeField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // Out of county M/A
       if (field.length() == 0 && getRelativeField(+1).length() == 0) {
         data.defCity = "";
@@ -78,19 +90,19 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       data.strCity = city;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("LL:")) {
@@ -103,7 +115,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       return true;
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -112,7 +124,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_DELIM_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d .*\\]\\s*|\n");
   private static final Pattern CODE_PTN = Pattern.compile("\\d{1,2}[A-EO]\\d{1,2}[A-Z]?", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
@@ -120,14 +132,14 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.contains("\n") && !field.endsWith("]")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       String delim = "; ";
@@ -144,13 +156,13 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
          }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH " + super.getFieldNames();
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(\\d\\d/\\d\\d/\\d{4})|(\\d{4}-\\d{2}-\\d{2}))? (\\d\\d:\\d\\d:\\d\\d)(?:\\.\\d+)?");
   private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
   private static final String DATE_TIME_MASK1 = "NN/NN/NNNN NN:NN:NN";
@@ -160,7 +172,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replace(" /", "/").replace("/ ", "/");
@@ -175,11 +187,11 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       data.strTime = match.group(3);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (checkParse(field, data)) return;
-      
+
       if (!isLastField()) {
         field = DIGIT_PTN.matcher(field).replaceAll("N");
         if (!DATE_TIME_MASK1.startsWith(field) &&
@@ -187,7 +199,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
       }
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("FOSTER")) city = "SWEET HOME";

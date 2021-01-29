@@ -9,28 +9,28 @@ import net.anei.cadpage.parsers.dispatch.DispatchRedAlert2Parser;
 
 
 public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
-  
+
   private static final Pattern OOC_MUT_AID_BOX = Pattern.compile("(.*) ([BCY]C[FM]B \\d\\d-\\d\\d) (MD|PA)");
   private static final Pattern CITY_ST_PTN = Pattern.compile("(.*?) +(PA|MD)");
-  
+
   public MDHarfordCountyBParser() {
     super(CITY_LIST, "HARFORD COUNTY","MD");
   }
 
   @Override
   public String getFilter() {
-    return "harfordcty@rednmxcad.com";
+    return "harfordcty@rednmxcad.com,rednmxmobile@harfordcountymd.gov";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
     int pt = data.strCall.indexOf(' ');
-    
+
     if (pt < 0) return false;
     data.strUnit = data.strCall.substring(0,pt);
     data.strCall = data.strCall.substring(pt+1).trim();
-    
+
     if (data.strCity.length() == 0) {
       Matcher match = OOC_MUT_AID_BOX.matcher(data.strAddress);
       if (match.matches()) {
@@ -58,7 +58,7 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "UNIT CALL").replace("CITY", "CITY ST");
@@ -69,7 +69,7 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
     "ABERDEEN MD",
     "HAVRE DE GRACE MD",
     "BEL AIR MD",
-    
+
     "ABERDEEN PROVING GROUND MD",
     "EDGEWOOD MD",
     "FALLSTON MD",
@@ -87,6 +87,6 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
     "WHITE HALL MD",
     "MONKTON MD",
     "BALDWIN MD",
-    
+
   };
 }
