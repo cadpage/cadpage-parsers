@@ -49,6 +49,8 @@ public class DispatchA46Parser extends SmartAddressParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) (\\d{5}|0000)(?:-\\d+)?");
 
+  private static final Pattern BODY_PTN4 = Pattern.compile("There has been a\\(n\\) (.*?) reported at (.*?) 0+\\.");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
@@ -182,31 +184,41 @@ public class DispatchA46Parser extends SmartAddressParser {
 
       body = stripFieldStart(body, "A ");
       mat = BODY_PTN3.matcher(body);
-      if (!mat.matches()) return false;
-      data.strCall = mat.group(1);
-      String addr = mat.group(2);
-      data.strDate =  mat.group(3);
-      setTime(TIME_FMT, mat.group(4), data);
-      data.strSupp = mat.group(5);
-
-      String zip = null;
-      mat = ADDR_ZIP_PTN.matcher(addr);
       if (mat.matches()) {
-        addr = mat.group(1).trim();
-        zip = mat.group(2);
-        if (zip.startsWith("0000")) zip = null;
+        data.strCall = mat.group(1);
+        String addr = mat.group(2);
+        data.strDate =  mat.group(3);
+        setTime(TIME_FMT, mat.group(4), data);
+        data.strSupp = mat.group(5);
+
+        String zip = null;
+        mat = ADDR_ZIP_PTN.matcher(addr);
+        if (mat.matches()) {
+          addr = mat.group(1).trim();
+          zip = mat.group(2);
+          if (zip.startsWith("0000")) zip = null;
+        }
+
+        pt = addr.lastIndexOf(',');
+        if (pt >= 0) {
+          data.strState = addr.substring(pt+1).trim();
+          addr = addr.substring(0,pt).trim();
+        }
+
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+
+        if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+        return true;
       }
 
-      pt = addr.lastIndexOf(',');
-      if (pt >= 0) {
-        data.strState = addr.substring(pt+1).trim();
-        addr = addr.substring(0,pt).trim();
+      else if ((mat = BODY_PTN4.matcher(body)).matches()) {
+        setFieldList("CALL ADDR APT CITY");
+        data.strCall = mat.group(1).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, mat.group(2).trim(), data);
+        return true;
       }
-
-      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
-
-      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
-      return true;
+      
+      else return false;
     }
 
     else return false;
