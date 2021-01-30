@@ -273,6 +273,7 @@ public class Active911ParserTable {
       "US/CO/PitkinCounty",               "COPitkinCounty",
       "US/CO/RioGrandeounty",             "CORioGrandeCountyA",
       "US/CO/SanMiguelCounty",            "COSanMiguelCounty",
+      "US/CO/SouthwestMemorialAmbulance", "COMontezumaCounty",
       "US/CO/StadiumMedical",             "CODenverB",
       "US/CO/TellerCounty",               "COTellerCounty",
       "US/CO/USAMobility",                "CODouglasCountyB",
