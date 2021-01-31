@@ -9,10 +9,11 @@ Salem County, NJ
 */
 
 public class NJSalemCountyParser extends GroupBestParser {
-  
+
   public NJSalemCountyParser() {
     super(new NJSalemCountyAParser(),
           new NJSalemCountyBParser(),
-          new NJSalemCountyCParser());
+          new NJSalemCountyCParser(),
+          new NJSalemCountyDParser());
   }
 }
