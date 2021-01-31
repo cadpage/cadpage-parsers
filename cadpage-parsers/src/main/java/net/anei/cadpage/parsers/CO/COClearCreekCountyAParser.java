@@ -10,6 +10,11 @@ public class COClearCreekCountyAParser extends DispatchA55Parser {
 
   @Override
   public String getFilter() {
-    return "cadalerts@messaging.eforcesoftware.net";
+    return "reports@messaging.eforcesoftware.net";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 }
