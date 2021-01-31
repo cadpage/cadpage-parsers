@@ -20,7 +20,7 @@ public class PAAlleghenyCountyParser extends GroupBestParser {
           new PAAlleghenyCountyDParser());
   }
 
-  // We have already complained about the msiformated coordinates in Active911 tables
+  // We have already complained about the misformatted coordinates in Active911 tables
   // so just ignore them if they are still there.
 
   static final Properties GPS_TABLE_LOOKUP = buildCodeTable(new String[]{
@@ -86,6 +86,8 @@ public class PAAlleghenyCountyParser extends GroupBestParser {
       "23 DUQUESNE GV",                       "+40.591059,-79.999715",
       "940 E INGOMAR RD",                     "+40.592813,-80.011393",
       "1370 E INGOMAR RD",                    "+40.593387,-79.998900",
+      "2001 EAGLE RIDGE LN",                  "+40.300941,-79.987498",
+      "2005 EAGLE RIDGE LN",                  "+40.300089,-79.992117",
       "24 EAST DRIVE GV",                     "+40.324753,-80.006039",
       "255 EAST PARK DR",                     "+40.323778,-79.999121",
       "700 EAST PARK DR",                     "+40.330843,-80.003062",
