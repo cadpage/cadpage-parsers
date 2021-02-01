@@ -212,12 +212,12 @@ public class DispatchA46Parser extends SmartAddressParser {
       }
 
       else if ((mat = BODY_PTN4.matcher(body)).matches()) {
-        setFieldList("CALL ADDR APT CITY");
+        setFieldList("ID CALL ADDR APT CITY");
         data.strCall = mat.group(1).trim();
         parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, mat.group(2).trim(), data);
         return true;
       }
-      
+
       else return false;
     }
 

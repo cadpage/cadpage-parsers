@@ -10,7 +10,7 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Number:ID? Call_Type:CALL/SDS? Common_Place:PLACE? Address:ADDR? Apartment:APT? City_State_County:CITY? Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP Notes:INFO/N+");
+          "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDR Apartment:APT City_State_County:CITY Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP Notes:INFO/N+");
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
@@ -24,7 +24,8 @@ public class DispatchA55Parser extends FieldProgramParser {
     int pt = body.indexOf("\n_____");
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!parseFields(body.split("\n"), data)) return false;
-    return data.strAddress.length() > 0 || data.strSupp.length() > 0;
+    if (data.strAddress.isEmpty() && data.strSupp.isEmpty()) return false;
+    return true;
   }
 
   @Override
