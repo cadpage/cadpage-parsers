@@ -9,7 +9,7 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
     super("ESCAMBIA COUNTY", "FL",
           "( SELECT/NEW ID ID/L UNIT ADDR APT APT PLACE X X CODE CALL CITY! GPS1 GPS2 END " +
           "| Rep#:ID INFO/NR! INFO/N+ " +
-          "| ID ADDR APT X X CODE CALL! END " +
+          "| ID ( EMPTY UNIT | ) ADDR APT ( EMPTY PLACE | ) X X CODE CALL! CITY GPS1 GPS2 EMPTY END " +
           ")");
   }
 
