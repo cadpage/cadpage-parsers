@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.FL;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -7,9 +9,10 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
 
   public FLEscambiaCountyBParser() {
     super("ESCAMBIA COUNTY", "FL",
-          "( SELECT/NEW ID ID/L UNIT ADDR APT APT PLACE X X CODE CALL CITY! GPS1 GPS2 END " +
-          "| Rep#:ID INFO/NR! INFO/N+ " +
-          "| ID ( EMPTY UNIT | ) ADDR APT ( EMPTY PLACE | ) X X CODE CALL! CITY GPS1 GPS2 EMPTY END " +
+          "( Rep#:ID INFO/NR! INFO/N+ " +
+          "| ID ( ID UNIT ADDR APT APT PLACE X X CODE CALL CITY! GPS1 GPS2 INFO/N+" +
+               "| ADDR APT X X CODE CALL! END " +
+               ") " +
           ")");
   }
 
@@ -26,14 +29,9 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
 
+    body = stripFieldStart(body, "Escambia County Public Safety:");
     body = stripFieldEnd(body, "Text STOP to opt out");
 
-    if (body.startsWith("Escambia County Public Safety: ")) {
-      setSelectValue("OLD");
-      body = body.substring(31).trim();
-    } else {
-      setSelectValue("NEW");
-    }
     if (body.startsWith("*"))  body = ' ' + body;
     if (!parseFields(body.split(" \\*", -1), data)) return false;
     String call = FLEscambiaCountyParser.CALL_CODES.getCodeDescription(data.strCode);
@@ -43,8 +41,22 @@ public class FLEscambiaCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("A{0,2}\\d{9,10}(?:-\\d{3})?|", true);
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
+  }
+
+  private static final Pattern ID_DELIM_PTN = Pattern.compile("; *");
+
+  private class MyIdField extends IdField {
+    public MyIdField() {
+      super("A{0,2}\\d{9,10}(?:-\\d{3})?(?:;.*)?|", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      field = ID_DELIM_PTN.matcher(field).replaceAll("/");
+      data.strCallId = append(data.strCallId, "/", field);
+    }
   }
 
 }
