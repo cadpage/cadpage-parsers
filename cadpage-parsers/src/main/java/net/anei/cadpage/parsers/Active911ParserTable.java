@@ -1182,6 +1182,7 @@ public class Active911ParserTable {
       "US/NH/GraftonCounty",              "NHGraftonCountyB",
       "US/NH/Hanover",                    "NHHanover,Cadpage2",
       "US/NH/HollisDispatch",             "NHHollis",
+      "US/NH/LincolnFD",                  "NHGraftonCountyB",
       "US/NH/LRMFA",                      "NHGraftonCountyA",
       "US/NH/LRMFALimited",               "NHGraftonCountyA",
       "US/NH/NewLondonPD",                "NHMerrimackCounty",
