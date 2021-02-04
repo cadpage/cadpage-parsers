@@ -614,6 +614,7 @@ public class ParserList {
               ,"KYEdmonsonCounty"               ,"Edmonson County, KY"
               ,"KYElliottCounty"                ,"Elliott County, KY"
               ,"KYErlangerDispatch"             ,"Erlanger Dispatch, KY"
+              ,"KYEstillCounty"                 ,"Estil County, KY"
               ,"KYFloydCounty"                  ,"Floyd County, KY"
               ,"KYFortKnox"                     ,"Fort Knox, KY"
               ,"KYFranklinCounty"               ,"Franklin County, KY"

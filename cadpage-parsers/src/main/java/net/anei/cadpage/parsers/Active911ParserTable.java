@@ -631,6 +631,7 @@ public class Active911ParserTable {
       "US/KY/EdmonsonCounty",             "KYEdmonsonCounty",
       "US/KY/ElliotCounty",               "KYElliottCounty",
       "US/KY/ErlangerPD",                 "KYErlangerDispatch",
+      "US/KY/EstillCounty",               "KYEstillCounty",
       "US/KY/FranklinCounty",             "KYFranklinCountyB",
       "US/KY/FultonCounty",               "KYFultonCounty",
       "US/KY/GallatinCounty",             "KYGallatinCountyA",
