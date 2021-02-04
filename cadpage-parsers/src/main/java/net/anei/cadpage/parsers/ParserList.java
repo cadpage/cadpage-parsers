@@ -1517,6 +1517,7 @@ public class ParserList {
               ,"TXGillespieCounty"              ,"Gillespie County, TX"
               ,"TXGladewater"                   ,"Gladewater, TX"
               ,"TXGreggCounty"                  ,"Gregg County, TX"
+              ,"TXGrimesCounty"                 ,"Grimes County, TX"
               ,"TXHarrisCounty"                 ,"Harris County, TX"
               ,"TXHarrisCountyESD1"             ,"Harris County ESD1, TX"
               ,"TXHarrisCountyNWEMS"            ,"Harris County NWEMS, TX"

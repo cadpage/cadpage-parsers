@@ -1783,6 +1783,7 @@ public class Active911ParserTable {
       "US/TX/GillespieCounty",            "TXGillespieCounty",
       "US/TX/GlennHeights",               "TXDallasCountyD",
       "US/TX/GreggCounty",                "TXGreggCounty,TXGladewater",
+      "US/TX/GrimesCounty",               "TXGrimesCounty",
       "US/TX/HarrisCounty",               "TXHarrisCountyA",
       "US/TX/HarrisCountyEC",             "TXHarrisCountyESD1B",
       "US/TX/HarrisCountyNWEMS",          "TXHarrisCountyNWEMS",
