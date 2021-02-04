@@ -11,46 +11,38 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Middletown, CT
  */
 public class CTMiddletownParser extends FieldProgramParser {
-  
+
   public CTMiddletownParser() {
-    super(CITY_LIST, "MIDDLETOWN","CT",
-          "UNIT CALL ADDR/S! PLACE INFO+");
+    super("MIDDLETOWN","CT",
+          "ID CALL ADDR SKIP APT CITY ZIP X UNIT DATETIME/d! INFO/N+");
   }
-  
-  @Override 
+
+  @Override
   public String getFilter() {
-    return "911@middletownct.gov,911@cityofmiddletown.com";
+    return "NexgenMessage@middletownctpolice.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD System Message")) return false;
-    return parseFields(body.split("\n"), 3, data);
+    if (!subject.equals("NexgenAlert")) return false;
+    return parseFields(body.split("\\|"), 3, data);
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d-\\d\\d-\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) , Apt\\. (.*)");
-  private class MyAddressField extends AddressField {
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:Apt|Unit|Room|Lot)[ #]*(.*)");
+  private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ADDR_APT_PTN.matcher(field);
-      if (match.matches()) {
-        parseAddress(match.group(1).trim(), data);
-        parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, match.group(2).trim(), data);
-        data.strApt = append(data.strApt, "-", getStart());
-      } else {
-        super.parse(field, data);
-      }
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
     }
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-    "CROMWELL",
-    "MIDDLETOWN"
-  };
 }
