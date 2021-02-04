@@ -1,18 +1,30 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 /**
  * Allen County, KY
  */
-public class KYAllenCountyParser extends DispatchGeoconxParser {
-  
+public class KYAllenCountyParser extends DispatchA65Parser {
+
   public KYAllenCountyParser() {
-    super("ALLEN COUNTY", "KY");
+    super(CITY_LIST, "ALLEN COUNTY", "KY");
   }
-  
+
   @Override
   public String getFilter() {
-    return "allencoky911@911email.net,dispatch@911comm1.info,dispatch@911comm3.info";
+    return "dispatch@911comm1.info";
   }
+
+  private static final String[] CITY_LIST = new String[]{
+      "ADOLPHUS",
+      "AMOS",
+      "HALIFAX",
+      "HALFWAY",
+      "HOLLAND",
+      "MEADOR",
+      "NEW ROE",
+      "PETROLEUM",
+      "SCOTTSVILLE"
+  };
 }
