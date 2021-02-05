@@ -1379,6 +1379,7 @@ public class Active911ParserTable {
       "US/OH/Concord",                    "OHLakeCountyA",
       "US/OH/CrawfordCountySheriff",      "OHCrawfordCounty",
       "US/OH/CuyahogaCounty",             "OHCuyahogaCountyA,OHCuyahogaCountyF",
+      "US/OH/DarkeCounty",                "OHShelbyCountyB",
       "US/OH/DarkeCountySheriff",         "OHDarkeCounty",
       "US/OH/DelawareCounty",             "OHDelawareCounty",
       "US/OH/EatonPolice",                "OHPrebleCounty",
