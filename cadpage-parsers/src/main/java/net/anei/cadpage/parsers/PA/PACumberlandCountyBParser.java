@@ -22,7 +22,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
   public String getFilter() {
     return "ep911@ccpa.net,dispatch@cgfrems.org";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -42,10 +42,10 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.endsWith("IPS I/Page Notification")) return false;
-    
+
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     Matcher match = RUN_REPORT_PTN1.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -55,7 +55,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       data.strSupp = match.group(3).replace(';', '\n').trim();
       return true;
     }
-    
+
     match = RUN_REPORT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("UNIT ID INFO");
@@ -65,7 +65,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       data.strSupp = match.group(3).replace(';', '\n').trim();
       return true;
     }
-    
+
     return super.parseMsg(body, data);
   }
 
@@ -87,12 +87,13 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern OOC_PFX_PTN = Pattern.compile("([A-Z]{2}): @[A-Z]{3}[,:;] *");
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|LOT) *(.*)");
+  private static final Pattern OOC_PFX_PTN = Pattern.compile("([A-Z]{2}): @[A-Z]{3}[,:; ] *");
+  private static final Pattern ADDR_DELIM = Pattern.compile("[:@,;]");
+  private static final Pattern APT_PTN = Pattern.compile("(?:A\\b|APT|RM|LOT) *(.*)|([A-Z]?\\d{1,5}|[A-Z]|.* FL)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       field = field.replace("_TOWNSHIP", " TWP").replace("_BOROUGH", "");
 
       String countyCode = null;
@@ -104,14 +105,18 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
         field = getLeft();
       }
 
-      Parser p = new Parser(field);
-      data.strPlace = stripFieldStart(p.getLastOptional(':'), "@");
-      String apt = p.getLastOptional(',');
-      apt = append(p.getLastOptional(';'), "-", apt);
-      match = APT_PTN.matcher(apt);
-      if (match.matches()) apt = match.group(1);
-      super.parse(p.get(), data);
-      data.strApt = append(data.strApt, "-", apt);
+      for (String part : ADDR_DELIM.split(field)) {
+        part = part.trim();
+        if (data.strAddress.isEmpty()) {
+          super.parse(part, data);
+        } else if ((match = APT_PTN.matcher(part)).matches()) {
+          String apt = match.group(1);
+          if (apt == null) apt = match.group(2);
+          data.strApt = append(data.strApt, "-", apt);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", part);
+        }
+      }
 
       if (data.strCity.length() > 0) {
         data.strCity = stripFieldEnd(data.strCity, " BORO");
@@ -120,6 +125,11 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
         String city = COUNTY_CODES.getProperty(countyCode);
         if (city != null) data.strCity = city;
       }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY PLACE APT";
     }
   }
 
@@ -182,6 +192,10 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
       "UM CUMB", "UPPER MIFFLIN TWP",
       "WB CUMB", "WORMLEYSBURG",
       "WP CUMB", "WEST PENNSBORO TWP",
+
+      "FC FR",   "SOUTHAMPTON TWP",
+
+      "CARROLL TWP PERY", "CARROL TWP",
 
       // York County codes
       "MON",               "MONAGHAN TWP"
