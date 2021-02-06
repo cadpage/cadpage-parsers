@@ -1580,6 +1580,7 @@ public class ParserList {
               ,"TXWalkerCounty"                 ,"Walker County, TX"
               ,"TXWebster"                      ,"Webster, TX"
               ,"TXWhartonCounty"                ,"Wharton County, TX"
+              ,"TXWichitaCounty"                ,"Wichita County, TX"
               ,"TXWilliamsonCounty"             ,"Williamson County, TX"
               ,"TXWylie"                        ,"Wylie, TX"
           ),
