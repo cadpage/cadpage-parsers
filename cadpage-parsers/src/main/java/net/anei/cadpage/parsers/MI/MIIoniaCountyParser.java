@@ -1,13 +1,13 @@
 package net.anei.cadpage.parsers.MI;
 
-public class MIIoniaCountyParser extends MIMidlandCountyParser {
-  
+public class MIIoniaCountyParser extends MIBarryCountyBParser {
+
   public MIIoniaCountyParser() {
     super("IONIA COUNTY", "MI");
   }
-  
+
   @Override
   public String getFilter() {
-    return "cfs-noreply@ioniacounty.org,dispatch@barry911.org";
+    return "noreplyzuercher@ioniacounty.org";
   }
 }
