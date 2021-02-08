@@ -27,7 +27,12 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
     return "commcenter@acadian.com";
   }
 
-  private static final Pattern MARKER = Pattern.compile("Resp(?:onse)?[#:]+(\\d+(?:-\\d{4})?) +");
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+
+  private static final Pattern MARKER = Pattern.compile("Resp(?:onse)?[#:]+(\\d+(?:-\\d{4})?|) +");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|APT:|Cross St:|City:|Cnty:|Map Pg:|Dest:|Pt's Name:)");
   private static final Pattern RUN_REPORT_DELIM = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)\\s*(?=[A-Z][A-Za-z]+:)");
@@ -65,7 +70,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
       if (body.startsWith("Changed To:Location:")) {
         body = body.substring(11);
         data.strCall = "Address Change";
-        body = body.replace("Address:", " Address:");
+        body = body.replace("Address:", " Address:").replace(" Apt.", " Apt:");
         return super.parseMsg(body,  data);
       }
 
