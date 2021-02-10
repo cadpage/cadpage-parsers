@@ -1681,6 +1681,7 @@ public class Active911ParserTable {
       "US/SC/PickensCounty",              "SCPickensCounty",
       "US/SC/PickensCountyNoInfo",        "SCPickensCountyNoInfo",
       "US/SC/RichlandCounty",             "SCRichlandCounty",
+      "US/SC/SaludaCounty",               "SCSaludaCounty",
       "US/SC/SenacaPD",                   "SCOconeeCountyC",
       "US/SC/SpartanburgCounty",          "SCSpartanburgCounty",
       "US/SC/Summerville",                "SCDorchesterCountyB",

@@ -1426,6 +1426,7 @@ public class ParserList {
               ,"SCOrangeburgCounty"             ,"Orangeburg County, SC"
               ,"SCPickensCounty"                ,"Pickens County, SC"
               ,"SCRichlandCounty"               ,"Richland County, SC"
+              ,"SCSaludaCounty"                 ,"Saluda County, SC"
               ,"SCSpartanburgCounty"            ,"Spartanburg County, SC"
               ,"SCSumterCounty"                 ,"Sumter County, SC"
               ,"SCWilliamsburgCounty"           ,"Williamsburg County, SC"
