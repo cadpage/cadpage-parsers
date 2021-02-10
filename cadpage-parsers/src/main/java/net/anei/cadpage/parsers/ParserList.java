@@ -226,6 +226,7 @@ public class ParserList {
               ,"CAStanislausCounty"             ,"Stanislaus County, CA"
               ,"CAStockton"                     ,"Stockton, CA"
               ,"CASuisunCity"                   ,"Suisun City, CA"
+              ,"CASutterCounty"                 ,"Sutter County, CA"
               ,"CATehamaCounty"                 ,"Tehama County, CA"
               ,"CATulareCounty"                 ,"Tulare County, CA"
               ,"CATuolumneCounty"               ,"Tuolumne County, CA"

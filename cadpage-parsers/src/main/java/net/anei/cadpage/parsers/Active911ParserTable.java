@@ -223,6 +223,7 @@ public class Active911ParserTable {
       "US/CA/WillowOakFD",                "CAYoloCountyB",
       "US/CA/YermoCalico",                "CASanBernardinoCountyC",
       "US/CA/YoloCounty",                 "CAYoloCountyB",
+      "US/CA/YubaCity",                   "CASutterCounty",
       "US/CO/AdamsCounty",                "COAdamsCounty",
       "US/CO/ArchuletaCounty",            "COArchuletaCounty",
       "US/CO/BentCounty",                 "COBentCounty",
