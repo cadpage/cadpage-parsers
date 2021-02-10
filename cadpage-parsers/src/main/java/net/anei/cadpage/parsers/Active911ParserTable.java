@@ -2034,6 +2034,7 @@ public class Active911ParserTable {
       "US/WI/RacineCounty",               "WIRacineCounty",
       "US/WI/RockCounty",                 "WIRockCounty",
       "US/WI/SawyerCounty",               "WISawyerCounty",
+      "US/WI/SawyerCountyLimited",        "WISawyerCounty",
       "US/WI/SheboyganCounty",            "WISheboyganCounty",
       "US/WI/WaukeshaCounty",             "WIWaukeshaCountyA",
       "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB,WIWinnebagoCountyC",
