@@ -11,20 +11,19 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Macon County, MO
  */
 public class MOMaconCountyParser extends FieldProgramParser {
-  
+
   public MOMaconCountyParser() {
     super("MACON COUNTY", "MO",
       "Event_Number:ID! Police_Event_Type:CALL! Fire_Event_Type:CALL! EMS_Event_Type:CALL! Latitude:GPS1! Longitude:GPS2! Address:ADDR! Location:APT_PLACE? City:CITY! Zip:SKIP! ESN:SKIP! Class:SKIP! District:SRC! UnitTimes:TIMES Notes:INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@macondomain.org";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Active 911")) return false;
     if (!super.parseFields(body.split("\n"), 12, data)) return false;
     if (data.strUnit.length() == 0) {
       data.strUnit = data.strSource;
@@ -32,7 +31,7 @@ public class MOMaconCountyParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{8}-\\d+", true);
@@ -64,7 +63,7 @@ public class MOMaconCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       String times = "";
-      
+
       for (String part : field.split(",")) {
         part = part.trim();
         times = append(times, "\n", part);
@@ -77,10 +76,10 @@ public class MOMaconCountyParser extends FieldProgramParser {
           data.msgType = MsgType.RUN_REPORT;
         }
       }
-      
+
       if (data.msgType == MsgType.RUN_REPORT) data.strSupp = times;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT INFO";
