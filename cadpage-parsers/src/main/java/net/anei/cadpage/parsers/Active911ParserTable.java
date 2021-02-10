@@ -1658,6 +1658,7 @@ public class Active911ParserTable {
       "US/SC/ClarendonCountyFD",          "SCClarendonCounty",
       "US/SC/DarlingtonCounty",           "SCDarlingtonCounty",
       "US/SC/DorchesterCounty",           "SCDorchesterCountyA",
+      "US/SC/EdgefieldCounty",            "SCEdgefieldCounty",
       "US/SC/FairfieldCounty",            "SCFairfieldCounty",
       "US/SC/FountainInn",                "SCGreenvilleCountyE",
       "US/SC/GeorgetownCounty",           "SCGeorgetownCounty",

@@ -1408,6 +1408,7 @@ public class ParserList {
               ,"SCClarendonCounty"              ,"Clarendon County, SC"
               ,"SCDarlingtonCounty"             ,"Darlington County, SC"
               ,"SCDorchesterCounty"             ,"Dorchester County, SC"
+              ,"SCEdgefieldCounty"              ,"Edgefield County, SC"
               ,"SCFairfieldCounty"              ,"Fairfield County, SC"
               ,"SCFlorenceCounty"               ,"Florence County, SC"
               ,"SCGeorgetownCounty"             ,"Georgetown County, SC"
