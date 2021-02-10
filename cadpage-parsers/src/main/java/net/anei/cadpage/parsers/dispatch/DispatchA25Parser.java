@@ -10,7 +10,20 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class DispatchA25Parser extends FieldProgramParser {
-  
+
+  private boolean checkCity;
+
+  public DispatchA25Parser(String defCity, String defState) {
+    this(null, defCity, defState);
+  }
+
+  public DispatchA25Parser(String[] cityList, String defCity, String defState) {
+    super(cityList, defCity, defState,
+          "CALL! CALL2+? ( SELECT/1 Address:ADDR! Reporting_Person:NAME Phone:PHONE% Detail:INFO% " +
+                        "| ADDR! MEMO:INFO ) INFO/N+");
+    checkCity = (cityList != null);
+  }
+
   private static final Pattern RUN_REPORT_ID_PTN = Pattern.compile(" INC #(\\d+-\\d+) ");
   private static final Pattern RUN_REPORT_ID_PTN2 = Pattern.compile("^Inc # (\\d+-\\d+)\\b");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("^OCC #\\d\\d-\\d+, INC #(\\d\\d-\\d+)");
@@ -19,12 +32,6 @@ public class DispatchA25Parser extends FieldProgramParser {
   private static final Pattern MISSING_DELIM = Pattern.compile(",? (?=Phone:)");
   private static final Pattern ALTERNATE_PTN = Pattern.compile("NEW (?:(\\d\\d?-\\d\\d?-[A-Z]{1,2}) )?(.*?)(?:[-,] ([ A-Za-z]+))?");
   private static final Pattern PLACE_ADDR_PREFIX_PTN = Pattern.compile("([NSEW]B)|(.*)(?:&| and)", Pattern.CASE_INSENSITIVE);
-  
-  public DispatchA25Parser(String defCity, String defState) {
-    super(defCity, defState,
-           "CALL! CALL2+? ( SELECT/1 Address:ADDR! Reporting_Person:NAME Phone:PHONE% Detail:INFO% " +
-                         "| ADDR! MEMO:INFO ) INFO/N+");
-  }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -36,7 +43,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       data.strSupp = body;
       return true;
     }
-    
+
     if (subject.startsWith("NEW 911 CALL HISTORY FOR UNIT #")) {
       setFieldList("UNIT ID INFO");
       data.msgType = MsgType.RUN_REPORT;
@@ -45,9 +52,9 @@ public class DispatchA25Parser extends FieldProgramParser {
       if (match.find()) data.strCallId = match.group(1);
       data.strSupp = body;
       return true;
-      
+
     }
-    
+
     Matcher match = RUN_REPORT_PTN2.matcher(body);
     if (match.find()) {
       setFieldList("ID INFO");
@@ -56,7 +63,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       data.strSupp = body;
       return true;
     }
-    
+
     match = MARKER1.matcher(body);
     if (match.lookingAt()) {
       setSelectValue("1");
@@ -68,28 +75,28 @@ public class DispatchA25Parser extends FieldProgramParser {
       data.strCall = append(update, " - ", data.strCall);
       return true;
     }
-    
+
     match = MARKER2.matcher(body);
     if (match.lookingAt()) {
       setSelectValue("2");
       body = body.substring(match.end());
       return super.parseFields(body.split("\n"), data);
     }
-    
+
     match = ALTERNATE_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("CODE CALL PLACE ADDR APT CITY");
       data.strCode = getOptGroup(match.group(1));
       String addr = match.group(2).trim();
       data.strCity = getOptGroup(match.group(3));
-      
+
       String place = "";
       int pt = addr.lastIndexOf('@');
       if (pt >= 0) {
         place = addr.substring(pt+1).trim();
         addr = addr.substring(0,pt);
       }
-      
+
       String apt = "";
       if (addr.endsWith(")")) {
         pt = addr.lastIndexOf('(');
@@ -100,7 +107,7 @@ public class DispatchA25Parser extends FieldProgramParser {
           if (match.matches()) apt = match.group(1);
         }
       }
-      
+
       do {
         CodeSet callList = getCallList();
         if (callList != null) {
@@ -118,14 +125,14 @@ public class DispatchA25Parser extends FieldProgramParser {
             break;
           }
         }
-        
+
         pt = addr.indexOf(" - ");
         if (pt >= 0) {
           data.strCall = addr.substring(0,pt).trim();
           parseAddress(addr.substring(pt+3).trim(), data);
           break;
         }
-      
+
         parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
       } while (false);
 
@@ -136,7 +143,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       }
 
       data.strApt = append(data.strApt, "-", apt);
-      
+
       // See if place looks like it should really be prefixed to the address
       match = PLACE_ADDR_PREFIX_PTN.matcher(data.strPlace);
       if (match.matches()) {
@@ -149,19 +156,19 @@ public class DispatchA25Parser extends FieldProgramParser {
         data.strAddress = append(tmp, sep, data.strAddress);
         data.strPlace = "";
       }
-      
+
       // Append previously identified place name
       data.strPlace = append(data.strPlace, " - ", place);
       return true;
     }
     return false;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -171,7 +178,7 @@ public class DispatchA25Parser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_PTN = Pattern.compile("([-& A-Z0-9.]+?) - (.*)", Pattern.CASE_INSENSITIVE);
   private class MyCallField extends CallField {
     @Override
@@ -181,41 +188,69 @@ public class DispatchA25Parser extends FieldProgramParser {
       data.strCode = match.group(1);
       data.strCall = match.group(2).trim();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!data.strCall.endsWith("-")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " ", field);
     }
   }
-  
+
+  private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT(?: ROOM)?|LOT|RM|ROOM|STE)[ :]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      String zip = null;
       Parser p = new Parser(field);
-      data.strCity = p.getLastOptional(',');
-      if (data.strCity.length() == 0) data.strCity = p.getLastOptional(" - ");
-      data.strPlace = p.getOptional(" - ");
-      String addr = p.get();
+      String city = p.getLastOptional(',');
+      if (!city.isEmpty()) {
+        Matcher match = CITY_ZIP_PTN.matcher(city);
+        if (match.matches()) {
+          data.strState = match.group(1);
+          zip = match.group(2);
+        } else {
+          data.strCity = city;
+        }
+      }
+      String addr;
+      if (data.strCity.isEmpty()) {
+        city = p.getLastOptional(" - ");
+        if (!city.isEmpty() && checkCity && !isCity(city)) {
+          addr = city;
+          data.strPlace = p.get();
+        } else {
+          data.strCity = city;
+          addr = p.get();
+        }
+      } else {
+        addr = p.get();
+      }
+      if (data.strPlace.isEmpty()) {
+        int pt = addr.indexOf(" - ");
+        if (pt >= 0) {
+          data.strPlace = addr.substring(0,pt).trim();
+          addr = addr.substring(pt+3);
+        }
+      }
       String apt = "";
       if (addr.endsWith(")")) {
         int pt = addr.lastIndexOf('(');
@@ -226,16 +261,21 @@ public class DispatchA25Parser extends FieldProgramParser {
           if (match.matches()) apt = match.group(1);
         }
       }
-      parseAddress(addr, data);
+      if (data.strCity.isEmpty() && checkCity) {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+      } else {
+        parseAddress(addr, data);
+      }
+      if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
-      return "PLACE " + super.getFieldNames() + " CITY";
+      return "PLACE " + super.getFieldNames() + " CITY ST";
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
@@ -246,7 +286,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_GPS_PTN = Pattern.compile("(?:RP )?Lat/Long: *(.*)");
   private class MyInfoField extends InfoField {
     @Override
@@ -260,7 +300,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "GPS INFO";
