@@ -14,9 +14,8 @@ public class MIBarryCountyBParser extends FieldProgramParser {
 
   public MIBarryCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "Location:ADDR! ( ESN:BOX! Cross_Streets:X! Call_Details:INFO! Use_Caution:CAUTION! ProQA:INFO2! All_ProQA:INFO2! Latitude:GPS1 Longitude:GPS2! CFS#:ID! " +
-                         "| Cross_Streets:X! Use_Caution:CAUTION! Location_Alerts:ALERT/SDS! ESN:BOX? Zone:MAP? Call_Details:INFO! ProQA:INFO2 All_ProQA:INFO2 #:ID! " +
-                         ") END");
+          "Location:ADDR! ESN:BOX! Cross_Streets:X! ( Call_Details:INFO! Use_Caution:CAUTION! | Use_Caution:CAUTION! Call_Details:INFO! ) " +
+          "ProQA:INFO2! All_ProQA:INFO2! Latitude:GPS1 Longitude:GPS2! ( CFS#:ID! | #:ID! ) END");
   }
 
   @Override
@@ -51,8 +50,8 @@ public class MIBarryCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([A-Z ]*), *([A-Z]{2})(?: +(\\d{5}))?\\b *");
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?\\b *");
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([A-Z ]*), *(?!ER)([A-Z]{2})(?: +(\\d{5}))?\\b *");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("(?!ER)([A-Z]{2})(?: +(\\d{5}))?\\b *");
   private static final Pattern APT_PLACE_PTN1 = Pattern.compile("(?:APT|LOT|ROOM|RM) *(\\S+) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_PLACE_PTN2 = Pattern.compile("(\\d+)\\b[ /]*(.*)");
   private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?) (?:(?:APT|LOT|ROOM|RM) *(\\S+)|(\\d{1,4}[A-Z]?))", Pattern.CASE_INSENSITIVE);
@@ -76,7 +75,8 @@ public class MIBarryCountyBParser extends FieldProgramParser {
           match = ST_ZIP_PTN.matcher(field);
           if (match.lookingAt()) {
             data.strState = match.group(1);
-            data.strCity = match.group(2);
+            String zip = match.group(2);
+            if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
             field = field.substring(match.end());
           }
         }
