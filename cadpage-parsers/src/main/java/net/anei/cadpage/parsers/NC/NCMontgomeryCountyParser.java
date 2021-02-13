@@ -12,7 +12,7 @@ public class NCMontgomeryCountyParser extends DispatchSouthernParser {
 
 
   public NCMontgomeryCountyParser() {
-    super(CITY_LIST, "MONTGOMERY COUNTY", "NC", DSFLAG_ID_OPTIONAL | DSFLAG_BOTH_PLACE | DSFLAG_NO_NAME_PHONE);
+    super(CITY_LIST, "MONTGOMERY COUNTY", "NC", DSFLG_PROC_EMPTY_FLDS | DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_CODE | DSFLG_OPT_ID | DSFLG_TIME);
     allowBadChars("()");
     removeWords("LA");
     setupMultiWordStreets(MWORD_STREET_LIST);
