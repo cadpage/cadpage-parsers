@@ -16,6 +16,7 @@ public class Active911ParserTable {
       "AU/SA/Whyalla",                    "ZAUWhyalla",
       "CA/AB/Canmore",                    "ZCAABCanmoreB",
       "CA/AB/ClearwaterCounty",           "ZCAABClearwaterCounty",
+      "CA/AB/CremonaFire",                "ZCAABMountainViewCounty",
       "CA/AB/FrescCA",                    "ZCAABCanmoreA,ZCAABCalgary",
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
       "CA/AB/ParklandCounty",             "ZCAABLeducCounty",
