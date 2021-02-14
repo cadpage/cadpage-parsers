@@ -22,18 +22,18 @@ TXDallasCounty
  */
 
 public class DispatchA18Parser extends FieldProgramParser {
-  
+
   public DispatchA18Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CALL ADDR X BOX! EMPTY+? ( DASHES DATETIME SRC SRC | ) INFO+? ID_UNIT ID_UNIT+? END");
+          "CALL ADDR X BOX! EMPTY+? ( DASHES EMPTY+? DATETIME SRC SRC | ) INFO+? ID_UNIT ID_UNIT+? END");
   }
 
   private static final Pattern FIX_BROKEN_INFO_PTN = Pattern.compile("([A-Za-z]+:.*[^\\]])\n(.*\\[\\d\\d:\\d\\d:\\d\\d\\])");
-  
-  
+
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.length() > 0) {
       if (!body.startsWith(subject)) body = subject + '\n' + body;
     }
@@ -45,14 +45,14 @@ public class DispatchA18Parser extends FieldProgramParser {
     body = FIX_BROKEN_INFO_PTN.matcher(body).replaceAll("$1$2");
     return parseFields(body.split("\n"), 4, data);
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
     int pt = sAddress.indexOf(", Box");
     if (pt >= 0) sAddress = sAddress.substring(0,pt).trim();
     return sAddress;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -90,7 +90,7 @@ public class DispatchA18Parser extends FieldProgramParser {
           data.strPlace = data.strPlace.substring(0,pt).trim();
         }
       } else abort();
-      
+
       // Split up the address field
       field = field.replace('@', '&');
       Matcher match = REMOVE_DASH_PTN.matcher(field);
@@ -103,7 +103,7 @@ public class DispatchA18Parser extends FieldProgramParser {
         field = sb.toString();
       }
       String[] parts = DELIM_PTN.split(field);
-      
+
       // And try to extract a city from the last fragment
       for (int pt = parts.length-1; pt>=0; pt--) {
         parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, parts[pt].trim(), data);
@@ -116,33 +116,33 @@ public class DispatchA18Parser extends FieldProgramParser {
           break;
         }
       }
-      
+
       // Now cycle through the remaining partial feild lists
       boolean first = true;
       for (String part : parts) {
         part = part.trim();
         if (part.length() == 0) continue;
-        
+
         // First segment contains an address and nothing else
         if (first) {
           first = false;
           parseAddress(part, data);
-        } 
-        
+        }
+
         else {
-          
+
           match = BOX_PTN.matcher(part);
           if (match.find()) {
             data.strAddress = data.strAddress + ", Box " + match.group(1);
             part = part.substring(match.end()).trim();
           }
-          
+
           match = DIR_PTN.matcher(part);
           if (match.lookingAt()) {
             data.strAddress = append(data.strAddress, " ", match.group(1));
             part = part.substring(match.end());
           }
-          
+
           match = BOUND_PTN.matcher(part);
           if (match.lookingAt()) {
             String bnd = match.group(1);
@@ -151,19 +151,19 @@ public class DispatchA18Parser extends FieldProgramParser {
             }
             part = part.substring(match.end());
           }
-          
+
           match = APT_PTN.matcher(part);
           if (match.find()) {
             data.strApt = append(data.strApt, "-", match.group(1));
             part = part.substring(match.end()).trim();
           }
-          
+
           match = APT2_PTN.matcher(part);
           if (match.find()) {
             data.strApt = append(data.strApt, "-", match.group(1));
             part = part.substring(match.end()).trim();
           }
-          
+
           if (isValidAddress(part)) {
             if (Character.isDigit(data.strAddress.charAt(0))) {
               data.strCross = append(data.strCross, "/", part);
@@ -172,7 +172,7 @@ public class DispatchA18Parser extends FieldProgramParser {
             }
             continue;
           }
-          
+
           if (APT2_PTN.matcher(part).matches()) {
             data.strApt = append(data.strApt, "-", part);
             continue;
@@ -182,18 +182,18 @@ public class DispatchA18Parser extends FieldProgramParser {
             data.strApt = append(data.strApt, "-", part);
             continue;
           }
-          
+
           data.strPlace = append(data.strPlace, " - ", part);
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE ADDR APT CITY";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -206,7 +206,7 @@ public class DispatchA18Parser extends FieldProgramParser {
       data.strCross = append(data.strCross, "/", field);
     }
   }
-  
+
   private class MyBoxField extends BoxField {
     @Override
     public void parse(String field, Data data) {
@@ -215,7 +215,7 @@ public class DispatchA18Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_PTN = Pattern.compile("[A-Za-z]+: *(.*?) *\\[(\\d\\d:\\d\\d:\\d\\d)\\]");
   private class MyInfoField extends InfoField {
     @Override
@@ -227,13 +227,13 @@ public class DispatchA18Parser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO TIME";
     }
   }
-  
+
   private class MySourceField extends SourceField {
     @Override
     public void parse(String field, Data data) {
@@ -244,12 +244,12 @@ public class DispatchA18Parser extends FieldProgramParser {
 
   private static final Pattern ID_UNIT_PTN = Pattern.compile("(\\d\\d[A-Z0-9]{2}\\d{6})=([-A-Za-z0-9,]+)");
   private class MyIdUnitField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = ID_UNIT_PTN.matcher(field);
@@ -268,6 +268,6 @@ public class DispatchA18Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "ID UNIT";
     }
-    
+
   }
 }
