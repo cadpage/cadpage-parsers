@@ -4345,16 +4345,41 @@ Good luck,
 -Ken
 
 **************************************************************************************
-* Cadpage registration with Active911 no longer works
+* Trouble installing Cadpage support app
 **************************************************************************************
 
-Active911 should have this fixed in a day or so.  Until there, there is a workaround
+The following instructions are what I have to do to get the Cadpage support app installed on an Android 11 device.  If your are running a different version, things might be slightly different.
 
-1) Ask Cadpage to register with Active911
-2) When you get the 404 error, click on the web link at the top of the screen.
-3) This should display your page history.  The first line will read "Error".  Click the pencil icon at the far right of that line
-4) This will make the web link at the top of the screen editable.  You have to drag the cursor from to the beginning of the very long URL and change the initial "www" to "console"
-5) Send that, then continue the regular registration process.
+1) Open Cadpage, giving you the warning message that you need to install the support app.
+
+1) Open Cadpage Settings and change the "Alert Message Type" setting to "SMS Messages only".  This will display a warning message that you need to install the support app.
+
+
+2) Press "Install Cadpage support app" which takes you to the main Cadpage download page.
+
+3) Press any one of the cadpage-support.apk links to download the support app.
+
+4) Press "Open" to open the downloaded file.  If you do not see an open link, use the triple dot icon to pull up the option menu and select "Downloads", the select the cadpage-support.apk file.
+
+5) Next you will probably get a warning that Chrome is not allowed to install unknown apps.  Select "Settings", then turn on the "Allow from this source" setting.
+
+6) Next comes a popup asking if you want to install the application. Select "Install".
+
+7) Next comes another popup telling you the app has been installed. Select "Open"
+
+8) Another popup asking if  Cadpage Msg Support should be allowed to send and view SMS messages.  Select "Allow".
+
+Cadpage should now function normally.  But if you have any problems, feel free to use the "Email the Developer" setting to contact us.
+
+But...  We have left Chrome with permission to install unknown apps, which is potentially dangerous.  Malicious web sites might use this capability to install apps that can do bad things.  This is not as dangerous as it used to be, because under Android 11, you get an additional warning before any app will be installed, but we still recommend turning that capability off.  To do that...
+
+Open Android Settings and select
+Apps & Notifications > Chrome > Advanced > Install unknown apps
+
+And turn off the "Allow from this source" setting.
+
+Good luck,
+-Ken
 
 **************************************************************************************
 * Not receiving CodeMessaging alerts
