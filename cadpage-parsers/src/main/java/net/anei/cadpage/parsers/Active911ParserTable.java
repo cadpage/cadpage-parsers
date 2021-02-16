@@ -1081,7 +1081,7 @@ public class Active911ParserTable {
       "US/NC/CityofShelby",               "NCClevelandCounty",
       "US/NC/CityofThomasville",          "NCDavidsonCountyA",
       "US/NC/ClayCounty",                 "NCClayCounty",
-      "US/NC/ClaytonFD",                  "NCWakeCountyD",
+      "US/NC/ClaytonFD",                  "NCWakeCountyD,NCWakeCountyE",
       "US/NC/ClevelandCounty",            "NCClevelandCountyA",
       "US/NC/ClevelandFD",                "NCWakeCountyD",
       "US/NC/CliffsideAreaFD",            "NCRutherfordCounty",

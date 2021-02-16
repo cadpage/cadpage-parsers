@@ -10,7 +10,7 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   public DispatchA71Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! XY:GPS? ID:ID! PRI:PRI? DATE:DATE? TIME:TIME! MAP:MAP? UNIT:UNIT? X:X? INFO:INFO? INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! XY:GPS? ID:ID! PRI:PRI? DATE:DATE? TIME:TIME! NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? INFO/N+");
   }
 
   @Override

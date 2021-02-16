@@ -15,7 +15,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
 
   public NCWakeCountyBParser() {
     super(CITY_CODES, "CARY", "NC",
-          "( CANCEL ADDR CITY PLACE " +
+          "( CANCEL ADDR CITY! PLACE " +
           "| FYI? CH? MAP SRC? ( CODE CALL? ADDR! | CALL ADDR! ) ( UNIT | X/Z UNIT | X/Z X/Z UNIT | X+? ) ) INFO/N+? GPS1 GPS2 END");
   }
 
@@ -49,6 +49,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
   protected Field getField(String name) {
     if (name.equals("CANCEL")) return new MyCancelField();
     if (name.equals("CH")) return new ChannelField("OPS_\\d+", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]{2,5}", true);
     if (name.equals("SRC1")) return new SourceField("[A-Z]{1,4}");
     if (name.equals("SRC2")) return new SourceField("S\\d{2}|[A-Z]{4}");
     if (name.equals("CODE")) return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?", true);
