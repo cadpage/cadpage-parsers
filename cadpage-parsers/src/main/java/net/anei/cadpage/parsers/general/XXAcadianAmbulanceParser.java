@@ -12,8 +12,8 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   public XXAcadianAmbulanceParser(String defState) {
     super("", defState,
           "( SELECT/1 CALL! Loc:PLACE! Address:ADDR! Apt:APT! City:CITY! Parish:SKIP! Latitude:GPS1/d Longitude:GPS2/d" +
-          "| Location:PLACE! Address:ADDR! Apt:APT! City:CITY! Changed_From:SKIP!" +
-          "| CALL! Loc:PLACE! Add:ADDR! APT:APT? Cross_St:X! City:CITY! Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME )",
+          "| Location:PLACE! Address:ADDR! Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP!" +
+          "| CALL! Loc:PLACE! Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME )",
           FLDPROG_IGNORE_CASE);
   }
 
@@ -32,9 +32,9 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern MARKER = Pattern.compile("Resp(?:onse)?[#:]+(\\d+(?:-\\d{4})?|) +");
+  private static final Pattern MARKER = Pattern.compile("Resp(?:onse)?[#:]+ *(\\d+(?:-\\d{4})?|) +");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|APT:|Cross St:|City:|Cnty:|Map Pg:|Dest:|Pt's Name:)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|APT:|Apt:|Cross St:|City:|Cnty:|Map Pg:|Dest:|Pt's Name:)");
   private static final Pattern RUN_REPORT_DELIM = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)\\s*(?=[A-Z][A-Za-z]+:)");
   private static final Pattern DELIM2 = Pattern.compile("\\*(?=Loc:|Address:|Apt:|City:|Parish:)| +(?=Latitude:|Longitude:)");
 
@@ -77,7 +77,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
       body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
       if (!super.parseMsg(body, data)) return false;
 
-      // Fixe some state specific issues
+      // Fix some state specific issues
       if (data.defState.equals("TX")) {
 
         // There is one particular long, oft abbreviated road in Harris County, TX
