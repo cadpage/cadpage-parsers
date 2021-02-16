@@ -13,37 +13,37 @@ import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchH03Parser extends FieldProgramParser {
-  
+
   public DispatchH03Parser(String defCity, String defState) {
     this(null, defCity, defState);
   }
-  
+
   public DispatchH03Parser(Properties cityCodes, String defCity, String defState) {
-    super(cityCodes, defCity, defState, 
-          "SKIP+? DASHES ( INCIDENT_DETAILS%EMPTY! ( LOCATION:EMPTY! | LOCATION_of_Incident:EMPTY! ) ( Location:ADDR! | Loc:ADDR! ) Loc_Name:PLACE! Loc_Descr:INFO! " + 
-                            "City:CITY! Building:APT? Subdivision:APT? Floor:APT? Apt/Unit:APT! Zip_Code:ZIP? Cross_Strs:X? Area:MAP! Sector:MAP/D! Beat:MAP/D! Census_Tract:SKIP? " +
-                            "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES! ) " +  
-                            "INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! " + 
-                            "DASHES! ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES! | ) UNITS_DISPATCHED:EMPTY! UNIT/S+? DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! " + 
-                            "COMMENTS:EMPTY! INFO/N+? DASHES " + 
-                         "| INCIDENT:EMPTY! Inc_Type:CODE! Mod_Circum:CALL/SDS! Priority:PRI! Area:MAP! County:CITY! " + 
+    super(cityCodes, defCity, defState,
+          "SKIP+? DASHES ( INCIDENT_DETAILS%EMPTY! ( LOCATION:EMPTY! | LOCATION_of_Incident:EMPTY! ) ( Location:ADDR! | Loc:ADDR! ) Loc_Name:PLACE! Loc_Descr:INFO! " +
+                            "City:CITY! Building:APT? Subdivision:APT? Floor:APT? Apt/Unit:APT! Zip_Code:ZIP? Cross_Strs:X? Area:MAP? Sector:MAP/D! Beat:MAP/D! Census_Tract:SKIP? RA:BOX? " +
+                            "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES! ) " +
+                            "INCIDENT:EMPTY! Inc_#:ID2! Priority:PRI! Inc_Type:CODE! Descr:CALL! Mod_Circum:CALL/SDS! Created:TIMEDATE! Caller:NAME! Phone:PHONE! " +
+                            "DASHES! ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES! | ) UNITS_DISPATCHED:EMPTY! UNIT/S+? DASHES! PERSONNEL_DISPATCHED:EMPTY! SKIP! " +
+                            "COMMENTS:EMPTY! INFO/N+? DASHES PREMIS_HAZARD:ALERT " +
+                         "| INCIDENT:EMPTY! Inc_Type:CODE! Mod_Circum:CALL/SDS! Priority:PRI! Area:MAP! County:CITY! " +
                             "LOCATION:EMPTY! Loc_Name:PLACE! Loc_Descr:INFO! Location:ADDR! Municipality:CITY! Building:APT! Floor:APT! Apt/Unit:APT! Cross_Strs:X! " +
-                            "PREMISE_HAZARD:EMPTY! INFO/N+ COMMENTS:EMPTY! INFO/N+ UNITS_DISPATCHED:EMPTY! UNIT/C+ Caller:NAME! Phone:PHONE! Created:TIMEDATE! Inc_#:ID " + 
+                            "PREMISE_HAZARD:EMPTY! INFO/N+ COMMENTS:EMPTY! INFO/N+ UNITS_DISPATCHED:EMPTY! UNIT/C+ Caller:NAME! Phone:PHONE! Created:TIMEDATE! Inc_#:ID " +
                          ")");
   }
-  
+
   private HtmlDecoder decoder = new HtmlDecoder();
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!body.startsWith("<")) return super.parseHtmlMsg(subject, body, data);
-    
+
     String[] flds = decoder.parseHtml(body);
     if (flds == null) return false;
     flds = condenseFields(flds);
     return parseFields(flds, data);
   }
-  
+
   private String[] condenseFields(String[] flds) {
     List<String> fldList= new ArrayList<String>();
     boolean copy = false;
@@ -71,7 +71,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (lastFld != null) fldList.add(lastFld);
     return fldList.toArray(new String[fldList.size()]);
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("Dispatch Notification for Incident ([-A-Z0-9]{12,20})");
   private static final Pattern DELIM = Pattern.compile("\\s*\n\\s*");
 
@@ -81,14 +81,14 @@ public class DispatchH03Parser extends FieldProgramParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) data.strCallId = match.group(1);
     return true;
-    
+
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ZIP")) return new BaseZipField();
@@ -99,7 +99,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (name.equals("ID2")) return new BaseIdField();
     return super.getField(name);
   }
-  
+
   private class BaseZipField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -107,7 +107,7 @@ public class DispatchH03Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern TIME_DATE_PTN = Pattern.compile("(\\d\\d?:\\d\\d:\\d\\d [AP]M) (\\d\\d?/\\d\\d?/\\d{4})");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseTimeDateField extends TimeDateField {
@@ -119,7 +119,7 @@ public class DispatchH03Parser extends FieldProgramParser {
       data.strDate = match.group(2);
     }
   }
-  
+
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -128,7 +128,7 @@ public class DispatchH03Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class BaseMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -136,7 +136,7 @@ public class DispatchH03Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class BaseIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
