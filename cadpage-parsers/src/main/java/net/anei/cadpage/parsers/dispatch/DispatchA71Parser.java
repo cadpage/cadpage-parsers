@@ -10,7 +10,7 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   public DispatchA71Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! XY:GPS? ID:ID! PRI:PRI? DATE:DATE! TIME:TIME! UNIT:UNIT? X:X? INFO:INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! XY:GPS? ID:ID! PRI:PRI? DATE:DATE? TIME:TIME! MAP:MAP? UNIT:UNIT? X:X? INFO:INFO? INFO/N+");
   }
 
   @Override
@@ -29,11 +29,17 @@ public class DispatchA71Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
+
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR|SEC [NSEW]{1,2})", Pattern.CASE_INSENSITIVE);
 
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+
+      field = MSPACE_PTN.matcher(field).replaceAll(" ");
+      if (field.equals(data.strPlace)) data.strPlace = "";
+
       Matcher match = ADDR_SECTOR_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1);

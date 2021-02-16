@@ -1224,6 +1224,7 @@ public class ParserList {
               ,"OHGeaugaCounty"                 ,"Geauga County, OH"
               ,"OHGeneva"                       ,"Geneva, OH"
               ,"OHGreeneCounty"                 ,"Greene County, OH"
+              ,"OHGuernseyCounty"               ,"Guernsey County, OH"
               ,"OHHamiltonCounty"               ,"Hamilton County, OH"
               ,"OHHancockCounty"                ,"Hancock County, OH"
               ,"OHHighlandCounty"               ,"Highland County, OH"
