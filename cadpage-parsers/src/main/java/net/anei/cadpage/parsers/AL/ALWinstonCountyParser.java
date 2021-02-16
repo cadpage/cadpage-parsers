@@ -8,16 +8,16 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 public class ALWinstonCountyParser extends DispatchA65Parser {
-  
+
   public ALWinstonCountyParser() {
     super(CITY_LIST, "WINSTON COUNTY", "AL");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info";
+    return "@911email.net,dispatch@911comm2.info,winstonsheriff.org,@winston911.net";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -30,7 +30,7 @@ public class ALWinstonCountyParser extends DispatchA65Parser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     if (data.strSource.length() == 0) data.expectMore = true;
-    
+
     if (data.strCity.length() == 0) {
       int pt = data.strAddress.lastIndexOf(',');
       if (pt >= 0) {
@@ -38,11 +38,11 @@ public class ALWinstonCountyParser extends DispatchA65Parser {
         data.strAddress = data.strAddress.substring(0,pt).trim();
       }
     }
-    
+
     data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
     return true;
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
@@ -77,22 +77,22 @@ public class ALWinstonCountyParser extends DispatchA65Parser {
     "BATTS NEST",
     "BOOGER TREE",
     "CORINTH",
-    
+
     // ?????
     "BLACK POND",
     "HELICON",
     "HELICAN",
-    
+
     // Cullman County
     "CULLMAN CO",
     "CRANE HILL",
     "CULLMAN",
     "LOGAN",
-    
+
     // Lawrence County
     "LAWRENCE CO"
   };
-  
+
   private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
       "DOUBLE SPRING",  "DOUBLE SPRINGS",
       "DOUBLE SRINGS",  "DOUBLE SPRINGS",
@@ -101,7 +101,7 @@ public class ALWinstonCountyParser extends DispatchA65Parser {
       "HVILLE",         "HALEYVILLE",
       "HELICAN",        "HELICON"
   });
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "BLACK POND",     "DOUBLE SPRINGS",
       "HELICON",        "ARLEY"
