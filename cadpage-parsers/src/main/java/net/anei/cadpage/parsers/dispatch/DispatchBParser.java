@@ -11,39 +11,39 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class DispatchBParser extends FieldProgramParser {
-  
+
   int version;
-  
+
   public DispatchBParser(Properties cityCodes, String defCity, String defState) {
     this(0, cityCodes, defCity, defState);
   }
-  
+
   public DispatchBParser(String[] cityList, String defCity, String defState) {
     this(0, cityList, defCity, defState);
   }
-  
+
   public DispatchBParser(String defCity, String defState) {
     this(0, defCity, defState);
   }
-  
+
   public DispatchBParser(int version, Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState, calcProgram(version));
     this.version = version;
     setup();
   }
-  
+
   public DispatchBParser(int version, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState, calcProgram(version));
     this.version = version;
     setup();
   }
-  
+
   public DispatchBParser(int version, String defCity, String defState) {
     super(defCity, defState, calcProgram(version));
     this.version = version;
     setup();
   }
-  
+
   private static String calcProgram(int version) {
     switch (Math.abs(version)) {
     case 0: return null;
@@ -56,9 +56,9 @@ public class DispatchBParser extends FieldProgramParser {
     default:return null;
     }
   }
-  
+
   private static final String[] FIXED_KEYWORDS = new String[]{"Map", "Grids", "Cad"};
-  private static final String[] KEYWORDS = 
+  private static final String[] KEYWORDS =
     new String[]{"Loc", "Return Phone", "BOX", "Map", "Grids", "Cad", "Time"};
   private static final Pattern REPORT_PTN = Pattern.compile("(?:EVENT: *(\\S*?) +LOC:(.*?)[ \n]Cad: +([-0-9]+)[ \n]|\\(?(\\S+?)\\)? *= *)([A-Z0-9]+ +>?\\d\\d:\\d\\d(?::\\d\\d)?[ \n].*)", Pattern.DOTALL);
   private static final Pattern REPORT_PTN2 = Pattern.compile("([-A-Z0-9]+)\n= (DSP .*)");
@@ -86,7 +86,7 @@ public class DispatchBParser extends FieldProgramParser {
       data.strSupp = REPORT_DELIM_PTN.matcher(match.group(5).trim()).replaceAll("\n");
       return true;
     }
-    
+
     match = REPORT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("CODE INFO");
@@ -95,7 +95,7 @@ public class DispatchBParser extends FieldProgramParser {
       data.strSupp = REPORT_DELIM_PTN.matcher(match.group(2).trim()).replaceAll("\n");
       return true;
     }
-    
+
     // See if this is the new fangled line break delimited format
     if (version != 0) {
       String[] flds = body.split("\n");
@@ -103,14 +103,14 @@ public class DispatchBParser extends FieldProgramParser {
         return parseFields(flds, data);
       }
     }
- 
+
     // Otherwise use the old logic
     if (! isPageMsg(body)) return false;
     setFieldList("CODE CALL ADDR APT X PLACE CITY NAME PHONE BOX MAP ID TIME");
-    
+
     body = "Loc: " + body;
     Properties props = parseMessage(body, KEYWORDS);
-    
+
     String addr = props.getProperty("Loc", "");
     String phone = props.getProperty("Return Phone");
     if (addr.length() == 0) {
@@ -123,26 +123,26 @@ public class DispatchBParser extends FieldProgramParser {
       if (phone != null) data.strPhone = phone;
     }
     if (!parseAddrField(addr, data)) return false;
-    
+
     data.strBox = props.getProperty("BOX", "");
     data.strMap = props.getProperty("Map", "");
     String callId = props.getProperty("Cad");
     if (callId != null) {
       parseCallId(callId, data);
     }
-    
+
     String time = props.getProperty("Time", "");
     match = TIME_PTN.matcher(time);
-    
+
     if (match.matches()) data.strTime = match.group(1)+':'+match.group(2);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " INFO";
   }
-  
+
   /**
    * Determines if this is a CAD page (may be overridden by subclasses)
    * @param body
@@ -151,7 +151,7 @@ public class DispatchBParser extends FieldProgramParser {
   protected boolean isPageMsg(String body) {
     return isPageMsg(body, FIXED_KEYWORDS);
   }
-  
+
   /**
    * Processes the complicated first address field
    * Will usually be overridden by subclasses
@@ -160,7 +160,7 @@ public class DispatchBParser extends FieldProgramParser {
    * @return true if parse was successful
    */
   protected boolean parseAddrField(String field, Data data) {
-    
+
     // Default is to ignore everything up to the first '>'
     int ipt = field.indexOf('>');
     if (ipt >= 0) field = field.substring(ipt+1);
@@ -192,7 +192,7 @@ public class DispatchBParser extends FieldProgramParser {
     }
     data.strCallId = callId;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new BaseCallField();
@@ -213,13 +213,13 @@ public class DispatchBParser extends FieldProgramParser {
       data.strCode = field.substring(0,pt).trim();
       data.strCall = field.substring(pt+1).trim();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class BaseCallAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -232,13 +232,13 @@ public class DispatchBParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE " + super.getFieldNames();
     }
   }
-  
+
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private class BaseCrossField extends CrossField {
     @Override
@@ -247,7 +247,7 @@ public class DispatchBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class BaseAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
@@ -256,7 +256,7 @@ public class DispatchBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern NULL_GRID_PTN = Pattern.compile("0*,0*");
   private class BaseMapField extends MapField {
     @Override
@@ -271,23 +271,23 @@ public class DispatchBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class BaseIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
       parseCallId(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID INFO";
     }
   }
-  
+
   private void setup() {
     setupCallList(buildCallList());
   }
-  
+
   protected CodeSet buildCallList() {
     return new CodeSet(
         "1070 FIRE",
@@ -655,7 +655,7 @@ public class DispatchBParser extends FieldProgramParser {
         "FIGHT",
         "FIGHT-IN PROGRESS",
         "FIGHT IN PROGRESS",
-        "FIRE",    
+        "FIRE",
         "FIRE / CHIMNEY",
         "FIRE / WILDFIRE",
         "FIRE AGRICULTURE",
@@ -1084,7 +1084,7 @@ public class DispatchBParser extends FieldProgramParser {
         "STROKE/CVA PATIENT",
         "STROKE (CVA) BREATH NORM > 35",
         "STRUC FIRE-SINGLE RESIDENTIAL",
-        "STRUCTURE FIRE",                         
+        "STRUCTURE FIRE",
         "STRUCTURE FIRE CHARLEY RESPONS",
         "STRUCTURE FIRE-COMMERCIAL",
         "STRUCTURE FIRE-BARN/GARAGE/OTH",
