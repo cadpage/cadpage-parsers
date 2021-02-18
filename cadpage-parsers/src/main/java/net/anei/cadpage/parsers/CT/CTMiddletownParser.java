@@ -15,7 +15,7 @@ public class CTMiddletownParser extends FieldProgramParser {
   public CTMiddletownParser() {
     super(CITY_LIST, "MIDDLETOWN","CT",
           "( ID CALL PLACE ADDR APT CITY ZIP X UNIT DATETIME/d! INFO/N+ " +
-          "| UNIT CALL PLACE ADDR APT CITY? ZIP ID INFO/N+ )");
+          "| UNIT CALL PLACE ADDR APT CITY? ZIP? ID? INFO/N+ )");
   }
 
   @Override
