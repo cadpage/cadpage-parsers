@@ -609,6 +609,7 @@ public class ParserList {
               ,"KYCampbellCounty"               ,"Campbell County, KY"
               ,"KYCarrollCounty"                ,"Carroll County, KY"
               ,"KYCarterCounty"                 ,"Carter County, KY"
+              ,"KYCaseyCounty"                  ,"Casey County, KY"
               ,"KYChristianCounty"              ,"Christian County, KY"
               ,"KYClarkCounty"                  ,"Clark County, KY"
               ,"KYClayCounty"                   ,"Clay County, KY"
