@@ -817,6 +817,7 @@ public class Active911ParserTable {
       "US/MI/EatonCounty",                "MIEatonCounty",
       "US/MI/EmmetCounty",                "MIEmmetCounty",
       "US/MI/Firemodules",                "MIOaklandCountyB",
+      "US/MI/Frankenlust",                "MIBayCountyC",
       "US/MI/GogebicCounty",              "MIGogebicCounty,MIWayneCounty",
       "US/MI/GrandTraverse",              "MIGrandTraverseCounty",
       "US/MI/GrandTraverseAttachment",    "MIGrandTraverseCounty",
