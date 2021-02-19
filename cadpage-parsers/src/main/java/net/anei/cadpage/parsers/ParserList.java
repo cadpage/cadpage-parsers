@@ -158,6 +158,7 @@ public class ParserList {
               ,"AKJuneau"                       ,"Juneau, AK"
               ,"AKKenaiPeninsulaBorough"        ,"Kenai Peninsula Borough, AK"
               ,"AKMatanuskaSusitnaBorough"      ,"Matanuska Susitna Borough, AK"
+              ,"AKSkagway"                      ,"Skagway, AK"
           ),
           new ParserCategory("Arizona"
               ,"AZMaricopaCounty"               ,"Maricopa County, AZ"

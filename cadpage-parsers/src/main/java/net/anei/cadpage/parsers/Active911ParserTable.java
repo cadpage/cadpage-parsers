@@ -49,6 +49,7 @@ public class Active911ParserTable {
       "US/AK/CityofJuneau",               "AKJuneau",
       "US/AK/Fairbanks",                  "AKFairbanks",
       "US/AK/MatanuskaSusitna",           "AKMatanuskaSusitnaBorough",
+      "US/AK/Skagway",                    "AKSkagway",
       "US/AL/AdamsvilleFD",               "ALJeffersonCountyJ",
       "US/AL/AlexanderCity",              "ALTallapoosaCounty",
       "US/AL/AthensLimestoneCounty",      "ALLimestoneCountyA",
