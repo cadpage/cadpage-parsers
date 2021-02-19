@@ -223,7 +223,7 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
       "BARRICADE COMBINED",             "MEDIC LOCAL - STANDBY WITH POLICE-ALS",
       "BARRICADE",                      "MEDIC LOCAL - STANDBY WITH POLICE-ALS",
       "BLS AMB COMBINED",               "AMBULANCE LOCAL",
-      "BLS AMB",                        "AMBULANCE LOCAL - BLS1",
+      "BLS AMB",                        "AMBULANCE LOCAL - BLS",
       "BLS COMBINED",                   "AMBULANCE LOCAL - BLS1 WITH POLICE",
       "BLS",                            "AMBULANCE LOCAL - BLS1",
       "BLS+",                           "AMBULANCE LOCAL - BLS+",
