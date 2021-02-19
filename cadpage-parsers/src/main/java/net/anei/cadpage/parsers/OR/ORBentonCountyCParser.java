@@ -9,11 +9,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Benton County, OR fallback parser
  */
 public class ORBentonCountyCParser extends ORBentonCountyBaseParser {
-  
+
   public ORBentonCountyCParser() {
-    super("BENTON COUNTY", null);
+    this("BENTON COUNTY");
   }
-  
+
+  public ORBentonCountyCParser(String defCity) {
+    super(defCity, null);
+  }
+
+  public String getAliasCode() {
+    return "ORBentonCountyC";
+  }
+
   @Override
   public String getFilter() {
     return "Corvallis Alerts,alerts@corvallis.ealertgov.com";
@@ -25,9 +33,9 @@ public class ORBentonCountyCParser extends ORBentonCountyBaseParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!isPositiveId()) return false;
     setFieldList("CALL ADDR APT CITY INFO");
-    
+
     data.defCity = "";
-    
+
     if (body.startsWith(subject)) subject = "";
     if (subject.length() > 0) data.strCall = subject;
     for (String line : body.split("\n")) {
@@ -51,7 +59,7 @@ public class ORBentonCountyCParser extends ORBentonCountyBaseParser {
       else data.strSupp = append(data.strSupp, "\n", line);
     }
     if (data.strAddress.length() == 0) return false;
-    
+
     fixAddress(data);
     return true;
   }
