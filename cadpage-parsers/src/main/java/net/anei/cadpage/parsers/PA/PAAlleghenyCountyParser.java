@@ -345,6 +345,7 @@ public class PAAlleghenyCountyParser extends GroupBestParser {
       "714 PARKFORD DR",                      "+40.291945,-79.994783",
       "715 PARKFORD DR",                      "+40.291945,-79.994783",
       "716 PARKFORD DR",                      "+40.291945,-79.994783",
+      "1851 PARKVUE ST",                      "+40.247239,-79.800261",
       "1700 PATRICK PL",                      "+40.309548,-80.014289",
       "1750 PATRICK PL",                      "+40.308667,-80.012814",
       "1800 PATRICK PL",                      "+40.308478,-80.013326",
