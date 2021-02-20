@@ -2064,6 +2064,7 @@ public class Active911ParserTable {
       "US/WV/JacksonCounty911HTML",       "WVJacksonCounty",
       "US/WV/JeffersonCounty",            "WVJeffersonCounty",
       "US/WV/KanawhaCounty",              "WVKanawhaCounty",
+      "US/WV/LCE911",                     "WVLewisCounty",
       "US/WV/LincolnCounty",              "WVLincolnCounty",
       "US/WV/MarionCounty",               "WVMarionCounty",
       "US/WV/MasonCounty",                "WVMasonCounty",

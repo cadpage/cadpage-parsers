@@ -1747,6 +1747,7 @@ public class ParserList {
               ,"WVJacksonCounty"                ,"Jackson County, WV"
               ,"WVJeffersonCounty"              ,"Jefferson County, WV"
               ,"WVKanawhaCounty"                ,"Kanawha County, WV"
+              ,"WVLewisCounty"                  ,"Lewis County, WV"
               ,"WVLincolnCounty"                ,"Lincoln County, WV"
               ,"WVMarionCounty"                 ,"Marion County, WV"
               ,"WVMasonCounty"                  ,"Mason County, WV"
