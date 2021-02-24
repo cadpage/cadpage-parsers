@@ -79,22 +79,29 @@ public class DispatchH01Parser extends HtmlProgramParser {
       String zip = null;
       for (String part : addr.split("/")) {
         part = part.trim();
-        boolean first = true;
+        String taddr = "";
+        String tcity = "";
+        String tzip = null;
         for (String seg : part.split(",")) {
           seg = seg.trim();
-          if (first) {
-            data.strAddress = append(data.strAddress, " & ", seg);
-            first = false;
-          }
-          else if (STATE_PTN.matcher(seg).matches()) {
+          if (STATE_PTN.matcher(seg).matches()) {
             data.strState = seg;
           }
           else if (ZIP_PTN.matcher(seg).matches()) {
-            zip = seg;
+            tzip = seg;
           } else {
-            city = seg;
+            data.strPlace = append(data.strPlace, ", ", taddr);
+            taddr = tcity;
+            tcity = seg;
           }
         }
+        if (taddr.isEmpty()) {
+          taddr = tcity;
+          tcity = "";
+        }
+        data.strAddress = append(data.strAddress, " & ", taddr);
+        if (!tcity.isEmpty()) city = tcity;
+        if (tzip != null) zip = tzip;
       }
 
       if (city != null) {
