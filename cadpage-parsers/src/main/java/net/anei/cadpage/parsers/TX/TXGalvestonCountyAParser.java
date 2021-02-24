@@ -121,7 +121,7 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
       "LAMA",   "LA MARQUE",
       "PORT",   "PORT BOLIVAR",
       "SANL",   "SAN LEON",
-      "SANT",   "SANTE FE",
+      "SANT",   "SANTA FE",
       "TIKI",   "TIKI ISLAND",
 
       "LAMARQUE",   "LA MARQUE",
