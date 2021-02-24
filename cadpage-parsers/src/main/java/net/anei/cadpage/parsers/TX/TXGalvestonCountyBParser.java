@@ -1,15 +1,27 @@
 package net.anei.cadpage.parsers.TX;
 
-import java.util.Properties;
+import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class TXGalvestonCountyBParser extends DispatchOSSIParser {
 
   public TXGalvestonCountyBParser() {
-    super(CITY_CODES, "GALVESTON COUNTY", "TX",
+    super(TXGalvestonCountyAParser.CITY_CODES, "GALVESTON COUNTY", "TX",
           "( CANCEL ADDR CITY! " +
           "| FYI ID SRC CALL ADDR CITY UNIT! UNIT/C+? ) INFO/N+");
+  }
+
+  private static final Pattern TX_LA_PORTE_MARKER = Pattern.compile(";\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d;");
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+
+    // Reject TXLaPorte alerts
+    if (TX_LA_PORTE_MARKER.matcher(body).find()) return false;
+
+    return super.parseMsg(body, data);
   }
 
   @Override
@@ -19,13 +31,4 @@ public class TXGalvestonCountyBParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+", true);
     return super.getField(name);
   }
-
-  private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "BAYO", "BAYOU VISTA",
-      "GACO", "GALVESTON COUNTY",
-      "HITC", "HITCHCOCK",
-      "LAMA", "LA MARQUE",
-      "TC",   "TEXAS CITY",
-      "TIKI", "TIKI ISLAND"
-  });
 }

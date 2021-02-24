@@ -1,17 +1,17 @@
 Using the Cadpage Parser in a standalone server environment
 
 The Cadpage Parser is distributed as the CadpageParser.jar file available from
-http://www.cadpage.org/download-cadpage.  It is distributred under a GPL3 license, 
-the source code is available from https://github.com/cadpage/cadpage-parsers. 
+http://www.cadpage.org/download-cadpage.  It is distributed under a GPL3 license,
+the source code is available from https://github.com/cadpage/cadpage-parsers.
 
-The parser can be called directly from a Java program, but will most commonly be 
+The parser can be called directly from a Java program, but will most commonly be
 executed as a standalone process   You do have to have Java 1.5 or better
 installed on your system.
 
 The command to run the Cadpage parser is
 java -jar CadpageParser.jar <arguments>
 
-Once started it will read page message information from stdin and output the parsed 
+Once started it will read page message information from stdin and output the parsed
 results to stdout.  Anything displayed on stderr indicates a fatal error and should
 be logged and reported to the developers.
 
@@ -19,7 +19,7 @@ Arguments can be one of
 FLGS=<flags>
    Flags can be any combination of
    P - Preparse message to remove artifacts inserted by a upstream message
-       service.  Should not be necessary if page is coming directly from 
+       service.  Should not be necessary if page is coming directly from
        dispatch CAD software
    G - Messages should be parsed as general alerts if not recognized as CAD pages
    default value "G"
@@ -27,11 +27,11 @@ FMT=<format code>
    format code is the parser format code.  Default value - read from stdin
 SUBJ=<message subject>
    message subject.  Default value - read from stdin
-   
+
 Any parameter value set to a dash (-) will be read from stdin for every message
 to be parsed
 
-The parser will start by optionally reading values for flags, format code, and 
+The parser will start by optionally reading values for flags, format code, and
 message subject as separate lines from stdin.  It will then read any number of
 lines of text message, which can be terminated by an
 <*EOD*>
@@ -49,7 +49,7 @@ marker
 Example #1 - Parser dedicated to handling a single location, pages received
 directly from dispatch.  Subject is first line of input
 
-java -jar CadpageParser.jar FLGS= FMT=ORBentonCounty 
+java -jar CadpageParser.jar FLGS= FMT=ORBentonCounty
 Corvallis Alert
 INC: CODE 1 MEDICAL
 ADD:1740 MAIN ST
@@ -67,7 +67,7 @@ from an upstream messaging service which has already attempted to embed the
 message subject in the message text.  Format code is first line of input.  Subject
 is the blank second line.  The actual message text starts with the S: line
 
-java -jar CadpageParser.jar FLGS=P FMT=ORBentonCounty 
+java -jar CadpageParser.jar FLGS=P FMT=ORBentonCounty
 ORBentonCounty
 
 S: Corvallis Alert
@@ -86,7 +86,7 @@ Example #3 - Parser is invoked once per text page, pages may be received
 from an upstream messaging service which has already attempted to embed the
 message subject in the message text. Input is terminated by a hard EOF
 
-java -jar CadpageParser.jar FLGS=PG FMT=ORBentonCounty "SUBJ=Corvallis Alert" 
+java -jar CadpageParser.jar FLGS=PG FMT=ORBentonCounty "SUBJ=Corvallis Alert"
 ORBentonCounty
 INC: CODE 1 MEDICAL
 ADD:1740 MAIN ST
@@ -102,6 +102,7 @@ What is returned is a list of name:value pairs separated by newline characaters.
 The possible name values are as follows:
 
 These fields contain important information that should always be reported to the user
+ALERT   Text warning of any special hazards or conditions
 PRI     Call priority
 CODE    Short Call Code
 CODE    Call code
@@ -120,7 +121,7 @@ INFO    Other useful information
 ID      Call ID or number
 
 These field contain useful information that you might want to suppress out of
-concerns for caller/patient privacy.  Cadpage has a configurable option to 
+concerns for caller/patient privacy.  Cadpage has a configurable option to
 determine whether or not these are displayed.  Default is off
 NAME    Pt/Caller name
 PHONE   Pt/Caller phone
@@ -149,7 +150,7 @@ of mapping addresses to identify the location.  It has three states.  Use GPS, u
 address, or the default follow parser recomendation.
 The GPS coordinates should be used if GPS coordinates are present the user option
 user option or REC_GPS flag recommends use of GPS coordinates.
-When building a search string from the address information, use the following 
+When building a search string from the address information, use the following
 information separated by commas.
 MADDR field if present, ADDR field otherwise  (Replace & with AT in result)
 MCITY field if present, otherwise CITY field if present, otherwise DCITY field
@@ -163,7 +164,7 @@ URL     URL with more information about the call.
 
 These fields contain dispatch date and time message extracted from message.  They
 are not always present and should not be relied upon to determine the reported
-message time.  
+message time.
 DATE  Dispatch date in mm/dd/yy or mm/dd/yyyy form or mm/dd **
 TIME  Dispatch time in hh:mm:ss or hh:mm form **
 The date/time reporting algorithm should use these fields if present.
@@ -177,19 +178,19 @@ were on different sides of midnight.
 Fields that may allow department map pages to be displayed online.  Currently only supported
 for Benton County, OR
 MP_STATUS:
-Is only present if the parser supports Map Page viewing, whether or not a map page is present 
-for this call.  Possible values for now are ANY, which means any page view can be used, and ADOBE, 
+Is only present if the parser supports Map Page viewing, whether or not a map page is present
+for this call.  Possible values for now are ANY, which means any page view can be used, and ADOBE,
 which means we have determined that only the real Adobe Reader app can be used to display these pages.
 
 MP_URL:
-contains the URL needed to view the map page for this call.  This will only be present if there is a 
+contains the URL needed to view the map page for this call.  This will only be present if there is a
 map page associated with this call.
 
 
 Sending parsed page information to Cadpage/Android
-For best results, the entire string of parsed key/value pairs should be sent to 
-Cadpage/Android with a message format code of "Cadpage".  Modifying or dropping 
-key values you are not interested in can cause loss of information or mapping 
+For best results, the entire string of parsed key/value pairs should be sent to
+Cadpage/Android with a message format code of "Cadpage".  Modifying or dropping
+key values you are not interested in can cause loss of information or mapping
 problems.  If these modifications cannot be avoided, the following fields *MUST*
 be included if Cadpage is to map the incident properly.
 ADDR

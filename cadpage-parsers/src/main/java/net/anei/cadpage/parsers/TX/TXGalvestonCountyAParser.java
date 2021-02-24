@@ -11,7 +11,7 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
 
   public TXGalvestonCountyAParser() {
     super(CITY_CODES, "GALVESTON COUNTY", "TX",
-          "( CANCEL ADDR CITY! | FYI CALL ( ADDR! | PLACE ADDR! | ADDR! ) CITY? ID? PRI? DATETIME? ) INFO/N+? SRC END");
+          "( CANCEL ADDR CITY! | FYI CALL ( ADDR! | PLACE ADDR! | ADDR! ) CITY? ID? PRI? DATETIME? ) INFO/N+? SRC");
     setupCityValues(CITY_CODES);
     setupCities(CITY_LIST);
   }
@@ -25,7 +25,8 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     if (body.startsWith("CAD\n") || body.startsWith("CAD ")) body = "CAD:" + body.substring(4);
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    return !NUMERIC.matcher(data.strCall).matches();
   }
 
   @Override
@@ -36,6 +37,7 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new UnitField("[A-Z]{4}", true);
+    if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
   }
 
@@ -81,14 +83,35 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern SRC_PTN = Pattern.compile("[A-Z]{1,5}\\d?");
+  private class MySourceField extends SourceField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField(+1)) return false;
+      if (!SRC_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+  }
+
   @Override
   public String adjustMapAddress(String addr) {
     return NUMBER_HALF_PTN.matcher(addr).replaceAll("$1");
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "BAYO",   "BAYO VISTA",
+  // This table is shared with TXGalvestonCountyB and TXLaPorte
+
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BACL",   "BACLIFF",
+      "BAYO",   "BAYOU VISTA",
+      "CLEMC",  "CLEAR LAKE",
       "CRYS",   "CRYSTAL BEACH",
+      "DICK",   "DICKINSON",
       "GACO",   "GALVESTON COUNTY",
       "GALV",   "GALVESTON",
       "GILC",   "GILCHRIST",
@@ -98,25 +121,48 @@ public class TXGalvestonCountyAParser extends DispatchOSSIParser {
       "LAMA",   "LA MARQUE",
       "PORT",   "PORT BOLIVAR",
       "SANL",   "SAN LEON",
-      "TC",     "TEXAS CITY",
+      "SANT",   "SANTE FE",
       "TIKI",   "TIKI ISLAND",
 
-      "SANLEON",    "SAN LEON"
-  });
+      "LAMARQUE",   "LA MARQUE",
+      "SANLEON",    "SAN LEON",
 
+      "AL",     "ALVIN",
+      "CS",     "CLEAR LAKE SHORES",
+      "DP",     "DEER PARK",
+      "EL",     "EL LAGO",
+      "ETJ",    "SUGAR LAND",
+      "FB",     "FOREST BEND",
+      "FW",     "FRIENDSWOOD",
+      "GC",     "GALVESTON COUNTY",
+      "HC",     "HARRIS COUNTY",
+      "HO",     "NASSAU BAY",
+      "KH",     "KEMAH",
+      "LC",     "LEAGUE CITY",
+      "LP",     "LA PORTE",
+      "MP",     "MORGANS POINT",
+      "NB",     "NASSAU BAY",
+      "PA",     "PASADENA",
+      "PL",     "PEARLAND",
+      "SA",     "SHOREACRES",
+      "SB",     "SEABROOK",
+      "SE",     "SOUTHEAST",
+      "SL",     "SUGAR LAND",
+      "ST",     "STAFFORD",
+      "SO",     "HARRIS COUNTY",
+      "TC",     "TEXAS CITY",
+      "TL",     "TAYLOR LAKE VILLAGE",
+      "WB",     "WEBSTER"
+  });
 
   private static final String[] CITY_LIST = new String[]{
       "CLEAR LAKE SHORES",
-      "DICKINSON",
       "FRIENDSWOOD",
       "KEMAH",
       "LEAGUE CITY",
-      "SANTA FE",
-
-      "BACLIFF",
 
       "ALGOA",
       "CAPLEN",
-      "PORT BOLIVAR",
+      "PORT BOLIVAR"
   };
 }

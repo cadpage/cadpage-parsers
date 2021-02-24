@@ -8,44 +8,44 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 /**
- * NLa Porte, TX 
+ * La Porte, TX
  */
 
 public class TXLaPorteParser extends DispatchOSSIParser {
-  
+
   private static final Pattern PREFIX = Pattern.compile("^\\d*:");
   private static final Pattern LINE_BRK_PTN = Pattern.compile(" *\n *");
-  
+
   public TXLaPorteParser() {
     this("HARRIS COUNTY", "TX");
   }
-  
+
   protected TXLaPorteParser(String defCity, String defState) {
-    super(CITY_CODES, defCity, defState,
+    super(TXGalvestonCountyAParser.CITY_CODES, defCity, defState,
           "( KEMA_FMT KEMA_ADDR/aS9CI " +
-          "| CANCEL ADDR! CITY? " + 
+          "| CANCEL ADDR! CITY? " +
           "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ " +
           ") INFO+");
   }
-  
+
   @Override
   public String getAliasCode() {
-    return "TXNassauBay";
+    return "TXLaPorte";
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@ossicadpaging";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     // Kema alerts probably do not belong in this parser, but since Active911
     // handles them in the same parser, we will do likewise.
     if (body.startsWith("CANCEL ")) {
@@ -59,36 +59,47 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       parseAddress(body, data);
       return true;
     }
-    
+
     if (body.startsWith("FYI:")) {
       body = "CAD:KEMA_FMT;" + body.substring(4).trim();
     }
-      
+
     // Regular parsing takes up here
     else {
-      
+
       // Strip off option number prefix
       Matcher match = PREFIX.matcher(body);
       if (match.find()) body = body.substring(match.end()).trim();
       body = LINE_BRK_PTN.matcher(body).replaceAll(" ");
     }
-    
-    if (body.startsWith("CAD ") || body.startsWith("CAD\n")) body = "CAD:" + body.substring(4); 
-    
+
+    if (body.startsWith("CAD ") || body.startsWith("CAD\n")) body = "CAD:" + body.substring(4);
+
     // Both cases invoke the superclass parseMsg method
     return super.parseMsg(body, data);
   }
-  
+
   private static final Pattern LEAD_TRASH_PTN = Pattern.compile("^(?:Event spawned from |\\(S\\) *\\(N\\)) *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = LEAD_TRASH_PTN.matcher(field);
-      if (match.find()) field = field.substring(match.end());
-      super.parse(field, data);
+
+      if (isValidCrossStreet(field)) {
+        data.strCross = append(data.strCross, " / ", field);
+      } else {
+
+        Matcher match = LEAD_TRASH_PTN.matcher(field);
+        if (match.find()) field = field.substring(match.end());
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " X";
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("KEMA_FMT")) return new SkipField("KEMA_FMT", true);
@@ -105,11 +116,11 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern KEMA_WATERFRONT_PTN = Pattern.compile("(.*?) +(\\d+) KEMAH WATERFRONT\\b *(.*)");
   private static final Pattern KEMA_ADDR_PTN = Pattern.compile("(.*?) +((?:\\d+ (?:yoa?|yr|y/o) |[A-Z]?[a-z]).*)");
   private class KemaAddressField extends AddressField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       Matcher match = KEMA_WATERFRONT_PTN.matcher(field);
       if (match.matches()) {
@@ -128,26 +139,26 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       parseAddress(StartType.START_CALL, flags, field, data);
       if (data.strSupp.length() == 0) data.strSupp = getLeft();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL ADDR INFO";
     }
   }
-  
+
   private class MySourceField extends SourceField {
     public MySourceField() {
       super("(?!ASFD)[A-Z]{4}", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strSource = append(data.strSource, " ", field);
     }
   }
-  
+
   private class MyCallAddressField extends Field {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_WATERFRONT_PTN.matcher(field);
@@ -162,13 +173,13 @@ public class TXLaPorteParser extends DispatchOSSIParser {
         data.strCall = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL ADDR APT";
     }
   }
-  
+
   private static final Pattern ADDR_WATERFRONT_PTN = Pattern.compile("(\\d+) KEMAH WATERFRONT");
   private class MyAddressField extends AddressField {
     @Override public void parse(String field, Data data) {
@@ -177,50 +188,50 @@ public class TXLaPorteParser extends DispatchOSSIParser {
         data.strAddress = match.group(1) + " KEMAH WATER FRONT";
         return;
       }
-      
+
       if (data.strCity.length() == 0) {
         int pt = field.lastIndexOf(',');
         if (pt >= 0) {
-          data.strCity = convertCodes(field.substring(pt+1).trim().toUpperCase(), CITY_CODES);
+          data.strCity = convertCodes(field.substring(pt+1).trim().toUpperCase(), TXGalvestonCountyAParser.CITY_CODES);
           field = field.substring(0,pt).trim();
         }
       }
       super.parse(field, data);
     }
   }
-  
+
   private static final String UNIT_PTN1 = "(?:[A-Z]+\\d+|[A-Z]{2,4}|\\d{2,4})";
   private static final String UNIT_PTN = UNIT_PTN1 + "(?:," + UNIT_PTN1 + ")*";
   private class MyUnitField extends UnitField {
-    
+
     public MyUnitField() {
       super(UNIT_PTN, true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, ",", field);
     }
   }
-  
+
   private class MyOptCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCity.length() > 0) return false;
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = PVT_DR_PTN.matcher(address).replaceAll("");
@@ -233,45 +244,4 @@ public class TXLaPorteParser extends DispatchOSSIParser {
   private static final Pattern DASH_ALPH_PTN = Pattern.compile("-(?:SH|ST|LA).*$");
   private static final Pattern HALF_PTN = Pattern.compile("\\bHALF\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern IH45_PTN = Pattern.compile("\\bIH *45(?: *FWY)?", Pattern.CASE_INSENSITIVE);
-  
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AL",     "ALVIN",
-      "BACL",   "BACLIFF",
-      "CLEMC",  "CLEAR LAKE",
-      "CS",     "CLEAR LAKE SHORES",
-      "DICK",   "DICKINSON",
-      "DP",     "DEER PARK",
-      "EL",     "EL LAGO",
-      "ETJ",    "SUGAR LAND",
-      "FB",     "HARRIS COUNTY", // "FOREST BEND",
-      "FW",     "FRIENDSWOOD",
-      "GACO",   "GALVESTON COUNTY",
-      "GALV",   "GALVESTON",
-      "GC",     "KEMAH",  // ??
-      "HC",     "HARRIS COUNTY",
-      "HITC",   "HITCHCOCK",
-      "HO",     "NASSAU BAY",
-      "JAMA",   "JAMAICA BEACH",
-      "KH",     "KEMAH",
-      "LAMA",   "LA MARQUE",
-      "LC",     "LEAGUE CITY",
-      "LP",     "LA PORTE",
-      "MP",     "MORGANS POINT",
-      "NB",     "NASSAU BAY",
-      "PA",     "PASADENA",
-      "PL",     "PEARLAND",
-      "SA",     "SHOREACRES",
-      "SANT",   "SANTE FE",
-      "SB",     "SEABROOK",
-      "SE",     "SOUTHEAST",
-      "SL",     "SUGAR LAND",
-      "ST",     "STAFFORD",
-      "SO",     "HARRIS COUNTY",
-      "TC",     "TEXAS CITY",
-      "TL",     "SEABROOK",   // ???
-      "WB",     "WEBSTER",
-      
-      "BAYTOWN",    "BAYTOWN"
-
-  });
 }
