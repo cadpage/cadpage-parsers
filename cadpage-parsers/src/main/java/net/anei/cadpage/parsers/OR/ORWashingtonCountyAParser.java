@@ -15,14 +15,14 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 /**
  * Washington County, OR
  * Also Clackamas County
- * 
- * 
+ *
+ *
  */
 public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   public ORWashingtonCountyAParser() {
     this("WASHINGTON COUNTY", "OR");
   }
-  
+
   public ORWashingtonCountyAParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
           "( SELECT/1 ( CODE_CALL! AT:ADDR! X:X! CITY:CITY! | ADDR1/SC! ) MAP:MAP UNIT:UNIT! | " +
@@ -32,12 +32,12 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets("E ST", "HWY 99E", "HWY 99W");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORWashingtonCountyA";
   }
-  
+
   @Override
   public String getFilter() {
     return "930010,777,888,wccca@wccca.com,majcs@majcs.us";
@@ -52,32 +52,33 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       @Override public int splitBreakPad() { return 1; }
    };
   }
-  
+
   private static final Pattern BAD_SUBJECT_PTN = Pattern.compile("PW(\\d+)|VisiCAD Email");
-  
+
   private static final Pattern RECALL_PTN = Pattern.compile("(RECALL):(.*) C\\*\\d{5}(?:CANCEL|RECALL)?(.*)");
   private static final Pattern RECALL_CITY_PTN = Pattern.compile("(.*),([A-Z]{3}) (.*)");
-  
+
   private static final Pattern MASTER_PTN1 = Pattern.compile("([A-Z0-9]+\\**) - ([-A-Z0-9]{2,5}) \\((.*?)\\) (.*?)#([A-Z]{2}\\d+)\\b[, ]*(.*)");
-  
-  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units resp[. ]+([A-Z0-9,]+) *(?:time: ?(\\d\\d:\\d\\d)Inc#([A-Z]*\\d+)(?: Apt(.*?))?(?:City(.*?))?(?: ?Lat(\\d{8,}) Lon(\\d{8,})(?: Comments *(.*))?)?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
-  
-  private static final Pattern MASTER_PTN5 = Pattern.compile("([A-Z]{2,6}\\**) - (.*?) Units ([,A-Z0-9]+) RP +(?:(.*?) +)?Comment(.*)");
-  
+
+  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units [Rr]esp[. ]+([A-Z0-9,]+) *(?:[Tt]ime[: ]+(\\d\\d:\\d\\d)(?:Inc|INC)# ?([A-Z]*\\d+)(?: Apt(.*?))?(?: ?City ?(.*?))?(?: ?(?:Lat|LAT) ?(\\d{8,}) (?:Lon|LON) ?(\\d{8,})(?: Comments *(.*))?)?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
+
+  private static final Pattern MASTER_PTN5 = Pattern.compile("([A-Z]{2,6}\\d?\\**) - (.*?) Units ([,A-Z0-9]+) RP +(?:(.*?) +)?Comment(.*)");
+
   private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*?) *(\\d{3}[- ]\\d{3}[- ]\\d{4})");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Reject anything for ORWashingtonCountyB or ORWashingtonCountyC
     if (BAD_SUBJECT_PTN.matcher(subject).matches()) return false;
-    
+
     // Reject anything from ORMultnomahCountyD
     if (body.contains("CALL:")) return false;
-    
+
     body = stripFieldStart(body, "*");
     body = stripFieldEnd(body, "\\");
-    
+    body = stripFieldStart(body, "From: CCOM FD ");
+
     // Special recall format
     Matcher match = RECALL_PTN.matcher(body);
     if (match.matches()) {
@@ -95,7 +96,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       }
       return true;
     }
-    
+
     // Another alternate format
     match = MASTER_PTN1.matcher(body);
     if (match.matches()) {
@@ -106,11 +107,11 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       body = match.group(4);
       data.strCallId = match.group(5);
       data.strSupp = match.group(6);
-      
+
       if (body.endsWith("-")) body += ' ';
       return parseFields(body.split("- ", -1), data);
     }
-    
+
     // They keep on coming
     match = MASTER_PTN3.matcher(body);
     if (match.matches()) {
@@ -136,7 +137,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       if (gps1 != null) setGPSLoc(convertGPS(gps1)+','+convertGPS(gps2), data);
       return true;
     }
-    
+
     match = MASTER_PTN5.matcher(body);
     if (match.matches()) {
       setFieldList("CODE CALL ADDR APT UNIT NAME PHONE INFO");
@@ -145,7 +146,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       data.strUnit = match.group(3);
       String namePhone = getOptGroup(match.group(4));
       data.strSupp = match.group(5).trim();
-      
+
       int pt = callAddr.indexOf(" at ");
       if (pt >= 0) {
         data.strCall = expandCall(callAddr.substring(0, pt).trim());
@@ -153,14 +154,14 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       } else {
         parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, callAddr, data);
       }
-      
+
       match = NAME_PHONE_PTN.matcher(namePhone);
       if (match.matches()) {
         namePhone = match.group(1);
         data.strPhone = match.group(2);
       }
       data.strName = namePhone;
-      
+
       return true;
     }
 
@@ -168,20 +169,20 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     body = body.replace(" UNITS:", " UNIT:");
     return super.parseMsg(body, data);
   }
-  
+
   private String cleanCross(String cross) {
     cross = cross.replace("No X Street", "").trim();
     cross = stripFieldStart(cross, "/");
     cross = stripFieldEnd(cross, "/");
     return cross;
   }
-  
+
   private static String convertGPS(String field) {
     int pt = field.length()-6;
     if (field.length() > 6) field = field.substring(0, pt) + '.' + field.substring(pt);
     return field;
   }
-  
+
   @Override
   public String getProgram() {
     String result = super.getProgram();
@@ -220,19 +221,19 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private static final Pattern DIR_OF_SLASH_PTN = Pattern.compile("\\b([NSEW] *OF) */ *");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = CODE_CALL_PTN.matcher(field);
       if (match.matches()) {
         data.strCode = match.group(1);
         field = match.group(2);
       }
-      
+
       int flags = FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT | FLAG_ANCHOR_END;
       int pt1 = field.lastIndexOf(')');
       if (pt1 >= 0) {
@@ -274,13 +275,13 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL ADDR APT X CITY";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -288,7 +289,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CROSS_PFX_PTN = Pattern.compile("btwn |low xst:");
   private class MyCross2Field extends CrossField {
     @Override
@@ -300,7 +301,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern PLACE_CITY_PTN = Pattern.compile("(.*), *[A-Z]{3}");
   private class MyPlace2Field extends PlaceField {
     @Override
@@ -310,7 +311,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyName2Field extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -321,13 +322,13 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
         data.strName = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "X NAME";
     }
   }
-  
+
   private String expandCall(String call) {
     SortedSet<String> tail =  CALL_SET.tailSet(call);
     String result = null;
@@ -342,6 +343,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
   }
 
   private static final String[] CALL_ARRAY = new String[]{
+      "**BEHAVIORAL H",
       "AB PAIN W/FAINTG",
       "ABANDON VEHICLE",
       "ABANDONED VEHICLE",
@@ -360,6 +362,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "ABDOMINL PAIN C1",
       "AIR ALERT2:TASK",
       "AIR ALERT3:BOX",
+      "AIRCRAFT INCIDENT 1",
       "ALARM SILENT",
       "ALARM,AUDIBLE",
       "ALARM,OTHER",
@@ -382,6 +385,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "AMR TRANSPORT",
       "ANIMAL BITE C1",
       "ANIMAL BITE/ATTA",
+      "ANIMAL BITES/ATTACKS",
       "ANIMAL BITES/ATTACKS ALPHA",
       "ANIMAL BITES/ATTACKS BRAVO",
       "ANIMAL BITES/ATTACKS CHARLIE",
@@ -452,6 +456,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "BREATHING-DELTA RESPONSE",
       "BREATHING-ECHO RESPONSE",
       "BRUSH FIRE",
+      "BURGLARY IN",
       "BURGLARY,RESIDENTIAL",
       "BURN COMPLAINT",
       "BURNS/EXPLOSIONS ALPHA",
@@ -519,12 +524,14 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "COMMERCIAL FIRE ALARM",
       "COMMERCIAL F",
       "COMMERCIAL FIRE",
+      "COMMUNITY CONTA",
       "CONVULSION/SEIZU",
       "CONVULSIONS/SEIZURES ALPHA",
       "CONVULSIONS/SEIZURES BRAVO",
       "CONVULSIONS/SEIZURES CHARLIE",
       "CONVULSIONS/SEIZURES DELTA",
       "CONVULSIONS/SEIZURES ECHO",
+      "CRIM MISCHIEF",
       "CRIMINAL MISCHIEF",
       "DANGEROUS BLEED",
       "DEATH INVESTIGATION",
@@ -651,10 +658,13 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "LIFT ASSIST",
       "LOCKOUT",
       "MARINE ASSIST NON-IMMINE",
+      "MARINE RESCU",
       "MARINE RESCUE",
       "MARINE RESCUE 1",
       "MARINE RESCUE 2",
       "MARINE RESCUE EMRGENCY",
+      "MARINE RESCUE IMMINENT",
+      "MARINE ASSIST NON IMMINE",
       "MARINE RESCUE NON-IMMINENT",
       "MEDICAL ALARM",
       "MEDICAL ALARM-1",
@@ -701,6 +711,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "PRE NOTIFICATION",
       "PREG/CHILDBIRTH/MISCAR",
       "PREGNANCY/BIRTH",
+      "PREMISE CHECK",
       "PROPERTY INVESTIGATION",
       "PROPERTY LST/FND",
       "PREG/CHILDBIRTH/MISCAR ALPHA",
@@ -727,6 +738,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "RFIRE",
       "ROBBERY,ARMED",
       "RUNAWAY JUVENILE",
+      "SEARCH & RESCUE",
       "SEIZE/CONTINUOUS",
       "SEIZE/NO TRAIGE",
       "SEIZE/UNK BREATH",
@@ -778,6 +790,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "TAI-HIGH MECHANI",
       "TAU",
       "TASK FORCE",
+      "TECHNICAL RESCUE",
       "TEST FIRE",
       "TEST MEDICAL",
       "THEFT",
@@ -786,6 +799,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "THEFT, JUST OCCURRED",
       "TOXIC EXPOSURE",
       "TRAFFIC ACCIDENT",
+      "TRAFFIC ACCIDENT ENTRAPM",
       "TRAFFIC ACCIDENT INJURY",
       "TRAFFIC ACCIDENT UNK INJ",
       "TRAFFIC ACCIDENT, INJURY",
@@ -818,6 +832,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "TREE FIRE",
       "TRF ACC INJURY",
       "TRF ACC NON-INJ",
+      "TRF ACC NON-INJURY",
       "TRF ACC, INJURY",
       "TRF ACC, NON-INJ",
       "TRF ACC, UNK INJ",
@@ -853,19 +868,21 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "UNKNOWN TYP FIRE",
       "UNWANTED",
       "UNWELL/ILL",
+      "UTILITY NOTIF",
       "VEHICLE FIRE",
       "VEHICLE RELEASE",
+      "VIOL REST ORDE",
       "VIOLATION OF RESTRAINING ORDER",
       "VOMITING",
       "WARRANT SERVICE",
       "WATER PROBLEM",
       "WELFARE CHECK",
       "WIRES DOWN"
-  }; 
-  
+  };
+
   private final static CodeSet CALL_LIST = new CodeSet(CALL_ARRAY);
   private final static TreeSet<String> CALL_SET = new TreeSet<String>(Arrays.asList(CALL_ARRAY));
-  
+
   private static String[] MWORD_STREET_LIST = new String[]{
       "ALDER CREST",
       "ANNIE LOU",
@@ -1114,7 +1131,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "WORDEN HILL",
       "ZION CHURCH"
   };
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALO", "ALOHA",
       "AMI", "AMITY",
