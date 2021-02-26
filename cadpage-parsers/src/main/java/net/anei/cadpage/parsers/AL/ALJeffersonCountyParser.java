@@ -5,21 +5,21 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 
 
 public class ALJeffersonCountyParser extends GroupBestParser {
-  
+
   public ALJeffersonCountyParser() {
-    super(new ALJeffersonCountyBParser(), 
+    super(new ALJeffersonCountyBParser(),
           new ALJeffersonCountyCParser(), new ALJeffersonCountyDParser(),
           new ALJeffersonCountyEParser(), new ALJeffersonCountyFParser(),
           new ALJeffersonCountyGParser(), new ALJeffersonCountyHParser(),
           new ALJeffersonCountyIParser(), new ALJeffersonCountyJParser(),
-          new ALJeffersonCountyKParser(),
-          
+          new ALJeffersonCountyKParser(), new ALJeffersonCountyLParser(),
+
           // The ALJeffersionCountyA parser is highly promiscuous
           // so we only check it after everything else has been tried
           new GroupBlockParser(),         new ALJeffersonCountyAParser());
   }
-  
-  
+
+
   static final String[] CITY_LIST = new String[]{
       //Cities
       "ADAMSVILLE",
