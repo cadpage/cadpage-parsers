@@ -168,6 +168,7 @@ public class Active911ParserTable {
       "US/CA/CSB",                        "CASanBernardinoCountyB",
       "US/CA/DinubaCity",                 "CATulareCountyB",
       "US/CA/ElDoradoCounty",             "CAElDoradoCounty",
+      "US/CA/FortIrwin",                  "CASanBernardinoCountyE",
       "US/CA/FresnoCounty",               "CAFresnoCounty",
       "US/CA/GBPD",                       "CAGroverBeach",
       "US/CA/GonzalesFD",                 "CAMontereyCountyA",
