@@ -1712,6 +1712,7 @@ public class Active911ParserTable {
       "US/TN/BedfordCounty",              "TNBedfordCounty",
       "US/TN/Blount911",                  "TNBlountCountyB",
       "US/TN/BlountCounty",               "TNBlountCountyB",
+      "US/TN/BlountCountyFireRescue",     "TNBlountCountyB",
       "US/TN/CampbellCounty",             "TNCampbellCounty",
       "US/TN/CarterCounty",               "TNCarterCounty",
       "US/TN/ChesterCounty",              "TNChesterCounty",

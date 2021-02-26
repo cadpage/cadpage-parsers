@@ -8,12 +8,12 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA66Parser extends FieldProgramParser {
-  
+
   private Properties cityCodes;
-  
+
   public DispatchA66Parser(Properties cityCodes, String defCity, String defState) {
     super(defCity, defState,
-          "SRC CALL ADDR! UNIT! UNIT+? INFO+");
+          "SRC CALL DISP? ADDR! UNIT! UNIT+? INFO+");
     this.cityCodes = cityCodes;
   }
 
@@ -21,16 +21,17 @@ public class DispatchA66Parser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), 4, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}");
+    if (name.equals("DISP")) return new SkipField("DISP", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern BOUND_PTN = Pattern.compile("\\b(?:NORTH|EAST|SOUTH|WEST)BOUND\\b");
   private class MyAddressField extends AddressField {
     @Override
@@ -56,7 +57,7 @@ public class DispatchA66Parser extends FieldProgramParser {
       match.appendTail(sb);
       parseAddress(sb.toString(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " X CITY ST";
@@ -67,14 +68,14 @@ public class DispatchA66Parser extends FieldProgramParser {
     public MyUnitField() {
       super("[A-Za-z]*[0-9]*", true);
     }
-    
-    @Override 
+
+    @Override
     public void parse(String field, Data data) {
       if (field.equals(data.strSource)) return;
       data.strUnit = append(data.strUnit, ",", field);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
