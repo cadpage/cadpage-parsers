@@ -10,88 +10,66 @@ public class ORClackamasCountyDParser extends SmartAddressParser {
 
   public ORClackamasCountyDParser() {
     super("GRESHAM", "OR");
-    setFieldList("CODE CALL TIME ADDR PLACE CITY MAP X CH UNIT ID SRC");
+    setFieldList("CH ID CODE CALL TIME APT ADDR PLACE MAP X UNIT INFO SRC");
   }
-  
+
   @Override
   public String getFilter() {
-    return "HDP6@portlandoregon.gov,HDP7@portlandoregon.gov";
+    return "@portlandoregon.gov";
   }
 
   private static final Pattern MASTER
-    = Pattern.compile("(?:([A-Z0-9]+)(?: +([A-Z0-9]+|- .+?|\\*[A-Z]))?|(.*?)) +(\\d{2}:\\d{2}:\\d{2})(.*?)Dt: ([A-Z]{2}) +Zne: (\\d{4}[A-Z]?|[A-Z]{2}) +Gd: (\\d{4}[A-Z]|CCOM STA\\d+)\\b(?:(.+?)(?:/ )?BLOCK:<.+?>)?(.*?) #(\\d+) Sent by:(.*)");
+    = Pattern.compile("(OPS\\d R[PG]) #(\\d+) (.*?) (\\d\\d:\\d\\d:\\d\\d) (.*?) (F[A-Z] [A-Z]?\\d{4} \\d{4}[A-Z]) (?:(.*?) )?DISPATCHED: (.*) REMARKS: *(.*?)(?: Sent by: (\\S+))?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    Matcher m = MASTER.matcher(body);
-    if (m.matches()) {
-      parseType(m.group(1), m.group(2), m.group(3), data);
-      data.strTime = m.group(4);
-      parseLocation(m.group(5).trim(), data);
-      data.strMap = append(m.group(6), "-", append(m.group(7), "-", m.group(8)));
-      parseCross(getOptGroup(m.group(9)), data);
-      parseUnit(m.group(10).trim(), data);
-      data.strCallId = m.group(11);
-      data.strSource = m.group(12).trim();
-      
-      return true;
-    }
-    
-    return false;
+    body =  stripFieldEnd(body, " ...");
+    Matcher match = MASTER.matcher(body);
+    if (!match.matches()) return false;
+    data.strChannel = match.group(1);
+    data.strCallId = match.group(2);
+    parseCodeCall(match.group(3).trim(), data);
+    data.strTime = match.group(4);
+    parseLocation(match.group(5).trim(), data);
+    data.strMap = match.group(6);
+    data.strCross = getOptGroup(match.group(7));
+    data.strUnit = match.group(8).trim();
+    data.strSupp = match.group(9).trim();
+    data.strSource = getOptGroup(match.group(10));
+    return true;
   }
 
-  private void parseType(String field1, String field2, String field3, Data data) {
-    if (field3 != null) {
-      data.strCall = field3.trim();
-    } else if(field2 ==  null) {
-      data.strCode = field1.trim();
-    } else if (field2.charAt(0) == '-') {
-      data.strCode = field1.trim();
-      data.strCall = field2.substring(1).trim();
-    } else if (field2.charAt(0) == '*') {
-      data.strCode = append(field1.trim(), " ", field2.trim());
+  private void parseCodeCall(String field, Data data) {
+    int pt = field.indexOf(" - ");
+    if (pt >= 0) {
+      data.strCode = field.substring(0,pt).trim();
+      data.strCall = field.substring(pt+3).trim();
     } else {
-      data.strCall = append(field1.trim(), " ", field2.trim());
+      data.strCall = field;
     }
   }
-  
+
+  private static final Pattern APT_ADDR_PTN = Pattern.compile("(\\S+)-(\\d+ .*)");
+
   private void parseLocation(String field, Data data) {
-    int b = field.indexOf('[', 0);
-    if (b != -1) {
-      data.strPlace = field.substring(b+1).trim();
-      field = field.substring(0, b);
+    String apt = "";
+    Matcher match = APT_ADDR_PTN.matcher(field);
+    if (match.matches()) {
+      apt = match.group(1);
+      field = match.group(2);
     }
-    parseAddress(field, data);
-  }
-    
-  private static final Pattern PLACE_PATTERN
-    = Pattern.compile("[0-9\\-]+");
-  private void parseCross(String field, Data data) {
-    if (field.length() == 0) return;
-    String placeSave = data.strPlace;
-    data.strPlace = "";
-    Result r = parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS, field);
-    if (r.getStatus() == 3) {
-      r.getData(data);
-      Matcher m = PLACE_PATTERN.matcher(data.strPlace);
-      if (m.matches()) {
-        data.strCross = append(data.strPlace, " ", data.strCross);
-        data.strPlace = placeSave;
+    int pt = field.indexOf('[');
+    if (pt >= 0) {
+      data.strPlace = field.substring(pt+1).trim();
+      parseAddress(field.substring(0,pt).trim(), data);
+    } else {
+      parseAddress(StartType.START_ADDR, field, data);
+      data.strPlace = getLeft();
+      if (data.strPlace.startsWith("&")) {
+        data.strAddress = append(data.strAddress, " ", data.strPlace);
+        data.strPlace = "";
       }
-      else
-        data.strPlace = append(placeSave, " - ", data.strPlace);
     }
-    else
-      data.strPlace = append(placeSave, " - ", field);
-  }
-  
-  private static final Pattern UNIT_PATTERN
-    = Pattern.compile("(?:Ch: ([A-Z0-9]+))?(.*)");
-  private void parseUnit(String field, Data data) {
-    Matcher m = UNIT_PATTERN.matcher(field);
-    if (m.matches()) {
-      data.strChannel = getOptGroup(m.group(1));
-      data.strUnit = m.group(2).trim();
-    }
+    data.strApt = append(apt, "-", data.strApt);
   }
 }
