@@ -405,6 +405,7 @@ public class Active911ParserTable {
       "US/GA/TiftCounty",                 "GATiftCounty",
       "US/GA/TownsCounty",                "GATownsCounty",
       "US/GA/WaltonCounty",               "GAWaltonCounty",
+      "US/GA/WashingtonCounty",           "GAWashingtonCountyB",
       "US/GA/WebsterCounty",              "GAWebsterCounty",
       "US/GA/WhiteCounty",                "GAWhiteCounty",
       "US/GA/WhitfieldCounty",            "GAWhitfieldCountyC",
