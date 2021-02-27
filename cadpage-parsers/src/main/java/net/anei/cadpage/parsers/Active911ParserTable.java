@@ -2064,6 +2064,7 @@ public class Active911ParserTable {
       "US/WV/GrantCounty",                "WVGrantCounty",
       "US/WV/GreenbrierCounty",           "WVGreenbrierCounty",
       "US/WV/HampshireCounty",            "WVHampshireCounty",
+      "US/WV/HampshireCountyALS",         "WVHampshireCounty",
       "US/WV/HarrisonCounty",             "WVHarrisonCountyA",
       "US/WV/JacksonCounty911",           "WVJacksonCounty",
       "US/WV/JacksonCounty911HTML",       "WVJacksonCounty",

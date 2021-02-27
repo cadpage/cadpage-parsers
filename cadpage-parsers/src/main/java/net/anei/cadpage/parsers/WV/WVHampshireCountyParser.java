@@ -22,7 +22,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
     );
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "@frontier.com,@hardynet.com";
@@ -31,23 +31,23 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+(?:-\\d+)?|\\d+-\\d+|MEDIC", Pattern.CASE_INSENSITIVE);
   private static final Pattern COUNTY_PTN = Pattern.compile("^(HARDY|FRED|FREDERICK|MINERAL|ALLEGANY|MORGAN) ", Pattern.CASE_INSENSITIVE);
   private static final Pattern DUP_ADDR_PTN = Pattern.compile("\\d+ .* \\d{5}\\b *(.*)");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Get rid of some garbage constructs before they up the semicolon count
     // to the point where we might think this is a semicolon delimited format
     body = body.replace("Name:;", "");
     body = body.replace("Address:null null;", "");
     body = body.replace("Phone number:000000000;", "");
-    
+
     if (!super.parseMsg("", body, data)) return false;
-    
+
     // SO far, so good
     // Now for some special corrective measures to take if the
     // address parser did not find a city
     if (data.strCity.length() == 0) {
-      
+
       // If there was no name, then see if the address includes
       // a STA word.  If found, this marks what should be the
       // end of the address and everything else goes in the name
@@ -59,7 +59,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
           data.strAddress = data.strAddress.substring(0,pt).trim();
         }
       }
-      
+
       // If the name looks like a neighboring county 911 center
       // leave it alone but use it to set the city & possible state
       Matcher match = COUNTY_PTN.matcher(data.strName);
@@ -71,28 +71,28 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
         else if (city.equals("ALLEGANY")) data.strState = "MD";
       }
     }
-    
+
     // If we did find a city, see if it is one of our misspelled entries
     else {
       String city = MISTYPED_CITIES.getProperty(data.strCity.toUpperCase());
       if (city !=  null) data.strCity = city;
     }
-    
+
     // Remove duplicated address from name field
     Matcher match = DUP_ADDR_PTN.matcher(data.strName);
     if (match.matches()) data.strName = match.group(1);
-    
+
     // Look for trailing back quote in call ID.
     data.strCallId = stripFieldEnd(data.strCallId, "`");
-    
+
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY ", "CITY ST ");
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911",
       "ALLERGY",
@@ -100,6 +100,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
       "ANIMAL BITES",
       "APPLIANCE",
       "ASSAULT",
+      "ASSIST",
       "ASSISTANCE",
       "BLEED",
       "BLOOD PRESSURE",
@@ -154,7 +155,7 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
       "UNRESPONSIVE",
       "WELL"
   );
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ALLEN HILL",
     "APPLE RIDGE",
@@ -342,13 +343,13 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
     "WOODLAND MOUNTAIN",
     "ZEKI HALICI"
   };
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Incorporated Communities
     "ROMNEY",
     "CAPON BRIDGE",
-    
+
     // Unincorporated Communities
     "AUGUSTA",
     "BARNES MILL",
@@ -422,18 +423,18 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
     "YELLOW SPRING",
         "YELLOW SPRIN",
         "YELLOW SPRINGS",
-    
+
     // Hardy County
     "WARDENSVILLE",
         "WARDENSVILE",
-        
+
     // Morgan County
     "PAW PAW",
-    
+
     // Mineral County
     "BURLINGTON",
   };
-  
+
   private static final Properties MISTYPED_CITIES = buildCodeTable(new String[]{
       "GREENSPRING",        "GREEN SPRING",
       "PURGITVILLE",        "PURGITSVILLE",
@@ -441,6 +442,6 @@ public class WVHampshireCountyParser extends DispatchA48Parser {
       "WARDENSVILE",        "WARDENSVILLE",
       "YELLOW SPRIN",       "YELLOW SPRING",
       "YELLOW SPRINGS",     "YELLOW SPRING"
-      
+
   });
 }
