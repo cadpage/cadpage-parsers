@@ -275,77 +275,6 @@ Good luck
 -Ken
 
 ***************************************************************************
-* AUTHENTICATION_FAILURE
-* bugreport filed - what now???
-***************************************************************************
-
-Big disclaimer, the following instructions are NOT recommended by the Google engineers.  There recommendation is to do a factory reset.  The following procedures might clear up the problem without doing a factory reset.  But they also might disable your phone to the point where you will have to do a factory reset to recover it.  To my mind, it isn't much of a risk, especially since Google seems to be in no hurry come up with a better fix.
-
-I haven't run a Gingerbread phone for a while.  If I remember correctly, you go into the main Android settinsg menu and select
-Applications > Manage Applications
-and display the "All" tab.
-
-Scroll down this list until you find Google Service Frameworks.  Select it and press the force stop, clear data, and clear cache buttons.  Then open Cadpage and try to register it with CodeMessaging again.  If it works, terrific.
-
-If it doesn't, try restarting the phone.
-
-If it still doesn't work, go back into the All Applications list and do the the Force Close, Clear Data, Clear Cache thing on
-Google Service Frameworks
-Google Play Service
-Google Play Store
-Power down your phone and then restart it
-Open the Google Play Store and use it to browse a few things to see if it is working.  Open it's account setting and make sure you have an account selected.
-
-Then try to register Cadpage with CodeMessaging again.
-
-If it still doesn't work, you are down to doing a factory reset :(
-
-So far, the factory reset has only failed to fix the problem one time.  And that user resolved the problem by getting Verizon to ship him a new phone.  If your problem persists after a factory reset, Google very much wants to talk to you.
-
-Alternate solution I should have mentioned before, but in case I haven't
-
-See if a system update is available for you phone.  From what I remember you get there by going back to Android Settings and selecting
-About Phone > Software Update > Check for Updates.
-
-If there is no system update available, and you got the phone from Verizon, you can try calling Verizon support and complaining that the phone can not be upgraded and the current software can not run critically needed software.  That is how my first user got Verizon to ship them a new phone.
-
-Take care,
--Ken
-
-***************************************************************************
-* AUTHENTICATION_FAILURE
-* No triggered bugreport dump
-***************************************************************************
-
-I just released a new v1.6.46 version of Cadpage which should be available on Google Play Store shortly.  It has some additional logging logic to record a whole bunch of information that I hope will be helpful to the Google people working on this.  I need you to trigger that log logic and send us the resulting file.  More specifically,
-
-Make sure that you have v1.6.46 or later of Cadpage installed.
-
-You will need to install some kind of file manager.  Astro file manager is highly recommended and has a useful free version.
-
-Try, again, to register with Active911 direct paging again.  Since I haven't done anything that might possibly fix things, this will, presumably, fail again.  This will trigger creation of a bugreport file, but the process takes a long time, give it a good 5  min before proceeding to the next step.
-
-Use the Email the Developer setting to generate another email to us.  While this message is open, find a way to attach a file to it.  With Gmail, you would do this by pressing the menu button, attach a picture or video, then select the previously installed file manager to select the file.
-
-In the file manager, navigate to the Download folder on your SD card.  Exactly where this is differs from phone to phone.  The SD card might be  mounted as /sdcard or /sdcard0 or /storage/sdcard0.  Where ever it is, it should have a Download folder, which hopefully will contain a file named bugreport.cadpage.gz.  Long press that file and select it, confirm that that file has been attached to your email and send it.
-
-Take care,
--Ken
-
-***************************************************************************
-* bad token abort
-***************************************************************************
-
-This used to be an annoying but uncommon problem that pops up when
-Cadpage tries to display a dialog box about the same time that you close
-the parent window.  I thought I had found and fixed all of the code
-where this could potentially happen, but I must have missed something.
-Do you recall just what it was you were doing when this crash happened?
-
-Thanks for reporting this,
--Ken
-
-***************************************************************************
 * Receiving CodeMessaging text pages
 ***************************************************************************
 
@@ -1351,40 +1280,6 @@ Take care,
 -Ken
 
 ******************************************************************
-** Recent PHONE_REGISTRATION_ERROR
-** Null RegistrationID
-** Cadpage version >= 1.6.29
-******************************************************************
-
-It looks like you are one of the users who cannot get the Google registration you need to implement direct paging.  Usually just retrying it a few times is enough to get things working.  But sometimes more serious measures are called for.
-
-If you have not tried it yet, try uninstalling and re-installing Cadpage.  You will have to register your device with CodeMessaging or Active911 again, hoping it succeeds this time.
-
-If that doesn't work, leave it and come back and try again in a couple hours.  It may just take some time to get Google's servers to respond to us.
-
-If that does not work, we are starting to get desperate.  But first, double check that the account associated with Google Play Store is valid.  To do that, open the Play Store App and select
-Menu > Accounts
-and verify that the selected account is the one you expect.
-
-*** For Android versions >= 4.0
-Then go back to the Android home screen and select
-Menu > Settings
-Scroll down to the Account settings and select Google
-Verify that the Google Play account is syncing properly (ie.. that the last sync date/time is fairly recent)
-
-*** For Android versions < 4.0
-Then go back to the Android home screen and select
-Menu > Settings > Accounts & Sync > Google > Sync
-and see if everything synchronizes.
-
-Next, go back to Cadpage Settings and try to register with Active911/Code Messaging again.
-
-If that does not work, we are down to recommending a factory reset.  This a rather drastic solution, but it has, thus far, always resolved this particular problem.
-
-Take care,
--Ken
-
-******************************************************************
 * Duplicate pages with Active911
 ******************************************************************
 
@@ -2157,33 +2052,6 @@ nightrh@gmail.com
 Then you may need to enter a password.
 
 Please note that the instructions may vary a bit depending on the type of second phone you have.
-
-***************************************************************
-fix this up?:
-
-You might look into the FirefighterLog app.  It is published by somebody
-else, but it will pick up the page information displayed by Cadpage and
-will save it in a real database for long term retrieval and reporting
-purposes.
-
-Once you trial period expires, Cadpage will quit displaying call
-details, which makes it more or less useless.  You are given options to
-ask for another free day, I think you can do that 8 times.  Or to
-reinstall Cadpage which will reset your demo period but loose all
-Cadpage settings and history.
-
-
-> After your trial expires, there are some "free" options below.  There is
-> no loss of function with free, DEMO, or PAID Cadpage subscriptions.  The
-> only difference is the time period they are used before the payment
-> becomes an issue.
->
->> I was wondering if there is an add on available, or a different app
->> that's works in conjunction with cadpage that I could keep track if
->> which calls u went to, and possibly have the ability to track call
->> duration. Also, I saw that there is a process for not having to pay the
->> 10.00 after the trial expires. What functions are lost after the trial
->> period expires?
 ************************************************************
 Sound questions
 Question is there away to set the length of the
