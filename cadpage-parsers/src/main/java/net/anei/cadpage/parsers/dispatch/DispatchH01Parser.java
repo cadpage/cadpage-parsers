@@ -43,7 +43,7 @@ public class DispatchH01Parser extends HtmlProgramParser {
 
 
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("#([^\\(\\)#]*)$");
-  private static final Pattern TRAIL_CROSS_PTN = Pattern.compile("\\(([^\\(\\)]*?)\\)$");
+  private static final Pattern X_DELIM_PTN = Pattern.compile("[/\\\\]");
   private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
@@ -58,10 +58,11 @@ public class DispatchH01Parser extends HtmlProgramParser {
         apt = match.group(1).trim();
         field = field.substring(0,match.start()).trim();
       }
-      match = TRAIL_CROSS_PTN.matcher(field);
-      if (match.find()) {
-        cross = match.group(1).trim();
-        field = field.substring(0,match.start()).trim();
+      int pt = matchTrailParen(field);
+      if (pt >= 0) {
+        cross = field.substring(pt+1, field.length()-1).trim();
+        cross = stripFieldStart(cross, ";");
+        field = field.substring(0,pt).trim();
       }
       String addr = field;
 
@@ -71,13 +72,17 @@ public class DispatchH01Parser extends HtmlProgramParser {
         cross = "";
       }
 
-      cross = stripFieldStart(cross, "/");
-      cross = stripFieldEnd(cross, "/");
-      data.strCross = cross;
+      if (cross.startsWith("Near:")) {
+        data.strPlace = append(data.strPlace, " - ", cross);
+      } else {
+        cross = stripFieldStart(cross, "/");
+        cross = stripFieldEnd(cross, "/");
+        data.strCross = cross;
+      }
 
       String city = null;
       String zip = null;
-      for (String part : addr.split("/")) {
+      for (String part : X_DELIM_PTN.split(addr)) {
         part = part.trim();
         String taddr = "";
         String tcity = "";
@@ -135,6 +140,18 @@ public class DispatchH01Parser extends HtmlProgramParser {
           data.strApt = append(data.strApt, "-", apt);
         }
       }
+    }
+
+    private int matchTrailParen(String field) {
+      int pt = field.length();
+      int pc = 0;
+      do {
+        char chr = field.charAt(--pt);
+        if (chr == ')') pc++;
+        else if (chr == '(') pc--;
+      } while (pc > 0 && pt > 0);
+      if (pc > 0 || pt == field.length()-1) return -1;
+      return pt;
     }
 
     @Override
