@@ -10,6 +10,11 @@ public class WVLewisCountyParser extends DispatchEmergitechParser {
   }
 
   @Override
+  public String getFilter() {
+    return "71@lce-911.com";
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Text Message|")) return false;
     subject = subject.substring(13).trim();
