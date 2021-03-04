@@ -32,8 +32,8 @@ public class KYOldhamCountyCParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.endsWith(" No")) return false;
-    body = body.substring(0,body.length()-3).trim();
+
+    body = stripFieldEnd(body, " No");
 
     Matcher match = X_DATE_TIME_PTN.matcher(body);
     if (!match.matches()) return false;
