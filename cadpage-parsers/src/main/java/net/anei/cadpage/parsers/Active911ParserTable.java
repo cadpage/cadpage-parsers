@@ -1604,6 +1604,7 @@ public class Active911ParserTable {
       "US/PA/LehighCounty",               "PALehighCountyA,PALehighCountyC",
       "US/PA/Lionville",                  "PAChesterCountyM",
       "US/PA/LowerAlsaceFC",              "PABerksCounty",
+      "US/PA/LowerMerion",                "PAMongtomeryCountyC",
       "US/PA/LuzerneCounty",              "PALuzerneCounty",
       "US/PA/Lvh",                        "PALehighCountyB",
       "US/PA/LycomingCounty",             "PALycomingCounty",
