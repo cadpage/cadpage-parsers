@@ -43,7 +43,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
     if (name.equals("MAP")) return new MapField("[A-Z]{2}-\\d{2}-[A-Z]|NOT FOUN", true);
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("ADDR2")) return new MyAddress2Field();
-    if (name.equals("ID")) return new IdField("\\d{2}-[A-Z]{2}-\\d{6}", true);
+    if (name.equals("ID")) return new IdField("\\d{2}-[A-Z]{2}-\\d{2,6}", true);
     return super.getField(name);
   }
 
