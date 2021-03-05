@@ -720,6 +720,7 @@ public class Active911ParserTable {
       "US/KY/WoodburnVFD",                "KYBowlingGreen",
       "US/KY/WoodfordCounty",             "KYWoodfordCounty",
       "US/LA/Acadian",                    "LAAcadianAmbulance",
+      "US/LA/AcadianAMB",                 "LAAcadianAmbulance",
       "US/LA/AllenCounty",                "LAAllenParish",
       "US/LA/AscensionParish",            "LAAscensionParish",
       "US/LA/AvoyellesCounty",            "LAAvoyellesParish",

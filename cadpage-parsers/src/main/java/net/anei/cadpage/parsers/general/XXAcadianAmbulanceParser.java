@@ -12,8 +12,13 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   public XXAcadianAmbulanceParser(String defState) {
     super("", defState,
           "( SELECT/1 CALL! Loc:PLACE! Address:ADDR! Apt:APT! City:CITY! Parish:SKIP! Latitude:GPS1/d Longitude:GPS2/d" +
+          "| SELECT/CANCEL CALL ADDR! Loc:PLACE! Cancel_Reason:INFO! " +
+          "| SELECT/ADDRCH Address:ADDR! Apt:APT! City:CITY! State:ST! Latitude:GPS1/d! Longitude:GPS2/d! " +
           "| Location:PLACE! Address:ADDR! Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP!" +
-          "| CALL! Loc:PLACE! Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME )",
+          "| CALL! Loc:PLACE! ( Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! State:ST Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME Latitude:GPS1/d Longitude:GPS2/d" +
+                             "| Address:ADDR! Apt:APT! Bldg:APT/D! Cross_St:X! City:CITY! State:ST! Parish/County:SKIP! Map_Pg:MAP! Notes:INFO! Dest:INFO! Latitude:GPS1/d! Longitude:GPS2/d " +
+                             ") " +
+          ")",
           FLDPROG_IGNORE_CASE);
   }
 
@@ -34,7 +39,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
 
   private static final Pattern MARKER = Pattern.compile("Resp(?:onse)?[#:]+ *(\\d+(?:-\\d{4})?|) +");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|APT:|Apt:|Cross St:|City:|Cnty:|Map Pg:|Dest:|Pt's Name:)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|Address:|APT:|Apt:|Bldg:|Cross St:|City:|State:|Cnty:|Parish/County:|Map Pg:|Notes:|Dest:|Pt's Name:|Latitude:|Longitude:)");
   private static final Pattern RUN_REPORT_DELIM = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)\\s*(?=[A-Z][A-Za-z]+:)");
   private static final Pattern DELIM2 = Pattern.compile("\\*(?=Loc:|Address:|Apt:|City:|Parish:)| +(?=Latitude:|Longitude:)");
 
@@ -70,43 +75,88 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
       if (body.startsWith("Changed To:Location:")) {
         body = body.substring(11);
         data.strCall = "Address Change";
+        body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
         body = body.replace("Address:", " Address:").replace(" Apt.", " Apt:");
         return super.parseMsg(body,  data);
       }
 
+      if (body.startsWith("Cancelled or Reassigned ,")) {
+        data.msgType = MsgType.RUN_REPORT;
+        body = body.replace("Incident listed above has been Cancelled or Reassigned.", ",");
+        setSelectValue("CANCEL");
+        return parseFields(body.split(" , "), data);
+      }
+
+      if (body.startsWith("Address Changed To:")) {
+        data.strCall = "Address Change";
+        body = body.substring(19).trim();
+        body = body.replace(" Apt.", " Apt:");
+        setSelectValue("ADDRCH");
+      }
+
+      FParser fp = new FParser(body);
+      if (fp.check("Updated Priority:")) {
+        setFieldList("PLACE ADDR APT CITY ST CODE CALL INFO");
+        data.strCall = "Updated Priority";
+        if (fp.check("Location:")) data.strPlace = fp.get(400);
+        if (!fp.check("Address:")) return false;
+        parseAddress(fp.get(400), data);
+        fp.check("City:");
+        data.strCity = fp.get(35);
+        fp.check("State:");
+        data.strState = fp.get(5);
+        parseCodeCall(fp.get(60), data);
+        data.strSupp = fp.get(35);
+        return true;
+      }
+
+      if (fp.check("Inc Times")) {
+        setFieldList("ADDR APT CITY ST INFO");
+        data.msgType = MsgType.RUN_REPORT;
+        if (!fp.check("Address:")) return false;
+        parseAddress(fp.get(400), data);
+        if (!fp.check("City:")) return false;
+        data.strCity = fp.get(35);
+        if (!fp.check("State:")) return false;
+        data.strState = fp.get(5);
+        fp.skip(20);  // We already have call ID
+        data.strSupp = fp.get().replace("\\ ", "\n");
+        return true;
+      }
+
       body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
       if (!super.parseMsg(body, data)) return false;
+    }
+    else if (body.contains("*Loc:")) {
+      setSelectValue("1");
+      if (!parseFields(DELIM2.split(body), data)) return false;
+    }
+    else return false;
 
-      // Fix some state specific issues
-      if (data.defState.equals("TX")) {
+    // Fix some state specific issues
+    if (data.defState.equals("TX")) {
 
-        // There is one particular long, oft abbreviated road in Harris County, TX
-        // that always causes trouble
-        if (data.strCity.toUpperCase().startsWith("HARRIS")) {
-          int pt = data.strAddress.lastIndexOf(' ');
+      // There is one particular long, oft abbreviated road in Harris County, TX
+      // that always causes trouble
+      if (data.strCity.toUpperCase().startsWith("HARRIS")) {
+        int pt = data.strAddress.lastIndexOf(' ');
+        if (pt >= 0) {
+          pt = data.strAddress.lastIndexOf(' ', pt-1);
           if (pt >= 0) {
-            pt = data.strAddress.lastIndexOf(' ', pt-1);
-            if (pt >= 0) {
-              String tag = data.strAddress.substring(pt+1).toUpperCase();
-              if ("HUFFMAN CLEVELAND RD".startsWith(tag)) {
-                data.strAddress = data.strAddress.substring(0,pt+1) + "Huffman-Cleveland Rd";
-              }
+            String tag = data.strAddress.substring(pt+1).toUpperCase();
+            if ("HUFFMAN CLEVELAND RD".startsWith(tag)) {
+              data.strAddress = data.strAddress.substring(0,pt+1) + "Huffman-Cleveland Rd";
             }
           }
         }
       }
-      return true;
     }
-    else if (body.contains("*Loc:")) {
-      setSelectValue("1");
-      return parseFields(DELIM2.split(body), data);
-    }
-    return false;
+    return true;
   }
 
   @Override
   public String getProgram() {
-    return "ID CALL " + super.getProgram();
+    return "ID CALL? " + super.getProgram();
   }
 
   @Override
@@ -119,9 +169,25 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replaceAll("  +", " ");
-      super.parse(field, data);
+      parseCodeCall(field, data);
     }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d\\S+)-(.*)");
+
+  private static  void parseCodeCall(String field, Data data) {
+    Matcher match = CODE_CALL_PTN.matcher(field);
+    if (match.matches()) {
+      data.strCode = match.group(1);
+      field = match.group(2);
+    }
+    field = field.replaceAll(" {2,}", " ");
+    data.strCall = field;
   }
 
   private class MyCityField extends CityField {

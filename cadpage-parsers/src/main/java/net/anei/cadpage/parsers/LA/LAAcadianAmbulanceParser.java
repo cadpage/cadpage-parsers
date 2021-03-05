@@ -12,12 +12,12 @@ public class LAAcadianAmbulanceParser extends XXAcadianAmbulanceParser {
   public LAAcadianAmbulanceParser() {
     super("LA");
   }
-  
+
   @Override
   public String getLocName() {
     return "Acadian Ambulance, LA";
   }
-  
+
   @Override
   public String getFilter() {
     return "@acadian.com";
