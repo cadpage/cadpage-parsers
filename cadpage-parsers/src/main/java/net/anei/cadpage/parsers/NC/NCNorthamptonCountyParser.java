@@ -16,7 +16,7 @@ public class NCNorthamptonCountyParser extends DispatchA3Parser {
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "Northampton911:");
     return super.parseMsg(body, data);
   }
