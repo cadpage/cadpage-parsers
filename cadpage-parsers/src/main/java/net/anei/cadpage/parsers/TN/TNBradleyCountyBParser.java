@@ -4,17 +4,17 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class TNBradleyCountyBParser extends FieldProgramParser {
-  
+
   public TNBradleyCountyBParser() {
-    super("BRADLEY COUNTY", "TN", 
+    super("BRADLEY COUNTY", "TN",
           "CALL! Address:ADDR! Apt:APT");
   }
 
   @Override
   public String getFilter() {
-    return "777,93001";
+    return "777,93001,911center@clevelandtn911.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "CLEVELANDTN911:");
