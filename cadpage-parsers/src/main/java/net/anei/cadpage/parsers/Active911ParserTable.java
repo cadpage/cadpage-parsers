@@ -1667,6 +1667,7 @@ public class Active911ParserTable {
       "US/RI/Woonsocket",                 "RIProvidenceCounty",
       "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",
+      "US/SC/BethelFD",                   "SCYorkCounty",
       "US/SC/CalhounCounty",              "SCCalhounCounty",
       "US/SC/CharlestonCounty",           "SCCharlestonCounty",
       "US/SC/CherokeeCounty",             "SCCherokeeCounty",
