@@ -8,22 +8,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 public class TNSevierCountyParser extends DispatchSouthernParser {
-  
+
   public TNSevierCountyParser() {
-    super(CITY_LIST, "SEVIER COUNTY", "TN", 
-          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_ID );
+    super(CITY_LIST, "SEVIER COUNTY", "TN",
+          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_TIME | DSFLG_OPT_ID );
     removeWords("COVE", "GATEWAY", "LA", "MALL", "PARKWAY", "ROAD");
     setupSpecialStreets("NBOUND SPUR", "PARKWAY");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "Central_Dispatch@mydomain.com,Central_Dispatch@seviercountytn.org";
   }
-  
+
   private static final Pattern CALL_PFX_PTN = Pattern.compile("((?:PER [ A-Z]+ )?(?:CANCEL|CXC?LD?|CSL)[/ ]*(?:ANY )?(?:FURTHER RES?PONSE|RESPONSE|ALL RESPONSE|ALL UNITS|MUTUAL AIDE RESPONSE|CALL(?: CXL| CANCEL|/FALSE)?)?(?:[ /]*(?:FALSE ALARM|False Alarm|NON-INJ|-N))?(?:[ /]*PER (?:EMS ON SCENE|ALARM CO|[^ ]+))?)[-:/ ]*");
-  
+  private static final Pattern CH_PFX_PTN = Pattern.compile("(TAC *\\S+) +");
+  private static final Pattern TAIL_OCA_PTN = Pattern.compile(" +OCA: *\\S+$");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     String callPfx = null;
@@ -32,72 +34,34 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
       callPfx = match.group(1).trim();
       body = body.substring(match.end());
     }
+
+    match = CH_PFX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strChannel = match.group(1);
+      body = body.substring(match.end());
+    }
     body = stripFieldStart(body, "CFS Closed:");
     body = stripFieldStart(body, "CFS Location:");
-    int pt = body.indexOf(" OCA:");
-    if (pt >= 0) body = body.substring(0, pt).trim(); 
+    match = TAIL_OCA_PTN.matcher(body);
+    if (match.find()) body = body.substring(0,match.start());
     if (!super.parseMsg(body, data)) return false;
+    if (data.strTime.isEmpty() && data.strCallId.isEmpty()) return false;
     if (callPfx != null) data.strCall = append(callPfx, " - ", data.strCall);
     data.strCity = convertCodes(data.strCity, CITY_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
-    return super.getProgram() + " CALL";
+    return "CH? " + super.getProgram() + " CALL";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  private class MyCancelField extends CallField {
-    public MyCancelField() {
-      setPattern(CALL_PFX_PTN, true);
-    }
-  }
-  
-  private static final Pattern AREA_OF_PTN = Pattern.compile("AREA(?: OF)?");
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      
-      Matcher match = CALL_PFX_PTN.matcher(field);
-      if (match.lookingAt()) {
-        data.strCall = match.group(1).trim();
-        field = field.substring(match.end());
-      }
-      
-      // Leading zeros are normally stripped from the beginning.  But we want to take the extra
-      // step of not looking for a place field if we had to strip a leading zero.
-      StartType st = StartType.START_PLACE;
-      if (field.startsWith("0 ")) {
-        st = StartType.START_ADDR;
-        field = field.substring(2).trim();
-      }
-      parseAddress(st, FLAG_IGNORE_AT | FLAG_RECHECK_APT | FLAG_CROSS_FOLLOWS, field, data);
-      
-      if (data.strAddress.length() == 0) {
-        parseAddress(data.strPlace, data);
-        data.strPlace = "";
-      }
-      
-      if (AREA_OF_PTN.matcher(data.strApt).matches()) {
-        data.strPlace = append(data.strPlace, " - ", data.strApt);
-        data.strApt = "";
-      }
-      
-      data.strPlace = append(data.strPlace, " - ", getLeft());
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "PLACE ADDR APT CITY";
-    }
-  }
-  
+
   private class MyInfoField extends BaseInfoField {
     @Override
     public void parse(String field, Data data) {
@@ -108,19 +72,19 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
 
   @Override
   protected boolean isNotExtraApt(String apt) {
-    if ( apt.startsWith("@") || 
-         apt.startsWith("&") || 
-         apt.startsWith("MM ") || 
+    if ( apt.startsWith("@") ||
+         apt.startsWith("&") ||
+         apt.startsWith("MM ") ||
          apt.endsWith(" MM") ||
          apt.equals("MM")) return true;
     return super.isNotExtraApt(apt);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return city.equals("NEWPORT") ? "COSBY" : city;
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "A M KING",
       "ABBEY LANE",
@@ -663,14 +627,14 @@ public class TNSevierCountyParser extends DispatchSouthernParser {
       "STRAWBERRY PLAINS",
       "TRUNDLES CROSSROADS",
       "WEARS VALLEY",
-  
+
       "OM",
       "PIG",
-      
+
       // Jefferson County
       "DANDRIDGE"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "OM",     "SEYOUR",
       "PIG",    "PIGEON FORGE"
