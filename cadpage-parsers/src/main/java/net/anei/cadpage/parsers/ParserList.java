@@ -1814,6 +1814,9 @@ public class ParserList {
               ,"ZCABCPrinceGeorge"              ,"Prince George, BC"
               ,"ZCABCVancouverIsland"           ,"VancouverIsland, BC"
           ),
+          new ParserCategory("New Brunswick, Canada"
+              ,"ZCANBFredericton"               ,"Fredericton, NB"
+          ),
           new ParserCategory("Nova Scotia, Canada"
               ,"ZCANSAnnapolisCounty"           ,"Annapolis County, NS"
               ,"ZCANSHantsCounty"               ,"Hants County, NS"
