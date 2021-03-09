@@ -15,7 +15,7 @@ public class ZCANBFrederictonParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "alerts@wrnotify.com Subj";
+    return "alerts@wrnotify.com";
   }
 
   @Override
