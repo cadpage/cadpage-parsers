@@ -26,12 +26,10 @@ public class ZSESwedenBParser extends ZSESwedenBaseParser {
   }
 
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("R_Pos-WSG84 : ")) {
-      body = cleanFixedLabelBreaks(body, 20);
-      if (body == null) return false;
-    }
+    body = cleanFixedLabelBreaks(body);
+    if (body == null) return false;
     if (!parseFields(body.split("\n"), data)) return false;
-    if (data.strAddress.length() == 0 && data.strGPSLoc.length() == 0) return false;
+    if (data.strAddress.isEmpty() && data.strGPSLoc.isEmpty() && data.strCity.isEmpty()) return false;
     return true;
   }
 
