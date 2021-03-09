@@ -10,8 +10,8 @@ public class MOBuchananCountyAParser extends FieldProgramParser {
   // City code table shared with MOBuchananCountyA
 
   public MOBuchananCountyAParser() {
-    super("BUCHANAN COUNTY", "MO",
-          "CALL:CALL! PLACE:ADDR! LATITUDE:GPS1! LONGITUDE:GPS2! ID:ID! RECEIVED_DATE/TIME:SKIP! DISPATCH_TIME:TIME MAP:MAP! UNIT:UNIT! COMMON_NAME:PLACE! ( CLOSEST:X! | CLOSEST_INTERSECTION:X! ) INFO:INFO!");
+    super(CITY_CODES, "BUCHANAN COUNTY", "MO",
+          "CALL:CALL! PLACE:ADDRCITY/S6! LATITUDE:GPS1! LONGITUDE:GPS2! ID:ID! RECEIVED_DATE/TIME:SKIP! DISPATCH_TIME:TIME MAP:MAP! UNIT:UNIT! COMMON_NAME:PLACE! ( CLOSEST:X! | CLOSEST_INTERSECTION:X! ) INFO:INFO!");
   }
 
   @Override
@@ -34,13 +34,13 @@ public class MOBuchananCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private class MyAddressField extends AddressField {
+  private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       field = field.replaceAll("  +", " ");
@@ -50,6 +50,7 @@ public class MOBuchananCountyAParser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
       }
       field = stripFieldEnd(field, "/");
+      field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
