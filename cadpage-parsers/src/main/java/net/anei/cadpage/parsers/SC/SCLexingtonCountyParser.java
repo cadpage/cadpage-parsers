@@ -8,26 +8,35 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class SCLexingtonCountyParser extends DispatchOSSIParser {
-  
+
   public SCLexingtonCountyParser() {
     super(CITY_CODES, "LEXINGTON COUNTY", "SC",
           "( CANCEL ADDR CITY | FYI? SRC? CALL ADDR! ( X/Z PLACE CITY | X_PLACE CITY | CITY | ) UNIT? ) INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@lex-co.com";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
-    if (!subject.equals("CAD")) return false;
-    body = "CAD:" + body;
+
+    if (subject.equals("CAD")) {
+      body = "CAD:" + body;
+    } else if (body.startsWith("CAD\n")) {
+      data.strSource = subject;
+      body = "CAD:" + body.substring(4);
+    } else return false;
     return super.parseMsg(body, data);
   }
-  
+
+  @Override
+  public String getProgram() {
+    return "SRC? " + super.getProgram();
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("(?!MVC)[A-Z]{3,4}", true);
@@ -36,7 +45,7 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCrossPlaceField extends Field {
 
     @Override
@@ -53,7 +62,7 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
       return "X PLACE";
     }
   }
-  
+
   private Pattern INFO_TRIM_PTN = Pattern.compile("[-* ]*(.*?)[-* ]*");
   private Pattern INFO_CH_PTN = Pattern.compile("OPS *\\d+", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
@@ -61,22 +70,22 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
       Matcher match = INFO_TRIM_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
-      
+
       if (INFO_CH_PTN.matcher(field).matches()) {
         data.strChannel = field;
       } else {
         data.strSupp = append(data.strSupp, "\n", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH INFO";
     }
   }
-  
+
   private static final Pattern I_20_26_PTN = Pattern.compile("(\\d{2,3})(\\d\\d) (20|26) [EW](?: &.*)?");
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     Matcher match = I_20_26_PTN.matcher(address);
@@ -165,9 +174,9 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
       "12900 26",                             "+33.763811,-80.960550",
       "13000 26",                             "+33.755147,-80.946714",
       "13100 26",                             "+33.749788,-80.943194"
- 
+
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BA", "BATESBURG",
       "BL", "BATESBURG LEESVILE",
@@ -185,5 +194,5 @@ public class SCLexingtonCountyParser extends DispatchOSSIParser {
       "SP", "SPRINGDALE",
       "SW", "SWANSEA",
       "WC", "WEST COLUMBIA"
-  }); 
+  });
 }
