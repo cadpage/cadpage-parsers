@@ -592,6 +592,7 @@ public class ParserList {
               ,"KSSedgwickCounty"               ,"Sedgwick County, KS"
               ,"KSSumnerCounty"                 ,"Sumner County, KS"
               ,"KSWichita"                      ,"Wichita, KS"
+              ,"KSWoodsonCounty"                ,"Woodson County, KS"
               ,"KSWyandotteCounty"              ,"Wyandotte County, KS"
           ),
           new ParserCategory("Kentucky"
