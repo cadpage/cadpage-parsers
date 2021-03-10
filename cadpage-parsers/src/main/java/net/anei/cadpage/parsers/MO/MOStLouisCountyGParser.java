@@ -65,6 +65,7 @@ public class MOStLouisCountyGParser extends DispatchGlobalDispatchParser {
       "ASSIST POLICE",
       "BASIC EMS",
       "BRUSH FIRE",
+      "BRUSH FIRE STILL",
       "BRUSH WITH EXPOSURES",
       "CAR FIRE WITH EXPOSURES",
       "CHECK THE AREA",
