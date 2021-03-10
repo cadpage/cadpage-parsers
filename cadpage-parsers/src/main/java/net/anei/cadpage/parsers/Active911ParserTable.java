@@ -1875,6 +1875,7 @@ public class Active911ParserTable {
       "US/TX/TexasCity",                  "TXTexasCity",
       "US/TX/TravisCounty",               "TXTravisCountyB",
       "US/TX/UMCHealth",                  "TXLubbockCountyB",
+      "US/TX/VALAMB",                     "TXElPasoCounty",
       "US/TX/VanAlstyne",                 "TXVanAlstyne",
       "US/TX/VillageFire",                "TXHarrisCountyB",
       "US/TX/Waco",                       "TXMcLennanCountyB",
