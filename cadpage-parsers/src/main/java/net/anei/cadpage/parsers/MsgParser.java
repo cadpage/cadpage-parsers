@@ -868,6 +868,7 @@ public abstract class MsgParser {
           break;
         }
 
+        
         // If we found a keyword for this colon, bail out of loop
         // Otherwise try looking for another colon
         if (iEndPt >= 0) break;

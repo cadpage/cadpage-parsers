@@ -14,7 +14,9 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
           "( SELECT/1 CALL! Loc:PLACE! Address:ADDR! Apt:APT! City:CITY! Parish:SKIP! Latitude:GPS1/d Longitude:GPS2/d" +
           "| SELECT/CANCEL CALL ADDR! Loc:PLACE! Cancel_Reason:INFO! " +
           "| SELECT/ADDRCH Address:ADDR! Apt:APT! City:CITY! State:ST! Latitude:GPS1/d! Longitude:GPS2/d! " +
-          "| Location:PLACE! Address:ADDR! Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP!" +
+          "| Location:PLACE! Address:ADDR! ( Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP! " +
+                                          "| Room:APT! City:CITY! Destination:LINFO! Address:LINFO! City:LINFO! " +
+                                          ") " +
           "| CALL! Loc:PLACE! ( Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! State:ST Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME Latitude:GPS1/d Longitude:GPS2/d" +
                              "| Address:ADDR! Apt:APT! Bldg:APT/D! Cross_St:X! City:CITY! State:ST! Parish/County:SKIP! Map_Pg:MAP! Notes:INFO! Dest:INFO! Latitude:GPS1/d! Longitude:GPS2/d " +
                              ") " +
@@ -130,6 +132,10 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
     else if (body.contains("*Loc:")) {
       setSelectValue("1");
       if (!parseFields(DELIM2.split(body), data)) return false;
+    }
+    else if (body.startsWith("Location:")) {
+      setSelectValue("2");
+      return super.parseMsg(body, data);
     }
     else return false;
 
