@@ -1865,7 +1865,7 @@ public class Active911ParserTable {
       "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",
       "US/TX/Seabrook",                   "TXHarrisCountyC",
       "US/TX/Seagoville",                 "TXDallasCountyB",
-      "US/TX/Seguin",                     "TXKeller",
+      "US/TX/Seguin",                     "TXTarrentCounty",
       "US/TX/Seguin",                     "TXSeguin",
       "US/TX/Smhcems",                    "TXHaysCounty",
       "US/TX/SmithCounty",                "TXSmithCounty",
