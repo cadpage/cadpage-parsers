@@ -8,25 +8,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHWilliamsCountyBParser extends FieldProgramParser {
-  
+
   public OHWilliamsCountyBParser() {
-    super(CITY_CODES, "WILLIAMS COUNTY", "OH", 
-          "( CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! Date:TIMEDATE! Unit:UNIT! "  + 
-          "| FIRE_CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! " + 
+    super(CITY_CODES, "WILLIAMS COUNTY", "OH",
+          "( CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! Date:TIMEDATE! Unit:UNIT! "  +
+          "| FIRE_CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! " +
           ") INFO:INFO/N! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "mlevy@wmsco.org";
+    return "mlevy@wmsco.org,info@sundance-sys.com,BryanCAD";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Active 911")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -35,7 +34,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -46,13 +45,13 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " INFO";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -60,7 +59,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d .*");
   private class MyInfoField extends InfoField {
     @Override
