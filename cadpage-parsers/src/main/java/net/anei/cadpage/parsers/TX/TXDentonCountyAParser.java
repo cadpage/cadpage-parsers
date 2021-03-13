@@ -11,25 +11,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 public class TXDentonCountyAParser extends DispatchOSSIParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("FYI|Update|Cancel|\\d{9};\\d\\d/\\d\\d/\\d{4} \\d\\d");
-  
+
   public TXDentonCountyAParser() {
     super(CITY_LIST, "DENTON COUNTY", "TX",
           "ID?: ( CANCEL ADDR SHORT_CITY! " +
-               "| FYI? DATIME? ID DATIME? ( SRC CALL PLACE? ADDR X/Z+? CITY " + 
+               "| FYI? DATIME? ID DATIME? ( SRC CALL PLACE? ADDR X/Z+? CITY " +
                                          "| CALL ( PLACE ADDR/Z CITY | ADDR/Z CITY | PLACE ADDR | ADDR ) ( SRC | X/Z SRC | X/Z X/Z SRC | X+? ) UNIT? ) ) " +
           "INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@dentoncounty.com";
   }
-  
+
   @Override
   public String getSponsor() {
     return "Lake Cities Fire Department";
   }
-  
+
   @Override
   public String getSponsorDateString() {
     return "02172014";
@@ -42,17 +42,17 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("Message Forwarded by PageGate") && !body.startsWith("CAD:")) body = "CAD:" + body;
-    else if (subject.length() > 0 && body.startsWith("CAD:")) {
+    if (subject.length() > 0 && body.startsWith("CAD:")) {
       String extra = null;
       if (SUBJECT_PTN.matcher(subject).matches()) {
         extra = "CAD:" + subject + ":";
         if (!body.startsWith(extra)) body = extra + body.substring(4);
       }
     }
+    else if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new CallField("CANCEL|.* ENROUTE|MUTUAL AID|CPR IN PROGRESS", true);
@@ -65,13 +65,13 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+(?:,[A-Z]+\\d+)*", true);
     return super.getField(name);
   }
-  
+
   private class MyShortCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       String city = CITY_CODES.getProperty(field);
@@ -85,7 +85,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
       }
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
@@ -94,23 +94,23 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
   private static final Pattern ADDR_UNIT_PTN = Pattern.compile("FM\\d+");
   private static final Pattern ADDR_SERV_PTN = Pattern.compile("\\bSERV\\b");
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("-(?:RM|[RASLU])([A-Z]|\\d+[A-Z]?)\\b"); 
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("-(?:RM|[RASLU])([A-Z]|\\d+[A-Z]?)\\b");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return checkParse(field, data, false);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       checkParse(field, data, true);
     }
-    
+
     private boolean checkParse(String field, Data data, boolean force) {
-      
+
       if (!force && ADDR_UNIT_PTN.matcher(field).matches()) return false;
-      
+
       field = ADDR_SERV_PTN.matcher(field).replaceAll("FRONTAGE");
 
       String apt = "";
@@ -119,39 +119,39 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
         apt = match.group(1);
         field = field.substring(0,match.start()) + field.substring(match.end());
       }
-      
+
       if (!force) {
         if (!super.checkParse(field, data)) return false;
       } else {
         super.parse(field, data);
       }
-      
+
       data.strApt = append(apt, "-", data.strApt);
       return true;
     }
   }
- 
+
   // Throw an error if  cross fields contain more than 2 streets
   private class MyCrossField extends CrossField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (ADDR_UNIT_PTN.matcher(field).matches()) return false;
       if (data.strCross.contains("&")) return false;
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (data.strCross.contains("&")) abort();
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARGY", "ARGYLE",
       "AUBR", "AUBREY",
@@ -219,7 +219,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
       "THE COLONY",
       "TROPHY CLUB",
       "WESTLAKE",
-      
+
       "COOKE COUNTY",
       "COLLIN COUNTY",
       "DALLAS COUNTY",
