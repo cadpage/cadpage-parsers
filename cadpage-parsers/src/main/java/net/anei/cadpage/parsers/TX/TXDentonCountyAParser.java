@@ -16,7 +16,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     super(CITY_LIST, "DENTON COUNTY", "TX",
           "ID?: ( CANCEL ADDR SHORT_CITY! " +
                "| FYI? DATIME? ID DATIME? ( SRC CALL PLACE? ADDR X/Z+? CITY " +
-                                         "| CALL ( PLACE ADDR/Z CITY | ADDR/Z CITY | PLACE ADDR | ADDR ) ( SRC | X/Z SRC | X/Z X/Z SRC | X+? ) UNIT? ) ) " +
+                                         "| CALL ( PLACE ADDR/Z CITY | ADDR/Z CITY | PLACE ADDR | ADDR ) ( SRC | X/Z SRC | X/Z X/Z SRC | X+? ) UNIT? ( GPS1 GPS2 | ) ) ) " +
           "INFO+");
   }
 
@@ -63,6 +63,8 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+(?:,[A-Z]+\\d+)*", true);
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
 
@@ -149,6 +151,14 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     public void parse(String field, Data data) {
       if (data.strCross.contains("&")) abort();
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
   }
 
