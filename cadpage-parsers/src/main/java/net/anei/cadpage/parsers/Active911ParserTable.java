@@ -112,6 +112,7 @@ public class Active911ParserTable {
       "US/AL/WinstonCounty",              "ALWinstonCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",
       "US/AR/Bentonville",                "ARBentonCountyC",
+      "US/AR/CityofBellaVista",           "ARBentonCountyE",
       "US/AR/CaveSpringsFD",              "ARBentonCountyA,ARBentonCountyD",
       "US/AR/CentralEMS",                 "ARWashingtonCountyB",
       "US/AR/CityofRogers",               "ARBentonCountyB",
