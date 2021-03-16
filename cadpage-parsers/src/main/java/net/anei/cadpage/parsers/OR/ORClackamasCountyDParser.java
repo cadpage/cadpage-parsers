@@ -9,8 +9,17 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 public class ORClackamasCountyDParser extends FieldProgramParser {
 
   public ORClackamasCountyDParser() {
-    super("GRESHAM", "OR",
+    this("CLACKAMAS COUNTY", "OR");
+  }
+
+  public ORClackamasCountyDParser(String defCity, String defState) {
+    super(defCity, defState,
           "CH ID CALL TIME ADDR PLACE MAP MAP/S MAP/S X UNIT INFO! INFO/N+ Sent_by:SKIP!");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "ORClackamasCountyD";
   }
 
   @Override
@@ -19,7 +28,7 @@ public class ORClackamasCountyDParser extends FieldProgramParser {
   }
 
   private static final Pattern MASTER1
-    = Pattern.compile("(?:(OPS\\d) )?(R[PG] #\\d+) (.*?) (\\d\\d:\\d\\d:\\d\\d) (.*?) ([FGM][A-Z] [A-Z]?\\d{2,4} \\d{4}[A-Z0-9]) (?:(.*?) )?DISPATCHED: (.*) REMARKS: *(.*?)(?: Sent by: (\\S+))?");
+    = Pattern.compile("(?:(OPS\\d) )?(R[CPG] #\\d+) (.*?) (\\d\\d:\\d\\d:\\d\\d) (.*?) ([FGM][A-Z] [A-Z]?\\d{2,4} \\d{4}[A-Z0-9]) (?:(.*?) )?DISPATCHED: (.*) REMARKS: *(.*?)(?: Sent by: (\\S+))?");
   private static final Pattern MASTER2
   = Pattern.compile("(.+?) (\\d\\d:\\d\\d:\\d\\d) (.*?) ([FGM][A-Z] [A-Z]?\\d{2,4} \\d{4}[A-Z0-9]) (?:(.*?) )?(P[GM] #\\d+) REMARKS: *(.*?)(?: Sent by: (\\S+))?");
 
@@ -65,7 +74,7 @@ public class ORClackamasCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CH")) return new ChannelField("OPS\\d", true);
-    if (name.equals("ID")) return new IdField("R[GP] #\\d+", true);
+    if (name.equals("ID")) return new IdField("R[CGP] #\\d+", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDR")) return new MyAddressField();
