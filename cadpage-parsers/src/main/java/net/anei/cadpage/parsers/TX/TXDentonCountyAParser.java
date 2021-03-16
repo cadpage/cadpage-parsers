@@ -14,10 +14,12 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
   public TXDentonCountyAParser() {
     super(CITY_LIST, "DENTON COUNTY", "TX",
-          "ID?: ( CANCEL ADDR SHORT_CITY! " +
-               "| FYI? DATIME? ID DATIME? ( SRC CALL PLACE? ADDR X/Z+? CITY " +
-                                         "| CALL ( PLACE ADDR/Z CITY | ADDR/Z CITY | PLACE ADDR | ADDR ) ( SRC | X/Z SRC | X/Z X/Z SRC | X+? ) UNIT? ( GPS1 GPS2 | ) ) ) " +
-          "INFO+");
+          "ID?: ( CANCEL ADDR ( SHORT_CITY | PLACE! ) " +
+               "| FYI? DATIME? ID DATIME? ( SRC CALL ( ADDR/Z CITY | PLACE? ADDR X/Z+? CITY ) " +
+                                         "| CALL ( PLACE ADDR/Z CITY | ADDR/Z CITY | PLACE ADDR | ADDR ) ( SRC | X/Z SRC | X/Z X/Z SRC | X+? ) UNIT? " +
+                                         ") "  +
+               ") " +
+          "INFO/N+? GPS1 GPS2 INFO/N+");
   }
 
   @Override
@@ -26,18 +28,8 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
   }
 
   @Override
-  public String getSponsor() {
-    return "Lake Cities Fire Department";
-  }
-
-  @Override
-  public String getSponsorDateString() {
-    return "02172014";
-  }
-
-  @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
   @Override
@@ -55,7 +47,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new CallField("CANCEL|.* ENROUTE|MUTUAL AID|CPR IN PROGRESS", true);
+    if (name.equals("CANCEL")) return new CallField("CANCEL|.* ENROUTE|MUTUAL AID|CPR IN PROGRESS|DEATH ON SCENE", true);
     if (name.equals("SHORT_CITY")) return new MyShortCityField();
     if (name.equals("ID")) return new IdField("\\d{9}", true);
     if (name.equals("DATIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
@@ -113,6 +105,12 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
       if (!force && ADDR_UNIT_PTN.matcher(field).matches()) return false;
 
+      int pt = field.lastIndexOf(':');
+      if (pt >= 0) {
+        data.strCity = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+
       field = ADDR_SERV_PTN.matcher(field).replaceAll("FRONTAGE");
 
       String apt = "";
@@ -130,6 +128,11 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
 
       data.strApt = append(apt, "-", data.strApt);
       return true;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CITY?";
     }
   }
 
@@ -154,11 +157,29 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}");
+  private static final Pattern TRUN_GPS_PTN = Pattern.compile("[-+]?\\d[.\\d]*");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type);
-      setPattern(GPS_PTN, true);
+    }
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Pattern ptn = isLastField() ? TRUN_GPS_PTN : GPS_PTN;
+      if (!ptn.matcher(field).matches()) return false;
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (! checkParse(field, data)) abort();
     }
   }
 
@@ -167,6 +188,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
       "AUBR", "AUBREY",
       "BART", "BARTONVILLE",
       "CORI", "CORINTH",
+      "CROS", "CROSS ROADS",
       "DC",   "DENTON COUNTY",
       "DENT", "DENTON",
       "DOUB", "DOUBLE OAK",
@@ -177,9 +199,11 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
       "LITT", "LITTLE ELM",
       "NORT", "NORTH LAKE",
       "PILO", "PILOT POINT",
+      "PROV", "PROVIDENCE VILLAGE",
       "ROAN", "ROANOKE",
       "SANG", "SANGER",
-      "TROP", "TROPHY CLUB"
+      "TROP", "TROPHY CLUB",
+      "WIS",  "WISE COUNTY"
   });
 
   private static final String[] CITY_LIST = new String[]{
@@ -225,6 +249,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
       "ROANOKE",
       "SANGER",
       "SHADY SHORES",
+      "SLIDELL",
       "SOUTHLAKE",
       "THE COLONY",
       "TROPHY CLUB",
