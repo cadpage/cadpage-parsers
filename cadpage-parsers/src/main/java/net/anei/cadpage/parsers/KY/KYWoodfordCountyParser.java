@@ -13,27 +13,26 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
     super(CITY_LIST, "WOODFORD COUNTY", "KY");
     setFieldList("SRC CODE CALL ADDR APT CITY DATE TIME GPS INFO ID");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@vpd.versaillesky.com";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z][A-Z0-9]+|");
-  private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
+  private static final Pattern MBLANK_PTN = Pattern.compile("\\s+");
   private static final Pattern MASTER = Pattern.compile("CAD:([A-Z0-9]+) (.*?) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)(?: (.*?))??(?: (\\d{12}))?");
   private static final Pattern INFO_GPS_PTN = Pattern.compile("E911 CLASS: [A-Z0-9]+ .*? LAT: ([-+]\\d{2,3}\\.\\d{6}) LON: ([-+]\\d{2,3}\\.\\d{6})\\b *(.*)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (!SUBJECT_PTN.matcher(subject).matches()) return false;
-    data.strSource = subject;
-    
+
+    if (SUBJECT_PTN.matcher(subject).matches()) data.strSource = subject;
+
     body = MBLANK_PTN.matcher(body).replaceAll(" ");
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    
+
     data.strCode = match.group(1);
     data.strCall = convertCodes(data.strCode, CALL_CODES);
     parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(2), data);
@@ -41,7 +40,7 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
     data.strTime = match.group(4);
     String info = getOptGroup(match.group(5));
     data.strCallId = getOptGroup(match.group(6));
-    
+
     match = INFO_GPS_PTN.matcher(info);
     if (match.matches()) {
       setGPSLoc(match.group(1)+','+match.group(2), data);
@@ -50,7 +49,7 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
     data.strSupp = info;
     return true;
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "E01",    "Abdominal Pain",
       "E02",    "Alleries/Hives/Sting",
@@ -111,9 +110,9 @@ public class KYWoodfordCountyParser extends SmartAddressParser {
       "FTRAN",  "Fire Training"
 
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "LEXINGTON",
     "MIDWAY",
