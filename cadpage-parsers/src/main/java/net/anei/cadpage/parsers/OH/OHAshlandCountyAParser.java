@@ -8,24 +8,24 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 
 public class OHAshlandCountyAParser extends DispatchEmergitechParser {
-  
+
   public OHAshlandCountyAParser() {
-    super(true, CITY_LIST, "ASHLAND COUNTY", "OH", TrailAddrType.INFO);
+    super(true, CITY_LIST, "ASHLAND COUNTY", "OH", EMG_FLG_NO_PLACE, TrailAddrType.NONE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "911@ashlandcountysheriff.org,no-reply@zuercherportal.com,noreply@zuercherportal.com";
+    return "911@ashlandcountysheriff.org,no-reply@zuercherportal.com,noreply@zuercherportal.com,acso.txt.rpt@gmail.com";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("\\d{4}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Reject any OHAshlandCountyB alerts
     if (subject.equals("From: WarCOGUser")) return false;
-    
+
     body = stripFieldStart(body, "911:");
     if (SUBJECT_PTN.matcher(subject).matches()) {
       body = "[" + subject + "]" + body;
@@ -36,7 +36,7 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-    
+
       //City
 
       "ASHLAND",
@@ -89,20 +89,20 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "SPRENG",
       "SULLIVAN",
       "WIDOWVILLE",
-      
+
       // Holmes County
       "KNOX TWP",
       "RIPLEY TWP",
       "WASHINGTON TWP",
       "NASHVILLE",
-      
+
       // Huron County
       "FITCHVILLE TWP",
       "GREENWICH TWP",
       "NEW LONDON TWP",
       "GREENWICH",
       "NEW LONDONG",
-      
+
       // Knox County
       "BROWN TWP",
       "HOWARD TWP",
@@ -112,7 +112,7 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "UNION TWP",
       "DANVILLE",
       "GANN",
-      
+
       // Lorain County
       "BRIGHTON TWP",
       "HUNTINGTON TWP",
@@ -120,8 +120,8 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "ROCHESTER TWP",
       "WELLINGTON TWP",
       "ROCHESTER",
-      "WELLINGTON", 
-      
+      "WELLINGTON",
+
       // Medina County
       "CHATHAM TWP",
       "HARRISVILLE TWP",
@@ -131,7 +131,7 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "LODI",
       "SPENCER",
       "WESTFIELD TWP",
-      
+
       // Richland County
       "BLOOMINGGROVE TWP",
       "BUTLER TWP",
@@ -147,7 +147,7 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "BUTLER",
       "LUCAS",
       "MANSFIELD",
-      
+
       // Wayne County
       "CHESTER TWP",
       "CLINTON TWP",

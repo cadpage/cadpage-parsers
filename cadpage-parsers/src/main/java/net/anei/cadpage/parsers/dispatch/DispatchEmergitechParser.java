@@ -491,7 +491,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
           "( SELECT/3 Call:ID! NATURE:CALL! PLACE:ADDRCITY! AKA:PLACE? COMMENTS:INFO3! INFO3/N+ LAT:GPS1 LONG:GPS2 " +
           "| SELECT/2 CALL:CALL PLACE:PLACE ADDR:ADDR! BETWEEN:X CITY:CITY! ID:ID! DATE:DATE2! TIME:TIME2! INFO:INFO " +
           "| Nature:CALL Location:ADDR/S2! Comments:INFO " +
-          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+ ( LOCATION:ADDR2! | PLACE:ADDR2! | ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO )");
+          "| ( CALL:ID NATURE:CALL | ID NATURE:CALL | NATURE:CALL | CALL ) CALL/SDS+ ( LOCATION:ADDR2! | PLACE:ADDR2! | ) BETWEEN:X? CALL:SKIP? NATURE:SKIP? COMMENTS:INFO INFO/N+ )");
     this.extraSpacePosList = extraSpacePosList;
     this.prefixList = prefixList;
     this.optUnit = optUnit;
@@ -760,12 +760,27 @@ public class DispatchEmergitechParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?\\b");
   private static final Pattern ADDR_BRK_PTN = Pattern.compile(" - |\n");
   protected class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       int flags = FLAG_AT_SIGN_ONLY;
-      if (trailField == null) flags |= FLAG_ANCHOR_END;
+      String zip = null;
+      if (trailField == null) {
+        flags |= FLAG_ANCHOR_END;
+        Parser p = new Parser(field);
+        String city = p.getLastOptional(',');
+        Matcher match = ST_ZIP_PTN.matcher(city);
+        if (match.matches()) {
+          city = p.getLastOptional(',');
+          data.strState = match.group(1);
+          zip = match.group(2);
+        }
+        data.strCity = city;
+        if (!data.strCity.isEmpty()) flags |= FLAG_NO_CITY;
+        field = p.get();
+      }
       flags |= getExtraParseAddressFlags();
       StartType st = noPlace ? StartType.START_ADDR : StartType.START_PLACE;
       parseAddress(st, flags, field, data);
@@ -773,6 +788,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         parseAddress(data.strPlace, data);
         data.strPlace = "";
       }
+      if (zip != null && data.strCity.isEmpty()) data.strCity = zip;
       if (trailField != null) {
         String left = getLeft();
         if (left.startsWith("/")) {
@@ -802,7 +818,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      String names = "PLACE ADDR APT CITY";
+      String names = "PLACE ADDR APT CITY ST";
       if (trailField != null) names = names + ' ' + trailField.getFieldNames();
       if (special) names += " INFO";
       names += " X?";
