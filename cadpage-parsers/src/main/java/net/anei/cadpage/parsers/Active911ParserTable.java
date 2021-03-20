@@ -422,6 +422,7 @@ public class Active911ParserTable {
       "US/IA/MitchellCountySheriff",      "IAMitchellCounty",
       "US/IA/PolkCounty",                 "IAPolkCounty",
       "US/IA/StoryCounty",                "IAStoryCounty",
+      "US/IA/TamaCounty",                 "IATamaCounty",
       "US/IA/WarrenCounty",               "IAWarrenCountyB",
       "US/IA/Westcom",                    "IAWarrenCountyB",
       "US/IA/WinnebagoCounty",            "IAWinnebagoCounty",

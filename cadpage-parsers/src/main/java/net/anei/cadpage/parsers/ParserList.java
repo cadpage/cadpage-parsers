@@ -550,6 +550,7 @@ public class ParserList {
               ,"IAPottawattamieCounty"          ,"Pottawattamie County, IA"
               ,"IAScottCounty"                  ,"Scott County, IA"
               ,"IAStoryCounty"                  ,"Story County, IA"
+              ,"IATamaCounty"                   ,"Tama County, IA"
               ,"IAWapelloCounty"                ,"Wapello County, IA"
               ,"IAWarrenCounty"                 ,"Warren County, IA"
               ,"IAWoodburyCounty"               ,"Woodbury County, IA"
