@@ -9,7 +9,7 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
 
   public IAStoryCountyParser() {
     super(CITY_CODES, "STORY COUNTY", "IA",
-          "( CANCEL ADDR CITY! | FYI ADDR CITY? CALL! ) INFO+");
+          "( CANCEL ADDR CITY! | FYI ( ADDR/Z CITY CALL! | CALL ADDR/Z CITY! |  CALL ADDR | ADDR CALL ) ) INFO+");
   }
 
   @Override
@@ -39,7 +39,6 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
       "CAMB", "CAMBRIDGE",
       "COLL", "COLLINS",
       "COLO", "COLO",
-      "ELKH", "ELKHART",
       "GILB", "GILBERT",
       "HUXL", "HUXLEY",
       "KELL", "KELLY",
@@ -67,8 +66,13 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
       // Jasper County
       "MING", "MINGO",
 
+      // Marshall County
+      "SAIN", "ST ANTHONY",
+      "STAT", "STATE CENTER",
+
       // Polk County
       "ALLE", "ALLEMAN",
+      "ELKH", "ELKHART",
       "POLK", "POLK CITY"
   });
 }
