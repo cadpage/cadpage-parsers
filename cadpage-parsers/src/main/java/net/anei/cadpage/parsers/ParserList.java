@@ -1833,6 +1833,9 @@ public class ParserList {
           new ParserCategory("Quebec, Canada"
               ,"ZCAQCQuebec"                    ,"Quebec, QC"
           ),
+          new ParserCategory("Saskatchewan, Canada"
+              ,"ZCASKPECC"                      ,"PECC, SK"
+          ),
           new ParserCategory("Australia"
               ,"ZAUMountBarker"                 ,"Mount Barker, AU"
               ,"ZAUNewSouthWales"               ,"New South Wales, AU"
