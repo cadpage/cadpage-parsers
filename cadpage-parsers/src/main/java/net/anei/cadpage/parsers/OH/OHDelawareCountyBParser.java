@@ -7,12 +7,14 @@ public class OHDelawareCountyBParser extends DispatchH05Parser {
 
   public OHDelawareCountyBParser() {
     super("DELAWARE COUNTY", "OH",
-          "SEQ DATETIME UNIT PLACE ADDRCITY X INFO_BLK+? TIMES+? ID!");
+          "( Call_For_Service:SEQ! Call_Date/Time:DATETIME! Units:UNIT! Common_Name:PLACE! Location:ADDRCITY! Cross_Street:X! Alerts:ALERT! Radio_Channel:CH! Narrative:EMPTY! INFO_BLK+? Status_Times:EMPTY! TIMES+ Incident_Numbers:EMPTY! ID Maps:EMPTY! " +
+          "| SEQ DATETIME UNIT PLACE ADDRCITY X INFO_BLK+? TIMES+? ID! " +
+          "| DATETIME ADDRCITY X UNIT INFO_BLK+? TIMES+? https:SKIP! )");
   }
 
   @Override
   public String getFilter() {
-    return "del-911@co.delaware.oh.us";
+    return "del-911@co.delaware.oh.us,maleshire@co.delaware.oh.us,nwsysadmin@westerville.org";
   }
 
   @Override
