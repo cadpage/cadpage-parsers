@@ -14,7 +14,7 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
     super("JACKSON COUNTY", "MO",
           "( SELECT/RR ID ID/C ADDR CALLCODE TIMES END " +
           "| ID3 ADDR CITY CALL CH MAP! Assigned:UNIT UNIT/C+ Apt/Lot:APT! Location:PLACE END " +
-          "| ADDR! ( CITY ZIP | ) CALLCODE! CH! CASE! ( ID2/C! Assigned:UNIT! | UNIT! ) UNIT/C+ )");
+          "| ADDR! ( CITY ZIP | ) CALLCODE! CH! CASE! ID2/C? ( Assigned:UNIT! | UNIT! ) UNIT/C+ )");
   }
 
   @Override
@@ -65,7 +65,7 @@ public class MOJacksonCountyBParser extends FieldProgramParser {
     if (name.equals("CALLCODE")) return new MyCallCodeField();
     if (name.equals("CH")) return new ChannelField("(?:(?:[A-Z]+-[A-Z0-9]+|OPS\\d+|DISP)\\b ?)*", true); //only two examples, possibly numeric chars before the "-"?
     if (name.equals("CASE")) return new IdField("Case#:? *((?:[A-Z]+-)?(?:\\d{2}-)?\\d+)", true);
-    if (name.equals("ID2")) return new IdField("Response/PCR #(\\d+)", true);
+    if (name.equals("ID2")) return new IdField("Response/PCR #(\\d+)|", true);
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
