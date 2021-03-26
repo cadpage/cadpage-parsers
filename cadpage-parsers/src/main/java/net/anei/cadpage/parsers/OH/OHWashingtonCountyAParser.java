@@ -19,9 +19,9 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
 
   public OHWashingtonCountyAParser () {
     super("WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDR EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR DATETIME CALL ) UNIT INFO+");
+        "( CALL EMPTY ADDR EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR DATETIME CALL ) UNIT X X END");
   }
-  
+
   @Override
   public String getFilter() {
     return "notifications@washingtoncountysheriff.or,notifications@wcso84.us";
@@ -43,7 +43,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     data.strCallId = getOptGroup(match.group(1));
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
@@ -58,7 +58,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -66,7 +66,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) *(\\d\\d:\\d\\d:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
