@@ -10,18 +10,18 @@ import net.anei.cadpage.parsers.dispatch.DispatchA51Parser;
  * Red Deer County, AB, CA
  */
 public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
-  
+
   private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?) +RURAL(?: AREA)?", Pattern.CASE_INSENSITIVE);
-  
+
   public ZCAABRedDeerCountyParser() {
     this("RED DEER COUNTY");
   }
-  
+
   protected ZCAABRedDeerCountyParser(String defCity) {
     super(CITY_LIST, defCity, "AB");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ZCABRedDeerCounty";
@@ -31,31 +31,35 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   public String getFilter() {
     return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_CR_CRES;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Message") && !subject.equals("Incident Message")) {
       data.strSource = subject;
     }
-    
+
+    int pt = body.indexOf("\nYou have received");
+    if (pt < 0) pt = body.indexOf("\nNOTICE - ");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
     if (!super.parseMsg(body,  data)) return false;
-    
+
     data.strCity = data.strCity.replace('_', ' ');
     Matcher match = CLEAN_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
- 
+
   @Override
   public String adjustMapAddress(String sAddress) {
     sAddress = RNG_PATTERN.matcher(sAddress).replaceAll("Range");
@@ -67,10 +71,10 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
   @Override
   public String postAdjustMapAddress(String sAddress) {
-    return HWY_NN_PTN.matcher(sAddress).replaceAll("ALBERTA $1");  
+    return HWY_NN_PTN.matcher(sAddress).replaceAll("ALBERTA $1");
   }
   private static final Pattern HWY_NN_PTN = Pattern.compile("\\bHWY +(\\d+)\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "4850 43 AVE",                          "+51.791691,-114.093236",
       "4902 44 AVE",                          "+51.791463,-114.092998",
@@ -87,7 +91,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "4550 53 ST",                           "+51.788715,-114.094699",
       "50 ST",                                "+51.788461,-114.091142"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
       "AIRDRIE",
       "ALCOMDALE",

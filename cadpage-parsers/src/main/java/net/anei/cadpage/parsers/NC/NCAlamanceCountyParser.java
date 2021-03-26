@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Alamance county, NC
  */
 public class NCAlamanceCountyParser extends DispatchOSSIParser {
-  
+
   public NCAlamanceCountyParser() {
     super(CITY_CODES, "ALAMANCE COUNTY", "NC",
           "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? INFO/N+");
@@ -22,7 +22,7 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
   public String getFilter() {
     return "CAD@alamance-nc.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     boolean good = false;
@@ -41,14 +41,14 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
     if (!super.parseMsg(body, data)) return false;
     return good || data.strCity.length() > 0 || isPositiveId();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|UNIT|RM|ROOM|STE|#)[- ]*(.*)");
   private class MyAptField extends AptField {
     @Override
@@ -61,13 +61,13 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
       if (match.matches()) field = match.group(1);
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO APT";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -77,13 +77,13 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH " + super.getFieldNames();
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BURL",  "BURLINGTON",
       "ELON",  "ELON",
@@ -95,13 +95,13 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
       "MEB",   "MEBANE",
       "SNOW",  "SNOW CAMP",
       "SWEP",  "SWEPSONVILLE",
-      
+
       // Chatham County
       "PIT",   "PITTSBORO",
-      
+
       // Guilford County
       "WHIT",  "WHITSETT",
-      
+
       // Orange County
       "ORG",   "ORANGE COUNTY"
   });

@@ -11,32 +11,35 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Lacombe County, AB, CA
  */
 public class DispatchA51Parser extends FieldProgramParser {
-  
+
   protected DispatchA51Parser(String defCity, String defState) {
     this(null, defCity, defState);
   }
-  
+
   protected DispatchA51Parser(String[] cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
           "( Sent:DATETIME3 INFO/G! INFO/N+ " +
           "| SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ " +
           "| DATETIME CALL ADDRCITY INFO/N+ " +
-          "| ID:ID? Date:DATETIME! Type:CALL! Location:ADDRCITY! Units:UNIT? Latitude:GPS1? Longitude:GPS2? Units:UNIT? Units_Responding:UNIT Notes:INFO/N+ " + 
+          "| ID:ID? Date:DATETIME! Type:CALL! Location:ADDRCITY! Location_Description:PLACE Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 Units:UNIT Units_Responding:UNIT Notes:INFO/N+ " +
           ")");
   }
-  
+
+  private static final Pattern DELIM = Pattern.compile(";?\n");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     body = body.replace("LatitudeUnits Responding", "Units Responding");
     body = body.replace('\\', '/');
     if (body.startsWith("/ ")) {
       setSelectValue("2");
       body = body.replace("\n", " / ");
       if (!parseFields(body.substring(2).trim().split(" / "), data)) return false;
-    } else {  
+    } else {
       setSelectValue("1");
-      if (!parseFields(body.split("\n"), data)) return false;
+      body = stripFieldEnd(body, ";");
+      if (!parseFields(DELIM.split(body), data)) return false;
       setGPSLoc(data.strGPSLoc, data);
       if (data.strAddress.startsWith("Unknown Location -") && data.strGPSLoc.length() > 0) {
         data.strAddress = data.strGPSLoc;
@@ -44,7 +47,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   private static final DateFormat DATE_TIME_FMT3 = new SimpleDateFormat("yyyy/MMM/dd HH:mm");
   private static final DateFormat DATE_TIME_FMT1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -62,7 +65,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\w+) - +(.*)");
   private class MyCallField extends CallField {
     @Override
@@ -74,24 +77,24 @@ public class DispatchA51Parser extends FieldProgramParser {
       }
       data.strCall = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
-    
+
   }
-  
+
   private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
   private static Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)");
   private static Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = TRAIL_SEMI_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
-      
+
       if (field.endsWith(")")) {
         if (field.startsWith("LL(")) {
           data.strAddress = field;
@@ -116,7 +119,7 @@ public class DispatchA51Parser extends FieldProgramParser {
         city = p.getLastOptional(',');
       }
       data.strCity = city;
-      
+
       field = p.get();
       match = APT_PTN.matcher(field);
       if (match.matches()) {
@@ -133,13 +136,13 @@ public class DispatchA51Parser extends FieldProgramParser {
       }
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST PLACE";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
