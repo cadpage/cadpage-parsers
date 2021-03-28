@@ -8,11 +8,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA7BaseParser;
 import net.anei.cadpage.parsers.dispatch.DispatchA7Parser;
 
 public class PAChesterCountyBaseParser extends DispatchA7Parser {
-  
+
   public PAChesterCountyBaseParser(String programStr) {
     super(0, CITY_LIST, CITY_CODES, "CHESTER COUNTY", "PA", programStr);
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = PA_TPK_PTN.matcher(addr).replaceAll("PENNSYLVANIA TURNPIKE");
@@ -20,7 +20,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern PA_TPK_PTN = Pattern.compile("\\bPA TPK?\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   protected boolean parseFields(String[] fields, Data data) {
     if (!super.parseFields(fields, data)) return false;
@@ -28,12 +28,12 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
     if (state != null) data.strState = state;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new BaseCallField();
@@ -58,10 +58,10 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       super.parse(field, data);
     }
   }
-  
+
   // ADDRPL: address - place
   protected class AddressPlaceField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
       int pt = field.lastIndexOf(',');
@@ -76,38 +76,38 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR PLACE CITY";
     }
   }
-  
+
   // ADDRCITY: address, citycode
   private static final Pattern ADDR_STATION_PTN = Pattern.compile("STATION +\\d+(?: *\\([A-Z]+\\))?");
   protected class BaseAddressCityField extends AddressField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.contains(",") && !ADDR_STATION_PTN.matcher(field).matches()) return false;
       parseChesterAddress(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY";
     }
   }
-  
+
   // ADDRCITY2: address, city
   protected class AddressCity2Field extends AddressField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       int pt = field.indexOf(',');
@@ -116,18 +116,18 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       data.strCity = field.substring(pt+1).trim();
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY";
     }
   }
-  
+
   protected class BaseCityField extends DispatchA7BaseParser.CityField {
     @Override
     public void parse(String field, Data data) {
@@ -135,23 +135,23 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       if (field.length() > 0) super.parse(field, data);
     }
   }
-  
+
   // X2: must contain &
   protected class Cross2Field extends CrossField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.contains("&")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "X";
     }
   }
-  
+
   // APT: must start with APT or be <= 4 characters
   protected class BaseAptField extends AptField {
 
@@ -166,11 +166,11 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       if (field.startsWith("APT ")) {
         field = field.substring(4).trim();
       } else if (field.length() > 4) return false;
-      
+
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("-")) field = field.substring(1).trim();
@@ -181,20 +181,20 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       if (field.length() > 6) data.strPlace = field;
       else super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT PLACE";
     }
   }
-  
+
   private static final Pattern PLACE_DASH_PTN = Pattern.compile("-.*|.*-|.*[^ ]-[^ ].*");
   protected class BasePlaceDashField extends  PlaceField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = PLACE_DASH_PTN.matcher(field);
@@ -204,36 +204,36 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern DATE_PATTERN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d(?:\\d\\d)?");
   private class BaseDateField extends DateField {
     public BaseDateField() {
       setPattern(DATE_PATTERN, true);
     }
   }
-  
+
   private static final Pattern TIME_PATTERN = Pattern.compile("\\d\\d:\\d\\d(?::\\d\\d)?");
   protected class BaseTimeField extends TimeField {
     public BaseTimeField() {
       setPattern(TIME_PATTERN, true);
     }
   }
-  
+
 
   protected class BaseDateTimeField extends DateTimeField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isLastField()) {
@@ -247,51 +247,51 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
         }
         return false;
       }
-      
+
       else {
         String tmp = field.replaceAll("\\d", "N");
         return "NN/NN/NNNN".startsWith(tmp) ||
                 "NN:NN:NN".startsWith(tmp);
       }
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
-  
+
+
   private static final Pattern NOT_PLACE_PHONE_PTN = Pattern.compile("\\d{4}");
   private static final Pattern APT_PTN = Pattern.compile("^(?:APT|RM) *([^ \\-]*)[- ]*");
   private static final Pattern PHONE_PTN = Pattern.compile("(.*?)[-#/ ]*\\b((?:CP)?\\d{3}[-\\.]?\\d{3}[-\\.]?\\d{4})\\b[-#/ ]*(.*?)");
-  
+
   protected class BasePlacePhoneField extends PlaceField {
 
     @Override
     public void parse(String field, Data data) {
-      
+
       // First check to make sure this isn't something else
       // in particular a 4 digit box number
       if (NOT_PLACE_PHONE_PTN.matcher(field).matches()) abort();
-      
+
       Matcher match = APT_PTN.matcher(field);
       if (match.find()){
         data.strApt = getOptGroup(match.group(1));
         field = match.replaceFirst("");
       }
-      
+
       match = PHONE_PTN.matcher(field);
       if (match.matches()){
         data.strPhone = match.group(2);
         field = append(match.group(1), " ", match.group(3));
       }
-      
+
       if (field.endsWith("-")) field = field.substring(0,field.length()-1).trim();
       if (field.startsWith("-")) field = field.substring(1,field.length()).trim();
       data.strPlace = append(data.strPlace, " - ", field).trim();
     }
-    
+
     @Override
     public String getFieldNames(){
       return "APT PLACE PHONE";
@@ -301,18 +301,18 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
   public void parseChesterAddress(String field, Data data) {
     parseAddressA7(field, data);
   }
-  
+
   public String convertCityCode(String city) {
     return convertCodes(city, CITY_CODES);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     String tmp = CITY_MAP_TABLE.getProperty(city.toUpperCase());
     if (tmp != null) return tmp;
     return city;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
     /* 00 */ "",
     /* 01 */ "WEST CHESTER",
@@ -389,8 +389,8 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
     /* 72 */ "FRANKLIN TWP",
     /* 73 */ "LONDON BRITAIN",
     /* 74 */ "",
-    /* 75 */ "WEST CHESTER",    // WEST CHESTER UNIVERSITY PD 
-    /* 76 */ "OXFORD",          // LINCOLN UNIVERSITY 
+    /* 75 */ "WEST CHESTER",    // WEST CHESTER UNIVERSITY PD
+    /* 76 */ "OXFORD",          // LINCOLN UNIVERSITY
     /* 77 */ "COATESVILLE",     // COATESVILLE VA MEDICAL CENTER POLICE
     /* 78 */ "WEST CHESTER",    // WEST CHESTER AREA SCHOOL DISTRICT SECURITY
     /* 79 */ "COATESVILLE",     // COATESVILLE AREA SCHOOL DISTRICT POLICE
@@ -407,7 +407,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
     /* 90 */ "",
     /* 91 */ "RADNOR"
   };
-  
+
   protected static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ATGLN",  "ATGLEN",
       "AVNDAL", "AVONDALE",
@@ -454,6 +454,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "MALVR",  "MALVERN",
       "MALVRN", "MALVERN",
       "MLCRK",  "MILL CREEK",
+      "MLCRK NEW C DE", "MILL CREEK",
       "MODNA",  "MODENA",
       "NCC",    "NEW CASTLE COUNTY",
       "NCVNTY", "NORTH COVENTRY TWP",
@@ -494,7 +495,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "WBRAD",  "WEST BRADFORD TWP",
       "WBRAND", "WEST BRANDYWINE TWP",
       "WCALN",  "WEST CALN TWP",
-      "WCHEST", "WEST CHESTER", 
+      "WCHEST", "WEST CHESTER",
       "WESTWN", "WESTTOWN TWP",
       "WFALLO", "WEST FALLOWFIELD TWP",
       "WGOSHN", "WEST GOSHEN TWP",
@@ -508,7 +509,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "WSADS",  "WEST SADSBURY TWP",
       "WVINCT", "WEST VINCENT TWP",
       "WWHITE", "WEST WHITELAND TWP",
-      
+
       // Lancaster County
       "SLISBRY",      "SALISBURY",
 
@@ -520,7 +521,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "UPPER PROV",   "UPPER PROVIDENCE TWP",
       "UPPPROVDNCE",  "UPPER PROVIDENCE TWP"
   });
-  
+
   private static final Properties OOC_CITIES = buildCodeTable(new String[]{
       "NEW CASTLE COUNTY",      "DE",
       "NORTH EAST",             "MD",
@@ -528,8 +529,8 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "MILL CREEK",             "DE",
       "RISING SUN",             "MD"
   });
-  
+
   private static final Properties CITY_MAP_TABLE = buildCodeTable(new String[]{
       "MILL CREEK",             "HOCKESSIN"
   });
-} 
+}
