@@ -23,7 +23,8 @@ public class SplitMsgOptionsCustom implements SplitMsgOptions {
   @Override public int splitBreakLength() { return 0; }
 
   @Override public int splitBreakPad() { return 0; }
-  
+
   @Override public boolean subjectColonField() { return false; }
 
+  @Override public boolean insConditionalBreak() { return false; }
 }

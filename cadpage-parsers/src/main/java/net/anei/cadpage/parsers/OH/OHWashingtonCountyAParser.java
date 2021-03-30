@@ -18,8 +18,8 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PATTERN = Pattern.compile("CAD +Page(?: +(\\d\\d-\\d{6}))?");
 
   public OHWashingtonCountyAParser () {
-    super("WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDR EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR DATETIME CALL ) UNIT X X END");
+    super(CITY_LIST, "WASHINGTON COUNTY", "OH",
+        "( CALL EMPTY ADDR/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR/S DATETIME CALL ) UNIT X X END");
   }
 
   @Override
@@ -31,8 +31,10 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean splitKeepLeadBreak() { return true; }
       @Override public int splitBreakLength() { return 180; }
-      @Override public int splitBreakPad() { return 1; }
+      @Override public int splitBreakPad() { return 2; }
+      @Override public boolean insConditionalBreak() { return true; }
     };
   }
 
@@ -41,12 +43,14 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     Matcher match = SUBJECT_PATTERN.matcher(subject);
     if (!match.matches()) return false;
     data.strCallId = getOptGroup(match.group(1));
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (! data.strCity.isEmpty()) data.strState = "WV";
+    return true;
   }
 
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram();
+    return "ID " + super.getProgram().replace("CITY", "CITY ST");
   }
 
   @Override
@@ -77,4 +81,10 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
       data.strTime = match.group(2);
     }
   }
+
+  private static final String[] CITY_LIST = new String[] {
+      "BELMONT",
+      "ST MARYS",
+      "SAINT MARYS"
+  };
 }

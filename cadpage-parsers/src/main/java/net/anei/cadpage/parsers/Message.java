@@ -17,6 +17,7 @@ public class Message {
   private int leadBrkCount = 0;
   private int msgIndex = -1;
   private int msgCount = -1;
+  private int origMsgLen = -1;
 
   // Parsed message information
   private MsgInfo info = null;
@@ -25,11 +26,15 @@ public class Message {
     this(preParse, fromAddress, subject, body, null);
   }
 
+  private static final Pattern TRAIL_LF_PTN = Pattern.compile("[\r\n]+$");
+
   public Message(boolean preParse, String fromAddress, String subject, String body, SplitMsgOptions options) {
     if (fromAddress == null) fromAddress = "";
     if (subject == null) subject = "";
     if (body == null) body = "";
     if (options == null) options = new SplitMsgOptionsCustom();
+    body = TRAIL_LF_PTN.matcher(body).replaceFirst("");
+    origMsgLen = body.length();
 
     // Remove byte order mark from anywhere in text.  Generally it only occurs
     // at the beginning, but we have had a case where a prefix was prepended to
@@ -135,6 +140,14 @@ public class Message {
 
   public int getMsgCount() {
     return msgCount;
+  }
+
+  public int getOrigMsgLen() {
+    return origMsgLen;
+  }
+
+  void setOrigMsgLen(int origMsgLen) {
+    this.origMsgLen = origMsgLen;
   }
 
   /**
@@ -541,6 +554,7 @@ public class Message {
   private static final Pattern JUNK_HEADER_PTN = Pattern.compile("_{5,}|-{5,}|--+(?:Original Message)?--+|Auto forwarded by a Rule|--+ Forwarded message --+");
 
   private String trimLead(String str, boolean keepLeadBreak) {
+    if (keepLeadBreak) return str;
     int pt = 0;
     while (pt < str.length()) {
       char chr = str.charAt(pt);
@@ -612,6 +626,7 @@ public class Message {
     }
 
     // First skip leading dots and spaces
+    boolean found = false;
     int pt1 = 0;
     while (pt1 < body.length() && " .".indexOf(body.charAt(pt1))>=0) pt1++;
     while (pt1 < body.length()) {
@@ -631,6 +646,7 @@ public class Message {
         if (c == d1) level++;
         if (c == d2) level--;
         if (level == 0) {
+          found = true;
           addSubject(body.substring(pt1+1, pt2).trim());
           pt1 = pt2+1;
           break;
@@ -638,7 +654,9 @@ public class Message {
       }
       if (pt2 >= body.length()) break;
     }
-    body = trimLead(body.substring(pt1), true);
+    if (found || !options.splitKeepLeadBreak()) {
+      body = trimLead(body.substring(pt1), true);
+    }
 
     // If we didn't change anything, then reset any saved following msg information
     if (saveFollow && pt1 == 0) {
@@ -711,8 +729,7 @@ public class Message {
     // If message matches expected break length, within the pad fudge factor, expect more to come
     int breakLen = options.splitBreakLength();
     if (breakLen > 0) {
-      int msgLen = getMessageBody().length();
-      int delta = msgLen % breakLen;
+      int delta = origMsgLen % breakLen;
       if (delta == 0) return true;
       if (delta + options.splitBreakPad() >= breakLen)  return true;
     }
