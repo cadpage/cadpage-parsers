@@ -11,12 +11,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class MDCharlesCountyBParser extends FieldProgramParser {
-  
+
   public MDCharlesCountyBParser() {
     super("CHARLES COUNTY", "MD",
            "CALL ADDR URL! ID UNIT DATETIME INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "@sms.mdfiretech.com";
@@ -24,10 +24,10 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     return parseFields(body.split("\n"), 3, data);
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     int pt = address.indexOf('(');
@@ -36,7 +36,7 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
     return address;
   }
   private static final Pattern PR_PTN = Pattern.compile("\\bPR\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -45,7 +45,7 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM) *(.*)|\\d+[A-Z]?|[A-Z]");
   private class MyAddressField extends AddressField {
 
@@ -63,50 +63,51 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
         extra = null;
       }
       super.parse(field, data);
-      
+
       if (extra == null) return;
-      
+
       Matcher match = APT_PTN.matcher(extra);
       if (match.matches()) {
         data.strApt = match.group(1);
         if (data.strApt == null) data.strApt = extra;
         return;
       }
-      
+
       extra = extra.replace('@', '/');
       if (extra.contains("/")) {
         data.strCross = extra;
         return;
       }
-      
+
       data.strPlace = extra;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY " + super.getFieldNames() + " APT X PLACE";
     }
   }
-  
+
   private class MyInfoUrlField extends InfoUrlField {
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!field.startsWith("mdfire.com/?") && !field.startsWith("mdft.us/?")) return false;
-      field = "http://" + field;
+      if (field.startsWith("mdfire.com/?") || field.startsWith("mdft.us/?")) {
+        field = "http://" + field;
+      } else if (!field.startsWith("http://") && !field.startsWith("https://")) return false;
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{1,2}/\\d{1,2}/\\d{4}) +(\\d{1,2}:\\d{1,2}:\\d{1,2} [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return;
@@ -114,7 +115,7 @@ public class MDCharlesCountyBParser extends FieldProgramParser {
       setTime(TIME_FMT, match.group(2), data);
     }
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
