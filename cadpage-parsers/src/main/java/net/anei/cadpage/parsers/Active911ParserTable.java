@@ -876,6 +876,7 @@ public class Active911ParserTable {
       "US/MI/ShiawasseeCounty",           "MIShiawasseeCounty",
       "US/MI/SpartaFD",                   "MIKentCounty",
       "US/MI/StClairCounty",              "MIStClairCounty",
+      "US/MI/StJosephCounty",             "MIStJosephCounty",
       "US/MI/TroyFD",                     "MIOaklandCountyC",
       "US/MI/Up911CAD",                   "MIChippewaCounty",
       "US/MI/VanBurenCounty",             "MIVanBurenCounty",

@@ -807,6 +807,7 @@ public class ParserList {
               ,"MISchoolcraftCounty"            ,"Schoolcraft County, MI"
               ,"MIShiawasseeCounty"             ,"Shiawassee County, MI"
               ,"MIStClairCounty"                ,"St Clair County, MI"
+              ,"MIStJosephCounty"               ,"St Joseph County, MI"
               ,"MIVanBurenCounty"               ,"Van Buren County, MI"
               ,"MIWashtenawCounty"              ,"Washtenaw County, MI"
               ,"MIWayneCounty"                  ,"Wayne County, MI"
