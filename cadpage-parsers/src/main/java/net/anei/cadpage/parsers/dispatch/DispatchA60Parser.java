@@ -13,12 +13,14 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   public DispatchA60Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CODE? CALL ADDR/Z INFO UNIT DATETIME! END");
+          "CODE? CALL ADDR/Z INFO UNIT DATETIME! ID END");
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(": "), data);
+    if (!parseFields(body.split(": "), data)) return false;
+    if (data.strCallId.equals("None")) data.strCallId = "";
+    return true;
   }
 
   @Override
