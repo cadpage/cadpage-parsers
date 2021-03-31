@@ -755,6 +755,7 @@ public class Active911ParserTable {
       "US/LA/StTammanyParish",            "LAStTammanyParish",
       "US/LA/TangipahoaParish",           "LATangipahoaParish",
       "US/LA/TerrebonneParish",           "LATerrebonneParish",
+      "US/LA/Vangy911",                   "LAEvangelineParish",
       "US/LA/WestBatonRougeCouncil",      "LAWestBatonRougeParish",
       "US/LA/WestFelicianaParish",        "LAWestFelicianaParish",
       "US/MA/Mvpsis",                     "MADukesCounty",

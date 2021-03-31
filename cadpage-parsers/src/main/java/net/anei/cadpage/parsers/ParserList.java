@@ -692,6 +692,7 @@ public class ParserList {
               ,"LACalcasieuParish"              ,"Calcasieu Parish, LA"
               ,"LAEastBatonRougeParish"         ,"East Baton Rouge Parish, LA"
               ,"LAEastFelicianaParish"          ,"East Feliciana Parish, LA"
+              ,"LAEvangelineParish"             ,"Evangeline Parish, LA"
               ,"LAIberiaParish"                 ,"Iberia Parish, LA"
               ,"LAJeffersonParish"              ,"Jefferson Parish, LA"
               ,"LAJeffersonDavisParish"         ,"Jefferson Davis Parish, LA"
