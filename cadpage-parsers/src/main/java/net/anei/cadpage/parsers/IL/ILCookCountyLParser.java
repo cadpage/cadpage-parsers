@@ -10,7 +10,7 @@ public class ILCookCountyLParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "MABAS22@CALCOMM911.org,MABAS22@calumetparkvillage.org";
+    return "MABAS22@CALCOMM911.org,MABAS22@calumetparkvillage.org,alerts@calcomm911.org";
   }
 
 }
