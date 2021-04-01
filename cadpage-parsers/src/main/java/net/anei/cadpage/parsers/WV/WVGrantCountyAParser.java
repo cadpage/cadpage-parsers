@@ -156,14 +156,17 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "GYNBIRTH",
       "HIT N RUN",
       "LANDING ZONE SETUP",
+      "LIFT ASSIST",
       "LMISC",
       "LZSET",
       "MENTAL",
       "MISC",
       "MISC CALL NOT LAW ENFORCEMENT",
+      "MISC TRAINING",
       "MOTOR VEHICLE CRASH WITH INJURY OR ENTRAPMET ACCIDENT",
       "MUT AID EMS",
       "MUT AID FIRE",
+      "MVA",
       "MVC",
       "MVCINJ",
       "ODOR OF GAS",
@@ -223,7 +226,7 @@ public class WVGrantCountyAParser extends DispatchA48Parser {
       "SCHERR",
       "WILLIAMSPORT",
       "WILSONIA",
-      
+
       // Hardy County
       "MOOREFIELD",
 
