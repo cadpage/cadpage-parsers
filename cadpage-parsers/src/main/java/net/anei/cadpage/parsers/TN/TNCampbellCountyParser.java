@@ -6,11 +6,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
 public class TNCampbellCountyParser extends DispatchA65Parser {
-  
+
   public TNCampbellCountyParser() {
     super(CITY_LIST, "CAMPBELL COUNTY", "TN");
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -21,11 +21,11 @@ public class TNCampbellCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info,geoconex@nlamerica.com,campbellcotn@911email.net";
+    return "dispatch@911comm2.info,geoconex@nlamerica.com,campbellcotn@911email.net,dispatch@campbelltne911.net,@nlamerica.com";
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "JELLICO",
       "LAFOLLETTE",
