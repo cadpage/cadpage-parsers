@@ -11,23 +11,23 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * San Luis Obispo County, CA
  */
 public class CASanLuisObispoCountyAParser extends FieldProgramParser {
-  
+
   public CASanLuisObispoCountyAParser() {
     super("SAN LUIS OBISPO COUNTY", "CA",
           "( RA:SKIP! ADDRCITY X CALL UNK! Map:MAP! ID UNIT! INFO/N+? GPS END " +
           "| ID CALL ADDRCITY! ( SELECT/RR INFO! INFO/N+ | COMMAND:CH! Tac:CH/SLS! ATG:CH/SLS! Resources:UNIT! REMARKS:INFO! INFO/N+? GPS END ) )");
   }
-  
+
   @Override
   public String getFilter() {
     return "slucad@fire.ca.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("[;\n]+");
 
   @Override
@@ -39,11 +39,11 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
       body = body.substring(7).trim();
     }
-    
+
     body = body.replace(" <a href=", "\n<a href=");
     return super.parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -52,7 +52,7 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
     if (name.equals("GPS")) return new GPSField("<a href=\"http://maps.google.com/\\?q=([-+0-9\\.,]+)\">Map</a>", true);
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -68,7 +68,7 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
       }
       data.strCity = convertCodes(city, CITY_CODES);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE ADDR APT CITY";
@@ -82,18 +82,20 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
       if (INFO_JUNK_PTN.matcher(field).matches()) return;
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ATAS",     "ATASCADERO",
       "CMB",      "CAMBRIA",
+      "LOS_OSOS", "LOS OSOS",
       "MB",       "MORRO BAY",
       "PR",       "PASO ROBLES",
+      "SANTA_MARG","SANTA MARGARITA",
       "SAN_MIG",  "SAN MIGUEL",
       "SL",       "SAN LUIS OBISPO",
       "SLO_CO",   "SAN LUIS OBISPO COUNTY",
