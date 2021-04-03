@@ -9,21 +9,22 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 
 /**
  * Harnett County, NC
- * 
+ *
  * Replaces NCHarnetCountyA
  */
 public class NCHarnettCountyCParser extends FieldProgramParser {
-  
+
   String select;
-  
+
   public NCHarnettCountyCParser() {
     super(NCHarnettCountyParser.CITY_LIST, "HARNETT COUNTY", "NC",
            "( SELECT/DASHFMT ID ADDR APT+? CITY/Y X/Z+? EMPTY EMPTY+? CALL EMPTY+? UNIT " +
-           "| CITY/Y X X EMPTY EMPTY CALL! EMPTY EMPTY EMPTY UNIT% INFO+ " +
-           "| ID ADDR EMPTY+? CITY/Y X/Z+? CALL UNIT! END )");
-  
+           "| CITY/Y X X CH EMPTY CALL! EMPTY EMPTY EMPTY UNIT% INFO+ " +
+           "| ID ADDR EMPTY+? CITY/Y X/Z+? CALL UNIT! END " +
+           "| X/Z X/Z CH EMPTY EMPTY? CALL! EMPTY EMPTY EMPTY UNIT% INFO+ )");
+
   }
-  
+
   @Override
   public String getFilter() {
     return "cadpage@harnett.org";
@@ -46,12 +47,13 @@ public class NCHarnettCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{6}", true);
     if (name.equals("CALL"))  return new MyCallField();
+    if (name.equals("CH")) return new ChannelField("TAC\\d+|");
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?");
   private class MyCallField extends CallField {
-    
+
     @Override
     public void parse(String field, Data data) {
       if (CALL_CODE_PTN.matcher(field).matches()) {
@@ -64,12 +66,12 @@ public class NCHarnettCountyCParser extends FieldProgramParser {
         data.strCall = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static CodeTable CALL_CODES = new StandardCodeTable();
 }

@@ -5,15 +5,16 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class NCHarnettCountyParser extends GroupBestParser {
-  
+
   public NCHarnettCountyParser() {
-    super(new NCHarnettCountyAParser(), 
-          new NCHarnettCountyBParser(), 
-          new NCHarnettCountyCParser());
+    super(new NCHarnettCountyAParser(),
+          new NCHarnettCountyBParser(),
+          new NCHarnettCountyCParser(),
+          new NCHarnettCountyDParser());
   }
-  
+
   static final String[] CITY_LIST = new String[]{
-    
+
     // Townships
     "ANDERSON CREEK",
     "AVERASBORO",
@@ -28,7 +29,7 @@ public class NCHarnettCountyParser extends GroupBestParser {
     "NEILLS CREEK",
     "STEWARTS CREEK",
     "UPPER LITTLE RIVER",
-    
+
     // Cities and towns
     "CAMERON",
     "COATS",
@@ -36,7 +37,7 @@ public class NCHarnettCountyParser extends GroupBestParser {
     "ERWIN",
     "LILLINGTON",
     "SPRING LAKE",
-    
+
     // Unincorporated Communities
     "ANDERSON CREEK",
     "BARBECUE",
@@ -60,27 +61,30 @@ public class NCHarnettCountyParser extends GroupBestParser {
     "SHAWTOWN",
     "SPOUT SPRINGS",
     "TURLINGTON",
-    
+
     // Other
     "LINDEN",
     "ANGIER",
     "BENSON",
-    
+
     // Cumberland County
     "FAYETTEVILLE",
-    
+
     // Lee County
     "BROADWAY",
     "SANFORD",
-    
+
     // Moore County
     "ABERDEEN",
     "SOUTHERN PINES",
-    
+    "VASS",
+
     // Wake County
     "HOLLY SPRINGS",
     "FUQUAY",
     "FUQUAY VARINA",
     "FUQUAY-VARINA",
+    "WILLOW SPRING",
+    "WILLOW SPRINGS"
   };
 }
