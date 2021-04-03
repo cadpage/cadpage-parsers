@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCAlexanderCountyParser extends DispatchOSSIParser {
-  
+
   public NCAlexanderCountyParser() {
     super(CITY_CODES, "ALEXANDER COUNTY", "NC",
           "FYI? ( CALL2/Z ADDR/Z CITY X+? ID? CODE? INFO+ " +
@@ -21,14 +21,14 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
     removeWords("AVENUE", "BEND", "COVE");
     setupProtectedNames("B AND S");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@alexandercountync.gov,6504224256";
   }
-  
+
   private static final Pattern CITY_DIST_PTN = Pattern.compile("( [A-Z]{2,3})(DIST:)");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (body.length() == 0) body = subject;
@@ -37,15 +37,15 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       subject = "Text Message";
       body = body.substring(15).trim();
     }
-    if (!body.startsWith("CAD:") && 
+    if (!body.startsWith("CAD:") &&
         (subject.equals("Text Message") || isPositiveId())) {
       body = "CAD:" + body;
     }
-    
+
     body = CITY_DIST_PTN.matcher(body).replaceAll("$1;$2");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -56,13 +56,13 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!CALL_LIST.contains(field)) return false;
@@ -70,21 +70,21 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private static final Pattern CALL_CH_PTN = Pattern.compile("(.+?) CHANNEL # (\\d+)");
   private class MyCall2Field extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // See if this is one of our special call fields
       if (!field.startsWith("CANCEL") && !field.equals("UNDER CONTROL") &&
-          !field.startsWith("FIRE OPS") && 
+          !field.startsWith("FIRE OPS") &&
           !field.startsWith("ROUTINE FURTHER RESPONSE")) {
         if (!field.startsWith("{")) return false;
         int pt = field.indexOf('}');
@@ -123,7 +123,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       return "SRC CALL CH";
     }
   }
-  
+
   private static final Pattern CROSS_MARK_PTN = Pattern.compile("\\b(?:NC|US)\\b");
   private class MyCrossField extends CrossField {
     @Override
@@ -135,7 +135,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       return super.checkParse(field, data);
     }
   }
-  
+
   @Override
   public boolean checkCall(String call) {
     return CALL_LIST.contains(call);
@@ -150,6 +150,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       "BACK PAIN",
       "BREATHING PROBLEMS",
       "BRUSH GRASS WOODS FIRE",
+      "BUILDING AND BRUSH",
       "CANCEL",
       "CANCEL FURTHER RESPONSE",
       "CARBON MONOXIDE DETECTOR",
@@ -203,6 +204,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       "STANDARD FIRE ALARM",
       "STANDARD STRUCTURE FIRE",
       "STROKE",
+      "STRUCTURE FIRE",
       "TAYCODE 401",
       "TRAFFIC ACCIDENT",
       "TRAFFIC CONTROL",
@@ -218,7 +220,7 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       "WEATHER RELATED",
       "WORKING FIRE"
   ));
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "GF",  "GRANITE FALLS",
       "HID", "HIDDENITE",
@@ -228,5 +230,5 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
       "SVA", "STATESVILLE",
       "TAY", "TAYLORSVILLE TWP"
   });
-  
+
 }

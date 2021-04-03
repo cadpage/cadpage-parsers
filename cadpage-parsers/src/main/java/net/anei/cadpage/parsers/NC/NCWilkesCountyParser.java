@@ -7,22 +7,23 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCWilkesCountyParser extends DispatchSouthernParser {
-  
+
   public NCWilkesCountyParser() {
-    super(CITY_LIST, "WILKES COUNTY", "NC", DSFLAG_TRAIL_PLACE | DSFLAG_FOLLOW_CROSS | DSFLAG_ID_OPTIONAL | DSFLAG_TIME_OPTIONAL);
-    removeWords("RUN");
+    super(CITY_LIST, "WILKES COUNTY", "NC", DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME);
+    removeWords("RUN", "STREET", "WAY");
+    setupDoctorNames("THAKKARS");
   }
-  
+
   @Override
   public String getFilter() {
     return "@wilkescounty.net";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = NO_EXT_PTN.matcher(address).replaceAll("$1");
@@ -31,7 +32,7 @@ public class NCWilkesCountyParser extends DispatchSouthernParser {
   }
   private static final Pattern NO_EXT_PTN = Pattern.compile("\\b(WINKLER MILL RD) EXT", Pattern.CASE_INSENSITIVE);
   private static final Pattern EXT_EXD_PTN = Pattern.compile("\\b(COUNTRY CLUB RD) EXT", Pattern.CASE_INSENSITIVE);
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Towns
@@ -80,17 +81,26 @@ public class NCWilkesCountyParser extends DispatchSouthernParser {
     "SOMERS",
     "STANTON",
     "TRAPHILL",
-    "UNION",
+    "UNION GROVE",
     "WALNUT GROVE",
     "MILLERS CREEK",
     "WILKESBORO",
-    
+
+    // Caldwell County
+    "CALDWELL",
+    "LENOIR",
+
+    // Surry County
+    "SURRY",
+    "STATE ROAD",
+
     // Watauga County
     "WATAUGA",
     "DEEP GAP",
-    
+
     // Yadkin County
     "YADKIN",
+    "JONESVILLE",
     "HAMPTONVILLE"
   };
 }

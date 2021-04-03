@@ -7,12 +7,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NCCaldwellCountyParser extends FieldProgramParser {
-  
+
   public NCCaldwellCountyParser() {
     super(CITY_CODES, "CALDWELL COUNTY", "NC",
            "CALL ( ADDR/Z ID | ADDR/Z CITY APT? X/Z+? ID | PLACE ADDR/Z ID | PLACE ADDR/Z CITY APT? X/Z+? ID )");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@caldwellcountync.org,7677";
@@ -23,14 +23,14 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
     body = stripFieldStart(body, "CAD:");
     return parseFields(body.split(";"), data);
   }
-  
+
   private class MyAptField extends AptField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("APT ")) return false;
@@ -38,15 +38,15 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("ID")) return new IdField("\\d{10}", true);
     return super.getField(name);
   }
-  
-  
+
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BOOM", "BOOMER",
       "BR",   "BLOWING ROCK",
@@ -68,5 +68,5 @@ public class NCCaldwellCountyParser extends FieldProgramParser {
       "YAD",  "YADKIN VALLEY",
       "BETH", "BETHLEHEM"
   });
-  
+
 }
