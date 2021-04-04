@@ -41,7 +41,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
 
   private static final Pattern ADDR_CHG_PTN = Pattern.compile("Unit:(\\S+) *AddressChanged From:.*?,to: (.*)");
   private static final Pattern PRI_CHG_PTN = Pattern.compile("Unit:(\\S+) +The Priority of the call at (.*?) has been changed to P(\\d) .*");
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:Unit:?(.+?)[, ]+)?(?:EMS|Incident |Run)#:(\\d*)[ ,]+(.*)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:Unit[: ](\\S+?)[, ]+)?(?:EMS|Incident |Run)#:(\\d*)[ ,]+(.*)");
   private static final Pattern RUN_REPORT_BRK = Pattern.compile(" +,");
   private static final Pattern CANCEL_PTN = Pattern.compile("Unit:(.+?)[ ]+EMS:(\\S*) *(Incident Cancelled:.*?) +(CR:.*)");
   private static final Pattern CANCEL_BRK_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)(?=[A-Z])");
