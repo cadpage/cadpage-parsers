@@ -24,6 +24,7 @@ public class TNCoffeeCountyParser extends DispatchA65Parser {
   private static final String[] CITY_LIST = new String[]{
 
       "BEECHGROVE",
+      "BEECH GROVE",
       "BELMONT",
       "FUDGEAROUND",
       "HILLSBORO",
@@ -35,7 +36,10 @@ public class TNCoffeeCountyParser extends DispatchA65Parser {
       "POCAHONTAS",
       "SHADY GROVE",
       "SUMMITVILLE",
-      "TULLAHOMA"
+      "TULLAHOMA",
+
+      // Bedford County
+      "NORMANDY"
 
   };
 }
