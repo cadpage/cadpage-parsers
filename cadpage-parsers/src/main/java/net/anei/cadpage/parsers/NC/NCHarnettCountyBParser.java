@@ -19,7 +19,7 @@ public class NCHarnettCountyBParser extends DispatchSouthernParser {
 
   @Override
   public String getFilter() {
-    return "@dunn-nc.orgt";
+    return "@dunn-nc.org";
   }
   
   @Override
