@@ -1366,6 +1366,7 @@ public class Active911ParserTable {
       "US/OH/BellefontaineCAD",           "OHLoganCountyD",
       "US/OH/BelmontCounty",              "OHBelmontCounty",
       "US/OH/BelprePD",                   "OHWashingtonCountyB",
+      "US/OH/Byesville",                  "OHGuernseyCounty",
       "US/OH/BrownCounty",                "OHBrownCounty",
       "US/OH/Brunswick",                  "OHMedinaCountyC",
       "US/OH/ButlerCountySheriff",        "OHButlerCountyA",
