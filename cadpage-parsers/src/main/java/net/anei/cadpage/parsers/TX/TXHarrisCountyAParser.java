@@ -7,11 +7,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
  */
 
 public class TXHarrisCountyAParser extends DispatchA27Parser {
-  
+
   public TXHarrisCountyAParser() {
     super("HARRIS COUNTY", "TX", "\\d{8}");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@cisusa.org";

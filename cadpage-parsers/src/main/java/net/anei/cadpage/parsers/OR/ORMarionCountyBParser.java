@@ -13,9 +13,9 @@ public class ORMarionCountyBParser extends FieldProgramParser {
   public ORMarionCountyBParser() {
     this("MARION COUNTY", "OR");
   }
-  
+
   protected ORMarionCountyBParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState, 
+    super(CITY_LIST, defCity, defState,
           "CALL SRC DATETIME ADDR/ZiS? UNIT/Z ID! INFO/N+");
   }
 
@@ -23,12 +23,12 @@ public class ORMarionCountyBParser extends FieldProgramParser {
   public String getAliasCode() {
     return "ORMarionCountyB";
   }
-  
+
   @Override
   public String getFilter() {
     return "@cityofsalem.net,@ccschaplain.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_CR;
@@ -45,10 +45,11 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d{2}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ID")) return new IdField("[A-Z]{3,4}\\d{12}", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?)\\d*");
   private class MyCallField extends CallField {
     @Override
@@ -64,7 +65,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
         data.strCall = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
@@ -80,7 +81,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
   public class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Parser p = new Parser(field);
       String thing = p.getLastOptional(";");
       if (thing.length() > 0) {
@@ -104,7 +105,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       if (fieldMat.matches()) {
         field = fieldMat.group(1);
       }
-      
+
       // parse remaining string
       p = new Parser(field);
       if (field.endsWith(")")) {
@@ -116,17 +117,17 @@ public class ORMarionCountyBParser extends FieldProgramParser {
         data.strCross = cross;
         p = new Parser(field);
       }
-      
+
       data.strCity = p.getLastOptional(",");
-      if (NUMERIC.matcher(data.strCity).matches()) data.strCity = p.getLastOptional(","); 
+      if (NUMERIC.matcher(data.strCity).matches()) data.strCity = p.getLastOptional(",");
       data.strPlace = p.getLastOptional(", @");
 
       // remove extra city from intersection address
       String addr = p.get();
       Matcher intMat = INTERSECTION_CLEANUP_PATTERN.matcher(addr);
       if (intMat.matches()) addr = intMat.group(1).trim() + " " + intMat.group(2);
-      
-      // If the city we found is not a city, then it is probably parser of a name, 
+
+      // If the city we found is not a city, then it is probably parser of a name,
       // so put it back together
       if (data.strCity.length() > 0 && !isCity(data.strCity)) {
         data.strAddress = addr + ", " + data.strCity;
@@ -134,7 +135,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       } else {
         super.parse(addr, data);
       }
-      
+
       // remove zipcode from city
       Matcher zipMat = REMOVE_ZIP_PATTERN.matcher(data.strCity);
       if (zipMat.matches()) data.strCity = zipMat.group(1);
@@ -145,7 +146,17 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       return ("ADDR APT MAP PLACE CITY X NAME PHONE");
     }
   }
-  
+
+  private Pattern UNIT_COMMA_PTN = Pattern.compile(" *, *");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field =  UNIT_COMMA_PTN.matcher(field).replaceAll(",");
+      field = field.replace(' ', '_');
+      super.parse(field, data);
+    }
+  }
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "ABDOM",   "Abdominal Pain",
       "ACC",     "Motor vehicle accident w/injury",
@@ -234,12 +245,12 @@ public class ORMarionCountyBParser extends FieldProgramParser {
       "WCTRAN",  "Wheelchair transport",
       "WIRE",    "Wire down"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Marion County
     "MARION COUNTY",
-    
+
     // Cities
     "AUMSVILLE",
     "AURORA",
@@ -290,7 +301,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     "TALBOT",
     "WACONDA",
     "WEST STAYTON",
-    
+
     // Lincoln County
     "LINCOLN COUNTY",
 
@@ -334,7 +345,7 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     "SOUTH BEACH",
     "TIDEWATER",
     "YAQUINA",
-    
+
     // Benton County
     "BENTON COUNTY",
 
@@ -402,10 +413,10 @@ public class ORMarionCountyBParser extends FieldProgramParser {
     "VALLEY JUNCTION",
     "VALSETZ",
     "ZENA",
-    
+
     // Lane County
     "LANE COUNTY"
-    
+
   };
 
 }
