@@ -8,16 +8,16 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA11Parser extends FieldProgramParser {
-  
+
   private Properties cityCodes;
-  
+
   public DispatchA11Parser(String defCity, String defState) {
     this(null, defCity, defState);
   }
-  
+
   public DispatchA11Parser(Properties cityCodes, String defCity, String defState) {
     super(defCity, defState,
-          "( SRC/Z UNIT/Z ID/Z PAGE_TIME | SRC UNIT? CALL PAGED? ADDR UNIT/S UNIT/S? INFO/N+? ( ID X/Z? DATETIME | X DATETIME | DATETIME ) )");
+          "( SRC/Z UNIT/Z ID/Z PAGE_TIME! | SRC UNIT? CALL PAGED? ADDR! UNIT/S UNIT/S? INFO/N+? ( ID X/Z? DATETIME | X DATETIME | DATETIME ) )");
     this.cityCodes = cityCodes;
   }
 
@@ -38,24 +38,24 @@ public class DispatchA11Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     return super.getField(name);
   }
-  
+
   private class BasePageTimeField extends Field {
     BasePageTimeField() {
       super("PAGED- \\d\\d\\.\\d\\d\\.\\d\\d \\d\\d/\\d\\d/\\d\\d", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strCall = "RUN REPORT";
       data.strPlace = append(field, "\n", getRelativeField(+1));
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL PLACE";
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM)(.*)|(?:BLDG|BUILDING|SUITE).*");
   private class BaseAddressField extends AddressField {
     @Override
@@ -79,26 +79,26 @@ public class DispatchA11Parser extends FieldProgramParser {
       }
       super.parse(p.get(), data);
     }
-    
+
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE CITY";
     }
   }
-  
+
   private class BaseCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("Intersection of:")) return true;
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("Intersection of:")) return;
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern SLOPPY_DATE_TIME_PTN = Pattern.compile("[ /:0-9]+");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d");
   private class BaseDateTimeField extends DateTimeField {
@@ -106,7 +106,7 @@ public class DispatchA11Parser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isLastField()) return false;
@@ -114,7 +114,7 @@ public class DispatchA11Parser extends FieldProgramParser {
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (DATE_TIME_PTN.matcher(field).matches()) {

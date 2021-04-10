@@ -1246,7 +1246,7 @@ public class Active911ParserTable {
       "US/NJ/MercerCounty",               "NJMercerCountyB",
       "US/NJ/MICCOM",                     "NJMICOMB",
       "US/NJ/Middle",                     "NJCapeMayCounty",
-      "US/NJ/MonmouthCounty",             "NJMonmouthCountyA",
+      "US/NJ/MonmouthCounty",             "NJMonmouthCountyA,NJMonmouthCountyD",
       "US/NJ/MorrisCounty",               "NJMorrisCountyA",
       "US/NJ/MountHollyFire",             "NJBurlingtonCountyH",
       "US/NJ/MountLaurelTwp",             "NJBurlingtonCountyC,NJBurlingtonCountyH",
