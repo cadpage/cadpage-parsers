@@ -1,16 +1,12 @@
 package net.anei.cadpage.parsers.NC;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class NCSwainCountyParser extends DispatchA71Parser {
-  
+
+public class NCSwainCountyParser extends GroupBestParser {
+
   public NCSwainCountyParser() {
-    super("SWAIN COUNTY", "NC");
+    super(new NCSwainCountyBParser(),
+          new NCSwainCountyAParser());
   }
-  
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
 }
