@@ -615,6 +615,7 @@ public class Active911ParserTable {
       "US/KS/SedgwickCounty",             "KSSedgwickCounty",
       "US/KS/SumnerCounty",               "KSSumnerCounty",
       "US/KS/WoodsonCounty",              "KSWoodsonCounty",
+      "US/KS/WoodsonCountySheriff",       "KSWoodsonCounty",
       "US/KS/WyandotteCounty",            "KSWyandotteCounty",
       "US/KY/AllenCounty",                "KYAllenCounty",
       "US/KY/AndersonCounty",             "KYAndersonCounty",
