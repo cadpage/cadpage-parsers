@@ -2,59 +2,55 @@ package net.anei.cadpage.parsers.NJ;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA11Parser;
 
 /**
  * Monmouth County, NJ
  */
 public class NJMonmouthCountyAParser extends DispatchA11Parser {
-  
+
   public NJMonmouthCountyAParser() {
     super(CITY_CODES, "MONMOUTH COUNTY", "NJ");
   }
-  
+
   @Override
   public String getFilter() {
-    return "MCSOPageNotification@mcsonj.org,MCSOCallComplete@MCSONJ.ORG,info@rooseveltfire.org";
+    return "MCSOPageNotification@mcsonj.org";
   }
-  
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (subject.startsWith("Call Complete Notification") || body.startsWith("Incident #: ")) {
-      setFieldList("CALL PLACE INFO");
-      data.strCall = "RUN REPORT";
-      data.strPlace = body;
-      return true;
-    }
-    
-    if (subject.equals("MCSO Page Notification") || isPositiveId()) {
-      String[] fields = body.split("\n");
-      if (fields.length < 6) fields = body.split("  +"); 
-      return super.parseFields(fields, 6, data);
-    }
-    else return false;
-  }
-  
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
       "12", "ENGLISHTOWN",
+      "13", "FAIR HAVEN", // Might be SHREWSBURY
       "15", "FREEHOLD",
       "16", "FREEHOLD",
       "18", "HOLMDEL",
       "19", "HOWELL",
+      "22", "KEYPORT",
       "23", "MONROE",
       "25", "LONG BRANCH",
       "26", "MANALAPAN",
+      "27", "MANASQUAN",
       "28", "MARLBORO",
       "32", "MILLSTONE",
       "33", "MONMOUTH BEACH",
+      "35", "NEPTUNE CITY",
       "36", "TINTON FALLS",
+      "38", "OCEANPORT",
       "41", "ROOSEVELT",
+      "42", "RUMSON",  // Could be KEYPORT,FAIR HAVEN,KEANSBURG
       "43", "SEA BRIGHT",
       "51", "MONROE",
+      "52", "WALL TWP",
+      "54", "OCEAN GROVE",
+      "63", "KEYPORT",
+      "65", "UNION BEACH",
       "82", "ALLENTOWN",
+      "83", "ASBURY PARK",
       "84", "COLTS NECK",
-      "86", "MATAWAN"
+      "85", "KEANSBURG",
+      "86", "MATAWAN",
+      "88", "BRADLEY BEACH",
+      "94", "COLTS NECK",
+      "99", "BRIELLE"
   });
 }
