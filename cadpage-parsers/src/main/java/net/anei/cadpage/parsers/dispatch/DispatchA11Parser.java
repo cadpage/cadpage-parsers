@@ -17,13 +17,14 @@ public class DispatchA11Parser extends FieldProgramParser {
 
   public DispatchA11Parser(Properties cityCodes, String defCity, String defState) {
     super(defCity, defState,
-          "( SRC/Z UNIT/Z ID/Z PAGE_TIME! | SRC UNIT? CALL PAGED? ADDR! UNIT/S UNIT/S? INFO/N+? ( ID X/Z? DATETIME | X DATETIME | DATETIME ) )");
+          "( SRC/Z UNIT1/Z ID/Z PAGE_TIME! | SRC ( CALL PAGED | UNIT1? CALL PAGED? ) ADDR! UNIT2/S UNIT1/S? INFO/N+? ( ID X/Z? DATETIME | X DATETIME | DATETIME ) )");
     this.cityCodes = cityCodes;
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return super.parseFields(body.split("\n"), 5, data);
+    if (!super.parseFields(body.split("\n"), 5, data)) return false;
+    return !data.strUnit.isEmpty();
   }
 
   @Override
@@ -32,7 +33,8 @@ public class DispatchA11Parser extends FieldProgramParser {
     if (name.equals("SRC")) return new SourceField("[-A-Z0-9]+", true);
     if (name.equals("PAGED")) return new SkipField("PAGED|ASSGN|ENRT", true);
     if (name.equals("ADDR")) return new BaseAddressField();
-    if (name.equals("UNIT")) return new UnitField("[-A-Z0-9]+", false);
+    if (name.equals("UNIT1")) return new UnitField("[-A-Z0-9]{1,6}", true);
+    if (name.equals("UNIT2")) return new UnitField("(?:\\b[-A-Z0-9]{1,6}\\b ?)*", true);
     if (name.equals("ID")) return new IdField("\\d{2}[A-Z]{1,4}-?\\d+");
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("DATETIME")) return new BaseDateTimeField();
