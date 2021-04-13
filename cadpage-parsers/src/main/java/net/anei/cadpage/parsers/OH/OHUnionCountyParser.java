@@ -8,17 +8,17 @@ import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class OHUnionCountyParser extends FieldProgramParser {
-  
+
   public OHUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "OH",
            "CALL ADDR/S ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "idnetworks@co.union.oh.us";
+    return "idnetworks@co.union.oh.us,idnetworks@unioncountyohio.gov";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -34,7 +34,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
     if (!body.endsWith(",")) data.expectMore = true;
     return parseFields(body.split(","), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -45,11 +45,11 @@ public class OHUnionCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // If message is split into two messages and the trailing part does not
       // contain a comma, then putting them back together in the wrong order
       // results in a long call description ending in the real call description
@@ -59,11 +59,11 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // If the message happens to end with a comma, and happens to get split
       // into two messages, then putting them back together in the wrong order
       // will push the call description into the address field.  Which should be rejected
@@ -71,7 +71,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -79,7 +79,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -91,13 +91,13 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(p2, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -105,7 +105,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public CodeSet getCallList() {
     return CALL_LIST;
@@ -198,20 +198,20 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "WATER RESCUE",
       "WIRES DOWN"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "DUBLIN",
     "MARYSVILLE",
-    
+
     // Villages
     "MAGNETIC SPRINGS",
     "MILFORD CENTER",
     "PLAIN CITY",
     "RICHWOOD",
     "UNIONVILLE CENTER",
-    
+
     // Unincorporated communities
     "ALLEN CENTER",
     "ARNOLD",
@@ -235,7 +235,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
     "WATKINS",
     "WOODLAND",
     "YORK CENTER",
-    
+
     // Townships
     "ALLEN TWP",
     "CLAIBOURNE TWP",
