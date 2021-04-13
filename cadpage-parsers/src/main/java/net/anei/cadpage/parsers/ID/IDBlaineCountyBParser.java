@@ -19,6 +19,11 @@ public class IDBlaineCountyBParser extends FieldProgramParser {
     return "zdispatch@co.blaine.id.us";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern MASTER1 = Pattern.compile(".*?[\n ]*\nBCEC: ([A-Z]{2}\\d{6}-\\d{3}) -- ");
   private static final Pattern MASTER2 = Pattern.compile(".*?\n(?:([A-Z]{2}\\d{6}-\\d{3})| )\n");
   @Override
