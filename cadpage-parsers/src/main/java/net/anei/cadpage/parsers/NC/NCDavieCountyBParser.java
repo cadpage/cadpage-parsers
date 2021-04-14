@@ -11,7 +11,7 @@ public class NCDavieCountyBParser extends MsgParser {
 
   public NCDavieCountyBParser() {
     super("DAVIE COUNTY", "NC");
-    setFieldList("CALL ADDR CITY ST APT NAME DATE TIME ID INFO UNIT CH");
+    setFieldList("CALL ADDR CITY ST GPS APT NAME DATE TIME ID INFO UNIT CH");
   }
 
   @Override
@@ -23,7 +23,6 @@ public class NCDavieCountyBParser extends MsgParser {
   private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(.*) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\d{11}) (.*)");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("([^,]+), *([A-Z ]*)(?:, *([A-Z]{2}) +(?:(\\d{5}) +)?|\\b +)");
-  private static final Pattern APT_PTN = Pattern.compile("\\b(?:APT|RM|ROOM|ROM|ER)\\b");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -97,18 +96,52 @@ public class NCDavieCountyBParser extends MsgParser {
     return true;
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,} [-+]?\\d{2,3}\\.\\d{6,})\\b *");
+  private static final Pattern APT_PTN = Pattern.compile("\\b(?:APT|APARTMENT|RM|ROOM|ROM|ED|ER|ER ROOM|UNIT)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern VALID_APT_PTN = Pattern.compile(".*\\d.*|[A-Z]");
+
   private void parseAptName(String body, Data data) {
     Matcher match;
+
+    match = GPS_PTN.matcher(body);
+    if (match.lookingAt()) {
+      setGPSLoc(match.group(1), data);
+      body = body.substring(match.end());
+    }
+
+    if (body.equals("None")) return;
+
     if (body.startsWith("None ")) {
       String name = body.substring(5).trim();
       if (!name.equals("None")) {
         data.strName = cleanWirelessCarrier(name);
       }
-    }  else if (body.endsWith(" None")) {
-      String apt = body.substring(0, body.length()-5).trim();
-      match = APT_PTN.matcher(apt);
-      if (match.lookingAt()) apt = apt.substring(match.end()).trim();
-      data.strApt= append(data.strApt, "-", apt);
+    }
+
+    else {
+      match = APT_PTN.matcher(body);
+      boolean forceApt = match.lookingAt();
+      if (forceApt) body = body.substring(match.end()).trim();
+
+      if (body.endsWith(" None")) {
+        String apt = body.substring(0, body.length()-5).trim();
+        data.strApt= append(data.strApt, "-", apt);
+      } else {
+        match = APT_PTN.matcher(body);
+        if (match.lookingAt()) body = body.substring(match.end()).trim();
+        int pt = body.indexOf(' ');
+        if (pt >= 0) {
+          String apt = body.substring(0,pt);
+          if (VALID_APT_PTN.matcher(apt).matches()) {
+            data.strApt = append(data.strApt, "-", body.substring(0,pt));
+            body = stripFieldStart(body.substring(pt+1).trim(), "-");
+          }
+        } else if (VALID_APT_PTN.matcher(body).matches()) {
+          data.strApt = append(data.strApt, "-", body);
+          body = "";
+        }
+        data.strName = cleanWirelessCarrier(body);
+      }
     }
   }
 }
