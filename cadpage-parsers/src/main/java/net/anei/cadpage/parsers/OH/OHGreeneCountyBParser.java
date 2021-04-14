@@ -7,22 +7,22 @@ import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHGreeneCountyBParser extends HtmlProgramParser {
-  
+
   public OHGreeneCountyBParser() {
-    super("GREENE COUNTY", "OH", 
+    super("GREENE COUNTY", "OH",
           "( SRC UNITS:UNIT! INCIDENT_NUMBER:ID? CALL_TYPE:CALL! LOCATION:ADDRCITY! ( CROSS_STREETS:X! ( NAME:NAME! QUADRANT:MAP! | QUADRANT:MAP! NAME:NAME? ) DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO/N+ " +
                                                                                    "| NARRATIVE:X! DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO INFO/N+? MAP:MAP! " +
-                                                                                   ") " + 
-          "| Call:CODE_CALL! ( Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP? Units:UNIT! " + 
-                            "| Name:PLACE! Address:ADDRCITY! Cross:X! Units:UNIT! Incident_Number:ID! Call_Time:SKIP! Dispatch_Time:DATETIME! Quadrant:MAP! " + 
-                            ") Narrative:INFO/N+ " + 
+                                                                                   ") " +
+          "| Call:CODE_CALL! ( Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP? Units:UNIT! " +
+                            "| Name:PLACE! Address:ADDRCITY! Cross:X! Units:UNIT! Incident_Number:ID! Call_Time:SKIP! Dispatch_Time:DATETIME! Quadrant:MAP! " +
+                            ") Narrative:INFO/N+ " +
           ")");
     setupMultiWordStreets(MULTI_WORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
-    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn.oh.us";
+    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn";
   }
 
   @Override
@@ -31,7 +31,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
     body = body.replace("    INCIDENT NUMBER:", "<div/>INCIDENT NUMBER:");
     return super.parseHtmlMsg(subject, body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
@@ -41,7 +41,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]{3,5})(?:-|  ) *(.*)");
   private class MyCodeCallField extends Field {
     @Override
@@ -60,7 +60,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?) +([A-Z]*\\d+[A-Z]*|[A-Z]{1,2})", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -75,7 +75,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
       }
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -83,17 +83,17 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+|\\d\\d:\\d\\d:\\d\\d|[a-z]+|-");
   private class MyInfoField extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
       if (INFO_JUNK_PTN.matcher(field).matches()) return;
       super.parse(field, data);
     }
   }
-  
+
   private static final String[] MULTI_WORD_STREET_LIST = new String[]{
       "ALPHA BELLBROOK",
       "AMY LYNN",
