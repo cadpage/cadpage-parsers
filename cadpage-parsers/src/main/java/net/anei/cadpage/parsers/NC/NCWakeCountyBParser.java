@@ -16,7 +16,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
   public NCWakeCountyBParser() {
     super(CITY_CODES, "CARY", "NC",
           "( CANCEL ADDR CITY! PLACE " +
-          "| FYI? CH? MAP SRC? ( CODE CALL? ADDR! | CALL ADDR! ) ( UNIT | X/Z UNIT | X/Z X/Z UNIT | X+? ) ) INFO/N+? GPS1 GPS2 END");
+          "| FYI? CH? MAP SRC? ( CODE CALL? ADDR! | CALL ADDR! ) CITY? ( UNIT | X/Z UNIT | X/Z X/Z UNIT | X+? ) ) INFO/N+? GPS1 GPS2 END");
   }
 
   @Override
