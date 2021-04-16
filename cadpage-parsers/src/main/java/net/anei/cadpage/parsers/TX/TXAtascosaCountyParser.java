@@ -8,11 +8,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Atoscosa County, TX
  */
 public class TXAtascosaCountyParser extends GroupBestParser {
-  
+
   public TXAtascosaCountyParser() {
     super(new TXAtascosaCountyAParser(), new TXAtascosaCountyBParser());
   }
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BIG", "BIGFOOT",
       "CAM", "CAMPBELLTON",
