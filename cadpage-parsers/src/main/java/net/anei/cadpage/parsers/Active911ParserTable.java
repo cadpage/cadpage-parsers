@@ -883,6 +883,7 @@ public class Active911ParserTable {
       "US/MI/Up911CAD",                   "MIChippewaCounty",
       "US/MI/VanBurenCounty",             "MIVanBurenCounty",
       "US/MI/WashtenawCounty",            "MIWashtenawCounty",
+      "US/MI/WMTOC",                      "MIOttawaCounty,MIAlleganCounty",
       "US/MN/AnokaCounty",                "MNAnokaCounty",
       "US/MN/BeckerCounty",               "MNBeckerCounty",
       "US/MN/BloomingtonFD",              "MNMinneapolisStPaulA",
