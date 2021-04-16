@@ -14,25 +14,25 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Washington County, MD
  */
 public class MDWashingtonCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern CALL_QUAL_PTN = Pattern.compile("(?:Recall Reason|Completed|Cancel Reason):.*\n|(?:CANCEL|CANCELL?ED|CALL CANCELL?ED|FAILED!).*\n|[- A-Za-z0-9!\\.\\*',]+\n");
   private static final Pattern CROSS_PTN = Pattern.compile("\\[([^\\[\\]]*) - ([^\\[\\]]*)\\]");
   private static final Pattern DELIM = Pattern.compile(" *(?<= )- +|  ,");
- 
+
   public MDWashingtonCountyParser() {
     super(CITY_LIST, "WASHINGTON COUNTY", "MD",
         "( INFO/G END " +
-        "| ADDR/SXP CITY? ( PLACE X | X | ) CALL! CALL+? ( TRAIL1% END | UNIT UNIT+? ( TRAIL2% END | INFO1+? TRAIL3% END ) ) " + 
+        "| ADDR/SXP CITY? ( PLACE X | X | ) CALL! CALL+? ( TRAIL1% END | UNIT UNIT+? ( TRAIL2% END | INFO1+? TRAIL3% END ) ) " +
         ")");
     addExtendedDirections();
     removeWords("CV");
   }
-  
+
   @Override
   public String getFilter() {
     return "Dispatch@washco-md.net,cadnotifications@washco-md.net,@c-msg.net,TextAlert@sems79.org,@alert.active911.com";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -42,46 +42,46 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Look for call qualifier prefix
     Matcher match = CALL_QUAL_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strCall = match.group().trim();
       body = body.substring(match.end()).trim();
     }
-    
+
     // Drop everything after the first newline
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     pt = body.indexOf(" / [!] ");
     if (pt >= 0) {
       subject = body.substring(0,pt).trim();
       body = body.substring(pt+7).trim();
     }
-    
+
     if (subject.endsWith("|!")) subject = subject.substring(0,subject.length()-2).trim();
-    if (!subject.equals("CAD") && !subject.equals("!")) data.strSource = subject;
-    
+    if (!subject.equals("CAD") && !subject.equals("!") && !subject.equals("Dispatch")) data.strSource = subject;
+
     // Standard cross street field contains a spurious delimiter that we need to protect
     body = CROSS_PTN.matcher(body).replaceFirst("[$1 & $2]");
-    
+
     // Split body into fields separated by  -
     if (!parseFields(DELIM.split(body), data)) return false;
-    
+
     if (data.msgType == MsgType.GEN_ALERT && !isPositiveId()) return false;
-    
+
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
     String state = CITY_STATE_TABLE.getProperty(data.strCity.toUpperCase());
     if (state != null) data.strState = state;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -94,15 +94,15 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     if (name.equals("TRAIL3")) return new TrailField(3);
     return super.getField(name);
   }
-  
+
   private static final Pattern BOX_PTN = Pattern.compile("(.*)\\bBOX +([^ ]+(?: [A-Z])?)");
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("([NSEW]B)\\b *(.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT)\\b *(.*)");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // Kill off partial results
       if (field.contains("ProQA")) abort();
 
@@ -138,19 +138,19 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       }
       if (data.strCity.length() == 0) data.strCity = maCounty;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY BOX";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("[") || ! field.endsWith("]")) return false;
@@ -160,14 +160,14 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Kill off partial results
       if (field.contains("ProQA")) abort();
-      
+
       data.strCall = append(data.strCall, " - ", field);
     }
   }
@@ -182,36 +182,36 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       data.strUnit = append(data.strUnit, ",", field);
     }
   }
-  
+
   private class MyInfo1Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
       data.strSupp = append(data.strSupp," - ", field);
     }
   }
-  
+
   // TrailField always handles the last field in the text string.  It always has a date field
   //  and may have an ID field.  Depending on the context, there are three possibilities for
   // a leading unit field
   //   TRAIL1 - Leading UNIT field is required
   //   TRAIL2 - Leading UNIT field is optional
   //   TRAIL3 - Leading UNIT field will not be present
-  
+
   private static final Pattern TIME_PTN = Pattern.compile("(?<=^| )(\\d\\d:\\d\\d)\\b");
   private static final Pattern TIME2_PTN = Pattern.compile("\\b[\\d:]*$");
   private static final Pattern ID_PTN = Pattern.compile("\\b(?:[EF]\\d{9}(?: \\d{7})?|\\d{7})$");
   private static final Pattern TG_PTN = Pattern.compile("\\bTG: *(\\S+)(?: (.*))?$");
   private class TrailField extends Field {
-    
+
     private int type;
-    
+
     public TrailField(int type) {
       this.type = type;
     }
 
     @Override
     public void parse(String field, Data data) {
-      
+
       // Check for leading unit field
       if (type <= 2) {
         Matcher match = UNIT_PTN.matcher(field);
@@ -220,7 +220,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
           field = field.substring(match.end()).trim();
         } else if (type == 1) abort();
       }
-      
+
       String sPart1, sPart2;
       Matcher match = TIME_PTN.matcher(field);
       if (match.find()) {
@@ -234,7 +234,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
         match = TIME2_PTN.matcher(field);
         if (match.find()) sPart1 = field.substring(0,match.start()).trim();
       }
-      
+
       match = TG_PTN.matcher(sPart1);
       if (match.find()) {
         data.strChannel = match.group(1);
@@ -247,17 +247,17 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
           sPart1 = sPart1.substring(0,match.start()).trim();
         }
       }
-      
+
       data.strSupp = append(data.strSupp, " - ", sPart1);
       data.strSupp = append(data.strSupp, " - ", sPart2);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT INFO CH ID TIME";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     Matcher match = LONG_DIR_PTN.matcher(addr);
@@ -272,15 +272,15 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     return super.adjustMapAddress(addr);
   }
   private static final  Pattern LONG_DIR_PTN = Pattern.compile("\\b(NORTH|SOUTH|EAST|WEST)\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("ROHRERSVILLE")) city = "";
     return city;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // City
     "HAGERSTOWN",
 
@@ -349,7 +349,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     "VAN LEAR",
     "WEVERTON",
     "WOODMONT",
-    
+
     // Franklin County
     "GREENCASTLE",
     "THURMONT",
@@ -357,11 +357,11 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
     "WASHINGTON TWNSP",
     "WASHINGTON TWP",
     "WAYNESBORO",
-    
+
     // Jefferson County
     "SHEPHERDSTOWN"
   };
-  
+
   private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
       "ALL", "ALLEGANY COUNTY",
       "BER", "BERKELEY COUNTY",
@@ -372,22 +372,22 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       "LOU", "LOUDOUN COUNTY",
       "MOR", "MORGAN COUNTY"
   });
-  
+
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{
       "WASH TWP",         "WASHINGTON TWP",
       "WASHINGTON TWNSP", "WASHINGTON TWP"
   });
-  
+
   private static final Properties CITY_STATE_TABLE = buildCodeTable(new String[]{
-      
+
       "GREENCASTLE",      "PA",
       "FRANKLIN COUNTY",  "PA",
       "FULTON COUNTY",    "PA",
       "WASHINGTON TWP",   "PA",
       "WAYNESBORO",       "PA",
-      
+
       "LOUDOUN COUNTY",   "VA",
-      
+
       "BERKELEY COUNTY",  "WV",
       "JEFFERSON COUNTY", "WV",
       "MORGAN COUNTY",    "WV",
