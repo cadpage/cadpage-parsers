@@ -86,13 +86,18 @@ public class DispatchA48Parser extends FieldProgramParser {
     PLACE("PLACE? APT?", "PLACE APT") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        Parser p = new Parser(field);
-        String apt = p.getLast(' ');
-        if (APT_PTN.matcher(apt).matches()) {
-          data.strApt = append(data.strApt, "-", apt);
-          field = p.get();
+
+        if (field.startsWith("/")) {
+          data.strAddress = append(data.strAddress, " & ", field.substring(1).trim());
+        } else {
+          Parser p = new Parser(field);
+          String apt = p.getLast(' ');
+          if (APT_PTN.matcher(apt).matches()) {
+            data.strApt = append(data.strApt, "-", apt);
+            field = p.get();
+          }
+          data.strPlace = field;
         }
-        data.strPlace = field;
       }
     },
 

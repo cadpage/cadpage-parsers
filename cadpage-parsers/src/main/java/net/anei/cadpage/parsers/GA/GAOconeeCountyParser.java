@@ -1,15 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 
-public class GAOconeeCountyParser extends SmartAddressParser {
+public class GAOconeeCountyParser extends DispatchA48Parser {
 
   public GAOconeeCountyParser() {
-    super("OCONEE COUNTY", "GA");
-    setFieldList("PHONE CODE CALL ADDR APT X INFO MAP ID");
+    super(CITY_LIST, "OCONEE COUNTY", "GA", FieldType.PLACE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets(
@@ -18,57 +16,48 @@ public class GAOconeeCountyParser extends SmartAddressParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-
-    if (!body.startsWith("OCSO_E911:")) return false;
-    body = body.substring(10).trim();
-
-    boolean hasPhone = body.startsWith("Return Phone:");
-    if (hasPhone) body = body.substring(13).trim();
-    Parser p = new Parser(body);
-    if (hasPhone) data.strPhone = p.get(' ');
-    data.strCode = p.get(' ');
-
-    data.strCallId = p.getLastOptional(" Cad:");
-    String map =  p.getLastOptional("Map: Grids:");
-    if (!map.contentEquals("0,0")) data.strMap =  map;
-    body = p.get();
-    if (body.length() == 0) return false;
-
-    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_IGNORE_AT | FLAG_CROSS_FOLLOWS, body, data);
-    body = stripFieldStart(getLeft(), "Bldg");
-
-    if (isValidAddress(body)) {
-      data.strCross = body;
-    } else {
-      data.strSupp = body;
-    }
-
-    return true;
+  protected int getExtraParseAddressFlags() {
+    return FLAG_RECHECK_APT;
   }
 
   private static final CodeSet CALL_LIST = new CodeSet(
       "ACCIDENT (INJURIES",
+      "ANIMAL CASE",
+      "CHASE",
+      "DISCHARGING FIREARMS",
       "DOMESTIC PHYSICAL",
       "DOMESTIC PHYSICAL",
       "DOMESTIC VERBAL",
+      "DRUG/DRUG RELATED",
+      "ENTERING AUTO",
+      "FIGHTING OR DISORDER",
       "FIRE",
       "FIRE ALARM",
+      "FIRE STRUCTURE",
       "GAS LEAK",
       "INJURED PERSON",
       "LIFT ASSITANCE",
       "MEDICAL ALARM",
+      "NEGLECT/SEXUAL ABUSE TO CHILD",
+      "PRIVATE PROPERTY / INJURY",
       "SICK PERSON",
+      "SIGN DOWN/DAMAGED",
       "SMOKE",
+      "TRAFFIC LIGHT OUT",
       "TREE DOWN IN POWER LINES",
       "TREE DOWN ON ROAD"
   );
 
   private static final String[] MWORD_STREET_LIST = new String[] {
+      "ATHENS RIDGE",
+      "BARBER CREEK",
       "BARNETT SHOALS",
+      "BLACK OAK",
+      "CLIFF DAWSON",
       "COLHAM FERRY",
       "DANIELLS BRIDGE",
       "DIALS MILL",
+      "DOUBLE BRIDGES",
       "EPPS BRIDGE",
       "EXPERIMENT STATION",
       "FLAT ROCK",
@@ -79,20 +68,40 @@ public class GAOconeeCountyParser extends SmartAddressParser {
       "HOLLOW CREEK",
       "JENNINGS MILL",
       "JIMMY DANIEL",
+      "JIMMY DANIELL",
       "JIMMY DANIELS",
       "KNOB CREEK",
       "LAKE WELBROOK",
       "LANE CREEK",
+      "LIVE OAK",
       "MALCOM BRIDGE",
       "MARS HILL",
+      "MCNUTT CREEK",
       "MOORES FORD",
       "NORTH BURSON",
+      "OCONEE SPRINGS",
       "OLIVER BRIDGE",
+      "PERSIMMON CREEK",
       "PRICE MILL",
       "RIVER'S EDGE",
       "RIVERS EDGE",
+      "ROCKY BRANCH",
       "SCARLET OAK",
-      "VIRGIL LANGFORD"
+      "TIMBER RIDGE",
+      "TWIN OAKS",
+      "UNION CHURCH",
+      "VIRGIL LANGFORD",
+      "WILD FLOWER"
+  };
 
+
+  private static final String[] CITY_LIST = new String[] {
+      "ATHENS",
+      "BISHOP",
+      "BOGART",
+      "FARMINGTON",
+      "NORTH HIGH SHOALS",
+      "STATHAM",
+      "WATKINSVILLE"
   };
 }
