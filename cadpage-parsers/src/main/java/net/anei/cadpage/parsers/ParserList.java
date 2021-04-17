@@ -1488,6 +1488,7 @@ public class ParserList {
               ,"TNSmithCounty"                  ,"Smith County, TN"
               ,"TNSumnerCounty"                 ,"Sumner County, TN"
               ,"TNUnionCounty"                  ,"Union County, TN"
+              ,"TNVanBurenCounty"               ,"Van Buren County, TN"
               ,"TNWarrenCounty"                 ,"Warren County, TN"
               ,"TNWashingtonCounty"             ,"Washington County, TN"
               ,"TNWeakleyCounty"                ,"Weakley County, TN"
