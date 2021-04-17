@@ -13,7 +13,7 @@ public class MILakeCountyParser extends DispatchOSSIParser {
   public MILakeCountyParser() {
     super(CITY_CODES, "LAKE COUNTY", "MI",
           "( CANCEL ADDR CITY! INFO/N+ " +
-          "| FYI? CALL ADDR! ( END | X/Z+? CITY END ) )");
+          "| FYI? CALL ADDR! ( X/Z X/Z CITY | X/Z CITY | CITY | X+? ) INFO/N+ )");
   }
 
   @Override
