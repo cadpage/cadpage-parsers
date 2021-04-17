@@ -906,6 +906,7 @@ public class Active911ParserTable {
       "US/MN/FaribaultCounty",            "MNFaribaultCounty",
       "US/MN/FreebornCounty",             "MNFreebornCounty",
       "US/MN/GoodhueCounty",              "MNGoodhueCounty",
+      "US/MN/GrantCounty",                "MNGrantCounty",
       "US/MN/HealtheastMedTran",          "MNMinneapolisStPaulB",
       "US/MN/HennepinCounty",             "MNHennepinCounty",
       "US/MN/HubbardCounty",              "MNHubbardCounty",

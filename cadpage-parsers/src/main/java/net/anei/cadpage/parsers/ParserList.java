@@ -833,6 +833,7 @@ public class ParserList {
               ,"MNFaribaultCounty"              ,"Faribault County, MN"
               ,"MNFreebornCounty"               ,"Freeborn County, MN"
               ,"MNGoodhueCounty"                ,"Goodhue County, MN"
+              ,"MNGrantCounty"                  ,"Grant County, MN"
               ,"MNHennepinCounty"               ,"Hennepin County, MN"
               ,"MNHubbardCounty"                ,"Hubbard County, MN"
               ,"MNIsantiCounty"                 ,"Isanti County, MN"
