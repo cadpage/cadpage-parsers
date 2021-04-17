@@ -16,7 +16,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
   public NCWakeCountyBParser() {
     super(CITY_CODES, "CARY", "NC",
           "( CANCEL ADDR CITY! PLACE " +
-          "| FYI? CH? MAP SRC? ( CODE CALL? ADDR! | CALL ADDR! ) CITY? ( UNIT | X/Z UNIT | X/Z X/Z UNIT | X+? ) ) INFO/N+? GPS1 GPS2 END");
+          "| FYI? CH? MAP SRC? ( CODE CALL? ADDR! | CALL ADDR! ) CITY? ( UNIT | X/Z UNIT | X/Z X/Z UNIT | X+? ) ) INFO/N+? GPS1 GPS2 ID END");
   }
 
   @Override
@@ -57,6 +57,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+,[A-Z0-9,]+|[A-Z]+\\d+|[A-Z]+FD|MUT[A-Z0-9]+", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("ID")) return new IdField("\\d+", true);
     return super.getField(name);
   }
 
@@ -89,7 +90,7 @@ public class NCWakeCountyBParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}");
   private class MyGPSField extends GPSField {
 
     public MyGPSField(int type) {
