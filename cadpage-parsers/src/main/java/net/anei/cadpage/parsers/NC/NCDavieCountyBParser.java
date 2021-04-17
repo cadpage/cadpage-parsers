@@ -19,7 +19,12 @@ public class NCDavieCountyBParser extends MsgParser {
     return "no-reply@daviecountync.gov";
   }
 
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(";? +(\\d{1,4}[A-Z]{0,2}\\d?|[A-Z]{2,5}\\d+|[A-Z]{2}\\d{2}[A-Z]{1,2}|FDALLCALL)$");
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(";? +(\\d{1,4}[A-Z]{0,2}\\d?|[A-Z]{2,6}\\d+|[A-Z]{2}\\d{2}[A-Z]{1,2}|AIRCARE|DCFACILITIES|ICEMS|NCSHP|FDALLCALL)$");
   private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(.*) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\d{11}) (.*)");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("([^,]+), *([A-Z ]*)(?:, *([A-Z]{2}) +(?:(\\d{5}) +)?|\\b +)");
@@ -28,6 +33,23 @@ public class NCDavieCountyBParser extends MsgParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     data.strCall = subject;
+
+    if (subject.equals("Cancel Response") || subject.equals("CPR In Progress") ||
+        subject.equals("Working Fire")) {
+      int pt = body.indexOf(',');
+      if (pt < 0) {
+        pt = body.indexOf(' ');
+        if (pt >= 0) pt = body.indexOf(' ', pt+1);
+      }
+      if (pt >= 0) {
+        pt = body.indexOf(body.substring(0, pt).trim(), pt);
+        if (pt >= 0) body = body.substring(0,pt).trim();
+      }
+      Parser p = new Parser(body);
+      parseAddress(p.get(','), data);
+      data.strCity = p.get(',');
+      return true;
+    }
 
     // Strip unit and channel information from end of alert
     Matcher match = TRAIL_UNIT_PTN.matcher(body);
@@ -91,6 +113,7 @@ public class NCDavieCountyBParser extends MsgParser {
         parseAptName(body.substring(pt).trim(), data);
         body = body.substring(0,pt).trim();
       }
+      body = parseTrailGPS(body, data);
       parseAddress(body, data);
     }
     return true;
@@ -143,5 +166,16 @@ public class NCDavieCountyBParser extends MsgParser {
         data.strName = cleanWirelessCarrier(body);
       }
     }
+  }
+
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile("\\b([-+]?\\d{2,3}\\.\\d{6,} [-+]?\\d{2,3}\\.\\d{6,})$");
+
+  private String parseTrailGPS(String field, Data data) {
+    Matcher match = TRAIL_GPS_PTN.matcher(field);
+    if (match.find()) {
+      setGPSLoc(match.group(1), data);
+      field = field.substring(0, match.start()).trim();
+    }
+    return field;
   }
 }
