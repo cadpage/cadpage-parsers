@@ -43,29 +43,37 @@ public class PATiogaCountyParser extends DispatchA48Parser {
         "WHISPERING PINES"
     );
   }
-  
+
   @Override
   public String getFilter() {
     return "@tiogacountypa.us";
   }
-  
-  
+
+
   private static final Pattern TRAIL_NULL_PTN = Pattern.compile("(?:\\s+null)+$");
-  
-  
+
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     body = TRAIL_NULL_PTN.matcher(body).replaceFirst("");
-    
+
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     // Description ending with 3 HRS confuses the address parser
     if (data.strAddress.startsWith("3 HRS ")) {
       data.strCall += " 3 HRS";
       data.strAddress = data.strAddress.substring(6).trim();
     }
+
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
     return true;
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.endsWith(" TWP")) city = city.substring(0, city.length()-2) + "OWNSHIP";
+    return city;
   }
 
 
@@ -75,6 +83,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "AUTOMATIC FIRE ALARM",
       "BACK PAIN - NON-RECENT",
       "BACK PAIN - NON-TRAUMATIC",
+      "BLS MEDICAL",
       "BREATHING PROBLEMS - ABNORMAL BREATHING",
       "BREATHING PROBLEMS - ASTHMA - DIFF SPKING BETWEEN BREATHS",
       "BREATHING PROBLEMS - CHANGING COLOR",
@@ -152,6 +161,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "OVERDOSE/POISONING - UNCONSCIOUS - ACCIDENTAL",
       "OVERDOSE/POISONING - UNCONSCIOUS - INTENTIONAL",
       "PAGE CALL ERWAY AMB",
+      "STAB/GUNSHOT/PENETRATING TRAUMA - NON RECENT - PERIPHERAL WOUNDS - GUNSHOT",
       "PSYCHIATRIC",
       "PSYCHIATRIC / ABNORMAL BEHAVIOR - NON SUICIDAL AND ALERT",
       "PSYCHIATRIC / ABNORMAL BEHAVIOR - NON SUICIDAL AND ALERT - VIOLENT",
@@ -181,7 +191,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "VEHICLE FIRE",
       "WILD FIRE"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
     "BLOSSBURG BORO",
     "ELKLAND BORO",
@@ -223,7 +233,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
     "UNION TWP",
     "WARD TWP",
     "WESTFIELD TWP",
-    
+
     "BLOSSBURG",
     "ELKLAND",
     "KNOXVILLE",
@@ -264,16 +274,16 @@ public class PATiogaCountyParser extends DispatchA48Parser {
     "UNION",
     "WARD",
     "WESTFIELD",
-    
+
     // Bradford County
     "CATON",
     "TOWN OF CATON",
     "WELLS TWP",
-    
+
     // Potter County
     "HEBRON TWP"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BRO", "BROWN TWP"
   });
