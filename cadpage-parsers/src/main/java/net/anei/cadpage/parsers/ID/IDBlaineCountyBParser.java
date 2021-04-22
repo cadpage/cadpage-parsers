@@ -10,8 +10,9 @@ public class IDBlaineCountyBParser extends FieldProgramParser {
 
   public IDBlaineCountyBParser() {
     super("BLAINE COUNTY", "ID",
-          "( SELECT/1 CALL ADDRCITYST! X INFO/N+ " +
-          "| CODE CALL ADDRCITYST! X PLACE? INFO/N+? GPS1 GPS2 )");
+          "( SELECT/1 CALL ADDRCITYST! X " +
+          "| CODE CALL ADDRCITYST! X PLACE? INFO/N+? GPS1 GPS2 " + 
+          ") INFO/N+");
   }
 
   @Override

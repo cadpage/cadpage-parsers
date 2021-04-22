@@ -16,8 +16,8 @@ public class CAFresnoCountyParser extends FieldProgramParser {
 
   public CAFresnoCountyParser() {
     super("FRESNO COUNTY", "CA",
-          "( Unit:UNIT! Pri:PRI! Loc:ADDR! MapPage:MAP Apt:APT! City:CITY? Nature:CALL% Zone:MAP% EMS#:ID% XStreet:X% " +
-          "| CALL! For:UNIT! ( Zone:MAP_ADDR! | Dist:MAP Address:ADDR ) Apt:APT! Between:X! Location_Name:PLACE! )");
+          "( Unit:UNIT! Pri:PRI! Loc:ADDR! MapPage:MAP Apt:APT! City:CITY? Nature:CALL% Zone:MAP% EMS#:ID% XStreet:X% GPS/d? ( PAS_#:LINFO INFO/C+ | PLACE ) " +
+          "| CALL! For:UNIT! ( Zone:MAP_ADDR! | Dist:MAP Address:ADDR ) Apt:APT! ( Between:X! Location_Name:PLACE! City:CITY? | City:CITY! Between:X! Location_Name:PLACE! ) ) END");
   }
 
   @Override
@@ -111,6 +111,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("MAP_ADDR")) return new MyMapAddressField();
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("GPS")) return new GPSField("Lat:.* Long:.*", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
@@ -151,8 +152,10 @@ public class CAFresnoCountyParser extends FieldProgramParser {
   }
 
   private class MyPlaceField extends PlaceField {
+
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Loc Name");
       int pt = field.indexOf('(');
       if (pt >= 0) field = field.substring(0,pt).trim();
       super.parse(field, data);
