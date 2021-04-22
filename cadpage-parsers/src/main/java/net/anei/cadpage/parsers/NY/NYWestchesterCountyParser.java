@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.NY;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,18 +8,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
-
-
 public class NYWestchesterCountyParser extends FieldProgramParser {
-  
+
   public NYWestchesterCountyParser() {
     super("WESTCHESTER COUNTY", "NY",
           "ADDR Cross:X! Type:CALL! CALL Time_out:TIME Area:MAP lev:PRI Comments:INFO% INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "IPAGE@westchestergov.com";
+    return "IPAGE@westchestergov.com,messaging@iamresponding.com";
   }
 
   @Override
@@ -30,7 +27,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Check for IPage signature
     do {
       if (subject.equals("IPage")) break;
@@ -46,7 +43,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       if (isPositiveId()) break;
       return false;
     } while (false);
-    
+
     body = body.replace(" Area:", ",Area:");
     if (!parseFields(body.split(","), data)) return false;
     int pt = data.strCity.indexOf(',');
@@ -103,14 +100,14 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
       return "ADDR CITY ST PLACE APT";
     }
   }
-  
+
   private static final Pattern GPS_PTN1 = Pattern.compile("WPH\\d +([-+]?\\d{3}\\.\\d{6,}[, ][-+]?\\d{3}\\.\\d{6,})");
   private static final Pattern GPS_PTN2 = Pattern.compile("http://maps.google.com/\\?q=([-+]?\\d{2,3}\\.\\d{6,})");
   private static final Pattern GPS_PTN3 = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,})");
   private class MyInfoField extends InfoField {
-    
+
     private String gps1 = null;
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = GPS_PTN1.matcher(field);
@@ -118,7 +115,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
         setGPSLoc(match.group(1), data);
         return;
       }
-      
+
       match = GPS_PTN2.matcher(field);
       if (match.matches()) {
         gps1 = match.group(1);
@@ -132,83 +129,13 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
         gps1 = null;
         return;
       }
-      
+
       data.strSupp = append(data.strSupp, ", ", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";
     }
   }
-  
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AIRPT",      "WESTCHESTER AIRPRT",
-      "ARCHV",      "ARCHVILLE",
-      "ARDSL",      "ARDSLEY",
-      "ARMNK",      "ARMONK",
-      "AMTW",       "MAMARONECK",
-      "BANKS",      "BANKSVILLE",
-      "BEDHL",      "BEDFORD HILLS",
-      "BEDVL",      "BEDFORD",
-      "BCLFM",      "BRIARCLIFF MANOR",
-      "CHAPQ",      "CHAPPAQUA",
-      "CROFL",      "CROTON FALLS",
-      "CROTN",      "CROTON",
-      "DBSFY",      "DOBBS FERRY",
-      "ECHST",      "EASTCHESTER",
-      "ELMSF",      "ELMSFORD",
-      "FAIRV",      "FAIRVIEW",
-      "CNTVL",      "CONTINENTAL",
-      "GBRDG",      "GOLDENS BRIDGE",
-      "GNWCH",      "GREENWICH,CT",
-      "GRASS",      "GRASSLANDS",
-      "GRNVL",      "GREENVILLE",
-      "HARSN",      "HARRISON",
-      "HARTS",      "HARTSDALE",
-      "HASTG",      "HASTINGS",
-      "HAWTH",      "HAWTHORNE",
-      "IRVNG",      "IRVINGTON",
-      "KATNH",      "KATONAH",
-      "LARCH",      "LARCHMONT",
-      "LEWIS",      "LEWISBORO",
-      "MAMTW",      "MAMARONECK",
-      "MAMVL",      "MAMARONECK",
-      "MILLW",      "MILLWOOD",
-      "MOHGN",      "MOHEGAN",
-      "MONTR",      "MONTROSE",
-      "MTKSC",      "MOUNT KISCO",
-      "MTVRN",      "MOUNT VERNON",
-      "NROCH",      "NEW ROCHELLE",
-      "SLPHL",      "SLEEPY HOLLOW",
-      "NOWPL",      "NORTH WHITE PLAINS",
-      "NSALM",      "NORTH SALEM",
-      "OSSNG",      "OSSINING",
-      "PKSKL",      "PEEKSKILL",
-      "PELHM",      "PELHAM",
-      "PELMR",      "PELHAM MANOR",
-      "POCHL",      "POCANTICO HILLS",
-      "PORTC",      "PORT CHESTER",
-      "PNDRG",      "POUND RIDGE",
-      "PURCH",      "PURCHASE",
-      "PVILL",      "PLEASANTVILLE",
-      "RYBRK",      "RYE BROOK",
-      "RYE",        "RYE",
-      "SCARS",      "SCARSDALE",
-      "SOMER",      "SOMERS",
-      "SSALM",      "SOUTH SALEM",
-      "TARRY",      "TARRYTOWN",
-      "THRWD",      "THORNWOOD",
-      "VALHA",      "VALHALLA",
-      "VERPL",      "VERPLANCK",
-      "WHRSN",      "WEST HARRISON",
-      "WHPLN",      "WHITE PLAINS",
-      "WSEMS",      "", // Armonk & Beford hills & white plains & Somers & Valhalla
-      "YKTWN",      "YORKTOWN",
-      "YNKRS",      "YONKERS",
-      "BUCHN",      "BUCHANAN",
-      "VISTA",      "VISTA",
-      "VAHOS",      "MONTROSE"
-  });
 }
-	
