@@ -815,6 +815,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
 
       "1178 CHURCH RD APT A",                "+39.919431,-77.399077",
 
+      "1788 COON RD",                        "+40.008626,-77.295562",
+
       "11 DALE RD",                           "+39.957422,-77.360099",
       "375 DALE RD",                          "+39.957512,-77.360893",
 
