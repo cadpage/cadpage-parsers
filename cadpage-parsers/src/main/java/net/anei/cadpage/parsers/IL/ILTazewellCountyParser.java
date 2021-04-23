@@ -7,23 +7,23 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class ILTazewellCountyParser extends DispatchOSSIParser {
-  
+
   public ILTazewellCountyParser() {
     super(CITY_CODES, "TAZEWELL COUNTY", "IL",
          "( CANCEL ADDR CITY! " +
-         "| FYI SRC DATETIME CALL ADDR! CITY? X X ) INFO+");
+         "| FYI? SRC DATETIME CALL ADDR! CITY? X X ) INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@tazewell911.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() > 0 && body.startsWith("CAD:")) {
       body = "CAD:" + subject + ": " + body.substring(4);
-    } else if (body.startsWith("FYI:") || body.startsWith("Update:") || body.startsWith("CANCEL")) {
+    } else if (!body.startsWith("CAD:")) {
       body = "CAD:" + body;
     }
     return super.parseMsg(body, data);
@@ -68,6 +68,6 @@ public class ILTazewellCountyParser extends DispatchOSSIParser {
       "ST", "STANFORD",
       "TR", "TREMONT",
       "WA", "WASHINGTON"
- 
+
   });
 }
