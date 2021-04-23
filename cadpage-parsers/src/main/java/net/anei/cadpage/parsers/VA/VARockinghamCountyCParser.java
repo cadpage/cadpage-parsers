@@ -7,12 +7,17 @@ public class VARockinghamCountyCParser extends FieldProgramParser {
 
   public VARockinghamCountyCParser() {
     super("ROCKINGHAM COUNTY", "VA",
-          "Call:CALL! Address:ADDRCITY! City/Town:CITY! Business:PLACE! X_Street:X! Incident_#:ID! Tac:CH! Priority:PRI! Units:UNIT! Lat:GPS1! Lon:GPS2! Move_Up:INFO INFO/N+");
+          "Call:CALL! Address:ADDRCITY! City/Town:CITY? Business:PLACE? X_Street:X! Incident_#:ID! Tac:CH! Priority:PRI! Units:UNIT! Fire_Box:BOX? Lat:GPS1! Lon:GPS2! CAD_#:ID/L Move_Up:INFO Standby:INFO INFO/N+");
   }
 
   @Override
   public String getFilter() {
     return "caddmsmailbox@hrecc.org";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
