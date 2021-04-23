@@ -6,16 +6,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
 public class TNWhiteCountyParser extends DispatchA65Parser {
-  
+
   public TNWhiteCountyParser() {
     super(CITY_LIST, "WHITE COUNTY", "TN");
   }
-  
+
   @Override
   public String getFilter() {
     return "whitecotn@911email.net,dispatch@911comm2.info,dispatch@whitecounty-tn-911.info,@whitecoe911.info";
-  } 
-  
+  }
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom() {
@@ -25,7 +25,7 @@ public class TNWhiteCountyParser extends DispatchA65Parser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-      
+
       "BON AIR",
       "DOYLE",
       "CASSVILLE",
