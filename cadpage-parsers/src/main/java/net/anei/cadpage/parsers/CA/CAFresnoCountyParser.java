@@ -30,7 +30,6 @@ public class CAFresnoCountyParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
 
-
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -43,7 +42,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
   private static final Pattern PRI_CHG_PTN = Pattern.compile("Unit:(\\S+) +The Priority of the call at (.*?) has been changed to P(\\d) .*");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:Unit[: ](\\S+?)[, ]+)?(?:EMS|Incident |Run)#:(\\d*)[ ,]+(.*)");
   private static final Pattern RUN_REPORT_BRK = Pattern.compile(" +,");
-  private static final Pattern CANCEL_PTN = Pattern.compile("Unit:(.+?)[ ]+EMS:(\\S*) *(Incident Cancelled:.*?) +(CR:.*)");
+  private static final Pattern CANCEL_PTN = Pattern.compile("Unit:(.+?)[ ]+(?:EMS:(\\S*) *)?(Incident Cancelled:.*?) +(CR:.*)");
   private static final Pattern CANCEL_BRK_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)(?=[A-Z])");
 
   @Override
@@ -87,7 +86,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
         setFieldList("UNIT ID CALL INFO");
         data.msgType = MsgType.RUN_REPORT;
         data.strUnit = match.group(1);
-        data.strCallId = match.group(2);
+        data.strCallId = getOptGroup(match.group(2));
         data.strCall = match.group(3).trim();
         data.strSupp = CANCEL_BRK_PTN.matcher(match.group(4).replace(" ", "")).replaceAll("\n");
         return true;
