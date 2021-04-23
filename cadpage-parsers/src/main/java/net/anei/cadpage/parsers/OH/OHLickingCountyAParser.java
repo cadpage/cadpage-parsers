@@ -20,7 +20,7 @@ public class OHLickingCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "notif@domain.com,messaging@iamresponding.com,notif@mecc911.org,WASST@MIFFLIN-OH.GOV,911dispatch@lcounty.com";
+    return "notif@domain.com,messaging@iamresponding.com,notif@mecc911.org,WASST@MIFFLIN-OH.GOV,911dispatch@lcounty.com,911dispatch@lickingcounty.gov";
   }
 
   @Override
