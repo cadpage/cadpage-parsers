@@ -11,7 +11,7 @@ public class IDBlaineCountyBParser extends FieldProgramParser {
   public IDBlaineCountyBParser() {
     super("BLAINE COUNTY", "ID",
           "( SELECT/1 CALL ADDRCITYST! X " +
-          "| CODE CALL ADDRCITYST! X PLACE? INFO/N+? GPS1 GPS2 " + 
+          "| CODE CALL ADDRCITYST! X PLACE? INFO/N+? GPS1 GPS2 " +
           ") INFO/N+");
   }
 
@@ -26,7 +26,7 @@ public class IDBlaineCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern MASTER1 = Pattern.compile(".*?[\n ]*\nBCEC: ([A-Z]{2}\\d{6}-\\d{3}) -- ");
-  private static final Pattern MASTER2 = Pattern.compile(".*?\n(?:([A-Z]{2}\\d{6}-\\d{3})| )\n");
+  private static final Pattern MASTER2 = Pattern.compile("(?:.*?\n(?:([A-Z]{2}\\d{6}-\\d{3})| )|.*PRE-ALERT.*)\n");
   @Override
   protected boolean parseMsg(String body , Data data) {
 
@@ -56,7 +56,7 @@ public class IDBlaineCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("PLACE")) return new PlaceField("[- A-Z]*", true);
+    if (name.equals("PLACE")) return new PlaceField("[- A-Z()']*", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
