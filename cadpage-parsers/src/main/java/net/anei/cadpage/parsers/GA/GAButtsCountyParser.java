@@ -20,6 +20,7 @@ public class GAButtsCountyParser extends DispatchA19Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "FLO", "Flovilla",
       "JAK", "Jackson",
-      "JEN", "Jenkinsburg"
+      "JEN", "Jenkinsburg",
+      "LGR", "Locust Grove"
   });
 }
