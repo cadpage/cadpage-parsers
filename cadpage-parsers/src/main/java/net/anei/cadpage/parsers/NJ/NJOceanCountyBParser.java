@@ -1,21 +1,22 @@
 package net.anei.cadpage.parsers.NJ;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class NJOceanCountyBParser extends DispatchA19Parser {
-  
+
   public NJOceanCountyBParser() {
-    super("OCEAN COUNTY", "NJ");
+    super(CITY_CODES, "OCEAN COUNTY", "NJ");
   }
 
   @Override
   public String getFilter() {
-    return "@trpolice.org,@alert.active911.com,ripnrun@lakewoodpolicenj.com";
+    return "@trpolice.org,@alert.active911.com,ripnrun@lakewoodpolicenj.com,FlexRapidNotification@dccnotify.com";
   }
-  
+
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
 
   @Override
@@ -27,5 +28,10 @@ public class NJOceanCountyBParser extends DispatchA19Parser {
     }
     return super.parseMsg(subject, body, data);
   }
- 
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "LKH", "LAKEHURST",
+      "MAN", "MANCHESTER TWP"
+  });
+
 }
