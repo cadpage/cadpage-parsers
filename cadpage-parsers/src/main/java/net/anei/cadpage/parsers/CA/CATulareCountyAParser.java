@@ -12,14 +12,14 @@ Tulare County, CA
 public class CATulareCountyAParser extends DispatchA49Parser {
 
   public CATulareCountyAParser() {
-    super(CITY_CODES, "TULARE COUNTY","CA");
+    super(CITY_CODES, "TULARE COUNTY","CA", CALL_CODES);
   }
-  
+
   @Override
   public String getFilter() {
     return "ADSI_CAD@co.tulare.ca.us";
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = RNN_PTN.matcher(addr).replaceAll("RD $1");
@@ -28,7 +28,7 @@ public class CATulareCountyAParser extends DispatchA49Parser {
   }
   private static final Pattern RNN_PTN = Pattern.compile("\\bR(\\d+) RD\\b");
   private static final Pattern ANN_PTN = Pattern.compile("\\bA(\\d+) AVE?\\b");
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AL", "ALPAUGH",
       "AW", "ALLENSWORTH",
@@ -92,5 +92,18 @@ public class CATulareCountyAParser extends DispatchA49Parser {
       "WK", "WAUKENA",
       "WV", "WOODVILLE",
       "YM", "YETTEM"
+  });
+
+  private static final Properties CALL_CODES = buildCodeTable(new String[] {
+      "ALRM", "ALARM SOUNDING",
+      "FDEB", "DEBRIS,TRASH",
+      "FGRS", "GRASS FIRE",
+      "FUNK", "UNKNOWN TYPE FIRE",
+      "FVEH", "VEHICLE FIRE",
+      "FWLD", "WILDLAND FIRE (SRA)",
+      "M83",  "GUN SHOT WOUND",
+      "MED",  "BASIC MEDICAL AID",
+      "MISC", "MISCELLANEOUS CALLS",
+      "MVA",  "TRAFFIC ACCIDENT"
   });
 }

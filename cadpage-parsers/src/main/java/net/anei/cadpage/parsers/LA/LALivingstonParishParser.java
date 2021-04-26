@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.LA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,9 +12,9 @@ Livingston Parish, LA
 */
 
 public class LALivingstonParishParser extends DispatchA49Parser {
-  
+
   public LALivingstonParishParser() {
-    super("LIVINGSTON PARISH","LA");
+    super("LIVINGSTON PARISH","LA", CALL_CODES);
   }
 
   @Override
@@ -22,7 +23,7 @@ public class LALivingstonParishParser extends DispatchA49Parser {
   }
 
   private static final Pattern FIX_MARK_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4} Time:\\d\\d:\\d\\d)\n(?:EQ ID:(.*)\n)?");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Alert Recieved")) return false;
@@ -42,5 +43,15 @@ public class LALivingstonParishParser extends DispatchA49Parser {
     body = body.replace("\nRemarks >", "\nRemarks:\n>");
     return super.parseMsg(body, data);
   }
- 
+
+  private static final Properties CALL_CODES = buildCodeTable(new String[] {
+      "COMALARM", "FIRE ALARM - COMMERCIAL",
+      "COMMFIRE", "STRUCTURE FIRE-COMMERCIAL",
+      "MEDICAL",  "MEDICAL",
+      "MVA",      "MVA",
+      "PUBASST",  "PUBLIC ASSIST",
+      "RESDFIRE", "STRUCTURE FIRE-RESIDENTIAL",
+  });
+
+
 }

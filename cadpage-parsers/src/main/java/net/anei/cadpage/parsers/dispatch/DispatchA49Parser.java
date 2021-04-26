@@ -14,21 +14,32 @@ Lafayette Parish, LA
 
 public class DispatchA49Parser extends FieldProgramParser {
 
-  private boolean checkCity;
+  private final boolean checkCity;
+  private final Properties callCodes;
 
   public  DispatchA49Parser(String defCity, String defState) {
-    this(null, defCity, defState);
+    this(null, defCity, defState, null);
   }
 
-  public DispatchA49Parser(Properties cityCodes, String defCity, String defState) {
+  public  DispatchA49Parser(String defCity, String defState, Properties callCodes) {
+    this(null, defCity, defState, callCodes);
+  }
+
+  public  DispatchA49Parser(Properties cityCodes, String defCity, String defState) {
+    this(cityCodes, defCity, defState, null);
+  }
+
+  public DispatchA49Parser(Properties cityCodes, String defCity, String defState, Properties callCodes) {
     super(cityCodes, defCity, defState,
-          "( Call_Number:ID! Date/Time:DATETIME! Address:ADDR! " +
+          "( RPT#:ID EQPT:UNIT! ADDR:ADDR! INFO/R! TIMES! TIMES+? " +
+          "| Call_Number:ID! Date/Time:DATETIME! Address:ADDR! " +
           "| CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
           "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
             "| DATE_TIME_SRC! Addr:ADDR/S! City:CITY? Cross:X? Inc_Type:CODE? Juris:SKIP? Report_#:ID? " +
             "| Date:DATE! Time:TIME! Inc#:ID! INFO/RN+ " +
             ") REMARKS? EXTRA+ )");
     checkCity = cityCodes != null;
+    this.callCodes = callCodes;
   }
 
   private static final Pattern REMARKS_PTN = Pattern.compile("(\nRemarks)[: ]+");
@@ -37,7 +48,33 @@ public class DispatchA49Parser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     body = REMARKS_PTN.matcher(body).replaceFirst("$1:\n");
     if (body.startsWith("Call Number:")) data.msgType = MsgType.RUN_REPORT;
-    return parseFields(body.split("\n+"), data);
+    if (! parseFields(body.split("\n+"), data)) return false;
+
+    if (data.msgType == MsgType.PAGE) {
+      if (data.strCode.isEmpty() && data.strCall.isEmpty() && !data.strSupp.isEmpty()) {
+        int pt = data.strSupp.indexOf('\n');
+        if (pt >= 0) {
+          data.strCode = data.strSupp.substring(0,pt).trim();
+          data.strSupp = data.strSupp.substring(pt+1).trim();
+        } else {
+          data.strCode = data.strSupp;
+          data.strSupp = "";
+        }
+      }
+
+      if (data.strCall.isEmpty()) {
+        if (callCodes != null) {
+          String call = callCodes.getProperty(data.strCode);
+          if (call != null) data.strCall = call;
+        }
+        if (data.strCall.isEmpty()) {
+          data.strCall = data.strCode;
+          data.strCode = "";
+        }
+      }
+    }
+
+    return true;
   }
 
   @Override
@@ -46,6 +83,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     if (name.equals("DATE_TIME_SRC")) return new BaseDateTimeSourceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();
+    if (name.equals("TIMES")) return new BaseTimesField();
     if (name.equals("REMARKS")) return new SkipField("Remarks:", true);;
     if (name.equals("EXTRA")) return new BaseExtraField();
     return super.getField(name);
@@ -89,9 +127,31 @@ public class DispatchA49Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern TIMES_PTN = Pattern.compile("[A-Z]+: *(\\d\\d:\\d\\d:\\d\\d)");
+  private class BaseTimesField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = TIMES_PTN.matcher(field);
+      if (match.matches()) return false;
+      data.msgType = MsgType.RUN_REPORT;
+      if (!match.group(1).equals("00:00:00")) super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+  }
+
   private static final Pattern EXTRA_JUNK_PTN = Pattern.compile("(.*?) +\\d{6}");
   private static final Pattern EXTRA_ID_PTN  = Pattern.compile(">(?:RPT#|AC)< *([-\\d]+)");
-  private static final Pattern EXTRA_CALL_PTN = Pattern.compile("F>>?IC< *(?:F\\.)? *(.*?)");
+  private static final Pattern EXTRA_CALL_PTN = Pattern.compile("[A-Z]>>?IC< *(?:[A-Z]\\.)? *(.*?)");
   private static final Pattern EXTRA_GPS_PTN = Pattern.compile("\\bLat=([-+]\\d+\\.\\d{4,}) Long=([-+]\\d+\\.\\d{4,})\\b");
   private static final Pattern EXTRA_TIME_OP_PTN = Pattern.compile("(.*) \\d{4},\\d{3}");
   private static final Pattern EXTRA_PREFIX_PTN = Pattern.compile("(?:[A-Z]>)?(?:>(?:AC|E9|IC)<)? *(?:[A-Z]\\.)? *(.*)");
@@ -113,7 +173,10 @@ public class DispatchA49Parser extends FieldProgramParser {
 
       match = EXTRA_CALL_PTN.matcher(field);
       if (match.matches()) {
-        data.strCall = append(data.strCall, " / ", match.group(1));
+        String call = fixCall(match.group(1));
+        if (call == null) return;
+        if (data.strCall.contains(call)) return;
+        data.strCall = append(data.strCall, " / ", call);
         return;
       }
 
@@ -178,5 +241,11 @@ public class DispatchA49Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "ID CALL PLACE NAME PHONE INFO GPS";
     }
+  }
+
+  protected String fixCall(String call) {
+    call = stripFieldEnd(call, " Y");
+    if (call.equals("DEFAULT")) return null;
+    return call;
   }
 }

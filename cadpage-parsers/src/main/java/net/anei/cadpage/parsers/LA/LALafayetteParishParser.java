@@ -12,13 +12,13 @@ Lafayette Parish, LA
 */
 
 public class LALafayetteParishParser extends DispatchA49Parser {
-  
+
   private static final Pattern TRAIL_NA_PTN = Pattern.compile("(?: +OR)? +NA$");
 
   public LALafayetteParishParser() {
     super("LAFAYETTE PARISH","LA");
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("  >", "\n>");
@@ -33,13 +33,20 @@ public class LALafayetteParishParser extends DispatchA49Parser {
   public String getFilter() {
     return "cadalert@lafayettela.gov,alerts@carencrofd.org";
   }
-  
+
+  @Override
+  protected String fixCall(String call) {
+    if (call.startsWith("CALL SENT TO ACADIAN IT")) return null;
+    if (call.equals("ACADIAN AMBULANCE INCIDENT TRANSFERED")) return null;
+    return super.fixCall(call);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)\\.([A-Z])");
   private class MyAddressField extends AddressField {
     @Override
@@ -51,13 +58,13 @@ public class LALafayetteParishParser extends DispatchA49Parser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String  getFieldNames() {
       return super.getFieldNames() + " CITY";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress, boolean cross) {
     sAddress = TW_PTN.matcher(sAddress).replaceAll("THRUWAY");
@@ -69,7 +76,7 @@ public class LALafayetteParishParser extends DispatchA49Parser {
   }
   private static final Pattern TW_PTN = Pattern.compile("\\bTW\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern CROSS_HOUSE_PTN = Pattern.compile("\\d+ +(.*)");
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "B", "BROUSSARD",
       "C", "CARENCRO",

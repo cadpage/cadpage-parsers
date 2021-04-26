@@ -894,6 +894,7 @@ public class ParserList {
               ,"MSPontotocCounty"               ,"Pontotoc County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"
               ,"MSTateCounty"                   ,"Tate County, MS"
+              ,"MSWarrenCounty"                 ,"Warren County, MS"
               ,"MSWinstonCounty"                ,"Winston County, MS"
               ,"MSYazooCounty"                  ,"Yazoo County, MS"
           ),
