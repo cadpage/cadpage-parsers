@@ -22,9 +22,19 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     return "interface@acso-oh.us";
   }
 
+  private static final Pattern ALARM_LEVEL_PTN = Pattern.compile("Alarm Level (\\d) +");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
     if (!subject.equals("ACSO Paging")) return false;
+
+    Matcher match = ALARM_LEVEL_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strPriority = match.group(1);
+      body = body.substring(match.end());
+    }
+
     if (body.startsWith("Call:")) {
       if (!super.parseFields(body.split("\n"), data)) return false;
     } else {
@@ -33,6 +43,11 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     data.strAddress = data.strAddress.replace("LAKERIDGE DR", "DEERCREEK CIR");
     data.strCross = data.strCross.replace("LAKERIDGE DR", "DEERCREEK CIR");
     return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "PRI " + super.getProgram();
   }
 
   @Override
