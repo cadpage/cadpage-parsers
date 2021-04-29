@@ -40,7 +40,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
 
   @Override
   public String getFilter() {
-    return "930010,777,888,wccca@wccca.com,majcs@majcs.us";
+    return "930010,777,888,wccca@wccca.com,majcs@majcs.us,cad@majcs-cad.us";
   }
 
   @Override
