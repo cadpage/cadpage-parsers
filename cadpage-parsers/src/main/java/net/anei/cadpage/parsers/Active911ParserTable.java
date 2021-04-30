@@ -637,6 +637,7 @@ public class Active911ParserTable {
       "US/KY/CarrollCounty",              "KYCarrollCountyB",
       "US/KY/CarrollCountyPD",            "KYCarrollCountyC",
       "US/KY/CarterCounty",               "KYCarterCounty",
+      "US/KY/Chalybeate",                 "KYEdmonsonCountyB",
       "US/KY/CaseyCounty",                "KYCaseyCounty",
       "US/KY/ChristianCounty",            "KYChristianCounty",
       "US/KY/CityofBowlingGreen",         "KYBowlingGreen",
