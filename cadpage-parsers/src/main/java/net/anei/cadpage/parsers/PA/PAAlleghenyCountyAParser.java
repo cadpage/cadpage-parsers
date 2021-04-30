@@ -14,7 +14,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
 
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
-           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
+           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | ADDR/Z X XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
     setupCities(EXTRA_CITY_LIST);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
     setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
@@ -36,7 +36,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern MARKER = Pattern.compile("ALLEGHENY COUNTY 911:? :|:");
-  private static final Pattern TRAILER_PTN = Pattern.compile(" +- +From \\d+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b.*$");
+  private static final Pattern TRAILER_PTN = Pattern.compile(" +- +From \\S+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b.*$");
   private static final Pattern MOVE_UP_PTN = Pattern.compile("MOVE-UP: +([A-Z0-9]+) +to +([A-Z0-9]+)\\.?");
   private static final Pattern MOVE_UP_UNIT_PTN = Pattern.compile("\\b([A-Z0-9]+) +to +");
 
@@ -122,11 +122,12 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("PRI")) return new PriorityField("[A-Z]\\d|\\d[A-Z]", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("GPS1")) return new GPSField(1, "[-+]\\d+\\.\\d+");
-    if (name.equals("GPS2")) return new GPSField(2, "[-+]\\d+\\.\\d+");
+    if (name.equals("GPS1")) return new GPSField(1, "[-+]\\d+\\.\\d+", true);
+    if (name.equals("GPS2")) return new GPSField(2, "[-+]\\d+\\.\\d+", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DUP_ADDR")) return new MyDupAddressField();
     if (name.equals("AT")) return new MyAtField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("XINFO")) return new MyCrossInfoField();
     if (name.equals("SRC")) return new SourceField("[A-Z]{3}\\d");
     if (name.equals("BOX")) return new BoxField("\\d{5,6}(?: \\d{5,6})*|[A-Z]\\d{5}|[A-Z]{2,3}\\d{2,3}|\\d{3}[A-Z]\\d{2}|[EF]?\\d{3}-[A-Z0-9]{2,3}", true);
@@ -187,6 +188,25 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       data.strPlace = data.strAddress;
       data.strAddress = "";
       super.parse(field.substring(3).trim(), data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private class MyCrossField extends MyCrossInfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("btwn ")) return false;
+      super.parse(field, data);
       return true;
     }
 
@@ -362,6 +382,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "WDR", "WEST DEER",
       "WEL", "WEST ELIZABETH",
       "WES", "WEST MIFFLIN",
+      "WST", "WESTMORELAND COUNTY",
       "WHI", "WHITEHALL",
       "WHM", "WEST HOMESTEAD",
       "WIL", "WILKINS",
