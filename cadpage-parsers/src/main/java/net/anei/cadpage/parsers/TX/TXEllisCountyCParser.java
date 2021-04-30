@@ -1,62 +1,52 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
+public class TXEllisCountyCParser extends FieldProgramParser {
 
-public class TXEllisCountyCParser extends DispatchA18Parser {
-  
   public TXEllisCountyCParser() {
-    super(CITY_LIST, "ELLIS COUNTY","TX");
-    for (String city : CITY_LIST) {
-      setupCities(city + " TX", city + " TEXAS");
-    }
+    super("ELLIS COUNTY","TX",
+          "ADDRCITYST CALL X UNIT! INFO EMPTY END");
   }
 
   @Override
   public String getFilter() {
-    return "alert@waxahachiepd.org";
+    return "alerts@waxahachie.com";
   }
 
-  private static String[] CITY_LIST = new String[]{
+  private static final Pattern DELIM = Pattern.compile("\\*(?: +|$)");
 
-      //cities
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("Active Call Alert")) return false;
+    return parseFields(DELIM.split(body), data);
+  }
 
-      "BARDWELL",
-      "CEDAR HILL",
-      "ENNIS",
-      "FERRIS",
-      "GLENN HEIGHTS",
-      "GRAND PRAIRIE",
-      "MANSFIELD",
-      "MAYPEARL",
-      "MIDLOTHIAN",
-      "OAK LEAF",
-      "OVILLA",
-      "PECAN HILL",
-      "RED OAK",
-      "WAXAHACHIE",
+  @Override
+  public Field getField(String name) {
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
 
-      //towns
-      
-      "ALMA",
-      "GARRETT",
-      "ITALY",
-      "MILFORD",
-      "PALMER",
-      "VENUS",
-      
-      //Unincorporated community
+  private static final Pattern UNIT_BRK_PTN = Pattern.compile(" *; *");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = UNIT_BRK_PTN.matcher(field).replaceAll(",");
+      super.parse(field, data);
+    }
+  }
 
-      "AUBURN",
-      "AVALON",
-      "BRISTOL",
-      "CRISP",
-      "FORRESTON",
-      "IKE",
-      "INDIA",
-      "RANKIN",
-      "ROCKETT",
-      "TELICO"
-  };
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *(?:; *)?\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
+      super.parse(field, data);
+    }
+  }
 }

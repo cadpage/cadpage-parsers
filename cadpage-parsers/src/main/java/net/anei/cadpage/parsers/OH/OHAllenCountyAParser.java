@@ -38,7 +38,7 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     if (body.startsWith("Call:")) {
       if (!super.parseFields(body.split("\n"), data)) return false;
     } else {
-      if (!super.parseFields(body.split("\\|"), data)) return false;
+      if (!super.parseFields(body.split("\\|", -1), data)) return false;
     }
     data.strAddress = data.strAddress.replace("LAKERIDGE DR", "DEERCREEK CIR");
     data.strCross = data.strCross.replace("LAKERIDGE DR", "DEERCREEK CIR");
@@ -47,7 +47,7 @@ public class OHAllenCountyAParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "PRI " + super.getProgram();
+    return "PRI? " + super.getProgram();
   }
 
   @Override
@@ -60,16 +60,19 @@ public class OHAllenCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([EF]\\d\\d) +(.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([EF]\\d\\d[A-Z]?) +(.*)");
 
   private class MyCodeCallField extends Field {
 
     @Override
     public void parse(String field, Data data) {
       Matcher match = CODE_CALL_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strCode = match.group(1);
-      data.strCall = match.group(2);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        data.strCall = match.group(2);
+      } else if (field.equals(">New Call<")) {
+        data.strCall = field;
+      } else abort();
     }
 
     @Override
