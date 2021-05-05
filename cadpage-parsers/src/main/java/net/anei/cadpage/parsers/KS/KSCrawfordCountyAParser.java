@@ -7,19 +7,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class KSCrawfordCountyAParser extends DispatchH05Parser {
-  
+
   public KSCrawfordCountyAParser() {
-    super(CITY_LIST, "CRAWFORD COUNTY", "KS", 
+    super(CITY_LIST, "CRAWFORD COUNTY", "KS",
           "JUNK+? CALL_ADDR_CITY_X HTTP INFO_BLK/Z+? ID! TIMES+");
     setPreserveWhitespace(true);
     setAccumulateUnits(true);
   }
-  
+
   @Override
   public String getFilter() {
-    return "@crsoks.org,@police.pittks.org";
+    return "@crsoks.org,@crosks.org,@police.pittks.org";
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Automatic R&R Notification:")) return false;
@@ -36,14 +36,14 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
     if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
-  
+
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private class MyCallAddressCityCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
       String[] parts = MSPACE_PTN.split(field);
       if (parts.length > 4)  abort();
-      
+
       if (parts.length > 1) {
         data.strCall = parts[0];
         field = parts[1];
@@ -54,7 +54,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
           data.strCross = parts[3];
         }
       }
-      
+
       else if (data.strCall.length() > 0) {
         if (field.startsWith(data.strCall)) {
           field = field.substring(data.strCall.length()).trim();
@@ -62,7 +62,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
           data.strCall = "";
         }
       }
-      
+
       int pt = field.lastIndexOf(',');
       if (pt >= 0) {
         data.strCity = field.substring(pt+1).trim();
@@ -74,7 +74,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       } else {
         parseAddress(StartType.START_CALL, FLAG_ANCHOR_END, field, data);
       }
-      
+
       if (data.strCross.length() == 0 && data.strCity.length() > 0) {
         String city = data.strCity;
         data.strCity = "";
@@ -88,18 +88,18 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       return "CALL ADDR APT CITY PLACE X";
     }
   }
-  
+
   private static final Pattern NAME_ID_PTN = Pattern.compile("(.*?)(\\[(?:\\d{4}-|Incident).*\\]).*");
   private static final Pattern NAME_PTN = Pattern.compile("[A-Z ]*,[A-Z ]+", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_PHONE_PTN = Pattern.compile("([A-Z, ]+?) +(\\(\\d{3}\\) ?\\d{3}-?\\d{4})(?: +.*)?", Pattern.CASE_INSENSITIVE);
   private static final Pattern TIMES_PTN = Pattern.compile("[A-Z0-9]+: .*");
   private class MyIdField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       // If this matches the regular Name/ID/Unit pattern parse it as such
@@ -115,21 +115,21 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
         data.strName = name;
         return true;
       }
-      
+
       // If it looks like a stand alone name, likewise
       if (NAME_PTN.matcher(field).matches()) {
         data.strName = field;
         return true;
       }
-      
+
       // See if it matches the name/phone/unit pattern
       match = NAME_PHONE_PTN.matcher(field);
       if (match.matches()) {
         data.strName = match.group(1);
         data.strPhone = match.group(2);
       }
-      
-      // If the next field looks like a times field signature, just accept this 
+
+      // If the next field looks like a times field signature, just accept this
       return TIMES_PTN.matcher(getRelativeField(+1)).matches();
     }
 
@@ -143,9 +143,9 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       return "NAME PHONE ID";
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "ARMA",
       "ARCADIA",
@@ -157,7 +157,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
       "MULBERRY",
       "PITTSBURG",
       "WALNUT",
-      
+
       // Townships
       "BAKER",
       "CRAWFORD",
