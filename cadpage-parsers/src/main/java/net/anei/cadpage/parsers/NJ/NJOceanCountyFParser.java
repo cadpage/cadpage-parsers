@@ -37,6 +37,7 @@ public class NJOceanCountyFParser extends FieldProgramParser {
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
