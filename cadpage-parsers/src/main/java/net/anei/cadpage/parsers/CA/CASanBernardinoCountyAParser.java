@@ -1775,6 +1775,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "TEF",        "Freeway TC w/Extrication",
       "TEST",       "Test Incident",
       "TF",         "TC with Fire",
+      "TRB",        "Training Burn",
       "TFF",        "Freeway TC w/Fire",
       "TFR",        "Tactical Fire Response",
       "TI",         "TC with Injuries",
