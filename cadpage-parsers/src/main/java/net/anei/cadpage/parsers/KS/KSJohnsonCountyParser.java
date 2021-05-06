@@ -14,21 +14,21 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
   public KSJohnsonCountyParser() {
     super("JOHNSON COUNTY", "KS",
           "( Address_UpdateIncident_#:ID! Add:ADDR! Apt:APT! " +
-          "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X TAC:CH ) END");
+          "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X TAC:CH City:CITY Units:UNIT LAT:GPS1/d LON:GPS2/d ) END");
   }
-  
+
   @Override
   public String getFilter() {
     return "93001,ecc1@jocogov.org,ecc2@jocogov.org,ecc3@jocogov.org,ecc4@jocogov.org,@jocofd1.org,@jocoems.org,2183500185";
   }
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("Call Times +(.*?) +incident#:(.*)");
   private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<![ a-z]) +");
 
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("INFO ID");
@@ -37,18 +37,18 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
       data.strCallId = match.group(2);
       return true;
     }
-    
+
     body = body.replaceAll("Incident#", "Incident:");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
   }
-  
+
   private class MySourceField extends SourceField {
     @Override
     public void parse(String field, Data data) {
@@ -56,7 +56,7 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
