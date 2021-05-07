@@ -2127,6 +2127,7 @@ public class Active911ParserTable {
       "Vendor/Cadpage/Default",           "Cadpage2",
       "Vendor/Cadpage/StandardA",         "StandardA",
       "Vendor/ComputerArts",              "IDAdaCounty",
+      "Vendor/ComputerArts/Default",      "IDGemCounty",
       "Vendor/CTC/Default",               "MIInghamCountyC",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
