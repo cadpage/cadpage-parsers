@@ -105,6 +105,7 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
   protected String adjustGpsLookupAddress(String address) {
     if (address.startsWith("MM ")) {
       address = SLASH_PTN.matcher(address).replaceAll(" ");
+      address = address.replace("I 35", "I35");
       address = TRAIL_DIR_PTN.matcher(address).replaceFirst("");
     }
     return address;
@@ -113,14 +114,15 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
       "MM 180 I35",                           "+42.943993,-93.350784",
       "MM 182 I35",                           "+42.980130,-93.344672",
-      "MM 183 HWY 18",                        "+43.105356,-93.260737",
-      "MM 186 HWY 18",                        "+43.104299,-93.201360",
       "MM 188 I35",                           "+43.067302,-93.342899",
-      "MM 190 HWY 18",                        "+43.112076,-93.122528",
       "MM 190 I35",                           "+43.099276,-93.345547",
       "MM 193 I35",                           "+43.133711,-93.356062",
       "MM 194 I35",                           "+43.146258,-93.355832",
-      "MM 195 HWY 18",                        "+43.116339,-93.023539",
-      "MM 197 I35",                           "+43.198764,-93.349298"
+      "MM 197 I35",                           "+43.198764,-93.349298",
+
+      "MM 183 HWY 18",                        "+43.105356,-93.260737",
+      "MM 186 HWY 18",                        "+43.104299,-93.201360",
+      "MM 190 HWY 18",                        "+43.112076,-93.122528",
+      "MM 195 HWY 18",                        "+43.116339,-93.023539"
   });
 }
