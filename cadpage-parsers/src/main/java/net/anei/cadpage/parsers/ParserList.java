@@ -1448,6 +1448,7 @@ public class ParserList {
           ),
           new ParserCategory("South Dakota"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
+              ,"SDKiowaCounty"                  ,"Kiowa County, SD"
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
               ,"SDMinnehahaCounty"              ,"Minnehaha County, SD"
               ,"SDPenningtonCounty"             ,"Pennington County, SD"
