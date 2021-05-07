@@ -1917,6 +1917,7 @@ public class Active911ParserTable {
       "US/UT/CarbonCounty",               "UTCarbonCounty",
       "US/UT/DavisCounty",                "UTDavisCountyE",
       "US/UT/DavisCountyEforceSoftware",  "UTDavisCountyD",
+      "US/UT/KaneCounty",                 "UTKaneCounty",
       "US/UT/KaysvilleFD",                "UTDavisCountyE",
       "US/UT/SaltLakeCounty",             "UTSaltLakeCountyA",
       "US/UT/TooeleCounty",               "UTTooeleCounty",

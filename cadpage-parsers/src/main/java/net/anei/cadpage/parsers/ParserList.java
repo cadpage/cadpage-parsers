@@ -1609,6 +1609,7 @@ public class ParserList {
               ,"UTBoxElderCounty"               ,"Box Elder County, UT"
               ,"UTCarbonCounty"                 ,"Carbon County, UT"
               ,"UTDavisCounty"                  ,"Davis County, UT"
+              ,"UTKaneCounty"                   ,"Kane County, UT"
               ,"UTSaltLakeCounty"               ,"Salt Lake County, UT"
               ,"UTSummitCounty"                 ,"Summit County, UT"
               ,"UTTooeleCounty"                 ,"Tooele County, UT"
