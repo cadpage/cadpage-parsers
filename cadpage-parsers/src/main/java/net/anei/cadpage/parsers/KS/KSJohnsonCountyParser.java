@@ -22,6 +22,11 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
     return "93001,ecc1@jocogov.org,ecc2@jocogov.org,ecc3@jocogov.org,ecc4@jocogov.org,@jocofd1.org,@jocoems.org,2183500185";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("Call Times +(.*?) +incident#:(.*)");
   private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<![ a-z]) +");
 
