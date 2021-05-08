@@ -9,26 +9,26 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
 
 public class NCWakeCountyEParser extends FieldProgramParser {
-  
+
   public NCWakeCountyEParser() {
-    super("WAKE COUNTY", "NC", 
+    super("WAKE COUNTY", "NC",
           "Incident:CALL! Alarm_Level:PRI! Place:PLACE! Map:MAP! Addr:ADDR! Apt:APT! City:CITY! ID:ID! Pri:PRI/L! Date:DATE! Time:TIME! Unit:UNIT! Info:INFO! TAC:CH! Lati:GPS1/d Long:GPS2/d");
   }
-  
+
   @Override
   public String getFilter() {
     return "ECCDISPATCH@rwecc.net";
   }
-  
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?=(?:Alarm Level|Map|Time|Unit):)");
-  
+
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Alarm Level|Place|Map|Addr|City|ID|Pri|Time|Unit|Info|TAC|Lati|Long):)");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("\n ", "");
     body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -37,10 +37,10 @@ public class NCWakeCountyEParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.+) (\\d{1,2}[A-Z]\\d{1,2}[A-Z]?)");
   private CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   private class MyCallField extends Field {
 
     @Override
@@ -60,11 +60,11 @@ public class NCWakeCountyEParser extends FieldProgramParser {
       return "CALL CODE";
     }
   }
-  
+
   private static final Pattern INFO_DELIM = Pattern.compile("[, ]*\\[\\d{1,2}\\] *");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("Class of Service:.*|Automatic Case Number.*");
   private static final Pattern INFO_DELIM2 = Pattern.compile(" +(?=\\d{1,2}\\. +)");
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -83,7 +83,7 @@ public class NCWakeCountyEParser extends FieldProgramParser {
       }
       data.strSupp = sb.toString();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";

@@ -1130,6 +1130,7 @@ public class Active911ParserTable {
       "US/NC/ForsythCounty",              "NCForsythCounty",
       "US/NC/FourOaksFD",                 "NCJohnstonCounty",
       "US/NC/FranklinCounty",             "NCFranklinCounty",
+      "US/NC/FuquaVarinaFD",              "NCWakeCountyD,NCWakeCountyE",
       "US/NC/GarnerFire",                 "NCWakeCountyD",
       "US/NC/GastonCounty",               "NCGastonCounty",
       "US/NC/GatesCounty",                "NCGatesCounty",
