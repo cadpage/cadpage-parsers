@@ -21,18 +21,31 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +([-+]?\\d{2,3}\\.\\d{3,} [-+]?\\d{2,3}\\.\\d{3,})$");
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Call Type:")) return false;
     data.strCall = subject.substring(10).trim();
     body = stripFieldEnd(body, " Please respond immediately.");
     int pt = body.lastIndexOf("\n\n");
     if (pt >= 0) body = body.substring(pt+2).trim();
+
+    Matcher match = TRAIL_GPS_PTN.matcher(body);
+    if (match.find()) {
+      setGPSLoc(match.group(1), data);
+      body = body.substring(0,match.start());
+    }
     return super.parseMsg(body, data);
   }
 
   @Override
   public String getProgram() {
-    return "CALL " + super.getProgram();
+    return "CALL " + super.getProgram() + " GPS";
   }
 
   @Override
