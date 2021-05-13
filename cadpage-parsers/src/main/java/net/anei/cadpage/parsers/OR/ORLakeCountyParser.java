@@ -28,6 +28,7 @@ public class ORLakeCountyParser extends DispatchA22Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "CV",       "CHRISTMAS VALLEY"
+      "CHRISTMAS", "CHRISTMAS VALLEY",
+      "CV",        "CHRISTMAS VALLEY"
   });
 }
