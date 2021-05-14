@@ -10,7 +10,7 @@ public class ARDallasCountyParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "DALLASCOUNTYNOTIFICATION@OMNIGO.COM";
+    return "DALLASCOUNTYNOTIFICATION@OMNIGO.COM,noreply@omnigo.com";
   }
 
 }
