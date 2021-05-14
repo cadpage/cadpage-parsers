@@ -1596,6 +1596,7 @@ public class ParserList {
               ,"TXTarrantCounty"                ,"Tarrant County, TX"
               ,"TXTexasCity"                    ,"Texas City, TX"
               ,"TXTravisCounty"                 ,"Travis County, TX"
+              ,"TXUTHealthEastTexas"            ,"UTHealth East Texas, TX"
               ,"TXVanAlstyne"                   ,"Van Alstyne, TX"
               ,"TXVanZandtCounty"               ,"Van Zandt County, TX"
               ,"TXWalkerCounty"                 ,"Walker County, TX"
@@ -1603,6 +1604,7 @@ public class ParserList {
               ,"TXWhartonCounty"                ,"Wharton County, TX"
               ,"TXWichitaCounty"                ,"Wichita County, TX"
               ,"TXWilliamsonCounty"             ,"Williamson County, TX"
+              ,"TXWoodCounty"                   ,"Wood County, TX"
               ,"TXWylie"                        ,"Wylie, TX"
           ),
           new ParserCategory("Utah"

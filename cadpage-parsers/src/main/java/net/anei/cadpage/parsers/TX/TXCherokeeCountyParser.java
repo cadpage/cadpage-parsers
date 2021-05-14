@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXCherokeeCountyParser extends DispatchA55Parser {
-  
+/**
+ * Cherokee County, TX
+ */
+public class TXCherokeeCountyParser extends GroupBestParser {
+
   public TXCherokeeCountyParser() {
-    super("CHEROKEE COUNTY", "TX");
+    super(new TXCherokeeCountyAParser(), new TXCherokeeCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "cadalerts@eforcesoftware.com";
-  }
-
 }

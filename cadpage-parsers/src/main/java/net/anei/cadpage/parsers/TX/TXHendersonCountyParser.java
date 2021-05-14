@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA64Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXHendersonCountyParser extends DispatchA64Parser {
-  
+/**
+ * Henderson County, TX
+ */
+public class TXHendersonCountyParser extends GroupBestParser {
+
   public TXHendersonCountyParser() {
-    super("HENDERSON COUNTY", "TX");
+    super(new TXHendersonCountyAParser(), new TXHendersonCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "cadalerts@eforcesoftware.com";
-  }
-
 }
