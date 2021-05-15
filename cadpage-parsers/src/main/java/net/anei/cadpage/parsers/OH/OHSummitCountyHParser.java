@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -18,9 +20,17 @@ public class OHSummitCountyHParser extends FieldProgramParser {
     return "Dispatch1,info@sundance-sys.com,BHDispMap";
   }
 
+  private static final Pattern PFX1_PTN = Pattern.compile("(?:\\*+(?:ALL CALL)\\*+:?|ALL )(?=CALL:)");
+  private static final Pattern PFX2_PTN = Pattern.compile("\\*+2ND PAGE\\*+ *\n");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("**ALL CALL**:")) body = "CALL:" + body.substring(13);
+    Matcher  match = PFX1_PTN.matcher(body);
+    if (match.lookingAt()) {
+      body = body.substring(match.end());
+    } else if ((match = PFX2_PTN.matcher(body)).lookingAt()) {
+      body = "CALL:" + body.substring(match.end());
+    }
     return parseFields(body.split("\n"), data);
   }
 
