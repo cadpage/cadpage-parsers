@@ -26,7 +26,14 @@ public class NCStokesCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Stokes County Call")) return false;
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strCity.equals("Stuart")) data.strState = "VA";
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CITY", "CITY ST");
   }
 
   @Override
@@ -119,6 +126,7 @@ public class NCStokesCountyParser extends FieldProgramParser {
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "BEL",  "Belews Creek",
       "BELE", "Belews Creek",
       "BETH", "Bethania",
       "CLEM", "Clemmons",
@@ -137,12 +145,17 @@ public class NCStokesCountyParser extends FieldProgramParser {
       "LAW",  "Lawsonville",
       "LEW",  "Lewisville",
       "MAD",  "Madison",
+      "MTA",  "Mt Airy",
       "PFAF", "Pfafftown",
+      "PH",   "Pine Hall",
       "PIN",  "Pinnacle",
-      "RH",   "RuralHall",
+      "PIL",  "Pilot Mountain",
+      "RH",   "Rural Hall",
+      "RUH",  "Rural Hall",
       "SAN",  "Sandy Ridge",
       "SC",   "StokesCounty",
       "STA",  "Stanleyville",
+      "STU",  "Stuart",
       "STOK", "Stokesdale",
       "SU",   "Surry",
       "TOB",  "Tobaccoville",
