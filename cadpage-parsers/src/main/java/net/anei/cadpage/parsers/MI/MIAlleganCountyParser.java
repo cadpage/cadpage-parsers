@@ -1,33 +1,55 @@
 package net.anei.cadpage.parsers.MI;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA9Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 
 /**
  * Allegan County, MI
  */
-public class MIAlleganCountyParser extends DispatchA9Parser {
-  
+public class MIAlleganCountyParser extends DispatchH05Parser {
+
   public MIAlleganCountyParser() {
-    super(null, "ALLEGAN COUNTY", "MI");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    super("ALLEGAN COUNTY", "MI",
+          "Date_&_Time:DATETIME! Call_Type:CALL! Priority:PRI! Call_Location:ADDRCITY! Cross_Streets:X! Caller_Name_&_Phone_Number:NAME_PHONE! Units:UNIT! Incident_Number:ID! Narrative:EMPTY! INFO_BLK+ Unit_Times:EMPTY TIMES+");
+          setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "@allegancounty.org";
+    return "incidentnotification@allegancounty.org";
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
     return super.getField(name);
   }
-  
+
+  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*) (\\(\\d{3}\\) ?\\d{3}-\\d{4})");
+  private class MyNamePhoneField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = NAME_PHONE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strPhone = match.group(2);
+      }
+      data.strName = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "NAME PHONE";
+    }
+  }
+
   private static final Pattern MNN_HWY_PTN1 = Pattern.compile("\\bM ?(\\d+) HWY");
   private static final Pattern MNN_HWY_PTN2 = Pattern.compile("\\bM_(\\d+) HWY");
   private class MyAddressField extends AddressField {
@@ -38,7 +60,7 @@ public class MIAlleganCountyParser extends DispatchA9Parser {
       data.strAddress = MNN_HWY_PTN2.matcher(data.strAddress).replaceAll("M$1 HWY");
     }
   }
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     return stripFieldEnd(address, " HWY");
@@ -62,5 +84,5 @@ public class MIAlleganCountyParser extends DispatchA9Parser {
       "41 NB I 196", "42.68180,-86.16984",
       "41 SB I 196", "42.68180,-86.17020",
   });
-  
+
 }
