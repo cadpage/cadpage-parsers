@@ -16,7 +16,7 @@ public class MDKentCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,911@Kentgov.org,@alert.active911.com";
+    return "FlexRapidNotification@dccnotify.com,911@Kentgov.org,@alert.active911.com,cadflex@kentgov.org";
   }
 
   @Override
