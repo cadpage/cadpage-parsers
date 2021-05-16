@@ -11,7 +11,7 @@ public class MDMontgomeryCountyCParser extends FieldProgramParser {
 
   public MDMontgomeryCountyCParser() {
     super("MONTGOMERY COUNTY", "MD",
-          "ID CALL ADDR! CITY Apt/Suite:APT? LOC:PLACE Box_Area:BOX! X/Y:GPS? TG/CH:CH? Units:UNIT! END");
+          "ID CALL ADDR! CITY Apt/Suite:APT? LOC:PLACE ( Box_Area:BOX! | Area:MAP! Beat:MAP/L! ) X/Y:GPS? TG/CH:CH? Units:UNIT! END");
   }
 
   @Override
