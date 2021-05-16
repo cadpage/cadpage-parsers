@@ -9,17 +9,17 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 
 
 public class KYBoydCountyBParser extends FieldProgramParser {
-  
+
   public KYBoydCountyBParser() {
-    super("BOYD COUNTY", "KY", 
-          "UNIT UNIT/S+? CODE_CALL ( EMPTY ID! | ADDR APT? CITY ID! ) END");
+    super("BOYD COUNTY", "KY",
+          "UNIT UNIT/S+? CODE_CALL ( EMPTY ID! | ADDR APT? CITY ID! ) INFO/N+");
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]{2,5}", true);
@@ -27,7 +27,7 @@ public class KYBoydCountyBParser extends FieldProgramParser {
     if (name.equals("ID"))  return new IdField("\\d{12}", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]{2,5}) - +(.*)");
   private class MyCodeCallField extends Field {
 
@@ -43,6 +43,6 @@ public class KYBoydCountyBParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CODE CALL";
     }
-    
+
   }
 }
