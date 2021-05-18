@@ -57,6 +57,11 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       if (EAST_MAXFIELD_CREEK_PTN.matcher(data.strAddress).matches()) data.strCity = "MONMOUTH";
     }
 
+    // Lincoln County problems
+    else if (data.strCity.isEmpty()) {
+      data.strAddress = data.strAddress.replace("KLINE HILL LOOP", "CLINE HILL LOOP");
+    }
+
     // See if we can use call code to improve call description
     if (data.strCode.length() > 0) {
       String call = CALL_CODES.getCodeDescription(data.strCode);
