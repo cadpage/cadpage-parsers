@@ -13,7 +13,7 @@ public class KYHarrisonCountyBParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info";
+    return "dispatch@911comm2.info,dispatch@harrisonkye911.info";
   }
 
   @Override
