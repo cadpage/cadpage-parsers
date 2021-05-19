@@ -39,7 +39,9 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n<div");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseHtmlMsg(subject, body, data);
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (data.strCity.equals("Out of County")) data.defCity = "";
+    return true;
   }
 
   @Override
@@ -66,6 +68,12 @@ public class WICalumetCountyAParser extends DispatchPrintrakParser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern CTH_PTN = Pattern.compile("\\bCTH\\b", Pattern.CASE_INSENSITIVE);
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("Out of County")) return "";
+    return city;
+  }
 
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       // Brown County
