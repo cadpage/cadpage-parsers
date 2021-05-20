@@ -16,7 +16,7 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
 
   public MDCarrollCountyBParser() {
     super("CARROLL COUNTY", "MD",
-           "CALL ( BOX ( UNIT ADDR! | ADDR! UNIT ) | UNIT BOX ADDR ) INFO+");
+           "CALL ( BOX ( UNIT ADDR! | ADDR! UNIT ) | UNIT BOX ADDR! APT:APT_CITY_ST? ) INFO+");
     setupMultiWordStreets(
         "BUTLERS BRANCH",
         "CHRIS MAR",
@@ -62,6 +62,7 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
     if (name.equals("BOX")) return new MyBoxField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("APT_CITY_ST")) return new MyAptCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -107,6 +108,37 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
+  private class MyAptCityStateField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(',');
+      if (STATE_PTN.matcher(city).matches()) {
+        data.strState = city;
+        city = p.getLastOptional(',');
+      }
+      String apt = p.get();
+      if (apt.isEmpty()) {
+        int pt = city.indexOf(' ');
+        if (pt >= 0) {
+          apt = city.substring(0,pt).trim();
+          city = city.substring(pt+1).trim();
+        } else {
+          apt = city;
+          city = "";
+        }
+      }
+      data.strApt = apt;
+      data.strCity = city;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "APT CITY ST";
     }
   }
 
