@@ -2615,7 +2615,7 @@ public class FieldProgramParser extends SmartAddressParser {
     }
 
     private boolean parse(String field, Data data, boolean force) {
-      
+
       int pt = field.lastIndexOf(',');
       if (pt >= 0) {
         String city = field.substring(pt+1).trim();
@@ -3031,11 +3031,11 @@ public class FieldProgramParser extends SmartAddressParser {
     public IdField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
-    
+
     public IdField(Pattern pattern) {
       super(pattern);
     }
-    
+
     public IdField(Pattern pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
@@ -3066,6 +3066,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class PhoneField extends Field {
 
+    private String append = null;
+
     public PhoneField() {
       setPattern(Pattern.compile("\\d{10}|\\d{3}-\\d{3}-\\d{4}"));
     }
@@ -3079,8 +3081,18 @@ public class FieldProgramParser extends SmartAddressParser {
     }
 
     @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      append = buildConnector(qual, null);
+    }
+
+    @Override
     public void parse(String field, Data data) {
-      data.strPhone = field;
+      if (append != null) {
+        data.strPhone = append(data.strPhone, append, field);
+      } else {
+        data.strPhone = field;
+      }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.SC;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -9,7 +10,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   public SCAndersonCountyDParser() {
     super("ANDERSON COUNTY", "SC",
-          "DATETIME CODE CALL ADDRCITYST INFO UNIT ID! NAME EMPTY? PHONE EMPTY END");
+          "DATETIME CODE CALL ADDRCITYST INFO UNIT ( ID_NAME | ID! NAME PHONE PHONE/CS ) END");
   }
 
   @Override
@@ -28,6 +29,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("ID_NAME")) return new MyIdNameField();
     if (name.equals("ID")) return new IdField("CFS\\d{4}-\\d+", true);
     return super.getField(name);
   }
@@ -49,6 +51,34 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = UNIT_BRK_PTN.matcher(field).replaceAll(",");
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern ID_NAME_PTN =  Pattern.compile("(CFS\\d{4}-\\d+) +(.*)");
+  private class MyIdNameField extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ID_NAME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCallId =  match.group(1);
+      String name = match.group(2);
+      if (!name.equals("None")) data.strName = cleanWirelessCarrier(name);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ID NAME";
     }
   }
 }
