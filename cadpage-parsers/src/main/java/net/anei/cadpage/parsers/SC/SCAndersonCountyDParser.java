@@ -9,7 +9,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   public SCAndersonCountyDParser() {
     super("ANDERSON COUNTY", "SC",
-          "DATETIME CODE CALL ADDRCITYST INFO UNIT ID! END");
+          "DATETIME CODE CALL ADDRCITYST INFO UNIT ID! NAME EMPTY? PHONE EMPTY END");
   }
 
   @Override
@@ -20,7 +20,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.isEmpty()) return false;
-    return parseFields(body.split("\\|"), data);
+    return parseFields(body.split("\\|", -1), data);
   }
 
   @Override
