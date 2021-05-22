@@ -17,18 +17,6 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
   public MDCarrollCountyBParser() {
     super("CARROLL COUNTY", "MD",
            "CALL ( BOX ( UNIT ADDR! | ADDR! UNIT ) | UNIT BOX ADDR! APT:APT_CITY_ST? ) INFO+");
-    setupMultiWordStreets(
-        "BUTLERS BRANCH",
-        "CHRIS MAR",
-        "CARROLL CREEK VIEW",
-        "COON CLUB",
-        "EDGEWOOD CHURCH",
-        "FORT FOOTE",
-        "MIKE SHAPIRO",
-        "MT GILEAD",
-        "OLD ALEXANDRIA FERRY",
-        "RUSTIC VIEW"
-    );
   }
 
   @Override
@@ -43,6 +31,7 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
     if (!match.matches()) return false;
 
     int pt = body.indexOf("\n\n___");
+    if (pt < 0) pt = body.indexOf("\n\nReply STOP");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
     data.strSource = match.group(1);
@@ -59,56 +48,12 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("BOX")) return new MyBoxField();
+    if (name.equals("BOX")) return new BoxField("\\d{3,}[A-Z]{0,2}|[A-Z]C00", true);
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT_CITY_ST")) return new MyAptCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-
-  // Box field behaves normally unless this is a mutual aid call
-  // in which case it becomes a county code
-  private static final Pattern BOX_PTN = Pattern.compile("\\d{3,}[A-Z]{0,2}");
-  private class MyBoxField extends BoxField {
-
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (data.strCall.startsWith("MUTUAL AID")) {
-        parseMACityCode(field, data);
-        return true;
-      }
-
-      if (field.length() == 4 && field.startsWith("MA")) {
-        if (!data.strCall.startsWith("MUTUAL AID")) {
-          data.strCall = "MUTUAL AID " + data.strCall;
-        }
-        parseMACityCode(field.substring(2), data);
-        return true;
-      }
-
-      if (BOX_PTN.matcher(field).matches()) {
-        super.parse(field, data);
-        return true;
-      }
-      return false;
-    }
-
-    private void parseMACityCode(String field, Data data) {
-      String[] tmp = convertCodes(field, COUNTY_CODES).split(",");
-      data.strCity = tmp[0];
-      if (tmp.length > 1) data.strState = tmp[1];
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
   }
 
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
@@ -159,141 +104,92 @@ public class MDCarrollCountyBParser extends FieldProgramParser {
   }
 
 
-  private static final Pattern ADDR_AT_AT_PTN = Pattern.compile("(.*? AT .*?) at (.* AT .*)");
-  private static final Pattern ADDR_BOX_PTN = Pattern.compile("\\d{2}-\\d{1,2}");
-  private static final Pattern APT_PTN = Pattern.compile("(?:\\bAPT\\b|\\bROOM\\b|\\bRM\\b|\\bUNIT\\b|#) *([^ ]+)$");
-  private static final Pattern APT_PTN2 = Pattern.compile("(?:\\bAPT(?![A-Z])|\\bROOM|\\bRM|\\bUNIT\\b|#) *([^ ]+) *");
-  private static final Pattern CHANNEL_PTN = Pattern.compile(" TG *(.*)$");
-  private static final Pattern SEPARATOR = Pattern.compile(";| // ");
+  private static final Pattern MA_ADDR_PTN1 = Pattern.compile("(?:(\\d{2}-\\d{1,2})[ /]+)?(.*) @ [A-Z]C, *(.*), *([A-Z]{2})");
+  private static final Pattern MA_ADDR_PTN2 = Pattern.compile("([A-Z]C), *(?:(\\d{2}-\\d{1,2})[ /]+)?(.*)");
+  private static final Pattern MA_ADDR_DELIM = Pattern.compile(" *(?<! W)/+ *");
+  private static final Pattern INTERSECT_DBL_SFX_PTN = Pattern.compile("(.*?) */ *(.*) +(AVE|BLVD|DR|LN|RD|ST) +(AVE|BLVD|DR|LN|RD|ST)");
   private class MyAddressField extends Field {
 
     @Override
     public void parse(String fld, Data data) {
 
-      // Rules are completely different for old style mutual aid calls
-      // If it was, there may be a box code,
-      // there is some addition call description stuff following the address
-      // And the last token is a radio code
+      // Mutual aid calls have their own unique address structure
+      if (data.strCall.startsWith("MUTUAL AID")) {
 
-      // New style mutual aid call address contains a comma and should be
-      // treated normally
-      if (!fld.contains(",") && data.strCall.startsWith("MUTUAL AID")) {
-        Parser p = new Parser(fld);
-        String tmp = p.get(' ');
-        if (tmp.equals("BOX") || tmp.equals("BC")) {
-          data.strBox = p.get(' ');
-          fld = p.get();
-        } else if (ADDR_BOX_PTN.matcher(tmp).matches()) {
-          data.strBox = tmp;
-          fld = p.get();
-        }
-        Matcher match = CHANNEL_PTN.matcher(fld);
-        if (match.find()) {
-          data.strChannel = match.group(1).trim();
-          fld = fld.substring(0,match.start()).trim();
+        String box = null;
+        String addr = null;;
+        Matcher match = MA_ADDR_PTN1.matcher(fld);
+        if (match.matches()) {
+          box = match.group(1);
+          addr = match.group(2).trim();
+          data.strCity = match.group(3);
+          data.strState = match.group(4);
         }
 
-        String call;
-        match = SEPARATOR.matcher(fld);
-        if (match.find()) {
-          parseAddress(fld.substring(0,match.start()).trim(), data);
-          int pt = match.end();
-          if (data.strChannel.length() == 0 && match.find()) {
-            call = fld.substring(pt, match.start()).trim();
-            data.strChannel = fld.substring(match.end()).trim();
-          } else {
-            call = fld.substring(pt).trim();
+        else if ((match = MA_ADDR_PTN2.matcher(fld)).matches()) {
+          String code = match.group(1);
+          box = match.group(2);
+          addr = match.group(3);
+          String city = COUNTY_CODES.getProperty(code);
+          if (city == null) abort();
+          int pt = city.indexOf(',');
+          if (pt >= 0) {
+            data.strState = city.substring(pt+1);
+            city = city.substring(0,pt);
           }
-        } else {
-          parseAddress(StartType.START_ADDR, fld, data);
-          call = getLeft();
+          data.strCity = city;
         }
-        data.strCall = append(data.strCall, " - ", call);
+
+        if (addr != null) {
+          if (box != null) data.strBox = box;
+          String[] parts = MA_ADDR_DELIM.split(addr);
+          int ndx = 0;
+          addr = parts[ndx++];
+          while (ndx < parts.length-2) {
+            addr = append(addr, " & ", parts[ndx++]);
+          }
+          if (ndx < parts.length) {
+            data.strCall = data.strCall = append(data.strCall, " - ", parts[ndx++]);
+            if (ndx < parts.length) data.strChannel = parts[ndx++];
+          }
+
+          parseAddress(StartType.START_ADDR, addr, data);
+          data.strPlace = getLeft();
+          return;
+        }
       }
 
       // resume normal address parsing
-      else {
-        // Strip off state and city
-        Parser p = new Parser(fld);
-        String city = p.getLastOptional(',');
-        if (city.length() == 2) {
-          if (!city.equals(data.defState)) data.strState = city;
-          city = p.getLastOptional(',');
-        }
-        data.strCity = city;
-        fld = p.get();
 
-        // Strip off any cross street numbers
-        if (fld.endsWith(">")) {
-          int pt = fld.indexOf('<');
-          if (pt >= 0) {
-            fld = fld.substring(0,pt).trim();
-            fld = stripFieldEnd(fld, "#");
-          }
-        }
+      // Strip off leading place
+      Parser p = new Parser(fld);
+      data.strPlace = p.getOptional('@');
 
-        // They have a weird of of designating intersections that we will try to simplify
-        Matcher match = ADDR_AT_AT_PTN.matcher(fld);
-        if (match.matches()) {
-          String p1 = match.group(1).trim();
-          String p2 = match.group(2).trim();
-          if (p1.equals(p2)) fld = p1;
-        }
-
-        // See if we can find an apt field
-        match = APT_PTN.matcher(fld);
-        if (match.find()) {
-          data.strApt = match.group(1);
-          fld = fld.substring(0,match.start()).trim();
-        }
-
-
-        // Rest of address could include a place name separated by a ; or @
-        // Unfortunately, the two fields might be in either order :(
-        if (fld.startsWith("@")) fld = fld.substring(1).trim();
-        int pt = fld.indexOf('@');
-        if (pt < 0) pt = fld.indexOf(';');
-        if (pt < 0) {
-          match = APT_PTN2.matcher(fld);
-          if (match.find()) {
-            data.strApt = match.group(1);
-            data.strPlace = fld.substring(0,match.start()).trim();
-            fld = fld.substring(match.end()).trim();
-          }
-          if (data.strPlace.length() > 0) {
-            parseAddress(fld, data);
-          } else {
-            parseAddress(StartType.START_PLACE, FLAG_IGNORE_AT | FLAG_ANCHOR_END, fld, data);
-            if (data.strAddress.length() == 0) {
-              parseAddress(data.strPlace, data);
-              data.strPlace = "";
-            }
-            else if (data.strPlace.length() > 0) {
-              if (data.strApt.length() > 0) {
-                data.strApt = data.strApt + ' ' + data.strPlace;
-                data.strPlace = "";
-              }
-            }
-          }
-        }
-        else {
-          String fld1 = fld.substring(0,pt).trim();
-          String fld2 = fld.substring(pt+1).trim();
-          Result res1 = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_IGNORE_AT | FLAG_ANCHOR_END, fld1);
-          Result res2 = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_IGNORE_AT | FLAG_ANCHOR_END, fld2);
-          if (res2.getStatus() > res1.getStatus()) {
-            res1 = res2;
-            fld2 = fld1;
-          }
-          res1.getData(data);
-          data.strPlace = fld2;
-        }
+      // Strip off state and city
+      String city = p.getLastOptional(',');
+      if (city.length() == 2) {
+        data.strState = city;
+        city = p.getLastOptional(',');
       }
+      data.strCity = city;
+
+      // ANd maybe a trailing place
+      data.strPlace = append(data.strPlace, " - ", p.getLastOptional(','));
+
+      fld = p.get();
+
+      // They do weird things with intersection street names
+      Matcher match = INTERSECT_DBL_SFX_PTN.matcher(fld);
+      if (match.matches()) {
+        fld = match.group(1) + ' ' + match.group(3) + " & " + match.group(2) + ' ' + match.group(4);
+      }
+
+      parseAddress(fld, data);
     }
 
     @Override
     public String getFieldNames() {
-      return "BOX PLACE ADDR APT CITY ST CH";
+      return "BOX ADDR APT PLACE CALL CH CITY ST";
     }
   }
 
