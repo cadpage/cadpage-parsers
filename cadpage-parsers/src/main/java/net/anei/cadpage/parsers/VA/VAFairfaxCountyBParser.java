@@ -6,25 +6,25 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class VAFairfaxCountyBParser extends FieldProgramParser {
-  
+
   public VAFairfaxCountyBParser() {
-    super(CITY_CODES, "FAIRFAX COUNTY", "VA", 
-          "LOCATION:ADDR/S! EVENT_TYPE:CALL! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH% Disp:UNIT");
+    super(CITY_CODES, "FAIRFAX COUNTY", "VA",
+          "LOCATION:ADDR/S? EVENT_TYPE:CALL! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH% Disp:UNIT");
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Information")) return false;
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -51,20 +51,20 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
       data.strApt = append(data.strApt, "-", apt);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCode = field;
       data.strCall = convertCodes(field, CALL_CODES);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "FBLDG",  "BUILDING FIRE",
       "FHOU",   "HOUSE FIRE",
@@ -85,7 +85,7 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
       "RSWIFT", "SWIFT WATER RESCUE (MOVING WATER)",
       "RIVERF", "FLAT WATER RESCUE"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALEX",          "ALEXANDRIA",
       "ALEX CITY",     "ALEXANDER",
