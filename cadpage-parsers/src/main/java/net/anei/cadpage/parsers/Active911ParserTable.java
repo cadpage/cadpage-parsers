@@ -222,7 +222,7 @@ public class Active911ParserTable {
       "US/CA/StanislausCounty",           "CAStanislausCountyA",
       "US/CA/StanislausCountyTiburon",    "CAStanislausCountyA",
       "US/CA/StanislausCountyVRECC",      "CAStanislausCountyB",
-      "US/CA/Stockton",                   "CAStockton",
+      "US/CA/Stockton",                   "CASanJoaquinCountyB",
       "US/CA/Suisun",                     "CASuisunCityA",
       "US/CA/TulareCounty",               "CATulareCountyA",
       "US/CA/TuolumneCounty",             "CATuolumneCounty",

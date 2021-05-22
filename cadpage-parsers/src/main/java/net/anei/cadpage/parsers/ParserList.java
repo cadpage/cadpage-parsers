@@ -225,7 +225,6 @@ public class ParserList {
               ,"CASonomaCounty"                 ,"Sonoma County, CA"
               ,"CASouthLakeTahoe"               ,"South Lake Tahoe, CA"
               ,"CAStanislausCounty"             ,"Stanislaus County, CA"
-              ,"CAStockton"                     ,"Stockton, CA"
               ,"CASuisunCity"                   ,"Suisun City, CA"
               ,"CASutterCounty"                 ,"Sutter County, CA"
               ,"CATehamaCounty"                 ,"Tehama County, CA"

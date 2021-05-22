@@ -210,7 +210,8 @@ public class ManageParsers {
         "TXTarrantCountyE",   "TXTarrantCountyC",
         "CTGroton",           "CTNewLondonCounty",       // 01/18/2020
         "ILRandolphCountyB",  "ILMonroeCounty",          // 01/29/2020
-        "NCStanlyCountyA",    "NCStanlyCountyB"         // 11/28/2020
+        "NCStanlyCountyA",    "NCStanlyCountyB",         // 11/28/2020
+        "CAStockton",         "CASanJoaquinCounty"      // 05/21/2021
   });
 
 }
