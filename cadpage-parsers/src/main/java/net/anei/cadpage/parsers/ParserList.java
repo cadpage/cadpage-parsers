@@ -849,6 +849,7 @@ public class ParserList {
               ,"MNMartinCounty"                 ,"Martin County, MN"
               ,"MNMcLeodCounty"                 ,"McLeod County, MN"
               ,"MNMinneapolisStPaul"            ,"Minneapolis/St Paul, MN"
+              ,"MNMorrisonCounty"               ,"Morrison County, MN"
               ,"MNMowerCounty"                  ,"Mower County, MN"
               ,"MNNicolletCounty"               ,"Nicollet County, MN"
               ,"MNOlmstedCounty"                ,"Olmsted County, MN"

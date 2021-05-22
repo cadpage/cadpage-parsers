@@ -4,13 +4,23 @@ import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
 
 public class MNCrowWingCountyParser extends DispatchA43Parser {
-  
+
   public MNCrowWingCountyParser() {
-    super(CITY_LIST, "CROW WING COUNTY", "MN");
+    this("CROW WING COUNTY", "MN");
   }
-  
+
+  public MNCrowWingCountyParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState);
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "MNCrowWingCounty";
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
+    // Crow Wing County
     // Cities
     "BAXTER",
     "BRAINERD",
@@ -30,7 +40,7 @@ public class MNCrowWingCountyParser extends DispatchA43Parser {
     "PEQUOT LAKES",
     "RIVERTON",
     "TROMMALD",
- 
+
     // Townships
     "BAY LAKE",
     "CENTER",
@@ -68,7 +78,75 @@ public class MNCrowWingCountyParser extends DispatchA43Parser {
     "MISSON",
     "DEAN LAKE",
     "WEST CROW WING",
-    "OLD CROW WING"
-    
+    "OLD CROW WING",
+
+    // Morison County
+    // Cities
+    "BOWLUS",
+    "BUCKMAN",
+    "ELMDALE",
+    "FLENSBURG",
+    "GENOLA",
+    "HARDING",
+    "HILLMAN",
+    "LASTRUP",
+    "LITTLE FALLS",
+    "MOTLEY",
+    "PIERZ",
+    "RANDALL",
+    "ROYALTON",
+    "SOBIESKI",
+    "SWANVILLE",
+    "UPSALA",
+
+    // Unincorporated communities
+    "BELLE PRAIRIE",
+    "CENTER VALLEY",
+    "CUSHING",
+    "DARLING",
+    "FREEDHEM",
+    "GREGORY",
+    "LINCOLN",
+    "LITTLE ROCK",
+    "MORRILL",
+    "NORTH PRAIRIE",
+    "PLATTE",
+    "RAMEY",
+    "SHAMINEAU PARK",
+    "SULLIVAN",
+    "VAWTER",
+
+    // Townships
+    "AGRAM",
+    "BELLE PRAIRIE",
+    "BELLEVUE",
+    "BUCKMAN",
+    "BUH",
+    "CULDRUM",
+    "CUSHING",
+    "DARLING",
+    "ELMDALE",
+    "GRANITE",
+    "GREEN PRAIRIE",
+    "HILLMAN",
+    "LAKIN",
+    "LEIGH",
+    "LITTLE FALLS",
+    "MORRILL",
+    "MOTLEY",
+    "MOUNT MORRIS",
+    "PARKER",
+    "PIERZ",
+    "PIKE CREEK",
+    "PLATTE",
+    "PULASKI",
+    "RAIL PRAIRIE",
+    "RICHARDSON",
+    "RIPLEY",
+    "ROSING",
+    "SCANDIA VALLEY",
+    "SWAN RIVER",
+    "SWANVILLE",
+    "TWO RIVERS"
   };
 }
