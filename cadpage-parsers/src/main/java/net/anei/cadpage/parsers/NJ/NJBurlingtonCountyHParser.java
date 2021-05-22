@@ -8,47 +8,52 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class NJBurlingtonCountyHParser extends DispatchH05Parser {
-  
+
   public NJBurlingtonCountyHParser() {
-    super(CITY_CODES, "BURLINGTON COUNTY", "NJ", 
-          "FINAL? RADIO_CHANNEL:CH? " + 
-              "( TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " + 
-                "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " + 
-                "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:SKIP | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:SKIP ) https:QUERY! " +
-              "| CALL! RADIO_CHANNEL:CH! INC_NUMBER:EMPTY! ID! COMMON_NAME:EMPTY! NAME CALL_ADDRESS:EMPTY! ADDRCITY! QUALIFIER/LOCAL_INFO:EMPTY! INFO/N+ CROSS_STREETS:EMPTY! X " + 
+    super(CITY_CODES, "BURLINGTON COUNTY", "NJ",
+          "FINAL? RADIO_CHANNEL:CH? " +
+              "( TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " +
+                "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " +
+                "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:GPS | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:GPS ) https:QUERY! " +
+              "| CALL! RADIO_CHANNEL:CH! INC_NUMBER:EMPTY! ID! COMMON_NAME:EMPTY! NAME CALL_ADDRESS:EMPTY! ADDRCITY! QUALIFIER/LOCAL_INFO:EMPTY! INFO/N+ CROSS_STREETS:EMPTY! X " +
                 "CALLERS_NAME:NAME! CALLERS_ADDRESS:SKIP! CALLERS_PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT ALERTS:EMPTY! ALERT INFO/N+ END " +
-              "| CALL! CALL2+ INC_NUMBER:EMPTY! ID! ADDRCITY! CROSS_STREETS:EMPTY! X! NAME:NAME! ADDRESS:SKIP! PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT! ALERTS:EMPTY! ALERT INFO/N+ " + 
+              "| CALL! CALL2+ INC_NUMBER:EMPTY! ID! ADDRCITY! CROSS_STREETS:EMPTY! X NAME:NAME! ADDRESS:SKIP! PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT! ALERTS:EMPTY! ALERT INFO/N+ " +
               ")");
     setAccumulateUnits(true);
     setupMultiWordStreets("REV DR ML KING JR");
   }
-  
+
   @Override
   public String getFilter() {
     return "@co.burlington.nj.us,@CinnaminsonPolice.org";
   }
-  
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n|<br>|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
+
     if (subject.equals("Station 261")) {
       data.strSource = subject;
       return parseFields(SPEC_DELIM.split(body), data);
     }
-    
+
     if (subject.startsWith("[")) {
       int pt = subject.indexOf(']');
       if (pt < 0) return false;
       subject = subject.substring(pt+1).trim();
     }
-    
+
     int pt = body.indexOf("\nThe information in this e-mail");
     if (pt >= 0) body = body.substring(0,pt);
     return super.parseHtmlMsg(subject, body, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC? " + super.getProgram();
@@ -63,10 +68,11 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     if (name.equals("MAP"))  return new MyMapField();
     if (name.equals("QUERY")) return new MyQueryField();
     if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
-  
-  
+
+
   private static final Pattern CITY_PTN = Pattern.compile("(\\d\\d) *(.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE|UNIT) *(.*)");
   private class MyAddressCityField extends AddressCityField {
@@ -82,7 +88,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       int flags = FLAG_RECHECK_APT | FLAG_ANCHOR_END;
       if (city != null) flags |= FLAG_NO_CITY;
       parseAddress(StartType.START_ADDR, flags, field, data);
-      
+
       if (city != null) {
         city = stripFieldStart(city, data.strApt);
         Matcher match = CITY_PTN.matcher(city);
@@ -99,7 +105,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       }
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
@@ -107,8 +113,8 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
-  
+
+
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -127,7 +133,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern QUERY_PTN = Pattern.compile("//www.google.com/maps/.*?(?:,([A-Z+]{3,}))?(?:,([A-Z]{2}))?");
   private class MyQueryField extends Field {
 
@@ -151,20 +157,30 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       return "CITY ST";
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.equals(getRelativeField(-1))) return;
       super.parse(field,  data);
     }
   }
-  
+
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf("LAT/LONG:");
+      if (pt < 0) return;
+      field = field.substring(pt+9).replace("-", ",-");
+      super.parse(field, data);
+    }
+  }
+
   @Override
   protected boolean isNotExtraApt(String apt) {
     if (apt.startsWith("EXIT")) return true;
@@ -179,7 +195,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   }
   private static final Pattern CL_PTN = Pattern.compile("\\bCL\\b");
   private static final Pattern TN_PTN = Pattern.compile("\\bTN\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "10", "MAPLE SHADE TWP",
       "11", "DELANCO TWP",
@@ -220,7 +236,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       "70", "RIVERSIDE TWP",
       "80", "PALMYRA",
       "90", "BURLINGTON"
-      
+
   });
 
 }
