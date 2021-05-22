@@ -252,11 +252,11 @@ public abstract class MsgParser {
   // Parser specific table of GPS coordinates associated with
   // specific addresses (typically mile markers)
   private Properties gpsLookupTable = null;
-  
+
   // Parser specific table of GPS coordinates associated with
   // specific place names
   private Properties placeGpsLookupTable =  null;
-  
+
   // Save parse flags so we can check message status from methods that
   // were not passed the parse flags
   private int parseFlags;
@@ -868,7 +868,7 @@ public abstract class MsgParser {
           break;
         }
 
-        
+
         // If we found a keyword for this colon, bail out of loop
         // Otherwise try looking for another colon
         if (iEndPt >= 0) break;
@@ -1667,7 +1667,7 @@ public static void addCodeTable(Properties props, String[] table) {
 
    return body;
  }
- private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+ private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|SPAN|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
  private static final Pattern END_BR_PTN = Pattern.compile("< */(?:br|p) *>", Pattern.CASE_INSENSITIVE);
