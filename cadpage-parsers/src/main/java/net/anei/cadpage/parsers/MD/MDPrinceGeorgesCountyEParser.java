@@ -33,7 +33,7 @@ public class MDPrinceGeorgesCountyEParser extends MDPrinceGeorgesCountyBaseParse
     if (match.lookingAt()) body = body.substring(match.end());
 
     // rule out version G format
-    if (BAD_ID_PTN.matcher(body).lookingAt()) return false;
+    if (BAD_ID_PTN.matcher(body).find()) return false;
 
     match = ID_PTN.matcher(body);
     if (match.lookingAt()) {
