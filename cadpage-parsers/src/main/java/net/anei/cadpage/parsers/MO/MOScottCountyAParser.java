@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
@@ -9,6 +11,7 @@ public class MOScottCountyAParser extends DispatchBCParser {
 
   public MOScottCountyAParser() {
     super("SCOTT COUNTY", "MO");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -44,4 +47,8 @@ public class MOScottCountyAParser extends DispatchBCParser {
     }
     return true;
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "416 COUNTY HIGHWAY 212",               "+37.199800,-89.570200"
+  });
 }
