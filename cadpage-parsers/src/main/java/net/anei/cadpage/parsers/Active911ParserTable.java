@@ -1967,6 +1967,7 @@ public class Active911ParserTable {
       "US/VA/Franklin",                   "VAFranklinB",
       "US/VA/FranklinFireCommandStaff",   "VAFranklinB",
       "US/VA/FranklinCounty",             "VAFranklinCountyC",
+      "US/VA/FrederickCounty",            "VAFrederickCounty",
       "US/VA/Galax",                      "VAGalax",
       "US/VA/GalaxGraysonCounty",         "VAGalax",
       "US/VA/GilesCounty",                "VAGilesCounty",
