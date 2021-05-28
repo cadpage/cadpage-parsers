@@ -1253,6 +1253,7 @@ public class Active911ParserTable {
       "US/NJ/InfoMap911",                 "NJBergenCountyA",
       "US/NJ/JacksonTwpPolice",           "NJOceanCountyB,NJOceanCountyE",
       "US/NJ/JeffersonPolice",            "NJMorrisCountyB",
+      "US/NJ/LakehurstVFC",               "NJOceanCountyB",
       "US/NJ/LifeCommCad",                "NJMercerCountyA",
       "US/NJ/Linwood",                    "Cadpage2",
       "US/NJ/ManchesterTEMS",             "NJOceanCountyB",
