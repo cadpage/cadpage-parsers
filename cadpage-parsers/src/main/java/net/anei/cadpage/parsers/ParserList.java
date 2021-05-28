@@ -647,6 +647,7 @@ public class ParserList {
               ,"KYKnottCounty"                  ,"Knott County, KY"
               ,"KYKnoxCounty"                   ,"Knox County, KY"
               ,"KYLaRueCounty"                  ,"LaRue County, KY"
+              ,"KYLaurelCounty"                 ,"Laurel County, KY"
               ,"KYLawrenceCounty"               ,"Lawrence County, KY"
               ,"KYLincolnCounty"                ,"Lincoln County, KY"
               ,"KYLoganCounty"                  ,"Logan County, KY"
