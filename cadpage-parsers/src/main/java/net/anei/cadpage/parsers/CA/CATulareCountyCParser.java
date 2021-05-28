@@ -12,7 +12,7 @@ public class CATulareCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,dispatch@ci.porterville.ca.us";
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
