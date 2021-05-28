@@ -3,9 +3,9 @@ package net.anei.cadpage.parsers.CO;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchPremierOneParser;
+import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 
-public class COCostillaCountyParser extends DispatchPremierOneParser {
+public class COCostillaCountyParser extends DispatchH03Parser {
 
   public COCostillaCountyParser() {
     super("COSTILLA COUNTY", "CO");
