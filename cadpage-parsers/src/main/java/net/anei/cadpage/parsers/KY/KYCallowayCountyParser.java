@@ -7,24 +7,24 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 
 public class KYCallowayCountyParser extends DispatchA27Parser {
-  
+
   public KYCallowayCountyParser() {
     super("CALLOWAY COUNTY", "KY");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,cad@callkyso.com";
   }
-  
+
   private static final Pattern NORTH_PTN = Pattern.compile("\\bNORTH\\b");
   private static final Pattern STREET_PTN = Pattern.compile("\\bSTREET\\b");
   private static final Pattern DRIVE_PTN = Pattern.compile("\\bDRIVE\\b");
   private static final Pattern COURT_PTN = Pattern.compile("\\bCOURT\\b");
   private static final Pattern CIRCLE_PTN = Pattern.compile("\\bCIRCLE\\b");
   private static final Pattern AVENUE_PTN = Pattern.compile("\\bAVENUE\\b");
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = address.toUpperCase();
