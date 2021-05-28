@@ -165,7 +165,7 @@ public class Active911ParserTable {
       "US/CA/CityofPasoRobles",           "CAPasoRobles",
       "US/CA/CityofPorterville",          "CATulareCountyC",
       "US/CA/CityofRocklin",              "CAPlacerCountyB",
-      "US/CA/CityofRoseville",            "CAPlacerCountyC",
+      "US/CA/CityofRoseville",            "CAPlacerCountyC,CAPlacerCountyD",
       "US/CA/CityofSanLuisObispo",        "CASanLuisObispoCountyB",
       "US/CA/CityofSLakeTahoe",           "CASouthLakeTahoe",
       "US/CA/CityofSuisun",               "CASolanoCountyA",

@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +10,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA84Parser extends FieldProgramParser {
 
   public DispatchA84Parser(String defCity, String defState) {
-    super(defCity, defState,
+    this(null, defCity, defState);
+  }
+
+  public DispatchA84Parser(Properties cityCodes, String defCity, String defState) {
+    super(cityCodes, defCity, defState,
           "NOTIFYTYPE:SKIP! CALL:CALL! ADDR:ADDRCITY! CROSSSTREETS:X! ID:ID! PRI:PRI! DATE:DATETIME! MAP:SKIP! UNIT:UNIT! INFO:INFO/N+ DISTRICT:MAP! GROUP:MAP/D! AREA:MAP/D! LAT:GPS1! LON:GPS2 END");
   }
 
