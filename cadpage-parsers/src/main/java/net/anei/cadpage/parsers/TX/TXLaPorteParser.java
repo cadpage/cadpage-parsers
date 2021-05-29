@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.TX;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +23,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     super(TXGalvestonCountyAParser.CITY_CODES, defCity, defState,
           "( KEMA_FMT KEMA_ADDR/aS9CI " +
           "| CANCEL ADDR! CITY? " +
-          "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | ) INFO+? DATETIME UNIT? INFO+ " +
+          "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | MAP? ) INFO+? DATETIME UNIT? INFO+ " +
           ") INFO+");
   }
 
@@ -113,6 +112,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     if (name.equals("OPT_CITY")) return new MyOptCityField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("CODE")) return new CodeField("[A-Z]{1,2}[A-Z0-9]{1,2}", true);
+    if (name.equals("MAP")) return new MapField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }

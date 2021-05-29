@@ -2508,8 +2508,10 @@ public class CASacramentoCountyParser extends MsgParser {
   });
 
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "ARDEN-ARCADE", "ARDEN",
-      "COSUMNES",     "SLOUGHHOUSE",
-      "PACIFIC",      "SACRAMENTO"
+      "ARDEN-ARCADE",     "ARDEN",
+      "COSUMNES",         "SLOUGHHOUSE",
+      "FRUITRIDGE MANOR", "SACRAMENTO",
+      "NATOMAS",          "SACRAMENTO",
+      "PACIFIC",          "SACRAMENTO"
   });
 }
