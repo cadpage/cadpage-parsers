@@ -50,6 +50,7 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new MySourceField();
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
   }
@@ -60,6 +61,18 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
       field = stripFieldEnd(field, ":");
       super.parse(field, data);
     }
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|SUITE|STE)[# ]*(.*)", Pattern.CASE_INSENSITIVE);
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
+
+
   }
 
   private class MyMapField extends MapField {
