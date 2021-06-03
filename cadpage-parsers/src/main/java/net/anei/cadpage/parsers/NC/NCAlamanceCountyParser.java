@@ -15,7 +15,7 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
 
   public NCAlamanceCountyParser() {
     super(CITY_CODES, "ALAMANCE COUNTY", "NC",
-          "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? INFO/N+");
+          "ID?: FYI? CALL ADDR! ( APT CITY | CITY | ) X+? ( GPS1 GPS2 | ) INFO/N+");
   }
 
   @Override
@@ -45,6 +45,8 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -65,6 +67,14 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return "INFO APT";
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, false);
     }
   }
 
