@@ -19,7 +19,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   private static final Pattern MASTER1 = Pattern.compile("CFS(#)? (\\d{8}) +(.*)");
   private static final Pattern MSG_DISPATCH_PTN = Pattern.compile("Message [Ff]rom Dispatch ");
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("(?:(?:\\[[^\\[\\]]*)?\\{[^\\{\\}]*?\\}?|\\[SENT: [:\\d]+\\])$");
-  
+
   public TXCollinCountyAParser() {
     this("COLLIN COUNTY", "TX");
   }
@@ -31,23 +31,23 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "ccsodispatch@co.collin.tx.us,DispatchSMS@coppelltx.gov,ics.gateway@wylietexas.gov,wyliefiredispatch@gmail.com,CADPaging-NOREPLY@flower-mound.com,prosperdispatch@gmail.com,@outlook.com,icspage@murphytx.org,InfoRad@co.walker.tx.us,prosperdispatch@prospertx.gov";
   }
-  
-  
+
+
   @Override
   public String getAliasCode() {
     return "TXCollinCountyA";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom() {
@@ -58,7 +58,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
       String delim = match.group(1) == null ? "  +" : "// +";
@@ -78,7 +78,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
             parseAddress(flds[0], data);
             data.strCall = flds[1];
           }
-          
+
           if (flds.length > 2) data.strSupp = flds[2];
           for (int ndx = 2; ndx<flds.length; ndx++) {
             data.strSupp = append(data.strSupp, "\n", flds[ndx].trim());
@@ -86,12 +86,12 @@ public class TXCollinCountyAParser extends FieldProgramParser {
           return true;
         }
       }
-      
+
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body;
       return true;
     }
-    
+
     String alert = null;
     match = MSG_DISPATCH_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -102,24 +102,24 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     // Remove trailing ID
     match = TRAIL_JUNK_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start()).trim();
-    
+
     body = body.replace("CFS RMK ", "CFS RMK: ");
     body = body.replaceAll(" +/ +", " / ");
     if (super.parseMsg(body, data)) {
-      
+
       if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
       if (data.strAddress.length() > 0) return true;
     }
-    
+
     if (alert != null) return data.parseGeneralAlert(this, alert);
     return false;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID CALL ADDR APT CITY PLACE X SRC MAP UNIT INFO TIME";
   }
-  
+
   // Parse a mashup of ID, CALL, ADDR, CITY, and Cross streets all of which might
   // or might not be separated by double blank delimiters
   private static final Pattern ID_PTN = Pattern.compile("^(?:([- A-Za-z0-9]+)\\b)?(\\d{8}) +");
@@ -133,10 +133,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   private static final Pattern ALPHA_PTN = Pattern.compile("[A-Z]+", Pattern.CASE_INSENSITIVE);
   private static final Pattern TX_PTN = Pattern.compile("TX(?: (?:\\d{5}|0))?\\b *(.*)");
   private class MashField extends Field {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // Start with easy stuff.  ID is almost always the first token
       // Occasionally there is a call prefix in front of it
       Matcher match = ID_PTN.matcher(field);
@@ -145,14 +145,14 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       if (prefix.startsWith("CFS")) prefix = "";
       data.strCallId = match.group(2);
       field = field.substring(match.end());
-      
+
       // Check for one or more map grid constructs
       match = DIST_GRID_PTN.matcher(field);
       if (match.find()) {
         parseDistGrid(match, data);
         String info = field.substring(match.end()).trim();
         field = field.substring(0,match.start()).trim();
-        
+
         while ((match = DIST_GRID_PTN.matcher(info)).lookingAt()) {
           parseDistGrid(match, data);
           info = info.substring(match.end()).trim();
@@ -162,13 +162,13 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
       // If first phrase is a standby request, combine it with second term
       field = STANDBY_PTN.matcher(field).replaceFirst("STANDBY ");
-      
+
       // Fix leading blanks before STAGE AT phrase
       field = STAGE_AT_PTN.matcher(field).replaceFirst(" STAGE AT");
-      
+
       // Cleanup other special problems
       field = JUNK_PTN.matcher(field).replaceAll("  ");
-      
+
       // A field in {} is considered a place name
       match = BRACKET_PTN.matcher(field);
       if (match.find()) {
@@ -177,45 +177,45 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         data.strPlace = place.trim();
         field = field.substring(0,match.start()) + "  " + field.substring(match.end());
       }
-      
+
       // Break up what is left by any double blank delimiters and see what we have to work with
       String[] flds = field.split("  +");
       switch (flds.length) {
-      
+
       case 1:
-        
+
         parseAddr(CALL | CROSS, flds[0], data);
         break;
-        
+
       case 2:
-        
+
         // Two fields is ambiguous, we don't know if if the break is call/address and cross
         // or call and address/cross.  We'll check both for an IN keyword, which
         // would mark the address
         if (parseAddr(OPTIONAL | CROSS, flds[1], data)) {
           data.strCall = flds[0];
         }
-        
-        else { 
+
+        else {
           parseAddr(CALL, flds[0], data);
           data.strCross = flds[1];
         }
         break;
-        
+
       default:
-        
+
         // Three or more fields, special case if next to last field is CROSS STREETS
         int addrPt = -1;
-        
+
         for (int ii = flds.length-2; addrPt < 0 && ii>=1 && ii >= flds.length-3; ii--) {
           if (flds[ii].equals("CROSS STREETS")) {
             data.strCross = flds[ii+1];
             if (ii+2 < flds.length) data.strSupp = flds[ii+2];
-            addrPt = ii-1; 
-            parseAddr((addrPt == 0 ? CALL : 0), flds[addrPt], data); 
+            addrPt = ii-1;
+            parseAddr((addrPt == 0 ? CALL : 0), flds[addrPt], data);
           }
         }
-        
+
         // Otherwise, look for address in one of the last
         // two fields.
         if (addrPt < 0) {
@@ -234,24 +234,24 @@ public class TXCollinCountyAParser extends FieldProgramParser {
             }
           }
         }
-        
+
         if (addrPt < 0) abort();
-        
+
         // ANy fields in front of address are concatenated to form call description
         for (int ii = 0; ii < addrPt; ii++) {
           data.strCall = append(data.strCall, " - ", flds[ii]);
         }
         break;
       }
-      
+
       // Append the call prefix if we have one
       data.strCall = append(prefix, " - ", data.strCall);
-      
+
       // However we got them, remove leading/trailing / from cross field
       data.strCross = stripFieldStart(data.strCross, "/");
       data.strCross = stripFieldEnd(data.strCross, "/");
     }
-    
+
     private void parseDistGrid(Matcher match, Data data) {
       String extra = parseDistGrid2(match, data);
       while (extra.length() > 0) {
@@ -268,31 +268,31 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       if (!data.strMap.equals(map)) data.strMap = append(data.strMap, "/", map);
       return match.group(4).trim();
     }
-    
+
     private static final int OPTIONAL = 1;
     private static final int CALL = 2;
     private static final int CROSS = 4;
     private boolean parseAddr(int flags, String sAddress, Data data) {
-      
+
       // Break out flag options
       boolean optional = (flags & OPTIONAL) != 0;
       boolean call = (flags & CALL) != 0;
       boolean cross = (flags & CROSS) != 0;
-      
+
       int parseFlags = FLAG_NO_IMPLIED_APT;
       StartType st = StartType.START_ADDR;
       if (call) {
         st = StartType.START_CALL;
-        parseFlags |= FLAG_START_FLD_REQ; 
+        parseFlags |= FLAG_START_FLD_REQ;
       }
-      
+
       // Next, see if address contains an IN keyword separated call/address from city/cross
       Matcher match = IN_PTN.matcher(sAddress);
       if (match.find()) {
-        
+
         sAddress = match.group(1).trim();
         String tail = match.group(2).trim();
-        
+
         // Check for doubled IN city construct
         match = IN_PTN.matcher(sAddress);
         if (match.matches()) {
@@ -316,23 +316,23 @@ public class TXCollinCountyAParser extends FieldProgramParser {
             tail = stripFieldStart(tail, city);
           }
         }
-        
+
         // Check, use smart parser to split call and address
         parseAddress(st, parseFlags | FLAG_ANCHOR_END, sAddress, data);
-        
+
         tail = trimTX(tail);
-        
+
         if (data.strCity.length() > 0) {
           if (cross) setCross(tail, data);
           return true;
         }
-        
+
         // Otherwise, if we aren't handling cross streets, it is all city
         if (!cross) {
           data.strCity = tail;
           return true;
         }
-        
+
         // Otherwise, see if it starts with a two word city, if it does
         // use that city to break tail into city and cross streets
         String city = DOUBLE_CITY_LIST.getCode(tail.toUpperCase(), true);
@@ -341,7 +341,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
           setCross(trimTX(tail.substring(city.length()).trim()), data);
           return true;
         }
-        
+
         // Otherwise first word of tail is city, rest is cross
         // Unless city was followed by TX which needs to go
         Parser p = new Parser(tail);
@@ -349,7 +349,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         setCross(trimTX(p.get()), data);
         return true;
       }
-      
+
       // No IN keyword, if this was an optional parse, return failure
       // Unless is an obvious address
       if (optional) {
@@ -358,7 +358,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         res.getData(data);
         return true;
       }
-      
+
       // no IN keyword, which we assume means no city
       // Use smart address parser to separate call, adddress, and cross
       if (!cross) parseFlags |= FLAG_ANCHOR_END;
@@ -373,7 +373,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       if (match.matches()) tail = match.group(1);
       return tail;
     }
-    
+
     private void setCross(String cross, Data data) {
       if (cross.equals("2ND TONE/PAGE")) {
         data.strCall = append(data.strCall, " - ", cross);
@@ -381,13 +381,13 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         data.strCross = cross;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID CALL ADDR CITY X SRC MAP";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -402,7 +402,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_MAP_PTN = Pattern.compile("^MAP(?: PAGE)?[ _]?((?:[A-Z]{3} )?[-A-Z0-9]+)(?:\\.PDF)? *");
   private static final Pattern INFO_TIME_PTN = Pattern.compile("^(\\d\\d:\\d\\d)\\b");
   private static final Pattern INFO_NONE_PTN = Pattern.compile(" *<NO(?:NE|.* COMMENTS|.* REMARKS)> *");
@@ -414,23 +414,23 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         data.strMap = match.group(1);
         field = field.substring(match.end());
       }
-      
+
       match = INFO_TIME_PTN.matcher(field);
       if (match.find()) {
         data.strTime = match.group(1);
         field = field.substring(match.end()).trim();
       }
-      
+
       field = INFO_NONE_PTN.matcher(field).replaceAll(" ").trim();
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "MAP TIME INFO";
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("MASH")) return new MashField();
@@ -438,7 +438,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "880-101 S COIT RD",  "33.226272,-96.767895",
       "880-102 S COIT RD",  "33.226272,-96.767895",
@@ -748,7 +748,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "880-3905 S COIT RD",  "33.222206,-96.772921",
       "880-3906 S COIT RD",  "33.222206,-96.772921",
       "880-3907 S COIT RD",  "33.222206,-96.772921",
-      
+
       "980-110 S COIT RD",  "33.223826,-96.768216",
       "980-111 S COIT RD",  "33.223826,-96.768216",
       "980-112 S COIT RD",  "33.223826,-96.768216",
@@ -1087,7 +1087,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "980-1437 S COIT RD",  "33.22217,-96.771859"
 
   });
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "A O REEVES",
     "ALPHA OMEGA",
@@ -1620,7 +1620,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "WYLIE EAST",
     "WYNDHAM MEADOWS"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "10-150 MAJOR ACCIDENT",
       "1050 MAJOR",
@@ -1852,6 +1852,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "TRASH / DUMPSTER FIRE",
       "TRASH FIRE",
       "TRAUMATIC INJURIES",
+      "TREE",
       "TSUICI",
       "UFIRE",
       "UNAUTHORIZED BURN",
@@ -1871,7 +1872,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "WELFARE CHECK",
       "WELFARE CONCERN"
   );
-  
+
   private static final CodeSet DOUBLE_CITY_LIST = new CodeSet(
     "BLUE RIDGE",
     "COLLIN COUNTY",
