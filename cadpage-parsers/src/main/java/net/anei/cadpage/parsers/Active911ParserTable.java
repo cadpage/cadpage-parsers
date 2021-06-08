@@ -114,6 +114,7 @@ public class Active911ParserTable {
       "US/AL/Tallapoosa911",              "StandardA",
       "US/AL/Tarrant911",                 "ALJeffersonCountyJ",
       "US/AL/Trussville",                 "ALJeffersonCountyI",
+      "US/AL/Vandiver",                   "ALShelbyCountyA",
       "US/AL/Velocityps",                 "ALJeffersonCountyF",
       "US/AL/WalkerCounty",               "ALWalkerCounty",
       "US/AL/WinstonCounty",              "ALWinstonCounty",
