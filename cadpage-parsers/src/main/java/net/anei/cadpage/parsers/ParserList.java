@@ -578,6 +578,7 @@ public class ParserList {
               ,"KSJacksonCounty"                ,"Jackson County, KS"
               ,"KSJohnsonCounty"                ,"Johnson County, KS"
               ,"KSKingmanCounty"                ,"Kingman County, KS"
+              ,"KSKiowaCounty"                  ,"Kiowa County, KS"
               ,"KSLabetteCounty"                ,"Labette County, KS"
               ,"KSLeavenworthCounty"            ,"Leavenworth County, KS"
               ,"KSMarionCounty"                 ,"Marion County, KS"
@@ -1450,7 +1451,6 @@ public class ParserList {
           ),
           new ParserCategory("South Dakota"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
-              ,"SDKiowaCounty"                  ,"Kiowa County, SD"
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
               ,"SDMinnehahaCounty"              ,"Minnehaha County, SD"
               ,"SDPenningtonCounty"             ,"Pennington County, SD"

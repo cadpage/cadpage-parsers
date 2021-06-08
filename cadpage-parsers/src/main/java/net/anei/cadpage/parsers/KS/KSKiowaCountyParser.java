@@ -1,10 +1,10 @@
-package net.anei.cadpage.parsers.SD;
+package net.anei.cadpage.parsers.KS;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
-public class SDKiowaCountyParser extends DispatchA25Parser {
+public class KSKiowaCountyParser extends DispatchA25Parser {
 
-  public SDKiowaCountyParser() {
+  public KSKiowaCountyParser() {
     super("KIOWA COUNTY", "SD");
   }
 

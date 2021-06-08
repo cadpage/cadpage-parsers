@@ -24,6 +24,11 @@ public class NCAlamanceCountyParser extends DispatchOSSIParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     boolean good = false;
     if (subject.contains(";")) {
