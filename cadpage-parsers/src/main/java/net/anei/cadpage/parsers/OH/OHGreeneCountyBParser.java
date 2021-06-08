@@ -22,7 +22,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
 
   @Override
   public String getFilter() {
-    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn";
+    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn,@fairbornoh.gov";
   }
 
   @Override
