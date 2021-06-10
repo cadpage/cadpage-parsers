@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 public class KSRileyCountyParser extends DispatchA19Parser {
 
   public KSRileyCountyParser() {
-    super("RILEY COUNTY", "KS");
+    super(CITY_CODES, "RILEY COUNTY", "KS");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -22,6 +22,12 @@ public class KSRileyCountyParser extends DispatchA19Parser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "MN2", "MANHATTAN",
+      "MN3", "MANHATTAN",
+      "MN6", "MANHATTAN"
+  });
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "100 MANHATTAN TOWN CTR",    "39.178923, -96.558442",
