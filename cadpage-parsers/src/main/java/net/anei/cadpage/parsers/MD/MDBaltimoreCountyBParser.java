@@ -550,7 +550,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
       "014-07", "PIKESVILLE",
       "014-08", "LUTHERVILLE TIMONIUM",
       "014-09", "TOWSON",
-      "014-10", "BALTIMORE",
+      "014-10", "PIKESVILLE",
       "014-11", "PIKESVILLE",
       "014-12", "TOWSON",
       "014-13", "PIKESVILLE",
