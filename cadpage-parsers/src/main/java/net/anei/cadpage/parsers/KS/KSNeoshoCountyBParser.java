@@ -10,7 +10,7 @@ public class KSNeoshoCountyBParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "CPD@chanute.org";
+    return "chanute911@chanute.org";
   }
 
 }

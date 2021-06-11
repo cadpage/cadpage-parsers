@@ -11,7 +11,7 @@ public class KSNeoshoCountyAParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "NEOSHO911@OMNIGO.COM,NEOSHO911@ACEKS.COM";
+    return "noreply@omnigo.com";
   }
 
  }
