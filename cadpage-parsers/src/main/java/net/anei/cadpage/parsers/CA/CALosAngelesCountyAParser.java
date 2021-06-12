@@ -14,19 +14,19 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Los Angeles County, CA
  */
 public class CALosAngelesCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern MARKER = Pattern.compile("^(\\w+):[ /]*(?:(\\d\\d/\\d\\d/\\d\\d) )?(\\d\\d:\\d\\d(?::\\d\\d)?)/");
-  
+
   public CALosAngelesCountyAParser() {
     super(CITY_CODES, "LOS ANGELES COUNTY", "CA",
            "ALARM CALL ADDRCITY+? X1 ( X/ZSLS PLACE UNIT MAP ID | PLACE UNIT MAP ID ) INFO2+");
   }
-  
+
   @Override
   public String getFilter() {
     return "Verdugo@VerdugoFire.com,ljensen034m@gmail.com,landon034@icloud.com";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
@@ -47,12 +47,12 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
     body = body.substring(match.end()).trim();
     return parseFields(body.split("/"), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC DATE TIME " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ALARM")) return new MyAlarmField();
@@ -63,13 +63,13 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
     if (name.equals("INFO2")) return new MyInfo2Field();
     return super.getField(name);
   }
- 
+
   @Override
   public String adjustMapAddress(String sAddress) {
     return FWY_PTN.matcher(sAddress).replaceAll("RT $1");
   }
   private static final Pattern FWY_PTN = Pattern.compile("\\b(\\d+) *FWY\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private class MyAlarmField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -81,9 +81,9 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyCallField extends CallField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       String desc = CALL_CODES.getProperty(field);
       if (desc != null) {
@@ -92,25 +92,25 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       }
       data.strCall = append(field, " ", data.strCall);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PRI CALL";
     }
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // If parsed a city field on a previous pass, return failure
       if (data.strCity.length() > 0) return false;
-      
+
       String saveAddr = data.strAddress;
       data.strAddress = "";
       String place = null;
@@ -130,7 +130,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private static final Pattern X_MARKER = Pattern.compile("^(?:btwn |low xst:)");
   private class MyCross1Field extends CrossField {
     @Override
@@ -145,7 +145,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
   }
 
   private class MyInfo2Field extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "EMS INFO:");
@@ -153,7 +153,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, " / ", field);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALH", "ALHAMBRA",
       "ANF", "ANF",
@@ -178,14 +178,15 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "VER", "VERNON"
 
   });
-  
+
   private static Properties CALL_CODES = buildCodeTable(new String[]{
       "ALERT2",      "1/Emergency Landing At Airport",
       "ALERT3",      "1/Plane Accident, Down or Fire",
       "PERSON",      "1/Person On Fire",
       "PLANE",       "1/Plane Accident, Down or Fire",
       "TCSTR",       "1/Vehicle Into A Structure",
-      
+      "TCT",         "1/Collision W/Entrapment",
+
       "BUILD",       "2/Building Collapse Rescue",
       "CONFIN",      "2/Confined Space Rescue",
       "DERAIL",      "2/Train Derailment",
@@ -201,7 +202,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "TRENCH",      "2/Trench Rescue",
       "USAR",        "2/Collapse/Extrication/Rescue",
       "WMD",         "2/Weapons Mass Destruction Event",
-      
+
       "ABD1",        "3/Allergic Reaction",
       "ALERGY",      "3/Allergic Reaction",
       "ALOC",        "3/Altered Level of Consciousness",
@@ -243,7 +244,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "TR1",         "3/Severe Trauma",
       "UNCON",       "3/Person Unconscious-Unresponsve",
       "UNKMED",      "3/Unknown Medical",
-      
+
       "APT",         "4/Apartment House Fire",
       "BRUSH",       "4/Brush Fire",
       "BRUSHF",      "4/Brush Fire (Full Assignment)",
@@ -272,7 +273,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "TCFUEL",      "5/Traffic Collision w/Fuel Spill",
       "TR2",         "5/Minor Trauma",
       "WELFAR",      "5/Investigate The Welfare",
-      
+
       "APPL1",       "6/Appliance Fire – Major",
       "APPL2",       "6/Appliance Fire - Minor",
       "ELECF",       "6/Electrical Fire",
@@ -282,7 +283,7 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "RAIL",        "6/Train Fire",
       "SMOKEI",      "6/Smoke In A Structure",
       "UNKF",        "6/Unknown Type Fire",
-      
+
       "ALARM",       "7/Fire Alarm",
       "ANIMAL",      "7/Animal Rescue",
       "ARC",         "7/Arcing Wires",
@@ -325,9 +326,9 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
       "WATER",       "7/Minor Flooding",
       "WIRES",       "7/Wires Down",
       "WMAIN",       "7/Broken Water Main",
-      
+
       "INVL",        "8/Assist The Invalid",
-      
+
       "ALERT1",      "9/Airport Alert 1 - Stand By",
       "BOMB",        "9/Bomb Threat",
       "TCNON",       "9/Non-Inj Traffic Collision"
