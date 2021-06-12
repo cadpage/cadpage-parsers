@@ -1028,6 +1028,7 @@ public class Active911ParserTable {
       "US/MO/MobileFonePlatteCounty",     "MOJacksonCountyB",
       "US/MO/Mobilefonetotalaccess",      "MOJacksonCountyB",
       "US/MO/MoniteauCounty",             "MOMoniteauCounty",
+      "US/MO/Moniteau911",                "MOMoniteauCounty",
       "US/MO/MorganCounty",               "MOMorganCounty",
       "US/MO/MorganCountyHTML",           "COMorganCounty",
       "US/MO/NewtonCounty",               "MONewtonCounty",

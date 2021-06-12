@@ -24,7 +24,7 @@ public class MOMoniteauCountyParser extends HtmlProgramParser {
 
   @Override
   public String getFilter() {
-    return "CAD@MONITEAU911.COM,CADMONITEAU911@OMNIGO.COM,DISPATCH@OMNIGO.COM";
+    return "CAD@MONITEAU911.COM,CADMONITEAU911@OMNIGO.COM,DISPATCH@OMNIGO.COM,noreply@omnigo.com";
   }
 
   @Override
