@@ -10,46 +10,46 @@ import net.anei.cadpage.parsers.MsgParser.CountryCode;
  * the actual message text
  */
 public class MsgInfo {
-  
+
   // Flags that will be queried by the MsgParser.getMapFlags() method
   // the alter aspects of the map query string generation
-  
+
   // Suppress LA -> LN translation
   public static final int MAP_FLG_SUPPR_LA = 1;
-  
+
   // Remove EXT
   public static final int MAP_FLG_REMOVE_EXT = 2;
-  
+
   // Add default city/county in back of parsed city/county
   public static final int MAP_FLG_ADD_DEFAULT_CNTY = 4;
-  
+
   // Suppress NO EO SO WO -> & translation
   public static final int MAP_FLG_SUPPR_DIRO = 8;
-  
+
   // Suppress inclusion of place name in front of naked street names
   public static final int MAP_FLG_SUPPR_AND_ADJ = 0x10;
-  
+
   // Recommend use of GPS coordinates for mapping
   public static final int MAP_FLG_PREFER_GPS = 0x20;
-  
+
   // Suppress SR -> ST translation
   public static final int MAP_FLG_SUPPR_SR = 0x40;
-  
+
   // convert CR -> CRES instead of CIR
   public static final int MAP_FLG_CR_CRES = 0x80;
-  
+
   // Suppress conversion of various forms of CR XX to COUNTY ROAD XX
   public static final int MAP_FLG_SUPPR_CR = 0x100;
-  
+
   // convert CR -> CREEK instead of CIRCLE
   public static final int MAP_FLG_CR_CREEK = 0x200;
-  
+
   // Suppress TE -> TER translation
   public static final int MAP_FLG_SUPPR_TE = 0x400;
-  
+
   // Preserve STATE HIGHWAY construct
   public static final int MAP_FLG_KEEP_STATE_HIGHWAY = 0x800;
-  
+
   public enum MsgType { PAGE, GEN_ALERT, RUN_REPORT };
 
   private MsgType msgType;
@@ -81,27 +81,27 @@ public class MsgInfo {
   private MsgParser.CountryCode countryCode;
   private boolean preferGPSLoc;
   private MsgParser.MapPageStatus mapPageStatus;
-  
+
   // Flag set when parser determines that message is incomplete
   // and another part should be expected
   private boolean expectMore;
-  
+
   // Cached map address & map city & map page URL
   private String strBaseMapAddress = null;
   private String strMapCity = null;
   private String mapPageURL = null;
-  
+
   // Parser code of parser used to create this information block
   private String parserCode;
-  
+
   // Parser to be used for any followup processing
   // This is usually the same as the parser used to create this information block
   // The exception is the Cadpage family of parsers that are relaying information
   // created by another primary parser running on a vendor server.  In that
-  // situation, parserCode refers to the Cadpage class parser that parsed the 
+  // situation, parserCode refers to the Cadpage class parser that parsed the
   // information and parser points to the original information parser
   private MsgParser parser;
-  
+
 
   /**
    * Temporary data class used to pass information to constructor
@@ -138,7 +138,7 @@ public class MsgInfo {
     public MsgParser.CountryCode countryCode;
     public boolean preferGPSLoc;
     MsgParser.MapPageStatus mapPageStatus;
-    
+
     public boolean expectMore;
 
     public String parserCode;
@@ -146,17 +146,17 @@ public class MsgInfo {
     public String strBaseMapAddress;
     public String strMapCity;
     public String mapPageURL;
-    
+
     public Data(MsgParser parser) {
       initialize(parser);
     }
-    
+
     /**
      * Initialize existing Data structure to original state
      */
     public void initialize(MsgParser parser) {
       expectMore = false;
-      
+
       msgType = MsgType.PAGE;
       strCall = "";
       strPlace = "";
@@ -186,7 +186,7 @@ public class MsgInfo {
       countryCode = MsgParser.CountryCode.US;
       preferGPSLoc = false;
       mapPageStatus = null;
-      
+
       this.parser = parser;
       if (parser != null) {
         this.parserCode = parser.getParserCode();
@@ -196,14 +196,14 @@ public class MsgInfo {
         this.preferGPSLoc = (parser.getMapFlags() & MAP_FLG_PREFER_GPS) != 0;
         this.mapPageStatus = parser.getMapPageStatus();
       }
-      
+
       strBaseMapAddress = null;
       strMapCity = null;
       mapPageURL = null;
     }
-    
+
     /**
-     * Clear any information left over from a failed parse attempt, and 
+     * Clear any information left over from a failed parse attempt, and
      * set the data field to return a general alert status
      * @param message message to be set as the general alert text
      * @returns always returns true
@@ -214,9 +214,9 @@ public class MsgInfo {
       strSupp = message;
       return true;
     }
-    
+
     /**
-     * Clear any information left over from a failed parse attempt, and 
+     * Clear any information left over from a failed parse attempt, and
      * set the data field to return a RUN REPORT status
      * @param message message to be set as the general alert text
      * @returns always returns true
@@ -266,13 +266,13 @@ public class MsgInfo {
     expectMore = info.expectMore;
     preferGPSLoc = info.preferGPSLoc;
     mapPageStatus = info.mapPageStatus;
-    
+
     parserCode = info.parserCode;
     parser = info.parser;
     strBaseMapAddress = info.strBaseMapAddress;
     strMapCity = info.strMapCity;
     mapPageURL = info.mapPageURL;
-    
+
     // Convert old General ALert or Run report convention to new standard
     if (msgType == MsgType.PAGE) {
       if (strCall.equals("GENERAL ALERT")) msgType = MsgType.GEN_ALERT;
@@ -286,14 +286,14 @@ public class MsgInfo {
       }
     }
   }
-  
+
   /**
    * @return message type
    */
   public MsgType getMsgType() {
     return msgType;
   }
-  
+
   /**
    * @return call ID
    */
@@ -307,7 +307,7 @@ public class MsgInfo {
   public String getCall() {
     return strCall;
   }
-  
+
   /**
    * @return extended call description
    */
@@ -319,7 +319,7 @@ public class MsgInfo {
     }
     return call;
   }
-  
+
   /**
    * @return return place name
    */
@@ -333,7 +333,7 @@ public class MsgInfo {
   public String getAddress() {
     return strAddress;
   }
-  
+
   /*
    * @return call title
    */
@@ -360,8 +360,8 @@ public class MsgInfo {
     if (msgType == MsgType.GEN_ALERT || msgType == MsgType.RUN_REPORT) return false;
     return strCall.length() == 0 || strCall.equals("ALERT");
   }
-  
-  
+
+
   /**
    * Calculate map search string to be passed to Google maps
    * @param overrideCity if non-null, this value should override parser default city
@@ -374,10 +374,10 @@ public class MsgInfo {
     if (result != null) return result;
     return getMapAddress(!prefGPSLoc, overrideCity, overrideState);
   }
-  
+
   /**
    * Calculate map search string to be passed to Google maps
-   * @param useGPS true to request GPS map coordinates, 
+   * @param useGPS true to request GPS map coordinates,
    *  false to request regular street map address
    * @param overrideCity if non-null, this value should override parser default city
    * @param overrideState if non-null, this value should override parser default state
@@ -385,17 +385,17 @@ public class MsgInfo {
    */
   public String getMapAddress(boolean useGPS, String overrideCity, String overrideState) {
     if (useGPS) return (strGPSLoc.length() == 0 ? null : strGPSLoc);
-    
+
     // if there is no base address, return null
     String mapAddr = getBaseMapAddress();
     if (mapAddr.length() == 0) return null;
-    
+
     // If there is a GPS pattern in this, don't append anything
     if (MsgParser.GPS_PATTERN.matcher(mapAddr).find()) return mapAddr;
 
-    
+
     StringBuilder sb = new StringBuilder(mapAddr);
-    
+
     // Add city if specified, default city otherwise
     String city = getMapCity();
     if (city.equalsIgnoreCase("OUT OF COUNTY") ||
@@ -405,14 +405,14 @@ public class MsgInfo {
       city = (overrideCity != null ? overrideCity : defCity);
     } else if (overrideCity == null && (parser.getMapFlags() & MAP_FLG_ADD_DEFAULT_CNTY) != 0 &&
                 !city.contains(",")) {
-      city = city.length() == 0 ? defCity : city + ',' + defCity; 
+      city = city.length() == 0 ? defCity : city + ',' + defCity;
     }
 
     if (city.length() > 0 && !city.equalsIgnoreCase("NONE")) {
       sb.append(",");
       sb.append(city);
-    } 
-    
+    }
+
     // Add state if specified, default state otherwise
     String state = strState;
     if (state.length() == 0) {
@@ -422,16 +422,16 @@ public class MsgInfo {
       sb.append(",");
       sb.append(state);
     }
-    
+
     // Only add country for non-US addresses
     if (countryCode != MsgParser.CountryCode.US) {
       sb.append(",");
       sb.append(countryCode.toString());
     }
-    
+
     return sb.toString();
   }
-  
+
   /**
    * @return base mapping address, which is the adjusted address without
    * the additional city and state information
@@ -442,11 +442,11 @@ public class MsgInfo {
   private static final Pattern CROSS_DELIM = Pattern.compile("(?<=..)[&/,@]| - | AND ", Pattern.CASE_INSENSITIVE);
   private static final Pattern DEAD_END_PTN = Pattern.compile("END OF .*|DEAD END", Pattern.CASE_INSENSITIVE);
   public String getBaseMapAddress() {
-    
+
     if (strBaseMapAddress != null) return strBaseMapAddress;
 
     if (strAddress.length() == 0) return strAddress;
-    
+
     // See if we can find any GPS coordinates, if we do, return those
     String mapAddr = null;
     if (mapAddr == null) mapAddr = countryCode.parseGPSCoords(strAddress);
@@ -454,10 +454,10 @@ public class MsgInfo {
       strBaseMapAddress = mapAddr;
       return mapAddr;
     }
-    
+
     // If we have a parser, see if we have a GPS location match
     if (parser != null) {
-      String addr = parser.lookupGpsCoordinates(strAddress, strApt, strPlace);
+      String addr = parser.lookupGpsCoordinates(strAddress, strApt, strPlace, strCity);
       if (addr != null) {
         strBaseMapAddress = addr;
         return addr;
@@ -467,7 +467,7 @@ public class MsgInfo {
     // Perform any parser specific customizations
     String sAddr = strAddress;
     if (parser != null) sAddr = parser.adjustMapAddress(sAddr, strCity, false);
-    
+
     // UK addresses have a postal code prefix that we don't want to mess with
     String prefix = "";
     if (countryCode == MsgParser.CountryCode.UK){
@@ -477,7 +477,7 @@ public class MsgInfo {
         sAddr = sAddr.substring(match.end());
       }
     }
-    
+
     if ((parser.getMapFlags() & MAP_FLG_SUPPR_DIRO) == 0) {
       sAddr = DIR_OF_PTN.matcher(sAddr).replaceAll(" & ");
     } else {
@@ -493,13 +493,13 @@ public class MsgInfo {
     sAddr = cleanInterstate(sAddr);
     sAddr = cleanOffRamp(sAddr);
     sAddr = cleanSTRoutes(sAddr);
-    
+
     // Make sure & are surrounded by blanks
     // Except in Swedish where & can be part of a legitimate street name
     if (countryCode != CountryCode.SE) {
       sAddr = sAddr.replaceAll(" *&[& ]*", " & ");
     }
-    
+
     // If there wasn't an address number or intersection marker in address
     // try appending cross street info as as intersection
     if (validAddress(sAddr)) {
@@ -514,11 +514,11 @@ public class MsgInfo {
           if (sTemp.equals(sAddr)) {
             int pt1 = match.end();
             int pt2 = match.find() ? match.start() : sCross.length();
-            sTemp = strCross.substring(pt1, pt2).trim(); 
+            sTemp = strCross.substring(pt1, pt2).trim();
           }
           sCross = sTemp;
         }
-        
+
         // Don't use DEAD END or like phrases
         if (!DEAD_END_PTN.matcher(sCross).matches()) {
           sCross = cleanParens(sCross);
@@ -533,24 +533,24 @@ public class MsgInfo {
           if (sCross.length() > 0) sAddr = prefix + sAddr + " & " + sCross;
         }
       }
-      
+
       // else just append prefix
       else {
         sAddr = prefix + sAddr;
       }
     }
-    
+
     // ANy last minute parser adjustments go here
     if (parser != null) sAddr = parser.postAdjustMapAddress(sAddr);
-    
+
     strBaseMapAddress = sAddr.trim();
     return strBaseMapAddress;
 	}
-  
+
   // Remove any nested parenthesis from potential address
   private String cleanParens(String sAddr) {
     if (!sAddr.contains("(") && !sAddr.contains("[")) return sAddr;
-    
+
     StringBuilder sb = new StringBuilder();
     int level = 0;
     boolean brk = false;
@@ -561,7 +561,7 @@ public class MsgInfo {
         if (chr == '(' || chr == '[') {
           brk = true;
           startBrk = chr;
-          endBrk = chr == '(' ? ')' : ']'; 
+          endBrk = chr == '(' ? ')' : ']';
         }
       }
       if (chr == startBrk) level++;
@@ -606,25 +606,25 @@ public class MsgInfo {
   private static final Pattern RCH_PTN = Pattern.compile("\\bRCH\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern HT_PTN = Pattern.compile("\\bHT\\b", Pattern.CASE_INSENSITIVE);
   private String cleanStreetSuffix(String sAddr) {
-    
+
     // CR is a very versatile abbreviation.  In New Zealand, it is an abbreviation for Crescent
     if (countryCode == CountryCode.NZ || (parser.getMapFlags() & MAP_FLG_CR_CRES) != 0) {
-      sAddr = CR_PTN.matcher(sAddr).replaceAll("CRES"); 
+      sAddr = CR_PTN.matcher(sAddr).replaceAll("CRES");
     }
-    
+
     // Or sometimes creek
     if ((parser.getMapFlags() & MAP_FLG_CR_CREEK) != 0) {
-      sAddr = CR_PTN.matcher(sAddr).replaceAll("CREEK"); 
+      sAddr = CR_PTN.matcher(sAddr).replaceAll("CREEK");
     }
-    
-    
+
+
     // convert CR nn to COUNTY ROAD nn
     // we need to do this before we do the abbreviations conversions that will
     // change CR to CIR.
     if ((parser.getMapFlags() & MAP_FLG_SUPPR_CR) == 0) {
       sAddr = CRNN_PTN.matcher(sAddr).replaceAll("COUNTY ROAD $1");
     }
-    
+
     sAddr = replace(sAddr, AV_PTN, "AVE");
     sAddr = replace(sAddr, HW_PTN, "HWY");
     sAddr = replace(sAddr, PK_PTN, "PIKE");
@@ -645,22 +645,22 @@ public class MsgInfo {
     sAddr = replace(sAddr, WK_PTN, "WALK");
     sAddr = replace(sAddr, RCH_PTN, "REACH");
     sAddr = replace(sAddr, HT_PTN, "HTS");
-    
+
     // Some alterations are suppressed by different parsers to meet local
     // requirements
     int mapFlags = parser.getMapFlags();
     if ((mapFlags & MAP_FLG_SUPPR_LA) == 0) sAddr = replace(sAddr, LA_PTN, "LN");
     if ((mapFlags & MAP_FLG_REMOVE_EXT) != 0) sAddr = EXT_PTN.matcher(sAddr).replaceAll("");
     if ((mapFlags & MAP_FLG_SUPPR_TE) == 0 && countryCode != CountryCode.NZ) sAddr = replace(sAddr, TE_PTN, "TER");
-    
+
     if (!sAddr.contains("CUT OFF")) {
       sAddr = NEAR_PTN.matcher(sAddr).replaceAll("&");
     }
     return sAddr;
   }
-  
+
   /**
-   * Replace all occurrences of a given pattern in an address string with 
+   * Replace all occurrences of a given pattern in an address string with
    * a replacement string.  The case of characters in the replacement string
    * will be adjusted to best match the case of the characters being replaced
    * @param address address line in which pattern sequence should be replaced
@@ -680,12 +680,12 @@ public class MsgInfo {
         if (isLower(token, ndx)) chr = Character.toLowerCase(chr);
         sb.append(chr);
       }
-    } 
+    }
     if (sb == null) return address;
     match.appendTail(sb);
     return sb.toString();
   }
-  
+
   /**
    * Determine if character at string position index is a lower case character.
    * if index is beyond end of string, check status of last character in string
@@ -708,7 +708,7 @@ public class MsgInfo {
     sAddr = match.replaceFirst("");
     return sAddr;
   }
-  
+
   // Clean up some Interstate conventions
   private static final Pattern INA_PATTERN = Pattern.compile("\\bIH?[- ]?(\\d+)[NSEW]?\\b");
   private static final Pattern FRONTAGE_PTN = Pattern.compile("\\b(?:[NSEW]B)?FR\\b");
@@ -719,7 +719,7 @@ public class MsgInfo {
     sAddr = IH_PTN.matcher(sAddr).replaceAll("");
     return sAddr;
   }
-  
+
   // Clean up and NB, SB, EB, or WB words
 
   private static final Pattern DIRBOUND_PAT = Pattern.compile("[\\s]*(?:(?<![A-Z])(?:NB|SB|EB|WB)|NORTHBOUND|EASTBOUND|SOUTHBOUND|WESTBOUND)(?: ON)?\\b", Pattern.CASE_INSENSITIVE);
@@ -736,9 +736,9 @@ public class MsgInfo {
   private static final Pattern ROUTE_PTN =
     Pattern.compile("\\b(?:(RT|RTE|HW|HWY|HIGH|US|STH?Y?|SHY?|FM|I|CO|CR|CORD|SRT?|TWP)|([A-Z]{2}|M))-?(\\d{1,4}[A-Z]?)(?:[NSEW]B?)?\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern SRT_PTN = Pattern.compile("\\bS(?:RT?| ?H|TH)\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private String cleanRoutes(String sAddress) {
-    
+
     String state = getStateCode();
     String repState = getRepState(state);
 
@@ -760,7 +760,7 @@ public class MsgInfo {
       match.appendTail(sb);
       sAddress = sb.toString();
     }
-    
+
     boolean suppr_sr = (parser.getMapFlags() & MAP_FLG_SUPPR_SR) != 0;;
     match = SRT_PTN.matcher(sAddress);
     if (match.find()) {
@@ -773,19 +773,19 @@ public class MsgInfo {
       match.appendTail(sb);
       sAddress = sb.toString();
     }
-    
+
     // If the state code should be replaced with something else, we have to look for
     // a route number starting with the state code
     sAddress = sAddress.replaceAll("\\b" + state + " *(\\d+)\\b", repState + " $1");
     return sAddress;
   }
-  
+
 
   // Google can handle things like ST 666 or US 666 or RTE 666.
   // But it doesn't like US RTE 666 or US 666 HWY
   // If we find a construct like that, remove the middle section
   // When we are done with that, check for addresses ending with 666 HWY and reverse the terms
-  private static final Pattern[] DBL_ROUTE_PTNS = new Pattern[]{ 
+  private static final Pattern[] DBL_ROUTE_PTNS = new Pattern[]{
     Pattern.compile("\\b([A-Z]{2}|STE|STATE|COUNTY|TWP) *(ROAD|RD|RT|RTE|ROUTE|HW|HWY|HY|HIGH|HIGHWAY) +(\\d+[ABMNSEW]?|[A-Z]{1,2})\\b", Pattern.CASE_INSENSITIVE),
     Pattern.compile("\\b([A-Z]{2}|STATE|COUNTY|ROUTE|RTE|FARM-TO-MARKET|TWP) +(\\d+[A-Z]?|[A-Z]{1,2})\\b *(?:ROAD|RD|RT|RTE|ROUTE|HW|HWY|HY|HIGH)\\b", Pattern.CASE_INSENSITIVE)
   };
@@ -794,7 +794,7 @@ public class MsgInfo {
   private static final Pattern REV_HWY_PTN = Pattern.compile("(?<!-)\\b(\\d+[A-Z]?|([A-Z&&[^NSEW]])\\2?\\b) *(HWY|RT|RTE|ROUTE)(?=$| *&)", Pattern.CASE_INSENSITIVE);
   private static final Pattern FM_PTN = Pattern.compile("\\bFM\\b", Pattern.CASE_INSENSITIVE);
   private String cleanDoubleRoutes(String sAddress) {
-    
+
     String state = getStateCode();
     if (state.length() == 0) state = defState;
     String repState = getRepState(state);
@@ -802,7 +802,7 @@ public class MsgInfo {
     for (Pattern ptn : DBL_ROUTE_PTNS) {
       Matcher match = ptn.matcher(sAddress);
       if (!match.find()) continue;
-      
+
       StringBuffer sb = new StringBuffer();
       do {
         String prefix = match.group(1).toUpperCase();
@@ -833,15 +833,15 @@ public class MsgInfo {
       match.appendTail(sb);
       sAddress = sb.toString();
     }
-    
+
     // Google also doesn't like I-20 fwy contructs
     sAddress = I_FWY_PTN.matcher(sAddress).replaceAll("$1");
-    
+
     if (parser == null || (parser.getMapFlags() & MAP_FLG_SUPPR_AND_ADJ) == 0) {
       sAddress = AND_PTN.matcher(sAddress).replaceAll(" & ");
     }
     sAddress = REV_HWY_PTN.matcher(sAddress).replaceAll("$3 $1");
-    
+
     // Aexpand FM route names
     sAddress = replace(sAddress, FM_PTN, "FARM-TO-MARKET");
     return sAddress;
@@ -852,7 +852,7 @@ public class MsgInfo {
   private static final Pattern HOUSE_RANGE = Pattern.compile("^(\\d+) *- *[A-Z0-9/\\.]+\\b");
   private static final Pattern HOUSE_NUMBER = Pattern.compile("(?!911 CENTER)\\d+ +(?![NSEW]{0,2} *(?:[&/]|\\bM[MP]|$)|(?:1/2|ABOUT|ALT|ALTERNATE|AT|AVE?|AVENUE|BETWEEN|BYPASS|BUS|DR|EXIT|FROM|FY|JUNCTION|MILES?|LANES?|LN|MI|ND|ON|ONTO|OVERPASS|RAMP|RD|SERV|SPUR|TH)\\b|(?:HWY|ST)\\b(?! *\\d+))", Pattern.CASE_INSENSITIVE);
   private String cleanHouseNumbers(String sAddress) {
-    
+
     // Start by eliminating any house ranges
     sAddress = HOUSE_RANGE.matcher(sAddress).replaceAll("$1");
 
@@ -869,7 +869,7 @@ public class MsgInfo {
         }
       }
     }
-    
+
     // Check for a trailing apt number
     // Generally google ignores appt numbers, but it chokes on one that
     // starts with a #
@@ -879,24 +879,24 @@ public class MsgInfo {
     }
     return sAddress;
   }
-  
+
   private static final Pattern OFFRAMP_PTN = Pattern.compile(" OFRP ", Pattern.CASE_INSENSITIVE);
   private static String cleanOffRamp(String sAddress) {
     Matcher match = OFFRAMP_PTN.matcher(sAddress);
     if (match.find()) sAddress = sAddress.substring(0,match.start()).trim();
     return sAddress;
   }
-  
+
   private static final Pattern ST_PTN = Pattern.compile("(?<=^|& ?|\\d ?(?:[NSEW] ?)?)S[TH](?= +\\d+)\\b", Pattern.CASE_INSENSITIVE);
   private String cleanSTRoutes(String sAddress) {
-    
+
     // Google gets confused by the ST abbreviation for State hwy.  We have a couple choices but lets use
     // the default state if there is one and STATE if there isn't.
     String state = getRepState(getStateCode());
     return ST_PTN.matcher(sAddress).replaceAll(state);
   }
 
-  
+
   // Google gets confused by the ST abbreviation for State hwy.  We have a couple choices but lets use
   // the default state if there is one and STATE if there isn't.
   // That turned out to be an unwise choice.  STATE seems be more reliable.  But changing it
@@ -908,13 +908,13 @@ public class MsgInfo {
    * @return current state code
    */
   private String getStateCode() {
-    return strState.length() > 0 && VALID_STATE_PTN.matcher(strState).matches() ? strState : 
+    return strState.length() > 0 && VALID_STATE_PTN.matcher(strState).matches() ? strState :
             defState.length() > 0 ? defState : "STATE";
   }
   private static final Pattern VALID_STATE_PTN = Pattern.compile("[A-Z]{2}");
-  
+
   /**
-   * returns the value that should replace the state code when we encounter it in abbreviations for 
+   * returns the value that should replace the state code when we encounter it in abbreviations for
    * state highways.  We used to always set this to the current state code, but found some cases and
    * some states where this does not work properly and "STATE" does.  Changing this across the board is
    * going to break huge numbers of test cases, so we will phase it in on a state by state basis
@@ -924,25 +924,25 @@ public class MsgInfo {
   private String getRepState(String state) {
     return state.equals("NC") || state.equals("MI") ? "STATE" : state;
   }
-  
+
   /**
    * @return true if address is valid standalone address
-   * (ie either starts with a house number or contains an intersection marker) 
+   * (ie either starts with a house number or contains an intersection marker)
    */
   private static final Pattern HOUSE_NO_PTN = Pattern.compile("^(?:(?:[NSEW] +)?\\d+[A-Z]?|\\d+[NSEW]\\d+) ", Pattern.CASE_INSENSITIVE);
   private boolean validAddress(String sAddr) {
     if (HOUSE_NO_PTN.matcher(sAddr).find()) return true;;
-    if (sAddr.contains("&") || sAddr.contains(" AND ") || sAddr.contains(" and ")) return true; 
+    if (sAddr.contains("&") || sAddr.contains(" AND ") || sAddr.contains(" and ")) return true;
     return false;
   }
-  
+
   /**
    * @return the call city
    */
   public String getCity() {
     return strCity;
   }
-  
+
   /**
    * @return map adjusted city
    */
@@ -987,14 +987,14 @@ public class MsgInfo {
   public String getUnit() {
     return strUnit;
   }
-  
+
   /**
    * @return map code
    */
   public String getMap() {
     return strMap;
   }
-  
+
   /**
    * @return the callback phone number
    */
@@ -1002,91 +1002,91 @@ public class MsgInfo {
     return strPhone;
   }
   /**
-   * @return the Supp Info 
+   * @return the Supp Info
    */
   public String getSupp() {
     return strSupp;
   }
-  
+
   /***
    * @return call type code
    */
   public String getCode() {
     return strCode;
   }
-  
+
   /**
-   * @return the page source 
+   * @return the page source
    */
   public String getSource() {
     return strSource;
   }
-  
+
   /**
    * @return name
    */
   public String getName() {
     return strName;
   }
-  
+
   /**
    * @return call priority
    */
   public String getPriority() {
     return strPriority;
   }
-  
+
   /**
    * @return radio channel
    */
   public String getChannel() {
     return strChannel;
   }
-  
+
   /**
    * @return GPS Location
    */
   public String getGPSLoc() {
     return strGPSLoc;
   }
-  
+
   /**
    * @return incident date
    */
   public String getDate() {
     return strDate;
   }
-  
+
   /**
    * @return incident time
    */
   public String getTime() {
     return strTime;
   }
-  
+
   /**
    * @return information URL field
    */
   public String getInfoURL() {
     return strInfoURL;
   }
-  
+
   /**
    * @return alert field
    */
   public String getAlert() {
     return strAlert;
   }
-  
+
   /**
-   * @return the default city 
+   * @return the default city
    */
   public String getDefCity() {
     return defCity;
   }
-  
+
   /**
-   * @return the default state 
+   * @return the default state
    */
   public String getDefState() {
     return defState;
@@ -1099,11 +1099,11 @@ public class MsgInfo {
   public boolean isPreferGPSLoc() {
     return preferGPSLoc;
   }
-  
+
   public MsgParser.MapPageStatus getMapPageStatus() {
     return mapPageStatus;
   }
-  
+
   public String getMapPageURL() {
     if (mapPageURL == null) {
       if (parser != null && mapPageStatus != null) {
@@ -1113,18 +1113,18 @@ public class MsgInfo {
     }
     return mapPageURL.length() == 0 ? null : mapPageURL;
   }
-  
+
   /**
    * @return true if additional messages are expected
    */
   public boolean isExpectMore() {
     return expectMore;
   }
-  
+
   public String getParserCode() {
     return parserCode;
   }
-  
+
   public MsgParser getParser() {
     return parser;
   }
@@ -1138,7 +1138,7 @@ public class MsgInfo {
   }
 
   /**
-   * @param incomplete true if this is an incomplete message.  
+   * @param incomplete true if this is an incomplete message.
    * @return relative score that can be used to pick out the better result
    * from multiple possible parsings
    */
@@ -1182,7 +1182,7 @@ public class MsgInfo {
    */
   public void addMessageInfo(StringBuilder sb) {
     sb.append("\n\nParser Info");
-    
+
     addInfo(sb, "Type", msgType.toString());
     addInfo(sb, "Call", strCall);
     addInfo(sb, "Place", strPlace);
@@ -1208,7 +1208,7 @@ public class MsgInfo {
     addInfo(sb, "Date", strDate);
     addInfo(sb, "Time", strTime);
   }
-  
+
   private void addInfo(StringBuilder sb, String title, String value) {
     if (value != null && value.length() > 0) {
       sb.append('\n');

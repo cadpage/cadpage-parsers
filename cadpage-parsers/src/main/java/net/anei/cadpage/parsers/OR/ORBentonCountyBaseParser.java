@@ -140,7 +140,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
   private static final Pattern STREET_APT_PTN = Pattern.compile("(\\d+)-(\\d+)( +.*)");
 
   @Override
-  protected String adjustGpsLookupAddress(String address, String apt) {
+  protected String adjustGpsLookupAddress(String address, String apt, String place, String city) {
     address = address.toUpperCase().replace("& MP", "MP");
     if (address.contains(" MP ")) {
       address = address.replace("EDDYVILLE-BLODGETT HWY ", "HWY 180 ")
@@ -149,6 +149,11 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
                        .replace("ALSEA-DEADWOOOD HWY ",    "HWY 501 ")
                        .replace(" AND MP ", " MP ");
       return address;
+    }
+
+    if (address.contains("MAIN ST") ) {
+      if (!city.equals("PHILOMATH")) return null;
+      apt = "";
     }
 
     if (apt.length() == 0) {
@@ -835,6 +840,47 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "1937 COLLEGE ST",              "44.541592,-123.357916",
       "1939 COLLEGE ST",              "44.541366,-123.357903",
       "1941 COLLEGE ST",              "44.541215,-123.357930",
+
+      // Boulevard apartments
+      "3067 MAIN ST",                 "44.544118,-123.338781",
+      "3069 MAIN ST",                 "44.544116,-123.338524",
+      "3071 MAIN ST",                 "44.544338,-123.337749",
+      "3073 MAIN ST",                 "44.543877,-123.338135",
+      "3075 MAIN ST",                 "44.543715,-123.338140",
+      "3077 MAIN ST",                 "44.543596,-123.338148",
+      "3079 MAIN ST",                 "44.543778,-123.337770",
+      "3081 MAIN ST",                 "44.543814,-123.337569",
+      "3083 MAIN ST",                 "44.544109,-123.337993",
+      "3085 MAIN ST",                 "44.544046,-123.337379",
+      "3087 MAIN ST",                 "44.543838,-123.337347",
+      "3089 MAIN ST",                 "44.543892,-123.337076",
+      "3095 MAIN ST",                 "44.543926,-123.336883",
+      "3097 MAIN ST",                 "44.543972,-123.336607",
+      "3099 MAIN ST",                 "44.543993,-123.336398",
+      "3101 MAIN ST",                 "44.544247,-123.336497",
+      "3103 MAIN ST",                 "44.544431,-123.336502",
+      "3107 MAIN ST",                 "44.544553,-123.336797",
+      "3109 MAIN ST",                 "44.544635,-123.336499",
+      "3111 MAIN ST",                 "44.544775,-123.336494",
+      "3115 MAIN ST",                 "44.545037,-123.336489",
+      "3117 MAIN ST",                 "44.545037,-123.336489",
+      "3119 MAIN ST",                 "44.545444,-123.336497",
+      "3121 MAIN ST",                 "44.544924,-123.336995",
+      "3125 MAIN ST",                 "44.545348,-123.336885",
+      "3127 MAIN ST",                 "44.545379,-123.337133",
+      "3129 MAIN ST",                 "44.545344,-123.337411",
+      "3131 MAIN ST",                 "44.545345,-123.337616",
+      "3133 MAIN ST",                 "44.545003,-123.337562",
+      "3135 MAIN ST",                 "44.544860,-123.337671",
+      "3137 MAIN ST",                 "44.544714,-123.337776",
+      "3139 MAIN ST",                 "44.544567,-123.337905",
+      "3143 MAIN ST",                 "44.544410,-123.338128",
+      "3145 MAIN ST",                 "44.544743,-123.338391",
+      "3147 MAIN ST",                 "44.544682,-123.338544",
+      "3149 MAIN ST",                 "44.544592,-123.338732",
+      "3151 MAIN ST",                 "44.544489,-123.338906",
+      "3153 MAIN ST",                 "44.544202,-123.339480",
+      "3155 MAIN ST",                 "44.544200,-123.339260",
 
       "1250 ADAMS ST",                "44.543512,-123.304196",     // Access via Industrial Way
 

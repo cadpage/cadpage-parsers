@@ -1209,13 +1209,13 @@ public abstract class MsgParser {
     return city;
   }
 
-  public String lookupGpsCoordinates(String address, String apt, String place) {
+  public String lookupGpsCoordinates(String address, String apt, String place, String city) {
     if (placeGpsLookupTable != null && !place.isEmpty()) {
       String gps = placeGpsLookupTable.getProperty(place);
       if (gps != null) return gps;
     }
     if (gpsLookupTable == null) return null;
-    address = adjustGpsLookupAddress(address, apt, place);
+    address = adjustGpsLookupAddress(address, apt, place, city);
     if (address == null) return null;
 
     String gps = gpsLookupTable.getProperty(address);
@@ -1242,7 +1242,7 @@ public abstract class MsgParser {
    * Call to perform any adjustments on the raw address field before
    * trying to match it to an GPS location table entry
    * @param address raw address field
-   * @param address apt/lot number
+   * @param apt apt/lot number
    * @return adjusted address field
    */
   protected String adjustGpsLookupAddress(String address, String apt) {
@@ -1253,12 +1253,25 @@ public abstract class MsgParser {
    * Call to perform any adjustments on the raw address field before
    * trying to match it to an GPS location table entry
    * @param address raw address field
-   * @param address apt/lot number
-   * @param address place name
+   * @param apt apt/lot number
+   * @param place place name
    * @return adjusted address field
    */
   protected String adjustGpsLookupAddress(String address, String apt, String place) {
     return adjustGpsLookupAddress(address, apt);
+  }
+
+  /**
+   * Call to perform any adjustments on the raw address field before
+   * trying to match it to an GPS location table entry
+   * @param address raw address field
+   * @param apt apt/lot number
+   * @param place place name
+   * @param city city name
+   * @return adjusted address field
+   */
+  protected String adjustGpsLookupAddress(String address, String apt, String place, String city) {
+    return adjustGpsLookupAddress(address, apt, place);
   }
 
   /**
