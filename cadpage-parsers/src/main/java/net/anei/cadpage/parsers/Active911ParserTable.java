@@ -1795,6 +1795,7 @@ public class Active911ParserTable {
       "US/TX/AransasCounty",              "TXAransasCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
       "US/TX/Austin",                     "TXTravisCountyA",
+      "US/TX/AustinCountySheriff",        "TXAustinCounty",
       "US/TX/BellCounty",                 "TXBellCounty",
       "US/TX/BexarCounty",                "TXBexarCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
