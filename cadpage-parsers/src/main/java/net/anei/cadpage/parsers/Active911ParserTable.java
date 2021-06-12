@@ -736,6 +736,7 @@ public class Active911ParserTable {
       "US/KY/TriggCountyEMS",             "KYTriggCountyB",
       "US/KY/WestKnoxVFD",                "KYKnoxCountyB,KYKnoxCountyC",
       "US/KY/WhitleyCounty",              "KYWhitleyCounty",
+      "US/KY/WilderFireRescue",           "KYCampbellCounty",
       "US/KY/Wittensville",               "KYJohnsonCounty",
       "US/KY/WoodburnVFD",                "KYBowlingGreen",
       "US/KY/WoodfordCounty",             "KYWoodfordCounty",
