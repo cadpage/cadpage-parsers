@@ -1171,6 +1171,7 @@ public class Active911ParserTable {
       "US/NC/MecklenburgCounty",          "NCMecklenburgCounty",
       "US/NC/MintHillVFD",                "NCMecklenburgCountyA",
       "US/NC/MitchellCounty",             "NCMitchellCounty",
+      "US/NC/MoncureFD",                  "NCChathamCounty",
       "US/NC/MontgomeryCounty",           "NCMontgomeryCounty",
       "US/NC/MooreCounty",                "NCMooreCounty",
       "US/NC/NashCounty",                 "NCNashCounty",
