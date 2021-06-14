@@ -451,7 +451,9 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(\\d\\d[-/]\\d\\d[-/]\\d{4}) (\\d\\d:\\d\\d(?::\\d\\d)?)\\b.*");
+  private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d(?::\\d\\d)?)\\b.*");
+  private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
+  private static final String TRUNC_DATE_TIME_STR = "NN/NN/NN NN:NN";
   private class MyDateTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
@@ -460,11 +462,18 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      field = field.replace('-', '/');
       Matcher match = DATE_TIME_PTN2.matcher(field);
-      if (!match.matches()) return false;;
-      data.strDate = match.group(1).replace('-', '/');
-      data.strTime = match.group(2);
-      return true;
+      if (match.matches()) {
+        data.strDate = match.group(1);
+        data.strTime = match.group(2);
+        return true;
+      }
+
+      // See if this matches a truncated date/time string
+      if (field.length() < 3) return false;
+      field = DIGIT_PTN.matcher(field).replaceAll("N");
+      return TRUNC_DATE_TIME_STR.startsWith(field);
     }
 
     @Override
