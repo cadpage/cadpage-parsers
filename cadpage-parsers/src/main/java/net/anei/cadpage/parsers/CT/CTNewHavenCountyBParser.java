@@ -489,6 +489,12 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
   }
   private static final Pattern GILBERT_EXT = Pattern.compile("\\bGILBERT EXT\\b", Pattern.CASE_INSENSITIVE);
 
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("UCONNHEALTH")) return "FARMINGTON";
+    return city;
+  }
+
 //  private static CodeTable CALL_CODES = new StandardCodeTable();
 
   private static final String[] MWORD_STREET_LIST = new String[]{
@@ -1377,6 +1383,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SOUTH WINDSOR",
       "SOUTHINGTON",
       "SUFFIELD",
+      "UCONNHEALTH",
       "UNIONVILLE",
       "WEST HARTFORD",
       "WETHERSFIELD",

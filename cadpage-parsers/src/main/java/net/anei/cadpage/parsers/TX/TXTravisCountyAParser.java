@@ -16,31 +16,31 @@ public class TXTravisCountyAParser extends MsgParser {
   public TXTravisCountyAParser() {
     super("TRAVIS COUNTY", "TX");
   }
-  
+
   public String getFilter() {
     return "PublicSafety@austintexas.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern COMMENT_PTN = Pattern.compile("Comment: (.*?), (From - .*?)(?: From - .*)?");
-  
-  private static final Pattern MASTER1 = 
+
+  private static final Pattern MASTER1 =
       Pattern.compile("From -([A-Z0-9]+) Dispatch - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) ?On -([ A-Z0-9]*) - AT -(.+?) - INC# =>(\\d+) Case Num:([- A-Z0-9]*) For -([A-Z0-9,]+)");
-  
-  private static final Pattern MASTER2 = 
-      Pattern.compile("From - ?([A-Z0-9]+) - ?\\d ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]*)");
-  
-  private static final Pattern MASTER3 = 
+
+  private static final Pattern MASTER2 =
+      Pattern.compile("From - ?([A-Z0-9]+) - ?\\d ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]*)(?: Lat: ?(\\d{8}) Lon: ?(\\d{8}))?");
+
+  private static final Pattern MASTER3 =
       Pattern.compile("(?:INCIDENT ASSIGNED TO YOU!!*|Response Info from Dispatch) - ?\\d?ALARM -(.*?) - BOX -([-A-Z0-9]*) FC=(.+?)- AT -(.*?) - ASSIGNED UNITS=>([A-Z0-9,]+) ?- INC# =>(\\d+)");
-  
+
   private static final Pattern CROSS_PTN = Pattern.compile("(?:(?:N?o )?CrossStreet Found)?/?(.*?)/?(?:No CrossStreet Found)?");
-  
+
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
- 
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = COMMENT_PTN.matcher(body);
@@ -51,7 +51,7 @@ public class TXTravisCountyAParser extends MsgParser {
     match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("INFO SRC CALL MAP CH ADDR CITY APT ID UNIT");
-      
+
       data.strSource = match.group(1);
       data.strCall = match.group(2).trim();
       data.strMap = match.group(3).trim();
@@ -59,14 +59,14 @@ public class TXTravisCountyAParser extends MsgParser {
       parseAddress(match.group(5).trim(), data);
       data.strCallId = append(match.group(7), "/", match.group(6));
       data.strUnit = match.group(8);
-      
+
       return true;
     }
-    
+
     match = MASTER2.matcher(body);
     if (match.matches()) {
-      setFieldList("INFO SRC CALL PRI MAP ADDR CITY APT X CH TIME ID UNIT");
-      
+      setFieldList("INFO SRC CALL PRI MAP ADDR CITY APT X CH TIME ID UNIT GPS");
+
       data.strSource = match.group(1);
       data.strCall = match.group(2).trim();
       data.strPriority = getOptGroup(match.group(3));
@@ -79,14 +79,21 @@ public class TXTravisCountyAParser extends MsgParser {
       else setTime(TIME_FMT, match.group(9), data);
       data.strCallId = append(match.group(10), "/", getOptGroup(match.group(11)));
       data.strUnit = match.group(12);
+      String gps1 = match.group(13);
+      String gps2 = match.group(14);
+
       match = CROSS_PTN.matcher(cross);
       if (match.matches()) cross = match.group(1);
       data.strCross = cross;
-      
+
+      if (gps1 != null) {
+        setGPSLoc(fixGPS(gps1)+','+fixGPS(gps2), data);
+      }
+
       return true;
-      
+
     }
-    
+
     match = MASTER3.matcher(body);
     if (match.matches()) {
       setFieldList("CALL MAP CH ADDR CITY APT UNIT ID");
@@ -98,10 +105,10 @@ public class TXTravisCountyAParser extends MsgParser {
       data.strCallId = match.group(6);
       return true;
     }
-    
+
     return false;
   }
-  
+
   @Override
   public void parseAddress(String addr, Data data) {
     int pt = addr.lastIndexOf(',');
@@ -111,7 +118,13 @@ public class TXTravisCountyAParser extends MsgParser {
     }
     super.parseAddress(addr, data);
   }
-  
+
+  private static String fixGPS(String gps) {
+    int pt = gps.length()-6;
+    if (pt >= 0) gps = gps.substring(0,pt)+'.' + gps.substring(pt);
+    return gps;
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BAS", "BASTROP COUNTY",
       "BLC", "BLANCO COUNTY",
