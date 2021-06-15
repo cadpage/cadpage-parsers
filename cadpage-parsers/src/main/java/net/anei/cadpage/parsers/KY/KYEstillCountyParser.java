@@ -10,7 +10,7 @@ public class KYEstillCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm3.info";
+    return "dispatch@911comm3.info,dispatch@EstillKY911.net";
   }
 
   private static final String[] CITY_LIST = new String[] {
