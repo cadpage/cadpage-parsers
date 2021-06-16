@@ -22,7 +22,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
                         "| ADDR1/Z APT/Z CITY " +
                         "| ADDR2 " +
                         "| ADDR1 DUP? APT? CITY ) " +
-          "EMPTY+? ( MAP_X UNIT/Z DATETIME! | UNIT/Z DATETIME! | DATETIME! ) INFO/N+");
+          "EMPTY+? ( MAP_X UNIT/Z DATETIME! | UNIT/Z DATETIME! | DATETIME! | MAP_X! UNIT/Z SKIP END ) INFO/N+");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets(
@@ -453,7 +453,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d(?::\\d\\d)?)\\b.*");
   private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
-  private static final String TRUNC_DATE_TIME_STR = "NN/NN/NN NN:NN";
+  private static final String TRUNC_DATE_TIME_STR = "NN/NN/NNNN NN:NN";
   private class MyDateTimeField extends DateTimeField {
     @Override
     public boolean canFail() {
@@ -1014,6 +1014,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "ELEVATOR PROBLEM - W/ OCCUPANTS",
       "ELEVATOR RESCUE",
       "EMD IN PROGRESS",
+      "EMS",
       "EMS ASSIST",
       "EMS INCIDENT",
       "ENTRAPMENT (NO MEDICAL OR HAZARD)",
