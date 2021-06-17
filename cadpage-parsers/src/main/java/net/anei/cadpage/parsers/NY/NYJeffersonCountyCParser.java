@@ -23,9 +23,48 @@ public class NYJeffersonCountyCParser extends DispatchA19Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "CWT", "WATERTOWN",
       "FTD", "FORT DRUM",
+      "OTH", "",
+      "TAD", "ADAMS",
+      "TAL", "ALEXANDRIA",
+      "TAN", "ANTWERP",
+      "TBR", "BROWNVILLE",
+      "TCH", "CHAMPION", // unconfirmed
+      "TCL", "CLAYTON", // unconfirmed
+      "TCV", "CAPE VINCENT", // unconfirmed
+      "TEL", "ELLISBURG",
+      "THO", "HOUNSFIELD",
       "TLE", "LE REY",
+      "TLO", "LORRAINE",
+      "TLY", "LYME", // unconfirmed
+      "TOR", "ORLEANS",
+      "TPA", "PAMELIA",
+      "TPH", "PHILADELPHIA",
       "TRO", "RODMAN",
-      "TWT", "WATERTOWN"
+      "TTH", "THERESA",
+      "TWT", "WATERTOWN",
+      "TWI", "WILNA", // unconfirmed
+      "TWO", "WORTH", // unconfirmed
+      "VAD", "ADAMS",
+      "VAL", "ALEXANDRIA BAY",
+      "VAN", "ANTWERP",
+      "VBL", "BLACK RIVER", // unconfirmed
+      "VBR", "BROWNVILLE", // unconfirmed
+      "VCA", "CARTHAGE",
+      "VCH", "CHAUMONT", // unconfirmed
+      "VCL", "CLAYTON", // unconfirmed
+      "VCV", "CAPE VINCENT", // unconfirmed
+      "VDE", "DEFERIET", // unconfirmed
+      "VDX", "DEXTER", // unconfirmed
+      "VEL", "ELLISBURG", // unconfirmed
+      "VEM", "EVANS MILLS",
+      "VGL", "GLEN PARK", // unconfirmed
+      "VGP", "GLEN PARK", // unconfirmed
+      "VMA", "MANNSVILLE", // unconfirmed
+      "VPH", "PHILADELPHIA",
+      "VSA", "SACKETS HARBOR", // unconfirmed
+      "VSH", "SACKETS HARBOR", // unconfirmed
+      "VTH", "THERESA",
+      "VWC", "WEST CARTHAGE"  // unconfirmed
   });
 
 }
