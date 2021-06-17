@@ -317,6 +317,7 @@ public class Active911ParserTable {
       "US/CT/TownofStratford",            "CTFairfieldCountyC",
       "US/CT/Uconn",                      "CTTollandCountyB",
       "US/CT/Valleyshore911",             "CTMiddlesexCountyA",
+      "US/CT/WallingfordPD",              "CTNewHavenCountyC",
       "US/CT/WaterfordFD",                "CTWaterfordTown",
       "US/CT/WestHavenPD",                "CTNewHavenCountyB",
       "US/CT/WinchesterPD",               "CTLitchfieldCountyB",
