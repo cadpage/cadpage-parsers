@@ -11,13 +11,14 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * San Diego County, CA
  */
 public class CASanDiegoCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("INFO:.*\\\\DISP:.*");
 
   public CASanDiegoCountyAParser() {
     super("SAN DIEGO COUNTY", "CA",
           "( ALRM:PRI! MSTR_INC#:ID! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT! TB:MAP% MAP:MAP/D% XST:X% TG:CH% TIMEDSP:TIME% UNITS:UNIT% INFO/N+ RPNAME:NAME% TEXT:INFO/N+ " +
-          "| NAT:CALL! ADR:ADDR! APT:APT! TAC:CH! UNITS:UNIT! MAP:MAP! XST:X! X/Z? SRC ID! END " +
+          "| NAT:CALL! ADR:ADDR! ADDR2+ APT:APT! TAC:CH! UNITS:UNIT! MAP:MAP% XST:X% ( X/Z SRC ID | SRC ID ) END " +
+          "| INC#:ID! ADR:ADDR! ADDR2+ APT:APT! PLACE! TAC:CH! LOC:PLACE! " +
           "| ADVISE ALRM:PRI! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT% XST:X% TIMEDSP:TIME% UNITS:UNIT% " +
           "| ALM:PRI? MSTR_INC#:ID? TYP:CALL! ADR:ADDR! LOC:PLACE! XST:X? SP:APT% TB:MAP% MAP:MAP% TG:CH% TIMEDSP:TIME? UNITS:UNIT INFO+ LOC_CMNTS:INFO+ )");
   }
@@ -30,27 +31,27 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
-      if (subject.equals("CAD MESSAGE") || subject.equals("HCFA Inc Page")) break;
-      
+      if (subject.equals("CAD MESSAGE") || subject.equals("HCFA")) break;
+
       if (body.startsWith("/ CAD MESSAGE / ")) {
         body = body.substring(16).trim();
         break;
       }
-      
+
       return false;
     } while (false);
-    
+
     if (RUN_REPORT_PTN.matcher(body).matches()) {
       setFieldList("INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strSupp = body;
       return true;
     }
-    
-    if (body.startsWith("NAT:")) return parseFields(body.split("/"), data);
+
+    if (subject.equals("HCFA")) return parseFields(body.split("/"), data);
     return parseFields(body.split("\\\\"), data);
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -60,6 +61,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADVISE")) return new MyAdvisePageField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("CH")) return new MyChannelField();
@@ -68,33 +70,43 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{6,8}", true);
     return super.getField(name);
   }
-  
+
   private class MyAdvisePageField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.equals("***ADVISORY PAGE***")) return false;
       data.strCall = "ADVISORY";
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
     }
   }
-  
+
+  private class MyAddress2Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      String save = data.strAddress;
+      data.strAddress = "";
+      super.parse(field, data);
+      data.strAddress = append(save, " & ", data.strAddress);
+    }
+  }
+
   private static final Pattern APT_TITLE_PTN = Pattern.compile("^(?:APT|SUITE|SPT?|RM) *", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
@@ -127,7 +139,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern EMPTY_PTN = Pattern.compile("[A-Z]+[:;]");
   private static final Pattern SKIP_PTN = Pattern.compile("(?:^| *,) *This incident \\d{4}.*$");
   private class MyInfoField extends InfoField {
