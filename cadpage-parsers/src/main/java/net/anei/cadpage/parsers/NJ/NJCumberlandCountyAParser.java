@@ -25,6 +25,7 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("CUMBERLAND911:(\\S+): *(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(\\d+):([^:]+):([^:]+):([^:]+)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -35,6 +36,24 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
       data.msgType = MsgType.GEN_ALERT;
       data.strUnit = match.group(1);
       data.strSupp = match.group(2);
+      return true;
+    }
+
+    match = MASTER1.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID UNIT CALL PLACE ADDR APT INFO");
+      data.strCallId = match.group(1);
+      data.strUnit = match.group(2).trim().toUpperCase().replace(' ', '_');
+      data.strCall = match.group(3).trim();
+      String address = match.group(4).trim();
+      String[] parts = address.split("/");
+      if (parts.length == 3) {
+        data.strPlace = parts[0].trim();
+        address = parts[1].trim();
+        String info = parts[2].trim();
+        if (!info.equals(data.strPlace)) data.strSupp = info;
+      }
+      parseAddress(address, data);
       return true;
     }
 
