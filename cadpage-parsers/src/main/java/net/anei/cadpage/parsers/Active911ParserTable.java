@@ -1757,6 +1757,7 @@ public class Active911ParserTable {
       "US/SC/WHFDGreenville",             "SCGreenvilleCountyE",
       "US/SC/WilliamsburgCounty",         "SCWilliamsburgCounty",
       "US/SC/YorkCounty",                 "SCYorkCounty",
+      "US/SD/DeweyCounty",                "SDDeweyCounty",
       "US/SD/EdmundsCounty",              "SDEdmundsCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
       "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",

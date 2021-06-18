@@ -8,9 +8,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class SDEdmundsCountyParser extends FieldProgramParser {
 
+
   public SDEdmundsCountyParser() {
-    super("EDMUNDS COUNTY", "SD",
+    this("EDMUNDS COUNTY", "SD");
+  }
+
+  SDEdmundsCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL ADDRCITYST APT! INFO/N+");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "SDEdmundsCounty";
   }
 
   @Override

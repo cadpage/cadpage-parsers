@@ -1450,6 +1450,7 @@ public class ParserList {
               ,"SCYorkCounty"                   ,"York County, SC"
           ),
           new ParserCategory("South Dakota"
+              ,"SDDeweyCounty"                  ,"Dewey County, SD"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
               ,"SDMinnehahaCounty"              ,"Minnehaha County, SD"
