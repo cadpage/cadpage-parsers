@@ -14,11 +14,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchPrintrakParser;
  */
 
 public class FLBrowardCountyParser extends DispatchPrintrakParser {
-  
+
   public FLBrowardCountyParser() {
     super(CITY_TABLE, "BROWARD COUNTY", "FL");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@Sheriff.org,CAD_Notify@regionalpsi.net,bsocad@southfloridarest.org";
@@ -30,12 +30,12 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
       @Override public boolean mixedMsgOrder() { return true; }
     };
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[- ]* +([A-Z]{2}/[ A-Z]+)");
 
   @Override
@@ -59,7 +59,7 @@ public class FLBrowardCountyParser extends DispatchPrintrakParser {
     data.strSupp = data.strSupp.replace("DROP_TIME:", "DROP TIME:");
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " CH";
