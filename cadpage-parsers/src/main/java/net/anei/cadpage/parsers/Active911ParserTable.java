@@ -449,6 +449,7 @@ public class Active911ParserTable {
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/MadisonCounty",              "IDMadisonCounty",
       "US/ID/ShoshoneCounty",             "IDShoshoneCountyB",
+      "US/ID/SugarCityOfficials",         "IDMadisonCounty",
       "US/ID/TetonCounty",                "IDTetonCounty",
       "US/ID/TwinFallsCounty",            "IDTwinFallsCountyC",
       "US/IL/AdamsCounty",                "ILAdamsCounty",
