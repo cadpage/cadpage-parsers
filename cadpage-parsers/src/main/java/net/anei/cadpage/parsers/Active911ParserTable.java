@@ -1870,6 +1870,7 @@ public class Active911ParserTable {
       "US/TX/HarrisonCounty",             "TXHarrisonCounty",
       "US/TX/HaysUSA",                    "KSEllisCounty",
       "US/TX/Helotes",                    "TXHelotes",
+      "US/TX/HillCounty",                 "TXHillCounty",
       "US/TX/HumblePolice",               "TXHumbleB",
       "US/TX/HuntCounty",                 "TXHuntCounty",
       "US/TX/HurstTX",                    "TXTarrantCountyD",
