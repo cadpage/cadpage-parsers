@@ -7,11 +7,14 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
-  
+
   public SCOrangeburgCountyCParser() {
-    super(CITY_CODES, "ORANGEBURG COUNTY", "SC", 
+    super(CITY_CODES, "ORANGEBURG COUNTY", "SC",
           "( CANCEL ADDR CITY!" +
-          "| FYI? CALL ADDR X X CITY ID! ) INFO/N+");
+          "| FYI? ( ID CALL ADDR CITY GPS1 GPS2 UNIT SRC EMPTY X X " +
+                  "| CALL ADDR X X CITY ID! " +
+                  ")  " +
+          ") INFO/N+");
   }
 
   @Override
@@ -24,7 +27,7 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
     if (name.equals("ID")) return new IdField("\\d{7,9}|", true);
     return super.getField(name);
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BOWM", "BOWMAN",
       "BWMN", "BOWMAN",
