@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  */
 
 public class GroupBestParser extends GroupBaseParser {
-  
+
   // Lists of parsers are mutually compatible.  Which means that there
   // are some calls that they return identical results for.  Since we can
   // not tell which parser returned the results, we have to fudge the
@@ -24,37 +24,34 @@ public class GroupBestParser extends GroupBaseParser {
   };
 
   private MsgParser[] parsers;
-  
+
   private String sponsor;
-  
+
   private Date sponsorDate;
-  
+
   private SplitMsgOptions splitMsgOptions;
-  
+
   public GroupBestParser(MsgParser ... parsersP) {
-    
+
     // Build the final array of parsers.  eliminating parsers that are aliased
     // to another parser in the list
     List<MsgParser> parserList = new ArrayList<MsgParser>(parsersP.length);
+    List<MsgParser> blockedParserList = new ArrayList<MsgParser>();
     Map<String, MsgParser> aliasMap = new HashMap<String, MsgParser>();
-    
-    // Loop through the parser list
-    // Group parsers are not added directly, instead all of their
-    // component parsers are added to out list
-    for (MsgParser parser : parsersP) {
-      
-      if (parser instanceof GroupBestParser) {
-        for (MsgParser p : ((GroupBestParser)parser).parsers) {
-          addParser(p, parserList, aliasMap);
-        }
-      } else {
-        addParser(parser, parserList, aliasMap);
-      }
+
+    // Add the list of parsers to our accumulated parser lists
+    addParsers(parsersP, parserList, blockedParserList, aliasMap);
+
+    // If we found any blocked parsers, they all get added to end of the regular
+    // parser list behind a new GroupBlockParser
+    if (!blockedParserList.isEmpty()) {
+      parserList.add(new GroupBlockParser());
+      parserList.addAll(blockedParserList);
     }
-    
+
     // Convert the adjusted parser list back to an array
     parsers = parserList.toArray(new MsgParser[parserList.size()]);
-    
+
     // Group parser is sponsored if all of it subparsers are sponsored
     // If all subparsers are sponsored, sponsor date is the earliest subparser sponsor date
     splitMsgOptions = null;
@@ -79,10 +76,10 @@ public class GroupBestParser extends GroupBaseParser {
         }
       }
     }
-    
+
     // Next we have to make adjustments when there are compatible parsers in the list
     for (String[] list : COMPAT_PARSER_LIST) {
-      
+
       // First pass checking to see if we have 2 or more parsers from the compatible list
       int cnt = 0;
       String defCity = null;
@@ -98,7 +95,7 @@ public class GroupBestParser extends GroupBaseParser {
           }
         }
       }
-      
+
       // If we found 2 or more, make another pass replacing the affected
       // parser with an aliased parser that returns the appropriate defaults
       if (cnt >= 2) {
@@ -122,21 +119,52 @@ public class GroupBestParser extends GroupBaseParser {
     }
   }
 
+  /**
+   * Add list of parser to master parser list(s)
+   * @param parsersP list of parsers to be added
+   * @param parserList accumulated list of regular parsers
+   * @param blockedParserList accumulated list of blocked parsers
+   * @param aliasMap map of alias codes to parsers
+   */
+  private void addParsers(MsgParser[] parsersP, List<MsgParser> parserList, List<MsgParser> blockedParserList, Map<String, MsgParser> aliasMap) {
+
+    // Run through the list of parsers
+    for (MsgParser parser : parsersP) {
+
+      // If we encounter a GropuBlockParsr, it does not get added, but we switch to
+      // adding subsequent parsers to the blocked parser list
+      if (parser instanceof GroupBlockParser) {
+        parserList = blockedParserList;
+      }
+
+      // If parser is another GroupBestParser, call ourselves recursivelly to process it's parsers
+      else if (parser instanceof GroupBestParser) {
+        addParsers(((GroupBestParser)parser).parsers, parserList, blockedParserList, aliasMap);
+      }
+
+      // Otherwise just add the parser to the current parser list
+      else {
+        addParser(parser, parserList, aliasMap);
+      }
+    }
+
+  }
+
   private void addParser(MsgParser parser, List<MsgParser> parserList,
       Map<String, MsgParser> aliasMap) {
     // Merge the default city/state and filter information.  None of these
     // are really used for any maping or filtering, but they do end up
     // calculating the displayed location name and sender filter.
     addParser(parser);
-    
+
     // See if this parser has an alias code
     String aliasCode = parser.getAliasCode();
     if (aliasCode != null) {
-      
+
       // Yep, see if we have already processed a parser with the same alias code
       MsgParser mainParser = aliasMap.get(aliasCode);
       if (mainParser != null) {
-        
+
         // Yes again.  The main parser is going to replace the aliased parser
         // First step is to make sure the  main parser is an AliasedMsgParser
         // that we can adjust to include things that may differ between aliased
@@ -150,21 +178,21 @@ public class GroupBestParser extends GroupBaseParser {
           int ndx = parserList.indexOf(mainParser);
           parserList.set(ndx, aliasParser);
         }
-        
+
         // Now that that is taken care of, just add the new parser
         // to the aliased one
         aliasParser.addMsgParser(parser);
         parser = null;
-      } 
-      
+      }
+
       // No, we do not yet have another parser with this alias code.  So we keep this
       // parser, but add it to the alias map in case another parser is aliased to this one
       else {
         aliasMap.put(aliasCode, parser);
       }
     }
-    
-    // If we haven't dropped this parser because it is aliased to another one, 
+
+    // If we haven't dropped this parser because it is aliased to another one,
     // add it to this list
     if (parser != null) parserList.add(parser);
   }
@@ -174,14 +202,14 @@ public class GroupBestParser extends GroupBaseParser {
     if (oldDefault.equals(newDefault)) return oldDefault;
     return "";
   }
-  
+
   @Override
   public void setTestMode(boolean testMode) {
     // Propogate the test mode status to all subparsers
     super.setTestMode(testMode);
     for (MsgParser parser : parsers) parser.setTestMode(testMode);
   }
-  
+
   /**
    * @return list of component subparsers
    */
@@ -191,18 +219,18 @@ public class GroupBestParser extends GroupBaseParser {
 
   @Override
   protected Data parseMsg(Message msg, int parserFlags) {
-    
+
     int bestScore = Integer.MIN_VALUE;
     Data bestData = null;
-    
+
     for (MsgParser parser : parsers) {
-      
-      // If we encounter a GroupBlockParser in the list, see if 
+
+      // If we encounter a GroupBlockParser in the list, see if
       // we have found anything so far.  If we have, return it
       if (parser instanceof GroupBlockParser) {
         if (bestData != null && bestData.msgType != MsgType.GEN_ALERT) return bestData;
       }
-      
+
       // Otherwise invoke this parser and see what kind of result it returns.
       else {
         Data tmp = parser.parseMsg(msg, parserFlags);
@@ -212,7 +240,7 @@ public class GroupBestParser extends GroupBaseParser {
           // including General Alert.  GENERAL ALERT type messages produced by location
           // parsers do not suffer this penalty
           int newScore = new MsgInfo(tmp).score();
-          if (!parser.getParserCode().startsWith("General")) newScore += 100000;
+          if (!tmp.parserCode.startsWith("General")) newScore += 100000;
           if (newScore > bestScore) {
             bestData = tmp;
             bestScore = newScore;
@@ -220,7 +248,7 @@ public class GroupBestParser extends GroupBaseParser {
         }
       }
     }
-    
+
     return bestData;
   }
 
@@ -235,12 +263,12 @@ public class GroupBestParser extends GroupBaseParser {
   public String getSponsor() {
     return sponsor;
   }
-  
+
   @Override
   public Date getSponsorDate() {
     return sponsorDate;
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return splitMsgOptions;

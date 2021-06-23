@@ -381,7 +381,7 @@ public abstract class MsgParser {
     // invoke parsing of several different sub-parsers after synchronizing on
     // it's own parsing object.  Unbelievably, this odd problem resulted in
     // two user reported crashes in the space of as many weeks.  And yes, it
-    // toook a while to track down :(
+    // took a while to track down :(
 
     synchronized (MsgParserLock) {
 
@@ -461,7 +461,7 @@ public abstract class MsgParser {
     // message, parse as a general alert.  If General alerts are not desired, they will
     // be filtered out one level up.  Unless we are in test mode in which case we skip this step
     // If not then return failure
-    if (!testMode && isPositiveId()) {
+    if (!isTestMode() && isPositiveId()) {
       return ManageParsers.getInstance().getAlertParser().parseMsg(msg, parseFlags);
     }
     return null;
