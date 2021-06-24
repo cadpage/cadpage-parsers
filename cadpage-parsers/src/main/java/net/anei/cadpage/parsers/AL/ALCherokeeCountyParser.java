@@ -23,7 +23,7 @@ public class ALCherokeeCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info,geoconex@nlamerica.com,dispatch@911comm1.info";
+    return "dispatch@911comm2.info,geoconex@nlamerica.com,dispatch@911comm1.info,Dispatch@CherokeeALE911.net";
   }
 
   @Override
