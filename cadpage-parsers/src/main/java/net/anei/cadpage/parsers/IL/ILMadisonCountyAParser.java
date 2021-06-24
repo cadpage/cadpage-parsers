@@ -31,7 +31,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
   
   @Override
   public String getFilter() {
-    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,@granitecity.illinois.gov";
+    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,@granitecity.illinois.gov,ripnrun@madisonco.com";
   }
 
   private static final Pattern FIND_ID_PTN = Pattern.compile("\\[(?:(\\d{4}-\\d{8})|Incident not yet created) ([A-Z]+\\d+)\\][ ,]*");

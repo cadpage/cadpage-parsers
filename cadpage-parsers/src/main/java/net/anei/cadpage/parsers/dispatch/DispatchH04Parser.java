@@ -10,7 +10,7 @@ public class DispatchH04Parser extends DispatchH05Parser {
   public DispatchH04Parser(String defCity, String defState) {
     super(defCity, defState, 
           "SKIP+? ( ADDR:ADDRCITY! PLACE:PLACE! Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2! " + 
-                 "| ( CALL:CALL! | Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2 | FIRE_CALL_TYPE:CALL! EMS_CALL_TYPE:CALL2! ) " + 
+                 "| ( CALL:CALL! | Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2 | FIRE_CALL_TYPE:CALL! EMS_CALL_TYPE:CALL2! | EMS_CALL_TYPE:CALL2 ) " + 
                      "PLACE:PLACE! ADDR:ADDRCITY! " +
                  ") " +
              "Lat_/_Long:GPS? ( Cross_Streets:X | CROSS_STREETS:X | ) CALLER_NAME:NAME? " + 
