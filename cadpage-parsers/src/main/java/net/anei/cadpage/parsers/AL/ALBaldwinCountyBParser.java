@@ -4,18 +4,20 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 public class ALBaldwinCountyBParser extends DispatchSouthernParser {
-  
+
   public ALBaldwinCountyBParser() {
     super(CITY_LIST, "BALDWIN COUNTY", "AL",
           DSFLG_ADDR | DSFLG_OPT_X | DSFLG_ID | DSFLG_TIME);
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.equals("Foley Sta. 30")) data.strSource = subject;
+
+    body = body.replace("https://www.ssmap.link/cad?", "https://maps.google.com/?q=");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
