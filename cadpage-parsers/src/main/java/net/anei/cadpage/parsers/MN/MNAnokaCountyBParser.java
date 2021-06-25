@@ -30,7 +30,8 @@ public class MNAnokaCountyBParser extends MsgParser {
   }
 
   private static final Pattern TRAIL_MAP_GPS_PTN =
-      Pattern.compile("(?:[A-Z].{30}\\d{8}  \\d{8}|(?:Andover|Blaine|Centennial|Columbia Heights|Coon Rapids|East Bethel|Fridley|Forest Lake|Ham Lake|Isanti Fire|Lino Lakes|Linwood|Oak Grove|Ramsey|SLP/MV|White Bear Lake Fire) \\S+|Anoka|Bethel|Champlin|Forest Lake|Hilltop|Hugo Fire|Lake Johanna Fire|Lexington|Nowthen|Oak Grove Law|St Francis)$");
+      Pattern.compile("(?:[A-Z].{30}\\d{8}  \\d{8}|(?:Andover|Blaine|Brooklyn Center|Brooklyn Park|Centennial|Champlin|Columbia Heights|Coon Rapids|Dayton|East Bethel|Elk River|Fridley|Forest Lake|Ham Lake|Isanti Fire|Lino Lakes|Linwood|Maple Grove|New Brighton|Nowthen|Oak Grove|Ramsey|SLP/MV|White Bear Lake Fire) \\S+|Anoka|Bethel|Champlin|Forest Lake|Hilltop|Hugo Fire|Lake Johanna Fire|Lexington|Nowthen|Oak Grove Law|St Anthony|St Francis)$");
+
   private static final Pattern LEAD_ID_PTN = Pattern.compile("[A-Z]{2}[A-Z0-9]\\d{7}");
   private static final Pattern INFO_SKIP_PTN = Pattern.compile("\\[\\d\\]");
   private static final Pattern TRAIL_ID_PTN = Pattern.compile("(.*)(\\d{2}[A-Z]-[A-Z]{2}\\d{4})");
