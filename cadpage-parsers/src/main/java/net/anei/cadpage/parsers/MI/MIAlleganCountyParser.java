@@ -50,17 +50,6 @@ public class MIAlleganCountyParser extends DispatchH05Parser {
     }
   }
 
-  private static final Pattern MNN_HWY_PTN1 = Pattern.compile("\\bM ?(\\d+) HWY");
-  private static final Pattern MNN_HWY_PTN2 = Pattern.compile("\\bM_(\\d+) HWY");
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = MNN_HWY_PTN1.matcher(field).replaceAll("M_$1 HWY");
-      super.parse(field, data);
-      data.strAddress = MNN_HWY_PTN2.matcher(data.strAddress).replaceAll("M$1 HWY");
-    }
-  }
-
   @Override
   protected String adjustGpsLookupAddress(String address) {
     return stripFieldEnd(address, " HWY");
