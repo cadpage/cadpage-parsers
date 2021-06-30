@@ -23,6 +23,11 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     return "dispatch@sccda.org,dispatch@sccmo.org,SCCEC_info@sccmo.org";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern PRENOTE_PTN = Pattern.compile("\\b\\d+\\) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] (?:\\[(?:Notification|Page)\\])? *(.*)");
   private static final Pattern PRENOTE_PREFIX_PTN = Pattern.compile("(\\d{6}-\\d{5}) New Notification:");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=APT:|X ST:|MAP:|CHL:|GPS:)");
