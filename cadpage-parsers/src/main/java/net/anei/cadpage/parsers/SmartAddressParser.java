@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 /**
  * Abstract message parser class that adds support for "smart" address parsing.
- * That is parsing logic that can be used for text formats that do not clearly 
- * diliminate where the the address portion of the message can be found. 
+ * That is parsing logic that can be used for text formats that do not clearly
+ * diliminate where the the address portion of the message can be found.
  *
  */
 public abstract class SmartAddressParser extends MsgParser {
@@ -24,64 +24,64 @@ public abstract class SmartAddressParser extends MsgParser {
    * portion of this message
    */
   public  enum StartType {START_ADDR, START_CALL, START_CALL_PLACE, START_PLACE, START_OTHER};
-  
+
   /**
    * Flag indicating that the start field (either CALL, PLACE, or SKIP) must
    * contain at least one token
    */
   public static final int FLAG_START_FLD_REQ = 0x0001;
-  
+
   /**
    * Flag indicating that an @ mark will be used to mark the start of a
    * place name following the normal address instead of an address
    */
   public static final int FLAG_AT_PLACE = 0x0002;
-  
+
   /**
    * Flag indicating that an @ mark can be used to mark either the start of
    * an address or the start of a place name following an address
    */
   public static final int FLAG_AT_BOTH = 0x0004;
-  
+
   /**
    * Flag indicating that address should extend to end of parsed data field
    */
   public static final int FLAG_ANCHOR_END = 0x0008;
-  
+
   /**
    * Flag indicating that status should always be calculated, even if
    * both beginning and end of the address have been identified
    */
   public static final int FLAG_CHECK_STATUS = 0x0010;
-  
+
   /**
    * Flag indicating that the & or / between street names for an intersection
    * type address may not be present and should be implied
    */
   public static final int FLAG_IMPLIED_INTERSECT = 0x0020;
-  
+
   /**
    * Flag indicating the presence of some kind of pad field between the
    * address proper and the city field.   The field can be retrieved later
    * with a getPadField() method
    */
   public static final int FLAG_PAD_FIELD = 0x0040;
-  
+
   /**
    * Flag indicating that @ and AT tokens should be ignored
    */
   public static final int FLAG_IGNORE_AT = 0x0080;
-  
+
   /**
    * Flag indicating that we only want to parse a cross street
    */
   public static final int FLAG_ONLY_CROSS = 0x0100;
-  
-  /** 
+
+  /**
    * Flag indicating that we only want to parse a city
    */
   public static final int FLAG_ONLY_CITY = 0x0200;
-  
+
   /**
    * Flag indicating that a numeric field following the address should NOT
    * be considered an apartment number.  Use when dispatch never includes
@@ -89,7 +89,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * with a number as "123 BLACKSTONE DR 76 YO FEMALE
    */
   public static final int FLAG_NO_IMPLIED_APT =0x0400;
-  
+
   /**
    * Flag indicating there is cross street information following the address
    * which means logic to identify a city followed by a street suffix as as
@@ -101,7 +101,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * was not really a cross street, but looked like it could be a cross street
    */
   public static final int FLAG_CROSS_FOLLOWS = 0x0800;
-  
+
   /**
    * Flag indicating that there my not be a blank delimiter between the
    * address and the data field in front of it. As in
@@ -109,7 +109,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * Things are pretty bad when you have to use this
    */
   public static final int FLAG_START_FLD_NO_DELIM = 0x1000;
-  
+
   /**
    * Flag indicating that we will accept street names with non street suffix.
    * Only use in cases where dispatch routinely drops streets suffixes.  When
@@ -117,7 +117,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * are not going to parser properly.  But this is the best we can do.
    */
   public static final int FLAG_OPT_STREET_SFX = 0x2000;
-  
+
   /**
    * Flag indicating that @ signs should be processed as at markers
    * but the word "AT" should be ignored.  This should probably be
@@ -125,7 +125,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * following data inocently contains the word AT.
    */
   public static final int FLAG_AT_SIGN_ONLY = 0x4000;
-  
+
   /**
    * Flag indicating the presence of some kind of PAD field between
    * the address and city name.  Similar to the FLAG_PAD_FIELD flag
@@ -133,7 +133,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * The pad field can later be retrieved with the getPadField() method
    */
   public static final int FLAG_PAD_FIELD_EXCL_CITY = 0x8000;
-  
+
   /**
    * Flag indicating that this call should not find a city.  That any predefined city lists
    * or codes should be ignored.  Basically tells the parser to ignore any city codes or lists.
@@ -146,7 +146,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * on the FLAG_NO_CITY flag
    */
   public static final int FLAG_NO_CITY = 0x10000;
-  
+
   /**
    * Flag indicating that a NEAR clause should extend to the end of the input string.
    * I'm really not sure about this one.  But here is what I think happens.
@@ -155,18 +155,18 @@ public abstract class SmartAddressParser extends MsgParser {
    * this flag set, NEAR THE PHILOMATH FIRE STATION goes into the place name.
    */
   public static final int FLAG_NEAR_TO_END = 0x20000;
-  
+
   /**
    * Flag indicating a city with no address is an acceptable result
    */
   public static final int FLAG_EMPTY_ADDR_OK = 0x40000;
-  
+
   /**
-   * Flag indicating that entire line should be assigned to address in 
+   * Flag indicating that entire line should be assigned to address in
    * the event of a full parser failure
    */
   public static final int FLAG_FALLBACK_ADDR = 0x80000;
-  
+
   /**
    * Flag indicating that extra effort should be expended to identify
    * implied apt fields at the end of the address field.  Normally only
@@ -175,64 +175,64 @@ public abstract class SmartAddressParser extends MsgParser {
    * following the address and assigning it to the apt field.
    */
   public static final int FLAG_RECHECK_APT = 0x100000;
-  
+
   /**
    * Flag indication that there is absolutely, positively, no street suffix
    * in this address.  Used only in the incredibly weird case where search for
-   * a street suffix will mistakenly pick up a following cross street. 
+   * a street suffix will mistakenly pick up a following cross street.
    */
   public static final int FLAG_NO_STREET_SFX = 0x200000;
-  
+
   /**
    * Flag indicating that the word "AND" should not be considered as
    * connecting two street names at an intersection
    */
   public static final int FLAG_AND_NOT_CONNECTOR = 0x400000;
-  
+
   /**
-   * Flag indicating that simple directions generally follow rather 
+   * Flag indicating that simple directions generally follow rather
    * than lead the street name.  This only really matters when
    * a direction is found between two street names
    */
   public static final int FLAG_PREF_TRAILING_SIMPLE_DIR = 0x800000;
-  
+
   /**
    * Flag indicating that @ and at should be treated as cross street markers
    */
   public static final int FLAG_AT_MEANS_CROSS = 0x1000000;
-  
-  /** 
+
+  /**
    * Flag indicating city name may occur before @ sign.  This is only significant
    * if FLAG_AT_PLACE or FLAG_AT_BOTH have been specified
    */
   public static final int FLAG_AT_INCL_CITY = 0x2000000;
-  
+
   /**
    * Flag indicating we are looking for anything in this line *EXCEPT* an address
    * this is used internally by the @ mark processing.  It is not expected to
    * ever be used in the real world.
    */
   public static final int FLAG_NO_ADDRESS = 0x4000000;
-  
+
   /**
    * Normally, a street name that should be ended with a street suffix will be
    * considered safely terminated by a cross street or apt marker.  This flag
    * requires that street names end in proper street suffixes to be accepted
    */
   public static final int FLAG_STRICT_SUFFIX = 0x8000000;
-  
+
   /**
    * Allow street names to have common direction qualifiers at both ends
    */
   public static final int FLAG_ALLOW_DUAL_DIRECTIONS = 0x10000000;
-  
+
   /**
-   * Flag indicating that bound directions generally follow rather 
+   * Flag indicating that bound directions generally follow rather
    * than lead the street name.  This only really matters when
    * a bound direction is found between two street names
    */
   public static final int FLAG_PREF_TRAILING_BOUND = 0x20000000;
-  
+
   /**
    * Flag indicating the commas should be accepted in the address field
    */
@@ -241,14 +241,14 @@ public abstract class SmartAddressParser extends MsgParser {
   // Flag combination that indicates we are processing some kind of pad field
   // Rechecking the apt is treated as a flavor of pad field
   private static final int FLAG_ANY_PAD_FIELD = FLAG_PAD_FIELD | FLAG_PAD_FIELD_EXCL_CITY | FLAG_RECHECK_APT;
-  
+
   /**
-   * Flag combination indicating that all direction constructs generally follow rather 
+   * Flag combination indicating that all direction constructs generally follow rather
    * than lead the street name.  This only really matters when
    * a direction is found between two street names
    */
   public static final int FLAG_PREF_TRAILING_DIR = FLAG_PREF_TRAILING_SIMPLE_DIR | FLAG_PREF_TRAILING_BOUND;
-  
+
   // Status codes that might be returned
   public static final int STATUS_TRIVIAL = 5;
   public static final int STATUS_FULL_ADDRESS = 4;
@@ -258,116 +258,116 @@ public abstract class SmartAddressParser extends MsgParser {
   public static final int STATUS_NOTHING = 0;
   public static final int STATUS_EMPTY = -1;
   public static final int STATUS_REJECT = -2;
-      
+
   // Pattern searching for characters that are not allowed in addresses
   private Pattern badCharPtn = null;
-  
+
   private Properties cityCodes = null;
-  
+
   // Main dictionary maps words to a bitmap indicating what is important about that word
   private final Map<String, Long> dictionary = new HashMap<String, Long>();
-  
+
   // Bitmask indicating dictionary word is a road suffix
   private static final long ID_ROAD_SFX = 1L;
-  
+
   // Bitmask bit indicating dictionary word is a route number prefix
   private static final long ID_ROUTE_PFX_PFX = 2L;
-  
+
   // Bitmask bit indicating dictionary word is a direction modifier
   private static final long ID_DIRECTION = 4L;
-  
+
   // Bitmask bit indicating dictionary work is an intersection connector
   private static final long ID_CONNECTOR = 8L;
-  
+
   // Bitmask bit indicating dictionary word is a cross street selector
   private static final long ID_CROSS_STREET = 0x10L;
-  
+
   // Bitmask bit indicating dictionary word is a city name/code
   private static final long ID_CITY = 0x100L;
-  
+
   // Bitmask bit indicating numeric token
   private static final long ID_NUMBER = 0x200L;
-  
+
   // Bitmask bit indicating start of multiword token
   private static final long ID_MULTIWORD = 0x400L;
-  
+
   // Bitmask bit indicating a start address marker
   private static final long ID_AT_MARKER = 0x800L;
-  
+
   // Bitmask bit indicating token had a preceding @ character
   // private static final long ID_INCL_AT_MARKER = 0x1000L;    *** AVAILABLE ***
-  
+
   // Bitmask bit indicating token is an apartment selector
   private static final long ID_APT = 0x2000L;
-  
+
   // Bitmask bit indicating token is a complete single word token
   // both this and the ID_MULTIWORD flag may be set if a token is both
   // a single complete token and the start of a multiword token
   private static final long ID_COMPLETE = 0x4000L;
-  
+
   // Bitmask bit indicating token is a route prefix that can be extended
   // by another normal route prefix
   private static final long ID_ROUTE_PFX_EXT =  0x8000L;
-  
+
   // Bitmask bit indicating token is an ambiguous road suffix
   private static final long ID_AMBIG_ROAD_SFX = 0x10000L;
-  
+
   // Bitmask bit indicating token cannot be part of an address
   private static final long ID_NOT_ADDRESS = 0x20000L;
-  
+
   // Bitmask bit indicating token can be an alpha route or highway number
   private static final long ID_ALPHA_ROUTE = 0x40000L;
-  
+
   // Bitmask bit indicating token is an optional extra road prefix (OLD, NEW)
   private static final long ID_OPT_ROAD_PFX = 0x80000L;
-  
+
   // Bitmask bit indicating token is a road suffix commonly associated with
   // numbered road names
   private static final long ID_NUMBERED_ROAD_SFX = 0x100000L;
-  
+
   // Bitmask bit indicating token is a word that is commonly used to qualify
   // other highway names
   private static final long ID_ROAD_QUALIFIER = 0x200000L;
-  
+
   // Bitmask indicating dictionary word should be considered as starting a multi-word
   // street name
   private static final long ID_STREET_NAME_PREFIX = 0x400000L;
-  
+
   private static final long ID_SPEC_CROSS_FWD = 0x0800000L;
   private static final long ID_SPEC_CROSS_REV = 0x1000000L;
-  
+
   private static final long ID_RELATION = 0x2000000L;
-  
+
   private static final long ID_NEAR = 0x4000000L;
-  
+
   private static final long ID_SINGLE_WORD_ROAD = 0x8000000L;
-  
+
   private static final long ID_BYPASS = 0x10000000L;
-  
+
   private static final long ID_BLOCK = 0x20000000L;
-  
+
   private static final long ID_AND_CONNECTOR = 0x40000000L;
-  
+
   private static final long ID_FLOOR = 0x80000000L;
-  
+
   private static final long ID_DR = 0x100000000L;
-  
+
   private static final long ID_DOCTOR = 0x200000000L;
-  
+
   private static final long ID_APT_SOFT = 0x400000000L;
-  
+
   private static final long ID_NUMBER_SUFFIX = 0x800000000L;
 
   private static final long ID_ST = 0x1000000000L;
-  
+
   private static final long ID_SAINT = 0x2000000000L;
-  
+
   private static final long ID_OF = 0x4000000000L;
-  
+
   private static final long ID_TO = 0x8000000000L;
-  
+
   private static final long ID_ROUTE_PFX = 0x10000000000L;
-  
+
   private static final long ID_MILE_MARKER = 0x20000000000L;
 
   private static final long ID_PURE_DIRECTION = 0x40000000000L;
@@ -381,70 +381,70 @@ public abstract class SmartAddressParser extends MsgParser {
   private static final long ID_SPECIAL_STREET_REV = 0x400000000000L;
 
   private static final long ID_SPECIAL_STREET_REV_END = 0x800000000000L;
-  
+
   private static final long ID_YEAR_OLD_NOT_ADDRESS = 0x1000000000000L;
 
   private static final long ID_JUST = 0x2000000000000L;
 
   private static final Pattern PAT_HOUSE_NUMBER = Pattern.compile("\\d+(?:-[A-Z]?[0-9/]+|\\.\\d)?(?:-?(?:[A-Z]|BLK))?", Pattern.CASE_INSENSITIVE);
-  
+
   // Permanent parsing  flags
   private int permParseFlags = 0;
-  
+
   // List of multiple word cities
   private MultiWordList mWordCities = null;
-  
+
   // List of multiple word street names
   // We keep two of these in case we have to search forward or backward
   private MultiWordList mWordStreetsFwd = null;
   private MultiWordList mWordStreetsRev = null;
-  
+
   // List of special street names
   private MultiWordList mWordSpecialFwd = null;
   private MultiWordList mWordSpecialRev = null;
-  
+
   // List of special cross street names
   private MultiWordList mWordCrossStreetsFwd = null;
   private MultiWordList mWordCrossStreetsRev = null;
-  
+
   // Call lookup table
   private CodeSet callDictionary = null;
-  
+
   // Permanent address flags
   private boolean allowDirectionHwyNames = false;
-  
+
   // Special Place detection algorithm
   private Pattern placeAddressPtn = null;
   private boolean placeAddressPtnExcl = false;
-  
+
   // Special reject address pattern
   private Pattern rejectAddressPtn = null;
-  
+
   public SmartAddressParser(String[] cities, String defCity, String defState) {
     this(cities, defCity, defState, CountryCode.US);
   }
-  
-  public SmartAddressParser(String[] cities, String defCity, String defState, 
+
+  public SmartAddressParser(String[] cities, String defCity, String defState,
                             CountryCode code) {
     this(defCity, defState, code);
     if (cities != null) setupCities(cities);
   }
-  
+
   public SmartAddressParser(Properties cityCodes, String defCity, String defState) {
     this(cityCodes, defCity, defState, CountryCode.US);
   }
-  
-  public SmartAddressParser(Properties cityCodes, String defCity, String defState, 
+
+  public SmartAddressParser(Properties cityCodes, String defCity, String defState,
                             CountryCode code) {
     this(defCity, defState, code);
     if (cityCodes != null) setupCities(cityCodes);
     this.cityCodes = cityCodes;
   }
-  
+
   public SmartAddressParser(String defCity, String defState) {
     this(defCity, defState, CountryCode.US);
   }
-  
+
   public SmartAddressParser(String defCity, String defState, CountryCode code) {
     super(defCity, defState, code);
     setupDictionary(defState);
@@ -457,11 +457,11 @@ public abstract class SmartAddressParser extends MsgParser {
    */
   private void setupDictionary(String defState) {
 
-    setupDictionary(ID_ROAD_SFX, 
-        "AVENUE", "AV", "AVE", 
-        "STREET", "ST", 
-        "PLACE", "PL", 
-        "ROAD", "RD", 
+    setupDictionary(ID_ROAD_SFX,
+        "AVENUE", "AV", "AVE",
+        "STREET", "ST",
+        "PLACE", "PL",
+        "ROAD", "RD",
         "LANE", "LN",
         "DRIVE", "DR",
         "SQUARE", "SQ",
@@ -503,28 +503,28 @@ public abstract class SmartAddressParser extends MsgParser {
         "KNOLL",
         "XING");
     if ((getMapFlags() & MAP_FLG_SUPPR_LA) == 0)  setupDictionary(ID_ROAD_SFX, "LA");
-    
+
     setupDictionary(ID_BYPASS, "BYPASS", "BYP", "BUSINESS", "BUS", "ALT");
-    
-    setupDictionary(ID_AMBIG_ROAD_SFX, 
-        "PLACE", "TRAIL", "PATH", "PIKE", "COURT", "MALL", "TURNPIKE", "PASS", 
+
+    setupDictionary(ID_AMBIG_ROAD_SFX,
+        "PLACE", "TRAIL", "PATH", "PIKE", "COURT", "MALL", "TURNPIKE", "PASS",
         "RUN", "LANE", "PARK", "POINT", "RIDGE", "CREEK", "MILL", "BRIDGE", "HILLS",
         "HILL", "TRACE", "MILE", "BAY", "NOTCH", "END", "LOOP", "ESTATES",
         "SQUARE", "WALK", "CIRCLE", "GROVE", "HT", "HTS", "HEIGHTS", "BEND", "VALLEY",
         "WAY", "GATEWAY", "KNOLL", "COVE", "ARCH", "BYPASS", "ESTS", "ESTATES", "CUTOFF",
         "TERRACE", "PLAZA", "LANE", "PARKWAY", "REACH", "THOROUGHFARE", "STREET");
-    
-    
-    setupDictionary(ID_NUMBERED_ROAD_SFX, 
-        "AVENUE", "AV", "AVE", 
-        "STREET", "ST", 
+
+
+    setupDictionary(ID_NUMBERED_ROAD_SFX,
+        "AVENUE", "AV", "AVE",
+        "STREET", "ST",
         "PLACE", "PL",
         "ROAD", "RD",
         "HWY",
         "MILE");
-    
+
     setupDictionary(ID_ROAD_QUALIFIER, "OLD");
-        
+
     setupDictionary(ID_ROUTE_PFX_PFX, "STATE", "ST", "SR", "SRT", "US", "FS", "INTERSTATE", "I", "IH", "STHWY", "STHY", "SH", "USHWY", "USHY", "CO", "CR", "CORD", "COUNTY", "CTY", "FM", "FR", "TWP", "PVT", "PRIVATE", "COUNTY");
     setupDictionary(ID_ROUTE_PFX_EXT, "RT", "RTE", "ROUTE", "HW", "HY", "HWY", "HIGHWAY", "ROAD", "RD");
     setupDictionary(ID_ROUTE_PFX, "STATE", "ST", "SR", "SRT", "US", "FS", "INTERSTATE", "I", "IH", "STHWY", "STHY", "SH", "USHWY", "USHY", "CO", "CR", "CORD", "COUNTY", "CTY", "FM", "FR", "RT", "RTE", "ROUTE", "HW", "HY", "HWY", "HIGHWAY", "TWP");
@@ -535,7 +535,7 @@ public abstract class SmartAddressParser extends MsgParser {
       setupDictionary(ID_ROUTE_PFX, "M");
     }
     setupDictionary(ID_PURE_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW");
-    setupDictionary(ID_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW", "NB", "EB", "SB", "WB", "EXT", "EXTENSION", 
+    setupDictionary(ID_DIRECTION, "N", "NE", "E", "SE", "S", "SW", "W", "NW", "NB", "EB", "SB", "WB", "EXT", "EXTENSION",
                                   "NORTHBOUND", "EASTBOUND", "SOUTHBOUND", "WESTBOUND", "BUS");
     setupDictionary(ID_OPT_ROAD_PFX, "OLD", "NEW", "UPPER", "LOWER", "MC");
     setupDictionary(ID_CONNECTOR, "AND", "/", "&");
@@ -546,7 +546,7 @@ public abstract class SmartAddressParser extends MsgParser {
     setupDictionary(ID_DR, "DR");
     setupDictionary(ID_ST, "ST");
     setupDictionary(ID_MILE_MARKER, "MM", "MP");
-    
+
     setupDictionary(ID_CROSS_STREET, "XS:", "X:", "C/S:", "C/S", "XSTR", "X");    //  Warning!  Must match CROSS_MARK_PTN
     setupDictionary(ID_NEAR, "BESIDE", "NEAR", "ACROSS");
     setupDictionary(ID_APT, "APT:", "APT", "#APT", "#", "SP", "RM", "SUITE", "SUIT", "STE", "SUITE:", "ROOM", "ROOM:", "LOT", "#LOT", "UNIT");
@@ -560,7 +560,7 @@ public abstract class SmartAddressParser extends MsgParser {
     setupDictionary(ID_NUMBER_SUFFIX, "ND", "RD", "TH");
     setupDictionary(ID_NOT_STREET_NAME, "ON", "NO", "IN", "AT", "THE", "-");
     setupDictionary(ID_JUST, "JUST");
-    
+
     // Set up special cross street names
     addCrossStreetNames(
         "ALLEY",
@@ -577,7 +577,7 @@ public abstract class SmartAddressParser extends MsgParser {
         "UNKNOWN",
         "UNNAMED STREET"
     );
-    
+
     // Add any country specific words
     switch (getCountryCode()) {
     case UK:
@@ -586,22 +586,22 @@ public abstract class SmartAddressParser extends MsgParser {
           "GREEN",
           "CRESCENT");
       break;
-      
+
     case NZ:
       setupDictionary(ID_ROAD_SFX,
           "CRES", "CRESCENT",
           "TCE", "TERRACE");
       break;
-      
+
     default:
       break;
     }
   }
-  
+
   protected void setupParseAddressFlags(int flags) {
     permParseFlags = flags;
   }
-  
+
   /**
    * Allow otherwise prohibited characters in address
    * @param charList list of characters that will be allowed
@@ -618,26 +618,26 @@ public abstract class SmartAddressParser extends MsgParser {
     sb.append(']');
     badCharPtn = Pattern.compile(sb.toString());
   }
-  
+
   /**
    * Add full length names of directions to direction dictionary tables
    */
   protected void addExtendedDirections() {
     setupDictionary(ID_DIRECTION, "NORTH", "SOUTH", "EAST", "WEST");
   }
-  
+
   /**
    * Add vocabulary to identify nautical locations
    */
   protected void addNauticalTerms() {
-    setupDictionary(ID_ROAD_SFX | ID_AMBIG_ROAD_SFX, 
+    setupDictionary(ID_ROAD_SFX | ID_AMBIG_ROAD_SFX,
         "POINT", "PT",
         "BAY",
         "MARINA",
         "STRAIGHT",
         "ISLAND", "ISLE");
   }
-  
+
   /**
    * Add additional road suffix terms.  It is the callers responsibility
    * to ensure that all new suffix terms are properly handled when the
@@ -647,7 +647,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected void addRoadSuffixTerms(String ... terms) {
     setupDictionary(ID_ROAD_SFX, terms);
   }
-  
+
   /**
    * Add additional words that should not be allowed in address fields
    * @param words words to be added to list of invalid address words
@@ -655,7 +655,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected void addInvalidWords(String ... words) {
     setupDictionary(ID_NOT_ADDRESS, words);
   }
-  
+
   /**
    * Remove words from dictionary that are causing confusion
    * @param words words to be removed
@@ -663,7 +663,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected void removeWords(String ... words) {
     for (String word : words) dictionary.remove(word);
   }
-  
+
   protected static String[] getKeywords(Properties table) {
     String[] result = new String[table.size()];
     int ndx = 0;
@@ -672,7 +672,7 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     return result;
   }
-  
+
   protected static String[] getValues(Properties table) {
     String[] result = new String[table.size()];
     int ndx = 0;
@@ -681,22 +681,22 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     return result;
   }
-  
+
   /**
    * Set up predefined city code tables or lists
    */
   protected void setupCities(String ... cities) {
     setupCities(Arrays.asList(cities));
   }
-  
+
   protected void setupCities(Properties cityCodes) {
     setupCities(getKeywords(cityCodes));
   }
-  
+
   protected void setupCityValues(Properties cityCodes) {
     setupCities(getValues(cityCodes));
   }
-  
+
   protected void setupCities(Collection<String> cities) {
     if (cities == null) return;
     if (mWordCities ==  null) {
@@ -705,7 +705,7 @@ public abstract class SmartAddressParser extends MsgParser {
       mWordCities.addNames(+1, cities);
     }
   }
-  
+
   private void setupDictionary(long bitMask, String ... args) {
     for (String arg : args) {
       long newMask = bitMask;
@@ -725,7 +725,7 @@ public abstract class SmartAddressParser extends MsgParser {
     Long flags = dictionary.get(word);
     return (flags != null && (flags & (ID_NOT_ADDRESS|ID_NOT_STREET_NAME)) == 0);
   }
-  
+
   /**
    * Setup predefined call list
    * @param callList list of predefined calls
@@ -733,7 +733,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected void setupCallList(String ... callList) {
     setupCallList(new CodeSet(callList));
   }
-  
+
   /**
    * Set up predefined call list
    * @param callDictionary CodeSet containing expected call values
@@ -741,16 +741,16 @@ public abstract class SmartAddressParser extends MsgParser {
   protected void setupCallList(CodeSet callDictionary) {
     this.callDictionary = callDictionary;
   }
-  
+
   @Override
   public CodeSet getCallList() {
     return callDictionary;
   }
-  
+
   protected void setAllowDirectionHwyNames() {
     setAllowDirectionHwyNames(true);
   }
-  
+
   /**
    * Setup up pattern to be used to detect place names in front of address
    * information
@@ -765,15 +765,15 @@ public abstract class SmartAddressParser extends MsgParser {
     this.placeAddressPtn = placeAddressPtn;
     this.placeAddressPtnExcl = placeAddressPtnExcl;
   }
-  
+
   protected void setupRejectAddressPattern(Pattern rejectAddressPtn) {
     this.rejectAddressPtn = rejectAddressPtn;
   }
-  
+
   public void setAllowDirectionHwyNames(boolean allowDirectionHwyNames) {
     this.allowDirectionHwyNames = allowDirectionHwyNames;
   }
-  
+
   /**
    * Set up preloaded multi-word street names
    * @param names list of multi-word street names.  with no street suffixes
@@ -782,9 +782,9 @@ public abstract class SmartAddressParser extends MsgParser {
     mWordStreetsFwd = new MultiWordList(+1, 0, ID_MULTIWORD, 0, names);
     mWordStreetsRev = new MultiWordList(-1, 0, ID_MULTIWORD, 0, names);
   }
-  
+
   /**
-   * Set up preloaded special street names.  These are names of legitimate streets that lack a normal 
+   * Set up preloaded special street names.  These are names of legitimate streets that lack a normal
    * street suffix
    * @param names special street names
    */
@@ -806,18 +806,18 @@ public abstract class SmartAddressParser extends MsgParser {
       mWordCrossStreetsFwd.addNames(+1, names);
     }
   }
-  
+
   protected void setupDoctorNames(String ... names) {
     for (String name : names) {
       setupDictionary(ID_DOCTOR, name, name+"S", name+"'S");
     }
   }
-  
+
   protected void setupSaintNames(String ... names) {
     setupDictionary(ID_SAINT, names);
   }
-  
-  
+
+
   // Parser working variables
   private int flags;
   private String[] tokens;
@@ -827,10 +827,10 @@ public abstract class SmartAddressParser extends MsgParser {
   private int lastCity = -1;
   private int startNdx = 0;
   private String saveAddress;
-  
+
   // Have to save last result for backward compatibility with some calls
   private Result lastResult = null;
-  
+
   /**
    * Determine if a string looks like a valid address
    * @param address Address string to be checked
@@ -840,7 +840,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected int checkAddress(String address) {
     return checkAddress(address, 0);
   }
-  
+
   /**
    * Determine if a string looks like a valid address
    * @param address Address string to be checked
@@ -852,7 +852,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected int checkAddress(String address, int extra) {
     return parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_STRICT_SUFFIX | FLAG_NO_CITY, address).getStatus(extra);
   }
-  
+
   /**
    * Determine if a string looks like a valid address
    * @param address Address string to be checked
@@ -861,7 +861,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected boolean isValidAddress(String address) {
     return isValidAddress(address, 0);
   }
-  
+
   /**
    * Determine if a string looks like a valid address
    * @param address Address string to be checked
@@ -881,7 +881,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected boolean isValidCrossStreet(String address) {
     return isValidCrossStreet(address, 0);
   }
-  
+
   /**
    * Determine if a string looks like a valid address
    * @param address Address string to be checked
@@ -893,7 +893,7 @@ public abstract class SmartAddressParser extends MsgParser {
     int status = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ONLY_CROSS | FLAG_ALLOW_DUAL_DIRECTIONS | FLAG_NO_CITY, address).getStatus(extra);
     return status == STATUS_STREET_NAME || status == STATUS_INTERSECTION;
   }
-  
+
   /**
    * Determine if string contains a city name or code.
    * @param address string to be checked for city name
@@ -928,7 +928,7 @@ public abstract class SmartAddressParser extends MsgParser {
    *         START_PLACE - field starts with a place name
    *         START_SKIP - field starts with something we aren't interested in,
    *                      followed by address
-   * @param flags - Special processing flags                     
+   * @param flags - Special processing flags
    * @param address address field to be parsed
    * @param data data object to be filled with information from parsed address field.
    */
@@ -936,7 +936,7 @@ public abstract class SmartAddressParser extends MsgParser {
     lastResult = parseAddress(sType, flags, address);
     lastResult.getData(data);
   }
-  
+
   /**
    * Determine if the string that we just parsed looks like an address
    * @return zero if string was not recognized as valid address, otherwise a
@@ -945,7 +945,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected int getStatus() {
     return lastResult.getStatus();
   }
-  
+
   /**
    * Determine if the string that we just parsed looks like an address
    * @return zero if string was not recognized as valid address, otherwise a
@@ -954,7 +954,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected boolean isValidAddress() {
     return lastResult.isValid();
   }
-  
+
   /**
    * parse address and return a result object that can be used to build
    * the parsed data fields at a later time
@@ -971,7 +971,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected Result parseAddress(StartType sType, String address) {
     return parseAddress(sType, 0, address);
   }
-  
+
   /**
    * parse address and return a result object that can be used to build
    * the parsed data fields at a later time
@@ -982,7 +982,7 @@ public abstract class SmartAddressParser extends MsgParser {
    *         START_PLACE - field starts with a place name
    *         START_SKIP - field starts with something we aren't interested in,
    *                      followed by address
-   * @param flags - Special processing flags                     
+   * @param flags - Special processing flags
    * @param address address field to be parsed
    * @return integer indicating how good this address is, higher number mean better fit
    */
@@ -990,7 +990,7 @@ public abstract class SmartAddressParser extends MsgParser {
     address = address.trim();
     flags |= permParseFlags;
     this.flags = flags;
-    
+
     // Pad fields and Apt recheck logic do not work well together
     if (isFlagSet(FLAG_RECHECK_APT) && isFlagSet(FLAG_PAD_FIELD | FLAG_PAD_FIELD_EXCL_CITY)) {
       throw new RuntimeException("Unsupported flag combination");
@@ -1002,11 +1002,11 @@ public abstract class SmartAddressParser extends MsgParser {
     // contains an @
     String callPrefix = null;
     if ((sType == StartType.START_CALL && (isFlagSet(FLAG_AT_PLACE|FLAG_AT_BOTH|FLAG_IGNORE_AT) || !address.contains("@")) ||
-         sType == StartType.START_CALL_PLACE) 
+         sType == StartType.START_CALL_PLACE)
          && callDictionary != null) {
       String call = callDictionary.getCode(address.toUpperCase(), !isFlagSet(FLAG_START_FLD_NO_DELIM));
       if (call != null) {
-        
+
         // We have a match.  Store the call (without the trailing space)
         // in the result call prefix.  Remove the call prefix from the address
         // line, and set the start type to start with the address
@@ -1021,10 +1021,10 @@ public abstract class SmartAddressParser extends MsgParser {
         this.flags = flags;
       }
     }
-    
+
     // Convert any protected names in address line
     address = protectNames(address);
-    
+
     // A start type of START_ADDR is incompatible with the FLAG_AT_BOTH flag.  If both are
     // set, switch flag to FLAG_AT_PLACE
 //    if (sType == StartType.START_ADDR && isFlagSet(FLAG_AT_BOTH)) {
@@ -1032,7 +1032,7 @@ public abstract class SmartAddressParser extends MsgParser {
 //      flags |= FLAG_AT_PLACE;
 //      this.flags = flags;
 //    }
-    
+
     // If we are not ignoring at signs, see if we have one
     String prefix = null;
     String specPlace = null;
@@ -1042,16 +1042,16 @@ public abstract class SmartAddressParser extends MsgParser {
       Pattern ptn = (isFlagSet(FLAG_AT_SIGN_ONLY) ? AT2_PTN : AT1_PTN);
       Matcher match = ptn.matcher(address);
       if (match.find()) {
-        
+
         // Find the first cross street marker
         int crossPos = Integer.MAX_VALUE;
         Matcher mat2 = CROSS_MARK_PTN.matcher(address);
         if (mat2.find()) crossPos = mat2.start();
-        
+
         boolean atPlace = isFlagSet(FLAG_AT_PLACE);
         boolean atBoth = isFlagSet(FLAG_AT_BOTH);
         boolean atIncCity = isFlagSet(FLAG_AT_INCL_CITY);
-        
+
         // It makes a difference if there is a second AT mark in the field so lets
         // look ahead and see if we have one
         int atStart = match.start();
@@ -1063,17 +1063,17 @@ public abstract class SmartAddressParser extends MsgParser {
           nextStart = match.start();
           nextEnd = match.end();
         }
-        
+
         // Go into loop checking results at different break points.
         do {
-          
+
           // @ markers beyond the first cross street marker do not count
           if (atStart >= crossPos) break;
-          
-          // We got one.  Use it to split address into two pieces 
+
+          // We got one.  Use it to split address into two pieces
           String part1 = address.substring(0,atStart).trim();
           String part2 = address.substring(atEnd).trim();
-          
+
           // Try one or both pieces as an address
           Result res1 = null, res2 = null;
           if (atPlace || atBoth) {
@@ -1088,7 +1088,7 @@ public abstract class SmartAddressParser extends MsgParser {
             if (atBoth || atMult) tFlags |= FLAG_CHECK_STATUS;
             res2 = parseAddressInternal1(StartType.START_ADDR, tFlags, part2);
           }
-          
+
           // If FLAG_AT_BOTH was set, we tried both pieces and need to determine which one is better
           if (res1 != null && res2 != null) {
             if (res1.getStatus() >  res2.getStatus()) {
@@ -1097,8 +1097,8 @@ public abstract class SmartAddressParser extends MsgParser {
               res1  = null;
             }
           }
-          
-          // AT this point, one and only one of res1 and res2 will be non-null.  Use it to 
+
+          // AT this point, one and only one of res1 and res2 will be non-null.  Use it to
           // determine the final result
           String tmpPrefix, tmpSpecPlace;
           Result tmpResult;
@@ -1112,7 +1112,7 @@ public abstract class SmartAddressParser extends MsgParser {
             tmpResult = res2;
             tmpSpecPlace = null;
           }
-          
+
           // OK, not the final result, now we compare the previous loop results to determine
           // the real final result
           if (result == null || tmpResult.getStatus() > result.getStatus()) {
@@ -1120,7 +1120,7 @@ public abstract class SmartAddressParser extends MsgParser {
             result = tmpResult;
             specPlace = tmpSpecPlace;
           }
-          
+
           // Continue checking further @ breaks until we get a valid address or
           // run out of breaks
           atStart = nextStart;
@@ -1135,30 +1135,30 @@ public abstract class SmartAddressParser extends MsgParser {
         } while (true);
       }
     }
-    
+
 
     if (result == null) result = parseAddressInternal1(sType, flags, address);
-    
+
     result.startType = sType;
     result.flags = flags;
     result.callPrefix = callPrefix;
-    
+
     // Some consistency checks
     if (prefix != null) {
       if (result.startField != null) throw new RuntimeException("Inconsistent prefix parse result");
       result.stdPrefix = prefix;
     }
-    if (specPlace != null) { 
+    if (specPlace != null) {
       if (result.placePrefix != null || result.placeField != null) throw new RuntimeException("Inconsistent place parse result");
       result.trailPlace = specPlace;
     }
-    
+
     // If we were really parsing cross streets, switch address index to cross street index
     if (isFlagSet(FLAG_ONLY_CROSS)) {
       result.crossField = result.addressField;
       result.addressField = null;
     }
-    
+
     // Clean up any protected names in any fields
     if (result.callPrefix != null) result.callPrefix = unprotectNames(result.callPrefix);
     if (result.placePrefix != null) result.placePrefix = unprotectNames(result.placePrefix);
@@ -1176,17 +1176,17 @@ public abstract class SmartAddressParser extends MsgParser {
   private static Pattern CROSS_MARK_PTN = Pattern.compile("\\b(?:XS?:|C/S:|C/S\\b|XSTR\\b|X\\b)", Pattern.CASE_INSENSITIVE);
   private static Pattern AT1_PTN = Pattern.compile("@|(?: REPORTED *)?\\bAT\\b(?!&T)", Pattern.CASE_INSENSITIVE);
   private static Pattern AT2_PTN = Pattern.compile("@");
-  
-  
+
+
   protected Result parseAddressInternal1(StartType sType, int flags, String address) {
 
     Result result = parseAddressInternal2(sType, flags, address);
-    
+
     // Now is where we use the result to compute the true prefix and leftover segments
     result.left = "";
     result.mBlankLeft = false;
     result.commaLeft = false;
-    
+
     if (result.startField != null) {
       int tmp = result.startField.fldEnd;
       if (tmp > 0) {
@@ -1197,35 +1197,35 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
     }
-    
+
     if (result.endAll >= 0 && result.endAll < tokenPos.length) {
       int tmp = result.endAll;
       while (tmp < tokens.length && tokens[tmp].equals(",")) {
         tmp++;
         result.commaLeft = true;
       }
-      if (tmp < tokenPos.length){ 
+      if (tmp < tokenPos.length){
         int pt = tokenPos[tmp];
         result.mBlankLeft = (pt >= 2 && saveAddress.substring(pt-2, pt).equals("  "));
         result.left = saveAddress.substring(pt);
       }
     }
-    
+
     return result;
   }
-  
+
   private Result parseAddressInternal2(StartType sType, int flags, String address) {
     lastCity = -1;
     this.flags = flags;
     Result result = new Result(this, flags);
-    
+
     // If address fits the reject pattern return a reject status
     if (rejectAddressPtn != null && rejectAddressPtn.matcher(address).matches()) {
       result.status = STATUS_REJECT;
       result.left = address;
       return result;
     }
-    
+
     // If a place pattern has been specified, we use it instead of the
     // standard start address logic to identify the place prefix
     if (sType == StartType.START_PLACE && placeAddressPtn != null) {
@@ -1252,18 +1252,18 @@ public abstract class SmartAddressParser extends MsgParser {
     result.status = STATUS_EMPTY;
     address = address.trim();
     if (address.length() == 0) return result;
-    
+
     // Check some stuff that will not apply to city only parse requests
     String gpsCoords = null;
     boolean onlyCity = isFlagSet(FLAG_ONLY_CITY);
     if (!onlyCity) {
-      
+
       // Look for and compress any US symbols
       address = US_PTN.matcher(address).replaceAll("$1$2");
-      
+
       // Strip leading zeros from starting numeric tokens
       address = stripLeadingZero(address);
-      
+
       // Identify and protect any GPS coordinates
       Matcher match = MsgParser.GPS_PATTERN.matcher(address);
       if (match.find()) gpsCoords = match.group().trim();
@@ -1271,13 +1271,13 @@ public abstract class SmartAddressParser extends MsgParser {
 
     // Set up token list and types
     setTokenTypes(sType, address, gpsCoords, result);
-    
+
     // Null token list should return total failure status
     if (tokens.length == 0) {
       result.status = 0;
       return result;
     }
-    
+
     // If we are looking for a city and nothing else, parseToCity can find it
     // If the city has to start and end the field, check that that start index is zero
     boolean noAddress = isFlagSet(FLAG_NO_ADDRESS);
@@ -1290,8 +1290,8 @@ public abstract class SmartAddressParser extends MsgParser {
           return result;
         }
         result.cityField = null;
-      } 
-      
+      }
+
       // Otherwise assign entire field to start field if there is one
       if (result.startField != null) {
         result.startField.end(tokens.length);
@@ -1301,9 +1301,9 @@ public abstract class SmartAddressParser extends MsgParser {
       result.status = STATUS_NOTHING;
       return result;
     }
-    
+
     // Now comes the hard part.
-    
+
     // We have a number of basic patters that we will recognize
     // Try each one until we find one that works
     result.status = STATUS_TRIVIAL;
@@ -1319,7 +1319,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (parseNakedRoad(result)) {
       // If the naked road pattern detected an implied intersection symbol
       // promote the result status to intersection
-      if (result.insertAmp >= 0) result.status++; 
+      if (result.insertAmp >= 0) result.status++;
       return result;
     }
 
@@ -1380,9 +1380,9 @@ public abstract class SmartAddressParser extends MsgParser {
   public boolean isCommaLeft() {
     return lastResult.isCommaLeft();
   }
-  
+
   /**
-   * We handle the dead simple case where the address starts at the 
+   * We handle the dead simple case where the address starts at the
    * beginning of the text and we have found a city to mark the end
    * of the address (would that life were always this simple
    * @param result returns the parsed results if successful
@@ -1390,22 +1390,22 @@ public abstract class SmartAddressParser extends MsgParser {
    * @param overrideCheckStatus true if processing should continue when check status has been requested
    */
   private boolean parseTrivialAddress(Result result, boolean skipPad, boolean overrideCheckStatus) {
-    
+
     // If start address is not fixed somewhere, this cannot possibly work
     if (startAddress < 0) return false;
-    
+
     // If we were called to specifically check address status, we always fail
     // because this short circuits the entire address validation logic
     if (isFlagSet(FLAG_CHECK_STATUS)) return false;
 
     // We end up getting called twice. The first time skipPad is false, and we are
-    // still hoping to find an implied intersection or pad field, which won't happen if we   
-    // return a trivial result here 
-    
+    // still hoping to find an implied intersection or pad field, which won't happen if we
+    // return a trivial result here
+
     // We are called a second time if nothing else has worked, in which case we
     // will ahead and process this if we skipped processing the first time around
     if (isFlagSet(FLAG_IMPLIED_INTERSECT|FLAG_ANY_PAD_FIELD) != skipPad) return false;
-    
+
     // OK, we have to have at least 1 items before the city
     // Unless we are parsing a cross street instead of a real address, in which
     // case we allow it to be empty
@@ -1418,10 +1418,10 @@ public abstract class SmartAddressParser extends MsgParser {
    * that contains valid GPS coordinates
    */
   private boolean parseGPSCoords(Result result, String gpsCoords) {
-    
+
     // If no GPS coordinates were found, return false
     if (gpsCoords == null) return false;
-    
+
     // We have already packed the GPS coordinates into a single token
     // now find that token
     int gpsNdx = 0;
@@ -1447,7 +1447,7 @@ public abstract class SmartAddressParser extends MsgParser {
    *     <number> <street name> <street suffix>
    */
   private boolean parseSimpleAddress(Result result) {
-    
+
     result.reset(startAddress);
     boolean padField = isFlagSet(FLAG_ANY_PAD_FIELD);
 
@@ -1460,26 +1460,26 @@ public abstract class SmartAddressParser extends MsgParser {
       while (true) {
         if (sAddr >= tokens.length) return false;
         if (isType(sAddr, ID_CROSS_STREET)) return false;
-        
-        // See if this token looks like a house number, and is not followed by an invalid address token or a connector 
+
+        // See if this token looks like a house number, and is not followed by an invalid address token or a connector
         if (isHouseNumber(sAddr) && !isType(sAddr+1, ID_NOT_ADDRESS | ID_NUMBER_SUFFIX | ID_CROSS_STREET | ID_APT) && findConnector(sAddr+1)<0) {
-          
+
           // And is not followed by another number, unless that number is followed by a numbered road suffix
           if (!isHouseNumber(sAddr+1) || isType(sAddr+2, ID_NUMBERED_ROAD_SFX)) {
-            
+
             // And is not preceded by a relational operator
             // or preceded or followed by a mile marker symbol
             if (!isType(sAddr+1, ID_MILE_MARKER) && (sAddr == 0 || ! isType(sAddr-1, ID_RELATION | ID_MILE_MARKER))) {
-              
+
               // Getting closer...
               // if the house number appears to be part of a numbered highway, bail out
               // Unless the previous word is "CO" which might be abbreviation for "COMPANY in the prefix data
               if (findRevNumberedHwy(start, sAddr) < 0 || tokens[sAddr-1].equalsIgnoreCase("CO")) {
-                
+
                 // If the house numbered is followed by a numbered road suffix
                 // this starts looking chancy.  But more analysis is needed.
                 if (isType(sAddr+1, ID_NUMBERED_ROAD_SFX)) {
-                  
+
                   // If the numbered road suffix is actually the start of a numbered highway name, we are good to go
                   sEnd = findNumberedHwy(sAddr+1);
                   if (sEnd >= 0) {
@@ -1487,14 +1487,14 @@ public abstract class SmartAddressParser extends MsgParser {
                     sEnd = bumpTrailingDir(sAddr+1, sEnd);
                     break;
                   }
-  
+
                   // If the numbered road suffix is ST, see if it is actually the start
                   // of a street name named after saint.  if it is, we are good to go
                   if (isType(sAddr+1, ID_ST)) {
                     if (!isType(sAddr+2, ID_DIRECTION)) {
                       sEnd = findRoadEnd(sAddr+1, 1);
                       if (sEnd > 0) {
-                        
+
                         // Unless the implied intesection flag is set, in which case
                         // this only works if the street name is a defined saint name
                         if (!isFlagSet(FLAG_IMPLIED_INTERSECT) ||
@@ -1502,11 +1502,11 @@ public abstract class SmartAddressParser extends MsgParser {
                       }
                     }
                   }
-                  
+
                   // Last chance, see if this is an identified special street name
                   sEnd = findSpecialRoadEnd(sAddr+1);
                   if (sEnd > 0) break;
-                  
+
                   // Otherwise, this has been confirmed as a legitimate numbered road suffix following
                   // the house number which is a show stopper
                   return false;
@@ -1516,19 +1516,19 @@ public abstract class SmartAddressParser extends MsgParser {
             }
           }
         }
-        
+
         // Not a house  number.  If the start address field is locked, bail out
         if (startAddress >= 0 || locked) return false;
-        
+
         // Otherwise move on to the next token
         // If we encounter a flexible @ sign, lock in the start of the address field
         sAddr++;
       }
-      
+
       // OK, we found a house number!!
       // sAddr points to the house number
       // sEnd points to end of street name if identified, or -1 if not.
-      
+
       // If we found a city beyond this start point, just use that as the terminator
       int sTmp = sEnd;
       if (sTmp < 0) {
@@ -1545,17 +1545,17 @@ public abstract class SmartAddressParser extends MsgParser {
         if (locked && result.startField != null) result.startField.fldEnd--;
         return true;
       }
-      
+
       // Otherwise, see if we can find a road starting from the next token
       // In general, we would search for a non-strict road end here.  But doing so may
       // preempt better matches from some of the other parsers.  So will make a strict
       // check here, and catch non-strict road termination results in the fallback parser
       if (sEnd < 0) sEnd = findRoadEnd(sAddr+1, 2, true);
       if (sEnd > 0) {
-        
+
         // We found one.  But before accepting it lets check for one
         // particular special case.  If the start address position is not locked
-        // and the road suffix that ended this address also happens to be a 
+        // and the road suffix that ended this address also happens to be a
         // numbered route prefix, the see if we can get a better address
         // match treating treating that as a number route prefix
         if (startAddress < 0 && isType(sEnd-1, ID_ROUTE_PFX)) {
@@ -1568,22 +1568,22 @@ public abstract class SmartAddressParser extends MsgParser {
             startAddress = saveStartAddress;
           }
         }
-        
+
         // Not problem, this will be the end of the address
         break;
       }
-      
+
       // This isn't what we are looking for
       // Increment the search index and look for something else
       sAddr++;
     }
-    
+
     // We have found what we need to have found and we are going
     // to be successful
     result.addressField = new FieldSpec(sAddr, sEnd);
     if (result.startField != null) result.startField.optionalEnd(locked ? sAddr-1 : sAddr);
     result.endAll = sEnd;
-    
+
     // Special case - simple address can have intersection marker followed by
     // cross stream info.  But it has to be a real 1 token marker.  We do
     // not accept "N OF" type connectors here
@@ -1591,7 +1591,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (tmp == sEnd+1) {
       findCrossStreetEnd(tmp, false, result);
     }
-    
+
     return parseTrailingData(result);
   }
 
@@ -1601,14 +1601,14 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if successful
    */
   private boolean parseIntersection(Result result) {
-    
+
     result.reset(startAddress);
     boolean padField = isFlagSet(FLAG_ANY_PAD_FIELD);
-    
+
     // First lets figure out where the address starts
     int sAddr = -1;
     int ndx = -1;
-    
+
     // At least one of the two street names must be pretty solid
     // we can allow some slop for the other one.
     boolean good = true;
@@ -1619,14 +1619,14 @@ public abstract class SmartAddressParser extends MsgParser {
       // See if we can identify a street name starting here
       int tmp = findRoadEnd(startAddress, 2, true, true);
       if (tmp >= 0) {
-        
+
         // If this is followed by a connector, we are good to go.
         tmp = findConnector(tmp);
         if (tmp >= 0) {
           sAddr = startAddress;
           ndx = tmp;
         }
-        
+
         // Legal street name not followed by a connector.  Normally we would drop
         // down and see if we can find a connector followed by a good street name.
         // But if there might be a cross street following this address, that might
@@ -1644,39 +1644,39 @@ public abstract class SmartAddressParser extends MsgParser {
       ndx = start;
       while (true) {
         ndx++;
-        
+
         // If we reach the end of the string, all is lost
         if (ndx >= tokens.length) return false;
-        
+
         // If we started from a solid address start point, stop searching before things
         // get too ridiculous
         if (startAddress >= 0 && ndx-startAddress > 5) return false;
-        
+
         // Likewise if we encounter a cross street marker
         if (isType(ndx, ID_CROSS_STREET)) return false;
-        
+
         // If field starts with an address, any invalid token is a reject
         if (startAddress >= 0 && isType(ndx, ID_NOT_ADDRESS)) return false;
-        
+
         // Now look for a connector, but it can not be the first element
         if (ndx-start >= 1) {
           int tmp = findConnector(ndx);
           if (tmp >= 0) {
-            
+
             // Found one
             sAddr = ndx-1;
             ndx = tmp;
-            
+
             // Next identify a street in front of the connector
             // If start of address has been locked, that takes care of that
-            // But, we do not have a confirmed good street name and will 
+            // But, we do not have a confirmed good street name and will
             // require higher standards for the following street name
             if (startAddress >= 0) {
               sAddr = startAddress;
               good = false;
               break;
             }
-            
+
             // If cross street search, check for special cross street name
             if (isFlagSet(FLAG_ONLY_CROSS)) {
               tmp = mWordCrossStreetsRev.findEndSequence(sAddr);
@@ -1685,10 +1685,10 @@ public abstract class SmartAddressParser extends MsgParser {
                 break;
               }
             }
-            
+
             // skip over direction and bypass
             if (sAddr > start && isType(sAddr, ID_DIRECTION)) sAddr--;
-            
+
             // Check for special street names
             if (mWordSpecialRev != null) {
               tmp = mWordSpecialRev.findEndSequence(sAddr);
@@ -1697,26 +1697,26 @@ public abstract class SmartAddressParser extends MsgParser {
                 break;
               }
             }
-            
+
             // See if this is a multi word street name without a suffix
             if (mWordStreetsRev != null && isFlagSet(FLAG_OPT_STREET_SFX)) {
               int save = sAddr;
               sAddr = mWordStreetsRev.findEndSequence(sAddr);
               if (sAddr != save) break;
             }
-  
+
             // Skip over bypass
             if (sAddr > start && isType(sAddr, ID_BYPASS)) sAddr--;
-            
+
             if (sAddr >= start && isRoadToken(sAddr)) break;
-            
+
             if (sAddr > start && isRoadSuffix(sAddr)) {
               sAddr--;
               if (isType(sAddr,ID_NOT_ADDRESS|ID_NOT_STREET_NAME)) continue;
               sAddr = findRoadStart(start, sAddr);
               break;
             }
-            
+
             // Check for a route prefix followed by a numeric or alpha route number
             // We check two positions for this sequence to catch the odd case where an alpha route number
             // has previously been mistaken for a direction
@@ -1727,9 +1727,9 @@ public abstract class SmartAddressParser extends MsgParser {
               sAddr = tmp;
               break;
             }
-            
-            if (isFlagSet(FLAG_OPT_STREET_SFX) && !isType(sAddr,ID_NOT_ADDRESS)) break; 
-  
+
+            if (isFlagSet(FLAG_OPT_STREET_SFX) && !isType(sAddr,ID_NOT_ADDRESS)) break;
+
             // One last chance.  If we skipped over a "BYPASS" token to get here
             // see if we can treat it as a suffix as well
             if (sAddr > start && isType(sAddr+1, ID_BYPASS)) {
@@ -1740,19 +1740,19 @@ public abstract class SmartAddressParser extends MsgParser {
           }
         }
       }
-      
+
       // If road is preceded by a direction, include that
       sAddr = stretchRoadPrefix(start, sAddr);
     }
-    
-    // When we get here, 
+
+    // When we get here,
     // good true if we have a good solid first street name
     // saddr points to beginning of address
     // ndx points to the token following the connector
 
     // If there is a city terminating the address, just parse up to it
     if (good && !padField && parseAddressToCity(sAddr, ndx+1, result)) return true;
-    
+
     // Otherwise find end of second road
     if (good) {
       ndx = findRoadEnd(ndx, 2);
@@ -1760,17 +1760,17 @@ public abstract class SmartAddressParser extends MsgParser {
       ndx = findRoadEnd(ndx, 0, true);
     }
     if (ndx < 0) return false;
-    
+
     // If we did not try to parse to a trailing city previously because
     // we did not have a solid first street name, we can try again now
     // that we have a solid second street name
     if (!good && parseAddressToCity(sAddr, ndx, result)) return true;
-    
+
     // If we found that, we have a successful intersection parse
     result.addressField = new FieldSpec(sAddr, ndx);
-    if (startAddress < 0) result.startField.end(sAddr); 
+    if (startAddress < 0) result.startField.end(sAddr);
     result.endAll = ndx;
-    
+
     // But there might be some additional cross street info we can parse
     return parseTrailingData(result);
   }
@@ -1782,28 +1782,31 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return
    */
   private int findRoadStart(int start, int sAddr) {
-    
+
     // Two things to check.  First is to see if we have a recognized multi word street name
     int save = sAddr;
     if (mWordStreetsRev != null) sAddr = mWordStreetsRev.findEndSequence(sAddr);
-    
+
     // If not, see if the first word is an ambiguous street suffix, and if it is, include the
     // previous word,
     if (sAddr == save && isAmbigRoadSuffix(sAddr)) sAddr--;
+
+    // Not allowed to precede hard start
+    if (sAddr < start) sAddr = start;
     return sAddr;
   }
 
   /**
    * Look for simple road without a house number or intersection
    *    <roadname> <roadsfx>
-   * @return true if found 
+   * @return true if found
    */
   private boolean parseNakedRoad(Result result) {
-    
+
     result.reset(startAddress);
     boolean atStart = false;
     boolean padField = isFlagSet(FLAG_ANY_PAD_FIELD);
-    
+
     // Normally we will consider the possiblilty that ST might be the
     // beginning of a street name starting with the abbrevation for Saint.
     // But don't try this if  there is a reason to expect a different
@@ -1819,12 +1822,12 @@ public abstract class SmartAddressParser extends MsgParser {
       sAddr = ndx = startAddress;
       ndx = findRoadEnd(ndx, 0, true, followingRoad);
       if (ndx < 0) return false;
-      
+
       // A number followed by a connector is considered to be a street
       // name in most contexts.  But not here
       if (ndx - sAddr == 1 && isType(sAddr, ID_NUMBER)) return false;
     }
-    
+
     // Otherwise, scan forward looking for a <road-sfx>
     //            that isn't the start of a <route-pfx> <number> combination
     // or number preceded by a <route-pfx>
@@ -1836,7 +1839,7 @@ public abstract class SmartAddressParser extends MsgParser {
       int failStart = -1;
       int failEnd = -1;
       while (true) {
-        
+
         // See if there is a naked cross street name here.  Finding one doesn't
         // immediately return that result, but it defines the fallback result
         // we will use if something better doesn't come along.
@@ -1844,7 +1847,7 @@ public abstract class SmartAddressParser extends MsgParser {
           failEnd = mWordCrossStreetsFwd.findEndSequence(ndx);
           if (failEnd >= 0) failStart = ndx;
         }
-        
+
         // See if we have a special street name
         if (mWordSpecialFwd != null) {
           int tmp = mWordSpecialFwd.findEndSequence(ndx);
@@ -1855,12 +1858,12 @@ public abstract class SmartAddressParser extends MsgParser {
             break;
           }
         }
-        
+
         // See if we have a multi-word street match
         if (mWordStreetsFwd != null) {
           int tmp = mWordStreetsFwd.findEndSequence(ndx);
           if (tmp > ndx+1) {
-            
+
             // If followed by a road suffix, this is what we are looking for
             if (isRoadSuffix(tmp)) {
               found = true;
@@ -1868,7 +1871,7 @@ public abstract class SmartAddressParser extends MsgParser {
               ndx = tmp;
               break;
             }
-            
+
             // Otherwise, use it as the failure fallback
             else if (failStart < 0 && isFlagSet(FLAG_OPT_STREET_SFX|FLAG_NO_STREET_SFX)) {
               failStart = ndx;
@@ -1880,7 +1883,7 @@ public abstract class SmartAddressParser extends MsgParser {
         // The rest of the checks can only happen after we have passed at least
         // one token
         if (ndx > start) {
-          
+
           sAddr = ndx - 1;
           if (ndx >= tokens.length) break;
           if (isType(ndx, ID_CROSS_STREET)) break;
@@ -1891,13 +1894,13 @@ public abstract class SmartAddressParser extends MsgParser {
             if (ndx >= 0) found = true;
             break;
           }
-          
-          if (isRoadSuffix(ndx) && !isType(sAddr, ID_NOT_ADDRESS|ID_NOT_STREET_NAME) && 
+
+          if (isRoadSuffix(ndx) && !isType(sAddr, ID_NOT_ADDRESS|ID_NOT_STREET_NAME) &&
               findConnector(sAddr)<0 && !isType(sAddr, ID_MILE_MARKER)) {
-            boolean startHwy = checkNumberedHwy(ndx) || 
+            boolean startHwy = checkNumberedHwy(ndx) ||
                                ndx > start && findNumberedHwy(ndx-1) >= 0 ||
                                (isType(ndx, ID_AMBIG_ROAD_SFX) && (isRoadSuffix(ndx+1)));
-            
+
             // If street suffix was ST, see if it might be the beginning of a street name
             // Don't do this if we are looking for an implied intersection
             if (!startHwy && !followingRoad && isType(ndx, ID_ST)) {
@@ -1911,22 +1914,22 @@ public abstract class SmartAddressParser extends MsgParser {
                 }
               }
             }
-  
+
             // OK, this is a legitimate street suffix
             // Check the multiple word street list to find the start of the
             // street name.  If not found, assume a one word street name.
             if (!startHwy) {
               found = true;
-              
+
               // Assume one word street name, unless first word is an ambiguous suffix
               // in which case we keep expanding the street name
               while (sAddr > start && findConnector(sAddr-1)<0 && isAmbigRoadSuffix(sAddr)) {
                 sAddr--;
               }
-              break; 
+              break;
             }
           }
-          
+
           int tmp = findRevNumberedHwy(start, ndx);
           if (tmp >= 0) {
             sAddr = tmp;
@@ -1934,7 +1937,7 @@ public abstract class SmartAddressParser extends MsgParser {
             break;
           }
         }
-        
+
         if (isRoadToken(ndx)) {
           sAddr = ndx;
           found = true;
@@ -1942,7 +1945,7 @@ public abstract class SmartAddressParser extends MsgParser {
         }
         ndx++;
       }
-      
+
       // When we break out of this loop, see if we found a real street name
       // If we didn't, see if there is a fallback street name we can return
       // otherwise fail
@@ -1951,12 +1954,12 @@ public abstract class SmartAddressParser extends MsgParser {
         sAddr = failStart;
         ndx = failEnd;
       }
-      
+
       else {
-  
+
         // If the previous token is a direction, back up one more to include that.
         sAddr = stretchRoadPrefix(start, sAddr);
-        
+
         // increment end pointer past the road terminator
         // and possibly over a trailing direction
         ndx++;
@@ -1964,15 +1967,15 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       result.startField.end(atStart ? sAddr-1 : sAddr);
     }
-    
-    // When we get here, 
+
+    // When we get here,
     // sAddr points to beginning of address
     // ndx points past the end of the road
-    
+
     // We have a naked road parse
     result.addressField = new FieldSpec(sAddr, ndx);
     result.endAll = ndx;
-    
+
     // If we are looking for implied intersection markers see if we can
     // find another street name immediately following this one.  If we can
     // then set the implied & column to the end of the first street and set
@@ -1983,10 +1986,10 @@ public abstract class SmartAddressParser extends MsgParser {
       // do not insert an ampersand here
       int mark = result.endAll;
       if (!isType(mark, ID_MILE_MARKER) && findConnector(mark)<0) {
-        
+
         if (!padField && parseAddressToCity(sAddr, ndx, result)) {
           if (ndx < result.addressField.fldEnd) {
-            
+
             // We are treating the second part as a street name, and might or might
             // not have previously recognized it as such.  If we did not, we might have
             // attached an ambiguous direction to the first street when we really want
@@ -1998,7 +2001,7 @@ public abstract class SmartAddressParser extends MsgParser {
                 }
               }
             }
-            
+
             // Set the ampersand insert point
             result.insertAmp = mark;
           }
@@ -2012,10 +2015,10 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
     }
-    
+
     // See if we can parse out to a city
     if (!padField && parseAddressToCity(sAddr, result.endAll, result)) return true;
-    
+
     // Nope, see if we can find some trailing data
     return parseTrailingData(result);
   }
@@ -2031,7 +2034,7 @@ public abstract class SmartAddressParser extends MsgParser {
     boolean padField = isFlagSet(FLAG_PAD_FIELD | FLAG_PAD_FIELD_EXCL_CITY);
     boolean startFldReq = isFlagSet(FLAG_START_FLD_REQ);
     boolean emptyAddrOK = isFlagSet(FLAG_EMPTY_ADDR_OK);
-    
+
     // Determine tentative start and end of address information
     int stAddr = startAddress;
     int endAddr = padField || !isFlagSet(FLAG_ANCHOR_END) ? -1 : result.tokens.length;
@@ -2050,7 +2053,7 @@ public abstract class SmartAddressParser extends MsgParser {
       if (!emptyAddrOK) tmp++;
     }
     for (int ndx = tmp; ndx < tokens.length; ndx++) {
-      
+
       // Mark the location and type of the first apartment indicator
       // Not a hard limit yet, just want to know where the first one is.
       if (iApt < 0) {
@@ -2068,10 +2071,10 @@ public abstract class SmartAddressParser extends MsgParser {
           iAptEnd = ndx+1;
         }
       }
-      
-      // Stuff we only look for in  real address searches 
+
+      // Stuff we only look for in  real address searches
       if (!crossOnly) {
-        
+
         // If we have not yet identified the start address point, see if
         // this looks like a house number, and if it does set the start
         // address point here.  Oh, and wipe out any previously found
@@ -2093,26 +2096,26 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
 
-      // An invalid address token works for all address searches.  It only 
-      // kicks in after we have identified an address start and if the end 
+      // An invalid address token works for all address searches.  It only
+      // kicks in after we have identified an address start and if the end
       // address is not locked.  In which case it marks the end of the address
       // info
       if (stAddr >= 0 && endAddr < 0 && isType(ndx, ID_NOT_ADDRESS)) {
-        
+
         // A YO type of not address also takes out a preceding numeric field
         if (isType(ndx, ID_YEAR_OLD_NOT_ADDRESS) && ndx > stAddr && isType(ndx-1, ID_NUMBER)) ndx--;
         result.endAll = endAddr = ndx;
         break;
       }
     }
-    
-    // If we still haven't found the end of the address, see if we 
+
+    // If we still haven't found the end of the address, see if we
     // have found apt marker, if we have, set the end address 2 past
     // the apt marker.  We will get the actual apt field later.
     if (endAddr < 0 && iApt >= 0 && iAptEnd <= tokens.length) {
       result.endAll = endAddr = iAptEnd;
     }
-    
+
     // If we found and end of the address, and are looking for
     // a pad field, try to extend the pad field out to the city
     // name or EOL
@@ -2123,12 +2126,12 @@ public abstract class SmartAddressParser extends MsgParser {
       if (isComma(tmpNdx)) tmpNdx++;
       parsePadToCity(tmpNdx, result);
     }
-    
+
     // If we still haven't found a recognizable end address, take everything
     if (endAddr < 0) {
       result.endAll = endAddr = tokens.length;
     }
-    
+
     // However we identified the end of the address, see if it contains an
     // apt indicator, and if it does, use that to set up the apartment field
     if (iApt >= 0 && iAptEnd <= endAddr) {
@@ -2136,19 +2139,19 @@ public abstract class SmartAddressParser extends MsgParser {
       result.aptField = new FieldSpec(iAptSt, endAddr);
       endAddr = iApt;
     }
-    
-    // If we haven't found a start of address yet, 
+
+    // If we haven't found a start of address yet,
     // assign everything to the start field
     if (stAddr < 0) {
-      
+
       if (result.startField != null) {
-        
+
         // But first, if we are still parsing to the end of the field, see if we can
         // find a city at end of field
         if (endAddr == tokens.length) {
           if (parseStartToCity((emptyAddrOK ? 0 : 1), true, result)) return;
         }
-        
+
         result.startField.end(endAddr);
         return;
       }
@@ -2162,33 +2165,33 @@ public abstract class SmartAddressParser extends MsgParser {
       if (isHouseNumber(stAddr)) tmp++;
       if (parseFallbackToCity(stAddr, tmp, result)) return;
     }
-    
+
     // OK, we have an address
     result.addressField = new FieldSpec(stAddr, endAddr);
   }
-  
+
   /**
    * Called when we found the end of a road name and are guessing at where
    * it might start
    * @param start Hard limit on where address can start
    * @param sAddr index of current start of tentative road name
-   * 
+   *
    * @return index of presumed road name
    */
   private int stretchRoadPrefix(int start, int sAddr) {
-    
+
     // If we are backed up against hard start position, nothing to check
     if (sAddr == start) return sAddr;
-    
+
     // Ditto if preceding token is not legitimate address
     if (isType(sAddr-1, ID_NOT_ADDRESS)) return sAddr;
-    
+
     // If read name starts with a direction, back up one
     if (isType(sAddr, ID_DIRECTION)) sAddr--;
-    
+
     // If road starts with a common street name prefix, back up one place
     if (sAddr > start && isType(sAddr-1, ID_STREET_NAME_PREFIX)) sAddr--;
-    
+
     // Look up to 3 tokens back to see if we find a direction token
     // Stop search if we encounter a /, lest we confuse a W/INJURY
     // as part of a road name
@@ -2198,14 +2201,14 @@ public abstract class SmartAddressParser extends MsgParser {
       if (tokens[ndx].equals("/")) break;
       if (isType(ndx, ID_NOT_ADDRESS)) break;
       if (findConnector(ndx)>=0 || ndx>0 && findConnector(ndx-1)==ndx+1) break;
-      if (isType(ndx, ID_DIRECTION)) return sAddr-j; 
+      if (isType(ndx, ID_DIRECTION)) return sAddr-j;
     }
-    
+
     // No luck, see if the previous token is a possible road prefix
     if (sAddr > start && isType(sAddr-1, ID_OPT_ROAD_PFX)) sAddr--;
     return sAddr;
   }
-  
+
   /**
    * Parse address field to city
    * @param stAddr prospective start of address field
@@ -2221,7 +2224,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (result.startField != null) result.startField.optionalEnd(stAddr);
     return true;
   }
-  
+
   /**
    * Parse fallback field to city
    * @param stAddr prospective start of address field
@@ -2237,7 +2240,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (result.startField != null) result.startField.optionalEnd(stAddr);
     return true;
   }
-  
+
   /**
    * Parse pad field to city
    * @param start prospective start of pad field
@@ -2268,7 +2271,7 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     return true;
   }
-  
+
   /**
    * Parse start field to City
    * @param start prospective start of pad field
@@ -2279,7 +2282,7 @@ public abstract class SmartAddressParser extends MsgParser {
   private boolean parseStartToCity(int start, boolean optCity, Result result) {
     return parseToCity(result.startField, false, false, optCity ? 3 : 1, start, result);
   }
-  
+
   /**
    * See if we can parse an address from a known starting point to a city
    * @param fldSpec previous field being parsed
@@ -2288,16 +2291,16 @@ public abstract class SmartAddressParser extends MsgParser {
    * @param cityOpt search option<br>
    * 1 - succeed only if real city found, or at EOL if FLAG_ANCHOR_END is set
    * 2 - succeed if we find an apt or cross street indicator
-   * 3 - always succeed 
+   * 3 - always succeed
    * @param srcNdx start looking for city here
    * @return true if  city was identified and all fields have been set
    */
   private boolean parseToCity(FieldSpec fldSpec, boolean addrFld, boolean aptFld, int cityOpt, int srcNdx, Result result) {
-    
+
     // If we are doing a cross only parse without a city, answer is always no
     boolean crossOnly = isFlagSet(FLAG_ONLY_CROSS);
     if (crossOnly && !isFlagSet(FLAG_ONLY_CITY | FLAG_ANCHOR_END)) return false;
-    
+
     // If FLAG_ANCHOR_END is set, we are going to parse this to the
     // end of the line without looking for a city
     boolean anchorEnd = isFlagSet(FLAG_ANCHOR_END);
@@ -2319,7 +2322,7 @@ public abstract class SmartAddressParser extends MsgParser {
       return true;
     }
     if ((cityOpt == 1 || checkStatus) && !parseToEnd && !nearToEnd && lastCity < srcNdx) return false;
-    
+
     // Notice: If the FLAG_ANY_PAD_FIELD was set, some of these fields might have
     // been found before the PAD field, in which case we don't want to disturb
     // them.
@@ -2328,18 +2331,18 @@ public abstract class SmartAddressParser extends MsgParser {
     FieldSpec crossField = null;
     FieldSpec nearField = null;
     boolean aptToken = false;
-    
+
     FieldSpec startField = new FieldSpec(0);
-    
+
     FieldSpec lastField = startField;
     for (int ndx = srcNdx-1; ndx < tokens.length; ndx++) {
-      
+
       // Skip over special street names
       if (mWordSpecialFwd != null && ndx >= 0) {
         int tmpndx = mWordSpecialFwd.findEndSequence(ndx);
         if (tmpndx >= 0) ndx = tmpndx;
       }
-      
+
       // Skip over multiword  street names
       if (mWordStreetsFwd != null && ndx >= 0) {
         int tmpNdx = mWordStreetsFwd.findEndSequence(ndx);
@@ -2349,13 +2352,13 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
       if (ndx < srcNdx) continue;
-      
+
       // Is there a city here?
       int tmpNdx = ndx;
       if (isComma(tmpNdx)) tmpNdx++;
       int endCity = findEndCity(tmpNdx);
       if (endCity >= 0) {
-        
+
         // Close out the last field and save the
         // city location in results and jump out of the loop
         lastField.end(ndx);
@@ -2363,10 +2366,10 @@ public abstract class SmartAddressParser extends MsgParser {
         foundCity = true;
         break;
       }
-      
+
       // If we are only parsing a city field, skip all of the fancy stuff
       if (cityOnly) continue;
-      
+
       // Only check for fun stuff if it isn't inside a pad field
       if (!padField) {
 
@@ -2376,7 +2379,7 @@ public abstract class SmartAddressParser extends MsgParser {
         // Check for apartment marker
           if (!aptFld) {
             if (aptField == null) {
-              if (tmpNdx+1 < tokens.length && isType(tmpNdx, ID_FLOOR | ID_APT) && 
+              if (tmpNdx+1 < tokens.length && isType(tmpNdx, ID_FLOOR | ID_APT) &&
                   (!isType(tmpNdx, ID_APT_SOFT) || !isRoadSuffix(tmpNdx+1))) {
                 lastField.end(ndx);
                 ndx = tmpNdx;
@@ -2392,14 +2395,14 @@ public abstract class SmartAddressParser extends MsgParser {
               }
             }
           }
-          
+
           if (nearField == null && isType(tmpNdx, ID_NEAR)) {
             lastField.end(ndx);
             ndx = tmpNdx;
             lastField = nearField = new FieldSpec(ndx);
             if (nearToEnd && cityOpt == 1) cityOpt = 2;
           }
-          
+
           // Check for cross street marker
           if (crossField == null && ndx < tokens.length-1 && isType(tmpNdx, ID_CROSS_STREET)) {
             lastField.end(ndx);
@@ -2408,7 +2411,7 @@ public abstract class SmartAddressParser extends MsgParser {
           }
         }
       }
-      
+
       // If we are processing an address field and we skipped over a comma
       // without finding anything, or encountered a non-address character
       // fail here
@@ -2421,13 +2424,13 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       ndx = tmpNdx;
     }
-    
+
     // End of loop, check for different success conditions
     // Obviously finding a city is a successful outcome
     if (foundCity) {
       result.endAll = result.cityField.fldEnd;
     }
-    
+
     // If we are parsing to end of field, return successful status
     // If we are still processing a NEAR field and the FLAG_NEAR_TO_END
     // flag was set, do likewise
@@ -2436,18 +2439,18 @@ public abstract class SmartAddressParser extends MsgParser {
       lastField.end(tokens.length);
       result.endAll = tokens.length;
     }
-    
+
     // If the city option is to always succeed and we have not found anything
     // put everything in the start field
     else if (cityOpt == 3 && lastField == startField) {
       startField.end(tokens.length);
       result.endAll = tokens.length;
     }
-    
+
     // If we are checking address status, none of the remaining
     // success conditions should be recognized
     else if (cityOpt == 1 || checkStatus) return false;
-    
+
     // Otherwise if we found an apartment or cross street indicator
     // try to close out the found field
     else if (lastField == aptField) {
@@ -2469,10 +2472,10 @@ public abstract class SmartAddressParser extends MsgParser {
       findCrossStreetEnd(lastField.fldStart, true, result);
       crossField  = result.crossField;
     }
-    
+
     // Otherwise return failure
     else return false;
-    
+
     // We are successful!!
     // Now is when we save all of the working variables back into the result object
     if (aptField != null) {
@@ -2482,8 +2485,8 @@ public abstract class SmartAddressParser extends MsgParser {
     if (crossField != null) result.crossField = crossField;
     if (nearField != null && nearField.fldEnd-nearField.fldStart > 1) result.nearField = nearField;
     if (fldSpec != null) fldSpec.end(startField.fldEnd);
-    
-    // If we did find a city and there is a pad field, it might have the misfortune to be a 
+
+    // If we did find a city and there is a pad field, it might have the misfortune to be a
     // place name that includes a local city name.  So we will call
     // ourselves recursively in an attempt to find another city name
     // behind this one
@@ -2492,7 +2495,7 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     return true;
   }
-  
+
   /**
    * Find the end of a city that starts at the current index
    * @param ndx current index
@@ -2500,10 +2503,10 @@ public abstract class SmartAddressParser extends MsgParser {
    * -1 if this is not a city.
    */
   private int findEndCity(int ndx) {
-    
+
     // If there is no city list, obviously there is no city
     if (mWordCities == null) return -1;
-    
+
     // If this call should ignore any listed cities, return now
     if (isFlagSet(FLAG_NO_CITY)) return -1;
 
@@ -2511,8 +2514,8 @@ public abstract class SmartAddressParser extends MsgParser {
     // If not, then return -1;
     int endNdx = mWordCities.findEndSequence(ndx);
     if (endNdx < 0) return -1;
-    
-    // Under no circumstances will we accept a city ending with "CO" or "COUNTY" 
+
+    // Under no circumstances will we accept a city ending with "CO" or "COUNTY"
     // that is followed by the word "LINE" or "LIN".
     if (endNdx < tokens.length) {
       String lastWord = tokens[endNdx-1].toUpperCase();
@@ -2521,33 +2524,33 @@ public abstract class SmartAddressParser extends MsgParser {
         if (lastWord.equals("LINE") || lastWord.equals("LIN")) return -1;
       }
     }
-    
+
     // We found a real city.  But....
     // Doesn't count if anchor end requested and this isn't the end of the tokens
     if (isFlagSet(FLAG_ANCHOR_END) &&  endNdx != tokens.length) return -1;
-    
+
     // We don't want to return this as a city if it look it might by a street
     // named after that city :(
-    
+
     // But we do not have to worry about that if we are only parsing a city name
     if (isFlagSet(FLAG_ONLY_CITY) && !isFlagSet(FLAG_ONLY_CROSS)) return endNdx;
-    
+
     // OK, we have to do this....
     // If the city is followed by a road suffix, disqualify it
     // Unless the road suffix is followed by a road suffix
     if (!isType(endNdx, ID_NOT_ADDRESS | ID_CROSS_STREET | ID_NEAR)) {
       if (isRoadSuffix(endNdx) || isRoadSuffix(endNdx+1)) {
-        
+
         // Or unless there might be a following cross street, and the street suffix
         // found after the city can start a valid road name in its own right
-        if (!isFlagSet(FLAG_CROSS_FOLLOWS) || findRoadEnd(endNdx, 1, true) < 0) return -1; 
+        if (!isFlagSet(FLAG_CROSS_FOLLOWS) || findRoadEnd(endNdx, 1, true) < 0) return -1;
       }
     }
-    
+
     // Looks good, lets return this
     return endNdx;
   }
-  
+
   /**
    * Determine if token is unambiguous street suffix
    * @param ndx - token index
@@ -2558,7 +2561,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (isType(ndx, ID_AMBIG_ROAD_SFX)) return false;
     return true;
   }
-  
+
   /**
    * See if a token is a legitimate road suffix
    * @param ndx token index
@@ -2571,7 +2574,7 @@ public abstract class SmartAddressParser extends MsgParser {
     if (isType(ndx, ID_ST) && isType(ndx+1, ID_SAINT)) return false;
     return true;
   }
-  
+
   /**
    * Determine if token is a potential ambiguous road suffix, which means
    * road names should generally include the word in front of this
@@ -2579,21 +2582,21 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if previous word should be included in road name
    */
   private boolean isAmbigRoadSuffix(int ndx) {
-    
+
     // If this is the first token, obviusly we cannot include a previous word
     if (ndx == 0) return false;
-    
+
     // Is this a potential ambiguous road suffix
     if (!isType(ndx, ID_AMBIG_ROAD_SFX)) return false;
-    
+
     // If the previous word cannot be an address or is a direction, answer is no
     if (isType(ndx-1,ID_NOT_ADDRESS | ID_DIRECTION)) return false;
-    
+
     // One more special case, if there might not be a delimiter
     // between the start field and address, and the previous word
     // looks like it might consist of a merged word and house number
     if (isFlagSet(FLAG_START_FLD_NO_DELIM) && MIXED_WORD_PTN.matcher(tokens[ndx-1]).matches()) return false;
-    
+
     // Otherwise we are good to go
     return true;
   }
@@ -2606,20 +2609,20 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if final address parse should be considered successful
    */
   private boolean parseTrailingData(Result result) {
-    
+
     // Apt and cross street process is skipped if we are parsing cross streets
     if (!isFlagSet(FLAG_ONLY_CROSS)) {
-      
+
       boolean recheckApt = isFlagSet(FLAG_RECHECK_APT);
-      
+
       // If recheck Apt is requested, parsePdToCity does all of the work.
       // If and only it succeeds.
       if (recheckApt && parsePadToCity(result.endAll, result)) return true;
-      
+
       // Otherwise, just look for a normal apt
       if (parseApt(result)) recheckApt = true;
-      
-      // If we found an apt, or are rechecking apt fields, look ahead for 
+
+      // If we found an apt, or are rechecking apt fields, look ahead for
       // cross street indicator.  If found, expand the end of the apt field
       // to that
       if (recheckApt) {
@@ -2630,30 +2633,30 @@ public abstract class SmartAddressParser extends MsgParser {
           result.endAll = ndx;
         }
       }
-      
+
       // Always look for a cross street indicator
       if (isType(result.endAll, ID_CROSS_STREET)) {
         findCrossStreetEnd(result.endAll+1, true, result);
       }
-      
+
       // If we are looking for a pad field between the address and city
       // now is when we try to find that city
       if (isFlagSet(FLAG_PAD_FIELD | FLAG_PAD_FIELD_EXCL_CITY)) {
         parsePadToCity(result.endAll, result);
       }
     }
-    
+
     // If we have not yet found a NEAR field, see if there is one here
     if (result.nearField == null && isType(result.endAll, ID_NEAR) && !isFlagSet(FLAG_ONLY_CROSS)) {
       result.nearField = new FieldSpec(result.endAll, tokens.length);
       result.endAll = tokens.length;
     }
-    
+
     // Return success unless we were requested to use the entire text string and
     // have failed to do so
     return (result.endAll == tokens.length || !isFlagSet(FLAG_ANCHOR_END));
   }
-  
+
   /**
    * Find keyword that would indicate the end of an apt field
    * @param result parsed result object
@@ -2673,7 +2676,7 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if apt field was identified
    */
   private boolean parseApt(Result result) {
-    
+
     int ndx = result.endAll;
     if (isComma(ndx)) ndx++;
     if (isType(ndx, ID_APT)) {
@@ -2685,7 +2688,7 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       return true;
     }
-    
+
     else if (isType(ndx, ID_FLOOR)) {
       if (ndx+1 < tokens.length) {
         result.aptField = new FieldSpec(ndx, ndx+2);
@@ -2695,7 +2698,7 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       return true;
     }
-    
+
     else if (isAptToken(ndx)) {
       result.aptToken = true;
       result.aptField = new FieldSpec(ndx, ++ndx);
@@ -2716,19 +2719,19 @@ public abstract class SmartAddressParser extends MsgParser {
     int sEnd = sCross;
     int ndx = sEnd;
     while (true) {
-      
+
       // And try to find another road
       ndx = findRoadEnd(ndx, 2);
       if (ndx < 0) break;
       sEnd = ndx;
-      
+
       // If this road was terminated by a connector
       // Loop back and see if we can find another cross street
       int tmp = findConnector(sEnd);
       if (tmp < 0) break;
       ndx = tmp;
     }
-    
+
     // If we did not find anything, grab everything that we can
     // up to the first invalid address token
     if (force && sEnd <= sCross) {
@@ -2740,7 +2743,7 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
     }
-    
+
     // Save the cross street location if found
     if (sEnd > sCross) {
       result.crossField = new FieldSpec(sCross, sEnd);
@@ -2790,15 +2793,15 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return index of token past end of road name if successful, -1 otherwise
    */
   private int findRoadEnd(int start, int option, boolean strict, boolean followingRoad) {
-    
+
     // Skip over BLOCK indicator
     if (isType(start, ID_BLOCK)) start++;
-    
+
     // Dummy loop that we can break out of when we find a road end
     int streetStart = start;
     int end;
     do {
-      
+
       // See if a special or multi-word street names starts here
       int mWordIndex = -1;
       int tmp = findSpecialRoadEnd(start);
@@ -2807,14 +2810,14 @@ public abstract class SmartAddressParser extends MsgParser {
         break;
       }
       else if (tmp < 0) mWordIndex = -tmp;
-      
+
       // If this starts with a street direction,
-      
+
       if (isType(start, ID_DIRECTION)) {
-        
+
         // If the direction starts a valid city name, bail out
         if (findEndCity(start) >= 0) return -1;
-        
+
         // Otherwise bump the start search index and make another check
         // for special or multi-word street names
         start++;
@@ -2825,17 +2828,17 @@ public abstract class SmartAddressParser extends MsgParser {
         }
         else if (tmp < 0) mWordIndex = -tmp;
       }
-      
+
       // Ditto for a street prefix
       // But save the original start position, some checks will use this
       // original start position and some will used the prefix adjusted start
       // position
       int origStart = start;
       while (isType(start, ID_OPT_ROAD_PFX)) start++;
-      
+
       // If we are out of tokens, the answer is no
-      if (start >= tokens.length) return -1; 
-      
+      if (start >= tokens.length) return -1;
+
       // Compute the failure index that we return if we fail to find a proper road end.
       // If we are processing cross streets, check for a special cross street name and
       // set the failure index to the end of that
@@ -2843,7 +2846,7 @@ public abstract class SmartAddressParser extends MsgParser {
       if (isFlagSet(FLAG_ONLY_CROSS)) {
         failIndex = mWordCrossStreetsFwd.findEndSequence(origStart);
       }
-      
+
       // if we are accepting roads without a street suffix, we will compute the
       // default value assuming this is a suffixless street name.  If not, the failure return
       // is always -1;
@@ -2856,31 +2859,31 @@ public abstract class SmartAddressParser extends MsgParser {
         }
         if (option < 2 && failIndex - start < 2) failIndex = -1;
       }
-      
+
       // We will accept a simple number as a street name in very restricted circumstances
       if (failIndex < 0 && option == 2 && !strict && isType(start, ID_NUMBER)) failIndex = start+1;
-      
+
       // If non-address token found, we are done
       if (isType(start, ID_NOT_ADDRESS) || findConnector(start)>=0) return failIndex;
-      
+
       // A stand alone road token can terminate the road search, but it must
       // be the first thing in the search sequence
       if (isRoadToken(start)) {
         end = start+1;
         break;
       }
-      
+
       // See if this is a numbered highway
       end = findNumberedHwy(start);
       if (end >= 0) {
-        
+
         // Yet another special case Texas FM number highways can be terminated
         // with a street suffix :(
         if (tokens[start].equalsIgnoreCase("FM")) {
           if (isRoadSuffix(end+1) && !isType(end+2, ID_ALPHA_ROUTE)) end++;
         }
         end++;
-        
+
         // If this is a route prefix extension, (possibly following a direction)
         // we normally skip past it.
         // But do not do this if we are in implied intersections and it
@@ -2892,11 +2895,11 @@ public abstract class SmartAddressParser extends MsgParser {
         }
         break;
       }
-      
+
       // OK, OK, if we find a number followed by a connector, we will consider
       // it a numbered highway (sheesh)
       if (!strict && isType(start, ID_NUMBER) && findConnector(start+1)>=0) return start+1;
-      
+
       // Still no luck,
       // If we are deliberately ignoring street suffixes, take what we have so far
       // Possibly incrementing the result over a road suffix that is right here.
@@ -2908,10 +2911,10 @@ public abstract class SmartAddressParser extends MsgParser {
         end = failIndex;
         break;
       }
-      
+
       // If we only accept numbered highways, time to bail out
       if (option == 3) return -1;
-      
+
       // A legitimate street suffix found here is never legal
       // Make an exception for ST and DR which might be the start
       // of roads named after saints or doctors.
@@ -2919,21 +2922,21 @@ public abstract class SmartAddressParser extends MsgParser {
       boolean good = false;
       do {
         if (!isType(end, ID_DR | ID_ST) && isRealRoadSuffix(end)) break;
-        
+
         // Ditto for a NEAR indicator
         if (isType(end, ID_NEAR)) break;
-  
+
         // start looking for a street suffix (or cross street indicator
         // If we have to pass more than two tokens before finding, give up
         boolean number = false;
         while (++end - start <= 3) {
-          
+
           // Invalid token or mile marker rejects everything
           if (isType(end, ID_NOT_ADDRESS | ID_MILE_MARKER)) return failIndex;
-          
+
           // An intersection marker marks the end of things
           if (findConnector(end)>=0) break;
-  
+
           // See if this is a normal road suffix
           // Skip if it an ambiguous road suffix and a real road suffix follows it
           // Or if the road suffix is part of a two part highway number
@@ -2943,13 +2946,13 @@ public abstract class SmartAddressParser extends MsgParser {
           if (isRoadSuffix(end) && !isType(end-1, ID_NOT_STREET_NAME) &&
               (! (isType(end, ID_AMBIG_ROAD_SFX) && isRoadSuffix(end+1))) &&
               ( !checkNumberedHwy(end)) &&
-              (findNumberedHwy(end-1) < 0) && 
+              (findNumberedHwy(end-1) < 0) &&
               (! (isType(end, ID_ROUTE_PFX) && isType(end-1, ID_TO))) &&
               (findEndCity(end) < 0)) {
-            end++; 
-            break; 
+            end++;
+            break;
           }
-          
+
           // A cross street, apt keyword, or legitimate city name ends things
           // If a strict suffix search was requested, return failure, otherwise
           // return the current end location
@@ -2958,27 +2961,27 @@ public abstract class SmartAddressParser extends MsgParser {
             good = !strict;
             break;
           }
-          
+
           // A numeric token is acceptable only if it is the last token in the street name
           good = false;
           if (number) break;
           if (isType(end, ID_NUMBER)) number = true;
         }
       } while (false);
-      
+
       if (!good) end = failIndex;
-      
+
     } while (false);
-    
+
     // if we swapped in failIndex for end, it might be negative
     if (end < 0) return -1;
-    
+
     // Bump bypass and trailing direction
     end = bumpTrailingDir(streetStart, end, followingRoad);
-    
+
     return end;
   }
-  
+
   /**
    * See if we can find a special street name or multi-word street name
    * at the specified index
@@ -2986,16 +2989,16 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return index past end of street name if found<br>
    * negative index past end of suffixless multi-word street name if found
    * zero otherwise
-   * 
+   *
    */
   private int findSpecialRoadEnd(int ndx) {
-    
+
     // See if this is start of special street name
     if (mWordSpecialFwd != null) {
       int tmp = mWordSpecialFwd.findEndSequence(ndx);
       if (tmp >= 0) return tmp;
     }
-    
+
     // See if this is the start of a multi word street name
     // terminated by a proper road suffix
     if (mWordStreetsFwd != null) {
@@ -3013,31 +3016,31 @@ public abstract class SmartAddressParser extends MsgParser {
   }
 
   private void setTokenTypes(StartType sType, String address, String gpsCoords, Result result) {
-    
+
     // Parse line into tokens and categorize each token
     // While we are doing this, identify the index of the last city
     // And see if we have a keyword flagging the start of the address
     startAddress =  -1;
     lastCity = -1;
     startNdx = isFlagSet(FLAG_START_FLD_REQ) ? 1 : 0;
-    
+
     // A lot of special constructs need to be protected.  Which we will accomplish
     // by creating a second version of the address line that will be used to
     // identify the token positions with the line.  While the original address line
     // will be used to actually extract the token values
     String searchAddress = address;
-    
+
     // GPS Coordinates can now contain blanks or colons, which we need to go to some trouble
     // to temporarily replace so they do not result in the coordinates being broken up
     if (gpsCoords != null) {
       String altGPSCoords = gpsCoords.replaceAll(".", "~");
       searchAddress = searchAddress.replace(gpsCoords, altGPSCoords);
     }
-    
-    // The field delimiter pattern we use will break tokens before and after any / or & 
+
+    // The field delimiter pattern we use will break tokens before and after any / or &
     // characters.  But there are some special constructs that we do not want broken up.
     // These need to be protected
-    
+
     Matcher match = PROTECTED_TOKEN_PTN.matcher(searchAddress);
     if (match.find()) {
       StringBuffer  sb = new StringBuffer();
@@ -3051,7 +3054,7 @@ public abstract class SmartAddressParser extends MsgParser {
     // Now scan through the protected address line using the field token
     // delimiter pattern to identify the start and end of each token
     // Despite our best effort, there are case where the pattern may detect
-    // back to back delimiters and we have to take steps to prevent that 
+    // back to back delimiters and we have to take steps to prevent that
     // from producing zero length tokens
     List<Integer> tokenStartList = new ArrayList<Integer>();
     List<Integer> tokenEndList = new ArrayList<Integer>();
@@ -3070,7 +3073,7 @@ public abstract class SmartAddressParser extends MsgParser {
       tokenStartList.add(lastEnd);
       tokenEndList.add(address.length());
     }
-    
+
     int cnt = tokenStartList.size();
     tokenPos = new int[cnt];
     tokens = new String[cnt];
@@ -3079,19 +3082,19 @@ public abstract class SmartAddressParser extends MsgParser {
       tokenPos[ndx] = st;
       tokens[ndx] = address.substring(st, tokenEndList.get(ndx));
     }
-    
+
     result.tokens = tokens;
-    
+
     // Save the original address
     // When parsing is finished, we will use this to calculate the true prefix and leftover segments
     saveAddress = address;
-    
+
     tokenType = new long[tokens.length];
-    
-    if (sType == StartType.START_ADDR) startAddress = 0; 
-    else result.startField = new FieldSpec(0); 
-    
-    boolean pastAddr = false; 
+
+    if (sType == StartType.START_ADDR) startAddress = 0;
+    else result.startField = new FieldSpec(0);
+
+    boolean pastAddr = false;
     for (int ndx = 0; ndx < tokens.length; ndx++) {
       setType(ndx, pastAddr);
       if (isType(ndx, ID_CROSS_STREET | ID_APT | ID_FLOOR)) {
@@ -3100,22 +3103,22 @@ public abstract class SmartAddressParser extends MsgParser {
       if (isType(ndx, ID_CITY)) lastCity = ndx;
     }
   }
-  
+
   // Sequence containing slashes that need to be protected
   private static final Pattern PROTECTED_TOKEN_PTN = Pattern.compile("\\bC/S:|\\b(?:\\d/\\d|AT&T|C/S|Y/O)\\b");
-  
+
   // Token delimiter pattern should find field breaks
   // 1) for any sequence of one or more blanks
   // 2) Before or after any & or / or comma
   // 3) After any :
   // 4) For any period not followed by a space
-  private static final Pattern TOKEN_DELIM_PTN = 
+  private static final Pattern TOKEN_DELIM_PTN =
       Pattern.compile("\\.?(?:\\s+|(?<! )(?=[/&,])|(?<=[/&,:])(?! )|(?<=\\.)(?![ \\d])|,)");
 
   // Identify token type
   private void setType(int ndx, boolean pastAddr) {
     String token = tokens[ndx];
-    
+
     // If token contains any illegal characters, flag it as a non-address token
     // and bail out.  This is only a problem if we are still in the address proper
     // If we have passed the address and are now in apt or cross fields, illegal
@@ -3124,13 +3127,13 @@ public abstract class SmartAddressParser extends MsgParser {
       tokenType[ndx] |= ID_NOT_ADDRESS;
       return;
     }
-    
+
     long mask = 0;
-    
+
     // If token ends with a numeric comparison character, set the relation flag
     char chr = token.charAt(token.length()-1);
     if ("=><".indexOf(chr) >= 0) mask |= ID_RELATION;
-    
+
     // If token is in dictionary, return the associated type code
     // City codes are not permitted to follow intersection connectors, cross
     // street markers, or at markers for fear they might be a street with the
@@ -3138,7 +3141,7 @@ public abstract class SmartAddressParser extends MsgParser {
     Long iType = dictionary.get(token.toUpperCase());
     if (iType != null) {
       mask = iType;
-      
+
       // If @ is being used as a cross street marker, switch any tokens marked
       // as at signs to connectors
       if (isFlagSet(FLAG_AT_MEANS_CROSS)) {
@@ -3146,7 +3149,7 @@ public abstract class SmartAddressParser extends MsgParser {
           if (!isFlagSet(FLAG_AT_SIGN_ONLY) || token.equals("@")) mask |= ID_CONNECTOR;
         }
       }
-      
+
       // Unless we are only looking for a city, cities are not allowed to follow
       // connectors or cross street indicators
       if (!isFlagSet(FLAG_ONLY_CITY) || isFlagSet(FLAG_ONLY_CROSS)) {
@@ -3155,12 +3158,12 @@ public abstract class SmartAddressParser extends MsgParser {
           mask &= ~ID_CITY;
         }
       }
-      
+
       // Special case, the word LOT should not be considered an apt keyword if it
       // follows the word PARKING
       if ((mask & ID_APT) != 0 && ndx > 0 && token.equalsIgnoreCase("LOT") && tokens[ndx-1].equalsIgnoreCase("PARKING")) mask &= ~ID_APT;
     }
-    
+
     // Numeric tokens 9 digits or longer are probably SSNs or phone numbers
     // which should be marked as non-address tokens
     if (NUMERIC.matcher(token).matches()) {
@@ -3171,12 +3174,12 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       else mask |= ID_NUMBER | ID_ALPHA_ROUTE;
     }
-    
+
     // dull numbers separated by a dash might be a dual hwy number
     else if (DUAL_NUMBER_HWY_PTN.matcher(token).matches()) {
       mask |= ID_ALPHA_ROUTE;
     }
-    
+
     // Some states use alpha route numbers.  This token is a candidate if
     // it hasn't been designated as anything else
     // it is one or two characters long
@@ -3190,17 +3193,17 @@ public abstract class SmartAddressParser extends MsgParser {
         mask |= ID_ALPHA_ROUTE;
       }
     }
-    
+
     tokenType[ndx] =  mask;
   }
   private static final Pattern ROUTE_NUMBER_PTN = Pattern.compile("(?!IN|OF)[A-Z]{1,2}|\\d+[ABDHNSEW]?|\\d+[NSEW]B");
   private static final Pattern DUAL_NUMBER_HWY_PTN = Pattern.compile("\\d{1,3}-\\d{1,3}");
-  
+
   private boolean isComma(int ndx) {
     if (ndx >= tokens.length) return false;
     return tokens[ndx].equals(",");
   }
-  
+
   private int findConnector(int ndx) {
     if (isType(ndx, ID_JUST)) ndx++;
     if (isType(ndx, ID_CONNECTOR)) {
@@ -3208,10 +3211,10 @@ public abstract class SmartAddressParser extends MsgParser {
       return ndx+1;
     }
     if (isType(ndx, ID_DIRECTION) && isType(ndx+1, ID_OF)) return ndx+2;
-    
+
     return -1;
   }
-  
+
   /**
    * find end of number highway name
    * @param ndx possible start of numbered highway name
@@ -3221,7 +3224,7 @@ public abstract class SmartAddressParser extends MsgParser {
   private int findNumberedHwy(int ndx) {
     return findNumberedHwy(ndx, false);
   }
-  
+
   /**
    * Check a potential road suffix to confirm that is not the start
    * of a numbered highway.  A single route prefix and number will not
@@ -3234,7 +3237,7 @@ public abstract class SmartAddressParser extends MsgParser {
   private boolean checkNumberedHwy(int ndx) {
     return (findNumberedHwy(ndx, true) >= 0);
   }
-  
+
   /**
    * find end of number highway name
    * @param ndx possible start of numbered highway name
@@ -3245,18 +3248,18 @@ public abstract class SmartAddressParser extends MsgParser {
    */
   private int findNumberedHwy(int ndx, boolean strict) {
     if (isType(ndx, ID_ROUTE_PFX_PFX) && isType(ndx+1, ID_ROUTE_PFX_EXT) && isType(ndx+2, ID_ALPHA_ROUTE)) {
-      
+
       // More special cases.  In a strict search, if a cross street might follow this address and
-      // the token following this one starts a legitimate numbered highway name, then disgregard 
+      // the token following this one starts a legitimate numbered highway name, then disgregard
       // this one
       if (strict && findNumberedHwy(ndx+1, false) >= 0) return -1;
-      
+
       // Otherwise return the end of this numbered highway
       return ndx+2;
     }
-    
+
     if (!strict && isType(ndx, ID_ROUTE_PFX) && isType(ndx+1, ID_ALPHA_ROUTE)) {
-      
+
       // "IN A"  is never considered a numbered highway
       if (tokens[ndx].equalsIgnoreCase("IN") && tokens[ndx+1].equalsIgnoreCase("A")) return -1;
 
@@ -3264,7 +3267,7 @@ public abstract class SmartAddressParser extends MsgParser {
     }
     return -1;
   }
-  
+
   /**
    * find end of number highway name
    * @param start hard start of address field
@@ -3298,12 +3301,12 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return adjusted end address
    */
   private int bumpTrailingDir(int stNdx, int endNdx, boolean followingRoad) {
-    
-    // If we are not allowing 
+
+    // If we are not allowing
     // See what kind of directions were found at the start of the street name
     boolean leadDir = false;
     boolean leadBound = false;
-    
+
     if (!isFlagSet(FLAG_ALLOW_DUAL_DIRECTIONS)) {
       int tmp = stNdx;
       while (true) {
@@ -3313,31 +3316,31 @@ public abstract class SmartAddressParser extends MsgParser {
         tmp++;
       }
     }
-    
+
     // Bump pass bypass word
     if (isType(endNdx, ID_BYPASS)) endNdx++;
-    
+
     // Is there a trailing direction that is not followed by OF
     if (isType(endNdx, ID_DIRECTION) && !isType(endNdx+1, ID_OF)) {
-      
+
       // See if this is direction or bound and make sure we did not
       // encounter this beast at the start of the street name
-      
+
       boolean pureDir = isType(endNdx, ID_PURE_DIRECTION);
       if (!(pureDir ? leadDir : leadBound)) {
-        
+
         // If direction is part of a trailing city name, the answer is no.
-        if (findEndCity(endNdx) < 0) { 
-          
-          // Otherwise, if we are not concerned about the direction being part 
+        if (findEndCity(endNdx) < 0) {
+
+          // Otherwise, if we are not concerned about the direction being part
           // of a following cross street name, we should include it
           boolean checkBound = false;
           if (!followingRoad || isFlagSet(pureDir ? FLAG_PREF_TRAILING_SIMPLE_DIR : FLAG_PREF_TRAILING_BOUND)) {
             endNdx++;
             checkBound = pureDir;
           }
-          
-          // Otherwise, see if what follows looks like a trailing street 
+
+          // Otherwise, see if what follows looks like a trailing street
           // name.  If it does not, or if the trailing street has its own
           // leading or trailing direction, bump over this direction
           else {
@@ -3353,7 +3356,7 @@ public abstract class SmartAddressParser extends MsgParser {
             else if (isType(tmp-1, ID_DIRECTION)) bump = true;;
             if (bump) endNdx++;
           }
-          
+
           // See if we should check for a trailing bound after incrementing over
           // a pure direction
           if (checkBound && isType(endNdx, ID_DIRECTION) && !isType(endNdx, ID_PURE_DIRECTION)) endNdx++;
@@ -3364,85 +3367,85 @@ public abstract class SmartAddressParser extends MsgParser {
   }
 
   private boolean isType(int ndx, long mask) {
-    if (ndx >= tokenType.length) return false; 
+    if (ndx >= tokenType.length) return false;
     return (tokenType[ndx] & mask) != 0;
   }
-  
+
   private boolean isFlagSet(int mask) {
     return (flags & mask) != 0;
   }
-  
+
   // Determine if token is a single standalone road token
   // such as I-234, or US50, or RT250NB :(
   private boolean isRoadToken(int ndx) {
-    
+
     // If reserved single word name, answer is yes
-    // Unless it is also an optional street suffix followed by a 
+    // Unless it is also an optional street suffix followed by a
     // real street suffix
     if (isType(ndx, ID_SINGLE_WORD_ROAD)) {
       if (isType(ndx, ID_AMBIG_ROAD_SFX) && isRoadSuffix(ndx+1)) return false;
       return true;
     }
-    
+
     // If illegal char, answer is no
     if (isType(ndx, ID_NOT_ADDRESS | ID_CONNECTOR)) return false;
-    
+
     // Get the string token
-    if (ndx >= tokenType.length) return false; 
+    if (ndx >= tokenType.length) return false;
     String token = tokens[ndx];
-    
+
     // See how many letters there are at start of token
     int pt = 0;
     while (pt < token.length() && Character.isLetter(token.charAt(pt))) pt++;
-    
+
     // If zero, or if entire token is letters, the answer is no
     if (pt == 0 || pt == token.length()) return false;
-    
+
     // If next character is a dash, skip over it
     int pta = pt;
     if (token.charAt(pt) == '-') pt++;
-    
+
     // If next character is not a digit, answer is no
     if (pt >= token.length() || ! Character.isDigit(token.charAt(pt))) return false;
-    
+
     // Shift the alpha portion upper case and see if what is left is a route prefix
     String pfx = token.substring(0, pta).toUpperCase();
     Long mask = dictionary.get(pfx);
     if (mask == null || (mask&ID_ROUTE_PFX) == 0) return false;
-    
+
     // Looks promising.  Now scan over any digits and see what we have left
     do pt++; while (pt < token.length() && Character.isDigit(token.charAt(pt)));
-    
+
     // If we are at end of string, answer is yes
     // Otherwise, the answer depends on if the remaining suffix looks like some
     // kind of highway qualifier (NB = north bound for example)
     if (pt != token.length()) {
       String sfx = token.substring(pt).toUpperCase();
-      
+
       do {
         if (sfx.length() == 2 && sfx.charAt(1) == 'B' &&
             "NESW".indexOf(sfx.charAt(0)) >= 0) break;
 
-        if (sfx.length() == 1 && 
+        if (sfx.length() == 1 &&
             "NESW".indexOf(sfx.charAt(0)) >= 0) break;
-        
+
         // Nothing recognized, return false
         return false;
-        
+
       } while (false);
     }
     return true;
   }
-  
+
   // Determine if token is a valid house number
   private boolean isHouseNumber(int ndx) {
-    
+
     // If numeric token, answer is yes
     if (isType(ndx, ID_NUMBER)) return true;
-    
+
     // If not address, return false
     if (isType(ndx, ID_NOT_ADDRESS)) return false;
-    
+
     // Try it against the numeric street number pattern
     // which allows a trailing letter qualifier
     if (ndx >= tokens.length) return false;
@@ -3459,14 +3462,14 @@ public abstract class SmartAddressParser extends MsgParser {
     if (PAT_HOUSE_NUMBER.matcher(token).matches()) return true;
     return false;
   }
-  
+
   // Determine if token at index is a standalone apartment number
   private boolean isAptToken(int ndx) {
     if (ndx >= tokens.length) return false;
     if (isType(ndx+1, ID_YEAR_OLD_NOT_ADDRESS)) return false;
     return isAptToken(tokens[ndx], !isFlagSet(FLAG_NO_IMPLIED_APT));
   }
-  
+
   /**
    * Determine if token is a valid single apartment token
    * @param token token to be checked
@@ -3474,13 +3477,13 @@ public abstract class SmartAddressParser extends MsgParser {
    * @return true if this is an apartment token
    */
   private boolean isAptToken(String token, boolean numberOK) {
-    
+
     // Do not accept fractions
     if (token.contains("/")) return false;
-    
+
     int pt = getAptBreak(token);
     if (pt < 0) return false;
-    
+
     // Check for reserved things that look like street names
     if (isFlagSet(FLAG_CROSS_FOLLOWS) && token.length() >= 3) {
       String tail = token.substring(token.length()-3).toUpperCase();
@@ -3502,7 +3505,7 @@ public abstract class SmartAddressParser extends MsgParser {
     int pt = getAptBreak(token);
     return token.substring(pt);
   }
-  
+
   /**
    * Identify the break between the Apt keyword and value in a token
    * that we are trying to identify as a single word apt token
@@ -3516,20 +3519,20 @@ public abstract class SmartAddressParser extends MsgParser {
     return -1;
   }
   private static final Pattern DIGIT = Pattern.compile("\\d");
-  
+
   /**
    * This class contains a searchable list of multi word items.  It will be
    * used to keep two lists.  One of multi-word cities, and another of multi-word
    * streets.
    */
   private class MultiWordList {
-    
+
     private int dir;
     private long idFlag;
     private long incompFlag;
     private long completeFlag;
     private List<String[]> wordList = null;
-    
+
     /**
      * Create a multiword list
      * @param dir search direction +1 for forward search, -1 for backward search
@@ -3543,7 +3546,7 @@ public abstract class SmartAddressParser extends MsgParser {
     public MultiWordList(int dir, long idFlag, long incompFlag, long completeFlag, String[] nameList) {
       this(dir, idFlag, incompFlag, completeFlag, Arrays.asList(nameList));
     }
-    
+
     /**
      * Create a multiword list
      * @param dir search direction +1 for forward search, -1 for backward search
@@ -3562,21 +3565,21 @@ public abstract class SmartAddressParser extends MsgParser {
 
       addNames(dir, nameList);
     }
-    
+
     public void addNames(int dir, String[] nameList) {
       addNames(dir, Arrays.asList(nameList));
     }
 
     public void addNames(int dir, Collection<String> nameList) {
-      
+
       long flags1 = idFlag | incompFlag;
       long flags2 = idFlag | completeFlag;
       // Run thorough the city list
       for (String name : nameList) {
-        
+
         // If city name does not contain a blank, we are not interested in it
         if (name.contains(" ")) {
-          
+
           // Break up city name into token list.
           // If this a backward search list, reverse the tokenList word order
           if (wordList == null) wordList = new ArrayList<String[]>();
@@ -3589,26 +3592,26 @@ public abstract class SmartAddressParser extends MsgParser {
               tokenList[ndx2] = tmp;
             }
           }
-          
+
           // Add the token list to the word list
           wordList.add(tokenList);
-          
+
           // And add the first token to the dictionary as an incomplete city
           if (flags1 != 0) setupDictionary(flags1, tokenList[0]);
-          
+
           // Add the rest of the tokens to the dictionary with no flags
           // Doesn't hurt the address parsing logic and the weird DispatchEmergitechParser
           // subclasses work better if these are in the dictionary
           for (int ndx = 1; ndx < tokenList.length; ndx++) setupDictionary(0, tokenList[ndx]);
         }
-        
+
         // Otherwise, we just add this to dictionary as a normal city
         else {
           if (flags2 != 0) setupDictionary(flags2, name);
         }
       }
     }
-    
+
     /**
      * Search for a single or multi-word sequence begining at specfied index
      * @param ndx specified token index
@@ -3617,10 +3620,10 @@ public abstract class SmartAddressParser extends MsgParser {
      * If search direction is backward, returns the beginning of found sequence
      */
     public int findEndSequence(int ndx) {
-      
-      // If there is an ID token flag, and isn't set for this index, look no further 
+
+      // If there is an ID token flag, and isn't set for this index, look no further
       if (idFlag != 0 && !isType(ndx, idFlag)) return -1;
-      
+
       // If this is flagged as the start of a multi-word entry, see if
       // we find a match in the muti-word list
       // If there are multiple matches, pick the longest
@@ -3649,18 +3652,18 @@ public abstract class SmartAddressParser extends MsgParser {
         if (completeFlag == 0 || isType(ndx, completeFlag)) foundLen = 1;
         else return -1;
       }
-      
+
       // Compute the end (or beginning) index of what we have found and return it.
       int endNdx = ndx + foundLen*dir;
       if (dir < 0) endNdx++;
       return endNdx;
     }
   }
-  
+
   private static class FieldSpec {
     int fldStart;
     int fldEnd;
-    
+
     public FieldSpec(int fldStart) {
       this(fldStart, -1);
     }
@@ -3669,7 +3672,7 @@ public abstract class SmartAddressParser extends MsgParser {
       this.fldStart = fldStart;
       this.fldEnd = fldEnd;
     }
-    
+
     public void end(int fldEnd) {
       this.fldEnd = fldEnd;
     }
@@ -3678,11 +3681,11 @@ public abstract class SmartAddressParser extends MsgParser {
       if (this.fldEnd < 0) this.fldEnd = fldEnd;
     }
   }
-  
-  private static final Pattern NO_DELIM_ADDR_PTN1 = Pattern.compile("(?<!\\d)\\d+\\b");  
-  private static final Pattern NO_DELIM_ADDR_PTN2 = Pattern.compile("(?<!\\d)\\d+$");  
+
+  private static final Pattern NO_DELIM_ADDR_PTN1 = Pattern.compile("(?<!\\d)\\d+\\b");
+  private static final Pattern NO_DELIM_ADDR_PTN2 = Pattern.compile("(?<!\\d)\\d+$");
   public static class Result {
-    
+
     // We do need to access our parent object for global configuration settings
     // and to perform additional calculations.  But we must never refer to any
     // local variables used in calculating this result that may have been
@@ -3691,7 +3694,7 @@ public abstract class SmartAddressParser extends MsgParser {
     // so we can use it when we have determined that it is safe to do so.
     private SmartAddressParser parent;
     private int flags;
-    
+
     private String[] tokens;
     private StartType startType;
     private int status = -1;
@@ -3717,12 +3720,12 @@ public abstract class SmartAddressParser extends MsgParser {
     private String left = null;
     private boolean mBlankLeft = false;
     private boolean commaLeft = false;
-    
+
     public Result(SmartAddressParser parent, int flags) {
       this.parent = parent;
       this.flags = flags;
     }
-    
+
     public void reset(int startAddress) {
       if (startAddress < 0) startField.end(-1);
       addressField = null;
@@ -3735,7 +3738,7 @@ public abstract class SmartAddressParser extends MsgParser {
       insertAmp = -1;
       endAll = -1;
     }
-   
+
     /**
      * Determine Determine how good an address this parse call found
      * @return zero if string is not recognized as valid address, otherwise a
@@ -3744,7 +3747,7 @@ public abstract class SmartAddressParser extends MsgParser {
     public int getStatus() {
       return status;
     }
-    
+
     /**
      * Determine Determine how good an address this parse call found
      * @param extra number of extra tokens (presumably city names) that can
@@ -3757,7 +3760,7 @@ public abstract class SmartAddressParser extends MsgParser {
       if (tokens.length-endAll > extra) return 0;
       return status;
     }
-    
+
     /**
      * Determine Determine how good an address this parse call found
      * @return true if this is a valid address
@@ -3765,7 +3768,7 @@ public abstract class SmartAddressParser extends MsgParser {
     public boolean isValid() {
       return status > STATUS_MARGINAL;
     }
-    
+
     /**
      * Determine Determine how good an address this parse call found
      * @param extra number of extra tokens (presumably city names) that can
@@ -3777,18 +3780,18 @@ public abstract class SmartAddressParser extends MsgParser {
       if (tokens.length-endAll > extra) return false;
       return isValid();
     }
-  
+
     /**
      * Fill data object with information from parsed line
      */
     public void getData(MsgInfo.Data data) {
-      
+
       // Reject is a special case
       if (status == STATUS_REJECT) {
         data.strAddress = left;
         return;
       }
-      
+
       if (addressField != null) data.strAddress = stripLeadingZero(buildData(addressField, 2));
       if (placeField != null) data.strPlace = buildData(placeField, 0);
       if (aptField != null) {
@@ -3807,11 +3810,11 @@ public abstract class SmartAddressParser extends MsgParser {
           if (city != null) data.strCity = city;
         }
       }
-      
+
       // Before we figure out with to do with the leading start field, see if some of it
       // should be stripped off and added to the address
       // We use two pattern searches to do this.  If no address has been found, look for
-      // any word ending in 1 or more digits.  If we found an address but the result 
+      // any word ending in 1 or more digits.  If we found an address but the result
       // status indicates it did not find a street number, restrict the previos search
       // to the last word of the start field.  if we find a match for either pattern
       // move the digits and everything following them to the address field
@@ -3833,17 +3836,17 @@ public abstract class SmartAddressParser extends MsgParser {
           }
         }
       }
-      
+
       if (callPrefix != null) data.strCall = callPrefix;
       if (placePrefix != null) data.strPlace = placePrefix;
-      
+
       // If no address field has been found, but we have a start field and caller
       // has requested fallback to put everything in the address field, make it so
       if (data.strAddress.length() == 0 && startFld.length() > 0 && (flags & FLAG_FALLBACK_ADDR) != 0) {
         parent.parseAddress(startFld, data);
         startFld = "";
       }
-      
+
       // Otherwise, assign the start field to where it seems appropriate
       else {
         switch (startType) {
@@ -3860,16 +3863,16 @@ public abstract class SmartAddressParser extends MsgParser {
           break;
         }
       }
-      
+
       if (trailPlace != null) {
         Result res = parent.parseAddress(StartType.START_PLACE, flags | FLAG_START_FLD_REQ | FLAG_IGNORE_AT | FLAG_NO_ADDRESS, trailPlace);
         res.getData(data);
         left = res.getLeft();
       }
-    
+
       // We do the NEAR field last, because it requires a lot of special treatment
       if (nearField != null) {
-        
+
         // If there is no cross street and the near field content looks like an
         // address, stick it in the cross street.
         // Otherwise append the full term to the place field
@@ -3877,10 +3880,10 @@ public abstract class SmartAddressParser extends MsgParser {
         String field2 = null;
         int pt = field.indexOf(' ');
         if (pt >= 0) field2 = field.substring(pt+1);
-        
+
         boolean nearPlace = true;
         if (field2 != null && data.strCross.length() == 0) {
-          
+
           // If we found a city, the near field has a well defined end
           // and we can just call checkAddress to see if the near field is
           // an address or not
@@ -3890,7 +3893,7 @@ public abstract class SmartAddressParser extends MsgParser {
               nearPlace = false;
             }
           }
-          
+
           // If there is no city, things get complicated.  This could only have
           // happened if the FLAG_NEAR_TO_END flag was specified and we have
           // to make another call to parseAddress to see how much of the
@@ -3905,19 +3908,19 @@ public abstract class SmartAddressParser extends MsgParser {
             }
           }
         }
-        if (nearPlace) data.strPlace = append(data.strPlace, " ", field); 
+        if (nearPlace) data.strPlace = append(data.strPlace, " ", field);
       }
-      
-      // Some corrective adjustments may be needed if the apt field was 
+
+      // Some corrective adjustments may be needed if the apt field was
       // collected from whatever was left after the end of the address
       if (extraApt) {
-        
+
         // If parse says this is not an apt, append it to the address
         if (parent.isNotExtraApt(data.strApt)) {
           data.strAddress = append(data.strAddress, " ", data.strApt.replace('/', '&'));
           data.strApt = "";
         }
-        
+
         // Otherwise if what we found starts with a place mark, move it to the
         // place field
         else {
@@ -3928,7 +3931,7 @@ public abstract class SmartAddressParser extends MsgParser {
           }
         }
       }
-      
+
       // If we are collecting trailing apts and did not find one
       // see if what we found ends with a floor indicator
       if ((flags & FLAG_RECHECK_APT) != 0 && data.strApt.length() == 0) {
@@ -3939,7 +3942,7 @@ public abstract class SmartAddressParser extends MsgParser {
         }
       }
     }
-    
+
     /**
      * return the start field that is fond in front of the address
      */
@@ -3949,7 +3952,7 @@ public abstract class SmartAddressParser extends MsgParser {
       }
       return startFld;
     }
-    
+
     /**
      * @return the pad field (if any) that lies between the address property and
      * the city field
@@ -3967,7 +3970,7 @@ public abstract class SmartAddressParser extends MsgParser {
       if (nearResult != null) return nearResult.getLeft();
       return left;
     }
-    
+
     /**
      * Determine there were multiple blanks directly in front of the string
      * returned by getLeft()
@@ -3977,7 +3980,7 @@ public abstract class SmartAddressParser extends MsgParser {
       if (nearResult != null) return nearResult.isMBlankLeft();
       return mBlankLeft;
     }
-    
+
     /**
      * Determine there was a comma in front of the string returned by getLeft()
      * @return true if there was a comma before the getLeft() result
@@ -3986,14 +3989,14 @@ public abstract class SmartAddressParser extends MsgParser {
       if (nearResult != null) return nearResult.isCommaLeft();
       return commaLeft;
     }
-    
+
     /**
      * @return whatever was identifying as being in front of the address
      */
     public String getAddressPrefix() {
       return buildData(startField, 0);
     }
-    
+
     /**
      * @return everything from start of identified address to end of string
      */
@@ -4008,12 +4011,12 @@ public abstract class SmartAddressParser extends MsgParser {
     public String getCity() {
       return buildData(cityField, 0);
     }
-    
+
     private String buildData(FieldSpec spec, int addrCode) {
       if (spec == null) return "";
       return buildData(spec.fldStart, spec.fldEnd, addrCode);
     }
-  
+
     /**
      * Construct data field from the token sequence from given start and end position
      * @param start starting token index
@@ -4025,11 +4028,11 @@ public abstract class SmartAddressParser extends MsgParser {
      * @return Constructed data field.
      */
     private String buildData(int start, int end, int addrCode) {
-      
+
       boolean atToCross = ((flags & FLAG_AT_MEANS_CROSS) != 0);
       StringBuilder sb = new StringBuilder();
       for (int ndx = start; ndx < end; ndx++) {
-        
+
         // Comma is a special case.  Skip if first token in sequence
         // otherwise inhibit the usual blank placed between it and the
         // previous token
@@ -4039,13 +4042,13 @@ public abstract class SmartAddressParser extends MsgParser {
         } else {
           if (sb.length() > 0) sb.append(' ');
         }
-        
+
         // Insert & if required
         if (ndx == insertAmp) {
           sb.append(new String[]{"", "/ ", "& "}[addrCode]);
         }
-        if (addrCode>1 && 
-            (token.equals("/") || 
+        if (addrCode>1 &&
+            (token.equals("/") ||
              (atToCross && token.equalsIgnoreCase("AT")))) token = "&";
         sb.append(token);
       }
@@ -4054,9 +4057,9 @@ public abstract class SmartAddressParser extends MsgParser {
   }
   private static final Pattern ADDR_PLACE_MARK = Pattern.compile("^(?:AT |@) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_TRAIL_FL = Pattern.compile(" +(\\d+ *FL)$", Pattern.CASE_INSENSITIVE);
-  
+
   /**
-   * Check a potential extra apartment field for constructs that do 
+   * Check a potential extra apartment field for constructs that do
    * not look like apartment fields
    * @param apt prospective extra apartment field
    * @return true if this does not look like a possible apartment field
@@ -4065,40 +4068,40 @@ public abstract class SmartAddressParser extends MsgParser {
     return NOT_APT_PTN.matcher(apt).matches();
   }
   private static final Pattern NOT_APT_PTN = Pattern.compile("(?:[&/]|(?:JUST )?(?:MM|EX|NORTH|SOUTH|EAST|WEST|PRIOR|BLK|MILE|BEFORE|AFTER|RUNAWAY|OFF|FROM|NEAR|OFF|CLOSE TO|PAST)\\b).*|.* MM|EXT|[NSEW]|[NS][EW]", Pattern.CASE_INSENSITIVE);
-  
+
   /**
    * This is used by GenMultiWordStreetList.  When passed a previously passed
-   * address it returns a simple street name stripped of house numbers prefixes 
+   * address it returns a simple street name stripped of house numbers prefixes
    * and suffixes.
    * @param address The parsed address
-   * @return null if it does not contain a normal street name 
+   * @return null if it does not contain a normal street name
    * (ie, with a regular street suffix).  Otherwise returns the naked
    * unadorned street name
    */
   protected String stripStreetName(String address) {
-    
+
     // Do the normal split tokens processing
     Result res = new Result(this, 0);
     setTokenTypes(StartType.START_ADDR, address, null, res);
-    
+
     // Strip off directions at end of address
     if (tokens.length == 0) return null;
     int sEnd = tokens.length-1;
     while (sEnd >= 0 && isType(sEnd, ID_DIRECTION)) sEnd--;
-    
+
     // If no remaining tokens, or if last token is not a regular street
     // suffix, bail out
     if (sEnd < 0) return null;
     if (! isRoadSuffix(sEnd)) return null;
-    
+
     // Not start from the beginning
     // If first token is a house number, skip it
     int sBeg = 0;
     if (isHouseNumber(tokens[sBeg])) sBeg++;
-    
+
     // Skip over any directions, optional prefixes, and block indicators
     while (sBeg < sEnd && isType(sBeg, ID_DIRECTION | ID_OPT_ROAD_PFX | ID_BLOCK)) sBeg++;
-    
+
     // If we have anything left, return it
     if (sBeg >= sEnd) return null;
     String result = "";
