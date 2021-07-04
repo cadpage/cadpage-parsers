@@ -87,8 +87,12 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       }
       data.strCallId = getOptGroup(match.group(6));
 
+      //  Parse trailing unit and channel in either order
+
+      boolean foundUnit = false;
       match = TRAIL_UNIT_PTN.matcher(body);
       if (match.matches()) {
+        foundUnit = true;
         body = match.group(1).trim();
         data.strUnit = append(cvtUnitCodes(match.group(2).trim()), ",", data.strUnit);
       }
@@ -101,6 +105,14 @@ public class CTTollandCountyAParser extends SmartAddressParser {
           body = match.group(1).trim();
           data.strChannel = match.group(2);
           if (tmp.length() > 0) postCall = tmp.substring(1).trim();
+
+          if (!foundUnit) {
+            match = TRAIL_UNIT_PTN.matcher(body);
+            if (match.matches()) {
+              body = match.group(1).trim();
+              data.strUnit = append(cvtUnitCodes(match.group(2).trim()), ",", data.strUnit);
+            }
+          }
         }
       }
 
