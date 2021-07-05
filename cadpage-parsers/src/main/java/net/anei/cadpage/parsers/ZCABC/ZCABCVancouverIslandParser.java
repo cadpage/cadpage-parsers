@@ -15,35 +15,35 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
   public ZCABCVancouverIslandParser() {
     this("", "BC");
   }
-  
+
   public ZCABCVancouverIslandParser(String defCity, String defState) {
     super(defCity, defState, "CALL? ADDR/ZSC CITY DATETIME!");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "paging@ni911.ca";
   }
-  
+
   @Override
   public String getLocName() {
     if (this.getClass() == ZCABCVancouverIslandParser.class) return "Vancouver Island, BC";
     return super.getLocName();
   }
-  
-  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SOINTULA|SPROAT LAKE|TAHSIS|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
+
+  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|LADYSMITH|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SOINTULA|SPROAT LAKE|TAHSIS|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("\\(?([-+]?[\\d:\\.]+),([-+]?[\\d:\\.]+)\\)");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private static final Pattern GPS_PTN2 = Pattern.compile("([-+]?\\d+)(\\d{6}),([-+]?\\d+)(\\d{6})");
-  
-  @Override 
+
+  @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if(!subject.equals("Fire Dispatch")) return false;
-    
+
     // Clean the body of any email text
     int newLine = body.indexOf('\n');
     if(newLine >= 0) {
@@ -56,7 +56,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       data.strSource = match.group(1);
       body = match.group(2);
     }
-    
+
     // Process trailing GPS coordinates
     match = TRAIL_GPS_PTN.matcher(body);
     if (match.matches()) {
@@ -68,19 +68,19 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
         setGPSLoc(match.group(1)+'.'+match.group(2)+','+match.group(3)+'.'+match.group(4), data);
       }
     }
-    
+
     // GPS coordinates contain a comma which must be escaped
     body = GPS_PTN.matcher(body).replaceAll("($1|$2)");
-    
+
     String[] fields = body.split(",");
     return parseFields(fields, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram() + " GPS";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -91,7 +91,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?) *((?:\\bL)?\\([^\\)A-Za-z]+\\))");
   private static final Pattern ADDR_SPEC_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_GPS_PTN.matcher(field);
@@ -99,7 +99,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
         data.strCall = append(data.strCall, " / ", match.group(1));
         data.strAddress = match.group(2).replace('|', ',');
       }
-      
+
       else if ((match = ADDR_SPEC_PTN.matcher(field)).matches()) {
         data.strCall = append(data.strCall, " / ", match.group(1).trim());
         parseAddress(match.group(2).trim(), data);
@@ -113,17 +113,17 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:BC )?(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d(?: [ap]m)?) *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
-    
-    @Override 
+
+    @Override
     public boolean canFail() {
       return true;
     }
-    
-    @Override 
+
+    @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return false;
@@ -143,18 +143,18 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       data.strUnit = unit;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if(!checkParse(field, data)) super.abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME UNIT X";
     }
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ACLE BEACH",
     "ARBUTUS BAY",
@@ -282,6 +282,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "THE POINT",
     "TONQUIN PARK",
     "TRADING POST",
+    "TRANS CANADA",
     "TRIBUNE BAY PROVINCIAL",
     "TSOLUM RIVER",
     "TSULQUATE IR",
@@ -296,7 +297,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     "YEW WOOD"
 
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 ANSWER",
       "ABANDONED 911",
@@ -337,18 +338,18 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "FUEL - LEAK/SPILL/OTHER NON EMERG",
       "FUEL - LEAK/SPILL/OTHER",
       "GARBAGE CONTAINER",
-      "HAZMAT NON EMERGENCY",
       "HAZMAT",
+      "HAZMAT NON EMERGENCY",
       "HYDRO TROUBLE",
       "MARINE INCIDENT",
       "MARINE",
       "MOTOR VEHICLE ACCIDENT",
       "MOTOR VEHICLE FIRE",
       "MV FIRE",
+      "MVI",
       "MVI / EXTRICATION",
       "MVI PED STRUCK",
       "MVI PORT",
-      "MVI",
       "MVI/EXTRICATION",
       "NATURAL GAS LINE BREAK",
       "NATURAL GAS/PROP NON EMERG",
@@ -381,7 +382,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "TSUNAMI WARNING",
       "WILDLAND FIRE"
   );
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     return address.toUpperCase();
