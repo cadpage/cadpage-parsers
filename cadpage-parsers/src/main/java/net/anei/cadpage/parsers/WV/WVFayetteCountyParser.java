@@ -15,10 +15,10 @@ public class WVFayetteCountyParser extends FieldProgramParser {
   public WVFayetteCountyParser() {
     super(CITY_CODES, "FAYETTE COUNTY", "WV", "SRC ( STA UNIT INFO/RN+ | CALL ADDRCITY UNIT STA! INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
-    return "kwhite@fayettecounty911wv.org,Fayette_911@wv.org";
+    return "@fayettecounty911wv.org,Fayette_911@wv.org";
   }
 
   private static Pattern DELIM = Pattern.compile(" *\n *");
@@ -58,7 +58,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       if (mat.matches()) {
         field = "I " + mat.group(1) + " " + mat.group(2) + " " + mat.group(3) + " MM" + getOptGroup(mat.group(4));
       }
-      
+
       mat = ADDR_SEMICOLON_PLACE.matcher(field);
       if (mat.matches()) {
         data.strPlace = mat.group(2);
@@ -73,7 +73,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       return "ADDR PLACE CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BEC", "BECKLEY",    // ????
       "FAY", "FAYETTEVILLE",
