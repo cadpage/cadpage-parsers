@@ -10,29 +10,29 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class ORJosephineCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern UNITS_PTN = Pattern.compile("Units: +");
-  
+
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
-          "( ID CALL ( DATETIME ADDRCITY/S6 CITY PLACE X UNIT! END " +  
+          "( ID CALL ( DATETIME ADDRCITY/S6 CITY PLACE X UNIT! END " +
                     "| ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " +
                     ") " +
-          "| DATETIME_CALL CALL2? ADDR_CITY_X/SXa! X2? ( Units:UNIT | UNIT2? ) " + 
-          "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " + 
+          "| DATETIME_CALL CALL2? ADDR_CITY_X/SXa! X2? ( Units:UNIT | UNIT2? ) " +
+          "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " +
           ") GPS1? GPS2? Notes:INFO? INFO/S+");
   }
-  
+
   @Override
   public String getFilter() {
     return "Dispatch@Pacific.com,dispatch@grantspassoregon.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Pattern LAT_LON_PTN = Pattern.compile("\\bLAT: *([-+]?[\\d\\.]+),? +LON: *([-+]?[\\d\\.]+)\\b");
   private static final Pattern LAT_LON_PTN2 = Pattern.compile("\\bLAT:([-+]?[\\d\\.]+) LON:([-+]?[\\d\\.]+)\\b");
   private static final Pattern GPS_PTN = Pattern.compile(":([-+]?\\d{2,3}\\.\\d{6,}):([-+]?\\d{2,3}\\.\\d{6,}) ");
@@ -45,16 +45,16 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       subject = "!";
       body = body.substring(5).trim().replace("=\n", "").replace("=0A", "\n");
     }
-    
+
     if (! subject.trim().equals("!")) return false;
-    
+
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
-    
+
     body = LAT_LON_PTN.matcher(body).replaceAll("LAT:$1 LON:$2");
     body = UNITS_PTN.matcher(body).replaceFirst("Units:");
     body = GPS_PTN.matcher(body).replaceFirst(": $1: $2: ");
-    
+
     String[] flds = body.split(";", -1);
     if (flds.length < 8) {
       flds = DELIM.split(body);
@@ -64,7 +64,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     data.strAddress = LAT_LON_PTN2.matcher(data.strAddress).replaceFirst("LAT: $1, LON: $2");
     return true;
   }
-  
+
   private static final String GPS_PTN_STR = "[-+]?\\d{2,3}\\.\\d{6,}";
 
   @Override
@@ -84,7 +84,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     if (name.equals("UNIT2")) return new UnitField("[A-Z0-9,t]*", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends Field {
@@ -92,7 +92,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
@@ -106,25 +106,25 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       }
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME CALL";
     }
   }
-  
-  private static final Pattern DATE_TIME_CALL_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)\\b(?: {2,}(.*))?");
+
+  private static final Pattern DATE_TIME_CALL_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)\\b(?: +(.*))?");
   private class MyDateTimeCallField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_CALL_PTN.matcher(field);
@@ -139,25 +139,25 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       data.strCall = getOptGroup(match.group(3));
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME CALL";
     }
   }
-  
-  
+
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCall.length() > 0) return false;
@@ -165,7 +165,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyAddressCityCrossField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -187,13 +187,13 @@ public class ORJosephineCountyParser extends FieldProgramParser {
         data.strCross = append(data.strCross, " / ", cross);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE? " + super.getFieldNames() + " CITY X";
     }
   }
-  
+
   private static final Pattern INTERSECT_MARKER = Pattern.compile(" *@ *");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -206,13 +206,13 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       field = INTERSECT_MARKER.matcher(field).replaceAll(" & ");
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE? " + super.getFieldNames();
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -221,7 +221,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       else super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -229,14 +229,14 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern PLACE_X2_PTN = Pattern.compile("(.*[a-z]\\S*) *(.*)");
   private class MyCross2Field extends CrossField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCross.length() > 0) return false;
@@ -253,13 +253,13 @@ public class ORJosephineCountyParser extends FieldProgramParser {
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE X";
     }
   }
-  
+
 
   @Override
   public String adjustMapAddress(String address) {

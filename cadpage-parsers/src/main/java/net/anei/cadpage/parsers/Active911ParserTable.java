@@ -1554,6 +1554,7 @@ public class Active911ParserTable {
       "US/OR/DouglasCounty",              "ORDouglasCounty",
       "US/OR/GilliamCounty",              "ORGilliamCounty",
       "US/OR/GrantsPass",                 "ORJosephineCounty",
+      "US/OR/GrantsPassPolice",           "ORJosephineCounty",
       "US/OR/GreshamStandardA",           "Cadpage2",
       "US/OR/HoodRiverCounty",            "ORHoodRiverCounty",
       "US/OR/IdanhaDetroit",              "ORMarionCountyA",
