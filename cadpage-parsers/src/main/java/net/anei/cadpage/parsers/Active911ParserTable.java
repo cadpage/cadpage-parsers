@@ -138,6 +138,7 @@ public class Active911ParserTable {
       "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyB",
       "US/AZ/CityofCottonwood",           "AZYavapaiCountyC",
       "US/AZ/CityofShowLow",              "AZNavajoCountyB",
+      "US/AZ/CochiseCounty",              "AZCochiseCounty",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",
       "US/AZ/RuralMetro",                 "AZYavapaiCountyD",
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",

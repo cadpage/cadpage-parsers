@@ -161,6 +161,7 @@ public class ParserList {
               ,"AKSkagway"                      ,"Skagway, AK"
           ),
           new ParserCategory("Arizona"
+              ,"AZCochiseCounty"                ,"Cochise County, AZ"
               ,"AZMaricopaCounty"               ,"Maricopa County, AZ"
               ,"AZNavajoCounty"                 ,"Navajo County, AZ"
               ,"AZPimaCounty"                   ,"Pima County, AZ"
