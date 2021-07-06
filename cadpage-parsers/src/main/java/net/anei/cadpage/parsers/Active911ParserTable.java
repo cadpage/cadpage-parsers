@@ -1134,6 +1134,7 @@ public class Active911ParserTable {
       "US/NC/Concord",                    "NCCabarrusCounty",
       "US/NC/CravenCounty",               "NCCravenCounty",
       "US/NC/CumberlandCounty",           "NCCumberlandCounty",
+      "US/NC/DareCounty",                 "NCDareCounty",
       "US/NC/DavidsonCounty",             "NCDavidsonCountyA",
       "US/NC/DavieCounty",                "NCDavieCounty",
       "US/NC/DunnPD",                     "NCHarnettCountyD",

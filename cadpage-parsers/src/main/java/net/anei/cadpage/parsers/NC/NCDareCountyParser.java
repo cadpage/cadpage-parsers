@@ -12,7 +12,12 @@ public class NCDareCountyParser extends DispatchOSSIParser {
   public NCDareCountyParser() {
     super("DARE COUNTY", "NC", "SRC? CALL ADDR SRC? ( PLACE CITY | CITY | ) INFO+");
   }
-  
+
+  @Override
+  public String getFilter() {
+    return "CAD@darenc.com,CAD@darepublicsafety.com";
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -21,9 +26,9 @@ public class NCDareCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  
-  
+
+
+
   private static Pattern CALL_CODE_PTN = Pattern.compile("(.*?) *\\((\\d{2}-[A-Z]-\\d[A-Z]?)\\)");
   private class MyCallField extends CallField {
     @Override
@@ -32,7 +37,7 @@ public class NCDareCountyParser extends DispatchOSSIParser {
       if (mat.matches()) {
         field = mat.group(1);
         data.strCode = mat.group(2);
-      } 
+      }
       super.parse(field, data);
     }
 
@@ -41,12 +46,12 @@ public class NCDareCountyParser extends DispatchOSSIParser {
       return "CALL CODE";
     }
   }
-  
+
   private class MyCityField extends Field {
     public MyCityField() {
       super("[A-Z]{3}", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if(CITY_CODES.containsKey(field)) data.strCity = CITY_CODES.getProperty(field);
@@ -58,7 +63,7 @@ public class NCDareCountyParser extends DispatchOSSIParser {
       return "CITY";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -77,10 +82,11 @@ public class NCDareCountyParser extends DispatchOSSIParser {
       return "INFO CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "AVN",     "AVON",
       "BUX",     "BUXTON",
+      "CLB",     "MATEO",    // ???
       "COL",     "COLINGTON",
       "DCK",     "DUCK",
       "ELK",     "EAST LAKE",
