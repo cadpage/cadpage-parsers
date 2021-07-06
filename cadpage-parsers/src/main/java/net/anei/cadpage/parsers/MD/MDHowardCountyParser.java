@@ -12,12 +12,12 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 public class MDHowardCountyParser extends FieldProgramParser {
-  
+
   public MDHowardCountyParser() {
     super(CITY_CODES, "HOWARD COUNTY", "MD",
            "ADDR/S! TYPE:CALL! BEAT/BOX:BOX Disp:UNIT");
   }
-  
+
   @Override
   public String getFilter() {
     return "@c-msg.net,dwalton@howardcountymd.gov,hc1@howardcountymd.gov,@iamresponding.com";
@@ -29,26 +29,27 @@ public class MDHowardCountyParser extends FieldProgramParser {
       @Override public boolean splitBlankIns() { return false; }
       @Override public int splitBreakLength() { return 240; }
       @Override public int splitBreakPad() { return 1; }
+      @Override public boolean mixedMsgOrder() { return true; }
     };
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     body = body.replace("=20", " ").trim();
     do {
       if (subject.startsWith("CAD") || subject.startsWith("hCAD")) break;
-      
+
       if (subject.startsWith("Station ")) {
         data.strSource = subject;
         break;
       }
       if (body.startsWith("EVENT: ")) break;
-      
+
       if (isPositiveId()) break;
       return false;
     } while (false);
-    
+
     if (!super.parseMsg(body, data)) return false;
     if (data.strUnit.length() == 0) {
       String unit = UNIT_CODES.getProperty(data.strCall);
@@ -56,12 +57,12 @@ public class MDHowardCountyParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -69,7 +70,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
     if (name.equals("BOX")) return new  MyBoxField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
 
     @Override
@@ -96,13 +97,13 @@ public class MDHowardCountyParser extends FieldProgramParser {
       }
       super.parse(sAddr, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID " + super.getFieldNames() + " APT PLACE";
     }
   }
-  
+
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("-\\**$");
   private class MyCallField extends CallField {
     @Override
@@ -114,7 +115,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
       data.strCall =  call;
 
       data.strTime = p.get(' ');
-      
+
       String extra = p.get();
       if (data.strAddress.length() == 0) {
         Result res = parseAddress(StartType.START_ADDR, extra);
@@ -126,13 +127,13 @@ public class MDHowardCountyParser extends FieldProgramParser {
         data.strSupp = extra;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL UNIT TIME";
     }
   }
-  
+
   private class MyBoxField extends BoxField {
     @Override
     public void parse(String field, Data data) {
@@ -140,7 +141,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
       if (pt >= 0) {
         String extra = field.substring(pt+1).trim();
         field = field.substring(0,pt);
-        
+
         extra = stripFieldEnd(extra, " --");
         String alarm = ALARM_CODES.getProperty(extra);
         if (alarm != null) {
@@ -151,26 +152,26 @@ public class MDHowardCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "BOX INFO";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
     return NS_PTN.matcher(sAddress).replaceAll("");
   }
   private static Pattern NS_PTN = Pattern.compile("\\bNS\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties ALARM_CODES = buildCodeTable(new String[]{
       "Alarm Level 0", "1st Alarm",
       "Alarm Level 1", "Task Force",
       "Alarm Level 2", "2nd Alarm",
       "Alarm level 3", "3rd Alarm"
   });
-  
+
   private static final Properties UNIT_CODES = buildCodeTable(new String[]{
 
       "AIR-LARGE",              "BX_ALM",
@@ -199,7 +200,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
       "SMOKE-HIGHRISE",         "BX_ALM",
       "SMOKE-INSIDE/HIGHOCC",   "BX_ALM",
       "SMOKE-INSIDE/HOUSE",     "BX_ALM",
-      
+
       "BUS-UNKNOWN",            "SER_ACC",
       "RAIL-PED",               "SER_ACC",
       "RAIL-VSAUTO",            "SER_ACC",
@@ -215,7 +216,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
       "RESCUE-NOTALERT",        "SER_ACC",
       "RESCUE-RESFIRE",         "SER_ACC",
       "RESCUE-TRAPPED",         "SER_ACC",
-      
+
       "CAVEIN-CAVEIN",          "SPEC_OPS",
       "COLLAPSE-COLLAPSE",      "SPEC_OPS",
       "COLLAPSE-VEHICLE",       "SPEC_OPS",
@@ -225,7 +226,7 @@ public class MDHowardCountyParser extends FieldProgramParser {
       "HAZMAT-NOFIRE",          "SPEC_OPS",
       "INVPKG",                 "SPEC_OPS",
       "TECHRES-TECHRES",        "SPEC_OPS",
-      
+
       "ALFIRE-BUSC",            "MISC",
       "ALFIRE-RES",             "MISC",
       "BRUSH-BRUSH",            "MISC",
@@ -269,6 +270,6 @@ public class MDHowardCountyParser extends FieldProgramParser {
       "WDBN", "WOODBINE",
       "WDSK", "WOODSTOCK",
       "WF",   "WEST FRIENDSHIP",
-     
+
   });
 }
