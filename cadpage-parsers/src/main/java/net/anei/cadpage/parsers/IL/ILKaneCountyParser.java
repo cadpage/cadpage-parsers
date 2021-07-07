@@ -3,14 +3,15 @@ package net.anei.cadpage.parsers.IL;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 public class ILKaneCountyParser extends GroupBestParser {
-  
+
   public ILKaneCountyParser() {
-    super(new ILKaneCountyAParser(), new ILKaneCountyBParser(), 
-          new ILKaneCountyCParser(), new ILKaneCountyDParser());
+    super(new ILKaneCountyAParser(), new ILKaneCountyBParser(),
+          new ILKaneCountyCParser(), new ILKaneCountyDParser(),
+          new ILKaneCountyEParser());
   }
 
   static final String[] CITY_LIST = new String[]{
-    
+
       "KANE CO",
 
       // Townships
@@ -30,7 +31,7 @@ public class ILKaneCountyParser extends GroupBestParser {
       "ST CHARLES TWP",
       "SUGAR GROVE TWP",
       "VIRGIL TWP",
-      
+
       // Cities and Towns
       "ALGONQUIN",
       "AURORA",
@@ -65,7 +66,7 @@ public class ILKaneCountyParser extends GroupBestParser {
       "VIRGIL",
       "WAYNE",
       "WEST DUNDEE",
-      
+
       // Unicorporated Communities
       "ALLENS CORNERS",
       "LA FOX",
@@ -73,17 +74,17 @@ public class ILKaneCountyParser extends GroupBestParser {
       "PLATO CENTER",
       "STARKS, ILLINOIS",
       "WASCO",
-      
+
       // Cook County
       "BARRINGTON",
       "SCHAUMBURG",
       "STREAMWOOD",
-      
+
       // Dekalb County
       "DEKALB",
       "GENOA",
       "SYCAMORE",
-      
+
       // McHenry County
       "CARY",
       "MARENGO",

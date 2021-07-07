@@ -14,51 +14,51 @@ import java.util.Set;
  */
 
 public class HtmlDecoder {
-  
+
   // Different HTML flags that tell the decoder what should be done with
   // the different html tags
-  
+
   // All data should be ignored until we find the matching close tag
   private static final int HTML_FLAG_SKIP_DATA = 0x0001;
-  
+
   // Tag should trigger a field break
   private static final int HTML_FLAG_FIELD_BREAK = 0x0002;
-  
+
   // Tag should generate a line break
   private static final int HTML_FLAG_LINE_BREAK = 0x0004;
-  
+
   // User identified break tag
   private static final int HTML_FLAG_USER_BREAK = 0x0008;
-  
+
   private static final int HTHL_FLAG_PRE =0x0010;
-  
-  
+
+
   private static final char EOL = (char)-1;
-  
+
   private boolean preserveWhitespace = false;
-  
+
   // Primary map that tells us how to process HTML tags
   private Map<String, Integer> tagDictionary = new HashMap<String,Integer>();
-  
+
   public HtmlDecoder() {
     this(null, false);
   }
-  
+
   public HtmlDecoder(boolean preserveWhitespace) {
     this(null, preserveWhitespace);
   }
-  
+
   public HtmlDecoder(String userTags) {
     this(userTags, false);
   }
-  
+
   public HtmlDecoder(String userTags, boolean preserveWhitespace) {
     setTagFlags(HTML_FLAG_SKIP_DATA, "head", "style");
     setTagFlags(HTML_FLAG_LINE_BREAK, "br");
-    setTagFlags(HTML_FLAG_FIELD_BREAK, 
-        "blockqute", "code", "dd", "div", "dl", "dt", 
+    setTagFlags(HTML_FLAG_FIELD_BREAK,
+        "blockqute", "code", "dd", "div", "dl", "dt",
         "h1", "h2", "h3", "h4", "H5", "h6",
-        "li", "p", "pre", "section", 
+        "li", "p", "pre", "section",
         "table", "tbody", "td", "th", "thead", "tr", "ul");
     setTagFlags(HTHL_FLAG_PRE, "pre");
     if (userTags != null) {
@@ -66,14 +66,14 @@ public class HtmlDecoder {
     }
     this.preserveWhitespace = preserveWhitespace;
   }
-  
-  
+
+
   private void setTagFlags(int flags, String ... tags) {
     for (String tag : tags) {
       tagDictionary.put(tag, flags);
     }
   }
-  
+
   public void setPreserveWhitespace(boolean preserveWhitespace) {
     this.preserveWhitespace = preserveWhitespace;
   }
@@ -87,7 +87,7 @@ public class HtmlDecoder {
   private boolean lineBreak;
   private Set<String> userTagSet;
   private int nestedPreCnt;
-  
+
   /**
    * Main parsing method
    * @param body message text to be parsed
@@ -95,14 +95,14 @@ public class HtmlDecoder {
    */
   public String[] parseHtml(String body) {
     initialize(body);
-    
+
     // Go into loop getting tags and figuring out what to do with them
     while (true) {
-      
+
       // Get next html tag.  If EOS break out
       String tag = getNextTag(false);
       if (tag == null) break;
-      
+
       // Get the flags associated with this tag
       // For this purpose we do not care whether it is a start tag,
       // end tag, or self completing tag.  If not flags are found
@@ -111,8 +111,8 @@ public class HtmlDecoder {
       Integer iFlags = tagDictionary.get(tag2);
       if (iFlags == null) continue;
       int tagFlags = iFlags;
-      
-      // Skip data flag tells us to skip over everything until we find 
+
+      // Skip data flag tells us to skip over everything until we find
       // a matching close tag
       if ((tagFlags & HTML_FLAG_SKIP_DATA) != 0) {
         if (!tag.contains("/")) {
@@ -123,7 +123,7 @@ public class HtmlDecoder {
           }
         }
       }
-      
+
       // Field break flag tells us to move the current data into a new field
       if ((tagFlags & HTML_FLAG_FIELD_BREAK) != 0) {
         addCurField();
@@ -132,12 +132,12 @@ public class HtmlDecoder {
           userTagSet.add(tag);
         }
       }
-      
+
       // Line break flags tells us to request a line break be inserted in curField
       if ((tagFlags & HTML_FLAG_LINE_BREAK) != 0) {
         if (curField.length() > 0) lineBreak = true;
       }
-      
+
       // <pre> tag increments or decrements the nested pre counter
       if ((tagFlags & HTHL_FLAG_PRE) != 0) {
         if (tag.startsWith("/")) nestedPreCnt--;
@@ -147,7 +147,7 @@ public class HtmlDecoder {
 
     // ALl done, add any leftover data to the field list
     addCurField();
-    
+
     // Success, calculate the return result, release all resources, and
     // return the result;
     String[] result = fieldList.toArray(new String[fieldList.size()]);
@@ -169,7 +169,7 @@ public class HtmlDecoder {
     userTagSet = null;
     nestedPreCnt = 0;
   }
-  
+
   /**
    * Release intermediate parsing resources
    */
@@ -178,7 +178,7 @@ public class HtmlDecoder {
     fieldList = null;
     curField = null;
   }
-  
+
   /**
    * Retrieve next HTML tag from message body.  Any actual data values
    * passed along the way will be appended to curField;
@@ -187,42 +187,42 @@ public class HtmlDecoder {
    * @return HTML tag name converted to lower case if found, null if end of string reached
    */
   private String getNextTag(boolean skipData) {
-    
+
     while (true) {
       // Get next character.  If no more characters, return null
       char chr  = getNextChar();
       if (chr == EOL) return null;
-      
+
       // If start of html tag, retrieve html tag name
       if (chr == '<') {
         String tag = getHtmlTag();
         if (tag != null) return tag;
       }
-      
+
       // If this is an HTML escape sequence, retrieve the escaped character
       if (chr == '&') chr = getHtmlEscape();
-      
+
       // If whitespace character processing depends on whether or not
       // we are in a nested <pre> block
       if (Character.isWhitespace(chr)) {
-        
+
         // Normal processing just sets teh space flag
         if (!preserveWhitespace && nestedPreCnt == 0) {
           if (curField.length() > 0) space = true;
         }
-        
+
         // Pre block processing
         // new lines are treated as field breaks
         // Anything else is treated as a single blank
         else {
           if (chr == '\n') {
-            addCurField();
+            addCurField(true);
           } else {
             curField.append(' ');
           }
         }
       }
-      
+
       // Otherwise, append to current field, possibly with a leading space
       else if (!skipData) {
         if (userTagSet != null) {
@@ -245,13 +245,13 @@ public class HtmlDecoder {
    */
   private String getHtmlTag() {
     int savePos = pos;
-    
+
     if (checkNext("!--")) {
       int tmp = body.indexOf("-->", pos);
       pos = tmp < 0 ? body.length() : tmp+3;
       return "!----";
     }
-    
+
     StringBuilder sb = new StringBuilder();
     char chr = getNextChar();
     if (chr == '?') {
@@ -289,7 +289,7 @@ public class HtmlDecoder {
     }
     return sb.toString();
   }
-  
+
   /**
    * Retrieve the rest of an HTML escape sequence after an & has been identified
    * @return the unescaped character
@@ -320,10 +320,10 @@ public class HtmlDecoder {
         pos = savePos;
       }
     }
-    
+
     return code;
   }
-  
+
   /**
    * Retrieve all text until terminator character found
    * @param mark terminator character
@@ -343,13 +343,22 @@ public class HtmlDecoder {
    * the current data field
    */
   private void addCurField() {
-    if (curField.length() == 0) return;
+    addCurField(false);
+  }
+
+  /**
+   * If current data field has any data, move it to the field list and clear
+   * the current data field
+   * @param lineBreak - true of field end triggered by newline character
+   */
+  private void addCurField(boolean lineBreak) {
+    if (!lineBreak && curField.length() == 0) return;
     fieldList.add(curField.toString());
     curField.setLength(0);
     lineBreak = false;
     space = false;
   }
-  
+
   private boolean checkNext(String field) {
     if (!body.substring(pos).startsWith(field)) return false;
     pos += field.length();
@@ -364,7 +373,7 @@ public class HtmlDecoder {
     if (pos >= body.length()) return EOL;
     return body.charAt(pos++);
   }
-  
+
   private static Map<String, Character> ESCAPE_CODES = new HashMap<String, Character>();
   static {
     ESCAPE_CODES.put("nbsp", ' ');
