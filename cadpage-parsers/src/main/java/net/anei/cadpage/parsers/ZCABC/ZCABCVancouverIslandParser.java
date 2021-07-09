@@ -17,7 +17,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
   }
 
   public ZCABCVancouverIslandParser(String defCity, String defState) {
-    super(defCity, defState, "CALL? ADDR/ZSC CITY DATETIME!");
+    super(defCity, defState, "CALL? ADDR/ZS7C CITY DATETIME!");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
@@ -34,8 +34,8 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     return super.getLocName();
   }
 
-  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|LADYSMITH|MOBERLY LAKE|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SOINTULA|SPROAT LAKE|TAHSIS|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
-  private static final Pattern GPS_PTN = Pattern.compile("\\(?([-+]?[\\d:\\.]+),([-+]?[\\d:\\.]+)\\)");
+  private static final Pattern SRC_PTN = Pattern.compile("(ARRAS|BEAVER CREEK|CAMPBELL RIVER|CHERRY CREEK|CHETWYND|COWICHAN BAY|COMOX|COURTENAY|CUMBERLAND|DAWSON CREEK|DENMAN ISLAND|FANNY BAY|HORNBY ISLAND|LADYSMITH|MALAHAT|MILL BAY|MOBERLY LAKE|NORTH COWICHAN|NORTH OYSTER|OYSTER RIVER|POUCE COUPE|PT ALBERNI|PT HARDY|SOINTULA|SPROAT LAKE|TAHSIS|TAYLOR|TOFINO|TOMSLAKE|UCLUELET|UNION BAY) *(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("\\(?([-+]?[\\d:\\.]+),([-+]?[\\d:\\.]+)\\)?");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private static final Pattern GPS_PTN2 = Pattern.compile("([-+]?\\d+)(\\d{6}),([-+]?\\d+)(\\d{6})");
 
@@ -88,7 +88,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?) *((?:\\bL)?\\([^\\)A-Za-z]+\\))");
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?) *((?:\\b[Ll]+)?\\([^\\)A-Za-z]+\\)?)");
   private static final Pattern ADDR_SPEC_PTN = Pattern.compile("(.*)\\{(.*)\\}");
   private class MyAddressField extends AddressField {
 
@@ -114,7 +114,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:BC )?(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d(?: [ap]m)?) *(.*)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(BC)\\b *)?(?:(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d(?: [ap]m)?))? *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
 
@@ -127,20 +127,26 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strDate = match.group(1);
-      String time = match.group(2);
-      if (time.endsWith("m")) {
-        setTime(TIME_FMT, time, data);
-      } else {
-        data.strTime = match.group(2);
+      data.strState = getOptGroup(match.group(1));
+      String date = match.group(2);
+      if (date == null && data.strState.isEmpty()) return false;
+      if (date != null) {
+        data.strDate = date;
+        String time = match.group(3);
+        if (time.endsWith("m")) {
+          setTime(TIME_FMT, time, data);
+        } else {
+          data.strTime = time;
+        }
       }
-      String unit = getOptGroup(match.group(3));
-      int pt = unit.indexOf("X-ST:");
-      if (pt >= 0) {
-        data.strCross = unit.substring(pt+5).trim();
-        unit = unit.substring(0, pt).trim();
-      }
-      data.strUnit = unit;
+      Parser p = new Parser(match.group(4));
+      data.strPriority = p.getLastOptional("Alarm Level:");
+      String cross = p.getLastOptional("X-ST:");
+      cross = cross.replace("No X-Street", "");
+      cross = stripFieldStart(cross, "/");
+      cross = stripFieldEnd(cross, "/");
+      data.strCross = cross;
+      data.strUnit = p.get();
       return true;
     }
 
@@ -151,7 +157,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "DATE TIME UNIT X";
+      return "ST DATE TIME UNIT X PRI";
     }
   }
 
@@ -310,6 +316,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "BEACH/BRUSH/MISC OUT NON EMERG",
       "BEACH/BRUSH/MISC OUT",
       "BOMB THREAT",
+      "BURNING COMPLAINT",
       "CARBON MONOXIDE NON EMERG",
       "CARBON MONOXIDE NON EMERGENCY",
       "CARBON MONOXIDE",
@@ -317,6 +324,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "DUPLICATE",
       "DUTY INVESTIGATION",
       "DUTY OFFICER",
+      "FIRE STRUCTURE - FIRE",
       "FIRST ALARM - A",
       "FIRST ALARM - B",
       "FIRST ALARM - C",
@@ -341,6 +349,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "HAZMAT",
       "HAZMAT NON EMERGENCY",
       "HYDRO TROUBLE",
+      "HYDRO TROUBLE NON EMERGENCY",
       "MARINE INCIDENT",
       "MARINE",
       "MOTOR VEHICLE ACCIDENT",
