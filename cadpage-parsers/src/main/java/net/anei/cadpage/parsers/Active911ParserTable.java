@@ -49,6 +49,7 @@ public class Active911ParserTable {
       "NZ/NI/OkereFalls",                 "ZNZNewZealand",
       "NZ/NI/Rotorua",                    "ZNZNewZealand",
       "NZ/NI/Waikato",                    "ZNZNewZealand",
+      "NZ/RAR/Avarua",                    "MIOtsegoCounty",
       "SE/Kumla/Eskilstuna",              "ZSESwedenB",
       "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB,ZSESwedenE",
       "US/AK/AnchorageChugiak",           "AKChugiak",

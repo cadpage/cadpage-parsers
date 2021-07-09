@@ -805,6 +805,7 @@ public class ParserList {
               ,"MIOaklandCounty"                ,"Oakland County, MI"
               ,"MIOgemawCounty"                 ,"Ogemaw County, MI"
               ,"MIOsceolaCounty"                ,"Osceola County, MI"
+              ,"MIOtsegoCounty"                 ,"Otsego County, MI"
               ,"MIOttawaCounty"                 ,"Ottawa County, MI"
               ,"MIRichmond"                     ,"Richmond, MI"
               ,"MIRoscommonCounty"              ,"Roscommon County, MI"
