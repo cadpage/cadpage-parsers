@@ -10,7 +10,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
 
   public KSCrawfordCountyAParser() {
     super(CITY_LIST, "CRAWFORD COUNTY", "KS",
-          "JUNK+? CALL_ADDR_CITY_X HTTP INFO_BLK/Z+? ID! TIMES+");
+          "JUNK+? CALL_ADDR_CITY_X EMPTY+? HTTP EMPTY+? INFO_BLK/Z+? ID! TIMES+");
     setPreserveWhitespace(true);
     setAccumulateUnits(true);
   }
