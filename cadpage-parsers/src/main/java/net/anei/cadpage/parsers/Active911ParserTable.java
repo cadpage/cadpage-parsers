@@ -92,7 +92,7 @@ public class Active911ParserTable {
       "US/AL/Hoover",                     "ALHoover",
       "US/AL/Irondale",                   "ALJeffersonCountyH",
       "US/AL/JacksonCounty",              "ALJacksonCounty,ALMarshallCounty",
-      "US/AL/JeffersonCounty",            "ALJeffersonCountyC,ALJeffersonCountyE,ALJeffersonCountyI",
+      "US/AL/JeffersonCounty",            "ALJeffersonCountyC,ALJeffersonCountyE,ALJeffersonCountyI,ALJeffersonCountyJ",
       "US/AL/LeeCounty",                  "ALLeeCounty",
       "US/AL/LimestoneCounty",            "ALLimestoneCounty",
       "US/AL/LimestoneCounty",            "ALLimestoneCountyA",
