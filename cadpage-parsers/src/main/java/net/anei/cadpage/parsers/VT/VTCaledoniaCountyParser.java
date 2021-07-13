@@ -1,7 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-public class VTCaledoniaCountyParser extends VTLamoilleCountyParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Caledonia County, VT
+ */
+public class VTCaledoniaCountyParser extends GroupBestParser {
+
   public VTCaledoniaCountyParser() {
-    super("CALEDONIA COUNTY", "VT");
+    super(new VTCaledoniaCountyAParser(), new VTCaledoniaCountyBParser());
   }
 }

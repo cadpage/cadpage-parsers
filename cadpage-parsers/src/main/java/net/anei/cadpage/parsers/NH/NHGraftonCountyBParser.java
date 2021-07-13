@@ -4,25 +4,25 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
 
 public class NHGraftonCountyBParser extends DispatchA32Parser {
-  
+
   public NHGraftonCountyBParser() {
     this("GRAFTON COUNTY", "NH");
   }
-  
-  NHGraftonCountyBParser(String defCity, String defState) {
+
+  protected NHGraftonCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "NHGraftonCountyB";
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.equals("CCSO")) subject += " Page";
@@ -34,7 +34,7 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
   private static final String[] CITY_LIST = new String[]{
 
     "GRAFTON COUNTY",
-    
+
     // Cities
     "LEBANON",
 
@@ -107,11 +107,11 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
     "PIKE",
     "STINSON LAKE",
     "WEST LEBANON",
-    
+
 
     // Carroll County
     "CARROLL COUNTY",
-    
+
     // Cities
       "ALBANY",
       "BARTLETT",
@@ -164,8 +164,53 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
       "SOUTH TAMWORTH",
       "WEST OSSIPEE",
       "WOLFEBORO FALLS",
-      "WONALANCET"
+      "WONALANCET",
 
+
+      "CALEDONIA COUNTY",
+
+      // Towns
+      "BARNET",
+      "BURKE",
+      "DANVILLE",
+      "GROTON",
+      "HARDWICK",
+      "KIRBY",
+      "LYNDON",
+      "NEWARK",
+      "PEACHAM",
+      "RYEGATE",
+      "SHEFFIELD",
+      "ST JOHNSBURY",
+      "STANNARD",
+      "SUTTON",
+      "WALDEN",
+      "WATERFORD",
+      "WHEELOCK",
+
+      // Villages
+      "BURKE HOLLOW",
+      "EAST HARDWICK",
+      "EAST LYNDON",
+      "EAST RYEGATE",
+      "EAST ST JOHNSBURY",
+      "HARDWICK",
+      "LOWER WATERFORD",
+      "LYNDON CENTER",
+      "LYNDON CORNER",
+      "LYNDONVILLE",
+      "MACKVILLE",
+      "MCINDOE FALLS",
+      "PASSUMPSIC",
+      "RYEGATE CORNER",
+      "SOUTH KIRBY",
+      "SOUTH RYEGATE",
+      "ST JOHNSBURY CENTER",
+      "UPPER WATERFORD",
+      "WEST BURKE",
+
+      // Census-designated places
+      "EAST BURKE"
   };
 
 }
