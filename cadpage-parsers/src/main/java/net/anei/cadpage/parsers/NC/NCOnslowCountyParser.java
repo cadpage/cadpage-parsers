@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.TestCodeSet;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
@@ -20,18 +22,23 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
 
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
-           "FYI? ( CALL ADDR! CITY? SRC? DIST? INFO/N+ " +
-                "| UNIT_CH ADDR! CITY DIST? INFO/N+ " +
-                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " +
-                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " +
-                                  "| CITY? PLACE+? CALL/Z END " +
-                                  ") " +
+           "FYI? ( UNIT_CH ADDR! CITY DIST? INFO/N+ " +
+                 "| ADDR APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL | PLACE CALL! | CALL ) INFO/N+? SRC EMPTY? UNIT END " +
+//                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " +
+//                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " +
+//                                  "| CITY? PLACE+? CALL/Z END " +
+//                                  ") " +
                 ")");
   }
 
   @Override
   public String getFilter() {
     return "CAD@onslowcountync.gov";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
@@ -110,7 +117,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
         data.strCode = match.group(2);
         return true;
       }
-      if (selectValue.equals("CALL") || CALL_LIST.contains(field)) {
+      if (CALL_LIST.contains(field)) {
         data.strCall = field;
         return true;
       }
@@ -290,6 +297,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "CONVULSIONS/SEIZURES",
       "DEATH/INJURY",
       "DIABETIC PROBLEMS",
+      "DISTURBANCE/ NUISANCE",
       "DOMESTIC DISTURBANCE/ VIOLENCE",
       "DRIVING UNDER THE INFLUENCE",
       "DROWNING/DIVING/SCUBA ACCIDENT",
@@ -303,12 +311,14 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "FALL",
       "FUEL SPILL",
       "GAS LEAK / GAS ODOR",
+      "GRASS FIRE",
       "HAZMAT",
       "HEADACHE",
       "HEART PROBLEM",
       "HEMORRHAGE",
       "INACCESSIBLE INCIDENT",
       "INCIDENT/SERVICES",
+      "LANDING ZONE",
       "LIGHTENING STRIKE",
       "LIGHTNING STRIKE",
       "MARINE FIRE",
@@ -325,6 +335,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SICK PERSON",
       "SMOKE INVESTIGATION",
       "STAB/GUNSHOT/PEN TRAUMA",
+      "STAB/GUNSHOT/PEN TRAUMA CENTR",
       "STAB/GUNSHOT/PEN TRAUMA UNCON",
       "STRUCTURE FIRE",
       "STROKE CVA",
