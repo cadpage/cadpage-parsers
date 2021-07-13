@@ -10,9 +10,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchRedAlertParser;
 
 
 public class NYNassauCountyRedAlertParser extends DispatchRedAlertParser {
-  
+
   private static final Pattern JUNK_PTN = Pattern.compile(" *\\([A-Z]\\) *");
-  
+
   public NYNassauCountyRedAlertParser() {
     super("NASSAU COUNTY","NY");
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -29,19 +29,19 @@ public class NYNassauCountyRedAlertParser extends DispatchRedAlertParser {
 
   @Override
   public String getFilter() {
-    return super.getFilter() + ",alarms@rvcny.us,notifications@Plainviewfd.com,vtext.com@mxh3.email-od.com,93001";
+    return super.getFilter() + ",alarms@rvcny.us,notifications@Plainviewfd.com,vtext.com@mxh3.email-od.com,alerts@nmxpaging.com,93001";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_REMOVE_EXT;
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     body = body.replace('\n', ' ');
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     // Supp info can have all kinds of fun things
     Parser p = new Parser(data.strSupp);
     data.strUnit = p.getLastOptional(", Response:");
@@ -49,15 +49,15 @@ public class NYNassauCountyRedAlertParser extends DispatchRedAlertParser {
     String sInfo = p.get();
     if (sInfo.endsWith(":")) sInfo = sInfo.substring(0, sInfo.length()-1).trim();
     data.strSupp = sInfo;
-    
+
     // Some of the city names need to be adjusted
     data.strCity = convertCodes(data.strCity, CITY_CODES);
-    
+
     // Clean paren stuff out of cross fields
     data.strCross = JUNK_PTN.matcher(data.strCross).replaceAll(" ");
     return true;
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ACORN PONDS",
     "BAITING PLACE",
@@ -189,7 +189,7 @@ public class NYNassauCountyRedAlertParser extends DispatchRedAlertParser {
     "YELLOW COTE"
 
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "LAKE SUCCESS QUARD", "LAKE SUCCESS",
       "STRATHMORE VILLAGE", "STRATHMORE"
