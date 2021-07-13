@@ -1256,6 +1256,7 @@ public class Active911ParserTable {
       "US/NJ/EndeavorEmergencySquad",     "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/EveshamFireRescue",          "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/FairLawnPD",                 "NJBergenCountyG",
+      "US/NJ/FlorenceTWP",                "NJBurlingtonCountyH",
       "US/NJ/FortLeePolice",              "NJBergenCountyB",
       "US/NJ/FranklinLakes",              "NJBergenCountyF",
       "US/NJ/GallowayTownship",           "NJAtlanticCountyB,NJAtlanticCountyC",

@@ -11,8 +11,10 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
 
   public NJBurlingtonCountyHParser() {
     super(CITY_CODES, "BURLINGTON COUNTY", "NJ",
-          "FINAL? RADIO_CHANNEL:CH? " +
-              "( TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " +
+          "FINAL? ( RADIO_CHANNEL:CH | Radio_Channel:CH | ) " +
+              "( Call_Type:SKIP! Date:DATETIME! Inc_Number:ID! Common_Name:PLACE! Address:ADDRCITY! Additional_Location_Info:INFO! Cross_Streets:X! " +
+                "Caller_Name:NAME! Address:SKIP! Phone:PHONE! NATURE_OF_CALL:CALL! NARRATIVE:EMPTY! INFO_BLK+? UNIT_TIMES:EMPTY! TIMES+ Alerts:ALERT! " +
+              "| TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! ) " +
                 "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " +
                 "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:GPS | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:GPS ) https:QUERY! " +
               "| CALL! RADIO_CHANNEL:CH! INC_NUMBER:EMPTY! ID! COMMON_NAME:EMPTY! NAME CALL_ADDRESS:EMPTY! ADDRCITY! QUALIFIER/LOCAL_INFO:EMPTY! INFO/N+ CROSS_STREETS:EMPTY! X " +
@@ -223,6 +225,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       "34", "EASTAMPTON TWP",
       "36", "MOUNT LAUREL TWP",
       "37", "MEDFORD LAKES",
+      "38", "COOKSTOWN",
       "39", "HAINESPORT TWP",
       "40", "ROEBLING",
       "41", "WRIGHTSTOWN",
@@ -233,6 +236,11 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       "46", "WRIGHTSTOWN",
       "50", "MOUNT HOLLY TWP",
       "60", "BORDENTOWN",
+      "61", "MILLICA TWP",
+      "62", "PENNSAUKEN TWP",
+      "63", "NEW EGYPT",
+      "64", "ALLENTOWN",
+      "65", "TUCKERTON",
       "70", "RIVERSIDE TWP",
       "80", "PALMYRA",
       "90", "BURLINGTON"
