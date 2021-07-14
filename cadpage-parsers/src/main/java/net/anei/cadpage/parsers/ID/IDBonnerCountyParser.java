@@ -8,18 +8,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class IDBonnerCountyParser extends SmartAddressParser {
-  
+
   public IDBonnerCountyParser() {
     super("BONNER COUNTY", "ID");
     setFieldList("SRC CALL ADDR X PLACE APT CITY INFO DATE TIME");
     removeWords("MALL", "STREET");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern MASTER = Pattern.compile("([A-Z]{3,4}) _([^_]+) _(.*)");
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?), ([A-Z]{3}) +(.*)");
   private static final Pattern ADDR_SPLIT_PTN = Pattern.compile(";| - ");
@@ -34,7 +34,7 @@ public class IDBonnerCountyParser extends SmartAddressParser {
     data.strSource = match.group(1);
     data.strCall = match.group(2).trim();
     String addr = match.group(3).trim();
-    
+
     addr = addr.replace('\n', ' ');
     String info = null;
     match = ADDR_CITY_PTN.matcher(addr);
@@ -43,7 +43,7 @@ public class IDBonnerCountyParser extends SmartAddressParser {
       data.strCity = convertCodes(match.group(2), CITY_CODES);
       info = match.group(3);
     }
-    
+
     boolean first = true;
     for (String part : ADDR_SPLIT_PTN.split(addr)) {
       part = part.trim();
@@ -71,7 +71,7 @@ public class IDBonnerCountyParser extends SmartAddressParser {
         }
       }
     }
-    
+
     if (info != null) {
       match = INFO_DATE_TIME_PTN.matcher(info);
       int last = 0;
@@ -86,9 +86,9 @@ public class IDBonnerCountyParser extends SmartAddressParser {
       data.strSupp = append(data.strSupp, "\n", info.substring(last));
     }
     return true;
-    
+
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ATH", "ATHOL",
       "BLA", "BLANCHARD",

@@ -27,14 +27,24 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Call Times +(.*?) +incident#:(.*)");
+  private static final Pattern POST_PTN = Pattern.compile("([A-Z0-9]+) {2,}(GO ON THE AIR TO) +(.+)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:Call Times|RUN REPORT) +(.*?) +incident#:(.*)");
   private static final Pattern RUN_REPORT_BRK = Pattern.compile("(?<![ a-z]) +");
 
 
   @Override
   protected boolean parseMsg(String body, Data data) {
 
-    Matcher match = RUN_REPORT_PTN.matcher(body);
+    Matcher match = POST_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT CALL ADDR");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strUnit = match.group(1);
+      data.strCall = match.group(2);
+      data.strAddress = match.group(3);
+      return true;
+    }
+    match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("INFO ID");
       data.msgType = MsgType.RUN_REPORT;
