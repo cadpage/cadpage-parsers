@@ -10,12 +10,12 @@ public class WVMasonCountyBParser extends FieldProgramParser {
 
   public WVMasonCountyBParser() {
     super("MASON COUNTY", "WV",
-          "CFS_#:ID! CALL_TYPE:CODE! LOC:ADDRCITY! LAT/LONG:GPS! RESP:UNIT! END");
+          "CALL! CFS#:ID! CALL_TYPE:CODE! LOC:ADDRCITY! LAT/LONG:GPS! RESP:UNIT! END");
   }
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,zuercher@masoncountyoes.com";
   }
 
   @Override
@@ -25,8 +25,12 @@ public class WVMasonCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0) return false;
-    data.strCall = subject;
+    if (body.startsWith("CFS #:")) {
+      if (subject.length() == 0) return false;
+      body = subject + " CFS#: " + body.substring(6);
+    } else {
+      body = body.replace("CFS# ", "CFS#:");
+    }
     return super.parseMsg(body, data);
   }
 
