@@ -885,6 +885,7 @@ public class Active911ParserTable {
       "US/MI/OaklandCountyURL",           "MIOaklandCountyC",
       "US/MI/OgemawCounty",               "MIOgemawCounty",
       "US/MI/OgemawCountyFire",           "MIOgemawCounty",
+      "US/MI/OstegoCounty",               "MIAlleganCounty",
       "US/MI/OttawaCounty",               "MIOttawaCounty",
       "US/MI/RichmondFDDelimited",        "MIMacombCounty",
       "US/MI/RoscommonCounty",            "MIRoscommonCounty",
