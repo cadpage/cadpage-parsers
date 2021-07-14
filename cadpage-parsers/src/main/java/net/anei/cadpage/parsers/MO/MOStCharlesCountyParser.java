@@ -239,7 +239,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     // See if we find field starts with a known call description
     // Only considered valid if it is the right length or is
     // terminated with a blank.  Or is the one known call description
-    // that includes double blanks that get squenced down to a 25 character
+    // that includes double blanks that get sequenced down to a 25 character
     // field in this variant
     String call = CALL_LIST.getCode(field.substring(callStart));
     if (call != null) {
@@ -333,6 +333,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Back Pain (No Trauma)",
       "Boat Fire Docked",
       "BP Diff Breathing",
+      "Building Collapse",
       "Cardiac Arrest Delta",
       "Cardiac Arrest Not Br",
       "Cardiac Hx and alert",
@@ -372,6 +373,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Diff Breathing Not Al",
       "Difficulty Breathing",
       "Downed Trees/Objects",
+      "Electrical ARCING",
+      "Electrical Hazard W H",
       "Electrical HZ Near Wa",
       "Entrapped No Inj / Tr",
       "Evaluation",
@@ -397,6 +400,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Gas Odor OUTSD",
       "Gas Odor RES",
       "General Sick Case",
+      "Headache Abnormal Bre",
       "Heart Problem Cardiac",
       "Heart Problem Diff Br",
       "Heart Problems Not Al",
@@ -437,6 +441,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "MVA Bicycle / Motorcy",
       "MVA Injuries",
       "MVA Multi Inj Pts 1 U",
+      "MVA Multiple Patients",
+      "MVA No Injuries",
       "MVA Not Alert",
       "MVA Other Hazards",
       "MVA Pedestrian Struck",
@@ -452,8 +458,10 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "No Cardiac Hx and -35",
       "NonDwell Smoke Alrm",
       "Not Alert",
+      "OBVS Death Cold / Sti",
       "OCC Veh Lockout",
       "OD Arrest",
+      "OD Dif Brth Fntnyl",
       "OD Fentanyl",
       "OD Ingestion Fentany",
       "OD Uncon Fentanyl",
@@ -477,6 +485,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Public Assist No Inj",
       "Res CO Alrm",
       "Res Gen Alrm",
+      "Residental",
       "Residental Fire Multi",
       "Residential Alarm",
       "Residential Alrm",
@@ -516,6 +525,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Small Outside Fire",
       "Small Outside Fire",
       "Smoke Investigation",
+      "Stabbing Unknown Sta",
       "Stroke Not Alert",
       "Stroke Headache",
       "Stroke Numbness",
@@ -543,6 +553,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Unk Sit Gen Alrm",
       "Vehicle Fire",
       "Vehicle Fire Reported",
+      "Water Problem",
       "Water Problem Elec/Hz",
       "Water Rescue",
       "Water Rescue Override",
