@@ -11,26 +11,26 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class VARoanokeCountyParser extends HtmlProgramParser {
-  
+
   public VARoanokeCountyParser() {
-    super("ROANOKE COUNTY", "VA", 
+    super("ROANOKE COUNTY", "VA",
           "( SELECT/1 ( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:CALL/SDS! " +
                         "Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP3! District:MAP3! Beat:MAP3! CFS_Number:SKIP! Primary_Incident:ID! Radio_Channel:CH! Narrative:INFO/N+ " +
-                     "| UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " + 
+                     "| UNIT? CALL PLACE? ADDRCITY/S6! X MAP END " +
                      ") " +
-          "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " + 
-              "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " + 
-              "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " + 
+          "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " +
+              "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " +
+              "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " +
               "Incident_Number(s):ID! Units_Assigned:UNIT! Fire_Radio_Channel:CH! INFO/N+ )");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "5403144404,Active911server@Vintonems.com,dispatch@roanokecountyva.gov,dispatchcalls@cavespringfire.org";
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     body = body.replace("^", "");
@@ -45,7 +45,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
 
   private static final Pattern MSG_HEADER_PTN = Pattern.compile(">>> <dispatch@roanokecountyva.gov> (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) >>>\n\n");
   private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile("\n(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)$");
-  private static final Pattern DELIM = Pattern.compile(";?\n|;");
+  private static final Pattern DELIM = Pattern.compile("[;:]?\n|;");
   private static final Pattern MASTER_PTN1 = Pattern.compile("(.*?)  (\\d{4}) (.*)(City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton) ([ A-Z]+) (\\d{4} \\d{8})");
   private static final Pattern MASTER_PTN2 = Pattern.compile("([A-Z0-9,]+) +(.*?), (City of Salem|Roanoke County|Floyd County|Franklin County|Montgomery County|Town of Vinton)(?: (.*?))?(?: ([A-Z]+\\d+))?");
   private static final Pattern NOT_DISPATCH_PTN = Pattern.compile("\\b(?:ADV|TRAINING)\\b");
@@ -64,17 +64,17 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     // Convert some misplaced control characters
     body = body.replace("\u0001", "").replace('\u0004', '\n').trim();
-    
+
     // And any email headers that get through :(
     if (body.startsWith("Received:")) {
       int pt = body.indexOf("\n\n");
       if (pt < 0) return false;
       body = body.substring(pt+2).trim();
     }
-    
+
     // And non-standard message headings
     Matcher match = MSG_HEADER_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -82,7 +82,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strTime = match.group(2);
       body = body.substring(match.end()).trim();
     }
-    
+
     // Strip off trailing date.time field
     match = TRAIL_DATE_TIME_PTN.matcher(body);
     if (match.find()) {
@@ -90,9 +90,10 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strDate = match.group(1);
       setTime(TIME_FMT1, match.group(2), data);
     }
-    
+
     // Now there is a new newline delimited format
     if (body.endsWith(";")) body += ' ';
+    else if (body.endsWith(":")) body += '\n';
     String[] flds = DELIM.split(body);
     if (flds.length >= 3) {
       if (!parseFields(flds, data)) return false;
@@ -100,7 +101,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strCity = stripFieldStart(data.strCity, "City of ");
       return true;
     }
-    
+
     // There seem to be three different formats, possibly separated chronologically
     // This first one can be identified by a pattern match
     match = MASTER_PTN1.matcher(body);
@@ -117,7 +118,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strCallId = match.group(6);
       return true;
     }
-    
+
     // So can the second format
     match = MASTER_PTN2.matcher(body);
     if (match.matches()) {
@@ -140,12 +141,12 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strMap = getOptGroup(match.group(5));
       return true;
     }
-    
+
     // Second format tends to catch a lot of things that really are not
     // dispatch pages.  We will look for some keywords that indicate this
     // is not a dispatch alert
     if (NOT_DISPATCH_PTN.matcher(body).find()) return false;
-    
+
     setFieldList("UNIT CALL PLACE ADDR APT PHONE INFO X DATE TIME");
     boolean good = false;
     match = DATE_TIME_PTN1.matcher(body);
@@ -161,14 +162,14 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       body = body.substring(0,match.start()).trim();
       good = true;
     }
-    
+
     String bodyUpsh = body.toUpperCase();
     match = XST_PTN.matcher(bodyUpsh);
     if (match.find()) {
       String cross  = body.substring(match.end());
       body = body.substring(0,match.start());
       good = true;
-      
+
       match = X_APT_PTN1.matcher(cross);
       if (match.matches()) {
         data.strApt = append(getOptGroup(match.group(1)), " ", match.group(2));
@@ -187,7 +188,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       if (match.matches()) {
         data.strApt = append(data.strApt, "-", match.group(1));
         data.strPlace = append(data.strPlace, " - ", match.group(2));
-      } else { 
+      } else {
         cross = cross.replaceAll("  +", " / ");
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT, cross, data);
         String left = getLeft();
@@ -201,18 +202,18 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
           data.strPlace = append(data.strPlace, " - ", getLeft());
         } else if (isValidAddress(left)) {
             data.strCross = append(data.strCross, " / ", left);
-        } else  { 
+        } else  {
           data.strPlace = append(data.strPlace, " - ", left);
         }
       }
     }
-    
+
     match = UNIT_PTN.matcher(body);
     if (match.find()) {
       data.strUnit = match.group().trim();
       body = body.substring(match.end()).trim();
     }
-    
+
     parseAddress(StartType.START_CALL_PLACE, FLAG_START_FLD_REQ | FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM, body.toUpperCase(), data);
     if (data.strAddress.length() == 0) {
       if (data.strPlace.length() == 0) return false;
@@ -236,24 +237,24 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     } else {
       data.strSupp = left;
     }
-    
+
     // See if we should split a place name from the call description
     if (data.strPlace.length() == 0) {
       int pt = data.strCall.indexOf('(');
       if (pt >= 0) {
         data.strPlace = data.strCall.substring(pt+1).trim();
-        if (data.strPlace.endsWith(")")) data.strPlace = data.strPlace.substring(0,data.strPlace.length()-1).trim(); 
+        if (data.strPlace.endsWith(")")) data.strPlace = data.strPlace.substring(0,data.strPlace.length()-1).trim();
         data.strCall = data.strCall.substring(0,pt).trim();
       }
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " DATE TIME";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -266,13 +267,13 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       String call = CALL_LIST.getCode(field);
@@ -281,22 +282,22 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       return true;
     }
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replace('@', '&');
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
@@ -304,7 +305,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -312,7 +313,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern ID_JUNK_PTN = Pattern.compile("\\[Incident not yet created \\d+\\]");
   private class MyIdField extends IdField {
     @Override
@@ -321,7 +322,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyMap3Field extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -330,7 +331,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       data.strMap = append(field, "/", data.strMap);
     }
   }
-  
+
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("Alerts:|Narrative:|\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d?:\\d\\d:\\d\\d");
   private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[a-z]+ - +");
   private class MyInfoField extends InfoField {
@@ -342,15 +343,15 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern GRANDIN_ROAD_EXT = Pattern.compile("\\b(GRANDIN ROAD) EXT\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String address) {
     address = GRANDIN_ROAD_EXT.matcher(address).replaceAll("$1 EXD");
     return super.adjustMapAddress(address);
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "AMERICAN TIRE",
     "ANNIE HOLLAND",
@@ -596,7 +597,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     "YELLOW MOUNTAIN"
 
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       ">NEW<",
       "ACC  INJ",
@@ -670,7 +671,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       "VEHICLE FIRE",
       "WIRE DOWN",
       "WIREDOWN",
-      
+
       // One time call descriptions
       "YOU CAN DIREGARD THE ACCIDENT CALL AT",
       "APPROACH FROM CASTLEROCK/STONEYBROOK PER BATT"
