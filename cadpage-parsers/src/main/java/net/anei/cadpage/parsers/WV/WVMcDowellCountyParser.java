@@ -10,7 +10,7 @@ public class WVMcDowellCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "mccad@frontier.com";
+    return "mccad@frontier.com,McDowell911-Relay@Lightrr.com";
   }
 
 }
