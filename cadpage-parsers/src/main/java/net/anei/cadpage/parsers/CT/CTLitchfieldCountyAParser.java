@@ -142,7 +142,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("[A-Z]?\\d{2}-\\d+|", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
-    if (name.equals("X1")) return new CrossField("CS= *(.*)", true);
+    if (name.equals("X1")) return new MyCrossField();
     if (name.equals("APT1")) return new MyApt1Field();
     return super.getField(name);
   }
@@ -319,6 +319,18 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     }
 
     CTLitchfieldCountyParser.fixCity(data);
+  }
+
+  private class MyCrossField extends CrossField {
+    public MyCrossField() {
+      super("CS= *(.*)", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "&");
+      super.parse(field,  data);
+    }
   }
 
   private static final Pattern APT_CALL_PTN = Pattern.compile("(.*?) *((?:1st |2nd |3rd )?Call in Town)", Pattern.CASE_INSENSITIVE);
