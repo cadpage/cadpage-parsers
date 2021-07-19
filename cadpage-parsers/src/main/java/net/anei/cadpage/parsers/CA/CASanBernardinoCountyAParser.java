@@ -555,6 +555,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "ASLT-D4a",   "Assault-multiple victims - assault",
       "ASLT-D4s",   "Assault-multiple victims - sexual assault",
       "ASLT-D4t",   "Assault-multiple victims - stun gun",
+      "ASLT-D5",    "Assault - mult. victims reported",
       "AT",         "Ambulance Transport",
       "AT-A1",      "Ambulance Transp. Acuity I",
       "AT-A2",      "Ambulance Transp. Acuity II",
