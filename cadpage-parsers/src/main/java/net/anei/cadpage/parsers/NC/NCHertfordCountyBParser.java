@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernPlusParser;
 public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
 
   public NCHertfordCountyBParser() {
-    super(CITY_LIST, "HERTFORD COUNTY", "NC", 
+    super(CITY_LIST, "HERTFORD COUNTY", "NC",
           DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR_LEAD_PLACE | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_X |DSFLG_NAME | DSFLG_PHONE | DSFLG_ID | DSFLG_TIME);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(
@@ -33,12 +33,12 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     );
     removeWords("APT", "BLDG", "RCH");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@hertfordcountync.gov";
+    return "@hertfordcountync.gov,777";
   }
-  
+
   private static final Pattern PREFIX_PTN = Pattern.compile("[A-Za-z0-9 ]+: *");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("HWY", Pattern.CASE_INSENSITIVE);
 
@@ -64,7 +64,7 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     if (data.strCity.equalsIgnoreCase("AHOSIE")) data.strCity = "AHOSKIE";
     return true;
   }
-  
+
   private static String stripSector(String field, Data data) {
     if (data.strMap.length() > 0) return field;
     int pt = field.indexOf(" - ");
@@ -78,18 +78,18 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     }
     return field;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "MAP CITY");
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("UNION")) return "AHOSKIE";
     return city;
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "050 ACCIDENT",
       "077 FIRE CALL",
@@ -112,7 +112,7 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
   );
 
   private static final String[] CITY_LIST = new String[]{
-    
+
     "AHOSKIE",
     "AHOSIE",   // Misspelled
       "ST JOHN",
@@ -123,11 +123,11 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     "MILLENNIUM",
     "MURFREESBORO",
     "WINTON",
-    
+
     // Bertie County
     "AULANDER",
     "COLERAIN",
-    
+
     // Northampton County
     "WOODLAND"
 

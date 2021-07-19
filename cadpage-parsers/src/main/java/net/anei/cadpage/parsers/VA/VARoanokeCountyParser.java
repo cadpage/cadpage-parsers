@@ -6,11 +6,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 
-public class VARoanokeCountyParser extends HtmlProgramParser {
+public class VARoanokeCountyParser extends DispatchH05Parser {
 
   public VARoanokeCountyParser() {
     super("ROANOKE COUNTY", "VA",
@@ -21,7 +21,7 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
           "| ( Call_Address:ADDRCITY/S6! | Caller_Address:ADDRCITY/S6! ) Common_Name:PLACE! Cross_Streets:X! Caller_Phone:PHONE! " +
               "( EMS_District:MAP! | EMS_DIstrict:MAP! ) Fire_Quadrant:MAP/L! " +
               "CFS_Number:SKIP! ( Fire_Call_Type:CALL! | Fire_Call_Types:CALL! ) Fire_Call_Priority:SKIP! Caller_Name:NAME! Call_Date/Time:DATETIME! Status_Times:SKIP! " +
-              "Incident_Number(s):ID! Units_Assigned:UNIT! Fire_Radio_Channel:CH! INFO/N+ )");
+              "Incident_Number(s):ID! Units_Assigned:UNIT? Fire_Radio_Channel:CH! Alerts:ALERT Narrative:EMPTY INFO_BLK+ )");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
@@ -264,7 +264,6 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("MAP3")) return new MyMap3Field();
-    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -329,18 +328,6 @@ public class VARoanokeCountyParser extends HtmlProgramParser {
       field = stripFieldStart(field, "TOWN OF ");
       field = stripFieldEnd(field, "CITY OF ");
       data.strMap = append(field, "/", data.strMap);
-    }
-  }
-
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile("Alerts:|Narrative:|\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d?:\\d\\d:\\d\\d");
-  private static final Pattern INFO_PREFIX_PTN = Pattern.compile("[a-z]+ - +");
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      if (INFO_JUNK_PTN.matcher(field).matches()) return;
-      Matcher match = INFO_PREFIX_PTN.matcher(field);
-      if (match.lookingAt()) field = field.substring(match.end());
-      super.parse(field, data);
     }
   }
 
