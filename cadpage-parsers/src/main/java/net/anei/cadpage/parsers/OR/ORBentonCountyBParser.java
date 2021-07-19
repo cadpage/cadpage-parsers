@@ -21,7 +21,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
           "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " +
           "| INFO INFO/Z+? ( PHONE DATETIME ID! | DATETIME ID! | ID! ) " +
           "| FYI? CALL PLACE ADDR/S X X ( INFO INFO+ " +
-                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( PLACE END | INFO+? PLACE PHONE DATETIME ID ID2 END ) ) " +
+                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( PLACE END | ( PHONE | INFO+? PLACE PHONE ) DATETIME ID ID2 END ) ) " +
           ")");
   }
 
@@ -39,7 +39,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
   protected boolean parseMsg(String body, Data data) {
 
     // DHS Fax Reports contains all kind of very sensitive details about possible child abuse
-    // cases that nobody has any business nowing about.
+    // cases that nobody has any business knowing about.
     if (body.startsWith("DHS FAX REPORT")) {
       setFieldList("CALL");
       data.msgType = MsgType.GEN_ALERT;
