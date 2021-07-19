@@ -10,7 +10,7 @@ public class WVMasonCountyBParser extends FieldProgramParser {
 
   public WVMasonCountyBParser() {
     super("MASON COUNTY", "WV",
-          "CALL! CFS#:ID! CALL_TYPE:CODE! LOC:ADDRCITY! LAT/LONG:GPS! RESP:UNIT! END");
+          "CALL CFS#:ID! CALL_TYPE:CODE! LOC:ADDRCITY! LAT/LONG:GPS! RESP:UNIT! END");
   }
 
   @Override
