@@ -53,7 +53,7 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
       return true;
     }
 
-    body = body.replaceAll("Incident#", "Incident:");
+    body = body.replaceAll("Incident#", "Incident:").replace("Apt:", " Apt:");
     return super.parseMsg(body, data);
   }
 
