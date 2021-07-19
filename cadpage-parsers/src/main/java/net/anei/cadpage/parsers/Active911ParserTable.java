@@ -1470,6 +1470,7 @@ public class Active911ParserTable {
       "US/OH/LakeCounty",                 "OHLakeCountyA,OHLakeCountyB",
       "US/OH/LakeCountyMentorFD",         "OHLakeCountyB",
       "US/OH/LawrenceCounty",             "OHLawrenceCounty",
+      "US/OH/LebanonFD",                  "OHWarrenCountyE",
       "US/OH/LibertyTwp",                 "OHButlerCountyA",
       "US/OH/LickingCounty",              "OHLickingCounty",
       "US/OH/LittleMuskingum",            "OHWashingtonCountyA",
