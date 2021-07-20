@@ -19,7 +19,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     setProgram("CALL:CALL! PLACE:PLACE? ADDR:ADDR"+extra+"! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP UNIT:UNIT INFO:INFO", 0);
   }
 
-  private static final Pattern MARKER1 = Pattern.compile("^DISPATCH[:\n](?:([-_A-Z0-9]+)(?: |\n\n))?(?:([^-]\\S*: *\\S+(?: (?:FD|ALS|BLS))?) )?");
+  private static final Pattern MARKER1 = Pattern.compile("^DISPATCH[:\n](?:([-_A-Z0-9]+)(?: |\n\n))?(?:([^-][-_ A-Z0-9]*:) *([-_ A-Z0-9]*) )?- +", Pattern.CASE_INSENSITIVE);
   private static final Pattern MARKER2 = Pattern.compile("(?:(\\d\\d?/\\d\\d?) (\\d\\d?:\\d\\d?) - )?(?:([A-Z]{2,4}:\\d{2}-\\d{6}) )?");
   private static final Pattern CODE_PTN = Pattern.compile("([A-Z0-9]+) +");
   private static final Pattern UNIT_INFO_PTN = Pattern.compile("[ /\n]+((?:\\b[A-Z\\d]+:[-_A-Z\\d]+(?: FD|-\\d| \\d(?=,)|)\\b,?)++)[ /\n]*");
@@ -35,12 +35,12 @@ public class DispatchA29Parser extends FieldProgramParser {
     Matcher match = MARKER1.matcher(body);
     if (!match.find()) return false;
     data.strSource = getOptGroup(match.group(1));
-    data.strUnit = getOptGroup(match.group(2)).replace(" ", "");
+    data.strUnit = getOptGroup(match.group(2))+getOptGroup(match.group(3)).replace(" ", "_");
     body = body.substring(match.end()).trim();
     if (data.strSource.length() == 0 && data.strUnit.length() == 0) return false;
 
-    boolean good = body.startsWith("- ");
-    if (good) body = body.substring(2).trim();
+//    boolean good = body.startsWith("- ");
+//    if (good) body = body.substring(2).trim();
 
     body = body.replace("Apt/Unit", "Apt");
 
@@ -56,7 +56,7 @@ public class DispatchA29Parser extends FieldProgramParser {
     data.strTime = getOptGroup(match.group(2));
     data.strCallId = getOptGroup(match.group(3));
     body = body.substring(match.end()).trim();
-    if (!good && data.strCallId.length() == 0) return false;
+//    if (!good && data.strCallId.length() == 0) return false;
 
     // Split of call code
     match = CODE_PTN.matcher(body);
@@ -190,7 +190,7 @@ public class DispatchA29Parser extends FieldProgramParser {
   private void addUnit(String field, Data data) {
     Set<String> unitSet = new HashSet<String>();
     if (data.strUnit.length() > 0) unitSet.addAll(Arrays.asList(data.strUnit.split(",")));
-    field = field.replace(" ", "");
+    field = field.replace(" ", "_");
     for (String unit : field.split(",")) {
       if (!unitSet.contains(unit)) {
         unitSet.add(unit);
