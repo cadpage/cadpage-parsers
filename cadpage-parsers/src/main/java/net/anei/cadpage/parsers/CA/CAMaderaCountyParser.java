@@ -7,45 +7,29 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CAMaderaCountyParser extends FieldProgramParser {
-  
+
   public CAMaderaCountyParser() {
-    super("MADERA COUNTY", "CA", 
-          "CALL ADDR CITY! INFO/N+");
+    super("MADERA COUNTY", "CA",
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! EVENT_#:ID! PRI:PRI! DATE:DATE! TIME:TIME! INFO:INFO! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "@CityOfChowchilla.org";
   }
-  
-  private static final Pattern SUBJECT_ID_PTN = Pattern.compile("(?:CAD EVENT NUMBER|EVENT) +(\\d+)");
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (subject.length() > 0) {
-      Matcher match = SUBJECT_ID_PTN.matcher(subject);
-      if (match.matches()) data.strCallId = match.group(1);
-    }
-    
-    int pt = body.indexOf("\n");
-    if(pt < 0) return false;
-    body = body.substring(0,pt).trim();
-    
-    return parseFields(body.split(";"), data);
+  protected boolean parseMsg(String body, Data data) {
+    return parseFields(body.split("\n+"), data);
   }
-  
-  @Override
-  public String getProgram() {
-    return "ID " + super.getProgram();
-  }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern TIME_PTN = Pattern.compile("(\\d{2})(\\d{2})");
   private class MyTimeField extends TimeField {
     @Override
