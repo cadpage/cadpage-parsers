@@ -11,6 +11,11 @@ public class MDDorchesterCountyBParser extends DispatchX01Parser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!body.startsWith("Dorchester: ")) return false;
     body = body.substring(12).trim();

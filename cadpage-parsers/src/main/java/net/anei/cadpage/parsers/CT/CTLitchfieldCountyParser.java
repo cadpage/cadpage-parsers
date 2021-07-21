@@ -4,19 +4,19 @@ import net.anei.cadpage.parsers.GroupBestParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CTLitchfieldCountyParser extends GroupBestParser {
-  
+
   public CTLitchfieldCountyParser() {
-    super(new CTLitchfieldCountyAParser(), 
-          new CTNewMilfordParser(), 
+    super(new CTLitchfieldCountyAParser(),
+          new CTNewMilfordParser(),
           new CTLitchfieldCountyBParser(),
           new CTLitchfieldCountyCParser());
   }
-  
+
   @Override
   public String getLocName() {
     return "Litchfield County, CT";
   }
-  
+
   public static void fixCity(Data data) {
     if (data.strCity.equals("HEMLOCK ROXBURY")) data.strCity = "ROXBURY";
     if (data.strCity.endsWith(" MA")) {
@@ -78,17 +78,17 @@ public class CTLitchfieldCountyParser extends GroupBestParser {
     "WINSTED",
     "WOODBURY",
     "WOLCOTT",
-    
+
     "GRANVILLE MA",
     "NEW MARLBORO MA",
     "SANDISFIELD MA",
     "SHEFFIELD MA",
     "TOLLAND MA",
-    
+
     "AMENIA NY",
     "DOVER NY",
     "MILLERTON NY",
     "WASSAIC NY"
-    
+
   };
 }
