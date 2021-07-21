@@ -23,11 +23,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
            "FYI? ( UNIT_CH ADDR! CITY DIST? INFO/N+ " +
-                 "| ADDR APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL | PLACE CALL! | CALL ) INFO/N+? SRC EMPTY? UNIT END " +
-//                "| ADDR APT? CITY? ( SELECT/EMS PLACE+? CALL! CODE END " +
-//                                  "| SELECT/FIRE PLACE+? CALL/Z SRC! UNIT END " +
-//                                  "| CITY? PLACE+? CALL/Z END " +
-//                                  ") " +
+                "| ID? ADDR APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL | PLACE CALL! | CALL ) INFO/N+? SRC EMPTY? UNIT END " +
                 ")");
   }
 
@@ -93,7 +89,8 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   protected Field getField(String name) {
     if (name.equals("UNIT_CH"))  return new MyUnitChannelField();
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("DIST")) return new PlaceField("DIST:.*");
+    if (name.equals("DIST")) return new PlaceField("DIST:.*", true);
+    if (name.equals("ID")) return new IdField("\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("APT")) return new MyAptField();
