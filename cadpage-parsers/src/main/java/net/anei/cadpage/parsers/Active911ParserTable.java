@@ -1054,7 +1054,7 @@ public class Active911ParserTable {
       "US/MO/Raytown",                    "MOJacksonCountyB",
       "US/MO/Rejis",                      "MOStLouisCountyE",
       "US/MO/RollaRuralFire",             "MOPhelpsCounty",
-      "US/MO/SCBCFD",                     "MOBuchananCountyA",
+      "US/MO/SCBCFD",                     "MOBuchananCountyA,MOBuchananCountyD",
       "US/MO/ScottCity",                  "MOScottCountyA",
       "US/MO/ScottCounty",                "MOScottCountyB",
       "US/MO/ShelbyCounty",               "MOShelbyCounty",

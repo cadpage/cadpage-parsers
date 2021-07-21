@@ -7,12 +7,16 @@ public class MOBuchananCountyDParser extends DispatchH05Parser {
 
   public MOBuchananCountyDParser() {
     super(MOBuchananCountyAParser.CITY_CODES, "BUCHANAN COUNTY", "MO",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_ST:X! ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:EMPTY! INFO_BLK+? EXTERNAL_EMAIL:SKIP");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_ST:X! LAT:GPS1 LONG:GPS2 ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:EMPTY! INFO_BLK+? EXTERNAL_EMAIL:SKIP");
   }
 
   @Override
   public String getFilter() {
     return "@stjoemo.org";
+  }
+
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
