@@ -7,25 +7,25 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class SCOconeeCountyBParser extends FieldProgramParser {
-  
+
   public SCOconeeCountyBParser() {
-    super("OCONEE COUNTY", "SC", 
+    super("OCONEE COUNTY", "SC",
           "ID CALL CALL2/SLS+? ADDR INFO! INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "zuercher@oconeelaw.com";
+    return "zuercher@oconeelaw.com,no-reply@zuercherportal.com";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile(" /(?= |$)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Call Dispatched:")) return false;
     return super.parseFields(DELIM.split(body),  data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL2")) return new CallField("TIA|Stroke");
@@ -33,7 +33,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
   private class MyAddressField extends AddressField {
     @Override
@@ -48,13 +48,13 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
       data.strCity = city;
       super.parse(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY ST";
     }
   }
-  
+
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) - (.*)");
   private class MyInfoField extends InfoField {
     @Override
@@ -69,12 +69,12 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
           data.strTime = match.group(2);
           part = match.group(3);
         }
-        
+
         data.strSupp = append(data.strSupp, connect, part);
         connect = "\n";
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME INFO";
