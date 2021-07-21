@@ -1010,6 +1010,7 @@ public class FieldProgramParser extends SmartAddressParser {
     Data data;
     private List<Field> fieldList = new ArrayList<>();
     private String fieldName = null;
+    private boolean done = false;
 
     public XMLHandler(Data data) {
       this.data = data;
@@ -1018,10 +1019,24 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       fieldName = qName;
+      done = false;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+      done = true;
+      String value = new String(ch, start, length);
+      processField(value);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+      if (!done) processField("");
+      done = false;
+      fieldName = null;
+    }
+
+    private void processField(String value) throws SAXException {
       if (fieldName == null || fieldName.isEmpty()) return;
       Step step = keywordMap.get(fieldName);
       if (step == null) return;
@@ -1033,18 +1048,12 @@ public class FieldProgramParser extends SmartAddressParser {
       // and use it to process this value
       if (step.field != null) {
         try {
-          String value = new String(ch, start, length);
           step.field.parse(value, data);
         } catch (FieldProgramException ex) {
           throw new SAXException(ex);
         }
         fieldList.add(step.field.getProcField());
       }
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-      fieldName = null;
     }
 
     public void finish() {

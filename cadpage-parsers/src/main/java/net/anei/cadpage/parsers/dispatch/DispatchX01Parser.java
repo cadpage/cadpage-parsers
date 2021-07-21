@@ -68,7 +68,7 @@ public class DispatchX01Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - D\\d+ [A-Za-z]+\\b *");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - (?:D\\d+|[A-Z]\\.) [A-Za-z]+\\b *| *\n *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
