@@ -1320,7 +1320,7 @@ public class Active911ParserTable {
       "US/NV/WestWendover",               "NVElkoCountyB",
       "US/NV/WinnemuccaCityFD",           "NVHumboldtCounty",
       "US/NY/Albany",                     "NYAlbanyCountyC",
-      "US/NY/AlbanyCounty",               "NYAlbanyCountyD",
+      "US/NY/AlbanyCounty",               "NYAlbanyCountyD,NYAlbanyCountyE",
       "US/NY/AlleganyCounty911",          "NYAlleganyCounty",
       "US/NY/BCFA",                       "NYSuffolkCountyB",
       "US/NY/Bridgehampton",              "NYSuffolkCountyC",
