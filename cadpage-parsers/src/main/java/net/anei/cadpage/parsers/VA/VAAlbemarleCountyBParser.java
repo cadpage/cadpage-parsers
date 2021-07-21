@@ -13,33 +13,33 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class VAAlbemarleCountyBParser extends FieldProgramParser {
-  
+
   public VAAlbemarleCountyBParser() {
     super("ALBEMARLE COUNTY", "VA",
           "( HTML_ADDRCITY NATURE_UNIT_CROSS! INFO/N+ " +
           "| SRC! INC:ID! TYP:CALL1! UNITS:UNIT! AD:ADDRCITY% APT:APT% CROSS_STREETS:X% LAT:GPS1 LON:GPS2 NAME:NAME% NATURE:CALL/SDS% NARRATIVE:INFO/N+ ESN:BOX% DT:DATETIME% END )");
     setupProtectedNames("LEWIS AND CLARK");
   }
-  
+
   @Override
   public String getFilter() {
-    return "cad2@acuecc.org,dpuckett@albemarle.org,jplumb@albemarle.org,powellbr@charlottesville.org";
+    return "cad2@acuecc.org,@albemarle.org,powellbr@charlottesville.org";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.startsWith("Automatic R&R Notification:")) return false;
     data.strCall = subject.substring(27).trim();
     if (!parseFields(body.split("\n"), data)) return false;
-    
+
     // Apt is usually duplicated at end of address
     if (data.strApt.length() > 0) {
       data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strApt);
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("HTML_ADDRCITY")) return new MyHtmlAddressCityField();
@@ -51,14 +51,14 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern HTML_ADDR_CITY_PTN = Pattern.compile("http://maps.google.com/.* AD: *(.*)");
   private class MyHtmlAddressCityField extends MyAddressCityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = HTML_ADDR_CITY_PTN.matcher(field);
@@ -66,18 +66,18 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
       super.parse(match.group(1), data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort(); 
+      if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL " + super.getFieldNames();
     }
   }
-  
+
   private static final Pattern NATURE_UNIT_CROSS_PTN = Pattern.compile("([^,]*),(.*),([^,]*),");
   private class MyNatureUnitCrossField extends Field {
 
@@ -95,7 +95,7 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
       return "CALL UNIT X";
     }
   }
-  
+
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
@@ -104,7 +104,7 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -113,15 +113,15 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [ap]m)?)", Pattern.CASE_INSENSITIVE);
   private static DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
