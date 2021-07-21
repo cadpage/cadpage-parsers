@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +16,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
@@ -205,6 +217,9 @@ public class FieldProgramParser extends SmartAddressParser {
   // Flag indicating that double underscores are required to escape blanks in keywords
   public static final int FLDPROG_DOUBLE_UNDERSCORE = 4;
 
+  // Flag indicating that we should parse alert message as HTML text
+  public static final int FLDPROG_XML = 8;
+
   // list of cities
   private Set<String> cities = null;
 
@@ -234,6 +249,12 @@ public class FieldProgramParser extends SmartAddressParser {
 
   // String sequence that escapes blanks in keywords
   private String blankEscape;
+
+  // XML message parsing
+  private boolean xml;
+
+  // XML parser
+  SAXParser xmlParser;
 
   private Map<String, Step> keywordMap = null;
 
@@ -359,9 +380,20 @@ public class FieldProgramParser extends SmartAddressParser {
   private static final Pattern TAG_PTN = Pattern.compile("([^ :]+):");
   protected void setProgram(String program, int flags) {
 
-    anyOrder = (flags & FLDPROG_ANY_ORDER) != 0;
+    xml = (flags & FLDPROG_XML) != 0;
+    anyOrder = xml || (flags & FLDPROG_ANY_ORDER) != 0;
     ignoreCase = (flags & FLDPROG_IGNORE_CASE) != 0;
     blankEscape = (flags & FLDPROG_DOUBLE_UNDERSCORE) != 0 ? "__" : "_";
+
+    if (xml) {
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      factory.setValidating(false);
+      try {
+        xmlParser = factory.newSAXParser();
+      } catch (ParserConfigurationException | SAXException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
 
     if (program == null) return;
 
@@ -418,7 +450,7 @@ public class FieldProgramParser extends SmartAddressParser {
           if (step.field != null) {
             String tag = step.tag == null ? "" : step.tag;
             if (keywordMap.put(tag, step) != null) {
-              throw new RuntimeException("Duplicate tag:" + tag + " in anyorder program");
+              throw new RuntimeException("Duplicate tag:" + tag + " in anyorder or xml program");
             };
           }
         }
@@ -973,6 +1005,99 @@ public class FieldProgramParser extends SmartAddressParser {
     }
   }
 
+  private class XMLHandler extends DefaultHandler {
+
+    Data data;
+    private List<Field> fieldList = new ArrayList<>();
+    private String fieldName = null;
+
+    public XMLHandler(Data data) {
+      this.data = data;
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+      fieldName = qName;
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+      if (fieldName == null || fieldName.isEmpty()) return;
+      Step step = keywordMap.get(fieldName);
+      if (step == null) return;
+
+      // Flag step as processed
+      step.markChecked();
+
+
+      // and use it to process this value
+      if (step.field != null) {
+        try {
+          String value = new String(ch, start, length);
+          step.field.parse(value, data);
+        } catch (FieldProgramException ex) {
+          throw new SAXException(ex);
+        }
+        fieldList.add(step.field.getProcField());
+      }
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+      fieldName = null;
+    }
+
+    public void finish() {
+      fieldRecord = fieldList.toArray(new Field[0]);
+    }
+  }
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+
+    // We only need to parse HTML text in XML parsing mode.  Otherwise call
+    // the superclass method
+    if (!xml) return super.parseHtmlMsg(subject, body, data);
+
+    // Otherwise, we do the XML parsing here
+    gpsFldCnt = 0;
+
+    // Clear the checked flags for all steps
+    initStepScan();
+
+    // Some XML alert messages are not wrapped in a root element, which
+    // is a requirement for well formed XML.  We fix that by wrapping
+    // everything in our own root element
+    body = "<CadpageAlert911>" + body + "</CadpageAlert911>";
+
+    // Start the XML parser and feed it the  message body
+    Reader reader = new StringReader(body);
+    InputSource src = new InputSource();
+    src.setCharacterStream(reader);
+    XMLHandler handler = new XMLHandler(data);
+    try {
+      xmlParser.parse(src, handler);
+    } catch (SAXException | IOException ignore) {
+      // Sloppy, but truncated messsages throw this exception and we
+      // want to process as much as we can
+      // ignore.printStackTrace();
+    } finally {
+      try { reader.close(); } catch (IOException ignore) {}
+    }
+    handler.finish();
+
+    // Make another pass checking that all required fields have been entered
+    for (Step step : keywordMap.values()) {
+      if (!step.isChecked() && step.required != EReqStatus.NORMAL) {
+        if (step.required == EReqStatus.REQUIRED) {
+          return false;     // BREAKPOINT
+        }
+        data.expectMore = true;
+      }
+    }
+    return true;
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
 
@@ -1007,6 +1132,9 @@ public class FieldProgramParser extends SmartAddressParser {
    * @return true if parsing was successful
    */
   protected boolean parseFields(String[] fields, Data data) {
+
+    // If we get here in xml parsing mode, something has gone irreversably wrong
+    if (xml) throw new RuntimeException("XML parse request somehome missed the parseHTMLMsg() method");
 
     gpsFldCnt = 0;
     fieldRecord = new Field[fields.length];
@@ -2126,6 +2254,7 @@ public class FieldProgramParser extends SmartAddressParser {
      * @return value of requested field if it exists, empty string if it does not
      */
     protected String getRelativeField(int ndx) {
+      if (xml) throw new RuntimeException("getRelativeField() cannot be called in XML parse mode");
       return state.getRelativeField(ndx);
     }
 
@@ -2141,6 +2270,7 @@ public class FieldProgramParser extends SmartAddressParser {
      * @return true if we are ndx fields from the end of the message
      */
     protected boolean isLastField(int ndx) {
+      if (xml) throw new RuntimeException("isLastField() cannot be called in XML parse mode");
       return state.isLastField(ndx);
     }
 
