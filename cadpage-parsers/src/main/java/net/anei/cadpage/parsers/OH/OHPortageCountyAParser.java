@@ -9,24 +9,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class OHPortageCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern MARKER1 = Pattern.compile(".*?\\b(?=CALL:)");
   private static final Pattern MARKER2 = Pattern.compile("[A-Z0-9\\.]+: +", Pattern.CASE_INSENSITIVE);
-  
+
   public OHPortageCountyAParser() {
     super(OHPortageCountyParser.CITY_LIST, "PORTAGE", "OH",
           "( SELECT/1 PREFIX CALL:CALL/SDS! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+ " +
           "| PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
-    return "911@ci.ravenna.oh.us,info@sundance-sys.com";
+    return "911@ci.ravenna.oh.us,info@sundance-sys.com,sunsrv@sundance-sys.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = MARKER1.matcher(body);
     if (match.lookingAt()) {
       setSelectValue("1");
@@ -34,7 +34,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
       if (pt >= 0) body = body.substring(0, pt) + '\n' + body.substring(pt);
       return parseFields(body.split("\n"), data);
     }
-    
+
     setSelectValue("2");
     match = MARKER2.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
@@ -42,7 +42,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     data.strCity = OHPortageCountyParser.fixCity(data.strCity);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField();
@@ -59,7 +59,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CALL_CODE_PTN.matcher(field);
@@ -74,18 +74,18 @@ public class OHPortageCountyAParser extends FieldProgramParser {
       data.strCall = append(data.strCall, ", ", field);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
-    @Override 
+
+    @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -93,7 +93,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -101,7 +101,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
       return super.checkParse(field, data);
     }
   }
-  
+
   @Override
   public String postAdjustMapAddress(String addr) {
     return OHPortageCountyParser.fixMapAddress(addr);
