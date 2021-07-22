@@ -7,64 +7,49 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class WAClallamCountyParser extends SmartAddressParser {
-  
+
   public WAClallamCountyParser() {
     super(CITY_LIST, "CLALLAM COUNTY", "WA");
+    setFieldList("ADDR APT DATE TIME UNIT SRC ID CALL INFO");
   }
-  
+
   @Override
   public String getFilter() {
     return "Dispatch@co.clallam.wa.us";
   }
-  
-  private static final Pattern MASTER1 = Pattern.compile("(?:([A-Z0-9 ]+)  )?(?:([A-Z0-9]+) - (Stn \\S+|[A-Z][a-z]+) )?(.*?) (\\d{4}-\\d{8})");
-  private static final Pattern MASTER2 = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\S+)((?: \\S+)*)  (?:(.*?) )?(\\d{4}-\\d{8}) *(.*)");
+
+  private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([ A-Z0-9]+)  (?:([A-Z]{3,5}) )?(\\d{4}-\\d{8})  (.*)");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\bDispatch received by unit \\S+\\b|\\bCall Number \\d+ was created from Call Number \\d+(?:\\([A-za-z0-9 :]*\\))?|(?:  |^)E911 Info.*");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("Incident")) return false;
-    
-    Matcher match = MASTER2.matcher(body);
+
+    Matcher match = MASTER.matcher(body);
     if (match.matches()) {
-      setFieldList("DATE TIME CALL UNIT ADDR APT ID INFO");
-      data.strDate = match.group(1);
-      data.strTime = match.group(2);
-      data.strCall = match.group(3);
+      parseAddress(MSPACE_PTN.matcher(match.group(1).trim()).replaceAll(" "), data);
+      data.strDate = match.group(2);
+      data.strTime = match.group(3);
       data.strUnit = match.group(4).trim();
-      String addr = getOptGroup(match.group(5)).replaceAll("  +", " "); 
-      parseAddress(addr, data);
+      data.strSource = getOptGroup(match.group(5));
       data.strCallId = match.group(6);
-      String info = match.group(7);
-      info = INFO_JUNK_PTN.matcher(info).replaceAll("");
-      info = info.replaceAll("  +", "").trim();
-      data.strSupp = info;
+      body = match.group(7).trim();
+      for (String line : MSPACE_PTN.split(body)) {
+        if (INFO_JUNK_PTN.matcher(line).matches()) continue;
+        if (data.strCall.isEmpty()) {
+          data.strCall = line;
+        } else {
+          data.strSupp = append(data.strSupp, "\n", line);
+        }
+      }
       return true;
     }
-    
-    match = MASTER1.matcher(body);
-    if (match.matches()) {
-      setFieldList("UNIT SRC MAP ADDR APT PLACE CITY CALL ID");
-      data.strUnit = getOptGroup(match.group(1));
-      data.strSource = getOptGroup(match.group(2));
-      data.strMap = getOptGroup(match.group(3));
-      String addr = match.group(4).trim();
-      data.strCallId = match.group(5);
-      
-      parseAddress(StartType.START_ADDR, FLAG_PAD_FIELD | FLAG_IMPLIED_INTERSECT, addr, data);
-      data.strPlace = getPadField();
-      if (data.strPlace.equals("BLK")) {
-        data.strAddress = append(data.strAddress, " ", data.strPlace);
-        data.strPlace = "";
-      }
-      data.strCall = getLeft();
-      return data.strCall.length() > 0;
-    }
-    
+
     return false;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Cities
