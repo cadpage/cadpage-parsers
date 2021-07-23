@@ -330,6 +330,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "PREGNANCY",
       "PSYCHIATRIC/ABNORMAL BEHAV",
       "SICK PERSON",
+      "SINKING VEH/VEH IN FLOODWATER",
       "SMOKE INVESTIGATION",
       "STAB/GUNSHOT/PEN TRAUMA",
       "STAB/GUNSHOT/PEN TRAUMA CENTR",
