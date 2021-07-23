@@ -10,7 +10,8 @@ public class WAClallamCountyParser extends SmartAddressParser {
 
   public WAClallamCountyParser() {
     super(CITY_LIST, "CLALLAM COUNTY", "WA");
-    setFieldList("ADDR APT DATE TIME UNIT SRC ID CALL INFO");
+    setFieldList("ADDR DATE TIME CODE UNIT APT PLACE X ID CALL INFO");
+    removeWords("SQ");
   }
 
   @Override
@@ -18,8 +19,9 @@ public class WAClallamCountyParser extends SmartAddressParser {
     return "Dispatch@co.clallam.wa.us";
   }
 
-  private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) ([ A-Z0-9]+)  (?:([A-Z]{3,5}) )?(\\d{4}-\\d{8})  (.*)");
+  private static final Pattern MASTER = Pattern.compile("(?:(.*?) )?(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\*New Call|911Hangup|[-A-Za-z]+) (?:([- A-Za-z0-9]+?) )? (?:(.*?) )?(\\d{4}-\\d{8})(?:  (.*))?");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
+  private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:#|APT|SUIT) *(\\S+) *(.*)");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\bDispatch received by unit \\S+\\b|\\bCall Number \\d+ was created from Call Number \\d+(?:\\([A-za-z0-9 :]*\\))?|(?:  |^)E911 Info.*");
 
   @Override
@@ -29,13 +31,36 @@ public class WAClallamCountyParser extends SmartAddressParser {
 
     Matcher match = MASTER.matcher(body);
     if (match.matches()) {
-      parseAddress(MSPACE_PTN.matcher(match.group(1).trim()).replaceAll(" "), data);
+      parseAddress(MSPACE_PTN.matcher(getOptGroup(match.group(1))).replaceAll(" "), data);
       data.strDate = match.group(2);
       data.strTime = match.group(3);
-      data.strUnit = match.group(4).trim();
-      data.strSource = getOptGroup(match.group(5));
-      data.strCallId = match.group(6);
-      body = match.group(7).trim();
+      data.strCode = match.group(4);
+      data.strUnit = getOptGroup(match.group(5));
+      String place = getOptGroup(match.group(6));
+      data.strCallId = match.group(7);
+      body = getOptGroup(match.group(8));
+
+      match = APT_PLACE_PTN.matcher(place);
+      if (match.matches()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+        place = match.group(2);
+      }
+
+      if (isValidAddress(place)) {
+        if (checkAddress(place) == STATUS_FULL_ADDRESS) {
+          data.strCross = place;
+        } else {
+          data.strAddress = append(data.strAddress, " & ", place);
+        }
+      } else {
+        data.strPlace = place;
+      }
+
+      // If an official address was not included, try finding one in the info block
+      if (data.strAddress.isEmpty()) {
+        parseAddress(StartType.START_OTHER, FLAG_NO_IMPLIED_APT, body, data);
+      }
+
       for (String line : MSPACE_PTN.split(body)) {
         if (INFO_JUNK_PTN.matcher(line).matches()) continue;
         if (data.strCall.isEmpty()) {
@@ -44,6 +69,9 @@ public class WAClallamCountyParser extends SmartAddressParser {
           data.strSupp = append(data.strSupp, "\n", line);
         }
       }
+
+      if (data.strCall.isEmpty()) data.strCall = data.strCode;
+
       return true;
     }
 
