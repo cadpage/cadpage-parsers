@@ -16,7 +16,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   public MIIsabellaCountyAParser() {
     super(CITY_CODES, "ISABELLA COUNTY", "MI",
            "( UNIT ENROUTE ADDR CITY CALL/SDS " +
-           "| ( CANCEL | FYI? CALL ) ( ADDR/Z CITY! | ADDR2/S! ) X+? INFO/N+? ID UNIT " +
+           "| ( CANCEL | FYI? CALL ) ( ADDR/Z APT/Z CITY! | ADDR/Z CITY! | ADDR2/S! ) ( X  X? | PLACE X X? | ) INFO/N+? ID UNIT " +
            ") END");
   }
 
@@ -38,6 +38,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new CallField("Enroute");
     if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("\\d{1,6}");
@@ -58,6 +59,16 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
         }
       }
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+    }
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)", Pattern.CASE_INSENSITIVE);
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
     }
   }
 
