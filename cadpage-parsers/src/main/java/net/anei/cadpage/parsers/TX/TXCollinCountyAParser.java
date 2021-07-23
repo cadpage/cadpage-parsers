@@ -26,8 +26,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
   protected TXCollinCountyAParser(String defCity, String defState) {
     super(defCity, defState,
-          "MASH! UNITS:UNIT ( St_Rmk:MAP! Grid_Map:MAP/L! Rmk1:INFO/N+ http:URL " +
-                           "| ST_RMK:INFO/N CFS_RMK:INFO/N )");
+          "( SELECT/2 ID CALL ADDRCITY X GRID! UNITS:UNIT! CFS_RMK:INFO " +
+          "| MASH! UNITS:UNIT ( St_Rmk:MAP! Grid_Map:MAP/L? Rmk1:INFO/N+ http:URL " +
+                             "| ST_RMK:INFO/N CFS_RMK:INFO/N ) " +
+          ") END");
     setupCallList(CALL_LIST);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -59,7 +61,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
 
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
@@ -107,6 +109,13 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     if (match.find()) body = body.substring(0,match.start()).trim();
 
     body = body.replace("CFS RMK ", "CFS RMK: ");
+
+    if (subject.equals("CFS Page")) {
+      setSelectValue("2");
+      return parseFields(body.split("\n"), data);
+    }
+
+    setSelectValue("1");
     body = body.replaceAll(" +/ +", " / ");
     if (super.parseMsg(body, data)) {
 
@@ -124,6 +133,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("MASH")) return new MashField();
+    if (name.equals("GRID")) return new MyGridField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("URL")) return new MyInfoURLField();
@@ -303,29 +313,6 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       data.strCross = stripFieldEnd(data.strCross, "/");
     }
 
-    private void parseDistGrid(Matcher match, Data data) {
-      String extra = parseDistGrid2(match, data);
-      while (extra.length() > 0) {
-        match = DIST_GRID_PTN2.matcher(extra);
-        if (!match.matches()) break;
-        extra = parseDistGrid2(match, data);
-      }
-    }
-
-    private String parseDistGrid2(Matcher match, Data data) {
-      String src = match.group(1).trim();
-      if (!data.strSource.contains(src)) data.strSource = append(data.strSource, " ", src);
-      String call = match.group(2);
-      if (call != null) {
-        if (!data.strCall.contains(call)) data.strCall = append(data.strCall, " - ", call.trim());
-        String priority =  append(getOptGroup(match.group(3)), "/", getOptGroup(match.group(4)));
-        if (!priority.isEmpty()) data.strPriority = priority;
-      }
-      String map = append(getOptGroup(match.group(5)), "-", match.group(6).trim());
-      if (!data.strMap.equals(map)) data.strMap = append(data.strMap, "/", map);
-      return match.group(7).trim();
-    }
-
     private static final int OPTIONAL = 1;
     private static final int CALL = 2;
     private static final int CROSS = 4;
@@ -444,6 +431,48 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       return newFmt ? "ID ADDR CITY PLACE X SRC CALL PRI MAP INFO"
                     : "ID CALL ADDR CITY PLACE X SRC MAP INFO";
     }
+  }
+
+  private class MyGridField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match;
+      while ((match = DIST_GRID_PTN.matcher(field)).lookingAt()) {
+        parseDistGrid(match, data);
+        field = field.substring(match.end()).trim();
+      }
+      if (!field.isEmpty()) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "SRC CALL? PRI? MAP";
+    }
+
+  }
+
+  private void parseDistGrid(Matcher match, Data data) {
+    String extra = parseDistGrid2(match, data);
+    while (extra.length() > 0) {
+      match = DIST_GRID_PTN2.matcher(extra);
+      if (!match.matches()) break;
+      extra = parseDistGrid2(match, data);
+    }
+  }
+
+  private String parseDistGrid2(Matcher match, Data data) {
+    String src = match.group(1).trim();
+    if (!data.strSource.contains(src)) data.strSource = append(data.strSource, " ", src);
+    String call = match.group(2);
+    if (call != null) {
+      if (!data.strCall.contains(call)) data.strCall = append(data.strCall, " - ", call.trim());
+      String priority =  append(getOptGroup(match.group(3)), "/", getOptGroup(match.group(4)));
+      if (!priority.isEmpty()) data.strPriority = priority;
+    }
+    String map = append(getOptGroup(match.group(5)), "-", match.group(6).trim());
+    if (!data.strMap.equals(map)) data.strMap = append(data.strMap, "/", map);
+    return match.group(7).trim();
   }
 
   private class MyUnitField extends UnitField {
@@ -1823,8 +1852,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "1050 MINOR",
       "2ND PAGE",
       "911 HANG UP/OPEN LINE",
+      "AAST",
       "AALARM",
       "ABANDONED CHILD",
+      "ABANDONED VEHICLE",
       "ABNORMAL BREATHING",
       "ABDOMINAL PAIN",
       "ALARM",
@@ -1832,11 +1863,13 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "ALLERGIES/ENVENOMATIONS",
       "AMB",
       "AMBULANCE/EMS SERVICE",
+      "ANIMAL",
       "ANIMAL BITE",
       "ANIMAL COMPLAINT",
       "APUBLIC",
       "ADDITIONAL MANPOWER",
       "ASSAULT",
+      "ASSAULT JUST OCCURRED",
       "ASSIST MOTORIST",
       "ASSIST OTHER AGENCY",
       "ASSIST PD",
@@ -1849,6 +1882,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "AUDIBLE BURGLAR ALARM",
       "AUTOMATIC AID ENGINE",
       "AUTOMATIC FIRE ALARM",
+      "BASST",
       "BITE",
       "BOAT ASSIST",
       "BOAT IN DISTRESS",
@@ -1869,10 +1903,12 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "CHEMICAL FIRE",
       "CHEST PAINS",
       "CITIZEN CONTACT",
+      "CIVIL",
       "CIVIL PROBLEM",
       "CIVIL STANDBY",
       "CHOKING",
       "CLOSE PATROL",
+      "COMM VIDEO ALARM",
       "COMMERCIAL FIRE",
       "COMERCIAL FIRE ALARM",
       "COMMERCIAL FIRE ALARM",
@@ -1899,6 +1935,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "DOWN",
       "DOWN POWER LINE",
       "DOWN TREE",
+      "DROWN",
       "DROWNING ON THE LAKE",
       "DUMPSTER FIRE",
       "DRIVING WHILE INTOXICATED",
@@ -1917,19 +1954,20 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "EMERGENCY WATER CUT OFF",
       "EMS",
       "EMS-NON EMERGENCY TRANSFER",
+      "EMS - CARDIAC ARREST",
       "EMS - CARDIAC EMERGENCY",
       "EMS - INJURED PERSON",
       "EMS - PERSON FALLEN",
       "EMS - SEIZURE",
       "EMS - SICK PERSON",
+      "EMS - STROKE (CVA)",
       "EMS - SUICIDAL PERSON",
       "EMS - UNCONSCIOUS PERSON",
       "EMS CALL",
       "EMS CARDIAC",
-      "EMS - CARDIAC ARREST",
+      "EMS INFECTION",
       "EMS MEDICAL",
       "EMS OTHER/STANDBY/PR",
-      "EMS - STROKE (CVA)",
       "EMS TRANSFER",
       "EMS TRAUMA",
       "EMSFALL",
@@ -1959,12 +1997,16 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "FIRE PUBLIC ASSIST",
       "FIRE REPORTED OUT",
       "FIRE TEST CALL",
+      "FIREWORKS COMPLAINT",
       "FIRST",
       "FIRST RESPONDERS",
+      "FIRST RESPONDERS - ASSIST OTHER AGENCY - CUSTOMER DISTURBANCE",
       "FISRT RESPONDERS",
       "FLOOD",
       "FLOODING REPORTED",
       "FOLLOW UP INVESTIGATION",
+      "FOUND CHILD",
+      "FOUND PROPERTY",
       "FUEL",
       "FUEL SPILL GAS LEAK",
       "GFIRE",
@@ -1980,9 +2022,12 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "HAZARDOUS MATERIALS",
       "HAZMAT SPILL/LEAK",
       "HEART PROBLEMS",
+      "HEAT/COLD EXPOSURE",
       "HEMORRHAGE/LACERATIONS",
       "HMAJOR",
       "HMINOR",
+      "HURT",
+      "INDOOR NATURAL GAS LEAK",
       "INJURED ANIMAL",
       "INJURED PERSON",
       "INJURY",
@@ -2003,12 +2048,14 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "LOCKOUT - NON EMERGENT",
       "LOOSE",
       "LOOSE LIVESTOCK",
+      "MAJ ACCIDENT W/RESCUE (TONE)!!",
       "MAJOR",
       "MAJOR ACCIDENT",
       "MAJOR ACCIDENT (INJURIES)",
       "MAJOR ACCIDENT (MAJOR ROAD)",
       "MAJOR ACCIDENT (TONE) !!",
       "MAJOR ACCIDENT 10/50",
+      "MAJOR ACCIDENT WITH MOTORCYCLE",
       "MAJOR HIT AND RUN ACCIDENT",
       "MAJOR WITH ENTRAPMENT",
       "MAJOR WITH EXTRICATION",
@@ -2034,8 +2081,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "MISCELLANEOUS FIRE",
       "MISSING PERSON",
       "MOTORIST ASSIST",
+      "MP",
       "MUTUAL",
       "MUTUAL AID",
+      "MUTUAL AID-FIRE",
       "MUTUAL AID FIRE",
       "MUTUAL AID,FIRE/FILL IN",
       "MUTUAL AID AMB FOR MAJOR",
@@ -2066,7 +2115,9 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "NATURAL / PROPANE GAS LEAK",
       "NATURAL DISASTER",
       "NATURAL GAS LEAK",
+      "NCHILD",
       "NOISE DISTURBANCE",
+      "NOT DANGEROUS BODY AREA",
       "ODOR",
       "ODOR INSIDE STRUCTURE",
       "ODOR INVESTIGATION",
@@ -2077,6 +2128,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "OTHER CALL FOR FIRE DEPARTMENT",
       "OTHER CALL FOR POLICE",
       "OUTSIDE FIRE",
+      "OUTSIDE NATURAL GAS LEAK",
       "OVERDOSE",
       "PANIC ALARM",
       "PASSED",
@@ -2102,12 +2154,14 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "RESIDENTIAL FIRE",
       "RESIDENTIAL FIRE ALARM",
       "RESIDENTIAL PANIC ALARM",
+      "ROAD RAGE",
       "RUNAWAY REPORT",
       "SEARCH FOR MISSING PERSON",
       "SEXUAL ASSAULT OF A CHILD",
       "SFIRE",
       "SFIRE / MUTUAL AID",
       "SHOOTING",
+      "SHOOTING/STABBING",
       "SICK PERSON",
       "SMOKE",
       "SMOKE DETECTOR ALARM",
@@ -2118,6 +2172,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "SPECIAL EVENT",
       "SPECIAL HAZARD",
       "SPECIAL WATCH",
+      "SPEEDING VEHICLE",
       "SPEAK WITH OFFICER",
       "STAB",
       "STANDBY ELECTRICAL FIRE",
@@ -2125,13 +2180,16 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "STROKE",
       "STRUCTURE FIRE",
       "SUBJECT PASSED OUT",
+      "SUICIDAL PERSON",
       "SUICIDE THREAT",
       "SUSPICIOUS CIRCUMSTANCES",
       "SUSPICIOUS PERSON",
       "SUSPICIOUS VEHICLE",
       "TASST",
       "TEST CALL",
+      "TEST FIRE & EMS CALL",
       "TEST FIRE CALL",
+      "TFIRE",
       "THEFT IN PROGRESS",
       "THEFT REPORT",
       "THREATS",
@@ -2139,8 +2197,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "TRAFFIC COMPLAINT",
       "TRAFFIC HAZARD",
       "TRAFFIC STOP",
+      "TRANSFORMER FIRE",
       "TRASH / DUMPSTER FIRE",
       "TRASH FIRE",
+      "TRASH FIRE / DUMPSTER FIRE",
       "TRAUMATIC INJURIES",
       "TREE",
       "TS",
@@ -2155,8 +2215,12 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "UNATTENDED DEATH",
       "UNKNOWN MEDICAL PROBLEM",
       "UNKNOWN FIRE",
+      "VANDALISM JUST OCCURRED",
       "VANDALISM/CRIM MISCHIEF REPORT",
+      "VEHICLE / RESIDENCE",
+      "VEHICLE DISTURBANCE",
       "VEHICLE FIRE",
+      "VEHICLE THEFT REPORT",
       "VFIRE",
       "VFIRE -- DISREGARD PER CALLER FIRE OUT",
       "WATER",
