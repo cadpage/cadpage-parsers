@@ -4,8 +4,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class SCSpartanburgCountyParser extends GroupBestParser {
-  
+
   public SCSpartanburgCountyParser() {
-    super(new SCSpartanburgCountyBParser());
+    super(new SCSpartanburgCountyBParser(), new SCSpartanburgCountyCParser());
   }
 }
