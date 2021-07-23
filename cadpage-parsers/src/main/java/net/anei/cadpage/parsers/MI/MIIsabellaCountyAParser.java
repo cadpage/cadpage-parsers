@@ -66,9 +66,18 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = APT_PTN.matcher(field);
-      if (match.matches()) field = match.group(1);
-      super.parse(field, data);
+      if (field.startsWith("DIST:")) {
+        data.strPlace = field;
+      } else {
+        Matcher match = APT_PTN.matcher(field);
+        if (match.matches()) field = match.group(1);
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "APT PLACE?";
     }
   }
 
