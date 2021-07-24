@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class WAClallamCountyParser extends SmartAddressParser {
 
   public WAClallamCountyParser() {
-    super(CITY_LIST, "CLALLAM COUNTY", "WA");
+    super("CLALLAM COUNTY", "WA");
     setFieldList("ADDR DATE TIME CODE UNIT APT PLACE X ID CALL INFO");
     removeWords("SQ");
   }
@@ -77,47 +77,4 @@ public class WAClallamCountyParser extends SmartAddressParser {
 
     return false;
   }
-
-  private static final String[] CITY_LIST = new String[]{
-
-    // Cities
-    "FORKS",
-    "PORT ANGELES",
-    "SEQUIM",
-
-    // Census-designated places
-    "BELL HILL",
-    "BLYN",
-    "CARLSBORG",
-    "CLALLAM BAY",
-    "JAMESTOWN",
-    "NEAH BAY",
-    "PORT ANGELES EAST",
-    "RIVER ROAD",
-    "SEKIU",
-
-    // Other communities
-    "AGATE BEACH",
-    "AGNEW",
-    "BEAVER",
-    "BOGACHIEL",
-    "CRANE",
-    "DIAMOND POINT",
-    "DUNGENESS",
-    "ELWHA",
-    "FAIRHOLM",
-    "HOKO",
-    "JOYCE",
-    "LA PUSH",
-    "MAPLE GROVE",
-    "MORA",
-    "OZETTE",
-    "PYSHT",
-    "PIEDMONT",
-    "SAPPHO",
-    "SCHOOLHOUSE POINT",
-    "SEKIU",
-    "UPPER HOH"
-  };
-
 }
