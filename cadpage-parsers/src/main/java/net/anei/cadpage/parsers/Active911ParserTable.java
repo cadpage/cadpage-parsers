@@ -1457,6 +1457,7 @@ public class Active911ParserTable {
       "US/OH/FultonCounty",               "OHFultonCounty",
       "US/OH/GalliaCounty",               "OHGalliaCounty,OHMahoningCountyA",
       "US/OH/GeaugaCounty",               "OHGeaugaCountyB",
+      "US/OH/GenevaOnTheLake",            "OHAshtabulaCounty",
       "US/OH/GermantownFD",               "OHMontgomeryCountyC2",
       "US/OH/GrangerFD",                  "OHMedinaCountyB,OHMedinaCountyD",
       "US/OH/GuernseyCounty",             "OHGuernseyCounty",
