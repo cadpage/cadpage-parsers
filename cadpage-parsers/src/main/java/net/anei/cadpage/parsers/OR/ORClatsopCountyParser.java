@@ -1,9 +1,6 @@
 package net.anei.cadpage.parsers.OR;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -12,26 +9,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 public class ORClatsopCountyParser extends FieldProgramParser {
 
   public ORClatsopCountyParser() {
-    super(CITY_LIST, "CLATSOP COUNTY", "OR", 
-          "ADDRCITY! ( CITY | ADDRCITY2/Z CITY | ADDRCITY2? ) CALL/SLS! CALL/SLS+ ");
-    setupSpecialStreets("PROMENADE");
+    super(CITY_CODES, "CLATSOP COUNTY", "OR",
+          "ADDR/S6 CITY DATE TIME UNIT UNIT/C UNIT/C UNIT/C CALL/SDS! ID? INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "cmireporting@astoria.or.us,lewisandclarkfd@astoria.or.us";
+    return "@astoria.or.us";
   }
 
   private static final Pattern PROM_PTN = Pattern.compile("\\bPROM\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern DELIM = Pattern.compile("(?<!\\d)/|/(?!\\d)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     //require subject
     if (subject.length() == 0) return false;
     data.strCall = subject;
-    
+
     // Clean out GNUGPL headers and trailers
     if (body.startsWith("X-Mailer:")) {
       int pt = body.indexOf("\nContent-Disposition:");
@@ -43,62 +38,50 @@ public class ORClatsopCountyParser extends FieldProgramParser {
       if (ept < 0) ept = body.length();
       body = body.substring(pt, ept).trim();
     }
-    
+
     // Expand PROM -> PROMONADE
     subject = PROM_PTN.matcher(subject).replaceAll("PROMENADE");
     body = PROM_PTN.matcher(body).replaceAll("PROMENADE");
-    if (!parseFields(DELIM.split(body, -1), data)) return false;
-    
-    // Try to rule out random messages containing a slash
-    if (data.strCity.length() > 0) return true;
-    for (String call : data.strCall.split("/")) {
-      if (CALL_SET.contains(call.trim().toUpperCase())) return true;
-    }
-    return false;
+    return parseFields(body.split("~"), data);
   }
-  
+
   @Override
   public String getProgram() {
-    return "CALL " + super.getProgram();
+    return "CALL? " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("ID")) return new IdField("\\d+");
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  private static final Pattern AVE_ST_PTN = Pattern.compile("(?:AVE|AVENUE) +[A-Z]", Pattern.CASE_INSENSITIVE);
-  private class MyAddressCity2Field extends AddressCityField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      String city = null;
-      int pt = field.indexOf(',');
-      if (pt >= 0) {
-        city = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
-      }
-      if (city != null && isCity(city) ||
-          AVE_ST_PTN.matcher(field).matches() || isValidAddress(field)) {
-        parse(field, data);
-        if (city != null) data.strCity = city;
-        return true;
-      } else {
-        return false;
-      }
-    }
-    
+
+  private static final Pattern TRAIL_JUNK_PTN = Pattern.compile(" *\\.{3,}\\d*$");
+  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b[ .]*");
+  private static final Pattern JUNK_PTN = Pattern.compile(".*Add below this line.*|\\S+ Added|Fire Pager call at.*");
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      data.strAddress = append(data.strAddress, " & ", field);
+      for (String line : field.split("\n")) {
+        line =  line.trim();
+        line = TRAIL_JUNK_PTN.matcher(line).replaceFirst("");
+        line = LEAD_JUNK_PTN.matcher(line).replaceFirst("");
+        if (JUNK_PTN.matcher(line).matches()) continue;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+
     }
   }
-  
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("CAPE FALCON")) city = "ARCH CAPE";
+    return city;
+  }
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = address.toUpperCase();
@@ -353,122 +336,17 @@ public class ORClatsopCountyParser extends FieldProgramParser {
       "TOLOVANA",                             "+45.872515,-123.961937",
       "TURNAROUND",                           "+45.993175,-123.930229"
   });
-  
-  private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
-      "1 VEH MVA",
-      "2 VEH MVA",
-      "ARCING TRANSFORMERS",
-      "ALARM ACTIVATION",
-      "ALARM FIRE",
-      "ASSIST RENDERED",
-      "BACK PAIN",
-      "BLADDER INF",
-      "BRUSH FIRE",
-      "CHEMICAL",
-      "CHIM FIRE",
-      "CHIMNEY FIRE",
-      "DIFFICULTY BREATHING",
-      "DISTURBANCE",
-      "ELDERLY FALL PT HEAD INJ",
-      "EMERG MEDICAL RESPONSE",
-      "EMS",
-      "EXTRICATION",
-      "FALL PT",
-      "FIRE",
-      "FIRE ALARM",
-      "FIRE CALL",
-      "FIRE INVESTIGATION",
-      "GEN MED ALARM",
-      "GRASS",
-      "HEAD INJ",
-      "INFANT LOCKED IN VEH",
-      "INFORMATION",
-      "LIFT ASSIST",
-      "LINE DOWN",
-      "LIVE POWER LINE DOWN",
-      "LOW 02",
-      "MALE NOT BREATHING",
-      "MEDICAL",
-      "MEDICAL CALL",
-      "MOTOR VEH ACCIDENT",
-      "MVA",
-      "MVA UNK INJ",
-      "ODOR GAS",
-      "OTHER ALL",
-      "POSS CODE 99",
-      "POSS STROKE",
-      "PUBLIC ASSIST",
-      "RESCUE CALL",
-      "SEIZURE",
-      "SEIZURE PATIENT",
-      "SMOKE",
-      "STRUC FIRE 1ST",
-      "SUSP CIRCUMSTANCES",
-      "SVR ABD PAIN",
-      "TEST",
-      "TEST CALL TEST CALL",
-      "TRAFFIC ROADS",
-      "TREE DOWN",
-      "TREE DOWN IN ROADWAY",
-      "TREE FALL ON HOME",
-      "TWO VEHICL AIC",
-      "UNK MED",
-      "UNK TYP UTIL POLE DOWN",
-      "UNRESP",
-      "VEH FIRE",
-      "VEHICLE FIRE",
-      "WATER FLOW ALARM",
-      "WATER RESCUE",
-      "WELFARE CHECK"
-  ));
-  
-  private static final String[] CITY_LIST = new String[]{
-      
-      // Cities
-      "ASTORIA",
-      "CANNON BEACH",
-      "GEARHART",
-      "SEASIDE",
-      "WARRENTON",
 
-      // Census-designated places
-      "JEFFERS GARDEN",
-      "WESTPORT",
-
-      // Unincorporated communities
-      "ARCH CAPE",
-      "BRADWOOD",
-      "BROWNSMEAD",
-      "CARNAHAN",
-      "CLIFTON",
-      "ELSIE",
-      "FERN HILL",
-      "FORT STEVENS",
-      "GRAND RAPIDS",
-      "HAMLET",
-      "HAMMOND",
-      "JEWELL",
-      "JEWELL JUNCTION",
-      "KNAPPA",
-      "LUKARILLA",
-      "MELVILLE",
-      "MILES CROSSING",
-      "MISHAWAKA",
-      "NAVY HEIGHTS",
-      "NECANICUM",
-      "OKLAHOMA HILL",
-      "OLNEY",
-      "SKIPANON",
-      "SUNSET BEACH",
-      "SURF PINES",
-      "SVENSEN",
-      "SVENSEN JUNCTION",
-      "TAYLORVILLE",
-      "TOLOVANA PARK",
-      "TONGUE POINT VILLAGE",
-      "UNIONTOWN",
-      "VESPER",
-      "VINEMAPLE",
-      "WAUNA"
-  };
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "ARC", "ARCH CAPE",
+      "AST", "ASTORIA",
+      "CAN", "CANNON BEACH",
+      "FAL", "CAPE FALCON",
+      "GEA", "GEARHEART",
+      "HAM", "HAMLET",
+      "SEA", "SEASIDE",
+      "TOL", "TOLVANA PARK",
+      "WAR", "WARRENTON",
+      "WES", "WESTPORT"
+  });
 }
