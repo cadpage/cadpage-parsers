@@ -21,7 +21,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
           "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " +
           "| INFO INFO/Z+? ( PHONE DATETIME ID! | DATETIME ID! | ID! ) " +
           "| FYI? CALL PLACE ADDR/S X X ( INFO INFO+ " +
-                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( PLACE END | ( PHONE | INFO+? PLACE PHONE ) DATETIME ID ID2 END ) ) " +
+                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( DATETIME | PHONE DATETIME | PLACE DATETIME | ( PLACE END | ( PHONE | INFO+? PLACE PHONE ) DATETIME ) ) ID ID2 END ) " +
           ")");
   }
 
@@ -63,7 +63,6 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("PH")) return new PhoneField("\\d{10}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("ID")) return new IdField("\\d+", false);
     if (name.equals("ID2")) return new SkipField("\\d*", true);
