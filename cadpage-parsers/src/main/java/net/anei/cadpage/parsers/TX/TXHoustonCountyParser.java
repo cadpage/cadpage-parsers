@@ -10,6 +10,6 @@ public class TXHoustonCountyParser extends DispatchA64Parser {
 
   @Override
   public String getFilter() {
-    return "cadalerts@eforcesoftware.com";
+    return "cadalerts@eforcesoftware.com,ereports@eforcesoftware.com";
   }
 }
