@@ -7,14 +7,14 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
 public class OHLakeCountyCParser extends DispatchA24Parser {
-  
+
   public OHLakeCountyCParser() {
     super("LAKE COUNTY", "OH");
   }
-  
+
   @Override
   public String getFilter() {
-    return "info@sundance-sys.com";
+    return "info@sundance-sys.com,sunsrv@sundance-sys.com";
   }
 
   private static final Pattern FIRENO_PTN = Pattern.compile("(.*) FireNo (\\d+)", Pattern.DOTALL);
@@ -31,7 +31,7 @@ public class OHLakeCountyCParser extends DispatchA24Parser {
     data.strCallId = append(data.strCallId, "/", fireno);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " ID";
