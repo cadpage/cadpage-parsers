@@ -1324,6 +1324,7 @@ public class ParserList {
               ,"ORDeschutesCounty"              ,"Deschutes County, OR"
               ,"ORDouglasCounty"                ,"Douglas County, OR"
               ,"ORGilliamCounty"                ,"Gilliam County, OR"
+              ,"ORGrantCounty"                  ,"Grant County, OR"
               ,"ORHoodRiverCounty"              ,"Hood River County, OR"
               ,"ORJacksonCounty"                ,"Jackson County, OR"
               ,"ORJeffersonCounty"              ,"Jefferson County, OR"
