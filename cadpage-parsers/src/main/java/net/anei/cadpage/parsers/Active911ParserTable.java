@@ -609,6 +609,7 @@ public class Active911ParserTable {
       "US/KS/HarveyCounty",               "KSHarveyCounty",
       "US/KS/JacksonCounty",              "KSJacksonCounty",
       "US/KS/JohnsonCounty",              "KSJohnsonCounty",
+      "US/KS/JohnsonCountyNoMutualAid",   "KSJohnsonCounty",
       "US/KS/KingmanCounty",              "KSKingmanCounty",
       "US/KS/KiowaCounty",                "KSKiowaCounty",
       "US/KS/LabetteCounty",              "KSLabetteCounty",
