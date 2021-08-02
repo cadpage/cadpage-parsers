@@ -7,25 +7,25 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA74Parser extends FieldProgramParser {
-  
+
   public DispatchA74Parser(String defCity, String defState) {
-    super(defCity, defState, 
+    super(defCity, defState,
           "ID CALL! ADDRCITY INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     body = stripFieldStart(body,  "1/1:");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("CAD #((?:\\d{2,8}-)?\\d+):", true);
@@ -33,57 +33,102 @@ public class DispatchA74Parser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?)(?: (?:APT|RM|LOT) +(.*?))?(?: *\\[(.*)\\])?(?: *\\(([-+]?[.0-9]+, *[-+]?[.0-9]+)\\))?");
+
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?) *\\(([-+]?[.0-9]+, *[-+]?[.0-9]+)\\)");
+  private static final Pattern ADDR_CITY_UNIT_PTN = Pattern.compile(" *[\\(\\[](.*?)[\\]\\)] *");
+  private static final Pattern ADDR_UNIT_PTN = Pattern.compile("(.*?)(?: (?:APT|RM|LOT) +(.*?))?(?: *\\[(.*?)\\])?");
   private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
   private static final Pattern CITY_PTN = Pattern.compile("[A-Z ]*");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "INTERSECTION:");
-      Matcher match = ADDR_CITY_PTN.matcher(field);
-      String apt = null;
+
+      // Strip off trailing GPS
+      Matcher match = ADDR_GPS_PTN.matcher(field);
       if (match.matches()) {
-        field = match.group(1).trim();
-        apt = match.group(2);
-        data.strUnit = getOptGroup(match.group(3));
-        setGPSLoc(getOptGroup(match.group(4)), data);
+        field = match.group(1);
+        setGPSLoc(match.group(2), data);
       }
-      String[] parts = COMMA_PTN.split(field);
-      switch (parts.length) {
-      case 1:
-        parseAddress(parts[0], data);
-        break;
-        
-      case 2:
-        if (CITY_PTN.matcher(parts[1]).matches()) {
+
+      // Intersections have their own protocol
+      if (field.startsWith("INTERSECTION:")) {
+        field = field.substring(13).trim();
+
+        // Intersections can have a city or city/unit combination in round or square brackets
+        // The construct usually appears twice but we will assume the city/unit information is duplicated
+        match = ADDR_CITY_UNIT_PTN.matcher(field);
+        if (match.find()) {
+          StringBuffer sb = new StringBuffer();
+          do {
+            String term = match.group(1);
+            String city, unit;
+            int pt = term.lastIndexOf('/');
+            if (pt >= 0) {
+              city = term.substring(0,pt).trim();
+              unit = term.substring(pt+1).trim();
+            } else if (CITY_PTN.matcher(term).matches()) {
+              city = term;
+              unit = null;
+            } else {
+              city = null;
+              unit = term;
+            }
+
+            if (city != null && data.strCity.isEmpty()) data.strCity = city;
+            if (unit != null && data.strUnit.isEmpty()) data.strUnit = unit;
+
+            match.appendReplacement(sb, match.hitEnd() ? "" : " ");
+          } while (match.find());
+          match.appendTail(sb);
+          parseAddress(sb.toString(), data);
+        }
+      }
+
+      // Regular non-intersection processing
+      else {
+        match = ADDR_UNIT_PTN.matcher(field);
+        String apt = null;
+        if (match.matches()) {
+          field = match.group(1).trim();
+          apt = match.group(2);
+          data.strUnit = getOptGroup(match.group(3));
+        }
+        String[] parts = COMMA_PTN.split(field);
+        switch (parts.length) {
+        case 1:
           parseAddress(parts[0], data);
-          data.strCity = parts[1];
-        } else {
+          break;
+
+        case 2:
+          if (CITY_PTN.matcher(parts[1]).matches()) {
+            parseAddress(parts[0], data);
+            data.strCity = parts[1];
+          } else {
+            data.strPlace = parts[0];
+            parseAddress(parts[1], data);
+          }
+          break;
+
+        case 3:
           data.strPlace = parts[0];
           parseAddress(parts[1], data);
+          data.strCity = parts[2];
+          break;
+
+        default:
+          abort();
         }
-        break;
-        
-      case 3:
-        data.strPlace = parts[0];
-        parseAddress(parts[1], data);
-        data.strCity = parts[2];
-        break;
-      
-      default:
-        abort();
+
+        if (apt != null) data.strApt = append(data.strApt, "-", apt.trim());
       }
-      
-      if (apt != null) data.strApt = append(data.strApt, "-", apt.trim());
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames() + " UNIT GPS";
     }
   }
-  
+
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) +([-A-Z0-9]+)\\b[ .;]*(.*)");
   private class MyInfoField extends InfoField {
     @Override
@@ -95,7 +140,7 @@ public class DispatchA74Parser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT " + super.getFieldNames();
