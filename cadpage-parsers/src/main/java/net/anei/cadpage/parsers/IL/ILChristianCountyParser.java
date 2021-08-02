@@ -2,104 +2,20 @@ package net.anei.cadpage.parsers.IL;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser.Result;
-import net.anei.cadpage.parsers.SmartAddressParser.StartType;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 /**
  * Christian County, IL
  */
-public class ILChristianCountyParser extends DispatchEmergitechParser {
+public class ILChristianCountyParser extends DispatchA19Parser {
 
   public ILChristianCountyParser() {
-    super("ChristianCounty911:", CITY_LIST, "CHRISTIAN COUNTY", "IL", TrailAddrType.PLACE);
+    super(CITY_CODES, "CHRISTIAN COUNTY", "IL");
   }
 
   public String getFilter() {
-    return "panafiredepartment@gmail.com";
+    return "flex@christiancountysheriff.com";
   }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR2")) return new MyAddressField();
-    return super.getField(name);
-  }
-
-  private class MyAddressField extends BaseAddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replace('@',  '/');
-      super.parse(field, data);
-    }
-  }
-
-  @Override
-  protected Result parseAddress(StartType sType, int flags, String address) {
-    if (sType == StartType.START_PLACE) sType = StartType.START_ADDR;
-    return super.parseAddress(sType, flags, address);
-  }
-
-  private static final String[] CITY_LIST = new String[]{
-
-      //Cities
-
-      "ASSUMPTION",
-      "PANA",
-      "TAYLORVILLE",
-
-      //Villages
-
-      "BULPITT",
-      "EDINBURG",
-      "HARVEL",
-      "JEISYVILLE",
-      "KINCAID",
-      "MORRISONVILLE",
-      "MOUNT AUBURN",
-      "MOWEAQUA",
-      "OWANECO",
-      "PALMER",
-      "STONINGTON",
-      "TOVEY",
-
-      //Unincorporated
-      "CLARKSDALE",
-      "DUNKEL",
-      "HEWITTSVILLE",
-      "LANGLEYVILLE",
-      "MILLERSVILLE",
-      "OLD STONINGTON",
-      "RADFORD",
-      "ROSAMOND",
-      "SHARPSBURG",
-      "WILLEY STATION",
-
-      //Townships
-      "ASSUMPTION",
-      "BEAR CREEK",
-      "BUCKHART",
-      "GREENWOOD",
-      "JOHNSON",
-      "KING",
-      "LOCUST",
-      "MAY",
-      "MOSQUITO",
-      "MOUNT AUBURN",
-      "PANA TOWNSHIP",
-      "PRAIRIETON",
-      "RICKS",
-      "ROSAMOND",
-      "SOUTH FORK",
-      "STONINGTON",
-      "TAYLORVILLE",
-
-      // Montgomery County
-      "NOKOMIS",
-
-      // Shelby County
-      "SHELBYVILLE"
-  };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "ASU", "ASSUMPTION",
@@ -116,6 +32,7 @@ public class ILChristianCountyParser extends DispatchEmergitechParser {
       "HEW", "HEWITTVILLE",
       "JEI", "JEISEYVILLE",
       "KIN", "KINCAID",
+      "LAN", "LANGELYVILLE",
       "MAC", "MACON",
       "MID", "MIDDLESWORTH",
       "MOD", "MODE",
@@ -130,6 +47,7 @@ public class ILChristianCountyParser extends DispatchEmergitechParser {
       "PAN", "PANA",
       "PAW", "PAWNEE",
       "ROC", "ROCHESTER",
+      "ROT", "ROCHESTER",
       "ROS", "ROSAMOND",
       "SHE", "SHELBYVILLE",
       "SIG", "SIGEL",
