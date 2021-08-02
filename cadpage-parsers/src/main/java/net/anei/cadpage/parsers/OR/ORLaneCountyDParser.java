@@ -16,7 +16,11 @@ public class ORLaneCountyDParser extends DispatchA85Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "233", "FLORENCE",
+      "DEA", "DEADWOOD",
       "FLO", "FLORENCE",
+      "MAP", "MAPLETON",
+      "PO0", "FLORENCE",
       "WES", "WESTLAKE"
   });
 }
