@@ -265,6 +265,7 @@ public class ParserList {
               ,"COLarimerCounty"                ,"Larimer County, CO"
               ,"COMemorialStar"                 ,"Memorial Star, CO"
               ,"COMesaCounty"                   ,"Mesa County, CO"
+              ,"COMineralCounty"                ,"Mineral County, CO"
               ,"COMoffatCounty"                 ,"Moffat County, CO"
               ,"COMontezumaCounty"              ,"Montezuma County, CO"
               ,"COMontroseCounty"               ,"Montrose County, CO"

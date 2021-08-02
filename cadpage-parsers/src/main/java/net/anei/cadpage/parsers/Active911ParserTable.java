@@ -280,6 +280,7 @@ public class Active911ParserTable {
       "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",
       "US/CO/ManassaFD",                  "COConejosCounty",
       "US/CO/Metcom911",                  "COArapahoeCounty",
+      "US/CO/MineralCounty",              "COMineralCounty",
       "US/CO/MoffatCounty",               "COMoffatCounty",
       "US/CO/MontezumaCounty",            "COMontezumaCounty",
       "US/CO/MorganCounty",               "COMorganCounty",
