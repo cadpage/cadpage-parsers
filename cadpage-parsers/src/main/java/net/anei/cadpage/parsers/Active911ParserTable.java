@@ -2069,6 +2069,7 @@ public class Active911ParserTable {
       "US/VT/ValcourNotification",        "VTLamoilleCounty",
       "US/VT/WindhamCounty",              "VTWindhamCounty",
       "US/VT/WindsorCounty",              "VTWindsorCounty",
+      "US/WA/AnacortesFD",                "WASkagitCounty",
       "US/WA/BentonCounty",               "WABentonCounty",
       "US/WA/CityofBuckleyFD",            "WAPierceCountyE",
       "US/WA/CityofFife",                 "WAPierceCountyC",

@@ -1749,6 +1749,7 @@ public class ParserList {
               ,"WAOkanoganCounty"               ,"Okanogan County, WA"
               ,"WAPendOreilleCounty"            ,"Pend Oreille County, WA"
               ,"WAPierceCounty"                 ,"Pierce County, WA"
+              ,"WASkagitCounty"                 ,"Skagit County, WA"
               ,"WASkamaniaCounty"               ,"Skamania County, WA"
               ,"WASnohomishCounty"              ,"Snohomish County, WA"
               ,"WASpokaneCounty"                ,"Spokane County, WA"
