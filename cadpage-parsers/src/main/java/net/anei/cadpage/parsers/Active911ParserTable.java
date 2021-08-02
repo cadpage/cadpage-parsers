@@ -1683,6 +1683,7 @@ public class Active911ParserTable {
       "US/PA/Myerstown",                  "PALebanonCountyB",
       "US/PA/NewHollandAmb",              "PALancasterCounty",
       "US/PA/NHTPD",                      "PAWestmorelandCountyB",
+      "US/PA/NorcoFireCo",                "PAChesterCountyO",
       "US/PA/NorthamptonCounty",          "PANorthamptonCounty",
       "US/PA/NorthumberlandCounty",       "PANorthumberlandCounty",
       "US/PA/NorthumberlandFireRelief",   "PANorthumberlandCountyB",
