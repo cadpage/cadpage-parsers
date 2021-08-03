@@ -75,13 +75,14 @@ public class DispatchA74Parser extends FieldProgramParser {
             }
 
             if (city != null && data.strCity.isEmpty()) data.strCity = city;
-            if (unit != null && data.strUnit.isEmpty()) data.strUnit = unit;
+            if (unit != null && !data.strUnit.equals(unit)) data.strUnit = append(data.strUnit, ",", unit);
 
             match.appendReplacement(sb, match.hitEnd() ? "" : " ");
           } while (match.find());
           match.appendTail(sb);
-          parseAddress(sb.toString(), data);
+          field = sb.toString();
         }
+        parseAddress(field, data);
       }
 
       // Regular non-intersection processing
