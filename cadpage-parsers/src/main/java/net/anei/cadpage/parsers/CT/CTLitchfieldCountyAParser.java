@@ -16,8 +16,11 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
 
   public CTLitchfieldCountyAParser() {
     super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT",
-          "ADDR ADDR_EXT? ( SELECT/1 PLACE ( EMPTY PLACE | CITY PLACE | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ( JUNK | JUNK1 SKIP+? JUNK2! | ( EMPTY ID ID/L | ID? GPS1 GPS2 ID/L ) X1 APT1 ) " +
-                         "| CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
+          "ADDR ADDR_EXT? ( SELECT/1 ( APT3 CALL! CALL/CS+? CODE LOC ID ID/L X1 ( APT_GPS1 | APT3 GPS1L ) GPS2 TIME! " +
+                                    "| PLACE ( EMPTY PLACE | CITY PLACE | PRI EMPTY | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ( JUNK | JUNK_ST SKIP+? JUNK_END! | APT3 | COVID_ALERT | EMPTY? ( GPS1 GPS2 ID? | ID ( ID/L | GPS1 GPS2 ID/L ) ) X1 ( APT_GPS1 GPS2 | APT3 ) ) " +
+                                    ") " +
+                         "| SELECT/2 CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
+                         "| APT3 PLACE CALL CALL/CS+? CODE ID ID/L X1 GPS1L GPS2! " +
                          ") END");
     addExtendedDirections();
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -46,13 +49,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       if (!match.find()) return false;
       body = match.group(1).trim();
     }
-    if (!parseMsg(subject, body, data)) return false;
-    int pt = data.strApt.indexOf("**COVID ALERT**");
-    if (pt >= 0) {
-      data.strAlert = "COVID ALERT";
-      data.strApt = append(data.strApt.substring(0,pt).trim(), "-", data.strApt.substring(pt+15).trim());
-    }
-    return true;
+    return parseMsg(subject, body, data);
   }
 
   private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO +(.*?)(?::|--| -)(\\d\\d:\\d\\d)\\b\\**(.*)");
@@ -61,6 +58,8 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   private static final Pattern MASTER3 = Pattern.compile("(.+?)-(?!Dwelling)(.+)-(.*?) *\\*\\*\\* (\\d\\d:\\d\\d)---");
   private static final Pattern MAU_HILL = Pattern.compile("^(.*) MAUWEEHOO H(?:IL)?L (.*)$");
   private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
+  private static final Pattern TRAIL_TIME_PTN = Pattern.compile("(.*?) +:(\\d\\d:\\d\\d)\\**");
+  private static final Pattern TRAIL_CALL_PTN = Pattern.compile("(.*?) *((?:1st |2nd |3rd )?Call in Town)", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -89,6 +88,29 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    else if (!subject.isEmpty() && body.startsWith(subject+',')) {
+
+      setSelectValue("3");
+
+      data.strSource = subject;
+      body = body.substring(subject.length()+1).trim();
+
+      int pt = body.indexOf("If you receive this alert in error");
+      if (pt >= 0) body = body.substring(0,pt).trim();
+
+      match = TRAIL_TIME_PTN.matcher(body);
+      if (match.matches()) {
+        body = match.group(1);
+        data.strTime = match.group(2);
+      }
+      if (parseBody(body, data)) {
+
+        // Intersections duplicate the address in the place field
+        if (data.strAddress.contains("&") && data.strPlace.contains("&")) data.strPlace = "";
+        return true;
+      }
+    }
+
     if (isPositiveId()) {
       setFieldList("CALL INFO");
       data.msgType = MsgType.GEN_ALERT;
@@ -112,8 +134,15 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       if (info != null) data.strSupp = append(data.strSupp, "\n", info);
 
       if (!data.strCode.isEmpty()) {
-        String call = CALL_CODES.getCodeDescription(data.strCode.replace("-",  ""));
-        if (call != null) data.strCall = call;
+        String call = CALL_CODES.getCodeDescription(data.strCode.toUpperCase().replace("-",  ""));
+        if (call != null) {
+          pt = data.strCall.lastIndexOf(" - ");
+          if (pt >= 0) {
+            data.strCall = call + data.strCall.substring(pt);
+          } else {
+            data.strCall = call;
+          }
+        }
       }
       return true;
     }
@@ -123,27 +152,32 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "SRC " + super.getProgram().replace("APT", "APT ALERT") + " INFO";
+    return "SRC " + super.getProgram() + " INFO TIME";
   }
 
-  private static final String CODE_PTN_STR = "\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|";
+  private static final String CODE_PTN_STR = "(?i)\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|";
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("ADDR_EXT")) return new MyAddressExtField();
     if (name.equals("PLACE"))  return new MyPlaceField();
+    if (name.equals("LOC")) return new PlaceField("LOC= *(.*)|", false);
     if (name.equals("CALL_CODE")) return new MyCallCodeField();
     if (name.equals("CODE")) return new CodeField(CODE_PTN_STR, true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
-    if (name.equals("JUNK")) return new SkipField("\\(.*\\)", true);
-    if (name.equals("JUNK1")) return new SkipField("\\(.*", true);
-    if (name.equals("JUNK2")) return new SkipField(".*\\)", true);
+    if (name.equals("JUNK")) return new MyJunkField(true, true);
+    if (name.equals("JUNK_ST")) return new MyJunkField(true, false);
+    if (name.equals("JUNK_END")) return new MyJunkField(false, true);
     if (name.equals("ID")) return new IdField("[A-Z]?\\d{2}-\\d+|", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("GPS1L")) return new MyGPSField(1, true);
+    if (name.equals("APT_GPS1")) return new MyAptGPS1Field();
     if (name.equals("X1")) return new MyCrossField();
-    if (name.equals("APT1")) return new MyApt1Field();
+    if (name.equals("APT3")) return new MyApt3Field();
+    if (name.equals("COVID_ALERT")) return new AlertField("\\**(COVID ALERT)\\**");
+    if (name.equals("PRI")) return new PriorityField("\\d");
     return super.getField(name);
   }
 
@@ -239,10 +273,95 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}|0");
+
+  private static final String GPS_PTN_STR = "[-+]?\\d{2,3}\\.\\d{4,}|0";
+  private static final Pattern GPS_PTN = Pattern.compile(GPS_PTN_STR);
+  private static final Pattern GPS_CALL_PTN = Pattern.compile("(" + GPS_PTN_STR + ")(?: +(.*))?");
   private class MyGPSField extends GPSField {
+
+    private int type;
+    private boolean label;
+
     public MyGPSField(int type) {
-      super(type, GPS_PTN, true);
+      this(type, false);
+    }
+
+    public MyGPSField(int type, boolean label) {
+      super(type);
+      this.type = type;
+      this.label = label;
+    }
+
+    public boolean canFail() {
+      return true;
+    }
+
+    public boolean checkParse(String field, Data data) {
+      if (label) {
+        if (!field.startsWith("GPS=")) return false;
+        field = field.substring(4).trim();
+      }
+      if (type == 2) {
+        Matcher match = GPS_CALL_PTN.matcher(field);
+        if (!match.matches()) return false;
+        field = match.group(1);
+        String call = match.group(2);
+        if (call != null) {
+          if (call.equals("**COVID ALERT**")) {
+            data.strAlert = "COVID ALERT";
+          } else {
+            data.strCall = append(data.strCall, " - ", call);
+          }
+        }
+      } else {
+        if (!GPS_PTN.matcher(field).matches()) return false;
+      }
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return type == 2 ? "GPS ALERT? CALL?" : "GPS";
+    }
+  }
+
+  private static final Pattern APT_GPS1_PTN = Pattern.compile("Apt (.*?) (" + GPS_PTN_STR + ")");
+  private class MyAptGPS1Field extends GPSField {
+    public MyAptGPS1Field() {
+      super(1);
+    }
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = APT_GPS1_PTN.matcher(field);
+      if (!match.matches()) return false;
+      String apt = match.group(1).trim();
+      if (!data.strApt.equals(apt)) {
+        data.strApt = append(data.strApt, "-", apt);
+      }
+      super.parse(match.group(2), data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "APT GPS";
     }
   }
 
@@ -333,23 +452,56 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern APT_CALL_PTN = Pattern.compile("(.*?) *((?:1st |2nd |3rd )?Call in Town)", Pattern.CASE_INSENSITIVE);
-  private class MyApt1Field extends AptField {
+  private class MyApt3Field extends AptField {
     @Override
-    public void parse(String field, Data data) {
-      if (!field.startsWith("Apt")) abort();
-      field = field.substring(3).trim();
-      Matcher match =  APT_CALL_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1);
-        data.strCall = append(data.strCall, " - ", match.group(2));
-      }
-      super.parse(field, data);
+    public boolean canFail() {
+      return true;
     }
 
     @Override
-    public String getFieldNames() {
-      return "APT CALL";
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("Apt")) return false;
+      field = field.substring(3).trim();
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+
+  /**
+   * This class skips over are parenthesis enclosed block of meaningless data.  Because
+   * the information block may include commas, it can be split into multiple fields.
+   */
+  private class MyJunkField extends SkipField {
+
+    boolean start, end;
+
+    public MyJunkField(boolean start, boolean end) {
+      this.start = start;
+      this.end = end;
+    }
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    public boolean checkParse(String field, Data data) {
+      if (start && !field.startsWith("(")) return false;
+      if (end && !field.endsWith(")")) return false;
+      int parenCnt = 0;
+      for (char chr : field.toCharArray()) {
+        if (chr == '(') parenCnt++;
+        else if (chr == ')') parenCnt--;
+      }
+      if (start && end) return parenCnt == 0;
+      if (start) return parenCnt > 0;
+      if (end) return parenCnt < 0;
+      return false;
     }
   }
 
