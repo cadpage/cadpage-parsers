@@ -13,19 +13,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class MDSaintMarysCountyParser extends SmartAddressParser {
-  
+
   public MDSaintMarysCountyParser() {
     super("SAINT MARYS COUNTY", "MD");
     setFieldList("TIME CALL ADDR APT X PLACE CITY UNIT INFO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupProtectedNames("BARNES AND YEH");
   }
-  
+
   @Override
   public String getFilter() {
     return "mplus@co.saint-marys.md.us,mplus@STMARYSMD.COM,777,888";
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("\\b\\d\\d:\\d\\d:\\d\\d\\*");
   private static final Pattern PLACE = Pattern.compile("\\*\\*([^*]+)\\*\\*");
   private static final Pattern INFO_BRK_PTN = Pattern.compile(" +(?=\\d{1,2}\\. )");
@@ -35,41 +35,41 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
     body = body.substring(match.start()).trim().replace("\n", "");
-    if (body.endsWith(" stop")) body = body.substring(0,body.length()-5).trim();
-    
-    // Special case, field delimited by double starts is a place name
+    body = stripFieldEnd(body, " stop");
+
+    // Special case, field delimited by double stars is a place name
     // that should be removed from the message string
     match = PLACE.matcher(body);
     if (match.find()) {
-      data.strPlace = body.substring(match.start(1), match.end(1));
+      data.strPlace = match.group(1).trim();
       body = body.substring(0, match.start()+1) + body.substring(match.end());
     }
-    
+
     String[] flds = body.split("\\*+");
     if (flds.length < 4) return false;
-    
+
     Result lastResult = null;
     String lastFld = null;
     boolean mutualAid = true;
     int ndx = 0;
     for (String fld : flds) {
       fld = fld.trim();
-      
+
       switch (ndx++) {
-      
+
       case 0:
         data.strTime = fld;
         break;
-      
+
       case 1:
         // Call description
         data.strCall = fld;
         mutualAid = fld.startsWith("Mutual Aid");
         break;
-        
+
       case 2:
         // Address line
-        
+
         // If line ends with intersection, it is positively the
         // address field.  Any previously found field goes into the place
         // field, and we process the next intersecting address field.
@@ -79,14 +79,14 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
           data.strApt = append(data.strApt, "-", getLeft());
           break;
         }
-        
+
         // If mutual aid call, this is the only address
         // don't bother looking for a place field
         if (mutualAid) {
           parseAddress(fld, data);
           break;
         }
-        
+
         // Otherwise parse the address.  We always parse the first two
         // fields to see which one has the best address
         Result result = parseAddress(StartType.START_ADDR, fld);
@@ -96,7 +96,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
           ndx--;
           break;
         }
-        
+
         // If this field looks better than the previous one
         // treat the prev field as a place and and parse this an address;
         if (lastResult.getStatus() < result.getStatus()) {
@@ -105,14 +105,14 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
           data.strApt = append(data.strApt, "-", result.getLeft());
           break;
         }
-        
+
         // If the previous field looks like the better than this one
         // parse the previous address and drop through to treat this
         // one as the first cross street
         lastResult.getData(data);
         data.strApt = append(data.strApt, "-", lastResult.getLeft());
         ndx++;
-        
+
       case 3:
         // Cross streets * City
 
@@ -129,24 +129,24 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
           }
           break;
         }
-        
+
         // If identified unit field, drop through to next field
         if (isUnitField(fld)) {
           ndx++;
         }
-        
+
         // Otherwise accumulate cross street and repeat this field
         else {
           data.strCross = append(data.strCross, " / ", fld);
           ndx--;
           break;
         }
-        
+
       case 4:
         // Units
         data.strUnit = fld;
         break;
-        
+
       case 5:
         // Description
         if (fld.startsWith("1. ")) {
@@ -157,10 +157,10 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
         break;
       }
     }
-    
+
     return true;
   }
-  
+
   /*
    * Determine if field is city or unit field
    */
@@ -171,11 +171,11 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     }
     return true;
   }
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address, String apt) {
     if (address.equals("46860 HILTON DR") && apt.length() > 2) {
-      address = address + " BLDG " + apt.substring(0, apt.length()-2); 
+      address = address + " BLDG " + apt.substring(0, apt.length()-2);
     }
     return address;
   }
@@ -283,7 +283,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "45521 WEST MEATH WAY",                 "+38.287701,-76.502262",
       "45522 WEST MEATH WAY",                 "+38.288337,-76.501659"
   });
-  
+
   private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{
       "CALIFORNIA",
       "CEDAR COVE",
@@ -340,13 +340,13 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "TOWN CREEK",
       "VALLEY LEE",
       "WILDEWOOD",
-      
+
       "CALVERT COUNTY"
   }));
-  
+
   private static final Properties CITY_CHANGES = buildCodeTable(new String[]{
       "CHAR HALL", "CHARLOTTE HALL",
-      
+
       "BAREFOOT ACRES", "CALIFORNIA",
       "ESPERANZA FARMS","CALIFORNIA",
       "FIRST COLONY",   "CALIFORNIA",
@@ -361,7 +361,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "SOUTH HAMPTON","LEXINGTON PARK",
       "SPRING RIDGE", "LEXINGTON PARK",
       "ST JAMES",     "LEXINGTON PARK",
-      
+
       "MEDLEYS NECK", "LEONARDTOWN"
   });
 }
