@@ -14,7 +14,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
 
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
-           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? SRC | PLACE AT CITY? XINFO+? SRC | ADDR/Z X XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
+           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? ( GPS1 GPS2 SRC | SRC ) | PLACE AT CITY? XINFO+? SRC | ADDR/Z X XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
     setupCities(EXTRA_CITY_LIST);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
     setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
@@ -23,6 +23,11 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern ARCH_ST_EXT = Pattern.compile("\\b(ARCH ST) EXT\\b", Pattern.CASE_INSENSITIVE);
@@ -122,8 +127,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("PRI")) return new PriorityField("[A-Z]\\d|\\d[A-Z]", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("GPS1")) return new GPSField(1, "[-+]\\d+\\.\\d+", true);
-    if (name.equals("GPS2")) return new GPSField(2, "[-+]\\d+\\.\\d+", true);
+    if (name.equals("GPS1")) return new GPSField(1, "[-+]?\\d+\\.\\d+", true);
+    if (name.equals("GPS2")) return new GPSField(2, "[-+]?\\d+\\.\\d+", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DUP_ADDR")) return new MyDupAddressField();
     if (name.equals("AT")) return new MyAtField();
