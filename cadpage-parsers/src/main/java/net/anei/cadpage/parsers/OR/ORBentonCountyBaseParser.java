@@ -151,7 +151,9 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       return address;
     }
 
-    if (address.contains("MAIN ST") ) {
+    //  Some common street names in Philomath are duplicated elsewhere :(
+    if (address.contains("MAIN ST") || address.contains("N 7TH ST") ||
+        address.contains("N 8TH ST")) {
       if (!city.equals("PHILOMATH")) return null;
       apt = "";
     }
@@ -892,7 +894,12 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "24505 PENLAND DR",             "44.484959,-123.390387",
       "24604 PENLAND DR",             "44.479962,-123.391941",
 
-      "24634 RICHLAND LANE",          "44.478346,-123.394360"
+      "24634 RICHLAND LANE",          "44.478346,-123.394360",
+
+      "HWY 20 & WAKEFIELD",           "44.622138,-123.721373",
+      "HWY 20 & WAKEFIELD RD",        "44.622138,-123.721373",
+
+      "392 N 7TH ST",                 "44.544062,-123.376707"    // Access via 7th St
 
   });
 
