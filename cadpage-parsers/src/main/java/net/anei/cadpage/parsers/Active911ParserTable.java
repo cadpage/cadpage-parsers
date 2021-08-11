@@ -1857,7 +1857,7 @@ public class Active911ParserTable {
       "US/TX/CityofPortAransas",          "TXPortAransas",
       "US/TX/CityofTerrel",               "TXKaufmanCountyB",
       "US/TX/CityofWilmer",               "TXDallasCountyB",
-      "US/TX/CityofWylie",                "TXCollinCountyA",
+      "US/TX/CityofWylie",                "TXCollinCounty",
       "US/TX/CollinCounty",               "TXCollinCounty",
       "US/TX/CookeCounty",                "TXCookeCountyA",
       "US/TX/CoryellCounty",              "TXCoryellCounty",

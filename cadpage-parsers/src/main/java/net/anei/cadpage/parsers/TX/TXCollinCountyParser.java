@@ -6,8 +6,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Collin County, TX
  */
 public class TXCollinCountyParser extends GroupBestParser {
-  
+
   public TXCollinCountyParser() {
-    super(new TXCollinCountyAParser(), new TXCollinCountyBParser());
+    super(new TXCollinCountyAParser(),
+          new TXCollinCountyBParser(),
+          new TXCollinCountyCParser());
   }
 }

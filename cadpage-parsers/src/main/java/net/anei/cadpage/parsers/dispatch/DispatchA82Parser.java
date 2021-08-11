@@ -11,7 +11,9 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
-          "ID ADDRCITY PLACE X MASH MASH+? EMPTY! UNITS:UNIT! EMPTY! INFO/N+? URL END");
+          "ID ( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? EMPTY? INFO/N+? URL END " +
+             "| CALL! CALL/SDS+? ADDRCITYST X MASH2! UNITS:UNIT! ST_RMK:MAP/C? INFO/N+ " +
+             ") END");
   }
 
   @Override
@@ -21,47 +23,19 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CFS Page")) return false;
+    if (!subject.equals("CFS Page") && !subject.equals("Message from Dispatch")) return false;
     return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{8}", true);
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ID")) return new IdField("(\\d{8})(?: MANUAL PAGE)?", true);
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MASH"))  return new MyMashField();
+    if (name.equals("MASH1"))  return new MyMash1Field();
+    if (name.equals("MASH2")) return new MyMash2Field();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("URL")) return new InfoUrlField("https?:.*");
     return super.getField(name);
-  }
-
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) +(\\d{5})");
-  private static final Pattern ADDR_ST_PTN = Pattern.compile("[A-Z]{2}");
-  private class MyAddressCityField extends AddressCityField {
-    @Override
-    public void parse(String field, Data data) {
-      String zip = null;
-      Matcher match = ADDR_ZIP_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1);
-        zip = match.group(2);
-      }
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      if (ADDR_ST_PTN.matcher(city).matches()) {
-        data.strState = city;
-        city = p.getLastOptional(',');
-      }
-      data.strCity = city;
-      if (city.length() == 0 && zip != null) data.strCity = zip;
-      parseAddress(p.get(), data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " ST";
-    }
   }
 
   private class MyCrossField extends CrossField {
@@ -73,8 +47,8 @@ public class DispatchA82Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MASH_PTN = Pattern.compile("\\[([A-Z]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
-  private class MyMashField extends Field {
+  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
+  private class MyMash1Field extends Field {
     @Override
     public boolean canFail() {
       return true;
@@ -89,13 +63,13 @@ public class DispatchA82Parser extends FieldProgramParser {
 
     @Override
     public void parse(String field, Data data) {
-      Matcher match = MASH_PTN.matcher(field);
+      Matcher match = MASH1_PTN.matcher(field);
       if (!match.matches()) abort();
-      if (data.strSource.length() == 0) data.strSource = match.group(1);
+      data.strSource = merge(data.strSource, match.group(1));
       if (data.strCall.length() == 0) data.strCall = match.group(2).trim();
       if (data.strPriority.length() == 0) data.strPriority = append(getOptGroup(match.group(3)), "/", getOptGroup(match.group(4)));
-      if (data.strBox.length() == 0) data.strBox = match.group(5);
-      if (data.strMap.length() == 0) data.strMap = match.group(6);
+      data.strBox = merge(data.strBox, match.group(5));
+      data.strMap = merge(data.strMap, match.group(6));
     }
 
     @Override
@@ -104,12 +78,43 @@ public class DispatchA82Parser extends FieldProgramParser {
     }
   }
 
-  private Pattern INFO_PFX_PTN = Pattern.compile("Rmk\\d+: \\[\\d\\d?:\\d\\d:\\d\\d\\]: *");
+  private static final Pattern MASH2_SEP_PTN = Pattern.compile("\\] *\\[");
+  private static final Pattern MASH2_PTN = Pattern.compile("(\\S+) DIST: (\\S*) GRID: (\\S*)\\b *");
+  private class MyMash2Field extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (!field.startsWith("[") || !field.endsWith("]")) abort();
+      field = field.substring(1, field.length()-1).trim();
+      field = MASH2_SEP_PTN.matcher(field).replaceAll(" ");
+      while (!field.isEmpty()) {
+        Matcher match = MASH2_PTN.matcher(field);
+        if (!match.lookingAt()) abort();
+        data.strSource = merge(data.strSource, match.group(1));
+        data.strBox = merge(data.strBox, match.group(2));
+        data.strMap = merge(data.strMap, match.group(3));
+        field = field.substring(match.end());
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "SRC BOX MAP";
+    }
+  }
+
+  private static String merge(String base, String field) {
+    if (base.contains(field)) return base;
+    return append(base, ",", field);
+  }
+
+  private Pattern INFO_PFX_PTN = Pattern.compile("Rmk\\d+: \\[\\d\\d?:\\d\\d:\\d\\d\\]: *|CFS RMK \\d\\d:\\d\\d *");
+  private Pattern INFO_JUNK_PTN = Pattern.compile("\\{\\S+ +\\d\\d:\\d\\d\\}|<NO CALL REMARKS>|\\[SENT: \\d\\d:\\d\\d:\\d\\d\\]");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = INFO_PFX_PTN.matcher(field);
       if (match.lookingAt()) field = field.substring(match.end());
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
       super.parse(field, data);
     }
   }
