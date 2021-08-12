@@ -59,7 +59,6 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   private static final Pattern MAU_HILL = Pattern.compile("^(.*) MAUWEEHOO H(?:IL)?L (.*)$");
   private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile("(.*?) +:(\\d\\d:\\d\\d)\\**");
-  private static final Pattern TRAIL_CALL_PTN = Pattern.compile("(.*?) *((?:1st |2nd |3rd )?Call in Town)", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
