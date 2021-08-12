@@ -22,7 +22,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,777,9300,4127802418";
+    return "@AlleghenyCounty.us,@ACESCAD.comcastbiz.net,messaging@iamresponding.com,CADAlert@alleghenycounty.us,777,9300,4127802418";
   }
 
   @Override
@@ -49,7 +49,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Undo some IAR edits :(
-    if (subject.equals("Station 125")) body = body.replace('\n', ',');
+    if (subject.equals("Station 125") || subject.equals("WD3-290")) body = body.replace('\n', ',');
 
     // There are a number of different message markers
     do {
