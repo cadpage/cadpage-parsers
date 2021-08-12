@@ -7,7 +7,7 @@ public class DispatchA64Parser extends FieldProgramParser{
 
   public DispatchA64Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL City:CITY Address:ADDRCALL! END");
+          "Call_Type:CALL City:CITY Address:ADDRCALL! Apartment:APT END");
   }
 
   protected boolean parseMsg(String subject, String body, Data data) {
