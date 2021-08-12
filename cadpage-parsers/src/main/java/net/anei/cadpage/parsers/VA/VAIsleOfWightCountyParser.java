@@ -12,24 +12,24 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
-  
+
   public VAIsleOfWightCountyParser() {
-    super("ISLE OF WIGHT COUNTY", "VA",
-          "FYI? ( BOLO BOLO? ADDR? " + 
-               "|  CANCEL ADDR SKIP " + 
+    super(CITY_CODES, "ISLE OF WIGHT COUNTY", "VA",
+          "FYI? ( BOLO BOLO? ADDR? " +
+               "|  CANCEL ADDR SKIP " +
                "| CALL ( ADDR | PLACE ADDR | ADDR ) " +
-               "| ADDR APT? DIST? ( CALL! | X X? CALL! | PLACE X X? CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) ( X X? | ) ) INFO/N+");
+               "| ADDR APT? DIST? ( CITY CALL! | PLACE CITY CALL! | CALL! | X X? CALL! | PLACE X X? CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) ( X X? | ) ) INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     addRoadSuffixTerms("CRES");
   }
-  
+
   @Override
   public String getFilter() {
     return "@isleofwightUS.net";
   }
-  
+
   private static final Pattern DIST_PLACE_PTN = Pattern.compile("(DIST:.*?) - (.*)");
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
@@ -39,7 +39,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
     if (match.matches()) data.strPlace = match.group(2) + " - " + match.group(1);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("BOLO")) return new MyBoloField();
@@ -49,34 +49,34 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static final Pattern BOLO_PTN = Pattern.compile("BOLO|BE ON THE LOOKOUT.*");
   private class MyBoloField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!BOLO_PTN.matcher(field).matches()) return false;
       if (data.strCall.length() == 0) data.strCall = field;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT|#) *(.*)|[A-Z]*[0-9]+[- ]?[A-Z0-9]*|[A-Z]{1,2}|.* FLOOR|.* FLR");
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT|#) *(.*)|[A-Z]*[0-9]+[- ]?[A-Z0-9]*|[A-Z]{1,2}|.* FLOOR|.* FLR|.* UNIT");
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("1050")) return false;
@@ -87,19 +87,20 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
         apt = field;
         if (apt.length() > 5 &&
             !apt.endsWith(" FLOOR") &&
-            !apt.endsWith(" FLR")) return false;
+            !apt.endsWith(" FLR") &&
+            !apt.endsWith(" UNIT")) return false;
       }
       parse(apt, data);
       return true;
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!CALL_SET.contains(field)) return false;
@@ -107,7 +108,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   // Cross street doesn't permit name ending with PLACE on
   // the theory that this is probably a place name
   private class MyCrossField extends CrossField {
@@ -117,13 +118,13 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       return super.checkParse(field, data);
     }
   }
-  
+
   @Override
   public boolean checkCall(String call) {
     if (call.equals("CANCEL") || call.equals("BOLO") || call.startsWith("BE ON THE LOOKOUT")) return true;
     return CALL_SET.contains(call);
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "214 EAST ST",                          "+36.978188,-76.645103",
       "315 EAST ST",                          "+36.979602,-76.646173",
@@ -134,12 +135,14 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
 
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(
       "1050",
+      "1050EN",
       "1050PI",
       "ABDOMINAL PAIN",
       "ABRASIONS BRUISES ETC",
       "ACCIDENT UNKNOWN INJURIES",
       "ACCIDENT WITH INJURIES",
       "ALARM - MEDICAL",
+      "ALARM - ROBBERY",
       "ALLERGIC REACTIONS",
       "ARCING WIRES DOWN POWER LINES",
       "ARMED ROBBERY",
@@ -147,7 +150,9 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "ASSIST BOATER",
       "ATSUIC",
       "BACK PAIN (NON TRAUMATIC)",
+      "BITE",
       "BOLO",
+      "BLEEDING/HEMORRHAGING",
       "BLEEDING OR HEMORRHAGING",
       "BRUSH FIRE",
       "BURNING COMPLAINT",
@@ -156,12 +161,15 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "CARDIAC ARREST",
       "CHEST PAIN",
       "CHILD OR ANIMAL LOCKED IN CAR",
+      "CHOKING",
       "CITIZN",
       "DIABETIC PROBLEMS",
       "DIFFICULTY BREATHING",
       "FALLS AND RELATED INJURIES",
       "FDBACK",
+      "FDOTHR",
       "FIGHT IN PROGRESS",
+      "FIRE",
       "FIRE ALARM",
       "FIRE DEPT COMMUNITY RELATIONS",
       "FIRE MUTUAL AID",
@@ -169,11 +177,15 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "FRACTURES OR BROKEN BONES",
       "HAZARDOUS MATERIALS INCIDENT",
       "HEADAC",
+      "HEAD",
       "HEART",
+      "HEAT AND COLD EXPOSURE",
+      "INDUSTRIAL ACCIDENT",
       "INFO",
       "INGEST POISONS OR TOXINS",
       "LIFT ASSIST",
       "MDSTBY",
+      "MISSING PERSON",
       "MISSING PERSON ADULT-JUVENILE",
       "OBSTETRICS",
       "OVERDOSE",
@@ -183,14 +195,27 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "RESCUE MUTUAL AID",
       "ROBBERY",
       "SEIZURE",
+      "SEX OFFENSES",
       "SHOOTING",
       "SICK / ILL OR RESCUE",
+      "SMELL OF GAS INSIDE/OUTSIDE",
       "SMELL OR ODOR OF SMOKE",
       "STROKE",
       "STRUCTURE FIRE",
       "SUICIDE",
       "SUSPIC",
+      "TRANSFORMER FIRE OR POWER LINE",
       "UNCONSCIOUS OR FAINTING",
-      "WIND"
+      "WELFAR"
   ));
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "CARR",  "CARROLLTON",
+      "CARV",  "CARRSVILLE",
+      "FRAN",  "FRANKLIN",
+      "SMIT",  "SMITHFIELD",
+      "WIND",  "WINDSOR",
+      "ZUNI",  "ZUNI"
+
+  });
 }
