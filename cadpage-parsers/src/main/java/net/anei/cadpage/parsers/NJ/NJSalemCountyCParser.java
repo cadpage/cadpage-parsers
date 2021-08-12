@@ -24,7 +24,7 @@ public class NJSalemCountyCParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "E_Messaging@salemcountynj.gov";
+    return "E_Messaging@salemcountynj.gov,SalemComm@enfwebmail.onmicrosoft.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{2,3}-\\d{4}-\\d{5,6}");
