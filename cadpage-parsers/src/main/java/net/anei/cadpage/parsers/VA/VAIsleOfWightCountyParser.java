@@ -213,9 +213,12 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "CARR",  "CARROLLTON",
       "CARV",  "CARRSVILLE",
       "FRAN",  "FRANKLIN",
+      "FRNK",  "FRANKLIN",
+      "IVOR",  "IVOR",
       "SMIT",  "SMITHFIELD",
+      "SUF",   "SUFFOLK",
+      "SURR",  "SURRY",
       "WIND",  "WINDSOR",
       "ZUNI",  "ZUNI"
-
   });
 }
