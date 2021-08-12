@@ -2106,6 +2106,8 @@ public class Active911ParserTable {
       "US/WA/SouthSound911",              "WAPierceCountyE",
       "US/WA/SpokaneCounty",              "WASpokaneCounty",
       "US/WA/StevensCounty",              "WAStevensCounty",
+      "US/WA/StevensCountyDistrict4",     "WAStevensCounty",
+      "US/WA/StevensCountyDistrict8",     "WAStevensCounty",
       "US/WA/StevensCountyNoNotes",       "WAStevensCounty",
       "US/WA/ThurstonCounty",             "WAThurstonCounty",
       "US/WA/ThurstonCountyMedicOne",     "WAThurstonCounty",
