@@ -1,24 +1,20 @@
 package net.anei.cadpage.parsers.MD;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 
-public class MDSaintMarysCountyParser extends SmartAddressParser {
+public class MDSaintMarysCountyParser extends FieldProgramParser {
 
   public MDSaintMarysCountyParser() {
-    super("SAINT MARYS COUNTY", "MD");
-    setFieldList("TIME CALL ADDR APT X PLACE CITY UNIT INFO");
+    super(CITY_LIST, "SAINT MARYS COUNTY", "MD",
+          "TIME CALL ( ADDR/Z EMPTY ( EMPTY | CITY X ) UNIT PLACE! | PLACE/Z ADDR/Z X/Z X/Z CITY! UNIT? | PLACE? ADDR ( CITY! UNIT? | UNIT | X/Z CITY! UNIT? | X/Z X/Z CITY! UNIT? | X/Z UNIT! | X/Z X/Z UNIT! | ( X X? | ) ) ) EMPTY? INFO+? EMPTY END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
-    setupProtectedNames("BARNES AND YEH");
+    setupProtectedNames("BARNES AND YEH", "LAKE AND BRETON VIEW DR");
   }
 
   @Override
@@ -26,150 +22,92 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
     return "mplus@co.saint-marys.md.us,mplus@STMARYSMD.COM,777,888";
   }
 
-  private static final Pattern MARKER = Pattern.compile("\\b\\d\\d:\\d\\d:\\d\\d\\*");
-  private static final Pattern PLACE = Pattern.compile("\\*\\*([^*]+)\\*\\*");
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +(?=\\d{1,2}\\. )");
-
   @Override
   protected boolean parseMsg(String body, Data data) {
-    Matcher match = MARKER.matcher(body);
-    if (!match.find()) return false;
-    body = body.substring(match.start()).trim().replace("\n", "");
-    body = stripFieldEnd(body, " stop");
-
-    // Special case, field delimited by double stars is a place name
-    // that should be removed from the message string
-    match = PLACE.matcher(body);
-    if (match.find()) {
-      data.strPlace = match.group(1).trim();
-      body = body.substring(0, match.start()+1) + body.substring(match.end());
-    }
-
-    String[] flds = body.split("\\*+");
-    if (flds.length < 4) return false;
-
-    Result lastResult = null;
-    String lastFld = null;
-    boolean mutualAid = true;
-    int ndx = 0;
-    for (String fld : flds) {
-      fld = fld.trim();
-
-      switch (ndx++) {
-
-      case 0:
-        data.strTime = fld;
-        break;
-
-      case 1:
-        // Call description
-        data.strCall = fld;
-        mutualAid = fld.startsWith("Mutual Aid");
-        break;
-
-      case 2:
-        // Address line
-
-        // If line ends with intersection, it is positively the
-        // address field.  Any previously found field goes into the place
-        // field, and we process the next intersecting address field.
-        if (fld.endsWith(" INTERSECTN")) {
-          if (lastFld != null) data.strPlace = lastFld;
-          parseAddress(StartType.START_ADDR, fld.substring(0, fld.length()-11), data);
-          data.strApt = append(data.strApt, "-", getLeft());
-          break;
-        }
-
-        // If mutual aid call, this is the only address
-        // don't bother looking for a place field
-        if (mutualAid) {
-          parseAddress(fld, data);
-          break;
-        }
-
-        // Otherwise parse the address.  We always parse the first two
-        // fields to see which one has the best address
-        Result result = parseAddress(StartType.START_ADDR, fld);
-        if (lastResult == null) {
-          lastFld = fld;
-          lastResult = result;
-          ndx--;
-          break;
-        }
-
-        // If this field looks better than the previous one
-        // treat the prev field as a place and and parse this an address;
-        if (lastResult.getStatus() < result.getStatus()) {
-          data.strPlace = lastFld;
-          result.getData(data);
-          data.strApt = append(data.strApt, "-", result.getLeft());
-          break;
-        }
-
-        // If the previous field looks like the better than this one
-        // parse the previous address and drop through to treat this
-        // one as the first cross street
-        lastResult.getData(data);
-        data.strApt = append(data.strApt, "-", lastResult.getLeft());
-        ndx++;
-
-      case 3:
-        // Cross streets * City
-
-        // If identified city, process city field and progress to next UNIT field
-        fld = fld.toUpperCase();
-        if (CITY_LIST.contains(fld)) {
-          data.strCity = fld;
-          String newCity = CITY_CHANGES.getProperty(fld);
-          if (newCity != null) {
-            if (!newCity.equals("CHAR HALL") && data.strPlace.length() == 0) {
-              data.strPlace = data.strCity;
-            }
-            data.strCity = newCity;
-          }
-          break;
-        }
-
-        // If identified unit field, drop through to next field
-        if (isUnitField(fld)) {
-          ndx++;
-        }
-
-        // Otherwise accumulate cross street and repeat this field
-        else {
-          data.strCross = append(data.strCross, " / ", fld);
-          ndx--;
-          break;
-        }
-
-      case 4:
-        // Units
-        data.strUnit = fld;
-        break;
-
-      case 5:
-        // Description
-        if (fld.startsWith("1. ")) {
-          fld = INFO_BRK_PTN.matcher(fld).replaceAll("\n");
-        }
-        data.strSupp = append(data.strSupp, "\n", fld);
-        ndx--;
-        break;
-      }
-    }
-
-    return true;
+    return parseFields(body.split("\\*", -1), data);
   }
 
-  /*
-   * Determine if field is city or unit field
-   */
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|ALS");
-  private boolean isUnitField(String field) {
-    for (String unit : field.split(" +")) {
-      if (!UNIT_PTN.matcher(unit).matches()) return false;
+  @Override
+  public Field getField(String name) {
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|ALS|DNR|ECC|TFER|USCG|WEA|WXWARN|WXWAT)\\b ?)+", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private static final Pattern ADDR_APT_PTN = Pattern.compile(".* (?:APT|RM|ROOM|UNIT) *\\S+");
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public boolean canFail() {
+      return true;
     }
-    return true;
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+
+      if (!isPlaceField(field, getRelativeField(+1))) return false;
+      super.parse(field, data);
+      return true;
+    }
+
+    private boolean isPlaceField(String field1, String field2) {
+      // Place field is optional, and if present is always followed by the address field.
+      // What makes things complicated is that the place field can sometimes be a street
+      // name, and the address field will probably be followed by a cross street.
+
+      // If this field ends with APTS, assume it is a place
+      if (field1.endsWith(" APTS")) return true;
+
+      // They frequently use an apartment convention that the dumb address parser recognizes
+      // but the smart address parser does not.  If we find it in either field, make that
+      // the address
+      if (ADDR_APT_PTN.matcher(field1).matches()) return false;
+      if (ADDR_APT_PTN.matcher(field2).matches()) return true;
+
+      // If the current field is a full address or intersection, it is not a place field
+      int status1 = checkAddress(field1);
+      if (status1 >= STATUS_INTERSECTION) return false;
+
+      // If the next field is a full address or intersection, this must be a place field
+      int status2 = checkAddress(field2);
+      if (status2 >= STATUS_INTERSECTION) return true;
+
+      // OK, now things get dicey.  If second field is a street name, assume the first is
+      // a malformed address (ie not place)
+      if (status2 == STATUS_STREET_NAME) return false;
+
+      // Out of ideas :( Just pick the best field to be the address.  If this
+      // field isn't it, it must be the place field
+      return status2 > status1;
+    }
+  }
+
+  private static final Pattern CO_UNIT_PTN = Pattern.compile("CO\\d+");
+  private class MyCrossField extends CrossField {
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+
+      // They have some unit names that get confused with county roads, so
+      // reject them out of hand
+      if (CO_UNIT_PTN.matcher(field).matches()) return false;
+      return super.checkParse(field, data);
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +(?=\\d{1,2}\\. )");
+  private class MyInfoField extends InfoField {
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
+      data.strSupp = append(data.strSupp, "*", field);
+    }
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, CITY_FIX_TABLE);
   }
 
   @Override
@@ -284,7 +222,7 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "45522 WEST MEATH WAY",                 "+38.288337,-76.501659"
   });
 
-  private static Set<String> CITY_LIST = new HashSet<String>(Arrays.asList(new String[]{
+  private static String[] CITY_LIST = new String[]{
       "CALIFORNIA",
       "CEDAR COVE",
       "CEDARCOVE",
@@ -342,9 +280,9 @@ public class MDSaintMarysCountyParser extends SmartAddressParser {
       "WILDEWOOD",
 
       "CALVERT COUNTY"
-  }));
+  };
 
-  private static final Properties CITY_CHANGES = buildCodeTable(new String[]{
+  private static final Properties CITY_FIX_TABLE = buildCodeTable(new String[]{
       "CHAR HALL", "CHARLOTTE HALL",
 
       "BAREFOOT ACRES", "CALIFORNIA",
