@@ -527,6 +527,24 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       super.parse(getRelativeField(0), data);
     }
   }
+  
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(\\d+) *(-\\d+) (.*)");
+
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    Matcher match = ADDR_APT_PTN.matcher(address);
+    if (match.matches()) {
+      String grp1 = match.group(1);
+      String grp2 = match.group(2);
+      String grp3 = match.group(3);
+      if (grp1.equals("1777")) {
+        address = grp1 + ' ' + grp3;
+      } else {
+        address = grp1 + grp2 + ' ' + grp3;
+      }
+    }
+    return address;
+  }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "880-101 S COIT RD",  "33.226272,-96.767895",
@@ -1173,7 +1191,9 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "980-1434 S COIT RD",  "33.22217,-96.771859",
       "980-1435 S COIT RD",  "33.22217,-96.771859",
       "980-1436 S COIT RD",  "33.22217,-96.771859",
-      "980-1437 S COIT RD",  "33.22217,-96.771859"
+      "980-1437 S COIT RD",  "33.22217,-96.771859",
+
+      "1777 TIMBER CREEK RD","33.04238,-97.056006"
 
   });
 
