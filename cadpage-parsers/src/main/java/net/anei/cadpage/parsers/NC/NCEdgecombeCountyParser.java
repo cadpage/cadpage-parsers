@@ -6,9 +6,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NCEdgecombeCountyParser extends GroupBestParser {
 
   public NCEdgecombeCountyParser() {
-    super(new NCEdgecombeCountyAParser(), new NCEdgecombeCountyBParser());
+    super(new NCEdgecombeCountyAParser(),
+          new NCEdgecombeCountyBParser(),
+          new NCEdgecombeCountyCParser());
   }
-  
+
   static final String[] CITY_LIST = new String[]{
     "BATTLEBORO",
     "CONETOE",
@@ -23,7 +25,7 @@ public class NCEdgecombeCountyParser extends GroupBestParser {
     "TARBORO",
     "WHITAKERS",
     "HOUSEVILLE",
-    
+
     "TARBORO TWP",
     "LOWER CONETOE TWP",
     "UPPER CONETOE TWP",
@@ -38,10 +40,10 @@ public class NCEdgecombeCountyParser extends GroupBestParser {
     "ROCKY MOUNT TWP",
     "COKEY TWP",
     "UPPER TOWN CREEK TWP",
-    
+
     // Hallifax County
     "HOBGOOD",
-    
+
     // Nash County
     "NASHVILLE",
 
@@ -72,14 +74,14 @@ public class NCEdgecombeCountyParser extends GroupBestParser {
     "OAK LEVEL TWP",
     "RED OAK TWP",
     "SPRING HOPE TWP",
-    
+
     // Pitt County
     "FOUNTAIN",
     "GREENVILLE",
-    
+
     // Wilson County
     "ELM CITY",
-    
+
     // Wayne County
     "STONY CREEK",
   };

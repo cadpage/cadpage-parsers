@@ -1151,7 +1151,7 @@ public class Active911ParserTable {
       "US/NC/DuplinCounty",               "NCDuplinCounty",
       "US/NC/DurhamCounty",               "NCDurhamCounty",
       "US/NC/EasternFirePhoto",           "NCJohnstonCounty",
-      "US/NC/EdgecombeCounty",            "NCEdgecombeCountyA",
+      "US/NC/EdgecombeCounty",            "NCEdgecombeCountyA,NCEdgecombeCountyC",
       "US/NC/FayettevilleCumberland",     "NCCumberlandCounty",
       "US/NC/ForsythCounty",              "NCForsythCounty",
       "US/NC/FourOaksFD",                 "NCJohnstonCounty",
