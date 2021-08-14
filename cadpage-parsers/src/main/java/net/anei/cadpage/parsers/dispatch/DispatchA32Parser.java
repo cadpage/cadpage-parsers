@@ -12,24 +12,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA32Parser extends FieldProgramParser {
-  
+
   private List<String> addressPlaceFields = new ArrayList<String>();
-  
+
   public DispatchA32Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
           "( GEN_INFO/G DATETIME2 District:MAP? " +
-          "| ADDR CALL! " + 
-          "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! | CALL/SDS CALL/SDS DATETIME2 ) District:MAP? ID? ( SELECT/ADDRTAG PLACE+? Addr:ADDR! INFO+? CITY_ST! | PLACE+? ADDR/Z CITY_ST! ) ID? " + 
-                 "| ( ADDR_PL ADDR_PL ADDR_PL2 CITY! " + 
-                   "| ADDR_PL ADDR_PL2 CITY! " + 
-                   "| ADDR/Z CITY! " + 
-                   "| PLACE ADDR! " + 
-                   "| ADDR! " + 
-                   ") INFO+? ( CITY District:MAP? INFO+? DATETIME | District:MAP INFO+? DATETIME | DATETIME ) " + 
-                 ") " + 
+          "| ADDR CALL! " +
+          "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! | CALL/SDS CALL/SDS DATETIME2 ) District:MAP? ID? ( SELECT/ADDRTAG PLACE+? Addr:ADDR! INFO+? CITY_ST! | PLACE+? ADDR/Z CITY_ST! ) ID? " +
+                 "| ( ADDR_PL ADDR_PL ADDR_PL2 CITY! " +
+                   "| ADDR_PL ADDR_PL2 CITY! " +
+                   "| ADDR/Z CITY! " +
+                   "| PLACE ADDR! " +
+                   "| ADDR! " +
+                   ") INFO+? ( CITY District:MAP? INFO+? DATETIME | District:MAP INFO+? DATETIME | DATETIME ) " +
+                 ") " +
           ") INFO+");
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.endsWith("Page")) return false;
@@ -44,7 +44,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     }
     return parseFields(flds, data);
   }
-  
+
   public Field getField(String name) {
     if (name.equals("GEN_INFO")) return new CallField("GENERAL INFO");
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d");
@@ -58,16 +58,16 @@ public class DispatchA32Parser extends FieldProgramParser {
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATETIME2_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d[AP]M)", Pattern.CASE_INSENSITIVE);
   private static final DateFormat DATETIME2_FMT = new SimpleDateFormat("hh:mmaa");
   private class BaseDateTime2Field extends DateTimeField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATETIME2_PTN.matcher(field);
@@ -76,13 +76,13 @@ public class DispatchA32Parser extends FieldProgramParser {
       setTime(DATETIME2_FMT, match.group(2), data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern PLACE_APT_PTN = Pattern.compile("(?:LOT|APT|RM|ROOM)[ #]*(.*)|\\d{1,4}[A-Z]?", Pattern.CASE_INSENSITIVE);
   private class BasePlaceField extends PlaceField {
     @Override
@@ -94,38 +94,38 @@ public class DispatchA32Parser extends FieldProgramParser {
         data.strApt = apt;
         return;
       }
-      
+
       data.strPlace = append(data.strPlace, " - ", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT PLACE";
     }
   }
-  
+
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "Addr:");
       super.parse(field, data);
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = stripFieldStart(field, "Addr:");
       return super.checkParse(field, data);
     }
   }
-  
+
   private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Za-z ]+), +([A-Z]{2})(?: +(\\d{5}))?");
   private class BaseCityStateField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CITY_ST_PTN.matcher(field);
@@ -149,12 +149,12 @@ public class DispatchA32Parser extends FieldProgramParser {
       return "CITY ST";
     }
   }
-  
+
   private static final Pattern CROSS_PTN = Pattern.compile("(?:X|BETWEEN) +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern PLACE_PTN = Pattern.compile("[A-Z \\.\\+/]+");
   private class BaseAddressPlaceField extends Field {
     private boolean done;
-    
+
     public BaseAddressPlaceField(boolean done) {
       this.done = done;
     }
@@ -163,11 +163,11 @@ public class DispatchA32Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.length() > 0) addressPlaceFields.add(field);
       if (!done) return;
-      
+
       // By now we have collected up to 3 fields, any of which might be the
       // best address field
       if (addressPlaceFields.isEmpty()) abort();
-      
+
       int addrPt = -1;
       int bestStatus = Integer.MIN_VALUE;
       for (int ii = 0; ii<addressPlaceFields.size(); ii++) {
@@ -179,7 +179,7 @@ public class DispatchA32Parser extends FieldProgramParser {
       }
       parseAddress(addressPlaceFields.get(addrPt), data);
       addressPlaceFields.remove(addrPt);
-      
+
       // Make a second pass through the remaining fields
       for (String fld : addressPlaceFields) {
         Matcher match = CROSS_PTN.matcher(fld);
@@ -187,14 +187,14 @@ public class DispatchA32Parser extends FieldProgramParser {
           data.strCross = match.group(1);
           continue;
         }
-        
+
         if (data.strPlace.length() == 0) {
           if (PLACE_PTN.matcher(fld).matches()) {
             data.strPlace = fld;
             continue;
           }
         }
-        
+
         data.strSupp = append(data.strSupp, " / ", fld);
       }
     }
