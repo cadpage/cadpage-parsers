@@ -582,7 +582,7 @@ public class MsgInfo {
 
   // Clean up any street suffix abbreviations that Google isn't happy with
   private static final Pattern CR_PTN = Pattern.compile("\\bCR\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CRNN_PTN = Pattern.compile("\\b(?:CR|COUNTY|(?:CO|CTY|CNTY|COUNTY)(?: *(?:RD|RT|RTE|ROAD|HWY|ROUTE))?)[- ]*(\\d+[A-Z]?|(?<= )[A-Z]|(?<= )([A-Z])\\2)(?: HWY)?\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CRNN_PTN = Pattern.compile("\\b(?:CR|COUNTY|(?:CO|CTY|CNTY|COUNTY)(?: *(?:RD|RT|RTE|ROAD|HIGHWAY|HWY|ROUTE))?)[- ]*(\\d+[A-Z]?|(?<= )[A-Z]|(?<= )([A-Z])\\2)(?: HWY)?\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern AV_PTN = Pattern.compile("\\bAV\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern HW_PTN = Pattern.compile("\\bH[WY]\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern PK_PTN = Pattern.compile("\\b(?:PI|PI?K|PKE)\\b", Pattern.CASE_INSENSITIVE);
