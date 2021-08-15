@@ -1696,6 +1696,7 @@ public class ParserList {
               ,"VAMadisonCounty"                ,"Madison County, VA"
               ,"VAMecklenburgCounty"            ,"Mecklenburg County, VA"
               ,"VAMontgomeryCounty"             ,"Montgomery County, VA"
+              ,"VANelsonCounty"                 ,"Nelson County, VA"
               ,"VANewKentCounty"                ,"New Kent County, VA"
               ,"VANewportNews"                  ,"Newport News, VA"
               ,"VANorthamptonCounty"            ,"Northampton County, VA"
