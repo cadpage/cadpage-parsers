@@ -1489,6 +1489,7 @@ public class ParserList {
               ,"TNKingsport"                    ,"Kingsport, TN"
               ,"TNKnoxCounty"                   ,"Knox County, TN"
               ,"TNLoudonCounty"                 ,"Loudon County, TN"
+              ,"TNMadisonCounty"                ,"Madison County, TN"
               ,"TNMooreCounty"                  ,"Moore County, TN"
               ,"TNMorganCounty"                 ,"Morgan County, TN"
               ,"TNOakRidge"                     ,"Oak Ridge, TN"
