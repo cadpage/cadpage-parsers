@@ -12,7 +12,7 @@ public class NYWestchesterCountyParser extends FieldProgramParser {
 
   public NYWestchesterCountyParser() {
     super("WESTCHESTER COUNTY", "NY",
-          "ADDR Cross:X! Type:CALL! CALL Time_out:TIME Area:MAP lev:PRI Comments:INFO% INFO+");
+          "ADDR Cross:X! Type:CALL! CALL Time_out:TIME Area:MAP lev:PRI Comments:INFO% INFO+? Event_Number:ID END");
   }
 
   @Override
