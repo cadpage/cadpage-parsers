@@ -4,16 +4,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
 
 public class MOHowardCountyParser extends DispatchA29Parser {
-  
+
   public MOHowardCountyParser() {
     super(CITY_LIST, "HOWARD COUNTY", "MO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "notification@howardcountye911.com";
+    return "notification@howardcountye911.com,howardcountye911@icstech.org";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
