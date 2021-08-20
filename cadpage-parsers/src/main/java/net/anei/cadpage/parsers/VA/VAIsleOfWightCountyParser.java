@@ -18,7 +18,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
           "FYI? ( BOLO BOLO? ADDR? " +
                "|  CANCEL ADDR SKIP " +
                "| CALL ( ADDR | PLACE ADDR | ADDR ) " +
-               "| ADDR APT? DIST? ( CITY CALL! | PLACE CITY CALL! | CALL! | X X? CALL! | PLACE X X? CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) ( X X? | ) ) INFO/N+");
+               "| ADDR APT? DIST? ( CITY CALL! | PLACE CITY CALL! | CALL! | X X? CALL! | PLACE X X? CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) ( X X? | ) ) INFO/N+? GPS1 GPS2 END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     addRoadSuffixTerms("CRES");
   }
@@ -26,6 +26,11 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
   @Override
   public String getFilter() {
     return "@isleofwightUS.net";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern DIST_PLACE_PTN = Pattern.compile("(DIST:.*?) - (.*)");
@@ -47,6 +52,8 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
     if (name.equals("DIST")) return new PlaceField("DIST:.*");
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
 
@@ -116,6 +123,14 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
     public boolean checkParse(String field, Data data) {
       if (field.endsWith(" PLACE")) return false;
       return super.checkParse(field, data);
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
   }
 
