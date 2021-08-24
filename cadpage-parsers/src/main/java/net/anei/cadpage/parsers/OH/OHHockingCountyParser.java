@@ -1,153 +1,76 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 /**
  * Hocking County, OH
  */
-public class OHHockingCountyParser extends DispatchEmergitechParser {
+public class OHHockingCountyParser extends FieldProgramParser {
 
   public OHHockingCountyParser() {
-    super(CITY_LIST, "HOCKING COUNTY", "OH", TrailAddrType.INFO);
+    super("HOCKING COUNTY", "OH",
+          "ID CALL ADDRCITYST APT PLACE GPS1 GPS1 UNIT INFO! END");
   }
 
   @Override
   public String getFilter() {
-    return "hockingcounty911@gmail.com,Perry911@perrycountyohio.net";
-  }
-  
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return "no-reply@hocking.us";
   }
 
   @Override
-  protected int getExtraParseAddressFlags() {
-    return FLAG_CROSS_FOLLOWS;
+  protected boolean parseMsg(String body, Data data) {
+    return parseFields(body.split("\\|"), data);
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    body = stripFieldStart(body, "Perry911:");
-    return super.parseMsg(subject, body, data);
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("CFS\\d{7}", true);
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
   }
 
-  @Override
-  public String adjustMapCity(String city) {
-    if (city.equalsIgnoreCase("SOUTH BLOOMING")) city = "SOUTH BLOOMINGVILLE";
-    return city;
+  private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:APT|APARTMENT|CABIN|UNIT|ROOM|RM) *", Pattern.CASE_INSENSITIVE);
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      field = APT_PFX_PTN.matcher(field).replaceFirst("");
+      super.parse(field, data);
+    }
   }
 
-  private static final String[] CITY_LIST = new String[]{
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}|None");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
+    }
+  }
 
-    // Cities
-    "LOGAN",
-    "WEST LOGAN",
+  private static final Pattern UNIT_SEP_PTN = Pattern.compile(" *; *");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = UNIT_SEP_PTN.matcher(field).replaceAll(",");
+      super.parse(field, data);
+    }
+  }
 
-    // Villages
-    "BUCHTEL",
-    "LAURELVILLE",
-    "MURRAY CITY",
-
-    // Townships
-    "BENTON TWP",
-    "FALLS TWP",
-    "GOOD HOPE TWP",
-    "GREEN TWP",
-    "LAUREL TWP",
-    "MARION TWP",
-    "PERRY TWP",
-    "SALT CREEK TWP",
-    "STARR TWP",
-    "WARD TWP",
-    "WASHINGTON TWP",
-
-    // Census-designated places
-    "CARBON HILL",
-    "HAYDENVILLE",
-    "HIDEAWAY HILLS",
-    "ROCKBRIDGE",
-
-    // Unincorporated communities
-    "EWING",
-    "ILESBORO",
-    "SAND RUN",
-    "SOUTH BLOOMING",
-    "SOUTH BLOOMINGVILLE",
-    "UNION FURNACE",
-    "SOUTH PERRY",
-    
-    // Perry County
-    "PERRY COUNTY",
-    
-    // Vilages
-    "CORNING",
-    "CROOKSVILLE",
-    "GLENFORD",
-    "HEMLOCK",
-    "JUNCTION CITY",
-    "NEW LEXINGTON",
-    "NEW STRAITSVILLE",
-    "RENDVILLE",
-    "ROSEVILLE",
-    "SHAWNEE",
-    "SOMERSET",
-    "THORNVILLE",
-
-    // Townships
-    "BEARFIELD TWP",
-    "CLAYTON TWP",
-    "COAL TWP",
-    "HARRISON TWP",
-    "HOPEWELL TWP",
-    "JACKSON TWP",
-    "MADISON TWP",
-    "MONDAY CREEK TWP",
-    "MONROE TWP",
-    "PIKE TWP",
-    "PLEASANT TWP",
-    "READING TWP",
-    "SALT LICK TWP",
-    "THORN TWP",
-
-    // Census-designated places
-    "ROSE FARM",
-    "THORNPORT",
-
-    // Other unincorporated communities
-    "BRISTOL",
-    "BUCKINGHAM",
-    "CHALFANTS",
-    "CHAPEL HILL",
-    "CLARKSVILLE",
-    "CROSSENVILLE",
-    "GLASS ROCK",
-    "MCCUNEVILLE",
-    "MCLUNEY",
-    "MILLERTOWN",
-    "MILLIGAN",
-    "MOUNT PERRY",
-    "MOXAHALA",
-    "NEW READING",
-    "OAKFIELD",
-    "PORTERSVILLE",
-    "REHOBOTH",
-    "SALTILLO",
-    "SEGO",
-    "SULPHUR SPRINGS",
-    "WHIPSTOWN",
-
-    // Ghost towns
-    "DICKSONTON",
-    "SAN TOY",
-
-    
-    // Athens County
-    "ATHENS COUNTY",
-    "NELSONVILLE"
-  };
+  private static final Pattern INFO_SEP_PTN = Pattern.compile("[, ;]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      for (String line : INFO_SEP_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+    }
+  }
 }
-  
