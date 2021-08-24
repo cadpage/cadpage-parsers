@@ -11,7 +11,8 @@ public class PADauphinCountyBParser extends DispatchH05Parser {
 
   public PADauphinCountyBParser(String defCity, String defState) {
     super(defCity, defState,
-          "Report_Date:SKIP! Call_Date:DATETIME! Call_Address:ADDRCITY! ( Latitude:GPS1! Longitude:GPS2! | ) Common_Name:PLACE! Cross_Streets:X! Fire_Call_Type:SKIP! Fire_Box:BOX! EMS_Box:BOX! EMS_Call_Type:SKIP Unit_Incident_Number:ID! Unit_Times:EMPTY! TIMES+? Units_Assigned:UNIT!");
+          "Report_Date:SKIP! Call_Date:DATETIME! Call_Address:ADDRCITY! ( Latitude:GPS1! Longitude:GPS2! | ) Common_Name:PLACE! Cross_Streets:X! Fire_Call_Type:SKIP! Fire_Box:BOX! EMS_Box:BOX! EMS_Call_Type:SKIP Nature_Of_Call:CALL? Unit_Incident_Number:ID! Unit_Times:EMPTY! TIMES+? Units_Assigned:UNIT");
+    setAccumulateUnits(true);
   }
 
   @Override
