@@ -93,6 +93,8 @@ public class SCNewberryCountyParser extends FieldProgramParser {
   private static Pattern ADDR_CROSS = Pattern.compile("Location - *(.*)");
   private static Pattern CROSS = Pattern.compile(" cross ", Pattern.CASE_INSENSITIVE);
   private static Pattern ADDR_SLASH_PTN = Pattern.compile(" */ *");
+  private static Pattern MBLANK_I26_PTN = Pattern.compile(" {2,}(I26)\\b");
+  private static Pattern MBLANK_EW_I26_PTN = Pattern.compile(" {2,}([EW] I26)\\b");
   private static Pattern APT_PTN = Pattern.compile("([A-Z]?\\d+[A-Z]?)|(?:APT|ROOM|RM|LOT) *([^ ]+) *(.*)");
   private class MyAddressField extends AddressField {
     @Override
@@ -105,6 +107,8 @@ public class SCNewberryCountyParser extends FieldProgramParser {
       String[] fields = CROSS.split(field);
       String addr = fields[0].trim();
       addr = ADDR_SLASH_PTN.matcher(addr).replaceAll("/");
+      addr = MBLANK_I26_PTN.matcher(addr).replaceAll(" $1");
+      addr = MBLANK_EW_I26_PTN.matcher(addr).replaceAll(" $1");
       int pt = addr.indexOf("  ");
       if (pt >= 0) {
         String info = addr.substring(pt+2).trim();
