@@ -10,7 +10,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
 
   public PACentreCountyBParser() {
     super("CENTRE COUNTY", "PA",
-          "Box:BOX_CALL! CALL? ADDRCITY! PLACE APT NAME Name:NAME ( Number:ID! | Due:UNIT ) END");
+          "Box:BOX_CALL! CALL? ADDRCITY! PLACE APT NAME Name:NAME ( Due:UNIT | Number:ID ) PLACE APT NAME END");
   }
 
   @Override
@@ -43,7 +43,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("BOX_CALL")) return new MyBoxCallField();
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("APT")) return new AptField("(?:APT|LOT|ROOM|RM|SUITE|UNIT) +(.*)|(.*)", true);
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|ROOM|RM|SUITE|UNIT) *(.*)|(.*)", true);
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
