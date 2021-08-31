@@ -8,9 +8,8 @@ Centre County, PA
 
 
 public class PACentreCountyParser extends GroupBestParser {
-  
+
   public PACentreCountyParser() {
-    super(new PACentreCountyAParser(),
-           new PACentreCountyBParser());
+    super(new PACentreCountyBParser());
   }
 }
