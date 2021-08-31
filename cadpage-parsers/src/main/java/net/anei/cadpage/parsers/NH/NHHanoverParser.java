@@ -14,16 +14,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NHHanoverParser extends FieldProgramParser {
-  
+
   public NHHanoverParser() {
     super(CITY_LIST, "HANOVER","NH",
-          "PREFIX? CALL! ( DATETIME1! District:MAP? PLACE? ADDR/Z! CITYST1! " +
-                "| PLACE? ADDR/Z CITY2! INFO2+? DATETIME2 INFO2+ )");
+          "CALL! CALL/SDS+? DATETIME! District:MAP? PLACE? ADDR/Z! CITYST! ID? ( INFO_TAG INFO/N+ | END )");
   }
-  
+
   @Override
   public String getFilter() {
-    return "DISPATCH@HANOVER.PD,HDISPATCH@HOLLISNH.ORG,DISPATCH@LEBANONNH.GOV,messaging@iamresponding.com.hanoverpaging@hanovernh.org,amherstdispatch@amherstnh.gov,hanoverpaging@hanovernh.org,dispatch@lebnh.net,bedforddispatch@gmail.com,npd03773@gmail.com,charlestowndispatch@gmail.com";
+    return "DISPATCH@HANOVER.PD,HDISPATCH@HOLLISNH.ORG,DISPATCH@LEBANONNH.GOV,messaging@iamresponding.com.hanoverpaging@hanovernh.org,amherstdispatch@amherstnh.gov,hanoverpaging@hanovernh.org,dispatch@lebnh.net,bedforddispatch@gmail.com,npd03773@gmail.com,charlestowndispatch@gmail.com,donotreply@bedfordnh.org";
   }
 
   @Override
@@ -33,32 +32,30 @@ public class NHHanoverParser extends FieldProgramParser {
     if (VT_CITIES.contains(data.strCity)) data.defState = "VT";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField("\\*\\* *(.*)", true);
-    if (name.equals("DATETIME1")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d[AP]M", DATE_TIME_FMT1, true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d[AP]M", DATE_TIME_FMT1, true);
     if (name.equals("ADDR")) return new AddressField("Addr:(.*)", false);
-    if (name.equals("CITYST1")) return new MyCityState1Field();
-    if (name.equals("CITY2")) return new MyCity2Field();
-    if (name.equals("INFO2")) return new MyInfo2Field();
-    if (name.equals("DATETIME2")) return new DateTimeField("\\d{1,2}/\\d{1,2}/\\d{4} \\d\\d:\\d\\d", true);
+    if (name.equals("CITYST")) return new MyCityState1Field();
+    if (name.equals("INFO_TAG")) return new SkipField("\\d\\d/\\d\\d/\\d{4} \\d{4} .*", true);
     return super.getField(name);
   }
   private static final DateFormat DATE_TIME_FMT1 = new SimpleDateFormat("MM/dd/yyyy hh:mmaa");
-  
-  private static final Pattern CITY_ST1_PTN = Pattern.compile("([ A-Za-z]+), *([A-Z]{2})");
+
+  private static final Pattern CITY_ST1_PTN = Pattern.compile("([ A-Za-z]+), *([A-Z]{2})(?: \\d{5})?");
   private class MyCityState1Field extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CITY_ST1_PTN.matcher(field);
@@ -67,67 +64,20 @@ public class NHHanoverParser extends FieldProgramParser {
       data.strState = match.group(2);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY ST";
     }
   }
-  
-  private class MyCity2Field extends CityField {
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
-      
-      // Sometimes the city and info fields are combined into one
-      // field separated by a slash :(
-      String info = null;
-      int pt1 = field.indexOf('/');
-      int pt2 = field.indexOf('.');
-      if (pt1 < 0 || pt2 >= 0 && pt2 < pt1) pt1 = pt2;
-      if (pt1 >= 0) {
-        info = field.substring(pt1+1).trim();
-        field = field.substring(0,pt1).trim();
-      }
-      if (!super.checkParse(field, data)) return false;
-      if (info != null) data.strSupp = append(data.strSupp, " / ", info);
-      return true;
-    }
-    
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "CITY INFO";
-    }
-  }
-  
-  private class MyInfo2Field extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.startsWith("District:")) {
-        data.strMap = field.substring(9).trim();
-      } else {
-        super.parse(field, data);
-      }
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return "MAP INFO";
-    }
-  }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Grafton County
     "ALEXANDRIA",
     "ASHLAND",
@@ -183,7 +133,7 @@ public class NHHanoverParser extends FieldProgramParser {
     "WENTWORTH",
     "WOODSTOCK",
     "NORTH WOODSTOCK",
-    
+
     // Hillsborough COunty
     "AMHERST",
     "ANTRIM",
@@ -220,7 +170,7 @@ public class NHHanoverParser extends FieldProgramParser {
     "WEARE",
     "WILTON",
     "WINDSOR",
-    
+
     // Merrimack County
     "ALLENSTOWN",
     "SUNCOOK",
@@ -260,15 +210,15 @@ public class NHHanoverParser extends FieldProgramParser {
     "WARNER",
     "WEBSTER",
     "WILMOT",
-    
+
     // Orange County (VT)
     "BRADFORD",
-    
+
     // Windsor County (VT)
     "NORWICH"
 
   };
-  
+
   private static final Set<String> VT_CITIES = new HashSet<String>(Arrays.asList(
     "BRADFORD",
     "NORWICH"
