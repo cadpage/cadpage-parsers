@@ -13,11 +13,6 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  */
 public class DispatchA19Parser extends FieldProgramParser {
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
-  private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
-  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|Phone):");
-  private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
-
   private boolean refLatLong = false;
   private double refLat;
   private double refLong;
@@ -36,9 +31,15 @@ public class DispatchA19Parser extends FieldProgramParser {
 
   public DispatchA19Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-          "( Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
+          "( CALL ADDR/Z Call_Narrative%EMPTY/R INFO/N+ CAD_Call_ID_#:ID! END " +
+          "| Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
           "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP! ( Address:ADDR! Zone:MAP! | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
+  private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
+  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|(?<=  )Phone):");
+  private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -51,6 +52,8 @@ public class DispatchA19Parser extends FieldProgramParser {
       if (pt < 0) return false;
       body = body.substring(pt+1).trim();
     }
+
+
 
     times = "";
     body = HASH_DELIM.matcher(body).replaceAll(":");
@@ -163,8 +166,9 @@ public class DispatchA19Parser extends FieldProgramParser {
   }
 
   private static final Pattern DATE_TIME_OPER1_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
-  private static final Pattern DATE_TIME_OPER2_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) [ A-Z]+(?::|From:.*)");
-  private static final Pattern PHONE_GPS_PTN = Pattern.compile("CALLBACK=([-()\\d]+) LAT=([-+]\\d+\\.\\d+) LON=([-+]\\d+\\.\\d+) UNC=\\d+");
+  private static final Pattern DATE_TIME_OPER2_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) [ A-Za-z]+(?::|From:.*)");
+  private static final Pattern PHONE_GPS1_PTN = Pattern.compile("CALLBACK=([-()\\d]+) LAT=([-+]\\d+\\.\\d+) LON=([-+]\\d+\\.\\d+) UNC=\\d+");
+  private static final Pattern PHONE_GPS2_PTN = Pattern.compile("WPH2 data. Phone: (\\S+), UNC: \\d, Lat: ([-+]?\\d+\\.\\d+), Long: ([-+]?\\d+\\.\\d+)");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("ProQA Fire.*|[A-Za-z0-9 ]+:");
   private class BaseInfoField extends InfoField {
     @Override
@@ -183,10 +187,17 @@ public class DispatchA19Parser extends FieldProgramParser {
         return;
       }
 
-      match = PHONE_GPS_PTN.matcher(field);
+      match = PHONE_GPS1_PTN.matcher(field);
       if (match.matches()) {
         data.strPhone = match.group(1);
-        setGPSLoc(match.group(2) + "," + match.group(3), data);
+        if (data.strGPSLoc.isEmpty()) setGPSLoc(match.group(2) + "," + match.group(3), data);
+        return;
+      }
+
+      match = PHONE_GPS2_PTN.matcher(field);
+      if (match.matches()) {
+        data.strPhone = match.group(1);
+        if (data.strGPSLoc.isEmpty()) setGPSLoc(match.group(2) + "," + match.group(3), data);
         return;
       }
 
@@ -197,7 +208,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO TIME DATE GPS";
+      return "INFO TIME DATE PHONE GPS";
     }
   }
 

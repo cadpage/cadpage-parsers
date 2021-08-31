@@ -3991,14 +3991,30 @@ public class FieldProgramParser extends SmartAddressParser {
    * Field which must be empty
    */
   public class EmptyField extends SkipField {
+
+    boolean genAlert = false;
+    boolean runReport = false;
+
     @Override
     public boolean canFail() {
       return true;
     }
 
     @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      if (qual != null) {
+        genAlert = qual.contains("G");
+        runReport = qual.contains("R");
+      }
+    }
+
+    @Override
     public boolean checkParse(String field, Data data) {
-      return field.length() == 0;
+      if (!field.isEmpty()) return false;
+      if (genAlert) data.msgType = MsgType.GEN_ALERT;
+      if (runReport) data.msgType = MsgType.RUN_REPORT;
+      return true;
     }
 
     @Override
