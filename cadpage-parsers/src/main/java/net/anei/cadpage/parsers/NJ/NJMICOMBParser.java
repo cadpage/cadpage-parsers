@@ -151,8 +151,9 @@ public class NJMICOMBParser extends MsgParser {
       if (fp.check(" ")) return false;
       parseAddress(fp.get(30), data);
       if (!fp.check("BLDG:")) return false;
-      data.strApt = append(data.strApt, "-", fp.get(4));
-      if (!fp.check(" APT:")) return false;
+      String apt = fp.getOptional("APT:", 4, 5);
+      if (apt == null) return false;
+      data.strApt = append(data.strApt, "-", apt);
       data.strApt = append(data.strApt, "-", fp.get(10));
       if (!fp.check(" ")) return false;
       fp.setOptional();
