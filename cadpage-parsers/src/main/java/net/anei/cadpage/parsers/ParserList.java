@@ -838,6 +838,7 @@ public class ParserList {
               ,"MNEdenPrairie"                  ,"Eden Prairie, MN"
               ,"MNEdina"                        ,"Edina, MN"
               ,"MNFaribaultCounty"              ,"Faribault County, MN"
+              ,"MNFillmoreCounty"               ,"Fillmore County, MN"
               ,"MNFreebornCounty"               ,"Freeborn County, MN"
               ,"MNGoodhueCounty"                ,"Goodhue County, MN"
               ,"MNGrantCounty"                  ,"Grant County, MN"

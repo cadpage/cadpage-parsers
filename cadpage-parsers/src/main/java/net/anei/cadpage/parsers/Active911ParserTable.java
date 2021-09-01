@@ -932,6 +932,7 @@ public class Active911ParserTable {
       "US/MN/EdenPrairie",                "MNEdenPrairie",
       "US/MN/Edina",                      "MNEdina",
       "US/MN/FaribaultCounty",            "MNFaribaultCounty",
+      "US/MN/FillmoreCounty",             "MNFillmoreCounty",
       "US/MN/FreebornCounty",             "MNFreebornCounty",
       "US/MN/GoodhueCounty",              "MNGoodhueCounty",
       "US/MN/GrantCounty",                "MNGrantCounty",
