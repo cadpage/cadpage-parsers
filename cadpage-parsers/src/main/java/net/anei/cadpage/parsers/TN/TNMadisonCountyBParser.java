@@ -10,9 +10,11 @@ public class TNMadisonCountyBParser extends DispatchOSSIParser {
 
   public TNMadisonCountyBParser() {
     super(CITY_CODES, "MADISON COUNTY", "TN",
-          "FYI? ( CANCEL ADDR CITY! INFO/N+ " +
+          "( UNIT ENROUTE ADDR CITY! INFO/N+ " +
+          "| FYI? ( CANCEL ADDR CITY! INFO/N+ " +
                "| ADDR CALL! X+? INFO/N+? GPS1 GPS2 ( ID | UNIT? PLACE? ID ) " +
-               ") END");
+               ") " +
+          ") END");
   }
 
   @Override
@@ -22,12 +24,16 @@ public class TNMadisonCountyBParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.contains(",Enroute,")) {
+      return parseFields(body.split(","), data);
+    }
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ENROUTE")) return new SkipField("Enroute");
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+|\\d{3})\\b,?)+", true);
