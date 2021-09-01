@@ -29,7 +29,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.equals("Metcom Info:")) return false;
+    if (!subject.equals("Metcom Info:") && !subject.equals("SMFR Dispatch Info:")) return false;
 
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
