@@ -590,6 +590,7 @@ public class Active911ParserTable {
       "US/KS/AndoverButlerCounty",        "KSButlerCountyB",
       "US/KS/AugustaDPS",                 "KSButlerCountyC",
       "US/KS/BartonCounty",               "KSBartonCounty",
+      "US/KS/BonnerSpringsFD",            "KSWyandotteCounty",
       "US/KS/BourbonCounty",              "KSBourbonCounty",
       "US/KS/BrownCounty",                "KSBrownCounty",
       "US/KS/ButlerCounty",               "KSButlerCountyA,KSButlerCountyB",
