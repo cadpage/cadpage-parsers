@@ -897,6 +897,7 @@ public class ParserList {
               ,"MSNeshobaCounty"                ,"Neshoba County, MS"
               ,"MSNewtonCounty"                 ,"Newton County, MS"
               ,"MSOktibbehaCounty"              ,"Oktibbeha County, MS"
+              ,"MSPanolaCounty"                 ,"Panola County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
               ,"MSPontotocCounty"               ,"Pontotoc County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"

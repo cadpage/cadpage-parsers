@@ -1095,6 +1095,7 @@ public class Active911ParserTable {
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",
+      "US/MS/PanolaCounty",               "MSPanolaCounty",
       "US/MS/PearlRiverCounty",           "MSPearlRiverCounty",
       "US/MS/PicayunePolice",             "MSPearlRiverCounty",
       "US/MS/Southaven",                  "MSDeSotoCountyB",
