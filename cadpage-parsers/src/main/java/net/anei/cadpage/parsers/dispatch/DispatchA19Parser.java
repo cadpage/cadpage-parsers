@@ -38,7 +38,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
   private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
-  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|(?<=  )Phone):");
+  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|(?<=\n ?Contact:.{10,70} )Phone):");
   private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
 
   @Override
@@ -58,6 +58,12 @@ public class DispatchA19Parser extends FieldProgramParser {
     times = "";
     body = HASH_DELIM.matcher(body).replaceAll(":");
     body = FIELD_BREAK.matcher(body).replaceAll("\n$1:");
+    body = body.replace(",\nUNC:", ", UNC:");
+    body = body.replace(", UNC:\n", ", UNC: ");
+    body = body.replace(",\nLat:", ", Lat:");
+    body = body.replace(", Lat:\n", ", Lat: ");
+    body = body.replace(",\nLong:", ", Long:");
+    body = body.replace(", Long:\n", ", Long: ");
     if (!parseFields(FIELD_DELIM.split(body), data)) return false;
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     return true;
@@ -165,25 +171,25 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_OPER1_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
-  private static final Pattern DATE_TIME_OPER2_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) [ A-Za-z]+(?::|From:.*)");
+  private static final Pattern TIME_DATE_OPER_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) (\\d\\d/\\d\\d/\\d{4}) - .*");
+  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d)/(\\d\\d)/(\\d\\d) (\\d\\d:\\d\\d:\\d\\d) .+(?::|From:.*)");
   private static final Pattern PHONE_GPS1_PTN = Pattern.compile("CALLBACK=([-()\\d]+) LAT=([-+]\\d+\\.\\d+) LON=([-+]\\d+\\.\\d+) UNC=\\d+");
-  private static final Pattern PHONE_GPS2_PTN = Pattern.compile("WPH2 data. Phone: (\\S+), UNC: \\d, Lat: ([-+]?\\d+\\.\\d+), Long: ([-+]?\\d+\\.\\d+)");
+  private static final Pattern PHONE_GPS2_PTN = Pattern.compile("[A-Za-z0-9]{3,4} data\\. (?:Caller Name:.*?, )?Phone: (?:\\(   \\) +- +|(.+?)), UNC: \\d+, Lat: (\\S+), Long: (\\S+)(?:,.*)?");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("ProQA Fire.*|[A-Za-z0-9 ]+:");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_OPER1_PTN.matcher(field);
+      Matcher match = TIME_DATE_OPER_PTN.matcher(field);
       if (match.matches()) {
         data.strTime = match.group(1);
         data.strDate = match.group(2);
         return;
       }
 
-      match = DATE_TIME_OPER2_PTN.matcher(field);
+      match = DATE_TIME_OPER_PTN.matcher(field);
       if (match.matches()) {
-        data.strDate = match.group(1);
-        data.strTime = match.group(2);
+        data.strDate = match.group(2)+'/'+match.group(1)+'/'+match.group(3);
+        data.strTime = match.group(4);
         return;
       }
 
@@ -196,7 +202,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
       match = PHONE_GPS2_PTN.matcher(field);
       if (match.matches()) {
-        data.strPhone = match.group(1);
+        data.strPhone = getOptGroup(match.group(1));
         if (data.strGPSLoc.isEmpty()) setGPSLoc(match.group(2) + "," + match.group(3), data);
         return;
       }
@@ -208,7 +214,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO TIME DATE PHONE GPS";
+      return "INFO TIME DATE PHONE? GPS";
     }
   }
 
