@@ -78,7 +78,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     }
 
     else if ((match = MASTER3.matcher(body)).matches()) {
-      setFieldList("CALL ADDR X PLACE APT CITY ST PLACE TIME");
+      setFieldList("CALL ADDR X ALERT PLACE APT CITY ST PLACE TIME");
 
       data.strCall = match.group(1).trim();
       parseAddressField(match.group(2).trim(), data);
@@ -188,7 +188,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT PLACE? X? CITY ST";
+      return "ADDR APT ALERT PLACE? X? CITY ST";
     }
   }
 
@@ -364,6 +364,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern STAGE_PTN = Pattern.compile("(\\*+STAGE\\*+) *(.*)");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}|[A-Z]");
 
   private void parseAddressField(String sAddr, Data data) {
@@ -387,6 +388,13 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     if (match.find()) {
       data.strAddress = append(data.strAddress, " ", match.group());
       sPlace = sPlace.substring(match.end()).trim();
+    }
+
+    // Looke for an alert indication
+    match = STAGE_PTN.matcher(sPlace);
+    if (match.matches()) {
+      data.strAlert = match.group(1);
+      sPlace = match.group(2);
     }
 
     // What's left is an optional place name followed by an optional cross
