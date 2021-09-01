@@ -211,6 +211,7 @@ public class Active911ParserTable {
       "US/CA/SacramentoFire",             "CASacramentoCounty",
       "US/CA/SacramentoFireWiz",          "CASacramentoCounty",
       "US/CA/SanBernardinoCounty",        "CASanBernardinoCountyA,CASanBernardinoCountyC",
+      "US/CA/SanBernardinoCountyMedia",   "CASanBernardinoCountyA",
       "US/CA/SanDiegoCounty",             "CASanDiegoCounty",
       "US/CA/SanRamonValleyFD",           "CAContraCostaCountyC",
       "US/CA/SantaClaraCademail",         "CASantaClaraCountyA",
