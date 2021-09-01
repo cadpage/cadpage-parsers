@@ -1837,6 +1837,7 @@ public class Active911ParserTable {
       "US/TX/Burleson",                   "TXJohnsonCountyA,TXBurlesonCounty",
       "US/TX/BurnetCounty",               "TXBurnetCounty",
       "US/TX/Carrollton",                 "TXCarrollton",
+      "US/TX/CarsonCounty",               "TXCarsonCounty",
       "US/TX/CherokeeCounty",             "TXCherokeeCounty",
       "US/TX/CIMA",                       "TXCyCreekCommCenterA",
       "US/TX/CityofBryan",                "TXBrazosCounty",
