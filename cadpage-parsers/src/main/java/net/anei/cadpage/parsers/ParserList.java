@@ -1015,6 +1015,7 @@ public class ParserList {
               ,"NHHollis"                       ,"Hollis, NH"
               ,"NHKeeneMutualAid"               ,"Keene Mutual Aid, NH"
               ,"NHMerrimackCounty"              ,"Merrimack County, NH"
+              ,"NHSullivanCounty"               ,"Sullivan County, NH"
           ),
           new ParserCategory("New Jersey"
               ,"NJAtlanticareEMS"               ,"Atlanticare EMS, NJ"
