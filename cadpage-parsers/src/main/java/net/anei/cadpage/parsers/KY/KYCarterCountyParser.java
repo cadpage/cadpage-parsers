@@ -1,18 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Carter County,KY
- */
-public class KYCarterCountyParser extends DispatchA27Parser {
+
+public class KYCarterCountyParser extends GroupBestParser {
 
   public KYCarterCountyParser() {
-    super("CARTER COUNTY", "KY");
-  }
-
-  @Override
-  public String getFilter() {
-    return "cis@carterco911.com";
+    super(new KYCarterCountyAParser(), new KYCarterCountyBParser());
   }
 }
