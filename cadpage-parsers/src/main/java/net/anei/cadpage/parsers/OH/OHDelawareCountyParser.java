@@ -9,6 +9,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class OHDelawareCountyParser extends GroupBestParser {
 
   public OHDelawareCountyParser() {
-    super(new OHDelawareCountyAParser(), new OHDelawareCountyBParser());
+    super(new OHDelawareCountyAParser(),
+          new OHDelawareCountyBParser(),
+          new OHDelawareCountyCParser(),
+          new OHDelawareCountyDParser());
   }
 }
