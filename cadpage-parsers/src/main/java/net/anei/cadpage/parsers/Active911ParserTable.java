@@ -425,6 +425,7 @@ public class Active911ParserTable {
       "US/GA/WebsterCounty",              "GAWebsterCounty",
       "US/GA/WhiteCounty",                "GAWhiteCounty",
       "US/GA/WhitfieldCounty",            "GAWhitfieldCountyC",
+      "US/IA/AmesFD",                     "IAStoryCounty",
       "US/IA/CerroGordoCounty",           "IACerroGordoCounty",
       "US/IA/CityofBurlington",           "IADesMoinesCounty",
       "US/IA/CityofMaquoketa",            "IAJacksonCounty",

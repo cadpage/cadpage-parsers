@@ -9,7 +9,10 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
 
   public IAStoryCountyParser() {
     super(CITY_CODES, "STORY COUNTY", "IA",
-          "( CANCEL ADDR CITY! | FYI ( ADDR/Z CITY CALL! | CALL ADDR/Z CITY! |  CALL ADDR | ADDR CALL ) ) INFO+");
+          "( CANCEL ADDR CITY! " +
+          "| FYI ( ADDR/Z CITY CALL! | CALL ADDR/Z CITY! |  CALL ADDR | ADDR CALL ) " +
+          "| UNIT CALL PRI ADDR CITY! " +
+          ") INFO+");
   }
 
   @Override
@@ -26,6 +29,12 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
       }
     }
     return super.parseMsg(body, data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("PRI")) return new PriorityField("F\\d", true);
+    return super.getField(name);
   }
 
   @Override
