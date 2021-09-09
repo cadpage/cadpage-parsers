@@ -1786,6 +1786,7 @@ public class Active911ParserTable {
       "US/SC/Summerville",                "SCDorchesterCountyB",
       "US/SC/SumterCounty",               "SCSumterCountyA",
       "US/SC/TaylorsFire",                "SCGreenvilleCountyE",
+      "US/SC/ValleyHillFR",               "NCHendersonCounty",
       "US/SC/WHFD",                       "SCGreenvilleCountyE",
       "US/SC/WHFDGreenville",             "SCGreenvilleCountyE",
       "US/SC/WilliamsburgCounty",         "SCWilliamsburgCounty",
