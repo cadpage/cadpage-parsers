@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +25,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     data.strCall = subject;
     int pt = body.indexOf("\n_____");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    body = body.replace("\nNOTES\n", "\nNotes:\n");
     if (!parseFields(body.split("\n"), data)) return false;
     if (data.strAddress.isEmpty() && data.strSupp.isEmpty()) return false;
     return true;
@@ -84,7 +87,9 @@ public class DispatchA55Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d(?::\\d\\d)?) \\(.*\\)");
+  private static final Pattern DATE_TIME_OPER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}),? +(\\d\\d?:\\d\\d(?::\\d\\d)?(?: [AP]M)?) \\(.*\\)", Pattern.CASE_INSENSITIVE);
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+  private static final DateFormat TIME_SEC_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("(.*)\\b(OPS *\\d+)", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
 
@@ -93,7 +98,13 @@ public class DispatchA55Parser extends FieldProgramParser {
       Matcher match = DATE_TIME_OPER_PTN.matcher(field);
       if (match.matches()) {
         data.strDate = match.group(1);
-        data.strTime = match.group(2);
+        String time = match.group(2).toUpperCase();
+        if (!time.endsWith("M")) {
+          data.strTime = time;
+        } else {
+          DateFormat fmt = time.length() <= 8 ? TIME_FMT : TIME_SEC_FMT;
+          setTime(fmt, time, data);
+        }
         return;
       }
 
