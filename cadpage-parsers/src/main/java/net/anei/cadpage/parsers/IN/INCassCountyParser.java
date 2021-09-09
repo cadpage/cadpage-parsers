@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.IN;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
@@ -19,13 +20,15 @@ public class INCassCountyParser extends DispatchA29Parser {
     return "e911.pagegate@co.cass.in.us";
   }
 
-  private static Pattern DIR_OF_PTN = Pattern.compile("\\b([NSEW])/O\\b");
+  private static final Pattern MARKER = Pattern.compile("\\S+\\s+DISPATCH\\s+");
+  private static final Pattern DIR_OF_PTN = Pattern.compile("\\b([NSEW])/O\\b");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     String s1 = subject;
-    body = stripFieldStart(body, subject);
-    if (body.startsWith("DISPATCH ")) body = "DISPATCH:" + body.substring(9).trim();
+    Matcher match = MARKER.matcher(body);
+    if (!match.lookingAt()) return false;
+    body = "DISPATCH:" + body.substring(match.end());
     body = DIR_OF_PTN.matcher(body).replaceAll("$1O");
     if (!super.parseMsg(body, data)) return false;
     data.strSource = s1;
@@ -46,6 +49,7 @@ public class INCassCountyParser extends DispatchA29Parser {
       "ASSIST ANOTHER AGENCY",
       "ATTEMPT TO LOCATE",
       "DISORDERLY CONDUCT",
+      "DOMESTIC COMPLAINT",
       "FIRE ALARM",
       "FIRE FIELD",
       "FIRE-STRUCTURE",
