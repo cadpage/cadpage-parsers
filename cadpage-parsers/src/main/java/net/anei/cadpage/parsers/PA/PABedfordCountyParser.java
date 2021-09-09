@@ -7,27 +7,43 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class PABedfordCountyParser extends DispatchH05Parser {
-  
+
   public PABedfordCountyParser() {
-    super("BEDFORD COUNTY", "PA", 
-          "BEDFORD_COUNTY%EMPTY MASH1 MASH2 ( GPS1 GPS2 | ) INFO_BLK+? TIMES+? GMAP!");
+    super("BEDFORD COUNTY", "PA",
+          "( SELECT/NEW CALL ADDRCITY NAME X DATETIME ID UNIT! INFO/N+ " +
+          "| SKIP+? BEDFORD_COUNTY MASH1 MASH2 ( GPS1 GPS2 | ) INFO_BLK+? TIMES+? GMAP! )");
     setAccumulateUnits(true);
     setupProtectedNames("W & W");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "CADnoreply@bedfordcountypa.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (subject.equals("911 Dispatch")) {
+      setSelectValue("NEW");
+      return parseFields(body.split(" // "), data);
+    }
+
+    else {
+      setSelectValue("OLD");
+      return super.parseHtmlMsg(subject, body, data);
+    }
+  }
+
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("BEDFORD_COUNTY")) return new SkipField("BEDFORD COUNTY|Bedford County", true);
     if (name.equals("MASH1")) return new MyMash1Field();
     if (name.equals("MASH2")) return new MyMash2Field();
     if (name.equals("GPS1")) return new MyGPSField(1);
@@ -35,7 +51,7 @@ public class PABedfordCountyParser extends DispatchH05Parser {
     if (name.equals("GMAP")) return new SkipField("https://www.google.com/maps.*", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern MASH1_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d) (?:(.*) )?CFS: \\d+ +(.*)");
   private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*?) *(\\(\\d{3}\\) ?\\d{3}-\\d{4})");
   private class MyMash1Field extends Field {
@@ -48,7 +64,7 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       data.strTime = match.group(2);
       String name = getOptGroup(match.group(3));
       data.strCall = match.group(4);
-      
+
       match = NAME_PHONE_PTN.matcher(name);
       if (match.matches()) {
         name = match.group(1);
@@ -62,7 +78,7 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       return "DATE TIME NAME PHONE CALL";
     }
   }
-  
+
   private static final Pattern MASH2_PTN = Pattern.compile("(.*?)(\\[.*\\])(.*)");
   private class MyMash2Field extends AddressCityField {
     @Override
@@ -73,7 +89,7 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       data.strCallId = cleanIdField(match.group(2));
       parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS, match.group(3).trim(), data);
     }
-    
+
     private String cleanIdField(String field) {
       field = field.replace("[", "").replace("]",  "");
       StringBuilder sb = new StringBuilder();
@@ -93,14 +109,14 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       return "ADDR APT CITY ID PLACE X";
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type, GPS_PTN, true);
     }
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "BACK RUN",
       "BARNETTS RUN",

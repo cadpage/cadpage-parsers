@@ -1641,6 +1641,7 @@ public class Active911ParserTable {
       "US/PA/CentreCounty",               "PACentreCounty",
       "US/PA/ChesterCounty",              "PAChesterCountyL,PAChesterCountyN,PAChesterCountyP,PALancasterCounty",
       "US/PA/ChesterCountyIAR",           "PAChesterCountyL",
+      "US/PA/ChestnutRidge",              "PABedfordCounty",
       "US/PA/CityofModerna",              "PAChesterCountyD1",
       "US/PA/ClarionCounty",              "PAClarionCounty",
       "US/PA/ClearfieldCounty",           "PAClearfieldCounty",
