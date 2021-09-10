@@ -1495,7 +1495,7 @@ public class Active911ParserTable {
       "US/OH/LickingCounty",              "OHLickingCounty",
       "US/OH/LittleMuskingum",            "OHWashingtonCountyA",
       "US/OH/LoganCounty",                "OHLoganCounty",
-      "US/OH/LorainCounty",               "OHLorainCountyB",
+      "US/OH/LorainCounty",               "OHLorainCountyB,OHLorainCountyC",
       "US/OH/LSFD",                       "OHLoveland,AiviaAED",
       "US/OH/LucasCounty",                "OHLucasCounty",
       "US/OH/MadisonCounty",              "OHMadisonCounty",

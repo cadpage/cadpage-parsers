@@ -34,6 +34,24 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
+    // Strip off extraneous msg headers
+    if (body.startsWith("X-ASG-Debug-ID:")) {
+      int pt = body.indexOf("\n\n");
+      if (pt < 0) return false;
+      String headers = body.substring(0,pt).trim();
+      body = body.substring(pt).trim();
+
+      pt = headers.indexOf("\nThread-Topic:");
+      if (pt >= 0) {
+        pt += 14;
+        int pt2 = headers.indexOf('\n', pt);
+        if (pt2 < 0) pt2 = headers.length();
+        subject = headers.substring(pt, pt2).trim();
+      }
+
+      body = body.replace("=\n", "");
+    }
+
     // Parse new page format
     if (subject.equals("911 Paging")) {
       int pt = body.indexOf("\n\n____");
