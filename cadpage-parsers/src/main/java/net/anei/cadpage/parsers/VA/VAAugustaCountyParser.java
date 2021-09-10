@@ -11,25 +11,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Augusta County, VA
  */
 public class VAAugustaCountyParser extends DispatchOSSIParser {
-  
+
   private static final Pattern DELIM_PTN = Pattern.compile("(?<!\\b(?:CAD|DIST|FYI|Update)):");
-  
-  
+
+
   public VAAugustaCountyParser() {
     this("AUGUSTA COUNTY", "VA");
   }
-  
+
   public VAAugustaCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
            "FYI? CALL! ( ADDR/SZ! END | PLACE? ADDR/S! MAP? INFO+ )");
     removeWords("MALL");
   }
-  
+
   @Override
   public String getFilter() {
-    return "cad@co.augusta.va.us";
+    return "cad@co.augusta.va.us,777";
   }
-  
+
   @Override
   public String getAliasCode() {
     return "VAAugustaCounty";
@@ -37,15 +37,15 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     // This may bite us someday, but it is a convenient way to identify
     // VAWaynesboroB calls
-    if (subject.length() > 0 && 
+    if (subject.length() > 0 &&
         !subject.equals("Text Message") &&
         !subject.equals("%Text Message%") &&
         !subject.equals("%Augusta 911%")) return false;
     if (body.startsWith("CAD:CANCEL;")) return false;
-    
+
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (body.startsWith("CAD:%")) {
@@ -66,21 +66,21 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // Anything starting with a digit is assumed to be an address
       if (field.length() == 0) return false;
       if (Character.isDigit(field.charAt(0))) {
         parse(field, data);
         return true;
       }
-      
+
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf("- ");
@@ -95,7 +95,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY";
@@ -123,22 +123,22 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   // Info field contains all kinds of sloppy stuff
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:ROOM|RM|APT) *(.*)");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("CNTY-.*|MED-\\d|HRECC?|SEOC|WEOC");
   private static final Pattern INFO_MAP_PTN = Pattern.compile("\\d{2,3}-\\d{2}");
   private class MyInfoField extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // Info field are frequently broken up by slashes :(
       for (String fld : field.split("/")) {
         fld = fld.trim();
-        
+
         if (fld.equals(data.strAddress)) continue;
-        
+
         String tmp = fld.toUpperCase();
         if (tmp.startsWith("PO ") || tmp.startsWith("P O ")) continue;
         Matcher match = INFO_APT_PTN.matcher(fld);
@@ -146,12 +146,12 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           data.strApt = append(data.strApt, "-", match.group(1));
           continue;
         }
-        
+
         if (INFO_MAP_PTN.matcher(fld).matches()) {
           data.strMap = fld;
           continue;
         }
-        
+
         if (data.strChannel.length() == 0 && INFO_CHANNEL_PTN.matcher(fld).matches()) {
           data.strChannel = fld;
           continue;
@@ -164,7 +164,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           data.strCity = city;
           continue;
         }
-        
+
         int addrStat = checkAddress(fld);
         if (addrStat > STATUS_MARGINAL) {
           // If this is better than a naked road, see if
@@ -179,16 +179,16 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           data.strCross = append(data.strCross, " & ", fld);
           continue;
         }
-        
+
         if (data.strPlace.length() == 0) {
           data.strPlace = fld;
           continue;
         }
-        
+
         data.strSupp = append(data.strSupp, " / ", fld);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT MAP PLACE X INFO CH";
@@ -196,11 +196,11 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
   }
 
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "STAUNTON",
       "WAYNESBORO",
-      
+
       // Towns
       "CRAIGSVILLE",
       "GRO",
@@ -233,37 +233,37 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       "SPOTTSWOOD",
       "SWOOPE",
       "WEST AUGUSTA",
-      
+
       // Albemarle County
       "ALBEMARLE",
       "ALBEMARLE COUNTY",
       "AFTON",
-      
+
       // Bath County
       "BATH",
       "BATH COUNTY",
-      
+
       // Highland County
       "HIGH",
       "HIGHLAND",
       "HIGHLAND COUNTY",
-      
+
       // Rockbridge County
       "ROCKBRIDGE",
       "ROCKBRIDGE COUNTY",
       "GOSHEN",
       "RAPHINE",
-      
+
       //  Rockingham County
       "ROCKINGHAM",
       "ROCKINGHAM COUNTY",
       "BRIDGEWATER",
       "MT CRAWFORD"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "GRO",  "GROTTOES",
       "HIGH", "HIGHLAND COUNTY"
   });
-  
+
 }
