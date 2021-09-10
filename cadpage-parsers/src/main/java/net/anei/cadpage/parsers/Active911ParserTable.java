@@ -1254,7 +1254,7 @@ public class Active911ParserTable {
       "US/ND/RichlandCounty",             "NDRichlandCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
       "US/NH/CarrollCounty",              "NHCarrollCounty",
-      "US/NH/Charlestown",                "NHSullivanConty",
+      "US/NH/Charlestown",                "NHSullivanCounty",
       "US/NH/GraftonCounty",              "NHGraftonCountyB",
       "US/NH/Hanover",                    "NHHanover,Cadpage2",
       "US/NH/HollisDispatch",             "NHHollis",

@@ -9,16 +9,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class NJMICOMBParser extends MsgParser {
-  
+
   public NJMICOMBParser() {
     super("", "NJ");
   }
-  
+
   @Override
   public String getFilter() {
     return "miccom@nnjems.org,cadsmtp@nnjems.org";
   }
-  
+
   @Override
   public String getLocName() {
     return "MICCOM (northern NJ), NJ";
@@ -32,38 +32,38 @@ public class NJMICOMBParser extends MsgParser {
       @Override public int splitBreakPad() { return 2; }
     };
   }
-  
+
   private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d|");
   private static final Pattern SPACE_COMMA_PTN = Pattern.compile(" *, *");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     do {
       if (subject.equals("CAD Page")) break;
-      
+
       if (subject.equals("MICCOM CAD")) break;
       if (subject.equals("MICCOM")) break;
-      
+
       if (body.startsWith("/ CAD Page / ")) {
         body = body.substring(13).trim();
         break;
       }
-      
+
       if (body.startsWith("CAD Page / ")) {
         body = body.substring(11).trim();
         break;
       }
-      
+
       if (body.startsWith("MICCOM / ")) {
         body = body.substring(9).trim();
         body = body.replace("MICCOM / ", " ");
         break;
       }
-        
+
       return false;
     } while (false);
-    
+
     // Fix problems with fixed length message split across two messages.
     if (substring(body, 10, 16).equals("RESP:")) {
       if (body.length() <= 160) {
@@ -77,7 +77,7 @@ public class NJMICOMBParser extends MsgParser {
           sb.append(body.substring(pt2));
           body = sb.toString();
         }
-        
+
         else {
           if (body.length() >= 160) {
             char chr1 = body.charAt(159);
@@ -86,7 +86,7 @@ public class NJMICOMBParser extends MsgParser {
               body = body.substring(0,160) + ' ' + body.substring(160);
             }
           }
-          
+
           int pt3 = body.indexOf(" #", 137);
           if (pt3 >= 0) {
             pt3 -= 29;
@@ -103,7 +103,7 @@ public class NJMICOMBParser extends MsgParser {
 
     FParser fp = new FParser(body);
     data.strUnit = fp.get(10);
-    
+
     // New run report format
     if (fp.check("@")) {
       setFieldList("UNIT ID PLACE ID INFO");
@@ -115,7 +115,7 @@ public class NJMICOMBParser extends MsgParser {
       data.strSupp = fp.get();
       return true;
     }
-    
+
     // There are two flavors of run report, once for cancelled calls and one
     // for normal termination calls
     if (fp.checkAhead(32, "#") && fp.checkAhead(43, " Disp")) {
@@ -128,7 +128,7 @@ public class NJMICOMBParser extends MsgParser {
       data.strSupp = fp.get();
       return true;
     }
-    
+
     if (fp.check("CANCEL: #")) {
       setFieldList("UNIT CALL ID CITY ADDR APT INFO");
       data.msgType = MsgType.RUN_REPORT;
@@ -141,7 +141,7 @@ public class NJMICOMBParser extends MsgParser {
       if (data.strSupp.endsWith("Cxl Rsn:")) data.expectMore = true;
       return true;
     }
-    
+
     // Check for new regular dispatch page
     if (fp.check("RESP: ")) {
       setFieldList("UNIT CITY ADDR APT PLACE X CALL ID TIME NAME");
@@ -169,11 +169,12 @@ public class NJMICOMBParser extends MsgParser {
       if (!fp.check(" @")) return false;
       String time = fp.get(5);
       if (!TIME_PTN.matcher(time).matches()) return false;
+      if (fp.atEnd()) data.expectMore = true;
       saveTime(time, data);
       data.strName = SPACE_COMMA_PTN.matcher(fp.get()).replaceAll(", ");
       return true;
     }
-    
+
     // Now check for old regular dispatch page
     if (fp.check("RESPOND:#")) {
       setFieldList("UNIT ID CITY ADDR APT X CALL TIME");
@@ -191,7 +192,7 @@ public class NJMICOMBParser extends MsgParser {
       saveTime(time, data);
       return true;
     }
-    
+
     // Pt transfers have a different format
     if (fp.check("#")) {
       setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
@@ -206,8 +207,8 @@ public class NJMICOMBParser extends MsgParser {
       data.strSupp = fp.get();
       return true;
     }
-    
-    if (substring(body, 10, 11).equals("#") && 
+
+    if (substring(body, 10, 11).equals("#") &&
         substring(body, 112, 120).equals("Patient:")) {
       setFieldList("UNIT ID CALL CITY ADDR APT NAME INFO");
       data.strCallId = substring(body, 11, 21);
@@ -219,24 +220,24 @@ public class NJMICOMBParser extends MsgParser {
       data.strSupp = substring(body, 156);
       return true;
     }
-    
+
     return false;
   }
-  
+
   private static final Pattern CITY_SFX_PTN = Pattern.compile("( +(?:Boro?|City|Villa))?(?: *\\([ A-Z]+\\))?$");
-  
+
   private static String cleanCity(String city) {
     city = CITY_SFX_PTN.matcher(city).replaceFirst("");
     if (city.endsWith(" Tw")) city += 'p';
     if (city.endsWith(" Town")) city += "ship";
     return city;
   }
-  
+
   private static void saveTime(String time, Data data) {
-    
+
     // Save time field.  For interfacility transfers, the is the requested transfer time
     // not the actual dispatch time.
-    
+
     if (time.length() == 0) return;
     if (data.strCall.equals("Trans/Interfacility/Palliative")) {
       data.strCall = data.strCall + " @" + time;
