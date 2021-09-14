@@ -12,17 +12,17 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Bell County, TX
  */
 public class TXBellCountyParser extends FieldProgramParser {
-  
+
   public TXBellCountyParser() {
     super(CITY_CODES, "BELL COUNTY", "TX",
-        "PRI LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
+        "PRI LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
     setupGpsLookupTable(GPS_TABLE);
   }
-  
+
   public String getFilter() {
     return "930010,28863700";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
@@ -32,9 +32,9 @@ public class TXBellCountyParser extends FieldProgramParser {
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Comments:|CALLER NAME:|CLRNUM:|TIME:)");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
@@ -52,7 +52,7 @@ public class TXBellCountyParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CODE", "CODE PRI CALL").replace("GPS", "GPS ADDR");
@@ -96,13 +96,13 @@ public class TXBellCountyParser extends FieldProgramParser {
         data.strApt = append(data.strApt, "-", apt);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private class MyCodeField extends CodeField {
     @Override
     public void parse(String field, Data data) {
@@ -110,19 +110,19 @@ public class TXBellCountyParser extends FieldProgramParser {
       data.strCode = append(data.strCode, "-", field);
     }
   }
-  
+
   private static final Pattern INFO_UNIT_PTN = Pattern.compile("UNIT ([^ ]+) *(.*)");
   private static final Pattern INFO_PHONE_GPS_PTN = Pattern.compile("((?:\\(\\d{3}\\) ?\\d{3}-\\d{4} +)?\\d{10}) ([-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)(?: [-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)?(?: Location Saved by LocateCall - LL\\([-+\\d:\\.,]+?\\))?(?:: EST \\d+)?(?: WPH\\d)? *(.*)");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = INFO_UNIT_PTN.matcher(field);
       if (match.matches()) {
         data.strUnit = match.group(1);
         field = match.group(2);
       }
-      
+
       match = INFO_PHONE_GPS_PTN.matcher(field);
       if (match.matches()) {
         data.strPhone = match.group(1);
@@ -131,13 +131,13 @@ public class TXBellCountyParser extends FieldProgramParser {
       }
       data.strSupp = append(data.strSupp, "\n", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT PHONE GPS INFO";
     }
   }
-  
+
   private class MyTimeField extends TimeField {
     @Override
     public void parse(String field, Data data) {
@@ -145,7 +145,7 @@ public class TXBellCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     if (!address.startsWith("@")) return null;
@@ -153,7 +153,7 @@ public class TXBellCountyParser extends FieldProgramParser {
     if (pt >= 0) address = address.substring(0,pt);
     return address;
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "ADMIN",              "4/ADMIN DUTIES",
       "ADMIN-FD",           "4/ADMIN DUTIES - FD ADMIN DUITES",
@@ -629,7 +629,7 @@ public class TXBellCountyParser extends FieldProgramParser {
       "@314",   "31.272733,-97.265484",
       "@315",   "31.284852,-97.256454"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BART", "BARTLETT",
       "BELL", "BELL COUNTY",
@@ -672,5 +672,5 @@ public class TXBellCountyParser extends FieldProgramParser {
       "TROY", "TROY",
       "WLMN", "WILLIAMSON COUNTY"
   });
-  
+
 }
