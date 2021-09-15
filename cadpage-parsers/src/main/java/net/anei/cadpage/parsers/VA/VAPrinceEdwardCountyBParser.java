@@ -20,7 +20,7 @@ public class VAPrinceEdwardCountyBParser extends MsgParser {
   }
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(FECC\\d{2}-\\d{5}) +");
-  private static final Pattern UNIT_PTN = Pattern.compile(" +\\b((?:(?:[A-Z]+\\d+|MRS|PER)\\b[; ]*)+)\\b +");
+  private static final Pattern UNIT_PTN = Pattern.compile(" *\\b((?:(?:[A-Z]+\\d+|\\d{2}|MRS|PER)\\b[; ]*)+)\\b(?: +|$)");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[; ]+");
   private static final Pattern INFO_DELIM_PTN = Pattern.compile("[; ]+\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
 
@@ -48,11 +48,11 @@ public class VAPrinceEdwardCountyBParser extends MsgParser {
     match = UNIT_PTN.matcher(body);
     if (!match.find()) return false;
     parseAddress(body.substring(0,match.start()), data);
-    data.strUnit = UNIT_DELIM_PTN.matcher(match.group(1)).replaceAll(",");
+    data.strUnit = UNIT_DELIM_PTN.matcher(match.group(1).trim()).replaceAll(",");
     body = body.substring(match.end());
 
     String[] parts = INFO_DELIM_PTN.split(body);
-    data.strCross = parts[0];
+    if (!parts[0].equals("None")) data.strCross = parts[0];
     for (int ndx = 1; ndx < parts.length; ndx++) {
       data.strSupp = append(data.strSupp, "\n", parts[ndx]);
     }
