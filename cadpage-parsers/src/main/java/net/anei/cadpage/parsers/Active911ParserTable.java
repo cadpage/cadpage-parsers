@@ -526,6 +526,7 @@ public class Active911ParserTable {
       "US/IN/AdamsCounty",                "INAdamsCounty",
       "US/IN/AndersonFD",                 "INMadisonCountyC,INMadisonCountyE",
       "US/IN/BartholomewCounty",          "INBartholomewCounty",
+      "US/IN/BlackfordCounty",            "INBlackfordCounty",
       "US/IN/BooneCounty",                "INBooneCountyB",
       "US/IN/Bristol",                    "INElkhartCounty",
       "US/IN/BrownCounty",                "INBrownCounty",
