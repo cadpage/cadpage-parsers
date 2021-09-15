@@ -87,7 +87,16 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       if (!match.matches()) abort();
       super.parse(match.group(1).trim(), data);
       data.strCallId = cleanIdField(match.group(2));
-      parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS, match.group(3).trim(), data);
+
+      String cross = match.group(3).trim();
+      String extra = null;
+      int pt = cross.indexOf(",");
+      if (pt >= 0) {
+        extra = cross.substring(pt+1).trim();
+        cross = cross.substring(0, pt).trim();
+      }
+      parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_ANCHOR_END, cross, data);
+      if (extra != null) data.strCross = append(data.strCross, ", ", extra);
     }
 
     private String cleanIdField(String field) {
@@ -118,36 +127,54 @@ public class PABedfordCountyParser extends DispatchH05Parser {
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
+      "ADAMS RUN",
       "BACK RUN",
       "BARNETTS RUN",
       "BETHEL CHURCH",
       "BLACK BEAR",
       "BLACK OAK",
+      "BLAIRS HILL",
       "BREEZY POINT",
       "BUCK VALLEY",
       "CAMP GROUND",
+      "CIDER MILL",
       "CLEAR RIDGE",
       "COON HOLLOW",
+      "COVE RUN",
       "COVE VIEW",
       "DENEENS GAP",
+      "DIEHL FAMILY",
+      "DUNNINGS CREEK",
+      "EBENEZER CHURCH",
       "FOX SQUIRREL",
       "FRANKLIN MILLS",
       "GEM BRIDGE",
+      "GRANGE HILL",
       "GREAT COVE",
       "GREEN LANE",
       "HEAVENLY ACRES RIDGE",
+      "HICKORY GROVE",
+      "HIDEAWAY ACRES",
+      "HOMINY HILL",
       "HONEY ROCK",
+      "INDIAN GRAVE",
+      "JIM WEST",
+      "LANE METAL",
       "LAUREL RIDGE",
       "LOCUST GROVE",
       "MCKEES GAP",
       "MEADOW MOUNTAIN",
+      "MEDICAL CAMPUS",
       "MILL HILL",
+      "MOUNTAIN VIEW",
       "PATTERSON RUN",
       "PEACH ORCHARD",
       "PIGEON COVE",
       "PLEASANT GROVE",
+      "PLEASANT HOLLOW",
       "PLEASANT RIDGE",
       "POSSUM HOLLOW",
+      "QUAKER VALLEY",
       "QUARRY HILL",
       "SHADED ACRES",
       "SIPES MILL",
@@ -155,6 +182,7 @@ public class PABedfordCountyParser extends DispatchH05Parser {
       "TALL SPRUCE",
       "TIMBER RIDGE",
       "WENDING WAY",
+      "WINDY HILL",
       "WOLF HOLLOW"
   };
 }
