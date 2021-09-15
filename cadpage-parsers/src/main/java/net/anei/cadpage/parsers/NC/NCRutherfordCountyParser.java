@@ -123,7 +123,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       data.msgType = MsgType.RUN_REPORT;
       field = getRelativeField(0);
-      field = TIMES_BRK_PTN.matcher(field).replaceAll("\n");
+      field = TIMES_BRK_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);
     }
   }
