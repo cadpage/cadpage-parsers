@@ -37,6 +37,11 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.startsWith("EVENT:")) {
+      int pt = body.indexOf(": ", 6);
+      if (pt < 0) return false;
+      body = body.substring(pt+2).trim();
+    }
     body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getProperty(data.strCode);
@@ -68,32 +73,37 @@ public class TXBellCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *([^ ]+)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *([^ ]+)(?: APT)?");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = field.replace("CHAPPARAL", "CHAPARRAL");
       if (field.startsWith("@")) {
         data.strAddress = field;
-      } else {
-        while (true) {
-          int pt = field.lastIndexOf(':');
-          if (pt < 0) break;
-          String place = field.substring(pt+1).trim();
-          if (place.startsWith("@")) {
-            place = place.substring(1).trim();
-            data.strPlace = append(place, " - ", data.strPlace);
+        return;
+      }
+      if (field.startsWith("LL(")) {
+        int pt = field.indexOf(")", 3);
+        if (pt < 0) abort();
+        data.strAddress = field.substring(0,pt+1).trim();
+        field = field.substring(pt+1);
+      }
+      for (String part : field.split(":")) {
+        part = part.trim();
+        if (data.strAddress.isEmpty()) {
+          String apt = "";
+          Matcher match = ADDR_APT_PTN.matcher(part);
+          if (match.matches()) {
+            part = match.group(1).trim();
+            apt = match.group(2);
           }
-          field = field.substring(0,pt).trim();
+          part = stripFieldEnd(part, " MUN");
+          super.parse(part, data);
+          data.strApt = append(data.strApt, "-", apt);
         }
-        String apt = "";
-        Matcher match = ADDR_APT_PTN.matcher(field);
-        if (match.matches()) {
-          field = match.group(1).trim();
-          apt = match.group(2);
+        else if (part.startsWith("@")) {
+          data.strPlace = append(data.strPlace, " - ", part.substring(1).trim());
         }
-        super.parse(field, data);
-        data.strApt = append(data.strApt, "-", apt);
       }
     }
 
@@ -138,11 +148,20 @@ public class TXBellCountyParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)\\b *(.*)");
+
   private class MyTimeField extends TimeField {
     @Override
     public void parse(String field, Data data) {
-      if (field.length() == 0) data.expectMore = true;
-      super.parse(field, data);
+      if (field.length() == 0) {
+        data.expectMore = true;
+        return;
+      }
+
+      Matcher match = TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      super.parse(match.group(1), data);
+      data.strCall = append(data.strCall, " - ", match.group(2));
     }
   }
 
