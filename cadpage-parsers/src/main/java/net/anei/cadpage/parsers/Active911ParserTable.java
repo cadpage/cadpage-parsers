@@ -277,6 +277,7 @@ public class Active911ParserTable {
       "US/CO/FremontCountySheriffsOffice","COFremontCounty",
       "US/CO/GarfieldCounty",             "COGarfieldCounty",
       "US/CO/GrandCounty",                "COGrandCounty",
+      "US/CO/GunnisonCounty",             "COGunnisonCounty",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
       "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",
       "US/CO/ManassaFD",                  "COConejosCounty",
