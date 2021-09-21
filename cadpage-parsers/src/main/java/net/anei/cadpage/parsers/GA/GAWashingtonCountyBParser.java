@@ -10,7 +10,7 @@ public class GAWashingtonCountyBParser extends DispatchA83Parser {
 
   @Override
   public String getFilter() {
-    return "washington.ga@ez911map.net";
+    return "washington.ga@ez911map.net,CAD@ssialerts.com";
   }
 
   @Override
