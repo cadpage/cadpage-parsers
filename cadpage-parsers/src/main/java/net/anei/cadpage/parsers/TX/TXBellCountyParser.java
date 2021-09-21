@@ -15,7 +15,7 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   public TXBellCountyParser() {
     super(CITY_CODES, "BELL COUNTY", "TX",
-        "PRI LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
+        "UNIT LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
     setupGpsLookupTable(GPS_TABLE);
   }
 
@@ -37,11 +37,6 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("EVENT:")) {
-      int pt = body.indexOf(": ", 6);
-      if (pt < 0) return false;
-      body = body.substring(pt+2).trim();
-    }
     body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getProperty(data.strCode);
@@ -50,10 +45,10 @@ public class TXBellCountyParser extends FieldProgramParser {
       if (pt >= 0) call = CALL_CODES.getProperty(data.strCode.substring(0,pt));
     }
     if (call == null) {
-      data.strCall = data.strCode;
+      data.strCall = append(data.strCall, " - ", data.strCode);
     } else {
       if (data.strPriority.length() == 0) data.strPriority = call.substring(0,1);
-      data.strCall = call.substring(2);
+      data.strCall = append(data.strCall, " - ", call.substring(2));
     }
     return true;
   }
@@ -65,12 +60,42 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("PRI")) return new PriorityField("P(\\d)");
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
+  }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("(.*?) *\\b([A-Z]\\d+)");
+  private class MyUnitField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = UNIT_PTN.matcher(field);
+      if (!match.matches()) abort();
+      String prefix = match.group(1);
+      data.strUnit = match.group(2);
+
+      int pt = prefix.indexOf("Original message from");
+      if (pt >= 0) {
+        if (!prefix.startsWith("EVENT:")) {
+          data.strCall = prefix.substring(0, pt).trim();
+        }
+        pt = prefix.lastIndexOf(':');
+        if (pt < 0) abort();
+        data.strCall = append(data.strCall, " - ", prefix.substring(pt+1).trim());
+      } else {
+        data.strCall = prefix;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CALL? UNIT";
+    }
+
   }
 
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *([^ ]+)(?: APT)?");
