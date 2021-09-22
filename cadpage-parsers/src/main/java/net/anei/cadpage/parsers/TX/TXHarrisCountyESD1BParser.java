@@ -54,7 +54,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
 
   private static final Pattern ID_PTN = Pattern.compile("(ID#:?\\d\\d-\\d\\d-\\d+) *-");
   private static final Pattern ZIP_PTN = Pattern.compile("[- ]+(Zip:)");
-  private static final Pattern KEY_SPLIT_PTN = Pattern.compile(" +(?=(?:Lat|Lon|Notes|Units):)");
+  private static final Pattern KEY_SPLIT_PTN = Pattern.compile(" *(?=(?:Lat|Lon|Notes|Units):)");
 
   private String[] splitFields(String body) {
     List<String> flds = new ArrayList<String>();
