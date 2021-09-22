@@ -1,16 +1,15 @@
 package net.anei.cadpage.parsers.MD;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
-public class MDCarolineCountyBParser extends FieldProgramParser {
+public class MDCarolineCountyBParser extends DispatchH05Parser {
 
   public MDCarolineCountyBParser() {
-    super("CAROLINE COUNTY", "MD",
-          "Call_Type:CALL! Call_Date/Time:DATETIME! Call_Location:ADDRCITY! ( Cross_Streets:X! | X_Streets:X! ) Common_Name:PLACE! ( Latitude:GPS1! Longitude:GPS2! | ) Box_Area:BOX! Radio_Channel:CH! ( Map:MAP! https:SKIP! Incident_Number:ID! Units:UNIT! | Units:UNIT! CFS_#:ID! ) END");
+    super(MDCarolineCountyParser.CITY_LIST, "CAROLINE COUNTY", "MD",
+          "Call_Type:CALL! Call_Date/Time:DATETIME! Call_Location:ADDRCITY! ( Cross_Streets:X! | X_Streets:X! ) Common_Name:PLACE! ( Latitude:GPS1! Longitude:GPS2! | ) Box_Area:BOX! Radio_Channel:CH! ( Map:MAP! https:SKIP! Incident_Number:ID! Units:UNIT! | Lat:GPS1! Long:GPS2! Incident_Number:ID! Units:UNIT! Times:EMPTY! TIMES+ CFS_#:SKIP! | Units:UNIT! CFS_#:ID! ) END");
   }
 
   @Override
@@ -24,8 +23,12 @@ public class MDCarolineCountyBParser extends FieldProgramParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (subject.isEmpty()) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseHtmlMsg(subject, body, data);
+    }
   }
 
   @Override
@@ -36,22 +39,26 @@ public class MDCarolineCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?) +(\\d{1,4}[A-Z]?|[A-Z])");
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern APT_PTN = Pattern.compile("^(?:APT|RM|ROOM|LOT|SUITE) *", Pattern.CASE_INSENSITIVE);
+  private class MyAddressCityField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      if (field.contains(",")) {
-        String apt = "";
-        Matcher match = ADDR_APT_PTN.matcher(field);
-        if (match.matches()) {
-          field = match.group(1);
-          apt = match.group(2);
+      String apt = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        String city = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+        if (data.strCity.isEmpty()) {
+          data.strCity = city;
+        } else {
+          apt = getLeft();
+          apt = APT_PTN.matcher(apt).replaceFirst("");
         }
-        super.parse(field, data);
-        data.strApt = append(data.strApt, "-", apt);
-      } else {
-        parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, field, data);
       }
+      field = field.replace('@', '&');
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_NO_CITY | FLAG_ANCHOR_END, field, data);
+      if (!data.strApt.equals(apt)) data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
