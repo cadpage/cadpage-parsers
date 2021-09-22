@@ -25,7 +25,7 @@ public class OHMahoningCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@canfield.local,noreply@boardman.gov,@alert.active911.com";
+    return "noreply@canfield.local,noreply@boardman.gov,@alert.active911.com,cadnotification@flex.comS";
   }
 
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*) \\d{5}");
