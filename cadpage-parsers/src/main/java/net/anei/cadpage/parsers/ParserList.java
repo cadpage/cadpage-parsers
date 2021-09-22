@@ -1523,6 +1523,7 @@ public class ParserList {
               ,"TXAustinCounty"                 ,"Austin County, TX"
               ,"TXBellCounty"                   ,"Bell County, TX"
               ,"TXBexarCounty"                  ,"Bexar County, TX"
+              ,"TXBlancoCounty"                 ,"Blanco County, TX"
               ,"TXBosqueCounty"                 ,"Bosque County, TX"
               ,"TXBrazoriaCounty"               ,"Brazoria County, TX"
               ,"TXBrazosCounty"                 ,"Brazos County, TX"
