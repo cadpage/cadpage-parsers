@@ -189,6 +189,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
       "FIRE DEPT COMMUNITY RELATIONS",
       "FIRE MUTUAL AID",
       "FIRE OTHER NOT LISTED",
+      "FIRE TEST CALL",
       "FRACTURES OR BROKEN BONES",
       "HAZARDOUS MATERIALS INCIDENT",
       "HEADAC",
