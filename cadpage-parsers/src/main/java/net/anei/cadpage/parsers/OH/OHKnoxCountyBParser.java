@@ -108,13 +108,12 @@ public class OHKnoxCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_PFX_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private static final Pattern INFO_DELIM_PTN = Pattern.compile("[; ]*\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
-      Matcher match = INFO_PFX_PTN.matcher(field);
-      if (match.lookingAt()) field = field.substring(match.end());
+      field = INFO_DELIM_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);
     }
   }
