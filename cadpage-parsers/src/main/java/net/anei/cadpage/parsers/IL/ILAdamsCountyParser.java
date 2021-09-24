@@ -13,12 +13,17 @@ public class ILAdamsCountyParser extends FieldProgramParser {
 
   public ILAdamsCountyParser() {
     super("ADAMS COUNTY", "IL",
-          "CALL! Units:UNIT! ADDR/S6! APT City:CITY Cross_Streets:X Comments:INFO? INFO/N+ City:CITY Cross_Streets:X Comments:INFO INFO/N+");
+          "CALL! Units:UNIT! ADDR/S6! GPS City:CITY Cross_Streets:X Comments:INFO? INFO/N+ City:CITY Cross_Streets:X Comments:INFO INFO/N+");
   }
 
   @Override
   public String getFilter() {
     return "911@co.adams.il.us";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -59,7 +64,20 @@ public class ILAdamsCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.replace(" and ", " & ");
       super.parse(field, data);
+      if (data.strApt.startsWith("BY ")) {
+        data.strPlace = data.strApt;
+        data.strApt = "";
+      } else {
+        data.strApt = stripFieldStart(data.strApt, "APT");
+      }
     }
+  }
+
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (apt.startsWith("[")) return true;
+    if (apt.toUpperCase().startsWith("EXIT")) return true;
+    return super.isNotExtraApt(apt);
   }
 
   private class MyCrossField extends CrossField {
