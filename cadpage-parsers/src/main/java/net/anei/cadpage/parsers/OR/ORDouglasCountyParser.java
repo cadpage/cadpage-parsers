@@ -9,12 +9,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class ORDouglasCountyParser extends FieldProgramParser {
-  
+
   public ORDouglasCountyParser() {
     super(CITY_CODES,"DOUGLAS COUNTY", "OR",
           "DATETIME CALL ADDR CITY_APT PLACE INFO!");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@co.douglas.or.us";
@@ -29,14 +29,14 @@ public class ORDouglasCountyParser extends FieldProgramParser {
     data.strAddress = data.strAddress.replace("138W", "138 W");
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("CITY_APT")) return new MyCityAptField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d)(\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -47,7 +47,7 @@ public class ORDouglasCountyParser extends FieldProgramParser {
       data.strTime = match.group(2) + ':' + match.group(3);
     }
   }
-  
+
   private static final Pattern CITY_APT_PTN = Pattern.compile("(?:([A-Z]{2}) )?#(.*)");
   private class MyCityAptField extends CityField {
     @Override
@@ -58,18 +58,18 @@ public class ORDouglasCountyParser extends FieldProgramParser {
       data.strApt = append(data.strApt, "-", match.group(2).trim());
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY APT";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AZ", "AZALEA",
       "CG", "COTTAGE GROVE",
@@ -89,11 +89,13 @@ public class ORDouglasCountyParser extends FieldProgramParser {
       "NB", "NORTH BEND",
       "OK", "OAKLAND",
       "RB", "ROSEBURG",
+      "RI", "RIDDLE",
       "RP", "REEDSPORT",
       "SC", "SCOTTSBURG",
       "SU", "SUTHERLIN",
-      "TM", "TENMILE",
       "TI", "TILLER",
+      "TM", "TENMILE",
+      "TN", "TEN MILE",
       "UM", "UMPQUA",
       "WB", "WINCHESTER BAY",
       "WE", "WESTLAKE",
@@ -101,6 +103,6 @@ public class ORDouglasCountyParser extends FieldProgramParser {
       "WN", "WINCHESTER",
       "WS", "WINSTON",
       "YC", "YONCALLA",
-      "YN", "YONCALLA",
+      "YN", "YONCALLA"
   });
 }
