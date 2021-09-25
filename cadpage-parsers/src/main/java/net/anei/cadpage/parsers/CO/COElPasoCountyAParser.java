@@ -144,7 +144,31 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    if (p.check("Address: ")) {
+      setFieldList("ADDR APT PLACE CITY CALL ID GPS");
+      parseAddress(p.get(35), data);
+      if (!p.check("Location: ")) return false;
+      data.strPlace = p.get(35);
+      if (!p.check("City: ")) return false;
+      data.strCity = p.get(35);
+      if (!p.check("Problem: ")) return false;
+      data.strCall = p.get(30);
+      data.strCallId = p.get(20);
+      if (!p.check("Lat/Long:")) return false;
+      String gps1 = p.get(10);
+      if (!p.check("~")) return false;
+      String gps2 = p.get(10);
+      setGPSLoc(fixGPS(gps1)+','+fixGPS(gps2), data);
+      return true;
+    }
+
     return false;
+  }
+
+  private String fixGPS(String gps) {
+    int pt = gps.length()-6;
+    if (pt >= 0) gps = gps.substring(0,pt)+'.'+gps.substring(pt);
+    return gps;
   }
 
   @Override
