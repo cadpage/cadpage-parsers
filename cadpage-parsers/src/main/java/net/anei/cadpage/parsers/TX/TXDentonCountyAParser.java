@@ -57,6 +57,7 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z]+\\d+(?:,[A-Z]+\\d+)*", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -180,6 +181,22 @@ public class TXDentonCountyAParser extends DispatchOSSIParser {
     @Override
     public void parse(String field, Data data) {
       if (! checkParse(field, data)) abort();
+    }
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Radio Channel:")) {
+        data.strChannel = field.substring(15).trim();
+        return;
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CH " + super.getFieldNames();
     }
   }
 
