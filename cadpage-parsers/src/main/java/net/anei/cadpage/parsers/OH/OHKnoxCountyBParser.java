@@ -10,7 +10,9 @@ public class OHKnoxCountyBParser extends FieldProgramParser {
 
   public OHKnoxCountyBParser() {
     super("KNOX COUNTY", "OH",
-          "ADDR1? ADDR_CITY_ST X CALL/SDS ID! INFO/N+ EMPTY END");
+          "( ID " +
+          "| ADDR/Z? ADDR_CITY_ST/Z X/Z CALL/ZSDS ID! " +
+          ") INFO/N+ EMPTY END");
   }
 
   @Override
@@ -33,35 +35,12 @@ public class OHKnoxCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR1")) return new MyAddress1Field();
     if (name.equals("ADDR_CITY_ST")) return new MyAddressCityStateField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ID")) return new IdField("CFS\\d+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-
-  private class MyAddress1Field extends AddressField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (field.contains(",")) return false;
-      String next = getRelativeField(+1);
-      if (next.length() == 0)  return false;
-      if (!next.contains(",") && checkAddress(field) != STATUS_STREET_NAME) return false;
-      data.strAddress = field;
-      return true;
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
   }
 
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
