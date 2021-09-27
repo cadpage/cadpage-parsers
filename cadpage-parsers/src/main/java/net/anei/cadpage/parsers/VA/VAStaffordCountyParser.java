@@ -11,7 +11,7 @@ public class VAStaffordCountyParser extends FieldProgramParser {
 
   public VAStaffordCountyParser() {
     super("STAFFORD COUNTY", "VA",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE TIME:TIME UNIT:UNIT! INFO:INFO MAP:MAP LAT:GPS1 LON:GPS2");
+          "CALL:CALL! PLACE:PLACE! ( ADDR:ADDR/Z! CITY:CITY | ADDR:ADDRCITYST ) ID:ID! PRI:PRI! DATE:DATE TIME:TIME UNIT:UNIT! INFO:INFO MAP:MAP LAT:GPS1 LON:GPS2");
   }
 
   @Override
@@ -21,7 +21,6 @@ public class VAStaffordCountyParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT")) return new MyUnitField();

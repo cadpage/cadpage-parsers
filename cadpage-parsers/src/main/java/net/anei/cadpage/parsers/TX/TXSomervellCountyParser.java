@@ -7,9 +7,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class TXSomervellCountyParser extends GroupBestParser {
-  
+
   public TXSomervellCountyParser() {
-    super(new TXSomervellCountyAParser(), new TXSomervellCountyBParser());
+    super(new TXSomervellCountyBParser());
   }
- 
+
 }
