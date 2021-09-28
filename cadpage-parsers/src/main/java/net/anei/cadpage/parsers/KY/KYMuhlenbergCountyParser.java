@@ -23,9 +23,13 @@ public class KYMuhlenbergCountyParser extends GroupBestParser {
     "GRAHAM",
     "GREENVILLE",
     "POWDERLY",
+    "ROSEWOOD",
     "SOUTH CARROLLTON",
 
     // Logan County
-    "LEWISBURG"
+    "LEWISBURG",
+
+    // Todd County
+    "ELKTON"
   };
 }
