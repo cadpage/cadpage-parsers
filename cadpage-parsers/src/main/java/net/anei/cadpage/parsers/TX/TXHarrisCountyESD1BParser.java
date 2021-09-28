@@ -17,7 +17,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     super("HARRIS COUNTY", "TX",
            "( CODE_CALL ADDR1? ADDR UNIT1! KM:MAP! Xst's:X " +
            "| ID/Z ADDRCH! ADDR+? Cross_Streets:X ( Map:MAP | Key_Map:MAP ) Zip:ZIP Lat:GPS1/d Lon:GPS2/d" +
-           "| ID/Z ( Unit:UNIT! Type:CODE! | Type:CODE! ) Problem:CALL! Loc:ADDR! Apt:APT! Bldg:PLACE! EMPTY? ( Map:MAP! | Key_Map:MAP! ) Cross_Streets:X! Box_#:BOX! Zip:ZIP! Lat:GPS1/d! Lon:GPS2/d! Notes:INFO Units:UNIT " +
+           "| ID/Z ( Unit:UNIT! Type:CODE! | Type:CODE! ) Problem:CALL! Loc:ADDR! Apt:APT! Bldg:PLACE! EMPTY? MA? ( Map:MAP! | Key_Map:MAP! ) Cross_Streets:X! Box_#:BOX! Zip:ZIP! Lat:GPS1/d! Lon:GPS2/d! Notes:INFO Units:UNIT " +
            "| ( ID UNIT2? | UNIT1 ) CODE CALL! PREALERT? ADDR1? ADDR! Apt:APT! Bldg:PLACE Key_Map:MAP% Cross_Streets:X Box_#:BOX )");
   }
 
@@ -86,6 +86,7 @@ public class TXHarrisCountyESD1BParser extends FieldProgramParser {
     if (name.equals("CODE_CALL")) return new CodeCallField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("ADDRCH"))  return new AddressChangeField();
+    if (name.equals("MA")) return new SkipField("Ma", true);
     if (name.equals("UNIT1")) return new MyUnit1Field();
     if (name.equals("UNIT2")) return new MyUnit2Field();
     if (name.equals("CODE")) return new MyCodeField();
