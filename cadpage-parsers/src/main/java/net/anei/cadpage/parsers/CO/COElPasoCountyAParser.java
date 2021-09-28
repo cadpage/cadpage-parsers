@@ -101,12 +101,19 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
     FParser p = new FParser(body);
     if (p.check("REF:")) {
-      setFieldList("CALL ADDR APT");
-      data.strCall = p.get(33);
-      if (!p.check("THE LOC HAS CHANGED TO:")) return false;
-      parseAddress(p.get(30), data);
-      if (!p.check("#")) return false;
-      data.strApt = p.get();
+      if (p.checkAhead(33,  "THE LOC HAS CHANGED TO:")) {
+        setFieldList("CALL ADDR APT");
+        data.strCall = p.get(33);
+        if (!p.check("THE LOC HAS CHANGED TO:")) return false;
+        parseAddress(p.get(30), data);
+        if (!p.check("#")) return false;
+        data.strApt = p.get();
+        return true;
+      }
+      setFieldList("ADDR APT CALL");
+      parseAddress(p.get(40), data);
+      if (!p.check(" PROBLEM CHANGED TO:") && !p.check(" PROBLEM HAS CHANGED TO:")) return false;
+      data.strCall = p.get();
       return true;
     }
 
@@ -138,7 +145,6 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       p.checkBlanks(5);
       if (!p.check("JURIS:")) return false;
       data.strSource = p.get(30);
-      p.check(" ");
       data.strCallId = p.get(10);
       if (!p.check("~NO RESPONSE")) return false;
       return true;
@@ -159,6 +165,17 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       if (!p.check("~")) return false;
       String gps2 = p.get(10);
       setGPSLoc(fixGPS(gps1)+','+fixGPS(gps2), data);
+      return true;
+    }
+
+    if (p.checkAhead(77, "RP Ph:")) {
+      setFieldList("ADDR APT CALL CODE PHONE INFO");
+      parseAddress(p.get(40), data);
+      data.strCall = p.get(30);
+      data.strCode = p.get(7);
+      if (!p.check("RP Ph:")) return false;
+      data.strPhone = p.get(13);
+      data.strSupp = p.get();
       return true;
     }
 
