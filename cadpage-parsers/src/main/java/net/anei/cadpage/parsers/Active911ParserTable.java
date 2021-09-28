@@ -2098,7 +2098,7 @@ public class Active911ParserTable {
       "US/VT/StowePS",                    "VTLamoilleCounty",
       "US/VT/UVM",                        "VTChittendenCountyC",
       "US/VT/ValcourNotification",        "VTLamoilleCounty",
-      "US/VT/WillistonFD",                "VChttendenCountyA",
+      "US/VT/WillistonFD",                "VTChittendenCountyA",
       "US/VT/WindhamCounty",              "VTWindhamCounty",
       "US/VT/WindsorCounty",              "VTWindsorCounty",
       "US/WA/AnacortesFD",                "WASkagitCounty",
