@@ -2,20 +2,32 @@ package net.anei.cadpage.parsers.dispatch;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class DispatchA78Parser extends FieldProgramParser {
 
   public DispatchA78Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL! Date:DATETIME! Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS?");
+          "Call_Type:CALL! ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
+                 "( SELECT/RR Additional_Location_Information:INFO/N! INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? )");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("InterOp CAD Alert - ")) return false;
-    body = body.replace("Agency Dispatched:", "Agencies Dispatched:");
-    return parseFields(body.split("\n"), data);
+    if (subject.startsWith("InterOp CAD Alert - ")) {
+      setSelectValue("");
+      body = body.replace("Agency Dispatched:", "Agencies Dispatched:");
+      return parseFields(body.split("\n"), data);
+    }
+
+    if (subject.startsWith("InterOp CAD - CALL Completed -")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("RR");
+      return parseFields(body.split("\n"), data);
+    }
+
+    return false;
   }
 
   @Override
@@ -29,7 +41,9 @@ public class DispatchA78Parser extends FieldProgramParser {
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldEnd(field, "||");
+      field = field.replace("||", "/");
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
   }
