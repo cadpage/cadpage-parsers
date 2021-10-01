@@ -17,7 +17,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "Dispatch1,info@sundance-sys.com,BHDispMap";
+    return "Dispatch1,info@sundance-sys.com,sunsrv@sundance-sys.com,BHDispMap,SWSCOMUSER";
   }
 
   private static final Pattern PFX1_PTN = Pattern.compile("(?:\\*+(?:ALL CALL)\\*+:?|ALL )(?=CALL:)");
