@@ -5,12 +5,19 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA71Parser extends FieldProgramParser {
 
   public DispatchA71Parser(String defCity, String defState) {
     super(defCity, defState,
           "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! XY:GPS? ID:ID! PRI:PRI? DATE:DATE? TIME:TIME! NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? INFO/N+");
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.endsWith(" CLEARED")) data.msgType = MsgType.RUN_REPORT;
+    return parseMsg(body, data);
   }
 
   @Override
