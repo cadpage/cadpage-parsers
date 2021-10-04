@@ -14,7 +14,7 @@ public class PAPikeCountyBParser extends DispatchA45Parser {
 
   @Override
   public String getFilter() {
-    return "@pike.alertpa.org,messaging@iamresponding.com";
+    return "@pike.alertpa.org,messaging@iamresponding.com,no-reply@onsolve.com";
   }
 
   private static final Pattern SPECIAL_BRK_PTN = Pattern.compile("> *\n *>");
