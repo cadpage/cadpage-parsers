@@ -1585,6 +1585,7 @@ public class Active911ParserTable {
       "US/OR/ClatsopCounty",              "ORClatsopCounty",
       "US/OR/ColumbiaCounty",             "ORColumbiaCounty",
       "US/OR/ColumbiaCountyFire",         "ORColumbiaCounty",
+      "US/OR/CityofMyrtlePoint",          "ORCoosCounty",
       "US/OR/Corbett",                    "ORMultnomahCountyE",
       "US/OR/DeschutesCounty",            "ORDeschutesCounty",
       "US/OR/DouglasCounty",              "ORDouglasCounty",
