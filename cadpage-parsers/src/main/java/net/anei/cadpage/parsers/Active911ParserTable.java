@@ -737,6 +737,7 @@ public class Active911ParserTable {
       "US/KY/MagoffinCounty",             "KYMagoffinCounty",
       "US/KY/MarshallCountyFire",         "KYMarshallCounty",
       "US/KY/MartinCounty",               "KYMartinCounty",
+      "US/KY/MasonCounty",                "KYMasonCounty",
       "US/KY/McLeanCounty",               "KYMcLeanCounty",
       "US/KY/MeadeCounty",                "KYMeadeCounty",
       "US/KY/MonacoEnterprises",          "KYFortKnox",

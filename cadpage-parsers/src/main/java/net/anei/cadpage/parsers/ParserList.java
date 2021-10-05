@@ -651,6 +651,7 @@ public class ParserList {
               ,"KYJohnsonCounty"                ,"Johnson County, KY"
               ,"KYKentonCounty"                 ,"Kenton County, KY"
               ,"KYLivingstonCounty"             ,"Livingston County, KY"
+              ,"KYMasonCounty"                  ,"Mason County, KY"
               ,"KYStatePolice"                  ,"Kentucky State Police, KY"
               ,"KYKnottCounty"                  ,"Knott County, KY"
               ,"KYKnoxCounty"                   ,"Knox County, KY"
