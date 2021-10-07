@@ -11,38 +11,43 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 
 
 public class PAWestmorelandCountyAParser extends FieldProgramParser {
-  
+
   private String cityCode;
-  
+
   public PAWestmorelandCountyAParser() {
     super("WESTMORELAND COUNTY", "PA",
           "Loc:ADDR/S? X-ST:X? LL:GPS? Inc:ID! NATURE:CALL! CALLER:NAME? TOC:TIME Fire_TAC:CH? EMS_Tac:CH? Comments:INFO Response_text:SKIP Disp:UNIT");
   }
-  
+
   @Override
   public String getFilter() {
     return "alert@emgcall.net,alert@emgcall.net,@ecm2.us,incident@wcvfd3.org";
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     cityCode = null;
-    
+
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     body = body.replace("X-sts:", "X-ST:").replace("Inc#:", "Inc:").replaceAll("\\s+", " ");
-    
+
     if (!super.parseMsg(body, data)) return false;
-    
+
     // Intersections go in the cross street and leave the Loc: field empty
     if (data.strAddress.length() == 0) {
       if (data.strCross.length() == 0) return false;
       data.strAddress = data.strCross;
       data.strCross = "";
     }
-    
+
     // Look up possible call code
     if (!data.strCall.contains(" ")) {
       String call = CALL_CODES.getCodeDescription(data.strCall, true);
@@ -53,12 +58,12 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ADDR " + super.getProgram().replace("CALL", "CODE CALL");
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -67,11 +72,11 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   // Address field parser
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|UNIT) *(.*)|\\d+[A-Z]?|[A-Z]\\d*");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String fld, Data data) {
       boolean first = true;
@@ -89,11 +94,11 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
             }
           }
           cityCode = p.getLast(' ');
-          data.strCity = convertCodes(cityCode, CITY_CODES); 
+          data.strCity = convertCodes(cityCode, CITY_CODES);
           super.parse(p.get(), data);
           data.strApt = append(data.strApt, "-", apt);
-        } 
-        
+        }
+
         else {
           if (part.startsWith("@")) {
             data.strPlace = append(data.strPlace, " - ", part.substring(1).trim());
@@ -110,13 +115,13 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY PLACE APT";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -124,14 +129,14 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyChannelField extends ChannelField {
     @Override
     public void parse(String field, Data data) {
       data.strChannel = append(data.strChannel, " / ", field);
     }
   }
-  
+
   private static final Pattern INFO_CITY_GPS_PTN = Pattern.compile("([A-Z ]+) ([-+]\\d{3}\\.\\d{5,} [-+]\\d{3}\\.\\d{5,})\\b\\s*");
   private class MyInfoField extends InfoField {
     @Override
@@ -144,18 +149,18 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY GPS " + super.getFieldNames();
     }
   }
-  
+
   private static final CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "MONESSEN_C",  "MONESSEN",
-      
+
       "ADAMSBURG_B", "ADAMSBURG",
       "IRWIN_B",     "IRWIN",
       "MADISON_B",   "MADISON",
@@ -173,7 +178,7 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
       "TRAFFORD_B",  "TRAFFORD",
       "W_NEWTON_B",  "WEST NEWTON",
       "YNGWD_B",     "YOUNGWOOD",
-      
+
       "HEMP_T",      "HEMPFIELD TWP",
       "MT_PLEAS_T",  "MT PLEASANT TWP",
       "N_HUNT_T",    "N HUNTINGDON TWP",
