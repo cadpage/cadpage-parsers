@@ -38,6 +38,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      field = translateAddress(field);
       int pt = field.indexOf(" to ");
       if (pt >= 0) {
         data.strSupp = "Dest: " + field.substring(pt+4).trim();
@@ -69,6 +70,33 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private String translateAddress(String addr) {
+    Matcher match = ADDR_TRANSLATE_PTN.matcher(addr);
+    if (match.find()) {
+      StringBuilder sb = new StringBuilder();
+      do {
+        String term = match.group();
+        String rep = ADDR_TRANSLATE_TABLE.getProperty(term);
+        if (rep == null) rep = term;
+        match.appendReplacement(sb, rep);
+      } while (match.find());
+      match.appendTail(sb);
+      addr = sb.toString();
+    }
+    return addr;
+  }
+
+  private static final Pattern ADDR_TRANSLATE_PTN = Pattern.compile("\\b(?:[NSEW]S|BCH|WCGH)\\b", Pattern.CASE_INSENSITIVE);
+
+  private static final Properties ADDR_TRANSLATE_TABLE = buildCodeTable(new String[] {
+      "N/S",    "NORTH SIDE",
+      "S/S",    "SOUTH SIDE",
+      "E/S",    "EAST SIDE",
+      "W/S",    "WEST SIDE",
+      "BCH",    "BRYAN HOSPITAL",
+      "WCGH",   "MONTPELIER HOSPITAL"
+  });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALV", "ALVORDTON",
