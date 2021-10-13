@@ -430,6 +430,7 @@ public class Active911ParserTable {
       "US/GA/WhitfieldCounty",            "GAWhitfieldCountyC",
       "US/IA/AmesFD",                     "IAStoryCounty",
       "US/IA/CerroGordoCounty",           "IACerroGordoCounty",
+      "US/IA/CherokeeCounty",             "IACherokeeCounty",
       "US/IA/CityofBurlington",           "IADesMoinesCounty",
       "US/IA/CityofMaquoketa",            "IAJacksonCounty",
       "US/IA/CityofOttumwa",              "IAWapelloCounty",

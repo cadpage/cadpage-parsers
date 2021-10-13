@@ -541,6 +541,7 @@ public class ParserList {
               ,"IAAppanooseCounty"              ,"Appanoose County, IA"
               ,"IABlackHawkCounty"              ,"Black Hawk County, IA"
               ,"IACerroGordoCounty"             ,"Cerro Gordo County, IA"
+              ,"IACherokeeCounty"               ,"Cherokee County, IA"
               ,"IADallasCounty"                 ,"Dallas County, IA"
               ,"IADesMoinesCounty"              ,"Des Moines County, IA"
               ,"IADickinsonCounty"              ,"Dickinson County, IA"
