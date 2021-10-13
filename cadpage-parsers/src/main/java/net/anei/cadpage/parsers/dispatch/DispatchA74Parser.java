@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA74Parser extends FieldProgramParser {
 
   public DispatchA74Parser(String defCity, String defState) {
-    super(defCity, defState,
+    this(null, defCity, defState);
+  }
+
+  public DispatchA74Parser(String[] cityList, String defCity, String defState) {
+    super(cityList, defCity, defState,
           "ID CALL! ADDRCITY INFO/N+");
   }
 
@@ -97,7 +101,8 @@ public class DispatchA74Parser extends FieldProgramParser {
         String[] parts = COMMA_PTN.split(field);
         switch (parts.length) {
         case 1:
-          parseAddress(parts[0], data);
+          field = stripFieldEnd(field, ' ' + data.defState);
+          parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
           break;
 
         case 2:

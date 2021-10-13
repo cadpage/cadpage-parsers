@@ -1,55 +1,23 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
 /**
  * Cherokee County, AL
  */
-public class ALCherokeeCountyParser extends DispatchA65Parser {
+public class ALCherokeeCountyParser extends DispatchA86Parser {
 
   public ALCherokeeCountyParser() {
-    super(CITY_LIST, "CHEROKEE COUNTY", "AL");
-  }
-
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom(){
-      public boolean splitBreakIns() { return true; }
-      public boolean splitKeepLeadBreak() { return true; }
-    };
+    super("CHEROKEE COUNTY", "AL");
   }
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info,geoconex@nlamerica.com,dispatch@911comm1.info,Dispatch@CherokeeALE911.net";
+    return "Dispatch@CherokeeALE911.net";
   }
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_SR;
+    return MAP_FLG_SUPPR_SR | MAP_FLG_PREFER_GPS;
   }
-
-  private static final String[] CITY_LIST = new String[]{
-
-      //INCORPORATED
-      "CEDAR BLUFF",
-      "CENTRE",
-      "COLLINSVILLE",
-      "GAYLESVILLE",
-      "LEESBURG",
-      "PIEDMONT",
-      "SAND ROCK",
-
-      //UNINCORPORATED
-      "FORNEY",
-      "LITTLE RIVER",
-      "ROCK RUN",
-
-      //CDPS
-      "BROOMTOWN",
-      "SPRING GARDEN"
-
-  };
 }
