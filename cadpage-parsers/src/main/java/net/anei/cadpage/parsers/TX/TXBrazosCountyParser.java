@@ -16,15 +16,15 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     super("BRAZOS COUNTY", "TX",
           "DATETIME! Type:TYPE! Location:LOCATION! LocCross:X? Info:PLACE? PrimeUnit:PRIMEUNIT! Agency:AGENCY! INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@bc911.org,paging.bc911.org";
+    return "@bc911.org,paging.bc911.org,noreply@omnigo.com";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("\n(?! |\n)");
   private static final Pattern MULTI_SPACE = Pattern.compile("\\s{2,}");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Call Notes")) return false;
@@ -34,7 +34,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     }
     return parseFields(field, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d? \\d\\d?\\d\\d:\\d\\d");
@@ -46,7 +46,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern TYPE_PATTERN
     = Pattern.compile("(.*)Priority:(.*)");
   private class TypeField extends Field {
@@ -56,9 +56,9 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       if (m.matches()) {
         parseCall(m.group(1).trim(), data);
         data.strPriority = m.group(2).trim();
-      }  
+      }
     }
-    
+
     private void parseCall(String field, Data data) {
       int hPtr = field.indexOf('-');
       if (hPtr > -1) {
@@ -70,11 +70,11 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     }
 
     @Override
-    public String getFieldNames() { 
-      return "CODE CALL PRI"; 
+    public String getFieldNames() {
+      return "CODE CALL PRI";
     }
   }
-  
+
   private static final Pattern ADDR_PTN = Pattern.compile("(.*?)(?:[- ]+at +(.*?))?(?:[- ]+btwn +(.*?))?(?:[- ]*<.*)?");
   private class LocationField extends Field {
     @Override
@@ -84,7 +84,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       field = m.group(1);
       String atTerm = m.group(2);
       String btwnTerm = m.group(3);
-      
+
       field = stripCity(field, data);
       if (atTerm != null) {
         data.strPlace = field;
@@ -93,10 +93,10 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       if (btwnTerm != null) {
         data.strCross = stripCity(btwnTerm, data).replaceAll(" and ", " & ");
       }
-      
+
       parseAddress(field, data);
     }
-    
+
     private String stripCity(String field, Data data) {
       field = field.trim();
       int pt = field.lastIndexOf(',');
@@ -106,13 +106,13 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       }
       return field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT X MAP PLACE";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -121,7 +121,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern PRIME_UNIT_PATTERN
     = Pattern.compile("(.*?)Final Type:(.*)");
   private class PrimeUnitField extends Field {
@@ -145,13 +145,13 @@ public class TXBrazosCountyParser extends FieldProgramParser {
         if (!data.strCode.equals(field)) data.strCode = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT CODE CALL";
     }
   }
-  
+
   private static final Pattern AGENCY_PATTERN
     = Pattern.compile("(.*?)Group:(.*?)(?:Station|Beat):(.*?)Box:(.*)");
   private class AgencyField extends Field {
@@ -170,7 +170,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       return "SRC MAP BOX";
     }
   }
-  
+
   private static final String TIMESTAMP_PATTERN_S
     = "\\d{1,2}:\\d{2}:\\d{2}(?:c(?:s|d)t)? +",
     FLOAT_PATTERN_S
@@ -198,7 +198,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       if (m.matches()) {
         setGPSLoc(m.group(2)+","+m.group(1), data);
         return;
-      }      
+      }
       m = UNIT_PATTERN.matcher(field);
       if (m.matches()) {
         data.strUnit = addUnit(data.strUnit, m.group(1).trim());
@@ -232,7 +232,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       }
       return units;
     }
-    
+
     private boolean containsUnit(String[] us, String u) {
       for (int i=0; i<us.length; i++)
         if (us[i].equals(u)) return true;
@@ -242,9 +242,9 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames()+" UNIT NAME PHONE GPS";
-    }  
+    }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
     "BC", "BRAZOS COUNTY",
     "BR", "BRYAN",

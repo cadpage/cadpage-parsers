@@ -1952,7 +1952,7 @@ public class Active911ParserTable {
       "US/TX/NTECC",                      "TXDallasCountyC",
       "US/TX/NuecesCounty",               "TXNuecesCounty",
       "US/TX/OssiCAD",                    "TXLaPorte",
-      "US/TX/OysterCreekPD",              "TXBrazoriaCountyC",
+      "US/TX/OysterCreekPD",              "TXBrazoriaCountyB",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
       "US/TX/PolkCounty",                 "TXPolkCounty",
       "US/TX/PortIsabel",                 "TXCameronCounty",
