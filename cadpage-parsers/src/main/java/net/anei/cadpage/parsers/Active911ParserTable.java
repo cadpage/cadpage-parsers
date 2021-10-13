@@ -1536,6 +1536,7 @@ public class Active911ParserTable {
       "US/OH/Secc911",                    "OHCuyahogaCountyA",
       "US/OH/SharonTwp",                  "OHMedinaCountyB,OHMedinaCountyD",
       "US/OH/ShelbyCounty",               "OHShelbyCounty",
+      "US/OH/SouthSummitCounty",          "OHSummitCountyI",
       "US/OH/SpringfieldTwp",             "OHSummitCountyH",
       "US/OH/StarkCounty",                "OHStarkCountyRedcenter2",
       "US/OH/StMarysFD",                  "OHAuglaizeCountyC",
