@@ -1825,6 +1825,7 @@ public class Active911ParserTable {
       "US/TN/ClayCounty",                 "TNClayCounty",
       "US/TN/CockeCounty",                "TNCockeCountyB",
       "US/TN/CoffeeCounty",               "TNCoffeeCounty",
+      "US/TN/CrockettCounty",             "TNCrockettCounty",
       "US/TN/CumberlandCounty",           "TNCumberlandCounty",
       "US/TN/DyerCounty",                 "TNDyerCounty",
       "US/TN/FranklinCounty",             "TNFranklinCounty",

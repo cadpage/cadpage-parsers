@@ -32,7 +32,7 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("CAD #((?:\\d{2,8}-)?\\d+):", true);
+    if (name.equals("ID")) return new IdField("CAD #((?:\\d{2,10}-)?\\d+):", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);

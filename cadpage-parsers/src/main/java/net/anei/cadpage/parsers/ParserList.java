@@ -1486,6 +1486,7 @@ public class ParserList {
               ,"TNClayCounty"                   ,"Clay County, TN"
               ,"TNCockeCounty"                  ,"Cocke County, TN"
               ,"TNCoffeeCounty"                 ,"Coffee County, TN"
+              ,"TNCrockettCounty"               ,"Crockett County, TN"
               ,"TNCumberlandCounty"             ,"Cumberland County, TN"
               ,"TNDyerCounty"                   ,"Dyer County, TN"
               ,"TNFranklinCounty"               ,"Franklin County, TN"
