@@ -10,7 +10,7 @@ public class VACarolineCountyAParser extends MsgParser {
 
   public VACarolineCountyAParser() {
     super("CAROLINE COUNTY", "VA");
-    setFieldList("ADDR CITY ST GPS UNIT CALL ID DATE TIME INFO");
+    setFieldList("ADDR CITY ST PLACE GPS UNIT CALL ID DATE TIME INFO");
   }
 
   @Override
@@ -19,7 +19,8 @@ public class VACarolineCountyAParser extends MsgParser {
   }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) ((?:None|[-+]?\\d{2,3}\\.\\d{6}) / (?:None|[-+]?\\d{2,3}\\.\\d{6})) (.*?) //// (.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern TRAIL_BSL_PTN = Pattern.compile("\\\\+$");
+  private static final Pattern ST_ZIP_PLACE_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?(?: +(.*))?");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile(" *; *");
   private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (CCFR\\d+)");
   private static final Pattern INFO_SPLIT_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
@@ -37,12 +38,14 @@ public class VACarolineCountyAParser extends MsgParser {
     data.strTime = match.group(6);
     String info = match.group(7).trim();
 
+    addr = TRAIL_BSL_PTN.matcher(addr).replaceFirst("");
     Parser p = new Parser(addr);
     String city = p.getLastOptional(',');
-    match = ST_ZIP_PTN.matcher(city);
+    match = ST_ZIP_PLACE_PTN.matcher(city);
     if (match.matches()) {
       data.strState = match.group(1);
       String zip = match.group(2);
+      data.strPlace = getOptGroup(match.group(3));
       city = p.getLastOptional(',');
       if (city.isEmpty() && zip != null) city = zip;
     }
