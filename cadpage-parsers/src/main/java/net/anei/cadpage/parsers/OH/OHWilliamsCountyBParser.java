@@ -77,7 +77,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
       StringBuilder sb = new StringBuilder();
       do {
         String term = match.group();
-        String rep = ADDR_TRANSLATE_TABLE.getProperty(term);
+        String rep = ADDR_TRANSLATE_TABLE.getProperty(term.toUpperCase());
         if (rep == null) rep = term;
         match.appendReplacement(sb, rep);
       } while (match.find());
@@ -87,7 +87,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
     return addr;
   }
 
-  private static final Pattern ADDR_TRANSLATE_PTN = Pattern.compile("\\b(?:[NSEW]S|BCH|WCGH)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_TRANSLATE_PTN = Pattern.compile("\\b(?:[NSEW]/S|BCH|WCGH)\\b", Pattern.CASE_INSENSITIVE);
 
   private static final Properties ADDR_TRANSLATE_TABLE = buildCodeTable(new String[] {
       "N/S",    "NORTH SIDE",

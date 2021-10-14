@@ -8,13 +8,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA74Parser extends FieldProgramParser {
 
+  public static final int FLG_LEAD_PLACE = 1;
+
+  private boolean leadPlace;
+
   public DispatchA74Parser(String defCity, String defState) {
-    this(null, defCity, defState);
+    this(null, defCity, defState, 0);
   }
 
   public DispatchA74Parser(String[] cityList, String defCity, String defState) {
+    this(cityList, defCity, defState, 0);
+  }
+
+  public DispatchA74Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
           "ID CALL! ADDRCITY INFO/N+");
+    leadPlace = (flags & FLG_LEAD_PLACE) != 0;
   }
 
   @Override
@@ -101,8 +110,14 @@ public class DispatchA74Parser extends FieldProgramParser {
         String[] parts = COMMA_PTN.split(field);
         switch (parts.length) {
         case 1:
-          field = stripFieldEnd(field, ' ' + data.defState);
-          parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+          field = stripFieldEnd(parts[0], ' ' + data.defState);
+          field = field.replace('@', '&');
+          StartType st = leadPlace ? StartType.START_PLACE : StartType.START_ADDR;
+          parseAddress(st, FLAG_ANCHOR_END, field, data);
+          if (data.strAddress.isEmpty()) {
+            parseAddress(data.strPlace, data);
+            data.strPlace = "";
+          }
           break;
 
         case 2:
