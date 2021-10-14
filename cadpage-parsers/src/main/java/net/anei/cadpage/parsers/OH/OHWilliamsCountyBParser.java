@@ -74,7 +74,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
   private String translateAddress(String addr) {
     Matcher match = ADDR_TRANSLATE_PTN.matcher(addr);
     if (match.find()) {
-      StringBuilder sb = new StringBuilder();
+      StringBuffer sb = new StringBuffer();
       do {
         String term = match.group();
         String rep = ADDR_TRANSLATE_TABLE.getProperty(term.toUpperCase());
