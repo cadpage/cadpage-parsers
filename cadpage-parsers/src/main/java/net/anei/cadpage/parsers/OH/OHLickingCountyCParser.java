@@ -12,7 +12,7 @@ public class OHLickingCountyCParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "911dispatch@lickingcounty.gov";
+    return "@lickingcounty.gov";
   }
 
   @Override
