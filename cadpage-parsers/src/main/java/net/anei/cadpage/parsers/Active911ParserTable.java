@@ -1472,6 +1472,7 @@ public class Active911ParserTable {
       "US/OH/ClermontCountyUnionTwp",     "OHClermontCountyC",
       "US/OH/ClintonCounty",              "OHClintonCounty",
       "US/OH/ColumbianaCounty",           "OHColumbianaCountyB",
+      "US/OH/ColumbianaCountySO",         "OHColumbianaCountyC",
       "US/OH/Concord",                    "OHLakeCountyA",
       "US/OH/CrawfordCountySheriff",      "OHCrawfordCounty",
       "US/OH/CuyahogaCounty",             "OHCuyahogaCountyA,OHCuyahogaCountyF",
