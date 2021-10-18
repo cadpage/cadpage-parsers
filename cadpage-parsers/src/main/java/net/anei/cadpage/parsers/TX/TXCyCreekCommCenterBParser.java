@@ -7,12 +7,16 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class TXCyCreekCommCenterBParser extends FieldProgramParser {
-  
+
   public TXCyCreekCommCenterBParser() {
-    super("HARRIS COUNTY", "TX", 
+    this("HARRIS COUNTY", "TX");
+  }
+
+  public TXCyCreekCommCenterBParser(String defCity, String defState) {
+    super(defCity, defState,
           "ADDR:ADDR! APT:APT! PLACE:PLACE! X-ST:X! MAP:MAP! SUB:CITY! NATURE:CALL! PRI:PRI! UNITS:UNIT! LAT:GPS1! LON:GPS2! ID:ID! ( NOTES:INFO | CN:INFO )");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
@@ -25,13 +29,14 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
     data.strAddress = data.strAddress.replace("KINGSCOTE DR", "KINGSCOATE DR");
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(\\S.*)");
   private class MyCallField extends Field {
     @Override
@@ -47,6 +52,14 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+  
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
     }
   }
 }

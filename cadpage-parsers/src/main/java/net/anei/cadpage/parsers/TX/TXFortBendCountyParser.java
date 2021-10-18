@@ -8,17 +8,19 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Fort Bend County, TX
  */
 public class TXFortBendCountyParser extends GroupBestParser {
-  
+
   public TXFortBendCountyParser() {
-    super(new TXFortBendCountyAParser(), new TXFortBendCountyBParser());
+    super(new TXFortBendCountyAParser(),
+          new TXFortBendCountyBParser(),
+          new TXFortBendCountyCParser());
   }
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARC", "ARCOLA",
       "BEA", "BEASLEY",
       "BRK", "BROOKSHIRE",
       "DAM", "DAMON",
-      "EB",  "EAST BERNARD", 
+      "EB",  "EAST BERNARD",
       "FAI", "FAIRCHILDS",
       "FRS", "FRESNO",
       "FUL", "FULSHEAR",
