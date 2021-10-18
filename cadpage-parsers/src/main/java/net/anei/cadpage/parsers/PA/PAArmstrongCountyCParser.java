@@ -11,7 +11,9 @@ public class PAArmstrongCountyCParser extends FieldProgramParser {
 
   public PAArmstrongCountyCParser() {
     super(CITY_CODES, "ARMSTRONG COUNTY", "PA",
-          "CALL_NUMBER:ID! CALL_TYPE:CALL! TAC:CH! LOCATION:ADDRCITY! CLOSEST_INTERSECTION:X! COMMON_NAME:PLACE! LAT/LONG:GPS! NARRATIVE:INFO!");
+          "( INFO:CALL! LOCALE:ADDRCITY! ADD'L_LOCALE_INFO:INFO! LANDMARK:PLACE! INTER:X! CFS#:ID! " +
+          "| CALL_NUMBER:ID? CALL_TYPE:CALL! ( LOCATION:ADDRCITY! TAC:CH! | TAC:CH LOCATION:ADDRCITY! ) CLOSEST_INTERSECTION:X! COMMON_NAME:PLACE! LAT/LONG:GPS! NARRATIVE:INFO " +
+          ") END");
   }
 
   @Override
@@ -28,9 +30,7 @@ public class PAArmstrongCountyCParser extends FieldProgramParser {
     if (!body.contains("NARRATIVE:")) {
         Matcher match = BAD_MSG_PTN.matcher(body);
       if (match.matches()) {
-        body = match.group(1) + " NARRATIVE:" + match.group(2);
-      } else {
-        return false;
+        body = match.group(1) + " NARRATIVE:" + stripFieldStart(match.group(2), "=");
       }
     }
     return super.parseMsg(body, data);
@@ -64,6 +64,11 @@ public class PAArmstrongCountyCParser extends FieldProgramParser {
       city = convertCodes(city, CITY_CODES);
       city = stripFieldEnd(city, " BORO");
       return city;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY";
     }
   }
 
