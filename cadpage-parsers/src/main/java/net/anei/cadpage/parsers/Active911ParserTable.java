@@ -1648,6 +1648,7 @@ public class Active911ParserTable {
       "US/PA/BerwynFire",                 "PAChesterCountyD1",
       "US/PA/BlairCounty",                "PABlairCounty",
       "US/PA/BradfordCounty",             "PABradfordCounty",
+      "US/PA/BroughtonVFD",               "PAAlleghenyCountyA",
       "US/PA/BucksCounty",                "PABucksCounty",
       "US/PA/BucksEMA",                   "PABucksCounty",
       "US/PA/ButlerCounty",               "PAButlerCounty",

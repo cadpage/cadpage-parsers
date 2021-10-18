@@ -18,6 +18,11 @@ public class VACarolineCountyAParser extends MsgParser {
     return "cad-rms@co.caroline.va.us";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern MASTER = Pattern.compile("(.*?) ((?:None|[-+]?\\d{2,3}\\.\\d{6}) / (?:None|[-+]?\\d{2,3}\\.\\d{6})) (.*?) //// (.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
   private static final Pattern TRAIL_BSL_PTN = Pattern.compile("\\\\+$");
   private static final Pattern ST_ZIP_PLACE_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?(?: +(.*))?");
