@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
 /**
  * Allen County, KY
  */
-public class KYAllenCountyParser extends DispatchA65Parser {
+public class KYAllenCountyParser extends DispatchA74Parser {
 
   public KYAllenCountyParser() {
     super(CITY_LIST, "ALLEN COUNTY", "KY");
@@ -13,7 +13,12 @@ public class KYAllenCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm1.info,@allenkye911.info";
+    return "dispatch@AllenKYE911.info";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final String[] CITY_LIST = new String[]{
