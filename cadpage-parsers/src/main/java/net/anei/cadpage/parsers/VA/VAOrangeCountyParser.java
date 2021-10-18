@@ -14,6 +14,7 @@ public class VAOrangeCountyParser extends SmartAddressParser {
 
   public VAOrangeCountyParser() {
     super("ORANGE COUNTY", "VA");
+    removeWords("BUS");
   }
 
   @Override
@@ -28,7 +29,8 @@ public class VAOrangeCountyParser extends SmartAddressParser {
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("\\\\+ *(?:([-+]?\\d{2,3}\\.\\d{6,} +[-+]?\\d{2,3}\\.\\d{6,})|-361 -361)(?: +[- A-Z0-9]+)?$");
 
-  private static final Pattern MASTER2 = Pattern.compile("(.*?) LOC: (.*?) ([A-Z]+)(\\d{4}-\\d{6}) BOX: (\\d+) (.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(.*?) LOC: (.*?) ((?:[A-Z]+\\d{4}-\\d{6}\\b[; ]*)+) BOX: (\\d+) (.*)");
+  private static final Pattern ID_DELIM_PTN = Pattern.compile(" *; *");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
 
   @Override
@@ -96,13 +98,13 @@ public class VAOrangeCountyParser extends SmartAddressParser {
 
     Matcher match = MASTER2.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL ADDR SRC ID BOX APT INFO");
+      setFieldList("CALL ADDR APT PLACE ID BOX APT INFO");
       data.strCall = match.group(1).trim();
-      parseAddress(match.group(2), data);
-      data.strSource = match.group(3);
-      data.strCallId = match.group(4);
-      data.strBox = match.group(5);
-      String extra = match.group(6);
+      parseAddress(StartType.START_ADDR, match.group(2), data);
+      data.strPlace = getLeft();
+      data.strCallId = ID_DELIM_PTN.matcher(match.group(3)).replaceAll(",");
+      data.strBox = match.group(4);
+      String extra = match.group(5);
 
       if (extra.startsWith("None ")) {
         extra = extra.substring(5).trim();
@@ -149,9 +151,11 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "CO Alarm",
       "CP",
       "DB",
+      "Detached Structure Fire Barn Shed",
       "Diabetic Emergency",
       "Dumpster Fire",
       "Electrocution",
+      "Falls",
       "Fire Alarms",
       "Fire Alarm COM",
       "Fire Alarm NHSA",
@@ -159,6 +163,7 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "Fuel Spill Small",
       "Gas Leak Inside",
       "Gas Leak Outside",
+      "Hemorrhage/Laceration",
       "Illness",
       "Injury",
       "Injury/Fall",
@@ -166,6 +171,8 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "Lines Down",
       "Medical Alarm",
       "Minor Bleeding",
+      "Motor Vehicle Accident",
+      "Motor Vehicle Accident w/Injury",
       "NEW CALL",
       "Odor Inside COM",
       "Odor Inside RES",
@@ -174,6 +181,8 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "Outside Smoke",
       "Overdose/Poisoning",
       "Pedestrian Struck",
+      "Psychiatric/Suicide Attempt",
+      "Public Service",
       "Public Service EMS",
       "Public Service Fire",
       "Road Hazard",
@@ -184,6 +193,7 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "Standby EMS",
       "Standby FIRE",
       "Stroke",
+      "Structure Fire",
       "Structure Fire COM",
       "Structure Fire NHSA",
       "Structure Fire RES",
@@ -191,6 +201,7 @@ public class VAOrangeCountyParser extends SmartAddressParser {
       "Suicide/Attempted",
       "Syncopal Episode",
       "Transfer",
+      "Traumatic Injury",
       "Unconscious",
       "Unconscious/Fainting (near)",
       "UNK Medical Emergency",
