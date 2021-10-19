@@ -1930,6 +1930,7 @@ public class Active911ParserTable {
       "US/TX/Gatesville",                 "TXGatesville",
       "US/TX/GillespieCounty",            "TXGillespieCounty",
       "US/TX/GlennHeights",               "TXDallasCountyD",
+      "US/TX/CityofDenison",              "TXGraysonCounty",
       "US/TX/GreggCounty",                "TXGreggCounty,TXGladewater",
       "US/TX/GrimesCounty",               "TXGrimesCounty",
       "US/TX/HarrisCounty",               "TXHarrisCountyA",

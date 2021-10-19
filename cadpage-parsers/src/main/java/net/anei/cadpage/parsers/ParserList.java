@@ -1564,6 +1564,7 @@ public class ParserList {
               ,"TXGatesville"                   ,"Gatesville, TX"
               ,"TXGillespieCounty"              ,"Gillespie County, TX"
               ,"TXGladewater"                   ,"Gladewater, TX"
+              ,"TXGraysonCounty"                ,"Grayson County, TX"
               ,"TXGreggCounty"                  ,"Gregg County, TX"
               ,"TXGrimesCounty"                 ,"Grimes County, TX"
               ,"TXHarrisCounty"                 ,"Harris County, TX"
