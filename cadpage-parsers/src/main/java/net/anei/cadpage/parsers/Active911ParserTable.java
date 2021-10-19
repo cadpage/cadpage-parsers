@@ -1643,6 +1643,7 @@ public class Active911ParserTable {
       "US/PA/ACDES",                      "PAYorkCountyD,PAAdamsCountyA,PAFranklinCountyC",
       "US/PA/AdamsCounty",                "PAAdamsCountyA",
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
+      "US/PA/AlleghenyCountyCADDivision", "PAAlleghenyCountyA",
       "US/PA/ArmstrongCounty",            "PAArmstrongCounty",
       "US/PA/AvondaleFC",                 "PAChesterCountyO",
       "US/PA/BeaverCounty",               "PABeaverCounty",
