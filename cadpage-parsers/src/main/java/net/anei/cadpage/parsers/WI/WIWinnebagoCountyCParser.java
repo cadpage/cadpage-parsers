@@ -4,11 +4,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 
 public class WIWinnebagoCountyCParser extends DispatchH03Parser {
-  
+
   public WIWinnebagoCountyCParser() {
     super("WINNEBAGO COUNTY", "WI");
   }
-  
+
   @Override
   public String getFilter() {
     return ".WI@co.winnebago.wi.us";
@@ -16,7 +16,7 @@ public class WIWinnebagoCountyCParser extends DispatchH03Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (!subject.equals("OF Active911 Incident")) return false;
+    if (!subject.endsWith(" Active911 Incident")) return false;
     return super.parseHtmlMsg(subject, body, data);
   }
 
