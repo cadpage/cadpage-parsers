@@ -48,7 +48,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.equals("VisiCad Email")) return false;
+    if (!subject.equalsIgnoreCase("VisiCAD Email")) return false;
 
     if (body.startsWith("Unit") || body.startsWith("EMS#:")) {
 
