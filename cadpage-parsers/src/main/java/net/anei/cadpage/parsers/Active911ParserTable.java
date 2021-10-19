@@ -2185,6 +2185,7 @@ public class Active911ParserTable {
       "US/WI/KCCJS",                      "WIRacineCountyB,WIRacineCountyC",
       "US/WI/KenoshaCounty",              "WIKenoshaCounty",
       "US/WI/MukwonagoFire",              "WIWaukeshaCountyB",
+      "US/WI/NeenahFD",                   "WIWinnabegoCountyC",
       "US/WI/PepinCounty",                "WIPeppinCounty",
       "US/WI/RacineCounty",               "WIRacineCounty",
       "US/WI/RockCounty",                 "WIRockCounty",
