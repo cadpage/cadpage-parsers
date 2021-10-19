@@ -2091,6 +2091,7 @@ public class Active911ParserTable {
       "US/VA/SouthamptonCounty",          "VASouthamptonCounty",
       "US/VA/SpotsylvaniaCounty",         "VASpotsylvaniaCounty",
       "US/VA/StaffordCounty",             "VAStaffordCounty",
+      "US/VA/StaffordCountyFireAndRescueDepartment","VAStaffordCounty",
       "US/VA/Suffolk",                    "VASuffolk",
       "US/VA/SurryCounty",                "VASurryCounty",
       "US/VA/TogaVFD",                    "VABuckinghamCountyB",
