@@ -601,6 +601,7 @@ public class ParserList {
               ,"KSRooksCounty"                  ,"Rooks County, KS"
               ,"KSSedgwickCounty"               ,"Sedgwick County, KS"
               ,"KSSumnerCounty"                 ,"Sumner County, KS"
+              ,"KSWabaunseeCounty"              ,"Wabaunsee County, KS"
               ,"KSWichita"                      ,"Wichita, KS"
               ,"KSWilsonCounty"                 ,"Wilson County, KS"
               ,"KSWoodsonCounty"                ,"Woodson County, KS"

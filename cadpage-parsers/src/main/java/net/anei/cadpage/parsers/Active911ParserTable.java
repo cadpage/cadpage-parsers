@@ -640,6 +640,7 @@ public class Active911ParserTable {
       "US/KS/RooksCounty",                "KSRooksCounty",
       "US/KS/SedgwickCounty",             "KSSedgwickCounty",
       "US/KS/SumnerCounty",               "KSSumnerCounty",
+      "US/KS/WabaunseeCounty",            "KSWabaunseeCounty",
       "US/KS/WilsonCounty",               "KSWilsonCounty",
       "US/KS/WoodsonCounty",              "KSWoodsonCounty",
       "US/KS/WoodsonCountySheriff",       "KSWoodsonCounty",

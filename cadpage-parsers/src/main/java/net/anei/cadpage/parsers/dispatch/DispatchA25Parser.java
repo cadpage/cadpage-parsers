@@ -179,7 +179,7 @@ public class DispatchA25Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_PTN = Pattern.compile("([-& A-Z0-9.]+?) - (.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CALL_PTN = Pattern.compile("([-/& A-Z0-9.]+?) - (.*)", Pattern.CASE_INSENSITIVE);
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
