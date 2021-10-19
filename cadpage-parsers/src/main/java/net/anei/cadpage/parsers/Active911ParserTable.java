@@ -962,6 +962,7 @@ public class Active911ParserTable {
       "US/MN/LeSueurCounty",              "MNLeSueurCounty",
       "US/MN/Logis",                      "MNMinneapolisStPaulA",
       "US/MN/LyonCounty",                 "MNLyonCounty",
+      "US/MN/MankatoPublicSafety",        "MNBlueEarthCounty",
       "US/MN/MartinCounty",               "MNMartinCounty",
       "US/MN/McLeodCounty",               "MNMcLeodCounty",
       "US/MN/MIFCIAR",                    "MNItascaCounty",
