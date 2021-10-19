@@ -1867,6 +1867,7 @@ public class Active911ParserTable {
       "US/TX/AustinCountySheriff",        "TXAustinCounty",
       "US/TX/AustinTest",                 "TXTravisCountyA",
       "US/TX/BellCounty",                 "TXBellCounty",
+      "US/TX/BeverlyHills",               "TXMclennanCountyD",
       "US/TX/BexarCounty",                "TXBexarCounty",
       "US/TX/BlancoCounty",               "TXBlancoCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
