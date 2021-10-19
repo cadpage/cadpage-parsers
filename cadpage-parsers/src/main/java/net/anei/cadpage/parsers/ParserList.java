@@ -627,6 +627,7 @@ public class ParserList {
               ,"KYChristianCounty"              ,"Christian County, KY"
               ,"KYClarkCounty"                  ,"Clark County, KY"
               ,"KYClayCounty"                   ,"Clay County, KY"
+              ,"KYCrittendenCounty"             ,"Crittenden County, KY"
               ,"KYDaviessCounty"                ,"Daviess County, KY"
               ,"KYEdmonsonCounty"               ,"Edmonson County, KY"
               ,"KYElliottCounty"                ,"Elliott County, KY"
