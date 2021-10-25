@@ -13,7 +13,8 @@ public class DispatchA80Parser extends FieldProgramParser {
   public DispatchA80Parser(String defCity, String defState) {
     super(defCity, defState,
          "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
-         "| CALL:CALL1! PLACE:PLACE? ( ADDR:ADDR! CITY:CITY! ID:ID! | ID:ID! ADDR! CITY_ST! ) DATE:DATE! TIME:TIME! MAP:MAP? UNIT:UNIT% INFO:INFO/N+ DIRECTIONS:INFO/N+ WARNINGS:ALERT/N+ )");
+         "| CALL:CALL1! PLACE:PLACE? ( ADDR:ADDR! CITY:CITY! ID:ID! | ID:ID! ADDR! CITY_ST! ) DATE:DATE! TIME:TIME! MAP:MAP? UNIT:UNIT% INFO:INFO/N+ DIRECTIONS:INFO/N+ WARNINGS:ALERT/N+ )",
+         FLDPROG_IGNORE_CASE);
   }
 
   @Override
@@ -26,14 +27,14 @@ public class DispatchA80Parser extends FieldProgramParser {
     return new SplitMsgOptionsCustom();
   }
 
-  private static final Pattern MARKER = Pattern.compile("DISPATCH:([_A-Z0-9]+:[- A-Z0-9]+) - +");
+  private static final Pattern MARKER = Pattern.compile("DISPATCH:(?:([_A-Z0-9]+:[- A-Z0-9]+) - )? *");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (match.lookingAt()) {
       setSelectValue("1");
-      data.strSource = match.group(1);
+      data.strSource = getOptGroup(match.group(1));
       body = body.substring(match.end());
      if (!parseFields(body.split("\n"), data)) return false;
     }
@@ -54,9 +55,10 @@ public class DispatchA80Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL1")) return new BaseCall1Field();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("CITY_ST")) return new BaseCityStateField();
-    if (name.equals("DATE"))  return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("DATE"))  return new DateField("\\d\\d/\\d\\d(?:/\\d{4})?", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d(?::\\d\\d)?", true);
     if (name.equals("UNIT2")) return new UnitField("[A-Z0-9]+:[A-Z0-9]+(?:,[A-Z0-9]+:[A-Z0-9]+)*", true);
     return super.getField(name);
   }
@@ -75,6 +77,21 @@ public class DispatchA80Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private static final Pattern APT_PFX_PTN = Pattern.compile("Apt/Unit[ #]+");
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        String apt = field.substring(0,pt).trim();
+        apt = APT_PFX_PTN.matcher(apt).replaceFirst("");
+        data.strApt = append(data.strApt, "-", apt);
+        field = field.substring(pt+1).trim();
+      }
+      super.parse(field, data);
     }
   }
 

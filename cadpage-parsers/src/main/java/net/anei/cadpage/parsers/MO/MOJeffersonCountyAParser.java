@@ -12,21 +12,26 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
 
   String address;
   String callerAddress;
- 
+
   public MOJeffersonCountyAParser() {
     super(CITY_CODES, "JEFFERSON COUNTY", "MO",
           "( SELECT/R Times_For:SRC! Event_Number:ID! Call_Entered:SKIP! Event_Type:CALL! INFO/RN+ " +
           "| Location:ADDR/S? EID:ID? TYPE_CODE:CALL! TIME:TIME? CALLER_ADDR:CADDR? Comments:MAP? Disp:UNIT% )");
   }
-  
+
+  @Override
+  public String getFilter() {
+    return "911@jeffco911.org";
+  }
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.startsWith("EVENT TIMES FOR ")) {
       setSelectValue("R");
       return super.parseFields(body.split("\n"), data);
     }
-    
+
     setSelectValue("");
     address = callerAddress = null;
     if (!super.parseMsg(body, data)) return false;
@@ -35,7 +40,7 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
       callerAddress = null;
     }
     if (address == null) return true;
-    
+
     if (callerAddress == null) {
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, address, data);
     } else {
@@ -68,7 +73,7 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -78,16 +83,16 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
   }
   private static final Pattern X_PREFIX_PTN = Pattern.compile("(?:X|X-|X-ST) +(.*)");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // If address contains GPS coordinates, make sure skip over any
       // colons it might contain
       int pt = 0;
       Matcher match = GPS_PATTERN.matcher(field);
       if (match.find()) pt = match.end();
-      
+
       field = field.replace(";", ":");
       pt = field.indexOf(':', pt);
       if (pt >= 0) {
@@ -111,25 +116,25 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
       }
       address = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " X APT PLACE";
     }
   }
-  
+
   private class MyCallerAddressField extends Field {
     @Override
     public void parse(String field, Data data) {
       if (field.length() > 0) callerAddress = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY INFO";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -137,7 +142,7 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
     "ARN",  "ARNOLD",
     "BM",   "BYRNES MILL",
