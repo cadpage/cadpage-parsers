@@ -63,6 +63,7 @@ public class VTHartfordParser extends DispatchA19Parser {
          "PER",  "PERU",
          "PIT",  "PITTSFIELD",
          "PLF",  "PLAINFIELD",
+         "PLN",  "PLAINFIELD",
          "PLY",  "PLYMOUTH",
          "POM",  "POMFRET",
          "RAN",  "RANDOLPH",
@@ -70,19 +71,24 @@ public class VTHartfordParser extends DispatchA19Parser {
          "REA",  "READING",
          "ROC",  "ROCHESTER",
          "ROY",  "SOUTH ROYALTON",
+         "RUT",  "RUTLAND",
          "SHA",  "SHARON",
          "SLD",  "SOUTH LONDONERRY",
          "SPR",  "SPRINGFIELD",
          "SRO",  "SOUTH ROYALTON",
          "SXR",  "SAXTON RIVER",
+         "TUN",  "TUNBRIDGE",
          "WDM",  "WINDHAM",
          "WES",  "WESTON",
-         "WSR",  "WINDSOR"
+         "WET",  "WEATHERSFIELD",
+         "WSR",  "WINDSOR",
+         "WWI",  "WEST WINDSOR"
 
   });
 
   private static final Set<String> NH_CITIES = new HashSet<String>(Arrays.asList(new String[]{
       "CLAREMONT",
+      "PLAINFIELD"
   }));
 
 }
