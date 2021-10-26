@@ -10,31 +10,31 @@ import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 public class WIFondDuLacCountyParser extends DispatchA41Parser {
 
   public WIFondDuLacCountyParser() {
-    super(CITY_CODES, "FOND DU LAC COUNTY", "WI", "F[AFPS]|S[EF]");
+    super(CITY_CODES, "FOND DU LAC COUNTY", "WI", "F[AFPS]|S[EFO]");
   }
-  
+
   @Override
   public String getFilter() {
     return "cadmail@fdlco.wi.gov";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("CALLALERT:")) body = "DISPATCH:" + body.substring(10); 
+    if (body.startsWith("CALLALERT:")) body = "DISPATCH:" + body.substring(10);
     if (!super.parseMsg(body, data)) return false;
     data.strSource = data.strChannel;
     data.strChannel = "";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CH", "SRC");
   }
-  
+
   private static final Pattern DIR_NUMBER_ADDR = Pattern.compile("([NSEW])(\\d+ .*)");
   private String saveDir;
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     saveDir = null;
@@ -53,7 +53,9 @@ public class WIFondDuLacCountyParser extends DispatchA41Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "FDL", "FOND DU LAC",
-      "OAK", "OAKFIELD"
+      "BRND", "BRANDON",
+      "FAIR", "FAIRWATER",
+      "FDL",  "FOND DU LAC",
+      "OAK",  "OAKFIELD"
   });
 }
