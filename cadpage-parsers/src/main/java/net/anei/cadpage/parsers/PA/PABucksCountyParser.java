@@ -8,8 +8,10 @@ Bucks County, PA
 
 
 public class PABucksCountyParser extends GroupBestParser {
-  
+
   public PABucksCountyParser() {
-    super(new PABucksCountyAParser(), new PABucksCountyBParser());
+    super(new PABucksCountyAParser(),
+          new PABucksCountyBParser(),
+          new PABucksCountyDParser());
   }
 }
