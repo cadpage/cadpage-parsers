@@ -5,7 +5,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class INHowardCountyParser extends GroupBestParser {
 
   public INHowardCountyParser() {
-    super(new INHowardCountyAParser(), new INHowardCountyBParser());
+    super(new INHowardCountyAParser(),
+          new INHowardCountyBParser(),
+          new INHowardCountyCParser());
   }
 
 }

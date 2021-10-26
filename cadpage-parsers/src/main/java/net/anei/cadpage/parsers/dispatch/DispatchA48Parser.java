@@ -108,7 +108,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     },
 
-    GPS_PLACE_X("GPS? PLACE? X+?", "GPS PLACE X") {  // Also not supported for field delimited format
+    GPS_PLACE_X("GPS? ( X X+? | PLACE  X+? | ) INFO/Z?", "GPS PLACE X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
         parser.parseCrossStreet(true, true, false, field, data);
@@ -523,6 +523,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("X_NAME")) return new BaseCrossNameField();
     if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("X")) return new BaseCrossField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("PHONE")) return new BasePhoneField();
     if (name.equals("INFO")) return new BaseInfoField();
@@ -646,6 +647,27 @@ public class DispatchA48Parser extends FieldProgramParser {
       if (INFO_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
+    }
+  }
+
+  private class BaseCrossField extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.contains("/")) return false;
+      if (field.equals(UNIT_LABEL_STR)) return false;
+      if (INFO_PTN.matcher(field).matches()) return false;
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
