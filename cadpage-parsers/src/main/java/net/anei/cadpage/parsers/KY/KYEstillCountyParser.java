@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
-public class KYEstillCountyParser extends DispatchA65Parser {
+public class KYEstillCountyParser extends DispatchA74Parser {
 
   public KYEstillCountyParser() {
     super(CITY_LIST, "ESTILL COUNTY", "KY");
@@ -10,7 +10,7 @@ public class KYEstillCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm3.info,dispatch@EstillKY911.net";
+    return "dispatch@EstillKY911.net";
   }
 
   private static final String[] CITY_LIST = new String[] {
