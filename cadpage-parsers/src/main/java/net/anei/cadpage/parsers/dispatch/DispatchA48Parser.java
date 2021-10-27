@@ -664,11 +664,6 @@ public class DispatchA48Parser extends FieldProgramParser {
       super.parse(field, data);
       return true;
     }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
   }
 
   private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
