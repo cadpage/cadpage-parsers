@@ -54,8 +54,30 @@ public class WIFondDuLacCountyParser extends DispatchA41Parser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BRND", "BRANDON",
+      "BRV",  "BROWNSVILLE",
+      "BYRN", "BYRON",
+      "CAMP", "CAMPBELLSPORT",
+      "CASC", "CASCADE",
+      "CHIL", "CHILTON",
+      "EDEN", "EDEN",
+      "ELD",  "ELDORADO",
       "FAIR", "FAIRWATER",
       "FDL",  "FOND DU LAC",
-      "OAK",  "OAKFIELD"
+      "GLEN", "GLENBEULAH",
+      "KEW",  "KEWASKUM",
+      "LOM",  "LOMIRE",
+      "MAL",  "MALONE",
+      "MARK", "MARKESAN",
+      "MTCA", "MT CALVARY",
+      "NFDL", "N FOND DU LAC",
+      "NHOL", "NEW HOLSTEIN",
+      "OAK",  "OAKFIELD",
+      "OSH",  "OSHKOSH",
+      "PICK", "PICKETT",
+      "RIP",  "RIPON",
+      "ROS",  "ROSENDALE",
+      "STC",  "ST CLOUD",
+      "VDYN", "VAN DYNE",
+      "WPN",  "WAUPUN"
   });
 }
