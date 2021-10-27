@@ -1,25 +1,26 @@
 package net.anei.cadpage.parsers.LA;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
-public class LAWestFelicianaParishParser extends DispatchB2Parser {
-		
+public class LAWestFelicianaParishParser extends DispatchA48Parser {
+
   public LAWestFelicianaParishParser() {
-    super("911CENTER:", CITY_LIST, "WEST FELICIANA PARISH", "LA", B2_FORCE_CALL_CODE);
+    super(CITY_LIST, "WEST FELICIANA PARISH", "LA", FieldType.GPS_PLACE_X, A48_NO_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("FRANCISVILLE");
   }
-  
-  
+
+
   @Override
   public String getFilter() {
     return "911CENTER@wfpso.org";
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "BAINS RISTROPH",
+      "CAP EDDIES",
       "CLUBHOUSE WAY",
       "DANIEL PORCHE",
       "DEER RUN",
@@ -46,71 +47,21 @@ public class LAWestFelicianaParishParser extends DispatchB2Parser {
       "ST MARYS",
       "STAR HILL",
       "THOMPSON COVE",
+      "TRAILER PARK",
       "WEST FELICIANA"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
-      "911 HANG UP / OPEN LINE",
-      "ABDOMINAL/BACK PAIN",
-      "ACCIDENT INJURIES UNKNOWN",
-      "ACCIDENT WITH INJURIES",
-      "ALLERGIC REACTION",
-      "AIRPLANE CRASH",
-      "ANIMAL/HUMAN BITE",
-      "AUTO ACCIDENT NO INJURIES",
-      "BLEEDING",
-      "BURN PATIENT",
-      "CHEST PAINS",
-      "CHOKING PATIENT",
-      "CPR IN PROGRESS",
-      "DIABETIC PATIENT",
-      "DIFFICULTY BREATHING",
-      "DISTURBANCE",
-      "ELECTRIC POLE/ LINE FIRE",
-      "FALL",
-      "FIGHT",
-      "FIRE ALARM",
-      "FIRE CALL",
-      "GRASS FIRE CALL",
-      "GRASS FIRE",
-      "HAZARDOUS MATERIALS CALL",
-      "HIT AND RUN",
-      "MEDICAL ALARM",
-      "MEDICAL CALL",
-      "MEDICAL CALL",
-      "MICELLANEOUS CALL FOR SERVICE",
-      "MVA NO INJURIES",
-      "MVA UNKNOWN INJURIES",
-      "MVA WITH INJURIES",
-      "PATIENT TRANSFER",
-      "POSSIBLE DEATH",
-      "POSSIBLE DROWNING",
-      "PREGNANCY CHILDBIRTH",
-      "PREGNANCY/LABOR CALL",
-      "PUBLIC ASSIST",
-      "REPORT OF FALLEN SUBJECT",
-      "REPORT OF SIGHT/SMELL SMOKE, NO FLAMES",
-      "REPORT OF SMOKE, NO FLAMES",
-      "REPORT OF TRAUMA",
-      "REPORTED PAIN",
-      "REPORTED SEIZURE",
-      "REPORTED SUICIDE",
-      "REQUEST TO SEE OFFICER",
-      "SEIZURE",
-      "SICK PERSON",
-      "SILENT ALARM",
-      "SPECIAL DETAIL",
-      "STROKE",
-      "STROKE/CVA",
-      "STRUCTURE FIRE",
-      "SUSPICIOUS PERSON",
-      "TEST",
-      "TRASH FIRE",
-      "TREE IN ROADWAY",
-      "UNCONSCIOUS PATIENT",
-      "UNCONSCIOUS SUBJECT",
-      "UNKNOWN EXPLOSION",
-      "VEHICLE FIRE"
+      "911",
+      "FALARM",
+      "GFIRE",
+      "MALARM",
+      "MED",
+      "MENTAL",
+      "MVAU",
+      "SMOKE",
+      "UNRESP",
+      "VFIRE"
   );
 
   private static final String[] CITY_LIST = new String[] {

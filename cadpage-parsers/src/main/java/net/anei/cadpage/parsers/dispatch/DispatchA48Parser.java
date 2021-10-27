@@ -108,7 +108,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     },
 
-    GPS_PLACE_X("GPS? ( X X+? | PLACE  X+? | ) INFO/Z?", "GPS PLACE X") {
+    GPS_PLACE_X("GPS? ( X X+? | PLACE  X+? | ) INFO/Z+?", "GPS PLACE X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
         parser.parseCrossStreet(true, true, false, field, data);
