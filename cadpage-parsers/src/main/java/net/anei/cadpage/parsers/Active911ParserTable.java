@@ -61,6 +61,7 @@ public class Active911ParserTable {
       "US/AK/Skagway",                    "AKSkagway",
       "US/AL/AdamsvilleFD",               "ALJeffersonCountyJ",
       "US/AL/AlexanderCity",              "ALTallapoosaCounty",
+      "US/AL/AttallaPD",                  "ALEtowahCountyD",
       "US/AL/AthensLimestoneCounty",      "ALLimestoneCountyA",
       "US/AL/BaldwinCounty",              "ALBaldwinCounty",
       "US/AL/BibbCounty",                 "ALBibbCounty",
