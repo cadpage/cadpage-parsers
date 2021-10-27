@@ -606,6 +606,7 @@ public class Active911ParserTable {
       "US/KS/BonnerSpringsFD",            "KSWyandotteCounty",
       "US/KS/BourbonCounty",              "KSBourbonCounty",
       "US/KS/BrownCounty",                "KSBrownCounty",
+      "US/KS/BrownCountySheriff",         "KSBrownCounty",
       "US/KS/ButlerCounty",               "KSButlerCountyA,KSButlerCountyB",
       "US/KS/Cherryvale",                 "KSMontgomeryCounty",
       "US/KS/CityofAndover",              "KSAndover",
