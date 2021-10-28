@@ -143,7 +143,7 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
     "ARN",  "ARNOLD",
     "BM",   "BYRNES MILL",
     "HB",   "HILLSBORO",
