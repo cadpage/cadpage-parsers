@@ -4,10 +4,12 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SplitMsgOptions;
 import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
+import net.anei.cadpage.parsers.StandardCodeTable;
 
 /**
  * Onondaga County, NY
@@ -148,6 +150,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
   private static final Pattern X_APT_PTN = Pattern.compile(
       "(?:APT|RM|ROOM|SUITE|LOT|#)[-:/# ]*(.*)|\\d+(?: *- *[A-Z0-9]+)?",
       Pattern.CASE_INSENSITIVE);
+  private static final Pattern STD_CODE_PTN = Pattern.compile("(\\d\\d[A-E])[- ]*(\\d\\d[A-Za-z]?)");
 
   private class MyCrossField extends CrossField {
     @Override
@@ -195,21 +198,36 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
         }
       }
 
-      code = stripFieldEnd(code, "-default");
-      code = stripFieldEnd(code, "-");
-      data.strCode = code;
-      String call = CALL_CODES.getProperty(code);
-      if (call == null) {
-        int pt = code.indexOf(' ');
-        if (pt >= 0)
-          call = CALL_CODES.getProperty(code.substring(0, pt));
+      Matcher match = STD_CODE_PTN.matcher(code);
+      if (match.matches()) {
+        code = match.group(1) + match.group(2);
+      } else {
+        code = stripFieldEnd(code, "-default");
+        code = stripFieldEnd(code, "-");
       }
-      if (call == null)
-        call = code;
-      int pt = call.indexOf(", PRIORITY ");
-      if (pt >= 0) {
-        data.strPriority = call.substring(pt + 11).trim();
-        call = call.substring(0, pt).trim();
+      data.strCode = code;
+
+      String call = STD_CALL_CODES.getCodeDescription(code);
+      if (call != null) {
+        if (code.length() >= 3) {
+          String priority = STD_CODE_PRI.getProperty(code.substring(2,3));
+          if (priority != null) data.strPriority = priority;
+        }
+      } else {
+        call = CALL_CODES.getProperty(code);
+        if (call == null) {
+          int pt = code.indexOf(' ');
+          if (pt >= 0) call = CALL_CODES.getProperty(code.substring(0, pt));
+        }
+        if (call == null) {
+          call = code;
+        } else {
+          int pt = call.indexOf(", PRIORITY ");
+          if (pt >= 0) {
+            data.strPriority = call.substring(pt + 11).trim();
+            call = call.substring(0, pt).trim();
+          }
+        }
       }
       data.strCall = call;
     }
@@ -269,6 +287,16 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
     return city;
   }
 
+  private static final CodeTable STD_CALL_CODES = new StandardCodeTable();
+
+  private static final Properties STD_CODE_PRI = buildCodeTable(new String[] {
+      "A", "3",
+      "B", "2",
+      "C", "2",
+      "D", "1",
+      "E", "1"
+  });
+
   private static final Properties CALL_CODES = buildCodeTable(new String[] {
 
       // New Numeric codes
@@ -280,9 +308,15 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "02C", "ALLERGIES or ENVENOMATIONS, PRIORITY 2",
       "02D", "ALLERGIES or ENVENOMATIONS, PRIORITY 1",
       "02E", "ALLERGIES or ENVENOMATIONS, PRIORITY 1",
+      "03A", "ANIMAL BITES / ATTACKS, PRIORITY 3",
+      "03B", "ANIMAL BITES / ATTACKS, PRIORITY 2",
+      "03D", "ANIMAL BITES / ATTACKS, PRIORITY 1",
+      "04A", "ASSAULT (INJURIES), PRIORITY 3",
+      "04B", "ASSAULT (INJURIES), PRIORITY 2",
+      "04D", "ASSAULT (INJURIES), PRIORITY 1",
       "05A", "BACK PAIN, PRIORITY 3",
       "05C", "BACK PAIN, PRIORITY 2",
-      "O5D", "BACK PAIN, PRIORITY 1",
+      "05D", "BACK PAIN, PRIORITY 1",
       "06C", "BREATHING PROBLEMS, PRIORITY 2",
       "06D", "BREATHING PROBLEMS, PRIORITY 1",
       "06E", "BREATHING PROBLEMS, PRIORITY 1",
@@ -291,6 +325,9 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "07C", "BURNS, PRIORITY 2",
       "07D", "BURNS, PRIORITY 1",
       "07E", "BURNS, PRIORITY 1",
+      "08B", "CARBON MONOXIDE / INHALATION / HAZMAT, PRIORITY 3",
+      "08C", "CARBON MONOXIDE / INHALATION / HAZMAT, PRIORITY 2",
+      "08D", "CARBON MONOXIDE / INHALATION / HAZMAT, PRIORITY 1",
       "09B", "CARDIAC or RESPIRATORY ARREST, PRIORITY 2",
       "09D", "CARDIAC or RESPIRATORY ARREST, PRIORITY 1",
       "09E", "CARDIAC or RESPIRATORY ARREST, PRIORITY 1",
@@ -308,6 +345,10 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "13C", "DIABETIC PROBLEM, PRIORITY 2",
       "13D", "DIABETIC PROBLEM, PRIORITY 1",
       "14A", "DROWNING, PRIORITY 3",
+      "14B", "DROWNING, PRIORITY 2",
+      "14C", "DROWNING, PRIORITY 2",
+      "14D", "DROWNING, PRIORITY 1",
+      "14E", "DROWNING, PRIORITY 1",
       "15C", "ELECTROCUTION, PRIORITY 2",
       "15D", "ELECTROCUTION, PRIORITY 1",
       "15E", "ELECTROCUTION, PRIORITY 1",
@@ -331,6 +372,9 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "21B", "HEMORRHAGE or LACERATION, PRIORITY 2",
       "21C", "HEMORRHAGE or LACERATION, PRIORITY 2",
       "21D", "HEMORRHAGE or LACERATION, PRIORITY 1",
+      "22A", "INACCESSIBLE INCIDENT / OTHER ENTRAPMENTS, PRIORITY 3",
+      "22B", "INACCESSIBLE INCIDENT / OTHER ENTRAPMENTS, PRIORITY 2",
+      "22D", "INACCESSIBLE INCIDENT / OTHER ENTRAPMENTS, PRIORITY 1",
       "23B", "OVERDOSE or POISONING, PRIORITY 2",
       "23C", "OVERDOSE or POISONING, PRIORITY 2",
       "23D", "OVERDOSE or POISONING, PRIORITY 1",
@@ -338,12 +382,21 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "24B", "MATERNITY, PRIORITY 2",
       "24C", "MATERNITY, PRIORITY 2",
       "24D", "MATERNITY, PRIORITY 1",
+      "25A", "PYSCHIATRIC / ABDNORMAL BEHAVIOR / SUICIDE ATTEMPT, PRIORITY 1",
+      "25B", "PYSCHIATRIC / ABDNORMAL BEHAVIOR / SUICIDE ATTEMPT, PRIORITY 2",
+      "25D", "PYSCHIATRIC / ABDNORMAL BEHAVIOR / SUICIDE ATTEMPT, PRIORITY 3",
       "26A", "SICK PERSON, PRIORITY 3",
       "26B", "SICK PERSON, PRIORITY 2",
       "26C", "SICK PERSON, PRIORITY 2",
       "26D", "SICK PERSON, PRIORITY 1",
+      "27A", "STAB / GUNSHOT / PENETRATING TRAUMA, PRIORITY 1",
+      "27B", "STAB / GUNSHOT / PENETRATING TRAUMA, PRIORITY 2",
+      "27D", "STAB / GUNSHOT / PENETRATING TRAUMA, PRIORITY 3",
       "28A", "STROKE, PRIORITY 3",
       "28C", "STROKE, PRIORITY 2",
+      "29A", "TRAFFIC / TRANSPORTATION INCIDENT, PRIORITY 1",
+      "29B", "TRAFFIC / TRANSPORTATION INCIDENT, PRIORITY 2",
+      "29D", "TRAFFIC / TRANSPORTATION INCIDENT, PRIORITY 3",
       "30A", "TRAUMATIC INJURY, PRIORITY 3",
       "30B", "TRAUMATIC INJURY, PRIORITY 2",
       "30D", "TRAUMATIC INJURY, PRIORITY 1",
@@ -440,7 +493,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "ESCT -B",  "ESCORT - BLOOD",
       "ESCT -C",  "ESCORT - CUSTODY",
       "ESCT -F",  "ESCORT - FUNERAL",
-      "ESCT -M",  "ESCORT - MONEY/BANKBAG",
+      "ESCT -M",  "ESCORT - MONEY/BANK BAG",
       "ESCT -P",  "ESCORT - PERSONAL EFFECTS (MEDS/CLOTHING)",
       "ESCT",     "ESCORT",
       "EXPL",     "EXPLOSION",
@@ -461,7 +514,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "FIRE -Q",  "FIRE INVESTIGATION",
       "FIRE -R",  "RESIDENTIAL FIRE",
       "FIRE -S",  "SCHOOL FIRE",
-      "FIRE -T",  "TRANSIT - BUS/TRAINFIRE",
+      "FIRE -T",  "TRANSIT - BUS/TRAIN FIRE",
       "FIRE -V",  "VEHICLE FIRE",
       "FIRE -W",  "WATER VESSEL/BOAT FIRE",
       "FIRE",     "FIRE",
@@ -469,7 +522,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "FOOT",     "OUT OF SERVICE - WALKING BEAT",
       "FORG",     "FORGERY",
       "FRAD",     "FRAUD",
-      "FWAR",     "WARRANT ARREST WITHDR",
+      "FWAR",     "WARRANT ARREST WITH DR",
       "FWKS",     "FIREWORKS COMPLAINT",
       "GAMB",     "GAMBLING COMPLAINT",
       "GILL",     "GENERAL ILLNESS",
@@ -575,13 +628,13 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "TRES",     "TRESPASSING",
       "TRNG",     "OUT OF SERVICE - TRAINING",
       "UNCP",     "UNCONSCIOUS PERSON",
-      "VEH -A",   "VEHICLE COMPLAINT -ABANDONED",
-      "VEH -D",   "VEHICLE COMPLAINT -DISABLED",
-      "VEH -L",   "VEHICLE COMPLAINT -LOCATED FILE 1",
-      "VEH -P",   "VEHICLE COMPLAINT -PARKING",
-      "VEH -R",   "VEHICLE COMPLAINT -REPOSSESSED",
-      "VEH -S",   "VEHICLE COMPLAINT -STOLEN",
-      "VEH -T",   "VEHICLE COMPLAINT -TOWED",
+      "VEH -A",   "VEHICLE COMPLAINT - ABANDONED",
+      "VEH -D",   "VEHICLE COMPLAINT - DISABLED",
+      "VEH -L",   "VEHICLE COMPLAINT - LOCATED FILE 1",
+      "VEH -P",   "VEHICLE COMPLAINT - PARKING",
+      "VEH -R",   "VEHICLE COMPLAINT - REPOSSESSED",
+      "VEH -S",   "VEHICLE COMPLAINT - STOLEN",
+      "VEH -T",   "VEHICLE COMPLAINT - TOWED",
       "VEH",      "VEHICLE COMPLAINT",
       "WALK",     "WALK-IN EMS TO STATION",
       "WARP",     "WARRANT PROCESSED",
@@ -593,7 +646,8 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "WTRP -M",  "WATER PROBLEM - WATER MAIN/SERVICE PROBLEM",
       "WTRP -S",  "WATER PROBLEM - STRUCTURE INVOLVED",
       "WTRP",     "WATER PROBLEM",
-      "XING",     "SCHOOL CROSSING DET" 
+      "XING",     "SCHOOL CROSSING DET"
+
   // Unidentified codes
   // 26C -01
   // 26C -02
@@ -625,7 +679,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTBT", "BRUTUS",
       "OTCA", "CAYUGA",
       "OTCQ", "CONQUEST",
-      "OTCT", "CATO", 
+      "OTCT", "CATO",
       "OTFL", "FLEMING",
       "OTGN", "GENOA",
       "OTIR", "IRA",
@@ -645,7 +699,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTVC", "VICTORY",
       "OTVN", "VENICE",
       "OVAU", "AURORA",
-      "OVCT", "CATO", 
+      "OVCT", "CATO",
       "OVFH", "FAIR HAVEN",
       "OVME", "MENTZ",    // or Meridian
       "OVMO", "MORAVIA",
@@ -675,12 +729,12 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVMR", "MARATHON",
 
       // Madison County
-      "OCON", "ONEIDA CITY", 
-      "OTBK", "BROOKFIELD", 
-      "OTCZ", "CAZENOVIA", 
-      "OTDR", "DERUYTER TOWN", 
-      "OTEA", "EATON", 
-      "OTFE", "FENNER", 
+      "OCON", "ONEIDA CITY",
+      "OTBK", "BROOKFIELD",
+      "OTCZ", "CAZENOVIA",
+      "OTDR", "DERUYTER TOWN",
+      "OTEA", "EATON",
+      "OTFE", "FENNER",
       "OTGE", "GEORGETOWN",
       "OTHM", "HAMILTON",
       "OTLB", "LEBANON",
@@ -703,12 +757,12 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVWM", "WAMPSVILLE",
 
       // Oneida County
-      "OCRO", "ROME CITY", 
-      "OCSH", "SHERRILL CITY", 
+      "OCRO", "ROME CITY",
+      "OCSH", "SHERRILL CITY",
       "OCUT", "UTICA CITY",
       "OTAN", "AUBURN",   // or Annsville
-      "OTAU", "AUGUSTA", 
-      "OTAV", "AVA", 
+      "OTAU", "AUGUSTA",
+      "OTAV", "AVA",
       "OTBO", "BOONVILLE",
       "OTBR", "BRIDGEWATER",
       "OTCM", "CAMDEN",
@@ -724,8 +778,8 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTPS", "PARIS",
       "OTRE", "REMSEN",
       "OTSA", "SANGERFIELD",
-      "OTSE", "SKANEATELES", 
-      
+      "OTSE", "SKANEATELES",
+
       // Was Steuben
       "OTTR", "TRENTON",
       "OTVE", "VERNON",
@@ -758,7 +812,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "NAT", "ONONDAGA NATION",
       "SYR", "SYRACUSE CITY",
       "TCI", "CICERO",
-      "TCL", "CLAY", 
+      "TCL", "CLAY",
       "TCM", "CAMILLUS",
       "TDW", "DEWITT",
       "TEB", "ELBRIDGE",
@@ -828,7 +882,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVPU", "PULASKI",
       "OVSC", "SANDY CREEK"
   });
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "STRAWBERRY LN & SALT SPRINGS RD",         "43.027955,-75.954269",
   });
