@@ -15,7 +15,9 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   public TXBellCountyParser() {
     super(CITY_CODES, "BELL COUNTY", "TX",
-        "UNIT LOC:ADDR/S? ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO )");
+        "( P:PRI! EVNUM:ID! LOC:ADDR1/S! ADDR2/S? APT:APT! LAT:GPS1! LONG:GPS2! TIME:DATETIME2! CALLR:NAME! CALLR_ADD:SKIP! CALLR_NUM:PHONE! UNITS:UNIT! EVENT_TYPE:CALL! Sub_Type:CALL/SDS! COMMENTS:INFO INFO/CS+ " +
+        "| PRI1 ( LOC:ADDR/S APT:APT? MUN:CITY? | ) ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO ) " +
+        ")");
     setupGpsLookupTable(GPS_TABLE);
   }
 
@@ -37,20 +39,26 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
-    if (!super.parseMsg(body, data)) return false;
-    String call = CALL_CODES.getProperty(data.strCode);
-    if (call == null) {
-      int pt = data.strCode.indexOf('-');
-      if (pt >= 0) call = CALL_CODES.getProperty(data.strCode.substring(0,pt));
+    if (body.startsWith("P:")) {
+      if (body.length() >= 2980 && body.length() <= 3001) data.expectMore = true;
+      return parseFields(body.split(","), data);
     }
-    if (call == null) {
-      data.strCall = append(data.strCall, " - ", data.strCode);
-    } else {
-      if (data.strPriority.length() == 0) data.strPriority = call.substring(0,1);
-      data.strCall = append(data.strCall, " - ", call.substring(2));
+    else {
+      body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
+      if (!super.parseMsg(body, data)) return false;
+      String call = CALL_CODES.getProperty(data.strCode);
+      if (call == null) {
+        int pt = data.strCode.indexOf('-');
+        if (pt >= 0) call = CALL_CODES.getProperty(data.strCode.substring(0,pt));
+      }
+      if (call == null) {
+        data.strCall = append(data.strCall, " - ", data.strCode);
+      } else {
+        if (data.strPriority.isEmpty()) data.strPriority = call.substring(0,1);
+        data.strCall = append(data.strCall, " - ", call.substring(2));
+      }
+      return true;
     }
-    return true;
   }
 
   @Override
@@ -60,23 +68,27 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("PRI1")) return new MyPriority1Field();
     if (name.equals("CODE")) return new MyCodeField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR")) return new MyAddressField(0);
+    if (name.equals("ADDR1")) return new MyAddressField(1);
+    if (name.equals("ADDR2")) return new MyAddressField(2);
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIME")) return new MyTimeField();
+    if (name.equals("DATETIME2")) return new MyDateTime2Field();
     return super.getField(name);
   }
 
-  private static final Pattern UNIT_PTN = Pattern.compile("(.*?) *\\b([A-Z]\\d+)");
-  private class MyUnitField extends Field {
+  private static final Pattern PRI1_PTN = Pattern.compile("(.*?) *\\bP(\\d)");
+  private class MyPriority1Field extends Field {
 
     @Override
     public void parse(String field, Data data) {
-      Matcher match = UNIT_PTN.matcher(field);
+      Matcher match = PRI1_PTN.matcher(field);
       if (!match.matches()) abort();
       String prefix = match.group(1);
-      data.strUnit = match.group(2);
+      data.strPriority = match.group(2);
 
       int pt = prefix.indexOf("Original message from");
       if (pt >= 0) {
@@ -93,21 +105,48 @@ public class TXBellCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "CALL? UNIT";
+      return "PRI? UNIT";
     }
 
   }
 
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *([^ ]+)(?: APT)?");
   private class MyAddressField extends AddressField {
+
+    private int type;
+
+    public MyAddressField(int type) {
+      this.type = type;
+    }
+
+    @Override
+    public boolean canFail() {
+      return type == 2;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (type == 2 && !data.strAddress.startsWith("LL(")) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
+      if (type == 2) {
+        field = data.strAddress + ',' + field;
+        data.strAddress = "";
+      }
       field = field.replace("CHAPPARAL", "CHAPARRAL");
       if (field.startsWith("@")) {
         data.strAddress = field;
         return;
       }
       if (field.startsWith("LL(")) {
+        if (type == 1) {
+          data.strAddress = field;
+          return;
+        }
         int pt = field.indexOf(")", 3);
         if (pt < 0) abort();
         data.strAddress = field.substring(0,pt+1).trim();
@@ -138,6 +177,14 @@ public class TXBellCountyParser extends FieldProgramParser {
     }
   }
 
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strApt)) return;
+      super.parse(field, data);
+    }
+  }
+
   private class MyCodeField extends CodeField {
     @Override
     public void parse(String field, Data data) {
@@ -146,25 +193,23 @@ public class TXBellCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_UNIT_PTN = Pattern.compile("UNIT ([^ ]+) *(.*)");
-  private static final Pattern INFO_PHONE_GPS_PTN = Pattern.compile("((?:\\(\\d{3}\\) ?\\d{3}-\\d{4} +)?\\d{10}) ([-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)(?: [-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)?(?: Location Saved by LocateCall - LL\\([-+\\d:\\.,]+?\\))?(?:: EST \\d+)?(?: WPH\\d)? *(.*)");
+  private static final Pattern INFO_PHONE_GPS_PTN = Pattern.compile("(\\(\\d{3}\\) ?\\d{3}-\\d{4}|\\d{10}) +(?:TELCO=\\S* +)?([-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)(?: [-+]\\d+\\.\\d+ [-+]\\d+\\.\\d+)?(?: Location Saved by LocateCall - LL\\([-+\\d:\\.,]+?\\))?(?:: EST \\d+)?(?: WPH\\d)? *(.*)");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
 
-      Matcher match = INFO_UNIT_PTN.matcher(field);
-      if (match.matches()) {
-        data.strUnit = match.group(1);
-        field = match.group(2);
-      }
+      for (String part : field.split("\\|")) {
 
-      match = INFO_PHONE_GPS_PTN.matcher(field);
-      if (match.matches()) {
-        data.strPhone = match.group(1);
-        setGPSLoc(match.group(2), data);
-        field = match.group(3);
+        part = part.trim();
+
+        Matcher match = INFO_PHONE_GPS_PTN.matcher(part);
+        if (match.matches()) {
+          if (data.strPhone.isEmpty()) data.strPhone = match.group(1);
+          if (data.strGPSLoc.isEmpty()) setGPSLoc(match.group(2), data);
+          part = match.group(3);
+        }
+        data.strSupp = append(data.strSupp, "\n", part);
       }
-      data.strSupp = append(data.strSupp, "\n", field);
     }
 
     @Override
@@ -187,6 +232,17 @@ public class TXBellCountyParser extends FieldProgramParser {
       if (!match.matches()) abort();
       super.parse(match.group(1), data);
       data.strCall = append(data.strCall, " - ", match.group(2));
+    }
+  }
+
+  private static final Pattern DATE_TIME2_PTN = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d\\d:\\d\\d:\\d\\d)");
+  private class MyDateTime2Field extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME2_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate =  match.group(2)+'/'+match.group(3)+'/'+match.group(1);
+      data.strTime = match.group(4);
     }
   }
 
