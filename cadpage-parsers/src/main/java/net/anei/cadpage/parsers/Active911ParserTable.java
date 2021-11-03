@@ -535,6 +535,7 @@ public class Active911ParserTable {
       "US/IN/BooneCounty",                "INBooneCountyB",
       "US/IN/Bristol",                    "INElkhartCounty",
       "US/IN/BrownCounty",                "INBrownCounty",
+      "US/IN/CarrollCounty",              "INCarrollCounty",
       "US/IN/CataractVFD",                "INOwenCounty",
       "US/IN/Chesterfield",               "INMadisonCountyC",
       "US/IN/ClayCoCAD",                  "INClayCounty",

@@ -487,6 +487,7 @@ public class ParserList {
               ,"INBlackfordCounty"              ,"Blackford County, IN"
               ,"INBooneCounty"                  ,"Boone County, IN"
               ,"INBrownCounty"                  ,"Brown County, IN"
+              ,"INCarrollCounty"                ,"Carroll County, IN"
               ,"INCassCounty"                   ,"Cass County, IN"
               ,"INClayCounty"                   ,"Clay County, IN"
               ,"INDaviessCounty"                ,"Daviess County, IN"
