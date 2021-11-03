@@ -29,7 +29,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
   @Override
   public String getFilter() {
-    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca";
+    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca,FireDispatch@stalbert.ca,Incident@ParklandCounty.com";
   }
 
   @Override
@@ -105,6 +105,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "BLACKFALDS",
       "BLUFFTON",
       "BOWDEN",
+      "BRAZEAU COUNTY",
       "BROOKS",
       "BRUDERHEIM",
       "BUFORD",
@@ -148,6 +149,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "MOUNTAIN VIEW COUNTY",
       "MORINVILLE",
       "MUNDARE",
+      "NAMAO",
       "NEW SAREPTA",
       "NEWELL COUNTY",
       "NISKU",
@@ -184,6 +186,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "TORRINGTON",
       "TROCHU",
       "VEGREVILLE",
+      "VILLENEUVE",
       "WARBURG",
       "WETASKIWIN",
       "WETASKIWIN COUNTY"

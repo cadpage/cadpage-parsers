@@ -1,28 +1,23 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
 /**
  * Muhlenberg County, KY (A)
  */
-public class KYMuhlenbergCountyAParser extends DispatchEmergitechParser {
+public class KYMuhlenbergCountyAParser extends DispatchA86Parser {
 
   public KYMuhlenbergCountyAParser() {
-    super(KYMuhlenbergCountyParser.CITY_LIST, "MUHLENBERG COUNTY", "KY");
+    super("MUHLENBERG COUNTY", "KY");
   }
 
   @Override
   public String getFilter() {
-    return "pagegate@muhlenberg911.org";
+    return "Dispatch@MuhlenbergKYE911.info";
   }
 
   @Override
-  public boolean parseMsg(String body, Data data) {
-
-    // Occasionally the extra pace goes in 66 instead of 67.
-    // But that only seems to happen to one word, so we will fix it here
-    body = body.replace(" B ETWEEN ", " BETWEEN ");
-    return super.parseMsg(body, data);
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 }
