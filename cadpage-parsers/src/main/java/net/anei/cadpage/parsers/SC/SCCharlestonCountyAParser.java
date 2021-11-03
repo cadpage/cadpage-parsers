@@ -11,7 +11,11 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
 
   public SCCharlestonCountyAParser() {
     super("CHARLESTON COUNTY", "SC",
-           "( PREFIX Address:ADDR! X_Street:X Cmd_Channel:CH% | ADDR2/SC! X_Street:X Cmd_Channel:CH! Units_Assigned:UNIT% Time:TIME )");
+          "( Comment:INFO ( Problem:CALL! Address:ADDR! X_Street:X! " +
+                         "| IN:ID! PN:CALL! IC:EMPTY! PR:APT! AD:ADDR! CS:X! CT:CITY! BD:EMPTY! AN:SKIP! ) " +
+          "| PREFIX Address:ADDR! X_Street:X Cmd_Channel:CH% " +
+          "| ADDR2/SC! X_Street:X Cmd_Channel:CH! Units_Assigned:UNIT% Time:TIME " +
+          ") END");
   }
 
   @Override
@@ -46,7 +50,10 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
       // No luck, try it as a variable length field message
       body = body.replace(" Op Channel:", " Cmd Channel:")
                  .replace(" Cmnd Channel:", " Cmd Channel:")
-                 .replace(" X Streets:", " X Street:");
+                 .replace(" X Streets:", " X Street:")
+                 .replace(",Problem:", " Problem:")
+                 .replace(",IN:", " IN:")
+                 .replace("IC:", " IC:");
       if (! super.parseMsg(body, data)) return false;
     }
     if (data.msgType == MsgType.GEN_ALERT) return true;
