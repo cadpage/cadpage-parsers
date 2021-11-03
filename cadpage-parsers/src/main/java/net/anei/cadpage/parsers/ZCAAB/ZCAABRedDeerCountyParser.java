@@ -29,7 +29,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
   @Override
   public String getFilter() {
-    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com";
+    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca";
   }
 
   @Override
@@ -52,6 +52,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
     data.strCity = data.strCity.replace('_', ' ');
     Matcher match = CLEAN_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
+    if (data.strCity.equals("VILLAGE OF")) data.strCity = "";
     return true;
   }
 
@@ -93,18 +94,22 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   });
 
   private static final String[] CITY_LIST = new String[]{
+      "ACME",
       "AIRDRIE",
       "ALCOMDALE",
       "ARDROSSAN",
+      "BASSANO",
       "BENTLEY",
       "BIG VALLEY",
       "BIRCHCLIFF",
       "BLACKFALDS",
       "BLUFFTON",
       "BOWDEN",
+      "BROOKS",
       "BRUDERHEIM",
       "BUFORD",
       "CALMAR",
+      "CARBON",
       "CARBONDALE",
       "CAROLINE",
       "CARSTAIRS",
@@ -114,6 +119,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "CROSSFIELD",
       "DELBURNE",
       "DIDSBURY",
+      "DUCHESS",
       "EDMONTON",
       "EDMONTON INTERNATIONAL AIRPORT",
       "ELK ISLAND",
@@ -135,6 +141,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "LEDUC COUNTY",
       "LEGAL",
       "LESLIEVILLE",
+      "LINDEN",
       "MARKERVILLE",
       "MINBURN",
       "MINBURN COUNTY",
@@ -142,10 +149,12 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "MORINVILLE",
       "MUNDARE",
       "NEW SAREPTA",
+      "NEWELL COUNTY",
       "NISKU",
       "NORGLENWOLD",
       "OLDS",
       "PARKLAND BEACH",
+      "PENHOLD",
       "PONOKA",
       "PONOKA COUNTY",
       "RED DEER",
@@ -155,6 +164,8 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "RIMBEY",
       "ROCKY MOUNTAIN HOUSE",
       "ROCKY VIEW COUNTY",
+      "ROLLING HILLS",
+      "ROSEMARY",
       "SHERWOOD PARK",
       "SPRINGBROOK",
       "SPRUCE GROVE",
@@ -169,6 +180,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "SYLVAN LAKE",
       "THREE HILLS",
       "THORSBY",
+      "TILLEY",
       "TORRINGTON",
       "TROCHU",
       "VEGREVILLE",
