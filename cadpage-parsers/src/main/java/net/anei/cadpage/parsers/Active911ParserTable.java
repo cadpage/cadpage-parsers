@@ -1657,6 +1657,7 @@ public class Active911ParserTable {
       "US/PA/AvondaleFC",                 "PAChesterCountyO",
       "US/PA/BeaverCounty",               "PABeaverCounty",
       "US/PA/BedfordCounty",              "PABedfordCounty",
+      "US/PA/Bensalem",                   "PABucksCountyD",
       "US/PA/BerksCounty",                "PABerksCounty",
       "US/PA/BerwynFire",                 "PAChesterCountyD1",
       "US/PA/BlairCounty",                "PABlairCounty",
