@@ -264,6 +264,7 @@ public class ParserList {
               ,"COKitCarsonCounty"              ,"Kit Carson County, CO"
               ,"COLaPlataCounty"                ,"La Plata County, CO"
               ,"COLarimerCounty"                ,"Larimer County, CO"
+              ,"COLasAnimasCounty"              ,"Las Animas County, CO"
               ,"COMemorialStar"                 ,"Memorial Star, CO"
               ,"COMesaCounty"                   ,"Mesa County, CO"
               ,"COMineralCounty"                ,"Mineral County, CO"

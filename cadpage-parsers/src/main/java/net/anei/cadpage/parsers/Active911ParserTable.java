@@ -282,6 +282,7 @@ public class Active911ParserTable {
       "US/CO/GunnisonCounty",             "COGunnisonCounty",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
       "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",
+      "US/CO/LasAnimasCounty",            "COLasAnimasCounty",
       "US/CO/ManassaFD",                  "COConejosCounty",
       "US/CO/Metcom911",                  "COArapahoeCounty",
       "US/CO/MineralCounty",              "COMineralCounty",
