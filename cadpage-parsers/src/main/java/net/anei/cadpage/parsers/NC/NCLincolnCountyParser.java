@@ -78,7 +78,7 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
 
   private class MyIdField extends IdField {
     public MyIdField() {
-      setPattern(Pattern.compile("\\d{9,}"));
+      setPattern(Pattern.compile("\\d{9,}|"));
     }
   }
 
