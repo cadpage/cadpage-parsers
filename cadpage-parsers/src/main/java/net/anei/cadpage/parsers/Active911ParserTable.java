@@ -1255,6 +1255,7 @@ public class Active911ParserTable {
       "US/NC/TownOfCary",                 "NCWakeCountyA,NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
       "US/NC/UnionCounty",                "NCUnionCounty",
+      "US/NC/UnionCountyEmergencyManagement","NCUnionCounty",
       "US/NC/UnionVFD",                   "NCCatawbaCounty,NCLincolnCounty",
       "US/NC/USAMobility",                "NCWayneCountyA",
       "US/NC/VanceCounty",                "NCVanceCountyC",
