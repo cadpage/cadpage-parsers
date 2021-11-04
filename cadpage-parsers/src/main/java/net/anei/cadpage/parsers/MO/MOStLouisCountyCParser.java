@@ -53,6 +53,23 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
     setSelectValue("1");
 
+    // Strip off leading comment
+    if (body.startsWith("Comment:")) {
+      int pt = body.indexOf(" AT:", 8);
+      if (pt < 0) return false;
+      pt = body.lastIndexOf(", ", pt);
+      if (pt < 0) return false;
+      data.strSupp = body.substring(8,pt).trim();
+      body = body.substring(pt+2).trim();
+    }
+
+    // Check for a duplicated alert message and remove the duplicates
+    int pt = body.indexOf(" AT:");
+    if (pt >= 0) {
+      int pt2 = body.indexOf(body.substring(0, pt+3), pt+3);
+      if (pt2 >= 0) body = body.substring(0,pt2).trim();
+    }
+
     // Occasionally calls are duplicated and we need to cut out the duplicated content :(
     match = DUP_ALERT_PTN.matcher(body);
     if (match.matches())  body = match.group(1) + match.group(2);
@@ -93,7 +110,7 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
     // Make sure there is a blank in front of the AT keyword
     // And a colon behind it
-    int pt = body.indexOf("AT:");
+    pt = body.indexOf("AT:");
     if (pt >= 0) {
       body = body.substring(0,pt) + ' ' + body.substring(pt);
     } else if (substring(body, 30,32).equals("AT")) {
@@ -114,7 +131,7 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return super.getProgram() + " CH MAP SRC UNIT GPS TIME ID";
+    return "INFO? " + super.getProgram() + " CH MAP SRC UNIT GPS TIME ID";
   }
 
   @Override
@@ -124,19 +141,12 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern COMMENT_PTN = Pattern.compile("Comment: *(.*), *(.*)");
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(\\d{2}(?:[A-Z]\\d)?) +(.*)");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
 
-      Matcher match = COMMENT_PTN.matcher(field);
-      if (match.matches()) {
-        data.strSupp = match.group(1).trim();
-        field = match.group(2).trim();
-      }
-
-      match = CALL_CODE_PTN.matcher(field);
+      Matcher match = CALL_CODE_PTN.matcher(field);
       if (match.matches()) {
         data.strCode = match.group(1);
         field = match.group(2);
@@ -147,7 +157,7 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO CODE CALL";
+      return "CODE CALL";
     }
   }
 
