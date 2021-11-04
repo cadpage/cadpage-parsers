@@ -16,7 +16,8 @@ public class MOJeffersonCountyAParser extends FieldProgramParser {
   public MOJeffersonCountyAParser() {
     super(CITY_CODES, "JEFFERSON COUNTY", "MO",
           "( SELECT/R Times_For:SRC! Event_Number:ID! Call_Entered:SKIP! Event_Type:CALL! INFO/RN+ " +
-          "| Location:ADDR/S? EID:ID? TYPE_CODE:CALL! TIME:TIME? CALLER_ADDR:CADDR? Comments:MAP? Disp:UNIT% )");
+          "| Location:ADDR/S? EID:ID? TYPE_CODE:CALL! TIME:TIME? ( Comments:MAP CALLER_NAME:NAME? CALLER_ADDR:CADDR? " +
+                                                                "|  CALLER_NAME:NAME? CALLER_ADDR:CADDR? Comments:MAP? ) GPS:GPS? Disp:UNIT% )");
   }
 
   @Override
