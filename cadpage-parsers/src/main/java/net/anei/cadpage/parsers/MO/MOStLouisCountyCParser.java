@@ -26,12 +26,14 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
   }
 
   private static final Pattern BAD_MSG_PTN = Pattern.compile(".* AT .* BUS:.*Units:");
+  private static final Pattern AT_PTN = Pattern.compile(" AT[^A-Z]");
   private static final Pattern RESPONDING_PTN = Pattern.compile("(.*?) (?:Is|Are) Responding (.*?) (?=On:)");
   private static final Pattern CHANNEL_PTN = Pattern.compile("(?:TAC: *)?((?:CC911 )?(?:SO|NO) - (?:S MAIN F|N MAIN F|FTAC \\d{2}))");
   private static final Pattern DUP_ALERT_PTN = Pattern.compile("(.*?(?: \\[ | Units:) *[^ ]*).*(?: \\[ | Units:) *[^ ]*(.*)");
   private static final Pattern ID_PTN = Pattern.compile(" *(?:Incident:)?(\\d{2}-\\d+)$");
   private static final Pattern TIME_PTN = Pattern.compile(" +(\\d\\d:\\d\\d)$");
   private static final Pattern LAT_LONG_PTN = Pattern.compile("(?:(38)(\\d{6}) +(\\d{2})(\\d{6})| 0 0)$");
+  private static final Pattern UNIT_SRC_PTN = Pattern.compile(" Unit\\(s\\):(\\S*) +(\\d\\d)");
   private static final Pattern SRC_UNIT_PTN = Pattern.compile(" *(?:FD: *)?(\\d\\d\\b|(?:Affton|Brentwood|City of St Loui|Crestwood FD|Eureka|Fenton|Fenton FPD|Franklin|Jefferson|Kirkwood|Ladue|Lemay|Mehlville|Olivette|Shrewsbury|St Charles|St Louis City|St Louis|Webster Groves)(?: FPD)?)(?: *(?:\\[ ?|Units:)? *((?:(?:(?:STL )?[A-Za-z0-9]+|AB \\d+|GTWY \\d+|\\d+ DUTY|METRO AIR|NEED (?:A|AMB|EMS|MED)(?: \\d+)?|Rescue Dut)\\b,?)+))?$");
   private static final Pattern BAD_AT_PTN = Pattern.compile("(.*?[a-z ])AT(.*)");
 
@@ -55,12 +57,16 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
 
     // Strip off leading comment
     if (body.startsWith("Comment:")) {
-      int pt = body.indexOf(" AT:", 8);
-      if (pt < 0) return false;
-      pt = body.lastIndexOf(", ", pt);
+      int pt = body.indexOf(" AT:");
+      if (pt < 0) {
+        match = AT_PTN.matcher(body);
+        if (!match.find(8)) return false;
+        pt =  match.start();
+      }
+      pt = body.lastIndexOf(",", pt);
       if (pt < 0) return false;
       data.strSupp = body.substring(8,pt).trim();
-      body = body.substring(pt+2).trim();
+      body = body.substring(pt+1).trim();
     }
 
     // Check for a duplicated alert message and remove the duplicates
@@ -102,10 +108,13 @@ public class MOStLouisCountyCParser extends FieldProgramParser {
       body = body.substring(0,match.start()).trim();
     }
 
-    match = SRC_UNIT_PTN.matcher(body);
-    if (!match.find()) return false;
-    data.strSource = match.group(1);
-    data.strUnit = getOptGroup(match.group(2)).replace(' ', '_');
+    if ((match = UNIT_SRC_PTN.matcher(body)).find()) {
+      data.strUnit =  match.group(1);
+      data.strSource = match.group(2);
+    } else if ((match = SRC_UNIT_PTN.matcher(body)).find()) {
+      data.strSource = match.group(1);
+      data.strUnit = getOptGroup(match.group(2)).replace(' ', '_');
+    } else return false;
     body = body.substring(0,match.start()).trim();
 
     // Make sure there is a blank in front of the AT keyword
