@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class TXCyCreekCommCenterBParser extends FieldProgramParser {
 
@@ -22,8 +23,18 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern RR_PTN = Pattern.compile("ID:(\\d\\d-\\d+) +(.*)");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
+    Matcher match = RR_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      data.strSupp = match.group(2).replace(' ', '\n');
+      return true;
+    }
     body = body.replace(" CN - ", " CN: ");
     if (!super.parseMsg(body, data)) return false;
     data.strAddress = data.strAddress.replace("KINGSCOTE DR", "KINGSCOATE DR");
@@ -54,7 +65,7 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
