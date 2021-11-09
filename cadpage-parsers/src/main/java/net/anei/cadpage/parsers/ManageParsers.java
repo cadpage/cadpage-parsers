@@ -212,7 +212,8 @@ public class ManageParsers {
         "ILRandolphCountyB",  "ILMonroeCounty",          // 01/29/2020
         "NCStanlyCountyA",    "NCStanlyCountyB",         // 11/28/2020
         "CAStockton",         "CASanJoaquinCounty",      // 05/21/2021
-        "SDKiowaCounty",      "KSKiowaCounty"           // 06/07/2021
+        "SDKiowaCounty",      "KSKiowaCounty",           // 06/07/2021
+        "TXSeguin",           "TXGuadalupeCounty"        // 11/09/2021
   });
 
 }

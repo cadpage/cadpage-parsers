@@ -9,8 +9,11 @@ Atlantic County, NJ
 */
 
 public class NJAtlanticCountyParser extends GroupBestParser {
-  
+
   public NJAtlanticCountyParser() {
-    super(new NJAtlanticCountyAParser(), new NJAtlanticCountyBParser(), new NJAtlanticCountyCParser());
+    super(new NJAtlanticCountyAParser(),
+          new NJAtlanticCountyBParser(),
+          new NJAtlanticCountyCParser(),
+          new NJAtlanticCountyDParser());
   }
 }

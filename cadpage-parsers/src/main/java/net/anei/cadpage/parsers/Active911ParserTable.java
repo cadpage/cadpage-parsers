@@ -1304,7 +1304,7 @@ public class Active911ParserTable {
       "US/NJ/FlorenceTWP",                "NJBurlingtonCountyH",
       "US/NJ/FortLeePolice",              "NJBergenCountyB",
       "US/NJ/FranklinLakes",              "NJBergenCountyF",
-      "US/NJ/GallowayTownship",           "NJAtlanticCountyB,NJAtlanticCountyC",
+      "US/NJ/GallowayTownship",           "NJAtlanticCountyB,NJAtlanticCountyC,NJAtlanticCountyD",
       "US/NJ/GloucesterCounty",           "NJGloucesterCountyA",
       "US/NJ/GloucesterERCAlert",         "GeneralAlert",
       "US/NJ/HamiltonTownship",           "NJAtlanticCountyB",
