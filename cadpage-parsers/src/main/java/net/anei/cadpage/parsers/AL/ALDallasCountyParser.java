@@ -40,6 +40,7 @@ public class ALDallasCountyParser extends DispatchA48Parser {
       "FCHECK",
       "FGAS",
       "FGRASS",
+      "FPOWER",
       "FSTRUCTURE",
       "FTEST",
       "FVACC",
@@ -90,6 +91,9 @@ public class ALDallasCountyParser extends DispatchA48Parser {
       "TYLER",
 
       // Ghost town
-      "CAHABA"
+      "CAHABA",
+
+      // Autauga County
+      "JONES"
   };
 }
