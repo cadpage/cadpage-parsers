@@ -947,6 +947,7 @@ public class Active911ParserTable {
       "US/MN/CarverCountyNR",             "MNCarverCounty",
       "US/MN/CarverCountyTEST",           "MNCarverCounty",
       "US/MN/CassCounty",                 "MNCassCounty",
+      "US/MN/ChaskaFire",                 "MNCarverCounty",
       "US/MN/CityofStLouisPark",          "MNStLouisPark",
       "US/MN/CottonwoodCounty",           "MNCottonwoodCounty",
       "US/MN/CrowWingCounty",             "MNCrowWingCounty",
