@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -17,7 +18,12 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
 
   public NCLincolnCountyParser() {
     super("LINCOLN COUNTY", "NC",
-           "ID: ( CANCEL ADDR! | FYI? SRC? ID? CODE? CALL ( PHONE NAME | ) PARTADDR? ADDR! ( X X? | PLACE X X? | ) ) INFO/D+");
+           "ID: ( CANCEL ADDR! INFO/D+ " +
+               "| FYI? SRC? ID? CODE? CALL CALL2/D? COUNTY? ( PHONE NAME | SECURITY | ) PARTADDR? ADDR! EMPTY+? " +
+                   "( SELECT/2 INFO/D+? X X+ " +
+                   "|  ( X X? | PLACE APT X+? | PLACE X X? | PLACE X/Z X| ) INFO/D+ " +
+                   ") " +
+               ")");
   }
 
   @Override
@@ -26,12 +32,22 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
   }
 
   private static final Pattern DATE_TIME_MARK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d \\d\\d?:\\d\\d:\\d\\d: [A-Z]+\\] *");
+  private static final Pattern ALT_VARIANT_PTN = Pattern.compile(".*[a-z\\[\\]].*-(.*)");
 
   @Override
   public boolean parseMsg(String body, Data data) {
 
     int pt = body.indexOf("\nDISCLAIMER:");
     if (pt >= 0) body = body.substring(0,pt).trim();
+
+    // Remove dashes in street names
+    body = body.replace("HOOVER-ELMORE", "HOOVER ELMORE");
+    body = body.replace("7-ELEVEN", "7 ELEVEN");
+    body = body.replace("RENT-A-CAR", "RENT A CAR");
+
+    // Alternate format moves the cross streets to the end
+    Matcher match = ALT_VARIANT_PTN.matcher(body);
+    setSelectValue(match.matches() && isValidCrossStreet(match.group(1).trim()) ? "2" : "1");
 
     // The OSSI parser either expects a leading ID field, or does not expect one.  It can't handle our case
     // where it sometimes is there and sometimes isn't.  We fix that by adding a dummy ID if there isn't one.
@@ -58,9 +74,15 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
 
     // And convert comment marks to line breaks
     body = DATE_TIME_MARK_PTN.matcher(body).replaceAll("\n");
+
     if (! super.parseMsg(body, data)) return false;
     if (data.strCallId.equals("0")) data.strCallId = "";
     return true;
+  }
+
+  @Override
+  public boolean isValidCrossStreet(String field) {
+    return field.endsWith(" RAMP") || super.isValidCrossStreet(field);
   }
 
   @Override
@@ -68,10 +90,15 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     if (name.equals("SRC")) return new SourceField("[A-Z][A-Z0-9]{2,4}", true);
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("CODE")) return new MyCodeField();
+    if (name.equals("CALL2"))  return new CallField("MAT", true);
+    if (name.equals("COUNTY")) return new CityField(".* CO", true);
     if (name.equals("PHONE")) return new PhoneField("\\d{7,}", true);
+    if (name.equals("SECURITY")) return new NameField(".*SECURITY.*", true);
     if (name.equals("PARTADDR")) return new MyPartAddressField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceAddress();
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -133,9 +160,46 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}|[A-J]");
+  private static final Pattern PLACE_PTN = Pattern.compile("\\D.*");
+  private class MyAptField extends AptField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      // Not valid unless previous place field is non-empty and starts with non-digit
+      if (!PLACE_PTN.matcher(getRelativeField(-1)).matches()) return false;
+
+      // And has to  match expected pattern
+      if (!APT_PTN.matcher(field).matches()) return false;
+
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.endsWith(" RAMP")) {
+        super.parse(field, data);
+        return true;
+      } else {
+        return super.checkParse(field, data);
+      }
+    }
+  }
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile(" +-- +");
   private class MyInfoField extends InfoField {
-    @Override
     public void parse(String field, Data data) {
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
       super.parse(field, data);
