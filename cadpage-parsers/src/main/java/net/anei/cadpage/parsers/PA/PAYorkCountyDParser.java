@@ -12,21 +12,21 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class PAYorkCountyDParser extends FieldProgramParser {
-  
+
   public PAYorkCountyDParser() {
     super("YORK COUNTY", "PA",
           "( SELECT/RR Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! CFS:CFS! TIMES/N+? " +
-          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )", 
+          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )",
           FLDPROG_IGNORE_CASE);
     setupProtectedNames("FISH AND GAME");
   }
-  
+
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com,@active911.com";
   }
-  
-  
+
+
   private HtmlDecoder decoder = null;
 
   @Override
@@ -39,7 +39,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
       return parseFields(flds, data);
     }
-    
+
     setSelectValue("");
     return super.parseHtmlMsg(subject, body, data);
   }
@@ -54,20 +54,20 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (SUBJECT_SRC_PTN.matcher(subject).matches()) data.strSource = subject;
-    
+
     // Trim trailing garbage
     int pt = body.indexOf('\04');
     if (pt >= 0) body = body.substring(0,pt).trim();
     Matcher match = TRAIL_JUNK_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start()).trim();
-    
+
     // Undo IAR edits :(
     if (IAR_PTN1.matcher(body).lookingAt()) {
       body = "box: " + body.replace('\n', ',');
     } else {
       body = body.replace('\n', ' ');
     }
-    
+
     if (subject.equals("WMTFD") || subject.equals("41 Wrightsville") || subject.equals("50 W Manchester")) {
       if (!BOX_PTN.matcher(body).lookingAt()) body = "box: " + body;
     }
@@ -77,15 +77,15 @@ public class PAYorkCountyDParser extends FieldProgramParser {
         body = "box: " + match.group(1) + ", cross streets:" + match.group(2) + " units:" + match.group(3);
       }
     }
-    
+
     return parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   protected Field getField(String name) {
     if (name.equals("DATE_TIME")) return new MyDateTimeField();
@@ -95,12 +95,12 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("X_INFO")) return new MyCrossInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
-    
+
     if (name.equals("CFS")) return new MyCFSField();
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{6})?\\b ?\\b(\\d\\d:\\d\\d:\\d\\d)?(?: (\\d\\d-\\d\\d-\\d\\d))?");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -112,7 +112,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern BOX_CALL_PTN = Pattern.compile("(\\d+-\\d+) +(.*)");
   private static final Pattern CL_PTN = Pattern.compile("(CL \\d)\\b *(.*)");
   private class MyBoxCallField extends CallField {
@@ -136,13 +136,13 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "BOX CALL PLACE";
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -151,7 +151,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -159,13 +159,13 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       super.parse(field, data);
       if (data.strCity.equalsIgnoreCase("BALTIMORE COUNTY")) data.strState = "MD";
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY ST";
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM) *(.*)|(.*\\d.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptPlaceField extends Field {
     @Override
@@ -185,9 +185,9 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       return "APT PLACE";
     }
   }
-  
+
   private static final Pattern FL_CROSS_PTN = Pattern.compile("(\\d+[A-Za-z]* +FL)\\b *(.*)");
-  
+
   private class MyCrossInfoField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -207,44 +207,44 @@ public class PAYorkCountyDParser extends FieldProgramParser {
         data.strSupp = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT X INFO";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
     }
   }
-  
+
   private static final Pattern CFS_PTN = Pattern.compile(".*? Box: (.*?) (Received: .*)");
   private class MyCFSField extends Field {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = CFS_PTN.matcher(field);
       if (!match.matches()) abort();
-      
+
       data.strBox = match.group(1).trim();
       data.strSupp = match.group(2);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "BOX INFO";
     }
   }
-  
+
   private class MyTimesField extends InfoField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("SAVE PAPER") || field.startsWith("CONFIDENTIALITY NOTICE")) return false;
@@ -252,12 +252,12 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "CHANCEFORD",           "BROGUE",
       "CODORUS",              "GLENVILLE",
