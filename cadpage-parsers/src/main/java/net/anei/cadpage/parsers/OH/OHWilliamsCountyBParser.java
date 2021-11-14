@@ -100,6 +100,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALV", "ALVORDTON",
+      "AMB", "CAMDEN",
       "ANG", "ANGOLA/IN",
       "ARC", "ARCHBOLD",
       "AUB", "AUBURN/IN",
