@@ -10,7 +10,7 @@ public class OHDelawareCountyDParser extends FieldProgramParser {
 
   public OHDelawareCountyDParser() {
     super("DELAWARE COUNTY", "OH",
-          "DATETIME CALL_PRI! Run_Card:LINFO! Talk_Group:CH! SRC! ADDRCITY! X! UNIT! INFO/N+? GPS ID END");
+          "DATETIME CALL_PRI! Run_Card:LINFO! Talk_Group:CH! PLACE! ADDRCITY! X! UNIT! INFO/N+? GPS ID END");
   }
 
   @Override
