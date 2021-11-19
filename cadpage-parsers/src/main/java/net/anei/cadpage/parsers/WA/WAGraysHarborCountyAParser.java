@@ -23,11 +23,13 @@ public class WAGraysHarborCountyAParser extends DispatchA19Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Rip-n-run Report")) return false;
+
+    if (!subject.equals("Rip-n-run Report") && !subject.equals("RipnRun Notice")) return false;
+
     int pt = body.indexOf("\n\n");
-    if (pt < 0) return false;
-    if (!body.substring(0,pt).equals("*** NEW RAPID NOTIFICATION REPORT ***")) return false;
-    body = body.substring(pt+2).trim();
+    if (pt >= 0 && body.substring(0,pt).equals("*** NEW RAPID NOTIFICATION REPORT ***")) {
+      body = body.substring(pt+2).trim();
+    }
 
     int pt1 = body.indexOf("\n Nature:") + 1;
     if (pt1 <= 0) return false;
