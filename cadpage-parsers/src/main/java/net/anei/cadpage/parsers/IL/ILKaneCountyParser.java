@@ -7,7 +7,7 @@ public class ILKaneCountyParser extends GroupBestParser {
   public ILKaneCountyParser() {
     super(new ILKaneCountyAParser(), new ILKaneCountyBParser(),
           new ILKaneCountyCParser(), new ILKaneCountyDParser(),
-          new ILKaneCountyEParser());
+          new ILKaneCountyEParser(), new ILKaneCountyFParser());
   }
 
   static final String[] CITY_LIST = new String[]{
