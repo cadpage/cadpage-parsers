@@ -515,7 +515,7 @@ public class Active911ParserTable {
       "US/IL/OrlandFire",                 "ILCookCountyG",
       "US/IL/PleasantviewFPD",            "ILCookCountyI",
       "US/IL/PrairieDuPont",              "ILStClairCountyA,ILStClairCountyC",
-      "US/IL/Quadcom911",                 "ILKaneCountyD,ILKaneCountyE",
+      "US/IL/Quadcom911",                 "ILKaneCountyD,ILKaneCountyE,ILKaneCountyF",
       "US/IL/RandolphCounty",             "ILRandolphCountyA",
       "US/IL/RedCenter",                  "ILLakeCountyD",
       "US/IL/RobinsonPolice",             "ILCrawfordCounty",
