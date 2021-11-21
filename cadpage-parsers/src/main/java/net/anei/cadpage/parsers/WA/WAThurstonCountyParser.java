@@ -10,17 +10,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class WAThurstonCountyParser extends FieldProgramParser {
-  
+
   private String addressFld, cityFld;
-  
+
   public WAThurstonCountyParser() {
     super(CITY_CODES, "THURSTON COUNTY", "WA",
            "EMPTY CODE CALL ADDR CITY! X+? SRC MAP% INFO+ Units:UNIT+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "50911,70359,79516,MBLFD";
+    return "50911,70359,79516,MBLFD,@medic.one";
   }
 
   @Override
@@ -29,7 +29,7 @@ public class WAThurstonCountyParser extends FieldProgramParser {
     body = body.replace(" Unit:", " Units:");
     return parseFields(body.split(","), 8, data);
   }
-  
+
   private class MyAddressField extends AddressField {
 
     // Save the address field for future checks against the cross street field
@@ -38,7 +38,7 @@ public class WAThurstonCountyParser extends FieldProgramParser {
       addressFld = field;
       super.parse(field, data);
     }
-    
+
     // Address field might contain a place name.  Though we won't figure that out
     // until we process the cross street field
     @Override
@@ -46,7 +46,7 @@ public class WAThurstonCountyParser extends FieldProgramParser {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private class MyCityField extends CityField {
 
     // Save the city field for future checks against the cross street field
@@ -56,14 +56,14 @@ public class WAThurstonCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern X_BTWN_AT_PTN = Pattern.compile("btwn (.*) and (.*)");
   private class MyCrossField extends CrossField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       // Cross street field contains a number of different things
@@ -75,18 +75,18 @@ public class WAThurstonCountyParser extends FieldProgramParser {
         String tmp = field.substring(0,pt).trim();
         if (tmp.equals(cityFld)) return true;
       }
-      
+
       // Anything matching the city field is ignored
       if (field.equals(cityFld)) return true;
-      
+
       // btwn ... and ... turn into high and low cross streets
       Matcher match = X_BTWN_AT_PTN.matcher(field);
       if (match.matches()) {
         super.parse(match.group(1).trim() + " / " + match.group(2).trim(), data);
         return true;
       }
-      
-      // at ... 
+
+      // at ...
       // can be a single cross street, or the actual address of a place name
       // that was in the address field
       if (field.startsWith("at ")) {
@@ -101,24 +101,24 @@ public class WAThurstonCountyParser extends FieldProgramParser {
         }
         return true;
       }
-      
+
       // Anything else we do not know how to handle
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, ", ", field);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -129,7 +129,7 @@ public class WAThurstonCountyParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BU", "BUCODA",
       "LA", "LACEY",

@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.PA;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class PABucksCountyDParser extends FieldProgramParser {
 
@@ -22,10 +23,22 @@ public class PABucksCountyDParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD PAGE")) return false;
+
     int pt = body.indexOf("\n\n***");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(body.split("\n"), data);
+
+    if (subject.equals("CAD PAGE")) {
+      return parseFields(body.split("\n"), data);
+    }
+
+    if (subject.startsWith("CAD Report")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setFieldList("INFO");
+      data.strSupp = body;
+      return true;
+    }
+
+    return false;
   }
 
   @Override
