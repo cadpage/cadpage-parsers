@@ -7,16 +7,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA60Parser;
  * Floyd County, GA
  */
 public class GAFloydCountyParser extends DispatchA60Parser {
-  
+
   public GAFloydCountyParser() {
     super("FLOYD COUNTY", "GA");
   }
-  
+
   @Override
   public String getFilter() {
-    return "no-reply@ledsportal.com";
+    return "no-reply@ledsportal.com,zuercher@floydcountyga.org";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Fire-related calls")) return false;
