@@ -1,14 +1,14 @@
-package net.anei.cadpage.parsers.SD;
+package net.anei.cadpage.parsers.CT;
 
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class SDMinnehahaCountyCParser extends FieldProgramParser {
+public class CTMiddlesexCountyCParser extends FieldProgramParser {
 
-  public SDMinnehahaCountyCParser() {
-    super("MINNEHAHA COUNTY", "SD",
+  public CTMiddlesexCountyCParser() {
+    super("MIDDLESEX COUNTY", "CT",
           "ID! PD_Pri:PRI! CALL ADDR APT CITY PLACE GPS1 GPS2 X DATETIME UNIT! INFO/N+");
   }
 

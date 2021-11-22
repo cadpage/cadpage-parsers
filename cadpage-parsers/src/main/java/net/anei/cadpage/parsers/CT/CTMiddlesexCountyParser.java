@@ -4,8 +4,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class CTMiddlesexCountyParser extends GroupBestParser {
-  
+
   public CTMiddlesexCountyParser() {
-    super(new CTMiddlesexCountyAParser(), new CTMiddlesexCountyBParser());
+    super(new CTMiddlesexCountyAParser(),
+          new CTMiddlesexCountyBParser(),
+          new CTMiddlesexCountyCParser());
   }
 }

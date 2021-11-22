@@ -15,7 +15,7 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "noreply@siouxfalls.org";
+    return "ZuercherNoReply@siouxfalls.org";
   }
 
   @Override

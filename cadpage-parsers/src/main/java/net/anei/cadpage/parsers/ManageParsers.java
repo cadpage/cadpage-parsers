@@ -213,7 +213,8 @@ public class ManageParsers {
         "NCStanlyCountyA",    "NCStanlyCountyB",         // 11/28/2020
         "CAStockton",         "CASanJoaquinCounty",      // 05/21/2021
         "SDKiowaCounty",      "KSKiowaCounty",           // 06/07/2021
-        "TXSeguin",           "TXGuadalupeCounty"        // 11/09/2021
+        "TXSeguin",           "TXGuadalupeCounty",       // 11/09/2021
+        "CTOldSaybroook",     "CTMiddlesexCounty"        // 11/22/2021
   });
 
 }
