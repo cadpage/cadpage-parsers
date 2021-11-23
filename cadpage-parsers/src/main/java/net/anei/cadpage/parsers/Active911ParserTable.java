@@ -1147,6 +1147,7 @@ public class Active911ParserTable {
       "US/NC/AlexanderCounty",            "NCAlexanderCounty",
       "US/NC/AlleghanyCounty",            "NCAlleghanyCounty",
       "US/NC/AnsonCounty",                "NCAnsonCounty",
+      "US/NC/ApexFire",                   "NCWakeCountyB",
       "US/NC/AsheCounty",                 "NCAsheCounty",
       "US/NC/BeaufortCounty",             "NCBeaufortCounty",
       "US/NC/BiscoeFD",                   "NCMontgomeryCounty",

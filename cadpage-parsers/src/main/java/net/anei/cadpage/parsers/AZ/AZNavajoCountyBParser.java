@@ -9,16 +9,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
  * Navajo County, AZ (B)
  */
 public class AZNavajoCountyBParser extends DispatchA20Parser {
-  
+
   public AZNavajoCountyBParser() {
     super("NAVAJO COUNTY", "AZ");
   }
-  
+
   @Override
   public String getFilter() {
     return "@ci.show-low.ca.us,police@stpd.org";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("\\([A-Z ]+\\)");
 
   @Override
