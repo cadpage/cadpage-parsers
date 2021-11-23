@@ -89,7 +89,7 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
   protected Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z][A-Z0-9]{2,4}", true);
     if (name.equals("ID")) return new MyIdField();
-    if (name.equals("CODE")) return new MyCodeField();
+    if (name.equals("CODE")) return new CodeField("\\d{2,3}[A-Z]\\d{2}[A-Za-z]?|", true);
     if (name.equals("CALL2"))  return new CallField("MAT", true);
     if (name.equals("COUNTY")) return new CityField(".* CO", true);
     if (name.equals("PHONE")) return new PhoneField("\\d{7,}", true);
@@ -106,12 +106,6 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
   private class MyIdField extends IdField {
     public MyIdField() {
       setPattern(Pattern.compile("\\d{9,}|"));
-    }
-  }
-
-  private class MyCodeField extends CodeField {
-    public MyCodeField() {
-      setPattern(Pattern.compile("\\d{2,3}[A-Z]\\d{2}[A-Za-z]?"));
     }
   }
 
