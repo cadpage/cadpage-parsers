@@ -14,7 +14,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
 
   public NCRutherfordCountyParser() {
     super("RUTHERFORD COUNTY", "NC",
-          "( ( UNIT Prob:CALL! | Prob:CALL! ) /Addr:ADDR! ( /City:CITY! CrossSt:X! | CrossSt:X! /City:CITY ) " +
+          "( ( UNIT Prob:CALL! | Prob:CALL! ) Addr:ADDR! ( City:CITY! CrossSt:X! | CrossSt:X! City:CITY ) " +
           "| UNIT Run_Number:ID! Address:ADDR! Dispatch:TIMES! Unit:UNIT! " +
           "| Location:ADDR! APT/ROOM:APT? City:CITY! Call_Type:CALL! Line11:INFO? Units:UNIT! DATETIME1 " +
           "| City:CITY! Call_Type:CALL! Units:UNIT! " +
@@ -26,7 +26,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     return "paging@rutherfordcountync.gov,8284295922";
   }
 
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=\\S)(?=Prob:|Run Number:|Unit:|/Addr:)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=\\S)(?=Prob:|Addr:|City:|Run Number:|Unit:)");
   private static final Pattern MISSING_COLON_PTN = Pattern.compile("(<=/City)(?!:)");
   private static final Pattern PREFIX_PTN = Pattern.compile("To - (\\w+)\\s+");
   private static final Pattern KEYWORD_DELIM = Pattern.compile("(?<=Location|APT/ROOM|City|Call Type|Line11|Units)[^*]");
@@ -57,6 +57,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
       int pt = body.indexOf("\n\n____");
       if (pt >= 0) body = body.substring(0,pt).trim();
       body = stripFieldStart(body, "Units:");
+      body = body.replace("/Addr:", " Addr:").replace("/City:", " City:");
       body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
       body = MISSING_COLON_PTN.matcher(body).replaceAll(":");
       body = body.replace("Cross St:", "CrossSt:");
