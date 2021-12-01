@@ -1791,6 +1791,7 @@ public class Active911ParserTable {
       "US/SC/CherokeeCounty",             "SCCherokeeCounty",
       "US/SC/ChesterCounty",              "SCChesterCounty",
       "US/SC/ChesterfieldCounty",         "SCChesterfieldCounty",
+      "US/SC/CityofMauldin",              "SCGreenvilleCountyE",
       "US/SC/ClarendonCounty",            "SCClarendonCounty",
       "US/SC/ClarendonCountyFD",          "SCClarendonCounty",
       "US/SC/DarlingtonCounty",           "SCDarlingtonCounty",

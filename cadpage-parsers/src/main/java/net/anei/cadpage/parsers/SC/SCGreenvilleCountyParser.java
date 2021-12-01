@@ -4,15 +4,13 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class SCGreenvilleCountyParser extends GroupBestParser {
-  
+
   public SCGreenvilleCountyParser() {
-    super(new SCGreenvilleCountyAParser(), 
-          new SCGreenvilleCountyBParser(),
-          new SCGreenvilleCountyEParser());
+          new SCGreenvilleCountyEParser();
   }
-  
+
   static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "FOUNTAIN INN",
       "GREENVILLE",
@@ -42,21 +40,21 @@ public class SCGreenvilleCountyParser extends GroupBestParser {
       // Unincorporated communities
       "CLEVELAND",
       "CONESTEE",
-      
+
       // Anderson County
       "BELTON",
       "HONEA PATH",
       "PELZER",
-      
+
       // Laurens County
       "GRAY COURT",
-      
+
       // Spartanburg County
       "CAMPOBELLO",
       "GREER",
       "LANDRUM",
       "WOODRUFF",
-      
+
       ""    // Empty city is valid
   };
 }
