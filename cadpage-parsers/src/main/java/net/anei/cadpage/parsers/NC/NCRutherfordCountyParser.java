@@ -14,7 +14,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
 
   public NCRutherfordCountyParser() {
     super("RUTHERFORD COUNTY", "NC",
-          "( ( UNIT Prob:CALL! | Prob:CALL! ) Addr:ADDR! ( City:CITY! CrossSt:X! | CrossSt:X! City:CITY ) " +
+          "( ( UNIT Prob:CALL! | Prob:CALL! ) Addr:ADDR! ( City:CITY! CrossSt:X! | CrossSt:X! City:CITY ) Comments:INFO Unit:UNIT" +
           "| UNIT Run_Number:ID! Address:ADDR! Dispatch:TIMES! Unit:UNIT! " +
           "| Location:ADDR! APT/ROOM:APT? City:CITY! Call_Type:CALL! Line11:INFO? Units:UNIT! DATETIME1 " +
           "| City:CITY! Call_Type:CALL! Units:UNIT! " +
@@ -26,7 +26,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     return "paging@rutherfordcountync.gov,8284295922";
   }
 
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=\\S)(?=Prob:|Addr:|City:|Run Number:|Unit:)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=\\S)(?=Prob:|Addr:|City:|CrossSt:|Run Number:|Unit:)");
   private static final Pattern MISSING_COLON_PTN = Pattern.compile("(<=/City)(?!:)");
   private static final Pattern PREFIX_PTN = Pattern.compile("To - (\\w+)\\s+");
   private static final Pattern KEYWORD_DELIM = Pattern.compile("(?<=Location|APT/ROOM|City|Call Type|Line11|Units)[^*]");
@@ -56,6 +56,9 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     if (subject.equals("911 Paging")) {
       int pt = body.indexOf("\n\n____");
       if (pt >= 0) body = body.substring(0,pt).trim();
+
+      if (parseRunReport(body, data)) return true;
+
       body = stripFieldStart(body, "Units:");
       body = body.replace("/Addr:", " Addr:").replace("/City:", " City:");
       body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
@@ -98,6 +101,39 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
 
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Unit on Call:(\\S+) *Incident #:(\\S+) *(.*)");
+  private static final Pattern RUN_REPORT_TIME_PTN = Pattern.compile("[- A-Za-z]+ Time:");
+
+  private boolean parseRunReport(String body, Data data) {
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (!match.matches()) return false;
+    setFieldList("UNIT ID INFO");
+    data.msgType = MsgType.RUN_REPORT;
+    data.strUnit = match.group(1);
+    data.strCallId = match.group(2);
+    body = match.group(3);
+
+    String label = null;
+    int lastPt = 0;
+    StringBuilder sb = new StringBuilder();
+    match = RUN_REPORT_TIME_PTN.matcher(body);
+    while (true) {
+      boolean done = !match.find();
+      int pt = done ? body.length() : match.start();
+      String value = body.substring(lastPt, pt).trim();
+      if (label != null && !value.isEmpty()) {
+        if (sb.length() > 0) sb.append('\n');
+        sb.append(label);
+        sb.append(value);
+      }
+      if (done) break;
+      label = match.group();
+      lastPt = match.end();
+    }
+    data.strSupp = sb.toString();
+    return true;
+  }
+
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MMMdd,hh:mmaa");
 
   @Override
@@ -105,6 +141,7 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("TIMES")) return new MyTimesField();
     if (name.equals("DATETIME1")) return new DateTimeField(DATE_TIME_FMT, false);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -126,6 +163,18 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
       field = getRelativeField(0);
       field = TIMES_BRK_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(",?\\[\\d{1,2}\\]");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String line : INFO_BRK_PTN.split(field)) {
+        line = line.trim();
+        if (line.startsWith("A cellular re-bid")) continue;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
     }
   }
 }
