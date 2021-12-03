@@ -1,16 +1,10 @@
 package net.anei.cadpage.parsers.WV;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class WVMcDowellCountyParser extends DispatchSPKParser {
-  
+public class WVMcDowellCountyParser extends GroupBestParser {
+
   public WVMcDowellCountyParser() {
-    super("MCDOWELL COUNTY", "WV");
+    super(new WVMcDowellCountyAParser(), new WVMcDowellCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "mccad@frontier.com,McDowell911-Relay@Lightrr.com";
-  }
-
 }

@@ -510,7 +510,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
 
-  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-?\\d{8}\\b");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-?\\d+\\b");
 
   @Override
   public Field getField(String name) {
