@@ -8,6 +8,7 @@ public class CTMiddlesexCountyParser extends GroupBestParser {
   public CTMiddlesexCountyParser() {
     super(new CTMiddlesexCountyAParser(),
           new CTMiddlesexCountyBParser(),
-          new CTMiddlesexCountyCParser());
+          new CTMiddlesexCountyCParser(),
+          new CTMiddlesexCountyDParser());
   }
 }

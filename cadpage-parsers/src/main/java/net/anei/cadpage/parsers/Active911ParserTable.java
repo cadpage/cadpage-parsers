@@ -321,7 +321,7 @@ public class Active911ParserTable {
       "US/CT/MiddlesexCounty",            "CTMiddlesexCountyB",
       "US/CT/NewHavenCounty",             "CTNewHavenCountyB",
       "US/CT/NorthwestPublicSafety",      "CTNorthwestPublicSafety",
-      "US/CT/OldSaybrook",                "CTMiddlesexCountyC",
+      "US/CT/OldSaybrook",                "CTMiddlesexCountyD",
       "US/CT/QuinnebaugValleyEmergencyCommunications", "CTNewLondonCountyB",
       "US/CT/TollandCounty",              "CTTollandCountyA,CTTollandCountyD",
       "US/CT/TownofStratford",            "CTFairfieldCountyC",
