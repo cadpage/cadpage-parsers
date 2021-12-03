@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class DispatchA38Parser extends FieldProgramParser {
-  
+
   public DispatchA38Parser(String defCity, String defState) {
     super(defCity, defState,
           "CFS#:ID! CallType:CALL! Address:ADDR+ Units:UNIT/N+ Details:INFO/CS+");
@@ -21,14 +21,14 @@ public class DispatchA38Parser extends FieldProgramParser {
     if (flds.length >= 3) return parseFields(flds, data);
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}|\\d{8}|\\d{2}-\\d+|\\d{2}[A-Z]{3}\\d{6}", true);
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}|\\d{8}|\\d{2}-\\d+|\\d{2}[A-Z]{3}\\d{6}|[A-Z]{3,4}\\d{6}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: *\\d{5})?|");
   private class MyAddressField extends AddressField {
     @Override
@@ -49,7 +49,7 @@ public class DispatchA38Parser extends FieldProgramParser {
         data.strApt = append(data.strApt, "-", apt);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";

@@ -1011,6 +1011,7 @@ public class ParserList {
               ,"MTStillwaterCounty"             ,"Stillwater County, MT"
           ),
           new ParserCategory("Nebraska"
+              ,"NEAdamsCounty"                  ,"Adams County, NE"
               ,"NEGrandIsland"                  ,"Grand Island, NE"
               ,"NEMadisonCounty"                ,"Madison County, NE"
           ),

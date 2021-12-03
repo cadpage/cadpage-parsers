@@ -1280,6 +1280,7 @@ public class Active911ParserTable {
       "US/ND/PierceCounty",               "NDPierceCounty",
       "US/ND/RichlandCounty",             "NDRichlandCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
+      "US/NE/Hastings",                   "NEAdamsCounty",
       "US/NH/CarrollCounty",              "NHCarrollCounty",
       "US/NH/Charlestown",                "NHSullivanCounty",
       "US/NH/GraftonCounty",              "NHGraftonCountyB",
