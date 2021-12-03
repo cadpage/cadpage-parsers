@@ -22,7 +22,9 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   public DispatchA74Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
-          "ID CALL! ADDRCITY INFO/N+");
+          "( ID1 CALL! ADDRCITY " +
+          "| CALL ADDRCITY ID2 " +
+          ") INFO/N+");
     leadPlace = (flags & FLG_LEAD_PLACE) != 0;
   }
 
@@ -41,7 +43,8 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("CAD #((?:\\d{2,10}-)?\\d+):", true);
+    if (name.equals("ID1")) return new IdField("CAD #((?:\\d{2,10}-)?\\d+):", true);
+    if (name.equals("ID2")) return new IdField("\\d{9}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -154,6 +157,13 @@ public class DispatchA74Parser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+
+      if (field.startsWith("URL:")) {
+        field = field.substring(4).trim();
+        if (!field.contains("www.google.com")) data.strInfoURL = field;
+        return;
+      }
+
       Matcher match = INFO_APT_PTN.matcher(field);
       if (match.matches()) {
         data.strApt = append(data.strApt, "-", match.group(1));
