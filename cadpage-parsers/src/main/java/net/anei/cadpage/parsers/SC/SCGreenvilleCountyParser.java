@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class SCGreenvilleCountyParser extends GroupBestParser {
 
   public SCGreenvilleCountyParser() {
-          new SCGreenvilleCountyEParser();
+    super(new SCGreenvilleCountyEParser());
   }
 
   static final String[] CITY_LIST = new String[]{
