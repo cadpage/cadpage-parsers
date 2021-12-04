@@ -1709,6 +1709,7 @@ public class Active911ParserTable {
       "US/PA/FranklinCountyChambersburgFD","PAFranklinCountyB",
       "US/PA/FultonCounty",               "PAFultonCounty",
       "US/PA/GladwyneFire",               "PAMontgomeryCountyD",
+      "US/PA/GlenRock",                   "PAYorkCountyD",
       "US/PA/GoodFellowshipAmbulance",    "PAChesterCountyO",
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HawthornFD",                 "PAArmstrongCountyB",
