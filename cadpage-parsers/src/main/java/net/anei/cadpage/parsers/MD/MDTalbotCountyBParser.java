@@ -8,19 +8,20 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 public class MDTalbotCountyBParser extends DispatchA48Parser {
-  
+
   public MDTalbotCountyBParser() {
     super(CITY_LIST, "TALBOT COUNTY", "MD", FieldType.PLACE, A48_NO_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("MICHAELS");
   }
-  
+
   public String getFilter() {
     return "@talbotdes.org,4702193527";
   }
- 
+
   private static final Pattern PREFIX = Pattern.compile("([ A-Za-z0-9]+)(?: Page - Dispatch| - Page)(?=:)");
+  private static final Pattern BOX_PTN = Pattern.compile("[ A-Z]+ \\d+-\\d+");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "TALBOTDES:");
@@ -32,45 +33,75 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
     }
     int pt = body.indexOf("\nText");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    pt = data.strAddress.indexOf(';');
+    if (pt >= 0) {
+      String part1 = data.strAddress.substring(0, pt).trim();
+      String part2 = data.strAddress.substring(pt+1).trim();
+      if (BOX_PTN.matcher(part1).matches()) {
+        data.strBox = part1;
+        data.strAddress = part2;
+      } else {
+        data.strAddress = part1;
+        data.strBox = part2;
+      }
+    }
+    return true;
   }
-  
+
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("ADDR", "ADDR BOX");
+  }
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "ANDERBY HALL",
+      "BACHELORS HARBOR",
+      "BACHELORS POINT",
       "BAILEYS NECK",
       "BAR NECK",
+      "BLACK DOG",
       "BOLINGBROKE POINT",
       "BOONE CREEK",
       "BOZMAN NEAVITT",
       "BRICK ROW",
       "CALVES ACRE",
+      "CAMBRIDGE MARKET PLACE",
       "CEDAR POINT",
       "CHANCELLOR POINT",
       "CHESAPEAKE HOUSE",
       "CHIURCH CREEK",
       "CROUSE MILL",
       "DEEP BRANCH",
+      "DEEP NECK",
       "DOVER BRIDGE",
+      "DUKES BRIDGE",
+      "EAST SIXTH",
       "FOX MEADOW",
       "GLEBE CREEK",
       "GOOSE NECK",
       "GREEN BANKS",
       "HAWKES HILL",
+      "HELS HALF ACRE",
       "HOPKINS NECK",
       "HORNS POINT",
+      "HOWELL POINT",
       "INDUSTRIAL PARK",
       "KITTYS CORNER",
       "LANDING NECK",
       "LE GATES COVE",
       "LLOYDS LANDING",
+      "LONG POINT",
       "MALLARD POINT",
       "MARENGO FARM",
+      "MILES RIVER",
       "MT PLEASANT",
       "NINE TOWN",
       "NORTH BEND",
       "NORTH LIBERTY",
       "NORTH SIXTH",
       "PEACE CLIFF",
+      "PIN OAK",
       "PINEY HILL",
       "POLLYS HILL",
       "PORPOISE CREEK",
@@ -93,6 +124,7 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "TILGHMAN ISLAND",
       "TOWN POINT",
       "TUNIS MILLS",
+      "TURKEY CREEK",
       "WADES POINT",
       "WHITE MARSH",
       "WILLOUGHBY CANNERY",
@@ -100,22 +132,27 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "WINDY HILL",
       "WORLD FARM",
       "WYE MILLS"
+
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
       "ABDOMINAL PAIN FEMALE W PAIN ABOVE NAVEL",
       "ABDOMINAL PAIN MALES W PAIN ABOVE NAVEL",
+      "ABDOMINAL PAIN MALES W PAIN ABOVE NAVEL GREATER THAN 35 YOA",
       "ALARMS COMMERCIAL/INDUSTRIAL BUILDING",
       "ALARMS HIGH LIFE HAZARD - CO ALARM",
       "ALARMS RESIDENTIAL (MULTIPLE)",
+      "ALARMS RESIDENTIAL (MULTIPLE) - CO ALARM",
       "ALARMS RESIDENTIAL (SINGLE)",
       "ALARMS RESIDENTIAL (SINGLE) - CO ALARM",
       "ANIMAL BITE SUPERFICIAL BITES",
       "ASSAULT NOT IN PROGRESS",
       "ASSIST EMS",
       "ASSIST FIRE DEPARTMENT",
+      "BACK PAIN NON-TRAUMATIC",
       "BREATHING PROBLEM ABNORMAL BREATHING",
+      "BREATHING PROBLEMS ABNORMAL BREATHING",
       "BREATHING PROBLEM  CLAMMY",
       "BREATHING PROBLEM DIFFICULTY SPEAKING",
       "BREATHING PROBLEM NOT ALERT",
@@ -142,19 +179,22 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "FALLS UNKNOWN STATUS",
       "FIRE DEPT WASHDOWN",
       "FUEL SPILL/ODOR CONTAINED SMALL SPILL",
+      "FUEL SPILL/ODOR FUEL ODOR",
+      "FUEL SPILL/ODOR MINOR SPILL",
       "GAS LEAK/ODOR COMMERCIAL/INDUSTRIAL BUILDING",
       "GAS LEAK/ODOR OUTSIDE ODOR",
       "GAS LEAK/ODOR RESIDENTIAL (SINGLE)",
+      "HEADACHE ABNORMAL BREATHING",
       "HEART PROBLEMS/A.I.C.D CARDIAC HISTORY",
       "HEART PROBLEMS/A.I.C.D HEART RATE >50 OR 130",
       "HEART PROBLEMS/A.I.C.D UNKNOWN STATUS",
       "HEAT/COLD EXPOSURE NOT ALERT",
       "HEMORRHAGE/LACERATION - SERIOUS HEMORRHAGE",
+      "HEMORRHAGE/LACERATIONS - NOT ALERT",
+      "HEMORRHAGE/LACERATIONS - DANGEROUS HEMMORHAGE",
       "HEMORRHAGE/LACERATION BLOOD THINNERS",
       "HEMORRHAGE/LACERATION NOT DANGEROUS",
       "HEMORRHAGE/LACERATION POSSIBLY DANGEROUS",
-      "HEMORRHAGE/LACERATIONS - DANGEROUS HEMMORHAGE",
-      "HEMORRHAGE/LACERATIONS - DANGEROUS HEMMORHAGE",
       "HOUSE FIRE",
       "MEDICAL ALARM",
       "MEDICAL CALL NO INFO",
@@ -165,10 +205,13 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "MOTOR VEHICLE COLLISION WITH PED",
       "MVC SERIOUS",
       "ODOR (STRANGE/UNKNOWN) ODOR INSIDE W SINGLE SICK PERSON",
+      "OUTSIDE FIRE EXTINGUISHED",
+      "OUTSIDE FIRE LARGE BRUSH/GRASS FIRE",
       "OUTSIDE FIRE SMALL BRUSH/GRASS FIRE",
       "OVERDOSE/POISONING NARCOTICS",
       "OVERDOSE/POISONING OVERDOSE",
       "OVERDOSE/POISONING UNCONSCIOUS",
+      "OVERDOSE/POISONING UNKNOWN STATUS",
       "Paramount ProQA",
       "PATIENT WALKED INTO STATION",
       "POLICE ASK FOR FIRE",
@@ -176,12 +219,16 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "PSYCHIATRIC/ABNORMAL BEHAVIOR/SUICIDE ATTEMPT NON SUICIDAL",
       "PSYCHIATRIC/ABNORMAL BEHAVIOR/SUICIDE ATTEMPT NOT ALERT",
       "SEIZURES - CONTINUOUS/MULTIPLE SEIZURES",
+      "SEIZURES - DIABETIC",
       "SEIZURES - FOCAL/ABSENCE SEIZURE",
       "SEIZURES - FOCAL NOT ALERT",
       "SEIZURES - NOT SEIZING NOW BREATHING VERIFIED",
       "SEIZURES - NOT SEIZING NOW EFFEC BREATHING",
+      "SICK PERSON - ALERTED LEVEL OF - CONFIRM 36",
       "SICK PERSON - DIZZINESS/VERTIGO",
       "SICK PERSON - FEVER/CHILLS",
+      "SICK PERSON - GENERAL WEAKNESS",
+      "SICK PERSON - GENERAL WEAKNESS - CONFIRM 36",
       "SICK PERSON - NAUSEA",
       "SICK PERSON - UNWELL/ILL",
       "SICK PERSON - VOMITING",
@@ -191,6 +238,8 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "SICK PERSON NO PRIORITY SYMPTOMS",
       "SICK PERSON NOT ALERT",
       "SMOKE INVESTIGATION LIGHT SMOKE",
+      "SMOKE INVESTIGATION ODOR OF SMOKE",
+      "STROKE (CVA) - UNKNOWN STATUS",
       "STROKE (CVA) NOT ALERT",
       "STROKE (CVA) STROKE HISTORY",
       "STROKE (CVA) SUDDEN SPEACH PROBLEMS",
@@ -203,6 +252,8 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
       "STRUCTURE FIRE RESIDENTIAL (SINGLE)",
       "STRUCTURE FIRE SMALL NON-DWELLING (SHED)",
       "TRAFFIC ACCIDENT PI",
+      "TRAUMATIC INJURIES - NOT DANGEROUS AREA",
+      "TRAUMATIC INJURIES SERIOUS HEMORRHAGE",
       "UNCONSCIOUS/FAINTING  EFFECTIVE BREATHING",
       "UNCONSCIOUS/FAINTING  UNCONSCIOUS AGONAL/INEFFECTIVE BREATHING",
       "UNCONSCIOUS/FAINTING ALERT W ABNORMAL BREATHING",

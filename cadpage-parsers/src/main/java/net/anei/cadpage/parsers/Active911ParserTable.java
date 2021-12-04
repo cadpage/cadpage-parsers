@@ -841,6 +841,7 @@ public class Active911ParserTable {
       "US/MD/CityofBaltimore",            "MDBaltimore",
       "US/MD/CrumptonVFD",                "MDQueenAnnesCounty",
       "US/MD/DorchesterCounty",           "MDDorchesterCounty",
+      "US/MD/EastonVFD",                  "MDTalbotCountyB",
       "US/MD/Fastalert",                  "MDCarrollCountyB",
       "US/MD/FASTalertSystem",            "MDPrinceGeorgesCountyH",
       "US/MD/Fireblitz",                  "MDPrinceGeorgesCountyFireBiz",
