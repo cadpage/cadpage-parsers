@@ -11,19 +11,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  */
 public class NCLincolnCountyParser extends DispatchOSSIParser {
 
-  private static Pattern CODE_PTN = Pattern.compile("\\b\\d{1,2}-[A-Z]-\\d{1,2}\\b *");
-  private static Pattern CODE_PTN2 = Pattern.compile("\\b(\\d{1,2}[A-Z]\\d{1,2}-) *");
-  private static Pattern SQBRACE_DASH_PTN = Pattern.compile("\\] *-");
-  private static Pattern DASH_PTN = Pattern.compile("(?<! )-(?! )");
-
   public NCLincolnCountyParser() {
     super("LINCOLN COUNTY", "NC",
            "ID: ( CANCEL ADDR! INFO/D+ " +
                "| FYI? SRC? ID? CODE? CALL CALL2/D? COUNTY? ( PHONE NAME | SECURITY | ) PARTADDR? ADDR! EMPTY+? " +
                    "( SELECT/2 INFO/D+? X X+ " +
-                   "|  ( X X? | PLACE APT X+? | PLACE X X? | PLACE X/Z X| ) INFO/D+ " +
+                   "|  ( X X? | PLACE APT X+? | PLACE X X? | PLACE X/Z X| ) INFO/D+? CODE2 UNIT ( UNIT2/D | GPS1 EMPTY? GPS2 ) " +
                    ") " +
-               ")");
+               ") END");
   }
 
   @Override
@@ -31,8 +26,17 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     return "CAD@lincolne911.org,CAD@lincolnsheriff.org,cad@do-not-reply-lincolne911.org,93001,777";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern DATE_TIME_MARK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d\\d \\d\\d?:\\d\\d:\\d\\d: [A-Z]+\\] *");
   private static final Pattern ALT_VARIANT_PTN = Pattern.compile(".*[a-z\\[\\]].*-(.*)");
+  private static Pattern CODE_PTN = Pattern.compile("\\b\\d{1,2}-[A-Z]-\\d{1,2}\\b *");
+  private static Pattern CODE_PTN2 = Pattern.compile("\\b(\\d{1,2}[A-Z]\\d{1,2}-) *");
+  private static Pattern SQBRACE_DASH_PTN = Pattern.compile("\\] *-");
+  private static Pattern DASH_PTN = Pattern.compile("(?<![ ;])-(?! )");
 
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -90,6 +94,7 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     if (name.equals("SRC")) return new SourceField("[A-Z][A-Z0-9]{2,4}", true);
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("CODE")) return new CodeField("\\d{2,3}[A-Z]\\d{2}[A-Za-z]?|", true);
+    if (name.equals("CODE2")) return new MyCode2Field();
     if (name.equals("CALL2"))  return new CallField("MAT", true);
     if (name.equals("COUNTY")) return new CityField(".* CO", true);
     if (name.equals("PHONE")) return new PhoneField("\\d{7,}", true);
@@ -100,12 +105,26 @@ public class NCLincolnCountyParser extends DispatchOSSIParser {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("UNIT")) return new UnitField("\\d{1,3}", true);
+    if (name.equals("UNIT2")) return new UnitField("[A-Z]+", true);
     return super.getField(name);
   }
 
   private class MyIdField extends IdField {
     public MyIdField() {
       setPattern(Pattern.compile("\\d{9,}|"));
+    }
+  }
+
+  private class MyCode2Field extends SkipField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return !data.strCode.isEmpty() && field.equals(data.strCode);
     }
   }
 

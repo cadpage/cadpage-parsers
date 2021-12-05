@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA85Parser;
-import net.anei.cadpage.parsers.FieldProgramParser;
 
 public class ORClatsopCountyParser extends DispatchA85Parser {
 
@@ -298,6 +297,7 @@ public class ORClatsopCountyParser extends DispatchA85Parser {
       "FAL", "CAPE FALCON",
       "GEA", "GEARHEART",
       "HAM", "HAMLET",
+      "KNA", "KNAPPA",
       "SEA", "SEASIDE",
       "TOL", "TOLVANA PARK",
       "WAR", "WARRENTON",
