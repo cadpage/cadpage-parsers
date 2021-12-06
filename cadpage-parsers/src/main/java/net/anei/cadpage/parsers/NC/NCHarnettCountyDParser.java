@@ -9,7 +9,9 @@ public class NCHarnettCountyDParser extends FieldProgramParser {
 
   public NCHarnettCountyDParser() {
     super("HARNETT COUNTY", "NC",
-          "PN:CALL! ADD:ADDR! CITY:CITY! TAC:CH! XST:X! INC#:ID LT/LNG:GPS/d UNIT(S):UNIT TIME:TIME CMT:INFO");
+          "( AD:ADDR! PN:CALL! CTC:DATETIME! " +
+          "| PN:CALL! ADD:ADDR! CITY:CITY! TAC:CH! XST:X! INC#:ID LT/LNG:GPS/d UNIT(S):UNIT TIME:TIME CMT:INFO " +
+          ") END");
   }
 
   @Override
@@ -24,12 +26,18 @@ public class NCHarnettCountyDParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.startsWith("Received:")) {
+      int pt = body.indexOf("\n\n");
+      if (pt < 0) return false;
+      body = body.substring(pt+2).trim();
+    }
     body = body.replace("TIME:", " TIME:").replace("CMT:", " CMT:");
     return super.parseMsg(body, data);
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
