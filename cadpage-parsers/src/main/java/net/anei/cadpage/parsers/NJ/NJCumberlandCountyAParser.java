@@ -21,7 +21,7 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "E911@co.cumberland.nj.us";
+    return "E911@co.cumberland.nj.us,Cumberland911@co.cumberland.nj.us";
   }
 
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("CUMBERLAND911:(\\S+): *(.*)");
