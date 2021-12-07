@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
-public class TNCockeCountyBParser extends DispatchA74Parser {
+public class TNCockeCountyBParser extends DispatchA86Parser {
 
   public TNCockeCountyBParser() {
     super("COCKE COUNTY", "TN");
@@ -10,6 +10,6 @@ public class TNCockeCountyBParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info";
+    return "dispatch@CockeTNE911.net";
   }
 }
