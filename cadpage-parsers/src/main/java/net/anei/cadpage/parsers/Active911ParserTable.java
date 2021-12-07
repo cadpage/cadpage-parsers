@@ -761,6 +761,7 @@ public class Active911ParserTable {
       "US/KY/MurrayCounty",               "KYCallowayCounty",
       "US/KY/Nexigen",                    "Cadpage2",
       "US/KY/NicholasCounty",             "KYNicholasCounty",
+      "US/KY/OhioCounty",                 "KYOhioCounty",
       "US/KY/OldhamCounty",               "KYOldhamCountyC",
       "US/KY/PendletonCounty",            "KYPendletonCountyB",
       "US/KY/PointPleasantFire",          "KYKentonCountyC",

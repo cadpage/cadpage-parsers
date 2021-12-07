@@ -7,10 +7,9 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 
 public class DispatchB3Parser extends DispatchB2Parser {
-  
+
   private String prefix = null;
   private Pattern prefixPattern = null;
 
@@ -59,7 +58,7 @@ public class DispatchB3Parser extends DispatchB2Parser {
     super(cityCodes, defCity, defState);
     setupCallList((CodeSet)null);
   }
-  
+
   @Override
  protected boolean parseMsg(String subject, String body, Data data) {
     String tmp;
@@ -70,7 +69,7 @@ public class DispatchB3Parser extends DispatchB2Parser {
     } else {
       return false;
     }
-    
+
     boolean v3 = false;
     if (subject.length() > 0) {
       if (body.startsWith("= DSP")) {
@@ -84,7 +83,7 @@ public class DispatchB3Parser extends DispatchB2Parser {
       }
     }
     if (!super.parseMsg(body, data)) return false;
-    
+
     if (v3 && data.msgType == MsgType.RUN_REPORT) {
       setFieldList("CODE " + super.getProgram());
       data.strCode = subject;
@@ -110,7 +109,7 @@ public class DispatchB3Parser extends DispatchB2Parser {
     }
     return body;
   }
-  
+
   @Override
   protected boolean isPageMsg(String body) {
     if (prefix != null || prefixPattern != null) return true;
