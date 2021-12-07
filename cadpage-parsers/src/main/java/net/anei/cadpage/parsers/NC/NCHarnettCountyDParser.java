@@ -10,7 +10,9 @@ public class NCHarnettCountyDParser extends FieldProgramParser {
   public NCHarnettCountyDParser() {
     super("HARNETT COUNTY", "NC",
           "( AD:ADDR! PN:CALL! CTC:DATETIME! " +
-          "| PN:CALL! ADD:ADDR! CITY:CITY! TAC:CH! XST:X! INC#:ID LT/LNG:GPS/d UNIT(S):UNIT TIME:TIME CMT:INFO " +
+          "| PN:CALL! ADD:ADDR! ( NOTES:INFO! OCA:ID! " +
+                               "| CITY:CITY! TAC:CH! XST:X! INC#:ID LT/LNG:GPS/d UNIT(S):UNIT TIME:TIME CMT:INFO " +
+                               ") " +
           ") END");
   }
 
@@ -31,7 +33,7 @@ public class NCHarnettCountyDParser extends FieldProgramParser {
       if (pt < 0) return false;
       body = body.substring(pt+2).trim();
     }
-    body = body.replace("TIME:", " TIME:").replace("CMT:", " CMT:");
+    body = body.replace("TIME:", " TIME:").replace("CMT:", " CMT:").replace("NOTES:", " NOTES:");
     return super.parseMsg(body, data);
   }
 
