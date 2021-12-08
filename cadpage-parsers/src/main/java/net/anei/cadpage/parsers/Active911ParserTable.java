@@ -2031,6 +2031,7 @@ public class Active911ParserTable {
       "US/TX/WhartonCounty",              "TXWhartonCounty",
       "US/TX/WichitaCounty",              "TXWichitaCounty",
       "US/TX/Wilco",                      "TXWilliamsonCounty",
+      "US/TX/WilsonCounty",               "TXWilsonCounty",
       "US/TX/WylieFireDispatch",          "TXWylie",
       "US/USAF/Tinker",                   "OKTinkerAFB",
       "US/UT/BoxElderCounty",             "UTBoxElderCounty",

@@ -1636,6 +1636,7 @@ public class ParserList {
               ,"TXWebster"                      ,"Webster, TX"
               ,"TXWhartonCounty"                ,"Wharton County, TX"
               ,"TXWichitaCounty"                ,"Wichita County, TX"
+              ,"TXWilsonCounty"                 ,"Wilson County, TX"
               ,"TXWilliamsonCounty"             ,"Williamson County, TX"
               ,"TXWoodCounty"                   ,"Wood County, TX"
               ,"TXWylie"                        ,"Wylie, TX"
