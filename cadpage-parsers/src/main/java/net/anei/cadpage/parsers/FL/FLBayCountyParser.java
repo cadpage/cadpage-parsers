@@ -16,7 +16,9 @@ public class FLBayCountyParser extends FieldProgramParser {
 
   FLBayCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "UNIT? ADDR! CITY? MAP? CALL INPROGRESS? DATETIME! ID");
+          "( STATUS ADDR DATETIME! " +
+          "| UNIT? ADDR! CITY? MAP? CALL INPROGRESS? DATETIME! ID " +
+          ") END");
   }
 
   @Override
@@ -45,6 +47,7 @@ public class FLBayCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("STATUS")) return new CallField("First unit .*", true);
     if (name.equals("ADDR")) return new AddressField("!?(.*?)");
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("MAP")) return new MapField("ZONE .+", true);
