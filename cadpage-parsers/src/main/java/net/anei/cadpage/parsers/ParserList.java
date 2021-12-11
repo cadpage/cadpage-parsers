@@ -1478,6 +1478,7 @@ public class ParserList {
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
               ,"SDMinnehahaCounty"              ,"Minnehaha County, SD"
               ,"SDPenningtonCounty"             ,"Pennington County, SD"
+              ,"SDPerkinsCounty"                ,"Perkins County, SD"
               ,"SDUnionCounty"                  ,"Union County, SD"
           ),
           new ParserCategory("Tennessee"

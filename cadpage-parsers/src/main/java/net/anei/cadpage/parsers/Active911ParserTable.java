@@ -1845,6 +1845,7 @@ public class Active911ParserTable {
       "US/SD/EdmundsCounty",              "SDEdmundsCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
       "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
+      "US/SD/MobridgePD",                 "SDPerkinsCounty",
       "US/TN/BedfordCounty",              "TNBedfordCounty",
       "US/TN/Blount911",                  "TNBlountCountyB",
       "US/TN/BlountCounty",               "TNBlountCountyB",
