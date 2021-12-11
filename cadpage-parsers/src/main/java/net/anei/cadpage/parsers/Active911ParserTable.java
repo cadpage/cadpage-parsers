@@ -346,6 +346,7 @@ public class Active911ParserTable {
       "US/DE/NWSRipnrun",                 "DEKentCountyF",
       "US/DE/SussexCounty",               "DESussexCountyB",
       "US/FL/BayCounty",                  "FLBayCounty",
+      "US/FL/BonifayFireRescue",          "FLHolmesCounty",
       "US/FL/CalhounCounty",              "FLCalhounCounty",
       "US/FL/CharlotteCountySheriff",     "FLCharlotteCounty",
       "US/FL/CitrusCounty",               "FLCitrusCounty",
