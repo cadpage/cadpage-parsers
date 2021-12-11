@@ -9,6 +9,6 @@ public class MOCamdenCountyParser extends DispatchA33Parser {
 
   @Override
   public String getFilter() {
-    return "DISPATCH@CAMDENSO-MO.US,DISPATCH@OMNIGO.COM";
+    return "DISPATCH@CAMDENSO-MO.US,DISPATCH@OMNIGO.COM,noreply@omnigo.com";
   }
 }
