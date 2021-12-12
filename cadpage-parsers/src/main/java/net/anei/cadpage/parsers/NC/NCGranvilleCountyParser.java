@@ -14,9 +14,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCGranvilleCountyParser extends DispatchSouthernParser {
-  
+
   public NCGranvilleCountyParser() {
-    super(CITY_LIST, "GRANVILLE COUNTY", "NC", 
+    super(CITY_LIST, "GRANVILLE COUNTY", "NC",
            DSFLG_PROC_EMPTY_FLDS|DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_ADDR_TRAIL_PLACE|DSFLG_X|DSFLG_NAME|DSFLG_PHONE|DSFLG_CODE|DSFLG_TIME);
     setCallCodePtn("\\d{2}");
   }
@@ -25,10 +25,10 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
   public String getFilter() {
     return "@granvillecounty.org";
   }
-  
+
   private static final Pattern NUMBER_DR_PTN = Pattern.compile("# *(\\d+ DR\\b)", Pattern.CASE_INSENSITIVE);
   private static final Pattern NAME_COUNTY_PTN = Pattern.compile("(.*?)[ /]*\\b([A-Z]+) (?:CO|COUNTY|911)", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = NUMBER_DR_PTN.matcher(body).replaceAll("$1");
@@ -37,7 +37,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
       data.strSupp = append(data.strCall, " ", data.strSupp);
       data.strCall = "";
     }
-    
+
     data.strCity = data.strCity.replace('-', ' ');
     data.strCity = convertCodes(data.strCity, MISSPELLED_CITY_TABLE);
 
@@ -53,19 +53,19 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
         data.strName = "";
       }
     }
-    
+
     if (VA_CITIES.contains(data.strCity)) data.strState = "VA";
-    
+
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replaceAll("CITY", "CITY ST");
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities and towns
     "BUTNER",
     "CREEDMOOR",
@@ -73,7 +73,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "OXFORD",
     "STEM",
     "STOVALL",
-    
+
     // Unincorporated communities
     "BEREA",
     "BRASSFIELD",
@@ -86,7 +86,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "SHOOFLY",
     "TALLY HO",
     "WILTON",
-    
+
     // Durham County
     "DURHAM",
     "DURHAM CO",
@@ -99,7 +99,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "MANGUM",
     "OAK GROVE",
     "ROUGEMONT",
-    
+
     // Franklin County
     "FRANKLIN",
     "FRANKLIN CO",
@@ -107,12 +107,12 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "FRANKLIN COUNTY",
     "FRANKLINTON",
     "YOUNGSVILLE",
-    
+
     // Mecklenburg County, VA
     "MECKLENBURG",
     "MECKLENBURG CO",
     "MECKLENBURG-CO",
-    
+
     // Person County
     "PERSON",
     "PERSON CO",
@@ -124,7 +124,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "MT TIRZAH",
     "ROXBORO",
     "TIMBERLAKE",
-    
+
     // Vance County
     "VANCE",
     "VANCE CO",
@@ -135,7 +135,7 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "DABNEY",
     "WATKINS",
     "KITTRELL",
-    
+
     // Wake County
     "WAKE",
     "WAKE CO",
@@ -147,11 +147,11 @@ public class NCGranvilleCountyParser extends DispatchSouthernParser {
     "ROLESVILLE",
     "WAKE FOREST"
   };
-  
+
   private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
       "CREEMDOOR",    "CREEDMOOR"
   });
-  
+
   private static final Set<String> VA_CITIES = new HashSet<String>(
       Arrays.asList(new String[]{
           "MECKLENBURG",

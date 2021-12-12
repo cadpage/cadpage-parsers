@@ -1186,6 +1186,7 @@ public class Active911ParserTable {
       "US/NC/ColumbusCounty",             "NCColumbusCounty",
       "US/NC/Concord",                    "NCCabarrusCounty",
       "US/NC/CravenCounty",               "NCCravenCounty",
+      "US/NC/CreedmoorFD",                "NCGranvilleCounty",
       "US/NC/CumberlandCounty",           "NCCumberlandCounty",
       "US/NC/DareCounty",                 "NCDareCounty",
       "US/NC/DavidsonCounty",             "NCDavidsonCountyA",
