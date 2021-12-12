@@ -146,7 +146,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(\\S.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+(?:-[A-Z0-9])?)-(\\S.*)");
   private class MyCallField extends Field {
     @Override
     public void parse(String field, Data data) {
