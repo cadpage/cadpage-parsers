@@ -1131,6 +1131,7 @@ public class Active911ParserTable {
       "US/MS/Gulfport",                   "MSHarrisonCountyB",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
+      "US/MS/LoveFD",                     "MSDesotoCountyB",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",
       "US/MS/PanolaCounty",               "MSPanolaCounty",
       "US/MS/PearlRiverCounty",           "MSPearlRiverCounty",
