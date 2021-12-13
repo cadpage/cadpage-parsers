@@ -22,6 +22,11 @@ public class KYOhioCountyParser extends DispatchB2Parser {
   }
 
   @Override
+  public String getFilter() {
+    return "OHIOCO911@interact911.com";
+  }
+
+  @Override
   protected CodeSet buildCallList() {
     return new CodeSet(
         "1046 W/DEER",
