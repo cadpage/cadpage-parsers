@@ -127,11 +127,45 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INCIDENT_COMPLETE")) return new SkipField("Incident \\d+ Completed", true);
     return super.getField(name);
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(?:(\\d\\d[A-Z]\\d\\d(?: - [A-Z])?) - |(\\d\\d[A-Z]) ) *(.*)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+
+      String update = "";
+      if (field.startsWith("(UPDATE)")) {
+        update = field.substring(0,8);
+        field = field.substring(8).trim();
+      }
+
+      for (String part : field.split(";")) {
+        part = part.trim();
+        if (part.isEmpty()) continue;
+        Matcher match = CODE_CALL_PTN.matcher(part);
+        if (match.matches()) {
+          String code = match.group(1);
+          if (code != null) data.strCode = code.replace(" - ", "");
+          else if (data.strCode.isEmpty()) data.strCode = match.group(2);
+          part = match.group(3);
+        }
+        data.strCall = part;
+      }
+      data.strCall = append(update, " ", data.strCall);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+
   }
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
