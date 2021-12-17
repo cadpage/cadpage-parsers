@@ -18,19 +18,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCCaswellCountyParser extends DispatchSouthernParser {
 
   public NCCaswellCountyParser() {
-    super(CITY_LIST, "CASWELL COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID | DSFLAG_NO_NAME_PHONE);
+    super(CITY_LIST, "CASWELL COUNTY", "NC",
+          DSFLG_OPT_DISP_ID | DSFLG_ADDR |DSFLG_ADDR_TRAIL_PLACE | DSFLG_X | DSFLG_ID | DSFLG_TIME );
   }
-  
+
   @Override
   public String getFilter() {
     return "@caswellcountync.gov,caswell911@gmail.com";
   }
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\d+-Call Report OCA [-0-9]+ \\| Call (\\d+) *(.*)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Run reports are attached word documents that we can not yet read
     // but we can collect some information from the subject
     Matcher match = RUN_REPORT_PTN.matcher(subject);
@@ -47,12 +48,12 @@ public class NCCaswellCountyParser extends DispatchSouthernParser {
     if (VA_CITY_SET.contains(data.strCity.toUpperCase())) data.strState = "VA";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = EXT_PTN.matcher(addr).replaceAll("EXD");
@@ -60,13 +61,13 @@ public class NCCaswellCountyParser extends DispatchSouthernParser {
     return super.adjustMapAddress(addr);
   }
   private static final Pattern EXT_PTN = Pattern.compile("\\bEXT\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "MILTON",
     "YANCEYVILLE",
-    
+
     // Townships
     "ANDERSON TWP",
     "HIGHTOWERS TWP",
@@ -88,17 +89,17 @@ public class NCCaswellCountyParser extends DispatchSouthernParser {
     "SEMORA",
     "CHERRY GROVE",
     "BLANCH",
-    
+
     // Almace County
     "ELON",
-    
+
     // Rockingham County
     "REIDSVILLE",
-    
+
     // Independent cities, Virginia
     "DANVILLE"
   };
-  
+
   private static final Set<String> VA_CITY_SET = new HashSet<String>(Arrays.asList(new String[]{
       "DANVILLE"
   }));
