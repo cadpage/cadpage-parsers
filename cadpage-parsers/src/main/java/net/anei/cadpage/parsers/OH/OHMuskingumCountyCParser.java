@@ -8,17 +8,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class OHMuskingumCountyCParser extends DispatchH05Parser {
-  
+
   public OHMuskingumCountyCParser() {
-    super("MUSKINGUM COUNTY", "OH", 
+    super("MUSKINGUM COUNTY", "OH",
           "Address:ADDRCITY/S6! CALL_DATETIME_ID! Alert:ALERT? Cross_Streets:X! Incident_number:ID2? Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatch2@ohiomuskingumsheriff.org";
+    return "@ohiomuskingumsheriff.org";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -26,7 +26,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
     if (name.equals("ID2")) return new MyId2Field();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -44,13 +44,13 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
         data.strCity = city;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + "  PLACE";
     }
   }
-  
+
   private static final Pattern CALL_DATETIME_ID_PTN = Pattern.compile("Call Type:(.*)Date/Time:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)(?: *CFS#:(.*))?");
   private class MyCallDateTimeIdField extends Field {
     @Override
@@ -68,7 +68,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
       return "CALL DATE TIME ID";
     }
   }
-  
+
   private class MyId2Field extends IdField {
     @Override
     public void parse(String field, Data data) {
@@ -90,9 +90,9 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
       }
     }
   }
-  
+
   private static CodeSet CITY_SET = new CodeSet(
-      
+
       // Cities
       "ZANESVILLE",
 

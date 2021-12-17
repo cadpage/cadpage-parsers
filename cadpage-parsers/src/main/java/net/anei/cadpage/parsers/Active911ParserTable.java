@@ -920,6 +920,7 @@ public class Active911ParserTable {
       "US/MI/MontcalmSheriff",            "MIMontcalmCounty",
       "US/MI/MtPleasantFD",               "MIIsabellaCountyA",
       "US/MI/NewBuffaloTwp",              "MIBerrienCounty",
+      "US/MI/NilesCharter",               "MICassCountyB",
       "US/MI/OaklandCounty",              "MIOaklandCountyC",
       "US/MI/OaklandCountyURL",           "MIOaklandCountyC",
       "US/MI/OgemawCounty",               "MIOgemawCounty",
