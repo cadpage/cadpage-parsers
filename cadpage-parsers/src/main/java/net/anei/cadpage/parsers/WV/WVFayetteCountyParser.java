@@ -82,6 +82,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       "KIN", "KINGSTON",
       "MIN", "MINDEN",
       "MTH", "MT HOPE",
+      "NAL", "NALLEN",
       "OAK", "OAK HILL",
       "PAX", "PAX",
       "PRI", "PRINCE",
