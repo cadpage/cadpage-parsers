@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.NJ;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchArchonixParser;
 
 
@@ -18,6 +19,16 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
   @Override
   public String getFilter() {
     return "cccademail@camdencounty.com,cccalert@camdencodps.org";
+  }
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    if (data.strPlace.startsWith("EXIT")) {
+      data.strAddress = append(data.strAddress, " ", data.strPlace);
+      data.strPlace = "";
+    }
+    return true;
   }
 
   private static final Pattern TRAIL_BOUND_PTN = Pattern.compile(" +[NSEW]B$");
@@ -456,8 +467,12 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "19 ACE CN",                            "+39.376855,-74.432010",
       "20 ACE CN",                            "+39.378065,-74.431000",
       "21 ACE CN",                            "+39.379217,-74.429879",
-      "22 ACE CN",                            "+39.380489,-74.429039"
+      "22 ACE CN",                            "+39.380489,-74.429039",
 
+      "ROUTE 676 EXIT 1",                     "+39.902920,-75.111580",
+      "ROUTE 676 EXIT 1C",                    "+39.904880,-75.113620",
+      "ROUTE 676 EXIT 4",                     "+39.926820,-75.115900",
+      "ROUTE 676 EXIT 5A",                    "+39.943020,-75.113370"
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
