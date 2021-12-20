@@ -19,7 +19,7 @@ public class NCCaswellCountyParser extends DispatchSouthernParser {
 
   public NCCaswellCountyParser() {
     super(CITY_LIST, "CASWELL COUNTY", "NC",
-          DSFLG_OPT_DISP_ID | DSFLG_ADDR |DSFLG_ADDR_TRAIL_PLACE | DSFLG_X | DSFLG_ID | DSFLG_TIME );
+          DSFLG_PROC_EMPTY_FLDS | DSFLG_OPT_DISP_ID | DSFLG_ADDR |DSFLG_ADDR_TRAIL_PLACE | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME );
   }
 
   @Override
