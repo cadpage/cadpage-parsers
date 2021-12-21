@@ -1343,6 +1343,7 @@ public class Active911ParserTable {
       "US/NJ/ManchesterTEMS",             "NJOceanCountyB",
       "US/NJ/MarlboroPD",                 "NJMarlboro",
       "US/NJ/MercerCounty",               "NJMercerCounty",
+      "US/NJ/MercerCountyHAZMAT",         "NJMercerCountyA",
       "US/NJ/MICCOM",                     "NJMICOMB",
       "US/NJ/Middle",                     "NJCapeMayCounty",
       "US/NJ/MonmouthCounty",             "NJMonmouthCountyA,NJMonmouthCountyD",

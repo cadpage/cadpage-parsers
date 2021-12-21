@@ -25,6 +25,9 @@ public class NJMercerCountyAParser extends DispatchA24Parser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     
+    int pt = body.indexOf("FOOTER:*");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    
     // Some odd variants
     if (body.endsWith(" (Sent by Central 609-799-0110)")) {
       setFieldList("CALL ADDR APT CITY");
