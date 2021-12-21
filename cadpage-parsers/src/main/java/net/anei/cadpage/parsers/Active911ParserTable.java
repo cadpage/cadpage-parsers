@@ -1953,6 +1953,7 @@ public class Active911ParserTable {
       "US/TX/CityofWilmer",               "TXDallasCountyB",
       "US/TX/CityofWylie",                "TXCollinCounty",
       "US/TX/CollinCounty",               "TXCollinCounty",
+      "US/TX/ComalCounty",                "TXComalCounty",
       "US/TX/CookeCounty",                "TXCookeCountyA",
       "US/TX/CoryellCounty",              "TXCoryellCounty",
       "US/TX/CyCreekCommCenter",          "TXCyCreekCommCenter",

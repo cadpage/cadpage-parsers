@@ -1551,6 +1551,7 @@ public class ParserList {
               ,"TXCarsonCounty"                 ,"Carson County, TX"
               ,"TXCherokeeCounty"               ,"Cherokee County, TX"
               ,"TXCollinCounty"                 ,"Collin County, TX"
+              ,"TXComalCounty"                  ,"Comal County, TX"
               ,"TXCookeCounty"                  ,"Cooke County, TX"
               ,"TXCoryellCounty"                ,"Coryell County, TX"
               ,"TXCrowley"                      ,"Crowley, TX"
