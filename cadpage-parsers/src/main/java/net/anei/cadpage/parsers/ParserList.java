@@ -1866,6 +1866,7 @@ public class ParserList {
               ,"ZCAABTaber"                     ,"Taber, AB"
           ),
           new ParserCategory("British Columbia, Canada"
+              ,"ZCABCCentralOkanagan"           ,"Central Okanagan, BC"
               ,"ZCABCNanaimo"                   ,"Nanaimo, BC"
               ,"ZCABCPeaceRiverRegionalDistrict","Peace River Reginal District, BC"
               ,"ZCABCPrinceGeorge"              ,"Prince George, BC"

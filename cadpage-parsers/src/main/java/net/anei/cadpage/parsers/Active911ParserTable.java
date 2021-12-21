@@ -24,6 +24,7 @@ public class Active911ParserTable {
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",
       "CA/AB/StAlbert",                   "ZCAABEdmonton",
       "CA/AB/Taber",                      "ZCAABTaber",
+      "CA/BC/CentralOkanagan",            "ZCABCCentralOkanagan",
       "CA/BC/GabriolaVFD",                "ZCABCNanaimo",
       "CA/BC/Interlakes",                 "ZCABCPrinceGeorge",
       "CA/BC/MidIsland",                  "ZCABCVancouverIsland",
