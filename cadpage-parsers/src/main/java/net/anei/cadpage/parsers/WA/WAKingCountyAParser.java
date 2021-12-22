@@ -9,19 +9,19 @@ import net.anei.cadpage.parsers.MsgParser;
 
 
 public class WAKingCountyAParser extends MsgParser {
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("#LAT:(\\d{2})(\\d{6}) +#LON:(\\d{3})(\\d{6})(?: +(\\d+))?$");
-  
+
   public WAKingCountyAParser() {
     super("KING COUNTY", "WA");
     setFieldList("ADDR APT CITY CALL CH UNIT GPS");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@bellevuewa.gov,VisiCAD@norcom.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -29,24 +29,30 @@ public class WAKingCountyAParser extends MsgParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (parseNormalMsg(body, data)) return true;
-    data.initialize(this);
-    return parseCompressedMsg(body, data);
-  }
-  
-  private boolean parseNormalMsg(String body, Data data) {
-    
+
     // Retrieve GPS coordinates from end of message
     boolean shortForm = false;
+    String gpsInfo = null;
     Matcher match = GPS_PTN.matcher(body);
     if (match.find()) {
-      data.strGPSLoc = '+' + match.group(1) + '.' + match.group(2) + ",-" + match.group(3) + '.' + match.group(4);
-      body = body.substring(0,match.start());
+      gpsInfo = '+' + match.group(1) + '.' + match.group(2) + ",-" + match.group(3) + '.' + match.group(4);
+      body = body.substring(0,match.start()).trim();
       shortForm = match.group(5) != null;
     }
-    
+
+    if (! parseNormalMsg(shortForm, body, data)) {
+      data.initialize(this);
+      if (!parseCompressedMsg(body, data)) return false;
+    }
+
+    if (gpsInfo != null) data.strGPSLoc = gpsInfo;
+    return true;
+  }
+
+  private boolean parseNormalMsg(boolean shortForm, String body, Data data) {
+
     FParser p = new FParser(body);
-    
+
     if (p.check("ADDRESS CHANGE")) {
       p.check(":");
       parseAddress(p.get(42), data);
@@ -60,11 +66,10 @@ public class WAKingCountyAParser extends MsgParser {
       data.strUnit = p.get();
       return true;
     }
-    
-    
+
     parseAddress(p.get(50), data);
     if (!p.check("#")) return false;
-    
+
     if (p.checkAheadBlanks(26, 2) && !p.checkAheadBlanks(28, 1)) {
       data.strApt = append(data.strApt, "-", p.get(6));
       data.strCity = p.get(22);
@@ -75,11 +80,11 @@ public class WAKingCountyAParser extends MsgParser {
       data.strUnit = p.get();
       return true;
     }
-    
+
     String apt = p.get(shortForm ? 7 : 10);
     data.strApt = append(data.strApt, "-", apt);
     if (p.check(" ")) return false;
-    
+
     if (p.lookahead(34,1).length() == 0 && p.lookahead(35,1).length() == 1) data.strCity = p.get(35);
     data.strCall = p.get(29);
     if (!p.check(" ")) return false;
@@ -90,17 +95,16 @@ public class WAKingCountyAParser extends MsgParser {
     data.strUnit = p.get();
     return true;
   }
-  
-  private static final Pattern COMP_MASTER = Pattern.compile("([^#]+) # ([^ ]*) (.*?) (FT[A-Z0-9]+) ([A-Z0-9,]+)");
+
+  private static final Pattern COMP_MASTER = Pattern.compile("([^#]+) # (.*?) (FT[A-Z0-9]+) ([A-Z0-9,]+)");
   private boolean parseCompressedMsg(String body, Data data) {
     if (body.startsWith("CAD||")) return false;
     Matcher match = COMP_MASTER.matcher(body);
     if (!match.matches()) return false;
     parseAddress(match.group(1).trim(), data);
-    data.strApt = match.group(2);
-    data.strCall = match.group(3).trim();
-    data.strChannel = match.group(4);
-    data.strUnit = match.group(5).trim();
+    data.strCall = match.group(2).trim();
+    data.strChannel = match.group(3);
+    data.strUnit = match.group(4).trim();
     return true;
   }
 }

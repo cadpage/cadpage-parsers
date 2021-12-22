@@ -27,7 +27,7 @@ public class Active911ParserTable {
       "CA/BC/CentralOkanagan",            "ZCABCCentralOkanagan",
       "CA/BC/GabriolaVFD",                "ZCABCNanaimo",
       "CA/BC/Interlakes",                 "ZCABCPrinceGeorge",
-      "CA/BC/Kelowna",                    "ZCAABCentralOkanagan",
+      "CA/BC/Kelowna",                    "ZCABCCentralOkanagan",
       "CA/BC/MidIsland",                  "ZCABCVancouverIsland",
       "CA/BC/Nanaimo",                    "ZCABCNanaimo",
       "CA/BC/NI911",                      "ZCABCPeaceRiverRegionalDistrict",

@@ -3,9 +3,9 @@ package net.anei.cadpage.parsers.ZCABC;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA51Parser;
 
-public class ZCAABCentralOkanaganParser extends DispatchA51Parser {
+public class ZCABCCentralOkanaganParser extends DispatchA51Parser {
 
-  public ZCAABCentralOkanaganParser() {
+  public ZCABCCentralOkanaganParser() {
     super("", "BC");
   }
 

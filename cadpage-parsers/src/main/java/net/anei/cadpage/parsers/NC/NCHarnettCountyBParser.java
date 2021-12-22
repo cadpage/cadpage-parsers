@@ -31,7 +31,8 @@ public class NCHarnettCountyBParser extends DispatchSouthernParser {
   protected boolean parseMsg(String body, Data data) {
 
     // Eliminate NCHarnettCountyD alerts
-    if (body.startsWith("AD:") || body.startsWith("PN:")) return false;
+    if (body.startsWith("AD:") || body.startsWith("PN:") ||
+        body.startsWith("Received:")) return false;
 
     if (RUN_REPORT_PTN.matcher(body).find()) {
       data.strCall = "RUN REPORT";
