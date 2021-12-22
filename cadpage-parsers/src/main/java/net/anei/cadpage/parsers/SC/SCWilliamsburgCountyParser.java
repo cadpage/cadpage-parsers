@@ -16,7 +16,7 @@ public class SCWilliamsburgCountyParser extends DispatchA60Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("911 Call")) return false;
+    if (!subject.equals("911 Call") && !subject.equals("Active911 Call")) return false;
     return super.parseMsg(body,  data);
   }
 

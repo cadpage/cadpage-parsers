@@ -13,7 +13,7 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   public DispatchA60Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CODE? CALL ADDR/Z INFO UNIT DATETIME! ID END");
+          "CODE/Z? CALL ADDRCITYST/Z INFO INFO+? UNIT/C+? DATETIME! ID END");
   }
 
   @Override
@@ -25,58 +25,67 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CODE")) return new CodeField("\\*?[A-Z][-A-Z0-9]+|", false);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("DATETIME")) return new MyDateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
-  private static final Pattern CITY_PATTERN = Pattern.compile("(.*), *([A-Z][ A-Z]{2,})(?:, *([A-Z]{2})(?: +\\d{5})?)?");
-
-  private class MyAddressField extends AddressField {
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      if (field.length() == 0) return;
-
-      // Strip off leading '='
       field = stripFieldStart(field, "=");
-      Matcher m = CITY_PATTERN.matcher(field);
-      if (m.matches()) {
-        field = m.group(1).trim();
-        data.strCity = m.group(2).trim();
-        data.strState = getOptGroup(m.group(3));
-      }
       super.parse(field, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames()+" CITY ST";
     }
   }
 
   private static final Pattern LOG_PATTERN
     = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) -(?: LOG -)? *", Pattern.CASE_INSENSITIVE);
   private class MyInfoField extends InfoField {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("None")) return true;
+      return parseEntries(field.split("; *"), data);
+    }
+
+    private boolean parseEntries(String[]flds, Data data) {
+      String date = null;
+      String time = null;
+      StringBuilder sb = new StringBuilder();
+      boolean good = false;
+
+      for (String field : flds) {
+        field = field.trim();
+        if (field.isEmpty()) continue;
+        Matcher m = LOG_PATTERN.matcher(field);
+        if (m.lookingAt()) {
+          good = true;
+          date = m.group(1);
+          time =  m.group(2);
+          field = field.substring(m.end());
+          if (field.isEmpty()) continue;
+        }
+        if (sb.length() > 0) sb.append('\n');
+        sb.append(field);
+      }
+      if (!good) return false;
+      data.strDate = date;
+      data.strTime = time;
+      data.strSupp = append(data.strSupp, "\n", sb.toString());
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
-      if (!field.equals("None"))
-        parseEntries(field.split("; *"), data);
-    }
-
-    private void parseEntries(String[]f, Data data) {
-      for (String part : f) parseEntry(part.trim(), data);
-    }
-
-    private void parseEntry(String field, Data data) {
-      Matcher m = LOG_PATTERN.matcher(field);
-      if (m.lookingAt()) {
-        data.strDate = m.group(1);
-        data.strTime =  m.group(2);
-        field = field.substring(m.end());
-      }
-      data.strSupp = append(data.strSupp, "\n", field);
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
