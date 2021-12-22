@@ -59,6 +59,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("None")) return;
       String connect = " / ";
       for (String part : field.split("; ")) {
         part = part.trim();
