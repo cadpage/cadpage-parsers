@@ -8,4 +8,8 @@ public class TXComalCountyParser extends DispatchA72Parser {
     super("COMAL COUNTY", "TX");
   }
 
+  @Override
+  public String getFilter() {
+    return "ccsocad@co.comal.tx.us";
+  }
 }
