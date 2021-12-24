@@ -14,24 +14,24 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  */
 
 public class ALMadisonCountyAParser extends FieldProgramParser {
-  
+
   private static final String CAD_MARKER = "IPS I/Page Notification";
-  
+
   public ALMadisonCountyAParser() {
     this("MADISON COUNTY", "AL");
   }
-  
+
   ALMadisonCountyAParser(String defCity, String defState) {
-    super(CITY_TABLE, defCity, defState,
+    super(ALMadisonCountyBParser.CITY_CODES, defCity, defState,
            "EVENT:ID? Loc:ADDR! Mun:CITY Xstreets:X? EVT#:ID TYPE:CALL TIME:TIME% GRID_ID:MAP%");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "Madco911,rescue1-bounces@rescuesquad.net,cad.page@madco9-1-1.org,cad.page@hsv.madco911.com,pageout@hsv.madco911.com";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -50,18 +50,18 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
     body = stripFieldStart(body, "/ ");
     do {
       if (subject.contains(CAD_MARKER)) break;
-      
+
       if (body.startsWith(CAD_MARKER)) {
         body = body.substring(CAD_MARKER.length()).trim();
         body = stripFieldStart(body, "/ ");
         break;
       }
-      
+
       if (body.startsWith("Loc:")) break;
-      
+
       return false;
     } while (false);
-   
+
     body = body.replace("GRID_ID:", "GRID ID:");
     String info = null;
     int pt = body.indexOf('\n');
@@ -70,8 +70,8 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
       body = body.substring(0,pt).trim();
     }
     if (!super.parseMsg(body, data)) return false;
-    
-    // Address and call ID are both optional.  But one of them 
+
+    // Address and call ID are both optional.  But one of them
     // must be present
     if (data.strAddress.length() == 0 &&  data.strCallId.length() == 0) return false;
     if (!data.expectMore) {
@@ -104,12 +104,12 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " CALL? CODE? INFO UNIT";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -117,7 +117,7 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-  
+
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) *(.*)");
   private static final Pattern COLON_PTN = Pattern.compile(" *: *");
@@ -147,13 +147,13 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY PLACE";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -162,22 +162,22 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = convertCodes(field, TYPE_CODES);
     }
   }
-  
+
   private static final Pattern PRIV_PTN = Pattern.compile("\\bPRIV\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = PRIV_PTN.matcher(addr).replaceAll("").trim();
     return super.adjustMapAddress(addr);
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "2029 FLAGSTONE DR",                    "+34.692179,-86.720033",
       "148 GARDENGATE DR",                    "+34.836230,-86.699971",
@@ -199,20 +199,7 @@ public class ALMadisonCountyAParser extends FieldProgramParser {
       "117 KENWORTH CT",                      "+34.735870,-86.756995",
       "118 KENWORTH CT",                      "+34.735882,-86.756690"
   });
-  
-  private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-      "MAD",            "MADISON",
-      "MDCO",           "MADISON COUNTY",
-      "HSV",            "HUNTSVILLE",
-      "LIME",           "LIMESTONE COUNTY",
-      "LIME MAD",       "MADISON",
-      "NEWH",           "NEW HOPE",
-      "NWMK",           "NEW MARKET",
-      "NWMK MDCO",      "NEW MARKET",
-      "OXRD",           "OWENS CROSS ROADS",
-      "TRI",            "TRIANA"
-  });
-  
+
   private static final Properties TYPE_CODES = buildCodeTable(new String[]{
       "UNKMED",         "UNKNOWN MEDICAL",
       "M",              "MEDICAL",
