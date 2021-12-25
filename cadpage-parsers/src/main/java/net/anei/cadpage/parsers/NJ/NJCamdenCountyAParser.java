@@ -469,6 +469,8 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "21 ACE CN",                            "+39.379217,-74.429879",
       "22 ACE CN",                            "+39.380489,-74.429039",
 
+      "CAMDEN HIGH FOOTBALL FIELD",           "+39.930750,-75.093040",
+
       "ROUTE 676 EXIT 1",                     "+39.902920,-75.111580",
       "ROUTE 676 EXIT 1C",                    "+39.904880,-75.113620",
       "ROUTE 676 EXIT 4",                     "+39.926820,-75.115900",
