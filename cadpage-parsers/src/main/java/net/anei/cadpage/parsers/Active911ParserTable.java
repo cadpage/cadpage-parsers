@@ -123,6 +123,7 @@ public class Active911ParserTable {
       "US/AL/Vandiver",                   "ALShelbyCountyA",
       "US/AL/Velocityps",                 "ALJeffersonCountyF",
       "US/AL/WalkerCounty",               "ALWalkerCounty",
+      "US/AL/WashingtonCounty",           "ALWashingtonCounty",
       "US/AL/WinstonCounty",              "ALWinstonCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",
       "US/AR/Bentonville",                "ARBentonCountyC",

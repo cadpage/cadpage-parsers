@@ -150,6 +150,7 @@ public class ParserList {
               ,"ALTalladegaCounty"              ,"Talladega County, AL"
               ,"ALTallapoosaCounty"             ,"Tallapoosa County, AL"
               ,"ALWalkerCounty"                 ,"Walker County, AL"
+              ,"ALWashingtonCounty"             ,"Washington County, AL"
               ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
           new ParserCategory("Alaska"
