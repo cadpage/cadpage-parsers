@@ -15,14 +15,13 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class ALLauderdaleCountyBParser extends FieldProgramParser {
 
   public ALLauderdaleCountyBParser() {
-    super(ALLauderdaleCountyAParser.CITY_TABLE, "LAUDERDALE COUNTY", "AL",
-        "Pri:SRC? Address:ADDR/S! Time:TIME! Cross_Streets:X! Event_Type:CALL! Re:INFO");
-    setBreakChar('-');
+    super("LAUDERDALE COUNTY", "AL",
+          "Loc:ADDR/SXP! Time:TIME! XSts:X! Typ:CALL!");
   }
 
   @Override
   public String getFilter() {
-    return "@everbridge.net,88911,87844,89361";
+    return "noreply@everbridge.net";
   }
 
   @Override
@@ -39,9 +38,8 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
     return super.parseHtmlMsg(subject, body, data);
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,5}\\d{8}) EV- +.*");
-  private static final Pattern MASTER = Pattern.compile("([A-Z]{2,4}\\d{8}) EV- .*?(?: - |\n)((?:Pri|Address)-.*)");
-  private static final Pattern URL_PTN = Pattern.compile("(.*?)[ .]+(https?://.*)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,5}\\d{8,10}) TYP:.*");
+  private static final Pattern RAPIDOS_PTN = Pattern.compile("RapidSOS\\s(?:Latitude: *([-+]?\\d{2,3}\\.\\d{3,}), Longitude: *([-+]?\\d{2,3}\\.\\d{3,})|is not available) *(.*)", Pattern.DOTALL);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -52,16 +50,10 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
         break;
       }
 
-      match = MASTER.matcher(body);
-      if (match.matches()) {
-        data.strCallId = match.group(1);
-        body = match.group(2);
-        break;
-      }
-
       if (isPositiveId()) {
-        setFieldList("INFO");
+        setFieldList("CALL INFO");
         data.msgType = MsgType.GEN_ALERT;
+        data.strCall = subject;
         for (String line : body.split("\n")) {
           line = line.trim();
           if (line.startsWith("<a ")) continue;
@@ -73,43 +65,37 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
       return false;
     } while (false);
 
-    Matcher match = URL_PTN.matcher(body);
-    if (match.matches()) {
-      body = match.group(1);
-      data.strInfoURL = match.group(2);
+    String info = "";
+    int pt = body.indexOf(" | ");
+    if (pt >= 0) {
+      info = body.substring(pt+3).trim();
+      body = body.substring(0,pt).trim();
     }
+    body = body.replace("Typ:", " Typ:");
+    if (!super.parseMsg(body, data)) return false;
 
-    return super.parseMsg(body, data);
+    Matcher match = RAPIDOS_PTN.matcher(info);
+    if (match.matches()) {
+      String gps1 = match.group(1);
+      String gps2 = match.group(2);
+      if (gps1 != null) setGPSLoc(gps1+','+gps2, data);
+      info = match.group(3);
+    }
+    data.strSupp = info;
+
+    return true;
   }
 
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram() + " URL";
+    return "ID " + super.getProgram() + " GPS INFO";
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("TIME")) return new MyTimeField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-
-  // Address field must parse : @<place name> syntax
-  private class MyAddressField extends AddressField {
-
-    @Override
-    public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strPlace = p.getLastOptional(": @");
-      super.parse(p.get(), data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " PLACE";
-    }
   }
 
   private class MyCrossField extends CrossField {
@@ -133,28 +119,6 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
       } else {
         setTime(TIME_FMT, field, data);
       }
-    }
-  }
-
-  // INFO field may have cell phone # & GPS location
-  private static final Pattern CELL_INFO_PTN =
-      Pattern.compile("^ALT# ([\\d\\-]+) ([+\\-]\\d+\\.\\d+ [+\\-]\\d+\\.\\d+), *");
-  private class MyInfoField extends InfoField {
-
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = CELL_INFO_PTN.matcher(field);
-      if (match.find()) {
-        data.strPhone = match.group(1);
-        setGPSLoc(match.group(2), data);
-        field = field.substring(match.end()).trim();
-      }
-      super.parse(field, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "PHONE GPS INFO";
     }
   }
 }
