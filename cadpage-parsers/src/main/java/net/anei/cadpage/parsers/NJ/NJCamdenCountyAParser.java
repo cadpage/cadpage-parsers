@@ -469,6 +469,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "21 ACE CN",                            "+39.379217,-74.429879",
       "22 ACE CN",                            "+39.380489,-74.429039",
 
+      "BEN FRANKLIN BRIDGE PLAZA",            "+39.948700,-75.118600",
       "CAMDEN HIGH FOOTBALL FIELD",           "+39.930750,-75.093040",
 
       "ROUTE 676 EXIT 1",                     "+39.902920,-75.111580",
