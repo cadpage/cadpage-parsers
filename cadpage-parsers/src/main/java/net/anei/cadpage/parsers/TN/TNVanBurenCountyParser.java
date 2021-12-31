@@ -12,7 +12,7 @@ public class TNVanBurenCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm3.info";
+    return "dispatch@911comm3.info,dispatch@vanburentne911.info";
   }
 
   @Override
