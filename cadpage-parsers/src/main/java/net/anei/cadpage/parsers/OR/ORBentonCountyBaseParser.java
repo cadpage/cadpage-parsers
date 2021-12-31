@@ -129,6 +129,8 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
         addr = HWY_20_PTN.matcher(addr).replaceAll("CORVALLIS-NEWPORT HWY");
       }
     }
+
+    addr = addr.replace("SW PHILOMATH BLVD", "PHILOMATH BLVD");
     return super.adjustMapAddress(addr);
   }
   private static final Pattern HWY_34_PTN = Pattern.compile("\\bHWY +34\\b", Pattern.CASE_INSENSITIVE);
