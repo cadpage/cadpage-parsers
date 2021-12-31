@@ -8,27 +8,27 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHMercerCountyAParser extends FieldProgramParser {
-  
+
   public OHMercerCountyAParser() {
-    super("MERCER COUNTY", "OH", 
-          "SRC CALL STATUS ADDRCITY UNIT BOX! INFO/N+");
+    super("MERCER COUNTY", "OH",
+          "SRC CALL STATUS? ADDRCITY UNIT BOX! INFO/N+");
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{1,4}", true);
     if (name.equals("STATUS")) return new SkipField("DIS|ENR");
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z]{3,4}\\d?|SQ\\d{1,2}", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]{3,5}\\d?|SQ\\d{1,2}", true);
     if (name.equals("BOX")) return new BoxField("\\d{4}");
     return super.getField(name);
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("APT +(.*)|\\d{1,4}[A-Z]?|[A-Z]");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -57,13 +57,13 @@ public class OHMercerCountyAParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANN",  "ANNA",
       "ANS",  "ANSONIA",
