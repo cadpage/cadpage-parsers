@@ -513,6 +513,7 @@ public class Active911ParserTable {
       "US/IL/Medstar",                    "ILMedstar",
       "US/IL/MelrosePark",                "ILCookCountyF",
       "US/IL/MelroseParkEverbridge",      "ILCookCountyF",
+      "US/IL/MelroseParkFD",              "ILCookCountyF",
       "US/IL/METCAD911",                  "ILChampaignCounty",
       "US/IL/MontgomeryCounty",           "ILMontgomeryCounty",
       "US/IL/NWCDS",                      "ILCookCountyD",
