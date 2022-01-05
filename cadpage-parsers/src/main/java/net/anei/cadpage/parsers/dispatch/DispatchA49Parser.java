@@ -164,7 +164,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern EXTRA_JUNK_PTN = Pattern.compile("(.*?) +\\d{6}");
+  private static final Pattern EXTRA_JUNK_PTN = Pattern.compile("(.*?) +(?:[A-Z]{2}\\d{3},)?\\d{6}");
   private static final Pattern EXTRA_ID_PTN  = Pattern.compile(">(?:RPT#|AC)< *([-\\d]+)");
   private static final Pattern EXTRA_CALL_PTN = Pattern.compile("[A-Z]>>?IC< *(?:[A-Z]\\.)? *(.*?)");
   private static final Pattern EXTRA_GPS_PTN = Pattern.compile("\\bLat=([-+]\\d+\\.\\d{4,}) Long=([-+]\\d+\\.\\d{4,})\\b");
