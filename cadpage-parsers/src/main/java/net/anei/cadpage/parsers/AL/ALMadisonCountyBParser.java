@@ -58,14 +58,17 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("[-+]?\\d{3}\\.\\d{6} +[-+]?\\d{3}\\.\\d{6}");
   private static final Pattern INFO_PHONE_PTN = Pattern.compile("ALT# (\\d{3}-\\d{3}-\\d{4})\\b.*");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       for (String line : field.split("\n")) {
         line = line.trim();
-        Matcher match = INFO_PHONE_PTN.matcher(line);
+        Matcher match = INFO_GPS_PTN.matcher(line);
         if (match.matches()) {
+          setGPSLoc(line, data);
+        } else if ((match = INFO_PHONE_PTN.matcher(line)).matches()) {
           data.strPhone = match.group(1);
         } else {
           data.strSupp = append(data.strSupp, "\n", line);
@@ -75,7 +78,7 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "PHONE INFO";
+      return "GPS PHONE INFO";
     }
   }
 
