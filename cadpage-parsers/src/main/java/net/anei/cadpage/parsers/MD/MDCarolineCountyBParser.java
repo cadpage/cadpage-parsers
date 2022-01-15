@@ -9,7 +9,7 @@ public class MDCarolineCountyBParser extends DispatchH05Parser {
 
   public MDCarolineCountyBParser() {
     super(MDCarolineCountyParser.CITY_LIST, "CAROLINE COUNTY", "MD",
-          "Call_Type:CALL! Call_Date/Time:DATETIME! Call_Location:ADDRCITY! ( Cross_Streets:X! | X_Streets:X! ) Common_Name:PLACE! ( Latitude:GPS1! Longitude:GPS2! | ) Box_Area:BOX! Radio_Channel:CH! ( Map:MAP! https:SKIP! Incident_Number:ID! Units:UNIT! | Lat:GPS1! Long:GPS2! Incident_Number:ID! Units:UNIT! Times:EMPTY! TIMES+ CFS_#:SKIP! | Units:UNIT! CFS_#:ID! ) END");
+          "Call_Type:CALL! Call_Date/Time:DATETIME! Call_Location:ADDRCITY! ( Cross_Streets:X! | X_Streets:X! ) Common_Name:PLACE! ( Latitude:GPS1! Longitude:GPS2! | ) Box_Area:BOX! Radio_Channel:CH! ( Map:MAP! https:SKIP! Incident_Number:ID! Units:UNIT! | Lat:GPS1! Long:GPS2! Incident_Number:ID! Units:UNIT! Times:EMPTY! TIMES+ CFS_#:SKIP! | Units:UNIT! CFS_#:ID! ) Notes:EMPTY INFO_BLK+");
   }
 
   @Override
