@@ -33,8 +33,19 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     if (!subject.startsWith("MADCO to ACTIVE911 [")) return false;
-    if (!subject.endsWith("]|LOC")) return false;
-    body = "(LOC)" + body;
+
+    // All leading keywords got merged into the subject, and have to be restored
+    int pt = subject.lastIndexOf("]|");
+    if (pt < 0) return false;
+    StringBuilder sb = new StringBuilder();
+    for (String key : subject.substring(pt+2).split("\\|")) {
+      sb.append('(');
+      sb.append(key);
+      sb.append(") ");
+    }
+    sb.append(body);
+    body = sb.toString();
+
     if (!super.parseMsg(body, data)) return false;
 
     // Intersections are a bit strange
@@ -43,6 +54,9 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
       if (city != null) {
         data.strCity = city;
         data.strAddress = "";
+        parseAddress(data.strCross, data);
+        data.strCross = "";
+      } if (data.strAddress.isEmpty()) {
         parseAddress(data.strCross, data);
         data.strCross = "";
       }
@@ -55,6 +69,8 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("X")) return new MyCrossField();
+
     return super.getField(name);
   }
 
@@ -86,6 +102,14 @@ public class ALMadisonCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace('\n', ',');
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "CROSSOVER");
       super.parse(field, data);
     }
   }
