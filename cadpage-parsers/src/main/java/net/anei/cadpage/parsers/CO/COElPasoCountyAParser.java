@@ -16,9 +16,10 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   public COElPasoCountyAParser() {
     super("EL PASO COUNTY", "CO",
-          "ID? SRC_UNIT ( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
-                       "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
-                       ") END");
+          "ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
+                  "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
+                  "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
+                  ") END");
   }
 
   @Override
@@ -39,23 +40,27 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern COMMENT_INFO_PTN = Pattern.compile("Comment:(.*?),\\[(INFO from EPSO:.*?)\\]");
+  private static final Pattern COMMENT_INFO_PTN1 = Pattern.compile("Comment:(.*?),\\[(INFO from EPSO:.*?)\\]");
+  private static final Pattern COMMENT_INFO_PTN2 = Pattern.compile("Comment:(.*?),(?=INFO from EPSO:)");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:([A-Z]{2,4}\\d{11}|\\d{6}-\\d{5}) +)?(.*?) +(D:.*?) *(E:.*?) *(S:.*?) *(PTC:.*?) *(T:.*?) *(AD:.*?) *(C:.*?) *(Page Req Time:.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     String comment = "";
-    Matcher match = COMMENT_INFO_PTN.matcher(body);
+    Matcher match = COMMENT_INFO_PTN1.matcher(body);
     if (match.lookingAt()) {
       comment = match.group(1).trim();
       subject = match.group(2).trim();
       body = body.substring(match.end()).trim();
+    } else if ((match = COMMENT_INFO_PTN2.matcher(body)).lookingAt()) {
+      comment = match.group(1);
+      body = body.substring(match.end());
     }
 
     // One page format requires using the original subject
     if (subject.startsWith("INFO from EPSO:")) {
-      setFieldList("INFO CALL ADDR APT PLACE CITY PRI");
+      setFieldList("INFO CALL ADDR APT PLACE CITY CH");
       data.strSupp = comment;
       data.strCall = subject.substring(15).trim();
       FParser p = new FParser(body);
@@ -67,7 +72,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       if (!p.check("JURIS:")) return false;
       data.strCity = cvtJurisCity(p.get(30));
       if (!p.check("CMD:")) return false;
-      data.strPriority = p.get();
+      data.strChannel = p.get();
       return true;
     }
 
@@ -100,6 +105,26 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     }
 
     FParser p = new FParser(body);
+
+    // One page format requires using the original subject
+    if (p.check("INFO from EPSO:")) {
+      setFieldList("INFO CALL ADDR APT PLACE CITY CH");
+      data.strSupp = comment;
+      data.strCall = p.get(30);
+      if (!p.check(" ")) return false;
+      parseAddress(p.get(30), data);
+      if (!p.check("#")) return false;
+      data.strApt = append(data.strApt, "-", p.get(5));
+      if (!p.check("~") && !p.check(" ")) return false;
+      data.strPlace = p.get(30);
+      if (!p.check("JURIS:")) return false;
+      data.strCity = cvtJurisCity(p.get(30));
+      if (!p.check("CMD:")) return false;
+      data.strChannel = p.get();
+      return true;
+    }
+
+
     if (p.check("REF:")) {
       if (p.checkAhead(33,  "THE LOC HAS CHANGED TO:")) {
         setFieldList("CALL ADDR APT");
@@ -192,20 +217,41 @@ public class COElPasoCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}\\d{2}-\\d{5}", true);
     if (name.equals("SRC_UNIT")) return new MySourceUnitField();
+    if (name.equals("UNIT")) return new UnitField("[,pA-Z0-9]+", true);
     if (name.equals("DISTRICT")) return new MapField("District \\d+|Colorado S|El Paso Co|HWY 115 -", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
     if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
     return super.getField(name);
   }
 
-  private static final Pattern SRC_UNIT_PTN = Pattern.compile("\\[(.*?):?\\][ ,]*(.*?)");
+  private static final Pattern[] SRC_UNIT_PTNS = new Pattern[] {
+      Pattern.compile("\\[(.*?):?\\][ ,]*(.*?)"),
+      Pattern.compile("(.*?:.*?)[ ,]{3,}(.*?)"),
+      Pattern.compile("(MUTUAL AID:\\S+) +(.*)"),
+      Pattern.compile("((?:EPSO|MUTUAL AID):\\S+):\\]? *(.*)")
+  };
   private class MySourceUnitField extends Field {
     @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      for (Pattern ptn : SRC_UNIT_PTNS) {
+        Matcher match = ptn.matcher(field);
+        if (match.matches()) {
+          data.strSource = match.group(1).trim();
+          data.strUnit = match.group(2);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    @Override
     public void parse(String field, Data data) {
-      Matcher match = SRC_UNIT_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strSource = match.group(1).trim();
-      data.strUnit = match.group(2);
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
