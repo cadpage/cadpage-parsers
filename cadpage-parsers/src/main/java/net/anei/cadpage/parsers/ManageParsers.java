@@ -182,14 +182,6 @@ public class ManageParsers {
 
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "CAHaywardCounty",    "CAHayward",               // 02/16/2016
-        "KYRockcastleCounty", "KYRockCastleCounty",
-        "OHLimaCounty",       "OHLima",
-        "VAAlbermarleCounty", "VAAlbemarleCounty",       // 06/27/2016
-        "SCAndersonCountyD",  "SCCharlestonCountyB",     // 08/31/2016
-        "TXSanMarcosCounty",  "TXHaysCountyC",           // 09/28/2016
-        "ILWoodfordCountyA",  "ILWoodfordCounty",        // 10/01/2016
-        "ILWoodfordCountyB",  "ILWOodfordCounty",
         "NYSuffolkCountyI",   "NYSuffolkCountyF",        // 01/21/2017
         "CAYebaCounty",       "CAYubaCounty",            // 04/10/2017
         "OHPrebleCountyA",    "OHPrebleCounty",          // 06/06/2017
@@ -215,7 +207,8 @@ public class ManageParsers {
         "SDKiowaCounty",      "KSKiowaCounty",           // 06/07/2021
         "TXSeguin",           "TXGuadalupeCounty",       // 11/09/2021
         "CTOldSaybroook",     "CTMiddlesexCounty",       // 11/22/2021
-        "SDMinnehahaCountyC", "CTMiddlesexCounty"        // 11/22/2021 Active911 oops
+        "SDMinnehahaCountyC", "CTMiddlesexCounty",       // 11/22/2021 Active911 oops
+        "OHHudson",           "OHSummitCounty"           // 01/16/2022
   });
 
 }

@@ -11,7 +11,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
 
   public OHSummitCountyHParser() {
     super("SUMMIT COUNTY", "OH",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID! UNIT:UNIT! ( PRI:MAP! INFO:INFO! INFO/N+ MAP:X! | INFO:INFO! INFO/N+ XSTREET:X WS:MAP )");
+          "CALL CALL:CALL/SDS PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID UNIT:UNIT ( PRI:MAP INFO:INFO INFO/N+ MAP:X! | INFO:INFO INFO/N+ XSTREET:X WS:MAP )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -22,6 +22,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
 
   private static final Pattern PFX1_PTN = Pattern.compile("(?:\\*+(?:ALL CALL)\\*+:?|ALL )(?=CALL:)");
   private static final Pattern PFX2_PTN = Pattern.compile("\\*+2ND PAGE\\*+ *\n");
+  private static final Pattern DELIM = Pattern.compile("(?!\n|$)(?=CALL:)|\n");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -31,7 +32,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
     } else if ((match = PFX2_PTN.matcher(body)).lookingAt()) {
       body = "CALL:" + body.substring(match.end());
     }
-    return parseFields(body.split("\n"), data);
+    return parseFields(DELIM.split(body), data);
   }
 
   @Override

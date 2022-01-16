@@ -1537,7 +1537,7 @@ public class Active911ParserTable {
       "US/OH/HighlandCounty",             "OHHighlandCounty",
       "US/OH/HockingCounty",              "OHHockingCounty",
       "US/OH/HolmesCountySheriff",        "OHHolmesCounty",
-      "US/OH/Hudson",                     "OHHudson",
+      "US/OH/Hudson",                     "OHSummitCountyH",
       "US/OH/HuronCounty",                "OHHuronCounty",
       "US/OH/JeffersonCounty",            "OHJeffersonCounty",
       "US/OH/KnoxCounty",                 "OHKnoxCounty",
@@ -2043,7 +2043,7 @@ public class Active911ParserTable {
       "US/TX/RuskCounty",                 "TXRuskCountyA",
       "US/TX/RuskPD",                     "TXRuskCountyB",
       "US/TX/SachseCounty",               "TXDallasCountyF",
-      "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",
+//      "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",    Mysteriously vanished - further investigation required
       "US/TX/Seabrook",                   "TXHarrisCountyC",
       "US/TX/Seagoville",                 "TXDallasCountyB",
       "US/TX/Seguin",                     "TXSeguin",
