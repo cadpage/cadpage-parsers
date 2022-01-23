@@ -10,47 +10,47 @@ import net.anei.cadpage.parsers.ReverseCodeTable;
 
 
 public class OHHamiltonCountyAParser extends FieldProgramParser {
- 
+
   public OHHamiltonCountyAParser() {
-    super("HAMILTON COUNTY", "OH", 
-          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT NAME! Xst:X! END");
+    super("HAMILTON COUNTY", "OH",
+          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT NAME! Xst:X! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "hc@hamilton-co.org,9300,messaging@iamresponding.com,6245";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return WILLIAM_HENRY_HARR.matcher(addr).replaceAll("WILLIAM HENRY HARRISON");
   }
   private static final Pattern WILLIAM_HENRY_HARR = Pattern.compile("\\bWILLIAM HENRY HARR\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Pattern PREFIX_PTN = Pattern.compile("(?:HC|CAD|DIRECT):");
   private static final Pattern CALL_PFX_PTN = Pattern.compile("(2ND CALL) *(.*)");
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     if (body.startsWith("HC:AD:") || body.startsWith("HC:TIME:")) {
       setFieldList("INFO");
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body.substring(3);
       return true;
     }
-    
+
     String[] flds = body.split(">");
     if (flds.length < 5) return false;
     Matcher match = PREFIX_PTN.matcher(flds[0]);
     if (!match.lookingAt()) return false;
     flds[0] = flds[0].substring(match.end()).trim();
-    
+
     String prefix = "";
     match = CALL_PFX_PTN.matcher(flds[0]);
     if (match.matches()) {
@@ -59,25 +59,26 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
     }
     if (!parseFields(flds, data)) return false;
     data.strCall = append(prefix, " ", data.strCall);
-    
+
     String city = DEPT_CITY_TABLE.getCodeDescription(data.strSource);
     if (city != null) data.strCity = city;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("SRC", "SRC CITY");
   }
-  
+
   @Override
   public Field getField(String name) {
-    if (name.equals("CH")) return new ChannelField("[A-Z]{2,3}\\d{1,2}|", true);
+    if (name.equals("CH")) return new ChannelField("[A-Z]{2,3}\\d{1,2}|NECC|", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -87,7 +88,16 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *,?\\[\\d{1,2}\\] *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+  }
+
   private static final ReverseCodeTable DEPT_CITY_TABLE = new ReverseCodeTable(
       "Amberly Village FD",         "Amberley Village",
       "Amberley Villag",            "Amberley Village",
