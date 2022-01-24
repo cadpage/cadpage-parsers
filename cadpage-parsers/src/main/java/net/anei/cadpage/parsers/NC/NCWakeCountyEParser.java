@@ -17,7 +17,7 @@ public class NCWakeCountyEParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ECCDISPATCH@rwecc.net";
+    return "ECCDISPATCH@rwecc.net,dispatches@rwecc.net";
   }
 
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Alarm Level|Place|Map|Addr|City|ID|Pri|Time|Unit|Info|TAC|Lati|Long):)");
