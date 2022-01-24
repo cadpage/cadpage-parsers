@@ -21,7 +21,7 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "noreply@everbridge.net";
+    return "noreply@everbridge.net,88911";
   }
 
   @Override
@@ -38,11 +38,24 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
     return super.parseHtmlMsg(subject, body, data);
   }
 
+  private static final Pattern TRAIL_HTTP_PTN = Pattern.compile("\\.{3} (https://\\S+)$");
   private static final Pattern SUBJECT_PTN = Pattern.compile("([A-Z]{2,5}\\d{8,10}) TYP:.*");
-  private static final Pattern RAPIDOS_PTN = Pattern.compile("RapidSOS\\s(?:Latitude: *([-+]?\\d{2,3}\\.\\d{3,}), Longitude: *([-+]?\\d{2,3}\\.\\d{3,})|is not available) *(.*)", Pattern.DOTALL);
+  private static final Pattern RAPIDOS_PTN = Pattern.compile("(?:Location for )?RapidSOS\\s(?:Latitude: *([-+]?\\d{2,3}\\.\\d{3,}), Longitude: *([-+]?\\d{2,3}\\.\\d{3,})|is not available) *(.*)", Pattern.DOTALL);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
+    if (subject.isEmpty()) {
+      Matcher match = TRAIL_HTTP_PTN.matcher(body);
+      if (!match.find()) return false;
+      body = body.substring(0,match.start()).trim();
+      data.strInfoURL = match.group(1);
+
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      subject = body.substring(0,pt).trim();
+      body = body.substring(pt+1).trim();
+    }
     do {
       Matcher match = SUBJECT_PTN.matcher(subject);
       if (match.matches()) {
@@ -80,6 +93,8 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
       String gps2 = match.group(2);
       if (gps1 != null) setGPSLoc(gps1+','+gps2, data);
       info = match.group(3);
+    } else if (info.startsWith("RapidSOS") || info.startsWith("Location for")) {
+      info = "";
     }
     data.strSupp = info;
 
@@ -88,7 +103,7 @@ public class ALLauderdaleCountyBParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "ID " + super.getProgram() + " GPS INFO";
+    return "ID " + super.getProgram() + " GPS INFO URL";
   }
 
   @Override
