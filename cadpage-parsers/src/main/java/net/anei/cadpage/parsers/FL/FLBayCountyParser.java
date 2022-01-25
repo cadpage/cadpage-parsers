@@ -23,7 +23,7 @@ public class FLBayCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "DISPATCH@BAYSO.ORG";
+    return "DISPATCH@BAYSO.ORG,do-not-reply@bayso.ddns.net";
   }
 
   @Override
