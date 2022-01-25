@@ -9,17 +9,17 @@ Hood River County, OR
  */
 
 public class ORHoodRiverCountyParser extends DispatchA22Parser {
-  
+
   public ORHoodRiverCountyParser() {
     super(CITY_CODES, "HOOD RIVER COUNTY", "OR");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "hr911paging@co.hood-river.or.us";
+    return "hr911paging@co.hood-river.or.us,hr911paging@mail.hoodrivercounty.gov";
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "MP 41 I84",                            "+45.636029,-121.945340",
       "MP 42 I84",                            "+45.645378,-121.922170",
