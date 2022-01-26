@@ -7,15 +7,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 
-public class CTTollandCountyAParser extends SmartAddressParser {
+public class CTTollandCountyAParser extends FieldProgramParser {
 
   public CTTollandCountyAParser() {
-    super(CTTollandCountyParser.CITY_LIST, "TOLLAND COUNTY", "CT");
+    super(CTTollandCountyParser.CITY_LIST, "TOLLAND COUNTY", "CT",
+          "ADDRCITY APT PLACE PRI CALL1 CALL/SDS UNIT X DATETIME ID! END");
     removeWords("COURT", "KNOLL", "ROAD", "STREET", "TERRACE");
     addRoadSuffixTerms("CMNS", "COMMONS", "PARK");
     setupSaintNames("PHILIPS");
@@ -40,7 +41,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
 
   private static final Pattern MASTER2 = Pattern.compile("(.*?) (\\d\\d:\\d\\d)(?: (.*?))?(?: (\\d{4}-\\d{8}))?");
   private static final Pattern FLR_PTN = Pattern.compile("(\\d+)(?:ST|ND|RD|TH) *(?:FLOOR|FLR?)");
-  private static final Pattern APT_PTN = Pattern.compile("(?:UNIT|TRLR|TRAILER|APT|LOT|FLR?)[- ]*(.*)|[A-Z] *\\d*|\\d+[A-Z]?|\\d+FL");
+  private static final Pattern APT_PTN = Pattern.compile("(?:UNIT|TRLR|TRAILER|APT|LOT|RM|ROOM|FLR?)[- ]*(.*)|[A-Z] *\\d*|\\d+[A-Z]?|\\d+FL");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -69,6 +70,12 @@ public class CTTollandCountyAParser extends SmartAddressParser {
     if (pt >= 0) body = body.substring(0,pt).trim();
 
     body = body.replace('\n', ' ');
+
+    // Check for semicolon delimited format
+    String[] flds = body.split("; ");
+    if (flds.length >= 8) {
+      return parseFields(flds, data);
+    }
 
     // Check for variant 1 format
     Matcher match = MASTER1.matcher(body);
@@ -302,6 +309,51 @@ public class CTTollandCountyAParser extends SmartAddressParser {
   }
 
   @Override
+  public Field getField(String name) {
+    if (name.equals("APT")) return new MyAptField();
+    if (name.equals("PRI")) return new PriorityField("\\d", true);
+    if (name.equals("CALL1")) return new MyCall1Field();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("X")) return new CrossField("Cross Street *(.*)", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
+    return super.getField(name);
+  }
+
+  private static Pattern APTX_PTN = Pattern.compile("(?:UNIT|TRLR|TRAILER|APT|LOT|RM|ROOM|FLR?)[- ]*(.*)", Pattern.CASE_INSENSITIVE);
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APTX_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCall1Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      String pfx = parseCallDesc(field, data);
+      if (pfx != null) {
+        data.strPlace = append(data.strPlace, " - ", pfx);
+      } else {
+        data.strCall = pfx;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE? CALL";
+    }
+  }
+
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(cvtUnitCodes(field), data);
+    }
+  }
+
+  @Override
   public CodeSet getCallList() {
     return CALL_LIST;
   }
@@ -338,6 +390,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Aircraft Accident",
       "ALS - DIAL",
       "ALS",
+      "Animal Control",
       "Appliance Fire",
       "Appliance Malfunction",
       "AREA OF DOT GARAGE",
@@ -372,6 +425,7 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "OFFICER CALL TN.",
       "Officer Call",
       "Outside Fire",
+      "Possible Structure Fire",
       "Search & Rescue",
       "Search and Rescue",
       "Service Call",
@@ -386,6 +440,8 @@ public class CTTollandCountyAParser extends SmartAddressParser {
       "Structure Fire",
       "Structure Fire - Commercial",
       "Structure Fire - Residential",
+      "Structure Fire-Commercial",
+      "Structure Fire-Residential",
       "test call only",
       "THIS IS ONLY A TEST",
       "Tree/Wires Down",
