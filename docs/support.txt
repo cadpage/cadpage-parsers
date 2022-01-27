@@ -4264,6 +4264,9 @@ Good luck,
 -Ken
 
 **************************************************************************************
+* Hey Google!!
+**************************************************************************************
+This is really an emergency alert app that works by processing incoming text alerts sent by 911 dispatch centers to emergency responders.  Attempts to get it approved under the emergency alert exception have gotten nowhere, so now I'm going to try stretching the definition of a  Spam detection/blocking app.  The requested permissions are right, and we are alerting the user that the content of the message requires critical action be taken right now, which is what a spam detection app does.
 **************************************************************************************
 Useful search expressions...
 ^ +"ADDR:.*\r?\n(?: +"(?:MADDR|APT|X):.*\r?\n)*+(?! +"CITY:)
