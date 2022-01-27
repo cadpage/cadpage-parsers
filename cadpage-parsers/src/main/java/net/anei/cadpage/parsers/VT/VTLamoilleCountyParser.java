@@ -13,16 +13,16 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   private String timeString;
   private boolean unitInfo;
   private Map<String, String> unitName;
-  
+
   public VTLamoilleCountyParser() {
     this("LAMOILLE COUNTY", "VT");
   }
-  
+
   VTLamoilleCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
           "SKIP+ Address:ADDRCITY Incident_Number:ID! Call_Type:CALL Narratives:INFO+");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "VTLamoilleCounty";
@@ -32,7 +32,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   public String getFilter() {
     return "valcournotification@gmail.com,valcournotification@valcourcloud-vt.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     timeString = "";
@@ -42,11 +42,11 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
     if (data.msgType == MsgType.RUN_REPORT) {
       data.strSupp = append(timeString, "\n", data.strSupp);
     }
-    
+
     data.strAddress = data.strAddress.replace("Glen Dr", "Glenn Dr");
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -56,7 +56,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDRESS_PLACE_CITY_PATTERN
-    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:[, ] *([A-Za-z]{2}))?(?:[, ] *(\\d{5}))?");
+    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:[, ] *(VT|NH|NY|PQ|QC))?(?:[, ] *(\\d{5}))?", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -74,13 +74,13 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       if (data.strCity.length() == 0) data.strCity = getOptGroup(m.group(5));
       data.strState = getOptGroup(m.group(4));
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames()+" ST";
     }
   }
-  
+
   private static final Pattern UNIT_INFO_PATTERN_1
   = Pattern.compile("Unit Id +(\\d):(.*)"),
                               UNIT_INFO_PATTERN_2
@@ -124,17 +124,58 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       }
       data.strSupp = append(data.strSupp, "\n", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames()+" UNIT DATE TIME";
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
-      // Bennington County
-      
+
+      // Addison County ************************************
+      // City
+      "VERGENNES",
+
+      // Towns
+      "ADDISON",
+      "BRIDPORT",
+      "BRISTOL",
+      "CORNWALL",
+      "FERRISBURGH",
+      "GOSHEN",
+      "GRANVILLE",
+      "HANCOCK",
+      "LEICESTER",
+      "LINCOLN",
+      "MIDDLEBURY",
+      "MONKTON",
+      "NEW HAVEN",
+      "ORWELL",
+      "PANTON",
+      "RIPTON",
+      "SALISBURY",
+      "SHOREHAM",
+      "STARKSBORO",
+      "VERGENNES",
+      "WALTHAM",
+      "WEYBRIDGE",
+      "WHITING",
+
+      // Census-designated places
+      "BRISTOL",
+      "EAST MIDDLEBURY",
+      "LINCOLN",
+      "MIDDLEBURY",
+      "NEW HAVEN",
+      "SOUTH LINCOLN",
+
+      // Other unincorporated communities
+      "BREAD LOAF",
+      "CHIMNEY POINT",
+      "SATANS KINGDOM",
+
+      // Bennington County *********************************
       // Towns
       "ARLINGTON",
       "BENNINGTON",
@@ -167,9 +208,54 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       "MANCHESTER CTR",
       "READSBORO",
       "SOUTH SHAFTSBURY",
-      
-      // Franklin County
-      
+
+
+      // Chittenden County *************************************
+      // Cities
+      "BURLINGTON",
+      "SOUTH BURLINGTON",
+      "WINOOSKI",
+
+      // Towns
+      "BOLTON",
+      "CHARLOTTE",
+      "COLCHESTER",
+      "ESSEX",
+      "HINESBURG",
+      "HUNTINGTON",
+      "JERICHO",
+      "MILTON",
+      "RICHMOND",
+      "SHELBURNE",
+      "ST GEORGE",
+      "UNDERHILL",
+      "WESTFORD",
+      "WILLISTON",
+      "VILLAGES",
+      "ESSEX JUNCTION",
+      "JERICHO",
+
+      //Census-designated places
+      "BOLTON",
+      "BOLTON VALLEY",
+      "EAST CHARLOTTE",
+      "HANKSVILLE",
+      "HINESBURG",
+      "HUNTINGTON",
+      "HUNTINGTON CENTER",
+      "MILTON",
+      "RICHMOND",
+      "SHELBURNE",
+      "UNDERHILL CENTER",
+      "UNDERHILL FLATS",
+      "WEST CHARLOTTE",
+      "WESTFORD",
+
+      // Unincorporated communities
+      "BUELS GORE",
+      "JONESVILLE",
+
+      // Franklin County ***************************************
       // City
       "ST ALBANS",
 
@@ -186,7 +272,6 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       "MONTGOMERY",
       "RICHFORD",
       "SHELDON",
-      "ST. ALBANS",
       "SWANTON",
 
       // Villages
@@ -196,9 +281,9 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       // Census-designated places
       "FAIRFAX",
       "RICHFORD",
-      
+
       // Lamoille County
-      
+
       // Towns
       "BELVIDERE",
       "CAMBRIDGE",
@@ -224,8 +309,15 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       // Unincorporated community
       "MOSCOW",
 
-      
-      // Orange County
+      // Grand Isle County ***************************************
+      // Towns
+      "ALBURGH",
+      "GRAND ISLE",
+      "ISLE LA MOTTE",
+      "NORTH HERO",
+      "SOUTH HERO",
+
+      // Orange County *******************************************
       // Towns
       "BRADFORD",
       "BRAINTREE",
@@ -258,9 +350,9 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
 
       // Unincorporated community
       "POST MILLS",
-     
-      
-      // Orleans County
+
+
+      // Orleans County ********************************************
       // City
       "NEWPORT",
 
