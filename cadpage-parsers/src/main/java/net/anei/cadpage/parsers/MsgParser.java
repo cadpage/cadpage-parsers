@@ -801,7 +801,7 @@ public abstract class MsgParser {
    * @return Array of data fields broken up by defined keywords
    */
   protected String[] parseMessageFields(String body, String[] keyWords) {
-    return parseMessageFields(body, keyWords, ':', false, false);
+    return parseMessageFields(body, keyWords, ':', false, false, false);
   }
 
   /**
@@ -812,10 +812,12 @@ public abstract class MsgParser {
    * @param breakChar character that marks the end of all keywords
    * @param anyOrder true if if keywords can occur in any order
    * @param ignoreCase true if case should be ignored when comparing keywords
+   * @param newLineBrk treat newline characters as field breaks
    * @return Array of data fields broken up by defined keywords
    */
   protected String[] parseMessageFields(String body, String[] keyWords,
-                                        char breakChar, boolean anyOrder, boolean ignoreCase) {
+                                        char breakChar, boolean anyOrder, boolean ignoreCase,
+                                        boolean newLineBrk) {
 
     List<String> fields = new ArrayList<String>();
     int iKey = -1;  // Current key table pointer
@@ -923,12 +925,21 @@ public abstract class MsgParser {
 
       // Save current field and get ready to start looking for the
       // end of the next keyword
-      if (iEndPt > 0) fields.add(body.substring(iStartPt, iEndPt).trim());
+      if (iEndPt > 0) {
+        String fld = body.substring(iStartPt, iEndPt).trim();
+        if (newLineBrk) {
+          for (String part : fld.split("\n")) {
+            fields.add(part.trim());
+          }
+        } else {
+          fields.add(fld);
+        }
+      }
       if (!anyOrder) iKey = iNxtKey;
       iStartPt = iEndPt;
     } while (iNxtKey >= 0);
 
-    return fields.toArray(new String[fields.size()]);
+    return fields.toArray(new String[0]);
   }
 
   /**

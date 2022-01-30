@@ -9,13 +9,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchGlobalDispatchParser;
 
 
 public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
-  
-  private static final Pattern UNIT_PTN = Pattern.compile("(?!911)(?:[GOMB]|BE|BL|MT|NH|SJ)?\\d{2,4}|[A-Z][FP]D|BASE\\d|CHAMOIS|GAAD|HAAD|GFDTANK|MSHP|<[A-Z0-9]+>");
-  
+
+  private static final Pattern UNIT_PTN = Pattern.compile("(?!911)(?:[GOMB]|BE|BL|CU-|H|MT|NH|SJ|SU|T|U)?\\d{2,4}|[A-Z][FP]D|BASE\\d|BELLEFD|CHAMOIS|GAAD|HAAD|GFDTANK|LF|MSHP|OAAD|OAD|OCAD|<[A-Z0-9]+>");
+
   public MOGasconadeCountyAParser() {
     super(CITY_TABLE, "GASCONADE COUNTY", "MO", LEAD_SRC_UNIT_ADDR | PLACE_FOLLOWS_CALL, null, UNIT_PTN);
     setupCallList(CALL_LIST);
     setupSaintNames("LOUIS");
+    removeWords("CR");
     setupMultiWordStreets(
         "AHR STROM",
         "BALD HILL",
@@ -24,6 +25,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
         "BLACK FOREST",
         "BLUE HOUSE",
         "BUCHOLZ HOLLOW",
+        "BUFFALO RIDGE",
         "CEDAR LANE",
         "CHAMPION CITY",
         "CHARLOTTE CHURCH",
@@ -38,6 +40,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
         "GARDEN CLUB",
         "GLASER HOLLOW",
         "HALL PARK",
+        "HALLS WAY",
         "HELMIG FERRY",
         "HILLSIDE TRAILER",
         "HOMETOWN PLAZA",
@@ -45,8 +48,10 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
         "JENARIK COURT",
         "LAKE NORTHWOODS",
         "LAKE SHORE",
+        "LAKE VIEW",
         "LAZY D",
         "LONE GROVE SCHOOL",
+        "LOUTRE BEND",
         "MARIES COUNTY",
         "MT STERLING",
         "MUD CREEK",
@@ -60,21 +65,24 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
         "RED BIRD",
         "RED OAK",
         "ROLLING HOME",
+        "SCHROEDER FARM",
         "STOCK PILE",
         "STONE HILL",
         "STONY HILL",
         "SULPHER SPRINGS",
+        "THE OLD",
         "TOWER RIDGE",
         "TRIPLE E",
-        "VIRGIL NICKS"
+        "VIRGIL NICKS",
+        "WILD CARDINAL"
     );
   }
-  
+
   @Override
   public String getFilter() {
     return "central@fidmail.com,gc911text@gmail.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("MESSAGE / ")) body = body.substring(10).trim();
@@ -82,7 +90,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
     if (data.strCity.equals("FRNKLN CNTY")) data.strCity = "FRANKLIN COUNTY";
     return true;
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 ABUSE",
       "911 ACCIDENTAL",
@@ -111,6 +119,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
       "ASSIST AN INVALID",
       "ASSIST ANOTHER AGENCY",
       "ASSIST ANOTHER AGENCY- EMS",
+      "ASSIST ANOTHER AGENCY- FIRE",
       "ASSIST ANOTHER AGENCY - FIRE",
       "ASSIST EMS- FIRE NEEDED",
       "ATTEMPT TO LOCATE/CONTACT",
@@ -148,6 +157,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
       "DIABETIC PROBLEMS",
       "DIFFICULTY BREATHING",
       "DOMESTIC IN  PROGRESS",
+      "DOMESTIC IN PROGRESS",
       "DOMESTIC IN PROGRESS- PHYSICAL",
       "DOMESTIC NOT IN PROGRESS",
       "DROWNING- *DOMESTIC",
@@ -243,6 +253,8 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
       "PSYCHIATRIC PROBLEMS",
       "PSYCHIATRIC PROBLEMS- EMS",
       "PSYCHIATRIC PROBLEMS- LAW",
+      "PSYCHIATRIC PROBLEMS-EMS",
+      "PSYCHIATRIC PROBLEMS-LAW",
       "PURSUIT",
       "REKINDLE",
       "REPOSSESSION",
@@ -322,12 +334,14 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
     "OWENSVILLE",
     "ROSEBUD",
     "SULLIVAN",
-    
+
     "FRNKLN CNTY",
     "FRANKLIN COUNTY",
     "GASCONADE COUNTY",
     "MARIES COUNTY",
     "OUT OF COUNTY",
-    "OSAGE COUNTY"
+
+    "OSAGE COUNTY",
+    "CHAMOIS"
   };
 }

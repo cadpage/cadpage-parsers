@@ -220,6 +220,9 @@ public class FieldProgramParser extends SmartAddressParser {
   // Flag indicating that we should parse alert message as HTML text
   public static final int FLDPROG_XML = 8;
 
+  // Flag indicating that newline chars should be treated as field breaks in keyword delimited messages
+  public static final int FLDPROG_NL_BRK = 0x10;
+
   // list of cities
   private Set<String> cities = null;
 
@@ -252,6 +255,9 @@ public class FieldProgramParser extends SmartAddressParser {
 
   // XML message parsing
   private boolean xml;
+
+  // newline chars should be treated as field breaks
+  private boolean newLineBrk;
 
   // XML parser
   SAXParser xmlParser;
@@ -383,6 +389,7 @@ public class FieldProgramParser extends SmartAddressParser {
     xml = (flags & FLDPROG_XML) != 0;
     anyOrder = xml || (flags & FLDPROG_ANY_ORDER) != 0;
     ignoreCase = (flags & FLDPROG_IGNORE_CASE) != 0;
+    newLineBrk = (flags & FLDPROG_NL_BRK) != 0;
     blankEscape = (flags & FLDPROG_DOUBLE_UNDERSCORE) != 0 ? "__" : "_";
 
     if (xml) {
@@ -1107,6 +1114,10 @@ public class FieldProgramParser extends SmartAddressParser {
     return true;
   }
 
+  protected void setNewLineBrk(boolean value) {
+    newLineBrk = value;
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
 
@@ -1115,7 +1126,7 @@ public class FieldProgramParser extends SmartAddressParser {
       throw new RuntimeException("FieldProgramParser cannot parse message without tag definitions");
     }
 
-    String[] fields = parseMessageFields(body, tagList, breakChar, anyOrder, ignoreCase);
+    String[] fields = parseMessageFields(body, tagList, breakChar, anyOrder, ignoreCase, newLineBrk);
     return parseFields(fields, data);
   }
 
