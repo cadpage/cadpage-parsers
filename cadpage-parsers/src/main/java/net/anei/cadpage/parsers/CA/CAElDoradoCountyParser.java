@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class CAElDoradoCountyParser extends MsgParser {
-  
+
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("From: \\w+\\* *(.*)");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("#(\\d+)[\\.,]+ *(.*)");
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile(", *|\\.{2,}");
@@ -28,25 +28,25 @@ public class CAElDoradoCountyParser extends MsgParser {
   private static final Pattern MASTER = Pattern.compile("(.*?)[:;] Inc# ([A-Z]*\\d*)[:;] (.*?) *(?:,([_A-Za-z0-9]*) *)?");
   private static final Pattern B_ADDR = Pattern.compile("=[BL]\\(.*\\)");
   private static final DateFormat DATE_FMT = new SimpleDateFormat("dd-MMM-yyyy");
-  
+
   public CAElDoradoCountyParser() {
     this("EL DORADO COUNTY", "CA");
   }
-  
+
   protected CAElDoradoCountyParser(String defCity, String defState) {
     super(defCity, defState);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "CAElDoradoCounty";
   }
-  
+
   @Override
   public String getFilter() {
-    return "AEUCAD@fire.ca.gov";
+    return "AEUCAD@fire.ca";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -54,9 +54,9 @@ public class CAElDoradoCountyParser extends MsgParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("CAD Page")) return false;
-    
+
     Matcher match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1);
@@ -73,7 +73,7 @@ public class CAElDoradoCountyParser extends MsgParser {
       }
       return true;
     }
-    
+
     match = RUN_REPORT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("ID CALL ADDR APT CITY INFO");
@@ -85,27 +85,27 @@ public class CAElDoradoCountyParser extends MsgParser {
       data.strSupp = RUN_REPORT_DELIM_PTN2.matcher(match.group(5)).replaceAll("\n").trim();
       return true;
     }
-    
+
     match = MARKER.matcher(body);
     if (!match.find()) return false;
-    
+
     setDate(DATE_FMT, match.group(1), data);
     data.strTime = match.group(2);
     body = body.substring(match.end()).trim();
-    
+
     // Now start stripping fields off of the end, starting with the GPS coordinates
     match = GPS_PTN.matcher(body);
     if(match.find()) {
       setGPSLoc(match.group(1).trim(), data);
       body = body.substring(0,match.start()).trim();
     }
-    
+
     // Preceded by a redundant Google map URL
     match = MAP_URL_PTN.matcher(body);
     if (match.find()) {
       body = body.substring(0,match.start()).trim();
     }
-    
+
     // Preceded by a mandatory UNIT field
     match = UNIT_PTN.matcher(body);
     if (match.find()) {
@@ -116,14 +116,14 @@ public class CAElDoradoCountyParser extends MsgParser {
       data.strUnit = match.group(2);
       body = body.substring(0,match.start()).trim();
     } else return false;
-    
+
     // Preceded by an optional place field
     body = parsePlace(body, data);
-    
+
     // We can use a  master pattern for the rest
     match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    
+
     setFieldList("DATE TIME CALL ID ADDR APT CITY PLACE UNIT GPS");
     data.strCall = match.group(1).trim();
     data.strCallId = match.group(2).trim();
@@ -140,14 +140,14 @@ public class CAElDoradoCountyParser extends MsgParser {
     if (city != null) data.strCity = city.replace('_', ' ').trim();
     if (data.strCity.startsWith("GEORGETOWN ")) data.strCity = "GEORGETOWN";
     else if (data.strCity.startsWith("SOUTH PLACER ")) data.strCity = "PLACER COUNTY";
-    
+
     return true;
   }
-  
+
   private String parsePlace(String body, Data data) {
-    
+
     if (!body.endsWith(")")) return body;
-    
+
     int parenCnt = 0;
     for (int pt = body.length()-1; pt>=0; pt--) {
       char chr = body.charAt(pt);

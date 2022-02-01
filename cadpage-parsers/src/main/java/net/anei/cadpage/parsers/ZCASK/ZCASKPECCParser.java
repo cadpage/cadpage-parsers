@@ -12,6 +12,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
   public ZCASKPECCParser() {
     super(CITY_LIST, "", "SK",
           "( CALLADDR CITY? " +
+          "| CALLADDR2 " +
           "| ADDR CITY? CALL! " +
           "| CALL! CALL/CS+? ADDR! CITY? " +
           ") INFO/CS+");
@@ -56,6 +57,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALLADDR")) return new MyCallAddressField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CALLADDR2")) return new MyCallAddress2Field();
     return super.getField(name);
   }
 
@@ -115,6 +117,32 @@ public class ZCASKPECCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private class MyCallAddress2Field extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField()) return false;
+      Result res = parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, field);
+      if (!res.isValid()) return false;
+      res.getData(data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CALL ADDR APT CITY";
     }
   }
 
