@@ -11,12 +11,12 @@ public class CACathedralCityParser extends DispatchA58Parser {
   public CACathedralCityParser() {
     super("PSPD Auto Paging", CITY_CODES, "CATHEDRAL CITY", "CA");
   }
-  
+
   @Override
   public String getFilter() {
-    return "hostmaster@cathedralcity.gov,cyrunpaging@gmail.com,no-reply@mark43.com";
+    return "hostmaster@cathedralcity.gov,cyrunpaging@gmail.com,no-reply@mark43.com,cyrunpaging@cyrun.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -35,8 +35,8 @@ public class CACathedralCityParser extends DispatchA58Parser {
     return super.isNotExtraApt(apt);
   }
 
-  private static Properties CITY_CODES = buildCodeTable(new String[] { 
-      "CTHDRL CTY",         "Cathedral City", 
+  private static Properties CITY_CODES = buildCodeTable(new String[] {
+      "CTHDRL CTY",         "Cathedral City",
       "CATHEDRAL CITY CA",  "Cathedral City"
   });
 
