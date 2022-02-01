@@ -12,7 +12,7 @@ public class INCarrollCountyParser extends FieldProgramParser {
 
   public INCarrollCountyParser() {
     super("CARROLL COUNTY", "IN",
-          "CALL ADDRCITYST DATETIME GPS ID EMPTY EMPTY! END");
+          "CALL ADDRCITYST DATETIME GPS ID EMPTY INFO/N+ END");
   }
 
   @Override
