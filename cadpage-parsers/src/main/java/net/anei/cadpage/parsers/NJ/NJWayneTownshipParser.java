@@ -6,14 +6,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchProphoenixParser;
 
 
 public class NJWayneTownshipParser extends DispatchProphoenixParser {
-  
+
   public NJWayneTownshipParser() {
     super("WAYNE TOWNSHIP", "NJ");
   }
-  
+
   @Override
   public String getFilter() {
-    return "cad@waynetownship.com,5417047704";
+    return "cad@waynetownship.com,5417047704,@mms.firstnet-mail.com";
   }
 
   @Override
@@ -22,6 +22,6 @@ public class NJWayneTownshipParser extends DispatchProphoenixParser {
     data.strCity = "";
     return true;
   }
-  
-  
+
+
 }
