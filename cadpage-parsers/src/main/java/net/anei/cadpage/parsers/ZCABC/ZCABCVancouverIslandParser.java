@@ -310,6 +310,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "ALARMS",
       "ALARMS HAZMAT",
       "ALARMS NON EMERGENCY",
+      "ASSIST OTHER AGENCY",
       "AVIATION INCIDENT",
       "BEACH/BRUSH",
       "BEACH/BRUSH NON EMERG",
