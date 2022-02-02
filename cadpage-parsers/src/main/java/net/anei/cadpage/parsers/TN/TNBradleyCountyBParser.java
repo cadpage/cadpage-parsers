@@ -12,7 +12,7 @@ public class TNBradleyCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "777,93001,911center@clevelandtn911.com";
+    return "777,93001,14102,911center@clevelandtn911.com";
   }
 
   @Override
