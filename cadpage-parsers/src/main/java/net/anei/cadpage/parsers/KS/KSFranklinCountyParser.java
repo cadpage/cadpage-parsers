@@ -10,6 +10,6 @@ public class KSFranklinCountyParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "TPS_Service@tylertech.com";
+    return "TPS_Service@tylertech.com,Tyler.Technologies@FranklinCoKs.org";
   }
 }
