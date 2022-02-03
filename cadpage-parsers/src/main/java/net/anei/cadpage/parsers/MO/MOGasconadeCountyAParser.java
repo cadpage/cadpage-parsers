@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchGlobalDispatchParser;
 
 public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
 
-  private static final Pattern UNIT_PTN = Pattern.compile("(?!911)(?:[GOMB]|BE|BL|CU-|H|MT|NH|SJ|SU|T|U)?\\d{2,4}|[A-Z][FP]D|BASE\\d|BELLEFD|CHAMOIS|GAAD|HAAD|GFDTANK|LF|MSHP|OAAD|OAD|OCAD|<[A-Z0-9]+>");
+  private static final Pattern UNIT_PTN = Pattern.compile("(?!911)(?:[GOMB]|BE|BL|BO-T|CU-|H|MT|NH|SJ|SU|T|U)?\\d{2,4}|[A-Z][FP]D|BASE\\d|BELLEFD|CHAMOIS|GAAD|HAAD|GFDTANK|LF|MSHP|OAAD|OAD|OCAD|<[A-Z0-9]+>");
 
   public MOGasconadeCountyAParser() {
     super(CITY_TABLE, "GASCONADE COUNTY", "MO", LEAD_SRC_UNIT_ADDR | PLACE_FOLLOWS_CALL, null, UNIT_PTN);
@@ -66,6 +66,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
         "RED OAK",
         "ROLLING HOME",
         "SCHROEDER FARM",
+        "STREHLMAN FORD",
         "STOCK PILE",
         "STONE HILL",
         "STONY HILL",
@@ -88,7 +89,17 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
     if (body.startsWith("MESSAGE / ")) body = body.substring(10).trim();
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equals("FRNKLN CNTY")) data.strCity = "FRANKLIN COUNTY";
+    if (data.strAddress.startsWith("TO ST")) {
+      data.strAddress = append(data.strAddress, " ", data.strApt);
+      data.strApt = "";
+    }
     return true;
+  }
+
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (apt.equals("SPUR")) return true;
+    return super.isNotExtraApt(apt);
   }
 
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -257,6 +268,7 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
       "PSYCHIATRIC PROBLEMS-LAW",
       "PURSUIT",
       "REKINDLE",
+      "RELEASED FROM STAND BY",
       "REPOSSESSION",
       "ROAD CLOSURE",
       "ROBBERY",
@@ -342,6 +354,8 @@ public class MOGasconadeCountyAParser extends DispatchGlobalDispatchParser {
     "OUT OF COUNTY",
 
     "OSAGE COUNTY",
-    "CHAMOIS"
+    "CHAMOIS",
+    "LINN",
+    "WESTPHALIA"
   };
 }
