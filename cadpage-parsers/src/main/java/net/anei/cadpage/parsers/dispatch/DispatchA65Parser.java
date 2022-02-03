@@ -76,7 +76,7 @@ public class DispatchA65Parser extends FieldProgramParser {
         if (city != null) {
           data.strCity = city.trim();
         } else {
-          data.strCity = match.group(2).trim() + "COUNTY";
+          data.strCity = match.group(2).trim() + " COUNTY";
         }
         return true;
       }

@@ -56,6 +56,9 @@ public class KYHarrisonCountyBParser extends DispatchA65Parser {
 
     // Bourboun County
     "PARIS",
-    "PARIS PD"
+    "PARIS PD",
+
+    // Scott County
+    "GEORGETOWN"
   };
 }

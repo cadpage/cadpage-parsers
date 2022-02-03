@@ -272,7 +272,7 @@ public class DispatchA27Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "UNIT PLACE GPS INFO";
+      return "UNIT PLACE PHONE GPS INFO";
     }
   }
 
@@ -379,11 +379,16 @@ public class DispatchA27Parser extends FieldProgramParser {
         token = INFO_JUNK_PTN.matcher(token).replaceAll("\n").trim();
         if (token.startsWith("CPN:")) {
           data.strPlace = append(data.strPlace, " - ", token.substring(4).trim());
+        } else if (token.startsWith("Common Name:")) {
+          data.strPlace = append(data.strPlace, " - ", token.substring(12).trim());
+        } else if (token.startsWith("Phone:")) {
+          data.strPhone = token.substring(6).trim();
         } else if (!token.equals(".")) {
           info = append(info, "\n", token);
         }
       }
     }
+
     data.strSupp = append(data.strSupp, "\n", info);
   }
   private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{5,6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?");
