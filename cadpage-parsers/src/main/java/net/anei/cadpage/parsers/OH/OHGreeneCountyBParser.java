@@ -13,7 +13,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
           "( SRC UNITS:UNIT! INCIDENT_NUMBER:ID? CALL_TYPE:CALL! LOCATION:ADDRCITY! ( CROSS_STREETS:X! ( NAME:NAME! QUADRANT:MAP! | QUADRANT:MAP! NAME:NAME? ) DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO/N+ " +
                                                                                    "| NARRATIVE:X! DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO INFO/N+? MAP:MAP! " +
                                                                                    ") " +
-          "| Call:CODE_CALL! ( Place:ADDRCITY/SP! Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP? Units:UNIT! " +
+          "| Call:CODE_CALL! ( Place:PLACE_ADDRCITY/SP! Address:ADDRCITY/S Cross:X! ID:ID! PRI:PRI! Date:DATETIME! Map:MAP? Units:UNIT! " +
                             "| Name:PLACE! Address:ADDRCITY! Cross:X! Units:UNIT! Incident_Number:ID! Call_Time:SKIP! Dispatch_Time:DATETIME! Quadrant:MAP! " +
                             ") Narrative:INFO/N+ " +
           ")");
@@ -36,6 +36,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
   public Field getField(String name) {
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("PLACE_ADDRCITY")) return new MyPlaceAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
@@ -72,6 +73,18 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
         data.strCity = match.group(1);
         data.strApt = match.group(2);
         data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strApt);
+      }
+    }
+  }
+
+  private class MyPlaceAddressCityField extends MyAddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      String nextFld = getRelativeField(+1);
+      if (nextFld.startsWith("Address:")) {
+        data.strPlace = field;
+      } else {
+        super.parse(field, data);
       }
     }
   }
