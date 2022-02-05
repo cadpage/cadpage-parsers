@@ -13,17 +13,17 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
 
   public OHHamiltonCountyAParser() {
     super("HAMILTON COUNTY", "OH",
-          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT NAME! Xst:X! INFO/N+");
+          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT! NAME Xst:X! INFO/N+? GPS1/d GPS2/d");
   }
 
   @Override
   public String getFilter() {
-    return "hc@hamilton-co.org,9300,messaging@iamresponding.com,6245";
+    return "hc@hamilton-co.org,9300,messaging@iamresponding.com,active911@lsfd.org,6245";
   }
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
   @Override
@@ -48,8 +48,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
     String[] flds = body.split(">");
     if (flds.length < 5) return false;
     Matcher match = PREFIX_PTN.matcher(flds[0]);
-    if (!match.lookingAt()) return false;
-    flds[0] = flds[0].substring(match.end()).trim();
+    if (match.lookingAt()) flds[0] = flds[0].substring(match.end()).trim();
 
     String prefix = "";
     match = CALL_PFX_PTN.matcher(flds[0]);
@@ -72,10 +71,11 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CH")) return new ChannelField("[A-Z]{2,3}\\d{1,2}|NECC|", true);
+    if (name.equals("CH")) return new ChannelField("(?:\\b(?:[A-Z]{2,3}\\d{1,2}|NECC)\\b ?)*", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("GPS1")) return new GPSField(1, "\\d{8,9}");
     return super.getField(name);
   }
 

@@ -47,11 +47,16 @@ public class DispatchA86Parser extends FieldProgramParser {
       String gps = match.group(3);
       if (gps != null) setGPSLoc(gps, data);
       super.parse(field, data);
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        data.strPlace =  data.strAddress.substring(0,pt).trim();
+        data.strAddress = data.strAddress.substring(pt+1).trim();
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " BOX GPS";
+      return "PLACE " + super.getFieldNames() + " BOX GPS";
     }
   }
 }
