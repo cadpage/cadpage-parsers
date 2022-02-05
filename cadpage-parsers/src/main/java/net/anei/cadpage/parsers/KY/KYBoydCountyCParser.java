@@ -10,7 +10,7 @@ public class KYBoydCountyCParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,cadexport@boydcounty911.com,cadexport@windstream.net,support@cis.com";
+    return "noreply@cisusa.org,cadexport@boydcounty911.com,cadexport@windstream.net,support@cis.com,bc911@boydcountyky.gov";
   }
 
   @Override
