@@ -778,6 +778,7 @@ public class Active911ParserTable {
       "US/KY/PowellCounty",               "KYPowellCounty",
       "US/KY/PulaskiCounty",              "KYPulaskiCounty",
       "US/KY/RockCastleCounty",           "KYRockCastleCounty",
+      "US/KY/RussellCounty",              "KYRussellCounty",
       "US/KY/ScottCounty",                "KYScottCountyB",
       "US/KY/TaylorCounty",               "KYTaylorCounty",
       "US/KY/ToddCounty",                 "KYToddCounty",

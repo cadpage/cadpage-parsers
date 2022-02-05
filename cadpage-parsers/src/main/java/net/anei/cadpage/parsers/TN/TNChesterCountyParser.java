@@ -12,4 +12,9 @@ public class TNChesterCountyParser extends DispatchA86Parser {
   public String getFilter() {
     return "dispatch@chestertn911.info";
   }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 }
