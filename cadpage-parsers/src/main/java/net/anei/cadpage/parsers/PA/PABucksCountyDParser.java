@@ -8,7 +8,9 @@ public class PABucksCountyDParser extends FieldProgramParser {
 
   public PABucksCountyDParser() {
     super("BUCKS COUNTY", "PA",
-          "CALL! Inc#:ID! Box:BOX! Alrm_Lvl:PRI! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:INFO! ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! Units:UNIT! GPS! TIME! END");
+          "CALL! Inc#:ID! ( Box:BOX! Alrm_Lvl:PRI! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:INFO! ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! Units:UNIT! GPS! TIME! Caller:NAME Phone:PHONE Alt:PHONE/L " +
+                         "| Units:UNIT! Addr:ADDR! btwn:X! GPS! Box:BOX! Pri_Remarks:PRI! Call_Text:INFO! Caller:NAME! Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! TIME! " +
+                         ") END");
   }
 
   @Override
@@ -44,7 +46,15 @@ public class PABucksCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("PHONE")) return new MyPhoneField();
     return super.getField(name);
   }
 
+  private class MyPhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("-")) return;
+      super.parse(field, data);
+    }
+  }
 }
