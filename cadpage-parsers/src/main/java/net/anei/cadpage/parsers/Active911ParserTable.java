@@ -1590,6 +1590,7 @@ public class Active911ParserTable {
       "US/OH/SummitCounty",               "OHSummitCountyH",
       "US/OH/SundanceSys",                "OHCuyahogaCountyC,OHCuyahogaCountyF",
       "US/OH/SundanceSysPortageCounty",   "OHPortageCountyA",
+      "US/OH/TallmadgeFire",              "OHSummitCountyI",
       "US/OH/TheBeachWaterpark",          "OHWarrenCountyD",
       "US/OH/TrumbullCounty",             "OHTrumbullCounty",
       "US/OH/UnionCounty",                "OHUnionCounty,OHMadisonCounty,OHCrawfordCounty",
