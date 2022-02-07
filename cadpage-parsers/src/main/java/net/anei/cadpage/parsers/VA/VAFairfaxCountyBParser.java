@@ -9,7 +9,7 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
 
   public VAFairfaxCountyBParser() {
     super(CITY_CODES, "FAIRFAX COUNTY", "VA",
-          "LOCATION:ADDR/S? EVENT_TYPE:CALL! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH% Disp:UNIT");
+          "Location:ADDR/S? EVENT_TYPE:CALL! CALLER_ADDR:SKIP! EVENT_#:ID! FIRE_BOX:BOX! TALKGROUP:CH% Disp:UNIT");
   }
 
   @Override
@@ -46,6 +46,12 @@ public class VAFairfaxCountyBParser extends FieldProgramParser {
             data.strPlace = append(tmp, " - ", data.strPlace);
           }
         }
+      }
+      String city = CITY_CODES.getProperty(field);
+      if (city != null) {
+        data.strCity = city;
+        field = data.strPlace;
+        data.strPlace = "";
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
