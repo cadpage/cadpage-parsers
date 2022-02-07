@@ -8,9 +8,10 @@ public class PABucksCountyDParser extends FieldProgramParser {
 
   public PABucksCountyDParser() {
     super("BUCKS COUNTY", "PA",
-          "CALL! Inc#:ID! ( Box:BOX! Alrm_Lvl:PRI! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:INFO! ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! Units:UNIT! GPS! TIME! Caller:NAME Phone:PHONE Alt:PHONE/L " +
-                         "| Units:UNIT! Addr:ADDR! btwn:X! GPS! Box:BOX! Pri_Remarks:PRI! Call_Text:INFO! Caller:NAME! Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! TIME! " +
-                         ") END");
+          "CALL! Inc#:ID! ( Box:BOX! Alrm_Lvl:PRI! ( Place_Name:PLACE! Addr:ADDR! | Addr:ADDR! Place_Name:PLACE! ) btwn:X! Pri_Remarks:INFO ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! ( Units:UNIT! | Run:UNIT! ) GPS! TIME! Caller:NAME Phone:PHONE Alt:PHONE/L " +
+                         "| Units:UNIT! Place_Name:PLACE Addr:ADDR! btwn:X! GPS! Box:BOX! Pri_Remarks:PRI! Call_Text:INFO! Caller:NAME! Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! ( Time_Out:TIME! | TIME! ) G:SKIP D:SKIP " +
+                         "| Sector:MAP! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:PRI! Call_Text:INFO! GPS! TIME! Units:UNIT! Caller:NAME Phone:PHONE Alt:PHONE/L " +
+                         ") END ");
   }
 
   @Override
@@ -26,18 +27,30 @@ public class PABucksCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    int pt = body.indexOf("\n\n***");
+    int pt = body.indexOf("\n******");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
     if (subject.equals("CAD PAGE")) {
-      return parseFields(body.split("\n"), data);
-    }
-
-    if (subject.startsWith("CAD Report")) {
-      data.msgType = MsgType.RUN_REPORT;
-      setFieldList("INFO");
-      data.strSupp = body;
-      return true;
+      setFieldList("CALL INFO");
+      if (body.startsWith("COVER NOTIFICATION:,")) {
+        data.msgType = MsgType.GEN_ALERT;
+        data.strCall = "COVER NOTIFICATION";
+        for (String line : body.substring(20).split(",")) {
+          data.strSupp = append(data.strSupp, "\n", line.trim());
+        }
+        return true;
+      }
+      else {
+        String[] flds = body.split("\n");
+        if (flds.length >= 10) {
+          return parseFields(flds, data);
+        } else {
+          setFieldList("INFO");
+          data.msgType = MsgType.GEN_ALERT;
+          data.strSupp = body;
+          return true;
+        }
+      }
     }
 
     return false;
