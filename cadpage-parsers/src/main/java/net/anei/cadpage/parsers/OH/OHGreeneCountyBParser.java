@@ -10,6 +10,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
 
   public OHGreeneCountyBParser() {
     super("GREENE COUNTY", "OH",
+          "PREFIX? " +
           "( SRC UNITS:UNIT! INCIDENT_NUMBER:ID? CALL_TYPE:CALL! LOCATION:ADDRCITY! ( CROSS_STREETS:X! ( NAME:NAME! QUADRANT:MAP! | QUADRANT:MAP! NAME:NAME? ) DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO/N+ " +
                                                                                    "| NARRATIVE:X! DATE:DATETIME! INCIDENT_NUMBER:ID? NARRATIVE:INFO INFO/N+? MAP:MAP! " +
                                                                                    ") " +
@@ -22,7 +23,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
 
   @Override
   public String getFilter() {
-    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn,@fairbornoh.gov";
+    return "@xi.xenia.oh.us,@ci.xenia.oh.us,@beavercreekohio.gov,@ci.fairborn,@fairbornoh.gov,@ci.fairborn.oh.us";
   }
 
   @Override
@@ -34,6 +35,7 @@ public class OHGreeneCountyBParser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PREFIX")) return new SkipField("THIS EMAIL WAS (?s:.*)", true);
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE_ADDRCITY")) return new MyPlaceAddressCityField();
