@@ -24,6 +24,8 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     setupCities(MISTYPED_CITIES);
     addExtendedDirections();
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    setupProtectedNames("FISH AND GAME");
+
   }
 
   @Override
@@ -84,6 +86,7 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     }
 
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
+    body = body.replace("FISH & GAME", "FISH AND GAME");
     if (!super.parseMsg(subject, body, data)) return false;
 
     // Fix problems with no break format squeezing everything into the address
