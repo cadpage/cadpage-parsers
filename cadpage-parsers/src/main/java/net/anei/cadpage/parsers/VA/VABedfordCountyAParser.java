@@ -9,39 +9,50 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class VABedfordCountyAParser extends FieldProgramParser {
-  
+
   public VABedfordCountyAParser() {
     super(CITY_LIST, "BEDFORD COUNTY", "VA",
           "CALL#:ID! LOC:ADDR/S! COMP:CALL!");
   }
-  
+
   @Override
   public String getFilter() {
     return "Bedford";
   }
-  
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d | \\S+ : \\S+ +");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:\\b(?:[A-Z]*\\d+[A-Z]?(?:-\\d+)?|[A-Z]{1,4}FD|BRRS|COMM|FMO|HMAT|SOC|VDOF)\\b,?)+)");
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!body.startsWith("Bedford911:")) return false;
     body = body.substring(11).trim();
     body = body.replace('\n', ' ');
-    
+
     Parser p = new Parser(body);
     data.strPlace = p.getLastOptional(" Line20=");
     data.strSupp = p.getLastOptional(" Line19=");
     body = p.get();
-    
+
+    boolean first = true;
+    for (String part : INFO_BRK_PTN.split(body)) {
+      if (first) {
+        body = part;
+        first = false;
+      } else {
+        data.strSupp = append(data.strSupp, "\n", part);
+      }
+    }
+
     Matcher match = TRAIL_UNIT_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1).trim();
       data.strUnit = match.group(2);
     }
-    
+
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " UNIT INFO PLACE";
@@ -53,7 +64,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -63,13 +74,13 @@ public class VABedfordCountyAParser extends FieldProgramParser {
       if (fixCity != null) data.strCity = fixCity;
     }
   }
-  
+
   private static final Properties MISSPELLED_CITY = buildCodeTable(new String[]{
       "LYNCHUBRG",   "LYNCHBURG",
       "PINHOOK",     "PENHOOK",
       "WERTZ",       "WIRTZ"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
     "BEDFORD",
     "COLEMAN FALLS",
@@ -86,7 +97,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "NEW LONDON",
     "STEWARTSVILLE",
     "THAXTON",
-    
+
     // Amherst County
     "AMHERST",
     "CLIFFORD",
@@ -96,8 +107,8 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "MONROE",
     "RIVERVILLE",
     "STAPLETON",
-    
-    // Botetourt County, 
+
+    // Botetourt County,
     "BOTETOURT",
     "BUCHANAN",
     "FINCASTLE",
@@ -113,7 +124,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "ARCADIA",
     "GLEN WILTON",
     "NACE",
-    
+
     // Campbell County
     "CAMPBELL",
     "ALTAVISTA",
@@ -127,7 +138,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "EVINGTON",
     "CASTLE CRAIG",
     "KINGSTON",
-    
+
     // Franklin County
     "FRANKLIN",
     "BOONES MILL",
@@ -145,7 +156,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "WESTLAKE CORNER",
     "WIRTZ",
     "WERTZ",     // Misspelled?
-   
+
     // Pittsylvania County
     "PITTSYLVANIA",
     "CHATHAM",
@@ -172,7 +183,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "WHITTLES DEPOT",
     "TIGHTSQUEEZE",
     "CALLANDS",
-    
+
     // Roanoke County
     "ROANOKE",
     "VINTON",
@@ -192,7 +203,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "PENN FOREST",
     "POAGES MILL",
     "READ MOUNTAIN",
-   
+
     // Rockbridge County
     "ROCKBRIDGE",
     "GLASGOW",
@@ -201,7 +212,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     "RAPHINE",
     "FAIRFIELD",
     "NATURAL BRIDGE STATION",
-    
+
     // Independent Cities
     "LYNCHBURG",
     "LYNCHUBRG"  // Misspelled
