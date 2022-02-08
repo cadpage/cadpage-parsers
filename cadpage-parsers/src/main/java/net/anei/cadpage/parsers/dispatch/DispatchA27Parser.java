@@ -145,7 +145,7 @@ public class DispatchA27Parser extends FieldProgramParser {
       }
       String place = getValue(line, "Common Name:");
       if (place != null) {
-        data.strPlace = place;
+        data.strPlace = stripFieldStart(place, "CPN:");
         line = p.getLine();
       }
       if (getValue(line, "Activity:") == null) abort();
@@ -251,7 +251,9 @@ public class DispatchA27Parser extends FieldProgramParser {
         } else if (line.startsWith("Disposition:")) {
           times = append(times, "\n", line);
         } else if (line.startsWith("CPN:")) {
-            data.strPlace = append(data.strPlace, " - ", line.substring(4).trim());
+          data.strPlace = append(data.strPlace, " - ", line.substring(4).trim());
+        } else if (line.startsWith("Common Name:")) {
+          data.strPlace = append(data.strPlace, " - ", stripFieldStart(line.substring(12).trim(), "CPN:"));
         } else {
           data.strSupp = append(data.strSupp, "\n", line);
         }
@@ -380,7 +382,7 @@ public class DispatchA27Parser extends FieldProgramParser {
         if (token.startsWith("CPN:")) {
           data.strPlace = append(data.strPlace, " - ", token.substring(4).trim());
         } else if (token.startsWith("Common Name:")) {
-          data.strPlace = append(data.strPlace, " - ", token.substring(12).trim());
+          data.strPlace = append(data.strPlace, " - ", stripFieldStart(token.substring(12).trim(), "CPN:"));
         } else if (token.startsWith("Phone:")) {
           data.strPhone = token.substring(6).trim();
         } else if (!token.equals(".")) {
