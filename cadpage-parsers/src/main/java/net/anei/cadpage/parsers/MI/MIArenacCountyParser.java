@@ -96,7 +96,6 @@ public class MIArenacCountyParser extends DispatchEmergitechParser {
       "DUP",  "DUPLICATE CALL",
       "TEST", "TEST RECORD - NO CALL",
       "TRS",  "TRAFFIC STOP"
-
   });
 
   private static final String[] CITY_LIST = new String[]{
