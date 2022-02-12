@@ -75,7 +75,7 @@ public class MIArenacCountyParser extends DispatchEmergitechParser {
       "931",  "PIA/PDA - ACCIDENTS",
       "940",  "BANK ALARMS",
       "942",  "ALARMS, OTHER",
-      "951",  "FIREM DEPT. REQUESTS",
+      "951",  "FIRE DEPT REQUESTS",
       "971",  "ACCIDENT - AIRCRAFT",
       "972",  "ACCIDENT - HUNTING",
       "973",  "ACCIDENT - SHOOTING",
