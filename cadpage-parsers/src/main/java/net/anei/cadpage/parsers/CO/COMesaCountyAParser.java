@@ -10,22 +10,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class COMesaCountyAParser extends FieldProgramParser {
-  
+
   public COMesaCountyAParser() {
     super("MESA COUNTY", "CO",
           "ID Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X? Call_Time:DATETIME! Narrative:INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "aegisadmin@gjcity.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
@@ -39,7 +39,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ID_JUNK_PTN = Pattern.compile(" \\([A-Z0-9]+\\)");
   private class MyIdField extends IdField {
     @Override
@@ -50,7 +50,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -61,7 +61,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
@@ -72,17 +72,18 @@ public class COMesaCountyAParser extends FieldProgramParser {
       data.strDate = match.group(1);
       setTime(TIME_FMT, match.group(2), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME INFO";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = addr.replace("HWY 6 & 50", "HWY 50");
+    addr = addr.replace("MILLER CANYON RANCH RD", "E S 5/10 RD");
     return super.adjustMapAddress(addr);
   }
-  
+
 }

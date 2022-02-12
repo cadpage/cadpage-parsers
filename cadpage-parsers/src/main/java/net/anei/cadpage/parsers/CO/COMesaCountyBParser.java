@@ -9,24 +9,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class COMesaCountyBParser extends FieldProgramParser {
-  
+
   public COMesaCountyBParser() {
-    super(CITY_LIST, "MESA COUNTY", "CO", 
+    super(CITY_LIST, "MESA COUNTY", "CO",
           "MARKER? ID! ( Call_Type:CALL! | Fire_Call_Type:CALL! EMS_Call_Type:CALL! ) Address:ADDRCITY/S! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO? Call_Time:DATETIME! Units:UNIT? Narrative:INFO! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "@MESACOUNTY.US,@GJCITY.ORG,@CI.GRANDJCT.CO.US";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("\n| +(?<! Fire | EMS )(?=(?:Call Type|Fire Call Type|EMS Call Type|Common Name|Additional Location Info|Units):)");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("MARKER")) return new SkipField("\\*{3,}[A-Z0-9 ]+\\*{3,}", true);
@@ -37,11 +37,11 @@ public class COMesaCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ID_PTN1 = Pattern.compile("\\d{4}-\\d{8}\\b");
   private static final Pattern ID_PTN2 = Pattern.compile("CFS +(\\d+)");
   private class MyIdField extends IdField {
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("Inc#") || field.startsWith("INC#")) {
@@ -56,18 +56,18 @@ public class COMesaCountyBParser extends FieldProgramParser {
           }
         }
       }
-      
+
       else {
         Matcher match = ID_PTN2.matcher(field);
         if (match.matches()) {
           data.strCallId = match.group(1);
         }
-        
+
         else abort();
       }
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -81,7 +81,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) APT/BLD\\b *(.*)");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -95,13 +95,13 @@ public class COMesaCountyBParser extends FieldProgramParser {
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -126,7 +126,14 @@ public class COMesaCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
+  @Override
+  public String adjustMapAddress(String addr) {
+    addr = addr.replace("HWY 6 & 50", "HWY 50");
+    addr = addr.replace("MILLER CANYON RANCH RD", "E S 5/10 RD");
+    return super.adjustMapAddress(addr);
+  }
+
   private static final String[] CITY_LIST = new String[]{
       "CAMEO",
       "CARPENTER",
