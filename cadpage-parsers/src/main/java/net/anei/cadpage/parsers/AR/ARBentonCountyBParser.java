@@ -10,10 +10,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ARBentonCountyBParser extends FieldProgramParser {
 
   public ARBentonCountyBParser() {
-    super("BENTON COUNTY", "AR", 
+    super("BENTON COUNTY", "AR",
           "INC_TYPE:CALL! COMPANIES:UNIT! ADDRESS:ADDR!");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MsgInfo.MAP_FLG_SUPPR_AND_ADJ;
@@ -53,7 +53,7 @@ public class ARBentonCountyBParser extends FieldProgramParser {
       data.strPlace = getOptGroup(match.group(4));
       data.strSupp = match.group(5).trim();
       data.strMap = getOptGroup(match.group(6));
-      
+
       if (addr.length() == 0) {
         addr = data.strPlace;
         data.strPlace = "";
