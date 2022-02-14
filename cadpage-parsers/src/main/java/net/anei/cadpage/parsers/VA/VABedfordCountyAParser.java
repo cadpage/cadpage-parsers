@@ -20,7 +20,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
     return "Bedford";
   }
 
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d | \\S+ : \\S+ +");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d : \\S+ : \\S+ +");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:\\b(?:[A-Z]*\\d+[A-Z]?(?:-\\d+)?|[A-Z]{1,4}FD|BRRS|COMM|FMO|HMAT|SOC|VDOF)\\b,?)+)");
 
   @Override
@@ -36,6 +36,7 @@ public class VABedfordCountyAParser extends FieldProgramParser {
 
     boolean first = true;
     for (String part : INFO_BRK_PTN.split(body)) {
+      part = part.trim();
       if (first) {
         body = part;
         first = false;
