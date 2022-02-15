@@ -226,6 +226,7 @@ public class VAIsleOfWightCountyParser extends DispatchOSSIParser {
   ));
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "BATT",  "BATTERY PARK",
       "CARR",  "CARROLLTON",
       "CARV",  "CARRSVILLE",
       "FRAN",  "FRANKLIN",
