@@ -7,6 +7,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class ARGarlandCountyParser extends GroupBestParser {
   public ARGarlandCountyParser() {
-    super(new ARGarlandCountyAParser(), new ARGarlandCountyCParser());
+    super(new ARGarlandCountyAParser(),
+          new ARGarlandCountyCParser(),
+          new ARGarlandCountyDParser());
   }
 }
