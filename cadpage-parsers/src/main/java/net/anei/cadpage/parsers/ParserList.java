@@ -527,6 +527,7 @@ public class ParserList {
               ,"INPoseyCounty"                  ,"Posey County, IN"
               ,"INPulaskiCounty"                ,"Pulaski County, IN"
               ,"INRandolphCounty"               ,"Randolph County, IN"
+              ,"INRipleyCounty"                 ,"Ripley County, IN"
               ,"INShelbyCounty"                 ,"Shelby County, IN"
               ,"INStarkeCounty"                 ,"Starke County, IN"
               ,"INStJosephCounty"               ,"St Joseph County, IN"
