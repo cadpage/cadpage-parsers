@@ -947,7 +947,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("(?:geo:|https://maps.google.com/\\?q=)(.*?)(?:&.*)?");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("(?:geo:|https://maps.google.com/\\?q=|https://www.ssmap.link/cad\\?)(.*?)(?:&.*)?");
   private static final Pattern INFO_PRI_PTN = Pattern.compile("(?:AL:)?(\\d)");
   protected class BaseInfoField extends InfoField {
     @Override
