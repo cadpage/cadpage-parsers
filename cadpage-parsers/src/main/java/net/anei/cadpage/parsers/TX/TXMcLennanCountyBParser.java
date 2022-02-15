@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 public class TXMcLennanCountyBParser extends DispatchA41Parser {
 
   public TXMcLennanCountyBParser() {
-    super(CITY_CODES, "MCLENNAN COUNTY", "TX", "[A-Z]{2,3}");
+    super(CITY_CODES, "MCLENNAN COUNTY", "TX", "[A-Z]{2,4}");
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -28,7 +28,6 @@ public class TXMcLennanCountyBParser extends DispatchA41Parser {
       "RIE", "RIESEL",
       "ROB", "ROBINSON",
       "ROS", "ROSS",
-      "SO",  "",
       "VAL", "VALLEY MILLS",
       "WAC", "WACO",
       "WES", "WEST",
