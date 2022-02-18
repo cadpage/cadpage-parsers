@@ -76,11 +76,14 @@ public class MORayCountyParser extends FieldProgramParser {
     }
   }
 
+  private Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("None")) return;
-      super.parse(field, data);
+      field = stripFieldStart(field, "None");
+      for (String line : INFO_BRK_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
     }
   }
 }
