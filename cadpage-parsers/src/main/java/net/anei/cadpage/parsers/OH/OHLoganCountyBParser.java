@@ -12,7 +12,7 @@ public class OHLoganCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "lcso911@co.logan.oh.us";
+    return "lcso911@co.logan.oh.us,lcso911@logancountyohio.gov";
   }
 
   @Override
