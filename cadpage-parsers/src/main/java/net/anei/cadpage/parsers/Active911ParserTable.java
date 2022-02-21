@@ -320,6 +320,7 @@ public class Active911ParserTable {
       "US/CT/Cheshire",                   "CTCheshire",
       "US/CT/CityofLedyard",              "CTNewLondonCounty",
       "US/CT/CityofMiddletown",           "CTMiddletown",
+      "US/CT/CityofNewtown",              "CTTollandCountD",
       "US/CT/CityofStamford",             "CTStamford",
       "US/CT/DMS",                        "CTFairfieldCountyB",
       "US/CT/EastHavenPolice",            "CTNewHavenCountyB",
