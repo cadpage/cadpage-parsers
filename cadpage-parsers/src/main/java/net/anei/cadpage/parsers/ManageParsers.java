@@ -72,7 +72,7 @@ public class ManageParsers {
       else {
         String className = getParserClassname(location);
         try {
-          parser = (MsgParser)Class.forName(className).newInstance();
+          parser = (MsgParser)Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (Exception ex) {
           throw new RuntimeException("Failed to instantiate " + className + '\n' + ex.getMessage(), ex);
         }
@@ -208,7 +208,8 @@ public class ManageParsers {
         "TXSeguin",           "TXGuadalupeCounty",       // 11/09/2021
         "CTOldSaybroook",     "CTMiddlesexCounty",       // 11/22/2021
         "SDMinnehahaCountyC", "CTMiddlesexCounty",       // 11/22/2021 Active911 oops
-        "OHHudson",           "OHSummitCounty"           // 01/16/2022
+        "OHHudson",           "OHSummitCounty",          // 01/16/2022
+        "MSHernando",         "MSDesotoCounty"           // 02/21/2022
   });
 
 }

@@ -904,7 +904,6 @@ public class ParserList {
               ,"MSCalhounCounty"                ,"Calhoun County, MS"
               ,"MSDeSotoCounty"                 ,"DeSoto County, MS"
               ,"MSHarrisonCounty"               ,"Harrison County, MS"
-              ,"MSHernando"                     ,"Hernando, MS"
               ,"MSLafayetteCounty"			  	    ,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"
               ,"MSMadisonCounty"                ,"Madison County, MS"
