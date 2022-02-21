@@ -21,8 +21,7 @@ public class MORayCountyParser extends FieldProgramParser {
   }
 
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD Call")) return false;
+  public boolean parseMsg(String body, Data data) {
     if (body.endsWith(":")) body += ' ';
     return parseFields(body.split(": ", -1), data);
   }
