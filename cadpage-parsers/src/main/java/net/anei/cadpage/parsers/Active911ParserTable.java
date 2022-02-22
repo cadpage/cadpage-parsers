@@ -1150,7 +1150,7 @@ public class Active911ParserTable {
       "US/MO/Winfield",                   "MOLincolnCountyB",
       "US/MO/WrightCounty",               "MOWrightCounty",
       "US/MS/Biloxi",                     "MSBiloxi",
-      "US/MS/CityofHernando",             "MSDesotoCountyB",
+      "US/MS/CityofHernando",             "MSDeSotoCountyB",
       "US/MS/CityofHornLake",             "MSDeSotoCountyA",
       "US/MS/CityofLouisville",           "MSWinstonCounty",
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
