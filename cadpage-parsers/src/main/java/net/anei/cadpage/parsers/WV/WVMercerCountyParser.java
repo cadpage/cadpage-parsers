@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.WV;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class WVMercerCountyParser extends DispatchA19Parser {
@@ -13,6 +14,13 @@ public class WVMercerCountyParser extends DispatchA19Parser {
   @Override
   public String getFilter() {
     return "dispatch@mercer911.com";
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strUnit = stripFieldStart(data.strUnit, "CANCEL,");
+    return true;
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
