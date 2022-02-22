@@ -10,7 +10,7 @@ public class SCEdgefieldCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "cad@edgefieldcountysheriff.org";
+    return "cad@edgefieldcountysheriff.org,cad@ecso.sc.gov";
   }
 
 }
