@@ -22,12 +22,14 @@ public class TXBrazosCountyParser extends FieldProgramParser {
     return "@bc911.org,paging.bc911.org,noreply@omnigo.com";
   }
 
+  private static final Pattern ICUNIT_PTN = Pattern.compile("ICUnit:\\S*\\s+(?=PrimeUnit:)");
   private static final Pattern DELIM = Pattern.compile("\n(?! |\n)");
   private static final Pattern MULTI_SPACE = Pattern.compile("\\s{2,}");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Call Notes")) return false;
+    body = ICUNIT_PTN.matcher(body).replaceFirst("");
     String[] field = DELIM.split(body);
     for (int i=0; i<field.length; i++) {
       field[i] = MULTI_SPACE.matcher(field[i].trim()).replaceAll(" ");
@@ -153,7 +155,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern AGENCY_PATTERN
-    = Pattern.compile("(.*?)Group:(.*?)(?:Station|Beat):(.*?)Box:(.*)");
+    = Pattern.compile("(.*?)(?:Group|Chan):(.*?)(?:(?:Station|Beat):(.*?))?(?:Box:(.*))?");
   private class AgencyField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -161,8 +163,8 @@ public class TXBrazosCountyParser extends FieldProgramParser {
       if (!m.matches()) abort();
       data.strSource = m.group(1).trim();
       data.strMap = append(data.strMap, "-", m.group(2).trim());
-      data.strMap = append(data.strMap, "-", m.group(3).trim());
-      data.strBox = m.group(4).trim();
+      data.strMap = append(data.strMap, "-", getOptGroup(m.group(3)));
+      data.strBox = getOptGroup(m.group(4));
     }
 
     @Override
@@ -180,7 +182,7 @@ public class TXBrazosCountyParser extends FieldProgramParser {
   private static final Pattern GPS_PATTERN
     = Pattern.compile(TIMESTAMP_PATTERN_S+".*AliLong:.*?"+FLOAT_PATTERN_S+".*?AliLatitude:.*?"+FLOAT_PATTERN_S+".*?Uncertainty:.*");
   private static final Pattern UNIT_PATTERN
-    = Pattern.compile(TIMESTAMP_PATTERN_S+".*Unit:(.*?)(?:(?:UnmetReq|Dispo):.*)?");
+    = Pattern.compile(TIMESTAMP_PATTERN_S+".*Unit:(.*?)(?:(?:UnmetReq|Dispo|Comment):.*)?");
   private static final Pattern INFO_PATTERN1
     = Pattern.compile(TIMESTAMP_PATTERN_S+"PROQA Case#:\\d+ +Classify:.*?Service:.*?Comment:(.*)");
   private static final Pattern INFO_PATTERN2
