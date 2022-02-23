@@ -764,6 +764,7 @@ public class Active911ParserTable {
       "US/KY/LaurelCountyRescue",         "KYLaurelCounty",
       "US/KY/LawrenceCounty",             "KYLawrenceCounty",
       "US/KY/LedbetterTone",              "KYLivingstonCounty",
+      "US/KY/LEWISKY911",                 "KYLewisCounty",
       "US/KY/LincolnCounty",              "KYLincolnCounty",
       "US/KY/LivingstonCounty",           "KYLivingstonCounty",
       "US/KY/LoganCounty",                "KYLoganCounty",
