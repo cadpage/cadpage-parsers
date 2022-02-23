@@ -1922,6 +1922,7 @@ public class Active911ParserTable {
       "US/TN/DyerCounty",                 "TNDyerCounty",
       "US/TN/EastRoaneCountyVFD",         "TNRoaneCounty",
       "US/TN/FranklinCounty",             "TNFranklinCounty",
+      "US/TN/GibsonCounty",               "TNGibsonCounty",
       "US/TN/GraingerCounty",             "TNGraingerCounty",
       "US/TN/GrundyCounty",               "TNGrundyCounty",
       "US/TN/HamiltonCounty",             "TNHamiltonCountyC",

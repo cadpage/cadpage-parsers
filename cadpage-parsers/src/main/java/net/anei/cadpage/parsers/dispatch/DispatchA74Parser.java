@@ -133,14 +133,14 @@ public class DispatchA74Parser extends FieldProgramParser {
           }
           break;
 
-        case 3:
-          data.strPlace = parts[0];
-          parseAddress(parts[1], data);
-          data.strCity = parts[2];
-          break;
-
         default:
-          abort();
+          int addrNdx = parts.length-2;
+          for (int pNdx = 0; pNdx < addrNdx; pNdx++) {
+            data.strPlace = append(data.strPlace, ", ", parts[pNdx]);
+          }
+          parseAddress(parts[addrNdx], data);
+          data.strCity = parts[addrNdx+1];
+          break;
         }
 
         if (apt != null) data.strApt = append(data.strApt, "-", apt.trim());
