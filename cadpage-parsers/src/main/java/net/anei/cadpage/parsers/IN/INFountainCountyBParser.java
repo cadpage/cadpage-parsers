@@ -10,7 +10,7 @@ public class INFountainCountyBParser extends FieldProgramParser {
 
   public INFountainCountyBParser() {
     super("FOUNTAIN COUNTY", "IN",
-          "CALL:CODE_CALL! ADDR:ADDR! CITY:CITY! ID:ID! DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! INFO:INFO! DIRECTIONS:LINFO! WARNINGS:ALERT!");
+          "CALL:CODE_CALL! ( ID:ID! ADDR CITY_ST_ZIP! | ADDR:ADDR! CITY:CITY! ID:ID! ) DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+ DIRECTIONS:LINFO! WARNINGS:ALERT!");
   }
 
   @Override
@@ -24,12 +24,17 @@ public class INFountainCountyBParser extends FieldProgramParser {
     if (pt < 0) return false;
     body = body.substring(pt+3);
 
-    return super.parseMsg(body, data);
+    if (body.contains("\nID:")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseMsg(body, data);
+    }
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    if (name.equals("CITY_ST_ZIP")) return new MyCityStateZipField();
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
@@ -52,4 +57,22 @@ public class INFountainCountyBParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*), ([A-Z]{2})(?: (\\d{5}))?");
+  private class MyCityStateZipField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CITY_ST_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strState = match.group(2);
+        if (field.isEmpty()) field = getOptGroup(match.group(3));
+      }
+      data.strCity = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY ST";
+    }
+  }
 }

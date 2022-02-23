@@ -567,6 +567,7 @@ public class Active911ParserTable {
       "US/IN/EMGSVCS",                    "INHenryCounty",
       "US/IN/FishersFD",                  "INHamiltonCounty",
       "US/IN/FloydCounty",                "INFloydCounty",
+      "US/IN/FountainCounty",             "INFountainCountyB",
       "US/IN/GibsonCounty",               "INGibsonCounty",
       "US/IN/GrantCounty",                "INGrantCounty",
       "US/IN/HamiltonCounty",             "INHamiltonCounty",
