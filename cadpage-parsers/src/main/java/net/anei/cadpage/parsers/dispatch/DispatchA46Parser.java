@@ -48,7 +48,7 @@ public class DispatchA46Parser extends SmartAddressParser {
   private static final Pattern BODY_PTN3 =  Pattern.compile("(?:A(?:\\(n\\))? )?(.*?) has been reported at (.*?) on (\\d\\d?/\\d\\d?/\\d{4}) at (\\d\\d?:\\d\\d [AP]M)\\. *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
 
-  private static final Pattern BODY_PTN4 = Pattern.compile("There has been a\\(n\\) (.*?) reported(.*?) at (.*?)");
+  private static final Pattern BODY_PTN4 = Pattern.compile("(?:There has been a|A)\\(n\\) (.*?) (?:has been )?reported(.*?) at (.*?)");
   private static final Pattern TRAIL_DOT_PTN = Pattern.compile(" +0*\\.$");
 
   @Override
@@ -64,6 +64,8 @@ public class DispatchA46Parser extends SmartAddressParser {
       info = body.substring(pt+1).trim();
       body = body.substring(0,pt).trim();
     }
+
+    body = stripFieldStart(body, "**UPDATED ADDRESS**");
 
     Matcher mat = SUBJECT_PTN1.matcher(subject);
     if (mat.matches()) {
@@ -177,10 +179,8 @@ public class DispatchA46Parser extends SmartAddressParser {
       }
     }
 
-    else if ((mat = SUBJECT_PTN3.matcher(subject)).matches()) {
-      if (noCities) return false;
-      data.strCallId = mat.group(1);
-
+    else {
+      if ((mat = SUBJECT_PTN3.matcher(subject)).matches()) data.strCallId = mat.group(1);
       body = stripFieldStart(body, "A ");
       mat = BODY_PTN3.matcher(body);
       if (mat.matches()) {
@@ -192,23 +192,19 @@ public class DispatchA46Parser extends SmartAddressParser {
         data.strSupp = mat.group(5);
 
         parseThisAddress(addr, data);
-        return true;
       }
 
       else if ((mat = BODY_PTN4.matcher(body)).matches()) {
-        setFieldList("ID CALL ADDR APT CITY ST");
+        setFieldList("ID CALL ADDR APT CITY ST INFO");
         data.strCall = append(mat.group(1).trim(), " ", mat.group(2).trim());
         body = mat.group(3).trim();
         body = TRAIL_DOT_PTN.matcher(body).replaceFirst("");
         body = stripFieldEnd(body,  ".");
         parseThisAddress(body, data);
-        return true;
       }
 
       else return false;
     }
-
-    else return false;
 
     for (String line : info.split("\n+")) {
       line = line.trim();
@@ -219,27 +215,46 @@ public class DispatchA46Parser extends SmartAddressParser {
     return true;
   }
 
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) (\\d{5}|0000)(?:-\\d+)?");
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), ([A-Z]{2})(?: (\\d{5}|0000)(?:-\\d+)?)? *(.*)");
 
   private void parseThisAddress(String addr, Data data) {
     int pt;
     Matcher mat;
     String zip = null;
-    mat = ADDR_ZIP_PTN.matcher(addr);
+    String info = null;
+    mat = ADDR_ST_ZIP_PTN.matcher(addr);
     if (mat.matches()) {
       addr = mat.group(1).trim();
-      zip = mat.group(2);
-      if (zip.startsWith("0000")) zip = null;
-    }
+      data.strState = mat.group(2);
+      zip = mat.group(3);
+      if (zip != null && zip.startsWith("0000")) zip = null;
+      info = mat.group(4);
 
-    pt = addr.lastIndexOf(',');
-    if (pt >= 0) {
-      data.strState = addr.substring(pt+1).trim();
-      addr = addr.substring(0,pt).trim();
+      pt = addr.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strCity = addr.substring(pt+1).trim();
+        parseAddress(addr.substring(0,pt).trim(), data);
+      } else {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+      }
+    } else {
+      pt = addr.indexOf(',');
+      if (pt >= 0) {
+        parseAddress(addr.substring(0,pt).trim(), data);
+        String city = addr.substring(pt+1).trim();
+        if (noCities) {
+          data.strCity = city;
+        } else {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+          info = getLeft();
+        }
+      }
+      else {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+      }
     }
-
-    parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
 
     if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    if (info != null) data.strSupp = append(data.strSupp, " ", info);
   }
 }
