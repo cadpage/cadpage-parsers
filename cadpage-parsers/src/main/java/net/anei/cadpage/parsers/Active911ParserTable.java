@@ -514,6 +514,7 @@ public class Active911ParserTable {
       "US/IL/KaneCounty",                 "ILKaneCountyC",
       "US/IL/KankakeeCounty",             "ILKankakeeCounty",
       "US/IL/LakeCounty",                 "ILLakeCountyA",
+      "US/IL/LakeZurichFR",               "ILLakeCountyA",
       "US/IL/MacoupinCounty",             "ILMacoupinCounty",
       "US/IL/MadisonCounty",              "ILMadisonCounty",
       "US/IL/MassacCounty",               "ILMassacCounty",
