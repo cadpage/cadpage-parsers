@@ -216,6 +216,7 @@ public class DispatchA46Parser extends SmartAddressParser {
   }
 
   private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), ([A-Z]{2})(?: (\\d{5}|0000)(?:-\\d+)?)? *(.*)");
+  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) (\\d{5}|0000)(?:-\\d+)?");
 
   private void parseThisAddress(String addr, Data data) {
     int pt;
@@ -227,7 +228,6 @@ public class DispatchA46Parser extends SmartAddressParser {
       addr = mat.group(1).trim();
       data.strState = mat.group(2);
       zip = mat.group(3);
-      if (zip != null && zip.startsWith("0000")) zip = null;
       info = mat.group(4);
 
       pt = addr.lastIndexOf(',');
@@ -238,6 +238,11 @@ public class DispatchA46Parser extends SmartAddressParser {
         parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
       }
     } else {
+      mat = ADDR_ZIP_PTN.matcher(addr);
+      if (mat.matches()) {
+        addr = mat.group(1).trim();
+        zip = mat.group(2);
+      }
       pt = addr.indexOf(',');
       if (pt >= 0) {
         parseAddress(addr.substring(0,pt).trim(), data);
@@ -254,7 +259,7 @@ public class DispatchA46Parser extends SmartAddressParser {
       }
     }
 
-    if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
+    if (data.strCity.length() == 0 && zip != null && !zip.equals("0000")) data.strCity = zip;
     if (info != null) data.strSupp = append(data.strSupp, " ", info);
   }
 }
