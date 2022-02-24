@@ -183,6 +183,7 @@ public class WAKingCountyAParser extends SmartAddressParser {
       "MVA - Aid Emergency",
       "MVA - Medic",
       "MVA - Rescue",
+      "MVC - Aid Emergency",
       "Natural Gas - Major",
       "Natural Gas - Odor",
       "Rescue - Surface Water",
