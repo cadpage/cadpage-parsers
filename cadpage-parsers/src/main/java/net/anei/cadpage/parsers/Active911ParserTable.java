@@ -1959,6 +1959,7 @@ public class Active911ParserTable {
       "US/TX/AddisonFD",                  "TXDallasCountyG",
       "US/TX/AngletonPD",                 "TXAngleton",
       "US/TX/AransasCounty",              "TXAransasCounty",
+      "US/TX/ArcherCounty",               "TXArcherCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
       "US/TX/Austin",                     "TXTravisCountyA",
       "US/TX/AustinCountySheriff",        "TXAustinCounty",
