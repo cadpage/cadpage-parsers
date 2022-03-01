@@ -1,11 +1,18 @@
 package net.anei.cadpage.parsers.KY;
 
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 public class KYLewisCountyParser extends DispatchA65Parser {
 
   public KYLewisCountyParser() {
     super(CITY_LIST, "LEWIS COUNTY", "KY");
+  }
+  
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
