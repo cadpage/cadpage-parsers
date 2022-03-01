@@ -953,6 +953,7 @@ public class Active911ParserTable {
       "US/MI/NilesCharter",               "MICassCountyB",
       "US/MI/OaklandCounty",              "MIOaklandCountyC",
       "US/MI/OaklandCountyURL",           "MIOaklandCountyC",
+      "US/MI/OaklandTwpFD",               "MIOalkandCountyC",
       "US/MI/OgemawCounty",               "MIOgemawCounty",
       "US/MI/OgemawCountyFire",           "MIOgemawCounty",
       "US/MI/OstegoCounty",               "MIAlleganCounty",
