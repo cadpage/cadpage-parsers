@@ -656,6 +656,7 @@ public class ParserList {
               ,"KYHickmanCounty"                ,"Hickman County, KY"
               ,"KYHopkinsCounty"                ,"Hopkins County, KY"
               ,"KYJacksonCounty"                ,"Jackson County, KY"
+              ,"KSJessamineCounty"              ,"Jessamine County, KY"
               ,"KYJohnsonCounty"                ,"Johnson County, KY"
               ,"KYKentonCounty"                 ,"Kenton County, KY"
               ,"KYKnottCounty"                  ,"Knott County, KY"

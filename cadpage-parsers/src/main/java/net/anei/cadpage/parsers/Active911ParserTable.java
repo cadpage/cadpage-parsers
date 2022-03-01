@@ -733,6 +733,7 @@ public class Active911ParserTable {
       "US/KY/HopkinsvilleFD",             "KYChristianCounty",
       "US/KY/HopkinsvillePD",             "KYChristianCounty",
       "US/KY/JacksonCounty",              "KYJacksonCounty",
+      "US/KY/JessamineCounty",            "KSJessamineCounty",
       "US/KY/JohnsonCounty",              "KYJohnsonCounty",
       "US/KY/KentonCincinnati",           "OHCincinnati",
       "US/KY/KentonCounty",               "KYKentonCountyA",
