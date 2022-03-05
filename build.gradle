@@ -21,8 +21,8 @@ allprojects {
 }
 
 ext {
-//    versionName = "2.2.09-07"
-//    versionCode = 2020209070
+    versionName = "2.2.09-07"
+    versionCode = 2020209070
     versionName = "2.2.10-03"
     versionCode = 2020210030
 }

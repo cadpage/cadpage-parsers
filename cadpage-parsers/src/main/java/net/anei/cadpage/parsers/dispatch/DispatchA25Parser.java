@@ -234,6 +234,7 @@ public class DispatchA25Parser extends FieldProgramParser {
       String addr;
       if (data.strCity.isEmpty()) {
         city = p.getLastOptional(" - ");
+        if (city.isEmpty()) city = p.getLastOptional(',');
         if (!city.isEmpty() && checkCity && !isCity(city)) {
           addr = city;
           data.strPlace = p.get();
