@@ -7,18 +7,18 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.ReverseCodeSet;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class COParkCountyParser extends SmartAddressParser {
-  
+public class COParkCountyParser extends FieldProgramParser {
+
   private static final Pattern MARKER = Pattern.compile("(?:\\(CAD\\) +|CAD[ /]+)");
   private static final Pattern PLACE_PTN = Pattern.compile("(.*)\\((.*)\\)(.*)");
-  
+
   public COParkCountyParser() {
-    super(CITY_LIST, "PARK COUNTY", "CO");
-    setFieldList("ADDR APT PLACE CITY CALL");
+    super(CITY_LIST, "PARK COUNTY", "CO",
+          "Call_Number:ADDR/SC! Map_Link:GPS! Caller:NAME! Description:INFO! END");
   }
-  
+
   @Override
   public String getFilter() {
     return "parkcodispatch@parkco.us,777";
@@ -26,7 +26,7 @@ public class COParkCountyParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // There should be a marker, but very occasionally there is not
     body = stripFieldStart(body, "Park County Government:");
     do {
@@ -35,84 +35,126 @@ public class COParkCountyParser extends SmartAddressParser {
         body = body.substring(match.end());
         break;
       }
-      
+
       if (subject.equals("CAD")) break;
-      
+
       if (isPositiveId()) break;
-      
+
       return false;
     } while (false);
-    
-    int pt = body.indexOf('\n');
+
+    int pt = body.indexOf("\nText STOP");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
-    // We have a couple tricks.  First look for a place name in parens.  If found
-    // it also marks the beginning of the call description
-    Matcher match = PLACE_PTN.matcher(body);
-    if (match.matches()) {
-      body = match.group(1).trim();
-      data.strPlace = match.group(2).trim();
-      data.strCall = match.group(3).trim();
+
+    // New format starts with Call Number: label
+    if (body.startsWith("Call Number:")) {
+      return parseMsg(body, data);
     }
-    
-    // No luck there, see if we can identify the call description
-    // at the end of the message  (It doesn't always have a space delimiter :(
+
+    // Otherwise process old format
     else {
-      String call = CALL_LIST.getCode(body);
-      if (call != null) {
-        data.strCall = call;
-        body = body.substring(0,body.length()-call.length()).trim();
+      setFieldList("ADDR APT PLACE CITY CALL");
+
+      // We have a couple tricks.  First look for a place name in parens.  If found
+      // it also marks the beginning of the call description
+      Matcher match = PLACE_PTN.matcher(body);
+      if (match.matches()) {
+        body = match.group(1).trim();
+        data.strPlace = match.group(2).trim();
+        data.strCall = match.group(3).trim();
       }
-    }
-      
-    // Either way, having identified the call description makes life easier
-    if (data.strCall.length() > 0) {
-      
-      // Then see if we can parse a city name from the end of the line
-      // if that fails, parse an address and save the rest in place
-      Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, body);
-      if (res.getCity().length() > 0) {
-        res.getData(data);
-      } else {
+
+      // No luck there, see if we can identify the call description
+      // at the end of the message  (It doesn't always have a space delimiter :(
+      else {
+        String call = CALL_LIST.getCode(body);
+        if (call != null) {
+          data.strCall = call;
+          body = body.substring(0,body.length()-call.length()).trim();
+        }
+      }
+
+      // Either way, having identified the call description makes life easier
+      if (data.strCall.length() > 0) {
+
+        // Then see if we can parse a city name from the end of the line
+        // if that fails, parse an address and save the rest in place
+        Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, body);
+        if (res.getCity().length() > 0) {
+          res.getData(data);
+        } else {
+          parseAddress(StartType.START_ADDR, body, data);
+          data.strPlace = getLeft();
+        }
+      }
+
+      else {
+        // No such luck.  Just hope the address parser can make sense of this
         parseAddress(StartType.START_ADDR, body, data);
-        data.strPlace = getLeft();
+        data.strCall = getLeft();
+        if (data.strCall.length() == 0) return false;
       }
+
+      return true;
     }
-    
-    else {
-      // No such luck.  Just hope the address parser can make sense of this
-      parseAddress(StartType.START_ADDR, body, data);
-      data.strCall = getLeft();
-      if (data.strCall.length() == 0) return false;
-    }
-    
-    // If we found a city name, check to see if it is really a subdivision name
-    // If it is move it to place and save the real city.
-    if (data.strCity.length() > 0) {
-      String city = CITY_PLACE_TABLE.getProperty(data.strCity);
-      if (city != null) {
-        data.strPlace = append(data.strCity, " - ", data.strPlace);
-        data.strCity = city;
-      }
-    }
-    return true;
   }
-  
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private static final Pattern ID_ADDR_PTN = Pattern.compile("(\\d+) +(.*)");
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ID_ADDR_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strCallId = match.group(1);
+      field = match.group(2);
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ID " + super.getFieldNames();
+    }
+  }
+
+  private static final Pattern INFO_TRAIL_JUNK = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d .*\\]$");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        line = INFO_TRAIL_JUNK.matcher(line).replaceFirst("");
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+    }
+  }
+
   @Override
   protected boolean isHouseNumber(String token) {
-    
+
     // Mile  markers can be treated as house numbers
     if (MM_PTN.matcher(token).matches()) return true;
     return super.isHouseNumber(token);
   }
   private static final Pattern MM_PTN = Pattern.compile("MM\\d+");
 
-  
+
   @Override
   public CodeSet getCallList() {
     return CALL_LIST;
   }
-  
+
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+
   private CodeSet CALL_LIST = new ReverseCodeSet(
       "ACCIDENT/ CRASH",
       "ACCIDENT/CRASH",
@@ -126,11 +168,12 @@ public class COParkCountyParser extends SmartAddressParser {
       "FIRE STRUCTURE",
       "GAS ODOR/LEAK",
       "MEDICAL",
+      "MEDICAL/TRAUMA",
       "SMOKE REPORT",
       "VEHICLE SLIDE OFF",
       "FIRE WILDLAND"
  );
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Towns
@@ -158,10 +201,10 @@ public class COParkCountyParser extends SmartAddressParser {
     "LAURET",
     "LAURETTE",
     "TARRYALL",
-    
+
     // Alma Subdivisions
     "ALMA PARK ESTATES",
-    
+
     // Bailey Subdivisions
     "BAILEY ESTATES",
     "BAILEY VIEW",
@@ -177,7 +220,7 @@ public class COParkCountyParser extends SmartAddressParser {
     "ROLAND VALLEY",
     "TRAILS WEST",
     "WILL-O-WISP",
-    
+
     // Fairplay Subdivisions
     "BREAKNECK PASS RANCH AMEND",
     "FAIRPLAY CLARK AND BOGUES",
@@ -185,15 +228,15 @@ public class COParkCountyParser extends SmartAddressParser {
     "FRIENDSHIP RANCH",
     "WARM SPRINGS",
     "VALLEY OF THE SUN",
-    
+
     // Florissant Subdivisions
     "BADGER CREEK RANCH",
     "ECHO VALLEY ESTATES",
     "RAVENSWOOD",
-    
+
     // Hartsel Subdivisions
     "WESTERN UNION RANCH",
-    
+
     // Jefferson Subdivisions
     "CIRCLE R RANCH",
     "ELKHORN RANCHES",
@@ -201,13 +244,13 @@ public class COParkCountyParser extends SmartAddressParser {
     "INDIAN MOUNTAIN",
     "MICHIGAN HILL",
     "STAGESTOP",
-    
+
     // Lake George Subdivisions
     "WILDWOOD REC VILLAGE",
-    
+
     // Pine Subdivisions
     "WOODSIDE PARK",
-    
+
     // Counties
     "CHAFEE COUNTY",
     "CLEAR CREEK COUNTY",
@@ -218,10 +261,10 @@ public class COParkCountyParser extends SmartAddressParser {
     "SUMMIT COUNTY",
     "TELLER COUNTY"
   };
-  
-  private static final Properties CITY_PLACE_TABLE = buildCodeTable(new String[]{
+
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "ALMA PARK ESTATES",         "ALMA",
-      
+
       "BAILEY ESTATES",            "BAILEY",
       "BAILEY VIEW",               "BAILEY",
       "BURLAND RANCH-ETTES",       "BAILEY",
@@ -243,22 +286,22 @@ public class COParkCountyParser extends SmartAddressParser {
       "FRIENDSHIP RANCH",          "FAIRPLAY",
       "WARM SPRINGS",              "FAIRPLAY",
       "VALLEY OF THE SUN",         "FAIRPLAY",
-      
+
       "BADGER CREEK RANCH",        "FLORISSANT", // Possibly GUFFEY
       "ECHO VALLEY ESTATES",       "FLORISSANT",
       "RAVENSWOOD",                "FLORISSANT",
-      
+
       "WESTERN UNION RANCH",       "HARTSEL",
-      
+
       "CIRCLE R RANCH",            "JEFFERSON",
       "ELKHORN RANCHES",           "JEFFERSON",
       "INDINA MOUNTAIN",           "JEFFERSON",
       "INDIAN MOUNTAIN",           "JEFFERSON",
       "MICHIGAN HILL",             "JEFFERSON",
       "STAGESTOP",                 "JEFFERSON",
-      
+
       "WILDWOOD REC VILLAGE",      "LAKE GEORGE",  // ???
-      
+
       "WOODSIDE PARK",             "PINE"
   });
 }
