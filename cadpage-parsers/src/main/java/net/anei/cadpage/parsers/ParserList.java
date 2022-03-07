@@ -345,6 +345,7 @@ public class ParserList {
               ,"FLLevyCounty"                   ,"Levy County, FL"
               ,"FLManateeCounty"                ,"Manatee County, FL"
               ,"FLMarionCounty"                 ,"Marion County, FL"
+              ,"FLMartinCounty"                 ,"Martin County, FL"
               ,"FLMiamiDadeCounty"              ,"Miami-Dade County, FL"
               ,"FLOkaloosaCounty"               ,"Okaloosa County, FL"
               ,"FLOrangeCounty"                 ,"Orange County, FL"
