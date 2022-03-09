@@ -28,9 +28,18 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CH")) return new MyChannelField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(" X ", " & ");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern CHANNEL_PTN = Pattern.compile(".* (?:RAPS-|raps |SjvIns-|SamvFlyg-)\\d+|E-tunaIns");
@@ -67,22 +76,25 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-
-      if (field.length() == 0) return true;
-      Matcher match = GPS_PTN.matcher(field);
-      if (!match.matches()) return false;
-
-      String gpsLoc = (match.group(3).charAt(0) == 'S' ? "-" : "+") + match.group(1) + ' ' + match.group(2) + ' ' +
-                      (match.group(6).charAt(0) == 'W' ? "-" : "+") + match.group(4) + ' ' + match.group(5);
-      gpsLoc = gpsLoc.replace(',', '.');
-      setGPSLoc(gpsLoc, data);
-      return true;
+      return parseGPSField(field, data);
     }
 
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
+  }
+
+  protected boolean parseGPSField(String field, Data data) {
+    if (field.length() == 0) return true;
+    Matcher match = GPS_PTN.matcher(field);
+    if (!match.matches()) return false;
+
+    String gpsLoc = (match.group(3).charAt(0) == 'S' ? "-" : "+") + match.group(1) + ' ' + match.group(2) + ' ' +
+                    (match.group(6).charAt(0) == 'W' ? "-" : "+") + match.group(4) + ' ' + match.group(5);
+    gpsLoc = gpsLoc.replace(',', '.');
+    setGPSLoc(gpsLoc, data);
+    return true;
   }
 
 
