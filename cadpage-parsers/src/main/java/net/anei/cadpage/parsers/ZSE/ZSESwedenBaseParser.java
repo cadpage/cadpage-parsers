@@ -37,7 +37,7 @@ public class ZSESwedenBaseParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace(" X ", " & ");
+      field = field.replace(" X ", " & ").replace(" x ", " & ");
       super.parse(field, data);
     }
   }

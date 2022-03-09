@@ -48,7 +48,7 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     // Parsing Swedish addresses is a challenge :(
     match = ADDR_PTN.matcher(callAddr);
     if (match.find()) {
-      data.strAddress = match.group().replace(" X ", " & ");
+      data.strAddress = match.group().replace(" X ", " & ").replace(" x ", " & ");
       data.strCity = callAddr.substring(match.end()).trim();
       callAddr = callAddr.substring(0,match.start()).trim();
     }
