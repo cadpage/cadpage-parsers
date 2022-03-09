@@ -33,11 +33,16 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     return "adams911@adamscounty.us,adams911.com,messaging@iamresponding.com,tnethknouse2@gmail.com,777";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern IAMR_PREFIX1 = Pattern.compile("^(?:Alert: +)?(.*?)[ \n](?=ALRM LVL:|: +BOX |CANCEL INCIDENT:)");
   private static final Pattern IAMR_CANCEL_MASTER = Pattern.compile("(.*?) (LOC:.*?) (UNITS: *\\S+?) (.*)");
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
   private static final Pattern IAMR_COMMA_PTN = Pattern.compile("[ ,]*\n[ ,]*");
-  private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=LOC:) ");
+  private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|LAT/LONG:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=(?:LOC:|LAT/LONG:)) ");
   private static final Pattern SUB_SRC_PTN = Pattern.compile("[A-Z]{1,5}");
   private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" -(?: ([A-Za-z ]+))?$");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
