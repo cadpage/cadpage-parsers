@@ -47,6 +47,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField();
     if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ZERO")) return new SkipField("0?");
@@ -91,6 +92,28 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("`")) return;
       super.parse(field, data);
+    }
+  }
+  
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt < 0) abort();
+        String place = field.substring(pt+1, field.length()-1).trim();
+        field = field.substring(0, pt).trim();
+        
+        if (!data.strPlace.startsWith(place)) {
+          data.strPlace = append(data.strPlace, " - ", place);
+        }
+      }
+      super.parse(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
     }
   }
 
