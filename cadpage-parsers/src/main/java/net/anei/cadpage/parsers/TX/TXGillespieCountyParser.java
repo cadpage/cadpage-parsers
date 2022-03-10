@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.anei.cadpage.parsers.TX;
 
@@ -16,31 +16,31 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  *
  */
 public class TXGillespieCountyParser extends FieldProgramParser {
-  
+
   public TXGillespieCountyParser() {
-    super("GILLESPIE COUNTY", "TX", 
+    super("GILLESPIE COUNTY", "TX",
           "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "cadpage@gillespiecounty.org,no-reply@rr.com";
+    return "cadpage@gillespiecounty.org,no-reply@rr.com,gillespiecountycad@gcwebview.net";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("\n+");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!DISP!") && !subject.equals("!TESTDISP!")) return false;
     return parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
