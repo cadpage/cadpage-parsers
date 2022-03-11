@@ -12,57 +12,60 @@ import net.anei.cadpage.parsers.dispatch.DispatchProphoenixParser;
  * Gloucester County, NJ (version A)
  */
 public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
-  
+
   private static final Pattern FROM_ADDR_PTN = Pattern.compile("GC RSAN #(\\d+)");
   private static final Pattern SPECIAL_TRAIL_PTN = Pattern.compile(";.{2}$");
-  
+
   private String fromAddress;
-  
+
   public NJGloucesterCountyAParser() {
     super(CITY_CODES, CITY_LIST, "GLOUCESTER COUNTY", "NJ");
   }
- 
+
   @Override
   public String getFilter() {
     return "gccad@co.gloucester.nj.us,777,@private.gloucesteralert.com,12101,411912";
   }
-  
+
   @Override
   protected Data parseMsg(Message msg, int parseFlags) {
     fromAddress = msg.getFromAddress();
     return super.parseMsg(msg, parseFlags);
   }
-  
+
+  private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?<=\\}) | (?=(?:CrossStreet[12]|CommonName|Units|Comments) *:)");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\b(T)o(w)nshi(p)\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     // THere are some weird text options presumably introduced by forwarding services
     body = stripFieldStart(body, "Fwd:");
     body = stripFieldEnd(body, "=");
     body = stripFieldEnd(body, " STOP");
-    
+
     Matcher match = FROM_ADDR_PTN.matcher(fromAddress);
     if (match.matches()) {
       body = "GC ALERT (#" + match.group(1) + ") " + body;
       match = SPECIAL_TRAIL_PTN.matcher(body);
       if (match.find()) body = body.substring(0,match.start()).trim();
     }
-    
-    if (!body.contains("\n")) body = body.replace("} ", "}\n");
+
+    if (!body.contains("\n")) {
+      body = MISSING_BRK_PTN.matcher(body).replaceAll("\n");
+    }
     body = TOWNSHIP_PTN.matcher(body).replaceAll("$1$2$3");
     return super.parseMsg(body, data);
   }
-  
+
   private static final Pattern ACE_PTN = Pattern.compile("\\bACE\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = ACE_PTN.matcher(addr).replaceAll("ATLANTIC CITY EXPY");
     return super.adjustMapAddress(addr);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("ROWAN")) city = "GLASSBORO";
@@ -108,9 +111,9 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
       "CU", "CUMBERLAND COUNTY",
       "SA", "SALEM COUNTY"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Boroughs
     "CLAYTON",
     "GLASSBORO",
@@ -123,7 +126,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "WESTVILLE",
     "WOODBURY",
     "WOODBURY HEIGHTS",
-    
+
     // Townships
     "DEPTFORD",
     "DEPTFORD TWP",
@@ -164,7 +167,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "WOOLWICH",
     "WOOLWICH TWP",
     "WOOLWICH TOWNSHIP",
-    
+
     // Communities
     "ALMONESSON",
     "AURA",
@@ -201,7 +204,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "VICTORY LAKES",
     "WILLIAMSTOWN",
     "WOLFERT",
-    
+
     // Atlantic County
     "BUENA",
       "LANDISVILLE",
@@ -247,7 +250,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "WEYMOUTH TOWNSHIP",
       "DOROTHY",
       "WEYMOUTH",
-    
+
     // Camden County
     "AUDUBON",
     "AUDUBON PARK",
@@ -280,7 +283,7 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
     "PINE VALLEY",
     "SOMERDALE",
     "STRATFORD",
-    "WINSLOW",  
+    "WINSLOW",
     "WINSLOW TWP",
     "WINSLOW TOWNSHIP",
       "ALBION",
@@ -295,16 +298,16 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
       "TANSBORO",
       "WATERFORD WORKS",
       "WEST ATCO",
-      
+
     // Cape May County
     "MARMORA",
-    
+
     // Cumberland County
     "VINELAND",
-    
+
     // Delaware County, PA
     "CHESTER",
-    
+
     // Salem County
     "ALLOWAY TOWNSHIP",
       "ALDINE",

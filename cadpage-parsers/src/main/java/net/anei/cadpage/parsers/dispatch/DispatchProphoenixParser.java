@@ -43,7 +43,7 @@ public class DispatchProphoenixParser extends FieldProgramParser {
     }
     else {
       Matcher match = MARKER.matcher(body);
-      if (!match.find()) return false;
+      if (!match.lookingAt()) return false;
       data.strCallId = match.group(1);
 
       if (data.strCallId == null) {
