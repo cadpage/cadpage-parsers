@@ -42,10 +42,11 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
   private static final Pattern IAMR_CANCEL_MASTER = Pattern.compile("(.*?) (LOC:.*?) (UNITS: *\\S+?) (.*)");
   private static final Pattern IAMR_BOX_PTN = Pattern.compile("[, ] +BOX ");
   private static final Pattern IAMR_COMMA_PTN = Pattern.compile("[ ,]*\n[ ,]*");
-  private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|LAT/LONG:|INCIDENT:|UNITS:|DATE/TIME:)|(?<=(?:LOC:|LAT/LONG:)) ");
+  private static final Pattern IAMR_MISSING_BRK_PTN = Pattern.compile(" (?=LOC:|BTWN:|LAT/LONG:|INCIDENT:|UNITS:|RC:|DATE/TIME:)|(?<=(?:LOC:|LAT/LONG:)) ");
   private static final Pattern SUB_SRC_PTN = Pattern.compile("[A-Z]{1,5}");
   private static final Pattern TRAIL_SRC_PTN = Pattern.compile(" -(?: ([A-Za-z ]+))?$");
   private static final Pattern TOWNSHIP_PTN = Pattern.compile("\\bTOWNSHIP\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TRAIL_FLOOR_PTN = Pattern.compile("(.*) (\\d{1,2}(?:ST|ND|RD|TH))", Pattern.CASE_INSENSITIVE);
   private static final Pattern[] ADDR_APT_PTNS = new Pattern[] {
       Pattern.compile("(\\d+) ([A-DF-MO-R]) ((?!AVE?|ST).*)", Pattern.CASE_INSENSITIVE),
       Pattern.compile("(\\d+) ([EN]) (BRYSONIA WENKSVILLE RD|BUCHANAN VALLEY RD|CHAMBERSBURG RD|CHURCH RD|GREEN SPRINGS RD|MENGUS MILL RD|MOUNT HOPE RD|NEW RD|OLD ROUTE 30|SHIPPENSBURG RD|GREEN SPRINGS RD|YORK RD)")
@@ -98,7 +99,29 @@ public class PAAdamsCountyAParser extends DispatchA1Parser {
     if (noBrkFmt) {
       String addr = data.strAddress;
       data.strAddress = "";
-      parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr, data);
+      if (!data.strApt.isEmpty()) {
+        parseAddress(StartType.START_PLACE, FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
+        parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, data.strApt, data);
+        data.strApt = getStart();
+
+        if (data.strAddress.isEmpty() && !data.strPlace.isEmpty() && !data.strApt.isEmpty()) {
+          int pt = data.strApt.indexOf(' ');
+          if (pt >= 0) {
+            data.strAddress = data.strApt.substring(pt+1).trim();
+            data.strApt = data.strApt.substring(0, pt);
+          }
+        }
+
+        if (data.strApt.toUpperCase().startsWith("FLR")) {
+          match = TRAIL_FLOOR_PTN.matcher(data.strAddress);
+          if (match.matches()) {
+            data.strAddress = match.group(1).trim();
+            data.strApt = match.group(2) + ' ' + data.strApt;
+          }
+        }
+      } else {
+        parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, addr, data);
+      }
     }
 
 
