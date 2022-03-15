@@ -17,7 +17,7 @@ public class INWayneCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,noreply@co.wayne.in.us";
   }
 
   @Override
