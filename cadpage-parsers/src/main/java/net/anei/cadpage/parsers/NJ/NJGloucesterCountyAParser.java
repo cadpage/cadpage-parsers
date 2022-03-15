@@ -55,6 +55,12 @@ public class NJGloucesterCountyAParser extends DispatchProphoenixParser {
       body = MISSING_BRK_PTN.matcher(body).replaceAll("\n");
     }
     body = TOWNSHIP_PTN.matcher(body).replaceAll("$1$2$3");
+
+    int pt1 = body.indexOf("FDID > ");
+    if (pt1 >= 0) {
+      int pt2 =  body.indexOf("FDID > ", pt1+6);
+      if (pt2 >= 0) body = body.substring(0,pt1) + body.substring(pt2);
+    }
     return super.parseMsg(body, data);
   }
 
