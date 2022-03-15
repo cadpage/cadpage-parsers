@@ -1,16 +1,11 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class ALWashingtonCountyParser extends DispatchA71Parser {
+
+public class ALWashingtonCountyParser extends GroupBestParser {
 
   public ALWashingtonCountyParser() {
-    super("WASHINGTON COUNTY", "AL");
+    super(new ALWashingtonCountyAParser(), new ALWashingtonCountyBParser());
   }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
 }
