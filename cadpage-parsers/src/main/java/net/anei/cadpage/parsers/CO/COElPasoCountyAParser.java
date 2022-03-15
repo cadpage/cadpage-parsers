@@ -18,6 +18,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     super("EL PASO COUNTY", "CO",
           "ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
                   "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
+                  "| REF_Run_Number:ID! ( At:ADDR! PROBLEM_CHANGED_TO:CALL! | CALL! THE_LOC_HAS_CHANGED_TO:ADDR! APT! ) " +
                   "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
                   ") END");
   }
@@ -83,9 +84,26 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       body = body.substring(1).trim();
     }
 
+    // One fixed field format also has some ~ delimiters
+    FParser p = new FParser(body);
+
+    if (p.check("FROM EPSO NOTIFICATION~")) {
+      setFieldList("CALL ADDR APT PLACE SRC");
+      data.strCall =  p.get(30);
+      if (!p.check("~At:")) return false;
+      parseAddress(p.get(40), data);
+      if (!p.check("Apt #:")) return false;
+      data.strApt = append(data.strApt, "-", p.get(7));
+      data.strPlace = p.get(40);
+      if (!p.check("~JURIS: ")) return false;
+      data.strSource = p.get(14);
+      if (!p.check("~NO RESPONSE")) return false;
+      return true;
+    }
+
     // Not everyone is using it, but see if this is the new standard dispatch format
     String[] flds = body.split("~", -1);
-    if (flds.length >= 5) {
+    if (flds.length >= 5 || body.startsWith("REF Run Number:")) {
       return parseFields(flds, data);
     }
 
@@ -103,8 +121,6 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       }
       return true;
     }
-
-    FParser p = new FParser(body);
 
     // One page format requires using the original subject
     if (p.check("INFO from EPSO:")) {
@@ -126,13 +142,15 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
 
     if (p.check("REF:")) {
-      if (p.checkAhead(33,  "THE LOC HAS CHANGED TO:")) {
-        setFieldList("CALL ADDR APT");
-        data.strCall = p.get(33);
+      int callLen = p.checkAhead("THE LOC HAS CHANGED TO:", 30, 33);
+      if (callLen >= 0) {
+        setFieldList("CALL ADDR APT PLACE");
+        data.strCall = p.get(callLen);
         if (!p.check("THE LOC HAS CHANGED TO:")) return false;
         parseAddress(p.get(30), data);
         if (!p.check("#")) return false;
-        data.strApt = p.get();
+        data.strApt = p.get(5);
+        data.strPlace = p.get();
         return true;
       }
       setFieldList("ADDR APT CALL");
@@ -175,14 +193,18 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return true;
     }
 
-    if (p.check("Address: ")) {
+    if (p.check("Address:")) {
       setFieldList("ADDR APT PLACE CITY CALL ID GPS");
+      boolean chkSpace = p.check(" ");
       parseAddress(p.get(35), data);
-      if (!p.check("Location: ")) return false;
+      if (!p.check("Location:")) return false;
+      if (chkSpace && !p.check(" ")) return false;
       data.strPlace = p.get(35);
-      if (!p.check("City: ")) return false;
+      if (!p.check("City:")) return false;
+      if (chkSpace && !p.check(" ")) return false;
       data.strCity = p.get(35);
-      if (!p.check("Problem: ")) return false;
+      if (!p.check("Problem:")) return false;
+      if (chkSpace && !p.check(" ")) return false;
       data.strCall = p.get(30);
       data.strCallId = p.get(20);
       if (!p.check("Lat/Long:")) return false;
@@ -193,12 +215,12 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       return true;
     }
 
-    if (p.checkAhead(77, "RP Ph:")) {
+    if (p.checkAhead(77, "RP Ph:") || p.checkAhead(77,  "RP PH:")) {
       setFieldList("ADDR APT CALL CODE PHONE INFO");
       parseAddress(p.get(40), data);
       data.strCall = p.get(30);
       data.strCode = p.get(7);
-      if (!p.check("RP Ph:")) return false;
+      if (!p.check("RP Ph:") && !p.check("RP PH:")) return false;
       data.strPhone = p.get(13);
       data.strSupp = p.get();
       return true;
@@ -215,13 +237,22 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}\\d{2}-\\d{5}", true);
+    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}\\d{2}-\\d{4,5}", true);
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("SRC_UNIT")) return new MySourceUnitField();
     if (name.equals("UNIT")) return new UnitField("[,pA-Z0-9]+", true);
     if (name.equals("DISTRICT")) return new MapField("District \\d+|Colorado S|El Paso Co|HWY 115 -", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
     if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
     return super.getField(name);
+  }
+
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "#");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern[] SRC_UNIT_PTNS = new Pattern[] {
