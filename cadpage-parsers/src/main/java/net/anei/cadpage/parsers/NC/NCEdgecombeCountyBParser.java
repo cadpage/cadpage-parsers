@@ -1,25 +1,57 @@
 package net.anei.cadpage.parsers.NC;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
-public class NCEdgecombeCountyBParser extends DispatchA3Parser {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgParser;
+
+public class NCEdgecombeCountyBParser extends MsgParser {
 
   public NCEdgecombeCountyBParser() {
-    super("", "EDGECOMBE COUNTY", "NC", 
-          "Line1:ID! Line2:ADDR! Line3:APT! Line4:APT! Line5:CITY! Line6:X! Line7:X! Line8:MAP! Line9:INFO! Line10:CODE! Line11:CALL! Line12:NAME Line13:PHONE Line14:UNIT Line15:INFO2 Line16:INFO2 Line17:INFO2 Line18:INFO Line19:INFO Line20:INFO");
-    setBreakChar('=');
+    super("EDGECOMBE COUNTY", "NC");
+    setFieldList("CALL ADDR APT CITY ST INFO");
   }
-  
+
+  @Override
+  public String getFilter() {
+    return "csnoreply@tarboro-nc.com";
+  }
+
+  private static final Pattern MASTER = Pattern.compile("(.*?) None (.*)");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    return parseFields(body.split("\n"), data);
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("INFO2")) return new InfoField();
-    return super.getField(name);
+
+    if (subject.isEmpty()) return false;
+    data.strCall = subject;
+
+    body = stripFieldEnd(body, "{current_command_messsage}");
+    Matcher match = MASTER.matcher(body);
+    if (!match.matches()) return false;
+
+    String addr = match.group(1).trim();
+    String info = match.group(2).trim();
+
+    Parser p =  new Parser(addr);
+    String city = p.getLastOptional(',');
+    if ((match = ST_ZIP_PTN.matcher(city)).matches()) {
+      data.strState = match.group(1);
+      String zip =  match.group(2);
+      city = p.getLastOptional(',');
+      if (city.isEmpty() && zip != null) city = zip;
+    }
+    parseAddress(p.get(), data);
+    data.strCity = city;
+
+    if (!info.startsWith("None")) {
+      data.strSupp = INFO_BRK_PTN.matcher(info).replaceAll("\n").trim();
+    }
+
+    return true;
   }
 }
 
