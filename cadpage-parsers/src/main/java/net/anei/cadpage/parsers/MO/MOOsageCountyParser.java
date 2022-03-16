@@ -132,6 +132,7 @@ public class MOOsageCountyParser extends DispatchGlobalDispatchParser {
       "STRANDED MOTORIST",
       "STRUCTURE FIRE",
       "SUSPICIOUS ODOR",
+      "TEST MESSAGE",
       "TRANSFER / INTERFACILITY/PALLIATIVE CARE",
       "TRANSFER - MEDICAL",
       "TRAUMATIC EMERGENCIES",

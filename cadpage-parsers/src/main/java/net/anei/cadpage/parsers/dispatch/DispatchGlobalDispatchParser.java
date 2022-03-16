@@ -57,7 +57,8 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
          "( ReferenceCode:CODE! CALL ADDR/S! EMPTY Description:INFO! INFO/N+? TRAIL_UNIT " +
          "| " + calcAddressTerm(flags, cityList != null) +
           " Call_Received_Time:DATE_TIME_CITY MapRegions:MAP Description:INFO2 INFO2+ CrossStreets:X UNIT Description:INFO2 INFO2+ Dispatch:DATETIME " +
-          "Primary_Incident:ID Call_Number:ID Description:INFO2 INFO2+ ReferenceText:INFO2 Dispatch:SKIP Caller:NAME Call_Number:ID Description:INFO2 INFO2+ ReferenceText:SKIP Call_Number:ID Map_Link:GPS )",
+          "Primary_Incident:ID Call_Number:ID Description:INFO2 INFO2+ ReferenceText:INFO2 Dispatch:SKIP Caller:NAME Call_Number:ID Description:INFO2 INFO2+ " +
+          "ReferenceText:SKIP Call_Number:ID ( Lat/Long:GPS | Map_Link:GPS ) )",
           FLDPROG_NL_BRK);
     this.stationPtn = stationPtn;
     this.unitPtn = unitPtn;
