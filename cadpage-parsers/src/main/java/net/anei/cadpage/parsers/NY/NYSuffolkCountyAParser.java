@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NYSuffolkCountyAParser extends SmartAddressParser {
-  
+
   public NYSuffolkCountyAParser() {
     super(CITY_TABLE, "SUFFOLK COUNTY", "NY");
     setupCallList(CALL_LIST);
@@ -20,14 +20,14 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     setupDoctorNames("KAHN", "HSU", "KAMDAR", "KLEINER", "SINGH");
     removeWords("LA", "-");
   }
-  
+
   @Override
   public String getFilter() {
-    return "paging@scfres.com,printing@scfres.com,@communityamb.org,FRES CAD,6316640853@pm.sprint.com,6318487034@vzwpix.com,6316640853@vzwpix.com,8449810245";
+    return "paging@scfres.com,printing@scfres.com,@communityamb.org,FRES CAD,6316640853@pm.sprint.com,6318487034@vzwpix.com,6316640853@vzwpix.com,8449810245,444442501";
   }
 
   private static final Pattern SIG_3_PTN = Pattern.compile("SIG 3: *(.*) (\\d{1,2}-[A-Z]-\\d{1,2}[A-Z]?)");
-  private static final Pattern SIG_3_PLACE_ADDR_PTN = Pattern.compile("(.*?) (?:@(.*) )?: (.*)"); 
+  private static final Pattern SIG_3_PLACE_ADDR_PTN = Pattern.compile("(.*?) (?:@(.*) )?: (.*)");
   private static final Pattern SUFFOLK_E_MARKER = Pattern.compile("(?:/[A-Z ]*RELAY */|(?:FROM )?RELAY )");
 
   private static final Pattern DOUBLE_LOC_PTN = Pattern.compile("(.* LOC: .*) LOC:(?!.*CROSS:)(.*)");
@@ -44,16 +44,16 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Anything starting with 3 asterisks is the similar but different (B) variant
     if (body.startsWith("***")) return false;
-    
+
     // Drop anything that might be a E format
     if (subject.contains("FROM RELAY") || SUFFOLK_E_MARKER.matcher(body).lookingAt()) return false;
 
-    // Some formats cut the initial TYPE: code
-    if (body.startsWith("FWD:")) body = body.substring(4).trim();
-    
+    body = stripFieldStart(body, "paging@scfres.com/");
+    body = stripFieldStart(body, "FWD:");
+
     // Brentwood FD wraps their alert in some HTML text that needs to be stripped out
     if (body.startsWith("<HEAD>")) {
       int pt = body.indexOf("TYPE:");
@@ -62,7 +62,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       pt = body.indexOf('\n');
       if (pt >= 0) body = body.substring(0,pt).trim();
     }
-    
+
     // Check for new SIG 3: format
     Matcher match = SIG_3_PTN.matcher(body);
     if (match.matches()) {
@@ -84,14 +84,14 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     setFieldList("CALL ADDR CITY PLACE APT X CODE INFO TIME ID SRC");
     boolean good = body.startsWith("TYPE:");
     if (!good) body = "TYPE:" + body;
-    
+
     // Double LOC: keyword should change to a CROSS: keyword
     match = DOUBLE_LOC_PTN.matcher(body);
     if (match.matches()) body = match.group(1) + " CROSS:" + match.group(2);
-    
+
     body = VIP_PTN.matcher(body).replaceAll(" ");
     body = body.replace(" XST ", " CROSS: ");
-    
+
     int pt = body.indexOf("CROSS:");
     if (pt >= 0) {
       pt += 6;
@@ -99,12 +99,12 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     }
 
     Properties props = parseMessage(body, KEYWORDS);
-    
+
     data.strCall = props.getProperty("TYPE");
     if (data.strCall == null) return false;
 
     data.strCross = stripFieldEnd(props.getProperty("CROSS", ""), "/");;
-    
+
     String sAddress = props.getProperty("LOC");
     if (sAddress == null || sAddress.startsWith("/")) {
       if (sAddress != null) {
@@ -143,21 +143,21 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
           data.strPlace = append(data.strPlace, " - ", place);
         }
       }
-      
+
       else {
         match = APT_PTN.matcher(sAddress);
         if (match.matches()) {
           sAddress = match.group(1).trim();
           data.strApt = match.group(2).trim();
         }
-        
+
         match = ADDR_CROSS_PTN.matcher(sAddress);
         if (match.matches()) {
           sAddress = match.group(1).trim();
           data.strCross = append(match.group(2).trim(), " / ", data.strCross);
           parsePlaceField(getOptGroup(match.group(3)), data, false);
         }
-        
+
         match = SPECIAL_PTN.matcher(sAddress);
         if (match.matches()) {
           sAddress = match.group(1).trim();
@@ -174,7 +174,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
             data.strApt = append(match.group(2).trim(), "-", data.strApt);
           }
         }
-        
+
         // We have so many city codes that many of them form part of legitimate
         // street names, which really messes things up.  To cut down on some of
         // the confusion, any double blank following a legitimate city code is
@@ -196,13 +196,13 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
         }
       }
     }
-    
+
     data.strCross = stripFieldStart(data.strCross, "/");
     data.strCross = stripFieldEnd(data.strCross, "/");
-    
+
     data.strCode = props.getProperty("CODE", "");
     if (data.strCode.equals("default")) data.strCode = "";
-    
+
     data.strCity = convertCodes(data.strCity, CITY_TABLE);
     String sTime = props.getProperty("TIME", "");
     match = TRAIL_MARK_PTN.matcher(sTime);
@@ -212,11 +212,11 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     }
     if (sTime.length() > 5 && sTime.length() < 8) sTime = sTime.substring(0,5);
     if (sTime.length() >= 5) data.strTime = sTime;
-    
+
     data.strCallId = props.getProperty("EVENT#", "");
-    
+
     data.strSource = props.getProperty("AGENCY", "");
-    
+
     return true;
   }
 
@@ -236,7 +236,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       data.strPlace = append(data.strPlace, " - ", field, reverse);
     }
   }
-  
+
   private String append(String field1, String connect, String field2, boolean reverse) {
     if (reverse) {
       return append(field2, connect, field1);
@@ -244,7 +244,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       return append(field1, connect, field2);
     }
   }
-  
+
   static final String[] MWORD_STREET_LIST = new String[]{
       "ACRE VIEW",
       "AIR PARK",
@@ -706,7 +706,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "YAPHANK MIDDLE ISLAND",
       "YAPHANK WOODS"
   };
-  
+
   static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN / PROBLEMS",
       "ABDOMINAL PAINS",
@@ -956,7 +956,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "PORTJS",  "PORT JEFFERSON STATION",
       "QUIOGU",  "QUIOGUE",
       "QUOGUE",  "QUOGUE",
-      "REMSEN",  "REMSENBURG",  
+      "REMSEN",  "REMSENBURG",
       "REMSES",  "REMSENBURG-SPEONK",
       "RIDGE",   "RIDGE",
       "RIVERH",  "RIVERHEAD",
@@ -1022,10 +1022,10 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "WSAYVI",  "WEST SAYVILLE",
       "WYANDA",  "WYANDANCH",
       "YAPHAN",  "YAPHANK",
-      
+
       "LB",      "ISLIP",
       "VS",      "VALLEY STREAM",
-      
+
       "E NORTHPORT",    "E NORTHPORT",
       "SETAUKET",       "SETAUKET",
       "SO FARMINGDALE", "SOUTH FARMINGDALE"
