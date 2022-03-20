@@ -7,13 +7,13 @@ import net.anei.cadpage.parsers.dispatch.DispatchBParser;
 public class MDHarfordCountyAParser extends DispatchBParser {
 
   public MDHarfordCountyAParser() {
-    super(CITY_LIST, "HARFORD COUNTY", "MD");
+    super(MDHarfordCountyParser.CITY_LIST, "HARFORD COUNTY", "MD");
   }
-  
+
   public String getFilter() {
     return "@c-msg.net";
   }
-  
+
   @Override
   protected boolean isPageMsg(String body) {
     return true;
@@ -21,8 +21,8 @@ public class MDHarfordCountyAParser extends DispatchBParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
-    
+
+
     // First token following EOC: is the unit
     if (body.startsWith("HCCAD /")) body = body.substring(7).trim();
     if (body.startsWith("[!]")) body = body.substring(3).trim();
@@ -33,9 +33,9 @@ public class MDHarfordCountyAParser extends DispatchBParser {
     data.strUnit = body.substring(0, pt);
     body = body.substring(pt+1).trim();
     if (!super.parseMsg(body, data)) return false;
-    
+
     if (data.strCross.startsWith("X ")) data.strCross = data.strCross.substring(2);
-    
+
     if (!data.strName.equals("NOT ENTERED")) {
       if (data.strName.startsWith("LIFE ALERT")) {
         data.strSupp = data.strName;
@@ -46,7 +46,7 @@ public class MDHarfordCountyAParser extends DispatchBParser {
       if (pt > 0) {
         data.strPlace = data.strName.substring(0,pt).trim();
         data.strName = data.strName.substring(pt+1);
-        
+
         if (data.strPlace.startsWith("X ")) {
           data.strCross = append(data.strCross, " & ", data.strPlace.substring(2).trim());
           data.strPlace = "";
@@ -59,27 +59,4 @@ public class MDHarfordCountyAParser extends DispatchBParser {
     }
     return true;
   }
-  
-  private static final String[] CITY_LIST =new String[]{
-    "ABERDEEN", 
-    "BEL AIR", 
-    "HAVRE DE GRACE", 
-    "JOPPA", 
-    "ABINGDON", 
-    "BELCAMP",
-    "LEVEL", 
-    "CHURCHVILLE", 
-    "DARLINGTON", 
-    "WHITEFORD", 
-    "JARRETTSVILLE", 
-    "STREET",
-    "HICKORY", 
-    "FALLSTON", 
-    "JOPPATOWNE", 
-    "FAWN GROVE", 
-    "DELTA", 
-    "PYLESVILLE", 
-    "WHITE HALL", 
-    "FOREST HILL"
-  };
 }
