@@ -1,18 +1,29 @@
 package net.anei.cadpage.parsers.TN;
 
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 public class TNRheaCountyBParser extends DispatchA65Parser {
-  
+
   public TNRheaCountyBParser() {
-    super(CITY_LIST, "RHEA COUNTY", "TN");
+    this("RHEA COUNTY", "TN");
   }
-  
+
+  public TNRheaCountyBParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState);
+  }
+
   @Override
   public String getFilter() {
     return "rheacotn@911email.net,dispatch@911email.org";
   }
-  
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
     // Cities
@@ -32,7 +43,24 @@ public class TNRheaCountyBParser extends DispatchA65Parser {
     "OLD WASHINGTON",
 
     // Former community
-    "RHEA SPRINGS"
+    "RHEA SPRINGS",
+
+    // Bledsoe County
+
+    // City
+    "PIKEVILLE",
+
+    // Unincorporated communities
+    "COLD SPRING",
+    "DILL",
+    "LEES STATION",
+    "LUSK",
+    "MELVINE",
+    "MOUNT CREST",
+    "NEW HARMONY",
+    "PAILO",
+    "SUMMER CITY",
+
   };
 
 }
