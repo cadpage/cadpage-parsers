@@ -66,15 +66,16 @@ public class DispatchA20Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITYST")) return new MyAddressCityStField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStField();
+    if (name.equals("X")) return new BaseCrossField();
     if (name.equals("ID")) return new IdField("#(\\d+)|([0-9a-f]{24})", true);
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CALL")) return new BaseCallField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
-  private class MyAddressCityStField extends AddressField {
+  private class BaseAddressCityStField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       String zip = "";
@@ -101,8 +102,17 @@ public class DispatchA20Parser extends FieldProgramParser {
       return "ADDR CITY ST";
     }
   }
+  
+  private class BaseCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
 
-  private class MyCallField extends CallField {
+  private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       if (codeLookupTable != null) {
@@ -122,7 +132,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   private static final Pattern INFO_BRK_PTN = Pattern.compile("\n| {3,}");
   private static final Pattern UNIT_PTN = Pattern.compile("ENG .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern GPS_PTN = Pattern.compile("(?:LAT|LON):(.*)", Pattern.CASE_INSENSITIVE);
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       String gpsLoc = "";
