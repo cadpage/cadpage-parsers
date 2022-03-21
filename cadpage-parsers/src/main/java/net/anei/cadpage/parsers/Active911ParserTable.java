@@ -1782,6 +1782,7 @@ public class Active911ParserTable {
       "US/PA/HawthornFD",                 "PAArmstrongCountyB",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
+      "US/PA/KirwanHeightsVFA",           "PAAlleghenyCountyA",
       "US/PA/Km911",                      "PALebanonCounty,PADauphinCountyB",
       "US/PA/KutzTown",                   "PALebanonCountyB",
       "US/PA/LackawannaCounty",           "PALackawannaCounty",

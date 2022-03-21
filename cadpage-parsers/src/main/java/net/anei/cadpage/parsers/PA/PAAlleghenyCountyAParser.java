@@ -49,7 +49,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Undo some IAR edits :(
-    if (subject.equals("Station 125") || subject.equals("WD3-290")) body = body.replace('\n', ',');
+    if (subject.equals("Station 125") || subject.equals("WD3-290") |
+        subject.equals("KHF&EMS")) body = body.replace('\n', ',');
 
     // There are a number of different message markers
     do {
