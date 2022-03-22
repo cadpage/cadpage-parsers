@@ -1580,6 +1580,7 @@ public class ParserList {
               ,"TXFranklinCounty"               ,"Franklin County, TX"
               ,"TXGainesville"                  ,"Gainesville, TX"
               ,"TXGalvestonCounty"              ,"Galveston County, TX"
+              ,"TXGonzalesCounty"               ,"Gonzales County, TX"
               ,"TXGatesville"                   ,"Gatesville, TX"
               ,"TXGillespieCounty"              ,"Gillespie County, TX"
               ,"TXGladewater"                   ,"Gladewater, TX"
