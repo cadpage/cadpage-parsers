@@ -1487,6 +1487,7 @@ public class Active911ParserTable {
       "US/NY/SCFRES",                     "NYSuffolkCountyA",
       "US/NY/SCFRESpaging",               "NYSuffolkCountyA,NYSuffolkCountyD",
       "US/NY/SCFRESprinting",             "N/A",
+      "US/NY/SetauketFD",                 "NYSuffolkCountyB",
       "US/NY/Staticflux",                 "NYNassauCountyO",
       "US/NY/SteubenCounty",              "NYSteubenCounty",
       "US/NY/StLawrenceCounty",           "NYStLawrenceCounty",
