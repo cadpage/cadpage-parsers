@@ -19,7 +19,7 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
 
   @Override
   public String getFilter() {
-    return "46729778078";
+    return "46729778078,46706031127";
   }
 
   @Override
@@ -27,7 +27,7 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MASTER = Pattern.compile("(.*?) (RAPS-\\d+) (.*?) ([DT]\\d{1,2}) (.*?) (La = .*?  Lo = .*)");
+  private static final Pattern MASTER = Pattern.compile("(.*?) (RAPS-\\d+) (.*?) ([DT]\\d{1,2}[A-Z]?) (.*?) (La = .*?  Lo = .*)");
   private static final Pattern ADDR_PTN = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
 
   protected boolean parseMsg(String body, Data data) {
