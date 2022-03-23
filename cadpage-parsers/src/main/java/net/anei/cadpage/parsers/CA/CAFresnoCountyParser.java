@@ -17,7 +17,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
   public CAFresnoCountyParser() {
     super("FRESNO COUNTY", "CA",
           "( Unit:UNIT! Pri:PRI! Loc:ADDR! MapPage:MAP Apt:APT! City:CITY? Nature:CALL% Zone:MAP% EMS#:ID% XStreet:X% GPS/d? ( PAS_#:LINFO INFO/C+ | PLACE ) " +
-          "| CALL! For:UNIT! ( Zone:MAP_ADDR! | Dist:MAP Address:ADDR ) Apt:APT! ( Between:X! Location_Name:PLACE! City:CITY? | City:CITY! Between:X! Location_Name:PLACE! ) ) END");
+          "| CALL! For:UNIT! ( Zone:MAP_ADDR! Address:ADDR? | Dist:MAP Address:ADDR ) Apt:APT! ( Between:X! Location_Name:PLACE! City:CITY? | City:CITY! Between:X! Location_Name:PLACE! ) ) END");
   }
 
   @Override
@@ -128,10 +128,14 @@ public class CAFresnoCountyParser extends FieldProgramParser {
   private class MyMapAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ADDR_MAP_PTN.matcher(field);
-      if (!match.find()) abort();
-      data.strMap = getOptGroup(match.group(1));
-      super.parse(match.group(2), data);
+      if (getRelativeField(+1).startsWith("Address:")) {
+        data.strMap = field;
+      } else {
+        Matcher match = ADDR_MAP_PTN.matcher(field);
+        if (!match.find()) abort();
+        data.strMap = getOptGroup(match.group(1));
+        super.parse(match.group(2), data);
+      }
     }
 
     @Override
