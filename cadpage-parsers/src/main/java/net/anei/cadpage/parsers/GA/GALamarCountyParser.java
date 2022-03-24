@@ -16,7 +16,7 @@ public class GALamarCountyParser extends DispatchA78Parser {
 
   @Override
   public String getFilter() {
-    return "CAD@ssialerts.com";
+    return "CAD@ssialerts.com,donotreply@LamarSOalerts.com";
   }
 
   private static final Pattern CODE_PTN = Pattern.compile("(\\d+)[A-Z]*");
