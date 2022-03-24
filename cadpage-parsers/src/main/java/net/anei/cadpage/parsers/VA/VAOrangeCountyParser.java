@@ -29,7 +29,8 @@ public class VAOrangeCountyParser extends SmartAddressParser {
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{10})\\b *(.*)");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("\\\\+ *(?:([-+]?\\d{2,3}\\.\\d{6,} +[-+]?\\d{2,3}\\.\\d{6,})|-361 -361)(?: +[- A-Z0-9]+)?$");
 
-  private static final Pattern MASTER2 = Pattern.compile("(.*?) LOC: (.*?) ((?:[A-Z]+\\d{4}-\\d{6}\\b[; ]*)+) BOX: (\\d+) (.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(.*?) LOC: *(.*?) (?:((?:[A-Z]+\\d{4}-\\d{6}\\b[; ]*)+) )?BOX: *(\\d+) (.*)");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("(.*), ([A-Z]{2}) +(\\d{5})\\b *(.*)");
   private static final Pattern ID_DELIM_PTN = Pattern.compile(" *; *");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
 
@@ -98,13 +99,32 @@ public class VAOrangeCountyParser extends SmartAddressParser {
 
     Matcher match = MASTER2.matcher(body);
     if (match.matches()) {
-      setFieldList("CALL ADDR APT PLACE ID BOX APT INFO");
+      setFieldList("CALL ADDR APT CITY PLACE ID BOX APT INFO");
       data.strCall = match.group(1).trim();
-      parseAddress(StartType.START_ADDR, match.group(2), data);
-      data.strPlace = getLeft();
-      data.strCallId = ID_DELIM_PTN.matcher(match.group(3)).replaceAll(",");
+      String addr = match.group(2);
+      String id = match.group(3);
+      if (id != null) data.strCallId = ID_DELIM_PTN.matcher(id).replaceAll(",");
       data.strBox = match.group(4);
       String extra = match.group(5);
+
+      match = ST_ZIP_PTN.matcher(addr);
+      if (match.matches()) {
+        addr = match.group(1).trim();
+        data.strState = match.group(2);
+        String zip = match.group(3);
+        data.strPlace = match.group(4);
+        int pt = addr.indexOf(',');
+        if (pt >= 0) {
+          data.strCity = addr.substring(pt+1).trim();
+          addr = addr.substring(0,pt).trim();
+        } else {
+          data.strCity = zip;
+        }
+        parseAddress(addr, data);
+      } else {
+        parseAddress(StartType.START_ADDR, addr, data);
+        data.strPlace = getLeft();
+      }
 
       if (extra.startsWith("None ")) {
         extra = extra.substring(5).trim();
