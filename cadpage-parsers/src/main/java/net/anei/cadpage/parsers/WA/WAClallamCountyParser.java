@@ -8,6 +8,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WAClallamCountyParser extends GroupBestParser {
 
   public WAClallamCountyParser() {
-    super(new WAClallamCountyAParser(), new WAClallamCountyBParser());
+    super(new WAClallamCountyAParser(),
+          new WAClallamCountyBParser(),
+          new WAClallamCountyCParser());
   }
 }
