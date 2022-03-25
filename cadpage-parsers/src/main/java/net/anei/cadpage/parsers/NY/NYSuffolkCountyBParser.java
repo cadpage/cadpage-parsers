@@ -20,7 +20,7 @@ public class NYSuffolkCountyBParser extends DispatchA14Parser {
 
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,scmproducts@optonline.net,@bcfa.xohost.com,alarms@ronkonkomafd.net,paging@babyloncentral.info,paging@setauketfd.info,bcfa@bcfa.xohost.com,paging@portjeffersonfireinfo.com,paging@northpatchoguefireinfo.com,paging@huntingtoncommunityambinfo.com,babylonpaging@brentwoodambulance.com,paging@babylonpaging.com,paging@setauketpaging.net,2083399144,18337881329";
+    return "@firerescuesystems.xohost.com,scmproducts@optonline.net,@bcfa.xohost.com,alarms@ronkonkomafd.net,paging@babyloncentral.info,paging@setauketfd.info,bcfa@bcfa.xohost.com,paging@portjeffersonfireinfo.com,paging@northpatchoguefireinfo.com,paging@huntingtoncommunityambinfo.com,babylonpaging@brentwoodambulance.com,paging@babylonpaging.com,paging@setauketpaging.net,2083399144,8337881329,81777";
   }
 
   private static final Pattern SRC_PTN = Pattern.compile("([A-Z]{2,5}): *(?:\\(\\1\\) *)?");
