@@ -138,7 +138,7 @@ public class ORMarionCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final String UNIT_PTN_STR = "(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|AC|BLJ|DS|DT-LK-STPARK|JT|MCDUTY|MCSO|MP|ODF|PUBLWRKS|RCO|SEND_MAPD|SEND_[A-Z]+|TONE-ON-HOUSE|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?";
+  private static final String UNIT_PTN_STR = "(?:[A-Z]+[0-9]+(?:-[A-Z]+)?|\\d{3}|AC|BLJ|DS|DT-LK-STPARK|JT|MCDUTY|MCSO|MP|NOTIFY-.*|ODF|PUBLWRKS|RCO|SEND_MAPD|SEND_[A-Z]+|TONE-ON-HOUSE|[A-Z]*TONE|Respond-[A-Z0-9]+|.*-FD)(?:,.*)?";
   private static final Pattern UNIT_PTN = Pattern.compile(UNIT_PTN_STR);
   private static final Pattern UNITZ_PTN = Pattern.compile("|" + UNIT_PTN_STR);
   private static final Pattern STATION_PTN = Pattern.compile("\\bSTA\\d+$");
