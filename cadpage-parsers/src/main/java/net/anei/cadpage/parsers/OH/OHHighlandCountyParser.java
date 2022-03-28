@@ -4,165 +4,53 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.MsgParser;
 
 
 
-public class OHHighlandCountyParser extends DispatchEmergitechParser {
-  
+public class OHHighlandCountyParser extends MsgParser {
+
   public OHHighlandCountyParser() {
-    super(new String[]{"HighlandCOSO:", "Networkadmin:"}, 
-          CITY_LIST, "HIGHLAND COUNTY", "OH", TrailAddrType.PLACE);
+    super("HIGHLAND COUNTY", "OH");
+    setFieldList("CALL ADDR APT CITY ST INFO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "networkadmin@highlandcoso.com,HighlandCOSO@eticentral.net";
-  }
-  
-  
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return "centralsquare@highlandcoso.com";
   }
 
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]+\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    Matcher match = INFO_GPS_PTN.matcher(data.strSupp);
-    if (match.find()) {
-      setGPSLoc(match.group(1), data);
-      data.strSupp = data.strSupp.substring(match.end());
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    data.strCall = subject;
+
+    if (body.endsWith(" None")) {
+      body = body.substring(0,body.length()-5).trim();
+    } else {
+      String[] parts = INFO_BRK_PTN.split(body);
+      if (parts.length == 1) return false;
+      body = parts[0];
+      for (int ndx = 1; ndx < parts.length; ndx++) {
+        data.strSupp = append(data.strSupp, "\n", parts[ndx].trim());
+      }
     }
+
+    Parser p = new Parser(body);
+    String city = p.getLastOptional(',');
+    Matcher match = STATE_ZIP_PTN.matcher(city);
+    if (match.matches()) {
+      data.strState = match.group(1);
+      String zip = match.group(2);
+      city = p.getLastOptional(',');
+      if (city.isEmpty() && zip != null) city = zip;
+    }
+    data.strCity = city;
+    parseAddress(p.get().replace('|', '&'), data);
+
     return true;
   }
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("^(\\+\\d{3}\\.\\d{6} -\\d{3}\\.\\d{6})\\b *(?:CF?= *[ \\d]+% *)?");
-  
-  @Override
-  public String getProgram() {
-    return super.getProgram().replace("INFO", "GPS INFO");
-  }
-
-  private static final String[] CITY_LIST = new String[]{
-      
-    "HIGHLAND COUNTY",
-
-    // Cites
-    "HILLSBORO",
-    
-    // Villages
-    "GREENFIELD",
-    "HIGHLAND",
-    "LEESBURG",
-    "LYNCHBURG",
-    "MOWRYSTOWN",
-    "SINKING SPRING",
-    
-    // Townships
-    "BRUSH CREEK TWP",
-    "BRUSHCREEK TWP",
-    "CLAY TWP",
-    "CONCORD TWP",
-    "DODSON TWP",
-    "FAIRFIELD TWP",
-    "HAMER TWP",
-    "JACKSON TWP",
-    "LIBERTY TWP",
-    "MADISON TWP",
-    "MARSHALL TWP",
-    "NEW MARKET TWP",
-    "PAINT TWP",
-    "PENN TWP",
-    "SALEM TWP",
-    "UNION TWP",
-    "WASHINGTON TWP",
-    "WHITEOAK TWP",
-    
-    // Unincorporated communities
-    "ALLENSBURG",
-    "BELFAST",
-    "BERRYSVILLE",
-    "BOSTON",
-    "BRIDGES",
-    "BUFORD",
-    "CAREYTOWN",
-    "CARMEL",
-    "CENTERFIELD",
-    "DANVILLE",
-    "DODSONVILLE",
-    "EAST DANVILLE",
-    "EAST MONROE",
-    "ELMVILLE",
-    "FAIRFAX",
-    "FAIRVIEW",
-    "FOLSOM",
-    "GIST SETTLEMENT",
-    "HARIETT",
-    "HARWOOD",
-    "HOAGLAND",
-    "HOLLOWTOWN",
-    "MARSHALL",
-    "NEW MARKET",
-    "NEW PETERSBURG",
-    "PRICETOWN",
-    "RAINSBORO",
-    "RUSSELL",
-    "SAMANTHA",
-    "SHACKLETON",
-    "STRINGTOWN",
-    "SUGAR TREE RIDGE",
-    "TAYLORSVILLE",
-    "WILLETTSVILLE",
-    
-    // Adams County
-    "ADAMS COUNTY",
-    "CHERRY FORK",
-    "LIBERTY TWP",
-    "WAYNE TWP",
-    "WINCHESTER",
-    "WINCHESTER TWP",
-    
-    // Brown County
-    "BROWN COUNTY",
-    "EAGLE TWP",
-    "FAYETTEVILLE",
-    "GREEN TWP",
-    "MOUNT ORAB",
-    "MT ORAB",
-    "PERRY TWP",
-    "PIKE TWP",
-    "SARDINIA",
-    "ST MARTIN",
-    "WASHINGTON TWP",
-    
-    // Clinton County
-    "CLINTON COUNTY",
-    "CLARK TWP",
-    "GREEN TWP",
-    "MARTINSVILLE",
-    "NEW VIENNA",
-    "WAYNE TWP",
-    
-    // Fayette County
-    "FAYETTE COUNTY",
-    "GREEN TWP",
-    "PERRY TWP",
-    "WAYNE TWP",
-    
-    // Pike County
-    "PIKE COUNTY",
-    "MIFFLIN TWP",
-    "PERRY TWP",
-    
-    // Ross County
-    "ROSS COUNTY",
-    "BRAINBRIDGE",
-    "BUSKIN TWP",
-    "BUCKSKIN TWP ROSS COUNTY",
-    "PAINT TWP",
-    "PAXTON",
-    "SOUTH SALEM"
-  };
 }
