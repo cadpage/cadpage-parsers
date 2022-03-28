@@ -36,7 +36,9 @@ public class DispatchA27Parser extends FieldProgramParser {
 
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) Unit(s)_responded:UNIT? UNIT+");
+          "( SELECT/NEW ADDRCITY/SC Time_reported:DATETIME! Unit(s)_responded:UNIT! " +
+          "| ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) Unit(s)_responded:UNIT2? UNIT2+ " +
+          ")");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
 
@@ -48,7 +50,14 @@ public class DispatchA27Parser extends FieldProgramParser {
     body = body.substring(match.end()).trim();
     unitMode = UnitMode.UNIT;
     times = "";
-    if (!super.parseFields(DELIM_PTN.split(body), data)) return false;;
+    String[] flds = DELIM_PTN.split(body);
+    if (flds.length > 1) {
+      setSelectValue("OLD");
+      if (!super.parseFields(flds, data)) return false;
+    } else {
+      setSelectValue("NEW");
+      if (!super.parseFields(body.split("\n"), data)) return false;
+    }
 
     if (data.strTime.length() == 0) return false;
     if (data.msgType == MsgType.RUN_REPORT) {
@@ -61,16 +70,17 @@ public class DispatchA27Parser extends FieldProgramParser {
   public Field getField(String name) {
       if (name.equals("ADDRCITY")) return new BaseAddressField();
       if (name.equals("DUP")) return new BaseDuplField();
+      if (name.equals("DATETIME")) return new BaseDateTimeField();
       if (name.equals("MASH")) return new BaseMashField();
       if (name.equals("SRC")) return new BaseSrcField();
       if (name.equals("ID")) return new BaseIdField();
       if (name.equals("TIMES")) return new BaseTimesField();
-      if (name.equals("UNIT")) return new BaseUnitField();
+      if (name.equals("UNIT2")) return new BaseUnit2Field();
     return super.getField(name);
   }
 
-  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?, [^,]*?),(?: (?:\\d{5}|))?(?:, *([-+]?\\d+\\.\\d{4,}, *[-+]?\\d+\\.\\d{4,}))?");
-  protected class BaseAddressField extends AddressCityField {
+  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *([-+]?\\d+\\.\\d{4,}, *[-+]?\\d+\\.\\d{4,}))?(?: +(\\d{4}-\\d{6}))?");
+  protected class BaseAddressField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
@@ -78,6 +88,14 @@ public class DispatchA27Parser extends FieldProgramParser {
       if(m.matches()) {                           // If we have a match
         field = m.group(1).trim();                // Remove the zipcode
         setGPSLoc(getOptGroup(m.group(2)), data);
+        data.strCallId = getOptGroup(m.group(3));
+      }
+
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt < 0) abort();
+        data.strPlace = field.substring(pt+1, field.length()-1).trim();
+        field = field.substring(0,pt).trim();
       }
 
       int x = field.indexOf("/unincorp");
@@ -87,11 +105,18 @@ public class DispatchA27Parser extends FieldProgramParser {
 
       field = field.replace('@',  '&');
       super.parse(field, data);
+
+
+      int pt = data.strAddress.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strApt = append(data.strApt, "-", data.strAddress.substring(pt+1).trim());
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " GPS";
+      return super.getFieldNames() + " PLACE GPS ID?";
     }
   }
 
@@ -108,7 +133,13 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private class BaseDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!parseDateTime(field, data)) abort();
+    }
+  }
+
   private class BaseMashField extends Field {
     @Override
     public boolean canFail() {
@@ -145,24 +176,15 @@ public class DispatchA27Parser extends FieldProgramParser {
       }
       String place = getValue(line, "Common Name:");
       if (place != null) {
-        data.strPlace = stripFieldStart(place, "CPN:");
+        data.strPlace = append(data.strPlace, " - ", stripFieldStart(place, "CPN:"));
         line = p.getLine();
       }
       if (getValue(line, "Activity:") == null) abort();
       if (getValue(p, "Disposition:") == null) abort();
       String time = getValue(p,"Time reported:");
       if (time == null) abort();
-      Matcher match = DATE_TIME_PTN.matcher(time);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      time = match.group(2);
-      if (time.endsWith("M")) {
-        setTime(TIME_FMT, match.group(2), data);
-      } else {
-        data.strTime = time;
-      }
+      if (!parseDateTime(time, data)) abort();
     }
-
 
     private String getValue(Parser p, String key) {
       String line = p.getLine();
@@ -179,6 +201,21 @@ public class DispatchA27Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "SRC ID PLACE DATE TIME";
     }
+  }
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/(?:\\d{2}){1,2}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+
+  private static boolean parseDateTime(String field, Data data) {
+    Matcher match = DATE_TIME_PTN.matcher(field);
+    if (!match.matches()) return false;
+    data.strDate = match.group(1);
+    field = match.group(2);
+    if (field.endsWith("M")) {
+      setTime(TIME_FMT, match.group(2), data);
+    } else {
+      data.strTime = field;
+    }
+    return true;
   }
 
   private class BaseSrcField extends SourceField {
@@ -266,7 +303,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
 
-  private class BaseUnitField extends UnitField {
+  private class BaseUnit2Field extends UnitField {
     @Override
     public void parse(String field, Data data) {
       parseUnitField(false, field, data);
