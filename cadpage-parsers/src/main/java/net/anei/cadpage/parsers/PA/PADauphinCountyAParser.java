@@ -51,6 +51,9 @@ public class PADauphinCountyAParser extends FieldProgramParser {
     int pt = body.indexOf("\n\n--");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
+    // Undo IAR edits :(
+    if (subject.equals("Company 34")) body = body.replace(" \n", " ");
+
     String[] flds = subject.split("\\|");
     if (flds[flds.length-1].equals("!")) {
       if (flds.length > 1) data.strSource = flds[0];
