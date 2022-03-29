@@ -2,10 +2,10 @@ package net.anei.cadpage.parsers.TN;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
 
-public class TNCoffeeCountyParser extends DispatchA65Parser {
+public class TNCoffeeCountyParser extends DispatchA74Parser {
 
   public TNCoffeeCountyParser() {
     super(CITY_LIST, "COFFEE COUNTY", "TN");
