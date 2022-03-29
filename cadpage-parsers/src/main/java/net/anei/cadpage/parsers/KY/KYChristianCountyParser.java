@@ -31,6 +31,9 @@ public class KYChristianCountyParser extends DispatchA27Parser {
   private class MyAddressField extends BaseAddressField {
     @Override
     public void parse(String field, Data data) {
+
+      field = field.replace("422623", "42262");
+
       Matcher match = POUND_DIR_PTN.matcher(field);
       if (match.find()) {
         String dir = ' ' + match.group(1);

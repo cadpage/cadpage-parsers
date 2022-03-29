@@ -79,16 +79,19 @@ public class DispatchA27Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *([-+]?\\d+\\.\\d{4,}, *[-+]?\\d+\\.\\d{4,}))?(?: +(\\d{4}-\\d{6}))?");
+  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *(\\d{5}|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
   protected class BaseAddressField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
+      String zip = null;
+      field = field.replace(" -, ", ", -");
       Matcher m = PTN_FULL_ADDR.matcher(field);   // This will match address, city, and zip
       if(m.matches()) {                           // If we have a match
         field = m.group(1).trim();                // Remove the zipcode
-        setGPSLoc(getOptGroup(m.group(2)), data);
-        data.strCallId = getOptGroup(m.group(3));
+        zip = m.group(2);
+        setGPSLoc(getOptGroup(m.group(3)), data);
+        data.strCallId = getOptGroup(m.group(4));
       }
 
       if (field.endsWith(")")) {
@@ -112,6 +115,8 @@ public class DispatchA27Parser extends FieldProgramParser {
         data.strApt = append(data.strApt, "-", data.strAddress.substring(pt+1).trim());
         data.strAddress = data.strAddress.substring(0,pt).trim();
       }
+
+      if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
     }
 
     @Override

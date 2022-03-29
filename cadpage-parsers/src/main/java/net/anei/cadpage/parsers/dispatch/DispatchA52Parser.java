@@ -14,34 +14,45 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   private Properties callCodes;
   private CodeTable callTable;
+  private Properties zipCityTable;
 
   public DispatchA52Parser(String defCity, String defState) {
     this(null, null, null, defCity, defState);
   }
 
   public DispatchA52Parser(Properties callCodes, String defCity, String defState) {
-    this(callCodes, null, null, defCity, defState);
+    this(callCodes, null, null, defCity, defState, null);
+  }
+
+  public DispatchA52Parser(Properties callCodes, String defCity, String defState, Properties zipCityTable) {
+    this(callCodes, null, null, defCity, defState, zipCityTable);
   }
 
   public DispatchA52Parser(CodeTable codeTable, String defCity, String defState) {
-    this(null, codeTable, null, defCity, defState);
+    this(null, codeTable, null, defCity, defState, null);
   }
 
   public DispatchA52Parser(Properties callCodes, Properties cityCodes, String defCity, String defState) {
-    this(callCodes, null, cityCodes, defCity, defState);
+    this(callCodes, null, cityCodes, defCity, defState, null);
   }
 
   public DispatchA52Parser(CodeTable codeTable, Properties cityCodes, String defCity, String defState) {
-    this(null, codeTable, cityCodes, defCity, defState);
+    this(null, codeTable, cityCodes, defCity, defState, null);
   }
 
   private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState) {
+    this(callCodes, callTable, cityCodes, defCity, defState, null);
+
+  }
+
+  private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState, Properties zipCityTable) {
     super(cityCodes, defCity, defState,
           "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR! BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
           "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP LAT:GPS1 LONG:GPS2", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE);
 
     this.callCodes = callCodes;
     this.callTable = callTable;
+    this.zipCityTable = zipCityTable;
   }
 
   private static final Pattern PREFIX_PTN = Pattern.compile("[a-z0-9]*: *");
@@ -202,6 +213,7 @@ public class DispatchA52Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (data.strCity.length() > 0) return;
+      if (zipCityTable != null) field = convertCodes(field, zipCityTable);
       super.parse(field, data);
     }
   }

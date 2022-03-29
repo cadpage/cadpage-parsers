@@ -5,11 +5,46 @@ import java.util.Properties;
 import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
 public class SCSpartanburgCountyBParser extends DispatchA52Parser {
-  
+
   public SCSpartanburgCountyBParser() {
-    super(CALL_CODES, "SPARTANBURG COUNTY", "SC");
+    super(CALL_CODES, "SPARTANBURG COUNTY", "SC", ZIP_CITY_TABLE);
   }
-  
+
+  private static final Properties ZIP_CITY_TABLE = buildCodeTable(new String[] {
+      "29301", "Spartanburg",
+      "29302", "Spartanburg",
+      "29303", "Spartanburg",
+      "29306", "Spartanburg",
+      "29307", "Spartanburg",
+      "29316", "Boiling Springs",
+      "29320", "Arcadia",
+      "29322", "Campobello",
+      "29323", "Chesnee",
+      "29324", "Clifton",
+      "29329", "Converse",
+      "29330", "Cowpens",
+      "29331", "Cross Anchor",
+      "29333", "Drayton",
+      "29334", "Duncan",
+      "29335", "Enoree",
+      "29338", "Fingerville",
+      "29346", "Glendale",
+      "29349", "Inman",
+      "29356", "Landrum",
+      "29365", "Lyman",
+      "29368", "Mayo",
+      "29369", "Moore",
+      "29372", "Pacolet",
+      "29373", "Pacolet",
+      "29374", "Pauline",
+      "29375", "Reidville",
+      "29376", "Roebuck",
+      "29377", "Startex",
+      "29378", "Saxon",
+      "29385", "Wellford",
+      "29388", "Woodruff"
+  });
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "00",       "OFFICER DOWN",
       "00F",      "OFFICER DOWN",
