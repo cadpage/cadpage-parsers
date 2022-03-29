@@ -1623,6 +1623,7 @@ public class ParserList {
               ,"TXMedinaCounty"                 ,"Medina County, TX"
               ,"TXMidlandCounty"                ,"Midland County, TX"
               ,"TXMidlothian"                   ,"Midlothian, TX"
+              ,"TXMineralWells"                 ,"Mineral Wells, TX"
               ,"TXMissouriCity"                 ,"Missouri City, TX"
               ,"TXMontgomeryCounty"             ,"Montgomery County, TX"
               ,"TXNacogdochesCounty"            ,"Nacogdoches County, TX"
