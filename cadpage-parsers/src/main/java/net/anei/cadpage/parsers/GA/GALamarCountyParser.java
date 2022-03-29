@@ -24,8 +24,10 @@ public class GALamarCountyParser extends DispatchA78Parser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
+    data.strCall = stripFieldStart(data.strCall, ",");
     String code = data.strCall;
     data.strCode = code;
+    if (code.length() > 3) code = code.substring(0,3);
     String call = CALL_CODES.getProperty(code);
     if (call == null) {
       Matcher match = CODE_PTN.matcher(code);
