@@ -12,7 +12,7 @@ public class MOBuchananCountyDParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@stjoemo.org";
+    return "@stjoemo.org,@stjosephmo.gov";
   }
 
   public int getMapFlags() {
