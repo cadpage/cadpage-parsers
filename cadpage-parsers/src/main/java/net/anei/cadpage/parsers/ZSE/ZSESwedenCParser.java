@@ -19,7 +19,7 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
 
   @Override
   public String getFilter() {
-    return "46729778078,46706031127";
+    return "46729778,46706031127";
   }
 
   @Override
@@ -27,8 +27,8 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MASTER = Pattern.compile("(.*?) (RAPS-\\d+) (.*?) ([DT]\\d{1,2}[A-Z]?) (.*?) (La = .*?  Lo = .*)");
-  private static final Pattern ADDR_PTN = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
+  private static final Pattern MASTER = Pattern.compile("(.*?) (RAPS-\\d+|\\d+SjvIns-\\d) (.*?) (?:([DT]\\d{1,2}[A-Z]?) (.*?) )?(La = .*?  Lo = .*)");
+  private static final Pattern ADDR_PTN = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+[A-Z]?|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
 
   protected boolean parseMsg(String body, Data data) {
     String[] flds = body.split("\n");
@@ -41,7 +41,7 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     data.strCall = match.group(1).trim();
     data.strChannel = match.group(2);
     String callAddr = match.group(3).trim();
-    data.strUnit = match.group(4);
+    String unit = match.group(4);
     String city2 = match.group(5);
     parseGPSField(match.group(6), data);
 
@@ -53,6 +53,17 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
       callAddr = callAddr.substring(0,match.start()).trim();
     }
     data.strCall = append(data.strCall, " - ", callAddr);
+
+    if (unit == null) {
+      if (data.strCity.isEmpty()) return false;
+      Parser p = new Parser(data.strCity);
+      data.strCity = p.get(' ');
+      unit = p.get(' ');
+      city2 = p.get();
+    }
+
+    data.strUnit = unit;
+
     if (data.strCity.isEmpty()) data.strCity = city2;
     return true;
   }
