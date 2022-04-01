@@ -11,7 +11,7 @@ public class NHSullivanCountyParser extends DispatchA32Parser {
 
   @Override
   public String getFilter() {
-    return "charlestowndispatch@gmail.com";
+    return "charlestowndispatch@gmail.com,lebanonpaging@gmail.com";
   }
 
   @Override
