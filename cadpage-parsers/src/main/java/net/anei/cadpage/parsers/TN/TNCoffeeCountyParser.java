@@ -26,6 +26,7 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
       "BEECHGROVE",
       "BEECH GROVE",
       "BELMONT",
+      "FARRAR HILL",
       "FUDGEAROUND",
       "HILLSBORO",
       "LAKEWOOD PARK",
@@ -40,6 +41,5 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
 
       // Bedford County
       "NORMANDY"
-
   };
 }
