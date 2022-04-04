@@ -7,7 +7,7 @@ public class GADadeCountyBParser extends DispatchH05Parser {
 
   public  GADadeCountyBParser() {
     super("DADE COUNTY", "GA",
-          "( SELECT/1 Date:DATETIME! Fire_Call:CALL_TYPE! EMS_Call:CALL_TYPE Addr:ADDRCITY/S6! Common_Name:PLACE! City:CITY Cross_St:X! Nature_of_Call:CALL/SDS? Unit:UNIT Primary_Incident:ID ( Info:INFO! | Narrative:INFO! ) INFO/N+ " +
+          "( SELECT/1 Date:DATETIME! ( Fire_Call:CALL_TYPE! EMS_Call:CALL_TYPE | Call_Type:CALL_TYPE! ) Addr:ADDRCITY/S6! Common_Name:PLACE! City:CITY Cross_St:X! Nature_of_Call:CALL/SDS? Unit:UNIT Primary_Incident:ID ( Info:INFO! | Narrative:INFO! ) INFO/N+ " +
           "| DATETIME ID2 ADDRCITY2/S6 FIRE_CALL_TYPE EMS_CALL_TYPE! UNIT TABLE! TIMES+? TABLE< INFO_BLK+ )", "table");
   }
 
