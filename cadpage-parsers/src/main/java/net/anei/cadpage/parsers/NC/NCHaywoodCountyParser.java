@@ -25,6 +25,11 @@ public class NCHaywoodCountyParser extends DispatchSouthernParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "CAD:");
     if (!super.parseMsg(body, data)) return false;
