@@ -1354,6 +1354,7 @@ public class Active911ParserTable {
       "US/NH/LRMFA",                      "NHGraftonCountyA",
       "US/NH/LRMFALimited",               "NHGraftonCountyA",
       "US/NH/NewLondonPD",                "NHMerrimackCounty",
+      "US/NH/UVRESA",                     "NHGraftonCountyC",
       "US/NH/Wolfeboro",                  "NHCarrollCounty",
       "US/NJ/AtPdText",                   "NJSussexCountyA",
       "US/NJ/BeverlyCityFD",              "NJBurlingtonCountyC,NJBurlingtonCountyH",
