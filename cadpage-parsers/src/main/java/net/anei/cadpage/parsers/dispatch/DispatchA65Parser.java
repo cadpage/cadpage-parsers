@@ -11,17 +11,27 @@ public class DispatchA65Parser extends FieldProgramParser {
 
   public DispatchA65Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CFS:ID! MSG:CALL! CALL/SDS+? EMPTY EMPTY+? ( SRC END | CITY? ADDR DUP? APT? CS:X? EMPTY+? SRC END )");
+          "CFS:ID! MSG:CALL! ( SELECT/1 CALL/SDS+? EMPTY EMPTY+? ( SRC END | CITY? ADDR DUP? APT? CS:X? EMPTY+? SRC END ) " +
+                            "| ADDRESS:ADDRCITYST! LAT:GPS1! LON:GPS2! RUN#:ID/L END " +
+                            ")");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("E911-Page")) return false;
-    body = body.trim();
-    body = body.replace("\nX:", "\nCS:").replace("\nApt:", "\nAPT:");
-    if (!parseFields(body.split("\n"), data)) return false;
-    if (data.strAddress.length() == 0) data.msgType = MsgType.GEN_ALERT;
-    return true;
+    if (subject.equals("E911-Page")) {
+      setSelectValue("1");
+      body = body.replace("\nX:", "\nCS:").replace("\nApt:", "\nAPT:");
+      if (!parseFields(body.split("\n"), data)) return false;
+      if (data.strAddress.length() == 0) data.msgType = MsgType.GEN_ALERT;
+      return true;
+    }
+
+    if (subject.equals("E-911 Page")) {
+      setSelectValue("2") ;
+      return super.parseMsg(body, data);
+    }
+
+    return false;
   }
 
   @Override

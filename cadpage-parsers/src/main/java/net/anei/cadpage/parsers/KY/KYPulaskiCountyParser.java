@@ -6,39 +6,38 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 public class KYPulaskiCountyParser extends DispatchA65Parser {
-  
+
   public KYPulaskiCountyParser() {
     super(CITY_LIST, "PULASKI COUNTY", "KY");
     setupCities(CITY_CODES);
   }
-  
+
   @Override
   public String getFilter() {
-    return "pulaskicoky@911email.net,geoconex@nlamerica.com,6064258900@mms.cricketwireless.net,dispatch@911comm";
+    return "dispatch@911comm2.info,dispatch@911comm3.info";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     data.strCode = data.strCall;
     data.strCall = convertCodes(data.strCode, CALL_CODES);
-    
+
     data.strCity = convertCodes(data.strCity.toUpperCase(), CITY_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replaceAll("CALL", "CODE CALL");
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
-    if (city.equals("WHITE LILY")) return "SOMERSET";
-    return city;
+    return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "1",      "Receiving Poorly",
       "2",      "Receiving Well",
@@ -103,11 +102,13 @@ public class KYPulaskiCountyParser extends DispatchA65Parser {
   });
 
   private static final String[] CITY_LIST = new String[]{
+      "BRONSTON",
       "BURNSIDE",
       "ETNA",
       "EUBANK",
       "FAUBUSH",
       "FERGUSON",
+      "HAYNES KNOB",
       "INGLE",
       "NANCY",
       "OAK HILL",
@@ -118,9 +119,14 @@ public class KYPulaskiCountyParser extends DispatchA65Parser {
       "WHITE LILY",
       "WOODSTOCK",
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
      "SOMERSET CO", "SOMERSET",
      "SS",          "SOMERSET",
+  });
+
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[] {
+      "HAYNES KNOB",    "SOMERSET",
+      "WHITE LILY",     "SOMERSET"
   });
 }
