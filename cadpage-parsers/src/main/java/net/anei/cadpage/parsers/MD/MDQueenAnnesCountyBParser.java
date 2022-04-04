@@ -10,9 +10,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class MDQueenAnnesCountyBParser extends FieldProgramParser {
-  
+
   public MDQueenAnnesCountyBParser() {
-    super(CITY_CODES, "QUEEN ANNES COUNTY", "MD", 
+    super(CITY_CODES, "QUEEN ANNES COUNTY", "MD",
           "( CT:ADDR/S0L! BOX:BOX! DUE:UNIT! END " +
           "| Inc:ID! Call_Type:CODE! Call_Desc:CALL! Date:DATE! Time_Recv:TIME! Time_Clear:TIME_CLR! Box_Area:BOX! Station:SRC! Priority:PRI! Lat:GPS1! Long:GPS2! City:CITY! Location:ADDR/S0! Units:UNIT! UNIT/S+ Rmk:INFO/N+ From_CAD_User:SKIP )");
     setupCallList(CALL_LIST);
@@ -21,41 +21,41 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupProtectedNames("4-H PARK");
   }
-  
+
   @Override
   public String getFilter() {
-    return "qac911@gmail.com";
+    return "qac911@gmail.com,@c-msg.net";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("[\t\n]+");
-  private static final Pattern MARKER = Pattern.compile("QA911com:(\\d{8}) +(?=CT:)");
-  
+  private static final Pattern MARKER = Pattern.compile("(?:QA911com:|)(\\d{8}) +(?=CT:)");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.equals("From QAC DES")) {
       if (!body.startsWith("Inc:")) return false;
       if (!parseFields(DELIM.split(body), data)) return false;
     }
-    
+
     else {
       Matcher match = MARKER.matcher(body);
       if (!match.lookingAt()) return false;
-      
+
       data.strCallId = match.group(1);
       body = body.substring(match.end());
       if (!super.parseMsg(body, data)) return false;
     }
-    
+
     fixMutualAidCalls(data);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
-    return "ID? " + super.getProgram(); 
+    return "ID? " + super.getProgram();
   }
-  
+
   private static final Pattern MA_BOX_PTN = Pattern.compile("[A-Z]{4}");
   private static final Pattern MA_TO_CITY_PTN = Pattern.compile("MUTUAL AID.* TO ([A-Z]+)");
 
@@ -80,7 +80,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TIME_CLR")) return new MyTimeClearedField();
@@ -88,7 +88,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
-  
+
   private class MyTimeClearedField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -97,27 +97,29 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
         data.strSupp = "Time Recv: " + data.strTime + "\nTime Clear: " + field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO?";
     }
   }
-  
+
   private class MyGPSField extends GPSField {
-     
+
     public MyGPSField(int type) {
       super(type);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       super.parse(field+"000", data);
     }
   }
-  
+
   static String[] MWORD_STREET_LIST = new String[]{
       "4-H PARK",
+      "ANDREW FARM",
+      "ANNA CAROL",
       "BATTS NECK",
       "BAY BRIDGE",
       "BAY CITY",
@@ -129,12 +131,15 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "BENTON PLEASURE",
       "BOOKERS WHARF",
       "BRICK HOUSE",
+      "BURCHARD SAWMILL",
+      "BURTON AIR",
       "BUSCHS FRONTAGE",
       "CABIN CREEK",
       "CALLAHAN FARM",
       "CARRS WHARF",
       "CASTLE HARBOR",
       "CASTLE MARINA",
+      "CEE JAY",
       "CHANNEL MARKER",
       "CHAR NOR MANOR",
       "CHESTER RIVER BEACH",
@@ -146,6 +151,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "CHURCH HILL",
       "CLABBER HILL",
       "CLAIBORNE FIELDS",
+      "CLANNIHAN SHOP",
       "CLARK CORNERS",
       "COOPER FARM",
       "COX NECK",
@@ -157,13 +163,18 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "CREEKSIDE COMMONS",
       "CROUSE MILL",
       "DEL RHODES",
+      "DELL FOXX",
       "DIXON STABLE",
       "DOUBLE CREEK POINT",
       "DUCK PUDDLE",
       "DUDLEY CORNERS",
+      "DUHAMEL CORNER",
       "DULIN CLARK",
       "EAST CAMPUS",
+      "EAST HILL",
+      "ELL DOWNES",
       "EMORY FARM",
+      "FALLEN HORSE",
       "FIVE FARMS",
       "FLAT IRON SQUARE",
       "GOLDEN EYE",
@@ -179,9 +190,12 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "HICKORY RIDGE",
       "HIGH BRIDGE",
       "HIGH POINT",
+      "HOLDEN FARM",
       "HOUGHTON HOUSE",
       "HOUSE POINT",
       "INDIAN PLANTATION",
+      "ISLAND CREEK",
+      "JAMES K HORNE",
       "JOHN BROWN",
       "JOHN PATRICK",
       "JOHN POWELL",
@@ -217,9 +231,12 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "PERRYS CORNER",
       "PETERS CORNER",
       "PINE COVE",
+      "PINE TREE",
       "PINEY CREEK",
       "PINEY NARROWS",
+      "POPLAR SCHOOL",
       "PRICE STATION",
+      "PRINCESS ANNE",
       "PROSPECT BAY",
       "QUAKER NECK",
       "QUARTER CREEK",
@@ -247,6 +264,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "SKIP JACK",
       "SOUTH CAROLINA",
       "SOUTH LAKE",
+      "SPANIARD NECK",
       "SPARKS MILL",
       "SPORTSMAN HALL",
       "SPORTSMAN NECK",
@@ -256,7 +274,9 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "SWAN COVE",
       "THOMPSON CREEK",
       "TOWN POINT",
+      "TRINITY FARM",
       "UNION CHURCH",
+      "WATERSIDE FARM",
       "WEB FOOT",
       "WELCOME CENTER",
       "WELLS COVE",
@@ -272,7 +292,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "WYE MILLS",
       "YACHT CLUB"
   };
-  
+
   static CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAINS",
       "ACCIDENTAL OVERDOSE",
@@ -317,7 +337,8 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "FUEL SPILL/WATERWAY",
       "FUEL SPILL IN DRAIN",
       "GENERAL FIRE ALARM",
-      "HAZMAT",                                                                                                                                                                                                                                                
+      "GRASS FIRE W/EXP",
+      "HAZMAT",
       "HAZMAT/SMALL SPILL",
       "HEADACHE",
       "HEART PROBLEMS",
@@ -330,29 +351,36 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "INSIDE GAS LEAK",
       "LARGE FUEL SPILL",
       "LARGE OUTSIDE FIRE",
+      "LIFT ASSIST",
       "LG BRUSH/GRASS FIRE",
+      "LOCK IN/OUT DWELLING",
       "LOCK OUT OF VEHICLE",
       "LOCK OUT",
+      "MINOR MVC",
       "MLTPL DWELLING FIRE",
       "MULTIPLE VEH MVC",
+      "MUTUAL AID MEDICAL TO KENT",
       "MVC/NOT ALERT",
       "MVC COMMERCIAL VEH",
       "MVC W/FUEL LEAK",
+      "MVC HIGH MECHANISM",
       "MVC HIGH OCCUPANCY",
       "MVC INJ/HAZARD",
       "MVC INVOLVING A BUS",
       "MVC UNK INJURY",
       "MVC UNKNOWN INJURIES",
+      "MVC VEH VS BLDG",
       "MVC W/BIKE/MOTORCYCL",
       "MVC W/ENTRAPMENT",
       "MVC W/FUEL LEAK",
       "MVC W/HAZARDS",
       "MVC W/INJURIES",
       "MVC W/MINOR INJURIES",
+      "MVC W/MOTORCYCLE",
       "MVC PED/BIKE/MC",
       "MVC W/PEDESTRIAN",
       "MVC W/ROLLOVER",
-      "NEAR FAINTING",  
+      "NEAR FAINTING",
       "OBVIOUS DEATH",
       "ODOR OF GAS INSIDE",
       "ODOR OF SMOKE INSIDE",
@@ -378,19 +406,22 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "SMALL STRUCTURE FIRE",
       "SMOKE DETECTOR",
       "SMOKE INVESTIGATION",
+      "STABBING",
       "STROKE",
       "STROKE(CVA)",
       "STROKE (CVA)",
       "STROKE(CVA)<2HRS",
       "STROKE(CVA)>2HRS",
+      "STRUCTURE FIRE",
       "STRUCTURE FIRE/OUT",
       "TALB MUTUAL AID MEDICAL",
       "TANK FARM FIRE",
       "TRAILER FIRE",
       "TRANSFORMER FIRE",
       "TRAUMATIC INJURY",
-      "UNCONSCIOUS",                                                                                                                                                                                                                                           
+      "UNCONSCIOUS",
       "UNCONSCIOUS/FAINTING",
+      "UNK BRUSH FIRE",
       "UNK STRUCTURE FIRE",
       "UNKNOWN PROBLEM",
       "UNKNOWN TYPE ALARM",
@@ -402,7 +433,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "WILDLAND FIRE",
       "WIRES DOWN",
       "VEHICLE FIRE",
-      
+
       "MUTUAL AID",
       "MUTUAL AID TO AACO",
       "MUTUAL AID TO CARO",
@@ -410,7 +441,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "MUTUAL AID TO TALBOT",
       "MUTUAL AID MEDICAL"
   );
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BARC", "BARCLAY",
       "CENT", "CENTREVILLE",
@@ -431,7 +462,7 @@ public class MDQueenAnnesCountyBParser extends FieldProgramParser {
       "WYE",  "WYE MILLS"
 
   });
-  
+
   private static final Properties MA_CITY_TABLE = buildCodeTable(new String[]{
       "AACO", "ANNE ARUNDEL COUNTY",
       "CARO", "CAROLINE COUNTY",
