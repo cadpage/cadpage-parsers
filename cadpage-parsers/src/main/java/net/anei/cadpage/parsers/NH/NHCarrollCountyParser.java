@@ -1,13 +1,15 @@
 package net.anei.cadpage.parsers.NH;
 
-public class NHCarrollCountyParser extends NHGraftonCountyBParser {
-  
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/*
+Carroll County, NH
+*/
+
+
+public class NHCarrollCountyParser extends GroupBestParser {
+
   public NHCarrollCountyParser() {
-    super("CARROLL COUNTY", "NH");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "wfrpaging@gmail.com,dispatch@carrollcountynh.net";
+    super(new NHCarrollCountyAParser(), new NHCarrollCountyBParser());
   }
 }
