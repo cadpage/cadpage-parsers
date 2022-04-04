@@ -20,12 +20,12 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com,lincolnpd546@lincolnnh.org";
+    return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com,lincolnpd546@lincolnnh.org,lebanonpaging@gmail.com,cpddispatch@claremontnh.com,hanoverdispatch@gmail.com";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("CCSO")) subject += " Page";
+    if (subject.equals("CCSO") || subject.equals("_")) subject += " Page";
     if (!super.parseMsg(subject, body, data)) return false;
     data.strCity = stripFieldEnd(data.strCity, "Sheriff");
     return true;
@@ -79,6 +79,7 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
     "WOODSTOCK",
 
     // Township
+    "LIVERMORE",
     "LIVERMORE TWP",
 
     // Census-designated places
@@ -210,7 +211,34 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
       "WEST BURKE",
 
       // Census-designated places
-      "EAST BURKE"
+      "EAST BURKE",
+
+      // Coos County
+      "CARROLL",
+      "DALTON",
+      "JEFFERSON",
+      "WHITEFIELD",
+
+      // Sullivan County
+      "CLAREMONT",
+      "GRANTHAM",
+      "PLAINFIELD",
+      "UNITY",
+
+      // Merimack County
+      "BRADFORD",
+      "NEWBURY",
+      "NORTHUMBERLAND",
+
+      // Essex County, VT
+      "LUNENBURG",
+
+      // Orange County, VT
+      "W NEWBURY",
+      "WEST NEWBURY",
+
+      // Windsor County, VT
+      "HARTFORD"
   };
 
 }

@@ -20,6 +20,7 @@ public class DispatchA32Parser extends FieldProgramParser {
           "( GEN_INFO/G DATETIME2 District:MAP? " +
           "| ADDR CALL! " +
           "| CALL ( ( DATETIME2 | CALL/SDS DATETIME2! | CALL/SDS CALL/SDS DATETIME2 ) District:MAP? ID? ( SELECT/ADDRTAG PLACE+? Addr:ADDR! INFO+? CITY_ST! | PLACE+? ADDR/Z CITY_ST! ) ID? " +
+                 "| District:MAP! Addr:ADDR! CITY_ST! " +
                  "| ( ADDR_PL ADDR_PL ADDR_PL2 CITY! " +
                    "| ADDR_PL ADDR_PL2 CITY! " +
                    "| ADDR/Z CITY! " +
