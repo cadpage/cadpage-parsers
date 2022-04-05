@@ -12,22 +12,22 @@ import net.anei.cadpage.parsers.ReverseCodeSet;
  * Obsolete as of 8/19/14 - replaced by NCCravenCountyBParser
  */
 public class NCCravenCountyAParser extends FieldProgramParser {
-  
+
   public NCCravenCountyAParser() {
-    super(CITY_LIST, "CRAVEN COUNTY", "NC", 
+    super(CITY_LIST, "CRAVEN COUNTY", "NC",
           "Location:ADDR! Call_Time:DATETIME! Narrative:INFO!");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@cravencountync.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CC911")) return false;
@@ -35,14 +35,14 @@ public class NCCravenCountyAParser extends FieldProgramParser {
     data.parseGeneralAlert(this, body);
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern RR_TRACKS_PTN = Pattern.compile("(RAILROAD TRACKS) */? *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
@@ -78,13 +78,13 @@ public class NCCravenCountyAParser extends FieldProgramParser {
       }
       if (data.strCity.equalsIgnoreCase("Jones")) data.strCity = "Jones County";
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY CALL";
     }
   }
-  
+
   private static final Pattern INFO_GPS_PTN = Pattern.compile("\\s*(?:E911 Info .*)?(?:(3[45]\\.\\d{4,} +-7[67]\\.\\d{4,})|-361 +-361)$");
   private class MyInfoField extends InfoField {
     @Override
@@ -96,13 +96,13 @@ public class NCCravenCountyAParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";
     }
   }
-  
+
   private static CodeSet CALL_SET = new ReverseCodeSet(
       "Alarm Business",
       "Assault",
@@ -122,24 +122,24 @@ public class NCCravenCountyAParser extends FieldProgramParser {
       "Fire Unknown Size or Type",
       "Fire Vehicle",
       "Gas Leak Confirmed",
-      "Gas Leak Non-confirmed",                                                                                                                                              
-      "Medical",                                                                                                                                                             
-      "Mental Subject",                                                                                                                                                      
-      "Missing",                                                                                                                                                             
-      "Mutual Aid Request",                                                                                                                                                  
-      "New Call",                                                                                                                                                            
-      "Person Complaint",                                                                                                                                                    
+      "Gas Leak Non-confirmed",
+      "Medical",
+      "Mental Subject",
+      "Missing",
+      "Mutual Aid Request",
+      "New Call",
+      "Person Complaint",
       "Special Operation",
-      "Stranded Motorist",                                                                                                                                                   
-      "Suicide/Attempted",                                                                                                                                                   
-      "Susp Vehicle",                                                                                                                                                        
-      "Traffic All Other",                                                                                                                                                   
-      "TS",                                                                                                                                                                  
-      "Veh Crash-Injury",                                                                                                                                                    
-      "Veh Crash-Property",                                                                                                                                                  
-      "Water Rescue"                                                                                                                                                        
+      "Stranded Motorist",
+      "Suicide/Attempted",
+      "Susp Vehicle",
+      "Traffic All Other",
+      "TS",
+      "Veh Crash-Injury",
+      "Veh Crash-Property",
+      "Water Rescue"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
     "BRICES CREEK",
     "BRIDGETON",
@@ -160,9 +160,9 @@ public class NCCravenCountyAParser extends FieldProgramParser {
     "CHERRY BRANCH",
     "ADAMS CREEK",
     "FORT BARNWELL",
-    
+
     "JONES",   // Jones County
-    
+
     // Lenoir County
     "GRIFTON"
   };
