@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 public class NHGraftonCountyCParser extends DispatchA27Parser {
 
   public NHGraftonCountyCParser() {
-    super("GRAFTON COUNTY", "NH");
+    this("GRAFTON COUNTY", "NH");
   }
 
   public NHGraftonCountyCParser(String defCity, String defState) {
