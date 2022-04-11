@@ -2358,6 +2358,7 @@ public class Active911ParserTable {
       "US/WV/RoaneCounty",                "WVRoaneCounty",
       "US/WV/SHENTEL",                    "WVPendletonCounty",
       "US/WV/SouthMorganCo3",             "WVMorganCountyC",
+      "US/WV/WelchFD",                    "WVMcDowellCounty",
       "US/WV/WetzelCounty",               "WVWetzelCounty",
       "US/WV/WhiteSulphurSpringsEMS",     "WVGreenbrierCounty",
       "US/WV/WoodCounty",                 "WVWoodCounty",
