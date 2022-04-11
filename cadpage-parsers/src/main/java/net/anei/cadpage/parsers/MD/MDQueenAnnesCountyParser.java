@@ -4,8 +4,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class MDQueenAnnesCountyParser extends GroupBestParser {
- 
+
   public MDQueenAnnesCountyParser() {
-    super(new MDQueenAnnesCountyAParser(), new MDQueenAnnesCountyBParser());
+    super(new MDQueenAnnesCountyBParser(), new MDQueenAnnesCountyCParser());
   }
 }
