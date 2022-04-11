@@ -8,33 +8,33 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class COThorntonParser extends FieldProgramParser {
-  
+
   public COThorntonParser() {
-    super(CITY_CODES, "THORNTON", "CO", 
-          "Location:ADDR/S! EID:ID? TYPE_CODE:CALL! SUB_TYPE:CALL/SDS! TIME:TIME! Comments:INFO Disp:UNIT");
+    super(CITY_CODES, "THORNTON", "CO",
+          "Location:ADDR/S? EID:ID? TYPE_CODE:CALL! SUB_TYPE:CALL/SDS! TIME:TIME! Comments:INFO Disp:UNIT");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@cityofthornton.net";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
       if (subject.equals("Thornton Page Notification")) break;
-      
+
       if (body.startsWith("Thornton Page Notification ")) {
         body = body.substring(27).trim();
         break;
       }
       return false;
     } while (false);
-    
+
     body = body.replace("TIME:", " TIME:");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -43,7 +43,7 @@ public class COThorntonParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_PLACE_APT_PTN = Pattern.compile("(.*)(,|: *@?)(.*)");
   private class MyAddressField extends AddressField {
     @Override
@@ -63,13 +63,13 @@ public class COThorntonParser extends FieldProgramParser {
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private static final Pattern INFO_GPS_PTN = Pattern.compile("(-\\d{2,3}.\\d{6} \\+\\d{2,3}.\\d{6}) *(.*)");
   private class MyInfoField extends InfoField {
     @Override
@@ -81,18 +81,18 @@ public class COThorntonParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "GPS " + super.getFieldNames();
     }
   }
-  
+
   private static Properties CITY_CODES = buildCodeTable(new String[]{
       "ADAM",   "ADAMS COUNTY",
       "BPD",    "BRIGHTON",
       "FHPD",   "FEDERAL HEIGHTS",
-      "NPD",    "NORTHGLENN", 
+      "NPD",    "NORTHGLENN",
       "TPD",    "THORNTON"
   });
 }
