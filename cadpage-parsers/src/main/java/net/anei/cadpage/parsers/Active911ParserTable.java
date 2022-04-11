@@ -1809,6 +1809,7 @@ public class Active911ParserTable {
       "US/PA/Messenger911",               "PADelawareCountyH",
       "US/PA/MessiahEMS",                 "PAGrantham",
       "US/PA/MifflinCounty",              "PAMifflinCounty",
+      "US/PA/MocanaquaVFC",               "PALuzerneCounty",
       "US/PA/MonroeCounty",               "PAMonroeCounty",
       "US/PA/MonroeCountyCoolbaughTwp",   "PAMonroeCounty",
       "US/PA/Monroeville",                "PAMonroeville",
