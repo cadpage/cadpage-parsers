@@ -8,20 +8,29 @@ import net.anei.cadpage.parsers.dispatch.DispatchProphoenixParser;
 public class NJWayneTownshipParser extends DispatchProphoenixParser {
 
   public NJWayneTownshipParser() {
-    super("WAYNE TOWNSHIP", "NJ");
+    super(null, CITY_LIST, "WAYNE TOWNSHIP", "NJ");
   }
 
   @Override
   public String getFilter() {
-    return "cad@waynetownship.com,5417047704,@mms.firstnet-mail.com";
+    return "cad@waynetownship.com,5417047704,@mms.firstnet-mail.com,messaging@iamresponding.com";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    // Fix IAR edits
+    if (subject.equals("Wayne")) {
+      body = body.replace("\n{", "{");
+    }
     if (!super.parseMsg(body, data)) return false;
-    data.strCity = "";
+    if (data.strCity.startsWith("PD")) data.strCity = "";
     return true;
   }
+
+  private static final String[] CITY_LIST = new String[] {
+      "WAYNE"
+  };
 
 
 }

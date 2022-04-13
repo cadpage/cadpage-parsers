@@ -1426,6 +1426,7 @@ public class Active911ParserTable {
       "US/NJ/WarrenCounty",               "NJWarrenCounty",
       "US/NJ/WayneTownship",              "NJWayneTownship",
       "US/NJ/WestCaldwellPD",             "NJEssexCounty",
+      "US/NJ/WFD",                        "NJWayneTownship",
       "US/NJ/WillingboroFireEMS",         "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NM/LasCruces",                  "NMLasCruces",
       "US/NM/MesillaValleyRegionalDispatchAuthorityHtml", "NMDonaAnaCountyB",
