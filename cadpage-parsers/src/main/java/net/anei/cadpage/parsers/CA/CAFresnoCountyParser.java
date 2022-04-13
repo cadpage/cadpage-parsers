@@ -134,7 +134,8 @@ public class CAFresnoCountyParser extends FieldProgramParser {
         Matcher match = ADDR_MAP_PTN.matcher(field);
         if (!match.find()) abort();
         data.strMap = getOptGroup(match.group(1));
-        super.parse(match.group(2), data);
+        if (data.strMap.equals("NOT FOUND")) data.strMap = "";
+        super.parse(stripFieldStart(match.group(2), "Address"), data);
       }
     }
 
