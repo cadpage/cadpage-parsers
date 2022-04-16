@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
   public OHHamiltonCountyAParser() {
     super("HAMILTON COUNTY", "OH",
           "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT! NAME Xst:X! INFO/N+? GPS1/d GPS2/d");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -97,6 +99,27 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", field);
     }
   }
+
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "5242 LAKEFRONT DR", "+39.186182,-84.644449",
+      "5246 LAKEFRONT DR", "+39.186454,-84.644264",
+      "5250 LAKEFRONT DR", "+39.186669,-84.644066",
+      "5251 LAKEFRONT DR", "+39.186604,-84.644651",
+      "5254 LAKEFRONT DR", "+39.186895,-84.643611",
+      "5255 LAKEFRONT DR", "+39.186819,-84.644450",
+      "5258 LAKEFRONT DR", "+39.187079,-84.643612",
+      "5259 LAKEFRONT DR", "+39.187027,-84.644315",
+      "5263 LAKEFRONT DR", "+39.187192,-84.644067",
+      "5264 LAKEFRONT DR", "+39.187334,-84.643355",
+      "5267 LAKEFRONT DR", "+39.187439,-84.643959",
+      "5270 LAKEFRONT DR", "+39.187631,-84.643364",
+      "5273 LAKEFRONT DR", "+39.187667,-84.643901"
+  });
 
   private static final ReverseCodeTable DEPT_CITY_TABLE = new ReverseCodeTable(
       "Amberly Village FD",         "Amberley Village",
