@@ -13,7 +13,7 @@ public class MOBentonCountyParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "911.ADMIN@BENTONCOMO.COM";
+    return "911.ADMIN@BENTONCOMO.COM,notifications@bentoncomo.com";
   }
 
   private static final Pattern HIGHWAY_XX_PTN = Pattern.compile("\\b(?:HIGHWAY|HWY) ([A-Z]{1,2})\\b", Pattern.CASE_INSENSITIVE);
