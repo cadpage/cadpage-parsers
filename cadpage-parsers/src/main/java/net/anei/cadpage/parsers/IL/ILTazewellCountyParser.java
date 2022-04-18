@@ -3,6 +3,8 @@ package net.anei.cadpage.parsers.IL;
 import java.util.Properties;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -17,6 +19,13 @@ public class ILTazewellCountyParser extends DispatchOSSIParser {
   @Override
   public String getFilter() {
     return "cad@tazewell911.com";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom() {
+      @Override public boolean mixedMsgOrder() { return true; }
+    };
   }
 
   @Override
