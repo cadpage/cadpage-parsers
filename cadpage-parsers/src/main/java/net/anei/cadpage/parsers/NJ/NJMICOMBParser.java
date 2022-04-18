@@ -16,7 +16,7 @@ public class NJMICOMBParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "miccom@nnjems.org,cadsmtp@nnjems.org";
+    return "miccom@nnjems.o,cadsmtp@nnjems.org";
   }
 
   @Override
@@ -42,8 +42,7 @@ public class NJMICOMBParser extends MsgParser {
     do {
       if (subject.equals("CAD Page")) break;
 
-      if (subject.equals("MICCOM CAD")) break;
-      if (subject.equals("MICCOM")) break;
+      if (subject.startsWith("MICCO")) break;
 
       if (body.startsWith("/ CAD Page / ")) {
         body = body.substring(13).trim();
