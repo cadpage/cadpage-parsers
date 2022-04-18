@@ -12,7 +12,7 @@ public class GAWashingtonCountyBParser extends DispatchA78Parser {
 
   @Override
   public String getFilter() {
-    return "CAD@ssialerts.com";
+    return "CAD@ssialerts.com,donotreply@WashingtonCountyE911alerts.com";
   }
 
   private static final Properties CALL_CODES = buildCodeTable(new String[] {
