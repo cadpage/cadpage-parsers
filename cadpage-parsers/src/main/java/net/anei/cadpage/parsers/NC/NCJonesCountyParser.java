@@ -13,7 +13,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
   }
 
   public NCJonesCountyParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState, 
+    super(CITY_LIST, defCity, defState,
           "MASH! Line16:INFO! Line17:INFO! Line18:INFO!");
     addExtendedDirections();
     setBreakChar('=');
@@ -25,7 +25,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
   public String getAliasCode() {
     return "NCJonesCounty";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -59,14 +59,14 @@ public class NCJonesCountyParser extends DispatchA3Parser {
       data.strCode = mat.group(4).trim();
       String callCode = mat.group(5).trim();
       data.strUnit = getOptGroup(mat.group(6));
-      
+
       int pt = callCode.indexOf('-');
       if (pt >= 0) {
         data.strCode = append(data.strCode, " ", callCode.substring(0,pt).trim());
         callCode = callCode.substring(pt+1).trim();
       }
       data.strCall = callCode;
-      
+
       data.strPlace = LEAD_DOTS.matcher(place).replaceFirst("");
 
       addr = addr.replace("//", "&").replace(" N/S ", " ").replace(" E/W ", " ");
@@ -76,7 +76,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
         data.strAddress = mat.group(1);
         data.strApt = append(mat.group(2), "-", data.strApt);
       }
-      
+
       data.strAddress = stripFieldEnd(data.strAddress, "`");
       data.strApt = stripFieldEnd(data.strApt, "`");
 
@@ -93,7 +93,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
         Matcher crossMat = CLEAN_CROSS.matcher(data.strCross);
         if (crossMat.matches()) data.strCross = crossMat.group(1);
       }
-      
+
       if (data.strCity.equalsIgnoreCase("POLLOCKSVIL")) data.strCity = "POLLOCKSVILLE";
       if (data.strCity.length() == 0) data.strCity = zip;
     }
@@ -105,13 +105,13 @@ public class NCJonesCountyParser extends DispatchA3Parser {
   }
 
   public static String[] CITY_LIST = new String[] {
-    
+
     // Jones County
     "MAYSVILLE",
     "POLLOCKSVIL",   // Misspelled
-    "POLLOCKSVILLE", 
+    "POLLOCKSVILLE",
     "TRENTON",
-    
+
     "COMFORT",
     "OAK GROVE",
 
@@ -122,7 +122,7 @@ public class NCJonesCountyParser extends DispatchA3Parser {
     "TUCKAHOE TWP",
     "CHINQUAPIN TWP",
     "BEAVER CREEK TWP",
-    
+
     // Lenoir County
     "ALBERTSON",
     "KINSTON",
@@ -130,11 +130,11 @@ public class NCJonesCountyParser extends DispatchA3Parser {
     "LA GRANGE",
     "LAGRANGE",
     "PINK HILL",
-    
+
     "DEEP RUN",
     "LIDDELL",
     "TICK BITE",
-    
+
     "CONTENTNEA NECK TWP",
     "FALLING CREEK TWP",
     "INSTITUTE TWP",
@@ -147,23 +147,23 @@ public class NCJonesCountyParser extends DispatchA3Parser {
     "TRENT TWP",
     "VANCE TWP",
     "WOODINGTON TWP",
-    
+
     // Craven County
     "COVE CITY",
     "DOVER",
     "NEW BERN",
-    
+
     // Duplin County
     "BEULAVILLE",
-    
+
     // Greene County
     "HOOKERTON",
     "SNOW HILL",
-    
+
     // Onslow County
     "ONSLOW",
     "RICHLANDS",
-    
+
     // Wayne County
     "BROGDEN",
     "DUDLEY",
