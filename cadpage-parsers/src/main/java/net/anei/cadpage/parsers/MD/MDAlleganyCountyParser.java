@@ -22,7 +22,7 @@ public class MDAlleganyCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "acgov_911_cad@allconet.org,cad911@alleganygov.org,messaging@iamresponding.com";
+    return "acgov_911_cad@allconet.org,cad911@alleganygov.org,messaging@iamresponding.com,alleganycad@gmail.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD|Company +([^ ]+)");
