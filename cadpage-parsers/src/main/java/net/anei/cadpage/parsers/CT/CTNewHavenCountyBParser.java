@@ -39,7 +39,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "FirePaging@hamdenfirefighters.org,paging@branfordfire.com,paging@easthavenfire.com,paging@easthavenpolice.com,paging@mail.nbpolicect.org,paging@nbpolicect.org,noreply@nexgenpss.com,pdpaging@farmington-ct.org,noreply@whpd.com,page@watertownctpd.com,FirePaging@hamdenfirefighters.org,paging@townofstratford.com,ngpager@rockyhillct.gov,pubsafetypaging@uconn.edu,publicsafety@uchc.edu";
+    return "FirePaging@hamdenfirefighters.org,paging@branfordfire.com,paging@easthavenfire.com,paging@easthavenpolice.com,paging@mail.nbpolicect.org,paging@nbpolicect.org,noreply@nexgenpss.com,pdpaging@farmington-ct.org,noreply@whpd.com,page@watertownctpd.com,FirePaging@hamdenfirefighters.org,paging@townofstratford.com,ngpager@rockyhillct.gov,pubsafetypaging@uconn.edu,publicsafety@uchc.edu,nexgen@nbpolicect.org";
   }
 
   private static final Pattern DELIM1 = Pattern.compile(" *\\| *");
