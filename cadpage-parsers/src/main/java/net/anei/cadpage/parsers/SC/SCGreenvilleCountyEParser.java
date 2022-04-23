@@ -23,6 +23,11 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     return "InformCADPaging@Greenvillecounty.org,@whfd.org";
   }
 
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " GPS INFO";
+  }
+
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=Mutual Aid/Assist Outside Agen|Motor Vehicle Collision/Injury|Struct Fire Resi Single Family|Vehicle Fire Comm/Box/Mot Home)(?! )");
   private static final Pattern MASTER1 = Pattern.compile("(.*?)\\(C\\) (.*?)((?:Non-)?Emergency|Bravo) (\\d{4,6}-\\d{6})\\b *(.*)");
   private static final Pattern MASTER2 = Pattern.compile("Incident Type:(.*?) Location:(.*)");
@@ -73,67 +78,69 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     }
 
     if (body.contains(";")) {
-      return parseFields(body.split(";", -1), data);
-    }
-
-
-    body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
-
-    match = MASTER1.matcher(body);
-    if (match.matches()) {
-      good = true;
-      setFieldList("CALL CITY ADDR APT PLACE PRI ID X GPS INFO");
-      data.strCall = match.group(1).trim();
-      String cityAddr = match.group(2).trim();
-      data.strPriority = match.group(3);
-      data.strCallId = match.group(4);
-      data.strCross = match.group(5);
-
-      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityAddr, data);
-      parseAddress(StartType.START_ADDR, FLAG_NO_CITY, getLeft(), data);
-      data.strPlace = getLeft();
-      if (data.strAddress.length() == 0) {
-        String addr = data.strCall;
-        data.strCall = "";
-        parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
-      }
+      if (!parseFields(body.split(";", -1), data)) return false;
     }
 
     else {
-      setFieldList("CALL ADDR APT CITY PLACE GPS INFO");
-      int pt = body.indexOf("(C)");
-      if (pt >= 0) {
-        good = true;
-        String cityPlace = body.substring(pt+3).trim();
-        body = body.substring(0, pt).trim();
-        pt = body.indexOf("(A)");
-        if (pt >= 0) {
-          data.strCall = body.substring(0,pt).trim();
-          parseAddress(body.substring(pt+3).trim(), data);
-        } else {
-          parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
-        }
-        cityPlace = CITY_DASH_PTN.matcher(cityPlace).replaceFirst("");
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityPlace, data);
-        data.strPlace = getLeft();
-      } else {
-        pt = body.indexOf("(A)");
-        if (pt >= 0) {
-          data.strCall = body.substring(0,pt).trim();
-          body = body.substring(pt+3).trim();
-          parseAddress(StartType.START_ADDR, FLAG_IGNORE_AT, body, data);
-        } else {
-          parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_IGNORE_AT, body, data);
-          if (data.strCall.endsWith(":")) return false;
-        }
-        data.strPlace = getLeft();
-        if (!data.strAddress.isEmpty() && !data.strCity.isEmpty()) good = true;
-      }
-    }
 
-    if (APT_PTN.matcher(data.strPlace).matches()) {
-      data.strApt = append(data.strApt, "-", data.strPlace);
-      data.strPlace = "";
+      body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
+
+      match = MASTER1.matcher(body);
+      if (match.matches()) {
+        good = true;
+        setFieldList("CALL CITY ADDR APT PLACE PRI ID X");
+        data.strCall = match.group(1).trim();
+        String cityAddr = match.group(2).trim();
+        data.strPriority = match.group(3);
+        data.strCallId = match.group(4);
+        data.strCross = match.group(5);
+
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityAddr, data);
+        parseAddress(StartType.START_ADDR, FLAG_NO_CITY, getLeft(), data);
+        data.strPlace = getLeft();
+        if (data.strAddress.length() == 0) {
+          String addr = data.strCall;
+          data.strCall = "";
+          parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_NO_CITY | FLAG_ANCHOR_END, addr, data);
+        }
+      }
+
+      else {
+        setFieldList("CALL ADDR APT CITY PLACE");
+        int pt = body.indexOf("(C)");
+        if (pt >= 0) {
+          good = true;
+          String cityPlace = body.substring(pt+3).trim();
+          body = body.substring(0, pt).trim();
+          pt = body.indexOf("(A)");
+          if (pt >= 0) {
+            data.strCall = body.substring(0,pt).trim();
+            parseAddress(body.substring(pt+3).trim(), data);
+          } else {
+            parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
+          }
+          cityPlace = CITY_DASH_PTN.matcher(cityPlace).replaceFirst("");
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityPlace, data);
+          data.strPlace = getLeft();
+        } else {
+          pt = body.indexOf("(A)");
+          if (pt >= 0) {
+            data.strCall = body.substring(0,pt).trim();
+            body = body.substring(pt+3).trim();
+            parseAddress(StartType.START_ADDR, FLAG_IGNORE_AT, body, data);
+          } else {
+            parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_IGNORE_AT, body, data);
+            if (data.strCall.endsWith(":")) return false;
+          }
+          data.strPlace = getLeft();
+          if (!data.strAddress.isEmpty() && !data.strCity.isEmpty()) good = true;
+        }
+      }
+
+      if (APT_PTN.matcher(data.strPlace).matches()) {
+        data.strApt = append(data.strApt, "-", data.strPlace);
+        data.strPlace = "";
+      }
     }
 
     if (extra != null) {
