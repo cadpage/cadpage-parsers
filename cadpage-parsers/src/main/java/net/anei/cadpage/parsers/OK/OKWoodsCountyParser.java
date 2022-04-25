@@ -1,36 +1,20 @@
 package net.anei.cadpage.parsers.OK;
 
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
-public class OKWoodsCountyParser extends DispatchA65Parser {
+public class OKWoodsCountyParser extends DispatchA86Parser {
 
   public OKWoodsCountyParser() {
-    super(CITY_LIST, "WOODS COUNTY", "OK");
+    super("WOODS COUNTY", "OK");
   }
 
   @Override
   public String getFilter() {
-    return "Dispatch@WoodsOKE911.info,geoconex@nlamerica.com";
+    return "Dispatch@WoodsOKE911.info";
   }
 
   @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
-
-  private static final String[] CITY_LIST = new String[]{
-      "ALVA",
-      "AVARD",
-      "BRINK",
-      "CAPRON",
-      "DACOMA",
-      "FREEDOM",
-      "HOPETON",
-      "LODER",
-      "LOOKOUT",
-      "NOEL",
-      "WAYNOKA"
-  };
 }

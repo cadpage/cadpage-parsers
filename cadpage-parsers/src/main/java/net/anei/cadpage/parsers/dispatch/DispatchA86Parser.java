@@ -10,7 +10,7 @@ public class DispatchA86Parser extends FieldProgramParser {
 
   public DispatchA86Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL:CALL! Desc:CALL2? PLACE:ADDRCITY! ID:ID! INFO:INFO! INFO/N+");
+          "CALL:CALL! Desc:CALL2? PLACE:ADDRCITY! ID:ID? INFO:INFO! INFO/N+");
   }
 
   @Override
@@ -40,6 +40,7 @@ public class DispatchA86Parser extends FieldProgramParser {
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "INTERSECTION:");
       Matcher match = ADDR_ID_GPS_PTN.matcher(field);
       if (!match.matches()) abort();
       field = match.group(1).trim();
