@@ -25,7 +25,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -39,6 +39,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
     if (parseMsg3(body, data)) return true;
     if (parseMsg1(subject, body, data)) return true;
     if (parseMsg2(body, data)) return true;
+    if (parseMsg5(body, data)) return true;
     return false;
   }
 
@@ -199,6 +200,38 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
 
     }
 
+    if (fp.checkAhead(142, " X STRTS  ")) {
+      String unit = fp.get(30);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      String call = fp.get(10);
+      if (!fp.check(" ") || fp.check(" ")) return false;
+      String addr = fp.get(100);
+      if (!fp.check(" X STRTS  ")) return false;
+      String cross = fp.get(60);
+      if (!fp.checkBlanks(14)) return false;
+      String gps1 = fp.get(10);
+      if (!fp.checkBlanks(13)) return false;
+      String gps2 = fp.get(10);
+      if (!fp.checkBlanks(10)) return false;
+      String id =fp.get(12);
+      if (!fp.checkBlanks(10)) return false;
+      String zip = fp.get(5);
+      if (!fp.checkBlanks(6)) return false;
+      String city = fp.get();
+      if (city.isEmpty()) city = zip;
+
+      setFieldList("SRC UNIT CALL ADDR APT X GPS ID CITY");
+      data.strSource = source;
+      data.strUnit = unit;
+      data.strCall = call;
+      parseAddress(addr, data);
+      data.strCross = cross;
+      setGPSLoc(cvtGps(gps1)+','+cvtGps(gps2), data);
+      data.strCallId = id;
+      data.strCity = city;
+      return true;
+    }
+
     if (fp.checkAhead(243, "MAP PAGE")) {
       String unit = fp.get(20);
       if (!fp.check(" ") || fp.check(" ")) return false;
@@ -234,6 +267,12 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
     parseAddress(addr, data);
     data.strCross = cross;
     return true;
+  }
+
+  private String cvtGps(String gps) {
+    int pt = gps.length()-6;
+    if (pt >= 0) gps = gps.substring(0,pt)+'.'+gps.substring(pt);
+    return gps;
   }
 
   private static final Pattern MASTER = Pattern.compile("(?:(.*?) - )?([A-Z0-9]{2,6}):(.*?) - (.*?)(?: - ([A-Z]{3}))? *(?:Units?:(.*?))?");
@@ -275,6 +314,40 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
 
     return true;
   }
+
+  private boolean parseMsg5(String body, Data data) {
+    FParser fp = new FParser(body);
+    String src = fp.get(9);
+    if (!src.endsWith(" FIRE") && !src.endsWith(" EMS")) return false;
+    if (!fp.check(" ")) return false;
+    if (fp.check(" ")) return false;
+    String unit = fp.get(30);
+    if (!fp.check(" ")) return false;
+    if (fp.check(" ")) return false;
+    String call = fp.get(30);
+    if (!fp.check(" ")) return false;
+    if (fp.check(" ")) return false;
+    String addr = fp.get(100);
+    if (!fp.check(" ")) return false;
+    String cross = fp.get();
+
+    setFieldList("SRC UNIT CALL ADDR APT X");
+    data.strSource = src;
+    data.strUnit = unit;
+    data.strCall = call;
+    parseAddress(addr, data);
+    data.strCross = cross;
+    return true;
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[] {
+      "LAS PALMAS RANCH",     "SALINAS"
+  });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARO",   "AROMAS",
