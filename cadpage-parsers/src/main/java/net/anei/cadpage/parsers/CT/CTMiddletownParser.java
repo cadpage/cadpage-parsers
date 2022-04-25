@@ -13,7 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class CTMiddletownParser extends FieldProgramParser {
 
   public CTMiddletownParser() {
-    super(CITY_LIST, "MIDDLETOWN","CT",
+    this("MIDDLETOWN","CT");
+  }
+
+  CTMiddletownParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState,
           "( ID CALL PLACE ADDR APT CITY ZIP X UNIT DATETIME/d! INFO/N+ " +
           "| UNIT CALL PLACE ADDR APT CITY? ZIP? ID? INFO/N+ )");
   }
@@ -25,7 +29,6 @@ public class CTMiddletownParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("NexgenAlert")) return false;
     return parseFields(body.split("\\|"), 3, data);
   }
 
