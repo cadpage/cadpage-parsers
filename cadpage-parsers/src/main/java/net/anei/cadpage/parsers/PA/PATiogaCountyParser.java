@@ -83,6 +83,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "AUTOMATIC FIRE ALARM",
       "BACK PAIN - NON-RECENT",
       "BACK PAIN - NON-TRAUMATIC",
+      "BARN FIRE",
       "BLS MEDICAL",
       "BREATHING PROBLEMS - ABNORMAL BREATHING",
       "BREATHING PROBLEMS - ASTHMA - DIFF SPKING BETWEEN BREATHS",
@@ -285,6 +286,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
   };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CHO", "COGAN HOUSE TWP",
       "BRO", "BROWN TWP"
   });
 }
