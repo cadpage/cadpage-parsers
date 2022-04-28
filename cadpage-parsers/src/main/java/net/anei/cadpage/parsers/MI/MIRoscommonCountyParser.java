@@ -10,15 +10,15 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class MIRoscommonCountyParser extends DispatchOSSIParser {
-  
+
   public MIRoscommonCountyParser() {
-    super(CITY_CODES, "ROSCOMMON COUNTY", "MI", 
+    super(CITY_CODES, "ROSCOMMON COUNTY", "MI",
           "( CANCEL | ( FYI | EMPTY? ) CALL ) ADDR CITY? INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "CAD@roscommoncounty.net";
+    return "CAD@roscommoncounty.net,@rc911.org";
   }
 
   @Override
@@ -27,7 +27,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
       @Override public boolean noParseSubjectFollow() { return true; }
     };
   }
-  
+
   private static final Pattern WIRELESS_REBID_PTN = Pattern.compile("\n\\[Wireless Re-bid\\] *");
   private static final Pattern WEIRD_MARK_PTN = Pattern.compile("\\[[^\\]\n]*?;|\n[A-Z]? *;");
   private static final Pattern TRAIL_ADDR_CITY_PTN = Pattern.compile("(?:\\[[^\\]\n]*?;|\n[A-Z]? *)?(;[^;\n]+;([A-Z]{3,4}))$");
@@ -35,7 +35,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     body = WIRELESS_REBID_PTN.matcher(body).replaceAll("\n");
 
     // Fix weird trailing address/city mess
@@ -44,7 +44,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
     if (match.find()) {
       extra = body.substring(match.end()-1);
       body = body.substring(0,match.start());
-    } 
+    }
     else if ((match = TRAIL_ADDR_CITY_PTN.matcher(body)).find()) {
       String city = match.group(2);
       if (CITY_CODES.getProperty(city) != null) {
@@ -59,7 +59,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
         body = body.substring(0,match.start());
       }
     }
-    
+
     if (extra != null) {
       int pt = body.indexOf(';');
       if (pt >= 0) {
@@ -70,7 +70,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
       if (pt < 0) pt = body.length();
       body = body.substring(0,pt) + extra + body.substring(pt);
     }
-    
+
     body = body.replace('\n', ';');
     return super.parseMsg(body, data);
   }
