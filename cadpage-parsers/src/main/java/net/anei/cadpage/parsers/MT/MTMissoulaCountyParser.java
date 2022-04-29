@@ -11,7 +11,7 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
 
   public MTMissoulaCountyParser() {
     super("MISSOULA COUNTY", "MT",
-          "Call_Type:CALL! Address:ADDR/S6 Common_Name:PLACE! Assigned_Units:UNIT! Narrative:INFO");
+          "Call_Type:CALL! Address:ADDR/S6 Common_Name:PLACE! Assigned_Units:UNIT! Narrative:INFO INFO/N+");
   }
 
   @Override
@@ -22,9 +22,7 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
   private static final Pattern MARKER = Pattern.compile("(?:(\\d{4}), )?Call # (\\d+) +");
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-
-    if (!subject.equals("911 Page")) return false;
+  protected boolean parseMsg(String body, Data data) {
 
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
@@ -35,7 +33,11 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
     int pt = body.indexOf("\nMessages and attachments");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
-    return super.parseMsg(body, data);
+    if (body.contains("\n")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseMsg(body, data);
+    }
   }
 
   @Override
