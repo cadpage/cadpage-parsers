@@ -26,6 +26,11 @@ public class DispatchA48Parser extends FieldProgramParser {
    * Flag indicating the call description may be a single word code
    */
   public static final int A48_OPT_CODE = 0x02;
+  
+  /**
+   * Flag indicating call description is optional
+   */
+  public static final int A48_OPT_CALL = 0x4;
 
   /**
    * Flag indicating the call description may be a single word code
@@ -182,6 +187,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private boolean oneWordCode;
   private boolean optCode;
   private boolean noCode;
+  private boolean optCall;
   private Properties callCodes;
   private Pattern unitPtn;
   private String fieldList;
@@ -212,6 +218,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
     noCode = (flags & A48_NO_CODE) != 0;
+    optCall = (flags & A48_OPT_CALL) != 0;
     this.unitPtn = unitPtn;
     this.callCodes = callCodes;
     fieldList = ("DATE TIME ID CODE CALL ADDR X? APT PLACE? CITY NAME " + fieldType.getFieldList() + " UNIT INFO").replace("  ", " ");
@@ -330,7 +337,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     Parser p = new Parser(fixCallAddress(addr));
 
     StartType st = StartType.START_CALL;
-    int flags = FLAG_START_FLD_REQ;
+    int flags = (optCall ? 0 : FLAG_START_FLD_REQ);
 
     if (!noCode) {
       if (optCode || !oneWordCode) data.strCode = p.getOptional(" - ");

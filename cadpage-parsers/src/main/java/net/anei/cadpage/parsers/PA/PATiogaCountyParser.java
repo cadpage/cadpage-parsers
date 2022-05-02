@@ -11,12 +11,13 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 public class PATiogaCountyParser extends DispatchA48Parser {
 
   public PATiogaCountyParser() {
-    super(CITY_LIST, "TIOGA COUNTY", "PA", FieldType.PLACE, A48_NO_CODE);
+    super(CITY_LIST, "TIOGA COUNTY", "PA", FieldType.PLACE, A48_NO_CODE | A48_OPT_CALL);
     setupCallList(CALL_LIST);
     setupCities(CITY_CODES);
     setupMultiWordStreets(
         "ALDER RUN",
         "AMEIGH VALLEY",
+        "ANTRIM MAIN",
         "BAILEY CREEK",
         "BAKER CREST",
         "BAPTIST HILL",
@@ -24,13 +25,16 @@ public class PATiogaCountyParser extends DispatchA48Parser {
         "BUCK HILL",
         "BUCKWHEAT HOLLOW",
         "BURROWS HOLLOW",
+        "BUTTON HILL",
         "CORYLAND PARK",
         "ELK RUN",
         "ENGLISH HILL",
         "GROUSE RUN",
         "GROVES HILL",
         "JACKSON CENTER",
+        "JUDSON HILL",
         "LAUREL HILL",
+        "MOTT TOWN",
         "PICNIC GROVE",
         "PINE HILL",
         "PONY HILL",
@@ -40,7 +44,10 @@ public class PATiogaCountyParser extends DispatchA48Parser {
         "ROWLEY HILL",
         "TALL PINES",
         "TOWER HILL",
-        "WHISPERING PINES"
+        "TROWBRIDGE STATION",
+        "WHISPERING PINES",
+        "WILLIAM FARRELL",
+        "WOLFE RUN"
     );
   }
 
@@ -80,11 +87,14 @@ public class PATiogaCountyParser extends DispatchA48Parser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN",
       "ALLERGIES STINGS BITES DIFF SPEAKING BETWEEN BREATHS",
+      "ALS MEDICAL",
+      "ASSIST OTHER AGENCY",
       "AUTOMATIC FIRE ALARM",
       "BACK PAIN - NON-RECENT",
       "BACK PAIN - NON-TRAUMATIC",
       "BARN FIRE",
       "BLS MEDICAL",
+      "BLS TRANSFER",
       "BREATHING PROBLEMS - ABNORMAL BREATHING",
       "BREATHING PROBLEMS - ASTHMA - DIFF SPKING BETWEEN BREATHS",
       "BREATHING PROBLEMS - CHANGING COLOR",
@@ -161,6 +171,7 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "OVERDOSE/POISONING - NOT ALERT - INTENTIONAL",
       "OVERDOSE/POISONING - UNCONSCIOUS - ACCIDENTAL",
       "OVERDOSE/POISONING - UNCONSCIOUS - INTENTIONAL",
+      "PAGE CALL",
       "PAGE CALL ERWAY AMB",
       "STAB/GUNSHOT/PENETRATING TRAUMA - NON RECENT - PERIPHERAL WOUNDS - GUNSHOT",
       "PSYCHIATRIC",
@@ -190,7 +201,8 @@ public class PATiogaCountyParser extends DispatchA48Parser {
       "UNKNOWN PROBLEM - MEDICAL ALARM - NO INFORMATION",
       "UNKNOWN PROBLEM - UNKNOWN STATUS",
       "VEHICLE FIRE",
-      "WILD FIRE"
+      "WILD FIRE",
+      "WIRES DOWN"
   );
 
   private static final String[] CITY_LIST = new String[]{
