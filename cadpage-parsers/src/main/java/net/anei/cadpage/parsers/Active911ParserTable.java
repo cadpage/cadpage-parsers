@@ -2363,6 +2363,7 @@ public class Active911ParserTable {
       "US/WV/MineralCounty",              "WVMineralCounty",
       "US/WV/MorganCounty",               "WVMorganCounty",
       "US/WV/NicholasCounty",             "WVNicholasCounty",
+      "US/WV/PleasantsCounty",            "WVPleasantsCounty",
       "US/WV/PocahontasCounty",           "WVPocahontasCounty",
       "US/WV/RaleighCounty",              "WVRaleighCounty",
       "US/WV/RoaneCounty",                "WVRoaneCounty",

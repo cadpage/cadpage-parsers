@@ -1828,6 +1828,7 @@ public class ParserList {
               ,"WVMorganCounty"                 ,"Morgan County, WV"
               ,"WVNicholasCounty"               ,"Nicholas County, WV"
               ,"WVPendletonCounty"              ,"Pendleton County, WV"
+              ,"WVPleasantsCounty"              ,"Pleasants County, WV"
               ,"WVPocahontasCounty"             ,"Pocahontas County, WV"
               ,"WVPrestonCounty"				        ,"Preston County, WV"
               ,"WVRaleighCounty"                ,"Raleigh County, WV"
