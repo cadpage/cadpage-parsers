@@ -1,10 +1,10 @@
 
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA53Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 
-public class TXRuskCountyBParser extends DispatchA53Parser {
+public class TXRuskCountyBParser extends DispatchA19Parser {
 
   public TXRuskCountyBParser() {
     super("RUSK COUNTY", "TX");
@@ -12,6 +12,11 @@ public class TXRuskCountyBParser extends DispatchA53Parser {
   
   @Override
   public String getFilter() {
-    return "hpdactive911@ruskcountyoem.org";
+    return "FlexRapidNotification@dccnotify.com";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 }
