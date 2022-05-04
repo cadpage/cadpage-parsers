@@ -108,6 +108,8 @@ public class NYRocklandCountyEParser extends FieldProgramParser {
   }
   
   private static final Properties ZIP_CODE_TABLE = buildCodeTable(new String[]{
-      "10952", "MONSEY"
+      "10901", "SUFFERN",
+      "10952", "MONSEY",
+      "10977", "SPRING VALLEY"
   });
 }
