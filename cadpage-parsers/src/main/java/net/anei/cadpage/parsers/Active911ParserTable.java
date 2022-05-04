@@ -620,6 +620,7 @@ public class Active911ParserTable {
       "US/IN/SouthBend",                  "INStJosephCountyB",
       "US/IN/StarkeCounty",               "INStarkeCounty",
       "US/IN/StJohn",                     "INLakeCountyB",
+      "US/IN/Tippecannoe",                "INTippecanoeCounty",
       "US/IN/TiptonCounty",               "INTiptonCounty",
       "US/IN/VermillionCounty",           "INVermillionCounty",
       "US/IN/VernonTwpMadison",           "INHancockCountyB",

@@ -533,6 +533,7 @@ public class ParserList {
               ,"INShelbyCounty"                 ,"Shelby County, IN"
               ,"INStarkeCounty"                 ,"Starke County, IN"
               ,"INStJosephCounty"               ,"St Joseph County, IN"
+              ,"INTippecanoeCounty"             ,"Tipecanoe County, IN"
               ,"INTiptonCounty"                 ,"Tipton County, IN"
               ,"INVanderburghCounty"            ,"Vanderburgh County, IN"
               ,"INVermillionCounty"             ,"Vermillion County, IN"
