@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -32,7 +33,7 @@ public class TXMidlothianParser extends DispatchA18Parser {
     if (!super.parseMsg(subject, body, data)) return false;
     data.strAddress = cleanStreetName(data.strAddress);
     data.strCross = cleanStreetName(data.strCross);
-    if (data.strCity.equals("NONE")) data.strCity = "";
+    data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
     return true;
   }
   
@@ -58,6 +59,7 @@ public class TXMidlothianParser extends DispatchA18Parser {
       "PECAN HILL",
       "RED OAK",
       "WAXAHACHIE",
+      "WAXHACHIE",
 
       // Towns
       "ALMA",
@@ -85,6 +87,10 @@ public class TXMidlothianParser extends DispatchA18Parser {
       "GRAND PRAIRIE",
       "HUTCHINS",
       "LANCASTER"
-
   };
+  
+  private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
+      "NONE",       "",
+      "WAXHACHIE",  "WAXAHACHIE"
+  });
 }

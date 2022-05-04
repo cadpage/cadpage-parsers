@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA18Parser;
 
@@ -26,7 +28,13 @@ public class TXTarrantCountyCParser extends DispatchA18Parser {
     int pt = body.indexOf("\n\nCONFIDENTIALITY");
     if (pt >= 0) body = body.substring(0, pt).trim();
     if (!super.parseMsg(subject, body, data)) return false;
-    if (data.strCity.equals("NONE")) data.strCity = "";
+    data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
     return true;
   }
+  
+  private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
+    "FLOWERMOUND",    "FLOWER MOUND",
+    "NONE",           "",
+    "WAXHACHIE",      "WAXAHACHIE"
+  });
 }

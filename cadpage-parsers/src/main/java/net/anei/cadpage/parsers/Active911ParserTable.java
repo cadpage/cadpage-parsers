@@ -2119,7 +2119,7 @@ public class Active911ParserTable {
 //      "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",    Mysteriously vanished - further investigation required
       "US/TX/Seabrook",                   "TXHarrisCountyC",
       "US/TX/Seagoville",                 "TXDallasCountyB",
-      "US/TX/Seguin",                     "TXSeguin",
+      "US/TX/Seguin",                     "TXGuadalupeCounty",
       "US/TX/Smhcems",                    "TXHaysCounty",
       "US/TX/SmithCounty",                "TXSmithCounty",
       "US/TX/SomervellCounty",            "TXSomervellCounty",
