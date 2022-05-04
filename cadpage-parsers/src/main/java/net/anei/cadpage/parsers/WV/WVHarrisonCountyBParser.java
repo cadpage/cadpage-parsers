@@ -31,7 +31,7 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "harrison@911page.net";
+    return "harrison@911page.net,dispatch@centrale911.com,CADPAGE@CentralE911.local";
   }
 
   private static final Pattern DELIM = Pattern.compile("\n| +(?=District:|State:|ZIP Code:|Floor:|Phone:|Discipline:|Agency:)");
