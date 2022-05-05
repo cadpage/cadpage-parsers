@@ -18,7 +18,7 @@ public class NYRocklandCountyEParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CRFirst@chvrm.com";
+    return "CRFirst@chvrm.com,crbackup@chvrm.com ";
   }
   
   @Override
