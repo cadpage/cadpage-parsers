@@ -26,21 +26,21 @@ public class DispatchA48Parser extends FieldProgramParser {
    * Flag indicating the call description may be a single word code
    */
   public static final int A48_OPT_CODE = 0x02;
-  
-  /**
-   * Flag indicating call description is optional
-   */
-  public static final int A48_OPT_CALL = 0x4;
-
-  /**
-   * Flag indicating the call description may be a single word code
-   */
-  public static final int A48_OPT_ONE_WORD_CODE = A48_OPT_CODE | A48_ONE_WORD_CODE;
 
   /**
    * Flag indicating there is no call code.  Just a call description
    */
   public static final int A48_NO_CODE =           0x04;
+  
+  /**
+   * Flag indicating call description is optional
+   */
+  public static final int A48_OPT_CALL = 0x8;
+
+  /**
+   * Flag indicating the call description may be a single word code
+   */
+  public static final int A48_OPT_ONE_WORD_CODE = A48_OPT_CODE | A48_ONE_WORD_CODE;
 
   private static final Pattern GPS_PTN = Pattern.compile(" *([-+]?\\b\\d{2,3}\\.\\d{4,} +[-+]?\\d{2,3}\\.\\d{4,})\\b *");
   private static final Pattern PHONE_PTN = Pattern.compile("(?:(\\d{3}-\\d{3}-\\d{4})\\b|- -) *");
