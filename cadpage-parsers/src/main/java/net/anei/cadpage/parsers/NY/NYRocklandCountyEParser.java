@@ -18,12 +18,14 @@ public class NYRocklandCountyEParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "CRFirst@chvrm.com,crbackup@chvrm.com ";
+    return "CRFirst@chvrm.com,CRbackUP@chvrm.com";
   }
   
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom(){
+      @Override public boolean mixedMsgOrder() { return true; }
+    };
   }
 
   private static final Pattern MARKER = Pattern.compile("Unit (\\d+) = +");
