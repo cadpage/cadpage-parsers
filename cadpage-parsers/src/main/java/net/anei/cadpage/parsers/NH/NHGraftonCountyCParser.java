@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.NH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
@@ -17,10 +20,38 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
   public String getFilter() {
     return "notification@nhpd.cloud";
   }
+  
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6})\n");
+  private static final Pattern GPS_PTN = Pattern.compile("(.*?)\\(((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))\\)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    int pt = subject.lastIndexOf('|');
+    if (pt >= 0)subject = subject.substring(pt+1).trim();
+    if (subject.startsWith("CFS Notification - ")) {
+      String id = null;
+      Matcher match = LEAD_ID_PTN.matcher(body);
+      if (match.lookingAt()) {
+        id = match.group(1);
+        body = body.substring(match.end());
+      }
+      
+      pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      String head = body.substring(0, pt);
+      String tail = body.substring(pt);
+      match = GPS_PTN.matcher(head);
+      if (match.matches()) head = match.group(1) + ", " + match.group(2);
+      if (id != null) head = head + ' ' + id;
+      body = head + tail;
+      
+      body = "Notification from " + subject.substring(19) + ":\n" + body;
+      body = body.replace("\nUnit(s) responed:", "\nUnit(s) responded:");
+    }
+    
     if (!super.parseMsg(subject, body, data)) return false;
+    
     if (data.strApt.equals("NH") && data.strCity.isEmpty()) {
       data.strState = data.strApt;
       data.strApt = "";
