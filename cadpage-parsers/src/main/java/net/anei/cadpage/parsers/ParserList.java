@@ -407,6 +407,7 @@ public class ParserList {
               ,"GAPauldingCounty"               ,"Paulding County, GA"
               ,"GAPickensCounty"                ,"Pickens County, GA"
               ,"GAPikeCounty"                   ,"Pike County, GA"
+              ,"GAPolkCounty"                   ,"Polk County, GA"
               ,"GARabunCounty"                  ,"Rabun County, GA"
               ,"GASchleyCounty"                 ,"Schley County, GA"
               ,"GASeminoleCounty"               ,"Seminole County, GA"
