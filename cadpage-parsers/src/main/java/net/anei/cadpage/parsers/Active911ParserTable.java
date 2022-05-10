@@ -1152,7 +1152,7 @@ public class Active911ParserTable {
       "US/MO/RollaRuralFire",             "MOPhelpsCounty",
       "US/MO/SCBCFD",                     "MOBuchananCountyA,MOBuchananCountyD",
       "US/MO/ScottCity",                  "MOScottCountyA",
-      "US/MO/ScottCounty",                "MOScottCountyB",
+      "US/MO/ScottCounty",                "MOScottCounty",
       "US/MO/ShelbyCounty",               "MOShelbyCounty",
       "US/MO/SouthernBoone",              "MOBooneCounty",
       "US/MO/StCharlesCounty",            "MOStCharlesCounty",

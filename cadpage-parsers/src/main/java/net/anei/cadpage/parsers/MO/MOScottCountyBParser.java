@@ -13,12 +13,12 @@ public class MOScottCountyBParser extends HtmlProgramParser {
   public MOScottCountyBParser() {
     super("SCOTT COUNTY", "MO",
           "ID DATETIME! ( SELECT/HTML Situation:EMPTY! CALL! Address:EMPTY! ADDRCITY! Notes:EMPTY! INFO/N+? COPYRIGHT! " +
-                       "| Situation:CALL! Address:ADDRCITY! CALL/SDS Notes:INFO/N+ )");
+                       "| ( Situation:CALL! | CALL PLACE ) Address:ADDRCITY! CALL/SDS Notes:INFO/N+ )");
   }
 
   @Override
   public String getFilter() {
-    return "SIKESTONDPS@OMNIGO.COM";
+    return "noreply@omnigo.com";
   }
 
   @Override
