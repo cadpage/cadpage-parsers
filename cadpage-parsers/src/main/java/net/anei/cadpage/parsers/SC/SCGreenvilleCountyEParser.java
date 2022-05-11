@@ -12,7 +12,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   public SCGreenvilleCountyEParser() {
     super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC",
-          "CALL ADDR CITY PLACE! EMPTY! END");
+          "CALL ADDR CITY PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | UNIT EMPTY ) | PRI ID UNIT/C+ ) END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("GATEWAY", "PLACE", "ROAD");
@@ -21,11 +21,6 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "InformCADPaging@Greenvillecounty.org,@whfd.org";
-  }
-
-  @Override
-  public String getProgram() {
-    return super.getProgram() + " GPS INFO";
   }
 
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=Mutual Aid/Assist Outside Agen|Motor Vehicle Collision/Injury|Struct Fire Resi Single Family|Vehicle Fire Comm/Box/Mot Home)(?! )");
@@ -72,9 +67,11 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     match = INFO_DELIM_PTN.matcher(body);
     if (match.find()) {
       good = true;
-      extra = body.substring(match.end()).trim();
-      body = body.substring(0, match.start());
-      if (body.endsWith(" ") || body.contains("   ")) return false;
+      if (body.charAt(match.start()-1) != ';') {
+        extra = body.substring(match.end()).trim();
+        body = body.substring(0, match.start());
+        if (body.endsWith(" ") || body.contains("   ")) return false;
+      }
     }
 
     if (body.contains(";")) {
@@ -88,7 +85,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       match = MASTER1.matcher(body);
       if (match.matches()) {
         good = true;
-        setFieldList("CALL CITY ADDR APT PLACE PRI ID X");
+        setFieldList("CALL CITY ADDR APT PLACE PRI ID X INFO GPS");
         data.strCall = match.group(1).trim();
         String cityAddr = match.group(2).trim();
         data.strPriority = match.group(3);
@@ -106,7 +103,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       }
 
       else {
-        setFieldList("CALL ADDR APT CITY PLACE");
+        setFieldList("CALL ADDR APT CITY PLACE INFO GPS");
         int pt = body.indexOf("(C)");
         if (pt >= 0) {
           good = true;
@@ -144,21 +141,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     }
 
     if (extra != null) {
-      for (String part : INFO_BRK_PTN.split(extra)) {
-        part = part.trim();
-        part = stripFieldEnd(part, ",");
-        part = stripFieldEnd(part, "[Shared]");
-
-        match = INFO_GPS_PTN.matcher(part);
-        if (match.matches()) {
-          setGPSLoc(match.group(1)+','+match.group(2), data);
-          continue;
-        }
-
-        if (INFO_JUNK_PTN.matcher(part).matches()) continue;
-
-        data.strSupp = append(data.strSupp, "\n", part);
-      }
+      parseInfo(extra, data);
     }
 
     return good;
@@ -167,6 +150,10 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("ID")) return new IdField("\\d{6}-\\d{6}", true);
+    if (name.equals("PRI")) return new PriorityField("(?:Non-)?Emergency", true);
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -175,6 +162,45 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "(C)");
       super.parse(field, data);
+    }
+  }
+  
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Units Assigned");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      parseInfo(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "INFO GPS";
+    }
+  }
+
+  private void parseInfo(String extra, Data data) {
+    Matcher match;
+    for (String part : INFO_BRK_PTN.split(extra)) {
+      part = part.trim();
+      part = stripFieldEnd(part, ",");
+      part = stripFieldEnd(part, "[Shared]");
+
+      match = INFO_GPS_PTN.matcher(part);
+      if (match.matches()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        continue;
+      }
+
+      if (INFO_JUNK_PTN.matcher(part).matches()) continue;
+
+      data.strSupp = append(data.strSupp, "\n", part);
     }
   }
 
@@ -204,6 +230,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "BIG FOOT",
       "BIG OAK",
       "BILL TIMMONS",
+      "BLACK HAWK",
       "BLACKBERRY VALLEY",
       "BLUE RIDGE",
       "BLUE WATER",
@@ -212,6 +239,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "BONNIE WOODS",
       "BROCKMAN MCCLIMON",
       "BROOK GLENN",
+      "BROOK LAUREL",
       "BROOKE LEE",
       "BROOKS POINTE",
       "BRUSHY CREEK",
@@ -263,13 +291,16 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "CROSS HILL",
       "CROWN EMPIRE",
       "CUNNINGHAM POINT",
+      "CYPRESS COVE",
       "DEAN WILLIAMS",
       "DEER RUN",
       "DEVILS FORK",
       "DIVIDING WATER",
+      "DOLCE VITA",
       "DRY POCKET",
       "DUCK POND",
       "DUNCAN CHAPEL",
+      "DUNHAM BRIDGE",
       "DUNKLIN BRIDGE",
       "EAGLE CREEK",
       "EASLEY BRIDGE",
@@ -325,6 +356,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "HOKE SMITH",
       "HOLLY HILL",
       "HUNTS BRIDGE",
+      "HWY 25",
       "INDIAN RIDGE",
       "INDIAN SPRINGS",
       "J VERNE SMITH",
@@ -342,6 +374,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "KNIGHTS SPUR",
       "KNOB CREEK",
       "LA PLATA",
+      "LA ROSA",
       "LAKE CUNNINGHAM",
       "LAKE SHORE",
       "LAND GRANT",
@@ -369,6 +402,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "LUCILLE SMITH",
       "MAGNOLIA MEADOW",
       "MAGNOLIA PLACE",
+      "MAPLE LAKE",
       "MAPLE TREE",
       "MARY PEACE STERLING",
       "MATTIE CAMPBELL",
@@ -380,6 +414,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "MEADOW FORK",
       "MEADOW TREE",
       "MILFORD CHURCH",
+      "MILL PARK",
       "MISTY CREST",
       "MISTY GATE",
       "MITER SAW",
@@ -406,6 +441,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "PACKS MOUNTAIN",
       "PALM SPRINGS",
       "PARIS CREEK",
+      "PARIS MOUNTAIN",
       "PARIS VIEW",
       "PARK PLACE",
       "PARNELL BRIDGE",
@@ -457,6 +493,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "SAM LANGLEY",
       "SANDY FLAT",
       "SCOTTS BLUFF",
+      "SEYLE ST",
       "SHANNON LAKE",
       "SHORT BRANCH",
       "SILVER CREEK",
@@ -464,6 +501,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "SINGLE OAK",
       "SLEEPY RIVER",
       "SLIDING ROCK",
+      "SMYTHE MILL",
       "SPARROW HAWK",
       "SPRING FELLOW",
       "SPRING PARK",
@@ -526,6 +564,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "WINDY OAK",
       "WOODS CHAPEL",
       "WOODS LAKE"
+    
   };
 
   private static final CodeSet CALL_LIST = new CodeSet(
