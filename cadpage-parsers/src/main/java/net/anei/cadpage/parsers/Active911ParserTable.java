@@ -1556,6 +1556,7 @@ public class Active911ParserTable {
       "US/OH/CityofMacedonia",            "OHSummitCountyG",
       "US/OH/CityofMonroe",               "OHMonroe",
       "US/OH/CityofNorwood",              "OHHamiltonCountyB",
+      "US/OH/CityofOakwood",              "OHMontgomeryCountyD",
       "US/OH/CityofOxford",               "OHOxford",
       "US/OH/CityofRavenna",              "OHPortageCountyA",
       "US/OH/CityofShakerHeights",        "OHCuyahogaCountyA",

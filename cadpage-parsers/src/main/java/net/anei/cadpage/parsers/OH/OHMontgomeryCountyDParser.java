@@ -10,6 +10,6 @@ public class OHMontgomeryCountyDParser extends DispatchA1Parser {
   
   @Override
   public String getFilter() {
-    return "Kettering_911Dispatch@ketteringoh.org";
+    return "dispatchalerts@oakwood.oh.us";
   }
 }
