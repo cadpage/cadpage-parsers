@@ -1058,6 +1058,7 @@ public class Active911ParserTable {
       "US/MN/WinonaCounty",               "MNWinonaCounty",
       "US/MN/WrightCounty",               "MNWrightCounty",
       "US/MO/AdairCounty",                "MOAdairCounty",
+      "US/MO/AdairCountyFireEms",         "MOAdairCounty",
       "US/MO/ADSiCad",                    "MOLawrenceCounty",
       "US/MO/AndrewCounty",               "Cadpage2",
       "US/MO/AndrewCounty",               "MOAndrewCounty",
