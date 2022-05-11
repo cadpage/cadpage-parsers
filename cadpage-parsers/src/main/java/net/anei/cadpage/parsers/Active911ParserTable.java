@@ -479,6 +479,7 @@ public class Active911ParserTable {
       "US/ID/BoundarySheriff",            "IDBoundaryCounty",
       "US/ID/FremontCounty",              "IDFremontCounty",
       "US/ID/GemCounty",                  "IDGemCounty",
+      "US/ID/GoodingCounty",              "IDGoodingCountyC",
       "US/ID/IdahoCounty",                "IDIdahoCounty",
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/KootenaiCountyFR",           "IDKootenaiCounty",

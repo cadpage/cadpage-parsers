@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.ID;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,7 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
   
   public IDTwinFallsCountyCParser(String defCity, String defState) {
     super(defCity, defState, 
-          "UNIT ID CALL ADDRCITY PLACE INFO! END");
+          "UNIT ID CALL ADDRCITY PLACE INFO! UNIT EMPTY END");
   }
   
   @Override
@@ -27,9 +29,13 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
     return "IDTwinFallsCountyC";
   }
   
+  private Set<String> unitSet = new HashSet<>();
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace(" -- -- ", " --  -- ");
+    if (body.endsWith(" --")) body += ' ';
+    unitSet.clear();
     return parseFields(body.split(" -- "), data);
   }
   
@@ -46,8 +52,16 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace("; ", ",");
-      super.parse(field, data);
+      if (field.isEmpty()) return;
+      StringBuilder sb = new StringBuilder(data.strUnit);
+      for (String unit : field.split(";")) {
+        unit = unit.trim();
+        if (unitSet.add(unit)) {
+          if (sb.length() > 0) sb.append(',');
+          sb.append(unit);
+        }
+      }
+      data.strUnit = sb.toString();
     }
   }
   
