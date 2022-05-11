@@ -894,6 +894,7 @@ public class Active911ParserTable {
       "US/MD/FrederickCounty",            "MDFrederickCounty",
       "US/MD/FrederickCountyFireRescue",  "MDFrederickCounty",
       "US/MD/GarrettCounty",              "MDGarrettCounty",
+      "US/MD/GarrettCountyTest",          "MDGarrettCounty",
       "US/MD/HarfordCounty",              "MDHarfordCountyC,Cadpage2",
       "US/MD/HowardCounty",               "MDHowardCounty",
       "US/MD/KentCounty",                 "MDKentCounty",

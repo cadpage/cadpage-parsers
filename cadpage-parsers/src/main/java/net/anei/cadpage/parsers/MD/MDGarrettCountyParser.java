@@ -60,6 +60,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
     if (name.equals("X2")) return new MyCrossField("(.*?) *\\]", true);
     if (name.equals("CALL2")) return new CallField("HOT|COLD|[AB]LS", true);
     if (name.equals("UNIT_TIME")) return new MyUnitTimeField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -107,7 +108,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern UNIT_TIME_PTN = Pattern.compile("(?:([ A-Z0-9]+?) )??(?:(\\d{7}) )?(\\d\\d:\\d\\d)");
+  private static final Pattern UNIT_TIME_PTN = Pattern.compile("(?:([ A-Z0-9]+?) )??(?:(\\d{7}) )?(\\d\\d:\\d\\d)(?: +(.*))?");
   private class MyUnitTimeField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -116,11 +117,28 @@ public class MDGarrettCountyParser extends FieldProgramParser {
       data.strUnit = getOptGroup(match.group(1));
       data.strCallId = getOptGroup(match.group(2));
       data.strTime = match.group(3);
+      data.strCall = append(data.strCall, " - ", getOptGroup(match.group(4)));
     }
 
     @Override
     public String getFieldNames() {
       return "UNIT ID TIME";
+    }
+  }
+  
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("TG:")) {
+        data.strChannel = append(data.strChannel, "/", field.substring(3).trim());
+      } else {
+        super.parse(field, data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CH";
     }
   }
   
