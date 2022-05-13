@@ -11,6 +11,11 @@ public class MDHowardCountyBParser extends FieldProgramParser {
   }
   
   @Override
+  public String getFilter() {
+    return "@c-msg.net";
+  }
+  
+  @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split(" //"), data);
   }
