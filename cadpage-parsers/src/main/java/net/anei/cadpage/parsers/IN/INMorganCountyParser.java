@@ -12,7 +12,7 @@ public class INMorganCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "notification@pd.mooresville.in.gov,alerts@interagency.us";
+    return "notification@pd.mooresville.in.gov,alerts@interagency.us,911alert@cloud.morgancounty.in.gov";
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
