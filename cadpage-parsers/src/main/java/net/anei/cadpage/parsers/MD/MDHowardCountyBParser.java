@@ -7,7 +7,7 @@ public class MDHowardCountyBParser extends FieldProgramParser {
   
   public MDHowardCountyBParser() {
     super("HOWARD COUNTY", "MD", 
-          "ID CALL PLACE ADDR CITY INFO UNIT TIME! END");
+          "ID CALL PLACE ADDR CITY APT UNIT TIME! END");
   }
   
   @Override
