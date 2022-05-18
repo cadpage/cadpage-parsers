@@ -64,7 +64,7 @@ public class NCPolkCountyParser extends DispatchSouthernParser {
   }
   private static final Pattern BEFORE_PTN = Pattern.compile(" (?:JUST )?BEFORE ");
   
-  private static final String[] CITY_LIST = new String[]{
+  public static final String[] CITY_LIST = new String[]{
     "COLUMBUS",
     "MILL SPRING",
     "RUTHERFORD",
