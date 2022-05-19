@@ -10,7 +10,7 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
   
   public PANorthamptonCountyBParser() {
     super("NORTHAMPTON COUNTY", "PA", 
-          "UNIT_CALL_ADDR_CITY/S6! Cross_Streets:X! Caller:NAME! Case:ID! END");
+          "UNIT_CALL_ADDR_CITY/S6! ( XST:X! CALLER:NAME! CASE:ID! NARR:INFO! | Cross_Streets:X! Caller:NAME! Case:ID! ) END");
     setupSpecialStreets("BROADWAY", "RAMP");
     addCrossStreetNames("ALLEY ALY", "UNNAMED");
     removeWords("NEW", "PARK");
@@ -26,6 +26,7 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT_CALL_ADDR_CITY"))  return new MyUnitCallAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
   
@@ -92,6 +93,19 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
       field = stripFieldStart(field, ",");
       field = stripFieldEnd(field, ",");
       super.parse(field, data);
+    }
+  }
+  
+  private static final Pattern INFO_PFX_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} \\d{4} +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        Matcher match = INFO_PFX_PTN.matcher(line);
+        if (match.lookingAt()) line = line.substring(match.end());
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
     }
   }
 }
