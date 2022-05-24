@@ -1152,6 +1152,7 @@ public class Active911ParserTable {
       "US/MO/PikeCountyIncLog",           "MOPikeCountyB",
       "US/MO/PolkCounty",                 "MOPolkCounty",
       "US/MO/PoplarBluffPD",              "MOPoplarBluff",
+      "US/MO/PublicSafety",               "MOTaneyCounty",
       "US/MO/PulaskiCounty",              "MOPulaskiCounty",
       "US/MO/RayCounty",                  "MORayCounty",
       "US/MO/Raytown",                    "MOJacksonCountyB",

@@ -1003,6 +1003,7 @@ public class ParserList {
               ,"MOStoddardCounty"               ,"Stoddard County, MO"
               ,"MOStoneCounty"                  ,"Stone County, MO"
               ,"MOSullivanCounty"               ,"Sullivan County, MO"
+              ,"MOTaneyCounty"                  ,"Taney County, MO"
               ,"MOWarrenCounty"                 ,"Warren County, MO"
               ,"MOWashingtonCity"               ,"Washington City, MO"
               ,"MOWashingtonCounty"             ,"Washington County, MO"
