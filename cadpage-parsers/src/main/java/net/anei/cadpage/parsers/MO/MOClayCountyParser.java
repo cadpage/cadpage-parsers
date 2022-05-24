@@ -12,6 +12,7 @@ public class MOClayCountyParser extends GroupBestParser {
   // centers with different email addresses, we will separate them with a block call.
   public MOClayCountyParser() {
     super(new MOClayCountyAParser(), new MOClayCountyCParser(), 
+          new MOClayCountyEParser(),
           new GroupBlockParser(),
           new MOClayCountyDParser());
   }
