@@ -9,29 +9,29 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.FieldProgramParser;
 
 public class WVHarrisonCountyBParser extends FieldProgramParser {
-  
+
   public WVHarrisonCountyBParser() {
     this("HARRISON COUNTY", "WV");
   }
-  
+
   protected WVHarrisonCountyBParser(String defCity, String defState) {
-    super(CITY_LIST, defCity, defState, 
+    super(CITY_LIST, defCity, defState,
           "Call_Number:ID! Primary_Incident_Number:SKIP! All_Incident_Numbers:SKIP! ESN:MAP! District:MAP/L! Received:SKIP! Caller:NAME! Call_Taker:SKIP! " +
-              "City:CITY! State:ST! ZIP_Code:ZIP! Place:PLACE! Address:ADDR! Apt:APT! Floor:APT! Phone:PHONE! Nature:CALL! Discipline:SKIP! Agency:SKIP! " + 
+              "City:CITY! State:ST! ZIP_Code:ZIP! Place:PLACE! Address:ADDR! Apt:APT! Floor:APT! Phone:PHONE! Nature:CALL! Discipline:SKIP! Agency:SKIP! " +
               "Location:PLACE! Landmark:PLACE! Caller_Address:SKIP! Description:INFO! INFO/N+ ( Location_Alert_Info:ALERT! Units:UNIT! END | TIMES/N+ )");
-    
+
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "WVHarrisonCountyB";
   }
-  
+
   @Override
   public String getFilter() {
-    return "harrison@911page.net,dispatch@centrale911.com,CADPAGE@CentralE911.local";
+    return "harrison@911page.net,dispatch@centrale911.com,CADPAGE@CentralE911.local,alerts@gmail.com";
   }
 
   private static final Pattern DELIM = Pattern.compile("\n| +(?=District:|State:|ZIP Code:|Floor:|Phone:|Discipline:|Agency:)");
@@ -39,15 +39,15 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
   private static final Pattern MASTER = Pattern.compile("Call Number: *(\\d+) +(?:Call Received Time: (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d) +)?(.*?)((?: (?:[A-Z]+\\d+|\\d{3,4}|[A-Z]{2,}FD|DOHPUB|AIREVAC|DOH|RCSO))+)");
   private static final Pattern MBLANK_PTN = Pattern.compile("  +");
   private static final Pattern COUNTY_ABRV_PTN = Pattern.compile("(.*) (?:DODD|HARR|RITC)");
-  
+
   private String times;
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
-    
+
     body = SALEM_UNIT_PTN.matcher(body).replaceAll("$1$2");
-    
+
     if (body.contains("\n")) {
       times = "";
       if (!parseFields(DELIM.split(body), data)) return false;
@@ -58,39 +58,39 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     setFieldList("ID DATE TIME CALL ADDR APT CITY UNIT");
-    
+
     data.strCallId = match.group(1);
     data.strDate = getOptGroup(match.group(2));
     data.strTime = getOptGroup(match.group(3));
     String addr = match.group(4).trim();
     data.strUnit = match.group(5).trim();
-    
+
     if (addr.startsWith("Call Received Time:")) return false;
-    
+
     addr = MBLANK_PTN.matcher(addr).replaceAll(" ");
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_EMPTY_ADDR_OK | FLAG_ANCHOR_END, addr, data);
-    
+
     match = COUNTY_ABRV_PTN.matcher(data.strAddress);
     if (match.matches()) data.strAddress = match.group(1).trim();
-    
+
     if (data.strCity.endsWith(" CO")) data.strCity += "UNTY";
-    
+
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("Unit:") || field.startsWith("Event Type:")) return false;
@@ -98,7 +98,7 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyTimesField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -115,15 +115,15 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = WV_STATE_PTN.matcher(addr).replaceAll("WV");
     return super.adjustMapAddress(addr);
   }
-  
+
   private static final Pattern WV_STATE_PTN = Pattern.compile("\\bWV STATE\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "BIG BATTEL",
       "BIG BATTLE",
@@ -153,7 +153,7 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
       "WHITE OAK"
 
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 HANG UP",
       "ABDOMINAL /BACK PAIN",
@@ -225,7 +225,7 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
       "VEHICLE FIRE",
       "WELFARE CHECK"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
 
     // Harrison County
@@ -258,8 +258,8 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
     "JIMTOWN",
     "MOUNT CLARE",
     "WALLACE",
-    
-    
+
+
     // Richie County
     // Cities
     "PENNSBORO",
@@ -311,7 +311,7 @@ public class WVHarrisonCountyBParser extends FieldProgramParser {
     "WIRT COUNTY",
     "WOOD CO",
     "WOOD COUNTY",
-    
+
     // Doddridge County
     "ASHLEY",
     "CENTER POINT",
