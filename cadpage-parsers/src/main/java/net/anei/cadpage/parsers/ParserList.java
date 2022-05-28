@@ -993,6 +993,7 @@ public class ParserList {
               ,"MOPoplarBluff"                  ,"Poplar Bluff, MO"
               ,"MOPulaskiCounty"                ,"Pulaski County, MO"
               ,"MORayCounty"                    ,"Ray County, MO"
+              ,"MOSchuylerCounty"               ,"Schuyler County, MO"
               ,"MOScottCounty"                  ,"Scott County, MO"
               ,"MOShelbyCounty"                 ,"Shelby County, MO"
               ,"MOSikeston"                     ,"Sikeston, MO"
