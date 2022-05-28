@@ -36,7 +36,7 @@ public class CASacramentoCountyParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.equals("CAD PAGE-Do not reply")) return false;
+    if (!subject.equalsIgnoreCase("CAD PAGE-Do not reply")) return false;
 
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) {
