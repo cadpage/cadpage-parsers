@@ -11,8 +11,13 @@ public class VAGoochlandCountyParser extends DispatchOSSIParser {
 
   public VAGoochlandCountyParser() {
     super("GOOCHLAND COUNTY", "VA",
-           "( CANCEL ADDR | FYI? CALL ADDR! X X ( GPS1 GPS2 | ) ) INFO+");
+           "( CANCEL ADDR | FYI? CALL ADDR! ( GPS1 GPS2 | X/Z GPS1 GPS2 | X/Z X/Z GPS1 GPS2 | X+? ) ) INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -23,14 +28,14 @@ public class VAGoochlandCountyParser extends DispatchOSSIParser {
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
