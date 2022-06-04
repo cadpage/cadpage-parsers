@@ -10,22 +10,22 @@ import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 
 public class TNWarrenCountyParser extends DispatchEmergitechParser {
-  
+
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("WarrenCo911:\\[(\\d+)\\]--? *");
 
   public TNWarrenCountyParser() {
-    super("WarrenCo911:", true, CITY_LIST, "WARREN COUNTY", "TN");
+    super("warrenco911:", true, CITY_LIST, "WARREN COUNTY", "TN", TrailAddrType.PLACE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "WarrenCo911@blomand.net";
+    return "warrenco911@benlomand.net";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (super.parseMsg(body, data)) return true;
-    
+
     Matcher match = GEN_ALERT_PTN.matcher(body);
     if (!match.lookingAt()) return false;
     setFieldList("UNIT INFO");
@@ -63,7 +63,7 @@ public class TNWarrenCountyParser extends DispatchEmergitechParser {
     "SMARTT",
     "VERVILLA",
     "WAYSIDE",
-    
+
     // DeKalb County
     "SMITHVILLE"
 
