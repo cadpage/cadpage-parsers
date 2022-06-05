@@ -12,20 +12,20 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Base class for the two CadpageParser classes
  */
 public class CadpageParserBase  extends FieldProgramParser{
-  
+
   private Map<String,Field> fieldMap = new HashMap<String,Field>();
-  
+
   public CadpageParserBase() {
     this("", "", CountryCode.US);
   }
-  
+
   public CadpageParserBase(String defCity, String defState, CountryCode country) {
-    // Pass empty strings to subclass constructor, we never really try to run a 
+    // Pass empty strings to subclass constructor, we never really try to run a
     // field program or use the default city/state values
     super(defCity, defState, country, "");
     initMap();
   }
-  
+
   private void initMap() {
     setMap("TYPE");
     setMap("PRI");
@@ -68,11 +68,11 @@ public class CadpageParserBase  extends FieldProgramParser{
    * @param keys list of key used to access this field.  The first key will
    * be used to look up the field that all of them will refer to.
    */
-  private void setMap(String ... keys) {
+  protected void setMap(String ... keys) {
     Field field = getField(keys[0]);
     for (String key : keys) fieldMap.put(key, field);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TYPE")) return new TypeField();
@@ -88,7 +88,7 @@ public class CadpageParserBase  extends FieldProgramParser{
     if (name.equals("PARSER")) return new ParserField();
     return super.getField(name);
   }
-  
+
   private class TypeField extends SkipField {
     @Override
     public void parse(String field, Data data) {
@@ -97,7 +97,7 @@ public class CadpageParserBase  extends FieldProgramParser{
       } catch (IllegalArgumentException ex) {}
     }
   }
-  
+
   private static final Pattern SPEC_CALL_PTN = Pattern.compile("(GENERAL ALERT|RUN REPORT)(?: - +(.*))?");
   private class MyCallField extends CallField {
     @Override
@@ -116,19 +116,19 @@ public class CadpageParserBase  extends FieldProgramParser{
 
   // And something to save the default city and state
   private class DefCityField extends SkipField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       data.defCity = field;
     }
   }
-  
+
   private class DefStateField extends SkipField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       data.defState = field;
     }
   }
-  
+
   private class CountryField extends SkipField {
     @Override
     public void parse(String field, Data data) {
@@ -140,16 +140,16 @@ public class CadpageParserBase  extends FieldProgramParser{
       } catch (Exception ex) {}
     }
   }
-  
+
   private class PreferGPSField extends SkipField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       data.preferGPSLoc = (field.length() > 0 && "YES".startsWith(field));
     }
   }
-  
+
   private class MapPageStatusField extends SkipField {
-    @Override 
+    @Override
     public void parse(String field, Data data) {
       data.mapPageStatus = null;
       if (field.length() == 0 || field.equals("NONE")) return;
@@ -158,28 +158,28 @@ public class CadpageParserBase  extends FieldProgramParser{
       } catch (IllegalArgumentException ex) {}
     }
   }
-  
+
   private class MapAddressField extends SkipField {
     @Override
     public void parse(String field, Data data) {
       data.strBaseMapAddress = field;
     }
   }
-  
+
   private class MapPageURLField extends SkipField {
     @Override
     public void parse(String field, Data data) {
       data.mapPageURL = (field.length() > 0 ? field : null);
     }
   }
-  
+
   private class MapCityField extends SkipField {
     @Override
     public void parse(String field, Data data) {
       data.strMapCity = field;
     }
   }
-  
+
   private class ParserField extends SkipField {
     @Override
     public void parse(String field, Data data) {
@@ -188,7 +188,7 @@ public class CadpageParserBase  extends FieldProgramParser{
       } catch (Exception ex) {}
     }
   }
-  
+
   /**
    * Get Field object that will really be used to process items
    * @param name field name
