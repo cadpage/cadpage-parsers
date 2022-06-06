@@ -1427,6 +1427,7 @@ public class Active911ParserTable {
       "US/NJ/PalmyraFire",                "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/RowanUniversity",            "NJGloucesterCountyA",
       "US/NJ/Rutgers",                    "NJMiddlesexCountyE",
+      "US/NJ/RWJBHealthEMS",              "NJMiddlesexCountyF",
       "US/NJ/SaddleRiverPD",              "NJBergenCountyC",
       "US/NJ/SalemCounty",                "NJSalemCountyC",
       "US/NJ/SomersetCounty",             "NJSomersetCountyA",
