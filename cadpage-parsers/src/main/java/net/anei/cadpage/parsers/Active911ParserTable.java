@@ -1194,6 +1194,7 @@ public class Active911ParserTable {
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/LoveFD",                     "MSDeSotoCountyB",
+      "US/MS/NeshobaCounty",              "MSNeshobaCountyB",
       "US/MS/OktibbehaCounty",            "MSOktibbehaCounty",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",
       "US/MS/PanolaCounty",               "MSPanolaCounty",
