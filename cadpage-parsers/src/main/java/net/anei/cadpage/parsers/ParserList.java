@@ -1608,6 +1608,7 @@ public class ParserList {
               ,"TXHumble"                       ,"Humble, TX"
               ,"TXHuntCounty"                   ,"Hunt County, TX"
               ,"TXHutchins"                     ,"Hutchins, TX"
+              ,"TXJeffersonCounty"              ,"Jefferson County, TX"
               ,"TXJohnsonCounty"                ,"Johnson County, TX"
               ,"TXKaufmanCounty"                ,"Kaufman County, TX"
               ,"TXKendallCounty"                ,"Kendall County, TX"
