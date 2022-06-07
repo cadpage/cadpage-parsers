@@ -1108,7 +1108,7 @@ public class Active911ParserTable {
       "US/MO/EasternCentral",             "MOStLouisCountyE",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
       "US/MO/GasconadeCounty",            "MOGasconadeCounty",
-      "US/MO/Gladstone",                  "MOClayCountyE",
+      "US/MO/Gladstone",                  "MOClayCountyE,MOClayCountyF",
       "US/MO/Glendale",                   "MOStLouisCountyK",
       "US/MO/GreeneCounty",               "MOGreeneCounty",
       "US/MO/GrundyCounty",               "MOGrundyCounty",
