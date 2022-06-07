@@ -401,6 +401,7 @@ public class ParserList {
               ,"GAMarionCounty"                 ,"Marion County, GA"
               ,"GAMartinez"                     ,"Martinez, GA"
               ,"GAMcDuffieCounty"               ,"McDuffie County, GA"
+              ,"GAMonroeCounty"                 ,"Monroe County, GA"
               ,"GAMurrayCounty"                 ,"Murray County, GA"
               ,"GAMeriwetherCounty"             ,"Meriwether County, GA"
               ,"GAOconeeCounty"                 ,"Oconee County, GA"
