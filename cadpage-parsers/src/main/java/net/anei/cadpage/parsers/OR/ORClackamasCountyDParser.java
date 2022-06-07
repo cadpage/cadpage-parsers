@@ -16,7 +16,7 @@ public class ORClackamasCountyDParser extends FieldProgramParser {
     super(defCity, defState,
           "CH ID CALL TIME ADDR PLACE MAP MAP/S MAP/S X UNIT INFO! INFO/N+ Sent_by:SKIP!");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORClackamasCountyD";
@@ -73,8 +73,8 @@ public class ORClackamasCountyDParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CH")) return new ChannelField("OPS\\d", true);
-    if (name.equals("ID")) return new IdField("R[CGP] #\\d+", true);
+    if (name.equals("CH")) return new ChannelField("OPS\\d|", true);
+    if (name.equals("ID")) return new IdField("R[CGPX] #\\d+", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDR")) return new MyAddressField();
