@@ -13,11 +13,11 @@ public class INLakeCountyAParser extends FieldProgramParser {
     super(CITY_CODES, "LAKE COUNTY", "IN",
       "SRC MAP CALL STATUS? ADDR UNIT! INFO/N+? ( ID Between:X DATETIME | Between:X DATETIME | DATETIME ) END");
   }
-  
+
   public String getFilter() {
-      return "hiplink@lakecountysheriff.com,hiplink@lcec911.org";
+      return "hiplink@lakecountysheriff.com,hiplink@lcec911.org,@dccnotify.com";
     }
-  
+
   protected boolean parseMsg(String subject, String body, Data data) {
     body = body.replace("\nIntersection of:", "\nBetween:");
     return parseFields(body.split("\n"), 2, data);
@@ -35,12 +35,12 @@ public class INLakeCountyAParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
-  private static final Pattern ADDR_APT_PTN = 
+
+  private static final Pattern ADDR_APT_PTN =
       Pattern.compile("(?:#|APT|RM|ROOM|SUITE|STE|LOT)(?!S) *(.*)|\\d{1,4}[A-Z]?|[A-Z]\\d{0,3}|.* FLOOR", Pattern.CASE_INSENSITIVE);
-  
+
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
@@ -61,22 +61,22 @@ public class INLakeCountyAParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
   }
-  
+
  private class MyUnitField extends UnitField {
-   
+
    @Override
    public void parse(String field, Data data) {
      if (field.equals("PAGED")) return;
      data.strUnit = append(data.strUnit, " ", field);
    }
  }
- 
+
  private class MyCrossField extends CrossField {
    @Override
    public void parse(String field, Data data) {
@@ -86,21 +86,21 @@ public class INLakeCountyAParser extends FieldProgramParser {
      super.parse(field, data);
    }
  }
- 
+
  private static final Pattern DATE_TIME_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d");
  private class MyDateTimeField extends DateTimeField {
-   
+
    public MyDateTimeField() {
      setPattern(DATE_TIME_PTN, false);
    }
-   
+
    @Override
    public void parse(String field, Data data) {
      if (!DATE_TIME_PTN.matcher(field).matches()) return;
      super.parse(field, data);
    }
  }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BEE",  "BEECHER",
       "BNH",  "BURNHAM",
