@@ -1,16 +1,10 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchGeoconxParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
+public class TNUnionCountyParser extends GroupBestParser {
 
-public class TNUnionCountyParser extends DispatchGeoconxParser {
-  
   public TNUnionCountyParser() {
-    super("UNION COUNTY", "TN", GCX_FLG_NAME_PHONE);
-  }
-  
-  @Override
-  public String getFilter() {
-    return "dispatch@911email.net";
+    super(new TNUnionCountyAParser(), new TNUnionCountyBParser());
   }
 }

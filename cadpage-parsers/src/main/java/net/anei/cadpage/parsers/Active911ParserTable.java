@@ -1999,6 +1999,7 @@ public class Active911ParserTable {
       "US/TN/SevierCounty",               "TNSevierCounty",
       "US/TN/SmithCounty",                "TNSmithCounty",
       "US/TN/Traumasoft",                 "TNCockeCountyA",
+      "US/TN/UnionCounty",                "TNUnionCountyB",
       "US/TN/VanBurenCounty",             "TNVanBurenCounty",
       "US/TN/WarrenCounty",               "TNWarrenCounty",
       "US/TN/WashingtonCounty",           "TNWashingtonCounty",
