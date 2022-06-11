@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +13,7 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   public DispatchA71Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! APT:APT? CITY:CITY! ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PLACE:PLACE? PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? INFO/N+");
   }
 
   @Override
@@ -29,7 +31,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d?:\\d\\d?", true);
+    if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new BaseInfoField();
@@ -59,6 +61,22 @@ public class DispatchA71Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " MAP";
+    }
+  }
+  
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa"); 
+  
+  private class BaseTimeField extends TimeField {
+    public BaseTimeField() {
+      super("\\d\\d?:\\d\\d?:\\d\\d?(?: [AP]M)?", true);
+    }
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith("M")) {
+        setTime(TIME_FMT, field, data);
+      }  else {
+        data.strTime = field;
+      }
     }
   }
 

@@ -11,12 +11,14 @@ public class OHGuernseyCountyParser extends DispatchA71Parser {
 
   @Override
   public String getFilter() {
-    return "notify@somahub.io";
+    return "notify@somahub.io,uadispatch@seormc.org";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    data.strSource = subject;
+    if (!subject.equals("Run Detail")) data.strSource = subject;
+    int pt = body.indexOf("\n\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(body,  data);
   }
 

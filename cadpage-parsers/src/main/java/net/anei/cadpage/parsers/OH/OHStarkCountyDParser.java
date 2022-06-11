@@ -15,7 +15,7 @@ public class OHStarkCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "uadispatch@seormc.org";
+    return "uadispatch@seormc.org,@plaintownship.com";
   }
 
   @Override
