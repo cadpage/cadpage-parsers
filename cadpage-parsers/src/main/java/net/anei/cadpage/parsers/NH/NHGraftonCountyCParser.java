@@ -18,7 +18,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "notification@nhpd.cloud";
+    return "notification@nhpd.cloud,Dispatch@lebanonnh.gov";
   }
   
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6})\n");

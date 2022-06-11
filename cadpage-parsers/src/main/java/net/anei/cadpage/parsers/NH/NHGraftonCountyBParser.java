@@ -20,7 +20,7 @@ public class NHGraftonCountyBParser extends DispatchA32Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com,lincolnpd546@lincolnnh.org,lebanonpaging@gmail.com,cpddispatch@claremontnh.com,hanoverdispatch@gmail.com";
+    return "dispatch@co.grafton.nh.us,lincolnpd546@gmail.com,lincolnpd546@lincolnnh.org,lebanonpaging@gmail.com,cpddispatch@claremontnh.com,hanoverdispatch@gmail.com,Dispatch@lebanonnh.gov";
   }
 
   @Override
