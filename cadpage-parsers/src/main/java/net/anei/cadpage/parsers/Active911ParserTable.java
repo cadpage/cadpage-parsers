@@ -305,6 +305,7 @@ public class Active911ParserTable {
       "US/CO/MineralCounty",              "COMineralCounty",
       "US/CO/MoffatCounty",               "COMoffatCounty",
       "US/CO/MontezumaCounty",            "COMontezumaCounty",
+      "US/CO/MontezumaCountyDoloresCounty","CODeloresCounty",
       "US/CO/MorganCounty",               "COMorganCounty",
       "US/CO/MountainViewFR",             "COBoulderCountyB",
       "US/CO/NorthglennAmbulance",        "CONorthglennEMS",
