@@ -1,6 +1,6 @@
 package net.anei.cadpage.parsers.ID;
 
-public class IDBoundaryCountyParser extends IDBinghamCountyParser {
+public class IDBoundaryCountyParser extends IDBinghamCountyAParser {
   
   public IDBoundaryCountyParser() {
     super("BOUNDARY COUNTY", "ID");
