@@ -10,7 +10,7 @@ public class ALEtowahCountyBParser extends FieldProgramParser {
 
   public ALEtowahCountyBParser() {
     super("ETOWAH COUNTY", "AL",
-          ":SKIP! CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ( SELECT_NO_GPS ESN:UNIT! GPS! | ) SRC/C+");
+          ":SKIP! CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC/C+");
   }
 
   @Override
@@ -21,14 +21,15 @@ public class ALEtowahCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD DISPATCH")) return false;
-    return parseFields(body.split("\n+"), data);
+    return parseFields(body.split("\n\\s*"), data);
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("SELECT_NO_GPS")) return new MySelectNoGPSField();
-    if (name.equals("SRC")) return new SourceField("(\\S+):(?: +NR)?", true);
+    if (name.equals("GPS")) return new GPSField("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}", true);
+    if (name.equals("SRC")) return new MySourceField();
     return super.getField(name);
   }
 
@@ -55,6 +56,18 @@ public class ALEtowahCountyBParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       return data.strUnit.isEmpty() && data.strGPSLoc.isEmpty();
+    }
+  }
+  
+  private class MySourceField extends SourceField {
+    public MySourceField() {
+      super("([^:]+):(?: +NR)?", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(' ', '_');
+      super.parse(field, data);
     }
   }
 }
