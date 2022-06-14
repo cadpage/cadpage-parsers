@@ -1,95 +1,60 @@
 package net.anei.cadpage.parsers.AL;
 
-import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
-public class ALEtowahCountyBParser extends DispatchA65Parser {
-  
+public class ALEtowahCountyBParser extends FieldProgramParser {
+
   public ALEtowahCountyBParser() {
-    super(CITY_LIST, "ETOWAH COUNTY", "AL");
+    super("ETOWAH COUNTY", "AL",
+          ":SKIP! CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ( SELECT_NO_GPS ESN:UNIT! GPS! | ) SRC/C+");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@911comm2.info,dispatch@etowah911.info";
   }
-  
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom(){
-      @Override public boolean splitBreakIns() { return true; }
-    };
-  }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!super.parseMsg(subject, body, data)) return false;
-    String city = MISSPELLED_CITIES.getProperty(data.strCity.toUpperCase());
-    if (city != null) data.strCity = city;
-    return true;
+    if (!subject.equals("CAD DISPATCH")) return false;
+    return parseFields(body.split("\n+"), data);
   }
 
-  private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{
-      "GLECNCOE",     "GLENCOE",
-      "GLENCO",       "GLENCOE",
-      "GLENOCE",      "GLENCOE"
-  });
-  
-  private static final String[] CITY_LIST = new String[]{
-    
-      // Cities
-      "ATTALLA",
-      "BOAZ",
-      "EAST GADSDEN",
-      "GADSDEN",
-      "GLENCO",  // Misspelled
-      "GLENCOE",
-      "GLENOCE", // Misspelled
-      "GLECNCOE",  // Also mispelled
-      "HOKES BLUFF",
-      "RAINBOW CITY",
-      "SOUTHSIDE",
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("SELECT_NO_GPS")) return new MySelectNoGPSField();
+    if (name.equals("SRC")) return new SourceField("(\\S+):(?: +NR)?", true);
+    return super.getField(name);
+  }
 
-      // Towns
-      "ALTOONA",
-      "REECE CITY",
-      "RIDGEVILLE",
-      "SARDIS CITY",
-      "WALNUT GROVE",
+  private static final Pattern ADDR_UNIT_GPS_PTN = Pattern.compile("(.*) \\[(\\d+)\\] \\((.*)\\)");
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDR_UNIT_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strUnit = match.group(2);
+        setGPSLoc(match.group(3), data);
+      }
+      super.parse(field, data);
+    }
 
-      // Census-designated places
-      "BALLPLAY",
-      "BRISTOW COVE",
-      "CARLISLE-ROCKLEDGE",
-      "COATS BEND",
-      "EGYPT",
-      "GALLANT",
-      "IVALEE",
-      "LOOKOUT MOUNTAIN",
-      "NEW UNION",
-      "TIDMORE BEND",
-      "WHITESBORO",
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " UNIT GPS";
+    }
+  }
 
-      // Unincorporated communities
-      "ANDERSON",
-      "LIBERTY HILL",
-      "MOUNTAINBORO",
-      "BOAZ",
-      "PILGRIMS REST",
-      "BAIRDVILLE",
-      
-      // Calhoun County
-      "PIEDMONT",
-      
-      // Cherokee County
-      "CENTRE",
-      
-      // Dekalb County
-      "COLLINSVILLE"
-
-  };
+  private class MySelectNoGPSField extends SelectField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return data.strUnit.isEmpty() && data.strGPSLoc.isEmpty();
+    }
+  }
 }
