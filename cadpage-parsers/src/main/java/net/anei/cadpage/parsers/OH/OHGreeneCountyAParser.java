@@ -17,7 +17,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
   
   public OHGreeneCountyAParser() {
     super(CITY_LIST, "GREENE COUNTY", "OH",
-          "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:SKIP! Narative:INFO/N " + 
+          "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:SKIP! Narrative:INFO/N INFO/N+ " + 
           "| CALL2 Location:ADDR2/SXXx! Time:TIME Units:UNIT Common_Name:PLACE Info:INFO ( Problem:CALL Patient_Info:INFO | Nature_Of_Call:CALL ) Incident_#:ID2 Narrative:INFO Nature_Of_Call:CALL/SDS Quadrant:MAP EMS_District:MAP )");
   }
   
@@ -84,7 +84,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     }
   }
   
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTime1Field extends DateTimeField {
     @Override
@@ -92,7 +92,12 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(2), data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
   
