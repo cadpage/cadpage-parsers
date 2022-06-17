@@ -17,7 +17,7 @@ public class COArchuletaCountyParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "directorac911@gmail.com";
+    return "directorac911@gmail.com,ArchuletaCountyCAD@outlook.com";
   }
 
   @Override
