@@ -10,7 +10,7 @@ public class KYBrackenCountyBParser extends DispatchA27Parser {
   
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,@cissystem.com";
   }
 
 }
