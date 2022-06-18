@@ -1853,7 +1853,7 @@ public class Active911ParserTable {
       "US/PA/NorcoFireCo",                "PAChesterCountyO",
       "US/PA/NorthamptonCounty",          "PANorthamptonCounty",
       "US/PA/NorthBoroEarlyDispatch",     "PAAlleghenyCounty",
-      "US/PA/NorthumberlandCounty",       "PANorthumberlandCounty",
+      "US/PA/NorthumberlandCounty",       "PANorthumberlandCounty,PASnyderCountyB",
       "US/PA/NorthumberlandFireRelief",   "PANorthumberlandCountyB",
       "US/PA/OxfordFire",                 "PAChesterCountyO",
       "US/PA/Padoh",                      "PABethlehem",
