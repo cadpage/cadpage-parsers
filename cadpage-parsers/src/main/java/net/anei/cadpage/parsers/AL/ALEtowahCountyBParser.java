@@ -10,7 +10,7 @@ public class ALEtowahCountyBParser extends FieldProgramParser {
 
   public ALEtowahCountyBParser() {
     super("ETOWAH COUNTY", "AL",
-          ":SKIP! CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC/C+");
+          ":SKIP! CFS:ID! ( EVT:CALL! CMT:INFO! | EVENT:CALL! COMMENT:INFO! ) LOC:ADDRCITY! ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC/C+");
   }
 
   @Override
