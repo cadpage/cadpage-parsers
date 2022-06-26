@@ -68,7 +68,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   
   private class BaseTimeField extends TimeField {
     public BaseTimeField() {
-      super("\\d\\d?:\\d\\d?:\\d\\d?(?: [AP]M)?", true);
+      super("\\d\\d?:\\d\\d?:\\d\\d?(?: [AP]M)?|\\d\\d:\\d\\d", true);
     }
     @Override
     public void parse(String field, Data data) {
