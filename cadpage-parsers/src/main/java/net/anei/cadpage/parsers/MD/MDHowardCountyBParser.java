@@ -22,7 +22,7 @@ public class MDHowardCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[EF]\\d{8}", true);
+    if (name.equals("ID")) return new IdField("[EF]\\d{8}|OOC\\d{7}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("BOX")) return new MyBoxField();
     return super.getField(name);
