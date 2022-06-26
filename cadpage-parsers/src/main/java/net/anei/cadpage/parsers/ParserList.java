@@ -1609,6 +1609,7 @@ public class ParserList {
               ,"TXHillCounty"                   ,"Hill County, TX"
               ,"TXHoodCounty"                   ,"Hood County, TX"
               ,"TXHoustonCounty"                ,"Houston County, TX"
+              ,"TXHowardCounty"                 ,"Howad County, TX"
               ,"TXHumble"                       ,"Humble, TX"
               ,"TXHuntCounty"                   ,"Hunt County, TX"
               ,"TXHutchins"                     ,"Hutchins, TX"

@@ -2021,6 +2021,7 @@ public class Active911ParserTable {
       "US/TX/BellCounty",                 "TXBellCounty",
       "US/TX/BeverlyHills",               "TXMcLennanCountyD",
       "US/TX/BexarCounty",                "TXBexarCountyA",
+      "US/TX/BigSpring",                  "TXHowardCounty",
       "US/TX/BlancoCounty",               "TXBlancoCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
       "US/TX/BryanFD",                    "TXBrazosCounty",
