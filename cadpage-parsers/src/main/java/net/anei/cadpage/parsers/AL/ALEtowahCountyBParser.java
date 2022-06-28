@@ -20,7 +20,7 @@ public class ALEtowahCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD DISPATCH")) return false;
+    if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     return parseFields(body.split("\n\\s*"), data);
   }
 
