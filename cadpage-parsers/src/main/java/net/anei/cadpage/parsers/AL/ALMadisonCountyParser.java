@@ -6,6 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class ALMadisonCountyParser extends GroupBestParser {
   
   public ALMadisonCountyParser() {
-    super(new ALMadisonCountyAParser(), new ALMadisonCountyBParser());
+    super(new ALMadisonCountyAParser(), new ALMadisonCountyBParser(),
+          new ALMadisonCountyCParser());
   }
 }

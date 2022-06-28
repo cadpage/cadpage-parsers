@@ -90,6 +90,7 @@ public class Active911ParserTable {
       "US/AL/DecaturFireRescue",          "ALMorganCountyB",
       "US/AL/DeKalbCounty",               "ALDeKalbCounty",
       "US/AL/Dothan",                     "ALDothan",
+      "US/AL/Echo911",                    "ALMadisonCountyC",
       "US/AL/ElbaDispatch",               "ALCoffeeCountyB",
       "US/AL/ElbowPD",                    "ALCoffeeCountyB",
       "US/AL/EmergencyCallWorx",          "ALBaldwinCounty",

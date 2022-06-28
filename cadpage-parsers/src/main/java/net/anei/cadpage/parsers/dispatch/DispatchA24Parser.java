@@ -17,7 +17,7 @@ public class DispatchA24Parser extends FieldProgramParser {
   
   public DispatchA24Parser(String defCity, String defState) {
     super(defCity, defState,
-           "UNIT:UNIT? ( CALL:CALL! ( PLACE:PLACE! ADDR:ADDR! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% DATE:DATE% TIME:TIME% UNIT:UNIT | ID:ID? ) INFO:INFO " +
+           "UNIT:UNIT? ( CALL:CALL! ( PLACE:PLACE! ADDR:ADDR! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% PRI:PRI DATE:DATE% TIME:TIME% UNIT:UNIT | ID:ID? ) INFO:INFO " +
                       "| ID:ID! INFO/RN+ )");
   }
   
@@ -44,11 +44,21 @@ public class DispatchA24Parser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
-    if (name.equals("TIME")) return new MyTimeField();
+    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("TIME")) return new BaseTimeField();
     return super.getField(name);
   }
   
-  private class MyTimeField extends TimeField {
+  private class BaseAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      super.parse(field, data);
+    }
+  }
+  
+  private class BaseTimeField extends TimeField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf('(');
