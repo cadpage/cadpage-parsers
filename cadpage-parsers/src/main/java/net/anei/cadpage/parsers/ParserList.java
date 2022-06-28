@@ -1763,6 +1763,7 @@ public class ParserList {
               ,"VAPrinceGeorgeCounty"           ,"Prince George County, VA"
               ,"VAPrinceWilliamCounty"          ,"Prince William County, VA"
               ,"VARadford"                      ,"Radford, VA"
+              ,"VARappahannockCounty"           ,"Rappahannock County, VA"
               ,"VARichmond"                     ,"Richmond, VA"
               ,"VARoanokeCity"                  ,"Roanoke City, VA"
               ,"VARoanokeCounty"                ,"Roanoke County, VA"

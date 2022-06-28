@@ -2252,6 +2252,7 @@ public class Active911ParserTable {
       "US/VA/PowhatanCounty",             "VAPowhatanCounty",
       "US/VA/PrinceEdwardCounty",         "VAPrinceEdwardCounty,VALunenburgCountyB",
       "US/VA/PrinceWilliamCounty",        "VAPrinceWilliamCounty",
+      "US/VA/RappahannockCounty",         "VARappahannockCounty",
       "US/VA/RoanokeCounty",              "VARoanokeCounty",
       "US/VA/RoanokeCountyCarilion",      "VAGilesCounty",
       "US/VA/RockbridgeCounty",           "VARockbridgeCounty",
