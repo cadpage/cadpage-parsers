@@ -16,7 +16,7 @@ public class NCBrunswickCountyCParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,no-reply@brunsco.net";
   }
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(\\d\\d-\\d+) - Run Report;\n");

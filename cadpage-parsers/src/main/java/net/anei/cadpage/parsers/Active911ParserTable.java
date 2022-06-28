@@ -1348,6 +1348,7 @@ public class Active911ParserTable {
       "US/NC/UnionCountyEmergencyManagement","NCUnionCounty",
       "US/NC/UnionVFD",                   "NCCatawbaCounty,NCLincolnCounty",
       "US/NC/USAMobility",                "NCWayneCountyA",
+      "US/NC/USCGOakIsland",              "NCBrunswickCountyC",
       "US/NC/VanceCounty",                "NCVanceCountyC",
       "US/NC/WakeCounty",                 "NCWakeCounty",
       "US/NC/WarrenCounty",               "NCWarrenCounty",
