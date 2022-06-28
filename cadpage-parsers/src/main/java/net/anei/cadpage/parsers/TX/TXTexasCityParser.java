@@ -8,6 +8,6 @@ public class TXTexasCityParser extends TXLaPorteParser {
   
   @Override
   public String getFilter() {
-    return "CAD@texas-city-tx.org";
+    return "CAD@texas-city-tx.org,CAD@texascitytx.gov";
   }
 }
