@@ -20,6 +20,11 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   public String getFilter() {
     return "noreply@emergenthealth.org,cadpaging@emergenthealth.org";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
   private static final Pattern MASTER = Pattern.compile("New Incident:\n(.*?) - (.*?) at(?: (.*))?");
@@ -169,33 +174,40 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("[A-Za-z ]+, *[A-Z]{2}(?: +\\d{5})?");
   private static final Pattern COUNTY_PTN = Pattern.compile("[A-Za-z ]+");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       String apt = "";
-      int pt1 = field.indexOf('(');
+      String city = null;
+      int pt1 = field.lastIndexOf('(');
       if (pt1 >= 0) {
-        String city;
-        int pt2 = field.indexOf(')', pt1+1);
-        if (pt2 >= 0) {
+        int pt2 = field.lastIndexOf(')');
+        if (pt2 >= 0 && pt2 > pt1) {
           city = field.substring(pt1+1, pt2).trim();
           apt = field.substring(pt2+1).trim();
         } else {
           city = field.substring(pt1+1).trim();
         }
         field = field.substring(0, pt1).trim();
+        
+        if (city.endsWith(")")) {
+          city = city.substring(0,city.length()-1).trim();
+           field = field.substring(findOpenParen(field)).trim();
+        }
 
-        if (COUNTY_PTN.matcher(city).matches()) {
-          data.strCity = city;
-        } else {
+        if (CITY_ST_ZIP_PTN.matcher(city).matches()) {
+          field = field + ',' + city;
+          city = null;
+        }
+        else if (!COUNTY_PTN.matcher(city).matches()) {
           data.strPlace = append(data.strPlace, " - ", field);
           field = city;
+          city = null;
         }
-        if (apt.startsWith("(")) {
-          apt = "";
-        } else if (!apt.isEmpty()) {
+        if (!apt.isEmpty()) {
           apt = APT_PFX_PTN.matcher(apt).replaceFirst("");
         }
       }
@@ -207,7 +219,20 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
+      if (data.strCity.isEmpty() && city != null) data.strCity = city;
       if (zip != null && data.strCity.isEmpty()) data.strCity = zip;
+    }
+    
+    private int findOpenParen(String field) {
+      int cnt = 1;
+      for (int pt = field.length()-1; pt > 0; pt--) {
+        char chr = field.charAt(pt);
+        if (chr == ')') cnt++;
+        else if (chr == '(') {
+          if (--cnt == 0) return pt+1;
+        }
+      }
+      return 0;
     }
 
     @Override
