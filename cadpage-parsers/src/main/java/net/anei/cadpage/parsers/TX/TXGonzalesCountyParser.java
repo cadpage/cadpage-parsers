@@ -10,7 +10,7 @@ public class TXGonzalesCountyParser extends DispatchA72Parser {
   
   @Override
   public String getFilter() {
-    return "gonzalessodispatch@gmail.com";
+    return "gonzalessodispatch@gmail.com,@gvtc.com";
   }
 
 }
