@@ -22,6 +22,8 @@ public class ILCookCountyFParser extends DispatchA27Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n\n\n______");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseMsg(subject, body, data)) return false;
     Matcher match = PHONE_INFO_PTN.matcher(data.strSupp);
     if (match.lookingAt()) {
