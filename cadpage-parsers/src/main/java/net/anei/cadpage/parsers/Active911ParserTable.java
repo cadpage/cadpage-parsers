@@ -1943,6 +1943,7 @@ public class Active911ParserTable {
       "US/SC/NewberryCounty",             "SCNewberryCounty",
       "US/SC/OconeeCounty",               "SCOconeeCounty",
       "US/SC/OrangeburgCounty",           "SCOrangeburgCounty",
+      "US/SC/ParkerFD",                   "SCGreenvilleCountyE",
       "US/SC/PickensCounty",              "SCPickensCounty",
       "US/SC/PickensCountyNoInfo",        "SCPickensCountyNoInfo",
       "US/SC/RichlandCounty",             "SCRichlandCounty",
