@@ -938,6 +938,7 @@ public class Active911ParserTable {
       "US/MI/ClareCounty",                "MIClareCounty",
       "US/MI/ClintonCounty",              "MIClintonCounty",
       "US/MI/EatonCounty",                "MIEatonCounty",
+      "US/MI/EmergentHealth",             "MIWashtenawCountyB",
       "US/MI/EmmetCounty",                "MIEmmetCounty",
       "US/MI/Firemodules",                "MIOaklandCountyB",
       "US/MI/Frankenlust",                "MIBayCountyC",
