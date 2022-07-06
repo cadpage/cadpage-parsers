@@ -11,7 +11,7 @@ public class GAColquittCountyParser extends DispatchA78Parser {
 
   @Override
   public String getFilter() {
-    return "911alert@interoponline.com";
+    return "donotreply@Colquitt911alerts.com";
   }
 
   @Override
