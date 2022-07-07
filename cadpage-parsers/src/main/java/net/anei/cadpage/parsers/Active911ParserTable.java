@@ -1195,7 +1195,7 @@ public class Active911ParserTable {
       "US/MS/CityofHornLake",             "MSDeSotoCountyA",
       "US/MS/CityofLouisville",           "MSWinstonCounty",
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
-      "US/MS/Gulfport",                   "MSHarrisonCountyB",
+      "US/MS/Gulfport",                   "MSHarrisonCountyB,MSHarrisonCountyE,MSHarrisonCountyF",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/LoveFD",                     "MSDeSotoCountyB",
