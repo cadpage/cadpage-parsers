@@ -2049,7 +2049,7 @@ public class Active911ParserTable {
       "US/TX/CityofFlowerMound",          "TXFlowerMound",
       "US/TX/CityofHenderson",            "TXRuskCountyB",
       "US/TX/CityofHutchins",             "TXHutchins",
-      "US/TX/CityofKeller",               "TXTarrantCountyC",
+      "US/TX/CityofKeller",               "TXTarrantCountyC,TXTarantCountyE",
       "US/TX/CityofKilgore",              "TXKilgore",
       "US/TX/CityofLiveOak",              "TXBexarCountyB",
       "US/TX/CityofLufkin",               "TXLufkin",
