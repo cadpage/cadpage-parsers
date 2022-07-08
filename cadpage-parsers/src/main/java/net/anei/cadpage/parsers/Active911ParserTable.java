@@ -2142,6 +2142,7 @@ public class Active911ParserTable {
       "US/TX/PonderosaFD",                "TXCyCreekCommCenterB",
       "US/TX/PortArthurFD",               "TXJeffersonCounty",
       "US/TX/PortIsabel",                 "TXCameronCounty",
+      "US/TX/ReevesCounty",               "TXReevesCounty",
       "US/TX/Richardson",                 "TXDallasCountyE",
       "US/TX/Roanoke",                    "TXRoanoke",
       "US/TX/RockwallCounty",             "TXRockwallCountyC",
