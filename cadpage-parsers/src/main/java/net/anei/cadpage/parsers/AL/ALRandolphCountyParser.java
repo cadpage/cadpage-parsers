@@ -7,5 +7,10 @@ public class ALRandolphCountyParser extends DispatchA74Parser {
   public ALRandolphCountyParser() {
     super("RANDOLPH COUNTY", "AL");
   }
+  
+  @Override
+  public String getFilter() {
+    return "Dispatch@RandolphAL911.info";
+  }
 
 }
