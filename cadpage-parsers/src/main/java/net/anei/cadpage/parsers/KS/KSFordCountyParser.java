@@ -10,6 +10,6 @@ public class KSFordCountyParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "@alert.active911.com>";
+    return "@alert.active911.com,Paging@44-Control.net";
   }
 }
