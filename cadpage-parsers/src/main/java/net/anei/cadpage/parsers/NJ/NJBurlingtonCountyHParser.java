@@ -14,7 +14,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
           "FINAL? ( RADIO_CHANNEL:CH | Radio_Channel:CH | ) " +
               "( Call_Type:SKIP! Date:DATETIME! Inc_Number:ID! Common_Name:PLACE! Address:ADDRCITY! Additional_Location_Info:INFO! Cross_Streets:X! " +
                 "Caller_Name:NAME! Address:SKIP! Phone:PHONE! NATURE_OF_CALL:CALL! NARRATIVE:EMPTY! INFO_BLK+? UNIT_TIMES:EMPTY! TIMES+ Alerts:ALERT! " +
-              "| TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! | DETAILED_INFO:PLACE! ) " +
+              "| ( TYPE:CALL! | INC_TYPE:CALL! ) DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ( ADDRESS:ADDRCITY! | INC_ADDRESS:ADDRCITY! ) ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! | DETAILED_INFO:PLACE! ) " +
                 "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP? PHONE:PHONE! ALERTS:ALERT? NATURE_OF_CALL:CALL/SDS? ( NARRATIVE:EMPTY! INFO_BLK+? | ) UNITS_DISPATCHED:UNIT? " +
                 "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:GPS2 | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:GPS2 | UNITS_DISPATCHED:UNIT! EMS_GRID:MAP! EMPTY+? GPS | END ) https:QUERY " +
               "| CALL! RADIO_CHANNEL:CH! INC_NUMBER:EMPTY! ID! COMMON_NAME:EMPTY! NAME CALL_ADDRESS:EMPTY! ADDRCITY! QUALIFIER/LOCAL_INFO:EMPTY! INFO/N+ CROSS_STREETS:EMPTY! X " +
@@ -40,6 +40,12 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     
+    if (body.startsWith("CAUTION:")) {
+      int pt = body.indexOf('\n', 8);
+      if (pt < 0) return false;
+      body = body.substring(pt).trim();
+      return parseFields(body.split("\n"), data);
+    }
     int pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
