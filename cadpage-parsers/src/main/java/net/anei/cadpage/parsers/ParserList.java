@@ -1668,6 +1668,7 @@ public class ParserList {
               ,"TXWichitaCounty"                ,"Wichita County, TX"
               ,"TXWilsonCounty"                 ,"Wilson County, TX"
               ,"TXWilliamsonCounty"             ,"Williamson County, TX"
+              ,"TXWiseCounty"                   ,"Wise County, TX"
               ,"TXWoodCounty"                   ,"Wood County, TX"
               ,"TXWylie"                        ,"Wylie, TX"
           ),
