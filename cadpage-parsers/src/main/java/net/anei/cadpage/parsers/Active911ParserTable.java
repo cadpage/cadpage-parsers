@@ -1331,6 +1331,7 @@ public class Active911ParserTable {
       "US/NC/RandolphCounty",             "NCRandolphCounty",
       "US/NC/RDUAirport",                 "NCWakeCountyC",
       "US/NC/RDUAirportWakeCo",           "NCWakeCountyD",
+      "US/NC/RichmondCounty",             "NCRichmondCounty",
       "US/NC/RobesonCounty",              "NCRobesonCounty",
       "US/NC/RockinghamCounty",           "NCRockinghamCounty",
       "US/NC/RoCoAnEn",                   "NCRowanCounty",

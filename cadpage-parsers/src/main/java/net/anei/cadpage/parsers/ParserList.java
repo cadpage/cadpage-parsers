@@ -1211,6 +1211,7 @@ public class ParserList {
               ,"NCPittCounty"                   ,"Pitt County, NC"
               ,"NCPolkCounty"                   ,"Polk County, NC"
               ,"NCRandolphCounty"               ,"Randolph County, NC"
+              ,"NCRichmondCounty"               ,"Richmond County, NC"
               ,"NCRobesonCounty"                ,"Robeson County, NC"
               ,"NCRockinghamCounty"             ,"Rockingham County, NC"
               ,"NCRockyMount"                   ,"Rocky Mount, NC"
