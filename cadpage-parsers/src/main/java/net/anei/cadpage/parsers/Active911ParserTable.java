@@ -1348,6 +1348,7 @@ public class Active911ParserTable {
       "US/NC/StonyPoint",                 "NCIredellCounty",
       "US/NC/SwainCounty",                "NCSwainCounty",
       "US/NC/TarboroFD",                  "NCEdgecombeCountyB",
+      "US/NC/ThomasvilleCR",              "NCDavidsonCountyB",
       "US/NC/ToisnotRuralFD",             "NCWilsonCounty",
       "US/NC/TownOfCary",                 "NCWakeCountyA,NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
