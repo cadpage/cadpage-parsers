@@ -9,7 +9,7 @@ public class TXHuntCountyBParser extends FieldProgramParser {
   
   public TXHuntCountyBParser() {
     super("HUNT COUNTY", "TX", 
-          "Incident_Type:CALL! Incident_Location:ADDR! City:CITY! Timestamp:DATETIME! City:CITY2!");
+          "Incident_Type:CALL! Incident_Location:ADDR! City:CITY2! Timestamp:DATETIME! INCIDENT_NOTES:INFO/N! Email_Address:SKIP! EXTRA", FLDPROG_ANY_ORDER);
   }
   
   @Override
@@ -31,12 +31,14 @@ public class TXHuntCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("CITY2")) return new MyCity2Field();
+    if (name.equals("EXTRA")) return new MyExtraField();
     return super.getField(name);
   }
   
   private class MyCity2Field extends CityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",,");
       int pt = field.indexOf(',');
       if (pt >= 0) {
         data.strSupp = append(data.strSupp, ", ", field.substring(pt+1).trim());
@@ -48,6 +50,14 @@ public class TXHuntCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CITY INFO";
+    }
+  }
+  
+  private class MyExtraField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("OTHER INCIDENT IF NOT LISTED ABOVE")) return;
+      data.strSupp = append(data.strSupp, "\n", field);
     }
   }
 }
