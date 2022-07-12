@@ -1012,6 +1012,7 @@ public class ParserList {
               ,"MOWashingtonCounty"             ,"Washington County, MO"
               ,"MOWayneCounty"                  ,"Wayne County, MO"
               ,"MOWebsterCounty"                ,"Webster County, MO"
+              ,"MOWorthCounty"                  ,"Worth County, MO"
               ,"MOWrightCounty"                 ,"Wright County, MO"
           ),
           new ParserCategory("Montana"
