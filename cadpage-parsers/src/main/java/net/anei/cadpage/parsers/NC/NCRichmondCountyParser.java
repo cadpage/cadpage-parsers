@@ -6,7 +6,7 @@ public class NCRichmondCountyParser extends DispatchSouthernParser {
   
   public NCRichmondCountyParser() {
     super(CITY_LIST, "RICHMOND COUNTY", "NC", 
-          DSFLG_ADDR | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME);
+          DSFLG_ADDR | DSFLG_OPT_X | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME | DSFLG_NO_INFO);
   }
 
   private static final String[] CITY_LIST = new String[]{
