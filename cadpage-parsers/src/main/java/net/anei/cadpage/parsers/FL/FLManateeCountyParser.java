@@ -13,7 +13,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   public FLManateeCountyParser() {
     super(CITY_CODES, "MANATEE COUNTY", "FL",
         "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! BEAT:BOX " + 
-                         "| Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
+                         "| EID:ID? Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO CALLER_NAME:NAME? CALLER_ADDR:SKIP? TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
