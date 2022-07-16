@@ -17,7 +17,7 @@ public class INCarrollCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911ccsd@gmail.com";
+    return "911ccsd@gmail.com,EMSdirector901@outlook.com";
   }
 
   @Override
