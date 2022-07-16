@@ -932,6 +932,7 @@ public class Active911ParserTable {
       "US/MI/BerrienCounty",              "MIBerrienCounty",
       "US/MI/CaledoniaTwp",               "MIKentCounty",
       "US/MI/CalhounCounty",              "MICalhounCounty",
+      "US/MI/CambridgeTWP",               "MIWashtenawCounty",
       "US/MI/CassCounty",                 "MICassCounty",
       "US/MI/CharlevoixCounty",           "MICharlevoixCounty",
       "US/MI/CharlevoixCountyCoastGuard", "MICharlevoixCounty",
