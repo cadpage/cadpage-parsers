@@ -13,8 +13,10 @@ public class FLManateeCountyParser extends FieldProgramParser {
   public FLManateeCountyParser() {
     super(CITY_CODES, "MANATEE COUNTY", "FL",
         "Location:ADDR/S? ( Inside_location:LOC! Event_type:CALL! Subtype:INFO! Map_grid:MAP! Time:TIME! BEAT:BOX " + 
-                         "| EID:ID? Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO CALLER_NAME:NAME? CALLER_ADDR:SKIP? TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
+                         "| EID:ID? Estimated_Address:PLACE? INSIDE_LOCATION:LOC? TYPE_CODE:CALL! INSIDE_LOCATION:LOC? SUB_TYPE:INFO CALLER_NAME:NAME? CALLER_ADDR:CADDR? TIME:TIME% MAP_GRID:MAP TIME:TIME ) END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    setupCityValues(CITY_CODES);
+    setupCities("DUETTE");
   }
 
   @Override
@@ -28,7 +30,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
   }
   
   private static final Pattern FROM_PREFIX_PTN = Pattern.compile("(?:\\*\\*\\[from \\d+\\]|FWD:) +");
-  private static final Pattern EST_PREFIX_PTN = Pattern.compile("\\d+ : EST |EA : |\\d+ (?=Inside location:)");
+  private static final Pattern EST_PREFIX_PTN = Pattern.compile("\\d+ :(?: EST )?|EA : |\\d+ (?=Inside location:)");
   
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -46,8 +48,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
     body = body.replace("Estimated Address ", "Estimated Address:");
     
     if (!super.parseMsg(body, data)) return false;
-    if (data.strAddress.length() == 0) {
-      if (data.strPlace.length() == 0) return false;
+    if (data.strAddress.isEmpty() && !data.strAddress.isEmpty()) {
       parseAddress(data.strPlace, data);
       data.strPlace = "";
     }
@@ -59,6 +60,7 @@ public class FLManateeCountyParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("LOC")) return new MyLocField();
+    if (name.equals("CADDR")) return new MyCallerAddressField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d");
     return super.getField(name);
   }
@@ -170,6 +172,22 @@ public class FLManateeCountyParser extends FieldProgramParser {
     }
   }
   
+  private static final Pattern CALL_ADDR_TERM_PTN = Pattern.compile(" -|:| SECTOR");
+  private class MyCallerAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!data.strAddress.isEmpty()) return;
+      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+      Matcher match = CALL_ADDR_TERM_PTN.matcher(data.strAddress);
+      if (match.find()) data.strAddress = data.strAddress.substring(0,match.start()).trim();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY";
+    }
+  }
+  
   private static final Pattern ST_62_PTN = Pattern.compile("\\b(?:ST|SR|FL) +62\\b", Pattern.CASE_INSENSITIVE);
   
   @Override
@@ -182,25 +200,25 @@ public class FLManateeCountyParser extends FieldProgramParser {
   });
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "AM",   "Anna Maria",
-      "BB",   "Bradenton Beach",
-      "BR",   "Bradenton",
-      "CZ",   "Cortez",
-      "DE",   "Desoto County",
-      "EL",   "Ellenton",
-      "HA",   "Hardee County",
-      "HB",   "Holmes Beach",
-      "HC",   "Hillsborough County",
-      "LBK",  "Longboat Key",
-      "LK",   "Longboat Key",
-      "MY",   "Myakka City",
-      "PA",   "Palmetto",
-      "PI",   "Pinellas County",
-      "PR",   "Parrish",
-      "SARA", "Sarasota County",
-      "SM",   "Sarasota",
-      "UB",   "Bradenton",
-      "UP",   "Palmetto",
-      "WM",   "Wimauma"
+      "AM",   "ANNA MARIA",
+      "BB",   "BRADENTON BEACH",
+      "BR",   "BRADENTON",
+      "CZ",   "CORTEZ",
+      "DE",   "DESOTO COUNTY",
+      "EL",   "ELLENTON",
+      "HA",   "HARDEE COUNTY",
+      "HB",   "HOLMES BEACH",
+      "HC",   "HILLSBOROUGH COUNTY",
+      "LBK",  "LONGBOAT KEY",
+      "LK",   "LONGBOAT KEY",
+      "MY",   "MYAKKA CITY",
+      "PA",   "PALMETTO",
+      "PI",   "PINELLAS COUNTY",
+      "PR",   "PARRISH",
+      "SARA", "SARASOTA COUNTY",
+      "SM",   "SARASOTA",
+      "UB",   "BRADENTON",
+      "UP",   "PALMETTO",
+      "WM",   "WIMAUMA"
   });
 }
