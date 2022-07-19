@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
-public class ALRandolphCountyParser extends DispatchA74Parser {
+public class ALRandolphCountyParser extends DispatchA86Parser {
   
   public ALRandolphCountyParser() {
     super("RANDOLPH COUNTY", "AL");
