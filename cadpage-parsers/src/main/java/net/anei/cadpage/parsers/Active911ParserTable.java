@@ -255,6 +255,7 @@ public class Active911ParserTable {
       "US/CA/Vallejo",                    "CASolanoCountyA",
       "US/CA/VRECC",                      "CASanJoaquinCounty",
       "US/CA/VRECCEMS",                   "CASanJoaquinCounty",
+      "US/CA/VRECCSNPP",                  "CASanJoaquinCountyA",
       "US/CA/WillowOakFD",                "CAYoloCountyB",
       "US/CA/YermoCalico",                "CASanBernardinoCountyC",
       "US/CA/YoloCounty",                 "CAYoloCountyB",

@@ -23,7 +23,17 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
 
   CASanJoaquinCountyAParser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL! Location:PLACE! Address:ADDR! City:CITY! GPS:GPS? Bldg:PLACE% Apt:APT% CrossStreets:X% Plan:PLAN% Initial_Assignment:UNIT%");
+          "( SELECT/OLD CALL! Location:PLACE! Address:ADDR! City:CITY1! GPS:GPS? Bldg:PLACE% Apt:APT% CrossStreets:X1% Plan:PLAN% Initial_Assignment:UNIT% " +
+          "| UNIT:UNIT! ( SELECT/POST_ASSIGNMENT_PAGE ASS_ADDR! ( ADDR/Z CITY GPS:GPS! | CITY? GPS:GPS! ) INFO/L+ " +
+                       "| CAD#:ID! RESP#:ID/L? " + 
+                           "( SELECT/RR INFO! INFO/N+ " + 
+                           "| CODE_CALL CALL/L+? PRI2! PRI/L+ Loc:PLACE! ADDR! ADDR City:CITY! X2! X2 Bldg:APT! Apt:APT! " +
+                               "( Assigned_Units:UNIT! Resp_Plan:PLAN! GPS:GPS! CH CH MAP MAP/L! " +
+                               "| GPS:GPS! ( Assigned_Units:UNIT! CH CH MAP MAP/L! Inc_Type:SKIP! Resp_Plan:PLAN! | ) " + 
+                               ") Incident_Comments:INFO2! " +
+                           ") " +
+                       ") " +
+          ") END");
   }
   
   @Override
@@ -131,160 +141,14 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
       return true;
     }
     
-    // Try the fixed format fields first
-    do {
-      FParser p = new FParser(body);
-      String type = p.get(20).replace(' ', '_');
-      if (!p.check("/UNIT:")) break;
-      String unit = p.get(10);
-      
-      if (type.equals("POST_ASSIGNMENT_PAGE")) {
-        boolean shortAddr = p.checkBlanks(20);
-        if (!p.check("/ You have been assigned to post at:")) break;
-        String addr = p.get(shortAddr ? 15 : 30);
-        String city = "";
-        if (!shortAddr) {
-          if (!p.check("/")) break;
-          city = p.get(15);
-        }
-        if (!p.check("/GPS:")) break;
-        String gps = p.getOptional("/", 24, 25, 31);
-        if (gps == null) break;
-        String info = p.get();
-        
-        setFieldList("UNIT CALL ADDR APT CITY GPS INFO");
-        data.strUnit = unit;
-        Parser p2 = new Parser(addr);
-        data.strCall = "POST ASSIGNMENT: " + p2.get(' ');
-        parseAddress(p2.get(), data);
-        data.strCity = city;
-        setGPSLoc(convertGPS(gps), data);
-        data.strSupp = info;
-        return true;
-      }
-      
-      if (!p.check("/CAD#:")) break;
-      String id = p.get(15);
-      if (p.check("/RESP#:")) {
-        id = append(id, "/", p.get(8));
-        p.checkBlanks(1);
-      }
-      if (!p.check("/")) break;
-      if (!type.equals("RESPONSE_INFORMATION") && !type.equals("RESPONSE_INFO_UPDATE")) {
-        setFieldList("CALL UNIT ID INFO");
-        data.msgType = MsgType.RUN_REPORT;
-        data.strCall = type;
-        data.strUnit = unit;
-        data.strCallId = id;
-        data.strSupp = p.get().replace('/', '\n').trim();
-        return true;
-      }
-      String codeCall = p.get(30);
-      if (!p.check("/")) break;
-      String priority = p.get(30);
-      if (!p.check("/Loc:")) break;
-      String place = p.get(50);
-      if (!p.check("/")) break;
-      String addr = p.get(50);
-      if (!p.check("/City:")) break;
-      String city = p.get(15);
-      if (!p.check("/")) break;
-      String cross = p.get(40);
-      if (!p.check("/Bldg:")) break;
-      String apt = p.get(10);
-      if (!p.check("/Apt:")) break;
-      apt = append(apt, "-", p.get(10));
-      p.checkBlanks(1);
-
-      if (p.check("/Assigned Units:")) {
-        unit = p.get(30);
-        if (!p.check("/Resp Plan:")) break;
-        String respPlan = p.get(50);
-        if (!p.check("/GPS:")) break;
-        String gps = p.get(21);
-        if (!p.check("/")) break;
-        if (!p.checkBlanks(30)) break;
-        if (!p.check("/")) break;
-        String channel = p.get(30);
-        p.checkBlanks(1);
-        if (!p.check("/")) break;
-        String map = p.get(8);
-        if (!p.check("/")) break;
-        map = append(map, "/", p.get(8));
-        if (!p.check("/Incident Comments:")) break;
-        String info = p.get();
-
-        setFieldList("ID CODE CALL PRI PLACE ADDR CITY X APT UNIT GPS CH MAP INFO");
-        data.strCallId = id;
-        parseCodeCall(codeCall, data);
-        data.strPriority = priority;
-        data.strPlace = place;
-        parseAddress(addr, data);
-        data.strCity = city;
-        data.strCross = cross;
-        data.strApt = append(data.strApt, "-", apt);
-        data.strUnit = unit;
-        if (respPlan.length() > 0) {
-          data.strSupp = "Resp Plan: " + respPlan;
-        }
-        setGPSLoc(convertGPS(gps), data);
-        data.strChannel = channel;
-        data.strMap = map;
-        parseInfo(info, data);
-        return true;
-      }
-      
-      if (!p.check("/GPS:")) break;
-      String gps = p.getOptional("/", 19, 31);
-      if (gps == null) break;
-      
-      String channel = "";
-      String map = "";
-      String respPlan = "";
-      String info = "";
-      if (!p.check("Incident_Comments:")) {
-        if (!p.check("Assigned_Units:")) break;
-        unit = p.get(30);
-        if (!p.check("/")) break;
-        channel = p.get(30);
-        if (!p.check("/")) break;
-        String channel2 = p.get(30);
-        if (!channel.equals(channel2)) channel = append(channel, "/", channel2);
-        p.checkBlanks(1);
-        if (!p.check("/")) break;
-        map = p.get(8);
-        if (!p.check("/")) break;
-        map = append(map, "/", p.get(8));
-        if (!p.check("/Inc_Type:")) break;
-        p.skip(30);
-        if (!p.check("/Resp_Plan:")) break;
-        respPlan = p.get(50);
-        if (!p.check("/Incident_Comments:")) break;
-        info = p.get();
-      }
-      
-      setFieldList("ID CODE CALL PRI PLACE ADDR CITY X APT GPS CH UNIT MAP INFO");
-      data.strCallId = id;
-      parseCodeCall(codeCall, data);
-      data.strPriority = priority;
-      data.strPlace = place;
-      parseAddress(addr, data);
-      data.strCity = city;
-      data.strCross = cross;
-      data.strApt = append(data.strApt, "-", apt);
-      setGPSLoc(convertGPS(gps), data);
-      data.strUnit = unit;
-      data.strChannel = channel;
-      data.strMap = map;
-      if (respPlan.length() > 0) {
-        data.strSupp = "Resp Plan: " + respPlan;
-      }
-      parseInfo(info, data);
-      return true;
-      
-      
-      
-    } while (false);
+    // Try the slash delimited format first
+    if (body.length() >= 26 && body.substring(20,26).equals("/UNIT:")) {
+      String type = body.substring(0,20).replace(' ', '_');
+      body = body.substring(21);
+      body = body.replace("Assigned_Units:", "Assigned Units:").replace("Inc_Type:", "Inc Type:").replace("Resp_Plan:", "Resp Plan:").replace("Incident_Comments:", "Incident Comments:");
+      setSelectValue(type);
+      return parseFields(splitSlashDelimFields(body), data);
+    }
     
     do {
       FParser p = new  FParser(body);
@@ -632,7 +496,30 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
     }
     
     // Next try normal field based formats
+    setSelectValue("OLD");
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "CALL? " + super.getProgram();
+  }
+  
+  private String[] splitSlashDelimFields(String body) {
+    String comments = null;
+    int pt = body.indexOf("/Incident Comments:");
+    if (pt >= 0) {
+      comments = body.substring(pt+1);
+      body = body.substring(0,pt);
+    }
+    String[] flds = body.split("/");
+    if (comments != null) {
+      String[] flds2 = new String[flds.length+1];
+      System.arraycopy(flds, 0, flds2, 0, flds.length);
+      flds2[flds.length] = comments;
+      flds = flds2;
+    }
+    return flds;
   }
   
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("\\s*+((?:Enroute|Resp|On Scene|Scn|TX|Tx|Dest|Dsp|AOR|Clear Call)[:/]|STmiles)");
@@ -664,7 +551,7 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
     } else {
       if ("No Cross Street".startsWith(field)) field = "";
     }
-    return field;
+    return field.replace('/', '&');
   }
   
   private void addUnitField(String field, Data data) {
@@ -679,7 +566,7 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
     }
     
     for (String unit : UNIT_DELIM_PTN.split(field)) {
-      if (unitSet.add(unit)) data.strUnit = append(data.strUnit, " ", unit);
+      if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
     }
   }
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[ ,]+");
@@ -712,13 +599,35 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("SELECT")) return new MySelectField();
+    if (name.equals("PRI2")) return new PriorityField("P\\d .*", true);
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("CITY1")) return new MyCity1Field();
     if (name.equals("GPS")) return new MyGPSField();
-    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("X1")) return new MyCross1Field();
+    if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("PLAN")) return new MyPlanField();
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("ASS_ADDR")) return new MyAssignAddressField();
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    if (name.equals("CH")) return new MyChannelField();
+    if (name.equals("INFO2")) return new MyInfo2Field();
     return super.getField(name);
+  }
+  
+  private class MySelectField extends SelectField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (getQual().equals("RR")) {
+        String select = getSelectValue();
+        if (select.equals("RESPONSE_INFORMATION") | select.equals("RESPONSE_INFO_UPDATE")) return false;
+        data.msgType = MsgType.RUN_REPORT;
+        data.strCall = select;
+        return true;
+      } else {
+        return super.checkParse(field, data);
+      }
+    }
   }
   
   private class MyPlaceField extends PlaceField {
@@ -729,7 +638,7 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
   }
   
   private static final Pattern CITY_PTN = Pattern.compile("(.*)\\(CAD INC#: ([^ ]+) *\\) ?\\[GROUP PAGE\\]");
-  private class MyCityField extends CityField {
+  private class MyCity1Field extends CityField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CITY_PTN.matcher(field);
@@ -751,7 +660,7 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
     }
   }
   
-  private class MyCrossField extends CrossField {
+  private class MyCross1Field extends CrossField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CHANNEL_PTN.matcher(field);
@@ -769,11 +678,19 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
     }
   }
   
+  private class MyCross2Field extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("No Cross Street")) return;
+      super.parse(field, data);
+    }
+  }
+  
   private class MyPlanField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
-      data.strSupp = "Plan: " + stripFieldEnd(field,  ",");
+      data.strSupp = "Resp Plan: " + stripFieldEnd(field,  ",");
     }
   }
   
@@ -783,6 +700,54 @@ public class CASanJoaquinCountyAParser extends FieldProgramParser {
       int pt = field.indexOf(' ');
       if (pt >= 0) field = field.substring(0,pt);
       addUnitField(field, data);
+    }
+  }
+  
+  private static final Pattern ASSIGN_ADDR_PTN = Pattern.compile("You have been assigned to post at: *(\\S+) (.*)");
+  private class MyAssignAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ASSIGN_ADDR_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strCall = "POST ASSIGNMENT: " + match.group(1);
+      parseAddress(match.group(2), data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL ADDR APT";
+    }
+  }
+  
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      parseCodeCall(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+  
+  private class MyChannelField extends ChannelField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strChannel)) return;
+      data.strChannel = append(data.strChannel, "/", field);
+    }
+  }
+  
+  private class MyInfo2Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      parseInfo(field, data);
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "INFO GPS?";
     }
   }
 }
