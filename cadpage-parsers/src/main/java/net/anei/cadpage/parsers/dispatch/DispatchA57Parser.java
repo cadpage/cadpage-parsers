@@ -23,7 +23,7 @@ public class DispatchA57Parser extends FieldProgramParser {
                       "Lat_and_Long:GPS CFS_Number:ID1? Primary_Incident:ID2/L CFS_Number:ID1? Radio_Channel:CH? ( Nar:INFO | Narrative:INFO ) INFO/N+ " +
                 ") " +
               ") " +
-          "| DATETIME CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
+          "| DATETIME EMPTY? CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
 
   private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n|Police |Fire )(?=(?:Police |Fire )?Call Type:|Address:|Common Name:|City:|Custom Layer:|Map Page:|Latt:|(?<!Lat and )Long:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|Fire Box:|(?:EMS )?District:|Beat:|Narr:|Narrative)");
