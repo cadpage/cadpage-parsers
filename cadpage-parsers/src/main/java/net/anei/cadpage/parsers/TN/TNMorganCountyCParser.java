@@ -1,10 +1,10 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA89Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
-public class TNMorganCountyBParser extends DispatchA89Parser {
+public class TNMorganCountyCParser extends DispatchA74Parser {
 
-  public TNMorganCountyBParser() {
+  public TNMorganCountyCParser() {
     super("MORGAN COUNTY", "TN");
   }
 
