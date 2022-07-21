@@ -35,7 +35,7 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
     Matcher match = LEADER.matcher(body);
     if (match.find()) {
       body = body.substring(0,match.end()) + "CAD:" + body.substring(match.end());
-    } else if (!body.startsWith("CAD:")) {
+    } else if (!body.contains("CAD:")) {
       body = "CAD:" + body;
           
     }
