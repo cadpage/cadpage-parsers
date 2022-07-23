@@ -14,17 +14,17 @@ public class MIKentCountyAParser extends DispatchH03Parser {
     super("KENT COUNTY", "MI");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "@Kent911.org,ssiler@caledoniatownship.org";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) (?:Med|Fire) Alert");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
+
     if (subject.equalsIgnoreCase("BURN PERMIT")) {
       setFieldList("CALL INFO");
       data.msgType = MsgType.GEN_ALERT;
@@ -32,10 +32,9 @@ public class MIKentCountyAParser extends DispatchH03Parser {
       data.strSupp = decodeHtmlSequence(body).trim();
       return true;
     }
-    
+
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strSource = match.group(1).trim();
+    if (match.matches()) data.strSource = match.group(1).trim();
 
     return super.parseHtmlMsg(subject, body, data);
   }
@@ -44,7 +43,7 @@ public class MIKentCountyAParser extends DispatchH03Parser {
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "I-96 EB WO DEAN LAKE-GT",      "+43.01519,-85.61512",
       "I-96 EB WO FULTON",            "+42.96480,-85.58169"
