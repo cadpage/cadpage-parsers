@@ -10,7 +10,7 @@ public class TNCampbellCountyBParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "911cad@laxe911.net,Dispatch@Lafollette911.info";
+    return "911cad@laxe911.net,Dispatch@Lafollette911.info,dispatch@campbelltne911.net";
   }
 
   @Override

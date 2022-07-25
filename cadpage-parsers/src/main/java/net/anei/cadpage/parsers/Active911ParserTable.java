@@ -1988,7 +1988,7 @@ public class Active911ParserTable {
       "US/TN/Blount911",                  "TNBlountCountyB",
       "US/TN/BlountCounty",               "TNBlountCountyB",
       "US/TN/BlountCountyFireRescue",     "TNBlountCountyB",
-      "US/TN/CampbellCounty",             "TNCampbellCountyA",
+      "US/TN/CampbellCounty",             "TNCampbellCountyA,TNCampbellCountyB",
       "US/TN/CarterCounty",               "TNCarterCounty",
       "US/TN/ChesterCounty",              "TNChesterCounty",
       "US/TN/CityofKingsport",            "TNKingsport",

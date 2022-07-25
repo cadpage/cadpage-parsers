@@ -10,7 +10,7 @@ public class DispatchA89Parser extends FieldProgramParser {
 
   public DispatchA89Parser(String defCity, String defState) {
     super(defCity, defState,
-          ":SKIP! CFS:ID! ( EVT:CALL! ( CMT:INFO! | COM:INFO! ) | EVENT:CALL! COMMENT:INFO! ) LOC:ADDRCITY! CITY? ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC_ID+");
+          ":SKIP! CFS:ID? ( EVT:CALL! ( CMT:INFO! | COM:INFO! ) | EVENT:CALL! COMMENT:INFO! ) LOC:ADDRCITY! CITY? ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC_ID+");
   }
 
   @Override
@@ -54,13 +54,13 @@ public class DispatchA89Parser extends FieldProgramParser {
       return data.strUnit.isEmpty() && data.strGPSLoc.isEmpty();
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("ESN:")) return false;
@@ -69,7 +69,7 @@ public class DispatchA89Parser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private static final Pattern SRC_ID_PTN = Pattern.compile("([^:]+): *(\\S*)");
   private class MySourceIdField extends Field {
     @Override
@@ -81,7 +81,7 @@ public class DispatchA89Parser extends FieldProgramParser {
       data.strSource = append(data.strSource, ",", src);
       if (!id.equals("NR")) data.strCallId = append(data.strCallId, ",", id);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "SRC ID";
