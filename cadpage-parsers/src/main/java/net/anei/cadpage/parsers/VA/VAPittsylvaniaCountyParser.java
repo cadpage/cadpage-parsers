@@ -10,25 +10,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
- 
+
   public VAPittsylvaniaCountyParser() {
     super(CITY_CODES, "PITTSYLVANIA COUNTY", "VA",
           "ID?: EMPTY? ( CANCEL ADDR! CITY?| FYI? CALL ADDR! ( CITY! ID? | ID! ) X? X? ) INFO+");
     setupProtectedNames("OAKS AND STANFIELD", "R AND L SMITH");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@pittgov.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_DIRO;
   }
-  
+
   private static final Pattern LEADER = Pattern.compile("^\\d+:(?!CAD:)");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "Text Message / ");
@@ -37,18 +37,18 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
       body = body.substring(0,match.end()) + "CAD:" + body.substring(match.end());
     } else if (!body.contains("CAD:")) {
       body = "CAD:" + body;
-          
+
     }
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}", true);
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private Pattern US_HWY_NN_PTN = Pattern.compile("U ?S HIGHWAY NO \\d+");
   private class MyCrossField extends CrossField {
     @Override
@@ -61,8 +61,8 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
       }
     }
   }
- 
-  
+
+
   @Override
   public String adjustMapAddress(String addr) {
     return US_PTN.matcher(addr).replaceAll("US");
@@ -87,17 +87,21 @@ public class VAPittsylvaniaCountyParser extends DispatchOSSIParser {
       "RNG","Ringgold",
       "SAN","Sandy Level",
       "SUT","Sutherlin",
-      
+
       "CAM","Campbell County",
-      
+
       // Henry County
       "HEN","Henry County",
       "AXT","Axton",
-      
+
+      // Franklin County
       "FRA","Franklin County",
       "PEN","Penhook",
 
-      "HAL","Halifax County"
+      // Henry County
+      "HAL","Halifax County",
+
+      "VER", ""   // ?????
 
   });
 }
