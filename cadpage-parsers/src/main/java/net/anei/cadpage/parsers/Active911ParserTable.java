@@ -1437,6 +1437,7 @@ public class Active911ParserTable {
       "US/NJ/MountHollyFire",             "NJBurlingtonCountyH",
       "US/NJ/MountLaurelTwp",             "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/NCPD",                       "NJEssexCounty",
+      "US/DE/NewarkPD",                   "DENewCastleCountyG",
       "US/NJ/NPD",                        "NJSussexCountyA",
       "US/NJ/Nwbcd",                      "NJSussexCountyA",
       "US/NJ/OceanCounty",                "NJOceanCounty",
