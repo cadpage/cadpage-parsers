@@ -1,8 +1,13 @@
 package net.anei.cadpage.parsers.OR;
 
-public class ORLincolnCountyParser extends ORMarionCountyBParser {
+import net.anei.cadpage.parsers.GroupBestParser;
 
+/**
+* Lincoln County, OR
+ */
+
+public class ORLincolnCountyParser extends GroupBestParser {
   public ORLincolnCountyParser() {
-    super("LINCOLN COUNTY", "OR");
+    super(new ORLincolnCountyAParser(), new ORLincolnCountyBParser());
   }
 }
