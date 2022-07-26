@@ -6,17 +6,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
 
 public class TNCumberlandCountyParser extends DispatchA65Parser {
-  
+
   public TNCumberlandCountyParser() {
     super(CITY_LIST, "CUMBERLAND COUNTY", "TN");
     setupMultiWordStreets("MILLSTONE MNTN");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@911email.net,@911email.org,e911@cumberlandtn911.org,Dispatch@Etowah911.info";
+    return "@911email.net,@911email.org,e911@cumberlandtn911.org,dispatch@cumberlandtn911.info,Dispatch@Etowah911.info";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -26,7 +26,7 @@ public class TNCumberlandCountyParser extends DispatchA65Parser {
 
 
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "CRAB ORCHARD",
       "CROSSVILLE",
@@ -49,13 +49,13 @@ public class TNCumberlandCountyParser extends DispatchA65Parser {
       "OZONE",
       "RENEGADE MOUNTAIN",
       "WESTEL",
-      
+
       // Putnam County
       "MONTEREY",
-      
+
       // Roane County
       "ROCKWOOD",
-      
+
       // White County
       "SPARTA"
   };
