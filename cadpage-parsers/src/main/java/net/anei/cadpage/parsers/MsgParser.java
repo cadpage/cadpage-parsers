@@ -662,6 +662,7 @@ public abstract class MsgParser {
    * MAP_FLG_SUPPR_TE suppress TE -> TER adjustment
    * MAP_FLG_MAP_PAGES parser may return map page information
    * MAP_FLG_ADOBE_MAP_PAGE Map pages must be displayed with Adobe Reader
+   * MAP_FLG_PK_PARKWAY convert PK -> PARKWAY instead of PIKE
    */
   public int getMapFlags() {
     return mapFlags;
@@ -677,6 +678,7 @@ public abstract class MsgParser {
   public static final int MAP_FLG_CR_CREEK = MsgInfo.MAP_FLG_CR_CREEK;
   public static final int MAP_FLG_SUPPR_TE = MsgInfo.MAP_FLG_SUPPR_TE;
   public static final int MAP_FLG_KEEP_STATE_HIGHWAY = MsgInfo.MAP_FLG_KEEP_STATE_HIGHWAY;
+  public static final int MAP_FLG_PK_PARKWAY = MsgInfo.MAP_FLG_PK_PARKWAY;
 
   public enum MapPageStatus { ANY, ADOBE };
 

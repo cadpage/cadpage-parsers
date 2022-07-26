@@ -50,6 +50,9 @@ public class MsgInfo {
   // Preserve STATE HIGHWAY construct
   public static final int MAP_FLG_KEEP_STATE_HIGHWAY = 0x800;
 
+  // Convert PK -> PARKWAY instead of PIKE
+  public static final int MAP_FLG_PK_PARKWAY = 0x1000;
+
   public enum MsgType { PAGE, GEN_ALERT, RUN_REPORT };
 
   private MsgType msgType;
@@ -627,7 +630,7 @@ public class MsgInfo {
 
     sAddr = replace(sAddr, AV_PTN, "AVE");
     sAddr = replace(sAddr, HW_PTN, "HWY");
-    sAddr = replace(sAddr, PK_PTN, "PIKE");
+    sAddr = replace(sAddr, PK_PTN, ((parser.getMapFlags() & MAP_FLG_PK_PARKWAY) != 0 ? "PARKWAY" : "PIKE"));
     sAddr = replace(sAddr, PW_PTN, "PKWY");
     sAddr = replace(sAddr, CI_PTN, "CIR");
     sAddr = replace(sAddr, BLV_PTN, "BLVD");
