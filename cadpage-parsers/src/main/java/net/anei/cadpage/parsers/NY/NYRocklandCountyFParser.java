@@ -6,21 +6,21 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class NYRocklandCountyFParser extends DispatchA19Parser {
-  
+
   public NYRocklandCountyFParser() {
     super("ROCKLAND COUNTY", "NY");
   }
-  
+
   @Override
   public String getFilter() {
     return "DISPATCH@RCPIN.NET";
   }
-  
+
   @Override
-  public int getMapFlags() {
+  public int getMapFlags(){
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
@@ -28,13 +28,42 @@ public class NYRocklandCountyFParser extends DispatchA19Parser {
     data.strCall = convertCodes(data.strCode, CALL_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
   }
 
   private static final Properties CALL_CODES = buildCodeTable(new String[] {
+      "0011 FIRE STBY",   "0011 SPECIAL CALL-FIRE STBY",
+      "0012 PD STBY",     "0012 SPECIAL CALL-POLICE STBY",
+      "0013 EVENT STBY",  "0013 SPECIAL CALL-EVENT STBY",
+      "0014 DRILL/TRNG",  "0014 SPECIAL CALL-DRILL/TRAIN",
+      "0041 DISASTER",    "0041 SPECIAL CALL-DISASTER",
+      "0042 FIRE INJS",   "0042 SPECIAL CALL-FIRE INJ",
+      "0121 ABDPN",       "0121 ABD PN",
+      "0131 ABDPN-UNK",   "0131 ABD PN-UNK",
+      "0140 ABDPN-MA",    "0140 ABD PN-MUTUAL AID",
+      "0141 ABDPN-AMS",   "0141 ABD PN-AMS",
+      "0142 ABDPN-SNC",   "0142 ABD PN-AMS",
+      "0143 ABDPN-MALE",  "0143 ABD PN",
+      "0144 ABDPN-FEMA",  "0144 ABD PN",
+      "0221 ALRG",        "0221 ALLERGIC RXN",
+      "0222 ALRG-SPID",   "0222 ALLERGIC RXN-SPIDER BITE",
+      "0231 ALRG-UNK",    "0231 ALLERGIC RXN-UNK",
+      "0240 ALRG-MA",     "0240 ALLERGIC RXN-MUTUAL AID",
+      "0241 ALRG-NB",     "0241 ALLERGIC RXN-NOT BREATH",
+      "0242 ALRG-DIB",    "0242 ALLERGIC RXN-DIFF BREATH",
+      "0243 ALRG-AMS",    "0243 ALLERGIC RXN-AMS",
+      "0244 ALRG-STING",  "0244 ALLERGIC RXN-MULTI STING",
+      "0245 ALRG-SNAKE",  "0245 ALLERGIC RXN-SNAKE BITE",
+      "0246 ALRG-EPI",    "0246 ALLERGIC RXN-EPIPEN USED",
+      "0247 ALRG-SWALL",  "0247 ALLERGIC RXN-DIFF SWALLOW",
+      "0321 BITE-LIMB",   "0321 ANIMAL BITE-LIMB",
+      "0322 BITE-PAST",   "0322 ANIMAL BITE-PAST",
+      "0323 BITE-MINOR",  "0323 ANIMAL BITE-MINOR",
+      "0331 BITE-BLEED",  "0331 ANIMAL BITE-BLEEDING",
+      "0332 BITE-UNK",    "0332 ANIMAL BITE-UNK",
       "5111 AIRCRFT-SB",  "AIRCRAFT-STANDBY",
       "5112 AIRCRFT-UN",  "AIRCRAFT-UNK STAT-DEST UNKNOWN",
       "5121 AIRCRFT-KN",  "AIRCRAFT-UNK STAT-DEST KNOWN",
@@ -296,7 +325,7 @@ public class NYRocklandCountyFParser extends DispatchA19Parser {
       "7945 RWTR-POOL",   "WATER RESQ-SWIMMING POOL",
       "7946 RWTR-LAKE",   "WATER RESQ-LAKE/POND",
       "7947 RWTR-SWAMP",  "WATER RESQ-MARSH/SWAMP/MUD",
-      "7948 RWTR-UNK",    "WATER RESQ-UNKNOWN STATUS",
+      "7948 RWTR-UNK",    "WATER RESQ-UNKNOWN STATUS"
 
   });
 

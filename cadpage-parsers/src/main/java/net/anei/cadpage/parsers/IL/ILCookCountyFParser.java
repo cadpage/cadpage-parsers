@@ -15,7 +15,7 @@ public class ILCookCountyFParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,noreply@everbridge.net,CIS_CAD@norcomm911.com";
+    return "noreply@cisusa.org,noreply@everbridge.net,@norcomm911.com";
   }
 
   private static final Pattern PHONE_INFO_PTN = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})\\b *");
