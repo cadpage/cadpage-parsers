@@ -2,13 +2,12 @@ package net.anei.cadpage.parsers.MS;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
-public class MSPearlRiverCountyParser extends DispatchA74Parser {
+public class MSPearlRiverCountyParser extends DispatchA86Parser {
 
   public MSPearlRiverCountyParser() {
-    super(CITY_LIST, "PEARL RIVER COUNTY", "MS");
-    setupCities(MAP_CITY_TABLE);
+    super("PEARL RIVER COUNTY", "MS");
   }
 
   @Override
@@ -33,27 +32,4 @@ public class MSPearlRiverCountyParser extends DispatchA74Parser {
       "SONES CHAPEL",   "POPLARVILLE",
       "SYCAMORE",       "CARRIERE",
   });
-
-  private static final String[] CITY_LIST = new String[]{
-
-      // Cities
-      "LUMBERTON",
-      "PICAYUNE",
-      "POPLARVILLE",
-
-      // Census-designated places
-      "HIDE-A-WAY LAKE",
-      "NICHOLSON",
-
-      // Other unincorporated communities
-      "CAESAR",
-      "CARRIERE",
-      "CROSSROADS",
-      "HENLEYFIELD",
-      "MCNEILL",
-      "OZONA"
-
-
-
-  };
 }
