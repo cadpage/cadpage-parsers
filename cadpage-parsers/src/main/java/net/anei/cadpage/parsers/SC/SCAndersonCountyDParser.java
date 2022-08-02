@@ -25,7 +25,6 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.isEmpty()) return false;
     return parseFields(body.split("\\|", -1), data);
   }
 
