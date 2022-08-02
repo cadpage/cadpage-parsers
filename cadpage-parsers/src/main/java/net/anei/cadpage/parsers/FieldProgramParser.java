@@ -2812,20 +2812,21 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public void parse(String field, Data data) {
+      String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
         Matcher match = ST_ZIP_PTN.matcher(city);
         if (match.matches()) {
           data.strState = match.group(1);
-          String zip = match.group(2);
+          zip = match.group(2);
           city = p.getLastOptional(',');
-          if (city.length() == 0 && zip != null) city = zip;
         }
         cityField.parse(city, data);
         field = p.get();
       }
       parseAddress(field, data);
+      if (city.length() == 0 && zip != null) city = zip;
     }
 
     protected void parseAddress(String field, Data data) {

@@ -467,6 +467,7 @@ public class Active911ParserTable {
       "US/IA/CityofOttumwa",              "IAWapelloCounty",
       "US/IA/DallasCounty",               "IADallasCounty",
       "US/IA/HancockCounty",              "IAHancockCounty",
+      "US/IA/IdaCounty",                  "IAIdaCounty",
       "US/IA/JohnsonCounty",              "IAJohnsonCounty",
       "US/IA/LyonCounty",                 "IALyonCounty",
       "US/IA/MarionCounty",               "IAMarionCounty",
