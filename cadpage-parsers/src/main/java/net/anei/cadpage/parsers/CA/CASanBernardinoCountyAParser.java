@@ -879,6 +879,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "CVA-C8x",    "Stroke Victim-breathing >35 - no test evidence (less then 3 hours)",
       "CVA-C8y",    "Stroke Victim-breathing >35 - no test evidence (greater then 3 hours)",
       "CVA-C8z",    "Stroke Victim-breathing >35 - no test evidence (unknown time frame)",
+      "CVA-C9",     "Stroke: has history, no signs present",
       "DIA",        "Diabetic Problem",
       "DIA-A1",     "Diabetic Problem-pt. alert",
       "DIA-A1c",    "Diabetic Problem-pt. alert - combative/aggressive",
