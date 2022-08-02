@@ -1343,6 +1343,7 @@ public class Active911ParserTable {
       "US/NC/RichmondCounty",             "NCRichmondCounty",
       "US/NC/RobesonCounty",              "NCRobesonCounty",
       "US/NC/RockinghamCounty",           "NCRockinghamCounty",
+      "US/NC/RockinghamFD",               "NCRichmondCounty",
       "US/NC/RoCoAnEn",                   "NCRowanCounty",
       "US/NC/RowanCounty",                "NCRowanCounty",
       "US/NC/RutherfordCounty",           "NCRutherfordCounty",
