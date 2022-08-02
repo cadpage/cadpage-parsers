@@ -10,12 +10,17 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   public SCAndersonCountyDParser() {
     super("ANDERSON COUNTY", "SC",
-          "DATETIME CODE CALL ADDRCITYST INFO UNIT ( ID_NAME | ID! NAME PHONE PHONE/CS ) END");
+          "DATETIME CODE CALL ADDRCITYST INFO UNIT ( ID_NAME | ID! NAME PHONE PHONE/CS ) GPS1 GPS2 END");
   }
 
   @Override
   public String getFilter() {
     return "centralsquare@andersonsheriff.com";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -31,6 +36,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("ID_NAME")) return new MyIdNameField();
     if (name.equals("ID")) return new IdField("CFS\\d{4}-\\d+", true);
+    if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
 
@@ -79,6 +85,14 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ID NAME";
+    }
+  }
+
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
     }
   }
 }
