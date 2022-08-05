@@ -12,35 +12,35 @@ Mecosta County, MI
 
  */
 public class MIMecostaCountyParser extends FieldProgramParser {
-  
+
   public MIMecostaCountyParser() {
     this("MECOSTA COUNTY", "MI");
   }
-  
+
   public MIMecostaCountyParser(String defCity, String defState) {
-    super(defCity, defState, 
+    super(defCity, defState,
           "ADDR ( CITY ST_ZIP? | ) X APT_PLACE ( CALL2 | APT_PLACE NAME/CS+? CALL2 ) UNIT! ( NONE END | INFO/CS+ )");
   }
-  
+
   @Override
   public String getFilter() {
-    return "zuercher@mcd911.org";
+    return "zuercher@mcd911.org,@mecostacounty.org";
   }
 
   @Override
   public String getAliasCode() {
     return "MIMceolaCounty";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.startsWith("Respond:")) return false;
     data.strCall = subject.substring(8).trim();
-    
+
     return parseFields(body.split(","), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
@@ -53,13 +53,13 @@ public class MIMecostaCountyParser extends FieldProgramParser {
     if (name.equals("NONE")) return new SkipField("None", true);
     return super.getField(name);
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.contains("(")) return false;
@@ -69,14 +69,14 @@ public class MIMecostaCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?-?");
   private class MyStateZipField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = ST_ZIP_PTN.matcher(field);
@@ -85,18 +85,18 @@ public class MIMecostaCountyParser extends FieldProgramParser {
       if (data.strCity.length() == 0) data.strCity = getOptGroup(match.group(2));
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ST CITY?";
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)|(\\d{1,5}[A-Z]?|[A-Z])");
   private class MyAptPlaceField extends Field {
 
@@ -118,7 +118,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
       return "APT PLACE";
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
@@ -126,7 +126,7 @@ public class MIMecostaCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -135,24 +135,24 @@ public class MIMecostaCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return field.equals(data.strCall);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern INFO_DATETIME_PTN = Pattern.compile("(?:^|; +)\\d\\d?/\\d\\d?/\\d\\d +\\d\\d?:\\d\\d:\\d\\d - *");
   private class MyInfoField extends InfoField {
     @Override
