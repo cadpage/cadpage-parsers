@@ -1507,6 +1507,7 @@ public class Active911ParserTable {
       "US/NY/FireRescueSystems",          "NYSuffolkCountyB,NYSuffolkCountyF,NYSuffolkCountyL,NYNassauCountyH",
       "US/NY/FireRescueSystemsSuffolkCounty","NYSuffolkCountyG,NYSuffolkCountyL",
       "US/NY/FlandersFD",                 "NYSuffolkCountyA",
+      "US/NY/FRSNaussaCounty",            "NYSuffolkCountyB,NYSuffolkCountyF,NYSuffolkCountyL,NYNassauCountyH",
       "US/NY/FultonCounty",               "NYFultonCounty",
       "US/NY/GeneseeCounty",              "NYGeneseeCounty",
       "US/NY/Islips",                     "NYSuffolkCountyA",

@@ -5,23 +5,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 
 
 
 public class OHStarkCountyCencommParser extends DispatchA13Parser {
-  
+
   public OHStarkCountyCencommParser() {
     this("STARK COUNTY", "OH");
   }
-  
+
   OHStarkCountyCencommParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState);
     setupSaintNames("ABIGAIL", "FRANCIS");
     setupMultiWordStreets("ST ABIGAIL", "ST FRANCIS", "ST FRANCAIS", "CORPORATE WOODS");
   }
-  
+
   @Override
   public String getFilter() {
     return "@neohio.twcbc.com,@neo.rr.com";
@@ -35,18 +34,18 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
   private static final Pattern FIELD_DELIM_PTN = Pattern.compile("\\s*-\\ss+|\\s+-\\s*|\\s*[:;\n]\\s*");
   private static final Pattern MASTER1_PTN = Pattern.compile("(.*?) +(?:AT|ON) +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Clean up an non-ASCII characters
     body = NON_ASCII_PTN.matcher(body).replaceAll("");
-    
+
     // Check for "normal" alerts
     if (SUBJECT_MASTER.matcher(subject).matches()) {
       return parseMsg(body, data);
     }
-    
+
     // Otherwise, to sloppy to continue without positive confirmation
     if (!isPositiveId()) return false;
     if (body.contains(" COMMENTS:")) return false;
@@ -62,7 +61,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
       match.appendTail(sb);
       body = sb.toString();
     }
-    
+
     match = YOFM_PTN.matcher(body);
     if (match.find()) {
       StringBuffer sb = new StringBuffer();
@@ -72,14 +71,14 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
       match.appendTail(sb);
       body = sb.toString();
     }
-    
+
     body = body.replace("\n.", "\n");
     body = TOWNSHIP_PTN.matcher(body).replaceAll("TWP");
-    
+
     // See if this is a delimited field alert
     String[] flds = FIELD_DELIM_PTN.split(body);
     if (flds.length > 1) {
-      
+
       // Yep, first run throught the parts looking for a city name.
       // Field in front of the city will be the address field
       int addrNdx = -1;
@@ -103,7 +102,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
           break;
         }
       }
-      
+
       // No luck, run through all of the parts looking for the best address
       if (bestResult == null) {
         for (int ndx = 0; ndx < flds.length; ndx++) {
@@ -117,12 +116,12 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
         }
         if (bestResult.getStatus() <= STATUS_NOTHING) bestResult = null;
       }
-      
+
       if (bestResult != null) {
         for (int ndx = 0; ndx < addrNdx; ndx++) {
           data.strCall = append(data.strCall, " - ", flds[ndx]);
         }
-        
+
         bestResult.getData(data);
         String left = bestResult.getLeft();
         if (data.strCross.length() > 0) {
@@ -130,7 +129,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
           data.strCross = "";
         }
         data.strSupp = left;
-        
+
         for (int ndx = infoNdx; ndx<flds.length; ndx++) {
           String part = flds[ndx];
           if (data.strCall.length() == 0) {
@@ -145,7 +144,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
         return true;
       }
     }
-    
+
     body = body.replace('\n', ' ');
     match = MASTER1_PTN.matcher(body);
     if (match.matches()) {
@@ -155,7 +154,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
       fixCity(data);
       return true;
     }
-    
+
     parseAddress(StartType.START_CALL, FLAG_OPT_STREET_SFX, body, data);
     if (!isValidAddress()) return false;
     String left = getLeft();
@@ -171,25 +170,25 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     fixCity(data);
     return true;
   }
-  
+
   private void fixCity(Data data) {
     data.strCity = MBLANK_PTN.matcher(data.strCity).replaceAll(" ");
     String city = MISSPELLED_CITIES.getProperty(data.strCity.toUpperCase());
     if (city != null) data.strCity = city;
   }
-  
-  
+
+
   @Override
   public String adjustMapCity(String city) {
     String tmp = MAP_CITY_TABLE.getProperty(city.toUpperCase());
     if (tmp != null) return tmp;
     return city;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Stark County
-    
+
     // Cities
     "ALLIANCE",
     "CANAL FULTON",
@@ -288,7 +287,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     "WACO",
 
     // Mahoning County
-    
+
     // Cities
     "CAMPBELL",
     "CANFIELD",
@@ -371,9 +370,9 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     "SNODES",
     "WEST AUSTINTOWN",
     "WOODWORTH",
-    
+
     // Portage County
-    
+
     // Cities
     "AURORA",
     "KENT",
@@ -450,32 +449,32 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     "SUFFIELD",
     "WAYLAND",
     "YALE",
-    
+
     // Carroll County
     "CARROLL CO",
     "ROSE TWP",
-    
+
     // Columbiana County
     "COLUMBIAN CO",
     "NORTH GEORGETOWN",
-    
+
     // Summit County
     "SUMMIT CO",
     "SPRINGFIELD TWP",
     "SPRINGFIELD",
-    
+
     // Tuscarawas County
     "TUSC CO",
     "TUSC COUNTY",
     "SANDY TWP TUSC CO",
-    
+
     // Wayne County
     "BAUGHMAN TWP",
     "BAUGMAN TWP",     // Misspelled
     "DALTON"
-    
+
   };
-  
+
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{
       "BAUGMAN TWP",        "BAUGHMAN TWP",
       "LOUSIVILLE",         "LOUISVILLE",
@@ -487,9 +486,9 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
       "TUSC CO",            "TUSCARAWAS COUNTY",
       "TUSC COUNTY",        "TUSCARAWAS COUNTY",
       "TUSC TWP",           "TUSCARAWAS TWP",
-      "WASINGTON TWP",      "WASHINGTON TWP" 
+      "WASINGTON TWP",      "WASHINGTON TWP"
   });
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "NORTH GEORGETOWN",   "BELOIT"
   });
