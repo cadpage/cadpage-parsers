@@ -27,7 +27,7 @@ public class NJSalemCountyCParser extends MsgParser {
     return "E_Messaging@salemcountynj.gov,@enfwebmail.onmicrosoft.com";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{2,3}-\\d{4}-\\d{5,6}");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{1,3}-\\d{4}-\\d{5,6}");
   private static final Pattern MASTER = Pattern.compile("([-;/ .()A-Z0-9]+) @ +(.*)", Pattern.DOTALL);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([, A-Z]+) (NJ|DE)\\b(?: *\\d{0,5})?(?: - (.*?))?[-. ]*");
 
