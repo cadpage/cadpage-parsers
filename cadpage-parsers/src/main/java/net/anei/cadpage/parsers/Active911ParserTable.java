@@ -1943,6 +1943,7 @@ public class Active911ParserTable {
       "US/SC/CoastalCrisis",              "General",
       "US/SC/DarlingtonCounty",           "SCDarlingtonCounty",
       "US/SC/DillonCounty",               "SCDillonCounty",
+      "US/SC/DonaldsonCenterFD",          "SCGreenvilleCountyE",
       "US/SC/DorchesterCounty",           "SCDorchesterCountyA",
       "US/SC/EdgefieldCounty",            "SCEdgefieldCounty",
       "US/SC/FairfieldCounty",            "SCFairfieldCounty",
