@@ -11,6 +11,6 @@ Mercer County, NJ
 public class NJMercerCountyParser extends GroupBestParser {
 
   public NJMercerCountyParser() {
-    super(new NJMercerCountyAParser());
+    super(new NJMercerCountyAParser(), new NJMercerCountyBParser());
   }
 }

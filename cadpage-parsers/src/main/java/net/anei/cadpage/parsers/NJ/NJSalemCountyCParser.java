@@ -29,7 +29,8 @@ public class NJSalemCountyCParser extends MsgParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{1,3}-\\d{4}-\\d{5,6}");
   private static final Pattern MASTER = Pattern.compile("([-;/ .()A-Z0-9]+) @ +(.*)", Pattern.DOTALL);
-  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([, A-Z]+) (NJ|DE)\\b(?: *\\d{0,5})?(?: - (.*?))?[-. ]*");
+  private static final Pattern COMMA_BRK_PTN = Pattern.compile("(.*?),");
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([, A-Z]+) (NJ|DE|PA)\\b(?: *\\d{0,5})?(?: - (.*?))?[-. ]*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,21 +43,36 @@ public class NJSalemCountyCParser extends MsgParser {
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
     body = match.group(2);
+    
+    if (!body.startsWith("OUT OF COUNTY")) {
+      int pt = body.indexOf(" - ");
+      if (pt >= 0) {
+        String place = body.substring(0,pt).trim();
+        String addr = body.substring(pt+3).trim();
+        if (!place.contains("\n") && !place.contains("Active Units:") && addr.contains(",")) {
+          if (!CITY_ST_ZIP_PTN.matcher(place).find()) {
+            data.strPlace = place;
+            body = addr;
+          }
+        }
+      }
+    }
 
     String addr, left;
-    int pt = body.indexOf(',');
-    if (pt >= 0) {
-      addr = body.substring(0,pt).trim();
-      left = body.substring(pt+1).trim();
-    } else if (body.startsWith("OUT OF COUNTY - ")) {
+    match = COMMA_BRK_PTN.matcher(body);
+    if (match.lookingAt()) {
+      addr = match.group(1).trim();
+      left = body.substring(match.end()).trim();
+    }
+    else if (body.startsWith("OUT OF COUNTY - ")) {
       addr = "OUT OF COUNTY";
       left = body.substring(16).trim();
     } else return false;
 
     if (!addr.startsWith("OUT OF COUNTY")) {
-      pt = addr.indexOf(" - ");
+      int pt = addr.indexOf(" - ");
       if (pt >= 0) {
-        data.strPlace = addr.substring(0, pt).trim();
+        data.strPlace = append(data.strPlace, " - ", addr.substring(0, pt).trim());
         addr = addr.substring(pt+3).trim();
         if (addr.startsWith("OUT OF COUNTY")) {
           String tmp = data.strPlace;
@@ -67,7 +83,7 @@ public class NJSalemCountyCParser extends MsgParser {
     }
     parseAddress(addr, data);
 
-    pt = left.indexOf("\nActive Units:");
+    int pt = left.indexOf("\nActive Units:");
     pt = left.indexOf(" - ", pt+1);
     if (pt >= 0) {
       data.strSupp = left.substring(pt+3).trim();
@@ -79,7 +95,7 @@ public class NJSalemCountyCParser extends MsgParser {
       String unit = left.substring(pt+1).trim();
       left = left.substring(0,pt).trim();
       if (unit.startsWith("Active Units:")) {
-        data.strUnit = unit.substring(13).trim();
+        data.strUnit = stripFieldEnd(unit.substring(13).trim(), "-");
       } else if (!"Active Units:".startsWith(unit)) return false;
     }
 
@@ -100,6 +116,13 @@ public class NJSalemCountyCParser extends MsgParser {
       }
     }
     data.strCity = stripFieldEnd(left, " BORO");
+    
+    if (data.strAddress.startsWith("OUT OF COUNTY") && !data.strPlace.isEmpty()) {
+      String temp = data.strPlace;
+      data.strPlace = data.strAddress;
+      data.strAddress = "";
+      parseAddress(temp, data);
+    }
 
     return true;
   }
