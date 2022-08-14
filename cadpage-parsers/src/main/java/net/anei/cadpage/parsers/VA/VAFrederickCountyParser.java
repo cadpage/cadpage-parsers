@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.VA;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -13,6 +14,12 @@ public class VAFrederickCountyParser extends DispatchOSSIParser {
   @Override
   public String getFilter() {
     return "CAD@co.frederick.va.us,CAD@psb.net,cad@fcva.us";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    return super.parseMsg(body, data);
   }
 
   @Override
