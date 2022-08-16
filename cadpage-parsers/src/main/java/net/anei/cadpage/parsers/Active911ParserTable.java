@@ -1685,7 +1685,7 @@ public class Active911ParserTable {
       "US/OH/SpringfieldTwp",             "OHSummitCountyH",
       "US/OH/StarkCounty",                "OHStarkCountyRedcenter2",
       "US/OH/StMarysFD",                  "OHAuglaizeCountyC",
-      "US/OH/SummitCounty",               "OHSummitCountyH",
+      "US/OH/SummitCounty",               "OHSummitCountyH,OHSummitCountyB",
       "US/OH/SundanceSys",                "OHCuyahogaCountyC,OHCuyahogaCountyF",
       "US/OH/SundanceSysPortageCounty",   "OHPortageCountyA",
       "US/OH/TallmadgeFire",              "OHSummitCountyI",

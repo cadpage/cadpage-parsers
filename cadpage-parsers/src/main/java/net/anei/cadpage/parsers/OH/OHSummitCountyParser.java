@@ -100,6 +100,7 @@ public class OHSummitCountyParser extends GroupBestParser {
     "NOGLE",
 
     // Medina County
+    "MEDINA",
     "WADSWORTH",
     "WADSWORTH TWP",
     "WADSWORTH TOWNSHIP",
@@ -111,7 +112,10 @@ public class OHSummitCountyParser extends GroupBestParser {
     "STREETSBORO",
 
     // Starke County
-    "UNIONTOWN"
+    "UNIONTOWN",
+    
+    // Wayne County
+    "CHIPPEWA TWP"
   };
 
   static String fixMapCity(String city) {

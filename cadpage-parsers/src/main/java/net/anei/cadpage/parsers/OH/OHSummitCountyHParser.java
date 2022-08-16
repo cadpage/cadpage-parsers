@@ -11,7 +11,7 @@ public class OHSummitCountyHParser extends FieldProgramParser {
 
   public OHSummitCountyHParser() {
     super("SUMMIT COUNTY", "OH",
-          "CALL CALL:CALL/SDS PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ID:ID UNIT:UNIT ( PRI:MAP INFO:INFO INFO/N+ MAP:X! | INFO:INFO INFO/N+ XSTREET:X WS:MAP )");
+          "CALL CALL:CALL/SDS PLACE:PLACE ADDR:ADDR/S6! CITY:CITY! ID:ID UNIT:UNIT ( PRI:MAP INFO:INFO INFO/N+ MAP:X! | INFO:INFO INFO/N+ XSTREET:X WS:MAP )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
