@@ -8,7 +8,7 @@ public class VAFrederickCountyParser extends DispatchOSSIParser {
 
   public VAFrederickCountyParser() {
     super("FREDERICK COUNTY", "VA",
-           "ADDR CALL! X? X? ID? INFO+");
+           "ADDR CALL! ( PLACE X/Z X/Z ID | X/Z X/Z ID! | X/Z ID! | ID! | X+? ) INFO+");
   }
 
   @Override
