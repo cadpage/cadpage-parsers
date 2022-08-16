@@ -780,7 +780,7 @@ public class Active911ParserTable {
       "US/KY/KentonCountyTaylorMill",     "KYKentonCountyA",
       "US/KY/KentonCountyWalton",         "KYKentonCountyA",
       "US/KY/KnottCounty",                "KYKnottCounty",
-      "US/KY/KnoxCounty",                 "KYKnoxCountyC",
+      "US/KY/KnoxCounty",                 "KYKnoxCountyA",
       "US/KY/KSPP1",                      "KYStatePolice",
       "US/KY/KSPP12",                     "KYStatePolice",
       "US/KY/KSPP13",                     "KYStatePolice",
