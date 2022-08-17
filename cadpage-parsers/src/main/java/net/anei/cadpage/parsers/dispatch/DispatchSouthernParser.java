@@ -188,7 +188,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
     super(cityList, defCity, defState, "");
     this.parseFieldOnly = false;
-    this.callSet = callSet;
+    setupCallList(callSet);
 
     this.flags = convertFlags(flags);
 

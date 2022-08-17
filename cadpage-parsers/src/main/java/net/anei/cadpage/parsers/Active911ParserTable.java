@@ -2291,6 +2291,7 @@ public class Active911ParserTable {
       "US/VA/RockinghamCounty",           "VARockinghamCounty,VALexington",
       "US/VA/RockinghamCountyFireRescue", "VARockinghamCounty",
       "US/VA/ShenandoahCounty",           "VAShenandoahCounty",
+      "US/VA/SmythCounty",                "VASmythCounty",
       "US/VA/SouthamptonCounty",          "VASouthamptonCounty",
       "US/VA/SpotsylvaniaCounty",         "VASpotsylvaniaCounty",
       "US/VA/StaffordCounty",             "VAStaffordCounty",
