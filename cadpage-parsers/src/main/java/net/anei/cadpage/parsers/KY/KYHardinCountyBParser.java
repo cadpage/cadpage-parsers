@@ -17,7 +17,7 @@ public class KYHardinCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "flahertyfire@bbtel.com, todd.vinton@bbtel.com, noreply@meadeky.gov";
+    return "@bbtel.com, noreply@meadeky.gov";
   }
   
   protected boolean parseMsg(String subject, String body, Data data) {
