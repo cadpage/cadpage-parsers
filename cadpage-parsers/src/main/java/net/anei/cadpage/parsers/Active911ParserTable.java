@@ -902,6 +902,7 @@ public class Active911ParserTable {
       "US/MD/CharlesCountyCCMedic",       "MDCharlesCountyC",
       "US/MD/ChiefAlert",                 "MDCarolineCounty",
       "US/MD/CityofBaltimore",            "MDBaltimore",
+      "US/MD/CobbIslandGroups",           "MDTalbotCountyB",
       "US/MD/CrumptonVFD",                "MDQueenAnnesCounty",
       "US/MD/DorchesterCounty",           "MDDorchesterCounty",
       "US/MD/EastonVFD",                  "MDTalbotCountyB",
