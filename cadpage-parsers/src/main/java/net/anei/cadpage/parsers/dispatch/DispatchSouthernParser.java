@@ -767,6 +767,15 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strCall = sExtra;
       return;
     }
+
+    if (callSet != null) {
+      String call = callSet.getCode(sExtra, true);
+      if (call != null) {
+        data.strCall = call;
+        data.strSupp = stripFieldStart(sExtra.substring(call.length()).trim(), "/");
+        return;
+      }
+    }
     
     if (callPtn != null) {
       Parser p = new Parser(sExtra);
@@ -775,15 +784,6 @@ public class DispatchSouthernParser extends FieldProgramParser {
       if (match.matches()) {
         data.strCall = call;
         data.strSupp = p.get();
-        return;
-      }
-    }
-
-    if (callSet != null) {
-      String call = callSet.getCode(sExtra, true);
-      if (call != null) {
-        data.strCall = call;
-        data.strSupp = stripFieldStart(sExtra.substring(call.length()).trim(), "/");
         return;
       }
     }

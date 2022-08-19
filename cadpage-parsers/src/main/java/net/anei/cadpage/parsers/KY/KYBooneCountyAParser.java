@@ -37,6 +37,8 @@ public class KYBooneCountyAParser extends FieldProgramParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
       @Override public boolean splitBlankIns() { return false; }
+      @Override public int splitBreakLength() { return 999; }
+      @Override public int splitBreakPad() { return 2; }
     };
   }
   
