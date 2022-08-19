@@ -1501,6 +1501,7 @@ public class Active911ParserTable {
       "US/NY/CityofMarion",               "NYWayneCountyA",
       "US/NY/CityofRochesterTwp",         "NYLivingstonCountyB",
       "US/NY/CityofSouthampton",          "NYSuffolkCountyJ",
+      "US/NY/ColumbiaCounty",             "NYColumbiaCounty",
       "US/NY/CortlandCounty",             "NYCortlandCountyC",
       "US/NY/Cutchogue",                  "NYSuffolkCountyC",
       "US/NY/DelawareCounty",             "NYDelawareCounty",
