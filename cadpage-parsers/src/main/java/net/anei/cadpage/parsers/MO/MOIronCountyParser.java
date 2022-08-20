@@ -13,7 +13,7 @@ public class MOIronCountyParser extends FieldProgramParser {
   
   public MOIronCountyParser() {
     super("IRON COUNTY", "MO", 
-          "ADDR CALL! Description:INFO! INFO/N+ Dispatch:DATETIME! UNIT! END!");
+          "ADDR CALL! Description:INFO! INFO/N+ Dispatch:DATETIME! UNIT! Call_Number:ID END");
   }
   
   @Override
@@ -23,7 +23,7 @@ public class MOIronCountyParser extends FieldProgramParser {
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD CALL")) return false;
+    if (!subject.equals("CAD CALL")  && !subject.equals("WCCD Call Report")) return false;
     return parseFields(body.split("\n"), data);
   }
   
