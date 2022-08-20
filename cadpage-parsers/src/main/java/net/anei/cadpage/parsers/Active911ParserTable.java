@@ -393,6 +393,7 @@ public class Active911ParserTable {
       "US/FL/LevyCounty",                 "FLLevyCounty",
       "US/FL/ManateeCounty",              "FLManateeCounty",
       "US/FL/MartinCounty",               "FLMartinCounty",
+      "US/FL/MexicoBeachVFD",             "FLBayCounty",
       "US/FL/OkaloosaCounty",             "FLOkaloosaCounty",
       "US/FL/OrlandoHealth",              "FLOrangeCountyB",
       "US/FL/PalmBeachCounty",            "FLPalmBeachCounty",
