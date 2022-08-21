@@ -23,7 +23,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "smfrrelay@smfra.com,smtprelay@smfra.onmicrosoft.com";
+    return "smfrrelay@smfra.com";
   }
 
   @Override
