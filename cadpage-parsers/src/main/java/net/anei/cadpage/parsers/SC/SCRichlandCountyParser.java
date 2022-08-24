@@ -31,18 +31,8 @@ public class SCRichlandCountyParser extends FieldProgramParser {
       return true;
     }
 
-    // If the regular message parser handles this all is well
     body = body.replace(" MapGrid ", " MapGrid:");
-    if (!super.parseMsg(body, data)) {
-
-      // If not, see if we can get this through a general type parser
-      // Which will only accept it caller has identified this as a dispatch page
-      if (!isPositiveId()) return false;
-
-      parseAddress(StartType.START_CALL, FLAG_IGNORE_AT | FLAG_NO_IMPLIED_APT, body, data);
-      if (data.strAddress.length() == 0) return false;
-      data.strSupp = getLeft();
-    }
+    if (!super.parseMsg(body, data)) return false;
 
     // Fix mistyped address
     data.strAddress = data.strAddress.replace("Hardscrabble", "Hard Scrabble");
