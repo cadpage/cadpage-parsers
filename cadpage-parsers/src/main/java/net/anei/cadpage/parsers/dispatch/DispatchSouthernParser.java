@@ -407,7 +407,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callPtn = callPtn;
   }
 
-  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+: *)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})(?: ([^;]+))?[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d([\\| ])");
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+: *)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{5,7}|\\d{4}-\\d{2}-\\d{5})(?: ([^;]+))?[ ;,] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d([\\| ])");
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d) ");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(?:[A-Z]+:)?CFS: *(\\S+?)[;, ](?:([^;]+)[;, ])?(?: [;, ])? *Unit: *([^,;]+?)[;, ] *(Status:.*?)[;,]?(?: Note: *(.*))?");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
