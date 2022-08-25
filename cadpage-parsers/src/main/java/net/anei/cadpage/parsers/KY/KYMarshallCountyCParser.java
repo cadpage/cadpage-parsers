@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 public class KYMarshallCountyCParser extends DispatchA48Parser {
   
   public KYMarshallCountyCParser() {
-    super(CITY_LIST, "MARSHALL COUNTY", "KY", FieldType.NONE, A48_NO_CODE);
+    super(CITY_LIST, "MARSHALL COUNTY", "KY", FieldType.PLACE_PHONE_NAME, A48_NO_CODE);
   }
   
   @Override
@@ -18,15 +18,19 @@ public class KYMarshallCountyCParser extends DispatchA48Parser {
   }
   
   private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) [AP]M");
+  private static final Pattern INFO_DATE_PTN = Pattern.compile("(\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d) [AP]M\\b");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf(':');
-    if (pt >= 0) body = body.substring(pt+1).trim();
+    if (pt >= 0 && pt < body.indexOf('\n')) body = body.substring(pt+1).trim();
     
     // They have misconfigured the time with a spuruous AM/PM indicator
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (match.matches()) subject = match.group(1).trim();
+    if (match.matches()) {
+      subject = match.group(1).trim();
+      body = INFO_DATE_PTN.matcher(body).replaceAll("$1");
+    }
     
     return super.parseMsg(subject, body, data);
   }
