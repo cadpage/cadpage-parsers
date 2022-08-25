@@ -2113,6 +2113,7 @@ public class Active911ParserTable {
       "US/TX/Eforcesoftware",             "TXWhartonCounty",
       "US/TX/EforcesoftwareHendersonCounty","TXHendersonCounty",
       "US/TX/EforcesoftwareHoustonCounty","TXHoustonCounty",
+      "US/TX/EllisCounty",                "TXEllisCountyB",
       "US/TX/Everman",                    "TXTarrantCountyC",
       "US/TX/Farmersville",               "TXCollinCounty",
       "US/TX/FireComm",                   "TXHidalgoCounty",
