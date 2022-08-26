@@ -1144,6 +1144,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "FALL, UNKNOWN",
       "FALL -  UNKNOWN - PRI 1",
       "FALL, UNKNOWN - PRI 1 -",
+      "FILL BOX ALARM",
       "FIRE - BRUSH FIRE",
       "FD ALPHA",
       "FD ASSIST/SERVICE CALL",
@@ -1500,6 +1501,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "YALESVILLE",
 
       // Fairfield County
+      "FAIRFIELD",
       "BRIDGEPORT",
       "EASTON",
       "MONROE",

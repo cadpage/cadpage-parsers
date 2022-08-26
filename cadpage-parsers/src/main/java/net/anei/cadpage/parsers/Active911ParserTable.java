@@ -339,6 +339,7 @@ public class Active911ParserTable {
       "US/CT/EastLyme",                   "CTEastLyme",
       "US/CT/Farmington",                 "CTHartfordCountyFarmington",
       "US/CT/Groton",                     "CTNewLondonCountyC",
+      "US/CT/HamdenFD",                   "CTNewHavenCountyB",
       "US/CT/HartfordCounty",             "CTHartfordCountyFarmington",
       "US/CT/Ledyard",                    "CTNewLondonCountyA",
       "US/CT/LitchfieldCounty",           "CTLitchfieldCountyA",
