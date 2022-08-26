@@ -1038,6 +1038,7 @@ public class ParserList {
               ,"NVClarkCounty"                  ,"Clark County, NV"
               ,"NVElkoCounty"                   ,"Elko County, NV"
               ,"NVHumboldtCounty"               ,"Humboldt County, NV"
+              ,"NVReno"                         ,"Reno, NV"
           ),
           new ParserCategory("New Hampshire"
               ,"NHBelknapCounty"                ,"Belknap County, NH"
