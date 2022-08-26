@@ -638,6 +638,7 @@ public class Active911ParserTable {
       "US/IN/StJohn",                     "INLakeCountyB",
       "US/IN/Tippecannoe",                "INTippecanoeCounty",
       "US/IN/TiptonCounty",               "INTiptonCounty",
+      "US/IN/VanderburghCounty",          "INVanderburghCounty",
       "US/IN/VermillionCounty",           "INVermillionCounty",
       "US/IN/VernonTwpMadison",           "INHancockCountyB",
       "US/IN/VigoCounty",                 "INVigoCounty",
