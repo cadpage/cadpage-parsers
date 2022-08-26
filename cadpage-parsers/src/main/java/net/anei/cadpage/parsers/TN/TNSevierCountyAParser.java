@@ -21,6 +21,11 @@ public class TNSevierCountyAParser extends DispatchSouthernParser {
   public String getFilter() {
     return "Central_Dispatch@mydomain.com,Central_Dispatch@seviercountytn.org";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Pattern CALL_PFX_PTN = Pattern.compile("((?:PER [ A-Z]+ )?(?:CANCEL|CXC?LD?|CSL)[/ ]*(?:ANY )?(?:FURTHER RES?PONSE|RESPONSE|ALL RESPONSE|ALL UNITS|MUTUAL AIDE RESPONSE|CALL(?: CXL| CANCEL|/FALSE)?)?(?:[ /]*(?:FALSE ALARM|False Alarm|NON-INJ|-N))?(?:[ /]*PER (?:EMS ON SCENE|ALARM CO|[^ ]+))?)[-:/ ]*");
   private static final Pattern CH_PFX_PTN = Pattern.compile("(TAC *\\S+) +");
