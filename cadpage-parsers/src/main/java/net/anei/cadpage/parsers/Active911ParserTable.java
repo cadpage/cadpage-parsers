@@ -1524,6 +1524,7 @@ public class Active911ParserTable {
       "US/NY/FultonCounty",               "NYFultonCounty",
       "US/NY/GeneseeCounty",              "NYGeneseeCounty",
       "US/NY/Islips",                     "NYSuffolkCountyA",
+      "US/NY/HicksvilleFD",               "NYNassauCountyRedAlert",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
       "US/NY/Lewis911",                   "NYLewisCountyA",
       "US/NY/LewisCounty",                "NYLewisCountyB",
