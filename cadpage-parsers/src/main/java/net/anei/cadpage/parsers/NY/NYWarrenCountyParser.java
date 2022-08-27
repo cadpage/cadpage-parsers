@@ -31,7 +31,7 @@ public class NYWarrenCountyParser extends FieldProgramParser {
 	
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("\\*ALERT +([A-Z]+)\\*", true);
+    if (name.equals("SRC")) return new SourceField("\\*(?:ALERT|UPDATE) +([ A-Za-z]+)\\*", true);
     return super.getField(name);
   }
   

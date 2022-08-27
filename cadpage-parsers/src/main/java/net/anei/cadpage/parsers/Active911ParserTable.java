@@ -1568,6 +1568,7 @@ public class Active911ParserTable {
       "US/NY/SullivanCounty",             "NYSullivanCounty",
       "US/NY/SyrUnivAmb",                 "NYOnondagaCountyE",
       "US/NY/UlsterCounty",               "NYUlsterCounty",
+      "US/NY/WarrenCountySheriff",        "NYWarrenCounty",
       "US/NY/WashingtonCounty",           "NYWashingtonCounty",
       "US/NY/WayneCounty",                "NYWayneCountyB",
       "US/NY/WestchesterCounty",          "NYWestchesterCounty",
