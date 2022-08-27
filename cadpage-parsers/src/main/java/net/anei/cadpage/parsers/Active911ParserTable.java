@@ -365,6 +365,7 @@ public class Active911ParserTable {
       "US/DE/ChiefMsg",                   "DESussexCountyA",
       "US/DE/DelawareCounty",             "Cadpage2",
       "US/DE/Dover",                      "DEKentCountyB,DEKentCountyF",
+      "US/DE/NewarkPD",                   "DENewCastleCountyG",
       "US/DE/NewCastle911",               "DENewCastleCountyE,DEKentCountyF",
       "US/DE/NewCastleCounty",            "DENewCastleCounty",
       "US/DE/NewCastleCountycmsg",        "DENewCastleCountyB,DENewCastleCountyD",
@@ -1450,8 +1451,8 @@ public class Active911ParserTable {
       "US/NJ/MountainLakesVFD",           "NJMorrisCountyA",
       "US/NJ/MountHollyFire",             "NJBurlingtonCountyH",
       "US/NJ/MountLaurelTwp",             "NJBurlingtonCountyC,NJBurlingtonCountyH",
+      "US/NJ/NassauCo",                   "NYNassauCountyJ",
       "US/NJ/NCPD",                       "NJEssexCounty",
-      "US/DE/NewarkPD",                   "DENewCastleCountyG",
       "US/NJ/NPD",                        "NJSussexCountyA",
       "US/NJ/Nwbcd",                      "NJSussexCountyA",
       "US/NJ/OceanCounty",                "NJOceanCounty",
@@ -1479,8 +1480,8 @@ public class Active911ParserTable {
       "US/NJ/VirtuaEMS",                  "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/WarrenCounty",               "NJWarrenCounty",
       "US/NJ/WayneTownship",              "NJWayneTownship",
-      "US/NJ/WestCaldwellPD",             "NJEssexCounty",
       "US/NJ/WestamptonTWP",              "NJBurlingtonCountyH",
+      "US/NJ/WestCaldwellPD",             "NJEssexCounty",
       "US/NJ/WFD",                        "NJWayneTownship",
       "US/NJ/WillingboroFireEMS",         "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NM/LasCruces",                  "NMLasCruces",
@@ -1938,8 +1939,8 @@ public class Active911ParserTable {
       "US/RI/CityofWestWarwick",          "RIWestWarwick",
       "US/RI/Woonsocket",                 "RIProvidenceCounty",
       "US/SC/AbbevilleCounty",            "SCAbbevilleCountyB",
-      "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/AndersonCountySheriff911",   "SCAndersonCountyD",
+      "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",
       "US/SC/BethelFD",                   "SCYorkCounty",
       "US/SC/CalhounCounty",              "SCCalhounCounty",
@@ -2001,8 +2002,8 @@ public class Active911ParserTable {
       "US/SD/DeweyCounty",                "SDDeweyCounty",
       "US/SD/EdmundsCounty",              "SDEdmundsCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
-      "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
       "US/SD/McPhersonCounty",            "SDMcPhersonCounty",
+      "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
       "US/SD/MobridgePD",                 "SDPerkinsCounty",
       "US/SD/PotterCounty",               "SDPotterCounty",
       "US/TN/BedfordCounty",              "TNBedfordCounty",
@@ -2190,7 +2191,6 @@ public class Active911ParserTable {
       "US/TX/RuskCounty",                 "TXRuskCountyA",
       "US/TX/RuskPD",                     "TXRuskCountyB",
       "US/TX/SachseCounty",               "TXDallasCountyF",
-//      "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",    Mysteriously vanished - further investigation required
       "US/TX/Seabrook",                   "TXHarrisCountyC",
       "US/TX/Seagoville",                 "TXDallasCountyB",
       "US/TX/Seguin",                     "TXGuadalupeCounty",
@@ -2468,5 +2468,6 @@ public class Active911ParserTable {
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
       "Vendor/Sweden/Zenit",              "ZSESwedenA"
+//      "US/TX/SanMarcosCounty",            "TXSanMarcosCounty",    Mysteriously vanished - further investigation required
   });
 }
