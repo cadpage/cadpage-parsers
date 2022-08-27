@@ -234,6 +234,7 @@ public class Active911ParserTable {
       "US/CA/SantaClaraCademail",         "CASantaClaraCountyA",
       "US/CA/SantaClaraCounty",           "CASantaClaraCountyB",
       "US/CA/SantaCruzCounty",            "CASantaCruzCounty",
+      "US/CA/SantaCruzCountyAC",          "CASantaCruzCountyC",
       "US/CA/SantaCruzlimited",           "CASantaCruzCountyA",
       "US/CA/SantaMargaritaVFD",          "CASanLuisObispoCountyA",
       "US/CA/ShastaCom911",               "CAShastaCountyB,CAShastaCountyC",
