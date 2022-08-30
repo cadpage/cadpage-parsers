@@ -34,6 +34,11 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
   public String getAliasCode() {
     return "ORBentonCountyB";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   @Override
   protected boolean parseMsg(String body, Data data) {

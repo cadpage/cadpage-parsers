@@ -17,7 +17,7 @@ public class NHMerrimackCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@newlondonpd.us";
+    return "dispatch@newlondonpd.us,dispatch@NewLondon.NH.gov";
   }
 
   @Override
