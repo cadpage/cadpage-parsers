@@ -10,6 +10,6 @@ public class COAdamsCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@fedheights.org,@alert.active911.com";
+    return "noreply@fedheights.org,@alert.active911.com,@smfra.onmicrosoft.com";
   }
 }
