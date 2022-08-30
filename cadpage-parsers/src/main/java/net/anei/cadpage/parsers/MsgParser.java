@@ -196,8 +196,8 @@ public abstract class MsgParser {
   /**
    * Pattern that identifies GPS coordinates in an arbitrary field
    */
-  private static final String GPS_COORD_PTN_STR = "([-+]?[0-9]+\\.[0-9]{2,})\\??|([-+]?)([0-9]+)\\?? +([0-9]+\\.[0-9]{1,})['`]?|([-+]?)([0-9]{1,3})[: \\?] *([0-9]{1,2})[:'` ] *([0-9]{1,2}(?:\\.[0-9]{1,})?)\"?";
-  private static final String GPS_COORD_PTN_STR2 = "[-+]?[0-9]+\\.[0-9]{2,}\\??|[-+]?[0-9]+\\?? +[0-9]+\\.[0-9]{1,}['`]?|[-+]?[0-9]{1,3}[: \\?] *[0-9]{1,2}[:'` ] *[0-9]{1,2}(?:\\.[0-9]{1,})?\"?";
+  private static final String GPS_COORD_PTN_STR = "([-+]?[0-9]+\\.[0-9]{2,})\\??|([-+]?)([0-9]+)[° \\?] *([0-9]+\\.[0-9]{1,})['`°]?|([-+]?)([0-9]{1,3})[: °\\?] *([0-9]{1,2})[:'` ] *([0-9]{1,2}(?:\\.[0-9]{1,})?)\"?";
+  private static final String GPS_COORD_PTN_STR2 = "[-+]?[0-9]+\\.[0-9]{2,}\\??|[-+]?[0-9]+[° \\?] *[0-9]+\\.[0-9]{1,}['`]?|[-+]?[0-9]{1,3}[: °\\?] *[0-9]{1,2}[:'` ] *[0-9]{1,2}(?:\\.[0-9]{1,})?\"?";
   private static final Pattern GPS_COORD_PTN = Pattern.compile(GPS_COORD_PTN_STR);
   public static final Pattern GPS_PATTERN =
       Pattern.compile("(?:\\b|^|[ ,;\\.]+)(X: *|LAT: *|LL\\( *)?[NS]?(" + GPS_COORD_PTN_STR2 + ")[NnSs]?[,\\W] ?\\W*?(Y: *|LONG?: *|x )?[EW]?(" + GPS_COORD_PTN_STR2 + ")[EW]?(?:\\)|\\b)", Pattern.CASE_INSENSITIVE);
