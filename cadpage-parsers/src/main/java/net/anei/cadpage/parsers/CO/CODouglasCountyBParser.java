@@ -16,7 +16,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "smfrrelay@smfra.com";
+    return "smfrrelay@smfra.com,smtprelay@smfra.onmicrosoft.com";
   }
 
   @Override
