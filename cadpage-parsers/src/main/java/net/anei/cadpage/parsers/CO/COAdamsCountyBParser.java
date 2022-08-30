@@ -47,9 +47,11 @@ public class COAdamsCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (!subject.equals("Metcom Info:")) return false;
+    if (!subject.endsWith(" Info:")) return false;
     
     body = stripFieldStart(body, "Resp.Info:");
+    body = stripFieldStart(body, "RI:");
+    
     String[] flds = body.split("\\|", -1);
     if (flds.length > 3) {
       return parseFields(flds, data);
