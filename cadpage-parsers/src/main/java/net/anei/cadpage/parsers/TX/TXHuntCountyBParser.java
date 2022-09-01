@@ -56,7 +56,7 @@ public class TXHuntCountyBParser extends FieldProgramParser {
   private class MyExtraField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("OTHER INCIDENT IF NOT LISTED ABOVE")) return;
+      field = stripFieldStart(field, "OTHER INCIDENT IF NOT LISTED ABOVE:");
       data.strSupp = append(data.strSupp, "\n", field);
     }
   }
