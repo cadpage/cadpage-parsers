@@ -712,7 +712,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_TIMES_PTN = Pattern.compile("[A-Za-z ]+: *\\d\\d:\\d\\d");
-  private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d(?: [AP]M)?\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
   private static final Pattern INFO_TRUNC_PTN = Pattern.compile("\\d{1,2}[/:][ 0-9:/]*");
   private class BaseInfoField extends InfoField {
     @Override
@@ -735,7 +735,7 @@ public class DispatchA48Parser extends FieldProgramParser {
           field = match.group(1);
         }
       }
-      if (field != null) super.parse(field, data);
+      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
       return true;
     }
 
@@ -744,7 +744,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       Matcher match = INFO_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       else if (INFO_TRUNC_PTN.matcher(field).matches()) return;
-      if (field != null) super.parse(field, data);
+      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
     }
   }
 
