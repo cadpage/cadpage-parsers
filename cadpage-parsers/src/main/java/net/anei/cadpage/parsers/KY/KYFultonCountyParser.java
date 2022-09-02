@@ -11,7 +11,7 @@ public class KYFultonCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "fultoncountydispatch@outlook.com,active911@outlook.com";
+    return "fultoncountydispatch@outlook.com,active911@outlook.com,fultoncoky911@cissystem.com";
   }
 
   private static final String[] CITY_LIST = new String[]{

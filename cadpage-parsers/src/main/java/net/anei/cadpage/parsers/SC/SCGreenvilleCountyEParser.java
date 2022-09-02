@@ -18,7 +18,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   public SCGreenvilleCountyEParser() {
     super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC",
-          "CALL ADDR CITY PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | UNIT EMPTY ) | PRI ID UNIT/C+ ) END");
+          "CALL ADDR CITY PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | EMPTY UNIT | UNIT EMPTY ) | PRI ID UNIT/C+ ) END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("GATEWAY", "PLACE", "ROAD");
@@ -134,7 +134,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("ID")) return new IdField("\\d{6}-\\d{6}", true);
+    if (name.equals("ID")) return new IdField("(?:\\d{6}|[A-Z]{2}\\d{2})-\\d{6}", true);
     if (name.equals("PRI")) return new PriorityField("(?:Non-)?Emergency", true);
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
