@@ -92,7 +92,8 @@ public class NCMecklenburgCountyAParser extends SmartAddressParser {
     data.strUnit = fp.get(10);
     if (!fp.check("Map -")) return false;
     data.strMap = fp.get(10);
-    data.strCallId = fp.get();
+    data.strCallId = fp.get(20);
+    data.strCity = fp.get();
 
     String check = data.strSupp;
     pt = check.indexOf('-');
