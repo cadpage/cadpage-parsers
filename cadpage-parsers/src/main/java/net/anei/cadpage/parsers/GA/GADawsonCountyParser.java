@@ -10,7 +10,7 @@ public class GADawsonCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@dawsoncounty.org";
+    return "dispatch@dawsoncounty.org,@dawsoncountyga.gov";
   }
   
   @Override
