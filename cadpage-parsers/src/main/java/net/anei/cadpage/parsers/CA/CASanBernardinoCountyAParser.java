@@ -1058,6 +1058,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "FCL",        "Commercial Fire: Low Response",
       "FD",         "Dumpster Fire",
       "FG",         "Vegetation Fire",
+      "FGL",        "Small Vegetation Fire",
       "FH",         "Hay Fire",
       "FI",         "Improvement Fire",
       "FR",         "Refuse Fire",
