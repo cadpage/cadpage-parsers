@@ -1236,6 +1236,7 @@ public class Active911ParserTable {
       "US/MT/HavrePolice",                "MTHillCounty",
       "US/MT/KIC",                        "MTFlatheadCountyC,MTFlatheadCountyE",
       "US/MT/LakeCounty",                 "MTLakeCounty",
+      "US/MT/LakeCounty2",                "MTLakeCounty",
       "US/MT/LakesideQRU",                "MTFlatheadCountyC",
       "US/MT/LewisandClarkCounty",        "MTLewisAndClarkCounty",
       "US/MT/MissoulaCounty",             "MTMissoulaCounty",
