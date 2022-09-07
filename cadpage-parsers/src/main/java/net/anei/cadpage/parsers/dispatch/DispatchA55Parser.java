@@ -26,6 +26,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     int pt = body.indexOf("\n_____");
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace("\nNOTES\n", "\nNotes:\n");
+    body = body.replace("\nFIRST NOTE:", "\nNotes:");
     if (!parseFields(body.split("\n"), data)) return false;
     if (data.strAddress.isEmpty() && data.strSupp.isEmpty()) return false;
     return true;
