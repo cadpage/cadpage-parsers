@@ -21,7 +21,7 @@ public class ORBentonCountyBParser extends ORBentonCountyBaseParser {
           "| UNIT/Z ENROUTE/R ADDR/S CITY CALL END " +
           "| INFO INFO/Z+? ( PHONE DATETIME ID! | DATETIME ID! | ID! ) " +
           "| FYI? CALL PLACE ADDR/S X X ( INFO INFO+ " +
-                                       "| CITY MAP CODE UNIT UNIT/C INFO! ( DATETIME | PHONE DATETIME | PLACE DATETIME | ( PLACE END | ( PHONE | INFO+? PLACE PHONE ) DATETIME ) ) ID ID2 GPS1 GPS2 END ) " +
+                                       "| CITY MAP CODE UNIT UNIT/C INFO! INFO+? ( DATETIME | PHONE DATETIME | PLACE DATETIME | ( PLACE END | ( PHONE | INFO+? PLACE PHONE ) DATETIME ) ) ID ID2 GPS1 GPS2 END ) " +
           ")");
   }
 

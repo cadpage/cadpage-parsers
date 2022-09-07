@@ -2067,6 +2067,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "SIS",  "SISTERS",
       "SOD",  "SODAVILLE",
       "SPF",  "SPRINGFIELD",
+      "STAY", "STAYTON",
       "STY",  "STAYTON",
       "SWH",  "SWEET HOME",
       "TANG", "TANGENT"
