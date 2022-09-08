@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +12,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA1Parser extends FieldProgramParser {
 
   boolean hasCityList = false;
+  
+  Set<String> unitSet = new HashSet<>();
 
   public DispatchA1Parser(String defCity, String defState) {
     this((Properties)null, defCity, defState);
@@ -24,12 +28,14 @@ public class DispatchA1Parser extends FieldProgramParser {
   public DispatchA1Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
            "( CANCEL_INCIDENT:ID! LOC:ADDR/S! UNITS:UNIT! CALL! INFO/N+ " +
-           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X EMPTY+? ( LAT/LONG:EMPTY GPS! | ) INCIDENT:ID? COM:INFO INFO+? CT:INFO INFO+? UNITS:UNIT INCIDENT:ID UNITS:UNIT RC:CH DATE/TIME:DATETIME http:GPS2 RPT_#:EMPTY ID )");
+           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X EMPTY+? ( LAT/LONG:EMPTY GPS! | ) INCIDENT:ID? COM:INFO INFO/N+? CT:INFO/N INFO/N+? UNITS:UNIT INCIDENT:ID UNITS:UNIT RC:CH DATE/TIME:DATETIME http:GPS2 RPT_#:EMPTY ID )");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
+    unitSet.clear();
+    
     if (subject.isEmpty() && (body.startsWith("Alert:") || body.startsWith("Cancel Message"))) {
       int pt = body.indexOf('\n');
       if (pt >= 0) {
@@ -56,18 +62,19 @@ public class DispatchA1Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("BOX")) return new MyBoxField();
-    if (name.equals("PLACE2")) return new MyPlace2Field();
+    if (name.equals("BOX")) return new BaseBoxField();
+    if (name.equals("PLACE2")) return new BasePlace2Field();
 //    if (name.equals("ADDR1")) return new MyAddressField();
-    if (name.equals("APT")) return new MyAptField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("GPS2")) return new MyGPS2Field();
+    if (name.equals("APT")) return new BaseAptField();
+    if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("GPS2")) return new BaseGPS2Field();
     if (name.equals("ID")) return new IdField("[E|F]=(.*)");
     return super.getField(name);
   }
 
-  private class MyBoxField extends BoxField {
+  private class BaseBoxField extends BoxField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "BOX");
@@ -75,7 +82,7 @@ public class DispatchA1Parser extends FieldProgramParser {
     }
   }
 
-  private class MyPlace2Field extends PlaceField {
+  private class BasePlace2Field extends PlaceField {
 
     @Override
     public boolean canFail() {
@@ -148,7 +155,7 @@ public class DispatchA1Parser extends FieldProgramParser {
 
   private static final Pattern APT_PATTERN = Pattern.compile("(?:APT|ROOM|RM|STE(?![A-Z])|SUITE?|UNIT)[-:]? *(.*)|(LOT *.*|.* (?:APT|ROOM|RM|STE(?![A-Z])|HALLWAY)\\b.*|\\d+[A-Z]?|[A-Z])");
   private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
-  private class MyAptField extends AptField {
+  private class BaseAptField extends AptField {
 
     @Override
     public boolean canFail() {
@@ -218,7 +225,7 @@ public class DispatchA1Parser extends FieldProgramParser {
 
   private static final Pattern CITY_PATTERN = Pattern.compile("[ A-Za-z]+");
 
-  private class MyCrossField extends CrossField {
+  private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("N/A ")) field = field.substring(4).trim();
@@ -231,7 +238,8 @@ public class DispatchA1Parser extends FieldProgramParser {
   }
 
   private static final Pattern SKIP_INFO_PTN = Pattern.compile("[A-Z]+[0-9]* at(?: POS \\d+)?");
-  private class MyInfoField extends InfoField {
+  private static final Pattern UNIT_INFO_PTN = Pattern.compile("(\\S+)[- ]+(?:Dispatched|Enroute)");
+  private class BaseInfoField extends InfoField {
     @Override
     public boolean canFail() {
       return true;
@@ -247,8 +255,30 @@ public class DispatchA1Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (SKIP_INFO_PTN.matcher(field).matches()) return;
+      Matcher match = UNIT_INFO_PTN.matcher(field);
+      if (match.lookingAt()) {
+        addUnit(match.group(1), data);
+      }
       super.parse(field, data);
     }
+    
+    @Override
+    public String getFieldNames() {
+      return "UNIT " + super.getFieldNames();
+    }
+  }
+  
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String unit : field.split(",")) {
+        addUnit(unit.trim(), data);
+      }
+    }
+  }
+  
+  private void addUnit(String unit, Data data) {
+    if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
   }
 
   @Override
@@ -257,7 +287,7 @@ public class DispatchA1Parser extends FieldProgramParser {
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("//maps\\.google\\.com.*?q=loc:([-+]?\\d{2,3}\\.\\d{6,})\\+([-+]?\\d{2,3}\\.\\d{6,})");
-  private class MyGPS2Field extends GPSField {
+  private class BaseGPS2Field extends GPSField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = GPS_PTN.matcher(field);
