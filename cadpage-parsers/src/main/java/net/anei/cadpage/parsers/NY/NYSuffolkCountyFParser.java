@@ -13,17 +13,23 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
   private static final Pattern PREFIX_PTN = Pattern.compile("([^\\*\n]+)(\\*\\*.*)", Pattern.DOTALL);
 
   public NYSuffolkCountyFParser() {
-    super("SUFFOLK COUNTY", "NY",
-           "CALL! ( TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO+ | PLACE? ADDR/ZS6Xa CITY/Z! TOA:TOA! SRC ID! INFO+? HQ UNIT/S+ )");
+    super(CITY_LIST, "SUFFOLK COUNTY", "NY",
+          "CALL! ( TOA:TOA! CODE? ADDR/S6Xa! CS:X? NAME? ( IDP! | CODE IDP! ) INFO/N+ " +
+                "| PLACE ADDR/ZS6Xa CITY! TOA:TOA! SRC ID_INFO! INFO/N+? HQ UNIT/S+ " + 
+                "| ADDR/ZS6Xa CITY! TOA:TOA! SRC ID_INFO! INFO/N+? HQ UNIT/S+ " + 
+                "| PLACE ADDR/ZS6! CS:X? TOA:TOA! ID_INFO! INFO/N+ " +
+                ")");
   }
   
   @Override
   public String getFilter() {
-    return "@firerescuesystems.xohost.com,masticambco@optonline.net,paging@wadingriverfd.info,amityvillefdpaging1@gmail.com,amityvillefdpaging@gmail.com,paging@amityvillefireinfo.com";
+    return "@firerescuesystems.xohost.com,masticambco@optonline.net,paging@wadingriverfd.info,amityvillefdpaging1@gmail.com,amityvillefdpaging@gmail.com,paging@amityvillefireinfo.com,paging@frspaging.net";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    
+    data.strSource = subject;
     
     String prefix = null;
     Matcher match = PREFIX_PTN.matcher(body);
@@ -36,6 +42,11 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
       data.strCall = data.strCall + " (" + prefix + ")";
     }
     return true;
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC? " + super.getProgram();
   }
   
   @Override
@@ -54,5 +65,11 @@ public class NYSuffolkCountyFParser extends NYSuffolkCountyXBaseParser {
   public String adjustMapAddress(String addr) {
     return stripFieldEnd(addr, " CTY");
   }
+  
+  private static final String[] CITY_LIST = new String[]{
+    "AMITYVILLE",
+    "MASSAPEQUA",
+    "W BABYLON"
+  };
 }
 	
