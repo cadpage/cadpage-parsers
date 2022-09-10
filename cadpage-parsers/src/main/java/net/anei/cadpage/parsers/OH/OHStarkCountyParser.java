@@ -8,19 +8,20 @@ import net.anei.cadpage.parsers.GroupBlockParser;
  */
 
 public class OHStarkCountyParser extends GroupBestParser {
-  
+
   public OHStarkCountyParser() {
     super(new OHStarkCountyAllianceParser(),
           new OHStarkCountyRedcenterParser(),
           new OHStarkCountyRedcenter2Parser(),
-          
+          new OHStarkCountyDParser(),
+
           new GroupBlockParser(),
           new OHStarkCountyCencommParser()
           );
   }
 
   static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "ALLIANCE",
     "CANAL FULTON",
@@ -28,7 +29,7 @@ public class OHStarkCountyParser extends GroupBestParser {
     "LOUISVILLE",
     "MASSILLON",
     "NORTH CANTON",
-    
+
     // Villages
     "BEACH CITY",
     "BREWSTER",
@@ -43,7 +44,7 @@ public class OHStarkCountyParser extends GroupBestParser {
     "NAVARRE",
     "WAYNESBURG",
     "WILMOT",
-    
+
     // Townships
     "BETHLEHEM TWP",
     "CANTON TWP",
@@ -62,12 +63,12 @@ public class OHStarkCountyParser extends GroupBestParser {
     "SUGAR CREEK TWP",
     "TUSCARAWAS TWP",
     "WASHINGTON TWP",
-    
+
     // Census-designated places
     "GREENTOWN",
     "PERRY HEIGHTS",
     "UNIONTOWN",
-    
+
     // Other localities
     "AVONDALE",
     "CAIRO",

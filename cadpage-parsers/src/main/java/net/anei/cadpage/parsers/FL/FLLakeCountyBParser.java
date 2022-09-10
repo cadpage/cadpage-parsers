@@ -10,16 +10,16 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
 public class FLLakeCountyBParser extends DispatchA52Parser {
-  
+
   public FLLakeCountyBParser() {
     super("LAKE COUNTY", "FL");
   }
-  
+
   @Override
   public String getFilter() {
     return "tap@yourdomain.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
@@ -27,6 +27,7 @@ public class FLLakeCountyBParser extends DispatchA52Parser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("LOC:")) body = "CMT:" + body;
     if (!super.parseMsg(body, data)) return false;
     String call = CALL_CODES.getCodeDescription(data.strCall);
     if (call != null) {
@@ -36,18 +37,18 @@ public class FLLakeCountyBParser extends DispatchA52Parser {
     data.strCity = expandCity(data.strCity);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
   }
-  
+
   /**
    * Expand possibly truncated city
    * @param truncCity possibly truncated city
    * @return corrected city name
    */
-  
+
   private String expandCity(String truncCity) {
     SortedSet<String> set = CITY_SET.tailSet(truncCity);
     String city = null;
@@ -63,11 +64,11 @@ public class FLLakeCountyBParser extends DispatchA52Parser {
     if (city != null) return city;
     return truncCity;
   }
-  
+
   private static final CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   private static final TreeSet<String> CITY_SET = new TreeSet<>(Arrays.asList(new String[]{
-      
+
       // Cities
       "CLERMONT",
       "EUSTIS",

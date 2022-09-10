@@ -10,6 +10,6 @@ public class INDeKalbCountyBParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "jober@co.dekalb.in.us";
+    return "jober@co.dekalb.in.us,FlexRapidNotification@dccnotify.com";
   }
 }

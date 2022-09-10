@@ -14,9 +14,9 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
           "FINAL? ( RADIO_CHANNEL:CH | Radio_Channel:CH | ) " +
               "( Call_Type:SKIP! Date:DATETIME! Inc_Number:ID! Common_Name:PLACE! Address:ADDRCITY! Additional_Location_Info:INFO! Cross_Streets:X! " +
                 "Caller_Name:NAME! Address:SKIP! Phone:PHONE! NATURE_OF_CALL:CALL! NARRATIVE:EMPTY! INFO_BLK+? UNIT_TIMES:EMPTY! TIMES+ Alerts:ALERT! " +
-              "| TYPE:CALL! DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ADDRESS:ADDRCITY! ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! | DETAILED_INFO:PLACE! ) " +
-                "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP! PHONE:PHONE! ALERTS:ALERT? NATURE_OF_CALL:CALL/SDS? ( NARRATIVE:EMPTY! INFO_BLK+? | ) " +
-                "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:GPS | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:GPS ) https:QUERY " +
+              "| ( TYPE:CALL! | INC_TYPE:CALL! ) DATE:DATETIME! INC_NUMBER:ID! COMMON_NAME:PLACE! ( ADDRESS:ADDRCITY! | INC_ADDRESS:ADDRCITY! ) ( \"LOCAL_INFO\":PLACE! | DETAILED_LOCATION:PLACE! | DETAILED_INFO:PLACE! ) " +
+                "CROSS_STREETS:X! ( NAME:NAME! | CALLERS_NAME:NAME! ) ADDRESS:SKIP? PHONE:PHONE! ALERTS:ALERT? NATURE_OF_CALL:CALL/SDS? ( NARRATIVE:EMPTY! INFO_BLK+? | ) UNITS_DISPATCHED:UNIT? " +
+                "UNIT_TIMES:EMPTY? TIMES+? ( FIRE_GRID:MAP! | ALERTS:ALERT! FINAL_REPRT:GPS2 | NATURE:EMPTY ALERTS:ALERT! FINAL_REPRT:GPS2 | UNITS_DISPATCHED:UNIT! EMS_GRID:MAP! EMPTY+? GPS | END ) https:QUERY " +
               "| CALL! RADIO_CHANNEL:CH! INC_NUMBER:EMPTY! ID! COMMON_NAME:EMPTY! NAME CALL_ADDRESS:EMPTY! ADDRCITY! QUALIFIER/LOCAL_INFO:EMPTY! INFO/N+ CROSS_STREETS:EMPTY! X " +
                 "CALLERS_NAME:NAME! CALLERS_ADDRESS:SKIP! CALLERS_PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT ALERTS:EMPTY! ALERT INFO/N+ END " +
               "| CALL! CALL2+ INC_NUMBER:EMPTY! ID! ADDRCITY! CROSS_STREETS:EMPTY! X NAME:NAME! ADDRESS:SKIP! PHONE:PHONE! UNITS_ASSIGNED:EMPTY! UNIT! ALERTS:EMPTY! ALERT INFO/N+ " +
@@ -39,19 +39,32 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    
+    if (body.startsWith("CAUTION:")) {
+      int pt = body.indexOf('\n', 8);
+      if (pt < 0) return false;
+      body = body.substring(pt).trim();
+      return parseFields(body.split("\n"), data);
+    }
+    int pt = body.indexOf("\n\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
 
     if (subject.equals("Station 261")) {
       data.strSource = subject;
       return parseFields(SPEC_DELIM.split(body), data);
     }
+    
+    if (subject.equals("!")) {
+      return parseFields(body.split("\n"), data);
+    }
 
     if (subject.startsWith("[")) {
-      int pt = subject.indexOf(']');
+      pt = subject.indexOf(']');
       if (pt < 0) return false;
       subject = subject.substring(pt+1).trim();
     }
 
-    int pt = body.indexOf("\nThe information in this e-mail");
+    pt = body.indexOf("\nThe information in this e-mail");
     if (pt >= 0) body = body.substring(0,pt);
     return super.parseHtmlMsg(subject, body, data);
   }
@@ -70,7 +83,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     if (name.equals("MAP"))  return new MyMapField();
     if (name.equals("QUERY")) return new MyQueryField();
     if (name.equals("CALL2")) return new MyCall2Field();
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("GPS2")) return new MyGPS2Field();
     return super.getField(name);
   }
 
@@ -116,20 +129,22 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     }
   }
 
-
+  private static final Pattern MAP_PTN = Pattern.compile("(.*?) *(EMS|FIRE) GRID: *(.*)");
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf("EMS GRID:");
-      if (pt >= 0) {
-        String fireMap = field.substring(0,pt).trim();
-        String emsMap = field.substring(pt+9).trim();
-        if (fireMap.equals(emsMap)) {
-          field = fireMap;
+      Matcher match = MAP_PTN.matcher(field);
+      if (match.matches()) {
+        String map1 = match.group(1);
+        String type2 = match.group(2).substring(0,1);
+        String map2 = match.group(2);
+        if (map1.equals(map2)) {
+          field = map1;
         } else {
-          if (fireMap.length() > 0) fireMap = "F:" + fireMap;
-          if (emsMap.length() > 0) emsMap = "E:" + emsMap;
-          field = append(fireMap, " ", emsMap);
+          String type1 = (type2.equals("E") ? "F" : "E");
+          if (!map1.isEmpty()) map1 = type1 + ':' + map1;
+          if (!map2.isEmpty()) map2 = type2 + ':' + map2;
+          field = append(map1, " ", map2);
         }
       }
       super.parse(field, data);
@@ -173,7 +188,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     }
   }
 
-  private class MyGPSField extends GPSField {
+  private class MyGPS2Field extends GPSField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf("LAT/LONG:");

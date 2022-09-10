@@ -14,7 +14,7 @@ public class TXTarrantCountyCParser extends DispatchA18Parser {
 
   @Override
   public String getFilter() {
-    return "crimes@cityofkeller.com,crimes@benbrook-tx.gov,active911@sansompark.org,crimespage@lakeworthtx.org,cad@evermantx.net,cad@evermanfire.org,cadeverman@gmail.com,CRIMES@EULESSTX.GOV";
+    return "crimes@cityofkeller.com,crimes@benbrook-tx.gov,active911@sansompark.org,crimespage@lakeworthtx.org,cad@evermantx.net,cad@evermanfire.org,cadeverman@gmail.com,CRIMES@EULESSTX.GOV,CRIMES@CI.EULESS.TX.US,dispatch_group@grapevinetexas.gov";
   }
 
   @Override

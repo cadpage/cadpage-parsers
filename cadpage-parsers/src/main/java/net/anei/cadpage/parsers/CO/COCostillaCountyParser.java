@@ -13,7 +13,7 @@ public class COCostillaCountyParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return ".AL@csp.noreply";
+    return "@csp.noreply";
   }
 
   @Override

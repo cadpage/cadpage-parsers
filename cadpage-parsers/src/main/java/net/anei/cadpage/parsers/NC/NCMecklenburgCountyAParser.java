@@ -28,7 +28,7 @@ public class NCMecklenburgCountyAParser extends SmartAddressParser {
   private static final Pattern POST_ASSIGN_PTN = Pattern.compile("(POST ASSIGNMENT)   (?:(P \\d+): +(.*)|(.*))");
   private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*), +([A-Z]{2})(?: +(\\d{5}))?");
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("(?<! ) *(?=Assigned:|Enroute:|Arrived:|Pt Contact:|Pt Cont:|Depart:|Hospital:|Available:|Cancelled:)");
-  private static final Pattern PREFIX_PTN = Pattern.compile("Fire threatening Structure\\.");
+  private static final Pattern PREFIX_PTN = Pattern.compile("Fire threatening Structure\\..{6}|INFO FOR .*? - \\d{3}-\\d{3}-\\d{4}");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -78,23 +78,36 @@ public class NCMecklenburgCountyAParser extends SmartAddressParser {
 
     if (body.length() < 74) return false;
 
-    setFieldList("ADDR APT PLACE INFO CODE CALL X UNIT MAP ID");
+    setFieldList("ADDR APT PLACE INFO PRI CODE CALL X UNIT MAP ID CITY");
     String prefix = null;
+    match = PREFIX_PTN.matcher(body);
+    if (match.lookingAt()) {
+      prefix = match.group();
+      body = body.substring(match.end());
+    }
     FParser fp = new FParser(body);
-    if (PREFIX_PTN.matcher(body).lookingAt()) prefix = fp.get(33);
     parseAddress(fp.get(30), data);
     data.strApt = fp.get(10);
     data.strPlace = fp.get(30);
+    if (data.strPlace.startsWith("[")) {
+      pt = data.strPlace.indexOf(']');
+      if (pt >= 0) {
+        data.strSupp = data.strPlace.substring(pt+1).trim();
+        data.strPlace = data.strPlace.substring(0,pt).trim();
+      }
+    }
     fp.setOptional();
-    data.strSupp = fp.get(30);
+    data.strPriority = fp.get(30);
     data.strCall = fp.get(30);
     data.strCross = fp.get(60);
     data.strUnit = fp.get(10);
     if (!fp.check("Map -")) return false;
     data.strMap = fp.get(10);
-    data.strCallId = fp.get();
+    if (data.strMap.equals("NOT FOUND")) data.strMap = "";
+    data.strCallId = fp.get(20);
+    data.strCity = fp.get();
 
-    String check = data.strSupp;
+    String check = data.strPriority;
     pt = check.indexOf('-');
     if (pt >= 0) check = check.substring(0,pt).trim();
     if (!PRI_VALUES.contains(check)) return false;
@@ -144,6 +157,7 @@ public class NCMecklenburgCountyAParser extends SmartAddressParser {
       "Fire",
       "Scheduled",
       "Scheduled BLS",
+      "Sierra",
       "unkFire",
       "Zulu"
   }));

@@ -24,8 +24,11 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
-    if (data.strPlace.startsWith("EXIT")) {
-      data.strAddress = append(data.strAddress, " ", data.strPlace);
+    String place = data.strPlace;
+    if (place.startsWith("EXIT")) {
+      int pt = place.indexOf(" - ");
+      if (pt >= 0) place = place.substring(0,pt).trim();
+      data.strAddress = append(data.strAddress, " ", place);
       data.strPlace = "";
     }
     return true;
@@ -474,6 +477,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
 
       "ROUTE 676 EXIT 1",                     "+39.902920,-75.111580",
       "ROUTE 676 EXIT 1C",                    "+39.904880,-75.113620",
+      "ROUTE 676 EXIT 3",                     "+39.915400,-75.006410",
       "ROUTE 676 EXIT 4",                     "+39.926820,-75.115900",
       "ROUTE 676 EXIT 5A",                    "+39.943020,-75.113370"
   });

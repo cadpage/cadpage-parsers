@@ -199,7 +199,6 @@ public class ManageParsers {
         "TNWashingtonCountyB","TNWashingtonCounty",      // 08/03/2019
         "TNWashingtonCOunty", "TNWashingtonCounty",      // 08/06/2019  *oops*
         "TXKeller",           "TXTarrantCounty",         // 01/05/2020
-        "TXTarrantCountyE",   "TXTarrantCountyC",
         "CTGroton",           "CTNewLondonCounty",       // 01/18/2020
         "ILRandolphCountyB",  "ILMonroeCounty",          // 01/29/2020
         "NCStanlyCountyA",    "NCStanlyCountyB",         // 11/28/2020

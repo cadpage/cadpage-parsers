@@ -14,12 +14,14 @@ public class NCCurrituckCountyParser extends DispatchOSSIParser {
   
   public NCCurrituckCountyParser() {
     super(CITY_CODES, "CURRITUCK COUNTY", "NC",
-           "F6? CALL ADDR/S! CITY? X+? ( PLACENAME END | PLACENAME PHONE | ) INFO+");
+          "( CANCEL ADDR CITY? PLACE? " +
+          "| F6? CALL ADDR/S! CITY? UNIT/C? X+? ( PLACENAME END | PLACENAME PHONE | ) " + 
+          ") INFO/N+");
   }
   
   @Override
   public String getFilter() {
-    return "CAD@co.currituck.nc.us";
+    return "CAD@co.currituck.nc.us,CAD@currituckcountync.gov";
   }
   
   @Override
@@ -31,6 +33,8 @@ public class NCCurrituckCountyParser extends DispatchOSSIParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("F6")) return new SkipField("F6");
+    if (name.equals("PLACE")) return new PlaceField("\\(S\\) *(.*?) *\\(N\\)", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]\\d[A-Z]", true);
     if (name.equals("PLACENAME")) return new MyPlaceNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
     return super.getField(name);
@@ -49,8 +53,13 @@ public class NCCurrituckCountyParser extends DispatchOSSIParser {
   }
   
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "CNJC", "COINJOCK",
       "CRLA", "COROLLA",
+      "CURR",  "CURRITUCK",
       "DUCK", "DUCK",
-      "GNDY", "GRANDY"
+      "GNDY", "GRANDY",
+      "JVBG", "JARVISBURG",
+      "MOYC", "MOYOCK",
+      "PTHR", "POINT HARBOR"
   });
 }

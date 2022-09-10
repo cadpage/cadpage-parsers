@@ -1,14 +1,20 @@
 package net.anei.cadpage.parsers.CO;
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
 
-public class COGrandCountyParser extends DispatchA55Parser {
-  
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Grand County, CO
+ */
+public class COGrandCountyParser extends GroupBestParser {
+
+
   public COGrandCountyParser() {
-    super("GRAND COUNTY", "CO");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "cadalerts@eforcesoftware.com,kfpd_dispatches@kremmlingfire.org,brady.mathis@gmail.com,brady.mathis@kremmlingfire.org,eforce_alert@co.grand.co.us";
+    super(new COGrandCountyAParser(), new COGrandCountyBParser());
   }
 }
+
+
+
+
+
+

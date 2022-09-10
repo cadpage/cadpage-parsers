@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.GA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA78Parser;
 
-public class GAChathamCountyBParser extends DispatchA72Parser {
+public class GAChathamCountyBParser extends DispatchA78Parser {
 
   public GAChathamCountyBParser() {
     super("CHATHAM COUNTY", "GA");
@@ -10,7 +10,7 @@ public class GAChathamCountyBParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@cityoftybee.org";
+    return "donotreply@TybeeIslandPoliceDepartmentalerts.com";
   }
 
 }

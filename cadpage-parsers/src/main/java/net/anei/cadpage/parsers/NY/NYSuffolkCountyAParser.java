@@ -166,7 +166,13 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
         String[] addrFlds = PLACE_MARK_PTN.split(sAddress, 3);
         if (addrFlds.length > 1) {
           sAddress = addrFlds[0].trim();
-          parsePlaceField(addrFlds[1].trim(), data, true);
+          String city = CITY_TABLE.getProperty(sAddress);
+          if (city != null) {
+            data.strCity = city;
+            sAddress = addrFlds[1].trim();
+          } else {
+            parsePlaceField(addrFlds[1].trim(), data, true);
+          }
           if (addrFlds.length > 2) data.strSupp = append(data.strSupp, "\n", addrFlds[2].trim());
           match = APT_PTN.matcher(sAddress);
           if (match.matches()) {
@@ -174,25 +180,32 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
             data.strApt = append(match.group(2).trim(), "-", data.strApt);
           }
         }
+        
+        // If we already have a city, just parse the address
+        if (!data.strCity.isEmpty()) {
+          parseAddress(sAddress, data);
+        }
 
-        // We have so many city codes that many of them form part of legitimate
+        // Otherwise, we have so many city codes that many of them form part of legitimate
         // street names, which really messes things up.  To cut down on some of
         // the confusion, any double blank following a legitimate city code is
         // treated as the end of the address
-        pt = -1;
-        while (true) {
-          pt = sAddress.indexOf("  ", pt+1);
-          if (pt < 0) break;
-          Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, sAddress.substring(0,pt));
-          if (res.getCity().length() > 0) {
-            res.getData(data);
-            data.strPlace = append(sAddress.substring(pt+2).trim(), " - ", data.strPlace);
-            break;
+        else {
+          pt = -1;
+          while (true) {
+            pt = sAddress.indexOf("  ", pt+1);
+            if (pt < 0) break;
+            Result res = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, sAddress.substring(0,pt));
+            if (res.getCity().length() > 0) {
+              res.getData(data);
+              data.strPlace = append(sAddress.substring(pt+2).trim(), " - ", data.strPlace);
+              break;
+            }
           }
-        }
-        if (data.strCity.length() == 0) {
-          parseAddress(StartType.START_ADDR, FLAG_CROSS_FOLLOWS, sAddress, data);
-          data.strPlace = append(getLeft(), " - ", data.strPlace);
+          if (data.strCity.length() == 0) {
+            parseAddress(StartType.START_ADDR, FLAG_CROSS_FOLLOWS, sAddress, data);
+            data.strPlace = append(getLeft(), " - ", data.strPlace);
+          }
         }
       }
     }
@@ -722,8 +735,10 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "ALLERGIES (REACTION) / ENVENOMATION (STING, BITE)",
       "ANIMAL BITES / ATTACKS",
       "ASSAULT / SEXUAL ASSAULT / STUN GUN",
+      "BACK PAIN",
       "BACK PAIN (NON-TRAUMATIC OR NON-RECENT TRAUMA)",
       "BLEEDING / LACERATIONS",
+      "BRUSH FIRE",
       "BURNS (SCALDS) / EXPLOSION (BLAST)",
       "BURNS (SCALDS) / EXPLOSION (BLAST) MASTIC",
       "BURNS / EXPLOSION",
@@ -738,6 +753,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "CONFINED SPACE / STRUCTURE COLLAPSE",
       "CONVULSIONS / SEIZURES",
       "DIABETIC PROBLEMS",
+      "DROWNING/NEAR DROWNING / DIVING/SCUBA ACCIDENT",
       "DROWNING / NEAR DROWNING / DIVING / SCUBA ACCIDENT",
       "ELECTRICAL HAZARD",
       "ELEVATOR/ESCALATOR INCIDENT",
@@ -765,6 +781,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "ODOR (STRANGE / UNKNOWN)",
       "OPEN BURNING",
       "OUTSIDE FIRE",
+      "OUTSIDE TANK FIRE",
       "OVERDOSE / POISONING (INGESTION)",
       "PANDEMIC",
       "PREGNANCY / CHILDBIRTH / MISCARRIAGE",
@@ -794,6 +811,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "UNKNOWN PROBLEM",
       "UNKNOWN PROBLEM (PERSON DOWN)",
       "VEHICLE FIRE",
+      "WATER / ICE / MUD RESCUE",
       "WATERCRAFT IN DISTRESS / COLLISION",
       "WATERCRAFT IN DISTRESS / COLLISION NICOLL ISLAND/CONNETQUOT RIVER",
       "WATER RESCUE / SINKING VEHICLE / VEHICLE IN FLOODWATER",
@@ -943,7 +961,8 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
       "OLDBET",  "OLD BETHPAGE",
       "OLDFIE",  "OLD FIELD",
       "ORIENT",  "ORIENT",
-      "OYSTERB",  "OYSTER BAY",
+      "OYSTERB", "OYSTER BAY",
+      "PATCH",   "PATCHOGUE",
       "PATCHO",  "PATCHOGUE",
       "PECONI",  "PECONIC",
       "PILGRP",  "PILGRIM PSYCHIATRIC",

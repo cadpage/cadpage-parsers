@@ -20,7 +20,7 @@ public class TXAcadianAmbulanceBParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "bastropactive911@gmail.com";
+    return "bastropactive911@gmail.com,bastropactive911@co.bastrop.tx.us,TPS_Service@tylertech.com";
   }
 
   @Override

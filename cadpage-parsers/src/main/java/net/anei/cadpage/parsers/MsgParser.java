@@ -196,8 +196,8 @@ public abstract class MsgParser {
   /**
    * Pattern that identifies GPS coordinates in an arbitrary field
    */
-  private static final String GPS_COORD_PTN_STR = "([-+]?[0-9]+\\.[0-9]{2,})\\??|([-+]?)([0-9]+)\\?? +([0-9]+\\.[0-9]{1,})['`]?|([-+]?)([0-9]{1,3})[: \\?] *([0-9]{1,2})[:'` ] *([0-9]{1,2}(?:\\.[0-9]{1,})?)\"?";
-  private static final String GPS_COORD_PTN_STR2 = "[-+]?[0-9]+\\.[0-9]{2,}\\??|[-+]?[0-9]+\\?? +[0-9]+\\.[0-9]{1,}['`]?|[-+]?[0-9]{1,3}[: \\?] *[0-9]{1,2}[:'` ] *[0-9]{1,2}(?:\\.[0-9]{1,})?\"?";
+  private static final String GPS_COORD_PTN_STR = "([-+]?[0-9]+\\.[0-9]{2,})\\??|([-+]?)([0-9]+)[° \\?] *([0-9]+\\.[0-9]{1,})['`°]?|([-+]?)([0-9]{1,3})[: °\\?] *([0-9]{1,2})[:'` ] *([0-9]{1,2}(?:\\.[0-9]{1,})?)\"?";
+  private static final String GPS_COORD_PTN_STR2 = "[-+]?[0-9]+\\.[0-9]{2,}\\??|[-+]?[0-9]+[° \\?] *[0-9]+\\.[0-9]{1,}['`]?|[-+]?[0-9]{1,3}[: °\\?] *[0-9]{1,2}[:'` ] *[0-9]{1,2}(?:\\.[0-9]{1,})?\"?";
   private static final Pattern GPS_COORD_PTN = Pattern.compile(GPS_COORD_PTN_STR);
   public static final Pattern GPS_PATTERN =
       Pattern.compile("(?:\\b|^|[ ,;\\.]+)(X: *|LAT: *|LL\\( *)?[NS]?(" + GPS_COORD_PTN_STR2 + ")[NnSs]?[,\\W] ?\\W*?(Y: *|LONG?: *|x )?[EW]?(" + GPS_COORD_PTN_STR2 + ")[EW]?(?:\\)|\\b)", Pattern.CASE_INSENSITIVE);
@@ -662,6 +662,7 @@ public abstract class MsgParser {
    * MAP_FLG_SUPPR_TE suppress TE -> TER adjustment
    * MAP_FLG_MAP_PAGES parser may return map page information
    * MAP_FLG_ADOBE_MAP_PAGE Map pages must be displayed with Adobe Reader
+   * MAP_FLG_PK_PARKWAY convert PK -> PARKWAY instead of PIKE
    */
   public int getMapFlags() {
     return mapFlags;
@@ -677,6 +678,7 @@ public abstract class MsgParser {
   public static final int MAP_FLG_CR_CREEK = MsgInfo.MAP_FLG_CR_CREEK;
   public static final int MAP_FLG_SUPPR_TE = MsgInfo.MAP_FLG_SUPPR_TE;
   public static final int MAP_FLG_KEEP_STATE_HIGHWAY = MsgInfo.MAP_FLG_KEEP_STATE_HIGHWAY;
+  public static final int MAP_FLG_PK_PARKWAY = MsgInfo.MAP_FLG_PK_PARKWAY;
 
   public enum MapPageStatus { ANY, ADOBE };
 

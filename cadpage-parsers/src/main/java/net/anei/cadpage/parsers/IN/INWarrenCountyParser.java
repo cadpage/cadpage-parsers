@@ -14,5 +14,4 @@ public class INWarrenCountyParser extends DispatchA80Parser {
     if (!body.startsWith("DISPATCH:")) body = "DISPATCH:" + body;
     return super.parseMsg(body, data);
   }
-
 }

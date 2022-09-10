@@ -5,6 +5,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TNMorganCountyParser extends GroupBestParser {
   
   public TNMorganCountyParser() {
-    super(new TNMorganCountyAParser(), new TNMorganCountyBParser());
+    super(new TNMorganCountyAParser(), new TNMorganCountyBParser(),
+          new TNMorganCountyCParser());
   }
 }

@@ -17,7 +17,7 @@ public class TXWylieParser extends FieldProgramParser {
 
   public TXWylieParser() {
     super("", "TX",
-        "CALL! BOX:BOX? ADDR! CROSS_STREET(S):X CHANNEL:CH? CITY!");
+        "CALL! BOX:BOX? ADDR! ( CROSS_STREET(S):X | INTERSECTS_WITH:X | ) ( CHANNEL:CH | ) SKIP+? CITY!");
     setupProtectedNames("BUTSCHERS BLOCK");
   }
 
@@ -36,7 +36,7 @@ protected boolean parseMsg(String subject, String body, Data data) {
   if (!m.matches()) return false;
   body = m.group(1).trim();
 
-  return parseFields(body.split("\\n"), data);
+  return parseFields(body.split("\n"), data);
 }
 
 @Override

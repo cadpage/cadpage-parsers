@@ -18,7 +18,7 @@ public class DispatchA13Parser extends FieldProgramParser {
   public static final int A13_FLG_LEAD_PLACE = 2;
   public static final int A13_FLG_TRAIL_PLACE = 4;
   
-  private static final String PROGRAM = "SRCID+? STATUS CALL/SDS! ADDR X:GPS1 Y:GPS2 INFO/N+";
+  private static final String PROGRAM = "SRCID+? ( UNIT TRANSPORT! ADDR END | STATUS CALL/SDS! ADDR X:GPS1 Y:GPS2 INFO/N+ )";
   
   private Properties cityCodes = null;
   private boolean checkCity;
@@ -75,6 +75,7 @@ public class DispatchA13Parser extends FieldProgramParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("SRCID")) return  new SourceIdField();
+    if (name.equals("TRANSPORT")) return new CallField("Transport", true);
     if (name.equals("STATUS")) return new BaseStatusField();
     if (name.equals("ADDR")) return new BaseAddressField(false);
     if (name.equals("GPS1")) return new BaseGPSField(1);
@@ -221,7 +222,10 @@ public class DispatchA13Parser extends FieldProgramParser {
         // A leading place name that contains parenthesis really messes
         // things up.  
         if ((leadPlaceName || leadPlace) && sPart3.length() > 0) {
-          Result res3 = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ANCHOR_END, sPart3);
+          String tmp3 = sPart3;
+          int pt = tmp3.indexOf('#');
+          if (pt >= 0) tmp3 = tmp3.substring(0,pt).trim();
+          Result res3 = parseAddress(StartType.START_ADDR, FLAG_CHECK_STATUS | FLAG_ANCHOR_END, tmp3);
           if (res3.getStatus() >= STATUS_INTERSECTION) {
             sPart1 = sPart1 + " (" + sPart2 + ") " + sPart3;
             sPart2 = sPart4;

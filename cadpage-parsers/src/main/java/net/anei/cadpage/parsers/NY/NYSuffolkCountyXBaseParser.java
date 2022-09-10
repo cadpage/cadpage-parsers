@@ -13,8 +13,12 @@ public class NYSuffolkCountyXBaseParser extends FieldProgramParser {
   
   private static final Pattern DELIM = Pattern.compile("\\*\\* |\n+ *\\*\\*|\n");
   
-    public NYSuffolkCountyXBaseParser(String defCity, String defState, String program) {
-      super(defCity, defState, program);
+  public NYSuffolkCountyXBaseParser(String defCity, String defState, String program) {
+    this(null, defCity, defState, program);
+  }
+  
+    public NYSuffolkCountyXBaseParser(String[] cityList, String defCity, String defState, String program) {
+      super(cityList, defCity, defState, program);
     }
 
 	  @Override
@@ -28,21 +32,24 @@ public class NYSuffolkCountyXBaseParser extends FieldProgramParser {
     @Override
     protected Field getField(String name) {
       if (name.equals("CODE")) return new CodeField("\\d{1,2}-?[A-Z]-?\\d{1,2}[A-Za-z]?", true);
-      if (name.equals("ID")) return new BaseIdField(false);
-      if (name.equals("IDP")) return new BaseIdField(true);
+      if (name.equals("ID")) return new BaseIdField(false, false);
+      if (name.equals("IDP")) return new BaseIdField(true, false);
+      if (name.equals("ID_INFO")) return new BaseIdField(false, true);
       if (name.equals("TOA")) return new TOAField(false);
       if (name.equals("TOAP")) return new TOAField(true);
       if (name.equals("INFO")) return new MyInfoField();
       return super.getField(name);
     }
     
-    private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{6}");
+    private static final Pattern ID_PTN = Pattern.compile("(\\d{4}-\\d{6})\\b *");
     private class BaseIdField extends IdField {
       
       private boolean allowPartial;
+      private boolean trailInfo;
       
-      public BaseIdField(boolean allowPartial) {
+      public BaseIdField(boolean allowPartial, boolean trailInfo) {
         this.allowPartial = allowPartial;
+        this.trailInfo = trailInfo;
       }
       
       @Override
@@ -53,6 +60,14 @@ public class NYSuffolkCountyXBaseParser extends FieldProgramParser {
       @Override
       public boolean checkParse(String field, Data data) {
         Matcher match = ID_PTN.matcher(field);
+        if (trailInfo) {
+          if (match.lookingAt()) {
+            super.parse(match.group(1), data);
+            data.strSupp = field.substring(match.end());
+            return true;
+          }
+        }
+        
         if (match.matches()) {
           super.parse(field, data);
           return true;
@@ -68,6 +83,11 @@ public class NYSuffolkCountyXBaseParser extends FieldProgramParser {
       @Override
       public void parse(String field, Data data) {
         if (!checkParse(field, data)) abort();
+      }
+      
+      @Override
+      public String getFieldNames() {
+        return trailInfo ? "ID INFO?" : "ID";
       }
     }
 	  

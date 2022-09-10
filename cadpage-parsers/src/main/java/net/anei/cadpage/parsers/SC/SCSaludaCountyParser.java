@@ -34,6 +34,12 @@ public class SCSaludaCountyParser extends FieldProgramParser {
       // Unincorporated communities
       "CHAPPELLS",
       "MOUNT WILLING",
+      
+      // Edgefield County
+      "JOHNSTON",
+      
+      // Greenwood County
+      "NINETY SIX",
 
       // Newberry County
       "PROSPERITY"

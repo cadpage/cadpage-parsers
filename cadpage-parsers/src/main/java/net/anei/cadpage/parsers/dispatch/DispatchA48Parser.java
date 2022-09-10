@@ -43,7 +43,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   public static final int A48_OPT_ONE_WORD_CODE = A48_OPT_CODE | A48_ONE_WORD_CODE;
 
   private static final Pattern GPS_PTN = Pattern.compile(" *([-+]?\\b\\d{2,3}\\.\\d{4,} +[-+]?\\d{2,3}\\.\\d{4,})\\b *");
-  private static final Pattern PHONE_PTN = Pattern.compile("(?:(\\d{3}-\\d{3}-\\d{4})\\b|- -) *");
+  private static final Pattern PHONE_PTN = Pattern.compile("(?:(\\d{3}-\\d{3}-\\d{4}|\\(\\d{3}\\) *\\d{3}-\\d{4}|\\d{10})\\b|- -) *");
 
   /**
    * Enum parameter indicating what kind of information comes between the
@@ -145,6 +145,11 @@ public class DispatchA48Parser extends FieldProgramParser {
         data.strName = field;
       }
 
+    },
+    
+    PLACE_PHONE_NAME("( PLACE/Z APT PHONE? | PLACE/Z PHONE | PHONE? ) NAME/Z?", "PLACE PHONE NAME") {
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {}
     },
 
     TRASH("SKIP", "") {
@@ -673,7 +678,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}(?: ?[A-Z])?|[A-Z]");
   private class BaseAptField extends AptField {
     public BaseAptField() {
       setPattern(APT_PTN, true);
@@ -707,7 +712,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_TIMES_PTN = Pattern.compile("[A-Za-z ]+: *\\d\\d:\\d\\d");
-  private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
+  private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d(?: [AP]M)?\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
   private static final Pattern INFO_TRUNC_PTN = Pattern.compile("\\d{1,2}[/:][ 0-9:/]*");
   private class BaseInfoField extends InfoField {
     @Override
@@ -730,7 +735,7 @@ public class DispatchA48Parser extends FieldProgramParser {
           field = match.group(1);
         }
       }
-      if (field != null) super.parse(field, data);
+      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
       return true;
     }
 
@@ -739,7 +744,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       Matcher match = INFO_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       else if (INFO_TRUNC_PTN.matcher(field).matches()) return;
-      if (field != null) super.parse(field, data);
+      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
     }
   }
 

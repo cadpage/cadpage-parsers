@@ -36,7 +36,7 @@ public class CASacramentoCountyParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.equals("CAD PAGE-Do not reply")) return false;
+    if (!subject.equalsIgnoreCase("CAD PAGE-Do not reply")) return false;
 
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) {
@@ -52,7 +52,9 @@ public class CASacramentoCountyParser extends MsgParser {
     data.strChannel = match.group(3);
     String map = match.group(4);
     if (!map.equals(",")) data.strMap = map;
-    parseAddress(match.group(5).replace('.', ' ').trim(), data);
+    String addr = match.group(5).replace('.', ' ').trim();
+    addr = stripFieldStart(addr, "W!");
+    parseAddress(addr, data);
     data.strCity = convertCodes(match.group(6), CITY_CODES);
     data.strUnit = match.group(7).trim().replace("+", "");
     return true;

@@ -7,7 +7,7 @@ public class AKChugiakParser extends FieldProgramParser {
   
   public AKChugiakParser() {
     super("CHUGIAK", "AK", 
-          "ADDR MAP CALL! END");
+          "ADDR MAP CALL! INFO/N+ END");
   }
   
   @Override

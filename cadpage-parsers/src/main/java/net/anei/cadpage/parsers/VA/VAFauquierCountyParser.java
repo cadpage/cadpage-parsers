@@ -18,6 +18,7 @@ public class VAFauquierCountyParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     if (!super.parseMsg(body, data)) return false;
     
     // Calls with no box number are OOC mutual aid calls

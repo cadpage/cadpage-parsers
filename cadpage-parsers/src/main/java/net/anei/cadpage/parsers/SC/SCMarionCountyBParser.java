@@ -11,7 +11,7 @@ public class SCMarionCountyBParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "marionsc911@gmail.com";
+    return "marionsc911@gmail.com,marionsc911@marionsc.org";
   }
 
   @Override

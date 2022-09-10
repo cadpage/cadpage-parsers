@@ -15,7 +15,7 @@ public class DispatchA86Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD DISPATCH")) return false;
+    if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     int pt = body.indexOf("\nURL:");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split(";"), data);

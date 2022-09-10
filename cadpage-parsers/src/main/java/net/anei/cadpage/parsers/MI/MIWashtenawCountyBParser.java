@@ -12,13 +12,20 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   public MIWashtenawCountyBParser() {
     super("WASHTENAW COUNTY", "MI",
           "( Call:CALL! Incident:ID! Address:ADDRCITYST! Coordinates:GPS! Address_Comment:PLACE! Resource:UNIT! Response:PRI! Notes:INFO! INFO/N+ " +
-          "| CALL:CALL! PLACE:PLACE? ADDR:ADDRCITYST! ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME? INFO:INFO? Additional_Info:INFO?" +
+          "| CALL:CALL! PLACE:PLACE? ADDR:ADDRCITYST! ( APT:APT! CITY:CITY! LAT:GPS1/d! LON:GPS2/d! ID:ID! TIME:DATETIME2! UNIT:UNIT! " + 
+                                                     "| ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME1? " + 
+                                                     ") INFO:INFO? Additional_Info:INFO?" +
           "| INCIDENT_COMPLETE! Location:ADDRCITYST! Location_Comment:PLACE! Nature:CALL? INFO/N+ )");
   }
 
   @Override
   public String getFilter() {
     return "noreply@emergenthealth.org,cadpaging@emergenthealth.org";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
@@ -28,13 +35,20 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    String type = "";
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    String type = match.group(1);
-    data.strCallId = match.group(2);
+    if (match.matches()) {
+      type = match.group(1);
+      data.strCallId = match.group(2);
+    }
 
     if (body.startsWith("CALL:") || body.startsWith("Call:")) {
-      String[] flds = body.split("\n");
+      String delim = "\n";
+      if (body.contains("; PLACE:")) {
+        delim = ";";
+        if (body.startsWith("Call:")) body = "CALL:" + body.substring(5).replace(" City:", " CITY:");
+      }
+      String[] flds = body.split(delim);
       if (flds.length >= 3) {
         if (!parseFields(flds, data)) return false;
       }
@@ -130,7 +144,8 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("GPS")) return new MyGPSField();
-    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("DATETIME1")) return new MyDateTime1Field();
+    if (name.equals("DATETIME2")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d");
     if (name.equals("INCIDENT_COMPLETE")) return new SkipField("Incident \\d+ Completed", true);
     return super.getField(name);
   }
@@ -169,33 +184,40 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("[A-Za-z ]+, *[A-Z]{2}(?: +\\d{5})?");
   private static final Pattern COUNTY_PTN = Pattern.compile("[A-Za-z ]+");
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
+  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})(?:-\\d{4})?");
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       String apt = "";
-      int pt1 = field.indexOf('(');
+      String city = null;
+      int pt1 = field.lastIndexOf('(');
       if (pt1 >= 0) {
-        String city;
-        int pt2 = field.indexOf(')', pt1+1);
-        if (pt2 >= 0) {
+        int pt2 = field.lastIndexOf(')');
+        if (pt2 >= 0 && pt2 > pt1) {
           city = field.substring(pt1+1, pt2).trim();
           apt = field.substring(pt2+1).trim();
         } else {
           city = field.substring(pt1+1).trim();
         }
         field = field.substring(0, pt1).trim();
+        
+        if (city.endsWith(")")) {
+          city = city.substring(0,city.length()-1).trim();
+           field = field.substring(findOpenParen(field)).trim();
+        }
 
-        if (COUNTY_PTN.matcher(city).matches()) {
-          data.strCity = city;
-        } else {
+        if (CITY_ST_ZIP_PTN.matcher(city).matches()) {
+          field = field + ',' + city;
+          city = null;
+        }
+        else if (!COUNTY_PTN.matcher(city).matches()) {
           data.strPlace = append(data.strPlace, " - ", field);
           field = city;
+          city = null;
         }
-        if (apt.startsWith("(")) {
-          apt = "";
-        } else if (!apt.isEmpty()) {
+        if (!apt.isEmpty()) {
           apt = APT_PFX_PTN.matcher(apt).replaceFirst("");
         }
       }
@@ -207,7 +229,20 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
+      if (data.strCity.isEmpty() && city != null) data.strCity = city;
       if (zip != null && data.strCity.isEmpty()) data.strCity = zip;
+    }
+    
+    private int findOpenParen(String field) {
+      int cnt = 1;
+      for (int pt = field.length()-1; pt > 0; pt--) {
+        char chr = field.charAt(pt);
+        if (chr == ')') cnt++;
+        else if (chr == '(') {
+          if (--cnt == 0) return pt+1;
+        }
+      }
+      return 0;
     }
 
     @Override
@@ -224,11 +259,11 @@ public class MIWashtenawCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?-\\d\\d?-\\d{4}) (\\d\\d?:\\d\\d)");
-  private class MyDateTimeField extends DateTimeField {
+  private static final Pattern DATE_TIME1_PTN = Pattern.compile("(\\d\\d?-\\d\\d?-\\d{4}) (\\d\\d?:\\d\\d)");
+  private class MyDateTime1Field extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
+      Matcher match = DATE_TIME1_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1).replace('-', '/');
       data.strTime = match.group(2);

@@ -44,6 +44,8 @@ public class DispatchA80Parser extends FieldProgramParser {
       if (!parseFields(body.split("//"), data)) return false;
     }
     data.strPlace = stripFieldStart(data.strPlace, "ALIAS=");
+    data.strApt = stripFieldStart(data.strApt, "/Unit #");
+    data.strApt = stripFieldStart(data.strApt, "APT");
     return true;
   }
 

@@ -14,6 +14,6 @@ public class KYPowellCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,jamie.suter@active911.com,powellcounty911center@gmail.com";
+    return "noreply@cisusa.org,jamie.suter@active911.com,powellcounty911center@gmail.com,powellcounty911@cissystem.com";
   }
 }

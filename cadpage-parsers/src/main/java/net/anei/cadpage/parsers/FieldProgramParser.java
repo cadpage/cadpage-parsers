@@ -2789,7 +2789,7 @@ public class FieldProgramParser extends SmartAddressParser {
   /**
    * Field containing address, city and optional state/zip code
    */
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})|0))?");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})|0))?|(\\d{5})");
   public class AddressCityStateField extends AddressField {
 
     private Field cityField = new CityField();
@@ -2812,20 +2812,26 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public void parse(String field, Data data) {
+      String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
         Matcher match = ST_ZIP_PTN.matcher(city);
         if (match.matches()) {
-          data.strState = match.group(1);
-          String zip = match.group(2);
+          String state = match.group(1);
+          if (state != null) {
+            data.strState = state;
+            zip = match.group(2);
+          } else {
+            zip = match.group(3);
+          }
           city = p.getLastOptional(',');
-          if (city.length() == 0 && zip != null) city = zip;
         }
         cityField.parse(city, data);
         field = p.get();
       }
       parseAddress(field, data);
+      if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
     }
 
     protected void parseAddress(String field, Data data) {

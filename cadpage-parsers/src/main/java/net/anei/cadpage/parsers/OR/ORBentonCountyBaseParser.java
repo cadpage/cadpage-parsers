@@ -31,6 +31,8 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
 
   protected void fixAddress(Data data) {
 
+    data.strAddress = data.strAddress.replace('\ufffd', '°');
+
     // Google has trouble with HIGHWAY 20, so change all highways to hwy
     data.strAddress = HIGHWAY_PTN.matcher(data.strAddress).replaceAll("HWY");
     data.strCross = HIGHWAY_PTN.matcher(data.strCross).replaceAll("HWY");
@@ -2065,6 +2067,7 @@ public class ORBentonCountyBaseParser extends FieldProgramParser {
       "SIS",  "SISTERS",
       "SOD",  "SODAVILLE",
       "SPF",  "SPRINGFIELD",
+      "STAY", "STAYTON",
       "STY",  "STAYTON",
       "SWH",  "SWEET HOME",
       "TANG", "TANGENT"

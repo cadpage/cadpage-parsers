@@ -33,6 +33,7 @@ public class TXHillCountyParser extends DispatchA19Parser {
       "AccidentMinor",   "Minor Accident",
       "Ambulance Emerg", "Medical Emergency",
       "FIREGRASS",       "Grass Fire",
+      "FireGrass",       "Grass Fire",
       "Traffic Stop",    "Assist PD"
   });
 

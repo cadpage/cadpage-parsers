@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TXArcherCountyParser extends FieldProgramParser {
 
   public TXArcherCountyParser() {
-    super("ARCHER COUNTY", "TX",
+    this("ARCHER COUNTY", "TX");
+  }
+
+  public TXArcherCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL ADDR CITY! INFO/N+");
   }
 

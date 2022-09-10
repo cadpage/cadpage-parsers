@@ -47,7 +47,7 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState, Properties zipCityTable) {
     super(cityCodes, defCity, defState,
-          "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR! BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
+          "TYP:CODE1 MODCIR:CODE2 TYPEN:CALL TYPN:CALL CC_TEXT:CALL LOC:ADDR BLD:APT FLR:APT APT:APT AD:PLACE DESC:PLACE CITY:CITY ZIP:ZIP CRSTR:X UNS:UNIT TIME:DATETIME3 INC:ID GRIDREF:MAP " +
           "CMT:INFO/N PROBLEM:INFO/N CC:SKIP CASE__#:ID PRIORITY:PRI CALLER:NAME LOCDESC:NAME USER_ID:SKIP CREATED:SKIP RFD:SKIP LOCATION:SKIP LAT:GPS1 LONG:GPS2", FLDPROG_ANY_ORDER | FLDPROG_IGNORE_CASE);
 
     this.callCodes = callCodes;
@@ -63,21 +63,21 @@ public class DispatchA52Parser extends FieldProgramParser {
     Matcher match = PREFIX_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
     if (body.startsWith("LOC:APPROX LOC:")) body = body.substring(11);
-    if (!body.startsWith("LOC:") && !body.startsWith("TYPN")) return false;
+    if (!body.startsWith("LOC:") && !body.startsWith("TYPN") && !body.startsWith("CMT:")) return false;
     body = body.replace("LOC DESC:", "LOCDESC:");
     if (!super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) return false;
-    if (data.strAddress.length() == 0 && data.strGPSLoc.length() > 0) {
+    if (data.strAddress.isEmpty() && !data.strGPSLoc.isEmpty()) {
       int pt = data.strGPSLoc.indexOf(',');
       data.strAddress = "LAT:" + data.strGPSLoc.substring(0,pt) + " LONG:" + data.strGPSLoc.substring(pt+1);
       data.strGPSLoc = "";
     }
-    return true;
+    return !data.strAddress.isEmpty();
   }
 
   @Override
   public String getProgram() {
-    return super.getProgram().replace("CODE", "CODE CALL?");
+    return super.getProgram().replace("CODE", "CODE CALL?").replace("GPS", "GPS ADDR?");
   }
 
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("EEEEEE, MMMM dd, yyyy hh:mm:ss aa");

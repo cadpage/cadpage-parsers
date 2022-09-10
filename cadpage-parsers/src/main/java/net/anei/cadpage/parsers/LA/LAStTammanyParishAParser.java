@@ -52,7 +52,7 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("SRC_X")) return new MySourceCrossField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
-    if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("ID")) return new IdField("(?:EVT# +)?(\\d{10})", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }

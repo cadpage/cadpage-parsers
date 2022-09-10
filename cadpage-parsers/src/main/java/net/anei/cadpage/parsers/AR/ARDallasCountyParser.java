@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.AR;
 
-import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
-public class ARDallasCountyParser extends DispatchBCParser {
+public class ARDallasCountyParser extends DispatchA71Parser {
 
   public ARDallasCountyParser() {
     super("DALLAS COUNTY", "AR");
@@ -10,7 +10,7 @@ public class ARDallasCountyParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "DALLASCOUNTYNOTIFICATION@OMNIGO.COM,noreply@omnigo.com";
+    return "cadpage@e9.com";
   }
 
 }

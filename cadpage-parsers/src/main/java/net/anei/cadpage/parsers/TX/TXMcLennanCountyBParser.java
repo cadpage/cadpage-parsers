@@ -10,6 +10,11 @@ public class TXMcLennanCountyBParser extends DispatchA41Parser {
     super(CITY_CODES, "MCLENNAN COUNTY", "TX", "[A-Z]{2,4}");
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA | MAP_FLG_PK_PARKWAY;
+  }
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BEL", "BELLMEAD",
       "BH",  "BEVERLY HILLS",

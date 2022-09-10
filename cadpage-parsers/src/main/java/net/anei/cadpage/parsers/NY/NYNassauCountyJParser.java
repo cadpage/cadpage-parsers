@@ -11,6 +11,6 @@ public class NYNassauCountyJParser extends DispatchA14Parser {
 
   @Override
   public String getFilter() {
-    return "paging1@firerescuesystems.xohost.com,8559495933";
+    return "paging1@firerescuesystems.xohost.com,text@nmfd-660.com,8559495933";
   }
 }

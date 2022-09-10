@@ -765,6 +765,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   protected class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace("//", "/");
       int flags = FLAG_AT_SIGN_ONLY;
       String zip = null;
       if (trailField == null) {

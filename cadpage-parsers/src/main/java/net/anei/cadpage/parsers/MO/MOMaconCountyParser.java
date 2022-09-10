@@ -13,7 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class MOMaconCountyParser extends FieldProgramParser {
 
   public MOMaconCountyParser() {
-    super("MACON COUNTY", "MO",
+    this("MACON COUNTY", "MO");
+  }
+
+  MOMaconCountyParser(String defCity, String defState) {
+    super(defCity, defState,
       "Event_Number:ID! Police_Event_Type:CALL! Fire_Event_Type:CALL! EMS_Event_Type:CALL! Latitude:GPS1! Longitude:GPS2! Address:ADDR! Location:APT_PLACE? City:CITY! Zip:SKIP! ESN:SKIP! Class:SKIP! District:SRC! UnitTimes:TIMES Notes:INFO/N+");
   }
 

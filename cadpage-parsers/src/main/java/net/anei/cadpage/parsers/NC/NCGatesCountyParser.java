@@ -15,6 +15,7 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
 
   public NCGatesCountyParser() {
     super(CALL_LIST, CITY_LIST, "GATES COUNTY", "NC", DSFLAG_CROSS_NAME_PHONE | DSFLAG_FOLLOW_CROSS);
+    setCallPtn("\\S+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupMultiWordStreets(
         "ACORN HILL",
@@ -93,10 +94,6 @@ public class NCGatesCountyParser extends DispatchSouthernParser {
 
   private static final CodeSet CALL_LIST = new CodeSet(
       "Breathing Problems",
-      "Diabetic",
-      "Fall",
-      "Fire",
-      "Medical",
       "MVC with Injury",
       "Non Emergency Transport",
       "Vehicle Fire"

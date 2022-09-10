@@ -5,21 +5,30 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class ARPopeCountyParser extends FieldProgramParser {
-  
+
   public ARPopeCountyParser() {
     super("POPE COUNTY", "AR",
-          "PLACE Location:ADDRCITY! Cross_Street:X Type:CALL! Units:UNIT!");
+          "Call_Time:DATETIME! Service_Call_Type:CALL! Street_Address:ADDRCITY! Common_Name:PLACE! Latitude:GPS1! Longitude:GPS2! Cross_Streets:X! Emergency_Nature:CALL/SDS! Station_Assignment:UNIT! Narrative:INFO! INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "alerts@popeco911.org";
+    return "no-reply@popeco911.org";
   }
-  
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
-    body = stripFieldEnd(body, "~");
     return parseFields(body.split("\n"), data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    return super.getField(name);
   }
 }

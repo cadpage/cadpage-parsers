@@ -18,7 +18,7 @@ public class ILAdamsCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911@co.adams.il.us";
+    return "911@co.adams.il.us,911relay@adamscountyil.gov";
   }
 
   @Override

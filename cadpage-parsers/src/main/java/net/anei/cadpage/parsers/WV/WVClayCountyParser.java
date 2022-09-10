@@ -10,7 +10,7 @@ public class WVClayCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "text.clay911@gmail.com";
+    return "text.clay911@gmail.com,ClayCoCAD@911.com";
   }
 
 }

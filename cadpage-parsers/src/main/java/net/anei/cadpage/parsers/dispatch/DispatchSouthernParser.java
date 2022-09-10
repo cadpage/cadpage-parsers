@@ -162,8 +162,9 @@ public class DispatchSouthernParser extends FieldProgramParser {
 
   private int flags;
 
-  private Pattern callCodePtn;
-  private CodeSet callSet;
+  private Pattern callCodePtn = null;
+  private Pattern callPtn = null;
+  private CodeSet callSet = null;
   private Pattern unitPtn;
 
   private String defaultFieldList;
@@ -187,7 +188,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
     super(cityList, defCity, defState, "");
     this.parseFieldOnly = false;
-    this.callSet = callSet;
+    setupCallList(callSet);
 
     this.flags = convertFlags(flags);
 
@@ -398,7 +399,15 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.callCodePtn = callCodePtn;
   }
 
-  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+: *)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{6,7}|\\d{4}-\\d{2}-\\d{5})(?: ([^;]+))?[ ;] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d([\\| ])");
+  protected void setCallPtn(String callPtn) {
+    setCallPtn(callPtn == null ? null : Pattern.compile(callPtn));
+  }
+
+  protected void setCallPtn(Pattern callPtn) {
+    this.callPtn = callPtn;
+  }
+
+  private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("(?:[A-Z\\.]+: *)?(\\d{8,10}|[A-Z]?\\d{2}-\\d+|\\d{4}-\\d{5,7}|\\d{4}-\\d{2}-\\d{5})(?: ([^;]+))?[ ;,] *([- _A-Z0-9]+)\\(.*\\)\\d\\d:\\d\\d:\\d\\d([\\| ])");
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d) ");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(?:[A-Z]+:)?CFS: *(\\S+?)[;, ](?:([^;]+)[;, ])?(?: [;, ])? *Unit: *([^,;]+?)[;, ] *(Status:.*?)[;,]?(?: Note: *(.*))?");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
@@ -764,6 +773,17 @@ public class DispatchSouthernParser extends FieldProgramParser {
       if (call != null) {
         data.strCall = call;
         data.strSupp = stripFieldStart(sExtra.substring(call.length()).trim(), "/");
+        return;
+      }
+    }
+    
+    if (callPtn != null) {
+      Parser p = new Parser(sExtra);
+      String call = p.get(' ');
+      Matcher match = callPtn.matcher(call);
+      if (match.matches()) {
+        data.strCall = call;
+        data.strSupp = p.get();
         return;
       }
     }
