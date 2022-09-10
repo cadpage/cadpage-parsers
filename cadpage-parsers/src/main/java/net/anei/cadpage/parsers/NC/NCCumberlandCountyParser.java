@@ -9,22 +9,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NCCumberlandCountyParser extends FieldProgramParser {
-  
+
   public NCCumberlandCountyParser() {
     super(CITY_CODES, "CUMBERLAND COUNTY", "NC",
           "( CANCEL ADDR CITY PLACEX END " +
-          "| PLACEX DATETIME CALL UNIT? ADDR! X PLACE " + 
+          "| PLACEX DATETIME CALL UNIT? ADDR! X PLACE " +
           "| DATETIME CALL UNIT? ADDR! X PLACE " +
           "| ADDR CALL ( UNIT/Z! END | PLACE X/Z UNIT/Z! END | ( X | PLACE ) UNIT! END ) )");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@co.cumberland.nc.us,messaging@iamresponding.com,@ci.fay.nc.us,777";
   }
-  
+
   private static final Pattern SRC_PTN = Pattern.compile("Station .*");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (subject.endsWith("|N")) {
@@ -32,23 +32,23 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       body = "(N) " + body;
     }
     if (subject.equals("S")) body = "(S)" + body;
-    
-    if (SRC_PTN.matcher(subject).matches()) data.strSource = subject; 
-    
+
+    if (SRC_PTN.matcher(subject).matches()) data.strSource = subject;
+
     boolean cadPrefix = body.startsWith("CAD:");
     if (cadPrefix) body = body.substring(4).trim();
     setSelectValue(cadPrefix ? "CAD" : "");
-    
+
     String[] flds = body.split("\n");
     if (flds.length < 3) flds = body.split(";");
     return parseFields(flds, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC? " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new MyCancelField();
@@ -58,14 +58,14 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
-  private static final Pattern CANCEL_PTN = Pattern.compile("(?:\\{(\\S+)\\} *)?(CANCEL.*|SCENE SECURE|UNDER CONTROL|TAC .*)");
+
+  private static final Pattern CANCEL_PTN = Pattern.compile("(?:\\{(\\S+)\\} *)?(CANCEL.*|SCENE SECURE|SLOW UNITS TO ROUTINE|UNDER CONTROL|UNIT WILL STAGE|TAC .*)");
   private class MyCancelField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CANCEL_PTN.matcher(field);
@@ -78,20 +78,20 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
           data.strCall = call;
         }
         return true;
-      } 
-      
-      // We will (reluctantly) accept an empty field only if there is recognized city field 
+      }
+
+      // We will (reluctantly) accept an empty field only if there is recognized city field
       // two places ahead
       if (field.length() == 0 && isCity(getRelativeField(+2))) return true;
-      
+
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT CALL CH";
@@ -106,7 +106,7 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       Parser p = new Parser(field);
       data.strPlace = append(p.getOptional("(S)"), " - ", p.getOptional("(N)"));
       field = p.get();
-      
+
       if (field.length() > 0) {
         if (PLACEX_UNIT_PTN.matcher(field).matches()) {
           data.strUnit = field;
@@ -123,14 +123,14 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       return "PLACE APT? UNIT?";
     }
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}(?:[A-Z]\\d{1,2}[A-Z]?)?) +(.*)");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CODE_CALL_PTN.matcher(field);
@@ -139,19 +139,19 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       data.strCall = match.group(2);
       return true;
     }
-    
+
     @Override
     public void parse(String field,  Data data) {
       if (checkParse(field, data)) return;
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(?:(.+?) +)??(?:([0-9/]+) +)?(\\b\\d\\d:\\d\\d:\\d\\d)");
   private static final Pattern DATE_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4}");
   private class MyDateTimeField extends DateTimeField {
@@ -159,7 +159,7 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
@@ -170,25 +170,25 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       if (sDate != null && DATE_PTN.matcher(sDate).matches()) data.strDate = sDate;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE DATE TIME";
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("[,A-Z0-9]+");
   private class MyUnitField extends UnitField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!UNIT_PTN.matcher(field).matches()) return false;
@@ -203,19 +203,20 @@ public class NCCumberlandCountyParser extends FieldProgramParser {
       data.strUnit = unit.toString();
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FAY", "FAYETTEVILLE",
       "HM",  "HOPE MILLS",
+      "PAR", "PARKTON",
       "ROS", "ROSEBORO",
       "STD", "STEDMAN",
       "WA",  "WADE"
-      
+
   });
 }
