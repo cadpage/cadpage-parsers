@@ -929,7 +929,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   }
 
   // Name field continues until it finds a phone number, call number, or time
-  private static final Pattern NOT_NAME_PTN = Pattern.compile("\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d|[FML]DL.*");
+  private static final Pattern NOT_NAME_PTN = Pattern.compile("|\\d{10}|\\d\\d(?:\\d\\d)?-?\\d{5,8}|\\d\\d:\\d\\d:\\d\\d|[FML]DL.*");
   class BaseNameField extends NameField {
     @Override
     public boolean canFail() {
