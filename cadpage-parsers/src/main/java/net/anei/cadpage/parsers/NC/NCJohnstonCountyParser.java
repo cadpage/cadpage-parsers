@@ -42,6 +42,8 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String body, Data data) {
 
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+
     boolean enroute = ENROUTE_PTN.matcher(body).matches();
     if (enroute) body = body.replace(',', ';');
 
