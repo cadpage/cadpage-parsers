@@ -13,4 +13,9 @@ public class IAWoodburyCountyCParser extends DispatchA19Parser {
     return "FlexRapidNotification@dccnotify.com";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
 }
