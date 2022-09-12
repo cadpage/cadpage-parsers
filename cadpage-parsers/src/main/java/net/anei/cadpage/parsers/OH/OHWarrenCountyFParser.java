@@ -15,15 +15,16 @@ public class OHWarrenCountyFParser extends FieldProgramParser {
             "| CALL PLACE ADDR/Z CITY " +
             "| PLACE ADDR/Z CITY " +
             "| ADDR CITY " +
-            ") X NAME PHONE MAP RESP_PLAN UNIT! INFO/N+? BOX ID TIME CH END " +
+            ") X NAME PHONE MAP RESP_PLAN UNIT! INFO/N+? BOX ID TIME ADD_RES? CH END " +
             ")");
   }
 
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9 ,]+|necc|StackHP");
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9 ,]+|necc|StackHP|Greene Co.*|BC Dispatch-.*");
   @Override
   protected boolean parseMsg(String body, Data data) {
 
     if (body.contains("\n")) {
+      if (body.startsWith("61Priority:")) body = body.substring(2);
       body = body.replace(" - MapPage:", "\nMapPage:");
       if (! parseFields(body.split("\n"), data)) return false;
     } else {
@@ -44,7 +45,8 @@ public class OHWarrenCountyFParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PRI")) return new PriorityField("(?:Fire|Law|Medical) .*");
     if (name.equals("RESP_PLAN")) return new MyResponsePlanField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("(\\d\\d:\\d\\d)\\b[ \\d]*", true);
+    if (name.equals("ADD_RES")) return new SkipField("Addt'l Resources", true);
     return super.getField(name);
   }
 

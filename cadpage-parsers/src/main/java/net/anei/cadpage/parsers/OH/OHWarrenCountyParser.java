@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHWarrenCountyParser extends GroupBestParser {
-  
+
   public OHWarrenCountyParser() {
     super(new OHWarrenCountyAParser(),
           new OHWarrenCountyBParser(),
@@ -16,9 +16,9 @@ public class OHWarrenCountyParser extends GroupBestParser {
           new OHWarrenCountyEParser(),
           new OHWarrenCountyFParser());
   }
-  
+
   static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "FRANKLIN",
     "LEBANON",
@@ -55,6 +55,7 @@ public class OHWarrenCountyParser extends GroupBestParser {
     "MASSIE TWP",
     "SALEM",
     "SALEM TWP",
+    "SPRING VALLEY TWP",
     "TURTLECREEK",
     "TURTLECREEK TWP",
     "UNION",
@@ -130,7 +131,7 @@ public class OHWarrenCountyParser extends GroupBestParser {
     "WEST WOODVILLE",
     "WINDSOR",
     "ZOAR",
-    
+
     // Clinton County
     "LIBERTY TOWNSHIP"
   };
