@@ -132,7 +132,58 @@ public class OHWarrenCountyParser extends GroupBestParser {
     "WINDSOR",
     "ZOAR",
 
+    // Butler
+    "BECKETT RIDGE",
+    "MIDDLETOWN",
+    "MONROE",
+    "OLDE WEST CHESTER",
+    "WETHERINGTON",
+
+    "LEMON TWP",
+    "LIBERTY TWP",
+    "MADISON TWP",
+    "UNION TWP",
+    "WEST CHESTER TWP",
+
+    // Cleremont County
+    "GOSHEN",
+
+    "GOSHEN TWP",
+    "MIAMI TWP",
+    "WAYNE TWP",
+
     // Clinton County
-    "LIBERTY TOWNSHIP"
+    "ADAMS TWP",
+    "CHESTER TWP",
+    "LIBERTY TWP",
+    "LIBERTY TOWNSHIP",
+    "VERNON TWP",
+    "MARION TWP",
+
+    // Greene County
+    "BELLBROOK",
+    "FAIRBORN",
+    "SPRING VALLEY",
+
+    "CEASARCREEK TWP",
+    "SPRING VALLEY TWP",
+    "SUGARCREEK TWP",
+
+    // Hamilton County
+    "LOCKLAND",
+    "LOVELAND",
+    "SHARONVILLE",
+
+    "SYMMES TWP",
+
+    // Montgomery County
+    "CENTERVILLE",
+    "GERMAN TWP",
+    "GERMANTOWN",
+    "MIAMISBURG",
+    "WEST CARROLLTON",
+
+    "WASHINGTON TWP",
+
   };
 }
