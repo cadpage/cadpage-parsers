@@ -24,8 +24,9 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
   public NCJohnstonCountyParser() {
     super(CITY_CODES, "JOHNSTON COUNTY", "NC",
           "( UNIT ENROUTE ADDR CITY CALL_CODE! " +
-          "| CALL ADDR/Z CITY! X_PLACE_INFO+ " +
-          "| CH? SRC CODE? CALL_CODE ADDR X_PLACE_INFO+? CITY/Y ( DATETIME | NAME PLACE? DATETIME ) UNIT! " +
+          "| ( CALL ADDR/Z CITY! X_PLACE_INFO+? DATETIME UNIT " +
+            "| CH? SRC CODE? CALL_CODE ADDR X_PLACE_INFO+? CITY/Y ( DATETIME | NAME PLACE? DATETIME ) UNIT! " +
+            ") " +
           ") END");
   }
 
@@ -66,9 +67,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
     if (name.equals("CALL_CODE")) return new MyCallCodeField();
     if (name.equals("CH")) return new ChannelField("OPS.*|.*FR|VPR.*|2ND", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}");
-//    if (name.equals("PLACE")) return new MyPlaceField();
-//    if (name.equals("CODE")) return new CodeField("\\d{1,3}[A-Z]\\d\\d[A-Za-z]?", true);
-//    if (name.equals("APT")) return new AptField("APT.*|SUITE.*|LOT.*");
+    if (name.equals("NAME")) return new MyNameField();
     if (name.equals("X_PLACE_INFO")) return new MyCrossPlaceInfoField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
@@ -89,6 +88,23 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return "CALL CODE";
+    }
+  }
+
+  private class MyNameField extends NameField {
+
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith(" CO") && data.strCity.isEmpty()) {
+        data.strCity = field + "UNTY";
+      } else {
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY NAME";
     }
   }
 
@@ -169,6 +185,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANGI", "ANGIER",
+      "ARCH", "ARCHER LODGE",
       "ARCL", "ARCHER LODGE",
       "BENS", "BENSON",
       "CLAY", "CLAYTON",
@@ -176,16 +193,20 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
       "ERWN", "ERWIN",
       "FOUR", "FOUR OAKS",
       "GARN", "GARNER",
+      "HARN", "HARNETT COUNTY",
       "KENL", "KENLY",
       "MICR", "MICRO",
       "MIDD", "MIDDLESEX",
       "NEWT", "NEWTON GROVE",
+      "OUTS", "",
+      "PIKE", "PIKEVILLE",
       "PINE", "PINE LEVEL",
       "PRIN", "PRINCETON",
       "RALE", "RALEIGH",
       "SELM", "SELMA",
       "SMIT", "SMITHFIELD",
       "WAKE", "WAKE COUNTY",
+      "WAYN", "WAYNE COUNTY",
       "WISM", "WILSON'S MILLS",
       "WEND", "WENDELL",
       "WILL", "WILLOW SPRING",
