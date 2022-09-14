@@ -146,6 +146,7 @@ public class Active911ParserTable {
       "US/AR/HotSpringCounty",            "ARHotSpringCounty",
       "US/AR/HotSpringsVillage",          "ARGarlandCountyC",
       "US/AR/LifeNetEms",                 "ARGarlandCountyA",
+      "US/AR/Maumelle",                   "ARPulaskiCountyD",
       "US/AR/NWAMetroChiefs",             "ARBentonCountyA,ARBentonCountyB,ARBentonCountyC,ARBentonCountyF,OHHamiltonCountyA",
       "US/AR/PopeCounty",                 "ARPopeCounty",
       "US/AR/PulaskiCounty",              "ARPulaskiCounty",

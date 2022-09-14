@@ -50,7 +50,7 @@ public class DispatchA32Parser extends FieldProgramParser {
     if (name.equals("GEN_INFO")) return new CallField("GENERAL INFO");
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d");
     if (name.equals("DATETIME2")) return new BaseDateTime2Field();
-    if (name.equals("ID")) return new IdField("\\d\\d-\\d+", true);
+    if (name.equals("ID")) return new IdField("\\d\\d-\\d+(?:-[A-Z]{2})?", true);
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY_ST")) return new BaseCityStateField();
