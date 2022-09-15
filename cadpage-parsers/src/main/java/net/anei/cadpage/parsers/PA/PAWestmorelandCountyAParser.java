@@ -159,34 +159,68 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
   private static final CodeTable CALL_CODES = new StandardCodeTable();
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "ARNOLD_C",    "ARNOLD",
+      "GREENSBG_C",  "GREENSBURG",
+      "JEANNETT_C",  "JEANNETTE",
+      "LATROBE_C",   "LATROBE",
+      "L_BURREL_C",  "LOWER BURRELL",
       "MONESSEN_C",  "MONESSEN",
+      "N_KENSNG_C",  "NEW KENSINGTON",
+
+      "MURRYSVL_M",   "MURRYSVILLE",
 
       "ADAMSBURG_B", "ADAMSBURG",
+      "ARONA_B",     "ARONA",
+      "BOLIVAR_B",   "BOLIVAR",
+      "DELMONT_B",   "DELMONT",
+      "DERRY_B",     "DERRY",
+      "DONEGAL_B",   "DONEGAL",
+      "E_VANDE_B",   "EAST VANDERGRIFT", //??
+      "EXPORT_B",    "EXPORT",
+      "HUNKER_B",    "HUNKER",
       "IRWIN_B",     "IRWIN",
       "MADISON_B",   "MADISON",
       "MANOR_B",     "MANOR",
       "MT_PLEAS_B",  "MT PLEASANT",
+      "N_ALEXAN_B",  "NEW ALEXANDRIA",
       "N_B_VERN_B",  "NORTH BELLE VERNON",
       "N_FLOR_B",    "NEW FLORENCE",
       "N_IRWIN_B",   "NORTH IRWIN",
       "N_STANTN_B",  "NEW STANTON",
+      "OKLAHOMA_B",  "OKLAHOMA",
       "PENN_B",      "PENN",
+      "S_GREENB_B",  "SOUTH GREENSBURG",
       "SCOTTDL_B",   "SCOTTDALE",
+      "SEWARD_B",    "SEWARD",
       "SMITHTON_B",  "SMITHTON",
       "SUTERSVL_B",  "SUTERSVILLE",
       "SW_GBG_B",    "SW GREENSBURG",
       "TRAFFORD_B",  "TRAFFORD",
+      "VANDERGR_B",  "VANDERGRIFT", //?
+      "W_LEECHB_B",  "WEST LEECHBURG", //?
       "W_NEWTON_B",  "WEST NEWTON",
       "YNGWD_B",     "YOUNGWOOD",
 
+      "ALLEGHNY_T",  "ALLEGHENY TWP",
+      "BELL_T",      "BELL TWP",
+      "COOK_T",      "COOK TWP",
+      "DERRY_T",     "DERRY TWP",
+      "DONEGAL_T",   "DONEGAL TWP",
+      "E_HUNT_T",    "EAST HUNTINGDON TWP",
+      "FAIR_T",      "FAIRFIELD TWP",
       "HEMP_T",      "HEMPFIELD TWP",
+      "LIGONIER_T",  "LIGONIER",
+      "LOYALHAN_T",  "LOYALHANNA",
       "MT_PLEAS_T",  "MT PLEASANT TWP",
       "N_HUNT_T",    "N HUNTINGDON TWP",
       "PENN_T",      "PENN TWP",
       "ROST_T",      "ROSTRAVER TWP",
+      "SALEM_T",     "SALEM TWP",
       "S_HUNT_T",    "S HUNTINGDON TWP",
       "ST_CLAIR_T",  "ST CLAIR TWP",
       "SEWICK_T",    "SEWICKELY TWP",
+      "U_BURREL_T",  "UPPER BURRELL TWP",
+      "UNITY_T",     "UNITY TWP",
       "WASH_T",      "WASHINGTON TWP"
   });
 }
