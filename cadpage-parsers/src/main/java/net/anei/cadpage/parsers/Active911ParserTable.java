@@ -1649,6 +1649,7 @@ public class Active911ParserTable {
       "US/OH/EatonPolice",                "OHPrebleCounty",
       "US/OH/ElmValley",                  "OHMorrowCounty",
       "US/OH/Fairfield",                  "OHFairfieldCounty",
+      "US/OH/FayettevilleFD",             "WVFayetteCounty",   // A911 misassigned state
       "US/OH/FultonCounty",               "OHFultonCounty",
       "US/OH/GalliaCounty",               "OHGalliaCounty,OHMahoningCountyA",
       "US/OH/GeaugaCounty",               "OHGeaugaCountyB",

@@ -25,6 +25,8 @@ public class WVFayetteCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n\nNextGen Message");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(DELIM.split(body), data);
   }
 
