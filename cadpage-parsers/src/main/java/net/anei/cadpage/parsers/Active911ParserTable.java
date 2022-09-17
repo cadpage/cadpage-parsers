@@ -1935,6 +1935,7 @@ public class Active911ParserTable {
       "US/PA/SomersetCounty",             "PASomersetCountyC",
       "US/PA/SomersetCountyCaller",       "PASomersetCountyC",
       "US/PA/SomersetCountySecond",       "PASomersetCountyC",
+      "US/PA/SouthChesterEMS",            "PAChesterCountyP",
       "US/PA/Springfield",                "PADelawareCountyG",
       "US/PA/Swift911",                   "PANorthumberlandCounty",
       "US/PA/TiogaCounty",                "PATiogaCounty",
