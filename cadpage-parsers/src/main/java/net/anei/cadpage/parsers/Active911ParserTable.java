@@ -2038,7 +2038,8 @@ public class Active911ParserTable {
       "US/TN/CockeCounty",                "TNCockeCountyB",
       "US/TN/CoffeeCounty",               "TNCoffeeCounty",
       "US/TN/CrockettCounty",             "TNCrockettCounty",
-      "US/TN/CumberlandCounty",           "TNCumberlandCounty",
+      "US/TN/CumberlandCounty",           "TNCumberlandCountyA",
+      "US/TN/CumberlandECD",              "TNCumberlandCountyB",
       "US/TN/DyerCounty",                 "TNDyerCounty",
       "US/TN/EastRoaneCountyVFD",         "TNRoaneCounty",
       "US/TN/FranklinCounty",             "TNFranklinCounty",
@@ -2486,6 +2487,7 @@ public class Active911ParserTable {
       "Vendor/ComputerArts",              "IDAdaCounty",
       "Vendor/ComputerArts/Default",      "IDGemCounty",
       "Vendor/CTC/Default",               "MIInghamCountyC",
+      "Vendor/GeoConex/V109",             "TNCumberlandCountyA",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
       "Vendor/Sweden/Zenit",              "ZSESwedenA"
