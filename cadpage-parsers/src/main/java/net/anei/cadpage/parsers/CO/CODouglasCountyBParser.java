@@ -11,7 +11,7 @@ public class CODouglasCountyBParser extends FieldProgramParser {
 
   public CODouglasCountyBParser() {
     super("DOUGLAS COUNTY", "CO",
-          "MAP ( GPS ADDR2 | ADDR GPS APT APT ) PLACE CALL ID! END");
+          "MAP ( GPS ADDR2 | ADDR ( GPS | GPS1/d GPS2/d ) APT APT ) PLACE CALL ID! END");
   }
 
   @Override
@@ -25,25 +25,43 @@ public class CODouglasCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern MARKER = Pattern.compile("(?:Resp\\.Info|Address Changed): *");
+  private static final Pattern MASTER = Pattern.compile("RI:([A-Z]{1,2}-\\d{2}-[A-Z]) +(.*?) +(AURORA|UNINC ARAPAHOE) (.*?) ([A-Z]+\\d+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     if (!subject.equals("Metcom Info:") && !subject.equals("SMFR Dispatch Info:")) return false;
 
-    Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end());
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
 
-    return parseFields(body.split("\\|"), data);
+    Matcher match = MARKER.matcher(body);
+    if (match.lookingAt()) {
+      body = body.substring(match.end());
+      return parseFields(body.split("\\|"), data);
+    } else if ((match = MASTER.matcher(body)).matches()) {
+      setFieldList("MAP ADDR APT CITY CALL UNIT");
+      data.strMap = match.group(1);
+      parseAddress(match.group(2).trim(), data);
+      data.strCity = match.group(3);
+      data.strCall =  match.group(4);
+      data.strUnit =  match.group(5);
+
+      if (data.strCity.startsWith("UNINC ")) {
+        data.strCity = data.strCity.substring(6).trim() + " COUNTY";
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("MAP")) return new MapField("[A-Z]{2}-\\d{2}-[A-Z]|NOT FOUN", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]{1,2}-\\d{2}-[A-Z]|NOT FOUN", true);
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("ADDR2")) return new MyAddress2Field();
-    if (name.equals("ID")) return new IdField("\\d{2}-[A-Z]{2}-\\d{2,6}", true);
+    if (name.equals("ID")) return new IdField("(?:Case#)?(\\d{2}-[A-Z]{2}-\\d{2,6})", true);
     return super.getField(name);
   }
 
