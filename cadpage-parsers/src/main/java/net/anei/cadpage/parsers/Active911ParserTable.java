@@ -2441,6 +2441,7 @@ public class Active911ParserTable {
       "US/WI/SawyerCountyLimited",        "WISawyerCounty",
       "US/WI/SheboyganCounty",            "WISheboyganCounty",
       "US/WI/TownofOshkosh",              "WIWinnebagoCountyB,WIWinnebagoCountyC",
+      "US/WI/WalworthCounty",             "WIWalworthCounty",
       "US/WI/WaukeshaCounty",             "WIWaukeshaCountyA",
       "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB,WIWinnebagoCountyC",
       "US/WV/BerkeleyCounty",             "WVBerkeleyCounty",
