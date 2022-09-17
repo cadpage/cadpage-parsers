@@ -2054,6 +2054,7 @@ public class Active911ParserTable {
       "US/TN/HaywoodCounty",              "TNHaywoodCounty",
       "US/TN/JeffersonCounty",            "TNJeffersonCounty",
       "US/TN/KnoxCounty",                 "TNKnoxCounty",
+      "US/TN/MaconCounty911",             "TNMaconCounty",
       "US/TN/MadisonCounty",              "TNMadisonCounty",
       "US/TN/MooreCounty",                "TNMooreCounty",
       "US/TN/MorganCounty",               "TNMorganCounty",
