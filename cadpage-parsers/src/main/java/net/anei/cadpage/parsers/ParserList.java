@@ -122,6 +122,7 @@ public class ParserList {
               ,"ALColbertCounty"                ,"Colbert County, AL"
               ,"ALCoosaCounty"                  ,"Coosa County, AL"
               ,"ALCullmanCounty"                ,"Cullman County, AL"
+              ,"ALDaleCounty"                   ,"Dale County, AL"
               ,"ALDallasCounty"                 ,"Dallas County, AL"
               ,"ALDeKalbCounty"                 ,"DeKalb County, AL"
               ,"ALDothan"                       ,"Dothan, AL"
