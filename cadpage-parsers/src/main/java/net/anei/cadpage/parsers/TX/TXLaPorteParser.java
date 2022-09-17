@@ -21,8 +21,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
 
   protected TXLaPorteParser(String defCity, String defState) {
     super(TXGalvestonCountyAParser.CITY_CODES, defCity, defState,
-          "( KEMA_FMT KEMA_ADDR/aS9CI " +
-          "| CANCEL ADDR! CITY? " +
+          "( CANCEL ADDR! CITY? " +
           "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | MAP? ) INFO+? DATETIME UNIT? INFO+ " +
           ") INFO+");
   }
@@ -59,10 +58,6 @@ public class TXLaPorteParser extends DispatchOSSIParser {
       return true;
     }
 
-    if (body.startsWith("FYI:")) {
-      body = "CAD:KEMA_FMT;" + body.substring(4).trim();
-    }
-
     // Regular parsing takes up here
     else {
 
@@ -73,6 +68,7 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     }
 
     if (body.startsWith("CAD ") || body.startsWith("CAD\n")) body = "CAD:" + body.substring(4);
+    else if (!body.startsWith("CAD:")) body = "CAD:" + body;
 
     // Both cases invoke the superclass parseMsg method
     return super.parseMsg(body, data);
@@ -101,8 +97,6 @@ public class TXLaPorteParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("KEMA_FMT")) return new SkipField("KEMA_FMT", true);
-    if (name.equals("KEMA_ADDR")) return new KemaAddressField();
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
     if (name.equals("ID")) return new IdField("\\d{10}", true);
     if (name.equals("PRI")) return new PriorityField("\\d");
@@ -115,35 +109,6 @@ public class TXLaPorteParser extends DispatchOSSIParser {
     if (name.equals("MAP")) return new MapField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-
-  private static final Pattern KEMA_WATERFRONT_PTN = Pattern.compile("(.*?) +(\\d+) KEMAH WATERFRONT\\b *(.*)");
-  private static final Pattern KEMA_ADDR_PTN = Pattern.compile("(.*?) +((?:\\d+ (?:yoa?|yr|y/o) |[A-Z]?[a-z]).*)");
-  private class KemaAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = KEMA_WATERFRONT_PTN.matcher(field);
-      if (match.matches()) {
-        data.strCall = match.group(1);
-        data.strAddress = match.group(2) + " KEMAH WATER FRONT";
-        data.strSupp = match.group(3);
-        return;
-      }
-      int flags = FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT | FLAG_NO_CITY;
-      match = KEMA_ADDR_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1);
-        data.strSupp = match.group(2);
-        flags |= FLAG_ANCHOR_END;
-      }
-      parseAddress(StartType.START_CALL, flags, field, data);
-      if (data.strSupp.length() == 0) data.strSupp = getLeft();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CALL ADDR INFO";
-    }
   }
 
   private class MySourceField extends SourceField {
