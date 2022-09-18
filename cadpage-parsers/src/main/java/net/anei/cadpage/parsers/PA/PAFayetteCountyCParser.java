@@ -9,22 +9,27 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAFayetteCountyCParser extends FieldProgramParser {
-  
+
   public PAFayetteCountyCParser() {
-    super("FAYETTE COUNTY", "PA", 
-          "( Date/Time:DATETIME! Call_Type:CALL! Location:ADDRCITY! Additional_Location:ADD_INFO! Cross_Streets:X! Caller_Name:NAME! " + 
-              "( Narrative:INFO! INFO/N+ Units:UNIT! Talkgroup:CH! END " + 
-              "| Caller_Phone:PHONE? Units:UNIT! Talkgroup:CH! Narrative:INFO! Common_Name:PLACE? Latitude:GPS1? Longitude:GPS2? INFO/N+ ) " + 
-          "| Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:ADD_INFO! " + 
-              "Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP! District:MAP/L! Beat:MAP/L! " + 
+    super("FAYETTE COUNTY", "PA",
+          "( Date/Time:DATETIME! Call_Type:CALL! Location:ADDRCITY! Additional_Location:ADD_INFO! Cross_Streets:X! Caller_Name:NAME! " +
+              "( Narrative:INFO! INFO/N+ Units:UNIT! Talkgroup:CH! END " +
+              "| Caller_Phone:PHONE? Units:UNIT! Talkgroup:CH! Narrative:INFO! Common_Name:PLACE? Latitude:GPS1? Longitude:GPS2? INFO/N+ ) " +
+          "| Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:ADD_INFO! " +
+              "Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Priority:PRI! Status:SKIP! Quadrant:MAP! District:MAP/L! Beat:MAP/L! " +
               "CFS_Number:ID! Primary_Incident:SKIP! Radio_Channel:CH! Narrative:INFO! INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@fcema.org,messaging@iamresponding.com,alerts@fcema.ealertgov.com";
   }
-  
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern MARKER = Pattern.compile("(?:(?:FAYETTE|Fayette)-911/[A-Za-z0-9/\\\\]+\n)?\\[Fayette911\\]\n");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -36,21 +41,21 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
     if (!subject.equals("Dispatch")) {
       data.strSource = subject;
     }
-    
+
     if (!body.startsWith("Call Time:")) {
       Matcher match = MARKER.matcher(body);
       if (!match.lookingAt()) return false;
       body = body.substring(match.end()).trim();
     }
-    
+
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -59,7 +64,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
@@ -76,7 +81,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern ADD_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) +(.*)|[A-Z]|\\d{1,4}");
   private class MyAddInfoField extends Field {
 
@@ -97,7 +102,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       return "PLACE APT";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -105,7 +110,7 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
