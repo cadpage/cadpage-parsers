@@ -35,6 +35,11 @@ public class OHMorrowCountyBParser extends FieldProgramParser {
     if (!parseFields(body.split("\\|"), data)) return false;
 
     OHMorrowCountyParser.fixCity(data);
+
+    // Sometimes they save GPS coordinates in the cross street field :(
+    if (data.strGPSLoc.isEmpty()) {
+      data.strCross = setGPSLoc(data.strCross, data);
+    }
     return true;
   }
 
