@@ -118,6 +118,7 @@ public class Active911ParserTable {
       "US/AL/PinckardVFD",                "ALDaleCountyB",
       "US/AL/Prattville",                 "ALAutaugaCounty",
       "US/AL/PrichardFire",               "ALMobileCounty",
+      "US/AL/RainbowCity",                "ALEtowahCountyB",
       "US/AL/RandolphCounty",             "ALRandolphCounty",
       "US/AL/RUSCO911",                   "ALRussellCountyB",
       "US/AL/RussellCounty",              "ALRussellCountyA",
