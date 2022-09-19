@@ -1950,7 +1950,7 @@ public class Active911ParserTable {
       "US/PA/TrappeIAR",                  "PAChesterCountyL",
       "US/PA/TylersportVFC",              "PAMontgomeryCountyC",
       "US/PA/UnionCounty",                "PAUnionCounty",
-      "US/PA/UpperChichester",            "PADelewareCountyB",
+      "US/PA/UpperChichester",            "PADelawareCountyB",
       "US/PA/ValleyAmbAut",               "PAAlleghenyCountyC",
       "US/PA/VenangoCounty",              "PAVenangoCountyB,PAVenangoCountyC",
       "US/PA/WarminsterFD",               "PABucksCountyD",
