@@ -23,7 +23,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911@cattco.org,messaging@iamresponding.com,777,888,0583,7165976086";
+    return "911@cattco.org,messaging@iamresponding.com,777,888,0583";
   }
 
   private static Pattern MARKER = Pattern.compile("CATTARAUGUS COUNTY SHERIFF:? *");

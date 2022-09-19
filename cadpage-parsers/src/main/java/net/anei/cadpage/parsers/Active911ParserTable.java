@@ -880,6 +880,7 @@ public class Active911ParserTable {
       "US/LA/Vangy911",                   "LAEvangelineParish",
       "US/LA/WestBatonRougeCouncil",      "LAWestBatonRougeParish",
       "US/LA/WestFelicianaParish",        "LAWestFelicianaParish",
+      "US/MA/HampdenCounty",              "MAHampdenCounty",
       "US/MA/Mvpsis",                     "MADukesCounty",
       "US/MA/NantucketCounty",            "MANantucketCounty",
       "US/MA/NorfolkCounty",              "MANorfolkCounty",
