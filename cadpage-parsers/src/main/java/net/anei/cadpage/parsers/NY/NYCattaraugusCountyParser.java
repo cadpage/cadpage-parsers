@@ -13,19 +13,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NYCattaraugusCountyParser extends FieldProgramParser {
-  
+
   private String address;
-  
+
   public NYCattaraugusCountyParser() {
     super(CITY_CODES, "CATTARAUGUS COUNTY", "NY",
            "SRC Unit:UNIT? Loc:ADDRCITY/S6! Between:X! CN:PLACE CTV:CITY Type:CALL Date:DATE Time:TIME Info:INFO Caller:NAME Inc:ID%");
   }
-  
+
   @Override
   public String getFilter() {
-    return "911@cattco.org,messaging@iamresponding.com,777,888,0583";
+    return "911@cattco.org,messaging@iamresponding.com,777,888,0583,7165976086";
   }
-  
+
   private static Pattern MARKER = Pattern.compile("CATTARAUGUS COUNTY SHERIFF:? *");
   private static Pattern TRAIL_COMMA_PAT = Pattern.compile("[ ,]+$");
   private static Pattern LOCATION_PAT = Pattern.compile(".* COUNTY", Pattern.CASE_INSENSITIVE);
@@ -34,7 +34,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     Matcher match = MARKER.matcher(body);
     if (match.lookingAt()) {
       body = body.substring(match.end());
@@ -50,37 +50,40 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
         body = body.substring(pt).trim();
       }
     }
-    
+
     // Silly IAR edits :(
     if (subject.equals("WVFD")) {
-      body = subject + " Loc:" + body.replace("\u0000", "")
-                                     .replace("\n`\nBtw:", " Between:")
-                                     .replaceAll("\n`\n", " ");
+      if (!body.startsWith("Loc:")) {
+        body = "Loc:" + body.replace("\u0000", "")
+                             .replace("\n`\nBtw:", " Between:")
+                             .replaceAll("\n`\n", " ");
+      }
+      body = subject + ' ' + body;
     }
-    
+
     body = body.replace(" Inc#:", " Inc:");
     address = null;
     if (!super.parseMsg(body, data)) return false;
-    
+
     // A city code of OUTS -> OUTSIDE the county means we know nothing
     // about the county or state where this incident occurs :(
     if (data.strCity.equals("OUTSIDE")) {
       data.strCity = data.defCity = data.defState = "";
-      
+
       // See if info field contains the entered address.  If it does, assume
       // that whatever follows the address is really a city name
       int pt = data.strSupp.indexOf(address);
       if (pt > 0) {
         data.strCity = data.strSupp.substring(pt + address.length()).trim();
       }
-      
+
       // Otherwise, see if the name field contains a county or city name
       else if (LOCATION_PAT.matcher(data.strName).matches()) {
         data.strCity = data.strName;
         data.strName = "";
       }
     }
-    
+
     // See if call field contains date/time
     if (data.strTime.length() == 0) {
       match = CALL_DATE_TIME_PTN.matcher(data.strCall);
@@ -92,7 +95,7 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CALL DATE TIME");
@@ -130,13 +133,13 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY PLACE APT";
     }
   }
-  
+
   private static final Pattern CITY_PLACE_PTN = Pattern.compile("(.*[a-z]) +([A-Z][^a-z]+)");
   private class MyCrossField extends CrossField {
     @Override
@@ -152,14 +155,14 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
         data.strCity = stripFieldEnd(data.strCity, " Town");
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4})|(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4})|(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
@@ -168,17 +171,22 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
       data.strDate = match.group(1);
       if (data.strDate == null) {
         data.strDate = match.group(2);
-        setTime(TIME_FMT, match.group(3), data);
+        String time = match.group(3);
+        if (time.endsWith("M")) {
+          setTime(TIME_FMT, time, data);
+        } else {
+          data.strTime = time;
+        }
       }
     }
   }
-  
+
   // Name field needs to remove trailing commas
   private class MyNameField extends NameField {
 
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = TRAIL_COMMA_PAT.matcher(field);
       if (match.find()) {
         field = field.substring(0, match.start());
@@ -246,4 +254,3 @@ public class NYCattaraugusCountyParser extends FieldProgramParser {
      "YORK","YORKSHIRE"
   });
 }
-	
