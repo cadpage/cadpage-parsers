@@ -80,9 +80,11 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       "BEC", "BECKLEY",    // ????
       "FAY", "FAYETTEVILLE",
       "GAL", "GAULEY BRIDGE",
+      "GAU", "GAULEY BRIDGE",
       "GLJ", "GLEN JEAN",
       "KIN", "KINGSTON",
       "MIN", "MINDEN",
+      "MON", "MONTGOMERY",
       "MTH", "MT HOPE",
       "NAL", "NALLEN",
       "OAK", "OAK HILL",
