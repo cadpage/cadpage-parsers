@@ -53,15 +53,17 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     }
 
     if (body.contains(";")) {
-      
+
       // Reject NCPolkCounty alerts
       if (TIME_FLD_PTN.matcher(body).find()) return false;
-      
-      return parseFields(body.split(";", -1), data);
+
+      if (!parseFields(body.split(";", -1), data)) return false;
+      good = true;
     }
-    
-    if (body.contains("~")) {
-      return parseFields(body.split("~", -1), data);
+
+    else if (body.contains("~")) {
+      if (!parseFields(body.split("~", -1), data)) return false;
+      good = true;
     }
 
     else {
@@ -152,13 +154,13 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       data.strPlace = stripLeadAlert(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ALERT PLACE";
     }
   }
-  
+
   private static final Pattern CH_PTN = Pattern.compile("(.*)\\bOPS\\b.*|ADMIN .*");
   private class MyUnitField extends UnitField {
     @Override
@@ -171,13 +173,13 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       parseInfo(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO GPS";
@@ -191,7 +193,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*+ADD'L Wireless Info : .*|Automatic Case Number\\(s\\) issued for Incident #.*|\\*+Class of Seri?vi?ce.*");
 
   private void parseInfo(String extra, Data data) {
-    
+
     Matcher match = TRAIL_INFO_DATA.matcher(extra);
     if (match.find()) {
       extra = extra.substring(0, match.start());
@@ -205,7 +207,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       }
       data.strCross = cross;
     }
-    
+
     for (String part : INFO_BRK_PTN.split(extra)) {
       part = part.trim();
       part = stripFieldEnd(part, ",");
@@ -222,14 +224,14 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", part);
     }
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " PRI ID UNIT CH X";
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
-    
+
       "ABNER CREEK",
       "ALAN KENT",
       "ALLENDALE ABBEY",
