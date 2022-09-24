@@ -35,11 +35,11 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n|<br>|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
+  private static final Pattern SPEC_DELIM = Pattern.compile("(?:=20)*\n+|<br>|(?<=\\b\\d\\d:\\d\\d:\\d\\d) (?=[A-Z0-9]+\\\\)");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    
+
     if (body.startsWith("CAUTION:")) {
       int pt = body.indexOf('\n', 8);
       if (pt < 0) return false;
@@ -53,7 +53,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       data.strSource = subject;
       return parseFields(SPEC_DELIM.split(body), data);
     }
-    
+
     if (subject.equals("!")) {
       return parseFields(body.split("\n"), data);
     }
