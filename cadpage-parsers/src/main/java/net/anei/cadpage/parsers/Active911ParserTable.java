@@ -1518,7 +1518,7 @@ public class Active911ParserTable {
       "US/NY/BuffaloRuralMetro",          "NYErieCountyF",
       "US/NY/CarmelIAR",                  "NYPutnamCounty",
       "US/NY/CatoFD",                     "NYCayugaCountyC",
-      "US/NY/CattaraugusCounty",          "NYCaattaraugusCounty",
+      "US/NY/CattaraugusCounty",          "NYCattaraugusCounty",
       "US/NY/CayugaCounty",               "NYCayugaCountyA",
       "US/NY/CentralIslip",               "NYSuffolkCountyK",
       "US/NY/ChenangoCounty",             "NYChenangoCounty",
