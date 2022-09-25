@@ -23,4 +23,28 @@ public class IDIdahoCountyParser extends DispatchA19Parser {
     return true;
   }
 
+//  "NEW" : "New Meadows",
+//  "KST" : "Stites",
+//  "KPD" : "Kooskia",
+//  "KOO" : "Kooskia",
+//  "RIG" : "Riggins",
+//  "ELC" : "Elk City",
+//  "KAM" : "Kamiah",
+//  "CRA" : "Craigmont",
+//  "GRA" : "Grangeville",
+//  "WHI" : "White Bird",
+//  "GPD" : "Grangeville",
+//  "MCC" : "McCall",
+//  "FER" : "Ferdinand",
+//  "CPD" : "Cottonwood",
+//  "KEU" : "Keuterville",
+//  "STI" : "Stites",
+//  "LUC" : "Lucile",
+//  "WIN" : "Winchester",
+//  "ELK" : "Elk City",
+//  "Rig City Limits" : "Riggins",
+//  "COT" : "Cottonwood",
+//  "POL" : "Pollock",
+//  "RPD" : "Riggins"
+
 }

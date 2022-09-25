@@ -37,6 +37,9 @@ public class NCPasquotankCountyParser extends DispatchOSSIParser {
       pt += 5;
       body = body.substring(0,pt) + subject + ' ' +  body.substring(pt);
     }
+
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+
     return super.parseMsg(body, data);
   }
 
