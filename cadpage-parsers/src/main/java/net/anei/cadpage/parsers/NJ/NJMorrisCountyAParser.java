@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class NJMorrisCountyAParser extends SmartAddressParser {
 
   private static final Pattern MASTER_PTN =
-    Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\. ]+)\\) - (.*)", Pattern.DOTALL);
+    Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\.\\[\\] ]+)\\) - (.*)", Pattern.DOTALL);
 
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*), *\\d{5}");
   private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)(?![A-Z'])[- ]*((?:ABOVE +)?[^ ]+(?: [A-Z]\\b)?) *(.*)", Pattern.CASE_INSENSITIVE);
@@ -31,7 +31,7 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@co.morris.nj.us,mcdispatch@optimum.net,iamresponding.com,@c-msg.net,Dispatch,MadisonDispatch@rosenet.org,cadrelay@denvillepolice.org,morrisdispatch@co.morris.nj.us,712,777";
+    return "Dispatch@co.morris.nj.us,mcdispatch@optimum.net,iamresponding.com,@c-msg.net,Dispatch,MadisonDispatch@rosenet.org,cadrelay@denvillepolice.org,morrisdispatch@co.morris.nj.us,keystone@denvillepolice.org,712,777";
   }
 
   @Override
