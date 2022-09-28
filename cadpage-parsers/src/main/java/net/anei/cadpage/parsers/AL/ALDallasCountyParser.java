@@ -13,7 +13,7 @@ public class ALDallasCountyParser extends DispatchA48Parser {
 
   @Override
   public String getFilter() {
-    return "@bellsouth.net";
+    return "@bellsouth.net,dallasco911.donotreply@gmail.com";
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
