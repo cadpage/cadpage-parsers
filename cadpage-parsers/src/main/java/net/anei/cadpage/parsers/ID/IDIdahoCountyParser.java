@@ -2,7 +2,6 @@ package net.anei.cadpage.parsers.ID;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class IDIdahoCountyParser extends DispatchA19Parser {
