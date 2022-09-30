@@ -710,6 +710,7 @@ public class Active911ParserTable {
       "US/KS/SumnerCounty",               "KSSumnerCounty",
       "US/KS/WabaunseeCounty",            "KSWabaunseeCounty",
       "US/KS/WilsonCounty",               "KSWilsonCounty",
+      "US/KS/WichitaFD",                  "KSSedgewickCounty",
       "US/KS/WoodsonCounty",              "KSWoodsonCounty",
       "US/KS/WoodsonCountySheriff",       "KSWoodsonCounty",
       "US/KS/WyandotteCounty",            "KSWyandotteCounty",
