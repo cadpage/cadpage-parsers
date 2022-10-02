@@ -54,12 +54,14 @@ public class ORCurryCountyParser extends SmartAddressParser {
 
   @Override
   protected String adjustGpsLookupAddress(String address) {
-    return address.toUpperCase();
+    return address.toUpperCase().replace("SECERET", "SECRET").replace("BRIDGES", "BRIDGE");
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
       "INDIAN SANDS",                         "+42.156770,-124.361102",
       "MILL BEACH",                           "+42.049202,-124.292419",
+      "NATURAL BRIDGE",                      "+42.190010,-124.365939",
+      "SECRET BEACH",                         "+42.197005,-124.370520",
       "SPORTHAVEN BEACH",                     "+42.042736,-124.265781"
   });
 
