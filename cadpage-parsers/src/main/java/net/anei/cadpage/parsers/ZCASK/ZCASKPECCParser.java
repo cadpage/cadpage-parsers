@@ -14,6 +14,9 @@ public class ZCASKPECCParser extends FieldProgramParser {
           "( CALLADDR CITY? " +
           "| CALLADDR2 " +
           "| ADDR CITY? CALL! " +
+          "| RESPOND ( ADDR CITY? CALL/S PLACE " +
+                    "| CALL/S PLACE? ADDR! CITY? " +
+                    ") " +
           "| CALL! CALL/CS+? ADDR! CITY? " +
           ") INFO/CS+");
   }
@@ -39,7 +42,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
 
     if (subject.isEmpty()) return false;
     subject = SUBJECT_TRAIL_PTN.matcher(subject).replaceFirst("");
-    if (!body.toUpperCase().startsWith(subject.toUpperCase())) return false;
+    if (!body.toUpperCase().replace("ASSINIBOAI", "ASSINIBOIA").replace("ASSINBOIA", "ASSINIBOIA").startsWith(subject.toUpperCase())) return false;
     data.strSource = subject;
     body = body.substring(subject.length());
     body = LEAD_JUNK_PTN.matcher(body).replaceFirst("");
@@ -55,6 +58,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("RESPOND")) return new CallField("(?i:RESPOND|STAND DOWN)", true);
     if (name.equals("CALLADDR")) return new MyCallAddressField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALLADDR2")) return new MyCallAddress2Field();
@@ -87,7 +91,8 @@ public class ZCASKPECCParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_PTN = Pattern.compile("IN FRONT OF .*|.*\\d.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NOT_ADDR_PTN = Pattern.compile("\\d (?:VEH|CAR).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_PTN = Pattern.compile("IN FRONT OF .*|.*\\d.*|(?:NORTH|SOUTH|EAST|WEST) OF .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*) in (.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
@@ -99,7 +104,8 @@ public class ZCASKPECCParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
 
       // Very!!! expansive definition of what constitutes an address
-      // Anything with a number counts
+      // Anything with a number counts, except for multi car colision reports
+      if (NOT_ADDR_PTN.matcher(field).matches()) return false;
       if (! ADDR_PTN.matcher(field).matches() && ! parseAddress(StartType.START_ADDR, FLAG_NO_CITY, field).isValid()) return false;
       if (field.toUpperCase().endsWith("ALARM")) return false;
 

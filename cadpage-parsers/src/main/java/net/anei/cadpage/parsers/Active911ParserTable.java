@@ -39,6 +39,7 @@ public class Active911ParserTable {
       "CA/ON/Clearview",                  "ZCAONSimcoeCountyA",
       "CA/ON/ConnectPublicSafety",        "ZCAONSimcoeCounty",
       "CA/QC/Quebec",                     "ZCAQCQuebec",
+      "CA/SK/Assiniboia",                 "ZCASKSPECC",
       "CA/SK/CarrotRiver",                "ZCASKPECC",
       "CA/SK/Delisle",                    "ZCASKPECC",
       "CA/SK/KronauFD",                   "ZCASKPECC",
