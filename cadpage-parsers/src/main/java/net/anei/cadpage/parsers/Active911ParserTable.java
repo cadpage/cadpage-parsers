@@ -642,6 +642,7 @@ public class Active911ParserTable {
       "US/IN/PulaskiCountyTest",          "INPulaskiCounty",
       "US/IN/RandolphCounty",             "INRandolphCounty",
       "US/IN/RipleyCounty",               "INRipleyCounty",
+      "US/IN/ScottCounty",                "INSCottCounty",
       "US/IN/ShelbyCounty",               "INShelbyCounty",
       "US/IN/Shelbyville",                "INShelbyCounty",
       "US/IN/SouthBend",                  "INStJosephCountyB",
