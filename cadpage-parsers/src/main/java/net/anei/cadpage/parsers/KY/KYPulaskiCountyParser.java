@@ -14,7 +14,7 @@ public class KYPulaskiCountyParser extends DispatchA65Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm2.info,dispatch@911comm3.info";
+    return "dispatch@911comm2.info,dispatch@911comm3.info,cadreports@pulaski911.com";
   }
 
   @Override
