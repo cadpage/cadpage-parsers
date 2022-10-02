@@ -27,6 +27,8 @@ public class ORTillamookCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     if (!subject.equals("!")) return false;
+    int pt = body.indexOf("\nCONFIDENTIALITY");
+    if (pt >= 0)  body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
   }
 
