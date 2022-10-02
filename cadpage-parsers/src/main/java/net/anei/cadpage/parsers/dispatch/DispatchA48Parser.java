@@ -31,7 +31,7 @@ public class DispatchA48Parser extends FieldProgramParser {
    * Flag indicating there is no call code.  Just a call description
    */
   public static final int A48_NO_CODE =           0x04;
-  
+
   /**
    * Flag indicating call description is optional
    */
@@ -146,7 +146,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
 
     },
-    
+
     PLACE_PHONE_NAME("( PLACE/Z APT PHONE? | PLACE/Z PHONE | PHONE? ) NAME/Z?", "PLACE PHONE NAME") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {}
@@ -218,7 +218,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+");
+          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY? ( RUNTIME/R RUNTIME/RN+ | ", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+ )");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
@@ -253,17 +253,24 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    String subExt = "";
+    int pt = subject.indexOf('|');
+    if (pt >= 0) {
+      subExt = subject.substring(pt+1).trim();
+      subject = subject.substring(0,pt).trim();
+    }
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) {
       if (match.group(1) != null) {
         if (!body.startsWith("As of ") && !body.contains(":As of ")) {
+          body = stripFieldStart(body, ":");
           match = ID_PTN.matcher(body);
           if (!match.lookingAt()) return false;
           if (body.length() <= match.end()) return false;
           char delim = body.charAt(match.end());
           body = subject + delim + body;
         }
-        subject = "";
+        subject = subExt;
       }
       else {
         match = PREFIX_PTN.matcher(body);
@@ -315,7 +322,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       part = part.trim();
 
       if (unitMark) {
-        int pt = part.indexOf(' ');
+        pt = part.indexOf(' ');
         if (pt >= 0) part = part.substring(0,pt);
         addUnit(part, data);
         continue;
@@ -407,7 +414,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     int pt2 = addr.indexOf(',');
     while (pt2 >= 0) {
-      int pt = pt2;
+      pt = pt2;
 
       // Check for duplicated address and city
       String addr1 = addr.substring(0,pt).trim();
@@ -435,7 +442,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
 
     if (!addressParsed) {
-      int pt = fieldType.find(addr);
+      pt = fieldType.find(addr);
       if (pt >= 0) {
         extra = addr.substring(pt).trim();
         addr = addr.substring(0,pt).trim();
@@ -532,6 +539,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
     if (name.equals("SKIPCITY")) return new BaseSkipCityField();
+    if (name.equals("RUNTIME")) return new InfoField("[A-Za-z ]+:\\d\\d:\\d\\d", false);
     if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("X_NAME")) return new BaseCrossNameField();
     if (name.equals("PLACE")) return new BasePlaceField();
@@ -571,10 +579,12 @@ public class DispatchA48Parser extends FieldProgramParser {
         }
       }
 
-      if (!optCode && !oneWordCode) abort();
+      if (!optCode && !optCall && !oneWordCode) abort();
       if (callCodes != null) {
         data.strCode = field;
         data.strCall = convertCodes(field, callCodes);
+      } else if (optCall){
+        data.strCode = field;
       } else {
         data.strCall = field;
       }

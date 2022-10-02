@@ -917,6 +917,7 @@ public class ParserList {
               ,"MSBiloxi"                       ,"Biloxi, MS"
               ,"MSCalhounCounty"                ,"Calhoun County, MS"
               ,"MSDeSotoCounty"                 ,"DeSoto County, MS"
+              ,"MSForestCounty"                 ,"Forest County, MS"
               ,"MSHarrisonCounty"               ,"Harrison County, MS"
               ,"MSLafayetteCounty"			  	    ,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"

@@ -969,6 +969,7 @@ public class Active911ParserTable {
       "US/MI/EmergentHealth",             "MIWashtenawCountyB",
       "US/MI/EmmetCounty",                "MIEmmetCounty",
       "US/MI/Firemodules",                "MIOaklandCountyB",
+      "US/MI/ForrestCounty",              "MSForestCounty",
       "US/MI/Frankenlust",                "MIBayCountyC",
       "US/MI/GeorgetownFD",               "MIOttawaCounty",
       "US/MI/GogebicCounty",              "MIGogebicCounty,MIWayneCounty",
