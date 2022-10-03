@@ -214,51 +214,54 @@ public class DispatchA25Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*), *([A-Z]{2})(?: +(\\d{5}))?");
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT(?: ROOM)?|LOT|RM|ROOM|STE)[ :]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       String zip = null;
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      if (!city.isEmpty()) {
-        Matcher match = CITY_ZIP_PTN.matcher(city);
-        if (match.matches()) {
-          data.strState = match.group(1);
-          zip = match.group(2);
-        } else {
-          data.strCity = city;
-        }
+      Matcher match = CITY_ZIP_PTN.matcher(field);
+      if (match.matches()) {
+        field =  match.group(1);
+        data.strState =  match.group(2);
+        zip = match.group(3);
       }
+
       String addr;
-      if (data.strCity.isEmpty()) {
-        city = p.getLastOptional(" - ");
-        if (city.isEmpty()) city = p.getLastOptional(',');
-        if (!city.isEmpty() && checkCity && !isCity(city)) {
-          addr = city;
-          data.strPlace = p.get();
+      int pt = field.indexOf(" - ");
+      if (pt >= 0) {
+        String part1 = field.substring(0,pt).trim();
+        String part2 = field.substring(pt+3).trim();
+        pt = part2.lastIndexOf(',');
+        if (pt >= 0) {
+          data.strPlace = part1;
+          data.strCity = part2.substring(pt+1).trim();
+          addr = part2.substring(0,pt).trim();
+        }
+        else if (checkCity && !isCity(part2)) {
+          data.strPlace = part1;
+          addr = part2;
         } else {
-          data.strCity = city;
-          addr = p.get();
+          addr = part1;
+          data.strCity = part2;
         }
       } else {
-        addr = p.get();
-      }
-      if (data.strPlace.isEmpty()) {
-        int pt = addr.indexOf(" - ");
+        pt = field.lastIndexOf(',');
         if (pt >= 0) {
-          data.strPlace = addr.substring(0,pt).trim();
-          addr = addr.substring(pt+3);
+          addr = field.substring(0,pt).trim();
+          data.strCity = field.substring(pt+1).trim();
+        } else {
+          addr = field;
         }
       }
+
       String apt = "";
       if (addr.endsWith(")")) {
-        int pt = addr.lastIndexOf('(');
+        pt = addr.lastIndexOf('(');
         if (pt >= 0) {
           apt = addr.substring(pt+1, addr.length()-1).trim();
           addr = addr.substring(0,pt).trim();
-          Matcher match = APT_PREFIX_PTN.matcher(apt);
+          match = APT_PREFIX_PTN.matcher(apt);
           if (match.matches()) apt = match.group(1);
         }
       }

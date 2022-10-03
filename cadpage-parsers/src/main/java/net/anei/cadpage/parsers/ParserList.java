@@ -608,6 +608,7 @@ public class ParserList {
               ,"KSMontgomeryCounty"             ,"Montgomery County, KS"
               ,"KSMortonCounty"                 ,"Morton County, KS"
               ,"KSNeoshoCounty"                 ,"Neosho County, KS"
+              ,"KSNessCounty"                   ,"Ness County, KS"
               ,"KSPottawatomieCounty"           ,"Pottawatomie County, KS"
               ,"KSRenoCounty"                   ,"Reno County, KS"
               ,"KSRiceCounty"                   ,"Rice County, KS"
