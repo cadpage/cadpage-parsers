@@ -256,6 +256,7 @@ public class Active911ParserTable {
       "US/CA/Stockton",                   "CASanJoaquinCountyB",
       "US/CA/Suisun",                     "CASuisunCityA",
       "US/CA/TulareCounty",               "CATulareCountyA",
+      "US/CA/TulareCountySpillman",       "CATulareCountyC",
       "US/CA/TuolumneCounty",             "CATuolumneCounty",
       "US/CA/UkiahValleyFireAuthority",   "CAMendocinoCountyA",
       "US/CA/VacavilleFD",                "CASolanoCountyA,CASolanoCountyD",
