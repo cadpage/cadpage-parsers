@@ -705,6 +705,7 @@ public class Active911ParserTable {
       "US/KS/NessCounty",                 "KSNessCounty",
       "US/KS/PaolaPD",                    "KSMiamiCountyB",
       "US/KS/PDPittKS",                   "KSCrawfordCountyA",
+      "US/KS/PhillipsCounty",             "KSPhillipsCounty",
       "US/KS/PottawatomieSheriff",        "KSPottawatomieCounty",
       "US/KS/Renolec",                    "KSRenoCounty",
       "US/KS/RiceCounty",                 "KSRiceCounty",

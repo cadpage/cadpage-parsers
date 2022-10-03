@@ -610,6 +610,7 @@ public class ParserList {
               ,"KSNeoshoCounty"                 ,"Neosho County, KS"
               ,"KSNessCounty"                   ,"Ness County, KS"
               ,"KSPottawatomieCounty"           ,"Pottawatomie County, KS"
+              ,"KSPhillipsCounty"               ,"Phillips County, KS"
               ,"KSRenoCounty"                   ,"Reno County, KS"
               ,"KSRiceCounty"                   ,"Rice County, KS"
               ,"KSRileyCounty"                  ,"Riley County, KS"
