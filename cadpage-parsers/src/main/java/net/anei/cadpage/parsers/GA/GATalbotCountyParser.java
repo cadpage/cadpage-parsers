@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.GA;
 
 /*
-Sumter county, GA
+Talbot county, GA
 
 */
-public class GATalbotCountyParser extends GASchleyCountyAParser {
-  
+public class GATalbotCountyParser extends GAMaconCountyBParser {
+
   public GATalbotCountyParser() {
     super("TALBOT COUNTY");
   }
