@@ -1,15 +1,15 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA82Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXWichitaCountyParser extends DispatchA82Parser {
+/**
+ * Wichita County, TX
+ */
+
+public class TXWichitaCountyParser extends GroupBestParser {
 
   public TXWichitaCountyParser() {
-    super("WICHITA COUNTY", "TX");
+    super(new TXWichitaCountyAParser(), new TXWichitaCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "CADAlert@burkburnett.org";
-  }
 }
