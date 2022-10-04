@@ -218,7 +218,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY? ( RUNTIME/R RUNTIME/RN+ | ", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+ )");
+          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
@@ -536,7 +536,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ID")) return new IdField(ID_PTN, true);
     if (name.equals("CALL")) return new BaseCallField();
-    if (name.equals("ADDRCITIY")) return new BaseAddressCityField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
     if (name.equals("SKIPCITY")) return new BaseSkipCityField();
     if (name.equals("RUNTIME")) return new InfoField("[A-Za-z ]+:\\d\\d:\\d\\d", false);
@@ -667,6 +667,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (field.equals(UNIT_LABEL_STR)) return false;
       if (INFO_PTN.matcher(field).matches()) return false;
+      if (INFO_TIMES_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
     }
@@ -721,7 +722,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_TIMES_PTN = Pattern.compile("[A-Za-z ]+: *\\d\\d:\\d\\d");
+  private static final Pattern INFO_TIMES_PTN = Pattern.compile("([A-Za-z ]+): *\\d\\d:\\d\\d");
   private static final Pattern INFO_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d(?: [AP]M)?\\b *(.*)|\\d\\d?/\\d\\d?/\\d\\d|\\d\\d:\\d\\d:\\d\\d");
   private static final Pattern INFO_TRUNC_PTN = Pattern.compile("\\d{1,2}[/:][ 0-9:/]*");
   private class BaseInfoField extends InfoField {
@@ -732,29 +733,30 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      if (data.msgType != MsgType.RUN_REPORT) {
-        Matcher match = INFO_TIMES_PTN.matcher(field);
-        if (match.matches()) {
-          data.msgType = MsgType.RUN_REPORT;
-        }
-        else {
-          match = INFO_PTN.matcher(field);
-          if (!match.matches()) {
-            return INFO_TRUNC_PTN.matcher(field).matches();
-          }
-          field = match.group(1);
-        }
-      }
-      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
-      return true;
+      return parse(true, field, data);
     }
 
     @Override
     public void parse(String field, Data data) {
-      Matcher match = INFO_PTN.matcher(field);
-      if (match.matches()) field = match.group(1);
-      else if (INFO_TRUNC_PTN.matcher(field).matches()) return;
-      if (field != null) data.strSupp = append(data.strSupp, "\n", field);
+      parse(false, field, data);
+    }
+
+    private boolean parse(boolean check, String field, Data data) {
+      Matcher match = INFO_TIMES_PTN.matcher(field);
+      if (match.matches()) {
+        String type = match.group(1);
+        if (type.equals("En Route") || type.equals("On Scene") || type.equals("Closed")) data.msgType = MsgType.RUN_REPORT;
+      }
+
+      else if ((match = INFO_PTN.matcher(field)).matches()) {
+        field = match.group(1);
+        if (field == null) return true;
+      } else if (INFO_TRUNC_PTN.matcher(field).matches()) {
+        return true;
+      } else if (check) return false;
+
+      data.strSupp = append(data.strSupp, "\n", field);
+      return true;
     }
   }
 

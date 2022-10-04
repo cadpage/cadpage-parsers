@@ -225,6 +225,8 @@ public class DispatchA25Parser extends FieldProgramParser {
         field =  match.group(1);
         data.strState =  match.group(2);
         zip = match.group(3);
+      } else {
+        field = stripFieldEnd(field, ",");
       }
 
       String addr;
