@@ -16,36 +16,41 @@ public class IDIdahoCountyParser extends DispatchA19Parser {
   }
 
 private static final Properties CITY_CODES = buildCodeTable(new String[] {
-    "CLE", "Clearwater", //
+    "C City Limits", "Cottonwood",
+    "CLE", "Clearwater",
     "COT", "Cottonwood",
     "CPD", "Cottonwood",
     "CRA", "Craigmont",
-    "DIX", "Dixie", //
+    "DIX", "Dixie",
     "ELC", "Elk City",
     "ELK", "Elk City",
-    "ELW", "Elk City", //
-    "FEN", "Fenn", //
+    "ELW", "Elk City",
+    "FEN", "Fenn",
     "FER", "Ferdinand",
+    "G City Limits", "Grangeville",
     "GPD", "Grangeville",
     "GRA", "Grangeville",
-    "GRE", "Greencreek", //
-    "HAR", "Harpster", //
+    "GRE", "Greencreek",
+    "HAR", "Harpster",
     "KAM", "Kamiah",
     "KEU", "Keuterville",
+    "Koo City Limits", "Kooskia",
     "KOO", "Kooskia",
     "KPD", "Kooskia",
     "KST", "Stites",
-    "LOW", "Lowell", //
+    "LOW", "Lowell",
     "LUC", "Lucile",
     "MCC", "McCall",
     "NEW", "New Meadows",
     "NEZ", "Nez Perce County",
     "POL", "Pollock",
-    "POW", "Powell Junction", // ???
+    "POW", "Powell",
     "Rig City Limits", "Riggins",
     "RIG", "Riggins",
     "RPD", "Riggins",
+    "SLA", "Slate Creek",
     "STI", "Stites",
+    "SYR", "Syringa",
     "WHI", "White Bird",
     "WIN", "Winchester"
 });
