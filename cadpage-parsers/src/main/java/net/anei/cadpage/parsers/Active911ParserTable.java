@@ -74,6 +74,7 @@ public class Active911ParserTable {
       "US/AL/BibbCounty",                 "ALBibbCounty",
       "US/AL/BlountCounty",               "ALBlountCounty",
       "US/AL/CalhounCounty",              "ALCalhounCounty",
+      "US/AL/Cambria911",                 "PACambriaCounty",
       "US/AL/ChambersCounty",             "ALChambersCounty",
       "US/AL/Cherokee",                   "ALCherokeeCounty",
       "US/AL/ChiltonCounty",              "ALChiltonCounty",
