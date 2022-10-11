@@ -1534,6 +1534,7 @@ public class ParserList {
               ,"TNGibsonCounty"                 ,"Gibson County, TN"
               ,"TNGraingerCounty"               ,"Grainger County, TN"
               ,"TNGrundyCounty"                 ,"Grundy County, TN"
+              ,"TNHamblenCounty"                ,"Hamblen County, TN"
               ,"TNHamiltonCounty"               ,"Hamilton County, TN"
               ,"TNHawkinsCounty"                ,"Hawkins County, TN"
               ,"TNHaywoodCounty"                ,"Haywood County, TN"
