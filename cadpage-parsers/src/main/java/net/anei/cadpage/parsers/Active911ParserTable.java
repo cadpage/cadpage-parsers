@@ -1097,6 +1097,7 @@ public class Active911ParserTable {
       "US/MN/RamseyCounty",               "MNRamseyCounty",
       "US/MN/RedwoodCounty",              "MNRedwoodCounty",
       "US/MN/RenvilleCounty",             "MNRenvilleCounty",
+      "US/MN/RobbinsdalePD",              "MNHennepinCounty",
       "US/MN/RoseauCounty",               "MNRoseauCounty",
       "US/MN/ScottCounty",                "MNScottCounty",
       "US/MN/SherburneCounty",            "MNSherburneCounty",

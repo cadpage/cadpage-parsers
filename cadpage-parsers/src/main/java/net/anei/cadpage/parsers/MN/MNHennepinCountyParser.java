@@ -21,7 +21,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
   public MNHennepinCountyParser() {
     super(CITY_LIST, "HENNEPIN COUNTY", "MN",
           "( NAME:NAME! ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " +
-                       "| PH#:PHONE! ADDRSS:ADDR! APT#:APT! CITY:CITY! X_ST:X! EVTYPE:CALL! INC#:ID! " +
+                       "| PH#:PHONE! LOC_NAME:PLACE ADDRESS:ADDR! APT#:APT! CITY:CITY! X_ST:X EVTYPE:CALL! INC#:ID! " +
                        "| ADDRESS:ADDR! APT#:APT! CITY:CITY! XSTREET:X! EVTYPE:CALL! INC#:ID! " +
                        ") COMMENTS:INFO/N+ " +
           "| INC#:ID! ADDRESS:ADDR! EVTYPE:CALL! INFO/RN+ " +
@@ -41,7 +41,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
     if (pt < 0) pt = body.indexOf("\n\n--");
     if (pt >= 0) body = body.substring(0, pt).trim();
 
-    body = body.replace(" X STREET-", " XSTREET-");
+    body = body.replace(" X STREET-", " XSTREET-").replace(" ADDRSS-", " ADDRESS-");
     if (!super.parseFields(splitFields(body), data)) return false;
 
     // If we did not find a city, check the name to see if it looks like
@@ -61,17 +61,26 @@ public class MNHennepinCountyParser extends FieldProgramParser {
    * @return array of fields
    */
   private static String[] splitFields(String body) {
+
+    // FIgure out which delimiter is being used
+    int colonPt = body.indexOf(':');
+    int semiPt = body.indexOf(';');
+    if (colonPt < 0) colonPt = 1000;
+    if (semiPt < 0) semiPt = 1000;
+    char delim = colonPt < semiPt ? ':' : ';';
     List<String> fields = new ArrayList<>();
     int last = 0;
     boolean semiBreak = true;
     for (int pt = 0; pt < body.length(); pt++) {
       char chr = body.charAt(pt);
-      if (chr == ';' && semiBreak || chr == '\n') {
+      if (chr == delim && semiBreak || chr == '\n') {
         fields.add(body.substring(last, pt).trim());
         last = pt+1;
-      }
-      else if (semiBreak) {
-        if (body.substring(pt).startsWith("COMMENTS-")) semiBreak = false;
+
+        if (semiBreak) {
+          String part = body.substring(last).trim();
+          if (part.startsWith("COMMENTS-")) semiBreak = false;
+        }
       }
     }
     fields.add(body.substring(last).trim());
