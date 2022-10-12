@@ -6,9 +6,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MIInghamCountyBParser extends FieldProgramParser{
 
-public MIInghamCountyBParser() {
-  super("INGHAM COUNTY", "MI", 
-        "CALL:CALL! PLACE:PLACE! ADDR:ADDR! APT:APT! CITY:CITY! LAT:GPS1! LON:GPS2 ID:ID! TIME:DATETIME! UNIT:UNIT! INFO:INFO+", FLDPROG_IGNORE_CASE);
+  public MIInghamCountyBParser() {
+    this("INGHAM COUNTY", "MI");
+  }
+
+  public MIInghamCountyBParser(String defCity, String defState) {
+    super(defCity, defState, 
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! APT:APT! CITY:CITY! LAT:GPS1! LON:GPS2 ID:ID! TIME:DATETIME! UNIT:UNIT! INFO:INFO+", FLDPROG_IGNORE_CASE);
   }
 
   @Override

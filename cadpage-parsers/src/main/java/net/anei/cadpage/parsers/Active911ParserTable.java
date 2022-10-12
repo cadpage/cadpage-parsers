@@ -1011,6 +1011,7 @@ public class Active911ParserTable {
       "US/MI/MedicOneAmbulance",          "MIBerrienCounty",
       "US/MI/MichiganGov",                "MISchoolcraftCounty",
       "US/MI/MidlandCounty",              "MIMidlandCounty",
+      "US/MI/MobileMedicalResponse",      "MISaginawCountyC",
       "US/MI/MontcalmCounty",             "MIMontcalmCounty",
       "US/MI/MontcalmCountyFire",         "MIMontcalmCounty",
       "US/MI/MontcalmSheriff",            "MIMontcalmCounty",
