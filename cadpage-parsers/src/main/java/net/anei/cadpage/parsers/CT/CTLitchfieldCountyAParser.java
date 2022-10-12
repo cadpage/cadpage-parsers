@@ -35,11 +35,6 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     return "@everbridge.net,@lcd911.com,88911,89361";
   }
 
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
   private static final Pattern HTML_MASK_PTN = Pattern.compile("\n +<p>(.*)</p>\n");
 
   @Override
@@ -49,7 +44,9 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       if (!match.find()) return false;
       body = match.group(1).trim();
     }
-    return parseMsg(subject, body, data);
+    if (!parseMsg(subject, body, data)) return false;
+    if (data.strSource.equals("WINSTED AMB")) data.strCity = "WINSTED";
+    return true;
   }
 
   private static final Pattern MASTER1 = Pattern.compile("(.*) RESPOND TO +(.*?)(?::|--| -)(\\d\\d:\\d\\d)\\b\\**(.*)");
