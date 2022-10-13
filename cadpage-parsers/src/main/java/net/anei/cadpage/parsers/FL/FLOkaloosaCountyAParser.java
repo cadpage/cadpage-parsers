@@ -11,27 +11,26 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class FLOkaloosaCountyAParser extends FieldProgramParser {
-  
+
   public FLOkaloosaCountyAParser() {
-    super(CITY_CODES, "OKALOOSA COUNTY", "FL", 
+    super(CITY_CODES, "OKALOOSA COUNTY", "FL",
           "Incident:ID Run_Zone:MAP Complaint:CALL Unit:UNIT " +
              "( Station:SRC! Complaint:CALL! Address:ADDR/S6! Cross_Street:X! Place:PLACE! " +
-             "| Address:ADDR/S6! Cross_Street:X Place:PLACE " + 
+             "| Address:ADDR/S6! Cross_Street:X Place:PLACE " +
              "| Location:ADDR? Place:PLACE! Apt/Lot:APT! Run_Zone:MAP! City:CITY! Cross_Street1:X! Cross_Street2:X! Complaint:CALL? " +
              ") Map:GPS Units:TIMES/N+");
     setupCities(CITY_LIST);
     setupSpecialStreets("CALLE DE TALENCIA");
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("(?:ECC|[a-z]+): *");
   private Set<String> unitSet = new HashSet<String>();
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
-    if (!match.lookingAt()) return false;
-    body = body.substring(match.end());
-    
+    if (match.lookingAt()) body = body.substring(match.end());
+
     if (body.startsWith("ncident:")) {
       body = 'I' + body;
     } else if (body.startsWith("cident:")) {
@@ -41,14 +40,14 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
     } else if (body.startsWith("omplaint:")) {
       body = 'C' + body;
     }
-    
+
     unitSet.clear();
     try {
       if (parseFields(body.split("\n"), data)) return true;
     } finally {
       unitSet.clear();
     }
-    
+
     // If that did not work, try looking for a generic dispatch alert
     if (body.contains("\n"))  return false;
     setFieldList("CALL ADDR APT CITY INFO");
@@ -56,7 +55,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
     data.strSupp = getLeft();
     return isValidAddress();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID"))  return new IdField("[A-Z]{4}\\d{2}CAD\\d{6}", true);
@@ -68,7 +67,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -78,7 +77,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -86,7 +85,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -94,20 +93,20 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern PLACE_STREET_PREFIX_PTN = Pattern.compile("\\d+[A-Z]? ");
   private static final Pattern PLACE_PHONE_PTN = Pattern.compile("(.*?) +(\\d{3}[- ](?:\\d{3}[- ])?\\d{4})");
   private static final Pattern PLACE_APT_PTN = Pattern.compile(" UNIT +(\\S+)\\b");
-  private static final Pattern PLACE_ST_ZIP_PTN = Pattern.compile("(.*) FL +(\\d{5})"); 
+  private static final Pattern PLACE_ST_ZIP_PTN = Pattern.compile("(.*) FL +(\\d{5})");
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // If this looks like it duplicates the address, just skip it
       Matcher match = PLACE_STREET_PREFIX_PTN.matcher(field);
       if (match.lookingAt()) {
         if (data.strAddress.startsWith(match.group())) {
-          
+
           // But before we drop it, see if it contains any apt information
           match = PLACE_APT_PTN.matcher(field);
           if (match.find()) {
@@ -116,7 +115,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
               data.strApt = append(data.strApt, "-", apt);
             }
           }
-          
+
           // And sometimes the place version of the address will contains a city name
           // that the original address does not.
           if (data.strCity.length() == 0) {
@@ -130,7 +129,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
         }
         return;
       }
-      
+
       match = PLACE_PHONE_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1);
@@ -138,13 +137,13 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE PHONE";
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("https://maps.google.com/\\?q=(.*)");
   private class MyGPSField extends GPSField {
     @Override
@@ -155,7 +154,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern TIMES_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) +(\\S+) +(\\S+) +([A-Z]+)");
   private class MyTimesField extends Field {
 
@@ -174,7 +173,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
           data.strSupp = append(data.strSupp, "\n", unit + ' ' + status);
         }
       }
-      
+
     }
 
     @Override
@@ -182,15 +181,15 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       return "DATE TIME UNIT INFO";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = addr.replace("SCENIC HIGHWAY 98", "HWY 98");
     return super.adjustMapAddress(addr);
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "CRESTVIEW",
       "DESTIN",
@@ -229,7 +228,7 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
       "VILLA TASSO",
       "WYNNEHAVEN BEACH"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FT WALTON BCH",    "FORT WALTON BEACH"
   });
