@@ -45,7 +45,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       body = match.group(1).trim();
     }
     if (!parseMsg(subject, body, data)) return false;
-    if (data.strSource.equals("WINSTED AMB")) data.strCity = "WINSTED";
+    if (data.strSource.equals("WINSTED AMB") && data.strCity.equalsIgnoreCase("WINCHESTER")) data.strCity = "WINSTED";
     return true;
   }
 
