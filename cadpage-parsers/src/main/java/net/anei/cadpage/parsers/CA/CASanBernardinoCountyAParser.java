@@ -32,7 +32,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD:(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Z]{1,4}))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
+  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD:(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Za-z]+))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -49,7 +49,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       parseAddress(match.group(3).trim(), data);
       String city = match.group(4);
       if (city != null) {
-        String tmp = CITY_CODES.getCodeDescription(city, true);
+        String tmp = CITY_CODES.getCodeDescription(city.toUpperCase(), true);
         if (tmp != null) city = tmp;
         data.strCity = city;
       }
@@ -159,11 +159,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
 
-      CodeTable.Result res = CITY_CODES.getResult(field);
-      if (res != null) {
-        data.strCity = res.getDescription();
-        field = res.getRemainder().trim();
-      }
+      field = parseCity(field, data);
 
       field = stripFieldEnd(field, "-");
       field = stripFieldEnd(field, "/");
@@ -202,14 +198,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
 
-      if (data.strCity.length() == 0) {
-        CodeTable.Result res = CITY_CODES.getResult(field);
-        if (res != null) {
-          data.strCity = res.getDescription();
-          field = res.getRemainder().trim();
-          field = stripFieldEnd(field, "-");
-        }
-      }
+      field = parseCity(field, data);
       data.strPlace = append(data.strPlace, " - ", field);
     }
 
@@ -291,7 +280,9 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
 
   @Override
   public String adjustMapCity(String city) {
-    return convertCodes(city.toUpperCase(), CITY_MAP_TABLE);
+    String mCity = CITY_MAP_TABLE.getProperty(city.toUpperCase());
+    if (mCity != null) city = mCity;
+    return city;
   }
 
   private static Properties CITY_MAP_TABLE = buildCodeTable(new String[]{
@@ -308,201 +299,226 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "YMO",                    "RIALTO"
   });
 
-  private static final ReverseCodeTable CITY_CODES = new ReverseCodeTable(
-      "ABY",  "AMBOY",
-      "ADC",  "ADELANTO",
-      "ADCC", "ADELANTO",
-      "ADDC", "ADELANTO",
+  private static final ReverseCodeTable CITY_CODES = new ReverseCodeTable();
+
+  private static String parseCity(String field, Data data) {
+    CodeTable.Result res = CITY_CODES.getResult(field.toUpperCase());
+    if (res != null) {
+      if (!data.strCity.isEmpty()) data.strAddress = append(data.strAddress, " ", data.strCity);
+      data.strCity = res.getDescription();
+      field = field.substring(0, res.getRemainder().length());
+      field = stripFieldEnd(field, "-");
+    }
+    return field;
+  }
+
+  static {
+    String key = null;
+    for (String value : new String[] {
+      "ABY",  "Amboy",
+      "ADC",  "Adelanto",
+      "ADCC", "Adelanto",
+      "ADDC", "Adelanto",
       "Adela","Adelanto",
-      "ANG",  "ANGELES OAKS",
-      "Angel","Angelus Oaks",
-      "APP",  "APPLE VALLEY",
-      "APPC", "APPLE VALLEY",
+      "ANG",  "Angels Oaks",
+      "ANGEL","Angels Oaks",
+      "APP",  "Apple Valley",
+      "APPC", "Apple Valley",
       "Apple","Apple Valley",
-      "ARB",  "ARROWBEAR",
-      "ARG",  "ARGUS",
-      "B",    "San Bernardino",
-      "BAK",  "BAKER",
+      "ARB",  "Arrowbear",
+      "ARG",  "Argus",
+//      "B",    "San Bernardino",    // Too dangerous
+      "BAK",  "Baker",
       "Baldy","Baldy Mesa",
-      "BAR",  "BARSTOW",
-      "BARC", "BARSTOW",
-      "Barst","Barstow",
-      "BBC",  "BIG BEAR",
-      "BBL",  "BIG BEAR LAKE",
-      "BBLC", "BIG BEAR LAKE",
-      "BCR",  "BEAR CREEK",
-      "BDM",  "BALDY MESA",
-      "BFL",  "BARTON FLATS",
-      "BGR",  "BIG RIVER",
-      "Big B","Big Bear",
-      "BLD",  "MT BALDY",
-      "BLK",  "BLACK MEADOW LANDING",
-      "BLO",  "BLOOMINGTON",
-      "Bloom","Bloomington",
-      "BLU",  "BLUE JAY",
-      "Blue", "Blue Jay",
-      "Bryn", "Bryn Mawr",
-      "CAJ",  "CAJON PASS",
-      "CDZ",  "CADIZ",
-      "CED",  "CEDAR GLEN",
-      "CHHC", "CHINO HILLS",
-      "CHI",  "CHINO",
-      "CHIC", "CHINO",
-      "CHL",  "CHINA LAKE",
-      "CMA",  "CIMA",
-      "COL",  "COLTON",
-      "COLC", "COLTON",
-      "CPP",  "CEDAR PINES PARK",
-      "CRA",  "CRAFTON",
+      "BAR",  "Barstow",
+      "BARC", "Barstow",
+      "BARST","Barstow",
+      "BBC",  "Big Bear",
+      "BBL",  "Big Bear Lake",
+      "BBLC", "Big Bear Lake",
+      "BCR",  "Bear Creak",
+      "BDM",  "Baldy Mesa",
+      "BFL",  "Barton Flags",
+      "BGR",  "Big River",
+      "BIG B","Big Bear",
+      "BLD",  "Mt Baldy",
+      "BLK",  "Black Meadow Landing",
+      "BLO",  "Bloomington",
+      "BLOOM","Bloomington",
+      "BLU",  "Blue Jay",
+      "BLUE", "Blue Jay",
+      "BRYN", "Bryn Mawr",
+      "",     "Cajon",
+      "CAJ",  "Cajon Pass",
+      "CDZ",  "Cadiz",
+      "CED",  "Cedar Glen",
+      "CHHC", "Chino Hills",
+      "CHI",  "Chino",
+      "CHIC", "Chino",
+      "CHL",  "China Lake",
+      "CMA",  "Cima",
+      "COL",  "Colton",
+      "COLC", "Colton",
+      "CPP",  "Cedar Pines Park",
+      "CRA",  "Crafton",
       "Crest","Crestline",
-      "CRL",  "CRESTLINE",
-      "CRM",  "CRESTMORE",
-      "CUD",  "CUDDEBACK LAKE",
-      "DAG",  "DAGGETT",
-      "Dagge","Daggett",
-      "DEV",  "DEVORE",
-      "Devor","Devore",
-      "EDW",  "EDWARDS AFB",
-      "ELM",  "EL MIRAGE",
-      "ERP",  "EARP",
-      "ESX",  "ESSEX",
-      "FAW",  "FAWNSKIN",
-      "Fawns","Fawnskin",
-      "FFL",  "FOREST FALLS",
-      "FON",  "FONTANA",
-      "FONC", "FONTANA",
-      "Fonta","Fontana",
-      "Fores","Forest Falls",
-      "Fort", "Fort Irwin",
-      "FRE",  "FREDALBA",
-      "FTI",  "FORT IRWIN",
-      "Grand","Grand Terrace",
-      "Green","Green Valley Lake",
-      "GRTC", "GRAND TERRACE",
-      "GVL",  "GREEN VALLEY LAKE",
-      "HAV",  "HAVASU",
-      "HEL",  "HELENDALE",
-      "Helen","Helendale",
-      "HES",  "HESPERIA",
-      "HESC", "HESPERIA",
-      "Hespe","HESPERIA",
-      "HIGC", "HIGHLAND",
-      "Highl","Highland",
-      "Hinkl","Hinkley",
-      "HNK",  "HINKLEY",
-      "HOL",  "HOLCOMB VALLEY",
-      "HRV",  "HARVARD",
-      "IRN",  "IRON MOUNTAIN",
-      "IVP",  "IVANPAH",
-      "JNV",  "JOHNSON VALLEY",
-      "Joshu","Joshua Tree",
-      "JOT",  "JOSHUA TREE",
-      "KEL",  "KELSO",
-      "KRJ",  "KRAMER JUNCTION",
-      "LAA",  "LAKE ARROWHEAD",
-      "LAC",  "LA COUNTY",
-      "Lake", "Lake Arrowhead",
-      "Lande","Landers",
-      "LDR",  "LANDERS",
-      "LEN",  "LENWOOD",
-      "LOM",  "LOMA LINDA",
-      "Loma", "Loma Linda",
-      "LOMC", "LOMA LINDA",
-      "LUC",  "LUCERNE VALLEY",
-      "Lucern",  "Lucerne Valley",
-      "LUD",  "LUDLOW",
-      "Ludlo","Ludlow",
-      "LYC",  "LYTLE CREEK",
-      "Lytle","Lytle Creek",
-      "MEN",  "MENTONE",
-      "Mento","Mentone",
-      "Montc","Montclair",
-      "MOR",  "MORONGO",
-      "Moron","Morongo Valley",
-      "Mount","Mountain Pass",
-      "Mt Ba","Mt Baldy",
-      "MTCC", "MONTCLAIR",
-      "MTH",  "MOUNTAIN HOME VILLAGE",
-      "MTP",  "MOUNTAIN PASS",
-      "MUS",  "MUSCOY",
-      "Musco","Muscoy",
-      "NBD",  "NEWBERRY SPRINGS",
-      "NED",  "NEEDLES",
-      "NEDC", "NEEDLES",
-      "Needl","Needles",
-      "Newbe","Newberry Springs",
-      "Nipto","Nipton",
-      "OKG",  "OAK GLEN",
-      "Ontar","Ontario",
-      "ONTC", "ONTARIO",
-      "Oro G","Oro Grande",
-      "ORO",  "ORO GRANDE",
-      "Parke","Parker Dam",
-      "Phela","Phelan",
-      "PHL",  "PHELAN",
-      "PIN",  "PINON HILLS",
-      "Pinon","Pinon Hills",
-      "PIO",  "PIONEERTOWN",
-      "Pione","Pioneertown",
-      "PKD",  "PARKER DAM",
-      "POM",  "POMONA",
-      "POMC", "POMONA",
-      "RCC",  "RANCHO CUCAMONGA",
-      "RCCC", "RANCHO CUCAMONGA",
-      "RED",  "REDLANDS",
-      "REDC", "REDLANDS",
-      "Redla","Redlands",
-      "RIA",  "RIALTO",
-      "RIAC", "RIALTO",
-      "Rialt","Rialto",
-      "RIC",  "RICE",
-      "RID",  "RIDGECREST",
-      "RIM",  "RIM FOREST",
-      "Rimfo","Rimforest",
-      "RIV",  "RIVERSIDE",
-      "RMT",  "RED MOUNTAIN",
-      "RRK",  "RIMROCK",
-      "RSP",  "RUNNING SPRINGS",
-      "Runni","Running Springs",
-      "SAH",  "SAN ANTONIO HEIGHTS",
+      "CRL",  "Crestline",
+      "CRM",  "Crestmore",
+      "CUD",  "Cuddeback Lake",
+      "DAG",  "Daggett",
+      "DAGGE","Daggett",
+      "DEV",  "Devore",
+      "DEVOR","Devore",
+      "EDW",  "Edwards AFB",
+      "ELM",  "El Mirage",
+      "ERP",  "Earp",
+      "ESX",  "Essex",
+      "FAW",  "Fawnskin",
+      "FAWNS","Fawnskin",
+      "FFL",  "Forest Falls",
+      "FON",  "Fontana",
+      "FONC", "Fontana",
+      "FONTA","Fontana",
+      "FORES","Forest Falls",
+      "FORT", "Fort Irwin",
+      "FRE",  "Fredalba",
+      "FTI",  "Fort Irwin",
+      "GRAND","Grand Terrace",
+      "GREEN","Green Valley Lake",
+      "GRTC", "Grand Terrace",
+      "GVL",  "Green Valley Lake",
+      "HAV",  "Havasu",
+      "HEL",  "Helendale",
+      "HELEN","Helendale",
+      "HES",  "Hesperia",
+      "HESC", "Hesperia",
+      "HESPE","Hesperia",
+      "HIGC", "Highland",
+      "HIGHL","Highland",
+      "HINKL","Hinkley",
+      "HNK",  "Hinkley",
+      "HOL",  "Holcomb Valley",
+      "HRV",  "Harvard",
+      "IRN",  "Iron Mountain",
+      "IVP",  "Ivanpah",
+      "JNV",  "Johnson Valley",
+      "JOSHU","Joshua Tree",
+      "JOT",  "Joshua Tree",
+      "KEL",  "Kelso",
+      "KRJ",  "Kramer Junction",
+      "LAA",  "Lake Arrowhead",
+      "LAC",  "La County",
+      "LAKE", "Lake Arrowhead",
+      "LANDE","Landers",
+      "LDR",  "Landers",
+      "LEN",  "Lenwood",
+      "LOM",  "Loma Linda",
+      "LOMA", "Loma Linda",
+      "LOMC", "Loma Linda",
+      "LUC",  "Lucerne Valley",
+      "LUCERN",  "Lucerne Valley",
+      "LUD",  "Ludlow",
+      "LUDLO","Ludlow",
+      "LYC",  "Lytle Creek",
+      "LYTLE","Lytle Creek",
+      "MEN",  "Mentone",
+      "MENTO","Mentone",
+      "MONTC","Montclair",
+      "MOR",  "Morongo",
+      "MORON","Morongo Valley",
+      "MOUNT","Mountain Pass",
+      "MT BA","Mt Baldy",
+      "MTCC", "Montclair",
+      "MTH",  "Mountain Home Village",
+      "MTP",  "Mountain Pass",
+      "MUS",  "Muscoy",
+      "MUSCO","Muscoy",
+      "NBD",  "Newberry Springs",
+      "NED",  "Needles",
+      "NEDC", "Needles",
+      "NEEDL","Needles",
+      "NEWBE","Newberry Springs",
+      "NIPTO","Nipton",
+      "OKG",  "Oak Glen",
+      "ONTAR","Ontario",
+      "ONTC", "Ontario",
+      "ORO G","Oro Grande",
+      "ORO",  "Oro Grande",
+      "PARKE","Parker Dam",
+      "PHELA","Phelan",
+      "PHL",  "Phelan",
+      "PIN",  "Pinon Hills",
+      "PINON","Pinon Hills",
+      "PIO",  "Pioneertown",
+      "PIONE","Pioneertown",
+      "PKD",  "Parker Dam",
+      "POM",  "Pomona",
+      "POMC", "Pomona",
+      "RCC",  "Rancho Cucamonga",
+      "RCCC", "Rancho Cucamonga",
+      "RED",  "Redlands",
+      "REDC", "Redlands",
+      "REDLA","Redlands",
+      "RIA",  "Rialto",
+      "RIAC", "Rialto",
+      "RIALT","Rialto",
+      "RIC",  "Rice",
+      "RID",  "Ridgecrest",
+      "RIM",  "Rimforest",
+      "RIMFO","Rimforest",
+      "RIV",  "Riverside",
+      "RMT",  "Red Mountain",
+      "RRK",  "Rimrock",
+      "RSP",  "Running Springs",
+      "RUNNI","Running Springs",
+      "SAH",  "San Antonio Heights",
       "San B","San Bernardino",
-      "SBO",  "SAN BERNARDINO",
-      "SBOC", "SAN BERNARDINO",
-      "SIL",  "SILVERWOOD",
-      "SKY",  "SKY FOREST",
-      "Skyfo","Skyforest",
-      "SUG",  "SUGARLOAF",
-      "Sugar","Sugarloaf",
-      "SVL",  "SPRING VALLEY LAKE",
-      "SVY",  "SEARLES VALLEY",
-      "TMD",  "MARINE CORP AIR GROUND COMBAT CENTER",
-      "TNP",  "29 PALMS",
-      "TNPC", "29 PALMS",
-      "TPK",  "TWIN PEAKS",
-      "TRN",  "TRONA",
-      "Twent","Twentynine Palms",
-      "Twin", "Twin Peaks",
-      "UPDC", "UPLAND",
-      "Uplan","Upland",
-      "Valle","Valley of Enchantment",
-      "VDJ",  "VIDAL JUNCTION",
-      "VDL",  "VIDAL",
-      "Victo","Victorville",
-      "VOE",  "VALLEY OF ENCHANTMENT",
-      "VVC",  "VICTORVILLE ",
-      "VVCC", "VICTORVILLE",
-      "WON",  "WONDER VALLEY",
-      "Wrigh","Wrightwood",
-      "WWD",  "WRIGHTWOOD",
-      "YER",  "YERMO",
-      "YMO",  "YERMO",
-      "YUC",  "YUCAIPA",
-      "Yucai","Yucaipa",
-      "YUCC", "YUCAIPA",
-      "Yucca","Yucca Valley",
-      "YVY",  "YUCCA VALLEY",
-      "YVYC", "YUCCA VALLEY"
-  );
+      "SBO",  "San Bernardino",
+      "SBOC", "SAN Bernardino",
+      "SIL",  "Silverwood",
+      "SKY",  "Skyforest",
+      "SKYFO","Skyforest",
+      "SUG",  "Sugarloaf",
+      "SUGAR","Sugarloaf",
+      "SVL",  "Spring Valley Lake",
+      "SVY",  "Searles Valley",
+      "TMD",  "Marine Corp Air Ground Combat Center",
+      "TNP",  "29 Palms",
+      "TNPC", "29 Palms",
+      "TPK",  "Twin Peaks",
+      "TRN",  "Trona",
+      "TWENT","Twentynine Palms",
+      "TWIN", "Twin Peaks",
+      "UPDC", "Upland",
+      "UPLAN","Upland",
+      "VALLE","Valley of Enchantment",
+      "VDJ",  "Vidal Junction",
+      "VDL",  "Vidal",
+      "VICTO","Victorville",
+      "VOE",  "Valley Of Enchantment",
+      "VVC",  "Victorville",
+      "VVCC", "victorville",
+      "WON",  "Wonder Valley",
+      "WRIGH","Wrightwood",
+      "WWD",  "Wrightwood",
+      "YER",  "Yermo",
+      "YMO",  "Yermo",
+      "YUC",  "Yucaipa",
+      "YUCAI","Yucaipa",
+      "YUCC", "Yucaipa",
+      "YUCCA","Yucca Valley",
+      "YVY",  "Yucca Valley",
+      "YVYC", "Yucca Valley"
+    }) {
+      if (key == null) {
+        key = value;
+      } else {
+        if (!key.isEmpty()) CITY_CODES.put(key, value);
+        CITY_CODES.put(value.toUpperCase(), value);
+        key = null;
+      }
+    }
+  }
 
   @Override
   public boolean checkCall(String code) {
