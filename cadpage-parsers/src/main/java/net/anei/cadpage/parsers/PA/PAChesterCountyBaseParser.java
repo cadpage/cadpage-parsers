@@ -409,16 +409,23 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
   };
 
   protected static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "AMTY",         "AMITY TWP",
       "ATGLN",        "ATGLEN",
       "AVNDAL",       "AVONDALE",
+      "BRDSBORO",     "BIRDSBORO",
       "BIRMHM",       "BIRMINGHAM TWP",
+      "BYRTWN",       "BOYERTOWN",
       "CALN",         "CALN TWP",
       "CARNVON",      "CAERNARVON TWP",
+      "CARVNB",       "CAERNARVON TWP",
       "CHARLS",       "CHARLESTOWN TWP",
       "CHDS FRD",     "CHADDS FORD",
       "CHRISTNA",     "CHRISTIANA",
       "CLN",          "CALN TWP",
       "COATVL",       "COATESVILLE",
+      "COLBRKDLE",    "COLEBROOKDALE",
+      "DELCO",        "DELAWARE COUNTY",
+      "DGLSS",        "DOUGLASS TWP",
       "DNGTWN",       "DOWNINGTOWN",
       "EASTW",        "EASTTOWN TWP",
       "EASTWN",       "EASTTOWN TWP",
@@ -437,6 +444,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "EVCNTY",       "EAST COVENTRY TWP",
       "EVINCT",       "EAST VINCENT TWP",
       "EWHITE",       "EAST WHITELAND TWP",
+      "EXTR",         "EXETER",
       "FRNKLN",       "FRANKLIN TWP",
       "HBBORO",       "HONEY BROOK",
       "HBTWP",        "HONEY BROOK TWP",
@@ -445,10 +453,12 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "KNTSQR",       "KENNETT SQUARE",
       "KNTTWP",       "KENNETT TWP",
       "LANCA",        "LANCASTER",
-      "LDNBRT",       "LANDENBERG",
+      "LANCO",        "LANCASTER COUNTY",
+      "LDNBRT",       "LONDON BRITAIN",
       "LGROVE",       "LONDON GROVE TWP",
       "LMRCK",        "LIMERICK TWP",
       "LONDER",       "LONDONERRY TWP",
+      "LWPRVDNCE",    "LOWER PROVIDENCE",
       "LWPTSG",       "LOWER POTTSGROVE TWP",
       "LWPTSGRV",     "LOWER POTTSGROVE TWP",
       "LWROXF",       "LOWER OXFORD TWP",
@@ -466,6 +476,8 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "NEWLON",       "NEW LONDON TWP",
       "NGARDN",       "NEW GARDEN TWP",
       "NRTHES",       "NORTH EAST",
+      "NWHNVR",       "NEW HANOVER TWP",
+      "NWMRGAN",      "NEW MORGAN",
       "OXFORD",       "OXFORD",
       "OXFRD",        "OXFORD",
       "PENN",         "PENN TWP",
@@ -474,7 +486,9 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "PNSBRY",       "PENNSBURY TWP",
       "POCOPS",       "POCOPSON TWP",
       "PRKSBG",       "PARKESBURG",
+      "PTTSTWN",      "POTTSTOWN",
       "ROBSN",        "ROBINSON TWP",
+      "ROYRFRD",      "ROYERSFORD",
       "RSNGSUNMCD",   "RISING SUN",
       "SADS",         "SADSBURY TWP",
       "SCHYKL",       "SCHUYLKILL TWP",
@@ -485,6 +499,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "THORNB",       "THORNBURY TWP",
       "TREDY",        "TREDYFFRIN TWP",
       "TREDYF",       "TREDYFFRIN TWP",
+      "UNON",         "UNION TWP",
       "UPPPRO",       "UPPER PROVIDENCE TWP",
       "UPRO",         "UPPER PROVIDENCE TWP",
       "UPROXF",       "UPPER OXFORD TWP",
@@ -520,14 +535,11 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "MONT",         "MONTGOMERY COUNTY",
       "MONTC",        "MONTGOMERY COUNTY",
       "ROYRFRD",      "ROYERSFORD",
+      "UPPMERON",     "UPPER MERION TWP",
       "UPPER POTTS",  "UPPER POTTSGROVE TWP",
       "UPPER PROV",   "UPPER PROVIDENCE TWP",
-      "UPPPROVDNCE",  "UPPER PROVIDENCE TWP"
-
-
-
-
-
+      "UPPPROVDNCE",  "UPPER PROVIDENCE TWP",
+      "WPTTSGRVE",    "WEST POTTSGROVE"
   });
 
   private static final Properties OOC_CITIES = buildCodeTable(new String[]{
