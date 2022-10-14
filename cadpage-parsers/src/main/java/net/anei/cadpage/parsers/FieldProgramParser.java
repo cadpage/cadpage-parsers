@@ -3084,7 +3084,12 @@ public class FieldProgramParser extends SmartAddressParser {
     public UnitField(String pattern) {
       super(pattern);
     }
+
     public UnitField(String pattern, boolean hardPattern) {
+      super(pattern, hardPattern);
+    }
+
+    public UnitField(Pattern pattern, boolean hardPattern) {
       super(pattern, hardPattern);
     }
 
