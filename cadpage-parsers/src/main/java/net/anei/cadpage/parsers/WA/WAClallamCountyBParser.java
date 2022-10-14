@@ -11,7 +11,7 @@ public class WAClallamCountyBParser extends DispatchA87Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@co.clallam.wa.us";
+    return "Dispatch@co.clallam.wa.us,Dispatch@clallamcountywa.gov";
   }
 
   @Override
