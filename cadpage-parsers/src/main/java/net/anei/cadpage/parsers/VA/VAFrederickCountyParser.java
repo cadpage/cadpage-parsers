@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.VA;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -10,7 +11,7 @@ public class VAFrederickCountyParser extends DispatchOSSIParser {
 
   public VAFrederickCountyParser() {
     super("FREDERICK COUNTY", "VA",
-          "ADDR CALL! ( PLACE X/Z X/Z ID! | ID! | X ( ID! | X/Z ID! | X? ) | PLACE X/Z ID! | PLACE ID! | ) UNIT? INFO+");
+          "ADDR CALL! ( ID_UNIT! | X ( ID_UNIT! | X/Z ID_UNIT! | X/Z X/Z ID_UNIT | X? ) | PLACE ID_UNIT! | PLACE X/Z ID_UNIT! | PLACE X/Z X/Z ID_UNIT! | ) ID_UNIT? INFO+");
   }
 
   @Override
@@ -25,49 +26,63 @@ public class VAFrederickCountyParser extends DispatchOSSIParser {
   }
 
 
-  private static final Pattern UNIT_PTN = Pattern.compile("(?:\\b[A-Z]+\\d+\\b,?)+");
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{8}", true);
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("UNIT")) return new UnitField(UNIT_PTN, true);
+    if (name.equals("ID_UNIT")) return new MyIdUnitField();
     return super.getField(name);
   }
 
-  private static final Pattern CROSS_PTN = Pattern.compile("\\b(?:ACCESS|RAMP|XOVER)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CROSS_PTN = Pattern.compile("\\b(?:ACCESS|INTERSTATE|RAMP|XOVER)\\b", Pattern.CASE_INSENSITIVE);
   private class MyCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
-
-      if (checkUnit(field, data)) return true;
-
       if (CROSS_PTN.matcher(field).find() || isValidCrossStreet(field)) {
         super.parse(field, data);
         return true;
       } else {
-        return false;
+        return super.checkParse(field, data);
+      }
+    }
+  }
+
+  // The call ID or Unit can come in either order, and they are a critical decision field, so we
+  // will have one processor that handles them both :(
+
+  private static Pattern ID_UNIT_PTN = Pattern.compile("(\\d{8})|((?:\\b(?:ALS|DFM|FW|STAF|[A-Z]+\\d+)\\b,?)+)");
+
+  private class MyIdUnitField extends Field {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ID_UNIT_PTN.matcher(field);
+      if (!match.matches()) return false;
+      String id = match.group(1);
+      if (id != null) {
+        if (!data.strCallId.isEmpty()) return false;
+        data.strCallId = id;
+        return true;
+      } else {
+        if (!data.strUnit.isEmpty()) return false;
+        data.strUnit = field;
+        return true;
       }
     }
 
     @Override
     public void parse(String field, Data data) {
-      if (checkUnit(field, data)) return;
-      super.parse(field, data);
-    }
-
-    private boolean checkUnit(String field, Data data) {
-      if (UNIT_PTN.matcher(field).matches()) {
-        data.strUnit = field;
-        return true;
-      } else {
-        return false;
-      }
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
     public String getFieldNames() {
-      return "X UNIT?";
+      return "ID UNIT";
     }
   }
 }
