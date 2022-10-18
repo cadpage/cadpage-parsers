@@ -8,12 +8,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NCRandolphCountyParser extends FieldProgramParser {
-  
+
   public NCRandolphCountyParser() {
     super("RANDOLPH COUNTY", "NC",
           "SRC ( UNIT ID! INFO/R INFO/N+ | CALL ADDRCITY UNIT SKIP! INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "911@RandolphCountyNC.gov";
@@ -24,18 +24,18 @@ public class NCRandolphCountyParser extends FieldProgramParser {
     body = stripFieldStart(body, "Randolph 911 - ");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|C?\\d+-\\d+|[A-Z]+[FP]D|ASH[A-Z]|", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]+[0-9]+|C?\\d+-\\d+|[A-Z]+[FP]D|ASH[A-Z]{1,2}|\\d{3}|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "\"");
@@ -54,13 +54,13 @@ public class NCRandolphCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT";
     }
   }
-  
+
   private static final Pattern SKIP_INFO_PTN = Pattern.compile("^\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4}");
   private class MyInfoField extends InfoField {
     @Override
@@ -78,13 +78,13 @@ public class NCRandolphCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return CTRY_PTN.matcher(addr).replaceAll("COUNTRY");
   }
   private static final Pattern CTRY_PTN = Pattern.compile("CTRY\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARC", "ARCHDALE",
       "ASB", "ASHEBORO",
@@ -107,6 +107,7 @@ public class NCRandolphCountyParser extends FieldProgramParser {
       "SOP", "SOPHIA",
       "STA", "STALEY",
       "THO", "THOMASVILLE",
+      "TRO", "TROY",
       "TRI", "TRINITY"
 
   });
