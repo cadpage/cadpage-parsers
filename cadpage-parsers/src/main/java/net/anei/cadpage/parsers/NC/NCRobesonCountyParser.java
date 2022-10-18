@@ -1,100 +1,82 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
-import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
-public class NCRobesonCountyParser extends DispatchOSSIParser{
+
+public class NCRobesonCountyParser extends DispatchOSSIParser {
 
   public NCRobesonCountyParser() {
-    super("ROBESON COUNTY", "NC",
-      "( CANCEL ADDR INFO | CALL PLACE? ADDR X/Z+? ( ID PRI | PRI ) INFO+ )");
+    super(CITY_CODES, "LUMBERTON", "NC",
+          "CH? CALL ADDR! ( END " +
+                         "| ID! " +
+                         "| CITY/Y! ID? " +
+                         "| X2 CITY? ID? " +
+                         "| X X/Z+? ( CITY! ID? | ID! ) " +
+                         "| PLACE X/Z+? ( CITY! ID? | ID! ) " +
+                         ") CODE");
   }
-  
+
   @Override
-  public String getFilter() {
-    return "CAD@robesoncoso.org,9107850026";
-  }
-    
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    body = stripFieldStart(body, "Text Message / ");
-    if (subject.length() > 0 && body.equals("CAD:")) {
-      body = body + subject;
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:"))  body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    if (!data.strCode.isEmpty()) {
+      String call = CALL_TABLE.getCodeDescription(body);
+      if (call != null) data.strCall = call;
     }
-    return super.parseMsg(body, data);
+    return true;
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CH")) return new ChannelField("FTAC\\d+");
+    if (name.equals("X2")) return new CrossField("(?:X-?ST|X)[- ]+(.*)", true);
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("ID")) return new IdField("\\d{8}", true);
-    if (name.equals("PRI")) return new PriorityField("(\\d|[A-Z])", true);
-    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  private static final Pattern ADDR_PTN = Pattern.compile("\\d+.*[A-Z].*|.*/.*", Pattern.CASE_INSENSITIVE);
-  private class MyAddressField extends AddressField {
-    
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-    
-    @Override
-    public boolean checkParse(String field, Data data) {
 
-      Matcher match = ADDR_PTN.matcher(field);
-      
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM)[-* ]+(.*)|(\\d{1,4}(?:-?[A-Z])?)");
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
       if (match.matches()) {
-        parse(field, data);
-        return true;
+        String apt = match.group(1);
+        if (apt == null) apt = match.group(2);
+        data.strApt = append(data.strApt, "-", apt);
+      } else {
+        data.strPlace = field;
       }
-      return false;
     }
-    
-    @Override
-    public void parse(String field, Data data) {
-      
-      if (field.startsWith("1 ") | field.startsWith("1-")) {
-        field = field.substring(2).trim();
-        if (field.startsWith("BLK ")) {
-          field = field.substring(4).trim();
-        }
-      }
-      super.parse(field, data);
-    }
+
   }
 
-  private static final Pattern CODE_PTN = Pattern.compile("(\\d{1,2}-?[A-Z]-?\\d{1,2}[A-Z]?)\\b *(.*)", Pattern.CASE_INSENSITIVE);
-  private class MyInfoField extends InfoField {
-  
-    @Override
-    public void parse(String field, Data data) {
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "FAIR", "FAIRMONT",
+      "GALA", "GALA",
+      "LBRG", "LUMBER BRIDGE",
+      "LUMB", "LUMBERTON",
+      "ORR",  "ORRUM",
+      "MAX",  "MAXTON",
+      "MAXT", "MAXTON",
+      "PARK", "PARKTON",
+      "PEMB", "PEMBROKE",
+      "PROC", "PROCTORVILLE",
+      "RED",  "RED SPRINGS",
+      "REDS", "RED SPRINGS",
+      "RESP", "RED SPRINGS",
+      "ROW",  "ROWLAND",
+      "SHAN", "SHANNON",
+      "STP",  "ST PAULS"
+  });
 
-      Matcher match = CODE_PTN.matcher(field);
-      
-      if (data.strCode.length() == 0) {
-        if (match.matches()) {
-          data.strCode = match.group(1);
-          field = match.group(2);
-          String call = CALL_CODES.getCodeDescription(data.strCode, true);
-          if (call != null) data.strCall = call;
-        }
-      }
-      super.parse(field, data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " CODE";
-    }
-  }
-  
-  private static final CodeTable CALL_CODES = new StandardCodeTable(); 
+  private static final CodeTable CALL_TABLE = new StandardCodeTable();
 }

@@ -208,7 +208,8 @@ public class ManageParsers {
         "CTOldSaybroook",     "CTMiddlesexCounty",       // 11/22/2021
         "SDMinnehahaCountyC", "CTMiddlesexCounty",       // 11/22/2021 Active911 oops
         "OHHudson",           "OHSummitCounty",          // 01/16/2022
-        "MSHernando",         "MSDesotoCounty"           // 02/21/2022
+        "MSHernando",         "MSDesotoCounty",          // 02/21/2022
+        "NCLumberton",        "NCRobesonCounty"          // 10/18/2022
   });
 
 }
