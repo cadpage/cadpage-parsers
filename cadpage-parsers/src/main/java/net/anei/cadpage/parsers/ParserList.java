@@ -1343,6 +1343,7 @@ public class ParserList {
               ,"OKCherokeeCounty"               ,"Cherokee County, OK"
               ,"OKClevelandCounty"              ,"Cleveland County, OK"
               ,"OKGarfieldCounty"               ,"Garfield County, OK"
+              ,"OKGradyCounty"                  ,"Grady County, OK"
               ,"OKLoveCounty"                   ,"Love County, OK"
               ,"OKMayesCounty"                  ,"Mayes County, OK"
               ,"OKMuskogeeCounty"               ,"Muskogee County, OK"
