@@ -40,8 +40,32 @@ public class KSKingmanCountyParser extends DispatchA25Parser {
       "WATERLOO",
       "WILLOWDALE",
 
+      // Barber County
+      "ISABEL",
+
+      // Harper County
+      "DANVILLE",
+      "CRYSTAL SPRINGS",
+      "HARPER",
+      "SHARON",
+
+      // Pratt County
+      "PRESTON",
+
+      // Reno County
+      "ANDALE",
+      "LANGDON",
+      "PRETTY PRAIRIE",
+      "TURON",
+
       // Sedgwick County
-      "CHENEY"
+      "CHENEY",
+      "GRAND RIVER TWP",
+      "MORTON TWP",
+      "ERIE TWP",
+
+      // Summer County
+      "ARGONIA"
 
   };
 }
