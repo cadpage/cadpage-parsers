@@ -52,115 +52,118 @@ public class DispatchSouthernParser extends FieldProgramParser {
   // DSFLG_ADDR_TRAIL_PLACE2 place information can follow address field
   // In the non delimited alert format, information following the address
   // will be considered a place information rather than name information
-  public static final int DSFLG_DISP_ID =             0x80000000;
-  public static final int DSFLG_OPT_DISP_ID =         0x40000000;
+  public static final long DSFLG_DISP_ID =             0x200000000L;
+  public static final long DSFLG_OPT_DISP_ID =         0x100000000L;
 
-  public static final int DSFLG_ADDR =                0x20000000;
-  public static final int DSFLG_ADDR_LEAD_PLACE =     0x10000000;
-  public static final int DSFLG_ADDR_TRAIL_PLACE =    0x08000000;
-  public static final int DSFLG_ADDR_TRAIL_PLACE2 =   0x04000000;
-  public static final int DSFLG_ADDR_NO_IMPLIED_APT = 0x02000000;
+  public static final long DSFLG_ADDR =                0x80000000L;
+  public static final long DSFLG_ADDR_LEAD_PLACE =     0x40000000L;
+  public static final long DSFLG_ADDR_TRAIL_PLACE =    0x20000000L;
+  public static final long DSFLG_ADDR_TRAIL_PLACE2 =   0x10000000L;
+  public static final long DSFLG_ADDR_NO_IMPLIED_APT = 0x08000000L;
 
-//  public static final int DSFLG_STATE =               0x01000000;
-  public static final int DSFLG_OPT_STATE =           0x00800000;
+  public static final long DSFLG_APT =                 0x04000000L;
+  public static final long DSFLG_OPT_APT =             0x02000000L;
 
-  public static final int DSFLG_BAD_CALL =            0x00400000;
-//  public static final int DSFLG_OPT_BAD_CALL =        0x00200000;
+//  public static final long DSFLG_STATE =               0x01000000L;
+  public static final long DSFLG_OPT_STATE =           0x00800000L;
 
-  public static final int DSFLG_BAD_PLACE =           0x00100000;
-  public static final int DSFLG_OPT_BAD_PLACE =       0x00080000;
+  public static final long DSFLG_BAD_CALL =            0x00400000L;
+//  public static final long DSFLG_OPT_BAD_CALL =        0x00200000L;
 
-  public static final int DSFLG_X =                   0x00040000;
-  public static final int DSFLG_OPT_X =               0x00020000;
+  public static final long DSFLG_BAD_PLACE =           0x00100000L;
+  public static final long DSFLG_OPT_BAD_PLACE =       0x00080000L;
 
-  public static final int DSFLG_NAME =                0x00010000;
-  public static final int DSFLG_OPT_NAME =            0x00008000;
+  public static final long DSFLG_X =                   0x00040000L;
+  public static final long DSFLG_OPT_X =               0x00020000L;
 
-  public static final int DSFLG_PHONE =               0x00004000;
-  public static final int DSFLG_OPT_PHONE =           0x00002000;
+  public static final long DSFLG_NAME =                0x00010000L;
+  public static final long DSFLG_OPT_NAME =            0x00008000L;
 
-  public static final int DSFLG_CODE =                0x00001000;
-  public static final int DSFLG_OPT_CODE =            0x00000800;
+  public static final long DSFLG_PHONE =               0x00004000L;
+  public static final long DSFLG_OPT_PHONE =           0x00002000L;
 
-  public static final int DSFLG_UNIT1 =               0x00000400;
-  public static final int DSFLG_OPT_UNIT1 =           0x00000200;
+  public static final long DSFLG_CODE =                0x00001000L;
+  public static final long DSFLG_OPT_CODE =            0x00000800L;
 
-  public static final int DSFLG_ID =                  0x00000100;
-  public static final int DSFLG_OPT_ID =              0x00000080;
+  public static final long DSFLG_UNIT1 =               0x00000400L;
+  public static final long DSFLG_OPT_UNIT1 =           0x00000200L;
 
-  public static final int DSFLG_TIME =                0x00000040;
-  public static final int DSFLG_OPT_TIME =            0x00000020;
+  public static final long DSFLG_ID =                  0x00000100L;
+  public static final long DSFLG_OPT_ID =              0x00000080L;
+
+  public static final long DSFLG_TIME =                0x00000040L;
+  public static final long DSFLG_OPT_TIME =            0x00000020L;
 
   // Some special cases
   // Process empty delimited fields instead of ignoring them
   // this should be the default, but is not for historical reasons
-  public static final int DSFLG_PROC_EMPTY_FLDS =     0x00000002;
+  public static final long DSFLG_PROC_EMPTY_FLDS =     0x00000002L;
 
   // In undelimited format, not info fileds, evertyhing goes into call description
-  public static final int DSFLG_NO_INFO =             0x00000001;
+  public static final long DSFLG_NO_INFO =             0x00000001L;
 
   // Old flags are a complicated mess, which is why they are depreciated
 
   // Flag indicating  a leading dispatch name is required
-  public static final int DSFLAG_DISPATCH_ID = 0x01;
+  public static final long DSFLAG_DISPATCH_ID = 0x01L;
 
   // Flag indicating a leading dispatch name is optional
-  public static final int DSFLAG_OPT_DISPATCH_ID = 0x02;
+  public static final long DSFLAG_OPT_DISPATCH_ID = 0x02L;
 
 
   // Flag indicating that the call ID is optional
-  public static final int DSFLAG_ID_OPTIONAL = 0x08;
+  public static final long DSFLAG_ID_OPTIONAL = 0x08L;
 
   // Flag indicating a place name may precede the address
   // And Name/Phone number follows address
-  public static final int DSFLAG_LEAD_PLACE = 0x010;
+  public static final long DSFLAG_LEAD_PLACE = 0x010L;
 
   // Flag indicating cross street information follows the address instead of
   // the usual name & phone
-  public static final int DSFLAG_FOLLOW_CROSS = 0x20;
+  public static final long DSFLAG_FOLLOW_CROSS = 0x20L;
 
   // Flag indicating address will be followed by cross street, and then the usual
   // name & phone
-  public static final int DSFLAG_CROSS_NAME_PHONE = 0x40;
+  public static final long DSFLAG_CROSS_NAME_PHONE = 0x40L;
 
   // Flag indicating there is no name and phone following the address
-  public static final int DSFLAG_NO_NAME_PHONE = 0x80;
+  public static final long DSFLAG_NO_NAME_PHONE = 0x80L;
 
   // Flag indicating we should not check for implied non-numeric apartments
-  public static final int DSFLAG_NO_IMPLIED_APT = 0x100;
+  public static final long DSFLAG_NO_IMPLIED_APT = 0x100L;
 
   // Flag indicating call description follows address
-  public static final int DSFLAG_FOLLOW_CALL = 0x200;
+  public static final long DSFLAG_FOLLOW_CALL = 0x200L;
 
   // Flag indicating optional unit designation precedes call ID
-  public static final int DSFLAG_LEAD_UNIT = 0x400;
+  public static final long DSFLAG_LEAD_UNIT = 0x400L;
 
   // Flag indicating place name can be in front of and behind the address
-  public static final int  DSFLAG_BOTH_PLACE = 0x800;
+  public static final long  DSFLAG_BOTH_PLACE = 0x800L;
 
   // Flag indicating there is no place name
-  public static final int DSFLAG_NO_PLACE = 0x1000;
+  public static final long DSFLAG_NO_PLACE = 0x1000L;
 
   // Flag indicating a place follows the address, even in field delimited mode
   // This is the default behavior in space delimited mode
-  public static final int DSFLAG_TRAIL_PLACE = 0x2000;
+  public static final long DSFLAG_TRAIL_PLACE = 0x2000L;
 
   // Flag indicating a state may follow the address
-  public static final int DSFLAG_STATE = 0x4000;
+  public static final long DSFLAG_STATE = 0x4000L;
 
   // Flag indicating time is optional :(
-  public static final int DSFLAG_TIME_OPTIONAL = 0x8000;
+  public static final long DSFLAG_TIME_OPTIONAL = 0x8000L;
 
   // Flag indicating place field following address is a place field
-  public static final int DSFLAG_PLACE_FOLLOWS = 0x10000;
+  public static final long DSFLAG_PLACE_FOLLOWS = 0x10000L;
 
   // Flag indicating that we will never have a call ID field
-  public static final int DSFLAG_NO_ID = 0x20000;
+  public static final long DSFLAG_NO_ID = 0x20000L;
 
 
   private boolean parseFieldOnly;
 
-  private int flags;
+  private long flags;
 
   private Pattern callCodePtn = null;
   private Pattern callPtn = null;
@@ -173,19 +176,19 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this(null, cityList, defCity, defState, DSFLAG_DISPATCH_ID, null);
   }
 
-  public DispatchSouthernParser(String[] cityList, String defCity, String defState, int flags) {
+  public DispatchSouthernParser(String[] cityList, String defCity, String defState, long flags) {
     this(null, cityList, defCity, defState, flags, null);
   }
 
-  public DispatchSouthernParser(String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
+  public DispatchSouthernParser(String[] cityList, String defCity, String defState, long flags, String unitPtnStr) {
     this(null, cityList, defCity, defState, flags, unitPtnStr);
   }
 
-  public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags) {
+  public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, long flags) {
     this(callSet, cityList, defCity, defState, flags, null);
   }
 
-  public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, int flags, String unitPtnStr) {
+  public DispatchSouthernParser(CodeSet callSet, String[] cityList, String defCity, String defState, long flags, String unitPtnStr) {
     super(cityList, defCity, defState, "");
     this.parseFieldOnly = false;
     setupCallList(callSet);
@@ -200,6 +203,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (!chkFlag(DSFLG_ADDR_NO_IMPLIED_APT)) sb.append("6");
     sb.append(chkFlag(DSFLG_ADDR_LEAD_PLACE) ? 'P' : 'X');
     if (chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) sb.append("P");
+    appendTerm(sb, "APT", DSFLG_APT, DSFLG_OPT_APT);
     if (chkFlag(DSFLG_OPT_STATE)) sb.append(" ST?");
     if (chkFlag(DSFLG_BAD_CALL)) sb.append(" CALL!");
     else if (chkFlag(DSFLG_BAD_PLACE | DSFLG_OPT_BAD_PLACE)) {
@@ -253,7 +257,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
    * @param flags flags to be converted
    * @return properly converted flags
    */
-  private static int convertFlags(int flags) {
+  private static long convertFlags(long flags) {
 
     // If new constructor flags, nothing needs to be done
     if ((flags & DSFLG_ADDR) != 0) return flags;
@@ -296,7 +300,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     return nflgs;
   }
 
-  private void appendTerm(StringBuilder sb, String term, int reqFlag, int optFlag) {
+  private void appendTerm(StringBuilder sb, String term, long reqFlag, long optFlag) {
     if (chkFlag(reqFlag | optFlag)) {
       sb.append(' ');
       sb.append(term);
@@ -304,11 +308,11 @@ public class DispatchSouthernParser extends FieldProgramParser {
     }
   }
 
-  private boolean chkFlag(int mask) {
+  private boolean chkFlag(long mask) {
     return chkFlag(flags, mask);
   }
 
-  private static boolean chkFlag(int flags, int mask) {
+  private static boolean chkFlag(long flags, long mask) {
     return ((flags & mask) != 0);
   }
 
