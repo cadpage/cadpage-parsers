@@ -8,6 +8,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WAJeffersonCountyParser extends GroupBestParser {
 
   public WAJeffersonCountyParser() {
-    super(new WAJeffersonCountyAParser(), new WAJeffersonCountyBParser());
+    super(new WAJeffersonCountyAParser(), new WAJeffersonCountyBParser(),
+          new WAJeffersonCountyCParser());
   }
 }
