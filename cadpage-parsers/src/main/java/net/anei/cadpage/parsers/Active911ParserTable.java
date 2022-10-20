@@ -597,6 +597,7 @@ public class Active911ParserTable {
       "US/IN/CataractVFD",                "INOwenCounty",
       "US/IN/Chesterfield",               "INMadisonCountyC",
       "US/IN/ClayCoCAD",                  "INClayCounty",
+      "US/IN/Daleville",                  "INDelawareCounty",
       "US/IN/DavidsonCounty",             "INBrownCounty",
       "US/IN/DaviessCounty",              "INDaviessCounty",
       "US/IN/DecaturTwp",                 "INMarionCountyB",
