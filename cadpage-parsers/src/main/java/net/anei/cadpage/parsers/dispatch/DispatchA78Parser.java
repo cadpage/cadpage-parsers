@@ -17,8 +17,8 @@ public class DispatchA78Parser extends FieldProgramParser {
 
   public DispatchA78Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL! ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
-                 "( SELECT/RR Additional_Location_Information:INFO/N! INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? )");
+          "( Call_Type:CALL! | Call_Types:CALL! ) ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
+                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? )");
     this.callCodes = callCodes;
   }
 
