@@ -13,7 +13,7 @@ public class WVHampshireCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "hamp911@hardynet.com";
+    return "hamp911@hardynet.com,hamp911cad@hampshirewv.com";
   }
 
   @Override
