@@ -16,7 +16,7 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
 
   TXUTHealthEastTexasParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "PRI ID! TIME INFO NAME NAME/CS? ADDR/Z CITY APT APT! INFO/N+", true);
+          "PRI ID! TIME CALL/SDS NAME NAME/CS? ADDR/Z CITY PLACE APT! INFO/N+", true);
   }
 
   @Override
@@ -31,6 +31,13 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
   }
 
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\nText STOP");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
   }
@@ -40,6 +47,7 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
     if (name.equals("PRI")) return new MyPriorityField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
 
@@ -47,8 +55,16 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf(' ');
-      if (pt >= 0) field = field.substring(0, pt);
+      if (pt >= 0) {
+        data.strCall = field.substring(pt+1).trim();
+        field = field.substring(0, pt);
+      }
       super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PRI CALL";
     }
   }
 
@@ -58,6 +74,14 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
     public void parse(String field, Data data) {
       Matcher match = APT_PTN.matcher(field);
       if (match.matches()) field =  match.group(1);
+      super.parse(field, data);
+    }
+  }
+
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("<Unknown>")) return;
       super.parse(field, data);
     }
   }
