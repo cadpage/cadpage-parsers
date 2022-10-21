@@ -17,7 +17,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ANNES", "ANDREWS", "JAMES", "JOHN", "JOSEPHS", "LUKES");
-    setupDoctorNames("KAHN", "HSU", "KAMDAR", "KLEINER", "SINGH");
+    setupDoctorNames("KAHN", "HSU", "KAMDAR", "KLEINER", "PATEL'S", "SINGH");
     removeWords("LA", "-");
   }
 
@@ -34,9 +34,9 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
   private static final Pattern VIP_PTN = Pattern.compile(" +\\*+_VIP_\\*+[: ]+");
   private static final String[] KEYWORDS = new String[]{"TYPE", "LOC", "CROSS", "CODE", "TIME", "EVENT#", "AGENCY"};
   private static final Pattern CALL_ADDR_SPLIT_PTN = Pattern.compile(" +: +| {2,}");
-  private static final Pattern APT_PTN = Pattern.compile("(.*)[: ](?:APT|ROOM|UNIT|STE\\b|SUITE|#)(?!S) *#?([-A-Z0-9]+?)[- ]*");
+  private static final Pattern APT_PTN = Pattern.compile("(.*?)[,: ]+(?:APT|ROOM|UNIT|STE\\b|SUITE|#)(?!S) *#?([-A-Z0-9]+?)[- ]*");
   private static final Pattern PLACE_MARK_PTN = Pattern.compile(": ?@|@|:|;");
-  private static final Pattern ADDR_CROSS_PTN = Pattern.compile("(.*)(?:[ :][SC]/S(?: ?=)?| X-| CX )(.*?)(?:\\.{2,} *(.*))?");
+  private static final Pattern ADDR_CROSS_PTN = Pattern.compile("(.*?)[,: ]+(?:[SC]/S(?: ?=)?|X-|CX )(.*?)(?:\\.{2,} *(.*))?");
   private static final Pattern SPECIAL_PTN = Pattern.compile("(.*)(\\*\\*\\*_[_A-Z]+_\\*\\*\\*):?(.*)");
   private static final Pattern TRAIL_MARK_PTN = Pattern.compile(" : *@?");
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("#?(\\d+[A-Z]?|[A-Z])");
@@ -106,6 +106,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
     data.strCross = stripFieldEnd(props.getProperty("CROSS", ""), "/");;
 
     String sAddress = props.getProperty("LOC");
+    if (sAddress != null) sAddress = stripFieldEnd(sAddress, ",");
     if (sAddress == null || sAddress.startsWith("/")) {
       if (sAddress != null) {
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, sAddress.substring(1).trim(), data);
@@ -180,7 +181,7 @@ public class NYSuffolkCountyAParser extends SmartAddressParser {
             data.strApt = append(match.group(2).trim(), "-", data.strApt);
           }
         }
-        
+
         // If we already have a city, just parse the address
         if (!data.strCity.isEmpty()) {
           parseAddress(sAddress, data);
