@@ -16,7 +16,7 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
 
   TXUTHealthEastTexasParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "PRI ID! TIME EMPTY NAME NAME/CS? ADDR/Z CITY EMPTY APT! INFO/N+", true);
+          "PRI ID! TIME INFO NAME NAME/CS? ADDR/Z CITY APT APT! INFO/N+", true);
   }
 
   @Override
