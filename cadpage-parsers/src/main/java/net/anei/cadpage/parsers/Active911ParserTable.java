@@ -577,6 +577,7 @@ public class Active911ParserTable {
       "US/IL/RedCenter",                  "ILLakeCountyD",
       "US/IL/RobinsonPolice",             "ILCrawfordCounty",
       "US/IL/RosemontPSD",                "ILCookCountyF",
+      "US/IL/SchuylerCounty",             "ILSchuylerCounty",
       "US/IL/ShelbyCounty",               "ILShelbyCounty",
       "US/IL/SheldonDistrict",            "ILIroquoisCounty",
       "US/IL/Skokie",                     "ILCookCountyB",

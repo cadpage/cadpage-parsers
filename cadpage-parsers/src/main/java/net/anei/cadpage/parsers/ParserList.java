@@ -481,6 +481,7 @@ public class ParserList {
               ,"ILRichlandCounty"               ,"Richland County, IL"
               ,"ILRockIslandCounty"             ,"Rock Island County, IL"
               ,"ILSangamonCounty"               ,"Sangamon County, IL"
+              ,"ILSchuylerCounty"               ,"Schuyler County, IL"
               ,"ILShelbyCounty"                 ,"Shelby County, IL"
               ,"ILStarkCounty"                  ,"Stark County, IL"
               ,"ILStClairCounty"                ,"St Clair County, IL"
