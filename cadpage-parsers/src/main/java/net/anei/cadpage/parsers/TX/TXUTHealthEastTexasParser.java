@@ -30,10 +30,22 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
     return "cadpage@uthet.com";
   }
 
+  private static final Pattern NH_PTN = Pattern.compile("\\bN/H\\b");
+  private static final Pattern SP_MARK_PTN = Pattern.compile("\\.{3} *");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf("\nText STOP");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+
+    body = body.replace("\nText STOP to opt out", "");
+
+    // Nursing home  abbreviation messes up parsing
+    body = NH_PTN.matcher(body).replaceAll("NH");
+
+    // Three periods mark where a long alert message was split.  We merge them back together with
+    // a space, but the three periods are still there
+    body = stripFieldEnd(body, "...");
+    body = SP_MARK_PTN.matcher(body).replaceAll(" ");
+
     return super.parseMsg(body, data);
   }
 
