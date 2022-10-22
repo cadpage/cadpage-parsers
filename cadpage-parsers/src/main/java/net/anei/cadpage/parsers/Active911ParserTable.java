@@ -1274,6 +1274,7 @@ public class Active911ParserTable {
       "US/MT/ParkCounty",                 "MTParkCounty",
       "US/MT/RavalliCounty",              "MTRavalliCounty",
       "US/MT/StillwaterCounty",           "MTStillwaterCounty",
+      "US/MT/StPetersHospital",           "MTLewisandClarkCountyA",
       "US/MT/WYSAR",                      "MTGallatinCounty",
       "US/NC/AlamanceCounty",             "NCAlamanceCounty",
       "US/NC/AlexanderCounty",            "NCAlexanderCounty",
