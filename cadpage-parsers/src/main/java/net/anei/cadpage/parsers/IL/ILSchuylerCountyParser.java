@@ -3,9 +3,9 @@ package net.anei.cadpage.parsers.IL;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA80Parser;
 
-public class ILSchulyerCountyParser extends DispatchA80Parser {
+public class ILSchuylerCountyParser extends DispatchA80Parser {
 
-  public ILSchulyerCountyParser() {
+  public ILSchuylerCountyParser() {
     super("SCHUYLER COUNTY", "IL");
   }
 
