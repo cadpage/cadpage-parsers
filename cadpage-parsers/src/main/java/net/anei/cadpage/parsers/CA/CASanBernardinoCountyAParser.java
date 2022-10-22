@@ -736,6 +736,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "BURN-D4f",   "Burn Victim-diff speaking - fire present",
       "BURN-D4w",   "Burn Victim-diff speaking - fireworks",
       "CA",         "Commercial Alarm",
+      "CA-",        "Commercial Alarm",
       "CARE TRANSP","CARE Transport",
       "CHOKE",      "Choking Victim",
       "CHOKE-A1",   "Subject no longer choking",
