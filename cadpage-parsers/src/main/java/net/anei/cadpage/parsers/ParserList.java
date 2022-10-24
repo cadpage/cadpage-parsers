@@ -134,6 +134,7 @@ public class ParserList {
               ,"ALJacksonCounty"                ,"Jackson County, AL"
               ,"ALJeffersonCounty"              ,"Jefferson County, AL"
               ,"ALLauderdaleCounty"             ,"Lauderdale County, AL"
+              ,"ALLawrenceCounty"               ,"Lawrence County, AL"
               ,"ALLeeCounty"                    ,"Lee County, AL"
               ,"ALLimestoneCounty"              ,"Limestone County, AL"
               ,"ALMadisonCounty"                ,"Madison County, AL"
