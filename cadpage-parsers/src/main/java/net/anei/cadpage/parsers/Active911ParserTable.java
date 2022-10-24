@@ -1908,6 +1908,7 @@ public class Active911ParserTable {
       "US/PA/GladwyneFire",               "PAMontgomeryCountyD",
       "US/PA/GlenRock",                   "PAYorkCountyD",
       "US/PA/GoodFellowshipAmbulance",    "PAChesterCountyO",
+      "US/PA/GoodwillAmbulance",          "PAChesterCountyP",
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HawthornFD",                 "PAArmstrongCountyB",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
