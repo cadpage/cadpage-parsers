@@ -3,11 +3,12 @@ package net.anei.cadpage.parsers.IL;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 public class ILLakeCountyParser extends GroupBestParser {
-  
+
   public ILLakeCountyParser() {
-    super(new ILLakeCountyAParser(), 
+    super(new ILLakeCountyAParser(),
           new ILLakeCountyBParser(),
-          new ILLakeCountyDParser());
+          new ILLakeCountyDParser(),
+          new ILLakeCountyEParser());
 
   }
 }

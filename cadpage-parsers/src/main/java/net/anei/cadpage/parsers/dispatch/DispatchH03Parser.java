@@ -29,6 +29,7 @@ public class DispatchH03Parser extends FieldProgramParser {
                          "| INCIDENT:EMPTY! Inc_Type:CODE! Mod_Circum:CALL/SDS! Priority:PRI! Area:MAP! County:CITY! " +
                             "LOCATION:EMPTY! Loc_Name:PLACE! Loc_Descr:INFO! Location:ADDR! Municipality:CITY! Building:APT! Floor:APT! Apt/Unit:APT! Cross_Strs:X! " +
                             "PREMISE_HAZARD:EMPTY! INFO/N+ COMMENTS:EMPTY! INFO/N+ UNITS_DISPATCHED:EMPTY! UNIT/C+ Caller:NAME! Phone:PHONE! Created:TIMEDATE! Inc_#:ID " +
+                         "| Location:ADDR! Loc_Name:PLACE! City:CITY! Cross_Strs:X! Beat:MAP! Map_Book:MAP/L! Inc_#:ID! Inc_Type:CALL! Mod_Circum:CALL/SDS! UNITS_DISPATCHED:EMPTY! UNIT! COMMENTS:EMPTY! INFO/N+ PREMISE_HAZARD:ALERT DASHES! " +
                          ")");
   }
 
@@ -49,7 +50,13 @@ public class DispatchH03Parser extends FieldProgramParser {
     boolean copy = false;
     String lastFld = null;
     for (String fld : flds) {
-      if (fld.equals("UNITS DISPATCHED:")) copy = true;
+      if (fld.equals("UNITS DISPATCHED:")) {
+        copy = true;
+        if (lastFld != null) {
+          fldList.add(lastFld);
+          lastFld = null;
+        }
+      }
       if (fld.startsWith("---")) {
         if (lastFld != null) {
           fldList.add(lastFld);
