@@ -17,7 +17,7 @@ public class MDTalbotCountyBParser extends DispatchA48Parser {
   }
 
   public String getFilter() {
-    return "@talbotdes.org,4702193527";
+    return "@talbotdes.org,dispatch@ccso.us,4702193527";
   }
 
   private static final Pattern PREFIX = Pattern.compile("([ A-Za-z0-9]+)(?: Page - Dispatch| - Page)(?=:)");
