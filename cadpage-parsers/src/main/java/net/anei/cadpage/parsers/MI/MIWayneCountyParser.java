@@ -5,7 +5,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 public class MIWayneCountyParser extends DispatchH03Parser {
 
   public MIWayneCountyParser() {
-    super("WAYNE COUNTY", "MI");
+    this("WAYNE COUNTY", "MI");
+  }
+
+  MIWayneCountyParser(String defCity, String defState) {
+    super(defCity, defState);
   }
 
   @Override
