@@ -32,7 +32,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD:(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Za-z]+))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
+  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD:(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?:, *([A-Za-z ]+))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
