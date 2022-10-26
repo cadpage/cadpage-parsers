@@ -38,6 +38,8 @@ public class TXUTHealthEastTexasParser extends DispatchProQAParser {
 
     body = body.replace("\nText STOP to opt out", "");
 
+    if (body.endsWith("...")) data.expectMore = true;
+
     // Nursing home  abbreviation messes up parsing
     body = NH_PTN.matcher(body).replaceAll("NH");
 
