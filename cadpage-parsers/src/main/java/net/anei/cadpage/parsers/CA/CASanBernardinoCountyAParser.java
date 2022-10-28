@@ -1135,6 +1135,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "FAR",        "Fire Alarm with Reset",
       "FC",         "Structure Fire: Commercial",
       "FCL",        "Commercial Fire: Low Response",
+      "FCL-Structu","Commercial Fire: Low Response",
       "FD",         "Dumpster Fire",
       "FG",         "Vegetation Fire",
       "FGL",        "Small Vegetation Fire",
