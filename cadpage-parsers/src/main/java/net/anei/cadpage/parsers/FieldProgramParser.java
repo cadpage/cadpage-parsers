@@ -2790,6 +2790,7 @@ public class FieldProgramParser extends SmartAddressParser {
    * Field containing address, city and optional state/zip code
    */
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})|0))?|(\\d{5})");
+  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   public class AddressCityStateField extends AddressField {
 
     private Field cityField = new CityField();
@@ -2826,6 +2827,13 @@ public class FieldProgramParser extends SmartAddressParser {
             zip = match.group(3);
           }
           city = p.getLastOptional(',');
+          if (data.strState.isEmpty() && zip != null) {
+            match = STATE_PTN.matcher(city);
+            if (match.matches()) {
+              data.strState = city;
+              city = p.getLastOptional(',');
+            }
+          }
         }
         cityField.parse(city, data);
         field = p.get();
