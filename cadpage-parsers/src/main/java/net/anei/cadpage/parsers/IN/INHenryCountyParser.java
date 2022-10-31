@@ -10,41 +10,32 @@ import net.anei.cadpage.parsers.FieldProgramParser;
  */
 public class INHenryCountyParser extends FieldProgramParser {
 
-  private static final Pattern DELIM = Pattern.compile("\\|+");
-
   public INHenryCountyParser() {
     super("HENRY COUNTY", "IN",
-          "CALL ADDRCITY! INFO/N+");
+          "CALL ADDRCITY! X GPS UNIT ID INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "hcradio@emgsvcs.net,@henryco911.org,@henrycounty.in.gov";
+    return "active911@henrycounty.in.gov";
   }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern DELIM = Pattern.compile("\\|");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    if (subject.length() > 0) {
-      subject = stripFieldStart(subject, "DISPATCH:");
-      subject = stripFieldEnd(subject, "(no subject)");
-      subject = stripFieldStart(subject, "[");
-      subject = stripFieldEnd(subject, "]");
-      subject = stripFieldEnd(subject, "riprun");
-      data.strSource = subject;
-    }
-
-    return parseFields(DELIM.split(body), data);
-  }
-
-  @Override
-  public String getProgram() {
-    return "SRC " + super.getProgram();
+    if (!subject.contains("Active 911") && !subject.equals("DISREGARD")) return false;
+    return parseFields(DELIM.split(body, -1), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new CallField("[- A-Z]+", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -54,26 +45,27 @@ public class INHenryCountyParser extends FieldProgramParser {
 
     @Override
     public void parse(String field, Data data) {
-      int pt = field.lastIndexOf(':');
-      if (pt >= 0) {
-        data.strCity = field.substring(pt+1).trim();
-        field = field.substring(0, pt).trim();
-      }
-      super.parse(field,  data);
+      Parser p = new Parser(field);
+      data.strCity = p.getLastOptional(':');
+      data.strPlace = p.getLastOptional(';');
+      super.parse(p.get(), data);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CITY";
+      return super.getFieldNames() + " PLACE CITY";
     }
   }
 
-  private static final Pattern INFO_LAT_LON_PTN = Pattern.compile(" *\\b(?:Lat|Lon): *");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d .*:");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      field = INFO_LAT_LON_PTN.matcher(field).replaceAll(" ").trim();
-      super.parse(field, data);
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        if (INFO_JUNK_PTN.matcher(line).matches()) continue;
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
     }
   }
 }

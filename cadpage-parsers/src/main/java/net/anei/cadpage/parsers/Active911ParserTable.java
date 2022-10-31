@@ -620,6 +620,7 @@ public class Active911ParserTable {
       "US/IN/HancockCounty",              "INHancockCounty",
       "US/IN/HarrisonCounty",             "INHarrisonCounty",
       "US/IN/HendricksCounty",            "INHendricksCounty",
+      "US/IN/HenryCounty",                "INHenryCounty",
       "US/IN/HowardCounty",               "INHowardCountyC",
       "US/IN/HowardCountyEmergencyManagement","INHowardCountyB",
       "US/IN/Indianapolis",               "INMarionCountyB",
