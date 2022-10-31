@@ -49,10 +49,12 @@ public class DispatchA55Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern CITY_JUNK_PTN = Pattern.compile("\\(.*?\\)");
   private static final Pattern CITY_ST_PTN = Pattern.compile("([A-Z][ A-Za-z]+), *([A-Z]{2})(?:[\\( ,]+.*)?");
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
+      field = CITY_JUNK_PTN.matcher(field).replaceAll("").trim();
       Matcher match = CITY_ST_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
