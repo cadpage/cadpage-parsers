@@ -6,12 +6,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Dallas County, TX
  */
 public class TXDallasCountyParser extends GroupBestParser {
-  
+
   public TXDallasCountyParser() {
-    super(new TXDallasCountyAParser(), new TXDallasCountyBParser(), 
+    super(new TXDallasCountyAParser(), new TXDallasCountyBParser(),
           new TXDallasCountyCParser(), new TXDallasCountyDParser(),
-          new TXDallasCountyEParser(), new TXDallasCountyFParser(),
-          new TXDallasCountyGParser());
+          new TXDallasCountyEParser(), new TXDallasCountyFParser());
   }
 
   static String[] CITY_LIST = new String[]{
@@ -19,7 +18,7 @@ public class TXDallasCountyParser extends GroupBestParser {
       "DALLAS CO",
 
       //cities
-      
+
       "BALCH SPRINGS",
       "CEDAR HILL",
       "CARROLLTON",
@@ -50,7 +49,7 @@ public class TXDallasCountyParser extends GroupBestParser {
       "WYLIE",
 
       //towns
-      
+
       "ADDISON",
       "HIGHLAND PARK",
       "SUNNYVALE",
@@ -58,12 +57,12 @@ public class TXDallasCountyParser extends GroupBestParser {
       //Unincorporated community
 
       "SAND BRANCH",
-      
-      
+
+
       // Collin County
       "MURPHY"
-      
-      
+
+
 
   };
 }

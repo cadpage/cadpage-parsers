@@ -2125,7 +2125,7 @@ public class Active911ParserTable {
       "US/TN/WhiteCounty",                "TNWhiteCounty",
       "US/TN/WilliamsonCounty",           "TNWilliamsonCounty",
       "US/TX/Acadian",                    "TXAcadianAmbulance",
-      "US/TX/AddisonFD",                  "TXDallasCountyG",
+      "US/TX/AddisonFD",                  "TXDallasCountyC",
       "US/TX/AngletonPD",                 "TXAngleton",
       "US/TX/AransasCounty",              "TXAransasCounty",
       "US/TX/ArcherCounty",               "TXArcherCounty",

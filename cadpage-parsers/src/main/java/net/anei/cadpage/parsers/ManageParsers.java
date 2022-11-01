@@ -209,7 +209,8 @@ public class ManageParsers {
         "SDMinnehahaCountyC", "CTMiddlesexCounty",       // 11/22/2021 Active911 oops
         "OHHudson",           "OHSummitCounty",          // 01/16/2022
         "MSHernando",         "MSDesotoCounty",          // 02/21/2022
-        "NCLumberton",        "NCRobesonCounty"          // 10/18/2022
+        "NCLumberton",        "NCRobesonCounty",         // 10/18/2022
+        "TXDallasCountyG",    "TXDallasCountyC"         // 11/01/2022
   });
 
 }
