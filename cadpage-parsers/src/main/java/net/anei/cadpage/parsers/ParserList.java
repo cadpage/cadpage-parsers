@@ -1449,6 +1449,7 @@ public class ParserList {
               ,"PAPerryCounty"                  ,"Perry County, PA"
               ,"PAPhiladelphia"                 ,"Philadelphia, PA"
               ,"PAPikeCounty"                   ,"Pike County, PA"
+              ,"PAPotterCounty"                 ,"Potter County, PA"
               ,"PASchuylkillCounty"             ,"Schuylkill County, PA"
               ,"PASnyderCounty"                 ,"Snyder County, PA"
               ,"PASomersetCounty"               ,"Somerset County, PA"

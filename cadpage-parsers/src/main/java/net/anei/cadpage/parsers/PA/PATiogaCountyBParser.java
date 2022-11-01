@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PATiogaCountyBParser extends FieldProgramParser {
 
   public PATiogaCountyBParser() {
-    super("TIOGA COUNTY", "PA",
+    this("TIOGA COUNTY", "PA");
+  }
+
+  PATiogaCountyBParser(String defCity, String defState) {
+    super(defCity, defState,
           "DISPATCHED:DATETIME? CODE_CALL! ADDRCITY! Cross_Streets:X? http:GPS!");
   }
 
@@ -56,6 +60,7 @@ public class PATiogaCountyBParser extends FieldProgramParser {
   private class MyCodeCallField extends Field {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals(":")) return;
       int pt = field.indexOf(" : ");
       if (pt < 0) abort();
       data.strCode = field.substring(0,pt).trim();
@@ -71,6 +76,7 @@ public class PATiogaCountyBParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
       field = stripFieldStart(field, "U:");
       String[] parts = field.split(",", -1);
       if (parts.length != 3) abort();
