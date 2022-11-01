@@ -10,7 +10,7 @@ public class NJMonmouthCountyGParser extends DispatchA32Parser {
 
   @Override
   public String getFilter() {
-    return "howellnjpolice@gmail.com";
+    return "howellnjpolice@gmail.com,paging@belmarpd.com";
   }
 
 }

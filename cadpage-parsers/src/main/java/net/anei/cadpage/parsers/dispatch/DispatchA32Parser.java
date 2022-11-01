@@ -33,7 +33,7 @@ public class DispatchA32Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.endsWith("Page")) return false;
+    if (!subject.endsWith("Page") && !subject.endsWith("Dispatch")) return false;
     addressPlaceFields.clear();
     String[] flds = body.split("\n");
     setSelectValue("");
