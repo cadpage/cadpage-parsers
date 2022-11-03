@@ -9,7 +9,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   public COWeldCountyBParser() {
     super("WELD COUNTY", "CO",
-          "PLACE ADDR CITY APT UNIT CALL ID INFO GPS1/d GPS2/d EMPTY! END");
+          "( EMPTY ADDR CITY PLACE UNIT CALL ID | ) INFO GPS1/d GPS2/d EMPTY! END");
   }
 
   @Override
@@ -22,14 +22,15 @@ public class COWeldCountyBParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final String MARKER = "WELD COUNTY: Automated message from Dispatch:";
-
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith(MARKER)) return false;
-    body = body.substring(MARKER.length()).trim();
+    if (!body.startsWith("WELD COUNTY: ")) return false;
+    body = body.replace("WELD COUNTY: ", "");
+    body = stripFieldStart(body, "Automated message from Dispatch:");
+
     int pt = body.indexOf("\nText STOP");
     if (pt >= 0) body = body.substring(0,pt).trim();
+
     return parseFields(body.split("\\|", -1), data);
   }
 
