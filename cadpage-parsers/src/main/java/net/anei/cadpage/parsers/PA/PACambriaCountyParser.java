@@ -17,7 +17,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
 
   public PACambriaCountyParser() {
     super(CITY_CODES, "CAMBRIA COUNTY", "PA",
-           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Bldg:APT? Cross:X? Fire_Area:MAP? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS? EMPTY+? GPS%");
+           "( Date:DATE | ) ( Time:TIME! Nature:CALL! Add:ADDR/y! Bldg:PLACE? Cross:X? Fire_Area:MAP? UNIT | DATE:DATE! TIME CALL ADDR/y X UNIT! ) Sta:UNIT/CS? EMPTY+? GPS%");
   }
 
   @Override
@@ -106,10 +106,14 @@ public class PACambriaCountyParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern EMPTY_APT_PTN = Pattern.compile("\\bAPT *-");
   private static final Pattern NOT_CITY_PTN = Pattern.compile(".*EXIT.*");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+
+      field = EMPTY_APT_PTN.matcher((field)).replaceFirst("-");
+
       for (String city : CITY_LIST) {
         int pt = field.length() - city.length();
         if (pt < 0) continue;
