@@ -20,7 +20,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
                                     "| PLACE ( EMPTY PLACE | CITY PLACE | PRI EMPTY | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ( JUNK | JUNK_ST SKIP+? JUNK_END! | APT3 | COVID_ALERT | EMPTY? ( GPS1 GPS2 ID? | ID ( ID/L | GPS1 GPS2 ID/L ) ) X1 ( APT_GPS1 GPS2 | APT3 ) ) " +
                                     ") " +
                          "| SELECT/2 CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
-                         "| APT3 PLACE CALL CALL/CS+? CODE ID ID/L X1 GPS1L GPS2! " +
+                         "| APT3 PLACE? CALL CALL/CS+? CODE ID ID/L X1 GPS1L GPS2! " +
                          ") END");
     addExtendedDirections();
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -57,9 +57,12 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   private static final Pattern START_PAREN_PTN = Pattern.compile("^\\(.*?\\)");
   private static final Pattern TRAIL_TIME_PTN = Pattern.compile("(.*?) +:(\\d\\d:\\d\\d)\\**");
 
+  boolean skipPlace = false;
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
+    skipPlace = false;
     body = body.replace('\n', ' ');
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
@@ -84,26 +87,33 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       return true;
     }
 
-    else if (!subject.isEmpty() && body.startsWith(subject+',')) {
+    else {
+      boolean disregard = body.startsWith("**DISREGARD**");
+      if (disregard) body = body.substring(13).trim();
+      body = stripFieldStart(body, "NORTHWEST ");
+      if (!subject.isEmpty() && body.startsWith(subject+',')) {
 
-      setSelectValue("3");
+        setSelectValue("3");
 
-      data.strSource = subject;
-      body = body.substring(subject.length()+1).trim();
+        data.strSource = subject;
+        body = body.substring(subject.length()+1).trim();
 
-      int pt = body.indexOf("If you receive this alert in error");
-      if (pt >= 0) body = body.substring(0,pt).trim();
+        int pt = body.indexOf("If you receive this alert in error");
+        if (pt >= 0) body = body.substring(0,pt).trim();
 
-      match = TRAIL_TIME_PTN.matcher(body);
-      if (match.matches()) {
-        body = match.group(1);
-        data.strTime = match.group(2);
-      }
-      if (parseBody(body, data)) {
+        match = TRAIL_TIME_PTN.matcher(body);
+        if (match.matches()) {
+          body = match.group(1);
+          data.strTime = match.group(2);
+        }
+        if (parseBody(body, data)) {
 
-        // Intersections duplicate the address in the place field
-        if (data.strAddress.contains("&") && data.strPlace.contains("&")) data.strPlace = "";
-        return true;
+          if (disregard) data.strCall = append("**DISREGARD**", " - ", data.strCall);
+
+          // Intersections duplicate the address in the place field
+          if (data.strAddress.contains("&") && data.strPlace.contains("&")) data.strPlace = "";
+          return true;
+        }
       }
     }
 
@@ -223,6 +233,18 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   }
 
   private class MyPlaceField extends PlaceField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (skipPlace) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
@@ -365,6 +387,17 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
   private static final Pattern ADDR_APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}|[A-Z]");
 
   private void parseAddressField(String sAddr, Data data) {
+
+    String[] parts = sAddr.split(";");
+    if (parts.length == 4) {
+      skipPlace = true;
+      parseAddress(parts[0].trim(), data);
+      data.strApt = parts[1].trim();
+      data.strPlace = parts[2].trim();
+      data.strCity = parts[3].trim();
+      return;
+    }
+
     Matcher match;
     parseAddress(StartType.START_ADDR, FLAG_PAD_FIELD | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, sAddr, data);
     String sPlace = stripFieldStart(getPadField(), "-");;
