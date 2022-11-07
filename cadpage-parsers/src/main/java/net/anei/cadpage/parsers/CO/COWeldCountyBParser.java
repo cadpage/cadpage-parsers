@@ -9,7 +9,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   public COWeldCountyBParser() {
     super("WELD COUNTY", "CO",
-          "( EMPTY ADDR CITY PLACE UNIT CALL ID | ) INFO GPS1/d GPS2/d EMPTY! END");
+          "( EMPTY ADDR CITY PLACE UNIT CALL? ID | ) INFO! GPS1/d GPS2/d EMPTY END");
   }
 
   @Override
@@ -24,7 +24,6 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("WELD COUNTY: ")) return false;
     body = body.replace("WELD COUNTY: ", "");
     body = stripFieldStart(body, "Automated message from Dispatch:");
 
@@ -36,7 +35,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d\\d[A-Z]{3}\\d{6}", true);
+    if (name.equals("ID")) return new IdField("\\d\\d[A-Z]{2,3}\\d{6}|\\d+-\\d+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
