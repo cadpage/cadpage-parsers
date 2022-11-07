@@ -312,6 +312,7 @@ public class Active911ParserTable {
       "US/CO/GarfieldCounty",             "COGarfieldCounty",
       "US/CO/GrandCounty",                "COGrandCountyA",
       "US/CO/GrandCounty2",               "COGrandCountyB",
+      "US/CO/GreeleyFD",                  "COWeldCountyB",
       "US/CO/GunnisonCounty",             "COGunnisonCounty",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
       "US/CO/LaPlataCounty",              "COLaPlataCountyB",
