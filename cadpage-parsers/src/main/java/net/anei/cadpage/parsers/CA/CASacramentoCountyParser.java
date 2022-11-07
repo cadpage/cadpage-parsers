@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.StandardCodeTable;
 
@@ -15,11 +14,8 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  */
 public class CASacramentoCountyParser extends MsgParser {
 
-  private static final Pattern MASTER = Pattern.compile("([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]*,[A-Z0-9]*)\\(([^,\\)]+),([A-Z]+)\\)\\((.*?)(?:\\).*)?");
-
   public CASacramentoCountyParser() {
     super("SACRAMENTO COUNTY", "CA");
-    setFieldList("SRC CODE CALL CH MAP ADDR APT CITY UNIT INFO");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -33,31 +29,54 @@ public class CASacramentoCountyParser extends MsgParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern MASTER1 = Pattern.compile("([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]+)/([A-Z0-9]*,[A-Z0-9]*)\\(([^,\\)]+)(?:,\\.?([A-Z.]*))?\\)\\((.*?)(?:\\).*)?");
+  private static final Pattern MASTER2 = Pattern.compile("/(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)/(\\d)/([^/]*)/([^/]*)/btwn ([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/(.*)~~", Pattern.DOTALL);
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-
-    if (!subject.equalsIgnoreCase("CAD PAGE-Do not reply")) return false;
-
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) {
-      data.msgType = MsgType.GEN_ALERT;
-      data.strSupp = body;
+    Matcher match = MASTER1.matcher(body);
+    if (match.matches()) {
+      setFieldList("SRC CODE CALL CH MAP ADDR APT CITY UNIT INFO");
+      data.strSource = match.group(1);
+      data.strCode = match.group(2);
+      data.strCall = CALL_CODES.getCodeDescription(data.strCode);
+      if (data.strCall == null) data.strCall = data.strCode;
+      data.strChannel = match.group(3);
+      String map = match.group(4);
+      if (!map.equals(",")) data.strMap = map;
+      String addr = match.group(5).replace('.', ' ').trim();
+      addr = stripFieldStart(addr, "W!");
+      parseAddress(addr, data);
+      String city1 = match.group(6);
+      if (city1 != null) {
+        String city2 = CITY_CODES.getProperty(city1);
+        data.strCity = (city2 != null ?  city2 : city1.replace('.', ' '));
+      }
+      data.strUnit = match.group(7).trim().replace("+", "");
       return true;
     }
+    match = MASTER2.matcher(body);
+    if (match.matches()) {
+      setFieldList("DATE TIME PRI CALL PLACE ADDR APT CITY X ID INFO");
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strPriority = match.group(3);
+      data.strCall = match.group(4).trim();
+      String addr = match.group(5).trim();
+      data.strCross = match.group(6).trim();
+      if (!match.group(7).isEmpty()) return false;
+      if (!match.group(8).isEmpty()) return false;
+      if (!match.group(9).isEmpty()) return false;
+      data.strCallId = match.group(10).trim();
+      data.strSupp = match.group(11).trim();
 
-    data.strSource = match.group(1);
-    data.strCode = match.group(2);
-    data.strCall = CALL_CODES.getCodeDescription(data.strCode);
-    if (data.strCall == null) data.strCall = data.strCode;
-    data.strChannel = match.group(3);
-    String map = match.group(4);
-    if (!map.equals(",")) data.strMap = map;
-    String addr = match.group(5).replace('.', ' ').trim();
-    addr = stripFieldStart(addr, "W!");
-    parseAddress(addr, data);
-    data.strCity = convertCodes(match.group(6), CITY_CODES);
-    data.strUnit = match.group(7).trim().replace("+", "");
-    return true;
+      Parser p = new Parser(addr);
+      data.strPlace = p.getOptional('@');
+      data.strCity = convertCodes(p.getLastOptional(','), CITY_CODES);
+      parseAddress(p.get(), data);
+      return true;
+    }
+    return false;
   }
 
   private static final Pattern EW_PTN = Pattern.compile("\\bEW\\b", Pattern.CASE_INSENSITIVE);
@@ -2476,8 +2495,10 @@ public class CASacramentoCountyParser extends MsgParser {
       "COS", "COSUMNES",
       "COU", "COURTLAND",
       "DEL", "DELTA",
+      "EDH", "EL DORADO HILLS",
       "EEG", "EAST ELK GROVE",
       "ELK", "ELK GROVE",
+      "EYO", "WEST SACRAMENTO",
       "FAI", "FAIR OAKS",
       "FOL", "FOLSOM",
       "FRU", "FRUITRIDGE MANOR",
@@ -2493,11 +2514,13 @@ public class CASacramentoCountyParser extends MsgParser {
       "PAC", "PACIFIC",
       "PLA", "PLACER",
       "PLG", "PLEASANT GROVE",
+      "R",   "ISLETON",
       "RCN", "RANCHO NORTH",
       "RCO", "RANCHO CORDOVA",
       "RCS", "RANCHO SOUTH",
       "RDF", "RIVER DELTA",
       "RI",  "RANDALL ISLAND",
+      "RID", "ISLETON",
       "RIO", "RIO LINDA",
       "RMU", "RANCHO MURIETA",
       "SAC", "SACRAMENTO",
