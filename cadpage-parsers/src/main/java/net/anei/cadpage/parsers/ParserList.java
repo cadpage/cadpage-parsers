@@ -1255,6 +1255,7 @@ public class ParserList {
               ,"NDBillingsCounty"               ,"Billings County, ND"
               ,"NDCassCounty"                   ,"Cass County, ND"
               ,"NDDivideCounty"                 ,"Divide County, ND"
+              ,"NDGoldenValleyCounty"           ,"Golden Valley County, ND"
               ,"NDKidderCounty"                 ,"Kidder County, ND"
               ,"NDPierceCounty"                 ,"Pierce County, ND"
               ,"NDRichlandCounty"               ,"Richland County, ND"
