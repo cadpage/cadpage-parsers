@@ -1306,6 +1306,7 @@ public class Active911ParserTable {
       "US/NC/BurkeCounty",                "NCBurkeCounty",
       "US/NC/BurkeCountyOakHill",         "NCBurkeCounty",
       "US/NC/CabarrusCounty",             "NCCabarrusCounty",
+      "US/NC/CabarrusCountySherriff",     "NCCabarrusCounty",
       "US/NC/CaldwellCounty",             "NCCaldwellCounty",
       "US/NC/CarteretCounty",             "NCCarteretCounty",
       "US/NC/CaswellCounty",              "NCCaswellCounty",
