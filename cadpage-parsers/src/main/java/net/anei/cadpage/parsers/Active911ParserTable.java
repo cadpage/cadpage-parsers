@@ -963,6 +963,7 @@ public class Active911ParserTable {
       "US/MD/PrinceGeorgesCountyGlennDale","MDPrinceGeorgesCountyG",
       "US/MD/PrintManager",               "MDAnneArundelCountyAnnapolis",
       "US/MD/QueenAnnesCounty",           "MDQueenAnnesCounty",
+      "US/MD/QueenAnneHillsboro",         "MDCarolineC0unty",
       "US/MD/SaintMarysCounty",           "MDSaintMarysCounty",
       "US/MD/TalbotCounty",               "MDTalbotCounty",
       "US/MD/WashingtonCounty",           "MDWashingtonCounty",
