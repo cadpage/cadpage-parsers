@@ -13,27 +13,27 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class CTNewLondonCountyCParser extends FieldProgramParser {
-  
+
   public CTNewLondonCountyCParser() {
     super(CITY_CODES, "NEW LONDON COUNTY", "CT",
-          "( ID CALL | CALL ID? ) PLACE ( ADDRCITY/Z SRCX TIME " + 
-                                       "| ADDRCITY/Z APT/Z SRCX TIME " + 
-                                       "| ADDR APT CITY MAP_X UNIT DATETIME_INFO " + 
+          "( ID CALL | CALL ID? ) PLACE ( ADDRCITY/Z SRCX TIME " +
+                                       "| ADDRCITY/Z APT/Z SRCX TIME " +
+                                       "| ADDR APT CITY MAP_X UNIT DATETIME_INFO " +
                                        ") INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "Mobiletec@town.groton.ct.us,mobiletec@groton-ct.gov,NexgenAlerts@groton-ct.gov";
+    return "Mobiletec@town.groton.ct.us,mobiletec@groton-ct.gov,NexgenAlerts@groton-ct.gov,CAD_Page@grotonambulance.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n\nDisclaimer");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\\|"), 4, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}", true);
@@ -48,7 +48,7 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -60,21 +60,21 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|STE|SUITE|UNIT)[ #]+", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("APT")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "APT");
@@ -83,14 +83,14 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       super.parse(field,  data);
     }
   }
-  
+
   private static final Pattern SRC_CROSS_PTN = Pattern.compile("(?:STA )?([ A-Z0-9]+) XS(?: (.*))?");
   private class SourceCrossField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replaceAll("  +", " ");
@@ -101,18 +101,18 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       if (cross != null) data.strCross = cross;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "SRC X";
     }
   }
-  
+
   private static final Pattern TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)\\b *(.*)");
   private class MyTimeField extends TimeField {
     @Override
@@ -122,13 +122,13 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       data.strTime = match.group(1);
       data.strSupp = match.group(2).trim();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "TIME INFO";
     }
   }
-  
+
   private static final Pattern LEAD_ZERO_PTN = Pattern.compile("0+");
   private class MyAddressField extends AddressField {
     @Override
@@ -138,14 +138,14 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       if (field.equals(place)) data.strPlace = "";
       super.parse(field, data);
     }
-    
+
     private String stripLeadZero(String field) {
       Matcher match = LEAD_ZERO_PTN.matcher(field);
       if (match.matches()) field = field.substring(match.end()).trim();
       return field;
     }
   }
-  
+
   private static final Pattern MAP_X_PTN = Pattern.compile("(?:Prem )?Map -(\\S+)(?: +(.*))?", Pattern.CASE_INSENSITIVE);
   private class MyMapCrossField extends CrossField {
     @Override
@@ -156,13 +156,13 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       data.strMap = match.group(1);
       super.parse(getOptGroup(match.group(2)), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "MAP X";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -170,7 +170,7 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_INFO_PTN = Pattern.compile("(\\d\\d-\\d\\d-\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b *");
   private class MyDateTimeInfoField extends InfoField {
     @Override
@@ -182,13 +182,13 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       field = field.substring(match.end());
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME " + super.getFieldNames();
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -196,7 +196,7 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "GRTN CITY",  "GROTON CITY",
       "GRTN TOWN",  "GROTON",
