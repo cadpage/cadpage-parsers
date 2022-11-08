@@ -17,7 +17,7 @@ public class MOPulaskiCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "DISPATCH,messaging@iamresponding.com,911dispatch@embargmail.com";
+    return "DISPATCH,messaging@iamresponding.com,911dispatch@embargmail.com,pulaskicommcenter@gmail.com";
   }
 
   private static final Pattern MISSING_CITY_PTN = Pattern.compile("\nAddress: (.*?) , (.*)\n");
