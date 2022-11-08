@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MI;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class MIShiawasseeCountyParser extends DispatchOSSIParser {
@@ -15,6 +16,12 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
     return "CAD@shiawassee.net,CAD@shiawassee.local";
   }
   
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    return super.parseMsg(body, data);
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{1,2}[FP]D", true);
