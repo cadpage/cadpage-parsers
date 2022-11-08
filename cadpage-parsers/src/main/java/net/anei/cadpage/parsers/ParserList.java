@@ -1611,6 +1611,7 @@ public class ParserList {
               ,"TXFortBendCounty"               ,"Fort Bend County, TX"
               ,"TXFortWorth"                    ,"Fort Worth, TX"
               ,"TXFranklinCounty"               ,"Franklin County, TX"
+              ,"TXFriendswood"                  ,"Friendswood, TX"
               ,"TXGainesville"                  ,"Gainesville, TX"
               ,"TXGalvestonCounty"              ,"Galveston County, TX"
               ,"TXGonzalesCounty"               ,"Gonzales County, TX"

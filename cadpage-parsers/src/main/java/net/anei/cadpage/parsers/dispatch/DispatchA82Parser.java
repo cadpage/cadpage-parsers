@@ -30,15 +30,35 @@ public class DispatchA82Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("(\\d{8})(?: MANUAL PAGE)?", true);
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MASH1"))  return new MyMash1Field();
-    if (name.equals("MASH2")) return new MyMash2Field();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
+    if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("MASH1"))  return new BaseMash1Field();
+    if (name.equals("MASH2")) return new BaseMash2Field();
+    if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("URL")) return new InfoUrlField("https?:.*");
     return super.getField(name);
   }
 
-  private class MyCrossField extends CrossField {
+  private class BaseAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith("]")) {
+        int pt = field.indexOf('[');
+        if (pt >= 0) {
+          data.strPlace = field.substring(pt+1, field.length()-1).trim();
+          field = field.substring(0,pt).trim();
+        }
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
+    }
+  }
+
+  private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "/");
@@ -48,7 +68,7 @@ public class DispatchA82Parser extends FieldProgramParser {
   }
 
   private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
-  private class MyMash1Field extends Field {
+  private class BaseMash1Field extends Field {
     @Override
     public boolean canFail() {
       return true;
@@ -80,7 +100,7 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   private static final Pattern MASH2_SEP_PTN = Pattern.compile("\\] *\\[");
   private static final Pattern MASH2_PTN = Pattern.compile("(\\S+) DIST: (\\S*) GRID: (\\S*)\\b *");
-  private class MyMash2Field extends Field {
+  private class BaseMash2Field extends Field {
     @Override
     public void parse(String field, Data data) {
       if (!field.startsWith("[") || !field.endsWith("]")) abort();
@@ -109,7 +129,7 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   private Pattern INFO_PFX_PTN = Pattern.compile("Rmk\\d+: \\[\\d\\d?:\\d\\d:\\d\\d\\]: *|CFS RMK \\d\\d:\\d\\d *");
   private Pattern INFO_JUNK_PTN = Pattern.compile("\\{\\S+ +\\d\\d:\\d\\d\\}|<NO CALL REMARKS>|\\[SENT: \\d\\d:\\d\\d:\\d\\d\\]");
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = INFO_PFX_PTN.matcher(field);
