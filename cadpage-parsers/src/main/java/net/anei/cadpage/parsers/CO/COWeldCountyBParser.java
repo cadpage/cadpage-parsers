@@ -30,7 +30,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
     int pt = body.indexOf("\nText STOP");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
-    return parseFields(body.split("\\|", -1), data);
+    return parseFields(body.split("\\|", -1), 3, data);
   }
 
   @Override
