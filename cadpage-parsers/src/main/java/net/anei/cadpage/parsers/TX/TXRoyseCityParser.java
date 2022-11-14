@@ -7,9 +7,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class TXRoyseCityParser extends GroupBestParser {
-  
+
   public TXRoyseCityParser() {
-    super(new TXRoyseCityAParser(), new TXRoyseCityBParser());
+    super(new TXRoyseCityBParser());
   }
- 
+
 }

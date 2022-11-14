@@ -1,41 +1,37 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
-public class TXRoyseCityBParser extends FieldProgramParser {
-  
+public class TXRoyseCityBParser extends DispatchH05Parser {
+
   public TXRoyseCityBParser() {
     super("ROYSE CITY", "TX",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! XY:GPS? ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! X:X? INFO:INFO/N+");
+          "Units_Assigned:UNIT! Call_Type:CALL! Business_Name:PLACE! Location:ADDRCITY! Cross_Streets:X! Box:BOX! Narrative:EMPTY! INFO_BLK+");
   }
-  
+
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+  public String getFilter() {
+    return "donotreply@rockwallcountytexas.com";
   }
-  
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("This is an automated message");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   @Override
   public Field getField(String name) {
-    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}");
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     return super.getField(name);
   }
 
-  private class MyUnitField extends UnitField {
+  private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
-      super.parse(field, data);
-    }
-  }
-
-  private class MyCrossField extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replace('@', '/');
       super.parse(field, data);
     }
   }
