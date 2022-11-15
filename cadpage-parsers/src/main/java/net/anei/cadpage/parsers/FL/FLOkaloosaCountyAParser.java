@@ -23,6 +23,10 @@ public class FLOkaloosaCountyAParser extends FieldProgramParser {
     setupSpecialStreets("CALLE DE TALENCIA");
   }
 
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+
   private static final Pattern MARKER = Pattern.compile("(?:ECC|[a-z]+): *");
   private Set<String> unitSet = new HashSet<String>();
 
