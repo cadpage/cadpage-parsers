@@ -173,6 +173,7 @@ public class ParserList {
               ,"AZYumaCounty"                   ,"Yuma County, AZ"
           ),
           new ParserCategory("Arkansas"
+              ,"ARBaxterCounty"                 ,"Baxter County, AR"
               ,"ARBentonCounty"                 ,"Benton County, AR"
               ,"ARDallasCounty"                 ,"Dallas County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
