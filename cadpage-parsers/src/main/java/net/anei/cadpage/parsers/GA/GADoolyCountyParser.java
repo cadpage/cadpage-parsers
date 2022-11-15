@@ -1,9 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class GADoolyCountyParser extends GASchleyCountyAParser {
-  
+/**
+ * Dooly County, GA
+ */
+public class GADoolyCountyParser extends GroupBestParser {
+
   public GADoolyCountyParser() {
-    super("DOOLY COUNTY");
+    super(new GADoolyCountyAParser(), new GADoolyCountyBParser());
   }
 }
