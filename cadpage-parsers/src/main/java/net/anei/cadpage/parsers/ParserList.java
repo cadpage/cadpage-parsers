@@ -1236,6 +1236,7 @@ public class ParserList {
               ,"NCRowanCounty"                  ,"Rowan County, NC"
               ,"NCRutherfordCounty"             ,"Rutherford County, NC"
               ,"NCSampsonCounty"                ,"Sampson County, NC"
+              ,"NCScotlandCounty"               ,"Scotland County, NC"
               ,"NCStanlyCounty"                 ,"Stanly County, NC"
               ,"NCStokesCounty"                 ,"Stokes County, NC"
               ,"NCSurryCounty"                  ,"Surry County, NC"

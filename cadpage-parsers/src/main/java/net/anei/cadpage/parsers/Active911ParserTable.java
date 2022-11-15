@@ -1416,6 +1416,7 @@ public class Active911ParserTable {
       "US/NC/SampsonCounty",              "NCSampsonCounty",
       "US/NC/SampsonCountyNewton",        "NCSampsonCounty",
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
+      "US/NC/ScotlandCounty",             "NCScotlandCounty",
       "US/NC/StanlyCounty",               "NCStanlyCounty",
       "US/NC/StokesCounty",               "NCStokesCounty",
       "US/NC/StonyPoint",                 "NCIredellCounty",
