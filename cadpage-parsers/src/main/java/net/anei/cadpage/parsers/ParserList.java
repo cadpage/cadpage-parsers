@@ -968,6 +968,7 @@ public class ParserList {
               ,"MODallasCounty"                 ,"Dallas County, MO"
               ,"MODaviessCounty"                ,"Daviess County, MO"
               ,"MODekalbCounty"                 ,"DeKalb County, MO"
+              ,"MODouglasCounty"                ,"Douglas County, MO"
               ,"MODunklinCounty"                ,"Dunklin County, MO"
               ,"MOFarmington"                   ,"Farmington, MO"
               ,"MOFestus"                       ,"Festus, MO"
