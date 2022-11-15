@@ -7,21 +7,22 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class MIMontcalmCountyParser extends DispatchOSSIParser {
-  
+
   public MIMontcalmCountyParser() {
     super(CITY_CODES, "MONTCALM COUNTY", "MI",
-          "( CANCEL ADDR CITY/Y " + 
-          "| FYI? ( ( ID2 UNIT? | UNIT ) CALL ADDR! DUPADDR? ( CITY/Y! | SKIP CITY/Y! | SKIP EMPTY/Z CITY/Y! | CITY? ) X+? ( SKIP ID | ID? ) " + 
-                 "| ( DATETIME ADDR | ADDR ID? DATETIME? ) CITY? ( ID | CALL! X+? ) " + 
-                 ") " + 
+          "( CANCEL ADDR CITY/Y " +
+          "| FYI? ( ( ID2 UNIT? | UNIT ) CALL ADDR! DUPADDR? ( CITY/Y! | SKIP CITY/Y! | SKIP EMPTY/Z CITY/Y! | CITY? ) X+? ( SKIP ID | ID? ) " +
+                 "| ( DATETIME ADDR | ADDR ID? DATETIME? ) CITY? ( ID | CALL! X+? ) " +
+                 ") " +
           ") INFO/N+");
+    addRoadSuffixTerms("LP");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@mydomain.com";
   }
-  
+
   private String saveAddress;
 
   @Override
@@ -32,12 +33,12 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     if (data.strCall.length() == 0) data.strCall = "EMS ALERT";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " CALL";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\b[A-Z]+\\d+|Temp\\d+|ALLRESCUES|AERO|BELDM|GRATM|MECOM|MTRT|NEWYM|OTHRM|ROCKM|SLR)\\b,?)+", true);
@@ -52,7 +53,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -60,19 +61,19 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyDupAddressField extends SkipField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       return field.equals(saveAddress);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -86,7 +87,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -94,17 +95,17 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       super.parse(field, data);
       return true;
     }
-    
+
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "Event spawned from "); 
+      field = stripFieldStart(field, "Event spawned from ");
       super.parse(field, data);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -113,7 +114,7 @@ public class MIMontcalmCountyParser extends DispatchOSSIParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BELV", "BELVIDERE TWP",
       "BLOO", "BLOOMER TWP",
