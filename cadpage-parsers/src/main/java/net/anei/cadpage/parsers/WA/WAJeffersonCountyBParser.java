@@ -5,7 +5,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 public class WAJeffersonCountyBParser extends DispatchA57Parser {
 
   public WAJeffersonCountyBParser() {
-    super("JEFFERSON COUNTY", "WA");
+    this("JEFFERSON COUNTY", "WA");
+  }
+
+  WAJeffersonCountyBParser(String defCity, String defState) {
+    super(defCity, defState);
   }
 
   @Override

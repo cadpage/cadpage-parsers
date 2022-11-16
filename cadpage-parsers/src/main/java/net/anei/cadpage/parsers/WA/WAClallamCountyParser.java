@@ -10,6 +10,7 @@ public class WAClallamCountyParser extends GroupBestParser {
   public WAClallamCountyParser() {
     super(new WAClallamCountyAParser(),
           new WAClallamCountyBParser(),
-          new WAClallamCountyCParser());
+          new WAClallamCountyCParser(),
+          new WAClallamCountyDParser());
   }
 }
