@@ -16,11 +16,11 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
 
   public CTLitchfieldCountyAParser() {
     super(CTLitchfieldCountyParser.CITY_LIST, "LITCHFIELD COUNTY", "CT",
-          "UNIT? ADDR ADDR_EXT? ( SELECT/1 ( APT3 CALL! CALL/CS+? CODE LOC ID ID/L X1 ( APT_GPS1 | APT3 GPS1L ) GPS2 TIME! " +
+          "SRC? ADDR ADDR_EXT? ( SELECT/1 ( APT3 CALL! CALL/CS+? CODE LOC ID ID/L X1 ( APT_GPS1 | APT3 GPS1L ) GPS2 TIME! " +
                                           "| PLACE ( EMPTY PLACE | CITY PLACE | PRI EMPTY | ) CALL/CS+? ( CALL_CODE | CALL/CS CODE ) TIME! ( JUNK | JUNK_ST SKIP+? JUNK_END! | APT3 | COVID_ALERT | EMPTY? ( GPS1 GPS2 ID? | ID ( ID/L | GPS1 GPS2 ID/L ) ) X1 ( APT_GPS1 GPS2 | APT3 ) ) " +
                                           ") " +
                                "| SELECT/2 CITY CALL/CS+? CALL_CODE ID! GPS1 GPS2 " +
-                               "| APT3 PLACE? CALL CALL/CS+? CODE ID ID/L X1 GPS1L GPS2! " +
+                               "| APT3 PLACE? CALL CALL/CS+? CODE ID ID/L X1 GPS1L! GPS2 " +
                                ") END");
     addExtendedDirections();
     setupMultiWordStreets(MWORD_STREET_LIST);
@@ -91,10 +91,6 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
       boolean disregard = body.startsWith("**DISREGARD**");
       if (disregard) body = body.substring(13).trim();
       body = stripFieldStart(body, "NORTHWEST ");
-      if (!subject.isEmpty() && body.startsWith(subject+',')) {
-        data.strSource = subject;
-        body = body.substring(subject.length()+1).trim();
-      }
 
       int pt = body.indexOf("If you receive this alert in error");
       if (pt >= 0) body = body.substring(0,pt).trim();
@@ -156,14 +152,14 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "SRC " + super.getProgram() + " INFO TIME";
+    return super.getProgram() + " INFO TIME";
   }
 
   private static final String CODE_PTN_STR = "(?i)\\d{1,3}-[A-Z]-\\d{1,2}(?:-?[A-Z])?|(?:\\d{1,2}-)?(?:HOT|ALPHA|COLD)|\\d+|";
 
   @Override
   public Field getField(String name) {
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("SRC")) return new MySourceField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("ADDR_EXT")) return new MyAddressExtField();
     if (name.equals("PLACE"))  return new MyPlaceField();
@@ -186,15 +182,24 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private class MyUnitField extends UnitField {
-    public MyUnitField() {
-      super("[A-Z]+ *\\d+", true);
+  private static final Pattern SOURCE_PTN = Pattern.compile("[ A-Z]+\\d*");
+  private class MySourceField extends SourceField {
+
+    @Override
+    public boolean canFail() {
+      return true;
     }
 
     @Override
-    public void parse(String field, Data data) {
-      field = field.replace(" ", "");
+    public boolean checkParse(String field, Data data) {
+
+      if (!data.strSource.isEmpty()) return false;
+
+      if (!getRelativeField(+1).contains(";") && !getRelativeField(+2).startsWith("Apt")) {
+        if (!SOURCE_PTN.matcher(field).matches()) return false;
+      }
       super.parse(field, data);
+      return true;
     }
   }
 
@@ -330,6 +335,7 @@ public class CTLitchfieldCountyAParser extends FieldProgramParser {
         if (!field.startsWith("GPS=")) return false;
         field = field.substring(4).trim();
       }
+      if (field.isEmpty()) return true;
       if (type == 2) {
         Matcher match = GPS_CALL_PTN.matcher(field);
         if (!match.matches()) return false;
