@@ -1004,6 +1004,7 @@ public class ParserList {
               ,"MONewtonCounty"                 ,"Newton County, MO"
               ,"MONodawayCounty"                ,"Nodaway County, MO"
               ,"MOOsageCounty"                  ,"Osage County, MO"
+              ,"MOOzarkCounty"                  ,"Ozark County, MO"
               ,"MOPerryCounty"                  ,"Perry County, MO"
               ,"MOPettisCounty"                 ,"Pettis County, MO"
               ,"MOPhelpsCounty"                 ,"Phelps County, MO"
