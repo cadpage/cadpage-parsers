@@ -113,6 +113,7 @@ public class ParserList {
               ,"ALBaldwinCounty"                ,"Baldwin County, AL"
               ,"ALBibbCounty"                   ,"Bibb County, AL"
               ,"ALBlountCounty"                 ,"Blount County, AL"
+              ,"ALButlerCounty"                 ,"Butler County, AL"
               ,"ALCalhounCounty"                ,"Calhoun County, AL"
               ,"ALChambersCounty"               ,"Chambers County, AL"
               ,"ALCherokeeCounty"               ,"Cherokee County, AL"
