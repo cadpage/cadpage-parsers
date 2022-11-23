@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class WAJeffersonCountyCParser extends FieldProgramParser {
 
   public WAJeffersonCountyCParser() {
-    super("JEFFERSON COUNTY", "WA",
+    this("JEFFERSON COUNTY", "WA");
+  }
+
+  WAJeffersonCountyCParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID_CODE! PRI:PRI! DATE:DATETIME! ( QUADRANT:MAP DISSTRICT:MAP/L | ) MAP:MAP/L! UNIT:UNIT! INFO:INFO! INFO/N+");
   }
 
