@@ -1,30 +1,11 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA49Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/*
-Walker County, AL
-*/
 
-public class ALWalkerCountyParser extends DispatchA49Parser {
+public class ALWalkerCountyParser extends GroupBestParser {
 
   public ALWalkerCountyParser() {
-    super("WALKER COUNTY","AL");
+    super(new ALWalkerCountyAParser(), new ALWalkerCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "@walker911,walker911@";
-  }
-
-  @Override
-  protected String fixCall(String call) {
-    if (call.endsWith(" POLICE DEPARTMENT")) return null;
-    if (call.equals("BIRMINGHAM STATE")) return null;
-    if (call.equals("REGIONAL PARAMEDICS 9-1-1 CALL")) return null;
-    if (call.equals("SHERIFF, UNKNOWN INCIDENT OCCURING")) return null;
-    return super.fixCall(call);
-  }
-
-
 }
