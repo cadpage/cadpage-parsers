@@ -9,27 +9,27 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 public class ALHooverAParser extends FieldProgramParser {
 
   public ALHooverAParser() {
-    super("HOOVER", "AL", 
+    super("HOOVER", "AL",
           "CALL:CALL! PLACE:PLACE? ADDR:ADDRCITY! ADDITIONAL_INFORMATION:INFO! ID:ID! PRI:PRI! DATE:DATETIME! RUN_#:ID? MAP:MAP! UNIT:UNIT! ( CROSSSTREET:X! INFO:INFO/N! INFO/N+ | INFO:INFO/N! INFO/N+ CROSSSTREET:X! )");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatchNWPS@ci.hoover.al.us";
+    return "dispatchNWPS@ci.hoover.al.us,dispatchNWPS@hooveralabama.gov";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!CAD ALERT!")) return false;
     return super.parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)");
   private class  MyDateTimeField extends DateTimeField {
     public void parse(String field, Data data) {
