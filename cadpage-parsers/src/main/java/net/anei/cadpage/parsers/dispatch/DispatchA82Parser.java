@@ -99,7 +99,7 @@ public class DispatchA82Parser extends FieldProgramParser {
   }
 
   private static final Pattern MASH2_SEP_PTN = Pattern.compile("\\] *\\[");
-  private static final Pattern MASH2_PTN = Pattern.compile("(\\S+) DIST: (\\S*) GRID: (\\S*)\\b *");
+  private static final Pattern MASH2_PTN = Pattern.compile("(?:(\\S+) )?(?:DIST: (\\S*) )?GRID: (\\S*)\\b *");
   private class BaseMash2Field extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -123,6 +123,7 @@ public class DispatchA82Parser extends FieldProgramParser {
   }
 
   private static String merge(String base, String field) {
+    if (field == null) return base;
     if (base.contains(field)) return base;
     return append(base, ",", field);
   }
