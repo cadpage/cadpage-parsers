@@ -16,11 +16,13 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   public COElPasoCountyAParser() {
     super("EL PASO COUNTY", "CO",
-          "ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
-                  "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
-                  "| REF_Run_Number:ID! ( At:ADDR! PROBLEM_CHANGED_TO:CALL! | CALL! THE_LOC_HAS_CHANGED_TO:ADDR! APT! ) " +
-                  "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
-                  ") END");
+          "( FROM_EPSO_NOTIFICATION%EMPTY CALL! At:ADDR! Apt_#:APT_PLACE! JURIS:SRC! CMD:CH! TA_Resp:CH! Inc_#:ID! EMPTY! " +
+          "| ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
+                   "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
+                   "| REF_Run_Number:ID! ( At:ADDR! PROBLEM_CHANGED_TO:CALL! | CALL! THE_LOC_HAS_CHANGED_TO:ADDR! APT! ) " +
+                   "| CALL ADDR PLACE! x:X% ALRM:PRI? CMD:CH%? ID EMPTY? ( GPS_TRUNC | GPS/d | GPS1/d ( GPS_TRUNC | GPS2/d ) ) INFO/N+ " +
+                   ") " +
+          ") END");
   }
 
   @Override
@@ -43,6 +45,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   private static final Pattern COMMENT_INFO_PTN1 = Pattern.compile("Comment:(.*?),\\[(INFO from EPSO:.*?)\\]");
   private static final Pattern COMMENT_INFO_PTN2 = Pattern.compile("Comment:(.*?),(?=INFO from EPSO:)");
+  private static final Pattern DELIM = Pattern.compile("~| (?=Apt #:)");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:([A-Z]{2,4}\\d{11}|\\d{6}-\\d{5}) +)?(.*?) +(D:.*?) *(E:.*?) *(S:.*?) *(PTC:.*?) *(T:.*?) *(AD:.*?) *(C:.*?) *(Page Req Time:.*)");
 
   @Override
@@ -88,21 +91,30 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     FParser p = new FParser(body);
 
     if (p.check("FROM EPSO NOTIFICATION~")) {
-      setFieldList("CALL ADDR APT PLACE SRC");
-      data.strCall =  p.get(30);
-      if (!p.check("~At:")) return false;
-      parseAddress(p.get(40), data);
-      if (!p.check("Apt #:")) return false;
-      data.strApt = append(data.strApt, "-", p.get(7));
-      data.strPlace = p.get(40);
-      if (!p.check("~JURIS: ")) return false;
-      data.strSource = p.get(14);
-      if (!p.check("~NO RESPONSE")) return false;
-      return true;
+      do {
+        String call =  p.get(30);
+        if (!p.check("~At:")) break;
+        String addr = p.get(40);
+        if (!p.check("Apt #:")) break;
+        String apt = p.get(7);
+        String place = p.get(40);
+        if (!p.check("~JURIS: ")) break;
+        String source = p.get(14);
+        if (!p.check("~NO RESPONSE")) break;
+
+        setFieldList("CALL ADDR APT PLACE SRC");
+        data.strCall = call;
+        parseAddress(addr, data);
+        data.strApt = append(data.strApt, "-", apt);
+        data.strPlace = place;
+        data.strSource = source;
+        return true;
+
+      } while (false);
     }
 
     // Not everyone is using it, but see if this is the new standard dispatch format
-    String[] flds = body.split("~", -1);
+    String[] flds = DELIM.split(body, -1);
     if (flds.length >= 5 || body.startsWith("REF Run Number:")) {
       return parseFields(flds, data);
     }
@@ -237,7 +249,9 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}\\d{2}-\\d{4,5}", true);
+    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
+    if (name.equals("CH")) return new MyChannelField();
+    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}(?:\\d{2}-\\d{4,5}|\\d{8})", true);
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("SRC_UNIT")) return new MySourceUnitField();
     if (name.equals("UNIT")) return new UnitField("[,pA-Z0-9]+", true);
@@ -245,6 +259,32 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
     if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
     return super.getField(name);
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
+  private class MyAptPlaceField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (APT_PTN.matcher(field).matches()) {
+        data.strApt = append(data.strApt, "-", field);
+      } else {
+        data.strPlace = field;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "APT PLACE";
+    }
+
+  }
+
+  private class MyChannelField extends ChannelField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ",");
+      data.strChannel = append(data.strChannel, ",", field);
+    }
   }
 
   private class MyAptField extends AptField {
