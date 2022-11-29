@@ -11,9 +11,10 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
-          "ID ( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? EMPTY? INFO/N+? URL END " +
-             "| CALL! CALL/SDS+? ADDRCITYST X MASH2! UNITS:UNIT! ST_RMK:MAP/C? INFO/N+ " +
-             ") END");
+          "( SELECT/1 ID | CALL/SDS+? ID2 ) " +
+          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? EMPTY? INFO/N+? URL END " +
+          "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2 UNITS:UNIT ST_RMK:MAP/C? INFO/N+ " +
+          ")");
   }
 
   @Override
@@ -23,20 +24,54 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CFS Page") && !subject.equals("Message from Dispatch")) return false;
+    if (subject.equals("CFS Page")) {
+      setSelectValue("1");
+    } else if (subject.equals("Message from Dispatch")) {
+      setSelectValue("2");
+    } else return false;
+    body = body.replace("\nUNITS\n", "\nUNITS:\n");
     return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("(\\d{8})(?: MANUAL PAGE)?", true);
+    if (name.equals("ID1")) return new IdField("\\d{8}", true);
+    if (name.equals("ID2")) return new BaseId2Field();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("X")) return new BaseCrossField();
-    if (name.equals("MASH1"))  return new BaseMash1Field();
+    if (name.equals("MASH1")) return new BaseMash1Field();
     if (name.equals("MASH2")) return new BaseMash2Field();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("URL")) return new InfoUrlField("https?:.*");
     return super.getField(name);
+  }
+
+  private static final Pattern ID2_PTN = Pattern.compile("(\\d{8})(?!\\d)[- ]*(.*)");
+
+  private class BaseId2Field extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ID2_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCallId = match.group(1);
+      data.strCall = match.group(2);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ID CALL?";
+    }
   }
 
   private class BaseAddressCityStateField extends AddressCityStateField {
@@ -67,7 +102,7 @@ public class DispatchA82Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
+  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z0-9 ]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
   private class BaseMash1Field extends Field {
     @Override
     public boolean canFail() {
