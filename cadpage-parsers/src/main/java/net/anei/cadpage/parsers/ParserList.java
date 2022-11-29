@@ -1535,6 +1535,7 @@ public class ParserList {
               ,"TNBlountCounty"                 ,"Blount County, TN"
               ,"TNBradleyCounty"                ,"Bradley County, TN"
               ,"TNCampbellCounty"               ,"Campbell County, TN"
+              ,"TNCannonCounty"                 ,"Cannon County, TN"
               ,"TNCarterCounty"                 ,"Carter County, TN"
               ,"TNChesterCounty"                ,"Chester County, TN"
               ,"TNClaiborneCounty"              ,"Claiborne County, TN"
