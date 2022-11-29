@@ -15,25 +15,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
  * Montgomery County, TX (MCHD EMS)
  */
 public class TXMontgomeryCountyBParser extends DispatchProQAParser {
-  
+
   public TXMontgomeryCountyBParser() {
     super(CITY_LIST, "MONTGOMERY COUNTY", "TX",
           "( Comment:INFO/G! ID:ID2! ( UNIT:UNIT2! | UNIT2! ) " +
-          "| ID:ID! PRI:PRI? UNIT:UNIT! PRI:PRI? CALL:CALL! ( NOTES:INFO/R! INFO/N+" + 
+          "| ID:ID! PRI:PRI? UNIT:UNIT! PRI:PRI? CALL:CALL! ( NOTES:INFO/R! INFO/N+" +
                                                            "| PLACE:PLACE! APT:APT? ADDR:ADDR! ( X-STREETS:X! MAP:MAP! CITY:CITY! CROSS_STREETS:SKIP? | CROSS_STREETS:X! MAP:MAP! CITY:CITY! CHANNEL:CH! | CITY:CITY! ( MAP:MAP! | ) | ) ( INFO:INFO! | GPS1! GPS2! ) ) " +
           "| ID UNIT! PRI:PRI! CALL! PLACE:PLACE! APT:APT? ADDR:ADDR! X-STREETS:X? MAP:MAP? CITY:CITY% GPS1 GPS2 )");
   }
-  
+
   @Override
   public String getFilter() {
     return "tritechcad@mchd-tx.org,ALARMSQLServer";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA | MAP_FLG_REMOVE_EXT | MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -48,13 +48,13 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   public CodeSet getCallList() {
     return CALL_SET;
   }
-  
+
   private static final Pattern MASTER1 = Pattern.compile("(?:(\\d{2,4}-\\d{6,7}) +)?(?:(\\d{8} \\d{8}|0 0) +)?(.*?)(?: *(\\d\\d[A-Z]-?[A-Z]\\d?))? *(?:NOT FOU|((?:WOODLA|\\d\\d&\\d\\d-)?\\d{2,4}[A-Za-z]))(?: +(F[DG] ?\\d+(?: +F[DG] ?\\d+)*)(?: +(?:North|East|South|West))?)?(?: +((?:[A-Z]+\\d+|Lake Rescue)(?: +[A-Z]+\\d+)*))?(?: +(TAC +\\d+))?");
   private static final Pattern MASTER2 = Pattern.compile("(?:([A-Z0-9]+)-)?(.*?) *(\\d\\d[A-Z]-[A-Z]) +(.*?) +(F[DG]\\d+(?: +F[DG]\\d+)*) +(\\d{2,3}[A-Za-z])(?: +(.*))?");
   private static final Pattern MASTER3 = Pattern.compile("([^\\d].*?)(0BH \\d|\\d\\d[A-Z]{2}\\b)(.*?)(?: (F[DG]\\d))? (\\d{2,4}[A-Z]) (.*)");
-  
+
   private static final Pattern ADDRESS_RANGE_PTN = Pattern.compile("\\b(\\d+) *- *(\\d+)\\b");
-  
+
   private static final Pattern RUN_REPORT_PTN1 = Pattern.compile("ID#:(\\d{2}-\\d{6}) *; *Unit:([^ ]+) *;[ ;]*(AC - Assignment Complete *; *.*|Disp:.*)");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("ID[#:](\\d{4}-\\d{6}) *[-;]([A-Z][ A-Za-z]+:\\d\\d:\\d\\d:\\d\\d\\b.*)");
   private static final Pattern RUN_REPORT_PTN3 = Pattern.compile("(\\d{4}-\\d{6}) (Time at Destination:\\d\\d:\\d\\d:\\d\\d)(.*?)-Destination Address:(.*) -");
@@ -62,19 +62,19 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
   private static final Pattern RUN_REPORT_PTN5 = Pattern.compile("ID:(\\S+) +; *(Time Cancelled:.*)");
   private static final Pattern NOTIFICATION_PTN1 = Pattern.compile("(\\d\\d-\\d{6}) - \\d+\\) (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) [\\d:]+\\.000-\\[\\d+\\] \\[Notification\\] +(.*?)(?: +\\[Shared\\])?");
   private static final Pattern NOTIFICATION_PTN2 = Pattern.compile("ID#:(\\d\\d-\\d{6}) +; +\\d+\\) (.*)");
-  
+
   private static final Pattern MISSING_SEMI_PTN = Pattern.compile("(?<!;) ++(?=\\d{8}\\b|NOTES:)|(?<![ 0-9])(?=\\d{8} +\\d{8}\\b)");
   private static final Pattern COMMA_ID_PTN = Pattern.compile(", *ID:|,(?=\\d\\d-\\d{6}\\b)");
   private static final Pattern DELIM = Pattern.compile("[ ,]*; *");
 
   private static final Pattern ADDR_CODE_CALL_PTN = Pattern.compile("(.*?)([#\\*]\\d+|\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) *-[- ]*(.*)");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=[a-z])(?=[A-Z])|(?<= [A-Z])(?=[A-Z][a-z])");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     body = stripFieldStart(body, ",");
-    
+
     Matcher match = RUN_REPORT_PTN1.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -86,7 +86,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       }
       return true;
     }
-    
+
     match = RUN_REPORT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -97,7 +97,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       }
       return true;
     }
-    
+
     match = RUN_REPORT_PTN3.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO PLACE ADDR");
@@ -108,7 +108,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strAddress = match.group(4).trim();
       return true;
     }
-    
+
     match = RUN_REPORT_PTN4.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -118,7 +118,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strSupp = append(match.group(3), " ", match.group(4));
       return true;
     }
-    
+
     match = RUN_REPORT_PTN5.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -127,7 +127,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strSupp = match.group(2);
       return true;
     }
-    
+
     match = NOTIFICATION_PTN1.matcher(body);
     if (match.matches()) {
       setFieldList("ID DATE TIME INFO");
@@ -138,7 +138,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strSupp = match.group(4);
       return true;
     }
-    
+
     match = NOTIFICATION_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -147,7 +147,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strSupp = match.group(2).trim();
       return true;
     }
-    
+
     // See if we can use the regular semicolon delimited form
     String body2 = MISSING_SEMI_PTN.matcher(body).replaceAll(";");
     boolean comment = body2.startsWith("Comment:");
@@ -156,7 +156,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     if (comment || flds.length >= 4) {
       return parseFields(flds, data);
     }
-    
+
     // Foo.  Now we have to do this the hard way
     match = MASTER3.matcher(body);
     if (match.matches()) {
@@ -169,7 +169,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strUnit = match.group(6);
       return true;
     }
-    
+
     match = MASTER2.matcher(body);
     if (match.matches()) {
       setFieldList("CODE CALL BOX ADDR APT CITY SRC MAP UNIT");
@@ -197,10 +197,10 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       data.strSource = getOptGroup(match.group(6));
       data.strUnit = append(data.strUnit, " ", getOptGroup(match.group(7)));
       data.strChannel = getOptGroup(match.group(8));
-      
+
       // What we have is an address followed by a call, with no consistent
       // way to identify the break.
-      // Start by looking for a call code 
+      // Start by looking for a call code
       boolean found = false;
       String call;
       match = ADDR_CODE_CALL_PTN.matcher(addr);
@@ -210,14 +210,14 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         data.strCode = match.group(2);
         data.strCall = match.group(3);
       }
-      
+
       // Try looking it up in a reverse call list
       if ((call = CALL_SET.getCode(addr)) != null) {
         found = true;
         data.strCall = call;
         addr = addr.substring(0,addr.length()-call.length());
       }
-      
+
       // No luck, try looking for a signature lower case letter followed by
       // an upper case character
       else if ((match = MISSING_BLANK_PTN.matcher(addr)).find()) {
@@ -226,8 +226,8 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         data.strCall = addr.substring(pt);
         addr = addr.substring(0,pt);
       }
-      
-      // If either of those worked, the address may be truncated, in which 
+
+      // If either of those worked, the address may be truncated, in which
       // case we will try to complete common road suffixes
       if (found) {
         if (addr.endsWith(" ")) {
@@ -246,7 +246,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         }
         parseAddress(addr, data);
       }
-      
+
       // If neither approach found the break, we will have to count on the
       // smart address parser, which is none to reliable in this county.  There
       // are too many street names that really lack an identifiable suffix
@@ -255,11 +255,11 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         data.strCall = getLeft();
         if (data.strCall.length() == 0) return false;
       }
-      
+
       // If call is out of county response, zap the default county
       fixOutOfCountyResponse(data);
       if (data.strCall.startsWith("Out of County Respon")) data.defCity = "";
-      
+
       return true;
     }
 
@@ -276,7 +276,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     }
   }
 
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new MyIdField(false);
@@ -289,16 +289,16 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("(\\d{2}-\\d{6}|\\d{4}-\\d{6})|(POST-\\d{7}/\\d{2})(\\d\\d:\\d\\d:\\d\\d)");
   private class MyIdField extends IdField {
-    
+
     boolean permissive;
-    
+
     public MyIdField(boolean permissive) {
       this.permissive = permissive;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
@@ -315,13 +315,13 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         data.strTime = match.group(3);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID TIME";
     }
   }
-  
+
   private class MyUnit2Field extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -331,12 +331,12 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       super.parse(field, data);
     }
   }
-  
-  
+
+
   private static final Pattern CALL_PTN = Pattern.compile("([#\\*][A-Z]*\\d+[A-Z]?|\\d{1,3}[A-Z]\\d{0,2}[A-Z]?) *-[- ]*(.*)");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private class MyCallField extends CallField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = CALL_PTN.matcher(field);
@@ -344,20 +344,20 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
         data.strCode = match.group(1);
         field = match.group(2);
       }
-      
+
       else {
         field = MBLANK_PTN.matcher(field).replaceAll(" ");
         field = field.replace("( ", "(").replace(" )", ")");
       }
       super.parse(field, data);
-    } 
-    
+    }
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -367,13 +367,13 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyGpsField extends GPSField {
-    
+
     public MyGpsField(int type) {
       super(type, "\\d{8}|0", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 8) {
@@ -385,10 +385,10 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
 
   private void parseGPSField(String gps, Data data) {
     if (gps.length() != 17) return;
-    gps = gps.substring(0,2) + '.' + gps.substring(2,8) + ',' + gps.substring(9,11) + '.' + gps.substring(11); 
+    gps = gps.substring(0,2) + '.' + gps.substring(2,8) + ',' + gps.substring(9,11) + '.' + gps.substring(11);
     setGPSLoc(gps, data);
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -396,9 +396,9 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
-      
+
       "#CFD AIRCRAFT EMERGENCY PA",
       "#CFD STRUCTURE FIRE PA",
       "1 - EMS (No suspected life threat)",
@@ -587,6 +587,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Smoke - In a Bldg Commercial",
       "Smoke - In a Residen",
       "Smoke - In a Residence",
+      "Smoke - In a Residence Box",
       "Smoke - In the Area Still",
       "Smoke - In the Area",
       "Smoke - Smell in a R",
@@ -617,6 +618,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Structure - Small Bu",
       "Structure - Small Building",
       "Structure Fire (Box)",
+      "Structure Fire Box",
       "STRUCTURE FIRE PA",
       "Structure Fire",
       "TEST",
@@ -644,9 +646,9 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       "Water Rescue - Still",
       "WFD PA Child Locked"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "CONROE",
     "CUT AND SHOOT",
@@ -678,7 +680,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     "RIVER PLANTATION",
     "TAMINA",
     "THE WOODLANDS",
-    
+
     // Harris County
     "SPRING"
   };
