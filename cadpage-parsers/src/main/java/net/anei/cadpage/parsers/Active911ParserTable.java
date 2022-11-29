@@ -2200,6 +2200,7 @@ public class Active911ParserTable {
       "US/TX/ComalCounty",                "TXComalCountyA",
       "US/TX/ComalCounty2",               "TXComalCountyB",
       "US/TX/CookeCounty",                "TXCookeCountyA",
+      "US/TX/CoppellFD",                  "TXDallasCountyC",
       "US/TX/CoryellCounty",              "TXCoryellCounty",
       "US/TX/CyCreekCommCenter",          "TXCyCreekCommCenter",
       "US/TX/CyFairVFD",                  "TXCyFair",
