@@ -402,6 +402,7 @@ public class ParserList {
               ,"GAJeffersonCounty"              ,"Jefferson County, GA"
               ,"GALamarCounty"                  ,"Lamar County, GA"
               ,"GALibertyCounty"                ,"Liberty County, GA"
+              ,"GALowndesCounty"                ,"Lowndes County, GA"
               ,"GAMaconCounty"                  ,"Macon County, GA"
               ,"GAMarionCounty"                 ,"Marion County, GA"
               ,"GAMartinez"                     ,"Martinez, GA"
