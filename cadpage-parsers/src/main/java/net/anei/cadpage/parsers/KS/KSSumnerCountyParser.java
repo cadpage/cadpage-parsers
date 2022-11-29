@@ -5,14 +5,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
 
 public class KSSumnerCountyParser extends DispatchA25Parser {
-  
+
   public KSSumnerCountyParser() {
     super("SUMNER COUNTY", "KS");
   }
-  
+
   @Override
   public String getFilter() {
-    return "sumner911cad@co.sumner.ks.us,donotreply@mulvane.us,CAD@mulvane.us";
+    return "sumner911cad@co.sumner.ks.us,donotreply@mulvane.us,CAD@mulvane.us,notsowpdd1@hotmail.com";
   }
 
   @Override
@@ -21,5 +21,5 @@ public class KSSumnerCountyParser extends DispatchA25Parser {
     if (data.strCity.equalsIgnoreCase("County")) data.strCity = "";
     return true;
   }
-  
+
 }
