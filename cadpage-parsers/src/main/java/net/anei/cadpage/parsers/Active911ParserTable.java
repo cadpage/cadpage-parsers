@@ -2304,6 +2304,7 @@ public class Active911ParserTable {
       "US/TX/VanAlstyne",                 "TXVanAlstyne",
       "US/TX/VillageFire",                "TXHarrisCountyB",
       "US/TX/Waco",                       "TXMcLennanCountyB",
+      "US/TX/WallerCounty",               "TXWallerCOunty",
       "US/TX/WalkerCounty",               "TXWalkerCounty",
       "US/TX/Weatherford",                "TXParkerCountyD",
       "US/TX/Weslaco",                    "TXHidalgoCountyB",
