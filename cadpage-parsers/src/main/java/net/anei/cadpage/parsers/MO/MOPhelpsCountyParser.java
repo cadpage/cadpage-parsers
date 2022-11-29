@@ -7,12 +7,16 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MOPhelpsCountyParser extends FieldProgramParser {
- 
+
   public MOPhelpsCountyParser() {
-    super("PHELPS COUNTY", "MO",
+    this("PHELPS COUNTY", "MO");
+  }
+
+  MOPhelpsCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "CFS:ID! Incident_Code:CALL! Address:ADDRCITY! Closest_Intersection:X? Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
   }
-  
+
   public String getFilter() {
     return "no-reply@zuercherportal.com";
   }
@@ -20,7 +24,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace(" Cross streets:", " Closest Intersection:");
@@ -35,7 +39,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -50,13 +54,13 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
         data.strCall = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -74,13 +78,13 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
       super.parse(p.get(), data);
       data.strCity = city;
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST PLACE";
     }
   }
-  
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("(?:^|; *)\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - *");
   private class MyInfoField extends InfoField {
     @Override
@@ -91,16 +95,16 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Pattern PVTNNNN_PTN = Pattern.compile("\\b(?:PVT|PRIVATE DR) *(\\d+)\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String address) {
     return PVTNNNN_PTN.matcher(address).replaceAll("PVT DRIVE $1");
   }
 
   // Google has problems mapping STATE BB.  This seems to be limited to this one highway
-  
+
   @Override
   public String postAdjustMapAddress(String sAddress) {
     return sAddress.replace("STATE BB", "STATE HWY BB");
