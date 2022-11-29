@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.TX;
 
-import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
@@ -21,12 +22,16 @@ public class TXDallasCountyCParser extends DispatchH03Parser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern MARKER = Pattern.compile("([A-Za-z ]* Notification)\n");
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
 
-    if (subject.isEmpty() && body.startsWith("Incident Notification\n")) {
-      subject = body.substring(0,21);
-      body = body.substring(22).trim();
+    if (subject.isEmpty()) {
+      Matcher match = MARKER.matcher(body);
+      if (match.lookingAt()) {
+        subject = match.group(1);
+        body = body.substring(match.end()).trim();
+      }
     }
     return super.parseHtmlMsg(subject, body, data);
   }
