@@ -9,16 +9,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ORColumbiaCountyParser extends FieldProgramParser {
 
   public ORColumbiaCountyParser() {
-    super("COLUMBIA COUNTY", "OR", 
+    super("COLUMBIA COUNTY", "OR",
           "ID_CALL_UNIT_CITY ADDR APT! MAP? X:X! COMMENTS:INFO? INFO/N+");
   }
-  
+
   private static Pattern MUTUAL_AID_FORMAT = Pattern.compile("([,A-Z0-9]+) (mutual aid to [A-Z0-9]+) at (.*?)(?:; *(.*?))? (for .*?)\\.");
   private static final Pattern DELIM = Pattern.compile(" ;| (?=Map |X:|COMMENTS:)|[ ,](?=\\[\\d{1,2}\\] )");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     // "mutual aid to" format
     Matcher match = MUTUAL_AID_FORMAT.matcher(body);
     if (match.matches()) {
@@ -31,10 +31,10 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
       if (g5.length() > 4) data.strSupp = g5; //min length is 4. ("for ")
       return true;
     }
-    
+
     return parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID_CALL_UNIT_CITY")) return new MyIdCallUnitCityField();
@@ -43,16 +43,16 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static Pattern ID_CALL_UNIT_CITY_PTN = Pattern.compile("([A-Z]{0,5}\\d{7,9}) +([A-Z0-9]+) - ([-/ A-Z0-9]+) :([A-Z0-9,]+) *(.*)");
-  
+
   private class MyIdCallUnitCityField extends Field {
 
     @Override
     public void parse(String field, Data data) {
       Matcher match = ID_CALL_UNIT_CITY_PTN.matcher(field);
       if (!match.matches()) abort();
-      
+
       data.strCallId = match.group(1);
       data.strCode = match.group(2);
       data.strCall = match.group(3).trim();
@@ -65,7 +65,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
       return "ID CODE CALL UNIT CITY";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -73,7 +73,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
       field = stripFieldStart(field,  "/");
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
-      
+
     }
   }
 }
