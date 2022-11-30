@@ -2,9 +2,9 @@ package net.anei.cadpage.parsers.MO;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
 
-public class OzarkCountyParser extends DispatchA33Parser {
+public class MOOzarkCountyParser extends DispatchA33Parser {
 
-  public OzarkCountyParser() {
+  public MOOzarkCountyParser() {
     super("OZARK COUNTY", "MO");
   }
 

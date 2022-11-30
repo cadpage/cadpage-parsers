@@ -20,7 +20,7 @@ public class DispatchH03Parser extends FieldProgramParser {
 
   public DispatchH03Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-          "( TIMEDATE INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! Location:ADDR! Apt/Unit:APT! Cross_Strs:X! Loc_Name:PLACE! City:CITY! Zip_Code:ZIP! Sector:MAP! INCIDENT:EMPTY! Inc_#:ID! Created:SKIP! Descr:CALL! UNITS_DISPATCHED:EMPTY! UNIT/C+? DASHES! COMMENTS:EMPTY INFO/N+ " +
+          "( SELECT/2 TIMEDATE INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! Location:ADDR! Apt/Unit:APT! Cross_Strs:X! Loc_Name:PLACE! City:CITY! Zip_Code:ZIP! Sector:MAP! INCIDENT:EMPTY! Inc_#:ID! Created:SKIP! Descr:CALL! UNITS_DISPATCHED:EMPTY! UNIT/C+? DASHES! COMMENTS:EMPTY INFO/N+ " +
           "| SKIP+? DASHES ( INCIDENT_DETAILS%EMPTY! ( LOCATION:EMPTY! | LOCATION_of_Incident:EMPTY! ) ( Location:ADDR! | Loc:ADDR! ) Loc_Name:PLACE! Loc_Descr:INFO! " +
                              "City:CITY! Building:APT? Subdivision:APT? Floor:APT? Apt/Unit:APT! Zip_Code:ZIP? Cross_Strs:X? Area:MAP? Sector:MAP/D! Beat:MAP/D! Census_Tract:SKIP? RA:BOX? " +
                              "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES? ) " +
@@ -44,6 +44,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     String[] flds = decoder.parseHtml(body);
     if (flds == null) return false;
     flds = condenseFields(flds);
+    if (!setSelectValue(flds)) return false;
     return parseFields(flds, data);
   }
 
@@ -52,6 +53,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     boolean copy = false;
     String lastFld = null;
     for (String fld : flds) {
+      fld = fld.trim();
       if (fld.equals("UNITS DISPATCHED:")) {
         copy = true;
         if (lastFld != null) {
@@ -81,12 +83,28 @@ public class DispatchH03Parser extends FieldProgramParser {
     return fldList.toArray(new String[fldList.size()]);
   }
 
+  private boolean setSelectValue(String[] flds) {
+    for (String fld : flds) {
+      if (fld.startsWith("----------")) {
+        setSelectValue("1");
+        return true;
+      }
+      if (fld.equals("INCIDENT DETAILS")) {
+        setSelectValue("2");
+        return true;
+      }
+    }
+    return false;
+  }
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("Dispatch Notification for Incident ([-A-Z0-9]{12,20})");
   private static final Pattern DELIM = Pattern.compile("\\s*\n\\s*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!parseFields(DELIM.split(body), data)) return false;
+    String[] flds = DELIM.split(body);
+    setSelectValue(flds);
+    if (!parseFields(flds, data)) return false;
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) data.strCallId = match.group(1);
     return true;
@@ -121,11 +139,22 @@ public class DispatchH03Parser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class BaseTimeDateField extends TimeDateField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
       Matcher match = TIME_DATE_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       setTime(TIME_FMT, match.group(1), data);
       data.strDate = match.group(2);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
