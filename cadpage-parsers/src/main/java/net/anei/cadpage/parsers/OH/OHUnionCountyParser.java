@@ -154,6 +154,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "FRACTURES",
       "GENERAL ILLNESS",
       "GRASS FIRE",
+      "HARASSMENT/STALKING",
       "HAZARDOUS SPILL",
       "HEAD/NECK/SPINE INJURY",
       "HEADACHE",

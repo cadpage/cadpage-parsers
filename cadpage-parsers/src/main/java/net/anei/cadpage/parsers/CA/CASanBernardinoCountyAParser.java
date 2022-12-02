@@ -53,7 +53,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
         if (tmp != null) city = tmp;
         data.strCity = city;
       }
-      setGPSLoc(convGPS(match.group(4))+','+convGPS(match.group(5)), data);
+      setGPSLoc(convGPS(match.group(5))+','+convGPS(match.group(6)), data);
       return true;
     }
 
