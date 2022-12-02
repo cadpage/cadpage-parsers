@@ -33,12 +33,12 @@ public class DispatchA19Parser extends FieldProgramParser {
     super(cityCodes, defCity, defState,
           "( CALL ADDR/Z Call_Narrative%EMPTY/R INFO/N+ CAD_Call_ID_#:ID! END " +
           "| Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
-          "| INCIDENT:ID? LONG_TERM_CAD:ID? ACTIVE_CALL:ID? PRIORITY:PRI? REPORTED:TIMEDATE? Nature:CALL! Type:SKIP? ( Address:ADDR! Zone:MAP? | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Reported:TIMEDATE? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
+          "| INCIDENT:ID LONG_TERM_CAD:ID ACTIVE_CALL:ID PRIORITY:PRI REPORTED:TIMEDATE ( Determinants/Desc:CODE | Determinant:CODE Desc:CALL | ) Nature:CALL! Type:SKIP ( Address:ADDR! Zone:MAP? | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Reported:TIMEDATE? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
   private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
-  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|REPORTED|Type|Zone|(?<=\n ?Contact:.{10,70} )Phone):");
+  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|Desc|REPORTED|Type|Zone|(?<=\n ?Contact:.{10,70} )Phone):");
   private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
 
   @Override
@@ -74,6 +74,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     if (name.equals("ID")) return new BaseIdField();
     if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("LAT-LON")) return new BaseLatLonField();
@@ -168,6 +169,13 @@ public class DispatchA19Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR PLACE APT CITY ST";
+    }
+  }
+
+  private class BaseCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strCall = append(field, " - ", data.strCall);
     }
   }
 
