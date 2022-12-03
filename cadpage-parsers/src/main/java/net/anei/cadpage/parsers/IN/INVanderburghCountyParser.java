@@ -10,20 +10,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Vanderburgh County, IN
  */
 public class INVanderburghCountyParser extends DispatchOSSIParser {
- 
+
   public INVanderburghCountyParser() {
     super(CITY_CODES, "VANDERBURGH COUNTY", "IN",
-          "( CANCEL ADDR? " + 
+          "( CANCEL ADDR? " +
           "| FYI? BOX UNIT? CALL ( ADDR/Z CH! | PLACE ADDR/Z CH! | PLACE? ADDR! ) CH? " +
           ") INFO/N+");
     removeWords("TERRACE");
   }
-  
+
   @Override
   public String getFilter() {
-    return "CAD@vanderburghsheriff.com";
+    return "CAD@vanderburghsheriff.com,CAD@vanderburghsheriff.org";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("[,A-Z0-9]+", true);
@@ -31,7 +31,7 @@ public class INVanderburghCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -48,13 +48,13 @@ public class INVanderburghCountyParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH? " + super.getFieldNames() + " CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "EV", "EVANSVILLE"
   });
