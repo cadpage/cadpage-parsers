@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MO;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   MOPhelpsCountyParser(String defCity, String defState) {
     super(defCity, defState,
           "CFS:ID! Incident_Code:CALL! Address:ADDRCITY! Closest_Intersection:X? Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   public String getFilter() {
@@ -109,4 +111,8 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   public String postAdjustMapAddress(String sAddress) {
     return sAddress.replace("STATE BB", "STATE HWY BB");
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "15650 COUNTY ROAD 2430",             "+38.032489, -91.682193"
+  });
 }

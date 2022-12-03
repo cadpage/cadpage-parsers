@@ -12,7 +12,7 @@ public class DispatchA82Parser extends FieldProgramParser {
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
           "( SELECT/1 ID | CALL/SDS+? ID2 ) " +
-          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? EMPTY? INFO/N+? URL END " +
+          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/N+? URL END " +
           "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2 UNITS:UNIT ST_RMK:MAP/C? INFO/N+ " +
           ")");
   }
@@ -29,7 +29,7 @@ public class DispatchA82Parser extends FieldProgramParser {
     } else if (subject.equals("Message from Dispatch")) {
       setSelectValue("2");
     } else return false;
-    body = body.replace("\nUNITS\n", "\nUNITS:\n");
+    body = body.replace("\nUNITS\n", "\nUNITS:\n").replace(" Lon:", "\nLon:");
     return parseFields(body.split("\n"), data);
   }
 
@@ -102,7 +102,7 @@ public class DispatchA82Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z0-9 ]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- DIST: (\\S+) - GRID: (\\S+)\\]");
+  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z0-9 ]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- (?:DIST: (\\S+) - )?GRID: (\\S+)\\]");
   private class BaseMash1Field extends Field {
     @Override
     public boolean canFail() {
