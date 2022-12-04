@@ -423,6 +423,7 @@ public class Active911ParserTable {
       "US/FL/OkaloosaCounty",             "FLOkaloosaCountyA",
       "US/FL/OrlandoHealth",              "FLOrangeCountyB",
       "US/FL/PalmBeachCounty",            "FLPalmBeachCounty",
+      "US/FL/PalmBeachGardens",           "FLPalmBeachCounty",
       "US/FL/PutnamSheriff",              "FLPutnamCounty",
       "US/FL/RegionalPsi",                "FLBrowardCounty",
       "US/FL/RegionalPsiSecond",          "FLBrowardCounty",

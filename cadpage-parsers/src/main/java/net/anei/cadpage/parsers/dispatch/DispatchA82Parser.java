@@ -12,7 +12,7 @@ public class DispatchA82Parser extends FieldProgramParser {
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
           "( SELECT/1 ID | CALL/SDS+? ID2 ) " +
-          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! St_Rmk:MAP/C? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/N+? URL END " +
+          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! EMPTY+? St_Rmk:MAP/C? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/N+? URL END " +
           "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2 UNITS:UNIT ST_RMK:MAP/C? INFO/N+ " +
           ")");
   }
