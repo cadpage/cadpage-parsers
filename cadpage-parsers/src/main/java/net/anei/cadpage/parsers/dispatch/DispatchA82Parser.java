@@ -11,9 +11,9 @@ public class DispatchA82Parser extends FieldProgramParser {
 
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( SELECT/1 ID | CALL/SDS+? ID2 ) " +
-          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! EMPTY+? St_Rmk:MAP/C? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/N+? URL END " +
-          "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2 UNITS:UNIT ST_RMK:MAP/C? INFO/N+ " +
+          "( SELECT/1 ID | ID2 | CALL/SDS ID2 | CALL/SDS CALL/SDS ID2 | ) " +
+          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! EMPTY+? St_Rmk:MAP/C? INFO/N+? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/ZN+? URL END " +
+          "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2? UNITS:UNIT? ST_RMK:MAP/C? INFO/N+ " +
           ")");
   }
 
@@ -28,9 +28,16 @@ public class DispatchA82Parser extends FieldProgramParser {
       setSelectValue("1");
     } else if (subject.equals("Message from Dispatch")) {
       setSelectValue("2");
-    } else return false;
+    } else if (!subject.isEmpty()) {
+      setSelectValue("2");
+      data.strCall = subject;
+    }
     body = body.replace("\nUNITS\n", "\nUNITS:\n").replace(" Lon:", "\nLon:");
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+
+    // Calls without a call ID are rare and somewhat questionable.  So let's confirm that they at
+    // least found a legitimate mash field
+    return !data.strCallId.isEmpty() || !data.strSource.isEmpty();
   }
 
   @Override
@@ -46,7 +53,7 @@ public class DispatchA82Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ID2_PTN = Pattern.compile("(\\d{8})(?!\\d)[- ]*(.*)");
+  private static final Pattern ID2_PTN = Pattern.compile("(?:(.*?) +)?(\\d{8})(?!\\d)[- ]*(.*)");
 
   private class BaseId2Field extends Field {
     @Override
@@ -58,8 +65,8 @@ public class DispatchA82Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = ID2_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strCallId = match.group(1);
-      data.strCall = match.group(2);
+      data.strCall = append(getOptGroup(match.group(1)), " - ", match.group(3));
+      data.strCallId = match.group(2);
       return true;
     }
 
@@ -75,6 +82,21 @@ public class DispatchA82Parser extends FieldProgramParser {
   }
 
   private class BaseAddressCityStateField extends AddressCityStateField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+
+      // Pretty much can count on legitimate address fields containing a comma.  But there are rare exceptions
+      // which we identify by looking to see if there is a legitimate MASH1 field 3 fields ahead, and ensuring
+      // that the next two fields do not look like address fields
+      if (!field.contains(",")) {
+        String tmp = getRelativeField(+3);
+        if (!tmp.startsWith("[") || !tmp.endsWith("]")) return false;
+        if (getRelativeField(+1).contains(",") || getRelativeField(+2).contains(",")) return false;
+      }
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       if (field.endsWith("]")) {
@@ -137,8 +159,13 @@ public class DispatchA82Parser extends FieldProgramParser {
   private static final Pattern MASH2_PTN = Pattern.compile("(?:(\\S+) )?(?:DIST: (\\S*) )?GRID: (\\S*)\\b *");
   private class BaseMash2Field extends Field {
     @Override
-    public void parse(String field, Data data) {
-      if (!field.startsWith("[") || !field.endsWith("]")) abort();
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("[") || !field.endsWith("]")) return false;
       field = field.substring(1, field.length()-1).trim();
       field = MASH2_SEP_PTN.matcher(field).replaceAll(" ");
       while (!field.isEmpty()) {
@@ -149,6 +176,12 @@ public class DispatchA82Parser extends FieldProgramParser {
         data.strMap = merge(data.strMap, match.group(3));
         field = field.substring(match.end());
       }
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
@@ -166,6 +199,18 @@ public class DispatchA82Parser extends FieldProgramParser {
   private Pattern INFO_PFX_PTN = Pattern.compile("Rmk\\d+: \\[\\d\\d?:\\d\\d:\\d\\d\\]: *|CFS RMK \\d\\d:\\d\\d *");
   private Pattern INFO_JUNK_PTN = Pattern.compile("\\{\\S+ +\\d\\d:\\d\\d\\}|<NO CALL REMARKS>|\\[SENT: \\d\\d:\\d\\d:\\d\\d\\]");
   private class BaseInfoField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("http")) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = INFO_PFX_PTN.matcher(field);
