@@ -16,14 +16,14 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "STANLY COUNTY", "NC",
           "( UNIT ENROUTE ADDR CITY2 CALL! END " +
           "| CANCEL ADDR CITY_PLACE! X+? " +
-          "| ADDR/Z CITY/Z ID CALL SRC CH X/Z+? DATETIME! UNIT " +
+          "| ADDR/Z CITY/Z ID CALL SRC CH? X/Z+? DATETIME! UNIT " +
           "| FYI? ID? CODE_CALL ADDR! ( END " +
                                      "| APT CITY/Y! " +
                                      "| PLACE CITY/Y! " +
                                      "| CITY/Y! " +
                                      "| " +
-                                     ") ( PLACE APT X+? | APT X+? | INFO1 | PLACE INFO1 | X X? | PLACE EMPTY+? X+? ) " +
-          ") INFO/N+");
+                                     ") ( PLACE APT CH? X+? | APT CH? X+? | PLACE CH X+? | PLACE PLACE CH X+? | INFO1 | PLACE INFO1 | X X? | PLACE EMPTY+? X+? ) " +
+          ") INFO/ZN+? GPS1 GPS2 END");
     setupCities(CITY_LIST);
     setupMultiWordStreets("DR MARTIN LUTHER KING JR");
     addRoadSuffixTerms("CONNECTOR");
@@ -54,6 +54,8 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     return !BAD_PLACE_PTN.matcher(data.strPlace).matches();
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+
   @Override
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new CallField("Enroute", true);
@@ -64,7 +66,10 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("APT")) return new MyAptField();
+    if (name.equals("CH")) return new ChannelField("OPS\\d+|[A-Z]{3}", true);
     if (name.equals("INFO1")) return new InfoField("(?!DIST:).*[a-z].*");
+    if (name.equals("GPS1")) return new GPSField(1, GPS_PTN);
+    if (name.equals("GPS2")) return new GPSField(2, GPS_PTN);
     return super.getField(name);
   }
 
