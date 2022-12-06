@@ -133,9 +133,14 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern BAD_ID_PTN = Pattern.compile("\\d{8}");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+
+      // If we find something that looks like a NCRowanCounty ID field, abort
+      if (BAD_ID_PTN.matcher(field).matches()) abort();
+
       if (field.startsWith("Radio Channel:")) {
         if (data.strChannel.isEmpty()) data.strChannel = field.substring(14).trim();
         return;
