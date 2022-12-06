@@ -1612,6 +1612,7 @@ public class ParserList {
               ,"TXDalworthingtonGardens"        ,"Dalworthington Gardens, TX"
               ,"TXDecatur"                      ,"Decatur, TX"
               ,"TXDentonCounty"                 ,"Denton County, TX"
+              ,"TXEastlandCounty"               ,"Eastland County, TX"
               ,"TXElCampo"                      ,"El Campo, TX"
               ,"TXElPasoCounty"                 ,"El Paso County, TX"
               ,"TXEllisCounty"                  ,"Ellis County, TX"

@@ -2215,6 +2215,7 @@ public class Active911ParserTable {
       "US/TX/DentonCounty",               "TXDentonCounty",
       "US/TX/EastexFire",                 "TXHarrisCountyESD1B",
       "US/TX/EastHarrisCountyCommunications","TXCyCreekCommCenterA",
+      "US/TX/EastlandCounty",             "TXEastlandCounty",
       "US/TX/ECOM",                       "TXCyCreekCommCenter",
       "US/TX/EforcesoftawreEllisCounty",  "TXEllisCounty",
       "US/TX/Eforcesoftware",             "TXWhartonCounty",
