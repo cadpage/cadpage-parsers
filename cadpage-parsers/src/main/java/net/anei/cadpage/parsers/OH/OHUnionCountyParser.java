@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -11,12 +14,17 @@ public class OHUnionCountyParser extends FieldProgramParser {
 
   public OHUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "OH",
-           "CALL ADDR/S ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
+           "CALL ADDR/S ADDR2? ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
   }
 
   @Override
   public String getFilter() {
     return "idnetworks@co.union.oh.us,idnetworks@unioncountyohio.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -29,16 +37,29 @@ public class OHUnionCountyParser extends FieldProgramParser {
     };
   }
 
+  private static final Pattern SUBJECT_GPS_PTN = Pattern.compile("(\\d*),([-+]?\\d{2}\\.\\d{6,},[-+]?\\d{2}\\.\\d{6,})");
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+
+    Matcher match = SUBJECT_GPS_PTN.matcher(subject);
+    if (match.matches()) {
+      data.strCallId = match.group(1);
+      setGPSLoc(match.group(2), data);
+    }
     if (!body.endsWith(",")) data.expectMore = true;
     return parseFields(body.split(","), data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "ID GPS " + super.getProgram();
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ST_ZIP")) return new SkipField("OH(?: +\\d{5})?", true);
     if (name.equals("X2")) return new MyCrossField();
@@ -69,6 +90,18 @@ public class OHUnionCountyParser extends FieldProgramParser {
       // will push the call description into the address field.  Which should be rejected
       if (CALL_LIST.getCode(field) != null) abort();
       super.parse(field, data);
+    }
+  }
+
+  private class MyAddress2Field extends AddressField {
+
+    public MyAddress2Field() {
+      super("[-+]?\\d{2}\\.\\d{4,}", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = append(data.strAddress, ",", field);
     }
   }
 
@@ -114,17 +147,24 @@ public class OHUnionCountyParser extends FieldProgramParser {
   private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(
       "911 FOLLOW UP",
       "911 UNKNOWN",
+      "911 WIRELESS INFO",
       "ABDOMINAL PAIN/PROBLEMS",
       "ADULT CPR",
+      "ADULT PROBATION TRANSPORT",
       "AIRCRAFT CRASH",
       "ALARM DROP",
       "ALLERGIC REACTION",
-      "ATTEMPTED SUICIDE",
+      "ANIMAL COMPLAINT",
+      "ARSENAL OPEN",
       "ASSAULT",
       "ASSIST OTHER UNIT",
+      "ASSISTANCE",
+      "ATTEMPT TO LOCATE",
+      "ATTEMPTED SUICIDE",
       "BACK PAIN",
       "BLEEDING",
       "BREATHING/ RECENT OPEN HEART",
+      "BURGLARY",
       "BURGLARY IN PROGRESS",
       "BURNS",
       "CARBON MONOXIDE ALARM",
@@ -134,6 +174,8 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "CHOKING",
       "COMMERCIAL FIRE",
       "COMMERCIAL FIRE ALARM",
+      "COMMON PLEAS DETAIL",
+      "COMMUNITY POLICE CONTACT",
       "CPR IN PROGRESS",
       "DEAD ON ARRIVAL",
       "DIABETIC PROBLEMS",
@@ -152,6 +194,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "FIRE",
       "FIRE ALARM",
       "FRACTURES",
+      "FRAUD",
       "GENERAL ILLNESS",
       "GRASS FIRE",
       "HARASSMENT/STALKING",
@@ -163,16 +206,20 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "INDUSTRIAL/MACHINE ACCIDENT",
       "INFANT CPR",
       "INJURY CRASH",
+      "JUVENILE COMPLAINT",
       "LACERATIONS",
       "LEFT SIDE",
       "LIFT ASSIST",
+      "LIVESTOCK IN THE ROAD",
       "MEDICAL ALARM",
+      "MEDICINE REACTION",
       "MENTAL HEALTH",
       "MISCELLANEOUS",
       "NATURAL GAS/PROPANE LEAK",
       "NATURE UNKNOWN",
       "NUISANCE CONTROL BURN",
       "OVERDOSE",
+      "PAPER SERVICE",
       "PERSON WITH A KNIFE",
       "POISONING",
       "POLE FIRE",
@@ -180,21 +227,33 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "PROPERTY DAMAGE CRASH",
       "ROAD HAZARD",
       "ROBBERY",
+      "RUNNING RADAR",
       "SEIZURES",
       "SERVICE RUN",
+      "SENIOR WATCH",
       "SICK PERSON",
       "SKATEBOARDERS",
       "SPECIAL DETAIL-NON SPECIFIC",
       "STABBING",
       "STROKE",
+      "SUICIDE",
       "SUSPICIOUS CIRCUMSTANCES",
       "SUSPICIOUS PERSON",
+      "SUSPICIOUS VEHICLE",
+      "TELECOMMUNICATION HARASSMENT",
+      "TEST",
       "THREATENED SUICIDE",
+      "TRAFFIC ENFORCEMENT/COMPLAINT",
+      "TRAFFIC STOP",
       "TRANSFORMER FIRE",
+      "TRANSPORT",
       "TRAUMATIC INJURY",
       "UNCONSCIOUS/ FAINTING",
       "UNKNOWN PROBLEM (MEDICAL)",
+      "UNRULY JUVENILE",
       "VEHICLE FIRE",
+      "VEHICLE REPOSSESSION",
+      "VIOLATION OF TPO",
       "WALK IN",
       "WATER RESCUE",
       "WIRES DOWN"
