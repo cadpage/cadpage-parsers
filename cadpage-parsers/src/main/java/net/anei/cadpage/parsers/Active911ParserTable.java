@@ -2130,6 +2130,7 @@ public class Active911ParserTable {
       "US/TN/MaconCounty911",             "TNMaconCounty",
       "US/TN/MadisonCounty",              "TNMadisonCounty",
       "US/TN/MaryvilleFD",                "TNBlountCountyB",
+      "US/TN/McMinnCounty",               "TNMcMinnCounty",
       "US/TN/MooreCounty",                "TNMooreCounty",
       "US/TN/MorganCounty",               "TNMorganCounty",
       "US/TN/OakRidge",                   "TNOakRidge",

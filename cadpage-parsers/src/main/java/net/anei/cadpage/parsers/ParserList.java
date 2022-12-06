@@ -1561,6 +1561,7 @@ public class ParserList {
               ,"TNLoudonCounty"                 ,"Loudon County, TN"
               ,"TNMaconCounty"                  ,"Macon County, TN"
               ,"TNMadisonCounty"                ,"Madison County, TN"
+              ,"TNMcMinnCounty"                 ,"McMinn County, TN"
               ,"TNMooreCounty"                  ,"Moore County, TN"
               ,"TNMorganCounty"                 ,"Morgan County, TN"
               ,"TNOakRidge"                     ,"Oak Ridge, TN"
