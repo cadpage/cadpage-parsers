@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +17,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
 
   public PAAlleghenyCountyAParser() {
     super(CITY_CODES, "ALLEGHENY COUNTY", "PA",
-           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( DUP_ADDR CITY | ) ( AT SKIP | ) XINFO+? ( GPS1 GPS2 SRC | SRC ) | PLACE AT CITY? XINFO+? SRC | ADDR/Z X XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
+           "CODE PRI CALL CALL+? ( GPS1 GPS2! XINFO+? SRC | ADDR/Z CITY/Y! ( AT SKIP ( MA_ADDR MA_SKIP+? | ) | ) XINFO+? ( GPS1 GPS2 SRC | SRC ) | PLACE AT CITY? XINFO+? SRC | ADDR/Z X XINFO+? SRC | SRC ) BOX? ID/L+? INFO+ Units:UNIT UNIT+");
     setupCities(EXTRA_CITY_LIST);
     setupGpsLookupTable(PAAlleghenyCountyParser.GPS_TABLE_LOOKUP);
     setupPlaceGpsLookupTable(PAAlleghenyCountyParser.PLACE_GPS_LOOKUP_TABLE);
@@ -44,6 +47,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
   private static final Pattern TRAILER_PTN = Pattern.compile(" +- +From \\S+ (\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)\\b.*$");
   private static final Pattern MOVE_UP_PTN = Pattern.compile("MOVE-UP: +([A-Z0-9]+) +to +([A-Z0-9]+)\\.?");
   private static final Pattern MOVE_UP_UNIT_PTN = Pattern.compile("\\b([A-Z0-9]+) +to +");
+
+  private boolean maAddressInfo;
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -108,12 +113,14 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    maAddressInfo = false;
     body = body.replace(" Unit:", " Units:");
     if (!parseFields(body.split(","), 5, data)) return false;
     if (data.strPlace.startsWith("GAP - GREAT ALLEGHENY PASSAGE - ")) {
       data.strAddress = data.strPlace;
       data.strPlace = "";
     }
+    if (maAddressInfo) data.strCross = data.strGPSLoc = "";
     return true;
   }
 
@@ -128,10 +135,11 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     if (name.equals("PRI")) return new PriorityField("[A-Z]\\d|\\d[A-Z]", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("MA_ADDR")) return new MyMutualAidAddressField();
+    if (name.equals("MA_SKIP")) return new MyMutualAidSkipField();
     if (name.equals("GPS1")) return new GPSField(1, "[-+]?\\d+\\.\\d+", true);
     if (name.equals("GPS2")) return new GPSField(2, "[-+]?\\d+\\.\\d+", true);
     if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("DUP_ADDR")) return new MyDupAddressField();
     if (name.equals("AT")) return new MyAtField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("XINFO")) return new MyCrossInfoField();
@@ -169,18 +177,6 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
   }
 
-  private class MyDupAddressField extends SkipField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      return field.equals(getRelativeField(-2));
-    }
-  }
-
   // AT field is option and hold the real address
   // if present, the previous address turns into a place name
   private class MyAtField extends AddressField {
@@ -203,6 +199,128 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
   }
 
+  /*
+   * Out of county mutual aid calls are a nightmare.  The regular address and GPS coordinates are the
+   * location of the station requested to respond.  The actual address and city and possibly place are
+   * in additional info fields following the city
+   */
+  private static final Pattern MA_TERM_PTN = Pattern.compile("btwn.*|[-+]?\\d{2}\\.\\d{6}");
+  private static final Pattern CITY_OR_PLACE_PTN = Pattern.compile("[ /A-Z]+|7 FIELDS");
+  private static final Pattern MA_ADDR_DELIM = Pattern.compile("[-./ ]{2,}");
+  private static final Pattern MA_ADDR_PTN = Pattern.compile("\\d{1,5}[A-Z]? .*");
+  private static final Pattern GOOD_CITY_PTN = Pattern.compile("(?!CROSS(?! CREEK)|.*ESTATE)[ A-Z]+|7 FIELDS");
+  private class MyMutualAidAddressField extends AddressField {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+
+      // Only real mutual aid calls qualify for this
+      if (! data.strCall.startsWith("MUTUAL AID")) return false;
+
+      // Make sure this isn't terminator field
+      if (MA_TERM_PTN.matcher(field).matches()) return false;
+
+      // or a covid alert
+      if (field.contains("COVID")) return false;
+
+      // Some extra cleanup
+      int pt = field.indexOf(" .. ");
+      if (pt >= 0) field = field.substring(pt+4).trim();
+
+      // Now things get ugly.  There could be up to 3 fields separated by some known delimiter combinations.
+      // One of which is a comma.  All of which much be followed by a known mutual address termination field.
+      // Start by assuming a comma separator and pulling fields until we find a terminator.  If we don't find
+      // a terminator after 2 fields, bail out
+      List<String> fldList = new ArrayList<>();
+      fldList.add(field);
+      for (int ndx = 1; ; ndx++ ) {
+        String fld = getRelativeField(ndx);
+        if (MA_TERM_PTN.matcher(fld).matches()) break;
+        if (ndx >= 3) return false;
+        if (!CITY_OR_PLACE_PTN.matcher(fld).matches()) return false;
+        fldList.add(fld);
+      }
+
+      // If we found no auxiliary field following this one, see if we can break this field up by one of the other delimiters
+      boolean singleFld = fldList.size() == 1;
+      if (singleFld) {
+        fldList = Arrays.asList(MA_ADDR_DELIM.split(field));
+      }
+
+      // One last check to see if the address field looks like a legitimate address
+      String addr = fldList.get(0);
+      int flags = FLAG_CHECK_STATUS | FLAG_FALLBACK_ADDR;
+      if (!singleFld) flags |= FLAG_ANCHOR_END | FLAG_NO_CITY;
+      Result res = parseAddress(StartType.START_ADDR, flags, addr);
+      if (res.getStatus() < STATUS_INTERSECTION) {
+        if (!MA_ADDR_PTN.matcher(addr).matches()) return false;
+      }
+
+      // Let's go.  Disable existing address and flag this alert as a special mutual aid address.
+      // this will eventually disable the GPS and cross street info after we parse it
+      data.strAddress = "";
+      maAddressInfo = true;
+      if (singleFld) data.strCity = data.defCity = "";
+
+      // parse the new address info
+      res.getData(data);
+      boolean overrideCity = res.getCity().isEmpty();
+      if (singleFld) {
+        String left = stripFieldStart(res.getLeft(), "/");
+        if (!left.isEmpty()) {
+          if (data.strCity.isEmpty()) {
+            overrideCity = false;
+            data.strCity = convertCodes(left, CITY_CODES);
+          } else {
+            data.strPlace = left;
+          }
+        }
+      }
+
+      for (int ndx = fldList.size()-1; ndx >= 1; ndx--) {
+        String fld =  fldList.get(ndx);
+        if (!fld.isEmpty()) {
+          if ((overrideCity || data.strCity.isEmpty()) && GOOD_CITY_PTN.matcher(fld).matches()) {
+            overrideCity = false;
+            data.strCity = convertCodes(fld, CITY_CODES);
+          } else {
+            data.strPlace = fld;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE CITY";
+    }
+  }
+
+  private class MyMutualAidSkipField extends SkipField {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return !MA_TERM_PTN.matcher(field).matches();
+    }
+  }
+
   private class MyCrossField extends MyCrossInfoField {
     @Override
     public boolean canFail() {
@@ -222,7 +340,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern COVID_PTN = Pattern.compile("COVID (?:NEG(?:ATIVE)?|POS(?:ITIVE)?)|(?:NEG(?:ATIVE)?|POS(?:ITIVE)?) COVID");
+  private static final Pattern COVID_PTN = Pattern.compile("COVID (?:NEG(?:ATIVE)?|POS(?:ITIVE)?|UNK(?:NOWN)?)|(?:NEG(?:ATIVE)?|POS(?:ITIVE)?|UNK(?:NOWN)?) COVID");
   private static final Pattern PHONE_PTN = Pattern.compile("\\d{10}");
   private class MyCrossInfoField extends InfoField {
     @Override
@@ -305,7 +423,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "ETN", "ETNA",
       "EWD", "EDGEWOOD",
       "FIN", "FINDLAY",
-      "FOR", "FOREST HILLS ",
+      "FOR", "FOREST HILLS",
       "FOX", "FOX CHAPEL",
       "FPB", "FRANKLIN PARK",
       "FRZ", "FRAZER",
@@ -327,21 +445,21 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "KEN", "KENNEDY",
       "KIL", "KILBUCK",
       "LEE", "LEET",
-      "LIB", "LIBERTY ",
+      "LIB", "LIBERTY",
       "LIN", "LINCOLN",
       "LTD", "LEETSDALE",
       "MAR", "MARSHALL",
       "MCC", "MCCANDLESS",
-      "MCD", "MCDONALD ",
+      "MCD", "MCDONALD",
       "MCK", "MCKEESPORT",
       "MIL", "MILLVALE",
       "MON", "MONROEVILLE",
       "MOO", "MOON",
       "MTL", "MT. LEBANON",
       "MTO", "MT OLIVER",
-      "MUN", "MUNHALL ",
+      "MUN", "MUNHALL",
       "NBR", "NORTH BRADDOCK",
-      "NEV", "NEVILLE ",
+      "NEV", "NEVILLE",
       "NFT", "NORTH FAYETTE",
       "NVT", "NORTH VERSAILLES",
       "OAK", "OAKMONT",
@@ -356,9 +474,9 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "PLU", "PLUM",
       "PVG", "PENNSBURY VILLAGE",
       "PVU", "PORT VUE",
-      "RAN", "RANKIN ",
+      "RAN", "RANKIN",
       "RCH", "RICHLAND",
-      "RES", "RESERVE ",
+      "RES", "RESERVE",
       "RKS", "MCKEES ROCKS",
       "ROB", "ROBINSON",
       "ROF", "ROSSLYN FARMS",
@@ -396,6 +514,10 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "WOA", "WHITE OAK",
       "WTK", "WHITAKER",
       "WVW", "WEST VIEW",
+
+      "CRAN",    "CRANBERRY TWP",
+      "NEW KEN", "NEW KENSINGTON",
+      "NEWKEN",  "NEW KENSINGTON"
   });
 
   private static final String[] EXTRA_CITY_LIST = new String[]{

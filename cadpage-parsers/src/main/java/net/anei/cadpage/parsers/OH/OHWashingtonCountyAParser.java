@@ -2,6 +2,9 @@ package net.anei.cadpage.parsers.OH;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,8 +21,8 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PATTERN = Pattern.compile("CAD +Page(?: +(\\d\\d-\\d{6}))?");
 
   public OHWashingtonCountyAParser () {
-    super(CITY_LIST, "WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDR/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDR/S DATETIME CALL ) UNIT X X END");
+    super(WV_CITY_LIST, "WASHINGTON COUNTY", "OH",
+        "( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDRCITYST/S DATETIME CALL ) UNIT X X END");
   }
 
   @Override
@@ -44,7 +47,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     if (!match.matches()) return false;
     data.strCallId = getOptGroup(match.group(1));
     if (!parseFields(body.split("\n"), data)) return false;
-    if (! data.strCity.isEmpty()) data.strState = "WV";
+    if (! data.strCity.isEmpty() && WV_CITY_SET.contains(data.strCity.toUpperCase())) data.strState = "WV";
     return true;
   }
 
@@ -56,18 +59,26 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{2}-\\d{6}", true);
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
 
-  private class MyAddressField extends AddressField {
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *(?:APT|RM|ROOM|LOT) *(.*)");
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      String apt = "";
+      Matcher match = ADDR_APT_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        apt = match.group(2);
+      }
       field = field.replace('@', '&');
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
 
@@ -82,9 +93,11 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final String[] CITY_LIST = new String[] {
+  private static final String[] WV_CITY_LIST = new String[] {
       "BELMONT",
       "ST MARYS",
       "SAINT MARYS"
   };
+
+  private static final Set<String> WV_CITY_SET = new HashSet<>(Arrays.asList(WV_CITY_LIST));
 }
