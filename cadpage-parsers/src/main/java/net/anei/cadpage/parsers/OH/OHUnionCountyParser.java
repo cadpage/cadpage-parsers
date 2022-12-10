@@ -37,7 +37,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
     };
   }
 
-  private static final Pattern SUBJECT_GPS_PTN = Pattern.compile("(\\d*),([-+]?\\d{2}\\.\\d{6,},[-+]?\\d{2}\\.\\d{6,})");
+  private static final Pattern SUBJECT_GPS_PTN = Pattern.compile("#?(\\S*),([-+]?\\d{2}\\.\\d{6,},[-+]?\\d{2}\\.\\d{6,})");
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
