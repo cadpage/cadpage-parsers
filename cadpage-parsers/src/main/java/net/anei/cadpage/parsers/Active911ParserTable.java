@@ -1024,6 +1024,7 @@ public class Active911ParserTable {
       "US/MI/KalamazooCity",              "MIKalamazooCountyC",
       "US/MI/KentCity",                   "MIKentCounty",
       "US/MI/KentCounty",                 "MIKentCounty",
+      "US/MI/KinrossEMS",                 "MIChippewaCounty",
       "US/MI/LakeCounty",                 "MILakeCounty",
       "US/MI/LeelanauCounty",             "MILeelanauCounty",
       "US/MI/LenaweeCounty",              "MILenaweeCountyB,MILeelanauCounty",
