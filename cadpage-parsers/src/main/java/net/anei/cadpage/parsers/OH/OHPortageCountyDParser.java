@@ -15,7 +15,7 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
   public OHPortageCountyDParser(String defCity, String defState) {
     super(defCity, defState,
           "( U_DATETIME U_ADDRESS U_NAME U_PHONE U_CFS_NUMBER U_PLACE U_X U_CALL U_ID! " +
-          "| Date/time:DATETIME! Address:ADDRCITY! Caller_Name:NAME! Caller_phone:PHONE! CFS_Number:SKIP! Common_Name:PLACE! Cross_Streets:X! Call_Type:CALL! Incident_Number:ID! " +
+          "| Date/time:DATETIME! Address:ADDRCITY! Latitude:GPS1? Longitude:GPS2? Caller_Name:NAME! Caller_phone:PHONE! CFS_Number:SKIP! Common_Name:PLACE! Cross_Streets:X! Call_Type:CALL! Incident_Number:ID! " +
           ") ( Narrative%EMPTY! | Narrative:EMPTY! ) INFO_BLK/Z+? ( Status_Times%EMPTY! | Status_Times:EMPTY! ) TIMES/Z+? U_UNIT! U_ALERT? INFO2/N+");
   }
 
@@ -26,6 +26,11 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
   @Override
   public String getFilter() {
     return "dispatch@kent.edu.ahenterly@stow.oh.us";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
