@@ -21,8 +21,9 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PATTERN = Pattern.compile("CAD +Page(?: +(\\d\\d-\\d{6}))?");
 
   public OHWashingtonCountyAParser () {
-    super(WV_CITY_LIST, "WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDRCITYST/S DATETIME CALL ) UNIT X X END");
+    super(OH_CITY_LIST, "WASHINGTON COUNTY", "OH",
+        "( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDRCITYST/S DATETIME CALL ) EMPTY? UNIT X X2 END");
+    setupCities(WV_CITY_LIST);
   }
 
   @Override
@@ -63,6 +64,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("X2")) return new MyCross2Field();
     return super.getField(name);
   }
 
@@ -70,6 +72,10 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      if (field.endsWith(" WV")) {
+        data.strState = "WV";
+        field = field.substring(0, field.length()-3).trim();
+      }
       String apt = "";
       Matcher match = ADDR_APT_PTN.matcher(field);
       if (match.matches()) {
@@ -93,10 +99,40 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     }
   }
 
+  private class MyCross2Field extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.lastIndexOf(',');
+      if (pt >= 0) {
+        String city = field.substring(pt+1).trim();
+        field = field.substring(0,pt);
+        if (data.strCity.isEmpty()) data.strCity = city;
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "X CITY";
+    }
+  }
+
+  private static final String[] OH_CITY_LIST = new String[] {
+      "ADAMS",
+      "ATHENS COUNTY",
+      "DUNHAM",
+      "MONROE COUNTY"
+  };
+
   private static final String[] WV_CITY_LIST = new String[] {
+      "PLEASANTS COUNTY",
+
       "BELMONT",
+      "DAVISVILLE",
+      "PARKERSBURG",
       "ST MARYS",
-      "SAINT MARYS"
+      "SAINT MARYS",
+      "VIENNA"
   };
 
   private static final Set<String> WV_CITY_SET = new HashSet<>(Arrays.asList(WV_CITY_LIST));
