@@ -286,8 +286,8 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
         String fld =  fldList.get(ndx);
         if (!fld.isEmpty()) {
           if ((overrideCity || data.strCity.isEmpty()) && GOOD_CITY_PTN.matcher(fld).matches()) {
-            overrideCity = false;
             data.strCity = convertCodes(fld, CITY_CODES);
+            if (!data.strCity.endsWith(" COUNTY")) overrideCity = false;
           } else {
             data.strPlace = fld;
           }
