@@ -1596,6 +1596,7 @@ public class ParserList {
               ,"TXBrazosCounty"                 ,"Brazos County, TX"
               ,"TXBurlesonCounty"               ,"Burleson County, TX"
               ,"TXBurnetCounty"                 ,"Burnet County, TX"
+              ,"TXCaldwellCounty"               ,"Caldwell County, TX"
               ,"TXCameronCounty"                ,"Cameron County, TX"
               ,"TXCarrollton"                   ,"Carrollton, TX"
               ,"TXCarsonCounty"                 ,"Carson County, TX"

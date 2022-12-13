@@ -2193,6 +2193,7 @@ public class Active911ParserTable {
       "US/TX/CityofKeller",               "TXTarrantCountyC,TXTarrantCountyE",
       "US/TX/CityofKilgore",              "TXKilgore",
       "US/TX/CityofLiveOak",              "TXBexarCountyB",
+      "US/TX/CityOfLockhart",             "TXCaldwellCounty",
       "US/TX/CityofLufkin",               "TXLufkin",
       "US/TX/CityofMansfield",            "TXMansfield",
       "US/TX/CityofMidlothian",           "TXMidlothian",
