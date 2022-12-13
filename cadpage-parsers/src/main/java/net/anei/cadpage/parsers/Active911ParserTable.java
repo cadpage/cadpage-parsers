@@ -885,7 +885,6 @@ public class Active911ParserTable {
       "US/KY/WestLiberty",                "KYMorganCountyB",
       "US/KY/WhitleyCounty",              "KYWhitleyCounty",
       "US/KY/WilderFireRescue",           "KYCampbellCounty",
-      "US/KY/Winchester",                 "KYClarkCounty",
       "US/KY/Wittensville",               "KYJohnsonCounty",
       "US/KY/WoodburnVFD",                "KYBowlingGreen",
       "US/KY/WoodfordCounty",             "KYWoodfordCounty",
