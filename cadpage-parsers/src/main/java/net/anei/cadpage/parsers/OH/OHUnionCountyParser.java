@@ -14,7 +14,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
 
   public OHUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "OH",
-           "CALL ADDR/S ADDR2? ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
+           "( ID GPS1 GPS2 | ) CALL ADDR/S ADDR2? ( CITY/Z ST_ZIP | CITY | ST_ZIP? ) X/Z+? X2! INFO/CS+");
   }
 
   @Override
@@ -37,26 +37,21 @@ public class OHUnionCountyParser extends FieldProgramParser {
     };
   }
 
-  private static final Pattern SUBJECT_GPS_PTN = Pattern.compile("#?(\\S*),([-+]?\\d{2}\\.\\d{6,},[-+]?\\d{2}\\.\\d{6,})");
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    Matcher match = SUBJECT_GPS_PTN.matcher(subject);
-    if (match.matches()) {
-      data.strCallId = match.group(1);
-      setGPSLoc(match.group(2), data);
+    if (subject.startsWith("#")) {
+      body = subject.replace(';', ',') + ",//," + body;
+    } else if (body.startsWith("#")) {
+      body = body.replace(';', ',') + ",//,";
     }
     if (!body.endsWith(",")) data.expectMore = true;
     return parseFields(body.split(","), data);
   }
 
   @Override
-  public String getProgram() {
-    return "ID GPS " + super.getProgram();
-  }
-
-  @Override
   public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("#+(.*)", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("ADDR2")) return new MyAddress2Field();
@@ -227,6 +222,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "PROPERTY DAMAGE CRASH",
       "ROAD HAZARD",
       "ROBBERY",
+      "ROBBERY IN PROGRESS",
       "RUNNING RADAR",
       "SEIZURES",
       "SERVICE RUN",
@@ -235,6 +231,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "SKATEBOARDERS",
       "SPECIAL DETAIL-NON SPECIFIC",
       "STABBING",
+      "STRAY DOG",
       "STROKE",
       "SUICIDE",
       "SUSPICIOUS CIRCUMSTANCES",
@@ -252,6 +249,7 @@ public class OHUnionCountyParser extends FieldProgramParser {
       "UNKNOWN PROBLEM (MEDICAL)",
       "UNRULY JUVENILE",
       "VEHICLE FIRE",
+      "VEHICLE LOCKOUT",
       "VEHICLE REPOSSESSION",
       "VIOLATION OF TPO",
       "WALK IN",
