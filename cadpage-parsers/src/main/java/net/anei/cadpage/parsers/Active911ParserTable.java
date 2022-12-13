@@ -1165,6 +1165,7 @@ public class Active911ParserTable {
       "US/MO/ChillicothePD",              "MOLivingstonCounty",
       "US/MO/ChristianCounty",            "MOChristianCounty",
       "US/MO/ChristianHospitalEMS",       "MOStLouisCountyC",
+      "US/MO/CitizensMemorial",           "MOPolkCounty",
       "US/MO/CityofBranson",              "MOBranson",
       "US/MO/CityofCameron",              "MOCameron",
       "US/MO/CityofChaffee",              "MOScottCountyC",
