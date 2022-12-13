@@ -20,6 +20,11 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CALL_DATETIME_ID")) return new MyCallDateTimeIdField();
