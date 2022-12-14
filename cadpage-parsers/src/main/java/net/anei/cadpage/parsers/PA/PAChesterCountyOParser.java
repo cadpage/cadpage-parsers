@@ -23,7 +23,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
 
   @Override
   public String getFilter() {
-    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,44@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,paging89@ehbems.org,whcems@outlook.com,calls@goodfellowship.org";
+    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,44@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,paging89@ehbems.org,whcems@outlook.com,calls@goodfellowship.org,MalvernFC@fdcmsincidents.com";
   }
 
   private static HtmlDecoder decoder = new HtmlDecoder();
