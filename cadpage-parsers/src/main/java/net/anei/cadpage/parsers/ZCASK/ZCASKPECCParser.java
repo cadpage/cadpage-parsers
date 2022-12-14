@@ -32,7 +32,8 @@ public class ZCASKPECCParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_TRAIL_PTN = Pattern.compile("(?: +ALERT)?[; ]*$", Pattern.CASE_INSENSITIVE);
-  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^ *(?:FD)?[-;, ]*");
+  private static final Pattern SUBJECT_FD_PTN = Pattern.compile(" +(?:FD|FIRE|FIRE/RESCUE|RESCUE|RESCUE/FD)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^ *(?:FD|FIRE|FIRE/RESCUE|RESCUE|RESCUE/FD)?[-;, ]*", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,6 +43,8 @@ public class ZCASKPECCParser extends FieldProgramParser {
 
     if (subject.isEmpty()) return false;
     subject = SUBJECT_TRAIL_PTN.matcher(subject).replaceFirst("");
+    Matcher match = SUBJECT_FD_PTN.matcher(subject);
+    if (match.find()) subject = subject.substring(0, match.start());
     if (!body.toUpperCase().replace("ASSINIBOAI", "ASSINIBOIA").replace("ASSINBOIA", "ASSINIBOIA").startsWith(subject.toUpperCase())) return false;
     data.strSource = subject;
     body = body.substring(subject.length());
@@ -66,7 +69,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
   }
 
   private static final Pattern CALL_ADDR_PTN =
-      Pattern.compile("((?:RESPOND|REPSOND|STAND DOWN|STRUCTURE)\\b.*?)(?: AT |(?=\\b(?:[NS][EW] )?\\d)) *(.*?)(?: IN (.*))?", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("((?:RESPOND|REPSOND|STAND DOWN|STRUCTURE)\\b.*?)(?: AT |(?=\\b(?:[NS][EW] )?\\d)) *(.*?)(?: IN (.*?))?(?: FOR (.*))?", Pattern.CASE_INSENSITIVE);
 
   private class MyCallAddressField extends AddressField {
     @Override
@@ -78,7 +81,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = CALL_ADDR_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strCall = match.group(1).trim();
+      data.strCall = append(match.group(1).trim(), " ", getOptGroup(match.group(4)));
       parseAddress(match.group(2).trim(), data);
       String city = match.group(3);
       if (city != null) data.strCity = city;
@@ -91,7 +94,8 @@ public class ZCASKPECCParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern NOT_ADDR_PTN = Pattern.compile("\\d (?:VEH|CAR).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NOT_ADDR_PTN = Pattern.compile("\\d (?:VEH|CAR).*|MUTUAL AID.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_FOR_CALL_PTN = Pattern.compile("(.*) for (.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_PTN = Pattern.compile("IN FRONT OF .*|.*\\d.*|(?:NORTH|SOUTH|EAST|WEST) OF .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*) in (.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
@@ -109,8 +113,15 @@ public class ZCASKPECCParser extends FieldProgramParser {
       if (! ADDR_PTN.matcher(field).matches() && ! parseAddress(StartType.START_ADDR, FLAG_NO_CITY, field).isValid()) return false;
       if (field.toUpperCase().endsWith("ALARM")) return false;
 
+      // Split out possible trailing call description
+      Matcher match = ADDR_FOR_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        data.strCall  = append(data.strCall, " ", match.group(2).trim());
+      }
+
       // See if there is an identified city here
-      Matcher match = ADDR_CITY_PTN.matcher(field);
+      match = ADDR_CITY_PTN.matcher(field);
       if (match.matches()) {
         field =  match.group(1).trim();
         data.strCity = match.group(2).trim();
@@ -123,6 +134,11 @@ public class ZCASKPECCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " CALL?";
     }
   }
 
@@ -184,6 +200,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
       "RICHARDSON",
       "ROSETOWN",
       "ROSE VALLEY",
+      "ROSTHERN",
       "SAINT-FRONT",
       "SCRIP",
       "SOVERIEGN",
