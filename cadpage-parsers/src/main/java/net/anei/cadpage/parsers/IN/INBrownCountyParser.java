@@ -9,6 +9,6 @@ public class INBrownCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "htvfd911@aol.com,tonka690@msn.com,BrownCountyCAD@ipsc.in.gov";
+    return "htvfd911@aol.com,tonka690@msn.com,BrownCountyCAD@ipsc.in.gov,noreply@public-safety-cloud.com";
   }
 }
