@@ -9,6 +9,6 @@ public class INClayCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "ClayCoCAD@ipsc.in.gov";
+    return "ClayCoCAD@ipsc.in.gov,noreply@public-safety-cloud.com";
   }
 }
