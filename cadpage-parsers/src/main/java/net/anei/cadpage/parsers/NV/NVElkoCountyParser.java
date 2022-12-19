@@ -5,8 +5,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class NVElkoCountyParser extends GroupBestParser {
-  
+
   public NVElkoCountyParser() {
-    super(new NVElkoCountyAParser(), new NVElkoCountyBParser());
+    super(new NVElkoCountyAParser(),
+          new NVElkoCountyBParser(),
+          new NVElkoCountyCParser());
   }
 }
