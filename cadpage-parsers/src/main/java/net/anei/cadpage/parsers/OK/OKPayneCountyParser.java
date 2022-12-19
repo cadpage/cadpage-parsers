@@ -1,75 +1,62 @@
 package net.anei.cadpage.parsers.OK;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class OKPayneCountyParser extends SmartAddressParser {
-  
+public class OKPayneCountyParser extends FieldProgramParser {
+
   public OKPayneCountyParser() {
-    super("PAYNE COUNTY", "OK");
-    setFieldList("CALL PLACE ADDR APT CITY ST INFO");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets("BUSH CREEK");
+    super("PAYNE COUNTY", "OK",
+          "Call_Time:DATETIME? Location:ADDRCITYST! Cross_Streets:X! Nearest_Intersection:SKIP! Incident_Type:CALL! Call_Details:INFO! END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "fireadmin@stillwater.org";
+    return "zuercher@stillwater.org";
   }
-  
-  private static final Pattern MASTER = Pattern.compile("911:(.*)From CAD User:[A-Z]+ on Device:\\d+");
-  private static final Pattern CALL_PTN = Pattern.compile("[- A-Z]+");
-  private static final Pattern CITY_ST_PTN = Pattern.compile("([ A-Z]+), *([A-Z]{2})");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (!subject.equals("CAD")) return false;
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    body = match.group(1).trim();
-    
-    Parser p = new Parser(body);
-    String addr = p.get("  ");
-    if (CALL_PTN.matcher(addr).matches()) {
-      data.strCall = addr;
-      addr = p.get("  ");
-      if (addr.length() == 0) {
-        addr = data.strCall;
-        data.strCall = "";
+    return parseFields(body.split(" \\| "), data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*) \\((.*,.*)\\)");
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDR_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        setGPSLoc(match.group(2).trim(), data);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS";
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String line : INFO_BRK_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", line);
       }
     }
-    data.strSupp = p.get();
-    
-    StartType st = (data.strCall.length() == 0 ? StartType.START_CALL_PLACE : StartType.START_PLACE);
-    parseAddress(st, FLAG_AT_BOTH | FLAG_ANCHOR_END, addr, data);
-    if (data.strAddress.length() == 0) {
-      parseAddress(data.strPlace, data);
-      data.strPlace = "";
-    }
-    
-    match = CITY_ST_PTN.matcher(data.strPlace);
-    if (match.matches()) {
-      data.strCity = match.group(1).trim();
-      data.strState = match.group(2);
-      data.strPlace = "";
-    }
-    return true;
   }
-  
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ACCIDENT WITH INJURY",
-      "AMBULANCE CALL",
-      "FIRE ALARM - GENERAL",
-      "MISC FIRE",
-      "PASSENGER VEH FIRE",
-      "RURAL GRASS FIRE",
-      "SMOKE INV COMMERCIAL",
-      "SMOKE INVEST OUTSIDE",
-      "STRUCTURE FIRE - RES"
-  );
 }
