@@ -758,6 +758,7 @@ public class Active911ParserTable {
       "US/KY/BrackenCounty",              "KYBrackenCountyB",
       "US/KY/BullittCounty",              "KYBullittCounty,Cadpage2",
       "US/KY/CaldwellCounty",             "KYCaldwellCounty",
+      "US/KY/CaldwellSprings",            "KYCrittendenCounty",
       "US/KY/CallowayCounty",             "KYCallowayCounty",
       "US/KY/CampbellCounty",             "KYCampbellCounty",
       "US/KY/CarrollCounty",              "KYCarrollCountyB",
