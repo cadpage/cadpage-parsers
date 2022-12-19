@@ -8,12 +8,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class DispatchA58Parser extends SmartAddressParser {
-  
+
   private String expSubject;
 
   public DispatchA58Parser(String expSubject, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState);
-    setFieldList("CALL ADDR APT CITY UNIT X");
+    setFieldList("ID CALL ADDR APT CITY UNIT X");
     this.expSubject = expSubject;
   }
 
@@ -27,14 +27,14 @@ public class DispatchA58Parser extends SmartAddressParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals(expSubject)) return false;
-    
+
     Matcher mat = MASTER.matcher(body);
     if (!mat.matches()) return false;
     data.strCallId = getOptGroup(mat.group(1));
     data.strCall = mat.group(2).trim();
-    
+
     String addr = mat.group(3);
     if (addr != null) {
       addr = addr.replace(",  ", " & ");
@@ -44,7 +44,7 @@ public class DispatchA58Parser extends SmartAddressParser {
     if (addr != null) {
       parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr.trim(), data);
     }
-    
+
     //UNIT CROSS
     data.strUnit = getOptGroup(mat.group(5));
     data.strCross = getOptGroup(mat.group(6));

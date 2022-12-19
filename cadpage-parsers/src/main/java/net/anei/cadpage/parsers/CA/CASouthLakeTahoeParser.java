@@ -1,21 +1,12 @@
 package net.anei.cadpage.parsers.CA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA58Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class CASouthLakeTahoeParser extends DispatchA58Parser {
-
+/**
+ * South Lake Tahoe County, CA
+ */
+public class CASouthLakeTahoeParser extends GroupBestParser {
   public CASouthLakeTahoeParser() {
-    super("Cyrun Auto Paging", CITY_LIST, "SOUTH LAKE TAHOE", "CA");
+    super(new CASouthLakeTahoeAParser(), new CASouthLakeTahoeBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "cyrunpaging@cyrun.com";
-  }
-  
-  private static String[] CITY_LIST = new String[] {
-      "MEYERS",
-      "S LAKE TAHOE" 
-  };
-
 }
