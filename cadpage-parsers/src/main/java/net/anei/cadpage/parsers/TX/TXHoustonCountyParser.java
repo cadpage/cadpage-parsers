@@ -1,15 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA64Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXHoustonCountyParser extends DispatchA64Parser {
+/**
+ * Houston County, TX
+ */
+public class TXHoustonCountyParser extends GroupBestParser {
 
   public TXHoustonCountyParser() {
-    super("HOUSTON COUNTY", "TX");
-  }
-
-  @Override
-  public String getFilter() {
-    return "cadalerts@eforcesoftware.com,ereports@eforcesoftware.com";
+    super(new TXHoustonCountyAParser(), new TXHoustonCountyBParser());
   }
 }
