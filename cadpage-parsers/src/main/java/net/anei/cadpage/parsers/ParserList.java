@@ -152,6 +152,7 @@ public class ParserList {
               ,"ALStClairCounty"                ,"St Clair County, AL"
               ,"ALTalladegaCounty"              ,"Talladega County, AL"
               ,"ALTallapoosaCounty"             ,"Tallapoosa County, AL"
+              ,"ALTuscaloosaCounty"             ,"Tuscaloosa County, AL"
               ,"ALWalkerCounty"                 ,"Walker County, AL"
               ,"ALWashingtonCounty"             ,"Washington County, AL"
               ,"ALWinstonCounty"                ,"Winston County, AL"
