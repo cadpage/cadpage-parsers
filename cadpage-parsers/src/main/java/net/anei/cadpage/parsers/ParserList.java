@@ -1480,6 +1480,7 @@ public class ParserList {
           ),
           new ParserCategory("South Carolina"
               ,"SCAbbevilleCounty"              ,"Abbeville County, SC"
+              ,"SCAikenCounty"                  ,"Aiken County, SC"
               ,"SCBerkeleyCounty"               ,"Berkeley County, SC"
               ,"SCAndersonCounty"               ,"Anderson County, SC"
               ,"SCCalhounCounty"                ,"Calhoun County, SC"

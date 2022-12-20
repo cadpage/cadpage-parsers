@@ -2036,6 +2036,7 @@ public class Active911ParserTable {
       "US/RI/CityofWestWarwick",          "RIWestWarwick",
       "US/RI/Woonsocket",                 "RIProvidenceCounty",
       "US/SC/AbbevilleCounty",            "SCAbbevilleCountyB",
+      "US/SC/AikenPublicSafety",          "SCAikenCounty",
       "US/SC/AndersonCountySheriff911",   "SCAndersonCountyD",
       "US/SC/AndersonSheriff",            "SCAndersonCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",
