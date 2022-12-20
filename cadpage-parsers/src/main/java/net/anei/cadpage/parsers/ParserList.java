@@ -1932,6 +1932,7 @@ public class ParserList {
               ,"ZCAABMountainViewCounty"        ,"Mountain View County, AB"
               ,"ZCAABRedDeerCounty"             ,"Red Deer County, AB"
               ,"ZCAABStrathconaCounty"          ,"Strathcona County, AB"
+              ,"ZCASturgeonCounty"              ,"Sturgeon County, AB"
               ,"ZCAABTaber"                     ,"Taber, AB"
           ),
           new ParserCategory("British Columbia, Canada"

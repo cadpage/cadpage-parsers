@@ -23,6 +23,7 @@ public class Active911ParserTable {
       "CA/AB/RedDeerCounty",              "ZCAABRedDeerCounty",
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",
       "CA/AB/StAlbert",                   "ZCAABEdmonton",
+      "CA/AB/SturgeonCounty",             "ZCASturgeonCounty",
       "CA/AB/SylvanLake",                 "ZCAABRedDeerCounty",
       "CA/AB/Taber",                      "ZCAABTaber",
       "CA/BC/CentralOkanagan",            "ZCABCCentralOkanagan",
