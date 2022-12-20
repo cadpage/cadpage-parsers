@@ -6,30 +6,29 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class VAMontgomeryCountyBParser extends FieldProgramParser {
-  
+
   public VAMontgomeryCountyBParser() {
-    super("MONTGOMERY COUNTY", "VA", 
+    super("MONTGOMERY COUNTY", "VA",
           "ADDR:ADDRCITY! GPS:GPS? CALL:CALL! PLACE:PLACE! INFO:INFO! INFO/N+ X:X! UNIT:UNIT! PRI:PRI! ID:ID! END");
   }
-  
+
   @Override
   public String getFilter() {
     return "@nrv911.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("!")) return false;
+  protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n<end>");
     if  (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -37,7 +36,7 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -48,7 +47,7 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -56,7 +55,7 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -64,14 +63,14 @@ public class VAMontgomeryCountyBParser extends FieldProgramParser {
       super.parse(field,  data);
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     String tmp = MAP_CITY_TABLE.getProperty(city.toUpperCase());
     if (tmp != null) city = tmp;
     return city;
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "VIRGINIA TECH", "Blacksburg"
   });
