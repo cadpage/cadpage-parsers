@@ -5,14 +5,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
 
 public class KSBrownCountyParser extends DispatchA25Parser {
-  
+
   public KSBrownCountyParser() {
     super("BROWN COUNTY", "KS");
   }
-  
+
   @Override
   public String getFilter() {
-    return "EnterpolAlerts@brownso.org";
+    return "EnterpolAlerts@brownso.org,cadalerts@hortonpdks.com";
   }
 
   @Override
@@ -21,5 +21,5 @@ public class KSBrownCountyParser extends DispatchA25Parser {
     if (data.strCity.equalsIgnoreCase("COUNTY")) data.strCity = "";
     return true;
   }
-  
+
 }
