@@ -81,18 +81,25 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern UNIT_INFO_PATTERN_1
-  = Pattern.compile("Unit Id +(\\d):(.*)"),
-                              UNIT_INFO_PATTERN_2
-  = Pattern.compile("(Dispatched|Enroute|On Scene|Cleared) +(\\d): +(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d)"),
-                              UNIT_INFO_PATTERN_3
-  = Pattern.compile("(?:Medical|Fire) \\d:.*");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("(.*) ([-+]?\\d{3}\\.\\d{5,}, *[-+]?\\d{3}\\.\\d{5,})");
+  private static final Pattern UNIT_INFO_PATTERN_1 = Pattern.compile("Unit Id +(\\d):(.*)"),
+                               UNIT_INFO_PATTERN_2 = Pattern.compile("(Dispatched|Enroute|On Scene|Cleared) +(\\d): +(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d)"),
+                               UNIT_INFO_PATTERN_3 = Pattern.compile("(?:Medical|Fire) \\d:.*");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       String uName = "";
       if (field.equals("")) return;
       if (field.startsWith("-----") && field.endsWith("-----")) return;
+
+      if (data.strGPSLoc.isEmpty()) {
+        Matcher match = INFO_GPS_PTN.matcher(field);
+        if (match.matches()) {
+          field = match.group(1).trim();
+          setGPSLoc(match.group(2), data);
+        }
+      }
+
       if (field.equals("Units")) {
         unitInfo = true;
         return;
@@ -127,7 +134,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames()+" UNIT DATE TIME";
+      return super.getFieldNames()+" GPS UNIT DATE TIME";
     }
   }
 
