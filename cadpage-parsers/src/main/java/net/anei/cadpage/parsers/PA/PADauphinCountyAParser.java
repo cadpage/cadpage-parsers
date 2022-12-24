@@ -298,6 +298,8 @@ public class PADauphinCountyAParser extends FieldProgramParser {
       "JKST NORT", "JACKSON TWP",
       "JORD NORT", "JORDAN TWP",
       "LMHY NORT", "LOWER MAHANOY TWP",
+      "UMHY NORT", "UPPER MAHANOY TWP",
+      "WASH NORT", "WASHINGTON TWP",
 
       // Perry County
       "DUNC PERR", "DUNCANNON",
