@@ -7,16 +7,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
  * Umatilla County, OR
  */
 public class ORUmatillaCountyAParser extends DispatchA20Parser {
-  
+
   public ORUmatillaCountyAParser() {
     super("UMATILLA COUNTY", "OR");
   }
-  
+
   @Override
   public String getFilter() {
-    return "notifier@umatillacounty.net,dpspagesa@ctuir.org,admin@pfdstaff.org";
+    return "notifier@umatillacounty.net,dpspagesa@ctuir.org,admin@pfdstaff.org,@co.umatilla.or.us,@crimegraphics.com";
   }
- 
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (subject.equals("(ACTIVE)") || subject.equals("RECALL") || subject.equals("GENERAL ALARM")) {
