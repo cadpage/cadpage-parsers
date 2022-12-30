@@ -25,6 +25,8 @@ public class MDQueenAnnesCountyCParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!") && !subject.equals("CMalert")) return false;
+    body = stripFieldStart(body, "{");
+    body = stripFieldEnd(body, "}");
     return parseFields(body.split(" \\| "), data);
   }
 
