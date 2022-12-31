@@ -13,36 +13,36 @@ import net.anei.cadpage.parsers.MsgParser;
  * Also Clackamas County
  */
 public class ORWashingtonCountyCParser extends MsgParser {
-  
+
   public ORWashingtonCountyCParser() {
     this("WASHINGTON COUNTY", "OR");
   }
-  
+
   public ORWashingtonCountyCParser(String defCity, String defState) {
     super(defCity, defState);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORWashingtonCountyCParser";
   }
-  
+
   @Override
   public String getFilter() {
-    return "portlandcomm@amr-ems.com";
+    return "portlandcomm@amr-ems.com,portlandcomm@gmr.net";
   }
-  
-  
+
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*)\\bUNIT: *(\\S+) +INC#: *(\\d+)[ .]+((?:DSP|RCD|CLR):.*)");
   private static final Pattern RR_BRK_PTN = Pattern.compile("[ .]+(?=[A-Z]+:)");
   private static final Pattern TEMP_PAGE_PTN = Pattern.compile("(.*?) \\.{3}Run:(\\S+) \\.{3}add:(.*)");
   private static final Pattern GEN_UNIT_PTN = Pattern.compile("UNIT[ :#]+(\\S+) +(.*)", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("VisiCAD Email")) return false;
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("CALL UNIT ID INFO");
@@ -53,13 +53,13 @@ public class ORWashingtonCountyCParser extends MsgParser {
       data.strSupp = RR_BRK_PTN.matcher(match.group(4)).replaceAll("\n");
       return true;
     }
-    
+
     if (parseMsgFmt2(body, data)) return true;
-    
+
     if (parseMsgFmt3(body, data)) return true;
-    
+
     if (parseMsgFmt4(body, data)) return true;
-    
+
     match = TEMP_PAGE_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("CALL ID ADDR APT");
@@ -79,9 +79,9 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strSupp = body;
     return true;
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +([^ ].*)");
-  
+
   private boolean parseMsgFmt2(String body, Data data) {
     String prefix = "";
     int pt = body.indexOf("UNIT:");
@@ -110,7 +110,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
     p.check(" ");
     if (p.check(" ")) return false;
     String call = p.get();
-    
+
     setFieldList("CALL UNIT ID PLACE ADDR APT CITY X PRI CODE CALL");
     data.strCall = prefix;
     data.strUnit = unit;
@@ -134,10 +134,10 @@ public class ORWashingtonCountyCParser extends MsgParser {
       call = match.group(2);
     }
     data.strCall = append(data.strCall, " - ", call);
-    
+
     return true;
   }
-  
+
   private boolean parseMsgFmt3(String body, Data data) {
     String prefix = "";
     int pt = body.indexOf("UNIT:");
@@ -154,7 +154,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
     String place = p.get(30);
     String addr = p.get(30);
     String apt = p.get();
-    
+
     setFieldList("UNIT ID PLACE ADDR APT");
     data.strCall = prefix;
     data.strUnit = unit;
@@ -169,7 +169,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strApt = append(data.strApt, "-", apt);
     return true;
   }
-  
+
   private boolean parseMsgFmt4(String body, Data data) {
     FParser p = new FParser(body);
     String unit = p.get(6);
@@ -192,7 +192,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
     if (!p.check(" PRI:")) return false;
     String pri = p.get(29);
     String info = p.get();
-    
+
     setFieldList("UNIT ID ADDR APT CITY PLACE X CALL PRI INFO");
     data.strUnit = unit;
     data.strCallId = id;
@@ -206,7 +206,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strSupp = info;
     return true;
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "FRVW", "FAIRVIEW",
       "GRSM", "GRESHAM",
