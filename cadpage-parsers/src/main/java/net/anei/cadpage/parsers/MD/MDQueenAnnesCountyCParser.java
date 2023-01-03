@@ -9,7 +9,7 @@ public class MDQueenAnnesCountyCParser extends FieldProgramParser {
 
   public MDQueenAnnesCountyCParser() {
     super("QUEEN ANNES COUNTY", "MD",
-          "CALL ADDRCITY PLACE X UNIT ( Radio_Channel:CH! | CH! ) ( Box_Area:MAP GPS1 GPS2! | ) INFO! DATETIME END");
+          "CALL ADDRCITY PLACE X UNIT ( Radio_Channel:CH! | CH! ) ( Box_Area:MAP! | ) ( GPS1 GPS2! | ) INFO! DATETIME END");
   }
 
   @Override

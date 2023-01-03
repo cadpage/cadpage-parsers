@@ -7,7 +7,7 @@ public class MDQueenAnnesCountyDParser extends FieldProgramParser {
 
   public MDQueenAnnesCountyDParser() {
     super("QUEEN ANNES COUNTY", "MD",
-          "CALL:CALL! ADDR:ADDR! DCITY:CITY? DST:ST! PL:PLACE! X:X! UNIT:UNIT! CH:CH! MAP:MAP! GPS:GPS? INFO:INFO! INFO/N+ CODE:CODE DATETIME:DATETIME");
+          "CALL:CALL! ADDR:ADDR! DCITY:CITY? DST:ST? PL:PLACE? X:X? UNIT:UNIT! CH:CH? MAP:MAP! GPS:GPS? INFO:INFO! INFO/N+ CODE:CODE DATETIME:DATETIME");
   }
 
   @Override
@@ -23,6 +23,8 @@ public class MDQueenAnnesCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CMalert")) return false;
+    body = stripFieldStart(body, "{");
+    body = stripFieldEnd(body, "}");
     return parseFields(body.split("\n"), data);
   }
 
