@@ -247,6 +247,7 @@ public class Active911ParserTable {
       "US/CA/SanBernardinoCounty",        "CASanBernardinoCountyA,CASanBernardinoCountyC",
       "US/CA/SanBernardinoCountyMedia",   "CASanBernardinoCountyA",
       "US/CA/SanDiegoCounty",             "CASanDiegoCounty",
+      "US/CA/SanLuisObispo",              "CASanLuisObispoCountyA",
       "US/CA/SanRamonValleyFD",           "CAContraCostaCountyC",
       "US/CA/SantaClaraCademail",         "CASantaClaraCountyA",
       "US/CA/SantaClaraCounty",           "CASantaClaraCountyB",
