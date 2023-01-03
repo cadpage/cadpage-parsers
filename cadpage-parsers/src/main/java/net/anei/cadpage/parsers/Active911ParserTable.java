@@ -302,6 +302,7 @@ public class Active911ParserTable {
       "US/CO/Crisppaging",                "COLarimerCountyC",
       "US/CO/CSPCostillaCounty",          "COCostillaCounty",
       "US/CO/CSPSanJuanCounty",           "COSanJuanCounty",
+      "US/CO/CusterCounty",               "COCusterCounty",
       "US/CO/DeltaCountyAmbulance",       "CODeltaCounty",
       "US/CO/DivideFPD",                  "COTellerCounty",
       "US/CO/DouglasCounty",              "CODouglasCountyA,CODouglasCountyC",

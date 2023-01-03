@@ -253,6 +253,7 @@ public class ParserList {
               ,"COClearCreekCounty"             ,"Clear Creek County, CO"
               ,"COConejosCounty"                ,"Conejos County, CO"
               ,"COCostillaCounty"               ,"Costilla County, CO"
+              ,"COCusterCounty"                 ,"Custer County, CO"
               ,"CODeloresCounty"                ,"Delores County, CO"
               ,"CODeltaCounty"                  ,"Delta County, CO"
               ,"CODenver"                       ,"Denver, CO"
