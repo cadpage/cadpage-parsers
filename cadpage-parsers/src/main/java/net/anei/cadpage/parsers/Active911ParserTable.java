@@ -1307,6 +1307,7 @@ public class Active911ParserTable {
       "US/MT/GallatinCounty",             "MTGallatinCounty",
       "US/MT/GreatFalls",                 "MTCascadeCountyB",
       "US/MT/HavrePolice",                "MTHillCounty",
+      "US/MT/HelenaPD",                   "MTLewisandClarkCounty",
       "US/MT/KIC",                        "MTFlatheadCountyC,MTFlatheadCountyE",
       "US/MT/LakeCounty",                 "MTLakeCounty",
       "US/MT/LakeCounty2",                "MTLakeCounty",
