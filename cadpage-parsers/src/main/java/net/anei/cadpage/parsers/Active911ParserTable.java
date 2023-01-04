@@ -1128,6 +1128,7 @@ public class Active911ParserTable {
       "US/MN/PickwickFireRescue",         "MNWinonaCounty",
       "US/MN/PopeCounty",                 "MNPopeCounty",
       "US/MN/RamseyCounty",               "MNRamseyCounty",
+      "US/WI/RedWing",                    "MNGoodhueCounty",
       "US/MN/RedwoodCounty",              "MNRedwoodCounty",
       "US/MN/RenvilleCounty",             "MNRenvilleCounty",
       "US/MN/RobbinsdalePD",              "MNHennepinCounty",

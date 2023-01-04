@@ -15,7 +15,7 @@ public class MNGoodhueCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,CISActive911@co.goodhue.mn.us";
+    return "noreply@cisusa.org,CISActive911@co.goodhue.mn.us,donotreply@ci.red-wing.mn.us";
   }
 
   @Override
