@@ -969,6 +969,7 @@ public class ParserList {
               ,"MOClayCounty"                   ,"Clay County, MO"
               ,"MOClintonCounty"                ,"Clinton County, MO"
               ,"MOColeCounty"                   ,"Cole County, MO"
+              ,"MOCooperCounty"                 ,"Cooper County, MO"
               ,"MOCrawfordCounty"               ,"Crawford County, MO"
               ,"MODallasCounty"                 ,"Dallas County, MO"
               ,"MODaviessCounty"                ,"Daviess County, MO"
