@@ -1941,6 +1941,7 @@ public class Active911ParserTable {
       "US/PA/ElkCounty",                  "PAElkCounty",
       "US/PA/ErieCounty",                 "PAErieCountyD",
       "US/PA/FayetteCounty",              "PAFayetteCountyC",
+      "US/PA/FayetteCountyCoroner",       "PAFayetteCountyC",
       "US/PA/FayetteCountyEMA",           "PAFayetteCountyC",
       "US/PA/FCFES",                      "PAFranklinCountyC",
       "US/PA/FDCMS",                      "PAChesterCountyO,GroupBlock,PAChesterCountyF",
