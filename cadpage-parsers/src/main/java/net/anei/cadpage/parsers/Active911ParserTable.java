@@ -61,6 +61,7 @@ public class Active911ParserTable {
       "NZ/RAR/Avarua",                    "MIOtsegoCounty",
       "SE/Kumla/Eskilstuna",              "ZSESwedenB",
       "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB,ZSESwedenE",
+      "US/AK/JBER",                       "AKAnchorage",
       "US/AK/AnchorageChugiak",           "AKChugiak",
       "US/AK/CapitalCityFire",            "AKJuneau",
       "US/AK/CapitalCityFire2",           "AKJuneau",

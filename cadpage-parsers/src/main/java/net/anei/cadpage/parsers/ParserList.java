@@ -158,6 +158,7 @@ public class ParserList {
               ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
           new ParserCategory("Alaska"
+              ,"AKAnchorage"                    ,"Anchorage, AK"
               ,"AKChugiak"                      ,"Chugiak, AK"
               ,"AKFairbanks"                    ,"Fairbanks, AK"
               ,"AKJuneau"                       ,"Juneau, AK"
