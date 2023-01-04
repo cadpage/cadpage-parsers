@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.WV;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 public class WVMcDowellCountyBParser extends DispatchA48Parser {
@@ -11,6 +12,13 @@ public class WVMcDowellCountyBParser extends DispatchA48Parser {
   @Override
   public String getFilter() {
     return "mccad@frontier.com";
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\nNextGen");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(subject, body, data);
   }
 
   private static final String[] CITY_LIST = new String[] {

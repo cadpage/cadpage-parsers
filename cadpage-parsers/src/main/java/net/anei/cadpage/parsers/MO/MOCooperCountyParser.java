@@ -32,6 +32,11 @@ public class MOCooperCountyParser extends FieldProgramParser {
   }
 
   @Override
+  public String getProgram() {
+    return "UNIT? " + super.getProgram();
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("PLACE")) return new MyPlaceField();
