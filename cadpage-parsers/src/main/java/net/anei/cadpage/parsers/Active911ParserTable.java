@@ -1080,6 +1080,7 @@ public class Active911ParserTable {
       "US/MI/VanBurenCounty",             "MIVanBurenCounty",
       "US/MI/WashtenawCounty",            "MIWashtenawCounty",
       "US/MI/WMTOC",                      "MIOttawaCounty,MIAlleganCounty",
+      "US/MI/Yates",                      "MILakeCounty",
       "US/MN/AnokaCounty",                "MNAnokaCounty",
       "US/MN/BeckerCounty",               "MNBeckerCounty",
       "US/MN/BeltramiCounty",             "MNBeltramiCounty",

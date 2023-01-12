@@ -1,7 +1,10 @@
 package net.anei.cadpage.parsers.MI;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -19,6 +22,18 @@ public class MILakeCountyParser extends DispatchOSSIParser {
   @Override
   public String getFilter() {
     return "CAD@co.lake.mi.us";
+  }
+
+  private static final Pattern YATES_FD_PFX = Pattern.compile("yatesfd\\d?\n(\\d\\d?/\\d\\d?/\\d{4}) @ (\\d\\d)(\\d\\d)\\n *");
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    Matcher match = YATES_FD_PFX.matcher(body);
+    if (match.lookingAt()) {
+      data.strDate = match.group(1);
+      data.strTime = match.group(2)+':'+match.group(3);
+      body = "CAD:" + body.substring(match.end());
+    }
+    return super.parseMsg(body, data);
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
