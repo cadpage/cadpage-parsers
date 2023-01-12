@@ -1838,6 +1838,7 @@ public class Active911ParserTable {
       "US/OK/FaxConnectionsWagonerCounty","OKTulsa",
       "US/OK/LakewoodFD",                 "OKBryanCounty",
       "US/OK/LoveCounty",                 "OKLoveCounty",
+      "US/OK/MajorCounty",                "OKMajorCounty",
       "US/OK/MayesCounty",                "OKMayesCounty",
       "US/OK/OklahomaCounty",             "OKOklahomaCountyB",
       "US/OK/SandSprings",                "OKSandSprings",

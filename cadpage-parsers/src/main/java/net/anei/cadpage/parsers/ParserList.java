@@ -1361,6 +1361,7 @@ public class ParserList {
               ,"OKGarfieldCounty"               ,"Garfield County, OK"
               ,"OKGradyCounty"                  ,"Grady County, OK"
               ,"OKLoveCounty"                   ,"Love County, OK"
+              ,"OKMajorCounty"                  ,"Major County, OK"
               ,"OKMayesCounty"                  ,"Mayes County, OK"
               ,"OKMuskogeeCounty"               ,"Muskogee County, OK"
               ,"OKOklahomaCounty"               ,"Oklahoma County, OK"

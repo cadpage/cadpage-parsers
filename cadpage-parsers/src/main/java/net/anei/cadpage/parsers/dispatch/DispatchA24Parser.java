@@ -55,8 +55,10 @@ public class DispatchA24Parser extends FieldProgramParser {
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(',');
-      if (pt >= 0) field = field.substring(0,pt).trim();
+      if (!GPS_PATTERN.matcher(field).matches()) {
+        int pt = field.indexOf(',');
+        if (pt >= 0) field = field.substring(0,pt).trim();
+      }
       super.parse(field, data);
     }
   }
