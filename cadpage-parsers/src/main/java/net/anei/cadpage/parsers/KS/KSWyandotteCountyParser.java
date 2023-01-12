@@ -12,12 +12,18 @@ public class KSWyandotteCountyParser extends DispatchH05Parser {
 
   public KSWyandotteCountyParser() {
     super("WYANDOTTE COUNTY", "KS",
-          "CALL:CALL! INCIDENT:ID? PLACE:PLACE! ADDR:ADDRCITY! PRI:PRI! DATE:DATETIME! UNIT:UNIT! INFO:INFO_BLK+ Call_Date:SKIP");
+          "( CALL:CALL! INCIDENT:ID? PLACE:PLACE! ADDR:ADDRCITY! PRI:PRI! DATE:DATETIME! UNIT:UNIT! INFO:INFO_BLK+ Call_Date:SKIP " +
+          "| SKIP+ CFS:SKIP! Incident_Number:ID! Call_Date:DATETIME! Type:CALL! Loc:SRC! ADDR_CITY_APT! Lat:GPS! Cross_Streets:X! Cmt:EMPTY! INFO_BLK+ Units:UNIT! Times:EMPTY! TIMES+ )");
   }
 
   @Override
   public String getFilter() {
-    return "@kckfd.org";
+    return "@kckfd.org,@kckpd.org";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -31,6 +37,7 @@ public class KSWyandotteCountyParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("ADDR_CITY_APT")) return new MyAddressCityAptField();
     return super.getField(name);
   }
 
@@ -56,6 +63,24 @@ public class KSWyandotteCountyParser extends DispatchH05Parser {
       } else {
         data.strTime = time;
       }
+    }
+  }
+
+  private class MyAddressCityAptField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String apt = p.getLastOptional('#');
+      data.strCity = p.getLastOptional(',');
+      field = p.get().replace('@', '&');
+      field = stripFieldEnd(field, apt);
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY APT";
     }
   }
 }
