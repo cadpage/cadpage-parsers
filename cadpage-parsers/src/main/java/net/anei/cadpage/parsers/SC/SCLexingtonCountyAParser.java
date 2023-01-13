@@ -29,7 +29,9 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
       data.strSource = subject;
       body = "CAD:" + body.substring(4);
     } else return false;
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    data.strAddress = MSPACE_PTN.matcher(data.strAddress).replaceAll(" ");
+    return true;
   }
 
   @Override
