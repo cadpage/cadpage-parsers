@@ -585,6 +585,7 @@ public class PALancasterCountyParser extends FieldProgramParser {
       "2930 MARIETTA AVE",                    "+40.056771,-76.395159",
       "2994 MARIETTA AVE",                    "+40.056771,-76.395159",
       "1320 SHREINER STATION RD",             "+40.072104,-76.346531",
+      "1321 SHREINER STATION RD",             "+40.072242,-76.346081",
       "1322 SHREINER STATION RD",             "+40.071757,-76.346450",
       "1323 SHREINER STATION RD",             "+40.071917,-76.346001",
       "1504 SWARR RUN RD",                    "+40.072135,-76.347223",
