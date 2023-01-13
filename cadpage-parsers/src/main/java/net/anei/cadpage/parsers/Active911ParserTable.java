@@ -1274,6 +1274,7 @@ public class Active911ParserTable {
       "US/MO/StoneCounty",                "MOStoneCountyC",
       "US/MO/SullivanCounty",             "MOSullivanCounty",
       "US/MO/SunriseBeachFPD",            "MOCamdenCounty",
+      "US/MO/TrimblePD",                  "MOClintonCounty",
       "US/MO/UnionFPD",                   "MOFranklinCounty",
       "US/MO/UniversityCity",             "MOStLouisCountyD",
       "US/MO/WarrenCounty",               "MOWarrenCountyA",
