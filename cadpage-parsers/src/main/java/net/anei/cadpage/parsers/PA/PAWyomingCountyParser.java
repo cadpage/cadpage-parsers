@@ -20,12 +20,13 @@ public class PAWyomingCountyParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "CAD@wycopa911.org";
+    return "CAD@wycopa911.org,sungard_noreply@wyomingcountypa.gov";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "cad@wycopa911.org:");
+    body = stripFieldStart(body, "sungard_noreply@wyomingcountypa.gov:");
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
