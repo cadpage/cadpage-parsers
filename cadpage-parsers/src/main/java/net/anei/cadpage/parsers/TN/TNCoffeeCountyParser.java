@@ -40,6 +40,9 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
       "TULLAHOMA",
 
       // Bedford County
-      "NORMANDY"
+      "NORMANDY",
+
+      // Franklin County
+      "ESTILL SPRINGS"
   };
 }

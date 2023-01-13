@@ -24,9 +24,10 @@ public class VAGilesCountyParser extends DispatchSouthernParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = LEAD_PRI_PTN.matcher(body);
-    if (!match.lookingAt()) return false;
-    data.strPriority = match.group(1);
-    body = body.substring(match.end()).trim();
+    if (match.lookingAt()) {
+      data.strPriority = match.group(1);
+      body = body.substring(match.end()).trim();
+    }
     if (!super.parseMsg(body, data)) return false;
 
     data.strAddress = data.strAddress.replace("KATHERINE", "CATHERINE");
