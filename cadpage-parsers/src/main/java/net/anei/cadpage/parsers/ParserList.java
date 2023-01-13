@@ -414,6 +414,7 @@ public class ParserList {
               ,"GAMonroeCounty"                 ,"Monroe County, GA"
               ,"GAMurrayCounty"                 ,"Murray County, GA"
               ,"GAMeriwetherCounty"             ,"Meriwether County, GA"
+              ,"GANewtonCounty"                 ,"Newton County, GA"
               ,"GAOconeeCounty"                 ,"Oconee County, GA"
               ,"GAPauldingCounty"               ,"Paulding County, GA"
               ,"GAPickensCounty"                ,"Pickens County, GA"

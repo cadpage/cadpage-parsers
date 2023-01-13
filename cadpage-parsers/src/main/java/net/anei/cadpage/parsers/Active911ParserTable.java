@@ -476,6 +476,7 @@ public class Active911ParserTable {
       "US/GA/MitchellCounty",             "GAMitchellCounty",
       "US/GA/MonroeCounty",               "GAMonroeCounty",
       "US/GA/MurrayCounty",               "GAMurrayCounty",
+      "US/GA/NewtonCounty",               "GANewtonCounty",
       "US/GA/OconeeCounty",               "GAOconeeCounty",
       "US/GA/PauldingCounty",             "GAPauldingCounty",
       "US/GA/PickensCo911",               "GAPickensCounty",
