@@ -472,6 +472,7 @@ public class Active911ParserTable {
       "US/GA/MarionCounty",               "GAMarionCounty",
       "US/GA/MeriweatherCounty",          "GAMeriwetherCounty",
       "US/GA/MFRE911",                    "GASchleyCounty",
+      "US/GA/MitchellCounty",             "GAMitchellCounty",
       "US/GA/MonroeCounty",               "GAMonroeCounty",
       "US/GA/MurrayCounty",               "GAMurrayCounty",
       "US/GA/OconeeCounty",               "GAOconeeCounty",
