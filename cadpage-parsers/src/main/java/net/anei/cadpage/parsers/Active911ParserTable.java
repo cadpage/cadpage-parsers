@@ -2609,6 +2609,7 @@ public class Active911ParserTable {
       "Vendor/ComputerArts/Default",      "IDGemCounty",
       "Vendor/CTC/Default",               "MIInghamCountyC",
       "Vendor/GeoConex/V109",             "TNCumberlandCountyA",
+      "Vendor/GeoSafe/Default",           "OKLoganCounty",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
       "Vendor/Sweden/Zenit",              "ZSESwedenA"
