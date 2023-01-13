@@ -1,11 +1,12 @@
 package net.anei.cadpage.parsers.CA;
 
+import net.anei.cadpage.parsers.GroupBestParser;
+
 /**
  * Yuba County, CA
  */
-public class CAYubaCountyParser extends CAPlacerCountyAParser {
-  
+public class CAYubaCountyParser extends GroupBestParser {
   public CAYubaCountyParser() {
-    super("YUBA COUNTY", "CA");
+    super(new CAYubaCountyAParser(), new CAYubaCountyBParser());
   }
 }
