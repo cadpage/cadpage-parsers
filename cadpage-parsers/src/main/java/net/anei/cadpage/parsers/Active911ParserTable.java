@@ -2152,6 +2152,7 @@ public class Active911ParserTable {
       "US/TN/HamblenCounty",              "TNHamblenCounty",
       "US/TN/HamiltonCounty",             "TNHamiltonCountyC",
       "US/TN/HawkinsCounty",              "TNHawkinsCounty",
+      "US/TN/HawkinsCountySR",            "TNHawkinsCounty",
       "US/TN/HaywoodCounty",              "TNHaywoodCounty",
       "US/TN/JeffersonCounty",            "TNJeffersonCounty",
       "US/TN/KnoxCounty",                 "TNKnoxCounty",
