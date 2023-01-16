@@ -37,12 +37,17 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
       "POCAHONTAS",
       "SHADY GROVE",
       "SUMMITVILLE",
+      "SUMMITTVILLE",
       "TULLAHOMA",
 
       // Bedford County
       "NORMANDY",
+      "WARTRACE",
 
       // Franklin County
-      "ESTILL SPRINGS"
+      "ESTILL SPRINGS",
+
+      // Warren County
+      "MCMINNVILLE"
   };
 }
