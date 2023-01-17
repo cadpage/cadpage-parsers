@@ -2,10 +2,10 @@ package net.anei.cadpage.parsers.TN;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 
-public class TNUnicoCountyParser extends DispatchA74Parser {
+public class TNUnicoiCountyParser extends DispatchA74Parser {
 
-  public TNUnicoCountyParser() {
-    super("UNICO COUNTY", "TN");
+  public TNUnicoiCountyParser() {
+    super("UNICOI COUNTY", "TN");
   }
 
   @Override
