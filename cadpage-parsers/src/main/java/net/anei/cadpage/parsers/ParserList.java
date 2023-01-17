@@ -1583,6 +1583,7 @@ public class ParserList {
               ,"TNSevierCounty"                 ,"Sevier County, TN"
               ,"TNSmithCounty"                  ,"Smith County, TN"
               ,"TNSumnerCounty"                 ,"Sumner County, TN"
+              ,"TNUnicoiCounty"                 ,"Unicoi County, TN"
               ,"TNUnionCounty"                  ,"Union County, TN"
               ,"TNVanBurenCounty"               ,"Van Buren County, TN"
               ,"TNWarrenCounty"                 ,"Warren County, TN"
