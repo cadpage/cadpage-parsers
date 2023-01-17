@@ -1622,6 +1622,7 @@ public class Active911ParserTable {
       "US/NY/HicksvilleFD",               "NYNassauCountyRedAlert",
       "US/NY/Islips",                     "NYSuffolkCountyA",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
+      "US/NY/JerichoFD",                  "NYNassauCountyRedAlert",
       "US/NY/Lewis911",                   "NYLewisCountyA",
       "US/NY/LewisCounty",                "NYLewisCountyB",
       "US/NY/LimaVFD",                    "NYLivingstonCountyA",
