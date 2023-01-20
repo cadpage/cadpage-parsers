@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.SC;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +13,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
 
   public SCLexingtonCountyAParser() {
     super(CITY_CODES, "LEXINGTON COUNTY", "SC",
-          "( CANCEL ADDR CITY | FYI? SRC? CALL ADDR! ( X/Z PLACE CITY | X_PLACE CITY | CITY | ) UNIT? ) INFO+");
+          "( CANCEL ADDR CITY | FYI? SRC? CALL ADDR! ( X/Z PLACE CITY | X_PLACE CITY | CITY | ) UNIT/C+? ) INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -19,6 +21,8 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
   public String getFilter() {
     return "CAD@lex-co.com";
   }
+
+  private Set<String> unitSet = null;
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -29,8 +33,10 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
       data.strSource = subject;
       body = "CAD:" + body.substring(4);
     } else return false;
+    unitSet = new HashSet<>();
     if (!super.parseMsg(body, data)) return false;
     data.strAddress = MSPACE_PTN.matcher(data.strAddress).replaceAll(" ");
+    unitSet = null;
     return true;
   }
 
@@ -43,7 +49,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("(?!MVC)[A-Z]{3,4}", true);
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
-    if (name.equals("UNIT")) return new UnitField("(?:IBAT|[A-Z]+\\d+)(?:,[A-Z0-9]+)*", true);
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -62,6 +68,20 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return "X PLACE";
+    }
+  }
+
+  private class MyUnitField extends UnitField {
+    public MyUnitField() {
+      super("(?:IBAT|[A-Z]+\\d+)(?:,[A-Z0-9]+)*", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      for (String unit : field.split(",")) {
+        unit = unit.trim();
+        if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
+      }
     }
   }
 
