@@ -970,6 +970,7 @@ public class Active911ParserTable {
       "US/MD/CrumptonVFD",                "MDQueenAnnesCounty",
       "US/MD/DorchesterCounty",           "MDDorchesterCounty",
       "US/MD/EastonVFD",                  "MDTalbotCounty",
+      "US/MD/EllicottCityVFD",            "MDHowardCountyB",
       "US/MD/Fastalert",                  "MDCarrollCountyB",
       "US/MD/FASTalertSystem",            "MDPrinceGeorgesCountyH",
       "US/MD/Fireblitz",                  "MDPrinceGeorgesCountyFireBiz",
