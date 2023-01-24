@@ -2430,6 +2430,7 @@ public class Active911ParserTable {
       "US/VA/KingGeorgeCounty",           "VAKingGeorgeCounty",
       "US/VA/KingWilliamCounty",          "VAKingWilliamCounty",
       "US/VA/LaurelRescue",               "VAWytheCountyC",
+      "US/VA/LeadMines",                  "VAWytheCounty",
       "US/VA/LoudounCounty",              "VALoudounCountyC",
       "US/VA/LouisaCounty",               "VALouisaCounty",
       "US/VA/LunenburgCounty",            "VALunenburgCountyA",
