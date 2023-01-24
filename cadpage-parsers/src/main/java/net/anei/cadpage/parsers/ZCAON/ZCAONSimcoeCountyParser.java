@@ -8,8 +8,10 @@ Simcoe County, ON
 
 
 public class ZCAONSimcoeCountyParser extends GroupBestParser {
-  
+
   public ZCAONSimcoeCountyParser() {
-    super(new ZCAONSimcoeCountyAParser(), new ZCAONSimcoeCountyBParser());
+    super(new ZCAONSimcoeCountyAParser(),
+          new ZCAONSimcoeCountyBParser(),
+          new ZCAONSimcoeCountyCParser());
   }
 }

@@ -16,7 +16,7 @@ public class DispatchA91Parser extends FieldProgramParser {
 
   public DispatchA91Parser(String marker, String defCity, String defState) {
     super(defCity, defState,
-          "CALL_TIME ADDR_MAP ( UNIT_INFO! | PLACE X/Z UNIT_INFO! | ( X | PLACE ) UNIT_INFO! ) Sent_by:SKIP! END");
+          "CALL_TIME ADDR_MAP ( UNIT_ID! | PLACE X/Z UNIT_ID! | ( X | PLACE ) UNIT_ID! ) Sent_by:SKIP! END");
     this.marker = marker;
   }
 
@@ -38,7 +38,7 @@ public class DispatchA91Parser extends FieldProgramParser {
     if (name.equals("ADDR_MAP")) return new BaseAddressMapField();
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("X")) return new BaseCrossField();
-    if (name.equals("UNIT_INFO")) return new BaseUnitIdField();
+    if (name.equals("UNIT_ID")) return new BaseUnitIdField();
     return super.getField(name);
   }
 
@@ -101,7 +101,7 @@ public class DispatchA91Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern UNIT_INFO_PTN = Pattern.compile("(.+?) #(\\d+)");
+  private static final Pattern UNIT_ID_PTN = Pattern.compile("(?:(.+?) )?#(\\d+)");
   private class BaseUnitIdField extends Field {
     @Override
     public boolean canFail() {
@@ -110,9 +110,9 @@ public class DispatchA91Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      Matcher match = UNIT_INFO_PTN.matcher(field);
+      Matcher match = UNIT_ID_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strUnit = match.group(1).trim();
+      data.strUnit = getOptGroup(match.group(1));
       data.strCallId = match.group(2);
       return true;
     }
