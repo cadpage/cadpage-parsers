@@ -208,6 +208,7 @@ public class ParserList {
               ,"CAMaderaCounty"                 ,"Madera County, CA"
               ,"CAMarinCounty"                  ,"Marin County, CA"
               ,"CAMendocinoCounty"              ,"Mendocino County, CA"
+              ,"CAMercedCounty"                 ,"Merced County, CA"
               ,"CAModocCounty"                  ,"Modoc County, CA"
               ,"CAMonoCounty"                   ,"Mono County, CA"
               ,"CAMontecito"                    ,"Montecito, CA"

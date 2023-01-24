@@ -228,6 +228,7 @@ public class Active911ParserTable {
       "US/CA/LifecommCellPaging",         "CASanJoaquinCounty",
       "US/CA/LincolnPD",                  "CAPlacerCountyB",
       "US/CA/LosAngelesCounty",           "CALosAngelesCountyA,CALosAngelesCountyC",
+      "US/CA/LosBanos",                   "CAMercedCounty",
       "US/CA/MarinCountySheriff",         "CAMarinCounty",
       "US/CA/Marysville",                 "CAYubaCountyB",
       "US/CA/MendocinoCounty",            "CAMendocinoCounty",
