@@ -1040,7 +1040,7 @@ public class Active911ParserTable {
       "US/MI/KinrossEMS",                 "MIChippewaCounty",
       "US/MI/LakeCounty",                 "MILakeCounty",
       "US/MI/LeelanauCounty",             "MILeelanauCounty",
-      "US/MI/LenaweeCounty",              "MILenaweeCountyB,MILeelanauCounty",
+      "US/MI/LenaweeCounty",              "MILenaweeCounty",
       "US/MI/LifeEMS",                    "MIAlleganCounty",
       "US/MI/LSWEmergencySA",             "MIShiawasseeCounty",
       "US/MI/LuceCounty",                 "MILuceCounty",
