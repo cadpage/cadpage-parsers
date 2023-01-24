@@ -147,6 +147,7 @@ public class Active911ParserTable {
       "US/AL/WashingtonCounty",           "ALWashingtonCounty",
       "US/AL/WestShelby",                 "ALShelbyCountyB",
       "US/AL/WinstonCounty",              "ALWinstonCounty",
+      "US/AL/WinstonSheriff",             "ALWinstonCountyC",
       "US/AL/WRCC",                       "ALWalkerCountyB",
       "US/AR/BaxterCounty",               "ARBaxterCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",
