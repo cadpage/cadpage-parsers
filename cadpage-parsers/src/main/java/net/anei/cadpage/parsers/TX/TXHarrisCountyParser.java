@@ -10,6 +10,7 @@ public class TXHarrisCountyParser extends GroupBestParser {
   public TXHarrisCountyParser() {
     super(new TXHarrisCountyAParser(),
           new TXHarrisCountyBParser(),
-          new TXHarrisCountyCParser());
+          new TXHarrisCountyCParser(),
+          new TXHarrisCountyFParser());
   }
 }
