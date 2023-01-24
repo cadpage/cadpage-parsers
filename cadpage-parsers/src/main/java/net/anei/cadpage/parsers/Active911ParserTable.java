@@ -17,6 +17,7 @@ public class Active911ParserTable {
       "CA/AB/Canmore",                    "ZCAABCanmoreB",
       "CA/AB/ClearwaterCounty",           "ZCAABClearwaterCounty",
       "CA/AB/CremonaFire",                "ZCAABMountainViewCounty",
+      "CA/AB/CityOfMedicineHat",          "ZCAABCypressCounty",
       "CA/AB/FrescCA",                    "ZCAABCanmoreA,ZCAABCalgary",
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
       "CA/AB/ParklandCounty",             "ZCAABLeducCounty",

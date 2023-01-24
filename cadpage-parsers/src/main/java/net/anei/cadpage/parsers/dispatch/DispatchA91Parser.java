@@ -10,6 +10,10 @@ public class DispatchA91Parser extends FieldProgramParser {
 
   private String marker;
 
+  public DispatchA91Parser(String defCity, String defState) {
+    this(null, defCity, defState);
+  }
+
   public DispatchA91Parser(String marker, String defCity, String defState) {
     super(defCity, defState,
           "CALL_TIME ADDR_MAP ( UNIT_INFO! | PLACE X/Z UNIT_INFO! | ( X | PLACE ) UNIT_INFO! ) Sent_by:SKIP! END");
