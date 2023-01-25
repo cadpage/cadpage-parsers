@@ -16,15 +16,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class NCColumbusCountyParser extends DispatchSouthernParser {
 
   public NCColumbusCountyParser() {
-    super(CITY_LIST, "COLUMBUS COUNTY", "NC", 
+    super(CITY_LIST, "COLUMBUS COUNTY", "NC",
           DSFLG_OPT_DISP_ID | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_OPT_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_OPT_TIME);
     setupSpecialStreets("HWY 701 N BY PASS");
     setupProtectedNames("ROUGH AND READY RD");
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -38,14 +43,14 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
     if (SC_CITY_SET.contains(data.strCity)) data.strState = "SC";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
   }
-  
-  
-  
+
+
+
   @Override
   protected int getExtraParseAddressFlags() {
     return FLAG_CROSS_FOLLOWS;
@@ -57,7 +62,7 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
       "CHADBURN",   "CHADBOURN",
       "NICOLS",     "NICHOLS"
   });
-  
+
   private static final Set<String> SC_CITY_SET = new HashSet<String>(Arrays.asList(
       "MARION COUNTY",
       "MARION CO",
@@ -65,11 +70,11 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
   ));
 
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "TABOR CITY",
     "WHITEVILLE",
-    
+
     // Towns
     "BOARDMAN",
     "BOLTON",
@@ -82,7 +87,7 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
     "FAIRBLUFF",
     "LAKE WACCAMAW",
     "SANDYFIELD",
-    
+
     // Townships
     "BOGUE TWP",
     "BOLTON TWP",
@@ -115,7 +120,7 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
     "PIREWAY",
     "RIVERVIEW",
     "SELLERSTOWN",
-    
+
     // Bladen County
     "BLADEN COUNTY",
     "BLADEN CO",
@@ -138,7 +143,7 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
     "ST PAUL",
     "TAR HEEL",
     "WHITE OAK",
-    
+
     // Brunswick County
     "BRUNSWICK COUNTY",
     "BRUNSWICK CO",
@@ -150,22 +155,22 @@ public class NCColumbusCountyParser extends DispatchSouthernParser {
     "ASH",
     "NORTHWEST",
     "SANDY CREEK",
-    
+
     // Horry County
     "HORRY COUNTY",
     "HORRY CO",
-    
+
     // Marion County, SC
     "MARION COUNTY",
     "MARION CO",
     "NICHOLS",
     "NICOLS" ,   // Misspelled
-    
+
     // Pender County
     "PENDER COUNTY",
     "PENDER CO",
     "CANETUCK TWP",
-    
+
     // Robeson County
     "ROBESON COUNTY",
     "ROBESON CO",
