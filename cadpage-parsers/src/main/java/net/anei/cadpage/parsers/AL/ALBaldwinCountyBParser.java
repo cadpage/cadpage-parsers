@@ -7,7 +7,7 @@ public class ALBaldwinCountyBParser extends DispatchSouthernParser {
 
   public ALBaldwinCountyBParser() {
     super(CITY_LIST, "BALDWIN COUNTY", "AL",
-          DSFLG_ADDR | DSFLG_OPT_X | DSFLG_ID | DSFLG_TIME);
+        DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_OPT_X  | DSFLG_OPT_CODE | DSFLG_OPT_UNIT1 | DSFLG_ID | DSFLG_TIME);
   }
 
   @Override
