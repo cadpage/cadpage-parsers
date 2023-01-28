@@ -10,6 +10,6 @@ public class LAEvangelineParishParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "vangy911@centurytel.net";
+    return "vangy911@centurytel.net,alerts@epcd911.org";
   }
 }
