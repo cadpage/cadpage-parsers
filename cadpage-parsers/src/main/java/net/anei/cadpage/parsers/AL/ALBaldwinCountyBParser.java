@@ -17,7 +17,12 @@ public class ALBaldwinCountyBParser extends DispatchSouthernParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("Foley Sta. 30")) data.strSource = subject;
+    if (subject.equals("Foley Sta. 30")) {
+      data.strSource = subject;
+      body = body.replace("\nCROSS STREET - ", ";");
+      body = body.replace(";\nDISPATCHED - ", ";");
+      body = body.replace(";\n ", ";");
+    }
 
     body = body.replace("https://www.ssmap.link/cad?", "https://maps.google.com/?q=");
     return super.parseMsg(body, data);
