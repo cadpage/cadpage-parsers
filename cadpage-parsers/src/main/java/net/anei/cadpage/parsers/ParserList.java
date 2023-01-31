@@ -118,6 +118,7 @@ public class ParserList {
               ,"ALChambersCounty"               ,"Chambers County, AL"
               ,"ALCherokeeCounty"               ,"Cherokee County, AL"
               ,"ALChiltonCounty"                ,"Chilton County, AL"
+              ,"ALChoctawCounty"                ,"Chocktaw County, AL"
               ,"ALCleburneCounty"               ,"Cleburne County, AL"
               ,"ALCoffeeCounty"                 ,"Coffee County, AL"
               ,"ALColbertCounty"                ,"Colbert County, AL"
