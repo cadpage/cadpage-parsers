@@ -13,7 +13,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
 
   public SCLexingtonCountyAParser() {
     super(CITY_CODES, "LEXINGTON COUNTY", "SC",
-          "( CANCEL ADDR CITY | FYI? SRC? CALL ADDR! ( X/Z PLACE CITY | X_PLACE CITY | CITY | ) UNIT/C+? ) INFO+");
+          "( CANCEL ADDR CITY | FYI? SRC? CALL ADDR! EMPTY? ( ( CH | X/Z CH | X/Z X/Z CH ) ( PLACE CITY | CITY | ) | ( CITY | X/Z CITY | X/Z X_PLACE CITY | X/Z X/Z PLACE CITY | X+? ) ) UNIT/C+? ) INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -34,10 +34,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
       body = "CAD:" + body.substring(4);
     } else return false;
     unitSet = new HashSet<>();
-    if (!super.parseMsg(body, data)) return false;
-    data.strAddress = MSPACE_PTN.matcher(data.strAddress).replaceAll(" ");
-    unitSet = null;
-    return true;
+    return super.parseMsg(body, data);
   }
 
   @Override
@@ -48,10 +45,21 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("(?!MVC)[A-Z]{3,4}", true);
+    if (name.equals("APT")) return new AptField("\\d{1,4}[A-Z]?|[A-Z]|", true);
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
+    if (name.equals("CH")) return new ChannelField("OPS *\\d+", true);
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = MSPACE_PTN.matcher(field).replaceAll(" ");
+      super.parse(field, data);
+    }
   }
 
   private class MyCrossPlaceField extends Field {
@@ -73,7 +81,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
 
   private class MyUnitField extends UnitField {
     public MyUnitField() {
-      super("(?:IBAT|[A-Z]+\\d+)(?:,[A-Z0-9]+)*", true);
+      super("(?:IBAT|[A-Z]+\\d+|\\d{3})(?:,[A-Z0-9]+)*", true);
     }
 
     @Override
@@ -651,6 +659,7 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
       "PE", "PELION",
       "PI", "PINE RIDGE",
       "SC", "SOUTH CONGAREE",
+      "SU", "SUMMIT",
       "SP", "SPRINGDALE",
       "SW", "SWANSEA",
       "WC", "WEST COLUMBIA"
