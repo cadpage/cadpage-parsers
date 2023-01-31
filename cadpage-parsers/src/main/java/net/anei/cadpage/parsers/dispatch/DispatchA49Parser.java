@@ -33,6 +33,7 @@ public class DispatchA49Parser extends FieldProgramParser {
     super(cityCodes, defCity, defState,
           "( RPT#:ID EQPT:UNIT! ADDR:ADDR! INFO/R! TIMES! TIMES+? " +
           "| Call_Number:ID! Date/Time:DATETIME! Address:ADDR! " +
+          "| date:DATE! time:TIME! inc#:ID! INFO/N+ " +
           "| CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
           "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
             "| DATETIME2! ADDR:ADDR/S! RCN:UNIT! CALL " +
@@ -48,7 +49,7 @@ public class DispatchA49Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = REMARKS_PTN.matcher(body).replaceFirst("$1:\n");
-    if (body.startsWith("Call Number:")) data.msgType = MsgType.RUN_REPORT;
+    if (body.startsWith("Call Number:") || body.startsWith("date:")) data.msgType = MsgType.RUN_REPORT;
     if (! parseFields(body.split("\n+"), data)) return false;
 
     if (data.msgType == MsgType.PAGE) {
@@ -82,6 +83,8 @@ public class DispatchA49Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATETIME2")) return new BaseDateTime2Field();
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("DATE_TIME_SRC")) return new BaseDateTimeSourceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();
