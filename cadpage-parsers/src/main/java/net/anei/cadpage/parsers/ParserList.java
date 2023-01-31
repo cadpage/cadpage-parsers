@@ -601,6 +601,7 @@ public class ParserList {
               ,"KSBourbonCounty"                ,"Bourbon County, KS"
               ,"KSBrownCounty"                  ,"Brown County, KS"
               ,"KSButlerCounty"                 ,"Butler County, KS"
+              ,"KSChaseCounty"                  ,"Chase County, KS"
               ,"KSCowleyCounty"                 ,"Cowley County, KS"
               ,"KSCrawfordCounty"               ,"Crawford County, KS"
               ,"KSEllisCounty"                  ,"Ellis County, KS"

@@ -711,6 +711,7 @@ public class Active911ParserTable {
       "US/KS/BrownCounty",                "KSBrownCounty",
       "US/KS/BrownCountySheriff",         "KSBrownCounty",
       "US/KS/ButlerCounty",               "KSButlerCountyA,KSButlerCountyB",
+      "US/KS/ChaseCounty",                "KSChaseCounty",
       "US/KS/Cherryvale",                 "KSMontgomeryCounty",
       "US/KS/CityofAndover",              "KSAndover",
       "US/KS/CityofElkhart",              "KSMortonCounty",
