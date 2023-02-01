@@ -25,7 +25,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "cad@jpapage.net,cad@sdrecc.org";
+    return "cad@jpapage.net,cad@sdrecc.org,2083399220";
   }
 
   @Override
