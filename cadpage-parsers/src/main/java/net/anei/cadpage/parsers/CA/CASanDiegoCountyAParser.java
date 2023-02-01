@@ -17,7 +17,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   public CASanDiegoCountyAParser() {
     super("SAN DIEGO COUNTY", "CA",
           "( ALRM:PRI! MSTR_INC#:ID! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT! TB:MAP% MAP:MAP/D% XST:X% TG:CH% TIMEDSP:TIME% UNITS:UNIT% INFO/N+ RPNAME:NAME% TEXT:INFO/N+ " +
-          "| NAT:CALL! ADR:ADDR! ADDR2+ APT:APT! TAC:CH! UNITS:UNIT! MAP:MAP% XST:X% ( X/Z SRC ID | SRC ID ) END " +
+          "| NAT:CALL! ADR:ADDR! ADDR2+ APT:APT! ( TAC:CH! | CHNL:CH! ) UNITS:UNIT! MAP:MAP% XST:X% ( X/Z SRC ID | SRC ID ) END " +
           "| INC#:ID! ADR:ADDR! ADDR2+ APT:APT! PLACE! TAC:CH! LOC:PLACE! " +
           "| ADVISE ALRM:PRI! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT% XST:X% TIMEDSP:TIME% UNITS:UNIT% " +
           "| ALM:PRI? MSTR_INC#:ID? TYP:CALL! ADR:ADDR! LOC:PLACE! XST:X? SP:APT% TB:MAP% MAP:MAP% TG:CH% TIMEDSP:TIME? UNITS:UNIT INFO+ LOC_CMNTS:INFO+ )");
@@ -29,6 +29,13 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA;
+  }
+
+  private static final Pattern TRAIL_ID_PTN = Pattern.compile("(.*?) +(\\d{4}-\\d{6,8})");
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
       if (subject.equals("CAD MESSAGE") || subject.equals("HCFA")) break;
@@ -36,6 +43,17 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
       if (body.startsWith("/ CAD MESSAGE / ")) {
         body = body.substring(16).trim();
         break;
+      }
+
+      if (body.startsWith("HCFA PAGE: (HCFA) ")) {
+        body = body.substring(18).trim();
+        int pt = body.lastIndexOf("\nSTOP");
+        if (pt >= 0) body = body.substring(0,pt).trim();
+        Matcher match = TRAIL_ID_PTN.matcher(body);
+        if (!match.matches()) return false;
+        body = match.group(1);
+        data.strCallId = match.group(2);
+        return parseMsg(body, data);
       }
 
       return false;
@@ -53,8 +71,8 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   }
 
   @Override
-  public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+  public String getProgram() {
+    return super.getProgram() + " ID?";
   }
 
   @Override
