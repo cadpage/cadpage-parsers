@@ -61,7 +61,15 @@ public class ALChoctawCountyParser extends FieldProgramParser {
   };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "GT",  "GILBERTOWN",
-      "TX",  "TOXEY"
+      "BU", "BUTLER",
+      "GT", "GILBERTOWN",
+      "JA", "JACHIN",
+      "LI", "LISMAN",
+      "NE", "NEEDHAM",
+      "PE", "PENNINGTON",
+      "SI", "SILAS",
+      "TX", "TOXEY",
+      "WA", "WARD"
+
   });
 }
