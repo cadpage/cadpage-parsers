@@ -15,7 +15,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB3Parser;
  * Clermont county, OH
  */
 public class OHClermontCountyAParser extends DispatchB3Parser {
-  
+
   private static final Pattern RETURN_PHONE_PTN = Pattern.compile("(Return Phone: \\d{10}) +(.*)");
 
   public OHClermontCountyAParser() {
@@ -23,21 +23,27 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "911-CENTER@clermontcountyohio.gov,911@clermontcountyohio.gov,777,888";
   }
-  
+
+  @Override
+  public boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<table")) return false;
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.startsWith("Alert:")) return false;
     if (body.startsWith("LOC:")) return false;
 
     boolean mark = body.startsWith("911-CENTER:");
     if (mark) body = body.substring(11).trim();
-    
+
     // Check for return phone message pattern
     Matcher match = RETURN_PHONE_PTN.matcher(body);
     if (match.matches()) {
@@ -48,10 +54,10 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
       if (res.isValid()) res.getData(data);
       return true;
     }
-    
+
     if (subject.equals("Text Message")) subject = "";
     else if (body.startsWith(subject)) subject = "";
-    if (!super.parseMsg(subject, body, data) && 
+    if (!super.parseMsg(subject, body, data) &&
         !(mark && parseFallback(body, data))) return false;
     if (data.strCity.length() == 0) {
       if (data.strName.equals("WARCO COMM")) data.strCity = "WARREN COUNTY";
@@ -66,13 +72,13 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
   private boolean parseFallback(String body, Data data) {
     setFieldList("UNIT CALL ADDR APT CITY INFO");
     data.initialize(this);
-    
+
     Matcher match = START_UNIT_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strUnit = match.group(1);
       body = body.substring(match.end());
     }
-    
+
     match = RESPOND_TO_PTN.matcher(body);
     if (match.matches()) {
       data.strCall = getOptGroup(match.group(1));
@@ -93,7 +99,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     }
     return data.strCall.length() > 0 && data.strAddress.length() > 0;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
@@ -103,19 +109,19 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
   protected boolean isPageMsg(String body) {
     return body.contains(" Cad:") || body.contains("CAD#") && !body.startsWith("EVENT: ");
   }
-  
+
   @Override
   protected boolean parseAddrField(String field, Data data) {
     // Mistyped AT mistaken for ATT carrier name :(
     field = field.replace(" ATT ", " AT ");
     return super.parseAddrField(field, data);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, CITY_MAP_TABLE);
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "AMBER HILL",
       "AMELIA OLIVE BRANCH",
@@ -410,7 +416,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
       "WOODLAND PARK"
 
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ABDOMINAL PAIN/PROBLEMS",
       "ALLERGIES/ENVENOMATIONS",
@@ -491,16 +497,16 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     "BATAVIA TWP",
     "FRANKLIN TOWNSHIP",
     "FRANKLIN TWP",
-    "GOSHEN TOWNSHIP", 
-    "GOSHEN TWP", 
+    "GOSHEN TOWNSHIP",
+    "GOSHEN TWP",
     "JACKSON TOWNSHIP",
     "JACKSON TWP",
     "MIAMI TOWNSHIP",
     "MIAMI TWP",
     "MONROE TOWNSHIP",
     "MONROE TWP",
-    "OHIO TOWNSHIP", 
-    "OHIO TWP", 
+    "OHIO TOWNSHIP",
+    "OHIO TWP",
     "PIERCE TOWNSHIP",
     "PIERCE TWP",
     "STONELICK TOWNSHIP",
@@ -515,7 +521,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     "WAYNE TWP",
     "WILLIAMSBURG TOWNSHIP",
     "WILLIAMSBURG TWP",
-    
+
     "AFTON",
     "AMELIA",
     "BANTAM",
@@ -572,7 +578,7 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
 //    "PERINTON",          // not mapping
     "PERINTOWN",
     "POINT ISABEL",
-    "POINT PLEASANT", 
+    "POINT PLEASANT",
 //    "PRINGLE CORNER",    // not mapping
     "RURAL",
     "SALTAIR",
@@ -586,11 +592,11 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     "WILLOWVILLE",
     "WITHAMSVILLE",
     "WOODVILLE",
-    
+
     // Brown County
     "BROWN CO",
     "FAYETTEVILLE",
- 
+
     "BRACKEN COUNTY",
     "BROWN COUNTY",
     "BRACKEN COUNTY",
@@ -599,17 +605,17 @@ public class OHClermontCountyAParser extends DispatchB3Parser {
     "PENDLETON COUNTY",
     "WARREN COUNTY"
   };
-  
+
   private static Set<String> KY_CITY_SET = new HashSet<String>(Arrays.asList(
       "BRACKEN COUNTY",
       "CAMPBELL COUNTY"
   ));
-  
+
   private static final Properties CITY_MAP_TABLE = buildCodeTable(new String[]{
       "EAST BATAVIA HEIGHTS",     "BATAVIA",
       "LOCUST LAKE",              "AMELIA"
   });
-  
+
   private static final Properties CITY_ABRV_TABLE = buildCodeTable(new String[]{
       "WMBURG",    "WILLIAMSBURG"
   });
