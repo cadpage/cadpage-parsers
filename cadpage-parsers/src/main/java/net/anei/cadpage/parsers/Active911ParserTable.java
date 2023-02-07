@@ -183,6 +183,7 @@ public class Active911ParserTable {
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",
       "US/AZ/ShowLowPD",                  "AZNavajoCountyB",
       "US/AZ/STPD",                       "AZNavajoCountyB",
+      "US/CA/AlamedaCounty",              "CAAlamedaCounty",
       "US/CA/AmadorCounty",               "CAAmadorCounty",
       "US/CA/BDUcad",                     "CASanBernardinoCountyC",
       "US/CA/Bducad",                     "CASanBernardinoCountyC",

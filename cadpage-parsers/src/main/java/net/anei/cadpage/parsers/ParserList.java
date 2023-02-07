@@ -189,6 +189,7 @@ public class ParserList {
               ,"ARWashingtonCounty"             ,"Washington County, AR"
           ),
           new ParserCategory("California"
+              ,"CAAlamedaCounty"                ,"Alameda County, CA"
               ,"CAAmadorCounty"                 ,"Amador County, CA"
               ,"CAButteCounty"                  ,"Butte County, CA"
               ,"CACalaverasCounty"              ,"Calaveras County, CA"
