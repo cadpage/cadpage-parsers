@@ -1474,6 +1474,7 @@ public class Active911ParserTable {
       "US/NC/USAMobility",                "NCWayneCountyA",
       "US/NC/USCGOakIsland",              "NCBrunswickCountyC",
       "US/NC/VanceCounty",                "NCVanceCountyC",
+      "US/NC/VolvoGroup",                 "NCGuilfordCountyD",
       "US/NC/WakeCounty",                 "NCWakeCounty",
       "US/NC/WarrenCounty",               "NCWarrenCounty",
       "US/NC/WashingtonCounty",           "NCWashingtonCounty",
