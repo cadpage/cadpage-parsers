@@ -27,7 +27,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
           "| ( CALL ADDR/Z CITY! X_PLACE_INFO+? DATETIME UNIT " +
             "| CH? SRC CODE? CALL_CODE ADDR X_PLACE_INFO+? CITY/Y ( DATETIME | NAME PLACE? DATETIME ) UNIT! " +
             ") " +
-          ") END");
+          ") INFO/N+");
   }
 
   @Override
