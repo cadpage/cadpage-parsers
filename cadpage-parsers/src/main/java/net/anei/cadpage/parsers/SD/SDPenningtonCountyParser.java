@@ -33,7 +33,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.pennington.sd.us,dispatch@pennco.org,messaging@iamresponding.com,777,74121";
+    return "dispatch@co.pennington.sd.us,dispatch@pennco.org,messaging@iamresponding.com,777,74121,6056076018,7573503185";
   }
   
   @Override
