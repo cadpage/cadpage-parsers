@@ -7,4 +7,9 @@ public class INPulaskiCountyParser extends DispatchSPKParser {
   public INPulaskiCountyParser() {
     super("PULASKI COUNTY", "IN");
   }
+  
+  @Override
+  public String getFilter() {
+    return "PulaskiCountyCAD@ipsc.in.gov,noreply@public-safety-cloud.com";
+  }
 }
