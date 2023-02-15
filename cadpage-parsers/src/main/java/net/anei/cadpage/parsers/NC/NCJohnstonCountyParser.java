@@ -25,6 +25,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "JOHNSTON COUNTY", "NC",
           "( UNIT ENROUTE ADDR CITY CALL_CODE! " +
           "| ( CALL ADDR/Z CITY! X_PLACE_INFO+? DATETIME UNIT " +
+            "| CALL ADDR/Z DATETIME UNIT! " +
             "| CH? SRC CODE? CALL_CODE ADDR X_PLACE_INFO+? CITY/Y ( DATETIME | NAME PLACE? DATETIME ) UNIT! " +
             ") " +
           ") INFO/N+");
@@ -66,7 +67,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
     if (name.equals("ENROUTE")) return new SkipField("Enroute", true);
     if (name.equals("CALL_CODE")) return new MyCallCodeField();
     if (name.equals("CH")) return new ChannelField("OPS.*|.*FR|VPR.*|2ND", true);
-    if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}");
+    if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}\\d?");
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("X_PLACE_INFO")) return new MyCrossPlaceInfoField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
