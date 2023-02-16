@@ -25,7 +25,7 @@ public class OHPortageCountyDParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@kent.edu.ahenterly@stow.oh.us";
+    return "@kent.edu.ahenterly@stow.oh.us";
   }
 
   @Override
