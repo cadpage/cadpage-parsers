@@ -18,6 +18,7 @@ public class VAHopewellParser extends DispatchOSSIParser {
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('-', ';');
     body = body.replace(";BLK ", "-BLK ");
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
   
