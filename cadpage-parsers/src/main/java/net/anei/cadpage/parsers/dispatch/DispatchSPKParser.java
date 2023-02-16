@@ -612,7 +612,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
             return;
           }
 
-          if (unit != null && UNIT_STATUS_SET.contains(field)) {
+          if (unit != null && UNIT_STATUS_SET.contains(field.toUpperCase())) {
             statusList = new ArrayList<>();
             statusList.add(field);
             statusLock = false;
@@ -635,7 +635,9 @@ public class DispatchSPKParser extends HtmlProgramParser {
               String status = statusList.get(colNdx-1);
               String line = field + "   " + unit + "   " + status;
               times = append(times, "\n", line);
-              if (status.equals("ON SCENE") || status.equals("AVAILABLE")) data.msgType = MsgType.RUN_REPORT;
+              status = status.toUpperCase();
+              if (status.equals("ON SCENE") || status.equals("AVAILABLE") ||
+                  status.equals("READYFORDISPATCH")) data.msgType = MsgType.RUN_REPORT;
             }
           }
         }
