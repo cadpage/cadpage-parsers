@@ -1076,6 +1076,7 @@ public class Active911ParserTable {
       "US/MI/OttawaCounty",               "MIOttawaCounty",
       "US/MI/OxfordFD",                   "MIOaklandCountyC",
       "US/MI/PlainfieldFD",               "MIKentCounty",
+      "US/MI/RacineCounty",               "WIRacineCountyA",
       "US/MI/RichmondFDDelimited",        "MIMacombCounty",
       "US/MI/RoscommonCounty",            "MIRoscommonCounty",
       "US/MI/SaginawChippewa",            "MIIsabellaCountyB",
