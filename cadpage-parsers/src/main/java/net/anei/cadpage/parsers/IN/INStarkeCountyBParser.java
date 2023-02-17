@@ -14,7 +14,7 @@ public class INStarkeCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "dispatch75@co.starke.in.us";
+    return "dispatch75@co.starke.in.us,dispatch75@starke.in.gov";
   }
 
   private static final Pattern SPECIAL_CITY_PTN = Pattern.compile("(.*?) +(JASPER COUNTY)", Pattern.CASE_INSENSITIVE);
