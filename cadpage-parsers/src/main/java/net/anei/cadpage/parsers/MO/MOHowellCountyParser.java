@@ -13,7 +13,7 @@ public class MOHowellCountyParser extends DispatchH05Parser {
   
   @Override
   public String getFilter() {
-    return "cad@howellcounty911.com";
+    return "cad@howellcounty911.com,cad@howellcountymo911.gov";
   }
   
   @Override
