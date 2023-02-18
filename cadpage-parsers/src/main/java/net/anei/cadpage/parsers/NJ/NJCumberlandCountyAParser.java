@@ -57,6 +57,8 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    body = stripFieldStart(body, "E911:");
+    body = stripFieldStart(body, "Text Message");
     if (body.startsWith("E911:")) body = body.substring(5).trim();
     if (subject.length() > 0 && !subject.equals("Text Message")) body = subject + "_" + body;
     if (!parseFields(body.split("_"), data)) return false;
