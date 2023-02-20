@@ -1751,6 +1751,7 @@ public class Active911ParserTable {
       "US/OH/DarkeCountySheriff",         "OHDarkeCounty",
       "US/OH/DelawareCounty",             "OHDelawareCounty",
       "US/OH/EatonPolice",                "OHPrebleCounty",
+      "US/OH/Elyria",                     "OHLorainCountyC",
       "US/OH/ElmValley",                  "OHMorrowCounty",
       "US/OH/Fairfield",                  "OHFairfieldCounty",
       "US/OH/FayettevilleFD",             "WVFayetteCounty",   // A911 misassigned state
@@ -1781,7 +1782,7 @@ public class Active911ParserTable {
       "US/OH/LickingCounty",              "OHLickingCounty",
       "US/OH/LittleMuskingum",            "OHWashingtonCountyA",
       "US/OH/LoganCounty",                "OHLoganCounty",
-      "US/OH/LorainCounty",               "OHLorainCountyB",
+      "US/OH/LorainCounty",               "OHLorainCountyB,OHLorainCountyC,OHLorainCountyD",
       "US/OH/LSFD",                       "OHLoveland,OHHamiltonCountyA,OHWarrenCountyF,AiviaAED",
       "US/OH/LucasCounty",                "OHLucasCounty",
       "US/OH/MadisonCounty",              "OHMadisonCounty",

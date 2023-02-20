@@ -14,7 +14,7 @@ public class OHLorainCountyBParser extends DispatchInfoSysParser {
   
   @Override
   public String getFilter() {
-    return "info@sundance-sys.com";
+    return "info@sundance-sys.com,sunsrv@sundance-sys.com";
   }
   
   @Override
@@ -85,6 +85,9 @@ public class OHLorainCountyBParser extends DispatchInfoSysParser {
     
     // Cayahoga County
     "BAY VILLAGE",
-    "NORTH OLMSTED"
+    "FAIRVIEW PARK",
+    "NORTH OLMSTED",
+    "ROCKY RIVER",
+    "WESTLAKE"
   };
 }

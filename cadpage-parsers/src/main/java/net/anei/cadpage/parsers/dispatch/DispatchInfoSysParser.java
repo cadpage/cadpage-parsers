@@ -41,7 +41,8 @@ public class DispatchInfoSysParser extends FieldProgramParser {
 
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("-")) return;
+      field = stripFieldStart(field, "-");
+      if (field.isEmpty()) return;
       Matcher match = CODE_CALL_PTN.matcher(field);
       if (!match.matches()) abort();
       String prefix = match.group(1);
@@ -84,12 +85,12 @@ public class DispatchInfoSysParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCity.length() > 0) {
-        if (!field.equals("OH") || field.length() == 0) return false;
+        if (!field.equals(data.defState) || field.length() == 0) return false;
         data.strState = field;
         return true;
       }
-      if (field.endsWith(" OH")) {
-        data.strState = "OH";
+      if (field.endsWith(' ' + data.defState)) {
+        data.strState = data.defState;
         data.strCity = field.substring(0, field.length()-3).trim();
         return true;
       } else {
