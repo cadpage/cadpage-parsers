@@ -10,7 +10,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   public COWeldCountyBParser() {
     super(CITY_LIST, "WELD COUNTY", "CO",
-          "( EMPTY ADDR ( APT APT CITY | CITY ) PLACE UNIT CALL? ID | ) INFO! GPS1/d GPS2/d SRC? EMPTY/Z END");
+          "( EMPTY ADDR ( APT APT CITY | CITY ) PLACE UNIT CALL? ID | ) INFO! GPS1/d GPS2/d MAP? EMPTY/Z END");
     setupCities(MAP_CITY_TABLE.stringPropertyNames());
   }
 
@@ -85,6 +85,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
     // County
     "WELD",
     "LARIMER COUNTY",
+    "MORGAN COUNTY",
     
     // Cities
     "BRIGHTON",
@@ -101,6 +102,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
     "BERTHOUD",
     "EATON",
     "ERIE",
+    "EVANSTON",
     "FIRESTONE",
     "FREDERICK",
     "GARDEN CITY",
@@ -155,14 +157,18 @@ public class COWeldCountyBParser extends FieldProgramParser {
     
     // Latimer County
     "FORT COLLINS",
+    "LOVELAND",
     
     // Elsewhere
     "AURORA"
   };
   
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
-      "ARROWHEAD",    "GREELEY",
-      "CAMFIELD",     "EATON",
-      "HILL N PARK",  "GREELEY"
+      "ARISTOCRAT RANCH", "ARISTOCRAT RANCHETTES",
+      "ARROWHEAD",        "GREELEY",
+      "CAMFIELD",         "EATON",
+      "HILL N PARK",      "GREELEY",
+      "INDIAN HEAD",      "LOVELAND",
+      "NEW RAYMER",       "RAYMER"
   });
 }
