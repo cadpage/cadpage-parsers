@@ -802,6 +802,7 @@ public class Active911ParserTable {
       "US/KY/CynthianaFD",                "KYHarrisonCountyB",
       "US/KY/Dunmor",                     "KYMuhlenbergCountyB",
       "US/KY/EastGoldenPondVFD",          "KYTriggCounty",
+      "US/KY/EastKnox",                   "KYKnoxCountyC",
       "US/KY/EdmonsonCounty",             "KYEdmonsonCounty",
       "US/KY/ElizabethtownPD",            "KYHardinCountyE",
       "US/KY/ElliotCounty",               "KYElliottCounty",
