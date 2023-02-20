@@ -991,6 +991,7 @@ public class ParserList {
               ,"MOGrundyCounty"                 ,"Grundy County, MO"
               ,"MOHarrisonCounty"               ,"Harrison County, MO"
               ,"MOHenryCounty"                  ,"Henry County,  MO"
+              ,"MOHickoryCounty"                ,"Hickory County, MO"
               ,"MOHoltCounty"                   ,"Holt County, MO"
               ,"MOHowardCounty"                 ,"Howard County, MO"
               ,"MOHowellCounty"                 ,"Howell County, MO"
