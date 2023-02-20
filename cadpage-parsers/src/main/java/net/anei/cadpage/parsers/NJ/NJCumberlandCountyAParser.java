@@ -24,22 +24,31 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
     return "E911@co.cumberland.nj.us,Cumberland911@co.cumberland.nj.us";
   }
 
-  private static final Pattern GEN_ALERT_PTN = Pattern.compile("CUMBERLAND911:(\\S+): *(.*)");
-  private static final Pattern MASTER1 = Pattern.compile("(\\d+):([^:]+):([^:]+):([^:]+)");
+  private static final Pattern GEN_ALERT_PTN1 = Pattern.compile("(\\S+): *(.*)");
+  private static final Pattern GEN_ALERT_PTN2 = Pattern.compile("((?:\\b(?:[A-Z]\\d+|\\d+[A-Z])\\b ??))[- ]*(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(\\d+):(?:Text Message)?([^:]+):([^:]+):([^:]+)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    Matcher match = GEN_ALERT_PTN.matcher(body);
-    if (match.matches()) {
+    if (body.startsWith("CUMBERLAND911:") || body.startsWith("Cumberland911:")) {
       setFieldList("UNIT INFO");
       data.msgType = MsgType.GEN_ALERT;
-      data.strUnit = match.group(1);
-      data.strSupp = match.group(2);
+      body = stripFieldStart(body.substring(15), "Text Message");
+      Matcher match = GEN_ALERT_PTN1.matcher(body);
+      if (match.matches()) {
+        data.strUnit = match.group(1);
+        data.strSupp = match.group(2);
+      } else if (( match = GEN_ALERT_PTN2.matcher(body)).matches()) {
+        data.strUnit = match.group(1);
+        data.strSupp = match.group(2);
+      } else {
+        data.strSupp = body;
+      }
       return true;
     }
 
-    match = MASTER1.matcher(body);
+    Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT CALL PLACE ADDR APT INFO");
       data.strCallId = match.group(1);
@@ -59,7 +68,7 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
 
     body = stripFieldStart(body, "E911:");
     body = stripFieldStart(body, "Text Message");
-    if (body.startsWith("E911:")) body = body.substring(5).trim();
+    body = stripFieldStart(body, "E911:");
     if (subject.length() > 0 && !subject.equals("Text Message")) body = subject + "_" + body;
     if (!parseFields(body.split("_"), data)) return false;
     if (data.strUnit.endsWith("AC")) {
