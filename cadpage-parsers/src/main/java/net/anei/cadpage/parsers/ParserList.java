@@ -802,6 +802,7 @@ public class ParserList {
           new ParserCategory("Massachusetts"
               ,"MABarnstableCounty"             ,"Barnstable County, MA"
               ,"MADukesCounty"                  ,"Dukes County, MA"
+              ,"MAFranklinCounty"               ,"Franklin County, MA"
               ,"MAHampdenCounty"                ,"Hampden County, MA"
               ,"MANantucketCounty"              ,"Nantucket County, MA"
               ,"MANorfolkCounty"                ,"Norfolk County, MA"
