@@ -197,6 +197,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
       "PRINCE",
       "PRONGUA",
       "REGINA",
+      "REGINA BEACH",
       "RICHARDSON",
       "ROSETOWN",
       "ROSE VALLEY",

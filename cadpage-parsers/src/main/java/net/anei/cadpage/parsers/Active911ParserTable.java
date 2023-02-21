@@ -47,6 +47,7 @@ public class Active911ParserTable {
       "CA/SK/KronauFD",                   "ZCASKPECC",
       "CA/SK/LangenburgFD",               "ZCASKPECC",
       "CA/SK/MeadowLake",                 "ZCASKPECC",
+      "CA/SK/ReginaBeach",                "ZCASKPECC",
       "CA/SK/RMBattleford",               "ZCASKPECC",
       "CA/SK/RoseValley",                 "ZCASKPECC",
       "CA/SK/Stockholm",                  "ZCASKPECC",
