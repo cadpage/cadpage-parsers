@@ -6,14 +6,10 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class NCDareCountyBParser extends FieldProgramParser {
-  
-  public NCDareCountyBParser() {
-    this("DARE COUNTY", "NC");
-  }
+public class NCDareCountyCParser extends FieldProgramParser {
 
-  NCDareCountyBParser(String defCity, String defState) {
-    super(CITY_CODES, defCity, defState,
+  public NCDareCountyCParser() {
+    super(CITY_CODES, "DARE COUNTY", "NC",
           "CAD_ID:ID! Call_Type:SKIP! Nature:CALL! Address:ADDR! City:CITY? Primary_Unit:UNIT? Call_Opened:TIMEDATE! " +
             "Lat:GPS1/d! Long:GPS2/d! ( ResponsePlanNumber:PLAN! NumberOfPlans:PLAN_CNT! | ) Call_Taker_Comments:INFO INFO/N+ END");
   }
@@ -107,7 +103,7 @@ public class NCDareCountyBParser extends FieldProgramParser {
       "EDEN",    "EDENTON",
       "ELK",     "EAST LAKE",
       "ENG",     "ENGLEHARD",
-      "FFD",     "FAIRFIELD",
+      "FFD",     "FARFIELD",
       "FRI",     "FRISCO",
       "HAT",     "HATTERAS",
       "JARV",    "JARVISBURG",

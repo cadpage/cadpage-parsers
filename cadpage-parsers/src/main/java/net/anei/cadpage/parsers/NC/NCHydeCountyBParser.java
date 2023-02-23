@@ -66,7 +66,7 @@ public class NCHydeCountyBParser extends DispatchOSSIParser {
       "EDEN",  "EDENTON",
       "ELK",   "EAST LAKE",
       "ENG",   "ENGELHARD",
-      "FFD",   "FARFIELD",
+      "FFD",   "FAIRFIELD",
       "FRI",   "FRISCO",
       "HAT",   "HATTERAS",
       "JARV",  "JARVISBURG",
