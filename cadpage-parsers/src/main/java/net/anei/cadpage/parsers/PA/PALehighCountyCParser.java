@@ -12,7 +12,9 @@ public class PALehighCountyCParser extends FieldProgramParser {
   
   public PALehighCountyCParser() {
     super(CITY_LIST, "LEHIGH COUNTY", "PA", 
-          "CALL! Address:ADDRCITY! XSt:X! INFO/N+ Assigned_Units:UNIT! ( GPS_DATE_TIME! | GPS1 GPS2 DATETIME! ) END");
+          "CALL! Address:ADDRCITY! XSt:X! " + 
+              "( PHONE/Z Caller:NAME! INFO/N+ Assigned_Units:UNIT! Radio_Channel:CH! GPS1! GPS2! Fire_Response_Area:MAP! EMS_Response_Area:MAP_DATE_TIME! " +
+              "| INFO/N+ Assigned_Units:UNIT! ( GPS_DATE_TIME! | GPS1 GPS2 DATETIME! ) ) END");
   }
   
   @Override
@@ -31,6 +33,7 @@ public class PALehighCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("MAP_DATE_TIME")) return new MyMapDateTimeField();
     if (name.equals("GPS_DATE_TIME")) return new MyGPSDateTimeField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
@@ -96,6 +99,25 @@ public class PALehighCountyCParser extends FieldProgramParser {
       return "GPS DATE TIME";
     }
   }
+  
+  private static final Pattern MAP_DATE_TIME_PTN = Pattern.compile("(.*?) *\\b(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private class MyMapDateTimeField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = MAP_DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strMap = append(data.strMap, "/", match.group(1));
+      data.strDate = match.group(2);
+      data.strTime = match.group(3);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "MAP DATE TIME";
+    }
+  }
+
   
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private class MyDateTimeField extends DateTimeField {
