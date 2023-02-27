@@ -22,7 +22,6 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
   public TXCollinCountyAParser() {
     this("COLLIN COUNTY", "TX");
-    setupSpecialStreets("CEDAR RIDGE", "DOVE CREEK");
   }
 
   protected TXCollinCountyAParser(String defCity, String defState) {
@@ -33,6 +32,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
           ") END");
     setupCallList(CALL_LIST);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    setupSpecialStreets("CEDAR RIDGE", "DOVE CREEK");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
 
@@ -49,7 +49,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -150,7 +150,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   // Parse a mashup of ID, CALL, ADDR, CITY, and Cross streets all of which might
   // or might not be separated by double blank delimiters
   private static final Pattern ID_PTN = Pattern.compile("^(?:([-/* A-Za-z0-9]+)\\b)?(\\d{8})[- ]+");
-  private static final String DIST_GRID_PTN_STR = "([A-Z]+) (?:\\(([A-Z][^\\[\\]\\(\\)]+)\\) \\(Pri:(\\d+)\\) \\(Esc:(\\d+)\\) - )?(?:DIST: ([A-Z0-9]*)[- ]+)?GRID: ([A-Z0-9]*) *(.*?)";
+  private static final String DIST_GRID_PTN_STR = "([A-Z]+) (?:\\(([A-Z][^\\[\\]]+)\\) \\(Pri:(\\d+)\\) \\(Esc:(\\d+)\\) - )?(?:DIST: ([A-Z0-9]*)[- ]+)?GRID: ([A-Z0-9]*) *(.*?)";
   private static final Pattern DIST_GRID_PTN = Pattern.compile("\\["+DIST_GRID_PTN_STR+"\\]");
   private static final Pattern DIST_GRID_PTN2 = Pattern.compile(DIST_GRID_PTN_STR);
   private static final Pattern STANDBY_PTN = Pattern.compile("^STANDBY(?: AT THIS TIME)?  +");
@@ -162,7 +162,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern IN_PTN = Pattern.compile("(.*)(?: IN (?!CUSTODY|CITY|TOWN|WOODS)|, )(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ALPHA_PTN = Pattern.compile("[A-Z]+", Pattern.CASE_INSENSITIVE);
-  private static final Pattern TX_PTN = Pattern.compile("TX(?: (?:\\d{5}|0))?\\b *(.*)");
+  private static final Pattern TX_PTN = Pattern.compile("(.*?)[, ]+TX(?: (?:\\d{5}|0))?\\b *(.*)");
   private class MashField extends Field {
 
     private boolean newFmt;
@@ -348,93 +348,122 @@ public class TXCollinCountyAParser extends FieldProgramParser {
         st = StartType.START_CALL;
 //        parseFlags |= FLAG_START_FLD_REQ;
       }
-
-      // Next, see if address contains an IN keyword separated call/address from city/cross
-      Matcher match = IN_PTN.matcher(sAddress);
-      if (match.find()) {
-
+      
+      // First see if there is a TX Zip construct.  If found it separates the address/city 
+      // from the name/place cross info
+      Matcher match = TX_PTN.matcher(sAddress);
+      if (match.matches()) {
         sAddress = match.group(1).trim();
         String tail = match.group(2).trim();
-
-        // Check for doubled IN city construct
+        tail = stripFieldStart(tail, "/");
+        tail = stripFieldEnd(tail, "/");
+        
+        flags |= FLAG_ANCHOR_END;
         match = IN_PTN.matcher(sAddress);
         if (match.matches()) {
-          String city = match.group(2).trim();
-          boolean good = ALPHA_PTN.matcher(city).matches();
-          if (!good) {
-            String upCity = city.toUpperCase();
-            String city2 = DOUBLE_CITY_LIST.getCode(upCity, true);
-            if (city2 != null) {
-              good = true;
-              if (city2.length() < upCity.length() && (city2.endsWith(" CO") || city.endsWith(" COUNTY"))) {
-                city = upCity.substring(city2.length()).trim();
-              } else {
-                city = city2;
+          sAddress = match.group(1).trim();
+          data.strCity = match.group(2).trim();
+          flags |= FLAG_NO_CITY;
+        }
+        parseAddress(st, flags, sAddress, data);
+        
+        if (cross) {
+          parseAddress(StartType.START_PLACE, FLAG_ONLY_CROSS | FLAG_ANCHOR_END, tail, data);
+        } else {
+          data.strPlace = tail;
+        }
+      }
+
+      else {
+          // Old logic
+        // Next, see if address contains an IN keyword separated call/address from city/cross
+        match = IN_PTN.matcher(sAddress);
+        if (match.find()) {
+  
+          sAddress = match.group(1).trim();
+          String tail = match.group(2).trim();
+  
+          // Check for doubled IN city construct
+          match = IN_PTN.matcher(sAddress);
+          if (match.matches()) {
+            String city = match.group(2).trim();
+            boolean good = ALPHA_PTN.matcher(city).matches();
+            if (!good) {
+              String upCity = city.toUpperCase();
+              String city2 = DOUBLE_CITY_LIST.getCode(upCity, true);
+              if (city2 != null) {
+                good = true;
+                if (city2.length() < upCity.length() && (city2.endsWith(" CO") || city.endsWith(" COUNTY"))) {
+                  city = upCity.substring(city2.length()).trim();
+                } else {
+                  city = city2;
+                }
               }
             }
+            if (good) {
+              sAddress = match.group(1).trim();
+              data.strCity = city;
+              tail = stripFieldStart(tail, city);
+            }
           }
-          if (good) {
-            sAddress = match.group(1).trim();
-            data.strCity = city;
-            tail = stripFieldStart(tail, city);
+  
+          // Check, use smart parser to split call and address
+          parseAddress(st, parseFlags | FLAG_ANCHOR_END, sAddress, data);
+  
+          if (data.strCity.length() > 0) {
+            if (cross) {
+              setCross(tail, data);
+            } else {
+              data.strPlace = tail;
+            }
+          }
+  
+          // Otherwise, if we aren't handling cross streets, it is all city
+          else if (!cross) {
+            data.strCity = tail;
+          }
+  
+          // Otherwise, see if it starts with a two word city, if it does
+          // use that city to break tail into city and cross streets
+          else {
+            String city = DOUBLE_CITY_LIST.getCode(tail.toUpperCase(), true);
+            if (city != null) {
+              data.strCity = tail.substring(0,city.length());
+              setCross(tail.substring(city.length()).trim(), data);
+            }
+    
+            // Otherwise first word of tail is city, rest is cross
+            // Unless city was followed by TX which needs to go
+            else {
+              Parser p = new Parser(tail);
+              data.strCity = p.get(' ');
+              setCross(p.get(), data);
+            }
           }
         }
-
-        // Check, use smart parser to split call and address
-        parseAddress(st, parseFlags | FLAG_ANCHOR_END, sAddress, data);
-
-        tail = trimTX(tail);
-
-        if (data.strCity.length() > 0) {
-          if (cross) setCross(tail, data);
-          return true;
+  
+        // No IN keyword, if this was an optional parse, return failure
+        // Unless is an obvious address
+        else if (optional) {
+          Result res = parseAddress(st, parseFlags | FLAG_CHECK_STATUS | FLAG_ANCHOR_END, sAddress);
+          if (res.getStatus() < STATUS_FULL_ADDRESS) return false;
+          res.getData(data);
         }
-
-        // Otherwise, if we aren't handling cross streets, it is all city
-        if (!cross) {
-          data.strCity = tail;
-          return true;
+  
+        // no IN keyword, which we assume means no city
+        // Use smart address parser to separate call, address, and cross
+        else {
+          if (!cross) parseFlags |= FLAG_ANCHOR_END;
+          parseAddress(st, parseFlags, sAddress, data);
+          if (cross) setCross(getLeft(), data);
         }
-
-        // Otherwise, see if it starts with a two word city, if it does
-        // use that city to break tail into city and cross streets
-        String city = DOUBLE_CITY_LIST.getCode(tail.toUpperCase(), true);
-        if (city != null) {
-          data.strCity = tail.substring(0,city.length());
-          setCross(trimTX(tail.substring(city.length()).trim()), data);
-          return true;
-        }
-
-        // Otherwise first word of tail is city, rest is cross
-        // Unless city was followed by TX which needs to go
-        Parser p = new Parser(tail);
-        data.strCity = p.get(' ');
-        setCross(trimTX(p.get()), data);
-        return true;
       }
-
-      // No IN keyword, if this was an optional parse, return failure
-      // Unless is an obvious address
-      if (optional) {
-        Result res = parseAddress(st, parseFlags | FLAG_CHECK_STATUS | FLAG_ANCHOR_END, sAddress);
-        if (res.getStatus() < STATUS_FULL_ADDRESS) return false;
-        res.getData(data);
-        return true;
+      
+      if (data.strPlace.contains(",")) {
+        data.strName = data.strPlace;
+        data.strPlace = "";
       }
-
-      // no IN keyword, which we assume means no city
-      // Use smart address parser to separate call, address, and cross
-      if (!cross) parseFlags |= FLAG_ANCHOR_END;
-      parseAddress(st, parseFlags, sAddress, data);
-      if (cross) setCross(getLeft(), data);
       return true;
-    }
-
-    private String trimTX(String tail) {
-      Matcher match;
-      match = TX_PTN.matcher(tail);
-      if (match.matches()) tail = match.group(1);
-      return tail;
     }
 
     private void setCross(String cross, Data data) {
@@ -447,8 +476,8 @@ public class TXCollinCountyAParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return newFmt ? "ID ADDR APT CITY PLACE X SRC CALL PRI MAP INFO"
-                    : "ID CALL ADDR APT CITY PLACE X SRC MAP INFO";
+      return newFmt ? "ID ADDR APT CITY NAME PLACE X SRC CALL PRI MAP INFO"
+                    : "ID CALL ADDR APT CITY NAME PLACE X SRC MAP INFO";
     }
   }
 
@@ -1225,16 +1254,19 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "ARBOR MANORS",
     "ARMADILLO RANCH",
     "ARNELL KELLY",
+    "ARROW WOOD",
     "ASH LEAF",
     "AUDIE MURPHY",
     "AUTUMN BREEZE",
     "AUTUMN HILL",
     "AUTUMN SAGE",
     "BALMORAL CASTLE",
+    "BAR HARBOR",
     "BAT MASTERSON",
     "BEACON HILL",
     "BEAR CREEK",
     "BEAVER CREEK",
+    "BELLA LAGO",
     "BELLA VISTA",
     "BELT LINE",
     "BENT GRASS",
@@ -1249,6 +1281,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "BLACK MAPLE",
     "BLACK OAK",
     "BLACK WALNUT",
+    "BLACK WILLOW",
     "BLUE BIRD",
     "BLUE LEAF",
     "BLUE RIDGE",
@@ -1276,6 +1309,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "BROKEN SPUR",
     "BROOK HOLLOW",
     "BRUSH CREEK",
+    "BRUSHY CREEK RANCH",
     "BRUTON ORAND",
     "BRYAN WALKER",
     "BRYANT FARM",
@@ -1283,6 +1317,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "BUFFALO SPRINGS",
     "BULL HEAD",
     "BURDEN RANCH",
+    "BURNING TREE",
     "BUSINESS PARK",
     "BUTCH CASSIDY",
     "C RHEA MILLS",
@@ -1295,6 +1330,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "CAPE BRETT",
     "CARRIAGE HOUSE",
     "CARTER RANCH",
+    "CEDAR BLUFF",
     "CEDAR BRANCH",
     "CEDAR COVE",
     "CEDAR CREEK",
@@ -1324,6 +1360,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "CLEAR HAVEN",
     "CLEAR LAKE PARK",
     "CLEAR LAKE",
+    "CLEAR RIDGE",
     "CLIFF CREEK",
     "CLOUD VIEW",
     "CLOVER RIDGE",
@@ -1334,6 +1371,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "COPEVILLE WEST",
     "CORAL RIDGE",
     "COTTAGE HILL",
+    "COTTIN GIN",
     "COTTON GIN",
     "COUER DU LAC",
     "COUNTRY BROOK",
@@ -1346,6 +1384,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "COUNTY LINE",
     "COYOTE CALL",
     "COYOTE CREEK",
+    "COZY PINE",
     "CREEK CANYON",
     "CREEK CROSSING",
     "CREEK VIEW",
@@ -1386,8 +1425,10 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "DOGWOOD PARK",
     "DOUBLE B",
     "DOUBLE LAKE",
+    "DOUBLE OAKS",
     "DOUBLE R",
     "DOVE COVE",
+    "DOVE CREEK",
     "DOVE HILL",
     "DOVE TAIL",
     "DRAKE HILL",
@@ -1434,6 +1475,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "GLACIER POINT",
     "GLEN CANYON",
     "GLEN ELLEN",
+    "GLEN HOLLOW",
     "GLEN LAKES",
     "GLEN RIDGE",
     "GOLDEN ROD",
@@ -1445,10 +1487,12 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "GRAND HERITAGE",
     "GRANITE VALLEY",
     "GRANT COLONY CEMETERY",
+    "GRAPEVINE MILLS",
     "GRASSY CREEK",
     "GREEN ACRES",
     "GREEN BRIAR",
     "GREEN MEADOW",
+    "GREEN RIDGE",
     "GREENWOOD MEMORIAL",
     "HADLEY CREEK",
     "HALEY HOLLOW",
@@ -1463,6 +1507,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "HAY MEADOW",
     "HAZY MEADOW",
     "HEATHER GLEN",
+    "HEATHER RIDGE",
     "HELMOKEN FALLS",
     "HICKORY CREEK",
     "HICKORY HILL",
@@ -1471,6 +1516,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "HIDDEN COVE",
     "HIDDEN CREEK",
     "HIDDEN FALLS",
+    "HIDDEN FOREST",
     "HIDDEN GLEN",
     "HIDDEN LAKE",
     "HIDDEN VALLEY",
@@ -1524,6 +1570,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "LAKE CREST",
     "LAKE FALLS",
     "LAKE FOREST",
+    "LAKE GENEVA",
     "LAKE HARRISON",
     "LAKE LAND PARK",
     "LAKE PARK",
@@ -1535,6 +1582,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "LAKE VIEW",
     "LAKE VISTA",
     "LAKE WICHITA",
+    "LAKE WINDERMERE",
     "LAKE WOOD",
     "LANDIS LAKE",
     "LAUREL OAK",
@@ -1552,6 +1600,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "LITTLE LAKE",
     "LITTLE RANCH",
     "LIVE OAK",
+    "LOFTY PINES",
     "LOGANS WAY",
     "LOMA ALTA",
     "LONE OAK",
@@ -1570,6 +1619,8 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "LUCAS BRANCH",
     "LUCKY 13",
     "MALLARD PARK",
+    "MAN O WAR",
+    "MAPLE GROVE",
     "MAPLE LEAF",
     "MAPLE RIDGE",
     "MARBLE PASS",
@@ -1617,6 +1668,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "MOSS GLEN",
     "MOSSY OAK",
     "MOSSY OAKS",
+    "MOURNING DOVE",
     "MT ZION CHURCH",
     "MT ZION",
     "MURRELL PARK",
@@ -1696,6 +1748,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "PINE TREE",
     "PINE VALLEY",
     "PINEY POINT",
+    "PINTO CREEK",
     "PIONEER PARK",
     "PIONEER PATH",
     "PLEASANT RUN",
@@ -1712,6 +1765,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "PRAIRIE CREEK",
     "PRAIRIE VISTA",
     "PRESTON COUNTRY",
+    "PRESTON ESTATES",
     "PRESTON HILLS",
     "PRESTON LAKES",
     "PRINCETON MEADOWS",
@@ -1737,7 +1791,9 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "RED MAPLE",
     "RED OAK",
     "RED PINE",
+    "RED TAILED",
     "RED WING",
+    "REDWOOD CREST",
     "REGENCY PARK",
     "REMINGTON PARK",
     "RENFRO VALLEY",
@@ -1770,6 +1826,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "RUBY CREST",
     "RUNNING BROOK",
     "RUNNING DEER",
+    "RUSTIC TIMBERS",
     "RYANS FERRY",
     "SADDLE CLUB",
     "SADDLE CREEK",
@@ -1778,6 +1835,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "SADDLE RIDGE",
     "SAINT PAUL",
     "SALMON LAKE",
+    "SALT CREEK",
     "SAM HOUSTON",
     "SAM RAYBURN",
     "SAM SLOTT",
@@ -1918,6 +1976,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "WEST OAK",
     "WEST WALNUT",
     "WESTON CREEK",
+    "WESTON RIDGE",
     "WHISPER CREEK",
     "WHISPERING HILLS",
     "WHISPERING MEADOWS",
@@ -2274,6 +2333,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "PSYCHOLOGICAL/ABNORMAL BEH",
       "PUBLIC ASSIST",
       "PUBLIC ASSIST - APUBLIC",
+      "PUBLIC ASSIST / PUBLIC CONTACT",
       "PUBLIC ASSIST (FD)",
       "PUBLIC ASSISTANCE",
       "PUBLIC INTOX",
@@ -2367,6 +2427,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
       "WELFARE CHECK",
       "WELFARE CONCERN",
       "WIRES DOWN"
+
   );
 
   private static final CodeSet DOUBLE_CITY_LIST = new CodeSet(
@@ -2374,6 +2435,7 @@ public class TXCollinCountyAParser extends FieldProgramParser {
     "CADDO MILLS",
     "COLLIN COUNTY",
     "COLLIN CO",
+    "DOUBLE OAK",
     "FIRST - 2ND PAGE",
     "FLOWER MOUND",
     "GRAYSON COUNTY",
