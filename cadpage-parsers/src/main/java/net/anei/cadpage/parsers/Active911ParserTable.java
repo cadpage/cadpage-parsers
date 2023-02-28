@@ -1356,6 +1356,7 @@ public class Active911ParserTable {
       "US/NC/BiscoeFD",                   "NCMontgomeryCounty",
       "US/NC/BladenCounty",               "NCBladenCounty",
       "US/NC/BladenCountyEMS",            "NCBladenCounty",
+      "US/NC/BoltonVFD",                  "NCColumbusCounty",
       "US/NC/BrassfieldVFD",              "NCGranvilleCounty",
       "US/NC/BrunswickCounty",            "NCBrunswickCounty",
       "US/NC/BuncombeCounty",             "NCBuncombeCounty",
