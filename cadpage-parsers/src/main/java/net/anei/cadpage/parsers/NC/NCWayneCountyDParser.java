@@ -1,15 +1,40 @@
 package net.anei.cadpage.parsers.NC;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import java.util.Properties;
 
-public class NCWayneCountyDParser extends DispatchA19Parser {
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
+
+public class NCWayneCountyDParser extends DispatchOSSIParser {
 
   public NCWayneCountyDParser() {
-    super("WAYNE COUNTY", "NC");
+    super(CITY_CODES, "WAYNE COUNTY", "NC", 
+          "( CANCEL ADDR CITY " +
+          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! " + 
+          ") INFO/N+");
   }
-
+  
   @Override
-  public String getFilter() {
-    return "@alert.active911.com,WayneCounty911@waynegov.com";
+  protected boolean parseMsg(String body, Data data) {
+    body = "CAD:" + body;
+    return super.parseMsg(body, data);
   }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{10}", true);
+    return super.getField(name);
+  }
+  
+  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "DUD", "DUDLEY",
+      "EUR", "EUREKA",
+      "FOR", "FOUR OAKS",
+      "FRE", "FREMONT",
+      "GLB", "GOLDSBORO",
+      "LAG", "LA GRANGE",
+      "MTO", "MOUNT OLIVE",
+      "PIK", "PIKEVILLE",
+      "STA", "STANTONSBURG"
+  });
 }
