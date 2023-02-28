@@ -2214,7 +2214,7 @@ public class Active911ParserTable {
       "US/TX/BayTown",                    "TXHarrisCountyF",
       "US/TX/BellCounty",                 "TXBellCounty",
       "US/TX/BeverlyHills",               "TXMcLennanCountyD",
-      "US/TX/BexarCounty",                "TXBexarCountyA",
+      "US/TX/BexarCounty",                "TXBexarCountyA,TXBexarCountyC",
       "US/TX/BigSpring",                  "TXHowardCounty",
       "US/TX/BlancoCounty",               "TXBlancoCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
