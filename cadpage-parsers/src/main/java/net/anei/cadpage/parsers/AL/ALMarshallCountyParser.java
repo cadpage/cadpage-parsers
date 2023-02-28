@@ -8,6 +8,7 @@ public class ALMarshallCountyParser extends GroupBestParser {
   public ALMarshallCountyParser() {
     super(new ALMarshallCountyBParser(), 
           new ALMarshallCountyCParser(),
-          new ALMarshallCountyDParser());
+          new ALMarshallCountyDParser(),
+          new ALMarshallCountyEParser());
   }
 }
