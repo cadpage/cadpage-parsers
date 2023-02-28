@@ -126,6 +126,7 @@ public class Active911ParserTable {
       "US/AL/Malvern",                    "ALGenevaCountyC",
       "US/AL/MarionCounty",               "ALMarionCounty",
       "US/AL/MarshallCounty",             "ALMarshallCounty,ALMorganCounty",
+      "US/AL/MillervilleVFD",             "ALClayCounty",
       "US/AL/MobileCounty",               "ALMobileCounty",
       "US/AL/MorganCounty",               "ALMorganCounty",
       "US/AL/PinckardVFD",                "ALDaleCountyB",
