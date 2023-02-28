@@ -2589,6 +2589,7 @@ public class Active911ParserTable {
       "US/WI/WinnebagoCounty",            "WIWinnebagoCountyB,WIWinnebagoCountyC",
       "US/WV/BerkeleyCounty",             "WVBerkeleyCounty",
       "US/WV/BooneCounty",                "WVBooneCounty",
+      "US/WV/BooneCountyEMA",             "WVBooneCountyC",
       "US/WV/CabellCounty",               "WVCabellCounty",
       "US/WV/Calhoun911",                 "WVCalhounCounty",
       "US/WV/Centrale911",                "WVHarrisonCountyB",
