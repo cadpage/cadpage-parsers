@@ -21,7 +21,7 @@ public class CASacramentoCountyParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "@CAD.GOV";
+    return "@CAD.GOV,CADPage@srfecc.ca.gov";
   }
 
   @Override
