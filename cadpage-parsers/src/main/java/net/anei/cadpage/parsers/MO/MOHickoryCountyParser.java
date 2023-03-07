@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
-public class MOHickoryCountyParser extends DispatchA33Parser {
+public class MOHickoryCountyParser extends DispatchBCParser {
 
   public MOHickoryCountyParser() {
     super("HICKORY COUNTY", "MO");
