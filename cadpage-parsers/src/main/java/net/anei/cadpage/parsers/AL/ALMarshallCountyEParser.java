@@ -10,7 +10,7 @@ public class ALMarshallCountyEParser extends DispatchA19Parser {
   
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,donotreply@cullmansheriff.org,cemsdispatch@cullmanregional.com";
   }
 
 }
