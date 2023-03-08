@@ -1495,6 +1495,7 @@ public class Active911ParserTable {
       "US/NC/WashingtonCounty",           "NCWashingtonCounty",
       "US/NC/WataugaCounty",              "NCWataugaCounty",
       "US/NC/WayneCounty",                "NCWayneCounty",
+      "US/NC/WayneCountyOES",             "NCWayneCountyD",
       "US/NC/WCUDispatch",                "NCJacksonCounty",
       "US/NC/WilkesCounty",               "NCWilkesCounty",
       "US/NC/WilsonCounty",               "NCWilsonCounty",

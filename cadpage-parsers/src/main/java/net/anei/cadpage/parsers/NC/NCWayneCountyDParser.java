@@ -34,7 +34,9 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
       "GLB", "GOLDSBORO",
       "LAG", "LA GRANGE",
       "MTO", "MOUNT OLIVE",
+      "PRN", "PRINCETON",
       "PIK", "PIKEVILLE",
+      "SSP", "SEVEN SPRINGS",
       "STA", "STANTONSBURG"
   });
 }
