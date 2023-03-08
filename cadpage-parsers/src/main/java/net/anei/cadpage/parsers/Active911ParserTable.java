@@ -2320,6 +2320,7 @@ public class Active911ParserTable {
       "US/TX/KaufmanCounty",              "TXKaufmanCountyA",
       "US/TX/KendallCounty",              "TXKendallCounty",
       "US/TX/KerrCounty",                 "TXKerrCounty",
+      "US/TX/KilleenPD",                  "TXBellCounty",
       "US/TX/KrumFD",                     "TXDentonCountyA",
       "US/TX/LagunaVista",                "TXCameronCounty",
       "US/TX/LakeWorth",                  "TXTarrantCountyC",
