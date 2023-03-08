@@ -186,8 +186,6 @@ public class DispatchA92Parser extends HtmlProgramParser {
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:[A-Za-z ]+, *)?[A-Z]{2}(?: +\\d{5})?");
-  private static final Pattern COUNTY_PTN = Pattern.compile("[A-Za-z ]+");
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})(?:-\\d{4})?");
   private static final Pattern APT_PTN = Pattern.compile("\\d{1,5}[A-Z]?");
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
