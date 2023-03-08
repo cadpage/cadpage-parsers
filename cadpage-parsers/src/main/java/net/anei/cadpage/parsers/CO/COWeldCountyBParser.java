@@ -46,6 +46,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.isEmpty()) return true;
       return super.checkParse(cleanField(field), data);
     }
     
