@@ -10,6 +10,6 @@ public class MIStJosephCountyParser extends DispatchA1Parser {
 
   @Override
   public String getFilter() {
-    return "centrald@stjosephcountymi.org";
+    return "centrald@stjosephcountymi.org,stjosephcountymi-org.mail.protection.outlook.com";
   }
 }
