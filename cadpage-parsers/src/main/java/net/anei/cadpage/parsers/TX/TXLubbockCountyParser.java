@@ -8,6 +8,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXLubbockCountyParser extends GroupBestParser {
   
   public TXLubbockCountyParser() {
-    super(new TXLubbockCountyAParser(), new TXLubbockCountyBParser());
+    super(new TXLubbockCountyAParser(), 
+          new TXLubbockCountyBParser(),
+          new TXLubbockCountyCParser());
   }
 }

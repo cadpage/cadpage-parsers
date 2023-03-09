@@ -2378,6 +2378,7 @@ public class Active911ParserTable {
       "US/TX/TarrantCounty",              "TXTarrantCountyA",
       "US/TX/TexasCity",                  "TXTexasCity",
       "US/TX/TravisCounty",               "TXTravisCountyB",
+      "US/TX/TylerTechnologies",          "TXLubbockCountyC",
       "US/TX/UMCHealth",                  "TXLubbockCountyB",
       "US/TX/VALAMB",                     "TXElPasoCounty",
       "US/TX/VanAlstyne",                 "TXVanAlstyne",
