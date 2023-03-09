@@ -2310,6 +2310,7 @@ public class Active911ParserTable {
       "US/TX/HarrisCounty",               "TXHarrisCountyA",
       "US/TX/HarrisCountyEC",             "TXHarrisCountyESD1B,TXCyCreekCommCenterA",
       "US/TX/HarrisCountyNWEMS",          "TXHarrisCountyNWEMS",
+      "US/TX/HarrisESD",                  "TXHarrisCountyESD1C",
       "US/TX/HarrisonCounty",             "TXHarrisonCounty",
       "US/TX/HaysUSA",                    "KSEllisCounty",
       "US/TX/Helotes",                    "TXHelotes",

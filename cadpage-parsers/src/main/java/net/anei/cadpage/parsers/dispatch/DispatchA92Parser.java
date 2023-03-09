@@ -185,8 +185,9 @@ public class DispatchA92Parser extends HtmlProgramParser {
   }
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COUNTY_PTN = Pattern.compile("([ A-Za-z]+)(?:,[ A-Za-z]+)?");
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:[A-Za-z ]+, *)?[A-Z]{2}(?: +\\d{5})?");
-  private static final Pattern APT_PTN = Pattern.compile("\\d{1,5}[A-Z]?");
+  private static final Pattern APT_PTN = Pattern.compile("Apt..*|\\d{1,5}[A-Z]?");
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
@@ -220,21 +221,25 @@ public class DispatchA92Parser extends HtmlProgramParser {
     
       city = field.substring(pt1+1, pt2).trim();
       apt = field.substring(pt2+1).trim();
-      if (apt.isEmpty()) {
-        Matcher match = CITY_ST_ZIP_PTN.matcher(city);
+      Matcher match = COUNTY_PTN.matcher(city);
+      if (match.matches()) {
+        data.strCity = match.group(1).trim();
+      }
+      else if (apt.isEmpty()) {
+        match = CITY_ST_ZIP_PTN.matcher(city);
         if (match.matches()) {
           return parseCity(field.substring(0, pt1).trim() + ',' + city, data);
         }
-        else if (city.contains(",")) {
+        else if (APT_PTN.matcher(city).matches()) {
+          apt = city;
+          city = "";
+        }
+        else {
           String place = field.substring(0,pt1).trim();
           if (!place.startsWith(city)) {
             data.strPlace = append(data.strPlace, " - ", place);
           }
           return parseCity(city, data);
-        }
-        else if (city.contains("#") || APT_PTN.matcher(city).matches()) {
-          apt = city;
-          city = "";
         }
       }
       data.strCity = city;

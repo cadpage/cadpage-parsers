@@ -5,6 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXHarrisCountyESD1Parser extends GroupBestParser {
 
   public TXHarrisCountyESD1Parser() {
-    super(new TXHarrisCountyESD1AParser(), new TXHarrisCountyESD1BParser());
+    super(new TXHarrisCountyESD1AParser(), 
+          new TXHarrisCountyESD1BParser(),
+          new TXHarrisCountyESD1CParser());
   }
 }
