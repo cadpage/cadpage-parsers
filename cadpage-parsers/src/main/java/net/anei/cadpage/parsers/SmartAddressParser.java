@@ -4067,7 +4067,7 @@ public abstract class SmartAddressParser extends MsgParser {
   protected boolean isNotExtraApt(String apt) {
     return NOT_APT_PTN.matcher(apt).matches();
   }
-  private static final Pattern NOT_APT_PTN = Pattern.compile("(?:[&/]|(?:JUST )?(?:MM|EX|NORTH|SOUTH|EAST|WEST|PRIOR|BLK|MILE|BEFORE|AFTER|RUNAWAY|OFF|FROM|NEAR|OFF|CLOSE TO|PAST)\\b).*|.* MM|EXT|[NSEW]|[NS][EW]", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NOT_APT_PTN = Pattern.compile("(?:[&/]|(?:JUST )?(?:MM *\\d*|AND .*|EX|NORTH|SOUTH|EAST|WEST|PRIOR|BLK|MILE|BEFORE|AFTER|RUNAWAY|OFF|FROM|NEAR|OFF|CLOSE TO|PAST)\\b).*|.* MM|EXT|[NSEW]|[NS][EW]", Pattern.CASE_INSENSITIVE);
 
   /**
    * This is used by GenMultiWordStreetList.  When passed a previously passed

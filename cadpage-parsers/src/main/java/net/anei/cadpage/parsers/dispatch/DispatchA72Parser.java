@@ -12,6 +12,8 @@ public class DispatchA72Parser extends FieldProgramParser {
     super(defCity, defState,
         "CFS:ID! CALLTYPE:CALL! PRIORITY:PRI! PLACE:PLACE! ADDRESS:ADDR! CITY:CITY! STATE:ST! ZIP:ZIP! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! INFO/N+ ALERT:ALERT");
   }
+  
+  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*) +([A-Z]{2}) +\\d{5}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -19,9 +21,17 @@ public class DispatchA72Parser extends FieldProgramParser {
     if (!parseFields(body.split("\n"), data)) return false;
     String addr = data.strAddress;
     data.strAddress = "";
+    addr = stripFieldStart(addr, "@");
+    addr = addr.replace('@', '&').replace("//", "&");
     addr = stripFieldEnd(addr, data.strState);
     addr = stripFieldEnd(addr, data.strCity);
-    parseAddress(addr, data);
+    parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
+    Matcher match = CITY_ST_ZIP_PTN.matcher(data.strApt);
+    if (match.matches()) {
+      data.strCity = match.group(1).trim();
+      data.strState = match.group(2);
+      data.strApt = "";
+    }
     return true;
   }
 
