@@ -19,7 +19,7 @@ public class MIKalamazooCountyCParser extends MsgParser {
     return "paging@kccda911.org";
   }
   
-  private static final Pattern MASTER = Pattern.compile("([^@]+)@([^/,]+?)(?:,([^/]*))?/(.*)");
+  private static final Pattern MASTER = Pattern.compile("([^@]+)@([^/,]+?)(?:,([^/,]*))?[/,](.*)");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -39,9 +39,9 @@ public class MIKalamazooCountyCParser extends MsgParser {
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
     String addr = match.group(2);
-    parseAddress(addr, data);
+    parseAddress(addr.replace('@', '&'), data);
     data.strCity = getOptGroup(match.group(3));
-    String place = match.group(4).trim();
+    String place = stripFieldEnd(match.group(4).trim(), ",");
     if (place.equals(addr)) place = "";
     data.strPlace = place;
     
