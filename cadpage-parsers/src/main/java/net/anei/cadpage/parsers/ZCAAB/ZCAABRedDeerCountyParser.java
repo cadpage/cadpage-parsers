@@ -29,7 +29,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
   @Override
   public String getFilter() {
-    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca,FireDispatch@stalbert.ca,Incident@ParklandCounty.com";
+    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca,ng911_notification@strathcona.ca,FireDispatch@stalbert.ca,Incident@ParklandCounty.com";
   }
 
   @Override
@@ -41,6 +41,12 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD Message") && !subject.equals("Incident Message")) {
       data.strSource = subject;
+    }
+    
+    if (body.startsWith("Sender:")) {
+      int pt = body.indexOf("Message:");
+      if (pt < 0) return false;
+      body = body.substring(pt+8).trim();
     }
 
     int pt = body.indexOf("\nYou have received");

@@ -29,7 +29,6 @@ public class DispatchA51Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-
     body = body.replace("LatitudeUnits Responding", "Units Responding");
     body = body.replace('\\', '/');
     if (body.startsWith("/ ")) {
