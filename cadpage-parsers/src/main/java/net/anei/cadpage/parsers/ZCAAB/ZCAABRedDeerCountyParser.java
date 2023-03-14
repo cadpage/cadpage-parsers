@@ -36,6 +36,8 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_CR_CRES;
   }
+  
+  private static final Pattern JUNK_PTN = Pattern.compile("\n(?:You have received|NOTICE -|This communication) ");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -49,16 +51,15 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       body = body.substring(pt+8).trim();
     }
 
-    int pt = body.indexOf("\nYou have received");
-    if (pt < 0) pt = body.indexOf("\nNOTICE - ");
-    if (pt >= 0) body = body.substring(0,pt).trim();
+    Matcher match = JUNK_PTN.matcher(body);
+    if (match.find()) body = body.substring(0,match.start()).trim();
 
     if (!super.parseMsg(body,  data)) return false;
 
     data.strCity = data.strCity.replace('_', ' ');
-    Matcher match = CLEAN_CITY_PTN.matcher(data.strCity);
+    match = CLEAN_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
-    if (data.strCity.equals("VILLAGE OF")) data.strCity = "";
+    if (data.strCity.equals("VILLAGE OF") || data.strCity.equals("[None selected]")) data.strCity = "";
     return true;
   }
 
@@ -105,6 +106,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "ALCOMDALE",
       "ARDROSSAN",
       "BASSANO",
+      "BENALTO",
       "BENTLEY",
       "BIG VALLEY",
       "BIRCHCLIFF",
@@ -116,12 +118,14 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "BROOKS",
       "BRUDERHEIM",
       "BUFORD",
+      "CALAHOO",
       "CALMAR",
       "CARBON",
       "CARBONDALE",
       "CAROLINE",
       "CARSTAIRS",
       "CLEARWATER COUNTY",
+      "CONDOR",
       "COUNTY OF MINBURN NO 27",
       "CREMONA",
       "CROSSFIELD",
@@ -142,6 +146,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "KNEEHILL COUNTY",
       "LACOMBE",
       "LACOMBE COUNTY",
+      "LAKE NEWELL RESORT",
       "LAMONT",
       "LAMONT COUNTY",
       "LAVOY",
@@ -150,6 +155,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "LEGAL",
       "LESLIEVILLE",
       "LINDEN",
+      "LOUSANA",
       "MARKERVILLE",
       "MINBURN",
       "MINBURN COUNTY",
@@ -163,6 +169,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "NORGLENWOLD",
       "OLDS",
       "PARKLAND BEACH",
+      "PATRICIA",
       "PENHOLD",
       "PONOKA",
       "PONOKA COUNTY",
@@ -187,6 +194,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
       "STARLAND COUNTY",
       "STRATHCONA COUNTY",
       "SYLVAN LAKE",
+      "SWALWELL",
       "THREE HILLS",
       "THORSBY",
       "TILLEY",

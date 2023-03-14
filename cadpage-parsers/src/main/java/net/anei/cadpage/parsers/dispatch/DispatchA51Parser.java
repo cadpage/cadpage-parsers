@@ -48,7 +48,6 @@ public class DispatchA51Parser extends FieldProgramParser {
   }
 
   private static final DateFormat DATE_TIME_FMT3 = new SimpleDateFormat("yyyy/MMM/dd HH:mm");
-  private static final DateFormat DATE_TIME_FMT1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public Field getField(String name) {
@@ -59,7 +58,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     if (name.equals("VILLAGE_OF")) return new SkipField("VILLAGE OF");
     if (name.equals("APT")) return new AptField("Unit +(.*)");
     if (name.equals("UNITS_RESPONDING")) return new SkipField("Units Responding", true);
-    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT1, true);
+    if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
@@ -81,7 +80,24 @@ public class DispatchA51Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "CODE CALL";
     }
+  }
 
+  private static final DateFormat DATE_TIME_FMT1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  private static final Pattern EXT_DATE_TIME_PTN = Pattern.compile("(.*?)T(.*?)-.*");
+
+  private class BaseDateTimeField extends DateTimeField {
+    
+    public BaseDateTimeField() {
+      super(DATE_TIME_FMT1, true);
+    }
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = EXT_DATE_TIME_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1) + ' ' + match.group(2);
+      }
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
