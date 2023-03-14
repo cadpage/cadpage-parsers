@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
 public class WICalumetCountyCParser extends DispatchA52Parser {
@@ -26,6 +28,16 @@ public class WICalumetCountyCParser extends DispatchA52Parser {
   @Override
   public String getFilter() {
     return "Hiplink@co.calumet.wi.us";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
   
   @Override
