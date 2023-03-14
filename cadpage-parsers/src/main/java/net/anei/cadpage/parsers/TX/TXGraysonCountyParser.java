@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA82Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXGraysonCountyParser extends DispatchA82Parser {
+/**
+ * Grayson County, TX
+ */
+public class TXGraysonCountyParser extends GroupBestParser {
 
   public TXGraysonCountyParser() {
-    super("GRAYSON COUNTY", "TX");
+    super(new TXGraysonCountyAParser(), new TXGraysonCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "ICSAlerts@cityofdenison.com";
-  }
-
 }
