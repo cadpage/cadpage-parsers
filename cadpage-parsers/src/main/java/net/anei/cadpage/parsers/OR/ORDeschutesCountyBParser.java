@@ -14,7 +14,7 @@ public class ORDeschutesCountyBParser extends HtmlProgramParser {
   
   @Override
   public String getFilter() {
-    return "cad@dc911sd.org,7017710262";
+    return "cad@dc911sd.org,@deschutes.org,7017710262";
   }
 
   @Override

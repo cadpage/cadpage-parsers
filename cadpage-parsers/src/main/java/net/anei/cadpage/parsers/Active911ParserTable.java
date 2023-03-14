@@ -1290,6 +1290,7 @@ public class Active911ParserTable {
       "US/MO/SchuylerCounty",             "MOSchuylerCounty",
       "US/MO/ScottCity",                  "MOScottCountyA",
       "US/MO/ScottCounty",                "MOScottCounty",
+      "US/MO/SedaliaPolice",              "MOPettisCountyB",
       "US/MO/ShelbyCounty",               "MOShelbyCounty",
       "US/MO/SouthernBoone",              "MOBooneCounty",
       "US/MO/StCharlesCounty",            "MOStCharlesCounty",
