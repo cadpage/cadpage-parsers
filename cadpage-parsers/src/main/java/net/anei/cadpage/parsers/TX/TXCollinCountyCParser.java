@@ -15,7 +15,7 @@ public class TXCollinCountyCParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "icsuser@co.collin.tx.us,ccsodispatch@co.collin.tx.us,inforad@co.walker.tx.us,prosperdispatch@prospertx.gov,ispage@murphytx.org";
+    return "icsuser@co.collin.tx.us,ccsodispatch@co.collin.tx.us,inforad@co.walker.tx.us,prosperdispatch@prospertx.gov,ispage@murphytx.org,CADPaging-NOREPLY@flower-mound.com";
   }
 
   @Override
