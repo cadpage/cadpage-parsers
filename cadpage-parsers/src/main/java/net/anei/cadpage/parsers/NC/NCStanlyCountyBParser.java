@@ -22,8 +22,21 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
                                      "| PLACE CITY/Y! " +
                                      "| CITY/Y! " +
                                      "| " +
-                                     ") ( PLACE APT CH? X+? | APT CH? X+? | PLACE CH X+? | PLACE PLACE CH X+? | INFO1 | PLACE INFO1 | X X? | PLACE EMPTY+? X+? ) " +
-          ") INFO/ZN+? GPS1 GPS2 END");
+                                     ") " + 
+                                     "( APT/Z PLACE/Z CH/Z X/Z X/Z UNIT! " +
+                                     "| APT/Z PLACE/Z CH X+? " +
+                                     "| APT/Z PLACE/Z X X? " +
+                                     "| APT/Z PLACE/Z CH/Z X X? " +
+                                     "| PLACE APT CH? X+? " + 
+                                     "| APT CH? X+? " + 
+                                     "| PLACE CH X+? " + 
+                                     "| PLACE PLACE CH X+? " +
+                                     "| INFO1 " +
+                                     "| PLACE INFO1 " + 
+                                     "| X X? " + 
+                                     "| PLACE EMPTY+? X+? " + 
+                                     ") " +
+          ") EMPTY+? UNIT? INFO/ZN+? GPS1 GPS2 END");
     setupCities(CITY_LIST);
     setupMultiWordStreets("DR MARTIN LUTHER KING JR");
     addRoadSuffixTerms("CONNECTOR");
@@ -51,7 +64,7 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     if (!super.parseMsg(body, data)) return false;
 
     // Exclude NCRowanCounty alerts
-    return !BAD_PLACE_PTN.matcher(data.strPlace).matches();
+    return !BAD_PLACE_PTN.matcher(data.strPlace).matches() && !BAD_PLACE_PTN.matcher(data.strAddress).matches();
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
@@ -66,10 +79,11 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("APT")) return new MyAptField();
-    if (name.equals("CH")) return new ChannelField("OPS\\d+|[A-Z]{3}", true);
-    if (name.equals("INFO1")) return new InfoField("(?!DIST:).*[a-z].*");
+    if (name.equals("CH")) return new ChannelField("OPS\\d+|[A-Z]{3}", false);
+    if (name.equals("INFO1")) return new InfoField("(?!DIST:).*[a-z].*", false);
     if (name.equals("GPS1")) return new GPSField(1, GPS_PTN);
     if (name.equals("GPS2")) return new GPSField(2, GPS_PTN);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+|\\d{3,4}|FM)\\b,?)+", true);
     return super.getField(name);
   }
 
@@ -133,7 +147,7 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern BAD_ID_PTN = Pattern.compile("\\d{8}");
+  private static final Pattern BAD_ID_PTN = Pattern.compile("[23]\\d{7}");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
