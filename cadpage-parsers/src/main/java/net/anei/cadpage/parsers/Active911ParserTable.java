@@ -2658,6 +2658,7 @@ public class Active911ParserTable {
       "Vendor/CTC/Default",               "MIInghamCountyC",
       "Vendor/GeoConex/V109",             "TNCumberlandCountyA",
       "Vendor/GeoSafe/Default",           "OKLoganCounty",
+      "Vendor/Logis/Vlitech",             "TXHarrisCountyESD1C",
       "Vendor/NewZealandPager/Revised",   "ZNZNewZealand",
       "Vendor/Spillman/Default",          "KSFordCounty",
       "Vendor/Sweden/Zenit",              "ZSESwedenA"
