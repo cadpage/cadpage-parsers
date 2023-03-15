@@ -161,6 +161,7 @@ public class Active911ParserTable {
       "US/AR/CentralEMS",                 "ARWashingtonCountyB",
       "US/AR/CityofBellaVista",           "ARBentonCountyE",
       "US/AR/CityofRogers",               "ARBentonCountyB",
+      "US/AR/CleburneCounty",             "ARCleburneCounty",
       "US/AR/DallasCounty",               "ARDallasCounty",
       "US/AR/FountainLake",               "ARGarlandCountyA",
       "US/AR/FSEMS",                      "ARSebastianCounty",

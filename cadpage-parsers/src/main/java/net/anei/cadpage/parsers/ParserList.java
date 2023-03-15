@@ -180,6 +180,7 @@ public class ParserList {
           new ParserCategory("Arkansas"
               ,"ARBaxterCounty"                 ,"Baxter County, AR"
               ,"ARBentonCounty"                 ,"Benton County, AR"
+              ,"ARCleburneCounty"               ,"Cleburne County, AR"
               ,"ARDallasCounty"                 ,"Dallas County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
               ,"ARGrantCounty"                  ,"Grant County, AR"
