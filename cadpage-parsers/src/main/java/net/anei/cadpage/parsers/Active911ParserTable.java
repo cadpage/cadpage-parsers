@@ -803,6 +803,7 @@ public class Active911ParserTable {
       "US/KY/CityofRadcliff",             "KYHardinCountyD",
       "US/KY/ClarkCounty",                "KYClarkCounty",
       "US/KY/ClayCounty",                 "KYClayCounty",
+      "US/KY/CloverportPolice",           "KYBeckinridgeCounty",
       "US/KY/Comm2",                      "KYCarterCountyB",
       "US/KY/Corbin",                     "KYKnoxCountyC",
       "US/KY/CrittendenCounty",           "KYCrittendenCounty",
