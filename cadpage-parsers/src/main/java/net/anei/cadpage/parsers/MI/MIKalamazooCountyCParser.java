@@ -11,7 +11,7 @@ public class MIKalamazooCountyCParser extends MsgParser {
   
   public MIKalamazooCountyCParser() {
     super("KALAMAZOO COUNTY", "MI");
-    setFieldList("CALL ADDR APT CITY PLACE INFO");
+    setFieldList("CALL ADDR APT CITY PLACE INFO MAP X");
   }
   
   @Override
@@ -19,7 +19,9 @@ public class MIKalamazooCountyCParser extends MsgParser {
     return "paging@kccda911.org";
   }
   
-  private static final Pattern MASTER = Pattern.compile("([^@]+)@([^/,]+?)(?:,([^/,]*))?[/,](.*)");
+  private static final Pattern MASTER = Pattern.compile("([^@]+)@([^/,]+?)(?:,(.*))?");
+  private static final Pattern BRK_PTN = Pattern.compile("\\s*\n\\s*");
+  private static final Pattern MAP_PTN = Pattern.compile("(?:[A-Z][a-z]+(?:-[A-Z][a-z]+)?(?: +(?:Twp|Village|Zone))?|SKCFA) +F?\\d+|Comstock +\\d-\\d-\\d");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -40,15 +42,41 @@ public class MIKalamazooCountyCParser extends MsgParser {
     data.strCall = match.group(1).trim();
     String addr = match.group(2);
     parseAddress(addr.replace('@', '&'), data);
-    data.strCity = getOptGroup(match.group(3));
-    String place = stripFieldEnd(match.group(4).trim(), ",");
-    if (place.equals(addr)) place = "";
-    data.strPlace = place;
+    String trail = match.group(3);
+    if (trail != null) {
+      Parser p = new Parser(trail);
+      String place = p.getLastOptional('/');
+      String city = p.get(',');
+      pt = city.indexOf("  ");
+      if (pt >= 0) {
+        data.strPlace = city.substring(pt+2).trim();
+        city = city.substring(0,pt);
+      }
+      data.strCity = city;
+      data.strPlace = append(data.strPlace, " - ", p.get());
+      data.strPlace = append(data.strPlace, " - ", place);
+    }
     
     if (extra != null) {
-      for (String line : extra.split("\n")) {
-        line = line.trim();
-        data.strSupp = append(data.strSupp, "\n", line);
+      String[] lines = BRK_PTN.split(extra);
+      int lastNdx = lines.length-1;
+      String lastLine = lines[lastNdx];
+      if (lastLine.equals("No Cross Streets Found")) {
+        if (lastNdx == 0) return true;
+        lastLine = lines[--lastNdx];
+      } else if (lastLine.contains(" / ")) {
+        data.strCross = lastLine;
+        if (lastNdx == 0) return true;
+        lastLine = lines[--lastNdx];
+      }
+      
+      if (MAP_PTN.matcher(lastLine).matches()) {
+        data.strMap = lastLine;
+        lastNdx--;
+      }
+      
+      for (int ndx = 0; ndx <= lastNdx; ndx++) {
+        data.strSupp = append(data.strSupp, "\n", lines[ndx]);
       }
     }
     return true;
