@@ -43,6 +43,7 @@ public class DispatchA78Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("GPS")) return new GPSField("Estimated Maps Location.*['\"]http://maps.apple.com/maps\\?q=([^'\"]*?)['\"].*", true);
     return super.getField(name);
@@ -66,7 +67,15 @@ public class DispatchA78Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "CODE CALL";
     }
-
+  }
+  
+  private class BaseAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      data.strAddress = stripFieldEnd(data.strAddress, " APT");
+      data.strAddress = stripFieldEnd(data.strAddress, ",");
+    }
   }
 
   private class BaseCrossField extends CrossField {

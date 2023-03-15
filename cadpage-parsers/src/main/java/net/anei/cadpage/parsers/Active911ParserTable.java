@@ -515,6 +515,7 @@ public class Active911ParserTable {
       "US/GA/WebsterCounty",              "GAWebsterCounty",
       "US/GA/WhiteCounty",                "GAWhiteCounty",
       "US/GA/WhitfieldCounty",            "GAWhitfieldCountyC",
+      "US/GA/WiregrassE911",              "GAMcIntoshCounty",
       "US/IA/AmesFD",                     "IAStoryCounty",
       "US/IA/CerroGordoCounty",           "IACerroGordoCounty",
       "US/IA/CherokeeCounty",             "IACherokeeCounty",
