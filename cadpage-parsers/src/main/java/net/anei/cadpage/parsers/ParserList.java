@@ -381,6 +381,7 @@ public class ParserList {
               ,"GACandlerCounty"                ,"Candler County, GA"
               ,"GACarrollCounty"                ,"Carroll County, GA"
               ,"GAChathamCounty"                ,"Chatham County, GA"
+              ,"GAChattoogaCounty"              ,"Chattooga County, GA"
               ,"GACherokeeCounty"               ,"Cherokee County, GA"
               ,"GAClaytonCounty"                ,"Clayton County, GA"
               ,"GACoffeeCounty"                 ,"Coffee County, GA"
