@@ -16,7 +16,7 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = "CAD:" + body;
+    body = "CAD:" + stripFieldStart(body, "EMS\nCAD\n");
     return super.parseMsg(body, data);
   }
   

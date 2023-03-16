@@ -14,7 +14,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
   
   public MDGarrettCountyParser() {
     super(CITY_LIST, "GARRETT COUNTY", "MD", 
-          "ADDR/S6 CITY? ( X | X1 X2 | ) CALL CALL2/SDS+? INFO/SDS+? UNIT_TIME! END");
+          "ADDR/S6 CITY? ( X | X1 X2 | ) CALL CALL2/SDS+? UNIT_ID? INFO/SDS+? UNIT_TIME! END");
   }
   
   @Override
@@ -59,6 +59,7 @@ public class MDGarrettCountyParser extends FieldProgramParser {
     if (name.equals("X1")) return new MyCrossField("\\[ *(.*?)", true);
     if (name.equals("X2")) return new MyCrossField("(.*?) *\\]", true);
     if (name.equals("CALL2")) return new CallField("HOT|COLD|[AB]LS", true);
+    if (name.equals("UNIT_ID")) return new MyUnitIdField();
     if (name.equals("UNIT_TIME")) return new MyUnitTimeField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -107,6 +108,34 @@ public class MDGarrettCountyParser extends FieldProgramParser {
       return false;
     }
   }
+  
+  private static final Pattern UNIT_ID_PTN = Pattern.compile("([A-Z0-99 ]*?) *\\b(\\d{7})");
+  private class MyUnitIdField extends Field {
+    
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = UNIT_ID_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strUnit = match.group(1).trim();
+      data.strCallId = match.group(2);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT ID";
+    }
+  }
 
   private static final Pattern UNIT_TIME_PTN = Pattern.compile("(?:([ A-Z0-9]+?) )??(?:(\\d{7}) )?(\\d\\d:\\d\\d)(?: +(.*))?");
   private class MyUnitTimeField extends Field {
@@ -114,8 +143,10 @@ public class MDGarrettCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = UNIT_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
-      data.strUnit = getOptGroup(match.group(1));
-      data.strCallId = getOptGroup(match.group(2));
+      String unit = match.group(1);
+      if (unit != null) data.strUnit = unit;
+      String id = match.group(2);
+      if (id != null) data.strCallId = id.trim();
       data.strTime = match.group(3);
       data.strCall = append(data.strCall, " - ", getOptGroup(match.group(4)));
     }
