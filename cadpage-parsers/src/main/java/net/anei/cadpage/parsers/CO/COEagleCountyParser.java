@@ -55,6 +55,7 @@ public class COEagleCountyParser extends FieldProgramParser {
   
   private static final Pattern SPEC_PATTERN = Pattern.compile("(?:alias |@)(.*)");
   private static final Pattern MM_PTN = Pattern.compile("[NESW]B\\d+");
+  private static final Pattern H6_PTN = Pattern.compile("H6 (\\d+)");
   private class Address2Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -73,10 +74,15 @@ public class COEagleCountyParser extends FieldProgramParser {
       field = p.get().replace(" CNTY", " ").trim();
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
-      if (!data.strPlace.isEmpty() && MM_PTN.matcher(data.strPlace).matches()) {
-        data.strAddress = stripFieldEnd(data.strAddress, data.strPlace.substring(0,2));
-        data.strAddress = append(data.strAddress, " ", data.strPlace);
-        data.strPlace = "";
+      if (!data.strPlace.isEmpty()) {
+        if (MM_PTN.matcher(data.strPlace).matches()) {
+          data.strAddress = stripFieldEnd(data.strAddress, data.strPlace.substring(0,2));
+          data.strAddress = append(data.strAddress, " ", data.strPlace);
+          data.strPlace = "";
+        } else if (H6_PTN.matcher(data.strPlace).matches()) {
+          data.strAddress = append(data.strAddress, " ", "MM " + data.strPlace.substring(3));
+          data.strPlace = data.strApt = "";
+        }
       }
     }
     
@@ -124,6 +130,34 @@ public class COEagleCountyParser extends FieldProgramParser {
   });
   
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "HWY 6 MM 142",                         "+39.650646,-106.954873",
+      "HWY 6 MM 143",                         "+39.646192,-106.942863",
+      "HWY 6 MM 144",                         "+39.647411,-106.925782",
+      "HWY 6 MM 145",                         "+39.647581,-106.908619",
+      "HWY 6 MM 146",                         "+39.645859,-106.890995",
+      "HWY 6 MM 147",                         "+39.647080,-106.871346",
+      "HWY 6 MM 148",                         "+39.646058,-106.852366",
+      "HWY 6 MM 149",                         "+39.650142,-106.834665",
+      "HWY 6 MM 150",                         "+39.658123,-106.819283",
+      "HWY 6 MM 151",                         "+39.666896,-106.804681",
+      "HWY 6 MM 152",                         "+39.673488,-106.787754",
+      "HWY 6 MM 153",                         "+39.678296,-106.769820",
+      "HWY 6 MM 154",                         "+39.631289,-106.523914",
+      "HWY 6 MM 155",                         "+39.625186,-106.506983",
+      "HWY 6 MM 156",                         "+39.622594,-106.488266",
+      "HWY 6 MM 157",                         "+39.710609,-106.709097",
+      "HWY 6 MM 158",                         "+39.710039,-106.692661",
+      "HWY 6 MM 159",                         "+39.701114,-106.680929",
+      "HWY 6 MM 160",                         "+39.697645,-106.664682",
+      "HWY 6 MM 161",                         "+39.684339,-106.659157",
+      "HWY 6 MM 162",                         "+39.676207,-106.646681",
+      "HWY 6 MM 163",                         "+39.654277,-106.630136",
+      "HWY 6 MM 164",                         "+39.648566,-106.612768",
+      "HWY 6 MM 165",                         "+39.648357,-106.611823",
+      "HWY 6 MM 166",                         "+39.644159,-106.593886",
+      "HWY 6 MM 167",                         "+39.638168,-106.577475",
+      "HWY 6 MM 168",                         "+39.631116,-106.522606",
+      "HWY 6 MM 169",                         "+39.624962,-106.506166",
       "INTERSTATE 70 EB116",                  "+39.553512,-107.333160",
       "INTERSTATE 70 EB117",                  "+39.551493,-107.318292",
       "INTERSTATE 70 EB118",                  "+39.561564,-107.305389",
