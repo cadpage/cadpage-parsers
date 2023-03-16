@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 public class GAChattoogaCountyParser extends DispatchA65Parser {
   
   public GAChattoogaCountyParser() {
-    super(CITY_LIST, "CHATOOGA COUNTY", "GA");
+    super(CITY_LIST, "CHATTOOGA COUNTY", "GA");
   }
   
   @Override

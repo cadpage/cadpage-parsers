@@ -64,7 +64,9 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
     if (!super.parseMsg(body, data)) return false;
 
     // Exclude NCRowanCounty alerts
-    return !BAD_PLACE_PTN.matcher(data.strPlace).matches() && !BAD_PLACE_PTN.matcher(data.strAddress).matches();
+    return !BAD_PLACE_PTN.matcher(data.strPlace).matches() && 
+           !BAD_PLACE_PTN.matcher(data.strAddress).matches() &&
+           !BAD_PLACE_PTN.matcher(data.strApt).matches();
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
