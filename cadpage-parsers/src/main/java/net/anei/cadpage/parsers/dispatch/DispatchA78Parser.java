@@ -24,7 +24,8 @@ public class DispatchA78Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.startsWith("InterOp CAD Alert - ")) {
+    if (subject.startsWith("InterOp CAD Alert - ") ||
+        subject.startsWith("InterOp CAD UPDATE - ")) {
       setSelectValue("");
       body = body.replace("Agency Dispatched:", "Agencies Dispatched:");
       return parseFields(body.split("\n"), data);
