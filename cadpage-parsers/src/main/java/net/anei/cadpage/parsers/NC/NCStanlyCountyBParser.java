@@ -250,6 +250,7 @@ public class NCStanlyCountyBParser extends DispatchOSSIParser {
       "LOC",  "LOCUST",
       "MID",  "MIDLAND",
       "MIS",  "MISENHEIMER",
+      "MON",  "MONROE",
       "MSH",  "MARSHVILLE",
       "MTP",  "MT PLEASANT",
       "NEW",  "NEW LONDON",
