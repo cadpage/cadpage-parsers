@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
@@ -14,10 +16,22 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
           ") INFO/N+");
   }
   
+  private static final Pattern MARKER = Pattern.compile("([A-Z0-9]+)\nCAD\n\\s*");
+  
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = "CAD:" + stripFieldStart(body, "EMS\nCAD\n");
+    Matcher match = MARKER.matcher(body);
+    if (match.lookingAt()) {
+      data.strSource = match.group(1);
+      body = body.substring(match.end());
+    }
+    body = "CAD:" + body;
     return super.parseMsg(body, data);
+  }
+  
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
   
   @Override
