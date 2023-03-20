@@ -6,107 +6,28 @@ import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.StandardCodeTable;
+import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 /**
  * Louisville, KY
  */
-public class KYLouisvilleParser extends FieldProgramParser {
+public class KYLouisvilleParser extends DispatchH03Parser {
 
   public KYLouisvilleParser() {
-    super(CITY_CODES, "LOUISVILLE", "KY",
-           "Location:ADDR/S? JTN:PLACE? TYPE_CODE:CODE! SUB_TYPE:CALL! TIME:TIME? Comments:INFO INFO+");
+    super("LOUISVILLE", "KY");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
   public String getFilter() {
-    return "MetroSafeTech@louisvilleky.gov";
+    return "@louisvilleky.gov";
   }
 
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf("\n\n");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseMsg(body, data);
-  }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CODE")) return new MyCodeField();
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-
-  private class MyCodeField extends CodeField {
-    @Override
-    public void parse(String field, Data data) {
-      super.parse(field, data);
-      String call = CALL_CODES.getCodeDescription(field);
-      if (call != null) data.strCall = call;
-    }
-  }
-
-  private class MyCallField extends CallField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("default")) return;
-      if (field.length() == 0) return;
-      if (data.strCall.length() == 0) {
-        data.strCall = field;
-      } else {
-        data.strCall = data.strCall + " (" + field + ")";
-      }
-    }
-  }
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      int pt = field.indexOf(':');
-      if (pt >= 0) {
-        data.strPlace = field.substring(pt+1).trim();
-        if (data.strPlace.startsWith("@")) data.strPlace = data.strPlace.substring(1).trim();
-        field = field.substring(0,pt).trim();
-      }
-      Parser p = new Parser(field);
-      data.strApt = append(p.getLastOptional(','), "-", p.getLastOptional(';'));
-      field = p.get();
-      if (field.startsWith("@")) field = field.substring(1).trim();
-      super.parse(field, data);
-      pt = data.strCity.indexOf('/');
-      if (pt >= 0) {
-        data.strPlace = append(data.strPlace, " - ", data.strCity.substring(0,pt));
-        data.strCity = data.strCity.substring(pt+1);
-      }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " PLACE";
-    }
-  }
-
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      DispatchProQAParser.parseProQAData(false, field, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CODE INFO";
-    }
-  }
-
-  private static CodeTable CALL_CODES = new StandardCodeTable();
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "LEFLORE AVE",                          "+38.130719,-85.875992",
