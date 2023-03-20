@@ -19,7 +19,7 @@ public class ALJeffersonCountyEParser extends DispatchH05Parser {
     
   @Override
   public String getFilter() {
-    return "@jeffcoal911.org";
+    return "FireDesk@jeffcoal911.org";
   }
   
   @Override

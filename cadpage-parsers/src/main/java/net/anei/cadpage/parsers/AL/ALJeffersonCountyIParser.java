@@ -19,7 +19,7 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "@JeffCoal911.org";
+    return "FireDesk@JeffCoal911.org";
   }
 
   @Override
