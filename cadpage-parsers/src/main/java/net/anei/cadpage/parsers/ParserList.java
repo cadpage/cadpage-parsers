@@ -1710,6 +1710,7 @@ public class ParserList {
               ,"TXPortAransas"                  ,"Port Aransas, TX"
               ,"TXReevesCounty"                 ,"Reeves County, TX"
               ,"TXRoanoke"                      ,"Roanoke, TX"
+              ,"TXRobertsonCounty"              ,"Robertson County, TX"
               ,"TXRockwallCounty"               ,"Rockwall County, TX"
               ,"TXRosenberg"                    ,"Rosenberg, TX"
               ,"TXRoyseCity"                    ,"Royse City, TX"
