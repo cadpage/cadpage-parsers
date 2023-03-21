@@ -7,7 +7,8 @@ public class ALPikeCountyParser extends DispatchSouthernParser {
   
   public ALPikeCountyParser() {
     super(CITY_LIST, "PIKE COUNTY", "AL", 
-          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE2 | DSFLG_ID | DSFLG_TIME);
+          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_X | DSFLG_OPT_NAME | DSFLG_OPT_PHONE | DSFLG_OPT_CODE | DSFLG_ID | DSFLG_TIME | DSFLG_PROC_EMPTY_FLDS);
+    removeWords("PIKE");
   }
   
   @Override
@@ -17,30 +18,38 @@ public class ALPikeCountyParser extends DispatchSouthernParser {
   
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("Pike County 9-1-1: ")) return false;
-    body = body.substring(19).trim();
+    body = stripFieldStart(body, "Pike County 9-1-1:");
     return super.parseMsg(body, data);
   }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
   
-  private static final String[] CITY_LIST = new String[]{
-    
-    // Cities
-    "BRUNDIDGE",
-    "TROY",
-
-    // Towns
-    "BANKS",
-    "GOSHEN",
-
-    // Unincorporated communities
-    "CURRY",
-    "JONESVILLE",
-    "KENT",
-    "ORION",
-    "PRONTO",
-    "RIVER RIDGE",
-    "SPRING HILL",
-    "CHINA GROVE"
+  private static final String[] CITY_LIST = new String[] {
+      
+      // Cities
+      "BRUNDIDGE",
+      "TROY",
+      
+      // Towns
+      "BANKS",
+      "GOSHEN",
+      
+      // Unincorporated communities
+      "CHINA GROVE",
+      "CURRY",
+      "HENDERSON",
+      "JONESVILLE",
+      "JOSIE",
+      "KENT",
+      "NEEDMORE",
+      "ORION",
+      "PRONTO",
+      "SHADY GROVE",
+      "SPRING HILL"
+      
   };
 
 }
