@@ -40,7 +40,7 @@ public class TXRobertsonCountyParser extends DispatchSouthernParser {
       "OWENSVILLE",
       
       // Brazos County
-      "BRIAN",
+      "BRYAN",
       
       // Limestone County
       "THORNTON",
