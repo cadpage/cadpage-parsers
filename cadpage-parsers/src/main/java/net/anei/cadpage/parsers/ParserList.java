@@ -1576,6 +1576,7 @@ public class ParserList {
               ,"TNHawkinsCounty"                ,"Hawkins County, TN"
               ,"TNHaywoodCounty"                ,"Haywood County, TN"
               ,"TNHumphreysCounty"              ,"Humphreys County, TN"
+              ,"TNJacksonCounty"                ,"Jackson County, TN"
               ,"TNJeffersonCounty"              ,"Jefferson County, TN"
               ,"TNJohnsonCounty"                ,"Johnson County, TN"
               ,"TNKingsport"                    ,"Kingsport, TN"
