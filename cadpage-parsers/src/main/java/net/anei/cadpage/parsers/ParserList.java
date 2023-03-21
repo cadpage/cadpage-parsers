@@ -170,6 +170,7 @@ public class ParserList {
           ),
           new ParserCategory("Arizona"
               ,"AZCochiseCounty"                ,"Cochise County, AZ"
+              ,"AZCoconinoCounty"               ,"Coconino County, AZ"
               ,"AZMaricopaCounty"               ,"Maricopa County, AZ"
               ,"AZMohaveCounty"                 ,"Mohave County, AZ"
               ,"AZNavajoCounty"                 ,"Navajo County, AZ"

@@ -184,6 +184,7 @@ public class Active911ParserTable {
       "US/AZ/CityofKingman",              "AZMohaveCounty",
       "US/AZ/CityofShowLow",              "AZNavajoCountyB",
       "US/AZ/CochiseCounty",              "AZCochiseCounty",
+      "US/AZ/CoconinoCounty",             "AZCoconinoCounty",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",
       "US/AZ/RuralMetro",                 "AZYavapaiCountyD",
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",
