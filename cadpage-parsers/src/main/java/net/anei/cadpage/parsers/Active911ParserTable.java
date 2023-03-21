@@ -508,6 +508,7 @@ public class Active911ParserTable {
       "US/GA/TalbotCounty",               "GATalbotCounty",
       "US/GA/TaylorCounty",               "GATaylorCounty",
       "US/GA/TelfairCounty",              "GATelfairCounty",
+      "US/GA/ThomasCounty",               "GAThomasCounty",
       "US/GA/ThompsonMcDuffie",           "GAMcDuffieCounty",
       "US/GA/ThomsonFD",                  "GAMcDuffieCounty",
       "US/GA/TiftCounty",                 "GATiftCounty",
