@@ -31,6 +31,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       data.strAddress = append(data.strAddress, " ", place);
       data.strPlace = "";
     }
+    data.strAddress = data.strAddress.replace("MICKLE BD", "DR MARTIN LUTHER BLVD");
     return true;
   }
 
