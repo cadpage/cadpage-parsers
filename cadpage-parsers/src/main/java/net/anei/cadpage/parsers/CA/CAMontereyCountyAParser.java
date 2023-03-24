@@ -35,12 +35,22 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
     if (flds.length >= 6) {
       return parseFields(flds, data);
     }
-    if (parseMsg4(body, data)) return true;
-    if (parseMsg3(body, data)) return true;
-    if (parseMsg1(subject, body, data)) return true;
-    if (parseMsg2(body, data)) return true;
-    if (parseMsg5(body, data)) return true;
-    return false;
+    do {
+      if (parseMsg4(body, data)) break;
+      if (parseMsg3(body, data)) break;
+      if (parseMsg1(subject, body, data)) break;
+      if (parseMsg2(body, data)) break;
+      if (parseMsg5(body, data)) break;
+      return false;
+    } while (false);
+    if (data.strCode.isEmpty()) {
+      String call = CALL_CODES.getProperty(data.strCall);
+      if (call != null) {
+        data.strCode = data.strCall;
+        data.strCall = call;
+      }
+    }
+    return true;
   }
 
   private boolean parseMsg4(String body, Data data) {
@@ -55,7 +65,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
     if (!fp.check(" ")) return false;
     String cross = fp.get();
 
-    setFieldList("SRC UNIT CALL ADDR APT X");
+    setFieldList("SRC UNIT CODE CALL ADDR APT X");
     data.strSource = src;
     data.strUnit = unit;
     data.strCall = call;
@@ -102,7 +112,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
 
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
-    setFieldList("SRC UNIT CALL ADDR APT X MAP");
+    setFieldList("SRC UNIT CODE CALL ADDR APT X MAP");
 
     String source = match.group(1);
     body = body.substring(match.end());
@@ -133,7 +143,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
       }
 
       if (pt == 142) {
-        setFieldList("SRC CALL UNIT ADDR APT X");
+        setFieldList("SRC CODE CALL UNIT ADDR APT X");
         String call = fp.get(10);
         if (fp.check(" ")) return false;
         String unit = fp.get(30);
@@ -220,7 +230,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
       String city = fp.get();
       if (city.isEmpty()) city = zip;
 
-      setFieldList("SRC UNIT CALL ADDR APT X GPS ID CITY");
+      setFieldList("SRC UNIT CODE CALL ADDR APT X GPS ID CITY");
       data.strSource = source;
       data.strUnit = unit;
       data.strCall = call;
@@ -331,7 +341,7 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
     if (!fp.check(" ")) return false;
     String cross = fp.get();
 
-    setFieldList("SRC UNIT CALL ADDR APT X");
+    setFieldList("SRC UNIT CODE CALL ADDR APT X");
     data.strSource = src;
     data.strUnit = unit;
     data.strCall = call;
@@ -347,6 +357,42 @@ public class CAMontereyCountyAParser extends FieldProgramParser {
 
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[] {
       "LAS PALMAS RANCH",     "SALINAS"
+  });
+
+  private static final Properties CALL_CODES = buildCodeTable(new String[] {
+        "5150",     "MENTAL HEALTH DISORDER",
+        "ALERT1",   "INBOUND AIRCRAFT W/ONBOARD EMERGENCY",
+        "ALERT2C",  "ISSUE W/INCOMING COMMERICAL AIRCRAFT",
+        "ALERT2P",  "ISSUE W/INCOMING SMALL AIRCRAFT",
+        "ALERT3",   "AIRCRAFT CRASH",
+        "ALF",      "FIRE ALARM",
+        "ASI",      "ACTIVE SHOOTER INCIDENT",
+        "BOAT",     "BOAT FIRE",
+        "CLIFF",    "CLIFF RESCUE",
+        "DRONE",    "DRONE & PILOT REQUEST",
+        "FIRE",     "MISC. FIRE (i.e. DEBRIS FIRE W/O EXTENSION)",
+        "FMA",      "FIRE MUTUAL AID (OUTSIDE FIRE AGENCY ASSIST)",
+        "GATE",     "AIRPORT GATE ACCESS REQUEST",
+        "GSW",      "GUN SHOT WOUND/VICTIM",
+        "HZC",      "HAZARDOUS CONDITION",
+        "HZM",      "HAZARDOUS MATERIALS RESPONSE",
+        "MED",      "MEDICAL EMERGENCY",
+        "RSQ",      "RESCUE (OFF TRAIL, CONFINED SPACE)",
+        "SF",       "STRUCTURE FIRE",
+        "SFU",      "UNCONFIRMED STRUCTURE FIRE",
+        "SMK",      "SMOKE INVESTIGATION (OUTSIDE ONLY - NO FLAMES SEEN)",
+        "STAB",     "VICTIM OF A STABBING",
+        "STRIKE",   "STRIKE TEAM DEPLOYMENT",
+        "SVC",      "SERVICE CALL (REQUEST FOR THE FIRE DEPT.)",
+        "UABURN",   "UNAUTHORIZED BURN (i.e. BACKYARD BURN)",
+        "UIA",      "UNKNOWN INJURY ACCIDENT",
+        "UTF",      "UNKNOWN TYPE FIRE",
+        "UWATER",   "URBAN WATER RESCUE (NOT OPEN WATER LIKE OCEAN)",
+        "VF",       "VEHICLE FIRE",
+        "VGF",      "VEGETATION FIRE",
+        "VIA",      "VEHICLE INJURY ACCIDENT",
+        "WATER",    "WATER RESCUE - OPEN WATER OCEAN",
+        "XP",       "EXPLOSION (WITNESSED BUILDING EXPLOSION)"
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
