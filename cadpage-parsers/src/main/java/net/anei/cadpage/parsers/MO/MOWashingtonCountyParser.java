@@ -13,29 +13,29 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class MOWashingtonCountyParser extends FieldProgramParser {
-    
+
   public MOWashingtonCountyParser() {
-    super("WASHINGTON COUNTY", "MO", 
+    super("WASHINGTON COUNTY", "MO",
           "ADDR/SZ? CALL! Description:INFO! INFO/N+ Dispatch:DATETIME! UNIT! END");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@wccd911.org";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("CAD CALL")) return false;
     return super.parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)\\b(?: .*)?");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {

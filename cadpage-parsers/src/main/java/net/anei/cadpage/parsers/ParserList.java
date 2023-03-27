@@ -1661,6 +1661,7 @@ public class ParserList {
               ,"TXGreggCounty"                  ,"Gregg County, TX"
               ,"TXGrimesCounty"                 ,"Grimes County, TX"
               ,"TXGuadalupeCounty"              ,"Guadalupe County, TX"
+              ,"TXHardinCounty"                 ,"Hardin County, TX"
               ,"TXHarrisCounty"                 ,"Harris County, TX"
               ,"TXHarrisCountyESD1"             ,"Harris County ESD1, TX"
               ,"TXHarrisCountyNWEMS"            ,"Harris County NWEMS, TX"
