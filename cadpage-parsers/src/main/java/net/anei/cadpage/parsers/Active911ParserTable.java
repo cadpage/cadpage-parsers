@@ -967,6 +967,8 @@ public class Active911ParserTable {
       "US/MD/BadenVFD",                   "MDPrinceGeorgesCountyG",
       "US/MD/BaltimoreCountyCmsg",        "MDBaltimoreCountyB",
       "US/MD/BaltimoreCountyCmsgTest",    "MDBaltimoreCountyB",
+      "US/MD/BCoFDBaltimoreCounty",       "MDBaltimoreCountyC",
+      "US/MD/BCVFADiscard",               "MDBaltimoreCountyC",
       "US/MD/Bittinger",                  "MDGarrettCounty",
       "US/MD/CalvertAdvanced",            "MDCalvertCounty",
       "US/MD/CalvertCounty",              "MDCalvertCounty",
