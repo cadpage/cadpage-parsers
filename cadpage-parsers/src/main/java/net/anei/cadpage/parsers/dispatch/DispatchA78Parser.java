@@ -17,8 +17,9 @@ public class DispatchA78Parser extends FieldProgramParser {
 
   public DispatchA78Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState,
-          "( Call_Type:CALL! | Call_Types:CALL! ) ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
-                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? )");
+          "( Call_Type:CALL! | Call_Types:CALL! ) CFS#:ID? ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
+                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? ) " + 
+                 "Current_Remarks:EMPTY INFO/N+");
     this.callCodes = callCodes;
   }
 
@@ -69,7 +70,7 @@ public class DispatchA78Parser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
