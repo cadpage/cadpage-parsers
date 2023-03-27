@@ -251,6 +251,7 @@ public class ParserList {
           ),
           new ParserCategory("Colorado"
               ,"COAdamsCounty"                  ,"Adams County, CO"
+              ,"COAlamosaCounty"                ,"Alamosa County, CO"
               ,"COArapahoeCounty"               ,"Arapahoe County"
               ,"COArchuletaCounty"              ,"Archuleta County, CO"
               ,"COBentCounty"                   ,"Bent County, CO"
