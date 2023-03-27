@@ -79,7 +79,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *(\\d{5}|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
+  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
   protected class BaseAddressField extends AddressCityStateField {
 
     @Override
@@ -116,7 +116,7 @@ public class DispatchA27Parser extends FieldProgramParser {
         data.strAddress = data.strAddress.substring(0,pt).trim();
       }
 
-      if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
+      if (data.strCity.isEmpty() && zip != null && !zip.equals("0")) data.strCity = zip;
     }
 
     @Override
