@@ -590,6 +590,7 @@ public class Active911ParserTable {
       "US/IL/HarwoodHeights",             "ILCookCountyK",
       "US/IL/Highland",                   "ILMadisonCounty",
       "US/IL/JacksonCounty",              "ILJacksonCounty",
+      "US/IL/Jacksonville",               "ILMorganCounty",
       "US/IL/KaneCounty",                 "ILKaneCountyC",
       "US/IL/KankakeeCounty",             "ILKankakeeCounty",
       "US/IL/LakeCounty",                 "ILLakeCountyA",

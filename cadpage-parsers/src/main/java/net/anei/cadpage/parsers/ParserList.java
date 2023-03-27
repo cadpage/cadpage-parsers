@@ -493,6 +493,7 @@ public class ParserList {
               ,"ILMedstar"                      ,"Medstar, IL"
               ,"ILMontgomeryCounty"             ,"Montgomery County, IL"
               ,"ILMonroeCounty"                 ,"Monroe County, IL"
+              ,"ILMorganCounty"                 ,"Morgan County, IL"
               ,"ILOFallon"                      ,"O'Fallon, IL"
               ,"ILPeoriaCounty"                 ,"Peoria County, IL"
               ,"ILRandolphCounty"               ,"Randolph County, IL"
