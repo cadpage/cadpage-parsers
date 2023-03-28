@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.dispatch;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -18,7 +20,7 @@ public class DispatchA78Parser extends FieldProgramParser {
   public DispatchA78Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState,
           "( Call_Type:CALL! | Call_Types:CALL! ) CFS#:ID? ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
-                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? ) " + 
+                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? ) " +
                  "Current_Remarks:EMPTY INFO/N+");
     this.callCodes = callCodes;
   }
@@ -48,6 +50,7 @@ public class DispatchA78Parser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("GPS")) return new GPSField("Estimated Maps Location.*['\"]http://maps.apple.com/maps\\?q=([^'\"]*?)['\"].*", true);
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -90,5 +93,24 @@ public class DispatchA78Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern INFO_LINK_PTN = Pattern.compile("<img src=\"(.*?)\".*");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Call Sent by ")) return;
+      if (field.startsWith("UNIT:")) return;
+      Matcher match = INFO_LINK_PTN.matcher(field);
+      if (match.matches()) {
+        data.strInfoURL = match.group(1).trim();
+        return;
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " URL";
+    }
+  }
 }
 
