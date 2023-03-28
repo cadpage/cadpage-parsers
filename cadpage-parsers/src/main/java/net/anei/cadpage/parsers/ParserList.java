@@ -1186,6 +1186,7 @@ public class ParserList {
               ,"NCAlleghanyCounty"              ,"Alleghany County, NC"
               ,"NCAnsonCounty"                  ,"Anson County, NC"
               ,"NCAsheCounty"                   ,"Ashe County, NC"
+              ,"NCAveryCounty"                  ,"Avery County, NC"
               ,"NCBeaufortCounty"               ,"Beaufort County, NC"
               ,"NCBladenCounty"                 ,"Bladen County, NC"
               ,"NCBrunswickCounty"              ,"Brunswick County, NC"
