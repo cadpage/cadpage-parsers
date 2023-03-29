@@ -21,4 +21,8 @@ public class ZCAONSimcoeCountyCParser extends DispatchA91Parser {
     return super.parseMsg(subject, body, data);
   }
 
+  @Override
+  public String adjustMapAddress(String sAddress) {
+    return ZCAONSimcoeCountyParser.doAdjustMapAddress(sAddress);
+  }
 }

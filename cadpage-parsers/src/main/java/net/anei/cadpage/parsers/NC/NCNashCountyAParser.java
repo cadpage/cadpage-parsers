@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA3AParser;
 
 
 public class NCNashCountyAParser extends DispatchA3AParser {
-  
+
   public NCNashCountyAParser() {
     super(NCNashCountyParser.CITY_LIST, "NASH COUNTY", "NC");
     setFieldList("ID ADDR APT CH CITY X PLACE CODE CALL NAME UNIT PHONE INFO " + getFieldList());
@@ -19,18 +19,18 @@ public class NCNashCountyAParser extends DispatchA3AParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets("TAR RIVER BRIDGE", "WHITAKERS CITY LIMITS");
   }
-  
+
   @Override
   public String getFilter() {
     return "nash911@nashcountync.gov,9300";
   }
-  
+
   @Override
   protected boolean isNotExtraApt(String apt) {
     if (apt.indexOf('/') >= 0) return true;
     return super.isNotExtraApt(apt);
   };
-  
+
   private static final Pattern MBLANK_DELIM = Pattern.compile(" {2,}");
   private static final Pattern SEMI_DELIM = Pattern.compile(" ;(?: |$)");
   private static final Pattern ID_PTN = Pattern.compile(" *(\\d\\d-\\d{6})(?= )");
@@ -42,22 +42,22 @@ public class NCNashCountyAParser extends DispatchA3AParser {
 
   @Override
   public boolean parseMain(String body, Data data) {
-  
+
     body = stripFieldStart(body, "/ ");
     body = body.replace("\n", "  ");
     if (!body.startsWith("NASH911:")) return false;
     body = body.substring(8);
-    
+
     // Check for leading ID
     Matcher match = ID_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strCallId = match.group(1);
       body = body.substring(match.end());
     }
-    
+
     body = body.replace("PERSONAL  ITEMS", "PERSONAL ITEMS");
     body = body.replace("EASTERN NC MEDICAL GROUP  ", "EASTERN NC MEDICAL GROUP ");
-    
+
     // Check for one of two possible field delimiters
     Pattern delimPtn = SEMI_DELIM;
     match = delimPtn.matcher(body);
@@ -66,7 +66,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       match = delimPtn.matcher(body);
       if (!match.lookingAt()) delimPtn = null;
     }
-    
+
     // If we identified a delimiter, use it to split the line
     boolean special = false;
     String[] flds = null;
@@ -74,7 +74,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       body = body.substring(match.end());
       flds = delimPtn.split(body);
     }
-    
+
     // If not, but the alerts starts with one leading blank, then see if we can break
     // it up with the multi-blank delimiter.  If it set a flag to check some fields
     // that are not properly split in this mode
@@ -85,19 +85,19 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         if (flds.length < 4) flds = null;
       }
     }
-    
+
     // Did any of those field splitting techniques work?
     if (flds != null) {
-      
+
       // Split out fields
       int spt = 0;
       int ept = flds.length;
-     
+
       // First field has to be the address
       String addr = flds[spt++].replace("//", "/");
       parseAddress(StartType.START_ADDR, FLAG_IMPLIED_INTERSECT | FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-      
-      // This has to be followed by city, but there can be a multi-part 
+
+      // This has to be followed by city, but there can be a multi-part
       // apt field before we get to the city.  In special parsing mode
       // the city is combined with the following field, so we have to
       // extract the rest of the field and put it back in the array.
@@ -117,7 +117,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
             }
             break;
           }
-          
+
           if (CHANNEL_PTN.matcher(city).matches()) {
             data.strChannel = append(data.strChannel, "/", city);
           } else {
@@ -128,7 +128,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         }
       }
       data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
-      
+
       // Now lets start working from the end.
       // First check for truncated date field
       String lastFld = flds[--ept];
@@ -136,14 +136,14 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
+
       // Next check for a special info field
       if (lastFld.startsWith("Hazards: ")) {
         data.strSupp = lastFld;
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
+
       // Or a truncated Hazards: label
       else if ("Hazards:".startsWith(lastFld)) {
         if (spt > ept) return false;
@@ -156,14 +156,14 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
+
       else if ("Medical:".startsWith(lastFld)) {
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
-      
-      // Check for (possibly multiple) unit fields 
+
+
+      // Check for (possibly multiple) unit fields
       // at end.
       while (true) {
         if (spt > ept) return false;
@@ -171,21 +171,21 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         data.strUnit = append(lastFld.replace(' ', '_'), ",", data.strUnit);
         lastFld = flds[--ept];
       }
-      
+
       // This may be preceded by a phone number
       if (PHONE_PTN.matcher(lastFld).matches()) {
         data.strPhone = lastFld;
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
+
       // Or a empty "252-   -    " phone number which will be split across two fields
       else if (lastFld.equals("-") && flds[ept-1].equals("252-")) {
         ept--;
         if (spt > ept) return false;
         lastFld = flds[--ept];
       }
-      
+
       // Things are different for special field parsing
       if (special) {
 
@@ -194,11 +194,11 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         parseCallInfo(false, lastFld, data);
         lastFld = flds[--ept];
       }
-      
+
       // Regular (non-special) field parsing
-      
+
       else {
-        
+
         // Look for a call description or code
         // followed by 0-2 name fields
         int pt = ept;
@@ -209,11 +209,11 @@ public class NCNashCountyAParser extends DispatchA3AParser {
             found = parseCall(flds[pt], data);
           }
         }
-        
+
         // If we found one, anything between it and ept
         // should form the name
         if (found) {
-          if (pt < ept) { 
+          if (pt < ept) {
             String name = "";
             for (int tpt = pt+1; tpt<=ept; tpt++) {
               if (!flds[tpt].equals("UNK")) {
@@ -223,7 +223,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
             data.strName = cleanWirelessCarrier(name);
             ept = pt;
           }
-          
+
           // If we found a call description, but not a code, see
           // if the previous field is a recognized call code
           lastFld = flds[--ept];
@@ -235,14 +235,14 @@ public class NCNashCountyAParser extends DispatchA3AParser {
             }
           }
         }
-        
+
         // If not, just use what we have for a call description
         else {
           data.strCall = lastFld;
           lastFld = flds[--ept];
         }
       }
-      
+
       // Check for a Geo|Place|Landmark Comment: info field
       // Occasionally these fields contain multiple blanks splitting
       // them across two more data fields
@@ -267,7 +267,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
           ept = pt-1;
         }
       }
-      
+
       // Anything that hasn't been processed is a cross street
       // If there is only one, check it for implied separators
       if (ept >= spt) {
@@ -280,22 +280,22 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         }
       }
     }
-    
+
     // Multiple blanks have been removed, we have do this the hard way :(
     else {
-      
+
       // Strip off Hazard notice
       int pt = body.indexOf(" Hazards:");
       if (pt >= 0) {
         data.strSupp = body.substring(pt+1).trim();
         body = body.substring(0,pt).trim();
       }
-      
+
       body = body.replace("//", "/");
       parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_CROSS_FOLLOWS, body, data);
       String left = getLeft();
       if (left.length() == 0) return false;
-      
+
       // Last token of what is left is "usually" a unit designation
       // But only if it contains at least one digit
       Parser p =  new Parser(left);
@@ -304,7 +304,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         data.strUnit = unit.replace(' ', '_');
         left = p.get();
       }
-      
+
       // And parse what is left into cross street special, call and name information
       parseCallInfo(true, left, data);
     }
@@ -312,20 +312,20 @@ public class NCNashCountyAParser extends DispatchA3AParser {
     data.strCity = convertCodes(data.strCity, NCNashCountyParser.CITY_FIXES);
     return true;
   }
-  
+
   /**
    * This is called to handle a combined cross special code call field
-   * It is called from two different format parsers, one of which will 
+   * It is called from two different format parsers, one of which will
    * not include a leading cross street
    * @param leadCross true if we should check for a leading cross street
    * @param field the data field
    * @param data parsed data object
    */
   private void parseCallInfo(boolean leadCross, String field, Data data) {
-    
+
     // If there is a landmark comment, it nicely separates the cross streets
     // from the comment & call description.  But sorting out where the comment/place
-    // ends and the call description begins will require checking each word to 
+    // ends and the call description begins will require checking each word to
     // see if it starts a known call description
     Matcher match = COMMENT_LABEL_PTN.matcher(field);
     if (leadCross ? match.find() : match.lookingAt()) {
@@ -333,12 +333,12 @@ public class NCNashCountyAParser extends DispatchA3AParser {
         String cross = field.substring(0,match.start()).trim();
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, cross, data);
       }
-      
+
       // Parse the landmark comment information
       String extra = match.group(1);
       boolean savePlace = (extra == null);
       if (savePlace) extra = match.group(2);
-      
+
       // Start scanning through the comment information
       // for every word start, see if it matches a know call code
       // or call description
@@ -370,27 +370,27 @@ public class NCNashCountyAParser extends DispatchA3AParser {
               tmp = tmp.substring(call.length()).trim();
             }
           }
-          
+
           if (found) {
             String info = extra.substring(0,pt).trim();
             if (savePlace) data.strPlace = info;
             else data.strSupp = info;
-            
+
             data.strName = cleanWirelessCarrier(tmp);
             break;
           }
         }
       }
-      
+
       // If we could not find a call description, dump everything in the info field.
       if (!found) {
         data.strSupp = extra;
       }
     }
-    
+
     // Otherwise, there may be a  cross street at the start of what is left.  But we
     // will check for a recognized call description first, lest we get tripped
-    // up by something like STRUCTURE PAUL LANE being misinterpreted as a 
+    // up by something like STRUCTURE PAUL LANE being misinterpreted as a
     // cross street
     else {
       CodeTable.Result cRes = CODE_TABLE.getResult(field);
@@ -402,7 +402,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
           cRes = CODE_TABLE.getResult(field);
         }
       }
-      
+
       // Now things get sticky.
       // What is left is either specific call code (which may be multiple words)
       // followed by a name.  Or is all call description :(
@@ -422,7 +422,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       }
     }
   }
-  
+
   private boolean parseCall(String field, Data data) {
     String call = CALL_LIST.getCode(field, true);
     if (call != null && call.length() == field.length()) {
@@ -435,13 +435,18 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       data.strCall = cRes.getDescription();
       return true;
     }
-    
+
     return false;
   }
-  
+
   @Override
   public CodeSet getCallList() {
     return CALL_LIST;
+  }
+
+  @Override
+  public String adjustMapAddress(String sAddr) {
+    return sAddr.replace("OLD SH RD", "OLD SPRING HOPE RD");
   }
 
   @Override
@@ -451,7 +456,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
     return addr;
   }
   private static final Pattern US64_PTN = Pattern.compile("(\\d+) US ?64(?: [EW]B)?");
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "454 US64", "35.945492,-78.039942",
       "455 US64", "35.949149,-78.023140",
@@ -466,7 +471,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       "464 US64", "35.981860,-77.876863"
 
   });
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "ADOLPHUS T BOONE",
       "AIR TERMINAL",
@@ -722,15 +727,15 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       "WOLLETT MILL",
 
   };
-  
+
   private static final CodeTable CODE_TABLE = new CodeTable();
   private static final CodeSet CALL_LIST = new CodeSet();
-  
+
   static {
     boolean isCode = true;
     String code = null;
     for (String value : new String[]{
-    
+
       // Fire:
       "911 HANGUP", "911 HANGUP",
       "ADMIN-C",    "SERVICE CALL",
@@ -780,7 +785,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       null,         "DEPT TRANSPORTATION",
       null,         "ELECTRICAL HAZZARD OUSIDE/AWAY FROM A STRUCTURE",
       null,         "HIGH ANGLE RESCUE",
-      
+
       // Police
       "ASSAULT-C",  "FIGHTS/PHYSICAL/SEXUAL ASSAULT-COLD (LAW ENFORCEMENT ONLY)",
       "ASSAULT-H",  "FIGHTS/PHYSICAL/SEXUAL ASSAULT-HOT (LAW ENFORCEMENT ONLY)",
@@ -904,7 +909,7 @@ public class NCNashCountyAParser extends DispatchA3AParser {
       "UNCONSC-H",  "UNCONSCIOUS/FAINTING-EMERGENCY",
       "UNK PROB-C", "UNKNOWN PROBLEM/PERSON DOWN -COLD (EMS RELATED)",
       "UNK PROB-H", "UNKNOWN PROBLEM/PERSON DOWN -HOT (EMS RELATED)",
-      
+
       // Other
       "ADMIN-C",    "DOCUMENTS,LOST/FOUND PROP.,MESSAGES,TRANSPORTS-COLD",
       "ADMIN-H",    "DOCUMENTS,LOST/FOUND PROP.,MESSAGES,TRANSPORTS-HOT"

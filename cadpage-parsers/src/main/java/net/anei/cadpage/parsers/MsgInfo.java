@@ -599,7 +599,6 @@ public class MsgInfo {
   private static final Pattern BYP_PTN = Pattern.compile("\\bBY?P\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern LA_PTN = Pattern.compile("\\bLA\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern EXT_PTN = Pattern.compile(" EXT?\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern SR_PTN = Pattern.compile("\\bSR\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern TP_PTN = Pattern.compile("\\b(?:TP|TRPK)\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern PA_PTN = Pattern.compile("\\bPA\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern PLAZ_PTN = Pattern.compile("\\bPLAZ\\b", Pattern.CASE_INSENSITIVE);
@@ -639,9 +638,9 @@ public class MsgInfo {
     sAddr = replace(sAddr, CRSN_PTN, "CRESCENT");
     sAddr = replace(sAddr, CG_PTN, "CROSSING");
     sAddr = replace(sAddr, BYP_PTN, "BYPASS");
-    if ((parser.getMapFlags() & MAP_FLG_SUPPR_SR) == 0) {
-      sAddr = replace(sAddr, SR_PTN, "ST");
-    }
+//    if ((parser.getMapFlags() & MAP_FLG_SUPPR_SR) == 0) {
+//      sAddr = replace(sAddr, SR_PTN, "ST");
+//    }
     sAddr = replace(sAddr, TP_PTN, "TPK");
     if (!defState.equals("PA")) sAddr = replace(sAddr, PA_PTN, "PATH");
     sAddr = replace(sAddr, PLAZ_PTN, "PLAZA");
@@ -737,13 +736,12 @@ public class MsgInfo {
   // This method breaks those up into two separate tokens, also dropping any
   // direction qualifiers
   private static final Pattern ROUTE_PTN =
-    Pattern.compile("\\b(?:(RT|RTE|HW|HWY|HIGH|US|STH?Y?|SHY?|FM|I|CO|CR|CORD|SRT?|TWP)|([A-Z]{2}|M))-?(\\d{1,4}[A-Z]?)(?:[NSEW]B?)?\\b", Pattern.CASE_INSENSITIVE);
-  private static final Pattern SRT_PTN = Pattern.compile("\\bS(?:RT?| ?H|TH)\\b", Pattern.CASE_INSENSITIVE);
+    Pattern.compile("(?<!-)\\b(?:(RT|RTE|HW|HWY|HIGH|US|STH?Y?|SHY?|FM|I|CO|CR|CORD|SRT?|TWP)|([A-Z]{2}|M))-?(\\d{1,4}[A-Z]?)(?:[NSEW]B?)?\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SRT_PTN = Pattern.compile("\\b(S(?:RT?| ?H|TH))\\b *(?=\\d+)", Pattern.CASE_INSENSITIVE);
 
   private String cleanRoutes(String sAddress) {
 
     String state = getStateCode();
-    String repState = getRepState(state);
 
     Matcher match = ROUTE_PTN.matcher(sAddress);
     if (match.find()) {
@@ -756,21 +754,20 @@ public class MsgInfo {
           if (!g1.equals(state)) continue;
         }
         String g1u = g1.toUpperCase();
-        if (g1u.startsWith("ST") || g1u.startsWith("SH") || g1u.equals(state)) g1 = repState;
-        String replace = g1 + ' ' + match.group(3);
-        match.appendReplacement(sb, replace);
+        if (g1u.startsWith("ST") || g1u.startsWith("SH") || g1u.equals(state)) g1 = state;
+        match.appendReplacement(sb, getHwyName(g1, match.group(3)));
       } while (match.find());
       match.appendTail(sb);
       sAddress = sb.toString();
     }
 
-    boolean suppr_sr = (parser.getMapFlags() & MAP_FLG_SUPPR_SR) != 0;;
+    boolean suppr_sr = (parser.getMapFlags() & MAP_FLG_SUPPR_SR) != 0;
     match = SRT_PTN.matcher(sAddress);
     if (match.find()) {
       StringBuffer sb = new StringBuffer();
       do {
-        if (!suppr_sr || !match.group().equalsIgnoreCase("SR")) {
-          match.appendReplacement(sb, repState);
+        if (!suppr_sr || !match.group(1).equalsIgnoreCase("SR")) {
+          match.appendReplacement(sb, getHwyName(state, ""));
         }
       } while (match.find());
       match.appendTail(sb);
@@ -779,7 +776,7 @@ public class MsgInfo {
 
     // If the state code should be replaced with something else, we have to look for
     // a route number starting with the state code
-    sAddress = sAddress.replaceAll("\\b" + state + " *(\\d+)\\b", repState + " $1");
+    sAddress = sAddress.replaceAll("\\b" + state + " *(\\d+)\\b", getHwyName(state, "$1"));
     return sAddress;
   }
 
@@ -792,6 +789,7 @@ public class MsgInfo {
     Pattern.compile("\\b([A-Z]{2}|STE|STATE|COUNTY|TWP) *(ROAD|RD|RT|RTE|ROUTE|HW|HWY|HY|HIGH|HIGHWAY) +(\\d+[ABMNSEW]?|[A-Z]{1,2})\\b", Pattern.CASE_INSENSITIVE),
     Pattern.compile("\\b([A-Z]{2}|STATE|COUNTY|ROUTE|RTE|FARM-TO-MARKET|TWP) +(\\d+[A-Z]?|[A-Z]{1,2})\\b *(?:ROAD|RD|RT|RTE|ROUTE|HW|HWY|HY|HIGH)\\b", Pattern.CASE_INSENSITIVE)
   };
+  private static final Pattern MDD_HWY_PTN = Pattern.compile("\\b(M-\\d+) +(?:ROAD|RD|RT|RTE|ROUTE|HW|HWY|HY|HIGH)\\b");
   private static final Pattern I_FWY_PTN = Pattern.compile("\\b(I[- ]\\d+) +[FH]WY\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern AND_PTN = Pattern.compile(" and ", Pattern.CASE_INSENSITIVE);
   private static final Pattern REV_HWY_PTN = Pattern.compile("(?<!-)\\b(\\d+[A-Z]?|([A-Z&&[^NSEW]])\\2?\\b) *(HWY|RT|RTE|ROUTE)(?=$| *&)", Pattern.CASE_INSENSITIVE);
@@ -800,7 +798,6 @@ public class MsgInfo {
 
     String state = getStateCode();
     if (state.length() == 0) state = defState;
-    String repState = getRepState(state);
     boolean keepStateHighway = (parser.getMapFlags() & MAP_FLG_KEEP_STATE_HIGHWAY) != 0;
     for (Pattern ptn : DBL_ROUTE_PTNS) {
       Matcher match = ptn.matcher(sAddress);
@@ -827,8 +824,8 @@ public class MsgInfo {
                prefix.equals("ST") ||
                prefix.equals("US"))) {
             if (!prefix.equals("COUNTY") || !middle.equals("ROAD") && !middle.equals("RD")) {
-              if (prefix.equals("ST") || prefix.equals("STE") || prefix.equals(state)) prefix = repState;
-              match.appendReplacement(sb, prefix + " " + hwy);
+              if (prefix.equals("ST") || prefix.equals("STE") || prefix.equals(state)) prefix = state;
+              match.appendReplacement(sb, getHwyName(prefix, hwy));
             }
           }
         }
@@ -836,6 +833,9 @@ public class MsgInfo {
       match.appendTail(sb);
       sAddress = sb.toString();
     }
+
+    // Michigan state hwy need a special check
+    sAddress = MDD_HWY_PTN.matcher(sAddress).replaceAll("$1");
 
     // Google also doesn't like I-20 fwy contructs
     sAddress = I_FWY_PTN.matcher(sAddress).replaceAll("$1");
@@ -890,13 +890,21 @@ public class MsgInfo {
     return sAddress;
   }
 
-  private static final Pattern ST_PTN = Pattern.compile("(?<=^|& ?|\\d ?(?:[NSEW] ?)?)S[TH](?= +\\d+)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ST_PTN = Pattern.compile("(?<=^|& ?|\\d ?(?:[NSEW] ?)?)(S[TH]) +(\\d+)\\b", Pattern.CASE_INSENSITIVE);
   private String cleanSTRoutes(String sAddress) {
 
     // Google gets confused by the ST abbreviation for State hwy.  We have a couple choices but lets use
     // the default state if there is one and STATE if there isn't.
-    String state = getRepState(getStateCode());
-    return ST_PTN.matcher(sAddress).replaceAll(state);
+    Matcher match = ST_PTN.matcher(sAddress);
+    if (!match.find()) return sAddress;
+
+    String state = getStateCode();
+    StringBuffer sb = new StringBuffer();
+    do {
+      match.appendReplacement(sb, getHwyName(state, match.group(2)));
+    } while (match.find());
+    match.appendTail(sb);
+    return sb.toString();
   }
 
 
@@ -917,15 +925,16 @@ public class MsgInfo {
   private static final Pattern VALID_STATE_PTN = Pattern.compile("[A-Z]{2}");
 
   /**
-   * returns the value that should replace the state code when we encounter it in abbreviations for
-   * state highways.  We used to always set this to the current state code, but found some cases and
-   * some states where this does not work properly and "STATE" does.  Changing this across the board is
-   * going to break huge numbers of test cases, so we will phase it in on a state by state basis
-   * @param state current state code
-   * @return state code replacement value
+   * @param prefix prefix description
+   * @param hwy hwy number
+   * @return maping highway name fromed by combining prefix description and highway number
    */
-  private String getRepState(String state) {
-    return state.equals("NC") || state.equals("MI") ? "STATE" : state;
+  private String getHwyName(String prefix, String hwy) {
+    if (prefix.equalsIgnoreCase("MI")) {
+      return "M-" + hwy;
+    } else {
+      return prefix + ' ' + hwy;
+    }
   }
 
   /**

@@ -7,9 +7,9 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
-  
+
   public ZCAONSimcoeCountyAParser() {
-    super(CITY_LIST, "SIMCOE COUNTY", "ON", 
+    super(CITY_LIST, "SIMCOE COUNTY", "ON",
           "URL ADDR/S6 PLACE? CITY/Y CALL! Caller_Name:NAME? INFO/N+");
     setupProtectedNames("15-16 SIDEROAD");
   }
@@ -18,7 +18,7 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
   public String getFilter() {
     return "cad@barrie.ca";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Trip Ticket")) return false;
@@ -26,14 +26,14 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
     if (pt >= 0) body = body.substring(0, pt).trim();
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("URL")) return new InfoUrlField("http://911txt.co/.*", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     return super.getField(name);
   }
-  
+
   private static  Pattern INTERSECT_PTN = Pattern.compile("(.*?), (.*) INTERSECT");
   private class MyPlaceField extends PlaceField {
     @Override
@@ -51,7 +51,12 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
+  @Override
+  public String adjustMapAddress(String sAddress) {
+    return ZCAONSimcoeCountyParser.doAdjustMapAddress(sAddress);
+  }
+
   private static final String[] CITY_LIST = new String[]{
       "ADJALA-TOSORONTIO",
       "BARRIE",
@@ -72,11 +77,11 @@ public class ZCAONSimcoeCountyAParser extends FieldProgramParser {
       "TAY",
       "TINY",
       "WASAGA BEACH",
-      
+
       // Grey County
       "BLUE MOUNTAINS",
       "GREY HIGHLANDS",
-      
+
       // Muskoka Regioin
       "BEAUSOLEIL",
       "DUFFERIN",

@@ -73,6 +73,12 @@ public class PAWyomingCountyParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern SR_6_11_PTN = Pattern.compile("\\b(?:SR|STATE ROUTE) 6_11\\b", Pattern.CASE_INSENSITIVE);
+  @Override
+  public String adjustMapAddress(String sAddr) {
+    return SR_6_11_PTN.matcher(sAddr).replaceAll("US 11");
+  }
+
   private static final Properties CITY_CODE = buildCodeTable(new String[] {
     "CARB", "CARBONDALE",
     "DALL", "DALLAS",

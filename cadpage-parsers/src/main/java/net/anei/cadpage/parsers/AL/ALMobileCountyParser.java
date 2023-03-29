@@ -15,7 +15,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
  * Mobile County, AL
  */
 public class ALMobileCountyParser extends SmartAddressParser {
-  
+
   private static final Pattern RUN_REPORT_PTN =  Pattern.compile("EVENT: ?([A-Za-z]\\d{8,10}) +(.*\\bADD: .* / DISP: .*|RCVD .* DISP .*|.*\\bDISP: .*)");
   private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile(" +/+ *|(?<=\\)): +");
   private static final Pattern OPT_PREFIX_PTN = Pattern.compile("^EVENT: [A-Za-z]\\d{9,10} +");
@@ -31,21 +31,21 @@ public class ALMobileCountyParser extends SmartAddressParser {
     super(CITY_CODES, "MOBILE COUNTY", "AL");
     setFieldList("ADDR CITY PLACE APT CALL ID X TIME DATE INFO");
   }
-  
-  
+
+
   @Override
   public String getFilter() {
     return "@c-msg.net";
   }
-  
+
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     body = stripFieldEnd(body, "_x000D_");
 
     Matcher match = RUN_REPORT_PTN.matcher(body);
@@ -55,10 +55,10 @@ public class ALMobileCountyParser extends SmartAddressParser {
       data.strSupp = RUN_REPORT_BRK_PTN.matcher(match.group(2)).replaceAll("\n").trim();
       return true;
     }
-    
+
     match = OPT_PREFIX_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
-    
+
     match = MASTER.matcher(body);
     if (!match.matches()) return false;
     String addr = match.group(1).trim();
@@ -68,7 +68,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
     data.strDate = getOptGroup(match.group(5));
     data.strSupp = getOptGroup(match.group(6));
     data.expectMore = (data.strDate.length() == 0);
-    
+
     // Parsing a truncated alert gets complicated
     if (data.expectMore) {
       match = PART_MARK_PTN.matcher(data.strCross);
@@ -90,14 +90,14 @@ public class ALMobileCountyParser extends SmartAddressParser {
       data.strCall = call;
       addr = stripFieldEnd(addr.substring(0,addr.length()-call.length()).trim(), "**");
     }
-    
+
     // Check for leading city
     match = CITY_ADDR_PTN1.matcher(addr);
     if (match.matches()) {
       data.strCity = convertCodes(match.group(1), CITY_CODES);
       addr = match.group(2).trim();
     }
-    
+
     String place = null;
     String apt = null;
     match = CITY_ADDR_PTN2.matcher(addr);
@@ -108,7 +108,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
         data.strCity = city;
         apt = match.group(3);
         place = match.group(4);
-        
+
         int pt = place.indexOf('@');
         if (pt >= 0) {
           if (apt == null) apt = "";
@@ -122,7 +122,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
         }
       }
     }
-    
+
     if (addr.startsWith("LL(")) {
       int pt = addr.indexOf(')', 3);
       if (pt >= 0) {
@@ -135,7 +135,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
         }
       }
     }
-    
+
     boolean endAddr = (place != null || data.strCall.length() > 0);
     if (endAddr && !addr.startsWith("LL(")) {
       int pt = addr.lastIndexOf(',');
@@ -152,35 +152,35 @@ public class ALMobileCountyParser extends SmartAddressParser {
     if (endAddr) flags |= FLAG_ANCHOR_END;
     parseAddress(StartType.START_ADDR, flags, addr, data);
     if (!addr.startsWith("LL(") && data.strCity.length() == 0) return false;
-    
+
     // So  many different choices
-    
-    // If we found an positive end address, either we found a place marker or call 
+
+    // If we found an positive end address, either we found a place marker or call
     // description or both
     if (endAddr) {
-      
-      // If we found a place marker and did not find a call description, then we 
+
+      // If we found a place marker and did not find a call description, then we
       // have to figure out where the place ends and the call description starts
       if (data.strCall.length() == 0 && place != null) {
-        
+
         // First see if there is a ** marker separating the place and call description
         int pt = place.indexOf(" ** ");
         if (pt >= 0) {
           data.strCall = place.substring(pt+4).trim();
           place = place.substring(0,pt).trim();
-        } 
-        
+        }
+
         // No go there, make it all a call description
         else {
           data.strCall = place;
           place = null;
         }
       }
-      
+
       // However we got here, see if there is a remaining place name
       // and if there is strip off a possible apt field before saving it
       if (place != null) {
-        
+
         match = PLACE_BRK_PTN.matcher(place);
         int col = 0;
         while (match.find()) {
@@ -199,7 +199,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
           }
           col = match.end();
         }
-        
+
         String part = place.substring(col).trim();
         Matcher mat2 = TRAIL_APT_PTN.matcher(part);
         if (mat2.matches()) {
@@ -210,7 +210,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
         if (!part.equals(data.strPlace)) data.strPlace = append(data.strPlace, " - ", part);
       }
     }
-    
+
     // Otherwise we had to use the smart parser to mark the end of the
     // address and start of call description.  Check for possible apt
     // following the city code.  There is no place name, but might
@@ -225,19 +225,19 @@ public class ALMobileCountyParser extends SmartAddressParser {
       }
       data.strCall = stripFieldStart(place, "**");
     }
-    
+
     // If there was a place marker, we need to identify the split between
     // the place name and call description
-    
+
     if (apt != null) data.strApt = append(data.strApt, "-", apt);
     return true;
   }
-  
+
   @Override
   public CodeSet getCallList() {
     return CALL_SET;
   }
-  
+
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
       "**PUBLIC ASSISTANCE*** (FALL)",
       "ABANDONED WASTE",
@@ -1076,7 +1076,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "WOODS FIRE",
       "WOUND INFECTED"
   );
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BLAB", "BAYOU LA BATRE",
       "CHIC", "CHICKASAW",
@@ -1090,7 +1090,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SARA", "SARALAND",
       "SATS", "SATSUMA",
       "SEMS", "SEMMES",
-      
-      
+
+
   });
 }

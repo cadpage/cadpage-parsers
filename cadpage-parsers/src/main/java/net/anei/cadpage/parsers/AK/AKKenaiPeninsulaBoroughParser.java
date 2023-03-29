@@ -10,24 +10,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Dothan AL
  */
 public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
-  
-  
+
+
   public AKKenaiPeninsulaBoroughParser() {
     super("KENAI PENINSULA BOROUGH", "AK",
-           "Location:EMPTY ADDR CITY? ST Cross_Streets:X! X+ Call_Type:CALL! CALL INFO+ Dispatch_Code:CODE CODE");
+           "Location:EMPTY ADDR/S6 CITY? ST Cross_Streets:X! X+ Call_Type:CALL! CALL INFO+ Dispatch_Code:CODE CODE");
   }
-  
+
   @Override
   public String getFilter() {
     return "Disp-CES@borough.kenai.ak.us";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("911 Rip And Run Service")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   private static final Pattern ADDR_PHONE_PTN = Pattern.compile(" (\\d{7})$");
   private class MyAddressField extends AddressField {
     @Override
@@ -39,7 +39,7 @@ public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PHONE";
@@ -59,8 +59,8 @@ public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
       }
     }
   }
-  
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("^(\\d+)-"); 
+
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("^(\\d+)-");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -71,13 +71,13 @@ public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -85,7 +85,7 @@ public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, sep, field);
     }
   }
-  
+
   private class MyCodeField extends CodeField {
     @Override
     public void parse(String field, Data data) {
@@ -95,7 +95,7 @@ public class AKKenaiPeninsulaBoroughParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();

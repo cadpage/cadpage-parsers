@@ -7,7 +7,7 @@ public class ALEtowahCountyDParser extends FieldProgramParser {
 
   public ALEtowahCountyDParser() {
     super("ETOWAH COUNTY", "AL",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR/SXP! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO INFO/N+");
   }
 
   @Override

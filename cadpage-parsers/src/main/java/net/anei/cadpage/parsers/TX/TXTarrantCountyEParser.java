@@ -38,6 +38,11 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
   }
 
   @Override
+  public String getProgram() {
+    return "ID? " + super.getProgram();
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new MyIdField();
@@ -66,4 +71,12 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private static final Pattern TX_DD_SR_PTN = Pattern.compile("\\b(TX \\d+) SR\\b");
+
+  @Override
+  public String postAdjustMapAddress(String sAddress) {
+    return TX_DD_SR_PTN.matcher(sAddress).replaceAll("$1");
+  }
+
 }

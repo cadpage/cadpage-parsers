@@ -7,30 +7,30 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class CAMontereyCountyBParser extends FieldProgramParser {
-  
+
   public CAMontereyCountyBParser() {
-    super("MONTEREY COUNTY", "CA", 
+    super("MONTEREY COUNTY", "CA",
           "( RES:UNIT! CLOSE:ID! CALL! ADDRCITY! INFO/R! INFO/N+ " +
           "| CALL ADDRCITY UNIT PLACE X MAP GPS! ID! Tac:CH! AIR/N GRD/N UNIT! INFO/N )");
   }
-  
+
   @Override
   public String getFilter() {
     return "8319983288,beuecc@fire.ca.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf(" <a ");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("; "), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("Inc# +(\\d{6})", true);
@@ -42,7 +42,7 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{1,2})-(\\d{1,2})-(\\d{1,2}:\\d{2})");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -52,9 +52,9 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
       data.strDate = match.group(1)+'/'+match.group(2);
       data.strTime = match.group(3);
     }
-    
+
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -66,13 +66,13 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
       super.parse(field, data);
       data.strCity = data.strCity.replace('_', ' ');
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {

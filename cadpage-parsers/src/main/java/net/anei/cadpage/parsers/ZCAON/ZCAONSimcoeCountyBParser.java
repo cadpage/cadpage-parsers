@@ -9,29 +9,29 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 /**
- * 
+ *
  */
 public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
-  
+
   public ZCAONSimcoeCountyBParser() {
     super(CITY_CODES, "SIMCOE COUNTY", "ON",
            "CALL? ( SELECT/REG ADDR/y! Map:MAP! Tac:CH! UNIT! X1:X? X2:X? Inc:ID! | SELECT/LOC ADDR/y! X1:X? X2:X? Map:MAP? Tac:CH! CALL Inc:ID | PLACE ADDR/y DATETIME! )");
   }
-  
+
   @Override
   public String getFilter() {
     return "pager@rsar.ca,peelfire@jrcnet.ca";
   }
-  
+
   private static final Pattern EXTRA_SPACES = Pattern.compile(" *\n *");
   private static final Pattern MISSING_BREAK = Pattern.compile("(?<!\n)(?=Tac:|X1:|X2:|Map:|Inc:)");
   private static final Pattern TAC_MISS_BREAK = Pattern.compile("(\nTac:\\S*?) +");
-  
-  private String selectType; 
+
+  private String selectType;
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     int pt = body.indexOf("\n-- \n");
     if (pt >= 0) body = body.substring(0, pt).trim();
 
@@ -50,7 +50,7 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (selectType.equals("COMP")) return false;
@@ -58,7 +58,7 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.contains(" TO REPLACE UNIT ")) {
@@ -72,18 +72,18 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       data.strCall = append(data.strCall, " - ", field);
     }
   }
-  
+
   @Override
   public String getSelectValue() {
     if (selectType.equals("COMP")) return "REG";
     return selectType;
   }
-  
+
   private static final Pattern DASH_CITY_PTN = Pattern.compile("\\b(\\w+)-([A-Z]{1,2})\\b");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Compressed form is a special case
       // Anything else should be passed to the superclass parse method
       if (!selectType.equals("COMP")) {
@@ -107,7 +107,7 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       if (city != null) data.strCity = convertCodes(city, CITY_CODES);
     }
   }
-  
+
   private static final Pattern TRIM_LEAD_X = Pattern.compile("^(?:0|[NSEW]{1,2} +OF) +");
   private class MyCrossField extends CrossField {
     @Override
@@ -118,7 +118,7 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("(\\d+)(?: +(\\d\\d:\\d\\d:\\d\\d))?");
   private class MyIdField extends IdField {
     @Override
@@ -130,13 +130,13 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       data.strCallId = match.group(1);
       data.strTime = getOptGroup(match.group(2));
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID TIME";
     }
   }
-  
+
   private class MyChannelField extends ChannelField {
     @Override
     public void parse(String field, Data data) {
@@ -148,7 +148,7 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -160,15 +160,11 @@ public class ZCAONSimcoeCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("yyy/MM/dd hh:mm:ss");
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
-    sAddress = SR_PTN.matcher(sAddress).replaceAll("SIDE ROAD");
-    sAddress = LI_PTN.matcher(sAddress).replaceAll("LINE");
-    return sAddress;
+    return ZCAONSimcoeCountyParser.doAdjustMapAddress(sAddress);
   }
-  private static final Pattern SR_PTN = Pattern.compile("\\bSR\\b");
-  private static final Pattern LI_PTN = Pattern.compile("\\bLI\\b");
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BR", "BRAMPTON",

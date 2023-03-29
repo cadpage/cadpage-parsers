@@ -36,6 +36,13 @@ public class TXDallasCountyCParser extends DispatchH03Parser {
     return super.parseHtmlMsg(subject, body, data);
   }
 
+  private static final Pattern SRT_PTN = Pattern.compile("\\bSRT\\b", Pattern.CASE_INSENSITIVE);
+
+  @Override
+  public String adjustMapAddress(String sAddr) {
+    return SRT_PTN.matcher(sAddr).replaceAll("SAM RAYBURN TOLLWAY");
+  }
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equals("DFW AIRPORT")) city = "DALLAS/FORT WORTH AIRPORT";

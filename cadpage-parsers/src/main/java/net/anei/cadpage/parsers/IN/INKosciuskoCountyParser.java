@@ -11,26 +11,26 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Kosciusko County, IN
  */
 public class INKosciuskoCountyParser extends DispatchOSSIParser {
-  
+
   public INKosciuskoCountyParser() {
     super(CITY_CODES, "KOSCIUSKO COUNTY", "IN",
            "( CANCEL COUNTY? | FYI CALL ) COUNTY? ( CITY ADDR | ADDR! ( COUNTY2 | CITY APTPLACE | APTPLACE? CITY/Y ) INFO+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@co.marshall.in.us,CAD@kcgov.local,CAD@kcgov.com";
   }
-  
+
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
+    return MAP_FLG_SUPPR_LA;
   }
-  
-  
+
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (subject.equals("Text Message")) {
       if (!body.startsWith("CAD:")) body = "CAD:" + body;
     }
@@ -38,11 +38,11 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
       body = "CAD:" + subject + body.substring(3);
     }
     if (!super.parseMsg(body, data)) return false;
-    
+
     // A city starting with a digit probably means this is a Marshall County page
     // In any case we don't want to accept it
     if (data.strCity.length() > 0 && Character.isDigit(data.strCity.charAt(0))) return false;
-    
+
     // Rule out a special Douglas County construct that might slip through
     if (data.strCall.equals("CANCEL") &&
         data.strCity.length() == 0 &&
@@ -51,7 +51,7 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
     return true;
   }
   private static final Pattern CITY_CODE_PTN = Pattern.compile("[A-Z]{4}");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("COUNTY")) return new MyCountyField();
@@ -59,14 +59,14 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
     if (name.equals("APTPLACE")) return new MyAptPlaceField();
     return super.getField(name);
   }
-  
+
   private static final Pattern COUNTY_PTN = Pattern.compile("1 ([A-Z ]+) CO\\b *(.*)");
   private class MyCountyField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = COUNTY_PTN.matcher(field);
@@ -76,13 +76,13 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
       data.strCity = city;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern APT_MARK_PTN = Pattern.compile("\\(S\\) \\(N\\)|\\([NS]\\)");
   private class MyAptPlaceField extends AptField {
     @Override
@@ -94,13 +94,13 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT PLACE";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = EXT_PTN.matcher(addr).replaceAll("EXD");

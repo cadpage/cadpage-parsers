@@ -18,6 +18,6 @@ public class ALCherokeeCountyParser extends DispatchA86Parser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_SR | MAP_FLG_PREFER_GPS;
+    return MAP_FLG_PREFER_GPS;
   }
 }
