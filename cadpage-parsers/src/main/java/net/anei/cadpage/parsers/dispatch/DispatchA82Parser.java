@@ -124,7 +124,7 @@ public class DispatchA82Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z0-9 ]+) \\(([^()]+)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- (?:DIST: (\\S+) - )?GRID: (\\S+)\\]");
+  private static final Pattern MASH1_PTN = Pattern.compile("\\[([A-Z0-9 ]+) \\((.+?)\\) (?:\\(Pri:(\\d+)\\) )?(?:\\(Esc:(\\d+)\\) )?- (?:DIST: (\\S+) - )?GRID: (\\S+)\\]");
   private class BaseMash1Field extends Field {
     @Override
     public boolean canFail() {

@@ -487,6 +487,7 @@ public class PAChesterCountyBaseParser extends DispatchA7Parser {
       "POCOPS",       "POCOPSON TWP",
       "PRKSBG",       "PARKESBURG",
       "PTTSTWN",      "POTTSTOWN",
+      "QURYVI",       "QUARRYVILLE",
       "ROBSN",        "ROBINSON TWP",
       "ROYRFRD",      "ROYERSFORD",
       "RSNGSUNMCD",   "RISING SUN",
