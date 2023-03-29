@@ -17,8 +17,16 @@ public class IADesMoinesCountyAParser extends DispatchA47Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    String extra = "";
+    int pt = body.indexOf("\nReported:");
+    if (pt >= 0) {
+      extra = body.substring(0,pt).trim();
+      body = body.substring(pt+1);
+    }
     body = stripFieldStart(body, "TEST ONLY\n");
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strCall = append(extra, " - ", data.strCall);
+    return true;
   }
 
   private static final String[] CITY_LIST =new String[]{
