@@ -2045,6 +2045,7 @@ public class Active911ParserTable {
       "US/PA/Monroeville",                "PAMonroeville",
       "US/PA/MontcoPage",                 "PAMontgomeryCountyC",
       "US/PA/MontgomeryCounty",           "PAMontgomeryCountyC",
+      "US/PA/MontgomeryCountyColmar",     "PAMontgomeryCountyC",
       "US/PA/MurrysvillePD",              "PAWestmorelandCountyA",
       "US/PA/Myerstown",                  "PALebanonCountyB",
       "US/PA/NewHollandAmb",              "PALancasterCounty",
