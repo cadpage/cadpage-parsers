@@ -10,7 +10,9 @@ public class OHDelawareCountyDParser extends FieldProgramParser {
 
   public OHDelawareCountyDParser() {
     super("DELAWARE COUNTY", "OH",
-          "DATETIME CALL_PRI! Run_Card:LINFO! Talk_Group:CH! PLACE! ADDRCITY! X! UNIT! INFO/N+? GPS ID END");
+          "DATETIME ( LE:CALL! FD:CALL/SDS? Run_Card:LINFO! TG:CH! PLACE! ADDRCITY! INFO/N+? UNIT END " +
+                   "| CALL_PRI! Run_Card:LINFO! Talk_Group:CH! PLACE! ADDRCITY! X! UNIT! INFO/N+? GPS ID END " +
+                   ")");
   }
 
   @Override
@@ -21,6 +23,7 @@ public class OHDelawareCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
+    body = body.replace(" TG:", "\nTG:");
     return parseFields(body.split("\n"), data);
   }
 
