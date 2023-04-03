@@ -25,7 +25,7 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "cad@jpapage.net,cad@sdrecc.org,CADPaging@heartlandfire.net,2083399220";
+    return "cad@jpapage.net,cad@sdrecc.org,CADPaging@heartlandfire.net,2083399220,8333280613";
   }
 
   @Override
@@ -38,8 +38,9 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.lastIndexOf("\nSTOP");
+    if (pt < 0) pt = body.lastIndexOf("Text stop");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     do {
       if (subject.equals("CAD MESSAGE") || subject.equals("HCFA")) break;
 
