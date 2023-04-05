@@ -27,6 +27,10 @@ public class INMarionCountyBParser extends DispatchA52Parser {
     return new SplitMsgOptionsCustom();
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Pattern MARKER = Pattern.compile("(?:Motorola )?CAD: *");
   private static final Pattern UNIT_PFX_PTN = Pattern.compile("[A-Z]+/");
