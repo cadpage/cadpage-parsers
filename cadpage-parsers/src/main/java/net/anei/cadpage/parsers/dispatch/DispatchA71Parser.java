@@ -26,7 +26,11 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+    if (body.contains("\n")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseMsg(body, data);
+    }
   }
 
   @Override
