@@ -1,23 +1,15 @@
 package net.anei.cadpage.parsers.CA;
 
-import java.util.Properties;
+import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
 
-import net.anei.cadpage.parsers.dispatch.DispatchH02Parser;
+public class CAButteCountyCParser extends DispatchA20Parser {
 
-public class CAButteCountyCParser extends DispatchH02Parser {
-  
   public CAButteCountyCParser() {
-    super(CITY_CODES,"BUTTE COUNTY", "CA");
+    super("BUTTE COUNTY", "CA");
   }
-  
+
   @Override
   public String getFilter() {
-    return "CPDADMIN_NOREPLY@CHICOCA.GOV";
+    return "RIMS2text@chicoca.gov";
   }
-
-  static final Properties CITY_CODES = buildCodeTable(new String[]{
-  
-      "CHIC", "CHICO"
-
-  }); 
 }
