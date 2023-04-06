@@ -12,12 +12,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
  */
 
 public class GAChathamCountyAParser extends DispatchProQAParser {
-  
+
   public GAChathamCountyAParser() {
-    super("CHATHAM COUNTY", "GA", 
+    super("CHATHAM COUNTY", "GA",
           "ID! ID2/L ADDR APT CITY GPS1 GPS2 UNIT CALL! INFO/N+", true);
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
@@ -27,19 +27,19 @@ public class GAChathamCountyAParser extends DispatchProQAParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID2")) return new IdField("E2020(.*)|", true);
+    if (name.equals("ID2")) return new IdField("E20.*|\\d{4,}|", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("UNIT")) return new UnitField("\\d\\d- *(.*)", true);
     return super.getField(name);
   }
-  
-  private static final Pattern GPS_PTN = Pattern.compile("(.*)% [NSEW]");
+
+  private static final Pattern GPS_PTN = Pattern.compile("(.*?)%? [NSEW]");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = GPS_PTN.matcher(field);
