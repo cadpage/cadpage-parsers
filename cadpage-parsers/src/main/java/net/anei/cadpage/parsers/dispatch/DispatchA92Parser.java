@@ -11,11 +11,11 @@ public class DispatchA92Parser extends HtmlProgramParser {
 
   public DispatchA92Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( Call:CALL! Incident:ID! ( Transfer_Pick-up:ADDRCITYST! Patient_Name:NAME! Transfer_Destination:INFO! Address_Comment:PLACE! Resource:UNIT! INFO/N+ " + 
+          "( Call:CALL! Incident:ID! ( Transfer_Pick-up:ADDRCITYST! Patient_Name:NAME! Transfer_Destination:INFO! Address_Comment:PLACE! Resource:UNIT! INFO/N+ " +
                                     "| Address:ADDRCITYST! Coordinates:GPS! Address_Comment:PLACE! Resource:UNIT! Response:PRI! Notes:INFO! INFO/N+ " +
                                     ") " +
-          "| CALL:CALL! PLACE:PLACE? ADDR:ADDRCITYST! ( APT:APT! CITY:CITY! LAT:GPS1/d! LON:GPS2/d! ID:ID! TIME:DATETIME2! UNIT:UNIT! " + 
-                                                     "| ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME1? " + 
+          "| CALL:CALL! PLACE:PLACE? ADDR:ADDRCITYST! ( APT:APT! CITY:CITY! LAT:GPS1/d! LON:GPS2/d! ID:ID! TIME:DATETIME2! UNIT:UNIT! " +
+                                                     "| ADDR_COMMENT:PLACE? ID:ID? PRI:PRI? DATE:DATETIME1? " +
                                                      ") INFO:INFO? Additional_Info:INFO?" +
           "| INCIDENT_COMPLETE! Location:ADDRCITYST! Location_Comment:PLACE! Nature:CALL? INFO/N+ )");
   }
@@ -151,7 +151,7 @@ public class DispatchA92Parser extends HtmlProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("(?:(\\d\\d[A-Z]\\d\\d(?: - [A-Z])?) - |(\\d\\d[A-Z]) ) *(.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(?:(\\d\\d[A-Z]\\d\\d(?: - [A-Z])?) - |(\\d\\d[A-Z]) )[- ]*(.*)");
   private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -192,17 +192,17 @@ public class DispatchA92Parser extends HtmlProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = parseCity(field, data);
-      
+
       String city = data.strCity;
       String apt = data.strApt;
       data.strCity = data.strApt = "";
 
       super.parse(field, data);
-      
+
       data.strApt = append(data.strApt, "-", apt);
       if (data.strCity.isEmpty() && city != null) data.strCity = city;
     }
-    
+
     private String parseCity(String field, Data data) {
       String apt = "";
       String city = null;
@@ -215,10 +215,10 @@ public class DispatchA92Parser extends HtmlProgramParser {
         }
         return field;
       }
-      
+
       int pt1 = findOpenParen(field, pt2);
       if (pt1 < 0) return field;
-    
+
       city = field.substring(pt1+1, pt2).trim();
       apt = field.substring(pt2+1).trim();
       Matcher match = COUNTY_PTN.matcher(city);
@@ -248,7 +248,7 @@ public class DispatchA92Parser extends HtmlProgramParser {
       }
       return field.substring(0, pt1).trim();
     }
-    
+
     private int findOpenParen(String field, int spt) {
       int cnt = 1;
       for (int pt = spt-1; pt > 0; pt--) {
