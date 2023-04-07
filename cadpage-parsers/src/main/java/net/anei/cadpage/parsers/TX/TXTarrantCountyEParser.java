@@ -10,9 +10,7 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
 
   public TXTarrantCountyEParser() {
     super("TARRANT COUNTY", "TX",
-          "CALL ADDRCITYST ( SELECT/1 X UNIT INFO ID/L DATETIME! SKIP " +
-                          "| SELECT/2 UNIT INFO DATETIME ID! ID/L " +
-                          "| INFO ) END");
+          "CALL ADDRCITYST SELECT/1 X/Z? UNIT INFO ( IDDATETIME! | ID/L DATETIME! | DATETIME ID/L! ) ID/L END");
   }
 
   @Override
@@ -20,18 +18,16 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
     return "no-reply@zuercherportal.com";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:CAD Call|Major Incident -) *(.*)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Call *(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) {
-      setSelectValue(subject.startsWith("Major") ? "3" : "1");
       data.strCallId = match.group(1);
     }
     else {
       if (subject.isEmpty()) return false;
-      setSelectValue("2");
       body = subject + " | " + body;
     }
     return parseFields(body.split("\\|"), data);
@@ -44,10 +40,26 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new MyIdField();
+    if (name.equals("IDDATETIME")) return new MyIdDateTimeField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+
+  private static final Pattern UNIT_DELIM_PTN = Pattern.compile(" *; *");
+
+  private class MyUnitField extends UnitField {
+    public MyUnitField() {
+      super("(?:[A-Z]+\\d+|\\d{3}|M1[A-Z]+|BCGRAPEVINE)(?:;.*)?", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      field = UNIT_DELIM_PTN.matcher(field).replaceAll(",");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[ ;]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
@@ -69,6 +81,36 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.replace("; ", "/");
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern ID_DATE_TIME_PTN = Pattern.compile("([A-Z]{2,3}\\d{8}) +(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)");
+
+  private class MyIdDateTimeField extends Field {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = ID_DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) return false;
+      data.strCallId = append(data.strCallId, "/", match.group(1));
+      data.strDate = match.group(2);
+      data.strTime = match.group(3);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ID DATE TIME";
     }
   }
 
