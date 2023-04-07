@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.NC;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class NCRutherfordCountyParser extends FieldProgramParser {
 
   public NCRutherfordCountyParser() {
-    super("RUTHERFORD COUNTY", "NC",
+    super(CITY_CODES, "RUTHERFORD COUNTY", "NC",
           "( ( UNIT Prob:CALL! | Prob:CALL! ) Addr:ADDR! ( City:CITY! CrossSt:X! | CrossSt:X! City:CITY ) Comments:INFO Unit:UNIT" +
           "| UNIT Run_Number:ID! Address:ADDR! Dispatch:TIMES! Unit:UNIT! " +
           "| Location:ADDR! APT/ROOM:APT? City:CITY! Call_Type:CALL! Line11:INFO? Units:UNIT! DATETIME1 " +
@@ -177,4 +178,10 @@ public class NCRutherfordCountyParser extends FieldProgramParser {
       }
     }
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "ALEXANDER MI",   "ALEXANDER MILLS",
+      "RUTHERFORDTO",   "RUTHERFORDTON",
+      "SULPHUR SPRI",   "SULPHUR SPRINGS"
+  });
 }
