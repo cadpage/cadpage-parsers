@@ -1259,6 +1259,7 @@ public class Active911ParserTable {
       "US/MO/JeffersonCounty",            "MOJeffersonCounty",
       "US/MO/JeffersonCountyHealthDept",  "MOJeffersonCounty",
       "US/MO/JohnsonCounty",              "MOJohnsonCountyB",
+      "US/MO/KCFire",                     "MOJacksonCountyB",
       "US/MO/Kirkwood",                   "MOStLouisCountyG",
       "US/MO/LacledeCounty",              "MOLacledeCounty",
       "US/MO/LeadingtonFire",             "MOStFrancoisCountyB",
