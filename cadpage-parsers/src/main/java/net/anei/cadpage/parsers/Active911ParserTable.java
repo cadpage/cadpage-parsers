@@ -623,6 +623,7 @@ public class Active911ParserTable {
       "US/IL/RedCenter",                  "ILLakeCountyD",
       "US/IL/RnadolphSheriffsOffice",     "ILRandolphCountyA",
       "US/IL/RobinsonPolice",             "ILCrawfordCounty",
+      "US/IL/Rockford",                   "ILWinnebagoCountyB",
       "US/IL/RosemontPSD",                "ILCookCountyF",
       "US/IL/SchuylerCounty",             "ILSchuylerCounty",
       "US/IL/ShelbyCounty",               "ILShelbyCounty",
