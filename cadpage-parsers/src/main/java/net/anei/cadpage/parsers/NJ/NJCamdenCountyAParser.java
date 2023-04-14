@@ -473,6 +473,8 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "21 ACE CN",                            "+39.379217,-74.429879",
       "22 ACE CN",                            "+39.380489,-74.429039",
 
+      "1 WATER ST",                           "+39.948970,-75.130830",
+
       "BEN FRANKLIN BRIDGE PLAZA",            "+39.948700,-75.118600",
       "CAMDEN HIGH FOOTBALL FIELD",           "+39.930750,-75.093040",
 
@@ -481,6 +483,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "ROUTE 676 EXIT 3",                     "+39.915400,-75.006410",
       "ROUTE 676 EXIT 4",                     "+39.926820,-75.115900",
       "ROUTE 676 EXIT 5A",                    "+39.943020,-75.113370"
+
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
