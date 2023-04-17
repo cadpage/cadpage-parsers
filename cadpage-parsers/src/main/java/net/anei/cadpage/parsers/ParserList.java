@@ -969,6 +969,7 @@ public class ParserList {
           new ParserCategory("Missouri"
               ,"MOAdairCounty"                  ,"Adair County, MO"
               ,"MOAndrewCounty"                 ,"Andrew County, MO"
+              ,"MOAtchisonCounty"               ,"Atchison County, MO"
               ,"MOAudrainCounty"                ,"Audrain County, MO"
               ,"MOBarryCounty"                  ,"Barry County, MO"
               ,"MOBentonCounty"                 ,"Benton County, MO"
