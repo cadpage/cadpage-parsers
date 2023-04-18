@@ -711,6 +711,7 @@ public class ParserList {
               ,"KYMarshallCounty"               ,"Marshall County, KY"
               ,"KYMasonCounty"                  ,"Mason County, KY"
               ,"KYMartinCounty"                 ,"Martin County, KY"
+              ,"KYMcCrackenCounty"              ,"McCracken County, KY"
               ,"KYMcLeanCounty"                 ,"McLean County, KY"
               ,"KYMeadeCounty"                  ,"Meade County, KY"
               ,"KYMetcalfeCounty"               ,"Metcalfe County, KY"
