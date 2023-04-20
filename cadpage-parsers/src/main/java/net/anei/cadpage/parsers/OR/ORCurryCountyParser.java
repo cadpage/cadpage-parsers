@@ -16,7 +16,7 @@ public class ORCurryCountyParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "station1dispatch@gmail.com";
+    return "station1dispatch@gmail.com,bpd911@jcxs.us";
   }
 
   @Override
