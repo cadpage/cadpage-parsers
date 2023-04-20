@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 public class COWeldCountyBParser extends FieldProgramParser {
 
@@ -25,6 +27,11 @@ public class COWeldCountyBParser extends FieldProgramParser {
   }
 
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("WELD COUNTY: ", "");
     body = stripFieldStart(body, "Automated message from Dispatch:");
@@ -42,19 +49,19 @@ public class COWeldCountyBParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.isEmpty()) return true;
       return super.checkParse(cleanField(field), data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       super.parse(cleanField(field), data);
     }
-    
+
     private String cleanField(String field) {
       int pt = field.indexOf('(');
       if (pt >= 0) field = field.substring(0,pt).trim();
@@ -71,23 +78,23 @@ public class COWeldCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
-  
-  
+
+
+
   @Override
   public String adjustMapCity(String city) {
     String mapCity = MAP_CITY_TABLE.getProperty(city.toUpperCase());
     if (mapCity != null) city = mapCity;
     return city;
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // County
     "WELD",
     "LARIMER COUNTY",
     "MORGAN COUNTY",
-    
+
     // Cities
     "BRIGHTON",
     "DACONO",
@@ -97,7 +104,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
     "LONGMONT",
     "NORTHGLENN",
     "THORNTON",
-    
+
     // Towns
     "AULT",
     "BERTHOUD",
@@ -124,11 +131,11 @@ public class COWeldCountyBParser extends FieldProgramParser {
     "RAYMER",
     "SEVERANCE",
     "WINDSOR",
-    
+
     // Census-designated places
     "ARISTOCRAT RANCHETTES",
     "BRIGGSDALE",
-    
+
     // Unincorporated communities
     "AUBURN",
     "AVALO",
@@ -144,7 +151,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
     "ROGGEN",
     "STONEHAM",
     "WATTENBURG",
-    
+
     // Ghost towns
     "ALDEN",
     "DEARFIELD",
@@ -155,15 +162,15 @@ public class COWeldCountyBParser extends FieldProgramParser {
     "ROSEDALE",
     "SERENE",
     "SLIGO",
-    
+
     // Latimer County
     "FORT COLLINS",
     "LOVELAND",
-    
+
     // Elsewhere
     "AURORA"
   };
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "ARISTOCRAT RANCH", "ARISTOCRAT RANCHETTES",
       "ARROWHEAD",        "GREELEY",

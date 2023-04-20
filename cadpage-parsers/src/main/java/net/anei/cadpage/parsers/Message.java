@@ -179,7 +179,8 @@ public class Message {
     Pattern.compile("^(000\\d)/(000\\d)\\b"),
     Pattern.compile("^(?:MACON CO 911: *)?(\\d) *of *(\\d):"),
     Pattern.compile("^ *(\\d)/(\\d)(?: / |\n\n|:)"),
-    Pattern.compile("^([\\w\\.]+@[\\w\\.]+) /(\\d)/(\\d) /"),
+    Pattern.compile("^([-\\w\\.]+@[\\w\\.]+) /(\\d)/(\\d) /"),
+    Pattern.compile("^([-\\w\\.]+@[\\w\\.]+) / ([A-Za-z0-9 ]*?) / (\\d)/(\\d) +"),
     Pattern.compile("^(\\d)/(\\d)\n+"),
     Pattern.compile("^(\\d)/(\\d)(?![/\\d])"),
     Pattern.compile("^(?:\\(Con't\\) )?(\\d) of (\\d)\n"),
@@ -297,8 +298,12 @@ public class Message {
             if (!tmp.equals("- part")) addSubject(tmp);
           }
         }
-        else if (match.groupCount() == 3) {
+        else if (match.groupCount() >= 3) {
           parseAddress = match.group(ndx++);
+          if (match.groupCount() == 4) {
+            String tmp = match.group(ndx++);
+            if (tmp != null) addSubject(tmp);
+          }
         }
         msgIndex = Integer.parseInt(match.group(ndx++));
         msgCount = Integer.parseInt(match.group(ndx++));
