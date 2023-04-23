@@ -8,13 +8,21 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 public class ALHaynesAmbulanceParser extends DispatchProQAParser {
 
   public ALHaynesAmbulanceParser() {
-    super("", "AL",
+    this("");
+  }
+
+  ALHaynesAmbulanceParser(String defCounty) {
+    super(defCounty, "AL",
           "ID! ADDR GPS1 GPS2 CITY APT PLACE DEST! INFO/N+", true);
   }
 
   @Override
   public String getLocName() {
-    return "HAYNES AMBULANCE";
+    if (getDefaultCity().isEmpty()) {
+      return "HAYNES AMBULANCE";
+    } else {
+      return super.getLocName();
+    }
   }
 
   @Override
