@@ -111,6 +111,7 @@ public class ParserList {
           new ParserCategory("Alabama"
               ,"ALAutaugaCounty"                ,"Autauga County, AL"
               ,"ALBaldwinCounty"                ,"Baldwin County, AL"
+              ,"ALBarbourCounty"                ,"Barbour County, AL"
               ,"ALBibbCounty"                   ,"Bibb County, AL"
               ,"ALBlountCounty"                 ,"Blount County, AL"
               ,"ALBullockCounty"                ,"Bullock County, AL"
