@@ -19,7 +19,7 @@ public class ALHaynesAmbulanceParser extends DispatchProQAParser {
   @Override
   public String getLocName() {
     if (getDefaultCity().isEmpty()) {
-      return "HAYNES AMBULANCE";
+      return "Haynes Ambulance";
     } else {
       return super.getLocName();
     }
