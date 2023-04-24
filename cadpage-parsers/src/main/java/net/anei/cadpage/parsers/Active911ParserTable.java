@@ -199,6 +199,7 @@ public class Active911ParserTable {
       "US/CA/BDUcad",                     "CASanBernardinoCountyC",
       "US/CA/Bducad",                     "CASanBernardinoCountyC",
       "US/CA/BishopPolice",               "CAInyoCounty",
+      "US/CA/BPS",                        "CALosAngelesCountyG",
       "US/CA/Branciforte",                "CASantaCruzCountyC",
       "US/CA/Btucad",                     "CAButteCountyA",
       "US/CA/CalaverasCounty",            "CACalaverasCounty",

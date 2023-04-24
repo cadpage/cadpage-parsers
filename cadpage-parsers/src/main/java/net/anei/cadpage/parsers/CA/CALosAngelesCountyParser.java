@@ -8,6 +8,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class CALosAngelesCountyParser extends GroupBestParser {
   public CALosAngelesCountyParser() {
     super(new CALosAngelesCountyAParser(), new CALosAngelesCountyBParser(),
-          new CALosAngelesCountyCParser());
+          new CALosAngelesCountyCParser(), new CALosAngelesCountyGParser());
   }
 }
