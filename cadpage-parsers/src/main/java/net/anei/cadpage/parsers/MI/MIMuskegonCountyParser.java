@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class MIMuskegonCountyParser extends DispatchOSSIParser {
-  
+
   // Too frigging many optional fields.
   // If there is no FYI field there is always a CALL field and may be a place field
   // If there is an FYI field, then CALL and PLACE are both optional, we have to count on the
@@ -23,12 +23,12 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
     super(CITY_CODES, "MUSKEGON COUNTY", "MI",
            "( FYI CALL? | CALL ) ( ADDR! | PLACE ADDR! | ADDR ) X? X? CITY? ( PLACE CALL | CALL2? ) INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@mcd911.net,9300";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_CR;
@@ -36,18 +36,21 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
+    body = stripFieldStart(body, "MCD911:");
+    int pt = body.indexOf("\nText STOP");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (! super.parseMsg(body, data)) return false;
     if (data.strCall.length() == 0) data.strCall = "Unknown";
     return true;
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.endsWith("- WORKING FIRE") && !CALL_SET.contains(field)) return false;
@@ -55,33 +58,33 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCall.length() > 0) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
     }
   }
-  
+
   private static final Pattern CITY_PTN = Pattern.compile("[A-Z]{4}");
   private class MyCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!CITY_PTN.matcher(field).matches()) return false;
@@ -89,7 +92,7 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -98,7 +101,7 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
     if (name.equals("CITY")) return new MyCityField();
     return super.getField(name);
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BLTW", "BLUE LAKE TWP",
       "CCTW", "CEDAR CREEK TWP",
@@ -128,7 +131,7 @@ public class MIMuskegonCountyParser extends DispatchOSSIParser {
       "LWCL", "LAKEWOOD CLUB",
       "WRTW", "WHITE RIVER TWP"
   });
-  
+
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(new String[]{
       "COMMERCIAL FIRE",
       "COMMERICAL FIRE",  // Dispatch spelling??
