@@ -16,7 +16,7 @@ public class COThorntonParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@cityofthornton.net";
+    return "dispatch@cityofthornton.net,dispatch@thorntonco.gov";
   }
 
   @Override
