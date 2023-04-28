@@ -475,6 +475,8 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
 
       "1 WATER ST",                           "+39.948970,-75.130830",
 
+      "1201 YORKSHIP SQ N",                   "+39.906624,-75.106103",
+
       "BEN FRANKLIN BRIDGE PLAZA",            "+39.948700,-75.118600",
       "CAMDEN HIGH FOOTBALL FIELD",           "+39.930750,-75.093040",
 
