@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -29,6 +30,21 @@ public class ALChoctawCountyParser extends FieldProgramParser {
     if (!parseFields(body.split("//", -1), data)) return false;
     data.strAddress = stripFieldEnd(data.strAddress, " - Sector");
     return true;
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("UNIT")) return new MyUnitField();
+    return super.getField(name);
+  }
+
+  private static final Pattern UNIT_BLK_PTN = Pattern.compile("[ -]+");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = UNIT_BLK_PTN.matcher(field).replaceAll("_");
+      super.parse(field, data);
+    }
   }
 
   private static final String[] CITY_LIST = new String[] {
