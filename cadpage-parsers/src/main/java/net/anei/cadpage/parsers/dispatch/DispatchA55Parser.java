@@ -19,6 +19,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NOTES_PTN = Pattern.compile("\nNOTES(?:\n|$)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -28,6 +29,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     data.strCall = subject;
     int pt = body.indexOf("\n_____");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    body = NOTES_PTN.matcher(body).replaceAll("Notes:\n");
     body = body.replace("\nNOTES\n", "\nNotes:\n");
     body = body.replace("\nFIRST NOTE:", "\nNotes:");
     if (!parseFields(body.split("\n"), data)) return false;

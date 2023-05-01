@@ -6,12 +6,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA64Parser;
 public class COMontezumaCountyBParser extends DispatchA64Parser {
 
   public  COMontezumaCountyBParser() {
-    super("MONTEZUMA COUNTY", "CO");
+    this("MONTEZUMA COUNTY");
+  }
+
+  COMontezumaCountyBParser(String defCity) {
+    super(defCity, "CO");
   }
 
   @Override
   public String getFilter() {
-    return "cadalerts@messaging.eforcesoftware.net,reports@messaging.eforcesoftware.net";
+    return "reports@messaging.eforcesoftware.net";
   }
 
   @Override

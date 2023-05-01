@@ -1,15 +1,14 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA64Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class CODeloresCountyParser extends DispatchA64Parser {
+/**
+ * Delores County, CO
+ */
+public class CODeloresCountyParser extends GroupBestParser {
+
 
   public CODeloresCountyParser() {
-    super("DELORES COUNTY", "CO");
-  }
-
-  @Override
-  public String getFilter() {
-    return "reports@messaging.eforcesoftware.net";
-  }
+    super(new CODeloresCountyAParser(), new CODeloresCountyBParser());
+   }
 }
