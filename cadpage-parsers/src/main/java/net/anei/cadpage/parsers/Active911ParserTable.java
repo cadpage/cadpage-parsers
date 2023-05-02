@@ -309,6 +309,7 @@ public class Active911ParserTable {
       "US/CO/BentCounty",                 "COBentCounty",
       "US/CO/BerthoudFire",               "COLarimerCountyF",
       "US/CO/Bretsaps",                   "COBoulderCountyB",
+      "US/CO/BoulderCounty",              "COBoulderCountyB",
       "US/CO/BroomfieldCounty",           "COAdamsCounty,COBroomfieldCounty",
       "US/CO/CastleRockFD",               "CODouglasCountyA",
       "US/CO/CenterPD",                   "CORioGrandeCountyB",
