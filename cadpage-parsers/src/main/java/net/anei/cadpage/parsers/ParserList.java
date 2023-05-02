@@ -1626,6 +1626,7 @@ public class ParserList {
               ,"TXArcherCounty"                 ,"Archer County, TX"
               ,"TXAtascosaCounty"               ,"Atascosa County, TX"
               ,"TXAustinCounty"                 ,"Austin County, TX"
+              ,"TXBastropCounty"                ,"Bastrop County, TX"
               ,"TXBellCounty"                   ,"Bell County, TX"
               ,"TXBexarCounty"                  ,"Bexar County, TX"
               ,"TXBlancoCounty"                 ,"Blanco County, TX"
