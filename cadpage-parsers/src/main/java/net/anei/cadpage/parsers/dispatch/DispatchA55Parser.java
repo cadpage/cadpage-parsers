@@ -10,19 +10,27 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchA55Parser extends FieldProgramParser {
 
+  private DispatchA64Parser auxParser;
+  private boolean useAuxParser;
+
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
           "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDR Apartment:APT " +
                   "( City:CITY! Postal_Code:ZIP "  +
                   "| City_State_County:CITY Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP " +
                   ") Notes:INFO/N+");
+    auxParser = new DispatchA64Parser(defCity, defState);
   }
 
+  private static final Pattern AUX_PTN = Pattern.compile("(?:Call Type|City|Address):");
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
   private static final Pattern NOTES_PTN = Pattern.compile("\nNOTES(?:\n|$)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
+    useAuxParser = AUX_PTN.matcher(body).lookingAt();
+    if (useAuxParser) return auxParser.parseMsg(subject,  body, data);
 
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.lookingAt()) subject = subject.substring(match.end());
@@ -39,6 +47,7 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
+    if (useAuxParser) return auxParser.getProgram();
     return "CALL " + super.getProgram();
   }
 

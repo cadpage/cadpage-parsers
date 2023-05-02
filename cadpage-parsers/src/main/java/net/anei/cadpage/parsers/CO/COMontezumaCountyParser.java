@@ -1,20 +1,24 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.GroupBestParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
 
-/**
- * Montezuma County, CO
- */
-public class COMontezumaCountyParser extends GroupBestParser {
-  
+public class COMontezumaCountyParser extends DispatchA55Parser {
 
-  public COMontezumaCountyParser() {
-    super(new COMontezumaCountyAParser(), new COMontezumaCountyBParser());
-   }
+  public  COMontezumaCountyParser() {
+    this("MONTEZUMA COUNTY");
+  }
+
+  COMontezumaCountyParser(String defCity) {
+    super(defCity, "CO");
+  }
+
+  @Override
+  public String getFilter() {
+    return "cadalerts@messaging.eforcesoftware.net";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "COMontezumaCounty";
+  }
 }
-  
-
-
-
-
-

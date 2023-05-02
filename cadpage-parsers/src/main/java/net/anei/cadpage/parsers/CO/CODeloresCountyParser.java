@@ -1,14 +1,8 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.GroupBestParser;
-
-/**
- * Delores County, CO
- */
-public class CODeloresCountyParser extends GroupBestParser {
-
+public class CODeloresCountyParser extends COMontezumaCountyParser {
 
   public CODeloresCountyParser() {
-    super(new CODeloresCountyAParser(), new CODeloresCountyBParser());
-   }
+    super("DELORES COUNTY");
+  }
 }
