@@ -23,7 +23,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com,@active911.com";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com,@active911.com,wrblackwell@comcast.net";
   }
 
 
@@ -46,7 +46,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("Station \\d+");
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]\\[\\d{4}\\](?:$| *[-\n]| {3})");
-  private static final Pattern IAR_PTN1 = Pattern.compile("(?!:BOX:|box:).*\n.*\n.*");
+  private static final Pattern IAR_PTN1 = Pattern.compile("(?!(?:\\d{7} )?(?:BOX:|box:)).*\n.*\n.*");
   private static final Pattern IAR_PTN2 = Pattern.compile("(?!BOX:|box:)(.*), ([^,]*) :(?: |$)(.*)");
   private static final Pattern BOX_PTN = Pattern.compile("BOX:", Pattern.CASE_INSENSITIVE);
   private static final Pattern DELIM = Pattern.compile(", |(?<!,) +(?=(?:box|cross streets|units):)", Pattern.CASE_INSENSITIVE);
@@ -65,7 +65,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     if (IAR_PTN1.matcher(body).lookingAt()) {
       body = "box: " + body.replace('\n', ',');
     } else {
-      body = body.replace('\n', ' ');
+      body = body.replace("=\n", " ").replace('\n', ' ').replace("cross  streets:", "cross streets:");
     }
 
     if (subject.equals("WMTFD") || subject.equals("41 Wrightsville") || subject.equals("50 W Manchester")) {
