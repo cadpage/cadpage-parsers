@@ -1440,6 +1440,7 @@ public class Active911ParserTable {
       "US/NC/GatesCounty",                "NCGatesCounty",
       "US/NC/GranvilleCounty",            "NCGranvilleCounty",
       "US/NC/GreeneCounty",               "NCGreeneCounty",
+      "US/NC/GriffithRoadVFD",            "NCUnionCounty",
       "US/NC/GuilfordCounty",             "NCGuilfordCounty",
       "US/NC/HalifaxCounty",              "NCHalifaxCounty",
       "US/NC/HarnettCounty",              "NCHarnettCountyD",
