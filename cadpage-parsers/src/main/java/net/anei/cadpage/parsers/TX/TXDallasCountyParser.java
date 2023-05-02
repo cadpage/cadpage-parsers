@@ -11,7 +11,7 @@ public class TXDallasCountyParser extends GroupBestParser {
     super(new TXDallasCountyAParser(), new TXDallasCountyBParser(),
           new TXDallasCountyCParser(), new TXDallasCountyDParser(),
           new TXDallasCountyEParser(), new TXDallasCountyFParser(),
-          new TXDallasCountyHParser());
+          new TXDallasCountyHParser(), new TXDallasCountyIParser());
   }
 
   static String[] CITY_LIST = new String[]{
