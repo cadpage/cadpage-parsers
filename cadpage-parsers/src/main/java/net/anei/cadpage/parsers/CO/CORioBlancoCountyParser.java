@@ -6,13 +6,13 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Rio Blanco County, CO
  */
 public class CORioBlancoCountyParser extends GroupBestParser {
-  
+
 
   public CORioBlancoCountyParser() {
-    super(new CORioBlancoCountyAParser(), new CORioBlancoCountyBParser());
+    super(new CORioBlancoCountyAParser());
   }
 }
-  
+
 
 
 

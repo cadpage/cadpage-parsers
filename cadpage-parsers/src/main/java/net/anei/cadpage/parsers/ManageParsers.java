@@ -211,7 +211,10 @@ public class ManageParsers {
         "MSHernando",         "MSDesotoCounty",          // 02/21/2022
         "NCLumberton",        "NCRobesonCounty",         // 10/18/2022
         "TXDallasCountyG",    "TXDallasCountyC",         // 11/01/2022
-        "OHMontgomeryCountyC2","OHMontgomeryCountyA"     // 12/19/2022
+        "OHMontgomeryCountyC2","OHMontgomeryCountyA",    // 12/19/2022
+        "COClearCreekCountyB","ClearCreekCountyA",       // 05/02/2023
+        "CORioBlancoCountyB", "CORioBlancoCountyB",
+        "GAMurrayCountyA",    "GAMurrayCountyB"
   });
 
 }

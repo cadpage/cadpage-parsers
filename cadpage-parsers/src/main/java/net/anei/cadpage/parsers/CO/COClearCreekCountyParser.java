@@ -10,7 +10,6 @@ public class COClearCreekCountyParser extends GroupBestParser {
 
   public COClearCreekCountyParser() {
     super(new COClearCreekCountyAParser(),
-          new COClearCreekCountyBParser(),
           new COClearCreekCountyCParser());
    }
 }

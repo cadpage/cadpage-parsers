@@ -23,13 +23,14 @@ public class DispatchA55Parser extends FieldProgramParser {
   }
 
   private static final Pattern AUX_PTN = Pattern.compile("(?:Call Type|City|Address):");
+  private static final Pattern NOT_AUX_PTN = Pattern.compile("\n|City State County:|Notes:");
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH ALERT|OUT TAPS)[- ]*", Pattern.CASE_INSENSITIVE);
   private static final Pattern NOTES_PTN = Pattern.compile("\nNOTES(?:\n|$)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    useAuxParser = AUX_PTN.matcher(body).lookingAt();
+    useAuxParser = AUX_PTN.matcher(body).lookingAt() && !NOT_AUX_PTN.matcher(body).find();
     if (useAuxParser) return auxParser.parseMsg(subject,  body, data);
 
     Matcher match = SUBJECT_PTN.matcher(subject);
