@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.KY;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -21,8 +22,39 @@ public class KYMcCrackenCountyParser extends DispatchH05Parser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+
+  private static final Pattern APT_PLACE_PTN = Pattern.compile("(\\d+) *(.*)");
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      String city = CITY_SET.getCode(data.strCity);
+      if (city != null) {
+        String extra = data.strCity.substring(city.length()).trim();
+        data.strCity = city;
+        if (!extra.isEmpty()) {
+          if (extra.contains("/")) {
+            data.strCross = extra;
+          } else {
+            Matcher match = APT_PLACE_PTN.matcher(extra);
+            if (match.matches()) {
+              data.strApt = append(data.strApt, "-", match.group(1));
+              extra = match.group(2);
+            }
+            data.strPlace = extra;
+          }
+        }
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY APT PLACE X";
+    }
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("LATITUDE: *(\\S*) +LONGITUDE: *(\\S*)");
@@ -45,4 +77,49 @@ public class KYMcCrackenCountyParser extends DispatchH05Parser {
       if (!checkParse(field, data)) abort();
     }
   }
+
+  @Override
+  protected boolean isCity(String city) {
+    String tmp = CITY_SET.getCode(city);
+    return tmp != null && tmp.equals(city);
+  }
+
+  private static final CodeSet CITY_SET = new CodeSet(
+
+      // City
+      "PADUCAH",
+
+      // Census-designated places
+      "FARLEY",
+      "HENDRON",
+      "MASSAC",
+      "REIDLAND",
+
+      /// Unincorporated communities
+      "CAMELIA",
+      "CECIL",
+      "CIMOTA CITY",
+      "FREEMONT",
+      "FUTURE CITY",
+      "GRAHAMVILLE",
+      "HARDMONEY",
+      "HEATH",
+      "HOVEKAMP",
+      "KREBS",
+      "LONE OAK",
+      "MAXON",
+      "MELBER",
+      "RAGLAND",
+      "ROSSINGTON",
+      "RUDOLPH",
+      "SAINT JOHNS",
+      "SHEEHAN BRIDGE",
+      "WEST PADUCAH",
+
+      // Graves County
+      "BOAZ",
+
+      // Livingston County
+      "LEDBETTER"
+  );
 }
