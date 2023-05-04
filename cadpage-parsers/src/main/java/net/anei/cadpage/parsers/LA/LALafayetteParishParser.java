@@ -19,6 +19,11 @@ public class LALafayetteParishParser extends FieldProgramParser {
           "Event_Date:DATETIME! Unit:UNIT! CAD:ID! Address:ADDR! Intersection:X! Jurisdiction:CITY? Event_Type:CODE_CALL! Report:ID! Remarks:INFO? INFO/N+");
   }
 
+  @Override
+  public String getFilter() {
+    return "cadalert@lafayettela.gov,alerts@lpcdops-lafla.gov,alerts@tailorbuilt.app";
+  }
+
   private static final Pattern TRAIL_HASH_PTN = Pattern.compile("(?<=Unit|CAD|Report)#");
   private static final Pattern DELIM = Pattern.compile("\n|\\s+(?=(?:Unit|CAD|Intersection|Jurisdiction):)");
 
@@ -27,12 +32,6 @@ public class LALafayetteParishParser extends FieldProgramParser {
     if (!subject.equals("System Alert")) return false;
     body = TRAIL_HASH_PTN.matcher(body).replaceAll(":");
     return parseFields(DELIM.split(body), data);
-  }
-
-
-  @Override
-  public String getFilter() {
-    return "alerts@lpcdops-lafla.gov";
   }
 
   @Override
