@@ -479,6 +479,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
 
       "BEN FRANKLIN BRIDGE PLAZA",            "+39.948700,-75.118600",
       "CAMDEN HIGH FOOTBALL FIELD",           "+39.930750,-75.093040",
+      "PATCO BROADWAY STATION",               "+39.948970,-75.130830",
 
       "ROUTE 676 EXIT 1",                     "+39.902920,-75.111580",
       "ROUTE 676 EXIT 1C",                    "+39.904880,-75.113620",
