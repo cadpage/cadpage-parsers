@@ -22,6 +22,7 @@ public class FLLeeCountyBParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
 
