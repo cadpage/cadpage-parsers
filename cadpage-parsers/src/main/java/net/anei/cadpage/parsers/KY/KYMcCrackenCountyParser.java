@@ -118,6 +118,7 @@ public class KYMcCrackenCountyParser extends DispatchH05Parser {
 
       // Graves County
       "BOAZ",
+      "SYMSONIA",
 
       // Livingston County
       "LEDBETTER"
