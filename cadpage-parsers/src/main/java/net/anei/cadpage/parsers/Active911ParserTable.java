@@ -219,6 +219,7 @@ public class Active911ParserTable {
       "US/CA/CityofNapa",                 "CANapa",
       "US/CA/CityofPasoRobles",           "CAPasoRobles",
       "US/CA/CityofPorterville",          "CATulareCountyC",
+      "US/CA/CityofRedding",              "CAShastaCountyD",
       "US/CA/CityofRocklin",              "CAPlacerCountyB",
       "US/CA/CityofRoseville",            "CAPlacerCountyC,CAPlacerCountyD",
       "US/CA/CityofSanLuisObispo",        "CASanLuisObispoCountyB",
