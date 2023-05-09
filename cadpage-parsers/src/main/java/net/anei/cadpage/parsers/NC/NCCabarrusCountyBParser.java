@@ -8,9 +8,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCCabarrusCountyBParser extends DispatchOSSIParser {
-  
+
   private static final Pattern MARKER = Pattern.compile("^(?:\\d{2,4}|CAD):");
-  
+
   public NCCabarrusCountyBParser() {
     super("CABARRUS COUNTY", "NC",
           "( CANCEL ADDR SKIP EXTRA+ " +
@@ -19,7 +19,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     setupMultiWordStreets("A T ALLEN SCHOOL");
     setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "93001";
@@ -33,7 +33,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     body = body.replace('|', ';');
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("FYI")) return new SkipField("FYI:|Update:", true);
@@ -47,7 +47,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     if (name.equals("ID")) return new IdField("\\d{7}", true);
     return super.getField(name);
   }
-  
+
   private static Pattern X_PTN = Pattern.compile("\\bRAMP\\b");
   private class MyCrossField extends CrossField {
     @Override
@@ -60,14 +60,14 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
       }
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("\\d[A-Z0-9]{1,3}|[A-Z]\\d{1,3}[A-Z]?");
   private class MyUnitField extends UnitField {
-    
+
     public MyUnitField() {
       setPattern(UNIT_PTN, true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
@@ -80,6 +80,13 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
   private class MyExtraField extends Field {
     @Override
     public void parse(String field, Data data) {
+
+      String city = NCCabarrusCountyParser.CITY_CODES.getProperty(field);
+      if (city != null) {
+        data.strCity = city;
+        return;
+      }
+
       Matcher match = APT_PTN.matcher(field);
       if (match.matches()) {
         String apt = match.group(1);
@@ -92,11 +99,13 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
         data.strApt = append(data.strApt, "-", apt);
         if (field.length() == 0) return;
       }
+
       match = PHONE_PTN.matcher(field);
       if (match.matches()) {
         data.strPhone = append(data.strPhone, " / ", field);
         return;
       }
+
       if (field.startsWith("(S)") || field.startsWith("(N)")) {
         field = field.substring(3).trim();
         int pt = field.indexOf("(N)");
@@ -115,14 +124,15 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
         }
         return;
       }
+
       match = SKIP_PTN.matcher(field);
       if (match.matches()) return;
       data.strPlace = append(data.strPlace, " - ", field);
     }
-    
+
     @Override
     public String getFieldNames() {
-      return "PHONE PLACE";
+      return "CITY PHONE PLACE";
     }
   }
 }

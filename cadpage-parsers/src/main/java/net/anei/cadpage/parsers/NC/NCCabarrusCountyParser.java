@@ -6,11 +6,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class NCCabarrusCountyParser extends GroupBestParser {
-  
+
   public NCCabarrusCountyParser() {
     super(new NCCabarrusCountyAParser(), new NCCabarrusCountyBParser());
   }
-  
+
   static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "9075 US HWY 601",                      "+35.292348,-80.511689",
       "9075 US HWY 601 S",                    "+35.292348,-80.511689",
@@ -25,4 +25,42 @@ public class NCCabarrusCountyParser extends GroupBestParser {
       "13280 US HWY 601 S",                   "+35.234622,-80.506740",
       "93250 US HWY 601 S",                   "+35.288985,-80.510182"
   });
+
+
+  static Properties CITY_CODES = buildCodeTable(new String[]{
+      "AMA",  "ALBEMARLE",
+      "CHASE","CONCORD",          // ?????
+      "CHL",  "CHARLOTTE",
+      "CHG",  "CHINA GROVE",
+      "CHGV", "CHINA GROVE",
+      "CLT",  "CHARLOTTE",
+      "CON",  "CONCORD",
+      "COR",  "CORNELIUS",
+      "CPD",  "CONCORD",
+      "DAV",  "DAVIDSON",
+      "GE",   "GEORGEVILLE",
+      "GLD",  "GOLD HILL",
+      "GOLD", "GOLD HILL",
+      "HAR",  "HARRISBURG",
+      "HUN",  "HUNTERSVILLE",
+      "IND",  "INDIAN TRAIL",
+      "KAN",  "KANNAPOLIS",
+      "LAN",  "LANDIS",
+      "LOC",  "LOCUST",
+      "MEC",  "MECKLENBURG",
+      "MID",  "MIDLAND",
+      "MIN",  "MINT HILL",
+      "MNR",  "MONROE",
+      "MP",   "MT PLEASANT",
+      "MTH",  "MOUNT HOLLY",
+      "PNV",  "PINEVILLE",
+      "ROC",  "ROCKWELL",
+      "ROCK", "ROCKWELL",
+      "SAL",  "SALISBURY",
+      "STF",  "STANFIELD",
+      "WAX",  "WAXHAW",
+
+      "OOC",  "OOC"
+  });
+
 }
