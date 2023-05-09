@@ -16,17 +16,17 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Hillsdale County, MI
  */
 public class MIHillsdaleCountyParser extends FieldProgramParser {
-  
+
   public MIHillsdaleCountyParser() {
-    super("HILLSDALE COUNTY", "MI", 
+    super("HILLSDALE COUNTY", "MI",
           "CALL ADDR ( X | CITY ST_ZIP? PLACE? X ) DATETIME!");
   }
-  
+
   @Override
   public String getFilter() {
     return "hccd@co.hillsdale.mi.us";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom() {
@@ -39,7 +39,7 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
   public boolean parseMsg(String body, Data data) {
     return parseFields(body.split(","), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -48,7 +48,7 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -61,13 +61,13 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
-    
+
     public MyCrossField() {
       super(".*//.*", true);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = field.replace("//", "/");
@@ -76,7 +76,7 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d [AP]M)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
@@ -88,7 +88,7 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
       setTime(TIME_FMT, match.group(2), data);
     }
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "911-HNGUP",  "911 HANG UP",
       "911-MISRTE", "911 MISROUTE",
@@ -124,7 +124,10 @@ public class MIHillsdaleCountyParser extends FieldProgramParser {
       "FIRE-WIRES", "FIRE - WIRES ARCHING",
       "HAZMAT",     "FIRE - HAZMAT / CHEMICAL SPILL",
       "MED-ALRM",   "MED - MEDICAL ALARM",
+      "MED-ALS",    "ALS TRANSFER",
       "MED-AST",    "MED - MEDICAL ASSIST",
+      "MED-BLS",    "BLS TRANSFER",
+      "MED-CCT",    "CRITICAL CARE TRANSFER",
       "MED-EMRG",   "MED - MEDICAL EMERGENCY",
       "MED-TRAN",   "MED - MEDICAL TRANSPORT",
       "MENTAL",     "MED - PSYCHATRIC EMERGENCY",
