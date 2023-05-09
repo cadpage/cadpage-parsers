@@ -2419,6 +2419,7 @@ public class Active911ParserTable {
       "US/TX/SomervellCounty",            "TXSomervellCounty",
       "US/TX/StaffordPD",                 "TXStafford",
       "US/TX/Stationalerting",            "TXFortBendCountyB",
+      "US/TN/SumnerCounty",               "TNSumnerCountyC",
       "US/TX/TarrantCounty",              "TXTarrantCountyA",
       "US/TX/TexasCity",                  "TXTexasCity",
       "US/TX/TravisCounty",               "TXTravisCountyB",
