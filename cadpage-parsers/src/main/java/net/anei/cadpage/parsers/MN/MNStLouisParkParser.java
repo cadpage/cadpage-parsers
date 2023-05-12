@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,7 @@ public class MNStLouisParkParser extends DispatchA60Parser {
 
   public MNStLouisParkParser() {
     super("ST LOUIS PARK", "MN");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -40,4 +42,8 @@ public class MNStLouisParkParser extends DispatchA60Parser {
     }
     return super.parseMsg(body, data);
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "7900 28TH ST W",                       "+44.953740,-93.380192"
+  });
 }
