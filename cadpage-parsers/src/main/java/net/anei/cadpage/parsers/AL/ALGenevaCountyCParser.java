@@ -11,7 +11,7 @@ public class ALGenevaCountyCParser extends MsgParser {
 
   public ALGenevaCountyCParser() {
     super("GENEVA COUNTY", "AL");
-    setFieldList("CALL ADDR APT CITY ST INFO");
+    setFieldList("DATE TIME CALL ADDR APT CITY ST INFO");
   }
 
   @Override
@@ -19,12 +19,22 @@ public class ALGenevaCountyCParser extends MsgParser {
     return "dispatch@34central.com,cad@34central.com";
   }
 
+  private static final Pattern LEAD_DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) +");
   private static final Pattern MSG_MARKER_PTN = Pattern.compile(";? \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - message - ");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
     data.strCall = subject;
+
+    Matcher match = LEAD_DATE_TIME_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      body = body.substring(match.end());
+    }
+
     String[] parts = MSG_MARKER_PTN.split(body);
     if (parts.length < 2) {
       if (!parts[0].endsWith(" None")) return false;
@@ -39,7 +49,7 @@ public class ALGenevaCountyCParser extends MsgParser {
         Parser p = new Parser(part);
         String city = p.getLastOptional(',');
         String zip = null;
-        Matcher match = ST_ZIP_PTN.matcher(city);
+        match = ST_ZIP_PTN.matcher(city);
         if (match.matches()) {
           data.strState = match.group(1);
           zip = match.group(2);
