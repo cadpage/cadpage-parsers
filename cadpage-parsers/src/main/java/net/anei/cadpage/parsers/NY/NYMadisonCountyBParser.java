@@ -10,12 +10,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 public class NYMadisonCountyBParser extends DispatchA13Parser {
 
   private static final Pattern MISMATCH_PAREN_PTN = Pattern.compile("(\\([^\\)]*)(?=\\()");
-  
+
   public NYMadisonCountyBParser() {
-    super(CITY_LIST, "MADISON COUNTY", "NY", A13_FLG_LEAD_PLACE_NAME);
+    super(NYMadisonCountyParser.CITY_LIST, "MADISON COUNTY", "NY", A13_FLG_LEAD_PLACE_NAME);
     removeWords("COUNTY");
   }
-  
+
   @Override
   public String getFilter() {
     return "e-911@co.madison.ny.us,e911@madisoncounty.ny.go,messaging@iamresponding.com,e911@bounce.secureserver.net,e911@madisoncounty.ny.gov";
@@ -37,34 +37,34 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Missed right parens cause a problem.  If we find any add a closing right paren.
     body = MISMATCH_PAREN_PTN.matcher(body).replaceAll("$1)");
-    
+
     if (subject.equals("SEVAC")) {
       data.strSource = subject;
       body = body.replace("\n\n", "\n");
       if (!body.contains("Dispatched") && !body.contains("Standby")) body = "Dispatched\n" + body;
       body = body.replace("=20\n", "");
     }
-    
+
     else if (subject.equals("Greater Lenox")) {
       body = body.replace("\n\n", "\n");
     }
 
     if (!super.parseMsg(body, data)) return false;
-    
+
     data.strCity = stripFieldEnd(data.strCity, " VIL");
     data.strCity = stripFieldEnd(data.strCity," VILLAGE");
     return true;
 
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("MORRISVILLE VILLAGE-SUNY")) {
@@ -72,18 +72,18 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
     }
     return city;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }
-  
+
   private static final Pattern OOC_ADDR_PTN = Pattern.compile("([ A-Z]+ COUNTY), \\((.*)\\) ; (.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends BaseAddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = OOC_ADDR_PTN.matcher(field);
       if (match.matches()) {
         data.strCity = match.group(1).trim();
@@ -97,7 +97,7 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
         parseAddress(addr, data);
         return;
       }
-      
+
       if (field.startsWith("@") || field.contains("(")) {
         super.parse(field, data);
       } else {
@@ -112,7 +112,7 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
         data.strCross = getLeft();
         data.strCross = stripFieldStart(data.strCross, "/");
         data.strCross = stripFieldEnd(data.strCross, "/");
-        
+
         if (data.strPlace.length() > 0 && data.strCity.length() == 0) {
           parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, data.strPlace, data);
           data.strPlace = getStart();
@@ -123,51 +123,4 @@ public class NYMadisonCountyBParser extends DispatchA13Parser {
     }
   }
 
-  private static final String[] CITY_LIST = new String[]{
-    "BRIDGEPORT",
-    "BROOKFIELD",
-    "CANASTOTA",
-    "CANASTOTA VIL",
-    "CANASTOTA VILLAGE",
-    "CAZENOVIA",
-    "CAZENOVIA VIL",
-    "CAZENOVIA VILLAGE",
-    "CHITTENANGO",
-    "DERUYTER",
-    "EARLVILLE",
-    "EARLVILLE VIL",
-    "EARLVILLE VILLAGE",
-    "EATON",
-    "FENNER",
-    "GEORGETOWN",
-    "HAMILTON",
-    "HAMILTON VIL",
-    "HAMILTON VILLAGE",
-    "LEBANON",
-    "LENOX",
-    "LINCOLN",
-    "MADISON",
-    "MADISON VIL",
-    "MADISON VILLAGE",
-    "MADISON COUNTY",
-    "MORRISVILLE",
-    "MORRISVILLE VIL",
-    "MORRISVILLE VILLAGE",
-    "MORRISVILLE VILLAGE-SUNY",
-    "MUNNSVILLE",
-    "MUNNSVILLE VIL",
-    "MUNNSVILLE VILLAGE",
-    "NELSON",
-    "NELSON VIL",
-    "NELSON VILLAGE",
-    "ONEIDA",
-    "ONEIDA CITY",
-    "SMITHFIELD",
-    "STOCKBRIDGE",
-    "SULLIVAN",
-    "WAMPSVILLE",
-    "WAMPSVILLE VIL",
-    "WAMPSVILLE VILLAGE"
-  };
 }
-	
