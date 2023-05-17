@@ -11,15 +11,17 @@ public class ALGenevaCountyCParser extends MsgParser {
 
   public ALGenevaCountyCParser() {
     super("GENEVA COUNTY", "AL");
-    setFieldList("DATE TIME CALL ADDR APT CITY ST INFO");
+    setFieldList("DATE TIME CALL ADDR APT CITY ST INFO UNIT");
   }
 
   @Override
   public String getFilter() {
-    return "dispatch@34central.com,cad@34central.com";
+    return "cad@34central.com";
   }
 
   private static final Pattern LEAD_DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) +");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile(" +(?:[A-Z0-9]+; *)*[A-Z0-9]+$");
+  private static final Pattern UNIT_DELIM_PTN = Pattern.compile(" *; *");
   private static final Pattern MSG_MARKER_PTN = Pattern.compile(";? \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - message - ");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
 
@@ -33,6 +35,10 @@ public class ALGenevaCountyCParser extends MsgParser {
       data.strDate = match.group(1);
       data.strTime = match.group(2);
       body = body.substring(match.end());
+      match = TRAIL_UNIT_PTN.matcher(body);
+      if (!match.find()) return false;
+      data.strUnit = UNIT_DELIM_PTN.matcher(match.group().trim()).replaceAll(" ");
+      body = body.substring(0, match.start());
     }
 
     String[] parts = MSG_MARKER_PTN.split(body);
