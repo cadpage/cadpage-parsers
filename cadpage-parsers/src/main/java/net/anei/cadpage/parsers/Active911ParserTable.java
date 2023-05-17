@@ -1304,6 +1304,7 @@ public class Active911ParserTable {
       "US/MO/PerryvillePolice",           "MOPerryCountyB",
       "US/MO/PikeCounty",                 "MOPikeCountyB",
       "US/MO/PikeCountyIncLog",           "MOPikeCountyB",
+      "US/MO/PilotKnobFPD",               "MOStFrancoisCountyB",
       "US/MO/PittsburgFD",                "MOHickoryCounty",
       "US/MO/PolkCounty",                 "MOPolkCounty",
       "US/MO/PoplarBluffPD",              "MOPoplarBluff",
