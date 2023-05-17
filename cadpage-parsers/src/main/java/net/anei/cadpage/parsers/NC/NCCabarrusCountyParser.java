@@ -45,6 +45,7 @@ public class NCCabarrusCountyParser extends GroupBestParser {
       "HUN",  "HUNTERSVILLE",
       "IND",  "INDIAN TRAIL",
       "KAN",  "KANNAPOLIS",
+      "KANN", "KANNAPOLIS",
       "LAN",  "LANDIS",
       "LOC",  "LOCUST",
       "MEC",  "MECKLENBURG",

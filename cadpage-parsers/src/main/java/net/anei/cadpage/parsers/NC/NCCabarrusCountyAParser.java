@@ -19,7 +19,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   public NCCabarrusCountyAParser() {
     super(NCCabarrusCountyParser.CITY_CODES, "CABARRUS COUNTY", "NC",
-        "( CANCEL ADDR CITY | FYI? ( ADDR CALL | CALL ADDR ) CITY? X_PLACE+? ( ID | SRC UNIT? ID? | UNIT SRC? ID? ) ) INFO+");
+        "( CANCEL ADDR CITY | FYI? ( ADDR CALL | CALL ADDR ) CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) ) INFO+");
     setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
   }
 
@@ -51,6 +51,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     crosses.clear();
     body = MISSING_SEMI_PTN.matcher(body).replaceAll(";");
     if (! super.parseMsg(body, data)) return false;
+    if (data.strAddress.isEmpty() || data.strCall.isEmpty()) return false;
     if (data.strCity.equals("OOC")) data.defCity = data.strCity = "";
     if (!ok && data.strCity.length() <= 3) return false;
 
@@ -86,6 +87,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CANCEL")) return new BaseCancelField("DUPLICATE PAGE");
 //    if (name.equals("MAP")) return new MapField("[A-Z]\\d{3}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
@@ -119,11 +121,9 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   private class MyCityField extends CityField {
     @Override
-    public void parse(String field, Data data) {
-      super.parse(field, data);
-      if (data.strCity.equals("OOC")) {
-        data.strCity = data.defCity = "";
-      }
+    public boolean checkParse(String field, Data data) {
+      if (!data.strCity.isEmpty()) return false;
+      return super.checkParse(field, data);
     }
   }
 

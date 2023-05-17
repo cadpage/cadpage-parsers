@@ -12,10 +12,14 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
   private static final Pattern MARKER = Pattern.compile("^(?:\\d{2,4}|CAD):");
 
   public NCCabarrusCountyBParser() {
-    super("CABARRUS COUNTY", "NC",
-          "( CANCEL ADDR SKIP EXTRA+ " +
+    super(NCCabarrusCountyParser.CITY_CODES, "CABARRUS COUNTY", "NC",
+          "( CANCEL ADDR CITY EXTRA+ " +
           "| FYI? ( DATETIME CALL CH? ADDR! X+? INFO+ " +
-                 "| DIGIT CALL ( PRI/Z UNIT UNIT+? CH? ADDR! X+? EXTRA+? DATETIME | DIGIT? CH? ADDR! X+? EXTRA+? ( PRI | UNIT ) UNIT+? DATETIME ) EXTRA+? ID ) )");
+                 "| DIGIT CALL ( ( UNIT | PRI/Z UNIT ) UNIT+? CH? ADDR! X+? EXTRA+? DATETIME " +
+                              "| DIGIT? CH? ADDR! X+? EXTRA+? ( PRI | UNIT ) UNIT+? DATETIME " +
+                              ") EXTRA+? ID " +
+                 ") " +
+          ")");
     setupMultiWordStreets("A T ALLEN SCHOOL");
     setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
   }
