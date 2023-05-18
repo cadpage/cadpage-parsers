@@ -170,10 +170,15 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{5,}");
+  private static final Pattern TRUNC_GPS1_PTN = Pattern.compile("\\+3[45].?\\d*");
   private class MyGPSField extends GPSField {
+
+    private final int type;
+
     public MyGPSField(int type) {
       super(type);
+      this.type = type;
     }
 
     @Override
@@ -184,7 +189,10 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isLastField(2)) return false;
-      if (!GPS_PTN.matcher(field).matches()) return false;
+      if (!GPS_PTN.matcher(field).matches()) {
+        if (type == 2) return true;
+        return (isLastField(1) && TRUNC_GPS1_PTN.matcher(field).matches());
+      }
       super.parse(field, data);
       return true;
     }
