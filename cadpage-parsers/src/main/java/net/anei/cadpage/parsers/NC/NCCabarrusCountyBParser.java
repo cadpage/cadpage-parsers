@@ -31,6 +31,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (! body.contains("|")) return false;
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
     body = "CAD:" + body.substring(match.end()).trim();
