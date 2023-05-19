@@ -12,7 +12,11 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
 
   public MIClintonCountyParser() {
     super("CLINTON COUNTY", "MI",
-          "( CANCEL ADDR! SKIP | FYI? ADDR X/Z+? CALL! PRI? ) INFO/N+");
+          "( CANCEL ADDR! SKIP " +
+          "| FYI? ( CALL ADDR X+? " +
+                 "| ADDR X/Z+? CALL! PRI? " +
+                 ") " +
+          ") INFO/N+");
   }
 
   @Override
@@ -33,7 +37,36 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_PTN = Pattern.compile(".* [1-4]|FIRE .*|COMMUNITY POLICING|CARBON MONOXIDE.*|EMERGENCY SERVICES TEAM|HAZARDOUS MATERIALS|HIT AND RUN PI ACCIDENT|LIFT ASSIST.*|MEDICAL|MOUNTED DIVISION|MUTUAL AID.*|PERSONAL INJURY.*|POWER LINES DOWN|PSYCHIATRIC.*|ROAD CLOSED|SPECIAL OPERATIONS TEAM|STRUCTURE FIRE|SUICIDE.*|TRAINING.*|UNKNOWN ACCIDENT");
+  private static final Pattern CALL_PTN = Pattern.compile(
+             ".* [1-4]|" +
+             "ACCIDENT WITH UNKNOWN INJURY|" +
+             "ALARM FIRE|" +
+             "CARBON MONOXIDE.*|" +
+             "CHECK WELFARE|" +
+             "COMMUNITY POLICING|" +
+             "DEAD ON ARRIVAL|" +
+             "EMERGENCY SERVICES TEAM|" +
+             "FIRE .*|" +
+             "GAS LEAK|" +
+             "HAZARDOUS MATERIALS|" +
+             "HIT AND RUN PI ACCIDENT|" +
+             "HOSPITAL TRANSFER|" +
+             "INCIDENT MANAGEMENT TEAM|" +
+             "LIFT ASSIST.*|" +
+             "MEDICAL.*|" +
+             "MOUNTED DIVISION|" +
+             "MUTUAL AID.*|" +
+             "PERSONAL INJURY.*|" +
+             "POWER LINES DOWN|" +
+             "PRIVATE CALL|" +
+             "PSYCHIATRIC.*|" +
+             "ROAD CLOSED|" +
+             "SPECIAL OPERATIONS TEAM|" +
+             "STRUCTURE FIRE|" +
+             "SUICIDAL SUBJECT|" +
+             "SUICIDE.*|" +
+             "TRAINING.*|" +
+             "UNKNOWN ACCIDENT");
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
