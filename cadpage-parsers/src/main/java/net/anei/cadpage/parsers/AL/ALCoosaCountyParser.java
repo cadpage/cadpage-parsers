@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class ALCoosaCountyParser extends DispatchA71Parser {
-  
+
+public class ALCoosaCountyParser extends GroupBestParser {
+
   public ALCoosaCountyParser() {
-    super("COOSA COUNTY", "AL");
+    super(new ALCoosaCountyAParser(), new ALCoosaCountyBParser());
   }
-
 }
