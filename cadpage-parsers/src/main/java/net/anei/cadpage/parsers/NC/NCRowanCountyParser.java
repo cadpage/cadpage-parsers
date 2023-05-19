@@ -21,7 +21,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
           "| FYI? ( BAD_ID " +
                  "| ADDR/Z CITY! " +
                  "| ( ADDR | CALL P? ADDR! UNIT? ( CITY | X/Z CITY | X/Z X/Z CITY | ) ) " +
-                 ") XPLACE+? INFO/N INFO/NZ+? NAME PH " +
+                 ") UNIT? XPLACE+? INFO/N INFO/NZ+? NAME PH " +
           ")");
     setupSpecialStreets("NEW ST");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
@@ -315,7 +315,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
 
     @Override
     public String getFieldNames() {
-      return "PLACE? APT";
+      return "CALL? PLACE? APT";
     }
   }
 
@@ -339,7 +339,7 @@ public class NCRowanCountyParser extends DispatchOSSIParser {
   private boolean lastIdField = false;
 
   private static final Pattern MAP_PTN = Pattern.compile("\\d{3,4}");
-  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|tac.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[-A-Z0-9,]+|[A-Z]{2}|DCC");
+  private static final Pattern UNIT_PTN = Pattern.compile("OPS.*|tac.*|\\d\\d|[A-Z]+\\d+[A-Z]?|\\d+[A-Z]+\\d|[A-z0-9]+,[-A-Z0-9,]+|[A-Z]{2}|DCC|RPD");
   private static final Pattern ID_PTN = Pattern.compile("\\d{6,9}");
   private static final Pattern OPT_INFO_PTN = Pattern.compile("(?![A-Z]{0,4}DIST:|\\d{1,3}[A-Z]\\d{1,2} ).*(?:[a-z\\{'`]|\\bACTIVATION\\b|\\bHOLD\\b|\\bON THE\\b|\\bCALLER\\b - |\\bLOCATED\\b|\\bUDTS:|\\bREF\\b|\\bREFERENCE\\b|\\bREQUESTING\\b).*");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("Radio Channel: *(.*)");
