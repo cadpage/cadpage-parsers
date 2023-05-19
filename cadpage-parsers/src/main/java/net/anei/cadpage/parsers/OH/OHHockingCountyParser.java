@@ -12,12 +12,17 @@ public class OHHockingCountyParser extends FieldProgramParser {
 
   public OHHockingCountyParser() {
     super("HOCKING COUNTY", "OH",
-          "ID CALL ADDRCITYST APT PLACE GPS1 GPS1 UNIT INFO! END");
+          "ID CALL ADDRCITYST APT PLACE GPS1 GPS2 UNIT INFO! END");
   }
 
   @Override
   public String getFilter() {
     return "no-reply@hocking.us";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
