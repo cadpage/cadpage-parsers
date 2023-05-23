@@ -1552,6 +1552,7 @@ public class Active911ParserTable {
       "US/NH/Charlestown",                "NHSullivanCounty",
       "US/NH/GraftonCounty",              "NHGraftonCountyB,NHGraftonCountyC",
       "US/NH/Hanover",                    "NHHanover,Cadpage2",
+      "US/NH/HillsboroughCounty",         "NHKeeneMutualAid",
       "US/NH/HollisDispatch",             "NHHollis",
       "US/NH/Keene",                      "NHKeeneMutualAid",
       "US/NH/LincolnFD",                  "NHGraftonCountyB,NHGraftonCountyC",
