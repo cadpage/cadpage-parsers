@@ -1623,7 +1623,7 @@ public class Active911ParserTable {
       "US/NJ/SalemCounty",                "NJSalemCountyC",
       "US/NJ/SomersetCounty",             "NJSomersetCountyA",
       "US/NJ/SomersetCountyDiscard",      "NJSomersetCountyA",
-      "US/NJ/SourthardFD",                "NJMonmouthCountyF,NJMonmouthCountyG",
+      "US/NJ/SourthardFD",                "NJMonmouthCountyF,NJMonmouthCountyG,NJOceanCountyB",
       "US/NJ/SouthBrunswickPD",           "NJMiddlesexCountyB",
       "US/NJ/SpartaPD",                   "NJSussexCountyA",
       "US/NJ/StaffordTwp",                "NJOceanCountyF",
