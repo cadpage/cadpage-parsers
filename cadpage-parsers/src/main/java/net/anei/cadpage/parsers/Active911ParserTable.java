@@ -609,6 +609,7 @@ public class Active911ParserTable {
       "US/IL/LincolnwoodFD",              "ILCookCountyB",
       "US/IL/MacoupinCounty",             "ILMacoupinCounty",
       "US/IL/MadisonCounty",              "ILMadisonCounty",
+      "US/IL/MarionCounty",               "ILMarionCounty",
       "US/IL/MassacCounty",               "ILMassacCounty",
       "US/IL/McHenryCounty",              "ILMcHenryCounty",
       "US/IL/Mcsd911",                    "ILMonroeCounty",
