@@ -10,7 +10,7 @@ public class TNCumberlandCountyBParser extends DispatchA86Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@cumberlandtn911.info";
+    return "dispatch@cumberlandtn911.info,Cumberland911@911comm1.info";
   }
 
   @Override
