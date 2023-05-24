@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,7 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("FYI")) return new SkipField("FYI:|Update:", true);
     if (name.equals("DIGIT")) return new SkipField("[\\dP]", true);
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CH")) return new ChannelField("OPS\\d*");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("PRI")) return new PriorityField("\\d{1,2}", true);
@@ -51,6 +53,14 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
     if (name.equals("EXTRA")) return new MyExtraField();
     if (name.equals("ID")) return new IdField("\\d{7}", true);
     return super.getField(name);
+  }
+
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = convertCodes(field, CALL_CODES);
+      super.parse(field, data);
+    }
   }
 
   private static Pattern X_PTN = Pattern.compile("\\bRAMP\\b");
@@ -140,4 +150,8 @@ public class NCCabarrusCountyBParser extends DispatchOSSIParser {
       return "CITY PHONE PLACE";
     }
   }
+
+  private static final Properties CALL_CODES = buildCodeTable(new String[] {
+      "FGASLN",   "Gas Leak"
+  });
 }
