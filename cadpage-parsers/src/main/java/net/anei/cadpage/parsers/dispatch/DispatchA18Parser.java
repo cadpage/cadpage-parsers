@@ -25,11 +25,8 @@ public class DispatchA18Parser extends FieldProgramParser {
 
   public DispatchA18Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CALL ADDR X BOX! EMPTY+? ( DASHES EMPTY+? DATETIME SRC SRC | ) INFO+? ID_UNIT ID_UNIT+? END");
+          "CALL ADDR X BOX! EMPTY+? ( DASHES EMPTY+? DATETIME SRC SRC | ) INFO/N+? ID_UNIT ID_UNIT+? INFO/N+");
   }
-
-  private static final Pattern FIX_BROKEN_INFO_PTN = Pattern.compile("([A-Za-z]+:.*[^\\]])\n(.*\\[\\d\\d:\\d\\d:\\d\\d\\])");
-
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,7 +39,6 @@ public class DispatchA18Parser extends FieldProgramParser {
     if (pt >= 0) {
       body = body.substring(0,pt).trim();
     }
-    body = FIX_BROKEN_INFO_PTN.matcher(body).replaceAll("$1$2");
     return parseFields(body.split("\n"), 4, data);
   }
 
@@ -216,14 +212,17 @@ public class DispatchA18Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_PTN = Pattern.compile("[A-Za-z]+: *(.*?) *\\[(\\d\\d:\\d\\d:\\d\\d)\\]");
+  private static final Pattern LEAD_INFO_PTN = Pattern.compile("^[A-Za-z]+: *");
+  private static final Pattern TRAIL_INFO_PTN = Pattern.compile(" *\\[(\\d\\d:\\d\\d:\\d\\d)\\]$");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = INFO_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1);
-        if (data.strTime.length() == 0) data.strTime = match.group(2);
+      Matcher match = LEAD_INFO_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      match = TRAIL_INFO_PTN.matcher(field);
+      if (match.find()) {
+        field = field.substring(0,match.start());
+        if (data.strTime.length() == 0) data.strTime = match.group(1);
       }
       super.parse(field, data);
     }
