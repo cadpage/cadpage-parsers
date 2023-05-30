@@ -53,7 +53,7 @@ public class NYMadisonCountyDParser extends FieldProgramParser {
       }
       parseAddress(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
@@ -103,6 +103,11 @@ public class NYMadisonCountyDParser extends FieldProgramParser {
     public String getFieldNames() {
       return "PHONE GPS " + super.getFieldNames();
     }
+  }
+
+  @Override
+  public String adjustMapAddress(String addr) {
+    return addr.replace("TRNPK", "TURNPIKE");
   }
 
   private static final CodeTable CALL_CODES = new StandardCodeTable();

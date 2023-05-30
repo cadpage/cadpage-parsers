@@ -12,13 +12,33 @@ public class OHButlerCountyBParser extends FieldProgramParser {
    */
 
   public OHButlerCountyBParser () {
-    super("BUTLER COUNTY", "OH",
-          "ADDRESS:ADDRCITYST! LOCATION_NAME:PLACE! CROSS_STREETS:X! CALL_TYPE:CALL! ADDITIONAL_CALL_TYPE:CALL/SDS! UNITS:UNIT! CALLER_NAME:NAME! CALLER_PHONE#:PHONE! DETAILS:INFO! REPORT_#:ID! END");
+    this("BUTLER COUNTY", "OH");
+  }
+
+  public OHButlerCountyBParser (String defCity, String defState) {
+    super(defCity, defState,
+          "ADDRESS:ADDRCITYST! LOCATION_NAME:PLACE! CROSS_STREETS:X! CALL_TYPE:CALL! ADDITIONAL_CALL_TYPE:CALL/SDS! UNITS:UNIT! CALLER_NAME:NAME! CALLER_PHONE#:PHONE! PROQA_CHIEF_COMPLAINT:LINFO/N? PROQA_SUMMARY:LINFO/N? DETAILS:INFO/N! REPORT#:ID! END");
   }
 
   @Override
   public String getFilter() {
     return "no-reply@zuercherportal.com";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "OHButlerCountyB";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (body.startsWith("<meta ")) {
+      int pt = body.indexOf("\nADDRESS:");
+      if (pt < 0) return false;
+      body = body.substring(pt+1);
+    }
+    body = body.replace(" REPORT #:", " REPORT#:");
+    return super.parseMsg(body, data);
   }
 
   @Override
