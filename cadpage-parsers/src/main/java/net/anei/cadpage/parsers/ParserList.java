@@ -196,6 +196,8 @@ public class ParserList {
               ,"ARPulaskiCounty"                ,"Pulaski County, AR"
               ,"ARSebastianCounty"              ,"Sebastian County, AR"
               ,"ARWashingtonCounty"             ,"Washington County, AR"
+              ,"ARWhiteCounty"                  ,"White County, AR"
+
           ),
           new ParserCategory("California"
               ,"CAAlamedaCounty"                ,"Alameda County, CA"
