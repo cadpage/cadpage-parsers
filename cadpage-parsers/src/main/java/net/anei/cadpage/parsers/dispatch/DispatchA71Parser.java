@@ -55,6 +55,8 @@ public class DispatchA71Parser extends FieldProgramParser {
       field = MSPACE_PTN.matcher(field).replaceAll(" ");
       if (field.equals(data.strPlace)) data.strPlace = "";
 
+      field = stripFieldStart(field, "Intersection Of ");
+
       Matcher match = ADDR_SECTOR_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1);
