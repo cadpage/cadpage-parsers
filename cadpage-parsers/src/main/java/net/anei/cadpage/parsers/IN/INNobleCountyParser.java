@@ -11,9 +11,9 @@ public class INNobleCountyParser extends DispatchA19Parser {
   public INNobleCountyParser() {
     super("NOBLE COUNTY", "IN");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@alert.active911.com";
+    return "@alert.active911.com,donotreply@nobleco.us";
   }
 }
