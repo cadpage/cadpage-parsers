@@ -25,7 +25,7 @@ public class DispatchA18Parser extends FieldProgramParser {
 
   public DispatchA18Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "CALL ADDR X BOX! EMPTY+? ( DASHES EMPTY+? DATETIME SRC SRC | ) INFO/N+? ID_UNIT ID_UNIT+? INFO/N+");
+          "CALL ADDR X/Z? BOX! EMPTY+? ( DASHES EMPTY+? DATETIME SRC SRC | ) INFO/N+? ID_UNIT ID_UNIT+? INFO/N+");
   }
 
   @Override
@@ -39,7 +39,7 @@ public class DispatchA18Parser extends FieldProgramParser {
     if (pt >= 0) {
       body = body.substring(0,pt).trim();
     }
-    return parseFields(body.split("\n"), 4, data);
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
@@ -205,10 +205,21 @@ public class DispatchA18Parser extends FieldProgramParser {
 
   private class MyBoxField extends BoxField {
     @Override
-    public void parse(String field, Data data) {
-      if (!field.startsWith("Fire Box =")) abort();
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("Fire Box =")) return false;
       field = field.substring(10).trim();
       super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
