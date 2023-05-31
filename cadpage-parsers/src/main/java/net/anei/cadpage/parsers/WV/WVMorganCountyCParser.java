@@ -14,7 +14,7 @@ public class WVMorganCountyCParser extends DispatchX01Parser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "fromcad\nCAD\n");
-    body = body.replace("&", "&amp;");
+    body = body.replace("&<", "<").replace("&", "&amp;");
     if (!super.parseHtmlMsg(subject, body, data)) return false;
 
     int pt = data.strCity.indexOf('/');

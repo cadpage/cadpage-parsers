@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.dispatch;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -51,20 +52,34 @@ public class DispatchX01Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]|(?:APT|LOT|ROOM|RM|SUITE) +(\\S*) *(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(';');
-      if (pt >= 0) {
-        data.strPlace = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
+      for (String part : field.split(";")) {
+        part = part.trim();
+        if (data.strAddress.isEmpty()) {
+          super.parse(part, data);
+        } else {
+          Matcher match = APT_PTN.matcher(part);
+          if (match.matches()) {
+            String apt = match.group(1);
+            if (apt == null) {
+              apt = part;
+              part = "";
+            } else {
+              part = match.group(2);
+            }
+            data.strApt = append(data.strApt, "-", apt);
+          }
+          data.strPlace = append(data.strPlace, " - ", part);
+        }
       }
-      super.parse(field, data);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " PLACE";
+      return "ADDR APT PLACE";
     }
   }
 
@@ -86,7 +101,7 @@ public class DispatchX01Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - (?:(?:D\\d+|[A-Z]\\.) )?[A-Za-z]+\\b *| *\n *");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - (?:(?:D\\d+|[A-Z]\\.) )?[A-Za-z]+(?: - From: *[-A-Z0-9]*)?\\b *| *\n *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {

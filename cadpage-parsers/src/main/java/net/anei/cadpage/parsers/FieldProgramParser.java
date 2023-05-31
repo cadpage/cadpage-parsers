@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -1017,7 +1018,7 @@ public class FieldProgramParser extends SmartAddressParser {
     Data data;
     private List<Field> fieldList = new ArrayList<>();
     private String fieldName = null;
-    private boolean done = false;
+    private StringBuilder fieldValue = new StringBuilder();
 
     public XMLHandler(Data data) {
       this.data = data;
@@ -1025,22 +1026,35 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+      if (ignoreElement(qName)) return;
       fieldName = qName;
-      done = false;
+      fieldValue.setLength(0);
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-      done = true;
       String value = new String(ch, start, length);
-      processField(value);
+      fieldValue.append(value);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (!done) processField("");
-      done = false;
+      if (ignoreElement(qName)) return;
+      processField(fieldValue.toString());
       fieldName = null;
+      fieldValue.setLength(0);
+    }
+
+    @Override
+    public void fatalError(SAXParseException ex) throws SAXException {
+      if (fieldName != null) {
+        processField(fieldValue.toString());
+      }
+      super.fatalError(ex);
+    }
+
+    private boolean ignoreElement(String name) {
+      return name.equals("span");
     }
 
     private void processField(String value) throws SAXException {
@@ -1055,7 +1069,7 @@ public class FieldProgramParser extends SmartAddressParser {
       // and use it to process this value
       if (step.field != null) {
         try {
-          step.field.parse(value, data);
+          step.field.parse(decodeHtmlField(value.trim()), data);
         } catch (FieldProgramException ex) {
           throw new SAXException(ex);
         }
