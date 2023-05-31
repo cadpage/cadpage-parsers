@@ -7,6 +7,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class CATuolumneCountyParser extends GroupBestParser {
   public CATuolumneCountyParser() {
-    super(new CATuolumneCountyAParser(), new CATuolumneCountyBParser());
+    super(new CATuolumneCountyBParser());
   }
 }

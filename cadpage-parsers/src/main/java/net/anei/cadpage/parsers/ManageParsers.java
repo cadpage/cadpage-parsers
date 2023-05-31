@@ -214,7 +214,9 @@ public class ManageParsers {
         "OHMontgomeryCountyC2","OHMontgomeryCountyA",    // 12/19/2022
         "COClearCreekCountyB","ClearCreekCountyA",       // 05/02/2023
         "CORioBlancoCountyB", "CORioBlancoCountyB",
-        "GAMurrayCountyA",    "GAMurrayCountyB"
+        "GAMurrayCountyA",    "GAMurrayCountyB",
+        "CACalaverasCountyA", "CACalaverasCountyB",      // 05/30/2023
+        "CATuolumneCountyA",  "CATuolumneCountyB"
   });
 
 }
