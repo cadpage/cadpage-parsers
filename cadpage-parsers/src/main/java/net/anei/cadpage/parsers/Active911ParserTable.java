@@ -1266,6 +1266,7 @@ public class Active911ParserTable {
       "US/MO/HarrisonCounty",             "MOHarrisonCounty",
       "US/MO/HenryCounty",                "MOHenryCounty",
       "US/MO/HermannAreaEMS",             "MOGasconadeCountyB",
+      "US/MO/HickoryCounty",              "MOHickoryCounty",
       "US/MO/HighRidgeFD",                "MOJeffersonCounty",
       "US/MO/HoltCounty",                 "MOHoltCounty",
       "US/MO/HowardCounty",               "MOHowardCounty",
