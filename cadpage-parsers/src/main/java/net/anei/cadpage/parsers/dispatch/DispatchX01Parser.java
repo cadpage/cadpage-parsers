@@ -44,10 +44,28 @@ public class DispatchX01Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("TIMEDATE")) return new TimeDateField("\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4}", true);
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        data.strPlace = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
+    }
   }
 
   private class MySourceField extends SourceField {
