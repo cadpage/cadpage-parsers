@@ -31,6 +31,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
       data.msgType = MsgType.GEN_ALERT;
       body = body.replace(',', ';');
     }
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
 
