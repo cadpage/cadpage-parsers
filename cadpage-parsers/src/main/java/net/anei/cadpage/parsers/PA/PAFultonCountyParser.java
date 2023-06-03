@@ -7,11 +7,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchArchonixParser;
 
 
 public class PAFultonCountyParser extends DispatchArchonixParser {
-  
+
   public PAFultonCountyParser() {
-    super(CITY_CODES, "FULTON COUNTY", "PA");
+    super(CITY_CODES, MA_CITY_CODES, "FULTON COUNTY", "PA", 0);
   }
-  
+
   @Override
   public String getFilter() {
     return "EP911@ccpa.net";
@@ -19,7 +19,7 @@ public class PAFultonCountyParser extends DispatchArchonixParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
 
-      "AR", "AYR TWP", 
+      "AR", "AYR TWP",
       "BC", "BRUSH CREEK TWP",
       "BL", "BELFAST TWP",
       "BT", "BETHEL TWP",
@@ -32,8 +32,15 @@ public class PAFultonCountyParser extends DispatchArchonixParser {
       "UN", "UNION TWP",
       "VH", "VALLEY-HI",
       "WL", "WELLS TWP",
-      
-      "FC", "FRANKLIN COUNTY",
-      "HC", "HUNTINGDON COUNTY"
+
+      "CBG", "CHAMBERSBURG",
+      "FC",  "FRANKLIN COUNTY",
+      "HC",  "HUNTINGDON COUNTY"
+  });
+
+  private static final Properties MA_CITY_CODES = buildCodeTable(new String[] {
+      "CBG", "CHAMBERSBURG",
+      "FC",  "FRANKLIN COUNTY",
+      "HC",  "HUNTINGDON COUNTY"
   });
 }

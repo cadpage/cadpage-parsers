@@ -1,9 +1,10 @@
 #! /bin/bash
-find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -m 3 \
+find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E -m 3 \
    -e 'PARSE FAILURE' \
    -e '"ADDR:[A-Za-z0-9].*[^-&()/.'\'' A-Za-z0-9].*"' \
    -e '"CITY:.*[^- A-Za-z]"' \
    -e '"CITY:[A-Z]{1,3}"' \
-   {} + | grep -v \
+   {} + | grep -E -v \
    -e 'BaseParserTest.java' \
-   -e '"CITY:[0-9]{5}"'
+   -e '"CITY:[0-9]{5}"' \
+   -e '"ADDR:(LAT:|LL)'
