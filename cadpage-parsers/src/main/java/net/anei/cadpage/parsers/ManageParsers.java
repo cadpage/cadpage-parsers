@@ -182,26 +182,6 @@ public class ManageParsers {
 
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "NYSuffolkCountyI",   "NYSuffolkCountyF",        // 01/21/2017
-        "CAYebaCounty",       "CAYubaCounty",            // 04/10/2017
-        "OHPrebleCountyA",    "OHPrebleCounty",          // 06/06/2017
-        "OHPrebleCountyB",    "OHPrebleCounty",
-        "CASanDiegoCountyB",  "CASanDiegoCountyA",       // 08/05/2017
-        "NCHavelock",         "NCCravenCounty",          // 02/18/2018
-        "TXWharton",          "TXWhartonCounty",         // 03/29/2018
-        "ZCAONMississauga",   "ZCAONSimcoeCountyB",      // 06/01/2018
-        "ZCABCMidIslandRegion","ZCABCVancouverIsland",   // 06/24/2018
-        "ZSECTConnect",       "ZSESweden",               // 10/02/2018
-        "COJeffersonCountyB", "COJeffersonCountyD",      // 10/16/2018
-        "WIKenoshaCountyE",   "WIKenoshaCountyD",        // 12/13/2018
-        "INHamiltonCountyD",  "INHamiltonCountyC",       // 05/11/2019
-        "TNWashingtonCountyA","TNWashingtonCounty",      // 08/03/2019
-        "TNWashingtonCountyB","TNWashingtonCounty",      // 08/03/2019
-        "TNWashingtonCOunty", "TNWashingtonCounty",      // 08/06/2019  *oops*
-        "TXKeller",           "TXTarrantCounty",         // 01/05/2020
-        "CTGroton",           "CTNewLondonCounty",       // 01/18/2020
-        "ILRandolphCountyB",  "ILMonroeCounty",          // 01/29/2020
-        "NCStanlyCountyA",    "NCStanlyCountyB",         // 11/28/2020
         "CAStockton",         "CASanJoaquinCounty",      // 05/21/2021
         "SDKiowaCounty",      "KSKiowaCounty",           // 06/07/2021
         "TXSeguin",           "TXGuadalupeCounty",       // 11/09/2021
@@ -216,7 +196,8 @@ public class ManageParsers {
         "CORioBlancoCountyB", "CORioBlancoCountyB",
         "GAMurrayCountyA",    "GAMurrayCountyB",
         "CACalaverasCountyA", "CACalaverasCountyB",      // 05/30/2023
-        "CATuolumneCountyA",  "CATuolumneCountyB"
+        "CATuolumneCountyA",  "CATuolumneCountyB",
+        "PAArmstrongCountyA", "General"                 // 06/03/2023
   });
 
 }
