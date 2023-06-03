@@ -3033,7 +3033,7 @@ public abstract class SmartAddressParser extends MsgParser {
     // GPS Coordinates can now contain blanks or colons, which we need to go to some trouble
     // to temporarily replace so they do not result in the coordinates being broken up
     if (gpsCoords != null) {
-      String altGPSCoords = gpsCoords.replaceAll(".", "~");
+      String altGPSCoords = gpsCoords.replaceAll(".", "~").replace('\n', '~');
       searchAddress = searchAddress.replace(gpsCoords, altGPSCoords);
     }
 

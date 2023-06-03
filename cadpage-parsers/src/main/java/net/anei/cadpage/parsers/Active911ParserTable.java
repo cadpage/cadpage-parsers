@@ -479,6 +479,7 @@ public class Active911ParserTable {
       "US/GA/DecaturCounty",              "GADecaturCountyC",
       "US/GA/DoolyCounty",                "GADoolyCountyA",
       "US/GA/DoolyHighFD",                "GADoolyCountyB",
+      "US/GA/ECFEmanuelCountyFire",       "GAEmanuelCounty",
       "US/GA/EffinghamCounty",            "GAEffinghamCountyA",
       "US/GA/EffinghamSheriffs",          "GAEffinghamCountyB",
       "US/GA/ElbertCounty",               "GAElbertCounty",
