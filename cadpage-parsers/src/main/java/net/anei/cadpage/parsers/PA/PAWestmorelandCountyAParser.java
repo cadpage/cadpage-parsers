@@ -37,7 +37,7 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
-    body = body.replace("X-sts:", "X-ST:").replace("Inc#:", "Inc:").replaceAll("\\s+", " ");
+    body = body.replace("X-sts:", "X-ST:").replace("Inc#:", "Inc:").replace(" CTLL:", " LL:").replaceAll("\\s+", " ");
 
     if (!super.parseMsg(body, data)) return false;
 
@@ -80,6 +80,14 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
     @Override
     public void parse(String fld, Data data) {
       boolean first = true;
+      if (fld.startsWith("LL(")) {
+        int pt = fld.indexOf(')');
+        if (pt >= 0) {
+          data.strAddress = fld.substring(0,pt+1);
+          fld = fld.substring(pt+1).trim();
+          first = false;
+        }
+      }
       for (String part : fld.split(":")) {
         part = part.trim();
         if (first) {
@@ -143,8 +151,8 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = INFO_CITY_GPS_PTN.matcher(field);
       if (match.lookingAt()) {
-        if (data.strCity.length() == 0) data.strCity = match.group(1).trim();
-        if (data.strGPSLoc.length() == 0) setGPSLoc(match.group(2), data);
+        if (data.strCity.isEmpty()) data.strCity = match.group(1).trim();
+        if (data.strGPSLoc.isEmpty()) setGPSLoc(match.group(2), data);
         field = field.substring(match.end());
       }
       super.parse(field, data);
