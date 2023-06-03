@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA50Parser;
  * Mercer County, PA
  */
 public class PAMercerCountyAParser extends DispatchA50Parser {
-  
+
   public PAMercerCountyAParser() {
     super(CALL_CODES, null, "MERCER COUNTY", "PA");
     setupCities(CITY_CODES);
@@ -22,22 +22,22 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
     setupCities(OHIO_CITIES);
     setupSpecialStreets("HAYES ORANGEVILLE");
   }
-  
+
   @Override
   public String getFilter() {
     return "@mcc.co.mercer.pa.us,911-CENTER@leoc.net";
   }
-  
+
   private static final Pattern CO_911_PTN = Pattern.compile("(.*?)[- ]+9-?1-?1");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("IPS I/Page Notification")) return false;
     if (!super.parseMsg(body, data)) return false;
-    
+
     boolean inCounty = data.strCity.length() == 4;
     data.strCity = convertCodes(data.strCity, CITY_CODES);
-    
+
     if (data.strCity.length() == 0) {
       String name = data.strName.toUpperCase();
       Matcher match = CO_911_PTN.matcher(name);
@@ -50,15 +50,20 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
         data.strCity = "CRAWFORD COUNTY";
       }
     }
+    int pt = data.strAddress.indexOf(':');
+    if (pt >= 0) {
+      data.strCity = data.strAddress.substring(pt+1).trim();
+      data.strAddress = data.strAddress.substring(0,pt).trim();
+    }
     if (!inCounty & OHIO_CITIES.contains(data.strCity.toUpperCase())) data.strState = "OH";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   private static final Set<String> COUNTY_SET = new HashSet<String>(Arrays.asList(
       "BUTLER",
       "CRAWFORD",
@@ -66,8 +71,8 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "MAHONING",
       "TRUMBULL",
       "VENANGO"
-  )); 
-  
+  ));
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CLRK",  "CLARK",
       "COOL",  "COOLSPRING TWP",
@@ -117,7 +122,7 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "WILM",  "WILMINGTON TWP",
       "WOLF",  "WOLF CREEK TWP",
       "WRTH",  "WORTH TWP",
-      
+
       "COOLSPRING",  "COOLSPRING TWP",
       "DEER CREEK",  "DEER CREEK TWP",
       "DELAWARE",    "DELAWARE TWP",
@@ -125,7 +130,7 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "FAIRVIEW",    "FAIRVIEW TWP",
       "FINDLEY",     "FINDLEY TWP",
       "FRENCH CREEK","FRENCH CREEK TWP",
-      "GREENE",      "GREENE TWP",      
+      "GREENE",      "GREENE TWP",
       "HEMPFIELD",   "HEMPFIELD TWP",
       "JACKSON",     "JACKSON TWP",
       "JEFFERSON",   "JEFFERSON TWP",
@@ -148,13 +153,13 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "WOLF CREEK",  "WOLF CREEK TWP",
       "WORTH",       "WORTH TWP"
   });
-      
+
   private static final String[] REG_CITY_LIST = new String[]{
-      
+
       "FARRELL",
       "HERMITAGE",
       "SHARON",
-      
+
       "CLARK",
       "FREDONIA",
       "GREENVILLE",
@@ -169,20 +174,20 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "STONEBORO",
       "WEST MIDDLESEX",
       "WHEATLAND",
-      
+
       // Crawford County
       "ADAMSVILLE"
   };
-  
+
   private static final Set<String> OHIO_CITIES = new HashSet<String>(Arrays.asList(
       "BUTLER COUNTY",
       "BUTLER CO",
-      
+
       "CHERRY TWP",
-      
+
       "TRUMBLE COUNTY",
       "TRUMBLE CO",
-      
+
       "CORTLAND",
       "GIRARD",
       "HUBBARD",
@@ -190,13 +195,13 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "NILES",
       "WARREN",
       "YOUNGSTOWN",
-      
+
       "LORDSTOWN",
       "MCDONALD",
       "ORANGEVILLE",
       "WEST FARMINGTON",
       "YANKEE LAKE",
-      
+
       "BAZETTA",
       "BLOOMFIELD",
       "BRACEVILLE",
@@ -221,7 +226,7 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "VIENNA",
       "WARREN",
       "WEATHERSFIELD",
-      
+
       "BAZETTA TWP",
       "BLOOMFIELD TWP",
       "BRACEVILLE TWP",
@@ -246,9 +251,9 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "VIENNA TWP",
       "WARREN TWP",
       "WEATHERSFIELD TWP",
-      
+
       "LORDSTOWN TOWNSHIP",
-      
+
       "BOLINDALE",
       "BROOKFIELD CENTER",
       "CHAMPION HEIGHTS",
@@ -262,7 +267,7 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "SOUTH CANAL",
       "VIENNA CENTER",
       "WEST HILL",
-      
+
       "BRISTOLVILLE",
       "BURGHILL",
       "CENTER OF THE WORLD",
@@ -273,7 +278,7 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "NORTH BLOOMFIELD",
       "SOUTHINGTON"
   ));
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "AF",   "Fire-Admin Activity",
       "ANML", "Animal Rescue",
@@ -311,8 +316,8 @@ public class PAMercerCountyAParser extends DispatchA50Parser {
       "TREE", "Tree down",
       "UNKF", "Unknown Type Fire",
       "UTL",  "Utility Lines Down"
-      
+
       // Unknown codes
-      // ABD, ALLER, ASST, BLEED, BOMB, BURN, CHEST, DIAB, DMV, DROWN, FALL, FADM, FUEL, HEAD, HEART, INJP, MISP, MVF, ODR, OOS, PSYCH, PUMP, SICK, SEIZE, SMO, TEST, TRAS 
+      // ABD, ALLER, ASST, BLEED, BOMB, BURN, CHEST, DIAB, DMV, DROWN, FALL, FADM, FUEL, HEAD, HEART, INJP, MISP, MVF, ODR, OOS, PSYCH, PUMP, SICK, SEIZE, SMO, TEST, TRAS
   });
 }
