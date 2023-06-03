@@ -21,13 +21,12 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
   }
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{7}) +");
-  private static final Pattern LEAD_EVENT_PTN = Pattern.compile("EVENT: *([EF]\\d{7}) +/([A-Z]{4}) +");
+  private static final Pattern LEAD_EVENT_PTN = Pattern.compile("EVENT: *([EF]\\d{7})(?: +/([A-Z]{4})| HYDRANT OOS -| [A-Z ]+:)? +");
   private static final Pattern LEAD_APT_PTN = Pattern.compile("#(\\S+) +");
   private static final Pattern MASTER1 = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) #(F\\d{7}) at (.*?), Note:(.*) -");
   private static final Pattern DATE_TIME_MARKER = Pattern.compile("^(\\d\\d:\\d\\d:\\d\\d) (?:(\\d\\d-\\d\\d-\\d\\d) )?+(?:EVENT: *([A-Z]\\d+) +)?");
   private static final Pattern SPECIAL_ALERT1_PTN = Pattern.compile("^#([A-Z]\\d+) at (.*?), Note: (.*)");
   private static final Pattern SPECIAL_CITY_PTN = Pattern.compile("(.*?) +([A-Z]{4})");
-  private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
   private static final Pattern COMMA_DELIM = Pattern.compile(",(?=BOX:|TIME:|NOTES:)");
   private static final Pattern START_UNIT_MARK_PTN = Pattern.compile("(?:[A-Z0-9,]+,)?\\d+-\\d[ ,].*");
   private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
@@ -104,7 +103,12 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
     body = body.replace(",I#", " I#:");
     body = COMMA_DELIM.matcher(body).replaceAll(" ");
     if (super.parseMsg(body, data)) {
-      if (data.strAddress.isEmpty() || data.strAddress.equals("&") || data.strAddress.startsWith("EVENT:")) {
+      int pt = data.strAddress.indexOf(" - ");
+      if (pt >= 0) {
+        data.strCity = data.strAddress.substring(pt+3).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
+      if (data.strAddress.isEmpty() || data.strAddress.equals("&")) {
         data.strAddress = "";
         parseAddress(data.strCross, data);
         data.strCross = "";
@@ -123,8 +127,13 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
     return false;
   }
 
+  private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
+  private static final Pattern APT_PLACE_PTN = Pattern.compile(": *([^@: ]*?) +@");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
+
   protected void parseAddress(String addr, Data data) {
 
+    // Check for trailing apt pattern
     String apt = "";
     Matcher match = APT_PTN.matcher(addr);
     if (match.find()) {
@@ -132,19 +141,34 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
       addr = addr.substring(0,match.start()).trim();
     }
 
-    int pt = addr.indexOf(": @");
-    if (pt >= 0) {
-      data.strPlace = addr.substring(pt+3).trim();
-      addr = addr.substring(0,pt).trim();
-    }
-
-    match = APT_PTN.matcher(addr);
+    // Break up address by second apt/place pattern
+    match = APT_PLACE_PTN.matcher(addr);
     if (match.find()) {
-      apt = append(match.group(1), "-", apt);
-      addr = addr.substring(0,match.start()).trim();
+      String newAddr = "";
+      String apt2 = "";
+      int lastPt = 0;
+      do {
+        String temp = addr.substring(lastPt, match.start()).trim();
+        if (lastPt == 0) {
+          newAddr = temp;
+        } else {
+          data.strPlace = append(data.strPlace, " - ", temp);
+        }
+        apt2 = append(apt2, "-", match.group(1));
+        lastPt = match.end();
+      } while (match.find());
+      data.strPlace = append(data.strPlace, " - ", addr.substring(lastPt).trim());
+      addr = newAddr;
+      apt = append(apt2, "-", apt);
     }
 
-    parseAddress(StartType.START_ADDR, FLAG_EMPTY_ADDR_OK | FLAG_ANCHOR_END, addr, data);
+    // Strip off trailing city
+    parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, addr, data);
+    addr = getStart();
+
+    addr = stripFieldEnd(addr, ": EST");
+    addr = MSPACE_PTN.matcher(addr).replaceAll(" ");
+    super.parseAddress(addr, data);
 
     data.strApt = append(data.strApt, "-", apt);
     match = APT_PTN.matcher(data.strPlace);
@@ -171,7 +195,7 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
     checkDoubleCity(data);
 
-    pt = data.strAddress.toUpperCase().indexOf(": ALIAS ");
+    int pt = data.strAddress.toUpperCase().indexOf(": ALIAS ");
     if (pt >= 0) {
       String alias = data.strAddress.substring(pt+8).trim();
       data.strAddress = data.strAddress.substring(0,pt).trim();
