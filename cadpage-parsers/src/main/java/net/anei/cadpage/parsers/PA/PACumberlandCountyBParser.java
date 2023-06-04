@@ -212,7 +212,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
         "LANDISBURG",
       "SPRING TWP",
       "CARROLL TWP",
-      "RYE",
+      "RYE TWP",
       "MARYSVILLE",
       "MARYSVILLE BORO",
 
