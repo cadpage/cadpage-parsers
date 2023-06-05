@@ -179,7 +179,7 @@ public class Active911ParserTable {
       "US/AR/LifeNetEms",                 "ARGarlandCountyA",
       "US/AR/Maumelle",                   "ARPulaskiCountyD",
       "US/AR/NortheastLakeside",          "ARBaxterCounty",
-      "US/AR/NWAMetroChiefs",             "ARBentonCountyA,ARBentonCountyB,ARBentonCountyC,ARBentonCountyF,OHHamiltonCountyA",
+      "US/AR/NWAMetroChiefs",             "ARBentonCountyA,ARBentonCountyB,ARBentonCountyC,ARBentonCountyF",
       "US/AR/PopeCounty",                 "ARPopeCountyA",
       "US/AR/PopeCountyERT",              "ARPopeCountyB",
       "US/AR/PulaskiCounty",              "ARPulaskiCounty",
