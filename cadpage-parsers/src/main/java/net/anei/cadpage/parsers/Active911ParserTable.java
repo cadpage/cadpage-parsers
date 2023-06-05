@@ -2151,7 +2151,7 @@ public class Active911ParserTable {
       "US/SC/CityofMauldin",              "SCGreenvilleCountyE",
       "US/SC/ClarendonCounty",            "SCClarendonCounty",
       "US/SC/ClarendonCountyFD",          "SCClarendonCounty",
-      "US/SC/CoastalCrisis",              "General",
+      "US/SC/CoastalCrisis",              "SCCharlestonCountyA",
       "US/SC/DarlingtonCounty",           "SCDarlingtonCounty",
       "US/SC/DillonCounty",               "SCDillonCounty",
       "US/SC/DonaldsonCenterFD",          "SCGreenvilleCountyE",
