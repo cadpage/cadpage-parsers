@@ -29,7 +29,7 @@ public class ORMarionCountyBParser extends DispatchH05Parser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_CR;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_CR;
   }
 
   @Override
