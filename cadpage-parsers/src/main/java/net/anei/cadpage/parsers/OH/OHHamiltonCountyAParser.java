@@ -73,7 +73,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CH")) return new ChannelField("(?:\\b(?:[A-Z]{2,3}\\d{1,2}|NECC)\\b ?)*", true);
+    if (name.equals("CH")) return new ChannelField("(?:\\b(?:[A-Z]{2,3}\\d{1,2}|NECC|NEFG\\d)\\b ?)*", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
