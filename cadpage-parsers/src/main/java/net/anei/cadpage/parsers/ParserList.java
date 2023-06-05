@@ -1782,6 +1782,7 @@ public class ParserList {
               ,"VAAlbemarleCounty"              ,"Albemarle County, VA"
               ,"VAAlexandria"                   ,"Alexandria, VA"
               ,"VAAmeliaCounty"                 ,"Amelia County, VA"
+              ,"VAAmherstCounty"                ,"Amherst County, VA"
               ,"VAAppomattoxCounty"             ,"Appomattox County, VA"
               ,"VAArlingtonCounty"              ,"Arlington County, VA"
               ,"VAAugustaCounty"                ,"Augusta County, VA"

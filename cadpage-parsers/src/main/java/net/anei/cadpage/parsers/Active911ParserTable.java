@@ -2468,6 +2468,7 @@ public class Active911ParserTable {
       "US/VA/Alexandria",                 "VAAlexandria",
       "US/VA/AMCOM",                      "GeneralAlert",
       "US/VA/AmeliaCounty",               "VAAmeliaCountyB",
+      "US/VA/AmherstCounty",              "VAAmherstCounty",
       "US/VA/AppomattoxCounty",           "VAAppomattoxCounty",
       "US/VA/Arcatus",                    "VALoudounCountyB",
       "US/VA/ArlingtonEmployeeAlerts",    "VAFallsChurch",
