@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Schuylkill County, PA
  */
 public class PASchuylkillCountyParser extends FieldProgramParser {
-  
+
   public PASchuylkillCountyParser() {
     super(CITY_LIST, "SCHUYLKILL COUNTY", "PA",
           "RESPOND_TO:ADDRCITY! FOR_A:CODE_CALL! OPS_CHNL:CH? TIME:TIME? TRUCKS:UNIT CN:PLACE INFO+");
@@ -38,10 +38,10 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
   private static final Pattern REPAGE_PTN = Pattern.compile("REPAGE[ \\.]+");
   private static final Pattern SRC_PTN = Pattern.compile("(.*) - ([A-Z]*[a-z][A-Za-z ]*\\d*|[A-Z][A-Z ]+(?:FIRE|FC|EMS))", Pattern.DOTALL);
   private static final Pattern MISSING_BREAK_PTN = Pattern.compile(" (?=FOR A:|TRUCKS:|TIME:)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     int pt = body.indexOf("\n\n---\n");
     if (pt >= 0) {
       String tail = body.substring(pt);
@@ -53,9 +53,9 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     if (!isMultiMsg() && body.length() >= 238) data.expectMore = true;
-    
+
     Matcher match = PREFIX_PTN1.matcher(body);
     String time = null;
     if (match.lookingAt()) {
@@ -67,10 +67,10 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
       data.strSource = match.group(1);
       body = body.substring(match.end());
     }
-    
+
     match = REPAGE_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
-    
+
     match = SRC_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(1).trim();
@@ -82,15 +82,15 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     if (time != null) data.strTime = time;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     String prog = "PRI " + super.getProgram() + " SRC";
     if (prog.indexOf("TIME") < 0) prog = "TIME " + prog;
     return prog;
   }
-  
-  
+
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -98,7 +98,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     if (name.equals("PLACE")) return new MyPlaceField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_TWSP_PTN = Pattern.compile("\\bTWSP\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_INTERSECT_PTN = Pattern.compile("(.*?)-(\\d\\d)(?:_HOLD)?/(.*)");
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?)-(\\d\\d) (\\(.*\\))");
@@ -109,19 +109,19 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
         data.strAddress = field;
         return;
       }
-      
+
       field = ADDR_TWSP_PTN.matcher(field).replaceAll("TWP");
-      Matcher match = ADDR_INTERSECT_PTN.matcher(field); 
+      Matcher match = ADDR_INTERSECT_PTN.matcher(field);
       if (match.matches()) {
         parseAddress(match.group(1).trim() + " & " + match.group(3).trim(), data);
         data.strCity = convertCodes(match.group(2), CITY_CODES);
       }
-      
+
       else if ((match = ADDR_CITY_PTN.matcher(field)).matches()) {
         parseAddress(match.group(1).trim() + " " + match.group(3), data);
         data.strCity = convertCodes(match.group(2), CITY_CODES);
       }
-      
+
       else {
         boolean found = false;
         String city = "";
@@ -152,13 +152,13 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
         if (data.strCity.length() == 0) data.strCity = city;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT";
     }
   }
-  
+
   private class MyCodeCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -176,7 +176,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -186,7 +186,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[] {
 
     // Cities
@@ -332,11 +332,11 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     "SOUTH TAMAQUA",
     "STILL CREEK",
     "WEISHAMPLE",
-    
+
     // Other
     "FAIRLANE MALL",
     "SCH MALL",
-    
+
     // Berks County
     "BERKS",
     "ALBANY TWP",
@@ -347,7 +347,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     "UPPER BERN TWP",
     "UPPER TULPEHOCKEN TWP",
     "WINDSOR TWP",
-    
+
     // Carbon County
     "CARBON",
     "CARBON CO",
@@ -362,14 +362,14 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     "PACKER TWP",
     "SUMMIT HILL",
     "TRESKOW",
-    
+
     // Columbia County
     "COLUMBIA",
     "BEAVER TWP",
     "CENTRALIA",
     "CONYNGHAM TWP",
     "ROARING CREEK TWP",
-    
+
     // Dauphin County
     "DAUPHIN COUNTY",
     "BERRYSBURG",
@@ -380,22 +380,22 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     "RUSH TWP",
     "WILLIAMS TWP",
     "WILLIAMSTOWN",
-    
+
     // Lebanon County
     "LEBANON",
     "COLD SPRING TWP",
     "UNION TWP",
-    
+
     // Lehigh County
     "LEHIGH",
     "HEIDELBERG TWP",
     "LYNN TWP",
-    
+
     // Luzerne County
     "LUZERNE",
     "BLACK CREEK TWP",
     "HAZLE TWP",
-    
+
     // Northumberland County
     "NORTHUMBERLAND",
     "EAST CAMERON TWP",
@@ -405,7 +405,7 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
     "MT CARMEL TWP",
     "UPPER MAHANOY TWP"
   };
-  
+
   private static final Properties CITY_ABBRV = buildCodeTable(new String[]{
       "BANKS TWP-CARBON CO", "BANKS TWP",
       "BERKS",        "BERKS COUNTY",
@@ -421,36 +421,49 @@ public class PASchuylkillCountyParser extends FieldProgramParser {
       "UPPER MAHANTONoO TWP", "UPPER MAHANTONGO TWP",
       "SCH MALL",     "SCHUYLKILL MALL"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "01", "BARRY TWP",
+      "02", "BLYTHE TWP",   //??
       "03", "BRANCH TWP",
       "04", "ASHLAND",
       "05", "POTTSVILLE",
+      "06", "DELANO TWP",
+      "07", "EAST BRUNSWICK TWP",
       "08", "POTTSVILLE",
       "10", "PITMAN",
       "11", "FOSTER TWP",
+      "12", "PORTER TWP",
       "13", "HEGINS",
       "14", "HUBLEY TWP",
+      "16", "MAHONEY TWP",
       "17", "POTTSVILLE",
       "18", "NORTH MANHEIM TWP",
       "20", "MINERSVILLE",
       "21", "PINE GROVE",
       "22", "PORTER TWP",
+      "24", "REILY TWP",
+      "25", "RUSH TWP",
+      "26", "RYAN TWP",
       "27", "TAMAQUA",
       "28", "AUBURN",
       "29", "TREMONT TWP",
+      "32", "WALKER TWP",
       "33", "WASHINGTON TWP",
       "34", "POTTSVILLE",
       "35", "ORWIGSBURG",
-      "36", "FRACKVILLE",
+      "36", "WEST MAHONEY TWP",
       "37", "WEST PENN TWP",
       "41", "CRESSONA",
+      "43", "FRACKVILLE",
       "52", "MINERSVILLE",
+      "54", "BLYTHE TWP",
       "57", "POTTSVILLE",
       "58", "PINE GROVE",
       "62", "SAINT CLAIR",
       "63", "SCHUYLKILL HAVEN",
       "65", "TAMAQUA",
+      "66", "TOWER CITY",
       "67", "TREMONT",
       "68", "POTTSVILLE"
   });
