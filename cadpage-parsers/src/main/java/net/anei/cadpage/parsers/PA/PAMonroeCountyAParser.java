@@ -10,24 +10,25 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class PAMonroeCountyAParser extends FieldProgramParser {
-  
+
   public PAMonroeCountyAParser() {
     super("MONROE COUNTY", "PA",
-          "( Caller:NAME! Caller:PHONE! | ) " + 
-          "( Priority:PRI! CALL! ADDRCITY/S6! PLACE! X_ST:X! GPS! " +
-          "| CALL! ADDRCITY/ZS6! X_STS:X! GPS! " + 
-          "| CALL! CALL/SDS! ADDRCITY/ZS6! X_STS:X! GPS! " + 
-          "| CALL! CALL/SDS! ADDRCITY/ZS6! PLACE! X_STS:X! GPS! " + 
-          "| ADDRCITY/S6! Priority:PRI? CALL! PLACE! X_ST:X! GPS! ) INFO/N+");
+          "( Priority:PRI! CALL! ADDRCITY/S6! PLACE! PLACE/SDS+ X_ST:X! " +
+          "| CALL! Priority:PRI! CALL/SDS ADDRCITY/S6! X_ST:X! " +
+          "| CALL! ADDRCITY/ZS6! Priority:PRI! CALL/SDS CALL/SDS+ X_ST:X! " +
+          "| CALL! CALL/ZSDS ADDRCITY/ZS6! Priority:PRI! CALL/SDS CALL/SDS+ X_ST:X! " +
+          "| SELECT/X_STS CALL! CALL/SDS+? ADDRCITY/ZS6! X_STS:X! " +
+          "| ( ASSIST ADDR! | ADDRCITY/ZS6 CALL/SDS ) INFO/N+ X_ST:X! " +
+          ") GPS! INFO/N+");
     removeWords("ROAD", "FS", "SQ");
     setupSpecialStreets("SUNSET STRIP");
   }
-  
+
   @Override
   public String getFilter() {
     return "@monroeco911.com,12101,alert@monroe.alertpa.org,messaging@iamresponding.com,mcpaas6@rsix.roamsecure.net,no-reply@ecnalert.com,no-reply@onsolve.com";
   }
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("INCIDENT UNIT HISTORY FOR: *(\\d+) +PAGE \\d+\n *DATE: *(\\d{6}) +CALLTYPE: *(\\S+) *\n");
   private static final Pattern NEWLINE_PTN = Pattern.compile(" *\n+ *");
   private static final Pattern MARKER = Pattern.compile("(?:CAD MSG[:\n]|(\\d{8})) \\*[DG] ([A-Z0-9]+) +");
@@ -37,7 +38,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // See if this is a run report
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -54,9 +55,11 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       }
       return true;
     }
-    
-    if (body.contains("\nX ST:") || body.contains("\n X STS:")) {
+
+    boolean selectXSTS = body.contains("\n X STS:");
+    if (selectXSTS || body.contains("\nX ST:") ) {
       body = stripFieldStart(body, "CAD MSG ");
+      setSelectValue(selectXSTS ? "X_STS" : "");
       return parseFields(body.split("\n"), data);
     }
 
@@ -64,7 +67,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     setFieldList("ID CODE CALL PLACE ADDR APT CITY X INFO");
     match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
-    
+
     data.strCallId = getOptGroup(match.group(1));
     data.strCode = match.group(2);
     data.strCall = lookupCallCode(data.strCode);
@@ -75,14 +78,14 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = NEWLINE_PTN.matcher(body).replaceAll(" ");
     body = body.replaceAll("//+", "/");
-    
+
     // See if there is a leading FS station number
     match = FS_PTN.matcher(body);
     if (match.lookingAt()) {
       data.strPlace = match.group(1);
       body = body.substring(match.end());
     }
-    
+
     // GPS coordinate address have a special format (and no corresponding city)
     match = GPS_PTN.matcher(body);
     if (match.matches()) {
@@ -90,7 +93,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       data.strSupp = match.group(2);
       return true;
     }
-    
+
     // The standard address parser has trouble with city codes that look like route numbers :(
     // See if we can find the city code on it's own
     match = CITY_CODE_PTN.matcher(body);
@@ -104,14 +107,14 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
         break;
       }
     }
-    
+
     // No city, treat message as a general alert
     if (data.strCity.length() == 0) {
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body;
       return true;
     }
-    
+
     // Extract possible cross street from beginning of info field
     // They never ever include more than once cross street.  So if this parses
     // out as an intersection, we was misinterpreted
@@ -120,7 +123,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       res.getData(data);
       data.strSupp = res.getLeft();
     }
-    
+
     data.strSupp = stripFieldStart(data.strSupp, "@");
     data.strSupp = stripFieldStart(data.strSupp, "/");
     return true;
@@ -138,14 +141,24 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     if (call == null) call = code;
     return call;
   }
-  
+
   @Override
   public Field getField(String name) {
+    if (name.equals("ASSIST")) return new CallField("ASSIST.*", true);
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
+  }
+
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
@@ -153,7 +166,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -163,13 +176,13 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       if (field.contains("/Cleared:")) data.msgType = MsgType.RUN_REPORT;
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO UNIT";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "101",   "Lehman",
       "201",   "Barrett",
@@ -193,7 +206,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       "403",   "Mount Pocono",
       "404",   "Stroudsburg"
   });
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "F1",   "Fire & EMS Dispatch",
       "F2",   "Fire Dispatch",
@@ -241,7 +254,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
       "E55",  "Fire Scene Standby",
       "E82",  "Emergency Transport",
       "E83",  "Non Emergency Transport"
-      
+
       // Unknown codes
       // E60
   });

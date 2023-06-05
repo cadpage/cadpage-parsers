@@ -1,5 +1,5 @@
 #! /bin/bash
-find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E -m 3 \
+find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E -m 20 \
    -e 'PARSE FAILURE' \
    -e '"ADDR:[A-Za-z0-9].*[^-&()/.\[\]'\'' A-Za-z0-9].*"' \
    -e '"CITY:.*[^- A-Za-z]"' \

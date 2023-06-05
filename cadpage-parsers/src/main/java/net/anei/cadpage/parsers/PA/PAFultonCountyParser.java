@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.PA;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchArchonixParser;
 
 
@@ -15,6 +16,18 @@ public class PAFultonCountyParser extends DispatchArchonixParser {
   @Override
   public String getFilter() {
     return "EP911@ccpa.net";
+  }
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    if (data.strCity.equals("WASHINGTON COUNTY")) data.strState = "PA";
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CITY", "CITY ST");
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -35,12 +48,14 @@ public class PAFultonCountyParser extends DispatchArchonixParser {
 
       "CBG", "CHAMBERSBURG",
       "FC",  "FRANKLIN COUNTY",
-      "HC",  "HUNTINGDON COUNTY"
+      "HC",  "HUNTINGDON COUNTY",
+      "WC",  "WASHINGTON COUNTY"
   });
 
   private static final Properties MA_CITY_CODES = buildCodeTable(new String[] {
       "CBG", "CHAMBERSBURG",
       "FC",  "FRANKLIN COUNTY",
-      "HC",  "HUNTINGDON COUNTY"
+      "HC",  "HUNTINGDON COUNTY",
+      "WC",  "WASHINGTON COUNTY"
   });
 }
