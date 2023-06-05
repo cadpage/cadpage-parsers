@@ -7,7 +7,7 @@ public class ALBarbourCountyParser extends FieldProgramParser {
 
   public ALBarbourCountyParser() {
     super(CITY_LIST, "BARBOUR COUNTY", "AL",
-          "ADDR/S PLACE TIME CALL! INFO/N+");
+          "ADDR/S PLACE EMPTY+? TIME CALL! INFO/N+");
   }
 
   @Override
@@ -46,7 +46,7 @@ public class ALBarbourCountyParser extends FieldProgramParser {
       "ELAMVILLE",
       "SPRING HILL",
       "TEALS CROSSROADS",
-      
+
       // Bullock County
       "MIDWAY"
 

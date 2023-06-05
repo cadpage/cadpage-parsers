@@ -18,14 +18,21 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "aegispage@lackawannacounty.org";
+    return "aegispage@lackawannacounty.org,messaging@iamresponding.com";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
+    if (!subject.equals("Dispatch")) {
+      data.strSource = subject;
+    }
     body = body.replace(" Muni:", "\nMuni:");
     return parseFields(body.split("\n"), data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
   @Override
