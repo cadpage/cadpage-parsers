@@ -60,7 +60,9 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     if (selectXSTS || body.contains("\nX ST:") ) {
       body = stripFieldStart(body, "CAD MSG ");
       setSelectValue(selectXSTS ? "X_STS" : "");
-      return parseFields(body.split("\n"), data);
+      if (!parseFields(body.split("\n"), data)) return false;
+      if (!data.strApt.isEmpty()) data.strCity = stripFieldEnd(data.strCity, ' ' + data.strApt);
+      return true;
     }
 
     // Strip off any prefix

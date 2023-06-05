@@ -48,7 +48,12 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       body = body.substring(match.end()).trim();
     }
 
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strCity.startsWith("TURNPIKE")) {
+      data.strAddress = append(data.strAddress, ", ", data.strCity);
+      data.strCity = "";
+    }
+    return true;
   }
 
   @Override

@@ -152,17 +152,22 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern CITY_PLACE_PTN = Pattern.compile("[NSEW]B|(?:NORTH|SOUTH|EAST|WEST) OF.*", Pattern.CASE_INSENSITIVE);
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
-      if (field.toUpperCase().endsWith(" BORO")) field = field.substring(0,field.length()-5).trim();
-      super.parse(field, data);
-      if (data.strCity.equalsIgnoreCase("BALTIMORE COUNTY")) data.strState = "MD";
+      if (CITY_PLACE_PTN.matcher(field).matches()) {
+        data.strPlace = field;
+      } else {
+        if (field.toUpperCase().endsWith(" BORO")) field = field.substring(0,field.length()-5).trim();
+        super.parse(field, data);
+        if (data.strCity.equalsIgnoreCase("BALTIMORE COUNTY")) data.strState = "MD";
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return "CITY ST";
+      return "CITY ST PLACE?";
     }
   }
 
