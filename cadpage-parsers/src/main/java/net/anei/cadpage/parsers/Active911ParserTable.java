@@ -2483,6 +2483,7 @@ public class Active911ParserTable {
       "US/VA/CityofCaveSpring",           "VARoanokeCounty",
       "US/VA/CityofFredericksburg",       "VAFredericksburg",
       "US/VA/CityofHarrisonburg",         "VARockinghamCounty",
+      "US/VA/CityofLexington",            "VARockbridgeCountyC",
       "US/VA/CityofRadford",              "VARadford",
       "US/VA/CityofRoanoke",              "VARoanokeCity",
       "US/VA/CityofStaunton",             "VAStaunton",
