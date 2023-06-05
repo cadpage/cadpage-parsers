@@ -10,14 +10,14 @@ public class DispatchA4Parser extends FieldProgramParser {
 
   private static final Pattern TRAIL_AND_PTN = Pattern.compile("(.*)(?:\\bAND|/|&)", Pattern.CASE_INSENSITIVE);
   private static final Pattern SLASH_PTN = Pattern.compile("/+");
-  
+
   public DispatchA4Parser(String defCity, String defState) {
     this(defCity, defState, 1);
   }
-  
+
   public DispatchA4Parser(String defCity, String defState, int version) {
     super(defCity, defState,
-          "( SELECT/NEW CALL ADDR! APT | " + 
+          "( SELECT/NEW CALL ADDR! APT | " +
           (version == 2 ? "CALL! EMPTY! CITY! ADDR/SP! Apt:APT! Cross_Streets:X"
                         : "CALL! ADDR1! Apt:APT! CITY GPS? PLACE Cross_Streets:X") + " ) ");
   }
@@ -26,12 +26,12 @@ public class DispatchA4Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("CAD Page for CFS ")) return false;
     data.strCallId = subject.substring(17).trim();
-    
+
     if (!body.contains("\n")) {
       setSelectValue("NEW");
       return parseFields(body.split(","), data);
     }
-    
+
     setSelectValue("OLD");
     if (! parseFields(body.split("\n"), data)) return false;
     if (data.strAddress.length() == 0) {
@@ -45,14 +45,15 @@ public class DispatchA4Parser extends FieldProgramParser {
       }
     }
     if (SLASH_PTN.matcher(data.strApt).matches()) data.strApt = "";
+    if (SLASH_PTN.matcher(data.strCity).matches()) data.strCity = "";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR1")) return new MyAddress1Field();
@@ -60,7 +61,7 @@ public class DispatchA4Parser extends FieldProgramParser {
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
-  
+
   private class MyAddress1Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -71,7 +72,7 @@ public class DispatchA4Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -79,14 +80,14 @@ public class DispatchA4Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("http://maps\\.google\\.com.*=([-+]?\\d+\\.\\d{5,})(?:\\%20|[ ,])([-+]?\\d+\\.\\d{5,})");
   private class MyGPSField extends GPSField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replace(" ", "");
@@ -98,7 +99,7 @@ public class DispatchA4Parser extends FieldProgramParser {
       if (field.startsWith("http://maps.google.com")) return true;
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();

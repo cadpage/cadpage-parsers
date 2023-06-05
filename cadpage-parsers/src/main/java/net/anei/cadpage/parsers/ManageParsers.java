@@ -197,7 +197,8 @@ public class ManageParsers {
         "GAMurrayCountyA",    "GAMurrayCountyB",
         "CACalaverasCountyA", "CACalaverasCountyB",      // 05/30/2023
         "CATuolumneCountyA",  "CATuolumneCountyB",
-        "PAArmstrongCountyA", "General"                 // 06/03/2023
+        "PAArmstrongCountyA", "General",                 // 06/03/2023
+        "PACumberlandCountyA","General"
   });
 
 }

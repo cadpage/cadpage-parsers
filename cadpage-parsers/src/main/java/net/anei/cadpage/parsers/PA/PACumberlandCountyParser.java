@@ -8,9 +8,8 @@ Cumberland County, PA
 
 
 public class PACumberlandCountyParser extends GroupBestParser {
-  
+
   public PACumberlandCountyParser() {
-    super(new PACumberlandCountyAParser(),
-          new PACumberlandCountyBParser());
+    super(new PACumberlandCountyBParser());
   }
 }

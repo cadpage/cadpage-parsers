@@ -6,16 +6,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA4Parser;
 
 
 public class PAMifflinCountyParser extends DispatchA4Parser {
-  
+
   public PAMifflinCountyParser() {
     super("MIFFLIN COUNTY", "PA");
   }
-  
+
   @Override
   public String getFilter() {
     return "cmessages@co.mifflin.pa.us,cadmessages@co.mifflin.pa.us";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -23,8 +23,9 @@ public class PAMifflinCountyParser extends DispatchA4Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    body = body.replace("\\n", "\n");
     if (! super.parseMsg(subject, body, data)) return false;
-    if (TOWNSHIPS.contains(data.strCity)) data.strCity += " TWP"; 
+    if (TOWNSHIPS.contains(data.strCity)) data.strCity += " TWP";
     return true;
   }
 
