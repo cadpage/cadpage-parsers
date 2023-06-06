@@ -165,7 +165,6 @@ public class PALebanonCountyAParser extends SmartAddressParser {
   private static final String COUNTY_PTN_S = "([BDLS]C|[A-Z]+ CO(?:UNTY)?)\\.?";
   private static final String CITY_PTN_S = "(?:City of ([A-Z]+)|((?:(?:NORTH|SOUTH|EAST|WEST|UPPER|LOWER|[NESW]) )?(?:(?:LITTLE|MOUNT|MT|NEW|PORT|ST) )?(?:[A-Z]+|COLD SPRING|DEER LAKE|PALO ALTO|SCHUYLKILL HAVEN|PINE GROVE|SINKING SPRING|TERRE HILL) (?:BORO(?:UGH)?|TWP|TOWNSHIP|CITY)))";
   private static final Pattern COUNTY_CITY_PTN = Pattern.compile("[, ]*\\b(?:"+COUNTY_PTN_S+"[-/,= ]+" + CITY_PTN_S + "|" + CITY_PTN_S + "(?:[-/,= ]+" + COUNTY_PTN_S + ")?)\\b[, ]*", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CITY_BORO_PTN = Pattern.compile("(.*?) +BORO(?:UGH)?", Pattern.CASE_INSENSITIVE);
 
   private String parseCity(boolean lead, String sAddress, Data data) {
 
@@ -194,8 +193,7 @@ public class PALebanonCountyAParser extends SmartAddressParser {
       county = match.group(6);
     }
 
-    Matcher match2 = CITY_BORO_PTN.matcher(city);
-    if (match2.matches()) city = match2.group(1);
+    city = cleanCity(city);
 
     if (county != null) {
       if (county.length() == 2) county = COUNTY_CODES.getProperty(county);
@@ -207,6 +205,7 @@ public class PALebanonCountyAParser extends SmartAddressParser {
     return sAddress;
   }
 
+  private static final Pattern APT_APT_PTN = Pattern.compile("(.*?) *\\bAPT +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_CITY_PTN = Pattern.compile("([BDLS]C) +(.*)");
   private static final Pattern APT_CITY_PTN2 = Pattern.compile("([A-Z ]+ CO(?:UNTY)?)[-, ]+(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern GOOD_APT_PTN = Pattern.compile("[A-Z0-9]{1,5}|.* FL(?:OOR)?", Pattern.CASE_INSENSITIVE);
@@ -218,19 +217,37 @@ public class PALebanonCountyAParser extends SmartAddressParser {
   private void fixApt(Data data) {
     if (data.strApt.isEmpty()) return;
     if (data.strCity.isEmpty()) {
-      Matcher match = APT_CITY_PTN.matcher(data.strApt);
+      String city = data.strApt;
+      String apt = "";
+      Matcher match = APT_APT_PTN.matcher(city);
       if (match.matches()) {
-        data.strCity = match.group(2) + ", " + COUNTY_CODES.getProperty(match.group(1));
-        data.strApt = "";
-      } else if ((match = APT_CITY_PTN2.matcher(data.strApt)).matches()) {
-        data.strCity = match.group(2) + ", " + match.group(1);
-        data.strApt = "";
+        city = cleanCity(match.group(1));
+        apt = match.group(2);
       }
+      match = APT_CITY_PTN.matcher(city);
+      if (match.matches()) {
+        city = cleanCity(match.group(2)) + ", " + COUNTY_CODES.getProperty(match.group(1));
+      } else if ((match = APT_CITY_PTN2.matcher(city)).matches()) {
+        city = match.group(2) + ", " + match.group(1);
+      } else {
+        city = "";
+        apt = data.strApt;
+      }
+      data.strCity = city;
+      data.strApt = apt;
     }
     if (!GOOD_APT_PTN.matcher(data.strApt).matches()) {
       data.strPlace = append(stripFieldStart(data.strApt, "-"), " - ", data.strPlace);
       data.strApt = "";
     }
+  }
+
+  private static final Pattern CITY_BORO_PTN = Pattern.compile("(.*?) +BORO(?:UGH)?", Pattern.CASE_INSENSITIVE);
+
+  private String cleanCity(String city) {
+    Matcher match = CITY_BORO_PTN.matcher(city);
+    if (match.matches()) city = match.group(1);
+    return city;
   }
 
   private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
