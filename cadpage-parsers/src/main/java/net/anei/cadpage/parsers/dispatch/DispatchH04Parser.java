@@ -9,9 +9,9 @@ public class DispatchH04Parser extends DispatchH05Parser {
 
   public DispatchH04Parser(String defCity, String defState) {
     super(defCity, defState,
-          "LEAD_JUNK+? ( ADDR:ADDRCITY! PLACE:PLACE! | ) " +
+          "LEAD_JUNK+? ( ADDR:ADDRCITY/S6! PLACE:PLACE! | ) " +
           "( CALL:CALL! | Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2 | FIRE_CALL_TYPE:CALL! EMS_CALL_TYPE:CALL2! | EMS_CALL_TYPE:CALL2 ) " +
-          "( PLACE:PLACE! ADDR:ADDRCITY! | ) " +
+          "( PLACE:PLACE! ADDR:ADDRCITY/S6! | ) " +
           "( ASSIGNED_UNIT(s):UNIT! NARRATIVE:EMPTY! INFO_BLK/N+? PLACE:PLACE! ADDR:ADDR! | ) " +
           "Lat_/_Long:GPS? ( Cross_Streets:X | CROSS_STREETS:X | ) CALLER_NAME:NAME? " +
              "( CALLER_PHONE:PHONE | Caller_Phone:PHONE | Caller_Number:PHONE | ) Lat_/_Long:GPS? ID:ID? " +
@@ -47,22 +47,31 @@ public class DispatchH04Parser extends DispatchH05Parser {
     }
   }
 
-  private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*?,.*), *(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("(?:100)?(\\+?\\d+\\.\\d+|-361)[, ]*(-\\d{2,3}\\.\\d+|-361)");
+  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals(",")) return;
-      Matcher match = ADDR_CITY_ST_PTN.matcher(field);
+      Parser p = new Parser(field);
+      String part = p.getLastOptional(',');
+      Matcher match = GPS_PTN.matcher(part);
       if (match.matches()) {
-        field = match.group(1).trim();
-        data.strState = match.group(2);
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        part = p.getLastOptional(',');
       }
-      super.parse(field, data);
+
+      if ((match = STATE_PTN.matcher(part)).matches()) {
+        data.strState = part;
+        part = p.getLastOptional(',');
+      }
+
+      data.strCity = part;
+      super.parse(p.get().replace('@', '&'), data);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " ST";
+      return super.getFieldNames() + " ST GPS";
     }
   }
 

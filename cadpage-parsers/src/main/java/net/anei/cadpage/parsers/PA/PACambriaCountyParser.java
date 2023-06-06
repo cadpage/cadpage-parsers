@@ -129,7 +129,7 @@ public class PACambriaCountyParser extends FieldProgramParser {
       if (data.strCity.length() == 0 || data.strCity.endsWith(" COUNTY")) {
         int pt = data.strAddress.lastIndexOf("- ");
         if (pt >= 0) {
-          String city = data.strAddress.substring(pt+2).trim();
+          String city = data.strAddress.substring(pt+2).trim().replace(" = ", ", ");
           if (!NOT_CITY_PTN.matcher(city).matches()) {
             data.strCity = city;
             data.strAddress = data.strAddress.substring(0,pt).trim();

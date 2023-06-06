@@ -16,7 +16,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   public PAYorkCountyDParser() {
     super("YORK COUNTY", "PA",
           "( SELECT/RR Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! CFS:CFS! TIMES/N+? " +
-          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY! APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )",
+          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY? APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )",
           FLDPROG_IGNORE_CASE);
     setupProtectedNames("FISH AND GAME");
   }
@@ -46,7 +46,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("Station \\d+");
   private static final Pattern TRAIL_JUNK_PTN = Pattern.compile("[ \n]\\[\\d{4}\\](?:$| *[-\n]| {3})");
-  private static final Pattern IAR_PTN1 = Pattern.compile("(?!(?:\\d{7} )?(?:BOX:|box:)).*\n.*\n.*");
+  private static final Pattern IAR_PTN1 = Pattern.compile("(?!(?:\\d{7} +)?(?:BOX:|box:|\n\n)).*\n.*\n.*");
   private static final Pattern IAR_PTN2 = Pattern.compile("(?!BOX:|box:)(.*), ([^,]*) :(?: |$)(.*)");
   private static final Pattern BOX_PTN = Pattern.compile("BOX:", Pattern.CASE_INSENSITIVE);
   private static final Pattern DELIM = Pattern.compile(", |(?<!,) +(?=(?:box|cross streets|units):)", Pattern.CASE_INSENSITIVE);
@@ -154,6 +154,10 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
   private static final Pattern CITY_PLACE_PTN = Pattern.compile("[NSEW]B|(?:NORTH|SOUTH|EAST|WEST) OF.*", Pattern.CASE_INSENSITIVE);
   private class MyCityField extends CityField {
+
+    public MyCityField() {
+      super("[ A-Z]+", true);
+    }
     @Override
     public void parse(String field, Data data) {
       if (CITY_PLACE_PTN.matcher(field).matches()) {
@@ -171,14 +175,17 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM) *(.*)|(.*\\d.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CROSS_PTN = Pattern.compile("(?:X|CROSS)(?: OF)? +(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM) *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptPlaceField extends Field {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = APT_PTN.matcher(field);
-      if (match.matches()) {
+      Matcher match;
+      if ((match = CROSS_PTN.matcher(field)).matches()) {
+        data.strCross = match.group(1);
+      } else if ((match = APT_PTN.matcher(field)).matches()) {
         String apt = match.group(1);
-        if (apt == null) apt = match.group(2);
+//        if (apt == null) apt = match.group(2);
         data.strApt = append(data.strApt, "-", apt);
       } else {
         data.strPlace = append(data.strPlace, " - ", field);
@@ -187,7 +194,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "APT PLACE";
+      return "APT PLACE X?";
     }
   }
 
