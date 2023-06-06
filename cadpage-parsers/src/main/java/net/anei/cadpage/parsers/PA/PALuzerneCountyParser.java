@@ -21,6 +21,7 @@ public class PALuzerneCountyParser extends DispatchA41Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+    data.strCity = stripFieldStart(data.strCity, ".");
     data.strCity = stripFieldEnd(data.strCity, " BORO");
     return true;
   }

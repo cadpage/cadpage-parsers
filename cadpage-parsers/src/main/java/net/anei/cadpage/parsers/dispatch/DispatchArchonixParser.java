@@ -13,11 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  */
 
 public class DispatchArchonixParser extends FieldProgramParser {
-  
+
   public static final int ARCH_FLG_TWO_PART_CITY = 1;
   public static final int ARCH_FLG_OPT_CITY = 2;
-  
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Dispatch|Free) (.*)"); 
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Dispatch|Free) (.*)");
   private static final Pattern SUBJECT3_PTN = Pattern.compile("Sta +(.+)");
   private static final Pattern SINGLE_LINE_BRK = Pattern.compile("(?<!\n)\n(?!\n)");
   private static final Pattern TWP_ADDR_PTN = Pattern.compile("([ A-Z]+ TWP) +(.*)");
@@ -40,24 +40,24 @@ public class DispatchArchonixParser extends FieldProgramParser {
     twoPartCity = (flags & ARCH_FLG_TWO_PART_CITY) != 0;
     optCity = (flags & ARCH_FLG_OPT_CITY) != 0;
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) {
       data.strUnit = match.group(1).trim();
-    } 
+    }
     else if ((match = SUBJECT3_PTN.matcher(subject)).matches()){
       data.strSource = match.group(1).trim();
     }
-    
+
     // Search and destroy code messaging double line breaks
     match = SINGLE_LINE_BRK.matcher(body);
     if (!match.find()) body = body.replace("\n\n", "\n");
-    
+
     if (!parseFields(body.split("\n"), data)) return false;
-    
+
     // Lots of special handling goes into mutual aid calls
     if (data.strAddress.length() <= 3) {
       String addr = data.strPlace;
@@ -83,7 +83,7 @@ public class DispatchArchonixParser extends FieldProgramParser {
             parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
             city = data.strCity;
           } else {
-            parseAddress(StartType.START_OTHER, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
+            parseAddress(StartType.START_OTHER, FLAG_ANCHOR_END, addr, data);
             city = getStart();
           }
         }
@@ -91,7 +91,7 @@ public class DispatchArchonixParser extends FieldProgramParser {
       data.strPlace = place;
       if (data.strAddress.length() == 0) {
         parseAddress(city, data);
-      } else {
+      } else if (!city.isEmpty()){
         city = stripFieldEnd(city, " BORO");
         city = stripFieldStart(city, "BORO OF ");
         city = stripFieldStart(city, "BORO ");
@@ -102,12 +102,12 @@ public class DispatchArchonixParser extends FieldProgramParser {
 
     return (data.strAddress.length() > 0);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
@@ -119,7 +119,7 @@ public class DispatchArchonixParser extends FieldProgramParser {
     if (name.equals("GPS")) return new BaseGPSField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CITY_CODE_PTN = Pattern.compile("([A-Z0-9]{2}) [A-Z-0-9]{2}");
   protected class BaseAddressCityField extends AddressField {
 
@@ -151,13 +151,13 @@ public class DispatchArchonixParser extends FieldProgramParser {
       data.strPlace = stripFieldStart(data.strPlace, "/");
       data.strPlace = append(data.strPlace, " - ", place);
     }
-    
+
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " PLACE"; 
+      return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   protected class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -165,7 +165,7 @@ public class DispatchArchonixParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   protected class BaseIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
@@ -176,22 +176,22 @@ public class DispatchArchonixParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID CH";
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d{4})-(\\d\\d)-(\\d\\d) (\\d\\d:\\d\\d:\\d\\d)$");
   protected class BasePlaceDateTimeField extends DateTimeField {
-    
+
     private boolean allowPlace;
-    
+
     public BasePlaceDateTimeField(boolean allowPlace) {
       this.allowPlace = allowPlace;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.length() == 0) return;
@@ -206,31 +206,31 @@ public class DispatchArchonixParser extends FieldProgramParser {
       if (process) {
         data.strDate = match.group(2) + "/" + match.group(3) + "/" + match.group(1);
         data.strTime = match.group(4);
-        field = field.substring(0,match.start()).trim(); 
+        field = field.substring(0,match.start()).trim();
       }
       data.strPlace = append(data.strPlace, " - ", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE DATE TIME";
     }
   }
-  
+
   private static final Pattern DISP_TIME_PTN = Pattern.compile("Disp:(\\d\\d?:\\d\\d:\\d\\d)");
   protected class BaseTimesField extends InfoField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("RES#:") || field.startsWith("Lat/Lon:")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.msgType = MsgType.RUN_REPORT;
@@ -240,13 +240,13 @@ public class DispatchArchonixParser extends FieldProgramParser {
       }
       data.strSupp = append(data.strSupp, "\n", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "TIME INFO";
     }
   }
-  
+
   protected class BaseGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
