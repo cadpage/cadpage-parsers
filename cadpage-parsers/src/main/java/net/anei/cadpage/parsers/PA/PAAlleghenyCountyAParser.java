@@ -458,6 +458,7 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
       "MTL", "MT LEBANON",
       "MTO", "MT OLIVER",
       "MUN", "MUNHALL",
+      "MUR", "PENN HILLS",  // ???
       "NBR", "NORTH BRADDOCK",
       "NEV", "NEVILLE",
       "NFT", "NORTH FAYETTE",

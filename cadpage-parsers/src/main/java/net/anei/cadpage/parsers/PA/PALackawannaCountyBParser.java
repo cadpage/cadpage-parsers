@@ -27,7 +27,9 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
       data.strSource = subject;
     }
     body = body.replace(" Muni:", "\nMuni:");
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strCity.equals("Fell/Simpson")) data.strCity = "Simpson";
+    return true;
   }
 
   @Override

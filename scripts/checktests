@@ -7,6 +7,7 @@ find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e '"ST:[A-Z]?[^A-Z]' \
    -e '"ST:[A-Z]{3,}"' \
    {} + | grep -E -v \
+   -e '\*\*IGNORE\*\*' \
    -e 'BaseParserTest.java' \
    -e '"CITY:( .*|FOX|YOE|[0-9]{5})"' \
    -e '"ADDR:(LAT:|LL|[+NS]?[0-9].*[0-9] *[,;] *-?[0-9])'

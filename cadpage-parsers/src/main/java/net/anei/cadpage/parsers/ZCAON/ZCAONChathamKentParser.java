@@ -87,7 +87,7 @@ public class ZCAONChathamKentParser extends FieldProgramParser {
       "CHA", "CHATHAM TWP",
       "CMD", "CAMDEN TWP",
       "CTH", "CHATHAM",
-      "DET", "DET",              // Bothwell??
+      "DET", "BOTHWELL",              // Bothwell??
       "DOV", "DOVER TWP",
       "HAR", "HARWICH TWP",
       "HOW", "HOWARD TWP",
