@@ -11,22 +11,22 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 
 
 public class NCWakeCountyAParser extends FieldProgramParser {
-  
+
   public NCWakeCountyAParser() {
     super(CITY_CODES, "WAKE COUNTY", "NC",
            "Inc:CALL! Map:MAP! Add:ADDR! Loc:PLACE! Apt:APT! CS:X? Unt:UNIT! TG:CH! Cty:CITY! Comm:INFO INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "wcps@wakegov.com";
+    return "wcps@wakegov.com,wcps@wake.gov";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("WCPS")) return false;
     if (!parseFields(body.split("\n"), data)) return false;
-    
+
     // See if this is an OOC mutual aid call with an odd address convention
     // if it is, try to extract the real address from the comments.
     String county = stripFieldEnd(data.strCity, " COUNTY");
@@ -47,7 +47,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
     return true;
   }
   private static final Pattern INFO_ADDR_MARK_PTN = Pattern.compile("\\. : [A-Z]{4}");
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -59,13 +59,13 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       }
       data.strCall = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -73,7 +73,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -83,7 +83,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -91,7 +91,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -100,15 +100,15 @@ public class NCWakeCountyAParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     city = convertCodes(city.toUpperCase(), MAP_CITY_TABLE);
     return super.adjustMapCity(city);
   }
-  
+
   private static final CodeTable CALL_CODES = new StandardCodeTable(
-                  
+
       "AIRCRAFTD",  "AIRCRAFT DOWN",
       "AIRCRAFTEM", "AIRCRAFT EMERGENCY",
       "AIRCRAFTSE", "AIRCRAFT INVESTIGATION",
@@ -309,7 +309,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       "WIRESINJ",   "ELECTRICAL WIRES SING INJ",
       "WIRESINJS",  "ELECTRICAL WIRES MULT INJS"
   );
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AN",     "ANGIER",
       "AP",     "APEX",
@@ -326,7 +326,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       "WD",     "WENDELL",
       "WF",     "WAKE FOREST",
       "ZB",     "ZEBULON",
-      
+
       "WCAN",   "ANGIER",
       "WCAP",   "APEX",
       "WCCA",   "CARY",
@@ -346,17 +346,17 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       "WCWS",   "WILLOW SPRINGS",
       "WCYV",   "YOUNGSVILLE",
       "WCZB",   "ZEBULON",
-      
+
       "CC",     "CHATHAM COUNTY",
       "DC",     "DURHAM COUNTY",
       "FC",     "FRANKLIN COUNTY",
       "GC",     "GRANVILLE COUNTY",
       "JC",     "JOHNSTON COUNTY",
       "NC",     "NASH COUNTY"
-      
+
 
   });
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "RDU",     "MORRISVILLE",
       "ST",      "NORTH CAROLINA STATE UNIVERSITY"
