@@ -16,7 +16,7 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
 
   public NJCumberlandCountyAParser() {
     super("CUMBERLAND COUNTY", "NJ",
-           "UNIT CALL ADDR DATETIME! PLACE");
+           "UNIT CALL ADDR DATETIME! UNIT_PLACE");
   }
 
   @Override
@@ -77,36 +77,56 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
     return true;
   }
 
-  private static final Pattern ADDR_PTN = Pattern.compile("^\\((.*)\\)");
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("UNIT_PLACE")) return new MyUnitPlaceField();
+    return super.getField(name);
+  }
+
   private class MyAddressField extends AddressField {
 
     @Override
     public void parse(String field, Data data) {
 
       // City is in front in parenthesis
-      Matcher match = ADDR_PTN.matcher(field);
-      if (match.find()) {
-        data.strCity = stripFieldEnd(match.group(1), " BORO");
-        field = field.substring(match.end()).trim();
+      if (field.startsWith("(")) {
+        int pt = field.lastIndexOf(')');
+        if (pt >= 0) {
+          String city = field.substring(1, pt).trim();
+          field = field.substring(pt+1).trim();
+          pt = city.indexOf(')');
+          if (pt >= 0) {
+            data.strPlace = city.substring(pt+1).trim() + ')';
+            city = city.substring(0,pt).trim();
+          }
+          pt = city.indexOf('(');
+          if (pt >= 0) city = city.substring(0,pt).trim();
+          city = stripFieldEnd(city, " BORO");
+          data.strCity = city;
+        }
       }
 
       // slash divides address into two parts, either which can be a place name
       // or they can both be streets
 
+      String place = "";
       int pt = field.indexOf('/');
       if (pt >= 0) {
         String fld1 = field.substring(0,pt).trim();
         String fld2 = field.substring(pt+1).trim();
 
         if (!isValidAddress(fld1)) {
-          data.strPlace = fld1;
+          place = fld1;
           field = fld2;
         } else if (!isValidAddress(fld2)) {
-          data.strPlace = fld2;
+          place = fld2;
           field = fld1;
         }
       }
 
+      data.strPlace = append(data.strPlace, " - ", place);
       super.parse(field, data);
     }
 
@@ -128,18 +148,29 @@ public class NJCumberlandCountyAParser extends FieldProgramParser {
     }
   }
 
-  private class MyPlaceField extends PlaceField {
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]*\\d+[A-Z]?");
+  private class MyUnitPlaceField extends Field {
     @Override
     public void parse(String field, Data data) {
-      data.strPlace = append(data.strPlace, " / ", field);
+      if (field.isEmpty()) return;
+      if (field.equals(data.strUnit)) return;
+      StringBuilder sb = new StringBuilder(data.strUnit);
+      for (String unit : field.split("[ ,]+")) {
+        if (!UNIT_PTN.matcher(unit).matches()) {
+          data.strPlace = append(data.strPlace, " - ", field);
+          return;
+        }
+        if (!unit.equals(data.strUnit)) {
+          if (sb.length() > 0) sb.append(',');
+          sb.append(unit);
+        }
+      }
+      data.strUnit = sb.toString();
     }
-  }
 
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("PLACE")) return new MyPlaceField();
-    return super.getField(name);
+    @Override
+    public String getFieldNames() {
+      return "UNIT PLACE";
+    }
   }
 }
