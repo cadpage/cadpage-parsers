@@ -1,28 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 package net.anei.cadpage.parsers.NJ;
 
 import java.util.regex.Matcher;

@@ -47,6 +47,7 @@ public class DispatchA24Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
     if (name.equals("TIME")) return new TimeField("(?:CAD time *\\()?(\\d\\d?:\\d\\d(?::\\d\\d)?)\\)?(?: *\\(.*)?");
     return super.getField(name);
@@ -58,6 +59,17 @@ public class DispatchA24Parser extends FieldProgramParser {
       if (!GPS_PATTERN.matcher(field).matches()) {
         int pt = field.indexOf(',');
         if (pt >= 0) field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+    }
+  }
+
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt >= 0) field = field.substring(0, pt).trim();
       }
       super.parse(field, data);
     }
