@@ -9,26 +9,26 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Kent County, DE
  */
 public class DEKentCountyEParser extends DEKentCountyBaseParser {
-  
+
   public DEKentCountyEParser() {
     super("KENT COUNTY", "DE",
           "Call_Type:CALL! Address:ADDRCITY/SXa! Dev/Sub:PLACE! Xst's:X");
     setupMultiWordStreets("ALLEY MILL");
   }
-  
+
   @Override
   public String getFilter() {
     return "CADCentral@State.DE.US";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("!")) return false;
     body = body.replace(" Dev/Sub:", "\nDev/Sub:");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   protected Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -48,13 +48,13 @@ public class DEKentCountyEParser extends DEKentCountyBaseParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -65,16 +65,20 @@ public class DEKentCountyEParser extends DEKentCountyBaseParser {
         field = field.substring(0,pt).trim();
       }
       field = field.replace('@', '&');
-      super.parse(field, data);
+      if (field.startsWith("LAT:")) {
+        data.strAddress = field;
+      } else {
+        super.parse(field, data);
+      }
       adjustCityState(data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " ST PLACE";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -82,7 +86,7 @@ public class DEKentCountyEParser extends DEKentCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = COR_PTN.matcher(addr).replaceAll("CORNER");
