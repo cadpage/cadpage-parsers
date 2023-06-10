@@ -36,7 +36,7 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   private static final Pattern UNIT_JUNK_PTN = Pattern.compile(" - (?:CAR|RESCUE|ENGINE|TOWER|TRUCK|TENDER) \\d+");
   private static final Pattern MASTER_PTN =
     Pattern.compile("([-/.,;&A-Za-z0-9 ]+) @ (?:BOX (\\S+) - )?(?:([^,]*) - )?([^,]+?) *(?:, ([^-\\.]*)(?:\\. -| -|\\.|$)| |(?<! )-(?= )|$)(?: (.*?)[-\\.]*)?", Pattern.DOTALL);
-  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: ([A-Z]{2}))?(?: \\d{5})?");
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?) (DE|NJ|NY|PA)(?: +(?:\\d{5}|0))?\\b *(.*?)");
   private static final Pattern END_STAR_PTN = Pattern.compile("([A-Z0-9])\\*");
   private static final Pattern LEAD_INFO_JUNK_PTN = Pattern.compile("^[-\\*\\. ]+");
 
@@ -87,16 +87,12 @@ public class NJSussexCountyAParser extends SmartAddressParser {
     String city = getOptGroup(match.group(5));
     String sInfo = getOptGroup(match.group(6));
 
-    pt = city.lastIndexOf(',');
-    if (pt >= 0) {
-      data.strApt = append(data.strApt, ", ", city.substring(0,pt).trim());
-      city = city.substring(pt+1).trim();
-    }
-
+    String extra = "";
     match = CITY_ST_ZIP_PTN.matcher(city);
     if (match.matches()) {
       city = match.group(1).trim();
       data.strState = getOptGroup(match.group(2));
+      extra = match.group(3);
     }
 
     if (city.equals("CMCH")) city = "CAPE MAY COURT HOUSE";
@@ -135,10 +131,10 @@ public class NJSussexCountyAParser extends SmartAddressParser {
           if (data.strCity.length() == 0) data.defCity = data.defState = "";
         }
       } else {
-        data.strSupp = sInfo;
+        data.strSupp = append(extra, "\n", sInfo);
       }
     } else {
-      data.strSupp = sInfo;
+      data.strSupp = append(extra, "\n", sInfo);
     }
     data.strCity = stripFieldEnd(data.strCity, " BOROUGH");
     data.strCity = stripFieldEnd(data.strCity, " BORO");
@@ -151,6 +147,12 @@ public class NJSussexCountyAParser extends SmartAddressParser {
   protected boolean isNotExtraApt(String apt) {
     if (apt.startsWith("(")) return true;
     return super.isNotExtraApt(apt);
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("CMCH / GOSHEN")) city = "MIDDLE TWP";
+    return city;
   }
 
   private static final Properties CALL_CODES = buildCodeTable(new String[]{

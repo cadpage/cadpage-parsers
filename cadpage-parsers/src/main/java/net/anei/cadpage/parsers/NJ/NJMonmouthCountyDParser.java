@@ -30,5 +30,4 @@ public class NJMonmouthCountyDParser extends DispatchA19Parser {
 
     return super.parseMsg(subject, body, data);
   }
-
 }

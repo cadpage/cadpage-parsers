@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.NJ;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA11Parser;
 
 /**
@@ -16,6 +17,11 @@ public class NJMonmouthCountyAParser extends DispatchA11Parser {
   @Override
   public String getFilter() {
     return "MCSOPageNotification@mcsonj.org";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    return super.parseMsg(body, data);
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -51,6 +57,10 @@ public class NJMonmouthCountyAParser extends DispatchA11Parser {
       "86", "MATAWAN",
       "88", "BRADLEY BEACH",
       "94", "COLTS NECK",
-      "99", "BRIELLE"
+      "99", "BRIELLE",
+
+      "HIG", "HIGHSTOWN",
+      "RB",  "ROBBINSVILLE TWP",
+      "OC",  "OUT OF COUNTY"
   });
 }
