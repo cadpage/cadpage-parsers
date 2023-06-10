@@ -214,6 +214,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
   private static final Pattern TN_PTN = Pattern.compile("\\bTN\\b", Pattern.CASE_INSENSITIVE);
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "04", "FLORENCE TWP",
       "10", "MAPLE SHADE TWP",
       "11", "DELANCO TWP",
       "12", "BEVERLY",

@@ -6,10 +6,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NJAtlanticCountyCParser extends FieldProgramParser {
 
   public NJAtlanticCountyCParser() {
-    super("ATLANTIC COUNTY", "NJ", 
+    super("ATLANTIC COUNTY", "NJ",
           "Call:CALL! Address:ADDR! Apt:APT! City:CITY! Cross:X! Place:PLACE! GPS ( Narrative:INFO INFO+? UNIT | UNIT )");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@gtpd.org";
@@ -21,18 +21,27 @@ public class NJAtlanticCountyCParser extends FieldProgramParser {
 
     return super.parseFields(body.split(";"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("UNIT")) return new UnitField("Units Dispatched:? *(.*)", true);
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, "&");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ".");
       super.parse(field, data);
     }
   }

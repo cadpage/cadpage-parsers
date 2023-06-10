@@ -30,7 +30,7 @@ public class NJSalemCountyCParser extends MsgParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z}]{1,3}-\\d{4}-\\d{5,6}");
   private static final Pattern MASTER = Pattern.compile("([-;/ .()A-Z0-9]+) @ +(.*)", Pattern.DOTALL);
   private static final Pattern COMMA_BRK_PTN = Pattern.compile("(.*?),");
-  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([, A-Z]+) (NJ|DE|PA)\\b(?: *\\d{0,5})?(?: - (.*?))?[-. ]*");
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("([, A-Za-z]+) (NJ|DE|PA)\\b(?: *\\d{0,5})?(?: - (.*?))?[-. ]*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -43,7 +43,7 @@ public class NJSalemCountyCParser extends MsgParser {
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
     body = match.group(2);
-    
+
     if (!body.startsWith("OUT OF COUNTY")) {
       int pt = body.indexOf(" - ");
       if (pt >= 0) {
@@ -116,7 +116,7 @@ public class NJSalemCountyCParser extends MsgParser {
       }
     }
     data.strCity = stripFieldEnd(left, " BORO");
-    
+
     if (data.strAddress.startsWith("OUT OF COUNTY") && !data.strPlace.isEmpty()) {
       String temp = data.strPlace;
       data.strPlace = data.strAddress;
