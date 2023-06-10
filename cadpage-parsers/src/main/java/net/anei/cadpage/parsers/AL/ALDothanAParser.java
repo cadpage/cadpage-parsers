@@ -10,28 +10,28 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Dothan AL
  */
 public class ALDothanAParser extends FieldProgramParser {
-  
-  
+
+
   public ALDothanAParser() {
     super("DOTHAN", "AL",
-          "TIME CALL ADDR/SXa CITY! PLACE+? ( ID | UNIT ) INFO+");
+          "TIME CALL CALL2/L+? ADDR/SXa CITY! PLACE+? ( ID | UNIT ) INFO+");
     removeWords("ESTATES");
   }
-  
+
   @Override
   public String getFilter() {
     return "Robot.ALERT@dothan.org,777802230001";
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("CITY OF DOTHAN:? +");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
     return parseFields(body.split("/"), 4, data);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -42,19 +42,20 @@ public class ALDothanAParser extends FieldProgramParser {
       if (data.strApt.startsWith("APT")) data.strApt = data.strApt.substring(3).trim();
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CALL2")) return new CallField("Assist|Crit|Critical Injury|Reckless Driving|Sexual Offense", true);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private class MyPlaceField extends PlaceField {
-    
+
     @Override
     public void parse(String field, Data data) {
       if (isValidAddress(field)) {
@@ -63,34 +64,34 @@ public class ALDothanAParser extends FieldProgramParser {
         data.strPlace = append(data.strPlace, "/", field);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "X PLACE";
     }
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("\\d{8,9}");
   private class MyIdField extends IdField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // checkParse is called when we are checking to see if this is a valid
       // ID field or a place field.  Here we make the normal pattern validation
       if (!ID_PTN.matcher(field).matches()) return false;
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // parse is called if we have already parsed a place name and are looking
       // for the real ID field.  Generally we should succeed if this matches the
       // normal ID pattern and fail if it does not.
@@ -104,31 +105,31 @@ public class ALDothanAParser extends FieldProgramParser {
       } else abort();
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9]{1,5}");
   private class MyUnitField extends UnitField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // Unit field has to match unit pattern
       Matcher match = UNIT_PTN.matcher(field);
       if (!match.matches()) return false;
-      
+
       // And there can not be a ID field anywhere behind us
       for (int ndx = 1; !isLastField(ndx); ndx++) {
         if (ID_PTN.matcher(getRelativeField(ndx)).matches()) return false;
       }
-      
+
       // Otherwise OK
       super.parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
