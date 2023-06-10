@@ -10,7 +10,7 @@ public class DispatchA89Parser extends FieldProgramParser {
 
   public DispatchA89Parser(String defCity, String defState) {
     super(defCity, defState,
-          ":SKIP! CFS:ID? ( EVT:CALL! ( CMT:INFO! | COM:INFO! ) | EVENT:CALL! COMMENT:INFO! ) LOC:ADDRCITY! CITY? ( SELECT_NO_GPS ( ESN:UNIT! GPS? | ) | ) SRC_ID+");
+          ":SKIP! CFS:ID? ( EVT:CALL! ( CMT:INFO! | COM:INFO! ) | EVENT:CALL! COMMENT:INFO! ) LOC:ADDRCITY! CITY? GPS? ESN:UNIT/C GPS? SRC_ID+");
   }
 
   @Override
@@ -29,15 +29,43 @@ public class DispatchA89Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_UNIT_GPS_PTN = Pattern.compile("(.*) \\[(\\d+)\\] \\((.*)\\)");
+  private static final Pattern ADDR_UNIT_GPS_PTN = Pattern.compile("(.*?)(?: +\\[(\\d+)\\])?( +\\((.*)\\))?");
+  private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("[- A-Za-z]*");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "INTERSECTION:");
+      field = field.replace(" [] ", " ");
       Matcher match = ADDR_UNIT_GPS_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
-        data.strUnit = match.group(2);
-        setGPSLoc(match.group(3), data);
+        data.strUnit = getOptGroup(match.group(2));
+        String gps = match.group(3);
+        if (gps != null) setGPSLoc(gps, data);
+      }
+      String[] parts = COMMA_PTN.split(field);
+      switch (parts.length) {
+      case 1:
+        break;
+
+      case 2:
+        if (ADDR_CITY_PTN.matcher(parts[1]).matches()) {
+          field = parts[0];
+          data.strCity = parts[1];
+        } else {
+          data.strPlace = parts[0];
+          field = parts[1];
+        }
+        break;
+
+      default:
+        for (int jj = 0; jj < parts.length-2; jj++) {
+          data.strPlace = append(data.strPlace, ", ", parts[jj]);
+        }
+        data.strPlace = parts[0];
+        field = parts[parts.length-2];
+        data.strCity = parts[parts.length-1];
       }
       super.parse(field, data);
     }
@@ -65,8 +93,21 @@ public class DispatchA89Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (field.startsWith("ESN:")) return false;
       if (!data.strCity.isEmpty()) return false;
+      if (field.contains(",")) return false;
+      if (field.endsWith("]")) {
+        int pt = field.indexOf('[');
+        if (pt >= 0) {
+          data.strUnit = field.substring(pt+1, field.length()-1).trim();
+          field = field.substring(0,pt).trim();
+        }
+      }
       super.parse(field, data);
       return true;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE? CITY UNIT?";
     }
   }
 

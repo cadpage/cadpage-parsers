@@ -37,6 +37,8 @@ public class DispatchA86Parser extends FieldProgramParser {
   }
 
   private static final Pattern ADDR_ID_GPS_PTN = Pattern.compile("(.*?)(?: \\[(\\d+)\\])?(?: *\\(([^()]+)\\))?");
+  private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("[- A-Za-z]*");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -47,12 +49,30 @@ public class DispatchA86Parser extends FieldProgramParser {
       data.strBox = getOptGroup(match.group(2));
       String gps = match.group(3);
       if (gps != null) setGPSLoc(gps, data);
-      super.parse(field, data);
-      int pt = data.strAddress.indexOf(',');
-      if (pt >= 0) {
-        data.strPlace =  data.strAddress.substring(0,pt).trim();
-        data.strAddress = data.strAddress.substring(pt+1).trim();
+
+      String[] parts = COMMA_PTN.split(field);
+      switch (parts.length) {
+      case 1:
+        break;
+
+      case 2:
+        if (ADDR_CITY_PTN.matcher(parts[1]).matches()) {
+          field = parts[0];
+          data.strCity = parts[1];
+        } else {
+          data.strPlace = parts[0];
+          field = parts[1];
+        }
+        break;
+
+      case 3:
+        for (int jj = 0; jj < parts.length-2; jj++) {
+          data.strPlace = append(data.strPlace, ",", parts[jj]);
+        }
+        field = parts[parts.length-2];
+        data.strCity = parts[parts.length-1];
       }
+      parseAddress(field, data);
     }
 
     @Override
