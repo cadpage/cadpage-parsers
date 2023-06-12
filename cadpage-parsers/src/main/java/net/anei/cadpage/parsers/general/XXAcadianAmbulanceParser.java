@@ -11,7 +11,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
 
   public XXAcadianAmbulanceParser(String defState) {
     super("", defState,
-          "( SELECT/1 CALL! Loc:PLACE! Address:ADDR! Apt:APT! City:CITY! Parish:SKIP! Latitude:GPS1/d Longitude:GPS2/d" +
+          "( SELECT/1 CALL! Loc:PLACE! Address:ADDR! Apt:APT! City:CITY! State:ST! Parish:SKIP! Latitude:GPS1/d Longitude:GPS2/d" +
           "| SELECT/CANCEL CALL ADDR! Loc:PLACE! Cancel_Reason:INFO! " +
           "| SELECT/ADDRCH Address:ADDR! Apt:APT! City:CITY! State:ST! Latitude:GPS1/d! Longitude:GPS2/d! " +
           "| Location:PLACE! Address:ADDR! ( Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP! " +
@@ -43,7 +43,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Loc:|Add:|Address:|APT:|Apt:|Bldg:|Cross St:|City:|State:|Cnty:|Parish/County:|Map Pg:|Notes:|Dest:|Pt's Name:|Latitude:|Longitude:)");
   private static final Pattern RUN_REPORT_DELIM = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d)\\s*(?=[A-Z][A-Za-z]+:)");
-  private static final Pattern DELIM2 = Pattern.compile("\\*(?=Loc:|Address:|Apt:|City:|Parish:)| +(?=Latitude:|Longitude:)");
+  private static final Pattern DELIM2 = Pattern.compile("\\*(?=Loc:|Address:|Apt:|City:|Parish:)| +(?=State:|Latitude:|Longitude:)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -200,8 +200,8 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("UDC")) field = "San Antonio";
-      if (data.strCity.endsWith(" County") && data.strCity.startsWith(field)) return;
-      data.strCity = append(data.strCity, ", ", field);
+      if (!data.strCity.isEmpty()) return;
+      super.parse(field, data);
     }
   }
 }

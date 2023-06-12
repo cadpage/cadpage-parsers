@@ -12,7 +12,7 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
   public COGunnisonCountyParser(String county) {
     super(county, "CO");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "COGunnisonCounty";
@@ -41,10 +41,10 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
       "Intersection",         "Intersection",
       "Opened Date / Time",   "Date / Time\nOpen"
   };
-  
+
   private String fixit(String body) {
     if (!body.startsWith("Event Number:")) return body;
-    
+
     StringBuilder sb = new StringBuilder("Event No:");
     int lastPt = 13;
     boolean address = false;
@@ -67,5 +67,5 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
     sb.append(body.substring(lastPt));
     return sb.toString();
   }
-  
+
 }

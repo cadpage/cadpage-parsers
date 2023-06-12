@@ -12,7 +12,7 @@ public class COBoulderCountyBParser extends FieldProgramParser {
 
 	public COBoulderCountyBParser() {
 		super("BOULDER COUNTY", "CO",
-		      "( Comment:INFO CAD:ID CALL:CALL LOC:PLACE ADD:ADDR CITY:CITY INFO:INFO UNIT:UNIT " +
+		      "( Comment:INFO CAD:ID CALL:CALL LOC:PLACE ADD:ADDR CITY:CITY INFO:INFO/N UNIT:UNIT " +
 		      "| ADDR:ADDR APT:APT! PROB:PROB! UNITS:UNIT! Map_Page:MAP! Assigned_Units:UNIT " +
 	        "| CALL! ADD:ADDR! BLD:APT! APT:APT! LOC:PLACE! INFO:INFO! TIME:TIME! UNITS:UNIT% )");
 	}
@@ -32,7 +32,7 @@ public class COBoulderCountyBParser extends FieldProgramParser {
   }
 
 	private static Pattern MASTER1 = Pattern.compile("\\*{3} ADVISORY NOTIFICATION \\*{3}Inc #([A-Z]{3,4})(\\d{6}-\\d{6})Type:z?(.*)Addr:(.*)Unit:(.*)");
-	private static Pattern DELIM2 = Pattern.compile(" *(?=(?:CAD|CALL|LOC|ADD|CITY|UNIT):)");
+	private static Pattern DELIM2 = Pattern.compile(" *(?=(?:CAD|CALL|LOC|ADD|CITY|INFO|UNIT):)");
   private static Pattern SRC_ID = Pattern.compile("([A-Z]{3,4})(\\d{6}-\\d{6}) +(.*)");
 	private static Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(ADD|APT|BLD|INFO|LOC|PROB|TIME|UNITS|Map Page):");
 
@@ -71,11 +71,20 @@ public class COBoulderCountyBParser extends FieldProgramParser {
   }
 
 	@Override
-	  public Field getField(String name) {
-	    if (name.equals("PROB")) return new MyProbField();
-	    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d");
-	    return super.getField(name);
+  public Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("PROB")) return new MyProbField();
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d");
+    return super.getField(name);
+  }
+
+	private class MyCityField extends CityField {
+	  @Override
+	  public void parse(String field, Data data) {
+	    field = stripFieldEnd(field, " U");
+	    super.parse(field, data);
 	  }
+	}
 
 	private static Pattern PROB = Pattern.compile("(.*) \\((L\\d)\\)(?: ([\\dA-Z]+))?");
 	private class MyProbField extends CallField {

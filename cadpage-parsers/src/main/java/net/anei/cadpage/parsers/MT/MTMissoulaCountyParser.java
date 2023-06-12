@@ -11,7 +11,7 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
 
   public MTMissoulaCountyParser() {
     super("MISSOULA COUNTY", "MT",
-          "Call_Type:CALL! Address:ADDR/S6 Common_Name:PLACE! Assigned_Units:UNIT! Narrative:INFO INFO/N+");
+          "Call_Type:CALL! Address:ADDRCITYST/S6 Common_Name:PLACE! Assigned_Units:UNIT! Narrative:INFO INFO/N+");
   }
 
   @Override
@@ -47,28 +47,20 @@ public class MTMissoulaCountyParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     return super.getField(name);
   }
 
   private static final Pattern PRESERVE_NUMBER_PTN = Pattern.compile(".* MM HWY");
-  private class MyAddressField extends AddressField {
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strCity = p.getLastOptional(',');
-      field = p.get().replace('@', '&');
+      field = field.replace('@', '&');
       super.parse(field, data);
       if (data.strApt.length() > 0 && PRESERVE_NUMBER_PTN.matcher(data.strAddress).matches()) {
         data.strAddress = data.strAddress + ' ' + data.strApt;
         data.strApt = "";
       }
-
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " CITY";
     }
   }
 }
