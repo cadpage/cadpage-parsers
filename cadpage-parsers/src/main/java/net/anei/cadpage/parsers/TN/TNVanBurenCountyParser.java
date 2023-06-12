@@ -1,43 +1,20 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
 
-public class TNVanBurenCountyParser extends DispatchA65Parser {
+public class TNVanBurenCountyParser extends DispatchA86Parser {
 
   public TNVanBurenCountyParser() {
-    super(CITY_LIST, "VAN BUREN COUNTY", "TN");
+    super("VAN BUREN COUNTY", "TN");
   }
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm3.info,dispatch@vanburentne911.info";
+    return "dispatch@vanburentne911.info";
   }
 
   @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
-
-  private static final String[] CITY_LIST = new String[] {
-
-      // Town
-      "SPENCER",
-
-      // Unincorporated communities
-      "BONE CAVE",
-      "CEDAR GROVE",
-      "LONEWOOD",
-      "MOONEYHAM",
-      "NEW MARTIN",
-      "PINEY",
-      "WELCHLAND",
-
-      // Bledsoe County
-      "PIKEVILLE",
-
-      // Warren County
-      "ROCK ISLAND"
-  };
 }
