@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 
@@ -12,27 +13,47 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
   public PAMontgomeryCountyCParser() {
     super(PAMontgomeryCountyParser.CITY_CODES, "MONTGOMERY COUNTY", "PA",
-        "ADDR/S TRUCKS:UNITADDR? XST:X! MUN:CITY? NAT:CALL! BOX:BOX ADC:MAP I#:ID TIME:TIME NOTES:INFO TRUCKS:UNIT");
+        "( SELECT/RR INCIDENT:ID! CODE:CALL! PLACE ADDR! Cross_Street:X! ESZ:MAP! MUN:CITY! INFO/N+ " +
+        "| ADDR/S TRUCKS:UNITADDR? XST:X! MUN:CITY? NAT:CALL! BOX:BOX ADC:MAP I#:ID TIME:TIME NOTES:INFO TRUCKS:UNIT )");
    }
 
   @Override
   public String getFilter() {
-    return "@c-msg.net,eoccomm@montcopa.org,montcopage@comcast.net";
+    return "mcdps@mcad911.com";
   }
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{7}) +");
   private static final Pattern LEAD_EVENT_PTN = Pattern.compile("EVENT: *([EF]\\d{7})(?: +/([A-Z]{4})| HYDRANT OOS -| [A-Z ]+:)? +");
   private static final Pattern LEAD_APT_PTN = Pattern.compile("#(\\S+) +");
-  private static final Pattern MASTER1 = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d) #(F\\d{7}) at (.*?), Note:(.*) -");
-  private static final Pattern DATE_TIME_MARKER = Pattern.compile("^(\\d\\d:\\d\\d:\\d\\d) (?:(\\d\\d-\\d\\d-\\d\\d) )?+(?:EVENT: *([A-Z]\\d+) +)?");
   private static final Pattern SPECIAL_ALERT1_PTN = Pattern.compile("^#([A-Z]\\d+) at (.*?), Note: (.*)");
   private static final Pattern SPECIAL_CITY_PTN = Pattern.compile("(.*?) +([A-Z]{4})");
   private static final Pattern COMMA_DELIM = Pattern.compile(",(?=BOX:|TIME:|NOTES:)");
-  private static final Pattern START_UNIT_MARK_PTN = Pattern.compile("(?:[A-Z0-9,]+,)?\\d+-\\d[ ,].*");
   private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+
+    if (!subject.equals("MCDPS CAD MESSAGE")) return false;
+
+    // Process run reports
+    if (body.startsWith("------ Clear Report")) {
+      return parseRunReport(body, data);
+    } else {
+      return parseAlert(body, data);
+    }
+  }
+
+  private static final Pattern RR_DELIM_PTN = Pattern.compile("\n| +(?=INCIDENT:|ESZ:|MUN:)");
+
+  private boolean parseRunReport(String body, Data data) {
+    setSelectValue("RR");
+    data.msgType = MsgType.RUN_REPORT;
+    return parseFields(RR_DELIM_PTN.split(body), data);
+  }
+
+  private boolean parseAlert(String body, Data data) {
+
+    setSelectValue("");
 
     Matcher match = LEAD_ID_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -45,30 +66,8 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
       body = stripFieldStart(body, "MCDPS CAD MESSAGE ");
     }
 
-    // Check for an uncommon variant
-    match = MASTER1.matcher(body);
-    if (match.matches()) {
-      setFieldList("TIME ID ADDR APT CITY PLACE CALL");
-      data.strTime = match.group(1);
-      data.strCallId = match.group(2);
-      parseAddress(match.group(3).trim(), data);
-      data.strCall = match.group(4).trim();
-      return true;
-    }
-
     // If body ends with dash,remove it
     body = stripFieldEnd(body, "-");
-
-    // Process Date/Time/ID marker
-    boolean dateTimeMark = false;
-    match = DATE_TIME_MARKER.matcher(body);
-    if (match.find()) {
-      dateTimeMark = true;
-      data.strTime = match.group(1);
-      data.strDate = getOptGroup(match.group(2)).replace('-', '/');
-      data.strCallId = getOptGroup(match.group(3));
-      body = body.substring(match.end());
-    }
 
     // Process special general alerts
     match = SPECIAL_ALERT1_PTN.matcher(body);
@@ -91,40 +90,27 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
       body = body.substring(match.end());
     }
 
-    // One agency seems to have dropped the TRUCKS: label, figuring out when it
-    // is needed is a hassle
-    if (subject.length() == 0 && !body.contains("TRUCKS:") &&
-        START_UNIT_MARK_PTN.matcher(body).matches()) {
-      body = "TRUCKS:" + body;
-    }
-
     body = body.replace(",MAP/BOX-PLAN:", " BOX:");
     body = body.replace(", MAP/BOX:", " BOX:");
     body = body.replace(",I#", " I#:");
     body = COMMA_DELIM.matcher(body).replaceAll(" ");
-    if (super.parseMsg(body, data)) {
-      int pt = data.strAddress.indexOf(" - ");
-      if (pt >= 0) {
-        data.strCity = data.strAddress.substring(pt+3).trim();
-        data.strAddress = data.strAddress.substring(0,pt).trim();
-      }
-      if (data.strAddress.isEmpty() || data.strAddress.equals("&")) {
-        data.strAddress = "";
-        parseAddress(data.strCross, data);
-        data.strCross = "";
-      }
-      return true;
+    if (!super.parseMsg(body, data)) return false;
+    int pt = data.strAddress.indexOf(" - ");
+    if (pt >= 0) {
+      data.strCity = data.strAddress.substring(pt+3).trim();
+      data.strAddress = data.strAddress.substring(0,pt).trim();
     }
-
-    // If parse failed, but we have a good date/time marker
-    // process this as a general alert
-    if (dateTimeMark) {
-      data.strCall = "GENERAL ALERT";
-      data.strPlace = body;
+    if (data.strAddress.isEmpty() || data.strAddress.equals("&")) {
       data.strAddress = "";
-      return true;
+      parseAddress(data.strCross, data);
+      data.strCross = "";
     }
-    return false;
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "ID? APT? ADDR? " + super.getProgram();
   }
 
   private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
@@ -218,11 +204,6 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
         data.strAddress = match.group(1);
       }
     }
-  }
-
-  @Override
-  public String getProgram() {
-    return "TIME? DATE? ID? ADDR " + super.getProgram();
   }
 
   @Override

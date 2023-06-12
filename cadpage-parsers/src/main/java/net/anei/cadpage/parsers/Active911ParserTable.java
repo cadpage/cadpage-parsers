@@ -2001,7 +2001,6 @@ public class Active911ParserTable {
       "US/PA/BroughtonVFD",               "PAAlleghenyCountyA",
       "US/PA/BucksCounty",                "PABucksCountyD",
       "US/PA/BucksEMA",                   "PABucksCounty",
-      "US/PA/BurholmeEMS",                "PAPhiladelphia,PAMontgomeryCountyC",
       "US/PA/ButlerCounty",               "PAButlerCounty",
       "US/PA/ButlerCountyTwp",            "PAButlerCounty",
       "US/PA/CambriaCounty",              "PACambriaCounty",

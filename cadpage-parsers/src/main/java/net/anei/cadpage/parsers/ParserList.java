@@ -1491,7 +1491,6 @@ public class ParserList {
               ,"PANorthumberlandCounty"         ,"Northumberland County, PA"
               ,"PAPennStar"                     ,"PennSTAR Flight, PA"
               ,"PAPerryCounty"                  ,"Perry County, PA"
-              ,"PAPhiladelphia"                 ,"Philadelphia, PA"
               ,"PAPikeCounty"                   ,"Pike County, PA"
               ,"PAPotterCounty"                 ,"Potter County, PA"
               ,"PASchuylkillCounty"             ,"Schuylkill County, PA"
