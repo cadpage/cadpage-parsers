@@ -12,7 +12,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   public SCGreenvilleCountyEParser() {
     super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC",
-          "CALL ADDR CITY PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | CH UNIT ) | PRI ID UNIT/C+ ) END");
+          "CALL ADDR CITY_X APT_PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | CH UNIT ) | PRI ID UNIT/C+ ) END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("GATEWAY", "PLACE", "ROAD");
@@ -132,8 +132,8 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("CITY_X")) return new MyCityCrossField();
+    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("ID")) return new IdField("(?:\\d{6}|[A-Z]{2}\\d{2})-\\d{6}", true);
     if (name.equals("PRI")) return new PriorityField("(?:Non-)?Emergency|Special Assignment", true);
     if (name.equals("UNIT")) return new MyUnitField();
@@ -141,23 +141,37 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private class MyCityField extends CityField {
+  private class MyCityCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "(C)");
-      super.parse(field, data);
-    }
-  }
-
-  private class MyPlaceField extends PlaceField {
-    @Override
-    public void parse(String field, Data data) {
-      data.strPlace = stripLeadAlert(field, data);
+      if (field.contains("/")) {
+        data.strCross = field;
+      } else {
+        data.strCity = field;
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return "ALERT PLACE";
+      return "CITY X";
+    }
+  }
+
+  private class MyAptPlaceField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripLeadAlert(field, data);
+      if (APT_PTN.matcher(field).matches()) {
+        data.strApt = append(data.strApt, "-", field);
+      }  else {
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ALERT APT PLACE";
     }
   }
 

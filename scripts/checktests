@@ -10,5 +10,5 @@ find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e '\*\*IGNORE\*\*' \
    -e 'BaseParserTest.java' \
    -e 'ALJeffersonCountyLParserTest.java' \
-   -e '"CITY:( .*|\\n|064/284|AMA|CMCH / GOSHEN|COTTAGE GROVE/HISSOP|HOU\.R\.|EVA|FOX|OPP|RAY|SUN|ULM|YOE|.*WARD *[0-9]|.*WD *[0-9]|[0-9]{5})"' \
+   -e '"CITY:( .*|\\n|064/284|AMA|CMCH / GOSHEN|COTTAGE GROVE/HISSOP|HOU\.R\.|EVA|FOX|IVA|OPP|RAY|SUN|ULM|YOE|.*WARD *[0-9]|.*WD *[0-9]|[0-9]{5})"' \
    -e '"ADDR:(LAT:|LL|[+NS]?[0-9].*[0-9] *[,;] *-?[0-9])'
