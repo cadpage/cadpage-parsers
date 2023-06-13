@@ -341,7 +341,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) Apartment: *(.*)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) (?:Apartment|Building): *(.*)");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
