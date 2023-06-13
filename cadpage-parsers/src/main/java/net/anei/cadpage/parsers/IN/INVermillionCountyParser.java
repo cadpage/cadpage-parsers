@@ -138,6 +138,7 @@ public class INVermillionCountyParser extends DispatchA29Parser {
     "RANDALL",
     "RILEYSBURG",
     "SAINT BERNICE",
+    "SANDYTOWN",
     "SUMMIT GROVE",
     "SYNDICATE",
     "ST BERNICE",
