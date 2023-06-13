@@ -171,6 +171,7 @@ public class ParserList {
               ,"AKFairbanks"                    ,"Fairbanks, AK"
               ,"AKJuneau"                       ,"Juneau, AK"
               ,"AKKenaiPeninsulaBorough"        ,"Kenai Peninsula Borough, AK"
+              ,"AKKetchikan"                    ,"Ketchikan, AK"
               ,"AKMatanuskaSusitnaBorough"      ,"Matanuska Susitna Borough, AK"
               ,"AKSkagway"                      ,"Skagway, AK"
           ),

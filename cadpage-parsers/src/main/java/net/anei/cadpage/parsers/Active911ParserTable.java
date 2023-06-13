@@ -73,6 +73,7 @@ public class Active911ParserTable {
       "US/AK/CapitalCityFire2",           "AKJuneau",
       "US/AK/CityofJuneau",               "AKJuneau",
       "US/AK/Fairbanks",                  "AKFairbanks",
+      "US/AK/CityofKetchikan",            "AKKetchikan",
       "US/AK/MatanuskaSusitna",           "AKMatanuskaSusitnaBorough",
       "US/AK/Skagway",                    "AKSkagway",
       "US/AL/AdamsvilleFD",               "ALJeffersonCountyJ",
