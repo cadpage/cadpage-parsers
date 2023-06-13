@@ -22,6 +22,8 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchSPKParser extends HtmlProgramParser {
 
   private static final Map<String, Field> FIELD_MAP = new HashMap<String, Field>();
+  private Field aptField;
+  private Field bldgField;
 
   public DispatchSPKParser(String defCity, String defState) {
     this(null, defCity, defState);
@@ -35,8 +37,8 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
     Field addrCityField = getField("ADDRCITY");
     Field alertField = getField("ALERT");
-    Field aptField = getField("APT");
-    Field bldgField = getField("BLDG");
+    aptField = getField("APT");
+    bldgField = getField("BLDG");
     Field callerLocField = getField("CALLER_LOC");
     Field cityField = getField("CITY");
     Field crossField = getField("X");
@@ -341,7 +343,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) (?:Apartment|Building): *(.*)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)(?: +Apartment: *(.*?))?(?: +Building: *(.*?))?");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -351,14 +353,17 @@ public class DispatchSPKParser extends HtmlProgramParser {
       // Unless the first address is UNKNOWN in which case, accept the second one
       if (data.strAddress.length() == 0 || data.strAddress.equals("UNKNOWN")) {
         Matcher match = ADDR_APT_PTN.matcher(field);
-        String apt = "";
+        String apt = null;
+        String bldg = null;
         if (match.matches()) {
           field = match.group(1).trim();
           apt = match.group(2);
+          bldg = match.group(3);
         }
         data.strAddress = "";
         super.parse(field, data);
-        data.strApt = append(data.strApt, "-", apt);
+        if (apt != null) aptField.parse(apt, data);
+        if (bldg != null) bldgField.parse(bldg, data);
       }
     }
   }
