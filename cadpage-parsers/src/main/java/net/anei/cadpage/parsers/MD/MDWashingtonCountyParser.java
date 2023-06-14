@@ -15,10 +15,6 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  */
 public class MDWashingtonCountyParser extends FieldProgramParser {
 
-  private static final Pattern CALL_QUAL_PTN = Pattern.compile("(?:Recall Reason|Completed|Cancel Reason):.*\n|(?:CANCEL|CANCELL?ED|CALL CANCELL?ED|FAILED!).*\n|[- A-Za-z0-9!\\.\\*',]+\n");
-  private static final Pattern CROSS_PTN = Pattern.compile("\\[([^\\[\\]]*) - ([^\\[\\]]*)\\]");
-  private static final Pattern DELIM = Pattern.compile(" *(?<= )- +|  ,");
-
   public MDWashingtonCountyParser() {
     super(CITY_LIST, "WASHINGTON COUNTY", "MD",
         "( INFO/G END " +
@@ -39,6 +35,10 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       @Override public boolean noParseSubjectFollow() { return true; }
     };
   }
+
+  private static final Pattern CALL_QUAL_PTN = Pattern.compile("(?:Recall Reason|Completed|Cancel Reason):.*\n|(?:CANCEL|CANCELL?ED|CALL CANCELL?ED|FAILED!).*\n|[- A-Za-z0-9!\\.\\*',]+\n");
+  private static final Pattern CROSS_PTN = Pattern.compile("\\[([^\\[\\]]*) - ([^\\[\\]]*)\\]");
+  private static final Pattern DELIM = Pattern.compile(" *(?<= )- +|  ,");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -96,6 +96,7 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern BOX_PTN = Pattern.compile("(.*)\\bBOX +([^ ]+(?: [A-Z])?)");
+  private static final Pattern MA_COUNTY_PTN = Pattern.compile("([A-Z]{3,4}) CO, *(.*)");
   private static final Pattern DIR_BOUND_PTN = Pattern.compile("([NSEW]B)\\b *(.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT)\\b *(.*)");
   private class MyAddressField extends AddressField {
@@ -114,9 +115,14 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
       }
 
       // First field contains option M/A county, address and optional place name
+      String maCounty = "";
+      match = MA_COUNTY_PTN.matcher(field);
+      if (match.matches()) {
+        maCounty = convertCodes(match.group(1), COUNTY_CODES);
+        field = match.group(2);
+      }
+
       Parser p = new Parser(field);
-      String maCounty = p.getOptional(" CO, ");
-      if (maCounty.length() > 0) maCounty = convertCodes(maCounty, COUNTY_CODES);
       super.parse(p.get(','), data);
       String place = p.get();
       p = new Parser(place);
@@ -363,14 +369,14 @@ public class MDWashingtonCountyParser extends FieldProgramParser {
   };
 
   private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
-      "ALL", "ALLEGANY COUNTY",
-      "BER", "BERKELEY COUNTY",
-      "FRA", "FRANKLIN COUNTY",
-      "FRE", "FREDERICK COUNTY",
-      "FUL", "FULTON COUNTY",
-      "JEF", "JEFFERSON COUNTY",
-      "LOU", "LOUDOUN COUNTY",
-      "MOR", "MORGAN COUNTY"
+      "ALL",  "ALLEGANY COUNTY",
+      "BER",  "BERKELEY COUNTY",
+      "FRA",  "FRANKLIN COUNTY",
+      "FRE",  "FREDERICK COUNTY",
+      "FUL",  "FULTON COUNTY",
+      "JEF",  "JEFFERSON COUNTY",
+      "LOUD", "LOUDOUN COUNTY",
+      "MOR",  "MORGAN COUNTY"
   });
 
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[]{

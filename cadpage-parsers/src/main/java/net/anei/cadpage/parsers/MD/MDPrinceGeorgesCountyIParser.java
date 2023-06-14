@@ -19,7 +19,17 @@ public class MDPrinceGeorgesCountyIParser extends DispatchH03Parser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
+
     data.strCall = convertCodes(data.strCall, CALL_CODES);
+
+    if (data.strCity.equals("OUT")) {
+      if (!data.strApt.isEmpty()) {
+        data.strCity = data.strApt;
+        data.strApt = "";
+      } else {
+        data.strCity = "OOC";
+      }
+    }
     return true;
   }
 
