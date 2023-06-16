@@ -55,29 +55,84 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDRESS_PLACE_CITY_PATTERN
-    = Pattern.compile("(.*?)(?:\\(([^\\)]+)\\))? *(?:,([^,]*?))?(?:[, ] *(VT|NH|NY|PQ|QC))?(?:[, ] *(\\d{5}))?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ZIP_APT_PTN = Pattern.compile("(\\d{5}|J0[A-Z0-9 ]{3,5})(?: *# *(.*))?");
+  private static final Pattern STATE_ZIP_APT_PTN = Pattern.compile("(VT|VRT|VVT|NH|NY|PQ|QC|Vermont)(?: *\\d{5}|J0[A-Z0-9 ]{3,5}())?(?: *# *(.*))?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?)(?: (VT|NH|NY|PQ|QC))?(?: +(\\d{5}|J0[A-Z0-9 ]{3,5}))?", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      Matcher m = ADDRESS_PLACE_CITY_PATTERN.matcher(field);
-      if (!m.matches()) abort();   // Can not happen!!
-      String addr = m.group(1);
-      data.strPlace = getOptGroup(m.group(2));
-      data.strCity = getOptGroup(m.group(3));
-      addr = addr.replace(',', '&');
-      if (data.strCity.length() > 0) {
+      String addr = "";
+      String apt = "";
+      while (true) {
+        Parser p = new Parser(field);
+        String part = p.getLastOptional(',');
+        if (part.equals('`')) part = p.getLastOptional(',');
+
+        Matcher match = ZIP_APT_PTN.matcher(part);
+        if (match.matches()) {
+          data.strCity = match.group(1);
+          apt = getOptGroup(match.group(2));
+          part = p.getLastOptional(',');
+        }
+
+        match = STATE_ZIP_APT_PTN.matcher(part);
+        if (match.matches()) {
+          part = match.group(1).toUpperCase();
+          if (part.startsWith("V")) part = "VT";
+          data.strState = part;
+          data.strCity = getOptGroup(match.group(2));
+          apt = append(getOptGroup(match.group(3)), "-", apt);;
+          part = p.getLastOptional(',');
+        }
+
+        if (!part.isEmpty()) {
+          match = CITY_ST_ZIP_PTN.matcher(part);
+          if (match.matches()) {
+            part = match.group(1).trim();
+            String state = match.group(2);
+            if (state != null) data.strState = state.toUpperCase();
+          }
+        }
+        part = part.replace(".", "");
+        if (part.equalsIgnoreCase("StAlbans")) part = "St Albans";
+        data.strCity = part;
+
+        String tmp = p.getLast(',');
+        if (tmp.startsWith("#")) {
+          apt = append(tmp.substring(1).trim(), "-", apt);
+          addr = p.getLast(',');
+        } else {
+          addr = tmp;
+        }
+
+        // If we end up with a state code for the address, something got sorted out of order
+        // Drop the last token, reset everything and try again :(
+        match = STATE_ZIP_APT_PTN.matcher(addr);
+        if (match.matches()) {
+          addr = apt = data.strState = data.strCity = "";
+          int pt = field.lastIndexOf(',');
+          if (pt < 0) abort();
+          field = field.substring(0,pt).trim();
+          continue;
+        }
+
+        // Otherwise the hard part is done
+        data.strPlace = p.get();
+        break;
+      }
+
+      if (!data.strCity.isEmpty()) {
         parseAddress(addr, data);
       } else {
         parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
       }
-      if (data.strCity.length() == 0) data.strCity = getOptGroup(m.group(5));
-      data.strState = getOptGroup(m.group(4));
+
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames()+" ST";
+      return "PLACE ADDR CITY ST APT";
     }
   }
 
