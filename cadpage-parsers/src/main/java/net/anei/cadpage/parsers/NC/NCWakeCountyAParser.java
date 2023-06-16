@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.NC;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeTable;
@@ -14,13 +15,15 @@ public class NCWakeCountyAParser extends FieldProgramParser {
 
   public NCWakeCountyAParser() {
     super(CITY_CODES, "WAKE COUNTY", "NC",
-           "Inc:CALL! Map:MAP! Add:ADDR! Loc:PLACE! Apt:APT! CS:X? Unt:UNIT! TG:CH! Cty:CITY! Comm:INFO INFO+");
+           "Inc:CALL! Map:MAP! Add:ADDR! Loc:PLACE! Apt:APT! CS:X? Unt:UNIT! TG:CH! Cty:CITY! Comm:INFO INFO/N+");
   }
 
   @Override
   public String getFilter() {
     return "wcps@wakegov.com,wcps@wake.gov";
   }
+
+  private static final Pattern INFO_ADDR_MARK_PTN = Pattern.compile("\\. : [A-Z]{4}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -46,7 +49,16 @@ public class NCWakeCountyAParser extends FieldProgramParser {
     }
     return true;
   }
-  private static final Pattern INFO_ADDR_MARK_PTN = Pattern.compile("\\. : [A-Z]{4}");
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
 
   private class MyCallField extends CallField {
     @Override
@@ -92,13 +104,27 @@ public class NCWakeCountyAParser extends FieldProgramParser {
     }
   }
 
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("UNIT")) return new MyUnitField();
-    return super.getField(name);
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("\\(1\\).*? LAT: *(\\S*) +LON: *(\\S*?)(?=\\([23])");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_GPS_PTN.matcher(field);
+      if (match.lookingAt()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        field = field.substring(match.end()).trim();
+        int pt = field.indexOf("(3)");
+        if (pt >= 0) {
+          field = field.substring(pt+3).trim();
+        } else return;
+      } else if (field.contains(" LAT:")) return;
+
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "GPS " + super.getFieldNames();
+    }
   }
 
   @Override
