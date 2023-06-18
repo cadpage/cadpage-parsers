@@ -60,7 +60,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
 
   private static final Pattern MASTER_PTN1 = Pattern.compile("([A-Z0-9]+\\**) - ([-A-Z0-9]{2,5}) \\((.*?)\\) (.*?)#([A-Z]{2}\\d+)\\b[, ]*(.*)");
 
-  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units [Rr]esp[. ]+([A-Z0-9,]+) *(?:[Tt]ime[: ]+(\\d\\d:\\d\\d)(?:Inc|INC)# ?([A-Z]*\\d+)(?: Apt(.*?))?(?: ?City ?(.*?))?(?: ?(?:Lat|LAT) ?(\\d{8,}) (?:Lon|LON) ?(\\d{8,})(?: Comments *(.*))?)?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
+  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units [Rr]esp[. ]+([A-Z0-9,]+) *(?:[Tt]ime[: ]+(\\d\\d:\\d\\d)(?:Inc|INC)# ?([A-Z]*\\d+)(?: Apt(.*?))?(?: ?City ?([A-Za-z ]*?))?(?: ?(?:Lat|LAT) ?(\\d{8,}) (?:Lon|LON) ?(\\d{8,})\\b(?: Comments)? *(.*))?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
 
   private static final Pattern MASTER_PTN5 = Pattern.compile("([A-Z]{2,6}\\d?\\**) - (.*?) Units ([,A-Z0-9]+) RP +(?:(.*?) +)?Comment(.*)");
 
@@ -222,6 +222,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     }
   }
 
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)\\) *([A-Z]{3})");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private static final Pattern DIR_OF_SLASH_PTN = Pattern.compile("\\b([NSEW] *OF) */ *");
   private class MyAddressField extends AddressField {
@@ -235,11 +236,13 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       }
 
       int flags = FLAG_START_FLD_REQ | FLAG_NO_IMPLIED_APT | FLAG_ANCHOR_END;
-      int pt1 = field.lastIndexOf(')');
-      if (pt1 >= 0) {
-        data.strCity = convertCodes(field.substring(pt1+1).trim(), CITY_CODES);
+
+      match = ADDR_CITY_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strCity = convertCodes(match.group(2), CITY_CODES);
         int pcnt = 1;
-        int pt2 = pt1-1;
+        int pt2 = field.length()-1;
         for (; pt2 >= 0; pt2--) {
           char chr = field.charAt(pt2);
           if (chr == ')') pcnt++;
@@ -247,7 +250,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
           if (pcnt == 0) break;
         }
         if (pt2 < 0) abort();
-        data.strCross = cleanCross(field.substring(pt2+1, pt1).trim());
+        data.strCross = cleanCross(field.substring(pt2+1).trim());
         field = field.substring(0,pt2).trim();
         flags |= FLAG_NO_CITY;
       } else {
