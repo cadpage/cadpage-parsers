@@ -11,8 +11,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ORJosephineCountyParser extends FieldProgramParser {
 
-  private static final Pattern UNITS_PTN = Pattern.compile("Units: +");
-
   public ORJosephineCountyParser() {
     super("JOSEPHINE COUNTY", "OR",
           "( ID CALL ( DATETIME ADDRCITY/S6 CITY PLACE X UNIT! END " +
@@ -35,6 +33,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
 
   private static final Pattern LAT_LON_PTN = Pattern.compile("\\bLAT: *([-+]?[\\d\\.]+),? +LON: *([-+]?[\\d\\.]+)\\b");
   private static final Pattern LAT_LON_PTN2 = Pattern.compile("\\bLAT:([-+]?[\\d\\.]+) LON:([-+]?[\\d\\.]+)\\b");
+  private static final Pattern UNITS_PTN = Pattern.compile("Units: +");
   private static final Pattern GPS_PTN = Pattern.compile(":([-+]?\\d{2,3}\\.\\d{6,}):([-+]?\\d{2,3}\\.\\d{6,}) ");
   private static final Pattern DELIM = Pattern.compile("\n|: +|(?<!Units|Notes| LAT| LON):(?!\\d\\d[: ])");
   private static final Pattern DELIM2 = Pattern.compile("\n *| {2,}");
@@ -58,7 +57,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     String[] flds = body.split(";", -1);
     if (flds.length < 8) {
       flds = DELIM.split(body);
-      if (flds.length < 3) flds = DELIM2.split(body);
+      if (flds.length < 3 || flds[0].contains("  ")) flds = DELIM2.split(body);
     }
     if (!parseFields(flds, data)) return false;
     data.strAddress = LAT_LON_PTN2.matcher(data.strAddress).replaceFirst("LAT: $1, LON: $2");
@@ -169,8 +168,19 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   private class MyAddressCityCrossField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      String addr = p.get(',');
+      int pt1 = field.indexOf(',');
+      if (pt1 < 0) pt1 = field.length();
+      int pt2 = field.indexOf("  ");
+      if (pt2 < 0) pt2 = field.length();
+      String addr;
+      if (pt1 < pt2) {
+        addr = field.substring(0,pt1).trim();
+        data.strCity = field.substring(pt1+1, pt2).trim();
+      } else {
+        addr = field.substring(0,pt2);
+      }
+      String cross = field.substring(pt2).trim();
+
       int pt = addr.indexOf(" - ");
       if (pt >= 0) {
         data.strPlace = addr.substring(0, pt).trim();
@@ -181,8 +191,6 @@ public class ORJosephineCountyParser extends FieldProgramParser {
         data.strCross = data.strApt;
         data.strApt = "";
       }
-      data.strCity = p.get("  ");
-      String cross = p.get();
       if (!cross.equals("No Cross Streets Found")) {
         data.strCross = append(data.strCross, " / ", cross);
       }
