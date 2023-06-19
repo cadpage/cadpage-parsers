@@ -12,8 +12,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA1Parser extends FieldProgramParser {
 
   boolean hasCityList = false;
-  
+
   Set<String> unitSet = new HashSet<>();
+
+  // **** WARNING **** Supplying a city list is highly recommended - Parser can be easily confused without it
 
   public DispatchA1Parser(String defCity, String defState) {
     this((Properties)null, defCity, defState);
@@ -28,14 +30,14 @@ public class DispatchA1Parser extends FieldProgramParser {
   public DispatchA1Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
            "( CANCEL_INCIDENT:ID! LOC:ADDR/S! UNITS:UNIT! CALL! INFO/N+ " +
-           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! APT? CITY BTWN:X EMPTY+? ( LAT/LONG:EMPTY GPS! | ) INCIDENT:ID? COM:INFO INFO/N+? CT:INFO/N INFO/N+? UNITS:UNIT INCIDENT:ID UNITS:UNIT RC:CH DATE/TIME:DATETIME http:GPS2 RPT_#:EMPTY ID )");
+           "| ALRM_LVL:PRI? RUN_CARD:BOX? LOC:PLACE PLACE2? ADDR! EMPTY? APT? CITY BTWN:X EMPTY+? ( LAT/LONG:EMPTY GPS! | ) INCIDENT:ID? COM:INFO INFO/N+? CT:INFO/N INFO/N+? UNITS:UNIT INCIDENT:ID UNITS:UNIT RC:CH DATE/TIME:DATETIME http:GPS2 RPT_#:EMPTY ID )");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     unitSet.clear();
-    
+
     if (subject.isEmpty() && (body.startsWith("Alert:") || body.startsWith("Cancel Message"))) {
       int pt = body.indexOf('\n');
       if (pt >= 0) {
@@ -261,13 +263,13 @@ public class DispatchA1Parser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT " + super.getFieldNames();
     }
   }
-  
+
   private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -276,7 +278,7 @@ public class DispatchA1Parser extends FieldProgramParser {
       }
     }
   }
-  
+
   private void addUnit(String unit, Data data) {
     if (unitSet.add(unit)) data.strUnit = append(data.strUnit, ",", unit);
   }

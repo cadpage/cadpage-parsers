@@ -58,7 +58,7 @@ public class OHMorrowCountyParser extends GroupBestParser {
       "43317", "Chesterville",
       "43321", "Fulton",
       "43334", "Marengo",
-      "43338", "Mt. Gilead",
+      "43338", "Mt Gilead",
       "43342", "Prospect",
       "43344", "Richwood",
       "43350", "Sparta",

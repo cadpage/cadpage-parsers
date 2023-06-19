@@ -10,13 +10,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class OHAuglaizeCountyAParser extends FieldProgramParser {
 
   public OHAuglaizeCountyAParser() {
-    super(CITY_CODES, "AUGLAIZE COUNTY", "OH", 
-          "SIG:CODE! NAME:NAME! LOC:ADDR/S! CROSS:X! DESC:INFO! CFS:ID! DATE:DATE! TIME:TIME! CITY:CITY! SECTOR:MAP! DISTRICT:MAP! SIG_DESC:CALL!");
+    super(CITY_CODES, "AUGLAIZE COUNTY", "OH",
+          "SIG:CODE! NAME:NAME! LOC:ADDR/S! CROSS:X! DESC:INFO! CFS:ID! DATE:DATE! TIME:TIME! CITY:CITY! INFO/N+ SECTOR:MAP! DISTRICT:MAP! SIG_DESC:CALL! END");
   }
+
+  private static final Pattern DELIM = Pattern.compile("\n| +(?=TIME:|DISTRICT:)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    return parseMsg(body, data);
+    return parseFields(DELIM.split(body), data);
   }
 
   private static Pattern REDUNDANT_X = Pattern.compile("(.*?) *& *(\\1)");
@@ -49,7 +51,7 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Strip out apt
       String apt = "";
       Matcher match = ADDR_UNIT_PTN.matcher(field);
@@ -57,10 +59,10 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
         field = match.group(1).trim();
         apt = match.group(2);
       }
-      
+
       // road@road to road & road
       super.parse(field.replace("@", " & "), data);
-      
+
       data.strApt = append(data.strApt, "-", apt);
     }
   }
@@ -72,7 +74,7 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
 
     @Override
     public void parse(String field, Data data) {
-      
+
       // Strip out city codes
       String saveCity = data.strCity;
       StringBuilder sb = new StringBuilder();
@@ -86,13 +88,13 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
       }
       data.strCross = sb.toString();
       if (saveCity.length() > 0) data.strCity = saveCity;
-      
+
       // consolidate entries like "US 33 & US 33"
       Matcher mat = REDUNDANT_X.matcher(data.strCross);
       if (mat.matches()) data.strCross = mat.group(1);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -111,7 +113,7 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CV", "CRIDERSVILLE",
       "FR", "WAPAKONETA",
@@ -122,7 +124,7 @@ public class OHAuglaizeCountyAParser extends FieldProgramParser {
       "UN", "UNIOPOLIS",
       "WA", "WAPAKONETA",
       "WF", "WAYNESFIELD",
-      
+
       "ALLEN CO",    "ALLEN COUNTY",
       "HARDIN CO",   "HARDIN COUNTY",
       "LOGAN CO",    "LOGAN COUNTY",

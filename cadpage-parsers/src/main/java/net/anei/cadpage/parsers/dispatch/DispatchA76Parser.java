@@ -12,9 +12,9 @@ public class DispatchA76Parser extends FieldProgramParser {
 
   public DispatchA76Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( SRC_CALL | SRC CALL ) ADDRCITY! ( XST:X! ID? DATETIME? NOTES:INFO/N+ UNITS:UNIT END" +
-                                            "| ID ( XST:X! NOTES:INFO/N+ UNITS:UNIT END " +
-                                                 "| INFO/N+? X END ) )"
+          "( SRC_CALL | SRC CALL ) ADDRCITYST! ( XST:X! ID? DATETIME? NOTES:INFO/N+ UNITS:UNIT END" +
+                                              "| ID ( XST:X! NOTES:INFO/N+ UNITS:UNIT END " +
+                                                   "| INFO/N+? X END ) )"
     );
   }
 
@@ -27,7 +27,7 @@ public class DispatchA76Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC_CALL")) return new BaseSourceCallField();
     if (name.equals("SRC")) return new SourceField("([- A-Z0-9]+):?", true);
-    if (name.equals("ADDRCITY"))  return new BaseAddressCityField();
+    if (name.equals("ADDRCITYST"))  return new BaseAddressCityStateField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("ID")) return new IdField("\\$?([A-Z]*\\d{2}-\\d{4,6})", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -61,34 +61,40 @@ public class DispatchA76Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
-  private static final Pattern ADDR_ST_PTN = Pattern.compile("[A-Z]{2}");
-  private class BaseAddressCityField extends AddressCityField {
+  private static final Pattern APT_PTN = Pattern.compile("APT *(.*)|\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
+
+  private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldEnd(field, " -");
-      Matcher match = ADDR_ZIP_PTN.matcher(field);
-      String zip = null;
-      if (match.matches()) {
-        field = match.group(1).trim();
-        zip = match.group(2);
+      String place = null;
+      int pt = field.indexOf(" - ");
+      int pt2 = field.lastIndexOf(',');
+      if (pt2 >= 0 && pt2 > pt) pt = -1;
+      if (pt >= 0) {
+        place = field.substring(pt+3).trim();
+        field = field.substring(0, pt);
+      } else {
+        field = stripFieldEnd(field, " -");
       }
 
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      if (ADDR_ST_PTN.matcher(city).matches()) {
-        data.strState = city;
-        city = p.getLastOptional(',');
-      }
-      if (city.length() == 0 && zip != null) city = zip;
-      data.strCity = city;
+      super.parse(field, data);
 
-      parseAddress(p.get(), data);
+      if (place != null) {
+        Matcher match = APT_PTN.matcher(place);
+        if (match.matches()) {
+          String tmp = match.group(1);
+          if (tmp != null) place = tmp;
+          data.strApt = append(data.strApt, "-", place);
+        }
+        else {
+          data.strPlace = place;
+        }
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " ST";
+      return super.getFieldNames() + " PLACE?";
     }
   }
 
