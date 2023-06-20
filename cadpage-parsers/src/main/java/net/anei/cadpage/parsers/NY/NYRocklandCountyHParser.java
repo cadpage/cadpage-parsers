@@ -10,7 +10,7 @@ public class NYRocklandCountyHParser extends FieldProgramParser {
 
   public NYRocklandCountyHParser() {
     super("ROCKLAND COUNTY", "NY",
-          "SRC ADDRCITY! CALL_TYPE:CALL! CALLER:PHONE! CAD:ID! GPS! END");
+          "SRC ADDRCITY! CALL_TYPE:CALL? CALLER:PHONE! CAD:ID! UNITS:UNIT? INFO/N+? GPS! END");
   }
 
   @Override
