@@ -17,20 +17,20 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
     setupCities(OHCuyahogaCountyParser.CITY_LIST);
     setupSaintNames("PETERSBURG", "ANDREWS");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
-    removeWords("RUN", "HTS");   // Lest SQUAD RUN be considered an address :(
+    removeWords("RUN", "HTS", "PATH");   // Lest SQUAD RUN be considered an address :(
   }
 
   @Override
   public String getFilter() {
     return "@tacpaging.com,cvd2-dispatch@cvdispatch.net,dispatch@secc-911.org,dispatch@hhdispatch.net,dispatch@prdc.net,dispatch@waltonhillsohio.gov,dispatch@beachwoodohio.com";
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("Dispatch Message[:\n]");
   private static final Pattern DIR_BOUND_PTN1 = Pattern.compile("(?:\\b|(?<=\\d))([NSEW])/B\\b");
   private static final Pattern DIR_BOUND_PTN2 = Pattern.compile("/ (NORTHBOUND|EASTBOUND|SOUTHBOUND|WESTBOUND)\\b");
-  private static final Pattern OOC_CITY_PTN = Pattern.compile("\\b(?:BEDFORD|GARFIELD HTS|NEWBURG|RICHFIELD|STRONGSVILLE)\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern OOC_CITY_PTN = Pattern.compile("(.*?)(?: +VLG)?(?: +(OH))?(?: +\\d{5})?");
   private static final Pattern EW_CITY_PTN = Pattern.compile(".*\\d.*");
-  
+
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
     if (subject.length() == 0) {
@@ -44,13 +44,24 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
     body = DIR_BOUND_PTN1.matcher(body).replaceAll("$1B");
     body = DIR_BOUND_PTN2.matcher(body).replaceAll("$1");
     if (!super.parseUntrimmedMsg(subject, body, data)) return false;
-    
+
     // Mutual aid calls always have a city field in the info section
-    if (data.strCity.length() == 0) {
-      Matcher match = OOC_CITY_PTN.matcher(data.strSupp);
-      if (match.find()) data.strCity = match.group();
+    data.strAddress = data.strAddress.replace(',', ' ').trim();
+    if (data.strCity.isEmpty() && !data.strSupp.isEmpty()) {
+      int pt = data.strSupp.indexOf('\n');
+      String city = ( pt >= 0 ? data.strSupp.substring(0, pt).trim() : data.strSupp);
+      city = city.replace(',', ' ').trim();
+      Matcher match = OOC_CITY_PTN.matcher(city);
+      if (!match.matches()) return false;               // cannot happen
+      city = match.group(1);
+      String state = match.group(2);
+      if (state != null || isCity(city)) {
+        data.strCity = city;
+        if (state != null) data.strState = state;
+        data.strSupp = data.strSupp.substring(pt+1);    // works even if pt is -1
+      }
     }
-    
+
     // More weird constructs
     Matcher match = EW_CITY_PTN.matcher(data.strCity);
     if (match.matches()) {
@@ -64,7 +75,7 @@ public class OHCuyahogaCountyAParser extends DispatchA39Parser {
 
   private static final Pattern GPS_JUNK_PTN = Pattern.compile("&|\\b[NSEW]B\\b|\\bMM\\b|\\((?:NORTH|SOUTH|EAST|WEST)\\)|\\b(?:NORTH|SOUTH|EAST|WEST) ?BOUND\\b");
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = GPS_JUNK_PTN.matcher(address).replaceAll("").trim();

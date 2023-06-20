@@ -727,6 +727,18 @@ public abstract class SmartAddressParser extends MsgParser {
   }
 
   /**
+   * See if word is a legitimate street suffix (ie not a state)
+   * @param word word to be checked
+   * @return true if word is found in dictionary and should
+   * be expected in a street
+   */
+  public boolean isStreetSuffix(String word) {
+    if (word.equals("CT")) return false;
+    Long flags = dictionary.get(word);
+    return (flags != null && (flags & ID_ROAD_SFX) != 0);
+  }
+
+  /**
    * Setup predefined call list
    * @param callList list of predefined calls
    */

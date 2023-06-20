@@ -53,6 +53,7 @@ public class OHWayneCountyEParser extends FieldProgramParser {
         city = p.getLastOptional(',');
       }
       if (city.length() == 0 && zip !=  null) city = convertCodes(zip, ZIP_CODE_TABLE);
+      if (city.equals("SAL")) city = "SALT CREEK TWP";
       data.strCity = city;
 
       parseAddress(p.get(), data);
