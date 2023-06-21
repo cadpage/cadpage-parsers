@@ -11,18 +11,18 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 public class WAYakimaCountyParser extends SmartAddressParser {
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("([A-Z0-9]+)\n([A-Z0-9]+)\n([A-Z]\\d+|\\d{2}[A-Z]{1,3}\\d+)\n(.*)", Pattern.DOTALL);
-  private static final Pattern MASTER = 
+  private static final Pattern MASTER =
     Pattern.compile("(?:(\\d\\d\\.\\d\\d\\.\\d\\d) (\\d\\d/\\d\\d/\\d\\d)|\\*\\*\\.\\*\\*\\.\\*\\* \\*\\*/\\*\\*/\\*\\*) ([^@]*?) (?:@ )?([A-Z]{2}[FP]D|AMR|ALS|SCOM|PRAM)((?: +(?:[A-Z]+\\d+[A-Z]?|AOA|[A-Z]{1,2}DC))+)(?: +(.*))?");
   private static final Pattern APT_MARK_PTN = Pattern.compile(" +(?:APT|ROOM) +", Pattern.CASE_INSENSITIVE);
-  
+
   public WAYakimaCountyParser() {
     super("YAKIMA COUNTY", "WA");
     setup();
     setFieldList("TIME DATE CALL ADDR APT PLACE SRC CITY UNIT ID INFO");
   }
-  
+
   @Override
   public String getFilter() {
     return "wwantla@ci.yakima.wa.us,Brad.Coughenour@yakimawa.gov";
@@ -30,7 +30,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       data.msgType = MsgType.RUN_REPORT;
@@ -40,7 +40,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       data.strSupp = match.group(4).trim();
       return true;
     }
-    
+
     match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strTime = getOptGroup(match.group(1)).replace('.', ':');
@@ -51,7 +51,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
     if (city != null) data.strCity = city;
     data.strUnit = match.group(5).trim();
     data.strSupp = getOptGroup(match.group(6));
-    
+
     // Address section consists of a call, address, and possible semicolon separated place and/or apt
     Parser p = new Parser(sAddr);
     String addr = p.get(';');
@@ -73,14 +73,14 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       data.strPlace = place;
     }
     data.strApt = append(data.strApt, "-", p.get());
-    
+
     if (data.strAddress.length() == 0) {
       parseAddress(data.strPlace, data);
       data.strPlace = "";
     }
     return true;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return SUMMITVIEW_EX.matcher(addr).replaceAll("SUMMITVIEW EXN");
@@ -141,7 +141,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "WELFARE CHECK"
     );
   }
-  
+
   private static final Properties SRC_CITY_CODES = buildCodeTable(new String[]{
       "GRFD", "GRANGER",
       "GVFD", "GRANDVIEW",
@@ -155,7 +155,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "WPFD", "WAPATO",
       "ZIFD", "ZILLAH"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BUE", "BUENA",
       "COW", "COWICHE",
@@ -172,6 +172,17 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "TOP", "TOPPENISH",
       "WAP", "WAPATO",
       "WHI", "WHITE SWAN",
+      "U1",  "UNION GAP",
+      "U2",  "UNION GAP",
+      "U3",  "UNION GAP",
+      "Y1",  "YAKIMA",
+      "Y2",  "YAKIMA",
+      "Y3",  "YAKIMA",
+      "Y4",  "YAKIMA",
+      "Y5",  "YAKIMA",
+      "Y6",  "YAKIMA",
+      "Y7",  "YAKIMA",
+      "Y8",  "YAKIMA",
       "ZIL", "ZILAH"
   });
 }

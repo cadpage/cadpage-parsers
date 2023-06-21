@@ -22,7 +22,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
 
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
-           "FYI? ( UNIT_CH ADDR! CITY DIST? INFO/N+ " +
+           "FYI? ( UNIT_CH ADDR! CITY? DIST? INFO/N+ " +
                 "| ID? ADDR APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL | PLACE CALL! | CALL ) INFO/N+? SRC EMPTY? UNIT END " +
                 ")");
   }

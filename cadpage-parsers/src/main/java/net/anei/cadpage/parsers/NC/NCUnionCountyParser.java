@@ -17,7 +17,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
     super(CITY_LIST, "UNION COUNTY", "NC",
            "( CANCEL ADDR CITY2 PLACE2 " +
            "| FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO1/N+? DATETIME ID? UNIT Radio_Channel:CH INFO/N+? GPS1 GPS2 " +
-           ")");
+           ") INFO/N+");
     setupSaintNames("JOHNS", "SIMONS");
     setupProtectedNames("BURGESS AND HELMS", "SUGAR AND WINE");
     setupMultiWordStreets("INDIAN TRAIL FAIRVIEW");
@@ -90,7 +90,18 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   private class MyCity2Field extends CityField {
     @Override
     public void parse(String field, Data data) {
-      data.strCity = convertCodes(field, CITY_CODES);
+      for (String part :  PLACE_DIR_PTN.split(field)) {
+        if (data.strCity.isEmpty()) {
+          data.strCity = convertCodes(part, CITY_CODES);
+        } else {
+          data.strPlace = append(data.strPlace, " - ", part);
+        }
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY PLACE";
     }
   }
 
@@ -231,12 +242,14 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
       "FAI", "FAIRVILLE",
       "HEM", "HEMBY BRIDGE",
       "IND", "INDIAN TRAIL",
-      "LAK", "LAKE PARK",    //???
-      "MAR", "MARVIN",       //???
+      "LAK", "LAKE PARK",
+      "MAR", "MARVIN",
       "MAT", "MATTHEWS",
-      "MIN", "MINERAL SPRINTS", //???
+      "MIN", "MINERAL SPRINTS",
       "MON", "MONROE",
       "MSH", "MARSHVILLE",
+      "OAK", "OAKBORO",
+      "PEA", "PEACHLAND",
       "STA", "STALLINGS",
       "UNI", "UNIONVILLE",
       "WAX", "WAXHAW",

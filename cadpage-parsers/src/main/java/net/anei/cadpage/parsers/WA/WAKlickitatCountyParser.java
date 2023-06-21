@@ -45,6 +45,7 @@ public class WAKlickitatCountyParser extends DispatchA19Parser {
       "KLI", "KLICKITAT",
       "LYL", "LYLE",
       "MAR", "MARRYHILL",
+      "MUR", "MURDOCK",
       "RSV", "ROOSEVELT",
       "SKA", "SKAMANIA COUNTY",
       "SNO", "SNOWDEN",

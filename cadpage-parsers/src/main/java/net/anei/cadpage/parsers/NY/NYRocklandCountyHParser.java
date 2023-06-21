@@ -19,6 +19,11 @@ public class NYRocklandCountyHParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }

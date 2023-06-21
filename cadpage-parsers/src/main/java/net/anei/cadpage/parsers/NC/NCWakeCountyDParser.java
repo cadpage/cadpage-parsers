@@ -83,9 +83,9 @@ public class NCWakeCountyDParser extends FieldProgramParser {
       return "INFO GPS";
     }
   }
-  
+
   private static final Pattern MAP_CITY_PTN = Pattern.compile("(.*) [WC]C");
-  
+
   @Override
   public String adjustMapCity(String city) {
     Matcher match = MAP_CITY_PTN.matcher(city);

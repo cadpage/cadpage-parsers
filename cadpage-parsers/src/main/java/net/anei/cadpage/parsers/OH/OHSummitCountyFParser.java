@@ -1,26 +1,28 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHSummitCountyFParser  extends FieldProgramParser {
-  
+
   public OHSummitCountyFParser() {
-    super("SUMMIT COUNTY", "OH",
-           "CALL ADDRCITY! MAP");
+    super(CITY_CODES, "SUMMIT COUNTY", "OH",
+          "CALL ADDRCITY! MAP");
   }
 
   @Override
   public String getFilter() {
     return "fdall@ems-cad.cityofgreen.org,fs1cad@cityofgreen.org";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   protected Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -46,10 +48,14 @@ public class OHSummitCountyFParser  extends FieldProgramParser {
         data.strApt = "";
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY X";
     }
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "PPM",    "AKRON"
+  });
 }

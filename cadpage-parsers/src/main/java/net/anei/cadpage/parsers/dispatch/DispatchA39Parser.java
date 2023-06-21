@@ -87,7 +87,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*) (\\d{5})");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private static final Pattern LEFT_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?(?: +(.*))?");
-  private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}[A-Z]?|[A-Z]|(?:APT|RM|ROOM|LOT|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
   private class BaseAddressField extends AddressField {
 
     @Override
@@ -150,7 +150,7 @@ public class DispatchA39Parser extends FieldProgramParser {
       if (!force && place == null && !res.isValid()) return false;
       res.getData(data);
 
-      if (city.length() > 0) {
+      if (data.strCity.isEmpty() && !city.isEmpty()) {
         if (cityCodes != null) city = convertCodes(city, cityCodes);
         data.strCity = city;
       }
@@ -170,7 +170,9 @@ public class DispatchA39Parser extends FieldProgramParser {
         }
       }
       if (place != null) {
-        if (APT_PTN.matcher(place).matches()) {
+        if ((match = APT_PTN.matcher(place)).matches()) {
+          String tmp = match.group(1);
+          if (tmp != null) place = tmp;
           apt = (apt == null ? place : append(place, "-", apt));
         } else {
           data.strPlace = append(data.strPlace, " - ", place);
