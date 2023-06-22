@@ -10,14 +10,14 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class WAPendOreilleCountyParser extends FieldProgramParser {
-  
+
   private Set<String> unitSet = new HashSet<String>();
 
   public WAPendOreilleCountyParser() {
-    super(CITY_CODES, "PEND OREILLE COUNTY", "WA", 
+    super(CITY_CODES, "PEND OREILLE COUNTY", "WA",
          "UNIT CALL ADDRCITY UNIT UNIT! INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@pendoreille.org";
@@ -25,7 +25,7 @@ public class WAPendOreilleCountyParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Email Copy Message From Hiplink")) return false;
+    if (!subject.equalsIgnoreCase("Email Copy Message From Hiplink")) return false;
     unitSet.clear();
     try {
       if (parseFields(body.split("\n"), 5, data)) return true;
@@ -44,8 +44,8 @@ public class WAPendOreilleCountyParser extends FieldProgramParser {
   }
 
   private class MyUnitField extends UnitField {
-    
-    
+
+
     public MyUnitField() {
       super("[A-Z0-9]+", true);
     }
@@ -71,17 +71,17 @@ public class WAPendOreilleCountyParser extends FieldProgramParser {
       data.strCity = city;
       String addr = p.get(';');
       data.strPlace = p.get();
-      
+
       addr = STATE_ROUTE_2_PTN.matcher(addr).replaceAll("US 2");
       parseAddress(addr, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY ST";
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("CALLBACK=(.*?) LAT=(.*?) LON=(.*?) UNC=.*");
   private class MyInfoField extends InfoField {
     @Override
@@ -95,13 +95,13 @@ public class WAPendOreilleCountyParser extends FieldProgramParser {
         super.parse(field, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO PHONE GPS";
     }
   }
-  
+
   private static Properties CITY_CODES = buildCodeTable(new String[] {
       "AIR",    "Airway Heights/WA",
       "ATH",    "Athol/ID",
