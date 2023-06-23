@@ -8,26 +8,27 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCHydeCountyBParser extends DispatchOSSIParser {
-  
+
   public NCHydeCountyBParser() {
-    super(CITY_CODES, "HYDE COUNTY", "NC", "CALL ADDR PLACE? CITY! INFO/N+");
+    super(CITY_CODES, "HYDE COUNTY", "NC",
+          "CALL ADDR ( PLACE CITY! | CITY? ) INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@darepublicsafety.com";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
+
       for (String part : field.split("\n")) {
         if (part.startsWith("Dispatch Code:")) {
           data.strCode = part.substring(14).trim();
@@ -35,27 +36,27 @@ public class NCHydeCountyBParser extends DispatchOSSIParser {
           if (call != null) data.strCall = call;
           continue;
         }
-        
+
         if (part.startsWith("Response:")) continue;
-        
+
         data.strSupp = append(data.strSupp, "\n", part);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CODE CALL";
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equalsIgnoreCase("ROANOKE ISLAND")) return "MANTEO";
     return city;
   }
-  
+
   private static CodeTable CALL_CODES = new StandardCodeTable();
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AVN",   "AVON",
       "BUX",   "BUXTON",
@@ -89,7 +90,7 @@ public class NCHydeCountyBParser extends DispatchOSSIParser {
       "SWQ",   "SWAN QUARTER",
       "WAN",   "WANCHESE",
       "WAV",   "WAVES"
-   
+
   });
 
 }
