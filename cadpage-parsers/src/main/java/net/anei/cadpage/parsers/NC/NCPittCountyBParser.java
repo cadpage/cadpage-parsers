@@ -23,7 +23,6 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     setupCities("BEAUFORT CO");
     setupMultiWordStreets("MARTIN LUTHER KING JR", "STOKESTOWN ST JOHNS");
     addRoadSuffixTerms("ALTERNATE", "ROADWAY");
-    System.out.println(this);
   }
 
   @Override
@@ -60,7 +59,7 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new BaseCancelField("County Working Incident|ELECTRIC UTILITIES|GAS WATER ELECTRIC|INVESTIGATOR NOTIFIED|MEDICAL EXAMINER|NCDOT NOTIFIED|PATIENT EXTRICATED|RED CROSS|STAGING IN THE AREA|UTILITY GAS|UTILITY WATER|EASTCARE (?:DISPATCHED|CANCELLED|STANDBY)|[A-Z]+ WORKING INCIDENT");
+    if (name.equals("CANCEL")) return new MyCancelField();
     if (name.equals("STATUS")) return new CallField("Enroute", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new IdField("\\d{11}", true);
@@ -75,6 +74,18 @@ public class NCPittCountyBParser extends DispatchOSSIParser {
     if (name.equals("CH")) return new ChannelField("(TAC.*|A\\d{1,2})|Radio Channel: *(.*)");
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyCancelField extends BaseCancelField {
+    public MyCancelField() {
+      super("County Working Incident|ELECTRIC UTILITIES|GAS WATER ELECTRIC|INVESTIGATOR NOTIFIED|MEDICAL EXAMINER|NCDOT NOTIFIED|PATIENT EXTRICATED|RED CROSS|STAGING IN THE AREA|UTILITY GAS|UTILITY WATER|EASTCARE (?:DISPATCHED|CANCELLED|STANDBY)|[A-Z]+ WORKING INCIDENT");
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("CONFIRMED PIN IN")) return false;
+      return super.checkParse(field, data);
+    }
   }
 
   private class MyAddressCityField extends AddressCityField {
