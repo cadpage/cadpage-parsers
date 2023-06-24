@@ -16,16 +16,30 @@ public class TNSumnerCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "2083399423";
+    return "2083399423,8334341751";
   }
 
-  private static final Pattern MASTER = Pattern.compile("CALL ALERT:? (.*?) CALL TYPE:? (.*?)(?: ([A-Z]{3,5}-\\d{2}-\\d{6}))?");
+  private static final Pattern MASTER2 = Pattern.compile("Sumner911: (.*?) CALL TYPE - (.*?) \\.--- (.*)");
+  private static final Pattern MASTER1 = Pattern.compile("CALL ALERT:? (.*?) CALL TYPE:? (.*?)(?: ([A-Z]{3,5}-\\d{2}-\\d{6}))?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
+    Matcher match = MASTER2.matcher(body);
+    if (match.matches()) {
+      setFieldList("ADDR APT CITY CALL CH");
+      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(1).trim(), data);
+      data.strCall = match.group(2).trim();
+      data.strChannel = match.group(3).trim();
+      return true;
+    }
+
     if (!body.startsWith("Sumner County ECC:")) return false;
     body = body.substring(18).trim();
-    Matcher match = MASTER.matcher(body);
+    match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("ADDR CITY CALL ID");
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, match.group(1).trim(), data);
