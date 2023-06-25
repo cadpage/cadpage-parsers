@@ -67,6 +67,7 @@ public class NYWestchesterCountyAParser extends FieldProgramParser {
 
   private static final Pattern ADDR_DELIM_PTN = Pattern.compile("(.*): *(?:@|(APT|CONDO|ROOM|RM|UNIT)|)(.*)");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?\\d?|[A-Z]\\d*");
+  private static final Pattern CITY_SFX_PTN = Pattern.compile("(.*)_[VT]");
   private class MyAddressField extends AddressField {
 
     @Override
@@ -83,16 +84,27 @@ public class NYWestchesterCountyAParser extends FieldProgramParser {
           data.strPlace = append(term, " - ", data.strPlace);
         }
       }
-      Parser p = new Parser(field);
-      data.strCity = p.getLast(' ');
-      parseAddress(p.get(), data);
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt >= 0) {
+          data.strPlace = append(field.substring(pt+1, field.length()-1).trim(), " - ", data.strPlace);
+          field = field.substring(0,pt).trim();
+        }
+      } else {
+        Parser p = new Parser(field);
+        String city = p.getLast(' ');
+        Matcher match = CITY_SFX_PTN.matcher(city);
+        if (match.matches()) city = match.group(1);
+        city = city.replace('_', ' ');
+        data.strCity = city;
+        field = p.get();
+      }
+      parseAddress(field, data);
       data.strApt = append(data.strApt, "-", apt);
       if (data.strAddress.length() == 0) {
         data.strAddress = data.strPlace;
         data.strPlace = "";
       }
-      data.strCity = stripFieldEnd(data.strCity, "_T");
-      data.strCity = data.strCity.replace('_', ' ');
     }
 
     @Override

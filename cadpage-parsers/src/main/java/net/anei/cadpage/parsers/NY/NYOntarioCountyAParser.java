@@ -18,7 +18,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
     setupCities(CITY_LIST);
     setupProtectedNames("5 AND 20");
   }
-  
+
   @Override
   public String getFilter() {
     return "E911page@co.ontario.ny.us";
@@ -37,11 +37,11 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      if (data.strSupp.startsWith("Cancel Reason:") || 
+      if (data.strSupp.startsWith("Cancel Reason:") ||
           data.strSupp.contains("CANCEL") ||
           data.strSupp.contains("STAND DOWN")) {
         field = "CANCEL - " + field;
@@ -55,7 +55,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -66,7 +66,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
         String part2 = field.substring(pt+1).trim();
         if (isCity(part2)) {
           field = part1;
-          data.strCity = part2;
+          data.strCity = part2.replace(".", "");
         } else {
           data.strPlace = part1;
           field = field.substring(pt+1).trim();
@@ -74,13 +74,13 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
       }
       super.parse(field.replace(" - ", " & "), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -89,7 +89,7 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = PK_PTN.matcher(addr).replaceAll("PARK");
@@ -100,15 +100,15 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
   private static final Pattern PK_PTN = Pattern.compile("\\bPK\\b");
   private static final Pattern RT_5_20_PTN = Pattern.compile("\\b5 (?:AND|&) 20\\b");
   private static final Pattern RT_5_21_PTN = Pattern.compile("(?:RT |ROUTE |\\b)(?:5|20)(?: *& *)((?:RT|ROUTE) *21)\\b");
-  
+
   private static final Properties CITY_FIX_TABLE = buildCodeTable(new String[]{
       "ATLANTA T-COHOCTON",   "ATLANTA",
       "TOWN OF PERINTON",     "PERINTON",
       "T-PERINTON",           "PERINTON"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "CANANDAIGUA",
       "GENEVA",
@@ -156,17 +156,16 @@ public class NYOntarioCountyAParser extends FieldProgramParser {
       "HALL",
       "HOPEWELL CENTER",
       "STANLEY",
-      
+
       // Livingston County
       "LIVONIA",
-      
+
       // Monroe County
       "PERINTON",
-      
+
       // Steuben County
       "ATLANTA"
   };
 }
 
 
-	

@@ -14,17 +14,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchA13Parser;
 
 
 public class NYOneidaCountyParser extends DispatchA13Parser {
-  
+
   public NYOneidaCountyParser() {
     super(CITY_LIST, "ONEIDA COUNTY", "NY", A13_FLG_TRAIL_PLACE);
     addRoadSuffixTerms("KNLS");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@ocgov.net,@oc911.org,messaging@iamresponding.com,777,888";
   }
-  
+
   private static final Pattern NON_ASCII_PTN = Pattern.compile("[^\\p{ASCII}]");
   private static final Pattern LEAD_JUNK_PTN = Pattern.compile("^[io?¿][^A-Z]*|^(?:&#\\d+;)+");
   private static final Pattern EXTRA_NL_PTN = Pattern.compile(", *\n");
@@ -39,47 +39,47 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Eliminate NYMadisonCountyB alerts
     if (subject.equals("SEVAC")) return false;
     if (subject.equals("LINCOLN VOLUNTEER FIRE DEPT")) return false;
-    
+
     // Eliminate NYMadisonCountyGLAS alerts
     if (subject.equals("Greater Lenox")) return false;
     if (subject.equals("LINCOLN VOLUNTEER FIRE DEPT")) return false;
-    
+
     data.strSource = subject;
-    
+
     body = LEAD_JUNK_PTN.matcher(body).replaceFirst("");
     body = NON_ASCII_PTN.matcher(body).replaceAll("");
-    
+
     body = EXTRA_NL_PTN.matcher(body).replaceAll(", ");
     body = stripFieldEnd(body, "#[0-0]");
     body = stripFieldStart(body, ",");
-    
+
     // Check for truncated city at end of line
     int pt = body.lastIndexOf(',');
     String newCity = body.substring(pt+1).trim();
     newCity = expandCity(newCity);
     if (newCity != null) body = body.substring(0,pt+1) + ' ' + newCity;
-    
+
     // As if things weren't bad enough, we also have to deal with IAR alterations
     // Fortunately this all seems to be limited to one agency for now
     if (body.startsWith(">") || body.startsWith(", ")) body = "Dispatched " + body;
-    
+
     // Sigh, the contagion seems to be spreading ...
     else if (subject.equals("Oneida Castle Fire")) {
       if (body.startsWith("patched")) body = "Dis" + body;
     }
-    
-    else if (subject.equals("Clinton Fire") || subject.equals("Durhamville Fire") || 
+
+    else if (subject.equals("Clinton Fire") || subject.equals("Durhamville Fire") ||
              subject.equals("Remsen Fire") || subject.equals("Deerfield Fire")) {
       if (!body.contains("Dispatched") && !body.contains("Acknowledge")) body = "Dispatched , " + body;
     }
-    
+
     // Occasional use of T/ or T/O for Town of messes everything up
     body = T_CITY_PTN.matcher(body).replaceAll(" $1");
-    
+
     // Clean out extraneous comma
     body = EFF_BREATHING_PTN.matcher(body).replaceAll("$1 $2");
 
@@ -89,7 +89,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     // so we use this pattern to find and identify the delimiter
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
-    
+
     // The delimiter preceding and following the Dispatched term should be the same
     // If they are not, see if we can reduce them to a common delimiter by removing
     // whitespace.  If we cannot do that, return failure
@@ -106,7 +106,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
         else if (!delim.equals(delimA)) return false;
       }
     }
-    
+
     // If we identified a delimiter that is something other than a single
     // blank, use it to break the rest of the page into a call and an address
     // portion
@@ -119,12 +119,12 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     // If the identified delimiter was a single blank, we will use the smart
     // address parser to find the break between the call and the first address
     else {
-      
+
       List<String> fldList = new ArrayList<String>();
       String prefix = match.group(1);
       if (prefix != null) fldList.add(prefix.trim());
       fldList.add(status);
-      
+
       String sCall, sAddr;
       body = body.substring(match.end()).trim();
       pt = body.indexOf('@');
@@ -147,14 +147,14 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
         if (sCall == null || sAddr == null) return false;
         sAddr = sAddr + sExtra;
       }
-      
+
       fldList.add(sCall);
       fldList.add(sAddr);
       flds = fldList.toArray(new String[fldList.size()]);
-    } 
-    
+    }
+
     if (!parseFields(flds, data)) return false;
-    
+
     // Separate call code from call field
     match = CODE_PTN.matcher(data.strCall);
     if (match.find()) {
@@ -164,17 +164,17 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
       if (prefix != null) call = prefix + call;
       data.strCall = call;
     }
-    
+
     // Clean up address
     data.strAddress = KNLS.matcher(data.strAddress).replaceAll("KNOLLE");
-    
+
     // They sometimes put near: info in cross street field
     match = NEAR_PTN.matcher(data.strCross);
     if (match.find()) {
       data.strCross = data.strCross.substring(0,match.start()).trim();
       data.strSupp = match.group(1);
     }
-    
+
     // See if the apt field looks more like a place name
     data.strApt = stripFieldEnd(data.strApt, "_");
     if (data.strApt.length() >= 8 &&
@@ -190,7 +190,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
       place = stripFieldEnd(place," NY");
       if (data.strCity.length() > 0) {
         place = stripFieldEnd(place, data.strCity);
-      }  
+      }
       if (isCity(place)) {
         if (data.strCity.length() == 0) {
           data.strCity = place;
@@ -201,24 +201,24 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
       }
     }
 
-    
+
     // Check for and remove OUTSIDE from city
     data.strCity = stripFieldEnd(data.strCity, " NY");
     data.strCity = stripFieldEnd(data.strCity, " VILLAGE");
     data.strCity = stripFieldEnd(data.strCity, " VILLA");
     data.strCity = stripFieldEnd(data.strCity, " OUTSIDE");
     data.strCity = stripFieldEnd(data.strCity, " INSIDE");
-    
+
     if (data.strCity.equalsIgnoreCase("HERLK CO") ||
         data.strCity.equalsIgnoreCase("HERIMER CO")) data.strCity = "HERKIMER CO";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC CODE " + super.getProgram() + " INFO";
   }
-  
+
   /**
    * Expand a possibly abbreviated city
    * @param sPart3 possibly abbreviated city
@@ -234,7 +234,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     if (result.length() == city.length()) return null;
     return result;
   }
-  
+
   private TreeSet<String> CITY_SET = new TreeSet<String>(Arrays.asList(CITY_LIST));
 
   private static final String[] CITY_LIST = new String[]{
@@ -264,6 +264,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     "HOLLAND PATENT VILLAGE",
     "KIRKLAND",
     "LEE",
+    "LEE CENTER",
     "MARCY",
     "MARSHALL",
     "MCCONNELLSVILLE",
@@ -308,7 +309,7 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     "WHITESTOWN",
     "YORKVILLE",
     "YORKVILLE VILLAGE",
-    
+
     "ANNSVILLE NY",
     "AUGUSTA NY",
     "AVA NY",
@@ -379,11 +380,11 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     "WHITESTOWN NY",
     "YORKVILLE NY",
     "YORKVILLE VILLAGE NY",
-    
+
     // Madison County
     "CANASTOTA",
     "CANASTOTA VILLAGE",
-    
+
     // Herkimer County
     "HERKIMER COUNTY",
     "HERKIMER CO",
@@ -392,12 +393,12 @@ public class NYOneidaCountyParser extends DispatchA13Parser {
     "NORWAY",
     "OHIO",
     "RUSSIA",
-    
+
     "POLAND",
     "POLAND VILLAGE",
-    
+
     // Oswego County
     "CONSTANTIA"
-    
+
   };
 }

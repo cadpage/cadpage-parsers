@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.NY;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 public class NYJeffersonCountyCParser extends DispatchA19Parser {
@@ -18,6 +19,14 @@ public class NYJeffersonCountyCParser extends DispatchA19Parser {
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    int pt = data.strCity.indexOf('(');
+    if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
+    return true;
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {

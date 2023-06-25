@@ -10,23 +10,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NYWayneCountyBParser extends FieldProgramParser {
 
   public NYWayneCountyBParser() {
-    super(CITY_CODES, "WAYNE COUNTY", "NY", 
+    super(CITY_CODES, "WAYNE COUNTY", "NY",
           "( DISPATCH_REPORT! CFS_Number:ID! SKIP! CODECALL! LOCATION:ADDRCITY! Apt:APT! Bldg:BLDG! RECEIVED:DATETIME! Cross_Streets:X? COMPLAINANT:NAME! CALLBACK_NO:PHONE! BOX:BOX! INFO/N+"+
           "| RESPONDING_UNIT_TIMES_REPORT/R! SKIP! CFS_Number:ID! SKIP+ Incident_Address:ADDRCITY! Apt:APT! Bldg:BLDG! City:CITY! Inc_Code:CODE! Inc_Desc:CALL! In_Prog:SKIP! Descriptive:PLACE! Caller_Name:NAME! Caller_Phone:PHONE! Caller_address:SKIP! Caller_Residence_Phone:SKIP! Received:DATETIME! INFO/N+ Primary_Unit:UNIT! INFO/N+ "+
           "| FROM_ACTIVE911/R! SRC:SRC! PRI:PRI! ID:ID! PLACE:PLACE! INFO:INFO/N+ PH:PHONE? INFO/N+ ( DATE:DATE! INFO/N+ TIME:TIME! | TIME:TIME! INFO/N+ DATE:DATE! ) INFO/N+ CODE:CODE! INFO/N+ CALL:CALL! DST:ST! APT:APT! CITY:CITY! MAP:MAP! ADDR:ADDR! INFO/N+ UNIT:UNIT! )");
   }
-  
+
   @Override
   public String getFilter() {
     return "ripandrun@co.wayne.ny.us,noreply@alert1-or.active911.com,noreply@alert1-tx.active911.com,noreply@alert1-tx.yourfirstdue.com,noreply@alert1-or.yourfirstdue.com";
   }
-  
+
   public boolean parseMsg(String subject, String body, Data data) {
     //Anything without DISPATCH REPORT for subject is a RUN REPORT
 //    if (!subject.equals("DISPATCH REPORT")) data.msgType = MsgInfo.MsgType.RUN_REPORT;
     return parseFields(body.split("\n\\s*"), data);
   }
-  
+
   @Override
   public String getProgram() {
     String prog = super.getProgram();
@@ -34,7 +34,7 @@ public class NYWayneCountyBParser extends FieldProgramParser {
     if (prog.endsWith("INFO")) return prog;
     return prog.replace(" INFO ", " ") + " INFO";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DISPATCH_REPORT")) return new SkipField("DISPATCH REPORT", true);
@@ -47,7 +47,7 @@ public class NYWayneCountyBParser extends FieldProgramParser {
     if (name.equals("FROM_ACTIVE911")) return new SkipField("From Active911", true);
     return super.getField(name);
   }
-  
+
   //remove brackets from city code
   private static Pattern CODE_CALL = Pattern.compile("(.+?)\\s+(.*)");
   private class MyCodeCallField extends Field {
@@ -65,7 +65,7 @@ public class NYWayneCountyBParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   //convert ADDR( [CITY])? to ADDR(, CITY)?
   private static Pattern ADDR_CITY = Pattern.compile("(.+?)\\s*\\[(.*)\\]");
   private class MyAddressCityField extends AddressCityField {
@@ -76,7 +76,7 @@ public class NYWayneCountyBParser extends FieldProgramParser {
       else super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -86,7 +86,7 @@ public class NYWayneCountyBParser extends FieldProgramParser {
       if (data.strCity.length() == 0) data.strCity = field;
     }
   }
-  
+
   //just replace * with /
   private class MyCrossField extends CrossField {
     @Override
@@ -94,14 +94,14 @@ public class NYWayneCountyBParser extends FieldProgramParser {
       super.parse(field.replace(" * ", " / "), data);
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
     sAddress = PK_PTN.matcher(sAddress).replaceAll("PARK");
     return super.adjustMapAddress(sAddress);
   }
   private static final Pattern PK_PTN = Pattern.compile("\\bPK\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static Properties CITY_CODES = buildCodeTable(new String[]{
       "BUTLER",    "BUTLER",
       "CLYDE_V",   "CLYDE VILLAGE",
@@ -120,12 +120,14 @@ public class NYWayneCountyBParser extends FieldProgramParser {
       "ROSE",      "ROSE",
       "SAVANNAH",  "SAVANNAH",
       "SODUS",     "SODUS",
+      "SODUS_PT",  "SODUS POINT",
       "SODUS_V",   "SODUS VILLAGE",
       "WALWORTH",  "WALWORTH",
       "WATERLOO",  "WATERLOO",
       "WAYNE COUNTY", "WAYNE COUNTY",
       "WILLIAMSO", "WILLIAMSON",
       "WOLCOTT",   "WOLCOTT",
+      "WOLCOTT_V", "WOLCOTT",
   });
-  
+
 }

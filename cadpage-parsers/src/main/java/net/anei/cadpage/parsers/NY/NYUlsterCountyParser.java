@@ -27,6 +27,8 @@ public class NYUlsterCountyParser extends FieldProgramParser {
     if (!super.parseMsg(body, data)) return false;
 
     data.strCity = data.strCity.replaceAll(" +", " ");
+    int pt = data.strCity.indexOf('(');
+    if (pt >= 0) data.strCity = data.strCity.substring(0, pt).trim();
     if (data.strCity.toUpperCase().startsWith("KING CITY")) data.strCity="KINGSTON";
     else if (data.strCity.equalsIgnoreCase("Out of Cty")) data.strCity = "";
     return true;
