@@ -166,7 +166,7 @@ public class DispatchBCParser extends DispatchA3Parser {
   }
 
   private static final Pattern STATE_CODE_PTN = Pattern.compile("[A-Z]{2}|");
-  private class BaseAddressField extends AddressField {
+  protected class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
@@ -213,7 +213,7 @@ public class DispatchBCParser extends DispatchA3Parser {
   }
 
   private static final Pattern CROSS_DIR_PTN = Pattern.compile("[NSEW]/?B");
-  private class BaseCrossField extends CrossField {
+  protected class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       if (CROSS_DIR_PTN.matcher(field).matches()) {
