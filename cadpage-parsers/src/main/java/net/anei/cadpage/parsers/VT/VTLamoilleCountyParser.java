@@ -66,7 +66,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       while (true) {
         Parser p = new Parser(field);
         String part = p.getLastOptional(',');
-        if (part.equals('`')) part = p.getLastOptional(',');
+        if (part.equals("`")) part = p.getLastOptional(',');
 
         Matcher match = ZIP_APT_PTN.matcher(part);
         if (match.matches()) {

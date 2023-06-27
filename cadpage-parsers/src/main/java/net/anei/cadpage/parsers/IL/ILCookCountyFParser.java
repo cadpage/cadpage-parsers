@@ -25,6 +25,7 @@ public class ILCookCountyFParser extends DispatchA27Parser {
     int pt = body.indexOf("\n\n\n______");
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseMsg(subject, body, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
     Matcher match = PHONE_INFO_PTN.matcher(data.strSupp);
     if (match.lookingAt()) {
       data.strPhone = match.group(1);

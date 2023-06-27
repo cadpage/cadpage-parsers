@@ -20,7 +20,7 @@ public class ILShelbyCountyParser extends DispatchA19Parser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "ASU",  "ASSUMPTION",
-//      "BC",   "",
+      "BC",   "BEECHER CITY",
       "BEE",  "BEECHER CITY",
       "BET",  "BETHANY",
       "BLU",  "BLUE MOUND",

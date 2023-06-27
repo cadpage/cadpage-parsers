@@ -15,11 +15,14 @@ public class DispatchBCParser extends DispatchA3Parser {
   private boolean useAuxParser;
 
   public DispatchBCParser(String defCity, String defState) {
-    this(defCity, defState, 0);
+    this(null, defCity, defState, 0);
   }
 
-
   public DispatchBCParser(String defCity, String defState, int flags) {
+    this(null, defCity, defState, flags);
+  }
+
+  public DispatchBCParser(String[] cityList, String defCity, String defState, int flags) {
     super(defCity, defState,
           "( Address:EMPTY! ADDR! Event_Number:EMPTY! ID! Category:EMPTY! CALL! COPY END " +
           "| Event_No:EMPTY! ID! Status:EMPTY! Disposition:EMPTY! Category:EMPTY! CALL " +
@@ -30,7 +33,7 @@ public class DispatchBCParser extends DispatchA3Parser {
             "( Person(s)_Involved%EMPTY! Name_Address_Phone%EMPTY! NAME_PHONE Business%EMPTY! | ) " +
             "Incident_Notes:EMPTY INFO+ Event_Log%EMPTY )");
 
-    auxA33Parser = new AuxA33Parser(defCity, defState, flags);
+    auxA33Parser = new AuxA33Parser(cityList, defCity, defState, flags);
   }
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("Event Number *(\\d{4}-\\d+[A-Z]*\\d*)\\n");
@@ -260,14 +263,23 @@ public class DispatchBCParser extends DispatchA3Parser {
     }
   }
 
-  private static class AuxA33Parser extends DispatchA33Parser {
+  private class AuxA33Parser extends DispatchA33Parser {
 
-    public AuxA33Parser(String defCity, String defState, int flags) {
-      super(defCity, defState, flags);
+    public AuxA33Parser(String[] cityList, String defCity, String defState, int flags) {
+      super(cityList, defCity, defState, flags);
     }
 
     public boolean parseThisMsg(String subject, String body, Data data) {
       return super.parseMsg(subject, body, data);
     }
+
+    @Override
+    protected String trimCrossField(String field) {
+      return DispatchBCParser.this.trimCrossField(field);
+    }
+  }
+
+  protected String trimCrossField(String field) {
+    return field;
   }
 }

@@ -3,12 +3,13 @@ package net.anei.cadpage.parsers.MO;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
 import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
 
 public class MOBentonCountyParser extends DispatchBCParser {
   public MOBentonCountyParser() {
-    super("BENTON COUNTY", "MO");
+    super("BENTON COUNTY", "MO", DispatchA33Parser.A33_X_ADDR_EXT);
   }
 
   @Override

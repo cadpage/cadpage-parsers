@@ -27,7 +27,9 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
   protected boolean parseMsg(String body, Data data) {
 
     body = fixit(body);
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    data.strCross = stripFieldEnd(data.strCross, "CITY");
+    return true;
   }
 
   private static String[]FIX_KEYWORDS = new String[]{

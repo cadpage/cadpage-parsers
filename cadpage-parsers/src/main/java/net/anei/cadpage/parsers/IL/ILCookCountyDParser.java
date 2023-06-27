@@ -55,12 +55,16 @@ public class ILCookCountyDParser extends MsgParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AH",   "ARLINGTON HEIGHTS",
+      "AL",   "ALGONQUIN",
       "BA",   "BARRINGTON",
       "BG",   "BUFFALO GROVE",
       "BH",   "BARRINGTON HILLS",
+      "CL",   "CRYSTAL LAKE",
       "FR",   "FOX RIVER",
       "IN",   "INVERNESS",
       "LG",   "LONG GROVE",
+      "LV",   "LIBERTYVILLE",
+      "LZ",   "LAKE ZURICH",
       "LKBA", "LAKE BARRINGTON",
       "SB",   "SOUTH BARRINGTON",
       "WH",   "WHEELING"
