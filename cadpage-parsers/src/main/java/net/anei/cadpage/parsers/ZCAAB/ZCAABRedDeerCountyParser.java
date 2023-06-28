@@ -36,7 +36,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_CR_CRES;
   }
-  
+
   private static final Pattern JUNK_PTN = Pattern.compile("\n(?:You have received|NOTICE -|This communication) ");
 
   @Override
@@ -44,7 +44,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
     if (!subject.equals("CAD Message") && !subject.equals("Incident Message")) {
       data.strSource = subject;
     }
-    
+
     if (body.startsWith("Sender:")) {
       int pt = body.indexOf("Message:");
       if (pt < 0) return false;
@@ -56,7 +56,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
     if (!super.parseMsg(body,  data)) return false;
 
-    data.strCity = data.strCity.replace('_', ' ');
+    data.strCity = data.strCity.replace('_', ' ').replace(".", "");
     match = CLEAN_CITY_PTN.matcher(data.strCity);
     if (match.matches()) data.strCity = match.group(1);
     if (data.strCity.equals("VILLAGE OF") || data.strCity.equals("[None selected]")) data.strCity = "";

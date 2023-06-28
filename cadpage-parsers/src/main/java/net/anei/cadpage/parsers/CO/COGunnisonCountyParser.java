@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CO;
 
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
 
@@ -44,6 +46,8 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
       "Opened Date / Time",   "Date / Time\nOpen"
   };
 
+  private static final Pattern START_COMMA_PTN = Pattern.compile("^:,+");
+
   private String fixit(String body) {
     if (!body.startsWith("Event Number:")) return body;
 
@@ -56,11 +60,13 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
       int pt = body.indexOf(keyword, lastPt);
       if (pt >= 0) {
         String segment = body.substring(lastPt, pt);
-        if (address) segment = segment.replace("   ", ",");
+        if (address) {
+          segment = segment.replace("   ", ",");
+          segment = START_COMMA_PTN.matcher(segment).replaceFirst(":");
+        }
         sb.append(segment);
         if  (body.charAt(pt-1) != '\n') sb.append('\n');
-        sb.append(replace
-            );
+        sb.append(replace);
         lastPt = pt + keyword.length();
         if (lastPt <= body.length() && body.charAt(lastPt) != ':') sb.append(':');
       }

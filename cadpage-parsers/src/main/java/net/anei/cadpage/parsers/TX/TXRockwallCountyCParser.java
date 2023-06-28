@@ -15,6 +15,15 @@ public class TXRockwallCountyCParser extends DispatchH04Parser {
   }
 
   @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    if (!data.strApt.isEmpty()) {
+      data.strCity = stripFieldEnd(data.strCity, ' '+data.strApt);
+    }
+    return true;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("INFO_BLK")) return new MyInfoBlockField();
     return super.getField(name);
