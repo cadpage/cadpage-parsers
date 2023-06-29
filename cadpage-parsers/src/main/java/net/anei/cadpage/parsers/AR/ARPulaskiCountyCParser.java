@@ -7,28 +7,28 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ARPulaskiCountyCParser extends SmartAddressParser {
-  
+
   public ARPulaskiCountyCParser() {
     super("PULASKI COUNTY", "AR");
     setFieldList("ID CALL ADDR PLACE APT CITY ST CH INFO");
   }
-  
+
   @Override
   public String getFilter() {
     return "smtp@pcso.org";
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("CFS\\d{4}-\\d{5}");
   private static final Pattern CH_PTN = Pattern.compile("(\\d+|[A-Z]{2,4} (?:FIRE )?\\d+|ONE)\\b *(.*)");
   private static final Pattern CANCEL_PTN = Pattern.compile("(.*) (CANCEL(?: RESPONSE)?)");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!ID_PTN.matcher(subject).matches()) return false;
     data.strCallId = subject;
-    
+
     String cancel = "";
     int pt = body.indexOf(" Fire Channel");
     if (pt >= 0) {
@@ -41,20 +41,20 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
       }
       data.strSupp = stripFieldStart(channel, "/");
     }
-    
+
     else {
       Matcher match = CANCEL_PTN.matcher(body);
       if (!match.matches()) return false;
       body = match.group(1).trim();
       cancel = match.group(2);
     }
-    
+
     Parser p = new Parser(body);
     data.strCall = append(cancel, " - ", p.get(','));
     String addr = p.get(',');
     if (addr.length() == 0) return false;
     parseAddress(addr.replace('@',  '&'), data);
-    
+
     String city = p.getLast(',');
     Matcher match = ST_ZIP_PTN.matcher(city);
     if (match.matches()) {
@@ -63,6 +63,7 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
       city = p.getLast(',');
       if (city.isEmpty() && zip != null) city = zip;
     }
+    if (city.equals("NLR")) city = "NORTH LITTLE ROCK";
     data.strCity = city;
     return p.get().isEmpty();
   }

@@ -250,8 +250,8 @@ public class TXBrazosCountyParser extends FieldProgramParser {
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
     "BC", "BRAZOS COUNTY",
     "BR", "BRYAN",
+    "CS", "COLLEGE STATION"
     /*
-    College Station
     Kurten
     Millican
     Wixon Valley

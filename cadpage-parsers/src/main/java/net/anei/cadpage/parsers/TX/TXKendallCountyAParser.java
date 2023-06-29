@@ -55,13 +55,13 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
                           "CLEAR SKY",
                           "MENGER SPRINGS");
   }
-  
+
   @Override
   public String getFilter() {
     return "joep@gvtc.com";
   }
 
-  @Override 
+  @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("BoerneDispatch:")) {
       body = body.substring(0,6)+' '+body.substring(6);
@@ -76,16 +76,16 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
 
   @Override
   protected boolean parseMessageField(String field, Data data) {
-    
+
     // Look for a normal address, Do not check for a city here, because
     // city names are commonly found in the information following the address
     Result res = parseAddress(StartType.START_ADDR, FLAG_NO_CITY | FLAG_NO_IMPLIED_APT, field);
     if (res.isValid()) {
       res.getData(data);
       field = res.getLeft();
-      
+
       // See if we can find a valid city/st/zip combination, that markes a
-      // pretty definitive city 
+      // pretty definitive city
       Matcher match = CITY_ST_ZIP_PTN.matcher(field);
       if (match.matches()) {
         String city = CITY_CODES.getProperty(match.group(2).toUpperCase());
@@ -93,7 +93,7 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
           String place = match.group(1);
           data.strCity = city;
           field = match.group(3);
-          
+
           // If there is anything in front of the city we found, see if it
           // looks like an apt, if not it goes into place
           if (place.length() > 0) {
@@ -106,7 +106,7 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
           }
         }
       }
-      
+
       // If that didn't work, see if we can find a simple city.  This will only
       // be accepted if what is in front of it looks like a valid apt (or is
       // empty)
@@ -126,14 +126,14 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
           }
         }
       }
-      
+
       // If we did find a city, strip off any trailing state and zip code
       if (data.strCity.length() > 0) {
         Matcher m = ST_ZIP_PTN.matcher(field);
         if (m.matches()) field = m.group(1);
       }
     }
-    
+
     // No address found :(
     // See if we can pick out a city TX zip combination
     else {
@@ -147,13 +147,13 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
         }
       }
     }
-    
+
     data.strSupp = field;
     return true;
   }
   private static final Pattern ST_ZIP_PTN = Pattern.compile("(?:(?:TX|TEXAS)\\b *)?(?:\\d{5}\\b *)(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?) *\\b([A-Z]+) +(?:TX|TEXAS)(?: +\\d{5})?\\b *(.*)", Pattern.CASE_INSENSITIVE);
-  
+
   private String parseApt(String apt) {
     if (apt.length() == 0) return apt;
     Matcher match = APT_PTN.matcher(apt);
@@ -161,17 +161,17 @@ public class TXKendallCountyAParser extends DispatchA37Parser {
     return match.group(1);
   }
   private static final Pattern APT_PTN = Pattern.compile(";? *(?:APT|RM|ROOM|STE|#)?(?: *#)? *([^ ]+)", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String getProgram() {
     return super.getProgram() + " ADDR APT PLACE CITY INFO";
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city.toUpperCase(), MAP_CITY_TABLE);
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "ALAMO SPRINGS","COMFORT",
       "BERGHEIM",     "BOERNE",
