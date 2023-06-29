@@ -549,7 +549,7 @@ public abstract class SmartAddressParser extends MsgParser {
 
     setupDictionary(ID_CROSS_STREET, "XS:", "X:", "C/S:", "C/S", "XSTR", "X");    //  Warning!  Must match CROSS_MARK_PTN
     setupDictionary(ID_NEAR, "BESIDE", "NEAR", "ACROSS");
-    setupDictionary(ID_APT, "APT:", "APT", "#APT", "#", "SP", "RM", "SUITE", "SUIT", "STE", "SUITE:", "ROOM", "ROOM:", "LOT", "#LOT", "UNIT");
+    setupDictionary(ID_APT, "APARTMENT", "APT:", "APT", "#APT", "#", "SP", "RM", "SUITE", "SUIT", "STE", "SUITE:", "ROOM", "ROOM:", "LOT", "#LOT", "UNIT");
     setupDictionary(ID_APT_SOFT, "APT", "APTS", "SUITE", "ROOM", "LOT", "UNIT");
     setupDictionary(ID_FLOOR, "FLOOR", "FLR", "FL", "BLDG");
     setupDictionary(ID_STREET_NAME_PREFIX, "HIDDEN", "LAKE", "MT", "MOUNT", "SUNKEN");

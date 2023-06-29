@@ -15,5 +15,5 @@ find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e 'OHWarrenCountyAParserTest.java:' \
    -e 'SmartAddressParserTest.java:' \
    -e '\+[[:space:]]*$' \
-   -e '"CITY:(\\n|064/284|ASH|AMA|AVA|AYR|CMCH / GOSHEN|COTTAGE GROVE/HISSOP|DC|ELA|EVA|FOX|GAY|HAY|HOU\.R\.|IRA|IVA|LEE|OPP|PG|RAY|RDU|ROY|RYE|SUN|TOWNSHIP .*|ULM|YOE|.*WARD *[0-9]|.*WD *[0-9]|[0-9]{5})"' \
+   -e '"CITY:(\\n|064/284|ARP|ASH|AMA|AVA|AYR|CMCH / GOSHEN|COTTAGE GROVE/HISSOP|DC|ELA|EVA|FOX|GAY|GUY|HAY|HOU\.R\.|IRA|IVA|LEE|OPP|PG|RAY|RDU|ROY|RYE|SUN|TOWNSHIP .*|ULM|YOE|.*WARD *[0-9]|.*WD *[0-9]|[0-9]{5})"' \
    -e '"ADDR:(LAT:|LL|[+NS]?[0-9].*[0-9] *[,;] *-?[0-9])'

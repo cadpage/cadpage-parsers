@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH04Parser;
 
@@ -14,11 +17,18 @@ public class TXRockwallCountyCParser extends DispatchH04Parser {
     return "@rockwall.com";
   }
 
+  private static final Pattern APT_PTN = Pattern.compile(" +(?:APT|RM|ROOM|STE|LOT)\\b", Pattern.CASE_INSENSITIVE);
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
     if (!data.strApt.isEmpty()) {
-      data.strCity = stripFieldEnd(data.strCity, ' '+data.strApt);
+      Matcher match = APT_PTN.matcher(data.strCity);
+      if (match.find()) {
+        data.strCity = data.strCity.substring(0,match.start());
+      } else {
+        data.strCity = stripFieldEnd(data.strCity, ' '+data.strApt);
+      }
     }
     return true;
   }
