@@ -17,7 +17,7 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
     super(defCity, defState,
           "CALL ADDRCITYST PLACE! INFO/N+");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "SDEdmundsCounty";
@@ -46,12 +46,32 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}[, ]+[-+]?\\d{2,3}\\.\\d{6,}");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}[, ]+[-+]?\\d{2,3}\\.\\d{6,}\\b");
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (match.lookingAt()) {
+        String gps = match.group();
+        field = field.substring(match.end()).trim();
+        if (field.isEmpty()) {
+          data.strAddress = gps;
+          return;
+        } else {
+          setGPSLoc(match.group(), data);
+        }
+      }
+      super.parse(field, data);
+    }
+  }
+
   private class MyPlaceField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -62,7 +82,7 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
         data.strPlace = field;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "GPS PLACE";
