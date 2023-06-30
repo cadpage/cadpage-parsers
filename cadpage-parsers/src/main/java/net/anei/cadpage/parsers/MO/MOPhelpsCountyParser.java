@@ -20,7 +20,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   }
 
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,dispatch@rollacity.org";
   }
 
   public int getMapFlags() {
