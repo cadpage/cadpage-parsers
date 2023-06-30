@@ -6,24 +6,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class VAStauntonParser extends DispatchOSSIParser {
-  
+
   public VAStauntonParser() {
-    super("STAUNTON", "VA", 
-          "ADDR CITY CALL! INFO+");
+    super(CITY_LIST, "STAUNTON", "VA",
+          "FYI? ADDR CITY? CALL! INFO+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@staunton.net";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
     return super.parseMsg("CAD:" + body, data);
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "208 ACADEMY ST",                       "+38.152484,-79.070467",
       "312 ACADEMY ST",                       "+38.153971,-79.069225",
@@ -208,4 +208,8 @@ public class VAStauntonParser extends DispatchOSSIParser {
       "125 WATERFORD LOOP",                   "+38.115224,-79.0076877",
       "1125 WESTMORELAND DR",                 "+38.156177,-79.0674900"
   });
+
+  private static final String[] CITY_LIST = new String[] {
+      "STAUNTON",
+  };
 }
