@@ -8,16 +8,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
  * Placer County, CA (B)
  */
 public class CAPlacerCountyBParser extends DispatchA20Parser {
-  
+
   public CAPlacerCountyBParser() {
     super(CALL_CODES, "PLACER COUNTY", "CA");
   }
-  
+
   @Override
   public String getFilter() {
     return "@rocklin.ca.us,@ci.lincoln.ca.us,@lincolnca.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -38,6 +38,7 @@ public class CAPlacerCountyBParser extends DispatchA20Parser {
       "FRAUD",    "FRAUD",
       "FTEST",    "FIRE TEST INCIDENT",
       "FTRASH",   "TRASH FIRE",
+      "FVEG",     "VEGETATION FIRE",
       "FVEH",     "VEHICLE FIRE",
       "FVSUMM",   "VEGETATION FIRE SUMMER",
       "FVWIN",    "VEGETATION FIRE WINTER",
