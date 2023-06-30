@@ -25,7 +25,25 @@ public class VARockbridgeCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     return super.getField(name);
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.lastIndexOf(':');
+      if (pt >= 0) {
+        data.strPlace = stripFieldStart(field.substring(pt+1).trim(), "-");
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
+    }
   }
 
 }
