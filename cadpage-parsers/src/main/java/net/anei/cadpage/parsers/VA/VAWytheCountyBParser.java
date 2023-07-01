@@ -16,6 +16,7 @@ public class VAWytheCountyBParser extends DispatchA19Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "RUR", "RURAL RETREAT",
       "WYT", "WYTHEVILLE"
   });
 

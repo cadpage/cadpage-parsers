@@ -29,7 +29,7 @@ public class DispatchA38Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: *\\d{5})?|");
+  private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2}|M)(?: *\\d{5})?|");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -37,7 +37,10 @@ public class DispatchA38Parser extends FieldProgramParser {
       String city = p.getLastOptional(',');
       Matcher match = CITY_ZIP_PTN.matcher(city);
       if (match.matches()) {
-        if (city.length() > 0) data.strState = match.group(1);
+        if (city.length() > 0) {
+          data.strState = match.group(1);
+          if (data.strState.equals("M")) data.strState = "MN";
+        }
         city = p.getLastOptional(',');
       }
       data.strCity = city;

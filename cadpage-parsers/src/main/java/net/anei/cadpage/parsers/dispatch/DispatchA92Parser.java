@@ -184,10 +184,10 @@ public class DispatchA92Parser extends HtmlProgramParser {
 
   }
 
-  private static final Pattern APT_PFX_PTN = Pattern.compile("^(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PFX_PTN = Pattern.compile("\\b(?:Apt|Rm|Room|Lot)[ .#]*", Pattern.CASE_INSENSITIVE);
   private static final Pattern COUNTY_PTN = Pattern.compile("([ A-Za-z]+)(?:,[ A-Za-z]+)?");
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:[A-Za-z ]+, *)?[A-Z]{2}(?: +\\d{5})?");
-  private static final Pattern APT_PTN = Pattern.compile("Apt..*|\\d{1,5}[A-Z]?");
+  private static final Pattern APT_PTN = Pattern.compile("Apt\\...*|\\d{1,5}[A-Z]?");
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
@@ -212,6 +212,12 @@ public class DispatchA92Parser extends HtmlProgramParser {
         if (pt1 >= 0) {
           data.strCity = field.substring(pt1+1).trim();
           field = field.substring(0,pt1).trim();
+        } else {
+          Matcher match = APT_PFX_PTN.matcher(field);
+          if (match.find()) {
+            data.strApt = field.substring(match.end());
+            field = field.substring(0, match.start()).trim();
+          }
         }
         return field;
       }
@@ -244,7 +250,9 @@ public class DispatchA92Parser extends HtmlProgramParser {
       }
       data.strCity = city;
       if (!apt.isEmpty()) {
-        data.strApt = APT_PFX_PTN.matcher(apt).replaceFirst("");
+        match = APT_PFX_PTN.matcher(apt);
+        if (match.lookingAt()) apt = apt.substring(match.end()).trim();
+        data.strApt = apt;
       }
       return field.substring(0, pt1).trim();
     }

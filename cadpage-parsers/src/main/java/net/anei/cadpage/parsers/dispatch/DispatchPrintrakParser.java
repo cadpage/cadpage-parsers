@@ -121,7 +121,7 @@ public class DispatchPrintrakParser extends FieldProgramParser {
       body = match.group(2);
     }
     body = body.replace(" CMTS:", " CMT1:").replace("CMT:",  " CMT1:").replace("AD:", " AD:").replace("UNTS:",  " UNTS:").replace("UNITS:", " UNTS:").replace(" X-ST:", " XST:");
-    body = body.replace("TYP:", " TYP:");
+    body = body.replace("TYP:", " TYP:").replace("CTY:", " CTY:").replace("MAP:", " MAP:");
     body = body.replace(" CALLER / STATEMENT:", " CALLER STATEMENT:");
     body = body.replace(" CALLER CMT2:", " CMT2:");
     rejectLatLongKeywords = true;

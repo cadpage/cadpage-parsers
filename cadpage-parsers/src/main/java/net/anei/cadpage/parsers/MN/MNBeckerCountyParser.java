@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA38Parser;
 
 public class MNBeckerCountyParser extends DispatchA38Parser {
-  
+
   private static final Pattern CRN_PTN = Pattern.compile("\\bCR#(\\d+)", Pattern.CASE_INSENSITIVE);
   private static final Pattern HN_PTN = Pattern.compile("\\bH#(\\d+)", Pattern.CASE_INSENSITIVE);
   private static final Pattern SLASH_DIR_PTN = Pattern.compile(".([NSEW])(?:ORTH|OUTH|AST|EST)?B(?:OUND)?\\b");
@@ -17,7 +17,7 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
   private static final Pattern DIR_OF_PTN = Pattern.compile("(?:[NSEW]|NORTH|SOUTH|EAST|WEST)\\.? OF\\b.*|AND .*");
   private static final Pattern APT_PTN = Pattern.compile("\\d+[A-Z]?|(?:APT|ROOM|RM|UNIT|LOT|SUITE) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern PART_ADDR_PTN = Pattern.compile("\\d.*|HWY .*|US .*|MN .*|ST \\d.*|.*[/&].*");
-  
+
   public MNBeckerCountyParser() {
     super("BECKER COUNTY", "MN");
     setupProtectedNames("TOWN AND COUNTRY");
@@ -36,15 +36,15 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
     if (NUMERIC.matcher(data.strCity).find()) {
       data.strPlace = append(data.strPlace, ", ", data.strCity);
       data.strCity = "";
-    }
+    } else if (data.strCity.equals("B") || data.strCity.equals("BAG")) data.strCity = "BAGLEY";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("ADDR", "ADDR PLACE X");
   }
- 
+
   @Override
   protected void parseAddress(String field, Data data) {
     field = CRN_PTN.matcher(field).replaceAll("CR $1");
@@ -56,9 +56,9 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
     field = field.replace("MOUNTAIN  ASH", "MOUNTAIN ASH");
     field = field.replace("LA BUDDE", "LABUDDE");
     field = field.replace(" HWT ", " HWY ");
-    
+
     // They use double blank delimiters to add all kinds
-    // of things to the address field.  We will see what we can 
+    // of things to the address field.  We will see what we can
     // do to set things aright.
     int pt = field.indexOf("  ");
     if (pt < 0) {
@@ -73,7 +73,7 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
       }
       return;
     }
-  
+
     String part1 = field.substring(0,pt);
     String part2 = field.substring(pt+2).trim();
     Matcher match = APT_PTN.matcher(part2);
@@ -83,8 +83,8 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
       super.parseAddress(part1, data);
       data.strApt = apt;
       return;
-    } 
-  
+    }
+
     match = APT_PTN.matcher(part1);
     if (match.matches()) {
       String apt = match.group(1);
@@ -94,13 +94,13 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
         return;
       }
     }
-    
+
     if (part2.startsWith("BETWEEN ")) {
       data.strCross = part2.substring(8).trim();
       super.parseAddress(part1, data);
       return;
     }
-    
+
     if (!part2.startsWith("BY ") && isValidAddress(part2)) {
       if (PART_ADDR_PTN.matcher(part1).matches()) {
         parseAddress(part1 + ' ' + part2, data);
@@ -110,7 +110,7 @@ public class MNBeckerCountyParser extends DispatchA38Parser {
       }
       return;
     }
-    
+
     if (checkAddress(part2) > checkAddress(part1)) {
       super.parseAddress(part2, data);
       data.strPlace = part1;
