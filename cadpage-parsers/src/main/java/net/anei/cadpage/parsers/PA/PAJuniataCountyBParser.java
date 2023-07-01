@@ -6,6 +6,7 @@ public class PAJuniataCountyBParser extends DispatchH04Parser {
 
   public PAJuniataCountyBParser() {
     super("JUNIATA COUNTY", "PA");
+    removeWords("APARTMENT");
   }
 
   @Override
