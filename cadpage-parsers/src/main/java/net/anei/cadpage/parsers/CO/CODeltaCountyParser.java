@@ -11,7 +11,7 @@ public class CODeltaCountyParser extends FieldProgramParser {
 
   public CODeltaCountyParser() {
     super(CITY_CODES, "DELTA COUNTY", "CO",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO!");
+          "CALL:CALL! ADDR:ADDR! CITY:CITY ID:ID UNIT:UNIT INFO:INFO");
   }
 
   @Override
@@ -21,7 +21,7 @@ public class CODeltaCountyParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), 7, data);
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
@@ -47,10 +47,10 @@ public class CODeltaCountyParser extends FieldProgramParser {
           place = apt;
           apt = "";
         }
-        if (place.length() == 0) place = p.getLastOptional(';');
+        if (place.isEmpty()) place = p.getLastOptional(';');
       }
       super.parse(p.get(), data);
-      data.strPlace = append(data.strPlace, " - ", place);
+      data.strPlace = place;
       data.strApt = append(data.strApt, "-", apt);
     }
 
