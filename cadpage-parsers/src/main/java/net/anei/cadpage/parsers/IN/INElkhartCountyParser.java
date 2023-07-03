@@ -15,7 +15,7 @@ public class INElkhartCountyParser extends FieldProgramParser {
   public INElkhartCountyParser() {
     super("ELKHART COUNTY", "IN", "CALL:CALL? ADDR:ADDR! UNIT:UNIT! CITY:CITY! ST:ST! INFO:INFO!");
   }
-  
+
   @Override
   public String getFilter() {
     return "@c-msg.net";
@@ -30,6 +30,7 @@ public class INElkhartCountyParser extends FieldProgramParser {
       setTime(TIME_FMT, mat.group(3), data);
     }
     if (!super.parseMsg(body, data)) return false;
+    data.strCity = stripFieldStart(data.strCity, "_");
     if (data.strCall.length() == 0) data.strCall = "ALERT";
     return true;
   }

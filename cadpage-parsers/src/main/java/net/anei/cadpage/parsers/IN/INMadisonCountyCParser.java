@@ -88,7 +88,7 @@ public class INMadisonCountyCParser extends FieldProgramParser {
           addr2 = part.replace('@', '&');
         }
         else if (part.toUpperCase().equals("IN")) {
-          data.strState = part;
+          data.strState = part.toUpperCase();
         }
         else {
           if (data.strCity.length() == 0) {

@@ -6,21 +6,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
 
 public class INTippecanoeCountyParser extends DispatchSPKParser {
-  
+
   public INTippecanoeCountyParser() {
     super("TIPPECANOE COUNTY", "IN");
   }
-  
+
   @Override
   public String getFilter() {
     return "caliber_alert@tippecanoe.in.gov";
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
     data.strCode = data.strCall;
     data.strCall = convertCodes(data.strCode, CALL_CODES);
+    int pt = data.strCity.indexOf('|');
+    if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
     return true;
   }
 
@@ -256,7 +258,7 @@ public class INTippecanoeCountyParser extends DispatchSPKParser {
       "WLORDT",       "WLORDINANCE TRASH",
       "WORKRV",       "WORK RELEASE VIOLATION",
       "WOW",          "WOW LOOKING FOR SUBJ."
-      
+
   });
 
 }

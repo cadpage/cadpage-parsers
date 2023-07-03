@@ -13,7 +13,7 @@ public class DispatchA80Parser extends FieldProgramParser {
   public DispatchA80Parser(String defCity, String defState) {
     super(defCity, defState,
          "( SELECT/2 ADDRCITY PLACE? UNIT2 CALL! INFO+ " +
-         "| CALL:CALL1! PLACE:PLACE? ( ADDR:ADDR! ( CITY:CITY! | CITY! ) ID:ID! | ID:ID! ADDR! CITY_ST! ) DATE:DATE! TIME:TIME! MAP:MAP? UNIT:UNIT% INFO:INFO/N+ DIRECTIONS:INFO/N+ WARNINGS:ALERT/N+ )",
+         "| CALL:CALL1! PLACE:PLACE? ( ADDR:ADDR! ( CITY:CITY! | CITY! ) ID:ID! | ID:ID! PLACE:PLACE? ADDR! CITY_ST! ) DATE:DATE! TIME:TIME! MAP:MAP? UNIT:UNIT% INFO:INFO/N+ DIRECTIONS:INFO/N+ WARNINGS:ALERT/N+ )",
          FLDPROG_IGNORE_CASE);
   }
 

@@ -31,6 +31,7 @@ public class INCassCountyParser extends DispatchA29Parser {
     body = "DISPATCH:" + body.substring(match.end());
     body = DIR_OF_PTN.matcher(body).replaceAll("$1O");
     if (!super.parseMsg(body, data)) return false;
+    if (data.strCity.equals("U")) data.strCity = "";
     data.strSource = s1;
     return true;
   }

@@ -6,16 +6,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA63Parser;
 
 
 
-public class WIOzaukeeCountyParser extends DispatchA63Parser {  
+public class WIOzaukeeCountyParser extends DispatchA63Parser {
   public WIOzaukeeCountyParser() {
     super(CITY_CODES, CITY_LIST, "OZAUKEE COUNTY", "WI");
   }
-  
+
   @Override
   public String getFilter() {
     return "Police@ci.mequon.wi.us";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -26,7 +26,7 @@ public class WIOzaukeeCountyParser extends DispatchA63Parser {
     "Cedarburg",
     "MEQUON",
     "PORT WASHINGTON",
-    
+
     // Villages
     "BAYSIDE",
     "BELGIUM",
@@ -35,7 +35,7 @@ public class WIOzaukeeCountyParser extends DispatchA63Parser {
     "NEWBURG",
     "SAUKVILLE",
     "THIENSVILLE",
-    
+
     // Towns
     "BELGIUM",
     "CEDARBURG",
@@ -43,10 +43,10 @@ public class WIOzaukeeCountyParser extends DispatchA63Parser {
     "GRAFTON",
     "PORT WASHINGTON",
     "SAUKVILLE",
-    
+
     // Census-designated place
     "WAUBEKA",
-    
+
     // Unincorporated communities
     "DACADA",
     "DECKER",
@@ -61,12 +61,13 @@ public class WIOzaukeeCountyParser extends DispatchA63Parser {
     "LITTLE KOHLER",
     "SAUK TRAIL BEACH",
     "ULAO",
-    
+
     // Ghost town
     "STONEHAVEN"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable (new String[]{
-    "ME", "MEQUON"
+    "ME", "MEQUON",
+    "OZ", "OZAUKEE COUNTY"
   });
 }

@@ -17,6 +17,7 @@ public class INMorganCountyParser extends DispatchA19Parser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "BRO", "BROOKLYN",
+      "MAR", "MARTINSVILLE",
       "MOO", "MOORESVILLE",
       "Moo", "MOORESVILLE",
       "moo", "MOORESVILLE"

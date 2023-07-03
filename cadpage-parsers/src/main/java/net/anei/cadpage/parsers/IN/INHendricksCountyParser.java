@@ -105,6 +105,8 @@ public class INHendricksCountyParser extends DispatchA52Parser {
         "46285", "INDIANAPOLIS",
         "46288", "INDIANAPOLIS",
         "46290", "INDIANAPOLIS",
-        "46298", "INDIANAPOLIS"
+        "46298", "INDIANAPOLIS",
+
+        "61",    ""
   });
 }
