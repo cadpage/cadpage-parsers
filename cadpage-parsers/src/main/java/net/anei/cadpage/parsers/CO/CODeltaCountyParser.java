@@ -62,6 +62,7 @@ public class CODeltaCountyParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "AUS", "Austin",
-      "MON", "Montrose"
+      "MON", "Montrose",
+      "SOM", "Somerset"
   });
 }
