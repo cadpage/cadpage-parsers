@@ -16,7 +16,11 @@ public class INDearbornCountyParser extends DispatchA19Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "LAW", "LAWRENCEBURG"
+      "AUR", "AURORA",
+      "GRN", "GREENDALE",
+      "GUI", "GUILFORD",
+      "LAW", "LAWRENCEBURG",
+      "WHI", "DILLSBORO"     // ????
   });
 
 }

@@ -28,7 +28,18 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
   }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) (RAPS-\\d+|\\d+SjvIns-\\d) (.*?) (?:([DT]\\d{1,2}[A-Z]?) (.*?) )?(La = .*?  Lo = .*)");
-  private static final Pattern ADDR_PTN = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+[A-Z]?|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
+  private static final Pattern ADDR_PTN;
+  static {
+
+    // It seems that very old versions of Android do not support unicode expressions
+    Pattern ptn;
+    try {
+      ptn = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+[A-Z]?|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
+    } catch (Exception ex) {
+      ptn = Pattern.compile("\\b(\\w+ \\d+[A-Z]?|\\w+ X \\w+)\\b");
+    }
+    ADDR_PTN = ptn;
+  }
 
   protected boolean parseMsg(String body, Data data) {
     String[] flds = body.split("\n");
@@ -50,9 +61,10 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     if (match.find()) {
       data.strAddress = match.group().replace(" X ", " & ").replace(" x ", " & ");
       data.strCity = callAddr.substring(match.end()).trim();
-      callAddr = callAddr.substring(0,match.start()).trim();
+      data.strCall = append(data.strCall, " - ", callAddr.substring(0,match.start()).trim());
+    } else {
+      data.strAddress = callAddr;
     }
-    data.strCall = append(data.strCall, " - ", callAddr);
 
     if (unit == null) {
       if (data.strCity.isEmpty()) return false;
