@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXCameronCountyParser extends DispatchA55Parser {
-  
+/**
+ * Cameron County, TX
+ */
+public class TXCameronCountyParser extends GroupBestParser {
+
   public TXCameronCountyParser() {
-    super("CAMERON COUNTY", "TX");
+    super(new TXCameronCountyAParser(), new TXCameronCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "reports@messaging.eforcesoftware.net";
-  }
-
 }

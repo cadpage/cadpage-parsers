@@ -2287,6 +2287,7 @@ public class Active911ParserTable {
       "US/TX/BurlesonFD",                 "TXJohnsonCountyA",
       "US/TX/BurnetCounty",               "TXBurnetCounty",
       "US/TX/Cadpaging",                  "TXFriendswood",
+      "US/TX/CameronCounty",              "TXCameronCountyB",
       "US/TX/Carrollton",                 "TXCarrollton",
       "US/TX/CarsonCounty",               "TXCarsonCounty",
       "US/TX/ChambersCounty",             "TXChambersCounty",
