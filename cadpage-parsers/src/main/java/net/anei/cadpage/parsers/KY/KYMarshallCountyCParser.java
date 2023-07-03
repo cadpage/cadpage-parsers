@@ -1,38 +1,21 @@
 package net.anei.cadpage.parsers.KY;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
-
-public class KYMarshallCountyCParser extends DispatchA48Parser {
+public class KYMarshallCountyCParser extends DispatchA27Parser {
 
   public KYMarshallCountyCParser() {
-    super(CITY_LIST, "MARSHALL COUNTY", "KY", FieldType.PLACE_PHONE_NAME, A48_NO_CODE);
+    super(CITY_LIST, "MARSHALL COUNTY", "KY");
   }
 
   @Override
   public String getFilter() {
-    return "@MarshallCountyKY.gov";
+    return "marshallco911ky@cissystem.com";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) [AP]M");
-  private static final Pattern INFO_DATE_PTN = Pattern.compile("(\n\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d) [AP]M\\b");
-
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    int pt = body.indexOf(':');
-    if (pt >= 0 && pt < body.indexOf('\n')) body = body.substring(pt+1).trim();
-
-    // They have misconfigured the time with a spuruous AM/PM indicator
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (match.matches()) {
-      subject = match.group(1).trim();
-      body = INFO_DATE_PTN.matcher(body).replaceAll("$1");
-    }
-
-    return super.parseMsg(subject, body, data);
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final String[] CITY_LIST = new String[]{

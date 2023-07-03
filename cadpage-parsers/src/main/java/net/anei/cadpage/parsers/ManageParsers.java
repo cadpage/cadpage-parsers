@@ -203,7 +203,9 @@ public class ManageParsers {
         "PAPhiladelphia",     "General",                 // 06/12/2023
         "MDPrinceGeorgesCountyE", "General",
         "MOAndrewCountyA",    "MOAndrewCountyB",         // 06/26/2023
-        "MOPerryCountyA",     "MOPerryCountyB"
+        "MOPerryCountyA",     "MOPerryCountyB",
+        "KYMarshallCountyA",  "General",                 /// 07/03/2023
+        "KYMarshallCountyB",  "General"
   });
 
 }
