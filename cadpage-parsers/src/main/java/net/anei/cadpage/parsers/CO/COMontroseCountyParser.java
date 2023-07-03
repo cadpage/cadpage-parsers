@@ -20,6 +20,12 @@ public class COMontroseCountyParser extends FieldProgramParser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "DPD",  "Delta"
+      "BED",  "Bedrock",
+      "DPD",  "Delta",
+      "EGN",  "Egnar",
+      "NUC",  "Nucla",
+      "PAX",  "Paradox",
+      "RED",  "Redvale",
+      "URA",  "Uravan"
   });
 }
