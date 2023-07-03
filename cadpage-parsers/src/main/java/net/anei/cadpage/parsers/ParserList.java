@@ -1919,6 +1919,7 @@ public class ParserList {
               ,"WVLincolnCounty"                ,"Lincoln County, WV"
               ,"WVLoganCounty"                  ,"Logan County, WV"
               ,"WVMarionCounty"                 ,"Marion County, WV"
+              ,"WVMarshallCounty"               ,"Marshall County, WV"
               ,"WVMasonCounty"                  ,"Mason County, WV"
               ,"WVMcDowellCounty"               ,"McDowell County, WV"
               ,"WVMercerCounty"                 ,"Mercer County, WV"
