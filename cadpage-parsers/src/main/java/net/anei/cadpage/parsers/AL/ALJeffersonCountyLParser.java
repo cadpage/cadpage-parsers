@@ -1,6 +1,9 @@
 
 package net.anei.cadpage.parsers.AL;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -26,11 +29,19 @@ public class ALJeffersonCountyLParser extends DispatchH05Parser {
     return super.getField(name);
   }
 
+  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*?), *(.*\\d.*|[A-Z]|)");
+
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldEnd(field,  ",");
+      String apt = "";
+      Matcher match = TRAIL_APT_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        apt = match.group(2);
+      }
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
 }

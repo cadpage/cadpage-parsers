@@ -204,8 +204,9 @@ public class ManageParsers {
         "MDPrinceGeorgesCountyE", "General",
         "MOAndrewCountyA",    "MOAndrewCountyB",         // 06/26/2023
         "MOPerryCountyA",     "MOPerryCountyB",
-        "KYMarshallCountyA",  "General",                 /// 07/03/2023
-        "KYMarshallCountyB",  "General"
+        "KYMarshallCountyA",  "General",                 // 07/03/2023
+        "KYMarshallCountyB",  "General",
+        "ALDothanA",          "General"
   });
 
 }
