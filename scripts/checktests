@@ -11,7 +11,6 @@ find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e 'BaseParserTest.java' \
    -e 'ALJeffersonCountyLParserTest.java:' \
    -e 'ZSESwedenAParserTest.java:' \
-   -e 'OHDelawareCountyBParserTest.java:' \
    -e 'OHWarrenCountyAParserTest.java:' \
    -e 'SmartAddressParserTest.java:' \
    -e 'ZCABCPrinceGeorgeParserTest.java:' \
