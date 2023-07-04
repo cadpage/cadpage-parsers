@@ -97,16 +97,13 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
   private static final Pattern ADDR_COUNTY_PTN = Pattern
       .compile(" +(CAY|COR|MAD|OND|ONO|OSW)$");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile(" +(13\\d{3})$");
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("/(?:\\d{5} +)?(.*)|13\\d{3} +([A-Z]{3,4})");
 
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
 
-      // Some times there is a county field, and sometimes there is not. In any
-      // case, we can ignore it and rely on the city code in front of it
-      Matcher match = ADDR_COUNTY_PTN.matcher(field);
-      if (match.find())
-        field = field.substring(0, match.start());
+      field = stripFieldStart(field, ":");
 
       String sPlace = "";
       int pt = field.indexOf(':');
@@ -115,6 +112,12 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
         field = field.substring(0, pt).trim();
         sPlace = stripFieldStart(sPlace, "@");
       }
+
+      // Some times there is a county field, and sometimes there is not. In any
+      // case, we can ignore it and rely on the city code in front of it
+      Matcher match = ADDR_COUNTY_PTN.matcher(field);
+      if (match.find()) field = field.substring(0, match.start());
+
       String apt = "";
       pt = field.lastIndexOf(',');
       if (pt >= 0) {
@@ -128,8 +131,10 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
         }
       }
 
-      if (field.startsWith("/")) {
-        data.strCity = convertCodes(field.substring(1).trim(), CITY_CODES);
+      if ((match = ZIP_CITY_PTN.matcher(field)).matches()) {
+        String city = match.group(1);
+        if (city == null) city = match.group(2);
+        data.strCity = convertCodes(city, CITY_CODES);
       } else {
         super.parse(field, data);
         data.strApt = append(data.strApt, "-", apt);
@@ -175,6 +180,8 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
           cross = "";
         }
       }
+      cross = stripFieldStart(cross, "/");
+      cross = stripFieldEnd(cross, "/");
       super.parse(cross, data);
 
       place = EXPANDED_DASH_APT_PTN.matcher(place).replaceAll("$1-$2");
@@ -673,7 +680,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
 
-      // Cahyuga County
+      // Cayuga County
       "OCAU", "AUBURN CITY",
       "OTAR", "AURELIUS",
       "OTBT", "BRUTUS",
@@ -707,6 +714,10 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVUS", "UNION SPRINGS",
       "OVWE", "WEEDSPORT",
 
+      "NIL",  "NILES",
+      "SEM",  "SEMPRONIUS",
+      "SEN",  "SENNETT",
+
       // Cortland County
       "OCCO", "CORTLAND CITY",
       "OTCN", "CINCINNATUS",
@@ -727,6 +738,9 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVHO", "HOMER",
       "OVMC", "MCGRAW",
       "OVMR", "MARATHON",
+
+      "CUY",  "CUYLER",
+      "SCT",  "SCOTT",
 
       // Madison County
       "OCON", "ONEIDA CITY",
@@ -755,6 +769,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVMU", "MUNNSVILLE",
       "OVMV", "MORRISVILLE",
       "OVWM", "WAMPSVILLE",
+      "TSUL", "SULLIVAN",
 
       // Oneida County
       "OCRO", "ROME CITY",
@@ -778,6 +793,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OTPS", "PARIS",
       "OTRE", "REMSEN",
       "OTSA", "SANGERFIELD",
+      "TCZT", "CAZENOVIA",
       "OTSE", "SKANEATELES",
 
       // Was Steuben
@@ -809,6 +825,7 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVYO", "YORKVILLE",
 
       // Onondaga County
+      "HAS", "HASTINGS",
       "NAT", "ONONDAGA NATION",
       "SYR", "SYRACUSE CITY",
       "TCI", "CICERO",
@@ -880,7 +897,12 @@ public class NYOnondagaCountyAParser extends FieldProgramParser {
       "OVPA", "PARISH",
       "OVPF", "PHOENIX",
       "OVPU", "PULASKI",
-      "OVSC", "SANDY CREEK"
+      "OVSC", "SANDY CREEK",
+
+      "GRB",  "GRANBY",
+      "PHX",  "PHOENIX",
+      "SCH",  "SCHROEPPEL",
+      "WMN",  "WILLIAMSTOWN"
   });
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
