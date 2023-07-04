@@ -14,7 +14,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("([A-Z0-9]+)\n([A-Z0-9]+)\n([A-Z]\\d+|\\d{2}[A-Z]{1,3}\\d+)\n(.*)", Pattern.DOTALL);
   private static final Pattern MASTER =
-    Pattern.compile("(?:(\\d\\d\\.\\d\\d\\.\\d\\d) (\\d\\d/\\d\\d/\\d\\d)|\\*\\*\\.\\*\\*\\.\\*\\* \\*\\*/\\*\\*/\\*\\*) ([^@]*?) (?:@ )?([A-Z]{2}[FP]D|AMR|ALS|SCOM|PRAM)((?: +(?:[A-Z]+\\d+[A-Z]?|AOA|[A-Z]{1,2}DC))+)(?: +(.*))?");
+    Pattern.compile("(?:(\\d\\d\\.\\d\\d\\.\\d\\d) (\\d\\d/\\d\\d/\\d\\d)|\\*\\*\\.\\*\\*\\.\\*\\* \\*\\*/\\*\\*/\\*\\*) ([^@]*?) (?:@ )?([A-Z]{2}[FP]D|AMR|ALS|BIA|SCOM|PRAM|YCSO)((?: +(?:[A-Z]+\\d+[A-Z]?|AOA|[A-Z]{1,2}DC))+)(?: +(.*))?");
   private static final Pattern APT_MARK_PTN = Pattern.compile(" +(?:APT|ROOM) +", Pattern.CASE_INSENSITIVE);
 
   public WAYakimaCountyParser() {
@@ -165,6 +165,7 @@ public class WAYakimaCountyParser extends SmartAddressParser {
       "MAB", "MABTON",
       "MOX", "MOXEE",
       "NAC", "NACHES",
+      "PAR", "PARKER",
       "PRO", "PROSSER",
       "SEL", "SELAH",
       "SUN", "SUNNYSIDE",
