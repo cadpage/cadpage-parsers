@@ -16,6 +16,7 @@ public class ORLincolnCountyBParser extends DispatchA85Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "BLO", "BLODGETT",
       "LIN", "LINCOLN COUNTY",
       "PO0", "TOLEDO",
       "SIL", "SILETZ",
