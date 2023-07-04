@@ -2141,6 +2141,7 @@ public class Active911ParserTable {
       "US/SC/AikenPublicSafety",          "SCAikenCounty",
       "US/SC/AndersonCountySheriff911",   "SCAndersonCountyD",
       "US/SC/AndersonSheriff",            "SCAndersonCounty",
+      "US/SC/BambergCounty",              "SCBambergCounty",
       "US/SC/BeaufortCounty",             "SCBeaufortCounty",
       "US/SC/BerkeleyCounty",             "SCBerkeleyCounty",
       "US/SC/BethelFD",                   "SCYorkCounty",
