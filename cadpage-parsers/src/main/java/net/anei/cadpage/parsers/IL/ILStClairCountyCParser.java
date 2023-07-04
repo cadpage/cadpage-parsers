@@ -17,7 +17,7 @@ public class ILStClairCountyCParser extends DispatchBCParser {
     return "ELLEVILLEPD@PUBLICSAFETYSOFTWARE.NET,CENCOM@CO.ST-CLAIR.IL.US,CENCOM@CO.ST-VLAIR.IL.US,BELLEVILLEPD@OMNIGO.COM,CENCOM@OMNIGO.COM>";
   }
 
-  private static final Pattern TRIM_X_PTN = Pattern.compile("(.*?)(?:(?<! )(?:[IV]+|D \\d)|(?<=\\b\\d{5}|[A-Z]|^)\\d\\d)");
+  private static final Pattern TRIM_X_PTN = Pattern.compile("(.*?)(?:(?<! )(?:[IV]+|\\d?D \\d)|(?<=\\b\\d{5}|[A-Z]|^)\\d\\d)");
 
   @Override
   protected String trimCrossField(String field) {
