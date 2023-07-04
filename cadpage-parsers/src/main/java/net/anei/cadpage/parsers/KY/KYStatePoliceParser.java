@@ -4,9 +4,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class KYStatePoliceParser extends GroupBestParser {
-  
+
   public KYStatePoliceParser() {
-    super(new KYStatePoliceAParser(), new KYStatePoliceBParser());
+    super(new KYStatePoliceBParser(), new KYStatePoliceCParser());
   }
 
   @Override

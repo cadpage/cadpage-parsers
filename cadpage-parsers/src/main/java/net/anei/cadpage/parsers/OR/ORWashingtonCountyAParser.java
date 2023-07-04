@@ -60,7 +60,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
 
   private static final Pattern MASTER_PTN1 = Pattern.compile("([A-Z0-9]+\\**) - ([-A-Z0-9]{2,5}) \\((.*?)\\) (.*?)#([A-Z]{2}\\d+)\\b[, ]*(.*)");
 
-  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for (?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units [Rr]esp[. ]+([A-Z0-9,]+) *(?:[Tt]ime[: ]+(\\d\\d:\\d\\d)(?:Inc|INC)# ?([A-Z]*\\d+)(?: Apt(.*?))?(?: ?City ?([A-Za-z ]*?))?(?: ?(?:Lat|LAT) ?(\\d{8,}) (?:Lon|LON) ?(\\d{8,})\\b(?: Comments)? *(.*))?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
+  private static final Pattern MASTER_PTN3 = Pattern.compile("(?:([A-Z]{2,5}\\d\\d-\\d{7}) )?[Cc]all for *(?:([-A-Z0-9]{2,6}\\**) - )?(.*?)(?: +|(?<=[A-Z]))at(?: +|(?=[A-Z0-9]))(.*?)(?: cross streets *(.*?))? ?Units [Rr]esp[. ]+([A-Z0-9,]+) *(?:[Tt]ime[: ]+(\\d\\d:\\d\\d)(?:Inc|INC)# ?([A-Z]*\\d+)(?: ?Apt(.*?))?(?: ?City ?([A-Za-z ]*?))?(?: ?(?:Lat|LAT) ?(\\d{8,}) (?:Lon|LON) ?(\\d{8,})\\b(?: Comments)? *(.*))?|(\\[.*?(?:Lat(\\d{8}) Lon(\\d{9}))?))");
 
   private static final Pattern MASTER_PTN5 = Pattern.compile("([A-Z]{2,6}\\d?\\**) - (.*?) Units ([,A-Z0-9]+) RP +(?:(.*?) +)?Comment(.*)");
 
@@ -459,6 +459,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "BREATHING-DELTA RESPONSE",
       "BREATHING-ECHO RESPONSE",
       "BRUSH FIRE",
+      "BURGLARY COLD",
       "BURGLARY IN",
       "BURGLARY,RESIDENTIAL",
       "BURN COMPLAINT",
@@ -536,6 +537,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "CONVULSIONS/SEIZURES ECHO",
       "CRIM MISCHIEF",
       "CRIMINAL MISCHIEF",
+      "DAM INCIDENT FD",
       "DANGEROUS BLEED",
       "DEATH INVESTIGATION",
       "DETECTOR PROBLEM",
@@ -550,11 +552,19 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "DIABETIC",
       "DIABETIC C1",
       "DISTURBANCE",
+      "DISTURBANCE FI",
+      "DISTURBANCE W",
       "DIZZY/VERTIGO",
       "DOMESTIC DISTURBANCE",
       "DROWNING/DIVING/SCUBA",
+      "DROWNING/DIVING/SCUBA ALPHA",
+      "DROWNING/DIVING/SCUBA BRAVE",
+      "DROWNING/DIVING/SCUBA CHARLIE",
+      "DROWNING/DIVING/SCUBA DELTA",
+      "DROWNING/DIVING/SCUBA ECHO",
       "DUII",
       "DUMPSTER FIRE",
+      "DRUGS / PROST",
       "ELDER ABUSE OR NEGLECT",
       "ELECTRICAL FIRE",
       "ELECTROCUTION/LIGHTNING D",
@@ -640,6 +650,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "HEMORRHAGE/LACERATION CHARLIE",
       "HEMORRHAGE/LACERATION DELTA",
       "HEMORRHAGE/LACERATION ECHO",
+      "HIT / RUN NON-",
       "HIT / RUN NON-INJ",
       "HIT / RUN NON-INJURY",
       "HIT AND RUN INJ",
@@ -659,6 +670,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "JUVENILE RUNAWAY",
       "LANDING ZONE",
       "LIFT ASSIST",
+      "LITTERING",
       "LOCKOUT",
       "MARINE ASSIST NON-IMMINE",
       "MARINE RESCU",
@@ -734,6 +746,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "PSYCHIATRIC",
       "PUBLIC ASSIST",
       "RECALL",
+      "RECOV STOLEN V",
       "REQUEST FOR K-9 UNIT",
       "RESIDENTIAL ALARM",
       "RESIDENTIAL FIRE ALARM",
@@ -741,6 +754,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "RFIRE",
       "ROBBERY,ARMED",
       "RUNAWAY JUVENILE",
+      "SCHOOL FIRE ALARM",
       "SEARCH & RESCUE",
       "SEIZE/CONTINUOUS",
       "SEIZE/NO TRAIGE",
@@ -789,6 +803,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "SUBJECT STOP",
       "SUICIDE ATTEMPT",
       "SUICIDE THREAT",
+      "SUSPECT CONTAC",
       "SUSPICIOUS CIRCUMSTANCES",
       "SUSPICIOUS PERSON",
       "SUSPICIOUS VEHICLE",
@@ -837,6 +852,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       "TRAUMATIC INJURY",
       "TREE FIRE",
       "TRF ACC INJURY",
+      "TRF ACC NON-IN",
       "TRF ACC NON-INJ",
       "TRF ACC NON-INJURY",
       "TRF ACC, INJURY",
