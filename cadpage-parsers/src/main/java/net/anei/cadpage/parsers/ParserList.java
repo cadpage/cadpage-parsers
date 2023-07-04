@@ -814,6 +814,7 @@ public class ParserList {
               ,"MDQueenAnnesCounty"             ,"Queen Anne\'s County, MD"
               ,"MDSaintMarysCounty"             ,"St Mary\'s County, MD"
               ,"MDSomersetCounty"               ,"Somerset County, MD"
+              ,"MDStatePolice"                  ,"Maryland State Police, MD"
               ,"MDTalbotCounty"                 ,"Talbot County, MD"
               ,"MDWashingtonCounty"             ,"Washington County, MD"
               ,"MDWicomicoCounty"               ,"Wicomico County, MD"

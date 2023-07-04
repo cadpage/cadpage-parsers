@@ -1032,6 +1032,7 @@ public class Active911ParserTable {
       "US/MD/HowardCounty",               "MDHowardCounty",
       "US/MD/KentCounty",                 "MDKentCounty",
       "US/MD/LineboroVFD",                "MDCarrollCountyA",
+      "US/MD/MDSP",                       "MDStatePolice",
       "US/MD/MontgomeryCounty",           "MDMontgomeryCountyC",
       "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty,MDMontgomeryCountyC,MDAnneArundelCountyEMS2",
       "US/MD/PrinceGeorgesCountyGlennDale","MDPrinceGeorgesCountyG",
