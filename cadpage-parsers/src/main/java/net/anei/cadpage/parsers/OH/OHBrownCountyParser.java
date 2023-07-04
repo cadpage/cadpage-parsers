@@ -119,9 +119,17 @@ public class OHBrownCountyParser extends DispatchA1Parser {
         "ADAMS CO",
         "WEST UNION",
 
+        // Clermont County
+        "CLERMONT CO",
+        "BATAVIA",
+
         // Clinton county
         "CLINTON CO",
         "BLANCHESTER",
+
+        // Hamilton County
+        "HAMILTON CO",
+        "CINCINNATI",
 
         // Mason County (KY)
         "MASON CO",
