@@ -206,7 +206,9 @@ public class ManageParsers {
         "MOPerryCountyA",     "MOPerryCountyB",
         "KYMarshallCountyA",  "General",                 // 07/03/2023
         "KYMarshallCountyB",  "General",
-        "ALDothanA",          "General"
+        "ALDothanA",          "General",
+        "KYStatePoliceA",     "General",
+        "OHWarrenCountyA",    "General"
   });
 
 }
