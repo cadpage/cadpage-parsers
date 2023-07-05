@@ -8,7 +8,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 public class WIKenoshaCountyDParser extends DispatchA57Parser {
 
   public WIKenoshaCountyDParser() {
-    super("KENOSHA COUNTY", "WI");
+    this("KENOSHA COUNTY", "WI");
   }
 
   WIKenoshaCountyDParser(String defState, String defCity) {
