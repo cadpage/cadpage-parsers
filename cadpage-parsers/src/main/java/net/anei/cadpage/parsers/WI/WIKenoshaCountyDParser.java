@@ -9,11 +9,11 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
 
   public WIKenoshaCountyDParser() {
     super("KENOSHA COUNTY", "WI");
-    setupCities(WIKenoshaCountyParser.CITY_LIST);
   }
 
   WIKenoshaCountyDParser(String defState, String defCity) {
     super(defState, defCity);
+    setupCities(WIKenoshaCountyParser.CITY_LIST);
   }
 
   @Override

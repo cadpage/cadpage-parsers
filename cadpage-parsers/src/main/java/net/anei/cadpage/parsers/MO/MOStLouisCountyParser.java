@@ -10,16 +10,16 @@ public class MOStLouisCountyParser extends GroupBestParser {
     super(new MOStLouisCountyAParser(), new MOStLouisCountyBParser(),
         new MOStLouisCountyDParser(),
         new MOStLouisCountyEParser(), new MOStLouisCountyFParser(),
-        new MOStLouisCountyGParser(), new MOStLouisCountyHParser(),
+        new MOStLouisCountyHParser(),
         new MOStLouisCountyIParser(), new MOStLouisCountyJParser(),
         new MOStLouisCountyKParser(),
-        
+
         // The C parser is getting to be to promiscuous :(
         new GroupBlockParser(), new MOStLouisCountyCParser());
   }
 
   static final String[] CITY_LIST = new String[]{
-      "AFFTON", 
+      "AFFTON",
       "BALLWIN",
       "BELLA VILLA",
       "BELLEFONTAINE NEIGHBORS",
@@ -92,7 +92,7 @@ public class MOStLouisCountyParser extends GroupBestParser {
       "SHREWSBURY",
       "ST ANN",
       "ST JOHN",
-      "ST LOUIS COUNTY", 
+      "ST LOUIS COUNTY",
       "SUNSET HILLS",
       "SYCAMORE HILLS",
       "TOWN AND COUNTRY",

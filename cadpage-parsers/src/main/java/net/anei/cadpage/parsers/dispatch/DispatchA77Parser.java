@@ -21,7 +21,7 @@ public class DispatchA77Parser extends FieldProgramParser {
                          "| Cross_Street:X ( GPS | GPS1 GPS2 ) END " +
                          "| GPS END " +
                          "| GPS1 GPS2 END " +
-                         "| CALL/SDS X/Z? ( GPS | GPS1 GPS2 ) END " +
+                         "| CALL/SDS EMPTY+? X/Z? ( GPS | GPS1 GPS2 ) END " +
                          ")");
     this.marker = marker;
     this.cityCodes = cityCodes;
@@ -77,7 +77,7 @@ public class DispatchA77Parser extends FieldProgramParser {
     }
   }
 
-  private static final String GPS_PTN_STR = "(?:[-+]?\\d{2,3}\\.\\d{6,}|-361|)";
+  private static final String GPS_PTN_STR = "(?:[-+]?\\d{2,3}\\.\\d{6,}|-361)";
   private static final Pattern GPS_PTN1 = Pattern.compile(GPS_PTN_STR+','+GPS_PTN_STR);
   private static final Pattern GPS_PTN2 = Pattern.compile(GPS_PTN_STR);
 

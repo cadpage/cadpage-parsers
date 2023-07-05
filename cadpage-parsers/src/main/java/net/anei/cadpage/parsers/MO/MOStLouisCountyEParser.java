@@ -13,7 +13,7 @@ public class MOStLouisCountyEParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "ECDC@rejis.org";
+    return "@rejis.org";
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
