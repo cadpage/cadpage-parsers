@@ -1,0 +1,15 @@
+v2.2.10-68
+New Locations:
+Cameron County, TX
+Marshall County, WV
+
+Location Fixes:
+Delta County, CO
+Marshall County, KY
+West Feliciana Parish, LA
+Onondaga County, NY
+Jefferson County, OR
+Grayson County, TX
+
+Misc Fixes:
+Fixed crash running Cadpage in Sweden under Android 6.

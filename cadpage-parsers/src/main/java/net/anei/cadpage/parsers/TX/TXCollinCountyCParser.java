@@ -22,6 +22,18 @@ public class TXCollinCountyCParser extends DispatchA82Parser {
   protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n\nConfidentiality notice:");
     if (pt >= 0)  body = body.substring(0,pt).trim();
-    return super.parseMsg(subject, body, data);
+
+    if (!super.parseMsg("", body, data)) return false;
+
+    if (!subject.isEmpty() && !subject.equals("CFS Page")) {
+      subject = stripFieldStart(subject, "Message from Dispatch");
+      data.strCall = append(subject, " - ", data.strCall);
+    }
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "CALL? " + super.getProgram();
   }
 }
