@@ -13,7 +13,7 @@ public class SCRichlandCountyParser extends FieldProgramParser {
 
   public SCRichlandCountyParser() {
     super("RICHLAND COUNTY", "SC",
-          "Address:ADDR! Problem:CALL! ( Agency:SRC Resp._Area:MAP | Facility:PLACE MapGrid:MAP )");
+          "Address:ADDR! City:CITY? Problem:CALL! ( Agency:SRC Resp._Area:MAP | Facility:PLACE MapGrid:MAP ) Radio_Assignment:CH");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
