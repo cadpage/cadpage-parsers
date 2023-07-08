@@ -12,7 +12,7 @@ public class NJOceanCountyFParser extends FieldProgramParser {
 
   public NJOceanCountyFParser() {
     super("OCEAN COUNTY", "NJ",
-          "CAD:ID! Date/Time:DATETIME! Loc:PLACE! Addr:ADDR! Apt:APT! Cross:X! Nature:CALL! Notes:INFO! INFO/N+");
+          "CAD:ID! Date/Time:DATETIME! Loc:PLACE! Addr:ADDR! Apt:APT! Cross:X! Nature:CALL! Notes:INFO! INFO/N+ Ambulance_ID:UNIT");
   }
 
   @Override

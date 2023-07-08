@@ -15,7 +15,7 @@ public class ORJacksonCountyParser extends FieldProgramParser {
 
   public ORJacksonCountyParser() {
     super(CITY_CODES, "JACKSON COUNTY", "OR",
-          "CODE CALL ( PLACE SKIP AT | ADDR ) CITY X? PRI:PRI! Unit:UNIT! UNIT+");
+          "EMPTY? CODE CALL ( GPS1 GPS2 | ) ( AT | PLACE SKIP AT | ADDR ) CITY X? PRI:PRI! Unit:UNIT! UNIT+");
   }
 
   @Override
@@ -24,8 +24,15 @@ public class ORJacksonCountyParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (! subject.equals("CAD Page") && !subject.equals("Cell Phone Paging system")) return false;
+    if (! subject.equals("CAD Page") &&
+        !subject.equals("Cell Phone Paging system") &&
+        !subject.equals("Message from ECSO")) return false;
     if (!body.startsWith("DISPATCH:")) return false;
     body = body.substring(9).trim();
 
@@ -61,6 +68,8 @@ public class ORJacksonCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("AT")) return new AtField();
     if (name.equals("CITY")) return new MyCityField();
@@ -95,8 +104,13 @@ public class ORJacksonCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      parseAddress(p.get('['), data);
-      data.strCity = p.get(']');
+      data.strPlace = p.getOptional(" AT ");
+      super.parse(p.get(), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE";
     }
   }
 
@@ -111,6 +125,14 @@ public class ORJacksonCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
   }
 
