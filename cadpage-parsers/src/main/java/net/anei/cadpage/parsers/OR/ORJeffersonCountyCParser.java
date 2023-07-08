@@ -8,9 +8,18 @@ public class ORJeffersonCountyCParser extends DispatchA19Parser {
     super("JEFFERSON COUNTY", "OR");
   }
 
+  public ORJeffersonCountyCParser(String defCity, String defState) {
+    super(defCity, defState);
+  }
+
   @Override
   public String getFilter() {
     return "FlexRapidNotification@dccnotify.com";
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "ORJeffersonCountyC";
   }
 
   @Override

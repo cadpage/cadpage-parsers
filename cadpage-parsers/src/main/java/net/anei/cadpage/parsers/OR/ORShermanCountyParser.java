@@ -1,12 +1,15 @@
 package net.anei.cadpage.parsers.OR;
 
-/*
-Sherman County, OR
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+* Sherman County, OR
  */
 
-public class ORShermanCountyParser extends ORJeffersonCountyAParser {
-  
+public class ORShermanCountyParser extends GroupBestParser {
   public ORShermanCountyParser() {
-    super("SHERMAN COUNTY", "OR");
+    super(new ORShermanCountyAParser(),
+          new ORShermanCountyBParser(),
+          new ORShermanCountyCParser());
   }
 }

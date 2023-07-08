@@ -5,7 +5,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA77Parser;
 public class ORJeffersonCountyBParser extends DispatchA77Parser {
 
   public ORJeffersonCountyBParser() {
-    super("Alert", "JEFFERSON COUNTY", "OR");
+    this("JEFFERSON COUNTY", "OR");
+  }
+
+  public ORJeffersonCountyBParser(String defCity, String defState) {
+    super("Alert", defCity, defState);
   }
 
   @Override
