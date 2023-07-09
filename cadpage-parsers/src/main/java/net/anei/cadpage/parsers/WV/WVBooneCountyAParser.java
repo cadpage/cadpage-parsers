@@ -6,35 +6,37 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
 public class WVBooneCountyAParser extends DispatchEmergitechParser {
-  
+
   public WVBooneCountyAParser() {
     super(true, CITY_LIST, "BOONE COUNTY", "WV");
   }
-  
+
   @Override
   public String getFilter() {
     return "paging@boonewv.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.length() > 0) body = subject + ": " + body;
-    return super.parseMsg(body,  data);
+    if (!super.parseMsg(body,  data)) return false;
+    if (data.strCity.equals("U.S. RT 119") ||  data.strCity.equals("UPPER RT 85")) data.strCity = "";
+    return true;
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city.toUpperCase(), MAP_CITIES);
   }
-  
+
   private static final String[] CITY_LIST = {
-    
+
     // Incorporated Cities
     "DANVILLE",
     "MADISON",
     "SYLVESTER",
     "WHITESVILLE",
-    
+
     // Unincorporated towns and cities - Many of which Google cannot find!
     "ANDREW",
     "ASHFORD",
@@ -160,7 +162,7 @@ public class WVBooneCountyAParser extends DispatchEmergitechParser {
     "WHARTON",
     "WILLIAMS MOUNTAIN"
   };
-  
+
   private static final Properties MAP_CITIES = buildCodeTable(new String[]{
     "BIG UGLY",             "DANVILLE",
     "BULL CREEK",           "WHARTON",
