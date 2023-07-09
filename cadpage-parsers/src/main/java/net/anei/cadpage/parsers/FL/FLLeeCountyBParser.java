@@ -9,7 +9,7 @@ public class FLLeeCountyBParser extends DispatchOSSIParser {
 
   public FLLeeCountyBParser() {
     super(CITY_CODES, "LEE COUNTY", "FL",
-          "( CANCEL ADDR CITY! " +
+          "( CANCEL ADDR! CITY? " +
           "| FYI DATETIME ADDR CALL! " +
           ") INFO/N+");
   }

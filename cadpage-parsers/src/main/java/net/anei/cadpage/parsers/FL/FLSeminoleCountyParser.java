@@ -15,43 +15,43 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
 
   public FLSeminoleCountyParser() {
     super("SEMINOLE COUNTY", "FL",
-          "( ID STATUS CODE_CALL ( MASH END " + 
-                                "| ADDR1 CITY_X1 CITY! " + 
+          "( ID STATUS CODE_CALL ( MASH END " +
+                                "| ADDR1 CITY_X1 CITY! " +
                                 "| ADDR CITY_X PLACE! " +
                                 ") " +
           "| ADDR1/SC CITY_X1 CITY! " +
-          "| ADDR/SC CITY_X PLACE! " + 
+          "| ADDR/SC CITY_X PLACE! " +
           ") EXTRA");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MW_STREET_LIST);
   }
-  
+
   private static final Pattern MASTER = Pattern.compile("([^/]+)/(.*?);(.*?) (?:: (.*?) )?TAC:(.*) UNITS:(.*)");
   private static final Pattern MSPACE_PTN = Pattern.compile(" +");
-  
+
   protected boolean parseMsg(String body, Data data) {
-    
+
     String[] flds = splitFields(body);
     if (flds.length > 1) return parseFields(splitFields(body), data);
-    
+
     // Special mutual aid page format
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     setFieldList("CALL ADDR APT X CITY MAP PLACE CH UNIT");
-    
+
     parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, match.group(1).trim(), data);
     data.strCross = match.group(2).trim();
     String extra = match.group(3).trim();
     data.strPlace = getOptGroup(match.group(4));
     data.strChannel = match.group(5).trim();
     data.strUnit = match.group(6).trim();
-    
+
     Set<String> notMapSet = new HashSet<>();
     notMapSet.add("MP");
     notMapSet.add("MAP");
     for (String part : MSPACE_PTN.split(data.strChannel)) notMapSet.add(part);
     for (String part : MSPACE_PTN.split(data.strUnit)) notMapSet.add(part);
-    
+
     for (String part : MSPACE_PTN.split(extra)) {
       if (!notMapSet.contains(part)) {
         String city = CITY_CODES.getProperty(part);
@@ -64,7 +64,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   private String[] splitFields(String body) {
     ArrayList<String> fields = new ArrayList<>();
     int st = 0;
@@ -83,7 +83,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
     fields.add(body.substring(st).trim());
     return fields.toArray(new String[fields.size()]);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR1")) return new MyAddress1Field();
@@ -98,13 +98,13 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
     if (name.equals("MASH")) return new MyMashField();
     return super.getField(name);
   }
-  
+
   private class MyAddress1Field extends AddressField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.endsWith(" ( )")) return false;
@@ -112,13 +112,13 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       super.parse(field, data);;
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern CITY_X1_PTN = Pattern.compile("([ A-Z]+) / +(.*) \\( \\)");
   private class MyCityCross1Field extends Field {
     @Override
@@ -134,7 +134,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       return "CITY ADDR";
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -142,9 +142,9 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)- +(.*)");
-  
+
   private class MyCodeCallField extends Field {
 
     @Override
@@ -161,26 +161,27 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CODE CALL";
     }
-    
+
   }
-  
-  private static final Pattern FLD_PAREN_PTN = Pattern.compile("(.*?)\\((.*)\\)");
-  
+
+  private static final Pattern FLD_PAREN_PTN = Pattern.compile("([^#]*?)(?:#(.*?))?\\((.*)\\)");
+
   private class MyCityCrossField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = FLD_PAREN_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strCity = match.group(1).trim();
-      data.strCross = match.group(2).trim();
+      data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
+      data.strCross = match.group(3).trim();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY X";
     }
   }
-  
+
   private class MyExtraField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -190,7 +191,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       String map = field.substring(1, pt).trim();
       field = field.substring(pt+1).trim();
       data.strMap = stripFieldStart(map, ";");
-      
+
       Parser p = new Parser(field);
       data.strUnit = p.getLastOptional("UNITS:");
       data.strChannel = p.getLastOptional("TAC:");
@@ -202,16 +203,16 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       return "MAP PLACE CH UNIT";
     }
   }
-  
+
   private static final Pattern MASH_PTN = Pattern.compile("([^/]+)/(.*?);(.*?)(?:: (.*?) )?");
   private static final Pattern MASH_CH_PTN = Pattern.compile("\\d{2}[A-Z]|F\\d|\\d+TAC\\d+");
-  
+
   private class MyMashField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = MASH_PTN.matcher(field);
@@ -238,11 +239,11 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
         case 1:
           data.strUnit = append(data.strUnit, " ", part);
           continue;
-          
+
         case 2:
           data.strMap = append(data.strMap, " ", part);
           continue;
-          
+
         case 3:
           data.strChannel = append(data.strChannel, " ", part);
           continue;
@@ -250,25 +251,25 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       }
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT X CITY UNIT MAP CH";
     }
   }
-  
+
   private static Pattern SHADY_HOLW_PTN = Pattern.compile("\\bSHADY +HOLW\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
     return SHADY_HOLW_PTN.matcher(sAddress).replaceAll("SHADY HOLLOW LN");
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "2ND ALARM - STRUCTURE FIRE RESIDENTIAL",
       "ALERT 1A",
@@ -332,8 +333,8 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       "WATER FLOW ALARM",
       "WORKING STRUCTURE FIRE RESIDENTIAL"
    );
-  
-  private static final String[] MW_STREET_LIST = new String[] { 
+
+  private static final String[] MW_STREET_LIST = new String[] {
     "BRANTLEY HALL",
     "COTTONWOOD CREEK",
     "CONTROL TOWER",
@@ -363,7 +364,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
     "WINTER PARK",
     "VILLAGE OAK"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "OCJZ", "ORANGE COUNTY",
       "VCJZ", "VOLUSIA COUNTY",

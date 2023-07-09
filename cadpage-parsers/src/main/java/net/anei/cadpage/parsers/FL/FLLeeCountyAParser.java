@@ -9,11 +9,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchPrintrakParser;
 
 
 public class FLLeeCountyAParser extends DispatchPrintrakParser {
-  
+
   public FLLeeCountyAParser() {
     super("LEE COUNTY", "FL", "XST:X");
   }
-  
+
   @Override
   public String getFilter() {
     return "leecontrol@leegov";
@@ -22,12 +22,12 @@ public class FLLeeCountyAParser extends DispatchPrintrakParser {
 
   private static final Pattern ID_PTN = Pattern.compile("Msg ID: *([\\S]*?)\n");
   private static final Pattern SRC_PTN = Pattern.compile("([A-Z]+) +");
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
-    
+
     if (body.startsWith("CAD:")) return false;
-    
+
     Matcher match = ID_PTN.matcher(body);
     if (match.lookingAt()) {
       body =  body.substring(match.end()).trim();
@@ -37,7 +37,7 @@ public class FLLeeCountyAParser extends DispatchPrintrakParser {
         body = body.substring(match.end());
       }
     }
-    
+
     else {
       int ipt = body.indexOf(" TYP:");
       if (ipt >= 0) {
@@ -45,15 +45,17 @@ public class FLLeeCountyAParser extends DispatchPrintrakParser {
         data.strCallId = p.getLast(' ');
         body = body.substring(ipt+1).trim();
       }
-      
+
       else if (!body.startsWith("TYP:")) {
         body = "TYP:" + body;
       }
     }
-    
-    return super.parseMsg(body, data);
+
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strCity.equals("CHAR. HARBOR")) data.strCity = "CHARLOTTE HARBOR";
+    return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
