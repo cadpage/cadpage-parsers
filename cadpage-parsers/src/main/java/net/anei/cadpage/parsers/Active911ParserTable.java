@@ -2175,6 +2175,7 @@ public class Active911ParserTable {
       "US/SC/KingstreeFD",                "SCWilliamsburgCounty",
       "US/SC/LancasterCounty",            "SCLancasterCounty",
       "US/SC/LeeCounty",                  "SCLeeCounty",
+      "US/SC/LexingtonCFS",               "SCLexingtonCountyA",
       "US/SC/LexingtonCounty",            "SCLexingtonCountyA,SCBerkeleyCounty",
       "US/SC/MarionCounty",               "SCMarionCounty",
       "US/SC/MarlboroCounty",             "SCMarlboroCounty",
