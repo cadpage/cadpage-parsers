@@ -1166,6 +1166,7 @@ public class Active911ParserTable {
       "US/MN/GrantCounty",                "MNGrantCounty",
       "US/MN/HealtheastMedTran",          "MNMinneapolisStPaulB",
       "US/MN/HennepinCounty",             "MNHennepinCounty",
+      "US/MN/HennepinCountySheriff",      "MNHennepinCounty",
       "US/MN/HubbardCounty",              "MNHubbardCounty",
       "US/MN/IsantiCounty",               "MNIsantiCounty",
       "US/MN/ItascaCounty",               "MNItascaCounty",
