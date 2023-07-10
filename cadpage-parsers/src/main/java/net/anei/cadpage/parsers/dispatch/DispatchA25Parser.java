@@ -212,6 +212,7 @@ public class DispatchA25Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.startsWith("Address:")) return false;
       if (!data.strCall.endsWith("-")) return false;
       parse(field, data);
       return true;
