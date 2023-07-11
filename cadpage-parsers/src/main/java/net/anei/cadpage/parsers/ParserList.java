@@ -1602,6 +1602,7 @@ public class ParserList {
               ,"TNKnoxCounty"                   ,"Knox County, TN"
               ,"TNLoudonCounty"                 ,"Loudon County, TN"
               ,"TNMaconCounty"                  ,"Macon County, TN"
+              ,"TNMarshallCounty"               ,"Marshall County, TN"
               ,"TNMadisonCounty"                ,"Madison County, TN"
               ,"TNMcMinnCounty"                 ,"McMinn County, TN"
               ,"TNMooreCounty"                  ,"Moore County, TN"
