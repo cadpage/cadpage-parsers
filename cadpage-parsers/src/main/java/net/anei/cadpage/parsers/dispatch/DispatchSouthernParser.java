@@ -454,7 +454,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", getOptGroup(match.group(5)));
       return true;
     }
-    
+
     match = RUN_REPORT_PTN3.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -610,6 +610,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
       st = StartType.START_ADDR;
     }
     sAddr = sAddr.replace('@', '/');
+    flags |= getExtraParseAddressFlags();
     parseAddress(st, flags, sAddr, data);
     if (leadOne) data.strAddress = append("1", " ", data.strAddress);
     String sLeft = getLeft();
@@ -906,6 +907,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
         int flags = FLAG_AT_SIGN_ONLY;
         if (!chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) flags |= FLAG_ANCHOR_END;
         if (!chkFlag(DSFLG_ADDR_NO_IMPLIED_APT)) flags |= FLAG_RECHECK_APT;
+        flags |= getExtraParseAddressFlags();
         parseAddress(StartType.START_ADDR, flags, field, data);
         if (chkFlag(DSFLG_ADDR_TRAIL_PLACE|DSFLG_ADDR_TRAIL_PLACE2)) {
           String left = getLeft();
@@ -929,7 +931,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
             data.strAddress = append(place, " & ", data.strAddress);
             data.strPlace = "";
           } else {
-            int flags = FLAG_CHECK_STATUS | FLAG_AT_SIGN_ONLY | FLAG_ANCHOR_END;
+            int flags = FLAG_CHECK_STATUS | FLAG_AT_SIGN_ONLY | FLAG_ANCHOR_END | getExtraParseAddressFlags();
             if (!chkFlag(DSFLG_ADDR_NO_IMPLIED_APT)) flags |= FLAG_RECHECK_APT;
             Result res = parseAddress(StartType.START_ADDR, flags, field);
             if (res.isValid() && res.getStatus() >= getStatus()) {
