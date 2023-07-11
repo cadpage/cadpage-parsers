@@ -2254,6 +2254,7 @@ public class Active911ParserTable {
       "US/TN/MarshallCounty",             "TNMarshallCounty",
       "US/TN/MaryvilleFD",                "TNBlountCountyB",
       "US/TN/McMinnCounty",               "TNMcMinnCounty",
+      "US/TN/McNairyCounty",              "TNMcNairyCounty",
       "US/TN/MooreCounty",                "TNMooreCounty",
       "US/TN/MorganCounty",               "TNMorganCounty",
       "US/TN/OakRidge",                   "TNOakRidge",
