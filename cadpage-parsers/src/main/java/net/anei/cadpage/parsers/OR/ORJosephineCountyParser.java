@@ -16,7 +16,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
           "( ID CALL ( DATETIME ADDRCITY/S6 CITY PLACE X UNIT! END " +
                     "| ADDRCITY/SXa PLACE X/Z? SRC DATETIME! UNIT " +
                     ") " +
-          "| DATETIME_CALL CALL2? ADDR_CITY_X/SXa! X2? ( Units:UNIT | UNIT2? ) " +
+          "| DATETIME_CALL CALL2? ( ADDR_CITY_X2/SXa! PLACE! | ADDR_CITY_X1/SXa! X2? ) ( Units:UNIT | UNIT2? ) " +
           "| CALL ADDRCITY/SXa PLACE DATETIME ID! UNIT " +
           ") GPS1? GPS2? Notes:INFO? INFO/S+");
   }
@@ -35,7 +35,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
   private static final Pattern LAT_LON_PTN2 = Pattern.compile("\\bLAT:([-+]?[\\d\\.]+) LON:([-+]?[\\d\\.]+)\\b");
   private static final Pattern UNITS_PTN = Pattern.compile("Units: +");
   private static final Pattern GPS_PTN = Pattern.compile(":([-+]?\\d{2,3}\\.\\d{6,}):([-+]?\\d{2,3}\\.\\d{6,}) ");
-  private static final Pattern DELIM = Pattern.compile("\n|: +|(?<!Units|Notes| LAT| LON):(?!\\d\\d[: ])");
+  private static final Pattern DELIM = Pattern.compile("\n|(?<!Cross|Units|Notes| LAT| LON):(?!\\d\\d[: ])");
   private static final Pattern DELIM2 = Pattern.compile("\n *| {2,}");
 
   @Override
@@ -71,7 +71,8 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("DATETIME_CALL")) return new MyDateTimeCallField();
     if (name.equals("CALL2")) return new MyCall2Field();
-    if (name.equals("ADDR_CITY_X")) return new MyAddressCityCrossField();
+    if (name.equals("ADDR_CITY_X1")) return new MyAddressCityCross1Field();
+    if (name.equals("ADDR_CITY_X2")) return new MyAddressCityCross2Field();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
@@ -165,7 +166,7 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     }
   }
 
-  private class MyAddressCityCrossField extends AddressField {
+  private class MyAddressCityCross1Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
       int pt1 = field.indexOf(',');
@@ -199,6 +200,32 @@ public class ORJosephineCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "PLACE? " + super.getFieldNames() + " CITY X";
+    }
+  }
+
+  private class MyAddressCityCross2Field extends AddressCityField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      int pt = field.indexOf(" Cross:");
+      if (pt < 0) return false;
+      data.strCross = field.substring(pt+7).trim();
+      super.parse(field.substring(0,pt).trim(), data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY X";
     }
   }
 
