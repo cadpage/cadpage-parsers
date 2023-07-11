@@ -887,6 +887,7 @@ public class Active911ParserTable {
       "US/KY/KentonCountyWalton",         "KYKentonCountyA",
       "US/KY/KnottCounty",                "KYKnottCounty",
       "US/KY/KnoxCounty",                 "KYKnoxCountyA",
+      "US/KY/KSP",                        "KYStatePolice",
       "US/KY/KSPP1",                      "KYStatePolice",
       "US/KY/KSPP12",                     "KYStatePolice",
       "US/KY/KSPP13",                     "KYStatePolice",
