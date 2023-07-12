@@ -10,9 +10,9 @@ public class WVBooneCountyBParser extends FieldProgramParser {
 
   public WVBooneCountyBParser() {
     super("BOONE COUNTY", "WV",
-          "Location:ADDRCITYST! ( CFS_#:ID! Responding_Agencies:SRC! Caller's_Number:PHONE! Nearest_Intersection:SKIP! Cross_Street:X! " +
-                               "| Cross_Street:X! CFS_#:ID! " +
-                               ") 911_Lat:GPS1! 911_Long:GPS2! Uncertainty:SKIP? Details:INFO! END");
+          "Location:ADDRCITYST! Location_Name:PLACE? ( CFS_#:ID! Responding_Agencies:SRC! Caller's_Number:PHONE! Nearest_Intersection:SKIP! Cross_Street:X! " +
+                                                    "| Cross_Street:X! CFS_#:ID! " +
+                                                    ") 911_Lat:GPS1! 911_Long:GPS2! Uncertainty:SKIP? Details:INFO! END");
   }
 
   @Override

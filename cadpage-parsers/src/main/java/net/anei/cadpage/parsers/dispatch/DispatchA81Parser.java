@@ -16,7 +16,7 @@ public class DispatchA81Parser extends FieldProgramParser {
   private static final Pattern MASTER = Pattern.compile("([A-Z]{3}\\d{10}) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
   private static final Pattern INFO_MARK_PTN = Pattern.compile(";? \\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - ");
   private static final Pattern TIMES_MARK_PTN = Pattern.compile(" [-/A-Z0-9]+ - (?:Assign|Enroute|On Scene|Available) \\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d\\b");
-  private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))");
+  private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -62,10 +62,10 @@ public class DispatchA81Parser extends FieldProgramParser {
     match = STATE_ZIP_PTN.matcher(city);
     if (match.matches()) {
       data.strState = match.group(1);
-      data.strCity = match.group(2);
+      data.strCity = getOptGroup(match.group(2));
       city = p.getLastOptional(',');
     }
-    data.strCity = city;
+    if (!city.isEmpty()) data.strCity = city;
     parseAddress(p.get(), data);
     return true;
   }

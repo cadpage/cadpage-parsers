@@ -6,30 +6,32 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class WVPleasantsCountyBParser extends FieldProgramParser {
-  
+
   public WVPleasantsCountyBParser() {
-    super("PLEASANTS COUNTY", "WV", 
+    super("PLEASANTS COUNTY", "WV",
           "CFS_Number:ID! Incident_Type:SKIP! Caller:NAME! Dispatcher:SKIP! Call_Time:DATETIME! Call_Location:ADDRCITYST! ( Location_Details:INFO! Address:SKIP! Address_Name:PLACE! | ) Responding_Units:UNIT! Details:INFO! Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Hazmat_Alert:ALERT");
   }
-  
+
   @Override
   public String getFilter() {
     return "comm@pleasantscountywv911.us";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.isEmpty()) return false;
     data.strCall = subject;
     body = stripFieldStart(body, " Please respond immediately.");
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
+    return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "CALL " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
@@ -37,7 +39,7 @@ public class WVPleasantsCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
-  
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[ ;]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
   private class MyInfoField extends InfoField {
     @Override
@@ -47,7 +49,7 @@ public class WVPleasantsCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern UNIT_BRK_PTN = Pattern.compile(" *; *");
   private class MyUnitField extends UnitField {
     @Override

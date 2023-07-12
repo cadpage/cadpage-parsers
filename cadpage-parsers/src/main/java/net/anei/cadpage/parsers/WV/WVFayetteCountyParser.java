@@ -82,6 +82,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       "GAL", "GAULEY BRIDGE",
       "GAU", "GAULEY BRIDGE",
       "GLJ", "GLEN JEAN",
+      "HIC", "HICO",
       "KIN", "KINGSTON",
       "MIN", "MINDEN",
       "MON", "MONTGOMERY",
@@ -91,6 +92,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
       "PAX", "PAX",
       "PRI", "PRINCE",
       "SCA", "SCARBRO",
-      "THU", "THURMOND"
+      "THU", "THURMOND",
+      "VIC", "VICTOR"
   });
 }
