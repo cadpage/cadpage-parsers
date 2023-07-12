@@ -96,7 +96,7 @@ public class MNHennepinCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)(?:,| -) *(.*)");
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)(?:,) *(.*)");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -148,6 +148,8 @@ public class MNHennepinCountyParser extends FieldProgramParser {
           }
         }
       }
+
+      apt = append(p.getLastOptional(" APT "), "-", apt);
 
       field = p.get();
       field = splitCity(field, data);

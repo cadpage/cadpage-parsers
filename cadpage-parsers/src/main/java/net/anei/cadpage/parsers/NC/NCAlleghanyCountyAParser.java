@@ -11,19 +11,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Alleghany County, NC
  */
 public class NCAlleghanyCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(\\d{4}-\\d{5}),.*\\(DISPATCHED\\).*");
-  
+
   public NCAlleghanyCountyAParser() {
     super(CITY_LIST, "ALLEGHANY COUNTY", "NC",
-          "ADDR/S ID TIME CALL");
+          "ADDR/S ID TIME! CALL");
   }
 
   @Override
   public String getFilter() {
     return "cad@alleghanycounty-nc.gov";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     Matcher match = RUN_REPORT_PTN.matcher(body);
@@ -33,20 +33,20 @@ public class NCAlleghanyCountyAParser extends FieldProgramParser {
       data.strPlace = body;
       return true;
     }
-    
+
     body = stripFieldEnd(body, "-");
     return parseFields(body.split(","), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Towns
     "SPARTA",
 
@@ -68,6 +68,6 @@ public class NCAlleghanyCountyAParser extends FieldProgramParser {
     "ROARING GAP",
     "SCOTTVILLE",
     "TWIN OAKS",
-   
+
   };
 }
