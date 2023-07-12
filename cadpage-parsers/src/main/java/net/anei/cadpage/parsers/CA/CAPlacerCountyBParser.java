@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.CA;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
 
 /**
@@ -21,6 +22,21 @@ public class CAPlacerCountyBParser extends DispatchA20Parser {
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    if (data.strCity.equals("C")) {
+      data.strState = "CA";
+      data.strCity = "";
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        data.strCity = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
+    }
+    return true;
   }
 
   private static final Properties CALL_CODES = buildCodeTable(new String[]{

@@ -44,6 +44,7 @@ public class CAGroverBeachParser extends DispatchA22Parser {
   }
 
   private static Properties CITY_CODES = buildCodeTable(new String[]{
+      "GB",             "GROVER BEACH",
       "OC",             "OCEANO",
       "PB",             "PISMO BEACH",
       "GROVER BEA",     "GROVER BEACH",

@@ -39,6 +39,11 @@ public class CALakeCountyBParser extends FieldProgramParser {
         data.strPlace = field.substring(0,pt).trim();
         field =  field.substring(pt+1).trim();
       }
+      if (field.endsWith(")")) {
+        pt = field.indexOf('(');
+        data.strPlace = append(data.strPlace, " - ", field.substring(pt+1, field.length()-1).trim());
+        field = field.substring(0,pt).trim();
+      }
       super.parse(field, data);
     }
 

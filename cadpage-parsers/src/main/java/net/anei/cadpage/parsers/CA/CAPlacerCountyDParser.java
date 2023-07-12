@@ -21,6 +21,8 @@ public class CAPlacerCountyDParser extends DispatchA84Parser {
       "FH", "FORESTHILL",
       "GB", "GRANITE BAY",
       "LO", "LOOMIS",
-      "NC", "NEWCASTLE"
+      "NC", "NEWCASTLE",
+      "PE", "PENRYN",
+      "WE", "WEIMAR"
   });
 }

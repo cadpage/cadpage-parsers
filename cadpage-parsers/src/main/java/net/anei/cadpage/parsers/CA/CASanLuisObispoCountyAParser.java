@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.CA;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -53,14 +54,21 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern PLACE_ADDR_APT_CITY_PTN = Pattern.compile("(?:([^@]+?)@)?(.*?)(?:#(.*?))?(?:,(?! *-)(.*))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      data.strApt = p.getLastOptional('#');
-      data.strPlace = p.getOptional('@');
-      parseAddress(p.get(), data);
+      String apt = "";
+      String city = "";
+      Matcher match = PLACE_ADDR_APT_CITY_PTN.matcher(field);
+      if (match.matches()) {
+        data.strPlace = getOptGroup(match.group(1));
+        field = match.group(2);
+        apt = getOptGroup(match.group(3));
+        city = getOptGroup(match.group(4));
+      }
+      parseAddress(field, data);
+      data.strApt = append(data.strApt, "-", apt);
       int pt = city.indexOf('(');
       if (pt >= 0) {
         data.strPlace = append(data.strPlace, " - ", stripFieldEnd(city.substring(pt+1).trim(), ")"));
@@ -91,15 +99,24 @@ public class CASanLuisObispoCountyAParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ATAS",     "ATASCADERO",
+      "ATAS_CO",  "ATASCADERO",
+      "C",        "CAMBRIA",
+      "CM",       "CAMBRIA",
       "CMB",      "CAMBRIA",
+      "CMB_CO",   "CAMBRIA",
       "LOS_OSOS", "LOS OSOS",
       "MB",       "MORRO BAY",
       "PR",       "PASO ROBLES",
+      "SANTA_MAR","SANTA MARGARITA",
       "SANTA_MARG","SANTA MARGARITA",
       "SAN_MIG",  "SAN MIGUEL",
       "SL",       "SAN LUIS OBISPO",
+      "SLO",      "SAN LUIS OBISPO",
       "SLO_CO",   "SAN LUIS OBISPO COUNTY",
+      "TE",       "TEMPLETON",
+      "TEM",      "TEMPLETON",
       "TEMP",     "TEMPLETON",
+      "TEMP_CO",  "TEMPLETON"
 
   });
 }
