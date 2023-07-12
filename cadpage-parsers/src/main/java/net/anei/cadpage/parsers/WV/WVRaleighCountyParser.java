@@ -8,17 +8,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 
 public class WVRaleighCountyParser extends DispatchA19Parser {
-  
+
   public WVRaleighCountyParser() {
     super(CITY_CODES, "RALEIGH COUNTY", "WV");
   }
-  
+
   @Override
   public String getFilter() {
     return "Raleigh911@SuddenLinkMail.com";
   }
 
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
@@ -30,7 +30,7 @@ public class WVRaleighCountyParser extends DispatchA19Parser {
   public String adjustMapCity(String city) {
     return convertCodes(city, CITY_PLACE_NAMES);
   }
-  
+
   private static final Properties CITY_PLACE_NAMES = buildCodeTable(new String[]{
       "BLUE JAY",           "BEAVER",
       "CABELL HEIGHTS",     "BECKLEY",
@@ -70,7 +70,7 @@ public class WVRaleighCountyParser extends DispatchA19Parser {
       "SWEENEYSBURG",       "BECKLEY",
       "TOLLEYTOWN",         "SURVEYOR"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ABH", "ABRAHAM",
       "AME", "AMEAGLE",

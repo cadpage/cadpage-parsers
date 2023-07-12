@@ -403,7 +403,8 @@ public class MsgInfo {
     String city = getMapCity();
     if (city.equalsIgnoreCase("OUT OF COUNTY") ||
         city.equalsIgnoreCase("OUTSIDE COUNTY") ||
-        city.equalsIgnoreCase("OUT OF AREA")) city = "";
+        city.equalsIgnoreCase("OUT OF AREA") ||
+        city.equals("OOC") || city.equals("OOJ")) city = "";
     else if (city.length() == 0) {
       city = (overrideCity != null ? overrideCity : defCity);
     } else if (overrideCity == null && (parser.getMapFlags() & MAP_FLG_ADD_DEFAULT_CNTY) != 0 &&

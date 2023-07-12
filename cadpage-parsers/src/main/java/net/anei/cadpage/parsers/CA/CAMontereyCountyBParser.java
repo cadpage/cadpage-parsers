@@ -80,4 +80,11 @@ public class CAMontereyCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.startsWith("NORTH COUNTY")) return "";
+    return city;
+
+  }
 }

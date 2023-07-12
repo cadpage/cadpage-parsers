@@ -17,7 +17,7 @@ public class CAAlamedaCountyParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR_CITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     return super.getField(name);
   }
 
