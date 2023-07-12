@@ -36,7 +36,7 @@ public class CASacramentoCountyParser extends MsgParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("SRC CODE CALL CH MAP ADDR APT CITY UNIT INFO");
+      setFieldList("SRC CODE CALL CH MAP ADDR APT CITY PLACE UNIT INFO");
       data.strSource = match.group(1);
       data.strCode = match.group(2);
       data.strCall = CALL_CODES.getCodeDescription(data.strCode);
@@ -49,6 +49,7 @@ public class CASacramentoCountyParser extends MsgParser {
       parseAddress(addr, data);
       String city1 = match.group(6);
       if (city1 != null) {
+        city1 = parsePlace(city1, data);
         String city2 = CITY_CODES.getProperty(city1);
         data.strCity = (city2 != null ?  city2 : city1.replace('.', ' '));
       }
@@ -72,11 +73,22 @@ public class CASacramentoCountyParser extends MsgParser {
 
       Parser p = new Parser(addr);
       data.strPlace = p.getOptional('@');
-      data.strCity = convertCodes(p.getLastOptional(','), CITY_CODES);
+      data.strCity = convertCodes(parsePlace(p.getLastOptional(','), data), CITY_CODES);
       parseAddress(p.get(), data);
       return true;
     }
     return false;
+  }
+
+  private String parsePlace(String field, Data data) {
+    if (field.endsWith(")")) {
+      int pt = field.indexOf('(');
+      if (pt >= 0) {
+        data.strPlace = append(data.strPlace, " - ", field.substring(pt+1, field.length()-1).trim());
+        field = field.substring(0,pt).trim();
+      }
+    }
+    return field;
   }
 
   private static final Pattern EW_PTN = Pattern.compile("\\bEW\\b", Pattern.CASE_INSENSITIVE);

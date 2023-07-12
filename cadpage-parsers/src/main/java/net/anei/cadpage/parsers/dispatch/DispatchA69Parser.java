@@ -40,17 +40,18 @@ public class DispatchA69Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID1")) return new IdField("Inc# (\\d{6})", true);
     if (name.equals("ID2")) return new IdField("INCIDENT #(\\d{6})", true);
-    if (name.equals("CODE_CALL")) return new MyCodeCallField();
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("CODE_CALL")) return new BaseCodeCallField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("GPS")) return new BaseGPSField();
     if (name.equals("ID3")) return new IdField("Incident #(\\d{6}|)", true);
     if (name.equals("MAP")) return new MapField("RespArea *(\\S+)", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
-  private class MyCodeCallField extends Field {
+  private class BaseCodeCallField extends Field {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf(':');
@@ -65,7 +66,24 @@ public class DispatchA69Parser extends FieldProgramParser {
     }
   }
 
-  private class MyAddressField extends AddressField {
+  private class BaseAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      if (data.strCity.endsWith(")")) {
+        int pt =  data.strCity.indexOf('(');
+        data.strPlace = append(data.strPlace, " - ", data.strCity.substring(pt+1,data.strCity.length()-1).trim());
+        data.strCity = data.strCity.substring(0,pt).trim();
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE?";
+    }
+  }
+
+  private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf('@');
@@ -94,7 +112,7 @@ public class DispatchA69Parser extends FieldProgramParser {
     }
   }
 
-  private class MyPlaceField extends PlaceField {
+  private class BasePlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("BTWN " )) {
@@ -111,7 +129,7 @@ public class DispatchA69Parser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_CODE_PTN = Pattern.compile("Dispatch +([A-Z0-9]+)");
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("NO TEXT")) return;
@@ -131,7 +149,7 @@ public class DispatchA69Parser extends FieldProgramParser {
 
   private static final Pattern GPS_PTN1 = Pattern.compile("(?:.*\n)?http://maps.google.com/\\?q=([-+]?\\d+\\.\\d{4,},[-+]?\\d+\\.\\d{4,})");
   private static final Pattern GPS_PTN2 = Pattern.compile("Lat: (.*); Long: (.*)");
-  private class MyGPSField extends GPSField {
+  private class BaseGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = GPS_PTN1.matcher(field);

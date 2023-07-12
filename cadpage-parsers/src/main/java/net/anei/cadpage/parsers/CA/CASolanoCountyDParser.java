@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.CA;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA3Parser;
 
@@ -11,11 +13,11 @@ public class CASolanoCountyDParser extends DispatchA3Parser {
           FA3_NBH1_BOX | FA3_NBH2_BOX);
     setBreakChar('=');
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
-    if (data.strCity.equals("VCVL")) data.strCity = "VACAVILLE";
+    data.strCity = convertCodes(data.strCity, CITY_CODES);
     return true;
   }
 
@@ -24,4 +26,9 @@ public class CASolanoCountyDParser extends DispatchA3Parser {
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{6}", true);
     return super.getField(name);
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "SUI",  "SUISUN CITY",
+      "VCVL", "VACAVILLE"
+  });
 }
