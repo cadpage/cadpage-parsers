@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
 public class KYWebsterCountyParser extends DispatchA74Parser {
 
   public KYWebsterCountyParser() {
-    super("WEBSTER COUNTY", "KY");
+    super(CITY_LIST, "WEBSTER COUNTY", "KY");
   }
 
   @Override
@@ -17,5 +17,41 @@ public class KYWebsterCountyParser extends DispatchA74Parser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Cities
+      "CLAY",
+      "DIXON",
+      "PROVIDENCE",
+      "SEBREE",
+      "SLAUGHTERS",
+      "WHEATCROFT",
+
+      // Census-designated places
+      "ONTON",
+      "POOLE",
+
+      // Other unincorporated communities
+      "BLACKFORD",
+      "DERBY",
+      "DIAMOND",
+      "ELMWOOD",
+      "FAIRMONT",
+      "FREE UNION",
+      "HEARIN",
+      "JOLLY",
+      "LISMAN",
+      "LITTLE ZION",
+      "ORTIZ",
+      "PRATT",
+      "STANHOPE",
+      "VANDERBURG",
+      "WANAMAKER",
+
+      // Hopkins County
+      "MADISONVILLE"
+
+  };
 
 }

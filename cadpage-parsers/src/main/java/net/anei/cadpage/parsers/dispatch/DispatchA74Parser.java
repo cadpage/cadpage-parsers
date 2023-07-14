@@ -50,10 +50,14 @@ public class DispatchA74Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?) *\\(([-+]?[.0-9]+, *[-+]?[.0-9]+)\\)");
+  // There might be multiple GPS coordinates at end of address.  This pattern will strip them all off
+  // but only capture the last set
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?)(?: *\\(([-+]?[.0-9]+, *[-+]?[.0-9]+)\\))+");
+
   private static final Pattern ADDR_CITY_UNIT_PTN = Pattern.compile(" *[\\(\\[](.*?)[\\]\\)] *");
   private static final Pattern ADDR_UNIT_PTN = Pattern.compile("(.*?)(?: (?:APT|RM|LOT) +(.*?))?(?: *\\[(.*?)\\])?");
   private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
   private static final Pattern CITY_PTN = Pattern.compile("[A-Z ]*");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -111,7 +115,16 @@ public class DispatchA74Parser extends FieldProgramParser {
           data.strUnit = getOptGroup(match.group(3));
         }
         String[] parts = COMMA_PTN.split(field);
-        switch (parts.length) {
+        int partCnt = parts.length;
+        if (partCnt > 1) {
+          match = ST_ZIP_PTN.matcher(parts[partCnt-1]);
+          if (match.matches()) {
+            data.strState = match.group(1);
+            partCnt--;
+          }
+        }
+
+        switch (partCnt) {
         case 1:
           field = stripFieldEnd(parts[0], ' ' + data.defState);
           field = field.replace('@', '&');
@@ -129,7 +142,7 @@ public class DispatchA74Parser extends FieldProgramParser {
             data.strCity = parts[1];
           } else {
             data.strPlace = parts[0];
-            parseAddress(parts[1], data);
+            parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, parts[1], data);
           }
           break;
 
@@ -149,7 +162,7 @@ public class DispatchA74Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "PLACE " + super.getFieldNames() + " UNIT GPS";
+      return "PLACE " + super.getFieldNames() + " ST UNIT GPS";
     }
   }
 
