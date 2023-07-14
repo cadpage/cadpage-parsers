@@ -218,7 +218,7 @@ public class DispatchA48Parser extends FieldProgramParser {
 
   public DispatchA48Parser(String[] cityList, String defCity, String defState, FieldType fieldType, int flags, Pattern unitPtn, Properties callCodes) {
     super(cityList, defCity, defState,
-          append("DATETIME ID CALL ADDRCITY! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+");
+          append("DATETIME ID CALL ADDRCITYST/S! DUPADDR? SKIPCITY?", " ", fieldType.getFieldProg()) + " ( INFO INFO/ZN+? UNIT_LABEL | UNIT_LABEL " + (fieldType.isDeferredDecision() ? "" : "| ") + ") UNIT/S+");
     this.fieldType = fieldType;
     oneWordCode = (flags & A48_ONE_WORD_CODE) != 0;
     optCode = (flags & A48_OPT_CODE) != 0;
@@ -536,7 +536,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ID")) return new IdField(ID_PTN, true);
     if (name.equals("CALL")) return new BaseCallField();
-    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("DUPADDR")) return new BaseDupAddrField();
     if (name.equals("SKIPCITY")) return new BaseSkipCityField();
     if (name.equals("RUNTIME")) return new InfoField("[A-Za-z ]+:\\d\\d:\\d\\d", false);
@@ -596,7 +596,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
-  private class BaseAddressCityField extends AddressCityField {
+  private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);

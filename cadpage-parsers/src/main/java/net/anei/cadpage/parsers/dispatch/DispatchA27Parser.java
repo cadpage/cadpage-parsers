@@ -106,7 +106,7 @@ public class DispatchA27Parser extends FieldProgramParser {
         field = field.substring(0, x) + field.substring(x+9);
       }
 
-      field = field.replace('@',  '&');
+      field = field.replace('@',  '&').replace(" at ,", " at ");
       super.parse(field, data);
 
 

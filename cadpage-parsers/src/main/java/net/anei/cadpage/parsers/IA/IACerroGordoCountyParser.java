@@ -11,7 +11,7 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
 
   public IACerroGordoCountyParser() {
     super("CERRO GORDO COUNTY", "IA",
-          "Message:INFO! Time:DATE_TIME_PLACE! Address:ADDRCITY! Nearest_intersection:X!");
+          "Message:INFO! Time:DATE_TIME_PLACE! Address:ADDRCITYST! Nearest_intersection:X!");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -52,7 +52,6 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
   public Field  getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATE_TIME_PLACE")) return new MyDateTimePlaceField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
@@ -79,27 +78,6 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "DATE TIME PLACE";
-    }
-  }
-
-  private static final Pattern ADDR_ST_ZIP = Pattern.compile("(.*), *([A-Z]{2})(?: (\\d{5}))?");
-  private class MyAddressCityField extends AddressCityField {
-    @Override
-    public void parse(String field, Data data) {
-      String zip = null;
-      Matcher match = ADDR_ST_ZIP.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strState = match.group(2);
-        zip = match.group(3);
-      }
-      super.parse(field, data);
-      if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " ST";
     }
   }
 

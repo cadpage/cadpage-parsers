@@ -2,12 +2,7 @@ package net.anei.cadpage.parsers.KY;
 
 import java.util.Properties;
 
-import net.anei.cadpage.parsers.CodeTable;
-import net.anei.cadpage.parsers.FieldProgramParser;
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
-import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 /**
  * Louisville, KY

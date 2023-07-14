@@ -16,7 +16,8 @@ public class KYHickmanCountyParser extends DispatchA48Parser {
 
   private static final String[] CITY_LIST = new String[] {
       "CLINTON",
-      "COLUMBUS"
+      "COLUMBUS",
+      "HICKMAN"
   };
 
 }
