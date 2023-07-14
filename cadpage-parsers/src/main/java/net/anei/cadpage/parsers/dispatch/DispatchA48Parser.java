@@ -599,6 +599,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace('@', '&');
       super.parse(field, data);
       primeCrossStreets(data.strAddress);
     }
