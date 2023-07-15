@@ -15,43 +15,45 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
     setupGpsLookupTable(buildGPSLookupTable());
     setupMultiWordStreets("TE LO CA");
   }
-  
+
   @Override
   public String getFilter() {
     return "cccademail@LRMFA.org,mobile@nhleds.com,@vzwpix.com,@concordnh.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_TE | MAP_FLG_SUPPR_LA;
   }
-  
+
   private static Pattern CITY = Pattern.compile("(.*?) *, *([^ ]{2}) *([^ ]{2})? *(\n.*)", Pattern.DOTALL);
-  
+
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {    
+  public boolean parseMsg(String subject, String body, Data data) {
     if (subject.startsWith("Fwd: ")) subject = subject.substring(5);
     if (! super.parseMsg(subject, body, data)) return false;
     if (data.msgType == MsgType.PAGE && data.strCall.length() == 0) return false;
-    
-    // convert city
-    Matcher mat = CITY.matcher(data.strPlace);
-    if (mat.matches()) data.strPlace = mat.group(1) + ", " + convertCodes(mat.group(2), CITY_CODES) + mat.group(4);
+
+    if (data.strCity.length() == 2) {
+      data.strState = data.strCity;
+      data.strCity = stripFieldEnd(data.strPlace, ' '+data.strState);
+      data.strPlace = "";
+    }
 
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     return super.getField(name);
   }
-    
+
   private class MyAddressCityField extends BaseAddressCityField {
 
     @Override
     public void parse(String field, Data data) {
-      
+
       // the false makes the following city construct optional
       super.parse(field, data, false);
       if (data.strPlace.startsWith("EXIT ") || data.strPlace.startsWith("MM ")) {
@@ -69,7 +71,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
     buildGPSLookupTable4(props);
     return props;
   }
-  
+
   private void buildGPSLookupTable1(Properties props) {
     addCodeTable(props, new String[]{
         "7 ABNAKI TRL",                         "+43.853611,-71.599678",
@@ -4015,7 +4017,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "3 INNSBRUCK WAY",                      "+43.945968,-71.505360",
     });
   }
-  
+
   private void buildGPSLookupTable2(Properties props) {
     addCodeTable(props, new String[]{
         "INTERSTATE 93 N 51",                   "+43.374689,-71.609194",
@@ -7613,7 +7615,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "454 OWL BROOK RD",                     "+43.741811,-71.620850",
     });
   }
-  
+
   private void buildGPSLookupTable3(Properties props) {
     addCodeTable(props, new String[]{
         "19 OWL ST",                            "+43.851418,-71.649147",
@@ -8086,7 +8088,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "8 PLEASANT ST",                        "+43.755940,-71.691155",
         "9 PLEASANT ST",                        "+43.755869,-71.691331",
         "10 PLEASANT ST",                       "+43.756039,-71.691392",
-        "11 PLEASANT ST",                       "+43.443972,-71.642581",        
+        "11 PLEASANT ST",                       "+43.443972,-71.642581",
         "12 PLEASANT ST",                       "+43.756128,-71.691883",
         "13 PLEASANT ST",                       "+43.756039,-71.692024",
         "14 PLEASANT ST",                       "+43.756054,-71.692169",
@@ -11593,7 +11595,7 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "562 WINTERBROOK RD",                   "+43.868671,-71.604775"
     });
   }
-  
+
   private void buildGPSLookupTable4(Properties props) {
     addCodeTable(props, new String[]{
         "37 WISE RD",                           "+43.805565,-71.704727",

@@ -20,16 +20,17 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
   public String getFilter() {
     return "notification@nhpd.cloud,Dispatch@lebanonnh.gov";
   }
-  
+
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6})(?: [\\[\\(]P#:\\d\\d-\\d{6}[\\)\\]])?\n");
   private static final Pattern GPS_PTN = Pattern.compile("(.*?)\\(((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))\\)");
+  private static final Pattern DOUBLE_STATE_PTN = Pattern.compile("(, (?:NH|VT)), NH\\b");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     int pt = subject.lastIndexOf('|');
     if (pt >= 0)subject = subject.substring(pt+1).trim();
-    
+
     if (body.startsWith("<h4 ")) {
       pt = body.indexOf('>');
       body = body.substring(pt+1).trim().replace("</h4>", "");
@@ -51,7 +52,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
         id = match.group(1);
         body = body.substring(match.end());
       }
-      
+
       pt = body.indexOf('\n');
       if (pt < 0) return false;
       String head = body.substring(0, pt);
@@ -60,13 +61,14 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
       if (match.matches()) head = match.group(1) + ", " + match.group(2);
       if (id != null) head = head + ' ' + id;
       body = head + tail;
-      
+
       body = "Notification from " + src + ":\n" + body;
       body = body.replace("\nUnit(s) responed:", "\nUnit(s) responded:");
     }
-    
+
+    body = DOUBLE_STATE_PTN.matcher(body).replaceFirst("$1");
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     if (data.strApt.equals("NH") && data.strCity.isEmpty()) {
       data.strState = data.strApt;
       data.strApt = "";
@@ -81,5 +83,4 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
     }
     return true;
   }
-
 }
