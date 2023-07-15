@@ -51,7 +51,9 @@ public class ZCASKPECCParser extends FieldProgramParser {
     body = LEAD_JUNK_PTN.matcher(body).replaceFirst("");
 
     parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, subject, data);
-    return parseFields(body.split(","), data);
+    if (!parseFields(body.split(","), data)) return false;
+    if (data.strCity.equals("SC")) data.strCity = "Swift Current";
+    return true;
   }
 
   @Override

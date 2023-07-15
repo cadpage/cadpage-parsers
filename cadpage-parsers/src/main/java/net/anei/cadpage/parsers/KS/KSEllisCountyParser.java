@@ -10,7 +10,7 @@ public class KSEllisCountyParser extends DispatchH05Parser {
 
   public KSEllisCountyParser() {
     super("ELLIS COUNTY", "KS",
-        "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! DATE:DATETIME! INFO:EMPTY! INFO_BLK+ TIMES:EMPTY! TIMES+");
+        "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITYAPT! ID:ID! DATE:DATETIME! INFO:EMPTY! INFO_BLK+ TIMES:EMPTY! TIMES+");
   }
 
   @Override
