@@ -63,12 +63,23 @@ public class DispatchA27Parser extends FieldProgramParser {
     if (data.msgType == MsgType.RUN_REPORT) {
       data.strSupp = append(times, "\n", data.strSupp);
     }
+
+    Parser p = new Parser(subject);
+    p.get(';');
+    p.get(';');
+    data.strSupp = append(data.strSupp, "\n", p.get());
+
     return true;
   }
 
   @Override
+  public String getProgram() {
+    return super.getProgram() + " INFO";
+  }
+
+  @Override
   public Field getField(String name) {
-      if (name.equals("ADDRCITY")) return new BaseAddressField();
+      if (name.equals("ADDRCITY")) return new BaseAddressCityField();
       if (name.equals("DUP")) return new BaseDuplField();
       if (name.equals("DATETIME")) return new BaseDateTimeField();
       if (name.equals("MASH")) return new BaseMashField();
@@ -79,8 +90,10 @@ public class DispatchA27Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern PTN_FULL_ADDR = Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
-  protected class BaseAddressField extends AddressCityStateField {
+  private static final Pattern PTN_FULL_ADDR =
+      Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?), *([A-Z]?\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  protected class BaseAddressCityField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
@@ -94,6 +107,7 @@ public class DispatchA27Parser extends FieldProgramParser {
         data.strCallId = getOptGroup(m.group(4));
       }
 
+      field = stripFieldEnd(field, ",");
       if (field.endsWith(")")) {
         int pt = field.indexOf('(');
         if (pt < 0) abort();
@@ -107,14 +121,22 @@ public class DispatchA27Parser extends FieldProgramParser {
       }
 
       field = field.replace('@',  '&').replace(" at ,", " at ");
+      String apt = null;
+      m = ADDR_APT_PTN.matcher(field);
+      if (m.matches()) {
+        field = m.group(1).trim();
+        apt = m.group(2);
+      }
       super.parse(field, data);
 
-
-      int pt = data.strAddress.lastIndexOf(',');
-      if (pt >= 0) {
-        data.strApt = append(data.strApt, "-", data.strAddress.substring(pt+1).trim());
-        data.strAddress = data.strAddress.substring(0,pt).trim();
+      if (apt == null) {
+        int pt = data.strAddress.lastIndexOf(',');
+        if (pt >= 0) {
+          apt = data.strAddress.substring(pt+1).trim();
+          data.strAddress = data.strAddress.substring(0,pt).trim();
+        }
       }
+      if (apt != null) data.strApt = append(data.strApt, "-", apt);
 
       if (data.strCity.isEmpty() && zip != null && !zip.equals("0")) data.strCity = zip;
     }

@@ -55,6 +55,7 @@ public class NHGraftonCountyParser extends GroupBestParser {
     "PLYMOUTH",
     "RUMNEY",
     "SUGAR HILL",
+    "SUGARHILL",
     "THORNTON",
     "WARREN",
     "WATERVILLE VALLEY",
@@ -197,6 +198,7 @@ public class NHGraftonCountyParser extends GroupBestParser {
       "EAST BURKE",
 
       // Coos County
+      "CARROL",
       "CARROLL",
       "DALTON",
       "JEFFERSON",
@@ -218,6 +220,7 @@ public class NHGraftonCountyParser extends GroupBestParser {
 
       // Orange County, VT
       "W NEWBURY",
+      "WELLS RIVER",
       "WEST NEWBURY",
 
       // Windsor County, VT

@@ -28,7 +28,7 @@ public class KYChristianCountyParser extends DispatchA27Parser {
 
   private static final Pattern POUND_DIR_PTN = Pattern.compile("  *#([NSEW]B)\\b", Pattern.CASE_INSENSITIVE);
 
-  private class MyAddressField extends BaseAddressField {
+  private class MyAddressField extends BaseAddressCityField {
     @Override
     public void parse(String field, Data data) {
 

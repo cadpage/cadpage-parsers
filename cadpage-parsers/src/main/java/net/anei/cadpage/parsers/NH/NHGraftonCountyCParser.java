@@ -23,28 +23,33 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6})(?: [\\[\\(]P#:\\d\\d-\\d{6}[\\)\\]])?\n");
   private static final Pattern GPS_PTN = Pattern.compile("(.*?)\\(((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))\\)");
-  private static final Pattern DOUBLE_STATE_PTN = Pattern.compile("(, (?:NH|VT)), NH\\b");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-
+    String src = null;
     int pt = subject.lastIndexOf('|');
-    if (pt >= 0)subject = subject.substring(pt+1).trim();
+    if (pt >= 0) {
+      src = subject.substring(pt+1).trim();
+      subject = subject.substring(0,pt).trim();
+    }
 
-    if (body.startsWith("<h4 ")) {
+    else if (body.startsWith("<h4 ")) {
       pt = body.indexOf('>');
+      if (pt < 0) return false;
       body = body.substring(pt+1).trim().replace("</h4>", "");
       if (body.startsWith("[")) {
         pt = body.indexOf(']');
         if (pt < 0) return false;
-        subject = body.substring(1,pt).trim();
+        src = body.substring(1,pt).trim();
         body = body.substring(pt+1).trim();
       }
       body = stripFieldEnd(body, "\n\nCSI TECHNOLOGY GROUP");
     }
-    String src = null;
-    if (subject.startsWith("CFS Notification - ")) src = subject.substring(19).trim();
-    else if (subject.endsWith(" - CFS Notification")) src = subject.substring(0,subject.length()-19).trim();
+    if (src != null) {
+      if (src.startsWith("CFS Notification - ")) src = src.substring(19).trim();
+      else if (src.endsWith(" - CFS Notification")) src = src.substring(0,src.length()-19).trim();
+      else src = null;
+    }
     if (src != null) {
       String id = null;
       Matcher match = LEAD_ID_PTN.matcher(body);
@@ -66,21 +71,32 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
       body = body.replace("\nUnit(s) responed:", "\nUnit(s) responded:");
     }
 
-    body = DOUBLE_STATE_PTN.matcher(body).replaceFirst("$1");
-    if (!super.parseMsg(subject, body, data)) return false;
+    return super.parseMsg(subject, body, data);
+  }
 
-    if (data.strApt.equals("NH") && data.strCity.isEmpty()) {
-      data.strState = data.strApt;
-      data.strApt = "";
-      String addr = data.strAddress;
-      if (addr.endsWith(" NH") || addr.endsWith(" VT")) {
-        data.strState = addr.substring(addr.length()-2);
-        addr = addr.substring(0,addr.length()-3).trim();
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    return super.getField(name);
+  }
+
+  private static final Pattern TRAIL_ST_PTN = Pattern.compile("(.*),? (NH|VT)\\b(?! *ROUTE|[- ]\\d{2,3}\\b)(?: \\d{5})?(.*)");
+  protected class MyAddressCityField extends BaseAddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+
+      // They add a trailing extraneous (and often wrong) NH state code
+      String state = "";
+      while (true) {
+        Matcher match = TRAIL_ST_PTN.matcher(field);
+        if (!match.matches()) break;
+        field = stripFieldEnd(match.group(1), ",") + match.group(3);
+        state = match.group(2);
       }
-      addr = stripFieldEnd(addr, ",");
-      data.strAddress = "";
-      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+
+      super.parse(field, data);
+
+      if (data.strState.isEmpty()) data.strState = state;
     }
-    return true;
   }
 }
