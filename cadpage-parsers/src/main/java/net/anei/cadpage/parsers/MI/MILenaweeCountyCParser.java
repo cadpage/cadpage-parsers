@@ -7,7 +7,7 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
 
   public MILenaweeCountyCParser() {
     super("LENAWEE COUNTY", "MI",
-          "EMPTY+? CALL DATETIME PLACE? ADDRCITY ( X | PLACE X ) https:SKIP! INFO_BLK/Z+? UNIT! Alerts:ALERT! Caller:NAME! Caller's_TX:PHONE! Incident_#:EMPTY! ID! TIMES+");
+          "EMPTY+? CALL DATETIME PLACE? ADDRCITY/S6 ( X | PLACE X ) https:SKIP! INFO_BLK/Z+? UNIT! Alerts:ALERT! Caller:NAME! Caller's_TX:PHONE! Incident_#:EMPTY! ID! TIMES+");
   }
 
   @Override
@@ -33,14 +33,20 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public boolean checkParse(String field, Data data) {
-      field = field.replace('@', '&');
-      return super.checkParse(field, data);
+      return parse(false, field, data);
     }
 
     @Override
     public void parse(String field, Data data) {
+      parse(true, field, data);
+    }
+
+    private boolean parse(boolean force, String field, Data data) {
+      if (!force && !field.contains(",") && !field.startsWith("LAT:")) return false;
       field = field.replace('@', '&');
       super.parse(field, data);
+      data.strCity = stripFieldEnd(data.strCity, data.strApt);
+      return true;
     }
   }
 

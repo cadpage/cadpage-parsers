@@ -24,6 +24,7 @@ public class MIBayCountyBParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     if (!super.parseFields(body.split("\n"),  8, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
     if (data.strPlace.equals(data.strAddress)) data.strPlace = "";
     if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
     return true;

@@ -13,9 +13,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class CTMiddlesexCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:(.+?) +CALL +)?CAD Page for CFS (\\d{6,}-\\d+)");
-  
+
   public CTMiddlesexCountyAParser() {
     super(CITY_CODES, "MIDDLESEX COUNTY", "CT",
           "GPS? CALL! ADDR! Apt:APT! CITY! Cross_Streets:X? Caller:NAME Disp_Time:DATETIME% EMPTY+? GPS");
@@ -25,12 +25,12 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
   public String getFilter() {
     return ".sbc.mail.gq1.yahoo.com,administrator@valleyshore911.org,cad@valleyshore911-lists.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
@@ -45,12 +45,12 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
     data.strCallId = callId;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC ID " + super.getProgram() + " INFO";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("GPS")) return new MyGPSField();
@@ -59,14 +59,14 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static final Pattern GPS_PATTERN = Pattern.compile("http://maps\\.google\\.com/maps\\?q=([-+]*\\d+\\.\\d+ +[-+]*\\d+\\.\\d+)");
   private class MyGPSField extends GPSField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replace("%20", " ");
@@ -76,13 +76,13 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
       if (!gps.equals("+-1.00000 --1.00000")) super.parse(match.group(1), data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private static final Pattern MCVEAGH_PTN = Pattern.compile("\\bMC VEAGH\\b", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
@@ -92,14 +92,14 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
       super.parse(field.toUpperCase(), data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -107,7 +107,7 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AV", "AVON",
       "BA", "BETHANY",
@@ -164,6 +164,7 @@ public class CTMiddlesexCountyAParser extends FieldProgramParser {
       "SX", "ESSEX",
       "WA", "WALLINGFORD",
       "WB", "WESTBROOK",
+      "WD", "WALLINGFORD",  // ???
       "WE", "WEATHERSFIELD",
       "WF", "WATERFORD",
       "WH", "WEST HARTFORD",

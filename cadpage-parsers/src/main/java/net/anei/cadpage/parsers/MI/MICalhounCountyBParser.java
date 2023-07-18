@@ -8,22 +8,22 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class MICalhounCountyBParser extends DispatchOSSIParser {
-  
+
   private static final Pattern MANGLED_SUBJECT_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} \\d{2}");
-  
+
   public MICalhounCountyBParser() {
     super(MICalhounCountyParser.CITY_CODES, "CALHOUN COUNTY", "MI",
-          "( CANCEL ADDR | FYI? EMPTY? DATETIME CODE ADDR! ) CITY INFO+");
+          "( CANCEL ADDR! | FYI? EMPTY? DATETIME CODE ADDR! ) CITY? INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@calhouncountymi.gov";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Fix some mangled messages
     if (subject.equals("Text Message")) {
       if (!body.startsWith("CAD:")) body = "CAD:" + body;
@@ -33,16 +33,16 @@ public class MICalhounCountyBParser extends DispatchOSSIParser {
     }
     if (!super.parseMsg(body, data)) return false;
     MICalhounCountyParser.cleanup(data);
-    
+
     data.strCall = convertCodes(data.strCode, CALL_CODES);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CODE", "CODE CALL");
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "911HU",  "911 Hang Up / Abandoned Call",
       "99",     "Signal 99 / Officer In Trouble",
@@ -183,5 +183,5 @@ public class MICalhounCountyBParser extends DispatchOSSIParser {
       "WATER",  "Water Rescue",
       "WELFAR", "Welfare Check",
       "WIRES",  "Wires Down"
-  }); 
+  });
 }

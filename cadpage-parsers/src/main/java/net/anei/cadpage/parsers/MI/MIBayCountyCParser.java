@@ -45,6 +45,7 @@ public class MIBayCountyCParser extends HtmlProgramParser {
 
     times = "";
     if (!super.parseHtmlMsg(subject, body, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     return true;
   }
