@@ -31,7 +31,7 @@ public class DispatchA25Parser extends FieldProgramParser {
   private static final Pattern MARKER2 = Pattern.compile("MEMO OCC #OUTS *- *");
   private static final Pattern MARKER3 = Pattern.compile("MEMO INC #([-0-9]+) - *");
   private static final Pattern MISSING_DELIM = Pattern.compile(",? (?=Phone:)");
-  private static final Pattern ALTERNATE_PTN = Pattern.compile("NEW (?:(\\d\\d?-\\d\\d?-[A-Z]{1,2}) )?(.*?)(?:[-,] ([ A-Za-z]+))?");
+  private static final Pattern ALTERNATE_PTN = Pattern.compile("NEW (?:(\\d\\d?-\\d\\d?-[A-Z]{1,2}) )?(.*?)(?:[-,] ([ 'A-Za-z]+))?(?:, *([A-Z]{2}))?");
   private static final Pattern PLACE_ADDR_PREFIX_PTN = Pattern.compile("([NSEW]B)|(.*)(?:&| and)", Pattern.CASE_INSENSITIVE);
 
   @Override
@@ -94,10 +94,11 @@ public class DispatchA25Parser extends FieldProgramParser {
 
     match = ALTERNATE_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("CODE CALL PLACE ADDR APT CITY");
+      setFieldList("CODE CALL PLACE ADDR APT CITY ST");
       data.strCode = getOptGroup(match.group(1));
       String addr = match.group(2).trim();
       data.strCity = getOptGroup(match.group(3));
+      data.strState = getOptGroup(match.group(4));
 
       String place = "";
       int pt = addr.lastIndexOf('@');

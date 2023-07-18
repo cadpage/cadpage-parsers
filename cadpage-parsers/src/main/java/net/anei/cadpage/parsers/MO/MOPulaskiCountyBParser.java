@@ -36,6 +36,7 @@ public class MOPulaskiCountyBParser extends DispatchA19Parser {
     }
 
     if (!super.parseMsg(subject, body, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
     data.strCallId = stripFieldEnd(data.strCallId, "/X/X");
     return true;
   }

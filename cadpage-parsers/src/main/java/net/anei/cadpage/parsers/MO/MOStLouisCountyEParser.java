@@ -134,16 +134,22 @@ public class MOStLouisCountyEParser extends DispatchH03Parser {
   });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "BLR",  "BEL-NOR",
       "BRW",  "BRENTWOOD",
+      "CCR",  "CREVE COEUR",
       "CLY",  "CLAYTON",
+      "CRE",  "CREVE COEUR",
+      "FLO",  "FLORISSANT",
       "GLN",  "GLENDALE",
       "LAD",  "LADUE",
       "MPL",  "MAPLEWOOD",
       "NOR",  "NORMANDY",
       "OLV",  "OLIVETTE",
+      "PIN",  "PINE LAWN",
       "RMH",  "RICHMOND HEIGHTS",
       "RKH",  "ROCK HILL",
       "SHR",  "SHREWSBURY",
+      "STL",  "ST LOUIS",
       "UCT",  "UNIVERSITY CITY",
       "UNI",  "UNIVERSITY CITY",
       "WEB",  "WEBSTER GROVES",

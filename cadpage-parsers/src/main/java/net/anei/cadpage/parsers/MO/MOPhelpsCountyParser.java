@@ -1,7 +1,6 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -15,7 +14,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
 
   MOPhelpsCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS:ID! Incident_Code:CALL! Address:ADDRCITY! Closest_Intersection:X? Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
+          "CFS:ID! Incident_Code:CALL! Address:ADDRCITYST! Closest_Intersection:X? Lat:GPS1! Long:GPS2! Units:UNIT! Narrative:INFO/N! END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -37,7 +36,7 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -63,27 +62,22 @@ public class MOPhelpsCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern PERIOD_PTN = Pattern.compile("\\. *");
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      data.strPlace = p.getLastOptional(';');
-      String city = p.getLastOptional(',');
-      Matcher match = ST_ZIP_PTN.matcher(city);
-      if (match.matches()) {
-        data.strState = match.group(1);
-        String zip = match.group(2);
-        city = p.getLastOptional(',');
-        if (city.length() == 0 && zip != null) city = zip;
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        data.strPlace = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
       }
-      super.parse(p.get(), data);
-      data.strCity = city;
+      super.parse(field, data);
+      data.strCity = PERIOD_PTN.matcher(data.strCity).replaceAll(" ");
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " ST PLACE";
+      return super.getFieldNames() + " PLACE";
     }
   }
 

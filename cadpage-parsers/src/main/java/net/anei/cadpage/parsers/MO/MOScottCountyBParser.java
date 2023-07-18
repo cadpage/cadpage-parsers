@@ -63,8 +63,9 @@ public class MOScottCountyBParser extends HtmlProgramParser {
     public void parse(String field, Data data) {
       int pt = field.lastIndexOf("   ");
       if (pt >= 0) {
-        data.strCity = field.substring(pt+3);
+        String city = field.substring(pt+3);
         field = field.substring(0,pt).trim();
+        if (!field.endsWith(city)) data.strCity = city;
       }
       parseAddress(field, data);
     }

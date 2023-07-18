@@ -44,22 +44,34 @@ public class MOFranklinCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATE_TIME_ID")) return new MyDateTimeIdField();
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
   }
 
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
-  private static final Pattern CITY_STATE_ZIP_PTN = Pattern.compile("(.*?) *\\bMO(?: +\\d{5})?");
+  private static final Pattern CITY_STATE_ZIP_PTN = Pattern.compile("(.*?)(?: *\\bMO)?(?: +\\d{5})?");
   private class MyAddressCityStateField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf("Appt or Suite");
-      if (pt >= 0) field = field.substring(0,pt).trim();
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
+      Parser p = new Parser(field);
+      data.strCross = p.getLastOptional(", Cross Street of");
+      p.getLastOptional("Appt or Suite");
+      field = MSPACE_PTN.matcher(p.get()).replaceAll(" ");
       super.parse(field, data);
       Matcher match = CITY_STATE_ZIP_PTN.matcher(data.strCity);
       if (match.matches()) data.strCity = match.group(1);
+      if (data.strCity.equals("- 0 MO 0")) data.strCity = "";
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      data.strCross = "";
+      super.parse(field, data);
     }
   }
 

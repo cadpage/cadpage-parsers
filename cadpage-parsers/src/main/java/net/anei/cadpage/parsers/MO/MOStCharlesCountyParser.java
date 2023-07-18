@@ -36,41 +36,46 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
   public boolean parseMsg(String body, Data data) {
 
     // Parser preceding comment
-    String prefix = "";
-    if (body.startsWith("Comment:")) {
-      int pt = body.indexOf(",ID:", 8);
-      if (pt < 0) pt = body.indexOf("ID:");
-      if (pt < 0) return false;
-      data.strSupp = prefix = body.substring(8, pt).trim();
-      if (body.charAt(pt) == ',') pt++;
-      body = body.substring(pt).trim();
-    }
+    do {
+      String prefix = "";
+      if (body.startsWith("Comment:")) {
+        int pt = body.indexOf(",ID:", 8);
+        if (pt < 0) pt = body.indexOf("ID:");
+        if (pt < 0) return false;
+        data.strSupp = prefix = body.substring(8, pt).trim();
+        if (body.charAt(pt) == ',') pt++;
+        body = body.substring(pt).trim();
+      }
 
-    // Dispatch sends a fixed length field format and a variable length field format.
-    // Things get easier if this is a fixed format alert
-    if (parseFixedMsg(body, data)) return true;
+      // Dispatch sends a fixed length field format and a variable length field format.
+      // Things get easier if this is a fixed format alert
+      if (parseFixedMsg(body, data)) break;
 
-    // Otherwise reset things and try the variable field format
-    data.initialize(this);
-    data.strSupp = prefix;
+      // Otherwise reset things and try the variable field format
+      data.initialize(this);
+      data.strSupp = prefix;
 
-    // OK, First look for prenotification variant
-    Matcher match = PRENOTE_PREFIX_PTN.matcher(body);
-    if (match.lookingAt()) {
-      setFieldList("ID CODE CALL ADDR PLACE DATE TIME INFO");
-      match = PRENOTE_PTN.matcher(body);
-      if (!match.find()) return false;
-      if (!parseIdCodeCallAddress(body.substring(0,match.start()).trim(), data)) return false;
-      data.strDate =  match.group(1);
-      data.strTime = match.group(2);
-      data.strSupp = append(data.strSupp, "\n", match.group(3));
-      return true;
+      // OK, First look for prenotification variant
+      Matcher match = PRENOTE_PREFIX_PTN.matcher(body);
+      if (match.lookingAt()) {
+        setFieldList("ID CODE CALL ADDR PLACE DATE TIME INFO");
+        match = PRENOTE_PTN.matcher(body);
+        if (!match.find()) return false;
+        if (!parseIdCodeCallAddress(body.substring(0,match.start()).trim(), data)) return false;
+        data.strDate =  match.group(1);
+        data.strTime = match.group(2);
+        data.strSupp = append(data.strSupp, "\n", match.group(3));
+        break;
+      }
 
+      body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
+      if (!super.parseMsg(body, data)) return false;
+      break;
 
-    }
-
-    body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
-    return super.parseMsg(body, data);
+    } while (false);
+    data.strCity = stripFieldEnd(data.strCity, " B2");
+    if (data.strCity.equals("Dispatch.")) data.strCity = "";
+    return true;
   }
 
   private boolean parseFixedMsg(String body, Data data) {
@@ -359,7 +364,6 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
   }
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "CENTRAL COUNTY",     "St Peters",
-      "DISPATCH.",          "",
       "RIVERS POINTE",      ""
   });
 

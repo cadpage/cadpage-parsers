@@ -10,30 +10,30 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Boone County, MO
  */
 public class MOBooneCountyParser extends DispatchOSSIParser {
-  
+
   public MOBooneCountyParser() {
     super(CITY_CODES, "BOONE COUNTY", "MO",
           "( CANCEL ADDR CITY! INFO/N+ " +
           "| FYI? DATETIME ID ( MAP ADDR? | ADDR ) PLACE1? ( CODE | PLACE CODE | CITY/Z PLACE CODE | CITY/Z X/Z X/Z CODE | CITY PLACE X X CODE ) CALL SRC! UNIT PHONE INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@boonecountymo.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private String gps = null;
-  
+
   protected boolean parseMsg(String subject, String body, Data data) {
     gps = null;
     return parseMsg("CAD:"+body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
@@ -47,13 +47,13 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.endsWith(" COUNTY")) return false;
@@ -61,7 +61,7 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -69,9 +69,9 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -92,19 +92,23 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CH GPS";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AS",   "ASHLAND",
+      "CE",   "CENTRALIA",
+      "CL",   "CLARK",
       "CO",   "COLUMBIA",
+      "HA",   "HALLSVILLE",
       "HB",   "HARTSBURG",
+      "HR",   "HARRISBURG",
       "RO",   "ROCHEPORT",
-      
+
       "BC",   ""
      });
 }

@@ -9,7 +9,7 @@ public class MONewtonCountyBParser extends DispatchOSSIParser {
 
   public MONewtonCountyBParser() {
     super(CITY_CODES, "NEWTON COUNTY", "MO",
-          "( CANCEL ADDR CITY! " +
+          "( CANCEL ADDR! CITY? " +
           "| FYI ( ADDR/Z CITY APT? X+? ( GPS1 GPS2 | ) CALL! " +
                 "| CALL PLACE ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +
                 "| CALL ADDR/Z CITY! APT? X+?  ( GPS1 GPS2 | ) " +

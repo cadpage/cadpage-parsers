@@ -2403,6 +2403,8 @@ public class FieldProgramParser extends SmartAddressParser {
    * Address field processor
    */
   private static final Pattern SLOPPY_ADDR_PTN = Pattern.compile("\\d.*|.*[/&].*");
+  private static final Pattern GPS_COMPONENT_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}\\)?");
+  private static final Pattern ADDR_AT_PTN = Pattern.compile(" at |@", Pattern.CASE_INSENSITIVE);
   public class AddressField extends Field {
 
     private boolean incCity = false;
@@ -2620,6 +2622,11 @@ public class FieldProgramParser extends SmartAddressParser {
       }
     }
 
+    protected boolean isValidCity(String fld) {
+      if (GPS_COMPONENT_PTN.matcher(fld).matches()) return false;
+      return (startType == null || startType == StartType.START_ADDR || !ADDR_AT_PTN.matcher(fld).find());
+    }
+
     private void fixEmptyAddress(Data data) {
       if (data.strAddress.length() > 0) return;
       if ((parseFlags & FLAG_START_FLD_REQ) != 0 && startType != StartType.START_CALL_PLACE) return;
@@ -2755,7 +2762,6 @@ public class FieldProgramParser extends SmartAddressParser {
   /**
    * Field containing address and city separated by a comma
    */
-  private static final Pattern GPS_COMPONENT_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}\\)?");
   public class AddressCityField extends AddressField {
 
     public AddressCityField() {};
@@ -2783,7 +2789,7 @@ public class FieldProgramParser extends SmartAddressParser {
       int pt = field.lastIndexOf(',');
       if (pt >= 0) {
         String city = field.substring(pt+1).trim();
-        if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
+        if (isValidCity(city)) {
           cityField.parse(city, data);
           field = field.substring(0,pt).trim();
         }
@@ -2831,7 +2837,7 @@ public class FieldProgramParser extends SmartAddressParser {
       String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
-      if (!GPS_COMPONENT_PTN.matcher(city).matches()) {
+      if (isValidCity(city)) {
         Matcher match = ST_ZIP_PTN.matcher(city);
         if (match.matches()) {
           String state = match.group(1);

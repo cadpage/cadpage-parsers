@@ -209,8 +209,7 @@ public class ManageParsers {
         "ALDothanA",          "General",
         "KYStatePoliceA",     "General",
         "OHWarrenCountyA",    "General",
-        "MOStLouisCountyG",   "General",
-        "NHHanover",          "NHGraftonCountyC"        // 07/17/2023
+        "MOStLouisCountyG",   "General"
   });
 
 }

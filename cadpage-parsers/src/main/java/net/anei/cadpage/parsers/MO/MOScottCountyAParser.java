@@ -38,7 +38,8 @@ public class MOScottCountyAParser extends DispatchBCParser {
           if (data.strCross.equals("MO")) {
             data.strState = data.strCross;
             data.strCross = "";
-          } else if (!isValidAddress(data.strCross) && !Character.isDigit(data.strCross.charAt(0))) {
+          } else if (!isValidAddress(data.strCross) && !Character.isDigit(data.strCross.charAt(0)) &&
+                     !data.strCross.startsWith("RAMP")) {
             data.strCity = append(data.strCity, " ", data.strCross);
             data.strCross = "";
           }

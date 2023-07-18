@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
 
@@ -14,6 +15,13 @@ public class MOHarrisonCountyParser extends DispatchBCParser {
   @Override
   public String getFilter() {
     return "HARCO911@GRM.NET,HARRISON911@PUBLICSAFETYSOFTWARE.NET,HCSO@OMNIGO.COM";
+  }
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    data.strCity = data.strCity.replace(".", "");
+    return true;
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{

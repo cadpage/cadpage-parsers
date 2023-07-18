@@ -23,7 +23,9 @@ public class MOStLouisCountyIParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    data.strCity = data.strCity.replace(".", "");
+    return true;
   }
 
   @Override
