@@ -1385,6 +1385,7 @@ public class Active911ParserTable {
       "US/MT/HavrePolice",                "MTHillCounty",
       "US/MT/HelenaMutAid",               "MTLewisAndClarkCountyA",
       "US/MT/HelenaPD",                   "MTLewisAndClarkCounty",
+      "US/MT/HillCounty",                 "MTHillCounty",
       "US/MT/KIC",                        "MTFlatheadCountyC,MTFlatheadCountyE",
       "US/MT/LakeCounty",                 "MTLakeCounty",
       "US/MT/LakeCounty2",                "MTLakeCounty",
