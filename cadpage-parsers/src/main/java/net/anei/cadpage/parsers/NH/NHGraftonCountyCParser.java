@@ -26,31 +26,8 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    String src = null;
-    int pt = subject.lastIndexOf('|');
-    if (pt >= 0) {
-      src = subject.substring(pt+1).trim();
-      subject = subject.substring(0,pt).trim();
-    }
 
-    else if (body.startsWith("<h4 ")) {
-      pt = body.indexOf('>');
-      if (pt < 0) return false;
-      body = body.substring(pt+1).trim().replace("</h4>", "");
-      if (body.startsWith("[")) {
-        pt = body.indexOf(']');
-        if (pt < 0) return false;
-        src = body.substring(1,pt).trim();
-        body = body.substring(pt+1).trim();
-      }
-      body = stripFieldEnd(body, "\n\nCSI TECHNOLOGY GROUP");
-    }
-    if (src != null) {
-      if (src.startsWith("CFS Notification - ")) src = src.substring(19).trim();
-      else if (src.endsWith(" - CFS Notification")) src = src.substring(0,src.length()-19).trim();
-      else src = null;
-    }
-    if (src != null) {
+    if (!body.startsWith("Notification from ")) {
       String id = null;
       Matcher match = LEAD_ID_PTN.matcher(body);
       if (match.lookingAt()) {
@@ -58,7 +35,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
         body = body.substring(match.end());
       }
 
-      pt = body.indexOf('\n');
+      int pt = body.indexOf('\n');
       if (pt < 0) return false;
       String head = body.substring(0, pt);
       String tail = body.substring(pt);
@@ -67,8 +44,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
       if (id != null) head = head + ' ' + id;
       body = head + tail;
 
-      body = "Notification from " + src + ":\n" + body;
-      body = body.replace("\nUnit(s) responed:", "\nUnit(s) responded:");
+      body = "Notification from CIS:\n" + body;
     }
 
     return super.parseMsg(subject, body, data);
@@ -80,7 +56,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
     return super.getField(name);
   }
 
-  private static final Pattern TRAIL_ST_PTN = Pattern.compile("(.*),? (NH|VT)\\b(?! *ROUTE|[- ]\\d{2,3}\\b)(?: \\d{5})?(.*)");
+  private static final Pattern TRAIL_ST_PTN = Pattern.compile("(.*),? (NH|VT)\\b(?! *ROUTE|[- ]\\d{2,3}\\b)(?: \\d{5}(?:-\\d{4})?)?\\\\?(.*)");
   protected class MyAddressCityField extends BaseAddressCityField {
     @Override
     public void parse(String field, Data data) {
