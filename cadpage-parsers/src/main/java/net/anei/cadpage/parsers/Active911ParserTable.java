@@ -1053,6 +1053,7 @@ public class Active911ParserTable {
       "US/MI/AlconaCounty",               "MIAlconaCounty",
       "US/MI/AlleganCounty",              "MIAlleganCounty",
       "US/MI/AlpenaCounty",               "MIAlpenaCounty",
+      "US/MI/AMRWest",                    "MIKentCountyC",
       "US/MI/AntrimCounty",               "MIAntrimCounty",
       "US/MI/ArenacCounty",               "MIArenacCounty",
       "US/MI/BaragaCounty",               "MIBaragaCounty",
