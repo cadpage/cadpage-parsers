@@ -6,28 +6,28 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class ZCABCPrinceGeorgeParser extends FieldProgramParser { 
+public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
   public ZCABCPrinceGeorgeParser() {
     super(CITY_LIST,  "PRINCE GEORGE", "BC",
           "Date:DATETIME! Dept:SRC Type:CALL! Address:ADDRCITY/S! Unit:APT Suite:APT 1st_Cross_Street:X 2nd_Cross_Street:X Building:PLACE Common_Place_Name:PLACE INFO/N+ Latitude:GPS1 Longitude:GPS2 Google_Maps_Link:SKIP Units_Responding:UNIT");
   }
-  
+
   @Override
   public String getFilter() {
-    return "donotreply@princegeorge.ca,donotreply@city.pg.bc.ca";
+    return "donotreply@princegeorge.ca,donotreply@city.pg.bc.ca,@rdffg.bc.ca";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
- 
-  @Override 
-  public boolean parseMsg(String subject, String body, Data data) {    
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
     if(!subject.equals("CAD Incident Message") && !subject.equals("Incident Message")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTime();
@@ -38,7 +38,7 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+) +- +(.*)");
   private class MyCallField extends Field {
     @Override
@@ -56,7 +56,7 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d) (\\d\\d:\\d\\d:\\d\\d)");
   private class MyDateTime extends DateTimeField {
     @Override
@@ -67,7 +67,7 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       data.strTime =match.group(4);
     }
   }
-  
+
   private static final Pattern INITIAL_APT_PATTERN
     = Pattern.compile("# *(\\S+?) *- *(.*)");
   private class MyAddressCityField extends AddressCityField {
@@ -81,13 +81,13 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       }
       super.parse(field.replace(", BC", ""), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return append (super.getFieldNames(), " ", "PLACE");
     }
   }
-  
+
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
@@ -95,7 +95,7 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -107,7 +107,7 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -115,14 +115,14 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     int pt = city.indexOf('/');
     if (pt >= 0) city = city.substring(0, pt).trim();
     return city;
   }
-  
+
   private static final String[] CITY_LIST = {
     "QUESNEL",
     "RED BLUFF"
