@@ -10,7 +10,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   public SCAndersonCountyDParser() {
     super("ANDERSON COUNTY", "SC",
-          "DATETIME CODE CALL ADDRCITYST INFO UNIT ( ID_NAME | ID! NAME PHONE PHONE/CS ) GPS1 GPS2 END");
+          "DATETIME CODE CALL ADDRCITYST INFO UNIT ( ID_NAME | ID! ( NAME PHONE PHONE/CS | ) ) GPS1 GPS2 END");
   }
 
   @Override
@@ -87,7 +87,21 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6}");
+
   private class MyNameField extends NameField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (GPS_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
