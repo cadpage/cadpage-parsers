@@ -23,7 +23,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com,@active911.com,wrblackwell@comcast.net";
+    return "york911alert@comcast.net,paging@ycdes.org,paging@zoominternet.net,armstrong1@zoominternet.net,messaging@iamresponding.com,j.bankert712@gmail.com,dtfdfilter@yahoo.com,pager@fairviewems.org,MRKIDD@YCDES.LCL,york911alerts@gmail.com,@active911.com,wrblackwell@comcast.net,CServiceAccount@YorkCountyPA.gov";
   }
 
 
