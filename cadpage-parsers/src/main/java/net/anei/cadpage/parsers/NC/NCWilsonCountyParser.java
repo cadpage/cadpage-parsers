@@ -19,7 +19,7 @@ public class NCWilsonCountyParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "@Wilson-co.com,930010";
+    return "@Wilson-co.com,cad@wilsoncountync.gov,930010";
   }
 
   @Override
