@@ -20,17 +20,17 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
     super(CITY_LIST, "WASHINGTON COUNTY", "OH",
           "( Call_Date:DATE! Call_Time:TIME! Fire_Code:CALL! Location:ADDR! Owner:PLACE! Sector:MAP! Description:INFO! " +
             "Cross_Street1:X! Cross_Street2:X! Alert1:ALERT! Alert2:ALERT/SDS! " +
-          "| DATETIME2 CALL2 ( ADDR2 INFO2! INFO2/N X2 " + 
+          "| DATETIME2 CALL2 ( ADDR2 INFO2! INFO2/N X2 " +
                             "| ADDR/S CITY3! INFO! INFO/N+ CROSS_STREETS:X3! ) " +
           ") END");
     setupCities(WV_CITY_LIST);
   }
-  
+
   @Override
   public String getFilter() {
-    return "belprepd@gmail.com";
+    return "belprepd@gmail.com,admin@belprepd.com";
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page (\\d\\d-\\d{6})");
 
   @Override
@@ -41,7 +41,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
     if (WV_CITY_LIST.contains(data.strCity.toUpperCase())) data.strState = "WV";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram().replace("CITY", "CITY ST");
@@ -60,7 +60,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
     if (name.equals("X3")) return new MyCross3Field();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) @ (\\d\\d:\\d\\d:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -71,7 +71,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       data.strTime = match.group(2);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -80,7 +80,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*)\\(Sector=(\\d+)\\)");
   private static final Pattern ADDRESS_PTN1 = Pattern.compile("At (.*?),(.*?)\\((.*)\\)");
   private static final Pattern ADDRESS_PTN2 = Pattern.compile("(.*?) / *(.*)");
@@ -89,7 +89,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = ADDR_MAP_PTN.matcher(field);
@@ -104,28 +104,28 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
         data.strPlace = match.group(3).trim();
         return true;
       }
-      
+
       match = ADDRESS_PTN2.matcher(field);
       if (match.matches()) {
         parseAddress(match.group(1).trim().replace('@', '&'), data);
         data.strPlace = match.group(2).trim();
         return true;
       }
-      
+
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field,  data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY PLACE MAP";
     }
   }
-  
+
   private class MyInfo2Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -133,7 +133,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CROSS_PTN = Pattern.compile("Cross Streets are - (.*?) and\\b(.*)");
   private class MyCross2Field extends CrossField {
     @Override
@@ -150,7 +150,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyCity3Field extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -158,7 +158,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCross3Field extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -171,9 +171,9 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "BELPRE",
       "MARIETTA",
@@ -271,7 +271,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
       "WINGETT RUN",
       "YANKEEBURG"
   };
-  
+
   private static Set<String> WV_CITY_LIST = new HashSet<String>(Arrays.asList(
       // Woods County
       "BLENNERHASSETT",
