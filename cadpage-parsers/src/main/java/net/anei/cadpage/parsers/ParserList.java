@@ -642,6 +642,7 @@ public class ParserList {
               ,"KSMortonCounty"                 ,"Morton County, KS"
               ,"KSNeoshoCounty"                 ,"Neosho County, KS"
               ,"KSNessCounty"                   ,"Ness County, KS"
+              ,"KSOttawaCounty"                 ,"Ottawa County, KS"
               ,"KSPhillipsCounty"               ,"Phillips County, KS"
               ,"KSPottawatomieCounty"           ,"Pottawatomie County, KS"
               ,"KSRenoCounty"                   ,"Reno County, KS"
