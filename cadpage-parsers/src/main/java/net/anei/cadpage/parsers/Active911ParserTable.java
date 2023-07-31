@@ -118,6 +118,7 @@ public class Active911ParserTable {
       "US/AL/Gardendale",                 "ALJeffersonCountyH",
       "US/AL/GenevaCounty",               "ALGenevaCountyC",
       "US/AL/GurleyPD",                   "ALMadisonCountyB",
+      "US/AL/HighlandsEMS",               "ALJacksonCounty",
       "US/AL/Hoover",                     "ALHoover",
       "US/AL/Irondale",                   "ALJeffersonCountyH",
       "US/AL/JacksonCounty",              "ALJacksonCounty,ALMarshallCounty",
