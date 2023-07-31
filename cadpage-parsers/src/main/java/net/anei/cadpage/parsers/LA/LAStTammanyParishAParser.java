@@ -1,126 +1,154 @@
 package net.anei.cadpage.parsers.LA;
 
-import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-/**
- * St Tammany Parish, LA
- * NOTES: There is an Apartment field that is not always present.  This means that
- * the SRC_X field must have check logic in order for the FieldProgramParser to know
- * whether the apartment field exits or not.
- */
-public class LAStTammanyParishAParser extends FieldProgramParser {
 
-  private static final Pattern DELIM = Pattern.compile("\\|");
+public class LAStTammanyParishAParser extends FieldProgramParser {
 
   public LAStTammanyParishAParser() {
     super("ST TAMMANY PARISH", "LA",
-        "CALL! PLACE ADDRCITY APT? SRC_X TIME! ID? INFO/N+");
+          "CODE CALL_PFX+? ADDR/SL X/Z? MAP! END");
+    setupCallList(CALL_SET);
   }
 
   @Override
   public String getFilter() {
-    return "@dapage.net,@stfd.dapage.net,@stfpd1.dapage.net,stfpd1@stfpd1.dapage.net";
+    return "stfpd1@stfpd1.dapage.net";
   }
+
+  private String callPrefix = "";
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    String[] fields = DELIM.split(body);
+    if (subject.isEmpty() || !body.startsWith(subject)) return false;
 
-    // Check to see subject and first field match, this is just so we
-    // don't have a greedy parser
-    if(!subject.equals(fields[0])) return false;
-
-    if(!super.parseFields(fields, data)) return false;
-
-    if (data.strAddress.length() == 0) {
-      data.strAddress = "";
-      parseAddress(data.strCross, data);
-      data.strCross = "";
-    }
-
-    return true;
+    callPrefix = "";
+    return parseFields(body.split(","), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("APT")) return new MyAptField();
-    if (name.equals("SRC_X")) return new MySourceCrossField();
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
-    if (name.equals("ID")) return new IdField("(?:EVT# +)?(\\d{10})", true);
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CODE")) return new CodeField("[A-Z0-9]{1,5}", true);
+    if (name.equals("CALL_PFX")) return new MyCallPrefixField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("MAP")) return new MapField("\\d{4,5}[A-Z]?|COV\\d|OUT");
     return super.getField(name);
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM) *(.*)");
-  private class MyAptField extends AptField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = APT_PTN.matcher(field);
-      if (match.matches()) field = match.group(1);
-      super.parse(field, data);
-    }
-  }
+  private static final Pattern PFX_CALL_PTN = Pattern.compile("(?:BITES|The) ");
 
-  /***
-   * MySourceCrossField - Extracts from the field that contains the source the
-   * cross streee and source.  It also checks for an optional GRID field.  Grid is
-   * then stored in MAP.
-   */
-  private static final Pattern SOURCE_X_PTN = Pattern.compile("((?:STA )?[^ ]+) ?(?:GRID (\\d+))? XS");
-  private class MySourceCrossField extends SourceField {
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher sourceMatch = SOURCE_X_PTN.matcher(field);
-      if(sourceMatch.find()) {
-        parse(field, data);
-        return true;
-      }
-      else return false;
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      Matcher sourceMatch = SOURCE_X_PTN.matcher(field);
-      if(sourceMatch.lookingAt()) {
-        data.strSource = sourceMatch.group(1).trim();
-        data.strMap = getOptGroup(sourceMatch.group(2));
-        data.strCross = field.substring(sourceMatch.end()).trim();
-      }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " MAP X";
-    }
-
+  private class MyCallPrefixField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-  }
 
-  private class MyInfoField extends InfoField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!PFX_CALL_PTN.matcher(getRelativeField(+1)).lookingAt()) return false;
+      callPrefix = append(callPrefix, ", ", field);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldStart(field, "NARR");
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return null;
+    }
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = append(callPrefix, ", ", field);
       super.parse(field, data);
     }
   }
 
-  @Override
-  public String adjustMapCity(String city) {
-    return convertCodes(city, CITY_TABLE);
-  }
-
-  // Lookup table for Google city designations
-  private static final Properties CITY_TABLE = buildCodeTable(new String[]{
-    "ST JOE", "PEARL RIVER"
-  });
+  private static final CodeSet CALL_SET = new CodeSet(
+      "AB PAIN / PROBLEMS",
+      "ALLERGIES / STINGS, BITES",
+      "ASSAULT / SEXUAL / STUN GUN",
+      "BACK PAIN NON RECENT OR TRAUMATIC",
+      "BREATHING PROBLEMS",
+      "BURNS / EXPLOSION MINOR",
+      "CARDIAC / RESPIRATORY ARREST",
+      "CHEST PAIN ABNORMAL BREATHING",
+      "CHEST PAIN / CLAMMY OR COLD SWEATS",
+      "CHOKING / COMPLETE OBSTRUCTION",
+      "CHOKING / PARTIAL OBSTRUCTION",
+      "DIABETIC NOT ALERT",
+      "DIABETIC PROBLEM / ALERT",
+      "ELECTRICAL HAZARD",
+      "ELECTRICAL HAZARD C",
+      "ELECTRICAL HAZARD SAW",
+      "EXPLOSION",
+      "FAINTING",
+      "FAINTING (ALERT)",
+      "FALL / EXTREME",
+      "FALL / NON RECENT/ NOT DANGEROUS",
+      "FALL / SERIOUS",
+      "FIRE ALARM (HIGH LIFE HAZARDS)",
+      "FIRE ALARMS (LOW LIFE HAZARDS)",
+      "FIRE INCIDENT",
+      "FUEL SPILL/ FUEL ODOR",
+      "GAS LEAK/GAS ODOR (NATURAL AND LP GAS)",
+      "HEART PROBLEMS",
+      "HEAT/COLD EXPOSURE /NOT ALERT",
+      "HEMORRHAGE/LACERATION MAJOR",
+      "HEMORRHAGE / LACERATION MINOR",
+      "HEMORRHAGE / LACERATION POSSIBLY DANGEROUS",
+      "INEFFECTIVE BREATHING",
+      "MARINE/BOAT FIRE",
+      "MEDICAL",
+      "MEDICAL INCIDENT",
+      "MVA",
+      "MVC",
+      "OBVIOUS DEATH",
+      "ON AIR",
+      "OUT OF SERVICE",
+      "OUTSIDE FIRE (EXTINGUISHED)",
+      "OUTSIDE FIRE (LARGE)",
+      "OUTSIDE FIRE (SMALL)",
+      "OVERDOSE NOT ALERT",
+      "OVERDOSE UNCONSCIOUS",
+      "PHYSICAL FITNESS",
+      "POISONING (W/O PRIORITY SYMPTOMS)",
+      "PREGNANCY/CHILDBIRTH",
+      "PSYCHIATRIC/SUICIDE ATTEMPT",
+      "PUBLIC LIFT ASSIST",
+      "SEIZURE",
+      "SEIZURE / CONVULSION",
+      "SEIZURE / NOT SEIZING",
+      "SERVICE CALL (53A)",
+      "SERVICE CALL (53B)",
+      "SERVICE CALL (53O)",
+      "SICK PERSON",
+      "SICK PERSON (NON PRIORITY)",
+      "SICK PERSON (NOT ALERT)",
+      "SMOKE INVESTIGATION (OUTSIDE) HEAVY",
+      "STROKE / TIA",
+      "STRUCTURE FIRE",
+      "TEST CALL",
+      "TRAFFIC INCIDENT",
+      "TRAUMATC INJURIES",
+      "TRAUMATIC INJURIES",
+      "UNCONSCIOUS / FAINTING",
+      "UNKNOWN PROBLEM",
+      "VEHICLE FIRE",
+      "VEHICLE FIRE (LARGE)",
+      "WILDLAND/BRUSH/GRASS FIRE (INVESTIGATION)",
+      "WILDLAND/BRUSH/GRASS FIRE (LARGE)",
+      "WILDLAND/BRUSH/GRASS FIRE (SMALL)",
+      "WILDLAND/BRUSH/GRASS FIRE (SMALL) CLEAR"
+ );
 }

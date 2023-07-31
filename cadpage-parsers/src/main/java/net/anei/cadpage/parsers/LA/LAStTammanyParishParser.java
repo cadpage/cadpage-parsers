@@ -4,8 +4,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class LAStTammanyParishParser extends GroupBestParser {
-  
+
   public LAStTammanyParishParser() {
-    super(new LAStTammanyParishAParser(), new LAStTammanyParishBParser());
+    super(new LAStTammanyParishAParser(),
+          new LAStTammanyParishBParser(),
+          new LAStTammanyParishCParser());
   }
 }
