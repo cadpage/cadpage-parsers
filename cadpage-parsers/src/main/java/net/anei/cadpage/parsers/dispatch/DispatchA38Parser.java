@@ -24,7 +24,7 @@ public class DispatchA38Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}|\\d{8}|\\d{2}-\\d+|\\d{2}[A-Z]{3}\\d{6}|[A-Z]{3,4}\\d{6}", true);
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}|\\d{8}|\\d{10}|\\d{2}-\\d+|\\d{2}[A-Z]{3}\\d{6}|[A-Z]{3,4}\\d{6}", true);
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }

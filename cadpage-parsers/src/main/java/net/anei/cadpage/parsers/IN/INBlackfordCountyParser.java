@@ -1,27 +1,15 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA38Parser;
 
-public class INBlackfordCountyParser extends DispatchEmergitechParser {
+public class INBlackfordCountyParser extends DispatchA38Parser {
 
   public INBlackfordCountyParser() {
-    super(CITY_LIST, "BLACKFORD COUNTY", "IN", TrailAddrType.NONE);
+    super("BLACKFORD COUNTY", "IN");
   }
-
-  private static final String[] CITY_LIST = new String[] {
-      // Cities
-      "HARTFORD CITY",
-      "MONTPELIER",
-      "DUNKIRK",
-
-      // Towns
-      "SHAMROCK LAKES",
-
-      // Unincorporated communities
-      "CONVERSE",
-      "MATAMORAS",
-      "MILLGROVE",
-      "ROLL",
-      "TRENTON"
-  };
+  
+  @Override
+  public String getFilter() {
+    return "bcsdispatch@Blackfordcounty.in.gov";
+  }
 }
