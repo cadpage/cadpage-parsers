@@ -69,7 +69,12 @@ public class NJSussexCountyAParser extends SmartAddressParser {
       }
       data.strUnit = unit.replace(' ', '_');
     }
-
+    else if (body.endsWith("...")) {
+      pt =  body.lastIndexOf('\n');
+      if ("\nActive Units:".startsWith(body.substring(pt, body.length()-3))) {
+        body = body.substring(0,pt).trim();
+      }
+    }
 
     body = body.replace('\n', ' ');
     match = MASTER_PTN.matcher(body);
