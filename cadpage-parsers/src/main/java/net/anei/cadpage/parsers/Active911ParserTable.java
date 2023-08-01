@@ -147,7 +147,7 @@ public class Active911ParserTable {
       "US/AL/StClairCounty",              "ALStClairCounty",
       "US/AL/SummitVFR",                  "ALBlountCountyB",
       "US/AL/TalladegaCounty",            "ALTalladegaCountyA",
-      "US/AL/Tallapoosa911",              "StandardA",
+      "US/AL/Tallapoosa911",              "ALTallapoosaCountyB,ALTallapoosaCountyD",
       "US/AL/TallapoosaCounty",           "ALTallapoosaCountyC",
       "US/AL/Tarrant911",                 "ALJeffersonCountyJ",
       "US/AL/Trussville",                 "ALJeffersonCountyI",
