@@ -13,4 +13,10 @@ public class COChaffeeCountyParser extends DispatchA55Parser {
   public String getFilter() {
     return "ereports@eforcesoftware.com";
   }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("GARFIELD/MONARCH")) city = "SALIDA";
+    return city;
+  }
 }
