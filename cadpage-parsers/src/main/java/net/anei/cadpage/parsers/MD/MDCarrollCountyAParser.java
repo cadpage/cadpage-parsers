@@ -13,35 +13,35 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Carroll County, MD
  */
 public class MDCarrollCountyAParser extends FieldProgramParser {
-  
+
   public MDCarrollCountyAParser() {
     super("CARROLL COUNTY", "MD",
           "TIME CT:ADDR! BOX:BOX! DUE:UNIT!");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getFilter() {
-    return "@c-msg.net,carrollalert@carroll911.mygbiz.com";
+    return "@c-msg.net,carrollalert@carroll911.mygbiz.com,alerts@carroll911.org";
   }
 
   private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)(CT:.*?) (?:(\\d{6,8}) )?(\\d\\d:\\d\\d)");
   private static final Pattern TRAIL_SEQ = Pattern.compile(" \\[\\d+\\]$");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Try to parse long format
     if (parseLongForm(subject, body, data)) return true;
-    
+
     do {
       if (subject.equals("!")) break;
-      
+
       if (subject.endsWith("|!")) {
         data.strSource = subject.substring(0,subject.length()-2);
         break;
       }
-      
+
       int pt = body.indexOf(" / [!] ");
       if (pt >= 0) {
         data.strSource = body.substring(0,pt).trim();
@@ -51,22 +51,22 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
       // Message signatures are now optional.  If we don't find one, keep on procesing
     } while (false);
-    
+
     String[] subFlds = subject.split("|");
     if (subFlds.length == 2 && subFlds[0].equals("CMalert")) data.strSource = subFlds[1];
-    
+
     String prefix = "";
     if (body.startsWith("RE-ALERT!\n")) {
       prefix = "RE-ALERT!";
       body = body.substring(10).trim();
     }
-    
+
     int pt = body.indexOf("\nDO NOT RESPOND");
     if (pt >= 0) {
       prefix = append(prefix," ", "DO NOT RESPOND");
       body = body.substring(0,pt).trim();
     }
-    
+
     Matcher match = TIME_SEQ_TIME_PTN.matcher(body);
     if (match.matches()) {
       body = match.group(2).trim();
@@ -77,17 +77,17 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       match = TRAIL_SEQ.matcher(body);
       if (match.find()) body = body.substring(0,match.start()).trim();
     }
-    
+
     if (!super.parseMsg(body, data)) return false;
     data.strCall = append(prefix, " - ", data.strCall);
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram() + " ID TIME";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
@@ -102,10 +102,10 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern BOX_PTN = Pattern.compile("\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?");
   private static final Pattern BOX_PTN2 = Pattern.compile("(?: +BOX)? +(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?)$");
   private class MyAddressField extends Field {
-    
+
     @Override
     public void parse(String fld, Data data) {
-      
+
       fld = fld.replaceAll("/+ */+", "/");
       fld = stripFieldEnd(fld, "/");
 
@@ -122,7 +122,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
           if (data.strBox == null) data.strBox = "";
         }
         fld = fld.substring(match.end()).trim();
-        
+
         // Sometimes, the address line is nicely split out with slashes, dashes, or semicolons
         // But first protectect L/Z short for Landing Zone
         // Also CP/TB whatever that may be
@@ -138,7 +138,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
             }
             sNdx++;
           }
-          
+
           int eNdx = flds.length-1;
           if (eNdx-sNdx > 0 && data.strChannel.length() == 0) {
             data.strChannel = flds[eNdx--];
@@ -155,23 +155,23 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
             data.strCall = append(data.strCall, " / ", flds[j].replace("L%Z", "L/Z").replace("CP%TB", "CP/TB"));
           }
         }
-        
+
         // and sometimes they do not :(
         else {
-          
+
           // Check for trailing channel
           match = CHANNEL_PTN.matcher(fld);
           if (match.find()) {
             data.strChannel = append(getOptGroup(match.group(1)), " ", match.group(2));
             fld = fld.substring(0,match.start()).trim();
           }
-          
+
           // And a trailing box number
           match = BOX_PTN2.matcher(fld);
           if (match.find()) {
             data.strBox = match.group(1);
             fld = fld.substring(0,match.start());
-            
+
             // and an occasional trailing channel in front of the box number :(
             if (data.strChannel.length() == 0) {
               match = CHANNEL_PTN.matcher(fld);
@@ -181,7 +181,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
               }
             }
           }
-          
+
           String call;
           int pt = fld.indexOf(';');
           if (pt >= 0) {
@@ -189,18 +189,18 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
             fld = fld.substring(0,pt).trim();
             parseAddress(StartType.START_PLACE, FLAG_ANCHOR_END, fld, data);
           }
-          
+
           else {
             parseAddress(StartType.START_PLACE, fld, data);
             call = getLeft();
           }
           call = stripFieldStart(call, "/");
-          
+
           if (data.strPlace.endsWith("/")) {
             data.strAddress = append(data.strPlace.substring(0,data.strPlace.length()-1).trim(), " & ", data.strAddress);
             data.strPlace = "";
           }
-          
+
           // Otherwise, just take the leftover stuff as the call description
           // If there isn't anything left over, grab the leading place field instead
           if (call.length() == 0) {
@@ -210,10 +210,10 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
           data.strCall = append("MA", " - ", call);
         }
       }
-      
+
       // If normal (not mutual aid) call
       else {
-        
+
         // First see if we recognize the call description
         StartType st = StartType.START_CALL;
         int flags = FLAG_START_FLD_REQ | FLAG_ANCHOR_END;
@@ -226,22 +226,22 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
           if (data.strCode.equals(data.strCall)) data.strCode = "";
           fld = res.getRemainder();
         }
-        
+
         parseOurAddress(st, flags, fld, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL BOX PLACE ADDR X APT CITY CH";
     }
   }
-  
+
   // Box field behaves normally unless this is a mutual aid call
   // in which case it becomes a county code
   private static final Pattern BOX_CODE_PTN = Pattern.compile("([A-Z]{2})\\d+");
   private class MyBoxField extends BoxField {
-    
+
     @Override
     public void parse(String fld, Data data) {
       if (data.strCall.startsWith("MA ") || data.strCall.equals("MA")) {
@@ -256,13 +256,13 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         super.parse(fld, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "BOX CITY ST";
     }
   }
-  
+
   private static final Pattern EVT_PRT_MARKER = Pattern.compile("C\\.A\\.D\\. +Event Listing For: (\\S+) +");
   private static final Pattern EVT_PRT_FND_CALL1_PTN = Pattern.compile(" HR  PR\n(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) +FND: +(.*?) {6,}");
   private static final Pattern EVT_PRT_RPT_CALL2_PTN = Pattern.compile("\n +RPT: +(.*?) +\n");
@@ -270,7 +270,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern EVT_PRT_LOCATION_PTN = Pattern.compile("\nLocation +C/A +USE +OPER\n(.*?) {6,}");
   private static final Pattern EVT_PRT_BOX_PTN = Pattern.compile("\\*\\*\\*(?:BOX)? *([-0-9]+)[ /]+(.*)");
   private static final Pattern EVT_PRT_APT_PTN = Pattern.compile("(.*?) *(?:APT|ROOM|LOT) +(\\S+)\\b *(.*?)");
-  
+
   private static final Pattern MBREAK_PTN = Pattern.compile("\n{2,}");
   private static final Pattern PREFIX_PTN = Pattern.compile("(\\d\\d:\\d\\d) +");
   private static final Pattern TRIM_SPACE_PTN = Pattern.compile(" +\n *| *\n +");
@@ -291,19 +291,19 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     if (subject.equals("Event Print")) {
       data.msgType = MsgType.RUN_REPORT;
       setFieldList("ID DATE TIME CODE CALL BOX ADDR APT CITY PLACE INFO");
-      
+
       Matcher match = EVT_PRT_MARKER.matcher(body);
       if (!match.lookingAt()) return false;
       data.strCallId = match.group(1);
       body = body.substring(match.end());
-      
+
       Parser p = new Parser(body);
       match = p.getMatcher(EVT_PRT_FND_CALL1_PTN);
       if (match == null) return false;
       data.strDate = match.group(1);
       data.strTime = match.group(2);
       String call = match.group(3);
-      
+
       match = p.getMatcher(EVT_PRT_RPT_CALL2_PTN);
       if (match == null) return false;
       if (call.length() == 0) call = match.group(1);
@@ -313,7 +313,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         call = match.group(2);
       }
       data.strCall = call;
-      
+
       match = p.getMatcher(EVT_PRT_LOCATION_PTN);
       if (match == null) return false;
       String addr = match.group(1);
@@ -335,31 +335,31 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       }
       parseAddress(addr, data);
       data.strApt = append(apt, "-", apt);
-      
+
       p.get("\n \n");
       String info = p.get();
       if (!info.startsWith("Caller Information")) return false;
       data.strSupp = info;
       return true;
     }
-    
-    
+
+
     // Check subject and message prefix
     if (!subject.equals("CAD") && !subject.equals("Dispatch Rip/Run")) return false;
     Matcher match = PREFIX_PTN.matcher(body);
     if (!match.lookingAt()) return false;
-    
+
     setFieldList("TIME CODE CALL ID ADDR APT CITY X MAP NAME PHONE PLACE INFO UNIT");
-    
+
     data.strTime = match.group(1);
     body = body.substring(match.end());
-    
+
     // remove extraneous blanks
     body = TRIM_SPACE_PTN.matcher(body).replaceAll("\n");
-    
+
     // and message trailer
     body = stripFieldEnd(body, "<< END OF MESSAGE >>");
-    
+
     // Parse dispatch alert
     if (body.startsWith("DISPATCH INFO\n\n")) {
       int pt = body.indexOf("\n\n*** Premise Info ***");
@@ -372,7 +372,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       data.strCode = match.group(1);
       data.strCall = match.group(2).trim();
       data.strCallId = getOptGroup(match.group(3));
-      
+
       match = ADDR_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       String addr = match.group(1).trim();
@@ -382,7 +382,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         addr = match.group(2);
       }
       parseOurAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
-      
+
       String line = p.getLine();
       if (!line.startsWith("Name")) {
         match = CROSS_MAP_PTN.matcher(line);
@@ -393,14 +393,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         cross = stripFieldEnd(cross, "/");
         data.strCross = cross;
         data.strMap = getOptGroup(match.group(2));
-        
+
         line = p.getLine();
       }
-      
+
       match = NAME_PTN.matcher(line);
       if (!match.matches()) return false;
       data.strName = cleanWirelessCarrier(match.group(1).trim());
-      
+
       match = PLACE_PHONE_PTN.matcher(p.getLine());
       if (!match.matches()) return false;
       // Places that look like street addresses are probably
@@ -417,7 +417,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         if (ac.length() > 0) phone = '(' + ac + ") " + phone;
         data.strPhone = phone;
       }
-      
+
       String info = stripFieldStart(p.get(), "Remarks");
       match = UNIT_PTN.matcher(info);
       if (match.find()) {
@@ -427,26 +427,26 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       data.strSupp = info;
       return true;
     }
-    
+
     // Try to find a call ID
     match = LONG_ID_PTN.matcher(body);
     if (!match.lookingAt()) return false;
     data.strCallId = getOptGroup(match.group(1));
-    
+
     // Set the message type
     data.msgType = (body.startsWith("ProQa Data for Incident:") ? MsgType.GEN_ALERT : MsgType.RUN_REPORT);
-    
+
     // Everything goes into info
     data.strSupp = body;
     return true;
   }
-  
+
   private static final Pattern BOX1_PFX_PTN = Pattern.compile("([A-Z]C), *");
   private static final Pattern BOX2_PFX_PTN = Pattern.compile("(\\d{1,2}-\\d{1,2})[ /]+");
   private static final Pattern APT_PTN = Pattern.compile("(?:\\bAPT\\b|#) *([^ ]+)$", Pattern.CASE_INSENSITIVE);
-  
+
   private void parseOurAddress(StartType st, int flags, String fld, Data data) {
-    
+
     // Next check if the last token is a recognized city and
     // strip it off if it is, otherwise it messes up the following logic
     int pt = fld.lastIndexOf(" City");
@@ -461,13 +461,13 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         fld = p.get();
       }
     }
-    
+
     pt = fld.lastIndexOf(" Apt");
     if (pt >= 0) {
       data.strApt = fld.substring(pt+4).trim();
       fld = fld.substring(0,pt).trim();
     }
-    
+
     // Again, the rules change when this is a mutual aid alarm
     if (data.strCall.equals("MUTUAL AID ALARM")) {
       Matcher match = BOX1_PFX_PTN.matcher(fld);
@@ -483,13 +483,13 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
           }
         }
       }
-      
+
       match = BOX2_PFX_PTN.matcher(fld);
       if (match.lookingAt()) {
         data.strBox = append(data.strBox, " ", match.group(1));
         fld = fld.substring(match.end());
       }
-      
+
       parseAddress(StartType.START_ADDR, FLAG_NO_CITY, fld, data);
       String call = getLeft();
       call = stripFieldStart(call, "/");
@@ -497,7 +497,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       data.strCall = append(data.strCall, " - ", call);
       return;
     }
-    
+
     // Rest of address could include a place name separated by a ; or @
     // Unfortunately, the two fields might be in either order :(
     // Worse, there could be 3 or  more :(  In which case we only
@@ -543,14 +543,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     // Other location seem OK with decimal street addresses, but not here
     return DECIMAL_PTN.matcher(address).replaceFirst("$1");
   }
   private static final Pattern DECIMAL_PTN = Pattern.compile("^(\\d+)\\.\\d+");
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "AGRICULTURAL CENTER",
     "ARTHUR SHIPLEY",
@@ -578,7 +578,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     "CORPORATE CENTER",
     "CROUSE MILL",
     "DARK HOLLOW",
-    "DAVE RILL", 
+    "DAVE RILL",
     "DEER PARK",
     "DOCTOR STITELY",
     "EAST CHERRY HILL",
@@ -682,7 +682,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       "WEST", "WESTMINSTER",
       "WOOD", "WOODBINE"
   });
-  
+
   // Mutual aid count abbreviations
   private static final Properties COUNTY_CODES = buildCodeTable(new String[]{
       "YC", "YORK COUNTY,PA",
@@ -692,7 +692,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       "AC", "ADAMS COUNTY,PA",
       "MC", "MONTGOMERY COUNTY"
   });
-  
+
   @Override
   public boolean checkCall(String call) {
     call = stripFieldStart(call, "RE-ALERT! - ");
@@ -924,7 +924,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         key = null;
       }
     }
-    
+
     for (String value : new String[]{
         "ABDOMINAL PAIN-ALS",
         "ABDOMINAL PAIN-BLS",
