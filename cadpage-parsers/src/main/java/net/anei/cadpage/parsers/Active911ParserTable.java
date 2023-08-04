@@ -153,7 +153,7 @@ public class Active911ParserTable {
       "US/AL/Trussville",                 "ALJeffersonCountyI",
       "US/AL/TSSEMS",                     "ALTalladegaCountyB",
       "US/AL/Tuscaloosa",                 "ALTuscaloosaCounty",
-      "US/AL/UnionVFR",                   "ALTallapoosaCountyB",
+      "US/AL/UnionVFR",                   "ALTallapoosaCountyB,ALTallapoosaCountyD",
       "US/AL/Vandiver",                   "ALShelbyCountyA",
       "US/AL/Velocityps",                 "ALJeffersonCountyF",
       "US/AL/WalkerCounty",               "ALWalkerCountyA",
