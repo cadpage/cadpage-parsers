@@ -44,8 +44,8 @@ public class COMesaCountyAParser extends FieldProgramParser {
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
-      if (!field.startsWith("INC# ")) abort();
-      field = field.substring(5).trim();
+      if (!field.startsWith("INC#")) abort();
+      field = field.substring(4).trim();
       field = ID_JUNK_PTN.matcher(field).replaceAll("");
       super.parse(field, data);
     }
@@ -62,7 +62,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
     @Override
@@ -70,7 +70,12 @@ public class COMesaCountyAParser extends FieldProgramParser {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(2), data);
+      } else {
+        data.strTime = time;
+      }
     }
 
     @Override
