@@ -10,7 +10,7 @@ public class OHJacksonCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "jacksonflexmsi@gmail.com";
+    return "jacksonflexmsi@gmail.com,flex@jacksonohio.co";
   }
 
   @Override
