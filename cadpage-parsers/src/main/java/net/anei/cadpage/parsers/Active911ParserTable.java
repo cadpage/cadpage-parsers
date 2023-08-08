@@ -2199,6 +2199,7 @@ public class Active911ParserTable {
       "US/SC/McCormickCounty",            "SCMcCormickCounty,SCGreenwoodCounty",
       "US/SC/MidlandsAmbulance",          "SCSumterCountyB",
       "US/SC/NewberryCounty",             "SCNewberryCounty",
+      "US/SC/NorthMyrtleBeach",           "SCHorryCounty",
       "US/SC/OconeeCounty",               "SCOconeeCounty",
       "US/SC/OrangeburgCounty",           "SCOrangeburgCounty",
       "US/SC/ParkerFD",                   "SCGreenvilleCountyE",

@@ -1538,6 +1538,7 @@ public class ParserList {
               ,"SCGeorgetownCounty"             ,"Georgetown County, SC"
               ,"SCGreenvilleCounty"             ,"Greenville County, SC"
               ,"SCGreenwoodCounty"              ,"Greenwood County, SC"
+              ,"SCHorryCounty"                  ,"Horry County, SC"
               ,"SCJasperCounty"                 ,"Jasper County, SC"
               ,"SCKershawCounty"                ,"Kershaw County, SC"
               ,"SCLancasterCounty"              ,"Lancaster County, SC"
