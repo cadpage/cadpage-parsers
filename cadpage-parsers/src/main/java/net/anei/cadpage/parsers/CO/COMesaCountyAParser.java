@@ -13,7 +13,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
 
   public COMesaCountyAParser() {
     super("MESA COUNTY", "CO",
-          "ID Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X? Call_Time:DATETIME! Narrative:INFO/N+");
+          "ID Call_Type:CALL! Address:ADDRCITY! ( Additional_address_info:PLACE! | Common_Name:PLACE! ) Closest_Intersection:X? Call_Time:DATETIME! Narrative:INFO/N+");
   }
 
   @Override
@@ -29,7 +29,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
-    return super.parseMsg(body, data);
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
@@ -44,6 +44,7 @@ public class COMesaCountyAParser extends FieldProgramParser {
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("****CAREFLIGHT****")) return;
       if (!field.startsWith("INC#")) abort();
       field = field.substring(4).trim();
       field = ID_JUNK_PTN.matcher(field).replaceAll("");
