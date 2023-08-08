@@ -522,6 +522,7 @@ public class ParserList {
           ),
           new ParserCategory("Indiana"
               ,"INAdamsCounty"                  ,"Adams County, IN"
+              ,"INAllenCounty"                  ,"Allen County, IN"
               ,"INBartholomewCounty"            ,"Bartholomew County, IN"
               ,"INBlackfordCounty"              ,"Blackford County, IN"
               ,"INBooneCounty"                  ,"Boone County, IN"
