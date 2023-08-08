@@ -15,16 +15,19 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
 
   private static final Pattern PART_MARKER = Pattern.compile("^\\d\\d:\\d\\d ");
   private static final Pattern DATE_PTN = Pattern.compile("(\\d+)/(\\d+)");
+  private static final Pattern DELIM1_PTN = Pattern.compile(",| (?=Units:)");
   private static final Pattern MARKER1 = Pattern.compile("(?:/ (?:(?:no subject|Text Message) / )?)?(?:(\\d\\d/\\d\\d) )?(?:(\\d\\d:\\d\\d) )?(?:Inc: *(\\d*);)?");
   private static final Pattern MARKER2 = Pattern.compile("(?:Assigned to Incident|Status Changed to Available|Resend Incident Information) (\\d{9}) +");
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Incident: *(\\d+) +Unit: *([^ ]*) +(Dispatched:.*)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("Incident: *(\\d+)\\s+Unit: *([^ ]*)\\s+(Dispatched:.*)", Pattern.DOTALL);
   private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile("(?<=:(?:\\d\\d:\\d\\d:\\d\\d)?) +");
   private static final Pattern MISSED_COLON_PTN = Pattern.compile("(?<=Map)(?=\\d)");
   private static final Pattern TRAILER = Pattern.compile(" +(\\d{8,}) *$");
 
   public TXCyCreekCommCenterAParser() {
     super("HARRIS COUNTY", "TX",
-          "Inc:ID? ADDR! Map:MAP! Sub:PLACE? Juris:SRC? Nat:CALL! Units:UNIT% X-St:X NOTES:INFO");
+          "( SELECT/1 ID:ID! CALL:CALL! PLACE:PLACE! ADDR:ADDR! Map:MAP! Sub:PLACE! " +
+          "| Inc:ID? ADDR! Map:MAP! Sub:PLACE? Juris:SRC? Nat:CALL! " +
+          ") Units:UNIT% X-St:X CITY:CITY GPS:GPS TAC_CHANNEL:CH NOTES:INFO");
   }
 
   @Override
@@ -34,7 +37,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
   @Override
@@ -75,9 +78,6 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     body = stripFieldStart(body, "/ Text Message /");
     body = stripFieldStart(body, "CommCenter@ccems.com:");
 
-    if (subject.equals("Text Message")) subject = "";
-    data.strSource = subject;
-
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -88,6 +88,18 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
       return true;
     }
 
+    if (body.startsWith("ID:")) {
+      int pt = body.indexOf(", NOTES:");
+      if (pt < 0) return false;
+      String[] tflds = DELIM1_PTN.split(body.substring(0,pt));
+      String[] flds = new String[tflds.length+1];
+      System.arraycopy(tflds, 0, flds, 0, tflds.length);
+      flds[tflds.length] = body.substring(pt+2);
+      setSelectValue("1");
+      return parseFields(flds, data);
+    }
+
+    setSelectValue("2");
     match = MARKER1.matcher(body);
     if (!match.lookingAt()) return false;  // Never happens anymore
     data.strDate = getOptGroup(match.group(1));
@@ -135,7 +147,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "SRC DATE TIME " + super.getProgram() + " ID";
+    return "DATE TIME " + super.getProgram() + " ID";
   }
 
   @Override
@@ -143,6 +155,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
 
@@ -208,6 +221,15 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
           data.strCross = append(data.strCross, " / ", getLeft());
         }
       }
+    }
+  }
+
+  private static final Pattern MISSING_COMMA_PTN = Pattern.compile("(?<=\\d)(?=-)");
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      field = MISSING_COMMA_PTN.matcher(field).replaceFirst(",");
+      super.parse(field, data);
     }
   }
 }

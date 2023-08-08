@@ -7,7 +7,8 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
 
   public MILenaweeCountyCParser() {
     super("LENAWEE COUNTY", "MI",
-          "EMPTY+? CALL DATETIME PLACE? ADDRCITY/S6 ( X | PLACE X ) https:SKIP! INFO_BLK/Z+? UNIT! Alerts:ALERT! Caller:NAME! Caller's_TX:PHONE! Incident_#:EMPTY! ID! TIMES+");
+          "Call_Type:CALL! Call_Date/Time:DATETIME! Common_Name:PLACE! ( Call_Address:ADDRCITY! | Address:ADDRCITY ) Additional_Location:PLACE/SDS! " +
+             "Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! ) Alerts:ALERT! Caller:NAME! Caller's_TX:PHONE! Incident_#:ID! Status_Times:EMPTY! TIMES+");
   }
 
   @Override
@@ -26,42 +27,31 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
 
   private class MyAddressCityField extends AddressCityField {
-    @Override
-    public boolean checkParse(String field, Data data) {
-      return parse(false, field, data);
-    }
 
     @Override
     public void parse(String field, Data data) {
-      parse(true, field, data);
-    }
-
-    private boolean parse(boolean force, String field, Data data) {
-      if (!force && !field.contains(",") && !field.startsWith("LAT:")) return false;
+      String apt = "";
+      int pt = field.indexOf("Apt/Lot:");
+      if (pt >= 0) {
+        apt = field.substring(pt+8).trim();
+        field = field.substring(0,pt).trim();
+      }
       field = field.replace('@', '&');
       super.parse(field, data);
-      data.strCity = stripFieldEnd(data.strCity, data.strApt);
-      return true;
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
 
-  private class MyCrossField extends CrossField {
+  private class MyNameField extends NameField {
     @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!field.contains("/")) return false;
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ",");
       super.parse(field, data);
-      return true;
     }
   }
-
 }
