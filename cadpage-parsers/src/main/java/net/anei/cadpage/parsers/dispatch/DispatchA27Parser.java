@@ -50,6 +50,8 @@ public class DispatchA27Parser extends FieldProgramParser {
     body = body.substring(match.end()).trim();
     unitMode = UnitMode.UNIT;
     times = "";
+
+    body = body.replace("\n\nIncident Nr:", "\nIncident Nr:");
     String[] flds = DELIM_PTN.split(body);
     if (flds.length > 1) {
       setSelectValue("OLD");
@@ -206,6 +208,11 @@ public class DispatchA27Parser extends FieldProgramParser {
         data.strPlace = append(data.strPlace, " - ", stripFieldStart(place, "CPN:"));
         line = p.getLine();
       }
+      String phone = getValue(line, "Phone:");
+      if (phone != null) {
+        data.strPhone = phone;
+        line = p.getLine();
+      }
       if (getValue(line, "Activity:") == null) abort();
       if (getValue(p, "Disposition:") == null) abort();
       String time = getValue(p,"Time reported:");
@@ -226,7 +233,7 @@ public class DispatchA27Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "SRC ID PLACE DATE TIME";
+      return "SRC ID PLACE PHONE DATE TIME";
     }
   }
 
@@ -318,6 +325,10 @@ public class DispatchA27Parser extends FieldProgramParser {
           data.strPlace = append(data.strPlace, " - ", line.substring(4).trim());
         } else if (line.startsWith("Common Name:")) {
           data.strPlace = append(data.strPlace, " - ", stripFieldStart(line.substring(12).trim(), "CPN:"));
+        } else if (line.startsWith("Activity:")) {
+          continue;
+        } else if (line.startsWith("Phone:")) {
+          data.strPhone = line.substring(6).trim();
         } else {
           data.strSupp = append(data.strSupp, "\n", line);
         }
@@ -326,7 +337,7 @@ public class DispatchA27Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "DATE TIME INFO";
+      return "DATE TIME PLACE PHONE INFO";
     }
   }
 

@@ -853,6 +853,7 @@ public class Active911ParserTable {
       "US/KY/EstillCounty",               "KYEstillCounty",
       "US/KY/EstillCountyFire",           "KYEstillCounty",
       "US/KY/Flatwoods",                  "KYGreenupCountyA",
+      "US/KY/FloydCounty",                "KYFloydCountyB",
       "US/KY/FranklinCounty",             "KYFranklinCountyB",
       "US/KY/FultonCounty",               "KYFultonCounty",
       "US/KY/GallatinCounty",             "KYGallatinCountyA",
