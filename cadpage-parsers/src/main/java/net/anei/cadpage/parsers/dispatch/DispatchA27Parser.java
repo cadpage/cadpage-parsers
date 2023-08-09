@@ -51,6 +51,9 @@ public class DispatchA27Parser extends FieldProgramParser {
     unitMode = UnitMode.UNIT;
     times = "";
 
+    int pt = body.indexOf("\n<img src=");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
     body = body.replace("\n\nIncident Nr:", "\nIncident Nr:");
     String[] flds = DELIM_PTN.split(body);
     if (flds.length > 1) {

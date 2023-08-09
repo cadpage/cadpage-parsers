@@ -117,7 +117,7 @@ public class Active911ParserTable {
       "US/AL/FranklinCounty",             "ALFranklinCounty",
       "US/AL/Gardendale",                 "ALJeffersonCountyH",
       "US/AL/GenevaCounty",               "ALGenevaCountyC",
-      "US/AL/GulfShoresFireRescue",       "ALBaldwinCountyBS",
+      "US/AL/GulfShoresFireRescue",       "ALBaldwinCountyB",
       "US/AL/GurleyPD",                   "ALMadisonCountyB",
       "US/AL/HighlandsEMS",               "ALJacksonCounty",
       "US/AL/Hoover",                     "ALHoover",
