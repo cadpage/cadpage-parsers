@@ -12,20 +12,20 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 
 public class OHGreeneCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern MISSED_BLANK_PTN = Pattern.compile("([^ ])(Info:)");
-  
+
   public OHGreeneCountyAParser() {
     super(CITY_LIST, "GREENE COUNTY", "OH",
-          "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:SKIP! Narrative:INFO/N INFO/N+ " + 
+          "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:ID! Narrative:INFO/N INFO/N+ " +
           "| CALL2 Location:ADDR2/SXXx! Time:TIME Units:UNIT Common_Name:PLACE Info:INFO ( Problem:CALL Patient_Info:INFO | Nature_Of_Call:CALL ) Incident_#:ID2 Narrative:INFO Nature_Of_Call:CALL/SDS Quadrant:MAP EMS_District:MAP )");
   }
-  
+
   @Override
   public String getFilter() {
     return "@ci.xenia.oh.us";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "Call Type:");
@@ -53,7 +53,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_CROSS_PLACE_PTN = Pattern.compile("([^,]*)(?:, ([^~]*?))? ~ ([^~]*) ~ ([^~]*)");
   private static final Pattern ADDR_X_STREETS_PTN = Pattern.compile(" *\\bX STREETS\\b *");
   private class MyAddressCityCrossPlaceField extends AddressCityField {
@@ -77,13 +77,13 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       }
       if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY X PLACE";
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTime1Field extends DateTimeField {
@@ -100,7 +100,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyMap1Field extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -108,7 +108,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -116,7 +116,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern MM_PTN = Pattern.compile("\\d+MM");
   private class MyAddress2Field extends AddressField {
 
@@ -148,7 +148,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       }
       DispatchProQAParser.parseProQAData(false, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ID " + super.getFieldNames();
@@ -160,15 +160,15 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       DispatchProQAParser.parseProQAData(false, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO CODE";
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "BEAVERCREEK",
     "BELLBROOK",
@@ -177,7 +177,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     "HUBER HEIGHTS",
     "KETTERING",
     "XENIA",
-    
+
     // Villages
     "BOWERSVILLE",
     "CEDARVILLE",
@@ -185,7 +185,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     "JAMESTOWN",
     "SPRING VALLEY",
     "YELLOW SPRINGS",
-    
+
     // Townships
     "BATH TWP",
     "BEAVERCREEK TWP",
@@ -206,7 +206,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     "WRIGHT-PATTERSON AIR FORCE BASE",
     "BYRON",
     "OLDTOWN",
-    
+
     "CLARK COUNTY",
     "CLINTON COUNTY",
     "FAYETTE COUNTY",
