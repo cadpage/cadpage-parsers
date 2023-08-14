@@ -36,7 +36,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
-    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
+    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("UNIT")) return new BaseUnitField();
@@ -72,16 +72,17 @@ public class DispatchA71Parser extends FieldProgramParser {
     }
   }
 
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d?:\\d\\d?(:\\d\\d?)?(?: [AP]M)?");
+  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm:ss aa");
+  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm aa");
 
   private class BaseTimeField extends TimeField {
-    public BaseTimeField() {
-      super("\\d\\d?:\\d\\d?:\\d\\d?(?: [AP]M)?|\\d\\d:\\d\\d", true);
-    }
     @Override
     public void parse(String field, Data data) {
+      Matcher match = TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
       if (field.endsWith("M")) {
-        setTime(TIME_FMT, field, data);
+        setTime((match.group(1)!=null ? TIME_FMT1 : TIME_FMT2), field, data);
       }  else {
         data.strTime = field;
       }

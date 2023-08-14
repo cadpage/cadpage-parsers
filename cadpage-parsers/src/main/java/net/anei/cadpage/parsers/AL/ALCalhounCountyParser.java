@@ -4,8 +4,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class ALCalhounCountyParser extends GroupBestParser {
-  
+
   public ALCalhounCountyParser() {
-    super(new ALCalhounCountyAParser(), new ALCalhounCountyBParser());
+    super(new ALCalhounCountyAParser(),
+          new ALCalhounCountyBParser(),
+          new ALCalhounCountyDParser());
   }
 }

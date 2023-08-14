@@ -49,7 +49,7 @@ public class DispatchA24Parser extends FieldProgramParser {
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
-    if (name.equals("TIME")) return new TimeField("(?:CAD time *\\()?(\\d\\d?:\\d\\d(?::\\d\\d)?)\\)?(?: *\\(.*)?");
+    if (name.equals("TIME")) return new TimeField("(?:CAD time *\\()?(\\d\\d?:\\d\\d(?::\\d\\d)?)\\)?(?: *\\(.*)?", true);
     return super.getField(name);
   }
 
