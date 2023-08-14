@@ -395,6 +395,7 @@ public class ParserList {
               ,"GAChattoogaCounty"              ,"Chattooga County, GA"
               ,"GACherokeeCounty"               ,"Cherokee County, GA"
               ,"GAClaytonCounty"                ,"Clayton County, GA"
+              ,"GACobbCounty",                  ,"Cobb County, GA"
               ,"GACoffeeCounty"                 ,"Coffee County, GA"
               ,"GAColquittCounty"               ,"Colquitt County, GA"
               ,"GACrispCounty"                  ,"Crisp County, GA"

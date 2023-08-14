@@ -478,6 +478,7 @@ public class Active911ParserTable {
       "US/GA/ChathamCounty",              "GAChathamCountyB",
       "US/GA/ChattoogaCounty",            "GAChattoogaCounty",
       "US/GA/ClaytonCounty",              "GAClaytonCounty",
+      "US/GA/CobbCounty",                 "GACobbCounty",
       "US/GA/ColquittCounty",             "GAColquittCounty",
       "US/GA/CrispCounty",                "GACrispCounty",
       "US/GA/DawsonCounty",               "GADawsonCounty",
