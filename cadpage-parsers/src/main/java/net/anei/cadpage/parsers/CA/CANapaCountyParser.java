@@ -13,7 +13,7 @@ public class CANapaCountyParser extends FieldProgramParser {
   public CANapaCountyParser() {
     super("NAPA COUNTY", "CA",
           "( SELECT/1 CALL ADDRCITY ID INFO! RA:UNIT! GPS UNIT Cmd:SRC Tac:CH " +
-          "| CALL ADDRCITY! Cross-Street:X? ID! Remarks:INFO! INFO/N+? GPS! Cross-Street:X? Resources:UNIT! INFO2/N+ ) END");
+          "| CALL ADDRCITY! EMPTY? Cross-Street:X RA:SRC? ID! Remarks:INFO! INFO/N+? GPS! Cross-Street:X? Resources:UNIT! INFO2/N+ ) END");
   }
 
   @Override
