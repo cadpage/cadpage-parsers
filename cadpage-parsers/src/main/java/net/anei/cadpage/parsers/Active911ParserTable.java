@@ -1850,6 +1850,7 @@ public class Active911ParserTable {
       "US/OH/HolmesCountySheriff",        "OHHolmesCounty",
       "US/OH/Hudson",                     "OHSummitCountyH",
       "US/OH/HuronCounty",                "OHHuronCounty",
+      "US/OH/JacksonCounty",              "OHJacksonCountyB",
       "US/OH/JacksonCountyEMS",           "OHJacksonCountyB",
       "US/OH/JacksonTWPPD",               "OHMahoningCountyC",
       "US/OH/JeffersonCounty",            "OHJeffersonCounty",
