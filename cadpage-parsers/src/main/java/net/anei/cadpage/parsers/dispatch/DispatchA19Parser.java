@@ -103,7 +103,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)[: ]*(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
-  private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+)(?: - \\d{5})?");
+  private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -149,6 +149,13 @@ public class DispatchA19Parser extends FieldProgramParser {
             place = apt;
             apt = "";
           }
+        }
+      }
+      if (place == null) {
+        pt = field.indexOf(" - ");
+        if (pt >= 0) {
+          place = field.substring(pt+3).trim();
+          field = field.substring(0,pt).trim();
         }
       }
       if (place != null) data.strPlace = place;

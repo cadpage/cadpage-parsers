@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +52,7 @@ public class DispatchA24Parser extends FieldProgramParser {
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
-    if (name.equals("TIME")) return new TimeField("(?:CAD time *\\()?(\\d\\d?:\\d\\d(?::\\d\\d)?)\\)?(?: *\\(.*)?", true);
+    if (name.equals("TIME")) return new BaseTimeField();
     return super.getField(name);
   }
 
@@ -72,6 +75,23 @@ public class DispatchA24Parser extends FieldProgramParser {
         if (pt >= 0) field = field.substring(0, pt).trim();
       }
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern TIME_PTN = Pattern.compile("(?:CAD time *\\()?(\\d\\d?:\\d\\d(:\\d\\d)?( [AP]M)?)\\)?(?: *\\(.*)?");
+  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm:ss aa");
+  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm aa");
+  private class BaseTimeField extends TimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      field = match.group(1);
+      if (match.group(3)!=null) {
+        setTime((match.group(2)!=null ? TIME_FMT1 : TIME_FMT2), field, data);
+      } else {
+        data.strTime = field;
+      }
     }
   }
 }

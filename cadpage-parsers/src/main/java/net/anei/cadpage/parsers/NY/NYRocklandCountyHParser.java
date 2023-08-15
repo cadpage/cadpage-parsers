@@ -27,6 +27,7 @@ public class NYRocklandCountyHParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace("CROSS STREETS:", "CROSS STREET:");
     return parseFields(DELIM.split(body), data);
   }
 
