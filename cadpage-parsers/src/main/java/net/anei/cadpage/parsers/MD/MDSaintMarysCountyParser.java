@@ -19,7 +19,7 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "mplus@co.saint-marys.md.us,mplus@STMARYSMD.COM,777,888";
+    return "mplus@co.saint-marys.md.us,mplus@STMARYSMD.COM,@stmaryscountymd.gov,777,888";
   }
 
   @Override
