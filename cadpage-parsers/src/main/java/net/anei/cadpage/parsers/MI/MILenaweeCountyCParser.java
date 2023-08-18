@@ -8,7 +8,8 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
   public MILenaweeCountyCParser() {
     super("LENAWEE COUNTY", "MI",
           "Call_Type:CALL! Call_Date/Time:DATETIME! Common_Name:PLACE! ( Call_Address:ADDRCITY! | Address:ADDRCITY ) Additional_Location:PLACE/SDS! " +
-             "Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! ) Alerts:ALERT! Caller:NAME! Caller's_TX:PHONE! Incident_#:ID! Status_Times:EMPTY! TIMES+");
+             "Cross_Streets:X Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! ) Alerts:ALERT! INFO/N+ " +
+              "Caller:NAME! Caller's_TX:PHONE! Incident_#:ID! Status_Times:EMPTY! TIMES+");
   }
 
   @Override
