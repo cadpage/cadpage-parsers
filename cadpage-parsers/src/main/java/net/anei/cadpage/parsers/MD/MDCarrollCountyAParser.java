@@ -16,7 +16,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
   public MDCarrollCountyAParser() {
     super("CARROLL COUNTY", "MD",
-          "TIME CT:ADDR! BOX:BOX! DUE:UNIT!");
+          "TIME CT:ADDR! BOX:BOX! DUE:UNIT! END");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
 
@@ -25,7 +25,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     return "@c-msg.net,carrollalert@carroll911.mygbiz.com,alerts@carroll911.org";
   }
 
-  private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("(\\d\\d:\\d\\d)(CT:.*?) (?:(\\d{6,8}) )?(\\d\\d:\\d\\d)");
+  private static final Pattern TIME_SEQ_TIME_PTN = Pattern.compile("\\d\\d:\\d\\d(CT:.*?) (?:(\\d{6,8}) )?(\\d\\d:\\d\\d)", Pattern.DOTALL);
   private static final Pattern TRAIL_SEQ = Pattern.compile(" \\[\\d+\\]$");
 
   @Override
@@ -52,8 +52,12 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
       // Message signatures are now optional.  If we don't find one, keep on procesing
     } while (false);
 
-    String[] subFlds = subject.split("|");
-    if (subFlds.length == 2 && subFlds[0].equals("CMalert")) data.strSource = subFlds[1];
+    String[] subFlds = subject.split("\\|");
+    if (subFlds.length == 2 && subFlds[0].equals("CMalert")) {
+      data.strSource = subFlds[1];
+    } else if (subFlds.length == 1 && subject.startsWith("Sta")) {
+      data.strSource = subject;
+    }
 
     String prefix = "";
     if (body.startsWith("RE-ALERT!\n")) {
@@ -69,9 +73,9 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
     Matcher match = TIME_SEQ_TIME_PTN.matcher(body);
     if (match.matches()) {
-      body = match.group(2).trim();
-      data.strCallId = getOptGroup(match.group(3));
-      data.strTime = match.group(4);
+      body = match.group(1).trim();
+      data.strCallId = getOptGroup(match.group(2));
+      data.strTime = match.group(3);
     }
     else {
       match = TRAIL_SEQ.matcher(body);
@@ -349,7 +353,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     Matcher match = PREFIX_PTN.matcher(body);
     if (!match.lookingAt()) return false;
 
-    setFieldList("TIME CODE CALL ID ADDR APT CITY X MAP NAME PHONE PLACE INFO UNIT");
+    setFieldList("TIME CODE CALL ID BOX ADDR APT CITY X MAP NAME PHONE PLACE INFO UNIT");
 
     data.strTime = match.group(1);
     body = body.substring(match.end());
