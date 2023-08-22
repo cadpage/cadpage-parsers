@@ -10,6 +10,7 @@ public class TXDentonCountyParser extends GroupBestParser {
   public TXDentonCountyParser() {
     super(new TXDentonCountyAParser(),
           new TXDentonCountyBParser(),
-          new TXDentonCountyCParser());
+          new TXDentonCountyCParser(),
+          new TXDentonCountyEParser());
   }
 }
