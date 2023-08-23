@@ -4,8 +4,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class KYKnoxCountyParser extends GroupBestParser {
-  
+
   public KYKnoxCountyParser() {
-    super(new KYKnoxCountyAParser(), new KYKnoxCountyBParser(), new KYKnoxCountyCParser());
+    super(new KYKnoxCountyBParser(), new KYKnoxCountyCParser());
   }
 }
