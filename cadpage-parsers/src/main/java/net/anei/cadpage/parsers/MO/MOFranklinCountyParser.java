@@ -75,7 +75,7 @@ public class MOFranklinCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) @ (\\d\\d:\\d\\d:\\d\\d) FC911 USE ONLY:(\\d{4}-\\d{8})");
+  private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) @ (\\d\\d:\\d\\d:\\d\\d) FC911 USE ONLY:(\\d{4}-\\d{8}|)");
   private class MyDateTimeIdField extends Field {
 
     @Override
