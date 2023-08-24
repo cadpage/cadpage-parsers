@@ -802,7 +802,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?) *\\b(" + APT_PTN_STR + ")", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PLACE_APT_PTN = Pattern.compile("((.*?) +)?:(" + APT_PTN_STR + ")", Pattern.CASE_INSENSITIVE);
 
   private void parseCrossStreet(boolean leadGPS, boolean leadPlace, boolean trailName, String field, Data data) {
 
@@ -845,7 +845,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     if (!data.strPlace.isEmpty()) {
       Matcher match = PLACE_APT_PTN.matcher(data.strPlace);
       if (match.matches()) {
-        data.strPlace = match.group(1);
+        data.strPlace = getOptGroup(match.group(1));
         data.strApt = append(data.strApt, "-", match.group(2));
       }
     }

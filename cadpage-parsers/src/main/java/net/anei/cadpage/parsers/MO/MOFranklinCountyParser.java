@@ -16,6 +16,7 @@ public class MOFranklinCountyParser extends FieldProgramParser {
           "Location:ADDRCITYST! Intersection:X! Business_Name:PLACE! APT/SUITE:APT! " +
             "( MapPageGrid:MAP! MapCoordinates:MAP/L! LocationDescription:INFO! Subdivision:LINFO/N! Latitude:GPS1! Longitude:GPS2! | ) " +
             "CALL:DATE_TIME_ID! Response_Type:CALL! UNITS/REPORTS_ASSIGNED:EMPTY! TIMES/N+ CAD_INFORMATION:EMPTY INFO/N+");
+    removeWords("APTS");
   }
 
   @Override
@@ -35,6 +36,10 @@ public class MOFranklinCountyParser extends FieldProgramParser {
     unitSet.clear();
     body = TAG_PTN.matcher(body).replaceAll("\n$1");
     if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strCity.equals("NEW")) data.strCity = "NEW HAVEN";
+    if (!data.strPlace.isEmpty()) {
+      data.strAddress = stripFieldStart(data.strAddress, data.strPlace);
+    }
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n\n", data.strSupp);
     times = null;
     unitSet.clear();
@@ -55,11 +60,16 @@ public class MOFranklinCountyParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
       Parser p = new Parser(field);
       data.strCross = p.getLastOptional(", Cross Street of");
       p.getLastOptional("Appt or Suite");
       field = MSPACE_PTN.matcher(p.get()).replaceAll(" ");
+      int pt = field.indexOf(" Appt");
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      field = field.replace("APTS", "A_P_T_S");
       super.parse(field, data);
+      data.strAddress = data.strAddress.replace("A_P_T_S", "APTS");
       Matcher match = CITY_STATE_ZIP_PTN.matcher(data.strCity);
       if (match.matches()) data.strCity = match.group(1);
       if (data.strCity.equals("- 0 MO 0")) data.strCity = "";
