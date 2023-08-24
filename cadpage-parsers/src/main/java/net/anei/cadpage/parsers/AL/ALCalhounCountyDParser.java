@@ -10,7 +10,7 @@ public class ALCalhounCountyDParser extends DispatchA71Parser {
 
   @Override
   public String getFilter() {
-    return "psmith@bibbcosoal.org";
+    return "psmith@bibbcosoal.org,PiedmontPD@digitalrms.org";
   }
 
 }
