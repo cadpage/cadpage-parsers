@@ -13,11 +13,8 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
   public SCOrangeburgCountyCParser() {
     super(CITY_CODES, "ORANGEBURG COUNTY", "SC",
           "( CANCEL ADDR CITY!" +
-          "| FYI? ( ID CALL ADDR CITY? GPS1 GPS2 UNIT SRC EMPTY? X X " +
-                  "| CALL ( MAP ADDR CITY SKIP INFO/N+? DATETIME! UNIT? ID2 SRC PRI SKIP NAME PHONE? BOX CLS ID/L? X X GPS1 GPS2 SKIP+" +
-                         "| ADDR X X CITY ID! ) " +
-                  ")  " +
-          ") INFO/N+");
+          "| FYI? ID? CALL ADDR CITY? GPS1 GPS2 UNIT ( SRC | PLACE ) EMPTY? X X " +
+          ") INFO/N+? ID2");
   }
 
   @Override
@@ -31,9 +28,13 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{7,9}|", true);
-    if (name.equals("ID2")) return new IdField("\\d{11}", true);
+    if (name.equals("ID")) return new IdField("\\d{7,11}|", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
@@ -43,6 +44,7 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
     if (name.equals("PHONE")) return new PhoneField("\\d{7}|\\d{10}", true);
     if (name.equals("BOX")) return new BoxField("\\d{1,4}");
     if (name.equals("CLS")) return new SkipField("PHONE", true);
+    if (name.equals("ID2")) return new MyId2Field();
     return super.getField(name);
   }
 
@@ -65,6 +67,27 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
     public MyGPSField(int type) {
       super(type);
       setPattern(GPS_PTN, true);
+    }
+  }
+
+  private static final Pattern ID2_PTN = Pattern.compile("\\d{11}");
+  private class MyId2Field extends IdField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField()) return false;
+      if (!ID2_PTN.matcher(field).matches()) return false;
+      data.strCallId = append(data.strCallId, "/", field);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 

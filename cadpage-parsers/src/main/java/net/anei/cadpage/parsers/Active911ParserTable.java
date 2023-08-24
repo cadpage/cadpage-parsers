@@ -2206,6 +2206,7 @@ public class Active911ParserTable {
       "US/SC/NorthMyrtleBeach",           "SCHorryCounty",
       "US/SC/OconeeCounty",               "SCOconeeCounty",
       "US/SC/OrangeburgCounty",           "SCOrangeburgCounty",
+      "US/SC/OrangeburgCountyLaw",        "SCOrangeburgCounty",
       "US/SC/ParkerFD",                   "SCGreenvilleCountyE",
       "US/SC/PickensCounty",              "SCPickensCounty",
       "US/SC/PickensCountyNoInfo",        "SCPickensCountyNoInfo",
