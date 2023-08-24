@@ -113,7 +113,7 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     },
 
-    GPS_PLACE_X("GPS? ( X X+? | PLACE  X+? | ) INFO/Z+?", "GPS PLACE X") {
+    GPS_PLACE_X("GPS? ( X X+? | APT X+? | PLACE APT? X+? | ) INFO/Z+?", "GPS PLACE X") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
         parser.parseCrossStreet(true, true, false, field, data);
@@ -690,7 +690,9 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}(?: ?[A-Z])?|[A-Z]");
+
+  private static final String APT_PTN_STR = "[A-Z]?\\d{1,4}(?: ?[A-Z])?|[A-Z]";
+  private static final Pattern APT_PTN = Pattern.compile(APT_PTN_STR, Pattern.CASE_INSENSITIVE);
   private class BaseAptField extends AptField {
     public BaseAptField() {
       setPattern(APT_PTN, true);
@@ -800,6 +802,8 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?) *\\b(" + APT_PTN_STR + ")", Pattern.CASE_INSENSITIVE);
+
   private void parseCrossStreet(boolean leadGPS, boolean leadPlace, boolean trailName, String field, Data data) {
 
     if (leadGPS) {
@@ -835,6 +839,14 @@ public class DispatchA48Parser extends FieldProgramParser {
         data.strPlace = field;
       } else {
         cross = append(cross, " / ", field);
+      }
+    }
+
+    if (!data.strPlace.isEmpty()) {
+      Matcher match = PLACE_APT_PTN.matcher(data.strPlace);
+      if (match.matches()) {
+        data.strPlace = match.group(1);
+        data.strApt = append(data.strApt, "-", match.group(2));
       }
     }
 
