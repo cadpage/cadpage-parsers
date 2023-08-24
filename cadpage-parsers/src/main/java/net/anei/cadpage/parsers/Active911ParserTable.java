@@ -665,6 +665,7 @@ public class Active911ParserTable {
       "US/IN/CataractVFD",                "INOwenCounty",
       "US/IN/Chesterfield",               "INMadisonCountyC",
       "US/IN/ClayCoCAD",                  "INClayCounty",
+      "US/IN/CrawfordCounty",             "INCrawfordCounty",
       "US/IN/CrownPointFRFireGroup",      "INLakeCountyC",
       "US/IN/Daleville",                  "INDelawareCounty",
       "US/IN/DavidsonCounty",             "INBrownCounty",
