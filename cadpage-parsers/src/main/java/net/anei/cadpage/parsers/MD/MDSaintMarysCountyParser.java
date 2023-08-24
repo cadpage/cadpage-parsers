@@ -32,7 +32,7 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|ALS|DNR|ECC|TFER|USCG|WEA|WXWARN|WXWAT)\\b ?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|ALS|DNR|ECC|FDC|TFER|USCG|WEA|WXWARN|WXWAT)\\b ?)+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
