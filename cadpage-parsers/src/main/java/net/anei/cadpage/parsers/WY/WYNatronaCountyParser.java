@@ -9,22 +9,32 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class WYNatronaCountyParser extends FieldProgramParser {
-  
+
   public WYNatronaCountyParser() {
     super("NATRONA COUNTY", "WY",
-           "SRC CALL ADDR MAP UNIT INFO+");
+           "SRC CALL CALL2/SDS? ADDR MAP UNIT INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "csphiplink@cityofcasperwy.com,emailrelay@casperwy.gov,emailrelay@cityofcasperwy.com";
+    return "csphiplink@cityofcasperwy.com,emailrelay@casperwy.gov,emailrelay@cityofcasperwy.com,hiplink@casperwy.gov";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     subject = stripFieldStart(subject, "Email Copy ");
     if (!subject.equalsIgnoreCase("Message From Hiplink")) return false;
     return parseFields(body.split("\n"), 4, data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}");
+    if (name.equals("CALL2")) return new CallField("ARRVD", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
   }
 
   private static final Pattern ADDR_DELIM = Pattern.compile("[,;]");
@@ -57,13 +67,13 @@ public class WYNatronaCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE APT";
     }
   }
-  
+
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
@@ -77,7 +87,7 @@ public class WYNatronaCountyParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY MAP";
@@ -102,22 +112,13 @@ public class WYNatronaCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PHONE GPS CH INFO";
     }
   }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}");
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("MAP")) return new MyMapField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BAR",    "BAR NUNN",
       "CAS",    "CASPER",
@@ -125,7 +126,7 @@ public class WYNatronaCountyParser extends FieldProgramParser {
       "EVA",    "EVANSVILLE",
       "MIL",    "MILLS",
       "NAT",    "NATRONA COUNTY",
-      
+
       "ALRD",   "ALCOVA LAKE",
       "MWRD",   "MIDWEST",
   });
