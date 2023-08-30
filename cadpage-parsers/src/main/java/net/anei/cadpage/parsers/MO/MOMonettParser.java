@@ -19,38 +19,47 @@ public class MOMonettParser extends FieldProgramParser{
       "Address:ADDRCITY! Category:CALL! SubCategory:CALL! Open:DATETIME! Dispatch:DATETIME! Enroute:SKIP! Arrival:SKIP! Closed:SKIP! NAME+? INFOMAP+");
   }
 
-public String getFilter() {
-    return "monettpd@cityofmonett.com,911EMAMONETTLAWCO@CITYOFMONETT.COM,911MONETTLAWCO@OMNIGO.COM";
+  public String getFilter() {
+    return "monettpd@cityofmonett.com,911EMAMONETTLAWCO@CITYOFMONETT.COM,911MONETTLAWCO@OMNIGO.COM,noreply@omnigo.com";
   }
 
-protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
 
-  int appendedNotes = body.indexOf("\n****** Appended notes from Work Area");
-  if (appendedNotes >= 0) body = body.substring(0, appendedNotes).trim();
+    int appendedNotes = body.indexOf("\n****** Appended notes from Work Area");
+    if (appendedNotes >= 0) body = body.substring(0, appendedNotes).trim();
 
-  body = body.replace("", "").trim();
-  int partCheck = body.indexOf("Address:");
-  if (partCheck != body.lastIndexOf("Address:")) {
-    String[] parts = body.split("Address:");
-    body = "Address:" + parts[1];
-    int oldInfo = parts[1].indexOf("Closed:") + 7;
-    if (oldInfo - 7 >= 0) {
-      parts[1] = parts[1].substring(oldInfo);
-      for (int i = 2; i < parts.length; i += 1) {
-        parts[i] = parts[i].substring(oldInfo);
-        int shortest = Math.min(parts[1].length(), parts[i].length());
-        int a = 0;
-        for ( ; a < shortest; a++) {
-          if (parts[1].charAt(a) != parts[i].charAt(a)) break;
+    body = body.replace("", "").trim();
+    int partCheck = body.indexOf("Address:");
+    if (partCheck != body.lastIndexOf("Address:")) {
+      String[] parts = body.split("Address:");
+      body = "Address:" + parts[1];
+      int oldInfo = parts[1].indexOf("Closed:") + 7;
+      if (oldInfo - 7 >= 0) {
+        parts[1] = parts[1].substring(oldInfo);
+        for (int i = 2; i < parts.length; i += 1) {
+          parts[i] = parts[i].substring(oldInfo);
+          int shortest = Math.min(parts[1].length(), parts[i].length());
+          int a = 0;
+          for ( ; a < shortest; a++) {
+            if (parts[1].charAt(a) != parts[i].charAt(a)) break;
+          }
+          if (a < shortest) a = parts[i].substring(0,a).lastIndexOf("\n")+1;
+          String tmp = parts[i].substring(a).trim();
+          body = append(body, "\n", tmp);
         }
-        if (a < shortest) a = parts[i].substring(0,a).lastIndexOf("\n")+1;
-        String tmp = parts[i].substring(a).trim();
-        body = append(body, "\n", tmp);
       }
     }
+    return parseFields(body.split("\n"), 2, data);
   }
-  return parseFields(body.split("\n"), 2, data);
-}
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("NAME")) return new MyNameField();
+    if (name.equals("CALL_RECEIVED")) return new SkipField("Call Received on .*");
+    if (name.equals("INFOMAP")) return new MyInfoMapField();
+    return super.getField(name);
+  }
 
   private class MyCallField extends CallField {
 
@@ -105,14 +114,5 @@ protected boolean parseMsg(String subject, String body, Data data) {
     public String getFieldNames() {
       return "PLACE MAP INFO";
     }
-  }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("NAME")) return new MyNameField();
-    if (name.equals("CALL_RECEIVED")) return new SkipField("Call Received on .*");
-    if (name.equals("INFOMAP")) return new MyInfoMapField();
-    return super.getField(name);
   }
 }

@@ -959,6 +959,7 @@ public class ParserList {
               ,"MNWrightCounty"                 ,"Wright County, MN"
           ),
           new ParserCategory("Mississippi"
+              ,"MSAlcornCounty"                 ,"Alcorn County, MS"
               ,"MSAcadianAmbulance"             ,"Acadian Ambulance, MS"
               ,"MSBiloxi"                       ,"Biloxi, MS"
               ,"MSCalhounCounty"                ,"Calhoun County, MS"
