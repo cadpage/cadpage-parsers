@@ -699,6 +699,7 @@ public class Active911ParserTable {
       "US/IN/KendallvillePD",             "INNobleCounty",
       "US/IN/KingsfordHeights",           "INLaporteCounty",
       "US/IN/KnoxCounty",                 "INKnoxCounty",
+      "US/IN/KokomoFD",                   "INHowardCountyC",
       "US/IN/KosciuskoCounty",            "INKosciuskoCounty",
       "US/IN/LakeCounty",                 "INLakeCounty",
       "US/IN/LaporteCounty",              "INLaporteCounty",
