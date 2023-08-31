@@ -16,7 +16,7 @@ public class TNDyerCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "alerts@tailorbuilt.app,alerts@pssalerts.info>";
+    return "alerts@tailorbuilt.app,alerts@pssalerts.info,alerts@dburgalerts.net";
   }
 
   private static final Pattern DELIM = Pattern.compile("\n| (?=(?:TIME|EVENT NUM|Incident Type):)");
