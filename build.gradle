@@ -21,8 +21,8 @@ allprojects {
 }
 
 ext {
-    versionName = "2.2.10-74"
-    versionCode = 2020210740
+    versionName = "2.2.10-75"
+    versionCode = 2020210750
 }
 
 task gstatus(type: Exec) {
