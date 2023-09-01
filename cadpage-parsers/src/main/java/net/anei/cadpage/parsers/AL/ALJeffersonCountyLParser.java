@@ -19,7 +19,7 @@ public class ALJeffersonCountyLParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@HOMEWOODAL.ORG";
+    return "@HOMEWOODAL.ORG,noreply@homewoodal.net";
   }
 
   @Override
