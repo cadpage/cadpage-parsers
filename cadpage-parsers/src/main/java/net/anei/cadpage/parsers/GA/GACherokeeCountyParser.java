@@ -1,8 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-public class GACherokeeCountyParser extends GAPickensCountyParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Cherokee County, GA
+ */
+public class GACherokeeCountyParser extends GroupBestParser {
 
   public GACherokeeCountyParser() {
-    super("CHEROKEE COUNTY", "GA");
+    super(new GACherokeeCountyAParser(), new GACherokeeCountyBParser());
   }
 }
