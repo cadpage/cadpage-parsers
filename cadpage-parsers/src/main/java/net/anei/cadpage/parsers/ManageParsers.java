@@ -210,7 +210,8 @@ public class ManageParsers {
         "KYStatePoliceA",     "General",
         "OHWarrenCountyA",    "General",
         "MOStLouisCountyG",   "General",
-        "KYKnoxCountyA",      "General"                  // 08/22/2023
+        "KYKnoxCountyA",      "General",                 // 08/22/2023
+        "MOMonett",           "MOLawrenceCounty"         // 09/05/2023
   });
 
 }
