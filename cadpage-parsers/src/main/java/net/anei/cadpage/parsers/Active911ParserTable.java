@@ -1271,6 +1271,7 @@ public class Active911ParserTable {
       "US/MO/CityofMonett",               "MOLawrenceCountyB",
       "US/MO/CityofRolla",                "MOPhelpsCounty",
       "US/MO/CityofStJoseph",             "MOBuchananCountyA,MOBuchananCountyD,MODekalbCounty",
+      "US/MO/ClarktonVFD",                "MODunklinCounty",
       "US/MO/ClayCounty",                 "MOClayCounty",
       "US/MO/ClayCountyOmnigo",           "MOClayCountyD",
       "US/MO/ClintonCounty",              "MOClintonCounty",
