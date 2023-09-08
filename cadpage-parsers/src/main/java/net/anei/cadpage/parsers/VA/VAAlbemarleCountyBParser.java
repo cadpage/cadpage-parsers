@@ -17,7 +17,7 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
   public VAAlbemarleCountyBParser() {
     super("ALBEMARLE COUNTY", "VA",
           "( HTML_ADDRCITY NATURE_UNIT_CROSS! INFO/N+ " +
-          "| SRC! INC:ID! TYP:CALL1! UNITS:UNIT! AD:ADDRCITY% APT:APT% CROSS_STREETS:X% LAT:GPS1 LON:GPS2 NAME:NAME% NATURE:CALL/SDS% NARRATIVE:INFO/N+ ESN:BOX% DT:DATETIME% END )");
+          "| SRC! INC:ID! TYP:CALL1! UNITS:UNIT! AD:ADDRCITY% APT:APT% CROSS_STREETS:X% LAT:GPS1 LON:GPS2 NAME:NAME% NATURE:CALL/SDS% NARRATIVE:INFO/N+ ESN:BOX% FDSUTalkgroup:CH DT:DATETIME% END )");
     setupProtectedNames("LEWIS AND CLARK");
   }
 
@@ -49,6 +49,7 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
     if (name.equals("CALL1")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -139,4 +140,16 @@ public class VAAlbemarleCountyBParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern INFO_HEAD_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+\\d\\d:\\d\\d:\\d{2,}[A-Z]+- +");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +\\d\\d:\\d\\d:\\d{2,}[A-Z]+- +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_HEAD_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      for (String part : INFO_BRK_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", part);
+      }
+    }
+  }
 }
