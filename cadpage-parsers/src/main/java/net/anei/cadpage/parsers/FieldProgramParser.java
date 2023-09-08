@@ -2809,9 +2809,9 @@ public class FieldProgramParser extends SmartAddressParser {
   /**
    * Field containing address, city and optional state/zip code
    */
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})(?:-\\d{4})?|0))?|(\\d{5})(?:-\\d{4})?");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})(?:-(?:\\d{4})?)?|0))?|(\\d{5})(?:-(?:\\d{4})?)?");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
-  private static final Pattern TRAIL_ZIP_PTN = Pattern.compile("(.*?) +\\d{5}(?:-\\d{4})?");
+  private static final Pattern TRAIL_ZIP_PTN = Pattern.compile("(.*?) +\\d{5}(?:-(?:\\d{4})?)?");
   public class AddressCityStateField extends AddressField {
 
     private Field cityField = new CityField();
