@@ -4,10 +4,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA33Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
 
 
-public class MOAudrainCountyParser extends DispatchA33Parser {
+public class MOAudrainCountyParser extends DispatchBCParser {
 
 
   public MOAudrainCountyParser() {
