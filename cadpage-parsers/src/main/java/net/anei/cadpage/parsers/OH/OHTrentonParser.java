@@ -10,20 +10,20 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class OHTrentonParser extends FieldProgramParser {
-  
+
   public OHTrentonParser() {
-    super("TRENTON", "OH", 
-          "SRC_CALL! CAD_#:ID! Address:ADDRCITY! Cross_Streets:X! Call_Details:INFO! INFO/N+ Page_Time:DATETIME");
+    super("TRENTON", "OH",
+          "SRC_CALL! CAD_#:ID! Address:ADDRCITY! Units:UNIT Incident_Code:SKIP Cross_Streets:X! Call_Details:INFO! INFO/N+ Page_Time:DATETIME");
   }
-  
-  
+
+
   @Override
   public boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "Trenton Paging System");
     body = stripFieldStart(body, "-");
     return parseFields(body.split(" - "), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC_CALL"))  return new MySourceCallField();
@@ -32,7 +32,7 @@ public class OHTrentonParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern SRC_CALL_PTN = Pattern.compile("([A-Z]{3,5})\\b *(.*)");
   private class MySourceCallField extends Field {
 
@@ -49,7 +49,7 @@ public class OHTrentonParser extends FieldProgramParser {
       return "SRC CALL";
     }
   }
-  
+
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
   private class MyAddressCityField extends AddressField {
     @Override
@@ -69,13 +69,13 @@ public class OHTrentonParser extends FieldProgramParser {
       data.strCity = city;
       super.parse(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";
     }
   }
-  
+
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("[; ]*\\b\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d$");
   private class MyInfoField extends InfoField {
     @Override
@@ -84,7 +84,7 @@ public class OHTrentonParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", field);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\((\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) +(\\d\\d?:\\d\\d [AP]M)\\)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
   private class MyDateTimeField extends DateTimeField {
