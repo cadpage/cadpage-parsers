@@ -12,30 +12,31 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 public class TXKaufmanCountyAParser extends DispatchSouthernParser {
 
   public TXKaufmanCountyAParser() {
-    super(CITY_LIST, "KAUFMAN COUNTY", "TX", 
-          DSFLG_ADDR|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_BAD_PLACE|DSFLG_ID|DSFLG_TIME);
+    super(CITY_LIST, "KAUFMAN COUNTY", "TX",
+          DSFLG_ADDR|DSFLG_ADDR_NO_IMPLIED_APT|DSFLG_ADDR_TRAIL_PLACE|DSFLG_OPT_APT|DSFLG_OPT_BAD_PLACE|DSFLG_OPT_X|DSFLG_ID|DSFLG_TIME,
+          "\\d{3}(?:FD)?|\\d[A-Z]?\\d{3}|[A-Z]\\d{1,3}");
     removeWords("BEND", "CIRCLE", "SQUARE");
   }
-  
+
 
   private static final Pattern TIME_MARKER_PTN = Pattern.compile(", *\\d\\d:\\d\\d:\\d\\d,");
   private static final Pattern MARKER = Pattern.compile("Dispatch:|kaufmancotx911:");
   private static final Pattern VZ_PTN = Pattern.compile("\\bVZ(?= ?C[OR]\\b)");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
-    
+
     // Strip off the old message prefix
     if (match.lookingAt()) {
       body = body.substring(match.end()).trim();
     } else {
-      
-      // The prefix was recently dropped, but we still need some way to reject 
-      // TXKaufmanCountyB alerts.  They are both  based on Southern dispatch format, 
-      // but TXKaufmanCountyA uses comma delimiters and  TXKaufmanCountyB used 
+
+      // The prefix was recently dropped, but we still need some way to reject
+      // TXKaufmanCountyB alerts.  They are both  based on Southern dispatch format,
+      // but TXKaufmanCountyA uses comma delimiters and  TXKaufmanCountyB used
       // semicolon delimiters, so we will check for a properly delimited time field
-      
+
       if (!TIME_MARKER_PTN.matcher(body).find()) return false;
     }
     int pt = body.indexOf("\n");
@@ -49,15 +50,16 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
 
   private static final Pattern DIR_OF_PTN = Pattern.compile("\\b[NSEW]O +OF\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern SVC_RD_NN_PTN = Pattern.compile("\\b(?:SVC|SERVICE) RD (\\d+)", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("APT")) return new AptField("\\d{1,3}[A-Z]?(?: BUILDING [A-Z])?|[A-Z]", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
-  
+
+
   private static final Pattern ADDR_VZ_COUNTY_PTN = Pattern.compile("\\b(VZ) (CO|COUNTY)\\b");
   private class MyAddressField extends BaseAddressField {
     @Override
@@ -70,14 +72,14 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
         if (data.strCity.length() == 0) data.strCity = "VAN ZANDT COUNTY";
         data.strAddress = match.replaceAll("$2");
       }
-      
+
       if (data.strCity.length() > 0) {
         String city = MISSPELLED_CITY_TABLE.getProperty(data.strCity.toUpperCase());
         if (city != null) data.strCity = city;
       }
     }
   }
-  
+
   private static final Pattern INFO_GRID_PTN = Pattern.compile("GRID +(\\d+)\\b *");
   private class MyInfoField extends BaseInfoField {
     @Override
@@ -89,7 +91,7 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "MAP " + super.getFieldNames();
@@ -103,7 +105,7 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
     addr = VZ_PTN.matcher(addr).replaceAll("").trim();
     return super.adjustMapAddress(addr);
   }
-  
+
   private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
       "GUN BAREL",          "GUN BARREL CITY",
       "GUN BARELL",         "GUN BARREL CITY",
@@ -144,14 +146,14 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
     "TALTY",
     "TERRELL",
     "TRAVIS RANCH",
-    
+
     "DALLAS COUNTY",
-    
+
     "ELLIS COUNTY",
-    
+
     "HUNT COUNTY",
     "QUINLAN",
-    
+
     "HENDERSON COUNTY",
     "GUN BAREL",
     "GUN BARELL",
@@ -161,9 +163,9 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
     "GUN BARELL CITY",
     "GUN BARREL CITY",
     "GUN BARRELL CITY",
-    
+
     "KAUFMAN COUNTY",
-    
+
     "ROCKWALL COUNTY",
 
     "VAN ZANDT COUNTY",

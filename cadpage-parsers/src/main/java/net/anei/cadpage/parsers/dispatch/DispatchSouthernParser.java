@@ -110,6 +110,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   // Flag indicating a leading dispatch name is optional
   public static final long DSFLAG_OPT_DISPATCH_ID = 0x02L;
 
+  // ***********************************************************************************************
 
   // Flag indicating that the call ID is optional
   public static final long DSFLAG_ID_OPTIONAL = 0x08L;
@@ -169,6 +170,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   private Pattern callPtn = null;
   private CodeSet callSet = null;
   private Pattern unitPtn;
+  private boolean unitFld;
 
   private String defaultFieldList;
 
@@ -196,6 +198,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     this.flags = convertFlags(flags);
 
     this.unitPtn = (unitPtnStr == null ? null : Pattern.compile(unitPtnStr));
+    this.unitFld = (this.flags & (DSFLG_UNIT1 | DSFLG_OPT_UNIT1)) != 0;
 
     // Program string needs to be built at run time
     StringBuilder sb = new StringBuilder();
@@ -884,6 +887,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("APT")) return new AptField("\\d{1,3}[A-Z]?|[A-Z]");
     if (name.equals("CODE"))  return new BaseCodeField();
     if (name.equals("PARTCODE")) return new SkipField("[MFL]D?");
     if (name.equals("X")) return new BaseCrossField();
@@ -1000,6 +1004,13 @@ public class DispatchSouthernParser extends FieldProgramParser {
         return;
       }
 
+      if (data.strSupp.isEmpty() && unitPtn != null && !unitFld) {
+        if (unitPtn.matcher(field).matches()) {
+          data.strUnit = append(data.strUnit, ",", field);
+          return;
+        }
+      }
+
       if (data.strSupp.isEmpty() && data.strPriority.isEmpty() &&
           (match = INFO_PRI_PTN.matcher(field)).matches()) {
         data.strPriority = match.group(1);
@@ -1012,7 +1023,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "UNIT CODE CALL PRI GPS INFO";
+      return "CODE CALL UNIT PRI GPS INFO";
     }
   }
 }
