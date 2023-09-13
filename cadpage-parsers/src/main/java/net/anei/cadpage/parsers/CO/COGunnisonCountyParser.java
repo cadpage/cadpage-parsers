@@ -22,7 +22,7 @@ public class COGunnisonCountyParser extends DispatchA33Parser {
 
   @Override
   public String getFilter() {
-    return "DISPATCHCENTER@CITYOFGUNNISON-CO.GOV,DISPATCHCENTER@GUNNISONCO.GOV";
+    return "DISPATCHCENTER@CITYOFGUNNISON-CO.GOV,DISPATCHCENTER@GUNNISONCO.GOV,noreply@omnigo.com";
   }
 
   @Override
