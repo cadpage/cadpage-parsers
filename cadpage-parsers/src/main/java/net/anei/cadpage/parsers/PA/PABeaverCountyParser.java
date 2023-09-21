@@ -15,19 +15,19 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 public class PABeaverCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern MISSING_LOC_PTN = Pattern.compile("^(EVENT #:[EF]\\d+)EST:  : EST ");
-  
+
   public PABeaverCountyParser() {
     super(CITY_CODES, "BEAVER COUNTY", "PA",
-           "EVENT_#:ID! LOC:ADDR/S? TYPE:CALL CALLER_NAME:NAME? CALLER_ADDR:ADDR/S? TIME:TIME! COMMENTS:INFO");
+           "EVENT_#:ID! LOC:ADDR/S? CALLER_PHONE:PHONE? TYPE:CALL CALLER_NAME:NAME? CALLER_ADDR:ADDR/S? TIME:TIME! COMMENTS:INFO");
   }
-  
+
   @Override
   public String getFilter() {
     return "bc911cad@beavercountypa.gov,Beaver County 911";
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom();
@@ -38,7 +38,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
     if (city.equals("OUT OF COUNTY")) city = "";
     return super.adjustMapCity(city);
   }
-  
+
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -50,7 +50,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
     if (data.strCity.equals("OUT OF COUNTY")) data.defCity = data.defState = "";
     return data.strAddress.length() > 0;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
@@ -58,23 +58,23 @@ public class PABeaverCountyParser extends FieldProgramParser {
     if (name.equals("INFO"))  return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_ALIAS_PTN = Pattern.compile("(.*?)[ :]+ALIAS .*", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PLACE_PTN = Pattern.compile("(.*):(.*?) *@(.*)");
   private static final Pattern ADDR_EST_PTN = Pattern.compile("(.*?)(?:[ :]*\\bEST\\b)+[ :]*");
   private static final Pattern CLEAN_APT_PTN = Pattern.compile("(?:APT *)?#? *(.*)");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
       if (data.strAddress.length() > 0) return;
-      
+
       Matcher match = ADDR_ALIAS_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
-      
+
       match = ADDR_EST_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
-      
+
       String apt = "";
       match = ADDR_APT_PLACE_PTN.matcher(field);
       if (match.matches()) {
@@ -82,7 +82,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
         apt = cleanApt(match.group(2).trim());
         data.strPlace = match.group(3).trim();
       }
-      
+
       int pt = field.lastIndexOf(':');
       if (pt >= 0) {
         String city = field.substring(pt+1).trim();
@@ -91,10 +91,10 @@ public class PABeaverCountyParser extends FieldProgramParser {
           field = field.substring(0,pt).trim();
         }
       }
-      
+
       match = ADDR_EST_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
-      
+
       Parser p = new Parser(field);
       apt = append(cleanApt(p.getLastOptional(',')), "-", apt);
       field = p.get();
@@ -114,38 +114,38 @@ public class PABeaverCountyParser extends FieldProgramParser {
         data.strApt = append(data.strApt, "-", apt);
       }
     }
-    
+
     private String cleanApt(String apt) {
       Matcher match = CLEAN_APT_PTN.matcher(apt);
       if (match.matches()) apt = match.group(1);
       return apt;
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " APT PLACE";
     }
   }
-  
+
   private static final Pattern INFO_CH_PTN = Pattern.compile("((?:FIRE )?OPS CH \\d+) +");
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("\\bWPH\\d (?:\\d{3} )?([-+]\\d{3}\\.\\d{6} [-+]\\d{3}\\.\\d{6}) *");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("\\b(?:WPH\\d(?: \\d{3})?|Y\\(\\d+,\\d+\\))( [-+]\\d{3}\\.\\d{6} [-+]\\d{3}\\.\\d{5,6})+ *");
   private static final Pattern INFO_TRAIL_JUNK_PTN = Pattern.compile("\\bWPH\\d\\b");
   private static final Pattern INFO_GPS_TRAILER_PTN1 = Pattern.compile("[^=:]*(?: SECTOR [_A-Z]*|_-_[NSEW][EW]?(?:_SEC?)?)\\.?(?: +|$)", Pattern.CASE_INSENSITIVE);
   private static final Pattern INFO_GPS_TRAILER_PTN2 = Pattern.compile("(?:VERIZON WIRELESS|WIRELESS-CRICKET\\(TCS\\)|SPPCS CALL|WIRELESS-AT&T MOBILITY\\(TCS\\)|SPRINT|T-Mobile USA, Inc\\.?)? *");
-  private static final Pattern INFO_GPS_TRAILER_PTN3 = Pattern.compile("\\bLocation Saved by LocateCall - LL\\([-+\\d:\\.,]+\\) *");
+  private static final Pattern INFO_GPS_TRAILER_PTN3 = Pattern.compile("\\bLocation Saved by LocateCall - (?:LL\\([-+\\d:\\.,]+\\)|[ A-Z0-9]+ [-+]\\d{3}\\.\\d{6} [-+]\\d{3}\\.\\d{5,6}|) *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
+
       int pt = field.indexOf("Duplicate Event:");
       if (pt >= 0) field = field.substring(0,pt).trim();
-      
+
       Matcher match = INFO_CH_PTN.matcher(field);
       if (match.lookingAt()) {
         data.strChannel = match.group(1);
         field = field.substring(match.end());
       }
-      
+
       match = INFO_GPS_PTN.matcher(field);
       if (match.find()) {
         setGPSLoc(match.group(1), data);
@@ -175,14 +175,14 @@ public class PABeaverCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH GPS INFO";
     }
   }
-  
-  
+
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALIQ", "ALIQUIPPA",
       "AMBR", "AMBRIDGE",
@@ -241,15 +241,15 @@ public class PABeaverCountyParser extends FieldProgramParser {
       "VANP", "VANPORT TWP",
       "WMYF", "WEST MAYFIELD",
       "WHIT", "WHITE",
-      
+
       "OUTC", "OUT OF COUNTY",
-      
+
       "CRANBERRY TWP",          "CRANBERRY TWP",
       "ELLWOOD CITY",           "ELLWOOD CITY",
       "WAYNE TWP",              "WAYNE TWP",
-      "ZELIONOPLE",             "ZELIONOPLE",  
+      "ZELIONOPLE",             "ZELIONOPLE",
   });
-  
+
   private static final Set<String> CITY_SET = new HashSet<String>(Arrays.asList(
       "CRANBERRY TWP",
       "ELLWOOD CITY",
