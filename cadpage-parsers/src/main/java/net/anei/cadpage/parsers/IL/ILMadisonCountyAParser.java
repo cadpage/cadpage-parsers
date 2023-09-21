@@ -11,31 +11,31 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
  * Madison County, IL
  */
 public class ILMadisonCountyAParser extends DispatchH05Parser {
-  
+
   public ILMadisonCountyAParser() {
     super("MADISON COUNTY", "IL",
           "( NEW_SRC Fire_Call_Type:CALL! Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Nature_of_Call:CALL/SDS! Narrative:INFO_BLK! INFO_BLK+ Call_Date/Time:SKIP! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:TIMES! TIMES+ Incident_Number:ID! Fire_Quadrant:SKIP! EMS_District:SKIP! Google_Map_Hyperlink:SKIP! " +
-          "| CALL_RECEIVED_AT? CALL ( PLACE ADDRCITY/S6 ID? X? " + 
+          "| CALL_RECEIVED_AT? CALL ( PLACE ADDRCITY/S6 ID? X? " +
                                    "| ADDRCITY/S6 ( ID X? | ( PLACE X | X | PLACE X/L | X/L | ) ) " +
-                                   "| ADDRCITY/ZS6 PLACE X " + 
-                                   "| ADDRCITY/ZS6 X " + 
-                                   "| ADDRCITY/ZS6 PLACE X/L " + 
-                                   "| ADDRCITY/ZS6 X/L " + 
+                                   "| ADDRCITY/ZS6 PLACE X " +
+                                   "| ADDRCITY/ZS6 X " +
+                                   "| ADDRCITY/ZS6 PLACE X/L " +
+                                   "| ADDRCITY/ZS6 X/L " +
                                    "| X/S " +
                                    "| DATE_MARK " +
                                    "| ADDRCITY/S6 " +
-                                   ") INFO_BLK/I+? ( DATETIME_MARK ( PHONE | NAME PHONE | ) | ID? ) TIMES+ https:QUERY " + 
+                                   ") INFO_BLK/I+? ( DATETIME_MARK ( PHONE | NAME PHONE | ) | ID? ) TIMES+ https:QUERY " +
          ")");
     setupSpecialStreets("BROADWAY", "TERRA VERDE");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,@granitecity.illinois.gov,ripnrun@madisonco.com";
+    return "@glen-carbon.il.us,@co.madison.il.us,@troypolice.us,@cityofedwardsville.com,@highlandil.gov,@siue.edu,@collinsvilleil.org,@granitecity.illinois.gov,ripnrun@madisonco.com,@glencarbonil.gov";
   }
 
   private static final Pattern FIND_ID_PTN = Pattern.compile("\\[(?:(\\d{4}-\\d{8})|Incident not yet created) ([A-Z]+\\d+)\\][ ,]*");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("NEW_SRC")) return new SourceField("(.*?) R&R from New World Systems", true);
@@ -52,7 +52,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
     if (name.equals("QUERY")) return new MyQueryField();
     return super.getField(name);
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
@@ -61,35 +61,35 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern ADDR_CITY_PTN = Pattern.compile(".*, *[A-Z][a-z][A-Za-z ]+");
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!ADDR_CITY_PTN.matcher(field).matches()) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern NOT_CROSS_PTN = Pattern.compile("\\*.*\\*|.*:.*|.*[a-z].*");
   private class MyCrossField extends CrossField {
-    
+
     private boolean loose = false;
     private boolean strict = false;
-    
+
     @Override
     public void setQual(String qual) {
       super.setQual(qual);
@@ -98,7 +98,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
         strict = qual.contains("S");
       }
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       field = field.replace("PRIVATE_LANE", "PRIVATE LANE");
@@ -130,22 +130,22 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
       }
       return false;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_MARK_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d");
-  
+
   private class MyDateTimeMarkField extends SkipField {
     public MyDateTimeMarkField() {
       setPattern(DATE_TIME_MARK_PTN, true);
     }
   }
-  
+
   private class MyInfoBlockField extends BaseInfoBlockField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -154,13 +154,13 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
       return super.checkParse(field, data);
     }
   }
-  
+
   private class MyIdField extends IdField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       String result = "";
@@ -173,13 +173,13 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
       data.strCallId = append(data.strCallId, ", ", result);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
@@ -187,21 +187,21 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private class MyQueryField extends Field {
     @Override
     public void parse(String field, Data data) {
-      
+
       // This is a URL to bring up the google map address.  Generally we ignore it,
       // but some calls are missing the normal address, in which case we will try to
       // extract an address from the query string
       if (data.strAddress.length() > 0) return;
-      
+
       int pt = field.indexOf("query=");
       if (pt < 0) return;
       field = field.substring(pt+6).trim().replace('+', ' ');
-      
+
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       if (STATE_PTN.matcher(city).matches()) {
@@ -209,11 +209,11 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
         city = p.getLastOptional(',');
       }
       data.strCity = city;
-      
+
       field = p.get().replace('@', '&');
       parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";
