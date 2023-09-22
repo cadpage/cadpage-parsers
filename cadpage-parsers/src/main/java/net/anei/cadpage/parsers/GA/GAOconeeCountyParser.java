@@ -23,6 +23,7 @@ public class GAOconeeCountyParser extends DispatchA48Parser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "ACCIDENT (INJURIES",
       "ANIMAL CASE",
+      "CARBON MONOXIDE ALARM",
       "CHASE",
       "DISCHARGING FIREARMS",
       "DOMESTIC PHYSICAL",
