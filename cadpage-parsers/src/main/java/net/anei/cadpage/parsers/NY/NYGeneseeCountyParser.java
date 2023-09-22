@@ -12,60 +12,61 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class NYGeneseeCountyParser extends FieldProgramParser {
-  
+
   public NYGeneseeCountyParser() {
     super(CITY_LIST, "GENESEE COUNTY", "NY",
-          "( SELECT/3 CODE CALL ADDR3 X DATETIME! Dispatched_Units:UNIT! Stand-By_Units:SKIP? CFS:ID? INFO/N+ " +
+          "( SELECT/3 CODE CALL ADDR3 X DATETIME! Dispatched_Units:UNIT! Stand-By_Units:SKIP? CFS:ID INFO/N+ END " +
           "| CALL1 PLACE ADDR1 APT? CALL2! X DATETIME ID% INFO+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "911center@co.genesee.ny.us,777,888";
   }
-  
+
   private static final Pattern DELIM3 = Pattern.compile("\\* *\\n");
   private static final Pattern UNIT_PREFIX_PTN = Pattern.compile("^(?:Unit: *([A-Z0-9]+) +)?Status: *(?:Dispatched|At Scene) *(?:\\*\\* +)?");
   private static final Pattern MUT_AID_CITY_PTN = Pattern.compile(".*\\bMUTUAL AID\\b.* TO ([^ ]+(?: +[^ ]+)?)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DELIM1 = Pattern.compile("(?<= )\\*\\*(?= |$)");
-  
+
   private boolean skipApt;
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
-      
+
       if (body.startsWith("GENESEE COUNTY DISPATCH ")) {
         body = body.substring(24).trim();
         break;
       }
-      
+
       if (subject.equals("Dispatch")) break;
-        
+
       return false;
     } while (false);
-    
+
     skipApt = false;
-    
+
     int pt = body.indexOf("\n-- \n");
+    if (pt < 0) pt = body.indexOf("\n\nNOTICE:");
     if (pt >= 0) {
       body = body.substring(0,pt).trim();
       body = stripFieldEnd(body, "*");
     }
-    
+
     String[] flds = DELIM3.split(body);
     if (flds.length >= 5) {
       setSelectValue("3");
       return parseFields(flds, data);
     }
-    
+
     setSelectValue("1");
     pt = body.indexOf("\n\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    
+
     body = body.replace("\n", "");
     String saveBody = body;
-    
+
     // We have to try old format first, because new format is a subset of it
     Matcher match = UNIT_PREFIX_PTN.matcher(body);
     if (match.find()) {
@@ -74,7 +75,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     } else if (body.startsWith("** ")) {
       body = body.substring(3).trim();
     }
-    
+
     if (!parseFields(DELIM1.split(body), 4, data)) {
       data.initialize(this);
       if (!parseNewFormat(saveBody, data)) {
@@ -82,7 +83,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
         return data.parseGeneralAlert(this, saveBody);
       }
     }
-    
+
     // If successful, and no city was specified, see if we can extract one from a mutual aid description
     if (data.strCity.length() == 0) {
       match = MUT_AID_CITY_PTN.matcher(data.strCall);
@@ -98,9 +99,9 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
 
   private static final Pattern UNIT_PTN1 = Pattern.compile("(?:(?:\\d{3}|[A-Z]+\\d+) )+ ");
   private static final Pattern UNIT_PTN2 = Pattern.compile("([A-Z]+\\d+) +");
-  private static final Pattern ID_PTN = Pattern.compile(" +(\\d{4}-\\d{8})$"); 
+  private static final Pattern ID_PTN = Pattern.compile(" +(\\d{4}-\\d{8})$");
   private static final Pattern APT_PTN = Pattern.compile("([A-D](?: ?\\d+)?) +(.*)");
-  
+
   private boolean parseNewFormat(String body, Data data) {
     setFieldList("UNIT ADDR APT PLACE CITY CALL ID");
     Matcher match = UNIT_PTN1.matcher(body);
@@ -114,15 +115,15 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       body = body.substring(match.end());
     }
     if (data.strUnit.length() == 0) return false;
-    
+
     match = ID_PTN.matcher(body);
     if (!match.find()) return false;
     data.strCallId = match.group(1);
     body = body.substring(0,match.start()).trim();
-    
+
     parseAddress(StartType.START_ADDR, FLAG_PAD_FIELD, body, data);
     if (data.strCity.length() == 0) return false;
-    
+
     String place = getPadField();
     match = APT_PTN.matcher(place);
     if (match.matches()) {
@@ -130,7 +131,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       place = match.group(2);
     }
     data.strPlace = place;
-    
+
     data.strCall = getLeft();
     return (data.strCall.length() > 0);
   }
@@ -149,13 +150,13 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
   }
 
   private class MyAddress1Field extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       // remove leading asterisk
       if (field.startsWith("*")) field = field.substring(1).trim();
-      
+
       // If field contains comma, parse as address and cross / city
       String sApt = "";
       skipApt = true;
@@ -182,13 +183,13 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
         data.strApt = append(data.strApt, "-", sApt);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY APT";
     }
   }
-  
+
   private static final Pattern ADDRESS3_PTN = Pattern.compile("([^*]*?)\\*([^,]*?),(?: ([^,]*?),)?(?: (.*))?");
   private class MyAddress3Field extends AddressField {
     @Override
@@ -200,24 +201,24 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       data.strCity = getOptGroup(match.group(3));
       data.strApt = append(data.strApt, "-", getOptGroup(match.group(4)));
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE ADDR CITY APT";
     }
-    
+
   }
-  
+
   private class MyAptField extends AptField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
-      
+
       // Older formats included apt in address field
       // if this is one of those, skip this field
       if (skipApt) return false;
@@ -225,14 +226,14 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -240,7 +241,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d)?(?: [AP]M)?).*");
   private static final Pattern TRUNC_DATE_TIME_PTN = Pattern.compile("\\d[ \\d/:]*");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
@@ -249,7 +250,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
       if (!match.matches()) {
-        if (!isLastField() || !TRUNC_DATE_TIME_PTN.matcher(field).matches()) abort(); 
+        if (!isLastField() || !TRUNC_DATE_TIME_PTN.matcher(field).matches()) abort();
         return;
       }
       data.strDate = match.group(1);
@@ -261,7 +262,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
     "ALABAMA",
     "ALEXANDER",
@@ -279,31 +280,31 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
     "PAVILION",
     "PEMBROKE",
     "STAFFORD",
-    
+
     "TONAWANDA IR",
 
     // Erie County
     "ALDEN",
     "AKRON",
-    
+
     // Wyoming County
     "ATTICA",
     "BENNINGTON",
     "WARSAW",
-    
+
     // Erie County,
     "CLARENCE",
     "NEWSTEAD",
-    
+
     // Orleans County
     "BARRE",
     "CLARENDON",
     "SHELBY",
-    
+
     // Livingston County
     "CALEDONIA",
     "YORK",
-    
+
     // Monroe County
     "RIGA"
   };
