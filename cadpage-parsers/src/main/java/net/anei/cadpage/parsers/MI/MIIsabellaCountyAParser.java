@@ -16,8 +16,9 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   public MIIsabellaCountyAParser() {
     super(CITY_CODES, "ISABELLA COUNTY", "MI",
            "( UNIT ENROUTE ADDR CITY CALL/SDS " +
-           "| ( CANCEL | FYI? CALL ) ( ADDR/Z APT/Z CITY! | ADDR/Z CITY! | ADDR2/S! ) ( X  X? | PLACE X X? | ) INFO/N+? ID UNIT " +
+           "| ( CANCEL | FYI? CALL ) ( ADDR/Z APT/Z APT/Z CITY! | ADDR/Z APT/Z CITY! | ADDR/Z CITY! | ADDR/S! ) ( X  X? | PLACE X X? | ) INFO/N+? ID UNIT " +
            ") END");
+    setupCityValues(CITY_CODES);
   }
 
   @Override
@@ -38,7 +39,7 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new CallField("Enroute");
-    if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -46,33 +47,37 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
     return super.getField(name);
   }
 
-  private class MyAddress2Field extends AddressField {
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?) *-+ *(.*)");
+  private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.lastIndexOf('-');
-      if (pt >= 0) {
-        String city = field.substring(pt+1).trim();
-        city = CITY_CODES.getProperty(city);
-        if (city != null) {
-          data.strCity = city;
-          parseAddress(field.substring(0,pt).trim(), data);
-          return;
+      Matcher match = ADDR_CITY_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        String place = match.group(2);
+        if (isCity(place)) {
+          String tmp = CITY_CODES.getProperty(place);
+          if (tmp != null) place = tmp;
+          data.strCity = place;
+        } else {
+          data.strPlace = place;
         }
       }
-      parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
+      super.parse(field, data);
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)|\\d{1,4}[A-Z]?|[A-Z]|BLDG.*|.* FL .*", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("DIST:")) {
-        data.strPlace = field;
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) {
+        String tmp = match.group(1);
+        if (tmp != null) field = tmp;
+        data.strApt = append(data.strApt, "-", field);
       } else {
-        Matcher match = APT_PTN.matcher(field);
-        if (match.matches()) field = match.group(1);
-        super.parse(field, data);
+        data.strPlace = append(data.strPlace, " - ", field);
       }
     }
 
@@ -143,8 +148,17 @@ public class MIIsabellaCountyAParser extends DispatchOSSIParser {
       "WDM",   "WEIDMAN",
       "WNN",   "WINN",
 
+      "CLARE",           "CLARE COUNTY",
+      "MECOSTA",         "MECOSTA COUNTY",
+      "MIDLAND",         "MIDLAND COUNTY",
+
+      "CLARE CO",        "CLARE COUNTY",
       "MECOSTA CO",      "MECOSTA COUNTY",
-      "MIDLAND CO",      "MIDLAND COUNTY"
+      "MIDLAND CO",      "MIDLAND COUNTY",
+
+      "CLARE COUNTY",    "CLARE COUNTY",
+      "MECOSTA COUNTY",  "MECOSTA COUNTY",
+      "MIDLAND COUNTY",  "MIDLAND COUNTY"
 
   });
 }
