@@ -14,7 +14,7 @@ public class WAJeffersonCountyBParser extends DispatchA57Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@co.clallam.wa.us,Dispatch@clallamcountywa.gov";
+    return "Dispatch@co.clallam.wa.us,Dispatch@clallamcountywa.gov,portangeles@hiplink.com";
   }
 
 }
