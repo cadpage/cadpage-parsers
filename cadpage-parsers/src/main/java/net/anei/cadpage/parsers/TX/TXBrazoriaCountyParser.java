@@ -9,6 +9,7 @@ public class TXBrazoriaCountyParser extends GroupBestParser {
 
   public TXBrazoriaCountyParser() {
     super(new TXBrazoriaCountyAParser(), new TXBrazoriaCountyBParser(),
-          new TXBrazoriaCountyCParser());
+          new TXBrazoriaCountyCParser(),
+          new TXBrazoriaCountyFParser());
   }
 }
