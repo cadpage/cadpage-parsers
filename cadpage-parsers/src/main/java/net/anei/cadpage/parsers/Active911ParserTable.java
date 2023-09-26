@@ -2438,6 +2438,7 @@ public class Active911ParserTable {
       "US/TX/ManvelPD",                   "TXBrazoriaCountyA",
       "US/TX/MaverickCounty",             "TXMaverickCounty",
       "US/TX/Mcspage",                    "TXVanZandtCounty",
+      "US/TX/McLennanCounty",             "TXMcLennanCountyF",
       "US/TX/Medapoint",                  "TXTravisCountyB",
       "US/TX/MedinaCounty",               "TXMedinaCounty",
       "US/TX/Medstar911",                 "TXFortWorth",

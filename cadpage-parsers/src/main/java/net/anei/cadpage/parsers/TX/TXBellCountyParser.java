@@ -14,11 +14,20 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 public class TXBellCountyParser extends FieldProgramParser {
 
   public TXBellCountyParser() {
-    super(CITY_CODES, "BELL COUNTY", "TX",
+    this("BELL COUNTY", "TX");
+  }
+
+  public TXBellCountyParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState,
         "( P:PRI! EVNUM:ID! LOC:ADDR1/S! ADDR2/S? APT:APT! LAT:GPS1! LONG:GPS2! TIME:DATETIME2! CALLR:NAME! CALLR_ADD:SKIP! CALLR_NUM:PHONE! UNITS:UNIT! EVENT_TYPE:CALL! Sub_Type:CALL/SDS! COMMENTS:INFO INFO/CS+ " +
         "| PRI1 ( LOC:ADDR/S APT:APT? MUN:CITY? | ) ( EVENT_TYPE:CODE! SubType:CODE! Comments:INFO Problem:INFO CALLER_NAME:NAME% CLRNUM:PHONE% TIME:TIME% EVNUM:ID | TYPE_CODE:CODE! SubType:CODE CALLER_NAME:NAME! CLRNUM:PHONE! TIME:TIME! Comments:INFO ) " +
         ")");
+    setupCities(CITY_LIST);
     setupGpsLookupTable(GPS_TABLE);
+  }
+
+  public String getAliasCode() {
+    return "TXBellCounty";
   }
 
   public String getFilter() {
@@ -110,7 +119,7 @@ public class TXBellCountyParser extends FieldProgramParser {
 
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*), *([^ ]+)(?: APT)?");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*)[,;] *([^ ]+)(?: APT)?");
   private class MyAddressField extends AddressField {
 
     private int type;
@@ -166,7 +175,17 @@ public class TXBellCountyParser extends FieldProgramParser {
           data.strApt = append(data.strApt, "-", apt);
         }
         else if (part.startsWith("@")) {
-          data.strPlace = append(data.strPlace, " - ", part.substring(1).trim());
+          part = part.substring(1).trim();
+          if (data.strAddress.length() == 4) {
+            String city = CITY_CODES.getProperty(data.strAddress);
+            if (city != null) {
+              data.strCity = city;
+              data.strAddress = "";
+              super.parse(part, data);
+              part = "";
+            }
+          }
+          data.strPlace = append(data.strPlace, " - ", part);
         }
       }
     }
@@ -734,6 +753,7 @@ public class TXBellCountyParser extends FieldProgramParser {
       "BART", "BARTLETT",
       "BELL", "BELL COUNTY",
       "BLTN", "BELTON",
+      "BTLN", "BELTON",   // Typo
       "BRGS", "BRIGGS",
       "BRNT", "BURNET",
       "BRTM", "BERTRAM",
@@ -772,5 +792,9 @@ public class TXBellCountyParser extends FieldProgramParser {
       "TROY", "TROY",
       "WLMN", "WILLIAMSON COUNTY"
   });
+
+  private static final String[] CITY_LIST = new String[] {
+      "FLORENCE"
+  };
 
 }
