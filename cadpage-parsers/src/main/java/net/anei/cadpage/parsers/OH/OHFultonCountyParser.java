@@ -1,68 +1,59 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
-public class OHFultonCountyParser extends DispatchEmergitechParser {
-  
+public class OHFultonCountyParser extends FieldProgramParser {
+
   public OHFultonCountyParser() {
-    super(CITY_LIST, "FULTON COUNTY", "OH", TrailAddrType.PLACE_INFO);
-    removeWords("TRAIL");
+    super("FULTON COUNTY", "OH",
+          "CALL:CALL! PLACE:SKIP! ADDR:ADDR/S6! CITY:CITY! LAT:GPS1! LONG:GPS2! AREA:MAP! PRI:PRI! TIME:TIME! UNIT:UNIT? INFO/N+");
   }
- 
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() == 0) return false;
-    body = subject + ':' + body + "$$";
-    return super.parseMsg(body, data);
-  }
-  
 
   @Override
-  protected boolean parseFields(String[] fields, Data data) {
-    fields[fields.length-1] = stripFieldEnd(fields[fields.length-1], "$$");
-    return super.parseFields(fields, data);
+  public String getFilter() {
+    return "notify@somahub.io";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
-  private static final String[] CITY_LIST = new String[]{
-    
-    "FULTON CO",
-    
-    //CITY
-    "WAUSEON",
-    
-    //VILLAGES
-    "ARCHBOLD",
-    "DELTA",
-    "FAYETTE",
-    "LYONS",
-    "METAMORA",
-    "SWANTON",
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    data.strSource = subject;
+    return parseFields(body.split("\n"), data);
+  }
 
-    //TOWNSHIPS
-    "AMBOY TWP",
-    "CHESTERFIELD TWP",
-    "CLINTON TWP",
-    "DOVER TWP",
-    "FRANKLIN TWP",
-    "FULTON TWP",
-    "GERMAN TWP",
-    "GORHAM TWP",
-    "PIKE TWP",
-    "ROYALTON TWP",
-    "SWAN CREEK TWP",
-    "YORK TWP",
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
 
-   //OTHER
-    "PETTISVILLE",
-    "TEDROW",
-    
-    // Lucas County
-    "MAUMEE",
-    
-    // Williams County
-    "ALVORDTON",
-    "MILL CREEK TWP"
-  };
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d?:\\d\\d?", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private static final Pattern UNIT_TIME_PTN = Pattern.compile("UNIT \\S+ \\| .*");
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("COMMENT: Terminal \\S+ \\| +");
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (UNIT_TIME_PTN.matcher(field).matches()) return;
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      if (field.startsWith("Call Initiated by ")) return;
+      super.parse(field, data);
+    }
+  }
 }
