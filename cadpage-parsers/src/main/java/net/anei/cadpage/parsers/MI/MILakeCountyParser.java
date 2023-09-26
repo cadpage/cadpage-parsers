@@ -32,6 +32,8 @@ public class MILakeCountyParser extends DispatchOSSIParser {
       data.strDate = match.group(1);
       data.strTime = match.group(2)+':'+match.group(3);
       body = "CAD:" + body.substring(match.end());
+    } else if (!body.startsWith("CAD:")) {
+      body = "CAD:" + body;
     }
     return super.parseMsg(body, data);
   }
