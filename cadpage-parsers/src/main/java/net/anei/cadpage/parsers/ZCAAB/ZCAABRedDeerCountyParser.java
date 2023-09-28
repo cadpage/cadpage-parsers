@@ -41,7 +41,7 @@ public class ZCAABRedDeerCountyParser extends DispatchA51Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD Message") && !subject.equals("Incident Message")) {
+    if (!subject.equals("CAD Message") && !subject.endsWith("Incident Message")) {
       data.strSource = subject;
     }
 
