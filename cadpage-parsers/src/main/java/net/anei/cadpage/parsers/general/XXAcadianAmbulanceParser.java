@@ -17,8 +17,8 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
           "| Location:PLACE! Address:ADDR! ( Apt:APT! Bldg:APT/D? City:CITY! Changed_From:SKIP! " +
                                           "| Room:APT! City:CITY! Destination:LINFO! Address:LINFO! City:LINFO! " +
                                           ") " +
-          "| CALL! Loc:PLACE! ( Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! State:ST Cnty:CITY! Map_Pg:MAP Dest:INFO Pt's_Name:NAME Latitude:GPS1/d Longitude:GPS2/d" +
-                             "| Address:ADDR! Apt:APT! Bldg:APT/D! Cross_St:X! City:CITY! State:ST! Parish/County:SKIP! Map_Pg:MAP! Notes:INFO! Dest:INFO! Latitude:GPS1/d! Longitude:GPS2/d " +
+          "| CALL! Loc:PLACE! ( Add:ADDR! APT:APT? Bldg:APT/D? Cross_St:X! City:CITY! State:ST Cnty:CITY! Map_Pg:MAP Dest:DEST Pt's_Name:NAME Latitude:GPS1/d Longitude:GPS2/d" +
+                             "| Address:ADDR! Apt:APT! Bldg:APT/D! Cross_St:X! City:CITY! State:ST! Parish/County:SKIP! Map_Pg:MAP! Notes:INFO! Dest:DEST! Latitude:GPS1/d! Longitude:GPS2/d " +
                              ") " +
           ")",
           FLDPROG_IGNORE_CASE);
@@ -169,6 +169,7 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("DEST")) return new MyDestField();
     return super.getField(name);
   }
 
@@ -202,6 +203,32 @@ public class XXAcadianAmbulanceParser extends FieldProgramParser {
       if (field.equals("UDC")) field = "San Antonio";
       if (!data.strCity.isEmpty()) return;
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
+
+  private class MyDestField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      FParser fp = new FParser(field);
+      if (isBreakAt(field, 80)) {
+        data.strSupp = append(data.strSupp, "\n", fp.get(40));
+        data.strSupp = append(data.strSupp, "\n", fp.get(30));
+        data.strSupp = append(data.strSupp, "  Apt:", fp.get(10));
+        data.strSupp = append(data.strSupp, "\n", fp.get());
+      } else if (isBreakAt(field, 70)) {
+        data.strSupp = append(data.strSupp, "\n", fp.get(30));
+        data.strSupp = append(data.strSupp, "\n", MSPACE_PTN.matcher(fp.get(40)).replaceFirst("  Apt:"));
+        data.strSupp = append(data.strSupp, "\n", fp.get());
+      } else {
+        data.strSupp = append(data.strSupp, "\n", field);
+      }
+    }
+
+    private boolean isBreakAt(String field, int pos) {
+      if (field.length() <= pos) return false;
+      return field.charAt(pos-1) == ' ' && Character.isUpperCase(field.charAt(pos));
     }
   }
 }
