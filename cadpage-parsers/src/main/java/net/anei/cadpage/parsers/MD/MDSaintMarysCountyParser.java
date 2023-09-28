@@ -12,7 +12,7 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
 
   public MDSaintMarysCountyParser() {
     super(CITY_LIST, "SAINT MARYS COUNTY", "MD",
-          "TIME CALL ( EMPTY EMPTY UNIT CALL/SDS INFO/N+ | ADDR/Z EMPTY ( EMPTY | CITY X ) UNIT PLACE! | PLACE/Z ADDR/Z X/Z X/Z CITY! UNIT? | PLACE? ADDR ( CITY! UNIT? | UNIT | X/Z CITY! UNIT? | X/Z X/Z CITY! UNIT? | X/Z UNIT! | X/Z X/Z UNIT! | ( X X? | ) ) ) EMPTY? INFO+? EMPTY END");
+          "TIME CALL ( EMPTY EMPTY+? UNIT CALL/SDS INFO/N+ | ADDR/Z EMPTY ( EMPTY | CITY X ) UNIT PLACE! | PLACE/Z ADDR/Z X/Z X/Z CITY! UNIT? | PLACE? ADDR ( CITY! UNIT? | UNIT | X/Z CITY! UNIT? | X/Z X/Z CITY! UNIT? | X/Z UNIT! | X/Z X/Z UNIT! | ( X X? | ) ) ) EMPTY? INFO+? EMPTY END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupProtectedNames("BARNES AND YEH", "LAKE AND BRETON VIEW DR");
   }
