@@ -14,7 +14,8 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
 
   public OHStarkCountyRedcenter2Parser() {
     super("STARK COUNTY", "OH",
-          "( Call:CALL! Date/Time:DATETIME1! ( Place:PLACE! Address:ADDRCITY! | Address:ADDRCITY! Place:PLACE ) Crosses:X! Latitude:GPS1? Longitude:GPS2? Section:MAP? Run_Num:ID? Unit:SKIP? Alert:INFO1! Info:INFO1% INFO1/N+ Map:TIMES1+ " +
+          "( Call:CALL! Date/Time:DATETIME1! ( Place:PLACE! Address:ADDRCITY! | Address:ADDRCITY! Place:PLACE ) Crosses:X! Latitude:GPS1? Longitude:GPS2? Section:MAP? Run_Num:ID? Unit:SKIP? Alert:INFO1! Info:INFO1% INFO1/N+ " +
+                "( MAC_Channel:CH Units_Assigned:UNIT Run_Number:ID | Map:TIMES1+ ) " +
           "| Address:ADDRCITY! Grid:MAP! Cross_Streets:X! Nature_Of_Call:CALL! DATETIME1! Incident_Number:ID! SKIP! INFO+? TIMES1! TIMES1+ " +
           "| Call_Address:ADDRCITY! Radio_Channel:CH! Common_Name:PLACE! Qualifier:EMPTY! Cross_Streets:X Local_Information:INFO! Custom_Layer:SKIP! Census_Tract:EMPTY! Call_Type:CALL! Call_Priority:PRI! Call_Date/Time:DATETIME1? Nature_Of_Call:CALL/SDS! Units_Assigned:UNIT! Fire_Quadrant:MAP! Incident_Number(s):ID! Caller_Name:NAME! Caller_Phone:PHONE! Caller_Address:CADDR! Alerts:SKIP! Narratives:INFO1! Status_Times:TIMES1+ Google_Maps_Hyperlink:SKIP " +
           "| CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! XST:X? ( ID:ID! PRI:PRI? DATE:DATETIME1! MAP:MAP_X! UNIT:SKIP? INFO:INFO1! TIMES1+ " +
