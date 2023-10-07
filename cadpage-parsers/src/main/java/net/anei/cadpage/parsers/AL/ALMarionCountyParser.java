@@ -17,7 +17,7 @@ public class ALMarionCountyParser extends FieldProgramParser {
 
   public ALMarionCountyParser() {
     super(CITY_LIST, "MARION COUNTY", "AL",
-          "Unit:UNIT? Event:ID! Location:ADDR/S! LAT/LONG:GPS? Event_Type:CALL! Event_SubType:CALL/SDS! Complainant_Name:NAME! Complainant_Phone:PHONE INFO+");
+          "Unit:UNIT? Event:ID! Location:ADDR/S! LAT/LONG:GPS? Event_Type:CALL! Latitude:GPS1? Longitude:GPS2? Event_SubType:CALL/SDS! Complainant_Name:NAME! Complainant_Phone:PHONE INFO+");
   }
     
   @Override
