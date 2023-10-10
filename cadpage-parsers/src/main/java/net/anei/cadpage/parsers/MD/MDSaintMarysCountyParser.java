@@ -12,7 +12,7 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
 
   public MDSaintMarysCountyParser() {
     super(CITY_LIST, "SAINT MARYS COUNTY", "MD",
-          "TIME CALL ( EMPTY EMPTY+? UNIT CALL/SDS INFO/N+ | ADDR/Z EMPTY ( EMPTY | CITY X ) UNIT PLACE! | PLACE/Z ADDR/Z X/Z X/Z CITY! UNIT? | PLACE? ADDR ( CITY! UNIT? | UNIT | X/Z CITY! UNIT? | X/Z X/Z CITY! UNIT? | X/Z UNIT! | X/Z X/Z UNIT! | ( X X? | ) ) ) EMPTY? INFO+? EMPTY END");
+          "TIME CALL ( DEMPTY EMPTY+? UNIT CALL/SDS | PLACE/Z ADDR/Z X/Z X/Z CITY | ADDR/Z X/Z CITY X/Z? UNIT PLACE | ADDR/Z X/Z CITY/Z X/Z UNIT PLACE ) EMPTY? INFO/N+ END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
     setupProtectedNames("BARNES AND YEH", "LAKE AND BRETON VIEW DR");
   }
@@ -30,11 +30,19 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("DEMPTY")) return new MyDoubleEmptyField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|ALS|DNR|ECC|FDC|TFER|USCG|WEA|WXWARN|WXWAT)\\b ?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:[A-Z]+\\d+[A-Z]?|ALS|DNR|ECCR?|FDC|SMCPD|SMECO|TFER|USCG|WEA|WXWARN|WXWAT)\\b ?)+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyDoubleEmptyField extends EmptyField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return field.isEmpty() && getRelativeField(+1).isEmpty();
+    }
   }
 
   private static final Pattern ADDR_APT_PTN = Pattern.compile(".* (?:APT|RM|ROOM|UNIT) *\\S+");
@@ -271,10 +279,13 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
       "SCOTLAND",
       "SOUTH HAMPTON",
       "SPRING RIDGE",
+      "SAINT CLEMENTS WOODS",
+      "ST CLEMENTS WOODS",
       "ST INIGOES",
       "ST JAMES",
       "ST MARYS CITY",
       "TALL TIMBERS",
+      "THOMPSONS CORNER",
       "TOWN CREEK",
       "VALLEY LEE",
       "WILDEWOOD",
@@ -300,6 +311,10 @@ public class MDSaintMarysCountyParser extends FieldProgramParser {
       "SPRING RIDGE", "LEXINGTON PARK",
       "ST JAMES",     "LEXINGTON PARK",
 
-      "MEDLEYS NECK", "LEONARDTOWN"
+      "MEDLEYS NECK",          "LEONARDTOWN",
+      "SAINTT CLEMENTS WOODS", "LEONARDTOWN",
+      "ST CLEMENTS WOODS",     "LEONARDTOWN",
+
+      "THOMPSONS CORNER",      "MECHANICSVILLE"
   });
 }
