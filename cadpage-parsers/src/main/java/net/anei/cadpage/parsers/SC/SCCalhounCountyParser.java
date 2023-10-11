@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.SC;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
-public class SCCalhounCountyParser extends DispatchSPKParser {
+public class SCCalhounCountyParser extends DispatchA19Parser {
 
   public SCCalhounCountyParser() {
     super("CALHOUN COUNTY", "SC");
@@ -10,7 +10,7 @@ public class SCCalhounCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "cad@calhouscsheriff.com,cad@calhounscsheriff.com,generalinfo@ccso.sc.gov";
+    return "generalinfo@ccso.sc.gov";
   }
 
   @Override
