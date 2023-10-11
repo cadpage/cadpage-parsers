@@ -11,12 +11,12 @@ public class VTChittendenCountyEParser extends DispatchH05Parser {
     super("CHITTENDEN COUNTY", "VT",
           "Call_Address:SKIP? " +
             "( Cross_Streets:X! Google_Map_Link:EMPTY! SKIP! Call_Type:CALL! Call_Address:ADDRCITY! Units:UNIT! Status_Times:EMPTY! TIMES+? Call_Date/Time:DATETIME! Incident_#:ID! LAT/LONG:GPS! TAG " +
-            "| CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_STREETS:X! ID:ID! PRI:PRI! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:EMPTY INFO_BLK+? INCIDENT:ID! APT:INFOX! LAT:GPS1! LON:GPS2! ) END");
+            "| CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_STREETS:X! ID:ID! PRI:PRI! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:EMPTY INFO_BLK+? INCIDENT:ID! APT:INFOX! LAT:GPS1! LON:GPS2! Times:EMPTY TIMES+ ) END");
   }
 
   @Override
   public String getFilter() {
-    return "Fire@burlingtonvt.gov,chayes@bpdvt.org";
+    return "@burlingtonvt.gov,@bpdvt.org";
   }
 
   @Override
