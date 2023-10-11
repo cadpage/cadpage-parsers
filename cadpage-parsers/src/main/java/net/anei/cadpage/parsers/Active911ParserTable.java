@@ -2402,6 +2402,7 @@ public class Active911ParserTable {
       "US/TX/FreeportDispatch",           "TXBrazoriaCountyB",
       "US/TX/Friendswood",                "TXFriendswood",
       "US/TX/Gainesville",                "TXCookeCountyB",
+      "US/TX/GalvestonCounty",            "TXGalvestonCounty",
       "US/TX/Gatesville",                 "TXGatesville",
       "US/TX/GillespieCounty",            "TXGillespieCounty",
       "US/TX/Gladewater",                 "TXGreggCounty",
