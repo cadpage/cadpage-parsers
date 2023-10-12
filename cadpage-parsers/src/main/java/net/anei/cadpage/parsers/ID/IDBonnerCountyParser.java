@@ -11,8 +11,13 @@ public class IDBonnerCountyParser extends SmartAddressParser {
 
   public IDBonnerCountyParser() {
     super("BONNER COUNTY", "ID");
-    setFieldList("SRC CALL ADDR X PLACE APT CITY INFO DATE TIME");
+    setFieldList("SRC CALL ADDR X PLACE APT CITY INFO");
     removeWords("MALL", "STREET");
+  }
+
+  @Override
+  public String getFilter() {
+    return "pssmtpauth@bonnercountyid.gov";
   }
 
   @Override
@@ -20,12 +25,12 @@ public class IDBonnerCountyParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern MASTER = Pattern.compile("([A-Z]{3,4}) _([^_]+) _(.*)");
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?), ([A-Z]{3}) +(.*)");
+  private static final Pattern MASTER = Pattern.compile("([A-Z]{3,4}) _([^_]+) _(.*)", Pattern.DOTALL);
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?), ([A-Z]{3}|): +(.*)");
   private static final Pattern ADDR_SPLIT_PTN = Pattern.compile(";| - ");
   private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d+[A-Z]?|(?:APT|RM|ROOM|#) *([^ ]+) *(.*)");
   private static final Pattern NEAR_PTN = Pattern.compile("NEAR:? +(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile(" *\\b(\\d\\d \\d\\d \\d\\d) (\\d\\d \\d\\d \\d{4})\\b[- ]*");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("\\\\{2}\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - .*?\\\\{2}");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -42,7 +47,7 @@ public class IDBonnerCountyParser extends SmartAddressParser {
       addr = match.group(1).trim();
       data.strCity = convertCodes(match.group(2), CITY_CODES);
       info = match.group(3);
-    }
+    } else return false;
 
     boolean first = true;
     for (String part : ADDR_SPLIT_PTN.split(addr)) {
@@ -73,34 +78,41 @@ public class IDBonnerCountyParser extends SmartAddressParser {
     }
 
     if (info != null) {
-      match = INFO_DATE_TIME_PTN.matcher(info);
-      int last = 0;
-      while (match.find()) {
-        if (data.strTime.length() == 0) {
-          data.strTime = match.group(1).replace(' ', ':');
-          data.strDate = match.group(2).replace(' ', '/');
-        }
-        data.strSupp = append(data.strSupp, "\n", info.substring(last,match.start()));
-        last = match.end();
+      for (String line : INFO_BRK_PTN.split(info)) {
+        line = line.replace("\\\\", " ").trim();
+        data.strSupp = append(data.strSupp, "\n", line);
       }
-      data.strSupp = append(data.strSupp, "\n", info.substring(last));
     }
+
     return true;
 
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "ATH", "ATHOL",
-      "BLA", "BLANCHARD",
-      "CLA", "CLARK FORK",
-      "COC", "COCOLALLA",
-      "COO", "COOLIN",
-      "HOP", "HOPE",
-      "OLD", "OLDTOWN",
-      "PON", "PONDERAY",
-      "PRI", "PRIEST RIVER",
-      "PRL", "PRIEST LAKE",
-      "SAN", "SANDPOINT",
-      "SAG", "SAGLE"
+      "ATH", "Athol",
+      "BAY", "Bayview",
+      "BLA", "Blanchard",
+      "CAR", "Careywood",
+      "CLA", "Clark Fork",
+      "COC", "Cocolalla",
+      "COL", "Colburn",
+      "COO", "Coolin",
+      "DOV", "Dover",
+      "HOP", "Hope",
+      "KOO", "Kootenai",
+      "LAC", "Laclede",
+      "NEW", "Newport",
+      "NOR", "Nordman",
+      "OLD", "Oldtown",
+      "PON", "Ponderay",
+      "POS", "Post Falls",
+      "PRI", "Priest River",
+      "PRL", "Priest Lake",
+      "RAT", "Rathdrum",
+      "SAG", "Sagle",
+      "SAM", "Samuels",
+      "SAN", "Sandpoint",
+      "SPI", "Spirit Lake"
+
   });
 }
