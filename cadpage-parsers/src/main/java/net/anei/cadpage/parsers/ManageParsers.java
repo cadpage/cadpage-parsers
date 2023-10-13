@@ -212,7 +212,8 @@ public class ManageParsers {
         "MOStLouisCountyG",   "General",
         "KYKnoxCountyA",      "General",                 // 08/22/2023
         "MOMonett",           "MOLawrenceCounty",        // 09/05/2023
-        "PAPennStar",         "General"                 // 09/28/2023
+        "PAPennStar",         "General",                 // 09/28/2023
+        "PAAdamsCountyB",     "General"                 // 10/12/2023
   });
 
 }

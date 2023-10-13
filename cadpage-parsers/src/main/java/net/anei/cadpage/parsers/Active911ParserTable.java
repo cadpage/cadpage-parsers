@@ -2074,6 +2074,7 @@ public class Active911ParserTable {
       "US/PA/FayetteCounty",              "PAFayetteCountyC",
       "US/PA/FayetteCountyCoroner",       "PAFayetteCountyC",
       "US/PA/FayetteCountyEMA",           "PAFayetteCountyC",
+      "US/PA/FayettevilleVFD",            "PAFranklinCountyD,PAFranklinCountyE",
       "US/PA/FCFES",                      "PAFranklinCountyC",
       "US/PA/FDCMS",                      "PAChesterCountyO,GroupBlock,PAChesterCountyF",
       "US/PA/Firepaging",                 "PAChesterCountyD4",

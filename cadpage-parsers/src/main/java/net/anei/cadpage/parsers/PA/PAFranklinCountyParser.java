@@ -8,10 +8,12 @@ Franklin County, PA
 
 
 public class PAFranklinCountyParser extends GroupBestParser {
-  
+
   public PAFranklinCountyParser() {
     super(new PAFranklinCountyAParser(),
           new PAFranklinCountyBParser(),
-          new PAFranklinCountyCParser());
+          new PAFranklinCountyCParser(),
+          new PAFranklinCountyDParser(),
+          new PAFranklinCountyEParser());
   }
 }
