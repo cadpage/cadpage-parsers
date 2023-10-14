@@ -375,6 +375,7 @@ public class Active911ParserTable {
       "US/CO/NorthMetroFire",             "COBroomfieldCounty",
       "US/CO/NWSAlert",                   "StandardNationalWeatherService",
       "US/CO/OlatheFire",                 "COMontroseCounty",
+      "US/CO/ParkCounty",                 "COParkCountyB",
       "US/CO/PitkinCounty",               "COPitkinCounty",
       "US/CO/RioBlancoCounty",            "CORioBlancoCountyA",
       "US/CO/RioGrandeCounty",            "CORioBlancoCountyA",

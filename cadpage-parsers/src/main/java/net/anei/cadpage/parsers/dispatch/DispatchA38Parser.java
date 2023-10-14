@@ -12,7 +12,7 @@ public class DispatchA38Parser extends FieldProgramParser {
 
   public DispatchA38Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS#:ID! CallType:CALL! Address:ADDR+ Units:UNIT/N+ Details:INFO/CS+");
+          "CFS#:ID! CallType:CALL! Address:ADDR+ Units:UNIT/C+ Details:INFO/CS+");
   }
 
   @Override
@@ -25,12 +25,13 @@ public class DispatchA38Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}|\\d{8}|\\d{10}|\\d{2}-\\d+|\\d{2}[A-Z]{3}\\d{6}|[A-Z]{3,4}\\d{6}", true);
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("UNIT")) return new BaseUnitField();
     return super.getField(name);
   }
 
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("([A-Z]{2}|M)(?: *\\d{5})?|");
-  private class MyAddressField extends AddressField {
+  private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field.replace(" apt:", " Apt:"));
@@ -56,6 +57,18 @@ public class DispatchA38Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";
+    }
+  }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("[^\\s,]+");
+
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Unit:");
+      Matcher match = UNIT_PTN.matcher(field);
+      if (match.lookingAt()) field = match.group();
+      super.parse(field, data);
     }
   }
 }
