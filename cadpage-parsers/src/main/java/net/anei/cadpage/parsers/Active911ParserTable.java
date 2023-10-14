@@ -189,6 +189,7 @@ public class Active911ParserTable {
       "US/AR/PulaskiCounty",              "ARPulaskiCounty",
       "US/AR/PulaskiCountyMcAlmontFD",    "ARPulaskiCountyC",
       "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyB",
+      "US/AR/SiloamSpringsFD",            "ARBentonCountyI",
       "US/AR/WhiteCounty",                "ARWhiteCounty",
       "US/AZ/CityofCottonwood",           "AZYavapaiCountyC",
       "US/AZ/CityofKingman",              "AZMohaveCounty",
