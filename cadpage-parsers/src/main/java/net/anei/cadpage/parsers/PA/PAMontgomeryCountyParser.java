@@ -5,22 +5,23 @@ import java.util.Properties;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 /*
- * Montgomery county, Pa 
+ * Montgomery county, Pa
  */
 
 
 public class PAMontgomeryCountyParser extends GroupBestParser {
-  
+
   public PAMontgomeryCountyParser() {
-    super(new PAMontgomeryCountyAParser(), 
+    super(new PAMontgomeryCountyAParser(),
            new PAMontgomeryCountyBParser(),
            new PAMontgomeryCountyCParser(),
            new PAMontgomeryCountyDParser(),
            new PAMontgomeryCountyEParser(),
            new PAMontgomeryCountyFParser(),
-           new PAMontgomeryCountyGParser());
+           new PAMontgomeryCountyGParser(),
+           new PAMontgomeryCountyKParser());
   }
-  
+
   public static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ABGN", "ABINGTON TWP",
       "AMBL", "AMBLER",
@@ -90,7 +91,7 @@ public class PAMontgomeryCountyParser extends GroupBestParser {
       "SOUD", "SOUDERTON",
       "SPRG", "SPRINGFIELD TWP",
       "TLFD", "TELFORD",
-      "TRPP", "TRAPPE", 
+      "TRPP", "TRAPPE",
       "TWMC", "TOWAMENCIN TWP",
       "UDUB", "UPPER DUBLIN TWP",
       "UFRE", "UPPER FREDERICK TWP",
@@ -110,14 +111,14 @@ public class PAMontgomeryCountyParser extends GroupBestParser {
       "WYCT", "WYNCOTE",
       "WYNN", "WYNNEWOOD",
       "VILL", "VILLANOVA",
-      
+
       "BECO", "BERKS COUNTY",
       "BUCO", "BUCKS COUNTY",
       "CHCO", "CHESTER COUNTY",
       "DECO", "DELAWARE COUNTY",
       "LECO", "LEHIGH COUNTY"
   });
-  
+
   public static final Properties MAP_CITIES = buildCodeTable(new String[]{
       "OVERBROOK HILLS",      "LOWER MERION TWP"
   });
