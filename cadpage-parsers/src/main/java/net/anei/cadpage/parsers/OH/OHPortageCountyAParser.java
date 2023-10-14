@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     super(OHPortageCountyParser.CITY_LIST, "PORTAGE", "OH",
           "( SELECT/1 PREFIX CALL:CALL/SDS! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+ " +
           "| PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+ )");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -54,7 +56,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?)[ \\.]+)?([A-Z0-9]{0,7})-([A-Z].*|)");
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?)[ \\.]+)?([A-Z0-9]{0,8})-([A-Z].*|)");
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
@@ -94,7 +96,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -103,14 +105,14 @@ public class OHPortageCountyAParser extends FieldProgramParser {
         if (pt < 0) abort();
         String place = field.substring(pt+1, field.length()-1).trim();
         field = field.substring(0, pt).trim();
-        
+
         if (!data.strPlace.startsWith(place)) {
           data.strPlace = append(data.strPlace, " - ", place);
         }
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
@@ -129,4 +131,37 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   public String postAdjustMapAddress(String addr) {
     return OHPortageCountyParser.fixMapAddress(addr);
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "9428 VISTA CT",                        "+41.240918,-81.354969",
+      "9429 VISTA CT",                        "+41.240508,-81.354968",
+      "9430 VISTA CT",                        "+41.240918,-81.354969",
+      "9431 VISTA CT",                        "+41.240508,-81.354968",
+      "9432 VISTA CT",                        "+41.240918,-81.354969",
+      "9433 VISTA CT",                        "+41.240508,-81.354968",
+      "9434 VISTA CT",                        "+41.240918,-81.354969",
+      "9435 VISTA CT",                        "+41.240508,-81.354968",
+      "9436 VISTA CT",                        "+41.241229,-81.354847",
+      "9437 VISTA CT",                        "+41.240512,-81.355409",
+      "9438 VISTA CT",                        "+41.241229,-81.354847",
+      "9439 VISTA CT",                        "+41.240512,-81.355409",
+      "9440 VISTA CT",                        "+41.241229,-81.354847",
+      "9441 VISTA CT",                        "+41.240512,-81.355409",
+      "9442 VISTA CT",                        "+41.241229,-81.354847",
+      "9443 VISTA CT",                        "+41.240512,-81.355409",
+      "9444 VISTA CT",                        "+41.241409,-81.355088",
+      "9445 VISTA CT",                        "+41.240529,-81.355852",
+      "9446 VISTA CT",                        "+41.241409,-81.355088",
+      "9447 VISTA CT",                        "+41.240529,-81.355852",
+      "9448 VISTA CT",                        "+41.241409,-81.355088",
+      "9449 VISTA CT",                        "+41.240529,-81.355852",
+      "9450 VISTA CT",                        "+41.241409,-81.355088",
+      "9451 VISTA CT",                        "+41.240529,-81.355852",
+      "9453 VISTA CT",                        "+41.240782,-81.355734",
+      "9455 VISTA CT",                        "+41.240782,-81.355734",
+      "9457 VISTA CT",                        "+41.240782,-81.355734",
+      "9459 VISTA CT",                        "+41.240782,-81.355734",
+      "9461 VISTA CT",                        "+41.240953,-81.355241"
+
+  });
 }
