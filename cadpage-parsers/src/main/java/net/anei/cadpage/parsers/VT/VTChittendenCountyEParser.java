@@ -52,22 +52,39 @@ public class VTChittendenCountyEParser extends DispatchH05Parser {
   }
 
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}|");
+  private static final Pattern CITY_PTN = Pattern.compile("[ A-Z]{3,}");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      if (STATE_PTN.matcher(city).matches()) {
-        data.strState = city;
-        city = p.getLastOptional(',');
+      String apt = null;
+      while (true) {
+        int pt = field.lastIndexOf(',');
+        if (pt < 0) break;
+        String city = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        if (field.isEmpty()) continue;
+        if (STATE_PTN.matcher(city).matches()) {
+          data.strState = city;
+          continue;
+        }
+        if (apt == null && !CITY_PTN.matcher(city).matches()) {
+          apt = city;
+          continue;
+        }
+
+        data.strCity = city;
+        break;
       }
-      data.strCity = city;
-      parseAddress(p.get(), data);
+      if (apt != null) {
+        field = stripFieldEnd(field, ' ' + apt);
+      }
+      parseAddress(field, data);
+      if (apt != null) data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY ST";
+      return "ADDR CITY ST APT";
     }
   }
 
