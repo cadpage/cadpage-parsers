@@ -196,6 +196,7 @@ public class ParserList {
               ,"ARPopeCounty"                   ,"Pope County, AR"
               ,"ARPulaskiCounty"                ,"Pulaski County, AR"
               ,"ARSebastianCounty"              ,"Sebastian County, AR"
+              ,"ARSpringdale"                   ,"Springdale, AR"
               ,"ARWashingtonCounty"             ,"Washington County, AR"
               ,"ARWhiteCounty"                  ,"White County, AR"
 
