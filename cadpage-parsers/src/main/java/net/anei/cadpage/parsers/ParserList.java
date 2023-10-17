@@ -1705,6 +1705,7 @@ public class ParserList {
               ,"TXHutchins"                     ,"Hutchins, TX"
               ,"TXJeffersonCounty"              ,"Jefferson County, TX"
               ,"TXJohnsonCounty"                ,"Johnson County, TX"
+              ,"TXKarnesCounty"                 ,"Karnes County, TX"
               ,"TXKaufmanCounty"                ,"Kaufman County, TX"
               ,"TXKendallCounty"                ,"Kendall County, TX"
               ,"TXKerrCounty"                   ,"Kerr County, TX"

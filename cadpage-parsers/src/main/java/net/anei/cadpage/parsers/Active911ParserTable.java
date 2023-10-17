@@ -2432,6 +2432,7 @@ public class Active911ParserTable {
       "US/TX/HuntCounty",                 "TXHuntCounty",
       "US/TX/HurstTX",                    "TXTarrantCountyD",
       "US/TX/JohnsonCounty",              "TXJohnsonCountyA",
+      "US/TX/KarnesCounty",               "TXKarnesCounty",
       "US/TX/Katy",                       "TXCyCreekCommCenter",
       "US/TX/KaufmanCounty",              "TXKaufmanCountyA",
       "US/TX/KendallCounty",              "TXKendallCounty",
