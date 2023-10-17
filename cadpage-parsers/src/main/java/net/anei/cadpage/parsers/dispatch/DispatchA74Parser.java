@@ -55,7 +55,7 @@ public class DispatchA74Parser extends FieldProgramParser {
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("(.*?)(?: *\\(([-+]?[.0-9]+, *[-+]?[.0-9]+)\\))+");
 
   private static final Pattern ADDR_CITY_UNIT_PTN = Pattern.compile(" *[\\(\\[](.*?)[\\]\\)] *");
-  private static final Pattern ADDR_UNIT_PTN = Pattern.compile("(.*?)(?: (?:APT|RM|LOT) +(.*?))?(?: *\\[(.*?)\\])?");
+  private static final Pattern ADDR_UNIT_PTN = Pattern.compile("(.*?)(?: (?:APT|RM|LOT) +([^,]*?))?(?: *\\[(.*?)\\])?");
   private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
   private static final Pattern CITY_PTN = Pattern.compile("[A-Z ]*");
