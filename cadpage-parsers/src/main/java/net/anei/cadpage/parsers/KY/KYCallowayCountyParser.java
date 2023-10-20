@@ -15,7 +15,7 @@ public class KYCallowayCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,cad@callkyso.com";
+    return "noreply@cisusa.org,cad@callkyso.com,911@comminc.com";
   }
 
   private static final Pattern NORTH_PTN = Pattern.compile("\\bNORTH\\b");
