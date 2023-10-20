@@ -10,6 +10,6 @@ public class CAButteCountyCParser extends DispatchA20Parser {
 
   @Override
   public String getFilter() {
-    return "RIMS2text@chicoca.gov";
+    return "RIMS2text@chicoca.gov,@active911.com";
   }
 }
