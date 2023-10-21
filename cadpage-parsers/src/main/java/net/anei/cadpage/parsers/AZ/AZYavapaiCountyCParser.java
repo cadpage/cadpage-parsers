@@ -12,6 +12,7 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
 	public AZYavapaiCountyCParser() {
 		super(CITY_CODES, "YAVAPAI COUNTY", "AZ",
 		      "SRC ( BOX | SRC? ) CALL ADDR UNIT/S! INFO/N+? ( EMPTY ID? | ID ) EMPTY+? X? DATETIME?");
+		setupGpsLookupTable(GPS_LOOKUP_TABLE);
 	}
 
 	@Override
@@ -165,6 +166,10 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
       if (data.strDate.length() == 0) super.parse(field, data);
     }
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "2050 W STATE ROUTE 89A",               "+34.752797,-112.045739"
+  });
 
   private static Properties CITY_CODES = buildCodeTable(new String[]{
       "CLA", "CLARKDALE",
