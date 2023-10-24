@@ -8,6 +8,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 public class ORDouglasCountyParser extends GroupBestParser {
   public ORDouglasCountyParser() {
-    super(new ORDouglasCountyAParser(), new ORDouglasCountyBParser(), new ORDouglasCountyCParser());
+    super(new ORDouglasCountyAParser(),
+          new ORDouglasCountyBParser(),
+          new ORDouglasCountyCParser(),
+          new ORDouglasCountyDParser());
   }
 }

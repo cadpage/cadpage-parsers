@@ -12,7 +12,7 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
 
   public ORDouglasCountyAParser() {
     super(CITY_CODES,"DOUGLAS COUNTY", "OR",
-          "DATETIME CALL ADDR CITY_APT PLACE INFO!");
+          "DATETIME CALL ADDR CITY_APT PLACE! INFO/N+");
   }
 
   @Override
@@ -23,6 +23,7 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldEnd(body, "...");
+    body = stripFieldEnd(body, "\n-");
     int pt = body.indexOf("\n--");
     if (pt >= 0) body = body.substring(0,pt).trim();
     if (!parseFields(body.split("\n"), data)) return false;
@@ -48,7 +49,7 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CITY_APT_PTN = Pattern.compile("(?:([A-Z]{2}) )?#(.*)");
+  private static final Pattern CITY_APT_PTN = Pattern.compile("(?:([A-Z ]+?) +)?#(.*)");
   private class MyCityAptField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
