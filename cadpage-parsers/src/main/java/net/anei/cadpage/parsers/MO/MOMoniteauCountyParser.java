@@ -50,10 +50,19 @@ public class MOMoniteauCountyParser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ST")) return new MyStateField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("COPYRIGHT")) return new SkipField("©.*", true);
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+
+  private class MyStateField extends StateField {
+    @Override
+    public void doParse(String field, Data data) {
+      if (field.equals("M")) field = "MO";
+      super.doParse(field, data);
+    }
   }
 
   private class MyInfoField extends InfoField {
