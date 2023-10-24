@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,99 +9,81 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class PABlairCountyBParser extends FieldProgramParser {
 
   public PABlairCountyBParser() {
-    super("BLAIR COUNTY", "PA",
-          "Units:UNIT! Inc_Code:CALL! Address:ADDRCITY/S6! X-ST:X! CFS_Number:ID! Date/Time:DATETIME! Narrative:INFO/N+ Lat/Lon:GPS");
+    super(CITY_LIST, "BLAIR COUNTY", "PA",
+          "CALL ADDRCITY PLACE PLACE! Due:UNIT! END");
   }
 
   @Override
   public String getFilter() {
-    return "blair911@atlanticbbn.net";
+    return "alerts@centre.ealert911.com";
   }
 
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
+  private static final Pattern DELIM = Pattern.compile("\n| +(?=Due:)");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals(".")) return false;
+    return parseFields(DELIM.split(body), data);
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     return super.getField(name);
   }
 
-  private Pattern ADDR_MAP_PTN = Pattern.compile("(.*) ((?:[NSEW]|[NS][EW]) SECTOR)");
-  private class MyAddressCityField extends AddressField {
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*) Apartment (.*)", Pattern.CASE_INSENSITIVE);
+  private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace('@', '&');
-      int pt = field.lastIndexOf(',');
-      if (!field.startsWith("LAT:")) {
-        if (pt >= 0) {
-          String city = field.substring(pt+1).trim();
-          city = stripFieldEnd(city, " BORO");
-          field = field.substring(0,pt).trim();
-
-          pt = city.indexOf('-');
-          if (pt >= 0) city = city.substring(pt+1).trim();
-          data.strCity = city;
-        }
-      }
-      Matcher match = ADDR_MAP_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strMap = match.group(2);
-      }
       super.parse(field, data);
+
+      Matcher match = ADDR_APT_PTN.matcher(data.strAddress);
+      if (match.matches()) {
+        data.strAddress = match.group(1).trim();
+        data.strApt =  match.group(2).trim();
+      }
+
+      parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, data.strCity, data);
+      data.strCity = stripFieldEnd(data.strCity, " BORO");
+    }
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("APT[. #]+(.*)|\\d{1,4}[A-Z]?|[A-Z]");
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) {
+        String tmp = match.group(1);
+        if (tmp != null) field = tmp;
+        if (!field.equals(data.strApt)) data.strApt = append(data.strApt, "-", field);
+      } else {
+        data.strPlace = append(data.strPlace, " - ", field);
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT MAP CITY";
+      return "APT PLACE";
     }
   }
 
-  private class MyCrossField extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("No Cross Streets Found")) return;
-      super.parse(field, data);
-    }
-  }
+  private static final String[] CITY_LIST = new String[] {
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private class MyDateTimeField extends DateTimeField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
-    }
-  }
+      // City
+      "ALTOONA",
 
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      field = stripFieldStart(field, "ProQA Paramount Medical:");
-      super.parse(field, data);
-    }
-  }
-
-  private class MyGPSField extends GPSField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replace("-", ",-");
-      super.parse(field, data);
-    }
-  }
+      // Boroughs
+      "BELLWOOD",
+      "DUNCANSVILLE",
+      "HOLLIDAYSBURG",
+      "MARTINSBURG",
+      "NEWRY",
+      "ROARING SPRING",
+      "TUNNELHILL",
+      "TYRONE",
+      "WILLIAMSBURG"
+  };
 }
