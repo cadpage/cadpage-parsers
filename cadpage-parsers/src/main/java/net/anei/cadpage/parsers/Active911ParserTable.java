@@ -1407,6 +1407,7 @@ public class Active911ParserTable {
       "US/MS/PicayunePolice",             "MSPearlRiverCounty",
       "US/MS/Southaven",                  "MSDeSotoCountyB",
       "US/MS/WarrenCounty",               "MSWarrenCounty",
+      "US/MS/YalobushaCounty",            "MSYalobushaCounty",
       "US/MT/CityofBlackEagle",           "MTCascadeCounty",
       "US/MT/FlatheadCounty",             "MTFlatheadCounty",
       "US/MT/GallatinCounty",             "MTGallatinCounty",

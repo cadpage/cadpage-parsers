@@ -984,6 +984,7 @@ public class ParserList {
               ,"MSTateCounty"                   ,"Tate County, MS"
               ,"MSWarrenCounty"                 ,"Warren County, MS"
               ,"MSWinstonCounty"                ,"Winston County, MS"
+              ,"MSYalobushaCounty"              ,"Yalobusha County, MS"
               ,"MSYazooCounty"                  ,"Yazoo County, MS"
           ),
           new ParserCategory("Missouri"
