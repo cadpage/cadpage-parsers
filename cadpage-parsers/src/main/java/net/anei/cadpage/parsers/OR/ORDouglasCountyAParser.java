@@ -73,12 +73,15 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AZ", "AZALEA",
+      "CC", "COTTAGE GROVE",
       "CG", "COTTAGE GROVE",
+      "CN", "CANYONVILLE",
       "CT", "CHEMULT",
       "CU", "CURTIN",
       "CV", "CAMAS VALLEY",
       "CY", "CANYONVILLE",
       "DC", "DAYS CREEK",
+      "DI", "DILLARD",
       "DL", "DILLARD",
       "DR", "DRAIN",
       "EL", "ELKTON",
@@ -90,6 +93,7 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
       "NB", "NORTH BEND",
       "OK", "OAKLAND",
       "RB", "ROSEBURG",
+      "RD", "REEDSPORT",
       "RI", "RIDDLE",
       "RP", "REEDSPORT",
       "SC", "SCOTTSBURG",
