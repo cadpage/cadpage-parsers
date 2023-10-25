@@ -98,7 +98,7 @@ public class AZYavapaiCountyCParser extends FieldProgramParser {
   }
 
   private static final Pattern DT_OPERATOR = Pattern.compile("(\\d{2} \\d{2} \\d{2}) (\\d{2}/\\d{2}/\\d{4}) - .*?, .* \\(.*\\)");
-  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,}[, ]+[-+]?\\d{2,3}\\.\\d{6,}\\b) *");
+  private static final Pattern GPS_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{3,}[, ]+[-+]?\\d{2,3}\\.\\d{3,}\\b) *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
