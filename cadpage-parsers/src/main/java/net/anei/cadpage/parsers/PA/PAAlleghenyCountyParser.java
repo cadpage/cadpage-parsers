@@ -16,6 +16,7 @@ public class PAAlleghenyCountyParser extends GroupBestParser {
     super(new PAAlleghenyCountyAParser(),
           new PAAlleghenyCountyBParser(),
           new PAAlleghenyCountyCParser(),
+          new PAAlleghenyCountyFParser(),
           new GroupBlockParser(),
           new PAAlleghenyCountyDParser());
   }

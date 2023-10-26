@@ -2037,6 +2037,7 @@ public class Active911ParserTable {
       "US/PA/AdamsCounty",                "PAAdamsCountyA",
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
       "US/PA/AlleghenyCountyCADDivision", "PAAlleghenyCountyA",
+      "US/PA/AlleghenyCountyTicket",      "PAAlleghenyCountyF",
       "US/PA/Ambridge",                   "PABeaverCounty",
       "US/PA/ArmstrongCounty",            "PAArmstrongCounty",
       "US/PA/AustinVFC",                  "PAPotterCounty",
