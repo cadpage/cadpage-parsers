@@ -31,7 +31,10 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
   private List<String> crosses = new ArrayList<String>();
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    // Toss anything with a subject
+    if (!subject.isEmpty()) return false;
 
     // Throw out any version B calls
     if (body.contains("|")) return false;
