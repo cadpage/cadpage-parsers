@@ -1294,6 +1294,7 @@ public class Active911ParserTable {
       "US/MO/DouglasCounty",              "MODouglasCounty",
       "US/MO/DunklinCounty",              "MODunklinCounty",
       "US/MO/EasternCentral",             "MOStLouisCountyE",
+      "US/MO/EllisvillePD",               "MOStLouisCountyE",
       "US/MO/FranklinCounty",             "MOFranklinCounty",
       "US/MO/GasconadeCounty",            "MOGasconadeCounty",
       "US/MO/Gladstone",                  "MOClayCountyE,MOClayCountyF",
