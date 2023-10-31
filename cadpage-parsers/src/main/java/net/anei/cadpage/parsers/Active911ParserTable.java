@@ -2339,6 +2339,7 @@ public class Active911ParserTable {
       "US/TX/BigSpring",                  "TXHowardCounty",
       "US/TX/BlancoCounty",               "TXBlancoCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
+      "US/TX/BrazoriaCounty",             "TXBrazoriaCountyD",
       "US/TX/BrazosCounty",               "TXBrazosCounty",
       "US/TX/BridgeportPD",               "TXWiseCounty",
       "US/TX/BryanFD",                    "TXBrazosCounty",
