@@ -1,23 +1,24 @@
 package net.anei.cadpage.parsers.GA;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 /**
  * Chatham County, GA
  */
 
-public class GAChathamCountyAParser extends DispatchProQAParser {
+public class GAChathamCountyAParser extends FieldProgramParser {
 
   public GAChathamCountyAParser() {
     super("CHATHAM COUNTY", "GA",
-          "( SELECT/1 ID! ID2/L ADDR ( NAME PHONE CITY | APT_PLACE CITY ) GPS1 GPS2 UNIT CALL! CH? INFO/N+ " +
-          "| CALL UNIT ADDR APT_PLACE CITY ST! INFO/N+ " +
-          ") ", true);
+          "( SELECT/1 CRN:ID! UNIT:UNIT! ADD:ADDR! CITY:CITY! APT/UNIT:APT! XSTREET:X! BUSINESS:PLACE! DET:CODE! PRIORITY:PRI! PROBLEM:CALL! COMMENTS:INFO! END " +
+          "| SELECT/2 CRN:ID! ADD:ADDR! INFO/N+ " +
+          "| SELECT/3 UNIT_ASSIGNED:UNIT! POST_LOCATION:ADDR! END " +
+          "| COMMENT_NOTIFICATION:INFO END " +
+          ")");
   }
 
   @Override
@@ -25,81 +26,84 @@ public class GAChathamCountyAParser extends DispatchProQAParser {
     return MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern DELIM1_PTN = Pattern.compile("(?: +|(?<![ /]))(?=(?:UNIT|ADD|CITY|APT/UNIT|XSTREET|BUSINESS|DET|PRIORITY|PROBLEM|COMMENTS):)");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("AUTOPAGE | ")) {
-      setSelectValue("2");
-      body = body.substring(11).trim();
-      return parseFields(body.split("\\|"), data);
-    } else {
+
+    if (body.startsWith("CALL INFO:")) {
       setSelectValue("1");
-      if (!super.parseMsg(body, data)) return false;
-      if (data.msgType == MsgType.RUN_REPORT && data.strSupp.startsWith("Alert:")) data.msgType = MsgType.GEN_ALERT;
-      return true;
+      return parseFields(DELIM1_PTN.split(body.substring(10).trim()), data);
     }
+
+    if (body.startsWith("TIMES:")) {
+      setSelectValue("2");
+      data.msgType = MsgType.RUN_REPORT;
+      body = body.substring(6).trim().replace(" DISPATCHED:", ";DISPATCHED:");
+      return parseFields(body.split(";"), data);
+    }
+
+    if (body.startsWith("UNIT POST:")) {
+      setSelectValue("3");
+      data.strCall = "UNIT ASSIGNED TO";
+      return super.parseMsg(body.substring(10).trim(), data);
+    }
+
+    if (body.startsWith("EXTR BEGIN: EXTR COMP:")) {
+      return parseExtraInfo(body, data);
+    }
+
+    if (body.startsWith("COMMENT NOTIFICATION:")) {
+      setSelectValue("4");
+      return super.parseMsg(body, data);
+    }
+    return false;
+  }
+
+  @Override
+  public String getProgram() {
+    String result = super.getProgram();
+    if (result.startsWith("UNIT ")) result = "CALL " + result;
+    return result;
+  }
+
+
+  private static final Pattern EXTRA_BRK_PTN = Pattern.compile(" +(?=\\d\\) )");
+
+  private boolean parseExtraInfo(String body, Data data) {
+    setFieldList("INFO");
+    String[] parts = EXTRA_BRK_PTN.split(body);
+    for (String part : parts[0].split(":")) {
+      data.strSupp = append(data.strSupp, "\n", part.trim());
+    }
+    for (int ndx = 1; ndx < parts.length; ndx++) {
+      data.strSupp = append(data.strSupp, "\n", parts[ndx]);
+    }
+    return true;
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID2")) return new IdField("[EF]20.*|\\d{4,}|", true);
-    if (name.equals("APT_PLACE")) return new MyAptPlaceField();
-    if (name.equals("CITY")) return new CityField("[ A-Z]+");
-    if (name.equals("GPS1")) return new MyGPSField(1);
-    if (name.equals("GPS2")) return new MyGPSField(2);
-    if (name.equals("UNIT")) return new UnitField("\\d\\d- *(.*)", true);
-    if (name.equals("CH")) return new ChannelField("TAC *\\d+", true);
+    if (name.equals("PRI")) return new MyPriorityField();
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("ST")) return new StateField("GA", true);
     return super.getField(name);
   }
 
-  private static final Pattern APT_PLACE_PTN = Pattern.compile("(\\d+[A-Za-z])\\b *(.*)");
-  private class MyAptPlaceField extends Field {
+  private class MyPriorityField extends PriorityField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = APT_PLACE_PTN.matcher(field);
-      if (match.matches()) {
-        data.strApt = append(data.strApt, "-", match.group(1));
-        field = match.group(2);
-      }
-      data.strPlace = field;
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "APT PLACE";
-    }
-  }
-
-  private static final Pattern GPS_PTN = Pattern.compile("(.*?) [NSEW]");
-  private class MyGPSField extends GPSField {
-    public MyGPSField(int type) {
-      super(type);
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = GPS_PTN.matcher(field);
-      if (!match.matches()) abort();
-      super.parse(match.group(1).replace("%", ""), data);
-    }
-  }
-
-  private static final Pattern CH_INFO_PTN = Pattern.compile("(TAC[- ]*\\d+)\\b", Pattern.CASE_INSENSITIVE);
-  private class MyInfoField extends BaseInfoField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = CH_INFO_PTN.matcher(field);
-      if (match.lookingAt()) {
-        data.strChannel = match.group();
-        field = field.substring(match.end()).trim();
-      }
+      if (field.length() >= 2 && field.charAt(1) == 'P') field = field.substring(0,1);
       super.parse(field, data);
     }
+  }
 
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]*(?=\\[\\d\\])");
+  private class MyInfoField extends InfoField {
     @Override
-    public String getFieldNames() {
-      return "CH " + super.getFieldNames();
+    public void parse(String field, Data data) {
+      for (String line : INFO_BRK_PTN.split(field)) {
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
     }
   }
 }
