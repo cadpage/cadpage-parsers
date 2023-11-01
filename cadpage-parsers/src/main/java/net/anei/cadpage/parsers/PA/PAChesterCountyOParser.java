@@ -14,16 +14,25 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
               "Address:EMPTY! PLACE! ADDR! Cross_Street:X! Location_Information:INFO! Development:INFO/N! Municipality:CITY! " +
               "Caller_Information:INFO/N! Caller_Name:NAME! Caller_Phone_Number:PHONE! Alt_Phone_Number:SKIP! Caller_Address:SKIP! " +
               "Caller_Source:SKIP! Units:UNIT! UNIT/S+ Event_Comments:INFO/N+ " +
-          "| SKIP+? Event_ID:EMPTY! ID! Event:EMPTY! ID2! Unit:EMPTY! UNIT! Dispatch_Time:EMPTY! DATETIME2 Event_Type:SKIP! " +
+          "| SELECT/2 SKIP+? Event_ID:EMPTY! ID! Event:EMPTY! ID2! Unit:EMPTY! UNIT! Dispatch_Time:EMPTY! DATETIME2 Event_Type:SKIP! " +
               "Agency:SKIP! Agency:SKIP! Event_Sub-Type:EMPTY! CALL! Dispatch_Group:EMPTY! CH Address:EMPTY! ADDR! Location_Info:EMPTY! PLACE " +
               "Cross_Street:EMPTY! X Municipality:EMPTY! CITY ESZ:EMPTY! MAP Development:EMPTY! MAP/L Beat:EMPTY! MAP/L " +
-              "Caller_Name:EMPTY! NAME Caller_Phone:EMPTY! PHONE Caller_Address:EMPTY! SKIP+? Event_Comments%EMPTY INFO2/N+ )");
+              "Caller_Name:EMPTY! NAME Caller_Phone:EMPTY! PHONE Caller_Address:EMPTY! SKIP+? Event_Comments%EMPTY INFO2/N+ " +
+          "| INCIDENT:CALL! STATUS:SKIP! EVENT_ID:ID! DISPATCH_TIME:DATETIME3! BOX:BOX! DISPATCHED_UNITS:UNIT! Mutual_Aid:UNIT/C? " +
+              "LOCATION:EMPTY! ADDR! CITY3! COUNTY_ST3! Common_Place:PLACE3? Development:PLACE3? Misc:PLACE3? X1:X? X2:X? " +
+              "Map:GPS3? CALLER_NAME:NAME! CALLER_ADDRESS:SKIP! CALLER_PHONE:PHONE! NOTES:INFO3! INFO3/N+ PORTAL_LINK:URL! " +
+          ")");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
   public String getFilter() {
-    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,paging@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,44@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,paging89@ehbems.org,whcems@outlook.com,calls@goodfellowship.org,@fdcmsincidents.com,MalvernFC@fdcms3.info";
+    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,@ehbems.org,whcems@outlook.com,calls@goodfellowship.org,@fdcmsincidents.com,@fdcms3.info,@westend67.com,Oxford_Union_Fire_Company@alerts.stationcad.com,nfdpc25norco@norcofireco.org";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static HtmlDecoder decoder = new HtmlDecoder();
@@ -54,8 +63,12 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf(MARKER);
-    if (pt < 0) return false;
-    body = body.substring(pt+MARKER.length()).trim();
+    if (pt >= 0) {
+      setSelectValue("1");
+      body = body.substring(pt+MARKER.length()).trim();
+    } else {
+      setSelectValue("3");
+    }
     return parseFields(body.split("\n"), data);
   }
 
@@ -68,6 +81,12 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
     if (name.equals("ID2")) return new MyId2Field();
     if (name.equals("DATETIME2")) return new MyDateTime2Field();
     if (name.equals("INFO2")) return new MyInfo2Field();
+    if (name.equals("DATETIME3")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("CITY3")) return new MyCity3Field();
+    if (name.equals("COUNTY_ST3")) return new MyCountyState3Field();
+    if (name.equals("PLACE3")) return new MyPlace3Field();
+    if (name.equals("GPS3")) return new MyGPS3Field();
+    if (name.equals("INFO3")) return new MyInfo3Field();
     return super.getField(name);
   }
 
@@ -117,11 +136,77 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
     }
   }
 
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d\\d?:\\d\\d:\\d\\d|[a-z]+\\d+");
+  private static final Pattern INFO_JUNK2_PTN = Pattern.compile("\\d\\d?:\\d\\d:\\d\\d|[a-z]+\\d+");
   private class MyInfo2Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (INFO_JUNK_PTN.matcher(field).matches()) return;
+      if (INFO_JUNK2_PTN.matcher(field).matches()) return;
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCity3Field extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf('(');
+      if (pt == 0) {
+        field = stripFieldEnd(field.substring(1), ")");
+      } else if (pt > 0) {
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCountyState3Field extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "(");
+      field = stripFieldEnd(field, ")");
+      String[] parts = field.split(",");
+      int last = parts.length-1;
+      String state = parts[last--].trim();
+      if (state.equalsIgnoreCase("Pennsylvania")) {
+        data.strState = "PA";
+      } else if (state.equalsIgnoreCase("Maryland")) {
+        data.strState = "MD";
+      } else if (state.equalsIgnoreCase("Delaware")) {
+        data.strState = "DE";
+      } else {
+        last++;
+      }
+      if (data.strCity.isEmpty() && last >= 0) data.strCity = parts[0].trim();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY ST";
+    }
+  }
+
+  private class MyPlace3Field extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!field.isEmpty()) data.strPlace = field;
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("\\+USA/@(\\d{2}\\.\\d{6,7},-\\d{2}\\.\\d{6,7})");
+  private class MyGPS3Field extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS_PTN.matcher(field);
+      if (match.find()) setGPSLoc(match.group(1), data);
+    }
+  }
+
+  private static final Pattern INFO_JUNK3_PTN = Pattern.compile("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d ~ \\S+ - +");
+  private class MyInfo3Field extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_JUNK3_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
       super.parse(field, data);
     }
   }
