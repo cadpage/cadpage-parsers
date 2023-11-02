@@ -25,4 +25,18 @@ public class AKAnchorageParser extends FieldProgramParser {
     return parseFields(body.split("\n"), data);
   }
 
+  @Override
+  public Field getField(String name) {
+    if (name.equals("PLACE")) return new MyPlaceField();
+    return super.getField(name);
+  }
+
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt =  field.indexOf(" : ");
+      if (pt >= 0) field = field.substring(pt+3).trim();
+      super.parse(field, data);
+    }
+  }
 }
