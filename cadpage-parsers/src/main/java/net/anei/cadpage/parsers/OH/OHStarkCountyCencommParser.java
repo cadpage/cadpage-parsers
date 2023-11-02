@@ -34,6 +34,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
   private static final Pattern FIELD_DELIM_PTN = Pattern.compile("\\s*-\\ss+|\\s+-\\s*|\\s*[:;\n]\\s*");
   private static final Pattern MASTER1_PTN = Pattern.compile("(.*?) +(?:AT|ON) +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
+  private static final Pattern RUN_PTN =  Pattern.compile("RUN[ #]+(\\d+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -50,7 +51,7 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
     if (!isPositiveId()) return false;
     if (body.contains(" COMMENTS:")) return false;
 
-    setFieldList("CALL ADDR APT CITY PLACE INFO");
+    setFieldList("CALL ADDR APT CITY PLACE ID INFO");
 
     Matcher match = FIX_NUMBER_PTN.matcher(body);
     if (match.find()) {
@@ -132,9 +133,16 @@ public class OHStarkCountyCencommParser extends DispatchA13Parser {
 
         for (int ndx = infoNdx; ndx<flds.length; ndx++) {
           String part = flds[ndx];
+          if (data.strCallId.isEmpty()) {
+            match = RUN_PTN.matcher(part);
+            if (match.matches()) {
+              data.strCallId = match.group(1);
+              continue;
+            }
+          }
           if (data.strCall.length() == 0) {
             data.strCall = part;
-          } else if (data.strCall.length() + part.length() <= 47) {
+          } else if (data.strCallId.isEmpty() && data.strCall.length() + part.length() <= 47) {
             data.strCall = append(data.strCall, " - ", part);
           } else {
             data.strSupp = append(data.strSupp, " - ", part);
