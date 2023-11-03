@@ -13,33 +13,33 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCClevelandCountyAParser extends DispatchOSSIParser {
-  
-  private static final Pattern BRACKET_PTN = Pattern.compile(";([^;]*?)\\["); 
+
+  private static final Pattern BRACKET_PTN = Pattern.compile(";([^;]*?)\\[");
   private String bracketTrigger = null;
   private boolean bracket = false;
-  
+
   public NCClevelandCountyAParser() {
     super(CITY_LIST, "CLEVELAND COUNTY", "NC",
           "( UNIT ENROUTE ADDR CITY_CODE CALL! END " +
           "| ( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDR! ADDR2? ( SKIP CITY | ) ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO/N+ )");
     setupMultiWordStreets("OAK GROVE-CLOVER HILL CH", "SANDY RUN CHURCH");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@clevelandcounty.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Reject NCClevelandCountyB messages
     if (subject.length() > 0) {
       if (subject.equals("Text Message")) return false;
       if (!body.startsWith("CAD:")) return false;
       if (body.substring(4).startsWith(subject)) return false;
     }
-    
+
     body = fixBody(body);
     bracket = false;
     bracketTrigger = null;
@@ -47,7 +47,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     if (match.find()) bracketTrigger = match.group(1).trim();
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new SkipField("Enroute");
@@ -61,19 +61,19 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyCityCodeField extends CityField {
     @Override
     public void parse(String field, Data data) {
       data.strCity = convertCodes(field, CITY_CODES);
     }
   }
-  
+
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]{1,2}[FP]D|\\d{3,4}|[A-Z]+\\d+");
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // We call it the name field, but it can be  many different things
       // Like a county name
       String county = COUNTY_CODES.getProperty(field.toUpperCase());
@@ -81,29 +81,29 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
         if (data.strCity.length() == 0) data.strCity = county;
         return;
       }
-      
+
       // Possibly a unit field
       if (UNIT_PTN.matcher(field).matches()) {
         data.strUnit = append(data.strUnit, " ", field);
         return;
       }
-      
+
       // Otherwise call it a name
       data.strName = append(data.strName, "-", cleanWirelessCarrier(field));
     }
-    
+
     @Override
     public String getFieldNames() {
       return "NAME UNIT CITY?";
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!isValidCall(field)) return false;
@@ -111,13 +111,13 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyAddress2Field extends AddressField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!NUMERIC.matcher(data.strAddress).matches()) return false;
@@ -128,14 +128,14 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       data.strPlace = append(data.strPlace, "-", field);
     }
   }
-  
+
   private static final Pattern NOT_CROSS_PTN = Pattern.compile("[a-z]");
   private class MyCrossField extends CrossField {
     @Override
@@ -145,7 +145,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       return super.checkParse(field, data);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -193,7 +193,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     }
     return sb.toString().replace(";;", ";");
   }
-  
+
   private static CodeSet HYPHENATED_WORD_SET = new CodeSet(
         "10-50",
         "BELWOOD-LAWNDALE",
@@ -206,18 +206,18 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
         "TASTE-T-DRIVE",
         "T-Mobile"
   );
-  
+
   private static Properties COUNTY_CODES = buildCodeTable(new String[]{
       "LINCOLN COUNTY",    "LINCOLN COUNTY",
       "LINC COUNTY",       "LINCOLN COUNTY",
       "LINC CO",           "LINCOLN COUNTY",
       "LINCOLN CO",        "LINCOLN COUNTY"
   });
-  
+
   static boolean isValidCall(String call) {
     return CALL_SET.contains(call);
   }
-  
+
   private static final Set<String> CALL_SET = new HashSet<String>(Arrays.asList(new String[]{
       "10-50 PI",
       "50PD",
@@ -247,6 +247,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "EMD",
       "FALL",
       "FIRE ALA",
+      "FIRE ALARM",
       "FIRE PD",
       "FIRE/1ST",
       "FIRE/CB",
@@ -296,7 +297,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "UNK MED",
       "WEL CHK"
   }));
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CASR", "CASAR",
       "CHER", "CHERRYVILLE",
@@ -308,9 +309,9 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       "SHE0", "SHELBY",
       "VALE", "VALE"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
-      
+
       // Cities
       "KINGS MOUNTAIN",
       "SHELBY",
@@ -335,13 +336,13 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
 
       // Unincorporated community
       "TOLUCA",
-      
+
       // Gaston County
       "CHERRYVILLE",
-      
+
       // Lincoln County
       "VALE",
-      
+
       //  Rutherford County
       "ELLENBORO"
   };
