@@ -81,6 +81,7 @@ public class Active911ParserTable {
       "US/AL/AthensLimestoneCounty",      "ALLimestoneCountyA",
       "US/AL/AttallaPD",                  "ALEtowahCountyD",
       "US/AL/BaldwinCounty",              "ALBaldwinCounty",
+      "US/AL/BarbourCounty",              "ALBarbourCounty",
       "US/AL/BibbCounty",                 "ALBibbCounty",
       "US/AL/BlountCounty",               "ALBlountCounty",
       "US/AL/BulterCounty",               "ALButlerCounty",

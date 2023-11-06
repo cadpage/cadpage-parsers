@@ -7,7 +7,12 @@ public class ALBarbourCountyParser extends FieldProgramParser {
 
   public ALBarbourCountyParser() {
     super(CITY_LIST, "BARBOUR COUNTY", "AL",
-          "ADDR/S PLACE EMPTY+? TIME CALL! INFO/N+");
+          "ADDR/S PLACE EMPTY+? PHONE? EMPTY+? TIME CALL! INFO/N+");
+  }
+
+  @Override
+  public String getFilter() {
+    return "messaging@iamresponding.com";
   }
 
   @Override
@@ -25,6 +30,7 @@ public class ALBarbourCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
@@ -48,7 +54,16 @@ public class ALBarbourCountyParser extends FieldProgramParser {
       "TEALS CROSSROADS",
 
       // Bullock County
-      "MIDWAY"
+      "MIDWAY",
+
+      // Dale County
+      "ARITON",
+      "CLOPTON",
+
+      // Henry County
+      "HENRY COUNTY",
+      "ABBEVILLE"
+
 
   };
 
