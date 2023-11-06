@@ -1,24 +1,23 @@
 package net.anei.cadpage.parsers.NH;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.dispatch.DispatchArchonixParser;
 
-public class NHGraftonCountyAParser extends DispatchArchonixParser {
+public class NHGraftonCountyAParser extends FieldProgramParser {
 
   public NHGraftonCountyAParser() {
-    super(CITY_CODES, "GRAFTON COUNTY", "NH");
+    super("GRAFTON COUNTY", "NH",
+          "Call_Type:CALL! Call_Time:DATETIME! Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! Additional_Location_Info:APT! " +
+              "Caller_Phone:PHONE! Channel:CH! Narrative:INFO! INFO/N+ Case_Number:ID END");
     setupGpsLookupTable(buildGPSLookupTable());
-    setupMultiWordStreets("TE LO CA");
+//    setupMultiWordStreets("TE LO CA");
   }
 
   @Override
   public String getFilter() {
-    return "cccademail@LRMFA.org,mobile@nhleds.com,@vzwpix.com,@concordnh.gov";
+    return "cad@lrmfa.org";
   }
 
   @Override
@@ -26,40 +25,33 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
     return MAP_FLG_SUPPR_TE | MAP_FLG_SUPPR_LA;
   }
 
-  private static Pattern CITY = Pattern.compile("(.*?) *, *([^ ]{2}) *([^ ]{2})? *(\n.*)", Pattern.DOTALL);
-
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (subject.startsWith("Fwd: ")) subject = subject.substring(5);
-    if (! super.parseMsg(subject, body, data)) return false;
-    if (data.msgType == MsgType.PAGE && data.strCall.length() == 0) return false;
-
-    if (data.strCity.length() == 2) {
-      data.strState = data.strCity;
-      data.strCity = stripFieldEnd(data.strPlace, ' '+data.strState);
-      data.strPlace = "";
-    }
-
-    return true;
+    if (!subject.equals("CAD Paging")) return false;
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("APT")) return new MyAptField();
     return super.getField(name);
   }
 
-  private class MyAddressCityField extends BaseAddressCityField {
-
+  private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
+  }
 
-      // the false makes the following city construct optional
-      super.parse(field, data, false);
-      if (data.strPlace.startsWith("EXIT ") || data.strPlace.startsWith("MM ")) {
-        data.strAddress = append(data.strAddress, " ", data.strPlace);
-        data.strPlace = "";
-      }
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      data.strApt = field;
     }
   }
 
@@ -11730,242 +11722,4 @@ public class NHGraftonCountyAParser extends DispatchArchonixParser {
         "13 YORK HILL DR",                      "+43.970367,-71.639526"
     });
   }
-
-  private static Properties CITY_CODES = buildCodeTable(new String[]{
-      "01", "ALTON",
-      "02", "ASHLAND",
-      "03", "BELMONT",
-      "04", "BRISTOL",
-      "05", "CENTER HARBOR",
-      "06", "BARNSTEAD",
-      "07", "FRANKLIN",
-      "08", "GILFORD",
-      "09", "GILMANTON",
-      "0S", "STRATHAM",
-      "10", "GROTON",
-      "11", "HILL",
-      "12", "HOLDERNESS",
-      "13", "LACONIA",
-      "14", "MEREDITH",
-      "15", "MOULTONBOROUGH",
-      "16", "NEW DURHAM",
-      "17", "NEW HAMPTON",
-      "18", "PLYMOUTH",
-      "19", "SANBORNTON",
-      "20", "SANDWICH",
-      "21", "TILTON",
-      "23", "WATERVILLE VALLEY",
-      "25", "STRAFFORD",
-      "26", "MIDDLETON",
-      "2S", "SULLIVAN",
-      "30", "ALEXANDRIA",
-      "31", "ANDOVER",
-      "34", "BRIDGEWATER",
-      "35", "CAMPTON",
-      "36", "DANBURY",
-      "37", "HEBRON",
-      "38", "RUMNEY",
-      "39", "TUFTONBORO",
-      "3S", "SURRY",
-      "40", "WARREN",
-      "41", "DORCHESTER",
-      "42", "WENTWORTH",
-      "43", "ROCHESTER",
-      "49", "FARMINGTON",
-      "50", "ALLENSTOWN",
-      "51", "BOSCAWEN",
-      "52", "BOW",
-      "53", "CANTERBURY",
-      "54", "CHICHESTER",
-      "55", "CONCORD",
-      "56", "EPSOM",
-      "57", "DUNBARTON",
-      "58", "HENNIKER",
-      "59", "HILLSBORO",
-      "60", "HOPKINTON",
-      "61", "LOUDON",
-      "62", "PEMBROKE",
-      "63", "HOOKSETT",
-      "65", "WEBSTER",
-      "71", "NORTHWOOD",
-      "72", "PITTSFIELD",
-      "74", "SALISBURY",
-      "75", "WEARE",
-      "76", "NEW BOSTON",
-      "80", "WARNER",
-      "82", "BRADFORD",
-      "83", "NEWBURY",
-      "84", "DEERING",
-      "85", "GLENCLIFF",
-      "86", "WASHINGTON",
-      "87", "WILMOT",
-      "88", "NEW LONDON",
-      "89", "NORTHFIELD",
-      "90", "SUTTON",
-      "91", "NEWPORT",
-      "93", "WOLFEBORO",
-      "94", "SUNAPEE",
-      "96", "ELLSWORTH",
-      "97", "THORNTON",
-      "A0", "ATKINSON",
-      "A1", "AUBURN",
-      "AD", "ALSTEAD",
-      "AH", "ACWORTH",
-      "AM", "ANTRIM",
-      "AT", "AMHERST",
-      "AY", "ALBANY",
-      "B0", "BARRINGTON",
-      "B1", "BEDFORD",
-      "B2", "BENNINGTON",
-      "B3", "BERLIN",
-      "B4", "BRENTWOOD",
-      "B5", "BROOKFIELD",
-      "BE", "BROOKLINE",
-      "BH", "BATH",
-      "BM", "BETHLEHEM",
-      "BN", "BENTON",
-      "BT", "BARTLETT",
-      "C0", "CANAAN",
-      "C1", "CANDIA",
-      "C2", "CHARLESTOWN",
-      "C3", "COLUMBIA",
-      "C4", "CROYDON",
-      "CD", "CHESTERFIELD",
-      "CE", "CLARKSVILLE",
-      "CH", "CORNISH",
-      "CK", "COLEBROOK",
-      "CL", "CARROL",
-      "CM", "CHATHAM",
-      "CR", "CHESTER",
-      "CT", "CLAREMONT",
-      "CY", "CONWAY",
-      "D0", "DALTON",
-      "D1", "DOVER",
-      "D2", "DUBLIN",
-      "D3", "DUMMER",
-      "DD", "DEERFIELD",
-      "DE", "DANVILLE",
-      "DM", "DURHAM",
-      "DY", "DERRY",
-      "E0", "EASTON",
-      "E1", "EATON",
-      "ED", "ENFIELD",
-      "EG", "EPPING",
-      "EK", "EAST KINGSTON",
-      "EL", "ERROL",
-      "EM", "EFFINGHAM",
-      "ER", "EXETER",
-      "F0", "FITZWILLIAM",
-      "F1", "FREEDOM",
-      "FA", "FRANCONIA",
-      "FN", "FRANCESTOWN",
-      "FT", "FREMONT",
-      "G0", "GILSUM",
-      "G1", "GOFFSTOWN",
-      "G2", "GORHAM",
-      "G3", "GOSHEN",
-      "G4", "GRAFTON",
-      "G5", "GRANTHAM",
-      "G6", "GREENFIELD",
-      "G7", "GREENLAND",
-      "GE", "GREENVILLE",
-      "H0", "HAMPTON",
-      "H1", "HARRISVILLE",
-      "H2", "HARTS LOCATION",
-      "H3", "HAVERHILL",
-      "H4", "HINSDALE",
-      "H5", "HUDSON",
-      "HD", "HAMPSTEAD",
-      "HF", "HAMPTON FALLS",
-      "HK", "HANCOCK",
-      "HR", "HANOVER",
-      "HS", "HOLLIS",
-      "J0", "JACKSON",
-      "J1", "JEFFERSON",
-      "JY", "JAFFERY",
-      "K0", "KENSINGTON",
-      "K1", "KINGSTON",
-      "KE", "KEENE",
-      "L0", "LANCASTER",
-      "L1", "LANGDON",
-      "L2", "LEBANON",
-      "L3", "LEE",
-      "L4", "LEMPSTER",
-      "L5", "LINCOLN",
-      "L6", "LISBON",
-      "L7", "LITTLETON",
-      "L8", "LYMAN",
-      "L9", "LYME",
-      "LD", "LITCHFIELD",
-      "LF", "LANDAFF",
-      "LH", "LYNDEBOROUGH",
-      "LV", "LIVERMORE",
-      "LY", "LONDONDERRY",
-      "M0", "MADISON",
-      "M1", "MASON",
-      "M3", "MILAN",
-      "M4", "MILTON",
-      "MD", "MILFORD",
-      "ME", "MONROE",
-      "MH", "MARLBOROUGH",
-      "MK", "MERRIMACK",
-      "MR", "MANCHESTER",
-      "MV", "MONT VERNON",
-      "MW", "MARLOW",
-      "MY", "MADBURY",
-      "N0", "NELSON",
-      "N2", "NEWINGTON",
-      "N3", "NEWTON",
-      "N4", "NORTHUMERLAND",
-      "NA", "NASHUA",
-      "NC", "NEW CASTLE",
-      "NH", "NORTH HAMPTON",
-      "NI", "NEW IPSWICH",
-      "NM", "NOTTINGHAM",
-      "NS", "NEWFIELDS",
-      "NT", "NEWMARKET",
-      "O0", "ORANGE",
-      "O1", "OSSIPEE",
-      "OD", "ORFORD",
-      "P0", "PETERBOROUGH",
-      "P1", "PORTSMOUTH",
-      "PD", "PLAINFIELD",
-      "PG", "PITTSBURG",
-      "PM", "PELHAM",
-      "PT", "PIERMONT",
-      "PW", "PLAISTOW",
-      "R0", "RAYMOND",
-      "R1", "RICHMOND",
-      "R2", "RINDGE",
-      "R3", "ROLLINSFORD",
-      "R4", "RYE",
-      "RH", "RANDOLPH",
-      "RY", "ROXBURY",
-      "S",  "SWANZEY",
-      "S0", "SALEM",
-      "S1", "SANDOWN",
-      "S2", "SEABROOK",
-      "S3", "SHARON",
-      "S4", "SOMERSWORTH",
-      "S5", "SOUTH HAMPTON",
-      "S6", "STARK",
-      "S7", "STEWARTSTOWN",
-      "S8", "STODDARD",
-      "S9", "STRATFORD",
-      "SE", "SHELBURNE",
-      "SH", "SUGAR HILL",
-      "TE", "TEMPLE",
-      "TH", "TAMWORTH",
-      "TY", "TROY",
-      "UY", "UNITY",
-      "W0", "WAKEFIELD",
-      "W1", "WESTMORELAND",
-      "W2", "WHITEFIELD",
-      "W3", "WINCHESTER",
-      "W4", "WINDSOR",
-      "WE", "WALPPOLE",
-      "WK", "WOODSTOCK",
-      "WM", "WINDHAM",
-      "WN", "WILTON"
-  });
 }
