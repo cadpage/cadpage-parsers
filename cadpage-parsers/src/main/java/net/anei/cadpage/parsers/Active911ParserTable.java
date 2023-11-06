@@ -844,6 +844,7 @@ public class Active911ParserTable {
       "US/KY/CaseyCounty",                "KYCaseyCounty",
       "US/KY/Chalybeate",                 "KYEdmonsonCountyB",
       "US/KY/ChristianCounty",            "KYChristianCounty",
+      "US/KY/ChristianCountyDiscard",     "US/KY/ChristianCounty",
       "US/KY/CincinnatiNorthernAirport",  "KYBooneCountyC",
       "US/KY/CityofBowlingGreen",         "KYBowlingGreen",
       "US/KY/CityofCarlisle",             "KYNicholasCounty",
