@@ -207,7 +207,7 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       "FALM4",      "RFD FOURTH ALARM",
       "FALM5",      "RFD FIFTH ALARM",
       "FAME",       "MEDICAL ALARM - FIRE",
-      "FAR",        "ALLERGIC REACTION",
+      "FAR",        "FIRE ALARM RESIDENTIAL",
       "FASLT",      "ASSAULT",
       "FBD",        "RESPIRATORY DISTRESS",
       "FBURNS",     "SUBJECT BURNED",
