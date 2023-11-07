@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import net.anei.cadpage.parsers.MsgInfo;
 import net.anei.cadpage.parsers.dispatch.DispatchProphoenixParser;
 
 public class MNHubbardCountyBParser extends DispatchProphoenixParser {
@@ -11,6 +12,13 @@ public class MNHubbardCountyBParser extends DispatchProphoenixParser {
   @Override
   public String getFilter() {
     return "NoReply@co.hubbard.mn.us";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, MsgInfo.Data data) {
+    int pt = body.indexOf("\n\n--");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+    return super.parseMsg(body, data);
   }
 
   private static final String[] CITY_LIST = new String[] {
