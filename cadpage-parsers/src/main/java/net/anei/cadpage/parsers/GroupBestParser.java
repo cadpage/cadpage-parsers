@@ -34,23 +34,32 @@ public class GroupBestParser extends GroupBaseParser {
   public GroupBestParser(MsgParser ... parsersP) {
 
     // Build the final array of parsers.  eliminating parsers that are aliased
-    // to another parser in the list
-    List<MsgParser> parserList = new ArrayList<MsgParser>(parsersP.length);
-    List<MsgParser> blockedParserList = new ArrayList<MsgParser>();
-    Map<String, MsgParser> aliasMap = new HashMap<String, MsgParser>();
+    // to another parser in the list.
+
+    // parserListList is a list of lists of message parsers.  First list consists of
+    // unblocked parsers.  Second list consists of parsers behind one block, third list
+    // consists of parsers behind two blocks, etc...
+    List<List<MsgParser>> parserListList = new ArrayList<List<MsgParser>>();
+
+    // Likewise aliasMapList is a list of alias maps for each block level
+    List<Map<String, MsgParser>> aliasMapList = new ArrayList<Map<String, MsgParser>>();
 
     // Add the list of parsers to our accumulated parser lists
-    addParsers(parsersP, parserList, blockedParserList, aliasMap);
+    addParsers(parsersP, 0, parserListList, aliasMapList);
 
-    // If we found any blocked parsers, they all get added to end of the regular
-    // parser list behind a new GroupBlockParser
-    if (!blockedParserList.isEmpty()) {
-      parserList.add(new GroupBlockParser());
-      parserList.addAll(blockedParserList);
+    // now merge this list of lists of parser into a single list separated by
+    // GroupBlockParsers
+    if (parserListList.size() == 0) {
+      parsers = new MsgParser[0];
     }
-
-    // Convert the adjusted parser list back to an array
-    parsers = parserList.toArray(new MsgParser[parserList.size()]);
+    else {
+      List<MsgParser> parserList = parserListList.get(0);
+      for (int ndx = 1; ndx < parserListList.size(); ndx++) {
+        parserList.add(new GroupBlockParser());
+        parserList.addAll(parserListList.get(ndx));
+      }
+      parsers = parserList.toArray(new MsgParser[parserList.size()]);
+    }
 
     // Group parser is sponsored if all of it subparsers are sponsored
     // If all subparsers are sponsored, sponsor date is the earliest subparser sponsor date
@@ -122,32 +131,32 @@ public class GroupBestParser extends GroupBaseParser {
   /**
    * Add list of parser to master parser list(s)
    * @param parsersP list of parsers to be added
-   * @param parserList accumulated list of regular parsers
-   * @param blockedParserList accumulated list of blocked parsers
+   * @param blockLevel number of blocks encountered before this parser list
+   * @param parserListList accumulated list of lists of parsers separated by block level
    * @param aliasMap map of alias codes to parsers
    */
-  private void addParsers(MsgParser[] parsersP, List<MsgParser> parserList, List<MsgParser> blockedParserList, Map<String, MsgParser> aliasMap) {
+  private void addParsers(MsgParser[] parsersP, int blockLevel, List<List<MsgParser>> parserListList, List<Map<String, MsgParser>> aliasMapList) {
 
     // Run through the list of parsers
     for (MsgParser parser : parsersP) {
 
-      // If we encounter a GropuBlockParsr, it does not get added, but we switch to
-      // adding subsequent parsers to the blocked parser list
-      if (parser instanceof GroupBlockParser) {
-        parserList = blockedParserList;
-      }
+      // If we encounter a GropuBlockParsr, it does not get added, but we increment the block level
+      if (parser instanceof GroupBlockParser) blockLevel++;
 
       // If parser is another GroupBestParser, call ourselves recursivelly to process it's parsers
       else if (parser instanceof GroupBestParser) {
-        addParsers(((GroupBestParser)parser).parsers, parserList, blockedParserList, aliasMap);
+        addParsers(((GroupBestParser)parser).parsers, blockLevel, parserListList, aliasMapList);
       }
 
       // Otherwise just add the parser to the current parser list
       else {
-        addParser(parser, parserList, aliasMap);
+        while (blockLevel+1 > parserListList.size()) {
+          parserListList.add(new ArrayList<MsgParser>());
+          aliasMapList.add(new HashMap<String, MsgParser>());
+        }
+        addParser(parser, parserListList.get(blockLevel), aliasMapList.get(blockLevel));
       }
     }
-
   }
 
   private void addParser(MsgParser parser, List<MsgParser> parserList,
