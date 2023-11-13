@@ -249,6 +249,12 @@ public class DispatchA49Parser extends FieldProgramParser {
         return;
       }
 
+      // Unit info
+      if (field.startsWith("EQquipment:")) {
+        data.strUnit = stripFieldStart(field.substring(11).trim(), ",");
+        return;
+      }
+
       match = EXTRA_LEAD_GT_PTN.matcher(field);
       if (match.lookingAt()) field = field.substring(match.end()).trim();
 
@@ -257,7 +263,7 @@ public class DispatchA49Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "ID CALL PLACE NAME PHONE INFO GPS";
+      return "ID CALL PLACE NAME PHONE INFO GPS UNIT";
     }
   }
 
