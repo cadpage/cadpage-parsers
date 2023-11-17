@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.NH;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -12,7 +14,6 @@ public class NHGraftonCountyAParser extends FieldProgramParser {
           "Call_Type:CALL! Call_Time:DATETIME! Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! Additional_Location_Info:APT! " +
               "Caller_Phone:PHONE! Channel:CH! Narrative:INFO! INFO/N+ Case_Number:ID END");
     setupGpsLookupTable(buildGPSLookupTable());
-//    setupMultiWordStreets("TE LO CA");
   }
 
   @Override
@@ -47,10 +48,14 @@ public class NHGraftonCountyAParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
+
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
       if (field.isEmpty()) return;
+      Matcher match = APT_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
       data.strApt = field;
     }
   }
