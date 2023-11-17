@@ -28,7 +28,7 @@ public class OHWashingtonCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "belprepd@gmail.com,admin@belprepd.com";
+    return "belprepd@gmail.com,admin@belprepd.com,cadbelpre@idatp.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page (\\d\\d-\\d{6})");
