@@ -39,6 +39,7 @@ public class DispatchA71Parser extends FieldProgramParser {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -53,7 +54,8 @@ public class DispatchA71Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
 
       field = MSPACE_PTN.matcher(field).replaceAll(" ");
-      if (field.equals(data.strPlace)) data.strPlace = "";
+      int pt = data.strPlace.indexOf(field);
+      if (pt >= 0) data.strPlace = data.strPlace.substring(0,pt).trim();
 
       field = stripFieldStart(field, "Intersection Of ");
 
@@ -93,6 +95,14 @@ public class DispatchA71Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace("@ *", "/").replace('@', '/');
+      super.parse(field, data);
+    }
+  }
+
+  private class BaseMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("Unknown")) return;
       super.parse(field, data);
     }
   }

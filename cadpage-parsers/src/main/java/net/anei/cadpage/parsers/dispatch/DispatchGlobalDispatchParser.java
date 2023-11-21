@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchGlobalDispatchParser extends FieldProgramParser {
 
@@ -41,10 +42,6 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     this(cityList, defCity, defState, flags, null, null);
   }
 
-  private static final Pattern CALL_NUMBER_PTN = Pattern.compile("^Call Number: *(\\d+) +");
-  private static final Pattern KEYWORD_PTN = Pattern.compile("(?:MapRegions|Description|CrossStreets|Description|Dispatch|Primary_Incident):");
-  private static final Pattern DELIM_PTN = Pattern.compile("\n| (?=ReferenceCode:|MapRegions:|CrossStreets:|Dispatch:|Description:)");
-
   private Pattern stationPtn;
   private Pattern unitPtn;
   private boolean leadStuff;
@@ -55,10 +52,12 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
                                        int flags, Pattern stationPtn, Pattern unitPtn) {
     super(cityList, defCity, defState,
          "( ReferenceCode:CODE! CALL ADDR/S! EMPTY Description:INFO! INFO/N+? TRAIL_UNIT " +
+         "| SELECT/RR Call_Number:ID! Primar_Incident_Number:ID/L Received:RECEIVED! Call_Taker:SKIP! Caller:NAME! Place:PLACE! Address:ADDR! City:CITY! State:ST! " +
+             "Apt:APT! Floor:APT/L! Phone:PHONE! Location_Alert_Info:ALERT! ( Alert_Code:CALL! Alert_Level:PRI! | Nature:CALL! Agency:SRC! CALL/SDS+ ) Description:INFO2! INFO2/N+? TIMES/N+ " +
          "| " + calcAddressTerm(flags, cityList != null) +
-          " Call_Received_Time:DATE_TIME_CITY MapRegions:MAP Description:INFO2 INFO2+ CrossStreets:X UNIT Description:INFO2 INFO2+ Dispatch:DATETIME " +
-          "Primary_Incident:ID Call_Number:ID Description:INFO2 INFO2+ ReferenceText:INFO2 Dispatch:SKIP Caller:NAME Call_Number:ID Description:INFO2 INFO2+ " +
-          "ReferenceText:SKIP Call_Number:ID ( Lat/Long:GPS | Map_Link:GPS ) )",
+            " Call_Received_Time:DATE_TIME_CITY MapRegions:MAP Description:INFO2 INFO2+ CrossStreets:X UNIT Description:INFO2 INFO2+ Dispatch:DATETIME " +
+            "Primary_Incident:ID Call_Number:ID Description:INFO2 INFO2+ ReferenceText:INFO2 Dispatch:SKIP Caller:NAME Call_Number:ID Description:INFO2 INFO2+ " +
+            "ReferenceText:SKIP Call_Number:ID ( Lat/Long:GPS | Map_Link:GPS ) )",
           FLDPROG_NL_BRK);
     this.stationPtn = stationPtn;
     this.unitPtn = unitPtn;
@@ -91,8 +90,26 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     return ((flags & mask) == mask);
   }
 
+  private static final Pattern CALL_NUMBER_PTN = Pattern.compile("^Call Number: *(\\d+) +");
+  private static final Pattern KEYWORD_PTN = Pattern.compile("(?:MapRegions|Description|CrossStreets|Description|Dispatch|Primary_Incident):");
+  private static final Pattern DELIM_PTN = Pattern.compile("\n| +(?=ReferenceCode:|MapRegions:|CrossStreets:|Dispatch:|Description:)");
+  private static final Pattern DELIM2_PTN = Pattern.compile("\n| +(?=Primary Incident Number:|Call Taker:|State:|Floor:|Phone:|Agency:)");
+
+  String times = null;
+
   @Override
   public boolean parseMsg(String body, Data data) {
+
+    if (body.endsWith("\nCALL COMPLETED")) {
+      setSelectValue("RR");
+      body = body.substring(0, body.length()-15).trim();
+      data.msgType = MsgType.RUN_REPORT;
+      times = "";
+      if (!parseFields(DELIM2_PTN.split(body), data)) return false;
+      data.strSupp = append(times, "\n", data.strSupp);
+      times = null;
+      return true;
+    }
 
     String prefix = "";
     if (body.startsWith("SECOND PAGE")) {
@@ -161,6 +178,8 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     if (name.equals("ID")) return new BaseIdField();
     if (name.equals("TRAIL_UNIT")) return new BaseTrailUnitField();
     if (name.equals("GPS")) return new GPSField("https?://google.com/maps\\?q=(.*)", false);
+    if (name.equals("RECEIVED")) return new BaseReceivedField();
+    if (name.equals("TIMES")) return new BaseTimesField();
     return super.getField(name);
   }
 
@@ -309,6 +328,19 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
 
   private static final Pattern DATE_TIME_PTN2 = Pattern.compile("\\[(\\d\\d/\\d\\d/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) \\d+\\]");
   protected class BaseInfo2Field extends InfoField {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("Unit:")) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = DATE_TIME_PTN2.matcher(field);
@@ -352,6 +384,20 @@ public class DispatchGlobalDispatchParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+
+  private class BaseReceivedField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      times = getRelativeField(0);
+    }
+  }
+
+  private class BaseTimesField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      times = append(times, "\n", field);
     }
   }
 
