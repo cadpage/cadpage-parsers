@@ -9,8 +9,10 @@ Dona Ana County, NM
 */
 
 public class NMDonaAnaCountyParser extends GroupBestParser {
-  
+
   public NMDonaAnaCountyParser() {
-    super(new NMDonaAnaCountyAParser(), new NMDonaAnaCountyBParser());
+    super(new NMDonaAnaCountyAParser(),
+          new NMDonaAnaCountyBParser(),
+          new NMDonaAnaCountyDParser());
   }
 }

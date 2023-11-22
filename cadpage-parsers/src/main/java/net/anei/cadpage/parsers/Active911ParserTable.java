@@ -1702,6 +1702,7 @@ public class Active911ParserTable {
       "US/NJ/WillingboroFireEMS",         "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NM/LasCruces",                  "NMLasCruces",
       "US/NM/MesillaValleyRegionalDispatchAuthorityHtml", "NMDonaAnaCountyB",
+      "US/NM/MesillaValleyRegionalDispatchAuthorityText", "NMDonaAnaCountyD",
       "US/NV/CityofElko",                 "NVElkoCountyA,NVElkoCountyC",
       "US/NV/ClarkCounty",                "NVClarkCountyE",
       "US/NV/Elko",                       "NVElkoCountyA,NVElkoCountyC",
