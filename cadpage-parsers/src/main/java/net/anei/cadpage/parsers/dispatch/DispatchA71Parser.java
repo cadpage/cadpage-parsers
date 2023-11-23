@@ -36,6 +36,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("X")) return new BaseCrossField();
@@ -48,14 +49,27 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR|SEC [NSEW]{1,2})", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_PFX_PTN = Pattern.compile("[NSEW]B|\\d+");
 
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
 
+      if (field.isEmpty()) {
+        field = data.strPlace;
+        int pt = field.indexOf(',');
+        if (pt >= 0) {
+          int pt2 = field.indexOf(',', pt+1);
+          if (pt2 < 0) pt2 = field.length();
+          data.strCity = field.substring(pt+1, pt2).trim();
+          field = field.substring(0,pt).trim();
+        }
+        data.strPlace = "";
+      }
+
       field = MSPACE_PTN.matcher(field).replaceAll(" ");
       int pt = data.strPlace.indexOf(field);
-      if (pt >= 0) data.strPlace = data.strPlace.substring(0,pt).trim();
+      if (pt >= 0) data.strPlace = stripFieldEnd(data.strPlace.substring(0,pt).trim(), "(");;
 
       field = stripFieldStart(field, "Intersection Of ");
 
@@ -65,12 +79,26 @@ public class DispatchA71Parser extends FieldProgramParser {
         data.strMap = match.group(2);
       }
       field = stripFieldEnd(field, ",");
+
+      if (ADDR_PFX_PTN.matcher(data.strPlace).matches()) {
+        if (!field.startsWith(data.strPlace)) field = append(data.strPlace, " ", field);
+        data.strPlace = "";
+      }
+
       super.parse(field, data);
     }
 
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " MAP";
+    }
+  }
+
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
     }
   }
 
