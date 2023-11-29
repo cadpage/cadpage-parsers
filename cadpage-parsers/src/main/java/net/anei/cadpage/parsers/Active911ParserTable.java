@@ -545,6 +545,7 @@ public class Active911ParserTable {
       "US/GA/WalkerCounty",               "GAWalkerCountyB",
       "US/GA/WaltonCounty",               "GAWaltonCounty",
       "US/GA/WashingtonCounty",           "GAWashingtonCountyB",
+      "US/GA/WayneCounty",                "GAWayneCounty",
       "US/GA/WebsterCounty",              "GAWebsterCounty",
       "US/GA/WhiteCounty",                "GAWhiteCounty",
       "US/GA/WhitfieldCounty",            "GAWhitfieldCountyC",

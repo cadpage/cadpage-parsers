@@ -456,6 +456,7 @@ public class ParserList {
               ,"GAWalkerCounty"                 ,"Walker County, GA"
               ,"GAWaltonCounty"                 ,"Walton County, GA"
               ,"GAWashingtonCounty"             ,"Washington County, GA"
+              ,"GAWayneCounty"                  ,"Wayne County, GA"
               ,"GAWebsterCounty"                ,"Webster County, GA"
               ,"GAWhiteCounty"                  ,"White County, GA"
               ,"GAWhitfieldCounty"              ,"Whitfield County, GA"
