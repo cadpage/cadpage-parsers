@@ -16,20 +16,9 @@ import net.anei.cadpage.parsers.SmartAddressParser;
  */
 public class ALMobileCountyParser extends SmartAddressParser {
 
-  private static final Pattern RUN_REPORT_PTN =  Pattern.compile("EVENT: ?([A-Za-z]\\d{8,10}) +(.*\\bADD: .* / DISP: .*|RCVD .* DISP .*|.*\\bDISP: .*)");
-  private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile(" +/+ *|(?<=\\)): +");
-  private static final Pattern OPT_PREFIX_PTN = Pattern.compile("^EVENT: [A-Za-z]\\d{9,10} +");
-  private static final Pattern MASTER = Pattern.compile("Respond To: (.*?) Event#: ([A-Za-z]\\d{8,10})(.*?)(?: +(\\d\\d:\\d\\d:\\d\\d) +(\\d\\d/\\d\\d/\\d\\d) (?:Dispatch\\b|//|~|) *(.*))?");
-  private static final Pattern PART_MARK_PTN = Pattern.compile(" +\\d\\d:");
-  private static final Pattern CITY_ADDR_PTN1 = Pattern.compile("([A-Z]{4}): @(.*)");
-  private static final Pattern CITY_ADDR_PTN2 = Pattern.compile("(.*?) ([A-Z]{4})(?:,(\\S*))?:[, ]*(.*)");
-  private static final Pattern APT_PTN = Pattern.compile("(?:LOT|APT|#) *(\\S+)\\b *(.*)");
-  private static final Pattern PLACE_BRK_PTN = Pattern.compile(": *(?:(?:LOT|APT|#)? *(\\S+))? *@");
-  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*), *([^ ]+)");
-
   public ALMobileCountyParser() {
     super(CITY_CODES, "MOBILE COUNTY", "AL");
-    setFieldList("ADDR CITY PLACE APT CALL ID X TIME DATE INFO");
+    setupCities(CITY_LIST);
   }
 
 
@@ -43,194 +32,168 @@ public class ALMobileCountyParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
   }
 
+  private static final Pattern MASTER = Pattern.compile("(?:ASSIGNED UNIT: ([-_A-Z0-9]+(?: \\d\\d)?) )?(?:(Respond To: )?(.*?) )?Event#: ([A-Za-z]\\d{7,10})(.*?) (\\d\\d:\\d\\d:\\d\\d) +(\\d\\d/\\d\\d/\\d\\d) DispatchCALLER NAME:(.*)CALLER ADDR:(?:.* (-\\d{3}\\.\\d{6}) (\\d{3}\\.\\d{6}))? *(.*)");
+  private static final Pattern ADDR_BRK_PTN = Pattern.compile(" *: @? *| *:@ *|(?<=[A-Z](?:[,;][A-Z0-9]{1,3})?): *");
+  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*?)[,;](\\S+) *(.*?)");
+  private static final Pattern APT_BRK_PTN = Pattern.compile("[,;]");
+  private static final Pattern ADDR_EXT_PTN = Pattern.compile("(?:[-@]|BET) .*");
+  private static final Pattern LEAD_APT_PTN = Pattern.compile("(\\S+) *@ *(.*)");
+  private static final Pattern LEAD_APT_PTN2 = Pattern.compile("(?:APT|RM|ROOM|LOT) +(\\S+) +(.*)");
+  private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
+  private static final Pattern GEN_ALERT_PTN =  Pattern.compile("(?:EVENT: ?([A-Za-z]\\d{8,10}) +|.*? |)Original message from.*? - (\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d .*)");
+  private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile(" +/+ *|(?<=\\(\\d+\\)): +");
+
   @Override
   public boolean parseMsg(String body, Data data) {
 
     body = stripFieldEnd(body, "_x000D_");
 
-    Matcher match = RUN_REPORT_PTN.matcher(body);
+    Matcher match = MASTER.matcher(body);
     if (match.matches()) {
-      data.msgType = MsgType.RUN_REPORT;
-      data.strCallId = match.group(1);
-      data.strSupp = RUN_REPORT_BRK_PTN.matcher(match.group(2)).replaceAll("\n").trim();
+      setFieldList("UNIT ADDR CITY APT PLACE CALL ID X TIME DATE NAME GPS INFO");
+      data.strUnit = getOptGroup(match.group(1)).replace(' ', '_');
+      boolean hasAddress = match.group(2) !=  null;
+      String addr = getOptGroup(match.group(3));
+      data.strCallId = match.group(4);
+      data.strCross = stripFieldEnd(match.group(5).trim(), "/");
+      data.strTime = match.group(6);
+      data.strDate = match.group(7);
+      data.strName = cleanWirelessCarrier(match.group(8).trim());
+      if (match.group(9) != null) setGPSLoc(match.group(10)+','+match.group(9), data);
+      data.strSupp = match.group(11);
+
+      data.strCross = stripFieldEnd(data.strCross, "/");
+
+      // If the "Respond to: tag is missing, there is no address
+      // and everything in the address is a call description
+      if (!hasAddress) {
+        data.strCall = addr;
+      }
+
+        // Otherwise see if we can identify call description at end of addr field
+        // that will make life a lot easier
+      else {
+        String call = CALL_SET.getCode(addr);
+        if (call != null) {
+          data.strCall = call;
+          addr = addr.substring(0,addr.length()-call.length()).trim();
+        }
+
+        // Next split the address field into different address/place/call parts
+        String[] parts = ADDR_BRK_PTN.split(addr);
+        int ips = 0;
+        int ipl = parts.length-1;
+
+        // First field might be GPS coordinates
+        addr = parts[ips++];
+        if (addr.startsWith("LL(") && addr.endsWith(")")) {
+          setGPSLoc(addr.substring(3, addr.length()-1).trim(), data);
+          addr = ips <= ipl ? parts[ips++] : "";
+        }
+
+        // If we have not identified a call field, and there are still
+        // two or more parts, use the last one as the call description.  It
+        // will really be a place name combined with the call description, but
+        // we have no way to split them apart.  At least not yet.
+        boolean fixCall = false;
+        if (data.strCall.isEmpty() && ips <= ipl) {
+          fixCall = true;
+          data.strCall = parts[ipl--];
+        }
+
+        // Next field might be special city construct
+        if (addr.length() == 4 && ips <= ipl) {
+          String city = CITY_CODES.getProperty(addr);
+          if (city != null) {
+            data.strCity = city;
+            addr = parts[ips++];
+          }
+        }
+
+        // Look for a trailing apt in the address field.  If we still did not find a call
+        // this can be followed by the call information, otherwise it has to be at the end
+        // of the field
+        String apt = null;
+        match = TRAIL_APT_PTN.matcher(addr);
+        if (match.matches()) {
+          call = match.group(3);
+          if (!call.isEmpty() && data.strCall.isEmpty()) {
+            data.strCall = call;
+            call = "";
+          }
+          if (call.isEmpty()) {
+            addr = match.group(1);
+            apt = APT_BRK_PTN.matcher(match.group(2)).replaceAll("-");
+          }
+        }
+
+        // Now parse the address. Once again, if we have not found a call
+        // description, it can follow the address.
+        int flags = 0;
+        if (!data.strCity.isEmpty()) flags |= FLAG_NO_CITY;
+        parseAddress(StartType.START_ADDR, flags, addr, data);
+        String left = getLeft();
+        if (!left.isEmpty()) {
+          if (data.strCall.isEmpty()) {
+            data.strCall = left;
+          } else if (ADDR_EXT_PTN.matcher(left).matches()) {
+              data.strAddress = append(data.strAddress, " ", left.replace('/', '&'));
+          } else if (APT_PTN.matcher(left).matches()) {
+            data.strApt = append(data.strApt, "-", left);
+          } else {
+            data.strPlace = left;
+          }
+        }
+        if (apt != null) data.strApt = append(data.strApt, "-", apt);
+
+        // Any remaining parts got into the place field, possible with a
+        // leading apt construct
+        while (ips <= ipl) {
+          String place = parts[ips++];
+          match = LEAD_APT_PTN.matcher(place);
+          if (match.matches()) {
+            data.strApt = append(data.strApt, "-", match.group(1));
+            place = match.group(2);
+          } else if ((match = LEAD_APT_PTN2.matcher(place)).matches()) {
+            data.strApt = append(data.strApt, "-", match.group(1));
+            place = match.group(2);
+          } else if (APT_PTN.matcher(place).matches()) {
+            data.strApt = append(data.strApt, "-", place);
+            place = "";
+          }
+          place = stripFieldEnd(place, "- " + data.strAddress);
+          data.strPlace = append(data.strPlace, " - ", place);
+        }
+
+        // OK, If we are stuck with a combine place & call field, we just might be
+        // able to split them out if the place portion ends with the identified address
+        if (fixCall) {
+          int pt = data.strCall.indexOf("- " + data.strAddress);
+          if (pt >= 0) {
+            data.strPlace = append(data.strPlace, " - ", data.strCall.substring(0,pt).trim());
+            data.strCall = data.strCall.substring(pt+data.strAddress.length()+2).trim();
+
+          }
+        }
+      }
       return true;
     }
 
-    match = OPT_PREFIX_PTN.matcher(body);
-    if (match.lookingAt()) body = body.substring(match.end());
-
-    match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    String addr = match.group(1).trim();
-    data.strCallId = match.group(2);
-    data.strCross = match.group(3).trim();
-    data.strTime = getOptGroup(match.group(4));
-    data.strDate = getOptGroup(match.group(5));
-    data.strSupp = getOptGroup(match.group(6));
-    data.expectMore = (data.strDate.length() == 0);
-
-    // Parsing a truncated alert gets complicated
-    if (data.expectMore) {
-      match = PART_MARK_PTN.matcher(data.strCross);
-      if (match.find()) {
-        String trail = data.strCross.substring(match.start()).trim().replaceAll("  +", " ");
-        data.strCross = data.strCross.substring(0,match.start());
-        String trail2 = trail.replaceAll("\\d", "N");
-        if (!"NN:NN:NN NN/NN/NN Dispatch".startsWith(trail2)) return false;
-        if (trail.length() >= 8) data.strTime = trail.substring(0,8);
-        if (trail.length() >= 17) data.strDate = trail.substring(9,17);
-      }
-    }
-    data.strCross = stripFieldEnd(data.strCross, "/");
-
-    // See if we can identify call description at end of addr field
-    // that will make life a lot easier
-    String call = CALL_SET.getCode(addr);
-    if (call != null) {
-      data.strCall = call;
-      addr = stripFieldEnd(addr.substring(0,addr.length()-call.length()).trim(), "**");
-    }
-
-    // Check for leading city
-    match = CITY_ADDR_PTN1.matcher(addr);
+    match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
-      data.strCity = convertCodes(match.group(1), CITY_CODES);
-      addr = match.group(2).trim();
+      setFieldList("ID INFO");
+      data.strCallId = getOptGroup(match.group(1));
+      String info =  match.group(2);
+      if (info.contains(" / ADD:")) {
+        data.msgType = MsgType.RUN_REPORT;
+      } else {
+        data.msgType = MsgType.GEN_ALERT;
+      }
+      data.strSupp = RUN_REPORT_BRK_PTN.matcher(info).replaceAll("\n").trim();
+      return true;
     }
 
-    String place = null;
-    String apt = null;
-    match = CITY_ADDR_PTN2.matcher(addr);
-    if (match.matches()) {
-      String city = CITY_CODES.getProperty(match.group(2));
-      if (city != null) {
-        addr = match.group(1).trim();
-        data.strCity = city;
-        apt = match.group(3);
-        place = match.group(4);
-
-        int pt = place.indexOf('@');
-        if (pt >= 0) {
-          if (apt == null) apt = "";
-          apt = append(apt, "-", place.substring(0,pt).trim());
-          place = place.substring(pt+1).trim();
-        }
-        else if ((match = APT_PTN.matcher(place)).matches()) {
-          if (apt == null) apt = "";
-          apt = append(apt, "-", match.group(1));
-          place = match.group(2);
-        }
-      }
-    }
-
-    if (addr.startsWith("LL(")) {
-      int pt = addr.indexOf(')', 3);
-      if (pt >= 0) {
-        String tmp = addr.substring(pt+1).trim();
-        addr = addr.substring(0,pt).trim();
-        if (tmp.length() > 0) {
-          tmp = stripFieldStart(tmp, ": @");
-          if (place == null) place = "";
-          place = append(tmp, " - ", place);
-        }
-      }
-    }
-
-    boolean endAddr = (place != null || data.strCall.length() > 0);
-    if (endAddr && !addr.startsWith("LL(")) {
-      int pt = addr.lastIndexOf(',');
-      if (pt < 0) pt = addr.lastIndexOf(';');
-      if (pt >= 0) {
-        if (apt == null) apt = "";
-        apt = append(addr.substring(pt+1).trim(), " ", apt);
-        addr = addr.substring(0,pt).trim();
-      }
-    }
-
-    int flags = 0;
-    if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
-    if (endAddr) flags |= FLAG_ANCHOR_END;
-    parseAddress(StartType.START_ADDR, flags, addr, data);
-    if (!addr.startsWith("LL(") && data.strCity.length() == 0) return false;
-
-    // So  many different choices
-
-    // If we found an positive end address, either we found a place marker or call
-    // description or both
-    if (endAddr) {
-
-      // If we found a place marker and did not find a call description, then we
-      // have to figure out where the place ends and the call description starts
-      if (data.strCall.length() == 0 && place != null) {
-
-        // First see if there is a ** marker separating the place and call description
-        int pt = place.indexOf(" ** ");
-        if (pt >= 0) {
-          data.strCall = place.substring(pt+4).trim();
-          place = place.substring(0,pt).trim();
-        }
-
-        // No go there, make it all a call description
-        else {
-          data.strCall = place;
-          place = null;
-        }
-      }
-
-      // However we got here, see if there is a remaining place name
-      // and if there is strip off a possible apt field before saving it
-      if (place != null) {
-
-        match = PLACE_BRK_PTN.matcher(place);
-        int col = 0;
-        while (match.find()) {
-          String part = place.substring(col,match.start()).trim();
-          Matcher mat2 = TRAIL_APT_PTN.matcher(part);
-          if (mat2.matches()) {
-            part = mat2.group(1).trim();
-            if (apt == null) apt = "";
-            apt = append(apt, "-", mat2.group(2));
-          }
-          if (!part.equals(data.strPlace)) data.strPlace = append(data.strPlace, " - ", part);
-          String tmp = match.group(1);
-          if (tmp != null) {
-            if(apt == null) apt = "";
-            apt = append(apt, "-", tmp);
-          }
-          col = match.end();
-        }
-
-        String part = place.substring(col).trim();
-        Matcher mat2 = TRAIL_APT_PTN.matcher(part);
-        if (mat2.matches()) {
-          part = match.group(1).trim();
-          if (apt == null) apt = "";
-          apt = append(apt, "-", match.group(2));
-        }
-        if (!part.equals(data.strPlace)) data.strPlace = append(data.strPlace, " - ", part);
-      }
-    }
-
-    // Otherwise we had to use the smart parser to mark the end of the
-    // address and start of call description.  Check for possible apt
-    // following the city code.  There is no place name, but might
-    // be a ** separator following the city/apt.
-    else {
-      place = getLeft();
-      if (isCommaLeft()) {
-        int pt = place.indexOf(' ');
-        if (pt < 0) return false;
-        apt = place.substring(0,pt);
-        place = place.substring(pt+1).trim();
-      }
-      data.strCall = stripFieldStart(place, "**");
-    }
-
-    // If there was a place marker, we need to identify the split between
-    // the place name and call description
-
-    if (apt != null) data.strApt = append(data.strApt, "-", apt);
-    return true;
+    return false;
   }
 
   @Override
@@ -240,21 +203,25 @@ public class ALMobileCountyParser extends SmartAddressParser {
 
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
       "**PUBLIC ASSISTANCE*** (FALL)",
+      "911 HANG UP",
       "ABANDONED WASTE",
-      "ABDOMINAL PAIN / FEMALES W/PAIN ABOVE NAVEL >45",
-      "ABDOMINAL PAIN / FEMALES W/SYNCOPE OR NEAR SYNCOPE 12-50",
-      "ABDOMINAL PAIN / MALES W/PAIN ABOVE NAVEL >35",
-      "ABDOMINAL PAIN / NOT ALERT",
-      "ABDOMINAL PAIN / PROBLEMS",
-      "ABDOMINAL PAIN / SYNCOPE OR NEAR SYNCOPE >50",
+      "ABDOMINAL PAIN/ABOVE NAVEL/FEMALES >AGE 45",
+      "ABDOMINAL PAIN/FAINTING OR NEAR FAINTING/FEMALES AGE 12-50",
+      "ABDOMINAL PAIN/FEMALES W/PAIN ABOVE NAVEL >45",
       "ABDOMINAL PAIN/FEMALES W/PAIN ABOVE NAVEL AGE>45",
+      "ABDOMINAL PAIN/FEMALES W/SYNCOPE OR NEAR SYNCOPE 12-50",
+      "ABDOMINAL PAIN/MALES W/PAIN ABOVE NAVEL >35",
+      "ABDOMINAL PAIN/NOT ALERT",
+      "ABDOMINAL PAIN / PROBLEMS",
       "ABDOMINAL PAIN/PROBLEMS",
+      "ABDOMINAL PAIN/SYNCOPE OR NEAR SYNCOPE >50",
+      "ABDOMINAL PAIN/TESTICLE OR GROIN NON-TRAUMATIC",
       "ABDOMINAL PAIN:KNOWN AORTIC ANEURYSM",
       "ABDOMINAL PAIN:POSS AORTIC ANEURYSM",
       "AIRBORNE AIRCRAFT",
       "AIRCRAFT ACCIDENT",
       "AIRCRAFT CRASH -- ALERT III",
-      "AIRCRAFT CRASH / STRUCTURE INVOLVED-ALERT III",
+      "AIRCRAFT CRASH/STRUCTURE INVOLVED-ALERT III",
       "AIRCRAFT CRASH OUTSIDE AIRPORT",
       "AIRCRAFT EMERGENCY -- UNKNOWN SITUATION",
       "AIRCRAFT EMERGENCY -- WATER (INLAND)",
@@ -266,40 +233,45 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "AIRCRAFT INCOMING -- ALERT II",
       "ALLERGIC REACTION",
       "ALLERGIC REACTION: NOT ALERT",
+      "ALLERGIC REACTION/DIFFICULTY SPEAKING BETWEEN BREATHS",
       "ALLERGIC REACTION/WITH DIFF BREATHING OR SWALLOWING",
-      "ALLERGIES / SWARMING ATTACK",
+      "ALLERGIES/SWARMING ATTACK",
       "ALLERGIES/ Hx SEVERE REACTION",
       "ALLERGIES/ RESPIRATORY PROBLEMS",
       "ALLERGIES/HIVES/MED REACTION/STINGS",
       "ALTERED MENTAL STATUS",
       "ANIMAL ATTACK or MULTIPLE ANIMALS",
-      "ANIMAL BITES / ATTACKS / EXOTIC ANIMAL",
-      "ANIMAL BITES / ATTACKS / PTN NOT ALERT",
-      "ANIMAL BITES / ATTACKS",
-      "ANIMAL BITES / ATTACKS/BRAVO OVERRIDE",
-      "ANIMAL BITES / ATTACKS/CHEST or NECK INJURY W/DIFF BREATHING",
-      "ANIMAL BITES / ATTACKS/LARGE ANIMAL",
-      "ANIMAL BITES / ATTACKS/POSS DANGERIOUS BODY AREA",
-      "ANIMAL BITES / ATTACKS: NON RECENT INJURIES",
-      "ANIMAL BITES / ATTACKS: NOT DANGERIOUS BODY AREA",
-      "ANIMAL BITES / ATTACKS: POSS DANGERIOUS BODY AREA",
-      "ANIMAL BITES / ATTACKS: PTN UNCONSCIOUS or IN ARREST",
-      "ANIMAL BITES / ATTACKS: SERIOUS BLEEDING",
-      "ANIMAL BITES / ATTACKS: SUPERFICIAL INJURIES",
-      "ANIMAL BITES / ATTACKS: UNK STATUS",
+      "ANIMAL BITES/ATTACKS/EXOTIC ANIMAL",
+      "ANIMAL BITES/ATTACKS/PTN NOT ALERT",
+      "ANIMAL BITES/ATTACKS",
+      "ANIMAL BITES/ATTACKS/BRAVO OVERRIDE",
+      "ANIMAL BITES/ATTACKS/CHEST or NECK INJURY W/DIFF BREATHING",
+      "ANIMAL BITES/ATTACKS/LARGE ANIMAL",
+      "ANIMAL BITES/ATTACKS/POSS DANGERIOUS BODY AREA",
+      "ANIMAL BITES/ATTACKS: NON RECENT INJURIES",
+      "ANIMAL BITES/ATTACKS: NOT DANGERIOUS BODY AREA",
+      "ANIMAL BITES/ATTACKS: POSS DANGERIOUS BODY AREA",
+      "ANIMAL BITES/ATTACKS: PTN UNCONSCIOUS or IN ARREST",
+      "ANIMAL BITES/ATTACKS: SERIOUS BLEEDING",
+      "ANIMAL BITES/ATTACKS: SUPERFICIAL INJURIES",
+      "ANIMAL BITES/ATTACKS: UNK STATUS",
       "ANIMAL RESCUE",
-      "APARTMENT FIRE (OR TOWNHOME/CONDO)",
       "APARTMENT FIRE",
+      "APARTMENT FIRE (CONDO, TOWNHOME)",
+      "APARTMENT FIRE (OR TOWNHOME/CONDO)",
+      "ARREST ORDER",
       "ASSAULT",
-      "ASSAULT / SEXUAL ASSAULT / CHEST or NECK INJURY DIFF BREATHING",
-      "ASSAULT / SEXUAL ASSAULT / MULTIPLE VICTIMS",
-      "ASSAULT / SEXUAL ASSAULT / NON-RECENT INJURIES",
-      "ASSAULT / SEXUAL ASSAULT / NOT ALERT",
-      "ASSAULT / SEXUAL ASSAULT / NOT DANGEROUS BODY AREA",
-      "ASSAULT / SEXUAL ASSAULT / POSS DANGEROUS BODY AREA",
-      "ASSAULT / SEXUAL ASSAULT / SERIOUS BLEEDING",
-      "ASSAULT / SEXUAL ASSAULT / UNK STATUS",
-      "ASSAULT / SEXUAL ASSAULT",
+      "ASSAULT/CHEST OR NECK INJURY WITH DIFF BREATHING",
+      "ASSAULT/SEXUAL ASSAULT/CHEST or NECK INJURY DIFF BREATHING",
+      "ASSAULT/SEXUAL ASSAULT/MULTIPLE VICTIMS",
+      "ASSAULT/SEXUAL ASSAULT/NON-RECENT INJURIES",
+      "ASSAULT/SEXUAL ASSAULT/NON-RECENT INJURY",
+      "ASSAULT/SEXUAL ASSAULT/NOT ALERT",
+      "ASSAULT/SEXUAL ASSAULT/NOT DANGEROUS BODY AREA",
+      "ASSAULT/SEXUAL ASSAULT/POSS DANGEROUS BODY AREA",
+      "ASSAULT/SEXUAL ASSAULT/SERIOUS BLEEDING",
+      "ASSAULT/SEXUAL ASSAULT/UNK STATUS",
+      "ASSAULT/SEXUAL ASSAULT",
       "ASSAULT / UNCONSCIOUS PATIENT",
       "ASSAULT/SEXUAL ASSAULT/BRAVO OVERRIDE",
       "ASSAULT/SEXUAL ASSAULT/NOT DANGEROUS BODY AREA",
@@ -310,7 +282,11 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ASSIST OUTSIDE AGENCY/ SINGLE UNIT",
       "ASSIST OUTSIDE AGENCY/MULTIPLE UNITS",
       "ASSIST OUTSIDE AGENCY/SINGLE UNIT",
+      "AUTOMATIC CRASH NOTIFICATION/INJURIES",
+      "BACK PAIN",
       "BACK PAIN / DIFFICULTY BREATHING",
+      "BACK PAIN / KNOWN AORTIC ANEURYSM",
+      "BACK PAIN / NON-RECENT-TRAUMATIC",
       "BACK PAIN / NON TRAUMATIC",
       "BACK PAIN (NON-RECENT/TRAUMATIC)",
       "BACK PAIN (NON-TRAUMATIC OR NON-RECENT TRAUMATIC)",
@@ -327,22 +303,23 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "BOMB THREAT",
       "BREATHING PROBLEMS",
       "BREATHING PROBLEMS / CLAMMY",
-      "BREATHING PROBLEMS / DIFFICULTY SPEAKING",
-      "BREATHING PROBLEMS / NOT ALERT",
+      "BREATHING PROBLEMS/DIFFICULTY SPEAKING",
       "BREATHING PROBLEMS/DIFFICULTY SPEAKING BETWEEN BREATHS",
+      "BREATHING PROBLEMS/NOT ALERT",
+      "BREATHING PROBLEMS/INEFFECTIVE BREATHING",
       "BREATHING PROBLEMS- ALS RESPONSE",
       "BREATHING PROBLEMS: CHANGING COLOR",
       "BREATHING PROBLEMS: CLAMMY",
       "BREATHING PROBLEMS: INEFFECTIVE BREATHING",
-      "BRUSH / GRASS FIRE",
+      "BRUSH/GRASS FIRE",
       "BRUSH, GRASS, WOODS FIRE",
       "BRUSH FIRE",
       "BUILDING FIRE",
       "BUMPS",
       "BURNS (SCALDS)/EXPLOSION",
-      "BURNS / BLAST INJURY",
-      "BURNS / RESPIRATORY DISTRESS",
-      "BURNS / SIGNIFICANT FACIAL",
+      "BURNS/BLAST INJURY",
+      "BURNS/RESPIRATORY DISTRESS",
+      "BURNS/SIGNIFICANT FACIAL",
       "BURNS /EXPLOSION",
       "BURNS < 18% TBSA",
       "BURNS > 18% TBSA",
@@ -354,26 +331,29 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "BURNS: PTN NOT ALERT",
       "BURNS: UNCONSCIOUS or ARREST",
       "BURNS:PERSON ON FIRE",
+      "CALL TRANSFER FOR MFRD",
       "CAN'T SLEEP",
       "CAN'T URINATE",
-      "CARBON MONOXIDE / INHALATION / HAZ MAT",
-      "CARBON MONOXIDE / MULTIPLE VICTIMS",
-      "CARBON MONOXIDE / NOT ALERT",
-      "CARBON MONOXIDE / SEVERE DIFF BREATHING",
-      "CARBON MONOXIDE / UNCONSCIOUS",
-      "CARBON MONOXIDE / UNK STATUS",
+      "CARBON MONOXIDE/INHALATION/HAZ MAT",
+      "CARBON MONOXIDE/MULTIPLE VICTIMS",
+      "CARBON MONOXIDE/NOT ALERT",
+      "CARBON MONOXIDE/SEVERE DIFF BREATHING",
+      "CARBON MONOXIDE/UNCONSCIOUS",
+      "CARBON MONOXIDE/UNK STATUS",
       "CARBON MONOXIDE DETECTOR",
-      "CARDIAC / RESPIRATORY ARREST",
-      "CARDIAC  ARREST / STRANGULATION",
-      "CARDIAC / RESPIRATORY ARREST / AGONAL",
-      "CARDIAC / RESPIRATORY ARREST- ALS RESPONSE",
       "CARDIAC ARREST / HANGING",
-      "CARDIAC ARREST / SUFFOCATION",
-      "CARDIAC ARREST / UNDERWATER",
+      "CARDIAC/RESPIRATORY ARREST",
+      "CARDIAC/RESPIRATORY ARREST/INEFFECTIVE BREATHING",
+      "CARDIAC  ARREST/STRANGULATION",
+      "CARDIAC/RESPIRATORY ARREST/AGONAL",
+      "CARDIAC/RESPIRATORY ARREST- ALS RESPONSE",
+      "CARDIAC ARREST/HANGING",
+      "CARDIAC ARREST/SUFFOCATION",
+      "CARDIAC ARREST/UNDERWATER",
       "CARDIAC ARREST/ APPARENT DEATH",
       "CARDIAC ARREST/ OBVIOUS DEATH",
       "CARDIAC ARREST/EXPECTED DEATH",
-      "CARDIAC / RESPIRATORY ARREST- ALS RESPONSE",
+      "CARDIAC/RESPIRATORY ARREST- ALS RESPONSE",
       "CARDIAC OR RESPIRATORY ARREST",
       "CARDIAC OR RESPIRATORY ARREST/DEATH",
       "CARDIAC/RESPIRATORY ARREST",
@@ -381,32 +361,26 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "CATHETER PROBLEMS",
       "CAVE IN",
       "CHEST PAIN",
-      "CHEST PAIN / ABNORMAL BREATHING",
-      "CHEST PAIN / AGE>35",
-      "CHEST PAIN / BREATHING DIFF (SEVERE)",
-      "CHEST PAIN / BREATHING NORMALLY <35",
-      "CHEST PAIN / BREATHING NORMALLY >35",
+      "CHEST PAIN/ABNORMAL BREATHING",
+      "CHEST PAIN/AGE>35",
+      "CHEST PAIN/BREATHING DIFF (SEVERE)",
+      "CHEST PAIN/BREATHING NORMALLY <35",
+      "CHEST PAIN/BREATHING NORMALLY >35",
       "CHEST PAIN / CARDIAC HISTORY",
-      "CHEST PAIN / CLAMMY",
-      "CHEST PAIN / COCAINE INGESTION",
+      "CHEST PAIN/CLAMMY",
+      "CHEST PAIN/COCAINE INGESTION",
       "CHEST PAIN / NOT ALERT",
-      "CHEST PAIN / SKIN CHANGING COLOR",
+      "CHEST PAIN/SKIN CHANGING COLOR",
       "CHEST PAIN- ALS RESPONSE",
       "CHEST PAIN CARDIAC HISTORY",
       "CHEST PAIN/BREATHING NORMALLY AGE<35",
       "CHEST PAIN/CHARLIE OVERRIDE-ALS RESPONSE",
       "CHEST PAIN/DIFFICULTY SPEAKING BETWEEN BREATHS",
-      "CHILDBIRTH / BABY BORN / NO COMPLICATIONS",
-      "CHILDBIRTH / BABY BORN W/COMPLICATIONS TO BABY",
-      "CHILDBIRTH / BABY BORN W/COMPLICATIONS TO MOTHER",
-      "CHILDBIRTH / BREECH or CORD PRESENTATION",
-      "CHILDBIRTH / HEAD VISIBLE or OUT",
-      "CHILDBIRTH / IMMINENT DELIVERY",
       "CHIMNEY FIRE",
       "CHOKING",
-      "CHOKING / COMPLETE OBSTRUCTION",
-      "CHOKING / NOT ALERT",
-      "CHOKING / PARTIAL OBSTRUCTION",
+      "CHOKING/COMPLETE OBSTRUCTION",
+      "CHOKING/NOT ALERT",
+      "CHOKING/PARTIAL OBSTRUCTION",
       "CHOKING:NOT CHOKING NOW",
       "CHOKING/PARTIAL OBSTRUCTION/ABNORMAL BREATHING",
       "CITIZEN ASSIST -- LOCKED IN VEHICLE",
@@ -421,7 +395,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "COMMERCIAL BUILDING FIRE",
       "COMMERCIAL VEHICLE FIRE",
       "COMMERCIAL/INDUSTRIAL BUILDING FIRE w/HAZ-MATERIALS",
-      "CONFINED SPACE ENTRAPMENT / TECHNICAL RESCUE",
+      "CONFINED SPACE ENTRAPMENT/TECHNICAL RESCUE",
       "CONFINED SPACE RESCUE",
       "CONFINED SPACE/COLLAPSE RESCUE + HAZ-MAT UNCONFIRMED",
       "CONFINED SPACE/COLLAPSE RESCUE + HAZ-MAT",
@@ -430,15 +404,16 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "CONFINED SPACE/STRUCTURE COLLAPSE RESCUE(ENTRAPMENT)",
       "CONSTIPATION",
       "CONTROLLED BURN",
-      "CONVULSIONS / SEIZURES",
-      "CONVULSIONS / SEIZURES- ALS RESPONSE",
+      "CONVULSIONS/SEIZURES",
+      "CONVULSIONS/SEIZURES- ALS RESPONSE",
       "CRAMPS/SPASMS: IN EXTREMITIES",
+      "CREAX INVESTIGATION (IDENTIFY)",
       "CUT-OFF RING REQUEST",
       "DEAFNESS",
       "DEFECATION/DIARRHEA",
       "DIABETIC PROBLEMS",
       "DIABETIC PROBLEMS (ABNORMAL BREATHING)",
-      "DIABETIC PROBLEMS / ALTERED MENTAL STATUS",
+      "DIABETIC PROBLEMS/ALTERED MENTAL STATUS",
       "DIABETIC PROBLEMS/ BEHAVING ABNORMALLY",
       "DIABETIC PROBLEMS/ UNCONSCIOUS",
       "DIABETIC PROBLEMS/ABNORMAL BEHAVIOR",
@@ -446,38 +421,41 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "DIABETIC PROBLEMS/ALERT & BREATHING NORMALLY",
       "DIABETIC PROBLEMS/NOT ALERT",
       "DIABETIC UNCONSCIOUS",
+      "DISPATCH INFORMATION",
       "DIZZINESS/VERTIGO",
       "DOWNED TREES & OTHER OBJECTS",
-      "DROWNING (NEAR) / DIVING ACCIDENT",
-      "DROWNING (NEAR) / DIVING ACCIDENT-ALERT & BREATHING NORMALLY",
-      "DROWNING / DIVING ACC / ABNORMAL BREATHING",
-      "DROWNING / DIVING ACC / IN WATER & BREATHING NORMALLY",
-      "DROWNING / DIVING ACC / NECK INJURY",
-      "DROWNING / DIVING ACC / NOT ALERT",
-      "DROWNING / DIVING ACC / UNCONSCIIOUS PATIENT",
-      "DROWNING / DIVING ACC / UNK STATUS",
+      "DROWNING (NEAR)/DIVING ACCIDENT",
+      "DROWNING (NEAR)/DIVING ACCIDENT-ALERT & BREATHING NORMALLY",
+      "DROWNING/DIVING ACC/ABNORMAL BREATHING",
+      "DROWNING/DIVING ACC/IN WATER & BREATHING NORMALLY",
+      "DROWNING/DIVING ACC/NECK INJURY",
+      "DROWNING/DIVING ACC/NOT ALERT",
+      "DROWNING/DIVING ACC/UNCONSCIIOUS PATIENT",
+      "DROWNING/DIVING ACC/UNK STATUS",
       "EARACHE",
-      "ELECTRICAL HAZARD -- APPLIANCE / NO ODOR",
-      "ELECTRICAL HAZARD -- APPLIANCE / ODOR PRESENT",
+      "ELECTRICAL HAZARD -- APPLIANCE/NO ODOR",
+      "ELECTRICAL HAZARD -- APPLIANCE/ODOR PRESENT",
       "ELECTRICAL HAZARD -- ELECTRICAL ARCING",
       "ELECTRICAL HAZARD -- ELECTRICAL ODOR",
       "ELECTRICAL HAZARD -- NEAR WATER",
       "ELECTRICAL HAZARD -- UNKNOWN SITUATION",
       "ELECTRICAL HAZARD -- WIRES DOWN-NO SMOKE/NO ARCING",
-      "ELECTRICAL HAZARD -- WIRES DOWN-SMOKE / ARCING",
+      "ELECTRICAL HAZARD -- WIRES DOWN-SMOKE/ARCING",
+      "ELECTRICAL HAZARD/APPLIANCE PROBLEM WITH ODOR",
       "ELECTRICAL HAZARD/ELECTRICAL ODOR",
-      "ELECTROCUTION  / LIGHTNING / ABNORMAL BREATHING",
-      "ELECTROCUTION  / LIGHTNING / ALERT & BREATHING NORMALLY",
-      "ELECTROCUTION  / LIGHTNING / EXTREME FALL >30FT",
-      "ELECTROCUTION  / LIGHTNING / HAZARD PRESENT",
-      "ELECTROCUTION  / LIGHTNING / LONG FALL",
-      "ELECTROCUTION  / LIGHTNING / NOT ALERT",
-      "ELECTROCUTION  / LIGHTNING / NOT BREATHING",
-      "ELECTROCUTION  / LIGHTNING / NOT DISCONN FROM POWER",
-      "ELECTROCUTION  / LIGHTNING / UNCONSCIOUS",
+      "ELECTRICAL HAZARD/INVESTIGATION",
+      "ELECTROCUTION /LIGHTNING/ABNORMAL BREATHING",
+      "ELECTROCUTION /LIGHTNING/ALERT & BREATHING NORMALLY",
+      "ELECTROCUTION /LIGHTNING/EXTREME FALL >30FT",
+      "ELECTROCUTION /LIGHTNING/HAZARD PRESENT",
+      "ELECTROCUTION /LIGHTNING/LONG FALL",
+      "ELECTROCUTION /LIGHTNING/NOT ALERT",
+      "ELECTROCUTION /LIGHTNING/NOT BREATHING",
+      "ELECTROCUTION /LIGHTNING/NOT DISCONN FROM POWER",
+      "ELECTROCUTION /LIGHTNING/UNCONSCIOUS",
       "ELECTROCUTION -- ALTERED LOC",
-      "ELECTROCUTION / LIGHTNING / UNK STATUS",
-      "ELECTROCUTION / LIGHTNING",
+      "ELECTROCUTION/LIGHTNING/UNK STATUS",
+      "ELECTROCUTION/LIGHTNING",
       "ELECTROCUTION",
       "ELECTRONIC ALARM -- BURGLARY/HOLDUP/PANIC/VEHICLE",
       "ELECTRONIC ALARM -- COMMERCIAL STRUCTURE",
@@ -494,9 +472,9 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ELECTRONIC ALARM/HIGH LIFE HAZARD",
       "ELECTRONIC ALARM/HIGH RISE STRUCTURE",
       "ELECTRONIC ALARM/RESIDENTIAL (SINGLE)",
-      "ELEVATOR / ESCALATOR RESCUE -- CAUGHT / NO INJURIES",
-      "ELEVATOR / ESCALATOR RESCUE -- ENTRAPMENT / INJURIES",
-      "ELEVATOR / ESCALATOR RESCUE -- UNK SITUATION",
+      "ELEVATOR/ESCALATOR RESCUE -- CAUGHT/NO INJURIES",
+      "ELEVATOR/ESCALATOR RESCUE -- ENTRAPMENT/INJURIES",
+      "ELEVATOR/ESCALATOR RESCUE -- UNK SITUATION",
       "ELEVATOR MALFUNCTION -- NO OCCUPANTS",
       "ELEVATOR RESCUE -- MEDICAL CONDITION",
       "ELEVATOR RESCUE -- OCCUPANTS INSIDE",
@@ -516,34 +494,39 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "EXPLOSION -- VEHICLE LARGE FUEL LOAD",
       "EXPLOSION -- VEHICLE",
       "EXTREME FALL   > 30 FEET",
-      "EXTRICATION / ENTRAPMENT",
-      "EXTRICATION / ENTRAPMENT -- NO LONGER TRAPPED",
-      "EXTRICATION / ENTRAPMENT -- UNK SITUATION",
-      "EYE INJURY / MODERATE / CHEMICAL IN EYE",
-      "EYE PROBLEMS / INJURIES / NOT ALERT",
-      "EYE PROBLEMS / INJURIES",
-      "EYE PROBLEMS / INJURIES/ MEDICAL",
-      "EYE PROBLEMS / INJURIES/ MINOR",
+      "EXTRICATION/ENTRAPMENT",
+      "EXTRICATION/ENTRAPMENT -- NO LONGER TRAPPED",
+      "EXTRICATION/ENTRAPMENT -- UNK SITUATION",
+      "EYE INJURY/MODERATE/CHEMICAL IN EYE",
+      "EYE PROBLEMS/INJURIES/NOT ALERT",
+      "EYE PROBLEMS/INJURIES",
+      "EYE PROBLEMS/INJURIES/ MEDICAL",
+      "EYE PROBLEMS/INJURIES/ MINOR",
+      "FALL/ LIFT ASSIST",
       "FALL INJURY",
-      "FALL INJURY  / NON-RECENT",
-      "FALL INJURY / CHEST or NECK INJURY / DIFF BREATHING",
-      "FALL INJURY / LONG FALL",
+      "FALL INJURY/NON-RECENT",
+      "FALL INJURY/CHEST or NECK INJURY/DIFF BREATHING",
+      "FALL INJURY/LONG FALL",
       "FALL INJURY / NOT ALERT",
-      "FALL INJURY / NOT DANGEROUS BODY AREA",
-      "FALL INJURY / NOT DANGEROUS BODY PART",
-      "FALL INJURY / UNCONSCIOUS",
-      "FALL INJURY / UNKNOWN STATUS",
+      "FALL INJURY/NOT DANGEROUS BODY AREA",
+      "FALL INJURY/NOT DANGEROUS BODY PART",
+      "FALL INJURY/UNCONSCIOUS",
+      "FALL INJURY/UNKNOWN STATUS",
       "FALL INJURY/BRAVO OVERRIDE",
       "FALL INJURY/CHARLIE OVERIDE/ALS-RESPONSE",
       "FALL INJURY/NOT DANGEROUS BODY AREA",
-      "FALL INJURY/POSSIBLY DANGERIOUS BODY AREA",
+      "FALL INJURY/POSSIBLY DANGEROUS BODY AREA",
+      "FALL INJURY / SERIOUS BLEEDING",
       "FALL-PUBLIC ASSISTANCE",
+      "FALL/ LIFT ASSIST",
+      "FALL/UNKNOWN INJURIES",
       "FALLS",
       "FALLS:LIFTING ASSISTANCE",
       "FALLS: POSS DANGEROUS INJURIES",
       "FALLS: SERIOUS BLEEDING",
       "FALLS: UNK STATUS",
       "FEVER/CHILLS",
+      "FEVER/CHILLS/POSSIBLE COVID",
       "FIRE (IDENTIFY)",
       "FIRE ALARM",
       "FIRE DEPT SET UP LANDING ZONE",
@@ -557,14 +540,14 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "FUEL SPILL -- UNKNOWN SITUATION",
       "FUEL SPILL/CONTAINED SMALL SPILL",
       "FUEL SPILL/SEWER OR DRAIN",
-      "GAS LEAK / ODOR",
-      "GAS LEAK / ODOR -- COMMERCIAL STRUCTURE",
-      "GAS LEAK / ODOR -- HIGH LIFE HAZARD",
-      "GAS LEAK / ODOR -- HIGH RISE",
-      "GAS LEAK / ODOR -- OUTSIDE COMMERCIAL LINE or TANK >5 GALS",
-      "GAS LEAK / ODOR -- OUTSIDE RESIDENTIAL LINE or TANK <5 GALS",
-      "GAS LEAK / ODOR -- RESIDENTIAL",
-      "GAS LEAK / ODOR -- RESIDENTIAL (MULTIPLE/APARTMENT)",
+      "GAS LEAK/ODOR",
+      "GAS LEAK/ODOR -- COMMERCIAL STRUCTURE",
+      "GAS LEAK/ODOR -- HIGH LIFE HAZARD",
+      "GAS LEAK/ODOR -- HIGH RISE",
+      "GAS LEAK/ODOR -- OUTSIDE COMMERCIAL LINE or TANK >5 GALS",
+      "GAS LEAK/ODOR -- OUTSIDE RESIDENTIAL LINE or TANK <5 GALS",
+      "GAS LEAK/ODOR -- RESIDENTIAL",
+      "GAS LEAK/ODOR -- RESIDENTIAL (MULTIPLE/APARTMENT)",
       "GAS LEAK/ODOR/OUTSIDE RESIDENTIAL LINE",
       "GAS LEAK/ODOR/RESIDENTIAL",
       "GENERAL PAIN",
@@ -580,70 +563,72 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "GUNSHOT -- SERIOUS HEMORRHAGE",
       "GUNSHOT -- UNCONSCIOUS VICTIM",
       "GUNSHOT -- UNK INJURIES",
-      "GUNSHOT / CENTRAL WOUND",
-      "GUNSHOT / OBVIOUS DEATH",
-      "GUNSHOT / PERIPHERAL WOUND",
+      "GUNSHOT/CENTRAL WOUND",
+      "GUNSHOT/OBVIOUS DEATH",
+      "GUNSHOT/PERIPHERAL WOUND",
+      "GUNSHOT/SERIOUS HEMORRHAGE",
       "GUNSHOT WOUND -- NON RECENT",
       "HAZARDOUS MATERIALS INCIDENT",
-      "HAZMAT RESPONSE -- CONTAINED SPILL / LEAK",
+      "HAZMAT RESPONSE -- CONTAINED SPILL/LEAK",
       "HAZMAT RESPONSE -- ILLEGAL DRUG LAB (CONTAINED)",
       "HAZMAT RESPONSE -- ILLEGAL DRUG LAB (UNCONTAINED)",
       "HAZMAT RESPONSE -- SMALL SPILL <5 GALS",
-      "HAZMAT RESPONSE -- UNCONTAINED SPILL / LEAK",
+      "HAZMAT RESPONSE -- UNCONTAINED SPILL/LEAK",
       "HAZMAT RESPONSE/UNCONTAINED HAZMAT",
       "HEADACHE",
-      "HEADACHE / ABNORMAL BREATHING",
-      "HEADACHE / BREATHING NORMAL",
+      "HEADACHE/ABNORMAL BREATHING",
+      "HEADACHE/BREATHING NORMAL",
       "HEADACHE / BREATHING NORMALLY",
-      "HEADACHE / CHANGE IN BEHAVIOR <3hrs.",
-      "HEADACHE / NOT ALERT",
-      "HEADACHE / NUMBNESS",
-      "HEADACHE / PARALYSIS",
-      "HEADACHE / SPEECH PROBLEMS",
-      "HEADACHE / SUDDEN ONSET",
-      "HEADACHE / UNK STATUS",
+      "HEADACHE/CHANGE IN BEHAVIOR <3hrs.",
+      "HEADACHE/NOT ALERT",
+      "HEADACHE/NUMBNESS",
+      "HEADACHE/PARALYSIS",
+      "HEADACHE/SPEECH PROBLEMS",
+      "HEADACHE/SUDDEN ONSET",
+      "HEADACHE/SUDDEN ONSET OF SEVERE PAIN",
+      "HEADACHE/UNK STATUS",
       "HEART PROBLEMS",
-      "HEART PROBLEMS /  ABNORMAL BREATHING",
-      "HEART PROBLEMS / A.I.C.D. / CARDIAC HISTORY",
-      "HEART PROBLEMS / A.I.C.D. / CHANGING COLOR",
-      "HEART PROBLEMS / A.I.C.D. / CHEST PAIN >35",
-      "HEART PROBLEMS / A.I.C.D. / DIFFICULTY BREATHING",
-      "HEART PROBLEMS / A.I.C.D. / NOT ALERT",
-      "HEART PROBLEMS / A.I.C.D. CHEST PAIN <35",
-      "HEART PROBLEMS / A.I.C.D. FIRING",
-      "HEART PROBLEMS / A.I.C.D. HR >50bpm & <130bpm",
-      "HEART PROBLEMS / A.I.C.D.",
-      "HEART PROBLEMS / ABNORMAL BREATHING",
-      "HEART PROBLEMS / CLAMMY",
-      "HEART PROBLEMS / COCAINE USE",
-      "HEART PROBLEMS / HR <50 or >130 bpm",
-      "HEART PROBLEMS / RESUSCITATED OR DEFIBRILLATED",
-      "HEART PROBLEMS / UNK STATUS",
+      "HEART PROBLEMS/ ABNORMAL BREATHING",
+      "HEART PROBLEMS/A.I.C.D./CARDIAC HISTORY",
+      "HEART PROBLEMS/A.I.C.D./CHANGING COLOR",
+      "HEART PROBLEMS/A.I.C.D./CHEST PAIN >35",
+      "HEART PROBLEMS/A.I.C.D./DIFFICULTY BREATHING",
+      "HEART PROBLEMS/A.I.C.D./NOT ALERT",
+      "HEART PROBLEMS/A.I.C.D. CHEST PAIN <35",
+      "HEART PROBLEMS/A.I.C.D. FIRING",
+      "HEART PROBLEMS/A.I.C.D. HR >50bpm & <130bpm",
+      "HEART PROBLEMS/A.I.C.D.",
+      "HEART PROBLEMS/ABNORMAL BREATHING",
+      "HEART PROBLEMS/CLAMMY",
+      "HEART PROBLEMS/COCAINE USE",
+      "HEART PROBLEMS/HR <50 or >130 bpm",
+      "HEART PROBLEMS/RESUSCITATED OR DEFIBRILLATED",
+      "HEART PROBLEMS/UNK STATUS",
       "HEART PROBLEMS/A.I.C.D./CLAMMY",
       "HEART PROBLEMS/ABNORMAL BREATHING",
       "HEART PROBLEMS WITH CHEST PAIN",
-      "HEAT / COLD EXPOSURE / CHANGE IN SKIN COLOR",
-      "HEAT / COLD EXPOSURE / MULTIPLE VICTIMS",
-      "HEAT / COLD EXPOSURE / NOT ALERT",
-      "HEAT / COLD EXPOSURE / UNK STATUS",
-      "HEAT / COLD EXPOSURE",
-      "HEAT / COLD EXPOSURE/ CARDIAC HISTORY",
-      "HEAT / COLD EXPOSURE: ALERT",
-      "HEAT EXPOSURE / ALERT",
-      "HEMORRHAGE / ABNORMAL BREATHING",
-      "HEMORRHAGE / LACERATION / ABNORMAL BREATHING",
-      "HEMORRHAGE / LACERATIONS / BLEEDING DISORDER",
-      "HEMORRHAGE / LACERATIONS / DANGEROUS BODY AREA",
-      "HEMORRHAGE / LACERATIONS / MINOR",
-      "HEMORRHAGE / LACERATIONS / NOT ALERT",
-      "HEMORRHAGE / LACERATIONS / POSS DANGEROUS HEMORRAGE",
-      "HEMORRHAGE / LACERATIONS / SERIOUS",
-      "HEMORRHAGE / LACERATIONS / UNCONSCIOUS OR ARREST",
-      "HEMORRHAGE / LACERATIONS",
-      "HEMORRHAGE / LACERATIONS/ BLOOD THINNERS",
-      "HEMORRHAGE / LACERATIONS: NOT DANGERIOUS",
-      "HEMORRHAGE / LACERATIONS: NOT DANGEROUS",
-      "HEMORRHAGE / SEVERE",
+      "HEAT/COLD EXPOSURE/CHANGE IN SKIN COLOR",
+      "HEAT/COLD EXPOSURE/MULTIPLE VICTIMS",
+      "HEAT/COLD EXPOSURE/NOT ALERT",
+      "HEAT/COLD EXPOSURE/UNK STATUS",
+      "HEAT/COLD EXPOSURE",
+      "HEAT/COLD EXPOSURE/ CARDIAC HISTORY",
+      "HEAT/COLD EXPOSURE: ALERT",
+      "HEAT EXPOSURE/ALERT",
+      "HEMORRHAGE/ABNORMAL BREATHING",
+      "HEMORRHAGE/LACERATION/ABNORMAL BREATHING",
+      "HEMORRHAGE/LACERATIONS/BLEEDING DISORDER",
+      "HEMORRHAGE/LACERATIONS/DANGEROUS BODY AREA",
+      "HEMORRHAGE/LACERATIONS/MINOR",
+      "HEMORRHAGE/LACERATIONS/NOT ALERT",
+      "HEMORRHAGE/LACERATIONS/POSS DANGEROUS HEMORRAGE",
+      "HEMORRHAGE/LACERATIONS/SERIOUS",
+      "HEMORRHAGE/LACERATIONS/UNCONSCIOUS OR ARREST",
+      "HEMORRHAGE/LACERATIONS",
+      "HEMORRHAGE/LACERATIONS/ BLOOD THINNERS",
+      "HEMORRHAGE/LACERATIONS: NOT DANGERIOUS",
+      "HEMORRHAGE/LACERATIONS: NOT DANGEROUS",
+      "HEMORRHAGE/SEVERE",
       "HEMORRHAGE/LACERATIONS/DANGERIOUS BODY AREA",
       "HEMORRHAGE/LACERATIONS/NOT ALERT",
       "HEMORRHAGE/LACERATIONS/NOT DANGERIOUS BODY AREA",
@@ -654,7 +639,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HEPATITIS",
       "HICCUPS",
       "HIGH ANGLE RESCUE -- SUICIDAL PERSON",
-      "HIGH ANGLE RESCUE -- UNKNOWN SITUATION / INVESTIGATION",
+      "HIGH ANGLE RESCUE -- UNKNOWN SITUATION/INVESTIGATION",
       "HIGH ANGLE RESCUE",
       "HIGH ANGLE ROPE RESCUE",
       "HIGH RISE FIRE",
@@ -662,19 +647,21 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HOTEL FIRE",
       "HYDRANT PROBLEMS",
       "ICE RESCUE",
+      "INSIDE ODOR INVESTIGATION/WITH MULTIPLE SICK PERSONS",
       "IMPENDING SEIZURE (AURA)",
-      "INACCESSIBLE INCIDENT / NO INJURIES",
-      "INACCESSIBLE INCIDENT / NO LONGER TRAPPED/ UNK INJURIES",
-      "INACCESSIBLE INCIDENT / OTHER ENTRAPMENTS",
-      "INACCESSIBLE INCIDENT / OTHER ENTRAPMENTS",
-      "INACCESSIBLE INCIDENT / UNK STATUS",
-      "INACCESSIBLE TERRAIN SITUATION / TECHNICAL RESCUE",
+      "INACCESSIBLE INCIDENT/NO INJURIES",
+      "INACCESSIBLE INCIDENT/NO LONGER TRAPPED/ UNK INJURIES",
+      "INACCESSIBLE INCIDENT/OTHER ENTRAPMENTS",
+      "INACCESSIBLE INCIDENT/OTHER ENTRAPMENTS",
+      "INACCESSIBLE INCIDENT/UNK STATUS",
+      "INACCESSIBLE TERRAIN SITUATION/TECHNICAL RESCUE",
       "INDUSTRIAL COMPLEX FIRE",
       "INSPECTION FIRE / SMOKE",
       "ITCHING",
       "LARGE OUTSIDE FIRE",
       "LARGE OUTSIDE FIRE -- HAZARDOUS MATERIALS PRESENT",
       "LAW ENFORCEMENT STANDBY",
+      "LIFT ASSIST",
       "LIGHTNING STRIKE (NO FIRE) -- COMMERCIAL STRUCTURE",
       "LIGHTNING STRIKE (NO FIRE) -- HIGH LIFE HAZARD",
       "LIGHTNING STRIKE (NO FIRE) -- HIGH RISE",
@@ -692,16 +679,17 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "MARINE VESSEL FIRE -- DOCKED/COASTAL",
       "MARINE VESSEL FIRE -- DOCKED/INLAND",
       "MARINE VESSEL FIRE -- IN DRY DOCK/ON LAND",
-      "MARINE VESSEL FIRE -- ON WATER / COASTAL",
-      "MARINE VESSEL FIRE -- ON WATER / GULF",
-      "MARINE VESSEL FIRE -- ON WATER / INLAND",
+      "MARINE VESSEL FIRE -- ON WATER/COASTAL",
+      "MARINE VESSEL FIRE -- ON WATER/GULF",
+      "MARINE VESSEL FIRE -- ON WATER/INLAND",
       "MARINE VESSEL FIRE -- REPORTED EXTINGUISHED",
       "MARINE VESSEL FIRE -- THREATENED STRUCTURE/BOAT",
-      "MCEMS / FIRE 911 CALL TRANSFER",
+      "MCEMS/FIRE 911 CALL TRANSFER",
       "MCEMS 911 TRANSFER",
-      "MECHANICAL / MACHINERY ENTRAPMENT / TECH RESCUE",
+      "MECHANICAL/MACHINERY ENTRAPMENT/TECH RESCUE",
       "MEDICAL ALARM ACTIVATION",
-      "MINOR / HEMORRHAGE / LACERATIONS",
+      "MEDICAL EMERGENCY (SPECIFY)",
+      "MINOR/HEMORRHAGE/LACERATIONS",
       "MODERATE EYE INJURIES",
       "MOTEL FIRE",
       "MOTOR VEHICLE COLLISION",
@@ -720,7 +708,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "MOTOR VEHICLE COLLISION/UNKNOWN INJURIES",
       "MOTOR VEHICLE COLLISION/WITH ENTRAPMENT",
       "MOVING TRAIN",
-      "MUDSLIDE / TECHNICAL RESCUE",
+      "MUDSLIDE/TECHNICAL RESCUE",
       "MUTL-AID MOVE/UP-COVER AREA",
       "MUTL-AID TO INCIDENT/ MULTIPLE UNITS",
       "MUTL-AID TO INCIDENT/ SINGLE UNIT",
@@ -732,6 +720,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "NEAR DROWNING/DIVING ACCIDENT/ALERT W/ABNORMAL BREATHING",
       "NERVOUS",
       "NEW ONSET OF IMMOBILITY",
+      "NOTIFICATION",
       "NURSING HOME FIRE",
       "OBJECT STUCK",
       "OBJECT SWALLOWED",
@@ -741,104 +730,122 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ODOR INVESTIGATION -- INSIDE WITH PATIENTS",
       "ODOR INVESTIGATION -- OUTSIDE WITH PATIENTS",
       "OMEGA",
-      "ONE DOWN / LIFE STATUS QUESTIONABLE",
-      "ONE DOWN / SUBJ MOVING",
-      "ONE DOWN / UNK STATUS",
+      "ONE DOWN/LIFE STATUS QUESTIONABLE",
+      "ONE DOWN/SUBJ MOVING",
+      "ONE DOWN/UNK STATUS",
       "ONE FALLEN",
       "ONE TASED  (ASSIST POLICE)",
       "ONE TASED (ASSIST POLICE)",
       "ONE TRAPPED BY A TRAIN (NO DERAILMENT)",
       "OTHER ASSISTANCE (SPECIFY)",
+      "OTHER PAIN",
+      "OUTSIDE FIRE",
+      "OUTSIDE FIRE/UNKNOWN SITUATION",
       "OUTSIDE FIRE (LARGE)",
       "OUTSIDE FIRE -- REPORTED EXTINGUISHED",
       "OUTSIDE FIRE -- UNKNOWN SITUATION",
       "OUTSIDE GAS ODOR",
+      "**OUTSIDE ODOR INVESTIGATION",
       "OUTSIDE TANK LEAK <5 GALLONS",
-      "OVERDOSE / ANTIDEPRESEANTS",
-      "OVERDOSE / COCAINE or METHAMPHETAMINE",
-      "OVERDOSE / INGESTION / POISONING",
-      "OVERDOSE / NARCOTICS (HEROIN LORTAB MORPHINE etc)",
-      "OVERDOSE / POISONING (INGESTION)",
-      "OVERDOSE / POISONING / ABNORMAL BREATHING",
-      "OVERDOSE / POISONING / ACID / ALKALI",
-      "OVERDOSE / POISONING / CHANGING COLOR",
-      "OVERDOSE / POISONING / POISON CONTROL REQ RESPONSE",
-      "OVERDOSE / POISONING / UNCONSCIOUS",
-      "OVERDOSE / WITHOUT PRIORITY SYMPTOMS",
-      "OVERDOSE/ POISONING  / NOT ALERT",
-      "OVERDOSE/ POISONING / NOT ALERT",
-      "OVERDOSE/ POISONING / UNK STATUS",
+      "OVERDOSE/ANTIDEPRESEANTS",
+      "OVERDOSE/COCAINE or METHAMPHETAMINE",
+      "OVERDOSE/INGESTION/POISONING",
+      "OVERDOSE/NARCOTICS (HEROIN LORTAB MORPHINE etc)",
+      "OVERDOSE/POISONING (INGESTION)",
+      "OVERDOSE/POISONING",
+      "OVERDOSE/POISONING/ABNORMAL BREATHING",
+      "OVERDOSE/POISONING/ACID/ALKALI",
+      "OVERDOSE/POISONING/CHANGING COLOR",
+      "OVERDOSE/POISONING/POISON CONTROL REQ RESPONSE",
+      "OVERDOSE/POISONING/UNCONSCIOUS",
+      "OVERDOSE/WITHOUT PRIORITY SYMPTOMS",
+      "OVERDOSE/POISONING/NOT ALERT",
+      "OVERDOSE/POISONING/UNK STATUS",
       "OVERDOSE/POISONING/SKIN CHANGING COLOR",
       "OVERDOSE/POISONING/UNCONSCIOUS PATIENT",
       "OVERDOSE/POISONING/UNKNOWN STATUS",
       "PAINFUL URINATION",
-      "PANDEMIC OUTBREAK / ABNORMAL BREATHING MULTI SYMPT",
-      "PANDEMIC OUTBREAK / ABNORMAL BREATHING w/FLU SYMPTOM",
-      "PANDEMIC OUTBREAK / CHEST PAIN <35 w/MULTI FLU SYMPT",
-      "PANDEMIC OUTBREAK / CHEST PAIN MULTIPLE FLU SYMPTOMS",
-      "PANDEMIC OUTBREAK / CHEST PAIN w/FLU SYMPTOM",
-      "PANDEMIC OUTBREAK / CHEST PAIN w/FLU SYMPTOM",
-      "PANDEMIC OUTBREAK / DIFF BREATHING w/FLU SYMPTOMS",
-      "PANDEMIC OUTBREAK / FLU LIKE SYMPTOMS",
-      "PANDEMIC OUTBREAK / INEFFECTIVE BREATHING w/FLU S/S",
-      "PANDEMIC OUTBREAK / NOT ALERT w/FLU SYMPTOMS",
-      "PANDEMIC OUTBREAK / SKIN CHANGING COLOR w/FLU SYMPTOMS",
+      "PANDEMIC OUTBREAK/ABNORMAL BREATHING MULTI SYMPT",
+      "PANDEMIC OUTBREAK/ABNORMAL BREATHING w/FLU SYMPTOM",
+      "PANDEMIC OUTBREAK/CHEST PAIN <35 w/MULTI FLU SYMPT",
+      "PANDEMIC OUTBREAK/CHEST PAIN MULTIPLE FLU SYMPTOMS",
+      "PANDEMIC OUTBREAK/CHEST PAIN w/FLU SYMPTOM",
+      "PANDEMIC OUTBREAK/CHEST PAIN w/FLU SYMPTOM",
+      "PANDEMIC OUTBREAK/DIFF BREATHING w/FLU SYMPTOMS",
+      "PANDEMIC OUTBREAK/FLU LIKE SYMPTOMS",
+      "PANDEMIC OUTBREAK/INEFFECTIVE BREATHING w/FLU S/S",
+      "PANDEMIC OUTBREAK/NOT ALERT w/FLU SYMPTOMS",
+      "PANDEMIC OUTBREAK/SKIN CHANGING COLOR w/FLU SYMPTOMS",
       "PATIENT NOT ALERT",
       "PEDESTRIAN STRUCK",
       "PENIS PROBLEMS/PAIN",
-      "PERIPHERAL ENTRAPMENT / TECHNICAL RESCUE",
-      "PERSON DOWN / MOVING",
-      "PERSON DOWN / UNKNOWN STATUS",
+      "PERIPHERAL ENTRAPMENT/TECHNICAL RESCUE",
+      "PERSON DOWN",
+      "PERSON DOWN/MOVING",
+      "PERSON DOWN/UNKNOWN STATUS",
       "PERSON DOWN/LIFE STATUS QUESTIONABLE",
       "PERSON LOCKED IN VEHICLE",
       "PERSON ON FIRE",
       "PERSON ON FIRE ( INSIDE STRUCTURE )",
       "PERSONAL WATERCRAFT ACCIDENT",
       "POISONING- NO PRIORITY SYMPTOMS",
-      "PREGNANCY / CHILDBIRTH / IN LABOR",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE / 1ST TRIMESTER SERIOUS BLEEDING",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE / 2ND TRIMESTER BLEEDING",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE / 3RD TRIMESTER BLEEDING",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE / HIGH RISK",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE / UNK STATUS",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE: 1ST TRIMESTER BLEEDING",
-      "PREGNANCY / CHILDBIRTH / WATER BROKEN",
+      "PREGNANCY/CHILDBIRTH/IMMINENT DELIVERY",
+      "PREGNANCY/CHILDBIRTH/IN LABOR",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE/1ST TRIMESTER SERIOUS BLEEDING",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE/2ND TRIMESTER BLEEDING",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE/3RD TRIMESTER BLEEDING",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE/HIGH RISK",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE/UNK STATUS",
       "PREGNANCY/CHILDBIRTH/MISCARRIAGE/UNKNOWN STATUS",
-      "PSYCHIATRIC / NON-SUICIDAL & ALERT",
-      "PSYCHIATRIC / SUICIDE ATTEMPT",
-      "PSYCHIATRIC / SUICIDE ATTEMPT / DANGEROUS BLEEDING",
-      "PSYCHIATRIC / SUICIDE ATTEMPT / MINOR BLEEDING",
-      "PSYCHIATRIC / SUICIDE ATTEMPT / NOT ALERT",
-      "PSYCHIATRIC / SUICIDE ATTEMPT / SERIOUS BLEEDING",
-      "PSYCHIATRIC / SUICIDE ATTEMPT / UNK STATUS",
-      "PSYCHIATRIC / SUICIDE ATTEMPT",
-      "PSYCHIATRIC / THREATENING SUICIDE",
-      "PSYCHIATRIC / THREATENING TO JUMP",
-      "PSYCHIATRIC/SUICIDE ATTEMPT/BRAVO OVERRIDE",
-      "PSYCHIATRIC/SUICIDE ATTEMPT/NOT ALERT",
-      "PSYCHIATRIC/SUICIDE ATTEMPT/UNKNOWN STATUS",
+      "PREGNANCY/CHILDBIRTH/MISCARRIAGE: 1ST TRIMESTER BLEEDING",
+      "PREGNANCY/CHILDBIRTH/WATER BROKEN",
+      "PROPERTY DAMAGE",
+      "PSYCHIATRIC/ALTERED LOC/NO OR UNKNOWN HISTORY OF MENTAL HEALTH CONDITIONS",
+      "PSYCHIATRIC/ALTERED LOC/SUDDEN CHANGE IN BEHAVIOR/PERSONALITY",
+      "PSYCHIATRIC/INTENDING SUICIDE",
+      "PSYCHIATRIC/NON-SUICIDAL & ALERT",
+      "PSYCHIATRIC/NON-SUICIDAL/ALERT",
+      "PSYCHIATRIC PROBLEM",
       "PSYCHIATRIC PROBLEM/NON-SUICIDAL & ALERT",
       "PSYCHIATRIC PROBLEM/THREATENING SUICIDE",
+      "PSYCHIATRIC/SUICIDE ATTEMPT",
+      "PSYCHIATRIC/SUICIDE ATTEMPT",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/BRAVO OVERRIDE",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/DANGEROUS BLEEDING",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/MINOR BLEEDING",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/NOT ALERT",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/NOT ALERT",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/SERIOUS BLEEDING",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/SERIOUS HEMORRHAGE",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/UNK STATUS",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/UNKNOWN STATUS",
+      "PSYCHIATRIC/SUICIDE IDEATION/ALERT",
+      "PSYCHIATRIC/SUICIDE IDEATION/ALERT/HISTORY OF MENTAL HEALTH CONDITIONS",
+      "PSYCHIATRIC/THREATENING SUICIDE",
+      "PSYCHIATRIC/THREATENING TO JUMP",
       "PUBLIC ASSISTANCE (FALL)",
-      "QUICKSAND / MARSH / MUD RESCUE",
+      "QUICKSAND/MARSH/MUD RESCUE",
       "RASH/SKIN DISORDER",
-      "REFINERY FIRE -- TANK FARM / FUEL STORAGE FACILITY",
+      "RECKLESS DRIVING",
+      "REFINERY FIRE -- TANK FARM/FUEL STORAGE FACILITY",
       "RESIDENTIAL FIRE",
       "RESIDENTIAL FIRE -- MFG HOUSING/TRAILER",
       "SCHOOL FIRE",
       "SCUBA ACCIDENT",
+      "SEIZURE",
       "SEIZURE / CONTINUOUS OR MULTIPLE",
-      "SEIZURE / DIABETIC HISTORY",
-      "SEIZURE / EFFECTIVE BREATHING NOT VERIFIED",
-      "SEIZURE / EFFECTIVE BREATHING NOT VERIFIED <35",
-      "SEIZURE / EFFECTIVE BREATHING UNVERIFIED",
-      "SEIZURE / INEFFECTIVE BREATHING",
-      "SEIZURE / NO LONGER SEIZING & BREATHING NORMALLY",
-      "SEIZURE / NO LONGER SEIZING & BREATHING NORMALLY (KNOWN SEIZURE DISORDER)",
-      "SEIZURE / NO LONGER SZ, BREATHING",
-      "SEIZURE / NOT BREATHING",
-      "SEIZURE / PREGNANCY",
+      "SEIZURE/DIABETIC HISTORY",
+      "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED",
+      "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED <35",
+      "SEIZURE/EFFECTIVE BREATHING UNVERIFIED",
+      "SEIZURE/FOCAL/ABSENCE/ALERT",
+      "SEIZURE/INEFFECTIVE BREATHING",
+      "SEIZURE/NO LONGER SEIZING & BREATHING NORMALLY",
+      "SEIZURE/NO LONGER SEIZING & BREATHING NORMALLY (KNOWN SEIZURE DISORDER)",
+      "SEIZURE/NO LONGER SZ, BREATHING",
+      "SEIZURE/NOT BREATHING",
+      "SEIZURE/PREGNANCY",
       "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED AGE >35",
       "SEIZURE/EFFECTIVE BREATHING UNVERIFIED AGE <35",
       "SEIZURE/HISTORY OF STROKE OR BRAIN TUMOR",
@@ -847,11 +854,13 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SEIZURE-ATYPICAL",
       "SEIZURE-FOCAL (ALERT)",
       "SEIZURE-HISTORY OF STROKE OR BRAIN TUMOR",
+      "SEIZURE/NO LONGER SEIZING/BREATHING NORMALLY/NO SEIZURE DISORDER",
+      "SEIZURE/NO LONGER SEIZING/BREATHING NORMALLY/NO SEIZURE HISTORY",
       "SEIZURE-NO LONGER SEIZING/EFFECTIVE BREATHING VERIF/NO SZ HX",
       "SEIZURE-NOT SEIZING NOW & EFFECTIVE BREATHING VERIF <6 CONF NO SEIZURE DISORDER",
       "SEIZURE-OVERDOSE/POISONING (INGESTION)",
       "SEIZURE CONTINUOUS or MULTIPLE",
-      "SEIZURES / CONTINUOUS or MULTIPLE",
+      "SEIZURES/CONTINUOUS or MULTIPLE",
       "SEIZURES/BRAVO OVERRIDE",
       "SEIZURES/DELTA OVERRIDE-ALS RESPONSE",
       "SELF INFLICTED GUNSHOT -- CENTRAL WOUND",
@@ -866,25 +875,30 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SELF INFLICTED GUNSHOT WOUND -- NON RECENT",
       "SERIOUS HEMORRHAGE/LACERATIONS",
       "SERVICE CALL",
+      "SERVICE CALL/LOCKED IN/OUT OF BUILDING",
+      "SERVICE CALL/PERSON/CHILD LOCKED IN A VEHICLE",
       "SERVICE CALL-MULTIPLE UNITS",
       "SERVICE CALL-POSS MEDICAL ASSISTANCE",
-      "SEVERE EYE PROBLEMS / INJURIES",
+      "SEVERE EYE PROBLEMS/INJURIES",
       "SEWER PROBLEMS",
       "SEXUALLY TRANSMITTED DISEASE",
       "SHIP FIRE",
       "SICK CALL",
-      "SICK CALL / ALTERED MENTAL STATUS",
-      "SICK CALL / ABNORMAL BREATHING",
+      "SICK CALL/ALTERED MENTAL STATUS",
+      "SICK CALL/ABNORMAL BREATHING",
+      "SICK CALL/ABNORMAL BREATHING/POSSIBLE COVID",
       "SICK CALL / NOT ALERT",
+      "SICK CALL/UNKNOWN STATUS",
       "SICK PERSON",
       "SICK PERSON- ALS RESPONSE",
-      "SICK PERSON / UNK STATUS",
-      "SICK PERSON / UNKNOWN STATUS",
+      "SICK PERSON/UNK STATUS",
+      "SICK PERSON/UNKNOWN STATUS",
       "SICK PERSON (UNKNOWN SYMPTOMS)",
       "SICK PERSON/BRAVO OVERRIDE",
       "SICKLE CELL CRISIS",
       "SMALL OUTSIDE FIRE -- HAZARDOUS MATERIALS PRESENT",
       "SMALL OUTSIDE/TRASH FIRE",
+      "SMOKE INVESTIGATION",
       "SMOKE INVESTIGATION -- HEAVY SMOKE",
       "SMOKE INVESTIGATION -- LIGHT SMOKE",
       "SMOKE INVESTIGATION -- ODOR OF SMOKE",
@@ -892,18 +906,19 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SNAKEBITE",
       "SORE THROAT",
       "SPECIAL EVENT",
-      "SPILL / LEAK",
-      "STAB / GUNSHOT / CENTRAL WOUND",
-      "STAB / GUNSHOT / MULTIPLE VICTIMS",
-      "STAB / GUNSHOT / MULTIPLE WOUNDS",
-      "STAB / GUNSHOT / NON-RECENT CENTRAL WOUND",
-      "STAB / GUNSHOT / NOT ALERT",
-      "STAB / GUNSHOT / PERIPHERAL NON-RECENT WOUNDS",
-      "STAB / GUNSHOT / SERIOUS BLEEDING",
-      "STAB / GUNSHOT / SINGLE PERIPHERAL WOUND",
-      "STAB / GUNSHOT / UNCONSCIOUS / ARREST",
-      "STAB / GUNSHOT : UNKNOWN STATUS",
-      "STAB / GUNSHOT WOUND",
+      "SPIDER BITE",
+      "SPILL/LEAK",
+      "STAB/GUNSHOT/CENTRAL WOUND",
+      "STAB/GUNSHOT/MULTIPLE VICTIMS",
+      "STAB/GUNSHOT/MULTIPLE WOUNDS",
+      "STAB/GUNSHOT/NON-RECENT CENTRAL WOUND",
+      "STAB/GUNSHOT/NOT ALERT",
+      "STAB/GUNSHOT/PERIPHERAL NON-RECENT WOUNDS",
+      "STAB/GUNSHOT/SERIOUS BLEEDING",
+      "STAB/GUNSHOT/SINGLE PERIPHERAL WOUND",
+      "STAB/GUNSHOT/UNCONSCIOUS/ARREST",
+      "STAB/GUNSHOT : UNKNOWN STATUS",
+      "STAB/GUNSHOT WOUND",
       "STAB/GUNSHOT WOUND/BRAVO OVERRIDE",
       "STAB/GUNSHOT WOUND/DELTA OVERRIDE-ALS RESPONSE",
       "STABBING -- CENTRAL WOUND",
@@ -917,25 +932,29 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "STABBING -- SERIOUS HEMORRHAGE",
       "STABBING -- UNCONSCIOUS VICTIM",
       "STABBING -- UNK INJURIES",
-      "STROKE (CVA) / ABNORMAL BREATHING",
-      "STROKE (CVA) / BREATHING NORMAL <35",
-      "STROKE (CVA) / BREATHING NORMALLY >35",
-      "STROKE (CVA) / NOT ALERT",
-      "STROKE (CVA) / STROKE HISTORY",
-      "STROKE (CVA) / SUDDEN LOSS OF BALANCE or COORDINATION",
-      "STROKE (CVA) / SUDDEN ONSET OF SEVERE HEADACHE",
-      "STROKE (CVA) / SUDDEN PARALYSIS or FACIAL DROOP (ONE SIDE)",
-      "STROKE (CVA) / SUDDEN SPEECH PROBLEMS",
-      "STROKE (CVA) / SUDDEN VISION PROBLEMS",
-      "STROKE (CVA) / SUDDEN WEAKNESS or NUMBNESS (ONE SIDE)",
-      "STROKE (CVA) / UNK STATUS",
+      "STROKE(CVA)",
+      "STROKE (CVA)/ABNORMAL BREATHING",
+      "STROKE (CVA)/BREATHING NORMAL <35",
+      "STROKE (CVA)/BREATHING NORMALLY >35",
+      "STROKE (CVA)/NOT ALERT",
+      "STROKE (CVA)/STROKE HISTORY",
+      "STROKE (CVA)/SUDDEN LOSS OF BALANCE or COORDINATION",
+      "STROKE (CVA)/SUDDEN ONSET OF SEVERE HEADACHE",
+      "STROKE (CVA)/SUDDEN PARALYSIS or FACIAL DROOP (ONE SIDE)",
+      "STROKE (CVA)/SUDDEN SPEECH PROBLEMS",
+      "STROKE (CVA)/SUDDEN VISION PROBLEMS",
+      "STROKE (CVA)/SUDDEN WEAKNESS or NUMBNESS (ONE SIDE)",
+      "STROKE (CVA)/UNK STATUS",
       "STROKE (CVA) /UNKNOWN STATUS (OTHER CODES NOT APPLICABLE)",
       "STROKE (CVA)/ABNORMAL BREATHING",
       "STROKE (CVA)/NOT ALERT",
       "STROKE (CVA)/SUDDEN SPEECH PROBLEMS",
       "STROKE (CVA)/SUDDEN WEAKNESS or NUMBNESS (ONE SIDE)",
       "STROKE (CVA)",
-      "STRUCTURAL COLLAPSE / TECHNICAL RESCUE",
+      "STRUCTURAL COLLAPSE/TECHNICAL RESCUE",
+      "STRUCTURE FIRE",
+      "STRUCTURE FIRE/ MANUFACTURED HOME",
+      "STRUCTURE FIRE/UNKNOWN TYPE",
       "STRUCTURE FIRE -- APPLIANCE FIRE",
       "STRUCTURE FIRE -- HIGH LIFE HAZARD",
       "STRUCTURE FIRE -- LARGE NON-DWELLING (SHED/DET. GARAGE)",
@@ -949,44 +968,58 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "STRUCTURE FIRE/MANUFACTURED BLDG",
       "STRUCTURE FIRE/SMALL NON-DWELLING",
       "SUICIDAL (NOT THREATENING) THOUGHTS & ALERT",
-      "SUICIDE ATTEMPT / NEAR HANGING or STRANGULATION",
-      "SUNBURN / MINOR BURNS",
-      "SYNCOPE / ALERT <35 W/CARDIAC HISTORY",
+      "SUICIDE ATTEMPT/NEAR HANGING or STRANGULATION",
+      "SUNBURN/MINOR BURNS",
+      "SUSPICIOUS (IDENTIFY)",
+      "SYNCOPE",
+      "SYNCOPE/ALERT <35 W/CARDIAC HISTORY",
       "SYNCOPE / ALERT <35",
-      "SYNCOPE / ALERT >35",
+      "SYNCOPE/ALERT AGE<35 WITH CARDIAC HISTORY",
       "SYNCOPE / ALERT AGE>35",
-      "SYNCOPE / FAINTING / ALERT / ABNORMAL BREATHING",
-      "SYNCOPE / FAINTING / ALERT / CARDIAC HISTORY",
-      "SYNCOPE / FAINTING / CHANGING SKIN COLOR",
-      "SYNCOPE / FAINTING / FEMALE with ABDOMINAL PAIN",
-      "SYNCOPE / FAINTING / NOT ALERT",
-      "SYNCOPE / NOT ALERT",
+      "SYNCOPE/ALERT AGE>35",
+      "SYNCOPE/ALERT/AGE>35/CARDIAC HISTORY",
+      "SYNCOPE/FAINTING/ALERT/ABNORMAL BREATHING",
+      "SYNCOPE/FAINTING/ALERT/CARDIAC HISTORY",
+      "SYNCOPE/FAINTING/CHANGING SKIN COLOR",
+      "SYNCOPE/FAINTING/FEMALE with ABDOMINAL PAIN",
+      "SYNCOPE/FAINTING/NOT ALERT",
+      "SYNCOPE/NOT ALERT",
       "SYNCOPE/ALERT/ABNORMAL BREATHING",
       "TEST EVENT TYPE",
-      "TEST EVENT / FOR ALERTING/PRT SYSTEM",
+      "TEST EVENT/FOR ALERTING/PRT SYSTEM",
       "TOOTHACHE",
-      "TRAFFIC  ACCIDENT / HAZARDOUS MATERIALS INCIDENT",
-      "TRAFFIC  ACCIDENT / MINOR INJURIES",
-      "TRAFFIC  ACCIDENT / NO INJURIES",
-      "TRAFFIC ACCIDENT / NO INJURIES",
-      "TRAFFIC ACCIDENT / HAZARDOUS SCENE",
-      "TRAFFIC ACCIDENT / HIGH MECHANISM / PEDESTRIAN",
-      "TRAFFIC ACCIDENT / MINOR INJURIES",
-      "TRAFFIC ACCIDENT / UNK STATUS",
+      "TRAFFIC ACCIDENT",
+      "TRAFFIC  ACCIDENT/HAZARDOUS MATERIALS INCIDENT",
+      "TRAFFIC  ACCIDENT/MINOR INJURIES",
+      "TRAFFIC  ACCIDENT/NO INJURIES",
+      "TRAFFIC ACCIDENT/(UNCONFIRMED) NO INJURIES REPORTED",
+      "TRAFFIC ACCIDENT/NO INJURIES",
+      "TRAFFIC ACCIDENT/HAZARDOUS SCENE",
+      "TRAFFIC ACCIDENT/HIGH MECHANISM/PEDESTRIAN",
+      "TRAFFIC ACCIDENT/HIGH VELOCITY IMPACT",
+      "TRAFFIC ACCIDENT/INJURIES",
+      "TRAFFIC ACCIDENT/MINOR INJURIES",
+      "TRAFFIC ACCIDENT/SCENE HAZARDS",
+      "TRAFFIC ACCIDENT/UNK STATUS",
+      "TRAFFIC ACCIDENT/UNKNOWN INJURIES",
+      "TRAFFIC ACCIDENT/VEHICLE VS BUILDING",
       "TRAFFIC ACCIDENT W/INJURIES-SERIOUS BLEEDING",
+      "TRAFFIC ACCIDENT/WITH ENTRAPMENT",
       "TRAFFIC ACCIDENT WITH ENTRAPMENT",
       "TRAFFIC ACCIDENT WITH INJURIES",
-      "TRAIN / RAIL INCIDENT -- DERAILMENT ABOVE GROUND",
-      "TRAIN / RAIL INCIDENT -- DERAILMENT BELOW GROUND",
-      "TRAIN / RAIL INCIDENT -- FIRE ON BOARD IN TUNNEL",
-      "TRAIN / RAIL INCIDENT -- GROUND LEVEL",
-      "TRAIN / RAIL INCIDENT -- INSIDE TUNNEL",
-      "TRAIN / RAIL INCIDENT -- INVOLVING VEHICLES",
-      "TRAIN / RAIL INCIDENT -- LARGE FUEL/FIRE LOAD",
-      "TRAIN / RAIL INCIDENT -- ON BRIDGE / TRESTLE",
-      "TRAIN / RAIL INCIDENT -- VEHICLE INVOLVED",
-      "TRAIN COLLISION / DERAILMENT",
-      "TRAIN FIRE / EMERGENCY",
+      "TRAFFIC HAZARD",
+      "TRAFFIC VIOLATION",
+      "TRAIN/RAIL INCIDENT -- DERAILMENT ABOVE GROUND",
+      "TRAIN/RAIL INCIDENT -- DERAILMENT BELOW GROUND",
+      "TRAIN/RAIL INCIDENT -- FIRE ON BOARD IN TUNNEL",
+      "TRAIN/RAIL INCIDENT -- GROUND LEVEL",
+      "TRAIN/RAIL INCIDENT -- INSIDE TUNNEL",
+      "TRAIN/RAIL INCIDENT -- INVOLVING VEHICLES",
+      "TRAIN/RAIL INCIDENT -- LARGE FUEL/FIRE LOAD",
+      "TRAIN/RAIL INCIDENT -- ON BRIDGE/TRESTLE",
+      "TRAIN/RAIL INCIDENT -- VEHICLE INVOLVED",
+      "TRAIN COLLISION/DERAILMENT",
+      "TRAIN FIRE/EMERGENCY",
       "TRANSFER/INTERFACILITY/PALLIATIVE CARE",
       "TRANSFER/INTERFACILITY/PALLIATIVE CARE/ NOT ALERT",
       "TRANSFER/INTERFACILITY/PALLIATIVE CARE/CARDIAC HISTORY",
@@ -996,42 +1029,49 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "TRANSFER/INTERFACILITY/PALLIATIVE CARE/SEVERE PAIN",
       "TRANSFER: POSS CARDIAC ARREST",
       "TRANSFER: RESUSCITATED OR DEFIBRILLATED",
-      "TRANSFORMER FIRE ( WIRE / POLE )",
+      "TRANSFORMER FIRE ( WIRE/POLE )",
       "TRANSFORMER FIRE ( WIRE or POLE )",
+      "TRANSFORMER PROBLEM",
       "TRANSPORTATION ONLY",
       "TRASH FIRE",
       "TRAUMATIC INJURIES",
-      "TRAUMATIC INJURIES / CHEST or NECK INJURY  W/ DIFF BREATHING",
-      "TRAUMATIC INJURIES / MINOR",
-      "TRAUMATIC INJURIES / NON-RECENT",
-      "TRAUMATIC INJURIES / NOT ALERT",
-      "TRAUMATIC INJURIES / POSSIBLY DANGEROUS BODY AREA",
-      "TRAUMATIC INJURIES / SERIOUS BLEEDING",
-      "TRAUMATIC INJURIES / UNCONSCIOUS or ARREST",
+      "TRAUMATIC INJURIES/CHEST or NECK INJURY  W/ DIFF BREATHING",
+      "TRAUMATIC INJURIES/MINOR",
+      "TRAUMATIC INJURIES/NON-RECENT",
+      "TRAUMATIC INJURIES/NOT ALERT",
+      "TRAUMATIC INJURIES/POSSIBLY DANGEROUS BODY AREA",
+      "TRAUMATIC INJURIES/SERIOUS BLEEDING",
+      "TRAUMATIC INJURIES/UNCONSCIOUS or ARREST",
       "TRAUMATIC INJURIES/NOT DANGERIOUS BODY AREA",
       "TRAUMATIC INJURIES/POSSIBLY DANGEROUS BODY AREA",
       "TRAUMATIC INJURIES/SERIOUS HEMORRHAGE",
       "TRAUMATIC INJURY",
       "TRAUMATIC INJURY / NON-RECENT",
-      "TRENCH COLLAPSE / TECHNICAL RESCUE",
+      "TRAUMATIC INJURY/UNKNOWN STATUS",
+      "TRENCH COLLAPSE/TECHNICAL RESCUE",
       "TRENCH RESCUE",
-      "UNCONSCIOUS / AGONAL BREATHING",
+      "UNCONSCIOUS/ABNORMAL BREATHING",
+      "UNCONSCIOUS/AGONAL BREATHING",
       "UNCONSCIOUS/AGONAL-INEFFECTIVE BREATHING",
-      "UNCONSCIOUS / EFFECTIVE BREATHING VERIFIED",
-      "UNCONSCIOUS / FAINTING",
-      "UNCONSCIOUS / INEFFECTIVE BREATHING",
+      "UNCONSCIOUS/EFFECTIVE BREATHING",
+      "UNCONSCIOUS/EFFECTIVE BREATHING VERIFIED",
+      "UNCONSCIOUS/FAINTING",
+      "UNCONSCIOUS/INEFFECTIVE BREATHING",
       "UNCONSCIOUS/EFFECTIVE BREATHING VERIFIED",
       "UNCONSCIOUS/INEFFECTIVE BREATHING",
       "UNK PROBLEM: CALLERS LANGUAGE NOT UNDERSTOOD",
       "UNKNOWN PROBLEM",
       "UNKNOWN PROBLEM (MAN DOWN)",
+      "UNKNOWN PROBLEM/PERSON DOWN",
       "UNKNOWN PROBLEM/PERSON DOWN/BRAVO OVERRIDE",
       "UNWELL/ILL",
+      "UNWELL/ILL/POSSIBLE COVID",
+      "VEGETATION FIRE- BRUSH / GRASS",
       "VEHICLE ACCCIDENT POSS FATALITY",
       "VEHICLE ACCIDENT -- ATV INVOLVED",
       "VEHICLE ACCIDENT -- BUS INVOLVED",
       "VEHICLE ACCIDENT -- MOTORCYCLE/BICYCLE INVOLVED",
-      "VEHICLE ACCIDENT / UNCONSCIOUS or NOT ALERT",
+      "VEHICLE ACCIDENT/UNCONSCIOUS or NOT ALERT",
       "VEHICLE ACCIDENT >10 VEHICLES",
       "VEHICLE ACCIDENT OVERTURNED VEHICLE",
       "VEHICLE ACCIDENT SINKING VEHICLE",
@@ -1047,11 +1087,12 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "VEHICLE FIRE -- LARGE FUEL/FIRE LOAD",
       "VEHICLE FIRE -- THREATENED NON-STRUCTURE OBJECT",
       "VEHICLE FIRE -- THREATENED STRUCTURE",
-      "VEHICLE FIRE / OCCUPANTS TRAPPED",
+      "VEHICLE FIRE/OCCUPANTS TRAPPED",
       "VEHICLE FIRE IN PARKING GARAGE",
       "VEHICLE FIRE/THREATENED NON-STRUCTURE OBJECT",
       "VIOLENT BEHAVIOR",
       "VOMITING",
+      "VOMITING/POSSIBLE COVID",
       "WATER MAIN BREAK",
       "WATER RESCUE (FLOOD)",
       "WATER RESCUE (FLOODING)",
@@ -1065,7 +1106,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "WATER RESCUE -- SWIFT WATER",
       "WATER RESCUE -- SWIMMING POOL",
       "WATER RESCUE -- UNKNOWN SITUATION",
-      "WATERCRAFT / BOATING ACCIDENT",
+      "WATERCRAFT/BOATING ACCIDENT",
       "WATERCRAFT IN DISTRESS -- ENGINE STALLED",
       "WATERCRAFT IN DISTRESS -- FLARE SIGHTING (ORANGE or RED)",
       "WATERCRAFT IN DISTRESS -- FLARE SIGHTING",
@@ -1076,6 +1117,60 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "WOODS FIRE",
       "WOUND INFECTED"
   );
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Cities
+      "BAYOU LA BATRE",
+      "CHICKASAW",
+      "CITRONELLE",
+      "CREOLA",
+      "MOBILE",
+      "PRICHARD",
+      "SARALAND",
+      "SATSUMA",
+      "SEMMES",
+      "TOWNS",
+      "DAUPHIN ISLAND",
+      "MOUNT VERNON",
+
+      // Census-designated places
+      "AXIS",
+      "BELLE FONTAINE",
+      "BUCKS",
+      "CALVERT",
+      "CHUNCHULA",
+      "GRAND BAY",
+      "GULFCREST",
+      "MOVICO",
+      "THEODORE",
+      "TILLMANS CORNER",
+
+      // Unincorporated communities
+      "ALABAMA PORT",
+      "CHURCHILL DOWNS",
+      "CLOVERDALE",
+      "CODEN",
+      "CRAWFORD",
+      "EIGHT MILE",
+      "FERNLAND",
+      "HERON BAY",
+      "IRVINGTON",
+      "KUSHLA",
+      "LE MOYNE",
+      "LLOYDS",
+      "MAUVILLA",
+      "MON LOUIS",
+      "PENNSYLVANIA",
+      "ST ELMO",
+      "TANNER WILLIAMS",
+      "UNION CHURCH",
+      "WHISTLER",
+      "WILMER",
+
+      // Ghost town
+      "BEAVER MILLS"
+  };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BLAB", "BAYOU LA BATRE",
