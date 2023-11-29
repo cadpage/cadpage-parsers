@@ -155,6 +155,8 @@ public class DispatchH05Parser extends HtmlProgramParser {
     @Override
     public void parse(String field, Data data) {
 
+      if (field.equals(";")) return;
+
       if (infoFirst) {
         infoEnabled = optInfo;
         infoFirst = false;

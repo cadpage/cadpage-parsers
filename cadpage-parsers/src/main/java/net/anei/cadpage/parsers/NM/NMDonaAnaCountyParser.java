@@ -13,6 +13,7 @@ public class NMDonaAnaCountyParser extends GroupBestParser {
   public NMDonaAnaCountyParser() {
     super(new NMDonaAnaCountyAParser(),
           new NMDonaAnaCountyBParser(),
+          new NMDonaAnaCountyCParser(),
           new NMDonaAnaCountyDParser());
   }
 }
