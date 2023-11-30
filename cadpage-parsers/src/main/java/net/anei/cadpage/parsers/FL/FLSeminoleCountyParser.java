@@ -1,9 +1,7 @@
 package net.anei.cadpage.parsers.FL;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,252 +12,127 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 public class FLSeminoleCountyParser extends FieldProgramParser {
 
   public FLSeminoleCountyParser() {
-    super("SEMINOLE COUNTY", "FL",
-          "( ID STATUS CODE_CALL ( MASH END " +
-                                "| ADDR1 CITY_X1 CITY! " +
-                                "| ADDR CITY_X PLACE! " +
-                                ") " +
-          "| ADDR1/SC CITY_X1 CITY! " +
-          "| ADDR/SC CITY_X PLACE! " +
-          ") EXTRA");
+    super(CITY_LIST, "SEMINOLE COUNTY", "FL",
+          "ADDR/SCP TAC:CH MpBk:MAP JZ:MAP/L DISPATCH_TIME:TIME UNITS:UNIT END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MW_STREET_LIST);
+    setupSaintNames("JOHNS");
+    removeWords("COVE", "LANE");
   }
 
-  private static final Pattern MASTER = Pattern.compile("([^/]+)/(.*?);(.*?) (?:: (.*?) )?TAC:(.*) UNITS:(.*)");
-  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]*\\[\\d\\] *");
 
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
 
-    String[] flds = splitFields(body);
-    if (flds.length > 1) return parseFields(splitFields(body), data);
+    if (!subject.equals("CAD Page")) return false;
 
-    // Special mutual aid page format
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    setFieldList("CALL ADDR APT X CITY MAP PLACE CH UNIT");
-
-    parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, match.group(1).trim(), data);
-    data.strCross = match.group(2).trim();
-    String extra = match.group(3).trim();
-    data.strPlace = getOptGroup(match.group(4));
-    data.strChannel = match.group(5).trim();
-    data.strUnit = match.group(6).trim();
-
-    Set<String> notMapSet = new HashSet<>();
-    notMapSet.add("MP");
-    notMapSet.add("MAP");
-    for (String part : MSPACE_PTN.split(data.strChannel)) notMapSet.add(part);
-    for (String part : MSPACE_PTN.split(data.strUnit)) notMapSet.add(part);
-
-    for (String part : MSPACE_PTN.split(extra)) {
-      if (!notMapSet.contains(part)) {
-        String city = CITY_CODES.getProperty(part);
-        if (city != null) {
-          data.strCity = city;
-        } else {
-          data.strMap = append(data.strMap, " ", part);
+    // If body starts with Comment: see if can identify
+    // a normal alert following the comment.
+    boolean leadComment = body.startsWith("Comment:");
+    if (leadComment) {
+      int pt = 7;
+      while (true) {
+        pt = body.indexOf(',', pt+1);
+        if (pt < 0) {
+          setFieldList("INFO");
+          data.strSupp = body.substring(8).trim();
+          return true;
+        }
+        String tmp = stripFieldStart(stripFieldStart(body.substring(pt+1), "z"), "y");
+        if (CALL_LIST.getCode(tmp) != null) {
+          data.strSupp = body.substring(8, pt).trim();
+          body = tmp;
+          break;
         }
       }
     }
-    return true;
+
+    String info = null;
+    int pt = body.indexOf(" _[1]");
+    if (pt >= 0) {
+      info = body.substring(pt+5).trim();
+      body = body.substring(0, pt).trim();
+    }
+    if (!super.parseMsg(body, data)) return false;
+    if (info != null) {
+      data.strSupp = INFO_BRK_PTN.matcher(info).replaceAll("\n");
+    }
+
+    // No fields are required because leading comment might crowd out
+    // everything.  But if there was no lead comment field, everything
+    // is required
+    return leadComment || !data.strMap.isEmpty();
   }
 
-  private String[] splitFields(String body) {
-    ArrayList<String> fields = new ArrayList<>();
-    int st = 0;
-    int lev = 0;
-    for (int pt = 0; pt < body.length(); pt++) {
-      char chr = body.charAt(pt);
-      if (chr == '(') lev++;
-      else if (chr == ')') lev--;
-      else if (lev == 0) {
-        if (chr == '\n' || chr == ',') {
-          fields.add(body.substring(st, pt).trim());
-          st = pt+1;
-        }
-      }
-    }
-    fields.add(body.substring(st).trim());
-    return fields.toArray(new String[fields.size()]);
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " INFO";
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR1")) return new MyAddress1Field();
-    if (name.equals("CITY_X1")) return new MyCityCross1Field();
-    if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("ID")) return new IdField("[A-Z]{2,3}-\\d{4}-\\d{2}-\\d{4}", true);
-    if (name.equals("STATUS")) return new SkipField("DISPATCHED|ENROUTE|ON SCENE|IN COMMAND|TERMINATE COMMAND|AT FHA", true);
-    if (name.equals("CODE_CALL")) return new MyCodeCallField();
-    if (name.equals("CITY_X")) return new MyCityCrossField();
-    if (name.equals("PLACE")) return new PlaceField("\\( *(.*?) *\\)", true);
-    if (name.equals("EXTRA")) return new MyExtraField();
-    if (name.equals("MASH")) return new MyMashField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("TIME")) return new MyTimeField();
     return super.getField(name);
   }
 
-  private class MyAddress1Field extends AddressField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
+  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*)(?: #|, APT *)(\\S+)");
+  private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:APT|UNIT) ([A-Z0-9]+?)[- ]+(.*)");
+  private static final Pattern APT_PTN = Pattern.compile("\\d+[A-Z]?|[A-Z]?|(?:APT|UNIT) *(\\S*)");
 
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!field.endsWith(" ( )")) return false;
-      field = field.substring(0, field.length()-4).trim();
-      super.parse(field, data);;
-      return true;
-    }
-
+  private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-  }
 
-  private static final Pattern CITY_X1_PTN = Pattern.compile("([ A-Z]+) / +(.*) \\( \\)");
-  private class MyCityCross1Field extends Field {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = CITY_X1_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strCity = match.group(1).trim();
-      data.strAddress = append(data.strAddress, " & ", match.group(2).trim());
-    }
+      field = stripFieldStart(field, "z");
+      field = stripFieldStart(field, "y");
 
-    @Override
-    public String getFieldNames() {
-      return "CITY ADDR";
-    }
-  }
-
-  private class MyCityField extends CityField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.length() == 0) return;
-      super.parse(field, data);
-    }
-  }
-
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)- +(.*)");
-
-  private class MyCodeCallField extends Field {
-
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = CODE_CALL_PTN.matcher(field);
+      String trailApt = "";
+      Matcher match = TRAIL_APT_PTN.matcher(field);
       if (match.matches()) {
-        data.strCode = match.group(1);
-        field = match.group(2);
+        field = match.group(1).trim();
+        trailApt = match.group(2);
       }
-      data.strCall = field;
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CODE CALL";
-    }
-
-  }
-
-  private static final Pattern FLD_PAREN_PTN = Pattern.compile("([^#]*?)(?:#(.*?))?\\((.*)\\)");
-
-  private class MyCityCrossField extends Field {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = FLD_PAREN_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strCity = match.group(1).trim();
-      data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
-      data.strCross = match.group(3).trim();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CITY X";
-    }
-  }
-
-  private class MyExtraField extends Field {
-    @Override
-    public void parse(String field, Data data) {
-      if (!field.startsWith("(")) abort();
-      int pt = field.indexOf(')');
-      if (pt < 0) abort();
-      String map = field.substring(1, pt).trim();
-      field = field.substring(pt+1).trim();
-      data.strMap = stripFieldStart(map, ";");
-
-      Parser p = new Parser(field);
-      data.strUnit = p.getLastOptional("UNITS:");
-      data.strChannel = p.getLastOptional("TAC:");
-      data.strPlace = append(data.strPlace, " - ", stripFieldStart(p.get(), ":"));
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "MAP PLACE CH UNIT";
-    }
-  }
-
-  private static final Pattern MASH_PTN = Pattern.compile("([^/]+)/(.*?);(.*?)(?:: (.*?) )?");
-  private static final Pattern MASH_CH_PTN = Pattern.compile("\\d{2}[A-Z]|F\\d|\\d+TAC\\d+");
-
-  private class MyMashField extends Field {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher match = MASH_PTN.matcher(field);
-      if (!match.matches()) return false;
-      parseAddress(match.group(1).trim(), data);
-      data.strCross = match.group(2).trim();
-      data.strPlace = getOptGroup(match.group(4));
-
-      int typeCode = 1;
-      for (String part : MSPACE_PTN.split(match.group(3).trim())) {
-        if (typeCode == 1) {
-          String city = CITY_CODES.getProperty(part);
-          if (city != null) {
-            data.strCity = city;
-            continue;
-          }
-        }
-        if (MASH_CH_PTN.matcher(part).matches()) typeCode = 3;
-        else if (part.equals("MP") || part.equals("MAP")) {
-          typeCode = 2;
-          continue;
-        }
-        switch (typeCode) {
-        case 1:
-          data.strUnit = append(data.strUnit, " ", part);
-          continue;
-
-        case 2:
-          data.strMap = append(data.strMap, " ", part);
-          continue;
-
-        case 3:
-          data.strChannel = append(data.strChannel, " ", part);
-          continue;
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt >= 0) {
+          data.strCross = field.substring(pt+1, field.length()-1).trim();
+          data.strCross = stripFieldStart(data.strCross, "/");
+          field = field.substring(0,pt).trim();
         }
       }
-      return true;
-    }
 
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      super.parse(field, data);
+
+      String place = data.strPlace;
+      match = APT_PLACE_PTN.matcher(place);
+      if (match.matches()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+        place = match.group(2).trim();
+      } else if ((match = APT_PTN.matcher(place)).matches()) {
+        String apt = match.group(1);
+        if (apt != null) place = apt;
+        data.strApt = append(data.strApt, "-", place);
+        place = "";
+      }
+      data.strPlace = place;
+
+      data.strApt = append(data.strApt, "-", trailApt);
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT X CITY UNIT MAP CH";
+      return super.getFieldNames() + " X";
+    }
+  }
+
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+
+  private class MyTimeField extends TimeField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      if (!setTime(TIME_FMT, field, data)) abort();
     }
   }
 
@@ -272,8 +145,8 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
 
   private static final CodeSet CALL_LIST = new CodeSet(
       "2ND ALARM - STRUCTURE FIRE RESIDENTIAL",
-      "ALERT 1A",
       "ABDOMINAL PAIN - FAINTING OR NEAR FAINTING >=50",
+      "ALERT 1A",
       "ANIMAL BITES",
       "ASSAULT - OVERRIDE",
       "BACK PAIN - OVERRIDE",
@@ -281,6 +154,7 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       "BRUSH FIRE",
       "CARBON MONOXIDE / INHALATION / HAZMAT",
       "CARDIAC ARREST",
+      "CHEST PAIN-D",
       "COMMAND ESTABLISHED NATURAL / PROPANE GAS LEAK OUTSIDE",
       "COMMAND ESTABLISHED REF NATURAL / PROPANE GAS LEAK INSIDE",
       "COMMAND ESTABLISHED REF STRUCTURE FIRE RESIDENTIAL",
@@ -288,86 +162,178 @@ public class FLSeminoleCountyParser extends FieldProgramParser {
       "COMMAND ESTABLISHED REF TRAFFIC ACCIDENT (ENTRAPMENT)",
       "COMMAND ESTABLISHED SMOKE IN STRUCTURE COMMERICAL",
       "DIABETIC PROBLEMS",
+      "EMD2",
       "EMDA",
       "EMDB",
+      "EMDC",
       "EMDD",
-      "FALLS",
       "FALLS - NOT ALERT",
+      "FALLS",
+      "FIRE OUTSIDE STRUCTURE",
+      "FUEL ODOR ONLY OUTSIDE",
       "GAS EXPLOSION",
+      "GAS LEAK INSIDE NATURAL",
+      "GAS LEAK OUTSIDE NATURAL",
+      "GAS LEAK OUTSIDE PROPANE",
+      "GAS LEAK/ODOR INSIDE",
+      "GAS LEAK/ODOR INSIDE W/INJ",
+      "GAS LEAK/ODOR OUTSIDE",
+      "GAS ODOR INSIDE ODOR ONLY",
       "GENERAL ALERT",
       "HAZARDOUS CONDITION",
       "HEADACHE",
       "HEART PROBLEMS",
+      "HIGH ANGLE RES",
+      "HIGH ANGLE RESCUE",
       "ILLEGAL BURN",
       "MECHANICAL ALARM COMMERCIAL",
       "MECHANICAL ALARM RESIDENTIAL",
+      "MISCELLANEOUS",
+      "MVC",
+      "MVC (ENTRAPMENT)",
+      "MVC (VEH VS BLDG)",
+      "MVC ENTRAPMENT",
+      "MVC FUEL/FLUID LEAK",
+      "MVC NO INJ NO HAZ",
       "NATURAL / PROPANE GAS LEAK INSIDE",
       "NATURAL / PROPANE GAS LEAK OUTSIDE",
+      "NATURAL GAS LEAK INSIDE",
+      "OUTSIDE FIRE",
       "OVEN FIRE (CONTAINED)",
-      "OVERDOSE / POISONING",
       "OVERDOSE / POISONING - OVERRIDE",
-      "PSYCHIATRIC",
+      "OVERDOSE / POISONING",
       "PREGNANCY / CHILDBIRTH",
+      "PSYCHIATRIC",
       "PUBLIC ASSIST",
       "SICK PERSON",
+      "SICK PERSON-C",
       "SMOKE IN STRUCTURE COMMERCIAL",
       "SMOKE IN STRUCTURE RESIDENTIAL",
+      "SMOKE ODOR COMM STRUC",
       "SMOKE ODOR IN STRUCTURE",
-      "STAB / GUNSHOT / PENETRATING TRAUMA",
+      "SMOKE ODOR IN STRUCTURE",
+      "SMOKE ODOR RES STRUC",
       "STAB / GUNSHOT / PENETRATING TRAUMA - OVERRIDE-GUNSHOT",
+      "STAB / GUNSHOT / PENETRATING TRAUMA",
       "STAB / GUNSHOT",
+      "STRUCT FIRE COMM TRAPPED",
+      "STRUCT FIRE COMM",
+      "STRUCT FIRE RES",
       "STRUCTURE FIRE COMMERCIAL",
+      "STRUCTURE FIRE OUT",
       "STRUCTURE FIRE RESIDENTIAL",
       "TRAFFIC / TRANSPORTATION ACCIDENTS",
-      "TRAFFIC ACCIDENT",
-      "TRAFFIC ACCIDENT - PINNED (TRAPPED) VICTIM",
       "TRAFFIC ACCIDENT (ENTRAPMENT)",
       "TRAFFIC ACCIDENT (SUBMERGED)",
       "TRAFFIC ACCIDENT (VEH VS STRUCTURE)",
+      "TRAFFIC ACCIDENT - PINNED (TRAPPED) VICTIM",
+      "TRAFFIC ACCIDENT",
       "TRAUMATIC INJURIES",
       "UNCONSCIOUS / FAINTING",
       "UNCONSCIOUS/FAINTING",
-      "UNKNOWN PROBLEM",
       "UNKNOWN PROBLEM (PERSON DOWN)",
+      "UNKNOWN PROBLEM",
       "UPDATE:  COMMAND TERMINATED - E16 ADVISED LOG IN FIREPLACE REF SMOKE IN STRUCTURE COMMERICAL",
+      "VEHICLE FIRE",
       "WATER FLOW ALARM",
+      "WATER RESCUE",
       "WORKING STRUCTURE FIRE RESIDENTIAL"
    );
 
   private static final String[] MW_STREET_LIST = new String[] {
+    "BEAR LAKE",
     "BRANTLEY HALL",
-    "COTTONWOOD CREEK",
+    "BROOK HOLLOW",
     "CONTROL TOWER",
+    "CORAL GLEN",
+    "COTTONWOOD CREEK",
     "GOLDEN DAYS",
+    "GOPHER SLOUGH",
     "GRASSY POINT",
-    "HIDDEN MEADOWS",
-    "HITCHING POST",
+    "HARBOR LIGHT",
     "HERITAGE PARK",
+    "HIDDEN MEADOWS",
+    "HISTORIC GOLDSBORO",
+    "HITCHING POST",
     "HOWELL BRANCH",
+    "ISLAND BAY",
+    "KING EDWARD",
     "LAKE EMMA",
+    "LAKE HARNEY WOODS",
     "LAKE HOWELL",
     "LAKE MARY",
     "LONGWOOD LAKE MARY",
+    "MARKHAM WOODS",
+    "MITCHELL HAMMOCK",
     "POINTE NEWPORT",
     "QUEENS MIRROR",
+    "RED BIRD",
     "RED BUG LAKE",
+    "REDWOOD GROVE",
     "REGAL POINTE",
     "ROSE MALLOW",
     "SABAL LAKE",
+    "SABAL PARK",
+    "SEVILLE CHASE",
     "SHADY HOLW", //the weird spelling is consistent even between departments
     "SPANISH TRACE",
     "ST JOHNS",
+    "TRIPLET LAKE",
+    "VILLAGE OAK",
     "WILLA SPRINGS",
-    "WINDSOR CRESCENT",
+    "WINDING CHASE",
+    "WINDING HOLLOW",
     "WINDING LAKE",
+    "WINDSOR CRESCENT",
     "WINTER GREEN",
-    "WINTER PARK",
-    "VILLAGE OAK"
+    "WINTER PARK"
+
   };
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "OCJZ", "ORANGE COUNTY",
-      "VCJZ", "VOLUSIA COUNTY",
-      "WPJZ", "WINTER PARK"
-  });
+  private static final String[] CITY_LIST = new String[] {
+
+      // Cities
+      "ALTAMONTE SPRINGS",
+      "CASSELBERRY",
+      "LAKE MARY",
+      "LONGWOOD",
+      "OVIEDO",
+      "SANFORD",
+      "WINTER SPRINGS",
+
+      // Census-designated places
+      "BLACK HAMMOCK",
+      "CHULUOTA",
+      "FERN PARK",
+      "FOREST CITY",
+      "GENEVA",
+      "GOLDENROD",
+      "HEATHROW",
+      "MIDWAY",
+      "WEKIWA SPRINGS",
+
+      // Unincorporated communities
+      "BERTHA",
+      "INDIAN MOUND VILLAGE",
+      "LAKE MONROE",
+      "SLAVIA",
+      "SANLANDO SPRINGS",
+      "TAINTSVILLE",
+      "TUSKAWILLA",
+
+      // Former communities
+      "MARKHAM",
+      "OSCEOLA",
+      "GOLDSBORO",
+
+      // Brevard County
+      "MIMS",
+
+      // Orange County
+      "APOPKA",
+      "MAITLAND",
+      "ORLANDO",
+      "WINTER PARK"
+
+  };
 }
