@@ -376,6 +376,7 @@ public class ParserList {
               ,"FLOrangeCounty"                 ,"Orange County, FL"
               ,"FLPalmBeachCounty"              ,"Palm Beach County, FL"
               ,"FLPensacola"                    ,"Pensacola, FL"
+              ,"FLPolkCounty"                   ,"Polk County, FL"
               ,"FLPutnamCounty"                 ,"Putnam County, FL"
               ,"FLSarasotaCounty"               ,"Sarasota County, FL"
               ,"FLSatelliteBeach"               ,"Satellite Beach, FL"

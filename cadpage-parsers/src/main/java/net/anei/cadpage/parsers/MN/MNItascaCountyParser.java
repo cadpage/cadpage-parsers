@@ -6,42 +6,42 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 
 public class MNItascaCountyParser extends DispatchA41Parser {
-  
+
   public MNItascaCountyParser() {
     this("ITASCA COUNTY", "MN");
   }
-  
+
   public MNItascaCountyParser(String defCity, String defState) {
-    super("DISPATCH:", CITY_CODES, defCity, defState, "[67][A-Z0-9]{6,7}");
+    super(CITY_CODES, defCity, defState, "[67][A-Z0-9]{6,7}");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "MNItascaCounty";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     // Fixed IAR edits :(
     body = body.replace("\n \n\n ", ", mappage,XXXX, ").replace("\n ", ", ");
-    
+
     if (!super.parseMsg(body, data)) return false;
-    
+
     // They use things a bit differently
     data.strMap = data.strChannel;
     data.strChannel = data.strApt;
     data.strApt = "";
-    
+
     if (data.strCity.equals("Superior")) data.strState = "WI";
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CH", "MAP").replace("APT", "CH").replace("CITY", "CITY ST");
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.toUpperCase().startsWith("UNORG")) return "";
@@ -49,7 +49,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
   }
 
   private static Properties CITY_CODES = buildCodeTable(new String[]{
-      
+
       // St Louis County
       "101",    "UNORG 52-21",
       "102",    "UNORG 53-15",
@@ -108,7 +108,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "1TV",    "Toivola Twp",
       "1UM",    "UMD",
       "1VB",    "Van Buren Twp",
-      
+
       // Cook County
       "2BWCA ", "BWCA",                   // ???
       "2CAR-LUT","Caribou Lake-Lutsen",   // ???
@@ -129,7 +129,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "2SCH",   "Schroeder",
       "2TOF",   "Tofte Twp",
       "2UNO",   "Unorganized",
-      
+
       // Lake County && St Louis County
       "3BB",    "Beaver Bay",
       "3BRI",   "Brimson",
@@ -140,7 +140,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "3LK",    "Lake County",
       "3SIL",   "Silver Bay",
       "3TH",    "Two Harbors",
-      
+
       // Koochiching County & Lake of the Woods County & Itsaca County
       "4-Mar ", "Margie",
       "4BAU",   "Baudette",
@@ -160,7 +160,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "4RAI",   "Ranier",
       "4RAY",   "Ray",
       "4WAS",   "Waskish",
-      
+
       // Pine County
       "5001",   "Birch Creek Twp",
       "5002",   "Sturgeon Lake Twp",
@@ -236,7 +236,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "5SL",    "Sturgeon Lake",
       "5SS",    "Sand Stone",
       "5WR",    "Willow River",
-      
+
       // Carlton County
       "6ATT",   "Atkinson Twp",
       "6AUT",   "Automba Twp",
@@ -279,7 +279,7 @@ public class MNItascaCountyParser extends DispatchA41Parser {
       "6WRI",   "Wright",
       "6WRN",   "Wrenshall",
       "6WRT",   "Wrenshall Twp",
-      
+
       // St Louis County
       "707",    "UNORG T55-R14",
       "708",    "UNORG 55-15",
