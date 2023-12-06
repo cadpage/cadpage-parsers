@@ -11,7 +11,7 @@ public class OHButlerCountyCParser extends FieldProgramParser {
   public OHButlerCountyCParser() {
     super("BUTLER COUNTY", "OH",
           "CALL ( ID1! Address:ADDRCITY! Cross_Streets:X! DATETIME! Area:MAP! Plan:MAP/L! Caller:NAME_PHONE1! Cautions:ALERT! Units:UNIT! INFO! INFO+ " +
-               "| ADDRCITY X UNIT! INFO! DATETIME! Caller:NAME_PHONE2! CAD#:ID! Call_Taker:SKIP! GPS! EMPTY! " +
+               "| ADDRCITY X UNIT! INFO! INFO/N+? DATETIME! Caller:NAME_PHONE2! CAD#:ID! Call_Taker:SKIP! GPS! EMPTY! " +
                ") END");
   }
 
