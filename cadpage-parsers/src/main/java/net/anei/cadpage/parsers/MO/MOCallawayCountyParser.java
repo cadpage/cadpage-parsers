@@ -35,7 +35,8 @@ public class MOCallawayCountyParser extends DispatchA25Parser {
       "6593 MEADOW VIEW CT",                  "+38.822072,-92.004162",
       "6596 MEADOW VIEW CT",                  "+38.822220,-92.004870",
       "1510 N BUS 54",                        "1510 NORTH BLUFF ST",
-      "2000 N BUS 54",                        "2000 N BLUFF ST"
+      "2000 N BUS 54",                        "2000 N BLUFF ST",
+      "2420 PAYNE FARM RD",                   "+38.669361,-92.106507"
   });
 }
 
