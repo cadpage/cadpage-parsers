@@ -8,25 +8,25 @@ import net.anei.cadpage.parsers.dispatch.DispatchRedAlertParser;
 
 
 public class TXTarrantCountyAParser extends DispatchRedAlertParser {
-  
+
   private static final Pattern FMRD_PTN = Pattern.compile("\\bF *M(?: +RD)(?= +\\d+)");
-  
+
   public TXTarrantCountyAParser() {
     super("TARRANT COUNTY","TX");
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSpecialStreets("OHIO GARDEN");
   }
-  
+
   @Override
   public String getFilter() {
-    return "alerts@tcfirealarm.com,crimespage@lakeworthtx.org";
+    return "alerts@tcfirealarm.com,crimespage@lakeworthtx.org,tarrantctydsp@rednmxcad.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     body = FMRD_PTN.matcher(body).replaceAll("FM");
@@ -210,6 +210,6 @@ public class TXTarrantCountyAParser extends DispatchRedAlertParser {
     "WINSCOTT PLOVER",
     "WOODED ACRES",
     "YUCCA FLATS"
-   
+
   };
 }
