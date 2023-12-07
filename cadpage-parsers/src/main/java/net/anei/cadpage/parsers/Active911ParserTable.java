@@ -1289,7 +1289,7 @@ public class Active911ParserTable {
       "US/MO/CityofRolla",                "MOPhelpsCounty",
       "US/MO/CityofStJoseph",             "MOBuchananCountyA,MOBuchananCountyD,MODekalbCounty",
       "US/MO/ClarktonVFD",                "MODunklinCounty",
-      "US/MO/ClayCounty",                 "MOClayCounty",
+      "US/MO/ClayCounty",                 "MOClayCountyA,MOClayCountyE",
       "US/MO/ClayCountyOmnigo",           "MOClayCountyD",
       "US/MO/ClintonCounty",              "MOClintonCounty",
       "US/MO/ClintonCountySheriff",       "MOClintonCounty",
