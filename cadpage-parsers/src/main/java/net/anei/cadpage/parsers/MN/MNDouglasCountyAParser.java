@@ -7,11 +7,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
  */
 
 public class MNDouglasCountyAParser extends DispatchA27Parser {
-  
+
   public MNDouglasCountyAParser() {
-    super("DOUGLAS COUNTY", "MN", "\\d+[A-Z]{2}");
+    super("DOUGLAS COUNTY", "MN");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@cisusa.org,cis@co.douglas.mn.us";

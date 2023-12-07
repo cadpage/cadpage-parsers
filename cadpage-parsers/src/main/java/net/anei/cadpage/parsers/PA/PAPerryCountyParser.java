@@ -9,8 +9,8 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 public class PAPerryCountyParser extends DispatchH05Parser {
 
   public PAPerryCountyParser() {
-    super("PERRY COUNTY", "PA",
-          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDRCITYGPS1! " +
+    super(CITY_LIST, "PERRY COUNTY", "PA",
+          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDRCITYGPS1/S6! " +
                  "( CRSS:X! MAP:GPS! CFS:SKIP! ID:ID! PRI:PRI1! DATE:DATETIME! UNIT:UNIT! TIMES:EMPTY! TIMES+ " +
                  "| CROSS_STREETS:X! ID:ID! PRI:PRI1! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:EMPTY! TIMES+? CALLER_NAME:NAME! FIRE_BOX:BOX! END ) " +
           "| CALL_ADDR_CITY2 X PLACE APT GPS! PN:PHONE! MAP UNIT! INFO/N+ )");
@@ -47,29 +47,41 @@ public class PAPerryCountyParser extends DispatchH05Parser {
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("(\\d+\\.\\d{6,})(-\\d+\\.\\d{6,})");
+  private static final Pattern APT_PTN = Pattern.compile(".*\\d.*|[A-Z]");
 
-  private class MyAddressCityGPS1Field extends AddressCityField {
+  private class MyAddressCityGPS1Field extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.lastIndexOf(',');
-      if (pt >= 0) {
-        String gps = field.substring(pt+1).trim();
-        Matcher match = GPS_PTN.matcher(gps);
-        if (match.matches()) {
-          setGPSLoc(match.group(1)+','+match.group(2), data);
-          field = field.substring(0,pt).trim();
-        }
-        else if (gps.isEmpty()) {
-          field = field.substring(0,pt).trim();
-        }
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(',');
+      if (city.isEmpty()) city = p.getLastOptional(',');
+      Matcher match = GPS_PTN.matcher(city);
+      if (match.matches()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        city = p.getLastOptional(',');
       }
-      field = stripFieldEnd(field, ",");
-      super.parse(field, data);
+      String apt = "";
+      match = APT_PTN.matcher(city);
+      if (match.matches()) {
+        apt = city;
+        city = p.getLastOptional(',');
+      }
+      data.strCity = city;
+      field = p.get().replace('@', '&');
+      if (!apt.isEmpty()) {
+        field = stripFieldEnd(field, ' ' + apt);
+      }
+      int flags = FLAG_ANCHOR_END | FLAG_RECHECK_APT;
+      if (!data.strCity.isEmpty()) flags |= FLAG_NO_CITY;
+      parseAddress(StartType.START_ADDR, flags, field, data);
+      if (!apt.equals(data.strApt)) {
+        data.strApt = append(data.strApt, "-", apt);
+      }
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " GPS?";
+      return "ADDR CITY APT GPS";
     }
   }
 
@@ -91,4 +103,9 @@ public class PAPerryCountyParser extends DispatchH05Parser {
       super.parse(field.substring(pt+1).trim(), data);
     }
   }
+
+  // Only out of county locations need go here
+  private static final String[] CITY_LIST = new String[] {
+      "COAL TWP"
+  };
 }
