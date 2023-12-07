@@ -15,7 +15,7 @@ public class ALHooverAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatchNWPS@ci.hoover.al.us,dispatchNWPS@hooveralabama.gov";
+    return "dispatchNWPS@ci.hoover.al.us,dispatchNWPS@hooveralabama.gov,arns@shelby911.org";
   }
 
   @Override
