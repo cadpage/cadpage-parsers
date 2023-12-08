@@ -12,6 +12,11 @@ public class FLPolkCountyParser extends DispatchA41Parser {
   }
 
   @Override
+  public String getFilter() {
+    return "@polksheriff.org";
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("\n", "");
     return super.parseMsg(body, data);
