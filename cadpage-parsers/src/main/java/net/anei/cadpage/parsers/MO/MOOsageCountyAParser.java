@@ -53,6 +53,10 @@ public class MOOsageCountyAParser extends DispatchGlobalDispatchParser {
 
     body = DASH_DIR_PTN.matcher(body).replaceAll("$1");
 
+    if (!body.endsWith("\nCALL COMPLETED") && body.contains("Primary Incident Number:")) {
+      body += "\nCALL COMPLETED";
+    }
+
     if (!super.parseMsg(body, data)) return false;
 
     data.strCity = convertCodes(data.strCity, CITY_CODES);
