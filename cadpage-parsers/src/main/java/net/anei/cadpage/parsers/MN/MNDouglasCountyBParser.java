@@ -1,12 +1,12 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA70Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 /**
  * Douglas County, MN
  */
 
-public class MNDouglasCountyBParser extends DispatchA70Parser {
+public class MNDouglasCountyBParser extends DispatchA27Parser {
   
   public MNDouglasCountyBParser() {
     super("DOUGLAS COUNTY", "MN");

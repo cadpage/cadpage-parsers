@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA70Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
-public class KYLaurelCountyParser extends DispatchA70Parser {
+public class KYLaurelCountyParser extends DispatchA27Parser {
 
   public KYLaurelCountyParser() {
     super("LAUREL COUNTY", "KY");

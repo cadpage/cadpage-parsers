@@ -182,11 +182,6 @@ public class ManageParsers {
 
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "CAStockton",         "CASanJoaquinCounty",      // 05/21/2021
-        "SDKiowaCounty",      "KSKiowaCounty",           // 06/07/2021
-        "TXSeguin",           "TXGuadalupeCounty",       // 11/09/2021
-        "CTOldSaybroook",     "CTMiddlesexCounty",       // 11/22/2021
-        "SDMinnehahaCountyC", "CTMiddlesexCounty",       // 11/22/2021 Active911 oops
         "OHHudson",           "OHSummitCounty",          // 01/16/2022
         "MSHernando",         "MSDesotoCounty",          // 02/21/2022
         "NCLumberton",        "NCRobesonCounty",         // 10/18/2022
@@ -214,7 +209,10 @@ public class ManageParsers {
         "MOMonett",           "MOLawrenceCounty",        // 09/05/2023
         "PAPennStar",         "General",                 // 09/28/2023
         "PAAdamsCountyB",     "General",                 // 10/12/2023
-        "PAColbertCountyB",   "General"                 // 10/16/2023
+        "PAColbertCountyB",   "General",                 // 10/16/2023
+        "KYKnoxCountyC",      "KYKnoxCountyB",           // 12/07/2023
+        "MNDouglasCountyA",   "MNDouglasCountyB",
+        "TXHaysCountyC",      "TXHaysCountyB"
   });
 
 }

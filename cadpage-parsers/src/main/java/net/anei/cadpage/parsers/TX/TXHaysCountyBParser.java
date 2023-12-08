@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA70Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
-public class TXHaysCountyBParser extends DispatchA70Parser {
+public class TXHaysCountyBParser extends DispatchA27Parser {
 
   public TXHaysCountyBParser() {
     super("HAYS COUNTY", "TX");

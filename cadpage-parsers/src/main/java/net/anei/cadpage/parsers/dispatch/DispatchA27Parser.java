@@ -34,7 +34,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   public DispatchA27Parser(String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
           "( SELECT/NEW ADDRCITY/SC Time_reported:DATETIME! Unit(s)_responded:UNIT! " +
-          "| SELECT/NEW3 SRC_ID3 CALL ADDR CITY_ST BOX3 ALL UNIT3 GPS1_3 GPS2_3 CODE3! INFO3/N+ Caller's_Phone:PHONE INFO3/N+ " +
+          "| SELECT/NEW3 SRC_ID3 CALL ADDR CITY_ST BOX3 INFOX3 UNIT3 GPS1_3 GPS2_3 CODE3! TIME_LOG " +
           "| ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) Unit(s)_responded:UNIT2? UNIT2+ " +
           ")");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
@@ -42,7 +42,6 @@ public class DispatchA27Parser extends FieldProgramParser {
 
   private static final Pattern MARKER = Pattern.compile("Notification from (?:CIS )?[-A-Za-z0-9 ']+:");
   private static final Pattern MARKER2 = Pattern.compile("[A-Z]{3,4} \\d{12}; ");
-  private static final Pattern DELIM_PTN3 = Pattern.compile("; | +(?=(?:Time Reported|Time Completed|Caller's Phone):)| Logs +<<Logs>>");
   private static final Pattern DELIM_PTN = Pattern.compile("\n{2}");
 
   @Override
@@ -53,8 +52,10 @@ public class DispatchA27Parser extends FieldProgramParser {
       match = MARKER2.matcher(body);
       if (!match.lookingAt()) return false;
       setSelectValue("NEW3");
-      body = body.replace(" Caller's Phone:", "; Caller's Phone:");
-      return parseFields(DELIM_PTN3.split(body), data);
+      int pt = body.indexOf("\n\n");
+      if (pt >= 0) body = body.substring(0, pt).trim();
+      body = body.replace(";; ", "; ; ");
+      return parseFields(body.split("; "), data);
     }
     body = body.substring(match.end()).trim();
     unitMode = UnitMode.UNIT;
@@ -104,14 +105,14 @@ public class DispatchA27Parser extends FieldProgramParser {
 
       if (name.equals("SRC_ID3")) return new BaseSourceId3Field();
       if (name.equals("CITY_ST")) return new BaseCityStateField();
-      if (name.equals("BOX3")) return new BoxField("Alrm Box +(.*)|()", true);
-      if (name.equals("ALL")) return new SkipField("ALL", true);
-      if (name.equals("UNIT3")) return new UnitField("Units +(.*)|()", true);
-      if (name.equals("GPS1_3")) return new GPSField(1, "Lat +(.*)|()", true);
-      if (name.equals("GPS2_3")) return new GPSField(2, "Lon +(.*)|()", true);
-      if (name.equals("CODE3")) return new CodeField("Code +(.*)", true);
+      if (name.equals("BOX3")) return new BoxField("Alrm Box +(.*)|", true);
+      if (name.equals("INFOX3")) return new BaseInfoX3Field();
+      if (name.equals("UNIT3")) return new UnitField("Units +(.*)|", true);
+      if (name.equals("GPS1_3")) return new GPSField(1, "Lat +(.*)|", true);
+      if (name.equals("GPS2_3")) return new GPSField(2, "Lon +(.*)|", true);
+      if (name.equals("CODE3")) return new CodeField("Code +(.*)|", true);
       if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-      if (name.equals("INFO3")) return new BaseInfo3Field();
+      if (name.equals("TIME_LOG")) return new BaseTimeLogField();
     return super.getField(name);
   }
 
@@ -528,13 +529,38 @@ public class DispatchA27Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO2_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d [A-Za-z0-9]+: *");
-
-  private class BaseInfo3Field extends InfoField {
+  private class BaseInfoX3Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      field = INFO2_BRK_PTN.matcher(field).replaceAll("\n").trim();
-      super.parse(field, data);
+      if (field.equalsIgnoreCase("All") || field.length() == 0) return;
+      data.strSupp = append(data.strSupp, "\n", field);
     }
+  }
+
+  private static final Pattern TIME_LOG_PTN = Pattern.compile("Time Reported: (\\d\\d:\\d\\d:\\d\\d) *(?:Time Completed: (\\d\\d:\\d\\d:\\d\\d) *)?(?:Caller's Phone: *(\\S*) *)?(?:Logs +<<Logs>>)? *(.*)", Pattern.DOTALL);
+  private static final Pattern LOG_BRK_PTN = Pattern.compile(" *\\b\\d\\d:\\d\\d:\\d\\d [A-Za-z0-9]+: *");
+  private class BaseTimeLogField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = TIME_LOG_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strTime = match.group(1);
+      String compTime = match.group(2);
+      data.strPhone = getOptGroup(match.group(3));
+      if (compTime != null) {
+        data.msgType = MsgType.RUN_REPORT;
+        String times = "Time Reported: " + data.strTime + "\nTime Completed: " + compTime;
+        data.strSupp = append(times, "\n", data.strSupp);
+      }
+      String logs = LOG_BRK_PTN.matcher(match.group(4)).replaceAll("\n").trim();
+      data.strSupp = append(data.strSupp, "\n",  logs);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "TIME PHONE INFO";
+    }
+
   }
 }

@@ -10,7 +10,6 @@ public class TXHaysCountyParser extends GroupBestParser {
   public TXHaysCountyParser() {
     super(new TXHaysCountyAParser(),
           new TXHaysCountyBParser(),
-          new TXHaysCountyCParser(),
           new TXHaysCountyDParser());
   }
 }
