@@ -1354,7 +1354,7 @@ public class Active911ParserTable {
       "US/MO/NodawayCounty",              "MONodawayCounty",
       "US/MO/NodawayCountySorted",        "MONodawayCounty",
       "US/MO/OsageCounty",                "MOOsageCounty,MOGasconadeCounty,MOPhelpsCounty",
-      "US/MO/OsageCountyAmbulanceDistrict","MOOssageCountyB",
+      "US/MO/OsageCountyAmbulanceDistrict","MOOsageCountyB",
       "US/MO/OzarkCounty",                "MOOzarkCounty",
       "US/MO/PerryCounty",                "MOPerryCounty",
       "US/MO/PerryvillePolice",           "MOPerryCountyB",
