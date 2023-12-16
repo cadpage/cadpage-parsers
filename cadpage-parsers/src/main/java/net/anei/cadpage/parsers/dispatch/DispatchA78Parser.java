@@ -19,18 +19,24 @@ public class DispatchA78Parser extends FieldProgramParser {
 
   public DispatchA78Parser(Properties callCodes, String defCity, String defState) {
     super(defCity, defState,
-          "( Call_Type:CALL! | Call_Types:CALL! ) CFS#:ID? ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! " +
-                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS | Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? ) " +
+          "( Call_Type:CALL! | Call_Types:CALL! ) CFS#:ID? ( SELECT/RR INFO/N+ | Date:DATETIME! ) Location:ADDRCITY! Cross_Streets:X? Common_Name:PLACE! " +
+                 "( SELECT/RR Additional_Location_Information:INFO/N INFO/N+? GPS " +
+                 "| Agencies_Dispatched:SRC! Units_Currently_Assigned:UNIT! EMPTY+? GPS? " +
+                 "| EMPTY+? CFS_ID:ID/L! CASE_NUM:SKIP! " +
+                 ") " +
                  "Current_Remarks:EMPTY INFO/N+");
     this.callCodes = callCodes;
   }
 
+  private boolean unitFldFound;
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.startsWith("InterOp CAD Alert - ") ||
-        subject.startsWith("InterOp CAD UPDATE - ")) {
+    unitFldFound = false;
+    if (subject.startsWith("InterOp CAD Alert -") ||
+        subject.startsWith("InterOp CAD UPDATE -")) {
       setSelectValue("");
-      body = body.replace("Agency Dispatched:", "Agencies Dispatched:");
+      body = body.replace("Agency Dispatched:", "Agencies Dispatched:").replace("CFS_ID:", "CFS ID:");
       return parseFields(body.split("\n"), data);
     }
 
@@ -49,6 +55,7 @@ public class DispatchA78Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("GPS")) return new GPSField("Estimated Maps Location.*['\"]http://maps.apple.com/maps\\?q=([^'\"]*?)['\"].*", true);
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -93,23 +100,37 @@ public class DispatchA78Parser extends FieldProgramParser {
     }
   }
 
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      unitFldFound = true;
+      super.parse(field, data);
+    }
+  }
+
   private static final Pattern INFO_LINK_PTN = Pattern.compile("<img src=\"(.*?)\".*");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("Call Sent by ")) return;
-      if (field.startsWith("UNIT:")) return;
-      Matcher match = INFO_LINK_PTN.matcher(field);
-      if (match.matches()) {
-        data.strInfoURL = match.group(1).trim();
-        return;
+      if (field.startsWith("UNIT:")) {
+        if (!unitFldFound && field.endsWith(" - UNIT DISPATCHED")) {
+          field = field.substring(5, field.length()-18).trim();
+          data.strUnit = append(data.strUnit, ", ", field);
+        }
+      } else {
+        Matcher match = INFO_LINK_PTN.matcher(field);
+        if (match.matches()) {
+          data.strInfoURL = match.group(1).trim();
+          return;
+        }
+        super.parse(field, data);
       }
-      super.parse(field, data);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " URL";
+      return super.getFieldNames() + " URL UNIT";
     }
   }
 }
