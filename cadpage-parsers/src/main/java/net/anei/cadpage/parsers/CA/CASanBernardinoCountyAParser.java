@@ -187,6 +187,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace("No X-Street", "");
+      field = field.replace("No Cross Street", "");
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
