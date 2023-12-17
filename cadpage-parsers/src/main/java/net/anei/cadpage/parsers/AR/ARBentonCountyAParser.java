@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.AR;
 
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -40,6 +39,7 @@ public class ARBentonCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("BOX")) return new MyBoxField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
@@ -57,6 +57,14 @@ public class ARBentonCountyAParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
       super.parse(field, data);
     }
   }
