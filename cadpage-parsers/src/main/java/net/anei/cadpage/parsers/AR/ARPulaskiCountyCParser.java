@@ -9,8 +9,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ARPulaskiCountyCParser extends SmartAddressParser {
 
   public ARPulaskiCountyCParser() {
-    super("PULASKI COUNTY", "AR");
-    setFieldList("ID CALL ADDR PLACE APT CITY ST CH INFO");
+    super(CITY_LIST, "PULASKI COUNTY", "AR");
+    setFieldList("ID CALL ADDR APT CITY ST PLACE ALERT CH INFO");
   }
 
   @Override
@@ -21,7 +21,11 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
   private static final Pattern ID_PTN = Pattern.compile("CFS\\d{4}-\\d{5}");
   private static final Pattern CH_PTN = Pattern.compile("(\\d+|[A-Z]{2,4} (?:FIRE )?\\d+|ONE)\\b *(.*)");
   private static final Pattern CANCEL_PTN = Pattern.compile("(.*) (CANCEL(?: RESPONSE)?)");
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
+  private static final Pattern DIR_PTN = Pattern.compile("\\b([NSEW])/B\\b");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("(AR)(?: +\\d{5})?\\b *");
+  private static final Pattern ALERT_PTN = Pattern.compile("(.*?) *(?:Alert:|Officer Safety:|Premise Information:) *(.*)");
+  private static final Pattern ADDR_EXT_PTN = Pattern.compile("MM.*|EXIT.*|[NSEW]B");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) +(\\S*)|\\d{1,4}[A-Z]?|[A-Z]");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -53,18 +57,88 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
     data.strCall = append(cancel, " - ", p.get(','));
     String addr = p.get(',');
     if (addr.length() == 0) return false;
-    parseAddress(addr.replace('@',  '&'), data);
+    addr = addr.replace('@', '&');
+    addr = DIR_PTN.matcher(addr).replaceAll("$1B");
+    parseAddress(addr, data);
 
-    String city = p.getLast(',');
-    Matcher match = ST_ZIP_PTN.matcher(city);
-    if (match.matches()) {
-      data.strState = match.group(1);
-      String zip = match.group(2);
-      city = p.getLast(',');
-      if (city.isEmpty() && zip != null) city = zip;
+    String city = p.get(',');
+    String extra = p.get();
+
+    if (extra.isEmpty()) {
+      extra = city;
+    } else {
+      Matcher match = ST_ZIP_PTN.matcher(extra);
+      if (match.lookingAt()) {
+        data.strCity = city;
+        data.strState = match.group(1);
+        extra = extra.substring(match.end());
+      } else {
+        extra = append(city, ", ", extra);
+      }
     }
-    if (city.equals("NLR")) city = "NORTH LITTLE ROCK";
-    data.strCity = city;
-    return p.get().isEmpty();
+
+    if (data.strCity.isEmpty()) {
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, extra, data);
+      extra = getLeft();
+    }
+
+    Matcher match = ALERT_PTN.matcher(extra);
+    if (match.matches()) {
+      extra =  match.group(1);
+      data.strAlert = match.group(2);
+    }
+    if (!extra.equals("None")) {
+      extra = stripFieldEnd(extra, " None");
+      if (ADDR_EXT_PTN.matcher(extra).matches()) {
+        data.strAddress = append(data.strAddress, " ", extra);
+      } else if ((match = APT_PTN.matcher(extra)).matches()) {
+        String apt = match.group(1);
+        if (apt == null) apt = extra;
+        data.strApt = append(data.strApt, "-", apt);
+      } else {
+        data.strPlace = extra;
+      }
+    }
+    return true;
   }
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Cities
+      "CAMMACK VILLAGE",
+      "JACKSONVILLE",
+      "LITTLE ROCK",
+      "MAUMELLE",
+      "NORTH LITTLE ROCK",
+      "SHERWOOD",
+      "WRIGHTSVILLE",
+
+      // Town
+      "ALEXANDER",
+
+      // Census-designated places
+      "COLLEGE STATION",
+      "GIBSON",
+      "HENSLEY",
+      "LANDMARK",
+      "MCALMONT",
+      "NATURAL STEPS",
+      "ROLAND",
+      "SCOTT",
+      "SWEET HOME",
+      "WOODSON",
+
+      // Other communities
+      "CRYSTAL HILL",
+      "GRAVEL RIDGE",
+      "IRONTON",
+      "LITTLE ITALY",
+      "MABELVALE",
+      "MARCHE",
+      "PANKEY",
+      "WOODYARDVILLE",
+
+      // Saline County
+      "PARON"
+  };
 }

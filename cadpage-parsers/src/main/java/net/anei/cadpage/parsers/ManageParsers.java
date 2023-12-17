@@ -212,7 +212,9 @@ public class ManageParsers {
         "PAColbertCountyB",   "General",                 // 10/16/2023
         "KYKnoxCountyC",      "KYKnoxCountyB",           // 12/07/2023
         "MNDouglasCountyA",   "MNDouglasCountyB",
-        "TXHaysCountyC",      "TXHaysCountyB"
+        "TXHaysCountyC",      "TXHaysCountyB",
+        "ARPulaskiCountyA",   "General",                 // 12/17/2023
+        "ARPulaskiCountyB",   "General"
   });
 
 }
