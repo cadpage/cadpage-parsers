@@ -117,6 +117,5 @@ public class SDMinnehahaCountyBParser extends FieldProgramParser {
       "I 90 MM 400",                             "+43.606675,-96.691759",
       "I 90 MM 401",                             "+43.607791,-96.670875",
       "I 90 MM 402",                             "+43.607910,-96.655458"
-
   });
 }
