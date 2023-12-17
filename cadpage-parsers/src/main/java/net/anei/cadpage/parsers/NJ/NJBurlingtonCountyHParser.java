@@ -23,6 +23,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
               ")");
     setAccumulateUnits(true);
     setupMultiWordStreets("REV DR ML KING JR");
+    setupCityValues(CITY_CODES);
   }
 
   @Override
@@ -105,17 +106,26 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
       parseAddress(StartType.START_ADDR, flags, field, data);
 
       if (city != null) {
-        city = stripFieldStart(city, data.strApt);
-        Matcher match = CITY_PTN.matcher(city);
-        if (match.matches()) {
-          data.strCity = convertCodes(match.group(1), CITY_CODES);
-          city = match.group(2);
-//          if (NUMERIC.matcher(data.strCity).matches()) abort();
+        pt = city.indexOf(',');
+        if (pt >= 0) {
+          data.strCity = city.substring(0,pt).trim();
+          city = null;
+        } else {
+          city = stripFieldEnd(city, data.strApt);
+          Matcher match = CITY_PTN.matcher(city);
+          if (match.matches()) {
+            data.strCity = convertCodes(match.group(1), CITY_CODES);
+            city = match.group(2);
+          }
         }
-        if (city.length() > 0) {
-          match = APT_PTN.matcher(city);
-          if (match.matches()) city = match.group(1);
-          if (!city.equals(data.strApt)) data.strApt = append(data.strApt, "-", city);
+        if (city != null) {
+          if (isCity(city)) {
+            data.strCity = city;
+          } else {
+            Matcher match = APT_PTN.matcher(city);
+            if (match.matches()) city = match.group(1);
+            if (!city.equals(data.strApt)) data.strApt = append(data.strApt, "-", city);
+          }
         }
       }
     }
@@ -158,7 +168,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
     public void parse(String field, Data data) {
       Matcher match = QUERY_PTN.matcher(field);
       if (match.matches()) {
-        if (data.strCity.length() == 0 || NUMERIC.matcher(data.strCity).matches()) {
+        if (data.strCity.isEmpty() || NUMERIC.matcher(data.strCity).matches()) {
           String city = match.group(1);
           if (city != null) {
             city = city.trim().replace('+', ' ');
