@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -12,12 +13,14 @@ public class ALRussellCountyAParser extends DispatchA19Parser {
     super("RUSSELL COUNTY", "AL");
   }
 
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Russell County Dispatch|911 Dispatch");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {5,}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("Russell County Dispatch")) return false;
-    subject = subject.substring(23).trim();
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (!match.lookingAt()) return false;
+    subject = subject.substring(match.end()).trim();
     if (subject.startsWith("Incident #:")) body = MSPACE_PTN.matcher(subject).replaceAll("\n") + '\n' + body;
     if (!super.parseMsg("",  body, data)) return false;
     data.strCity = data.strCity.replace(".", "");

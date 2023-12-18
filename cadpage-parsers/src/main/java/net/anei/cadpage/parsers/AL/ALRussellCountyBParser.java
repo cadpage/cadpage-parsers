@@ -1,40 +1,41 @@
 package net.anei.cadpage.parsers.AL;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
 
-public class ALRussellCountyBParser extends MsgParser {
+public class ALRussellCountyBParser extends FieldProgramParser {
 
   public ALRussellCountyBParser() {
-    super("RUSSELL COUNTY", "AL");
-    setFieldList("SRC CALL ADDR APT CITY INFO");
+    super("RUSSELL COUNTY", "AL",
+          "ADDRESS:ADDRCITYST! CROSS_STREETS:X! Y:GPS1! X:GPS2! AGENCY:SRC! OCA:NONE! CFS:ID! INCIDENT:CALL! DETAILS:INFO! DATE/TIME:DATETIME! END");
   }
 
-  private static final Pattern TRAIL_MARK = Pattern.compile("\n\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - ");
-  private static final Pattern MASTER = Pattern.compile("(.*?)@(.*?)\\*(.*?)\\|(.*)");
+  @Override
+  public String getFilter() {
+    return "cad@covington911.com";
+  }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith(":")) return false;
-    data.strSource = subject.substring(1).trim();
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
-    String tailInfo = "";
-    Matcher match = TRAIL_MARK.matcher(body);
-    if (match.find()) {
-      tailInfo = body.substring(match.start()+1);
-      body = body.substring(0,match.start()).trim();
+  @Override
+  public Field getField(String name) {
+    if (name.equals("NONE")) return new SkipField("None");
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d", true);
+    return super.getField(name);
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d?/\\d\\d?/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
     }
-
-    body = body.replace('\n', ' ');
-    match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    data.strCall = match.group(1).trim();
-    parseAddress(match.group(2).trim(), data);
-    data.strCity = match.group(3).trim().replace(".", "");
-    data.strSupp = append(match.group(4).trim(), "\n", tailInfo);
-    return true;
   }
 }

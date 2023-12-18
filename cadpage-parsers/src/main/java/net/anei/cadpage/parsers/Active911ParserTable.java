@@ -144,7 +144,7 @@ public class Active911ParserTable {
       "US/AL/PrichardFire",               "ALMobileCounty",
       "US/AL/RainbowCity",                "ALEtowahCountyB",
       "US/AL/RandolphCounty",             "ALRandolphCounty",
-      "US/AL/RUSCO911",                   "ALRussellCountyB",
+      "US/AL/RUSCO911",                   "ALRussellCounty",
       "US/AL/RussellCounty",              "ALRussellCountyA",
       "US/AL/Shelby",                     "ALShelbyCounty",
       "US/AL/StClairCounty",              "ALStClairCounty",
