@@ -2788,6 +2788,7 @@ public class Active911ParserTable {
       "US/WV/WhiteSulphurSpringsEMS",     "WVGreenbrierCounty",
       "US/WV/WoodCounty",                 "WVWoodCounty",
       "US/WV/Wyoming",                    "WVWyomingCounty",
+      "US/WY/AlbanyCounty",               "WYAlbanyCounty",
       "US/WY/BigHornCounty",              "WYBigHornCounty",
       "US/WY/ParkCounty",                 "WYParkCounty",
       "US/WY/SubletteCounty",             "WYSubletteCounty",

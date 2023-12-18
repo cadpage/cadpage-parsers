@@ -1976,6 +1976,7 @@ public class ParserList {
               ,"WIWinnebagoCounty"              ,"Winnebago County, WI"
           ),
           new ParserCategory("Wyoming"
+              ,"WYAlbanyCounty"                 ,"Albany County, WY"
               ,"WYBigHornCounty"                ,"Big Horn County, WY"
               ,"WYGoshenCounty"                 ,"Goshen County, WY"
               ,"WYNatronaCounty"                ,"Natrona County, WY"
