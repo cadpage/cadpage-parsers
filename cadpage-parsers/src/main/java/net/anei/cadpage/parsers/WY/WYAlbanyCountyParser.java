@@ -10,7 +10,7 @@ public class WYAlbanyCountyParser extends DispatchH05Parser {
 
   public WYAlbanyCountyParser() {
     super("ALBANY COUNTY", "WY",
-          "( CALL:CALL1! PLACE:PLACE! ADDR:ADDRCITY! City:CITY1! CROSS:X! ID:ID! PRI:PRI! DATE:DATETIME1! MAP:MAP! " +
+          "( CALL:CALL1! PLACE:PLACE! ADDR:ADDRCITY1! City:CITY1! CROSS:X! ID:ID! PRI:PRI! DATE:DATETIME1! MAP:MAP! " +
                 "Latitude:GPS1! Longitude:GPS2! UNIT:UNIT! INFO:EMPTY! NOTES:EMPTY! INFO/N+ https:SKIP " +
           "| Call_Date/Time:EMPTY! Call_Address:ADDRCITY2! PLACE2 X2 GPS Narrative:INFO! INFO/N+? CALL2! CALL/SDS " +
           ")");
@@ -29,6 +29,7 @@ public class WYAlbanyCountyParser extends DispatchH05Parser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL1")) return new MyCall1Field();
+    if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
     if (name.equals("CITY1")) return new MyCity1Field();
     if (name.equals("DATETIME1")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
@@ -44,6 +45,27 @@ public class WYAlbanyCountyParser extends DispatchH05Parser {
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, "-");
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern INTERNAL_CR_PTN = Pattern.compile("\\bCR \\d+ (AV|LN|RD|ST)\\b");
+
+  private class MyAddressCity1Field extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      String city = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        city = field.substring(pt+1).trim();
+        field = field.substring(0, pt).trim();
+      }
+      field = field.replace('@', '&');
+      field = INTERNAL_CR_PTN.matcher(field).replaceAll("$1");
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, field, data);
+      if (!data.strApt.isEmpty()) {
+        city = stripFieldEnd(city, ' ' + data.strApt);
+      }
+      data.strCity = city;
     }
   }
 
