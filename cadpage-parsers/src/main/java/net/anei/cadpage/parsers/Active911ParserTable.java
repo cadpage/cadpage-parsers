@@ -2280,6 +2280,7 @@ public class Active911ParserTable {
       "US/SD/PerkinsCounty",              "SDPerkinsCounty",
       "US/SD/PotterCounty",               "SDPotterCounty",
       "US/TN/AlcoaFD",                    "TNBlountCountyB",
+      "US/TN/AMRBlount911",               "TNBlountCountyB",
       "US/TN/BedfordCounty",              "TNBedfordCounty",
       "US/TN/BledsoeCounty",              "TNBledsoeCounty",
       "US/TN/Blount911",                  "TNBlountCountyB",
