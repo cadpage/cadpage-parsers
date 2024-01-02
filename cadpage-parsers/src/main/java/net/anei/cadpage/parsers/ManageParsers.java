@@ -214,7 +214,10 @@ public class ManageParsers {
         "MNDouglasCountyA",   "MNDouglasCountyB",
         "TXHaysCountyC",      "TXHaysCountyB",
         "ARPulaskiCountyA",   "General",                 // 12/17/2023
-        "ARPulaskiCountyB",   "General"
+        "ARPulaskiCountyB",   "General",
+        "OHClarkCountyA",     "General",                 // 01/02/2024
+        "OHClarkCountyB",     "General",
+        "OHClarkCountyC",     "General"
   });
 
 }

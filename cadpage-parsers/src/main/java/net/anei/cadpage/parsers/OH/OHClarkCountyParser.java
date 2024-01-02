@@ -8,15 +8,13 @@ import net.anei.cadpage.parsers.GroupBlockParser;
  */
 
 public class OHClarkCountyParser extends GroupBestParser {
-  
+
   public OHClarkCountyParser() {
-    super(new OHClarkCountyAParser(), 
-          new OHClarkCountyCParser(), new OHClarkCountyDParser(),
-          new GroupBlockParser(),  new OHClarkCountyBParser());
+    super(new OHClarkCountyCParser());
   }
-  
+
   static final String[] CITY_LIST = new String[]{
-    
+
     // Cities
     "NEW CARLISLE",
     "SPRINGFIELD",
