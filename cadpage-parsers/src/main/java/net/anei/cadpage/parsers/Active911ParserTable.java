@@ -957,6 +957,7 @@ public class Active911ParserTable {
       "US/KY/MonroeCounty",               "KYMonroeCounty",
       "US/KY/MontgomeryCounty",           "KYMontgomeryCounty",
       "US/KY/MorganCounty",               "KYMorganCountyB",
+      "US/KY/MtWashingtonPD",             "KYBullittCounty",
       "US/KY/MuhlenbergCounty",           "KYMuhlenbergCountyA",
       "US/KY/MurrayCounty",               "KYCallowayCounty",
       "US/KY/Nexigen",                    "Cadpage2",
