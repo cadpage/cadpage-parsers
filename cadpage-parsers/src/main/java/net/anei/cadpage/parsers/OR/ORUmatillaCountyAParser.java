@@ -1,6 +1,8 @@
 package net.anei.cadpage.parsers.OR;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
@@ -20,15 +22,44 @@ public class ORUmatillaCountyAParser extends DispatchA20Parser {
     return "notifier@umatillacounty.net,dpspagesa@ctuir.org,admin@pfdstaff.org,@co.umatilla.or.us,@crimegraphics.com";
   }
 
+  private static final Pattern SUBJECT_COMMENT_PTN = Pattern.compile("Incident (\\d+) Comment, Unit: (\\S+) \\(.*\\)");
+  private static final Pattern SUBJECT_CALL_PFX_PTN = Pattern.compile("(.*) - , (Unit: .*)");
+  private static final Pattern MISSING_SPC_PTN = Pattern.compile("(?<! )(?=\\* )");
+  private static final Pattern PFX_ID_PTN = Pattern.compile(" \\* [AF]?r(\\d{12}) \\* ");
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (subject.equals("(ACTIVE)") || subject.equals("RECALL") || subject.equals("GENERAL ALARM")) {
+
+    Matcher match = SUBJECT_COMMENT_PTN.matcher(subject);
+    if (match.matches()) {
+      setFieldList("CALL ID UNIT INFO");
+      data.strCall = "Update";
+      data.strCallId =  match.group(1);
+      data.strUnit = match.group(2);
+      data.strSupp = body;
+      return true;
+    }
+
+    String callPfx = "";
+    match = SUBJECT_CALL_PFX_PTN.matcher(subject);
+    if (match.matches()) {
+      callPfx =  match.group(1).trim();
+      subject = "Dispatched Call, " + match.group(2);
+    }
+    else if (subject.equals("(ACTIVE)") || subject.equals("RECALL") || subject.equals("RECALL FAILED") ||
+        subject.equals("AWARD RECALL") || subject.equals("GENERAL ALARM")) {
       subject = "Dispatched Call (XXX)";
+      body = MISSING_SPC_PTN.matcher(body).replaceAll(" ");
+      body = PFX_ID_PTN.matcher(body).replaceFirst(" * #$1 * ");
     }
     else if (subject.startsWith("(ACTIVE)|")) {
       subject = "Dispatched Call (XXX)|" + subject.substring(9);
     }
+    else if (subject.startsWith("(")) {
+      subject = "Dispatched Call " + subject;
+    }
     if (!super.parseMsg(subject,  body, data)) return false;
+    data.strCall = append(callPfx, " - ", data.strCall);
     if (data.strUnit.equals("XXX")) data.strUnit = "";
     if (data.strAddress.equals("(UNKNOWN ADDRESS)") && data.strPlace.length() > 0) {
       data.strAddress = "";

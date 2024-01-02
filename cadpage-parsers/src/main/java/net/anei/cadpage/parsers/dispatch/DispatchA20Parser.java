@@ -55,7 +55,7 @@ public class DispatchA20Parser extends FieldProgramParser {
     if (unit1 != null) data.strUnit = unit1;
     else if (!unitLabelReq) data.strUnit = unit2;
     if (body.endsWith("*")) body = body + " ";
-    if (!parseFields(body.split(" \\* ", -1), 5, data)) return false;
+    if (!parseFields(body.split(" \\*(?= )", -1), 5, data)) return false;
     return true;
   }
 
@@ -102,7 +102,7 @@ public class DispatchA20Parser extends FieldProgramParser {
       return "ADDR CITY ST";
     }
   }
-  
+
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
