@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
-public class KYCarlisleCountyParser extends DispatchA74Parser {
+public class KYCarlisleCountyParser extends DispatchA24Parser {
 
   public KYCarlisleCountyParser() {
     super("CARLISLE COUNTY", "KY");
@@ -10,6 +10,6 @@ public class KYCarlisleCountyParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@CarlisleKY911.info";
+    return "paging@10-8systems.com";
   }
 }
