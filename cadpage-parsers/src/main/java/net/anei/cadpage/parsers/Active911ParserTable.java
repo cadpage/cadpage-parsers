@@ -1573,6 +1573,7 @@ public class Active911ParserTable {
       "US/NC/SampsonCountyNewton",        "NCSampsonCounty",
       "US/NC/SampsonCountyWeather",       "StandardNationalWeatherService",
       "US/NC/ScotlandCounty",             "NCScotlandCounty",
+      "US/NC/SeymourJohnsonAFB",          "NCWayneCountyE",
       "US/NC/StanlyCounty",               "NCStanlyCounty",
       "US/NC/SteeleCreekVFD",             "NCMecklenburgCountyA",
       "US/NC/StokesCounty",               "NCStokesCounty",
