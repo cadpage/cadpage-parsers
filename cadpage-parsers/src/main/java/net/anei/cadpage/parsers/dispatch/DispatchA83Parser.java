@@ -14,22 +14,27 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class DispatchA83Parser extends SmartAddressParser {
 
   private CodeSet placeSet;
+  private int version;
 
-  public DispatchA83Parser(String[] cityList, String defCity, String defState) {
-    this(cityList, null, defCity, defState);
+  public DispatchA83Parser(String[] cityList, String defCity, String defState, int version) {
+    this(cityList, null, defCity, defState, version);
   }
 
-  public DispatchA83Parser(String[] cityList, CodeSet placeSet, String defCity, String defState) {
+  public DispatchA83Parser(String[] cityList, CodeSet placeSet, String defCity, String defState, int version) {
     super(cityList, defCity, defState);
     this.placeSet = placeSet;
     setFieldList("SRC ID CODE DATE TIME CALL ADDR APT CITY NAME GPS INFO");
+    this.version = version;
   }
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*?) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (.*?) (Case # \\d+ */.*)");
   private static final Pattern TIMES_BRK_PTN = Pattern.compile(" +/(?=[ A-Za-z]+ - )");
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:([A-Z]+) )?+(\\d+)");
-  private static final Pattern ALERT_MASTER = Pattern.compile("(.*?) +(?:Date Recv )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (.*?)(?: +http://maps.google.com/maps\\?q=(.*))?");
+  private static final Pattern ALERT_MASTER = Pattern.compile("(?:(.*?) +)?Date Recv (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) (.*)");
+  private static final Pattern TRAIL_FROM_PTN = Pattern.compile("(.*) From : .* User Id: .*");
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*) +http://maps.google.com/maps\\?q=(.*)");
+  private static final Pattern LEAD_PLACE_PTN = Pattern.compile("(.*?) \\| (.*) \\| (.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
 
   @Override
@@ -41,14 +46,14 @@ public class DispatchA83Parser extends SmartAddressParser {
     data.strCallId = match.group(2);
 
     if ((match = RUN_REPORT_PTN.matcher(body)).matches()) {
-      setFieldList("SRC ID CODE DATE TIME PLACE ADDR APT CITY CALL INFO");
+      setFieldList("SRC ID CALL DATE TIME PLACE ADDR APT CITY INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strCode = match.group(1);
+      data.strCall = match.group(1);
       data.strDate =  match.group(2);
       setTime(TIME_FMT, match.group(3), data);
 
       parseAddress(StartType.START_PLACE, match.group(4).trim(), data);
-      data.strCall = getLeft();
+      data.strCall = append(data.strCall, " - ", getLeft());
       if (data.strSupp.equals("None")) data.strSupp = "";
       String times = match.group(5);
       data.strSupp = TIMES_BRK_PTN.matcher(times).replaceAll("\n");
@@ -58,7 +63,7 @@ public class DispatchA83Parser extends SmartAddressParser {
           String place = placeSet.getCode(data.strPlace);
           if (place != null) {
             data.strAddress = place;
-            data.strCall = data.strPlace.substring(place.length()).trim();
+            data.strCall = append(data.strCall, " - ", data.strPlace.substring(place.length()).trim());
           } else {
             data.strAddress = data.strPlace;
           }
@@ -72,17 +77,63 @@ public class DispatchA83Parser extends SmartAddressParser {
 
     match = ALERT_MASTER.matcher(body);
     if (match.matches()) {
-      setFieldList("SRC ID CODE DATE TIME CALL ADDR APT CITY NAME GPS");
-      data.strCode = match.group(1).trim();
-      data.strDate =  match.group(2);
-      setTime(TIME_FMT, match.group(3), data);
+      setFieldList("SRC ID CALL DATE TIME PLACE APT ADDR CITY NAME INFO GPS");
+      String callPfx = getOptGroup(match.group(1));
+      data.strDate = match.group(2);
+      String time = match.group(3);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, match.group(3), data);
+      } else {
+        data.strTime = time;
+      }
+      body = match.group(4).trim();
 
-      parseAddress(StartType.START_CALL, match.group(4).trim(), data);
-      data.strName = getLeft();
+      StartType st;
+      String apt = "";
+      if (version == 1) {
+        match = TRAIL_GPS_PTN.matcher(body);
+        if (match.matches()) {
+          body = match.group(1).trim();
+          setGPSLoc(match.group(2).replace('+', ' '), data);
+        } else {
+          data.expectMore = true;
+        }
+        st = StartType.START_CALL;
 
-      String gps = match.group(5);
-      if (gps != null) setGPSLoc(gps.replace('+', ' '), data);
-      else data.expectMore = true;
+      } else {
+        match = TRAIL_FROM_PTN.matcher(body);
+        if (match.matches()) {
+          body = match.group(1).trim();
+        } else {
+          return false;
+        }
+
+        match = LEAD_PLACE_PTN.matcher(body);
+        if (match.matches()) {
+          data.strPlace = match.group(1).trim();
+          apt = match.group(2).trim();
+          body = match.group(3).trim();
+        }
+        st = StartType.START_ADDR;
+      }
+
+      parseAddress(st, body, data);
+      data.strCall = append(callPfx, " - ", data.strCall);
+      data.strApt = append(data.strApt, "-", apt);
+
+      String left = stripFieldStart(getLeft(), data.strAddress);
+      left = stripFieldStart(left, data.strCity);
+      if (version == 1) {
+        data.strName = left;
+      } else {
+        if (data.strCall.isEmpty()) {
+          data.strCall = left;
+        } else {
+          data.strSupp = left;
+        }
+      }
+
+
       return true;
     }
 

@@ -388,6 +388,7 @@ public class ParserList {
           new ParserCategory("Georgia"
               ,"GABarrowCounty"                 ,"Barrow County, GA"
               ,"GABrantleyCounty"               ,"Brantley County, GA"
+              ,"GABrooksCounty"                 ,"Brooks County, GA"
               ,"GABullochCounty"                ,"Bulloch County, GA"
               ,"GAButtsCounty"                  ,"Butts County, GA"
               ,"GACamdenCounty"                 ,"Camden County, GA"

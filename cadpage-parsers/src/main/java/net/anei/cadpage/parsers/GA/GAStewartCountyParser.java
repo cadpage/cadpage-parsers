@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA83Parser;
 public class GAStewartCountyParser extends DispatchA83Parser {
 
   public GAStewartCountyParser() {
-    super(CITY_LIST, PLACE_SET, "STEWART COUNTY", "GA");
+    super(CITY_LIST, PLACE_SET, "STEWART COUNTY", "GA", 1);
     setupMultiWordStreets("CHARLES OVERBY");
   }
 
