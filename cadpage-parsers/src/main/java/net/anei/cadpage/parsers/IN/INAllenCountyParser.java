@@ -10,6 +10,6 @@ public class INAllenCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "911@allencounty.us";
+    return "911@allencounty.us,@nobleco.gov";
   }
 }

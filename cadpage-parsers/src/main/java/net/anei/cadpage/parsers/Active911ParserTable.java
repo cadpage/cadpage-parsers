@@ -1858,7 +1858,7 @@ public class Active911ParserTable {
       "US/OH/CityofVandalia",             "OHMontgomeryCountyB",
       "US/OH/CityofXenia",                "OHGreeneCounty",
       "US/OH/ClarkCounty",                "OHClarkCounty",
-      "US/OH/ClarkCountyMadisonTWP",      "OHClarkCountyD",
+      "US/OH/ClarkCountyMadisonTWP",      "OHClarkCountyC",
       "US/OH/ClermontCounty",             "OHClermontCounty",
       "US/OH/ClermontCountyMilford",      "OHClermontCountyC",
       "US/OH/ClermontCountyUnionTwp",     "OHClermontCountyC",
