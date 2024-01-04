@@ -21,7 +21,8 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
   public VAAugustaCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-           "FYI? CALL! ( ADDR/SZ! END | PLACE? ADDR/S! MAP? INFO+ )");
+           "FYI? CALL! ( ADDR/SZ! END | PLACE? ADDR/S! MAP? CITY? INFO+ )");
+    setupCities(CITY_CODES);
     removeWords("MALL");
   }
 
@@ -137,6 +138,8 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       for (String fld : field.split("/")) {
         fld = fld.trim();
 
+        if (field.equals("Radio Channel")) continue;
+
         if (fld.equals(data.strAddress)) continue;
 
         String tmp = fld.toUpperCase();
@@ -152,8 +155,8 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           continue;
         }
 
-        if (data.strChannel.length() == 0 && INFO_CHANNEL_PTN.matcher(fld).matches()) {
-          data.strChannel = fld;
+        if (INFO_CHANNEL_PTN.matcher(fld).matches()) {
+          if (data.strChannel.isEmpty()) data.strChannel = fld;
           continue;
         }
 
@@ -180,12 +183,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
           continue;
         }
 
-        if (data.strPlace.length() == 0) {
-          data.strPlace = fld;
-          continue;
-        }
-
-        data.strSupp = append(data.strSupp, " / ", fld);
+        data.strSupp = append(data.strSupp, "\n", fld);
       }
     }
 
@@ -262,8 +260,49 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
   };
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "AFT",  "AFTON",
+      "AUG",  "AUGUST SPRINGS",
+      "BRAO", "BROADWAY",
+      "BWT",  "BRIDGEWATER",
+      "CHU",  "CHURCHVILLE",
+      "CRI",  "CRIMORA",
+      "DAYT", "DAYTON",
+      "DEE",  "DEERFIELD",
+      "FAIR", "FAIRFIELD",
+      "FISH", "FISHERSVILLE",
+      "FTD",  "FORT DEFIANCE",
+      "GOR",  "GROTTOES",
+      "GOS",  "GOSHEN",
+      "GRE",  "GREENVILLE",
+      "GRG",  "CRAIGSVILLE",
       "GRO",  "GROTTOES",
-      "HIGH", "HIGHLAND COUNTY"
+      "HARR", "HARRISONBURG",
+      "HIGH", "HIGHLAND COUNTY",
+      "KES",  "KESWICK",
+      "LEXI", "LEXINGTON",
+      "LYN",  "LYNDHURST",
+      "MID",  "MIDDLEBROOK",
+      "MIDL", "NIDLOTHIAN",
+      "MS",   "MINT SPRINGS",
+      "MSN",  "MOUNT SOLON",
+      "MTC",  "MT CRAWFORD",
+      "MTS",  "MOUNT SIDNEY",
+      "NELL", "NELLYSFORD",
+      "NH",   "NEW HOPE",
+      "RAP",  "RAPHINE",
+      "SHE",  "SHENANDOAH",
+      "SPO",  "SPOTTSWOOD",
+      "STD",  "STUARTS DRAFT",
+      "STE",  "STEELES TAVERN",
+      "STN",  "STAUNTON",
+      "SWO",  "SWOOPE",
+      "VAB",  "VIRGINIA BEACH",
+      "VER",  "VERONA",
+      "VESU", "VESUVIUS",
+      "WAG",  "WEST AUGUSTA",
+      "WC",   "WEYERS CAVE",
+      "WYN",  "WAYNESBORO"
+
   });
 
 }
