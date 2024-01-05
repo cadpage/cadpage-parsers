@@ -6,9 +6,9 @@ import net.anei.cadpage.parsers.dispatch.DispatchA1Parser;
 public class KYHendersonCountyParser extends DispatchA1Parser {
 
   public KYHendersonCountyParser() {
-    super("HENDERSON COUNTY", "KY"); 
+    super("HENDERSON COUNTY", "KY");
   }
-  
+
   @Override
   public String getFilter() {
     return "E911@cityofhendersonky.org";
@@ -16,7 +16,10 @@ public class KYHendersonCountyParser extends DispatchA1Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("AUTOMATED MESSAGE DO NOT REPLY")) return false;
+    if (!subject.equals("AUTOMATED MESSAGE DO NOT REPLY")) {
+      if (!body.startsWith("AUTOMATED MESSAGE DO NOT REPLY\n")) return false;
+      body = body.substring(31);
+    }
     int pt = body.indexOf('\n');
     if (pt < 0) return false;
     subject = body.substring(0, pt).trim();
