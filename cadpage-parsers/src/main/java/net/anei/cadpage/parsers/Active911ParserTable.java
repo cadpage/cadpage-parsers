@@ -1678,6 +1678,7 @@ public class Active911ParserTable {
       "US/NJ/MountLaurelTwp",             "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/NassauCo",                   "NYNassauCountyJ",
       "US/NJ/NCPD",                       "NJEssexCounty",
+      "US/NJ/NorthHanoverTWPEMS",         "NJBurlingtonCountyH",
       "US/NJ/NPD",                        "NJSussexCountyA,NJSussexCountyE",
       "US/NJ/Nwbcd",                      "NJSussexCountyA",
       "US/NJ/OceanCounty",                "NJOceanCounty",
