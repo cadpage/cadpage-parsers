@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
 public class KYDaviessCountyAParser extends DispatchB2Parser {
 
   public KYDaviessCountyAParser() {
-    super(CITY_LIST, "DAVIESS COUNTY", "KY", B2_FORCE_CALL_CODE);
+    super(KYDaviessCountyParser.CITY_LIST, "DAVIESS COUNTY", "KY", B2_FORCE_CALL_CODE);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("ALPHONSUS", "ANTHONY", "BENEDICT", "JOSEPH", "LAWRENCE");
@@ -426,54 +426,4 @@ public class KYDaviessCountyAParser extends DispatchB2Parser {
       "WIRE DOWN",
       "WRIT OF POSSESSION"
   );
-
-  private static final String[] CITY_LIST = new String[]{
-      "OWENSBORO",
-
-      "WEST DAVIESS",
-
-      "CURDSVILLE",
-      "DELAWARE",
-      "MOSELEYVILLE",
-      "PANTHER",
-      "PETTIT",
-      "ROME",
-      "SAINT JOSEPH",
-      "SORGHO",
-      "STANLEY",
-      "SUTHERLAND",
-      "TUCK",
-      "UTICA",
-      "WEST LOUISVILLE",
-
-      "EAST DAVIESS",
-
-      "DERMONT",
-      "ENSOR",
-      "HABIT",
-      "KNOTTSVILLE",
-      "MACEO",
-      "MASONVILLE",
-      "PHILPOT",
-      "THRUSTON",
-      "WHITESVILLE",
-      "YELVINGTON",
-
-      // Hancock County
-      "HANCOCK COUNTY",
-      "HANCOCK CO",
-      "HAWESVILLE",
-      "LEWISPORT",
-
-      // Mclean County
-      "MCLEAN COUNTY",
-      "MCLEAN CO",
-      "CALHOUN",
-
-      // Ohio County
-      "OHIO COUNTY",
-      "OHIO CO",
-      "HARTFORD",
-      "REYNOLDS STATION"
-  };
 }

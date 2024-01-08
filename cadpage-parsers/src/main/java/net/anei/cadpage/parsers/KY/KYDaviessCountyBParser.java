@@ -9,11 +9,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class KYDaviessCountyBParser extends FieldProgramParser {
 
   public KYDaviessCountyBParser() {
-    super("DAVIESS COUNTY", "KY",
+    super(KYDaviessCountyParser.CITY_LIST, "DAVIESS COUNTY", "KY",
           "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! " +
           "| Call_Type:CALL! EMPTY+? ( Common_Name:PLACE! Address:ADDRCITY/S6! Closest_Intersection:X! Incident:ID! " +
                                     "| Location:ADDRCITY/S6! PLACE Near:X! " +
+                                    "| Name:PLACE! Phone_Number:PHONE! Caller:NAME! Address:ADDRCITY/S6! Cross_Street:X! Incident:ID! " +
                                     ") " +
+          "| Alert_Type:CALL! Call_Type:CALL! Location:PLACE! Address:ADDR! Xstreet:X_CITY! Safety_Alert:ALERT " +
           ") END");
   }
 
@@ -23,8 +25,9 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +(\\d{2,3}\\.\\d{6,})(-\\d{2,3}\\.\\d{6,})$");
-  private static final Pattern MISSING_COLON_PTN = Pattern.compile("(?<=Common Name|Address|Closest Intersection|Incident)(?!:)");
-  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=Call Type:|Common Name|Address|Closest Intersection|Incident|Location|Near)|\n");
+  private static final Pattern NAME_PHONE_NUMBER_PTN = Pattern.compile("Name(.*?)Phone Number::");
+  private static final Pattern MISSING_COLON_PTN = Pattern.compile("(?<=Alert Type|Call Type|Common Name|(?<!Preplan )Location|Address|Closest Intersection|Incident|Xstreet|Safety Alert|Cross Street)(?!:)");
+  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=(?:Call Type|Common Name|Address|Closest Intersection|Incident|Location|Near|Xstreet|Safety Alert|Caller|Cross Street):)|\n");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -33,7 +36,11 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
       setGPSLoc(match.group(1)+','+match.group(2), data);
       body = body.substring(0,match.start());
     }
-    body = body.replace("Incident  Incident Number", "Incident").replace("Incident Number", "Incident");
+    body = body.replace("Incident  Incident Number", "Incident")
+               .replace("Incident Number", "Incident")
+               .replace("Incident Location", "Location")
+               .replace("No Cross Streets Found", "");
+    body = NAME_PHONE_NUMBER_PTN.matcher(body).replaceFirst("\nName:$1\nPhone Number:");
     body = MISSING_COLON_PTN.matcher(body).replaceAll(":");
     return parseFields(FLD_BRK_PTN.split(body), data);
   }
@@ -48,6 +55,8 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X_CITY")) return new MyCrossCityField();
+    if (name.equals("ALERT")) return new MyAlertField();
     return super.getField(name);
   }
 
@@ -83,6 +92,26 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = field.replace('@', '/');
       super.parse(field,  data);
+    }
+  }
+
+  private class MyCrossCityField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_ANCHOR_END, field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "X CITY";
+    }
+  }
+
+  private class MyAlertField extends AlertField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Building Name:") || "Building Name:".startsWith(field)) return;
+      super.parse(field, data);
     }
   }
 }
