@@ -215,7 +215,7 @@ public class DispatchOSSIParser extends FieldProgramParser {
   }
 
   private static final Pattern UNIT_PFX_PTN = Pattern.compile("(?:\\{([A-Z0-9,]+)\\} *)(.*)");
-  private static final Pattern CANCEL_PTN = Pattern.compile("(CANCEL\\b.*|.*\\bCOMMAND ESTABLISHED|CODE RED|CONFIRMED FIRE.*|CONFIRMED PIN IN|FIRE OUT|FIRE UNDER CONTROL|UNDER CONTROL|UNITS RESPOND CODE 1)");
+  private static final Pattern CANCEL_PTN = Pattern.compile("(CANCEL\\b.*|.*\\bCOMMAND ESTABLISHED|CODE RED|CONFIRMED FIRE.*|CONFIRMED PIN IN|FIRE OUT|FIRE UNDER CONTROL|UNDER CONTROL|UNITS RESPOND CODE 1|WORKING FIRE)");
   protected class BaseCancelField extends CallField {
 
     private Pattern extraPattern;
