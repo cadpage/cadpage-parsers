@@ -352,14 +352,14 @@ public abstract class MsgParser {
   }
 
   /**
-   * Validate that call code is valid.  Also not in any way, but can be
+   * Validate that call code is valid.  Also not used in any way, but can be
    * overridden by subclasses if they some call validation logic that
    * does not involve a simple CodeSet object
    * @param call call to be validated
-   * @return true if call is valid, false if not
+   * @return true if call is valid, false if regular logic should be used
    */
   public boolean checkCall(String call) {
-    return true;
+    return false;
   }
 
   private static final Object MsgParserLock = new Object();
