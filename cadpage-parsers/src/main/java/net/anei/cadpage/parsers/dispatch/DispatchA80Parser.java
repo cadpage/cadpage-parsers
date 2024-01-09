@@ -27,7 +27,7 @@ public class DispatchA80Parser extends FieldProgramParser {
     return new SplitMsgOptionsCustom();
   }
 
-  private static final Pattern MARKER = Pattern.compile("DISPATCH:(?:([_A-Za-z0-9]+:[- A-Z0-9]+) - )? *");
+  private static final Pattern MARKER = Pattern.compile("DISPATCH:(?:([_A-Za-z0-9]+:[-_ A-Z0-9]+) - )? *");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
