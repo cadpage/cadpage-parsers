@@ -217,7 +217,8 @@ public class ManageParsers {
         "ARPulaskiCountyB",   "General",
         "OHClarkCountyA",     "General",                 // 01/02/2024
         "OHClarkCountyB",     "General",
-        "OHClarkCountyC",     "General"
+        "OHClarkCountyC",     "General",
+        "OHSummitCountyF",    "General"                 // 01/08/2024
   });
 
 }
