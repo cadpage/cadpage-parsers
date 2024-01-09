@@ -14,7 +14,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "PARKER COUNTY", "TX",
           "( SELECT/STATUS UNIT CALL ADDR CITY/Y CALL2 " +
           "| CANCEL ADDR CITY/Y " +
-          "| UNIT? CH? CALL PLACE? ADDR/Z X/Z+? CITY/Y! SRC? MAP? " +
+          "| UNIT? CH? CALL PLACE? ADDR/Z X/Z+? CITY/Y! SRC? MAP? PRI? " +
           ") INFO/N+? GPS1 GPS2");
   }
 
@@ -44,6 +44,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     if (name.equals("SRC")) return new SourceField("ST\\d+|TC\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("MAP")) return new MapField("\\d{4}", true);
+    if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
@@ -161,6 +162,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
       "GRA", "GRANBURY",
       "LIP", "LIPAN",
       "MIL", "MILLSAP",
+      "PERR","PERRIN",
       "POL", "POOLVILLE",
       "SPT", "SPRINGTOWN",
       "WFD", "WEATHERFORD",
