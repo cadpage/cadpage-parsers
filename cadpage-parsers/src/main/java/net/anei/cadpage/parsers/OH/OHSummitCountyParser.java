@@ -113,7 +113,7 @@ public class OHSummitCountyParser extends GroupBestParser {
 
     // Starke County
     "UNIONTOWN",
-    
+
     // Wayne County
     "CHIPPEWA TWP"
   };
