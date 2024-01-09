@@ -12,15 +12,15 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
-  @Override
-  public String getFilter() {
-    return "CAD@cabarruscounty.us, 93001";
-  }
-
   public NCCabarrusCountyAParser() {
     super(NCCabarrusCountyParser.CITY_CODES, "CABARRUS COUNTY", "NC",
         "( CANCEL ADDR CITY | FYI? ( ADDR CALL | CALL ADDR ) CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) ) INFO+");
     setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
+  }
+
+  @Override
+  public String getFilter() {
+    return "CAD@cabarruscounty.us, 93001";
   }
 
   private static final Pattern SPEC_UNIT_PTN = Pattern.compile("CAD: *\\{([A-Z0-9]+)\\} *");

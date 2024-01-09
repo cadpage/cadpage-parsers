@@ -31,6 +31,8 @@ public class GroupBestParser extends GroupBaseParser {
 
   private SplitMsgOptions splitMsgOptions;
 
+  private MsgParser lastParser;
+
   public GroupBestParser(MsgParser ... parsersP) {
 
     // Build the final array of parsers.  eliminating parsers that are aliased
@@ -231,6 +233,7 @@ public class GroupBestParser extends GroupBaseParser {
 
     int bestScore = Integer.MIN_VALUE;
     Data bestData = null;
+    lastParser = null;
 
     for (MsgParser parser : parsers) {
 
@@ -253,6 +256,7 @@ public class GroupBestParser extends GroupBaseParser {
           if (newScore > bestScore) {
             bestData = tmp;
             bestScore = newScore;
+            lastParser = parser;
           }
         }
       }
@@ -281,5 +285,11 @@ public class GroupBestParser extends GroupBaseParser {
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return splitMsgOptions;
+  }
+
+  @Override
+  public boolean checkCall(String call) {
+    if (lastParser == null) return false;
+    return lastParser.checkCall(call);
   }
 }
