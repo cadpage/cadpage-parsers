@@ -1,10 +1,6 @@
 package net.anei.cadpage.parsers.CA;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,12 +9,12 @@ public class CAOrangeCountyParser extends FieldProgramParser {
 
   public CAOrangeCountyParser() {
     super(CITY_CODES, "ORANGE COUNTY", "CA",
-          "CALL:CALL! ADDR:ADDR! CITY:CITY! STATE:ST! LATITUDE:GPS1! LONGITUDE:GPS2! ID:ID! PRI:PRI! DATE:DATETIME! TIME:SKIP! MAP:MAP! UNIT:UNIT! APT:APT! CROSS:X! TAC:CH! END");
+          "DATETIME CALL ADDR APT PLACE CITY? MAP UNIT ID SRC! GPS/d END");
   }
 
   @Override
   public String getFilter() {
-    return "inotify@ocfa.org";
+    return "tritech911@ocfa.org";
   }
 
   @Override
@@ -28,35 +24,14 @@ public class CAOrangeCountyParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n+"), data);
+    return parseFields(body.split(">"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z]{3}\\d{8}", true);
-    if (name.equals("DATETIME")) return new MyDateTimeField();
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("ID")) return new IdField("\\d{2}-\\d{6}", true);
     return super.getField(name);
-  }
-
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d?:\\d\\d [AP]M)");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private class MyDateTimeField extends DateTimeField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
-    }
-  }
-
-  private class MyUnitField extends UnitField {
-    @Override
-    public void parse(String field, Data data) {
-      field = stripFieldEnd(field, ", ALL");
-      super.parse(field, data);
-    }
   }
 
   @Override
@@ -81,6 +56,7 @@ public class CAOrangeCountyParser extends FieldProgramParser {
       "IRV", "IRVINE",
       "JWA", "JOHN WAYNE AIRPORT",
       "LAF", "LOS ALAMITOS",
+      "LAP", "LA PALMA",
       "LDU", "LADERA RANCH",
       "LGH", "LAGUNA HILLS",
       "LGN", "LAGUNA NIGUEL",
