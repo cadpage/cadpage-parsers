@@ -18,6 +18,10 @@ public class KYGallatinCountyAParser extends DispatchA80Parser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+
+    // Eliminate KYGallatinCountyB -> KYStatePolice
+    if (body.startsWith("CALL:")) return false;
+
     body = "DISPATCH:" + MISSING_BRK_PTN.matcher(body).replaceAll("\n");
     return super.parseMsg(body, data);
   }

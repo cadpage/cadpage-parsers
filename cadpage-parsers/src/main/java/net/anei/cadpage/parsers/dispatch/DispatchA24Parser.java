@@ -15,14 +15,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class DispatchA24Parser extends FieldProgramParser {
 
-  private static final Pattern UNIT_PTN = Pattern.compile("\\bUNIT: *([- A-Z0-9]+?) *[;\\n ] *", Pattern.CASE_INSENSITIVE);
-
-
   public DispatchA24Parser(String defCity, String defState) {
     super(defCity, defState,
            "UNIT:UNIT? ( CALL:CALL! RUN:SKIP? ( PLACE:PLACE! ADDR:ADDR! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% PRI:PRI DATE:DATE% TIME:TIME% JURISDICTION:SRC LATITUDE:GPS1/d LONGITUDE:GPS2/d TPPU:SKIP ( ALLUNITS:UNIT |  UNIT:UNIT | ID:ID? ) | ) INFO:INFO " +
-                      "| ID:ID! INFO/RN+ )");
+                      "| ID:ID! INFO/RN+ " +
+                      "| FAIL " +
+                      ")");
   }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("\\bUNIT: *([- A-Z0-9]+?) *[;\\n ] *", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String body, Data data) {

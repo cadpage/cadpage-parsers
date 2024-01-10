@@ -4157,6 +4157,18 @@ public class FieldProgramParser extends SmartAddressParser {
       return field.equals("<|\table|>");
     }
   }
+  
+  public class FailField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      abort();
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return null;
+    }
+  }
 
   /**
    * Convert qual string to connection string
@@ -4250,6 +4262,7 @@ public class FieldProgramParser extends SmartAddressParser {
     if (name.equals("ENDMARK")) return new EndMarkField();
     if (name.equals("SELECT")) return new SelectField();
     if (name.equals("END_TABLE")) return new EndTableField();
+    if (name.equals("FAIL")) return new FailField();
 
     throw new RuntimeException("Invalid field name: " + name);
   }
