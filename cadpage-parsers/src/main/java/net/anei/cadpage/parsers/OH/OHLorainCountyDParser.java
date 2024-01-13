@@ -23,6 +23,7 @@ public class OHLorainCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
 
@@ -30,6 +31,15 @@ public class OHLorainCountyDParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+  
+  private class MyCrossField  extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
   }

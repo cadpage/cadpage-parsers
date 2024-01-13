@@ -1874,7 +1874,7 @@ public class Active911ParserTable {
       "US/OH/DarkeCountySheriff",         "OHDarkeCounty",
       "US/OH/DelawareCounty",             "OHDelawareCounty",
       "US/OH/EatonPolice",                "OHPrebleCounty",
-      "US/OH/Elyria",                     "OHLorainCountyC",
+      "US/OH/Elyria",                     "OHLorainCountyC,OHLorainCountyD",
       "US/OH/ElmValley",                  "OHMorrowCounty",
       "US/OH/Fairfield",                  "OHFairfieldCounty",
       "US/OH/FayettevilleFD",             "WVFayetteCounty",   // A911 misassigned state
