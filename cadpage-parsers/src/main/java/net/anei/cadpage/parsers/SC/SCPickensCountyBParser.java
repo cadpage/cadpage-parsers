@@ -46,7 +46,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("((?:\\d{2}\\.\\d{6})(-\\d{2}\\.\\d{6})|NoneNone) +(.*)");
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("((?:\\d{2}\\.\\d{6}) ?(-\\d{2}\\.\\d{6})|NoneNone) +(.*)");
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
