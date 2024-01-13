@@ -9,7 +9,7 @@ public class CAOrangeCountyParser extends FieldProgramParser {
 
   public CAOrangeCountyParser() {
     super(CITY_CODES, "ORANGE COUNTY", "CA",
-          "DATETIME CALL ADDR APT PLACE CITY? MAP UNIT ID SRC! GPS/d END");
+          "DATETIME CALL ADDR APT APT CITY? MAP UNIT ID SRC! GPS/d END");
   }
 
   @Override
