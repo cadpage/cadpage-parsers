@@ -9,6 +9,9 @@ import java.util.Map;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
+import net.anei.cadpage.parsers.general.GeneralParser;
+import net.anei.cadpage.parsers.general.GeneralAlertParser;
+
 /**
  * Abstract combination parser that accepts the best results of a group of parsers
  */
@@ -33,6 +36,9 @@ public class GroupBestParser extends GroupBaseParser {
 
   private MsgParser lastParser;
 
+  private MsgParser generalParser;
+  private MsgParser generalAlertParser;
+
   public GroupBestParser(MsgParser ... parsersP) {
 
     // Build the final array of parsers.  eliminating parsers that are aliased
@@ -47,21 +53,31 @@ public class GroupBestParser extends GroupBaseParser {
     List<Map<String, MsgParser>> aliasMapList = new ArrayList<Map<String, MsgParser>>();
 
     // Add the list of parsers to our accumulated parser lists
+    generalParser = generalAlertParser =  null;
     addParsers(parsersP, 0, parserListList, aliasMapList);
 
     // now merge this list of lists of parser into a single list separated by
     // GroupBlockParsers
-    if (parserListList.size() == 0) {
-      parsers = new MsgParser[0];
-    }
-    else {
-      List<MsgParser> parserList = parserListList.get(0);
-      for (int ndx = 1; ndx < parserListList.size(); ndx++) {
-        parserList.add(new GroupBlockParser());
+    List<MsgParser> parserList = new ArrayList<MsgParser>();
+    for (int ndx = 0; ndx < parserListList.size(); ndx++) {
+      List<MsgParser> tmpList = parserListList.get(ndx);
+      if (!tmpList.isEmpty()) {
+        if (!parserList.isEmpty()) parserList.add(new GroupBlockParser());
         parserList.addAll(parserListList.get(ndx));
       }
-      parsers = parserList.toArray(new MsgParser[parserList.size()]);
     }
+
+    // General and GeneralAlert parser are added to end after another GroupBlockParser
+    if (generalParser != null) {
+      if (!parserList.isEmpty()) parserList.add(new GroupBlockParser());
+      parserList.add(generalParser);
+    }
+    if (generalAlertParser != null) {
+      if (!parserList.isEmpty()) parserList.add(new GroupBlockParser());
+      parserList.add(generalAlertParser);
+    }
+    parsers = parserList.toArray(new MsgParser[parserList.size()]);
+    generalParser = generalAlertParser = null;
 
     // Group parser is sponsored if all of it subparsers are sponsored
     // If all subparsers are sponsored, sponsor date is the earliest subparser sponsor date
@@ -142,12 +158,22 @@ public class GroupBestParser extends GroupBaseParser {
     // Run through the list of parsers
     for (MsgParser parser : parsersP) {
 
-      // If we encounter a GropuBlockParsr, it does not get added, but we increment the block level
-      if (parser instanceof GroupBlockParser) blockLevel++;
+      // If we encounter a GroupBlockParsr, it does not get added, but we increment the block level
+      if (parser instanceof GroupBlockParser) {
+        blockLevel++;
+      }
 
-      // If parser is another GroupBestParser, call ourselves recursivelly to process it's parsers
+      // If parser is another GroupBestParser, call ourselves recursively to process it's parsers
       else if (parser instanceof GroupBestParser) {
         addParsers(((GroupBestParser)parser).parsers, blockLevel, parserListList, aliasMapList);
+      }
+
+      // General and GeneralAlert parsers are always added at end
+      else if (parser.getClass() == GeneralParser.class) {
+        generalParser = parser;
+      }
+      else if (parser.getClass() == GeneralAlertParser.class) {
+        generalAlertParser = parser;
       }
 
       // Otherwise just add the parser to the current parser list
