@@ -1,15 +1,11 @@
 package net.anei.cadpage.parsers.ID;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA64Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
 
-public class IDTetonCountyParser extends DispatchA64Parser{
+public class IDTetonCountyParser extends DispatchA55Parser{
 
   public IDTetonCountyParser() {
-    this("TETON COUNTY", "ID");
-  }
-
-  protected IDTetonCountyParser(String defCity, String defState) {
-    super(defCity, defState);
+    super("TETON COUNTY", "ID");
   }
 
   public String getFilter() {
