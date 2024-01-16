@@ -11,21 +11,28 @@ import net.anei.cadpage.parsers.dispatch.DispatchA11Parser;
  * Whitman County, WA
  */
 public class WAWhitmanCountyAParser extends DispatchA11Parser {
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("([A-Z]+)\n([A-Z0-9]+)\n(\\d{2}-\\d{6})\n(.*\nCMPLT- \\d\\d\\.\\d\\d\\.\\d\\d)",Pattern.DOTALL);
-  
+
   public WAWhitmanCountyAParser() {
-    super(CITY_CODES, "WHITMAN COUNTY", "WA");
+    this("WHITMAN COUNTY", "WA");
   }
-  
+
+  public WAWhitmanCountyAParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState);
+  }
+
   @Override
   public String getFilter() {
     return "hiplink@whitcom.org";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
+    int pt = body.indexOf("\nSent by Whitcom");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       data.strCall = "RUN REPORT";
@@ -40,12 +47,12 @@ public class WAWhitmanCountyAParser extends DispatchA11Parser {
     if (state != null) data.strState = state;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CITY", "CITY ST");
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
      "ANA", "ANATONE",
      "ASO", "ASOTIN",
@@ -56,7 +63,7 @@ public class WAWhitmanCountyAParser extends DispatchA11Parser {
      "PUL", "PULMAN",
      "UNI", "UNIONTOWN"
   });
-  
+
   private static final Properties CITY_ST_TABLE = buildCodeTable(new String[]{
     "GENESEE",    "ID",
     "LEWISTON",   "ID",

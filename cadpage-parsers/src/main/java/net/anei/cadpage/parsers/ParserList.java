@@ -1889,6 +1889,7 @@ public class ParserList {
               ,"VAWytheCounty"                  ,"Wythe County, VA"
           ),
           new ParserCategory("Washington"
+              ,"WAAsotinCounty"                 ,"Asotin County, WA"
               ,"WABentonCounty"                 ,"Benton County, WA"
               ,"WAChelanCounty"                 ,"Chelan County, WA"
               ,"WAClallamCounty"                ,"Clallam County, WA"
