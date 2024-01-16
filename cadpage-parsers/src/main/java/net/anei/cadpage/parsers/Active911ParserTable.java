@@ -1238,6 +1238,7 @@ public class Active911ParserTable {
       "US/WI/RedWing",                    "MNGoodhueCounty",
       "US/MN/RedwoodCounty",              "MNRedwoodCounty",
       "US/MN/RenvilleCounty",             "MNRenvilleCounty",
+      "US/MN/RobbinsdaleFD",              "MNHennepinCountyA",
       "US/MN/RobbinsdalePD",              "MNHennepinCounty",
       "US/MN/RoseauCounty",               "MNRoseauCounty",
       "US/MN/ScottCounty",                "MNScottCounty",
