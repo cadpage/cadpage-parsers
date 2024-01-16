@@ -4157,13 +4157,13 @@ public class FieldProgramParser extends SmartAddressParser {
       return field.equals("<|\table|>");
     }
   }
-  
+
   public class FailField extends Field {
     @Override
     public void parse(String field, Data data) {
       abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return null;

@@ -23,6 +23,11 @@ public class WAWhitmanCountyAParser extends DispatchA11Parser {
   }
 
   @Override
+  public String getAliasCode() {
+    return "IAWhitmanCountyA";
+  }
+
+  @Override
   public String getFilter() {
     return "hiplink@whitcom.org";
   }

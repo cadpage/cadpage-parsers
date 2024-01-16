@@ -1,9 +1,10 @@
 package net.anei.cadpage.parsers.IA;
 
-public class IADallasCountyParser extends IAWarrenCountyBParser {
-  
-  public IADallasCountyParser() {
-    super("DALLAS COUNTY", "IA");
-  }
+import net.anei.cadpage.parsers.GroupBestParser;
 
+public class IADallasCountyParser extends GroupBestParser {
+
+  public IADallasCountyParser() {
+   super(new IADallasCountyAParser(), new IADallasCountyBParser());
+  }
 }

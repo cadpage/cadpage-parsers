@@ -1,117 +1,56 @@
 package net.anei.cadpage.parsers.IA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA67Parser;
+import java.util.regex.Pattern;
 
-public class IAWarrenCountyBParser extends DispatchA67Parser {
-  
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+
+public class IAWarrenCountyBParser extends FieldProgramParser {
+
   public IAWarrenCountyBParser() {
     this("WARREN COUNTY", "IA");
   }
-  
+
   IAWarrenCountyBParser(String defCity, String defState) {
-    super("Westcom:", CITY_LIST, defCity, defState, A67_OPT_PLACE | A67_OPT_CROSS, 
-          "(?:V[FG]|CLV|UI)\\d+[A-Z]?", "(?:\\b[A-Z]+\\d+\\b *)+"); 
+    super(defCity, defState,
+          "Jurisdiction:SRC? Inci.#:ID! Time:DATETIME! Inci.Type:CALL! Address:ADDR! Bldg:APT! Unit/Apt:APT! City:CITY! xStreet:X! Loc.Name:PLACE! Area:MAP! " +
+              "Lat/Long:GPS/d! Map_Zone:MAP/L! ( Resp._Chnl:CH! | Cmd_Chnl:CH! ) Tac_Chnl:CH/L! Units:UNIT! Comments:INFO! END");
   }
-  
+
   @Override
   public String getAliasCode() {
     return "IAWarrenCountyB";
   }
-  
+
   @Override
-  public String getFilter() {
-    return "Westcom@wdm-ia.com";
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
-  
-  private static final String[] CITY_LIST = new  String[]{
-    
-    "WARREN COUNTY",
-    
-    // Cities
-    "ACKWORTH",
-    "BEVINGTON",
-    "CARLISLE",
-    "CUMMING",
-    "DES MOINES",
-    "HARTFORD",
-    "INDIANOLA",
-    "LACONA",
-    "MARTENSDALE",
-    "MILO",
-    "NEW VIRGINIA",
-    "NORWALK",
-    "SANDYVILLE",
-    "SPRING HILL",
-    "ST. MARYS",
-    "WEST DES MOINES",
 
-    // Unincorporated communities
-    "BEECH",
-    "CHURCHVILLE",
-    "COOL",
-    "LIBERTY CENTER",
-    "PROLE",
+  private static final Pattern MISSING_BLNK_PTN = Pattern.compile("(?<![\\s\\[])(?=(?:Inci\\.#|Address|Bldg|Unit/Apt|City|xstreet|Loc\\.Name|Lat/Long|Area|Map Zone|Resp\\. Chnl|Tac Chnl|Units|Comments):)");
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "Incident Page:");
+    body = body.replace("Jurisdicition:", "Jurisdiction:")
+               .replace("Inci. Type:", "Inci.Type:")
+               .replace("Unit:", "Units:");
+    body = MISSING_BLNK_PTN.matcher(body).replaceAll(" ");
+    return super.parseMsg(body, data);
+  }
 
-    // Townships
-    "ALLEN",
-    "BELMONT",
-    "GREENFIELD",
-    "JACKSON",
-    "JEFFERSON",
-    "LIBERTY",
-    "LINCOLN",
-    "LINN",
-    "OTTER",
-    "PALMYRA",
-    "RICHLAND",
-    "SQUAW",
-    "UNION",
-    "VIRGINIA",
-    "WHITE BREAST",
-    "WHITE OAK",
-    
-    
-    "DALLAS COUNTY",
-    
-    // Cities
-    "ADEL",
-    "BOUTON",
-    "CLIVE",
-    "DALLAS CENTER",
-    "DAWSON",
-    "DE SOTO",
-    "DEXTER",
-    "GRANGER",
-    "GRIMES",
-    "LINDEN",
-    "MINBURN",
-    "PERRY",
-    "REDFIELD",
-    "URBANDALE",
-    "VAN METER",
-    "WAUKEE",
-    "WEST DES MOINES",
-    "WOODWARD",
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d|", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
 
-    // Unincorporated community
-    "BOONEVILLE",
-
-    // Townships
-    "ADAMS",
-    "ADEL",
-    "BEAVER",
-    "BOONE",
-    "COLFAX",
-    "DALLAS",
-    "DES MOINES",
-    "GRANT",
-    "LINCOLN",
-    "LINN",
-    "SPRING VALLEY",
-    "SUGAR GROVE",
-    "UNION",
-    "VAN METER",
-    "WALNUT",
-    "WASHINGTON"
-  };
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]+(?=\\[\\d{1,2}\\])");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
+      super.parse(field, data);
+    }
+  }
 }
