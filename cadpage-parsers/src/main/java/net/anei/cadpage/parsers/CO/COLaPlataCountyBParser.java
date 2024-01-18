@@ -28,13 +28,16 @@ public class COLaPlataCountyBParser extends DispatchA19Parser {
     if (pt >= 0) {
       data.strPlace = append(data.strPlace, " - ", data.strCity.substring(pt+1).trim());
       data.strCity = convertCodes(data.strCity.substring(0,pt).trim(), CITY_CODES);
+    } else if (data.strCity.startsWith("DGO")) {
+      data.strPlace = append(data.strPlace, " - ", data.strCity.substring(3).trim());
+      data.strCity = "Durango";
     }
     return true;
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "DGO",  "Durango"
   });
-  
+
 
 }

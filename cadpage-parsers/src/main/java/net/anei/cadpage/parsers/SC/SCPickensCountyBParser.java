@@ -10,7 +10,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
 
   public SCPickensCountyBParser() {
     super("PICKENS COUNTY", "SC",
-          "Location:ADDRCITYST! Common_Name:PLACE? ( Location_info:X! | Common_Location:X! ) CAD_Code:ID! Received:SKIP! Units:UNIT! Priority:PRI? Box_Alarm:BOX? Caller_Name:NAME? Caller:PHONE? Contact:SKIP? Case_Number:ID/L! Notes:INFO/N+");
+          "Location:ADDRCITYST! Common_Name:PLACE? Location_Details:PLACE? ( Location_info:X! | Common_Location:X! ) CAD_Code:ID! Received:SKIP! Units:UNIT! Priority:PRI? Box_Alarm:BOX? Caller_Name:NAME? Caller:PHONE? Contact:SKIP? Case_Number:ID/L! Notes:INFO/N+");
     setupProtectedNames("J AND D DR", "LOVE AND CARE RD");
   }
 
@@ -38,6 +38,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("NAME")) return new MyNameField();
@@ -50,6 +51,10 @@ public class SCPickensCountyBParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+
+      while (field.startsWith("None ")) {
+        field = field.substring(5).trim();
+      }
 
       Matcher match = ADDR_GPS_PTN.matcher(field);
       if (match.matches()) {
@@ -65,6 +70,14 @@ public class SCPickensCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "GPS ADDR APT CITY ST";
+    }
+  }
+
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
     }
   }
 
