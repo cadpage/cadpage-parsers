@@ -13,6 +13,11 @@ public class ZCAONTimiskamingDistrictParser extends FieldProgramParser {
           "Location:ADDRCITYST! Type:CALL! Other_Info:INFO! INFO/N+ Call_Start_Time:DATETIME! END");
   }
 
+  @Override
+  public String getFilter() {
+    return "8337051109";
+  }
+
   private static final Pattern EXTRA_PIPE_PTN = Pattern.compile("(?<=:)\\||~?\\|(?=\n|$)");
 
   @Override
