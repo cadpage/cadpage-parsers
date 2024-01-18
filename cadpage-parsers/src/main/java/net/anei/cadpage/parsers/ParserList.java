@@ -2018,6 +2018,7 @@ public class ParserList {
           new ParserCategory("Ontario, Canada"
               ,"ZCAONChathamKent"               ,"Chatham-Kent, ON"
               ,"ZCAONSimcoeCounty"              ,"Simcoe County, ON"
+              ,"ZCAONTimiskamingDistrict"       ,"Timiskaming District, ON"
           ),
           new ParserCategory("Quebec, Canada"
               ,"ZCAQCQuebec"                    ,"Quebec, QC"
