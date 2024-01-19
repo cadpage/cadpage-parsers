@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.MI;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -10,6 +12,7 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
           "Call_Type:CALL! Call_Date/Time:DATETIME! Common_Name:PLACE! ( Call_Address:ADDRCITY! | Address:ADDRCITY ) Additional_Location:PLACE/SDS! " +
              "Cross_Streets:X Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! ) Alerts:ALERT! INFO/N+ " +
               "Caller:NAME! Caller's_TX:PHONE! Incident_#:ID! Status_Times:EMPTY! TIMES+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -55,4 +58,8 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "4462 N ROGERS HWY",                    "+41.954871,-83.926631"
+  });
 }
