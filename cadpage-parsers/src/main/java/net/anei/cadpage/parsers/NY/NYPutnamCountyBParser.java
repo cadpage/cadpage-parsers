@@ -10,14 +10,21 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
 
   public NYPutnamCountyBParser() {
     super("PUTNAM COUNTY", "NY",
-          "DATETIME! Fire:CALL! EMS:CALL/SLS! Location:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! Box:BOX! INFO/N+");
+          "DASH? DATETIME! Fire:CALL? EMS:CALL/SLS? ( Location:ADDRCITY/S6! Cross_Street:X! Common_Name:PLACE! " +
+                                                   "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
+                                                   "| ADDRCITY/S6! X PLACE " +
+                                                   ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? INFO/N+");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strSource = subject;
-    body = body.replace("=20", "\n").trim().replace("\nCross Streets;", "\nCross Streets:").replace("\nBox;", "\nBox:");
-    return parseFields(body.split("\\n+"), data);
+    body = body.replace("=20", "\n").trim()
+               .replace("\nCross Streets;", "\nCross Street:")
+               .replace("\nCross Streets:", "\nCross Street:")
+               .replace("\nBox;", "\nBox:");
+    if (!parseFields(body.split("\\n+"), data)) return false;
+    return !data.strCall.isEmpty();
   }
 
   @Override
@@ -27,8 +34,11 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("BOX")) return new BoxField("\\d\\d-(?:\\d\\d|[A-Z])|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -37,6 +47,15 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, ";");
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
     }
   }
