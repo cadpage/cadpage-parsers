@@ -1,109 +1,78 @@
 package net.anei.cadpage.parsers.OH;
 
-import java.util.Properties;
+import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
 
-public class OHPrebleCountyParser extends DispatchEmergitechParser {
-  
+public class OHPrebleCountyParser extends FieldProgramParser {
+
   public OHPrebleCountyParser() {
-    super(new String[]{"PREBLESHERIFF:", "Eaton911:"}, 
-          CITY_LIST, "PREBLE COUNTY", "OH", TrailAddrType.PLACE);
+    super("PREBLE COUNTY", "OH",
+          "Nature:CODE! Description:CALL! Responding_Agency:SRC! Units:UNIT! Location:ADDRCITYST! " +
+              "Added_Location_Details:PLACE! Common_/_Business_Name:PLACE! Cross_Streeets:X! Nearest_intersction:X! Call_Details_/_Notes:INFO! Use_Caution:ALERT END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "PREBLESHERIFF@swohio.twcbc.com,Eaton911@eatonpolice.org";
+    return "services@preblecountysheriff.org";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    data.strCode = data.strCall;
-    data.strCall = convertCodes(data.strCode, CALL_CODES);
-    return true;
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!body.startsWith("From Preble County")) return false;
+    return super.parseMsg(body, data);
   }
-  
+
   @Override
-  public String getProgram() {
-    return super.getProgram().replace("CALL", "CODE CALL");
+  public Field getField(String name) {
+    if (name.equals("SRC")) return new MySourceField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ALERT")) return new MyAlertField();
+    return super.getField(name);
   }
 
-  private static final Properties CALL_CODES = buildCodeTable(new String[]{
-      "4",  "MVA",
-      "16", "Dead Body",
-      "28", "Fire",
-      "29", "EMS Response",
-      "C4", "MVA"
-  });
+  private class MySourceField extends SourceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(';', ',').replace(" ", "");
+      super.parse(field, data);
+    }
+  }
 
-  private static final String[] CITY_LIST = new String[]{
-    
-    // City
-    "EATON",
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(';', ',').replace(" ", "");
+      super.parse(field, data);
+    }
+  }
 
-    // Villages
-    "COLLEGE CORNER",
-    "CAMDEN",
-    "ELDORADO",
-    "GRATIS",
-    "LEWISBURG",
-    "NEW PARIS",
-    "VERONA",
-    "WEST ALEXANDRIA",
-    "WEST ELKTON",
-    "WEST MANCHESTER",
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!data.strCross.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
 
-    // Townships
-    "DIXON",
-    "GASPER",
-    "GRATIS",
-    "HARRISON",
-    "ISRAEL",
-    "JACKSON",
-    "JEFFERSON",
-    "LANIER",
-    "MONROE",
-    "SOMERS",
-    "TWIN",
-    "WASHINGTON",
+  private Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
+    }
+  }
 
-    // Unincorporated communities
-
-    "BRENNERSVILLE",
-    "BRINLEY",
-    "BROWNS",
-    "CAMPBELLSTOWN",
-    "CEDAR SPRINGS",
-    "DADSVILLE",
-    "EBENEZER",
-    "ENTERPRISE",
-    "FAIRHAVEN",
-    "GETTYSBURG",
-    "GREENBUSH",
-    "HAMBURG",
-    "INGOMAR",
-    "MORNING SUN",
-    "MUTTONVILLE",
-    "NEW HOPE",
-    "NEW LEXINGTON",
-    "NEW WESTVILLE",
-    "SUGAR VALLEY",
-    "TALAWANDA SPRINGS",
-    "WEST FLORENCE",
-    "WEST SONORA",
-    "WHEATVILLE",
-    
-    // Butler County
-    "MIDDLETOWN",
-    "SOMERVILLE",
-    
-    // Darke County
-    "ARCANUM",
-    
-    // Montgomery County
-    "BROOKVILLE",
-    "GERMANTOWN"
-  };
+  private class MyAlertField extends AlertField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equalsIgnoreCase("No")) return;
+      if (field.equalsIgnoreCase("YES")) field = "*** USE CAUTION ***";
+      super.parse(field, data);
+    }
+  }
 }
