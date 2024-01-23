@@ -69,6 +69,8 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  *
  * Field Qualifiers
  *   All conditional fields
+ *     X - Data field does not contain a data tag.  Any colon should be treated
+ *         as part of the data field
  *     Y - Force condition approval. Reject result if field contents do not
  *         satisfy condition checks
  *     Z - suppress condition checks.  This is useful is this fields condition
@@ -1734,7 +1736,7 @@ public class FieldProgramParser extends SmartAddressParser {
       Step procStep = this;
       String curFld = state.getField(ndx);
       if (!doNotTrim) curFld = curFld.trim();
-      if (parseTags && !(field instanceof SelectField)) {
+      if (parseTags && field != null && !(field instanceof SelectField) && !field.isNoTag()) {
         Step startStep = this;
         int startNdx = ndx;
         boolean parenBreak = breakChar == ')';
@@ -2112,6 +2114,7 @@ public class FieldProgramParser extends SmartAddressParser {
 
     private String qual = null;
 
+    private boolean noTag;
     private boolean noVerify;
     private boolean forceVerify;
 
@@ -2146,6 +2149,7 @@ public class FieldProgramParser extends SmartAddressParser {
     public void setQual(String qual) {
       this.qual = qual;
       if (qual != null) {
+        this.noTag = qual.contains("X");
         this.noVerify = qual.contains("Z");
         this.forceVerify = qual.contains("Y");
       }
@@ -2171,6 +2175,10 @@ public class FieldProgramParser extends SmartAddressParser {
     public void setPattern(Pattern pattern, boolean hardPattern) {
       this.pattern = pattern;
       this.hardPattern = hardPattern;
+    }
+
+    protected boolean isNoTag() {
+      return noTag;
     }
 
     protected boolean isNoVerify() {

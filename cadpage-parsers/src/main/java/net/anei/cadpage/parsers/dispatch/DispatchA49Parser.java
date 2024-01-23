@@ -36,8 +36,8 @@ public class DispatchA49Parser extends FieldProgramParser {
           "| date:DATE! time:TIME! inc#:ID! INFO/N+ " +
           "| CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
           "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
-            "| DATETIME2! ADDR:ADDR/S! RCN:UNIT! CALL " +
-            "| DATE_TIME_SRC! Addr:ADDR/S! City:CITY? Cross:X? District:MAP? Inc_Type:CODE? Juris:SKIP? Report_#:ID? " +
+            "| DATETIME2/X! ADDR:ADDR/S! RCN:UNIT! CALL " +
+            "| DATE_TIME_SRC/X! CAD#:ID? Addr:ADDR/S! City:CITY? Cross:X? District:MAP? Inc_Type:CODE? Juris:SKIP? Report_#:ID? " +
             "| Date:DATE! Time:TIME! Inc#:ID! INFO/RN+ " +
             ") REMARKS? EXTRA+ )");
     checkCity = cityCodes != null;
@@ -96,14 +96,26 @@ public class DispatchA49Parser extends FieldProgramParser {
 
   private static final Pattern DATE_TIME_SRC_PTN = Pattern.compile("Date:(\\d\\d/\\d\\d/\\d{4}) Time:(\\d\\d:\\d\\d)(?:EQPT:(\\S+)| Num:(\\S+)|)");
   private class BaseDateTimeSourceField extends Field {
+
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_SRC_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       data.strDate = match.group(1);
       data.strTime = match.group(2);
       data.strSource = getOptGroup(match.group(3));
       data.strCallId = getOptGroup(match.group(4));
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
 
     @Override
@@ -115,13 +127,24 @@ public class DispatchA49Parser extends FieldProgramParser {
   private static final Pattern DATE_TIME2_PTN = Pattern.compile("DATE:(\\d{6}) TIME:(\\d{6})");
   private class BaseDateTime2Field extends DateTimeField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME2_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       String date = match.group(1);
       data.strDate = date.substring(2,4)+'/'+date.substring(4)+'/'+date.substring(0,2);
       String time = match.group(2);
       data.strTime = time.substring(0,2)+':'+time.substring(2,4)+':'+time.substring(4);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
