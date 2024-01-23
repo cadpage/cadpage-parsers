@@ -26,7 +26,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    data.strCall = subject;
+    data.strCall = stripFieldEnd(subject, " None");
     return super.parseMsg(body, data);
   }
 
