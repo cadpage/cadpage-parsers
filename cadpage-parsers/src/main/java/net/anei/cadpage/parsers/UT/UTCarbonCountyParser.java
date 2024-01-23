@@ -1,14 +1,14 @@
 package net.anei.cadpage.parsers.UT;
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
-public class UTCarbonCountyParser extends DispatchA55Parser {
-  
+public class UTCarbonCountyParser extends DispatchA19Parser {
+
   public UTCarbonCountyParser() {
     super("CARBON COUNTY", "UT");
   }
-  
+
   @Override
   public String getFilter() {
-    return "priceutdispatch@gmail.com;";
+    return "FlexRapidNotification@dccnotify.com";
   }
 }
