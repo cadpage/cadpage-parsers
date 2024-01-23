@@ -787,6 +787,7 @@ public class ParserList {
               ,"LAStCharlesParish"              ,"St Charles Parish, LA"
               ,"LARapidesParish"                ,"Rapides Parish, LA"
               ,"LAStJamesParish"                ,"St James Parish, LA"
+              ,"LAStMaryParish"                 ,"St Mary Parish, LA"
               ,"LAStTammanyParish"              ,"St Tammany Parish, LA"
               ,"LATangipahoaParish"             ,"Tangipahoa Parish, LA"
               ,"LATerrebonneParish"             ,"Terrebonne Parish, LA"

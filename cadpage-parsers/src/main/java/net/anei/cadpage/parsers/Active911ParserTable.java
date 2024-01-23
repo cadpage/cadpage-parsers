@@ -997,6 +997,7 @@ public class Active911ParserTable {
       "US/LA/AvoyellesCounty",            "LAAvoyellesParish",
       "US/LA/BeauregardParish",           "LABeauregardParish",
       "US/LA/CalcasieuParish",            "LACalcasieuParish",
+      "US/LA/Chitimacha",                 "LAStMaryParish",
       "US/LA/CityofCovington",            "LAStTammanyParishB",
       "US/LA/CityofLakeCharles",          "LACalcasieuParish",
       "US/LA/EastFelicianaParish",        "LAEastFelicianaParish",
