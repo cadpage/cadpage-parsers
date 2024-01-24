@@ -19,7 +19,6 @@ public class Message {
   private int msgCount = -1;
   private int origMsgLen = -1;
 
-  // Parsed message information
   private MsgInfo info = null;
 
   public Message(boolean preParse, String fromAddress, String subject, String body) {
@@ -755,7 +754,7 @@ public class Message {
     if (message == null) return message;
     message = message.replace("\\", "\\\\");
     message = message.replace("\t", "\\t");
-    message = message.replace("\n", "\\n\n");
+    message = message.replace("\n", "\\n");
     message = message.replace("\r", "\\r");
     message = message.replace("\f", "\\f");
     message = message.replace("\b", "\\b");
