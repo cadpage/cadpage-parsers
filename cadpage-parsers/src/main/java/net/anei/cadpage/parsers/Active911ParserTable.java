@@ -2349,7 +2349,7 @@ public class Active911ParserTable {
       "US/TX/Acadian",                    "TXAcadianAmbulance",
       "US/TX/AddisonFD",                  "TXDallasCountyC",
       "US/TX/AngletonPD",                 "TXAngleton",
-      "US/TX/AngletonAreaEMC",            "TXBrazoriaCountyF",
+      "US/TX/AngletonAreaEMC",            "TXBrazoriaCountyF,TXAngleton",
       "US/TX/AransasCounty",              "TXAransasCounty",
       "US/TX/ArcherCounty",               "TXArcherCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
