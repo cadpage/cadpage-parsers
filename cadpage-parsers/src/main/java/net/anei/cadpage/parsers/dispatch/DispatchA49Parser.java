@@ -36,8 +36,8 @@ public class DispatchA49Parser extends FieldProgramParser {
           "| date:DATE! time:TIME! inc#:ID! INFO/N+ " +
           "| CAD_Num:SKIP! Addr:ADDR/S! Times:EMPTY! INFO/R! INFO/N+ Rpt#:ID END " +
           "| ( Rpt#:ID! Addr:ADDR/S! Inc_Type:CODE! " +
-            "| DATETIME2/X! ADDR:ADDR/S! RCN:UNIT! CALL " +
-            "| DATE_TIME_SRC/X! CAD#:ID? Addr:ADDR/S! City:CITY? Cross:X? District:MAP? Inc_Type:CODE? Juris:SKIP? Report_#:ID? " +
+            "| DATETIME2/z! ADDR:ADDR/S! RCN:UNIT! CALL " +
+            "| DATE_TIME_SRC/z! CAD#:ID? Addr:ADDR/S! City:CITY? Cross:X? District:MAP? Inc_Type:CODE? Juris:SKIP? Report_#:ID? " +
             "| Date:DATE! Time:TIME! Inc#:ID! INFO/RN+ " +
             ") REMARKS? EXTRA+ )");
     checkCity = cityCodes != null;

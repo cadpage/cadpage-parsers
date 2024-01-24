@@ -20,9 +20,9 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strSource = subject;
     body = body.replace("=20", "\n").trim()
-               .replace("\nCross Streets;", "\nCross Street:")
-               .replace("\nCross Streets:", "\nCross Street:")
-               .replace("\nBox;", "\nBox:");
+               .replace("Cross Streets;", "Cross Street:")
+               .replace("Cross Streets:", "Cross Street:")
+               .replace("Box;", "Box:");
     if (!parseFields(body.split("\\n+"), data)) return false;
     return !data.strCall.isEmpty();
   }
