@@ -13,7 +13,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
 
   public MIRoscommonCountyParser() {
     super(CITY_CODES, "ROSCOMMON COUNTY", "MI",
-          "( CANCEL | ( FYI | EMPTY? ) CALL ) ADDR CITY? INFO/N+");
+          "( CANCEL | ( FYI | EMPTY? ) CALL ) ( GPSADDR GPSADDR! | ADDR! CITY? ) INFO/N+");
   }
 
   @Override
@@ -73,6 +73,31 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
 
     body = body.replace('\n', ';');
     return super.parseMsg(body, data);
+  }
+
+  public Field getField(String name) {
+    if (name.equals("GPSADDR")) return new MyGPSAddressField();
+    return super.getField(name);
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSAddressField extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!GPS_PTN.matcher(field).matches()) return false;
+      data.strAddress = append(data.strAddress, ", ", field);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
