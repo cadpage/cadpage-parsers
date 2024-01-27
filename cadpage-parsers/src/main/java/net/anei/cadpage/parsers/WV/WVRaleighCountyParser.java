@@ -15,7 +15,7 @@ public class WVRaleighCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "Raleigh911@SuddenLinkMail.com";
+    return "Raleigh911@SuddenLinkMail.com,Raleigh911@Raleigh911.org";
   }
 
 
