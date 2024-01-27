@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class MOFranklinCountyParser extends FieldProgramParser {
   public MOFranklinCountyParser() {
     super("FRANKLIN COUNTY", "MO",
-          "Location:ADDRCITYST! Intersection:X! Business_Name:PLACE! APT/SUITE:APT! " +
+          "Location:ADDRCITYST! Intersection:X! Business_Name:PLACE! APT/SUITE:APT! Person:NAME Phone:PHONE " +
             "( MapPageGrid:MAP! MapCoordinates:MAP/L! LocationDescription:INFO! Subdivision:LINFO/N! Latitude:GPS1! Longitude:GPS2! | ) " +
             "CALL:DATE_TIME_ID! Response_Type:CALL! UNITS/REPORTS_ASSIGNED:EMPTY! TIMES/N+ CAD_INFORMATION:EMPTY INFO/N+");
     removeWords("APTS");
@@ -28,13 +28,15 @@ public class MOFranklinCountyParser extends FieldProgramParser {
   private Set<String> unitSet = new HashSet<>();
 
   private static final Pattern TAG_PTN = Pattern.compile("\n<([ /A-Za-z]+: *)>");
+  private static final Pattern CLOSE_TAG_PTN = Pattern.compile("<\\\\[ /A-Za-z]+:?>");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
 
     times = "";
     unitSet.clear();
-    body = TAG_PTN.matcher(body).replaceAll("\n$1");
+    body = TAG_PTN.matcher(body).replaceAll("\n$1").replace("<Phone>", "\nPhone:");
+    body = CLOSE_TAG_PTN.matcher(body).replaceAll("");
     if (!parseFields(body.split("\n"), data)) return false;
     if (data.strCity.equals("NEW")) data.strCity = "NEW HAVEN";
     if (!data.strPlace.isEmpty()) {
