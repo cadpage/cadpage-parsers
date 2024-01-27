@@ -21,7 +21,7 @@ public class MNHennepinCountyAParser extends FieldProgramParser {
   public MNHennepinCountyAParser() {
     super(CITY_LIST, "HENNEPIN COUNTY", "MN",
           "( NAME:NAME! ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " +
-                       "| PH#:PHONE! LOC_NAME:PLACE ADDRESS:ADDR! APT#:APT! CITY:CITY! X_ST:X EVTYPE:CALL! INC#:ID! " +
+                       "| PH#:PHONE! ( LOC_NAME:PLACE | PREM_NAME:PLACE ) ADDRESS:ADDR! APT#:APT! CITY:CITY! ( X_ST:X | XSTREET:X ) EVTYPE:CALL! INC#:ID! " +
                        "| ADDRESS:ADDR! APT#:APT! CITY:CITY! XSTREET:X! EVTYPE:CALL! INC#:ID! " +
                        ") COMMENTS:INFO/N+ " +
           "| INC#:ID! ADDRESS:ADDR! EVTYPE:CALL! INFO/RN+ " +
@@ -89,11 +89,20 @@ public class MNHennepinCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "@");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*)(?:,) *(.*)");
