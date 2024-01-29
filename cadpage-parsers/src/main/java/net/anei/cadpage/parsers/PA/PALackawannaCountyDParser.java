@@ -23,7 +23,9 @@ public class PALackawannaCountyDParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Alert")) return false;
-    return parseFields(body.split("\n"), data);
+    int pt = body.indexOf("Full Transcript:");
+    body = body.substring(0,pt).replace('\n', ' ') + body.substring(pt);
+    return super.parseMsg(body, data);
   }
 
   @Override

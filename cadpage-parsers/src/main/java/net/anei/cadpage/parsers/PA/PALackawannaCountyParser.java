@@ -10,8 +10,7 @@ Lackawanna County, PA
 public class PALackawannaCountyParser extends GroupBestParser {
 
   public PALackawannaCountyParser() {
-    super(new PALackawannaCountyAParser(),
-          new PALackawannaCountyBParser(),
+    super(new PALackawannaCountyBParser(),
           new PALackawannaCountyDParser(),
           new PALackawannaCountyAmbulanceParser());
   }

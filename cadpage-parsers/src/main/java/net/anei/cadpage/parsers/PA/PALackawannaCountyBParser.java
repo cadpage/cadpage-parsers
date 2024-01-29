@@ -13,7 +13,10 @@ public class PALackawannaCountyBParser extends FieldProgramParser {
 
   public PALackawannaCountyBParser() {
     super(CITY_CODES, "LACKAWANNA COUNTY", "PA",
-          "Assigned_Units:UNIT! Call_Type:CALL! Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! APT_PLACE+ Common_Name:PLACE! LAT/LON:GPS! Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS! Primary_Incident:ID!");
+          "Assigned_Units:UNIT! Call_Type:CALL! " +
+              "( Nature_of_Call:CALL/SDS Address:ADDRCITY/S6! Muni:CITY! APT_PLACE+ Common_Name:PLACE! ( LAT/LON:GPS! | GPS ) PN:PHONE? Cross_Streets:X! Call_Time:DATETIME! Radio_Channel:CH? " +
+              "| Radio_Channel:CH! Address:ADDRCITY/S6! Muni:CITY! APT_PLACE+ Common_Name:PLACE! ( LAT/LON:GPS! | GPS ) Closest_Intersection:X! Call_Time:DATETIME! Nature_of_Call:CALL/SDS " +
+              ") Primary_Incident:ID!");
   }
 
   @Override
