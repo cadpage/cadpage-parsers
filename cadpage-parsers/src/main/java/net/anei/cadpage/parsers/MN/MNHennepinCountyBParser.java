@@ -11,7 +11,7 @@ public class MNHennepinCountyBParser extends FieldProgramParser {
   public MNHennepinCountyBParser() {
     super("HENNEPIN COUNTY", "MN",
           "Nature:CALL! CALL/CS+ Addr:ADDR! City:CITY! ST_ZIP! CAD:ID! Date/Time:DATETIME! Lat/Long:GPS! Cross:X! Priority:PRI! Jur:MAP! Apt:APT! " +
-            "RPName:NAME! NAME/CS+ RPPhone:PHONE! RPAdd:SKIP! Comments:INFO! END");
+            "RPName:NAME! NAME/CS+ RPPhone:PHONE! RPAdd:SKIP! Comments:INFO END");
   }
 
   @Override
@@ -36,13 +36,19 @@ public class MNHennepinCountyBParser extends FieldProgramParser {
       data.strSource = match.group(1);
     }
 
+    String[] flds;
     int pt = body.indexOf(", Comments:");
-    if (pt < 0) return false;
-
-    String[] tflds = DELIM.split(body.substring(0,pt).trim());
-    String[] flds = new String[tflds.length+1];
-    System.arraycopy(tflds, 0, flds, 0, tflds.length);
-    flds[tflds.length] = body.substring(pt+2);
+    if (pt >= 0) {
+      String[] tflds = DELIM.split(body.substring(0,pt).trim());
+      flds = new String[tflds.length+1];
+      System.arraycopy(tflds, 0, flds, 0, tflds.length);
+      flds[tflds.length] = body.substring(pt+2);
+    } else if (body.endsWith(", No Comments")) {
+      body = body.substring(0, body.length()-13).trim();
+      flds = DELIM.split(body);
+    } else {
+      return false;
+    }
 
     return parseFields(flds, data);
   }
@@ -75,7 +81,7 @@ public class MNHennepinCountyBParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d\\d:\\d\\d:\\d\\d) CDT");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d\\d:\\d\\d:\\d\\d) C[DS]T");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
