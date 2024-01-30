@@ -1,103 +1,54 @@
 package net.anei.cadpage.parsers.TN;
 
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchB2Parser;
+import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class TNClayCountyParser extends DispatchB2Parser {
+public class TNClayCountyParser extends FieldProgramParser {
 
   public TNClayCountyParser() {
-    super(CITY_LIST, "CLAY COUNTY", "TN");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(
-        "AMOS MCLERRAN",
-        "B THOMPSON",
-        "BETT BUFORD",
-        "BILLIE HILL",
-        "CLAY COUNTY",
-        "DRY MILL CREEK",
-        "FIRE HALL",
-        "JAMES WHITE",
-        "JIM SHORT",
-        "JOE STONE",
-        "KNOB CREEK",
-        "MAYFIELD BROWN",
-        "MOSS ARCOT",
-        "NEELEY CREEK",
-        "PEA RIDGE FIRETOWER",
-        "ROCK SPRINGS",
-        "ROSS BOLES",
-        "SCOTT HOLLOW",
-        "UNION HILL"
-    );
-  }
-  
-  @Override
-  protected boolean isPageMsg(String body) {
-    return body.contains(">") && body.contains(" Cad:");
+    super("CLAY COUNTY", "TN",
+          "CFS_Number:ID! How_Received:SKIP! Call_Taker:SKIP! Incident:CALL! Add'l_Incident_Code:CODE! Call_Details:INFO! Caution?:ALERT! " +
+                "Lat:GPS1! Long:GPS2! Name:NAME! Address:ADDRCITYST! Common_Name:PLACE! Cross_Streets:X! Calling_Number:PHONE! " +
+                "Location_Details:PLACE! Law_Zone:MAP! Departments:SRC! END");
   }
 
   @Override
-  protected int getExtraParseAddressFlags() {
-    return FLAG_AT_MEANS_CROSS;
+  public String getFilter() {
+    return "serviceacct@opecd.com";
   }
 
+  @Override
+  public boolean parseFields(String[] flds, Data data) {
+    for (int ndx = 0; ndx < flds.length; ndx++) {
+      flds[ndx] = stripFieldEnd(flds[ndx], "None");
+    }
+    return super.parseFields(flds, data);
+  }
 
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "4-WHEELER/MOTORCYCLE/ATV",
-      "ALARM",
-      "AMBULANCE NEEDED",
-      "ANIMAL OR LIVESTOCK CALL",
-      "BUSY",
-      "CHEST PAIN",
-      "DEBRIS IN ROADWAY",
-      "DIABETIC", 
-      "DOMESTIC VIOLENCE",
-      "DOMESTIC W/WEAPONS",
-      "DRIVING WHILE DRUNK",
-      "FALL",
-      "HEART ATTACK",
-      "LARCENY",
-      "MOTORIST ASSIST",
-      "PROWLER",
-      "PUBLIC DRUNK",
-      "RAPE",
-      "RECKLESS DRIVER",
-      "SEIZURES",
-      "SERVING WARRANT",
-      "SHORT OF BREATH",
-      "SICKNESS (GENERAL)",
-      "STROKE",
-      "SUSPICIOUS VEHICLE",
-      "TEST CALL",
-      "UNLOCK CAR DOOR",
-      "VEHICLE ACCIDENT-INJURY", 
-      "VEHICLE ACCIDENT-PD",
-      "WANT OFFICER",
-      "WATER OUTAGE",
-      "WELFARE CHECK"
-  );
+  @Override
+  public Field getField(String name) {
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ALERT")) return new MyAlertField();
+    return super.getField(name);
+  }
 
-  private static final String[] CITY_LIST = new String[]{
-    "ARCOT",
-    "BEECH BETHANY",
-    "BRIMSTONE",
-    "BUTLER'S LANDING",
-    "CELINA",
-    "DENTON CROSSROADS",
-    "FREE HILL",
-    "HAMILTON BRANCH",
-    "HERMITAGE SPRINGS",
-    "HILHAM",
-    "LILY DALE",
-    "MAPLE GROVE",
-    "MCLERRAN",
-    "MOSS",
-    "NEELY CROSSROADS",
-    "OAK GROVE",
-    "RED BOILING SPRINGS",
-    "PEA RIDGE",
-    "SHANKY BRANCH", 
-    "WHITLEYVILLE"
-  };
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - Log - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
+    }
+  }
+
+  private class MyAlertField extends AlertField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equalsIgnoreCase("No")) return;
+      if (field.equalsIgnoreCase("Yes")) field = "** USE CAUTION **";
+      super.parse(field, data);
+    }
+  }
 }
