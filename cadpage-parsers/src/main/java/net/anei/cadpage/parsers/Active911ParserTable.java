@@ -2425,7 +2425,7 @@ public class Active911ParserTable {
       "US/TX/EastHarrisCountyCommunications","TXCyCreekCommCenterA",
       "US/TX/EastlandCounty",             "TXEastlandCounty",
       "US/TX/ECOM",                       "TXCyCreekCommCenter",
-      "US/TX/EforcesoftawreEllisCounty",  "TXEllisCounty",
+      "US/TX/EforcesoftawreEllisCounty",  "TXEllisCountyA,TXEllisCountyD",
       "US/TX/Eforcesoftware",             "TXWhartonCounty",
       "US/TX/EforcesoftwareHendersonCounty","TXHendersonCounty",
       "US/TX/EforcesoftwareHoustonCounty","TXHoustonCountyA",
