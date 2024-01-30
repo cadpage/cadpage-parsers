@@ -6,8 +6,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Ellis County, TX
  */
 public class TXEllisCountyParser extends GroupBestParser {
-  
+
   public TXEllisCountyParser() {
-    super(new TXEllisCountyAParser(), new TXEllisCountyBParser(), new TXEllisCountyCParser());
+    super(new TXEllisCountyAParser(),
+          new TXEllisCountyBParser(),
+          new TXEllisCountyCParser(),
+          new TXEllisCountyDParser());
   }
 }

@@ -10,6 +10,6 @@ public class GATelfairCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "telfairwheelere911@windstream.net";
+    return "telfairwheelere911@windstream.net,caliber@telfairwheelere911.com";
   }
 }
