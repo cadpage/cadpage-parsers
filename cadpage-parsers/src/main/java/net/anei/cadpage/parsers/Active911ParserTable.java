@@ -2695,6 +2695,7 @@ public class Active911ParserTable {
       "US/WA/KCFPD",                      "WAKlickitatCounty",
       "US/WA/KentRegional",               "WAKingCounty",
       "US/WA/KingCounty",                 "WAKingCountyA,WAKingCountyD,WASnohomishCountyE",
+      "US/WA/KingCountyInternational",    "WAKingCountyC",
       "US/WA/KitsapCounty",               "WAKitsapCounty",
       "US/WA/KlickitatCounty",            "WAKlickitatCounty",
       "US/WA/LewisCounty",                "WALewisCounty",
