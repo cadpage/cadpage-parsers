@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.TX;
 
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -8,8 +9,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchRedAlertParser;
 
 
 public class TXTarrantCountyAParser extends DispatchRedAlertParser {
-
-  private static final Pattern FMRD_PTN = Pattern.compile("\\bF *M(?: +RD)(?= +\\d+)");
 
   public TXTarrantCountyAParser() {
     super("TARRANT COUNTY","TX");
@@ -27,10 +26,24 @@ public class TXTarrantCountyAParser extends DispatchRedAlertParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern FMRD_PTN = Pattern.compile("\\bF *M(?: +RD)(?= +\\d+)");
+  private static final Pattern PRIORITY_CALL_PTN = Pattern.compile("Pri(?:ority)? (\\d)[, ]+(.*)");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     body = FMRD_PTN.matcher(body).replaceAll("FM");
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    Matcher match = PRIORITY_CALL_PTN.matcher(data.strCall);
+    if (match.matches()) {
+      data.strPriority = match.group(1);
+      data.strCall = match.group(2);
+    }
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "PRI " + super.getProgram();
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
