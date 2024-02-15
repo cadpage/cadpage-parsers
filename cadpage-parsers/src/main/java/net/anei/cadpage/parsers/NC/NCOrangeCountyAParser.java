@@ -1,18 +1,27 @@
 package net.anei.cadpage.parsers.NC;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class NCOrangeCountyAParser extends DispatchOSSIParser {
-  
+
   public NCOrangeCountyAParser() {
     super(CITY_LIST, "ORANGE COUNTY", "NC",
            "ID? ADDR CITY? CALL! CH? CODE? ID? INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "@cedargrovefire.org,cadpage@orangeem.org,cad@orangecountync.gov,Orange Co EMS Dispatch,CFDFireCallsDistList@townofcarrboro.org,CHFDdispatch@townofchapelhill.org";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    boolean good = body.startsWith("CAD:");
+    if (!good) body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    return good || !data.strCallId.isEmpty() || !data.strCode.isEmpty();
   }
 
   @Override
@@ -22,7 +31,7 @@ public class NCOrangeCountyAParser extends DispatchOSSIParser {
     if (name.equals("CODE")) return new CodeField("\\d{1,2}[A-Z]\\d{1,2}[A-Z]?", true);
     return super.getField(name);
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
 
       // Cities
@@ -31,7 +40,7 @@ public class NCOrangeCountyAParser extends DispatchOSSIParser {
       "DURHAM",
       "HILLSBOROUGH",
       "MEBANE",
-      
+
       // Townships
       "BINGHAM TWP",
       "CEDAR GROVE TWP",
@@ -40,7 +49,7 @@ public class NCOrangeCountyAParser extends DispatchOSSIParser {
       "ENO TWP",
       "HILLSBOROUGH TWP",
       "LITTLE RIVER TWP",
-      
+
       // Unincorporated Communities
       "BLACKWOOD",
       "BUCKHORN",
