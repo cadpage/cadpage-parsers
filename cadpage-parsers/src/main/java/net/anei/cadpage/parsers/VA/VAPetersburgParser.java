@@ -11,24 +11,44 @@ public class VAPetersburgParser extends FieldProgramParser {
 
   public VAPetersburgParser() {
     super("PETERSBURG", "VA",
-          "ID UNIT CALL ADDRCITYST! PLACE XST1:X! XST2:X! NOTES:INFO! END");
+          "Number:ID Incident_Type:CALL Call_Location:ADDRCITYST! Location_Details:PLACE Cross_Street:X! Address:SKIP! Responding_Units:UNIT! " +
+               "Details:INFO! Message:EMPTY! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Business:PLACE! Time_of_Dispatch:DATETIME");
   }
 
   @Override
   public String getFilter() {
-    return "CAD@petersburg-police.com,cad@petersburg-va.org";
+    return "cadnoreply@petersburg-va.org";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(" \\| "), data);
+    body = stripFieldEnd(body, "*");
+    return super.parseMsg(body, data);
+  }
+
+  @Override
+  public boolean parseFields(String[] flds, Data data) {
+    for (int j = 0; j < flds.length; j++) {
+      flds[j] = stripFieldEnd(flds[j], "None");
+    }
+    return super.parseFields(flds, data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\$([A-Z]{1,5}\\d{2}-\\d{6})", true);
+    if (name.equals("ID")) return new MyIdField();
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern APT_PTN = Pattern.compile("(.*?) *\\bAPT\\b *(.*)");
@@ -47,5 +67,15 @@ public class VAPetersburgParser extends FieldProgramParser {
     public String getFieldNames() {
       return "PLACE APT";
     }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
+    }
+
   }
 }
