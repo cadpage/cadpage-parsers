@@ -219,7 +219,8 @@ public class ManageParsers {
         "OHClarkCountyB",     "General",
         "OHClarkCountyC",     "General",
         "OHSummitCountyF",    "General",                 // 01/08/2024
-        "PALackawannaCountyA","General"                 // 01/29/2024
+        "PALackawannaCountyA","General",                 // 01/29/2024
+        "NCHarnettCountyB",   "General"                 // 02/16/2024
   });
 
 }

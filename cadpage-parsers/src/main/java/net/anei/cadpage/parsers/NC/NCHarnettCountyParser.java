@@ -8,7 +8,6 @@ public class NCHarnettCountyParser extends GroupBestParser {
 
   public NCHarnettCountyParser() {
     super(new NCHarnettCountyAParser(),
-          new NCHarnettCountyBParser(),
           new NCHarnettCountyCParser(),
           new NCHarnettCountyDParser());
   }
