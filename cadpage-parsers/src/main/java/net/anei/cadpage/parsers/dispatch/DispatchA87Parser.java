@@ -9,12 +9,14 @@ public class DispatchA87Parser extends FieldProgramParser {
 
   public DispatchA87Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Time:DATETIME Police_Call_Type:CALL! Fire_Call_Type:CALL/L! EMS_Call_Type:CALL/L? Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! " +
-              "Additional_Location_Info:PLACE! Nature_of_Call:CALL/SDS? Assigned_Units:UNIT! ( Police_Priority:PRI! Police_Status:SKIP! Fire_Priority:PRI? Fire_Status:SKIP! EMS_Priority:PRI? EMS_Status:SKIP? | ) " +
-              "Quadrant:MAP! District:MAP/L! Beat:MAP/L! CFS_Number:SKIP? Primary_Incident:ID! Narrative:INFO! INFO/N+ Latitude:GPS END");
+          "Call_Time:DATETIME Police_Call_Type:CALL! Fire_Call_Type:CALL/L! EMS_Call_Type:CALL/L? Address:ADDRCITY! Common_Name:PLACE! Latitude,Longitude:GPS? Closest_Intersection:X! Additional_Location_Info:PLACE! " +
+              "( Quadrant:MAP! Beat:MAP/L! Assigned_Units:UNIT! CFS_Number:SKIP? Incident:ID! Police_Radio_Channel:CH! Fire_Radio_Channel:CH/L! EMS_RadioChannel:CH/L Narrative:INFO/N! INFO/N+ " +
+              "| Nature_of_Call:CALL/SDS? Assigned_Units:UNIT! ( Police_Priority:PRI! Police_Status:SKIP! Fire_Priority:PRI? Fire_Status:SKIP! EMS_Priority:PRI? EMS_Status:SKIP? | ) " +
+                    "Quadrant:MAP! District:MAP/L! Beat:MAP/L! CFS_Number:SKIP? Primary_Incident:ID! Narrative:INFO! INFO/N+ Latitude:GPS END " +
+              ")");
   }
 
-  private static final Pattern DELIM = Pattern.compile("\n| (?=(?:Common Name|Additional Location Info|Police Status|Fire Status|EMS Status|District|Beat):)");
+  private static final Pattern DELIM = Pattern.compile("\n| (?=(?:Common Name|Additional Location Info|Police Status|Fire Status|EMS Status|District|Beat|(?:Police|Fire|EMS) Radio Channel):)");
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(DELIM.split(body), data);
