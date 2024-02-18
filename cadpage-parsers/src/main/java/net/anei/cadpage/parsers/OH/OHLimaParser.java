@@ -7,39 +7,46 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHLimaParser extends FieldProgramParser {
-  
+
   public OHLimaParser() {
-    super("LIMA", "OH", 
-          "ID! Time_Out:DATETIME! CALL! ADDR! COMMON_NAME:NAME! CROSS_1:X! CROSS_2:X! INFO/N+");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "Dispatch@cityhall.lima.oh.us";
-  }
-  
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.startsWith("CAD Page ")) return false;
-    return parseFields(body.split("\n"), data);
-  }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d\\d-\\d{6}", true);
-    if (name.equals("DATETIME")) return new MyDateTimeField();
-    return super.getField(name);
-  }
-  
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4})@(\\d\\d:\\d\\d:\\d\\d)");
-  private class MyDateTimeField extends DateTimeField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      data.strTime = match.group(2);
-    }
+    super("LIMA", "OH",
+          "Call_Date/Time:DATETIME! Dispatched_Units:UNIT! Fire/EMS_Call_Type:CODE_CALL! Nature_of_Call:CALL/SDS! Call_Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Quadrant:MAP! Incident#:ID! Desc:INFO! INFO/N+");
   }
 
+  @Override
+  public String getFilter() {
+    return "lpd-dispatch@cityhall.lima.oh.us";
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("!")) return false;
+    return parseFields(body.split(";\n*|\n+"), data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    return super.getField(name);
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d+\\S+) *- *(.*?)(?: - .*)?");
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (!match.matches()) {
+        data.strCall = field;
+      } else {
+        data.strCode = match.group(1);
+        data.strCall = match.group(2).trim();
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
 }
