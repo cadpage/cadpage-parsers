@@ -7,7 +7,7 @@ public class MDSaintMarysCountyBParser extends DispatchH05Parser {
 
   public MDSaintMarysCountyBParser() {
     super("SAINT MARYS COUNTY", "MD",
-          "Common_Name:PLACE! Address:ADDRCITY! Call_Type:CALL! Call_Date/Time:DATETIME! Units:EMPTY! UNITS<+ GPS:GPS! " +
+          "Common_Name:PLACE! Address:ADDRCITY! Call_Type:CALL! Call_Date/Time:DATETIME! Units:UNIT! UNITS<+ GPS:GPS! " +
                 "Box:BOX! Radio_Channel:CH! Dispatch_Update:INFO! CFS_Number:SKIP! Incident_#:ID! Narrative:INFO/N! INFO/N+",
                 "tr");
   }

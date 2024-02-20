@@ -11,7 +11,9 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
 
   public SCCharlestonCountyAParser() {
     super("CHARLESTON COUNTY", "SC",
-          "( Comment:INFO ( Problem:CALL! Address:ADDR! X_Street:X! " +
+          "( PN:CALL! AD:ADDR! IC:CH! UN:UNIT! END " +
+          "| IN:ID! PN:CODE_CALL! IC:CH! PR:PLACE! AD:ADDR! CS:X! CT:CITY! BD:EMPTY! AN:UNIT! END " +
+          "| Comment:INFO ( Problem:CALL! Address:ADDR! X_Street:X! " +
                          "| IN:ID! PN:CALL! IC:EMPTY! PR:APT! AD:ADDR! CS:X! CT:CITY! BD:EMPTY! AN:SKIP! ) " +
           "| PREFIX Address:ADDR! X_Street:X Cmd_Channel:CH% " +
           "| ADDR2/SC! X_Street:X Cmd_Channel:CH! Units_Assigned:UNIT% Time:TIME " +
@@ -27,6 +29,8 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
+
+  private static final Pattern ID3_PTN = Pattern.compile("\\d{2}-\\d{5}");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -54,6 +58,7 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
                  .replace(",Problem:", " Problem:")
                  .replace(",IN:", " IN:")
                  .replace("IC:", " IC:");
+      body = stripFieldEnd(body, " END");
       if (! super.parseMsg(body, data)) return false;
     }
     if (data.msgType == MsgType.GEN_ALERT) return true;
@@ -68,43 +73,6 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
 
     do {
       FParser p = new FParser(body);
-
-      if (p.checkAhead(93, "Cmd Chan:")) {
-        setFieldList("UNIT ID CALL ADDR APT CH");
-        data.strUnit = p.get(10);
-        data.strCallId = p.get(13);
-        data.strCall = stripFieldStart(p.get(30), "*");
-        parseAddress(p.get(40), data);
-        if (!p.check("Cmd Chan:")) return false;
-        data.strChannel = p.get();
-        return true;
-      }
-
-      if (p.checkAhead(20, "DPC:")) {
-        setFieldList("CALL UNIT ID INFO");
-        data.strCall = "Times";
-        data.strUnit = p.get(9);
-        data.strCallId = p.get(11);
-        parseLabeledField(p.get(4), p.get(5), data);
-        for (int ndx = 1; ndx <= 7; ndx++) {
-          String key = p.get(ndx < 7 ? 4 : 6);
-          String value = p.get(8);
-          if (parseLabeledField(key, value, data) && ndx >= 6) data.msgType = MsgType.RUN_REPORT;
-        }
-        return true;
-      }
-
-      if (p.checkAhead(20, "Unit:")) {
-        setFieldList("ID UNIT INFO ADDR APT");
-        data.msgType = MsgType.GEN_ALERT;
-        data.strCallId = p.get(20);
-        if (!p.check("Unit:")) return false;
-        data.strUnit = p.get(10);
-        data.strSupp = p.get(64);
-        if (!p.check("Address:")) return false;
-        parseAddress(p.get(), data);
-        return true;
-      }
 
       if (p.checkAhead(116, " U:")) {
         setFieldList("CALL APT ADDR X GPS UNIT");
@@ -191,6 +159,23 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    p = new FParser(body);
+    String id = p.get(20);
+    if (ID3_PTN.matcher(id).matches() && p.check(", ")) {
+      String call = p.get(30);
+      if (!p.check(", ")) return false;
+      String addr = p.get(40);
+      if (!p.check(",")) return false;
+      String unit = p.get();
+
+      setFieldList("ID CALL ADDR UNIT");
+      data.strCallId = id;
+      data.strCall = call;
+      parseAddress(addr, data);
+      data.strUnit = unit;
+      return true;
+    }
+
     return false;
   }
 
@@ -200,10 +185,13 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
     return gps.substring(0,pt)+'.'+gps.substring(pt);
   }
 
-  private boolean parseLabeledField(String key, String value, Data data) {
-    if (value.isEmpty()) return false;
-    data.strSupp = append(data.strSupp, "\n", key + value);
-    return true;
+  @Override
+  public Field getField(String name) {
+    if (name.equals("PREFIX")) return new PrefixField();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
+    if (name.equals("CH")) return new ChannelField("_ *(.*)", false);
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    return super.getField(name);
   }
 
   private static final Pattern PREFIX_PTN =
@@ -256,10 +244,21 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
     }
   }
 
-  @Override
-  public Field getField(String name) {
-    if (name.equals("PREFIX")) return new PrefixField();
-    if (name.equals("ADDR2")) return new MyAddress2Field();
-    return super.getField(name);
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,3}[A-E]\\d{1,2}[A-Z]*)_(.*)");
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
 }
