@@ -51,11 +51,11 @@ public class DispatchH01Parser extends HtmlProgramParser {
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      String apt = "";
+      String trailApt = "";
       String cross = "";
       Matcher match = TRAIL_APT_PTN.matcher(field);
       if (match.find()) {
-        apt = match.group(1).trim();
+        trailApt = match.group(1).trim();
         field = field.substring(0,match.start()).trim();
       }
       int pt = matchTrailParen(field);
@@ -80,6 +80,7 @@ public class DispatchH01Parser extends HtmlProgramParser {
         data.strCross = cross;
       }
 
+      String apt = "";
       String city = null;
       String zip = null;
       for (String part : X_DELIM_PTN.split(addr)) {
@@ -89,7 +90,12 @@ public class DispatchH01Parser extends HtmlProgramParser {
         String tzip = null;
         for (String seg : part.split(",")) {
           seg = seg.trim();
-          if (STATE_PTN.matcher(seg).matches()) {
+          if (seg.isEmpty()) continue;
+          match = APT_PTN.matcher(seg);
+          if (match.matches()) {
+            apt = append(apt, "-", match.group(1));
+          }
+          else if (STATE_PTN.matcher(seg).matches()) {
             data.strState = seg;
           }
           else if (ZIP_PTN.matcher(seg).matches()) {
@@ -123,21 +129,22 @@ public class DispatchH01Parser extends HtmlProgramParser {
           zip = match.group(2);
         }
         parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+        data.strApt = append(data.strApt, "-", apt);
         if (zip != null && data.strCity.isEmpty()) data.strCity = zip;
       }
 
-      if (apt.length() > 0) {
-        if (apt.endsWith("MM")) {
-          apt = "MM " + apt.substring(0,apt.length()-2).trim();
-          data.strAddress = append(data.strAddress, " ", apt);
-        } else if (apt.startsWith("MM")) {
-          data.strAddress = append(data.strAddress, " ", apt);
-        } else if (isValidAddress(apt)) {
-          data.strCross = append(data.strCross, " / ", apt);
+      if (trailApt.length() > 0) {
+        if (trailApt.endsWith("MM")) {
+          trailApt = "MM " + trailApt.substring(0,trailApt.length()-2).trim();
+          data.strAddress = append(data.strAddress, " ", trailApt);
+        } else if (trailApt.startsWith("MM")) {
+          data.strAddress = append(data.strAddress, " ", trailApt);
+        } else if (isValidAddress(trailApt)) {
+          data.strCross = append(data.strCross, " / ", trailApt);
         } else {
-          match = APT_PTN.matcher(apt);
-          if (match.matches()) apt = match.group(1);
-          data.strApt = append(data.strApt, "-", apt);
+          match = APT_PTN.matcher(trailApt);
+          if (match.matches()) trailApt = match.group(1);
+          data.strApt = append(data.strApt, "-", trailApt);
         }
       }
     }
