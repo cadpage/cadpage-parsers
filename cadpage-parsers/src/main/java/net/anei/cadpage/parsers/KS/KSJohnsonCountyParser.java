@@ -14,7 +14,8 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
   public KSJohnsonCountyParser() {
     super("JOHNSON COUNTY", "KS",
           "( Address_UpdateIncident_#:ID! Add:ADDR! Apt:APT! Units:UNIT " +
-          "| Comment:INFO Nature:CALL! Add:ADDR! Apt:APT! Lat:GPS1/d! Lon:GPS2/d! " +
+          "| Comment:INFO Nature:CALL! Add:ADDR! Apt:APT! Lat:GPS1/d! Lon:GPS2/d! Incident:ID " +
+          "| Nature:CALL! incident#:ID! Unit:UNIT_INFO! " +
           "| SRC Add:ADDR! Apt:APT Loc:PLACE Nature:CALL! Grid:MAP! Incident:ID Cross:X TAC:CH City:CITY Units:UNIT LAT:GPS1/d LON:GPS2/d Bn:SRC ) END");
   }
 
@@ -63,6 +64,7 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
     if (name.equals("SRC")) return new MySourceField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("UNIT_INFO")) return new MyUnitInfoField();
     return super.getField(name);
   }
 
@@ -92,5 +94,23 @@ public class KSJohnsonCountyParser extends FieldProgramParser {
       field = stripFieldEnd(field, ".");
       super.parse(field, data);
     }
+  }
+
+  private static final Pattern UNIT_INFO_PTN = Pattern.compile("(\\S+) *(\\d\\).*)");
+  private class MyUnitInfoField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = UNIT_INFO_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.msgType = MsgType.GEN_ALERT;
+      data.strUnit = match.group(1);
+      data.strSupp = match.group(2);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT INFO";
+    }
+
   }
 }
