@@ -19,6 +19,7 @@ public class DispatchA87Parser extends FieldProgramParser {
   private static final Pattern DELIM = Pattern.compile("\n| (?=(?:Common Name|Additional Location Info|Police Status|Fire Status|EMS Status|District|Beat|(?:Police|Fire|EMS) Radio Channel):)");
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace("Latitude, Longitude:", "Latitude,Longitude:");
     return parseFields(DELIM.split(body), data);
   }
 
