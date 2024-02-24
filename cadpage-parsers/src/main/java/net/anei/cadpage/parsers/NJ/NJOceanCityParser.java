@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NJ;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -9,6 +10,7 @@ public class NJOceanCityParser extends DispatchA44Parser {
 
   public NJOceanCityParser() {
     super("OCEAN CITY", "NJ");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
   
   @Override
@@ -34,4 +36,8 @@ public class NJOceanCityParser extends DispatchA44Parser {
       "EMS RECALL",
       "FD RECALL"
   );
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "71 TYLER ROAD",                        "+39.239520,-74.706090"
+  });
 }
