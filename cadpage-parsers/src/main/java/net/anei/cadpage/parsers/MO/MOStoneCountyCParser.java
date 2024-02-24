@@ -9,12 +9,12 @@ public class MOStoneCountyCParser extends MOBarryCountyCParser {
 
   @Override
   public String getFilter() {
-    return "stoneco911@gmail.com";
+    return "stoneco911@gmail.com,stonedispatch@sces911.org";
   }
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     return super.parseHtmlMsg(subject, body, data);
   }
-  
+
 }
