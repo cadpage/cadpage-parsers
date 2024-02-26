@@ -19,7 +19,7 @@ public class TXGillespieCountyParser extends FieldProgramParser {
 
   public TXGillespieCountyParser() {
     super("GILLESPIE COUNTY", "TX",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! DATE:DATETIME! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! DATE:DATETIME! MAP:MAP! UNIT:UNIT! NATURE_OF_CALL:CALL/SDS! INFO/N+");
   }
 
   @Override
@@ -31,7 +31,7 @@ public class TXGillespieCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("!DISP!") && !subject.equals("!TESTDISP!")) return false;
+    if (!subject.equals("!LERMS!")) return false;
     return parseFields(DELIM.split(body), data);
   }
 
