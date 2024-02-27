@@ -1559,6 +1559,7 @@ public class Active911ParserTable {
       "US/NC/PasquotankCounty",           "NCPasquotankCounty",
       "US/NC/PenderCounty",               "NCPenderCounty",
       "US/NC/PenderSheriff",              "NCPenderCounty",
+      "US/NC/PerquimansCounty",           "NCGatesCounty",
       "US/NC/PersonCounty",               "NCPersonCounty",
       "US/NC/PineyCreek",                 "NCAlleghanyCounty",
       "US/NC/PittCounty",                 "NCPittCounty",
