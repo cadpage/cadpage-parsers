@@ -1409,7 +1409,6 @@ public class ParserList {
               ,"OKLoveCounty"                   ,"Love County, OK"
               ,"OKMajorCounty"                  ,"Major County, OK"
               ,"OKMayesCounty"                  ,"Mayes County, OK"
-              ,"OKMuskogeeCounty"               ,"Muskogee County, OK"
               ,"OKOklahomaCounty"               ,"Oklahoma County, OK"
               ,"OKPayneCounty"                  ,"Payne County, OK"
               ,"OKPontotocCounty"               ,"Pontotoc County, OK"
