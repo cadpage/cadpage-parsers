@@ -64,6 +64,15 @@ public class DispatchH01Parser extends HtmlProgramParser {
         cross = stripFieldStart(cross, ";");
         field = field.substring(0,pt).trim();
       }
+
+      if (trailApt.isEmpty()) {
+        match = TRAIL_APT_PTN.matcher(field);
+        if (match.find()) {
+          trailApt = match.group(1).trim();
+          field = field.substring(0,match.start()).trim();
+        }
+      }
+
       String addr = field;
 
       if (addr.startsWith("@")) {
