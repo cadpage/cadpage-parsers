@@ -10,7 +10,7 @@ public class INBooneCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "interact@co.boone.in.us";
+    return "interact@co.boone.in.us,CAD-Auto-Send@co.boone.in.us";
   }
 
   @Override
@@ -23,5 +23,5 @@ public class INBooneCountyBParser extends DispatchSPKParser {
     }
     return true;
   }
-  
+
 }
