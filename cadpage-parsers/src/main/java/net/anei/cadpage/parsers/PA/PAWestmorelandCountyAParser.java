@@ -102,6 +102,8 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
             }
           }
           cityCode = p.getLast(' ');
+          int pt = cityCode.indexOf(',');
+          if (pt >= 0) cityCode = cityCode.substring(0, pt);
           data.strCity = convertCodes(cityCode, CITY_CODES);
           super.parse(p.get(), data);
           data.strApt = append(data.strApt, "-", apt);
@@ -109,7 +111,13 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
 
         else {
           if (part.startsWith("@")) {
-            data.strPlace = append(data.strPlace, " - ", part.substring(1).trim());
+            part = part.substring(1).trim();
+            int pt = part.lastIndexOf(',');
+            if (pt >= 0) {
+              data.strApt = append(data.strApt, "-", part.substring(pt+1).trim());
+              part = part.substring(0, pt).trim();
+            }
+            data.strPlace = append(data.strPlace, " - ", part);
           } else {
             Matcher match = ADDR_APT_PTN.matcher(part);
             if (match.matches()) {
@@ -117,6 +125,11 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
               if (apt == null) apt = part;
               data.strApt = append(data.strApt, "-", apt);
             } else {
+              int pt = part.lastIndexOf(',');
+              if (pt >= 0) {
+                data.strApt = append(data.strApt, "-", part.substring(pt+1).trim());
+                part = part.substring(0, pt).trim();
+              }
               data.strPlace = append(data.strPlace, " - ", part);
             }
           }
