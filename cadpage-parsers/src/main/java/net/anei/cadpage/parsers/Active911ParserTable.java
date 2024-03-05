@@ -479,6 +479,7 @@ public class Active911ParserTable {
       "US/FL/RegionalPsiSecond",          "FLBrowardCounty",
       "US/FL/SeminoleCounty",             "FLSeminoleCountyA",
       "US/FL/SouthWalton",                "FLWaltonCounty",
+      "US/FL/TaylorCounty",               "FLTaylorCounty",
       "US/FL/WashingtonCountySheriff",    "FLWashingtonCounty",
       "US/GA/BarrowCounty",               "GABarrowCounty",
       "US/GA/BrooksCounty",               "GABrooksCounty",
