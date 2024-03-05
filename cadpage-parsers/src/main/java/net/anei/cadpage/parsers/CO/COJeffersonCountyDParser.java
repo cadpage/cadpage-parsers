@@ -10,7 +10,9 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
 
   public COJeffersonCountyDParser() {
     super(CITY_LIST, "JEFFERSON COUNTY", "CO",
-          "CALL ADDR APT CITY X ( MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID DATETIME! | UNIT UNIT/C+? ID DATETIME! ) INFO/N+");
+          "CALL ADDR APT ( SELECT/1 EMPTY? CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID DATETIME! " +
+                        "| PLACE X UNIT UNIT/C+? ID DATETIME! " +
+                        ") INFO/N+");
   }
 
   @Override
@@ -48,15 +50,18 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     // Reject COJeffersonCountyE
     if (body.startsWith("Unit:")) return false;
 
-    body = stripFieldStart(body, "Incident Notification:");
+    if (body.startsWith("Incident Notification:")) {
+      setSelectValue("2");
+      body = body.substring(22).trim();
+    } else {
+      setSelectValue("1");
+    }
 
     int pt = body.indexOf("\n\nThis email");
     if (pt >= 0) body = body.substring(0,pt).trim();
     String[] flds = DELIM.split(body);
     if (flds.length < 8) flds = body.split(",");
-    if (!parseFields(flds, data)) return false;
-    if (data.strCity.equals("UNINC JEFFERSON")) data.strCity = "JEFFERSON COUNTY";
-    return true;
+    return parseFields(flds, data);
   }
 
   @Override
@@ -67,10 +72,12 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{1,2}-[A-Z](?:-[A-Z]+)?", true);
+    if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
@@ -90,6 +97,23 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.lastIndexOf(" - ");
+      if (pt >= 0) {
+        data.strPlace = field.substring(0, pt).trim();
+        field = field.substring(pt+3).trim();
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
 
@@ -115,8 +139,11 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
           data.strPlace = field;
         }
       }
+      else if (field.equals("UNINC JEFFERSON")) {
+        data.strCity = "JEFFERSON COUNTY";
+      }
       else {
-        data.strCity = field;
+        data.strCity = stripFieldStart(field, "UNINC ");;
       }
     }
 
@@ -132,6 +159,23 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
       field = field.replace("Unk Cross Street", "");
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("NOT FOUND")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.lastIndexOf(" - ");
+      if (pt >= 0) field = field.substring(0, pt).trim();
       super.parse(field, data);
     }
   }
