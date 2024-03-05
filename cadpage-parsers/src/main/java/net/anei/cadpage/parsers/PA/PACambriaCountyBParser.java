@@ -36,6 +36,7 @@ public class PACambriaCountyBParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
 
@@ -85,6 +86,17 @@ public class PACambriaCountyBParser extends FieldProgramParser {
       match = CITY_COUNTY_PTN.matcher(city);
       if (match.matches()) city = match.group(1).trim();
       data.strCity = stripFieldEnd(city, " Boro");
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.contains("&") || field.contains(" - ")) {
+        super.parse(field, data);
+      } else {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_IMPLIED_INTERSECT | FLAG_ANCHOR_END, field, data);
+      }
     }
   }
 }
