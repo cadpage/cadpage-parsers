@@ -2343,6 +2343,7 @@ public class Active911ParserTable {
       "US/TN/RoaneCounty",                "TNRoaneCounty",
       "US/TN/SevierCounty",               "TNSevierCounty",
       "US/TN/SmithCounty",                "TNSmithCounty",
+      "US/TN/SullivanCounty",             "TNSullivanCounty",
       "US/TN/Traumasoft",                 "TNCockeCountyA",
       "US/TN/UnicoiCounty",               "TNUnicoiCounty",
       "US/TN/UnionCounty",                "TNUnionCountyB",
