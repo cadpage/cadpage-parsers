@@ -1501,6 +1501,7 @@ public class Active911ParserTable {
       "US/NC/DavidsonCountyTest",         "NCDavidsonCountyA",
       "US/NC/DavieCounty",                "NCDavieCounty",
       "US/NC/DeepGapFD",                  "NCWataugaCounty",
+      "US/NC/DPS",                        "NCWakeCountyF",
       "US/NC/DunnPD",                     "NCHarnettCountyD",
       "US/NC/DuplinCounty",               "NCDuplinCounty",
       "US/NC/DurhamCounty",               "NCDurhamCountyA",
