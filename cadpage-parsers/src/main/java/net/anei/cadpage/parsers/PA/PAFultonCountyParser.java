@@ -11,7 +11,7 @@ public class PAFultonCountyParser extends FieldProgramParser {
 
   public PAFultonCountyParser() {
     super("FULTON COUNTY", "PA",
-          "Units:EMPTY! UNIT! CALL! Location:EMPTY! ADDRCITY! X! Narrative:INFO! INFO/N+");
+          "Units:EMPTY! UNIT! CALL! Location:EMPTY! ADDRCITYST! X! Narrative:INFO! INFO/N+");
   }
 
   @Override
@@ -38,12 +38,12 @@ public class PAFultonCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     return super.getField(name);
   }
 
   private static final Pattern ADDR_GPS_X_PTN = Pattern.compile("(.*?) ([-+]?\\d{2,3}\\.\\d{6,} +[-+]?\\d{2,3}\\.\\d{6,}|-361 +-361)");
-  private class MyAddressCityField extends AddressCityField {
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("<UNKNOWN>")) {
@@ -60,7 +60,7 @@ public class PAFultonCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY GPS";
+      return "ADDR APT CITY ST GPS";
     }
   }
 }

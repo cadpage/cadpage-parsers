@@ -21,6 +21,9 @@ public class NJSomersetCountyCParser extends FieldProgramParser {
 
   @Override 
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    // Eliminate NJSomersetCOuntyA alerts
+    if (body.startsWith("Text Message")) return false;
     return parseFields(body.split("\\|"), 5, data);
   }
   
