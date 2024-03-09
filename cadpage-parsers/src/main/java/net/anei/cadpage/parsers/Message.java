@@ -180,6 +180,7 @@ public class Message {
     Pattern.compile("^ *(\\d)/(\\d)(?: / |\n\n|:)"),
     Pattern.compile("^([-\\w\\.]+@[\\w\\.]+) /(\\d)/(\\d) /"),
     Pattern.compile("^([-\\w\\.]+@[\\w\\.]+) / ([A-Za-z0-9 ]*?) / (\\d)/(\\d) +"),
+    Pattern.compile("^Dispatch / (\\d)/(\\d) +"),
     Pattern.compile("^(\\d)/(\\d)\n+"),
     Pattern.compile("^(\\d)/(\\d)(?![/\\d])"),
     Pattern.compile("^(?:\\(Con't\\) )?(\\d) of (\\d)\n"),
