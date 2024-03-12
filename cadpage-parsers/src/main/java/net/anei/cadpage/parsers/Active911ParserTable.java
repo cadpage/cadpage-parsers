@@ -362,6 +362,7 @@ public class Active911ParserTable {
       "US/CO/GrandJunctionAirport",       "COMesaCountyB",
       "US/CO/GreeleyFD",                  "COWeldCountyB",
       "US/CO/GunnisonCounty",             "COGunnisonCounty",
+      "US/CO/Hexagon",                    "COBoulderCountyC",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
       "US/CO/LaPlataCounty",              "COLaPlataCountyB",
       "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",

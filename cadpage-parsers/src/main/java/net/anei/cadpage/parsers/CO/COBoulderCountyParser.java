@@ -6,13 +6,15 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Boulder County, CO
  */
 public class COBoulderCountyParser extends GroupBestParser {
-  
+
 
   public COBoulderCountyParser() {
-    super(new COBoulderCountyAParser(), new COBoulderCountyBParser());
+    super(new COBoulderCountyAParser(),
+          new COBoulderCountyBParser(),
+          new COBoulderCountyCParser());
    }
 }
-  
+
 
 
 
