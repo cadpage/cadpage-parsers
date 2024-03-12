@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
-public class KYHardinCountyEParser extends DispatchA19Parser {
+public class KYHardinCountyEParser extends DispatchA71Parser {
 
   public KYHardinCountyEParser() {
     super("HARDIN COUNTY", "KY");
@@ -10,11 +10,6 @@ public class KYHardinCountyEParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
-  }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
+    return "paging@10-8systems.com";
   }
 }
