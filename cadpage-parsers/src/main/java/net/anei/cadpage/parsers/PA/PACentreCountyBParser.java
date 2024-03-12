@@ -48,7 +48,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern BOX_CALL_PTN = Pattern.compile("(\\d{2,})(?: +(.*))?");
+  private static final Pattern BOX_CALL_PTN = Pattern.compile("([-_A-Z0-9]+)(?: +(.*))?");
   private class MyBoxCallField extends Field {
 
     @Override
