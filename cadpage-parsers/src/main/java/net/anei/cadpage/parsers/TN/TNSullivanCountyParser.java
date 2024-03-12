@@ -10,7 +10,7 @@ public class TNSullivanCountyParser extends FieldProgramParser {
 
   public TNSullivanCountyParser() {
     super("SULLIVAN COUNTY", "TN",
-          "ADDRCITYST GPS1 GPS2 X DATETIME! INFO/N+? EMPTY/Z! END");
+          "ID? ADDRCITYST GPS1 GPS2 X DATETIME! INFO/N+? EMPTY/Z! END");
   }
 
   @Override
@@ -32,7 +32,9 @@ public class TNSullivanCountyParser extends FieldProgramParser {
     if (match.matches()) {
       data.strCode = match.group(1).trim();
       data.strCall = stripFieldEnd(match.group(2), " - None");
-    } else if (!subject.equals("- - None")) return false;
+    } else if (!subject.equals("- - None")) {
+      data.strCall = subject;
+    }
     int pt = body.indexOf("\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
     return parseFields(DELIM.split(body, -1), data);
@@ -45,6 +47,7 @@ public class TNSullivanCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
