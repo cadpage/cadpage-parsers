@@ -8,9 +8,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MNCottonwoodCountyParser extends FieldProgramParser {
 
+
   public MNCottonwoodCountyParser() {
-    super("COTTONWOOD COUNTY", "MN",
+    this("COTTONWOOD COUNTY", "MN");
+  }
+
+  public MNCottonwoodCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "DATETIME CALL ADDRCITYST ( NONE | INFO INFO/N+? ) UNIT! UNIT/C+? GPS1 GPS2");
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "MNCottonwoodCounty";
   }
 
   @Override
