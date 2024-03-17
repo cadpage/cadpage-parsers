@@ -10,7 +10,7 @@ Armstrong County, PA
 public class PAArmstrongCountyParser extends GroupBestParser {
 
   public PAArmstrongCountyParser() {
-    super(new PAArmstrongCountyBParser(),
-          new PAArmstrongCountyCParser());
+    super(new PAArmstrongCountyCParser(),
+          new PAArmstrongCountyEParser());
   }
 }
