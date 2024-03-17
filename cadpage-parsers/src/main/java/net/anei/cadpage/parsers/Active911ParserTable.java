@@ -2296,6 +2296,7 @@ public class Active911ParserTable {
       "US/SD/MobridgePD",                 "SDPerkinsCounty",
       "US/SD/PerkinsCounty",              "SDPerkinsCounty",
       "US/SD/PotterCounty",               "SDPotterCounty",
+      "US/SD/Watertown",                  "SDClarkCounty",
       "US/TN/AlcoaFD",                    "TNBlountCountyB",
       "US/TN/AMRBlount911",               "TNBlountCountyB",
       "US/TN/BedfordCounty",              "TNBedfordCounty",

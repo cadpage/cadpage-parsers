@@ -1570,6 +1570,7 @@ public class ParserList {
           ),
           new ParserCategory("South Dakota"
               ,"SDCampbellCounty"               ,"Campbell County, SD"
+              ,"SDClarkCounty"                  ,"Clark County, SD"
               ,"SDCorsonCounty"                 ,"Corson County, SD"
               ,"SDDeweyCounty"                  ,"Dewey County, SD"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
