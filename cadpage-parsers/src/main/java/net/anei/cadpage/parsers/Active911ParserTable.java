@@ -27,6 +27,7 @@ public class Active911ParserTable {
       "CA/AB/SturgeonCounty",             "ZCAABSturgeonCounty",
       "CA/AB/SylvanLake",                 "ZCAABRedDeerCounty",
       "CA/AB/Taber",                      "ZCAABTaber",
+      "CA/BC/Bulkley",                    "ZCABCSmithers",
       "CA/BC/CentralOkanagan",            "ZCABCCentralOkanagan",
       "CA/BC/GabriolaVFD",                "ZCABCNanaimo",
       "CA/BC/Interlakes",                 "ZCABCPrinceGeorge",

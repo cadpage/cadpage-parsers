@@ -2008,6 +2008,7 @@ public class ParserList {
               ,"ZCABCNanaimo"                   ,"Nanaimo, BC"
               ,"ZCABCPeaceRiverRegionalDistrict","Peace River Reginal District, BC"
               ,"ZCABCPrinceGeorge"              ,"Prince George, BC"
+              ,"ZCABCSmithers"                  ,"Smithers, BC"
               ,"ZCABCVancouverIsland"           ,"VancouverIsland, BC"
           ),
           new ParserCategory("New Brunswick, Canada"

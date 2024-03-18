@@ -7,14 +7,24 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
+
   public ZCABCPrinceGeorgeParser() {
-    super(CITY_LIST,  "PRINCE GEORGE", "BC",
+    this("PRINCE GEORGE", "BC");
+  }
+
+  public ZCABCPrinceGeorgeParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState,
           "Date:DATETIME! Dept:SRC Type:CALL! Address:ADDRCITY/S! Unit:APT Suite:APT 1st_Cross_Street:X 2nd_Cross_Street:X Building:PLACE Common_Place_Name:PLACE INFO/N+ Latitude:GPS1 Longitude:GPS2 Google_Maps_Link:SKIP Units_Responding:UNIT");
   }
 
   @Override
   public String getFilter() {
     return "donotreply@princegeorge.ca,donotreply@city.pg.bc.ca,@rdffg.bc.ca";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "ZCABCPrinceGeorge";
   }
 
   @Override
@@ -79,7 +89,9 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
         if (!apt.equals("0")) data.strApt = m.group(1);
         field = m.group(2);
       }
-      super.parse(field.replace(", BC", ""), data);
+      field = field.replace(", BC", "");
+      if (!field.contains(",")) field = field.replace(" RURAL ", ", RURAL ");
+      super.parse(field, data);
     }
 
     @Override
@@ -120,11 +132,78 @@ public class ZCABCPrinceGeorgeParser extends FieldProgramParser {
   public String adjustMapCity(String city) {
     int pt = city.indexOf('/');
     if (pt >= 0) city = city.substring(0, pt).trim();
+    if (city.endsWith(" AREA")) return "";
+    city = stripFieldStart(city, "RURAL ");
+    city = stripFieldEnd(city, " RURAL");
+    city = city.replace(" IR ", " ");
     return city;
   }
 
+  @Override
+  protected boolean isCity(String city) {
+    if (city.startsWith("RURAL ")) return true;
+    return super.isCity(city);
+  }
+
   private static final String[] CITY_LIST = {
+    "100 MILE HOUSE",
+    "150 MILE HOUSE",
+    "ALEXANDRIA",
+    "BABINE IR 25",
+    "BABINE LAKE",
+    "BARLOW CREEK",
+    "BIG CREEK",
+    "BLACK CREEK",
+    "BOUCHIE LAKE",
+    "BRIDGE LAKE",
+    "BURNS LAKE",
+    "CHILCOTIN / ESLER ROADS",
+    "CHIMNEY / FELKER LAKES",
+    "CLUCULZ LAKE",
+    "COMMODORE HEIGHTS / PINE VALLEY",
+    "DECKER LAKE",
+    "DEEP CREEK / TYEE LAKE",
+    "DEKA / SULPHUROUS LAKES",
+    "DOG CREEK ROAD AREA",
+    "ENTERPRISE",
+    "FORT FRASER",
+    "FOX MOUNTAIN",
+    "FRANCOIS LAKE",
+    "FRASER LAKE",
+    "GLENDALE / SODA CREEK ROAD",
+    "GRASSY PLAINS",
+    "HANCEVILLE",
+    "HORSEFLY",
+    "HOUSTON",
+    "KERSLEY",
+    "KITAMAAT",
+    "KITIMAT",
+    "KITIMAT RURAL",
+    "KNIFE CREEK",
+    "MIOCENE",
+    "MOOSE HEIGHTS / TEN MILE LAKE",
+    "NADLEH WHUTEN",
+    "NORALEE",
+    "NORTH LAKESIDE",
+    "PALLING",
+    "PEROW",
+    "PRIESTLY",
+    "PRINCE GEORGE",
     "QUESNEL",
-    "RED BLUFF"
+    "RED BLUFF",
+    "RED BLUFF / DRAGON LAKE",
+    "RISKE CREEK",
+    "ROSE LAKE",
+    "SHERIDAN LAKE",
+    "SMITHERS",
+    "SPRINGHOUSE",
+    "SUGARCANE RESERVE #1",
+    "TCHESINKUT LAKE",
+    "TINTAGEL",
+    "TELKWA",
+    "TOPLEY",
+    "TOPLEY LANDING",
+    "WILDWOOD",
+    "WILLIAMS LAKE"
   };
 }
