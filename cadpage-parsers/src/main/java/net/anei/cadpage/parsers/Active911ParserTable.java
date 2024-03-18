@@ -2829,6 +2829,7 @@ public class Active911ParserTable {
       "Vendor/EFORCE/Default",            "ALJeffersonCountyM",
       "Vendor/GeoConex/V109",             "TNCumberlandCountyA",
       "Vendor/GeoSafe/Default",           "OKLoganCounty",
+      "Vendor/Hexagon/Default",           "COBoulderCountyC",
       "Vendor/Iamresponding/Test",        "PALackawannaCountyB",
       "Vendor/Iamresponding/V2",          "ALBarbourCounty",
       "Vendor/Logis/Vlitech",             "TXHarrisCountyESD1C",

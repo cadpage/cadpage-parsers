@@ -10,7 +10,7 @@ public class COBoulderCountyCParser extends FieldProgramParser {
 
   public COBoulderCountyCParser() {
     super("BOULDER COUNTY", "CO",
-          "EVT#:ID! ECOD:CODE! ETYP:CALL! NAME:NAME! ADR1:ADDR! ADR2:APT! CITY:CITY! STCD:ST? LATI:GPS1! LONG:GPS2! PRIO:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! RADIO:CH! END");
+          "EVT#:ID! ECOD:CODE! ETYP:CALL! NAME:NAME! ADR1:ADDR! ADR2:APT! CITY:CITY! STCD:ST? LATI:GPS1! LONG:GPS2! PRIO:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! RADIO:CH END");
   }
 
   @Override
@@ -20,6 +20,7 @@ public class COBoulderCountyCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ST")) return new StateField("([A-Z]{2})(?: +\\d{5})?");
     if (name.equals("DATE")) return new MyDateField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d|", true);
     if (name.equals("UNIT")) return new MyUnitField();
