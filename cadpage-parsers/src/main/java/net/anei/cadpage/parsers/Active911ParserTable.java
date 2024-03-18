@@ -1420,6 +1420,7 @@ public class Active911ParserTable {
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
       "US/MS/Gulfport",                   "MSHarrisonCountyB,MSHarrisonCountyE,MSHarrisonCountyF",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
+      "US/MS/HernandoFD",                 "MSDeSotoCountyA",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/LoveFD",                     "MSDeSotoCountyB",
       "US/MS/NeshobaCounty",              "MSNeshobaCountyB",

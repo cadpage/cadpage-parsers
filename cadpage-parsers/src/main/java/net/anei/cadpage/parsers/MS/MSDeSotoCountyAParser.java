@@ -13,7 +13,7 @@ public class MSDeSotoCountyAParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "E911.AutoSend@obms.us";
+    return "E911.AutoSend@obms.us,Dispatch@hernandopolice.org";
   }
 
   private static final Pattern COR_PTN = Pattern.compile("\\bCOR\\b", Pattern.CASE_INSENSITIVE);
