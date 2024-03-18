@@ -798,6 +798,7 @@ public class Active911ParserTable {
       "US/KS/FordCountyCommunications",   "KSFordCounty",
       "US/KS/FranklinCounty",             "KSFranklinCounty",
       "US/KS/FrontKS",                    "KSCrawfordCountyB",
+      "US/KS/GearyCounty",                "KSGearyCounty",
       "US/KS/GreeleyCounty",              "KSGreeleyCounty",
       "US/KS/HarveyCounty",               "KSHarveyCounty",
       "US/KS/HarveyCounty",               "KSHarveyCounty",
