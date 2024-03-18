@@ -1918,6 +1918,7 @@ public class ParserList {
               ,"WAStevensCounty"                ,"Stevens County, WA"
               ,"WAThurstonCounty"               ,"Thurston County, WA"
               ,"WAWallaWallaCounty"             ,"Walla Walla County, WA"
+              ,"WAWhatcomCounty"                ,"Whatcom County, WA"
               ,"WAWhitmanCounty"                ,"Whitman County, WA"
               ,"WAYakimaCounty"                 ,"Yakima County, WA"
           ),

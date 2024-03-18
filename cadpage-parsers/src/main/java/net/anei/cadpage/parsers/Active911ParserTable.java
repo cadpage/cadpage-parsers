@@ -2740,6 +2740,7 @@ public class Active911ParserTable {
       "US/WA/ValleyCom",                  "WAKingCountyC",
       "US/WA/WallaWallaCounty",           "WAWallaWallaCounty",
       "US/WA/WestPierceCounty",           "WAPierceCountyE",
+      "US/WA/WhatcomCounty",              "WAWhatcomCounty",
       "US/WA/WhitmanCounty",              "WAWhitmanCounty",
       "US/WA/Woodinville",                "WAKingCountyA",
       "US/WA/YakimaCounty",               "WAYakimaCounty",
