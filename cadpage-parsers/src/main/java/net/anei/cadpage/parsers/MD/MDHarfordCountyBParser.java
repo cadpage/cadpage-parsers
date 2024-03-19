@@ -19,7 +19,7 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
 
   @Override
   public String getFilter() {
-    return "harfordcty@rednmxcad.com,rednmxmobile@harfordcountymd.gov";
+    return "harfordcty@rednmxcad.com,rednmxmobile@harfordcountymd.gov,rednmxmobilefd@harfordcountymd.gov";
   }
 
   @Override
@@ -74,6 +74,7 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
     "EDGEWOOD MD",
     "FALLSTON MD",
     "JARRETTSVILLE MD",
+    "JOPPA MD",
     "JOPPATOWNE MD",
     "PERRYMAN MD",
     "ABINGDON MD",
