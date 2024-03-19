@@ -41,7 +41,7 @@ public class NHMerrimackCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_ADDR_GPS_PTN = Pattern.compile("(.*?) at (.*?)(?: \\(([-0-9.,]+)\\))?");
+  private static final Pattern CALL_ADDR_GPS_PTN = Pattern.compile("(.*?) at (.*?)(?: \\((.*?[A-Z].*?)\\))?(?: \\(([-0-9.,]+)\\))?");
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
@@ -49,13 +49,14 @@ public class NHMerrimackCountyParser extends FieldProgramParser {
       if (!match.matches()) abort();
       data.strCall = match.group(1).trim();
       super.parse(match.group(2).trim(), data);
-      String gps = match.group(3);
+      data.strPlace = getOptGroup(match.group(3));
+      String gps = match.group(4);
       if (gps != null) setGPSLoc(gps, data);
     }
 
     @Override
     public String getFieldNames() {
-      return "CALL ADDR APT CITY ST GPS";
+      return "CALL ADDR APT CITY ST PLACE GPS";
     }
   }
 
