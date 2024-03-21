@@ -1293,17 +1293,20 @@ public abstract class MsgParser {
    * @param data message info object to be filled
    * @param parseCity true if cities should be parsed with dashes
    */
+  private static final Pattern MSPACE = Pattern.compile(" {2,}");
   private static final Pattern INTERSECT = Pattern.compile("/|&|@");
   private static final Pattern APT = Pattern.compile("(?!^)(?!RMP|SUITES)((?:APTS|\\bAPT(?!S)|\\bUNIT|\\bSUITE|\\bROOM|\\bSTE|\\bRM|\\bFLOOR|\\bFLRS?|\\bLOT)(?![A-Z].)|#APT|#)[ #\\.:]*(.+)$",Pattern.CASE_INSENSITIVE);
   private static final Pattern DOT = Pattern.compile("\\.(?!\\d)");
   private static final Pattern DOUBLE_SLASH = Pattern.compile("//+");
-  private static void parseAddress(String addressLine, MsgInfo.Data data,
-      boolean parseCity) {
+  private static void parseAddress(String addressLine, MsgInfo.Data data, boolean parseCity) {
     addressLine = addressLine.trim();
 
     // Periods used with abbreviations also cause trouble.  Just get rid of all periods
     // except those followed by a digit which are presumed to be decimal points
     addressLine = DOT.matcher(addressLine).replaceAll("").trim();
+
+    // Remove multple blanks
+    addressLine = MSPACE.matcher(addressLine).replaceAll(" ");
 
     addressLine = stripLeadingZero(addressLine);
     addressLine = DOUBLE_SLASH.matcher(addressLine).replaceAll("/");
