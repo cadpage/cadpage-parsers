@@ -30,21 +30,11 @@ public class CTMiddlesexCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d+-\\d+", true);
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d-\\d\\d-\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
-  }
-
-  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
-      super.parse(field, data);
-    }
   }
 
   private static final Pattern LEAD_ZEROS_PTN = Pattern.compile("^0+");

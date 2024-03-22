@@ -31,7 +31,7 @@ public class WAClallamCountyAParser extends SmartAddressParser {
 
     Matcher match = MASTER.matcher(body);
     if (match.matches()) {
-      parseAddress(MSPACE_PTN.matcher(getOptGroup(match.group(1))).replaceAll(" "), data);
+      parseAddress(getOptGroup(match.group(1)), data);
       data.strDate = match.group(2);
       data.strTime = match.group(3);
       data.strCode = match.group(4);

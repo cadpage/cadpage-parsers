@@ -10,16 +10,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA22Parser;
 
 
 public class ORJeffersonCountyAParser extends DispatchA22Parser {
-  
+
   public ORJeffersonCountyAParser() {
     this("JEFFERSON COUNTY", "OR");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   protected ORJeffersonCountyAParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORJeffersonCounty";
@@ -29,17 +29,15 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
   public String getFilter() {
     return "april.steam@tcdispatch.org,eis@wstribes.org,cad@frontier911.org";
   }
-  
+
   private static final Pattern HWY_MP_PTN = Pattern.compile("(?:I|US|HWY|ST|OR) (\\d+)[NSEW]?[& ]+MP (\\d+)(?: .*)");
-  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern TRAIL_DIR_PTN = Pattern.compile(" *[NESW]B?$");
   private static final Pattern MPNNN_PTN = Pattern.compile("(MP)(\\d+ +.*)");
   private static final Pattern MP_HWY_PTN = Pattern.compile("(MP \\d+ )(?:I|US|HWY|ST|OR|MP)[- ]?(\\d+)(?: +HWY)?");
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = address.toUpperCase();
-    address = MSPACE_PTN.matcher(address).replaceAll(" ");
     Matcher match = HWY_MP_PTN.matcher(address);
     if (match.matches()) address = match.group(2) + " MP " + match.group(1);
     address = TRAIL_DIR_PTN.matcher(address).replaceFirst("");
@@ -53,7 +51,7 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
 
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      
+
       "MP 82 20",                             "+44.424612,-121.824489",
       "MP 83 20",                             "+44.423390,-121.804864",
       "MP 84 20",                             "+44.419774,-121.786221",
@@ -69,7 +67,7 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
       "MP 94 20",                             "+44.369207,-121.622787",
       "MP 95 20",                             "+44.356841,-121.612124",
       "MP 96 20",                             "+44.344400,-121.601506",
-      
+
       "MP 1 26",                              "+44.594549,-121.133028",
       "MP 2 26",                              "+44.580726,-121.127017",
       "MP 3 26",                              "+44.566486,-121.123692",
@@ -118,7 +116,7 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
       "MP 115 26",                            "+44.675866,-121.143933",
       "MP 116 26",                            "+44.662888,-121.134679",
       "MP 117 26",                            "+44.649301,-121.129178",
-      
+
       "MP 71 97",                             "+44.869349,-120.927505",
       "MP 72 97",                             "+44.854787,-120.926467",
       "MP 73 97",                             "+44.840325,-120.929992",
@@ -161,13 +159,13 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
       "MP 114 97",                            "+44.376993,-121.178103",
       "MP 115 97",                            "+44.362577,-121.178523",
       "MP 116 97",                            "+44.348160,-121.178741",
-      
+
       "MP 1 293",                             "+44.827689,-120.921464",
       "MP 2 293",                             "+44.838265,-120.913661",
       "MP 3 293",                             "+44.845566,-120.899126",
       "MP 4 293",                             "+44.846283,-120.882580",
       "MP 5 293",                             "+44.852452,-120.867271",
-      
+
       "MP 1 361",                             "+44.623083,-121.140823",
       "MP 2 361",                             "+44.609459,-121.145446",
       "MP 3 361",                             "+44.600636,-121.161629",
@@ -179,9 +177,9 @@ public class ORJeffersonCountyAParser extends DispatchA22Parser {
       "MP 9 361",                             "+44.524471,-121.210063",
       "MP 10 361",                            "+44.512331,-121.200607",
       "MP 11 361",                            "+44.499195,-121.195006"
-      
+
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARL",  "ARLINGTON",
       "CON",  "CONDON",

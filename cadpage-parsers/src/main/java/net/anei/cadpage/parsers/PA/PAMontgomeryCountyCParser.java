@@ -115,7 +115,6 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
   private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
   private static final Pattern APT_PLACE_PTN = Pattern.compile(": *([^@: ]*?) +@");
-  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
 
   protected void parseAddress(String addr, Data data) {
 
@@ -153,7 +152,6 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
     addr = getStart();
 
     addr = stripFieldEnd(addr, ": EST");
-    addr = MSPACE_PTN.matcher(addr).replaceAll(" ");
     super.parseAddress(addr, data);
 
     data.strApt = append(data.strApt, "-", apt);

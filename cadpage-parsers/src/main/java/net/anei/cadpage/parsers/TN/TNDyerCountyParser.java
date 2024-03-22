@@ -37,21 +37,11 @@ public class TNDyerCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d\\d", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
 
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field =  MSPACE_PTN.matcher(field).replaceAll(" ");
-      super.parse(field, data);
-    }
-  }
-
 
   private class MyCrossField extends CrossField {
     @Override

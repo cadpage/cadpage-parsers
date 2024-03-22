@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.WV;
 
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -31,19 +29,9 @@ public class WVLincolnCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("GPS")) return new GPSField("https://maps.google.com/\\?q=(-\\d+\\.\\d+,\\d+\\.\\d+)", false);
     return super.getField(name);
-  }
-
-  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
-      super.parse(field, data);
-    }
   }
 
   private class MyPlaceField extends PlaceField {

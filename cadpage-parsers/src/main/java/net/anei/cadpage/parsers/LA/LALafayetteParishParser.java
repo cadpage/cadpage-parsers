@@ -37,22 +37,12 @@ public class LALafayetteParishParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     return super.getField(name);
   }
 
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
-      super.parse(field, data);
-    }
-  }
-
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {

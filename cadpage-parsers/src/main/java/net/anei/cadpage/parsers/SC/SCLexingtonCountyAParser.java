@@ -46,20 +46,11 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("(?!MVC)[A-Z]{3,4}", true);
     if (name.equals("APT")) return new AptField("\\d{1,4}[A-Z]?|[A-Z]|", true);
-    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
     if (name.equals("CH")) return new ChannelField("OPS *\\d+", true);
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
-  }
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
-      super.parse(field, data);
-    }
   }
 
   private class MyCrossPlaceField extends Field {
