@@ -9,6 +9,7 @@ public class PAArmstrongCountyEParser extends DispatchH05Parser {
     super("ARMSTRONG COUNTY", "PA",
           "EMS_CFS_Type:SKIP! Fire_CFS_Type:SKIP! Nature_of_Call:CALL! Narrative:EMPTY! INFO_BLK+ Location:ADDRCITY! " +
               "Call_Date/Time:DATETIME! Call_Number:ID! Fire_Quandrant:MAP! Ems_District:MAP/L! Status_Times:EMPTY TIMES+");
+    setAccumulateUnits(true);
   }
 
   @Override
