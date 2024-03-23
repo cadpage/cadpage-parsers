@@ -2132,6 +2132,7 @@ public class Active911ParserTable {
       "US/PA/GlenRock",                   "PAYorkCountyD",
       "US/PA/GoodFellowshipAmbulance",    "PAChesterCountyO",
       "US/PA/GoodwillAmbulance",          "PAChesterCountyP",
+      "US/PA/GreaterPittston",            "PALuzerneCounty",
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HawthornFD",                 "PAArmstrongCountyB",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
