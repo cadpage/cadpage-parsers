@@ -13,7 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
 
   public OHStarkCountyRedcenter2Parser() {
-    super("STARK COUNTY", "OH",
+    this("STARK COUNTY", "OH");
+  }
+
+  OHStarkCountyRedcenter2Parser(String defCity, String defState) {
+    super(defCity, defState,
           "( Call:CALL! Date/Time:DATETIME1! ( Place:PLACE! Address:ADDRCITY! | Address:ADDRCITY! Place:PLACE ) Crosses:X! Latitude:GPS1? Longitude:GPS2? Section:MAP? Run_Num:ID? Unit:SKIP? Alert:INFO1! Info:INFO1% INFO1/N+ " +
                 "( MAC_Channel:CH Units_Assigned:UNIT Run_Number:ID | Map:TIMES1+ ) " +
           "| Address:ADDRCITY! Grid:MAP! Cross_Streets:X! Nature_Of_Call:CALL! DATETIME1! Incident_Number:ID! SKIP! INFO+? TIMES1! TIMES1+ " +
@@ -22,6 +26,11 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
                                                           "| CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT? INFO:INFO ) " +
           "| INC_ID DATE:DATE! TIME:TIME! BLDG:PLACE! LOC:ADDRCITY! APT:APT! XST:X! XST:X? TRU:UNIT! NAT:CALL! NOTES:INFO/N+ )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "OHStarkCountyRedcenter2";
   }
 
   @Override

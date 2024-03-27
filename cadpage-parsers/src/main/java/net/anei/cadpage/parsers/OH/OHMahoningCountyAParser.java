@@ -50,6 +50,8 @@ public class OHMahoningCountyAParser extends DispatchEmergitechParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
+    if (subject.startsWith("Automatic R&R Notification:")) return false;
+
     body = stripFieldStart(body, "contact:");
     Matcher match = MARK_ID_PTN.matcher(body);
     if (match.lookingAt()) {
