@@ -13,7 +13,7 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
   public SCOrangeburgCountyCParser() {
     super(CITY_CODES, "ORANGEBURG COUNTY", "SC",
           "( CANCEL ADDR CITY!" +
-          "| FYI? ID? CALL ADDR CITY? GPS1 GPS2 UNIT ( SRC | PLACE ) EMPTY? X X " +
+          "| FYI? ID? CALL ADDR CITY? GPS1 GPS2 UNIT ( SRC | PLACE ) EMPTY? X X! " +
           ") INFO/N+? ID2");
   }
 
@@ -25,6 +25,26 @@ public class SCOrangeburgCountyCParser extends DispatchOSSIParser {
   @Override
   public String getFilter() {
     return "CAD@orangeburgcounty.org";
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    if (!data.strCity.isEmpty() || !data.strCallId.isEmpty()) return true;
+    int pt = body.lastIndexOf(';');
+    if (pt < 0) return false;
+    String id2 = body.substring(pt+1).trim();
+    if (ID2_PTN.matcher(id2).matches()) {
+      data.strCallId = append(data.strCallId, "/", id2);
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " ID";
   }
 
   @Override
