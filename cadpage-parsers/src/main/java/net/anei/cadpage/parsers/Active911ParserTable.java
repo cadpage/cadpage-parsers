@@ -1037,7 +1037,7 @@ public class Active911ParserTable {
       "US/MA/Peabody",                    "MASussexCounty",
       "US/MD/AACounty",                   "MDAnneArundelCountyEMS2",
       "US/MD/ADSiCAD",                    "MDAnneArundelCountyADSiCAD",
-      "US/MD/AlleganyCounty",             "MDAlleganyCounty",
+      "US/MD/AlleganyCounty",             "MDAlleganyCountyA",
       "US/MD/AlleganyCountyDES",          "MDAlleganyCounty,WVMineralCountyB",
       "US/MD/ArundelVFD",                 "MDAnneArundelCountyGambrills",
       "US/MD/BadenVFD",                   "MDPrinceGeorgesCountyG",
