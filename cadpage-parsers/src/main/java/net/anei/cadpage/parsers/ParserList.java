@@ -364,6 +364,7 @@ public class ParserList {
               ,"FLHardeeCounty"                 ,"Hardee County, FL"
               ,"FLHendryCounty"                 ,"Hendry County, FL"
               ,"FLHernandoCounty"               ,"Hernando County, FL"
+              ,"FLHighlandsCounty"              ,"Highlands County, FL"
               ,"FLHolmesCounty"                 ,"Holmes County, FL"
               ,"FLLakeCounty"                   ,"Lake County, FL"
               ,"FLLeeCounty"                    ,"Lee County, FL"
