@@ -641,6 +641,7 @@ public class ParserList {
               ,"KSGreeleyCounty"                ,"Greeley County, KS"
               ,"KSHarveyCounty"                 ,"Harvey County, KS"
               ,"KSJacksonCounty"                ,"Jackson County, KS"
+              ,"KSJeffersonCounty"              ,"Jefferson County, KS"
               ,"KSJohnsonCounty"                ,"Johnson County, KS"
               ,"KSKingmanCounty"                ,"Kingman County, KS"
               ,"KSKiowaCounty"                  ,"Kiowa County, KS"
