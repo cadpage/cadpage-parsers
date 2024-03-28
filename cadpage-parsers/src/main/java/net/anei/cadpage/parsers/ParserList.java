@@ -389,6 +389,7 @@ public class ParserList {
               ,"FLWashingtonCounty"             ,"Washington County, FL"
           ),
           new ParserCategory("Georgia"
+              ,"GAAugusta"                      ,"Augusta, GA"
               ,"GABarrowCounty"                 ,"Barrow County, GA"
               ,"GABrantleyCounty"               ,"Brantley County, GA"
               ,"GABrooksCounty"                 ,"Brooks County, GA"

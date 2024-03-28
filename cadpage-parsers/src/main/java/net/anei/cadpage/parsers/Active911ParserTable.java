@@ -498,6 +498,7 @@ public class Active911ParserTable {
       "US/GA/CherokeeContyFireEMS",       "GACherokeeCountyB",
       "US/GA/CherokeeCounty",             "GACherokeeCountyB",
       "US/GA/CherokeeMarshall",           "GACherokeeCountyB",
+      "US/GA/CityofAugusta",              "GAAugusta",
       "US/GA/ClaytonCounty",              "GAClaytonCounty",
       "US/GA/CobbCounty",                 "GACobbCounty",
       "US/GA/ColquittCounty",             "GAColquittCounty",
