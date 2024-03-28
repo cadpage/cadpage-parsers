@@ -28,7 +28,7 @@ public class NJBurlingtonCountyHParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@co.burlington.nj.us,@CinnaminsonPolice.org";
+    return "CAD@co.burlington.nj.us";
   }
 
   @Override
