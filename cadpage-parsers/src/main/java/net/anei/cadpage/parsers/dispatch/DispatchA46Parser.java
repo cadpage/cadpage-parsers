@@ -55,7 +55,7 @@ public class DispatchA46Parser extends SmartAddressParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
 
-    // We handle three page formats, believed to be two versions of the same CAD system
+    // We handle multiple page formats, believed to be multiple versions of the same CAD system
     // But both of them can be followed by new line separated information
     body = body.replace("\n has been reported", " has been reported");
     String info = "";
@@ -184,7 +184,7 @@ public class DispatchA46Parser extends SmartAddressParser {
       body = stripFieldStart(body, "A ");
       mat = BODY_PTN3.matcher(body);
       if (mat.matches()) {
-        setFieldList("ID CALL ADDR APT CITY ST DATE TIME INFO");
+        setFieldList("ID CALL ADDR APT CITY ST GPS DATE TIME INFO");
         data.strCall = mat.group(1);
         String addr = mat.group(2);
         data.strDate =  mat.group(3);
@@ -195,8 +195,8 @@ public class DispatchA46Parser extends SmartAddressParser {
       }
 
       else if ((mat = BODY_PTN4.matcher(body)).matches()) {
-        setFieldList("ID CALL ADDR APT CITY ST INFO");
-        data.strCall = append(mat.group(1).trim(), " ", mat.group(2).trim());
+        setFieldList("ID CALL ADDR APT CITY ST GPS INFO");
+        data.strCall = append(trimField(mat.group(1)), " ", mat.group(2).trim());
         body = mat.group(3).trim();
         body = TRAIL_DOT_PTN.matcher(body).replaceFirst("");
         body = stripFieldEnd(body,  ".");
@@ -215,12 +215,27 @@ public class DispatchA46Parser extends SmartAddressParser {
     return true;
   }
 
+  private static String trimField(String fld) {
+    fld = fld.trim();
+    fld = stripFieldStart(fld, "[");
+    fld = stripFieldEnd(fld, "]");
+    return fld;
+  }
+
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("\\[(.*?)\\]\\. +\\[(.*)\\]");
   private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), ([A-Z]{2})(?: (\\d{5}|0000)(?:-\\d+)?)? *(.*)");
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) (\\d{5}|0000)(?:-\\d+)?");
 
   private void parseThisAddress(String addr, Data data) {
     int pt;
     Matcher mat;
+
+    mat = ADDR_GPS_PTN.matcher(addr);
+    if (mat.matches()) {
+      addr = mat.group(1).trim();
+      setGPSLoc(mat.group(2).trim(), data);
+    }
+
     String zip = null;
     String info = null;
     mat = ADDR_ST_ZIP_PTN.matcher(addr);
