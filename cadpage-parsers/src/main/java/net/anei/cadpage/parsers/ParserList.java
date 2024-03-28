@@ -182,6 +182,7 @@ public class ParserList {
               ,"AZMohaveCounty"                 ,"Mohave County, AZ"
               ,"AZNavajoCounty"                 ,"Navajo County, AZ"
               ,"AZPimaCounty"                   ,"Pima County, AZ"
+              ,"AZPinalCounty"                  ,"Pinal County, AZ"
               ,"AZYavapaiCounty"                ,"Yavapai County, AZ"
               ,"AZYumaCounty"                   ,"Yuma County, AZ"
           ),

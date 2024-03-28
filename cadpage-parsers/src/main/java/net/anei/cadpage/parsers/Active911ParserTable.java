@@ -201,6 +201,7 @@ public class Active911ParserTable {
       "US/AZ/CochiseCounty",              "AZCochiseCounty",
       "US/AZ/CoconinoCounty",             "AZCoconinoCounty",
       "US/AZ/RuralMetroYavapaiCounty",    "AZYavapaiCountyE",
+      "US/AZ/RuralMetroPinalCounty",      "AZPinalCounty",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",
       "US/AZ/RuralMetro",                 "AZYavapaiCountyD",
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",

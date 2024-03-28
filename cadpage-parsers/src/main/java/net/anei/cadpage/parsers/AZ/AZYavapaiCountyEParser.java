@@ -10,9 +10,17 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class AZYavapaiCountyEParser extends FieldProgramParser {
 
   public AZYavapaiCountyEParser() {
-    super("YAVAPAI COUNTY", "AZ",
+    this("YAVAPAI COUNTY", "AZ");
+  }
+
+  public AZYavapaiCountyEParser(String defCity, String defState) {
+    super(defCity, defState,
           "Response:CALL! Chief_Complaint:CALL/S Criteria_Code:CODE! Address:ADDRCITYST! Resources:UNIT! INC_#:ID! Run_#:ID/L! " +
               "Notes:INFO! INFO/N+ Tags:EMPTY! Status_Times:EMPTY! TIMES+");
+  }
+
+  public String getAliasCode() {
+    return "AZYavapaiCountyE";
   }
 
   @Override
