@@ -10,11 +10,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class MDWorcesterCountyParser extends GroupBestParser {
- 
+
   public MDWorcesterCountyParser() {
     super(new MDWorcesterCountyAParser(), new MDWorcesterCountyBParser());
   }
-  
+
   public static void fixCity(Data data) {
     data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
     String city = data.strCity.toUpperCase();
@@ -25,7 +25,7 @@ public class MDWorcesterCountyParser extends GroupBestParser {
       data.strState = "DE";
     }
   }
-  
+
   public static final String[] CITY_LIST = new String[]{
     "POCO",       // Typo
     "POCOMOK",    // Typo
@@ -51,20 +51,25 @@ public class MDWorcesterCountyParser extends GroupBestParser {
     "NASSAWANGO HILLS",
     "POPLARTOWN",
     "PUBLIC LANDING",
+    "SALISBURY",
     "SINNEPUXENT",
     "SOUTH POINT",
     "TAYLORVILLE",
     "WHITEON",
-    
+
     "BERL",
     "SH",
     "WHAL",
 
-    
+
     // Somerset County
+    "CRISFIELD",
     "WESTOVER",
     "PRINCESS ANNE",
-    
+
+    // Wicomico County
+    "SALISBURY",
+
     // Accomack County, VA
     "ATLANTIC",
     "CHINCOTEAGUE",
@@ -77,26 +82,27 @@ public class MDWorcesterCountyParser extends GroupBestParser {
     "PARKSL",
     "PARKSLEY",
     "TEMPERANCEVILLE",
-    
+
     // Northampton County, VA
     "EXMORE",
     "MARIONVILLE",
-    
+
     // Sussex County, DE
     "SELBYVILLE"
+
   };
-  
+
   private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
       "HORTOWN",    "HORNTOWN",
       "PARKSL",     "PARKSLEY",
       "POCO",       "POCOMOKE",
       "POCOMOK",    "POCOMOKE",
-      
+
       "BERL",       "BERLIN",
       "SH",         "SNOW HILL",
       "WHAL",       "WHALEYVILLE"
   });
-  
+
   private static final Set<String> VA_CITY_SET = new HashSet<String>(Arrays.asList(new String[]{
       "ATLANTIC",
       "CHINCOTEAGUE",
@@ -106,11 +112,11 @@ public class MDWorcesterCountyParser extends GroupBestParser {
       "OAK HALL",
       "PARKSLEY",
       "TEMPERANCEVILLE",
-      
+
       "EXMORE",
       "MARIONVILLE"
   }));
-  
+
   private static final Set<String> DE_CITY_SET = new HashSet<String>(Arrays.asList(new String[]{
       "SELBYVILLE"
   }));

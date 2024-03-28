@@ -10,14 +10,15 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 public class MDWorcesterCountyAParser extends DispatchOSSIParser {
- 
+
   public MDWorcesterCountyAParser() {
     super(MDWorcesterCountyParser.CITY_LIST, "WORCESTER COUNTY", "MD",
     		   "FYI? SRC? CH? CALL ( CITY ADDR! DIR? APT? | ADDR! DIR? APT? PLACE+? CITY/Y ) ( DATETIME | X+? INFO+? DATETIME )");
   }
-  
+
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Text Message")) body = body.replace(subject, "");
     body = body.replace('\n', ' ');
     if (!super.parseMsg(body, data)) return false;
     MDWorcesterCountyParser.fixCity(data);
@@ -25,12 +26,12 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
     if (unit != null) data.strUnit = unit;
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CALL UNIT").replace("CITY", "CITY ST");
   }
-  
+
   @Override
   protected Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[0-9]{1,2}00[A-Z]?|S[0-9]", true);
@@ -41,7 +42,7 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d");
     return super.getField(name);
   }
-  
+
   private class MyDirField extends Field {
     public MyDirField() {
       setPattern("[NSEW](?:/?B)?", true);
@@ -58,7 +59,7 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
       // TODO Auto-generated method stub
       return null;
     }
-    
+
   }
 
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM) *(.*)|(BLDG *.*)", Pattern.CASE_INSENSITIVE);
@@ -67,7 +68,7 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = APT_PTN.matcher(field);
@@ -78,11 +79,11 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
       return true;
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Occasionally they have an apt field that does not look like
       // an apt field and was mistaken for a place field.  When the
       // real place field comes along, move the old place value to
@@ -94,13 +95,13 @@ public class MDWorcesterCountyAParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "APT PLACE";
     }
   }
-  
+
   private static final Properties CALL_UNIT_TABLE = buildCodeTable(new String[]{
       "ABDOMINAL PAIN PROBLEMS",        "MEDICAL",
       "AIRCRAFT STANDBY",               "PUBLIC_SERVICE_CALLS",
