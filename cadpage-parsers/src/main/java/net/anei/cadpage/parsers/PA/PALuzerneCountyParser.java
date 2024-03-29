@@ -434,8 +434,8 @@ public class PALuzerneCountyParser extends DispatchA41Parser {
       "9101", "HAZLE TWP",
       "92",   "YATESVILLE",
       "93",   "EAST SIDE",
-      "94",   "MONROE TWP"
-
+      "94",   "MONROE TWP",
+      "95",   "FISHING CREEK"
   });
 
   private static final String[] EXTRA_CITY_LIST = new String[]{
