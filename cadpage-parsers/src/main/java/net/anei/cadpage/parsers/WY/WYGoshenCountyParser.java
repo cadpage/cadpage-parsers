@@ -10,6 +10,6 @@ public class WYGoshenCountyParser extends DispatchA20Parser {
 
   @Override
   public String getFilter() {
-    return "@torringtonpolice.org";
+    return "@torringtonpolice.org,paging@goshencounty.org";
   }
 }

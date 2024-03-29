@@ -122,11 +122,16 @@ public class ARHotSpringCountyParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern BOUND_DIR_PTN = Pattern.compile("[NSEW]B");
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
       if (field.equalsIgnoreCase("COUNTY")) return;
-      super.parse(field, data);
+      if (BOUND_DIR_PTN.matcher(field).matches()) {
+        data.strAddress = append(data.strAddress, " ", field);
+      } else {
+        super.parse(field, data);
+      }
     }
   }
 

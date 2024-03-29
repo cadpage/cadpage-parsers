@@ -18,13 +18,13 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
 
   OHStarkCountyRedcenter2Parser(String defCity, String defState) {
     super(defCity, defState,
-          "( Call:CALL! Date/Time:DATETIME1! ( Place:PLACE! Address:ADDRCITY! | Address:ADDRCITY! Place:PLACE ) Crosses:X! Latitude:GPS1? Longitude:GPS2? Section:MAP? Run_Num:ID? Unit:SKIP? Alert:INFO1! Info:INFO1% INFO1/N+ " +
+          "( Call:CALL! Date/Time:DATETIME1! ( Place:PLACE! Address:ADDRCITYST! | Address:ADDRCITYST! Place:PLACE ) Crosses:X! Latitude:GPS1? Longitude:GPS2? Section:MAP? Run_Num:ID? Unit:SKIP? Alert:INFO1! Info:INFO1% INFO1/N+ " +
                 "( MAC_Channel:CH Units_Assigned:UNIT Run_Number:ID | Map:TIMES1+ ) " +
-          "| Address:ADDRCITY! Grid:MAP! Cross_Streets:X! Nature_Of_Call:CALL! DATETIME1! Incident_Number:ID! SKIP! INFO+? TIMES1! TIMES1+ " +
-          "| Call_Address:ADDRCITY! Radio_Channel:CH! Common_Name:PLACE! Qualifier:EMPTY! Cross_Streets:X Local_Information:INFO! Custom_Layer:SKIP! Census_Tract:EMPTY! Call_Type:CALL! Call_Priority:PRI! Call_Date/Time:DATETIME1? Nature_Of_Call:CALL/SDS! Units_Assigned:UNIT! Fire_Quadrant:MAP! Incident_Number(s):ID! Caller_Name:NAME! Caller_Phone:PHONE! Caller_Address:CADDR! Alerts:SKIP! Narratives:INFO1! Status_Times:TIMES1+ Google_Maps_Hyperlink:SKIP " +
-          "| CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! XST:X? ( ID:ID! PRI:PRI? DATE:DATETIME1! MAP:MAP_X! UNIT:SKIP? INFO:INFO1! TIMES1+ " +
-                                                          "| CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT? INFO:INFO ) " +
-          "| INC_ID DATE:DATE! TIME:TIME! BLDG:PLACE! LOC:ADDRCITY! APT:APT! XST:X! XST:X? TRU:UNIT! NAT:CALL! NOTES:INFO/N+ )");
+          "| Address:ADDRCITYST! Grid:MAP! Cross_Streets:X! Nature_Of_Call:CALL! DATETIME1! Incident_Number:ID! SKIP! INFO+? TIMES1! TIMES1+ " +
+          "| Call_Address:ADDRCITYST! Radio_Channel:CH! Common_Name:PLACE! Qualifier:EMPTY! Cross_Streets:X Local_Information:INFO! Custom_Layer:SKIP! Census_Tract:EMPTY! Call_Type:CALL! Call_Priority:PRI! Call_Date/Time:DATETIME1? Nature_Of_Call:CALL/SDS! Units_Assigned:UNIT! Fire_Quadrant:MAP! Incident_Number(s):ID! Caller_Name:NAME! Caller_Phone:PHONE! Caller_Address:CADDR! Alerts:SKIP! Narratives:INFO1! Status_Times:TIMES1+ Google_Maps_Hyperlink:SKIP " +
+          "| CALL:CALL! PLACE:PLACE! ADDR:ADDRCITYST! XST:X? ( ID:ID! PRI:PRI? DATE:DATETIME1! MAP:MAP_X! UNIT:SKIP? INFO:INFO1! TIMES1+ " +
+                                                            "| CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT? INFO:INFO ) " +
+          "| INC_ID DATE:DATE! TIME:TIME! BLDG:PLACE! LOC:ADDRCITYST! APT:APT! XST:X! XST:X? TRU:UNIT! NAT:CALL! NOTES:INFO/N+ )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -62,7 +62,7 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME1")) return new MyDateTime1Field();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("INFO1")) return new MyInfo1Field();
     if (name.equals("TIMES1")) return new MyTimes1Field();
@@ -94,22 +94,24 @@ public class OHStarkCountyRedcenter2Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_CITY_APT_PTN = Pattern.compile("(.*?), +([^,]*?)(?: +(FL [A-Z0-9 ]*|[A-Z0-9]*[0-9][A-Z0-9]*|[A-Z]))?");
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern ADDR_CITY_APT_PTN = Pattern.compile("([^,]*)(,.*) +(FL [A-Z0-9 ]*|[A-Z0-9]*[0-9][A-Z0-9]*|[A-Z])");
+  private static final Pattern APT_ZIP_PTN = Pattern.compile("\\d{5}");
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      String apt = "";
       Matcher match = ADDR_CITY_APT_PTN.matcher(field);
       if (match.matches()) {
-        String addr = match.group(1);
-        data.strCity = getOptGroup(match.group(2));
-        String apt = match.group(3);
-
-        if (apt != null) addr = stripFieldEnd(addr, ' '+apt);
-        parseAddress(addr, data);
-        if (apt != null) data.strApt = append(data.strApt, "-", apt);
-      } else {
-        parseAddress(field, data);
+        String addr1 = match.group(1).trim();
+        String addr2 = match.group(2);
+        String tmp = match.group(3);
+        if (!APT_ZIP_PTN.matcher(tmp).matches()) {
+          apt = tmp;
+          field = stripFieldEnd(addr1, ' '+apt) + addr2;
+        }
       }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
 

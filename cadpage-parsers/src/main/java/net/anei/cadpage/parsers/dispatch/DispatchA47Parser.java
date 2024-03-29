@@ -43,6 +43,7 @@ public class DispatchA47Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("PRI1")) return new BasePriority1Field();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("ID_CALL")) return new BaseIdCallField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("X")) return new BaseCrossField();
@@ -67,6 +68,32 @@ public class DispatchA47Parser extends FieldProgramParser {
         }
       }
       if (priority != null) data.strPriority = priority;
+    }
+  }
+
+  private static final Pattern DIR_BOUND_PTN = Pattern.compile("[NSEW]B");
+  private class BaseAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      String place = null;
+      int pt = field.lastIndexOf('\'');
+      if (pt >= 0) {
+        place = field.substring(pt+1).trim();
+        field = field.substring(0, pt).trim();
+      }
+      super.parse(field, data);
+      if (place != null) {
+        if (DIR_BOUND_PTN.matcher(place).matches()) {
+          data.strAddress = append(data.strAddress, " ", place);
+        } else {
+          data.strPlace = place;
+        }
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE?";
     }
   }
 
