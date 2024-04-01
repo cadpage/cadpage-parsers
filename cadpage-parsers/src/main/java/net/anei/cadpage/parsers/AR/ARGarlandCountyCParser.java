@@ -1,38 +1,51 @@
 package net.anei.cadpage.parsers.AR;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA46Parser;
+import java.util.Properties;
 
-public class ARGarlandCountyCParser extends DispatchA46Parser {
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+
+public class ARGarlandCountyCParser extends DispatchA19Parser {
 
   public ARGarlandCountyCParser() {
-    super(CITY_LIST, "GARLAND COUNTY", "AR");
+    super(CITY_CODES, "GARLAND COUNTY", "AR");
   }
 
   @Override
   public String getFilter() {
-    return "hotsprings@pagingpts.com,hotspringsvillage@ptspaging.com";
+    return "FlexRapidNotification@dccnotify.com";
   }
 
-  private static final String[] CITY_LIST = new String[] {
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
-      // Cities
-      "HOT SPRINGS",
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
+    return super.getField(name);
+  }
 
-      // Towns
-      "FOUNTAIN LAKE",
-      "LONSDALE",
-      "MOUNTAIN PINE",
+  private class MyCityField extends CityField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return super.checkParse(stripCity(field), data);
+    }
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(stripCity(field), data);
+    }
 
-      // Census-designated places
-      "HOT SPRINGS",
-      "HOT SPRINGS VILLAGE",
-      "LAKE HAMILTON",
-      "PINEY",
-      "ROCKWELL",
+    private String stripCity(String city) {
+      int pt = city.indexOf('-');
+      if (pt >= 0) city = city.substring(0,pt).trim();
+      return city;
+    }
+  }
 
-      // Unincorporated communities
-      "JESSIEVILLE",
-      "BEAR",
-      "ROYAL"
-  };
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "GAR", "GARLAND COUNTY",
+      "SAL", "SALINE COUNTY"
+  });
 }
