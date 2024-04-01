@@ -11,13 +11,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class OHPortageCountyAParser extends FieldProgramParser {
 
-  private static final Pattern MARKER1 = Pattern.compile(".*?\\b(?=CALL:)");
   private static final Pattern MARKER2 = Pattern.compile("[A-Z0-9\\.]+: +", Pattern.CASE_INSENSITIVE);
 
   public OHPortageCountyAParser() {
     super(OHPortageCountyParser.CITY_LIST, "PORTAGE", "OH",
-          "( SELECT/1 PREFIX CALL:CALL/SDS! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO/N+ " +
-          "| PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+ )");
+          "PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -28,17 +26,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-
-    Matcher match = MARKER1.matcher(body);
-    if (match.lookingAt()) {
-      setSelectValue("1");
-      int pt = match.end();
-      if (pt >= 0) body = body.substring(0, pt) + '\n' + body.substring(pt);
-      return parseFields(body.split("\n"), data);
-    }
-
-    setSelectValue("2");
-    match = MARKER2.matcher(body);
+    Matcher match = MARKER2.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
     if (!parseFields(body.split(","), data)) return false;
     data.strCity = OHPortageCountyParser.fixCity(data.strCity);

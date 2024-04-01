@@ -14,7 +14,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
 
   protected OHWayneCountyDParser(String defCity, String defState) {
     super(defCity, defState,
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+");
+          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END");
   }
 
   @Override
@@ -31,7 +31,8 @@ public class OHWayneCountyDParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("From: WarCOGUser")) return false;
+    if (!subject.startsWith("From: ")) return false;
+    data.strSource = subject.substring(6).trim();
     String flag = "";
     Matcher match = FLAG_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -46,6 +47,11 @@ public class OHWayneCountyDParser extends FieldProgramParser {
     }
     data.strCall = append(flag, " - ", data.strCall);
     return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
 }
