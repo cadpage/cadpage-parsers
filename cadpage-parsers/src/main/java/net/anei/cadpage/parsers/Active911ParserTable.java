@@ -2002,6 +2002,7 @@ public class Active911ParserTable {
       "US/OK/CityofTuttle",               "OKGradyCounty",
       "US/OK/CityofWoodford",             "OKCarterCountyC",
       "US/OK/CityofYukon",                "OKYukon",
+      "US/OK/CreekCounty",                "OKCreekCounty",
       "US/OK/FaxConnections",             "OKTulsa",
       "US/OK/FaxConnectionsWagonerCounty","OKTulsa",
       "US/OK/LakewoodFD",                 "OKBryanCounty",

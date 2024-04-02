@@ -1409,6 +1409,7 @@ public class ParserList {
               ,"OKCarterCounty"                 ,"Carter County, OK"
               ,"OKCherokeeCounty"               ,"Cherokee County, OK"
               ,"OKClevelandCounty"              ,"Cleveland County, OK"
+              ,"OKCreekCounty"                  ,"Creek County, OK"
               ,"OKGarfieldCounty"               ,"Garfield County, OK"
               ,"OKGradyCounty"                  ,"Grady County, OK"
               ,"OKLoganCounty"                  ,"Logan County, OK"
