@@ -13,9 +13,14 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 public class OHPortageCountyParser extends GroupBestParser {
 
   public OHPortageCountyParser() {
-    super(new OHPortageCountyAParser(), new OHPortageCountyBParser(), new OHPortageCountyCParser(),
-        new OHPortageCountyDParser(), new OHPortageCountyFParser(),
-        new GroupBlockParser(), new OHPortageCountyCencommParser());
+    super(new OHPortageCountyAParser(),
+          new OHPortageCountyBParser(),
+          new OHPortageCountyCParser(),
+          new OHPortageCountyDParser(),
+          new OHPortageCountyFParser(),
+          new OHPortageCountyGParser(),
+          new GroupBlockParser(),
+          new OHPortageCountyCencommParser());
   }
 
   static String fixMapAddress(String addr) {
