@@ -2029,7 +2029,7 @@ public class Active911ParserTable {
       "US/OR/CoosCounty",                 "ORCoosCountyB",
       "US/OR/Corbett",                    "ORMultnomahCountyE",
       "US/OR/DeschutesCounty",            "ORDeschutesCounty",
-      "US/OR/DouglasCounty",              "ORDouglasCountyA,ORDouglasCountyD",
+      "US/OR/DouglasCounty",              "ORDouglasCountyA,ORDouglasCountyD,ORDouglasCountyE",
       "US/OR/DrakesCrossing",             "ORMarionCountyA",
       "US/OR/GilliamCounty",              "ORGilliamCounty",
       "US/OR/GrantCounty",                "ORGrantCounty",
