@@ -46,6 +46,8 @@ public class OHWayneCountyDParser extends FieldProgramParser {
       if (!super.parseMsg(body, data)) return false;
     }
     data.strCall = append(flag, " - ", data.strCall);
+
+    data.strCity = new Parser(data.strCity).get('/');
     return true;
   }
 
