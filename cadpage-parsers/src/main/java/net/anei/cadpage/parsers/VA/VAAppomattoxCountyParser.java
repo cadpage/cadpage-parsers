@@ -1,65 +1,56 @@
 package net.anei.cadpage.parsers.VA;
 
-import java.util.Properties;
+import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.dispatch.DispatchDAPROParser;
+import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
 /**
  * Appomattox County, VA
  */
-public class VAAppomattoxCountyParser extends DispatchDAPROParser {
-  
+public class VAAppomattoxCountyParser extends FieldProgramParser {
+
   public VAAppomattoxCountyParser() {
-    super(CITY_CODE_TABLE, "APPOMATTOX COUNTY", "VA");
-    setupCallList(CALL_SET);
+    super("APPOMATTOX COUNTY", "VA",
+          "ID ADDRCITYST APT SRC SRC/C? PRI? X CALL! APT INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "MAILBOX@appomattoxcountyva.gov";
+    return "nzuercherportal@appomattoxcountyva.gov";
   }
-  
-  
-  private static final CodeSet CALL_SET = new CodeSet(
-    "911 ABANDONED CALL",
-    "911 CALL RECEIVED",
-    "911 HANG UP",
-    "ABDOMINAL DISTRESS",
-    "ACCIDENT",
-    "ALARM (FIRE)",
-    "ALARM (MEDICAL)",
-    "ALLERGIC REACTION",
-    "BREATHING DIFFICULTY",
-    "BRUSH FIRE",
-    "CARDIAC (WITH CARDIAC HISTORY)",
-    "CHEST PAIN (NO CARDIAC HISTORY",
-    "DIABETIC ILLNESS/INSULIN REACT",
-    "DISORIENTED",
-    "DOMESTIC TROUBLE",
-    "FALL/FRACTURE",
-    "FEVER",
-    "HEADACHE",
-    "HYPERTENSION HIGH BLOOD PRESSU",
-    "LIFTING ASSISTANCE",
-    "MENTAL SUBJECT",
-    "MISCELLANEOUS",
-    "MOTOR VEHICLE ACCIDENT",
-    "NAUSEA/VOMITING",
-    "OB/GYN (PREGNANCY/MISCARRIAGE)",
-    "OTHER (DESCRIBE IN REMARKS)",
-    "PAIN",
-    "SEIZURE/CONVULSIONS",
-    "SICK (UNKNOWN MEDICAL)",
-    "STROKE",
-    "UNRESPONSIVE"
-  );
-  
-  private static final Properties CITY_CODE_TABLE =
-    buildCodeTable(new String[]{
-        "APP", "APPOMATTOX",
-        "GLA", "GLADSTONE",
-        "SPO", "SPOUT SPRING",
-        "PAM", "PAMPLIN CITY"
-    });
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    data.strUnit = new Parser(subject).getOptional(';');
+    String[] flds = body.split(";", -1);
+    for (int ii = 0; ii < flds.length; ii++) {
+      if (flds[ii].trim().equals("None")) flds[ii] = "";
+    }
+    return parseFields(flds, data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "UNIT " + super.getProgram();
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("CFS\\d{4}-\\d{5}", true);
+    if (name.equals("PRI")) return new PriorityField("ALPHA|BRAVO|CHARLIE|DELTA|ECHO", true);
+    if (name.equals("APT")) return new AptField("(?:APT|LOT|ROOM|RM)?\\b *(.*)");
+    if (name.equals("SRC")) return new SourceField("[A-Z]+SQD", false);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_HDR_PTN.matcher(field).replaceFirst("");
+      super.parse(field, data);
+    }
+  }
 }
