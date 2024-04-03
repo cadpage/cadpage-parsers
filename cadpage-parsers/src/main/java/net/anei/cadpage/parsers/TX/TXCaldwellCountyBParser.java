@@ -10,7 +10,7 @@ public class TXCaldwellCountyBParser extends DispatchA55Parser {
 
   @Override
   public String getFilter() {
-    return "ereports@eforcesoftware.com>";
+    return "ereports@eforcesoftware.com";
   }
 
 }

@@ -29,7 +29,7 @@ public class OKCreekCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern INFO_JUNK_PTN = Pattern.compile("^(?:Call Notes:|\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d -[A-Z]+)\\b *| *\\[[A_Z]+\\]$");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("^(?:Call Notes:|\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d -[A-Z]+\\b) *| *\\[[A_Z]+\\]$");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
