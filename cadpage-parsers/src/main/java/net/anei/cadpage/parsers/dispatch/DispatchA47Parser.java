@@ -19,7 +19,7 @@ public class DispatchA47Parser extends FieldProgramParser {
 
   public DispatchA47Parser(String subjectMarker, String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "( SELECT/NEW Reported:DATETIME! Priorities:PRI1! CFS:ID! Type:CALL! Loc:ADDRCITYST/S! Cross:X! Prem:PLACE! ( RP:NAME! RP_Cell:PHONE! | ) Units:UNIT! " +
+          "( SELECT/NEW Reported:DATETIME! ( Priority:PRI! | Priorities:PRI1! ) CFS:ID! Type:CALL! Loc:ADDRCITYST/S! Cross:X! Prem:PLACE! ( RP:NAME! RP_Cell:PHONE! | ) Units:UNIT! " +
           "| ( Reported:DATETIME! ID_CALL! Loc:ADDR/S! | ID_CALL! Reported:DATETIME? ADDR/S! ) X? ( PLACE2 UNITQ | UNIT2 | PLACE2 END | ) " +
           ") INFO/N+");
     this.subjectMarker = subjectMarker;
@@ -30,18 +30,23 @@ public class DispatchA47Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subjectMarker != null && !subject.equals(subjectMarker)) return false;
-    if (body.contains("Priorities:")) {
+    if (body.contains("Priorities:") || body.contains("Priority:")) {
       setSelectValue("NEW");
-      body = body.replace(" Type:", "\nType:").replace(" Units:", "\nUnits:");
+      if (!body.contains("\n")) {
+        return super.parseMsg(subject, body, data);
+      } else {
+        body = body.replace(" Type:", "\nType:").replace(" Units:", "\nUnits:");
+        return parseFields(body.split("\n"), data);
+      }
     } else {
       setSelectValue("OLD");
+      return parseFields(body.split("\n"), data);
     }
-    return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d\\d(?:\\d\\d)? \\d\\d?:\\d\\d(?::\\d\\d)?", true);
     if (name.equals("PRI1")) return new BasePriority1Field();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("ID_CALL")) return new BaseIdCallField();
