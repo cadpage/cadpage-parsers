@@ -15,7 +15,7 @@ public class MIBarryCountyBParser extends FieldProgramParser {
   public MIBarryCountyBParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
           "Location:ADDR! ESN:BOX! Cross_Streets:X! ( Call_Details:INFO! Use_Caution:CAUTION! | Use_Caution:CAUTION! Call_Details:INFO! ) " +
-          "ProQA:INFO2! All_ProQA:INFO2! Latitude:GPS1 Longitude:GPS2! ( CFS#:ID! | #:ID! ) END");
+          "ProQA:INFO2! All_ProQA:INFO2! Latitude:GPS1 Longitude:GPS2! ( CFS#:ID! | #:ID! ) Units:UNIT? END");
   }
 
   @Override
