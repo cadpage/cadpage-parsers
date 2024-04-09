@@ -1,12 +1,13 @@
 package net.anei.cadpage.parsers.GA;
 
-/*
-Taylor county, GA
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class GATaylorCountyParser extends GASchleyCountyAParser {
-  
+/**
+ * Taylor County, GA
+ */
+public class GATaylorCountyParser extends GroupBestParser {
+
   public GATaylorCountyParser() {
-    super("TAYLOR COUNTY");
+    super(new GATaylorCountyAParser(), new GATaylorCountyBParser());
   }
 }
