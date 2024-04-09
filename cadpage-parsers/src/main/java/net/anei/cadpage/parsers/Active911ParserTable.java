@@ -306,6 +306,7 @@ public class Active911ParserTable {
       "US/CA/StanislausCountyVRECC",      "CAStanislausCountyB",
       "US/CA/Stockton",                   "CASanJoaquinCountyB",
       "US/CA/Suisun",                     "CASuisunCityA",
+      "US/CA/TravisAFB",                  "CASolanoCountyE",
       "US/CA/TulareCounty",               "CATulareCountyA",
       "US/CA/TulareCountySpillman",       "CATulareCountyC",
       "US/CA/TuolumneCounty",             "CATuolumneCounty",
