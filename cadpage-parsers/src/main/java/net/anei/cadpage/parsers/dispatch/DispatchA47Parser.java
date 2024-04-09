@@ -19,7 +19,8 @@ public class DispatchA47Parser extends FieldProgramParser {
 
   public DispatchA47Parser(String subjectMarker, String[] cityList, String defCity, String defState, String unitPtn) {
     super(cityList, defCity, defState,
-          "( SELECT/NEW Reported:DATETIME! ( Priority:PRI! | Priorities:PRI1! ) CFS:ID! Type:CALL! Loc:ADDRCITYST/S! Cross:X! Prem:PLACE! ( RP:NAME! RP_Cell:PHONE! | ) Units:UNIT! " +
+          "( SELECT/NEW Reported:DATETIME! ( Priority:PRI! | Priorities:PRI1! ) CFS:ID! Type:CALL! Loc:ADDRCITYST/S! Cross:X! Prem:PLACE! ( RP:NAME! RP_Cell:PHONE! | ) " +
+                "Units:UNIT! ProQA:INFO INFO/N+ Call_Details:INFO/N INFO/N+ " +
           "| ( Reported:DATETIME! ID_CALL! Loc:ADDR/S! | ID_CALL! Reported:DATETIME? ADDR/S! ) X? ( PLACE2 UNITQ | UNIT2 | PLACE2 END | ) " +
           ") INFO/N+");
     this.subjectMarker = subjectMarker;
@@ -56,6 +57,7 @@ public class DispatchA47Parser extends FieldProgramParser {
     if (name.equals("PLACE2")) return new BasePlace2Field();
     if (name.equals("UNIT2")) return new BaseUnit2Field();
     if (name.equals("UNITQ")) return new BaseOptUnitField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -166,15 +168,15 @@ public class DispatchA47Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (field.isEmpty()) return true;
       if (!field.contains("/")) return false;
-      field = stripFieldStart(field, "/");
-      field = stripFieldEnd(field, "/");
-      super.parse(field, data);
+      parse(field, data);
       return true;
     }
 
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
     }
   }
 
@@ -220,6 +222,15 @@ public class DispatchA47Parser extends FieldProgramParser {
       if (noUnit || unitPtn == null && !isLastField()) return false;
       return super.checkParse(field, data);
     }
+  }
 
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("^\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      field = INFO_HDR_PTN.matcher(field).replaceFirst("");
+      super.parse(field, data);
+    }
   }
 }

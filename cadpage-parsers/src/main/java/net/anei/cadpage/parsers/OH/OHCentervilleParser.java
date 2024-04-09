@@ -12,7 +12,7 @@ public class OHCentervilleParser extends DispatchA47Parser {
 
   @Override
   public String getFilter() {
-    return "SWMail@centervilleohio.gov";
+    return "SWMail@centervilleohio.gov,noreply-centralsquare@centervilleohio.gov";
   }
 
   @Override
