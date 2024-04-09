@@ -77,7 +77,7 @@ public class Active911ParserTable {
       "US/AK/CityofKetchikan",            "AKKetchikan",
       "US/AK/MatanuskaSusitna",           "AKMatanuskaSusitnaBorough",
       "US/AK/Skagway",                    "AKSkagway",
-      "US/AL/AdamsvilleFD",               "ALJeffersonCountyJ",
+      "US/AL/AdamsvilleFD",               "ALJeffersonCountyJ,ALJeffersonCountyM",
       "US/AL/AlexanderCity",              "ALTallapoosaCountyA",
       "US/AL/AthensLimestoneCounty",      "ALLimestoneCountyA",
       "US/AL/AttallaPD",                  "ALEtowahCountyD",

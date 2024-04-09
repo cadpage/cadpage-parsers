@@ -30,6 +30,8 @@ public class DispatchA55Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
+    if (subject.startsWith("Automatic R&R Notification:")) return false;
+
     useAuxParser = AUX_PTN.matcher(body).lookingAt() && !NOT_AUX_PTN.matcher(body).find();
     if (useAuxParser) return auxParser.parseMsg(subject,  body, data);
 
