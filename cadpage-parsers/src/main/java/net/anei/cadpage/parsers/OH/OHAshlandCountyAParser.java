@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -15,10 +16,11 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
 
   @Override
   public String getFilter() {
-    return "911@ashlandcountysheriff.org,no-reply@zuercherportal.com,noreply@zuercherportal.com,acso.txt.rpt@gmail.com";
+    return "911@ashlandcountysheriff.org,txt.rprt@ashlandcountysheriff.org";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("\\d{4}");
+  private static final Pattern SRC_ID_PTN = Pattern.compile("Run Number (\\S+) (FD\\d+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -32,7 +34,18 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
     }
     body = stripFieldStart(body, "- ");
     body = body.replace("TOWNSHIP RD", "TWP RD");
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    Matcher match = SRC_ID_PTN.matcher(data.strCallId);
+    if (match.matches()) {
+      data.strSource = match.group(1);
+      data.strCallId = match.group(2);
+    }
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -161,7 +174,5 @@ public class OHAshlandCountyAParser extends DispatchEmergitechParser {
       "SHREVE",
       "WEST SALEM",
       "WOOSTER"
-
-
   };
 }
