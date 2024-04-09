@@ -25,7 +25,7 @@ public class MIBarryCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,noreplyzuercher@ioniacounty.org";
   }
 
   @Override
@@ -44,9 +44,11 @@ public class MIBarryCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("BOX")) return new MyBoxField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("CAUTION")) return new MyCautionField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("INFO2")) return new MyInfo2Field();
+    if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
 
@@ -86,30 +88,39 @@ public class MIBarryCountyBParser extends FieldProgramParser {
         field = getLeft();
       }
 
-      field = stripFieldStart(field, "None");
-      field = stripFieldEnd(field, "None");
-      Matcher match = APT_PLACE_PTN1.matcher(field);
-      boolean found = match.matches();
-      if (!found) {
-        match = APT_PLACE_PTN2.matcher(field);
-        found = match.matches();
-      }
-      if (found) {
-        data.strApt = append(data.strApt, "-", match.group(1));
-        data.strPlace = match.group(2);
-      } else if ((match = PLACE_APT_PTN.matcher(field)).matches()) {
-        data.strPlace = match.group(1).trim();
-        String apt = match.group(2);
-        if (apt == null) apt = match.group(3);
-        data.strApt = append(data.strApt, "-", apt);
+      if (data.strCity.equals("KZOO CO")) data.strCity = "KALAMAZOO CO";
+
+      if (field.startsWith("X ") || field.startsWith("X-") ||
+          field.startsWith("x ") || field.startsWith("x-")) {
+        data.strCross = field.substring(2).trim();
+      } else if (isValidCrossStreet(field)) {
+        data.strCross = field;
       } else {
-        data.strPlace = field;
+        field = stripFieldStart(field, "None");
+        field = stripFieldEnd(field, "None");
+        Matcher match = APT_PLACE_PTN1.matcher(field);
+        boolean found = match.matches();
+        if (!found) {
+          match = APT_PLACE_PTN2.matcher(field);
+          found = match.matches();
+        }
+        if (found) {
+          data.strApt = append(data.strApt, "-", match.group(1));
+          data.strPlace = match.group(2);
+        } else if ((match = PLACE_APT_PTN.matcher(field)).matches()) {
+          data.strPlace = match.group(1).trim();
+          String apt = match.group(2);
+          if (apt == null) apt = match.group(3);
+          data.strApt = append(data.strApt, "-", apt);
+        } else {
+          data.strPlace = field;
+        }
       }
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR CITY ST APT PLACE";
+      return "ADDR CITY ST X? APT PLACE";
     }
   }
 
@@ -117,6 +128,17 @@ public class MIBarryCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None") || field.isEmpty()) return;
+
+      if (field.contains(data.strCross) ||
+          field.contains(" AND ") || field.contains(" and ")) data.strCross = "";
       super.parse(field, data);
     }
   }
@@ -147,6 +169,14 @@ public class MIBarryCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
       data.strSupp = append(data.strSupp, "\n", field);
+    }
+  }
+
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",");
+      super.parse(field, data);
     }
   }
 
@@ -227,6 +257,43 @@ public class MIBarryCountyBParser extends FieldProgramParser {
       "OTISCO TWP",
       "PORTLAND TWP",
       "RONALD TWP",
-      "SEBEWA TWP"
+      "SEBEWA TWP",
+
+      // Allegan County
+      "ALLEGAN",
+      "ALLEGAN CO",
+      "ALLEGAN COUNTY",
+      "PLAINWELL",
+      "SHELBYVILLE",
+      "WAYLAND",
+
+      // Calhoun County
+      "CALHOUN",
+      "CALHOUN CO",
+      "CALHOUN COUNTY",
+      "BATTLE CREEK",
+
+      // Eaton County
+      "EATON",
+      "EATON CO",
+      "EATON COUNTY",
+      "BELLEVUE",
+      "SUNFIELD",
+      "VERMONTVILLE",
+
+      // Kalamazoo County
+      "KZOO CO",
+      "KALAMAZOO",
+      "KALAMAZOO CO",
+      "KALAMAZOO COUNTY",
+      "ROSS TWP",
+      "RICHLAND",
+
+      // Kent County
+      "KENT",
+      "KENT CO",
+      "KENT COUNTY",
+      "CALEDONIA",
+      "GRAND RAPIDS"
   };
 }
