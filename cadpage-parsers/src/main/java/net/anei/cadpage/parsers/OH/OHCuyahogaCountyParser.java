@@ -9,12 +9,12 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHCuyahogaCountyParser extends GroupBestParser {
-  
+
   public OHCuyahogaCountyParser() {
-    super(new OHCuyahogaCountyAParser(), new OHCuyahogaCountyBParser(), new OHCuyahogaCountyCParser(),
+    super(new OHCuyahogaCountyAParser(), new OHCuyahogaCountyBParser(),
           new OHCuyahogaCountyDParser(), new OHCuyahogaCountyFParser());
   }
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
 
       //Cities
@@ -79,12 +79,12 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
       //TOWNSHIPS
       "CHAGRIN FALL",  "CHAGRIN FALLS TWP",
       "OLMSTED",       "OLMSTED TWP",
-      
+
       // Lake County
       "WLBY HILLS",    "WILLOUGHBY HILLS"
 
   });
-  
+
   static final String[] CITY_LIST = new String[]{
 
     // Cities
@@ -153,12 +153,12 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
     // Townships
     "CHAGRIN FALLS TWP",
     "OLMSTED TWP",
-    
+
     // Summit County
     "MACEDONIA",
     "NORTHFIELD",
     "RICHFIELD",
-    
+
     // Geauga County
     "BAINBRIDGE",
   };

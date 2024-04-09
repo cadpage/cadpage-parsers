@@ -224,7 +224,8 @@ public class ManageParsers {
         "ILMassacCountyB",    "General",                 // 02/17/2024
         "OKMuskogeeCounty",   "General",                 // 02/26/2024
         "PAArmstrongCountyB", "General",                 // 03/17/2024
-        "PAFranklinCountyB",  "General"                 // 04/01/2024
+        "PAFranklinCountyB",  "General",                 // 04/01/2024
+        "OHCuyahogaCountyC",  "General"                 // 04/09/2024
   });
 
 }

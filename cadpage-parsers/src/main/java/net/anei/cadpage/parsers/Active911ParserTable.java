@@ -1969,7 +1969,7 @@ public class Active911ParserTable {
       "US/OH/StarkCounty",                "OHStarkCountyRedcenter2",
       "US/OH/StMarysFD",                  "OHAuglaizeCountyC",
       "US/OH/SummitCounty",               "OHSummitCountyH,OHSummitCountyB",
-      "US/OH/SundanceSys",                "OHCuyahogaCountyC,OHCuyahogaCountyF",
+      "US/OH/SundanceSys",                "OHCuyahogaCountyF",
       "US/OH/SundanceSysPortageCounty",   "OHPortageCountyA",
       "US/OH/TallmadgeFire",              "OHSummitCountyI",
       "US/OH/TheBeachWaterpark",          "OHWarrenCountyD",

@@ -134,6 +134,9 @@ public class OHPortageCountyParser extends GroupBestParser {
     "BERLIN",
     "BERLIN CENTER",
 
+    // Summit County
+    "HUDSON",
+
     // Trumbull County
     "NEWTON FALLS",
     "SOUTHINGTON TWP"
