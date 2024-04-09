@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXHardinCountyParser extends DispatchA71Parser {
+/**
+ * Hardin County, TX
+ */
+public class TXHardinCountyParser extends GroupBestParser {
 
   public TXHardinCountyParser() {
-    super("HARDIN COUNTY", "TX");
+    super(new TXHardinCountyAParser(), new TXHardinCountyBParser());
   }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
-  }
-
 }
