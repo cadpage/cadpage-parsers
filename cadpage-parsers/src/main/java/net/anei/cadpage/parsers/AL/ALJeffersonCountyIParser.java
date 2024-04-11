@@ -9,14 +9,14 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ALJeffersonCountyIParser extends FieldProgramParser {
-  
+
   public ALJeffersonCountyIParser() {
-    super("JEFFERSON COUNTY", "AL", 
-          "CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! ( Date/Time:DATETIME MAP:SKIP! UNITS:UNIT! INFO/N+ " + 
-                                                 "| MAP:SKIP! UNITS:UNIT! ( Date/Time:DATETIME! INFO/N+ " + 
-                                                                         "| INFO/N+? Date/Time:DATETIME! END ) )");
+    super("JEFFERSON COUNTY", "AL",
+          "CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! GRID2640:MAP? ( Date/Time:DATETIME MAP:SKIP! UNITS:UNIT! INFO/N+ " +
+                                                                "| MAP:SKIP! UNITS:UNIT! ( Date/Time:DATETIME! INFO/N+ " +
+                                                                                        "| INFO/N+? Date/Time:DATETIME! END ) )");
   }
-  
+
   @Override
   public String getFilter() {
     return "FireDesk@JeffCoal911.org";
@@ -26,13 +26,14 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("ACTIVE 9-1-1")) return false;
+    body = body.replace(" GRID2640:", "\nGRID2640:");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -40,7 +41,7 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
     if (name.equals("INFO"))  return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeField extends DateTimeField {
@@ -57,7 +58,7 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
       }
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -65,7 +66,7 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
