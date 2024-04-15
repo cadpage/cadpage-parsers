@@ -8,7 +8,8 @@ public class ILLakeCountyParser extends GroupBestParser {
     super(new ILLakeCountyAParser(),
           new ILLakeCountyBParser(),
           new ILLakeCountyDParser(),
-          new ILLakeCountyEParser());
+          new ILLakeCountyEParser(),
+          new ILLakeCountyFParser());
 
   }
 }

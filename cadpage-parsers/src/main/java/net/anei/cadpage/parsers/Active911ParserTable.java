@@ -634,7 +634,7 @@ public class Active911ParserTable {
       "US/IL/GlenCarbon",                 "ILMadisonCounty",
       "US/IL/GraniteCity",                "ILMadisonCountyA",
       "US/IL/GreeneCounty",               "ILGreeneCounty",
-      "US/IL/GurneeFire",                 "ILLakeCountyB",
+      "US/IL/GurneeFire",                 "ILLakeCountyB,ILLakeCountyF",
       "US/IL/HancockCounty",              "ILHancockCounty",
       "US/IL/HarwoodHeights",             "ILCookCountyK",
       "US/IL/Highland",                   "ILMadisonCounty",
