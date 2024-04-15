@@ -12,7 +12,8 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   public COWeldCountyBParser() {
     super(CITY_LIST, "WELD COUNTY", "CO",
-          "( EMPTY ADDR ( APT APT CITY | CITY ) PLACE UNIT CALL? ID | ) INFO! GPS1/d GPS2/d MAP? EMPTY/Z END");
+          "( RR_MARK/R ID ADDR APT APT CITY PLACE UNIT CALL! INFO/N+ " +
+          "| ( EMPTY ADDR ( APT APT CITY | CITY ) PLACE UNIT CALL? ID | ) INFO! GPS1/d GPS2/d MAP? EMPTY/Z END )");
     setupCities(MAP_CITY_TABLE.stringPropertyNames());
   }
 
@@ -44,8 +45,9 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("RR_MARK")) return new SkipField("Call Completed Report.*", true);
     if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("ID")) return new IdField("\\d\\d[A-Z]{2,3}\\d{6}|\\d+-\\d+", true);
+    if (name.equals("ID")) return new IdField("\\d\\d[A-Z]{2,4}\\d{6}|\\d+-\\d+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -92,6 +94,7 @@ public class COWeldCountyBParser extends FieldProgramParser {
 
     // County
     "WELD",
+    "ADAMS COUNTY",
     "LARIMER COUNTY",
     "MORGAN COUNTY",
 
