@@ -17,6 +17,7 @@ public class PAAdamsCountyDParser extends DispatchA57Parser {
   }
 
   private static final Pattern NATURE_OF_CALL_PTN = Pattern.compile("N ?a ?t ?u ?r ?e  ?o ?f  ?C ?a ?l ?l ?:");
+  private static final Pattern ADDITIONAL_LOCATION_INFO_PTN = Pattern.compile("Additional ?Location ?Info:");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -29,6 +30,7 @@ public class PAAdamsCountyDParser extends DispatchA57Parser {
       if (body.length() != len) {
         body = stripBlank(body, 193);
         body = stripBlank(body, 127);
+        body = ADDITIONAL_LOCATION_INFO_PTN.matcher(body).replaceFirst("Additional Location Info:");
       }
     }
     body = body.replace("0A", "\n");
