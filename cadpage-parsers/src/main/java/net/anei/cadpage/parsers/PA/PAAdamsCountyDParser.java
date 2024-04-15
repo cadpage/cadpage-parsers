@@ -8,7 +8,10 @@ import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 public class PAAdamsCountyDParser extends DispatchA57Parser {
 
   public PAAdamsCountyDParser() {
-    super("ADAMS COUNTY", "PA");
+    super(PAAdamsCountyParser.CITY_LIST, "ADAMS COUNTY", "PA");
+    for (String city : PAAdamsCountyParser.CITY_LIST) {
+      if (city.endsWith(" BORO")) setupCities(city.substring(0,city.length()-5));
+    }
   }
 
   @Override

@@ -12,7 +12,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchA57Parser extends FieldProgramParser {
 
   public DispatchA57Parser(String defCity, String defState) {
-    super(defCity, defState,
+    this(null, defCity, defState);
+  }
+
+  public DispatchA57Parser(String[] cityList, String defCity, String defState) {
+    super(cityList, defCity, defState,
           "( SELECT/1 Call_Time:DATETIME? " +
               "( CFS_Number:ID1! Primary_Incident:ID2/L! Address:ADDRCITY/S6! Common_Name:PLACE! Police_Call_Type:CALL! Fire_Call_Type:CALL! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:INFO! " +
                   "Assigned_Units:UNIT! Quadrant:MAP! District:MAP! Beat:MAP! Narrative:INFO! INFO/N+ " +
