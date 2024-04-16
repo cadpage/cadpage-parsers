@@ -11,11 +11,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Wylie, TX
  */
 
-public class TXWylieParserA extends FieldProgramParser {
+public class TXWylieAParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PATTERN = Pattern.compile("ALERT \\- (.+)|String Match .*");
   private static final Pattern BODY_PATTERN = Pattern.compile("^CITY OF WYLIE DISPATCH\\n\\n(.*)", Pattern.DOTALL);
 
-  public TXWylieParserA() {
+  public TXWylieAParser() {
     super("", "TX",
         "CALL! BOX:BOX? ADDR! ( CROSS_STREET(S):X | INTERSECTS_WITH:X | ) ( CHANNEL:CH | ) SKIP+? CITY!");
     setupProtectedNames("BUTSCHERS BLOCK");

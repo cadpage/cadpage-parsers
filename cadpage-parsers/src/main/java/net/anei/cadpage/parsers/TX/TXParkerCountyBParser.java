@@ -1,10 +1,10 @@
 package net.anei.cadpage.parsers.TX;
 
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
+
 /**
  * Parker County, TX (B)
  */
@@ -15,7 +15,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
           "( SELECT/STATUS UNIT CALL ADDR CITY/Y CALL2 " +
           "| CANCEL ADDR CITY/Y " +
           "| UNIT? CH? CALL PLACE? ADDR/Z X/Z+? CITY/Y! SRC? MAP? PRI? " +
-          ") INFO/N+? GPS1 GPS2");
+          ") INFO/N+? BOX");
   }
 
   @Override
@@ -46,8 +46,8 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     if (name.equals("MAP")) return new MapField("\\d{4}", true);
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("GPS1")) return new MyGPSField(1);
-    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("BOX")) return new BoxField("\\d{4}", true);
+    if (name.equals("DIGIT")) return new SkipField("\\d", true);
     return super.getField(name);
   }
 
@@ -121,36 +121,6 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return "CH? " + super.getFieldNames();
-    }
-  }
-
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
-
-  private class MyGPSField extends GPSField {
-
-    int endCount;
-
-    public MyGPSField(int type) {
-      super(type);
-      endCount = 3-type;
-    }
-
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!isLastField(endCount)) return false;
-      if (!GPS_PTN.matcher(field).matches()) return false;
-      super.parse(field, data);
-      return true;
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
     }
   }
 

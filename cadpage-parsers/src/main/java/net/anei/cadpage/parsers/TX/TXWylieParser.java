@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXWylieParser extends GroupBestParser {
 
   public TXWylieParser() {
-    super(new TXWylieParserA(), new TXWylieBParser());
+    super(new TXWylieAParser(), new TXWylieBParser());
   }
 
 }
