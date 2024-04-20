@@ -180,7 +180,7 @@ public class Active911ParserTable {
       "US/AR/FountainLake",               "ARGarlandCountyA",
       "US/AR/FSEMS",                      "ARSebastianCounty",
       "US/AR/FSEMS",                      "ARSebastianCounty",
-      "US/AR/GarlandCounty",              "ARGarlandCountyD",
+      "US/AR/GarlandCounty",              "ARGarlandCountyD,ARGarlandCountyF",
       "US/AR/GrantCounty",                "ARGrantCounty",
       "US/AR/HotSpringCounty",            "ARHotSpringCounty",
       "US/AR/HotSpringsVillage",          "ARGarlandCountyC",
