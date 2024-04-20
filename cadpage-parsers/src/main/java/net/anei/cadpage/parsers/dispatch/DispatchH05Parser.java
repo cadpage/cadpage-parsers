@@ -84,7 +84,8 @@ public class DispatchH05Parser extends HtmlProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITYAPT")) return new BaseAddressCityAptField();
-    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("X")) return new BaseCrossField();
+    if (name.equals("ID")) return new BaseIdField();
     if (name.equals("INFO_BLK")) return new BaseInfoBlockField();
     if (name.equals("TIMES")) return new BaseTimesField();
     return super.getField(name);
@@ -117,11 +118,22 @@ public class DispatchH05Parser extends HtmlProgramParser {
     }
   }
 
-  private class MyCrossField extends CrossField {
+  private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("No Cross Streets Found")) return;
       super.parse(field, data);
+    }
+  }
+
+  private class BaseIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String part : field.split(",")) {
+        part = part.trim();
+        if (part.startsWith("[Incident not yet created")) continue;
+        data.strCallId = append(data.strCallId, ", ", part);
+      }
     }
   }
 
