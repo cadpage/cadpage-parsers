@@ -16,7 +16,7 @@ public class VTChittendenCountyEParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@burlingtonvt.gov,@bpdvt.org";
+    return "@burlingtonvt.gov,@bpdvt.org,@southburlingtonpolice.org";
   }
 
   @Override

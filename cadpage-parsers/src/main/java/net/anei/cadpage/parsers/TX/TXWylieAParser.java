@@ -12,8 +12,6 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 
 public class TXWylieAParser extends FieldProgramParser {
-  private static final Pattern SUBJECT_PATTERN = Pattern.compile("ALERT \\- (.+)|String Match .*");
-  private static final Pattern BODY_PATTERN = Pattern.compile("^CITY OF WYLIE DISPATCH\\n\\n(.*)", Pattern.DOTALL);
 
   public TXWylieAParser() {
     super("", "TX",
@@ -26,28 +24,31 @@ public class TXWylieAParser extends FieldProgramParser {
     return "wyliefiredispatch@gmail.com";
   }
 
-@Override
-protected boolean parseMsg(String subject, String body, Data data) {
+  private static final Pattern SUBJECT_PATTERN = Pattern.compile("ALERT \\- (.+)|String Match .*");
+  private static final Pattern BODY_PATTERN = Pattern.compile("^CITY OF WYLIE DISPATCH\\n\\n(.*)", Pattern.DOTALL);
 
-  Matcher m = SUBJECT_PATTERN.matcher(subject);
-  if (!m.lookingAt()) return false;
-  data.strUnit = getOptGroup(m.group(1));
-  m = BODY_PATTERN.matcher(body);
-  if (!m.matches()) return false;
-  body = m.group(1).trim();
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+  
+    Matcher m = SUBJECT_PATTERN.matcher(subject);
+    if (!m.lookingAt()) return false;
+    data.strUnit = getOptGroup(m.group(1));
+    m = BODY_PATTERN.matcher(body);
+    if (!m.matches()) return false;
+    body = m.group(1).trim();
+  
+    return parseFields(body.split("\n"), data);
+  }
 
-  return parseFields(body.split("\n"), data);
-}
+  @Override
+  public String getProgram() {
+    return "UNIT " + super.getProgram();
+  }  
 
-@Override
-public String getProgram() {
-  return "UNIT " + super.getProgram();
-}  
-
-@Override
-public Field getField(String name) {
-  if (name.equals("CITY")) return new CityField("IN +(.*)", true);
-  return super.getField(name);
-}
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CITY")) return new CityField("IN +(.*)", true);
+    return super.getField(name);
+  }
 
 }
