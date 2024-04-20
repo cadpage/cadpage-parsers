@@ -9,7 +9,7 @@ public class PABucksCountyDParser extends FieldProgramParser {
   public PABucksCountyDParser() {
     super("BUCKS COUNTY", "PA",
           "CALL! Inc#:ID! ( Box:BOX! Alrm_Lvl:PRI! ( Place_Name:PLACE! Addr:ADDR! | Addr:ADDR! Place_Name:PLACE! ) btwn:X! Pri_Remarks:INFO ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! ( Units:UNIT! | Run:UNIT! ) GPS! TIME! Caller:NAME Phone:PHONE Alt:PHONE/L " +
-                         "| Units:UNIT! Place_Name:PLACE Addr:ADDR! btwn:X! GPS! Box:BOX! Pri_Remarks:PRI! Call_Text:INFO! Caller:NAME! Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! ( Time_Out:TIME! | TIME! ) G:SKIP D:SKIP " +
+                         "| Units:UNIT! Place_Name:PLACE Addr:ADDR! btwn:X! GPS! ( Box:BOX! | FIRE_Box:BOX! EMS_Box:BOX/L! ) ( Pri_Remarks:PRI! | PRI_Remarks:PRI! ) Call_Text:INFO! Caller:NAME! Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! ( Time_Out:TIME! | TIME! ) G:SKIP D:SKIP " +
                          "| Sector:MAP! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:PRI! Call_Text:INFO! GPS! TIME! Units:UNIT! Caller:NAME Phone:PHONE Alt:PHONE/L " +
                          ") END ");
   }
