@@ -53,6 +53,8 @@ public class PAFayetteCountyCParser extends FieldProgramParser {
       data.strAddress = append(data.strAddress, ", ", data.strCity);
       data.strCity = "";
     }
+
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
     return true;
   }
 
