@@ -18,7 +18,7 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "@co.iredell.nc.us";
+    return "@co.iredell.nc.us,CAD@iredellcountync.gov";
   }
 
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9]+");
