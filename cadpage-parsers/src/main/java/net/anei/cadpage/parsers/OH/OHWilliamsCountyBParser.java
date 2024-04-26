@@ -18,7 +18,7 @@ public class OHWilliamsCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "mlevy@wmsco.org,info@sundance-sys.com,BryanCAD";
+    return "mlevy@wmsco.org,info@sundance-sys.com,BryanCAD,wcca911@gmail.com";
   }
 
   @Override
