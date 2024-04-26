@@ -23,7 +23,7 @@ public class MOClayCountyEParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("[A-Z]{2}\\d{6}-\\d{3}", true);
+    if (name.equals("ID")) return new IdField("[A-Z]{1,2}\\d{6}-\\d{3}", true);
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("NONE")) return new SkipField("None");
     if (name.equals("ADDR_PFX")) return new MyAddressPrefixField();
