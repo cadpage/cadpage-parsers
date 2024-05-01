@@ -19,7 +19,7 @@ public class MOStoddardCountyParser extends MsgParser {
   }
 
   private static final Pattern MASTER =
-      Pattern.compile("(?:([^;,]*(?:, -\\d+\\.\\d+ *)?(?:, APT [A-Z0-9]+ *)?)(?:, ([ A-Z]+))?(?:, ([A-Z]{2})(?: \\d{5})?)? )?([^;]*) ((?:[A-Z0-9]+; )*)((?!911)\\d{3}|[A-Z]FD) (?:(.*) )?Call Time: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d Assigned (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)\\b.*");
+      Pattern.compile("(?:([^;,]*(?:, -\\d+\\.\\d+ *)?(?:, APT [A-Z0-9]+ *)?)(?:, ([ A-Z]+))?(?:, ([A-Z]{2})(?: \\d{5})?)? )?([^;]*) ((?:[A-Z0-9]+; )*)((?!911)\\d{2,3}|SCSO|[A-Z]{1,2}[FP]D\\d?) (?:(.*) )?Call Time: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d Assigned (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)\\b.*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
