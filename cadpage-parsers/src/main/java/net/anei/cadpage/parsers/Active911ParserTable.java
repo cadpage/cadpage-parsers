@@ -949,6 +949,7 @@ public class Active911ParserTable {
       "US/KY/KSPP6",                      "KYStatePolice",
       "US/KY/KSPP9",                      "KYStatePolice",
       "US/KY/LarueCounty",                "KYLaRueCounty",
+      "US/KY/LetcherCounty",              "KYLetcherCounty",
       "US/KY/LaurelCounty",               "KYLaurelCounty",
       "US/KY/LaurelCountyRescue",         "KYLaurelCounty",
       "US/KY/LawrenceCounty",             "KYLawrenceCounty",

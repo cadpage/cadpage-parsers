@@ -728,6 +728,7 @@ public class ParserList {
               ,"KYLaRueCounty"                  ,"LaRue County, KY"
               ,"KYLaurelCounty"                 ,"Laurel County, KY"
               ,"KYLawrenceCounty"               ,"Lawrence County, KY"
+              ,"KYLetcherCounty"                ,"Letcher County, KY"
               ,"KYLewisCounty"                  ,"Lewis County, KY"
               ,"KYLincolnCounty"                ,"Lincoln County, KY"
               ,"KYLivingstonCounty"             ,"Livingston County, KY"
