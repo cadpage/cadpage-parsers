@@ -40,6 +40,7 @@ public class KYGreenupCountyAParser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.equals("-")) return true;
       int pt = field.indexOf(" - ");
       if (pt < 0) return false;
       data.strCode = field.substring(0,pt).trim();
