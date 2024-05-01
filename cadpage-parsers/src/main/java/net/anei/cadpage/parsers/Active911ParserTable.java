@@ -1086,7 +1086,7 @@ public class Active911ParserTable {
       "US/MD/Fireblitz",                  "MDPrinceGeorgesCountyFireBiz",
       "US/MD/Firetech",                   "MDCharlesCountyA,MDCharlesCountyB",
       "US/MD/FrederickCounty",            "MDFrederickCountyA,MDFrederickCountyB",
-      "US/MD/FrederickCountyFireRescue",  "MDFrederickCountyA",
+      "US/MD/FrederickCountyFireRescue",  "MDFrederickCountyA,MDFrederickCountyB",
       "US/MD/GarrettCounty",              "MDGarrettCounty",
       "US/MD/GarrettCountyTest",          "MDGarrettCounty",
       "US/MD/HarfordCounty",              "MDHarfordCountyC,Cadpage2",

@@ -12,7 +12,7 @@ public class MDFrederickCountyBParser extends FieldProgramParser {
 
   public MDFrederickCountyBParser() {
     super("FREDERICK COUNTY", "MD",
-          "EMPTY! Inc_#:ID! Type:CALL! Pri:PRI! Loc:PLACE! Desc:INFO! Addr:ADDR! Flr:APT! Apt:APT! XSt:X! Rmks:INFO! INFO/N+ Units:UNIT! Time:TIMEDATE! DASHES END");
+          "EMPTY! Inc_#:ID! Type:CALL! Pri:PRI! Loc:PLACE! Desc:INFO! Addr:ADDR! Flr:APT! Apt:APT! XSt:X! ( Rmks:INFO! INFO/N+ | ) Units:UNIT! Time:TIMEDATE! DASHES END");
   }
 
   @Override
@@ -20,7 +20,7 @@ public class MDFrederickCountyBParser extends FieldProgramParser {
     return "ECC@frederickcountymd.gov";
   }
 
-  private static final Pattern DELIM = Pattern.compile("[|\n]");
+  private static final Pattern DELIM = Pattern.compile("\\s*\\|\\s*|\\s*\n\\s*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
