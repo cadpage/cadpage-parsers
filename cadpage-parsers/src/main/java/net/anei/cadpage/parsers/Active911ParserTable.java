@@ -138,6 +138,7 @@ public class Active911ParserTable {
       "US/AL/MarshallCounty",             "ALMarshallCounty,ALMorganCounty",
       "US/AL/MillervilleVFD",             "ALClayCounty",
       "US/AL/MobileCounty",               "ALMobileCounty",
+      "US/AL/MonroeCounty",               "ALMonroeCounty",
       "US/AL/MorganCounty",               "ALMorganCounty",
       "US/AL/PikeCounty",                 "ALPikeCountyA",
       "US/AL/PinckardVFD",                "ALDaleCountyB",

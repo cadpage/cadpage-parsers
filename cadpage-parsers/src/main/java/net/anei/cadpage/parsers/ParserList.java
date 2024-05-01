@@ -149,6 +149,7 @@ public class ParserList {
               ,"ALMarionCounty"                 ,"Marion County, AL"
               ,"ALMarshallCounty"               ,"Marshall County, AL"
               ,"ALMobileCounty"                 ,"Mobile County, AL"
+              ,"ALMonroeCounty"                 ,"Monroe County, AL"
               ,"ALMontgomeryCounty"             ,"Montgomery County, AL"
               ,"ALMorganCounty"                 ,"Morgan County, AL"
               ,"ALOzark"                        ,"Ozark, AL"
