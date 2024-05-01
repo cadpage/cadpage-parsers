@@ -14,7 +14,7 @@ public class DispatchA79Parser extends FieldProgramParser {
   public DispatchA79Parser(String reqSubject, String defCity, String defState) {
     super(defCity, defState,
           "Unit:UNIT! Run:ID! Patient:NAME! INFO/N+? Pickup:EMPTY! " +
-          "( PLACE ADDR/Z APT/Z CITY_ST_ZIP! | ADDR/Z CITY_ST_ZIP! | ADDR/Z APT CITY_ST_ZIP | PLACE ADDR CITY_ST_ZIP! | ADDR APT CITY_ST_ZIP! ) INFO/N+");
+          "( PLACE ADDR/Z APT/Z PLACE/SDS CITY_ST_ZIP! | PLACE ADDR/Z APT/Z CITY_ST_ZIP! | ADDR/Z CITY_ST_ZIP! | ADDR/Z APT CITY_ST_ZIP | PLACE ADDR CITY_ST_ZIP! | ADDR APT CITY_ST_ZIP! ) INFO/N+");
     this.reqSubject =  reqSubject;
   }
 
