@@ -198,6 +198,19 @@ public class DispatchH05Parser extends HtmlProgramParser {
   }
 
   private class BaseTimesField extends InfoField {
+
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (INFO_DATE_TIME_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
 

@@ -2420,6 +2420,7 @@ public class Active911ParserTable {
       "US/TX/CityofDickinson",            "TXGalvestonCountyA",
       "US/TX/CityofElCampo",              "TXElCampo",
       "US/TX/CityofFlowerMound",          "TXFlowerMound",
+      "US/TX/CityofHarlingen",            "TXCameronCountyD",
       "US/TX/CityofHenderson",            "TXRuskCountyB",
       "US/TX/CityofHutchins",             "TXHutchins",
       "US/TX/CityofKeller",               "TXTarrantCountyC,TXTarrantCountyE",
