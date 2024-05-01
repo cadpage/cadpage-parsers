@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
-public class KYHardinCountyEParser extends DispatchA71Parser {
+public class KYHardinCountyEParser extends DispatchA24Parser {
 
   public KYHardinCountyEParser() {
     super("HARDIN COUNTY", "KY");
