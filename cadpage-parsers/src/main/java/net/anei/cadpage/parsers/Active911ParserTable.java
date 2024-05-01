@@ -92,7 +92,7 @@ public class Active911ParserTable {
       "US/AL/ChambersCounty",             "ALChambersCounty",
       "US/AL/Cherokee",                   "ALCherokeeCounty",
       "US/AL/ChiltonCounty",              "ALChiltonCounty",
-      "US/AL/ChoctawCounty",              "ALChoctawCounty",
+      "US/AL/ChoctawCounty",              "ALChoctawCountyA,ALChoctawCountyB",
       "US/AL/CityofBessemer",             "ALJeffersonCountyG",
       "US/AL/CityofBirmingham",           "ALJeffersonCountyD",
       "US/AL/CityofFlorence",             "ALLauderdaleCountyB",
