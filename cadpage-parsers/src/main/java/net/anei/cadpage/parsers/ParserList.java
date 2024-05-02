@@ -475,6 +475,7 @@ public class ParserList {
               ,"IDBlaineCounty"                 ,"Blaine County, ID"
               ,"IDBonnerCounty"                 ,"Bonner County, ID"
               ,"IDBoundaryCounty"               ,"Boundary County, ID"
+              ,"IDCanyonCounty"                 ,"Canyon County, ID"
               ,"IDFremontCounty"                ,"Fremont County, ID"
               ,"IDGemCounty"                    ,"Gem County, ID"
               ,"IDGoodingCounty"                ,"Gooding County, ID"

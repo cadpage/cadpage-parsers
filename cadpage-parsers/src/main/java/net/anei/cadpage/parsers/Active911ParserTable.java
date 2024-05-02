@@ -596,6 +596,7 @@ public class Active911ParserTable {
       "US/ID/BlaineCountyFireCalls",      "IDBlaineCountyB",
       "US/ID/BonnerCounty",               "IDBonnerCounty",
       "US/ID/BoundarySheriff",            "IDBoundaryCounty",
+      "US/ID/CanyonCounty",               "IDCanyonCounty",
       "US/ID/FremontCounty",              "IDFremontCounty",
       "US/ID/GemCounty",                  "IDGemCounty",
       "US/ID/GoodingCounty",              "IDGoodingCountyC",
