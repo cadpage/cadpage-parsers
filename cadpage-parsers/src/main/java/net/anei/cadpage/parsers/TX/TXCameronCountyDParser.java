@@ -6,7 +6,7 @@ public class TXCameronCountyDParser extends DispatchH05Parser {
 
   public TXCameronCountyDParser() {
     super("CAMERON COUNTY", "TX",
-          "BOX ADDRCITY DATETIME MAP? CALL UNIT! TIMES+? INFO_BLK+");
+          "BOX ADDRCITY DATETIME MAP? CALL UNIT! TIMES+? ST_INFO_BLK INFO_BLK+");
   }
 
   @Override

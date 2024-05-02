@@ -86,6 +86,7 @@ public class DispatchH05Parser extends HtmlProgramParser {
     if (name.equals("ADDRCITYAPT")) return new BaseAddressCityAptField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("ID")) return new BaseIdField();
+    if (name.equals("ST_INFO_BLK")) return new BaseStartInfoBlockField();
     if (name.equals("INFO_BLK")) return new BaseInfoBlockField();
     if (name.equals("TIMES")) return new BaseTimesField();
     return super.getField(name);
@@ -142,6 +143,16 @@ public class DispatchH05Parser extends HtmlProgramParser {
 
   private static final Pattern INFO_DATE_TIME_PTN = Pattern.compile("\\*+\\d\\d?/\\d\\d?/\\d{4}\\*+|\\d\\d?:\\d\\d:\\d\\d");
   private static final Pattern INFO_TIMES_MARK_PTN = Pattern.compile("[A-Z0-9]+: .*");
+
+  protected class BaseStartInfoBlockField extends BaseInfoBlockField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!INFO_DATE_TIME_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+  }
+
   protected class BaseInfoBlockField extends InfoField {
 
     private boolean optInfo = false;
@@ -198,18 +209,6 @@ public class DispatchH05Parser extends HtmlProgramParser {
   }
 
   private class BaseTimesField extends InfoField {
-
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (INFO_DATE_TIME_PTN.matcher(field).matches()) return false;
-      parse(field, data);
-      return true;
-    }
 
     @Override
     public void parse(String field, Data data) {
