@@ -7,16 +7,16 @@ public class LAJeffersonDavisParishParser extends DispatchA55Parser {
   public LAJeffersonDavisParishParser() {
     this("JEFFERSON DAVIS PARISH", "LA");
   }
-  
+
   LAJeffersonDavisParishParser(String defCity, String defState) {
     super(defCity, defState);
   }
-  
+
   public String getAliasCode() {
     return "LAJeffersonDavisParish";
   }
-  
+
   public String getFilter() {
-    return "cadalerts@messaging.eforcesoftware.net";
+    return "cadalerts@messaging.eforcesoftware.net,reports@messaging.eforcesoftware.net";
   }
 }
