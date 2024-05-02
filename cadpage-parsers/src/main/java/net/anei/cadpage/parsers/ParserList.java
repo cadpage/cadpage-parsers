@@ -1673,6 +1673,7 @@ public class ParserList {
               ,"TXCarsonCounty"                 ,"Carson County, TX"
               ,"TXChambersCounty"               ,"Chambers County, TX"
               ,"TXCherokeeCounty"               ,"Cherokee County, TX"
+              ,"TXCochranCounty"                ,"Cochran County, TX"
               ,"TXCollinCounty"                 ,"Collin County, TX"
               ,"TXComalCounty"                  ,"Comal County, TX"
               ,"TXCookeCounty"                  ,"Cooke County, TX"
