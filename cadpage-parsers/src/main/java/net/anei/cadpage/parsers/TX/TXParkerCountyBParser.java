@@ -14,7 +14,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "PARKER COUNTY", "TX",
           "( SELECT/STATUS UNIT CALL ADDR CITY/Y CALL2 " +
           "| CANCEL ADDR CITY/Y " +
-          "| UNIT? CH? CALL PLACE? ADDR/Z X/Z+? CITY/Y! SRC? MAP? PRI? " +
+          "| CALL PLACE? ADDR/Z X/Z+? CITY/Y! CH? UNIT? PRI MAP? " +
           ") INFO/N+? BOX");
   }
 
