@@ -64,6 +64,7 @@ public class WAWhitmanCountyAParser extends DispatchA11Parser {
      "CLA", "CLARKSTON",
      "CLT", "COLTON",
      "GEN", "GENESSEE",
+     "JOH", "JOHNSON",
      "LEW", "LEWISTON",
      "PUL", "PULMAN",
      "UNI", "UNIONTOWN"
