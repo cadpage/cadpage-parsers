@@ -12,7 +12,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   public COArapahoeCountyParser() {
     super("ARAPAHOE COUNTY", "CO",
-          "( Resp.Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT EMPTY PLACE CALL ID! " +
+          "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT EMPTY PLACE CALL ID! " +
           "| Address_Changed:MAP! GPS/d ADDR2 PLACE CALL ID! " +
           "| Incident_Location_Changed_to:EMPTY! ID3 MAP ADDR GPS1 GPS2 EMPTY EMPTY PLACE CALL UNIT! " +
           "| Inc_Address_Update:ADDR! ID3 MAP GPS1 GPS2 EMPTY EMPTY PLACE " +
@@ -47,6 +47,8 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       prefix = match.group(1);
       body = body.substring(match.end());
     }
+
+    body = body.replace("Resp.Info:", "Resp. Info:");
 
     // We have two different page formats
     // Check for the pipe delimited field format
@@ -110,7 +112,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("MAP")) return new MapField("[A-Z]-\\d{2}-[A-Z](?:-[A-Z])?", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} \\d{8,9}", true);
-    if (name.equals("ID")) return new IdField("(?:Case#)?(\\d\\d-[A-Z]{2}-\\d{6}|\\d\\d-\\d{7})", true);
+    if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,3}-\\d{6,7}|\\d\\d-\\d{7})", true);
     if (name.equals("ID3")) return new IdField("\\d{4}-\\d{7}", true);
     if (name.equals("ADDR2")) return new AddressField(".* TO: +(.*)");
     return super.getField(name);
