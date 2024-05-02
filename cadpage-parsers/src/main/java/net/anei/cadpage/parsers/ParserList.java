@@ -1547,6 +1547,7 @@ public class ParserList {
               ,"SCChesterCounty"                ,"Chester County, SC"
               ,"SCChesterfieldCounty"           ,"Chesterfield County, SC"
               ,"SCClarendonCounty"              ,"Clarendon County, SC"
+              ,"SCColletonCounty"               ,"Colleton County, SC"
               ,"SCDarlingtonCounty"             ,"Darlington County, SC"
               ,"SCDillonCounty"                 ,"Dillon County, SC"
               ,"SCDorchesterCounty"             ,"Dorchester County, SC"

@@ -2260,6 +2260,7 @@ public class Active911ParserTable {
       "US/SC/ClarendonCounty",            "SCClarendonCounty",
       "US/SC/ClarendonCountyFD",          "SCClarendonCounty",
       "US/SC/CoastalCrisis",              "SCCharlestonCountyA",
+      "US/SC/ColletonCounty",             "SCColletonCounty",
       "US/SC/DarlingtonCounty",           "SCDarlingtonCounty",
       "US/SC/DillonCounty",               "SCDillonCounty",
       "US/SC/DonaldsonCenterFD",          "SCGreenvilleCountyE",
