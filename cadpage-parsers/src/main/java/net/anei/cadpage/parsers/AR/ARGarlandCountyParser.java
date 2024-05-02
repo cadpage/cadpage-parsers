@@ -9,7 +9,6 @@ public class ARGarlandCountyParser extends GroupBestParser {
   public ARGarlandCountyParser() {
     super(new ARGarlandCountyAParser(),
           new ARGarlandCountyCParser(),
-          new ARGarlandCountyDParser(),
-          new ARGarlandCountyFParser());
+          new ARGarlandCountyDParser());
   }
 }
