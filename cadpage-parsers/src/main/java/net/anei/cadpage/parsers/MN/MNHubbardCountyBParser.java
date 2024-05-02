@@ -18,7 +18,10 @@ public class MNHubbardCountyBParser extends DispatchProphoenixParser {
   protected boolean parseMsg(String body, MsgInfo.Data data) {
     int pt = body.indexOf("\n\n--");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    pt = data.strSupp.indexOf("Names Added :");
+    if (pt >= 0) data.strSupp = data.strSupp.substring(0,pt).trim();
+    return true;
   }
 
   private static final String[] CITY_LIST = new String[] {
