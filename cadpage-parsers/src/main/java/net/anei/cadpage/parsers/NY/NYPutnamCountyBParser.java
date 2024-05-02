@@ -24,6 +24,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
                .replace("Cross Streets:", "Cross Street:")
                .replace("Box;", "Box:");
     if (!parseFields(body.split("\\n+"), data)) return false;
+    if (data.strCity.equals("OUTSIDE PUTNAM COUNTY")) data.strCity = "OUTSIDE COUNTY";
     return !data.strCall.isEmpty();
   }
 
