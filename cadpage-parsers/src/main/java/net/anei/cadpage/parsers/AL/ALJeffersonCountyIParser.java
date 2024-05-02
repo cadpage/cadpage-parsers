@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgParser.MapPageStatus;
 
 public class ALJeffersonCountyIParser extends FieldProgramParser {
 
@@ -28,6 +29,11 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
   }
 
   @Override
+  public MapPageStatus getMapPageStatus() {
+    return MapPageStatus.ANY;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("ACTIVE 9-1-1")) return false;
     body = body.replace(" GRID2640:", "\nGRID2640:");
@@ -36,10 +42,25 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("MAP")) return new MyMapField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO"))  return new MyInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern MAP_URL_PTN = Pattern.compile("https:.*/MapPage_(.*)\\.pdf");
+  private class MyMapField extends MapField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = MAP_URL_PTN.matcher(field);
+      if (match.matches()) {
+        data.mapPageURL = field;
+        data.strMap = match.group(1);
+      } else {
+        data.strMap = field;
+      }
+    }
   }
 
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
