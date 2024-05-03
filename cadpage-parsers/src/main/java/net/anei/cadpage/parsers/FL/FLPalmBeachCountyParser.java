@@ -10,32 +10,32 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class FLPalmBeachCountyParser extends FieldProgramParser {
 
   public FLPalmBeachCountyParser() {
-    super(CITY_CODES, "PALM BEACH COUNTY", "FL", 
+    super(CITY_CODES, "PALM BEACH COUNTY", "FL",
           "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? Map_page:MAP? Map_Coord:MAP? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Disp:UNIT! UNIT/S+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "FIRE-ALERT-CAD@pbcgov.org";
+    return "FIRE-ALERT-CAD@pbcgov.org,FIRE-ALERT-CAD@pbc.gov>";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
-  
+
   private static Pattern DOTDOTDOT = Pattern.compile("\\.{3,}");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     //check subject
     if (!subject.equals("IPS I/Page Notification")) return false;
-    
+
     //remove \\.{3,}
     body = DOTDOTDOT.matcher(body).replaceAll(" ");
-    
+
     body = body.replace(" Disp:", ",Disp:").replace(" lat/lon:", ",lat/lon:");
-    
+
     return parseFields(body.split(","), data);
   }
 
@@ -58,7 +58,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
       String addr = p.get(COLON_AT_PTN);
       String place = p.get(":APT ").trim();
       String apt = p.get();
-      
+
       String city = CITY_CODES.getProperty(addr);
       if (city != null) {
         data.strCity = city;
@@ -75,7 +75,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
       return "ADDR CITY PLACE APT";
     }
   }
-  
+
   private class MyAptField extends AptField {
     @Override
     public void parse(String field, Data data) {
@@ -87,21 +87,21 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
       if (!data.strPlace.equals(field)) data.strPlace = append(data.strPlace, " - ", field);
     }
   }
-  
+
   private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
       data.strMap = append(data.strMap, " / ", field);
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BG",    "Belle Glade",
       "BR",    "Boca Raton",
