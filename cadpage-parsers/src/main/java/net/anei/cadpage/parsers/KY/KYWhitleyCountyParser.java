@@ -10,6 +10,6 @@ public class KYWhitleyCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org";
+    return "noreply@cisusa.org,cad@whitleycountyfiscalcourt.com";
   }
 }
