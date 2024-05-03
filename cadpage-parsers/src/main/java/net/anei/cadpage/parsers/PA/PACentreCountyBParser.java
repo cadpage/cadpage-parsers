@@ -10,7 +10,7 @@ public class PACentreCountyBParser extends FieldProgramParser {
 
   public PACentreCountyBParser() {
     super("CENTRE COUNTY", "PA",
-          "Box:BOX_CALL! CALL? ADDRCITY! PLACE APT NAME Name:NAME ( Due:UNIT | Number:ID ) PLACE APT NAME END");
+          "( Box:BOX_CALL! CALL? | CALL ) ADDRCITY! PLACE APT NAME Name:NAME ( Due:UNIT | Number:ID ) PLACE APT NAME END");
   }
 
   @Override
