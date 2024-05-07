@@ -6,12 +6,17 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.ReverseCodeSet;
 
 public class COArapahoeCountyParser extends FieldProgramParser {
 
   public COArapahoeCountyParser() {
-    super("ARAPAHOE COUNTY", "CO",
+    this("ARAPAHOE COUNTY", "CO");
+  }
+
+  COArapahoeCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
           "| Address_Changed:MAP! GPS/d ADDR2 PLACE CALL ID! " +
           "| Incident_Location_Changed_to:EMPTY! ID3 MAP ADDR GPS1 GPS2 EMPTY EMPTY PLACE CALL UNIT! " +
@@ -24,7 +29,12 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "smfrrelay@smfra.com";
+    return "smtprelay@smfra.onmicrosoft.com";
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "COArapahoeCounty";
   }
 
   @Override
@@ -33,9 +43,11 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern PREFIX = Pattern.compile("(UNIVERSAL PRECAUTIONS(?:, SOB)?) *");
-  private static final Pattern MASTER1 = Pattern.compile("RI:([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?) +([A-Z][,A-Z0-9]+)");
+  private static final Pattern MASTER1 = Pattern.compile("RI:([A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?) (.*?) +([A-Z][,A-Z0-9]+)");
   private static final Pattern MASTER2 = Pattern.compile("([ A-Z]+) (?:-|RESPOND:?)(.*?)([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?)(?: Cmnd Chnl:(.*))?");
   private static final Pattern MASTER3 = Pattern.compile("ADDRESS CHANGE *([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*)");
+  private static final Pattern MASTER4 = Pattern.compile("(Call Completed) Timestamps:(.*?)(?: (Assigned:.*))?");
+  private static final Pattern BREAK4 = Pattern.compile("([A-Za-z ]+:[^A-Za-z]+)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -108,6 +120,23 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       }
     }
 
+    else if ((match = MASTER4.matcher(body)).matches()) {
+      setFieldList("CALL ADDR APT INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCall = match.group(1);
+      parseAddress(match.group(2).trim(), data);
+      String times = match.group(3);
+      if (times != null) {
+        match = BREAK4.matcher(times);
+        while (match.find()) {
+          String time = match.group().trim();
+          if (!time.endsWith(":")) {
+            data.strSupp = append(data.strSupp, "\n", time);
+          }
+        }
+      }
+    }
+
     else return false;
 
     if (prefix != null) data.strCall = append(prefix, " - ", data.strCall);
@@ -116,11 +145,11 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("MAP")) return new MapField("[A-Z]-\\d{2}-[A-Z](?:-[A-Z])?", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} \\d{8,9}", true);
     if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,3}-\\d{6,7}|\\d\\d-\\d{7})", true);
     if (name.equals("ID3")) return new IdField("\\d{4}-\\d{7}", true);
-    if (name.equals("ADDR2")) return new AddressField(".* TO: +(.*)");
+    if (name.equals("ADDR2")) return new AddressField(".* TO: *(.*)");
     return super.getField(name);
   }
 
@@ -181,6 +210,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Invest-Smoke Inside",
       "Invest-Smoke Outside",
       "Line Down / Transformer",
+      "Line Down/Transformer",
       "MEDICAL",
       "Medical Assist",
       "MVA Extrication",
