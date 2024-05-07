@@ -12,9 +12,12 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
 
   public ALJeffersonCountyIParser() {
     super("JEFFERSON COUNTY", "AL",
-          "CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! GRID2640:MAP? ( Date/Time:DATETIME MAP:SKIP! UNITS:UNIT! INFO/N+ " +
-                                                                "| MAP:SKIP! UNITS:UNIT! ( Date/Time:DATETIME! INFO/N+ " +
-                                                                                        "| INFO/N+? Date/Time:DATETIME! END ) )");
+          "CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
+                                                                  "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
+                                                                  ") " +
+                                                   "| Date/Time:DATETIME GRID2640:MAP? MAP:SKIP! UNITS:UNIT! " +
+                                                   "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
+                                                   ") INFO/N+");
   }
 
   @Override
@@ -35,7 +38,7 @@ public class ALJeffersonCountyIParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("ACTIVE 9-1-1")) return false;
-    body = body.replace(" GRID2640:", "\nGRID2640:");
+    body = body.replace("GRID2640:", "\nGRID2640:");
     return parseFields(body.split("\n"), data);
   }
 
