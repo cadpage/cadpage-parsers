@@ -12,10 +12,11 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   public COArapahoeCountyParser() {
     super("ARAPAHOE COUNTY", "CO",
-          "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT EMPTY PLACE CALL ID! " +
+          "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
           "| Address_Changed:MAP! GPS/d ADDR2 PLACE CALL ID! " +
           "| Incident_Location_Changed_to:EMPTY! ID3 MAP ADDR GPS1 GPS2 EMPTY EMPTY PLACE CALL UNIT! " +
           "| Inc_Address_Update:ADDR! ID3 MAP GPS1 GPS2 EMPTY EMPTY PLACE " +
+          "| ADDRESS_CHANGE:MAP! ADDR! UNIT! " +
           ") EMPTY? END");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
     setupSpecialStreets("BROADWAY", "BROADWAY CIR");
@@ -33,7 +34,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   private static final Pattern PREFIX = Pattern.compile("(UNIVERSAL PRECAUTIONS(?:, SOB)?) *");
   private static final Pattern MASTER1 = Pattern.compile("RI:([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?) +([A-Z][,A-Z0-9]+)");
-  private static final Pattern MASTER2 = Pattern.compile("([ A-Z]+) (?:-|RESPOND)(.*?)([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?)(?: Cmnd Chnl:(.*))?");
+  private static final Pattern MASTER2 = Pattern.compile("([ A-Z]+) (?:-|RESPOND:?)(.*?)([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?)(?: Cmnd Chnl:(.*))?");
   private static final Pattern MASTER3 = Pattern.compile("ADDRESS CHANGE *([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*)");
 
   @Override
@@ -48,12 +49,16 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       body = body.substring(match.end());
     }
 
+    int pt = body.indexOf("\nDisclaimer:");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+
     body = body.replace("Resp.Info:", "Resp. Info:");
+    body = body.replace("Resp. Info: |", "Resp. Info: ");
 
     // We have two different page formats
     // Check for the pipe delimited field format
     String[] flds = body.split("\\|", -1);
-    if (flds.length >= 6) {
+    if (flds.length >= 3) {
       if (!parseFields(flds, data)) return false;
     }
 
@@ -78,11 +83,12 @@ public class COArapahoeCountyParser extends FieldProgramParser {
     }
 
     else if ((match = MASTER2.matcher(body)).matches()) {
-      setFieldList("UNIT CALL MAP ADDR APT CH");
+      setFieldList("UNIT CALL MAP ADDR APT PLACE CH");
       data.strUnit = match.group(1).trim();
       data.strCall = match.group(2).trim();
       data.strMap = match.group(3);
-      parseAddress(match.group(4), data);
+      parseAddress(StartType.START_ADDR, match.group(4), data);
+      data.strPlace = getLeft();
       data.strChannel = getOptGroup(match.group(5));
     }
 
@@ -133,6 +139,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Alcohol Evaluation",
       "Allergies/Envenomation",
       "Animal Bites/Attacks",
+      "ARREST",
       "Assault/Sexual Assault",
       "Assist-Blood Draw",
       "Assist-Lift Assist",
@@ -164,6 +171,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Gas-Commercial Leak",
       "Gas-Residential Leak",
       "HazMat",
+      "Headache",
       "Heart Problems/ A.I.C.D",
       "Hemorrhage/Lacerations",
       "Invest-Lighting Strike",
@@ -173,6 +181,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Invest-Smoke Inside",
       "Invest-Smoke Outside",
       "Line Down / Transformer",
+      "MEDICAL",
       "Medical Assist",
       "MVA Extrication",
       "MVA Highway",
@@ -180,6 +189,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "MVA Motorcycle",
       "MVA Rollover",
       "MVA Unknown Injuries",
+      "MVA Traffic Pedestrian Accidnt",
       "MVA Vehicle Into Building",
       "Overdose/Poisoning (Ingestion)",
       "Psych Problems",
@@ -194,10 +204,13 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Stab/Gunshot/Penetrating Traum",
       "Standby In The Area",
       "Stroke(CVA)",
+      "TECH RESCUE LEVEL 1",
+      "TEST (Do not Dispatch)",
       "Test Call (Do Not Dispatch)",
       "Traffic Pedestrian Acciden",
       "Traumatic Injuries (Specific)",
       "Unconscious/Fainting (Near)",
+      "Resc-Animal Rescue",
       "x1A-Abdominal Pain/Problems",
       "x21D-Hemorrhage/Lacerations",
       "x26A-Sick Person",
