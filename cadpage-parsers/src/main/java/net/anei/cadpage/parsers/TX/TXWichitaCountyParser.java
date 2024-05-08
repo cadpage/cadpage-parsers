@@ -9,7 +9,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXWichitaCountyParser extends GroupBestParser {
 
   public TXWichitaCountyParser() {
-    super(new TXWichitaCountyAParser(), new TXWichitaCountyBParser());
+    super(new TXWichitaCountyAParser(),
+          new TXWichitaCountyBParser(),
+          new TXWichitaCountyCParser());
   }
 
 }

@@ -2560,6 +2560,7 @@ public class Active911ParserTable {
       "US/TX/Seagoville",                 "TXDallasCountyH",
       "US/TX/Seguin",                     "TXGuadalupeCounty",
       "US/TX/SelmaFD",                    "TXBexarCountyB",
+      "US/TX/SheppardAFB",                "TXWichitaCountyC",
       "US/TX/Smhcems",                    "TXHaysCounty",
       "US/TX/SmithCounty",                "TXSmithCounty",
       "US/TX/SomervellCounty",            "TXSomervellCounty",
