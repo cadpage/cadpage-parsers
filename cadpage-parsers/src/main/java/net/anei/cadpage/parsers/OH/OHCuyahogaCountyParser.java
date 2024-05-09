@@ -12,7 +12,8 @@ public class OHCuyahogaCountyParser extends GroupBestParser {
 
   public OHCuyahogaCountyParser() {
     super(new OHCuyahogaCountyAParser(), new OHCuyahogaCountyBParser(),
-          new OHCuyahogaCountyDParser(), new OHCuyahogaCountyFParser());
+          new OHCuyahogaCountyDParser(), new OHCuyahogaCountyEParser(),
+          new OHCuyahogaCountyFParser());
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
