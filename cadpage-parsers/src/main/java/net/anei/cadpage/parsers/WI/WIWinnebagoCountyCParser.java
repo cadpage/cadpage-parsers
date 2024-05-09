@@ -16,7 +16,7 @@ public class WIWinnebagoCountyCParser extends DispatchH03Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (!subject.endsWith(" Active911 Incident")) return false;
+    if (!subject.endsWith(" Active911 Incident") && !subject.endsWith(" Active911 Notification")) return false;
     return super.parseHtmlMsg(subject, body, data);
   }
 
