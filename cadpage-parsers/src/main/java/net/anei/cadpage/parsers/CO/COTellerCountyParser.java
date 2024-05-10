@@ -71,7 +71,10 @@ public class COTellerCountyParser extends FieldProgramParser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
-      "28541 N HWY 67",    "39.052499,-105.094141",
-      "1364 CR 75",        "39.045712,-105.094569"
-  });
+      "1364 CR 75",                           "+39.045712,-105.094569",
+      "27668 HWY 67",                         "+39.029401,-105.070055",
+      "28541 N HWY 67",                       "+39.052499,-105.094141",
+      "16006 W HWY 24",                       "+38.974977,-105.075896",
+      "16420 W HWY 24",                       "+38.975533,-105.074088"
+ });
 }
