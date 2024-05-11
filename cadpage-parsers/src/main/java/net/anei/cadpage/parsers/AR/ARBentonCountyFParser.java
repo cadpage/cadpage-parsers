@@ -10,7 +10,7 @@ public class ARBentonCountyFParser extends FieldProgramParser {
 
   public ARBentonCountyFParser() {
     super("BENTON COUNTY", "AR",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY/S6! ID:ID! PRI:PRI! DATE:DATETIME! MAP:X! UNIT:UNIT! INFO:INFO! INFO/N+? GPS END");
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY/S6! INCIDENT:ID! ID:ID/L! PRI:PRI! DATE:DATETIME! MAP:X! Radio_Channel:CH! UNIT:UNIT! INFO:INFO! INFO/N+? GPS END");
     setupMultiWordStreets("MARTIN LUTHER KING JR");
   }
 
