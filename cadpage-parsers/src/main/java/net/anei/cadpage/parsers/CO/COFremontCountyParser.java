@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 
-public class COFremontCountyParser extends DispatchBCParser {
+public class COFremontCountyParser extends DispatchA57Parser {
 
 
   public COFremontCountyParser() {
@@ -11,6 +11,6 @@ public class COFremontCountyParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "noreply@omnigo.com";
+    return "crcasmtp@hamilton.net";
   }
 }
