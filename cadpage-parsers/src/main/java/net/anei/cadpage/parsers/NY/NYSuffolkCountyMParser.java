@@ -11,7 +11,7 @@ public class NYSuffolkCountyMParser extends FieldProgramParser {
 
   public NYSuffolkCountyMParser() {
     super(CITY_CODES, "SUFFOLK COUNTY", "NY",
-          "Location:ADDR/S? EV_NUM:ID! TYPE_CODE:CODE! CALLER_NAME:NAME? CALLER_ADDR:CADDR/S? TIME:TIME! END");
+          "Location:ADDR/S? EV_NUM:ID! TYPE_CODE:CALL! CALLER_NAME:NAME? CALLER_ADDR:CADDR/S? TIME:TIME! END");
   }
 
   @Override
@@ -84,11 +84,15 @@ public class NYSuffolkCountyMParser extends FieldProgramParser {
       "CALVER CALVERTON",   "CALVERTON",
       "CALVER MANORVILLE",  "CALVERTON",
       "CALVER RIVERHEAD",   "CALVERTON",
+      "JAMESP",             "JAMESPORT",
+      "JAMESP JAMESPORT",   "JAMESPORT",
       "NORTHV",             "NORTHVILLE",
       "NORTHV RIVERHEAD",   "NORTHVILLE",
       "RIVERH",             "RIVERHEAD",
       "RIVERH RIVERHEAD",   "RIVERHEAD",
       "RIVERS",             "RIVERSIDE",
-      "RIVERS RIVERHEAD",   "RIVERSIDE"
+      "RIVERS RIVERHEAD",   "RIVERSIDE",
+      "WADINR",             "WADING RIVER",
+      "WADINR CALVER",      "WADING RIVER"
   });
 }

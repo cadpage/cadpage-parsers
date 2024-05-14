@@ -19,7 +19,7 @@ public class TXWichitaCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[ ,]+(?=\\[\\d{1,2}\\])");
-  private static final Pattern INFO_EMPTY_PTN = Pattern.compile("\\[\\d}1,2}\\]");
+  private static final Pattern INFO_EMPTY_PTN = Pattern.compile("\\[\\d{1,2}\\]");
   private static final Pattern INFO_GPS_PTN = Pattern.compile(".*Additional Information:.*; LAT (\\S+) ; LON (\\S+) ;.*");
 
   @Override
