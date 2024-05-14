@@ -1812,6 +1812,7 @@ public class Active911ParserTable {
       "US/NY/PerintonVolAmbulance",       "NYMonroeCountyWebster",
       "US/NY/PLutnamCounty",              "NYPutnamCounty",
       "US/NY/PortWashingtonFD",           "NYNassauCountyG",
+      "US/NY/RiverheadPD",                "NYSuffolkCountyM",
       "US/NY/RocklandCounty",             "NYRocklandCountyB",
       "US/NY/RocklandCountySpillman",     "NYRocklandCountyF",
       "US/NY/Ronkonkoma",                 "NYSuffolkCountyB",

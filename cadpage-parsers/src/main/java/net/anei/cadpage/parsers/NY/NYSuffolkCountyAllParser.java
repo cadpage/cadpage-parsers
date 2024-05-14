@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgParser;
 
 
 public class NYSuffolkCountyAllParser extends GroupBestParser {
-  
+
   public NYSuffolkCountyAllParser() {
     super(new MsgParser[]{
         new NYSuffolkCountyAParser(),
@@ -23,6 +23,7 @@ public class NYSuffolkCountyAllParser extends GroupBestParser {
         new NYSuffolkCountyJParser(),
         new NYSuffolkCountyKParser(),
         new NYSuffolkCountyLParser(),
+        new NYSuffolkCountyMParser(),
         new NYSuffolkCountyFiretrackerParser(),
         new NYDixHillsParser()
     });
