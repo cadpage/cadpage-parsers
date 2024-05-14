@@ -15,9 +15,10 @@ public class DispatchA88Parser extends SmartAddressParser {
 
   private static final Pattern MM_PTN = Pattern.compile("(MM \\d+(?:/\\d*)?)\\b *(.*)");
 
-  private static final Pattern MASTER = Pattern.compile("(?:\\d+-)?CFS Report (\\d{4}-\\d{6,8}) (?:([^|,]*?)\\|)?([^,]*?)(?:,(.*))?");
+  private static final Pattern MASTER = Pattern.compile("(?:\\d+-)?CFS Report (\\d{2}(?:\\d{2})?-\\d{6,8}) (?:([^|,]*?)\\|)?([^,]*?)(?:,(.*))?");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    if (body.startsWith("Disclaimer:")) body = "";
     body = append(subject, " | ", body);
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;

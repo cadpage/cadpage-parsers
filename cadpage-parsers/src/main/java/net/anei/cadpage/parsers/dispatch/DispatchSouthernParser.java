@@ -536,6 +536,10 @@ public class DispatchSouthernParser extends FieldProgramParser {
       }
     }
 
+    // If a semicolon ended up in the address, this looks like a semicolon delimited field
+    // that has gone south
+    if (data.strAddress.contains(";")) return false;
+
     // set an call description if we do not have one
     if (data.strCall.length() == 0 && data.strSupp.length() == 0) data.strCall= "ALERT";
 
