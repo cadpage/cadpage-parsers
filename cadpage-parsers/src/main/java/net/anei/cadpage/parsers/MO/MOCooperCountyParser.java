@@ -18,7 +18,7 @@ public class MOCooperCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "cooperdispatch@icstech.org";
+    return "cooperdispatch@icstech.org,cooperdispatch@supporticsllc.com";
   }
 
   private static final Pattern MARKER = Pattern.compile("EMS:([ #A-Z0-9]+) - +");
