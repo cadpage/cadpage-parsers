@@ -9,22 +9,22 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class VALunenburgCountyBParser extends FieldProgramParser {
-  
+
   public VALunenburgCountyBParser() {
-    super("LUNENBURG COUNTY", "VA", 
-          "UNIT CALL ADDRCITY ID DATETIME! X END");
+    super("LUNENBURG COUNTY", "VA",
+          "UNIT CALL ADDRCITY ID DATETIME! X NOTES:INFO END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "LunenburgCAD@lunenburg911.com";
+    return "LunenburgCAD@lunenburg911.com,cad@lunenburg911.net";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split(" \\| "), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
@@ -32,7 +32,7 @@ public class VALunenburgCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*), ([A-Z]{2})(?: +(\\d{5}))?");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -47,7 +47,7 @@ public class VALunenburgCountyBParser extends FieldProgramParser {
       super.parse(field, data);
       if (zip != null && data.strCity.length() == 0) data.strCity = zip;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";

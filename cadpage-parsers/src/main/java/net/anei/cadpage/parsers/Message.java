@@ -223,7 +223,8 @@ public class Message {
     Pattern.compile("^(?:([^ ,;/]+) +)?S:(.*?)(?: +M:|\n)"),
     Pattern.compile("^Fr:<(.*?)>?\nSu:(.*?)\nTxt: "),
     Pattern.compile("From: *(.*) Subj: *(.*) Msg: *"),
-    Pattern.compile("^prvs=[0-9a-f]{8,}=[\\w .<>@]*<([\\w.\\-]+@[\\w.]+)> *\\((.*?)\\)")
+    Pattern.compile("^prvs=[0-9a-f]{8,}=[\\w .<>@]*<([\\w.\\-]+@[\\w.]+)> *\\((.*?)\\)"),
+    Pattern.compile("^([-\\w\\.]+@[-\\w\\.]+)/([-_ A-Za-z0-9]+)/ *"),
   };
   private static final Pattern[] S_M_PATTERNS = new Pattern[]{
     Pattern.compile("^SUBJ: *(.*)\n(?:MSG:)?"),
