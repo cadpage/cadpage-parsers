@@ -9,7 +9,7 @@ public class TXBlancoCountyParser extends FieldProgramParser {
 
   public TXBlancoCountyParser() {
     super("BLANCO COUNTY", "TX",
-          "CALL:CALL! ADDR:ADDRCITYST! ID:ID! PRI:PRI! UNIT:UNIT! INFO:INFO!");
+          "CALL:CALL! ADDR:ADDRCITYST! ID:ID! PRI:PRI! UNIT:UNIT! MAP:MAP? INFO:INFO!");
   }
 
   @Override
