@@ -41,6 +41,7 @@ public class COArchuletaCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{8}-\\d{5}|", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     return super.getField(name);
   }
@@ -53,6 +54,24 @@ public class COArchuletaCountyParser extends FieldProgramParser {
       if (!match.matches()) abort();
       data.strDate = match.group(2)+'/'+match.group(3)+'/'+match.group(1);
       data.strTime = match.group(4);
+    }
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String apt = p.getLastOptional('#');
+      String place = p.getLastOptional(" - ");
+      field = p.get();
+      if (!place.equals("null")) data.strPlace = place;
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR PLACE APT";
     }
   }
 }
