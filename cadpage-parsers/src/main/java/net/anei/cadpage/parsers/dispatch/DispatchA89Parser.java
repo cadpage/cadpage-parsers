@@ -44,35 +44,37 @@ public class DispatchA89Parser extends FieldProgramParser {
         String gps = match.group(3);
         if (gps != null) setGPSLoc(gps, data);
       }
-      String[] parts = COMMA_PTN.split(field);
-      switch (parts.length) {
-      case 1:
-        break;
+      if (!field.startsWith("(") || !field.endsWith(")")) {
+        String[] parts = COMMA_PTN.split(field);
+        switch (parts.length) {
+        case 1:
+          break;
 
-      case 2:
-        if (ADDR_CITY_PTN.matcher(parts[1]).matches()) {
-          field = parts[0];
-          data.strCity = parts[1];
-        } else {
+        case 2:
+          if (ADDR_CITY_PTN.matcher(parts[1]).matches()) {
+            field = parts[0];
+            data.strCity = parts[1];
+          } else {
+            data.strPlace = parts[0];
+            field = parts[1];
+          }
+          break;
+
+        default:
+          for (int jj = 0; jj < parts.length-2; jj++) {
+            data.strPlace = append(data.strPlace, ", ", parts[jj]);
+          }
           data.strPlace = parts[0];
-          field = parts[1];
+          field = parts[parts.length-2];
+          data.strCity = parts[parts.length-1];
         }
-        break;
-
-      default:
-        for (int jj = 0; jj < parts.length-2; jj++) {
-          data.strPlace = append(data.strPlace, ", ", parts[jj]);
-        }
-        data.strPlace = parts[0];
-        field = parts[parts.length-2];
-        data.strCity = parts[parts.length-1];
       }
       super.parse(field, data);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " UNIT GPS";
+      return "PLACE? " + super.getFieldNames() + " UNIT GPS";
     }
   }
 
