@@ -16,7 +16,7 @@ public class VAPrinceEdwardCountyBParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com,no-reply@ledsportal.com";
+    return "no-reply@zuercherportal.com,no-reply@ledsportal.com,donotreply@farmvilleva.com";
   }
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(FECC\\d{2}-\\d{5}) +");
