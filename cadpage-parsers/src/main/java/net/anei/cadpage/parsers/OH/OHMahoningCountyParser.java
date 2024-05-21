@@ -10,7 +10,8 @@ import net.anei.cadpage.parsers.GroupBlockParser;
 public class OHMahoningCountyParser extends GroupBestParser {
 
   public OHMahoningCountyParser() {
-    super(new OHMahoningCountyCParser(),
+    super(new OHMahoningCountyBParser(),
+          new OHMahoningCountyCParser(),
           new GroupBlockParser(),
           new OHMahoningCountyCencommParser());
   }

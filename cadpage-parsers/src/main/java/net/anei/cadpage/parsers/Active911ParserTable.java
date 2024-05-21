@@ -1932,6 +1932,7 @@ public class Active911ParserTable {
       "US/OH/KnoxCounty",                 "OHKnoxCounty",
       "US/OH/LakeCounty",                 "OHLakeCountyA,OHLakeCountyB",
       "US/OH/LakeCountyMentorFD",         "OHLakeCountyB",
+      "US/OH/LaneLifeTrans",              "OHMahoningCountyB",
       "US/OH/LawrenceCounty",             "OHLawrenceCounty",
       "US/OH/LebanonFD",                  "OHWarrenCountyE",
       "US/OH/LibertyTwp",                 "OHButlerCountyA,OHButlerCountyC",
