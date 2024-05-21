@@ -972,6 +972,7 @@ public class Active911ParserTable {
       "US/KY/McCrackenCounty",            "KYMcCrackenCounty",
       "US/KY/McLeanCounty",               "KYMcLeanCounty",
       "US/KY/MeadeCounty",                "KYMeadeCounty",
+      "US/KY/MingoCounty",                "WVMingoCounty",    // Wrong state
       "US/KY/MonacoEnterprises",          "KYFortKnox",
       "US/KY/MonroeCounty",               "KYMonroeCounty",
       "US/KY/MontgomeryCounty",           "KYMontgomeryCounty",

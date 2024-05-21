@@ -1958,6 +1958,7 @@ public class ParserList {
               ,"WVMcDowellCounty"               ,"McDowell County, WV"
               ,"WVMercerCounty"                 ,"Mercer County, WV"
               ,"WVMineralCounty"                ,"Mineral County, WV"
+              ,"WVMingoCounty"                  ,"Mingo County, WV"
               ,"WVMorganCounty"                 ,"Morgan County, WV"
               ,"WVNicholasCounty"               ,"Nicholas County, WV"
               ,"WVPendletonCounty"              ,"Pendleton County, WV"
