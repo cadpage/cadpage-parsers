@@ -8,6 +8,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class ARPulaskiCountyParser extends GroupBestParser {
   public ARPulaskiCountyParser() {
     super(new ARPulaskiCountyCParser(),
-          new ARPulaskiCountyDParser());
+          new ARPulaskiCountyDParser(),
+          new ARPulaskiCountyEParser());
   }
 }
