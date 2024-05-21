@@ -59,10 +59,29 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
     if (addr.length() == 0) return false;
     addr = addr.replace('@', '&');
     addr = DIR_PTN.matcher(addr).replaceAll("$1B");
-    parseAddress(addr, data);
+    addr = stripFieldEnd(addr, " None");
+
 
     String city = p.get(',');
     String extra = p.get();
+
+    if (city.isEmpty() && extra.isEmpty() &&
+        !addr.contains("/") && !addr.contains("&")) {
+      parseAddress(StartType.START_ADDR, FLAG_NO_CITY, addr, data);
+      String place = getLeft();
+      if (place.startsWith("MM") || place.contains("EXIT")) {
+        data.strAddress = append(data.strAddress, " ", place);
+      } else if (place.equals("WHITE OAK CROSSING")) {
+        data.strAddress = append(data.strAddress, " & ", place);
+      } else if (data.strAddress.endsWith(" ARCH ST") && place.startsWith("PIKE")) {
+        data.strAddress = append(data.strAddress, " ", "PIKE");
+        data.strPlace = place.substring(4).trim();
+      } else {
+        data.strPlace = place;
+      }
+    } else {
+      parseAddress(addr, data);
+    }
 
     if (extra.isEmpty()) {
       extra = city;
@@ -96,7 +115,7 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
         if (apt == null) apt = extra;
         data.strApt = append(data.strApt, "-", apt);
       } else {
-        data.strPlace = extra;
+        data.strPlace = append(data.strPlace, " - ", extra);
       }
     }
     return true;
@@ -137,6 +156,10 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
       "MARCHE",
       "PANKEY",
       "WOODYARDVILLE",
+
+      // Lonoke County
+      "CABOT",
+      "ENGLAND",
 
       // Saline County
       "PARON"
