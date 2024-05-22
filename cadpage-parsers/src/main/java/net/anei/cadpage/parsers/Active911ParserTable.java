@@ -2093,6 +2093,7 @@ public class Active911ParserTable {
       "US/OR/Yamhill",                    "ORYamhillCountyB,ORYamhillCountyC",
       "US/PA/ACDES",                      "PAYorkCountyD,PAAdamsCountyA,PAAdamsCountyD,PAFranklinCountyC",
       "US/PA/AdamsCounty",                "PAAdamsCountyA,PAAdamsCountyD",
+      "US/PA/AdamsCountyDepartmentofEmergencyServices", "PAAdamsCountyA",
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
       "US/PA/AlleghenyCountyCADDivision", "PAAlleghenyCountyA",
       "US/PA/AlleghenyCountyTicket",      "PAAlleghenyCountyF",
