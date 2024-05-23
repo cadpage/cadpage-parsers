@@ -16,6 +16,7 @@ public class DispatchA81Parser extends FieldProgramParser {
   private static final Pattern MASTER = Pattern.compile("([A-Z]{3}\\d{10}) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d)\\b *(.*)");
   private static final Pattern INFO_MARK_PTN = Pattern.compile(";? \\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - ");
   private static final Pattern TIMES_MARK_PTN = Pattern.compile(" [-/A-Z0-9]+ - (?:Assign|Enroute|On Scene|Available) \\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d\\b");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
 
   @Override
@@ -30,17 +31,19 @@ public class DispatchA81Parser extends FieldProgramParser {
 
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
-    setFieldList("ID DATE TIME ADDR APT CITY ST INFO");
+    setFieldList("ID DATE TIME ADDR APT CITY ST PLACE INFO");
     data.strCallId = match.group(1);
     data.strDate = match.group(2);
     data.strTime = match.group(3);
     body = match.group(4);
 
     body = stripFieldEnd(body, "{incident_code_description");
+    int pt = body.indexOf("{incident_code_description");
+    if (pt >= 0) body = body.substring(0,pt).trim();
 
     match = INFO_MARK_PTN.matcher(body);
     if (match.find()) {
-      int pt = match.start();
+      pt = match.start();
       int spt = match.end();
       while (match.find()) {
         data.strSupp = append(data.strSupp, "\n", body.substring(spt, match.start()).trim());
@@ -58,15 +61,30 @@ public class DispatchA81Parser extends FieldProgramParser {
     }
 
     Parser p = new Parser(body);
-    String city = p.getLastOptional(',');
-    match = STATE_ZIP_PTN.matcher(city);
+    parseAddress(p.get(','), data);
+    String city = p.get(',');
+    match = APT_PTN.matcher(city);
     if (match.matches()) {
-      data.strState = match.group(1);
-      data.strCity = getOptGroup(match.group(2));
-      city = p.getLastOptional(',');
+      data.strApt = append(data.strApt, "-", match.group(1));
+      city = p.get(',');
     }
-    if (!city.isEmpty()) data.strCity = city;
-    parseAddress(p.get(), data);
+    match = STATE_ZIP_PTN.matcher(city);
+    boolean found = match.matches();
+    if (!found) {
+      data.strCity = city;
+      city = p.get(',');
+      match = STATE_ZIP_PTN.matcher(city);
+      found = match.matches();
+    }
+    if (found) {
+      data.strState = match.group(1);
+      if (data.strCity.isEmpty()) data.strCity = getOptGroup(match.group(2));
+      city = p.get(',');
+    }
+    data.strPlace = city;
+    while (!p.isEmpty()) {
+      data.strPlace = append(data.strPlace, " - ", p.get(','));
+    }
     return true;
   }
 
