@@ -10,6 +10,6 @@ public class WIRockCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@alert.active911.com,messaging@iamresponding.com";
+    return "@alert.active911.com,messaging@iamresponding.com,noreplyspillman@pdmonroe.com";
   }
 }
