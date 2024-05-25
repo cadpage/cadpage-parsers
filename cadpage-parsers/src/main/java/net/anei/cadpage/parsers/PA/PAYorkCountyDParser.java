@@ -16,7 +16,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   public PAYorkCountyDParser() {
     super("YORK COUNTY", "PA",
           "( SELECT/RR Location:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! CFS:CFS! TIMES/N+? " +
-          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY? APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ )",
+          "| DATE_TIME BOX:BOX_CALL! ADDR! CITY? APT_PLACE CROSS_STREETS:X_INFO! UNITS:UNIT UNIT+ lat/long:GPS )",
           FLDPROG_IGNORE_CASE);
     setupProtectedNames("FISH AND GAME");
   }
@@ -49,7 +49,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
   private static final Pattern IAR_PTN1 = Pattern.compile("(?!(?:\\d{7} +)?(?:BOX:|box:|\n\n)).*\n.*\n.*");
   private static final Pattern IAR_PTN2 = Pattern.compile("(?!BOX:|box:)(.*), ([^,]*) :(?: |$)(.*)");
   private static final Pattern BOX_PTN = Pattern.compile("BOX:", Pattern.CASE_INSENSITIVE);
-  private static final Pattern DELIM = Pattern.compile(", |(?<!,) +(?=(?:box|cross streets|units):)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DELIM = Pattern.compile(", |(?<!,) +(?=(?:box|cross streets|units|lat/long):)", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
