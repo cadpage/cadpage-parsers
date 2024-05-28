@@ -420,6 +420,7 @@ public class ParserList {
               ,"GAFloydCounty"                  ,"Floyd County, GA"
               ,"GAForsythCounty"                ,"Forsyth County, GA"
               ,"GAFranklinCounty"               ,"Franklin County, GA"
+              ,"GAGilmerCounty"                 ,"Gilmer County, GA"
               ,"GAGordonCounty"                 ,"Gordon County, GA"
               ,"GAHabershamCounty"              ,"Habersham County, GA"
               ,"GAHallCounty"                   ,"Hall County, GA"

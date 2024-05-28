@@ -518,6 +518,7 @@ public class Active911ParserTable {
       "US/GA/FanninCounty",               "GAFanninCounty",
       "US/GA/ForsythCounty",              "GAForsythCounty",
       "US/GA/FranklinCounty",             "GAFranklinCounty",
+      "US/GA/GilmerCounty",               "GAGilmerCounty",
       "US/GA/GoldStarEMS",                "GADoughertyCountyB",
       "US/GA/GordonCounty",               "GAGordonCounty",
       "US/GA/HabershamCounty",            "GAHabershamCounty",
