@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ARPulaskiCountyCParser extends SmartAddressParser {
 
   public ARPulaskiCountyCParser() {
-    super(CITY_LIST, "PULASKI COUNTY", "AR");
+    super(ARPulaskiCountyParser.CITY_LIST, "PULASKI COUNTY", "AR");
     setFieldList("ID CALL ADDR APT CITY ST PLACE ALERT CH INFO");
   }
 
@@ -120,48 +120,4 @@ public class ARPulaskiCountyCParser extends SmartAddressParser {
     }
     return true;
   }
-
-  private static final String[] CITY_LIST = new String[] {
-
-      // Cities
-      "CAMMACK VILLAGE",
-      "JACKSONVILLE",
-      "LITTLE ROCK",
-      "MAUMELLE",
-      "NORTH LITTLE ROCK",
-      "SHERWOOD",
-      "WRIGHTSVILLE",
-
-      // Town
-      "ALEXANDER",
-
-      // Census-designated places
-      "COLLEGE STATION",
-      "GIBSON",
-      "HENSLEY",
-      "LANDMARK",
-      "MCALMONT",
-      "NATURAL STEPS",
-      "ROLAND",
-      "SCOTT",
-      "SWEET HOME",
-      "WOODSON",
-
-      // Other communities
-      "CRYSTAL HILL",
-      "GRAVEL RIDGE",
-      "IRONTON",
-      "LITTLE ITALY",
-      "MABELVALE",
-      "MARCHE",
-      "PANKEY",
-      "WOODYARDVILLE",
-
-      // Lonoke County
-      "CABOT",
-      "ENGLAND",
-
-      // Saline County
-      "PARON"
-  };
 }
