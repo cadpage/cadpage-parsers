@@ -10,12 +10,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class DispatchRedAlertParser extends SmartAddressParser {
 
-  
+
   public DispatchRedAlertParser(String defCity, String defState) {
     this(null, defCity, defState);
   }
 
-  
+
   public DispatchRedAlertParser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState);
     setFieldList("CALL CODE INFO ADDR APT CITY BOX X MAP PLACE TIME");
@@ -25,8 +25,8 @@ public class DispatchRedAlertParser extends SmartAddressParser {
   public String getFilter() {
     return "paging@alpinesoftware.com,@rednmxcad.com,REDALERT";
   }
-  
-  private static final Pattern TIME_MARK = Pattern.compile("\\. ?\\. ?([\\d:]+)$");
+
+  private static final Pattern TIME_INFO_MARK = Pattern.compile("\\. ?\\. ?([\\d:]+)(?: +AddInfo: *(.*))?$");
   private static final Pattern END_ADDR_PTN = Pattern.compile(" S:| CROSS:| c/s:");
   private static final Pattern LEAD_INTERSECT_PTN = Pattern.compile(".*(?: AND|[/&])", Pattern.CASE_INSENSITIVE);
   private static final Pattern TRAIL_INTERSECT_PTN = Pattern.compile("(?:AND |[/&]).*", Pattern.CASE_INSENSITIVE);
@@ -36,28 +36,30 @@ public class DispatchRedAlertParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // Strip off leading slash
     body = stripFieldStart(body, "/");
-    
+
     // Look for the trailing time signature
     // If we find it, strip it off.
     boolean ok = false;
-    Matcher match = TIME_MARK.matcher(body);
+    String extraInfo = "";
+    Matcher match = TIME_INFO_MARK.matcher(body);
     if (match.find()) {
       ok = true;
       String sTime = match.group(1);
       if (sTime.length() >= 5) {
         if (sTime.length() < 8) sTime = sTime.substring(0,5);
         data.strTime = sTime;
+        extraInfo = getOptGroup(match.group(2));
       }
       body = body.substring(0,match.start()).trim();
     }
-    
+
     // Call is sometimes in square brackets, which got treated as a subject
     // in which case it needs to be restored
     if (subject.length() > 0) body = subject + " " + body;
-    
+
     // Also must have at " at " keyword which we will change to "LOC:"
     // If there happen to be more than one, only change the last one
     match = END_ADDR_PTN.matcher(body);
@@ -66,15 +68,15 @@ public class DispatchRedAlertParser extends SmartAddressParser {
     if (pt >= 0) {
       body = body.substring(0, pt) + " LOC: " + body.substring(pt+4);
     }
-    
+
     body = "TYPE:" + body.replace("c/s:", "CROSS:").replace(" c/s ", " CROSS:").replace(" CS:", " CROSS:").replace(" Box ", " Box:").replace(" B:", " O:").replaceAll("\\s+", " ");
     Properties props = parseMessage(body, new String[]{"TYPE","LOC","CROSS","Box", "Map", "O", "- S"});
-    
+
     String sAddress = props.getProperty("LOC");
     if (sAddress == null) {
       if (!ok) return false;
       sAddress = props.getProperty("TYPE", "");
-      sAddress = sAddress.replace("C/O","C%O");
+      sAddress = sAddress.replace("C/O","C%O").replace('@', '&');
       parseAddress(StartType.START_CALL, sAddress, data);
       if (data.strAddress.length() == 0) return false;
       String info = getLeft();
@@ -93,20 +95,20 @@ public class DispatchRedAlertParser extends SmartAddressParser {
         data.strCity = sAddress.substring(pt+1).trim();
         sAddress = sAddress.substring(0,pt).trim();
       }
-      
+
       sAddress = DIR_BOUND_PTN.matcher(sAddress).replaceAll("$1$2");
-      
+
       // Check for X-Streets term
       match = XSTREET_PTN.matcher(sAddress);
       if (match.matches()) {
         sAddress = match.group(1).trim();
         data.strCross = match.group(2).trim();
       }
-      
+
       // Protect C/O sequence form being treated as an intersection
       int flags = FLAG_ANCHOR_END;
       if (data.strCity.length() > 0) flags |= FLAG_NO_CITY;
-      sAddress = sAddress.replace("C/O", "C%%O");
+      sAddress = sAddress.replace("C/O", "C%%O").replace('@', '&');
       parseAddress(StartType.START_PLACE, flags, sAddress, data);
       if (data.strAddress.length() == 0) {
         data.strAddress = data.strPlace;
@@ -117,7 +119,7 @@ public class DispatchRedAlertParser extends SmartAddressParser {
         data.strPlace = "";
       }
       data.strAddress = data.strAddress.replace("%%", "/");
-      
+
       String sCall = props.getProperty("TYPE", "");
       int ipt = sCall.indexOf(':');
       if (ipt >= 0) {
@@ -143,16 +145,18 @@ public class DispatchRedAlertParser extends SmartAddressParser {
       sCross = stripTrailInfo(sCross, data);
       data.strCross = sCross;
     }
-    
+
     String sMap = props.getProperty("Map");
     if (sMap != null) {
       sMap = stripTrailInfo(sMap, data);
       data.strMap = sMap;
     }
 
+    data.strSupp = append(data.strSupp, "\n", extraInfo);
+
     return ok;
   }
-  
+
   private String stripTrailInfo(String field, Data data) {
     int pt = field.indexOf(',');
     if (pt >= 0) {

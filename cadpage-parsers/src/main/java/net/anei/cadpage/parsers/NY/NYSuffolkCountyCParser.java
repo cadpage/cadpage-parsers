@@ -48,6 +48,11 @@ public class NYSuffolkCountyCParser extends DispatchRedAlertParser {
   }
 
   @Override
+  public String getFilter() {
+    return append(super.getFilter(), ",", "8663791836");
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Anything starting with TYPE: belongs to variant A
@@ -55,6 +60,9 @@ public class NYSuffolkCountyCParser extends DispatchRedAlertParser {
 
     // Anything starting with three asterisks belongs to variant B
     if (body.startsWith("***")) return false;
+
+    int pt = body.indexOf("\nText STOP");
+    if (pt >= 0) body = body.substring(0, pt).trim();
 
     // They use a strange E/B convention
     if (!super.parseMsg(subject, DIR_SLASH_BOUND.matcher(body).replaceAll("$1B"), data)) return false;
