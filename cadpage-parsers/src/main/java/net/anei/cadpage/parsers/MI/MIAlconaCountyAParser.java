@@ -10,6 +10,6 @@ public class MIAlconaCountyAParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "Alcona911@alcona-county.net";
+    return "Alcona911@alcona-county.net,alcona911@alconacounty.gov";
   }
 }
