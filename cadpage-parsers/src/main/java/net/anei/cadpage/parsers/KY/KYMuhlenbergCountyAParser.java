@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA86Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 /**
  * Muhlenberg County, KY (A)
  */
-public class KYMuhlenbergCountyAParser extends DispatchA86Parser {
+public class KYMuhlenbergCountyAParser extends DispatchA27Parser {
 
   public KYMuhlenbergCountyAParser() {
     super("MUHLENBERG COUNTY", "KY");
@@ -13,7 +13,7 @@ public class KYMuhlenbergCountyAParser extends DispatchA86Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@MuhlenbergKYE911.info";
+    return "cis@muhlenberg911.org";
   }
 
   @Override
