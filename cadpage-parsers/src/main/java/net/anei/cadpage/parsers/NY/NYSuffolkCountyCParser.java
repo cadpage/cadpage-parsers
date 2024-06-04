@@ -67,6 +67,7 @@ public class NYSuffolkCountyCParser extends DispatchRedAlertParser {
     // They use a strange E/B convention
     if (!super.parseMsg(subject, DIR_SLASH_BOUND.matcher(body).replaceAll("$1B"), data)) return false;
     data.strCity = data.strCity.replace(".", "");
+    if (data.strCity.equals("RO")) data.strCity = "Ronkonkoma";
     return true;
   }
 }
