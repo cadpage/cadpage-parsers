@@ -431,7 +431,7 @@ public class Active911ParserTable {
       "US/CT/Uconn",                      "CTTollandCountyB",
       "US/CT/Valleyshore911",             "CTMiddlesexCountyA",
       "US/CT/WallingfordPD",              "CTNewHavenCountyB",
-      "US/CT/WaterfordFD",                "CTWaterfordTown",
+      "US/CT/WaterfordFD",                "CTNewLondonCountyD,CTNewLondonCountyE",
       "US/CT/WestHavenPD",                "CTNewHavenCountyB",
       "US/CT/WinchesterPD",               "CTLitchfieldCountyB",
       "US/CT/WindhamCounty",              "CTWindhamCountyA",

@@ -335,7 +335,6 @@ public class ParserList {
               ,"CTStamford"                     ,"Stamford, CT"
               ,"CTTollandCounty"                ,"Tolland County, CT"
               ,"CTTrumbull"                     ,"Trumbull, CT"
-              ,"CTWaterfordTown"                ,"Waterford Town, CT"
               ,"CTWindhamCounty"                ,"Windham County, CT"
           ),
           new ParserCategory("District of Columbia"
