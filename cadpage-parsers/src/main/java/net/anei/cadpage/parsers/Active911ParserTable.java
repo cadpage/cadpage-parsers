@@ -689,6 +689,7 @@ public class Active911ParserTable {
       "US/IL/SWCD911",                    "ILCookCountyE",
       "US/IL/Tazewell911",                "ILTazewellCounty",
       "US/IL/TownofCicero",               "ILCookCountyF",
+      "US/IL/TroyFD",                     "ILMadisonCountyA",
       "US/IL/WabashCounty",               "ILWabashCounty",
       "US/IL/WashingtonCounty",           "ILWashingtonCounty",
       "US/IL/WoodfordCounty",             "ILWoodfordCounty",
