@@ -1,44 +1,53 @@
 package net.anei.cadpage.parsers.IL;
 
-import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 
-public class ILRockIslandCountyParser extends DispatchOSSIParser {
-  
-  private static final Pattern MARKER = Pattern.compile("^\\d+:");
-  
+public class ILRockIslandCountyParser extends FieldProgramParser {
+
   public ILRockIslandCountyParser() {
-    super(CITY_CODES, "ROCK ISLAND COUNTY", "IL",
-          "ID:FYI ADDR CALL CITY!");
-    setFieldList("SRC ID ADDR CALL CITY");
+    super("ROCK ISLAND COUNTY", "IL",
+          "Primary_Code:CALL! Secondary_Code:CALL/SDS! Address:ADDRCITYST! Location:PLACE! Time:DATETIME! Details:INFO! END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "CAD@ricoetsb.org";
+    return "rico911-notify@ricoetsb.org";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    Matcher match = MARKER.matcher(body);
-    if (!match.find()) return false;
-    body = match.group() + "CAD:" + body.substring(match.end()).trim();
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("CAD CALL")) return false;
     return super.parseMsg(body, data);
   }
-  
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "EM",   "EAST MOLINE",
-      "HIL",  "HILLSDALE",
-      "MO",   "MOLINE",
-      "PB",   "PORT BYRON",
-      "RI",   "ROCK ISLAND",
-      "RIA",  "ROCK ISLAND ARSENAL"
-  });
-  
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
+  }
+
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - (?:Remarks - )? *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      data.strSupp = field;
+    }
+  }
 }
