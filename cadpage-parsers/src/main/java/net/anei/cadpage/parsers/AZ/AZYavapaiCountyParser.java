@@ -10,7 +10,6 @@ public class AZYavapaiCountyParser extends GroupBestParser {
     super(new AZYavapaiCountyAParser(),
           new AZYavapaiCountyBParser(),
           new AZYavapaiCountyCParser(),
-          new AZYavapaiCountyDParser(),
           new AZYavapaiCountyEParser());
   }
 }

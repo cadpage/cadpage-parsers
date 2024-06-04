@@ -206,7 +206,7 @@ public class Active911ParserTable {
       "US/AZ/RuralMetroYavapaiCounty",    "AZYavapaiCountyE",
       "US/AZ/RuralMetroPinalCounty",      "AZPinalCounty",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",
-      "US/AZ/RuralMetro",                 "AZYavapaiCountyD",
+      "US/AZ/RuralMetro",                 "AZYavapaiCountyE",
       "US/AZ/SaltRiver",                  "AZMaricopaCountyD",
       "US/AZ/ShowLowPD",                  "AZNavajoCountyB",
       "US/AZ/STPD",                       "AZNavajoCountyB",
