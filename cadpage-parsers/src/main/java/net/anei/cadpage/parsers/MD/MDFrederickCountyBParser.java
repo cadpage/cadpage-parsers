@@ -32,6 +32,7 @@ public class MDFrederickCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("TIMEDATE")) return new MyTimeDateField();
     if (name.equals("DASHES")) return new SkipField("-{5,}", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -44,6 +45,22 @@ public class MDFrederickCountyBParser extends FieldProgramParser {
       if (!match.matches()) abort();
       setTime(TIME_FMT, match.group(1), data);
       data.strDate =  match.group(2);
+    }
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("LAT:")) {
+        setGPSLoc(field.replace("<", "").replace(">", ""), data);
+      } else {
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "GPS " + super.getFieldNames();
     }
   }
 }
