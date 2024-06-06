@@ -16,7 +16,7 @@ public class PAFultonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@centrecountypa.gov";
+    return "@centrecountypa.gov,@ccpa.net,@bedfordcountypa.org,@centre.ealert911.com";
   }
 
   @Override
