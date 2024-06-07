@@ -12,7 +12,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
 
   public KYOldhamCountyCParser() {
     super("OLDHAM COUNTY", "KY",
-          "ADDR CITY ST_ZIP CALL! END");
+          "ADDR CITY ST_ZIP? CALL CALL/C+");
   }
 
   @Override
@@ -30,7 +30,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
     if (!match.find()) return false;
     String info = body.substring(match.start()).trim();
     body = body.substring(0, match.start()).trim();
-    parseFields(body.split(","), data);
+    if (!parseFields(body.split(","), data)) return false;
     if (!info.equals("None")) {
       for (String line : LOG_DATE_TIME_PTN.split(info)) {
         data.strSupp = append(data.strSupp, "\n", line);
@@ -46,7 +46,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ST_ZIP")) return new StateField("([A-Z]{2}) \\d{5}", true);
+    if (name.equals("ST_ZIP")) return new StateField("([A-Z]{2})(?: \\d{5})?", true);
     return super.getField(name);
   }
 
