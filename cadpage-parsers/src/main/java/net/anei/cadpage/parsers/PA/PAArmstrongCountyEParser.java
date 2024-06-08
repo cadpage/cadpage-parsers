@@ -19,6 +19,17 @@ public class PAArmstrongCountyEParser extends DispatchH05Parser {
   }
 
   @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+    int pt = data.strAddress.indexOf('=');
+    if (pt >= 0) {
+      data.strCity = data.strAddress.substring(pt+1).trim();
+      data.strAddress = data.strAddress.substring(0,pt).trim();
+    }
+    return true;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
