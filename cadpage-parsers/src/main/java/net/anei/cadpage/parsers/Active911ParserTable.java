@@ -1247,6 +1247,7 @@ public class Active911ParserTable {
       "US/MN/ItascaCounty",               "MNItascaCounty",
       "US/MN/KandiyohiCounty",            "MNKandiyohiCounty",
       "US/MN/LacquiParleCounty",          "MNLacQuiParleCounty",
+      "US/MN/LakesAreaRescue",            "MNCrowWingCounty",
       "US/MN/LeSueurCounty",              "MNLeSueurCounty",
       "US/MN/Logis",                      "MNMinneapolisStPaulA",
       "US/MN/LyonCounty",                 "MNLyonCounty",
