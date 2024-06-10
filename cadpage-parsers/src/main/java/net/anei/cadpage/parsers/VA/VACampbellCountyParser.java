@@ -6,8 +6,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Campbell County, VA
  */
 public class VACampbellCountyParser extends GroupBestParser {
-  
+
   public VACampbellCountyParser() {
-    super(new VACampbellCountyAParser(), new VACampbellCountyBParser());
+    super(new VACampbellCountyAParser(),
+          new VACampbellCountyBParser(),
+          new VACampbellCountyCParser());
   }
 }
