@@ -1641,6 +1641,7 @@ public class ParserList {
               ,"TNRoaneCounty"                  ,"Roane County, TN"
               ,"TNSevierCounty"                 ,"Sevier County, TN"
               ,"TNSmithCounty"                  ,"Smith County, TN"
+              ,"TNStewartCounty"                ,"Steward County, TN"
               ,"TNSullivanCounty"               ,"Sullivan County, TN"
               ,"TNSumnerCounty"                 ,"Sumner County, TN"
               ,"TNUnicoiCounty"                 ,"Unicoi County, TN"
