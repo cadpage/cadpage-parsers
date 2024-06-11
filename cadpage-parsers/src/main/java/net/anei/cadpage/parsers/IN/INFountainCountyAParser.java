@@ -14,7 +14,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
 public class INFountainCountyAParser extends DispatchA29Parser {
 
   public INFountainCountyAParser() {
-    super(CITY_LIST, "FOUNTAIN COUNTY", "IN");
+    super(INFountainCountyParser.CITY_LIST, "FOUNTAIN COUNTY", "IN");
     setupCallList(CALL_LIST);
   }
 
@@ -47,40 +47,4 @@ public class INFountainCountyAParser extends DispatchA29Parser {
     }
     return true;
   }
-
-  private static final String[] CITY_LIST = new String[]{
-
-      // Cities
-      "ATTICA",
-      "COVINGTON",
-
-      // Incorporated towns
-      "HILLSBORO",
-      "KINGMAN",
-      "MELLOTT",
-      "NEWTOWN",
-      "VEEDERSBURG",
-      "WALLACE",
-
-      // Unincorporated communities
-      "AYLESWORTH",
-      "CATES",
-      "CENTENNIAL",
-      "COAL CREEK",
-      "FOUNTAIN",
-      "GRAHAM",
-      "HARVEYSBURG",
-      "LAYTON",
-      "RIVERSIDE",
-      "ROB ROY",
-      "ROBERTS",
-      "SILVERWOOD",
-      "STEAM CORNER",
-      "STONE BLUFF",
-      "VINE",
-      "YEDDO",
-
-      // Previous settlements
-      "STRINGTOWN"
-  };
 }

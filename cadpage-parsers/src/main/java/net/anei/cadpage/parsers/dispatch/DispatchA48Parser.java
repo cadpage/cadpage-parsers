@@ -127,6 +127,32 @@ public class DispatchA48Parser extends FieldProgramParser {
       }
     },
 
+    GPS_PLACE_APT("GPS? ( PLACE/Z APT | APT | PLACE? ) INFO/Z+?", "GPS PLACE APT") {
+      @Override
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        Matcher match = GPS_PTN.matcher(field);
+        if (match.lookingAt()) {
+          parser.setGPSLoc(match.group(1), data);
+          field = field.substring(match.end());
+        }
+
+        match = PLACE_APT_PTN.matcher(field);
+        if (match.matches()) {
+          data.strPlace = match.group(1).trim();
+          data.strApt = append(data.strApt, "-", match.group(2));
+        } else {
+          data.strPlace = field;
+        }
+      }
+
+      @Override
+      public int find(String field) {
+        Matcher match = GPS_PTN.matcher(field);
+        if (match.find()) return match.start();
+        return -1;
+      }
+    },
+
     GPS_PHONE_NAME("GPS? PHONE? NAME/Z?", "GPS PHONE NAME") {
 
       @Override
@@ -691,7 +717,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   }
 
 
-  private static final String APT_PTN_STR = "[A-Z]?\\d{1,4}(?: ?[A-Z])?|[A-Z]";
+  private static final String APT_PTN_STR = "[A-Z]?\\d{1,4}(?: ?[A-Z])?|[A-Z]|\\d{1,4}-\\d{1,4}";
   private static final Pattern APT_PTN = Pattern.compile(APT_PTN_STR, Pattern.CASE_INSENSITIVE);
   private class BaseAptField extends AptField {
     public BaseAptField() {
