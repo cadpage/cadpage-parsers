@@ -1908,6 +1908,7 @@ public class Active911ParserTable {
       "US/OH/ColumbianaCounty",           "OHColumbianaCountyB",
       "US/OH/ColumbianaCountySO",         "OHColumbianaCountyC",
       "US/OH/Concord",                    "OHLakeCountyA",
+      "US/OH/CopleyFD",                   "OHSummitCountyI",
       "US/OH/CrawfordCountySheriff",      "OHCrawfordCounty",
       "US/OH/CuyahogaCounty",             "OHCuyahogaCountyA,OHCuyahogaCountyF",
       "US/OH/DarkeCounty",                "OHShelbyCountyB",
