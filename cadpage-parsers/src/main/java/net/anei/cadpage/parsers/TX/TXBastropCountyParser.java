@@ -10,7 +10,9 @@ public class TXBastropCountyParser extends FieldProgramParser {
   public TXBastropCountyParser() {
     super("BASTROP COUNTY", "TX",
           "( Addr:ADDR! LOC:PLACE City:CITY! Problem:CALL! UNITS:UNIT! Inc_Type:PRI! Station:SRC! NOTES:INFO! Response_Information:EMPTY! CN:ID! CASE_NUMBER:ID/L " +
-          "| CAD_Paging_MIN:ID! DATE:DATETIME! JUR:SRC! RA:SKIP! PROB:CALL! PRI:PRI2! ADDR:ADDR! STREET:SKIP! APT:APT! BLDG:PLACE! XSTREET:X! UNITS:UNIT! CALL_BACK:PHONE! CALLER_NAME:NAME! NOTES:INFO! " +
+          "| CAD_Paging_MIN:ID! DATE:DATETIME! ( JUR:SRC! RA:SKIP! PROB:CALL! PRI:PRI2! ADDR:ADDR! " +
+                                              "| UNITS:UNIT! PROB:CALL! ADDR:ADDR! JUR:SRC! PRI:PRI2! " +
+                                              ") STREET:SKIP! APT:APT! BLDG:PLACE! XSTREET:X! UNITS:UNIT? CALL_BACK:PHONE! CALLER_NAME:NAME! NOTES:INFO! " +
           "| MIN:ID! ADDR:ADDR! CITY:SKIP! COMMENTS:INFO CALL_BACK:PHONE! CALLER_NAME:NAME! " +
           ") END");
   }
@@ -28,7 +30,7 @@ public class TXBastropCountyParser extends FieldProgramParser {
     }
 
     if (body.startsWith("CAD Paging")) {
-      return super.parseMsg(body.replace("JUR:", " JUR:"), data);
+      return super.parseMsg(body.replace("JUR:", " JUR:").replace("UNITS:", " UNITS:"), data);
     }
 
     if (body.startsWith("MIN ")) {
