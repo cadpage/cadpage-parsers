@@ -113,4 +113,15 @@ public class DispatchA43Parser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  // We don't pass our city list to our superclass, so we havce to
+  // implement our own version it isCity() to help test class validate cities
+
+  @Override
+  protected boolean isCity(String city) {
+    if (citySet == null) return false;
+    city = city.toUpperCase();
+    String city2 = citySet.getCode(city);
+    return city2 != null && city2.equals(city);
+  }
 }
