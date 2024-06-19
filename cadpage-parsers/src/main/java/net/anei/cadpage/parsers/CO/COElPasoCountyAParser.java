@@ -258,6 +258,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     if (name.equals("DISTRICT")) return new MapField("District \\d+|Colorado S|El Paso Co|HWY 115 -", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
     if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -343,6 +344,14 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       if (field.length() == 0 || field.length() >= 8) return false;
       data.expectMore = true;
       return true;
+    }
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Details:");
+      super.parse(field, data);
     }
   }
 
