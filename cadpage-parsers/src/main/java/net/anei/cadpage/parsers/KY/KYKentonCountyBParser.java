@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.KY;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class KYKentonCountyBParser extends DispatchH05Parser {
@@ -21,11 +22,28 @@ public class KYKentonCountyBParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITYST")) return new AddressCityStateField("ADDR\\b *(.*?)[ ,]*", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("X")) return new CrossField("(?:CROSS\\b *)?(.*)", true);
     if (name.equals("GPS")) return new GPSField("LAT:.* LON:.*", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!field.startsWith("ADDR ")) abort();
+      field = field.substring(5).trim();
+      int pt = field.lastIndexOf(',');
+      if (pt < 0) abort();
+      String apt = field.substring(pt+1).trim();
+      field = field.substring(0,pt).trim();
+      super.parse(field, data);
+      if (!apt.isEmpty()) {
+        data.strAddress = stripFieldEnd(data.strAddress, ' '+apt);
+        data.strApt = apt;
+      }
+    }
   }
 
 }

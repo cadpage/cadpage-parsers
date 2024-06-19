@@ -1,1 +1,1 @@
-./gradlew :cadpage-private:test
+./gradlew :cadpage-private:test "$@"
