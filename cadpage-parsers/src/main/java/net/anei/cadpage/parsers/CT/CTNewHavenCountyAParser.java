@@ -8,12 +8,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchRedAlertParser;
 
 
 public class CTNewHavenCountyAParser extends DispatchRedAlertParser {
-  
+
   private static final Pattern BAD_MSG_PTN = Pattern.compile("\\d{10} .*");
   private static final Pattern MISSING_DOTS = Pattern.compile("(.*[^.]) (\\d\\d:\\d\\d)\\b *(.*)");
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*) \\d{5}");
   private static final Pattern PRI_CALL_PTN = Pattern.compile("CODE (\\d), *- *(.*)");
-  
+
   public CTNewHavenCountyAParser() {
     super(CITY_LIST, "NEW HAVEN COUNTY", "CT");
     setupMultiWordStreets(
@@ -25,13 +25,16 @@ public class CTNewHavenCountyAParser extends DispatchRedAlertParser {
         "THISTLE ROCK"
     );
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
+    // Eliminate CTNewHavenCountyE messages
+    if (body.startsWith("COMPLAINT TYPE:")) return false;
+
     // Eliminate CTNewHavenCountyA messages
     if (BAD_MSG_PTN.matcher(body).matches()) return false;
-    
+
     // This is mostly a Red Alert format with some variations we have to correct for
     String info = "";
     Matcher match = MISSING_DOTS.matcher(body);
@@ -39,15 +42,15 @@ public class CTNewHavenCountyAParser extends DispatchRedAlertParser {
       body = match.group(1) + " . . " + match.group(2);
       info = match.group(3).trim();
     }
-    
+
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     match = PRI_CALL_PTN.matcher(data.strCall);
     if (match.matches()) {
       data.strPriority = match.group(1);
       data.strCall = match.group(2);
     }
-    
+
     match = CITY_ZIP_PTN.matcher(data.strCity);
     if (match.matches()) {
       data.strCity = match.group(1).trim();
@@ -58,17 +61,17 @@ public class CTNewHavenCountyAParser extends DispatchRedAlertParser {
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
       if (data.strCity.length() == 0) data.strCity = data.strSource;
     }
-    
+
     data.strSupp = append(data.strSupp, " / ", info);
 
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "PRI " + super.getProgram().replace("CITY", "CITY SRC") + " INFO";
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
     "ALLENPORT",
     "AMWELL TWP",

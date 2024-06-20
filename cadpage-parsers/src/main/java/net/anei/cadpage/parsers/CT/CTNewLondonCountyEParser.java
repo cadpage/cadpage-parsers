@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.CT;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -26,13 +25,11 @@ public class CTNewLondonCountyEParser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_BRK_PTN = Pattern.compile(",(?=\\[\\d+\\])");
-  private static final Pattern DUP_NUMBER_PTN = Pattern.compile("\\[\\d+\\] (\\[\\d+\\])");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       for (String line : INFO_BRK_PTN.split(field)) {
-        Matcher match = DUP_NUMBER_PTN.matcher(line);
-        if (match.lookingAt()) line = line.substring(match.start(1));
+        data.strSupp = append(data.strSupp, "\n", line);
       }
     }
   }
