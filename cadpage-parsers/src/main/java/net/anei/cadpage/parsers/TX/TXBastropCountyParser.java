@@ -13,7 +13,7 @@ public class TXBastropCountyParser extends FieldProgramParser {
           "| CAD_Paging_MIN:ID! DATE:DATETIME! ( JUR:SRC! RA:SKIP! PROB:CALL! PRI:PRI2! ADDR:ADDR! " +
                                               "| UNITS:UNIT! PROB:CALL! ADDR:ADDR! JUR:SRC! PRI:PRI2! " +
                                               ") STREET:SKIP! APT:APT! BLDG:PLACE! XSTREET:X! UNITS:UNIT? CALL_BACK:PHONE! CALLER_NAME:NAME! NOTES:INFO! " +
-          "| MIN:ID! ADDR:ADDR! CITY:SKIP! COMMENTS:INFO CALL_BACK:PHONE! CALLER_NAME:NAME! " +
+          "| MIN:ID! PROB:CALL? ADDR:ADDR! CITY:SKIP! COMMENTS:INFO CALL_BACK:PHONE! CALLER_NAME:NAME! " +
           ") END");
   }
 
