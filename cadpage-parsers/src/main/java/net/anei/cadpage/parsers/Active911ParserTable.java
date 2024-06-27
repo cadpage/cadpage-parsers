@@ -1552,7 +1552,7 @@ public class Active911ParserTable {
       "US/NC/Havelock",                   "NCCravenCountyE",
       "US/NC/HaywoodCounty",              "NCHaywoodCounty",
       "US/NC/HendersonCounty",            "NCHendersonCounty",
-      "US/NC/HertfordCounty",             "NCHertfordCountyB",
+      "US/NC/HertfordCounty",             "NCHertfordCountyB,NCForsythCountyB",
       "US/NC/HighPoint",                  "NCGuilfordCounty",
       "US/NC/HokeCounty",                 "NCHokeCounty",
       "US/NC/HopeMills",                  "NCCumberlandCounty",

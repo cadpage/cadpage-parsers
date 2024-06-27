@@ -17,6 +17,8 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
     setupMultiWordStreets(
         "AHOSKIE COFIELD",
         "BENTHALL BRIDGE",
+        "BOONES BRIDGE",
+        "BOWLES PLACE",
         "DR MARTIN LUTHER KING JR",
         "EARLY STATION",
         "FLEA HILL",
@@ -25,11 +27,13 @@ public class NCHertfordCountyBParser extends DispatchSouthernPlusParser {
         "LEE HARMOND",
         "LIVERMAN MILL",
         "MENOLA ST JOHN",
+        "MILL NECK",
         "MORRIS FORD",
         "NEWSOME GROVE",
         "QUAIL RIDGE",
         "ST JOHN MILLENNIUM",
         "TRI COUNTY AIRPORT"
+
     );
     removeWords("APT", "BLDG", "RCH");
   }
