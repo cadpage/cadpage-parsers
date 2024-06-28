@@ -129,6 +129,18 @@ public class DispatchH05Parser extends HtmlProgramParser {
 
   private class BaseIdField extends IdField {
     @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("[") || !field.endsWith("]")) return false;
+      parse(field, data);
+      return true;
+    }
+
+    @Override
     public void parse(String field, Data data) {
       for (String part : field.split(",")) {
         part = part.trim();

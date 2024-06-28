@@ -541,6 +541,7 @@ public class ParserList {
               ,"INBrownCounty"                  ,"Brown County, IN"
               ,"INCarrollCounty"                ,"Carroll County, IN"
               ,"INCassCounty"                   ,"Cass County, IN"
+              ,"INClarkCounty"                  ,"Clark County, IN"
               ,"INClayCounty"                   ,"Clay County, IN"
               ,"INCrawfordCounty"               ,"Crawford County, IN"
               ,"INDaviessCounty"                ,"Daviess County, IN"

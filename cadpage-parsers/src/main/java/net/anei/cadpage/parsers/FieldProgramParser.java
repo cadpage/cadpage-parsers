@@ -3270,7 +3270,7 @@ public class FieldProgramParser extends SmartAddressParser {
     private String append = null;
 
     public PhoneField() {
-      setPattern(Pattern.compile("\\d{10}|\\d{3}-\\d{3}-\\d{4}"));
+      setPattern(Pattern.compile("\\d{10}|\\d{3}-\\d{3}-\\d{4}|\\(\\d{3}\\) ?\\d{3}-\\d{4}"));
     }
 
     public PhoneField(String pattern) {
