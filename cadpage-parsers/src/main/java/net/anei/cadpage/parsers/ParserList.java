@@ -1100,6 +1100,7 @@ public class ParserList {
               ,"MTHillCounty"                   ,"Hill County, MT"
               ,"MTLakeCounty"                   ,"Lake County, MT"
               ,"MTLewisAndClarkCounty"          ,"Lewis And Clark County, MT"
+              ,"MTLincolnCounty"                ,"Lincoln County, MT"
               ,"MTMissoulaCounty"               ,"Missoula County, MT"
               ,"MTParkCounty"                   ,"Park County, MT"
               ,"MTRavalliCounty"                ,"Ravalli County, MT"

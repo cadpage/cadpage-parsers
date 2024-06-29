@@ -1461,6 +1461,7 @@ public class Active911ParserTable {
       "US/MS/WarrenCounty",               "MSWarrenCounty",
       "US/MS/YalobushaCounty",            "MSYalobushaCounty",
       "US/MT/CityofBlackEagle",           "MTCascadeCounty",
+      "US/MT/FisherRiver",                "MTLincolnCounty",
       "US/MT/FlatheadCounty",             "MTFlatheadCounty",
       "US/MT/GallatinCounty",             "MTGallatinCounty",
       "US/MT/GreatFalls",                 "MTCascadeCountyB",
