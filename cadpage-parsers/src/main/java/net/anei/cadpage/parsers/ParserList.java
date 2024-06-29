@@ -712,6 +712,7 @@ public class ParserList {
               ,"KYGrantCounty"                  ,"Grant County, KY"
               ,"KYGravesCounty"                 ,"Graves County, KY"
               ,"KYGraysonCounty"                ,"Grayson County, KY"
+              ,"KYGreenCounty"                  ,"Green County, KY"
               ,"KYGreenupCounty"                ,"Greenup County, KY"
               ,"KYHancockCounty"                ,"Hancock County, KY"
               ,"KYHardinCounty"                 ,"Hardin County, KY"
