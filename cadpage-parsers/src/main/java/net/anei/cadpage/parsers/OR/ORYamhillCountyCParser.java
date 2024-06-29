@@ -13,7 +13,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
 
   public ORYamhillCountyCParser() {
     super("YAMHILL COUNTY", "OR",
-          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross_Street:X? MAP:MAP% UNIT:UNIT%  NARR:INFO/N " +
+          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! Cross_Street:X? MAP:MAP% ZIP_CODE:ZIP? UNIT:UNIT%  NARR:INFO/N INFO/N+" +
           "| CALL ADDR PLACE! Caller:NAME! Caller_#:PHONE! Units:UNIT! ) END");
   }
 
@@ -30,7 +30,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
     };
   }
 
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* ?CALL TIMES ?\\* ?Run #:((?:[A-Z]+-)?[-0-9]*) +Add: *?(.*?) +?((?:Call Rec:|Call Received:|Disp:).*)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("\\* ?CALL TIMES ?\\* ?Run #:((?:[A-Z]+-)?[-0-9]*) *(?:ADDR|Add): *?(.*?) +?((?:Call Rec:|Call Received:|Disp:).*)");
   private static final Pattern RR_BRK_PTN = Pattern.compile("(?:[* ]+|(?<!(?:^|[* \n])))(?=(?:Disp|Enr|Onscene|Avail|Unit):)");
   private static final Pattern DELIM = Pattern.compile("\\* | +(?=NARR:)");
 
@@ -53,7 +53,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
     }
 
     setSelectValue("1");
-    body = body.replace("*Cross Street:", "* Cross Street:");
+    body = body.replace("*Cross Street:", "* Cross Street:").replace("*ZIP CODE", " * ZIP CODE");
     return parseFields(DELIM.split(body), data);
   }
 

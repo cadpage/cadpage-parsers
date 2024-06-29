@@ -7,7 +7,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class ORYamhillCountyParser extends GroupBestParser {
   public ORYamhillCountyParser() {
-    super(new ORYamhillCountyAParser(), new ORYamhillCountyBParser(),
+    super(new ORYamhillCountyAParser(),
           new ORYamhillCountyCParser());
   }
 }
