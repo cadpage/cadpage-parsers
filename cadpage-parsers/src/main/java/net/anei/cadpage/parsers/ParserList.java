@@ -1580,6 +1580,7 @@ public class ParserList {
               ,"SCYorkCounty"                   ,"York County, SC"
           ),
           new ParserCategory("South Dakota"
+              ,"SDAuroraCounty"                 ,"Aurora County, SD"
               ,"SDHydeCounty"                   ,"Hyde County, SD"
               ,"SDCampbellCounty"               ,"Campbell County, SD"
               ,"SDClarkCounty"                  ,"Clark County, SD"
