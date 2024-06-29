@@ -8,15 +8,16 @@ Burlington County, NJ
 */
 
 public class NJBurlingtonCountyParser extends GroupBestParser {
-  
+
   public NJBurlingtonCountyParser() {
-    super(new NJBurlingtonCountyAParser(), 
+    super(new NJBurlingtonCountyAParser(),
            new NJBurlingtonCountyBParser(),
            new NJBurlingtonCountyCParser(),
            new NJBurlingtonCountyDParser(),
            new NJBurlingtonCountyEParser(),
            new NJBurlingtonCountyFParser(),
            new NJBurlingtonCountyGParser(),
-           new NJBurlingtonCountyHParser());
+           new NJBurlingtonCountyHParser(),
+           new NJBurlingtonCountyIParser());
   }
 }
