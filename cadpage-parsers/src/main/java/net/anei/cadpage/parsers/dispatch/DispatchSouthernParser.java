@@ -895,7 +895,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
     if (name.equals("CODE"))  return new BaseCodeField();
     if (name.equals("PARTCODE")) return new SkipField("[MFL]D?");
     if (name.equals("X")) return new BaseCrossField();
-    if (name.equals("ID")) return new IdField("[A-Z]?\\d\\d(?:\\d\\d)?-?\\d{4,8}|\\d{8}-\\d{5}|\\d{4}-\\d{2}-\\d{5}|\\d{7}-\\d{2}", true);
+    if (name.equals("ID")) return new IdField("[A-Z]?\\d\\d(?:\\d\\d)?-?\\d{4,8}|\\d{8}-\\d{5}|\\d{6}-\\d{4}|\\d{4}-\\d{2}-\\d{5}|\\d{7}-\\d{2}", true);
     if (name.equals("NAME")) return new BaseNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
