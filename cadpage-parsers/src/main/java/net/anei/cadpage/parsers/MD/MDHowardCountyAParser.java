@@ -55,12 +55,16 @@ public class MDHowardCountyAParser extends FieldProgramParser {
       String unit = UNIT_CODES.getProperty(data.strCall);
       if (unit != null) data.strUnit = unit;
     }
+
+    if (!data.strCallId.isEmpty()) {
+      data.strInfoURL = "https://cad.howardcountymd.gov/details/" + data.strCallId;
+    }
     return true;
   }
 
   @Override
   public String getProgram() {
-    return "SRC ID " + super.getProgram();
+    return "SRC ID " + super.getProgram() + " URL";
   }
 
   @Override

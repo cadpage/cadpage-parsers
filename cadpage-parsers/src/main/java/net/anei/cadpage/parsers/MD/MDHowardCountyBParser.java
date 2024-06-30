@@ -17,7 +17,17 @@ public class MDHowardCountyBParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("//"), data);
+    if (!parseFields(body.split("//"), data)) return false;
+
+    if (!data.strCallId.isEmpty()) {
+      data.strInfoURL = "https://cad.howardcountymd.gov/details/" + data.strCallId;
+    }
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " URL";
   }
 
   @Override
