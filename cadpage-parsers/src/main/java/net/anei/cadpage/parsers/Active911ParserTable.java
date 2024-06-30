@@ -2130,7 +2130,7 @@ public class Active911ParserTable {
       "US/PA/ButlerCounty",               "PAButlerCounty",
       "US/PA/ButlerCountyTwp",            "PAButlerCounty",
       "US/PA/CambriaCounty",              "PACambriaCounty",
-      "US/PA/CarrollValleyBoro",          "PAAdamsCountyA",
+      "US/PA/CarrollValleyBoro",          "PAAdamsCountyA,PAAdamsCountyD",
       "US/PA/CentreCounty",               "PACentreCounty",
       "US/PA/ChesterCounty",              "PAChesterCountyJ,PAChesterCountyP",
       "US/PA/ChesterCountyIAR",           "PAChesterCountyL",
