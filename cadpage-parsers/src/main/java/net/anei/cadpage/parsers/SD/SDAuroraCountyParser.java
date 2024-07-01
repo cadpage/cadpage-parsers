@@ -7,7 +7,7 @@ public class SDAuroraCountyParser extends FieldProgramParser {
 
   public SDAuroraCountyParser() {
     super("AURORA COUNTY", "SD",
-          "Assigned_Unit:UNIT! Date/Time:DATETIME! Location:ADDRCITY! Incident:CALL! END");
+          "Assigned_Unit:UNIT! Date/Time:DATETIME! Location:ADDRCITYST! Incident:CALL! END");
   }
 
   @Override
