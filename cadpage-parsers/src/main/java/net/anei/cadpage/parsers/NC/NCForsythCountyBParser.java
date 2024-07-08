@@ -23,16 +23,16 @@ public class NCForsythCountyBParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
     if (!body.startsWith("CAD - ")) return false;
-    return parseFields(body.substring(6).trim().split(";"), data);
+    return parseFields(body.substring(6).trim().split(";", -1), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new CallField("(?:\\{\\S+\\} +)?(.*\\bCANCEL\\b.*|RE-DISPATCH)", true);
+    if (name.equals("CANCEL")) return new CallField("(?:\\{\\S+\\} +)?(.*\\bCANCEL\\b.*|ADDT`L MANPOWER NEEDED|CODE GOLD C|CPR BYSTANDER|CPR RESPONDER|RE-DISPATCH|STAGE AWAY|WORKING FIRE)", true);
     if (name.equals("PRI")) return new PriorityField("\\d|P", true);
     if (name.equals("TYPE")) return new SkipField("EMS|FIRE", true);
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("ID")) return new IdField("\\d{5,}", true);
+    if (name.equals("ID")) return new IdField("\\d*", true);
     return super.getField(name);
   }
 
