@@ -1397,6 +1397,7 @@ public class ParserList {
               ,"OHPortageCounty"                ,"Portage County, OH"
               ,"OHPrebleCounty"                 ,"Preble County, OH"
               ,"OHRichlandCounty"               ,"Richland County, OH"
+              ,"OHSanduskyCounty"               ,"Sandusky County, OH"
               ,"OHShelbyCounty"                 ,"Shelby County, OH"
               ,"OHStarkCounty"                  ,"Stark County, OH"
               ,"OHSugarCreek"                   ,"Sugar Creek Twns, OH"
