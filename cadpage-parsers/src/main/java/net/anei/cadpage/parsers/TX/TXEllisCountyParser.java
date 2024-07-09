@@ -11,6 +11,7 @@ public class TXEllisCountyParser extends GroupBestParser {
     super(new TXEllisCountyAParser(),
           new TXEllisCountyBParser(),
           new TXEllisCountyCParser(),
-          new TXEllisCountyDParser());
+          new TXEllisCountyDParser(),
+          new TXEllisCountyEParser());
   }
 }
