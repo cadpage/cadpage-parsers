@@ -422,6 +422,7 @@ public class Active911ParserTable {
       "US/CT/Ledyard",                    "CTNewLondonCountyA",
       "US/CT/LitchfieldCounty",           "CTLitchfieldCountyA",
       "US/CT/MiddlesexCounty",            "CTMiddlesexCountyB",
+      "US/CT/NewFairfieldFD",             "CTFairfieldCountyF",
       "US/CT/NewHavenCounty",             "CTNewHavenCountyB",
       "US/CT/NorthwestPublicSafety",      "CTNorthwestPublicSafety",
       "US/CT/OldSaybrook",                "CTMiddlesexCountyD",
