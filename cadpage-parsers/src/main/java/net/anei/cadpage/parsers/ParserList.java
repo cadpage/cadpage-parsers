@@ -1362,6 +1362,7 @@ public class ParserList {
               ,"OHGuernseyCounty"               ,"Guernsey County, OH"
               ,"OHHamiltonCounty"               ,"Hamilton County, OH"
               ,"OHHancockCounty"                ,"Hancock County, OH"
+              ,"OHHarrisonCounty"               ,"Harrison County, OH"
               ,"OHHighlandCounty"               ,"Highland County, OH"
               ,"OHHockingCounty"                ,"Hocking County, OH"
               ,"OHHolmesCounty"                 ,"Holmes County, OH"

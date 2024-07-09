@@ -1936,6 +1936,7 @@ public class Active911ParserTable {
       "US/OH/HamiltonCounty",             "OHHamiltonCountyA",
       "US/OH/HamiltonCountyDW",           "OHHamiltonCountyA",
       "US/OH/HamiltonFD",                 "OHButlerCountyA,OHButlerCountyC",
+      "US/OH/HarrisonCounty",             "OHHarrisonCounty",
       "US/OH/Harveysburg",                "OHWarrenCountyC",
       "US/OH/HighlandCounty",             "OHHighlandCounty",
       "US/OH/HockingCounty",              "OHHockingCounty",
