@@ -10,7 +10,7 @@ public class KYGreenCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "greensburg911@gmail.com";
+    return "greensburg911@gmail.com,greensburgky@cissystem.com";
   }
 
 }

@@ -10,6 +10,6 @@ public class KYBowlingGreenParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "PD@bgky.org";
+    return "PD@bgky.org,@premierone.local";
   }
 }
