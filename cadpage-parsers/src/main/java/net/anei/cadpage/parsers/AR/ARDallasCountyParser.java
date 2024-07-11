@@ -10,7 +10,7 @@ public class ARDallasCountyParser extends DispatchA71Parser {
 
   @Override
   public String getFilter() {
-    return "cadpage@e9.com";
+    return "cadpage@e9.com,dallasco911@rpsfire.com";
   }
 
 }
