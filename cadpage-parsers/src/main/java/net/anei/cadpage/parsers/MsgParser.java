@@ -513,7 +513,7 @@ public abstract class MsgParser {
   private static final Pattern CLEAN_HTML_PTN = Pattern.compile("</?(?:div|span|p)\\b[^>]*?>", Pattern.CASE_INSENSITIVE);
 
   private String cleanDocHeaders(String body) {
-    StringBuilder sb = null;
+    StringBuffer sb = null;
     int ifCnt = 0;
     for (String line : body.split("\n")) {
       if (sb == null) {
@@ -521,7 +521,7 @@ public abstract class MsgParser {
         if (line.contains("<!--[if ")) ifCnt++;
         else if (line.contains("<![endif]")) ifCnt--;
         else if (ifCnt == 0) {
-          sb = new StringBuilder(CLEAN_HTML_PTN.matcher(line).replaceAll("").trim());
+          sb = new StringBuffer(CLEAN_HTML_PTN.matcher(line).replaceAll("").trim());
         }
       }
       else {
@@ -1678,12 +1678,14 @@ public static void addCodeTable(Properties props, String[] table) {
   * @return
   */
  public static  String decodeHtmlSequence(String body) {
+   body = COMMENT_PTN.matcher(body).replaceAll("");
    body = HTML_PTN.matcher(body).replaceAll("");
    body = HEAD_PTN.matcher(body).replaceFirst("");
    body = BR_PTN.matcher(body).replaceAll("\n");
    body = END_BR_PTN.matcher(body).replaceAll("");
-   return decodeHtmlField(body);
+   return decodeHtmlField(body).trim();
  }
+ private static final Pattern COMMENT_PTN = Pattern.compile("<!--.*?-->", Pattern.DOTALL);
  private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|SPAN|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
