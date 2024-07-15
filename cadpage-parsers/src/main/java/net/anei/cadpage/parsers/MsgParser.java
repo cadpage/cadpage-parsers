@@ -504,7 +504,7 @@ public abstract class MsgParser {
     if (parseUntrimmedMsg(subject, body, data)) return true;
     if (force) {
       setFieldList("INFO");
-      data.parseGeneralAlert(this, body);
+      data.parseGeneralAlert(this, body.trim());
       return true;
     }
     return false;
@@ -1683,7 +1683,7 @@ public static void addCodeTable(Properties props, String[] table) {
    body = HEAD_PTN.matcher(body).replaceFirst("");
    body = BR_PTN.matcher(body).replaceAll("\n");
    body = END_BR_PTN.matcher(body).replaceAll("");
-   return decodeHtmlField(body).trim();
+   return decodeHtmlField(body);
  }
  private static final Pattern COMMENT_PTN = Pattern.compile("<!--.*?-->", Pattern.DOTALL);
  private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|SPAN|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
