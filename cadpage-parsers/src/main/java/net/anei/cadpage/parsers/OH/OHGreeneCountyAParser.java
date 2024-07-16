@@ -17,7 +17,9 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
 
   public OHGreeneCountyAParser() {
     super(CITY_LIST, "GREENE COUNTY", "OH",
-          "( SELECT/1 CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:ID! Narrative:INFO/N INFO/N+ " +
+          "( SELECT/1 ( Call:CALL! Name:NAME! Address:ADDR_CITY_X_PLACE! Cross:X! Units:UNIT! Call_Time:DATETIME! Dispatch_Time:EMPTY! Quadrant:MAP! Radio_Channel:CH! Alerts:ALERT! " +
+                     "| CALL! Location:ADDR_CITY_X_PLACE! Time:DATETIME1! Units:UNIT! Common_Name:PLACE/SDS! Quadrant:MAP1! Primary_Incident:ID! " +
+                     ") Narrative:INFO/N INFO/N+ " +
           "| CALL2 Location:ADDR2/SXXx! Time:TIME Units:UNIT Common_Name:PLACE Info:INFO ( Problem:CALL Patient_Info:INFO | Nature_Of_Call:CALL ) Incident_#:ID2 Narrative:INFO Nature_Of_Call:CALL/SDS Quadrant:MAP EMS_District:MAP )");
   }
 
@@ -44,6 +46,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDR_CITY_X_PLACE")) return new MyAddressCityCrossPlaceField();
     if (name.equals("DATETIME1")) return new MyDateTime1Field();
     if (name.equals("MAP1")) return new MyMap1Field();
@@ -54,7 +57,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_CITY_CROSS_PLACE_PTN = Pattern.compile("([^,]*)(?:, ([^~]*?))? ~ ([^~]*) ~ ([^~]*)");
+  private static final Pattern ADDR_CITY_CROSS_PLACE_PTN = Pattern.compile("([^,~]*)(?:, ([^~]*?))? ~ ([^~]*)(?: ~ ([^~]*))?");
   private static final Pattern ADDR_X_STREETS_PTN = Pattern.compile(" *\\bX STREETS\\b *");
   private class MyAddressCityCrossPlaceField extends AddressCityField {
     @Override
@@ -65,7 +68,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       parseAddress(match.group(1).trim().replace('@', '&'), data);
       data.strCity = getOptGroup(match.group(2));
       String g3 = match.group(3).trim();
-      String g4 = match.group(4).trim();
+      String g4 = getOptGroup(match.group(4));
       match = ADDR_X_STREETS_PTN.matcher(g4);
       if (match.find()) {
         data.strApt = append(data.strApt, "-", g3);
