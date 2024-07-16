@@ -191,6 +191,7 @@ public class ParserList {
               ,"ARBaxterCounty"                 ,"Baxter County, AR"
               ,"ARBentonCounty"                 ,"Benton County, AR"
               ,"ARCleburneCounty"               ,"Cleburne County, AR"
+              ,"ARCrawfordCounty"               ,"Crawford County, AR"
               ,"ARDallasCounty"                 ,"Dallas County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
               ,"ARGrantCounty"                  ,"Grant County, AR"
