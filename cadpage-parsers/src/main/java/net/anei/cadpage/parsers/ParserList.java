@@ -1385,6 +1385,7 @@ public class ParserList {
               ,"OHMeigsCounty"                  ,"Meigs County, OH"
               ,"OHMercerCounty"                 ,"Mercer County, OH"
               ,"OHMiamiCounty"                  ,"Miami County, OH"
+              ,"OHMiddletown"                   ,"Middletown, OH"
               ,"OHMonroe"                       ,"Monroe, OH"
               ,"OHMontgomeryCounty"             ,"Montgomery County, OH"
               ,"OHMorrowCounty"                 ,"Morrow County, OH"

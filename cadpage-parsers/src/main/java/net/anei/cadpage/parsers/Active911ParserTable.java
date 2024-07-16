@@ -1972,6 +1972,7 @@ public class Active911ParserTable {
       "US/OH/MedinaCountyFire",           "OHMedinaCountyD",
       "US/OH/MeigsCounty",                "OHMeigsCounty",
       "US/OH/MercerCounty",               "OHMercerCounty",
+      "US/OH/CityofMiddletown",           "OHMiddletown",
       "US/OH/MiamiCounty",                "OHMiamiCountyB",
       "US/OH/MiamiTwpFireEMS",            "OHClermontCountyC",
       "US/OH/MiddleburgHeights",          "OHCuyahogaCountyA",
