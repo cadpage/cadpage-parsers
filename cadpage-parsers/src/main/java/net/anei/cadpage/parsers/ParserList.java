@@ -380,6 +380,7 @@ public class ParserList {
               ,"FLPensacola"                    ,"Pensacola, FL"
               ,"FLPolkCounty"                   ,"Polk County, FL"
               ,"FLPutnamCounty"                 ,"Putnam County, FL"
+              ,"FLSantaRosaCounty"              ,"Santa Rosa County, FL"
               ,"FLSarasotaCounty"               ,"Sarasota County, FL"
               ,"FLSatelliteBeach"               ,"Satellite Beach, FL"
               ,"FLSeminoleCounty"               ,"Seminole County, FL"
