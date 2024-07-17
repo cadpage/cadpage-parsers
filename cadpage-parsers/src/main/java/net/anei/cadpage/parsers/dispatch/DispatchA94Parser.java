@@ -11,7 +11,7 @@ public class DispatchA94Parser extends FieldProgramParser {
 
   public DispatchA94Parser(String defCity, String defState) {
     super(defCity, defState,
-         "ID:ID! CALL:CALL! DATE:DATETIME! ADDR:ADDR! UNIT:UNIT? INFO:TIMES! ( COMMENTS:INFO! INFO/N+ | ) GPS:GPS!");
+         "ID:ID! CALL:CALL! DATE:DATETIME! ADDR:ADDR? UNIT:UNIT? INFO:TIMES? ( COMMENTS:INFO! INFO/N+ | ) GPS:GPS! END");
   }
 
   String times;
