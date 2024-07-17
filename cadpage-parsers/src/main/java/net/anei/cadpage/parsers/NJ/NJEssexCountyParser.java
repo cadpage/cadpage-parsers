@@ -1,13 +1,15 @@
 package net.anei.cadpage.parsers.NJ;
 
-public class NJEssexCountyParser extends NJSussexCountyAParser {
-  
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/*
+Essex County, NJ
+*/
+
+
+public class NJEssexCountyParser extends GroupBestParser {
+
   public NJEssexCountyParser() {
-    super("ESSEX COUNTY", "NJ");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "@northcaldwell.org,mail@westcaldwellpd.org";
+    super(new NJEssexCountyAParser(), new NJEssexCountyBParser());
   }
 }
