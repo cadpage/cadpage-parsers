@@ -12,6 +12,7 @@ public class NYRocklandCountyParser extends GroupBestParser {
   public NYRocklandCountyParser() {
     super(new NYRocklandCountyAParser(), new NYRocklandCountyBParser(),
           new NYRocklandCountyCParser(), new NYRocklandCountyEParser(),
-          new NYRocklandCountyFParser(), new NYRocklandCountyHParser());
+          new NYRocklandCountyFParser(), new NYRocklandCountyHParser(),
+          new NYRocklandCountyIParser());
   }
 }

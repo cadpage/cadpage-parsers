@@ -1803,6 +1803,7 @@ public class Active911ParserTable {
       "US/NY/FRSNaussaCounty",            "NYSuffolkCountyB,NYSuffolkCountyF,NYSuffolkCountyL,NYNassauCountyH",
       "US/NY/FultonCounty",               "NYFultonCounty",
       "US/NY/GeneseeCounty",              "NYGeneseeCounty",
+      "US/NY/HatzolohEMS",                "NYRocklandCountyI",
       "US/NY/HicksvilleFD",               "NYNassauCountyRedAlert",
       "US/NY/Islips",                     "NYSuffolkCountyA",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
