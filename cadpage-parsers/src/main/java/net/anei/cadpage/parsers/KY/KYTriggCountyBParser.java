@@ -10,7 +10,7 @@ public class KYTriggCountyBParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,trigg911@bellsouth.net,triggcounty911@gmail.com,triggco911@cissystem.com";
+    return "noreply@cisusa.org,trigg911@bellsouth.net,triggcounty911@gmail.com,triggco911@cissystem.com,noreply@trigg911.com";
   }
 
   @Override
