@@ -749,6 +749,7 @@ public class ParserList {
               ,"KYMcCrackenCounty"              ,"McCracken County, KY"
               ,"KYMcLeanCounty"                 ,"McLean County, KY"
               ,"KYMeadeCounty"                  ,"Meade County, KY"
+              ,"KYMercerCounty"                 ,"Mercer County, KY"
               ,"KYMetcalfeCounty"               ,"Metcalfe County, KY"
               ,"KYMonroeCounty"                 ,"Monroe County, KY"
               ,"KYMontgomeryCounty"             ,"Montgomery County, KY"
