@@ -2870,6 +2870,7 @@ public class Active911ParserTable {
       "US/WV/MercerCounty",               "WVMercerCounty",
       "US/WV/Metro911",                   "WVKanawhaCounty",
       "US/WV/MineralCounty",              "WVMineralCounty",
+      "US/WV/MingoCounty",                "WVMingoCounty",
       "US/WV/MorganCounty",               "WVMorganCounty",
       "US/WV/NicholasCounty",             "WVNicholasCounty",
       "US/WV/PleasantsCounty",            "WVPleasantsCounty",
