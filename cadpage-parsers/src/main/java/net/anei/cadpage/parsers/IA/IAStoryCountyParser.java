@@ -9,10 +9,11 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
 
   public IAStoryCountyParser() {
     super(CITY_CODES, "STORY COUNTY", "IA",
-          "( CANCEL ADDR CITY! " +
-          "| FYI ( ADDR/Z CITY CALL! | CALL ADDR/Z CITY! |  CALL ADDR | ADDR CALL ) " +
-          "| UNIT CALL PRI ADDR CITY! " +
-          ") INFO+");
+          "( CANCEL ADDR CITY! INFO/N+" +
+          "| FYI UNIT1/C+? ( ADDR/Z CITY! CALL | CALL ADDR/Z CITY! |  CALL ADDR | ADDR CALL ) INFO/N+? ID END" +
+          "| UNIT2 CALL PRI ADDR CITY! INFO/N+ " +
+          "| ADDR? INFO/N+? DATETIME! UNIT1! CITY! END " +
+          ")");
   }
 
   @Override
@@ -31,9 +32,14 @@ public class IAStoryCountyParser extends DispatchOSSIParser {
     return super.parseMsg(body, data);
   }
 
+  private static final String UNIT_PTN_STR = "(?:[A-Z]{3}[A-Z0-9])";
   @Override
   public Field getField(String name) {
+    if (name.equals("UNIT1")) return new UnitField(UNIT_PTN_STR, true);
+    if (name.equals("UNIT2")) return new UnitField("(?:\\b" + UNIT_PTN_STR + "\\b,?)+", true);
     if (name.equals("PRI")) return new PriorityField("F\\d", true);
+    if (name.equals("ID")) return new IdField("\\d{9}", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
