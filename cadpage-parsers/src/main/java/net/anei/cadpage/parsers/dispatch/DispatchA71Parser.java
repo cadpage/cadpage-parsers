@@ -152,7 +152,9 @@ public class DispatchA71Parser extends FieldProgramParser {
         field = field.substring(pt).trim();
       }
       if (field.startsWith("Call Initiated by")) return;
-      if (field.contains(" | Dispatched | ")) return;
+      if (data.msgType != MsgType.RUN_REPORT) {
+        if (field.contains(" | Dispatched | ") || field.contains(" | Cleared | ")) return;
+      }
       super.parse(field, data);
     }
   }
