@@ -2002,6 +2002,7 @@ public class Active911ParserTable {
       "US/OH/SharonTwp",                  "OHMedinaCountyB,OHMedinaCountyD",
       "US/OH/ShelbyCounty",               "OHShelbyCounty",
       "US/OH/SouthSummitCounty",          "OHSummitCountyI",
+      "US/OH/SpringdaleFD",               "OHHamiltonCountyA",
       "US/OH/SpringfieldFRD",             "OHClarkCountyC",
       "US/OH/SpringfieldTwp",             "OHSummitCountyH",
       "US/OH/StarkCounty",                "OHStarkCountyRedcenter2",
