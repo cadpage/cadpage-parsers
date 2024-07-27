@@ -230,7 +230,8 @@ public class ManageParsers {
         "CTWaterfordTown",    "CTNewLondonCounty",       // 06/03/2024
         "AZYavapaiCountyD",   "AZYavapaiCountyE",        // 06/04/2024
         "ORYamhillCountyB",   "General",                 // 06/28/2024
-        "MIGrandTraverseCounty", "General"              // 07/16/2024
+        "MIGrandTraverseCounty", "General",              // 07/16/2024
+        "NCGastonCountyB",    "General"                 //07/27/2024
   });
 
 }
