@@ -2053,6 +2053,7 @@ public class Active911ParserTable {
       "US/OK/OklahomaCounty",             "OKOklahomaCountyB",
       "US/OK/SandSprings",                "OKSandSprings",
       "US/OK/SequoyahCounty",             "OKSequoyahCounty",
+      "US/OK/StephensCounty",             "OKStephensCounty",
       "US/OK/TahlequahFD",                "OKCherokeeCountyB",
       "US/OK/WoodsCounty",                "OKWoodsCounty",
       "US/OR/AlbanyFD",                   "ORLinnCountyB",

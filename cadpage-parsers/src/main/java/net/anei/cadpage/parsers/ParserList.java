@@ -1436,6 +1436,7 @@ public class ParserList {
               ,"OKSandSprings"                  ,"Sand Springs, OK"
               ,"OKSeminoleCounty"               ,"Seminole County, OK"
               ,"OKSequoyahCounty"               ,"Sequoyah County, OK"
+              ,"OKStephensCounty"               ,"Stephens County, OK"
               ,"OKTinkerAFB"                    ,"Tinker AFB, OK"
               ,"OKTulsa"                        ,"Tulsa, OK"
               ,"OKWoodsCounty"                  ,"Woods County, OK"
