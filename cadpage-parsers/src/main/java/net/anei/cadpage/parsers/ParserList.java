@@ -140,6 +140,7 @@ public class ParserList {
               ,"ALHoover"                       ,"Hoover, AL"
               ,"ALJacksonCounty"                ,"Jackson County, AL"
               ,"ALJeffersonCounty"              ,"Jefferson County, AL"
+              ,"ALLamarCounty"                  ,"Lamar County, AL"
               ,"ALLauderdaleCounty"             ,"Lauderdale County, AL"
               ,"ALLawrenceCounty"               ,"Lawrence County, AL"
               ,"ALLeeCounty"                    ,"Lee County, AL"
