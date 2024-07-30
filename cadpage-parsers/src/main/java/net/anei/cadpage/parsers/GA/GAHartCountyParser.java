@@ -12,4 +12,9 @@ public class GAHartCountyParser extends DispatchSPKParser {
   public String getFilter() {
     return "hartcong911@hartcountyga.gov";
   }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 }
