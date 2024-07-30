@@ -37,11 +37,18 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       if (flds == null) return false;
       setSelectValue("RR");
       data.msgType = MsgType.RUN_REPORT;
-      return parseFields(flds, data);
+      if (!parseFields(flds, data)) return false;
     }
 
-    setSelectValue("");
-    return super.parseHtmlMsg(subject, body, data);
+    else {
+      setSelectValue("");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+    }
+    if (data.strCity.startsWith("ITA")) {
+      data.strPlace = append(data.strPlace, " - ", data.strCity);
+      data.strCity = "";
+    }
+    return true;
   }
 
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("Station \\d+");

@@ -10,6 +10,6 @@ public class OHCuyahogaCountyEParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "SWED@cvdispatch.net";
+    return "@cvdispatch.net";
   }
 }
