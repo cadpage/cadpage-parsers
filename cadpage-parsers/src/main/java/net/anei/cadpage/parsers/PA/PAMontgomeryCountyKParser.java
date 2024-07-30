@@ -36,6 +36,8 @@ public class PAMontgomeryCountyKParser extends FieldProgramParser {
         data.strName = val;
       } else if ((val = getValue("Call Back Number:", field)) != null) {
         data.strPhone = val;
+      } else if ((val = getValue("Unit Dispatched:", field)) != null) {
+        data.strUnit = val;
       } else {
         super.parse(field, data);
       }
@@ -48,7 +50,7 @@ public class PAMontgomeryCountyKParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " NAME PHONE";
+      return super.getFieldNames() + " NAME PHONE UNIT";
     }
   }
 }
