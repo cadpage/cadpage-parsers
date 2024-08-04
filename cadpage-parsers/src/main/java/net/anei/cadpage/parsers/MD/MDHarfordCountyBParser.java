@@ -19,13 +19,17 @@ public class MDHarfordCountyBParser extends DispatchRedAlert2Parser {
 
   @Override
   public String getFilter() {
-    return "harfordcty@rednmxcad.com,rednmxmobile@harfordcountymd.gov,rednmxmobilefd@harfordcountymd.gov";
+    return "harfordcty@rednmxcad.com,rednmxmobile@harfordcountymd.gov,rednmxmobilefd@harfordcountymd.gov,8663812180";
   }
 
   @Override
   public boolean parseMsg(String body, Data data) {
+    body = stripFieldStart(body, "HARFORD COUNTY:");
+    body = stripFieldStart(body, "FREE MSG ");
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (!super.parseMsg(body, data)) return false;
-    int pt = data.strCall.indexOf(' ');
+    pt = data.strCall.indexOf(' ');
 
     if (pt < 0) return false;
     data.strUnit = data.strCall.substring(0,pt);
