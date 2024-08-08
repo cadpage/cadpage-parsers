@@ -379,6 +379,7 @@ public class ParserList {
               ,"FLOkaloosaCounty"               ,"Okaloosa County, FL"
               ,"FLOrangeCounty"                 ,"Orange County, FL"
               ,"FLPalmBeachCounty"              ,"Palm Beach County, FL"
+              ,"FLPascoCounty"                  ,"Pasco County, FL"
               ,"FLPensacola"                    ,"Pensacola, FL"
               ,"FLPolkCounty"                   ,"Polk County, FL"
               ,"FLPutnamCounty"                 ,"Putnam County, FL"
