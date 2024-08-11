@@ -30,7 +30,6 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
     if (!super.parseMsg(body, data)) return false;
 
     if (STATE_PTN.matcher(data.strCity).matches()) {
