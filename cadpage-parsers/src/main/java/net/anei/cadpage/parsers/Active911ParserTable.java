@@ -1451,6 +1451,7 @@ public class Active911ParserTable {
       "US/MS/Biloxi",                     "MSBiloxi",
       "US/MS/CityofHernando",             "MSDeSotoCountyB",
       "US/MS/CityofHornLake",             "MSDeSotoCountyA",
+      "US/MS/CityofLongBeach",            "MSHarrisonCountyG",
       "US/MS/CityofLouisville",           "MSWinstonCounty",
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCounty",
       "US/MS/Gulfport",                   "MSHarrisonCountyB,MSHarrisonCountyE,MSHarrisonCountyF",
