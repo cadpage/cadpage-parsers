@@ -2836,6 +2836,7 @@ public class Active911ParserTable {
       "US/WI/KenoshaCounty",              "WIKenoshaCounty",
       "US/WI/MukwonagoFire",              "WIWaukeshaCountyB",
       "US/WI/NeenahFD",                   "WIWinnebagoCountyC",
+      "US/WI/OnalaskaFD",                 "WILaCrosseCounty",
       "US/WI/OzaukeeCounty",              "WIOzaukeeCounty",
       "US/WI/PepinCounty",                "WIPeppinCounty",
       "US/WI/RacineCounty",               "WIRacineCounty",
