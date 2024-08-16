@@ -2445,6 +2445,7 @@ public class Active911ParserTable {
       "US/TX/BlancoCounty",               "TXBlancoCounty",
       "US/TX/BloomingGrove",              "TXNavarroCounty",
       "US/TX/BosqueCounty",               "TXBosqueCountyB",
+      "US/TX/BowiePD",                    "TXMontagueCounty",
       "US/TX/BrazoriaCounty",             "TXBrazoriaCountyD",
       "US/TX/BrazosCounty",               "TXBrazosCounty",
       "US/TX/BridgeportPD",               "TXWiseCounty",
