@@ -794,6 +794,7 @@ public class Active911ParserTable {
       "US/IN/WayneCounty",                "INWayneCountyB",
       "US/IN/WayneTWP",                   "INMarionCountyB",
       "US/IN/WhitleyCounty",              "INWhitleyCounty",
+      "US/IN/ZionsvillePD",               "INBooneCountyB",
       "US/KS/AllenCounty911",             "KSAllenCounty",
       "US/KS/AndersonCounty",             "KSAndersonCounty",
       "US/KS/AndoverButlerCounty",        "KSButlerCountyB",
