@@ -10,7 +10,7 @@ public class KYLaurelCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,londonlaurelcounty911@cissystem.com,CAD@knoxco911.org";
+    return "noreply@cisusa.org,londonlaurelcounty911@cissystem.com,CAD@knoxco911.org,ciscads@laurelco911.com";
   }
 
 }
