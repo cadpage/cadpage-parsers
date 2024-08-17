@@ -9,9 +9,9 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class NYCayugaCountyAParser extends FieldProgramParser {
-  
+
   private static final Pattern DELIM = Pattern.compile("  +|\n");
-  
+
   public NYCayugaCountyAParser() {
     super(MISTYPED_CITIES, "CAYUGA COUNTY", "NY",
           "ADDR_PFX+? ADDR/iSC INFO/N+? ( UNIT DATETIME% | DATETIME_UNIT% )");
@@ -52,10 +52,10 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
 
     );
   }
-  
+
   @Override
   public String getFilter() {
-    return "911cad@cayugacounty.us";
+    return "911cad@cayugacounty.us,support@digitalfirehouse.com";
   }
 
   @Override
@@ -64,7 +64,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
     if (!parseFields(DELIM.split(body), data)) return false;
     return data.strTime.length() > 0 || data.strCity.length() > 0;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR_PFX")) return new MyAddressPrefixField();
@@ -74,25 +74,25 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
     if (name.equals("DATETIME_UNIT")) return new MyDateTimeUnitField();
     return super.getField(name);
   }
-  
-  // Directions in the street address tend to be followed by an extraneous 
+
+  // Directions in the street address tend to be followed by an extraneous
   // double blank which splits the address into multiple fields that we have to
   // merge back together
   private static final Pattern TRAIL_DIR_PTN = Pattern.compile(".* [NSEW]");
   private class MyAddressPrefixField extends SkipField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     public boolean checkParse(String field, Data data) {
       if (!TRAIL_DIR_PTN.matcher(field).matches()) return false;
       data.strAddress = append(data.strAddress, " ", field);
       return true;
     }
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -101,7 +101,7 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("E911 Info - .*|.* Uncertainity:|Confidence:.*");
   private class MyInfoField extends InfoField {
     @Override
@@ -110,15 +110,15 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_UNIT_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) +(.*)");
   private class MyDateTimeUnitField extends Field {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_UNIT_PTN.matcher(field);
@@ -138,9 +138,9 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
     public String getFieldNames() {
       return "DATE TIME UNIT";
     }
-    
+
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "ACCIDENT - OTHER",
       "ALARM - CO",
@@ -187,52 +187,51 @@ public class NYCayugaCountyAParser extends FieldProgramParser {
       "VEHICLE FIRE",
       "WATER RESCUE"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
       "AUBURN",
-      "AURELIUS", 
+      "AURELIUS",
       "CAYUGA",
-      "BRUTUS", 
+      "BRUTUS",
       "WEEDSPORT",
-      "CATO", 
+      "CATO",
       "MERIDIAN",
-      "CONQUEST", 
+      "CONQUEST",
       "FLEMING",
       "GENOA",
       "IRA",
-      "LEDYARD", 
+      "LEDYARD",
       "AURORA",
       "LOCKE",
-      "MENTZ", 
+      "MENTZ",
       "PORT BYRON",
       "MONTEZUMA",
-      "MORAVIA", 
-      "NILES", 
+      "MORAVIA",
+      "NILES",
       "OWASCO",
       "SCIPIO",
       "SEMPRONIUS",
       "SENNETT",
-      "SPRINGPORT", 
+      "SPRINGPORT",
       "UNION SPRINGS",
-      "STERLING", 
+      "STERLING",
       "FAIR HAVEN",
       "SUMMERHILL",
       "THROOP",
       "VENICE",
       "VICTORY",
-      
+
       "ONONDAGA COUNTY",
       "SKANEATELES",
       "MOTTVILLE",
-      
+
       "WAYNE COUNTY",
       "WOLCOTT"
   };
-  
+
   private static Properties MISTYPED_CITIES = buildCodeTable(new String[]{
       "MORAVIL",                        "MORAVIA",
       "SKANEATELES ONONDAGA COUNTY",    "SKANEATELES",
       "TOWN OF WOLCOTT WAYNE COUNTY",   "WOLCOTT"
   });
 }
-	
