@@ -17,7 +17,7 @@ public class NCWakeCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ECCDISPATCH@rwecc.net";
+    return "ECCDISPATCH@rwecc.net,dispatches@rwecc.net";
   }
 
   private static final Pattern DELIM = Pattern.compile(" *(?=(?:Place|Addr|City|ID|Pri|Date|Time|Map|Unit|Info|TAC):)");
