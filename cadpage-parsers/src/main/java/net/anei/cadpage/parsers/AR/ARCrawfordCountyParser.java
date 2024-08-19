@@ -17,13 +17,13 @@ public class ARCrawfordCountyParser extends DispatchA33Parser {
     return "noreply@omnigo.com";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Call (\\S+)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Call *(\\S.+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
-    data.strUnit = match.group(1);
+    data.strUnit = match.group(1).replace(' ', ',');
     return super.parseMsg(body, data);
   }
 
