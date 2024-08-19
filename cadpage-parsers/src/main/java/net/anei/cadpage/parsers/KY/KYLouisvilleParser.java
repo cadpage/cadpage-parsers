@@ -65,6 +65,7 @@ public class KYLouisvilleParser extends DispatchH03Parser {
       "10418 LA PLAZA DR",                    "+38.104413,-85.872620",
       "10419 LA PLAZA DR",                    "+38.104199,-85.872130",
       "10620 MORAINE CIR",                    "+38.269389,-85.560232",
+      "6624 SOUTH DR",                        "+38.090030,-85.887270",
       "3402 SOUTHMEADE CIR",                  "+38.154698,-85.822535",
       "3403 SOUTHMEADE CIR",                  "+38.154974,-85.821994",
       "3405 SOUTHMEADE CIR",                  "+38.155102,-85.822243",
