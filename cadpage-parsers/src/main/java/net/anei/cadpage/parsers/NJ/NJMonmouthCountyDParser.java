@@ -28,6 +28,9 @@ public class NJMonmouthCountyDParser extends DispatchA19Parser {
       body = FIX2_PTN.matcher(body).replaceFirst("\n$1");
     }
 
+    int pt = body.indexOf("\nCONFIDENTIALITY NOTICE");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+
     return super.parseMsg(subject, body, data);
   }
 }
