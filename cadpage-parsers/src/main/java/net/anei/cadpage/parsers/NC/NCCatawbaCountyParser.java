@@ -15,7 +15,7 @@ public class NCCatawbaCountyParser extends DispatchA3Parser {
 
   public NCCatawbaCountyParser() {
     super("CATAWBA COUNTY", "NC",
-          "ID? ADDR APT CH CITY ( X2 CALL UNIT! | X/Z CALL UNIT! | X X MAP INFO1 SKIP CALL! PLACENAME PHONE UNIT ) INFO+");
+          "ID? ADDR APT CH CITY ( X2 CALL UNIT! | X/Z CALL UNIT! | X X MAP INFO1 SKIP CALL! PLACENAME PHONE UNIT ) INFO/N+");
   }
 
   @Override
@@ -35,6 +35,7 @@ public class NCCatawbaCountyParser extends DispatchA3Parser {
   public Field getField(String name) {
     if (name.equals("X2")) return new MyCross2Field();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -79,6 +80,22 @@ public class NCCatawbaCountyParser extends DispatchA3Parser {
   @Override
   public boolean checkCall(String call) {
     return CALL_LIST.contains(call);
+  }
+
+  private class MyInfoField extends BaseInfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Primary Response District -")) {
+        data.strSource = field.substring(27).trim();
+      } else {
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " SRC";
+    }
   }
 
   private static final Set<String> CALL_LIST = new HashSet<>(Arrays.asList(
