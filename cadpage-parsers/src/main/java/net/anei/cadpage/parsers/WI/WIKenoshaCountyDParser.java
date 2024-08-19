@@ -47,4 +47,9 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
     }
     return true;
   }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CITY", "CITY ST");
+  }
 }
