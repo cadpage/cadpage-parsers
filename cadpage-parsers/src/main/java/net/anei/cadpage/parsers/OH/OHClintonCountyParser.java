@@ -1,18 +1,14 @@
 package net.anei.cadpage.parsers.OH;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA76Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
+/*
  * Clinton County, OH
  */
-public class OHClintonCountyParser extends DispatchA76Parser {
+
+public class OHClintonCountyParser extends GroupBestParser {
 
   public OHClintonCountyParser() {
-    super("CLINTON COUNTY", "OH");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "noreply@clintonsheriff.com";
+    super(new OHClintonCountyAParser(), new OHClintonCountyBParser());
   }
 }

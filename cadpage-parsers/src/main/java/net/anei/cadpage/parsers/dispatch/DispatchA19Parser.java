@@ -32,7 +32,7 @@ public class DispatchA19Parser extends FieldProgramParser {
   public DispatchA19Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
           "( CALL ADDR/Z Call_Narrative%EMPTY/R INFO/N+ CAD_Call_ID_#:ID! END " +
-          "| Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
+          "| Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! EMPTY? City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Determinant:CODE Determinant_Desc:CALL/SDS Complaint_Name:NAME Complainant_Phone:PHONE Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
           "| NATURE:CALL! CASE_NUM:ID! CALL_TYPE:SKIP! DETERM_CODE:CODE! DETERM_DESC:CALL/SDS! DETAILS:INFO! INFO/N+ CITY:CITY! ZONE:MAP! ADDRESS:ADDR! DIRECTIONS:FINFO! CROSS_STREETS:X! COORDINATES:GPS! CONTACT:NAME! PHONE_NUM:PHONE! RESP_UNITS:UNIT! " +
           "| INCIDENT:ID LONG_TERM_CAD:ID ACTIVE_CALL:ID PRIORITY:PRI REPORTED:TIMEDATE ( Determinants/Desc:CODE | Determinant:CODE Desc:CALL | ) Nature:CALL! Type:SKIP ( Address:ADDR! Zone:MAP? | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Reported:TIMEDATE? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
