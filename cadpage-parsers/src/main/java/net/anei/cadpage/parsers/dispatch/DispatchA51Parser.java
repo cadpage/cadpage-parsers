@@ -21,7 +21,10 @@ public class DispatchA51Parser extends FieldProgramParser {
           "( Sent:DATETIME3 INFO/G! INFO/N+ " +
           "| SELECT/2 CALL CALL2? LOCATION ADDR VILLAGE_OF? CITY/Z? ( APT UNITS_RESPONDING! | UNITS_RESPONDING! ) UNIT+ " +
           "| DATETIME CALL ADDRCITY INFO/N+ " +
-          "| ID:ID? Date:DATETIME! Type:CALL! Severity:PRI? Location:ADDRCITY! Location_Description:PLACE Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 TAC_Channel:CH Units:UNIT Units_Responding:UNIT Notes:INFO/N+ " +
+          "| ID:ID? Date:DATETIME! Type:CALL! Severity:PRI? Location:ADDRCITY! " +
+                "( Business_Name:PLACE! Subdivision:PLACE/SDS! Common_Place:PLACE/SDS! GPS0? " +
+                "| ( Location_Description:PLACE_MAP | Description:PLACE_MAP ) Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 TAC_Channel:CH Units:UNIT " +
+                ") Units_Responding:UNIT Notes:INFO/N+ " +
           ")");
   }
 
@@ -52,20 +55,23 @@ public class DispatchA51Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME3")) return new DateTimeField(DATE_TIME_FMT3, true);
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("CALL2")) return new CallField("Gas Odor.*");
     if (name.equals("LOCATION")) return new SkipField("Location", true);
     if (name.equals("VILLAGE_OF")) return new SkipField("VILLAGE OF");
     if (name.equals("APT")) return new AptField("Unit +(.*)");
     if (name.equals("UNITS_RESPONDING")) return new SkipField("Units Responding", true);
     if (name.equals("DATETIME")) return new BaseDateTimeField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("PLACE_MAP")) return new BasePlaceMapField();
+    if (name.equals("GPS0")) return new GPSField("\\(([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+)\\)", true);
+    if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\w+) - +(.*)");
-  private class MyCallField extends CallField {
+  private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       Matcher match =  CODE_CALL_PTN.matcher(field);
@@ -86,7 +92,7 @@ public class DispatchA51Parser extends FieldProgramParser {
   private static final Pattern EXT_DATE_TIME_PTN = Pattern.compile("(.*?)T(.*?)-.*");
 
   private class BaseDateTimeField extends DateTimeField {
-    
+
     public BaseDateTimeField() {
       super(DATE_TIME_FMT1, true);
     }
@@ -103,7 +109,7 @@ public class DispatchA51Parser extends FieldProgramParser {
   private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
   private static Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)");
   private static Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
-  private class MyAddressCityField extends AddressCityField {
+  private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
 
@@ -158,10 +164,48 @@ public class DispatchA51Parser extends FieldProgramParser {
     }
   }
 
-  private class MyUnitField extends UnitField {
+  private class BasePlaceMapField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf("Map:");
+      if (pt >= 0) {
+        data.strMap = field.substring(pt+4).trim();
+        field = field.substring(0,pt).trim();
+      }
+      data.strPlace = append(data.strPlace, " - ", field);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE MAP";
+    }
+
+  }
+
+  private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
+    }
+  }
+
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("LONG/LAT: Long=(\\S+) +Lat=(\\S+)");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strGPSLoc.isEmpty()) {
+        Matcher match = INFO_GPS_PTN.matcher(field);
+        if (match.matches()) {
+          setGPSLoc(match.group(2)+','+match.group(1), data);
+          return;
+        }
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS?";
     }
   }
 }

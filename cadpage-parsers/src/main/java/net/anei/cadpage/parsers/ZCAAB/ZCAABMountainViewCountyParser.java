@@ -5,7 +5,7 @@ Mountain View County, AB, Canadaa
 Alias for Red Deer County
 
 */
-public class ZCAABMountainViewCountyParser extends ZCAABRedDeerCountyParser {
+public class ZCAABMountainViewCountyParser extends ZCAABRedDeerCountyAParser {
 
   public ZCAABMountainViewCountyParser() {
     super("MOUNTAIN VIEW COUNTY");

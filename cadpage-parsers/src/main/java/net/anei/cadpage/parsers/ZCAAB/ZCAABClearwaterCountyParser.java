@@ -5,7 +5,7 @@ Clearwater County, AB, Canadaa
 Alias for Red Deer County
 
 */
-public class ZCAABClearwaterCountyParser extends ZCAABRedDeerCountyParser {
+public class ZCAABClearwaterCountyParser extends ZCAABRedDeerCountyAParser {
   
   public ZCAABClearwaterCountyParser() {
     super("CLEARWATER COUNTY");

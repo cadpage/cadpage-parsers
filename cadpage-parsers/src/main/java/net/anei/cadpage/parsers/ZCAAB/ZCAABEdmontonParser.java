@@ -5,7 +5,7 @@ Edmonton, AB, Canadaa
 Alias for Red Deer County
 
 */
-public class ZCAABEdmontonParser extends ZCAABRedDeerCountyParser {
+public class ZCAABEdmontonParser extends ZCAABRedDeerCountyAParser {
   
   public ZCAABEdmontonParser() {
     super("EDMONTON");

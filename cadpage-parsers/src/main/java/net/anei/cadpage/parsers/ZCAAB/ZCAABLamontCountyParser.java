@@ -5,7 +5,7 @@ Lacombe County, AB, Canadaa
 Alias for Red Deer County
 
 */
-public class ZCAABLamontCountyParser extends ZCAABRedDeerCountyParser {
+public class ZCAABLamontCountyParser extends ZCAABRedDeerCountyAParser {
   
   public ZCAABLamontCountyParser() {
     super("LAMONT COUNTY");

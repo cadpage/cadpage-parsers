@@ -5,7 +5,7 @@ Leduc County, AB, Canadaa
 Alias for Red Deer County
 
 */
-public class ZCAABLeducCountyParser extends ZCAABRedDeerCountyParser {
+public class ZCAABLeducCountyParser extends ZCAABRedDeerCountyAParser {
   
   public ZCAABLeducCountyParser() {
     super("LEDUC COUNTY");
