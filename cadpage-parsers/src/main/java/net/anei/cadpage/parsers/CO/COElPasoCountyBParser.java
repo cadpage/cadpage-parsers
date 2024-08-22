@@ -12,7 +12,7 @@ public class COElPasoCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no_reply@coloradosprings.gov";
+    return "no_reply@coloradosprings.gov,CAD@eptpaging.info";
   }
 
   @Override
