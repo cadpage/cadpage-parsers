@@ -1115,7 +1115,7 @@ public class Active911ParserTable {
       "US/MD/LineboroVFD",                "MDCarrollCountyA",
       "US/MD/MDSP",                       "MDStatePolice",
       "US/MD/MontgomeryCounty",           "MDMontgomeryCountyC",
-      "US/MD/MSPA",                       "MDAnneArundelCountyAnnapolis,MDCarolineCountyB,MDCharlesCountyA,MDCharlesCountyB,MDDorchesterCounty,MDGarrettCounty,MDOceanCity,MDTalbotCounty,MDWorcesterCountyA",
+      "US/MD/MSPA",                       "MDAnneArundelCountyAnnapolis,MDCarolineCountyB,MDCharlesCountyA,MDCharlesCountyB,MDDorchesterCounty,MDGarrettCounty,MDOceanCity,MDTalbotCounty,MDWorcesterCountyA,VAAccomackCounty",
       "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty,MDMontgomeryCountyC,MDAnneArundelCountyEMS2",
       "US/MD/PrinceGeorgesCountyGlennDale","MDPrinceGeorgesCountyG",
       "US/MD/PrintManager",               "MDAnneArundelCountyAnnapolis",
