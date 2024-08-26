@@ -1,21 +1,22 @@
 package net.anei.cadpage.parsers.AR;
 
-import java.util.Properties;
+import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
-
-public class ARPulaskiCountyFParser extends DispatchSouthernParser {
+public class ARPulaskiCountyFParser extends DispatchA71Parser {
 
   public ARPulaskiCountyFParser() {
-    super(ARPulaskiCountyParser.CITY_LIST, "PULASKI COUNTY", "AR", 
-          DSFLG_PROC_EMPTY_FLDS | DSFLG_ADDR | DSFLG_X | DSFLG_NAME | DSFLG_PHONE | DSFLG_UNIT1 | DSFLG_ID | DSFLG_TIME);
-    setupCities(new String[] {"NLR"});
+    super("PULASKI COUNTY", "AR");
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     if (city.equals("NLR")) city = "NORTH LITTLE ROCK";
     return city;
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
 }
