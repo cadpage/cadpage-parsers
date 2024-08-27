@@ -170,6 +170,7 @@ public class ParserList {
           new ParserCategory("Alaska"
               ,"AKAnchorage"                    ,"Anchorage, AK"
               ,"AKChugiak"                      ,"Chugiak, AK"
+              ,"AKDenaliBorough"                ,"Denali Borough, AK"
               ,"AKFairbanks"                    ,"Fairbanks, AK"
               ,"AKJuneau"                       ,"Juneau, AK"
               ,"AKKenaiPeninsulaBorough"        ,"Kenai Peninsula Borough, AK"
