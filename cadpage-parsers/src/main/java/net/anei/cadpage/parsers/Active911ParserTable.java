@@ -1267,6 +1267,7 @@ public class Active911ParserTable {
       "US/MN/MankatoPublicSafety",        "MNBlueEarthCounty",
       "US/MN/MartinCounty",               "MNMartinCounty",
       "US/MN/McLeodCounty",               "MNMcLeodCounty",
+      "US/MN/MeekerCounty",               "MNMeekerCounty",
       "US/MN/MIFCIAR",                    "MNItascaCounty",
       "US/MN/MilleLacsCounty",            "Cadpage2",
       "US/MN/MorrisonCounty",             "MNMorrisonCounty",
