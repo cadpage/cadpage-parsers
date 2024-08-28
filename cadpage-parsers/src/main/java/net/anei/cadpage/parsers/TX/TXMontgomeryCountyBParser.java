@@ -164,6 +164,7 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
     if (name.equals("UNIT2")) return new MyUnit2Field();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("GPS1")) return new MyGpsField(1);
     if (name.equals("GPS2")) return new MyGpsField(2);
     if (name.equals("INFO")) return new MyInfoField();
@@ -244,6 +245,16 @@ public class TXMontgomeryCountyBParser extends DispatchProQAParser {
       field = field.replace("Not Found", "");
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
+
+  private static final Pattern CITY_TGPS_PTN = Pattern.compile("(.*?) +\\d+");
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CITY_TGPS_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
       super.parse(field, data);
     }
   }
