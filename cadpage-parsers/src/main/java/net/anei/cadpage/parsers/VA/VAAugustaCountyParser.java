@@ -282,7 +282,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
       "LEXI", "LEXINGTON",
       "LYN",  "LYNDHURST",
       "MID",  "MIDDLEBROOK",
-      "MIDL", "NIDLOTHIAN",
+      "MIDL", "MIDLOTHIAN",
       "MS",   "MINT SPRINGS",
       "MSN",  "MOUNT SOLON",
       "MTC",  "MT CRAWFORD",
