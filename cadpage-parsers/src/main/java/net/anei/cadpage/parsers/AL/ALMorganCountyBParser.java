@@ -20,7 +20,7 @@ public class ALMorganCountyBParser extends FieldProgramParser {
     return "cad-no-reply@morgan911.org";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("CFS - Unit Assigned - #(.*)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("CFS - (?:Unit Assigned|Changed) - #(.*)");
   private static final Pattern DELIM_PTN1 = Pattern.compile(";?\n");
 
   private Set<String> channelSet = new HashSet<>();
