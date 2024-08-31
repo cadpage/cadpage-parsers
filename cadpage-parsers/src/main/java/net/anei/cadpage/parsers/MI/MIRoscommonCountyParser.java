@@ -31,6 +31,7 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
     if (body.contains(",Enroute,")) {
       return parseFields(stripFieldStart(body, "CAD:").split(","), data);
     } else {
+      if (!body.startsWith("CAD:")) body = "CAD:" + body;
       return super.parseMsg(body, data);
     }
   }

@@ -35,13 +35,21 @@ public class WILaCrosseCountyParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf("ZIP Code:");
+      if (pt >= 0) field = field.substring(0,pt).trim();
+
       if (field.startsWith("NBH:")) {
+        pt = field.indexOf("Landmark Comment:");
+        if (pt >= 0) {
+          data.strSupp = field.substring(pt+17).trim();
+          field = field.substring(0, pt).trim();
+        }
         data.strPlace = append(data.strPlace, " - ", field.substring(4).trim());
         return;
       }
       if (field.startsWith("Landmark Comment:")) {
         field = field.substring(17).trim();
-        int pt = field.indexOf("NBH:");
+        pt = field.indexOf("NBH:");
         if (pt >= 0) {
           data.strPlace = append(data.strPlace, " - ", field.substring(pt+4).trim());
           field = field.substring(0,pt).trim();
@@ -55,8 +63,6 @@ public class WILaCrosseCountyParser extends FieldProgramParser {
       }
       if (field.startsWith("Line11:")) {
         field = field.substring(7).trim();
-        int pt = field.indexOf("ZIP Code:");
-        if (pt >= 0) field = field.substring(0,pt).trim();
         data.strCall = append(data.strCall, " - ", field);
         return;
       }
