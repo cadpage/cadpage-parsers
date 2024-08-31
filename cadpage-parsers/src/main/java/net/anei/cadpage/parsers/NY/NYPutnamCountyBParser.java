@@ -39,7 +39,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("BOX")) return new BoxField("\\d\\d-(?:\\d\\d|[A-Z])|", true);
+    if (name.equals("BOX")) return new BoxField("(?:\\d\\d|[A-Z]{2})-(?:\\d\\d|[A-Z])|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
