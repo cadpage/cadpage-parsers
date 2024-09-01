@@ -22,11 +22,26 @@ public class KYKentonCountyBParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("X")) return new CrossField("(?:CROSS\\b *)?(.*)", true);
     if (name.equals("GPS")) return new GPSField("LAT:.* LON:.*", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      data.strChannel = p.getLastOptional("RADIO CHANNEL:");
+      data.strCall = p.get();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CALL CH";
+    }
   }
 
   private class MyAddressCityStateField extends AddressCityStateField {
