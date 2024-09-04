@@ -1,240 +1,281 @@
 package net.anei.cadpage.parsers.IL;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.CodeSet;
-import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
-public class ILKankakeeCountyParser extends SmartAddressParser {
-  
+public class ILKankakeeCountyParser extends DispatchH05Parser {
+
   public ILKankakeeCountyParser() {
-    super(CITY_LIST, "KANKAKEE COUNTY", "IL");
+    super(CITY_LIST, "KANKAKEE COUNTY", "IL",
+        "( SELECT/1 Call_Time:DATETIMEID! Call_Type:CALL! Address:ADDRCITY/S6! Additional_Location_Info:PLACE! Primary_Incident:SKIP! " +
+        "| FULL END " +
+        "| HEADER! INFO_BLK/Z+? TRAILER! " +
+        ") END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     setupSaintNames("MARYS", "MARTINS", "PETERS");
     setupDoctorNames("JOHN");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatchmessage@nwsmessage.net,@k3county.net,@vil.bourbonnais.il.us,kancomm@gmail.com";
+    return "noreply@k3county.net,booking@k3county.net";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
-  private static final Pattern MASTER_PTN3 =
-      Pattern.compile("(.*?)\\b(\\d\\d?/\\d\\d/\\d\\d(?:\\d\\d)?) (\\d\\d?:\\d\\d(?::\\d\\d)?+(?: [AP]M)?+)(?:((?:[, ]+(?:\\b\\d{4}-\\d{8}\\b|\\[\\d{4}-\\d{8}(?: [A-Z0-9]+)?+\\]))+)(?: +(.*))?)?");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  private static final Pattern LEAD_DIR_PTN = Pattern.compile("([NSEW])\\b *(.*)");
-  private static final Pattern APT_PTN = Pattern.compile("(.*?) *\\b(?:APT|RM|LOT) +([^ ]+) *(.*)", Pattern.CASE_INSENSITIVE);
-  
-  private static final Pattern MASTER_PTN2 = 
-      Pattern.compile("(.+) Location: (.+) \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d Incident #: *(.*)");
-  private static final Pattern HOUSE_SLASH_PTN = Pattern.compile("^\\d+(/)[^ ]");
-  private static final Pattern ADDR_CALLBK_PTN = Pattern.compile("(.*?)[/ ]+CALLBK.*");
-  
-  private static final Pattern MASTER_PTN1 = Pattern.compile("([A-Z0-9 ]+?)  +(.*?)(?: +(\\d{4}-\\d{8}))?");
-  private static final Pattern PLACE_CITY_BRK_PTN = Pattern.compile("\\b([A-Z0-9]+)([A-Z][a-z]+)\\b");
-  private static final Pattern SRC_PTN = Pattern.compile("(Aroma Fire|Bourbonnais Fire|Herscher Fire|K3 Twp Fire|Manteno Fire|Momence Fire|Saline/Limestone Fire|Otto Fire|Saline/Limestone Fire|St.Anne Fire|Station #\\d+) +(.*)");
-  
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
 
     // Check for message signature
-    if (!subject.equals("NWS Message") && !subject.startsWith("Automatic R&R Notification")) return false;
-    
-    // There are now three formats, Wish they would make up their minds
-    Matcher match = MASTER_PTN2.matcher(body);
-    if (match.matches()) {
-      setFieldList("CALL PLACE ADDR APT CITY ST ID");
-      data.strCall = match.group(1).trim();
-      String sAddr = match.group(2);
-      Matcher match2 = HOUSE_SLASH_PTN.matcher(sAddr);
-      if (match2.find()) sAddr = sAddr.substring(0,match2.start(1)) + " " + sAddr.substring(match2.end(1));
-      match2 = ADDR_CALLBK_PTN.matcher(sAddr);
-      if (match2.matches()) sAddr = match2.group(1);
-      parseAddress(StartType.START_PLACE, FLAG_START_FLD_NO_DELIM | FLAG_ANCHOR_END, sAddr, data);
-      data.strCallId = match.group(3);
-      
-      // If we didn't find an address, transfer place to address
-      if (data.strAddress.length() == 0) {
-        data.strAddress = data.strPlace;
-        data.strPlace = "";
-      }
-      
-      // If we did find an address
-      // try to parse apt from end of parsed address
-      else { 
-        String addr = data.strAddress;
-        String apt = data.strApt;
-        data.strAddress = data.strApt = "";
-        parseAddress(StartType.START_ADDR, FLAG_NO_CITY, addr, data);
-        if (apt.length() == 0) apt = data.strApt;
-        data.strApt = append(apt, "-", getLeft());
-      }
-      setState(data);
-      return true;
-    }
-    
-    match = MASTER_PTN3.matcher(body);
-    if (match.matches()) {
-      setFieldList("CALL ADDR APT CITY ST PLACE DATE TIME ID X");
-      body = match.group(1).trim();
-      data.strDate = match.group(2);
-      String time = match.group(3);
-      if (time.endsWith("M")) {
-        setTime(TIME_FMT, time, data);
-      } else {
-        data.strTime = time;
-      }
-      data.strCallId = getOptGroup(match.group(4));
-      data.strCross = getOptGroup(match.group(5));
-      
-      // Sometimes there is no blank separating the place name
-      // from the city name.  We will try to identify these by looking
-      // for multiple upper case letters followed by a lower case leter
-      body = PLACE_CITY_BRK_PTN.matcher(body).replaceFirst("$1 $2");
-      
-      body = body.replace('@', '&');
-      parseAddress(StartType.START_CALL, FLAG_PAD_FIELD_EXCL_CITY | FLAG_CROSS_FOLLOWS, body, data);
-      if (data.strAddress.length() == 0) {
-        parseAddress(data.strCall, data);
-        data.strCall = "";
-      }
-      
-      String pad = getPadField();
-      match = LEAD_DIR_PTN.matcher(pad);
-      if (match.matches()) {
-        data.strAddress = append(data.strAddress, " ", match.group(1));
-        pad = match.group(2);
-      }
-      if (pad.startsWith("/")) {
-        data.strAddress = append(data.strAddress, " & ", pad.substring(2).trim());
-      } else if (pad.length() < 5) {
-        data.strApt = append(data.strApt, "-", pad);
-      } else {
-        data.strPlace = pad;
-      }
+    if (subject.equals("NWS Message")) {
+      if (!parseMsg(body, data)) return false;
 
-      String place = getLeft();
-      if (data.strCity.length() == 0 && place.startsWith("/")) {
-        data.strAddress = append(data.strAddress, " & ", place.substring(2).trim());
-      }
-      else {
-        match = APT_PTN.matcher(place);
-        if (match.matches()) {
-          data.strApt = append(data.strApt, "-", match.group(2));
-          place = append(match.group(1), " ", match.group(3));
-        }
-        if (isValidAddress(place) && !place.toUpperCase().endsWith(" TERRACE")) {
-          data.strCross = append(data.strCross, " / ", place);
-        } else if (data.strApt.length() == 0 && place.length() < 5) {
-          data.strApt = append(data.strApt, "-", place);
-        } else {
-          data.strPlace = append(data.strPlace, " - ", place);
-        }
-      }
-      setState(data);
-      return true;
+    } else if (body.startsWith("<style ")){
+      setSelectValue("3");
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+    } else {
+      return false;
     }
-    
-    match = MASTER_PTN1.matcher(body);
-    if (match.matches()) {
-      setFieldList("UNIT SRC ADDR APT PLACE CITY ST CALL ID");
-      data.strUnit = match.group(1).trim();
-      body = match.group(2).trim();
-      data.strCallId = getOptGroup(match.group(3));
-      
-      // Sometimes there is no blank separating the place name
-      // from the city name.  We will try to identify these by looking
-      // for multiple upper case letters followed by a lower case leter
-      body = PLACE_CITY_BRK_PTN.matcher(body).replaceFirst("$1 $2");
-      
-      // compress multiple blanks
-      body = body.replaceAll("  +", " ");
-      
-      // See if we can identify source field from pattern search.  If not
-      // we will have to trust the SAP
-      StartType st = StartType.START_OTHER;
-      match = SRC_PTN.matcher(body);
-      if (match.matches()) {
-        st = StartType.START_ADDR;
-        data.strSource = match.group(1);
-        body = match.group(2);
-      }
-      parseAddress(st, FLAG_IMPLIED_INTERSECT | FLAG_PAD_FIELD, body, data);
-      if (data.strSource.length() == 0) data.strSource = getStart();
-      String pad = getPadField();
-      if (pad.length() < 5) {
-        data.strApt = append(data.strApt, " ", pad);
-      } else {
-        data.strPlace = pad;
-      }
-      data.strCall = getLeft();
-      setState(data);
-      return data.strCity.length() > 0;
-    }
-    
-    return false;
-  }
-  
-  private static void setState(Data data) {
+
     String state = CITY_STATE_TABLE.getProperty(data.strCity);
     if (state != null) data.strState = state;
+    return true;
   }
-  
+
+  @Override
+  public String getProgram() {
+    return super.getProgram().replace("CITY", "CITY ST");
+  }
+
+  private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d?/\\d\\d?/\\d{4} .*)");
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+
+    if (body.startsWith("Call Time:")) {
+      setSelectValue("1");
+      return parseFields(body.split("\n"), data);
+    }
+
+    setFieldList(FULL_FLD_LIST);
+    return parseFull(body, data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("DATETIMEID")) return new MyDateTimeIdField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("FULL")) return new MyFullField();
+    if (name.equals("HEADER")) return new MyHeaderField();
+    if (name.equals("TRAILER")) return new MyTrailerField();
+    return super.getField(name);
+  }
+
+  private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d)(\\d{4}-\\d{8}\\b.*)");
+  private class MyDateTimeIdField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_ID_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strCallId = match.group(3).replace("(", "").replace(")", "");
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "DATE TIME ID";
+    }
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      field = p.get("City:");
+      String city = p.get();
+      field = field.replace('@', '&');
+      super.parse(field, data);
+      if (data.strCity.isEmpty()) data.strCity = city;
+    }
+  }
+
+  private class MyFullField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (!parseFull(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return FULL_FLD_LIST;
+    }
+  }
+
+  private static final String FULL_FLD_LIST = "CALL ADDR APT CITY PLACE DATE TIME ID";
+
+  private boolean parseFull(String field, Data data) {
+    Matcher match = MASTER.matcher(field);
+    if (!match.matches()) return false;
+    if (!parseHeader(match.group(1), data)) return false;
+    if (!parseTrailer(match.group(2), data)) return false;
+    return true;
+  }
+
+  private class MyHeaderField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (!parseHeader(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CALL ADDR APT CITY PLACE";
+    }
+  }
+
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=[a-z])(?=[A-Z0-9])");
+
+  private boolean parseHeader(String field, Data data) {
+
+    int pt = field.indexOf(',');
+    if (pt >= 0) {
+      String part1 = field.substring(0, pt).trim().replace('@', '&');
+      String part2 = field.substring(pt+1).trim().replace(".", "");
+      parseAddress(StartType.START_CALL, FLAG_RECHECK_APT | FLAG_ANCHOR_END, part1, data);
+      boolean fixed = false;
+      if (!data.strApt.isEmpty()) {
+        char chr = data.strApt.charAt(0);
+        if (chr >= 'a' && chr <= 'z') {
+          pt = part2.indexOf(data.strApt);
+          if (pt >= 0) {
+            fixed = true;
+            part2 = part2.substring(0,pt)+' '+part2.substring(pt);
+          }
+        }
+      }
+      if (!fixed) {
+        part2 = MISSING_BLANK_PTN.matcher(part2).replaceAll(" ");
+      }
+      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, part2, data);
+    } else {
+      field = field.replace('@', '&');
+      parseAddress(StartType.START_CALL, field, data);
+    }
+    data.strPlace = getLeft();
+    if (!data.strApt.isEmpty()) data.strPlace = stripFieldStart(data.strPlace, data.strApt);
+    return true;
+  }
+
+  private class MyTrailerField extends Field {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      return parseTrailer(field, data);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "DATE TIME ID";
+    }
+  }
+
+  private static final Pattern TRAILER_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) \\[?(\\d{4}-\\d{8}\\b.*?)\\]?");
+
+  private boolean parseTrailer(String field, Data data) {
+    Matcher match = TRAILER_PTN.matcher(field);
+    if (!match.matches()) return false;
+    data.strDate = match.group(1);
+    data.strTime = match.group(2);
+    data.strCallId = match.group(3).replace("(", "").replace(")", "");
+    return true;
+  }
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "1ST NORTH",
       "1ST SOUTH",
       "2ND SOUTH",
-      "3RD SOUTH",
       "3300 NORTH",
+      "3RD SOUTH",
       "4TH SOUTH",
       "ARTHUR BURCH",
       "BELLE AIRE",
+      "BIG CHIEF",
       "BROTHER ALPHONSUS",
       "BULL CREEK",
       "BUR OAK",
       "CAREER CENTER",
+      "COUNTRY CLUB",
       "DOWN E COURT",
+      "EAGLES LANDING",
       "EDGE WATER",
+      "EL DORADO",
       "EL PASO",
       "ESSON FARM",
       "EXLINE CLUB",
       "FAMILY DOLLAR",
       "FOX RUN",
+      "FRONTAGE EAST",
       "HARVEST VIEW",
       "INDUSTRIAL PARK",
+      "JOHN CASEY",
       "LAKE METONGA",
+      "LARRY POWER",
+      "LITTLE CHIEF",
+      "MEADOWS WALK",
+      "MID COURT",
       "MILL POND",
       "OAK CREEK",
       "OAK RIDGE",
       "OAK RUN",
       "PARK LANE",
+      "PLUM CREEK",
+      "PRAIRIE VIEW",
       "RIVER BEND",
+      "RIVER NORTH",
       "SAINT FRANCIS",
       "SAINT JOSEPH",
       "SAINT PETERS",
+      "SECTION LINE",
+      "SLEEPY HOLLOW",
       "SPORTSMAN CLUB",
+      "ST GEORGE",
+      "ST MICHAELS",
+      "ST PAULS",
+      "ST PETERS",
       "STEEPLE CHASE",
       "STOCKTON HEIGHTS",
+      "STONE RIDGE",
       "TOWN LINE",
       "VAN BUREN",
       "VAN METER",
+      "WARNER BRIDGE",
       "WESTERN HILLS",
+      "WESTWOOD OAKS",
+      "WHITE TAIL",
       "WILL PEOTONE",
       "WILLIAM LATHAM"
   };
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "<NEW>",
       "911:UNKNOWN",
@@ -249,7 +290,17 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "ALARM:CO DET",
       "ALARM:FIRE",
       "ALARM:STILL",
+      "AMB:ABDOMINAL PAIN",
+      "AMB:ALLERGIC REACTION",
+      "AMB:BLEEDING",
+      "AMB:BREATHING",
+      "AMB:CHEST PAIN",
+      "AMB:DIABETIC",
+      "AMB:FALL",
       "AMB:MUTUAL AID",
+      "AMB:SEIZURE",
+      "AMB:STROKE",
+      "AMB:UNRESP-BREATHING",
       "AMBULANCE",
       "AMBULANCE:ASSIST",
       "ANIMAL CASE",
@@ -266,6 +317,7 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "DRUG ACTIVITY",
       "DUI",
       "FIGHT",
+      "FIRE:AUTO-AIDE",
       "FIRE:BRUSH",
       "FIRE:MUTAL AID",
       "FIRE:STRUCTURE",
@@ -284,14 +336,16 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "MISSING PERSON",
       "NEW",
       "OTHER DUTIES",
+      "OVERDOSE",
       "PERSON UNK",
       "PERSON/ALCOHOL",
+      "RADIO DRILL",
       "REMOVAL",
       "RIVERSIDE AMB",
       "ROAD CLOSURE",
       "ROBBERY",
       "SERVICE",
-      "SHOTS FIRED",                                                                                                                                                                                                 
+      "SHOTS FIRED",
       "SMOKE/ODOR",
       "SUSPICIOUS ACTIVITY",
       "SUSPICIOUS PERSON",
@@ -303,7 +357,7 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
       "WELFARE CHECK",
       "WIRES DOWN"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
     "AROMA PARK",
     "BONFIELD",
@@ -347,9 +401,9 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     "ST ANNE TOWNSHIP",
     "SUMMER TOWNSHIP",
     "YELLOWHEAD TOWNSHIP",
-    
+
     "KANKAKEE COUNTY",
-    
+
     // Ford County
     "FORD COUNTY",
     "ELLIOTT",
@@ -360,13 +414,13 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     "PIPER CITY",
     "ROBERTS",
     "ROSSVILLE",
-    
+
     // Grundy County
     "GARDNER",
     "GRUNDY COUNTY",
     "BRACEVILLE",
     "PEOTONE",
-    
+
     // Iroquois County
     "IROQUOIS COUNTY",
     "CHEBANSE TWP",
@@ -375,20 +429,23 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     "BEAVERVILLE",
     "PAPINEAU",
     "THAWVILLE",
-    
+
+    // Livingston County
+    "DWIGHT",
+
     // Vermillion County
     "VERMILLION COUNTY",
     "EAST LYNN",
     "HOOPESTON",
     "RANKIN",
-    
+
     // Will County
     "WILL COUNTY",
     "BEECHER",
     "CRETE",
     "BRAIDWOOD",
     "CUSTER PARK",
-    
+
     // Newton County, IN
     "NEWTON COUNTY",
     "BROOK",
@@ -396,13 +453,13 @@ public class ILKankakeeCountyParser extends SmartAddressParser {
     "KENTLAND",
     "MOROCCO"
   };
-  
+
   private static final Properties CITY_STATE_TABLE = buildCodeTable(new String[]{
       "NEWTON COUNTY", "IN",
       "BROOK",         "IN",
       "GOODLAND",      "IN",
       "KENTLAND",      "IN",
       "MOROCCO",       "IN"
-      
+
   });
 }
