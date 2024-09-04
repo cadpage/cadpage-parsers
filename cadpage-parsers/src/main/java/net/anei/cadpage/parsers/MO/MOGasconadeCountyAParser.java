@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.MO;
 
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 
