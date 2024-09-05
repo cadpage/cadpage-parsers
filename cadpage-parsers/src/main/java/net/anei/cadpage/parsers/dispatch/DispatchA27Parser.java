@@ -117,7 +117,7 @@ public class DispatchA27Parser extends FieldProgramParser {
   }
 
   private static final Pattern PTN_FULL_ADDR =
-      Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}))?");
+      Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}|\\d{7}))?");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?), *([A-Z]?\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   protected class BaseAddressCityField extends AddressCityStateField {
 

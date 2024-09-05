@@ -21,7 +21,7 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
     return "notification@nhpd.cloud,Dispatch@lebanonnh.gov";
   }
 
-  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6})(?: [\\[\\(]P#:\\d\\d-\\d{6}[\\)\\]])?\n");
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6}|\\d{7})(?: [\\[\\(]P#:\\d\\d-\\d{6}[\\)\\]])?\n");
   private static final Pattern GPS_PTN = Pattern.compile("(.*?)\\(((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0))\\)");
 
   @Override
@@ -47,6 +47,8 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
       body = "Notification from CIS:\n" + body;
     }
 
+    int pt = subject.indexOf('|');
+    if (pt >= 0) subject = subject.substring(0,pt).trim();
     return super.parseMsg(subject, body, data);
   }
 
