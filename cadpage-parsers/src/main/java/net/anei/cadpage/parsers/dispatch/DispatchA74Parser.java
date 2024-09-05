@@ -22,7 +22,8 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   public DispatchA74Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
-          "( ID1 CALL! ADDRCITY " +
+          "( CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ESN:EMPTY! SRC1! SRC1+" +
+          "| ID1 CALL! ADDRCITY " +
           "| CALL ADDRCITY ID2 " +
           ") INFO/N+");
     leadPlace = (flags & FLG_LEAD_PLACE) != 0;
@@ -38,6 +39,7 @@ public class DispatchA74Parser extends FieldProgramParser {
 
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     body = stripFieldStart(body,  "1/1:");
+    body = stripFieldStart(body, ":\n");
     return parseFields(body.split("\n"), data);
   }
 
@@ -45,8 +47,9 @@ public class DispatchA74Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID1")) return new IdField("CAD #((?:\\d{2,10}[-/])?\\d+):", true);
     if (name.equals("ID2")) return new IdField("\\d{9}", true);
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("SRC1")) return new BaseSource1Field();
     return super.getField(name);
   }
 
@@ -59,7 +62,7 @@ public class DispatchA74Parser extends FieldProgramParser {
   private static final Pattern COMMA_PTN = Pattern.compile(" *, *");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
   private static final Pattern CITY_PTN = Pattern.compile("[A-Z ]*");
-  private class MyAddressCityField extends AddressCityField {
+  private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
 
@@ -167,7 +170,7 @@ public class DispatchA74Parser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) +([-A-Z0-9]+)\\b[ .;]*(.*)");
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
 
@@ -188,6 +191,14 @@ public class DispatchA74Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "APT " + super.getFieldNames();
+    }
+  }
+
+  private class BaseSource1Field extends SourceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ": NR").replace(' ', '_');
+      data.strSource = append(data.strSource, ",", field);
     }
   }
 }

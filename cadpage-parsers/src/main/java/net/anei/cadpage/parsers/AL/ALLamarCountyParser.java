@@ -10,7 +10,7 @@ public class ALLamarCountyParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm1.info,LamarCoE911@911comm3.info";
+    return "LamarCoE911@911comm3.info";
   }
 
 }

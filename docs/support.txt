@@ -4264,6 +4264,19 @@ Good luck,
 -Ken
 
 **************************************************************************************
+* Not receiving Active911 alerts
+**************************************************************************************
+
+The bad news is that Cadpage is not currently receiving Active911 alerts, and quite likely never will again.
+
+The problem is that Google deprecated an old protocol that Active911 was using to push alerts to Cadpage.  They did give us plenty of warning, and I did add support for the new protocol to Cadpage quite a ways back.  But I didn't catch that servers pushing alerts to Cadpage also needed to be upgraded, so I never asked Active911 to support the new protocol.
+
+They did update the protocol used to push alerts to their Android client app, so that continues to work properly.  You are free to ask Active911 support to fix the problem communicating with Cadpage, but they will probably just advise you to switch to using their Android client.  If you do, be nice.  It is not their fault that I didn't catch the need to update server communications.
+
+Sorry I don't have better news,
+-Ken
+
+**************************************************************************************
 * Hey Google!!
 **************************************************************************************
 This is really an emergency alert app that works by processing incoming text alerts sent by 911 dispatch centers to emergency responders.  Attempts to get it approved under the emergency alert exception have gotten nowhere, so now I'm going to try stretching the definition of a  Spam detection/blocking app.  The requested permissions are right, and we are alerting the user that the content of the message requires critical action be taken right now, which is what a spam detection app does.
