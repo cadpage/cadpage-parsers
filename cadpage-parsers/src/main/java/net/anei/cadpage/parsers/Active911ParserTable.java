@@ -1434,6 +1434,7 @@ public class Active911ParserTable {
       "US/MO/SteGenevieveCounty",         "MOSteGenevieveCountyB",
       "US/MO/StFrancoisCounty",           "MOStFrancoisCounty",
       "US/MO/StLouisCounty",              "MOStLouisCountyC,MOStLouisCountyJ",
+      "US/MO/StLouisCountyCanteen",       "MOStLouisCountyC",
       "US/MO/StoddEMS",                   "MOStoddardCounty",
       "US/MO/StoneCounty",                "MOStoneCountyC",
       "US/MO/SullivanCounty",             "MOSullivanCounty",
