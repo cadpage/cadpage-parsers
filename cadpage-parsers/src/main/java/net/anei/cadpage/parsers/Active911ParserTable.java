@@ -1929,6 +1929,7 @@ public class Active911ParserTable {
       "US/OH/ClermontCountyMilford",      "OHClermontCountyC",
       "US/OH/ClermontCountyUnionTwp",     "OHClermontCountyC",
       "US/OH/ClintonCounty",              "OHClintonCounty",
+      "US/OH/ClintonCountyIncident",      "OHClintonCountyB",
       "US/OH/COJFD",                      "OHDelawareCountyC",
       "US/OH/ColumbianaCounty",           "OHColumbianaCountyB",
       "US/OH/ColumbianaCountySO",         "OHColumbianaCountyC",
