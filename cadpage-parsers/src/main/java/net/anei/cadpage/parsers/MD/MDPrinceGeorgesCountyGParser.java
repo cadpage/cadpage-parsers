@@ -22,12 +22,12 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
     return "@alert.co.pg.md.us,@c-msg.net,14100,12101,@everbridge.net,87844,88911,89361";
   }
 
-  private static final Pattern HTML_FILTER_PTN = Pattern.compile("\n {3,}<p> (.*?)</p>\n {3,}", Pattern.DOTALL);
+  private static final Pattern HTML_FILTER_PTN = Pattern.compile("(?:\n|<br>) {3,}<p> (.*?)</p>(?:\n|<br>) {3,}", Pattern.DOTALL);
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     boolean keep = false;
-    if (body.startsWith("<!doctype html>\n")) {
+    if (body.startsWith("<!doctype html>")) {
       Matcher match = HTML_FILTER_PTN.matcher(body);
       if (!match.find()) return false;
       body = match.group(1).trim();
