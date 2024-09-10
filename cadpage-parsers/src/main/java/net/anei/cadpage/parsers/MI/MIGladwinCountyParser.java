@@ -9,7 +9,7 @@ public class MIGladwinCountyParser extends DispatchOSSIParser {
 
   public MIGladwinCountyParser() {
     super(CITY_CODES, "GLADWIN COUNTY", "MI",
-          "FYI? SRC? CALL ADDR CITY! UNIT+? INFO/N+? GPS1 GPS2 NAME END");
+          "FYI? SRC? CALL ADDR CITY? UNIT+? INFO/N+? GPS1 GPS2 NAME END");
   }
 
   @Override
@@ -20,7 +20,8 @@ public class MIGladwinCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    return !data.strCity.isEmpty() || !data.strDate.isEmpty();
   }
 
   @Override

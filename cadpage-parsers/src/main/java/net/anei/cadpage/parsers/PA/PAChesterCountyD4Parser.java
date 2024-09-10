@@ -29,6 +29,7 @@ public class PAChesterCountyD4Parser extends PAChesterCountyBaseParser {
 
     // Eliminate PAChesterCountyO alerts.  These are dual format alerts, they start out looking like
     // PAChesterCountyD4 alerts but have PAChesterCountyO information appended
+    if (body.contains("<style>")) return false;
     if (body.contains("Chester County Emergency Services Dispatch Report\n\nCall Time:")) return false;
 
     Matcher match = TEXT_PTN.matcher(body);

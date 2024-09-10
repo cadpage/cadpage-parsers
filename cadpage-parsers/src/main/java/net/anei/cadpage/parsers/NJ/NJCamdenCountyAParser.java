@@ -536,8 +536,10 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       "36",    "Winslow Twp",
       "37",    "Woodlyne",
       "44",    "",
+      "61",    "Atlantic City",
       "62",    "",
       "63",    "",
+      "66",    "Cumberland County"
   });
 
 }

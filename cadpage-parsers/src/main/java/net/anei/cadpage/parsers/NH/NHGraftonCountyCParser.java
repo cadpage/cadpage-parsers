@@ -58,7 +58,8 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
     return super.getField(name);
   }
 
-  private static final Pattern TRAIL_ST_PTN = Pattern.compile("(.*),? (NH|VT)\\b(?! *ROUTE|[- ]\\d{2,3}\\b)(?: \\d{5}(?:-\\d{4})?)?\\\\?(.*)");
+  private static final Pattern TRAIL_ST_PTN = Pattern.compile("(.*),? (NH|VT)\\b(?! *ROUTE|[- ]\\d{2,3}\\b)(?: \\d{5}(?:-\\d{4})?\\b)?\\\\?(.*)");
+  private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
   protected class MyAddressCityField extends BaseAddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -74,6 +75,10 @@ public class NHGraftonCountyCParser extends DispatchA27Parser {
 
       super.parse(field, data);
 
+      if (DIGIT_PTN.matcher(data.strCity).find()) {
+        data.strApt = append(data.strApt, "-", data.strCity);
+        data.strCity = "";
+      }
       if (data.strState.isEmpty()) data.strState = state;
     }
   }

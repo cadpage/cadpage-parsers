@@ -9,8 +9,7 @@ public class ARPulaskiCountyParser extends GroupBestParser {
   public ARPulaskiCountyParser() {
     super(new ARPulaskiCountyCParser(),
           new ARPulaskiCountyDParser(),
-          new ARPulaskiCountyEParser(),
-          new ARPulaskiCountyFParser());
+          new ARPulaskiCountyEParser());
   }
 
 
