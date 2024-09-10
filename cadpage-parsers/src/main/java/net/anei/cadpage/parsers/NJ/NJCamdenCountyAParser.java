@@ -23,6 +23,12 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Event Notification")) {
+      int pt = body.indexOf('\n');
+      if (pt < 0) return false;
+      subject = body.substring(0,pt).trim();
+      body = body.substring(pt+1).trim();
+    }
     if (!super.parseMsg(subject, body, data)) return false;
     String place = data.strPlace;
     if (place.startsWith("EXIT")) {
@@ -32,6 +38,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
       data.strPlace = "";
     }
     data.strAddress = data.strAddress.replace("MICKLE BD", "DR MARTIN LUTHER KING BLVD");
+    data.strCity = stripFieldEnd(data.strCity, " BORO");
     return true;
   }
 
