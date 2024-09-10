@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.VT;
 
-import net.anei.cadpage.parsers.NH.NHGraftonCountyBParser;
+import net.anei.cadpage.parsers.NH.NHGraftonCountyCParser;
 
-public class VTCaledoniaCountyBParser extends NHGraftonCountyBParser {
+public class VTCaledoniaCountyBParser extends NHGraftonCountyCParser {
 
   public VTCaledoniaCountyBParser() {
     super("CALEDONIA COUNTY", "VT");
