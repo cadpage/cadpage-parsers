@@ -12,6 +12,7 @@ public class NCRandolphCountyParser extends FieldProgramParser {
   public NCRandolphCountyParser() {
     super("RANDOLPH COUNTY", "NC",
           "SRC ( UNIT ID! INFO/R INFO/N+ | CALL ADDRCITY UNIT SKIP! INFO/N+ )");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -84,6 +85,10 @@ public class NCRandolphCountyParser extends FieldProgramParser {
     return CTRY_PTN.matcher(addr).replaceAll("COUNTRY");
   }
   private static final Pattern CTRY_PTN = Pattern.compile("CTRY\\b", Pattern.CASE_INSENSITIVE);
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "207 EAGLE LN",                         "+35.630840,-79.829030"
+  });
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARC", "ARCHDALE",
