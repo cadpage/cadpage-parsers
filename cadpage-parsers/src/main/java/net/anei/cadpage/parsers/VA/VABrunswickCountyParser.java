@@ -17,6 +17,7 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
                  "| DATETIME ID CALL UNIT PLACE? ADDR/Z CITY/Y! X/+? NAME PHONE " +
                  "| CALL ADDR CITY/Y! INFO/N+ ) )");
     setupCityValues(CITY_CODES);
+    setupCities(CITY_LIST);
   }
 
   @Override
@@ -34,8 +35,7 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{5,}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("SRC")) return new SourceField("DOLPHIN VOLUNTEER FIRE DEPARME|", true);
-    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\d{1,4}[A-Z]*|[A-Z]{4}|[A-Z]{1,2}\\d+|FRSTRY)\\b *)+");
+    if (name.equals("UNIT")) return new UnitField("(?:\\b(?:\\d{1,4}[A-Z]*|(?!RAMP)[A-Z]{4}|[A-Z]{1,2}\\d+|FRSTRY)\\b *)+");
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -48,6 +48,11 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
     }
   }
 
+  private static final String[] CITY_LIST = new String[] {
+      "BRACEY",
+      "LITTLETON"
+  };
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALBE",   "ALBERTA",
       "BLAC",   "BLACKSTONE",
@@ -58,7 +63,7 @@ public class VABrunswickCountyParser extends DispatchOSSIParser {
       "EMPO",   "EMPORIA",
       "FREE",   "FREEMAN",
       "GASB",   "GASBURG",
-      "LA C",   "LACROSSE",
+      "LA C",   "LA CROSSE",
       "LAWR",   "LAWRENCEVILLE",
       "RAWL",   "RAWLINGS",
       "VALE",   "VALENTINES",
