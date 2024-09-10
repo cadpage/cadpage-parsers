@@ -1194,6 +1194,7 @@ public class Active911ParserTable {
       "US/MI/MontcalmCountyFire",         "MIMontcalmCounty",
       "US/MI/MontcalmSheriff",            "MIMontcalmCounty",
       "US/MI/MtPleasantFD",               "MIIsabellaCountyA",
+      "US/MI/NesterTwpFD",                "MIGladwinCounty",
       "US/MI/NewBuffaloTwp",              "MIBerrienCounty",
       "US/MI/NilesCharter",               "MICassCountyB",
       "US/MI/OaklandCounty",              "MIOaklandCountyC",

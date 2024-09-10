@@ -880,6 +880,7 @@ public class ParserList {
               ,"MIEatonCounty"                  ,"Eaton County, MI"
               ,"MIEmmetCounty"                  ,"Emmet County, MI"
               ,"MIGogebicCounty"                ,"Gogebic County, MI"
+              ,"MIGladwinCounty"                ,"Gladwin County, MI"
               ,"MIGrandTraverseCounty"          ,"Grand Traverse County, MI"
               ,"MIGratiotCounty"                ,"Gratiot County, MI"
               ,"MIHillsdaleCounty"              ,"Hillsdale County, MI"
