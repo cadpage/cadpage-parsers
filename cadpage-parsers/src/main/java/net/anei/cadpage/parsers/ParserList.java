@@ -1674,6 +1674,7 @@ public class ParserList {
               ,"TXAngleton"                     ,"Angleton, TX"
               ,"TXAransasCounty"                ,"Aransas County, TX"
               ,"TXArcherCounty"                 ,"Archer County, TX"
+              ,"TXArmstrongCounty"              ,"Armstrong County, TX"
               ,"TXAtascosaCounty"               ,"Atascosa County, TX"
               ,"TXAustinCounty"                 ,"Austin County, TX"
               ,"TXBastropCounty"                ,"Bastrop County, TX"

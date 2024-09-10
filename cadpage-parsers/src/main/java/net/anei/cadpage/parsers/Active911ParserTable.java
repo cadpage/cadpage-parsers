@@ -2440,6 +2440,7 @@ public class Active911ParserTable {
       "US/TX/AngletonAreaEMC",            "TXBrazoriaCountyF",
       "US/TX/AransasCounty",              "TXAransasCounty",
       "US/TX/ArcherCounty",               "TXArcherCounty",
+      "US/TX/ArmstrongCounty",            "TXArmstrongCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
       "US/TX/Austin",                     "TXTravisCountyA",
       "US/TX/AustinCountySheriff",        "TXAustinCounty",
