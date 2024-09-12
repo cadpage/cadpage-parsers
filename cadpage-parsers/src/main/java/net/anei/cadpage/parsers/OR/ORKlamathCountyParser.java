@@ -10,22 +10,22 @@ import net.anei.cadpage.parsers.dispatch.DispatchA22Parser;
  */
 
 public class ORKlamathCountyParser extends DispatchA22Parser {
-  
+
   public ORKlamathCountyParser() {
     super(CITY_CODES, "KLAMATH COUNTY", "OR");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "kc-911@kc911.us";
+    return "kc-911@kc911.us,paging@klamath911.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   @Override
   protected String adjustGpsLookupAddress(String addr) {
     addr = TRAIL_DIR_PTN.matcher(addr).replaceFirst("");
@@ -35,10 +35,10 @@ public class ORKlamathCountyParser extends DispatchA22Parser {
 
   private static final Pattern TRAIL_DIR_PTN = Pattern.compile(" +[NSEW]{1,2}$");
   private static final Pattern MPNN_PTN = Pattern.compile("MP(\\d+) ");
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "0 MIDLAND REST AREA",                  "+42.125528,-121.825015",
-      
+
       "MP 1 HWY 39",                          "+42.181328,-121.698156",
       "MP 1 HWY 39",                          "+42.181380,-121.698026",
       "MP 2 HWY 39",                          "+42.166710,-121.698096",
@@ -52,7 +52,7 @@ public class ORKlamathCountyParser extends DispatchA22Parser {
       "MP 10 HWY 39",                         "+42.062438,-121.654515",
       "MP 11 HWY 39",                         "+42.052373,-121.640346",
       "MP 12 HWY 39",                         "+42.042466,-121.626376",
-      
+
       "MP 258 HWY 97",                        "+42.441334,-121.867645",
       "MP 259 HWY 97",                        "+42.430125,-121.856462",
       "MP 260 HWY 97",                        "+42.419029,-121.843597",
@@ -85,7 +85,7 @@ public class ORKlamathCountyParser extends DispatchA22Parser {
       "MP 286 HWY 97",                        "+42.072182,-121.848373",
       "MP 287 HWY 97",                        "+42.058636,-121.855705",
       "MP 288 HWY 97",                        "+42.052180,-121.860975",
-      
+
       "MP 1 HWY 140 W",                       "+42.189724,-121.811147",
       "MP 1 HWY 140 E",                       "+42.181550,-121.766929",
       "MP 2 HWY 140 E",                       "+42.188155,-121.766929",
