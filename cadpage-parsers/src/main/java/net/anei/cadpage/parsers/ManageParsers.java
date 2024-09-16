@@ -232,7 +232,8 @@ public class ManageParsers {
         "ORYamhillCountyB",   "General",                 // 06/28/2024
         "MIGrandTraverseCounty", "General",              // 07/16/2024
         "NCGastonCountyB",    "General",                 // 07/27/2024
-        "ARPulaskiCountyF",   "ARPulaskiCountyE"        // 09/10/2024
+        "ARPulaskiCountyF",   "ARPulaskiCountyE",        // 09/10/2024
+        "ORDouglasCountyD",   "General"                 // 09/16/2024
   });
 
 }

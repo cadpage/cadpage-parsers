@@ -12,7 +12,7 @@ public class ORDouglasCountyEParser extends DispatchH05Parser {
   public ORDouglasCountyEParser() {
     super("DOUGLAS COUNTY", "OR",
           "Nature:CALL! Dispatched:UNIT! CFS_#:ID? Date_&_Time:DATETIME! Location:ADDRCITY! Place_Name:PLACE! Cross_Streets:X! " +
-              "Lat/Lon:GPS! Map_Link:SKIP! Narrative:EMPTY! INFO_BLK+ Alerts:EMPTY! ALERT+");
+              "Lat/Lon:GPS! Map_Link:SKIP! Narrative:INFO! INFO_BLK+ Alerts:EMPTY! ALERT+");
   }
 
   @Override
@@ -25,11 +25,13 @@ public class ORDouglasCountyEParser extends DispatchH05Parser {
     return MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern SPLIT_PTN = Pattern.compile("/ (?=(?:Dispatched|CFS #|Date & Time|Place Name|Cross Streets|Map Link):)");
+
   @Override
   protected boolean parseFields(String[] flds, Data data) {
     List<String> flds2 = new ArrayList<>();
     for (String fld : flds) {
-      for (String part : fld.split(" / ")) {
+      for (String part : SPLIT_PTN.split(fld)) {
         flds2.add(part);
       }
     }

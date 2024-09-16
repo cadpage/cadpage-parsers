@@ -11,7 +11,6 @@ public class ORDouglasCountyParser extends GroupBestParser {
     super(new ORDouglasCountyAParser(),
           new ORDouglasCountyBParser(),
           new ORDouglasCountyCParser(),
-          new ORDouglasCountyDParser(),
           new ORDouglasCountyEParser());
   }
 }
