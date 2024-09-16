@@ -8,8 +8,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXBexarCountyParser extends GroupBestParser {
 
   public TXBexarCountyParser() {
-    super(new TXBexarCountyAParser(), 
+    super(new TXBexarCountyAParser(),
           new TXBexarCountyBParser(),
-          new TXBexarCountyCParser());
+          new TXBexarCountyCParser(),
+          new TXBexarCountyDParser());
   }
 }
