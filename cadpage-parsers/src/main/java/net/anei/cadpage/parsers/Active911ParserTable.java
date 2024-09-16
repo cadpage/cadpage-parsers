@@ -2883,7 +2883,7 @@ public class Active911ParserTable {
       "US/WV/KanawhaCounty",              "WVKanawhaCounty",
       "US/WV/LakeVFD",                    "WVLoganCounty",
       "US/WV/LCE911",                     "WVLewisCounty",
-      "US/WV/LincolnCounty",              "WVLincolnCountyA",
+      "US/WV/LincolnCounty",              "WVLincolnCountyA,WVLincolnCountyBS",
       "US/WV/LincolnCountySheriff",       "WVLincolnCountyB",
       "US/WV/LoganCounty",                "WVLoganCounty",
       "US/WV/MarionCounty",               "WVMarionCounty",

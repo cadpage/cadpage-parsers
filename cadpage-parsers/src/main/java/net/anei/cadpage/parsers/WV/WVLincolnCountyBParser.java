@@ -50,7 +50,7 @@ public class WVLincolnCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " X";
