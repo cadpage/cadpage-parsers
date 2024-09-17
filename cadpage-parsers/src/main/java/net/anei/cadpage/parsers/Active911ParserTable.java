@@ -2234,6 +2234,7 @@ public class Active911ParserTable {
       "US/PA/MontgomeryCountyColmar",     "PAMontgomeryCountyC",
       "US/PA/MurrysvillePD",              "PAWestmorelandCountyA",
       "US/PA/Myerstown",                  "PALebanonCountyB",
+      "US/PA/NazarethRAC",                "PANorthamptonCountyD",
       "US/PA/NEPA",                       "PALackawannaCountyD",
       "US/PA/NewHollandAmb",              "PALancasterCounty",
       "US/PA/NewmanstownVFC",             "PADauphinCountyB",
