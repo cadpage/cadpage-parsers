@@ -196,7 +196,6 @@ public class ParserList {
               ,"ARCrawfordCounty"               ,"Crawford County, AR"
               ,"ARDallasCounty"                 ,"Dallas County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
-              ,"ARGrantCounty"                  ,"Grant County, AR"
               ,"ARHotSpringCounty"              ,"Hot Spring County, AR"
               ,"ARPopeCounty"                   ,"Pope County, AR"
               ,"ARPulaskiCounty"                ,"Pulaski County, AR"
