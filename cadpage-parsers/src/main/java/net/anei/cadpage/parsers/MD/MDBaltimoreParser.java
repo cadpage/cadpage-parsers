@@ -14,7 +14,7 @@ public class MDBaltimoreParser extends FieldProgramParser {
 
   public MDBaltimoreParser() {
     super(CITY_CODES, "BALTIMORE", "MD",
-          "( DISPATCH CODE_CALL! Location:ADDRCITY! X1! Box_Area:MAP! Units:UNIT! Call_Entry_Comments:INFO! ProQA_Comments:INFO/N! CAD_Case_No:ID! END " +
+          "( DISPATCH CODE_CALL! Location:ADDRCITY! X1! Box_Area:MAP! ( Unit:UNIT! | Units:UNIT! ) Call_Entry_Comments:INFO! ProQA_Comments:INFO/N CAD_Case_No:ID! END " +
           "| ADDR CITY MAP CALL UNIT2/C+? UNIT_X X+? EMPTY+? ID! END " +
           ")");
   }
