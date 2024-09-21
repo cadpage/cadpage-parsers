@@ -19,7 +19,7 @@ public class VAHenricoCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "cad_service@henrico.us";
+    return "cad_service@henrico.us,cad_service@henrico.us";
   }
 
   @Override
