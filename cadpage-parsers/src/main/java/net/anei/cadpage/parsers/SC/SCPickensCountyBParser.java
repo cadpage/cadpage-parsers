@@ -16,7 +16,7 @@ public class SCPickensCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "pickenscountyE911@outlook.com";
+    return "pickenscountyE911@outlook.com,pcactive911alerts@pickenscountysc.gov";
   }
 
   @Override
