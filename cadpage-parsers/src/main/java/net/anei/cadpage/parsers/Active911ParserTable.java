@@ -195,7 +195,7 @@ public class Active911ParserTable {
       "US/AR/NWAMetroChiefs",             "ARBentonCountyA,ARBentonCountyB,ARBentonCountyC,ARBentonCountyF",
       "US/AR/PopeCounty",                 "ARPopeCountyA",
       "US/AR/PopeCountyERT",              "ARPopeCountyB",
-      "US/AR/PulaskiCounty",              "ARPulaskiCountyC",
+      "US/AR/PulaskiCounty",              "ARPulaskiCountyC,ARPulaskiCountyE",
       "US/AR/PulaskiCountyMcAlmontFD",    "ARPulaskiCountyC",
       "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyC",
       "US/AR/SiloamSpringsFD",            "ARBentonCountyI",
