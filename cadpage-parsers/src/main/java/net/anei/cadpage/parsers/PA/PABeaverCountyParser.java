@@ -207,7 +207,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
       "FALS", "FALLSTON",
       "FRDM", "FREEDOM",
       "FRFK", "FRANKFORT SPRINGS",
-      "FRAN", "FRANKLIN ",
+      "FRAN", "FRANKLIN",
       "GEOR", "GEORGETOWN",
       "GLAS", "GLASGOW",
       "GREN", "GREENE TWP",
