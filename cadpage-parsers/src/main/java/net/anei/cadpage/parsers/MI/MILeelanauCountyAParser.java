@@ -11,8 +11,7 @@ public class MILeelanauCountyAParser extends DispatchA19Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Rapid Notifications")) return false;
-    if (!super.parseMsg("", body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
 
     int callBrkPos = data.strCall.indexOf(" - ");
     if (callBrkPos < 0) callBrkPos = data.strCall.length();
