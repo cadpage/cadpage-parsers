@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
 
@@ -16,6 +19,26 @@ public class MNCrowWingCountyAParser extends DispatchA43Parser {
   @Override
   public String getAliasCode() {
     return "MNCrowWingCountyA";
+  }
+
+  private static final Pattern NOT_APT_PTN = Pattern.compile("[ A-Z]{3,}", Pattern.CASE_INSENSITIVE);
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    if (!super.parseMsg(body, data)) return false;
+    if (NOT_APT_PTN.matcher(data.strApt).matches()) {
+      String fld = data.strApt;
+      data.strApt = "";
+      if (fld.endsWith("Assessment")) {
+        data.strCall = append(data.strCall, " - ", fld);
+      } else if (data.strCity.isEmpty()) {
+        data.strCity = fld;
+      } else {
+        data.strPlace = append(data.strPlace, " - ", fld);
+      }
+    }
+    if (data.strCity.equalsIgnoreCase("Hazelton")) data.strCity += " Twp";
+    return true;
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -256,6 +279,8 @@ public class MNCrowWingCountyAParser extends DispatchA43Parser {
 
     // Aitkin County
     "AITKIN",
+    "HAZELTON",
+    "HAZELTON TWP",
 
     // Mile Lacs County
     "ONAMIA",
