@@ -53,6 +53,9 @@ public class ARPulaskiCountyParser extends GroupBestParser {
       "CABOT",
       "ENGLAND",
 
+      // Perry County
+      "BIGELOW",
+
       // Saline County
       "PARON"
   };
