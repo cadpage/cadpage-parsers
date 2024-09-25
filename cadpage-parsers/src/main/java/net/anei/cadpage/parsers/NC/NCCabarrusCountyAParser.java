@@ -14,8 +14,15 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   public NCCabarrusCountyAParser() {
     super(NCCabarrusCountyParser.CITY_CODES, "CABARRUS COUNTY", "NC",
-        "( CANCEL ADDR CITY | FYI? ( ADDR CALL | CALL ADDR ) CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) ) INFO+");
+        "( CANCEL ADDR CITY " +
+        "| FYI? ( ADDR/Z CITY ID CALL " +
+               "| CALL ADDR CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) " +
+               ") " +
+        ") INFO+");
+    setupCityValues(NCCabarrusCountyParser.CITY_CODES);
+    setupCities(OCC_CITY_LIST);
     setupGpsLookupTable(NCCabarrusCountyParser.GPS_LOOKUP_TABLE);
+    removeWords("NEW");
   }
 
   @Override
@@ -23,10 +30,11 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     return "CAD@cabarruscounty.us, 93001";
   }
 
+  private static final Pattern STANLEY_CALL_PTN = Pattern.compile("CAD:\\d{8};");
   private static final Pattern SPEC_UNIT_PTN = Pattern.compile("CAD: *\\{([A-Z0-9]+)\\} *");
   private static final Pattern OPER_PTN = Pattern.compile("^\\d+:");
   private static final Pattern MISSING_SEMI_PTN = Pattern.compile("(?<!;)(?=\\(S\\) \\(N\\))");
-  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|[A-Z]{2}(?:POV)?|\\d{1,4}|FORE|FMO");
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+[0-9]+|[A-Z]{2}(?:POV)?|\\d{1,4}|[A-Z]{1,3}PD|FORE|FMO|NECA");
 
   private List<String> crosses = new ArrayList<String>();
 
@@ -38,6 +46,9 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
     // Throw out any version B calls
     if (body.contains("|")) return false;
+
+    // Throw out NCStanleyCountyB calls
+    if (STANLEY_CALL_PTN.matcher(body).lookingAt()) return false;
 
     Matcher match = OPER_PTN.matcher(body);
     if (match.find()) body = body.substring(match.end()).trim();
@@ -56,14 +67,15 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     if (! super.parseMsg(body, data)) return false;
     if (data.strAddress.isEmpty() || data.strCall.isEmpty()) return false;
     if (data.strCity.equals("OOC")) data.defCity = data.strCity = "";
-    if (!ok && data.strCity.length() <= 3) return false;
+    if (!ok && data.strCity.length() <= 3 && data.strCallId.isEmpty()) return false;
 
     // Cross streets accumulated before an ID/SRC/UNIT field really are cross streets
     // But if we never found an ID/SRC/UNIT, then they are INFO fields
     if (data.strCallId.length() > 0 || data.strSource.length() > 0 || data.strUnit.length() > 0) {
       for (String cross : crosses) {
         if (data.strPlace.length() == 0 && data.strCross.length() == 0 &&
-            (cross.endsWith(" THE RUN") || !isValidAddress(cross))) {
+            !cross.endsWith("COUNTY LINE") && !cross.contains("RAMP") &&
+             (cross.endsWith(" THE RUN") || !isValidCrossStreet(cross))) {
           data.strPlace = cross;
         } else {
           data.strCross = append(data.strCross, " & ", cross);
@@ -92,13 +104,13 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new BaseCancelField("DUPLICATE PAGE");
 //    if (name.equals("MAP")) return new MapField("[A-Z]\\d{3}", true);
-    if (name.equals("ADDR")) return new MyAddressField();
+//    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X_PLACE")) return new CrossPlaceField();
     if (name.equals("SRC")) return new SourceField("[A-Z]{2}", true);
     if (name.equals("UNIT")) return new MyUnitField();
 //    if (name.equals("UNIT2")) return new UnitField("\\d{3}|CPD");
-    if (name.equals("ID")) return new IdField("\\d{8}", true);
+    if (name.equals("ID")) return new IdField("\\d{8,10}", true);
     return super.getField(name);
   }
 
@@ -130,20 +142,24 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern CHANNEL_PTN = Pattern.compile("OPS\\d+");
+
   private class CrossPlaceField extends Field {
 
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("(S) (N)")) {
         data.strPlace = append(data.strPlace, " - ", field.substring(7).trim());
-      } else {
+      } else if (CHANNEL_PTN.matcher(field).matches()) {
+        data.strChannel = field;
+      } else  {
         crosses.add(field);
       }
     }
 
     @Override
     public String getFieldNames() {
-      return "PLACE X";
+      return "CH? PLACE X";
     }
 
   }
@@ -172,8 +188,9 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
         }
         first = false;
       }
+      if (units.isEmpty()) return false;
       data.strUnit = units.toString();
-      data.strChannel = chan.toString();
+      if (!chan.isEmpty()) data.strChannel = chan.toString();
       return true;
     }
 
@@ -187,4 +204,8 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
       return "UNIT CH";
     }
   }
+
+  private static final String[] OCC_CITY_LIST = new String[] {
+      "FAIRVIEW"
+  };
 }
