@@ -180,6 +180,10 @@ public class ManageParsers {
     return location;
   }
 
+  public boolean isDecomissioned(String location) {
+    return OLD_CODE_TABLE.containsKey(location);
+  }
+
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
         "OHHudson",           "OHSummitCounty",          // 01/16/2022
