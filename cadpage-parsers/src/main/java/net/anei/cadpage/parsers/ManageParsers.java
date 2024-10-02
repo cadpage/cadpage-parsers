@@ -238,7 +238,8 @@ public class ManageParsers {
         "NCGastonCountyB",    "General",                 // 07/27/2024
         "ARPulaskiCountyF",   "ARPulaskiCountyE",        // 09/10/2024
         "ORDouglasCountyD",   "General",                 // 09/16/2024
-        "ARGrantCounty",      "General"                 // 009/16/2024
+        "ARGrantCounty",      "General",                 // 09/16/2024
+        "ALStClairCountyA",   "General"                  // 10/02/2024
   });
 
 }
