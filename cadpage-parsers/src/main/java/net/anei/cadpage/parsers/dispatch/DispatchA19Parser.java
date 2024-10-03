@@ -34,7 +34,7 @@ public class DispatchA19Parser extends FieldProgramParser {
           "( CALL ADDR/Z Call_Narrative%EMPTY/R INFO/N+ CAD_Call_ID_#:ID! END " +
           "| Incident_#:ID! CAD_Call_ID_#:ID! Type:SKIP/R! Date/Time:TIMEDATE! ( Address:ADDR! EMPTY? City:CITY? Contact:NAME? Contact_Address:SKIP? Contact_Phone:PHONE? | ) Nature:CALL! Nature_Description:INFO/N? Determinant:CODE Determinant_Desc:CALL/SDS Complaint_Name:NAME Complainant_Phone:PHONE Comments:INFO/N INFO/N+? TIME_MARK TIMES/N+ " +
           "| NATURE:CALL! CASE_NUM:ID! CALL_TYPE:SKIP! DETERM_CODE:CODE! DETERM_DESC:CALL/SDS! DETAILS:INFO! INFO/N+ CITY:CITY! ZONE:MAP! ADDRESS:ADDR! DIRECTIONS:FINFO! CROSS_STREETS:X! COORDINATES:GPS! CONTACT:NAME! PHONE_NUM:PHONE! RESP_UNITS:UNIT! " +
-          "| INCIDENT:ID LONG_TERM_CAD:ID ACTIVE_CALL:ID PRIORITY:PRI REPORTED:TIMEDATE ( Determinants/Desc:CODE | Determinant:CODE Desc:CALL | ) Nature:CALL! Type:SKIP ( Address:ADDR! Zone:MAP? | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Reported:TIMEDATE? Responding_Units:UNIT! Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
+          "| INCIDENT:ID LONG_TERM_CAD:ID ACTIVE_CALL:ID PRIORITY:PRI REPORTED:TIMEDATE ( Determinants/Desc:CODE | Determinant:CODE Desc:CALL | ) Nature:CALL! Type:SKIP ( Address:ADDR! Zone:MAP? | Zone:MAP! Address:ADDR! ) City:CITY? Contact:NAME Phone:PHONE SearchAddresss:SKIP? LAT-LON:GPS? Reported:TIMEDATE? Responding_Units:UNIT Directions:INFO/N? INFO/N+ Cross_Streets:X? X/Z+? ( LAT-LON | XY_Coordinates:XYPOS | XCoords:XY_COORD ) Comments:INFO/N? INFO/N+ Contact:NAME Phone:PHONE )");
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
@@ -250,15 +250,27 @@ public class DispatchA19Parser extends FieldProgramParser {
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(":");
-      if (pt >= 0) field = field.substring(pt+1).trim();
-      for (String street : field.split("&")) {
-        street = street.trim();
-        if (street.equals("<not found>")) continue;
-        if (!data.strAddress.contains(street) && !data.strCross.contains(street)) {
-          super.parse(street, data);
+      Matcher match = LAT_LON_PTN.matcher(field);
+      if (match.matches()) {
+        if (data.strGPSLoc.isEmpty()) {
+          setGPSLoc(match.group(1)+','+match.group(2), data);
+        }
+      } else {
+        int pt = field.indexOf(":");
+        if (pt >= 0) field = field.substring(pt+1).trim();
+        for (String street : field.split("&")) {
+          street = street.trim();
+          if (street.equals("<not found>")) continue;
+          if (!data.strAddress.contains(street) && !data.strCross.contains(street)) {
+            super.parse(street, data);
+          }
         }
       }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "X GPS?";
     }
   }
 
