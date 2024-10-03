@@ -1,8 +1,11 @@
 package net.anei.cadpage.parsers.AL;
 
-public class ALMontgomeryCountyParser extends ALHaynesAmbulanceParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+
+public class ALMontgomeryCountyParser extends GroupBestParser {
 
   public ALMontgomeryCountyParser() {
-    super("MONTGOMERY COUNTY");
+    super(new ALMontgomeryCountyAParser(), new ALMontgomeryCountyBParser());
   }
 }
