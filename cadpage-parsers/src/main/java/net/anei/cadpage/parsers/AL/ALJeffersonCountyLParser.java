@@ -19,7 +19,17 @@ public class ALJeffersonCountyLParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@HOMEWOODAL.ORG,noreply@homewoodal.net";
+    return "@HOMEWOODAL.ORG";
+  }
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    body = body.trim();
+    if (body.startsWith("CAUTION:") || body.startsWith("CALL:")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseHtmlMsg(subject, body, data);
+    }
   }
 
   @Override
