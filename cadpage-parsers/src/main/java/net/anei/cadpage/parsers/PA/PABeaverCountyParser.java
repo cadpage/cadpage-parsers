@@ -20,7 +20,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
 
   public PABeaverCountyParser() {
     super(CITY_CODES, "BEAVER COUNTY", "PA",
-           "EVENT_#:ID! LOC:ADDR/S? CALLER_PHONE:PHONE? TYPE:CALL CALLER_NAME:NAME? CALLER_ADDR:ADDR/S? TIME:TIME! COMMENTS:INFO");
+           "EVENT_#:ID! LOC:ADDR/S! CALLER_NAME:NAME! CALLER_PHONE:PHONE! TYPE:CALL SUB_TYPE:CODE? PRIORITY:PRI! CALLER_ADDR:SKIP! TIME:TIME COMMENTS:INFO CALLER_PHONE:PHONE END");
   }
 
   @Override
@@ -54,6 +54,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("PHONE")) return new MyPhoneField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("INFO"))  return new MyInfoField();
     return super.getField(name);
@@ -124,6 +125,14 @@ public class PABeaverCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " APT PLACE";
+    }
+  }
+
+  private class MyPhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!data.strPhone.isEmpty()) return;
+      super.parse(field, data);
     }
   }
 
