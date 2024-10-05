@@ -6,8 +6,17 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class SDAuroraCountyParser extends FieldProgramParser {
 
   public SDAuroraCountyParser() {
-    super("AURORA COUNTY", "SD",
+    this("AURORA COUNTY", "SD");
+  }
+  
+  SDAuroraCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "Assigned_Unit:UNIT! Date/Time:DATETIME! Location:ADDRCITYST! Incident:CALL! END");
+  }
+  
+  @Override
+  public String getAliasCode() {
+    return "SDAuroraCounty";
   }
 
   @Override

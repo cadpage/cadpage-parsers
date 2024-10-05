@@ -2372,6 +2372,7 @@ public class Active911ParserTable {
       "US/SD/DeweyCounty",                "SDDeweyCounty",
       "US/SD/EdmundsCounty",              "SDEdmundsCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
+      "US/SD/McCookCounty",               "SDMcCookCounty",
       "US/SD/McPhersonCounty",            "SDMcPhersonCounty",
       "US/SD/MinnehahaCounty",            "SDMinnehahaCounty",
       "US/SD/MobridgePD",                 "SDPerkinsCounty",

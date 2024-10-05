@@ -1600,6 +1600,7 @@ public class ParserList {
               ,"SDDeweyCounty"                  ,"Dewey County, SD"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
+              ,"SDMcCookCounty"                 ,"McCook County, SD"
               ,"SDMcPhersonCounty"              ,"McPherson County, SD"
               ,"SDMinnehahaCounty"              ,"Minnehaha County, SD"
               ,"SDPenningtonCounty"             ,"Pennington County, SD"
