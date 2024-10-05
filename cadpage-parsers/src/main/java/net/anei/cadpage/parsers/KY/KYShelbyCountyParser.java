@@ -1,13 +1,11 @@
 package net.anei.cadpage.parsers.KY;
 
-public class KYShelbyCountyParser extends KYStatePoliceCParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+
+public class KYShelbyCountyParser extends GroupBestParser {
 
   public KYShelbyCountyParser() {
-    super("SHELBY COUNTY");
-  }
-
-  @Override
-  public String getLocName() {
-    return "Shelby County, KY";
+    super(new KYShelbyCountyAParser(), new KYShelbyCountyBParser());
   }
 }

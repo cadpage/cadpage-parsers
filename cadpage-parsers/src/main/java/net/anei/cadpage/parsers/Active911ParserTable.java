@@ -1013,6 +1013,7 @@ public class Active911ParserTable {
       "US/KY/RockCastleCounty",           "KYRockCastleCounty",
       "US/KY/RussellCounty",              "KYRussellCounty",
       "US/KY/ScottCounty",                "KYScottCountyB",
+      "US/KY/ShelbyCounty",               "KYShelbyCountyB",
       "US/KY/SheridanVFD",                "KYCrittendenCounty",
       "US/KY/TaylorCounty",               "KYTaylorCounty",
       "US/KY/ToddCounty",                 "KYToddCounty",
