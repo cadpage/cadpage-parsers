@@ -10,33 +10,41 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class PABerksCountyDParser extends FieldProgramParser {
-  
+
   public PABerksCountyDParser() {
     super("BERKS COUNTY", "PA",
           "Type:CALL! Add:ADDRCITY! X-Sts:X! INFO/N+ NOC:CALL/SDS? Unit:UNIT% DATETIMEGPS% GPS? END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "berksalert@countyofberks.com,99538";
+    return "berksalert@countyofberks.com,89361,99538";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
+  private static final Pattern OPT_MARKER_PTN = Pattern.compile("(Berks County DES|CAD Incident Page): +");
   private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?<!\n)(Add:|NOC:|X-Sts:|Unit:)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (body.startsWith("Berks County DES: ")) {
+
+    Matcher match = OPT_MARKER_PTN.matcher(body);
+    if (match.lookingAt()) {
       subject = "Incident";
-      body = body.substring(18).trim();
+      body = body.substring(match.end()).trim();
       body = MISSING_BRK_PTN.matcher(body).replaceAll("\n$1");
     }
-    
+
+    int pt = body.indexOf("\nhttps:");
+    if (pt >= 0) {
+      data.strInfoURL = body.substring(pt+1);
+      body = body.substring(0,pt).trim();
+    }
+
     if (!subject.equals("Incident")) return false;
     body = stripFieldEnd(body, "\n.");
     if (parseFields(body.split("\n"), data)) return true;
@@ -44,7 +52,12 @@ public class PABerksCountyDParser extends FieldProgramParser {
     data.parseGeneralAlert(this, body);
     return true;
   }
-  
+
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " URL";
+  }
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -53,7 +66,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
     if (name.equals("GPS")) return new MyGpsField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" - ");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE) +(.*)");
   private class MyAddressCityField extends AddressCityField {
@@ -78,20 +91,20 @@ public class PABerksCountyDParser extends FieldProgramParser {
         }
         data.strPlace = append(data.strPlace, " - ", part);
       }
-      
+
       int pt = data.strAddress.indexOf(" BLDG ");
       if (pt >= 0) {
         data.strApt = append(data.strAddress.substring(pt+1).trim(), "-", data.strApt);
         data.strAddress = data.strAddress.substring(0, pt).trim();
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -99,7 +112,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_GPS_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)(?:; +(.*))?");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeGpsField extends Field {
@@ -119,19 +132,19 @@ public class PABerksCountyDParser extends FieldProgramParser {
       return "DATE TIME GPS";
     }
   }
-  
+
   private class MyGpsField extends GPSField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override public boolean checkParse(String field, Data data) {
       if (data.strGPSLoc.length() > 0) return false;
       super.parse(field, data);
       return true;
     }
   }
-  
-  
+
+
 }
