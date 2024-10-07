@@ -1,9 +1,8 @@
 package net.anei.cadpage.parsers.MO;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 
-public class MOLincolnCountyBParser extends DispatchA74Parser {
+public class MOLincolnCountyBParser extends DispatchH03Parser {
 
   public MOLincolnCountyBParser() {
     super("LINCOLN COUNTY", "MO");
@@ -11,25 +10,6 @@ public class MOLincolnCountyBParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@lincolnE911.info";
+    return "LNCC@rejis.org";
   }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
-  @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    if (!super.parseMsg(subject, body, data)) return false;
-    if (data.strApt.length() > 0 && NUMERIC.matcher(data.strAddress).matches()) {
-      Parser p = new Parser(data.strApt);
-      String city = p.getLastOptional(',');
-      if (!city.isEmpty()) data.strCity = city;
-      data.strApt = p.get(' ');
-      data.strAddress = append(data.strAddress, " ", p.get());
-    }
-    return true;
-  }
-
 }
