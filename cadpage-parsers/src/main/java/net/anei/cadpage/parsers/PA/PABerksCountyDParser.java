@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,8 +111,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_GPS_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M)(?:; +(.*))?");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private static final Pattern DATE_TIME_GPS_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)(?:; +(.*))?");
   private class MyDateTimeGpsField extends Field {
 
     @Override
@@ -122,7 +119,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
       Matcher match = DATE_TIME_GPS_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strDate = match.group(1);
-      setTime(TIME_FMT, match.group(2), data);
+      data.strTime = match.group(2);
       String gps = match.group(3);
       if (gps != null) setGPSLoc(gps, data);
     }
