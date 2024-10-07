@@ -239,7 +239,9 @@ public class ManageParsers {
         "ARPulaskiCountyF",   "ARPulaskiCountyE",        // 09/10/2024
         "ORDouglasCountyD",   "General",                 // 09/16/2024
         "ARGrantCounty",      "General",                 // 09/16/2024
-        "ALStClairCountyA",   "General"                  // 10/02/2024
+        "ALStClairCountyA",   "General",                 // 10/02/2024
+
+        "WAGraysHarborCountyA","WAGraysHarborCountyB"   // 10/07/2024
   });
 
 }

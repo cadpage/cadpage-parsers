@@ -6,8 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * GraysHarbor County, WA
  */
 public class WAGraysHarborCountyParser extends GroupBestParser {
-  
+
   public WAGraysHarborCountyParser() {
-    super(new WAGraysHarborCountyAParser(), new WAGraysHarborCountyBParser());
+    super(new WAGraysHarborCountyBParser());
   }
 }
