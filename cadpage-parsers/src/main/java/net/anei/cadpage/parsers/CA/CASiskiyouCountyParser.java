@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class CASiskiyouCountyParser extends FieldProgramParser {
   public CASiskiyouCountyParser() {
     super(CITY_CODES, "SISKIYOU COUNTY", "CA",
-          "ID CALL ADDRCITY PLACE X CH/L+? UNIT! INFO+? X:GPS1 Y:GPS2");
+          "ID CODE_CALL ADDRCITY X INFO! Remarks:INFO! INFO/N+? GPS/Z! Resources:UNIT! Cmd:CH! Tac:CH/L! END");
   }
 
   @Override
@@ -24,7 +24,7 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equalsIgnoreCase("CAD Page")) return false;
-    if (!super.parseFields(body.split(";"), data)) return false;
+    if (!super.parseFields(body.split("\n"), data)) return false;
 
     int pt = data.strCity.indexOf('/');
     if (pt >= 0) {
@@ -36,38 +36,28 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("Inc# +(.*)", true);
-    if (name.equals("PLACE")) return new MyPlace();
+    if (name.equals("ID")) return new IdField("Incident #(\\d+)", true);
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("ADDRCITY")) return new MyAddrCity();
-    if (name.equals("CH")) return new ChannelField("(?:Cmd|Tac): *(.*)", true);
+    if (name.equals("GPS")) return new GPSField("https?://maps.google.com/\\?q=(.*)|()", true);
     if (name.equals("UNIT")) return new MyUnit();
     return super.getField(name);
   }
 
-  private static final Pattern PLACE_PATTERN = Pattern.compile("^\\#(.+)");
-  private class MyPlace extends PlaceField {
+  private class MyCodeCallField extends Field {
     @Override
     public void parse(String field, Data data) {
-      field = field.trim();
-      Matcher m = PLACE_PATTERN.matcher(field);
-      if (m.matches()) {
-        data.strApt = m.group(1);
-      } else {
-        super.parse(field, data);
+      int pt = field.indexOf(':');
+      if (pt >= 0) {
+        data.strCode = field.substring(0,pt).trim();
+        field = field.substring(pt+1).trim();
       }
+      data.strCall = field;
     }
 
     @Override
     public String getFieldNames() {
-      return (append(super.getFieldNames(), " ", "APT"));
-    }
-  }
-
-  private class MyUnit extends UnitField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replaceFirst("^(?i)<a.+<\\/a>", "");
-      super.parse(field, data);
+      return "CODE CALL";
     }
   }
 
@@ -76,11 +66,6 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
   private class MyAddrCity extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      // Let super handle anything with "@L(..."
-      if (field.contains("@ =L(")) {
-        super.parse(field, data);
-        return;
-      }
       field = field.trim();
       // Anything in () at end is PLACE
       Matcher m = ADDRCITY_PATTERN_1.matcher(field);
@@ -102,6 +87,14 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
     }
   }
 
+  private class MyUnit extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(' ', ',');
+      super.parse(field, data);
+    }
+  }
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
@@ -114,9 +107,11 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
       "KLAMATH NF",       "",
       "LAKE SHASTINA",    "WEED",
       "NEWL",             "TULELAKE",
+      "NORTH OROVILLE",   "OROVILLE",
       "PLEASENT VALLEY",  "DORRIS",
       "RED ROCK",         "MACDOEL",
       "SAMS NECK",        "DORRIS",
+      "SOUTHWEST JACKSON","JACKSON",
       "TENNANT",          "MACDOEL"
   });
 
@@ -147,6 +142,7 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
       "MSA",          "MT SHASTA",
       "MTGUE",        "MONTAGUE",
       "MTNGATE",      "MOUNTAIN GATE",
+      "N_OROVILLE",   "NORTH OROVILLE",
       "NEWL",         "NEWL",
       "PALOCEDRO",    "PALO CEDRO",
       "PLEASANT_VLY", "PLEASENT VALLEY",
@@ -158,6 +154,7 @@ public class CASiskiyouCountyParser extends FieldProgramParser {
       "SEIAD",        "SEIAD VALLEY",
       "SHASTACOLL",   "SHASTA COLLEGE",
       "SHASTALKCTY",  "SHASTA LAKE",
+      "SOUTHWEST_JACKSON","SOUTHWEST JACKSON",
       "TENNANT",      "TENNANT/MACDOEL",
       "TULELAKE",     "TULELAKE",
       "WEED",         "WEED",
