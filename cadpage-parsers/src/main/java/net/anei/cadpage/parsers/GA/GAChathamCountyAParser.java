@@ -17,7 +17,8 @@ public class GAChathamCountyAParser extends FieldProgramParser {
           "( SELECT/1 CRN:ID! UNIT:UNIT! ADD:ADDR! CITY:CITY! APT/UNIT:APT! XSTREET:X! BUSINESS:PLACE! DET:CODE! PRIORITY:PRI! PROBLEM:CALL! COMMENTS:INFO! END " +
           "| SELECT/2 CRN:ID! ADD:ADDR! INFO/N+ " +
           "| SELECT/3 UNIT_ASSIGNED:UNIT! POST_LOCATION:ADDR! END " +
-          "| COMMENT_NOTIFICATION:INFO END " +
+          "| SELECT/4 COMMENT_NOTIFICATION:INFO END " +
+          "| SELECT/5 CRN:ID! Type:CALL! Loc:PLACE! ADD:ADDR! APT:APT! City:CITY! Lat:GPS1! Lon:GPS2! Det:CODE! END " +
           ")");
   }
 
@@ -33,31 +34,43 @@ public class GAChathamCountyAParser extends FieldProgramParser {
 
     if (body.startsWith("CALL INFO:")) {
       setSelectValue("1");
-      return parseFields(DELIM1_PTN.split(body.substring(10).trim()), data);
+      if (!parseFields(DELIM1_PTN.split(body.substring(10).trim()), data)) return false;
     }
 
-    if (body.startsWith("TIMES:")) {
+    else if (body.startsWith("TIMES:")) {
       setSelectValue("2");
       data.msgType = MsgType.RUN_REPORT;
       body = body.substring(6).trim().replace(" DISPATCHED:", ";DISPATCHED:");
-      return parseFields(body.split(";"), data);
+      if (!parseFields(body.split(";"), data)) return false;;
     }
 
-    if (body.startsWith("UNIT POST:")) {
+    else if (body.startsWith("UNIT POST:")) {
       setSelectValue("3");
       data.strCall = "UNIT ASSIGNED TO";
-      return super.parseMsg(body.substring(10).trim(), data);
+      if (!super.parseMsg(body.substring(10).trim(), data)) return false;
     }
 
-    if (body.startsWith("EXTR BEGIN: EXTR COMP:")) {
-      return parseExtraInfo(body, data);
+    else if (body.startsWith("EXTR BEGIN: EXTR COMP:")) {
+      if (!parseExtraInfo(body, data)) return false;
     }
 
-    if (body.startsWith("COMMENT NOTIFICATION:")) {
+    else if (body.startsWith("COMMENT NOTIFICATION:")) {
       setSelectValue("4");
-      return super.parseMsg(body, data);
+      if (!super.parseMsg(body, data)) return false;
     }
-    return false;
+
+    else if (body.startsWith("CCFD Alert: ")) {
+      setSelectValue("5");
+      body = body.substring(12).trim();
+      int pt = body.indexOf("\n\nClick the following link");
+      if (pt >= 0) body = body.substring(0,pt).trim();
+      if (!parseFields(body.split(";"), data)) return false;
+    }
+
+    else return false;
+
+    if (data.strCity.equals("County")) data.strCity = "";
+    return true;
   }
 
   @Override
@@ -67,6 +80,15 @@ public class GAChathamCountyAParser extends FieldProgramParser {
     return result;
   }
 
+  @Override
+  protected boolean parseFields(String[] fields, Data data) {
+    if (getSelectValue().equals("5")) {
+      for (int jj = 0; jj<fields.length; jj++) {
+        fields[jj] = stripFieldEnd(fields[jj], "[n/a]");
+      }
+    }
+    return super.parseFields(fields, data);
+  }
 
   private static final Pattern EXTRA_BRK_PTN = Pattern.compile(" +(?=\\d\\) )");
 
