@@ -7,7 +7,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 public class AZMaricopaCountyParser extends GroupBestParser {
   public AZMaricopaCountyParser() {
-    super(new AZMaricopaCountyAParser(), 
-          new AZMaricopaCountyDParser());
+    super(new AZMaricopaCountyAParser(),
+          new AZMaricopaCountyDParser(),
+          new AZMaricopaCountyEParser());
   }
 }
