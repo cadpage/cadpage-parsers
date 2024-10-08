@@ -1674,6 +1674,7 @@ public class Active911ParserTable {
       "US/ND/GoldedValleyCounty",         "NDGoldenValleyCounty",
       "US/ND/KidderCounty",               "NDKidderCounty",
       "US/ND/MckenzieCounty",             "NDMcKenzieCounty",
+      "US/ND/Napoleon",                   "NDLoganCounty",
       "US/ND/PierceCounty",               "NDPierceCounty",
       "US/ND/RichlandCounty",             "NDRichlandCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
