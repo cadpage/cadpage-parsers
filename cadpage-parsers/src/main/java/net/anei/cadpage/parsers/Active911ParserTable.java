@@ -1673,6 +1673,7 @@ public class Active911ParserTable {
       "US/ND/CityofFargo",                "NDCassCounty",
       "US/ND/GoldedValleyCounty",         "NDGoldenValleyCounty",
       "US/ND/KidderCounty",               "NDKidderCounty",
+      "US/ND/MckenzieCounty",             "NDMcKenzieCounty",
       "US/ND/PierceCounty",               "NDPierceCounty",
       "US/ND/RichlandCounty",             "NDRichlandCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",

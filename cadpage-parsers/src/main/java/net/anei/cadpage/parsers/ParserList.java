@@ -1332,6 +1332,7 @@ public class ParserList {
               ,"NDDivideCounty"                 ,"Divide County, ND"
               ,"NDGoldenValleyCounty"           ,"Golden Valley County, ND"
               ,"NDKidderCounty"                 ,"Kidder County, ND"
+              ,"NDMcKenzieCounty"               ,"McKenzie County, ND"
               ,"NDPierceCounty"                 ,"Pierce County, ND"
               ,"NDRichlandCounty"               ,"Richland County, ND"
           ),
