@@ -135,6 +135,7 @@ public class ParserList {
               ,"ALEtowahCounty"                 ,"Etowah County, AL"
               ,"ALFranklinCounty"               ,"Franklin County, AL"
               ,"ALGenevaCounty"                 ,"Geneva County, AL"
+              ,"ALHaleCounty"                   ,"Hale County, AL"
               ,"ALHaynesAmbulance"              ,"Haynes Ambulance, AL"
               ,"ALHenryCounty"                  ,"Henry County, AL"
               ,"ALHoover"                       ,"Hoover, AL"
