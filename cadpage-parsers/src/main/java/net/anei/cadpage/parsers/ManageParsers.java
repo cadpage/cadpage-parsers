@@ -240,8 +240,8 @@ public class ManageParsers {
         "ORDouglasCountyD",   "General",                 // 09/16/2024
         "ARGrantCounty",      "General",                 // 09/16/2024
         "ALStClairCountyA",   "General",                 // 10/02/2024
-
-        "WAGraysHarborCountyA","WAGraysHarborCountyB"   // 10/07/2024
+        "WAGraysHarborCountyA","WAGraysHarborCountyB",   // 10/07/2024
+        "PABerksCountyB",     "PABerksCountyD"          // 10/07/2024
   });
 
 }
