@@ -11,7 +11,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
 
   public PABerksCountyDParser() {
     super("BERKS COUNTY", "PA",
-          "Type:CALL! Add:ADDRCITY! X-Sts:X! INFO/N+ NOC:CALL/SDS? Unit:UNIT% DATETIMEGPS% GPS? END");
+          "Type:CALL! Add:ADDRCITY! X-Sts:X? INFO/N+ NOC:CALL/SDS? Unit:UNIT% DATETIMEGPS% GPS? END");
   }
 
   @Override
@@ -42,6 +42,8 @@ public class PABerksCountyDParser extends FieldProgramParser {
       data.strInfoURL = body.substring(pt+1);
       body = body.substring(0,pt).trim();
     }
+
+    body = stripFieldEnd(body, "...");
 
     if (!subject.equals("Incident")) return false;
     body = stripFieldEnd(body, "\n.");
