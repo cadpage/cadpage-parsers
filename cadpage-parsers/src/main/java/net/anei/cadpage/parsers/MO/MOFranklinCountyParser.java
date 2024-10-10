@@ -21,7 +21,7 @@ public class MOFranklinCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "franklincodispatch@franklinmo.net";
+    return "franklincodispatch@franklinmo.net,noreply@omnigo.com";
   }
 
   private String times;
