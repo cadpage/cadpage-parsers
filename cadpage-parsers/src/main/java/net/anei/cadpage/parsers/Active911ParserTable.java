@@ -1697,6 +1697,7 @@ public class Active911ParserTable {
       "US/NH/Wolfeboro",                  "NHCarrollCounty",
       "US/NJ/AtPdText",                   "NJSussexCountyA",
       "US/NJ/Belmar",                     "NJMonmouthCountyG",
+      "US/NJ/BerlinFCNo1",                "NJCamdenCountyA",
       "US/NJ/BeverlyCityFD",              "NJBurlingtonCountyH",
       "US/NJ/BurlingtonCounty",           "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/CamdenCounty",               "NJCamdenCounty",
