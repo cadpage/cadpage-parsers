@@ -7,12 +7,15 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class ALMorganCountyBParser extends FieldProgramParser {
 
   public ALMorganCountyBParser() {
     super(CITY_LIST, "MORGAN COUNTY", "AL",
-          "( SELECT/1 CALL! Location:ADDRCITYST! | Location:ADDR/S! ) Desc:DESC? Loc_Name:PLACE! TAC:SRC_CH! SRC_CH+? Assigned:DATETIME! Detail:INFO! INFO/N+");
+         "( SELECT/RR RR_INFO+ " +
+         "| CALL! Location:ADDRCITYST! Desc:DESC? Loc_Name:PLACE! TAC:SRC_CH! SRC_CH+? Assigned:DATETIME! Detail:INFO! INFO/N+ " +
+         ")");
   }
 
   @Override
@@ -20,7 +23,7 @@ public class ALMorganCountyBParser extends FieldProgramParser {
     return "cad-no-reply@morgan911.org";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("CFS - (?:Unit Assigned|Changed) - #(.*)");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("CFS - (Unit Assigned|Changed|Completed) - #(.*)");
   private static final Pattern DELIM_PTN1 = Pattern.compile(";?\n");
 
   private Set<String> channelSet = new HashSet<>();
@@ -33,24 +36,15 @@ public class ALMorganCountyBParser extends FieldProgramParser {
     channelSet.clear();
 
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (match.matches()) {
-      data.strCallId = match.group(1).trim();
-      setSelectValue("1");
-      return parseFields(DELIM_PTN1.split(body), data);
+    if (!match.matches()) return false;
+    if (match.group(1).equals("Completed")) {
+      data.msgType = MsgType.RUN_REPORT;
+      setSelectValue("RR");
+    } else {
+      setSelectValue("");
     }
-    int pt = subject.indexOf(';');
-    if (pt >= 0) subject = subject.substring(0,pt).trim();
-    subject = stripFieldEnd(subject, " None");
-    data.strCall = subject;
-
-    if (body.startsWith("Location:")) {
-      body = stripFieldEnd(body, ";");
-      setSelectValue("2");
-      body = body.replace("Tac:", "TAC:").replace("detail:", "Detail:");
-      return parseFields(body.split("; "), data);
-    }
-
-    return false;
+    data.strCallId = match.group(2).trim();
+    return parseFields(DELIM_PTN1.split(body), data);
   }
 
   @Override
@@ -65,6 +59,7 @@ public class ALMorganCountyBParser extends FieldProgramParser {
     if (name.equals("SRC_CH")) return new MySourceChannelField();
     if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d:\\d\\d)\\b[ *]*", true);
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("RR_INFO")) return new MyRRInfoField();
     return super.getField(name);
   }
 
@@ -143,6 +138,73 @@ public class ALMorganCountyBParser extends FieldProgramParser {
         data.strSupp = append(data.strSupp, "\n", line);
       }
     }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("\\bLat (\\S+); Lon (\\S+)\\b");
+  private class MyRRInfoField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(':');
+      if (pt >= 0) {
+        String key = field.substring(0, pt).trim();
+        String value = field.substring(pt+1).trim();
+
+        switch (key) {
+        case "911 Information":
+          Matcher match = GPS_PTN.matcher(value);
+          if (match.find()) {
+            setGPSLoc(match.group(1)+','+match.group(2), data);
+          }
+          return;
+
+        case "911 Calling Number":
+          data.strPhone = value;
+          return;
+
+        case "Additional Incident Codes":
+          data.strCode = value;
+          return;
+
+        case "Additional Incident Codes Description":
+          data.strCall = value;
+          return;
+
+        case "CFS Location Address":
+          super.parse(value, data);
+          return;
+
+        case "CFS Location Common":
+          data.strPlace = value;
+          return;
+
+        case "CFS Number":
+          data.strCallId = value;
+          return;
+
+        case "911 Class of Service":
+        case "911 ESN":
+        case "911 Latitude":
+        case "911 Longitude":
+        case "911 Uncertainty":
+        case "CFS Entered Location":
+        case "CFS Location Street Only":
+        case "CFS Location Details":
+        case "CFS Location Latitude":
+        case "CFS Location Longitude":
+        case "CFS Response Times":
+        case "Incident Code":
+        case "Incident Code Description":
+          return;
+        }
+      }
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "GPS PHONE CODE CALL ADDR APT CITY ST PLACE ID INFO";
+    }
+
   }
 
   private static final String[] CITY_LIST = new String[] {
