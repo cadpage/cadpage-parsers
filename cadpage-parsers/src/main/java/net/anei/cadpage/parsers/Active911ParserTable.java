@@ -500,6 +500,7 @@ public class Active911ParserTable {
       "US/FL/SouthWalton",                "FLWaltonCounty",
       "US/FL/TaylorCounty",               "FLTaylorCounty",
       "US/FL/WashingtonCountySheriff",    "FLWashingtonCounty",
+      "US/GA/AmeriProHealth",             "GAFultonCounty",
       "US/GA/BarrowCounty",               "GABarrowCounty",
       "US/GA/BrooksCounty",               "GABrooksCounty",
       "US/GA/ButtsCounty",                "GAButtsCounty",
