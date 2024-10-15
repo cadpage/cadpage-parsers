@@ -109,6 +109,7 @@ public class DispatchA78Parser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_LINK_PTN = Pattern.compile("<img src=\"(.*?)\".*");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("CFS ADDRESS CHANGED TO .* \\| COORD LAT: (\\S+) LNG: (\\S+)");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -124,13 +125,19 @@ public class DispatchA78Parser extends FieldProgramParser {
           data.strInfoURL = match.group(1).trim();
           return;
         }
+
+        match = INFO_GPS_PTN.matcher(field);
+        if (match.matches()) {
+          setGPSLoc(match.group(1)+','+match.group(2), data);
+          return;
+        }
         super.parse(field, data);
       }
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " URL UNIT";
+      return super.getFieldNames() + " URL UNIT GPS";
     }
   }
 }
