@@ -9,23 +9,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class ALCalhounCountyBParser extends FieldProgramParser {
-  
+
   public ALCalhounCountyBParser() {
-    super("CALHOUN COUNTY", "AL", 
+    super("CALHOUN COUNTY", "AL",
           "SRC ( UNIT/Z ID TIMES! TIMES+ | CALL ADDRCITY MAP UNIT! INFO/CS+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "administrator@911.calhouncountyal.gov,cc911@911.calhouncountyal.gov";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Active 911 Alert")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TIMES")) return new MyTimesField();
@@ -35,7 +35,7 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new UnitField("\\S+", true);
     return super.getField(name);
   }
-  
+
   private class MyTimesField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -44,7 +44,7 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", field);
     }
   }
-  
+
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*), *([A-Z]{3})");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM) *(.*)|\\d{1,5}[A-Z]?");
   private class MyAddressCityField extends AddressCityField {
@@ -71,13 +71,13 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALE", "ALEXANDRIA",
       "ANC", "ANNISTON",
@@ -95,6 +95,7 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
       "OXF", "OXFORD",
       "PIC", "PIEDMONT",
       "PIE", "PIEDMONT",
+      "PIH", "PIEDMONT",
       "WEA", "WEAVER",
       "WEC", "WEAVER",
       "WEL", "WELLINGTON"
