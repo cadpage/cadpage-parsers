@@ -13,7 +13,7 @@ public class NYJeffersonCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "fire@co.jefferson.ny.us";
+    return "fire@co.jefferson.ny.us,@jeffersoncountyny.gov";
   }
 
   @Override
