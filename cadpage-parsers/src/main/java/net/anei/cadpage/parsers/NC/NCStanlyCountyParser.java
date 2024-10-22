@@ -6,6 +6,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NCStanlyCountyParser extends GroupBestParser {
 
   public NCStanlyCountyParser() {
-    super(new NCStanlyCountyBParser());
+    super(new NCStanlyCountyBParser(), new NCStanlyCountyCParser());
   }
 }
