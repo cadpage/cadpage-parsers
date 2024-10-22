@@ -7,9 +7,11 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHMuskingumCountyParser extends GroupBestParser {
-  
+
   public OHMuskingumCountyParser() {
-    super(new OHMuskingumCountyAParser(), new OHMuskingumCountyBParser(),
-          new OHMuskingumCountyCParser());
+    super(new OHMuskingumCountyAParser(),
+          new OHMuskingumCountyBParser(),
+          new OHMuskingumCountyCParser(),
+          new OHMuskingumCountyEParser());
   }
 }
