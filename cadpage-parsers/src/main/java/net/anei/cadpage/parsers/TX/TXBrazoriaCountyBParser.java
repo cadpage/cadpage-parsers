@@ -2,18 +2,17 @@ package net.anei.cadpage.parsers.TX;
 
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.dispatch.DispatchBCParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
 
 
-public class TXBrazoriaCountyBParser extends DispatchBCParser {
+public class TXBrazoriaCountyBParser extends DispatchA55Parser {
   public TXBrazoriaCountyBParser() {
     super("BRAZORIA COUNTY", "TX");
-    setupMultiWordStreets("STEPHEN F AUSTIN");
   }
 
   @Override
   public String getFilter() {
-    return "FREEPORTDISPATCH@FREEPORT.TX.US,no-reply@freeport.tx.us,noreply@omnigo.com";
+    return "ereports@eforcesoftware.com";
   }
 
   @Override
