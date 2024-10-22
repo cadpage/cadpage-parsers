@@ -87,6 +87,8 @@ public class ALMorganCountyBParser extends FieldProgramParser {
       }
       else if (APT_PTN.matcher(field).matches()) {
         data.strApt = append(data.strApt, "-", field);
+      } else if (data.strCity.isEmpty() && field.endsWith(" COUNTY")) {
+          data.strCity = field;
       } else {
         data.strPlace = field;
       }
@@ -94,7 +96,7 @@ public class ALMorganCountyBParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "APT PLACE";
+      return "APT PLACE CITY";
     }
   }
 
