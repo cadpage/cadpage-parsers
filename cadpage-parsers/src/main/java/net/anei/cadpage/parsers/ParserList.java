@@ -133,6 +133,7 @@ public class ParserList {
               ,"ALDothan"                       ,"Dothan, AL"
               ,"ALElmoreCounty"                 ,"Elmore County, AL"
               ,"ALEtowahCounty"                 ,"Etowah County, AL"
+              ,"ALFayetteCounty"                ,"Fayette County, AL"
               ,"ALFranklinCounty"               ,"Franklin County, AL"
               ,"ALGenevaCounty"                 ,"Geneva County, AL"
               ,"ALHaleCounty"                   ,"Hale County, AL"

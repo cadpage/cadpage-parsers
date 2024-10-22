@@ -118,6 +118,7 @@ public class Active911ParserTable {
       "US/AL/ElbowPD",                    "ALCoffeeCountyB",
       "US/AL/EmergencyCallWorx",          "ALBaldwinCounty",
       "US/AL/EtowahCounty",               "ALEtowahCountyB,ALEtowahCountyC",
+      "US/AL/FayetteCounty",              "ALFayetteCounty",
       "US/AL/FortPayneFireRescue",        "ALDeKalbCounty",
       "US/AL/FranklinCounty",             "ALFranklinCounty",
       "US/AL/Gardendale",                 "ALJeffersonCountyH",
