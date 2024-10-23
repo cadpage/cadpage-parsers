@@ -25,7 +25,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@ci.xenia.oh.us";
+    return "@ci.xenia.oh.us,PSISN_Dispatch@GreeneCoOHPSISN.gov";
   }
 
   @Override
