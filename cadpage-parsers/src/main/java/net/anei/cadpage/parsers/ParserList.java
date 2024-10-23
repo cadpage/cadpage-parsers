@@ -963,6 +963,7 @@ public class ParserList {
               ,"MNMorrisonCounty"               ,"Morrison County, MN"
               ,"MNMowerCounty"                  ,"Mower County, MN"
               ,"MNNicolletCounty"               ,"Nicollet County, MN"
+              ,"MNNoblesCounty"                 ,"Nobles County, MN"
               ,"MNOlmstedCounty"                ,"Olmsted County, MN"
               ,"MNOtterTailCounty"              ,"Otter Tail County, MN"
               ,"MNPenningtonCounty"             ,"Pennington County, MN"

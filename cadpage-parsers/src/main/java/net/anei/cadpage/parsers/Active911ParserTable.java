@@ -1283,6 +1283,7 @@ public class Active911ParserTable {
       "US/MN/MowerCounty",                "MNMowerCounty",
       "US/MN/NicolletCounty",             "MNNicolletCounty",
       "US/MN/NisswaFD",                   "MNCassCounty",
+      "US/MN/NoblesCounty",               "MNNoblesCounty",
       "US/MN/NormanCounty",               "Cadpage2",
       "US/MN/OtterTailCounty",            "MNOtterTailCounty",
       "US/MN/PenningtonCounty",           "MNPenningtonCounty",
