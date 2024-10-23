@@ -2623,7 +2623,7 @@ public class Active911ParserTable {
       "US/TX/Roanoke",                    "TXRoanoke",
       "US/TX/RobertsonCounty",            "TXRobertsonCounty",
       "US/TX/RockwallCounty",             "TXRockwallCountyC",
-      "US/TX/RockwallCountyEMS",          "TXRockwallCountyD",
+      "US/TX/RockwallCountyEMS",          "TXRockwallCountyD,TXRockwallCountyE",
       "US/TX/Rosenburg",                  "TXRosenberg",
       "US/TX/RoyseCity",                  "TXRoyseCity",
       "US/TX/RowlettFire",                "TXDallasCountyH",

@@ -8,7 +8,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXRockwallCountyParser extends GroupBestParser {
 
   public TXRockwallCountyParser() {
-    super(new TXRockwallCountyAParser(), new TXRockwallCountyBParser(),
-          new TXRockwallCountyCParser(), new TXRockwallCountyDParser());
+    super(new TXRockwallCountyAParser(),
+          new TXRockwallCountyBParser(),
+          new TXRockwallCountyCParser(),
+          new TXRockwallCountyDParser(),
+          new TXRockwallCountyEParser());
   }
 }

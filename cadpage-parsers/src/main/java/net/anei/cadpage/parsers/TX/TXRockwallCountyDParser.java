@@ -10,7 +10,7 @@ public class TXRockwallCountyDParser extends DispatchA57Parser {
 
   @Override
   public String getFilter() {
-    return "donotreply@rockwallcountytexas.com";
+    return "donotreply@rockwallcountytexas.com,cadpagingalerts@rockwallcountytexas.com";
   }
 
 }
