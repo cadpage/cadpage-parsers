@@ -29,6 +29,10 @@ public class INCassCountyParser extends DispatchA29Parser {
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
     body = "DISPATCH:" + body.substring(match.end());
+
+    int pt = body.indexOf("\n________");
+    if (pt >= 0) body = body.substring(0,pt).trim();
+
     body = DIR_OF_PTN.matcher(body).replaceAll("$1O");
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equals("U")) data.strCity = "";
@@ -42,17 +46,28 @@ public class INCassCountyParser extends DispatchA29Parser {
   }
 
   private static final CodeSet CALL_LIST = new CodeSet(
+      "911 HANG UP/ MISDIAL",
+      "911 CELLPHONE CALL",
       "ABDOMINAL PAIN",
+      "ACCIDENT (CAR/DEER)",
       "ALARM",
+      "ALARM-TROUBLE",
       "ACCIDENT (INJURIES)",
       "ACCIDENT (PROPERTY DAMAGE)",
       "ACCIDENT (UNKNOWN)",
+      "ANIMAL COMPLAINT",
       "ASSIST ANOTHER AGENCY",
       "ATTEMPT TO LOCATE",
+      "BURN COMPLAINT",
+      "CITIZEN CONTACT/PUBLIC RELATIONS",
+      "CO DETECTOR ALARM",
+      "DIFFICULTY BREATHING",
       "DISORDERLY CONDUCT",
       "DOMESTIC COMPLAINT",
+      "FALLS",
       "FIRE ALARM",
       "FIRE FIELD",
+      "FIRE-GENERAL",
       "FIRE-STRUCTURE",
       "FIRE-VEHICLE",
       "GAS ODOR",
@@ -61,10 +76,15 @@ public class INCassCountyParser extends DispatchA29Parser {
       "LIFT ASSIST",
       "LIFTING ASSIST",
       "MEDICAL",
+      "OUT WITH SUBJECT/S",
       "SUICIDAL SUBJECT",
       "SUSPICIOUS CIRCUMSTANCES",
+      "TEST",
       "TRAFFIC STOP",
-      "TREES DOWN"
+      "TREES DOWN",
+      "UNWANTED GUEST",
+      "UTILITIES DOWN",
+      "WELFARE CHECK"
   );
 
   private static final String[] MWORD_STREET_LIST = new String[]{
