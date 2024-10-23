@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
@@ -31,13 +34,31 @@ public class OHGreeneCountyBParser extends DispatchH05Parser {
     return super.getField(name);
   }
 
+  private static final Pattern CITY_APT_PTN = Pattern.compile("([- A-Z]+) +(.*\\d.*|[A-Z])");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      parseAddress(p.get(','), data);
-      data.strCity = p.get(',');
-      data.strApt = append(data.strApt, "-", p.get());
+      String addr = p.get(',');
+      String city = p.get(',');
+      String apt = p.get();
+
+      if (apt.isEmpty()) {
+        Matcher match = CITY_APT_PTN.matcher(city);
+        if (match.matches()) {
+          city = match.group(1).trim();
+          apt = match.group(2).trim();
+          if (apt.endsWith("MM")) apt = "";
+        }
+      }
+
+      if (!apt.isEmpty()) {
+        addr = stripFieldEnd(addr, ' '+apt);
+      }
+
+      parseAddress(addr, data);
+      data.strCity = city;
+      data.strApt = append(data.strApt, "-", apt);
     }
   }
 }
