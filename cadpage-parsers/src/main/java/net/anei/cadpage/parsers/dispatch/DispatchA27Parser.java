@@ -492,7 +492,7 @@ public class DispatchA27Parser extends FieldProgramParser {
 
     data.strSupp = append(data.strSupp, "\n", info);
   }
-  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{5,6})(?: *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern GPS_PTN = Pattern.compile("E911 CLASS: *[A-Z]{1,4}\\d*(?: *LOC: .*?LAT: ([-+]?\\d+\\.\\d{6})\\d* *LON: ([-+]?\\d+\\.\\d{5,6})(?: *Lec:[a-z]{3,4}(?:[a-z]\\b)?|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b)?)?", Pattern.CASE_INSENSITIVE);
   private static final Pattern GPS_TRAIL_PTN = Pattern.compile(" *Lec:[a-z]{3,4}|\\d* +T=\\S+(?: +CDMA)?(?: +S=[A-Z]+)?\\b");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d/\\d\\d/\\d{4} +\\d\\d?:\\d\\d:\\d\\d : \\S+\\] *");
 

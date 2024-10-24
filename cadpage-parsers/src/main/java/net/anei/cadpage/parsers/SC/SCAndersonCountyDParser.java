@@ -10,7 +10,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   public SCAndersonCountyDParser() {
     super("ANDERSON COUNTY", "SC",
-          "DATETIME CODE CALL ADDRCITYST INFO INFO? UNIT ID! ( NAME PHONE PHONE/CS | ) GPS1 GPS2 END");
+          "DATETIME CODE CALL ADDRCITYST INFO INFO? UNIT ID! ( NAME PHONE PHONE/CS | ) GPS1 GPS2 PHONE END");
   }
 
   @Override
