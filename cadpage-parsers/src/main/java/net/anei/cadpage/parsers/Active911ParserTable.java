@@ -835,6 +835,7 @@ public class Active911ParserTable {
       "US/KS/HarveyCounty",               "KSHarveyCounty",
       "US/KS/HortonFD",                   "KSBrownCounty",
       "US/KS/JacksonCounty",              "KSJacksonCounty",
+      "US/KS/JCFD",                       "KSGearyCounty",
       "US/KS/JeffersonCounty",            "KSJeffersonCounty",
       "US/KS/JohnsonCounty",              "KSJohnsonCounty",
       "US/KS/JohnsonCountyMedAct",        "KSJohnsonCounty",
