@@ -1,23 +1,10 @@
 package net.anei.cadpage.parsers.MN;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Pennington County, MN
- */
+public class MNPenningtonCountyParser extends GroupBestParser {
 
-public class MNPenningtonCountyParser extends DispatchA43Parser {
-  
   public MNPenningtonCountyParser() {
-    super("PENNINGTON COUNTY", "MN");
+    super(new MNPenningtonCountyAParser(), new MNPenningtonCountyBParser());
   }
-
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
-    if (data.strPriority.length() > 0) data.strPriority = data.strPriority.substring(0, 1);
-    return true;
-  }
-  
 }

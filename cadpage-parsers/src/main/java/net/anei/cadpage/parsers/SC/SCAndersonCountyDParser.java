@@ -15,7 +15,7 @@ public class SCAndersonCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "centralsquare@andersonsheriff.com";
+    return "centralsquare@andersonsheriff.com,";
   }
 
   @Override
