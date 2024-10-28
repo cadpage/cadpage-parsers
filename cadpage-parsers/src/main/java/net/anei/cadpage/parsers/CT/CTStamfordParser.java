@@ -10,10 +10,10 @@ import net.anei.cadpage.parsers.FieldProgramParser;
  * Stamford, CT
  */
 public class CTStamfordParser extends FieldProgramParser {
-  
+
   public CTStamfordParser() {
-    super("STAMFORD", "CT", 
-          "ADDR CITY ST APT/D X NAME NAME/CS+? EMPTY PHONE CALL! INFO+");
+    super("STAMFORD", "CT",
+          "ADDR CITY ST APT/D EMPTY CALL X NAME NAME/CS+? PHONE! INFO+");
   }
 
   @Override
@@ -23,18 +23,19 @@ public class CTStamfordParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
-    if (!subject.equals("Stamford 911") && !subject.equals("From Stamford 911")) return false;
-    return parseFields(body.split(","), 9, data);
+
+    if (!subject.equals("Stamford 911-")) return false;
+    return parseFields(body.split(",", -1), 9, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ST")) return new MyStateField();
+    if (name.equals("PHONE")) return new PhoneField("\\d{3}[- ]\\d{3,4}[- ]\\d{4}|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyStateField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -45,13 +46,13 @@ public class CTStamfordParser extends FieldProgramParser {
       }
       data.strState = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ST APT";
     }
   }
-  
+
   private static final Pattern INFO_REJECT_PTN = Pattern.compile(".*(?:Multi-Agency LAW Incident #:|Automatic Case Number\\(s\\) issued).*");
   private static final Pattern INFO_PREFIX_PTN = Pattern.compile("(\\[\\d+\\]) *");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[(?:ProQA: Case Entry Complete|[ProQA: Case Entry Complete])\\]|[ProQA: Key Questions] >");
