@@ -14,7 +14,7 @@ public class MSDeSotoCountyAParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "E911.AutoSend@obms.us,Dispatch@hernandopolice.org";
+    return "E911.AutoSend@obms.us,Dispatch@hernandopolice.org,hlpdcadweb@hornlake.org";
   }
 
   @Override
