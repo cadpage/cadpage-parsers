@@ -430,6 +430,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "FIRST ALARM - B",
       "FIRST ALARM - C",
       "FIRST RESP A",
+      "FIRST RESP - ARREST",
       "FIRST RESP ASSIST",
       "FIRST RESP ASSIST D/E",
       "FIRST RESP ASSIST EMERGENCY",
@@ -453,6 +454,10 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "FIRST RESP PURPLE",
       "FIRST RESPONDER DELAY B/C",
       "FIRST RESPONDER DELAY D/E",
+      "FIRST RESPONDER DELAY ORANGE",
+      "FIRST RESPONDER DELAY PURPLE",
+      "FIRST RESPONDER DELAY RED",
+      "FIRST RESPONDER DELAY YELLOW",
       "FIRST RESPONDER UNKNOWN",
       "FUEL - LEAK/SPILL/OTH",
       "FUEL - LEAK/SPILL/OTH NON EMER",
@@ -511,6 +516,7 @@ public class ZCABCVancouverIslandParser extends FieldProgramParser {
       "TSUNAMI WARNING",
       "WILDLAND",
       "WILDLAND FIRE"
+
   );
 
   @Override
