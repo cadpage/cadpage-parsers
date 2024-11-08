@@ -10,7 +10,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
 
   public COJeffersonCountyDParser() {
     super(CITY_LIST, "JEFFERSON COUNTY", "CO",
-          "CALL ADDR APT ( SELECT/1 EMPTY? CITY X MAP GPS1/d GPS2/d UNIT UNIT/C+? CH ID DATETIME! " +
+          "CALL ADDR APT ( SELECT/1 EMPTY? CITY X MAP? GPS1/d GPS2/d UNIT UNIT/C+? CH ID DATETIME! " +
                         "| PLACE X UNIT UNIT/C+? ID DATETIME! " +
                         ") INFO/N+");
   }
@@ -34,7 +34,7 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     return super.parseHtmlMsg(subject, body, data);
   }
 
-  private static final Pattern DELIM = Pattern.compile(" \\|(?= )|\n");
+  private static final Pattern DELIM = Pattern.compile(" *\\| *|\n");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -163,7 +163,20 @@ public class COJeffersonCountyDParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern NOT_MAP_PTN = Pattern.compile("\\d{8,}");
   private class MyMapField extends MapField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (NOT_MAP_PTN.matcher(field).matches()) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       if (field.equals("NOT FOUND")) return;
