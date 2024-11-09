@@ -5,12 +5,16 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 public class WAWhitmanCountyBParser extends DispatchA19Parser {
 
   public WAWhitmanCountyBParser() {
-    super("WHITMAN COUNTY", "WA");
+    this("WHITMAN COUNTY", "WA");
+  }
+
+  WAWhitmanCountyBParser(String defCity, String defState) {
+    super(defCity, defState);
   }
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,whitcomrapidnotification@whitcom.org";
   }
 
   @Override

@@ -8,6 +8,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WAWhitmanCountyParser extends GroupBestParser {
 
   public WAWhitmanCountyParser() {
-    super(new WAWhitmanCountyAParser(), new WAWhitmanCountyBParser());
+    super(new WAWhitmanCountyBParser());
   }
 }
