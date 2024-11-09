@@ -462,6 +462,7 @@ public class Active911ParserTable {
       "US/FL/BayCounty",                  "FLBayCounty",
       "US/FL/BonifayFireRescue",          "FLHolmesCounty",
       "US/FL/CalhounCounty",              "FLCalhounCounty",
+      "US/FL/CapeCoral",                  "FLLeeCountyD",
       "US/FL/CharlotteCountySheriff",     "FLCharlotteCounty",
       "US/FL/CitrusCounty",               "FLCitrusCounty",
       "US/FL/CityofCocoa",                "FLCocoa",
