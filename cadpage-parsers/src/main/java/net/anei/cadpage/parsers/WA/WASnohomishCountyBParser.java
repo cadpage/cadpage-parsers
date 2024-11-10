@@ -7,17 +7,17 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class WASnohomishCountyBParser extends FieldProgramParser {
-  
+
   public WASnohomishCountyBParser() {
     super("SNOHOMISH COUNTY", "WA",
           "INFO? UNIT_CALL_CH  ( UNIT | CH? ) ADDRCITY1/S6 EMPTY? ( X_UNIT_INFO! | CH_INFO ) INFO/N+");
     setupSpecialStreets("AVE A");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
   }
-  
+
   @Override
   public String getFilter() {
-    return "NoReply@snopac911.us,NoReply@snosafe.org";
+    return "NoReply@snopac911.us,NoReply@snosafe.org,noreply@sno911.org";
   }
 
   @Override
@@ -29,9 +29,9 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   private static final String CHANNEL_PTN_STR = "\\*?((?:FIRE|NC F) TAC \\d+(?:/\\d+)?|) *[/*]?";
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT_CALL_CH")) return new MyUnitCallChannelField();
@@ -42,11 +42,11 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
     if (name.equals("CH_INFO")) return new MyChannelInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CHANNEL_PTN = Pattern.compile(">>>?([A-Z]+)<<<? *(.*)");
   private static final Pattern UNIT_CALL_PTN = Pattern.compile(">>>?(.*)<<<?([A-Z]+)");
   private class MyUnitCallChannelField extends Field {
-    
+
     @Override public boolean canFail() {
       return true;
     }
@@ -68,7 +68,7 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
       }
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
@@ -78,9 +78,9 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CALL CH?";
     }
-    
+
   }
-  
+
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("([^/]*)/(.*?)/([^/]*)/?");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private static final Pattern MAP_PTN = Pattern.compile("[A-Z]{2}\\d{3}[A-Z0-9]?");
@@ -108,20 +108,20 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE MAP";
     }
   }
-  
+
   private static final Pattern X_UNIT_INFO_PTN = Pattern.compile("(?:Between ([^*]*?))?\\*([ ,A-Z0-9]*)\\* *(.*)");
   private class MyCrossUnitInfoField extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = X_UNIT_INFO_PTN.matcher(field);
@@ -134,7 +134,7 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", match.group(3).trim());
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
@@ -157,15 +157,15 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
       }
       data.strSupp = append(data.strSupp, "\n", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH INFO";
     }
   }
-  
+
   private static final Pattern APT_DIROF_PTN = Pattern.compile("[NSEW]O .*");
-  
+
   @Override
   protected boolean isNotExtraApt(String apt) {
     if (APT_DIROF_PTN.matcher(apt).matches()) return true;
@@ -176,14 +176,14 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   public String adjustMapAddress(String addr) {
     // Usually PK means PIKE, but not here
     addr = PK_PTN.matcher(addr).replaceAll("PKWY");
-    
+
     // SR 2 usually means WA 2, but here is it US 2
     addr = SR2_PTN.matcher(addr).replaceAll("US 2");
     return super.adjustMapAddress(addr);
   }
   private static final Pattern PK_PTN = Pattern.compile("\\bPK\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern SR2_PTN = Pattern.compile("\\bSR *2\\b", Pattern.CASE_INSENSITIVE);
-//  
+//
 //  private static final Properties CALL_CODES = buildCodeTable(new String[]{
 //      "ACTIVE",   "Active Shooter",
 //      "AIR",      "Small Plane Crash",
