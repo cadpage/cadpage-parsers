@@ -18,7 +18,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
 
   @Override
   public String getFilter() {
-    return "cccademail@camdencounty.com,cccalert@camdencodps.org";
+    return "cccademail@camdencounty.com,cccalert@camdencodps.org,no-reply@mark43.com";
   }
 
   @Override
