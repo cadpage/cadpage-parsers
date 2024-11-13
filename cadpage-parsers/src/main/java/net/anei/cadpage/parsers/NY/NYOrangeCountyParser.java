@@ -8,11 +8,12 @@ Orange County, NY
 
 
 public class NYOrangeCountyParser extends GroupBestParser {
-  
+
   public NYOrangeCountyParser() {
     super(new NYOrangeCountyAParser(),
            new NYOrangeCountyBParser(),
            new NYOrangeCountyCParser(),
-           new NYOrangeCountyDParser());
+           new NYOrangeCountyDParser(),
+           new NYOrangeCountyEParser());
   }
 }

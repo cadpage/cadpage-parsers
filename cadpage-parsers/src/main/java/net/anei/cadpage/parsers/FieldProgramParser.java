@@ -1786,7 +1786,7 @@ public class FieldProgramParser extends SmartAddressParser {
                 // decision node of a conditional branch that is not
                 // the last branch
                 if (procStep.tag == null || procStep.nextStepLink == null) {
-                  skipReq = true;;
+                  skipReq = true;
                 }
               }
               procStep = procStep.getNextStep();
