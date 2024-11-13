@@ -242,7 +242,8 @@ public class ManageParsers {
         "ALStClairCountyA",   "General",                 // 10/02/2024
         "WAGraysHarborCountyA","WAGraysHarborCountyB",   // 10/07/2024
         "PABerksCountyB",     "PABerksCountyD",          // 10/07/2024
-        "WAWhitmanCountyA",   "General"                 // 11/08/2024
+        "WAWhitmanCountyA",   "General",                 // 11/08/2024
+        "NCStanlyCountyB",    "General"                 // 11/12/2024
   });
 
 }
