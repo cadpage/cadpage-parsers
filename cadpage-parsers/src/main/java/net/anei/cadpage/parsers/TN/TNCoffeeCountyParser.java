@@ -14,7 +14,7 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "coffeecotn@911email.net,geoconex@nlamerica.com,dispatch@911comm2.info,@coffeetne911.info";
+    return "dispatch@coffeetne911.info";
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
@@ -43,6 +43,9 @@ public class TNCoffeeCountyParser extends DispatchA74Parser {
       // Bedford County
       "NORMANDY",
       "WARTRACE",
+
+      // Cannon County
+      "BRADYVILLE",
 
       // Franklin County
       "ESTILL SPRINGS",
