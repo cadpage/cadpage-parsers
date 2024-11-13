@@ -13,6 +13,7 @@ public class PAMcKeanCountyParser extends GroupBestParser {
   public PAMcKeanCountyParser() {
     super(new PAMcKeanCountyAParser(),
           new PAMcKeanCountyBParser(),
-          new PAMcKeanCountyCParser());
+          new PAMcKeanCountyCParser(),
+          new PAMcKeanCountyDParser());
   }
 }
