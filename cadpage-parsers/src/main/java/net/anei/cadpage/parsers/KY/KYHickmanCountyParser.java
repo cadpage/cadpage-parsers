@@ -9,7 +9,10 @@ public class KYHickmanCountyParser extends FieldProgramParser {
 
   public KYHickmanCountyParser() {
     super("HICKMAN COUNTY", "KY",
-          "ID PRI CALL PLACE+? ADDRCITYST/Z UNIT EMPTY! INFO/N+");
+          "( SELECT/1 CALL:CALL! RUN:SKIP! PLACE:PLACE! ADDR:ADDRCITYST! CITY:CITY! " +
+                "ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! CALLERPHONE:PHONE! MAP:MAP! UNIT:UNIT! INFO:INFO! INFO/N+ " +
+          "| ID2 PRI2 CALL PLACE2+? ADDRCITYST/Z UNIT EMPTY! INFO/N+ " +
+          ")");
   }
 
   @Override
@@ -22,14 +25,22 @@ public class KYHickmanCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("NEW DISPATCH")) return false;
-    return parseFields(DELIM.split(body), data);
+    if (body.startsWith("CALL:")) {
+      setSelectValue("1");
+      return parseFields(body.split("\n"), data);
+    } else {
+      setSelectValue("2");
+      return parseFields(DELIM.split(body, -1), data);
+    }
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("INC +(.*)", true);
-    if (name.equals("PRI")) return new PriorityField("Pri (\\d)", true);
-    if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("ID2")) return new IdField("INC +(.*)", true);
+    if (name.equals("PRI2")) return new PriorityField("Pri (\\d)", true);
+    if (name.equals("PLACE2")) return new MyPlaceField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
