@@ -17,7 +17,7 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
 
   public LAEastFelicianaParishParser() {
     super(CITY_LIST, "EAST FELICIANA PARISH", "LA");
-    setFieldList("ID CODE CALL DATE TIME ADDR APT GPS PLACE CITY ST");
+    setFieldList("ID CODE CALL DATE TIME ADDR X APT GPS PLACE CITY ST");
   }
 
   @Override
@@ -26,8 +26,10 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Autopage EventID:(\\d{10})");
-  private static final Pattern MASTER_PTN = Pattern.compile("Call (\\d{10}) ([A-Z0-9]+) (\\d\\d?/\\d\\d?/\\d{4}), (\\d\\d?:\\d\\d [AP]M) {2,}([^,]*?)(?:, +([A-Z]{2}))?(?: +(\\d{5}))?(?:,([^,]*,[^,]*))?");
+  private static final Pattern MASTER_PTN =
+      Pattern.compile("Call (\\d{10}) ([A-Z0-9]+) (\\d\\d?/\\d\\d?/\\d{4}), (\\d\\d?:\\d\\d [AP]M) {2,}([^,]*?)(?:, *([^,]*))??(?:, +([A-Z]{2}))?(?: +(\\d{5}))?(?:,([^,]*,[^,]*))?");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|LOT) *(.*)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -43,16 +45,27 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
     data.strDate = match.group(3);
     setTime(TIME_FMT, match.group(4), data);
     String addr = match.group(5);
-    data.strState = getOptGroup(match.group(6));
-    String zip = match.group(7);
-    String gps = match.group(8);
+    String aptCity = match.group(6);
+    data.strState = getOptGroup(match.group(7));
+    String zip = match.group(8);
+    String gps = match.group(9);
     if (gps != null) setGPSLoc(gps, data);
 
-    addr = stripFieldEnd(addr, " EF");
-    parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-    if (data.strApt.equals("ST") || data.strApt.equals("LN")) data.strApt = "";
-    if (data.strCity.isEmpty() && zip !=  null) data.strCity = zip;
-
+    if (aptCity != null) {
+      parseAddress(addr, data);
+      aptCity = stripFieldEnd(aptCity, " EF");
+      parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY, aptCity.trim(), data);
+      String apt = getStart();
+      match = APT_PTN.matcher(apt);
+      if (match.matches()) apt = match.group(1);
+      data.strApt = append(data.strApt, "-", apt);
+    } else {
+      addr = stripFieldEnd(addr, " EF");
+      parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
+      if (data.strApt.equals("ST") || data.strApt.equals("LN")) data.strApt = "";
+      if (data.strCity.isEmpty() && zip !=  null) data.strCity = zip;
+    }
+    if (data.strCity.equals("EAST FELIC")) data.strCity = "EAST FELICIANA";
     return true;
   }
 
@@ -166,6 +179,9 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
 
       // East Baton Rouge Parish
       "ZACHARY",
+      
+      // East Feliciana Parish
+      "EAST FELIC",
 
       // West Feliciana Parish
       "ST FRANCESVILLE",
