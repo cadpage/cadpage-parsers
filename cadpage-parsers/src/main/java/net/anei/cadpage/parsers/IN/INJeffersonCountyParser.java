@@ -10,7 +10,7 @@ public class INJeffersonCountyParser extends FieldProgramParser {
 
   public INJeffersonCountyParser() {
     super("JEFFERSON COUNTY", "IN",
-          "CFS_location:ADDRCITY! Nature:CALL! Details:INFO! END");
+          "CFS_location:ADDRCITYST! Nature:CALL! Details:INFO! END");
   }
 
   @Override

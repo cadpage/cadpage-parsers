@@ -2664,6 +2664,7 @@ public class Active911ParserTable {
       "US/TX/Weatherford",                "TXParkerCountyD",
       "US/TX/Weslaco",                    "TXHidalgoCountyB",
       "US/TX/West",                       "TXMcLennanCountyA",
+      "US/TX/WestColumbiaPD",             "TXBrazoriaCountyC",
       "US/TX/WESTCOM",                    "TXCyCreekCommCenterB",
       "US/TX/WESTCOMFortBendCounty",      "TXFortBendCountyC",
       "US/TX/WhartonCounty",              "TXWhartonCounty",
