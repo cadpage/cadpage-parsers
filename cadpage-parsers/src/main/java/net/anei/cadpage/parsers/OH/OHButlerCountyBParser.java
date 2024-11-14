@@ -47,6 +47,7 @@ public class OHButlerCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
 
@@ -81,6 +82,14 @@ public class OHButlerCountyBParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
+    }
+  }
+
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
       super.parse(field, data);
     }
   }

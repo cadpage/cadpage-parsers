@@ -1904,6 +1904,7 @@ public class Active911ParserTable {
       "US/OH/BlanchesterEMS",             "OHClintonCounty,OHWarrenCountyF,OHClermontCountyC",
       "US/OH/BrownCounty",                "OHBrownCounty",
       "US/OH/Brunswick",                  "OHMedinaCountyC",
+      "US/OH/ButlerCountyEMA",            "OHButlerCountyB",
       "US/OH/ButlerCountySheriff",        "OHButlerCountyA,OHButlerCountyC",
       "US/OH/Byesville",                  "OHGuernseyCounty",
       "US/OH/Cencom",                     "OHStarkCountyCencomm,OHStarkCountyRedcenter2",
