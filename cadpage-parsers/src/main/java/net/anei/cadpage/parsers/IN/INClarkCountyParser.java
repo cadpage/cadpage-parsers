@@ -10,7 +10,7 @@ public class INClarkCountyParser extends DispatchH05Parser {
   public INClarkCountyParser() {
     super("CLARK COUNTY", "IN",
           "( DATETIME CALL CALL/SDS+? SRC PLACE? ADDRCITY/S6 APT2? X? PLACE? UNIT ( ID! | PHONE ID! | NAME ID! | NAME SKIP PHONE ID! | NAME PHONE ID/Y! ) https:SKIP! " +
-          "| SKIP? UNIT ADDRCITY/S6 CALL ID! X? ( ST_INFO_BLK | PHONE ST_INFO_BLK | NAME ST_INFO_BLK | NAME PHONE ST_INFO_BLK ) INFO_BLK+ https:SKIP! GPS1! GPS2! PLACE " +
+          "| ( SKIP UNIT | UNIT ) ADDRCITY/S6 CALL ID! X? ( ST_INFO_BLK | PHONE ST_INFO_BLK | NAME ST_INFO_BLK | NAME PHONE ST_INFO_BLK ) INFO_BLK+ https:SKIP! GPS1! GPS2! PLACE " +
           ") END");
   }
 
