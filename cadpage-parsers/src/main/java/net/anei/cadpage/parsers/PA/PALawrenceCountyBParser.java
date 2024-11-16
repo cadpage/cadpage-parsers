@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 
@@ -7,6 +9,7 @@ public class PALawrenceCountyBParser extends DispatchH03Parser {
 
   public PALawrenceCountyBParser() {
     this("LAWRENCE COUNTY", "PA");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   PALawrenceCountyBParser(String defCity, String defState) {
@@ -30,4 +33,7 @@ public class PALawrenceCountyBParser extends DispatchH03Parser {
     if (city.equals("JACKSON")) return "COOPERSTOWN";
     return city;
   }
-}
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "1560 AIRPORT RD",                      "+41.377640,-79.858340"
+ });}
