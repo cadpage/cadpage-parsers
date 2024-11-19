@@ -5,7 +5,11 @@ import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
 public class ZCAABRedDeerCountyBParser extends DispatchH03Parser {
 
   public ZCAABRedDeerCountyBParser() {
-    super("RED DEER COUNTY", "AB");
+    this("RED DEER COUNTY");
+  }
+
+  public ZCAABRedDeerCountyBParser(String defCity) {
+    super(defCity, "AB");
   }
 
   @Override

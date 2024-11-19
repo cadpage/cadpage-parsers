@@ -1,13 +1,13 @@
 package net.anei.cadpage.parsers.ZCAAB;
 
-/*
-Lacombe County, AB, Canadaa
-Alias for Red Deer County
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class ZCAABLacombeCountyParser extends ZCAABRedDeerCountyAParser {
-  
+/**
+ * Lacombe County, AB
+ */
+public class ZCAABLacombeCountyParser extends GroupBestParser {
+
   public ZCAABLacombeCountyParser() {
-    super("LACOMBE COUNTY");
+    super(new ZCAABLacombeCountyAParser(), new ZCAABLacombeCountyBParser());
   }
 }
