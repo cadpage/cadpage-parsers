@@ -9,12 +9,16 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA52Parser extends FieldProgramParser {
 
   private Properties callCodes;
   private CodeTable callTable;
   private Properties zipCityTable;
+
+  private boolean useRunReportParser;
+  private RunReportParser runReportParser;
 
   public DispatchA52Parser(String defCity, String defState) {
     this(null, null, null, defCity, defState);
@@ -42,7 +46,6 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState) {
     this(callCodes, callTable, cityCodes, defCity, defState, null);
-
   }
 
   private DispatchA52Parser(Properties callCodes, CodeTable callTable, Properties cityCodes, String defCity, String defState, Properties zipCityTable) {
@@ -53,12 +56,20 @@ public class DispatchA52Parser extends FieldProgramParser {
     this.callCodes = callCodes;
     this.callTable = callTable;
     this.zipCityTable = zipCityTable;
+
+    this.runReportParser = new RunReportParser(defCity, defState);
   }
 
   private static final Pattern PREFIX_PTN = Pattern.compile("[a-z0-9]*: *");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    useRunReportParser = subject.equals("EMS Status Notification");
+    if (useRunReportParser) {
+      return runReportParser.parseMsg(body, data);
+    }
+
     body = body.replace('\n', ' ');
     Matcher match = PREFIX_PTN.matcher(body);
     if (match.lookingAt()) body = body.substring(match.end());
@@ -77,6 +88,7 @@ public class DispatchA52Parser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
+    if (useRunReportParser) return runReportParser.getProgram();
     return super.getProgram().replace("CODE", "CODE CALL?").replace("GPS", "GPS ADDR?");
   }
 
@@ -237,6 +249,29 @@ public class DispatchA52Parser extends FieldProgramParser {
       field = stripFieldStart(field, "<");
       field = stripFieldEnd(field, ">");
       super.parse(field, data);
+    }
+  }
+
+  // The main parser invoke ignore case and any field order flags, which are not
+  // appropriate for the run report format, so we have to set up our own private
+  // parser to handle them
+
+  private static class RunReportParser extends FieldProgramParser {
+
+    public RunReportParser(String defCity, String defState) {
+      super(defCity, defState,
+            "Unit:UNIT! IncNo:ID! Date:DATETIME! INFO/N+");
+    }
+
+    public boolean parseMsg(String body, Data data) {
+      data.msgType = MsgType.RUN_REPORT;
+      return parseFields(body.split("\n"), data);
+    }
+
+    @Override
+    public Field getField(String name) {
+      if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d", true);
+      return super.getField(name);
     }
   }
 }
