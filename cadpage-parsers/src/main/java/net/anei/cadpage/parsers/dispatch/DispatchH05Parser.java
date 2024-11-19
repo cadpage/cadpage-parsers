@@ -220,7 +220,7 @@ public class DispatchH05Parser extends HtmlProgramParser {
     }
   }
 
-  private class BaseTimesField extends InfoField {
+  protected class BaseTimesField extends InfoField {
 
     @Override
     public void parse(String field, Data data) {
