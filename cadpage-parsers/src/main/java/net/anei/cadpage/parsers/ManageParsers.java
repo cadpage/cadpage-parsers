@@ -243,7 +243,8 @@ public class ManageParsers {
         "WAGraysHarborCountyA","WAGraysHarborCountyB",   // 10/07/2024
         "PABerksCountyB",     "PABerksCountyD",          // 10/07/2024
         "WAWhitmanCountyA",   "General",                 // 11/08/2024
-        "NCStanlyCountyB",    "General"                 // 11/12/2024
+        "NCStanlyCountyB",    "General",                 // 11/12/2024
+        "TXCookeCountyA",     "General"                 // 11/18/2024
   });
 
 }
