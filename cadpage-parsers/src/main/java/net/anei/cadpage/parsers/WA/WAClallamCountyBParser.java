@@ -7,11 +7,17 @@ public class WAClallamCountyBParser extends DispatchA87Parser {
 
   public WAClallamCountyBParser() {
     super("CLALLAM COUNTY", "WA");
+    removeWords("LA");
   }
 
   @Override
   public String getFilter() {
     return "Dispatch@co.clallam.wa.us,Dispatch@clallamcountywa.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_SUPPR_LA;
   }
 
   @Override
