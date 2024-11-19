@@ -100,6 +100,7 @@ public class Active911ParserTable {
       "US/AL/CityofHomewood",             "ALJeffersonCountyL",
       "US/AL/CityofMountainBrook",        "ALJeffersonCountyB",
       "US/AL/CityofPelham",               "ALPelham",
+      "US/AL/ClarkeCounty",               "ALClarkeCounty",
       "US/AL/ClayCounty",                 "ALClayCounty",
       "US/AL/CleburneCounty",             "ALCleburneCounty",
       "US/AL/CoffeeCounty",               "ALCoffeeCountyA",
