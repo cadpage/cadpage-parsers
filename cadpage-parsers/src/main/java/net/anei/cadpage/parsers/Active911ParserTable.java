@@ -2449,6 +2449,7 @@ public class Active911ParserTable {
       "US/TN/Overton",                    "TNOvertonCounty",
       "US/TN/ParrottsChapelFD",           "TNSevierCountyA",
       "US/TN/PutnamCounty",               "TNPutnamCounty",
+      "US/TN/RapidG911",                  "TNMauryCounty",
       "US/TN/RoaneCounty",                "TNRoaneCounty",
       "US/TN/SevierCounty",               "TNSevierCounty",
       "US/TN/SmithCounty",                "TNSmithCounty",
