@@ -15,7 +15,7 @@ public class WAThurstonCountyParser extends FieldProgramParser {
 
   public WAThurstonCountyParser() {
     super(CITY_CODES, "THURSTON COUNTY", "WA",
-           "EMPTY CODE CALL ADDR CITY! X+? SRC MAP% INFO+ Units:UNIT+");
+           "EMPTY CODE CALL ( GPS1 GPS2! | ADDR CITY? ) X+? SRC ( MAPPAGE XXXX | MAP% ) INFO+ Units:UNIT+");
   }
 
   @Override
@@ -27,7 +27,32 @@ public class WAThurstonCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String body, Data data) {
     addressFld = cityFld = "";
     body = body.replace(" Unit:", " Units:");
-    return parseFields(body.split(","), 8, data);
+    return parseFields(body.split(","), 5, data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("SRC")) return new SourceField("FD\\d+|[A-Z]{1,2}[FP]D|TCSO", true);
+    if (name.equals("MAPPAGE")) return new SkipField("mappage", true);
+    if (name.equals("XXXX")) return new SkipField("XXXX", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]{1,2}\\d+", true);
+    if (name.equals("UNIT")) return new MyUnitField();
+    return super.getField(name);
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
+    }
+
   }
 
   private class MyAddressField extends AddressField {
@@ -50,6 +75,13 @@ public class WAThurstonCountyParser extends FieldProgramParser {
   private class MyCityField extends CityField {
 
     // Save the city field for future checks against the cross street field
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!super.checkParse(field, data)) return false;
+      cityFld = field;
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       cityFld = field;
@@ -119,19 +151,9 @@ public class WAThurstonCountyParser extends FieldProgramParser {
     }
   }
 
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("SRC")) return new SourceField("FD\\d+");
-    if (name.equals("MAP")) return new MapField("[A-Z]\\d+");
-    if (name.equals("UNIT")) return new MyUnitField();
-    return super.getField(name);
-  }
-
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BU", "BUCODA",
+      "CE", "CENTRALIA",
       "LA", "LACEY",
       "OL", "OLYMPIA",
       "RA", "RANIER",
