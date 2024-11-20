@@ -2012,6 +2012,7 @@ public class ParserList {
               ,"WIGrantCounty"                  ,"Grant County, WI"
               ,"WIKenoshaCounty"                ,"Kenosha County, WI"
               ,"WILaCrosseCounty"               ,"La Crosse County, WI"
+              ,"WIMarinetteCounty"              ,"Marinette County, WI"
               ,"WIMilwaukeeCounty"              ,"Milwaukee County, WI"
               ,"WIOutagamieCounty"              ,"Outagamie County, WI"
               ,"WIOzaukeeCounty"                ,"Ozaukee County, WI"

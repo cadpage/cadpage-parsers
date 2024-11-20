@@ -11,11 +11,11 @@ public class TXGuadalupeCountyParser extends DispatchA19Parser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
   @Override
   public String getFilter() {
-    return "rapidnotifications@seguintexas.gov";
+    return "rapidnotifications@seguintexas.gov,ibridge@mail.police365.com";
   }
 }
