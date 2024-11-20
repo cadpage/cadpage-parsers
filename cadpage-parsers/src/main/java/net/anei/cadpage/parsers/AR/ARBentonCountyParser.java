@@ -10,6 +10,6 @@ public class ARBentonCountyParser extends GroupBestParser {
     super(new ARBentonCountyAParser(), new ARBentonCountyBParser(),
           new ARBentonCountyCParser(), new ARBentonCountyDParser(),
           new ARBentonCountyEParser(), new ARBentonCountyFParser(),
-          new ARBentonCountyIParser());
+          new ARBentonCountyIParser(), new ARBentonCountyJParser());
   }
 }

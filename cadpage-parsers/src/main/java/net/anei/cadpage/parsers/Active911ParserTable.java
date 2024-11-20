@@ -177,6 +177,7 @@ public class Active911ParserTable {
       "US/AL/WRCC",                       "ALWalkerCountyB",
       "US/AR/BaxterCounty",               "ARBaxterCounty",
       "US/AR/BentonCounty",               "ARBentonCountyA",
+      "US/AR/BentonCountySO",             "ARBentonCountyJ",
       "US/AR/Bentonville",                "ARBentonCountyC",
       "US/AR/CaveSpringsFD",              "ARBentonCountyA,ARBentonCountyD",
       "US/AR/CentralEMS",                 "ARWashingtonCountyB",
