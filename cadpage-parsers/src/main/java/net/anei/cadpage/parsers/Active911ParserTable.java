@@ -2638,6 +2638,7 @@ public class Active911ParserTable {
       "US/TX/Richardson",                 "TXDallasCountyE",
       "US/TX/Roanoke",                    "TXRoanoke",
       "US/TX/RobertsonCounty",            "TXRobertsonCounty",
+      "US/TX/RockdalePD",                 "TXMilamCounty",
       "US/TX/RockwallCounty",             "TXRockwallCountyC",
       "US/TX/RockwallCountyEMS",          "TXRockwallCountyD,TXRockwallCountyE",
       "US/TX/Rosenburg",                  "TXRosenberg",
