@@ -712,7 +712,7 @@ public class Active911ParserTable {
       "US/IL/WoodfordCounty",             "ILWoodfordCounty",
       "US/IN/AdamsCounty",                "INAdamsCounty",
       "US/IN/AllenCounty",                "INAllenCounty",
-      "US/IN/AmeriProHealth",             "INFLoydCounty",
+      "US/IN/AmeriProHealth",             "INFloydCounty",
       "US/IN/AndersonFD",                 "INMadisonCountyC,INMadisonCountyE",
       "US/IN/BartholomewCounty",          "INBartholomewCounty",
       "US/IN/BlackfordCounty",            "INBlackfordCounty",

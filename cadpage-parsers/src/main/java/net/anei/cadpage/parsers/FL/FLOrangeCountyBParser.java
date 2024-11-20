@@ -8,11 +8,11 @@ import net.anei.cadpage.parsers.StandardCodeTable;
 import net.anei.cadpage.parsers.dispatch.DispatchA52Parser;
 
 public class FLOrangeCountyBParser extends DispatchA52Parser {
-  
+
   public FLOrangeCountyBParser() {
     super(CODE_TABLE, "ORANGE COUNTY", "FL");
   }
-  
+
   @Override
   public String getFilter() {
     return "tap@yourdomain.com,@orlandohealth.com";
@@ -24,8 +24,8 @@ public class FLOrangeCountyBParser extends DispatchA52Parser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!super.parseMsg(body, data)) return false;
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
     if (data.strCode.startsWith("_")) {
       data.strCode = data.strCode.substring(1).trim();
       String call = CODE_TABLE.getCodeDescription(data.strCode);
@@ -33,6 +33,6 @@ public class FLOrangeCountyBParser extends DispatchA52Parser {
     }
     return true;
   }
-  
+
   private static final CodeTable CODE_TABLE = new StandardCodeTable();
 }

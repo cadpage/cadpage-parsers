@@ -9,11 +9,11 @@ public class PALawrenceCountyBParser extends DispatchH03Parser {
 
   public PALawrenceCountyBParser() {
     this("LAWRENCE COUNTY", "PA");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   PALawrenceCountyBParser(String defCity, String defState) {
     super(defCity, defState);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override

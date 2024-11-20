@@ -37,12 +37,12 @@ public class INMarionCountyBParser extends DispatchA52Parser {
   private static final Pattern MAP_CROSS_PTN = Pattern.compile("(\\d{5}[NS] \\d{5}[EW])\\b *(.*)");
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "PUBLIC SAFETY CAD:");
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
     body = body.substring(match.end());
-    if (!super.parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
 
     data.strUnit = data.strUnit.replace(", ", ",");
     data.strUnit = UNIT_PFX_PTN.matcher(data.strUnit).replaceAll("");

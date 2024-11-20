@@ -26,10 +26,10 @@ public class FLLakeCountyBParser extends DispatchA52Parser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     if (!body.startsWith("LOC:")) body = "CMT:" + body;
     body = body.replace("LAT:", " LAT:");
-    if (!super.parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
     String call = CALL_CODES.getCodeDescription(data.strCall);
     if (call != null) {
       data.strCode = data.strCall;

@@ -12,10 +12,10 @@ public class INHendricksCountyParser extends DispatchA52Parser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     if (!body.startsWith("CAD:")) return false;
     body = body.substring(4).trim();
-    return super.parseMsg(body, data);
+    return super.parseMsg(subject, body, data);
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {

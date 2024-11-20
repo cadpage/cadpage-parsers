@@ -27,7 +27,7 @@ public class MOGreeneCountyBParser extends DispatchA52Parser {
     body = stripFieldStart(body, "GRN_Alert:");
     if (body.startsWith(":")) body = "LOC" + body;
     else if (!body.startsWith("LOC:")) body = "LOC:"+ body;
-    if (!parseMsg(body, data)) return false;
+    if (!super.parseMsg(subject, body, data)) return false;
     return data.strAddress.length() > 0;
   }
 
