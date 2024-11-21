@@ -11,7 +11,7 @@ public class DispatchA98Parser extends FieldProgramParser {
 
   public DispatchA98Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Incident:ID! Station:UNIT? Complaint:CALL! Address_Street:ADDR/S6! Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:SKIP! Units:SKIP! Notes:INFO! INFO/N+");
+          "Incident:ID! Station:UNIT? Complaint:CALL! Address_Street:ADDR/S6! Caller:NAME? Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:SKIP! Units:SKIP! Notes:INFO! INFO/N+");
   }
 
   @Override
