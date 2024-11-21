@@ -124,6 +124,7 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("MAP")) return new BaseMapField();
     if (name.equals("ID2")) return new BaseIdField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -180,6 +181,31 @@ public class DispatchH03Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (data.strCallId.length() > 0) return;
       data.strCallId = field;
+    }
+  }
+
+  private static final Pattern GPS_PTN1 = Pattern.compile("CELL LOC INFO: LL\\(([^)]+)\\)");
+  private static final Pattern GPS_PTN2 = Pattern.compile("\\bLAT: *<?([-+]?[.0-9]+)>? +LONG: *<?([-+]?[.0-9]+)>?");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = GPS_PTN1.matcher(field);
+      if (match.find()) {
+        setGPSLoc(match.group(1), data);
+        return;
+      }
+
+      match = GPS_PTN2.matcher(field);
+      if (match.find()) {
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+      }
+
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "GPS " + super.getFieldNames();
     }
   }
 }
