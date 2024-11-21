@@ -24,26 +24,26 @@ public class KSAndoverParser extends DispatchGlobalDispatchParser {
         "WAGON WHEEL"
     );
   }
-  
+
   @Override
   public String getFilter() {
-    return "DispatchMail@andoverks.com";
+    return "DispatchMail@andoverks.com,@andoverks.gov";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if(!subject.equals("CAD Call")) return false;
-    
+
     body = body.replace('\n', ' ');
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     if (data.strCity.endsWith(" KS")) {
       data.strCity = data.strCity.substring(0,data.strCity.length()-3).trim();
     }
     return true;
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 OPEN LINE/HANG-UP",
       "ALARM - ENTRY",
@@ -64,16 +64,16 @@ public class KSAndoverParser extends DispatchGlobalDispatchParser {
       "DISTURBANCE - PHYSICAL",
       "DISTURBANCE - VERBAL",
       "DOCUMENTATION",
-      "FIRE - AIRCRAFT EMERGENCY",                                                                              
+      "FIRE - AIRCRAFT EMERGENCY",
       "FIRE - ALARM COMMERCIAL",
       "FIRE - ALARM RESIDENTIAL",
-      "FIRE - BRUSH/GRASS FIRE",                                                                                
-      "FIRE - BUILDING FIRE RESIDENTIAL",                                                                       
+      "FIRE - BRUSH/GRASS FIRE",
+      "FIRE - BUILDING FIRE RESIDENTIAL",
       "FIRE - CHECK A FIRE THAT IS OUT",
       "FIRE - CHECK ELEC WIRING/APPLIANCE",
       "FIRE - CO DETECTOR ACTIVATION",
       "FIRE - FUEL WASH DOWN",
-      "FIRE - HAZ-MAT RESPONSE",                                                                                
+      "FIRE - HAZ-MAT RESPONSE",
       "FIRE - LANDING ZONE",
       "FIRE - MEDICAL RESPONSE",
       "FIRE - NATURAL GAS ODOR",
