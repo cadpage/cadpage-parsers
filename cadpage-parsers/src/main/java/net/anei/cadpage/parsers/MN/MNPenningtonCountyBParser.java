@@ -10,7 +10,7 @@ public class MNPenningtonCountyBParser extends DispatchProphoenixParser {
 
   @Override
   public String getFilter() {
-    return "noreply@penningtonsheriff.org";
+    return "noreply@penningtonsheriff.org,@sanfordhealth.org";
   }
   private static final String[] CITY_LIST = new String[] {
 
