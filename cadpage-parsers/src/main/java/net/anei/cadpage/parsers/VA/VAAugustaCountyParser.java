@@ -21,7 +21,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
   public VAAugustaCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-           "FYI? CALL! ( ADDR/SZ! END | PLACE? ADDR/S! MAP? CITY? INFO+ )");
+           "FYI? CALL! ( ADDR/SZ! END | ( PLACE ID ADDR/S! | PLACE? ADDR/S! ) MAP? CITY? INFO+ )");
     setupCities(CITY_CODES);
     removeWords("MALL");
   }
@@ -62,6 +62,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{5,}");
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("INFO")) return new MyInfoField();
