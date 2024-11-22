@@ -198,6 +198,7 @@ public class DispatchH03Parser extends FieldProgramParser {
       match = GPS_PTN2.matcher(field);
       if (match.find()) {
         setGPSLoc(match.group(1)+','+match.group(2), data);
+        return;
       }
 
       super.parse(field, data);
