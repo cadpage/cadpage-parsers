@@ -9,6 +9,6 @@ public class INKnoxCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "KnoxCoCAD@in.gov,KnoxCoCAD@ipsc.in.gov";
+    return "KnoxCoCAD@in.gov,KnoxCoCAD@ipsc.in.gov,KnoxCAD@knoxcounty.in.gov";
   }
 }
