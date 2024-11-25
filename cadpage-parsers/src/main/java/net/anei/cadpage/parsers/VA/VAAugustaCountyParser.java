@@ -127,6 +127,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
   }
 
   // Info field contains all kinds of sloppy stuff
+  private static final Pattern INFO_ID_PTN = Pattern.compile("\\d{5,}");
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:ROOM|RM|APT) *(.*)");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("CNTY-.*|MED-\\d|HRECC?|SEOC|WEOC");
   private static final Pattern INFO_MAP_PTN = Pattern.compile("\\d{2,3}-\\d{2}");
@@ -134,6 +135,11 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
     @Override
     public void parse(String field, Data data) {
+
+      if (data.strCallId.isEmpty() && INFO_ID_PTN.matcher(field).matches()) {
+        data.strCallId = field;
+        return;
+      }
 
       // Info field are frequently broken up by slashes :(
       for (String fld : field.split("/")) {
@@ -190,7 +196,7 @@ public class VAAugustaCountyParser extends DispatchOSSIParser {
 
     @Override
     public String getFieldNames() {
-      return "APT MAP PLACE X INFO CH";
+      return "APT MAP PLACE X ID INFO CH";
     }
   }
 
