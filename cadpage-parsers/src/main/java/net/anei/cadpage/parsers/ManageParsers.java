@@ -18,8 +18,14 @@ public class ManageParsers {
   private String curLocCode = null;
   private MsgParser curParser = null;
 
+  private boolean testMode = false;
+
   // Private constructor, no body can build this except getInstance()
   private ManageParsers() {}
+
+  public void setTestMode(boolean testMode) {
+    this.testMode = testMode;
+  }
 
   /**
    * Get parser corresponding to location code
@@ -44,7 +50,9 @@ public class ManageParsers {
     if (location != null && location.startsWith("X")) location = location.substring(1);
 
     // Convert any old codes that have been renamed to new values
-    location = convertLocationCode(location, subject, body);
+    // This is suppressed in test mode so we can catch hard coded referenced to
+    // decomisioned parsers
+    if (!testMode) location = convertLocationCode(location, subject, body);
 
     // First level cache.  If location code matches what we have stored for
     // the current location code, return the current parser
@@ -168,8 +176,8 @@ public class ManageParsers {
    * @return possibly updated location code
    */
   public static String convertLocationCode(String location, String subject, String body) {
-    String result = OLD_CODE_TABLE.getProperty(location);
-    if (result != null) return result;
+      String result = OLD_CODE_TABLE.getProperty(location);
+      if (result != null) return result;
 
     // And another from NYOneidaCounty to NYMadisonCountyB from 01/16/2018
     if (subject != null && location.equals("NYOneidaCounty") && subject.equals("SEVAC")) return "NYMadisonCountyB";
