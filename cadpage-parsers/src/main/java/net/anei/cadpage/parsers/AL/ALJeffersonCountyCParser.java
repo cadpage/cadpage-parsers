@@ -13,31 +13,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Jefferson County, AL (C)
  */
 public class ALJeffersonCountyCParser extends FieldProgramParser {
-  
+
 
   public ALJeffersonCountyCParser() {
     super("JEFFERSON COUNTY", "AL",
           "( CALL ADDRCITY/SXP | ADDRCITY/SXP CALL! ) JUNK X:X? Units:UNIT! Created:DATETIME_ID! Pri_Inc:ID! N:INFO/N+");
   }
-    
+
   @Override
   public String getFilter() {
     return "FireDesk@jeffcoal911.org";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    do {
-      if (subject.equals("!")) break;
-      
-      if (body.startsWith("/ ! / ")) {
-        body = body.substring(6).trim();
-        break;
-      }
-    } while (false);
+    body = stripFieldStart(body, "/ ! / ");
     return parseFields(body.split("\n"), 5, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -47,7 +40,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
     if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_SRC_PTN = Pattern.compile("(.*)\\(([ \\w]*)\\)");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("\\d[^ ]*|[A-Z]\\d*|(?:APT#?|#) *(.*)");
   private static final Pattern ADDR_MM_PTN = Pattern.compile("/? *MM.*");
@@ -56,13 +49,13 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("@")) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "@");
@@ -74,12 +67,12 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
       field = stripFieldEnd(field, "()");
       field = field.replace('@', '&');
       super.parse(field, data);
-      
+
       int pt = data.strCity.indexOf("  ");
       if (pt >= 0) data.strCity = data.strCity.substring(0,pt);
-      
+
       data.strAddress = data.strAddress.replace(" & MM", " MM");
-      
+
       if (data.strPlace.length() > 0) {
         match = ADDR_APT_PTN.matcher(data.strPlace);
         if (match.matches()) {
@@ -98,7 +91,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " SRC";
@@ -114,7 +107,7 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) *#(\\d*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private class MyDateTimeIdField extends DateTimeField {
@@ -131,13 +124,13 @@ public class ALJeffersonCountyCParser extends FieldProgramParser {
       }
       data.strCallId = match.group(3);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "DATE TIME ID";
     }
   }
-  
+
   private class MyIdField extends IdField {
     @Override
     public void parse(String field, Data data) {

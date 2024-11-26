@@ -12,12 +12,8 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   public ALJeffersonCountyIParser() {
     super("JEFFERSON COUNTY", "AL",
-          "( SELECT/2 ADDRCITY CALL SKIP! X:X! Units:UNIT! Created:DATETIME2! Pri_Inc:ID! END " +
-          "| SELECT/H1  ( CALL:CALL! X/Y:GPS! ADDR1:ADDRCITY! ID:ID! DATE/TIME:DATETIME! CALL_TAKER:SKIP! " +
+          "( SELECT/H1 CALL:CALL! X/Y:GPS! ADDR1:ADDRCITY! ID:ID! DATE/TIME:DATETIME! CALL_TAKER:SKIP! " +
                               "GRID2640:MAP! GOOGLE_MAP:EMPTY! MAP:MAP/L! XSTREETS:X! UNITS:UNIT! NARR:EMPTY INFO_BLK+ " +
-                       "| Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! https:SKIP! Call_Date/Time:DATETIME! " +
-                              "Call_Type:CALL_PRI! Fire_Area:MAP! Alerts:ALERT! Incident_Numbers:ID! Units:UNIT! Times:EMPTY! TIMES+ " +
-                       ") " +
           "| CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
                                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
                                                                             ") " +
@@ -59,8 +55,7 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
       if (body.startsWith("CALL:")) {
         subject = "ACTIVE 9-1-1";
       } else {
-        setSelectValue("2");
-        return parseFields(body.split("\n"), data);
+        return false;
       }
     }
     if (subject.equals("ACTIVE 9-1-1")) {
