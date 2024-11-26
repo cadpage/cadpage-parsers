@@ -32,7 +32,9 @@ public class SCLexingtonCountyAParser extends DispatchOSSIParser {
     } else if (body.startsWith("CAD\n")) {
       data.strSource = subject;
       body = "CAD:" + body.substring(4);
-    } else return false;
+    } else if (!body.startsWith("CAD:")) {
+      body = "CAD:" + body;
+    }
     unitSet = new HashSet<>();
     return super.parseMsg(body, data);
   }
