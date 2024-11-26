@@ -2525,6 +2525,7 @@ public class Active911ParserTable {
       "US/TX/CityofMansfield",            "TXMansfield",
       "US/TX/CityofMidlothian",           "TXMidlothian",
       "US/TX/CityofMidlothian",           "TXMidlothian",
+      "US/TX/CityofMilanoVFD",            "TXMilamCounty",
       "US/TX/CityofNavasota",             "TXNavasota",
       "US/TX/CityofNorthRichlandHills",   "TXTarrantCountyB",
       "US/TX/CityofOverton",              "TXOverton",
