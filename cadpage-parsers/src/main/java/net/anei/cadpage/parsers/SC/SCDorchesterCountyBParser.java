@@ -12,7 +12,7 @@ public class SCDorchesterCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "spdnotify@summervillesc.gov,sds@smvpd-spillman.police.local";
+    return "spdnotify@summervillesc.gov";
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
