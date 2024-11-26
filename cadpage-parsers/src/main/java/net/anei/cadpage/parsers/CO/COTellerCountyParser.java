@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.CO;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -11,7 +12,11 @@ public class COTellerCountyParser extends FieldProgramParser {
 
   public COTellerCountyParser() {
     super("TELLER COUNTY", "CO",
-          "Add:ADDR! Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! ( RP_Ph:PHONE! | RP_Phone:PHONE! ) Caution/Access_Info:ACC_INFO INC#:ID");
+          "( REF:CALL! INC#:ID! Add:ADDR! COMMENT_INFO:INFO! INFO/S+ " +
+          "| Add:ADDR! ( Prob:CALL! Loc:PLACE! Incident_#:ID! RP:NAME_PHONE! Comment:INFO " +
+                      "| Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! ( RP_Ph:PHONE! | RP_Phone:PHONE! ) GPS:GPS/d? Caution/Access_Info:ACC_INFO/S+ INC#:ID Lat/Long:GPS/d " +
+                      ") " +
+          ") END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -20,22 +25,43 @@ public class COTellerCountyParser extends FieldProgramParser {
     return "alerts@eptpaging.info";
   }
 
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Problem|Apt|Loc|Code|RP Ph|RP Phone|Caution/Access Info):)");
+  private static final Pattern LOC_CHANGE_PTN = Pattern.compile("REF:(.*) THE LOC HAS CHANGED TO:(.*)#(.*)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Problem|Apt|Loc|Code|RP|RP Ph|RP Phone|GPS|Caution/Access Info|Lat/Long):)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
-    return super.parseMsg(body, data);
+    Matcher match = LOC_CHANGE_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ADDR APT PLACE");
+      data.strCall = match.group(1).trim();
+      parseAddress(match.group(2).trim(), data);
+      data.strPlace = match.group(3).trim();
+      return true;
+    } else {
+      body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
+      return super.parseMsg(body, data);
+    }
   }
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("PHONE")) return new PhoneField("(?:\\d+\\) *)(.*)");
     if (name.equals("ACC_INFO")) return new MyAccessInfoField();
+    if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
     return super.getField(name);
   }
 
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+
   private static final Pattern ALI_INFO_PTN = Pattern.compile(" *911ALI Info[': ]*");
-  private static final Pattern START_INFO_JUNK_PTN = Pattern.compile("^[-&. A-Za-z0-9]+, Wireless, ?\\d*,? *");
+  private static final Pattern START_INFO_JUNK_PTN = Pattern.compile("^[-&. A-Za-z0-9]+, Wireless, [-0-9]+[, ]*");
   private static final Pattern END_INFO_JUNK_PTN = Pattern.compile("[, ]*(?:\\[[^\\]]*|Multi-[^,]*|Automatic Case[^,]*)$");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *(?:Multi-(?:Agency|Jurisdiction) [ A-Za-z]+? Incident #: [A-Z]*[-0-9]*|A cellular re-bid has occurred, check the ANI/ALI Viewer for details|Automatic Case Number\\(s\\)[^,]+?,|\\[Shared\\]|\\[ProQA: Case Entry Complete\\]|\\[ProQA Session Aborted\\]),? *");
 
@@ -61,6 +87,24 @@ public class COTellerCountyParser extends FieldProgramParser {
         }
       }
       return stripFieldEnd(sb.toString(), ",");
+    }
+  }
+
+  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*?) *\\b(\\d{3}[- ]?\\d{3}[- ]?\\d{4})");
+  private class MyNamePhoneField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = NAME_PHONE_PTN.matcher(field);
+      if (match.matches()) {
+        field =  match.group(1);
+        data.strPhone = match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "NAME PHONE";
     }
   }
 
