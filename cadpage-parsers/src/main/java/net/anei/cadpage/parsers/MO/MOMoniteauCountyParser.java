@@ -16,7 +16,7 @@ public class MOMoniteauCountyParser extends HtmlProgramParser {
   public MOMoniteauCountyParser(String defCity, String defState) {
     super(defCity, defState,
           "( SELECT/HTML Call:EMPTY! CALL! Sub:EMPTY! CALL/S Place:EMPTY! PLACE Address:EMPTY! ADDR City:EMPTY! CITY Apt:EMPTY! APT Cross_Streets:EMPTY! X Event#:EMPTY! ID! Reporting_Person:EMPTY! NAME Phone#:EMPTY! PHONE Initiated:EMPTY! SKIP! INFO/N+ Units%EMPTY! UNIT/C+?  COPYRIGHT " +
-          "| Call:CALL! Sub:CALL/S! Place:PLACE! Address:ADDR! ( City:CITY! Apt:APT! | Apt:APT! City:CITY! State:ST! Zip:ZIP! ) Cross_Streets:X! Map_Coords:GPS? Event#:ID! Reporting_Person:NAME! Phone#:PHONE! ( Unit:UNIT! Initiated:SKIP! Notes:INFO! INFO/N+ | Initiated:SKIP! INFO/N+ Units%EMPTY! UNIT/C+ ) " +
+          "| Call:CALL! Sub:CALL/S! Place:PLACE! Address:ADDR! ( City:CITY! Apt:APT! | Apt:APT! City:CITY! State:ST! Zip:ZIP! ) Cross_Streets:X! ( Latitude:GPS1 Longitude:GPS2! | Map_Coords:GPS | MapCoordinates:GPS | ) Event#:ID! Reporting_Person:NAME! Phone#:PHONE! ( Unit:UNIT! Initiated:SKIP! Notes:INFO! INFO/N+ | ( Initiated:SKIP! | Initiated_Date:SKIP! Initiated_Time:SKIP! ) INFO/N+ Units%EMPTY! UNIT/C+ ) " +
           "| ADDR! Apt:APT! CITY! Cross_Streets:X! Event#:ID! Reporting_Person:NAME! Phone#:PHONE! INFO/N+ Units%EMPTY! UNIT/C+ )");
   }
 
