@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +11,12 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchA98Parser extends FieldProgramParser {
 
   public DispatchA98Parser(String defCity, String defState) {
-    super(defCity, defState,
-          "Incident:ID! Station:UNIT? Complaint:CALL! Address_Street:ADDR/S6! Caller:NAME? Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:SKIP! Units:SKIP! Notes:INFO! INFO/N+");
+    this(null, defCity, defState);
+  }
+
+  public DispatchA98Parser(Properties cityCodes, String defCity, String defState) {
+    super(cityCodes, defCity, defState,
+          "Incident:ID! Station:UNIT? Complaint:CALL! Address_Street:ADDR/S6! City:CITY? Caller:NAME? Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:SKIP? Units:SKIP? Notes:INFO! INFO/N+");
   }
 
   @Override
@@ -23,7 +28,7 @@ public class DispatchA98Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.endsWith(" Closed")) {
       data.msgType = MsgType.RUN_REPORT;
-    } else if (!subject.endsWith(" Creation")) return false;
+    } else if (!subject.endsWith(" Creation") && !subject.endsWith(" Notification")) return false;
     return parseFields(body.split("\n"), data);
   }
 
