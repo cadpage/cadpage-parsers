@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.1'
+        classpath 'com.android.tools.build:gradle:8.7.2'
         classpath 'com.google.gms:google-services:4.4.2'
     }
 }
@@ -21,26 +21,26 @@ allprojects {
 }
 
 ext {
-    versionName = "2.2.11-36"
-    versionCode = 2020211360
+    versionName = "2.2.11-37"
+    versionCode = 2020211370
 }
 
-task gstatus(type: Exec) {
+tasks.register('gstatus', Exec) {
     group = "team"
     commandLine 'scripts/gstatus'
 }
 
-task gpull(type: Exec) {
+tasks.register('gpull', Exec) {
     group = "team"
     commandLine 'scripts/gpull'
 }
 
-task gcommit(type: Exec) {
+tasks.register('gcommit', Exec) {
     group = "team"
     commandLine 'scripts/gcommit', '-editor', 'gedit'
 }
 
-task gpush(type: Exec) {
+tasks.register('gpush', Exec) {
     group = "team"
     commandLine 'scripts/gpush'
 }
