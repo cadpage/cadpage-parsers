@@ -29,6 +29,11 @@ public class MIBarryCountyBParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("Code:")) return false;
     data.strCall = subject.substring(5).trim();
