@@ -67,7 +67,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     body = body.replace(", Long:\n", ", Long: ");
     if (!parseFields(FIELD_DELIM.split(body), data)) return false;
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
-    return !data.strCall.isEmpty();
+    return !data.strCall.isEmpty() || !data.strCallId.isEmpty();
   }
 
   @Override
