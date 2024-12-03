@@ -1,16 +1,11 @@
 package net.anei.cadpage.parsers.MS;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA49Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class MSTateCountyParser extends DispatchA49Parser {
-  
+
+public class MSTateCountyParser extends GroupBestParser {
+
   public MSTateCountyParser() {
-    super("TATE COUNTY", "MS");
+    super(new MSTateCountyAParser(), new MSTateCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "cadpage@e9.com";
-  }
-
 }
