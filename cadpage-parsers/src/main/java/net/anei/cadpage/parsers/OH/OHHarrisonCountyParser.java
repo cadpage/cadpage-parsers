@@ -15,7 +15,7 @@ public class OHHarrisonCountyParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "HarrisonCoRunReports@outlook.com";
+    return "HarrisonCoRunReports@outlook.com,hcsoreports@harrisoncountyohio.gov";
   }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) (?:None|\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +(.*))");
