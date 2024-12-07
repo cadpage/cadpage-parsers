@@ -14,7 +14,7 @@ public class COTellerCountyParser extends FieldProgramParser {
     super("TELLER COUNTY", "CO",
           "( REF:CALL! INC#:ID! Add:ADDR! COMMENT_INFO:INFO! INFO/S+ " +
           "| Add:ADDR! ( Prob:CALL! Loc:PLACE! Incident_#:ID! RP:NAME_PHONE! Comment:INFO " +
-                      "| Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! ( RP_Ph:PHONE! | RP_Phone:PHONE! ) GPS:GPS/d? Caution/Access_Info:ACC_INFO/S+ INC#:ID Lat/Long:GPS/d " +
+                      "| Units:UNIT? Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! ( RP_Ph:PHONE! | RP_Phone:PHONE! ) GPS:GPS/d? Caution/Access_Info:ACC_INFO/S+ INC#:ID Lat/Long:GPS/d " +
                       ") " +
           ") END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
