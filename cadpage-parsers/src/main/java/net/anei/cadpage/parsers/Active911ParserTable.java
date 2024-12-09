@@ -1806,7 +1806,7 @@ public class Active911ParserTable {
       "US/NV/ClarkCounty",                "NVClarkCountyE",
       "US/NV/Elko",                       "NVElkoCountyA,NVElkoCountyC",
       "US/NV/RenoAirport",                "NVReno",
-      "US/NV/WestWendover",               "NVElkoCountyB",
+      "US/NV/WestWendover",               "NVElkoCountyB,NVElkoCountyC",
       "US/NV/WinnemuccaCityFD",           "NVHumboldtCounty",
       "US/NY/Albany",                     "NYAlbanyCountyC",
       "US/NY/AlbanyCounty",               "NYAlbanyCountyD,NYAlbanyCountyE",
