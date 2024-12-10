@@ -9,16 +9,20 @@ import net.anei.cadpage.parsers.MsgParser;
 public class NJEssexCountyBParser extends MsgParser {
 
   public NJEssexCountyBParser() {
-    super("ESSEX COUNTY", "NJ");
+    this("ESSEX COUNTY", "NJ");
+  }
+
+  public NJEssexCountyBParser(String defCity, String defState) {
+    super(defCity, defState);
     setFieldList("ID CALL PLACE ADDR APT CITY ST UNIT INFO");
   }
 
   @Override
   public String getFilter() {
-    return "roselandpaging@enfwebmail.onmicrosoft.com";
+    return "@enfwebmail.onmicrosoft.com";
   }
 
-  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{5}");
+  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{5}|[A-Z]+\\d{2}-\\d{5}");
   private static final Pattern MASTER = Pattern.compile("(.*?) @ (?:(.*) - )?(.*?), ([ A-Z]+) ([A-Z]{2}) \\d{5} \nActive Units: *(\\S+) - *(.*)");
 
   @Override
