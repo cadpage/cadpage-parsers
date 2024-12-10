@@ -1663,6 +1663,7 @@ public class ParserList {
               ,"TNOakRidge"                     ,"Oak Ridge, TN"
               ,"TNOliverSprings"                ,"Oliver Springs, TN"
               ,"TNOvertonCounty"                ,"Overton County, TN"
+              ,"TNPolkCounty"                   ,"Polk County, TN"
               ,"TNPutnamCounty"                 ,"Putnam County, TN"
               ,"TNRheaCounty"                   ,"Rhea County, TN"
               ,"TNRoaneCounty"                  ,"Roane County, TN"
