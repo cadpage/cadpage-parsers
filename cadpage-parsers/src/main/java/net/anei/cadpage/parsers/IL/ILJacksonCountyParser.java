@@ -1,9 +1,10 @@
 package net.anei.cadpage.parsers.IL;
 
-public class ILJacksonCountyParser extends ILRandolphCountyAParser {
-  
-  public ILJacksonCountyParser() {
-    super("JACKSON COUNTY", "IL");
-  }
+import net.anei.cadpage.parsers.GroupBestParser;
 
+public class ILJacksonCountyParser extends GroupBestParser {
+
+  public ILJacksonCountyParser() {
+    super(new ILJacksonCountyAParser(), new ILJacksonCountyBParser());
+  }
 }
