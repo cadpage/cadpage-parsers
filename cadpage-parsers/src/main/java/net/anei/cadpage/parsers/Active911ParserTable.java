@@ -1665,6 +1665,7 @@ public class Active911ParserTable {
       "US/NC/ToisnotRuralFD",             "NCWilsonCounty",
       "US/NC/TownOfCary",                 "NCWakeCountyA,NCWakeCountyB",
       "US/NC/TransylvaniaCounty",         "NCTransylvaniaCounty",
+      "US/NC/TyrrellCounty",              "NCTyrrellCounty",
       "US/NC/UnionCounty",                "NCUnionCounty",
       "US/NC/UnionCountyEmergencyManagement","NCUnionCounty",
       "US/NC/UnionVFD",                   "NCCatawbaCounty,NCLincolnCounty",

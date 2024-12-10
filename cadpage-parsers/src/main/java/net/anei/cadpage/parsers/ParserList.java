@@ -1321,6 +1321,7 @@ public class ParserList {
               ,"NCSurryCounty"                  ,"Surry County, NC"
               ,"NCSwainCounty"                  ,"Swain County, NC"
               ,"NCTransylvaniaCounty"           ,"Transylvania County, NC"
+              ,"NCTyrrellCounty"                ,"Tyrrell County, NC"
               ,"NCUnionCounty"                  ,"Union County, NC"
               ,"NCVanceCounty"                  ,"Vance County, NC"
               ,"NCWakeCounty"                   ,"Wake County, NC"
