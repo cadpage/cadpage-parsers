@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.WY;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
 
 /**
@@ -14,6 +15,12 @@ public class WYParkCountyParser extends DispatchA20Parser {
   @Override
   public String getFilter() {
     return "@parkcounty.us,chief@pvfd.net,@parkcounty-wy.gov,@parkcountysheriff-wy.gov,bhcsheriffpaging@gmail.com";
+  }
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.startsWith("(")) subject = "Dispatched Call " + subject;
+    return super.parseMsg(subject, body, data);
   }
 
 }
