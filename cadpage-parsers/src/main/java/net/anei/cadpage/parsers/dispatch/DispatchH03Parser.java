@@ -118,6 +118,7 @@ public class DispatchH03Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("ZIP")) return new BaseZipField();
     if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("DASHES")) return new SkipField("-{10,}");
@@ -126,6 +127,14 @@ public class DispatchH03Parser extends FieldProgramParser {
     if (name.equals("ID2")) return new BaseIdField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+
+  private class BaseAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "APPROX LOC:");
+      super.parse(field, data);
+    }
   }
 
   private class BaseZipField extends CityField {
