@@ -795,6 +795,7 @@ public class ParserList {
               ,"LAAscensionParish"              ,"Ascension Parish, LA"
               ,"LAAvoyellesParish"              ,"Avoyelles Parish, LA"
               ,"LABeauregardParish"             ,"Beauregard Parish, LA"
+              ,"LACaddoParish"                  ,"Caddo Parish, LA"
               ,"LACalcasieuParish"              ,"Calcasieu Parish, LA"
               ,"LAEastBatonRougeParish"         ,"East Baton Rouge Parish, LA"
               ,"LAEastFelicianaParish"          ,"East Feliciana Parish, LA"
