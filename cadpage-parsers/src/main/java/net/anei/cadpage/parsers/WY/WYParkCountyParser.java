@@ -14,7 +14,7 @@ public class WYParkCountyParser extends DispatchA20Parser {
 
   @Override
   public String getFilter() {
-    return "@parkcounty.us,chief@pvfd.net,@parkcounty-wy.gov,@parkcountysheriff-wy.gov,bhcsheriffpaging@gmail.com";
+    return "@parkcountysheriff-wy.gov";
   }
 
   @Override
