@@ -57,7 +57,7 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_CITY_CROSS_PLACE_PTN = Pattern.compile("([^,~]*)(?:, ([^~]*?))? ~ ([^~]*)(?: ~ ([^~]*))?");
+  private static final Pattern ADDR_CITY_CROSS_PLACE_PTN = Pattern.compile("([^,~]*)(?:, ([^~]*?))? ?[~,] ([^~]*)(?: ?[~,] ([^~]*))?");
   private static final Pattern ADDR_X_STREETS_PTN = Pattern.compile(" *\\bX STREETS\\b *");
   private class MyAddressCityCrossPlaceField extends AddressCityField {
     @Override
