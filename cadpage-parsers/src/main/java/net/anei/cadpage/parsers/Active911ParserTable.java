@@ -2911,6 +2911,7 @@ public class Active911ParserTable {
       "US/WV/BerkeleyCounty",             "WVBerkeleyCounty",
       "US/WV/BooneCounty",                "WVBooneCounty",
       "US/WV/BooneCountyEMA",             "WVBooneCountyC",
+      "US/WV/BrookeCounty",               "WVBrookeCounty",
       "US/WV/CabellCounty",               "WVCabellCounty",
       "US/WV/Calhoun911",                 "WVCalhounCounty",
       "US/WV/Centrale911",                "WVHarrisonCountyB",

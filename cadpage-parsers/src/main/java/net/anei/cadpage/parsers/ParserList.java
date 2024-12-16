@@ -1969,6 +1969,7 @@ public class ParserList {
           new ParserCategory("West Virginia"
               ,"WVBerkeleyCounty"               ,"Berkeley County, WV"
               ,"WVBooneCounty"                  ,"Boone County, WV"
+              ,"WVBrookeCounty"                 ,"Brooke County, WV"
               ,"WVCabellCounty"                 ,"Cabell County, WV"
               ,"WVCalhounCounty"                ,"Calhoun County, WV"
               ,"WVClayCounty"                   ,"Clay County, WV"
