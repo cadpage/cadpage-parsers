@@ -108,7 +108,7 @@ public class MOMillerCountyParser extends FieldProgramParser {
           Set<String> unitSet = new HashSet<>();
           for (String unit : units.split(" +")) {
             if (unitSet.add(unit)) {
-              if (!unitList.isEmpty()) unitList.append(',');
+              if (unitList.length() > 0) unitList.append(',');
               unitList.append(unit);
             }
           }
