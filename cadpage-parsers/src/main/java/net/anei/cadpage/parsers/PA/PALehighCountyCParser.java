@@ -9,28 +9,28 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PALehighCountyCParser extends FieldProgramParser {
-  
+
   public PALehighCountyCParser() {
-    super(CITY_LIST, "LEHIGH COUNTY", "PA", 
-          "CALL! Address:ADDRCITY! XSt:X! " + 
-              "( PHONE/Z Caller:NAME! INFO/N+ Assigned_Units:UNIT! Radio_Channel:CH! GPS1! GPS2! Fire_Response_Area:MAP? EMS_Response_Area:MAP/L? " +
+    super(CITY_LIST, "LEHIGH COUNTY", "PA",
+          "CALL! Address:ADDRCITY! XSt:X! " +
+              "( PHONE/Z Caller:NAME_PHONE! INFO/N+ Assigned_Units:UNIT! Radio_Channel:CH! GPS1! GPS2! Fire_Response_Area:MAP? EMS_Response_Area:MAP/L? " +
               "| INFO/N+ Assigned_Units:UNIT! ( GPS! | GPS1 GPS2 EMPTY! ) ) END");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@lehighcounty.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
-  private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile(" +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)$");
+
+  private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile(" +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: \\| Alarm Level: *(\\d))?$");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern DELIM = Pattern.compile("\\s*\\|\\s+");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
 //    body = body.replace('\n', ' ');
@@ -44,21 +44,24 @@ public class PALehighCountyCParser extends FieldProgramParser {
     } else {
       data.strTime = time;
     }
+    data.strPriority = getOptGroup(match.group(3));
     return parseFields(DELIM.split(body, -1), data);
   }
-  
+
   @Override
   public String getProgram() {
-    return super.getProgram() + " DATE TIME";
+    return super.getProgram() + " DATE TIME PRI";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("PHONE")) return new MyPhoneField();
+    if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
     if (name.equals("GPS")) return new GPSField("-361 -361|[-+]?\\d{2}\\.\\d{6,} [-+]?\\d{2}\\.\\d{6,}", true);
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -76,13 +79,41 @@ public class PALehighCountyCParser extends FieldProgramParser {
         data.strPlace = getLeft();
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR CITY PLACE";
     }
   }
-  
+
+  private class MyPhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
+
+  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(.*?) +(\\d{10})");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
+
+  private class MyNamePhoneField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = NAME_PHONE_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strPhone = match.group(2);
+      }
+      super.parse(MSPACE_PTN.matcher(field).replaceAll(" "), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "NAME PHONE";
+    }
+  }
+
   private static final String[] CITY_LIST = new String[]{
 
         // Cities
@@ -171,7 +202,7 @@ public class PALehighCountyCParser extends FieldProgramParser {
         "WERLEYS CORNER",
         "WEST CATASAUQUA",
         "ZIONSVILLE",
-        
+
         // Northampton County
         "WALNUTPORT"
   };

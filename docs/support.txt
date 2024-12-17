@@ -4161,31 +4161,21 @@ Good luck,
 **************************************************************************************
 * Help needed - nothing set up
 **************************************************************************************
-
 Thanks for trying out Cadpage.
 
 Cadpage only works if you are a member of a department that is sending dispatch alerts to your phone, typically as text messages.  Are your department's alerts current showing up in your message app?  If not, then you need to talk to someone in your department about getting their alerts sent to your phone.
 
-If you are receiving those alerts, then you need to tell Cadpage to process them.
+If you are receiving those alerts, then you need to tell Cadpage to process them.  The process is somewhat complicated but Cadpage will do it's best to guide you through it.
 
-When you open the Cadpage app, it should display a "Welcome to Cadpage" screen and warn you that nothing will happen with your current settings.
+When you open the Cadpage app, it will probably warn you that Cadpage only works with battery optimization disabled.  Select "Turn off battery optimization" and allow Cadpage to run in background.
 
-Assuming that you are receiving text alerts, select
-My department sends me text alerts
+Next comes a warning that app  notifications are not enabled.  Select "Enable Cadpage app notifications" and enable all Cadpage notifications.
 
-That takes you to the "Text dispatch alerts" screen.  Select
-Enable Cadpage text message processing
+Next comes a warning that Cadpage requires a message support app to process text alerts.  If you will be getting your dispatch alerts from CodeMessaging or Active911, you can select "I do not require Cadpage text message support".  Otherwise select "Install Cadpage support app".  This will download the support app.  Select it to install it.  You will probably be prompted to change settings to allow Chrome to install unknown apps.  Then install the Cadpage message support app and open it.
 
-This should take you to the "Install Cadpage Message support screen which warns you that Cadpage is no longer allowed to process incoming text messages and that you must install an auxiliary support app  to allow this functionality.  Select
-Install Cadpage support app
+Next Cadpage should display a "Welcome to Cadpage" screen and warn you that nothing will happen with your current settings.  Assuming that you are receiving text alerts, select "My department sends me text alerts"
 
-This takes you to a web page with instructions on how to download and install the support app.  You need to click on the "cadpage-support.apk" link and follow the directions from there.
-
-Once the support app is installed, running it or the Cadpage will take you back to the "Welcome to Cadpage" welcome screen.  Select
-My department sends me text alerts
-
-Which takes you to the "Text dispatch alerts" screen again.  But now you can select
-Select the appropriate location
+That takes you to the "Text dispatch alerts" screen.  Select "Select the appropriate location"
 then navigate to and select your current location.  This is necessary so Cadpage will know what your dispatch alert messages should look like.
 
 And finally you get to the final "Cadpage is good to go!' screen.  Just select "Done" and Cadpage should be ready to go.
