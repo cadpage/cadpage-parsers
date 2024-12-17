@@ -1035,6 +1035,7 @@ public class Active911ParserTable {
       "US/KY/TriggCounty",                "KYTriggCounty",
       "US/KY/TriggCountyEMS",             "KYTriggCountyB",
       "US/KY/TrimbleCounty",              "KYTrimbleCountyA",
+      "US/KY/WayneCounty",                "KYWayneCounty",
       "US/KY/WebsterCounty",              "KYWebsterCounty",
       "US/KY/WestKnoxVFD",                "KYKnoxCountyB",
       "US/KY/WestLiberty",                "KYMorganCountyB",

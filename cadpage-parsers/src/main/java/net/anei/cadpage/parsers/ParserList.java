@@ -785,6 +785,7 @@ public class ParserList {
               ,"KYToddCounty"                   ,"Todd County, KY"
               ,"KYTriggCounty"                  ,"Trigg County, KY"
               ,"KYTrimbleCounty"                ,"Trimble County, KY"
+              ,"KYWayneCounty"                  ,"Wayne County, KY"
               ,"KYWebsterCounty"                ,"Webster County, KY"
               ,"KYWhitleyCounty"                ,"WhitleyCounty, KY"
               ,"KYWoodfordCounty"               ,"Woodford County, KY"
