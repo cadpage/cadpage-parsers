@@ -11,6 +11,7 @@ public class OHColumbianaCountyParser extends GroupBestParser {
   public OHColumbianaCountyParser() {
     super(new OHColumbianaCountyBParser(),
           new OHColumbianaCountyCParser(),
+          new OHColumbianaCountyDParser(),
           new GroupBlockParser(),
           new OHColumbianaCountyAParser());
   }

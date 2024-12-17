@@ -18,7 +18,7 @@ public class TXBrazoriaCountyGParser extends MsgParser {
     return "donotreply@angletonpd.net";
   }
 
-  private static final Pattern MASTER = Pattern.compile("(\\d{4}-\\d{6}) ([^,]+?), *([A-Z ]+), *([A-Z]{2}) +\\d{5} (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d) ([A-Z][A-Z0-9]*)(?: +\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - +(.*))?");
+  private static final Pattern MASTER = Pattern.compile("(\\d{4}-\\d{6}) ([^,]+?)(?:, *([A-Z ]+)(?:, *([A-Z]{2}) +\\d{5})?)? (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d) ([A-Z][A-Z0-9]*)(?: +\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - +(.*))?");
   private static final Pattern INFO_PTN = Pattern.compile("[; ]+\\d\\d?/\\d\\d?/\\d\\d \\d\\d?:\\d\\d:\\d\\d - +");
 
   @Override
@@ -32,8 +32,8 @@ public class TXBrazoriaCountyGParser extends MsgParser {
 
     data.strCallId = match.group(1);
     parseAddress(match.group(2).trim(), data);
-    data.strCity = match.group(3).trim();
-    data.strState = match.group(4);
+    data.strCity = getOptGroup(match.group(3));
+    data.strState = getOptGroup(match.group(4));
     data.strDate = match.group(5);
     data.strTime = match.group(6);
     data.strUnit = match.group(7);
