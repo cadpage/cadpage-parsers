@@ -1,15 +1,11 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class INFloydCountyParser extends DispatchA19Parser {
+public class INFloydCountyParser extends GroupBestParser {
 
   public INFloydCountyParser() {
-    super("FLOYD COUNTY", "IN");
+    super(new INFloydCountyAParser(), new INFloydCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "911@FCSDIN.NET,@NAPD.COM";
-  }
 }
