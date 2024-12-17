@@ -39,6 +39,7 @@ public class NJCamdenCountyAParser extends DispatchArchonixParser {
     }
     data.strAddress = data.strAddress.replace("MICKLE BD", "DR MARTIN LUTHER KING BLVD");
     data.strCity = stripFieldEnd(data.strCity, " BORO");
+    if (data.strCity.equals("null")) data.strCity = "";
     return true;
   }
 
