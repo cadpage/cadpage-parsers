@@ -2626,6 +2626,7 @@ public class Active911ParserTable {
       "US/TX/Medstar911",                 "TXFortWorth",
       "US/TX/MidlandCounty",              "TXMidlandCounty",
       "US/TX/Midlothian",                 "TXMidlothian",
+      "US/TX/MilamCounty",                "TXMilamCounty",
       "US/TX/MineralWells",               "TXMineralWells",
       "US/TX/MontgomeryCounty",           "TXMontgomeryCountyB",
       "US/TX/MontgomeryCountyHospital",   "TXMontgomeryCountyB",
