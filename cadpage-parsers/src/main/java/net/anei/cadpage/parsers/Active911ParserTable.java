@@ -1406,6 +1406,7 @@ public class Active911ParserTable {
       "US/MO/LeesSummit",                 "MOJacksonCountyC",
       "US/MO/LincolnCounty",              "MOLincolnCounty,MOStCharlesCounty",
       "US/MO/LincolnCountyAmbulance",     "MOLincolnCounty",
+      "US/MO/LivingstonCounty",           "MOLivingstonCounty",
       "US/MO/LouisianaPD",                "MOPikeCountyA",
       "US/MO/MaconCounty",                "MOMaconCounty",
       "US/MO/MadisonCounty",              "MOMadisonCounty",
