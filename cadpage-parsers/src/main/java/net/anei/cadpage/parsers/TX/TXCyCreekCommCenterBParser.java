@@ -48,14 +48,19 @@ public class TXCyCreekCommCenterBParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(\\S.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}(?:[A-E]\\d{1,2}[A-Z]?)?)[- ]+(\\S.*)|([A-Z0-9]+)-(\\S.*)");
   private class MyCallField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CODE_CALL_PTN.matcher(field);
       if (match.matches()) {
-        data.strCode = match.group(1);
+        String code = match.group(1);
         field = match.group(2);
+        if (code == null) {
+          code = match.group(3);
+          field = match.group(4);
+        }
+        data.strCode = code;
       }
       data.strCall = field;
     }
