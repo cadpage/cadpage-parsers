@@ -22,7 +22,11 @@ public class NCEdgecombeCountyCParser extends DispatchA71Parser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject,  body, data)) return false;
-    if (CITY_TWP_PTN.matcher(data.strCity).matches()) data.strCity = "TOWNSHIP " + data.strCity;
+    if (CITY_TWP_PTN.matcher(data.strCity).matches()) {
+      data.strCity = "TOWNSHIP " + data.strCity;
+    } else if (data.strCity.equals("RMT")) {
+      data.strCity = "ROCKY MOUNT";
+    }
     return true;
   }
 }
