@@ -24,10 +24,12 @@ public class MOWarrenCountyAParser extends FieldProgramParser {
   private static final Pattern ZIP_CITY_PTN = Pattern.compile("(\\d{5}) .*");
 
   @Override
-  public boolean parseMsg(String body, Data data) {
+  public boolean parseMsg(String subject, String body, Data data) {
 
     // Pretty loose format, so check for a positive ID
     if (!isPositiveId()) return false;
+
+    if (subject.equals("CAD DISPATCH")) return false;
 
     if (body.startsWith("WARNING: ")) {
       int pt = body.indexOf('\n');
@@ -45,7 +47,7 @@ public class MOWarrenCountyAParser extends FieldProgramParser {
     if (name.equals("ID1")) return new IdField("\\d{4}-\\d+", true);
     if (name.equals("ID2")) return new IdField("\\d{2}-\\d{6}|\\d{2}-\\d{4,5}[A-Z]{2,4}|", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("CALL")) return new CallField("[-/& A-Za-z0-9]+", true);
+    if (name.equals("CALL")) return new CallField("[-/&? A-Za-z0-9]+", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -154,6 +156,9 @@ public class MOWarrenCountyAParser extends FieldProgramParser {
     "HAWK POINT",
     "TROY",
     "TRUXTON",
+
+    // Randolph County
+    "JACKSONVILLE",
 
     // Montgomery County
     "JONESBURG",
