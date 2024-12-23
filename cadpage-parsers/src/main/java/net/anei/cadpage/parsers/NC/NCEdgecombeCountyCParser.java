@@ -10,6 +10,7 @@ public class NCEdgecombeCountyCParser extends DispatchA71Parser {
 
   public NCEdgecombeCountyCParser() {
     super("EDGECOMBE COUNTY", "NC");
+    setupCities(CITY_CODES);
   }
 
   @Override
@@ -24,9 +25,12 @@ public class NCEdgecombeCountyCParser extends DispatchA71Parser {
     if (!super.parseMsg(subject,  body, data)) return false;
     if (CITY_TWP_PTN.matcher(data.strCity).matches()) {
       data.strCity = "TOWNSHIP " + data.strCity;
-    } else if (data.strCity.equals("RMT")) {
-      data.strCity = "ROCKY MOUNT";
     }
     return true;
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "BB",   "BATTLEBORO",
+      "RMT",  "ROCKY MOUNT"
+  });
 }
