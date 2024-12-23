@@ -1,37 +1,18 @@
 package net.anei.cadpage.parsers.NC;
 
-import net.anei.cadpage.parsers.SplitMsgOptions;
-import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
-import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
 
 /**
  * Clay County, NC
  */
-public class NCClayCountyParser extends DispatchA65Parser {
+public class NCClayCountyParser extends DispatchSPKParser {
 
   public NCClayCountyParser() {
-    super(CITY_LIST, "CLAY COUNTY", "NC");
+    super("CLAY COUNTY", "NC");
   }
 
   @Override
   public String getFilter() {
-    return "dispatch@911email.net,clayconc@911email.net,@claync911.net";
+    return "claync911cad@claync.us";
   }
-
-  @Override
-  public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
-  }
-
-  private static final String[] CITY_LIST = new String[]{
-
-      // Town
-      "HAYESVILLE",
-
-      // Unincorporated communities
-      "BRASSTOWN",
-      "ELF",
-      "TUSQUITTEE",
-      "WARNE"
-  };
 }
