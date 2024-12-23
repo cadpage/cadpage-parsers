@@ -9,15 +9,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class WASpokaneCountyParser extends FieldProgramParser {
 
   public WASpokaneCountyParser() {
-    super("SPOKANE COUNTY", "WA", 
+    super("SPOKANE COUNTY", "WA",
           "CALL:CALL! PLACE:PLACE! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! TAC:CH? UNIT:UNIT! MAP:MAP? CROSS:X? INFO:INFO/N+ LAT:GPS1 LON:GPS2");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@spokanecity.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -30,21 +30,21 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       data.strPlace = body;
       return true;
     }
-    
-    if (subject.toUpperCase().startsWith("ASSIGNED TO INCIDENT ") ) {
+
+    if (subject.toUpperCase().replace("=20", " ").contains("ASSIGNED TO INCIDENT ") ) {
       return parseFields(body.split("\n"), data);
     }
-    
+
     return false;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCodeCallField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)- *(.*)");
   private class MyCodeCallField extends Field {
 
@@ -61,7 +61,7 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
+
   private class MyCrossField extends CrossField {
 
     @Override
@@ -70,6 +70,6 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
-    
+
   }
 }

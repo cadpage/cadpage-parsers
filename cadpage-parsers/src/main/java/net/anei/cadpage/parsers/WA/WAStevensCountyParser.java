@@ -12,6 +12,11 @@ public class WAStevensCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "spillmancad@co.stevens.wa.us,Dispatch,@lifeflight.org";
+    return "spillmancad.gov,@lifeflight.org";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 }
