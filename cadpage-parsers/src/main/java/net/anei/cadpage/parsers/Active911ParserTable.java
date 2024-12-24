@@ -621,6 +621,7 @@ public class Active911ParserTable {
       "US/ID/GemCounty",                  "IDGemCounty",
       "US/ID/GoodingCounty",              "IDGoodingCountyC",
       "US/ID/IdahoCounty",                "IDIdahoCounty",
+      "US/ID/LatahCounty",                "IDLatahCounty",
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/KootenaiCountyFR",           "IDKootenaiCounty",
       "US/ID/MadisonCounty",              "IDMadisonCounty",

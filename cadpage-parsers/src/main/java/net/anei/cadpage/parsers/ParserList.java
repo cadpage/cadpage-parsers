@@ -490,6 +490,7 @@ public class ParserList {
               ,"IDGoodingCounty"                ,"Gooding County, ID"
               ,"IDIdahoCounty"                  ,"Idaho County, ID"
               ,"IDJeromeCounty"                 ,"Jerome County, ID"
+              ,"IDLatahCounty"                  ,"Latah County, ID"
               ,"IDKootenaiCounty"               ,"Kootenai County, ID"
               ,"IDLincolnCounty"                ,"Lincoln County, ID"
               ,"IDMadisonCounty"                ,"Madison County, ID"
