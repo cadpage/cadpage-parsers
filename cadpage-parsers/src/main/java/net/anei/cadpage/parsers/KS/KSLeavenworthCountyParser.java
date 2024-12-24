@@ -103,6 +103,9 @@ public class KSLeavenworthCountyParser extends SmartAddressParser {
       // Ghost towns
       "DELAWARE CITY",
 
+      // Atchison County
+      "ATCHISON",
+
       // Jefferson County
       "MC LOUTH",
       "MCLOUTH",

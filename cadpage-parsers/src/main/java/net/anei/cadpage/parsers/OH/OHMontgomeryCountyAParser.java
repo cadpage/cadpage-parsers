@@ -17,9 +17,9 @@ public class OHMontgomeryCountyAParser extends DispatchH03Parser {
   public String getFilter() {
     return "@mcohiosheriff.org";
   }
-  
+
   private static final Pattern CITY_EXT_PTN = Pattern.compile("(.*?) +\\((.*)\\)");
-  
+
   @Override
   public String adjustMapCity(String city) {
     Matcher match = CITY_EXT_PTN.matcher(city);
@@ -30,9 +30,11 @@ public class OHMontgomeryCountyAParser extends DispatchH03Parser {
     }
     return city;
   }
-  
+
   private static final Properties COUNTY_CODES = buildCodeTable(new String[] {
       "DC", "DARKE COUNTY",
+      "MIA","MIAMI COUNTY",
+      "PC", "PREBLE COUNTY",
       "WC", "WARREN COUNTY"
   });
 }

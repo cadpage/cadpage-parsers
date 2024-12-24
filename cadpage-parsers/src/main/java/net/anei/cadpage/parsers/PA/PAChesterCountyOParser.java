@@ -27,7 +27,7 @@ public class PAChesterCountyOParser extends PAChesterCountyBaseParser {
 
   @Override
   public String getFilter() {
-    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,@ehbems.org,whcems@outlook.com,calls@goodfellowship.org,@fdcmsincidents.com,@fdcms3.info,@westend67.com,Oxford_Union_Fire_Company@alerts.stationcad.com,nfdpc25norco@norcofireco.org";
+    return "gfac55calls@gmail.com,EWFC05@verizon.net,pfdfire@fdcms.info,vfvfco168@comcast.net,westwoodfire@comcast.net,cad@oxfordfire.com,afc23@fdcms.info,whcems@gmail.com,@eastwhitelandfire.org,cadoxfordfire@gmail.com,haacuse96@comcast.net,libertyfc@fdcms.info,@westwoodfire.com,dispatch@diverescue77.org,paging@honeybrookfire.org,@ehbems.org,whcems@outlook.com,calls@goodfellowship.org,@fdcmsincidents.com,@fdcms3.info,@westend67.com,Oxford_Union_Fire_Company@alerts.stationcad.com,nfdpc25norco@norcofireco.org,@valleyforgefireco.com";
   }
 
   @Override
