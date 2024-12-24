@@ -22,7 +22,7 @@ public class KSLeavenworthCountyParser extends SmartAddressParser {
   }
 
   private static final Pattern TIMES_PTN =
-      Pattern.compile("(?:;? \\S+ - (?:ASSIGNED|ENROUTE|On Scene|EXCHANGE|TRAFFIC STOP|OFFICER INITIATED) \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)+$");
+      Pattern.compile("(?:;? \\S+ - (?:ASSIGNED|ENROUTE|On Scene|EXCHANGE|TRAFFIC STOP|OFFICER INITIATED|LEAVING SCENE) \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)+$");
   private static final Pattern INFO_BRK_PTN = Pattern.compile(";? \\d\\d/\\d\\d.\\d\\d \\d\\d:\\d\\d:\\d\\d - ");
   private static final Pattern MASTER =
       Pattern.compile("(\\d+) (?:None|[A-Z][A-Z0-9]\\d{9}(?:; [A-Z][A-Z0-9]\\d{9})*) ([^,]*?)(?:, ([A-Z ]+)(?:, ([A-Z]{2}) (?:\\d{5} )?)?)?([^,;]*?)\\b((?:[A-Z0-9]+; )*[A-Z0-9]+)");
