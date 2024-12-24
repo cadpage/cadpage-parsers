@@ -716,6 +716,7 @@ public class Active911ParserTable {
       "US/IN/AmeriProHealth",             "INFloydCounty",
       "US/IN/AndersonFD",                 "INMadisonCountyC,INMadisonCountyE",
       "US/IN/BartholomewCounty",          "INBartholomewCounty",
+      "US/IN/Bedford",                    "INLawrenceCounty",
       "US/IN/BlackfordCounty",            "INBlackfordCounty",
       "US/IN/BooneCounty",                "INBooneCountyB",
       "US/IN/Bristol",                    "INElkhartCounty",
