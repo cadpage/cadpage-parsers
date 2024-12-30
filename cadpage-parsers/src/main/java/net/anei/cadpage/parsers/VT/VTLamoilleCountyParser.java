@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.VT;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,7 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
   VTLamoilleCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
           "SKIP+ Address:ADDRCITY Incident_Number:ID! Call_Type:CALL Narratives:INFO+");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -192,6 +194,15 @@ public class VTLamoilleCountyParser extends FieldProgramParser {
       return super.getFieldNames()+" GPS UNIT DATE TIME";
     }
   }
+
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "54 W MAIN CIR",                        "+44.508832,-72.969448"
+  });
 
   private static final String[] CITY_LIST = new String[]{
 
