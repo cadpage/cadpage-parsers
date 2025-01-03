@@ -14,7 +14,8 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
 
   public MIOttawaCountyParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "ID? Type:CALL_PRI! Call_Address:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! GPS? ( Addtl_Location_Info:PLACE! | Additional_Location_Info:PLACE! ) ( Nature:CALL! https:SKIP! Narrative:EMPTY! | https:SKIP! Nature:CALL! Additional_Narrative:EMPTY! Units_Assigned:UNIT! ) INFO_BLK+? Alerts:ALERT? Unit_Times:EMPTY? TIMES+");
+          "ID? Type:CALL_PRI! Call_Address:ADDRCITY! Cross_Streets:X! Common_Name:PLACE! GPS? ( Addtl_Location_Info:PLACE! | Additional_Location_Info:PLACE! ) ( Nature:CALL! https:GPS2! Narrative:EMPTY! | https:SKIP! Nature:CALL! Additional_Narrative:EMPTY! Units_Assigned:SKIP! ) INFO_BLK+? Alerts:ALERT? Unit_Times:EMPTY? TIMES+");
+    setAccumulateUnits(true);
   }
 
   @Override
@@ -32,6 +33,7 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
     if (name.equals("CALL_PRI")) return new PriorityField(".*[, ]+Pri(?:ority)?: +(\\d+),?|.*()", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("GPS2")) return new MyGPS2Field();
     return super.getField(name);
   }
 
@@ -68,6 +70,16 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
+    }
+  }
+  
+  private class MyGPS2Field extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!data.strGPSLoc.isEmpty()) return;
+      int pt = field.indexOf("query=");
+      if (pt < 0) return;
+      super.parse(field.substring(pt+6).trim(), data);
     }
   }
 
