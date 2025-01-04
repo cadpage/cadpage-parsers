@@ -2143,7 +2143,7 @@ public class Active911ParserTable {
       "US/OR/METCOM911ShortForm",         "ORClackamasCountyA",
       "US/OR/MiltonFreewater",            "ORUmatillaCountyB",
       "US/OR/MountainWaveSAR",            "ORMultnomahCountyC",
-      "US/OR/MultnomahCounty",            "ORMultnomahCounty,ORClackamasCountyD",
+      "US/OR/MultnomahCounty",            "ORMultnomahCounty",
       "US/OR/NetartsOceanside",           "ORTillamookCounty",
       "US/OR/NewbergFire",                "ORYamhillCountyA",
       "US/OR/Oakridge",                   "ORLaneCountyC",
