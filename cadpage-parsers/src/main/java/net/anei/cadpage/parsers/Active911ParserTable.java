@@ -2154,6 +2154,7 @@ public class Active911ParserTable {
       "US/OR/PrinevillePD",               "ORCrookCounty",
       "US/OR/ReedsportPD",                "ORDouglasCountyB,ORDouglasCountyC",
       "US/OR/ShermanCounty",              "ORShermanCounty",
+      "US/OR/SPRFPD",                     "ORPolkCounty",
       "US/OR/StaytonFireDistrict",        "ORMarionCountyA",
       "US/OR/TillamookCounty",            "ORTillamookCounty",
       "US/OR/Toledo",                     "ORLincolnCountyB",
