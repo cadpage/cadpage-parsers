@@ -5,7 +5,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class INHancockCountyParser extends GroupBestParser {
 
   public INHancockCountyParser() {
-    super(new INHancockCountyBParser(), new INHancockCountyCParser());
+    super(new INHancockCountyBParser(),
+          new INHancockCountyCParser(),
+          new INHancockCountyDParser());
   }
 
 }
