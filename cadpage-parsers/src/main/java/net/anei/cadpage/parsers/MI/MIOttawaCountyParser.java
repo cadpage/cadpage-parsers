@@ -29,6 +29,11 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("CALL_PRI")) return new PriorityField(".*[, ]+Pri(?:ority)?: +(\\d+),?|.*()", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -48,6 +53,7 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
         data.strCity = city;
       } else {
         data.strApt = append(data.strApt, "-", stripFieldStart(getLeft(), "#"));
+        data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strApt);
       }
     }
   }
@@ -72,7 +78,7 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
       if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyGPS2Field extends GPSField {
     @Override
     public void parse(String field, Data data) {
@@ -223,6 +229,8 @@ public class MIOttawaCountyParser extends DispatchH05Parser {
       "CHAUNCEY",
       "DUTTON",
       "ENGLISHVILLE",
-      "PARNELL"
+      "PARNELL",
+
+      "MUSKEGON COUNTY"
   };
 }
