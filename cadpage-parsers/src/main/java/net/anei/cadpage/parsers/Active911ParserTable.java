@@ -2851,6 +2851,7 @@ public class Active911ParserTable {
       "US/WA/KitsapCounty",               "WAKitsapCounty",
       "US/WA/KlickitatCounty",            "WAKlickitatCounty",
       "US/WA/LewisCounty",                "WALewisCounty",
+      "US/WA/LifeFlightNetwork",          "WAStevensCounty",
       "US/WA/MasonCounty",                "WAMasonCounty",
       "US/WA/Medapoint",                  "WASnohomishCountyC",
       "US/WA/MPTech",                     "WASnohomishCountyC",
