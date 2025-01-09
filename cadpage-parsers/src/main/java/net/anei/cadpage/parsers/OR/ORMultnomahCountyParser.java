@@ -11,6 +11,7 @@ public class ORMultnomahCountyParser extends GroupBestParser {
           new ORMultnomahCountyBParser(),
           new ORMultnomahCountyCParser(),
           new ORMultnomahCountyDParser(),
-          new ORMultnomahCountyEParser());
+          new ORMultnomahCountyEParser(),
+          new ORMultnomahCountyFParser());
   }
 }
