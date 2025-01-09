@@ -16,7 +16,9 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
   public MDCarrollCountyAParser() {
     super("CARROLL COUNTY", "MD",
-          "TIME CT:ADDR! BOX:BOX! DUE:UNIT! END");
+          "( SELECT/1 TIME CT:ADDR1! BOX:BOX! DUE:UNIT! END " +
+          "| DATE TIME ADDR2 X CALL UNIT ID MAP GPS NAME INFO! SKIP CH! " +
+          ")");
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
 
@@ -31,8 +33,16 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
+    if (subject.isEmpty() && body.contains("|")) {
+      body = body.replace('\n', ' ');
+      setSelectValue("2");
+      return parseFields(body.split("\\|", -1), data);
+    }
+
     // Try to parse long format
     if (parseLongForm(subject, body, data)) return true;
+
+    setSelectValue("1");
 
     do {
       if (subject.equals("!")) break;
@@ -95,9 +105,14 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d\\d|", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d|", true);
+    if (name.equals("ADDR1")) return new MyAddress1Field();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("BOX")) return new MyBoxField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("ID")) return new IdField("\\d{5,}|", true);
+    if (name.equals("CH"))  return new ChannelField("\\S*", true);
     return super.getField(name);
   }
 
@@ -106,7 +121,7 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
   private static final Pattern CHANNEL_PTN = Pattern.compile("(?:[ \\.]+(CP|TB|TG|FC) *| +)(\\d{1,2}(?:-?[A-Z])?|WEST)$");
   private static final Pattern BOX_PTN = Pattern.compile("\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?");
   private static final Pattern BOX_PTN2 = Pattern.compile("(?: +BOX)? +(\\d{1,2}-\\d{1,2}(?:-\\d{1,2})?)$");
-  private class MyAddressField extends Field {
+  private class MyAddress1Field extends Field {
 
     @Override
     public void parse(String fld, Data data) {
@@ -239,6 +254,32 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL BOX PLACE ADDR X APT CITY CH";
+    }
+  }
+
+  private static final Pattern BOX_ADDR_PTN2 = Pattern.compile("([A-Z]{2}), *(\\S+) +(.*)");
+  private class MyAddress2Field extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = BOX_ADDR_PTN2.matcher(field);
+      if (match.matches()) {
+        String code = match.group(1);
+        data.strBox = match.group(2);
+        field = match.group(3);
+        String[] tmp = convertCodes(code, COUNTY_CODES).split(",");
+        data.strCity = tmp[0];
+        if (tmp.length > 1) data.strState = tmp[1];
+      }
+      Parser p = new Parser(field);
+      data.strPlace = p.getLastOptional('/');
+      data.strPlace = append(p.getLastOptional(','), " - ", data.strPlace);
+
+      super.parse(p.get(), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "BOX " + super.getFieldNames() + " CITY ST PLACE";
     }
   }
 
@@ -603,6 +644,15 @@ public class MDCarrollCountyAParser extends FieldProgramParser {
         }
         data.strPlace = append(data.strPlace, " - ", savePlace);
       }
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "-");
+      field = field.replace(" - ", " / ");
+      super.parse(field, data);
     }
   }
 
