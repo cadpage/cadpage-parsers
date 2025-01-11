@@ -599,6 +599,7 @@ public class Active911ParserTable {
       "US/IA/LyonCounty",                 "IALyonCounty",
       "US/IA/MarionCounty",               "IAMarionCounty",
       "US/IA/MitchellCountySheriff",      "IAMitchellCounty",
+      "US/IA/NorwalkFD",                  "IAWarrenCountyB",
       "US/IA/PolkCounty",                 "IAPolkCounty",
       "US/IA/SiouxCity",                  "IAWoodburyCountyC",
       "US/IA/StoryCounty",                "IAStoryCounty",
