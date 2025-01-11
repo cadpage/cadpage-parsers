@@ -20,7 +20,7 @@ public class NYAlbanyCountyEParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "paging@cdps911.com";
+    return "paging@cdps911.com,paging@albanysheriffny.gov>";
   }
 
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=BATTA?LION|VEHICLE|CALL TYPE|ADDRESS|APPARTMENT|LOCATION|CROSS STREETS|LATITUDE|LONGITUDE|TIME ASSIGNED|COMMENTS)", Pattern.CASE_INSENSITIVE);
