@@ -1347,7 +1347,7 @@ public class Active911ParserTable {
       "US/MO/CentraliaPD",                "MOCentralia",
       "US/MO/CentralJacksonCounty",       "MOJacksonCountyB",
       "US/MO/CentralRegionFire",          "MOWarrenCountyB",
-      "US/MO/ChaffeeFD",                  "MOScottCountyA",
+      "US/MO/ChaffeeFD",                  "MOScottCountyA,MOScottCountyE",
       "US/MO/ChillicothePD",              "MOLivingstonCounty",
       "US/MO/ChristianCounty",            "MOChristianCounty",
       "US/MO/ChristianHospitalEMS",       "MOStLouisCountyC",
