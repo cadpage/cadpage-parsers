@@ -34,9 +34,9 @@ public class ZSESwedenCParser extends ZSESwedenBaseParser {
     // It seems that very old versions of Android do not support unicode expressions
     Pattern ptn;
     try {
-      ptn = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+[A-Z]?|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b");
+      ptn = Pattern.compile("\\b(\\p{IsAlphabetic}+ \\d+[A-Z]?|\\p{IsAlphabetic}+ X \\p{IsAlphabetic}+)\\b", Pattern.UNICODE_CHARACTER_CLASS);
     } catch (Exception ex) {
-      ptn = Pattern.compile("\\b(\\w+ \\d+[A-Z]?|\\w+ X \\w+)\\b");
+      ptn = Pattern.compile("\\b(\\w+ \\d+[A-Z]?|\\w+ X \\w+)\\b", Pattern.UNICODE_CHARACTER_CLASS);
     }
     ADDR_PTN = ptn;
   }

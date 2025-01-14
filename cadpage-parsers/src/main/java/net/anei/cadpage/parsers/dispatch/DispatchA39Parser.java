@@ -35,7 +35,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Message")) return false;
     if (!parseFields(body.split("\n",-1), 2, data)) return false;
-    if (data.strCall.length() == 0 && data.strSupp.length() == 0) data.strCall = "ALERT";
+    if (data.strCall.length() == 0) data.strCall = "ALERT";
     return true;
   }
 
@@ -61,7 +61,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*) (\\d{7,10})");
+  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*?) *\\b(\\d{7,10})");
   private class BaseCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -208,11 +208,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       Matcher match = INFO_JUNK_PTN.matcher(field);
       if (match.lookingAt()) field = field.substring(match.end());
-      if (data.strCall.length() == 0 && data.strSupp.length() == 0 && field.length() <= 40) {
-        data.strCall = field;
-      } else {
-        super.parse(field, data);
-      }
+      super.parse(field, data);
     }
 
     @Override
