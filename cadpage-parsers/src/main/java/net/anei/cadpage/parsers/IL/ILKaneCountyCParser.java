@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 public class ILKaneCountyCParser extends SmartAddressParser {
-  
+
   public ILKaneCountyCParser() {
     super(ILKaneCountyParser.CITY_LIST, "KANE COUNTY", "IL");
     setFieldList("CALL ADDR APT CITY PLACE X INFO GPS");
@@ -40,30 +40,33 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         "DEER RUN",
         "DIAMOND HEAD",
         "DUNHAM TRAILS",
-        "EDNA ST VINCENT MILLAY",
-        "EDGAR LEE MASTERS",
-        "EAST MARY",
         "EAST LAURA INGALLS WILDER",
+        "EAST MARY",
+        "EDGAR LEE MASTERS",
+        "EDNA ST VINCENT MILLAY",
         "EMILY DICKINSON",
         "FERSON CREEK",
         "FOX BEND",
         "FOX BLUFF",
         "FOX MILL",
         "FOX RIVER",
-        "FRANCIS BRET HARTE",
         "FOX RUN",
+        "FRANCIS BRET HARTE",
         "GLEN COVE",
+        "GREY BARN",
         "HAPPY HILLS",
         "HIDDEN HILL",
+        "HIDDEN LAKES",
         "HIDDEN OAKS",
+        "HOMEWARD HILL",
         "JJC LINCOLN",
         "JOYCE KILMER",
         "LAKE BLUFF",
         "LONG VIEW",
         "LOON LAKE",
         "NORTH JAMES",
-        "OLIVER WENDELL HOLMES",
         "OAK RIDGE",
+        "OLIVER WENDELL HOLMES",
         "PADRE ISLAND",
         "PINE HILLS",
         "PINE HILLS",
@@ -75,7 +78,9 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         "RED HAWK",
         "RED LEAF",
         "RICHARD J BROWN",
+        "RIDGE LINE",
         "RIVER GRANGE",
+        "RIVERSIDE",
         "ROLLING OAKS",
         "SETTLERS GROVE",
         "SILVER GLEN",
@@ -84,6 +89,7 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         "TALL PINES",
         "TAYLOR CALDWELL",
         "TIMBER RIDGE",
+        "TOMS TRAIL",
         "TOWN PLACE",
         "VACHEL LINDSAY",
         "VALLEY STREAM",
@@ -91,29 +97,30 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         "WEST LAURA INGALLS WILDER",
         "WEST MARY",
         "WEST VIEW",
+        "WHISPERING WILLOWS",
         "WHITE PINE",
         "WILD ROSE",
         "WILLIAM CULLEN BRYANT",
         "WINDING HILL"
     );
   }
-  
+
   @Override
   public String getFilter() {
     return "shfradio@co.kane.il.us";
   }
-  
+
   private static final Pattern DIR_STREET_NO_PTN = Pattern.compile(" (\\d+[NSEW]\\d? ?\\d+) ");
   private static final Pattern MIXED_CASE_PTN = Pattern.compile("[A-Z][a-z].*");
   private static final Pattern DIR_STREET_NO_PTN2 = Pattern.compile("(\\d+[NSEW]\\d? \\d+) ");
   private static final Pattern X_ST_PTN1 = Pattern.compile("([. A-Z0-9]+ ?/ ?[. ,A-Z0-9]+?)(?: {2,}|$)");
   private static final Pattern X_ST_PTN2 = Pattern.compile("([. A-Z0-9]+ ?/ ?[.A-Z0-9]+?)(?: |$)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     if (!subject.equals("!")) return false;
-    
+
     // They have some weird street numbers that throw the smart address parser
     // for a loop.  So check for them first.
     StartType st = StartType.START_CALL;
@@ -132,7 +139,7 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         body = "999999" + body.substring(match.end(1));
       }
     }
-    
+
     else {
       int pt = body.indexOf(" <UNKNOWN> ");
       if (pt >= 0) {
@@ -147,15 +154,15 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     body = body.replace(" UNITED STATES HIGHWAY ", " US ");
     body = body.replaceAll(" ILLIONIS ", " ILLINOIS ");
     body = body.replace(" ILLINOIS ROUTE ", " IL ");
-    
+
     match = GPS_PATTERN.matcher(body);
     if (match.find()) {
       setGPSLoc(match.group(), data);
       data.strSupp = body.substring(match.end()).trim();
       body = body.substring(0,match.start()).trim();
     }
-    
-    
+
+
     // Lets see what we can do...
     parseAddress(st, flags | FLAG_IMPLIED_INTERSECT | FLAG_IGNORE_AT| FLAG_CROSS_FOLLOWS | FLAG_RECHECK_APT, body, data);
     if (!isValidAddress() && data.strCity.length() == 0) return false;
@@ -163,30 +170,30 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     if (dirStreetNo != null && data.strAddress.startsWith("999999 ")) {
       data.strAddress = dirStreetNo + data.strAddress.substring(6);
     }
-    
-    // Next is the cross street. But it is a bit chancy.  Let's see what we can do 
+
+    // Next is the cross street. But it is a bit chancy.  Let's see what we can do
     // with this.
     do {
-      
+
       if (body.startsWith("No Cross Streets Found ")) {
         data.strSupp = body.substring(23).trim();
         break;
       }
-      
+
       match = X_ST_PTN1.matcher(body);
       if (match.lookingAt()) {
         data.strCross = match.group(1).trim();
         data.strSupp = body.substring(match.end()).trim();
         break;
       }
-      
+
       match = X_ST_PTN2.matcher(body);
       if (match.lookingAt()) {
         data.strCross = match.group(1).trim();
         data.strSupp = body.substring(match.end()).trim();
         break;
       }
-      
+
       Result res = parseAddress(StartType.START_ADDR, FLAG_ONLY_CROSS | FLAG_NO_CITY, body);
       if (res.isValid()) {
         res.getData(data);
@@ -197,11 +204,11 @@ public class ILKaneCountyCParser extends SmartAddressParser {
         }
         break;
       }
-      
+
       data.strSupp = body;
-        
+
     } while (false);
-    
+
     // Split out place name from cross street
     String cross = data.strCross;
     data.strCross = "";
@@ -217,10 +224,10 @@ public class ILKaneCountyCParser extends SmartAddressParser {
       data.strCross = cross;
     }
     if (crossExt != null) data.strCross += crossExt;
-    
+
     return true;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     Matcher match = DIR_STREET_NO_PTN2.matcher(addr);
@@ -230,8 +237,8 @@ public class ILKaneCountyCParser extends SmartAddressParser {
     while (addr.startsWith("0")) addr = addr.substring(1).trim();
     return addr;
   }
- 
-  
+
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "AMBULANCE CALL",
       "CALLBACK",
