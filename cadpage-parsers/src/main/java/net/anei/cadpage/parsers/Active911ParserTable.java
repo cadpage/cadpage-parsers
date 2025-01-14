@@ -37,6 +37,7 @@ public class Active911ParserTable {
       "CA/BC/NI911",                      "ZCABCPeaceRiverRegionalDistrict",
       "CA/BC/NI911ShipsPoint",            "ZCABCPeaceRiverRegionalDistrict",
       "CA/BC/PrinceGeorge",               "ZCABCPrinceGeorge",
+      "CA/BC/WitsetEMA",                  "ZCABCPrinceGeorge",
       "CA/ON/BarrieCAD",                  "ZCAONSimcoeCounty",
       "CA/ON/ChathamKent",                "ZCAONChathamKent",
       "CA/ON/Clearview",                  "ZCAONSimcoeCountyA",
