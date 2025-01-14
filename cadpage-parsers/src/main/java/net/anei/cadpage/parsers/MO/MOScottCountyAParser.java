@@ -46,6 +46,7 @@ public class MOScottCountyAParser extends DispatchBCParser {
         }
       }
     }
+    if (data.strCity.equals("ORN"))  data.strCity = "ORAN";
     return true;
   }
 
