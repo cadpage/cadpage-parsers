@@ -6,6 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NYLewisCountyParser extends GroupBestParser {
 
   public NYLewisCountyParser() {
-    super(new NYLewisCountyAParser(), new NYLewisCountyBParser());
+    super(new NYLewisCountyAParser(),
+          new NYLewisCountyBParser(),
+          new NYLewisCountyCParser());
   }
 }

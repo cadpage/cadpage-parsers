@@ -1853,7 +1853,7 @@ public class Active911ParserTable {
       "US/NY/Islips",                     "NYSuffolkCountyA",
       "US/NY/JeffersonCounty",            "NYJeffersonCounty",
       "US/NY/JerichoFD",                  "NYNassauCountyRedAlert",
-      "US/NY/Lewis911",                   "NYLewisCountyA",
+      "US/NY/Lewis911",                   "NYLewisCountyA,NYLewisCountyC",
       "US/NY/LewisCounty",                "NYLewisCountyB",
       "US/NY/LimaVFD",                    "NYLivingstonCountyA",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",

@@ -10,7 +10,7 @@ public class NYLewisCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "Lewis911@cnymail.com,no-reply@cnymail.com ";
+    return "Lewis911@cnymail.com,no-reply@cnymail.com,@alert.active911.com";
   }
 
 }
