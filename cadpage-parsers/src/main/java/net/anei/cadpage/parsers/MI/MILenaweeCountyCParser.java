@@ -17,7 +17,7 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "Lenawee@lenawee.mi.us";
+    return "Lenawee@lenawee.mi.us,hccd@co.hillsdale.mi.us";
   }
 
   @Override
