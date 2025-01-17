@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.KS;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class KSLeavenworthCountyParser extends SmartAddressParser {
   public KSLeavenworthCountyParser() {
     super(CITY_LIST, "LEAVENWORTH COUNTY", "KS");
     setFieldList("CALL ID ADDR APT CITY ST PLACE UNIT INFO");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -73,6 +75,11 @@ public class KSLeavenworthCountyParser extends SmartAddressParser {
     }
     return true;
   }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "1301 USDB RD",     "+39.377630,-94.935349"
+
+  });
 
   private static final String[] CITY_LIST = new String[] {
 
