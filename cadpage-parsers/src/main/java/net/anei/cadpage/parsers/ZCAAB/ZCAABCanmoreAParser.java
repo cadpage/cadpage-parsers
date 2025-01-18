@@ -15,34 +15,43 @@ import net.anei.cadpage.parsers.StandardCodeTable;
  * Canmore, Alberta, Canada
  */
 public class ZCAABCanmoreAParser extends FieldProgramParser {
-  
+
   private static final CodeTable STD_CODE_TABLE = new StandardCodeTable();
-  
+
   public ZCAABCanmoreAParser() {
-    super("CANMORE", "AB", 
-          "TIME! CALL:CODE! AT:ADDRCITY! EVENT_NO:ID! LAT:GPS1 LON:GPS2 END");
+    super("CANMORE", "AB",
+          "TIME! UNITS:UNIT? CALL:CODE! AT:ADDRCITY! EVENT_NO:ID! LAT:GPS1 LON:GPS2 END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
     return "@fresc.ca";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Rip & Run")) return false;
     return super.parseMsg(body, data);
   }
-  
+
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField(TIME_FMT, true);
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     return super.getField(name);
+  }
+
+  private class MyUnitField  extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace(' ', ',');
+      super.parse(field, data);
+    }
   }
 
   private class MyCodeField extends Field {
@@ -59,8 +68,8 @@ public class ZCAABCanmoreAParser extends FieldProgramParser {
       return "CODE CALL";
     }
   }
-  
-  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|ROOM|UNIT|LOT)(?![A-Z]) *(.*)|(\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE); 
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|ROOM|UNIT|LOT)(?![A-Z]) *(.*)|(\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -81,7 +90,7 @@ public class ZCAABCanmoreAParser extends FieldProgramParser {
         data.strPlace = place;
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
@@ -108,10 +117,10 @@ public class ZCAABCanmoreAParser extends FieldProgramParser {
       match.appendTail(sb);
       addr = sb.toString();
     }
-    
+
     return addr;
   }
-  
+
   private static final Properties SUFFIX_TABLE = buildCodeTable(new String[]{
       "allee",    "alley",
       "ally",     "alley",
@@ -467,12 +476,12 @@ public class ZCAABCanmoreAParser extends FieldProgramParser {
       "xrd",      "crossroad"
 
   });
-  
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     return address.toUpperCase();
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "2 HWY E & 418 AVE E",   "50.6739928, -113.8691339",
       "100-72132 594 AVE E",   "50.5217056, -113.8836797",
