@@ -1,13 +1,13 @@
 package net.anei.cadpage.parsers.ZCAAB;
 
-/*
-Clearwater County, AB, Canadaa
-Alias for Red Deer County
+import net.anei.cadpage.parsers.GroupBestParser;
 
-*/
-public class ZCAABClearwaterCountyParser extends ZCAABRedDeerCountyAParser {
-  
+/**
+ * ClearwaterCounty, AB
+ */
+public class ZCAABClearwaterCountyParser extends GroupBestParser {
+
   public ZCAABClearwaterCountyParser() {
-    super("CLEARWATER COUNTY");
+    super(new ZCAABClearwaterCountyAParser(), new ZCAABClearwaterCountyBParser());
   }
 }
