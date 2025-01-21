@@ -12,9 +12,9 @@ public class PALehighCountyCParser extends FieldProgramParser {
 
   public PALehighCountyCParser() {
     super(CITY_LIST, "LEHIGH COUNTY", "PA",
-          "CALL! Address:ADDRCITY! XSt:X! " +
-              "( PHONE/Z Caller:NAME_PHONE! INFO/N+ Assigned_Units:UNIT! Radio_Channel:CH! GPS1! GPS2! Fire_Response_Area:MAP? EMS_Response_Area:MAP/L? " +
-              "| INFO/N+ Assigned_Units:UNIT! ( GPS! | GPS1 GPS2 EMPTY! ) ) END");
+          "CALL! ( Address:ADDRCITY! PLACE XSt:X! | ) " +
+              "( PHONE/Z Caller:NAME_PHONE! | Caller:NAME_PHONE! EMPTY? | ) " +
+                    "INFO/N+ Assigned_Units:UNIT! Radio_Channel:CH! GPS1! GPS2! Fire_Response_Area:MAP? EMS_Response_Area:MAP/L? END");
   }
 
   @Override
@@ -62,27 +62,25 @@ public class PALehighCountyCParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern ADDR_DELIM_PTN = Pattern.compile(" *, *| +- +");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      String city = null;
-      int pt = field.indexOf(',');
-      if (pt >= 0) {
-        city = field.substring(pt+1).trim();
-        field = field.substring(0, pt).trim();
+      String[] flds = ADDR_DELIM_PTN.split(field);
+      parseAddress(flds[0].replace('@', '&'), data);
+      for (int ii = 1; ii < flds.length; ii++) {
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, flds[ii], data);
+        data.strPlace = append(data.strPlace, " - ", getLeft());
       }
-      field = field.replace('@',  '&');
-      parseAddress(field, data);
 
-      if (city != null) {
-        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
-        data.strPlace = getLeft();
-      }
+      if (data.strCity.equals("OUTSIDE COUNTY")) data.defCity = "";
+      if (!data.strCity.isEmpty()) data.strAddress = stripFieldEnd(data.strAddress, ' ' + data.strCity);
+      if (data.strCity.equals("GREENWICH")) data.strState = "NJ";
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR CITY PLACE";
+      return "ADDR CITY ST PLACE";
     }
   }
 
@@ -112,6 +110,12 @@ public class PALehighCountyCParser extends FieldProgramParser {
     public String getFieldNames() {
       return "NAME PHONE";
     }
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("OUTSIDE COUNTY")) return "";
+    return city;
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -203,7 +207,35 @@ public class PALehighCountyCParser extends FieldProgramParser {
         "WEST CATASAUQUA",
         "ZIONSVILLE",
 
+        // Berks County
+        "ALBANY",
+        "LONGSWAMP",
+
+        // Bucks County
+        "MILFORD",
+
+        // Delaware County
+        "SPRINGFIELD",
+
+        // Montgomery County
+        "UPPER HANOVER",
+        "UPPER HANOVER TWP",
+
         // Northampton County
-        "WALNUTPORT"
+        "ALLEN",
+        "LEHIGH",
+        "LEHIGH TWP",
+        "LOWER SAUCON",
+        "NORTH CATASAUQUA",
+        "NORTHAMPTON",
+        "WALNUTPORT",
+
+        //Schuylkill County
+        "WEST PENN",
+
+        // Glouster County, NJ
+        "GREENWICH",
+
+        "OUTSIDE COUNTY"
   };
 }
