@@ -13,8 +13,8 @@ public class TNClayCountyParser extends FieldProgramParser {
 
   protected TNClayCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS_Number:ID! How_Received:SKIP! Call_Taker:SKIP? Incident:CALL! Add'l_Incident_Code:CODE! Call_Details:INFO! Caution?:ALERT! " +
-                "Lat:GPS1! Long:GPS2! Name:NAME? Address:ADDRCITYST! Common_Name:PLACE! Cross_Streets:X! Calling_Number:PHONE! " +
+          "CFS_Number:ID! How_Received:SKIP! Calling_Number:PHONE! Incident:CALL! Add'l_Incident_Code:CODE! Call_Details:INFO! Caution?:ALERT! " +
+                "Lat:GPS1! Long:GPS2! Address:ADDRCITYST! Common_Name:PLACE! Cross_Streets:X! " +
                 "Location_Details:PLACE! Law_Zone:MAP! Departments:SRC! END");
   }
 
