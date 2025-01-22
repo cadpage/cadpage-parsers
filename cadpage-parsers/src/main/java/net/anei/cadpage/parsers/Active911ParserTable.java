@@ -1435,7 +1435,7 @@ public class Active911ParserTable {
       "US/MO/OsageCountyAmbulanceDistrict","MOOsageCountyB",
       "US/MO/OzarkCounty",                "MOOzarkCounty",
       "US/MO/PerryCounty",                "MOPerryCounty",
-      "US/MO/PerryvillePolice",           "MOPerryCountyB",
+      "US/MO/PerryvillePolice",           "MOPerryCounty",
       "US/MO/PikeCounty",                 "MOPikeCountyB",
       "US/MO/PikeCountyIncLog",           "MOPikeCountyB",
       "US/MO/PilotKnobFPD",               "MOStFrancoisCountyB",
