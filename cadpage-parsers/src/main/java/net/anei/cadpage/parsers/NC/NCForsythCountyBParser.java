@@ -11,7 +11,7 @@ public class NCForsythCountyBParser extends FieldProgramParser {
   public NCForsythCountyBParser() {
     super(CITY_CODES, "FORSYTH COUNTY", "NC",
          "( CANCEL ADDR CITY! PLACE1 " +
-         "| CALL PRI ADDR PLACE1 CITY X X SRC UNIT TYPE PLACE2 CH ID! " +
+         "| CALL PRI ADDR PLACE1 CITY X X SRC UNIT TYPE PLACE2! CH ID " +
          ") END");
   }
 
@@ -29,7 +29,7 @@ public class NCForsythCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new CallField("(?:\\{\\S+\\} +)?(.*\\bCANCEL\\b.*|ADDT`L MANPOWER NEEDED|CODE GOLD C|CPR BYSTANDER|CPR RESPONDER|RE-DISPATCH|STAGE AWAY|WORKING FIRE)", true);
+    if (name.equals("CANCEL")) return new CallField("(?:\\{\\S+\\} +)?(.*\\bCANCEL\\b.*|ADDT`L MANPOWER NEEDED|CODE GOLD C|CPR BYSTANDER|CPR RESPONDER|NOTIFY FIRE PREVENTION|RE-DISPATCH|RESCUE IN PROGRESS|STAGE AWAY|WORKING FIRE)", true);
     if (name.equals("PRI")) return new PriorityField("\\d|P", true);
     if (name.equals("TYPE")) return new SkipField("EMS|FIRE", true);
     if (name.equals("PLACE1")) return new MyPlace1Field();
