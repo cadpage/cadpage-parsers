@@ -18,6 +18,7 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.endsWith(":")) body += ' ';
     if (!parseFields(body.split(": "), data)) return false;
     if (data.strCallId.equals("None")) data.strCallId = "";
     return true;

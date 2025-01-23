@@ -14,12 +14,13 @@ public class GAFloydCountyParser extends DispatchA60Parser {
 
   @Override
   public String getFilter() {
-    return "no-reply@ledsportal.com,zuercher@floydcountyga.org";
+    return "no-reply@ledsportal.com,zuercher@floydcountyga.org,notification@floydcountyga.org";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Fire-related calls")) return false;
+    if (!subject.equals("Fire-related calls") &&
+        !subject.equals("Call for Service")) return false;
     return super.parseMsg(body, data);
   }
 }
