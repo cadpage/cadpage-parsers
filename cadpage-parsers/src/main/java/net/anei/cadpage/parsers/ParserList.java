@@ -294,6 +294,7 @@ public class ParserList {
               ,"COGunnisonCounty"               ,"Gunnison County, CO"
               ,"COHinsdaleCounty"               ,"Hinsdale County, CO"
               ,"COJeffersonCounty"              ,"Jefferson County, CO"
+              ,"COKiowaCounty"                  ,"Kiowa County, CO"
               ,"COKitCarsonCounty"              ,"Kit Carson County, CO"
               ,"COLaPlataCounty"                ,"La Plata County, CO"
               ,"COLarimerCounty"                ,"Larimer County, CO"

@@ -383,6 +383,7 @@ public class Active911ParserTable {
       "US/CO/GunnisonCounty",             "COGunnisonCounty",
       "US/CO/Hexagon",                    "COBoulderCountyC",
       "US/CO/Jeffcom911",                 "COJeffersonCounty",
+      "US/CO/KiowaCounty",                "COKiowaCounty",
       "US/CO/LaPlataCounty",              "COLaPlataCountyB",
       "US/CO/LarimerCounty",              "COLarimerCountyD,COLarimerCountyE",
       "US/CO/LaSalleFireProtection",      "COWeldCountyB",
