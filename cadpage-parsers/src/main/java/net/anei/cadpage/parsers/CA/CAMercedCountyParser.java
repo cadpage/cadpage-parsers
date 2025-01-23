@@ -1,16 +1,12 @@
 package net.anei.cadpage.parsers.CA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class CAMercedCountyParser extends DispatchA20Parser {
-
+/**
+ * Merced County, CA
+ */
+public class CAMercedCountyParser extends GroupBestParser {
   public CAMercedCountyParser() {
-    super("MERCED COUNTY", "CA");
+    super(new CAMercedCountyAParser(), new CAMercedCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "@losbanos.org";
-  }
-
 }
