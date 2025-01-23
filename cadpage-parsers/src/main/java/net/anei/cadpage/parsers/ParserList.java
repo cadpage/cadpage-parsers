@@ -398,6 +398,7 @@ public class ParserList {
           ),
           new ParserCategory("Georgia"
               ,"GAAugusta"                      ,"Augusta, GA"
+              ,"GABanksCounty"                  ,"Banks County, GA"
               ,"GABarrowCounty"                 ,"Barrow County, GA"
               ,"GABrantleyCounty"               ,"Brantley County, GA"
               ,"GABrooksCounty"                 ,"Brooks County, GA"
