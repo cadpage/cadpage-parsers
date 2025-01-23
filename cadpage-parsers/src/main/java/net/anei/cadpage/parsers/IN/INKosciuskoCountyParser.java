@@ -1,7 +1,6 @@
 package net.anei.cadpage.parsers.IN;
 
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -14,7 +13,7 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
 
   public INKosciuskoCountyParser() {
     super(CITY_CODES, "KOSCIUSKO COUNTY", "IN",
-           "( CANCEL COUNTY? | FYI CALL ) COUNTY? ( CITY ADDR | ADDR! ( COUNTY2 | CITY APTPLACE | APTPLACE? CITY/Y ) INFO+ )");
+          "( CANCEL | FYI? CALL ) ADDR CITY? PLACE? INFO/N+");
   }
 
   @Override
@@ -27,41 +26,26 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern BAD_TRAIL_DATETIME = Pattern.compile(";\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d$");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    if (subject.equals("Text Message")) {
-      if (!body.startsWith("CAD:")) body = "CAD:" + body;
-    }
-    else if (subject.length() > 0 && body.startsWith("CAD:;")) {
-      body = "CAD:" + subject + body.substring(3);
-    }
-    if (!super.parseMsg(body, data)) return false;
-
-    // A city starting with a digit probably means this is a Marshall County page
-    // In any case we don't want to accept it
-    if (data.strCity.length() > 0 && Character.isDigit(data.strCity.charAt(0))) return false;
-
-    // Rule out a special Douglas County construct that might slip through
-    if (data.strCall.equals("CANCEL") &&
-        data.strCity.length() == 0 &&
-        data.strPlace.length() == 0 &&
-        CITY_CODE_PTN.matcher(data.strApt).matches()) return false;
-    return true;
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    if (BAD_TRAIL_DATETIME.matcher(body).find()) return false;
+    return super.parseMsg(body, data);
   }
-  private static final Pattern CITY_CODE_PTN = Pattern.compile("[A-Z]{4}");
 
   @Override
   public Field getField(String name) {
-    if (name.equals("COUNTY")) return new MyCountyField();
-    if (name.equals("COUNTY2")) return new CityField("[A-Z ]+ CO", true);
-    if (name.equals("APTPLACE")) return new MyAptPlaceField();
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("PLACE")) return new PlaceField("\\(S\\) *\\(N\\) *(.*)", true);
     return super.getField(name);
   }
 
-  private static final Pattern COUNTY_PTN = Pattern.compile("1 ([A-Z ]+) CO\\b *(.*)");
-  private class MyCountyField extends CityField {
+  private static final Pattern CITY_CODE_PTN = Pattern.compile("[A-Z]{1,4}|952");
+
+  private class MyCityField extends CityField {
     @Override
     public boolean canFail() {
       return true;
@@ -69,35 +53,16 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      Matcher match = COUNTY_PTN.matcher(field);
-      if (!match.matches()) return false;
-      String city = match.group(2).trim();
-      if (city.length() == 0) city = match.group(1).trim() + " COUNTY";
-      data.strCity = city;
+      if (!CITY_CODE_PTN.matcher(field).matches()) return false;
+      parse(field, data);
       return true;
     }
 
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-  }
-
-  private static final Pattern APT_MARK_PTN = Pattern.compile("\\(S\\) \\(N\\)|\\([NS]\\)");
-  private class MyAptPlaceField extends AptField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher match = APT_MARK_PTN.matcher(field);
-      if (match.find()) {
-        data.strPlace = field.substring(match.end()).trim();
-        field = field.substring(0,match.start()).trim();
-      }
-      super.parse(field, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "APT PLACE";
+      String city = CITY_CODES.getProperty(field);
+      if (city == null) abort();
+      data.strCity = city;
     }
   }
 
