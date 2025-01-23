@@ -657,6 +657,7 @@ public class ParserList {
               ,"KSFordCounty"                   ,"Ford County, KS"
               ,"KSFranklinCounty"               ,"Franklin County, KS"
               ,"KSGearyCounty"                  ,"Geary County, KS"
+              ,"KSGrayCounty"                   ,"Gray County, KS"
               ,"KSGreeleyCounty"                ,"Greeley County, KS"
               ,"KSHarveyCounty"                 ,"Harvey County, KS"
               ,"KSJacksonCounty"                ,"Jackson County, KS"
