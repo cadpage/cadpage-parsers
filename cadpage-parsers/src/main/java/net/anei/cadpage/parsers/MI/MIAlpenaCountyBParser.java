@@ -7,7 +7,7 @@ public class MIAlpenaCountyBParser extends DispatchProQAParser {
 
   public MIAlpenaCountyBParser() {
     super("ALPENA COUNTY", "MI",
-          "ID! CALL CALL/SDS ADDR APT CITY! INFO/N+");
+          "ID! CALL CALL/SDS ADDR APT CITY! INFO/N+", true);
   }
 
   @Override

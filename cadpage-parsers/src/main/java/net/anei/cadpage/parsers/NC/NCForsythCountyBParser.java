@@ -10,9 +10,9 @@ public class NCForsythCountyBParser extends FieldProgramParser {
 
   public NCForsythCountyBParser() {
     super(CITY_CODES, "FORSYTH COUNTY", "NC",
-         "( CANCEL ADDR CITY! PLACE1 " +
+         "( CANCEL ADDR CITY? PLACE1 " +
          "| CALL PRI ADDR PLACE1 CITY X X SRC UNIT TYPE PLACE2! CH ID " +
-         ") END");
+         ") INFO/N+");
   }
 
   @Override
@@ -84,6 +84,7 @@ public class NCForsythCountyBParser extends FieldProgramParser {
       "PFAF", "PFAFFTOWN",
       "PIN",  "PINNACLE",
       "RH",   "RURAL HALL",
+      "RURA", "RURAL HALL",
       "SC",   "STOKES COUNTY",
       "STA",  "STANLEYVILLE",
       "STAN", "STANLEYVILLE",

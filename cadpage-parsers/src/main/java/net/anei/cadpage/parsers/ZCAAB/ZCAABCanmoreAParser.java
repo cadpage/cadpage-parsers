@@ -89,6 +89,7 @@ public class ZCAABCanmoreAParser extends FieldProgramParser {
       } else if (!place.equals("u:0 c:90")){
         data.strPlace = place;
       }
+      if (data.strCity.equals("id 9")) data.strCity = "banff";
     }
 
     @Override

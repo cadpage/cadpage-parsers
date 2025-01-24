@@ -10,9 +10,9 @@ Delaware County, PA
 */
 
 public class PADelawareCountyParser extends GroupBestParser {
-  
+
   public PADelawareCountyParser() {
-    super(new PADelawareCountyAParser(), 
+    super(new PADelawareCountyAParser(),
           new PADelawareCountyBParser(),
           new PADelawareCountyCParser(),
           new PADelawareCountyDParser(),
@@ -21,7 +21,7 @@ public class PADelawareCountyParser extends GroupBestParser {
           new PADelawareCountyGParser(),
           new PADelawareCountyHParser());
   }
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AL", "ALDAN",
       "AS", "ASTON TWP",
@@ -56,6 +56,8 @@ public class PADelawareCountyParser extends GroupBestParser {
       "MH", "MARCUS HOOK",
       "MO", "MORTON",
       "MP", "MARPLE TWP",
+      "NC", "NEW CASTLE COUNTY",
+      "NCC","NEW CASTLE COUNTY",
       "NP", "NETHER PROVIDENCE TWP",
       "NT", "NEWTOWN TWP",
       "NW", "NORWOOD",
@@ -80,20 +82,20 @@ public class PADelawareCountyParser extends GroupBestParser {
       "UP", "UPPER PROVIDENCE TWP",
       "WT", "WILLISTOWN TWP",
       "YE", "YEADON",
-      
+
       "DE", "NEW CASTLE COUNTY/DE",
-      
+
       "MONTCO",       "MONTGOMERY COUNTY",
       "UMT MONTCO",   "UPPER MERION TWP",
-      
+
       "NCC",          "NEW CASTLE COUNTY/DE",
       "NC",           "NEW CASTLE COUNTY/DE",
       "NEW CASTLE",   "NEW CASTLE COUNTY/DE",
-      
+
       "LOWER MERION",      "LOWER MERION TWP",
       "LOWER MERION TWP",  "LOWER MERION TWP",
       "UPPER MERION",      "UPPER MERION TWP",
       "UPPER MERION TWP",  "UPPER MERION TWP"
-    
+
   });
 }
