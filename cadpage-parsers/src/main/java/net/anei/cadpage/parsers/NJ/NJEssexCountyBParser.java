@@ -23,7 +23,7 @@ public class NJEssexCountyBParser extends MsgParser {
   }
 
   private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{5}|[A-Z]+\\d{2}-\\d{5}");
-  private static final Pattern MASTER = Pattern.compile("(.*?) @ (?:(.*) - )?(.*?), ([ A-Z]+) ([A-Z]{2}) \\d{5} \nActive Units: *(\\S+) - *(.*)");
+  private static final Pattern MASTER = Pattern.compile("(.*?) @ (?:(.*) - )?(.*?), ([ A-Z]+) ([A-Z]{2}) \\d{5} \nActive Units: *(\\S+) - *(?s)(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
