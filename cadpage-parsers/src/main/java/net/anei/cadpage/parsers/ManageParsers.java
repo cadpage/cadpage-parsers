@@ -194,11 +194,6 @@ public class ManageParsers {
 
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "OHHudson",           "OHSummitCounty",          // 01/16/2022
-        "MSHernando",         "MSDesotoCounty",          // 02/21/2022
-        "NCLumberton",        "NCRobesonCounty",         // 10/18/2022
-        "TXDallasCountyG",    "TXDallasCountyC",         // 11/01/2022
-        "OHMontgomeryCountyC2","OHMontgomeryCountyA",    // 12/19/2022
         "COClearCreekCountyB","ClearCreekCountyA",       // 05/02/2023
         "CORioBlancoCountyB", "CORioBlancoCountyB",
         "GAMurrayCountyA",    "GAMurrayCountyB",
@@ -252,7 +247,8 @@ public class ManageParsers {
         "PABerksCountyB",     "PABerksCountyD",          // 10/07/2024
         "WAWhitmanCountyA",   "General",                 // 11/08/2024
         "NCStanlyCountyB",    "General",                 // 11/12/2024
-        "TXCookeCountyA",     "General"                 // 11/18/2024
+        "TXCookeCountyA",     "General",                 // 11/18/2024
+        "TXHaysCountyA",      "General"                 // 01/28/2024
   });
 
 }

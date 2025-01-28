@@ -2,10 +2,13 @@ package net.anei.cadpage.parsers.dispatch;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlDecoder;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
@@ -28,6 +31,29 @@ public class DispatchA57Parser extends FieldProgramParser {
                 ") " +
               ") " +
           "| DATETIME EMPTY? CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
+  }
+
+  private HtmlDecoder decoder = null;
+
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\*{3}\\d\\d?/\\d\\d?/\\d{4}\\*{3}|\\d\\d:\\d\\d:\\d\\d");
+
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (subject.startsWith("Automatic R&R Notification")) {
+      if (decoder == null) decoder = new HtmlDecoder();
+      String[] flds = decoder.parseHtml(body);
+      List<String> newFlds = new ArrayList<>();
+      for (String fld : flds) {
+        if (INFO_JUNK_PTN.matcher(fld).matches()) continue;
+        for (String tfld : DELIM1.split(fld)) {
+          newFlds.add(tfld);
+        }
+      }
+      setSelectValue("1");
+      return parseFields(newFlds.toArray(new String[0]), data);
+    }
+
+    return super.parseHtmlMsg(subject, body, data);
   }
 
   private static final Pattern DELIM1 = Pattern.compile("\n|(?<!\n|Police |Fire )(?=(?:Police |Fire )?Call Type:|Address:|Common Name:|City:|Custom Layer:|Map Page:|Latt:|(?<!Lat and )Long:|Closest Intersection:|Additional Location Info:|Nature of Call:|Assigned Units:|Priority:|Quadrant:|Status:|Fire Box:|(?:EMS )?District:|Beat:|Narr:|Narrative)");

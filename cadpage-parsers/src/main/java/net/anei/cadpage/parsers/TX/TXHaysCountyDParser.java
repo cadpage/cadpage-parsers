@@ -11,7 +11,7 @@ public class TXHaysCountyDParser extends DispatchA57Parser {
 
   @Override
   public String getFilter() {
-    return "cadpage@co.hays.tx.us,Alert@active911.com,@hpcapplications.com";
+    return "Alert@active911.com,cadpage@co.hays.tx.us,forms@northhaysfire.com";
   }
 
   @Override
@@ -20,7 +20,11 @@ public class TXHaysCountyDParser extends DispatchA57Parser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    int pt = body.indexOf("\nSent via Google");
+    if (pt >= 0) body = body.substring(0, pt).trim();
+
     if (!super.parseMsg(body, data)) return false;
 
     if (data.strApt.contains("FRONTAGE RD")) {
