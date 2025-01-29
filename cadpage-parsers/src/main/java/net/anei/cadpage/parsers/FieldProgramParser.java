@@ -2819,7 +2819,7 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(?:(\\d{5})(?:-(?:\\d{4})?)?|0))?|(\\d{5})(?:-(?:\\d{4})?)?");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
-  private static final Pattern TRAIL_ZIP_PTN = Pattern.compile("(.*?) +\\d{5}(?:-(?:\\d{4})?)?");
+  private static final Pattern TRAIL_ZIP_PTN = Pattern.compile("(.*?) +(?:([A-Z]{2}) +)?\\d{5}(?:-(?:\\d{4})?)?");
   public class AddressCityStateField extends AddressField {
 
     private Field cityField = new CityField();
@@ -2866,6 +2866,8 @@ public class FieldProgramParser extends SmartAddressParser {
         }
         else if ((match = TRAIL_ZIP_PTN.matcher(city)).matches()) {
           city = match.group(1);
+          String st = match.group(2);
+          if (st != null) data.strState = st;
         }
         cityField.parse(city, data);
         field = p.get();

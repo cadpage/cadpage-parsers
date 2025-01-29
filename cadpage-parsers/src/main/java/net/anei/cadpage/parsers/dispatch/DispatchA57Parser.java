@@ -21,16 +21,16 @@ public class DispatchA57Parser extends FieldProgramParser {
   public DispatchA57Parser(String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
           "( SELECT/1 Call_Time:DATETIME? " +
-              "( CFS_Number:ID1! Primary_Incident:ID2/L! Address:ADDRCITY/S6! Common_Name:PLACE! Police_Call_Type:CALL! Fire_Call_Type:CALL! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:INFO! " +
+              "( CFS_Number:ID1! Primary_Incident:ID2/L! Address:ADDRCITYST/S6! Common_Name:PLACE! Police_Call_Type:CALL! Fire_Call_Type:CALL! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:INFO! " +
                   "Assigned_Units:UNIT! Quadrant:MAP! District:MAP! Beat:MAP! Narrative:INFO! INFO/N+ " +
-              "| Call_Type:CALL! Nature_of_Call:CALL/SDS? Common_Name:PLACE? Radio_Channel:CH? Address:ADDRCITY/S6! " +
+              "| Call_Type:CALL! Nature_of_Call:CALL/SDS? Common_Name:PLACE? Radio_Channel:CH? Address:ADDRCITYST/S6! " +
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
                 "| City:CITY Common_Name:PLACE Custom_Layer:MAP? Map_Page:MAP? ( Latt:GPS1! Long:GPS2 | ) Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? " +
                       "( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N | Nar:INFO/N | ) INFO/N+ Status:SKIP? ( Fire_Box:BOX EMS_District:MAP | Quadrant:MAP District:MAP ) Beat:MAP " +
                       "Lat_and_Long:GPS CFS_Number:ID1? Primary_Incident:ID2/L CFS_Number:ID1? Radio_Channel:CH? ( Nar:INFO | Narrative:INFO ) INFO/N+ CallerNumber:PHONE? Lat:GPS1 ( Long:GPS2 | Lon:GPS2 ) Units:UNIT " +
                 ") " +
               ") " +
-          "| DATETIME EMPTY? CALL ADDRCITY PLACE CALL/SDS ID! UNIT% INFO/N+ )");
+          "| DATETIME EMPTY? CALL ADDRCITYST PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
 
   private HtmlDecoder decoder = null;
@@ -73,7 +73,7 @@ public class DispatchA57Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
-    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("UNIT")) return new BaseUnitField();
@@ -115,7 +115,7 @@ public class DispatchA57Parser extends FieldProgramParser {
 
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("(.*)\\((.*)\\)");
   private static final Pattern ADDR_PLACE_PTN2 = Pattern.compile("(.*?)(?:(?<!LAT|LON):| - )(.*)");
-  private class BaseAddressCityField extends AddressCityField {
+  private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_PLACE_PTN.matcher(field);
