@@ -1,41 +1,28 @@
 package net.anei.cadpage.parsers.OH;
 
-import java.util.Properties;
-
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 
-public class OHRichlandCountyBParser extends DispatchOSSIParser {
-  
+public class OHRichlandCountyBParser extends DispatchA57Parser {
+
   public OHRichlandCountyBParser() {
-    super(CITY_CODES, "RICHLAND COUNTY", "OH", 
-          "SRC CALL UNIT? ADDR CITY BOX! INFO+");
+    super("RICHLAND COUNTY", "OH");
   }
-  
+
   @Override
   public String getFilter() {
-    return "CAD@richlandcountyoh.us";
+    return "PageGate@richlandcountyoh.us";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Message Forwarded by PageGate")) return false;
-    body = "CAD:" + body;
-    return super.parseMsg(body, data);
+    if (!subject.equals("PageGate NoReply")) return false;
+    int pt = body.indexOf('\n');
+    String call = body.substring(0,pt).trim();
+    body = body.substring(pt+1);
+    if (!body.startsWith("Call Type")) return false;
+    if (!super.parseMsg(body, data)) return false;
+    data.strCall = append(call, " - ", data.strCall);
+    return true;
   }
-  
-  @Override
-  public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("\\d{2,3}", true);
-    if (name.equals("UNIT")) return new UnitField("[0-9[A-Z],]+", true);
-    if (name.equals("BOX")) return new BoxField("\\(S\\) *(.*?) +\\(N\\)", true);
-    return super.getField(name);
-  }
-  
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "BEL",  "BELLVILLE",
-      "LUC",  "LUCAS",
-      "MANS", "MANSFIELD",
-      "PERR", "PERRY TWP"
-  });
 }
