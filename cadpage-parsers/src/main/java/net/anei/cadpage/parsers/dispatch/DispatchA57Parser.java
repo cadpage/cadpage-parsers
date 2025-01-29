@@ -30,7 +30,7 @@ public class DispatchA57Parser extends FieldProgramParser {
                       "Lat_and_Long:GPS CFS_Number:ID1? Primary_Incident:ID2/L CFS_Number:ID1? Radio_Channel:CH? ( Nar:INFO | Narrative:INFO ) INFO/N+ CallerNumber:PHONE? Lat:GPS1 ( Long:GPS2 | Lon:GPS2 ) Units:UNIT " +
                 ") " +
               ") " +
-          "| DATETIME EMPTY? CALL ADDRCITYST PLACE CALL/SDS ID! UNIT% INFO/N+ )");
+          "| DATETIME EMPTY? CALL ADDRCITYST/S PLACE CALL/SDS ID! UNIT% INFO/N+ )");
   }
 
   private HtmlDecoder decoder = null;
