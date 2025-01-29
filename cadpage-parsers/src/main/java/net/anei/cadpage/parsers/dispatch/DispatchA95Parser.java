@@ -9,7 +9,7 @@ public class DispatchA95Parser extends FieldProgramParser {
 
   public DispatchA95Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS_Number:ID! Incident_Type:SKIP! Caller:NAME? Dispatcher:SKIP? Call_Time:DATETIME! Call_Location:ADDRCITYST! ( Location_Details:INFO! Address:SKIP! Address_Name:PLACE! | ) ( Responding_Units:UNIT! | Responding_Agencies:UNIT! ) Details:INFO! Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Hazmat_Alert:ALERT");
+          "CFS_Number:ID! Incident_Type:SKIP! Caller:NAME? Dispatcher:SKIP? Call_Time:DATETIME! Call_Location:ADDRCITYST! ( Location_Details:INFO! Address:SKIP! Address_Name:PLACE! | ) ( Responding_Units:UNIT! | Responding_Agencies:UNIT! ) Details:INFO! ( END | Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Hazmat_Alert:ALERT END )");
   }
 
   @Override
