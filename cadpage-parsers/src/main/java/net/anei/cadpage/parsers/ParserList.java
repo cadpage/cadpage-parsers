@@ -1796,6 +1796,7 @@ public class ParserList {
               ,"TXParkerCounty"                 ,"Parker County, TX"
               ,"TXPolkCounty"                   ,"Polk County, TX"
               ,"TXPortAransas"                  ,"Port Aransas, TX"
+              ,"TXRandallCounty"                ,"Randall County, TX"
               ,"TXReevesCounty"                 ,"Reeves County, TX"
               ,"TXRoanoke"                      ,"Roanoke, TX"
               ,"TXRobertsonCounty"              ,"Robertson County, TX"
