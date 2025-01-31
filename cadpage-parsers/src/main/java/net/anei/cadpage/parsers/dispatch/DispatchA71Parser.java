@@ -122,7 +122,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   private class BaseCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace("@ *", "/").replace('@', '/');
+      field = field.replace('@', '/').replace("*", "");
       super.parse(field, data);
     }
   }
