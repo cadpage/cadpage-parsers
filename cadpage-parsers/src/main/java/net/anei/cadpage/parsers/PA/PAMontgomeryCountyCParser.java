@@ -14,7 +14,7 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
   public PAMontgomeryCountyCParser() {
     super(PAMontgomeryCountyParser.CITY_CODES, "MONTGOMERY COUNTY", "PA",
         "( SELECT/RR INCIDENT:ID! CODE:CALL! PLACE ADDR! Cross_Street:X! ESZ:MAP! MUN:CITY! INFO/N+ " +
-        "| ADDR/S TRUCKS:UNITADDR? XST:X! MUN:CITY? NAT:CALL! BOX:BOX ADC:MAP I#:ID TIME:TIME NOTES:INFO TRUCKS:UNIT )");
+        "| ADDR/S TRUCKS:UNITADDR? XST:X? MUN:CITY? NAT:CALL! BOX:BOX ADC:MAP I#:ID TIME:TIME NOTES:INFO TRUCKS:UNIT )");
    }
 
   @Override
