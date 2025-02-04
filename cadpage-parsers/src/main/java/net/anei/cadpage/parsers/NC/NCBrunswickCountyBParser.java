@@ -4,11 +4,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
 public class NCBrunswickCountyBParser extends DispatchA71Parser {
-  
+
   public NCBrunswickCountyBParser() {
     super("BRUNSWICK COUNTY", "NC");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -17,6 +17,10 @@ public class NCBrunswickCountyBParser extends DispatchA71Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!super.parseMsg(body, data)) return false;
+
+    // To reject any NCBrunswickCountyC alerts
+    if (data.strPriority.isEmpty()) return false;
+
     int pt = data.strPriority.indexOf(' ');
     if (pt >= 0) {
       data.strCode = data.strPriority.substring(pt+1).trim();
@@ -24,7 +28,7 @@ public class NCBrunswickCountyBParser extends DispatchA71Parser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("PRI", "PRI CODE");
