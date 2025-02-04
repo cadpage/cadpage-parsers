@@ -1107,6 +1107,7 @@ public class ParserList {
               ,"MOStoneCounty"                  ,"Stone County, MO"
               ,"MOSullivanCounty"               ,"Sullivan County, MO"
               ,"MOTaneyCounty"                  ,"Taney County, MO"
+              ,"MOTexasCounty"                  ,"Texas County, MO"
               ,"MOWarrenCounty"                 ,"Warren County, MO"
               ,"MOWashingtonCity"               ,"Washington City, MO"
               ,"MOWashingtonCounty"             ,"Washington County, MO"
