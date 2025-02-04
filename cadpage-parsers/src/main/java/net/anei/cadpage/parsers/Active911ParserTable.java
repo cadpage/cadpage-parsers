@@ -1975,7 +1975,7 @@ public class Active911ParserTable {
       "US/OH/ClintonCounty",              "OHClintonCounty",
       "US/OH/ClintonCountyIncident",      "OHClintonCountyB",
       "US/OH/COJFD",                      "OHDelawareCountyC",
-      "US/OH/ColumbianaCounty",           "OHColumbianaCountyB",
+      "US/OH/ColumbianaCounty",           "OHColumbianaCountyB,OHColumbianaCountyC",
       "US/OH/ColumbianaCountySO",         "OHColumbianaCountyC,OHColumbianaCountyD",
       "US/OH/Concord",                    "OHLakeCountyA",
       "US/OH/CopleyFD",                   "OHSummitCountyI",
