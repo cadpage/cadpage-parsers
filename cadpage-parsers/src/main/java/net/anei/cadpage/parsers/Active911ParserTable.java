@@ -2615,6 +2615,7 @@ public class Active911ParserTable {
       "US/TX/Helotes",                    "TXHelotes",
       "US/TX/HighlandVillage",            "TXDentonCountyC",
       "US/TX/HillCounty",                 "TXHillCounty",
+      "US/TX/HillsboroDPS",               "TXHillCounty",
       "US/TX/HumblePolice",               "TXHumbleB",
       "US/TX/HuntCounty",                 "TXHuntCounty",
       "US/TX/HurstTX",                    "TXTarrantCountyD",
