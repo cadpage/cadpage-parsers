@@ -3,11 +3,10 @@ package net.anei.cadpage.parsers.PA;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 public class PASomersetCountyParser extends GroupBestParser {
-  
+
   public PASomersetCountyParser() {
-    super(new PASomersetCountyAParser(), 
-          new PASomersetCountyBParser(),
+    super(new PASomersetCountyBParser(),
           new PASomersetCountyCParser());
   }
-  
+
 }
