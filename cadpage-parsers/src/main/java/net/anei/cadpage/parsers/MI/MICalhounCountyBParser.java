@@ -25,7 +25,7 @@ public class MICalhounCountyBParser extends DispatchOSSIParser {
   protected boolean parseMsg(String subject, String body, Data data) {
 
     // Fix some mangled messages
-    if (subject.equals("Text Message")) {
+    if (subject.equals("Text Message") || subject.isEmpty()) {
       if (!body.startsWith("CAD:")) body = "CAD:" + body;
     }
     else if (MANGLED_SUBJECT_PTN.matcher(subject).matches() && body.startsWith("CAD:")) {
