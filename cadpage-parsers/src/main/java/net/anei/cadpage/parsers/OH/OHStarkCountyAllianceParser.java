@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OH;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA39Parser;
 
 /**
@@ -15,19 +16,28 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
   public String getFilter() {
     return "dharpster@redcenter.us,nws@starksheriff.org,dispatch@alliancepolice.com,tacpaging.com";
   }
+
+
+  @Override
+  public boolean parseUntrimmedMsg(String subject, String body, Data data) {
+    if (!super.parseUntrimmedMsg(subject, body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " ALLIANCE");
+    return true;
+  }
+
+
   static final String[] CITY_LIST = new String[]{
 
       //Cities
-      
       "ALLIANCE",
       "CANAL FULTON",
       "CANTON",
       "LOUISVILLE",
+      "LOUISVILLE ALLIANCE",
       "MASSILLON",
       "NORTH CANTON",
 
       //Villages
-
       "BEACH CITY",
       "BREWSTER",
       "EAST CANTON",
@@ -43,7 +53,6 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
       "WILMOT",
 
       //Townships
-
       "BETHLEHEM TWP",
       "CANTON TWP",
       "JACKSON TWP",
@@ -63,7 +72,6 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
       "WASHINGTON TWP",
 
       //Census-designated places
-
       "GREENTOWN",
       "MARLBORO",
       "NORTH LAWRENCE",
@@ -73,7 +81,6 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
       "UNIONTOWN",
 
       //Other unincorporated communities
-
       "AVONDALE",
       "CAIRO",
       "CRYSTAL SPRINGS",
@@ -93,9 +100,6 @@ public class OHStarkCountyAllianceParser extends DispatchA39Parser {
       "PIGEON RUN",
       "SIPPO",
       "WACO"
-
-
     };
-
 }
 
