@@ -41,6 +41,7 @@ public class VADinwiddieCountyParser extends DispatchA48Parser {
       "BLEEDING (NON-TRAUMATIC)",
       "BREATHING DIFF",
       "BREATHING DIFFICULTY",
+      "BRUSH CLASS 3",
       "BRUSH FIRE",
       "CARD RESP ARREST",
       "CHESTP",
