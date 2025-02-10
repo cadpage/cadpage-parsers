@@ -6,18 +6,21 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.SmartAddressParser;
-
 public class KYOldhamCountyCParser extends FieldProgramParser {
 
   public KYOldhamCountyCParser() {
     super("OLDHAM COUNTY", "KY",
-          "ADDR CITY ST_ZIP? CALL CALL/C+");
+          "ADDR CITY ST_ZIP? ( GPS:GPS1 GPS2! | ) CALL CALL/C+");
   }
 
   @Override
   public String getFilter() {
     return "dispatchfax@oldhamcountyky.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern INFO_MARK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log -| None$");
