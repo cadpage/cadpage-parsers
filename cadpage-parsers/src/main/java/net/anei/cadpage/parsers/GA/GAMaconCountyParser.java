@@ -6,8 +6,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Macon County, GA
  */
 public class GAMaconCountyParser extends GroupBestParser {
-  
+
   public GAMaconCountyParser() {
-    super(new GAMaconCountyAParser(), new GAMaconCountyBParser());
+    super(new GAMaconCountyAParser(),
+          new GAMaconCountyBParser(),
+          new GAMaconCountyCParser());
   }
 }
