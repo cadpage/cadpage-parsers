@@ -1,68 +1,29 @@
 package net.anei.cadpage.parsers.IN;
 
 
-import net.anei.cadpage.parsers.dispatch.DispatchA29Parser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
 /**
  * Wabash County, IN
  */
-public class INWabashCountyParser extends DispatchA29Parser {
-  
+public class INWabashCountyParser extends DispatchA24Parser {
+
   public INWabashCountyParser() {
-    super(CITY_LIST, "WABASH COUNTY", "IN");
+    super("WABASH COUNTY", "IN");
   }
-  
+
   @Override
-  public String getFilter() {
-    return "DISPATCH@wabashcounty.in.gov";
+  public boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf(" - CALL:");
+    if (pt < 0) return false;
+    data.strSource = body.substring(0,pt).trim();
+    body = body.substring(pt+3);
+    return super.parseMsg(body, data);
   }
-  
-  private static final String[] CITY_LIST = new String[]{
 
-      //cities and towns
-      "LA FONTAINE",
-      "LAFONTAINE",
-      "LAGRO",
-      "NORTH MANCHESTER",
-      "ROANN",
-      "WABASH",
-
-      //Unincorporated towns
-
-      "AMERICA",
-      "BOLIVAR",
-      "COLLEGE CORNER",
-      "DISKO",
-      "IJAMSVILLE",
-      "LAKETON",
-      "LIBERTY MILLS",
-      "LINCOLNVILLE",
-      "MOUNT VERNON",
-      "NEWTON",
-      "PIONEER",
-      "RICHVALLEY",
-      "SERVIA",
-      "SOMERSET",
-      "SOUTH HAVEN",
-      "SPEICHERVILLE",
-      "STOCKDALE",
-      "SUNNYMEDE",
-      "TREATY",
-      "URBANA",
-      "VALLEY BROOK",
-
-      //Townships
-
-      "CHESTER",
-      "LAGRO",
-      "LIBERTY",
-      "NOBLE",
-      "PAW PAW",
-      "PLEASANT",
-      "WALTZ",
-      
-      // Grant County
-      "MARION"
-     
-  };
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
+  }
 }

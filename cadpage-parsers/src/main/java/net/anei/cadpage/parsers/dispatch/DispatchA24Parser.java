@@ -17,7 +17,7 @@ public class DispatchA24Parser extends FieldProgramParser {
 
   public DispatchA24Parser(String defCity, String defState) {
     super(defCity, defState,
-           "UNIT:UNIT? ( CALL:CALL! RUN:SKIP? PLACE:PLACE? ( ADDR:ADDRCITYST! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% PRI:PRI DATE:DATE% TIME:TIME% CALLERPHONE:PHONE% JURISDICTION:SRC LATITUDE:GPS1/d LONGITUDE:GPS2/d TPPU:SKIP ( ALLUNITS:UNIT |  UNIT:UNIT | ID:ID? ) | ) INFO:INFO INFO/N+ WARNINGS:ALERT" +
+           "UNIT:UNIT? ( CALL:CALL! RUN:SKIP? PLACE:PLACE? ( ADDR:ADDRCITYST! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% PRI:PRI DATE:DATE% TIME:TIME% MAP:MAP% CALLERPHONE:PHONE% JURISDICTION:SRC LATITUDE:GPS1/d LONGITUDE:GPS2/d TPPU:SKIP ( ALLUNITS:UNIT |  UNIT:UNIT | ID:ID? ) | ) INFO:INFO INFO/N+ WARNINGS:ALERT" +
                       "| ID:ID! INFO/RN+ " +
                       "| FAIL " +
                       ")");
@@ -50,6 +50,7 @@ public class DispatchA24Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
@@ -57,14 +58,18 @@ public class DispatchA24Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private class BasePlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "ALIAS=");
+      super.parse(field, data);
+    }
+  }
+
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*), USA\\b *#?(.*)");
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-//      if (!GPS_PATTERN.matcher(field).matches()) {
-//        int pt = field.indexOf(',');
-//        if (pt >= 0) field = field.substring(0,pt).trim();
-//      }
       String apt = "";
       Matcher match = TRAIL_APT_PTN.matcher(field);
       if (match.matches()) {
