@@ -1794,6 +1794,7 @@ public class ParserList {
               ,"TXNavasota"                     ,"Navasota, TX"
               ,"TXNuecesCounty"                 ,"Nueces County, TX"
               ,"TXOverton"                      ,"Overton, TX"
+              ,"TXPaloPintoCounty"              ,"Palo Pinto County, TX"
               ,"TXParkerCounty"                 ,"Parker County, TX"
               ,"TXPolkCounty"                   ,"Polk County, TX"
               ,"TXPortAransas"                  ,"Port Aransas, TX"
