@@ -1811,6 +1811,7 @@ public class Active911ParserTable {
       "US/NJ/VernonPolice",               "NJSussexCountyC",
       "US/NJ/VinelandCity",               "NJCumberlandCountyB",
       "US/NJ/VirtuaEMS",                  "NJBurlingtonCountyH",
+      "US/NJ/WaldwickFD",                 "NJBergenCountyF",
       "US/NJ/WarrenCounty",               "NJWarrenCounty",
       "US/NJ/WayneTownship",              "NJWayneTownship",
       "US/NJ/WestamptonTWP",              "NJBurlingtonCountyH",
