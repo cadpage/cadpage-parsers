@@ -249,7 +249,8 @@ public class ManageParsers {
         "NCStanlyCountyB",    "General",                 // 11/12/2024
         "TXCookeCountyA",     "General",                 // 11/18/2024
         "TXHaysCountyA",      "General",                 // 01/28/2025
-        "PASomersetCountyA",  "General"                 // 02/03/2025
+        "PASomersetCountyA",  "General",                 // 02/03/2025
+        "KYBourbonCountyB",   "KYBourbonCountyA"        // 02/11/2025
   });
 
 }

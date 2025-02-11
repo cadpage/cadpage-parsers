@@ -23,7 +23,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern INFO_MARK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log -| None$");
+  private static final Pattern INFO_MARK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log -| *None$");
   private static final Pattern LOG_DATE_TIME_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log - *");
 
   @Override
