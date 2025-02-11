@@ -187,6 +187,7 @@ public class Active911ParserTable {
       "US/AR/CityofSherwood",             "ARPulaskiCountyE",
       "US/AR/CityofSpringdale",           "ARSpringdale",
       "US/AR/CleburneCounty",             "ARCleburneCounty",
+      "US/AR/ConwayCounty",               "ARConwayCounty",
       "US/AR/CrawfordCounty",             "ARCrawfordCounty",
       "US/AR/DallasCounty",               "ARDallasCounty",
       "US/AR/FountainLake",               "ARGarlandCountyA",
