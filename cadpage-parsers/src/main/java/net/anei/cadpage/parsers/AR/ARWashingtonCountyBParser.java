@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class ARWashingtonCountyBParser extends MsgParser {
 
@@ -16,6 +15,7 @@ public class ARWashingtonCountyBParser extends MsgParser {
 
   protected ARWashingtonCountyBParser(String defCity, String defState) {
     super(defCity, defState);
+    setFieldList("ID PRI CALL ADDR APT CH TIME GPS PLACE CITY UNIT INFO");
   }
 
   @Override
@@ -33,40 +33,77 @@ public class ARWashingtonCountyBParser extends MsgParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MASTER = Pattern.compile("(?:(\\d{6}-\\d{6}) +(?:SPACE)?)?Call Information: *(\\S+) +response reference (.*?) +at +(.*?) +Ops Channel *(.*?) +Time (\\d\\d:\\d\\d)Lat/Long: *(\\d\\d)(\\d{6}) +(\\d\\d)(\\d{6}) +Location Name: *(.*?) +City: *(.*?) +(.*)");
-  private static final Pattern GEN_ALERT_MASTER = Pattern.compile("(\\d{6}-\\d{6}) +,(\\S+) +,(?:True|False) \\d+\\) \\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d-\\[\\d+\\] +(.*)");
+  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d");
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\d+\\) \\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d-\\[\\d+\\] *");
+  private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
     if (!subject.equals("Inform CAD Paging")) return false;
 
-    Matcher match = MASTER.matcher(body);
-    if (match.matches()) {
-      setFieldList("ID PRI CALL ADDR APT CH TIME GPS PLACE CITY UNIT");
-      data.strCallId = getOptGroup(match.group(1));
-      data.strPriority = match.group(2);
-      data.strCall = match.group(3);
-      parseAddress(match.group(4), data);
-      data.strChannel = match.group(5);
-      data.strTime = match.group(6);
-      setGPSLoc(match.group(7)+'.'+match.group(8)+','+match.group(9)+'.'+match.group(10), data);
-      data.strPlace = match.group(11);
-      data.strCity = match.group(12);
-      data.strUnit = match.group(13);
-      return true;
+    FParser fp = new FParser(body);
+
+    data.strCallId = fp.getOptional("Call Information:", 0, 20, 21);
+    if (data.strCallId == null) return false;
+
+    if (!fp.checkBlanks(3)) return false;
+    fp.checkBlanks(1);
+    data.strPriority = fp.get(17);
+
+    if (!fp.check("response reference ")) return false;
+    data.strCall = fp.get(33);
+
+    if (!fp.check(" at  ")) return false;
+    fp.checkBlanks(1);
+    parseAddress(fp.get(60), data);
+    if (!fp.checkBlanks(140)) return false;
+
+    if (fp.check(" Apt.")) {
+      data.strApt = append(data.strApt, "-", fp.get(9));
     }
 
-    match = GEN_ALERT_MASTER.matcher(body);
-    if (match.matches()) {
-      setFieldList("ID PRI INFO");
-      data.msgType = MsgType.GEN_ALERT;
-      data.strCallId = match.group(1);
-      data.strPriority =  match.group(2);
-      data.strSupp = match.group(3);
-      return true;
+    if (!fp.check(" Ops Channel") && !fp.check("  Ops Channel")) return false;
+    data.strChannel = fp.get(30);
+
+    if (!fp.check("Time") && !fp.check(" Time ")) return false;
+    data.strTime = fp.get(5);
+    if (!TIME_PTN.matcher(data.strTime).matches()) return false;
+
+    if (!fp.check("Lat/Long:")) return false;
+    fp.checkBlanks(2);
+    String gps1 = fp.get(8);
+    if (!fp.checkBlanks(2)) return false;
+    String gps2 = fp.get(8);
+    if (!fp.checkBlanks(2)) return false;
+    setGPSLoc(addDec(gps1)+','+addDec(gps2), data);
+
+    if (!fp.check("Location Name:")) return false;
+    data.strPlace = fp.get(40);
+    if (!fp.checkBlanks(360)) return false;
+
+    if (!fp.check("City:")) return false;
+    data.strCity = fp.get(35);
+
+    if (!fp.check("Units:")) {
+      data.strUnit = fp.get();
+    } else {
+      data.strUnit = fp.get(30);
+
+      if (!fp.check("Comments:")) return false;
+      String info = fp.get();
+      Matcher match = INFO_HDR_PTN.matcher(info);
+      if(match.lookingAt()) info = info.substring(match.end());
+      data.strSupp = MSPACE_PTN.matcher(info).replaceAll("\n");
     }
-    return false;
+
+    return true;
+  }
+
+  private static String addDec(String fld) {
+    int pt = fld.length()-6;
+    if (pt >= 0) fld = fld.substring(0,pt)+'.'+fld.substring(pt);
+    return fld;
   }
 
   private static final Pattern WC_NN_PTN = Pattern.compile("\\bWC \\d+\\b", Pattern.CASE_INSENSITIVE);
