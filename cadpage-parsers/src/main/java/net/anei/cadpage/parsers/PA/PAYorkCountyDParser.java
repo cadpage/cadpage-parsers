@@ -282,7 +282,6 @@ public class PAYorkCountyDParser extends FieldProgramParser {
       "CODORUS",              "GLENVILLE",
       "CONEWAGO",             "YORK",
       "CROSS ROAD",           "CROSS ROADS",
-      "EAST HOPEWELL",        "CROSS ROADS",
       "EAST MANCHESTER",      "MOUNT WOLF",
       "FAIRVIEW",             "NEW CUMBERLAND",
       "FAWN GROVE",           "FAWN GROVE",

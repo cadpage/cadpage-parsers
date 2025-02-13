@@ -8,7 +8,7 @@ public class OHRichlandCountyAParser extends DispatchH05Parser {
   public OHRichlandCountyAParser() {
     super("RICHLAND COUNTY", "OH",
           "Call_Number:SKIP! Call_Date/Time:DATETIME! Address:ADDRCITY! Units:UNIT! " +
-              "Status_Times:EMPTY! TIMES+ Narrative:EMPTY! INFO_BLK+ Incident_Number:ID! Latitude/Longitude:GPS!");
+              "Status_Times:EMPTY! TIMES+ Narrative:EMPTY! INFO_BLK+ Incident_Number:ID! Latitude/Longitude:GPS! Cross_Streets:X?");
   }
 
   @Override
