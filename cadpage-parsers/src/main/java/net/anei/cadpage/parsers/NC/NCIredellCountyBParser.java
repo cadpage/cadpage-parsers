@@ -13,6 +13,7 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "IREDELL COUNTY", "NC",
           "FYI? ( UNIT/Z ENROUTE ADDR CITY CALL SRC END " +
                "| CALL ADDR/Z CITY/Y! INFO/N+? ( UNIT2 SRC | SRC ) END " +
+               "| CANCEL ADDR INFO/N+? ( UNIT2 SRC | SRC ) END " +
                "| UNIT1? CALL PRI ADDR! X X INFO/N+? ( UNIT2 SRC | SRC ) END )");
   }
 
@@ -43,6 +44,7 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ENROUTE")) return new SkipField("Enroute", true);
+    if (name.equals("CANCEL")) return new BaseCancelField("CONTROL TIME|LOSS STOPPED|RETONE|WORKING FIRE");
     if (name.equals("PRI")) return new PriorityField("[P1-9]?", true);
     if (name.equals("UNIT1"))  return new MyUnit1Field();
     if (name.equals("UNIT2")) return new MyUnit2Field();
@@ -77,7 +79,7 @@ public class NCIredellCountyBParser extends DispatchOSSIParser {
     }
   }
 
-  private static Pattern SRC_PTN = Pattern.compile("[a-z]+\\d*");
+  private static Pattern SRC_PTN = Pattern.compile("[A-Z]+\\d*");
   private class MySourceField extends SourceField {
     @Override
     public boolean canFail() {
