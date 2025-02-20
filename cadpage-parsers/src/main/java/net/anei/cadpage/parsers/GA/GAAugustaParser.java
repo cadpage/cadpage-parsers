@@ -21,7 +21,9 @@ public class GAAugustaParser extends FieldProgramParser {
     int pt = body.indexOf("\n\n___");
     if (pt < 0) return false;
     body = body.substring(0, pt).trim();
-    return parseFields(body.split("/"), data);
+    String[] flds = body.split("\n\n");
+    if (flds.length < 6) flds = body.split("/");
+    return parseFields(flds, data);
   }
 
   @Override
