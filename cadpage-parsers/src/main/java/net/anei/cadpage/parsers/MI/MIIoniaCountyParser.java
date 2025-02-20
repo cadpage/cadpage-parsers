@@ -39,18 +39,34 @@ public class MIIoniaCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_APT_PLACE_PTN1 = Pattern.compile("(.*) (?:None|(?i:apt|in|lot|rm|room) (\\S+))\\b *(.*)");
-  private static final Pattern ADDR_APT_PLACE_PTN2 = Pattern.compile("(.*) (\\d{1,3}|dining)\\b *(.*)");
-  private static final Pattern ADDR_APT_PLACE_PTN3 = Pattern.compile("(.* [A-Z]{2} \\d{5}) +()(.*)");
+  private static final Pattern ADDR_EXTRA_PTN = Pattern.compile("(.* [A-Z]{2} \\d{5}) +(.*)");
+  private static final Pattern APT_PLACE_PTN1 = Pattern.compile("(?:None|(?i:cottage|apt|in|lot|rm|room|unit) (\\S+))\\b *(.*)");
+  private static final Pattern APT_PLACE_PTN2 = Pattern.compile("(\\d{1,3}|dining|living room)\\b *(.*)");
+  private static final Pattern ADDR_APT_PLACE_PTN1 = Pattern.compile("(.*) (?:None|(?i:cottage|apt|in|lot|rm|room|unit) (\\S+))\\b *(.*)");
+  private static final Pattern ADDR_APT_PLACE_PTN2 = Pattern.compile("(.*) (\\d{1,3}|dining|living room)\\b *(.*)");
 
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ADDR_APT_PLACE_PTN1.matcher(field);
-      if (!match.matches()) {
-        match = ADDR_APT_PLACE_PTN2.matcher(field);
-        if (!match.matches()) match = ADDR_APT_PLACE_PTN3.matcher(field);
-        if (!match.matches()) {
+      Matcher match = ADDR_EXTRA_PTN.matcher(field);
+      if (match.matches()) {
+        super.parse(match.group(1).trim(), data);
+        String place = match.group(2);
+        boolean found = (match = APT_PLACE_PTN1.matcher(place)).matches();
+        if (!found) found = (match = APT_PLACE_PTN2.matcher(place)).matches();
+        if (found) {
+          data.strApt = append(data.strApt, "-", getOptGroup(match.group(1)));
+          place = match.group(2);
+        }
+        data.strPlace = place;
+      } else {
+        boolean found = (match = ADDR_APT_PLACE_PTN1.matcher(field)).matches();
+        if (!found) found = (match = ADDR_APT_PLACE_PTN2.matcher(field)).matches();
+        if (found) {
+          super.parse(match.group(1).trim(), data);
+          data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
+          data.strPlace =  match.group(3);
+        } else {
           if (field.contains(",")) {
             super.parse(field, data);
           } else {
@@ -60,9 +76,6 @@ public class MIIoniaCountyParser extends FieldProgramParser {
           return;
         }
       }
-      super.parse(match.group(1).trim(), data);
-      data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
-      data.strPlace =  match.group(3);
     }
 
     @Override
