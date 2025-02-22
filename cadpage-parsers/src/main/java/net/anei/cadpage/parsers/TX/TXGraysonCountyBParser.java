@@ -10,6 +10,6 @@ public class TXGraysonCountyBParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "active911@co.grayson.tx.us,CAD@whitesborotexas.onmicrosoft.com";
+    return "active911@co.grayson.tx.us,CAD@whitesborotexas.onmicrosoft.com,@whitesborotexas.org";
   }
 }
