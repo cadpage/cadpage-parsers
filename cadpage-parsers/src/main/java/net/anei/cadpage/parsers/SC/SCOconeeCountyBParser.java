@@ -28,7 +28,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL2")) return new CallField("TIA|Stroke");
+    if (name.equals("CALL2")) return new CallField("Behavioral|Contusion|No Transport|Stabbing|Strain|Stroke|TIA");
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
