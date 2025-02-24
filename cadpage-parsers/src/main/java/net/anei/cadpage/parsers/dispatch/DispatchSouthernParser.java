@@ -421,6 +421,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
   private static final Pattern OCA_TRAIL_PTN = Pattern.compile("\\bOCA: *([-A-Z0-9]+)$");
+  private static final Pattern GPS_COMMA_PTN = Pattern.compile("(, *(?:geo|https).*?\\d+), *(-\\d{2,3}\\.)");
   private static final Pattern ID_PTN = Pattern.compile("\\b\\d{2,4}-?(?:\\d\\d-)?\\d{4,8}$");
   private static final Pattern PHONE_PTN = Pattern.compile("\\b\\d{10}\\b");
   private static final Pattern EXTRA_CROSS_PTN = Pattern.compile("(?:AND +|[/&] *|X +)(.*)", Pattern.CASE_INSENSITIVE);
@@ -496,6 +497,12 @@ public class DispatchSouthernParser extends FieldProgramParser {
       } else {
         String delim = match.group(1);
         if (delim.charAt(0) != ' ') {
+
+          // We have to protect gps coordinates in comma delimited alerts
+          if (delim.equals(",")) {
+            body = GPS_COMMA_PTN.matcher(body).replaceFirst("$1|||$2");
+          }
+
           body = body.replace(" OCA:", delim + "OCA:");
           if (!procEmptyFields) delim += '+';
           if (!parseFields(body.split(delim), data)) return false;
@@ -999,7 +1006,8 @@ public class DispatchSouthernParser extends FieldProgramParser {
 
       Matcher match = INFO_GPS_PTN.matcher(field);
       if (match.matches()) {
-        setGPSLoc(match.group(1), data);
+        String gps = match.group(1).replace("|||", ",");
+        setGPSLoc(gps, data);
         return;
       }
 
