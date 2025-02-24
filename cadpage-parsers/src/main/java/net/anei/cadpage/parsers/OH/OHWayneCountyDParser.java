@@ -14,7 +14,8 @@ public class OHWayneCountyDParser extends FieldProgramParser {
 
   protected OHWayneCountyDParser(String defCity, String defState) {
     super(defCity, defState,
-          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END");
+          "( SELECT/1 CALL ADDR/S6 PLACE INFO! INFO/CS+? EMPTY/Z END " +
+          "| ( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END )");
   }
 
   @Override
@@ -39,11 +40,18 @@ public class OHWayneCountyDParser extends FieldProgramParser {
       flag = match.group(1);
       body = body.substring(match.end());
     }
-    String[] flds = body.split("\n");
-    if (flds.length > 3) {
-      if (!parseFields(body.split("\n"), data)) return false;
-    } else {
-      if (!super.parseMsg(body, data)) return false;
+    if (body.contains("ADDR:")) {
+      setSelectValue("2");
+      String[] flds = body.split("\n");
+      if (flds.length > 3) {
+        if (!parseFields(flds, data)) return false;
+      } else {
+        if (!super.parseMsg(body, data)) return false;
+      }
+    }
+    else {
+      setSelectValue("1");
+      if (!parseFields(body.split(",", -1), data)) return false;
     }
     data.strCall = append(flag, " - ", data.strCall);
 
