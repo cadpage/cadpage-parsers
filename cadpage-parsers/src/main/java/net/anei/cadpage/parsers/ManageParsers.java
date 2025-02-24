@@ -251,7 +251,10 @@ public class ManageParsers {
         "TXHaysCountyA",      "General",                 // 01/28/2025
         "PASomersetCountyA",  "General",                 // 02/03/2025
         "KYBourbonCountyB",   "KYBourbonCountyA",        // 02/11/2025
-        "NCIredellCountyA",   "General"                 // 02/19/2025
+        "NCIredellCountyA",   "General",                 // 02/19/2025
+        "OHMuskingumCountyA", "General",                 // 02/24/2025
+        "OHMuskingumCountyB", "General",
+        "OHMuskingumCountyE", "General"
   });
 
 }

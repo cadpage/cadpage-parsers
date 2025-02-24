@@ -11,7 +11,8 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
 
   public OHMuskingumCountyCParser() {
     super("MUSKINGUM COUNTY", "OH",
-          "Address:ADDRCITY/S6! Name:NAME? CALL_DATETIME_ID! GPS? Alert:ALERT? Cross_Streets:X! CFS#:SKIP ( Incident_number:ID2 | INCIDENT_NUMBER:ID2? ) Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP");
+          "( Address:ADDRCITY/S6! Name:NAME? CALL_DATETIME_ID! GPS? Alert:ALERT? Cross_Streets:X! CFS#:SKIP ( Incident_number:ID2 | INCIDENT_NUMBER:ID2? ) Narrative:EMPTY! INFO_BLK+ Times:EMPTY TIMES+ Final_Report:SKIP " +
+          "| DATETIMECALL! Incident_number:ID! Narrative:EMPTY! INFO_BLK+ Caller_Name:NAME! Location:ADDRCITY! Address_Common_Name:PLACE! Units:UNIT! )");
   }
 
   @Override
@@ -28,6 +29,7 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CALL_DATETIME_ID")) return new MyCallDateTimeIdField();
+    if (name.equals("DATETIMECALL")) return new MyDateTimeCallField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("ID2")) return new MyId2Field();
     return super.getField(name);
@@ -72,6 +74,23 @@ public class OHMuskingumCountyCParser extends DispatchH05Parser {
     @Override
     public String getFieldNames() {
       return "CALL DATE TIME ID";
+    }
+  }
+
+  private static final Pattern DATE_TIME_CALL_PTN = Pattern.compile("Call Time:(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d) Call Type:(.*)");
+  private class MyDateTimeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_CALL_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strCall = match.group(3).trim();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "DATE TIME CALL";
     }
   }
 
