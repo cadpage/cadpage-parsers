@@ -17,6 +17,11 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
   }
 
   @Override
+  public String getFilter() {
+    return "messaging@iamresponding.com";
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strSource = subject;
     body = body.replace("=20", "\n").trim()
