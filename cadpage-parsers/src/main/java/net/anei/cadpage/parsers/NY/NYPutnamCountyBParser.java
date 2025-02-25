@@ -10,10 +10,10 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
 
   public NYPutnamCountyBParser() {
     super("PUTNAM COUNTY", "NY",
-          "DASH? DATETIME! Fire:CALL? EMS:CALL/SLS? ( Location:ADDRCITY/S6! Cross_Street:X! Common_Name:PLACE! " +
-                                                   "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
-                                                   "| ADDRCITY/S6! X PLACE " +
-                                                   ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? INFO/N+");
+          "DASH? ( DATETIME! | TIME ) Fire:CALL? EMS:CALL/SLS? ( Location:ADDRCITY/S6! Cross_Street:X! Common_Name:PLACE! " +
+                                                              "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
+                                                              "| ADDRCITY/S6! X PLACE " +
+                                                              ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? INFO/N+");
   }
 
   @Override
@@ -37,9 +37,10 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("BOX")) return new BoxField("(?:\\d\\d|[A-Z]{2})-(?:\\d\\d|[A-Z])|", true);
+    if (name.equals("BOX")) return new BoxField("(?:[A-Z ]+ \\()?(?:\\d\\d|[A-Z]{2})-(?:\\d\\d|[A-Z])\\)?|", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
