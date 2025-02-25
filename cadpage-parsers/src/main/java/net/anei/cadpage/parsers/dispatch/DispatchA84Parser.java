@@ -15,7 +15,7 @@ public class DispatchA84Parser extends FieldProgramParser {
 
   public DispatchA84Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-          "NOTIFYTYPE:SKIP! CALL:CALL! ADDR:ADDRCITY! CROSSSTREETS:X! ID:ID! PRI:PRI! DATE:DATETIME! MAP:SKIP! UNIT:UNIT! INFO:INFO/N+ DISTRICT:MAP! GROUP:MAP/D! AREA:MAP/D! LAT:GPS1! LON:GPS2 END");
+          "NOTIFYTYPE:SKIP! CALL:CODE_CALL! ADDR:ADDRCITY! CROSSSTREETS:X! ID:ID! PRI:PRI! DATE:DATETIME! MAP:SKIP! UNIT:UNIT! INFO:INFO/N+ DISTRICT:MAP! GROUP:MAP/D! AREA:MAP/D! LAT:GPS1! LON:GPS2 END");
   }
 
   @Override
@@ -30,9 +30,27 @@ public class DispatchA84Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        data.strCode =  field.substring(0,pt).trim();
+        field = field.substring(pt+1).trim();
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
 
   private class MyCrossField extends CrossField {
