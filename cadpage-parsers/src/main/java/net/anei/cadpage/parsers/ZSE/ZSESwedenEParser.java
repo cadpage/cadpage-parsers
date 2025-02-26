@@ -7,7 +7,7 @@ public class ZSESwedenEParser extends ZSESwedenBaseParser {
   public ZSESwedenEParser() {
     super("", "",
         "Adress:ADDR! " +
-        "Adressbeskriv.:PLACE/N " +
+        "Adressbeskriv.:PLACE " +
         "Fritext:INFO/N! " +
         "Namn:PLACE! " +
         "Notering:INFO/N " +

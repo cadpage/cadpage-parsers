@@ -2401,7 +2401,7 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public void setQual(String qual) {
       super.setQual(qual);
-      connector = buildConnector(qual, " / ");
+      connector = buildConnector(qual, " - ");
     }
 
     @Override
