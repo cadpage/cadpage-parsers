@@ -633,6 +633,7 @@ public class Active911ParserTable {
       "US/ID/KootenaiCounty",             "IDKootenaiCounty",
       "US/ID/KootenaiCountyFR",           "IDKootenaiCounty",
       "US/ID/MadisonCounty",              "IDMadisonCounty",
+      "US/ID/PowerCounty",                "IDPowerCounty",
       "US/ID/ShoshoneCounty",             "IDShoshoneCountyB",
       "US/ID/SugarCityOfficials",         "IDMadisonCounty",
       "US/ID/TetonCounty",                "IDTetonCounty",

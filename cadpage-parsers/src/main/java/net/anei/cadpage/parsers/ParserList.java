@@ -497,6 +497,7 @@ public class ParserList {
               ,"IDKootenaiCounty"               ,"Kootenai County, ID"
               ,"IDLincolnCounty"                ,"Lincoln County, ID"
               ,"IDMadisonCounty"                ,"Madison County, ID"
+              ,"IDPowerCounty"                  ,"Power County, ID"
               ,"IDShoshoneCounty"               ,"Shoshone County, ID"
               ,"IDTetonCounty"                  ,"Teton County, ID"
               ,"IDTwinFallsCounty"              ,"Twin Falls County, ID"
