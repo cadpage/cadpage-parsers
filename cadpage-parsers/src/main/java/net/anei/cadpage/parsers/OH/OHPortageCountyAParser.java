@@ -15,7 +15,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
 
   public OHPortageCountyAParser() {
     super(OHPortageCountyParser.CITY_LIST, "PORTAGE", "OH",
-          "PREFIX? CALL2 ZERO? ADDR! PLACE? CITY/Y INFO/N+");
+          "PREFIX? CALL2 CALL_EXT/CS+? ZERO? ADDR! PLACE/CS+? CITY/Y INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -37,6 +37,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PREFIX")) return new CallField();
     if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("CALL_EXT")) return new MyCallExtField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CITY")) return new MyCityField();
@@ -44,7 +45,7 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?)[ \\.]+)?([A-Z0-9]{0,8})-([A-Z].*|)");
+  private static final Pattern CALL_CODE_PTN = Pattern.compile("(?:\\*+(.*?)\\*+)? *(?:(.*?)[ \\.]+)?([A-Z0-9]{0,8}|Lift)-([A-Z].*|)");
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
@@ -74,6 +75,30 @@ public class OHPortageCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private class MyCallExtField extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      int pCnt = 0;
+      for (char chr : data.strCall.toCharArray()) {
+        if (chr == '(') pCnt++;
+        else if (chr == ')') pCnt--;
+      }
+      if (pCnt <= 0) return false;
+      data.strCall = append(data.strCall, ", ", field);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 

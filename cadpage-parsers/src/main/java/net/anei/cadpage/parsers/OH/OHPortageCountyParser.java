@@ -123,12 +123,23 @@ public class OHPortageCountyParser extends GroupBestParser {
     "ATWATER",
     "BRIMFIELD",
 
+    // Cuyahoga County
+    "FAIRVIEW PARK",
+    "FAIRVIEW VILLAGE",
+    "LAKEWOOD",
+    "NORTH OLMSTED",
+    "ROCKY RIVER",
+    "WESTLAKE",
+
     // Geauga County
     "AUBURN",
     "AUBURN TWP",
     "BURTON",
     "TROY",
     "TROY TWP",
+
+    // Lorain County
+    "AVON",
 
     // Mahoning County
     "BERLIN",

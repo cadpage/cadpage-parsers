@@ -2388,6 +2388,8 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class PlaceField extends Field {
 
+    private String connector = " - ";
+
     public PlaceField() {};
     public PlaceField(String pattern) {
       super(pattern);
@@ -2397,8 +2399,14 @@ public class FieldProgramParser extends SmartAddressParser {
     }
 
     @Override
+    public void setQual(String qual) {
+      super.setQual(qual);
+      connector = buildConnector(qual, " / ");
+    }
+
+    @Override
     public void parse(String field, Data data) {
-      data.strPlace = append(data.strPlace, " - ", cleanWirelessCarrier(field));
+      data.strPlace = append(data.strPlace, connector, cleanWirelessCarrier(field));
     }
 
     @Override
