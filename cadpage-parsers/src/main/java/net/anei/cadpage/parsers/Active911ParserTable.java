@@ -835,6 +835,7 @@ public class Active911ParserTable {
       "US/KS/CityofEudora",               "KSEudora",
       "US/KS/CityofManhattan",            "KSRileyCounty",
       "US/KS/CityofMulvane",              "KSSumnerCounty",
+      "US/KS/ConcordiaPD",                "KSCloudCounty",
       "US/KS/CowleyCounty",               "KSCowleyCounty",
       "US/KS/CrawfordCounty",             "KSCrawfordCountyA",
       "US/KS/CutlerFD",                   "KSFranklinCounty",

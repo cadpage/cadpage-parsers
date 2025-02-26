@@ -651,6 +651,7 @@ public class ParserList {
               ,"KSBrownCounty"                  ,"Brown County, KS"
               ,"KSButlerCounty"                 ,"Butler County, KS"
               ,"KSChaseCounty"                  ,"Chase County, KS"
+              ,"KSCloudCounty"                  ,"Cloud County, KS"
               ,"KSCowleyCounty"                 ,"Cowley County, KS"
               ,"KSCrawfordCounty"               ,"Crawford County, KS"
               ,"KSDickinsonCounty"              ,"Dickinson County, KS"
