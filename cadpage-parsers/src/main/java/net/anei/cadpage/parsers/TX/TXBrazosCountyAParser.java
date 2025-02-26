@@ -79,6 +79,7 @@ public class TXBrazosCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDR_PTN = Pattern.compile("(.*?)(?:[- ]+at +(.*?))?(?:[- ]+btwn +(.*?))?(?:[- ]*<.*)?");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d+\\.\\d+");
   private class LocationField extends Field {
     @Override
     public void parse(String field, Data data) {
@@ -104,8 +105,11 @@ public class TXBrazosCountyAParser extends FieldProgramParser {
       field = field.trim();
       int pt = field.lastIndexOf(',');
       if (pt >= 0) {
-        data.strCity = convertCodes(field.substring(pt+1).trim(), CITY_CODES);
-        field = field.substring(0,pt).trim();
+        String city = field.substring(pt+1).trim();
+        if (!GPS_PTN.matcher(city).matches()) {
+          data.strCity = convertCodes(city, CITY_CODES);
+          field = field.substring(0,pt).trim();
+        }
       }
       return field;
     }

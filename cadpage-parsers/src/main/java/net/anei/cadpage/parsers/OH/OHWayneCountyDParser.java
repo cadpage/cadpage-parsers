@@ -56,6 +56,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
     data.strCall = append(flag, " - ", data.strCall);
 
     data.strCity = new Parser(data.strCity).get('/');
+    if (data.strCity.equals("NR")) data.strCity = "N RANDALL";
     return true;
   }
 
