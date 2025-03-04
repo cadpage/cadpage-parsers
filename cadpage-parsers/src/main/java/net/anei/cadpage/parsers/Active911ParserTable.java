@@ -2750,6 +2750,7 @@ public class Active911ParserTable {
       "US/VA/BedfordCounty",              "VABedfordCounty",
       "US/VA/BotetourtCounty",            "VABotetourtCounty",
       "US/VA/BrunswickCounty",            "VABrunswickCounty",
+      "US/VA/BuckinghamCounty",           "VABuckinghamCountyB",
       "US/VA/CampbellCounty",             "VACampbellCounty",
       "US/VA/CarolineCounty",             "VACarolineCounty",
       "US/VA/CityofArlington",            "VAArlingtonCounty",

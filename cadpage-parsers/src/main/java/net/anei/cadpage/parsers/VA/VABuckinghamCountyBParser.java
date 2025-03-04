@@ -1,7 +1,5 @@
 package net.anei.cadpage.parsers.VA;
 
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
