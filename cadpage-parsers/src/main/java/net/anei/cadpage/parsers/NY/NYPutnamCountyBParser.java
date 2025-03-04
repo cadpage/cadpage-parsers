@@ -10,10 +10,14 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
 
   public NYPutnamCountyBParser() {
     super("PUTNAM COUNTY", "NY",
-          "DASH? ( DATETIME! | TIME ) Fire:CALL? EMS:CALL/SLS? ( Location:ADDRCITY/S6! Cross_Street:X! Common_Name:PLACE! " +
-                                                              "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
-                                                              "| ADDRCITY/S6! X PLACE " +
-                                                              ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? INFO/N+");
+          "DASH? ( MARK DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_St:X! Common_Name:PLACE! " +
+                      "Additional_Location_Information:PLACE/SDS! Quadrant:MAP! Narrative:INFO! " +
+                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS! | ) " +
+                      "( Location:ADDRCITY/S6! Cross_Street:X! Common_Name:PLACE! " +
+                      "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
+                      "| ADDRCITY/S6! X PLACE " +
+                      ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? " +
+                ") INFO/N+");
   }
 
   @Override
@@ -27,7 +31,8 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     body = body.replace("=20", "\n").trim()
                .replace("Cross Streets;", "Cross Street:")
                .replace("Cross Streets:", "Cross Street:")
-               .replace("Box;", "Box:");
+               .replace("Box;", "Box:")
+               .replace("Quadrant::", "Quadrant:");
     if (!parseFields(body.split("\\n+"), data)) return false;
     if (data.strCity.equals("OUTSIDE PUTNAM COUNTY")) data.strCity = "OUTSIDE COUNTY";
     return !data.strCall.isEmpty();
@@ -40,6 +45,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("MARK")) return new SkipField(".* CAD Page", true);
     if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);

@@ -19,7 +19,7 @@ public class MDPrinceGeorgesCountyGParser extends MDPrinceGeorgesCountyBaseParse
 
   @Override
   public String getFilter() {
-    return "@alert.co.pg.md.us,@c-msg.net,14100,12101,@everbridge.net,87844,88911,89361";
+    return "@alert.co.pg.md.us,@c-msg.net,14100,12101,@everbridge.net,87844,88911,8936";
   }
 
   private static final Pattern HTML_FILTER_PTN = Pattern.compile("(?:\n|<br>) {3,}<p> (.*?)</p>(?:\n|<br>) {3,}", Pattern.DOTALL);
