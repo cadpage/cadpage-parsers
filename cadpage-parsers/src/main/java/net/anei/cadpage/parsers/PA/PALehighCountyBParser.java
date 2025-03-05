@@ -7,24 +7,24 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Lehigh County PA
  */
 public class PALehighCountyBParser extends FieldProgramParser {
-  
+
   public PALehighCountyBParser() {
     super("LEHIGH COUNTY", "PA",
           "CALL ADDR CITY APT! INFO+? ID");
   }
-  
+
   @Override
   public String getFilter() {
-    return "dispatch@lvh.com";
+    return "dispatch@lvh.com,noreply@zollhosted.com";
   }
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!body.startsWith("RC:")) return false;
     body = body.substring(3).trim();
     return parseFields(body.split("/", -1), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("Run# *(\\d*)", true);
