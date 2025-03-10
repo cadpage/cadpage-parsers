@@ -11,6 +11,7 @@ public class INHowardCountyCParser extends DispatchA48Parser {
   public INHowardCountyCParser() {
     super(CITY_LIST, "HOWARD COUNTY", "IN", FieldType.GPS_PLACE_X, A48_NO_CODE);
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    removeWords("ESTATES");
   }
 
   @Override
