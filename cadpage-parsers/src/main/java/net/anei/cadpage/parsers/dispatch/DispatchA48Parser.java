@@ -555,7 +555,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
 
-  private static final Pattern ID_PTN = Pattern.compile("\\d{4}-?\\d+\\b");
+  private static final Pattern ID_PTN = Pattern.compile("(?:\\d{4}|\\d{2})-?\\d+\\b");
 
   @Override
   public Field getField(String name) {
@@ -708,9 +708,25 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!field.contains("/")) return false;
+
+      // Rule out unit or info field formats
       if (field.equals(UNIT_LABEL_STR)) return false;
       if (INFO_PTN.matcher(field).matches()) return false;
+
+      // Anything containing a slash is considered a cross field
+      if (!field.contains("/")) {
+
+        // Otherwise, look for any comma delimmited street field
+        boolean good = false;
+        for (String part : field.split(",")) {
+          part = part.trim();
+          if (isValidCrossStreet(part)) {
+            good = true;
+            break;
+          }
+        }
+        if (!good) return false;
+      }
       super.parse(field, data);
       return true;
     }
