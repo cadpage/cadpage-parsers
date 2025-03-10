@@ -1946,6 +1946,7 @@ public class Active911ParserTable {
       "US/OH/ChagrinValleySundanceMH",    "OHCuyahogaCountyF",
       "US/OH/ChampaignCounty",            "OHChampaignCounty",
       "US/OH/ChesterTwp",                 "OHGeaugaCountyB",
+      "US/OH/CincinnatiCity",             "OHHamiltonCountyC",
       "US/OH/Circleville",                "OHPickawayCounty",
       "US/OH/CityofAvonLake",             "OHLorainCountyA",
       "US/OH/CityofBroadviewHeights",     "OHCuyahogaCountyA",
