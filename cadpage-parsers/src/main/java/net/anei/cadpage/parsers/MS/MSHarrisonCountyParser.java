@@ -11,7 +11,7 @@ public class MSHarrisonCountyParser extends GroupBestParser {
   }
 
   public MSHarrisonCountyParser() {
-    super(new MSHarrisonCountyAParser(), new MSHarrisonCountyBParser(),
+    super(new MSHarrisonCountyAParser(),
           new MSHarrisonCountyCParser(), new MSHarrisonCountyDParser(),
           new MSHarrisonCountyEParser(), new MSHarrisonCountyFParser(),
           new MSHarrisonCountyGParser());

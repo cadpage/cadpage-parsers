@@ -1501,7 +1501,7 @@ public class Active911ParserTable {
       "US/MS/CityofLongBeach",            "MSHarrisonCountyG",
       "US/MS/CityofLouisville",           "MSWinstonCounty",
       "US/MS/DesotoCounty",               "MSDeSotoCountyB,MSTateCountyA",
-      "US/MS/Gulfport",                   "MSHarrisonCountyB,MSHarrisonCountyE,MSHarrisonCountyF",
+      "US/MS/Gulfport",                   "MSHarrisonCountyE,MSHarrisonCountyF",
       "US/MS/HarrisonCounty",             "MSHarrisonCountyC",
       "US/MS/HernandoFD",                 "MSDeSotoCountyA",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
