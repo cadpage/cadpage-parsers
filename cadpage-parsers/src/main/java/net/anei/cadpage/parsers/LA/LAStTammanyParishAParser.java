@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.LA;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -11,8 +11,7 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
 
   public LAStTammanyParishAParser() {
     super("ST TAMMANY PARISH", "LA",
-          "CODE CALL_PFX+? ADDR/SL X/Z? MAP! END");
-    setupCallList(CALL_SET);
+          "Event_Date:DATETIME_UNIT_ID! Address:ADDR_X_CITY! GPS?  Event_Type:CODE_CALL! REPORT! Remarks:INFO! INFO/N+");
   }
 
   @Override
@@ -20,135 +19,89 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
     return "stfpd1@stfpd1.dapage.net";
   }
 
-  private String callPrefix = "";
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("\\bDistrict[ #]+(\\d+)\\b");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (!match.find()) return false;
+    data.strSource = match.group(1);
 
-    if (subject.isEmpty() || !body.startsWith(subject)) return false;
+    return parseFields(body.split("\n+"), data);
+  }
 
-    callPrefix = "";
-    return parseFields(body.split(","), data);
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CODE")) return new CodeField("[A-Z0-9]{1,5}", true);
-    if (name.equals("CALL_PFX")) return new MyCallPrefixField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("MAP")) return new MapField("\\d{4,5}[A-Z]?|COV\\d|OUT");
+    if (name.equals("DATETIME_UNIT_ID")) return new MyDateTimeUnitIdField();
+    if (name.equals("ADDR_X_CITY")) return new MyAddressCrossCityField();
+    if (name.equals("GPS")) return new GPSField("Lat: .* Long: .*", true);
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    if (name.equals("REPORT")) return new IdField("Report# *(\\S*)", true);
     return super.getField(name);
   }
 
-  private static final Pattern PFX_CALL_PTN = Pattern.compile("(?:BITES|The) ");
-
-  private class MyCallPrefixField extends Field {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!PFX_CALL_PTN.matcher(getRelativeField(+1)).lookingAt()) return false;
-      callPrefix = append(callPrefix, ", ", field);
-      return true;
-    }
+  private static final Pattern DATE_TIME_UNIT_ID_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d) +Unit# (\\S+)  CAD# (.*)\\.");
+  private class MyDateTimeUnitIdField extends Field {
 
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      Matcher match = DATE_TIME_UNIT_ID_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      data.strTime = match.group(2);
+      data.strUnit = match.group(3);
     }
 
     @Override
     public String getFieldNames() {
-      return null;
+      return "DATE TIME UNIT";
     }
   }
 
-  private class MyAddressField extends AddressField {
+  private static final Pattern ADDR_X_CITY_PTN = Pattern.compile("(.*?) +(?:# *(.*?) +)?Intersection:(.*) +Jurisdiction: *(.*)");
+  private class MyAddressCrossCityField extends Field {
     @Override
     public void parse(String field, Data data) {
-      field = append(callPrefix, ", ", field);
-      super.parse(field, data);
+      Matcher match = ADDR_X_CITY_PTN.matcher(field);
+      if (!match.matches()) abort();
+      parseAddress(match.group(1).trim(), data);
+      data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
+      data.strCross = stripFieldStart(match.group(3).trim(), "0 ");
+      data.strCity = match.group(4);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT X CITY";
     }
   }
 
-  private static final CodeSet CALL_SET = new CodeSet(
-      "AB PAIN / PROBLEMS",
-      "ALLERGIES / STINGS, BITES",
-      "ASSAULT / SEXUAL / STUN GUN",
-      "BACK PAIN NON RECENT OR TRAUMATIC",
-      "BREATHING PROBLEMS",
-      "BURNS / EXPLOSION MINOR",
-      "CARDIAC / RESPIRATORY ARREST",
-      "CHEST PAIN ABNORMAL BREATHING",
-      "CHEST PAIN / CLAMMY OR COLD SWEATS",
-      "CHOKING / COMPLETE OBSTRUCTION",
-      "CHOKING / PARTIAL OBSTRUCTION",
-      "DIABETIC NOT ALERT",
-      "DIABETIC PROBLEM / ALERT",
-      "ELECTRICAL HAZARD",
-      "ELECTRICAL HAZARD C",
-      "ELECTRICAL HAZARD SAW",
-      "EXPLOSION",
-      "FAINTING",
-      "FAINTING (ALERT)",
-      "FALL / EXTREME",
-      "FALL / NON RECENT/ NOT DANGEROUS",
-      "FALL / SERIOUS",
-      "FIRE ALARM (HIGH LIFE HAZARDS)",
-      "FIRE ALARMS (LOW LIFE HAZARDS)",
-      "FIRE INCIDENT",
-      "FUEL SPILL/ FUEL ODOR",
-      "GAS LEAK/GAS ODOR (NATURAL AND LP GAS)",
-      "HEART PROBLEMS",
-      "HEAT/COLD EXPOSURE /NOT ALERT",
-      "HEMORRHAGE/LACERATION MAJOR",
-      "HEMORRHAGE / LACERATION MINOR",
-      "HEMORRHAGE / LACERATION POSSIBLY DANGEROUS",
-      "INEFFECTIVE BREATHING",
-      "MARINE/BOAT FIRE",
-      "MEDICAL",
-      "MEDICAL INCIDENT",
-      "MVA",
-      "MVC",
-      "OBVIOUS DEATH",
-      "ON AIR",
-      "OUT OF SERVICE",
-      "OUTSIDE FIRE (EXTINGUISHED)",
-      "OUTSIDE FIRE (LARGE)",
-      "OUTSIDE FIRE (SMALL)",
-      "OVERDOSE NOT ALERT",
-      "OVERDOSE UNCONSCIOUS",
-      "PHYSICAL FITNESS",
-      "POISONING (W/O PRIORITY SYMPTOMS)",
-      "PREGNANCY/CHILDBIRTH",
-      "PSYCHIATRIC/SUICIDE ATTEMPT",
-      "PUBLIC LIFT ASSIST",
-      "SEIZURE",
-      "SEIZURE / CONVULSION",
-      "SEIZURE / NOT SEIZING",
-      "SERVICE CALL (53A)",
-      "SERVICE CALL (53B)",
-      "SERVICE CALL (53O)",
-      "SICK PERSON",
-      "SICK PERSON (NON PRIORITY)",
-      "SICK PERSON (NOT ALERT)",
-      "SMOKE INVESTIGATION (OUTSIDE) HEAVY",
-      "STROKE / TIA",
-      "STRUCTURE FIRE",
-      "TEST CALL",
-      "TRAFFIC INCIDENT",
-      "TRAUMATC INJURIES",
-      "TRAUMATIC INJURIES",
-      "UNCONSCIOUS / FAINTING",
-      "UNKNOWN PROBLEM",
-      "VEHICLE FIRE",
-      "VEHICLE FIRE (LARGE)",
-      "WILDLAND/BRUSH/GRASS FIRE (INVESTIGATION)",
-      "WILDLAND/BRUSH/GRASS FIRE (LARGE)",
-      "WILDLAND/BRUSH/GRASS FIRE (SMALL)",
-      "WILDLAND/BRUSH/GRASS FIRE (SMALL) CLEAR"
- );
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("(")) {
+        int pt = field.indexOf(')', 1);
+        if (pt >= 0) {
+          data.strCode = field.substring(1, pt).trim();
+          field = field.substring(pt+1).trim();
+        }
+      }
+      data.strCall = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
 }
