@@ -521,6 +521,7 @@ public class ParserList {
               ,"ILKaneCounty"                   ,"Kane County, IL"
               ,"ILKankakeeCounty"               ,"Kankakee County, IL"
               ,"ILLakeCounty"                   ,"Lake County, IL"
+              ,"ILLoganCounty"                  ,"Logan County, IL"
               ,"ILMacoupinCounty"               ,"Macoupin County, IL"
               ,"ILMadisonCounty"                ,"Madison County, IL"
               ,"ILMarionCounty"                 ,"Marion County, IL"
