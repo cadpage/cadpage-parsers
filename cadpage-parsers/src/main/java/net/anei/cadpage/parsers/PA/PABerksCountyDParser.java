@@ -97,6 +97,9 @@ public class PABerksCountyDParser extends FieldProgramParser {
         data.strApt = append(data.strAddress.substring(pt+1).trim(), "-", data.strApt);
         data.strAddress = data.strAddress.substring(0, pt).trim();
       }
+
+      pt = data.strCity.indexOf('=');
+      if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
     }
 
     @Override
