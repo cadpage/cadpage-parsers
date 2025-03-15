@@ -80,7 +80,7 @@ public class ORMarionCountyBParser extends DispatchH05Parser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private static final Pattern GPS_PTN = Pattern.compile("(?:GPS:)?([-+]?\\d{2,3}\\.\\d{6,})");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type);
