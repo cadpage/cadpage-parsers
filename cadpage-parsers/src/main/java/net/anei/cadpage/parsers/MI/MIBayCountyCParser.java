@@ -16,7 +16,7 @@ public class MIBayCountyCParser extends HtmlProgramParser {
 
   @Override
   public String getFilter() {
-    return "@baycounty.net";
+    return "@baycounty.net,cadpaging@baycountymi.gov";
   }
 
   @Override
