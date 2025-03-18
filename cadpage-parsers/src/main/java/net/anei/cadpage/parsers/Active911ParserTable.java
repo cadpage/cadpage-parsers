@@ -872,6 +872,7 @@ public class Active911ParserTable {
       "US/KS/McPhersonCounty",            "KSMcPhersonCounty",
       "US/KS/MiamiCounty",                "KSMiamiCountyA",
       "US/KS/MontgomeryCounty",           "KSMontgomeryCounty",
+      "US/KS/NemahaCounty",               "KSNemahaCounty",
       "US/KS/NeoshoCounty",               "KSNeoshoCounty",
       "US/KS/NessCounty",                 "KSNessCounty",
       "US/KS/OsageCounty",                "KSOsageCounty",

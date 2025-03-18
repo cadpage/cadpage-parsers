@@ -679,6 +679,7 @@ public class ParserList {
               ,"KSMiamiCounty"                  ,"Miami County, KS"
               ,"KSMontgomeryCounty"             ,"Montgomery County, KS"
               ,"KSMortonCounty"                 ,"Morton County, KS"
+              ,"KSNemahaCounty"                 ,"Nemaha County, KS"
               ,"KSNeoshoCounty"                 ,"Neosho County, KS"
               ,"KSNessCounty"                   ,"Ness County, KS"
               ,"KSOsageCounty"                  ,"Osage County, KS"
