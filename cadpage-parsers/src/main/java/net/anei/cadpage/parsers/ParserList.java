@@ -632,6 +632,7 @@ public class ParserList {
               ,"IALucasCounty"                  ,"Lucas County, IA"
               ,"IALyonCounty"                   ,"Lyon County, IA"
               ,"IAMarionCounty"                 ,"Marion County, IA"
+              ,"IAMillsCounty"                  ,"Mills County, IA"
               ,"IAMitchellCounty"               ,"Mitchell County, IA"
               ,"IAMuscatineCounty"              ,"Muscatine County, IA"
               ,"IAPolkCounty"                   ,"Polk County, IA"
