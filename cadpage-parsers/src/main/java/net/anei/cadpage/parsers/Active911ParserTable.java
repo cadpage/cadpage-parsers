@@ -568,6 +568,7 @@ public class Active911ParserTable {
       "US/GA/OconeeCounty",               "GAOconeeCounty",
       "US/GA/PauldingCounty",             "GAPauldingCounty",
       "US/GA/PickensCo911",               "GAPickensCounty",
+      "US/GA/PierceCounty",               "GAPierceCounty",
       "US/GA/PikeCounty",                 "GAPikeCounty",
       "US/GA/PolkCounty",                 "GAPolkCounty",
       "US/GA/RabunCounty",                "GARabunCounty",

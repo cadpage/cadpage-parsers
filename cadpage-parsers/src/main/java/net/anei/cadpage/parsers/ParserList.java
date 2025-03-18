@@ -457,6 +457,7 @@ public class ParserList {
               ,"GAOconeeCounty"                 ,"Oconee County, GA"
               ,"GAPauldingCounty"               ,"Paulding County, GA"
               ,"GAPickensCounty"                ,"Pickens County, GA"
+              ,"GAPierceCounty"                 ,"Pierce County, GA"
               ,"GAPikeCounty"                   ,"Pike County, GA"
               ,"GAPolkCounty"                   ,"Polk County, GA"
               ,"GARabunCounty"                  ,"Rabun County, GA"
