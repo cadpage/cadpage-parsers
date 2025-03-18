@@ -1821,6 +1821,7 @@ public class ParserList {
               ,"TXUTHealthEastTexas"            ,"UTHealth East Texas, TX"
               ,"TXVanAlstyne"                   ,"Van Alstyne, TX"
               ,"TXVanZandtCounty"               ,"Van Zandt County, TX"
+              ,"TXVictoriaCounty"               ,"Victoria County, TX"
               ,"TXWallerCounty"                 ,"Waller County, TX"
               ,"TXWalkerCounty"                 ,"Walker County, TX"
               ,"TXWebster"                      ,"Webster, TX"

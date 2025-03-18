@@ -2712,6 +2712,7 @@ public class Active911ParserTable {
       "US/TX/UMCHealth",                  "TXLubbockCountyB",
       "US/TX/VALAMB",                     "TXElPasoCounty",
       "US/TX/VanAlstyne",                 "TXVanAlstyne",
+      "US/TX/VictoriaCounty",             "TXVictoriaCounty",
       "US/TX/VillageFire",                "TXHarrisCountyB",
       "US/TX/Waco",                       "TXMcLennanCountyB",
       "US/TX/WalkerCounty",               "TXWalkerCounty",
