@@ -316,6 +316,7 @@ public class ParserList {
               ,"CORouttCounty"                  ,"Routt County, CO"
               ,"COSanJuanCounty"                ,"San Juan County, CO"
               ,"COSanMiguelCounty"              ,"San Miguel County, CO"
+              ,"COSummitCounty"                 ,"Summit County, CO"
               ,"COTellerCounty"                 ,"Teller County, CO"
               ,"COThornton"                     ,"Thornton, CO"
               ,"COWeldCounty"                   ,"Weld County, CO"

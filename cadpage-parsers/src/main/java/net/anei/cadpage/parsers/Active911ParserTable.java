@@ -411,6 +411,7 @@ public class Active911ParserTable {
       "US/CO/SanMiguelCounty",            "COSanMiguelCounty",
       "US/CO/SouthwestMemorialAmbulance", "COMontezumaCounty",
       "US/CO/StadiumMedical",             "CODenverB",
+      "US/CO/SummitCounty",               "COSummitCounty",
       "US/CO/TellerCounty",               "COTellerCounty",
       "US/CO/USAMobility",                "CODouglasCountyB",
       "US/CO/Vail",                       "COEagleCounty",
