@@ -16,7 +16,7 @@ public class OHLakeCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ingr.com@archwireless.net,ingr.com@usamobility.net";
+    return "ingr.com@archwireless.net,ingr.com@usamobility.net,Central@lakecountyohio.gov";
   }
 
   @Override
