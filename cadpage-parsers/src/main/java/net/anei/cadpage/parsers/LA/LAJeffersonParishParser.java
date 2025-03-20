@@ -11,28 +11,30 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Jefferson Parish, LA
  */
 public class LAJeffersonParishParser extends FieldProgramParser {
-  
-  private static final Pattern MARKER = Pattern.compile("^DISPATCH From [A-Z]{2}\\d+:");
+
+  private static final Pattern MARKER = Pattern.compile("^DISPATCH From [A-Z]{2,3}\\d+:");
   private static final Pattern CITY_CROSS_PTN = Pattern.compile("\\b([A-Z]{2}) +(<\\d+/ *\\d+>)");
-  
+
   public LAJeffersonParishParser() {
     super(CITY_CODES, "JEFFERSON PARISH", "LA",
         "CODE CALL ADDR CITY! ( AT CITY | ) X? SRC MAP MAPPAGE? XXXX? INFO+ Units:UNIT UNIT+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@dispatchtext.com,CAD@JEFFPARISH.NET,5043829663@vzwpix.com";
+    return "@dispatchtext.com,CAD@JEFFPARISH.NET,911relay@jeffparish.gov,5043829663@vzwpix.com";
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return PK_PTN.matcher(addr).replaceAll("PKWY");
   }
   private static final Pattern PK_PTN = Pattern.compile("\\bPK\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     Matcher match = MARKER.matcher(body);
     if (!match.find()) return false;
     body = body.substring(match.end()).trim();
@@ -42,14 +44,14 @@ public class LAJeffersonParishParser extends FieldProgramParser {
     if (data.strUnit.length() == 0) data.strUnit = data.strSource;
     return true;
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames() + " UNIT";
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -58,12 +60,12 @@ public class LAJeffersonParishParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   // The AT field starts with an at keyword
   // It indicates that this is the real address, and what we originally
   // parsed as an address is a place name
   private class AtField extends AddressField {
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("at ")) return false;
@@ -74,7 +76,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   // Cross field only exist if it has the correct keyword
   private class MyCrossField extends CrossField {
     @Override
@@ -88,7 +90,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   // Unit fields join together with comma separators
   private class MyUnitField extends UnitField {
     @Override
@@ -98,7 +100,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
       data.strUnit = append(data.strUnit, ",", field);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CODE")) return new CodeField("[A-Z0-9]{1,6}", true);
@@ -106,7 +108,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("AT")) return new AtField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("SRC")) return new SourceField("[A-Z0-9]{3}", true);
+    if (name.equals("SRC")) return new SourceField("[A-Z0-9]{3,4}", true);
     if (name.equals("MAP")) return new MapField("[A-Z0-9]{3,6}", true);
     if (name.equals("MAPPAGE")) return new SkipField("mappage", true);
     if (name.equals("XXXX")) return new SkipField("XXXX?", true);
