@@ -15,7 +15,7 @@ public class TXKendallCountyBParser extends FieldProgramParser {
   
   @Override
   public String getFilter() {
-    return "tyler@boerne-tx.gov";
+    return "tyler@boerne-tx.gov,donotreply2@cityofboerne.net";
   }
   
   @Override
