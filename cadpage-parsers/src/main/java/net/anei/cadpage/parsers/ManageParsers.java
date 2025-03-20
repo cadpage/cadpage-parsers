@@ -255,7 +255,9 @@ public class ManageParsers {
         "OHMuskingumCountyA", "General",                 // 02/24/2025
         "OHMuskingumCountyB", "General",
         "OHMuskingumCountyE", "General",
-        "MSHarrisonCountyB",  "General"                 // 03/10/2025
+        "MSHarrisonCountyB",  "General",                 // 03/10/2025
+        "TXLeagueCity",       "TXHarrisCounty",          // 03/20/2025
+        "TXWebster",          "TXHarrisCounty"
   });
 
 }

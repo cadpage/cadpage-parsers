@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class TXSeabrookBParser extends FieldProgramParser {
+public class TXHarrisCountyGParser extends FieldProgramParser {
 
-  public TXSeabrookBParser() {
-    super(TXSeabrookParser.CITY_LIST, "HARRIS COUNTY", "TX",
+  public TXHarrisCountyGParser() {
+    super(TXHarrisCountyParser.CITY_LIST, "HARRIS COUNTY", "TX",
           "CAD#:ID! Call:CALL! UNIT:UNIT? ADDR:ADDRCITYST/S! INFO/N+");
   }
 
@@ -18,10 +18,25 @@ public class TXSeabrookBParser extends FieldProgramParser {
     return "messaging@iamresponding.com,@dispatches.iamresponding.com";
   }
 
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +NOTES::");
+  private static final Pattern DELIM = Pattern.compile("[;\n]");
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    body = body.replace(" NOTES::", "\nNOTES::");
-    return parseFields(body.split("\n"), data);
+    String[] parts = INFO_BRK_PTN.split(body);
+    if (!parseFields(DELIM.split(parts[0]), data)) return false;
+    for (int jj = 1; jj < parts.length; jj++) {
+      String fld = parts[jj];
+      int pt =  fld.lastIndexOf(':');
+      if (pt >= 0) fld = fld.substring(pt+1).trim();
+      data.strSupp = append(data.strSupp, "\n", fld);
+    }
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " INFO";
   }
 
   @Override

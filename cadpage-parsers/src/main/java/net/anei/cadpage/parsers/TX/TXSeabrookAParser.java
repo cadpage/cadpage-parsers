@@ -11,7 +11,7 @@ public class TXSeabrookAParser extends DispatchA18Parser {
   private static final Pattern SUBJECT_SRC_PTN = Pattern.compile("[A-Z]{1,3}FD");
 
   public TXSeabrookAParser() {
-    super(TXSeabrookParser.CITY_LIST, "HARRIS COUNTY","TX");
+    super(TXHarrisCountyParser.CITY_LIST, "HARRIS COUNTY","TX");
   }
 
   @Override

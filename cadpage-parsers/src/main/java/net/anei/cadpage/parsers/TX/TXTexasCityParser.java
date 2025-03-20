@@ -1,13 +1,14 @@
 package net.anei.cadpage.parsers.TX;
 
-public class TXTexasCityParser extends TXLaPorteParser {
-  
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Texis County, TX
+ */
+
+public class TXTexasCityParser extends GroupBestParser {
+
   public TXTexasCityParser() {
-    super("TEXAS CITY", "TX");
-  }
-  
-  @Override
-  public String getFilter() {
-    return "CAD@texas-city-tx.org,CAD@texascitytx.gov";
+    super(new TXTexasCityAParser(), new TXHarrisCountyGParser());
   }
 }
