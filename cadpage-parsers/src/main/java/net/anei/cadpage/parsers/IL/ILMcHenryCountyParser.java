@@ -8,12 +8,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class ILMcHenryCountyParser extends FieldProgramParser {
-  
+
   public ILMcHenryCountyParser() {
     super("MCHENRY COUNTY", "IL",
-          "OCA:ID? Type:CALL! OCA:ID? Date:DATETIME! Loca:ADDR! Apt:APT? City:CITY! Cros:X INFO+ Dist:MAP NAR:INFO/N+");
+          "OCA:ID? Unit:UNIT? Type:CALL! OCA:ID? Date:DATETIME! Loca:ADDR! Apt:APT? City:CITY! Cros:X INFO+ Dist:MAP NAR:INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "DoNotReply@mcetsb.org";
@@ -27,12 +27,12 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
     body = body.substring(2).trim();
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -40,7 +40,7 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_PFX_PTN = Pattern.compile("^\\d+");
   private class MyCallField extends CallField {
     @Override
@@ -49,50 +49,50 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern INFO_SPLIT_PTN = Pattern.compile("\n|(?=\\[\\d{1,2}\\])");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[\\d\\d/\\d\\d/\\d{4} .*\\]|\\[.* are related\\.\\]|\\*\\* EMD .*|\\(Cloned from.*\\)");
   private static final Pattern INFO_APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|#) *(.*)");
   private static final Pattern INFO_PHONE_PTN = Pattern.compile("\\d{3}[- ]\\d{3}[- ]\\d{4}");
   private static final Pattern INFO_GPS_PTN = Pattern.compile("ALI [XY] Coordinate: ([-+]?\\d+\\.\\d{4,})");
   private class MyInfoField extends InfoField {
-    
+
     private String gpsLoc;
-    
+
     @Override
     public void parse(String field, Data data) {
-      
+
       if (data.strSupp.length() == 0) gpsLoc = null;
-      
+
       for (String line : INFO_SPLIT_PTN.split(field)) {
         line = line.trim();
         if (line.length() == 0) continue;
-        
+
         line = stripFieldEnd(line, ",");
-        
+
         if (INFO_JUNK_PTN.matcher(line).matches()) return;
-        
+
         if (line.startsWith("Landmark:")) {
           line = stripFieldStart(line, ",");
           line = stripFieldStart(line, "-");
           data.strPlace = append(data.strPlace, " - ", line.substring(9).trim());
           continue;
         }
-        
+
         line = stripFieldStart(line, "Landmark Comment:");
         line = stripFieldStart(line, "Geo Comment:");
-        
+
         Matcher match = INFO_APT_PTN.matcher(line);
         if (match.matches()) {
           data.strApt = append(data.strApt, "-", match.group(1));
           continue;
         }
-        
+
         if (INFO_PHONE_PTN.matcher(line).matches()) {
           data.strPhone = line;
           continue;
         }
-        
+
         match = INFO_GPS_PTN.matcher(line);
         if (match.matches()) {
           String gps = match.group(1);
@@ -104,11 +104,11 @@ public class ILMcHenryCountyParser extends FieldProgramParser {
           }
           continue;
         }
-        
+
         data.strSupp = append(data.strSupp, "\n", line);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE PHONE APT GPS";
