@@ -32,6 +32,7 @@ public class OHMontgomeryCountyAParser extends DispatchH03Parser {
   }
 
   private static final Properties COUNTY_CODES = buildCodeTable(new String[] {
+      "CC", "CLARK COUNTY",
       "DC", "DARKE COUNTY",
       "MIA","MIAMI COUNTY",
       "PC", "PREBLE COUNTY",
