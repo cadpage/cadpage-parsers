@@ -103,6 +103,38 @@ public class TXHarrisCountyParser extends GroupBestParser {
       "ROSE HILL",
       "SATSUMA",
       "TRACES",
-      "WESTFIELD"
+      "WESTFIELD",
+
+      // Galveston County
+      // Cities
+      "BAYOU VISTA",
+      "CLEAR LAKE SHORES",
+      "DICKINSON",
+      "GALVESTON",
+      "HITCHCOCK",
+      "JAMAICA BEACH",
+      "KEMAH",
+      "LA MARQUE",
+      "SANTA FE",
+      "TEXAS CITY",
+
+      // Villages
+      "TIKI ISLAND",
+
+      // Census-designated places
+      "BACLIFF",
+      "BOLIVAR PENINSULA",
+      "SAN LEON",
+      "UNINCORPORATED COMMUNITIES",
+      "ALGOA",
+      "BAYVIEW",
+      "CAPLEN",
+      "CRYSTAL BEACH",
+      "GILCHRIST",
+      "HIGH ISLAND",
+      "PORT BOLIVAR",
+
+      // Fort Bend County
+      "SUGAR LAND"
     };
 }

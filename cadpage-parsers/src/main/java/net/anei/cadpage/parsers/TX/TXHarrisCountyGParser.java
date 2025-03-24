@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
   public TXHarrisCountyGParser() {
     super(TXHarrisCountyParser.CITY_LIST, "HARRIS COUNTY", "TX",
           "CAD#:ID! Call:CALL! UNIT:UNIT? ADDR:ADDRCITYST/S! INFO/N+");
+    setupCities(MISSPELLED_CITIES);
   }
 
   @Override
@@ -18,13 +20,13 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     return "messaging@iamresponding.com,@dispatches.iamresponding.com";
   }
 
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +NOTES::");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +NOTES::?");
   private static final Pattern DELIM = Pattern.compile("[;\n]");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
     String[] parts = INFO_BRK_PTN.split(body);
-    if (!parseFields(DELIM.split(parts[0]), data)) return false;
+    if (!parseFields(DELIM.split(parts[0].replace("-LA PORTE", " LA PORTE")), data)) return false;
     for (int jj = 1; jj < parts.length; jj++) {
       String fld = parts[jj];
       int pt =  fld.lastIndexOf(':');
@@ -64,4 +66,8 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
+      "BAYCLIFF",   "BACLIFF"
+  });
 }
