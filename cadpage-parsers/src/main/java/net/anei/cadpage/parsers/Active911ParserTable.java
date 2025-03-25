@@ -2571,7 +2571,7 @@ public class Active911ParserTable {
       "US/TX/CityofOverton",              "TXOverton",
       "US/TX/CityofPlano",                "TXDentonCountyB",
       "US/TX/CityofPortAransas",          "TXPortAransas",
-      "US/TX/CityofSilsbee",              "TXHardinCountyB",
+      "US/TX/CityofSilsbee",              "TXHardinCounty",
       "US/TX/CityofTerrel",               "TXKaufmanCountyB",
       "US/TX/CityofWhiteOak",             "TXGreggCountyB",
       "US/TX/CityofWilmer",               "TXDallasCountyB",
