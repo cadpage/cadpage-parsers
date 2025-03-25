@@ -22,7 +22,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@dispatchtext.com,CAD@JEFFPARISH.NET,911relay@jeffparish.gov,5043829663@vzwpix.com";
+    return "@dispatchtext.com,CAD@JEFFPARISH.NET,911relay@jeffparish.gov,Cad@jpcd.net,cad@marreroestellefire.com,5043829663@vzwpix.com";
   }
 
   @Override
@@ -48,7 +48,7 @@ public class LAJeffersonParishParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public String getFieldNames() {
-      return "PLACE " + super.getFieldNames() + " UNIT";
+      return "PLACE " + super.getFieldNames();
     }
   }
 
