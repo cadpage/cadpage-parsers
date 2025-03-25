@@ -257,7 +257,8 @@ public class ManageParsers {
         "OHMuskingumCountyE", "General",
         "MSHarrisonCountyB",  "General",                 // 03/10/2025
         "TXLeagueCity",       "TXHarrisCounty",          // 03/20/2025
-        "TXWebster",          "TXHarrisCounty"
+        "TXWebster",          "TXHarrisCounty",
+        "MOCapeGirardeauCountyE","MOCapeGirardeauCountyC" // 03/25/2025
   });
 
 }

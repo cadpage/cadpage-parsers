@@ -6,8 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MOCapeGirardeauCountyParser extends GroupBestParser {
 
   public MOCapeGirardeauCountyParser() {
-    super(new MOCapeGirardeauCountyAParser(), 
+    super(new MOCapeGirardeauCountyAParser(),
           new MOCapeGirardeauCountyBParser(),
-          new MOCapeGirardeauCountyEParser());
+          new MOCapeGirardeauCountyCParser());
   }
 }
