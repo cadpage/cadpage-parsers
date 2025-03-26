@@ -1379,6 +1379,7 @@ public class ParserList {
               ,"OHClermontCounty"               ,"Clermont County, OH"
               ,"OHClintonCounty"                ,"Clinton County, OH"
               ,"OHColumbianaCounty"             ,"Columbiana County, OH"
+              ,"OHCoshoctonCounty"              ,"Coshocton County, OH"
               ,"OHCrawfordCounty"               ,"Crawford County, OH"
               ,"OHCuyahogaCounty"               ,"Cuyahoga County, OH"
               ,"OHDarkeCounty"                  ,"Darke County, OH"
