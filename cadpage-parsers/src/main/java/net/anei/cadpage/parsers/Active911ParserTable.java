@@ -1724,6 +1724,7 @@ public class Active911ParserTable {
       "US/ND/Napoleon",                   "NDLoganCounty",
       "US/ND/PierceCounty",               "NDPierceCounty",
       "US/ND/RichlandCounty",             "NDRichlandCounty",
+      "US/NE/CusterCounty",               "NECusterCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
       "US/NE/Hastings",                   "NEAdamsCounty",
       "US/NH/BelknapCounty",              "NHBelknapCounty",

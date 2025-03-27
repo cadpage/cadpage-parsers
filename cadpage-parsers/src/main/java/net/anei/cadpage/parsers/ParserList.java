@@ -1139,6 +1139,7 @@ public class ParserList {
           ),
           new ParserCategory("Nebraska"
               ,"NEAdamsCounty"                  ,"Adams County, NE"
+              ,"NECusterCounty"                 ,"Custer County, NE"
               ,"NEGrandIsland"                  ,"Grand Island, NE"
               ,"NEMadisonCounty"                ,"Madison County, NE"
           ),
