@@ -3,31 +3,19 @@ package net.anei.cadpage.parsers.OR;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA22Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/*
- * Klamath County, OR
+/**
+* Klamath County, OR
  */
 
-public class ORKlamathCountyParser extends DispatchA22Parser {
-
+public class ORKlamathCountyParser extends GroupBestParser {
   public ORKlamathCountyParser() {
-    super(CITY_CODES, "KLAMATH COUNTY", "OR");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    super(new ORKlamathCountyAParser(), new ORKlamathCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "kc-911@kc911.us,paging@klamath911.gov";
-  }
 
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_SUPPR_LA;
-  }
-
-  @Override
-  protected String adjustGpsLookupAddress(String addr) {
+  static String doAdjustGpsLookupAddress(String addr) {
     addr = TRAIL_DIR_PTN.matcher(addr).replaceFirst("");
     addr = MPNN_PTN.matcher(addr).replaceAll("MP $1 ");
     return addr;
@@ -36,7 +24,7 @@ public class ORKlamathCountyParser extends DispatchA22Parser {
   private static final Pattern TRAIL_DIR_PTN = Pattern.compile(" +[NSEW]{1,2}$");
   private static final Pattern MPNN_PTN = Pattern.compile("MP(\\d+) ");
 
-  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+  static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "0 MIDLAND REST AREA",                  "+42.125528,-121.825015",
 
       "MP 1 HWY 39",                          "+42.181328,-121.698156",
@@ -145,7 +133,4 @@ public class ORKlamathCountyParser extends DispatchA22Parser {
       "MP 68 HWY 140",                        "+42.202770,-121.811473"
   });
 
-  private static Properties CITY_CODES = buildCodeTable(new String[]{
-      "KF", "KLAMATH FALLS"
-  });
 }
