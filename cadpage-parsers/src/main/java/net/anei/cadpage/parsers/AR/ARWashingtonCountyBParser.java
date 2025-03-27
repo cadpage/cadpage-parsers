@@ -33,7 +33,7 @@ public class ARWashingtonCountyBParser extends MsgParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d");
+  private static final Pattern TIME_PTN = Pattern.compile("\\d\\d:\\d\\d|");
   private static final Pattern INFO_HDR_PTN = Pattern.compile("\\d+\\) \\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d-\\[\\d+\\] *");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
 
@@ -60,10 +60,12 @@ public class ARWashingtonCountyBParser extends MsgParser {
     if (!fp.checkBlanks(140)) return false;
 
     if (fp.check(" Apt.")) {
-      data.strApt = append(data.strApt, "-", fp.get(9));
+      String apt = fp.getOptional(" Ops Channel", 9, 10);
+      if (apt == null) return false;
+      data.strApt = append(data.strApt, "-", apt);
+    } else {
+      if (!fp.check(" Ops Channel") && !fp.check("  Ops Channel")) return false;
     }
-
-    if (!fp.check(" Ops Channel") && !fp.check("  Ops Channel")) return false;
     data.strChannel = fp.get(30);
 
     if (!fp.check("Time") && !fp.check(" Time ")) return false;
