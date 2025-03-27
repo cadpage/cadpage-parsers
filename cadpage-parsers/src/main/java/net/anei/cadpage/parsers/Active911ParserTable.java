@@ -1414,7 +1414,7 @@ public class Active911ParserTable {
       "US/MO/HoltCounty",                 "MOHoltCounty",
       "US/MO/HowardCounty",               "MOHowardCounty",
       "US/MO/HowellCounty",               "MOHowellCounty",
-      "US/MO/Jackson",                    "MOCapeGirardeauCountyB,MOCapeGirardeauCountyE",
+      "US/MO/Jackson",                    "MOCapeGirardeauCountyB,MOCapeGirardeauCountyC",
       "US/MO/JasperCounty",               "MOJasperCounty",
       "US/MO/JeffersonCity",              "MOJeffersonCity",
       "US/MO/JeffersonCounty",            "MOJeffersonCounty",

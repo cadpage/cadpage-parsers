@@ -31,6 +31,7 @@ public class ORKlamathCountyAParser extends DispatchA22Parser {
   }
 
   private static Properties CITY_CODES = buildCodeTable(new String[]{
+      "CV", "CHRISTMAS VALLEY",
       "KF", "KLAMATH FALLS"
   });
 }
