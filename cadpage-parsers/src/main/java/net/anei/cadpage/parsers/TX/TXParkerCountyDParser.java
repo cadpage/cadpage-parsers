@@ -11,7 +11,7 @@ public class TXParkerCountyDParser extends FieldProgramParser {
 
   public TXParkerCountyDParser() {
     super("PARKER COUNTY","TX",
-          "Add._Codes:CALL! CALL2/SDS+? ADDRCITYST! ( Business:PLACE! | PLACE! ) APT! X MAP! ID! UNIT! UNIT/ZC+? INFO! INFO/+? NAME! ID2/L? EMPTY+? DATETIME! END");
+          "Add._Codes:CALL! CALL2/SDS+? ADDRCITYST! ( Business:PLACE! | PLACE! ) APT! X MAP! ID! UNIT! UNIT/ZC+? INFO! INFO/+? NAME! ID2/L? EMPTY+? Alert:ALERT? EMPTY+? DATETIME! END");
   }
 
   @Override
@@ -39,7 +39,7 @@ public class TXParkerCountyDParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("APT")) return new MyAptField();
-    if (name.equals("MAP")) return new MapField("[A-Z0-9]{3,4}", true);
+    if (name.equals("MAP")) return new MapField("[A-Z0-9]{3,4}|", true);
     if (name.equals("ID")) return new IdField("CFS\\d{9}", true);
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
     if (name.equals("INFO")) return new MyInfoField();
@@ -65,6 +65,7 @@ public class TXParkerCountyDParser extends FieldProgramParser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.contains(",")) return false;
+      if (getRelativeField(+1).startsWith("Business:")) return false;
       super.parse(field, data);
       return true;
     }
