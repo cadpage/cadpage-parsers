@@ -8,24 +8,24 @@ import java.util.Properties;
 import java.util.regex.*;
 
 public class NYLivingstonCountyAParser extends DispatchA5Parser {
-  
+
   public NYLivingstonCountyAParser() {
     super(CITY_CODES, STANDARD_CODES, "LIVINGSTON COUNTY", "NY");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@CO.LIVINGSTON.NY.US";
+    return "@CO.LIVINGSTON.NY.US,alarms@livoniafiredept.org";
   }
-  
-  @Override 
+
+  @Override
   public String getProgram() {
     return super.getProgram().replace("CALL", "CODE CALL");
   }
-  
-  @Override 
+
+  @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     if(!super.parseMsg(subject, body, data)) return false;
     if (data.strCity.equals("COUNTY OUT") || data.strCity.equals("OUT OF COUNTY")) {
       data.strCity = "";
@@ -33,7 +33,7 @@ public class NYLivingstonCountyAParser extends DispatchA5Parser {
     }
     return true;
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -42,16 +42,16 @@ public class NYLivingstonCountyAParser extends DispatchA5Parser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CITY")) return new MyCityField() ;
     return super.getField(name);
   }
-  
+
   @Override
   public String adjustMapAddress(String sAddress) {
-    
+
     sAddress = MA_PTN.matcher(sAddress).replaceAll("MANOR");
     sAddress = EX_PTN.matcher(sAddress).replaceAll("EXPY");
     sAddress = IFO_PTN.matcher(sAddress).replaceAll("");
@@ -60,11 +60,11 @@ public class NYLivingstonCountyAParser extends DispatchA5Parser {
   private static final Pattern MA_PTN = Pattern.compile("\\bMA\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern EX_PTN = Pattern.compile("\\bEX\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern IFO_PTN = Pattern.compile(" +IFO$", Pattern.CASE_INSENSITIVE);
-  
+
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "GROVELAN",   "GROVELAND",
       "SPRINGWA",   "SPRINGWATER",
-      
+
       "AVOS", "AVOCA",
       "AVOT", "AVON",
       "AVOV", "AVON",
@@ -125,6 +125,6 @@ public class NYLivingstonCountyAParser extends DispatchA5Parser {
       "WSPT", "WEST SPARTA",
       "YORT", "YORK"
   });
-  
-  private static final StandardCodeTable STANDARD_CODES = new StandardCodeTable(); 
+
+  private static final StandardCodeTable STANDARD_CODES = new StandardCodeTable();
 }
