@@ -41,7 +41,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.equals("VisiCAD Email")) return false;
+    if (!subject.equals("VisiCAD Email") && !subject.isEmpty()) return false;
 
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
@@ -69,6 +69,7 @@ public class ORWashingtonCountyCParser extends MsgParser {
       return true;
     }
 
+    if (subject.isEmpty()) return false;
     setFieldList("UNIT INFO");
     data.msgType = MsgType.GEN_ALERT;
     match = GEN_UNIT_PTN.matcher(body);
