@@ -11,7 +11,7 @@ public class OHLakeCountyAParser extends FieldProgramParser {
 
   public OHLakeCountyAParser() {
     super(CITY_CODES, "LAKE COUNTY", "OH",
-           "Location:ADDR/S? APT:APT? Cross_Streets:X! ( Type_Code:CALL! | TYPE_CODE:CALL! ) Sub_Type:CALL! ( Time:TIME! | TIME:TIME! ) Comments:INFO");
+           "Location:ADDR/S? APT:APT? Cross_Streets:X! ( Type_Code:CALL! | TYPE_CODE:CALL! ) Sub_Type:CALL! ( Time:TIME! | TIME:TIME! ) Comments:INFO CommonPlace:PLACE? CFS#:ID?");
   }
 
   @Override
@@ -21,6 +21,7 @@ public class OHLakeCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace("CFS#:", " CFS#:");
     if (!super.parseMsg(body, data)) return false;
     if (data.strAddress.startsWith("&")) {
       data.strPlace = append(data.strAddress.substring(1).trim(), " - ", data.strPlace);
