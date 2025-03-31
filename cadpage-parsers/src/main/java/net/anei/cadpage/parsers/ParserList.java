@@ -782,6 +782,7 @@ public class ParserList {
               ,"KYOwenCounty"                   ,"Owen County, KY"
               ,"KYOwsleyCounty"                 ,"Owsley County, KY"
               ,"KYPendletonCounty"              ,"Pendleton County, KY"
+              ,"KYPerryCounty"                  ,"Perry County, KY"
               ,"KYPikeCounty"                   ,"Pike County, KY"
               ,"KYPowellCounty"                 ,"Powell County, KY"
               ,"KYPulaskiCounty"                ,"Pulaski County, KY"

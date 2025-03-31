@@ -1042,6 +1042,7 @@ public class Active911ParserTable {
       "US/KY/OldhamCounty",               "KYOldhamCountyC",
       "US/KY/OwsleyCounty",               "KYOwsleyCounty",
       "US/KY/PendletonCounty",            "KYPendletonCountyA,KYPendletonCountyB",
+      "US/KY/PerryCounty",                "KYPerryCounty",
       "US/KY/PointPleasantFire",          "KYKentonCountyC",
       "US/KY/PowellCounty",               "KYPowellCounty",
       "US/KY/PulaskiCounty",              "KYPulaskiCounty",
