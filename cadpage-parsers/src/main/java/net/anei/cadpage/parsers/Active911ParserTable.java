@@ -1300,6 +1300,7 @@ public class Active911ParserTable {
       "US/MN/HennepinCountySheriff",      "MNHennepinCounty",
       "US/MN/HubbardCounty",              "MNHubbardCounty",
       "US/MN/IsantiCounty",               "MNIsantiCounty",
+      "US/MN/IsantiFireDistrict",         "MNIsantiCounty",
       "US/MN/ItascaCounty",               "MNItascaCounty",
       "US/MN/KandiyohiCounty",            "MNKandiyohiCounty",
       "US/MN/LacquiParleCounty",          "MNLacQuiParleCounty",
