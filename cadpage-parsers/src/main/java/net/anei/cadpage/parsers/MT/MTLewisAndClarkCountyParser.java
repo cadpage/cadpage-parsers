@@ -7,6 +7,7 @@ public class MTLewisAndClarkCountyParser extends GroupBestParser {
 
   public MTLewisAndClarkCountyParser() {
     super(new MTLewisAndClarkCountyAParser(),
-           new MTLewisAndClarkCountyBParser());
+          new MTLewisAndClarkCountyBParser(),
+          new MTLewisAndClarkCountyCParser());
   }
 }
