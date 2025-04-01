@@ -10,7 +10,9 @@ public class ILLoganCountyParser extends DispatchH05Parser {
 
   public ILLoganCountyParser() {
     super("LOGAN COUNTY", "IL",
-          "Call_Time:DATETIME! Location:ADDRCITY! Call_Type:CODE_CALL! Response_Area:MAP! DASHES! DASHES! Status_Times:EMPTY! TIMES+");
+          "( Call_Time:DATETIME! Location:ADDRCITY! Call_Type:CODE_CALL! Response_Area:MAP! DASHES! DASHES! Status_Times:EMPTY! " +
+          "| GPSCAD " +
+          ") TIMES+");
   }
 
   @Override
@@ -19,11 +21,17 @@ public class ILLoganCountyParser extends DispatchH05Parser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DASHES")) return new SkipField("-{4,}", true);
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    if (name.equals("GPSCAD")) return new MyGpsCadField();
     return super.getField(name);
   }
 
@@ -58,5 +66,29 @@ public class ILLoganCountyParser extends DispatchH05Parser {
     public String getFieldNames() {
       return "CODE CALL";
     }
+  }
+
+  private static final Pattern GPSCAD_PTN =
+      Pattern.compile("GPSCAD\\* (.*?) *MSGCAD\\* *(?:(\\d+) - )?(.*?) ADDRESS: *([^,]*?)(?:, *(.*?))? +Common Name: *(.*?) Response Area: *(.*?) Status Times:");
+  private class MyGpsCadField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('+', ' ');
+      Matcher match = GPSCAD_PTN.matcher(field);
+      if (!match.matches()) abort();
+      setGPSLoc(match.group(1), data);
+      data.strCode = getOptGroup(match.group(2));
+      data.strCall = match.group(3).trim();
+      parseAddress(match.group(4).trim(), data);
+      data.strCity = getOptGroup(match.group(5));
+      data.strPlace = match.group(6).trim();
+      data.strMap = match.group(7).trim();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "GPS CODE CALL ADDR APT CITY PLACE MAP";
+    }
+
   }
 }
