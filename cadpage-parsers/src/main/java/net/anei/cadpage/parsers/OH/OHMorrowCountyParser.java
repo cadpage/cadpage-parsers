@@ -13,7 +13,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class OHMorrowCountyParser extends GroupBestParser {
 
   public OHMorrowCountyParser() {
-    super(new OHMorrowCountyAParser(), new OHMorrowCountyBParser());
+    super(new OHMorrowCountyBParser());
   }
 
   private static final Pattern ZIP_CODE_PTN = Pattern.compile("\\d{5}");

@@ -1,15 +1,15 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXWiseCountyParser extends DispatchA72Parser {
-  
+/**
+ * Wise County, TX
+ */
+
+public class TXWiseCountyParser extends GroupBestParser {
+
   public TXWiseCountyParser() {
-    super("WISE COUNTY", "TX");
+    super(new TXWiseCountyAParser(), new TXWiseCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "RMS@cityofbridgeport.net";
-  }
+
 }
