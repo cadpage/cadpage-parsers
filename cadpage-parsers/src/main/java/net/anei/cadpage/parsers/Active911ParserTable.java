@@ -1396,6 +1396,7 @@ public class Active911ParserTable {
       "US/MO/ColeCounty",                 "MOColeCounty",
       "US/MO/CooperCounty",               "MOCooperCounty",
       "US/MO/CrawfordCounty",             "MOCrawfordCountyB",
+      "US/MO/DadeCounty",                 "MODadeCounty",
       "US/MO/DallasCounty",               "MODallasCounty",
       "US/MO/DaviessCounty",              "MODaviessCounty",
       "US/MO/DekalbCoDispatch",           "MODekalbCounty",

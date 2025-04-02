@@ -185,7 +185,9 @@ public class DispatchA48Parser extends FieldProgramParser {
 
     INFO("INFO", "INFO") {
       @Override
-      public void parse(DispatchA48Parser parser, String field, Data data) {}
+      public void parse(DispatchA48Parser parser, String field, Data data) {
+        data.strSupp = field;
+      }
     };
 
 
@@ -432,7 +434,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     boolean addressParsed = false;
     String extra = null;
 
-    if (fieldType == FieldType.NONE || fieldType == FieldType.INFO) flags |= FLAG_ANCHOR_END;
+    if (fieldType == FieldType.NONE) flags |= FLAG_ANCHOR_END;
     flags |= getExtraParseAddressFlags();
 
     addr = cleanWirelessCarrier(addr, true);

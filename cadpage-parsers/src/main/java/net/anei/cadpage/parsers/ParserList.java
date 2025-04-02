@@ -1056,6 +1056,7 @@ public class ParserList {
               ,"MOColeCounty"                   ,"Cole County, MO"
               ,"MOCooperCounty"                 ,"Cooper County, MO"
               ,"MOCrawfordCounty"               ,"Crawford County, MO"
+              ,"MODadeCounty"                   ,"Dade County, MO"
               ,"MODallasCounty"                 ,"Dallas County, MO"
               ,"MODaviessCounty"                ,"Daviess County, MO"
               ,"MODekalbCounty"                 ,"DeKalb County, MO"
