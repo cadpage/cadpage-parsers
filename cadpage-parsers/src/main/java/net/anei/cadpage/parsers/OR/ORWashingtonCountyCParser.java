@@ -4,22 +4,23 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.MsgParser;
 
 /**
  * Washington County, OR (Variant C)
  * Also Clackamas County
  */
-public class ORWashingtonCountyCParser extends MsgParser {
+public class ORWashingtonCountyCParser extends FieldProgramParser {
 
   public ORWashingtonCountyCParser() {
     this("WASHINGTON COUNTY", "OR");
   }
 
   public ORWashingtonCountyCParser(String defCity, String defState) {
-    super(defCity, defState);
+    super(defCity, defState,
+          "UNIT_ID! ADDY:ADDR! BLDG:APT! CITY:CITY! LOC_NAME:PLACE! XST:X! TYPE:CODE_CALL! PRI:PRI! END");
   }
 
   @Override
@@ -60,6 +61,13 @@ public class ORWashingtonCountyCParser extends MsgParser {
 
     if (parseMsgFmt4(body, data)) return true;
 
+    // Try one of the free form formats
+    int pt = body.indexOf(" **SCHED INFO**");
+    if (pt >= 0) {
+      body = body.substring(0,pt).trim();
+      return super.parseMsg(body, data);
+    }
+
     match = TEMP_PAGE_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("CALL ID ADDR APT");
@@ -80,8 +88,6 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strSupp = body;
     return true;
   }
-
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +([^ ].*)");
 
   private boolean parseMsgFmt2(String body, Data data) {
     String prefix = "";
@@ -129,14 +135,20 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strCity = convertCodes(city, CITY_CODES);
     data.strCross = cross;
     data.strPriority = pri;
+    parseCodeCall(call, data);
+
+    return true;
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}[A-Z]\\d{1,2}[A-Z]?) +([^ ].*)");
+
+  private void parseCodeCall(String call, Data data) {
     Matcher match = CODE_CALL_PTN.matcher(call);
     if (match.matches()) {
       data.strCode = match.group(1);
       call = match.group(2);
     }
     data.strCall = append(data.strCall, " - ", call);
-
-    return true;
   }
 
   private boolean parseMsgFmt3(String body, Data data) {
@@ -206,6 +218,42 @@ public class ORWashingtonCountyCParser extends MsgParser {
     data.strPriority = pri;
     data.strSupp = info;
     return true;
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("UNIT_ID")) return new MyUnitIdField();
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
+    return super.getField(name);
+  }
+
+  private static final Pattern UNIT_ID_PTN = Pattern.compile("(\\S+) INC#(\\d+)");
+  private class MyUnitIdField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = UNIT_ID_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strUnit = match.group(1);
+      data.strCallId = match.group(2);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT ID";
+    }
+  }
+
+  private class MyCodeCallField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      parseCodeCall(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
