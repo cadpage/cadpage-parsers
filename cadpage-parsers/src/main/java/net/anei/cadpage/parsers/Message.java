@@ -234,6 +234,7 @@ public class Message {
   private void preParse(String fromAddress, String subject, String body, SplitMsgOptions options) {
 
     boolean keepLeadBreak = options.splitKeepLeadBreak();
+    boolean keepTrailBreak = options.splitKeepTrailBreak();
 
     // default address and subject to obvious values
     parseSubject = "";
@@ -249,7 +250,7 @@ public class Message {
     body = RETURN_PTN.matcher(body).replaceAll("\n");
 
     // Start by decoding common HTML sequences
-    body = trimLead(body, keepLeadBreak);
+    body = trimEnds(body, keepLeadBreak, keepTrailBreak);
 
     // Change spurious '¡' characters back to the @ there were originally intended to be
     body = body.replace('¡', '@');
@@ -267,7 +268,7 @@ public class Message {
       trailIndexFound = true;
       msgIndex = Integer.parseInt(match.group(1));
       msgCount = Integer.parseInt(match.group(2));
-      body = trimLead(body.substring(0,match.start()),keepLeadBreak);
+      body = trimEnds(body.substring(0,match.start()), keepLeadBreak, keepTrailBreak);
     }
 
     body = cleanParenSubject(body, options);
@@ -281,9 +282,9 @@ public class Message {
     if (match.lookingAt()) body = body.substring(match.end());
 
     // See if we can parse this as an Email message header
-    if (parseEmailHeaders(body, keepLeadBreak)) return;
+    if (parseEmailHeaders(body, keepLeadBreak, keepTrailBreak)) return;
 
-    body = trimLead(body, keepLeadBreak);
+    body = trimEnds(body, keepLeadBreak, keepTrailBreak);
     if (body.startsWith("Pagecopy-")) body = body.substring(9);
 
     // If we did not find a trailing index indicator, see if we can find
@@ -313,24 +314,24 @@ public class Message {
         }
         else {
           String origBody = body;
-          body = trimLead(body.substring(match.end()),keepLeadBreak);
+          body = trimEnds(body.substring(match.end()),keepLeadBreak, keepTrailBreak);
           if (origBody.startsWith("((")) {
-            if (body.startsWith(")")) body = trimLead(body.substring(1), keepLeadBreak);
+            if (body.startsWith(")")) body = trimEnds(body.substring(1), keepLeadBreak, keepTrailBreak);
             else body = "(" + body;
           }
         };
       } else {
-        if (body.startsWith("/ ")) body = trimLead(body.substring(2), keepLeadBreak);
+        if (body.startsWith("/ ")) body = trimEnds(body.substring(2), keepLeadBreak, keepTrailBreak);
       }
     }
 
     // Get rid of leading quoted blanks
     match = LEAD_BLANK.matcher(body);
-    if (match.find()) body = trimLead(body.substring(match.end()), keepLeadBreak);
+    if (match.find()) body = trimEnds(body.substring(match.end()), keepLeadBreak, keepTrailBreak);
 
     // And trailing opt out message
     match = OPT_OUT_PTN.matcher(body);
-    if (match.find()) body = trimLead(body.substring(0,match.start()), keepLeadBreak);
+    if (match.find()) body = trimEnds(body.substring(0,match.start()), keepLeadBreak, keepTrailBreak);
 
     // Dummy loop we can break out of
     do {
@@ -386,7 +387,7 @@ public class Message {
             if (line.startsWith("MSG:")) {
               parseAddress = lines[0];
               if (ndx > 1) addSubject(lines[1]);
-              StringBuilder sb = new StringBuilder(trimLead(line.substring(4), keepLeadBreak));
+              StringBuilder sb = new StringBuilder(trimEnds(line.substring(4), keepLeadBreak, keepTrailBreak));
               boolean skipBreak = false;
               for ( ndx++; ndx < lines.length; ndx++) {
                 line = lines[ndx];
@@ -404,7 +405,7 @@ public class Message {
               }
               trimLast(sb, "(End)");
               trimLast(sb, "\nMore?");
-              body = trimLead(sb.toString(), keepLeadBreak);
+              body = trimEnds(sb.toString(), keepLeadBreak, keepTrailBreak);
               break;
             }
           }
@@ -430,7 +431,7 @@ public class Message {
         String addr = body.substring(0,ipt).trim();
         if (addr.contains("@") && ! addr.contains(":")) {
           parseAddress = addr;
-          body = trimLead(body.substring(ipt+5), keepLeadBreak);
+          body = trimEnds(body.substring(ipt+5), keepLeadBreak, keepTrailBreak);
           break;
         }
       }
@@ -441,7 +442,7 @@ public class Message {
       ipt  = body.indexOf("\nMSG:\n");
       if (ipt >= 0) {
         parseAddress = body.substring(0,ipt);
-        body = trimLead(body.substring(ipt+6), keepLeadBreak);
+        body = trimEnds(body.substring(ipt+6), keepLeadBreak, keepTrailBreak);
         break;
       }
 
@@ -454,7 +455,7 @@ public class Message {
         if (from != null) parseAddress = from.trim();
         String sub = match.group(2);
         if (sub != null) addSubject(sub.trim());
-        body = trimLead(body.substring(match.end()), keepLeadBreak);
+        body = trimEnds(body.substring(match.end()), keepLeadBreak, keepTrailBreak);
         if (from != null) break;
       }
 
@@ -465,7 +466,7 @@ public class Message {
         if (match != null) {
           String sub = match.group(1);
           if (sub != null) addSubject(sub.trim());
-          body = trimLead(body.substring(match.end()), keepLeadBreak);
+          body = trimEnds(body.substring(match.end()), keepLeadBreak, keepTrailBreak);
           break;
         }
       }
@@ -477,7 +478,7 @@ public class Message {
       match = findPattern(body, EMAIL_PATTERNS);
       if (match != null) {
         parseAddress = match.group(1);
-        body = trimLead(body.substring(match.end()), keepLeadBreak);
+        body = trimEnds(body.substring(match.end()), keepLeadBreak, keepTrailBreak);
         break;
       }
 
@@ -485,7 +486,7 @@ public class Message {
 
     // Clean up general leading junk
     match = LEAD_JUNK_PTN.matcher(body);
-    if (match.lookingAt()) body = trimLead(body.substring(match.end()), keepLeadBreak);
+    if (match.lookingAt()) body = trimEnds(body.substring(match.end()), keepLeadBreak, keepTrailBreak);
 
     body = finish(body, options);
 
@@ -512,7 +513,7 @@ public class Message {
    * @param body message body
    * @return true if successfully parsed as an email message
    */
-  private boolean parseEmailHeaders(String body, boolean keepLeadBreak) {
+  private boolean parseEmailHeaders(String body, boolean keepLeadBreak, boolean keepTrailBreak) {
 
     String address = "";
     String subject = "";
@@ -551,7 +552,7 @@ public class Message {
     if (headerCnt < 3) return false;
     if (address.length() > 0) parseAddress = address;
     if (subject.length() > 0) parseSubject = subject;
-    parseMessageBody = trimLead(body.substring(spt), keepLeadBreak);
+    parseMessageBody = trimEnds(body.substring(spt), keepLeadBreak, keepTrailBreak);
     return true;
   }
   private static final Pattern SENDER_HEADER_PTN = Pattern.compile("(?:From|Sender): *(.*)");
@@ -559,19 +560,25 @@ public class Message {
   private static final Pattern OTHER_HEADER_PTN = Pattern.compile("\\[?mailto:.*\\]|(?:Content-Type|Date|Importance|Reply-To|Return-Path|Sent|SentTo|To|X-Mailer):.*");
   private static final Pattern JUNK_HEADER_PTN = Pattern.compile("_{5,}|-{5,}|--+(?:Original Message)?--+|Auto forwarded by a Rule|--+ Forwarded message --+");
 
-  private String trimLead(String str, boolean keepLeadBreak) {
-    if (keepLeadBreak) return str;
-    int pt = 0;
-    while (pt < str.length()) {
-      char chr = str.charAt(pt);
-      if (!Character.isWhitespace(chr)) break;
-      if (chr != ' ') {
-        if (keepLeadBreak) break;
-        if (chr == '\n') leadBrkCount++;
+  private String trimEnds(String str, boolean keepLeadBreak, boolean keepTrailBreak) {
+    if (keepLeadBreak && keepTrailBreak) return str;
+    int spt = 0;
+    int ept = str.length();
+    if (!keepLeadBreak) {
+      while (spt < str.length()) {
+        char chr = str.charAt(spt);
+        if (!Character.isWhitespace(chr)) break;
+        if (chr != ' ') {
+          if (keepLeadBreak) break;
+          if (chr == '\n') leadBrkCount++;
+        }
+        spt++;
       }
-      pt++;
     }
-    return str.substring(pt);
+    if (!keepTrailBreak) {
+      while (ept > spt && Character.isWhitespace(str.charAt(ept-1))) ept--;
+    }
+    return str.substring(spt, ept);
   }
 
   /**
@@ -590,10 +597,10 @@ public class Message {
     Matcher match = EMAIL_PFX_PATTERN.matcher(body);
     if (match.find()) {
       parseAddress = match.group(1).trim();
-      body = trimLead(body.substring(match.end()), true);
+      body = trimEnds(body.substring(match.end()), true, true);
     }
 
-    if (body.startsWith("MSG:")) body = trimLead(body.substring(4), true);
+    if (body.startsWith("MSG:")) body = trimEnds(body.substring(4), true, true);
 
     match = FWD_PTN.matcher(parseSubject);
     if (match.find()) parseSubject = parseSubject.substring(match.end()).trim();
@@ -661,7 +668,7 @@ public class Message {
       if (pt2 >= body.length()) break;
     }
     if (found || !options.splitKeepLeadBreak()) {
-      body = trimLead(body.substring(pt1), true);
+      body = trimEnds(body.substring(pt1), true, true);
     }
 
     // If we didn't change anything, then reset any saved following msg information
@@ -733,11 +740,19 @@ public class Message {
     }
 
     // If message matches expected break length, within the pad fudge factor, expect more to come
+    // Check this against either the original message length or the final message length
     int breakLen = options.splitBreakLength();
     if (breakLen > 0) {
+      int pad = options.splitBreakPad();
       int delta = origMsgLen % breakLen;
       if (delta == 0) return true;
-      if (delta + options.splitBreakPad() >= breakLen)  return true;
+      if (delta + pad >= breakLen)  return true;
+      int len = parseMessageBody.length();
+      if (len != origMsgLen) {
+        delta = len % breakLen;
+        if (delta == 0) return true;
+        if (delta + pad >= breakLen) return true;
+      }
     }
     // Otherwise, message must parse and must return expect more status to be incomplete
     return info != null && info.isExpectMore();

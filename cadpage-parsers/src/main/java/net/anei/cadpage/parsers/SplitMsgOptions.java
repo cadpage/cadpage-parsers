@@ -44,6 +44,11 @@ public interface SplitMsgOptions {
   public boolean splitKeepLeadBreak();
 
   /**
+   * @return true if trailing whitespace should be retained in the messages
+   */
+  public boolean splitKeepTrailBreak();
+
+  /**
    * @return true if messages will be received in reverse order of how they
    * should be combined
    */

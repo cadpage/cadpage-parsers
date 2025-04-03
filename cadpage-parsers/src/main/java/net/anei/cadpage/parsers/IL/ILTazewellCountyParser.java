@@ -25,6 +25,7 @@ public class ILTazewellCountyParser extends DispatchOSSIParser {
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom() {
       @Override public boolean mixedMsgOrder() { return true; }
+      @Override public boolean splitKeepTrailBreak() { return false; }
     };
   }
 

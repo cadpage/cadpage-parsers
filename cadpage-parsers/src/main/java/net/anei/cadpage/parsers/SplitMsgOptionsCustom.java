@@ -14,6 +14,8 @@ public class SplitMsgOptionsCustom implements SplitMsgOptions {
 
   @Override public boolean splitKeepLeadBreak() { return false; }
 
+  @Override public boolean splitKeepTrailBreak() { return true; }
+
   @Override public boolean revMsgOrder() { return false;   }
 
   @Override public boolean mixedMsgOrder() { return false; }

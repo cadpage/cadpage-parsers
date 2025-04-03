@@ -29,7 +29,9 @@ public class CALosAngelesCountyAParser extends FieldProgramParser {
 
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom() {
+      @Override public boolean splitKeepTrailBreak() { return false; }
+    };
   }
 
   @Override

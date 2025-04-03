@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 
 
 
@@ -20,7 +22,22 @@ public class OHLakeCountyAParser extends FieldProgramParser {
   }
 
   @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom() {
+      @Override public boolean splitKeepLeadBreak() { return true; }
+      @Override public boolean splitKeepTrailBreak() { return false; }
+      @Override public boolean splitBlankIns() { return false; }
+      @Override public boolean mixedMsgOrder() { return true; }
+      @Override public int splitBreakLength() { return 151; }
+      @Override public int splitBreakPad() { return 3; }
+    };
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
+    if (body.length() > 150 && body.charAt(150)==' ') {
+      body = body.substring(0,150) + body.substring(151);
+    }
     body = body.replace("CFS#:", " CFS#:");
     if (!super.parseMsg(body, data)) return false;
     if (data.strAddress.startsWith("&")) {

@@ -22,7 +22,9 @@ public class GAJacksonCountyBParser extends FieldProgramParser {
 
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
-    return new SplitMsgOptionsCustom();
+    return new SplitMsgOptionsCustom() {
+      @Override public boolean splitKeepTrailBreak() { return false; }
+    };
   }
 
   private static final Pattern DELIM = Pattern.compile(" /|\n");
