@@ -913,6 +913,7 @@ public class Active911ParserTable {
       "US/KY/CaldwellCounty",             "KYCaldwellCountyA",
       "US/KY/CaldwellSprings",            "KYCrittendenCounty",
       "US/KY/CallowayCounty",             "KYCallowayCounty",
+      "US/KY/CallowayCountyE911",         "KYCallowayCounty",
       "US/KY/CampbellCounty",             "KYCampbellCounty",
       "US/KY/CarrollCounty",              "KYCarrollCountyB",
       "US/KY/CarrollCountyPD",            "KYCarrollCountyC",
