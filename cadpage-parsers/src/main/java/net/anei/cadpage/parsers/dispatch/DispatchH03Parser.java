@@ -23,8 +23,8 @@ public class DispatchH03Parser extends FieldProgramParser {
           "( SELECT/2 TIMEDATE INCIDENT_DETAILS%EMPTY! LOCATION:EMPTY! Location:ADDR! Apt/Unit:APT! Cross_Strs:X! Loc_Name:PLACE! City:CITY! Zip_Code:ZIP! Sector:MAP! INCIDENT:EMPTY! Inc_#:ID! Created:SKIP! Descr:CALL! UNITS_DISPATCHED:EMPTY! UNIT/C+? DASHES! COMMENTS:EMPTY INFO/N+ " +
           "| SKIP+? DASHES ( INCIDENT_DETAILS%EMPTY! ( LOCATION:EMPTY! | LOCATION_of_Incident:EMPTY! ) ( Location:ADDR! | Loc:ADDR! ) Apt/Unit:APT? Loc_Name:PLACE! Loc_Descr:INFO? " +
                              "City:CITY? Building:APT? Subdivision:APT? Floor:APT? ( Apt/Unit:APT | Apartment:APT ) Zip_Code:ZIP? Cross_Strs:X? Municipality:CITY? Area:MAP? Sector:MAP/D? Beat:MAP/D? Census_Tract:SKIP? RA:BOX? " +
-                             "( Map_Book:MAP/C MAP/C+? DASHES! | DASHES? ) " +
-                             "INCIDENT:EMPTY Inc_#:ID2 Priority:PRI Inc_Type:CODE Descr:CALL Inc_#:ID? Mod_Circum:CALL/SDS Created:TIMEDATE Caller:NAME Phone:PHONE " +
+                             "( Map_Book:MAP/C DASHES! | DASHES? ) " +
+                             "INCIDENT:EMPTY Inc_#:ID2 Inc_#:ID2 Priority:PRI Inc_Type:CODE Descr:CALL Inc_#:ID2? Mod_Circum:CALL/SDS Created:TIMEDATE Caller:NAME Phone:PHONE " +
                              "DASHES ( SECONDARY_RESPONSE_LOCATION:EMPTY INFO/N+? DASHES | ) UNITS_DISPATCHED:EMPTY UNIT/S+? DASHES ( PERSONNEL_DISPATCHED:EMPTY! SKIP! | ) " +
                              "DASHES? COMMENTS:EMPTY INFO/N+? DASHES PREMIS_HAZARD:ALERT " +
                           "| INCIDENT:EMPTY! Inc_Type:CODE! Mod_Circum:CALL/SDS! Priority:PRI! Area:MAP! County:CITY! " +
@@ -74,7 +74,10 @@ public class DispatchH03Parser extends FieldProgramParser {
       }
       else if (lastFld != null) {
         if (lastFld.startsWith("Map Book:")) {
-          lastFld = lastFld + fld;
+          if (!fld.isEmpty() && !fld.equals(",")) {
+            if (lastFld.length() > 9) lastFld = lastFld + ',';
+            lastFld = lastFld + fld;
+          }
         } else {
           fldList.add(lastFld + fld);
           lastFld = null;

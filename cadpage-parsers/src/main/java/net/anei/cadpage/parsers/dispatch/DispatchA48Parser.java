@@ -186,7 +186,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     INFO("INFO", "INFO") {
       @Override
       public void parse(DispatchA48Parser parser, String field, Data data) {
-        data.strSupp = field;
+        data.strSupp = append(field, "\n", data.strSupp);
       }
     };
 

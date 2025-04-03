@@ -7,6 +7,7 @@ public class MODadeCountyParser extends DispatchA48Parser {
 
   public MODadeCountyParser() {
     super(CITY_LIST, "DADE COUNTY", "MO", FieldType.INFO, A48_NO_CODE);
+    setupCallList(CALL_LIST);
   }
 
   @Override
@@ -17,6 +18,23 @@ public class MODadeCountyParser extends DispatchA48Parser {
     data.strDate = data.strTime = "";
     return true;
   }
+
+  private static final String[] CALL_LIST = new String[] {
+      "911HUP",
+      "ASSIST OTHER AGENCY",
+      "C&I",
+      "FIRES",
+      "MEDICAL ALARM",
+      "MEDICAL EVENT",
+      "MVA",
+      "OUTSIDE FIRE",
+      "STRUCTURE FIRE",
+      "SUSPAC",
+      "TEST CALL",
+      "TEST CALL ;DCES TEST CAD FOR EMAIL DELIVERY",
+      "UNK",
+      "VIOLAT",
+  };
 
   private static final String[] CITY_LIST = new String[] {
 
