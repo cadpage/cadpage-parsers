@@ -22,7 +22,7 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   public DispatchA74Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
-          "( CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ESN:EMPTY! SRC1! SRC1+" +
+          "( CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ESN:EMPTY? SRC1! SRC1+? GPS" +
           "| ID1 CALL! ADDRCITY " +
           "| CALL ADDRCITY ID2 " +
           ") INFO/N+");
@@ -50,6 +50,7 @@ public class DispatchA74Parser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("SRC1")) return new BaseSource1Field();
+    if (name.equals("GPS")) return new GPSField("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}", true);
     return super.getField(name);
   }
 
