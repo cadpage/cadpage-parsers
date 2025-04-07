@@ -2072,7 +2072,7 @@ public class ParserList {
               ,"ZCAABRedDeerCounty"             ,"Red Deer County, AB"
               ,"ZCAABStrathconaCounty"          ,"Strathcona County, AB"
               ,"ZCAABSturgeonCounty"            ,"Sturgeon County, AB"
-              ,"ZCAABTaber"                     ,"Taber, AB",
+              ,"ZCAABTaber"                     ,"Taber, AB"
               ,"ZCAABYellowheadCounty"          ,"Yellowhead County, AB"
           ),
           new ParserCategory("British Columbia, Canada"

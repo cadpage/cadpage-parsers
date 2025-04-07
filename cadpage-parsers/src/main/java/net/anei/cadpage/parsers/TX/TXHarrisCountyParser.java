@@ -105,7 +105,75 @@ public class TXHarrisCountyParser extends GroupBestParser {
       "TRACES",
       "WESTFIELD",
 
+      // Brazoria County
+      "BRAZORIA COUTY",
+
+      // Cities
+      "ALVIN",
+      "ANGLETON",
+      "BRAZORIA",
+      "BROOKSIDE VILLAGE",
+      "CLUTE",
+      "DANBURY",
+      "FREEPORT",
+      "IOWA COLONY",
+      "LAKE JACKSON",
+      "LIVERPOOL",
+      "MANVEL",
+      "OYSTER CREEK",
+      "RICHWOOD",
+      "SANDY POINT",
+      "SURFSIDE BEACH",
+      "SWEENY",
+      "WEST COLUMBIA",
+
+      // Towns
+      "HOLIDAY LAKES",
+      "QUINTANA",
+      "VILLAGES",
+      "BAILEYS PRAIRIE",
+      "BONNEY",
+      "HILLCREST",
+      "JONES CREEK",
+
+      // Census-designated places
+      "DAMON",
+      "EAST COLUMBIA",
+      "ROSHARON",
+      "RYAN ACRES",
+      "WILD PEACH VILLAGE",
+
+      // Unincorporated communities
+      "AMSTERDAM",
+      "ANCHOR",
+      "BRAZOSPORT",
+      "BRYAN BEACH",
+      "CHENANGO",
+      "CHINA GROVE",
+      "CHOCOLATE BAYOU",
+      "DANCIGER",
+      "ENGLISH",
+      "FOUR CORNERS",
+      "HINKLES FERRY",
+      "LOCHRIDGE",
+      "OLD OCEAN",
+      "OTEY",
+      "SILVERLAKE",
+      "SNIPE",
+      "TURTLE COVE",
+
+      // Ghost towns
+      "HASIMA",
+      "HASTINGS",
+      "LAKE BARBARA",
+      "MIMS",
+      "OAKLAND",
+      "PERRYS LANDING",
+      "VELASCO",
+
       // Galveston County
+      "GALVESTON COUNTY",
+
       // Cities
       "BAYOU VISTA",
       "CLEAR LAKE SHORES",

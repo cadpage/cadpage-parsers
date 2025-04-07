@@ -10,9 +10,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TXHarrisCountyGParser extends FieldProgramParser {
 
   public TXHarrisCountyGParser() {
-    super(TXHarrisCountyParser.CITY_LIST, "HARRIS COUNTY", "TX",
+    this("HARRIS COUNTY", "TX");
+  }
+
+  public TXHarrisCountyGParser(String defCity, String defState) {
+    super(TXHarrisCountyParser.CITY_LIST, defCity, defState,
           "CAD#:ID! Call:CALL! UNIT:UNIT? ADDR:ADDRCITYST/S! INFO/N+");
     setupCities(MISSPELLED_CITIES);
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "TXHarrisCountyG";
   }
 
   @Override
