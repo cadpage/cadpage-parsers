@@ -9,14 +9,8 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
 
   public MIShiawasseeCountyParser() {
     super("SHIAWASSEE COUNTY", "MI",
-          "SRC? CALL ADDR! X+? SRC? INFO/N+? GPS1 GPS2");
+          "CALL ADDR! SRC? INFO/N+? CITY_UNIT GPS1 ( GPS2 | SKIP ) UNIT END");
     setupCities(CITY_LIST);
-    setupSaintNames("MARYS");
-  }
-
-  @Override
-  public String getFilter() {
-    return "CAD@shiawassee.net,CAD@shiawassee.local";
   }
 
   @Override
@@ -32,8 +26,9 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("SRC")) return new SourceField("[A-Z]{1,2}[FP]D", true);
+    if (name.equals("SRC")) return new SourceField("[A-Z]{3,5}", true);
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CITY_UNIT")) return new MyCityUnitField();
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
 
@@ -56,6 +51,24 @@ public class MIShiawasseeCountyParser extends DispatchOSSIParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " UNIT CITY";
+    }
+  }
+
+  private class MyCityUnitField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      if (isCity(field)) {
+        data.strCity = field;
+      } else {
+        data.strUnit = field;
+      }
+
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY UNIT";
     }
   }
 
