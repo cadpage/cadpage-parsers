@@ -5,10 +5,20 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
 
 public class MOMadisonCountyParser extends FieldProgramParser {
+
   public MOMadisonCountyParser() {
-    super("MADISON COUNTY", "MO",
+    this("MADISON COUNTY", "MO");
+  }
+
+  public MOMadisonCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "Event_#:ID! Call_Date:SKIP! Address:ADDR! City:CITY! Cross_Street:X! Phone:PHONE! Police_Type:CALL! Fire_Type:CALL/SLS! EMS_Type:CALL/SLS! " +
               "EMS_Report_#:ID/L! Person_Name:NAME! Business_Name:PLACE! Unit:UNIT! Notes:EMPTY! INFO/N+");
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "MOMadisonCounty";
   }
 
   @Override
