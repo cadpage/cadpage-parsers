@@ -15,7 +15,7 @@ public class PAArmstrongCountyEParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@co.armstrong.pa.us";
+    return "911dispatch@co.armstrong.pa.us,noreply@co.armstrong.pa.us";
   }
 
   @Override
