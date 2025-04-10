@@ -23,8 +23,8 @@ public class PADauphinCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("DATE")) return new DateField("(\\d\\d?/\\d\\d?/\\d{4})\\b.*", true);
+    if (name.equals("TIME")) return new TimeField("\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
