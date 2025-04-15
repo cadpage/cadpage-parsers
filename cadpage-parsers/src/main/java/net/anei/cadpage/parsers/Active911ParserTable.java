@@ -1342,6 +1342,7 @@ public class Active911ParserTable {
       "US/MN/SibleyCounty",               "MNSibleyCounty",
       "US/MN/StearnsCounty",              "MNStearnsCounty",
       "US/MN/StevensCounty",              "MNStevensCounty",
+      "US/MN/StLouisCounty",              "MNStLouisCountyB",
       "US/MN/StPaul",                     "MNMinneapolisStPaulA",
       "US/MN/WabashaCounty",              "MNWabashaCounty",
       "US/MN/WadenaCounty",               "MNWadenaCounty",

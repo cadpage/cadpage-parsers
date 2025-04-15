@@ -1,8 +1,10 @@
 package net.anei.cadpage.parsers.MN;
 
-public class MNStLouisCountyParser extends MNItascaCountyParser {
-  
+import net.anei.cadpage.parsers.GroupBestParser;
+
+public class MNStLouisCountyParser extends GroupBestParser {
+
   public MNStLouisCountyParser() {
-    super("ST LOUIS COUNTY", "MN");
+    super(new MNStLouisCountyAParser(), new MNStLouisCountyBParser());
   }
 }
