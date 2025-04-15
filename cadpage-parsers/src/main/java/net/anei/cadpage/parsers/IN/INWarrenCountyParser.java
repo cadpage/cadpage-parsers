@@ -1,8 +1,11 @@
 package net.anei.cadpage.parsers.IN;
 
-public class INWarrenCountyParser extends INFountainCountyCParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+public class INWarrenCountyParser extends GroupBestParser {
 
   public INWarrenCountyParser() {
-    super("WARREN COUNTY", "IN");
+    super(new INWarrenCountyAParser(), new INWarrenCountyBParser());
   }
+
 }
