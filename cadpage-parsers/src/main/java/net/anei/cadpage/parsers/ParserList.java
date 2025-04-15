@@ -1039,6 +1039,7 @@ public class ParserList {
               ,"MOAtchisonCounty"               ,"Atchison County, MO"
               ,"MOAudrainCounty"                ,"Audrain County, MO"
               ,"MOBarryCounty"                  ,"Barry County, MO"
+              ,"MOBartonCounty"                 ,"Barton County, MO"
               ,"MOBentonCounty"                 ,"Benton County, MO"
               ,"MOBooneCounty"                  ,"Boone County, MO"
               ,"MOBranson"                      ,"Branson, MO"

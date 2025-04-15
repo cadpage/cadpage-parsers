@@ -1361,6 +1361,7 @@ public class Active911ParserTable {
       "US/MO/AudrainCounty",              "MOAudrainCounty",
       "US/MO/BarryCounty",                "MOBarryCountyC",
       "US/MO/BarryLawrenceCountyAmbulance","MOBarryCountyC",
+      "US/MO/BartonCounty",               "MOBartonCounty",
       "US/MO/BentonCounty",               "MOBentonCounty",
       "US/MO/BentonFD",                   "MOScottCountyA",
       "US/MO/BridgetonPD",                "MOStLouisCountyH",
