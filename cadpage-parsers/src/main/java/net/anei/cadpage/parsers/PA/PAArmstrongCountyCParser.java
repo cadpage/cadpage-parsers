@@ -1,90 +1,106 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class PAArmstrongCountyCParser extends FieldProgramParser {
+public class PAArmstrongCountyCParser extends MsgParser {
 
   public PAArmstrongCountyCParser() {
-    super(CITY_CODES, "ARMSTRONG COUNTY", "PA",
-          "( INFO:CALL! LOCALE:ADDRCITY! ADD'L_LOCALE_INFO:INFO! LANDMARK:PLACE! INTER:X! CFS#:ID! Narrative:INFO" +
-          "| CALL_NUMBER:ID? CALL_TYPE:CALL! ( LOCATION:ADDRCITY! TAC:CH! | TAC:CH LOCATION:ADDRCITY! ) CLOSEST_INTERSECTION:X! COMMON_NAME:PLACE! LAT/LONG:GPS! NARRATIVE:INFO " +
-          ") END");
+    super("ARMSTRONG COUNTY", "PA");
+    setFieldList("CALL UNIT ADDR APT CITY X URL PLACE DATE TIME ID CH");
   }
 
   @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
-  private static final Pattern BAD_MSG_PTN = Pattern.compile("(.* LAT/LONG:[^:]*\\b(?:40|79))([^.].*)");
-  @Override
-  protected boolean parseMsg(String body, Data data) {
-    if (!body.startsWith("Dispatch:")) return false;
-    body = body.substring(9).trim();
-
-    if (!body.contains("NARRATIVE:")) {
-        Matcher match = BAD_MSG_PTN.matcher(body);
-      if (match.matches()) {
-        body = match.group(1) + " NARRATIVE:" + stripFieldStart(match.group(2), "=");
-      }
-    }
-    return super.parseMsg(body, data);
-  }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("GPS")) return new MyGPSField();
-    return super.getField(name);
-  }
-
-  private class MyAddressCityField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      String apt = "";
-      Parser p =  new Parser(field);
-      data.strCity = fixCity(p.getLastOptional(','));
-      String city = p.getLastOptional('=');
-      if (!city.isEmpty()) {
-        data.strCity = append(city, ",", data.strCity);
-        apt = stripFieldStart(p.getLastOptional('='), "APT");
-      }
-      field = p.get().replace('@',  '&');
-      super.parse(field, data);
-      data.strApt = append(data.strApt, "-", apt);
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("Dispatch")) {
+      String[] parts = body.split("\n");
+      if (parts.length != 6) return false;
+      parseLine1(parts[0].trim(), data);
+      parseLine2(parts[1].trim(), data);
+      parseLine3(parts[2].trim(), data);
+      parseLine4(parts[3].trim(), data);
+      if (!parseLine5(parts[4].trim(), data)) return false;
+      if (!parseLine6(parts[5].trim(), data)) return false;
+      return true;
     }
 
-    private String fixCity(String city) {
-      if (city.isEmpty()) return city;
-      city = convertCodes(city, CITY_CODES);
-      city = stripFieldEnd(city, " BORO");
-      return city;
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CITY";
-    }
+    return parseMaster(body, data);
   }
 
-  private class MyGPSField extends GPSField {
-    @Override
-    public void parse(String field, Data data) {
-      field = field.replace('~', ',');
-      super.parse(field, data);
+  private static final Pattern LINE1_PTN = Pattern.compile("(.*?) +(E\\d+)");
+  private void parseLine1(String field, Data data) {
+    field = stripFieldStart(field, "/");
+    field = stripFieldEnd(field, "/");
+    Matcher match = LINE1_PTN.matcher(field);
+    if (match.matches()) {
+      field = match.group(1);
+      data.strUnit = match.group(2);
     }
+    data.strCall = field;
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "LEECHBURG BORO",    "LEECHBURG",
-      "KISKI TWP",         "KISKIMINETAS TWP",
-      "KITTG BORO",        "KITTANNING",
-      "KITTG TWP",         "KITTANNING TWP"
-  });
+  private static final Pattern LINE2_PTN = Pattern.compile("(.*?) +(EMS\\d+|FT\\d+|CW\\d+)", Pattern.CASE_INSENSITIVE);
+  private void parseLine2(String field, Data data) {
+    if (!data.strUnit.isEmpty()) field = stripFieldStart(field, data.strUnit+' ');
+    Matcher match = LINE2_PTN.matcher(field);
+    if (match.matches()) {
+      field = match.group(1);
+      data.strUnit = append(data.strUnit, ",", match.group(2));
+    }
+    data.strCall = append(data.strCall, " / ", field);
+  }
 
+  private void parseLine3(String field, Data data) {
+    Parser p = new Parser(field);
+    String apt = p.getLastOptional(" APT ");
+    String cross = p.getLastOptional(";");
+    if (cross.startsWith("http:") || cross.startsWith("https:")) {
+      data.strInfoURL = cross;
+    } else {
+      data.strCross = cross;
+    }
+
+    data.strCity = stripFieldEnd(p.getLastOptional(","), " BORO").replace("KITTG", "KITTANNING");
+    parseAddress(p.get(), data);
+    data.strApt = append(data.strApt, "-", apt);
+  }
+
+  private void parseLine4(String field, Data data) {
+    data.strPlace = stripFieldEnd(field, "/");
+  }
+
+  private static final Pattern LINE5_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d:\\d\\d:\\d\\d) (CFS\\d+)");
+  private boolean parseLine5(String field, Data data) {
+    Matcher match = LINE5_PTN.matcher(field);
+    if (!match.matches()) return false;
+    data.strDate = match.group(1);
+    data.strTime = match.group(2);
+    data.strCallId = match.group(3);
+    return true;
+  }
+
+  private static final Pattern LINE6_PTN = Pattern.compile("FIRE (.*) /EMS *\\b(.*)");
+  private boolean parseLine6(String field, Data data) {
+    Matcher match = LINE6_PTN.matcher(field);
+    if (!match.matches()) return false;
+    data.strChannel = append(match.group(1), " / ", match.group(2));
+    return true;
+  }
+
+  private static final Pattern MASTER =
+      Pattern.compile("Dispatch:(.*?)  / (.* (?:FT\\d+|EMS\\d+|CW\\d+)) (.*? (?:APT \\S+|https?:\\S+)?) /(.*?) (\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d CFS\\d+) (.*)", Pattern.CASE_INSENSITIVE);
+  private boolean parseMaster(String body, Data data) {
+    Matcher match = MASTER.matcher(body);
+    if (!match.matches()) return false;
+    parseLine1(match.group(1).trim(), data);
+    parseLine2(match.group(2).trim(), data);
+    parseLine3(match.group(3).trim(), data);
+    parseLine4(match.group(4).trim(), data);
+    if (!parseLine5(match.group(5).trim(), data)) return false;
+    if (!parseLine6(match.group(6).trim(), data)) return false;
+    return true;
+  }
 }
