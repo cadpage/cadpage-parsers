@@ -12,7 +12,7 @@ public class TXDentonCountyEParser extends FieldProgramParser {
 
   public TXDentonCountyEParser() {
     super("DENTON COUNTY", "TX",
-          "Msg_ID:SKIP! CALL? SRC/Z ID PLACE? CALL/SDS ADDR_INFO GPS DATETIME! END");
+          "Msg_ID:SKIP! CALL? SRC/Z ID PLACE? CALL/SDS ADDR_INFO PHONE? GPS DATETIME! END");
   }
 
   @Override
@@ -32,6 +32,7 @@ public class TXDentonCountyEParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("\\d{9}", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{1,3}[A-Z0-9]", true);
     if (name.equals("ADDR_INFO")) return new MyAddressInfoField();
+    if (name.equals("PHONE")) return new PhoneField("\\d{7}|\\d{10}");
     if (name.equals("GPS")) return new GPSField("https://.*query=([-+]?\\d{2,3}\\.\\d{3,},[-+]?\\d{2,3}\\.\\d{3,})", true);
     if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
     return super.getField(name);
