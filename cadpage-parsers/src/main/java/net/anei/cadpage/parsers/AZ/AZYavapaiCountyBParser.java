@@ -21,7 +21,9 @@ public class AZYavapaiCountyBParser extends MsgParser {
   }
 
   private static final Pattern MASTER =
-      Pattern.compile("(.*?) Map(\\d+) +(\\d\\d?/\\d\\d/\\d\\d) +(\\d\\d:\\d\\d:\\d\\d) *ADD:(.*?) *([A-Z]+) *XST:(.*?) *UNITS:(\\S*) (?:CMT: *)?(.*) LAT: *(\\d+) +LON: *(\\d+)");
+      Pattern.compile("(.*?) (?:Map|MAP:)(\\d+) +(?:(\\d\\d?/\\d\\d/\\d\\d) +)?(\\d\\d:\\d\\d:\\d\\d) *ADD:(.*?) *([A-Z]+) *XST:(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("(.*)\\bLAT: *(\\d+) +LON: *(\\d+)");
+  private static final Pattern UNIT_PTN = Pattern.compile("(.*)\\bUNITS:(\\S*)\\b *(.*)");
 
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -30,14 +32,30 @@ public class AZYavapaiCountyBParser extends MsgParser {
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
     data.strMap = match.group(2);
-    data.strDate = match.group(3);
+    data.strDate = getOptGroup(match.group(3));
     data.strTime = match.group(4);
     parseAddress(match.group(5).trim(), data);
     data.strSource = match.group(6);
-    data.strCross = stripFieldEnd(match.group(7), "/");
-    data.strUnit = match.group(8);
-    data.strSupp = match.group(9).trim();
-    setGPSLoc(setDec(match.group(10))+','+setDec(match.group(11)), data);
+
+    body = match.group(7).trim();
+    match = GPS_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1).trim();
+      setGPSLoc(setDec(match.group(2))+','+setDec(match.group(3)), data);
+    }
+    match = UNIT_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1).trim();
+      data.strUnit = match.group(2).trim();
+      data.strSupp = stripFieldStart(match.group(3), "CMT:");
+    } else {
+      int pt = body.indexOf(" CMT:");
+      if (pt >= 0) {
+        data.strSupp = body.substring(pt+4).trim();
+        body = body.substring(0,pt).trim();
+      }
+    }
+    data.strCross = stripFieldEnd(body, "/");
     return true;
   }
 
