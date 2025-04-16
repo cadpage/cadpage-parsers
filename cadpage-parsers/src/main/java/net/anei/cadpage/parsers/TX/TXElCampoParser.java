@@ -12,18 +12,18 @@ public class TXElCampoParser extends DispatchA53Parser {
   public TXElCampoParser() {
     super("EL CAMPO", "TX");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@cityofelcampo.org";
+    return "@cityofelcampo.org,@cityofelcampo1.onmicrosoft.com";
   }
-  
+
   private static Pattern AVE_X_PTN = Pattern.compile("\\b(?:AVE|AVENUE) [A-Z]\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
-    
+
     // See if we can insert & in address
     // Unless there is an AVENUE X construct which will just confuse things
     if (!AVE_X_PTN.matcher(data.strAddress).find()) {
