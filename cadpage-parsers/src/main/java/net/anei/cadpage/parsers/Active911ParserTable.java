@@ -74,6 +74,7 @@ public class Active911ParserTable {
       "SE/Kumla/Nerikesbrandkar",         "ZSESwedenB,ZSESwedenE",
       "US/AK/JBER",                       "AKAnchorage",
       "US/AK/AnchorageChugiak",           "AKChugiak",
+      "US/AK/CantwellVFD",                "AKDenaliBorough",
       "US/AK/CapitalCityFire",            "AKJuneau",
       "US/AK/CapitalCityFire2",           "AKJuneau",
       "US/AK/CityofJuneau",               "AKJuneau",
