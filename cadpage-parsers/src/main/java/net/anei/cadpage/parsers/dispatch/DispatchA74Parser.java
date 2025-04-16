@@ -22,7 +22,7 @@ public class DispatchA74Parser extends FieldProgramParser {
 
   public DispatchA74Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
-          "( CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! ESN:EMPTY? SRC1! SRC1+? GPS" +
+          "( CFS:ID! EVENT:CALL! COMMENT:INFO! LOC:ADDRCITY! CITY ESN:SKIP? GPS? SRC1+ " +
           "| ID1 CALL! ADDRCITY " +
           "| CALL ADDRCITY ID2 " +
           ") INFO/N+");
@@ -50,7 +50,7 @@ public class DispatchA74Parser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("SRC1")) return new BaseSource1Field();
-    if (name.equals("GPS")) return new GPSField("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}", true);
+    if (name.equals("GPS")) return new GPSField("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}|", true);
     return super.getField(name);
   }
 
@@ -198,7 +198,9 @@ public class DispatchA74Parser extends FieldProgramParser {
   private class BaseSource1Field extends SourceField {
     @Override
     public void parse(String field, Data data) {
-      field = stripFieldEnd(field, ": NR").replace(' ', '_');
+      int pt = field.indexOf(':');
+      if (pt >= 0) field = field.substring(0,pt).trim();
+      field = field.replace(' ', '_');
       data.strSource = append(data.strSource, ",", field);
     }
   }
