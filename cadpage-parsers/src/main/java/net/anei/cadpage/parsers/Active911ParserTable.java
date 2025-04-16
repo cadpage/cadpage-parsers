@@ -795,6 +795,7 @@ public class Active911ParserTable {
       "US/IN/MooresvilleFD",              "INMorganCounty",
       "US/IN/MorganCounty",               "INMorganCounty",
       "US/IN/NobleCounty",                "INNobleCounty",
+      "US/IN/NobleCountySpillman",        "INNobleCountyB",
       "US/IN/NotreDame",                  "INStJosephCountyC",
       "US/IN/ParkeCounty",                "INParkeCounty",
       "US/IN/PipeCreek",                  "INMadisonCountyC",

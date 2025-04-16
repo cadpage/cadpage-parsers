@@ -1,19 +1,11 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-/**
- * Noble County, AL
- */
-public class INNobleCountyParser extends DispatchA19Parser {
-
+public class INNobleCountyParser extends GroupBestParser {
 
   public INNobleCountyParser() {
-    super("NOBLE COUNTY", "IN");
+    super(new INNobleCountyAParser(), new INNobleCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "@alert.active911.com,donotreply@nobleco.us,FlexRapidNotification@dccnotify.com,donotreply@nobleco.gov";
-  }
 }
