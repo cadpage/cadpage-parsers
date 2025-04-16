@@ -2577,6 +2577,7 @@ public class Active911ParserTable {
       "US/TX/CityofHutchins",             "TXHutchins",
       "US/TX/CityofKeller",               "TXTarrantCountyC,TXTarrantCountyE",
       "US/TX/CityofKilgore",              "TXKilgore",
+      "US/TX/CityofLeagueCity",           "TXHarrisCountyG",
       "US/TX/CityofLiveOak",              "TXBexarCountyB",
       "US/TX/CityOfLockhart",             "TXCaldwellCountyA",
       "US/TX/CityofLufkin",               "TXLufkin",
