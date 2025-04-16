@@ -1015,6 +1015,7 @@ public class ParserList {
               ,"MSDeSotoCounty"                 ,"DeSoto County, MS"
               ,"MSForestCounty"                 ,"Forest County, MS"
               ,"MSHarrisonCounty"               ,"Harrison County, MS"
+              ,"MSJacksonCounty"                ,"Jackson County, MS"
               ,"MSLafayetteCounty"			  	    ,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"
               ,"MSMadisonCounty"                ,"Madison County, MS"
