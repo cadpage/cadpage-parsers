@@ -233,6 +233,7 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ARNOLD_C",    "ARNOLD",
+      "GBG_C",       "GREENSBURG",
       "GREENSBG_C",  "GREENSBURG",
       "JNT_C",       "JEANNETTE",
       "LATROBE_C",   "LATROBE",
@@ -253,6 +254,8 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
       "EXPORT_B",    "EXPORT",
       "HUNKER_B",    "HUNKER",
       "IRWIN_B",     "IRWIN",
+      "L_MOUNT_B",   "LAUREL MOUNTAIN",
+      "LIGONIER_B",  "LIGONIER",
       "MADISON_B",   "MADISON",
       "MANOR_B",     "MANOR",
       "MT_PLEAS_B",  "MT PLEASANT",
@@ -284,6 +287,7 @@ public class PAWestmorelandCountyAParser extends FieldProgramParser {
       "DONEGAL_T",   "DONEGAL TWP",
       "E_HUNT_T",    "EAST HUNTINGDON TWP",
       "FAIR_T",      "FAIRFIELD TWP",
+      "FAIRFLD_T",   "FAIRFIELD TWP",
       "HEMP_T",      "HEMPFIELD TWP",
       "LIGONIER_T",  "LIGONIER",
       "LOYALHNA_T",  "LOYALHANNA",
