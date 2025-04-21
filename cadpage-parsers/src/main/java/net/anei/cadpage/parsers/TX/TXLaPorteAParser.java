@@ -24,11 +24,12 @@ public class TXLaPorteAParser extends DispatchOSSIParser {
           "( CANCEL ADDR! CITY? " +
           "| FYI? ID? SRC? ( CALL_ADDR CITY | CALL! ( ADDR/Z CITY! | ADDR/Z UNIT UNIT+? CITY? | PLACE ADDR/Z CITY! | PLACE ADDR/Z UNIT UNIT+? OPT_CITY? | ADDR! ) ) UNIT+? ( ID PRI? | MAP? ) INFO+? DATETIME UNIT? INFO+ " +
           ") INFO+");
+    setupCities(TXHarrisCountyParser.CITY_LIST);
   }
 
   @Override
   public String getAliasCode() {
-    return "TXLaPorte";
+    return "TXLaPorteA";
   }
 
   @Override
