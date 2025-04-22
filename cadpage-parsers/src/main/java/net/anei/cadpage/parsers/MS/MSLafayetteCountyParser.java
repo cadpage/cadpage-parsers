@@ -12,7 +12,7 @@ public class MSLafayetteCountyParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "E911OMG@HOTMAIL.COM";
+    return "LafayetteCoMS@911comm2.info";
   }
 
   @Override
