@@ -2170,6 +2170,7 @@ public class Active911ParserTable {
       "US/OR/GrantsPass",                 "ORJosephineCounty",
       "US/OR/GrantsPassPolice",           "ORJosephineCounty",
       "US/OR/GreshamStandardA",           "Cadpage2",
+      "US/OR/HarneyCounty",               "ORHarneyCounty",
       "US/OR/HoodRiverCounty",            "ORHoodRiverCounty",
       "US/OR/IdanhaDetroit",              "ORMarionCountyA",
       "US/OR/Jackson",                    "ORJacksonCounty",
