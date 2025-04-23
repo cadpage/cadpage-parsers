@@ -2297,6 +2297,7 @@ public class Active911ParserTable {
       "US/PA/LebanonCountyCadpage",       "PALebanonCountyA",
       "US/PA/LehighCounty",               "PALehighCountyA,PALehighCountyC,PANorthamptonCountyB",
       "US/PA/LibertyFireCo",              "PAChesterCountyD4",
+      "US/PA/LifeLionEMS",                "PABerksCountyD,PADauphinCountyA",
       "US/PA/Lionville",                  "PAChesterCountyM",
       "US/PA/LowerAlsaceFC",              "PABerksCounty",
       "US/PA/LowerMerion",                "PAMontgomeryCountyC",

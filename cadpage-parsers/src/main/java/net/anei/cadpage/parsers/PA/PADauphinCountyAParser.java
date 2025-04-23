@@ -244,6 +244,7 @@ public class PADauphinCountyAParser extends FieldProgramParser {
       "HUM DAUP",  "HUMMELSTOWN",
       "JFT DAUP",  "JEFFERSON TWP",
       "JKT DAUP",  "JACKSON TWP",
+      "LALT CUMB", "LOWER ALLEN TWP",
       "LDT DAUP",  "LONDONDERRY TWP",
       "LPT DAUP",  "LOWER PAXTON TWP",
       "LST DAUP",  "LOWER SWATARA TWP",
