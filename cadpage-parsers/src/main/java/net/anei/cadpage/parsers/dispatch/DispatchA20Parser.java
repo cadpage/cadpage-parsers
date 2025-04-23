@@ -32,7 +32,9 @@ public class DispatchA20Parser extends FieldProgramParser {
 
   public DispatchA20Parser(Properties codeLookupTable, String defCity, String defState, int flags) {
     super(defCity, defState,
-           "ADDRCITYST PLACE X APT CALL! MAP ID? INFO/N+");
+           "( SELECT/1 ADDRCITYST PLACE X APT CALL! MAP " +
+           "| ADDR CITY X APT MAP CALL! " +
+           ") ID? INFO/N+");
     this.codeLookupTable = codeLookupTable;
     this.unitLabelReq = (flags & A20_UNIT_LABEL_REQ) != 0;
   }
@@ -55,7 +57,13 @@ public class DispatchA20Parser extends FieldProgramParser {
     if (unit1 != null) data.strUnit = unit1;
     else if (!unitLabelReq) data.strUnit = unit2;
     if (body.endsWith("*")) body = body + " ";
-    if (!parseFields(body.split(" \\*(?= )", -1), 5, data)) return false;
+    String[] flds = body.split(" \\*(?= )", -1);
+    setSelectValue("1");
+    if (flds.length < 5) {
+      flds = body.trim().split("\\*");
+      setSelectValue("2");
+    }
+    if (!parseFields(flds, 5, data)) return false;
     return true;
   }
 
