@@ -598,6 +598,7 @@ public class ParserList {
               ,"INPorterCounty"                 ,"Porter County, IN"
               ,"INPoseyCounty"                  ,"Posey County, IN"
               ,"INPulaskiCounty"                ,"Pulaski County, IN"
+              ,"INPutnamCounty"                 ,"Putnam County, IN"
               ,"INRandolphCounty"               ,"Randolph County, IN"
               ,"INRipleyCounty"                 ,"Ripley County, IN"
               ,"INSCottCounty"                  ,"Scott County, IN"
