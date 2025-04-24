@@ -10,6 +10,6 @@ public class TXMedinaCountyParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "active911@medinacountytexas.org,medinacodispatch@gmail.com,Active911@Medinatx.org";
+    return "active911@medinacountytexas.org,medinacodispatch@gmail.com,Active911@Medinatx.org,Active911@Medinatx.gov";
   }
 }
