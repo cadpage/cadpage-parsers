@@ -19,7 +19,7 @@ public class MIHillsdaleCountyAParser extends FieldProgramParser {
 
   public MIHillsdaleCountyAParser() {
     super("HILLSDALE COUNTY", "MI",
-          "CALL ADDR ( X | CITY ST_ZIP? PLACE? X ) DATETIME!");
+          "CALL ( GPS1 GPS2 | ADDR ) ( X | CITY ST_ZIP? PLACE? X ) DATETIME!");
   }
 
   @Override
@@ -43,6 +43,8 @@ public class MIHillsdaleCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("ST_ZIP")) return new StateField("([A-Z]{2})(?: +\\d{5})?", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -59,6 +61,14 @@ public class MIHillsdaleCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
   }
 
