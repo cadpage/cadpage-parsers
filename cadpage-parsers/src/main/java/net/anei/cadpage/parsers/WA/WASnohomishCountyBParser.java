@@ -17,12 +17,12 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "NoReply@snopac911.us,NoReply@snosafe.org,noreply@sno911.org";
+    return "NoReply@snopac911.us,NoReply@snosafe.org,noreply@sno911.org,dispatch@cadlite.org";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("DISP")) return false;
+    if (!subject.equals("DISP") && !subject.equals("CADLite: Unit(s) Dispatched")) return false;
     if (!parseFields(body.split("\n"), data)) return false;
     if (data.strCall.equals("FR") || data.strCall.equals("FC")) {
       data.strCall = append(data.strCall, " ", data.strUnit);
@@ -62,8 +62,8 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
         data.strUnit = match.group(1).trim();
         data.strCall =  match.group(2).trim();
       } else {
-        field = stripFieldStart(field, "<<");
-        field = stripFieldEnd(field, ">>");
+        field = stripFieldStart(field, ">>");
+        field = stripFieldEnd(field, "<<");
         data.strCall = field;
       }
       return true;
@@ -82,9 +82,10 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDR_PLACE_PTN = Pattern.compile("([^/]*)/(.*?)/([^/]*)/?");
+  private static final Pattern ADDR_MAP_PTN = Pattern.compile("(.*?), USA / (.*)");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {3,}");
   private static final Pattern MAP_PTN = Pattern.compile("[A-Z]{2}\\d{3}[A-Z0-9]?");
-  private class MyAddressCity1Field extends AddressCityField {
+  private class MyAddressCity1Field extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_PLACE_PTN.matcher(field);
@@ -92,6 +93,9 @@ public class WASnohomishCountyBParser extends FieldProgramParser {
         super.parse(match.group(1).trim().replace('@','&'), data);
         data.strPlace = match.group(2).trim();
         data.strMap = match.group(3).trim();
+      } else if ((match = ADDR_MAP_PTN.matcher(field)).matches()) {
+        super.parse(match.group(1).trim().replace('@','&'), data);
+        data.strMap = match.group(2).trim();
       } else {
         String[] parts = MSPACE_PTN.split(field);
         super.parse(parts[0].replace('@','&'), data);
