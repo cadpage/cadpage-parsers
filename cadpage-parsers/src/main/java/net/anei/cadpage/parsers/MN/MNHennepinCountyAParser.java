@@ -23,7 +23,7 @@ public class MNHennepinCountyAParser extends FieldProgramParser {
           "( NAME:NAME! ( LOC:ADDR! CITY:CITY? EVTYPE:CALL! " +
                        "| PH#:PHONE! ( LOC_NAME:PLACE | PREM_NAME:PLACE ) ADDRESS:ADDR! APT#:APT! CITY:CITY! ( X_ST:X | XSTREET:X ) EVTYPE:CALL! INC#:ID! " +
                        "| ADDRESS:ADDR! APT#:APT! CITY:CITY! XSTREET:X! EVTYPE:CALL! INC#:ID! " +
-                       ") COMMENTS:INFO/N+ UNITS:UNIT END" +
+                       ") ( UNITS:UNIT COMMENTS:INFO/N+ | COMMENTS:INFO/N+ UNITS:UNIT ) END" +
           "| INC#:ID! ADDRESS:ADDR! EVTYPE:CALL! INFO/RN+ " +
           ")");
     setBreakChar('-');

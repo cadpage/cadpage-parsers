@@ -15,6 +15,11 @@ public class INDearbornCountyParser extends DispatchA19Parser {
     return "FlexRapidNotification@dccnotify.com";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "AUR", "AURORA",
       "GRN", "GREENDALE",
