@@ -29,7 +29,7 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     return "messaging@iamresponding.com,@dispatches.iamresponding.com";
   }
 
-  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +NOTES::?");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +NOTES::?(?:[A-Z]+- *\\d+: *)?");
   private static final Pattern DELIM = Pattern.compile("[;\n]");
 
   @Override
@@ -38,8 +38,8 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     if (!parseFields(DELIM.split(parts[0].replace("-LA PORTE", " LA PORTE")), data)) return false;
     for (int jj = 1; jj < parts.length; jj++) {
       String fld = parts[jj];
-      int pt =  fld.lastIndexOf(':');
-      if (pt >= 0) fld = fld.substring(pt+1).trim();
+//      int pt =  fld.lastIndexOf(':');
+//      if (pt >= 0) fld = fld.substring(pt+1).trim();
       data.strSupp = append(data.strSupp, "\n", fld);
     }
     return true;
