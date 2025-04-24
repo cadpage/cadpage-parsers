@@ -213,6 +213,7 @@ public class Active911ParserTable {
       "US/AR/PulaskiCountyPageReceived",  "ARPulaskiCountyC",
       "US/AR/SiloamSpringsFD",            "ARBentonCountyI",
       "US/AR/WhiteCounty",                "ARWhiteCounty",
+      "US/AR/XNAFD",                      "ARBentonCountyE",
       "US/AZ/CircleCityMorristown",       "AZMaricopaCountyE",
       "US/AZ/CityofCottonwood",           "AZYavapaiCountyC",
       "US/AZ/CityofKingman",              "AZMohaveCounty",

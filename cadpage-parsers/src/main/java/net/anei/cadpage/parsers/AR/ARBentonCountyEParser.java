@@ -9,12 +9,12 @@ public class ARBentonCountyEParser extends FieldProgramParser {
 
   public ARBentonCountyEParser() {
     super("BENTON COUNTY", "AR",
-          "CALL:CALL! ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! RESPONSE:PRI? INFO:INFO! INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! RESPONSE:PRI? INFO:INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "copier@bellavistaar.gov";
+    return "copier@bellavistaar.gov,xnaairport@rpsfire.com";
   }
 
   @Override
