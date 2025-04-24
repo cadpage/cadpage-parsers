@@ -10,14 +10,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 public class NCWayneCountyDParser extends DispatchOSSIParser {
 
   public NCWayneCountyDParser() {
-    super(CITY_CODES, "WAYNE COUNTY", "NC", 
+    super(CITY_CODES, "WAYNE COUNTY", "NC",
           "( CANCEL ADDR CITY " +
-          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! " + 
-          ") INFO/N+");
+          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! " +
+          ") INFO/N+? UNIT2");
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("([A-Z0-9]+)\nCAD\n\\s*");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     Matcher match = MARKER.matcher(body);
@@ -28,18 +28,40 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
     body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("UNIT2")) return new MyUnit2Field();
     return super.getField(name);
   }
-  
+
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+(?:,.*)?");
+  private class MyUnit2Field extends UnitField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!isLastField()) return false;
+      if (!UNIT_PTN.matcher(field).matches()) return false;
+      data.strUnit = append(data.strUnit, ",", field);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "DUD", "DUDLEY",
       "EUR", "EUREKA",
