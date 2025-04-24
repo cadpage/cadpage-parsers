@@ -14,7 +14,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
 
   public PABeaverCountyParser() {
     super(CITY_LIST, "BEAVER COUNTY", "PA",
-          "UNIT:UNIT! ACTION:ACTION! EVENT_#:ID! LOC:ADDRCITY/S! LAT:GPS1! LONG:GPS2! CALLER_NAME:NAME! CALLER_PHONE:PHONE! TYPE:CALL! SUBTYPE:CODE! PRIORITY:PRI! TIME:TIME! COMMENTS:INFO! END");
+          "UNIT:UNIT! ACTION:ACTION! EVENT_#:ID! LOC:ADDRCITY/S! LAT:GPS1! LONG:GPS2! CALLER_NAME:NAME! CALLER_PHONE:PHONE! TYPE:CALL! SUBTYPE:CALL/SDS! PRIORITY:PRI! TIME:TIME! COMMENTS:INFO! END");
     setupCities(MISSPELLED_CITIES);
   }
 
@@ -132,7 +132,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("\\b\\d{2}\\.\\d{6,} -\\d{2}\\.\\d{6,}\\b");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile(" *[-+]?\\b\\d{2}\\.\\d{6,} [-+]?\\d{2}\\.\\d{6,}\\b *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {

@@ -409,6 +409,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Electrical Fire",
       "EMS -",
       "Fire -",
+      "Fire - Smoke/Odor Investigation",
       "Fire Alarm - Commercial",
       "Fire Alarm - Residential",
       "Fire Alarm",
