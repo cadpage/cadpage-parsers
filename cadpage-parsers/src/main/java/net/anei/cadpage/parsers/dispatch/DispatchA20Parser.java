@@ -76,7 +76,7 @@ public class DispatchA20Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStField();
     if (name.equals("X")) return new BaseCrossField();
-    if (name.equals("ID")) return new IdField("#(\\d+)|([0-9a-f]{24})", true);
+    if (name.equals("ID")) return new IdField("#(\\d+)|([0-9a-f]{24})|\\d{12}", true);
     if (name.equals("CALL")) return new BaseCallField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
