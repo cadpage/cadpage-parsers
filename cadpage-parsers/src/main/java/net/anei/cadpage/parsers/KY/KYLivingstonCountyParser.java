@@ -8,6 +8,11 @@ public class KYLivingstonCountyParser extends DispatchA27Parser {
     super(CITY_LIST, "LIVINGSTON COUNTY", "KY");
   }
 
+  @Override
+  public String getFilter() {
+    return "noreply911@livingstonco.ky.gov,livingstoncoky@cissystem.com";
+  }
+
   private static final String[] CITY_LIST = new String[] {
 
       // Cities
