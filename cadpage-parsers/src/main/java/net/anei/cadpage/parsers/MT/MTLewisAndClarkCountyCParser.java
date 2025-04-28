@@ -1,6 +1,5 @@
 package net.anei.cadpage.parsers.MT;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -10,12 +9,17 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
 
   public MTLewisAndClarkCountyCParser() {
     super("LEWIS AND CLARK COUNTY", "MT",
-          "ID ADDRCITYST CODE CALL CODE/L CALLDATETIME INFO UNIT EMPTY! END");
+          "ID CODE ADDRCITYST PLACE GPS1 GPS2 CODE/L CALL CODE/L CALL/L NAME PHONE DATETIME INFO EMPTY UNIT EMPTY! END");
   }
 
   @Override
   public String getFilter() {
     return "dispatch@helenamt.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -28,7 +32,8 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{6}-\\d{3}");
     if (name.equals("CODE")) return new MyCodeField();
-    if (name.equals("CALLDATETIME")) return new MyCallDateTimeField();
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
@@ -38,19 +43,17 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
-      super.parse(field, data);
+      if (field.equals(data.strCode))return;
+      data.strCode = append(data.strCode, "/", field);
     }
   }
 
-  private static final Pattern CALL_DATE_TIME_PTN = Pattern.compile("(.*?) +(\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d)");
-  private class MyCallDateTimeField extends DateTimeField {
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = CALL_DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      String call = match.group(1);
-      if (!call.equals("None")) data.strCall = append(data.strCall, " / ", call);
-      super.parse(match.group(2), data);
+      if (field.equals("None")) return;
+      if (field.equals(data.strCall))return;
+      data.strCall = append(data.strCall, "/", field);
     }
   }
 
