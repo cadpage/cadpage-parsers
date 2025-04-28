@@ -2296,7 +2296,7 @@ public class Active911ParserTable {
       "US/PA/LackTuscarora",              "PAJuniataCounty",
       "US/PA/LancasterCounty",            "PALancasterCounty",
       "US/PA/LawrenceCounty",             "PALawrenceCounty",
-      "US/PA/LebanonCountyCadpage",       "PALebanonCountyA",
+      "US/PA/LebanonCountyCadpage",       "PALebanonCounty",
       "US/PA/LehighCounty",               "PALehighCountyA,PALehighCountyC,PANorthamptonCountyB",
       "US/PA/LibertyFireCo",              "PAChesterCountyD4",
       "US/PA/LifeLionEMS",                "PABerksCountyD,PADauphinCountyA",
