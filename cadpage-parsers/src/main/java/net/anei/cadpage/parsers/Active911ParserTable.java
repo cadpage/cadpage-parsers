@@ -1259,6 +1259,7 @@ public class Active911ParserTable {
       "US/MI/OstegoCounty",               "MIAlleganCounty",
       "US/MI/OttawaCounty",               "MIOttawaCounty",
       "US/MI/OxfordFD",                   "MIOaklandCountyC",
+      "US/MI/ParmaSandstoneFD",           "MIJacksonCountyA",
       "US/MI/PlainfieldFD",               "MIKentCounty",
       "US/MI/RacineCounty",               "WIRacineCountyA",
       "US/MI/RichmondFDDelimited",        "MIMacombCountyA",
