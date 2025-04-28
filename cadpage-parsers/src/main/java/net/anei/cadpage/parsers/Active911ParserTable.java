@@ -2369,6 +2369,7 @@ public class Active911ParserTable {
       "US/PA/WarrenCounty",               "PAWarrenCounty",
       "US/PA/WarringtonTwpFire",          "PABucksCountyD",
       "US/PA/WashingtonCounty",           "PAWashingtonCounty,PAAlleghenyCountyD",
+      "US/PA/WashingtonCounty2",          "PAWestmorelandCountyA",
       "US/PA/WayneCounty",                "PAWayneCounty",
       "US/PA/WestChesterUniversity",      "PAChesterCountyP",
       "US/PA/WestmorelandCounty",         "PAWestmorelandCountyA",
