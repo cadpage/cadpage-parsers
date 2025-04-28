@@ -10,7 +10,7 @@ public class INHowardCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "HowardCoCAD@ipsc.in.gov";
+    return "pagegate@howardcountyin.gov";
   }
 
 }
