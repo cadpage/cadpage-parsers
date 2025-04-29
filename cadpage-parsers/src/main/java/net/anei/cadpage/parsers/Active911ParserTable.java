@@ -2421,6 +2421,8 @@ public class Active911ParserTable {
       "US/SC/JasperCounty",               "SCJasperCounty",
       "US/SC/JasperCountyFire",           "SCJasperCounty",
       "US/SC/JointBaseFireEmergencyServices","SCCharlestonCountyA",
+      "US/SC/KershawCountySERT",          "SCKershawCountyB",
+      "US/SC/KershawCountyTrackingTeam",  "SCKershawCountyB",
       "US/SC/KingstreeFD",                "SCWilliamsburgCounty",
       "US/SC/LancasterCounty",            "SCLancasterCounty",
       "US/SC/LeeCounty",                  "SCLeeCounty",
