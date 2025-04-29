@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -43,7 +44,9 @@ public class DispatchA77Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d{1,4}[A-Z]?|[A-Z]");
+  private static final Pattern BOUND_PTN =  Pattern.compile("[NSEW]B", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN1 = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN2 = Pattern.compile("[A-Z]?\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
 
   private class MyAddressCityField extends Field {
 
@@ -55,7 +58,14 @@ public class DispatchA77Parser extends FieldProgramParser {
       data.strCity = city;
       String place = p.getLastOptional(';');
       parseAddress(p.get(), data);
-      if (APT_PTN.matcher(place).matches()) {
+      Matcher match;
+      if (BOUND_PTN.matcher(place).matches()) {
+        data.strAddress = append(data.strAddress, " ", place);
+      }
+      else if ((match = APT_PTN1.matcher(place)).matches()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+      }
+      else if (APT_PTN2.matcher(place).matches()) {
         data.strApt = append(data.strApt, "-", place);
       } else {
         data.strPlace = place;
