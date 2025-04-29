@@ -409,6 +409,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Electrical Fire",
       "EMS -",
       "Fire -",
+      "Fire - LPG / Natural Gas Leak OUTSIDE",
       "Fire - Smoke/Odor Investigation",
       "Fire Alarm - Commercial",
       "Fire Alarm - Residential",
