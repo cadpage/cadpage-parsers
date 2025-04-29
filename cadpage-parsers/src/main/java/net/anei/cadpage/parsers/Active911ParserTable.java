@@ -850,6 +850,7 @@ public class Active911ParserTable {
       "US/KS/CityofManhattan",            "KSRileyCounty",
       "US/KS/CityofMulvane",              "KSSumnerCounty",
       "US/KS/CloudCounty",                "KSCloudCounty",
+      "US/KS/CoffeyCounty",               "KSCoffeeCounty",
       "US/KS/ConcordiaPD",                "KSCloudCounty",
       "US/KS/CowleyCounty",               "KSCowleyCounty",
       "US/KS/CrawfordCounty",             "KSCrawfordCountyA",
