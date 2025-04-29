@@ -1580,7 +1580,7 @@ public class Active911ParserTable {
       "US/NC/BladenCountyEMS",            "NCBladenCounty",
       "US/NC/BoltonVFD",                  "NCColumbusCounty",
       "US/NC/BrassfieldVFD",              "NCGranvilleCounty",
-      "US/NC/BrookfordPD",                "NCCatabwaCountyB",
+      "US/NC/BrookfordPD",                "NCCatawbaCountyB",
       "US/NC/BrunswickCounty",            "NCBrunswickCounty",
       "US/NC/BuncombeCounty",             "NCBuncombeCounty",
       "US/NC/BurkeCounty",                "NCBurkeCounty",
