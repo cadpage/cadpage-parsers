@@ -2611,6 +2611,7 @@ public class Active911ParserTable {
       "US/TX/CochranCounty",              "TXCochranCounty",
       "US/TX/CockrellHill",               "TXDallasCountyI",
       "US/TX/CollinCounty",               "TXCollinCounty",
+      "US/TX/ColoradoCounty",             "TXColoradoCounty",
       "US/TX/ComalCounty",                "TXComalCountyA",
       "US/TX/ComalCounty2",               "TXComalCountyB",
       "US/TX/CookeCounty",                "TXCookeCountyC",
