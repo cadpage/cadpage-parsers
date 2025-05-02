@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
           "( SELECT/1 CALL:CALL! ( Caller:NAME! Caller_#:PHONE! | ) PLACE:PLACE! ADDR:ADDR! CITY:CITY? ID:ID? " +
                 "Cross_Street:X? MAP:MAP% ZIP_CODE:ZIP? UNIT:UNIT%  NARR:INFO/N INFO/N+" +
           "| CALL ADDR PLACE! Caller:NAME! Caller_#:PHONE! Units:UNIT! ) END");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -90,4 +92,13 @@ public class ORYamhillCountyCParser extends FieldProgramParser {
       }
     }
   }
+
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "433 S BRIDGE ST",          "45.095399,-123.394278"
+  });
 }
