@@ -23,6 +23,7 @@ public class ZCAABYellowheadCountyParser extends DispatchA74Parser {
   public boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf("\n\nThe contents");
     if (pt >= 0) body = body.substring(0,pt).trim();
+    body = body.replace("VEGREVILLE/LAVOY RURAL", "VEGREVILLE");
     return super.parseMsg(subject, body, data);
   }
 }

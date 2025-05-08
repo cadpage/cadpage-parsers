@@ -55,6 +55,7 @@ public class DispatchA74Parser extends FieldProgramParser {
     if (name.equals("ID1")) return new IdField("CAD #((?:\\d{2,10}[-/])?\\d+):", true);
     if (name.equals("ID2")) return new IdField("\\d{9}", true);
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("SRC1")) return new BaseSource1Field();
     if (name.equals("GPS")) return new GPSField("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}|", true);
@@ -174,6 +175,14 @@ public class DispatchA74Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames() + " ST UNIT GPS";
+    }
+  }
+
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
     }
   }
 
