@@ -6,28 +6,28 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
-  
+
   private static final Pattern DELIM = Pattern.compile("\\*{2,}");
-  
+
   public PAChesterCountyD1Parser() {
     super("( EMPTY UNIT TIME CALL ADDR X PLACE_APT EMPTY NAME PHONE BOX ID EMPTY CITY | TIME! CALL ADDR ) INFO1 INFO+");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@ridgefirecompany.com,dispatch@berwynfireco.org,ADI64@norco.com,37@modena37.com";
+    return "@ridgefirecompany.com,dispatch@berwynfireco.org,ADI64@norco.com,37@modena37.com,@alerts.stationcad.com,@alerts2.stationcad.com";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // And all of the should treat line breaks as spaces
     body = body.replace('\n', ' ');
 
     // Split and parse by double asterisk delimiters
     return parseFields(DELIM.split(body), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new MyUnitField();
@@ -40,7 +40,7 @@ public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
     if (name.equals("INFO")) return new MyInfoField(false);
     return super.getField(name);
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -48,7 +48,7 @@ public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -57,7 +57,7 @@ public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern PLACE_PHONE_PTN = Pattern.compile("(.*?)[-/ ]+(\\d{3}-\\d{3}-\\d{4})");
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT|SUITE|ROOM|RM|LOT)[- ]*(.*)");
   private class MyPlaceAptField extends PlaceField {
@@ -86,18 +86,18 @@ public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
       return "PLACE APT PHONE";
     }
   }
-  
+
   private static final Pattern BOX_PTN = Pattern.compile("\\d{4}");
   private static final Pattern ID_PTN = Pattern.compile("F\\d{8}", Pattern.CASE_INSENSITIVE);
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|SUITE)[- /]+([^-]+?)-+(.*)");
   private static final Pattern PHONE_PTN = Pattern.compile(".*\\b(?:CP)?\\d{3}[-\\.]?\\d{3}[-\\.]?\\d{4}\\b.*");
   private class MyInfoField extends InfoField {
     private boolean place;
-    
+
     public MyInfoField(boolean place) {
       this.place = place;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "-");
@@ -139,4 +139,4 @@ public class PAChesterCountyD1Parser extends PAChesterCountyBaseParser {
       return "PLACE PHONE BOX INFO";
     }
   }
-} 
+}
