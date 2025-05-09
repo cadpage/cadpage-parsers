@@ -43,7 +43,7 @@ public class COSummitCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d\\d:\\d\\d:\\d\\d)\\.\\d+-.*");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d\\d)-(\\d\\d)T(\\d\\d:\\d\\d:\\d\\d)(?:\\.\\d+)?-.*");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {

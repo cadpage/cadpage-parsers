@@ -150,7 +150,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
     @Override
     public boolean checkParse(String field, Data data) {
       if (DATE_TIME_MARK_PTN.matcher(field).matches()) return false;
-      if (FIND_ID_PTN.matcher(field).matches()) return false;
+      if (FIND_ID_PTN.matcher(field).lookingAt()) return false;
       return super.checkParse(field, data);
     }
   }
