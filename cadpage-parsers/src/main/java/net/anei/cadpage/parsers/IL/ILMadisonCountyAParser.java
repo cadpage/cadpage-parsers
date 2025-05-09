@@ -188,6 +188,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
     }
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("\\d+\\.\\d+,-\\d+\\.\\d+");
   private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
   private class MyQueryField extends Field {
     @Override
@@ -200,7 +201,12 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
 
       int pt = field.indexOf("query=");
       if (pt < 0) return;
-      field = field.substring(pt+6).trim().replace('+', ' ');
+      field = field.substring(pt+6).replace('+', ' ').trim();
+
+      if (GPS_PTN.matcher(field).matches()) {
+        data.strAddress = field;
+        return;
+      }
 
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
