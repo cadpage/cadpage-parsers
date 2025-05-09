@@ -12,7 +12,7 @@ public class MOWrightCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@wrightcounty911.org,dispatch@wrightcountymo911.gov";
+    return "dispatch@wrightcounty911.org,dispatch@wrightcountymo911.gov,@howellcountymo911.gov";
   }
 
   @Override
