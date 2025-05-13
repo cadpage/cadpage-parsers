@@ -1857,6 +1857,7 @@ public class Active911ParserTable {
       "US/NM/MesillaFD",                  "NMDonaAnaCountyC",
       "US/NM/MesillaValleyRegionalDispatchAuthorityHtml", "NMDonaAnaCountyC,NMDonaAnaCountyD",
       "US/NM/MesillaValleyRegionalDispatchAuthorityText", "NMDonaAnaCountyD",
+      "US/NM/SanJuanCounty",              "NMSanJuanCountyB",
       "US/NV/CityofElko",                 "NVElkoCountyA,NVElkoCountyC",
       "US/NV/ClarkCounty",                "NVClarkCountyE",
       "US/NV/Elko",                       "NVElkoCountyA,NVElkoCountyC",
