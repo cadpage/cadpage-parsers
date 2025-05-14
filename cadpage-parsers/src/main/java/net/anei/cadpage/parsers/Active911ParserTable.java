@@ -1791,6 +1791,7 @@ public class Active911ParserTable {
       "US/NJ/GloucesterCounty",           "NJGloucesterCountyA",
       "US/NJ/GloucesterERCAlert",         "GeneralAlert",
       "US/NJ/HamiltonTownship",           "NJAtlanticCountyB",
+      "US/NJ/HatzolahEMS",                "NJOceanCountyH",
       "US/NJ/HopatcongPD",                "NJSussexCountyD",
       "US/NJ/HowellPD",                   "NJMonmouthCountyG",
       "US/NJ/HunterdonCounty",            "NJHunterdonCounty",
