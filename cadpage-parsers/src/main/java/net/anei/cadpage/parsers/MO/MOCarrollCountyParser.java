@@ -66,8 +66,20 @@ public class MOCarrollCountyParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      String apt = "";
+      int pt = field.indexOf(", Apt:");
+      if (pt >= 0) {
+        apt = field.substring(pt+6).trim();
+        field = field.substring(0, pt).trim();
+      }
       field = stripFieldEnd(field, ", United States");
       super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY ST APT";
     }
   }
 
