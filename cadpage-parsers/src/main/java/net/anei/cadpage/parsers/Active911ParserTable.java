@@ -412,6 +412,7 @@ public class Active911ParserTable {
       "US/CO/RioBlancoCounty",            "CORioBlancoCountyA",
       "US/CO/RioGrandeCounty",            "CORioBlancoCountyA",
       "US/CO/RioGrandeounty",             "CORioGrandeCountyA",
+      "US/CO/RockyMountainR",             "CORockyMoutainRescue",
       "US/CO/SableAltura",                "CODouglasCountyB",
       "US/CO/SableAlturaFR",              "CODouglasCountyB",
       "US/CO/SanMiguelCounty",            "COSanMiguelCounty",
