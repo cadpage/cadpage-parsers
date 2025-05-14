@@ -2889,6 +2889,7 @@ public class Active911ParserTable {
       "US/VA/TogaVFD",                    "VABuckinghamCountyB",
       "US/VA/VintonEMS",                  "VARoanokeCounty",
       "US/VA/VintonFAS",                  "VARoanokeCounty",
+      "US/VA/VirgilinaFD",                "VAHalifaxCounty",
       "US/VA/WarrenCounty",               "VAWarrenCounty",
       "US/VA/WashingtonCounty",           "VAWashingtonCountyA",
       "US/VA/WestmorelandCounty",         "VAWestmorelandCounty",
