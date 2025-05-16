@@ -11,7 +11,7 @@ public class SCCherokeeCountyParser extends FieldProgramParser {
 
   public SCCherokeeCountyParser() {
     super("CHEROKEE COUNTY", "SC",
-          "Location:PLACE! Address:ADDRCITYST! Cross_Streets:X! Address_Details:INFO! Call_Type:CALL! Call_Details:INFO/N! Pro_Qa_AGE:INFO/N? Pro_Qa_summary:INFO/N! External_Number:ID!");
+          "Location:PLACE! Address:ADDRCITYST! Cross_Streets:X! Address_Details:INFO! Call_Type:CALL! Call_Details:INFO/N! Pro_Qa_AGE:INFO/N? Pro_Qa_summary:INFO/N! CFS_Number:ID? External_Number:ID/L!");
   }
 
   @Override
