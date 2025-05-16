@@ -22,7 +22,7 @@ public class MOWrightCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Dispatch")) return false;
+    if (!subject.equals("Dispatch") && !subject.equals("CAD PAGE")) return false;
     if (!parseFields(body.split("\n"), data)) return false;
     if (data.strApt.equals("AVE")) {
       data.strApt = "";
