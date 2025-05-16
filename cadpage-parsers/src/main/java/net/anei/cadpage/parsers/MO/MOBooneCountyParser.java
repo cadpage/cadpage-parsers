@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -13,8 +14,9 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
 
   public MOBooneCountyParser() {
     super(CITY_CODES, "BOONE COUNTY", "MO",
-          "( CANCEL ADDR CITY! INFO/N+ " +
-          "| FYI? DATETIME ID ( MAP ADDR? | ADDR ) PLACE1? ( CODE | PLACE CODE | CITY/Z PLACE CODE | CITY/Z X/Z X/Z CODE | CITY PLACE X X CODE ) CALL SRC! UNIT PHONE INFO/N+ )");
+          "( SELECT/2 UNIT CALL ADDR CITY CALL2/S! END " +
+          "| CANCEL ADDR CITY! INFO/N+ " +
+          "| FYI? DATETIME ID ( MAP ADDR? | ADDR ) PLACE1? ( CODE | PLACE CODE | CITY/Z PLACE CODE | CITY/Z X/Z X/Z CODE | CITY PLACE X X CODE ) CALL1 SRC! UNIT PHONE INFO/N+ )");
   }
 
   @Override
@@ -31,7 +33,13 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
 
   protected boolean parseMsg(String subject, String body, Data data) {
     gps = null;
-    return parseMsg("CAD:"+body, data);
+    if (body.contains(",Enroute,")) {
+      setSelectValue("2");
+      return parseFields(body.split(","), data);
+    } else {
+      setSelectValue("1");
+      return parseMsg("CAD:"+body, data);
+    }
   }
 
   @Override
@@ -42,7 +50,8 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
     if (name.equals("PLACE1")) return new PlaceField("\\(S\\) *(.*?) *\\(N\\)", true);
     if (name.equals("CODE"))  return new CodeField("\\d{1,3}[A-EO]\\d{1,2}[A-Z]?|(?!CHA)[A-Z]{2,3}|TEST", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}", true);
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL1")) return new MyCall1Field();
+    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9,]+", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -62,11 +71,29 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private class MyCallField extends CallField {
+  private class MyCall1Field extends CallField {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, data.strCode);
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+) +(.*)");
+  private class MyCall2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field = match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
     }
   }
 
