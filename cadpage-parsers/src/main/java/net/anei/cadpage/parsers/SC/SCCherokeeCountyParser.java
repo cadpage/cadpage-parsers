@@ -11,7 +11,7 @@ public class SCCherokeeCountyParser extends FieldProgramParser {
 
   public SCCherokeeCountyParser() {
     super("CHEROKEE COUNTY", "SC",
-          "Location:PLACE! Address:ADDRCITYST! Cross_Streets:X! Address_Details:INFO! Call_Type:CALL! Call_Details:INFO/N! Pro_Qa_AGE:INFO/N! Pro_Qa_summary:INFO/N! External_Number:ID!");
+          "Location:PLACE! Address:ADDRCITYST! Cross_Streets:X! Address_Details:INFO! Call_Type:CALL! Call_Details:INFO/N! Pro_Qa_AGE:INFO/N? Pro_Qa_summary:INFO/N! External_Number:ID!");
   }
 
   @Override
@@ -49,6 +49,7 @@ public class SCCherokeeCountyParser extends FieldProgramParser {
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
 
@@ -76,6 +77,14 @@ public class SCCherokeeCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ", None");
       super.parse(field, data);
+    }
+  }
+
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field,  data);
     }
   }
 }
