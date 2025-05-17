@@ -17,10 +17,10 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     super(defCity, defState,
           "( SELECT/1 ( UNIT_STAT! ( BUS:PLACE! ADDX:ADDR! APT:APT! CODE:CALL! http:GPS " +
                                   "| ADDR! APT:APT! CALL! http:GPS ) " +
-                     "| BUS:PLACE! ADDX:ADDR! APT:APT! CODE:CALL! http:GPS " +
-                     "| CALL_ADDR! COMMENTS! INFO/N+? X? PLACE/SDS+? http:GPS " +
-                     "| ADDR! APT:APT! CALL! http:GPS ) END " +
-           "| CALL_TYPE:CALL! ADDRESS:ADDRCITY! PRIORITY_COMMENT:INFO! INFO/N+ NARRATIVE:INFO/N INFO/N+ CFS_#:ID/L UNITS:UNIT " +
+                     "| BUS:PLACE! ADDX:ADDR! APT:APT! CODE:CALL! http:GPS1 " +
+                     "| CALL_ADDR! COMMENTS! INFO/N+? X? PLACE/SDS+? http:GPS1 " +
+                     "| ADDR! APT:APT! CALL! http:GPS1 ) END " +
+           "| CALL_TYPE:CALL! ADDRESS:ADDRCITY! PRIORITY_COMMENT:INFO! INFO/N+ NARRATIVE:INFO/N INFO/N+ CFS_#:ID/L GPS:GPS UNITS:UNIT " +
            ")");
   }
 
@@ -75,14 +75,14 @@ public class MIMidlandCountyParser extends FieldProgramParser {
     if (name.equals("COMMENTS")) return new MyCommentsField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("GPS1")) return new MyGPS1Field();
     return super.getField(name);
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("//maps.google.com/(?:maps)?\\?q=([+-]\\d+\\.\\d{5})(?: +|%2[0C])([+-]\\d+\\.\\d{5})");
-  private class MyGPSField extends GPSField {
+  private static final Pattern GPS1_PTN = Pattern.compile("//maps.google.com/(?:maps)?\\?q=([+-]\\d+\\.\\d{5})(?: +|%2[0C])([+-]\\d+\\.\\d{5})");
+  private class MyGPS1Field extends GPSField {
     public void parse(String field, Data data) {
-      Matcher match = GPS_PTN.matcher(field);
+      Matcher match = GPS1_PTN.matcher(field);
       if (!match.matches()) return;
       setGPSLoc(match.group(1) + ',' + match.group(2), data);
     }
