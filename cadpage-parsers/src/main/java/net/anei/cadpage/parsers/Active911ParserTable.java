@@ -1863,6 +1863,7 @@ public class Active911ParserTable {
       "US/NM/SanJuanCounty",              "NMSanJuanCountyB",
       "US/NV/CityofElko",                 "NVElkoCountyA,NVElkoCountyC",
       "US/NV/ClarkCounty",                "NVClarkCountyE",
+      "US/NV/CommunityAmbulance",         "NVClarkCountyC",
       "US/NV/Elko",                       "NVElkoCountyA,NVElkoCountyC",
       "US/NV/RenoAirport",                "NVReno",
       "US/NV/WestWendover",               "NVElkoCountyB,NVElkoCountyC",
