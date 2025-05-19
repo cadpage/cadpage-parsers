@@ -1,22 +1,14 @@
 package net.anei.cadpage.parsers.CO;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class COChaffeeCountyParser extends DispatchA55Parser {
+/**
+ * Chaffee County, CO
+ */
+public class COChaffeeCountyParser extends GroupBestParser {
 
 
   public COChaffeeCountyParser() {
-    super("CHAFFEE COUNTY", "CO");
-  }
-
-  @Override
-  public String getFilter() {
-    return "ereports@eforcesoftware.com";
-  }
-  
-  @Override
-  public String adjustMapCity(String city) {
-    if (city.equals("GARFIELD/MONARCH")) city = "SALIDA";
-    return city;
-  }
+    super(new COChaffeeCountyAParser(), new COChaffeeCountyBParser());
+   }
 }
