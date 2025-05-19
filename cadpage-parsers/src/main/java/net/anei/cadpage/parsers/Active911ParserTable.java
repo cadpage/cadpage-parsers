@@ -2375,6 +2375,7 @@ public class Active911ParserTable {
       "US/PA/ValleyAmbAut",               "PAAlleghenyCountyC",
       "US/PA/VenangoCounty",              "PAVenangoCountyB,PAVenangoCountyC",
       "US/PA/VMSCLansdaleBurholme",       "PAMontgomeryCountyK",
+      "US/PA/VMSCLansdaleTransport",      "PAMontgomeryCountyC",
       "US/PA/WarminsterFD",               "PABucksCountyD",
       "US/PA/WarrenCounty",               "PAWarrenCounty",
       "US/PA/WarringtonTwpFire",          "PABucksCountyD",
