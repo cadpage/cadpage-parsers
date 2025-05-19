@@ -29,4 +29,10 @@ public class GAHartCountyParser extends DispatchSPKParser {
     }
     return true;
   }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("BIO")) city = "HARTWELL";
+    return city;
+  }
 }
