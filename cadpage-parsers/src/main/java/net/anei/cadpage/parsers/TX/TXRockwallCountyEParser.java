@@ -13,7 +13,7 @@ public class TXRockwallCountyEParser extends DispatchH05Parser {
 
   public TXRockwallCountyEParser(String defCity, String defState) {
     super(CITY_LIST, defCity, defState,
-          "( Units_Assigned:UNIT! | UnitAssigned:UNIT! ) Call_Type:CALL! Business_Name:PLACE! Location:ADDRCITY! Cross_Streets:X! Box:BOX! Narrative:EMPTY! INFO_BLK+");
+          "( Units_Assigned:UNIT! | UnitAssigned:UNIT! ) Call_Type:CALL! Business_Name:PLACE! Location:ADDRCITY! Cross_Streets:X! Box:BOX! CFS_Number:ID? Narrative:EMPTY! INFO_BLK+");
   }
 
   @Override
