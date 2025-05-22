@@ -22,7 +22,7 @@ public class CAFresnoCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "VCMail@co.fresno.ca.us,VCMail@fresnocountyca.gov";
+    return "VCMail@co.fresno.ca.us,VCMail@fresnocountyca.gov,@cityofhanfordca.com|@cityofhanfordca.gov";
   }
 
   @Override
