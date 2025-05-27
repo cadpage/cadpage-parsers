@@ -11,8 +11,8 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
 
   public NCCumberlandCountyBParser() {
     super(CITY_CODES, "CUMBERLAND COUNTY", "NC",
-          "( CANCEL ADDR CITY PLACEX! END " +
-          "| ADDR CALL CH X/Z? UNIT! INFO/N+? GPS1 GPS2 PHONE END )");
+          "( CANCEL ADDR CITY! PLACEX1 END " +
+          "| ADDR CALL CH? PLACEX2+? UNIT! INFO/N+? ( GPS | GPS1 GPS2 ) PHONE END )");
   }
 
   @Override
@@ -25,19 +25,32 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
     return MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern SRC_PTN = Pattern.compile("Station .*");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Text Message")) return false;
+    if (!subject.equals("Text Message")) {
+      if (!SRC_PTN.matcher(subject).matches()) return false;
+      data.strSource = subject;
+      body = body.replace('\n', ';');
+    }
     return super.parseMsg("CAD:" + body, data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "SRC? " + super.getProgram();
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new MyCancelField();
-    if (name.equals("PLACEX")) return new MyPlaceXField();
+    if (name.equals("PLACEX1")) return new MyPlaceX1Field();
+    if (name.equals("PLACEX2")) return new MyPlaceX2Field();
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("CH"))  return new ChannelField("CC\\d\\d", true);
+    if (name.equals("CH"))  return new ChannelField("(?:CC|FF)\\d\\d", true);
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("GPS")) return new MyGPSField(0);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
@@ -71,10 +84,15 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
 
       return false;
     }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT CALL";
+    }
   }
 
   private static final Pattern PLACEX_UNIT_PTN = Pattern.compile("[A-Z]\\d{1,3}");
-  private class MyPlaceXField extends Field {
+  private class MyPlaceX1Field extends Field {
 
     @Override
     public void parse(String field, Data data) {
@@ -97,6 +115,26 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
     public String getFieldNames() {
       return "PLACE APT? UNIT?";
     }
+  }
+
+  private class MyPlaceX2Field extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      if (field.contains(",")) {
+        data.strName = field;
+      } else if (field.contains("RAMP") || field.contains("EXIT") || isValidCrossStreet(field)) {
+        data.strCross = field;
+      } else {
+        data.strPlace = field;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "NAME PLACE X";
+    }
+
   }
 
   private static final Pattern CODE_CALL_PTN = Pattern.compile("(\\d{1,2}(?:[A-Z]\\d{1,2}[A-Z]?)?) +(.*)");
@@ -156,10 +194,11 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
+  private static final Pattern FULL_GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}");
   private class MyGPSField extends GPSField {
     public MyGPSField(int type) {
       super(type);
-      setPattern(GPS_PTN, true);
+      setPattern(type == 0 ? FULL_GPS_PTN : GPS_PTN, true);
     }
   }
 
