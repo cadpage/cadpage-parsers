@@ -10,7 +10,7 @@ public class MSPanolaCountyAParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@911comm3.info,dispatch@PanolaCoE911.com";
+    return "dispatch@911comm3.info,dispatch@PanolaCoE911.com,PanolaE911@911comm2.info";
   }
 
   @Override
