@@ -194,6 +194,7 @@ public class Active911ParserTable {
       "US/AR/ConwayCounty",               "ARConwayCounty",
       "US/AR/CrawfordCounty",             "ARCrawfordCounty",
       "US/AR/DallasCounty",               "ARDallasCounty",
+      "US/AR/FaulknerCounty",             "ARFaulknerCounty",
       "US/AR/FountainLake",               "ARGarlandCountyA",
       "US/AR/FSEMS",                      "ARSebastianCounty",
       "US/AR/FSEMS",                      "ARSebastianCounty",

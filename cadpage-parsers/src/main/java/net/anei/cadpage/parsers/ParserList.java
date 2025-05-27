@@ -199,6 +199,7 @@ public class ParserList {
               ,"ARConwayCounty"                 ,"Conway County, AR"
               ,"ARCrawfordCounty"               ,"Crawford County, AR"
               ,"ARDallasCounty"                 ,"Dallas County, AR"
+              ,"ARFaulknerCounty"               ,"Faulkner County, AR"
               ,"ARGarlandCounty"                ,"Garland County, AR"
               ,"ARHotSpringCounty"              ,"Hot Spring County, AR"
               ,"ARPopeCounty"                   ,"Pope County, AR"
