@@ -1,16 +1,13 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class TXAustinCountyParser extends DispatchA72Parser {
+/**
+ * Austin County, TX
+ */
+public class TXAustinCountyParser extends GroupBestParser {
 
   public TXAustinCountyParser() {
-    super("AUSTIN COUNTY", "TX");
+    super(new TXAustinCountyAParser(), new TXAustinCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "tpscad@austincountyso.org";
-  }
-
 }
