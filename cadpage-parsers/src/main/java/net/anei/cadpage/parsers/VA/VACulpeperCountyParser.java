@@ -3,15 +3,15 @@ package net.anei.cadpage.parsers.VA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
-public class VACulpeperCountyParser extends DispatchOSSIParser {
+public class VACulpeperCountyParser extends FieldProgramParser {
 
   public VACulpeperCountyParser() {
     super("CULPEPER COUNTY", "VA",
-           "( CANCEL ADDR | FYI? BOX CH? CALL ADDR MAP? ) INFO/N+");
+           "NONE? ADDRCITYST PLACE ( GPS1 GPS2! | ) CALL DATETIME INFO EMPTY! END");
   }
 
   @Override
@@ -20,47 +20,50 @@ public class VACulpeperCountyParser extends DispatchOSSIParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("RESPOND (CFS\\d+)");
+  private static final Pattern DELIM = Pattern.compile(" *\\| +");
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (!match.matches()) return false;
+    data.strCallId = match.group(1);
+
+    return parseFields(DELIM.split(body+' ', -1), data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "ID " + super.getProgram();
+  }
+
+  @Override
   protected Field getField(String name) {
-    if (name.equals("BOX"))  return new BoxField("(?:Text Message)?(\\d{4})", true);
-    if (name.equals("CH")) return new ChannelField("\\d+[- ]?[A-Z]", true);
-    if (name.equals("MAP")) return new MyMapField();
+    if (name.equals("NONE")) return new SkipField("None", true);
+    if (name.equals("GPS1")) return new MyGPSField(1);
+    if (name.equals("GPS2")) return new MyGPSField(2);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  // And we need a special MAP field that will append two map data fields
-  private static final Pattern MAP_PTN = Pattern.compile("(?:(.*?)[/ ]+?)?(\\d{1,2}-?[A-Z]\\d)(?: - MAP PAGE)?");
-  private static final Pattern SPECIAL_MAP_PTN = Pattern.compile("(?:(.*?)[ /]+)?(?:([A-Z]+) POST OFFICE MAP|MAP PAGE|MP)");
-  private class MyMapField extends MapField {
-    @Override
-    public boolean canFail() {
-      return true;
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}|None");
+  private class MyGPSField extends GPSField {
+    public MyGPSField(int type) {
+      super(type);
+      setPattern(GPS_PTN, true);
     }
+  }
 
-    @Override
-    public boolean checkParse(String field, Data data) {
-      Matcher match = MAP_PTN.matcher(field);
-      if (!match.matches()) return false;
-      String place = getOptGroup(match.group(1));
-      data.strMap = match.group(2);
-
-      match = SPECIAL_MAP_PTN.matcher(place);
-      if (match.matches()) {
-        data.strPlace = getOptGroup(match.group(1));
-        data.strCity = getOptGroup(match.group(2));
-      } else {
-        data.strPlace = place;
-      }
-      return true;
-    }
-
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[ ;]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "PLACE CITY MAP";
+      data.strSupp = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
     }
   }
 }
