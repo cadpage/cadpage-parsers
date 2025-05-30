@@ -15,11 +15,12 @@ public class PALuzerneCountyParser extends DispatchA41Parser {
 
   @Override
   public String getFilter() {
-    return "CADDispatch@LuzerneCounty.org,";
+    return "CADDispatch@LuzerneCounty.org,@zapiermail.com";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace('\n', ' ');
     if (!super.parseMsg(body, data)) return false;
     data.strCity = stripFieldStart(data.strCity, ".");
     data.strCity = stripFieldEnd(data.strCity, " BORO");
