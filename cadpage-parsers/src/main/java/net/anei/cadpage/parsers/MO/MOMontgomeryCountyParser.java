@@ -35,10 +35,24 @@ public class MOMontgomeryCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("HDR")) return new SkipField("Montgomery County Communication Center", true);
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{5}", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("TIMES")) return new MyTimesField();
     if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern APT_CITY_PTN = Pattern.compile("(\\d+[A-Z]?) +(.*)");
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      Matcher match = APT_CITY_PTN.matcher(data.strCity);
+      if (match.matches()) {
+        data.strApt = append(data.strApt, "-", match.group(1));
+        data.strCity = match.group(2);
+      }
+    }
   }
 
   private static final Pattern TIMES_PTN = Pattern.compile("(Opened Date / Time|[A-Za-z]+): *(.*)");

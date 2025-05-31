@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ARFaulknerCountyParser extends FieldProgramParser {
 
   public ARFaulknerCountyParser() {
-    super("FAULKNER COUNTY", "AR",
+    super(AUX_CITY_LIST, "FAULKNER COUNTY", "AR",
           "Incident:EMPTY! Nature:CALL! Address:ADDRCITY! Cross_Streets:X? Priority:PRI! Coordinates:GPS? ID:ID! Units:UNIT! Comments:EMPTY! INFO/N+");
   }
 
@@ -36,6 +36,7 @@ public class ARFaulknerCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -47,4 +48,25 @@ public class ARFaulknerCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      if (data.strCity.equals("AR")) {
+        data.strState = data.strCity;
+        data.strCity = "";
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, data.strAddress, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " ST";
+    }
+  }
+
+  private static final String[] AUX_CITY_LIST = new String[] {
+      "PULASKI COUNTY"
+  };
 }

@@ -203,8 +203,11 @@ public class NCCumberlandCountyBParser extends DispatchOSSIParser {
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "DU",  "DUNN",
+      "EAS", "EASTOVER",
       "FAY", "FAYETTEVILLE",
       "HM",  "HOPE MILLS",
+      "LIN", "LINDEN",
       "PAR", "PARKTON",
       "ROS", "ROSEBORO",
       "STD", "STEDMAN",
