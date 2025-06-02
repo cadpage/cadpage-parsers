@@ -12,6 +12,7 @@ public class TXRockwallCountyParser extends GroupBestParser {
           new TXRockwallCountyBParser(),
           new TXRockwallCountyCParser(),
           new TXRockwallCountyDParser(),
-          new TXRockwallCountyEParser());
+          new TXRockwallCountyEParser(),
+          new TXRockwallCountyFParser());
   }
 }
