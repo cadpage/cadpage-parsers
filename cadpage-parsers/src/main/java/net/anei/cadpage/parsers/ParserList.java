@@ -836,6 +836,7 @@ public class ParserList {
               ,"LATerrebonneParish"             ,"Terrebonne Parish, LA"
               ,"LAWebsterParish"                ,"Webster Parish, LA"
               ,"LAWestBatonRougeParish"         ,"West Baton Rouge Parish, LA"
+              ,"LAWestCarrollParish"            ,"West Carroll Parish, LA"
               ,"LAWestFelicianaParish"          ,"West Feliciana Parish, LA"
           ),
           new ParserCategory("Maine"
