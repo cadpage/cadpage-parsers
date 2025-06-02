@@ -559,6 +559,7 @@ public class Active911ParserTable {
       "US/GA/JacksonCounty",              "GAJacksonCounty",
       "US/GA/JasperCounty",               "GAJasperCounty",
       "US/GA/JeffersonCounty",            "GAJeffersonCounty",
+      "US/GA/JonesCounty",                "GAJonesCounty",
       "US/GA/LamarCounty",                "GALamarCounty",
       "US/GA/Ledsportal",                 "GAFloydCounty",
       "US/GA/LowndesCounty",              "GALowndesCounty",

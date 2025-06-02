@@ -443,6 +443,7 @@ public class ParserList {
               ,"GAJacksonCounty"                ,"Jackson County, GA"
               ,"GAJasperCounty"                 ,"Jasper County, GA"
               ,"GAJeffersonCounty"              ,"Jefferson County, GA"
+              ,"GAJonesCounty"                  ,"Jones County, GA"
               ,"GALamarCounty"                  ,"Lamar County, GA"
               ,"GALibertyCounty"                ,"Liberty County, GA"
               ,"GALowndesCounty"                ,"Lowndes County, GA"
