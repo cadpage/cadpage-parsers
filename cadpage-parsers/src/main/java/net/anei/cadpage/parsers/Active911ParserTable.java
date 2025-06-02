@@ -2236,6 +2236,7 @@ public class Active911ParserTable {
       "US/PA/Ambridge",                   "PABeaverCounty",
       "US/PA/ArmstrongCounty",            "PAArmstrongCountyC,PAArmstrongCountyE",
       "US/PA/AustinVFC",                  "PAPotterCounty",
+      "US/PA/AvocaHoseCompanyOne",        "PALuzerneCounty",
       "US/PA/AvondaleFC",                 "PAChesterCountyO",
       "US/PA/BeaverCounty",               "PABeaverCounty",
       "US/PA/BedfordCounty",              "PABedfordCounty",
