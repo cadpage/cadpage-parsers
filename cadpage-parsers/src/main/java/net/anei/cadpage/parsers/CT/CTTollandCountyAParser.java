@@ -16,7 +16,11 @@ public class CTTollandCountyAParser extends FieldProgramParser {
 
   public CTTollandCountyAParser() {
     super(CTTollandCountyParser.CITY_LIST, "TOLLAND COUNTY", "CT",
-          "ADDRCITY APT PLACE PRI CALL1 CALL/SDS UNIT X DATETIME ID! END");
+          "( SELECT/2 Call_Address:ADDRCITY! Common_Name:PLACE! Call_Type:CALL! Nature_of_Call:CALL/SDS! " +
+               "Units_Assigned:UNIT! Cross_Streets:X! Call_Date/Time:DATETIME! Latitude:GPS1! Longitude:GPS2! " +
+          "| ADDRCITY APT PLACE PRI CALL1 CALL/SDS UNIT X1 DATETIME ID! " +
+          ") END");
+
     removeWords("COURT", "KNOLL", "ROAD", "STREET", "TERRACE");
     addRoadSuffixTerms("CMNS", "COMMONS", "PARK");
     setupSaintNames("PHILIPS");
@@ -69,10 +73,17 @@ public class CTTollandCountyAParser extends FieldProgramParser {
     int pt = body.indexOf("\nText STOP");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
+    if (body.startsWith("Call Address:")) {
+      setSelectValue("2");
+      return parseFields(body.split("\n"), data);
+    }
+
+    setSelectValue("1");
     body = body.replace('\n', ' ');
 
     // Check for semicolon delimited format
-    String[] flds = body.split("; ");
+    if (body.endsWith(";")) body += ' ';
+    String[] flds = body.split("; ", -1);
     if (flds.length >= 8) {
       return parseFields(flds, data);
     }
@@ -171,6 +182,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       cross = stripFieldStart(cross, "Cross Street");
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
       data.strCallId = getOptGroup(match.group(4));
+      if (data.strCallId.isBlank()) return false;
 
       // We are invoking the smart address parser strictly to find city, it
       // shouldn't have to do much parsing.  If it doesn't find a city, bail out.
@@ -314,7 +326,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("CALL1")) return new MyCall1Field();
     if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("X")) return new CrossField("Cross Street *(.*)", true);
+    if (name.equals("X1")) return new CrossField("Cross Street *(.*)", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
@@ -385,7 +397,9 @@ public class CTTollandCountyAParser extends FieldProgramParser {
    });
 
   private static final CodeSet CALL_LIST = new CodeSet(
+      "- EMS",
       "<New Call>",
+      "31 Y/O MALE CRISIS INTERVENTION Call Priority BLS NVAC",
       "Active Violence/Shooter",
       "Aircraft Accident",
       "ALS",
@@ -416,6 +430,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Fire Alarm",
       "Fire Alarm-Commercial",
       "Fire Alarm-Residential",
+      "Flagpole Flag Detail FLAG DETAIL 114",
       "Fuel Spill",
       "Gasoline Spill",
       "Hangup / Misuse 911",
@@ -429,6 +444,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Medical Patch",
       "Mutual Aid Fire",
       "Natural Gas/Propane Leak",
+      "NVAC",
       "OFFICER CALL TN.",
       "Officer Call",
       "Outside Fire",
