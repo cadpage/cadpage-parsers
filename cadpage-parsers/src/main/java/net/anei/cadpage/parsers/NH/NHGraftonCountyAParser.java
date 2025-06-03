@@ -12,13 +12,13 @@ public class NHGraftonCountyAParser extends FieldProgramParser {
   public NHGraftonCountyAParser() {
     super("GRAFTON COUNTY", "NH",
           "Call_Type:CALL! Call_Time:DATETIME! Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! Additional_Location_Info:APT! " +
-              "Caller_Phone:PHONE! Channel:CH! Narrative:INFO! INFO/N+ Case_Number:ID END");
+              "Caller_Phone:PHONE! Channel:CH! Case_Number:ID? Narrative:INFO! INFO/N+ Case_Number:ID Incident_Number:ID/L END");
     setupGpsLookupTable(buildGPSLookupTable());
   }
 
   @Override
   public String getFilter() {
-    return "cad@lrmfa.org";
+    return "cad@lrmfa.org,cad@lrmfa.nh.gov";
   }
 
   @Override
