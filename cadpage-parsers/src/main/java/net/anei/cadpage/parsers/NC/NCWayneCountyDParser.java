@@ -12,7 +12,7 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
   public NCWayneCountyDParser() {
     super(CITY_CODES, "WAYNE COUNTY", "NC",
           "( CANCEL ADDR CITY " +
-          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! " +
+          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! DATETIME UNIT/C! " +
           ") INFO/N+? UNIT2");
   }
 
@@ -37,6 +37,7 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT2")) return new MyUnit2Field();
     return super.getField(name);
   }
