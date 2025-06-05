@@ -16,6 +16,7 @@ public class TXRockwallCountyFParser extends DispatchLifeNetEMSParser {
       "MCLENDON-CHISHOLM",
       "MOBILE CITY",
       "ROCKWALL",
+      "ROCKWALL COUNTY",
       "ROWLETT",
       "ROYSE CITY",
       "WYLIE"
