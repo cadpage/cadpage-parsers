@@ -9,19 +9,19 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
  * Smith County, TX
  */
 public class TXSmithCountyAParser extends DispatchA19Parser {
-  
+
   public TXSmithCountyAParser() {
     super("SMITH COUNTY", "TX");
   }
-  
+
   @Override
   public String getFilter() {
-    return "Dgeneric@smith-county.com,.pphosted.com";
+    return "Dgeneric@smith-county.com,.pphosted.com,spillmanadmin@smithcounty.onmicrosoft.com";
   }
 
   private static final Pattern SUBJ_PTN = Pattern.compile("(DISPATCH) +(?=Incident #)");
   private static final Pattern FIELD_BRK_PTN = Pattern.compile(" +(?=CAD Call ID #:|Type:|Date/Time:)");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJ_PTN.matcher(subject);
@@ -32,5 +32,5 @@ public class TXSmithCountyAParser extends DispatchA19Parser {
     // TODO Auto-generated method stub
     return super.parseMsg(subject, body, data);
   }
-  
+
  }
