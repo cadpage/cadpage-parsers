@@ -14,7 +14,7 @@ public class TXBlancoCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.blanco.tx.us";
+    return "dispatch@co.blanco.tx.us,dispatch@bcesit.net";
   }
 
   @Override
