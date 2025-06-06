@@ -203,6 +203,36 @@ public class TXHarrisCountyParser extends GroupBestParser {
       "PORT BOLIVAR",
 
       // Fort Bend County
-      "SUGAR LAND"
+      // Cities
+      "ARCOLA",
+      "BEASLEY",
+      "FULSHEAR",
+      "KENDLETON",
+      "MEADOWS PLACE",
+      "NEEDVILLE",
+      "ORCHARD",
+      "RICHMOND",
+      "ROSENBERG",
+      "SIMONTON",
+      "SUGAR LAND",
+      "WESTON LAKES",
+
+      // Towns
+      "THOMPSONS",
+
+      // Villages
+      "FAIRCHILDS",
+      "PLEAK",
+
+      // Census-designated places
+      "CINCO RANCH",
+      "CUMINGS",
+      "FIFTH STREET",
+      "FOUR CORNERS",
+      "FRESNO",
+      "GREATWOOD",
+      "MISSION BEND",
+      "PECAN GROVE",
+      "SIENNA"
     };
 }
