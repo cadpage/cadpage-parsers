@@ -34,6 +34,8 @@ public class NCHokeCountyBParser extends FieldProgramParser {
       return false;
     } while (false);
 
+    int pt = body.indexOf('\n');
+    if (pt >= 0) body = body.substring(0,pt);
     return parseFields(body.split("\\*\\*", -1), data);
   }
 }
