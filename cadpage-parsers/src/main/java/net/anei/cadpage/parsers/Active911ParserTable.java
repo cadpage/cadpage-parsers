@@ -2656,6 +2656,7 @@ public class Active911ParserTable {
       "US/TX/FortWorthFD",                "TXParkerCountyB",
       "US/TX/FranklinCounty",             "TXFranklinCounty",
       "US/TX/FreeportDispatch",           "TXBrazoriaCountyB",
+      "US/TX/FreestoneCounty",            "TXFreestoneCounty",
       "US/TX/Friendswood",                "TXFriendswood",
       "US/TX/Gainesville",                "TXCookeCountyB",
       "US/TX/GalvestonCounty",            "TXGalvestonCounty",
