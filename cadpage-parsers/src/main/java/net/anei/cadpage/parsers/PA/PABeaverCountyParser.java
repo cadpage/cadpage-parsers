@@ -13,7 +13,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class PABeaverCountyParser extends FieldProgramParser {
 
   public PABeaverCountyParser() {
-    super(CITY_LIST, "BEAVER COUNTY", "PA",
+    this("BEAVER COUNTY", "PA");
+  }
+
+  public PABeaverCountyParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState,
           "UNIT:UNIT! ACTION:ACTION! EVENT_#:ID! LOC:ADDRCITY/S! LAT:GPS1! LONG:GPS2! CALLER_NAME:NAME! CALLER_PHONE:PHONE! TYPE:CALL! SUBTYPE:CALL/SDS! PRIORITY:PRI! TIME:TIME! COMMENTS:INFO! END");
     setupCities(MISSPELLED_CITIES);
   }
@@ -32,8 +36,6 @@ public class PABeaverCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-//    body = MISSING_LOC_PTN.matcher(body).replaceFirst("$1 LOC: ");
-//    body = body.replace(" Type:", " TYPE:").replace("CALLER NAME:", " CALLER NAME:");
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equals("OUT OF COUNTY")) data.defCity = data.defState = "";
     return true;
@@ -57,8 +59,9 @@ public class PABeaverCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?) (?:CITY|BORO(?:UGH)?)");
+  private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?)(?: +CITY|BORO(?:UGH)?)?(?: +\\d{5})?");
   private static final Pattern PLACE_ADDR_CITY_PTN = Pattern.compile("(.*),(.*,.*)");
+  private static final Pattern FD_ADDR_PTN = Pattern.compile("(FD \\d+ (.*?)(?: CITY)?(?: HAZ-MAT| FIRE (?:DEPT|DEPARTMENT))?) (\\d+ .*)");
   private class MyAddressCityField extends AddressCityField {
 
     @Override
@@ -71,43 +74,54 @@ public class PABeaverCountyParser extends FieldProgramParser {
       Matcher match = CLEAN_CITY_PTN.matcher(field);
       if (match.matches()) {
         field = match.group(1).trim();
-      } else if (field.endsWith(" TOWNSHIP")) {
+      }
+      if (field.endsWith(" TOWNSHIP")) {
         field = field.substring(0,field.length()-8)+"TWP";
       }
       int pt = field.indexOf(':');
       if (pt >= 0) {
         data.strPlace = field.substring(0,pt).trim();
         field = field.substring(pt+1).trim();
-      } else {
-        match = PLACE_ADDR_CITY_PTN.matcher(field);
-        if (match.matches()) {
-          data.strPlace = match.group(1).trim();
-          field = match.group(2).trim();
+      } else if ((match = PLACE_ADDR_CITY_PTN.matcher(field)).matches()) {
+        data.strPlace = match.group(1).trim();
+        field = match.group(2).trim();
+      } else if ((match = FD_ADDR_PTN.matcher(field)).matches()) {
+        data.strPlace = match.group(1).trim();
+        if (!field.contains(",")) {
+          String city = match.group(2).replace(" TOWNSHIP", " TWP").trim();
+          data.strCity = convertCodes(city, MISSPELLED_CITIES);
         }
+        field = match.group(3).trim();
       }
 
-      String apt = "";
-      String city = "";
-      pt = field.lastIndexOf(',');
-      if (pt >= 0) {
-        city = field.substring(pt+1).replace(".", "").trim();
-        field = field.substring(0,pt).trim();
-        if (!isCity(city)) {
-          parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, city, data);
-          if (!data.strCity.isEmpty()) {
-            city = data.strCity;
-            data.strCity = "";
-            apt = getStart();
+      if (GPS_PATTERN.matcher(field).matches()) {
+        data.strAddress = field;
+      }
+
+      else {
+        String apt = "";
+        String city = "";
+        pt = field.lastIndexOf(',');
+        if (pt >= 0) {
+          city = field.substring(pt+1).replace(".", "").trim();
+          field = field.substring(0,pt).trim();
+          if (!isCity(city)) {
+            parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, city, data);
+            if (!data.strCity.isEmpty()) {
+              city = data.strCity;
+              data.strCity = "";
+              apt = getStart();
+            }
           }
         }
+        int flags = FLAG_ANCHOR_END;
+        if (apt.isEmpty()) flags |= FLAG_RECHECK_APT;
+        if (!city.isEmpty()) flags |= FLAG_NO_CITY;
+        parseAddress(StartType.START_ADDR, flags, field, data);
+        if (!city.isEmpty()) data.strCity = city;
+        data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
+        data.strApt = append(data.strApt, "-", apt);
       }
-      int flags = FLAG_ANCHOR_END;
-      if (apt.isEmpty()) flags |= FLAG_RECHECK_APT;
-      if (!city.isEmpty()) flags |= FLAG_NO_CITY;
-      parseAddress(StartType.START_ADDR, flags, field, data);
-      if (!city.isEmpty()) data.strCity = city;
-      data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
-      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
@@ -259,6 +273,8 @@ public class PABeaverCountyParser extends FieldProgramParser {
       "ELLWOOD",
 
       // Washington County
+      "WASHINGTON COUNTY",
+
       // Cities
       "MONONGAHELA",
       "WASHINGTON",
@@ -434,8 +450,11 @@ public class PABeaverCountyParser extends FieldProgramParser {
   };
 
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
+      "CANONSBURGSE",       "CANONSBURG",
       "CARROL TWP",         "CARROLL TWP",
       "CRANBRERRY TWP",     "CRANBERRY TWP",
-      "ELLWOOD",            "ELLWOOD CITY"
+      "ELLWOOD",            "ELLWOOD CITY",
+      "HANO",               "HANOVER TWP",
+      "W BROWNSVILLE",      "WEST BROWNSVILLE"
   });
 }

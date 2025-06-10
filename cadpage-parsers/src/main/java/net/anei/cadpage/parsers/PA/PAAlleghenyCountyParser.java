@@ -16,9 +16,7 @@ public class PAAlleghenyCountyParser extends GroupBestParser {
     super(new PAAlleghenyCountyAParser(),
           new PAAlleghenyCountyBParser(),
           new PAAlleghenyCountyCParser(),
-          new PAAlleghenyCountyFParser(),
-          new GroupBlockParser(),
-          new PAAlleghenyCountyDParser());
+          new PAAlleghenyCountyFParser());
   }
 
   // We have already complained about the misformatted coordinates in Active911 tables

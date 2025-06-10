@@ -261,7 +261,8 @@ public class ManageParsers {
         "MOCapeGirardeauCountyE","MOCapeGirardeauCountyC", // 03/25/2025
         "OHMorrowCountyA",    "General",                 // 03/31/2025
         "NCCumberlandCountyA","General",                 // 05/27/2025
-        "PAChesterCountyD1",  "PAChesterCountyO"        // 06/02/2025
+        "PAChesterCountyD1",  "PAChesterCountyO",        // 06/02/2025
+        "PAAlleghenyCountyD", "General"                 //06/09/2025
   });
 
 }
