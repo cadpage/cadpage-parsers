@@ -2554,6 +2554,7 @@ public class Active911ParserTable {
       "US/TX/AngletonPD",                 "TXAngleton",
       "US/TX/AngletonAreaEMC",            "TXBrazoriaCountyF,TXBrazoriaCountyG",
       "US/TX/AransasCounty",              "TXAransasCounty",
+      "US/TX/AransasPassFD",              "TXAransasPass",
       "US/TX/ArcherCounty",               "TXArcherCounty",
       "US/TX/ArmstrongCounty",            "TXArmstrongCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
