@@ -9,26 +9,31 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 
 public class WYSubletteCountyAParser extends DispatchA19Parser {
-  
+
   public WYSubletteCountyAParser() {
     super("SUBLETTE COUNTY", "WY");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
+  @Override
+  public String getFilter() {
+    return "FlexRapidNotification@dccnotify.com,spillmanprod@state.vt.us";
+  }
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!super.parseMsg(subject, body, data)) return false;
     data.strAddress = data.strAddress.replace("189 & 191", "189/191");
     return true;
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = US_PTN.matcher(addr).replaceAll("US");
     addr = addr.replace("US HWY 189/191", "US 189");
     return addr;
   }
-  
+
   private static final Pattern US_PTN = Pattern.compile("\\bU S\\b");
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
@@ -1178,6 +1183,6 @@ public class WYSubletteCountyAParser extends DispatchA19Parser {
       "WOODS-WARDELL 23-179 MP 2.3",          "+42.852686,-109.981282",
       "WYOMING RANGE MP 15.57",               "+42.609113,-110.485714",
       "ZERO ST MP 100.004",                   "+42.552441,-110.101609"
-      
+
   });
 }
