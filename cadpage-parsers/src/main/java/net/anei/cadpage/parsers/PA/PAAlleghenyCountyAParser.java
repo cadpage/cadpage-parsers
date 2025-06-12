@@ -366,10 +366,12 @@ public class PAAlleghenyCountyAParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" {2,}(?=\\d+\\. )");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       if (field.startsWith("Medical ProQA")) return;
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
       super.parse(field, data);
     }
   }
