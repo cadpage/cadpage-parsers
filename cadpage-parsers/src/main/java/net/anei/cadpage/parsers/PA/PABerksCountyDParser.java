@@ -16,7 +16,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "berksalert@countyofberks.com,noreply@everbridge.net,89361,99538";
+    return "berksalert@countyofberks.com,noreply@everbridge.net,89361,89362,99538";
   }
 
   @Override
