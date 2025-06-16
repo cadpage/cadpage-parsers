@@ -12,7 +12,8 @@ public class TXFortBendCountyParser extends GroupBestParser {
   public TXFortBendCountyParser() {
     super(new TXFortBendCountyAParser(),
           new TXFortBendCountyBParser(),
-          new TXFortBendCountyCParser());
+          new TXFortBendCountyCParser(),
+          new TXFortBendCountyFParser());
   }
 
   static final Properties CITY_CODES = buildCodeTable(new String[]{
