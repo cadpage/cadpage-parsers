@@ -9,6 +9,9 @@ Tulsa, OK
  */
 public class OKTulsaParser extends GroupBestParser {
   public OKTulsaParser() {
-    super(new OKTulsaAParser(), new GroupBlockParser(), new OKTulsaBParser());
+    super(new OKTulsaAParser(),
+          new OKTulsaCParser(),
+          new GroupBlockParser(),
+          new OKTulsaBParser());
   }
 }
