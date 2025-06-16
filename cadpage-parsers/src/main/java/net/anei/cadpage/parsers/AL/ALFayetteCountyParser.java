@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,36 +12,56 @@ public class ALFayetteCountyParser extends FieldProgramParser {
 
   public ALFayetteCountyParser() {
     super("FAYETTE COUNTY", "AL",
-          "Nature:CALL! Add:ADDRCITY! Comm:INFO! Coords:GPS! Date/Time:DATETIME! Unit:UNIT? END");
+          "CALL! Comment:INFO! Address:ADDRCITY! GPS! Begin_Time:DATETIME! Call_#:ID! END");
   }
 
   @Override
   public String getFilter() {
-    return "countyoffayette911@gmail.com";
+    return "fayette.al@ryzyliant.com";
   }
-
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Call: (\\d+) Case No:");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strCallId = match.group(1);
-
-    int pt = body.indexOf("\nFrom :");
-    if (pt >= 0) body = body.substring(0, pt).trim();
-
-    return super.parseMsg(body, data);
+    if (!subject.startsWith("OPS Broadcast:")) return false;
+    return parseFields(body.split("\n"), data);
   }
 
-  @Override
-  public String getProgram() {
-    return "ID " + super.getProgram();
-  }
+  private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/DD/YYYY hh:mm:ss aa");
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CALL")) return new CallField("On-dispatch OPS broadcast for '(.*)'", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
     return super.getField(name);
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("N/A")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      if (data.strCity.equals("city N/A")) data.strCity = "";
+    }
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("https?://.*query=(.*)");
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("Location coordinates not supplied")) return;
+      Matcher match = GPS_PTN.matcher(field);
+      if (!match.matches()) abort();
+      super.parse(match.group(1).trim(), data);
+    }
   }
 }
