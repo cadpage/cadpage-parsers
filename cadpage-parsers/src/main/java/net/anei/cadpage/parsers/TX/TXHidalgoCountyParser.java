@@ -8,9 +8,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class TXHidalgoCountyParser extends GroupBestParser {
 
   public TXHidalgoCountyParser() {
-    super(new TXHidalgoCountyAParser(), 
+    super(new TXHidalgoCountyAParser(),
           new TXHidalgoCountyBParser(),
           new TXHidalgoCountyCParser(),
-          new TXHidalgoCountyEParser());
+          new TXHidalgoCountyEParser(),
+          new TXHidalgoCountyFParser());
   }
 }
