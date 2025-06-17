@@ -1870,6 +1870,7 @@ public class Active911ParserTable {
       "US/NV/ClarkCounty",                "NVClarkCountyE",
       "US/NV/CommunityAmbulance",         "NVClarkCountyC",
       "US/NV/Elko",                       "NVElkoCountyA,NVElkoCountyC",
+      "US/NV/OffRoadRecovery",            "NVCarsonCity",
       "US/NV/RenoAirport",                "NVReno",
       "US/NV/WestWendover",               "NVElkoCountyB,NVElkoCountyC",
       "US/NV/WinnemuccaCityFD",           "NVHumboldtCounty",

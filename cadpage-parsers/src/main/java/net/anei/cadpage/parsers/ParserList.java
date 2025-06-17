@@ -1156,6 +1156,7 @@ public class ParserList {
               ,"NEMadisonCounty"                ,"Madison County, NE"
           ),
           new ParserCategory("Nevada"
+              ,"NVCarsonCity"                   ,"Carson City, NV"
               ,"NVClarkCounty"                  ,"Clark County, NV"
               ,"NVElkoCounty"                   ,"Elko County, NV"
               ,"NVHumboldtCounty"               ,"Humboldt County, NV"
