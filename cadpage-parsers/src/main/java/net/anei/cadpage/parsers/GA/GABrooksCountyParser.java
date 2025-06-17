@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA83Parser;
 public class GABrooksCountyParser extends DispatchA83Parser {
 
   public GABrooksCountyParser() {
-    super(CITY_LIST, "BROOKS COUNTY", "GA", 2);
+    super(CITY_LIST, "BROOKS COUNTY", "GA", A83_TRAIL_CALL | A83_REQ_SENDER);
   }
 
   @Override

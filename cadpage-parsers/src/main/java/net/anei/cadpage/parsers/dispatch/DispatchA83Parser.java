@@ -13,18 +13,24 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class DispatchA83Parser extends SmartAddressParser {
 
-  private CodeSet placeSet;
-  private int version;
+  public static final int A83_REQ_SENDER = 1;
+  public static final int A83_TRAIL_GPS = 2;
+  public static final int A83_TRAIL_CALL = 4;
 
-  public DispatchA83Parser(String[] cityList, String defCity, String defState, int version) {
-    this(cityList, null, defCity, defState, version);
+  private CodeSet placeSet;
+  private boolean reqSender, trailGPS, trailCall;
+
+  public DispatchA83Parser(String[] cityList, String defCity, String defState, int flags) {
+    this(cityList, null, defCity, defState, flags);
+    removeWords("X");
   }
 
-  public DispatchA83Parser(String[] cityList, CodeSet placeSet, String defCity, String defState, int version) {
+  public DispatchA83Parser(String[] cityList, CodeSet placeSet, String defCity, String defState, int flags) {
     super(cityList, defCity, defState);
     this.placeSet = placeSet;
-    setFieldList("SRC ID CODE DATE TIME CALL ADDR APT CITY NAME GPS INFO");
-    this.version = version;
+    reqSender = (flags & A83_REQ_SENDER) != 0;
+    trailGPS = (flags & A83_TRAIL_GPS) != 0;
+    trailCall = (flags & A83_TRAIL_CALL) != 0;
   }
 
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*?) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (.*?) (Case # \\d+ */.*)");
@@ -46,7 +52,7 @@ public class DispatchA83Parser extends SmartAddressParser {
     data.strCallId = match.group(2);
 
     if ((match = RUN_REPORT_PTN.matcher(body)).matches()) {
-      setFieldList("SRC ID CALL DATE TIME PLACE ADDR APT CITY INFO");
+      setFieldList("SRC ID CALL DATE TIME PLACE ADDR X APT CITY INFO");
       data.msgType = MsgType.RUN_REPORT;
       data.strCall = match.group(1);
       data.strDate =  match.group(2);
@@ -77,7 +83,8 @@ public class DispatchA83Parser extends SmartAddressParser {
 
     match = ALERT_MASTER.matcher(body);
     if (match.matches()) {
-      setFieldList("SRC ID CALL DATE TIME PLACE APT ADDR CITY NAME INFO GPS");
+      setFieldList("SRC ID CALL DATE TIME PLACE APT ADDR X CITY NAME INFO GPS");
+
       String callPfx = getOptGroup(match.group(1));
       data.strDate = match.group(2);
       String time = match.group(3);
@@ -88,9 +95,12 @@ public class DispatchA83Parser extends SmartAddressParser {
       }
       body = match.group(4).trim();
 
-      StartType st;
-      String apt = "";
-      if (version == 1) {
+      if (reqSender) {
+        match = TRAIL_FROM_PTN.matcher(body);
+        if (match.matches()) body = match.group(1).trim();
+      }
+
+      if (trailGPS) {
         match = TRAIL_GPS_PTN.matcher(body);
         if (match.matches()) {
           body = match.group(1).trim();
@@ -98,34 +108,23 @@ public class DispatchA83Parser extends SmartAddressParser {
         } else {
           data.expectMore = true;
         }
-        st = StartType.START_CALL;
-
-      } else {
-        match = TRAIL_FROM_PTN.matcher(body);
-        if (match.matches()) {
-          body = match.group(1).trim();
-        } else {
-          return false;
-        }
-
-        match = LEAD_PLACE_PTN.matcher(body);
-        if (match.matches()) {
-          data.strPlace = match.group(1).trim();
-          apt = match.group(2).trim();
-          body = match.group(3).trim();
-        }
-        st = StartType.START_ADDR;
       }
 
-      parseAddress(st, body, data);
-      data.strCall = append(callPfx, " - ", data.strCall);
-      data.strApt = append(data.strApt, "-", apt);
+      String apt = "";
 
-      String left = stripFieldStart(getLeft(), data.strAddress);
-      left = stripFieldStart(left, data.strCity);
-      if (version == 1) {
-        data.strName = left;
-      } else {
+      match = LEAD_PLACE_PTN.matcher(body);
+      if (match.matches()) {
+        data.strPlace = match.group(1).trim();
+        apt = match.group(2).trim();
+        body = match.group(3).trim();
+      }
+
+      if (trailCall) {
+        parseAddress(StartType.START_ADDR, body, data);
+        String left = getLeft();
+        left = stripFieldStart(left, data.strAddress);
+        left = stripFieldStart(left, data.strCity);
+        data.strCall = callPfx;
         if (data.strCall.isEmpty()) {
           data.strCall = left;
         } else {
@@ -133,7 +132,12 @@ public class DispatchA83Parser extends SmartAddressParser {
         }
       }
 
-
+      else {
+        parseAddress(StartType.START_CALL, body, data);
+        data.strCall = append(callPfx, " - ", data.strCall);
+        data.strName = getLeft();
+      }
+      data.strApt = append(data.strApt, "-", apt);
       return true;
     }
 

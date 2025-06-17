@@ -452,6 +452,7 @@ public class ParserList {
               ,"GAMartinez"                     ,"Martinez, GA"
               ,"GAMcDuffieCounty"               ,"McDuffie County, GA"
               ,"GAMcIntoshCounty"               ,"McIntosh County, GA"
+              ,"GAMillerCounty"                 ,"Miller County, GA"
               ,"GAMitchellCounty"               ,"Mitchell County, GA"
               ,"GAMonroeCounty"                 ,"Monroe County, GA"
               ,"GAMurrayCounty"                 ,"Murray County, GA"
