@@ -10,7 +10,7 @@ public class TXDentonCountyCParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "ICS-CAD@highlandvillage.org";
+    return "ICS-CAD@highlandvillage.org,@athenaics.com";
   }
 
 }
