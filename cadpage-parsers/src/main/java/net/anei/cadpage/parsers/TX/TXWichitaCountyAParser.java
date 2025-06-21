@@ -10,6 +10,6 @@ public class TXWichitaCountyAParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "CADAlert@burkburnett.org";
+    return "CADAlert@burkburnett.org,notifications@athenaics.com";
   }
 }
