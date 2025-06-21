@@ -24,7 +24,7 @@ public class LAAscensionParishParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "dispatch@ascensionsheriff.com";
+    return "dispatch@ascensionsheriff.com,@hiplink.com";
   }
 
   @Override
