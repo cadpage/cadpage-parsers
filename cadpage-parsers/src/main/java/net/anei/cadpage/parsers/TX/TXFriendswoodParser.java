@@ -13,7 +13,7 @@ public class TXFriendswoodParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "cadpaging@friendswood.com";
+    return "cadpaging@friendswood.com,notifications@athenaics.com";
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
