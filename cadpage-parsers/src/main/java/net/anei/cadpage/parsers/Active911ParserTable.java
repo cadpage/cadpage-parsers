@@ -1040,6 +1040,7 @@ public class Active911ParserTable {
       "US/KY/MartinCounty",               "KYMartinCounty",
       "US/KY/MasonCounty",                "KYMasonCounty",
       "US/KY/McCrackenCounty",            "KYMcCrackenCounty",
+      "US/KY/McCrearyCounty",             "KYMcCrearyCounty",
       "US/KY/McLeanCounty",               "KYMcLeanCounty",
       "US/KY/MeadeCounty",                "KYMeadeCounty",
       "US/KY/MercerCounty",               "KYMercerCounty",
