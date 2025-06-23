@@ -268,6 +268,9 @@ public class PABeaverCountyParser extends FieldProgramParser {
       // Butler County
       "CRANBERRY TWP",
 
+      // Fayette County
+      "FAYETTE COUNTY",
+
       // Lawrence County
       "ELLWOOD CITY",
       "ELLWOOD",
@@ -455,6 +458,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
       "CRANBRERRY TWP",     "CRANBERRY TWP",
       "ELLWOOD",            "ELLWOOD CITY",
       "HANO",               "HANOVER TWP",
+      "MONONGAHELATAF",     "MONONGAHELA",
       "W BROWNSVILLE",      "WEST BROWNSVILLE"
   });
 }
