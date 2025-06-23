@@ -1097,10 +1097,19 @@ public class FieldProgramParser extends SmartAddressParser {
     // Clear the checked flags for all steps
     initStepScan();
 
+    // Strip off version header
+    if (body.startsWith("<?xml ")) {
+      int pt = body.indexOf("?>");
+      if (pt < 0) return false;
+      body = body.substring(pt+2).trim();
+    }
+
     // Some XML alert messages are not wrapped in a root element, which
     // is a requirement for well formed XML.  We fix that by wrapping
     // everything in our own root element
-    body = "<CadpageAlert911>" + body + "</CadpageAlert911>";
+    else {
+      body = "<CadpageAlert911>" + body + "</CadpageAlert911>";
+    }
 
     // Start the XML parser and feed it the  message body
     Reader reader = new StringReader(body);
@@ -1109,7 +1118,8 @@ public class FieldProgramParser extends SmartAddressParser {
     XMLHandler handler = new XMLHandler(data);
     try {
       xmlParser.parse(src, handler);
-    } catch (SAXException | IOException ignore) {
+    } catch (SAXException | IOException ex) {
+      System.out.println(ex);
       // Sloppy, but truncated messsages throw this exception and we
       // want to process as much as we can
       // ignore.printStackTrace();
