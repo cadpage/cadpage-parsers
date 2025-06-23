@@ -941,7 +941,7 @@ public class Active911ParserTable {
       "US/KY/CincinnatiNorthernAirport",  "KYBooneCountyC",
       "US/KY/CityofBowlingGreen",         "KYBowlingGreen",
       "US/KY/CityofCarlisle",             "KYNicholasCounty",
-      "US/KY/CityofEdmonton",             "KYMetcalfeCounty",
+      "US/KY/CityofEdmonton",             "KYMetcalfeCountyA",
       "US/KY/CityofMorehead",             "KYRowenCounty",
       "US/KY/CityofOwensboro",            "KYDaviessCounty",
       "US/KY/CityofPaintsville",          "KYJohnsonCounty",
@@ -1044,6 +1044,7 @@ public class Active911ParserTable {
       "US/KY/McLeanCounty",               "KYMcLeanCounty",
       "US/KY/MeadeCounty",                "KYMeadeCounty",
       "US/KY/MercerCounty",               "KYMercerCounty",
+      "US/KY/MetcalfeCounty",             "KYMetcalfeCountyB",
       "US/KY/MingoCounty",                "WVMingoCounty",    // Wrong state
       "US/KY/MonacoEnterprises",          "KYFortKnox",
       "US/KY/MonroeCounty",               "KYMonroeCounty",
