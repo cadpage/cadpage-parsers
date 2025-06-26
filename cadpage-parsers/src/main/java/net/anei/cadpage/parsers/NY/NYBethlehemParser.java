@@ -16,7 +16,7 @@ public class NYBethlehemParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "@TOWNOFBETHLEHEM.ORG";
+    return "@TOWNOFBETHLEHEM.ORG,@bethlehemny.gov";
   }
 
   @Override
