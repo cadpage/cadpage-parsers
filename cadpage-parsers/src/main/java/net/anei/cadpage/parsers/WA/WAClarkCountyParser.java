@@ -11,24 +11,30 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 
 public class WAClarkCountyParser extends FieldProgramParser {
-  
+
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("([^ ]*) *\\bMPU: *(.*)");
-  
+
   private String select;
-  
+
   public WAClarkCountyParser() {
     super(CITY_CODES, "CLARK COUNTY", "WA",
            "SRC LOC:ADDR/S! ( MAP:MAP! OPS:CALL! | ) SUB_TYPE:CODE! PRI:PRI! TIME:TIME! EV#:ID! ALARM:SKIP! Disp:UNIT!");
   }
-  
+
   @Override
   public String getFilter() {
-    return "777,888,CRESA CAD";
+    return "777,888,CRESA CAD,ipagecresa@cresa.wa.gov";
   }
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
+    if (body.startsWith("MIME-Version:")) {
+      int pt = body.indexOf("\nLOC:");
+      if (pt < 0) return false;
+      body = body.substring(pt+1).replace("=\n", "");
+    }
+
     Matcher match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
       setFieldList("SRC INFO");
@@ -37,36 +43,36 @@ public class WAClarkCountyParser extends FieldProgramParser {
       data.strSupp = match.group(2);
       return true;
     }
-    
+
     body = body.replace(" UNITS:", " Disp:");
-    
+
     if (!super.parseMsg(body, data)) return false;
-    
+
     if (data.strCity.length() == 0 && data.strMap.length() > 0) {
       String city = MAP_CITY_TABLE.getProperty(data.strMap);
       if (city != null) data.strCity = city;
     }
     return true;
   }
-  
+
   @Override
   public String getSelectValue() {
     return select;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      
+
       // Next field will generally be a MAP: field.  If it is not, then this
-      // is an OOC mutual aid call.  THere is not MAP or OPS: field, the 
+      // is an OOC mutual aid call.  THere is not MAP or OPS: field, the
       // call description is concatenated with the address, hopefully with a
       // double blank separator, and there is no city
       if (!getRelativeField(+1).startsWith("MAP:")) {
@@ -80,7 +86,7 @@ public class WAClarkCountyParser extends FieldProgramParser {
           data.strCall = getLeft();
           if (data.strCall.length() == 0) abort();
         }
-        
+
       } else {
         Parser p = new Parser(field);
         data.strPlace = p.getLastOptional(": @");
@@ -88,14 +94,14 @@ public class WAClarkCountyParser extends FieldProgramParser {
         super.parse(p.get(), data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE CALL";
     }
   }
-  
-  private static final Pattern OPS_CALL_PTN = Pattern.compile("(OPS\\d+) +(.*)"); 
+
+  private static final Pattern OPS_CALL_PTN = Pattern.compile("(OPS\\d+) +(.*)");
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -106,13 +112,13 @@ public class WAClarkCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CH CALL";
     }
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "1301", "Camas",
       "1302", "Camas",
@@ -191,7 +197,7 @@ public class WAClarkCountyParser extends FieldProgramParser {
       "2435", "Washougal",
       "2436", "Washougal"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "BG",   "Battleground",
       "CAM",  "Camas",
@@ -203,6 +209,6 @@ public class WAClarkCountyParser extends FieldProgramParser {
       "VPD",  "Vancouver",
       "WAS",  "Washougal",
       "WPD",  "Washougal"
-      
+
   });
 }
