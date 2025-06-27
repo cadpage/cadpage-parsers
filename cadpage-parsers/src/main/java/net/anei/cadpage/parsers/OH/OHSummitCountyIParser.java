@@ -16,7 +16,7 @@ public class OHSummitCountyIParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@sccad.summitoh.net";
+    return "noreply@sccad.summitoh.net,@akronohio.gov";
   }
 
   @Override

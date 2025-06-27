@@ -9,7 +9,7 @@ public class VACampbellCountyCParser extends FieldProgramParser {
 
   public VACampbellCountyCParser() {
     super("CAMPBELL COUNTY", "VA",
-          "CALL DATETIME ID UNIT SKIP EMPTY PLACE ADDRCITYST X GPS NAME PHONE EMPTY INFO EMPTY! END");
+          "CALL DATETIME ID UNIT SKIP EMPTY PLACE ADDRCITYST X GPS NAME PHONE EMPTY INFO EMPTY! EMPTY+? END");
   }
 
   @Override
