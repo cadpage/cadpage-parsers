@@ -1223,6 +1223,7 @@ public class Active911ParserTable {
       "US/MI/GrandTraverse",              "General",
       "US/MI/GrandTraverseAttachment",    "General",
       "US/MI/GratiotCounty",              "MIGratiotCounty",
+      "US/MI/GreatLakesRescueBerrien",    "MIBerrienCounty",
       "US/MI/HighlandTwp",                "MIOaklandCountyC",
       "US/MI/HillsdaleCounty",            "MIHillsdaleCounty",
       "US/MI/InghamCounty",               "MIInghamCounty",
