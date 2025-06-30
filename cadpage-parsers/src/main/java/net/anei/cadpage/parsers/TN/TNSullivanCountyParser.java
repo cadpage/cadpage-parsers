@@ -24,7 +24,7 @@ public class TNSullivanCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("([ A-Z]+) - +(.*)");
-  private static final Pattern DELIM = Pattern.compile(" \\|(?= |$)");
+  private static final Pattern DELIM = Pattern.compile(" \\|");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
