@@ -18,7 +18,7 @@ public class WAClarkCountyParser extends FieldProgramParser {
 
   public WAClarkCountyParser() {
     super(CITY_CODES, "CLARK COUNTY", "WA",
-           "SRC LOC:ADDR/S! ( MAP:MAP! OPS:CALL! | ) SUB_TYPE:CODE! PRI:PRI! TIME:TIME! EV#:ID! ALARM:SKIP! Disp:UNIT!");
+           "SRC LOC:ADDR/S? ( MAP:MAP! OPS:CALL! | ) SUB_TYPE:CODE! PRI:PRI! TIME:TIME! EV#:ID! ALARM:SKIP! Disp:UNIT!");
   }
 
   @Override
@@ -31,8 +31,20 @@ public class WAClarkCountyParser extends FieldProgramParser {
 
     if (body.startsWith("MIME-Version:")) {
       int pt = body.indexOf("\nLOC:");
-      if (pt < 0) return false;
-      body = body.substring(pt+1).replace("=\n", "");
+      if (pt < 0) pt = body.indexOf("\nMAP:");
+      if (pt >= 0) {
+        body = cleanBody(body.substring(pt+1));
+      } else {
+        pt = body.indexOf("\n\n");
+        if (pt > 0) {
+          setFieldList("INFO");
+          data.msgType = MsgType.GEN_ALERT;
+          data.strSupp = cleanBody(body.substring(pt+2).trim());
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
 
     Matcher match = GEN_ALERT_PTN.matcher(body);
@@ -53,6 +65,16 @@ public class WAClarkCountyParser extends FieldProgramParser {
       if (city != null) data.strCity = city;
     }
     return true;
+  }
+
+  private static final Pattern JUNK_PTN = Pattern.compile("=(?:20)?(?:\n|$)");
+  private String cleanBody(String body) {
+    return JUNK_PTN.matcher(body).replaceAll("");
+  }
+
+  @Override
+  public String getProgram() {
+    return "CITY? " + super.getProgram();
   }
 
   @Override
