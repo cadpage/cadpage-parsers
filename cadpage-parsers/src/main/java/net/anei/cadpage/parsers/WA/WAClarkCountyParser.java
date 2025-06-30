@@ -14,8 +14,6 @@ public class WAClarkCountyParser extends FieldProgramParser {
 
   private static final Pattern GEN_ALERT_PTN = Pattern.compile("([^ ]*) *\\bMPU: *(.*)");
 
-  private String select;
-
   public WAClarkCountyParser() {
     super(CITY_CODES, "CLARK COUNTY", "WA",
            "SRC LOC:ADDR/S? ( MAP:MAP! OPS:CALL! | ) SUB_TYPE:CODE! PRI:PRI! TIME:TIME! EV#:ID! ALARM:SKIP! Disp:UNIT!");
@@ -75,11 +73,6 @@ public class WAClarkCountyParser extends FieldProgramParser {
   @Override
   public String getProgram() {
     return "CITY? " + super.getProgram();
-  }
-
-  @Override
-  public String getSelectValue() {
-    return select;
   }
 
   @Override
