@@ -10,24 +10,26 @@ public class PALackawannaCountyDParser extends FieldProgramParser {
 
   public PALackawannaCountyDParser() {
     super(CITY_CODES, "LACKAWANNA COUNTY", "PA",
-          "Call_Type:CALL! Location:ADDRCITY! Units:UNIT! Priority:PRI! CAD:ID!  Radio_Channel:CH! Area:MAP! Time:TIME! END");
+          "Call_Type:CALL! Location:ADDRCITY! Units:UNIT! Priority:PRI! ( Incident_Number:ID! | CAD:ID! ) Radio_Channel:CH! Area:MAP! Time:TIME! " +
+              "Coordinates:GPS COMMENT:INFO_HDR INFO/N+ END");
   }
 
   @Override
   public String getFilter() {
-    return "lackawannafirepager@gmail.com";
+    return "lackawannafirepager@gmail.com,alerts@cad.nepafirephotos.com";
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Luzerne Fire Automated Alert")) return false;
+  protected boolean parseMsg(String body, Data data) {
     return super.parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("ID")) return new IdField("#(F\\d+)", true);
+    if (name.equals("ID")) return new IdField("#?(F\\d+)", true);
+    if (name.equals("TIME")) return new TimeField("(?:Dispatch Time )?(\\d\\d:\\d\\d)", true);
+    if (name.equals("INFO_HDR")) return new SkipField("Comment:|", true);
     return super.getField(name);
   }
 
@@ -44,6 +46,7 @@ public class PALackawannaCountyDParser extends FieldProgramParser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "12", "AVOCA",
       "24", "MOUNTAIN TOP",
       "31", "FAIRMOUNT TWP",
       "33", "SCRANTON",
