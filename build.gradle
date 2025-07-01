@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.7.3'
-        classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'com.google.gms:google-services:4.4.3'
     }
 }
 
@@ -21,8 +21,8 @@ allprojects {
 }
 
 ext {
-    versionName = "2.2.11-52"
-    versionCode = 2020211520
+    versionName = "2.2.11-53"
+    versionCode = 2020211530
 }
 
 tasks.register('gstatus', Exec) {
