@@ -951,6 +951,7 @@ public class ParserList {
               ,"MIWayneCounty"                  ,"Wayne County, MI"
           ),
           new ParserCategory("Minnesota"
+              ,"MNAitkinCounty"                 ,"Aitkin County, MN"
               ,"MNAnokaCounty"                  ,"Anoka County, MN"
               ,"MNBeckerCounty"                 ,"Becker County, MN"
               ,"MNBeltramiCounty"               ,"Beltrami County, MN"

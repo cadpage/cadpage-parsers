@@ -1292,6 +1292,7 @@ public class Active911ParserTable {
       "US/MI/WMTOC",                      "MIOttawaCounty,MIAlleganCounty",
       "US/MI/Yates",                      "MILakeCounty",
       "US/MN/AnokaCounty",                "MNAnokaCounty",
+      "US/MN/AitkinCounty",               "MNAitkinCounty",
       "US/MN/BeckerCounty",               "MNBeckerCounty",
       "US/MN/BeltramiCounty",             "MNBeltramiCounty",
       "US/MN/BloomingtonFD",              "MNMinneapolisStPaulA",
