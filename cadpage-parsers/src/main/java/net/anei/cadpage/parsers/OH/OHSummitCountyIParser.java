@@ -9,8 +9,12 @@ public class OHSummitCountyIParser extends DispatchH05Parser {
 
   public OHSummitCountyIParser() {
     super("SUMMIT COUNTY", "OH",
-          "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Additional_Location_Info:INFO! Nature_of_Call:CALL! Assigned_Units:UNIT! Priority:PRI Quadrant:MAP! Incident_Number:ID! CFS_Number:SKIP Radio_Channel:CH! Narrative:EMPTY! INFO_BLK/N+ Times:EMPTY! TIMES+ " +
-          "| Incident_Type:CALL! Incident_Number:ID! ( Call_Number:SKIP! | CFS_Number:SKIP! ) Incident_Location:ADDRCITY! Common_Name:PLACE! ( Located_between:X! | Cross_Streets:X! ) Fire_Quadrant:MAP! Call_Date_/_Time:SKIP! Dispatch:DATETIME! Caller:NAME! Nature_of_call:CALL/SDS! Narrative:INFO_BLK! INFO_BLK+ Hazards:ALERT! ( Lat/Lon:GPS! | GPS:GPS! ) Times:TIMES! TIMES+ Units_Assigned:UNIT! Radio_Channel:CH! END " +
+          "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! Additional_Location_Info:INFO! " +
+                "( Latitude:GPS1! Longitude:GPS2 | ) Nature_of_Call:CALL! Assigned_Units:UNIT! Priority:PRI Quadrant:MAP! Incident_Number:ID! " +
+                "( CFS_Number:SKIP! Radio_Channel:CH! | Radio_Channel:CH! CFS_Number:SKIP? ) Narrative:EMPTY! INFO_BLK/N+ Times:EMPTY! TIMES+ " +
+          "| Incident_Type:CALL! Incident_Number:ID! ( Call_Number:SKIP! | CFS_Number:SKIP! ) Incident_Location:ADDRCITY! Common_Name:PLACE! " +
+                "( Located_between:X! | Cross_Streets:X! ) Fire_Quadrant:MAP! Call_Date_/_Time:SKIP! Dispatch:DATETIME! Caller:NAME! " +
+                "Nature_of_call:CALL/SDS! Narrative:INFO_BLK! INFO_BLK+ Hazards:ALERT! ( Lat/Lon:GPS! | GPS:GPS! ) Times:TIMES! TIMES+ Units_Assigned:UNIT! Radio_Channel:CH! END " +
           "| ID? ADDRCITY X/Z? GPS1 GPS2 DATETIME CALL INFO_BLK+? TIMES+? UNIT END )");
   }
 
@@ -24,7 +28,7 @@ public class OHSummitCountyIParser extends DispatchH05Parser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?=Call Type:|Common Name:|Additional Location Info:)");
+  private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?=Call Type:|Common Name:|Additional Location Info:|Longitude:)");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
