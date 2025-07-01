@@ -10,8 +10,9 @@ public class DispatchA93Parser extends FieldProgramParser {
 
   public DispatchA93Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Agency:SRC! Nature:CALL! Location:ADDRCITYST! CommonName:PLACE! CrossStreet1:X! CrossStreet2:X!  Latitude:GPS1! Longitude:GPS2! " +
-              "DateTime:DATETIME! ( Event:ID! | Report:ID! ) Name:NAME? Phone:PHONE? Narrative:INFO! EMPTY! END");
+          "Agency:SRC! ( Nature:CALL! Location:ADDRCITYST! CommonName:PLACE! CrossStreet1:X! CrossStreet2:X!  Latitude:GPS1! Longitude:GPS2! DateTime:DATETIME! " +
+                      "| DateTime:DATETIME! Nature:CALL! CommonName:PLACE! Location:ADDRCITYST! ( LocationNote:PLACE! | Location_note:PLACE! | ) CrossStreet1:X! CrossStreet2:X! Latitude:GPS1! Longitude:GPS2! " +
+                      ") ( Event:ID! | Report:ID! ) Name:NAME? Phone:PHONE? Narrative:INFO! EMPTY! END");
   }
 
   private static final Pattern DELIM = Pattern.compile(" +\\| *\n");
