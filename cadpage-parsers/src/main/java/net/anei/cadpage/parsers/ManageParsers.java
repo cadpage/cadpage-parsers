@@ -263,7 +263,8 @@ public class ManageParsers {
         "NCCumberlandCountyA","General",                 // 05/27/2025
         "PAChesterCountyD1",  "PAChesterCountyO",        // 06/02/2025
         "PAAlleghenyCountyD", "General",                 //06/09/2025
-        "VACampbellCountyA",  "General"                 // 06/30/2025
+        "VACampbellCountyA",  "General",                 // 06/30/2025
+        "MDAnneArundelCountyAnnapolis", "General"       // 06/30/2025
   });
 
 }
