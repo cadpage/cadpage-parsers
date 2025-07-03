@@ -11,6 +11,6 @@ public class TXRoanokeParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "ICS_Messaging@roanokepolice.com";
+    return "ICS_Messaging@roanokepolice.com,notifications@athenaics.com";
   }
 }
