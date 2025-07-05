@@ -33,7 +33,7 @@ public class ALHaynesAmbulanceParser extends DispatchProQAParser {
 
   @Override
   public String getFilter() {
-    return "copier2@haynes-ambulance.com";
+    return "copier2@haynes-ambulance.com,6245";
   }
 
   @Override
