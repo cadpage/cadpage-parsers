@@ -13,7 +13,8 @@ public class ALHaynesAmbulanceParser extends DispatchProQAParser {
 
   ALHaynesAmbulanceParser(String defCounty) {
     super(defCounty, "AL",
-          "ID! ADDR GPS1 GPS2 CITY APT PLACE DEST! INFO/N+", true);
+          "( ID! ADDR GPS1 GPS2 CITY APT PLACE DEST! INFO/N+? CALL " +
+          "| ADDR GPS1 GPS2 CITY APT PLACE  DEST! INFO/N+? CALL ID ) END", true);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class ALHaynesAmbulanceParser extends DispatchProQAParser {
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("DEST")) return new MyDestinationField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("CALL")) return new CallField("[AB]LS", true);
     return super.getField(name);
   }
 
@@ -58,23 +59,6 @@ public class ALHaynesAmbulanceParser extends DispatchProQAParser {
     public void parse(String field, Data data) {
       if (field.isEmpty()) return;
       data.strSupp = "Dest: " + field;
-    }
-  }
-
-  private static final Pattern CALL_PTN = Pattern.compile("[AB]LS");
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      if (isLastField() && CALL_PTN.matcher(field).matches()) {
-        data.strCall = field;
-      } else {
-        super.parse(field, data);
-      }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " CALL";
     }
   }
 }
