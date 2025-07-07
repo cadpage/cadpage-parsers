@@ -1064,7 +1064,7 @@ public class Active911ParserTable {
       "US/KY/PointPleasantFire",          "KYKentonCountyC",
       "US/KY/PowellCounty",               "KYPowellCounty",
       "US/KY/PulaskiCounty",              "KYPulaskiCounty",
-      "US/KY/ReidlandFarley",             "KYMcCrackenCounty",
+      "US/KY/ReidlandFarley",             "KYMcCrackenCountyA",
       "US/KY/RockCastleCounty",           "KYRockCastleCounty",
       "US/KY/RussellCounty",              "KYRussellCounty",
       "US/KY/ScottCounty",                "KYScottCountyB",
