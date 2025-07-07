@@ -27,7 +27,7 @@ public class GAPierceCountyAParser extends SmartAddressParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("SOP \\d+ \\d{4}-\\d-\\d+");
-  private static final Pattern MASTER = Pattern.compile("(\\d{2}-\\d{2}[A-Z]?|S\\d+) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) +");
+  private static final Pattern MASTER = Pattern.compile("(\\d{2}-\\d{2}[A-Z]*|S\\d+) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) +");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern GPS_PTN = Pattern.compile("(.*?) {2,}http://.*\\?q=(.*)");
   private static final Pattern PHONE_PTN = Pattern.compile(" +(\\d{3} \\d{3}-?\\d{4}) +");
