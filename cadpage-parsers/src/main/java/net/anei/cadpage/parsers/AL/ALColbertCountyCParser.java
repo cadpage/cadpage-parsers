@@ -1,61 +1,41 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA77Parser;
 
-public class ALColbertCountyCParser extends FieldProgramParser {
+public class ALColbertCountyCParser extends DispatchA77Parser {
 
   public ALColbertCountyCParser() {
-    super("COLBERT COUNTY", "AL",
-          "ID CALL ADDR UNIT! INFO/N+");
+    super("CAD Alert", "COLBERT COUNTY", "AL");
   }
+
+  @Override
+  public String getFilter() {
+    return "FlexRapidNotification@dccnotify.com";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(\\S+) Station Alerting");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.length() > 0 && body.startsWith("//")) {
-      body = "From CAD(" + subject + ") " + body;
+    Matcher match = SUBJECT_PTN.matcher(subject);
+    if (match.matches()) {
+      data.strSource = match.group(1);
+      subject = "CAD Alert";
     }
-    return parseFields(body.split(" // "), data);
+    return super.parseMsg(subject, body, data);
   }
 
   @Override
-  public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("From CAD\\((\\d+)\\)", true);
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("INFO")) return new MyInfoField();
-    return super.getField(name);
-  }
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      parseAddress(p.get(';'), data);
-      data.strApt = stripFieldStart(data.strApt, "APT");
-
-      String place = p.get(';');
-      if (place.startsWith("APT")) {
-        data.strApt = append(data.strApt, "-", place.substring(3).trim());
-      } else {
-        data.strPlace = place;
-      }
-      data.strSupp = p.get();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " PLACE INFO?";
-    }
-  }
-
-  private static final Pattern INFO_HDR_PTN = Pattern.compile("^\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4} - [A-Z]+ [A-Z] +");
-  private class MyInfoField extends InfoField {
-    @Override
-    public void parse(String field, Data data) {
-      field = INFO_HDR_PTN.matcher(field).replaceFirst("");
-      super.parse(field, data);
-    }
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 }
