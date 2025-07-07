@@ -6,6 +6,7 @@ public class ILLakeCountyParser extends GroupBestParser {
 
   public ILLakeCountyParser() {
     super(new ILLakeCountyAParser(),
+          new ILLakeCountyCParser(),
           new ILLakeCountyDParser(),
           new ILLakeCountyEParser(),
           new ILLakeCountyFParser(),

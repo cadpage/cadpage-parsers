@@ -678,6 +678,7 @@ public class Active911ParserTable {
       "US/IL/FairviewHeights",            "ILStClairCountyB",
       "US/IL/FreeburgFD",                 "ILStClairCountyC",
       "US/IL/GlenCarbon",                 "ILMadisonCounty",
+      "US/IL/Glenview",                   "ILLakeCountyC,ILLakeCountyF",
       "US/IL/GraniteCity",                "ILMadisonCountyA",
       "US/IL/GreaterRoundLakeFireProtectionDistrict", "ILLakeCountyF",
       "US/IL/GreeneCounty",               "ILGreeneCounty",

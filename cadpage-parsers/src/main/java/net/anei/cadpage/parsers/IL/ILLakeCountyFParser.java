@@ -10,6 +10,6 @@ public class ILLakeCountyFParser extends DispatchH06Parser {
 
   @Override
   public String getFilter() {
-    return "administrator@lakecounty911.org";
+    return "administrator@lakecounty911.org,nw_dispatch_noreply@glenview.il.us";
   }
 }
