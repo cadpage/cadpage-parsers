@@ -1877,6 +1877,7 @@ public class ParserList {
               ,"VTLamoilleCounty"               ,"Lamoille County, VT"
               ,"VTOrangeCounty"                 ,"Orange County, VT"
               ,"VTOrleansCounty"                ,"Orleans County, VT"
+              ,"VTWashingtonCounty"             ,"Washington County, VT"
               ,"VTWindhamCounty"                ,"Windham County, VT"
               ,"VTWindsorCounty"                ,"Windsor County, VT"
           ),
