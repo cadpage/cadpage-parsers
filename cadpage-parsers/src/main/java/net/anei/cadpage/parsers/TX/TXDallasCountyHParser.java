@@ -10,7 +10,7 @@ public class TXDallasCountyHParser extends DispatchA82Parser {
 
   @Override
   public String getFilter() {
-    return "rowlettgateway@rowlett.com";
+    return "rowlettgateway@rowlett.com,notifications@athenaics.com";
   }
 
 }
