@@ -11,7 +11,7 @@ public class MODekalbCountyParser extends DispatchBCParser {
 
   @Override
   public String getFilter() {
-    return "DEKALBCODISPATCH@OMNIGO.COM,LACLEDECOES@OMNIGO.COM";
+    return "@omnigo.com";
   }
 
   private static final String[] CITY_LIST = new String[] {
