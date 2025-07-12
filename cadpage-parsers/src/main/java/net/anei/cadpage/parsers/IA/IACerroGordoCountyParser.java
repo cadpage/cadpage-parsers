@@ -17,7 +17,7 @@ public class IACerroGordoCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com,zuercher@cgcounty.org";
+    return "no-reply@zuercherportal.com,zuercher@cgcounty.org,@cerrogordo.gov";
   }
 
   @Override
