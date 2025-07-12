@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.OR;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +13,7 @@ public class ORKlamathCountyBParser extends FieldProgramParser {
 
   public ORKlamathCountyBParser() {
     super("KLAMATH COUNTY", "OR",
-          "DATETIME CODE_CALL ADDRCITY PLACE X! X Priority:PRI! CFS_Number:SKIP! Units:UNIT? Primary_Incident:ID! INFO/N+");
+          "DATETIME CODE_CALL ADDRCITY PLACE X! X+ Priority:PRI! CFS_Number:SKIP! Units:UNIT? Primary_Incident:ID! INFO/N+");
     setupGpsLookupTable(ORKlamathCountyParser.GPS_LOOKUP_TABLE);
   }
 
@@ -19,11 +22,14 @@ public class ORKlamathCountyBParser extends FieldProgramParser {
     return "paging@klamath911.gov";
   }
 
-  private static final Pattern DELIM = Pattern.compile(" / |\n");
+  private static final Pattern DELIM = Pattern.compile("(?<=\\D)/|/(?=//D)");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
-    return parseFields(DELIM.split(body), data);
+    int pt = body.indexOf('\n');
+    List<String> flds = new ArrayList<>(Arrays.asList(DELIM.split(body.substring(0,pt)+' ', -1)));
+    flds.addAll(Arrays.asList(body.substring(pt+1).split("\n")));
+    return parseFields(flds.toArray(new String[0]), data);
   }
 
   @Override
