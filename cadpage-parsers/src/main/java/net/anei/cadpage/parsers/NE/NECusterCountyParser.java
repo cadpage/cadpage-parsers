@@ -7,7 +7,8 @@ public class NECusterCountyParser extends FieldProgramParser {
 
   public NECusterCountyParser() {
     super("CUSTER COUNTY", "NE",
-          "Date:DATETIME! Caller_Name:NAME! Phone:PHONE! CALL:CALL! INFO/N+");
+          "( Call_Type:CALL! Remarks:INFO! INFO/N+ Date:DATETIME! Agency:SRC! Caller_Name:NAME! Phone:PHONE! END " +
+          "| Date:DATETIME! Caller_Name:NAME! Phone:PHONE! CALL:CALL! INFO/N+ )");
   }
 
   @Override
