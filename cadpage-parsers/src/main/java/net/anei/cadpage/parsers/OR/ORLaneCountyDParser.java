@@ -12,7 +12,7 @@ public class ORLaneCountyDParser extends DispatchA85Parser {
 
   @Override
   public String getFilter() {
-    return "do.not.reply@ci.florence.or.us";
+    return "do.not.reply@ci.florence.or.us,fpd911@jcxs.us";
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
