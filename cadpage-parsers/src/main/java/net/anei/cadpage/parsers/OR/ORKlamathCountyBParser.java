@@ -26,10 +26,16 @@ public class ORKlamathCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
+    String[] flds;
     int pt = body.indexOf('\n');
-    List<String> flds = new ArrayList<>(Arrays.asList(DELIM.split(body.substring(0,pt)+' ', -1)));
-    flds.addAll(Arrays.asList(body.substring(pt+1).split("\n")));
-    return parseFields(flds.toArray(new String[0]), data);
+    if (pt >= 0) {
+      List<String> fldLst = new ArrayList<>(Arrays.asList(DELIM.split(body.substring(0,pt)+' ', -1)));
+      fldLst.addAll(Arrays.asList(body.substring(pt+1).split("\n")));
+      flds = fldLst.toArray(new String[0]);
+    } else {
+      flds = DELIM.split(body);
+    }
+    return parseFields(flds, data);
   }
 
   @Override
