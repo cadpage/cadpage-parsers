@@ -12,7 +12,7 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class NJMorrisCountyAParser extends SmartAddressParser {
 
   private static final Pattern MASTER_PTN =
-    Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\.\\[\\] ]+)\\) - (.*)", Pattern.DOTALL);
+    Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\.\\[\\] ]+)\\) -(.*)", Pattern.DOTALL);
 
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*), *\\d{5}");
   private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)(?![A-Z'])[- ]*((?:ABOVE +)?[^ ]+(?: [A-Z]\\b)?) *(.*)", Pattern.CASE_INSENSITIVE);
@@ -157,15 +157,19 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     // Strip ID and time from end extra data
     match = ID_TIME_PTN.matcher(sExtra);
     if (match.find()) {
-      sExtra = sExtra.substring(0,match.start()).trim();
+      sExtra = sExtra.substring(0,match.start());
       data.strCallId = getOptGroup(match.group(1));
       data.strTime = match.group(2);
     }
 
     String[] flds = sExtra.split("\n");
     if (flds.length > 1) {
-      data.strUnit = flds[0].trim();
-      for (int ndx = 1; ndx < flds.length; ndx++) {
+      int ndx = 0;
+      if (flds[0].startsWith(" ")) {
+        data.strUnit = flds[0].trim();
+        ndx = 1;
+      }
+      for (; ndx < flds.length; ndx++) {
         String fld = flds[ndx].trim();
         if (data.strCallId.isEmpty() && ID_PTN.matcher(fld).matches()) {
           data.strCallId = fld;
