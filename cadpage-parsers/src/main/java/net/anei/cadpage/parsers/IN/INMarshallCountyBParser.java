@@ -15,15 +15,17 @@ public class INMarshallCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "noreply@co.marshall.in.us";
+    return "noreply@co.marshall.in.us,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
+  private static final Pattern MASTER = Pattern.compile("(.*?) +(?:Please respond immediately\\.|Please cancel immediately.)");
+
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!body.endsWith(" Please respond immediately.")) return false;
-    body = body.substring(0,body.length()-28).trim();
-    if (!parseFields(body.split(";"), data)) return false;
-    return subject.equals(data.strCall);
+  protected boolean parseMsg(String body, Data data) {
+    Matcher match = MASTER.matcher(body);
+    if (!match.matches()) return false;
+    body = match.group(1);
+    return parseFields(body.split(";"), data);
   }
 
   @Override
