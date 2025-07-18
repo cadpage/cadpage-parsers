@@ -126,6 +126,7 @@ public class ParserList {
               ,"ALCleburneCounty"               ,"Cleburne County, AL"
               ,"ALCoffeeCounty"                 ,"Coffee County, AL"
               ,"ALColbertCounty"                ,"Colbert County, AL"
+              ,"ALConequhCounty"                ,"Conequh County, AL"
               ,"ALCoosaCounty"                  ,"Coosa County, AL"
               ,"ALCullmanCounty"                ,"Cullman County, AL"
               ,"ALDaleCounty"                   ,"Dale County, AL"
