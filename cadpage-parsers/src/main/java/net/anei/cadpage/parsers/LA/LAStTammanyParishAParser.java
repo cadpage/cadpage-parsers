@@ -38,8 +38,7 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.find()) return false;
-    data.strSource = match.group(1);
+    if (match.find()) data.strSource = match.group(1);
 
     return parseFields(body.split("\n+"), data);
   }
@@ -77,16 +76,17 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_X_CITY_PTN = Pattern.compile("(.*?) +(?:# *(.*?) +)?Intersection:(.*) +Jurisdiction: *(.*)");
+  private static final Pattern ADDR_X_CITY_PTN = Pattern.compile("(.*?) +(?:# *(.*?) +)?Intersection:(.*?)(?: +Jurisdiction: *(.*))?");
   private class MyAddressCrossCityField extends Field {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ".");
       Matcher match = ADDR_X_CITY_PTN.matcher(field);
       if (!match.matches()) abort();
       parseAddress(match.group(1).trim(), data);
       data.strApt = append(data.strApt, "-", getOptGroup(match.group(2)));
       data.strCross = stripFieldStart(match.group(3).trim(), "0 ");
-      data.strCity = match.group(4);
+      data.strCity = getOptGroup(match.group(4));
     }
 
     @Override
