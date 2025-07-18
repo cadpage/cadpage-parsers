@@ -19,7 +19,8 @@ public class NECusterCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strSource = subject;
-    body = body.replace(" Caller Name:", "\nCaller Name:");
+    body = body.replace(" Caller Name:", "\nCaller Name:")
+               .replace(" Remarks:", "\nRemarks:");
     return parseFields(body.split("\n"), data);
   }
 
