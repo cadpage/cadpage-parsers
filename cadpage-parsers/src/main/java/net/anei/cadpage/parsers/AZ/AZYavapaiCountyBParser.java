@@ -21,7 +21,7 @@ public class AZYavapaiCountyBParser extends MsgParser {
   }
 
   private static final Pattern MASTER =
-      Pattern.compile("(.*?) (?:Map|MAP:)(\\d+) +(?:(\\d\\d?/\\d\\d/\\d\\d) +)?(\\d\\d:\\d\\d:\\d\\d) *ADD:(.*?) *([A-Z]+) *XST:(.*)");
+      Pattern.compile("(.*?) (?:Map|MAP:)(?:(\\d+)|NOT FOUND) +(?:(\\d\\d?/\\d\\d/\\d\\d) +)?(\\d\\d:\\d\\d:\\d\\d) *ADD:(.*?) *([A-Z]+) *XST:(.*)");
   private static final Pattern GPS_PTN = Pattern.compile("(.*)\\bLAT: *(\\d+) +LON: *(\\d+)");
   private static final Pattern UNIT_PTN = Pattern.compile("(.*)\\bUNITS:(\\S*)\\b *(.*)");
 
@@ -31,7 +31,7 @@ public class AZYavapaiCountyBParser extends MsgParser {
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     data.strCall = match.group(1).trim();
-    data.strMap = match.group(2);
+    data.strMap = getOptGroup(match.group(2));
     data.strDate = getOptGroup(match.group(3));
     data.strTime = match.group(4);
     parseAddress(match.group(5).trim(), data);
