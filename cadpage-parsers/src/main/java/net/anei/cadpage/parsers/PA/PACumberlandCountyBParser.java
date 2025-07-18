@@ -20,7 +20,7 @@ public class PACumberlandCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ep911@ccpa.net,dispatch@cgfrems.org";
+    return "ep911@ccpa.net,dispatch@cgfrems.org,@fairviewems.org";
   }
 
   @Override
