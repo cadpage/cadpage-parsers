@@ -7,7 +7,7 @@ public class MDSaintMarysCountyBParser extends DispatchH05Parser {
 
   public MDSaintMarysCountyBParser() {
     super("SAINT MARYS COUNTY", "MD",
-          "Common_Name:PLACE! Address:ADDRCITY! Call_Type:CALL! Call_Date/Time:DATETIME! Units:UNIT! UNITS<+ Cross_Street:X? GPS:GPS! " +
+          "Common_Name:PLACE! Address:ADDRCITY/S6! Call_Type:CALL! Call_Date/Time:DATETIME! Units:UNIT! UNITS<+ Cross_Street:X? GPS:GPS! " +
                 "Box:BOX! Radio_Channel:CH! Dispatch_Update:INFO! CFS_Number:SKIP? Incident_#:ID? Narrative:INFO_BLK! INFO_BLK+",
                 "tr");
   }
@@ -20,9 +20,19 @@ public class MDSaintMarysCountyBParser extends DispatchH05Parser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("UNITS")) return new MyUnitField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field,  data);
+      data.strCity = stripFieldEnd(data.strCity, data.strApt);
+    }
   }
 
   private class MyUnitField extends UnitField {
