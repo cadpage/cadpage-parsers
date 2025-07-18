@@ -4,9 +4,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class LATangipahoaParishParser extends GroupBestParser {
-  
+
   public LATangipahoaParishParser() {
-    super(new LATangipahoaParishAParser(), new LATangipahoaParishBParser(),
+    super(new LATangipahoaParishBParser(),
           new LATangipahoaParishCParser());
   }
 }

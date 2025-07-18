@@ -10,13 +10,22 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class LAStTammanyParishAParser extends FieldProgramParser {
 
   public LAStTammanyParishAParser() {
-    super("ST TAMMANY PARISH", "LA",
+    this("ST TAMMANY PARISH", "LA");
+  }
+
+  LAStTammanyParishAParser(String defCity, String defState) {
+    super(defCity, defState,
           "Event_Date:DATETIME_UNIT_ID! Address:ADDR_X_CITY! GPS?  Event_Type:CODE_CALL! REPORT! Remarks:INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "stfpd1@stfpd1.dapage.net";
+    return "stfpd1@stfpd1.dapage.net,alerts@pssalerts.info";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "LAStTammanyParishA";
   }
 
   @Override
