@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA55Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA72Parser;
 
-public class TXCaldwellCountyBParser extends DispatchA55Parser {
+public class TXCaldwellCountyBParser extends DispatchA72Parser {
 
   public TXCaldwellCountyBParser() {
     super("CALDWELL COUNTY", "TX");
@@ -10,7 +10,7 @@ public class TXCaldwellCountyBParser extends DispatchA55Parser {
 
   @Override
   public String getFilter() {
-    return "ereports@eforcesoftware.com";
+    return "rms@cityofluling.net";
   }
 
 }
