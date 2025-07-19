@@ -101,7 +101,7 @@ public class Active911ParserTable {
       "US/AL/ChoctawCounty",              "ALChoctawCountyA,ALChoctawCountyB",
       "US/AL/CityofBessemer",             "ALJeffersonCountyG",
       "US/AL/CityofBirmingham",           "ALJeffersonCountyD",
-      "US/AL/CityofFlorence",             "ALLauderdaleCountyB",
+      "US/AL/CityofFlorence",             "ALLauderdaleCountyB,ALLauderdaleCountyC",
       "US/AL/CityofHomewood",             "ALJeffersonCountyL",
       "US/AL/CityofMountainBrook",        "ALJeffersonCountyB",
       "US/AL/CityofPelham",               "ALPelham",
