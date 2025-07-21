@@ -9,7 +9,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ILLakeCountyCParser extends FieldProgramParser {
 
   public ILLakeCountyCParser() {
-    super(CITY_LIST, "LAKE COUNTY", "IL",
+    super(ILLakeCountyParser.CITY_LIST, "LAKE COUNTY", "IL",
           "DATETIMECALL ADDRCITYPLACE X UNIT MAP! ID? INFO/N+");
   }
 
@@ -50,9 +50,13 @@ public class ILLakeCountyCParser extends FieldProgramParser {
     }
   }
 
+  // This class has been cloned in ILLakeCountyI
+
+  private static final Pattern APT_PTN = Pattern.compile("\\d+[A-Z]?|[A-Z]");
   private class MyAddressCityPlaceField extends Field {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace('@', '&').replace('=', ',');
       int pt = field.indexOf(',');
       if (pt >= 0) {
         parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, field.substring(0,pt).trim(), data);
@@ -66,6 +70,17 @@ public class ILLakeCountyCParser extends FieldProgramParser {
       else {
         parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT, field, data);
         data.strPlace = getLeft();
+      }
+      if (!data.strPlace.isEmpty()) {
+        if (data.strPlace.equals(data.strApt)) {
+          data.strPlace = "";
+        }
+        else if (APT_PTN.matcher(data.strPlace).matches()) {
+          if (!data.strPlace.equals(data.strApt)) {
+            data.strApt = append(data.strApt, "-", data.strPlace);
+          }
+          data.strPlace = "";
+        }
       }
     }
 
@@ -83,126 +98,4 @@ public class ILLakeCountyCParser extends FieldProgramParser {
       data.strMap = append(match.group(1).trim(), "/", match.group(2).trim());
     }
   }
-
-  private static final String[] CITY_LIST = new String[] {
-
-      // Cities
-      "HIGHLAND PARK",
-      "HIGHWOOD",
-      "LAKE FOREST",
-      "MCHENRY",
-      "NORTH CHICAGO",
-      "PARK CITY",
-      "WAUKEGAN",
-      "ZION",
-
-      // Villages
-      "ANTIOCH",
-      "BANNOCKBURN",
-      "BARRINGTON",
-      "BARRINGTON HILLS",
-      "BEACH PARK",
-      "BUFFALO GROVE",
-      "DEERFIELD",
-      "DEER PARK",
-      "FOX LAKE",
-      "FOX RIVER GROVE",
-      "GRAYSLAKE",
-      "GREEN OAKS",
-      "GURNEE",
-      "HAINESVILLE",
-      "HAWTHORN WOODS",
-      "INDIAN CREEK",
-      "ISLAND LAKE",
-      "KILDEER",
-      "LAKE BARRINGTON",
-      "LAKE BLUFF",
-      "LAKE VILLA",
-      "LAKE ZURICH",
-      "LAKEMOOR",
-      "LIBERTYVILLE",
-      "LINCOLNSHIRE",
-      "LINDENHURST",
-      "LONG GROVE",
-      "METTAWA",
-      "MUNDELEIN",
-      "NORTH BARRINGTON",
-      "OLD MILL CREEK",
-      "PORT BARRINGTON",
-      "RIVERWOODS",
-      "ROUND LAKE",
-      "ROUND LAKE BEACH",
-      "ROUND LAKE HEIGHTS",
-      "ROUND LAKE PARK",
-      "THIRD LAKE",
-      "TOWER LAKES",
-      "VERNON HILLS",
-      "VOLO",
-      "WADSWORTH",
-      "WAUCONDA",
-      "WHEELING",
-      "WINTHROP HARBOR",
-
-      // Census-designated places
-      "CHANNEL LAKE",
-      "FOREST LAKE",
-      "FOX LAKE HILLS",
-      "GAGES LAKE",
-      "GRANDWOOD PARK",
-      "KNOLLWOOD",
-      "LAKE CATHERINE",
-      "LONG LAKE",
-      "VENETIAN VILLAGE",
-
-      // Unincorporated communities
-      "APTAKISIC",
-      "DIAMOND LAKE",
-      "EDDY",
-      "FORT SHERIDAN",
-      "FREMONT CENTER",
-      "GILMER",
-      "GRANGE HALL",
-      "GRASS LAKE",
-      "HALF DAY",
-      "INGLESIDE",
-      "IVANHOE",
-      "KENNEDY",
-      "LOON LAKE",
-      "MILLBURN",
-      "MONAVILLE",
-      "PALM BEACH",
-      "PRAIRIE VIEW",
-      "RONDOUT",
-      "ROSECRANS",
-      "RUSSELL",
-      "SYLVAN LAKE",
-      "WEST MILTMORE",
-      "WILDWOOD",
-      "WILSON",
-
-      // Townships
-      "ANTIOCH",
-      "AVON",
-      "BENTON",
-      "CUBA",
-      "ELA",
-      "FREMONT",
-      "GRANT",
-      "LAKE VILLA",
-      "LIBERTYVILLE",
-      "MORAINE",
-      "NEWPORT",
-      "SHIELDS",
-      "VERNON",
-      "WARREN",
-      "WAUCONDA",
-      "WAUKEGAN",
-      "WEST DEERFIELD",
-      "ZION",
-
-      // Cook County
-      "GLENCOE",
-      "GLENVIEW"
-  };
-
 }
