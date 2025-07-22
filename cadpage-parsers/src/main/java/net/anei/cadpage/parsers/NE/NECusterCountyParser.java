@@ -2,12 +2,13 @@ package net.anei.cadpage.parsers.NE;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class NECusterCountyParser extends FieldProgramParser {
 
   public NECusterCountyParser() {
     super("CUSTER COUNTY", "NE",
-          "( Call_Type:CALL! Remarks:INFO! INFO/N+ Date:DATETIME! Agency:SRC! Caller_Name:NAME! Phone:PHONE! END " +
+          "( Call_Type:CALL! Remarks:INFO! INFO/N+ ( Date:DATETIME! Agency:SRC! Caller_Name:NAME! Phone:PHONE! | ) END " +
           "| Date:DATETIME! Caller_Name:NAME! Phone:PHONE! CALL:CALL! INFO/N+ )");
   }
 
@@ -21,7 +22,9 @@ public class NECusterCountyParser extends FieldProgramParser {
     data.strSource = subject;
     body = body.replace(" Caller Name:", "\nCaller Name:")
                .replace(" Remarks:", "\nRemarks:");
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strDate.isEmpty()) data.msgType = MsgType.GEN_ALERT;
+    return true;
   }
 
   @Override
