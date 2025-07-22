@@ -10,7 +10,7 @@ public class LALafourcheParishParser extends FieldProgramParser {
 
   public LALafourcheParishParser() {
     super(CITY_LIST, "LAFOURCHE PARISH", "LA",
-          "CALL:CALL! ID:ID! PLACE:PLACE! ADDR:ADDR! CITY:CITY! DETAILS:EMPTY? INFO:INFO! END");
+          "CALL:CALL! ID:ID! PLACE:PLACE! ADDR:ADDR! CITY:CITYST! DETAILS:EMPTY? INFO:INFO! END");
   }
 
   @Override
@@ -95,6 +95,29 @@ public class LALafourcheParishParser extends FieldProgramParser {
       data.strCall = info;
     } else {
       data.strSupp = append(data.strSupp, "\n", info);
+    }
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CITYST")) return new MyCityStateField();
+    return super.getField(name);
+  }
+
+  private class MyCityStateField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        data.strState = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      data.strCity = field;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CITY ST";
     }
   }
 
