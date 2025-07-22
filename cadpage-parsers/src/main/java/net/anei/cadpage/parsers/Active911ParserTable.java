@@ -2287,6 +2287,7 @@ public class Active911ParserTable {
       "US/PA/DelcoMedia",                 "PADelawareCountyB",
       "US/PA/DelcoTextBethel",            "PADelawareCountyB",
       "US/PA/DelcoTextRelay",             "PADelawareCountyB",
+      "US/PA/Duncannon",                  "PAPerryCounty",
       "US/PA/Ecm",                        "PAAlleghenyCountyB",
       "US/PA/EldredVFD",                  "PAMcKeanCountyC",
       "US/PA/ElizabethTWP",               "PAAlleghenyCountyA",
