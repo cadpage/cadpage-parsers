@@ -13,7 +13,7 @@ public class ORColumbiaCountyParser extends FieldProgramParser {
           "ID_CALL_UNIT CITY ADDR APT! MAP? X:X! COMMENTS:INFO? INFO/N+");
   }
 
-  private static final Pattern DELIM = Pattern.compile(" ;| (?=Map |X:|COMMENTS:)|[ ,](?=\\[\\d{1,2}\\] )");
+  private static final Pattern DELIM = Pattern.compile(" ;| (?=Map |X:|COMMENTS:)|(?<=\\S)(?=Map )|[ ,](?=\\[\\d{1,2}\\] )");
 
   @Override
   protected boolean parseMsg(String body, Data data) {

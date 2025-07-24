@@ -21,7 +21,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
           "| Address_Changed:MAP! GPS/d ADDR2 PLACE CALL ID! " +
           "| Incident_Location_Changed_to:EMPTY! ID3 MAP ADDR GPS1 GPS2 EMPTY EMPTY PLACE CALL UNIT! " +
           "| Inc_Address_Update:ADDR! ID3 MAP GPS1 GPS2 EMPTY EMPTY PLACE " +
-          "| ADDRESS_CHANGE:MAP! ADDR! UNIT! " +
+          "| ADDRESS_CHANGE:MAP! ADDR! CALL! " +
           ") EMPTY? END");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
     setupSpecialStreets("BROADWAY", "BROADWAY CIR");
@@ -31,7 +31,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   public String getFilter() {
     return "smtprelay@smfra.onmicrosoft.com";
   }
-  
+
   @Override
   public String getAliasCode() {
     return "COArapahoeCounty";
@@ -159,6 +159,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   }
 
   private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(
+      "1 SUPPRESSION UNIT",
       "Abdominal Pain/Problems",
       "Air Alert 2 Inflight Emergency",
       "Alarm-CO No Sick Parties",
@@ -224,6 +225,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Overdose/Poisoning (Ingestion)",
       "Psych Problems",
       "Psych/Abn Behavior/Suicide Att",
+      "Resc-Animal Rescue",
       "Resc-Confined Space Rescue",
       "SF-Comm Str Fire Reported",
       "SF-Multi-Fam Str Fire Report",
@@ -240,7 +242,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Traffic Pedestrian Acciden",
       "Traumatic Injuries (Specific)",
       "Unconscious/Fainting (Near)",
-      "Resc-Animal Rescue",
+      "WILDLAND LEVEL 2",
       "x1A-Abdominal Pain/Problems",
       "x21D-Hemorrhage/Lacerations",
       "x26A-Sick Person",
