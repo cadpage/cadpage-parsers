@@ -20,17 +20,18 @@ public class ALFayetteCountyParser extends FieldProgramParser {
     return "fayette.al@ryzyliant.com";
   }
 
+  private static final Pattern DELIM = Pattern.compile("\n| \\| ");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("OPS Broadcast:")) return false;
-    return parseFields(body.split("\n"), data);
+    return parseFields(DELIM.split(body), data);
   }
 
   private static final DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/DD/YYYY hh:mm:ss aa");
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new CallField("On-dispatch OPS broadcast for '(.*)'", true);
+    if (name.equals("CALL")) return new CallField("(?:On-dispatch )?OPS broadcast for '(.*)'", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS")) return new MyGPSField();
@@ -54,7 +55,7 @@ public class ALFayetteCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern GPS_PTN = Pattern.compile("https?://.*query=(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("(?:View location: )?https?://.*query=(.*)");
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
