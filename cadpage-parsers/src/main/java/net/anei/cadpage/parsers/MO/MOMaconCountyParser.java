@@ -18,7 +18,9 @@ public class MOMaconCountyParser extends FieldProgramParser {
 
   MOMaconCountyParser(String defCity, String defState) {
     super(defCity, defState,
-      "Event_Number:ID! Police_Event_Type:CALL! Fire_Event_Type:CALL! EMS_Event_Type:CALL! Latitude:GPS1! Longitude:GPS2! Address:ADDR! Location:APT_PLACE? City:CITY! Zip:SKIP! ESN:SKIP! Class:SKIP! District:SRC! UnitTimes:TIMES Notes:INFO/N+");
+      "Event_Number:ID! Police_Event_Type:CALL! Fire_Event_Type:CALL! EMS_Event_Type:CALL! Latitude:GPS1! Longitude:GPS2! " +
+          "( Tac_Channel:CH | TAC_Channel:CH | ) Phone:PHONE? Address:ADDR! Location:APT_PLACE? City:CITY! Zip:SKIP! ESN:SKIP! " +
+         "Class:SKIP! District:SRC! UnitTimes:TIMES Notes:INFO/N+");
   }
 
   @Override
