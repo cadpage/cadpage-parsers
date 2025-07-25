@@ -16,7 +16,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
                                     "| Name:PLACE! Phone_Number:PHONE! Caller:NAME! Address:ADDRCITY/S6! Cross_Street:X! Incident:ID! " +
                                     ") " +
           "| Alert_Type:CALL! Call_Type:CALL! Location:PLACE! Address:ADDR! Xstreet:X_CITY! Safety_Alert:ALERT " +
-          ") END");
+          ") Narrative:INFO INFO/N+ END");
   }
 
   @Override
@@ -27,7 +27,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +(\\d{2,3}\\.\\d{6,})(-\\d{2,3}\\.\\d{6,})$");
   private static final Pattern NAME_PHONE_NUMBER_PTN = Pattern.compile("Name(.*?)Phone Number::");
   private static final Pattern MISSING_COLON_PTN = Pattern.compile("(?<=Alert Type|Call Type|Common Name|(?<!Preplan )Location|Address|Closest Intersection|Incident|Xstreet|Safety Alert|Cross Street)(?!:)");
-  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=(?:Call Type|Common Name|Address|Closest Intersection|Incident|Location|Near|Xstreet|Safety Alert|Caller|Cross Street):)|\n");
+  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=(?:Call Type|Common Name|Address|Closest Intersection|Incident|Location|Near|Xstreet|Safety Alert|Caller|Cross Street|Narrative):)|\n");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
