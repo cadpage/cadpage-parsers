@@ -18,7 +18,7 @@ public class INJasperCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@jaspercountypolice.com,@alert.active911.com";
+    return "noreply@jaspercountypolice.com,@alert.active911.com,noreply@jaspersheriff.in.gov";
   }
 
   private static final Pattern DIR_PTN = Pattern.compile("[NSEW]B");
