@@ -17,7 +17,7 @@ public class ALFayetteCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "fayette.al@ryzyliant.com";
+    return "al@ryzyliant.com";
   }
 
   private static final Pattern DELIM = Pattern.compile("\n| \\| ");

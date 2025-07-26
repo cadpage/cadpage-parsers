@@ -17,6 +17,6 @@ public class LAJeffersonDavisParishParser extends DispatchA55Parser {
   }
 
   public String getFilter() {
-    return "cadalerts@messaging.eforcesoftware.net,reports@messaging.eforcesoftware.net";
+    return "cadalerts@messaging.eforcesoftware.net,reports@messaging.eforcesoftware.net,ereports@eforcesoftware.com";
   }
 }
