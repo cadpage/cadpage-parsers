@@ -18,9 +18,9 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   COArapahoeCountyParser(String defCity, String defState) {
     super(defCity, defState,
           "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
-          "| Address_Changed:MAP! GPS/d ADDR2 PLACE CALL ID! " +
-          "| Incident_Location_Changed_to:EMPTY! ID3 MAP ADDR GPS1 GPS2 EMPTY EMPTY PLACE CALL UNIT! " +
-          "| Inc_Address_Update:ADDR! ID3 MAP GPS1 GPS2 EMPTY EMPTY PLACE " +
+          "| Address_Changed:MAP! ( GPS/d | GPS1/d GPS2/d ) ADDR2 PLACE CALL ID! " +
+          "| Incident_Location_Changed_to:ID3 MAP ADDR GPS1/d GPS2/d EMPTY EMPTY PLACE CALL UNIT! " +
+          "| Inc_Address_Update:ADDR! ID3 MAP GPS1/d GPS2/d EMPTY EMPTY PLACE " +
           "| ADDRESS_CHANGE:MAP! ADDR! CALL! " +
           ") EMPTY? END");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
@@ -145,11 +145,11 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("MAP")) return new MapField("[A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?", true);
+    if (name.equals("MAP")) return new MapField("([A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?)|NOT FOUND()", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} \\d{8,9}", true);
-    if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,3}-\\d{6,7}|\\d\\d-\\d{7})", true);
+    if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,4}-\\d*|\\d\\d-\\d{7}|\\d\\d-[A-Z]{2})", true);
     if (name.equals("ID3")) return new IdField("\\d{4}-\\d{7}", true);
-    if (name.equals("ADDR2")) return new AddressField(".* TO: *(.*)");
+    if (name.equals("ADDR2")) return new AddressField(".*TO: *(.*)");
     return super.getField(name);
   }
 
@@ -159,7 +159,9 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   }
 
   private static final ReverseCodeSet CALL_LIST = new ReverseCodeSet(
+      "1 AND 1 INVESTIGATION",
       "1 SUPPRESSION UNIT",
+      "2nd Alarm WL Interface",
       "Abdominal Pain/Problems",
       "Air Alert 2 Inflight Emergency",
       "Alarm-CO No Sick Parties",
@@ -179,10 +181,13 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Assist-Police Assist",
       "Assist-Public Assist",
       "Assist-Water Problem/Shut Off",
+      "Auto Crash Notification (ACN)",
       "Back Pain (Non-Traumatic)",
       "Breathing Problems",
+      "Burns or Scalds",
       "Cardiac or Respiratory Arrest",
       "Chest Pain (Non-Traumatic)",
+      "Choking",
       "Convulsions/Seizures",
       "Diabetic Problems",
       "Driveway Eye Problems/ Injuries",
@@ -198,11 +203,13 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Fire-Vehicle Fire",
       "Fuel Spill Large",
       "Fuel Spill Small",
+      "Fire-Unknown Fire",
       "Gas-Commercial Leak",
       "Gas-Residential Leak",
       "HazMat",
       "Headache",
       "Heart Problems/ A.I.C.D",
+      "Heart Problems/A.I.C.D",
       "Hemorrhage/Lacerations",
       "Invest-Lighting Strike",
       "Invest-Odor Commercial",
@@ -222,26 +229,35 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "MVA Unknown Injuries",
       "MVA Traffic Pedestrian Accidnt",
       "MVA Vehicle Into Building",
+      "NOTIFICATION",
       "Overdose/Poisoning (Ingestion)",
+      "Pregnancy/Childbirth/Miscarr",
       "Psych Problems",
       "Psych/Abn Behavior/Suicide Att",
       "Resc-Animal Rescue",
       "Resc-Confined Space Rescue",
+      "Resc-Elevators Parties Trapped",
       "SF-Comm Str Fire Reported",
+      "SF-Comm Structure Fire Reportd",
       "SF-Multi-Fam Str Fire Report",
       "SF-Outbuilding Fire",
       "SF-Res Structure Fire Reported",
       "SF1C-Commercial Str Fire",
+      "SF1R-Residential Struc Fire",
       "Sick Person (Specific Diag)",
+      "Special Event Coverage",
       "Stab/Gunshot/Penetrating Traum",
       "Standby In The Area",
       "Stroke(CVA)",
+      "Stroke (CVA)",
       "TECH RESCUE LEVEL 1",
       "TEST (Do not Dispatch)",
       "Test Call (Do Not Dispatch)",
       "Traffic Pedestrian Acciden",
       "Traumatic Injuries (Specific)",
       "Unconscious/Fainting (Near)",
+      "Unknown Problem (Man Down)",
+      "WILDLAND LEVEL 1",
       "WILDLAND LEVEL 2",
       "x1A-Abdominal Pain/Problems",
       "x21D-Hemorrhage/Lacerations",
