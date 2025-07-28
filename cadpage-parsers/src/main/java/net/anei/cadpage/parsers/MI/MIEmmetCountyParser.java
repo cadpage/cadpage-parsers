@@ -4,6 +4,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.SplitMsgOptions;
+import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
 import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
@@ -15,12 +17,24 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
 
   MIEmmetCountyParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-           "ID?:( CANCEL ADDR! CITY? INFO/N+ | FYI? ( CALL GPS1 GPS2 ADDR CITY? | GPS1 GPS2 ADDR CITY? | CALL ADDR/Z! CITY | ADDR/Z CITY | ADDR | CALL ADDR ) ) SRC? INFO/N+? ( CITY SRC2 | SRC2 ) END");
+           "ID?:FYI+? ( CANCEL ADDR! CITY? INFO/N+ " +
+                     "| CALL ( GPS1 GPS2 | ) ADDR ( CITY! ( SRC X+? ( END | PHONE END | NAME PHONE END | X/Z NAME PHONE! END | X/Z X/Z NAME PHONE! END | X/Z+? NAME! END ) " +
+                                                         "| INFO/N+? SRC X+? ( END | PHONE END | NAME PHONE END | X/Z NAME PHONE! END | X/Z X/Z NAME PHONE! END | X/Z+? NAME! END ) " +
+                                                         ") " +
+                                                 "| X1 X/Z? CITY! INFO/N+? SRC NAME PHONE END " +
+                                                 "| INFO/N+? ( CITY SRC | SRC ) X+? ( END | PHONE END | NAME PHONE END | X/Z NAME PHONE! END | X/Z X/Z NAME PHONE! END | X/Z+? NAME! END ) " +
+                                                 ") " +
+                     ")");
   }
 
   @Override
   public String getAliasCode() {
     return "MIEmmetCounty";
+  }
+
+  @Override
+  public SplitMsgOptions getActive911SplitMsgOptions() {
+    return new SplitMsgOptionsCustom();
   }
 
   @Override
@@ -38,22 +52,22 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!CAD_MARKER.matcher(body).lookingAt()) body = "CAD:" + body;
-    int pt = body.indexOf('\n');
-    if (pt >= 0) body = body.substring(0, pt).trim();
+    body = stripFieldEnd(body, "\nText STOP to opt out");
     return super.parseMsg(body, data);
   }
+
+  private static final Pattern SRC_PTN = Pattern.compile("(?!MALE|PAGE|POSS)[A-Z]{4}|CCE|CDA");
 
   @Override
   public Field getField(String name) {
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
-    if (name.equals("CADDR1")) return new CallAddressField();
-    if  (name.equals("CADDR2")) return new SkipField();
-    if (name.equals("UNK")) return new AddressField("UNK", true);
-    if (name.equals("SRC")) return new MySourceField(1);
-    if (name.equals("SRC2")) return new MySourceField(2);
+    if (name.equals("SRC")) return new SourceField(SRC_PTN, true);
+    if (name.equals("X1")) return new MyCross1Field();
     if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
     return super.getField(name);
   }
 
@@ -66,6 +80,23 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
     }
   }
 
+  private static final Pattern CROSS1_PTN = Pattern.compile("[ A-Z]+");
+  private class MyCross1Field extends CrossField {
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (super.checkParse(field, data)) return true;
+      if (!CROSS1_PTN.matcher(field).matches()) return false;
+      if (!isCityField(+2) && !isCityField(+1)) return false;
+      parse(field, data);
+      return true;
+    }
+
+    private boolean isCityField(int offset) {
+      return (isCity(getRelativeField(offset)) &&
+              !SRC_PTN.matcher(getRelativeField(offset+1)).matches());
+    }
+  }
+
   private class MyCityField extends CityField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -74,50 +105,11 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
     }
   }
 
-  // If we do not recognize a city code, it will be processed as a source field.
-  // If the real source field finds the source field is already set, reject so
-  // someone will bring the missing city code to our notice
-  private class MySourceField extends SourceField {
-    public MySourceField(int type) {
-      super(type == 1 ? "[A-Z]{3,4}" : "[A-Z]{1,4}", true);
-    }
-
+  private class MyCrossField extends CrossField {
     @Override
-    public void parse(String field, Data data) {
-      if (field.length() > 0 && data.strSource.length() > 0) abort();
-      if (field.length() < 3) return;
-      super.parse(field, data);
-    }
-  }
-
-  // Call and address fields can occur in either order.  Usually there is a city
-  // field in there to positively identify which is which.  But in rare cases we
-  // have nothing to go on other than the fields themselves.  When we do, that is
-  // when we have to use the CallAddress1 and 2 fields.
-  private static final  Pattern CALL_PTN = Pattern.compile("[^\\d&/]+");
-  private class CallAddressField extends Field {
-    @Override
-    public void parse(String field, Data data) {
-      String nextFld = getRelativeField(+1);
-      if (field.length() == 0 || nextFld.length() == 0) abort();
-      if (checkAddress(field) > checkAddress(nextFld)) {
-        String tmp = field;
-        field = nextFld;
-        nextFld = tmp;
-      }
-      data.strCall = field;
-      parseAddress(nextFld, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CALL";
-    }
-
-    private int checkAddress(String field) {
-      int result = MIEmmetCountyParser.this.checkAddress(field);
-      if (result == 0 && CALL_PTN.matcher(field).matches()) result = -1;
-      return result;
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("US CG")) return false;
+      return super.checkParse(field, data);
     }
   }
 
@@ -180,11 +172,11 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
       "BH",   "RESORT TWP",   // ???????
       "BV",   "BAY VIEW",
       "HS",   "HARBOR SPRINGS",
+      "MC",   "MACKINAW CITY",
 
       "ALN",  "ALANSON",
       "BLS",  "BLISS TWP",
       "BRC",  "BEAR CREEK TWP",
-      "CCE",  "EMMET COUNTY",  // ????
       "CNT",  "CENTER TWP",
       "CRP",  "CARP LAKE",
       "CRS",  "CROSS VILLAGE TWP",
