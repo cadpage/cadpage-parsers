@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class KYDaviessCountyParser extends GroupBestParser {
 
   public KYDaviessCountyParser() {
-    super(new KYDaviessCountyAParser(), new KYDaviessCountyBParser());
+    super(new KYDaviessCountyBParser());
   }
 
 

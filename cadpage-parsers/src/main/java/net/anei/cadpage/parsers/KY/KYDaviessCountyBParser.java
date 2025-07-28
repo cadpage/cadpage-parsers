@@ -12,6 +12,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
     super(KYDaviessCountyParser.CITY_LIST, "DAVIESS COUNTY", "KY",
           "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! " +
           "| Call_Type:CALL! EMPTY+? ( Common_Name:PLACE! Address:ADDRCITY/S6! Closest_Intersection:X! Incident:ID! " +
+                                    "| Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Choose_your_incident_#_by_ORI:ID! " +
                                     "| Location:ADDRCITY/S6! PLACE Near:X! " +
                                     "| Name:PLACE! Phone_Number:PHONE! Caller:NAME! Address:ADDRCITY/S6! Cross_Street:X! Incident:ID! " +
                                     ") " +

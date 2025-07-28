@@ -265,7 +265,8 @@ public class ManageParsers {
         "PAAlleghenyCountyD", "General",                 //06/09/2025
         "VACampbellCountyA",  "General",                 // 06/30/2025
         "MDAnneArundelCountyAnnapolis", "General",       // 06/30/2025
-        "LATangipahoaParishA","General"                 // 07/17/205
+        "LATangipahoaParishA","General",                 // 07/17/2025
+        "KYDaviessCountyA",   "General"                 // 07/28/2025
   });
 
 }
