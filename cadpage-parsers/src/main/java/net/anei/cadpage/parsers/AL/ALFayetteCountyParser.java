@@ -59,7 +59,8 @@ public class ALFayetteCountyParser extends FieldProgramParser {
   private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("Location coordinates not supplied")) return;
+      if (field.equals("Location coordinates not supplied") ||
+          field.equals("Location coordinates were not supplied by CAD")) return;
       Matcher match = GPS_PTN.matcher(field);
       if (!match.matches()) abort();
       super.parse(match.group(1).trim(), data);
