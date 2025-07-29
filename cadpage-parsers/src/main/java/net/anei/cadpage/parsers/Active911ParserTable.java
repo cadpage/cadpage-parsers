@@ -2263,6 +2263,7 @@ public class Active911ParserTable {
       "US/PA/BerwynFire",                 "PAChesterCountyO",
       "US/PA/BlairCounty",                "PABlairCounty",
       "US/PA/BradfordCounty",             "PABradfordCounty",
+      "US/PA/BrightonTWPFD",              "AiviaAED",
       "US/PA/BroughtonVFD",               "PAAlleghenyCountyA",
       "US/PA/BucksCounty",                "PABucksCountyD",
       "US/PA/BucksEMA",                   "PABucksCounty",
