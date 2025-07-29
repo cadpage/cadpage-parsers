@@ -140,6 +140,7 @@ public class Active911ParserTable {
       "US/AL/JacksonCounty",              "ALJacksonCounty,ALMarshallCounty",
       "US/AL/JeffersonCounty",            "ALJeffersonCountyC,ALJeffersonCountyE,ALJeffersonCountyI,ALJeffersonCountyJ",
       "US/AL/LamarCounty",                "ALLamarCounty",
+      "US/AL/LauderdaleCounty",           "ALLauderdaleCountyC",
       "US/AL/LawrenceCounty",             "ALLawrenceCounty",
       "US/AL/LeeCounty",                  "ALLeeCounty",
       "US/AL/LimestoneCounty",            "ALLimestoneCounty",
