@@ -2515,6 +2515,7 @@ public class Active911ParserTable {
       "US/TN/CampbellCounty",             "TNCampbellCountyA,TNCampbellCountyB",
       "US/TN/CannonCounty",               "TNCannonCounty",
       "US/TN/CarterCounty",               "TNCarterCounty",
+      "US/TN/CarterCountyRS",             "TNCarterCounty",
       "US/TN/ChesterCounty",              "TNChesterCounty",
       "US/TN/CityofKingsport",            "TNKingsport",
       "US/TN/CityOfLafollete",            "TNCampbellCountyB",

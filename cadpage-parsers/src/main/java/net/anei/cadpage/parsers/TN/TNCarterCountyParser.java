@@ -9,7 +9,7 @@ public class TNCarterCountyParser extends FieldProgramParser {
 
   public TNCarterCountyParser() {
     super("CARTER COUNTY", "TN",
-          "CODE CALL CODE CALL PLACE ADDRCITYST GPS1 GPS2 X DATETIME INFO UNIT! END");
+          "CODE CALL CODE CALL PLACE ADDRCITYST GPS1 GPS2 X DATETIME INFO SRC! INFO/N ID UNIT INFO ID/L END");
   }
 
   @Override
@@ -24,7 +24,14 @@ public class TNCarterCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\\|"), data);
+    if (!parseFields(body.split("\\|"), data)) return false;
+    if (data.strUnit.isEmpty()) data.strUnit = data.strSource;
+    return true;
+  }
+
+  @Override
+  public String getProgram() {
+    return super.getProgram() + " UNIT?";
   }
 
   @Override
@@ -33,6 +40,7 @@ public class TNCarterCountyParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)(?: \\*)?", true);
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("NONE")) return new SkipField("None", true);
     return super.getField(name);
   }
 
