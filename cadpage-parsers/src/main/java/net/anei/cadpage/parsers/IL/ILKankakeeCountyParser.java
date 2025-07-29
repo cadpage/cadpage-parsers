@@ -25,7 +25,7 @@ public class ILKankakeeCountyParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "noreply@k3county.net,booking@k3county.net";
+    return "noreply@k3county.net,booking@k3county.net,@kankakeecountyil.gov";
   }
 
   @Override
