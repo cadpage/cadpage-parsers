@@ -195,6 +195,7 @@ public class MIEmmetCountyParser extends DispatchOSSIParser {
       "RST",  "RESORT TWP",
       "SPR",  "SPRINGVALE TWP",
       "WST",  "WEST TRAVERSE TWP",
+      "WWT",  "WAWATAM TWP",
 
       // Otsego County
       "VANDERBILT",  "VANDERBILT"

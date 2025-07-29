@@ -18,7 +18,7 @@ public class GAChathamCountyAParser extends FieldProgramParser {
           "| SELECT/2 CRN:ID! ADD:ADDR! INFO/N+ " +
           "| SELECT/3 UNIT_ASSIGNED:UNIT! POST_LOCATION:ADDR! END " +
           "| SELECT/4 COMMENT_NOTIFICATION:INFO END " +
-          "| SELECT/5 CRN:ID! Type:CALL! Loc:PLACE! ADD:ADDR! APT:APT! City:CITY! Lat:GPS1! Lon:GPS2! Det:CODE! END " +
+          "| SELECT/5 CRN:ID! Type:CALL! Loc:PLACE! ADD:ADDR! APT:APT! City:CITY! Lat:GPS1! Lon:GPS2! Det:CODE! Dept:SRC Comments:EMPTY INFO/N+ END " +
           ")");
   }
 
@@ -28,6 +28,7 @@ public class GAChathamCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern DELIM1_PTN = Pattern.compile("(?: +|(?<![ /]))(?=(?:UNIT|ADD|CITY|APT/UNIT|XSTREET|BUSINESS|DET|PRIORITY|PROBLEM|COMMENTS):)");
+  private static final Pattern DELIM5_PTN = Pattern.compile("\\s*[\n;]\\s*");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -64,7 +65,7 @@ public class GAChathamCountyAParser extends FieldProgramParser {
       body = body.substring(12).trim();
       int pt = body.indexOf("\n\nClick the following link");
       if (pt >= 0) body = body.substring(0,pt).trim();
-      if (!parseFields(body.split(";"), data)) return false;
+      if (!parseFields(DELIM5_PTN.split(body), data)) return false;
     }
 
     else return false;
@@ -107,6 +108,7 @@ public class GAChathamCountyAParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("PRI")) return new MyPriorityField();
+    if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -119,11 +121,20 @@ public class GAChathamCountyAParser extends FieldProgramParser {
     }
   }
 
+  private class MyCodeField extends CodeField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("[n/a]")) return;
+      super.parse(field, data);
+    }
+  }
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]*(?=\\[\\d\\])");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       for (String line : INFO_BRK_PTN.split(field)) {
+        if (line.equals("[n/a]")) continue;
         data.strSupp = append(data.strSupp, "\n", line);
       }
     }
