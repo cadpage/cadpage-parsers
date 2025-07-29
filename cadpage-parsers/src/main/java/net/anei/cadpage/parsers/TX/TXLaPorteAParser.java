@@ -50,6 +50,9 @@ public class TXLaPorteAParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String body, Data data) {
 
+    // Reject TXHarrisCountyG alerts
+    if (body.startsWith("CAD#:")) return false;
+
     // Kema alerts probably do not belong in this parser, but since Active911
     // handles them in the same parser, we will do likewise.
     if (body.startsWith("CANCEL ")) {
