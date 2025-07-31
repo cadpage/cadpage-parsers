@@ -41,6 +41,7 @@ public class TNCarterCountyParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)(?: \\*)?", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("NONE")) return new SkipField("None", true);
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
 
@@ -72,6 +73,13 @@ public class TNCarterCountyParser extends FieldProgramParser {
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);
     }
+  }
 
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
   }
 }
