@@ -115,7 +115,7 @@ public class Active911ParserTable {
       "US/AL/Covington911",               "ALMontgomeryCountyB",
       "US/AL/CreolaPD",                   "ALMobileCounty",
       "US/AL/CullmanCounty",              "ALCullmanCounty",
-      "US/AL/DaleCounty",                 "ALDaleCountyA",
+      "US/AL/DaleCounty",                 "ALDaleCountyA,ALDaleCountyB",
       "US/AL/DallasCounty",               "ALDallasCounty",
       "US/AL/DecaturFireRescue",          "ALMorganCountyB",
       "US/AL/DeKalbCounty",               "ALDeKalbCounty",
