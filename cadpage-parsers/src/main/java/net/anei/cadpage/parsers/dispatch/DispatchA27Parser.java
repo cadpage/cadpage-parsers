@@ -35,14 +35,14 @@ public class DispatchA27Parser extends FieldProgramParser {
     super(cityList, defCity, defState,
           "( SELECT/NEW ADDRCITY/SC Time_reported:DATETIME! Unit(s)_responded:UNIT! " +
           "| SELECT/NEW3 SRC_ID3 CALL ADDR CITY_ST BOX3 INFOX3 UNIT3 GPS1_3 GPS2_3 CODE3! TIME_LOG " +
-          "| ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) Unit(s)_responded:UNIT2? UNIT2+ " +
+          "| ADDRCITY/SC DUP? EMPTY+? ( MASH | SRC! Case_Nr:ID? TIMES+? ) ( Unit(s)_responded:UNIT2 | Responding_units:UNIT2 | ) UNIT2+ " +
           ")");
     this.unitPtn = unitPtn == null ? null : Pattern.compile(unitPtn);
   }
 
   private static final Pattern MARKER = Pattern.compile("Notification from (?:CIS )?[-A-Za-z0-9 ']+:");
   private static final Pattern MARKER2 = Pattern.compile("[A-Z]{3,4} \\d{12}; ");
-  private static final Pattern DELIM_PTN = Pattern.compile("\n{2}");
+  private static final Pattern DELIM_PTN = Pattern.compile("\n{2}|\n(?=Unit(s) responded:|Responding units:)");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -343,6 +343,8 @@ public class DispatchA27Parser extends FieldProgramParser {
             }
           }
           times = append(times, "\n", line);
+        } else if (line.startsWith("https:")) {
+          continue;
         } else if (line.startsWith("Disposition:")) {
           times = append(times, "\n", line);
         } else if (line.startsWith("CPN:")) {
@@ -390,6 +392,7 @@ public class DispatchA27Parser extends FieldProgramParser {
     for (String token : field.split("\n")) {
       token = token.trim();
       if (token.length() == 0) continue;
+      if (token.startsWith("https:")) continue;
       token = token.replace('\t', ' ');
 
       // Check for tokens that force a mode switch
