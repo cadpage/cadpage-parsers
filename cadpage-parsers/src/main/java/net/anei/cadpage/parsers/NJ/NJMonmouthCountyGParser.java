@@ -1,16 +1,15 @@
 package net.anei.cadpage.parsers.NJ;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
-public class NJMonmouthCountyGParser extends DispatchA32Parser {
+public class NJMonmouthCountyGParser extends DispatchA19Parser {
 
   public NJMonmouthCountyGParser() {
-    super(NJMonmouthCountyParser.CITY_LIST, "MONMOUTH COUNTY", "NJ");
+    super("MONMOUTH COUNTY", "NJ");
   }
 
   @Override
   public String getFilter() {
-    return "howellnjpolice@gmail.com,paging@belmarpd.com";
+    return "FlexRapidNotification@dccnotify.com";
   }
-
 }
