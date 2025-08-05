@@ -10,7 +10,7 @@ public class MOJacksonCountyCParser extends FieldProgramParser {
 
   public MOJacksonCountyCParser() {
     super("JACKSON COUNTY", "MO",
-          "Date:DATETIME! ID! Location:ADDR! CITY! ST ( Latitude:GPS1! Longitude:GPS2! | ) Map_Grid:MAP! Units_Responding:UNIT! CFS_#:ID/L! " +
+          "Date:DATETIME! ID! Location:ADDR! ( ADDR2! | CITY! ST ) ( Latitude:GPS1! Longitude:GPS2! | ) Map_Grid:MAP! Units_Responding:UNIT! CFS_#:ID/L! " +
               "Nearest_Intersection:X! Subdivision:LINFO! Response_Zone:LINFO! Hazmat:LINFO! Other_Hazardous:LINFO! END");
   }
 
@@ -61,9 +61,21 @@ public class MOJacksonCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("ST")) return new StateField("([A-Z]{2})\\b.*");
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
+  }
+
+  private class MyAddress2Field extends AddressField {
+    public MyAddress2Field() {
+      super("-\\d+\\.\\d+", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = append(data.strAddress, ", ", field);
+    }
   }
 
   private class MyUnitField extends UnitField {

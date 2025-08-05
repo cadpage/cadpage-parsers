@@ -22,6 +22,9 @@ public class NJMonmouthCountyDParser extends DispatchA19Parser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
+    // Rule out NJMonmouthCountyG alerts
+    if (!subject.endsWith(" Notification")) return false;
+
     // Have to fix some odd things
     if (subject.equals("MCSO Page Notification")) {
       body = FIX1_PTN.matcher(body).replaceFirst("$2\n$1");
