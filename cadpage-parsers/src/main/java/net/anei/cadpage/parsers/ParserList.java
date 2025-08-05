@@ -1738,6 +1738,7 @@ public class ParserList {
               ,"TXCameronCounty"                ,"Cameron County, TX"
               ,"TXCarrollton"                   ,"Carrollton, TX"
               ,"TXCarsonCounty"                 ,"Carson County, TX"
+              ,"TXCassCounty"                   ,"Cass County, TX"
               ,"TXChambersCounty"               ,"Chambers County, TX"
               ,"TXCherokeeCounty"               ,"Cherokee County, TX"
               ,"TXCochranCounty"                ,"Cochran County, TX"
