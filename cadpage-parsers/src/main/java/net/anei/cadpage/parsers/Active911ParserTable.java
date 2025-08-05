@@ -156,7 +156,7 @@ public class Active911ParserTable {
       "US/AL/MorganCounty",               "ALMorganCounty",
       "US/AL/MudTavern",                  "ALMorganCountyB",
       "US/AL/PikeCounty",                 "ALPikeCountyA",
-      "US/AL/PinckardVFD",                "ALDaleCountyB",
+      "US/AL/PinckardVFD",                "ALDaleCountyA,ALDaleCountyB",
       "US/AL/Prattville",                 "ALAutaugaCounty",
       "US/AL/PrichardFire",               "ALMobileCounty",
       "US/AL/RainbowCity",                "ALEtowahCountyB",
