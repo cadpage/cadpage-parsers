@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class FLBayCountyParser extends FieldProgramParser {
 
@@ -37,7 +38,16 @@ public class FLBayCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (UNIT.matcher(subject).matches()) data.strUnit = subject;
-    return parseFields(DELIMITER.split(body), data);
+    String[] flds = DELIMITER.split(body);
+    if (flds.length >= 3) {
+      return parseFields(flds, data);
+    }
+    else if (!data.strUnit.isEmpty()) {
+      setFieldList("CALL");
+      data.strCall = body;
+      return true;
+    }
+    return false;
   }
 
   @Override
