@@ -15,7 +15,7 @@ public class MNBeckerCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "BeckerCountyZuercher@co.becker.mn.us";
+    return "BeckerCountyZuercher@co.becker.mn.us,no-reply@dcpaging.net";
   }
 
   @Override
