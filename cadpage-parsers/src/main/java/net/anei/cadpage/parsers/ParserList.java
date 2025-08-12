@@ -1831,6 +1831,7 @@ public class ParserList {
               ,"TXPortAransas"                  ,"Port Aransas, TX"
               ,"TXRandallCounty"                ,"Randall County, TX"
               ,"TXReevesCounty"                 ,"Reeves County, TX"
+              ,"TXRefugioCounty"                ,"Refugio County, TX"
               ,"TXRoanoke"                      ,"Roanoke, TX"
               ,"TXRobertsonCounty"              ,"Robertson County, TX"
               ,"TXRockwallCounty"               ,"Rockwall County, TX"
