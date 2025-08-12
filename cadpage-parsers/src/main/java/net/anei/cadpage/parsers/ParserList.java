@@ -1641,6 +1641,7 @@ public class ParserList {
           ),
           new ParserCategory("South Dakota"
               ,"SDAuroraCounty"                 ,"Aurora County, SD"
+              ,"SDJonesCounty"                  ,"Jones County, SD"
               ,"SDHydeCounty"                   ,"Hyde County, SD"
               ,"SDCampbellCounty"               ,"Campbell County, SD"
               ,"SDClarkCounty"                  ,"Clark County, SD"

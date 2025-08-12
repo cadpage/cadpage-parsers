@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgParser;
 public class SDHydeCountyParser extends MsgParser {
 
   public SDHydeCountyParser() {
-    super("HYDE COUNTY", "SD");
+    this("HYDE COUNTY", "SD");
+  }
+
+  public SDHydeCountyParser(String defCity, String defState) {
+    super(defCity, defState);
     setFieldList("ADDR APT CITY ST CALL PLACE INFO");
   }
 
