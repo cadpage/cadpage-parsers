@@ -236,6 +236,7 @@ public class Active911ParserTable {
       "US/AZ/STPD",                       "AZNavajoCountyB",
       "US/AZ/YavapaiCounty",              "AZYavapaiCountyE",
       "US/CA/AlamedaCounty",              "CAAlamedaCounty",
+      "US/CA/AlpineCounty",               "CAAlpineCounty",
       "US/CA/AmadorCounty",               "CAAmadorCounty",
       "US/CA/BDUcad",                     "CASanBernardinoCountyC",
       "US/CA/Bducad",                     "CASanBernardinoCountyC",

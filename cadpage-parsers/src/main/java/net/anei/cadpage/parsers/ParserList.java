@@ -213,6 +213,7 @@ public class ParserList {
           ),
           new ParserCategory("California"
               ,"CAAlamedaCounty"                ,"Alameda County, CA"
+              ,"CAAlpineCounty"                 ,"Alpine County, CA"
               ,"CAAmadorCounty"                 ,"Amador County, CA"
               ,"CAButteCounty"                  ,"Butte County, CA"
               ,"CACalaverasCounty"              ,"Calaveras County, CA"
