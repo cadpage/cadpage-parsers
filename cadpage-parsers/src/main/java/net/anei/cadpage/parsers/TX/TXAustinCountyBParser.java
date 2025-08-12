@@ -10,7 +10,7 @@ public class TXAustinCountyBParser extends DispatchA55Parser {
 
   @Override
   public String getFilter() {
-    return "reports@messaging.eforcesoftware.net";
+    return "reports@messaging.eforcesoftware.net,ereports@eforcesoftware.com";
   }
 
 }

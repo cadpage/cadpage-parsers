@@ -2580,6 +2580,7 @@ public class Active911ParserTable {
       "US/TX/ArmstrongCounty",            "TXArmstrongCounty",
       "US/TX/AtascosaCounty",             "TXAtascosaCounty",
       "US/TX/Austin",                     "TXTravisCountyA",
+      "US/TX/AustinBernardo",             "TXAustinCountyB",
       "US/TX/AustinCountySheriff",        "TXAustinCountyA",
       "US/TX/AustinTest",                 "TXTravisCountyA",
       "US/TX/BastropCounty",              "TXBastropCounty",
