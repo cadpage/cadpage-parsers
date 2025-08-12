@@ -9,9 +9,12 @@ public class MIJacksonCountyAParser extends DispatchH05Parser {
 
   public MIJacksonCountyAParser() {
     super("JACKSON COUNTY", "MI",
-          "( Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Narrative:EMPTY! INFO_BLK+ Fire_Call_Type:CALL! " +
-          "| Narrative:EMPTY! INFO_BLK+ Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Fire_Call_Type:CALL! " +
-          ") Fire_Quadrant:MAP Incident_Number:ID! Units_Assigned:UNIT! Status_Times:EMPTY! TIMES+ Google_Maps_Hyperlink:EMPTY! GPS! Units_Assigned:SKIP END ");
+          "( Call_Type:CALL! Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Incident_Number:ID! Units_Assigned:UNIT! Nature_Of_Call:CALL! " +
+                "cross_streets:X! Fire_Quadrant:MAP! google_maps_Hyperlink:EMPTY! GPS! Qualifier:EMPTY! Local_Information:INFO! INFO/N+ " +
+          "| ( Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Narrative:EMPTY! INFO_BLK+ Fire_Call_Type:CALL! " +
+            "| Narrative:EMPTY! INFO_BLK+ Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Fire_Call_Type:CALL! " +
+            ") Fire_Quadrant:MAP Incident_Number:ID! Units_Assigned:UNIT! Status_Times:EMPTY! TIMES+ Google_Maps_Hyperlink:EMPTY! GPS! Units_Assigned:SKIP END " +
+          ")");
   }
 
   @Override
