@@ -712,6 +712,7 @@ public class ParserList {
               ,"KYAndersonCounty"               ,"Anderson County, KY"
               ,"KYBallardCounty"                ,"Ballard County, KY"
               ,"KYBarrenCounty"                 ,"Barren County, KY"
+              ,"KYBathCounty"                   ,"Bath County, KY"
               ,"KYBeckinridgeCounty"            ,"Beckinridge County, KY"
               ,"KYBooneCounty"                  ,"Boone County, KY"
               ,"KYBourbonCounty"                ,"Bourbon County, KY"
