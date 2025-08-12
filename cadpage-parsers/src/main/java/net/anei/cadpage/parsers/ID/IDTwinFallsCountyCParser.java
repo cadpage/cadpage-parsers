@@ -117,8 +117,6 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
-      "MM 0 HWY 50",                          "+42.548109,-114.364842",
-      "MM 1 HWY 50",                          "+42.547984,-114.345262",
       "MM 174 I84",                           "+42.636194,-114.428057",
       "MM 175 I84",                           "+42.629976,-114.410043",
       "MM 176 I84",                           "+42.623665,-114.392742",
@@ -146,7 +144,6 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
       "MM 198 I84",                           "+42.576167,-114.981854",
       "MM 199 I84",                           "+42.576241,-114.962423",
       "MM 200 I84",                           "+42.576349,-113.943082",
-      "MM 2 HWY 50",                          "+42.548271,-114.325752",
       "MM 221 HWY 30",                        "+42.548249,-114.414734",
       "MM 222 HWY 30",                        "+42.548199,-114.395128",
       "MM 223 HWY 30",                        "+42.548122,-114.375534",
@@ -168,6 +165,9 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
       "MM 239 HWY 30",                        "+42.474659,-114.124928",
       "MM 240 HWY 30",                        "+42.475061,-114.105032",
       "MM 241 HWY 30",                        "+42.474976,-114.085630",
-      "MM 242 HWY 30",                        "+42.474930,-114.066055"
+      "MM 242 HWY 30",                        "+42.474930,-114.066055",
+      "MM 0 HWY 50",                          "+42.548109,-114.364842",
+      "MM 1 HWY 50",                          "+42.547984,-114.345262",
+      "MM 2 HWY 50",                          "+42.548271,-114.325752"
   });
 }
