@@ -19,8 +19,10 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   private static final Pattern PLACE_CODE_PTN = Pattern.compile("\\(\\d+\\)");
   private static final Pattern BLD_APT_PTN = Pattern.compile("\\b(?:BLDG?|BUILD|UNIT) [^ ]+(?: (?:FLR?|FLOOR) [^ ]+)?(?: (?:APT|RM|ROOM|SUITE) [^ ]+)?\\b");
   private static final Pattern PLACE_APT_PTN = Pattern.compile("(.*?)-?\\b(?:APT|LOT|RM|ROOM|SUITE)\\b(?!'S|$) *(.+)");
+  private static final Pattern OLD_TRAIL_UNIT_PTN = Pattern.compile("(?:(.*?) - )?((?:\\bE?\\d{4},?)+)");
   private static final Pattern ID_TIME_PTN = Pattern.compile("\\b(?:([A-Z]\\d{6,}) +)?(\\d\\d:\\d\\d)$");
-  private static final Pattern ID_PTN = Pattern.compile("[A-Z]\\d{6,}");
+  private static final Pattern VALID_UNIT_PTN = Pattern.compile("[A-Z]*\\d[A-Z0-9,]*");
+  private static final Pattern ID_PTN = Pattern.compile("\\b[A-Z]\\d{6,}\\b");
 
   public NJMorrisCountyAParser() {
     super(OOC_CITY_LIST, "MORRIS COUNTY", "NJ");
@@ -163,7 +165,38 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     }
 
     String[] flds = sExtra.split("\n");
-    if (flds.length > 1) {
+    if (flds.length == 1) {
+      sExtra = sExtra.trim();
+      match = OLD_TRAIL_UNIT_PTN.matcher(sExtra);
+      if (match.matches()) {
+        data.strSupp = getOptGroup(match.group(1));
+        data.strUnit = match.group(2);
+      } else {
+        String trailInfo = "";
+        if (data.strCallId.isEmpty()) {
+          match = ID_PTN.matcher(sExtra);
+          if (match.find()) {
+            data.strCallId = match.group();
+            trailInfo = sExtra.substring(match.end()).trim();
+            sExtra = sExtra.substring(0,match.start()).trim();
+          }
+        }
+        p = new Parser(sExtra);
+        String unit = p.get(' ');
+        if (unit.length() >= 4 &&
+            VALID_UNIT_PTN.matcher(unit).matches() &&
+            !unit.contains("YO")) {
+          data.strUnit = unit;
+        } else {
+          data.strSupp = unit;
+        }
+        data.strSupp = append(data.strSupp, " ", p.get("Response Code:"));
+        data.strSupp = append(data.strSupp, "\n", trailInfo);
+        data.strCode = p.get();
+      }
+    }
+
+    else {
       int ndx = 0;
       if (flds[0].startsWith(" ")) {
         data.strUnit = flds[0].trim();
@@ -179,12 +212,6 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
           data.strSupp = append(data.strSupp, "\n", fld);
         }
       }
-    }
-
-    else {
-      p = new Parser(sExtra);
-      data.strUnit = p.getLastOptional(" - ");
-      data.strSupp = p.get();
     }
     return true;
   }
