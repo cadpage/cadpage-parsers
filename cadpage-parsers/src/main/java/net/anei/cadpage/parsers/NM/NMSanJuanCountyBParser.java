@@ -18,7 +18,7 @@ public class NMSanJuanCountyBParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "sjccaadmin@sjcounty911.net";
+    return "sjccaadmin@sjcounty911.net,dpslnx@sjcounty.net";
   }
 
   @Override
