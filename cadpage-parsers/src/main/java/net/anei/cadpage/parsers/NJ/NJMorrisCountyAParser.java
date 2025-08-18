@@ -5,12 +5,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 
 
 public class NJMorrisCountyAParser extends SmartAddressParser {
 
+  private static final Pattern RR_MARK_PTN = Pattern.compile("\\*Completed\\*|Completed: Normal Completion");
+  private static final Pattern CALL_PFX_PTN = Pattern.compile("RE-ALERT!");
   private static final Pattern MASTER_PTN =
     Pattern.compile("(.*?)[ \n]\\[+([-A-Za-z& ]+)(?:\\.*\\d+)?\\]+ \\(([-A-Z0-9\\\\/\\.\\[\\] ]+)\\) -(.*)", Pattern.DOTALL);
 
@@ -39,7 +42,19 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   @Override
   public boolean parseMsg(String body, Data data) {
 
-    Matcher match = MASTER_PTN.matcher(body);
+    String callPfx = "";
+    Matcher match = RR_MARK_PTN.matcher(body);
+    if (match.lookingAt()) {
+      data.msgType = MsgType.RUN_REPORT;
+      body = body.substring(match.end()).trim();
+    }
+
+    else if ((match = CALL_PFX_PTN.matcher(body)).lookingAt()) {
+      callPfx = match.group(0);
+      body = body.substring(match.end()).trim();
+    }
+
+    match = MASTER_PTN.matcher(body);
     if (!match.matches()) return false;
 
     String sAddress = match.group(1).trim();
@@ -52,6 +67,8 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
       data.strCall = append(data.strCall, " - ", sAddress.substring(0,pt).trim());
       sAddress = sAddress.substring(pt+1).trim();
     }
+
+    data.strCall = append(callPfx, " ", data.strCall);
 
     sAddress = stripFieldStart(sAddress, "***");
 
@@ -123,11 +140,11 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
     // If it can not, parser everything and treat whatever is left as a city name
     sAddress = stripFieldEnd(sAddress, " NJ");
     StartType st = data.strPlace.length() == 0 ? StartType.START_PLACE : StartType.START_ADDR;
-    Result res = parseAddress(st, FLAG_ANCHOR_END, sAddress);
+    Result res = parseAddress(st, FLAG_IGNORE_AT | FLAG_ANCHOR_END, sAddress);
     if (res.getCity().length() > 0) {
       res.getData(data);
     } else {
-      parseAddress(st, sAddress, data);
+      parseAddress(st, FLAG_IGNORE_AT, sAddress, data);
       String left = getLeft();
       if (left.startsWith("/") || left.startsWith("&")) {
         data.strAddress = data.strAddress + " & " + left.substring(1).trim();
@@ -190,7 +207,7 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
         } else {
           data.strSupp = unit;
         }
-        data.strSupp = append(data.strSupp, " ", p.get("Response Code:"));
+        data.strSupp = stripFieldStart(append(data.strSupp, " ", p.get("Response Code:")), "-");
         data.strSupp = append(data.strSupp, "\n", trailInfo);
         data.strCode = p.get();
       }
@@ -217,7 +234,89 @@ public class NJMorrisCountyAParser extends SmartAddressParser {
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
-      "VAN HOUTON"
+      "BASKING RIDGE",
+      "BEAVER BROOK",
+      "BEAVER DAM",
+      "BOUNDARY OAK",
+      "BOWLING GREEN",
+      "CARRIAGE HILL",
+      "CENTER GROVE",
+      "CHERRY TREE",
+      "CHESTNUT HILL",
+      "CHIMNEY RIDGE",
+      "CLYDE POTTS",
+      "COLBY FARM",
+      "COLD HILL",
+      "COMBS HOLLOW",
+      "COMMERCE CENTER",
+      "CORN HOLLOW",
+      "CROSS HILL",
+      "DIAMOND SPRING",
+      "DOVER CHESTER",
+      "FARBER HILL",
+      "FERRO MONTE",
+      "FLORIE FARM",
+      "FOREST VIEW",
+      "FOX CHASE",
+      "FOX HILL",
+      "GOLF COURSE",
+      "GREEN HILLS",
+      "GREEN VILLAGE",
+      "GRIST MILL",
+      "HORSE HILL",
+      "HORSESHOE BEND",
+      "HOUSE WREN",
+      "INDIAN HOLLOW",
+      "IRON FORGE",
+      "IRON MOUNTAIN",
+      "IRONIA MENDHAM",
+      "IVY CREST",
+      "JENNY LIND",
+      "LAUREL HILL",
+      "LONG HILL",
+      "MANOR HOUSE",
+      "MARTIN LUTHER KING",
+      "MARY LOUISE",
+      "MILDRED GILL",
+      "MINE MOUNT",
+      "MOLLY STARK",
+      "MOUNT HOPE",
+      "MT ARLINGTON",
+      "MT BETHEL",
+      "MT KEMBLE",
+      "MT PLEASANT",
+      "NORTH GATE",
+      "OAK FOREST",
+      "OAK HILL",
+      "OAK KNOLL",
+      "OLDE YORK",
+      "PEACH TREE",
+      "PLEASANT HILL",
+      "PLEASANT VALLEY",
+      "PRINCE HENRY",
+      "QUAKER CHURCH",
+      "ROBIN HOOD",
+      "ROCKAWAY VALLEY",
+      "SADDLE HILL",
+      "SAINT BERNARDS",
+      "SAINT JOSEPHS",
+      "SAINT MARY",
+      "SPRING HILL",
+      "STONE COTTAGE",
+      "STONEY HILL",
+      "SUNRISE LAKE",
+      "TALL OAKS",
+      "TEMPE WICK",
+      "TROY HILLS",
+      "VALLEY VIEW",
+      "VAN DOREN",
+      "VAN HOUTON",
+      "VAN NOSTRAND",
+      "WALNUT HILL",
+      "WASHINGTON VALLEY",
+      "WILLOW WALK",
+      "WINDING HILL",
+      "WOODS EDGE"
   };
 
   private static final String[] OOC_CITY_LIST = new String[]{
