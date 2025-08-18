@@ -2156,7 +2156,7 @@ public class Active911ParserTable {
       "US/OH/WilliamsCounty",             "OHWilliamsCounty",
       "US/OH/WillowickCAD",               "OHLakeCountyC",
       "US/OH/WoosterCity",                "OHWayneCountyD",
-      "US/OH/WrightPatt",                 "OHMontgomeryCountyA,OHGreeneCountyA,OHGreeneCountyB",
+      "US/OH/WrightPatt",                 "OHMontgomeryCountyA,OHGreeneCountyA,OHGreeneCountyB,OHGreeneCountyC",
       "US/OH/WRJFD",                      "OHMahoningCountyC",
       "US/OK/Berryhill",                  "OKTulsaA",
       "US/OK/CanadianCounty",             "OKCanadianCountyB",
