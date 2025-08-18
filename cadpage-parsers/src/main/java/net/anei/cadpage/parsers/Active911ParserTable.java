@@ -2289,6 +2289,7 @@ public class Active911ParserTable {
       "US/PA/CumberlandCoFCFES",          "PACumberlandCounty",
       "US/PA/CumberlandCounty",           "PACumberlandCounty",
       "US/PA/DauphinCounty",              "PADauphinCounty",
+      "US/PA/DaytonDistrict",             "PAArmstrongCountyC",
       "US/PA/DelawareCounty",             "PADelawareCountyB,PADelawareCountyG",
       "US/PA/DelcomDispatch",             "PADelawareCountyB,PADelawareCountyG",
       "US/PA/DelcoMedia",                 "PADelawareCountyB",
