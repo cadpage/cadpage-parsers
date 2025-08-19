@@ -2096,6 +2096,7 @@ public class Active911ParserTable {
       "US/OH/LucasCounty",                "OHLucasCounty",
       "US/OH/MadisonCounty",              "OHMadisonCounty",
       "US/OH/MahoningCounty",             "OHMahoningCountyC",
+      "US/OH/Marietta",                   "OHWashingtonCountyA",
       "US/OH/MarionCounty",               "OHMarionCounty",
       "US/OH/MayfieldVillage",            "OHCuyahogaCountyA",
       "US/OH/MCSO",                       "OHMontgomeryCountyA",

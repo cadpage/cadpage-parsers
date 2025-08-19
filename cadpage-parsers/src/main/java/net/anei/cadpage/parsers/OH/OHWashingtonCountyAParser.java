@@ -28,7 +28,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "notifications@washingtoncountysheriff.or,notifications@wcso84.us";
+    return "notifications@washingtoncountysheriff.or,notifications@wcso84.us,local442@mariettaoh.net";
   }
 
   @Override
@@ -88,7 +88,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) *(\\d\\d:\\d\\d:\\d\\d)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4})[, ]*(\\d\\d:\\d\\d:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
