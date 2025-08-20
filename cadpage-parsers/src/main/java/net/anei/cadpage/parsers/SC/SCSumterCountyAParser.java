@@ -15,7 +15,7 @@ public class SCSumterCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "zuercher@sumtersc.gov";
+    return "zuercher@sumtersc.gov,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
   @Override
