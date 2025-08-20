@@ -38,8 +38,6 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     if (!parseFields(DELIM.split(parts[0].replace("-LA PORTE", " LA PORTE")), data)) return false;
     for (int jj = 1; jj < parts.length; jj++) {
       String fld = parts[jj];
-//      int pt =  fld.lastIndexOf(':');
-//      if (pt >= 0) fld = fld.substring(pt+1).trim();
       data.strSupp = append(data.strSupp, "\n", fld);
     }
     return true;
@@ -74,6 +72,12 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
       if (match.lookingAt()) field = field.substring(match.end());
       super.parse(field, data);
     }
+  }
+
+  private static final Pattern I45_PTN = Pattern.compile("\\bIH? ?45(?: FWY)?\\b");
+  @Override
+  public String adjustMapAddress(String addr) {
+    return I45_PTN.matcher(addr).replaceAll("GULF FWY");
   }
 
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
