@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.IN;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -9,6 +10,7 @@ public class INHendricksCountyBParser extends DispatchH03Parser {
 
   public INHendricksCountyBParser() {
     super("HENDRICKS COUNTY", "IN");
+    setupCities(CITY_CODES);
   }
 
   @Override
@@ -27,5 +29,8 @@ public class INHendricksCountyBParser extends DispatchH03Parser {
     return super.parseMsg(subject, body, data);
   }
 
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "NSL", "NORTH SALEM"
+  });
 
 }

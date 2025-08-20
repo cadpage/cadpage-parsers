@@ -17,7 +17,7 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
 
   public IDTwinFallsCountyCParser(String defCity, String defState) {
     super(defCity, defState,
-          "UNIT ID CALL ADDRCITY PLACE INFO! UNIT EMPTY END");
+          "UNIT ID CALL ADDRCITYST PLACE INFO! UNIT EMPTY END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -44,7 +44,6 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID"))  return new IdField("CFS\\d{6}-\\d{4}", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
@@ -64,30 +63,6 @@ public class IDTwinFallsCountyCParser extends FieldProgramParser {
         }
       }
       data.strUnit = sb.toString();
-    }
-  }
-
-  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
-  private class MyAddressCityField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      String zip = null;
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      Matcher match = ADDR_ST_ZIP_PTN.matcher(city);
-      if (match.matches()) {
-        data.strState = match.group(1);
-        zip = match.group(2);
-        city = p.getLastOptional(',');
-      }
-      if (city.length() == 0 && zip != null) city = zip;
-      data.strCity = city;
-      super.parse(p.get(), data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "ADDR APT CITY ST";
     }
   }
 
