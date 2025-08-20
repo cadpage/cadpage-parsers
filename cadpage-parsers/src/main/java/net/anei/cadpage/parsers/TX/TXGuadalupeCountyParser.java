@@ -16,6 +16,6 @@ public class TXGuadalupeCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "rapidnotifications@seguintexas.gov,ibridge@mail.police365.com";
+    return "rapidnotifications@seguintexas.gov,ibridge@mail.police365.com,@mail.365labs.com";
   }
 }
