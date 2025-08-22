@@ -23,7 +23,7 @@ public class DispatchA51Parser extends FieldProgramParser {
           "| DATETIME CALL ADDRCITY INFO/N+ " +
           "| ( ID:ID! | Incident_Number:ID! | ) Date:DATETIME! Type:CALL! Severity:PRI? Location:ADDRCITY! " +
                 "( Business_Name:PLACE! Subdivision:PLACE/SDS! Common_Place:PLACE/SDS! GPS0? " +
-                "| ( Location_Description:PLACE_MAP | Description:PLACE_MAP ) Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 TAC_Channel:CH Units:UNIT " +
+                "| ( Location_Description:PLACE_MAP | Description:PLACE_MAP ) Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 TAC_Channel:CH ( Units:UNIT | Unit:UNIT ) ID:ID " +
                 ") Units_Responding:UNIT Notes:INFO/N+ " +
           ")");
   }
