@@ -3032,6 +3032,7 @@ public class Active911ParserTable {
       "US/WI/JanesvilleFD",               "WIRockCountyA",
       "US/WI/KCCJS",                      "WIRacineCountyB,WIRacineCountyC",
       "US/WI/KenoshaCounty",              "WIKenoshaCounty",
+      "US/WI/KickapooValley",             "WIVernonCounty",
       "US/WI/MarinetteCounty",            "WIMarinetteCountyB,WIMarinetteCountyC",
       "US/WI/MukwonagoFire",              "WIWaukeshaCountyB",
       "US/WI/NeenahFD",                   "WIWinnebagoCountyC",

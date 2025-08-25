@@ -2062,6 +2062,7 @@ public class ParserList {
               ,"WIFondDuLacCounty"              ,"Fond Du Lac County, WI"
               ,"WIGrantCounty"                  ,"Grant County, WI"
               ,"WIKenoshaCounty"                ,"Kenosha County, WI"
+              ,"WIVernonCounty"                 ,"Vernon County, WI"
               ,"WILaCrosseCounty"               ,"La Crosse County, WI"
               ,"WIMarinetteCounty"              ,"Marinette County, WI"
               ,"WIMilwaukeeCounty"              ,"Milwaukee County, WI"
