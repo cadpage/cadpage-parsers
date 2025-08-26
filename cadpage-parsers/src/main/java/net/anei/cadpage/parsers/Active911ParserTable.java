@@ -1774,6 +1774,7 @@ public class Active911ParserTable {
       "US/NE/CusterCounty",               "NECusterCounty",
       "US/NE/GrandIslandPolice",          "NEGrandIsland",
       "US/NE/Hastings",                   "NEAdamsCounty",
+      "US/NE/JohnsonCounty",              "NEJohnsonCounty",
       "US/NH/BelknapCounty",              "NHBelknapCounty",
       "US/NH/CarrollCounty",              "NHCarrollCounty",
       "US/NH/Charlestown",                "NHSullivanCounty",

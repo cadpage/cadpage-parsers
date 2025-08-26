@@ -1158,6 +1158,8 @@ public class ParserList {
               ,"NEAdamsCounty"                  ,"Adams County, NE"
               ,"NECusterCounty"                 ,"Custer County, NE"
               ,"NEGrandIsland"                  ,"Grand Island, NE"
+              ,"NEJohnsonCounty"                ,"Johnson County, NE"
+
               ,"NEMadisonCounty"                ,"Madison County, NE"
           ),
           new ParserCategory("Nevada"
