@@ -1849,6 +1849,7 @@ public class ParserList {
               ,"TXTexasCity"                    ,"Texas City, TX"
               ,"TXTravisCounty"                 ,"Travis County, TX"
               ,"TXUTHealthEastTexas"            ,"UTHealth East Texas, TX"
+              ,"TXUvaldeCounty"                 ,"Uvalde County, TX"
               ,"TXVanAlstyne"                   ,"Van Alstyne, TX"
               ,"TXVanZandtCounty"               ,"Van Zandt County, TX"
               ,"TXVictoriaCounty"               ,"Victoria County, TX"

@@ -2804,6 +2804,7 @@ public class Active911ParserTable {
       "US/TX/TylerTechnologies",          "TXRefugioCounty",
       "US/TX/UMCHealth",                  "TXLubbockCountyB",
       "US/TX/VALAMB",                     "TXElPasoCounty",
+      "US/TX/Uvalde",                     "TXUvaldeCounty",
       "US/TX/VanAlstyne",                 "TXVanAlstyne",
       "US/TX/VictoriaCounty",             "TXVictoriaCounty",
       "US/TX/VillageFire",                "TXHarrisCountyB",
