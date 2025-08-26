@@ -2793,6 +2793,7 @@ public class Active911ParserTable {
       "US/TX/Spicewood",                  "TXBurnetCountyB",
       "US/TX/Stationalerting",            "TXFortBendCountyB",
       "US/TX/Strac",                      "TXBexarCountyD",
+      "US/TX/Sugarland",                  "TXHarrisCountyG,TXFortBendCountyF",
       "US/TX/SurfsideBeachPD",            "TXBrazoriaCountyB",
       "US/TN/SumnerCounty",               "TNSumnerCountyC",
       "US/TX/TarrantCounty",              "TXTarrantCountyA",
