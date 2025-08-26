@@ -28,7 +28,7 @@ public class TXBexarCountyAParser extends FieldProgramParser {
   }
 
   public String getFilter() {
-    return "visinet.command@sanantonio.gov,commcenteraustin@Acadian.com";
+    return "visinet.command@sanantonio.gov,commcenteraustin@Acadian.com,@fireguyit.com>";
   }
 
   @Override
