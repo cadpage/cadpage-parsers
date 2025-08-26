@@ -2192,7 +2192,7 @@ public class Active911ParserTable {
       "US/OR/Brookings",                  "ORCurryCounty",
       "US/OR/CityofFlorence",             "ORLaneCountyD",
       "US/OR/CityofMyrtlePoint",          "ORCoosCountyA",
-      "US/OR/CityofSalem",                "ORMarionCountyB",
+      "US/OR/CityofSalem",                "ORMarionCountyB,ORMarionCountyC",
       "US/OR/ClackamasCounty",            "ORClackamasCountyA,ORClackamasCountyD",
       "US/OR/ClatsopCounty",              "ORClatsopCounty",
       "US/OR/ColumbiaCounty",             "ORColumbiaCounty",
