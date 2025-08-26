@@ -9,31 +9,31 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class CATehamaCountyParser extends FieldProgramParser {
-  
+
   public CATehamaCountyParser() {
-    super(CITY_CODES, "TEHAMA COUNTY", "CA", 
+    super(CITY_CODES, "TEHAMA COUNTY", "CA",
           "( SELECT/RR ID CALL ADDRCITY INFO! INFO/N+ " +
-          "| CALL ADDRCITY PLACE X MAP ID CH UNIT! INFO/N+ )");
+          "| CALL ADDRCITY PLACE X MAP ( LAT:GPS1! LONG:GPS2! | ) ID CH UNIT! INFO/N+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "tgucad@fire.ca.gov";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     do {
       if (subject.equals("CAD Page")) break;
-      
+
       if (body.startsWith("CAD Page / ")) {
         body = body.substring(11).trim();
         break;
       }
-      
+
       return false;
     } while (false);
-    
+
     if (body.startsWith("CLOSE: ")) {
       body = body.substring(7).trim();
       data.msgType = MsgType.RUN_REPORT;
@@ -41,9 +41,10 @@ public class CATehamaCountyParser extends FieldProgramParser {
     } else {
       setSelectValue("");
     }
+    body = body.replace("\nInc# ", ";Inc# ");
     return parseFields(body.split(";"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -52,7 +53,7 @@ public class CATehamaCountyParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -70,13 +71,13 @@ public class CATehamaCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames();
     }
   }
-  
+
   private static final Pattern INFO_GPS_PTN = Pattern.compile("<a href=\"http://maps.google.com/\\?q=(\\d{2,3}\\.\\d{6},-\\d{2,3}\\.\\d{6})\\b.*");
   private class MyInfoField extends InfoField {
     @Override
@@ -90,22 +91,22 @@ public class CATehamaCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " GPS";
     }
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, MAP_CITY_TABLE);
   }
-  
+
   private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
       "LAKE CALIFORNIA",    "COTTONWOOD"
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANTELOPE",     "RED BLUFF",
       "CNG",          "CORNING",
