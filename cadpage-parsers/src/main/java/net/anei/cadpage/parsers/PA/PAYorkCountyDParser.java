@@ -72,7 +72,7 @@ public class PAYorkCountyDParser extends FieldProgramParser {
     if (IAR_PTN1.matcher(body).lookingAt()) {
       body = "box: " + body.replace('\n', ',');
     } else {
-      body = body.replace("=\n", " ").replace('\n', ' ').replace("cross  streets:", "cross streets:");
+      body = body.replace("=\n", "").replace('\n', ' ').replace("cross  streets:", "cross streets:");
     }
 
     if (subject.equals("WMTFD") || subject.equals("41 Wrightsville") || subject.equals("50 W Manchester")) {
