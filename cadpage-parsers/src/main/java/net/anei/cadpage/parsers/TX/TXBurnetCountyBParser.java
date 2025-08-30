@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.TX;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -9,7 +10,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
 
   public TXBurnetCountyBParser() {
     super(CITY_CODES, "BURNET COUNTY", "TX",
-          "Msg_ID:ID! SRC MAP CALL ADDRCITY UNIT! INFO/N+");
+          "Msg_ID:SKIP! SRC MAP CALL ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END");
   }
 
   @Override
@@ -27,7 +28,39 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
     if (name.equals("MAP")) return new MapField("[A-Z]+\\d+", true);
+    if (name.equals("ID")) return new IdField("[EF]\\d+", true);
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Intersection of:")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d");
+  private static final Pattern DIGIT_PTN = Pattern.compile("\\d");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (DATE_TIME_PTN.matcher(field).matches()) {
+        super.parse(field,  data);
+        return true;
+      } else {
+        field = DIGIT_PTN.matcher(field).replaceAll("N");
+        return "NN/NN/NNNN NN:NN".startsWith(field);
+      }
+
+    }
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
