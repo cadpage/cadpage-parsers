@@ -8,7 +8,7 @@ public class TNClaiborneCountyParser extends FieldProgramParser {
 
   public TNClaiborneCountyParser() {
     super("CLAIBORNE COUNTY", "TN",
-          "CFS:ID! CALL! ADDRCITYST! ( GPS! | X_PLACE GPS! | ) ( X_PLACE UNIT_TIMES! | UNIT_TIMES | PHONE? NAME FAIL Received:TIMES! ) TIMES/N+");
+          "CFS:ID! CALL! ADDRCITYST! ( GPS! | X_PLACE GPS! | ) ( X_PLACE UNIT_TIMES! | UNIT_TIMES! | X_PLACE PHONE! NAME FAIL Received:TIMES! | PHONE? NAME FAIL Received:TIMES! ) TIMES/N+");
   }
 
   @Override
@@ -17,8 +17,23 @@ public class TNClaiborneCountyParser extends FieldProgramParser {
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(" \\|{2}", -1), data);
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.startsWith("iSOMS - ")) return false;
+    subject = subject.substring(8).trim();
+    if (subject.startsWith("CAD UNIT ")) {
+      subject = subject.substring(9).trim();
+      int pt  = subject.indexOf(' ');
+      if (pt < 0) pt = subject.length();
+      data.strSource = subject.substring(0,pt);
+      subject = subject.substring(pt).trim();
+      if (subject.equals("COMPLETED-CALL")) data.msgType = MsgType.RUN_REPORT;
+    }
+    return parseFields(body.split("\n", -1), data);
+  }
+
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
   @Override
@@ -34,7 +49,10 @@ public class TNClaiborneCountyParser extends FieldProgramParser {
   private class MyCrossPlaceField extends Field {
     @Override
     public void parse(String field, Data data) {
-      if (field.contains(" / ")) {
+      if (field.startsWith("@")) {
+        data.strCross = append(data.strCross, " / ", field.substring(1).trim());
+      }
+      else if (field.contains(" / ")) {
         data.strCross = append(data.strCross, " / ", field);
       } else {
         data.strPlace = append(data.strPlace, " - ", field);
@@ -43,8 +61,7 @@ public class TNClaiborneCountyParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      // TODO Auto-generated method stub
-      return null;
+      return "PLACE X";
     }
 
   }
