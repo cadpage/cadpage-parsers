@@ -65,6 +65,7 @@ public class MIClintonCountyParser extends DispatchOSSIParser {
              "STRUCTURE FIRE|" +
              "SUICIDAL SUBJECT|" +
              "SUICIDE.*|" +
+             "TEST CALL.*|" +
              "TRAINING.*|" +
              "UNKNOWN ACCIDENT");
   private class MyCallField extends CallField {
