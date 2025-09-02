@@ -362,6 +362,7 @@ public class Active911ParserTable {
       "US/CO/CastleRockFD",               "CODouglasCountyA",
       "US/CO/CenterPD",                   "CORioGrandeCountyB",
       "US/CO/ChaffeeCountySheriff",       "COChaffeeCounty",
+      "US/CO/CheyenneMtnStPrk",           "COElPasoCountyB",
       "US/CO/CityofDurango",              "COLaPlataCounty",
       "US/CO/CityofFortCarson",           "COElPasoCountyA",
       "US/CO/CityofGolden",               "COGolden",
