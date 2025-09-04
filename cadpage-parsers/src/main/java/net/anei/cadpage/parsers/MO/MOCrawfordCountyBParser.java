@@ -10,6 +10,6 @@ public class MOCrawfordCountyBParser extends DispatchA96Parser {
 
   @Override
   public String getFilter() {
-    return "crawfordco@omnigo.com";
+    return "crawfordco@omnigo.com,@crawford911.com";
   }
 }
