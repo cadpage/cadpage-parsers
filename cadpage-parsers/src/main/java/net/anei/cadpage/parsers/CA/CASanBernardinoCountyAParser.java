@@ -1145,6 +1145,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "FR",         "Refuse Fire",
       "FS",         "Structure Fire: Residential",
       "FSL",        "Residential Fire: Low response",
+      "FSW",        "Working Structure Fire",
       "FT",         "Motorhome/Truck/Bus Fire",
       "FTF",        "Freeway Truck/Bus Fire",
       "FU",         "Unknown Type Fire",
