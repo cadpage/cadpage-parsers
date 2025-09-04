@@ -1,5 +1,8 @@
 package net.anei.cadpage.parsers.TN;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
@@ -38,12 +41,26 @@ public class TNClaiborneCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("UNIT_TIMES")) return new SkipField("Unit Times", true);
     if (name.equals("X_PLACE")) return new MyCrossPlaceField();
     if (name.equals("GPS")) return new GPSField("\\d+\\.\\d+, -\\d+\\.\\d+", true);
     if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
+  }
+
+  private static final Pattern SHORT_ZIP_PTN = Pattern.compile("(.*\\bTN) \\d{4}");
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+
+      // Fix mistyped zip code
+      Matcher match = SHORT_ZIP_PTN.matcher(field);
+      if (match.matches()) field = match.group(1);
+      super.parse(field, data);
+    }
   }
 
   private class MyCrossPlaceField extends Field {
