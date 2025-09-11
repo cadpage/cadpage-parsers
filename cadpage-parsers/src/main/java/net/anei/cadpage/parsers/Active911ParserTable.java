@@ -531,6 +531,7 @@ public class Active911ParserTable {
       "US/GA/AmeriProHealth",             "GAFultonCounty",
       "US/GA/BanksCounty",                "GABanksCounty",
       "US/GA/BarrowCounty",               "GABarrowCounty",
+      "US/GA/BerrienCounty",              "GABerrienCounty",
       "US/GA/BrooksCounty",               "GABrooksCounty",
       "US/GA/ButtsCounty",                "GAButtsCounty",
       "US/GA/CamdenCounty",               "GACamdenCountyA",

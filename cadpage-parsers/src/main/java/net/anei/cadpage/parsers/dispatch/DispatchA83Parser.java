@@ -36,9 +36,9 @@ public class DispatchA83Parser extends SmartAddressParser {
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(.*?) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) (.*?) (Case # \\d+ */.*)");
   private static final Pattern TIMES_BRK_PTN = Pattern.compile(" +/(?=[ A-Za-z]+ - )");
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:([A-Z]+) )?+(\\d+)");
-  private static final Pattern ALERT_MASTER = Pattern.compile("(?:(.*?) +)?Date Recv (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) (.*)");
-  private static final Pattern TRAIL_FROM_PTN = Pattern.compile("(.*) From : .* User Id: .*");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("(?:([A-Z]+) )?+([ 0-9]+)");
+  private static final Pattern ALERT_MASTER = Pattern.compile("(?:(.*?) +)?Date Recv (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) (.*)", Pattern.DOTALL);
+  private static final Pattern TRAIL_FROM_PTN = Pattern.compile("(.*?)\\s+From : .* User Id: .*");
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*) +http://maps.google.com/maps\\?q=(.*)");
   private static final Pattern LEAD_PLACE_PTN = Pattern.compile("(.*?) \\| (.*) \\| (.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
@@ -49,7 +49,7 @@ public class DispatchA83Parser extends SmartAddressParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     data.strSource = getOptGroup(match.group(1));
-    data.strCallId = match.group(2);
+    data.strCallId = match.group(2).trim();
 
     if ((match = RUN_REPORT_PTN.matcher(body)).matches()) {
       setFieldList("SRC ID CALL DATE TIME PLACE ADDR X APT CITY INFO");

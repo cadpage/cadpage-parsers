@@ -406,6 +406,7 @@ public class ParserList {
               ,"GAAugusta"                      ,"Augusta, GA"
               ,"GABanksCounty"                  ,"Banks County, GA"
               ,"GABarrowCounty"                 ,"Barrow County, GA"
+              ,"GABerrienCounty"                ,"Berrien County, GA"
               ,"GABrantleyCounty"               ,"Brantley County, GA"
               ,"GABrooksCounty"                 ,"Brooks County, GA"
               ,"GABullochCounty"                ,"Bulloch County, GA"
