@@ -1,34 +1,39 @@
 package net.anei.cadpage.parsers.GA;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgParser;
 
 
-public class GARabunCountyParser extends MsgParser {
-  
-  private static final Pattern MASTER = Pattern.compile("([A-Z0-9]+) dispatched: (.*) at (.*)");
+public class GARabunCountyParser extends FieldProgramParser {
  
   public GARabunCountyParser() {
-    super("RABUN COUNTY", "GA");
-    setFieldList("UNIT CALL ADDR APT");
+    super("RABUN COUNTY", "GA", 
+          "CFS_Number:ID! Incident_Type:CALL! Location_Details:PLACE! Address:ADDRCITYST! Address_Name:PLACE! Cross_Streets:X! " + 
+              "CFS_Latitude:GPS1! CFS_Longitude:GPS2! Please_respond_immediately.%EMPTY! END");
   }
   
   @Override
   public String getFilter() {
-    return "noreply@emergencycallworx.com";
+    return "no-reply@zuercherportal.com";
   }
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("E911 Run Group Dispatched Notification")) return false;
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
-    data.strUnit = match.group(1);
-    data.strCall = match.group(2).trim();
-    parseAddress(match.group(3).trim(), data);
-    return true;
+    if (subject.isEmpty()) return false;
+    return parseFields(body.split(" // "), data);
+  }
+  
+  @Override
+  public Field getField(String name) {
+    if (name.equals("PLACE")) return new MyPlaceField();
+    return super.getField(name);
+  }
+  
+  private class MyPlaceField extends PlaceField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
   }
  }
