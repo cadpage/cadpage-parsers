@@ -27,11 +27,20 @@ public class INWayneCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+  
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",");
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern APT_PFX_PTN = Pattern.compile("(?:APT|LOT|RM) *(.*)", Pattern.CASE_INSENSITIVE);
