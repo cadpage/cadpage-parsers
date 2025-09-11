@@ -18,11 +18,13 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
    * Washington County, OH
    */
 
-  private static final Pattern SUBJECT_PATTERN = Pattern.compile("CAD +Page(?: +(\\d\\d-\\d{6}))?");
-
   public OHWashingtonCountyAParser () {
     super(OH_CITY_LIST, "WASHINGTON COUNTY", "OH",
-        "( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! | ID? ADDRCITYST/S DATETIME CALL ) EMPTY? UNIT X X2 END");
+        "( CALL ADDRCITY/Z DATETIME/Z ID! SKIP END " +
+        "| ( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! " + 
+          "| ID? ADDRCITYST/S DATETIME! CALL CALL2? " + 
+          ") NAME/Z? UNIT X X2% END " +
+        ")");
     setupCities(WV_CITY_LIST);
   }
 
@@ -42,11 +44,22 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     };
   }
 
+  private static final Pattern SUBJECT_PTN = Pattern.compile("CAD +Page(?: +(\\d\\d-\\d{6}))?");
+  private static final Pattern START_PTN = Pattern.compile("(?<!\n\\d\\d?/\\d\\d?/\\d{4}, \\d\\d:\\d\\d:\\d\\d)\n\\d\\d-\\d{6}\n");
+  private static final Pattern TRAIL_ID_PTN = Pattern.compile(" CAD +Page(?: \\d\\d-\\d{6})?$");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    Matcher match = SUBJECT_PATTERN.matcher(subject);
+    Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     data.strCallId = getOptGroup(match.group(1));
+    
+    match = START_PTN.matcher(body);
+    if (match.find()) body = body.substring(match.start()+1);
+    
+    match = TRAIL_ID_PTN.matcher(body);
+    if (match.find()) body = body.substring(0,match.start()).trim();
+    
     if (!parseFields(body.split("\n"), data)) return false;
     if (! data.strCity.isEmpty() && WV_CITY_SET.contains(data.strCity.toUpperCase())) data.strState = "WV";
     return true;
@@ -64,6 +77,8 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("CALL2")) return new MyCall2Field();
+    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]{4}|\\d{2,4}|[A-Z]+\\d+|DEVDRO)\\b ?)+", true);
     if (name.equals("X2")) return new MyCross2Field();
     return super.getField(name);
   }
@@ -96,6 +111,25 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
       if (!match.matches()) abort();
       data.strDate = match.group(1);
       data.strTime = match.group(2);
+    }
+  }
+  
+  private class MyCall2Field extends CallField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+    
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!field.startsWith("-")) return false;
+      data.strCall = append(data.strCall, " ", field);
+      return true;
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
