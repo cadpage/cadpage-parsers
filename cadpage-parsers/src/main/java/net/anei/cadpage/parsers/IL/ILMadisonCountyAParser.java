@@ -9,7 +9,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
   
   public ILMadisonCountyAParser() {
     super("MADISON COUNTY", "IL", 
-          "EMPTY ( Mitchel_Fire_R&R_from_New_World_Systems%EMPTY Fire_Call_Type:CALL! Call_Address:ADDRCITY/S6 Common_Name:PLACE! Cross_Streets:X! " + 
+          "EMPTY ( NEW_SRC Fire_Call_Type:CALL! Call_Address:ADDRCITY/S6 Common_Name:PLACE! Cross_Streets:X! " + 
                       "Nature_of_Call:INFO! Narrative:EMPTY! INFO_BLK+ Call_Date/Time:DATETIME! Caller_Name:NAME! Caller_Phone_#:PHONE! Status_Times:EMPTY! TIMES+ " + 
                 "| CALL_RECEIVED_AT EMPTY CALL EMPTY " + 
                     "( SELECT/1 ( ADDRCITY/S6Z EMPTY/Z SKIP EMPTY/Z ID/Y EMPTY X EMPTY INFO EMPTY EMPTY! EMPTY? INFO_BLK+? TIMES+ " + 
@@ -59,6 +59,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("NEW_SRC")) return new SourceField("(.*?) +R&R from New World Systems", true);
     if (name.equals("CALL_RECEIVED_AT")) return new SkipField("(?i)Call Rece?ie?ved at:?", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
