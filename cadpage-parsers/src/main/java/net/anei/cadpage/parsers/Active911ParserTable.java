@@ -747,6 +747,7 @@ public class Active911ParserTable {
       "US/IL/WabashCounty",               "ILWabashCounty",
       "US/IL/WashingtonCounty",           "ILWashingtonCounty",
       "US/IL/WoodfordCounty",             "ILWoodfordCounty",
+      "US/IL/WWT",                        "ILMadisonCountyA",
       "US/IN/AdamsCounty",                "INAdamsCounty",
       "US/IN/AllenCounty",                "INAllenCounty",
       "US/IN/AmeriProHealth",             "INFloydCounty",
