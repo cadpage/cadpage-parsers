@@ -1195,6 +1195,7 @@ public class Active911ParserTable {
       "US/MD/PrintManager",               "MDAnneArundelCountyEMS2",
       "US/MD/QueenAnneHillsboro",         "MDCarolineCounty",
       "US/MD/QueenAnnesCounty",           "MDQueenAnnesCounty",
+      "US/MD/Rockville",                  "MDMontgomeryCountyD",
       "US/MD/SaintMarysCounty",           "MDSaintMarysCounty",
       "US/MD/SaintMarysCountyGov",        "MDSaintMarysCountyC",
       "US/MD/TalbotCounty",               "MDTalbotCounty",
