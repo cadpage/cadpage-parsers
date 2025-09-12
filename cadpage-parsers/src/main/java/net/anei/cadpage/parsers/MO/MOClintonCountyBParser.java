@@ -18,4 +18,10 @@ public class MOClintonCountyBParser extends DispatchBCParser {
   public String getFilter() {
     return "DISPATCH@CAMERONMO.COM,DISPATCH@MAIL.PUBLICSAFETYSOFTWARE.NET,DISPATCH@OMNIGO.COM";
   }
+  
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("UNK")) return "";
+    return city;
+  }
 }

@@ -55,8 +55,11 @@ public class MOClintonCountyAParser extends MsgParser {
         data.strState = match.group(1);
         city = p.getLastOptional(',');
       }
-      parseAddress(p.get(), data);
-      data.strCity = city;
+      if (!city.startsWith("-")) {
+        addr = p.get();
+        data.strCity = city;
+      }
+      parseAddress(addr, data);
     }
     
     for (int j = 1; j < parts.length; j++) {

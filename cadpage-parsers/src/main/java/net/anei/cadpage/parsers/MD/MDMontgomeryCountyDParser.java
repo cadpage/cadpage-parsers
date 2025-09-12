@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MDMontgomeryCountyDParser extends FieldProgramParser {
   
@@ -16,8 +17,17 @@ public class MDMontgomeryCountyDParser extends FieldProgramParser {
   
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
     return super.getField(name);
+  }
+  
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ", USA");
+      super.parse(field, data);
+    }
   }
 
 }
