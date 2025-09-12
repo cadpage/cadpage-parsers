@@ -15,7 +15,7 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
 
   public TXHarrisCountyGParser(String defCity, String defState) {
     super(TXHarrisCountyParser.CITY_LIST, defCity, defState,
-          "CAD#:ID! Call:CALL! UNIT:UNIT? ADDR:ADDRCITYST/S! INFO/N+");
+          "CAD#:ID! Call:CALL! UNIT ADDR:ADDRCITYST/S! INFO/N+");
     setupCities(MISSPELLED_CITIES);
   }
 
@@ -54,12 +54,21 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
+  
+  private static final Pattern UNIT_PTN = Pattern.compile("Call Sign: *(\\S+)");
 
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace(' ', ',').replace("UNIT:", "");
-      super.parse(field, data);
+      if (field.startsWith("UNIT:")) {
+        field = field.replace(' ', ',').replace("UNIT:", "");
+        super.parse(field, data);
+      } else {
+        Matcher match = UNIT_PTN.matcher(field);
+        while (match.find()) {
+          data.strUnit = append(data.strUnit, ",", match.group(1));
+        }
+      }
     }
   }
 
