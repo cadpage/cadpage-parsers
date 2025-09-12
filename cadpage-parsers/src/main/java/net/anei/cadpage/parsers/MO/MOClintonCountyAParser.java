@@ -10,7 +10,11 @@ import net.anei.cadpage.parsers.MsgParser;
 public class MOClintonCountyAParser extends MsgParser {
   
   public MOClintonCountyAParser() {
-    super("CLINTON COUNTY", "MO");
+    this("CLINTON COUNTY", "MO");
+  }
+  
+  protected MOClintonCountyAParser(String defCity, String defState) {
+    super(defCity, defState);
     setFieldList("CALL CODE ADDR APT CITY ST PLACE INFO");
   }
   
@@ -20,13 +24,12 @@ public class MOClintonCountyAParser extends MsgParser {
   }
   
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]+\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
-  private static final Pattern MASTER = Pattern.compile("(?:([A-Z]+) )?None +(.*)");
+  private static final Pattern MASTER = Pattern.compile("(?:([A-Z]+) )?None\\b *(.*)");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
   
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     
-    if (subject.isEmpty()) return false;
     data.strCall = subject;
     
     String[] parts = INFO_BRK_PTN.split(body);
@@ -36,26 +39,32 @@ public class MOClintonCountyAParser extends MsgParser {
     if (!match.matches()) return false;
     data.strCode = getOptGroup(match.group(1));
     body =  match.group(2);
-    
-    String addr;
-    int brk = findDuplicate(body);
-    if (brk >= 0) {
-      addr = body.substring(0, brk).trim();
-      data.strPlace = body.substring(brk+addr.length()).trim();
-    } else return false;
-    
-    Parser p = new Parser(addr);
-    String city = p.getLastOptional(',');
-    match = ST_ZIP_PTN.matcher(city);
-    if (match.matches()) {
-      data.strState = match.group(1);
-      city = p.getLastOptional(',');
+
+    if (!body.isEmpty()) {
+      String addr;
+      int brk = findDuplicate(body);
+      if (brk >= 0) {
+        addr = body.substring(0, brk).trim();
+        data.strPlace = body.substring(brk+addr.length()).trim();
+      } else return false;
+      
+      Parser p = new Parser(addr);
+      String city = p.getLastOptional(',');
+      match = ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        data.strState = match.group(1);
+        city = p.getLastOptional(',');
+      }
+      parseAddress(p.get(), data);
+      data.strCity = city;
     }
-    parseAddress(p.get(), data);
-    data.strCity = city;
     
     for (int j = 1; j < parts.length; j++) {
-      data.strSupp = append(data.strSupp, "\n", parts[j]);
+      if (data.strCall.isEmpty()) {
+        data.strCall = parts[j];
+      } else {
+        data.strSupp = append(data.strSupp, "\n", parts[j]);
+      }
     }
     return true;
   }

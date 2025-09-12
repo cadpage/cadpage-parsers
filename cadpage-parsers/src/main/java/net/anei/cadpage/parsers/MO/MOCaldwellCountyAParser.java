@@ -11,7 +11,7 @@ public class MOCaldwellCountyAParser extends DispatchBCParser {
   
   @Override
   public String getFilter() {
-    return "CALDWELL003@CALDWELLCO.MISSOURI.ORG,DISPATCH@PUBLICSAFETYSOFTWARE.NET,DISPATCH@OMNIGO.COM,CALDWELLSHERIFF@OMNIGO.COM";
+    return "DISPATCH@OMNIGO.COM";
   }
 
   @Override
