@@ -17,7 +17,7 @@ public class INCassCountyParser extends DispatchA29Parser {
 
   @Override
   public String getFilter() {
-    return "e911.pagegate@co.cass.in.us";
+    return "e911.pagegate@co.cass.in.us,@public-safety-cloud.com";
   }
 
   private static final Pattern MARKER = Pattern.compile("\\S+\\s+DISPATCH\\s+");

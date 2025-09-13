@@ -14,7 +14,7 @@ public class GAPierceCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "pierce.ga@ez911map.net";
+    return "pierce.ga@ez911map.net,pierce.ga@ryzyliant.com";
   }
 
   @Override

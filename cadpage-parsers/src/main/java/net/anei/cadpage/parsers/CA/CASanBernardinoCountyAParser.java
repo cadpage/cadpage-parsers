@@ -1527,6 +1527,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "LAR",        "LAR Lg Anml Rq",
       "LAW",        "Law Enforcement Assist",
       "Law Enforce","Law Enforcement Assist",
+      "LK-DRWN",    "Lake Drowning",
       "Loma",       "Loma",
       "MA",         "Medical Aid",
       "MCI",        "Multi-Casualty Incident",
