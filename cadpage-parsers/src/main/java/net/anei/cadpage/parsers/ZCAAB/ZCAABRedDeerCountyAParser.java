@@ -35,14 +35,14 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_CR_CRES;
   }
 
+  private static final Pattern NOT_SRC_PTN = Pattern.compile("CAD Message|Incident Message|.*\\d.*");
   private static final Pattern JUNK_PTN = Pattern.compile("\n(?:You have received|NOTICE -|This communication) ");
   private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?) +RURAL(?: AREA)?", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("CAD Message") && !subject.endsWith("Incident Message")) {
-      data.strSource = subject;
-    }
+
+    if (!NOT_SRC_PTN.matcher(subject).matches()) data.strSource = subject;
 
     if (body.startsWith("Sender:")) {
       int pt = body.indexOf("Message:");

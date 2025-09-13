@@ -107,8 +107,9 @@ public class DispatchA51Parser extends FieldProgramParser {
   }
 
   private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
-  private static Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)");
-  private static Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
+  private static final Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)(?: +[A-Z]\\d[A-Z] \\d[A-Z]\\d)?");
+  private static final Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
+  private static final Pattern APT_CITY_PTN = Pattern.compile("(\\d+[A-Z]?|[A-Z]) +(.*)");
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -138,6 +139,11 @@ public class DispatchA51Parser extends FieldProgramParser {
       if (city.startsWith("Unit ")) {
         data.strApt = city.substring(5).trim();
         city = p.getLastOptional(',');
+      }
+      match = APT_CITY_PTN.matcher(city);
+      if (match.matches()) {
+        data.strApt = append(match.group(1), "-", data.strApt);
+        city = match.group(2);
       }
       data.strCity = city;
 
