@@ -20,6 +20,7 @@ public class ILMadisonCountyAParser extends DispatchH05Parser {
                     ") " +
                 ") EMPTY+? END");
     setPreserveWhitespace(true);
+    setAccumulateUnits(true);
   }
   
   @Override
