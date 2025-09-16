@@ -6,16 +6,16 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class PAChesterCountyPParser extends PAChesterCountyBaseParser {
-  
+
   public PAChesterCountyPParser() {
     super("LOCATION:ADDR! XST:X! TYPE:CALL! DATE:DATETIME! DG:CH! LOC_INFO:PLACE END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "desipage@chesco.org";
+    return "desipage@chesco.org,no-reply@cadnetcc.net";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("DES Page Notification")) return false;
@@ -29,14 +29,14 @@ public class PAChesterCountyPParser extends PAChesterCountyBaseParser {
     if (data.strCross.equals("&")) data.strCross = "";
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*?) *\\b([A-Z]+) (?:CHEST|BERKS|CECIL|DELAW|LANCA|MONTG|NEWCA) (DE|MD|PA):?");
   private class MyAddressField extends AddressField {
     @Override
@@ -52,10 +52,10 @@ public class PAChesterCountyPParser extends PAChesterCountyBaseParser {
         data.strCity = convertCodes(match.group(2), CITY_CODES);
         data.strState = match.group(3);
       }
-      
+
       parseAddress(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY ST PLACE";
