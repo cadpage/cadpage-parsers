@@ -10,6 +10,11 @@ public class GAMillerCountyParser extends DispatchA83Parser {
     addInvalidWords("ENTRY", "YEAR", "YEARS");
   }
 
+  @Override
+  public String getFilter() {
+    return "millerbaker.ga@ez911map.net,millerbaker.ga@ez911map.net";
+  }
+
   private static final String[] CITY_LIST = new String[] {
       // City
       "COLQUITT",
