@@ -13,7 +13,7 @@ public class ORGrantCountyParser extends DispatchA85Parser {
 
   @Override
   public String getFilter() {
-    return "DispatchText@grantcounty-or.gov";
+    return "DispatchText@grantcounty-or.gov,grant911@jcx.us";
   }
 
   private static final Pattern USFS_PTN = Pattern.compile("\\bUSFS(?: RD)?\\b");
