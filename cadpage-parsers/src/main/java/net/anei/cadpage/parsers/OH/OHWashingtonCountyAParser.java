@@ -21,9 +21,10 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   public OHWashingtonCountyAParser () {
     super(OH_CITY_LIST, "WASHINGTON COUNTY", "OH",
         "( CALL ADDRCITY/Z DATETIME/Z ID! SKIP END " +
-        "| ( CALL EMPTY ADDRCITYST/S EMPTY ( EMPTY EMPTY EMPTY | ) DATE TIME EMPTY SRC! " + 
-          "| ID? ADDRCITYST/S DATETIME! CALL CALL2? " + 
-          ") NAME/Z? UNIT X X2% END " +
+        "| ( ID? ( ADDRCITYST/ZS DATETIME! CALL CALL2? " +
+                "| CALL ADDRCITY/S DATETIME CALL/SDS " +
+                ") " +
+          ") INFO/N+? ( NAME/Z UNIT | UNIT | EMPTY EMPTY? ) X X2% END " +
         ")");
     setupCities(WV_CITY_LIST);
   }
@@ -53,13 +54,13 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (!match.matches()) return false;
     data.strCallId = getOptGroup(match.group(1));
-    
+
     match = START_PTN.matcher(body);
     if (match.find()) body = body.substring(match.start()+1);
-    
+
     match = TRAIL_ID_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start()).trim();
-    
+
     if (!parseFields(body.split("\n"), data)) return false;
     if (! data.strCity.isEmpty() && WV_CITY_SET.contains(data.strCity.toUpperCase())) data.strState = "WV";
     return true;
@@ -78,7 +79,7 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("CALL2")) return new MyCall2Field();
-    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]{4}|\\d{2,4}|[A-Z]+\\d+|DEVDRO)\\b ?)+", true);
+    if (name.equals("UNIT")) return new UnitField("(?:(?:[A-Z]{4}|\\d{2,4}|[A-Z]+\\d+|DEVDRO|MFD)\\b ?)+", true);
     if (name.equals("X2")) return new MyCross2Field();
     return super.getField(name);
   }
@@ -106,27 +107,38 @@ public class OHWashingtonCountyAParser extends FieldProgramParser {
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4})[, ]*(\\d\\d:\\d\\d:\\d\\d)");
   private class MyDateTimeField extends DateTimeField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
       Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
+      if (!match.matches()) return false;
       data.strDate = match.group(1);
       data.strTime = match.group(2);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
-  
+
   private class MyCall2Field extends CallField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (!field.startsWith("-")) return false;
       data.strCall = append(data.strCall, " ", field);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
