@@ -10,7 +10,7 @@ public class KSGreeleyCountyParser extends DispatchA25Parser {
 
   @Override
   public String getFilter() {
-    return "alerts@fairpoint.net";
+    return "alerts@fairpoint.net,@greeleyso.org";
   }
 
 }
