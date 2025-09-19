@@ -56,7 +56,7 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
 
   public MDBaltimoreCountyBParser() {
     super("BALTIMORE COUNTY", "MD",
-           "BOX:MAP CALL:CALL! ADDR:ADDR/S6! PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
+           "BOX:MAP CALL:CALL! ADDR:ADDR/S6! APT:APT PL:PLACE UNIT:UNIT! INFO:INFO DATE:DATE TIME:TIME ID:ID%");
     runRptTable = new RunReportEntry[] {
       new RunReportEntry("b ", "MAP"),
       new RunReportEntry(" cc# ", "ID"),
