@@ -10,8 +10,9 @@ public class VACampbellCountyCParser extends FieldProgramParser {
   public VACampbellCountyCParser() {
     super("CAMPBELL COUNTY", "VA",
           "( PFX EMPTY! CALL/SDS DATETIME ID EMPTY PLACE ADDRCITYST " +
-          "| CALL/SDS DATETIME ID UNIT SKIP EMPTY PLACE ADDRCITYST X GPS NAME PHONE " +
+          "| CALL/SDS DATETIME ID UNIT SKIP EMPTY PLACE ADDRCITYST ( X/Z GPS | GPS | X? ) NAME PHONE " +
           ") EMPTY INFO EMPTY! EMPTY+? END");
+    removeWords("UNKNOWN");
   }
 
   @Override
@@ -34,6 +35,7 @@ public class VACampbellCountyCParser extends FieldProgramParser {
     if (name.equals("PFX")) return new CallField("\\*{3,} *(.*?) *\\*{3,}", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d", true);
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("GPS")) return new GPSField("[-+]?\\d{2}\\.\\d{6,} [-+]?\\d{2}\\.\\d{6,}", true);
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
