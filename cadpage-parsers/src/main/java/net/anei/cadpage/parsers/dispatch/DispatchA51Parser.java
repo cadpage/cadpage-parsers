@@ -108,6 +108,7 @@ public class DispatchA51Parser extends FieldProgramParser {
 
   private static final Pattern TRAIL_SEMI_PTN = Pattern.compile("(.*?)[; ]+");
   private static final Pattern STATE_CODE_PTN = Pattern.compile("(.*?)[, ]+(AB|BC)(?: +[A-Z]\\d[A-Z] \\d[A-Z]\\d)?");
+  private static final Pattern LEAD_APT_PTN = Pattern.compile("(\\d{1,3}[A-Z]?), *(.*)");
   private static final Pattern APT_PTN = Pattern.compile("(?:Unit |#) *([^, ]+)[- ,]*(.*)");
   private static final Pattern APT_CITY_PTN = Pattern.compile("(\\d+[A-Z]?|[A-Z]) +(.*)");
   private class BaseAddressCityField extends AddressCityField {
@@ -133,6 +134,11 @@ public class DispatchA51Parser extends FieldProgramParser {
       if (match.matches()) {
         field = match.group(1);
         data.strState = match.group(2);
+      }
+      match = LEAD_APT_PTN.matcher(field);
+      if (match.matches()) {
+        apt = match.group(1);
+        field = match.group(2);
       }
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
