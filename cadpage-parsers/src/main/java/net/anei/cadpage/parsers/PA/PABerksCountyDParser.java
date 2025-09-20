@@ -11,12 +11,12 @@ public class PABerksCountyDParser extends FieldProgramParser {
 
   public PABerksCountyDParser() {
     super("BERKS COUNTY", "PA",
-          "Type:CALL! Add:ADDRCITY! X-Sts:X? INFO/N+ NOC:CALL/SDS? Unit:UNIT% DATETIMEGPS% GPS? END");
+          "Type:CALL! Add:ADDRCITY! X-Sts:X? NOC:INFO Unit:UNIT% DATETIMEGPS% GPS? END");
   }
 
   @Override
   public String getFilter() {
-    return "berksalert@countyofberks.com,noreply@everbridge.net,89361,89362,99538";
+    return "berksalert@countyofberks.com,noreply@everbridge.net,87844,89361,89362,99538";
   }
 
   @Override
@@ -26,6 +26,7 @@ public class PABerksCountyDParser extends FieldProgramParser {
 
   private static final Pattern OPT_MARKER_PTN = Pattern.compile("(Berks County DES|CAD Incident Page): +");
   private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?<!\n)(Add:|NOC:|X-Sts:|Unit:)");
+  private static final Pattern TRAIL_URL_PTN = Pattern.compile("\\s+(https:.*)$");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -37,12 +38,12 @@ public class PABerksCountyDParser extends FieldProgramParser {
       body = MISSING_BRK_PTN.matcher(body).replaceAll("\n$1");
     }
 
-    int pt = body.indexOf("\nhttps:");
-    if (pt >= 0) {
-      data.strInfoURL = body.substring(pt+1);
-      body = body.substring(0,pt).trim();
+    match = TRAIL_URL_PTN.matcher(body);
+    if (match.find()) {
+    int pt = body.indexOf("\\bhttps:");
+      data.strInfoURL = match.group(1);
+      body = body.substring(0, match.start());
     }
-
     body = stripFieldEnd(body, "...");
 
     if (!subject.equals("Incident")) return false;
