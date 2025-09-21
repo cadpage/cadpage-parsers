@@ -9,13 +9,13 @@ public class DispatchA95Parser extends FieldProgramParser {
 
   public DispatchA95Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS_Number:ID! Incident_Type:SKIP! Caller:NAME? Dispatcher:SKIP? Call_Time:DATETIME! Call_Location:ADDRCITYST! ( Location_Details:INFO! Address:SKIP! Address_Name:PLACE! | ) ( Responding_Units:UNIT! | Responding_Agencies:UNIT! ) Details:INFO! ( END | Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Hazmat_Alert:ALERT END )");
+          "CFS_Number:ID! Incident_Type:SKIP! Caller:NAME? Dispatcher:SKIP? Call_Time:DATETIME? Call_Location:ADDRCITYST! ( Location_Details:INFO! Address:SKIP! Address_Name:PLACE! | ) ( Responding_Units:UNIT! | Responding_Agencies:UNIT! ) Details:INFO! ( END | Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! Hazmat_Alert:ALERT END )");
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
-    body = stripFieldStart(body, " Please respond immediately.");
+    body = stripFieldEnd(body, " Please respond immediately.");
     if (!super.parseMsg(body, data)) return false;
     data.strCity = data.strCity.replace(".", "");
     return true;

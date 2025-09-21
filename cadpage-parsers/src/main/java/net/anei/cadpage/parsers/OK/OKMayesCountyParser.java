@@ -1,44 +1,16 @@
 package net.anei.cadpage.parsers.OK;
 
-import net.anei.cadpage.parsers.dispatch.DispatchEmergitechParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA95Parser;
 
 
-public class OKMayesCountyParser extends DispatchEmergitechParser {
-  
+public class OKMayesCountyParser extends DispatchA95Parser {
+
   public OKMayesCountyParser() {
-    super("MayesCounty911:", CITY_LIST, "MAYES COUNTY", "OK", TrailAddrType.INFO);
+    super("MAYES COUNTY", "OK");
   }
 
   @Override
   public String getFilter() {
-    return "MayesCounty911@active911.com";
+    return "911@mayes.okcounties.org";
   }
-  
-  private static final String[] CITY_LIST = new String[]{
-
-    "ADAIR",
-    "CHOUTEAU",
-    "DISNEY",
-    "GRAND LAKE TOWNE",
-    "HOOT OWL",
-    "LANGLEY",
-    "LOCUST GROVE",
-    "PENSACOLA",
-    "PRYOR",
-    "SALINA",
-    "SPAVINAW",
-    "SPORTSMEN ACRES",
-    "STRANG",
-
-    // Unincorporated community
-    "ROSE",
-
-    // Census Designated Places (CDPs)
-    "BALLOU",
-    "CEDAR CREST",
-    "IRON POST",
-    
-    // Counties
-    "MAYES COUNTY"
-  };
 }
