@@ -1,112 +1,56 @@
 package net.anei.cadpage.parsers.KS;
 
-import net.anei.cadpage.parsers.CodeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchGlobalDispatchParser;
 
 
-
-public class KSAndoverParser extends DispatchGlobalDispatchParser {
+public class KSAndoverParser extends FieldProgramParser {
 
   public KSAndoverParser() {
-    super("ANDOVER", "KS");
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(
-        "BLACK LOCUST",
-        "CEDAR RIDGE",
-        "HARVEST RIDGE",
-        "HEATHER LAKE",
-        "KERRY LYNN",
-        "PINE VIEW",
-        "PRAIRIE CREEK",
-        "SANTA FE LAKE",
-        "SHADOW ROCK",
-        "WAGON WHEEL"
-    );
+    super("ANDOVER", "KS",
+          "CALL ADDRCITYST PLACE! ( Call_Details:INFO! INFO/N+? GPS1 GPS2! X/Z! CAD#:ID! Call_Time:DATETIME! " +
+                                 "| INFO/N+? GPS1 GPS2 X/Z ID/Z DATETIME! ) EMPTY! END");
   }
 
   @Override
   public String getFilter() {
-    return "DispatchMail@andoverks.com,@andoverks.gov";
+    return "noreply@andoverks.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
 
-    if(!subject.equals("CAD Call")) return false;
-
-    body = body.replace('\n', ' ');
-    if (!super.parseMsg(subject, body, data)) return false;
-
-    if (data.strCity.endsWith(" KS")) {
-      data.strCity = data.strCity.substring(0,data.strCity.length()-3).trim();
-    }
-    return true;
+    if (subject.isEmpty() || !body.startsWith(subject)) return false;
+    return parseFields(body.split(";", -1), data);
   }
 
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "911 OPEN LINE/HANG-UP",
-      "ALARM - ENTRY",
-      "ALARM - HOLD-UP",
-      "ANIMAL - AT LARGE",
-      "ANIMAL - NEGLECT",
-      "ANIMAL - NOISE",
-      "ANIMAL - POUND CHECK",
-      "ASSAULT - THREAT",
-      "ASSIST - CITIZEN",
-      "ASSIST - LAW ENFORCEMENT",
-      "BLDG CHECK/OPEN DOOR",
-      "CHECK WELFARE",
-      "CIVIL MATTER",
-      "CODE COMPLIANCE",
-      "DISTURBANCE - DOMESTIC VIOLENCE",
-      "DISTURBANCE - OTHER",
-      "DISTURBANCE - PHYSICAL",
-      "DISTURBANCE - VERBAL",
-      "DOCUMENTATION",
-      "FIRE - AIRCRAFT EMERGENCY",
-      "FIRE - ALARM COMMERCIAL",
-      "FIRE - ALARM RESIDENTIAL",
-      "FIRE - BRUSH/GRASS FIRE",
-      "FIRE - BUILDING FIRE RESIDENTIAL",
-      "FIRE - CHECK A FIRE THAT IS OUT",
-      "FIRE - CHECK ELEC WIRING/APPLIANCE",
-      "FIRE - CO DETECTOR ACTIVATION",
-      "FIRE - FUEL WASH DOWN",
-      "FIRE - HAZ-MAT RESPONSE",
-      "FIRE - LANDING ZONE",
-      "FIRE - MEDICAL RESPONSE",
-      "FIRE - NATURAL GAS ODOR",
-      "FIRE - POWER LINES DOWN/ARCING",
-      "FIRE - PUBLIC ASSIST",
-      "FIRE - RESCUE RESPONSE",
-      "FIRE - SMOKE CHECK OUTSIDE",
-      "FIRE - SMOKE DETECTOR ACTIVATION",
-      "FIRE - TRASH FIRE/RUBBISH",
-      "FIRE - VEHICLE FIRE",
-      "FRAUD/FORGERY - REPORT",
-      "HARASS BY PHONE",
-      "JUVENILE COMPLAINT",
-      "LITTERING/TRASH",
-      "MISSING PERSON - RUNAWAY",
-      "MVA - INJURY",
-      "MVA - NON-INJURY",
-      "MVA - PEDESTRIAN",
-      "NOISE COMPLAINT",
-      "OTHER - NOT CLASSIFIED",
-      "PROPERTY - FOUND",
-      "PROPERTY - LOST",
-      "SECURITY CHECK",
-      "SUICIDE THREAT/ATTEMPT",
-      "SUSPICIOUS ACTIVITY",
-      "SUSPICIOUS - PERSON",
-      "SUSPICIOUS - VEHICLE",
-      "THEFT - REPORT",
-      "TRAFFIC - ABANDONED VEH",
-      "TRAFFIC - ASSIST",
-      "TRAFFIC - COMPLAINT",
-      "TRAFFIC - LOCKOUT",
-      "TRAFFIC - PARKING COMPLAINT",
-      "TRAFFIC - STOP"
-  );
+  @Override
+  public Field getField(String name) {
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new IdField("\\d+", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    return super.getField(name);
+  }
+
+  private static final Pattern INFO_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *(.*)");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      Matcher match = INFO_PTN.matcher(field);
+      if (match.matches()) {
+        data.strSupp = append(data.strSupp, "\n", match.group(1));
+      } else {
+        data.strSupp = append(data.strSupp, "; ", field);
+      }
+    }
+  }
 }
