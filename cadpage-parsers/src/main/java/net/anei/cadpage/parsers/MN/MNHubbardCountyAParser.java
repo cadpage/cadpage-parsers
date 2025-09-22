@@ -6,9 +6,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA43Parser;
 
 public class MNHubbardCountyAParser extends DispatchA43Parser {
-  
+
   public MNHubbardCountyAParser() {
     super("HUBBARD COUNTY", "MN");
+  }
+
+  public MNHubbardCountyAParser(String defCity, String defState) {
+    super(defCity, defState);
   }
 
   private static final Pattern DIR_OF_HWY = Pattern.compile(".*\\b(?:NORTH|SOUTH|EAST|WEST) (?:OF )?HWY");
@@ -21,6 +25,6 @@ public class MNHubbardCountyAParser extends DispatchA43Parser {
     }
     return true;
   }
-  
-  
+
+
 }
