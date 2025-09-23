@@ -24,7 +24,7 @@ public class NYOnondagaCountyCParser extends DispatchA8Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\t', ' ');
-    body = (body + ' ').replace(" NL ", " ** ").trim();
+    body = (body + ' ').replace("ASAP ** ", "ASAP *** ").replace(" NL ", " ** ").trim();
     return super.parseMsg(body, data);
   }
 

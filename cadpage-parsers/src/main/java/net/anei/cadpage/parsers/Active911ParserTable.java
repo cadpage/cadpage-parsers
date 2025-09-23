@@ -2151,7 +2151,7 @@ public class Active911ParserTable {
       "US/OH/TheBeachWaterpark",          "OHWarrenCountyD",
       "US/OH/TrumbullCounty",             "OHTrumbullCounty",
       "US/OH/UnionCounty",                "OHUnionCounty,OHMadisonCounty,OHCrawfordCounty",
-      "US/OH/UnionTWP",                   "OHClermontCountyC,OHClermontCountyD",
+      "US/OH/UnionTWP",                   "OHClermontCountyB,OHClermontCountyC,OHClermontCountyD",
       "US/OH/Vzwpix",                     "OHCuyahogaCountyD",
       "US/OH/WaltonHills",                "OHCuyahogaCountyA",
       "US/OH/WarCOG",                     "OHAshlandCountyB",
