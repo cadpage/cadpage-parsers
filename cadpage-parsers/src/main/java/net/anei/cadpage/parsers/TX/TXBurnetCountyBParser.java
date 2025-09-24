@@ -15,7 +15,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "support@toimagine.com";
+    return "support@toimagine.com,@marblefallstx.gov";
   }
 
   @Override
