@@ -20,7 +20,7 @@ public class LAStTammanyParishAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "stfpd1@stfpd1.dapage.net,alerts@pssalerts.info";
+    return "stfpd1@stfpd1.dapage.net,alerts@pssalerts.info,alerts@tangi911alerts.net";
   }
 
   @Override
