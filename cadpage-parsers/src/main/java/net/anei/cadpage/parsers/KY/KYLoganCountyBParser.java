@@ -10,7 +10,7 @@ public class KYLoganCountyBParser extends DispatchA27Parser {
 
   @Override
   public  String getFilter() {
-    return "noreply@cis.com,noreply@cisusa.org,cis@logantele.com";
+    return "noreply@cis.com,noreply@cisusa.org,cis@logantele.com,cis@logancountyky.gov";
   }
 
   @Override
