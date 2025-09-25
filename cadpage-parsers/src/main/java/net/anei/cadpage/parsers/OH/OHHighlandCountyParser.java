@@ -17,7 +17,7 @@ public class OHHighlandCountyParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "centralsquare@highlandcoso.com";
+    return "centralsquare@highlandcoso.com,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]+\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
