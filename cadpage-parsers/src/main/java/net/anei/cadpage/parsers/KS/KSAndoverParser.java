@@ -11,7 +11,7 @@ public class KSAndoverParser extends FieldProgramParser {
 
   public KSAndoverParser() {
     super("ANDOVER", "KS",
-          "CALL ADDRCITYST PLACE! ( Call_Details:INFO! INFO/N+? GPS1 GPS2! X/Z! CAD#:ID! Call_Time:DATETIME! " +
+          "CALL ADDRCITYST PLACE! ( Call_Details:INFO! INFO/N+? GPS1 GPS2! X/Z! CAD#:ID! Call_Time:DATETIME! ID2/L? " +
                                  "| INFO/N+? GPS1 GPS2 X/Z ID/Z DATETIME! ) EMPTY! END");
   }
 
@@ -37,6 +37,7 @@ public class KSAndoverParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("\\d+", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("ID2")) return new IdField("[A-Z]{1,4}\\d\\d-\\d{5}", true);
     return super.getField(name);
   }
 
