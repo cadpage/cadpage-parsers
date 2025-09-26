@@ -471,6 +471,7 @@ public class ParserList {
               ,"GASchleyCounty"                 ,"Schley County, GA"
               ,"GASeminoleCounty"               ,"Seminole County, GA"
               ,"GASmyrna"                       ,"Smyrna, GA"
+              ,"GASpaldingCounty"               ,"Spalding County, GA"
               ,"GAStephensCounty"               ,"Stephens County, GA"
               ,"GAStewartCounty"                ,"Stewart County, GA"
               ,"GASumterCounty"                 ,"Sumter County, GA"

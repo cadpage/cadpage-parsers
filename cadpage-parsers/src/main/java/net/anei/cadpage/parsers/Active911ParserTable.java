@@ -595,6 +595,8 @@ public class Active911ParserTable {
       "US/GA/RabunCounty",                "GARabunCounty",
       "US/GA/SeminoleCounty",             "GASeminoleCounty",
       "US/GA/SouthsideFire",              "GAChathamCountyA",
+      "US/GA/SpaldingCounty",             "GASpaldingCounty",
+      "US/GA/SpaldingFD",                 "GASpaldingCounty",
       "US/GA/StephensCounty",             "GAStephensCounty",
       "US/GA/SumterCounty",               "GASumterCounty,GAMaconCountyB",
       "US/GA/TalbotCounty",               "GATalbotCounty",
