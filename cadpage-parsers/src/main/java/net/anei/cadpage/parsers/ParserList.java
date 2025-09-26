@@ -1652,6 +1652,7 @@ public class ParserList {
               ,"SDCorsonCounty"                 ,"Corson County, SD"
               ,"SDDeweyCounty"                  ,"Dewey County, SD"
               ,"SDEdmundsCounty"                ,"Edmunds County, SD"
+              ,"SDHutchinsonCounty"             ,"Hutchinson County, SD"
               ,"SDLincolnCounty"                ,"Lincoln County, SD"
               ,"SDMcCookCounty"                 ,"McCook County, SD"
               ,"SDMcPhersonCounty"              ,"McPherson County, SD"
