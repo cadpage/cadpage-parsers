@@ -1161,8 +1161,8 @@ public class ParserList {
               ,"NECusterCounty"                 ,"Custer County, NE"
               ,"NEGrandIsland"                  ,"Grand Island, NE"
               ,"NEJohnsonCounty"                ,"Johnson County, NE"
-
               ,"NEMadisonCounty"                ,"Madison County, NE"
+              ,"NESarpyCounty"                  ,"Sarpy County, NE"
           ),
           new ParserCategory("Nevada"
               ,"NVCarsonCity"                   ,"Carson City, NV"
