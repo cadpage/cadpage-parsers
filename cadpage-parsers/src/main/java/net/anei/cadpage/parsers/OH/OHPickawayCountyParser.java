@@ -9,6 +9,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class OHPickawayCountyParser extends GroupBestParser {
 
   public OHPickawayCountyParser() {
-    super(new OHPickawayCountyAParser(), new OHPickawayCountyBParser());
+    super(new OHPickawayCountyAParser(),
+          new OHPickawayCountyBParser(),
+          new OHPickawayCountyCParser());
   }
 }
