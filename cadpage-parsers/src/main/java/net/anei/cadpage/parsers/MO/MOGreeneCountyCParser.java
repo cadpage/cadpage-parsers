@@ -10,7 +10,7 @@ public class MOGreeneCountyCParser extends HtmlProgramParser {
 
   public MOGreeneCountyCParser() {
     super("GREENE COUNTY", "MO",
-          "Call:CALL/SDS! Address:ADDRCITY! Coordinates:GPS! Address_Comment:COMMENT! Resource:MAP! Response:PRI! Notes:INFO! INFO/N+");
+          "Call:CALL/SDS! Address:ADDRCITYST! Coordinates:GPS! Address_Comment:COMMENT! Resource:MAP! Response:PRI! Notes:INFO! INFO/N+");
   }
 
   @Override
@@ -34,13 +34,13 @@ public class MOGreeneCountyCParser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("COMMENT")) return new MyCommentField();
     return super.getField(name);
   }
 
-  private static final Pattern ZIP_CITY_PTN = Pattern.compile("\\d{5} +(.*)");
-  private class MyAddressCityField extends AddressCityField {
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("\\d{5}(?:-\\d{4})? +(.*)");
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       saveAddress = field;

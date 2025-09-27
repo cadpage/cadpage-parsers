@@ -23,7 +23,7 @@ public class DispatchA95Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
-    body = stripFieldEnd(body, " Please respond immediately.");
+    body = stripFieldEnd(body, "Please respond immediately.");
     times = "";
     if (!super.parseMsg(body, data)) return false;
     data.strCity = data.strCity.replace(".", "");
