@@ -17,7 +17,7 @@ public class ORHoodRiverCountyParser extends DispatchA22Parser {
 
   @Override
   public String getFilter() {
-    return "hr911paging@co.hood-river.or.us,hr911paging@mail.hoodrivercounty.gov";
+    return "hr911paging@co.hood-river.or.us,hr911paging@mail.hoodrivercounty.gov,hr911paging@hoodriversheriff.com";
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
