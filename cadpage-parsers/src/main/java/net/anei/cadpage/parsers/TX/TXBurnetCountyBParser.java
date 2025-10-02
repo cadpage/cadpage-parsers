@@ -27,7 +27,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
-    if (name.equals("MAP")) return new MapField("[A-Z]+\\d+", true);
+    if (name.equals("MAP")) return new MapField("[A-Z]+\\d+[A-Z]?", true);
     if (name.equals("ID")) return new IdField("[EF]\\d+", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
