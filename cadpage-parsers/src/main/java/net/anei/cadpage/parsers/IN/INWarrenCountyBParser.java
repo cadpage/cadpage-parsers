@@ -10,7 +10,7 @@ public class INWarrenCountyBParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "cad@fwrdc.net";
+    return "cad@fwrdc.net,dispatch@fountaincounty.in.gov";
   }
 
   @Override
