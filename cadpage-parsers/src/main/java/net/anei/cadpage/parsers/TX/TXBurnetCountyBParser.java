@@ -10,7 +10,10 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
 
   public TXBurnetCountyBParser() {
     super(CITY_CODES, "BURNET COUNTY", "TX",
-          "Msg_ID:SKIP! SRC MAP CALL ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END");
+          "Msg_ID:SKIP! ( SRC/Z! INFO/G! END " +
+                       "| INFO/G! END " +
+                       "| SRC MAP CALL ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END " +
+                       ")");
   }
 
   @Override
