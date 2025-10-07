@@ -602,6 +602,7 @@ public class Active911ParserTable {
       "US/GA/SumterCounty",               "GASumterCounty,GAMaconCountyB",
       "US/GA/TalbotCounty",               "GATalbotCounty",
       "US/GA/TaylorCounty",               "GATaylorCounty",
+      "US/GA/TaylorCountyFD",             "GATaylorCountyA",
       "US/GA/TelfairCounty",              "GATelfairCounty",
       "US/GA/ThomasCounty",               "GAThomasCounty",
       "US/GA/ThompsonMcDuffie",           "GAMcDuffieCounty",
