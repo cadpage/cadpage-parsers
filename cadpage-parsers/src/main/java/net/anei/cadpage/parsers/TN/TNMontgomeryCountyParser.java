@@ -13,6 +13,11 @@ public class TNMontgomeryCountyParser extends SmartAddressParser {
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
 
+  @Override
+  public String getFilter() {
+    return "CADpage@mcgtn.net";
+  }
+
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[, ]*\\[\\d{1,2}\\][, ]*");
   private static final Pattern INFO_JUNK_PTN =
       Pattern.compile("^Additional info.*|^Automatic Case Number\\(s\\) issued.*|^A cellular re-bid has occurred.*|^Incident linked to.*|^Multi-Agency .*|^Multi-Jurisdiction .*|^Paging Groups Notified:.*|\\[Shared[^\\]]*\\][, ]*");
