@@ -1411,6 +1411,7 @@ public class Active911ParserTable {
       "US/MO/CaldwellSheriff",            "MOCaldwellCounty",
       "US/MO/CallawayCounty",             "MOCallawayCounty",
       "US/MO/CamdenCounty",               "MOCamdenCounty",
+      "US/MO/CameronCounty",              "MOCaldwellCountyB",
       "US/MO/CapeGirardeauCounty",        "MOCapeGirardeauCountyC",
       "US/MO/CarrollCounty",              "MOCarrollCounty",
       "US/MO/CentralCounty",              "MOStLouisCountyC",
