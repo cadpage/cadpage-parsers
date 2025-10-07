@@ -2255,6 +2255,7 @@ public class Active911ParserTable {
       "US/OR/TillamookCounty",            "ORTillamookCounty",
       "US/OR/Toledo",                     "ORLincolnCountyB",
       "US/OR/TosohQuartz",                "ORMultnomahCountyD",
+      "US/OR/TosohQuartzSL",              "ORMultnomahCountyD",
       "US/OR/UmatillaCounty",             "ORUmatillaCountyA",
       "US/OR/WarmSprings",                "ORJeffersonCounty",
       "US/OR/WashingtonCounty",           "ORWashingtonCounty",
