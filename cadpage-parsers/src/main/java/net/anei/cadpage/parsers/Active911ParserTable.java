@@ -1111,6 +1111,7 @@ public class Active911ParserTable {
       "US/LA/BeauregardParish",           "LABeauregardParish",
       "US/LA/CaddoParish",                "LACaddoParish",
       "US/LA/CalcasieuParish",            "LACalcasieuParish",
+      "US/LA/CameronParish",              "LACameronParish",
       "US/LA/Chitimacha",                 "LAStMaryParish",
       "US/LA/CityofCovington",            "LAStTammanyParishB",
       "US/LA/CityofLakeCharles",          "LACalcasieuParish",

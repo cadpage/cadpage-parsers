@@ -825,6 +825,7 @@ public class ParserList {
               ,"LABeauregardParish"             ,"Beauregard Parish, LA"
               ,"LACaddoParish"                  ,"Caddo Parish, LA"
               ,"LACalcasieuParish"              ,"Calcasieu Parish, LA"
+              ,"LACameronParish"                ,"Cameron Parish, LA"
               ,"LAEastBatonRougeParish"         ,"East Baton Rouge Parish, LA"
               ,"LAEastFelicianaParish"          ,"East Feliciana Parish, LA"
               ,"LAEvangelineParish"             ,"Evangeline Parish, LA"
