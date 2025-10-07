@@ -526,6 +526,7 @@ public class Active911ParserTable {
       "US/FL/SantaRosaCounty",            "FLSantaRosaCounty",
       "US/FL/SeminoleCounty",             "FLSeminoleCountyA",
       "US/FL/SouthWalton",                "FLWaltonCounty",
+      "US/FL/SuwanneeCounty",             "FLSuwanneeCounty",
       "US/FL/TaylorCounty",               "FLTaylorCounty",
       "US/FL/WashingtonCountySheriff",    "FLWashingtonCounty",
       "US/GA/AmeriProHealth",             "GAFultonCounty",

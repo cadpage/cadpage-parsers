@@ -398,6 +398,7 @@ public class ParserList {
               ,"FLSatelliteBeach"               ,"Satellite Beach, FL"
               ,"FLSeminoleCounty"               ,"Seminole County, FL"
               ,"FLSumterCounty"                 ,"Sumter County, FL"
+              ,"FLSuwanneeCounty"               ,"Suwannee County, FL"
               ,"FLTaylorCounty"                 ,"Taylor County, FL"
               ,"FLWaltonCounty"                 ,"Walton County, FL"
               ,"FLWashingtonCounty"             ,"Washington County, FL"
