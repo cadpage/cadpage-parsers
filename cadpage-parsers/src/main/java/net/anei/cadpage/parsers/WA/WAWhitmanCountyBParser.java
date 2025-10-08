@@ -14,7 +14,7 @@ public class WAWhitmanCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,whitcomrapidnotification@whitcom.org";
+    return "FlexRapidNotification@dccnotify.com,whitcomrapidnotification@whitcom.org,FRN-whitcom@email.getrave.com";
   }
 
   @Override
