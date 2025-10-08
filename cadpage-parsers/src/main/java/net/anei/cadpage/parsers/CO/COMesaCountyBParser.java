@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.CO;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,7 @@ public class COMesaCountyBParser extends FieldProgramParser {
   public COMesaCountyBParser() {
     super(CITY_LIST, "MESA COUNTY", "CO",
           "MARKER? ID! ( Call_Type:CALL! | Fire_Call_Type:CALL! EMS_Call_Type:CALL! ) Address:ADDRCITY/S! Common_Name:PLACE! Closest_Intersection:X! Additional_Location_Info:INFO? Call_Time:DATETIME! Units:UNIT? Narrative:INFO! INFO/N+");
+//    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -133,6 +135,10 @@ public class COMesaCountyBParser extends FieldProgramParser {
     addr = addr.replace("MILLER CANYON RANCH RD", "E S 5/10 RD");
     return super.adjustMapAddress(addr);
   }
+
+//  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+//      "TRAIL RIBBON TRAIL",                   "+38.994403,-108.659561"
+//  });
 
   private static final String[] CITY_LIST = new String[]{
       "CAMEO",

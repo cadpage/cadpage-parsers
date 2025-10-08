@@ -21,6 +21,7 @@ public class MIMidlandCountyParser extends FieldProgramParser {
                      "| CALL_ADDR! COMMENTS! INFO/N+? X? PLACE/SDS+? http:GPS1 " +
                      "| ADDR! APT:APT! CALL! http:GPS1 ) END " +
            "| CALL_TYPE:CALL! ADDRESS:ADDRCITY! PRIORITY_COMMENT:INFO! INFO/N+ NARRATIVE:INFO/N INFO/N+ CFS_#:ID/L GPS:GPS UNITS:UNIT " +
+           "| ADDRESS:ADDRCITY! CALL_TYPE:CALL! INFO/N+ " +
            ")");
   }
 
