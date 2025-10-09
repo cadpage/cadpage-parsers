@@ -1629,6 +1629,7 @@ public class ParserList {
               ,"SCJasperCounty"                 ,"Jasper County, SC"
               ,"SCKershawCounty"                ,"Kershaw County, SC"
               ,"SCLancasterCounty"              ,"Lancaster County, SC"
+              ,"SCLaurensCounty"                ,"Laurens County, SC"
               ,"SCLeeCounty"                    ,"Lee County, SC"
               ,"SCLexingtonCounty"              ,"Lexington County, SC"
               ,"SCMarionCounty"                 ,"Marion County, SC"

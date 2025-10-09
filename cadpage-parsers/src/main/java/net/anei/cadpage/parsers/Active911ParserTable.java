@@ -2486,6 +2486,7 @@ public class Active911ParserTable {
       "US/SC/KershawCountyTrackingTeam",  "SCKershawCountyB",
       "US/SC/KingstreeFD",                "SCWilliamsburgCounty",
       "US/SC/LancasterCounty",            "SCLancasterCounty",
+      "US/SC/LaurensCounty",              "SCLaurensCounty",
       "US/SC/LeeCounty",                  "SCLeeCounty",
       "US/SC/LexingtonCFS",               "SCLexingtonCountyA",
       "US/SC/LexingtonCounty",            "SCLexingtonCountyA,SCBerkeleyCounty",
