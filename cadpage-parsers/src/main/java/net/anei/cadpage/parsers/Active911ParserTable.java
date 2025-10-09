@@ -772,6 +772,7 @@ public class Active911ParserTable {
       "US/IN/Daleville",                  "INDelawareCounty",
       "US/IN/DavidsonCounty",             "INBrownCounty",
       "US/IN/DaviessCounty",              "INDaviessCounty",
+      "US/IN/DearbornCounty",             "INDearbornCounty",
       "US/IN/DecaturTwp",                 "INMarionCountyB",
       "US/IN/DeKalbCounty",               "INDeKalbCounty",
       "US/IN/DelawareCounty",             "INDelawareCounty",
