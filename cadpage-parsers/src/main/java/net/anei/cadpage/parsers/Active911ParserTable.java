@@ -3067,6 +3067,7 @@ public class Active911ParserTable {
       "US/WI/OnalaskaFD",                 "WILaCrosseCounty",
       "US/WI/OzaukeeCounty",              "WIOzaukeeCounty",
       "US/WI/PepinCounty",                "WIPeppinCounty",
+      "US/WI/PleasantPrairie",            "WIKenoshaCountyC",
       "US/WI/RacineCounty",               "WIRacineCounty",
       "US/WI/RockCounty",                 "WIRockCountyA",
       "US/WI/SawyerCounty",               "WISawyerCounty",

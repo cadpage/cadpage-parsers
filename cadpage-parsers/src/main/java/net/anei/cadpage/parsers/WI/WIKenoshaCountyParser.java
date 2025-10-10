@@ -8,9 +8,9 @@ public class WIKenoshaCountyParser extends GroupBestParser {
 
   public WIKenoshaCountyParser() {
     super(new WIKenoshaCountyAParser(),
-           new WIKenoshaCountyBParser(),
-           new WIKenoshaCountyCParser(),
-           new WIKenoshaCountyDParser());
+          new WIKenoshaCountyBParser(),
+          new WIKenoshaCountyCParser(),
+          new WIKenoshaCountyDParser());
   }
 
   static final String[] CITY_LIST = new String[]{
@@ -63,10 +63,27 @@ public class WIKenoshaCountyParser extends GroupBestParser {
       // Ghost towns/neighborhoods
       "AURORA",
 
+      // Lake County, IL
+      "WADSWORTH",
+      "WAUKEGAN",
+      "WINTHROP HARBOR",
+
       // Mchenry county
       "HEBRON",
 
+      // Racine County
+      "BURLINGTON",
+      "FRANKSVILLE",
+      "KANSASVILLE",
+      "RACINE",
+      "STURTEVANT",
+      "UNION GROVE",
+      "WIND LAKE",
+
       // Waukesha County
-      "EAGLE"
+      "EAGLE",
+
+      // Unknown
+      "ABBOTT PARK"
   };
 }
