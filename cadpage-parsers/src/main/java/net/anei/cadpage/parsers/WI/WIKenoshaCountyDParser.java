@@ -39,6 +39,8 @@ public class WIKenoshaCountyDParser extends DispatchA57Parser {
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
     }
 
+    data.strAddress = stripFieldEnd(data.strAddress, " CITY OF");
+
     int pt = data.strCross.lastIndexOf("Add");
     if (pt >= 0) {
       if ("Additional Location Info:".startsWith(data.strCross.substring(pt))) {
