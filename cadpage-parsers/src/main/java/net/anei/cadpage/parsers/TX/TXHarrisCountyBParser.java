@@ -11,7 +11,7 @@ public class TXHarrisCountyBParser extends DispatchProphoenixParser {
   }
 
   public String getFilter() {
-    return "contact@villagefire.org,DoNotReply@villagefire.org";
+    return "contact@villagefire.org,DoNotReply@villagefire.org,village@firermsonline.com";
   }
 
 }
