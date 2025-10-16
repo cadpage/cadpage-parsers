@@ -20,6 +20,10 @@ public class ORMultnomahCountyDParser extends FieldProgramParser {
     int pt = body.indexOf("CALL:");
     if (pt < 0) return false;
     body = body.substring(pt);
-    return parseFields(body.split("\n"), data);
+    if (body.contains("\n")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return parseFields(body.split(", "), data);
+    }
   }
 }
