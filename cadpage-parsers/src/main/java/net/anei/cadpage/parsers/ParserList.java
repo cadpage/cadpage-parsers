@@ -508,6 +508,7 @@ public class ParserList {
               ,"IDKootenaiCounty"               ,"Kootenai County, ID"
               ,"IDLincolnCounty"                ,"Lincoln County, ID"
               ,"IDMadisonCounty"                ,"Madison County, ID"
+              ,"IDNezPerceCounty"               ,"Nez Perce County, ID"
               ,"IDPowerCounty"                  ,"Power County, ID"
               ,"IDShoshoneCounty"               ,"Shoshone County, ID"
               ,"IDTetonCounty"                  ,"Teton County, ID"

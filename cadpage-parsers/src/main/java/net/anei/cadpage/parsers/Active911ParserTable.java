@@ -653,6 +653,7 @@ public class Active911ParserTable {
       "US/ID/BoundarySheriff",            "IDBoundaryCounty",
       "US/ID/CanyonCounty",               "IDCanyonCounty",
       "US/ID/CaribouCountySheriff",       "IDCaribouCounty",
+      "US/ID/CityofLewiston",             "IDNezPerceCounty",
       "US/ID/FremontCounty",              "IDFremontCounty",
       "US/ID/GemCounty",                  "IDGemCounty",
       "US/ID/GoodingCounty",              "IDGoodingCountyC",
