@@ -17,7 +17,7 @@ public class ALMarionCountyParser extends FieldProgramParser {
 
   public ALMarionCountyParser() {
     super(CITY_LIST, "MARION COUNTY", "AL",
-          "Unit:UNIT? Event:ID! Location:ADDR/S! ( Latitude:GPS1! Longitude:GPS2! | LAT/LONG:GPS! | ) Event_Type:CALL! Latitude:GPS1? Longitude:GPS2? Event_SubType:CALL/SDS! Complainant_Name:NAME! Complainant_Phone:PHONE INFO+");
+          "Unit:UNIT? Event:ID! Location:ADDR/S! ( Latitude:GPS1! Longitude:GPS2! | Lat/Long:GPS! | LAT/LONG:GPS! | ) Event_Type:CALL! Latitude:GPS1? Longitude:GPS2? Event_SubType:CALL/SDS! Complainant_Name:NAME! Complainant_Phone:PHONE INFO+");
   }
 
   @Override
@@ -50,8 +50,7 @@ public class ALMarionCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
-  private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
+  private static final Pattern STATE_PTN = Pattern.compile("([A-Z]{2})(?: {2,}(.*))?");
   private static final Pattern APT_PTN1 = Pattern.compile("(?:APT|LOT|ROOM|RM|STE)[# ]*(.*)");
   private static final Pattern APT_PTN2 = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
 
@@ -59,44 +58,70 @@ public class ALMarionCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
 
-      String city = null;
-      int pt = field.lastIndexOf(',');
-      if (pt >= 0) {
-        city = field.substring(pt+1).trim();
-        if (STATE_PTN.matcher(city).matches()) {
-          field = field.substring(0, pt).trim();
-          data.strState = city;
-          city = null;
+      String apt = "";
+      while (true) {
+        int pt = field.lastIndexOf(',');
+        if (pt < 0) break;
+        String city = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        if (city.startsWith("#")) {
+          apt = city.substring(1);
+          continue;
+        }
+        Matcher match = STATE_PTN.matcher(city);
+        if (match.matches()) {
+          data.strState = match.group(1);
+          city = match.group(2);
+          if (city != null) data.strCity = city;
+        } else if (city.contains(" ")) {
+          parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
+          if (data.strCity.isEmpty()) data.strCity = city;
+        } else {
+          data.strCity = city;
         }
       }
 
-      if (city != null) {
-        if (city.length() > 0 && Character.isAlphabetic(city.charAt(0))) {
-          field = field.substring(0, pt).trim();
-          pt = city.indexOf("  ");
-          if (pt >= 0) {
-            data.strCity = city.substring(0,pt);
-          } else if (city.contains(" ")) {
-            parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city, data);
-            if (data.strCity.isEmpty()) data.strCity = city;
-          } else {
-            data.strCity = city;
-          }
-        }
-      } else {
+      if (data.strCity.isEmpty()) {
         parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, field, data);
         field = getStart();
+      }
+
+      if (!data.strCity.isEmpty()) {
         field = stripFieldEnd(field, " " + data.strCity);
       }
 
+//      String city = null;
+//      int pt = field.lastIndexOf(',');
+//      if (pt >= 0) {
+//        city = field.substring(pt+1).trim();
+//        if (STATE_PTN.matcher(city).matches()) {
+//          field = field.substring(0, pt).trim();
+//          data.strState = city;
+//          city = null;
+//        }
+//      }
+//
+//      if (city != null) {
+//        if (city.length() > 0 && Character.isAlphabetic(city.charAt(0))) {
+//          field = field.substring(0, pt).trim();
+//          pt = city.indexOf("  ");
+//          if (pt >= 0) {
+//            data.strCity = city.substring(0,pt);
+//          } else if (city.contains(" ")) {
+//          } else {
+//            data.strCity = city;
+//          }
+//        }
+//      } else {
+//      }
 
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
       for (String part : field.split("[:@]")) {
         part = part.trim();
         if (part.isEmpty() || part.equals("@") || part.equals("Nearest")) continue;
 
         if (data.strAddress.isEmpty()) {
           parseAddress(part, data);
+          data.strApt = append(data.strApt, "-", apt);
           continue;
         }
 
@@ -170,7 +195,13 @@ public class ALMarionCountyParser extends FieldProgramParser {
     "BYRD",
     "PEA RIDGE",
 
+    // Franklin County
+    "HODGES",
+    "PHIL CAMPBELL",
+    "VINA",
+
     // Lamar County
+    "DETROIT",
     "SULLIGENT"
   };
 }
