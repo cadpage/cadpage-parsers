@@ -47,6 +47,9 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
       return true;
     }
 
+    if (!body.startsWith("CAD\n")) return false;
+    body = body.substring(4).trim();
+
     String[] flds = body.split(">");
     if (flds.length < 5) return false;
     Matcher match = PREFIX_PTN.matcher(flds[0]);
