@@ -20,7 +20,7 @@ public class KSLeavenworthCountyParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "sysalert@leavenworthcounty.gov";
+    return "sysalert@leavenworthcounty.gov,noreply@lvsheriff.org";
   }
 
   private static final Pattern TIMES_PTN =
