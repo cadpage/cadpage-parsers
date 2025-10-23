@@ -12,7 +12,7 @@ public class INLakeCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "flex@lcec911.org";
+    return "flex@lcec911.org,FRN-lakecountyin@email.getrave.com";
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
