@@ -6,6 +6,7 @@ public class FLOkaloosaCountyParser extends GroupBestParser {
   public FLOkaloosaCountyParser() {
     super(new FLOkaloosaCountyAParser(),
           new FLOkaloosaCountyBParser(),
-          new FLOkaloosaCountyCParser());
+          new FLOkaloosaCountyCParser(),
+          new FLOkaloosaCountyDParser());
   }
 }

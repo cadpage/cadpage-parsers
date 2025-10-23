@@ -47,8 +47,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
       return true;
     }
 
-    if (!body.startsWith("CAD\n")) return false;
-    body = body.substring(4).trim();
+    if (body.startsWith("CAD\n")) body = body.substring(4).trim();
 
     String[] flds = body.split(">");
     if (flds.length < 5) return false;
@@ -78,6 +77,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CH")) return new ChannelField("(?:\\b(?:[A-Z]{2,3}\\d{1,2}|NECC|NEFG\\d)\\b ?)*", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
+    if (name.equals("UNIT")) return new UnitField("(.*?),?");
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("GPS1")) return new GPSField(1, "\\d{8,9}");
