@@ -17,7 +17,7 @@ public class WYSubletteCountyAParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,spillmanprod@state.vt.us";
+    return "FlexRapidNotification@dccnotify.com,spillmanprod@state.vt.us,FRN-subso@email.getrave.com";
   }
 
   @Override
