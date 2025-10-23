@@ -83,6 +83,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     if (name.equals("XYPOS")) return new BaseXYPosField();
     if (name.equals("XY_COORD")) return new BaseXYCoordField();
     if (name.equals("PHONE")) return new BasePhoneField();
+    if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("TIME_MARK")) return new SkipField(".*Responding Units:", true);
     if (name.equals("TIMES")) return new BaseTimesField();
     if (name.equals("BADTIME")) return new SkipField("TIME - .*", true);
@@ -359,6 +360,15 @@ public class DispatchA19Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " GPS?";
+    }
+  }
+
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, ",");
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
     }
   }
 

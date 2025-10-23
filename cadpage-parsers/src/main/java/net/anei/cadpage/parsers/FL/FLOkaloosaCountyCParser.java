@@ -23,34 +23,15 @@ public class FLOkaloosaCountyCParser extends FieldProgramParser {
   }
 
   @Override
-  public Field getField(String name) {
-    if (name.equals("X")) return new MyCrossField();
-    if (name.equals("APT")) return new MyApt1Field();
-    if (name.equals("APT2")) return new MyApt2Field();
-    return super.getField(name);
-  }
-
-  private class MyCrossField extends CrossField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("n/a")) return;
-      super.parse(field, data);
+  protected boolean parseFields(String[] fields, Data data) {
+    for (int j = 0; j<fields.length; j++) {
+      String fld = fields[j].trim();
+      int pt = fld.indexOf(':');
+      if (pt >= 0) {
+        String val = fld.substring(pt+1).trim();
+        if (val.equals("n/a")) fields[j] = fld.substring(0,pt+1);
+      }
     }
-  }
-
-  private class MyApt1Field extends AptField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("n/a")) return;
-      super.parse(field, data);
-    }
-  }
-
-  private class MyApt2Field extends AptField {
-    @Override
-    public void parse(String field, Data data) {
-      if (field.equals("n/a")) return;
-      data.strApt = append(field, "-", data.strApt);
-    }
+    return super.parseFields(fields, data);
   }
 }
