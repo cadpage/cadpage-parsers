@@ -10,7 +10,7 @@ public class INMarshallCountyBParser extends FieldProgramParser {
 
   public INMarshallCountyBParser() {
     super("MARSHALL COUNTY", "IN",
-          "CALL ADDRCITYST PLACE? X/Z INFO! INFO/N+");
+          "CALL ( PHONE GPS | ) ADDRCITYST PLACE? X/Z INFO! INFO/N+");
   }
 
   @Override
@@ -32,6 +32,7 @@ public class INMarshallCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("PHONE")) return new PhoneField("\\(\\d{3}\\) \\d{3}-\\d{4}", true);
     return super.getField(name);
   }
 
