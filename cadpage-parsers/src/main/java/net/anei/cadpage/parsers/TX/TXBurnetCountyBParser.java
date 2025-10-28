@@ -12,7 +12,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
     super(CITY_CODES, "BURNET COUNTY", "TX",
           "Msg_ID:SKIP! ( SRC/Z! INFO/G! END " +
                        "| INFO/G! END " +
-                       "| SRC MAP CALL ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END " +
+                       "| SRC MAP? CALL STATUS? ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END " +
                        ")");
   }
 
@@ -31,10 +31,28 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
     if (name.equals("MAP")) return new MapField("[A-Z]+\\d+[A-Z]?", true);
+    if (name.equals("STATUS")) return new SkipField("ASSGN", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("ID")) return new IdField("[EF]\\d+", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     return super.getField(name);
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      String city = p.getLastOptional(",");
+      data.strCity = convertCodes(city, CITY_CODES);
+      parseAddress(p.get(';'), data);
+      data.strPlace = p.get();
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE CITY";
+    }
   }
 
   private class MyCrossField extends CrossField {
@@ -151,6 +169,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
       "LU",   "LUND",
       "LV",   "LAGO VISTA",
       "MA",   "MAHOMET",
+      "MAR",  "MEADOWLAKES",  // ???
       "MAX",  "MAXWELL",
       "MC",   "MANCHACA",
       "ME",   "MCNEIL",
