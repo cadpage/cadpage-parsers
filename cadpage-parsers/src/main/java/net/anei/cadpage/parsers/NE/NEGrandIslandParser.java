@@ -8,10 +8,10 @@ public class NEGrandIslandParser extends DispatchA19Parser {
   public NEGrandIslandParser() {
     super("GRAND ISLAND", "NE");
   }
-  
+
   @Override
   public String getFilter() {
-    return "gipdadmin@gipolice.org";
+    return "gipdadmin@gipolice.org,gipdadmin@ginepolice.gov";
   }
-    
+
 }
