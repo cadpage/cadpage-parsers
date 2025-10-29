@@ -13,7 +13,7 @@ public class TXHillCountyAParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "cad@co.hill.tx.us,911@co.hill.tx.us,CallOutAlert@co.hill.tx.us,FlexRapidNotification@dccnotify.com";
+    return "cad@co.hill.tx.us,911@co.hill.tx.us,CallOutAlert@co.hill.tx.us,FlexRapidNotification@dccnotify.com,FRN-hillsborotx@email.getrave.com";
   }
 
   @Override
