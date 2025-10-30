@@ -17,6 +17,11 @@ public class INMarshallCountyBParser extends FieldProgramParser {
   public String getFilter() {
     return "noreply@co.marshall.in.us,no-reply@csprosuite.centralsquarecloudgov.com";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) +(?:Please respond immediately\\.|Please cancel immediately.)");
 
@@ -32,7 +37,7 @@ public class INMarshallCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("PHONE")) return new PhoneField("\\(\\d{3}\\) \\d{3}-\\d{4}", true);
+    if (name.equals("PHONE")) return new PhoneField("\\(\\d{3}\\) \\d{3}-\\d{4}|", true);
     return super.getField(name);
   }
 
