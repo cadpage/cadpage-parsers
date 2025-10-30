@@ -11,6 +11,7 @@ public class VTChittendenCountyParser extends GroupBestParser {
     super(new VTChittendenCountyAParser(), 
           new VTChittendenCountyCParser(),
           new VTChittendenCountyDParser(),
-          new VTChittendenCountyEParser());
+          new VTChittendenCountyEParser(),
+          new VTChittendenCountyFParser());
   }
 }
