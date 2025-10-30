@@ -14,6 +14,7 @@ public class NYOrangeCountyParser extends GroupBestParser {
            new NYOrangeCountyBParser(),
            new NYOrangeCountyCParser(),
            new NYOrangeCountyDParser(),
-           new NYOrangeCountyEParser());
+           new NYOrangeCountyEParser(),
+           new NYOrangeCountyFParser());
   }
 }
