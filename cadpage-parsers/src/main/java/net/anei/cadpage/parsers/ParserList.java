@@ -1819,6 +1819,7 @@ public class ParserList {
               ,"TXLeonCounty"                   ,"Leon County, TX"
               ,"TXLewisville"                   ,"Lewisville, TX"
               ,"TXLibertyCounty"                ,"Liberty County, TX"
+              ,"TXLlanoCounty"                  ,"Llano County, TX"
               ,"TXLongview"                     ,"Longview, TX"
               ,"TXLubbockCounty"                ,"Lubbock County, TX"
               ,"TXLufkin"                       ,"Lufkin, TX"

@@ -2762,6 +2762,7 @@ public class Active911ParserTable {
       "US/TX/LAS",                        "TXHoustonCountyB",
       "US/TX/LeonCounty",                 "TXLeonCounty",
       "US/TX/LibertyCountyCleveland",     "TXLibertyCountyC",
+      "US/TX/LlanoCounty",                "TXLlanoCounty",
       "US/TX/Longview",                   "TXGreggCountyA",
       "US/TX/LubbockCounty",              "TXLubbockCountyA",
       "US/TX/Lufkin",                     "TXLufkin",
