@@ -7,6 +7,11 @@ public class ARCleburneCountyParser extends DispatchA99Parser {
   public ARCleburneCountyParser() {
     super("CLEBURNE COUNTY", "AR");
   }
+  
+  @Override
+  public String getFilter() {
+    return "Cleburne911@rpsfire.com,noreply@arcleburne.mmmicro.com";
+  }
 
   @Override
   public int getMapFlags() {

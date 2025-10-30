@@ -218,7 +218,7 @@ public class Active911ParserTable {
       "US/AR/SiloamSpringsFD",            "ARBentonCountyI",
       "US/AR/WashingtonCounty",           "ARWashingtonCountyC",
       "US/AR/WashingtonCountySAR",        "ARWashingtonCountyB",
-      "US/AR/WhiteCounty",                "ARWhiteCounty",
+      "US/AR/WhiteCounty",                "ARWhiteCounty,ARCleburneCounty",
       "US/AR/XNAFD",                      "ARBentonCountyE",
       "US/AZ/CircleCityMorristown",       "AZMaricopaCountyE",
       "US/AZ/CityofCottonwood",           "AZYavapaiCountyC",
