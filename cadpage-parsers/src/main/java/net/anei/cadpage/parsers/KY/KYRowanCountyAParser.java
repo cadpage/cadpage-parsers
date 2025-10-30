@@ -2,10 +2,10 @@ package net.anei.cadpage.parsers.KY;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA65Parser;
 
-public class KYRowenCountyParser extends DispatchA65Parser {
+public class KYRowanCountyAParser extends DispatchA65Parser {
   
-  public KYRowenCountyParser() {
-    super(CITY_LIST, "ROWEN COUNTY", "KY");
+  public KYRowanCountyAParser() {
+    super(CITY_LIST, "ROWAN COUNTY", "KY");
   }
   
   @Override

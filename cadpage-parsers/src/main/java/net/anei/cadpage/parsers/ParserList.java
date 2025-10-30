@@ -802,7 +802,7 @@ public class ParserList {
               ,"KYPulaskiCounty"                ,"Pulaski County, KY"
               ,"KYRobertsonCounty"              ,"Robertson County, KY"
               ,"KYRockCastleCounty"             ,"Rockcastle County, KY"
-              ,"KYRowenCounty"                  ,"Rowen County, KY"
+              ,"KYRowanCounty"                  ,"Rowan County, KY"
               ,"KYRussellCounty"                ,"Russell County, KY"
               ,"KYScottCounty"                  ,"Scott County, KY"
               ,"KYShelbyCounty"                 ,"Shelby County, KY"
