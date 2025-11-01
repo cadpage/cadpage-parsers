@@ -350,6 +350,7 @@ public class ParserList {
               ,"CTWindhamCounty"                ,"Windham County, CT"
           ),
           new ParserCategory("District of Columbia"
+              ,"DCFireAndEMS"                   ,"Fire and EMS, DC"
               ,"DCProteanhub"                   ,"Proteanhub, DC"
           ),
           new ParserCategory("Delaware"

@@ -469,6 +469,7 @@ public class Active911ParserTable {
       "US/CT/WindhamCounty",              "CTWindhamCountyA",
       "US/CT/Winsted",                    "CTLitchfieldCountyA",
       "US/CT/Wpdpaging",                  "CTWindhamCountyC",
+      "US/DC/DWFEMSDEV",                  "DCFireAndEMS",
       "US/DC/Proteanhub",                 "DCProteanhub",
       "US/DE/BethelTWP",                  "DENewCastleCountyE",
       "US/DE/CADCentral",                 "DEKentCountyE,DEKentCountyG",
