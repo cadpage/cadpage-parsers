@@ -2353,6 +2353,7 @@ public class Active911ParserTable {
       "US/PA/GreeneCounty",               "PAGreeneCounty",
       "US/PA/HawthornFD",                 "PAClarionCountyG",
       "US/PA/HuntingdonCounty",           "PAHuntingdonCounty",
+      "US/PA/IndianaCounty",              "PAIndianaCounty,PAWestmorelandCountyA",
       "US/PA/JuniataCounty",              "PAJuniataCounty",
       "US/PA/KirwanHeightsVFA",           "PAAlleghenyCountyA",
       "US/PA/Kittanning",                 "PAArmstrongCountyE",
