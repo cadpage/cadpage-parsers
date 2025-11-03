@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class DCFireAndEmsParser extends FieldProgramParser {
+public class DCFireAndEMSParser extends FieldProgramParser {
   
-  public DCFireAndEmsParser() {
+  public DCFireAndEMSParser() {
     super(CITY_LIST, "", "DC", 
           "Incident_Notification:EMPTY! Incident_#:ID! Type:CODE! Description:CALL! Location:ADDR/S! " + 
               "UNID:SKIP! Units_Assigned:UNIT! Time:TIME! Lat/Lon:GPS! Comments:EMPTY! INFO/N+");
@@ -17,6 +17,11 @@ public class DCFireAndEmsParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "automated_dwfemsdev@dc.go";
+  }
+
+  @Override
+  public String getLocName() {
+    return "Fire and EMS, DC";
   }
   
   @Override

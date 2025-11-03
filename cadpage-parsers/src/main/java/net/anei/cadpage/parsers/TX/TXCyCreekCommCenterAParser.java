@@ -160,6 +160,7 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
@@ -227,6 +228,15 @@ public class TXCyCreekCommCenterAParser extends FieldProgramParser {
           data.strCross = append(data.strCross, " / ", getLeft());
         }
       }
+    }
+  }
+  
+  private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[ ;]+");
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = UNIT_DELIM_PTN.matcher(field).replaceAll(",");
+      super.parse(field, data);
     }
   }
 
