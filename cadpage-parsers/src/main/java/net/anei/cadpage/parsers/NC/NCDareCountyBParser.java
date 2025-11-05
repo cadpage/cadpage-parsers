@@ -17,6 +17,11 @@ public class NCDareCountyBParser extends FieldProgramParser {
           "CAD_ID:ID! Call_Type:SKIP! Nature:CALL! Address:ADDR! City:CITY? Primary_Unit:UNIT? Call_Opened:TIMEDATE! " +
             "Lat:GPS1/d! Long:GPS2/d! ( ResponsePlanNumber:PLAN! NumberOfPlans:PLAN_CNT! | ) Call_Taker_Comments:INFO INFO/N+ END");
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Pattern LEAD_HTML_TAG_PTN = Pattern.compile("<([_A-Za-z]+)>");
   private static final Pattern TRAIL_HTML_TAG_PTN = Pattern.compile("</[_A-Za-z]+>");
