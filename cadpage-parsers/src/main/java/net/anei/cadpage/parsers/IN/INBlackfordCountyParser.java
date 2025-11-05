@@ -10,6 +10,6 @@ public class INBlackfordCountyParser extends DispatchA38Parser {
   
   @Override
   public String getFilter() {
-    return "bcsdispatch@Blackfordcounty.in.gov";
+    return "bcsdispatch@Blackfordcounty.in.gov,Info@TAC10.local";
   }
 }
