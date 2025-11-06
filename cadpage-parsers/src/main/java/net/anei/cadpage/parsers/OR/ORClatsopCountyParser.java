@@ -1,48 +1,25 @@
 package net.anei.cadpage.parsers.OR;
 
 import java.util.Properties;
-import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA85Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class ORClatsopCountyParser extends DispatchA85Parser {
+/**
+* Clatsop County, OR
+ */
 
+public class ORClatsopCountyParser extends GroupBestParser {
   public ORClatsopCountyParser() {
-    super(CITY_CODES, "CLATSOP COUNTY", "OR");
-    setupGpsLookupTable(GPS_LOOKUP_TABLE);
+    super(new ORClatsopCountyAParser(), new ORClatsopCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "@astoria.or.us";
-  }
-
-  private static final Pattern PROM_PTN = Pattern.compile("\\bPROM\\b", Pattern.CASE_INSENSITIVE);
-
-  @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-
-    // Expand PROM -> PROMONADE
-    subject = PROM_PTN.matcher(subject).replaceAll("PROMENADE");
-    body = PROM_PTN.matcher(body).replaceAll("PROMENADE");
-    return super.parseMsg(subject,  body, data);
-  }
-
-  @Override
-  public String adjustMapCity(String city) {
-    if (city.equals("CAPE FALCON")) city = "ARCH CAPE";
-    return city;
-  }
-
-  @Override
-  protected String adjustGpsLookupAddress(String address) {
+  
+  static String doAdjustGpsLookupAddress(String address) {
     address = address.toUpperCase();
     address = address.replace(" / MP ", " MP ");
     return address;
   }
 
-  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+  static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "26 101 JCT",                           "+45.939363,-123.919623",
       "10TH ST ACCESS",                       "+46.030907,-123.929361",
       "12TH AND PROM",                        "+46.001274,-123.927432",
@@ -290,17 +267,4 @@ public class ORClatsopCountyParser extends DispatchA85Parser {
       "TURNAROUND",                           "+45.993175,-123.930229"
   });
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "ARC", "ARCH CAPE",
-      "AST", "ASTORIA",
-      "CAN", "CANNON BEACH",
-      "FAL", "CAPE FALCON",
-      "GEA", "GEARHEART",
-      "HAM", "HAMLET",
-      "KNA", "KNAPPA",
-      "SEA", "SEASIDE",
-      "TOL", "TOLVANA PARK",
-      "WAR", "WARRENTON",
-      "WES", "WESTPORT"
-  });
 }
