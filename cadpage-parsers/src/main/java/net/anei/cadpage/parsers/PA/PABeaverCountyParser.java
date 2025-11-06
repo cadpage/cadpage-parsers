@@ -65,7 +65,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?)(?: +CITY|BORO(?:UGH)?)?(?: +\\d{5})?");
-  private static final Pattern PLACE_ADDR_CITY_PTN = Pattern.compile("(.*),(.*,.*)");
+  private static final Pattern PLACE_ADDR_CITY_PTN = Pattern.compile("(.*?),(.*,.*)");
   private static final Pattern FD_ADDR_PTN = Pattern.compile("(FD \\d+ (.*?)(?: CITY)?(?: HAZ-MAT| FIRE (?:DEPT|DEPARTMENT))?) (\\d+ .*)");
   private class MyAddressCityField extends AddressCityField {
 
@@ -125,6 +125,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
         parseAddress(StartType.START_ADDR, flags, field, data);
         if (!city.isEmpty()) data.strCity = city;
         data.strCity = convertCodes(data.strCity, MISSPELLED_CITIES);
+        data.strApt = stripFieldStart(data.strApt, "#");
         data.strApt = append(data.strApt, "-", apt);
       }
     }
