@@ -2502,7 +2502,7 @@ public class Active911ParserTable {
       "US/SC/LexingtonCounty",            "SCLexingtonCountyA,SCBerkeleyCounty",
       "US/SC/MarionCounty",               "SCMarionCounty",
       "US/SC/MarlboroCounty",             "SCMarlboroCounty",
-      "US/SC/McCormickCounty",            "SCMcCormickCounty,SCGreenwoodCounty",
+      "US/SC/McCormickCounty",            "SCMcCormickCounty",
       "US/SC/MidlandsAmbulance",          "SCSumterCountyB",
       "US/SC/NewberryCounty",             "SCNewberryCounty",
       "US/SC/NorthMyrtleBeach",           "SCHorryCounty",

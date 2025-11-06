@@ -1,9 +1,9 @@
 package net.anei.cadpage.parsers.SC;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
 
 
-public class SCMcCormickCountyParser extends DispatchA74Parser {
+public class SCMcCormickCountyParser extends DispatchSPKParser {
   
   public SCMcCormickCountyParser() {
     super("MCCORMICK COUNTY", "SC");
@@ -11,6 +11,6 @@ public class SCMcCormickCountyParser extends DispatchA74Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatch@McCormickE911.info";
+    return "cadalerts@mccormickcountysc.org";
   }
 }
