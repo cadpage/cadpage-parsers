@@ -564,6 +564,7 @@ public class ParserList {
               ,"INAdamsCounty"                  ,"Adams County, IN"
               ,"INAllenCounty"                  ,"Allen County, IN"
               ,"INBartholomewCounty"            ,"Bartholomew County, IN"
+              ,"INBentonCounty"                 ,"Benton County, IN"
               ,"INBlackfordCounty"              ,"Blackford County, IN"
               ,"INBooneCounty"                  ,"Boone County, IN"
               ,"INBrownCounty"                  ,"Brown County, IN"
