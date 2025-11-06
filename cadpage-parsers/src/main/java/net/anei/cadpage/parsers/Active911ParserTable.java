@@ -2024,6 +2024,7 @@ public class Active911ParserTable {
       "US/OH/ButlerCountyEMA",            "OHButlerCountyB",
       "US/OH/ButlerCountySheriff",        "OHButlerCountyA,OHButlerCountyC",
       "US/OH/Byesville",                  "OHGuernseyCounty",
+      "US/OH/CarrollCounty",              "OHCarrollCountyB",
       "US/OH/Cencom",                     "OHStarkCountyCencomm,OHStarkCountyRedcenter2",
       "US/OH/CencomMahoningCounty",       "OHMahoningCountyCencomm",
       "US/OH/CencomPortageCounty",        "OHPortageCountyCencomm",
