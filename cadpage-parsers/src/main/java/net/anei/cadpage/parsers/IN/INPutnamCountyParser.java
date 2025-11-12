@@ -10,7 +10,7 @@ public class INPutnamCountyParser extends DispatchSPKParser {
   
   @Override
   public String getFilter() {
-    return "dispatch@putnamcounty911.org";
+    return "dispatch@putnamcounty911.org,dispatch@co.putnam.in.us";
   }
 
 }
