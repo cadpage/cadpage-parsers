@@ -10,7 +10,7 @@ public class OKStephensCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "rapid.notifications@duncanok.gov";
+    return "rapid.notifications@duncanok.gov,FRN-duncanok@email.getrave.com";
   }
 
 }

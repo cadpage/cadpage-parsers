@@ -17,6 +17,7 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
     super(TXHarrisCountyParser.CITY_LIST, defCity, defState,
           "CAD#:ID! Call:CALL! UNIT ADDR:ADDRCITYST/S! INFO/N+");
     setupCities(MISSPELLED_CITIES);
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -91,5 +92,9 @@ public class TXHarrisCountyGParser extends FieldProgramParser {
 
   private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
       "BAYCLIFF",   "BACLIFF"
+  });
+  
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "2805 OAK PARK DR",                     "+29.464610,-95.052580"
   });
 }
