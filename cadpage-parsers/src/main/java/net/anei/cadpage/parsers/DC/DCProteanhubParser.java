@@ -15,7 +15,7 @@ public class DCProteanhubParser extends FieldProgramParser {
   private static final Pattern MISSING_NL_PTN = Pattern.compile(" (?=ADDR:|CITY:|ST:|CNTY:|GPS:)");
  
   public DCProteanhubParser() {
-    super("", "DC",
+    super("DC", "",
           "CAD:ID? ( CALL:CALL! Sending_Facility:FACILITY? LOCATION:PLACE? ( ADDR:ADDR! CITY:CITY! ST:ST! CNTY:CITY! GPS:GPS! PRI:PRI! UNIT:UNIT! | PRI:PRI? UNIT:UNIT? ) | " + 
                     "Call_Type:CALL! Sending_Facility:FACILITY? ( Priority:PRI | Pri:PRI? ) Unit:UNIT ) INFO/N+", FLDPROG_IGNORE_CASE);
   }
