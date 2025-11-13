@@ -10,6 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.ReverseCodeSet;
 import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.StandardCodeTable;
 
 /**
  * Mobile County, AL
@@ -32,7 +33,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
   }
 
-  private static final Pattern MASTER = Pattern.compile("(?:ASSIGNED UNIT: ([-_A-Z0-9]+(?: \\d\\d)?) )?(?:(Respond To: )?(.*?) )?Event#: ([A-Za-z]\\d{7,10})(.*?) (\\d\\d:\\d\\d:\\d\\d) +(\\d\\d/\\d\\d/\\d\\d) DispatchCALLER NAME:(.*)CALLER ADDR:(?:.* (-\\d{3}\\.\\d{6}) (\\d{3}\\.\\d{6}))? *(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(?:ASSIGNED UNIT: ([-_A-Z0-9]+(?: \\d\\d)?) )?(?:(Respond To: )?(.*?) )?Event#: ([A-Za-z]\\d{7,10})(.*?) (\\d\\d:\\d\\d:\\d\\d) +(\\d\\d/\\d\\d/\\d\\d) DispatchCALLER NAME:(.*)CALLER ADDR:(?:.* (-\\d{3}\\.\\d{6}) (\\d{3}\\.\\d{6}))? *(.*)");
   private static final Pattern ADDR_BRK_PTN = Pattern.compile(" *: @? *| *:@ *|(?<=[A-Z](?:[,;][A-Z0-9]{1,3})?): *");
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*?)[,;](\\S+) *(.*?)");
   private static final Pattern APT_BRK_PTN = Pattern.compile("[,;]");
@@ -40,15 +41,26 @@ public class ALMobileCountyParser extends SmartAddressParser {
   private static final Pattern LEAD_APT_PTN = Pattern.compile("(\\S+) *@ *(.*)");
   private static final Pattern LEAD_APT_PTN2 = Pattern.compile("(?:APT|RM|ROOM|LOT) +(\\S+) +(.*)");
   private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]");
+  
+  private static final Pattern MASTER2 = Pattern.compile("Unit (\\S+) was (dispatched to|cleared from) event ([A-Z]+\\d+) at (.*)\\.");
+  private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
+  private static final Pattern ST_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern PHONE_PTN = Pattern.compile("(\\d{3}-\\d{3}-\\d{4})\\b *");
+  
+  private static final Pattern EVENT_PTN = Pattern.compile("Event ([A-Z]+\\d+) \\(([A-Z0-9]+)/default\\) at (.*) was (created|closed)\\.");
+  
   private static final Pattern GEN_ALERT_PTN =  Pattern.compile("(?:EVENT: ?([A-Za-z]\\d{8,10}) +|.*? |)Original message from.*? - (\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d .*)");
   private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile(" +/+ *|(?<=\\(\\d+\\)): +");
+  
+  private boolean suppressCallCheck;
 
   @Override
   public boolean parseMsg(String body, Data data) {
 
     body = stripFieldEnd(body, "_x000D_");
 
-    Matcher match = MASTER.matcher(body);
+    suppressCallCheck = false;
+    Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("UNIT ADDR CITY APT PLACE CALL ID X TIME DATE NAME GPS INFO");
       data.strUnit = getOptGroup(match.group(1)).replace(' ', '_');
@@ -178,6 +190,52 @@ public class ALMobileCountyParser extends SmartAddressParser {
       }
       return true;
     }
+    
+    match = MASTER2.matcher(body);
+    if (match.matches()) {
+      setFieldList("UNIT ID ADDR CITY ST PHONE APT PLACE");
+      data.strUnit = match.group(1);
+      if (match.group(2).startsWith("clear")) data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(3);
+      String addr = match.group(4);
+      
+      String info = "";
+      int pt = addr.indexOf(':');
+      if (pt >= 0) {
+        info = addr.substring(pt+1).trim();
+        addr = addr.substring(0,pt).trim();
+      }
+      
+      parseAddressCityState(addr, data);
+      
+      match = PHONE_PTN.matcher(info);
+      if (match.lookingAt()) {
+        data.strPhone = match.group(1);
+        info = info.substring(match.end());
+      }
+      
+      pt = info.indexOf('@');
+      if (pt >= 0) {
+        data.strApt = append(data.strApt, "-", info.substring(0,pt).trim());
+        info = info.substring(pt+1).trim();
+      }
+      data.strPlace = info;
+      return true;
+    }
+    
+    match = EVENT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID CODE CALL ADDR APT CITY ST");
+      suppressCallCheck = true;
+      data.strCallId = match.group(1);
+      data.strCode = match.group(2);
+      String call = CALL_CODES.getCodeDescription(data.strCode);
+      if (call == null) call = data.strCode;
+      data.strCall = call;
+      parseAddressCityState(match.group(3).trim(), data);
+      if (match.group(4).equals("closed")) data.msgType = MsgType.RUN_REPORT;
+      return true;
+    }
 
     match = GEN_ALERT_PTN.matcher(body);
     if (match.matches()) {
@@ -196,15 +254,36 @@ public class ALMobileCountyParser extends SmartAddressParser {
     return false;
   }
 
+
+  private void parseAddressCityState(String addr, Data data) {
+    Parser p = new Parser(addr);
+    String city = p.getLastOptional(',');
+    String zip = "";
+    if (ZIP_PTN.matcher(city).matches()) {
+      zip = city;
+      city = p.getLastOptional(',');
+    }
+    if (ST_PTN.matcher(city).matches()) {
+      data.strState = city;
+      city = p.getLastOptional(',');
+    }
+    if (city.isEmpty()) city = zip;
+    parseAddress(p.get(), data);
+    data.strCity = city;
+  }
+
   @Override
   public CodeSet getCallList() {
-    return CALL_SET;
+    return suppressCallCheck ? null : CALL_SET;
   }
+  
+  private static StandardCodeTable CALL_CODES = new StandardCodeTable();
 
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
       "**PUBLIC ASSISTANCE*** (FALL)",
       "911 HANG UP",
       "ABANDONED WASTE",
+      "ABDOMINAL PAIN/ABOVE NAVEL/MALES AGE >35",
       "ABDOMINAL PAIN/ABOVE NAVEL/FEMALES >AGE 45",
       "ABDOMINAL PAIN/FAINTING OR NEAR FAINTING/FEMALES AGE 12-50",
       "ABDOMINAL PAIN/FEMALES W/PAIN ABOVE NAVEL >45",
@@ -255,6 +334,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ANIMAL BITES/ATTACKS: SERIOUS BLEEDING",
       "ANIMAL BITES/ATTACKS: SUPERFICIAL INJURIES",
       "ANIMAL BITES/ATTACKS: UNK STATUS",
+      "ANIMAL NUISANCE",
       "ANIMAL RESCUE",
       "APARTMENT FIRE",
       "APARTMENT FIRE (CONDO, TOWNHOME)",
@@ -278,11 +358,13 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ASSAULT/SEXUAL ASSAULT/NOT DANGEROUS BODY AREA-DEFORMITY",
       "ASSAULT/SEXUAL ASSAULT/POSS DANGEROUS BODY AREA",
       "ASSAULT/SEXUAL ASSAULT/UNKNOWN STATUS",
+      "ASSIST A MOTORIST",
       "ASSIST OUTSIDE AGENCY/ MULTIPLE UNITS",
       "ASSIST OUTSIDE AGENCY/ SINGLE UNIT",
       "ASSIST OUTSIDE AGENCY/MULTIPLE UNITS",
       "ASSIST OUTSIDE AGENCY/SINGLE UNIT",
       "AUTOMATIC CRASH NOTIFICATION/INJURIES",
+      "AUTOMATIC CRASH NOTIFICATION/UNKNOWN STATUS",
       "BACK PAIN",
       "BACK PAIN / DIFFICULTY BREATHING",
       "BACK PAIN / KNOWN AORTIC ANEURYSM",
@@ -316,8 +398,11 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "BRUSH FIRE",
       "BUILDING FIRE",
       "BUMPS",
+      "BURGLAR ALARM (COMMERCIAL)",
+      "BURGLAR ALARM (RESIDENTIAL)",
       "BURNS (SCALDS)/EXPLOSION",
       "BURNS/BLAST INJURY",
+      "BURNS/EXPLOSION/SMALL BODY AREA",
       "BURNS/RESPIRATORY DISTRESS",
       "BURNS/SIGNIFICANT FACIAL",
       "BURNS /EXPLOSION",
@@ -331,6 +416,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "BURNS: PTN NOT ALERT",
       "BURNS: UNCONSCIOUS or ARREST",
       "BURNS:PERSON ON FIRE",
+      "BUSY UNLESS URGENT",
       "CALL TRANSFER FOR MFRD",
       "CAN'T SLEEP",
       "CAN'T URINATE",
@@ -392,6 +478,8 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "CITIZEN ASSIST/NON-MEDICAL",
       "CITIZEN ASSIST/WATER PROBLEM",
       "CITIZEN LOCKED IN/OUT OF BUILDING",
+      "CLOSE PATROL",
+      "COLD EXPOSURE / ALERT",
       "COMMERCIAL BUILDING FIRE",
       "COMMERCIAL VEHICLE FIRE",
       "COMMERCIAL/INDUSTRIAL BUILDING FIRE w/HAZ-MATERIALS",
@@ -407,6 +495,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "CONVULSIONS/SEIZURES",
       "CONVULSIONS/SEIZURES- ALS RESPONSE",
       "CRAMPS/SPASMS: IN EXTREMITIES",
+      "CRIMINAL MISCHIEF (IDENTIFY)",
       "CREAX INVESTIGATION (IDENTIFY)",
       "CUT-OFF RING REQUEST",
       "DEAFNESS",
@@ -421,9 +510,12 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "DIABETIC PROBLEMS/ALERT & BREATHING NORMALLY",
       "DIABETIC PROBLEMS/NOT ALERT",
       "DIABETIC UNCONSCIOUS",
+      "DISCHARGING FIREARMS (IDENTIFY WEAPON)",
+      "DISORDERLY (IDENTIFY)",
       "DISPATCH INFORMATION",
       "DIZZINESS/VERTIGO",
       "DOWNED TREES & OTHER OBJECTS",
+      "DRIVING UNDER THE INFLUENCE",
       "DROWNING (NEAR)/DIVING ACCIDENT",
       "DROWNING (NEAR)/DIVING ACCIDENT-ALERT & BREATHING NORMALLY",
       "DROWNING/DIVING ACC/ABNORMAL BREATHING",
@@ -468,6 +560,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ELECTRONIC ALARM -- RESIDENTIAL (SINGLE)",
       "ELECTRONIC ALARM -- RESIDENTIAL STRUCTURE (MULTIPLE)",
       "ELECTRONIC ALARM -- UNKNOWN SITUATION",
+      "ELECTRONIC ALARM/UNKNOWN SITUATION",
       "ELECTRONIC ALARM/COMMERCIAL STRUCTURE",
       "ELECTRONIC ALARM/HIGH LIFE HAZARD",
       "ELECTRONIC ALARM/HIGH RISE STRUCTURE",
@@ -568,6 +661,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "GUNSHOT/PERIPHERAL WOUND",
       "GUNSHOT/SERIOUS HEMORRHAGE",
       "GUNSHOT WOUND -- NON RECENT",
+      "HARASSMENT (SPECIFY)",
       "HAZARDOUS MATERIALS INCIDENT",
       "HAZMAT RESPONSE -- CONTAINED SPILL/LEAK",
       "HAZMAT RESPONSE -- ILLEGAL DRUG LAB (CONTAINED)",
@@ -644,6 +738,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HIGH ANGLE ROPE RESCUE",
       "HIGH RISE FIRE",
       "HOSPITAL FIRE",
+      "HOT PURSUIT",
       "HOTEL FIRE",
       "HYDRANT PROBLEMS",
       "ICE RESCUE",
@@ -657,6 +752,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "INACCESSIBLE TERRAIN SITUATION/TECHNICAL RESCUE",
       "INDUSTRIAL COMPLEX FIRE",
       "INSPECTION FIRE / SMOKE",
+      "INVESTIGATION (IDENTIFY)",
       "ITCHING",
       "LARGE OUTSIDE FIRE",
       "LARGE OUTSIDE FIRE -- HAZARDOUS MATERIALS PRESENT",
@@ -789,6 +885,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "PERSON ON FIRE ( INSIDE STRUCTURE )",
       "PERSONAL WATERCRAFT ACCIDENT",
       "POISONING- NO PRIORITY SYMPTOMS",
+      "POISONING/NO PRIORITY SYMPTOMS",
       "PREGNANCY/CHILDBIRTH/IMMINENT DELIVERY",
       "PREGNANCY/CHILDBIRTH/IN LABOR",
       "PREGNANCY/CHILDBIRTH/MISCARRIAGE",
@@ -801,6 +898,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "PREGNANCY/CHILDBIRTH/MISCARRIAGE: 1ST TRIMESTER BLEEDING",
       "PREGNANCY/CHILDBIRTH/WATER BROKEN",
       "PROPERTY DAMAGE",
+      "PSYCHIATRIC/ALTERED LOC/HISTORY OF MENTAL HEALTH CONDITIONS",
       "PSYCHIATRIC/ALTERED LOC/NO OR UNKNOWN HISTORY OF MENTAL HEALTH CONDITIONS",
       "PSYCHIATRIC/ALTERED LOC/SUDDEN CHANGE IN BEHAVIOR/PERSONALITY",
       "PSYCHIATRIC/INTENDING SUICIDE",
@@ -835,6 +933,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SCUBA ACCIDENT",
       "SEIZURE",
       "SEIZURE / CONTINUOUS OR MULTIPLE",
+      "SEIZURE / DIABETIC HISTORY",
       "SEIZURE/DIABETIC HISTORY",
       "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED",
       "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED <35",
@@ -896,12 +995,14 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SICK PERSON (UNKNOWN SYMPTOMS)",
       "SICK PERSON/BRAVO OVERRIDE",
       "SICKLE CELL CRISIS",
+      "SICKLE CELL CRISIS/POSSIBLE COVID",
       "SMALL OUTSIDE FIRE -- HAZARDOUS MATERIALS PRESENT",
       "SMALL OUTSIDE/TRASH FIRE",
       "SMOKE INVESTIGATION",
       "SMOKE INVESTIGATION -- HEAVY SMOKE",
       "SMOKE INVESTIGATION -- LIGHT SMOKE",
       "SMOKE INVESTIGATION -- ODOR OF SMOKE",
+      "SMOKE INVESTIGATION/LIGHT SMOKE",
       "SMOKE ODOR (RESIDENTIAL)",
       "SNAKEBITE",
       "SORE THROAT",
@@ -961,6 +1062,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "STRUCTURE FIRE -- SMALL NON-DWELLING STRUCTURE",
       "STRUCTURE FIRE -- UNK SITUATION",
       "STRUCTURE FIRE -- VICTIM INSIDE",
+      "STRUCTURE FIRE/MIXED USE OCCUPANCY",
       "STRUCTURE FIRE W/PERSONS INSIDE",
       "STRUCTURE/APPLIANCE FIRE",
       "STRUCTURE FIRE/(APARTMENT/CONDO/TOWNHOME)",
@@ -992,6 +1094,10 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "TRAFFIC  ACCIDENT/HAZARDOUS MATERIALS INCIDENT",
       "TRAFFIC  ACCIDENT/MINOR INJURIES",
       "TRAFFIC  ACCIDENT/NO INJURIES",
+      "TRAFFIC ACCIDENT W/INJURIES-SERIOUS BLEEDING",
+      "TRAFFIC ACCIDENT WITH ENTRAPMENT",
+      "TRAFFIC ACCIDENT WITH INJURIES",
+      "TRAFFIC ACCIDENT, WITH INJURY",
       "TRAFFIC ACCIDENT/(UNCONFIRMED) NO INJURIES REPORTED",
       "TRAFFIC ACCIDENT/NO INJURIES",
       "TRAFFIC ACCIDENT/HAZARDOUS SCENE",
@@ -999,14 +1105,12 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "TRAFFIC ACCIDENT/HIGH VELOCITY IMPACT",
       "TRAFFIC ACCIDENT/INJURIES",
       "TRAFFIC ACCIDENT/MINOR INJURIES",
+      "TRAFFIC ACCIDENT/OVRTURNED VEHICLE",
       "TRAFFIC ACCIDENT/SCENE HAZARDS",
       "TRAFFIC ACCIDENT/UNK STATUS",
       "TRAFFIC ACCIDENT/UNKNOWN INJURIES",
       "TRAFFIC ACCIDENT/VEHICLE VS BUILDING",
-      "TRAFFIC ACCIDENT W/INJURIES-SERIOUS BLEEDING",
       "TRAFFIC ACCIDENT/WITH ENTRAPMENT",
-      "TRAFFIC ACCIDENT WITH ENTRAPMENT",
-      "TRAFFIC ACCIDENT WITH INJURIES",
       "TRAFFIC HAZARD",
       "TRAFFIC VIOLATION",
       "TRAIN/RAIL INCIDENT -- DERAILMENT ABOVE GROUND",
@@ -1067,6 +1171,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "UNWELL/ILL",
       "UNWELL/ILL/POSSIBLE COVID",
       "VEGETATION FIRE- BRUSH / GRASS",
+      "VEGETATION FIRE- WOODS (SMALL)",
       "VEHICLE ACCCIDENT POSS FATALITY",
       "VEHICLE ACCIDENT -- ATV INVOLVED",
       "VEHICLE ACCIDENT -- BUS INVOLVED",
@@ -1087,8 +1192,9 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "VEHICLE FIRE -- LARGE FUEL/FIRE LOAD",
       "VEHICLE FIRE -- THREATENED NON-STRUCTURE OBJECT",
       "VEHICLE FIRE -- THREATENED STRUCTURE",
-      "VEHICLE FIRE/OCCUPANTS TRAPPED",
       "VEHICLE FIRE IN PARKING GARAGE",
+      "VEHICLE FIRE THREATENING VEGETATION/WILDLAND/BRUSH/GRASS",
+      "VEHICLE FIRE/OCCUPANTS TRAPPED",
       "VEHICLE FIRE/THREATENED NON-STRUCTURE OBJECT",
       "VIOLENT BEHAVIOR",
       "VOMITING",
