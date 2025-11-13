@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA71Parser;
 
@@ -25,6 +27,16 @@ public class ALWinstonCountyCParser extends DispatchA71Parser {
     if (data.strCity.equalsIgnoreCase("Unincorporated")) data.strCity = "";
     return true;
   }
+
+  @Override
+  public String adjustMapCity(String city) {
+    return convertCodes(city, MAP_CITY_TABLE);
+  }
+
+  private static final Properties MAP_CITY_TABLE = buildCodeTable(new String[]{
+      "BLACK POND",     "DOUBLE SPRINGS",
+      "HELICON",        "ARLEY"
+  });
 
 
 }

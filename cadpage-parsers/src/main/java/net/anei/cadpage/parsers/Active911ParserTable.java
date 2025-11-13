@@ -1962,7 +1962,7 @@ public class Active911ParserTable {
       "US/NY/LewisCounty",                "NYLewisCountyB",
       "US/NY/LimaVFD",                    "NYLivingstonCountyA",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",
-      "US/NY/MadisonCounty",              "NYMadisonCountyB,NYMadisonCountyC,NYMadisonCountyD",
+      "US/NY/MadisonCounty",              "NYMadisonCountyD",
       "US/NY/MonroeCounty",               "NYMonroeCountyWebster",
       "US/NY/MontgomerySO",               "NYMontgomeryCountyB",
       "US/NY/MtVernon",                   "NYWestchesterCountyB",
