@@ -9,7 +9,7 @@ public class ORClatsopCountyBParser extends FieldProgramParser {
   
   public ORClatsopCountyBParser() {
     super("CLATSOP COUNTY", "OR", 
-          "DATETIME CODE CALL ADDRCITYST EMPTY NAME PHONE UNIT! INFO! TIMES EMPTY END");
+          "DATETIME CODE CALL ADDRCITYST PLACE NAME PHONE UNIT! INFO! TIMES EMPTY END");
     setupGpsLookupTable(ORClatsopCountyParser.GPS_LOOKUP_TABLE);
   }
   
@@ -27,7 +27,7 @@ public class ORClatsopCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseFields(String[] flds, Data data) {
     for (int j = 0; j<flds.length; j++) {
-      if (flds[j].equals("None")) flds[j] = "";
+      if (flds[j].trim().equals("None")) flds[j] = "";
     }
     return super.parseFields(flds, data);
   }
