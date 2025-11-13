@@ -268,7 +268,9 @@ public class ManageParsers {
         "LATangipahoaParishA","General",                 // 07/17/2025
         "KYDaviessCountyA",   "General",                 // 07/28/2025
         "KYCaldwellCountyA",  "General",                 // 08/25/2025
-        "KYRowenCounty",      "KYRowanCounty"           // 10/30/2025
+        "KYRowenCounty",      "KYRowanCounty",           // 10/30/2025
+        "NYMadisonCountyB",   "General",                 // 11/11/2025
+        "NYMadisonCountyC",   "General"
   });
 
 }

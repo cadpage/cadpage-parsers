@@ -14,8 +14,6 @@ public class NYMadisonCountyParser extends GroupBestParser {
 
   public NYMadisonCountyParser() {
     super(new NYMadisonCountyAParser(),
-          new NYMadisonCountyBParser(),
-          new NYMadisonCountyCParser(),
           new NYMadisonCountyDParser(),
           new GroupBlockParser(),
           new NYMadisonCountyGLASParser());
