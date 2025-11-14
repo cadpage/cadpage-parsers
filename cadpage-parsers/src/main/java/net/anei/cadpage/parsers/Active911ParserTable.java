@@ -2795,7 +2795,7 @@ public class Active911ParserTable {
       "US/TX/NacogdochesCounty",          "TXNacogdochesCounty",
       "US/TX/NTECC",                      "TXDallasCountyC",
       "US/TX/NuecesCounty",               "TXNuecesCounty",
-      "US/TX/OssiCAD",                    "TXLaPorte,TXFortBendCountyF",
+      "US/TX/OssiCAD",                    "TXLaPorte,TXFortBendCountyF,TXHarrisCountyG",
       "US/TX/OysterCreekPD",              "TXBrazoriaCountyB",
       "US/TX/PaloPinto",                  "TXPaloPintoCounty",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
