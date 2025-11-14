@@ -10,7 +10,7 @@ public class TXUpshurCountyParser extends FieldProgramParser {
 
   public TXUpshurCountyParser() {
     super("UPSHUR COUNTY", "TX",
-          "CALL GPS1 GPS2 ADDRCITYST! INFO/N+? ID DATETIME END");
+          "CALL GPS1 GPS2 ADDRCITYST! INFO/N+? ID DATETIME+");
   }
 
   @Override
@@ -36,7 +36,7 @@ public class TXUpshurCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("CFS\\d{3,}", true);
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)\\b.*", true);
     return super.getField(name);
   }
 
@@ -44,6 +44,7 @@ public class TXUpshurCountyParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("None")) return;
       Matcher match = INFO_HDR_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       data.strSupp = append(data.strSupp, "\n", field);
