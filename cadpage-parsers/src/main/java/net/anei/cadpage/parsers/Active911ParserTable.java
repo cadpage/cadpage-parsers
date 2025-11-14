@@ -227,6 +227,7 @@ public class Active911ParserTable {
       "US/AZ/CityofShowLow",              "AZNavajoCountyB",
       "US/AZ/CochiseCounty",              "AZCochiseCounty",
       "US/AZ/CoconinoCounty",             "AZCoconinoCounty",
+      "US/AZ/Hualapai",                   "AZMohaveCountyA",
       "US/AZ/RuralMetroYavapaiCounty",    "AZYavapaiCountyE",
       "US/AZ/RuralMetroPinalCounty",      "AZPinalCounty",
       "US/AZ/NavajoCounty",               "AZNavajoCountyA",

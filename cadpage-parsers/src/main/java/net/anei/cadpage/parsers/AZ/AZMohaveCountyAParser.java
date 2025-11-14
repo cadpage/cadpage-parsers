@@ -11,7 +11,7 @@ public class AZMohaveCountyAParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,firedepartment@hualapai-nsn.gov";
   }
 
   @Override
