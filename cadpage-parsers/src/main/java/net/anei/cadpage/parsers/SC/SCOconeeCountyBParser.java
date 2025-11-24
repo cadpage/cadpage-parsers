@@ -35,6 +35,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{6,}");
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -45,8 +46,13 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
         data.strState = match.group(1);
         city = p.getLastOptional(',');
       }
-      data.strCity = city;
-      super.parse(p.get(), data);
+      String addr = p.get();
+      if (ADDR_GPS_PTN.matcher(city).matches()) {
+        addr = append(addr, ", ", city);
+      } else {
+        data.strCity = city;
+      }
+      super.parse(addr, data);
     }
 
     @Override
