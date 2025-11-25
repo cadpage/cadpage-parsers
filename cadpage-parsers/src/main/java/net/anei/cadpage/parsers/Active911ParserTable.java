@@ -1371,7 +1371,7 @@ public class Active911ParserTable {
       "US/MN/McLeodCounty",               "MNMcLeodCounty",
       "US/MN/MeekerCounty",               "MNMeekerCounty",
       "US/MN/MIFCIAR",                    "MNItascaCounty",
-      "US/MN/MilleLacsCounty",            "Cadpage2",
+      "US/MN/MilleLacsCounty",            "MNMilleLacsCounty",
       "US/MN/MorrisonCounty",             "MNMorrisonCounty",
       "US/MN/MowerCounty",                "MNMowerCounty",
       "US/MN/NicolletCounty",             "MNNicolletCounty",

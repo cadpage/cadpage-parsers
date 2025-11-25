@@ -34,7 +34,10 @@ public class DispatchA63Parser extends FieldProgramParser {
           "( Juris:SRC! CFS:CALL! ( Location:ADDRCITYST! Call#:ID_DATE_TIME " + 
                                  "| Request#:ID! Report_Date/Time:DATETIME! Reporting_Period:SKIP! Location:ADDR! Notify_Type:SKIP Call#:SKIP Login_User:SKIP " +
                                  ") " +
-          "| CFS:CALL! Location:ADDR! Call#:ID! Units_Dispatched:UNIT! Stations_Dispatched:SRC? Report_Date/Time:DATETIME! ) Comments:INFO/N+");
+          "| CFS:CALL! Location:ADDR! Call#:ID! Units_Dispatched:UNIT! Stations_Dispatched:SRC? Report_Date/Time:DATETIME! " +
+          "| ID_DATE_TIME CODE_CALL_PRI ADDRCITYST Units:EMPTY! UNIT/C+ " +
+          ") Comments:INFO/N+");
+
     this.cityCodes = cityCodes;
   }
 
@@ -52,7 +55,11 @@ public class DispatchA63Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace("\t", "");
-    return parseFields(body.split("\n"), data);
+    if (!body.contains("\n")) {
+      return parseNoBreak(body, data);
+    } else {
+      return parseFields(body.split("\n"), data);
+    }
   }
 
   private HtmlDecoder decoder = null;
@@ -91,6 +98,20 @@ public class DispatchA63Parser extends FieldProgramParser {
 
     return result.toArray(new String[0]);
   }
+  
+  private static final Pattern NO_BRK_PTN = 
+      Pattern.compile("(\\S+ \\{\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d(?: [AP]M)?\\}) ([^\\}]+\\}) (.*?) (Units:)(.*?) (Comments:) (.*)");
+
+  private boolean parseNoBreak(String body, Data data) {
+    Matcher match = NO_BRK_PTN.matcher(body);
+    if (!match.matches()) return false;
+    int fldCnt = match.groupCount();
+    String[] flds = new String[fldCnt];
+    for (int j = 0; j<fldCnt; j++) {
+      flds[j] = match.group(j+1);
+    }
+    return parseFields(flds, data);
+  }
 
   @Override
   public Field getField(String name) {
@@ -100,15 +121,25 @@ public class DispatchA63Parser extends FieldProgramParser {
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("ID_DATE_TIME")) return new BaseIdDateTimeField();
+    if (name.equals("CODE_CALL_PRI")) return new BaseCodeCallPriorityField();
     return super.getField(name);
   }
 
-  private static final SimpleDateFormat DATE_TIME_FMT
-    = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final SimpleDateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  
   private class BaseDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
-      setDateTime(DATE_TIME_FMT, field, data);
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setDateTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
   }
 
@@ -153,26 +184,53 @@ public class DispatchA63Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
   private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
-      data.strUnit = field.replace(" ", "");
+      data.strUnit = MSPACE_PTN.matcher(field).replaceAll(",");
     }
   }
   
-  private static final Pattern ID_DATE_TIME_PTN = Pattern.compile("(\\S+) +\\{(\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d [AP]M)\\}");
+  private static final Pattern ID_DATE_TIME_PTN = Pattern.compile("(\\S+) +\\{(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)\\}");
   private class BaseIdDateTimeField extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ID_DATE_TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strCallId = match.group(1);
-      setDateTime(DATE_TIME_FMT, match.group(2), data);
+      data.strDate = match.group(2);
+      String time = match.group(3);
+      if (time.endsWith("M")) {
+        setDateTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
     }
 
     @Override
     public String getFieldNames() {
       return "ID DATE TIME";
     }
+  }
+  
+  private static final Pattern CODE_CALL_PRI_PTN = Pattern.compile("(\\S+) +- +(.*)\\{(\\d)\\}");
+  
+  private class BaseCodeCallPriorityField extends Field {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PRI_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strCode = match.group(1);
+      data.strCall = match.group(2);
+      data.strPriority = match.group(3);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL PRI";
+    }
+    
   }
 }
