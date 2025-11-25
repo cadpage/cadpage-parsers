@@ -25,6 +25,11 @@ public class GASchleyCountyAParser extends DispatchA19Parser {
   public String getAliasCode() {
     return "GASchleyCounty";
   }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "568 HWY 280 W",                        "+32.056300,-84.288500"
