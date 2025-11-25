@@ -11,8 +11,8 @@ public class FLSantaRosaCountyParser extends FieldProgramParser {
   public FLSantaRosaCountyParser() {
     super("SANTA ROSA COUNTY", "FL",
           "( Location:ADDR_GPS! X! Nature_Code:CALL! SKIP+? COUNTY ID! " +
-          "| NAT:CALL! LOC:ADDR_GPS! X! " +
-          "| Nature:CALL! Address:ADDR City:CITY! Placename:PLACE! Caution_Notes:ALERT! Comments:INFO! INFO/N+ Latitude:GPS1! Longitude:GPS2! " +
+          "| NAT:CALL! ( Received:SKIP! DIST:BOX! | ) LOC:ADDR_GPS! GPS? X! EMPTY CAUTION_NOTES:INFO INFO/N+ " +
+          "| Nature:CALL! Address:ADDR City:CITY! Placename:PLACE! Caution_Notes:INFO! INFO/N+ Comments:INFO/N! INFO/N+ Latitude:GPS1! Longitude:GPS2! " +
                   "Primary_Agency:SRC! Agencies_Assigned:SKIP! Units:UNIT! Incident_ID:ID! Priority:PRI! Opened:SKIP! Caller_Phone_Number:PHONE! " +
                   "Call_Back_Name:NAME! " +
           ") END");
@@ -36,6 +36,7 @@ public class FLSantaRosaCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR_GPS")) return new MyAddressGPSField();
+    if (name.equals("GPS")) return new GPSField("<https?://maps.google.com/maps\\?q=(.*)>|()", true);
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("COUNTY")) return new SkipField("County ?#", true);
     if (name.equals("UNIT")) return new MyUnitField();
