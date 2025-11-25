@@ -9,13 +9,18 @@ public class PAArmstrongCountyEParser extends DispatchH05Parser {
     super("ARMSTRONG COUNTY", "PA",
           "EMS_CFS_Type:SKIP! Fire_CFS_Type:SKIP! Nature_of_Call:CALL! Narrative:EMPTY! INFO_BLK+ Location:ADDRCITY! ( Latitude:GPS1! Longitude:GPS2! | ) " +
               "Cross_Streets:X? Common_Name:PLACE? Additional_Info:INFO/N? Info:INFO/N? Call_Date/Time:DATETIME! Call_Number:ID! Units:UNIT? " +
-              "( Fire_Quadrant:MAP! | Fire_Quandrant:MAP! ) Ems_District:MAP/L! Status_Times:EMPTY TIMES+ Caller_Name:NAME Caller_Phone:PHONE");
+              "( Fire_Quadrant:MAP! | Fire_Quandrant:MAP! ) ( Ems_District:MAP/L! | EMS_District:MAP/L! ) Status_Times:EMPTY TIMES+ Caller_Name:NAME Caller_Phone:PHONE");
     setAccumulateUnits(true);
   }
 
   @Override
   public String getFilter() {
     return "911dispatch@co.armstrong.pa.us,noreply@co.armstrong.pa.us";
+  }
+  
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
