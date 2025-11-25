@@ -15,7 +15,7 @@ public class OKCarterCountyAParser extends DispatchH04Parser {
 
   @Override
   public String getFilter() {
-    return "cadams@ardmorecity.org";
+    return "arddispatch@ardmorecity.org";
   }
 
   @Override

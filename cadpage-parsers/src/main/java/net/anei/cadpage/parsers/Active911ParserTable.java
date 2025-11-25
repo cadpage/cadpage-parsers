@@ -2195,7 +2195,7 @@ public class Active911ParserTable {
       "US/OH/WRJFD",                      "OHMahoningCountyC",
       "US/OK/Berryhill",                  "OKTulsaA",
       "US/OK/CanadianCounty",             "OKCanadianCountyB",
-      "US/OK/CarterCounty",               "OKCarterCountyA",
+      "US/OK/CarterCounty",               "OKCarterCountyA,OKCarterCountyD",
       "US/OK/CherokeeCounty",             "OKCherokeeCountyA",
       "US/OK/CityofElReno",               "OKCanadianCountyA",
       "US/OK/CityofNorman",               "OKClevelandCountyB",

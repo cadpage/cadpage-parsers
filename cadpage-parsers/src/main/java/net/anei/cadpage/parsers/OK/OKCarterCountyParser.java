@@ -8,7 +8,10 @@ Carter County, OK
  */
 public class OKCarterCountyParser extends GroupBestParser {
   public OKCarterCountyParser() {
-    super(new OKCarterCountyAParser(), new OKCarterCountyBParser(), new OKCarterCountyCParser());
+    super(new OKCarterCountyAParser(), 
+          new OKCarterCountyBParser(), 
+          new OKCarterCountyCParser(),
+          new OKCarterCountyDParser());
   }
 
   static final String[] CITY_LIST = new String[]{
@@ -25,7 +28,9 @@ public class OKCarterCountyParser extends GroupBestParser {
     "WILSON",
 
     "JEFFERSON COUNTY",
-    "RINGLING"
+    "RINGLING",
+    
+    "JOHNSTON COUNTY"
   };
 
 }
