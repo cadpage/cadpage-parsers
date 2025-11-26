@@ -125,7 +125,7 @@ public class DispatchA63Parser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d:\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final SimpleDateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
   
   private class BaseDateTimeField extends DateTimeField {
@@ -136,7 +136,7 @@ public class DispatchA63Parser extends FieldProgramParser {
       data.strDate = match.group(1);
       String time = match.group(2);
       if (time.endsWith("M")) {
-        setDateTime(TIME_FMT, time, data);
+        setTime(TIME_FMT, time, data);
       } else {
         data.strTime = time;
       }
@@ -184,11 +184,11 @@ public class DispatchA63Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
+  private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[ ,]+");
   private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
-      data.strUnit = MSPACE_PTN.matcher(field).replaceAll(",");
+      data.strUnit = UNIT_DELIM_PTN.matcher(field).replaceAll(",");
     }
   }
   
@@ -202,7 +202,7 @@ public class DispatchA63Parser extends FieldProgramParser {
       data.strDate = match.group(2);
       String time = match.group(3);
       if (time.endsWith("M")) {
-        setDateTime(TIME_FMT, time, data);
+        setTime(TIME_FMT, time, data);
       } else {
         data.strTime = time;
       }
