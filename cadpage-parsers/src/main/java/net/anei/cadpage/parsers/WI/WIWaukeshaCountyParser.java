@@ -6,7 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 public class WIWaukeshaCountyParser extends GroupBestParser {
   public WIWaukeshaCountyParser() {
-    super(new WIWaukeshaCountyAParser(), new WIWaukeshaCountyBParser(),
-        new WIWaukeshaCountyCParser() );
+    super(new WIWaukeshaCountyAParser(), 
+          new WIWaukeshaCountyBParser());
   }
 }

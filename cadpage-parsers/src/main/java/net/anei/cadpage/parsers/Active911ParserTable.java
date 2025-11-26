@@ -3071,7 +3071,7 @@ public class Active911ParserTable {
       "US/WI/DaneCounty",                 "WIDaneCounty",
       "US/WI/DoorCounty",                 "WIDoorCounty",
       "US/WI/DouglasCounty",              "WIDouglasCounty",
-      "US/WI/ElmGrove",                   "WIWaukeshaCountyC",
+      "US/WI/ElmGrove",                   "WIWaukeshaCountyB",
       "US/WI/EMSmobile",                  "WIMarinetteCountyB",
       "US/WI/FondDuLacCounty",            "WIFondDuLacCounty",
       "US/WI/Foxcomm",                    "WICalumetCountyC",

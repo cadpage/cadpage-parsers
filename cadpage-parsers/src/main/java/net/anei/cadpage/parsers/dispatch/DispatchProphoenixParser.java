@@ -229,7 +229,7 @@ public class DispatchProphoenixParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern UNIT_PTN = Pattern.compile("\\{ *([A-Z0-9]+) *\\}");
+  private static final Pattern UNIT_PTN = Pattern.compile("\\{ *([A-Z0-9]+?) *\\}");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {

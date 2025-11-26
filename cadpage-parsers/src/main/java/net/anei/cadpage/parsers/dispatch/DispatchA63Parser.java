@@ -28,6 +28,8 @@ public class DispatchA63Parser extends FieldProgramParser {
   public DispatchA63Parser(String[] cityList, String defCity, String defState) {
     this(null, cityList, defCity, defState);
   }
+  
+  private boolean noCity;
 
   public DispatchA63Parser(Properties cityCodes, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
@@ -39,6 +41,7 @@ public class DispatchA63Parser extends FieldProgramParser {
           ") Comments:INFO/N+");
 
     this.cityCodes = cityCodes;
+    noCity = cityCodes == null && cityList == null;
   }
 
   @Override
@@ -122,6 +125,7 @@ public class DispatchA63Parser extends FieldProgramParser {
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("ID_DATE_TIME")) return new BaseIdDateTimeField();
     if (name.equals("CODE_CALL_PRI")) return new BaseCodeCallPriorityField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -168,14 +172,24 @@ public class DispatchA63Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       String zip = null;
-      Matcher match = ADDR_STATE_ZIP_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strState = match.group(2);
-        zip = match.group(3);
+      if (!noCity) {
+        Matcher match = ADDR_STATE_ZIP_PTN.matcher(field);
+        if (match.matches()) {
+          field = match.group(1).trim();
+          data.strState = match.group(2);
+          zip = match.group(3);
+        }
+      }
+      int pt = field.lastIndexOf(',');
+      String apt = "";
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        if (apt.equals("BLDG") || apt.equals("LOT") || apt.equals("APT")) apt = "";
       }
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
       if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
+      data.strApt = append(data.strApt, "-", apt);
     }
     
     @Override
@@ -231,6 +245,43 @@ public class DispatchA63Parser extends FieldProgramParser {
     public String getFieldNames() {
       return "CODE CALL PRI";
     }
-    
+  }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("\\{ *([A-Z0-9]+?) *\\}");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+
+      // First pick out any unit designation in curly braces.
+      // These are added to the unit field if they are not already present there
+      int lastPt = 0;
+      Matcher match = UNIT_PTN.matcher(field);
+      while (match.find()) {
+        String sUnit = match.group(1);
+        lastPt = match.end();
+        Pattern ptn = Pattern.compile("\\b" + sUnit + "\\b");
+        if (!ptn.matcher(data.strUnit).find()) data.strUnit = append(data.strUnit, ",", sUnit);
+      }
+
+      // Ignore everything up to the last unit
+      field = field.substring(lastPt).trim();
+      field = stripFieldStart(field, ";");
+
+      if (field.startsWith(",")) field = field.substring(1).trim();
+
+      // Filter out stuff we aren't interested in
+      if (field.contains("Units Recommended:")) return;
+      if (field.contains("Toner Alert Instantiated")) return;
+      int pt = field.indexOf("Update reviewed by dispatcher");
+      if (pt >= 0) field = field.substring(0,pt).trim();
+
+      // ANything else is information
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "UNIT? " + super.getFieldNames();
+    }
   }
 }
