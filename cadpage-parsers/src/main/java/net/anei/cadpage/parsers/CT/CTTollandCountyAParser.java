@@ -38,7 +38,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]+");
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
 
-  private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: (\\d{4}-\\d{8}\\b.*))?");
+  private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: (\\d{4}-\\d{8}\\b.*?))?(?: Priority (\\S+))?");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Lifestar|Sta\\d+|Willimantic)(?:-RIT)?\\b,?)+)");
   private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[-/ ]*\\b(\\d\\d\\.\\d\\d(?:[-/., ]+(?:(?:[A-Z]+ )?F/?G|VFG|TAC[- ]*\\S+))?)\\b *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
@@ -91,7 +91,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
     // Check for variant 1 format
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
-      setFieldList("ADDR APT CITY PLACE CALL CH X UNIT DATE TIME ID");
+      setFieldList("ADDR APT CITY PLACE CALL CH X UNIT DATE TIME ID PRI");
       body = match.group(1).trim();
       String cross = getOptGroup(match.group(2));
       if (!cross.equals("No Cross Streets Found")) data.strCross = cross;
@@ -104,6 +104,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
         data.strTime = time;
       }
       data.strCallId = getOptGroup(match.group(6));
+      data.strPriority = getOptGroup(match.group(7));
 
       //  Parse trailing unit and channel in either order
 

@@ -14,7 +14,7 @@ public class PADauphinCountyBParser extends DispatchH05Parser {
           "Report_Date:SKIP? Call_Date:DATETIME! Call_Address:ADDRCITY! " +
                 "( Latitude:GPS1! Longitude:GPS2! Common_Name:PLACE! " +
                 "| Common_Name:PLACE! ( Latitude:GPS1! ( Longitude:GPS2! | Logitude:GPS2! ) | ) " +
-                ") Cross_Streets:X! Fire_Call_Type:SKIP! Fire_Box:BOX! EMS_Box:BOX! EMS_Call_Type:SKIP Nature_Of_Call:CALL? " +
+                ") Cross_Streets:X! Fire_Call_Type:CALL! Nature_of_Call:CALL? Fire_Box:BOX! EMS_Box:BOX! EMS_Call_Type:CALL Nature_Of_Call:CALL? " +
                       "Unit_Incident_Number:ID! Unit_Times:EMPTY! TIMES+? Units_Assigned:UNIT");
     setAccumulateUnits(true);
   }
@@ -46,6 +46,7 @@ public class PADauphinCountyBParser extends DispatchH05Parser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("BOX")) return new MyBoxField();
+    if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
 
@@ -62,7 +63,14 @@ public class PADauphinCountyBParser extends DispatchH05Parser {
     public void parse(String field, Data data) {
       if (field.equals(data.strBox)) return;
       data.strBox = append(data.strBox, "/", field);
-
+    }
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strCall.contains(field)) return;
+      data.strCall = append(data.strCall, " - ", field);
     }
   }
 }
