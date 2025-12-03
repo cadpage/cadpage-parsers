@@ -108,12 +108,17 @@ public class MIOaklandCountyCParser extends FieldProgramParser {
       
       // Could be a place name or could be a cross street
       if (field.startsWith("X OF ")) {
-        data.strCross = append(data.strCross, " / ", field.substring(5).trim());
+        data.strCross = append(data.strCross, "/", field.substring(5).trim());
         return;
       }
       
-      if (isValidAddress(field)) {
-        data.strCross = append(data.strCross," / ", field);
+      if (field.startsWith("X ")) {
+        data.strCross = append(data.strCross, "/", field.substring(2).trim());
+        return;
+      }
+      
+      if (!data.strCross.isEmpty() || isValidAddress(field)) {
+        data.strCross = append(data.strCross, "/", field);
         return;
       }
       
