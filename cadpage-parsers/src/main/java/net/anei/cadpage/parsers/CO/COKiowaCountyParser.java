@@ -10,7 +10,7 @@ public class COKiowaCountyParser extends DispatchA55Parser {
 
   @Override
   public String getFilter() {
-    return "reports@messagingvzw.eforcesoftware.net";
+    return "reports@messagingvzw.eforcesoftware.net,ereports@eforcesoftware.com";
   }
 
 }
