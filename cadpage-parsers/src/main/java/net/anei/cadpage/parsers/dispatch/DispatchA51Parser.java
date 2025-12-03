@@ -24,7 +24,7 @@ public class DispatchA51Parser extends FieldProgramParser {
           "| ( ID:ID! | Incident_Number:ID! | ) Date:DATETIME! Type:CALL! Severity:PRI? Location:ADDRCITY! Coordinates:GPS0 " +
                 "( Business_Name:PLACE! Subdivision:PLACE/SDS! Common_Place:PLACE/SDS! GPS0? " +
                 "| ( Location_Description:PLACE_MAP | Description:PLACE_MAP ) Units_Selected:UNIT PrePlan_Number:LINFO/N Units:UNIT Latitude:GPS1 Longitude:GPS2 TAC_Channel:CH ( Units:UNIT | Unit:UNIT ) ID:ID " +
-                ") Units_Responding:UNIT Notes:INFO/N+ " +
+                ") IncidentID:ID? Units_Responding:UNIT Notes:INFO/N+ " +
           ")");
   }
 
@@ -65,6 +65,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("PLACE_MAP")) return new BasePlaceMapField();
     if (name.equals("GPS0")) return new GPSField("\\(([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+)\\)", true);
+    if (name.equals("ID")) return new BaseIdField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
@@ -192,6 +193,15 @@ public class DispatchA51Parser extends FieldProgramParser {
       return "PLACE MAP";
     }
 
+  }
+  
+  private class BaseIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "(");
+      field = stripFieldEnd(field, ")");
+      super.parse(field, data);
+    }
   }
 
   private class BaseUnitField extends UnitField {
