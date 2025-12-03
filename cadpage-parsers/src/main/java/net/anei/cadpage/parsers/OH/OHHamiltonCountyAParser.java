@@ -14,7 +14,7 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
 
   public OHHamiltonCountyAParser() {
     super("HAMILTON COUNTY", "OH",
-          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT! NAME Xst:X! INFO/N+? GPS1/d GPS2/d");
+          "CALL! CH ADDR! Bld:APT! Apt:APT! PLACE SRC TIME UNIT! NAME Xst:X! INFO/N+? GPS1/d GPS2/d ( Area:MAP | MAP | ) PHONE? ID END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -81,6 +81,9 @@ public class OHHamiltonCountyAParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("GPS1")) return new GPSField(1, "\\d{8,9}");
+    if (name.equals("MAP")) return new MapField("\\d{2}[A-Z]|[A-Z]{2,5}", false);
+    if (name.equals("PHONE")) return new PhoneField("(?:\\d{3}-|\\(?\\d{2,3}\\) )?\\d{3}-?(?:\\d{4}|[A-Z]{4})", true);
+    if (name.equals("ID")) return new IdField("[A-Z]+-\\d+", true);
     return super.getField(name);
   }
 
