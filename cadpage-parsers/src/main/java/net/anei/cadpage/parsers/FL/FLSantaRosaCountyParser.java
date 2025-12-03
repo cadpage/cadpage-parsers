@@ -10,10 +10,11 @@ public class FLSantaRosaCountyParser extends FieldProgramParser {
 
   public FLSantaRosaCountyParser() {
     super("SANTA ROSA COUNTY", "FL",
+          "( Apparatus:UNIT Assisting_Units:UNIT/C! Vehicle_Name:SKIP! EMPTY+? | ) " +
           "( Location:ADDR_GPS! X! Nature_Code:CALL! SKIP+? COUNTY ID! " +
           "| NAT:CALL! ( Received:SKIP! DIST:BOX! | ) LOC:ADDR_GPS! GPS? X! EMPTY CAUTION_NOTES:INFO INFO/N+ " +
           "| Nature:CALL! Address:ADDR City:CITY! Placename:PLACE! Caution_Notes:INFO! INFO/N+ Comments:INFO/N! INFO/N+ Latitude:GPS1! Longitude:GPS2! " +
-                  "Primary_Agency:SRC! Agencies_Assigned:SKIP! Units:UNIT! Incident_ID:ID! Priority:PRI! Opened:SKIP! Caller_Phone_Number:PHONE! " +
+                  "Primary_Agency:SRC! Agencies_Assigned:SKIP! Units:UNIT/C! Incident_ID:ID! Priority:PRI! Opened:SKIP! Caller_Phone_Number:PHONE! " +
                   "Call_Back_Name:NAME! " +
           ") END");
   }
