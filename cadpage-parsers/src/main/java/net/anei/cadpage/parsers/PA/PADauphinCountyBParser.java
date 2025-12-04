@@ -14,8 +14,10 @@ public class PADauphinCountyBParser extends DispatchH05Parser {
           "Report_Date:SKIP? Call_Date:DATETIME! Call_Address:ADDRCITY! " +
                 "( Latitude:GPS1! Longitude:GPS2! Common_Name:PLACE! " +
                 "| Common_Name:PLACE! ( Latitude:GPS1! ( Longitude:GPS2! | Logitude:GPS2! ) | ) " +
-                ") Cross_Streets:X! Fire_Call_Type:CALL! Nature_of_Call:CALL? Fire_Box:BOX! EMS_Box:BOX! EMS_Call_Type:CALL Nature_Of_Call:CALL? " +
-                      "Unit_Incident_Number:ID! Unit_Times:EMPTY! TIMES+? Units_Assigned:UNIT");
+                ") Cross_Streets:X! Fire_Call_Type:CALL! Nature_of_Call:CALL? Fire_Box:BOX! Fire_Ground:CH? " + 
+                "( EMS_Box:BOX! EMS_Call_Type:CALL Nature_Of_Call:CALL? " +
+                "| Radio_Channel:CH! Narrative:EMPTY! INFO_BLK+ " +
+                ") Unit_Incident_Number:ID! Unit_Times:EMPTY! TIMES+? Units_Assigned:UNIT Google_Maps:SKIP? Fireground:CH/L");
     setAccumulateUnits(true);
   }
 
