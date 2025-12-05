@@ -28,21 +28,28 @@ public class DispatchA41Parser extends FieldProgramParser {
 
   private static String calcProgram(int flags) {
     StringBuilder sb = new StringBuilder();
-    sb.append("CODE! ");
+    sb.append("( SELECT/XX UNIT CODE IDX ( PLACE ADDRCITY/Z CITY CH/Y | ADDRCITY/Z CITY CH/Y | PLACE ADDRCITY/Z CH | ADDRCITY/Z CH? ) INFO/N+? DATETIME! END | CODE! ( CH/Z IDX PLACE ADDRCITY CITY MAP! Unit:UNIT! DATETIME! END | ");
     if ((flags & A41_FLG_ID) != 0) sb.append("ID ");
     else if ((flags & A41_FLG_NO_CALL) == 0) sb.append("CALL ");
-    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) INFO/CS+ Unit:UNIT UNIT+");
+    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) INFO/CS+ Unit:UNIT UNIT+ ) )");
     return sb.toString();
   }
 
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(.*) +- From +(?:([A-Z][A-Z0-9]+) +)?(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d:\\d\\d)$");
-  private static final Pattern MARKER = Pattern.compile("DISPATCH:|CALLALERT:");
+  private static final Pattern TRAIL_DATE_TIME_PTN = Pattern.compile("(.*) +- From +(?:([A-Z][A-Z0-9]+) +)?(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d:\\d\\d)$");
+  private static final Pattern MARKER = Pattern.compile("\\b(?:DISPATCH|CALLALERT):");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    
+    String[] flds = body.split("\n");
+    if (flds.length >= 5) {
+      setSelectValue("XX");
+      return parseFields(flds, data);
+    }
 
+    setSelectValue("");
     boolean good = false;
-    Matcher match = DATE_TIME_PTN.matcher(body);
+    Matcher match = TRAIL_DATE_TIME_PTN.matcher(body);
     if (match.matches()) {
       good = true;
       body = match.group(1);
@@ -58,23 +65,26 @@ public class DispatchA41Parser extends FieldProgramParser {
     }
 
     match = MARKER.matcher(body);
-    if (!match.lookingAt()) {
+    if (!match.find()) {
       if (!good) return false;
       setFieldList("INFO SRC DATE TIME");
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body.trim();
       return true;
     }
+    String info = stripFieldEnd(body.substring(0,match.start()).trim(), ",");
     body = body.substring(match.end()).trim();
 
     body = body.replace(" Units:", " Unit:");
     if (body.endsWith(",")) body = body + ' ';
-    return parseFields(body.split(",+ ", -1), data);
+    if (!parseFields(body.split(",+ ", -1), data)) return false;
+    data.strSupp = append(info, "\n", data.strSupp);
+    return true;
   }
 
   @Override
   public String getProgram() {
-    return super.getProgram() + " SRC DATE TIME";
+    return "INFO? " + super.getProgram() + " SRC DATE TIME";
   }
 
   @Override
@@ -98,9 +108,11 @@ public class DispatchA41Parser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("[A-Z]{2}\\d{9}");
     if (name.equals("ID1")) return new IdField("\\d{10}", true);
     if (name.equals("ID2")) return new BaseId2Field();
-    if (name.equals("GPS1")) return new MyGPS1Field();
-    if (name.equals("GPS2")) return new MyGPS2Field();
+    if (name.equals("IDX")) return new BaseIdXField();
+    if (name.equals("GPS1")) return new BaseGPS1Field();
+    if (name.equals("GPS2")) return new BaseGPS2Field();
     if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("DATETIME")) return new BaseDateTimeField();
     return super.getField(name);
   }
 
@@ -122,16 +134,22 @@ public class DispatchA41Parser extends FieldProgramParser {
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      int pt = -1;
       if (field.endsWith(")")) {
-        int pt = field.indexOf('(');
-        if (pt >= 0) field = field.substring(0,pt).trim();
+        pt = field.indexOf('(');
+      } else if (field.endsWith("]")) {
+        pt = field.indexOf('[');
+      }
+      if (pt >= 0) {
+        data.strPlace = append(data.strPlace, " - ", field.substring(pt+1, field.length()-1).trim());
+        field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR APT CITY?";
+      return "ADDR APT PLACE CITY?";
     }
   }
 
@@ -244,9 +262,10 @@ public class DispatchA41Parser extends FieldProgramParser {
       super.parse(field, data);
       return true;
     }
+    
     @Override
     public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
+      super.parse(field, data);
     }
   }
 
@@ -281,18 +300,30 @@ public class DispatchA41Parser extends FieldProgramParser {
       data.strCallId = append(field, "/", data.strCallId);
     }
   }
+  
+  private class BaseIdXField extends IdField {
+    public BaseIdXField() {
+      super("[A-Z]{2} #\\d+|#", true);
+    }
+    
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("#", "").trim();
+      super.parse(field, data);
+    }
+  }
 
   private static final Pattern GPS1_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{5,}");
-  private class MyGPS1Field extends GPSField {
-    public MyGPS1Field() {
+  private class BaseGPS1Field extends GPSField {
+    public BaseGPS1Field() {
       super(1);
       setPattern(GPS1_PTN, true);
     }
   }
 
   private static final Pattern GPS2_PTN = Pattern.compile("([-+]?\\d{2,3}\\.\\d{5,}) *(.*)");
-  private class MyGPS2Field extends GPSField {
-    public MyGPS2Field() {
+  private class BaseGPS2Field extends GPSField {
+    public BaseGPS2Field() {
       super(2);
     }
 
@@ -315,5 +346,21 @@ public class DispatchA41Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
     }
+  }
+  
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d\\d:\\d\\d:\\d\\d)");
+  private class BaseDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(2)+'/'+match.group(3)+'/'+match.group(1);
+      data.strTime =  match.group(4);
+    }
+  }
+  
+  @Override
+  public String adjustMapAddress(String addr) {
+    return stripFieldStart(addr, "1-");
   }
 }

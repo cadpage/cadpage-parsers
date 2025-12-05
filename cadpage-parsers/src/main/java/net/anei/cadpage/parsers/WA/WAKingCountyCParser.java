@@ -7,14 +7,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 public class WAKingCountyCParser extends DispatchA41Parser {
 
   public WAKingCountyCParser() {
-    super(CITY_CODES, "KING COUNTY", "WA", "FIR\\d|[A-Z]9|[A-ZS]\\d|MD", A41_FLG_ID, CALL_CODES);
+    super(CITY_CODES, "KING COUNTY", "WA", "FIR\\d|[A-Z]9|[A-ZS]\\d|MD|TACP", A41_FLG_ID, CALL_CODES);
   }
-  
+
   @Override
   public String getFilter() {
-    return "cad@valleycom.org";
+    return "cad@valleycom.org,@versaterm.cloud";
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "ACCINF", "Vehicle Accident",
       "ACCMDF", "Serious Vehicle accident",
@@ -96,7 +96,7 @@ public class WAKingCountyCParser extends DispatchA41Parser {
       "WIRES",  "Electrical wires down/arcing",
 
   });
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALG",  "Algona",
       "AUB",  "Auburn",
