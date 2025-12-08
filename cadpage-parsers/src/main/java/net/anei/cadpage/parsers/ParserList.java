@@ -169,6 +169,7 @@ public class ParserList {
               ,"ALTuscaloosaCounty"             ,"Tuscaloosa County, AL"
               ,"ALWalkerCounty"                 ,"Walker County, AL"
               ,"ALWashingtonCounty"             ,"Washington County, AL"
+              ,"ALWilcoxCounty"                 ,"Wilcox County, AL"
               ,"ALWinstonCounty"                ,"Winston County, AL"
           ),
           new ParserCategory("Alaska"
