@@ -1,6 +1,6 @@
 package net.anei.cadpage.parsers.TN;
 
-public class TNGrundyCountyParser extends TNFranklinCountyParser {
+public class TNGrundyCountyParser extends TNFranklinCountyAParser {
   
   public TNGrundyCountyParser() {
     super("GRUNDY COUNTY", "TN");
