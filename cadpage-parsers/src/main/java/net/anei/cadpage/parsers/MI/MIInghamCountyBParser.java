@@ -18,6 +18,11 @@ public class MIInghamCountyBParser extends FieldProgramParser{
   }
 
   @Override
+  public String getFilter() {
+    return "no-reply@mmr.traumasoft.com";
+  }
+
+  @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
