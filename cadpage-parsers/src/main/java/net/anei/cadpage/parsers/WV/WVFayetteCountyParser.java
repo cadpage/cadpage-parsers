@@ -18,7 +18,7 @@ public class WVFayetteCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@fayettecounty911wv.org,Fayette_911@wv.org";
+    return "@fayettecounty911wv.org,Fayette_911@wv.org,paging@fayette911wv.org";
   }
 
   private static Pattern DELIM = Pattern.compile(" *\n *");

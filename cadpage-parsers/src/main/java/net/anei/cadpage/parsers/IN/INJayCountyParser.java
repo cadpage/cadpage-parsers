@@ -10,6 +10,6 @@ public class INJayCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@co.jay.in.us";
+    return "dispatch@co.jay.in.us,dispatch@jaycounty.in.gov";
   }
 }
