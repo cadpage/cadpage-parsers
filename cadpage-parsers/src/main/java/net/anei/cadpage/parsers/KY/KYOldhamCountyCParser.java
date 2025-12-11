@@ -24,6 +24,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
   }
 
   private static final Pattern INFO_MARK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log -| *None$");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*) - Units: *(.*)");
   private static final Pattern LOG_DATE_TIME_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log - *");
 
   @Override
@@ -34,6 +35,12 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
     String info = body.substring(match.start()).trim();
     body = body.substring(0, match.start()).trim();
     if (!parseFields(body.split(","), data)) return false;
+    data.strCall = stripFieldEnd(data.strCall, "-");
+    match = TRAIL_UNIT_PTN.matcher(info);
+    if (match.matches()) {
+      info = match.group(1).trim();
+      data.strUnit = match.group(2);
+    }
     if (!info.equals("None")) {
       for (String line : LOG_DATE_TIME_PTN.split(info)) {
         data.strSupp = append(data.strSupp, "\n", line);
@@ -44,7 +51,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return super.getProgram() + " INFO";
+    return super.getProgram() + " INFO UNIT";
   }
 
   @Override
