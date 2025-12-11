@@ -14,6 +14,11 @@ public class GALibertyCountyParser extends FieldProgramParser {
   }
 
   @Override
+  public String getFilter() {
+    return "dispatch@libertycountyga.com,LCPSC.CAD@libertycountyga.gov";
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
     return parseFields(body.split("\n"), data);
