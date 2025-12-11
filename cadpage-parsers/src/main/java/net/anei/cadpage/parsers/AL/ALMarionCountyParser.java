@@ -86,6 +86,11 @@ public class ALMarionCountyParser extends FieldProgramParser {
         field = getStart();
       }
 
+      if (data.strCity.startsWith("AL ")) {
+        data.strCity = data.strCity.substring(3).trim();
+        data.strState = "AL";
+      }
+
       if (!data.strCity.isEmpty()) {
         field = stripFieldEnd(field, " " + data.strCity);
       }
@@ -192,6 +197,7 @@ public class ALMarionCountyParser extends FieldProgramParser {
     //missed places
     "SHOTTSVILLE",
     "SHILOH",
+    "SUNNY HOME",
     "BYRD",
     "PEA RIDGE",
 
