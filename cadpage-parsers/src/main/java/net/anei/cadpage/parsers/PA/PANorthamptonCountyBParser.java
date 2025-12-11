@@ -18,7 +18,7 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@onsolve.com,76993";
+    return "no-reply@onsolve.com,noReply@notify.onsolve.net,76993";
   }
 
   @Override
