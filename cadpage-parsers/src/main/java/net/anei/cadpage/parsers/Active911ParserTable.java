@@ -529,6 +529,7 @@ public class Active911ParserTable {
       "US/FL/RegionalPsiSecond",          "FLBrowardCounty",
       "US/FL/SantaRosaCounty",            "FLSantaRosaCounty",
       "US/FL/SeminoleCounty",             "FLSeminoleCountyA",
+      "US/FL/SkylineFireRescue",          "FLSantaRosaCounty",
       "US/FL/SouthWalton",                "FLWaltonCounty",
       "US/FL/SuwanneeCounty",             "FLSuwanneeCounty",
       "US/FL/TaylorCounty",               "FLTaylorCounty",
