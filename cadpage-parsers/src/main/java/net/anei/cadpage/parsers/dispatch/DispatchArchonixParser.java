@@ -33,8 +33,8 @@ public class DispatchArchonixParser extends FieldProgramParser {
 
   public DispatchArchonixParser(Properties cityCodes, Properties maCityCodes, String defCity, String defState, int flags) {
     super(defCity, defState,
-          "( ADDRCITY/ZaSXP! ( #:APT MI#:ID! | MI#:ID! ) TIMES! TIMES+? RES#:UNIT " +
-          "| CALL ADDRCITY/aSXP! #:APT X:X BOX:BOX? ZN:MAP? CP:PLACE UNIT Time:DATETIME? MI#:ID Lat/Lon:GPS? RES#:UNIT " + 
+          "( ADDRCITY/ZaSXP! ( X:X! MI#:ID! | #:APT MI#:ID! | MI#:ID! ) TIMES! TIMES+? RES#:UNIT " +
+          "| CALL ADDRCITY/aSXP! #:APT X:X BOX:BOX? ZN:MAP? CP:PLACE UNIT Time:DATETIME? MI#:ID Lat/Lon:GPS? RES#:UNIT " +
           ") INFO/N+");
     this.cityCodes = cityCodes;
     this.maCityCodes = maCityCodes;
