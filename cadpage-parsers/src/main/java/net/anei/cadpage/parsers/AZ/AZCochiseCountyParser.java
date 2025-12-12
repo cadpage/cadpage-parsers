@@ -10,7 +10,7 @@ public class AZCochiseCountyParser extends DispatchA71Parser {
 
   @Override
   public String getFilter() {
-    return "simmonsassetprotection@gmail.com";
+    return "@azsis.us,eric@fcstucson.com";
   }
 
 }

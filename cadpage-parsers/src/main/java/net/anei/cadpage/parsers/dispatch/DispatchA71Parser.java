@@ -27,7 +27,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (body.contains("\n")) {
-      return parseFields(body.split("\n"), data);
+      return parseFields(body.split("\n+"), data);
     } else {
       return super.parseMsg(body, data);
     }
@@ -38,7 +38,7 @@ public class DispatchA71Parser extends FieldProgramParser {
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("CITY")) return new BaseCityField();
-    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?", true);
+    if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?|", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("MAP")) return new BaseMapField();
@@ -118,6 +118,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   private class BaseTimeField extends TimeField {
     @Override
     public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
       Matcher match = TIME_PTN.matcher(field);
       if (!match.matches()) abort();
       if (field.endsWith("M")) {
