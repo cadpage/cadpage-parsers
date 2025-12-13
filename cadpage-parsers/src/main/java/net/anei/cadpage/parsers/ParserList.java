@@ -1860,6 +1860,7 @@ public class ParserList {
               ,"TXRosenberg"                    ,"Rosenberg, TX"
               ,"TXRoyseCity"                    ,"Royse City, TX"
               ,"TXRuskCounty"                   ,"Rusk County, TX"
+              ,"TXSanPatricoCounty"             ,"San Patrico County, TX"
               ,"TXSeabrook"                     ,"Seabrook, TX"
               ,"TXSmithCounty"                  ,"Smith County, TX"
               ,"TXSomervellCounty"              ,"Somervell County, TX"

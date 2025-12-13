@@ -9,8 +9,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class DispatchC03Parser extends FieldProgramParser {
 
   public DispatchC03Parser(String defCity, String defState) {
-    super(defCity, defState, 
-          "ID ADDRCITY X! INFO INFO/N+? ID_UNIT END");
+    super(defCity, defState,
+          "ID ADDRCITY X! INFO INFO/N+? ID_UNIT ID_UNIT+");
   }
 
   @Override
@@ -27,7 +27,7 @@ public class DispatchC03Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new CallField("CAD # (\\d+)", true);
+    if (name.equals("ID")) return new IdField("CAD # (\\d+)", true);
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("X")) return new BaseCrossField();
     if (name.equals("INFO")) return new BaseInfoField();
@@ -84,16 +84,16 @@ public class DispatchC03Parser extends FieldProgramParser {
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = ID_UNIT_PTN.matcher(field);
       if (!match.matches()) return false;
-      data.strCallId = match.group(1);
-      data.strUnit = match.group(2);
+      data.strCallId = append(data.strCallId, ",", match.group(1));
+      data.strUnit = append(data.strUnit, ",", match.group(2));
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
