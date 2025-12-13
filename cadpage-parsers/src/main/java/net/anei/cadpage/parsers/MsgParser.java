@@ -619,29 +619,6 @@ public abstract class MsgParser {
   }
 
   /**
-   * @return returns sponsor purchase date if it should be used to compute
-   * a sponsor expiration date or null if the sponsorship should not expire
-   * there is no sponsor expiration date.
-   */
-  public Date getSponsorDate () {
-    String dateStr = getSponsorDateString();
-    if (dateStr == null) return null;
-    try {
-      return DATE_FORMAT.parse(dateStr);
-    } catch (ParseException ex) {
-      throw new RuntimeException(ex);
-    }
-  }
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMddyyyy");
-
-  /**
-   * @return sponsor purchase date in MMDDYYYY form, or null if not defined
-   */
-  protected String getSponsorDateString() {
-    return null;
-  }
-
-  /**
    * @return Filter associated with this parser
    */
   public String getFilter() {

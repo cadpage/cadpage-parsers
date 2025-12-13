@@ -28,10 +28,6 @@ public class GroupBestParser extends GroupBaseParser {
 
   private MsgParser[] parsers;
 
-  private String sponsor;
-
-  private Date sponsorDate;
-
   private SplitMsgOptions splitMsgOptions;
 
   private MsgParser lastParser;
@@ -82,27 +78,6 @@ public class GroupBestParser extends GroupBaseParser {
     // Group parser is sponsored if all of it subparsers are sponsored
     // If all subparsers are sponsored, sponsor date is the earliest subparser sponsor date
     splitMsgOptions = null;
-    sponsor = null;
-    sponsorDate = null;
-    for (MsgParser parser : parsers) {
-      if (splitMsgOptions == null) splitMsgOptions = parser.getActive911SplitMsgOptions();
-      String pSponsor = parser.getSponsor();
-      if (pSponsor == null) {
-        sponsor = null;
-        sponsorDate = null;
-        break;
-      } else {
-        Date pDate = parser.getSponsorDate();
-        if (pDate == null) {
-          if (sponsor == null) sponsor = pSponsor;
-        } else {
-          if (sponsorDate == null || sponsorDate.after(pDate)) {
-            sponsor = pSponsor;
-            sponsorDate = pDate;
-          }
-        }
-      }
-    }
 
     // Next we have to make adjustments when there are compatible parsers in the list
     for (String[] list : COMPAT_PARSER_LIST) {
@@ -296,16 +271,6 @@ public class GroupBestParser extends GroupBaseParser {
   @Override
   protected boolean parseMsg(String strMessage, Data data) {
     return false;
-  }
-
-  @Override
-  public String getSponsor() {
-    return sponsor;
-  }
-
-  @Override
-  public Date getSponsorDate() {
-    return sponsorDate;
   }
 
   @Override
