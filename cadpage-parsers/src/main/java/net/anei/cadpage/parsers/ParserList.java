@@ -2008,6 +2008,7 @@ public class ParserList {
               ,"WAChelanCounty"                 ,"Chelan County, WA"
               ,"WAClallamCounty"                ,"Clallam County, WA"
               ,"WAClarkCounty"                  ,"Clark County, WA"
+              ,"WAColvilleReservation"          ,"Colville Reservation, WA"
               ,"WACowlitzCounty"                ,"Cowlitz County, WA"
               ,"WAGrantCounty"                  ,"Grant County, WA"
               ,"WAGraysHarborCounty"            ,"Grays Harbor County, WA"

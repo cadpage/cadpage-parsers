@@ -3018,6 +3018,7 @@ public class Active911ParserTable {
       "US/WA/CityofFife",                 "WAPierceCountyC",
       "US/WA/ClallamCounty",              "WAClallamCounty",
       "US/WA/ClarkCounty",                "WAClarkCounty",
+      "US/WA/ColvilleConfederatedTribes", "WAColvilleReservation",
       "US/WA/Cowlitz911",                 "WACowlitzCounty",
       "US/WA/CowlitzCounty",              "WACowlitzCounty",
       "US/WA/EastPierceFire",             "WAPierceCountyF",
