@@ -14,7 +14,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
 
   protected OHWayneCountyDParser(String defCity, String defState) {
     super(defCity, defState,
-          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR! CITY:CITY! ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END");
+          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR/S6! CITY:CITY! XSTREET:X? ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END");
   }
 
   @Override
@@ -57,4 +57,37 @@ public class OHWayneCountyDParser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
 
+  @Override
+  public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
+    return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt >= 0) {
+          String place = field.substring(pt+1, field.length()-1).trim();
+          field = field.substring(0,pt).trim();
+          if (!data.strPlace.contains(place)) {
+            if (place.contains(data.strPlace)) {
+              data.strPlace = place;
+            } else {
+              data.strPlace = append(data.strPlace, " - ", place);
+            }
+          }
+        }
+      }
+      String apt = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+  }
 }
