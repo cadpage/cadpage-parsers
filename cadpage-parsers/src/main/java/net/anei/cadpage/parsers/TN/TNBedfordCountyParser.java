@@ -17,7 +17,7 @@ public class TNBedfordCountyParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "bedford911reports@gmail.com";
+    return "bedford911reports@gmail.com,bedco911reports@gmail.com";
   }
 
   private static final Pattern MASTER1 = Pattern.compile("([^,]+), *([A-Z ]+), ([A-Z]{2})(?: *\\d{5})? *(.*)");
