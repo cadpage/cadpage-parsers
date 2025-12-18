@@ -41,7 +41,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
     }
     String[] flds = body.split("\n");
     if (flds.length > 3) {
-      if (!parseFields(body.split("\n"), data)) return false;
+      if (!parseFields(flds, data)) return false;
     } else {
       if (!super.parseMsg(body, data)) return false;
     }
