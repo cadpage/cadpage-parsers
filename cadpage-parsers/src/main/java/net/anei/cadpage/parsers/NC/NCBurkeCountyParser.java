@@ -15,7 +15,7 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
 
   public NCBurkeCountyParser() {
     super(CITY_CODES, "BURKE COUNTY", "NC",
-          "( CANCEL ADDR CITY? | FYI? SRC ( CITY/Z GPS1! GPS2! | ) CALL ID? CODE? ADDR! X? X? ) INFO+");
+          "( CANCEL ADDR CITY? | FYI? SRC? ( CITY/Z GPS1! GPS2! | ) CALL ( ID CODE? | CODE ID? | ) ADDR! X? X? ) INFO/N+");
   }
 
   @Override
@@ -42,12 +42,34 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
   @Override
   protected Field getField(String name) {
     if (name.equals("CANCEL")) return new CallField("CANCEL|UNDER CONTROL", true);
-    if (name.equals("SRC")) return new SourceField("\\S+", true);
+    if (name.equals("SRC")) return new MySourceField();
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("ID")) return new IdField("\\d{5,}", true);
     if (name.equals("CODE")) return new CodeField("\\d\\d[A-Z]\\d\\d[A-Za-z]?", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern SOURCE_PTN = Pattern.compile("[A-Z0-9]{1,4}");
+  private class MySourceField extends SourceField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!SOURCE_PTN.matcher(field).matches()) return false;
+      if (GPS_PTN.matcher(getRelativeField(+1)).matches()) return false;
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
 
   private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d{2}\\.\\d{6,}");
@@ -59,9 +81,22 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
     }
   }
 
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+
+      // NCCaldwellCounty alerts loook a lot like ours.  We identify them if the
+      // field following the address is one of their city codes
+      if (!field.isEmpty() && data.strSupp.isEmpty() &&
+          NCCaldwellCountyParser.CITY_CODES.getProperty(field) != null) abort();
+      super.parse(field, data);
+    }
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "HICK", "HICKORY",
       "LONG", "LONG VIEW",
+      "MORG", "MORGANTOWN",
       "NEBO", "NEBO",
       "NEWL", "JONAS RIDGE"  // ???
   });

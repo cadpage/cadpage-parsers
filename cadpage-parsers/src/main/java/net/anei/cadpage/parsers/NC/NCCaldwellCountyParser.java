@@ -13,7 +13,7 @@ public class NCCaldwellCountyParser extends DispatchOSSIParser {
            "( UNIT/Z ENROUTE ADDR CITY CALL! END " +
            "| CANCEL ADDR CITY APT? " +
            "| CALL ( ADDR/Z ID! " +
-                  "| PLACE? ADDR/Z CITY! APT? X/Z+? ID " +
+                  "| PLACE? ADDR/Z CITY/Y! APT? X/Z+? ID CODE? " +
                   ") " +
            ") INFO/N+");
   }
@@ -43,6 +43,7 @@ public class NCCaldwellCountyParser extends DispatchOSSIParser {
     if (name.equals("CANCEL")) return new BaseCancelField("Clear Stand By");
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("CODE")) return new CodeField("\\d\\d?[A-Z]\\d\\d?[A-Z]?", true);
     return super.getField(name);
   }
 
@@ -64,7 +65,8 @@ public class NCCaldwellCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
+      "",     "",
       "BOOM", "BOOMER",
       "BR",   "BLOWING ROCK",
       "COLL", "COLLETTSVILLE",
