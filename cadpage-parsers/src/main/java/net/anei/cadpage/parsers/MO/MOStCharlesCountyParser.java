@@ -14,7 +14,11 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
 
   public MOStCharlesCountyParser() {
     super("ST CHARLES COUNTY", "MO",
-          "ID:ID_CODE_CALL_ADDR! APT:APT! BUS:PLACE? X_ST:X? MAP:MAP? CHL:CH_CITY! GPS:GPS? Units:UNIT!");
+          "ID:ID_CODE_CALL_ADDR! ( Problem:CODE_CALL! Address:ADDR! ( Location:PLACE! APT:APT! BUS:PLACE? X_ST:X? MAP:MAP? CHL:CH_CITY! " +
+                                                                   "| APT:APT! Location:PLACE! FD:CITY! CHL:CH! " +
+                                                                   ") " +
+                                "| APT:APT! BUS:PLACE?  FD:CITY? X_ST:X? MAP:MAP? CHL:CH_CITY! " +
+                                ") GPS:GPS? Units:UNIT! END");
     removeWords("TERRACE");
   }
 
@@ -30,7 +34,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
 
   private static final Pattern PRENOTE_PTN = Pattern.compile("\\b\\d+\\) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)-\\[\\d+\\] (?:\\[(?:Notification|Page)\\])? *(.*)");
   private static final Pattern PRENOTE_PREFIX_PTN = Pattern.compile("(\\d{6}-\\d{5}) New Notification:");
-  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=APT:|X ST:|MAP:|CHL:|GPS:)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=Address:|Location:|APT:|BUS:|FD:|X ST:|MAP:|CHL:|GPS:)");
 
   @Override
   public boolean parseMsg(String body, Data data) {
@@ -183,7 +187,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       data.strMap = p.get(15);
       data.strCity = cleanCity(p.get(30));
       if (!p.check("Units:")) return false;
-      data.strUnit = p.get();
+      data.strUnit = stripFieldEnd(p.get(), ",");
       return true;
     }
   }
@@ -215,17 +219,23 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID_CODE_CALL_ADDR")) return new MyIdCodeCallAddressField();
+    if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("CH_CITY")) return new MyChannelCityField();
     if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
 
-  private static final Pattern ID_ADDR_PTN = Pattern.compile("(\\d{6}-\\d{5}) (.*)");
   private class MyIdCodeCallAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      if (!parseIdCodeCallAddress(field, data)) abort();
+      if (getRelativeField(+1).startsWith("Problem:")) {
+        if (!ID_PTN.matcher(field).matches()) abort();
+        data.strCallId = field;
+      } else {
+        if (!parseIdCodeCallAddress(field, data)) abort();
+      }
     }
 
     @Override
@@ -233,6 +243,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       return "ID CODE CALL ADDR APT? PLACE";
     }
   }
+
+  private static final Pattern ID_ADDR_PTN = Pattern.compile("(\\d{6}-\\d{5}) (.*)");
 
   private boolean parseIdCodeCallAddress(String field, Data data) {
 
@@ -254,7 +266,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     }
 
     // Sanity check to keep from aborting on short fields
-    if (field.length() < 30) return false;
+    if (field.length() < 25) return false;
 
     // Some variable formats have an AT marker, which we will use to mark the start
     // of the address.  Trusting their consistent use of camel case for real address
@@ -265,7 +277,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     int pt = field.indexOf(" AT", callStart);
     if (pt >= 0 && pt <= 30) {
       data.strCall = field.substring(callStart,pt).trim();
-      parseAddress(StartType.START_ADDR, FLAG_NO_IMPLIED_APT | FLAG_IGNORE_AT, field.substring(pt+3).trim(), data);
+      field = field.substring(pt+3).trim().replace(" - ", "-");
+      parseAddress(StartType.START_ADDR, FLAG_NO_IMPLIED_APT | FLAG_IGNORE_AT, field, data);
       data.strPlace = getLeft();
       return true;
     }
@@ -309,9 +322,22 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     return true;
   }
 
+  private class MyCodeCallField extends Field {
+    @Override
+    public void parse(String field, Data data) {
+      parseCodeCall(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
+
   private class MyPlaceField extends PlaceField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldStart(field, "_");
       int pt = field.lastIndexOf(':');
       if (pt >= 0) {
         data.strCity = field.substring(pt+1).trim();
@@ -356,6 +382,14 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     }
   }
 
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
+
   @Override
   public String adjustMapCity(String city) {
     String tmp = MAP_CITY_TABLE.getProperty(city.toUpperCase());
@@ -386,7 +420,12 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Acute onset Pri Symptom",
       "Advised Incident",
       "Alarm - Carbon Monoxide",
+      "Alarm - Comm",
+      "Alarm - Comm CO",
       "Alarm - Commercial",
+      "Alarm - Resd",
+      "Alarm - Resd CO",
+      "Alarm - Resd CO EMS",
       "Allergy Difficult Br",
       "Allergy Difficult Bre",
       "Alert Diff Breathing",
@@ -416,6 +455,8 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "BRUSH FIRE unknown",
       "BSH FRE small",
       "Building Collapse",
+      "Burns <18% Body Area",
+      "Burns Unk Inj Firewor",
       "Carbon dioxide",
       "Cardiac Arrest Delta",
       "Cardiac Arrest Not Br",
@@ -423,8 +464,10 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Cardiac Hx and alert",
       "CA Uncertain Breathin",
       "CC Transfer (CCT)",
+      "Chest Pain",
       "Chest Pain Alpha",
       "Chest Pain Diff Breat",
+      "Chest Pain Normal -35",
       "Chest Pain Normal +35",
       "Chest Pain Not Alert",
       "Chest Pain QD",
@@ -457,31 +500,40 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "CP Heart Attack/Angina HX",
       "DB clammy or cold sw",
       "DB clammy or cold swe",
+      "Diabetic Abnormal  Br",
       "Diabetic Not Alert",
       "Diabetic Seizures",
       "Diabetic Unconscious",
       "Diff Breath Abnormal",
+      "Diff Breathing Abnormal",
       "Diff Breath Color Cha",
       "Diff Breathing Abnor",
       "Diff Breathing Abnorm",
       "Diff Breathing Not A",
+      "Diff Breathing Not Alert",
       "Diff Breathing Not Al",
       "Difficulty Breathing",
       "Downed Trees/Objects",
       "Drowning Not Alert",
       "Electrical ARCING",
+      "Electrical Hazard",
       "Electrical Hazard W H",
       "Electrical HZ Near Wa",
       "Electrical Odor",
+      "EMERGENCY OPS",
       "ENTRPMT Peripheral On",
       "Entrapped No Inj / Tr",
+      "ETCD Transfer",
       "Evaluation",
+      "Explosion - Unk",
       "Explosion w/INJ UNK",
       "Fainting Abnormal Br",
       "Fainting  Abnormal Br",
       "Fainting Not Breath",
       "Fall",
       "Fall Bravo",
+      "Fainting Charlie Resp",
+      "Fainting Charlie Response",
       "Fall Non-Recent +6 h",
       "Fall Non-Recent +6 hr",
       "Fall Non-Recent +6 hrs",
@@ -492,6 +544,16 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Fall Possibly Dangerous",
       "Fall Unconscious",
       "Fall Unknown",
+      "Fire - Comm",
+      "Fire - Comm Smoke Odor",
+      "Fire - Outside",
+      "Fire - Outside Large",
+      "Fire - Outside Threaten",
+      "Fire - Resd",
+      "Fire - Resd Appliance",
+      "Fire - Resd Chimney",
+      "Fire - Veh",
+      "Fire - Veh Comm",
       "Fire Reported OUT",
       "Focal/Absence Not Al",
       "Focal/Absence Not Ale",
@@ -500,27 +562,35 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Fuel Spill Outdoor",
       "Gas Leak COMM OUTSD",
       "Gas Leak OUTSD Tank",
+      "Gas Leak - Outside",
       "Gas Leak RES",
       "Gas Leak RES OUTSD",
       "Gas Odor",
       "Gas Odor COMM OUTSD",
+      "Gas Odor - Inside",
       "Gas Odor OUTSD",
+      "Gas Odor - Outside",
       "Gas Odor RES",
       "General Sick Case",
       "UNCONTAINED HAZMAT",
       "Headache Abnormal Bre",
       "Headache Not Alert",
+      "Headache Sudden Onset",
       "Heart Problem Cardiac",
       "Heart Problem Diff Br",
+      "Heart Prob Rate -50/",
       "Heart Problems Not Al",
       "Heart Problem Unk Sta",
       "Heat EXP Not Alert",
       "Heavy Smoke In The Ar",
-      "Hemorrhage DANGEROUS",
+      "Hemo through TUBES",
       "Hemo NOT DANGEROUS",
       "Hemo Poss Dangerous",
+      "Hemorrhage DANGEROUS",
       "Hemorrhage Diff Brea",
+      "Hemorrhage Diff Breath",
       "Hemorrhage Not Alert",
+      "Hemorrhage SERIOUS",
       "HI LIFE HZ Keypad A",
       "HI LIFE HZ Pull Alr",
       "High Angle Rescue",
@@ -540,6 +610,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Hydrant Problem",
       "Illegal Burn",
       "Ingestion Antidepress",
+      "Ingestion Diff Breath",
       "Ingestion Not Alert",
       "Ingestion Unconsciou",
       "Ingest/OD Unk Status",
@@ -567,6 +638,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Mutual Aid to STAGNG",
       "MVA All Terrain Vehic",
       "MVA Bicycle / Motorcy",
+      "MVA Bravo",
       "MVA High Mechanism",
       "MVA HIGH VELOCITY",
       "MVA Injuries",
@@ -578,10 +650,14 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "MVA Pedestrian Struck",
       "MVA Possible Fatality",
       "Residental Fire",
+      "MVA Arrest",
+      "MVA Bus",
+      "MVA Serious Hemorrhag",
       "MVA Uncons",
       "MVA Unknown Status",
       "MVA Unk Pts w/ Injuri",
       "MVA Unk Status Unk P",
+      "MVA Veh vs Building",
       "MVA with Ejection",
       "MVA with Rollover",
       "No Cardiac Hx / alert",
@@ -619,6 +695,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Priority Transfer",
       "Psych Case Jumper",
       "Psych Case Minor Ble",
+      "Psych Case Suicidal",
       "Psych Case Unk Statu",
       "Psych Case Unk Status",
       "Psych Non - Suicidal",
@@ -630,6 +707,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Res CO Alrm",
       "Res CO Multi Sick",
       "Res Gen Alrm",
+      "Rescue - Water",
       "Resi Multi Fire OUT",
       "Residental",
       "Residential Fire Mul",
@@ -649,8 +727,10 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Resp Arrest Ineffecti",
       "Scheduled Transfer",
       "Seizures Continue/Mul",
+      "Seizures Continue/Multi",
       "Seizures Continuous/M",
       "Seizures Pregnancy",
+      "Seizures Charlie",
       "Seizure Stopped No Hx",
       "Seizure Stopped Seiz",
       "Seizure Stopped Unk H",
@@ -668,6 +748,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Sick Case Can't Urina",
       "Sick Case Cramps/Spas",
       "Sick Case Cut off Rin",
+      "Sick Case Diarrhea",
       "Sick Case Diff Breath",
       "Sick Case Dizziness",
       "Sick Case Fever or Ch",
@@ -687,6 +768,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Small Outside Fire",
       "Small Outside Fire",
       "Smoke Investigation",
+      "Stabbing Unknown Status",
       "Stabbing Unknown Sta",
       "Stroke Ab Breathing",
       "Stroke Breath Norm",
@@ -696,6 +778,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Stroke Numbness",
       "Stroke Paralysis",
       "Stroke Speech Probs",
+      "Stroke Unknown",
       "Stroke Vision Proble",
       "Structure Fire Overri",
       "Structure Fire Override",
@@ -707,12 +790,14 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Transformer Hazard",
       "Transformer wire po",
       "Trauma Injury Not Dan",
+      "Trauma Injury Not Danger",
       "Trauma Injury Poss Da",
       "Traumatic Injury Seri",
       "Traumatic Injury Serious",
       "Trauma Injury Poss Danger",
       "Trauma Unknown",
       "Unconscious Abn Breat",
+      "Unconscious Abn Breathing",
       "Unconscious Breathing",
       "Unconscious Not Breat",
       "Unk EMS Life Question",
@@ -731,6 +816,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Water Problem",
       "Water Problem Elec/H",
       "Water Problem Elec/Hz",
+      "Water Recovery Team",
       "Water Rescue",
       "Water Rescue Override",
       "Watercraft Welfare C",
