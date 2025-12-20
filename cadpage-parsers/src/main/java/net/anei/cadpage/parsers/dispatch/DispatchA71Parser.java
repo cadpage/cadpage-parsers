@@ -12,10 +12,14 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class DispatchA71Parser extends FieldProgramParser {
 
   public DispatchA71Parser(String defCity, String defState) {
-    super(defCity, defState,
-          "( ID:ID! INFO:INFO! " +
-          "| CALL:CALL PLACE:PLACE ADDR:ADDR? APT:APT CITY:CITY? ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PLACE:PLACE? PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? " +
-          ") INFO/N+");
+    this(defCity, defState,
+         "( ID:ID! INFO:INFO! " +
+         "| CALL:CALL PLACE:PLACE ADDR:ADDR? APT:APT CITY:CITY? ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PLACE:PLACE? PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? " +
+         ") INFO/N+");
+  }
+
+  public DispatchA71Parser(String defCity, String defState, String program) {
+    super(defCity, defState, program);
   }
 
   @Override
@@ -133,6 +137,7 @@ public class DispatchA71Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = field.replace('@', '/').replace("*", "");
+      field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
   }
@@ -148,6 +153,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   private class BaseUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace(";", ",");
       field = stripFieldEnd(field, ",");
       super.parse(field, data);
     }

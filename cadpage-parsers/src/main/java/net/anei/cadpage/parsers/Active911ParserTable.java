@@ -2859,6 +2859,7 @@ public class Active911ParserTable {
       "US/TX/Waco",                       "TXMcLennanCountyB",
       "US/TX/WalkerCounty",               "TXWalkerCounty",
       "US/TX/WallerCounty",               "TXWallerCounty",
+      "US/TX/WallerHarrisESD",            "TXWallerCounty",
       "US/TX/Weatherford",                "TXParkerCountyD",
       "US/TX/WeatherfordPublicSafety",    "TXParkerCountyD",
       "US/TX/WebsterFD",                  "TXHarrisCountyG",
