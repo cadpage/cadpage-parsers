@@ -352,7 +352,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CH_CITY_PTN = Pattern.compile("([A-Z]*TAC\\d+)\\b *(.*)");
+  private static final Pattern CH_CITY_PTN = Pattern.compile("([A-Z]*(?:TAC|OPS)\\d+)\\b *(.*)");
   private class MyChannelCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
