@@ -1034,6 +1034,7 @@ public class ParserList {
               ,"MSAcadianAmbulance"             ,"Acadian Ambulance, MS"
               ,"MSBiloxi"                       ,"Biloxi, MS"
               ,"MSCalhounCounty"                ,"Calhoun County, MS"
+              ,"MSChoctawCounty"                ,"Choctaw County, MS"
               ,"MSDeSotoCounty"                 ,"DeSoto County, MS"
               ,"MSForestCounty"                 ,"Forest County, MS"
               ,"MSHarrisonCounty"               ,"Harrison County, MS"

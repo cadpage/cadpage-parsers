@@ -1575,6 +1575,7 @@ public class Active911ParserTable {
       "US/MS/AlcornCounty",               "MSAlcornCounty",
       "US/MS/BatesvilleFD",               "MSPanolaCountyB",
       "US/MS/Biloxi",                     "MSBiloxi",
+      "US/MS/ChoctawCounty",              "MSChoctawCounty",
       "US/MS/CityofHernando",             "MSDeSotoCountyB",
       "US/MS/CityofHornLake",             "MSDeSotoCountyA",
       "US/MS/CityofLongBeach",            "MSHarrisonCountyG",
