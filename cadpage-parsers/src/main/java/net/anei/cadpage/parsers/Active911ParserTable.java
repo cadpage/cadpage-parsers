@@ -1629,6 +1629,7 @@ public class Active911ParserTable {
       "US/NC/AveryCounty",                "NCAveryCounty",
       "US/NC/BearGrassFR",                "NCMartinCounty",
       "US/NC/BeaufortCounty",             "NCBeaufortCounty",
+      "US/NC/BertieCounty",               "NCBertieCounty",
       "US/NC/BiscoeFD",                   "NCMontgomeryCounty",
       "US/NC/BladenCounty",               "NCBladenCounty",
       "US/NC/BladenCountyEMS",            "NCBladenCounty",

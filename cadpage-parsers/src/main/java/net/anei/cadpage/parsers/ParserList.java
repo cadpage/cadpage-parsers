@@ -1290,6 +1290,7 @@ public class ParserList {
               ,"NCAsheCounty"                   ,"Ashe County, NC"
               ,"NCAveryCounty"                  ,"Avery County, NC"
               ,"NCBeaufortCounty"               ,"Beaufort County, NC"
+              ,"NCBertieCounty"                 ,"Bertie County, NC"
               ,"NCBladenCounty"                 ,"Bladen County, NC"
               ,"NCBrunswickCounty"              ,"Brunswick County, NC"
               ,"NCBuncombeCounty"               ,"Buncombe County, NC"
