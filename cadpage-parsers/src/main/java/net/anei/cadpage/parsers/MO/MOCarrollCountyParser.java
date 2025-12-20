@@ -11,7 +11,11 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class MOCarrollCountyParser extends FieldProgramParser {
 
   public MOCarrollCountyParser() {
-    super("CARROLL COUNTY", "MO",
+    this("CARROLL COUNTY", "MO");
+  }
+
+  public MOCarrollCountyParser(String defCity, String defState) {
+    super(defCity, defState,
           "Call_Type:CALL! Priority:PRI! Phone:PHONE? Location:ADDRCITYST! Location_Note:INFO/n? Caller__Nickname:NAME Caller__Phone:PHONE Caller__Location:SKIP Call_Notes:INFO/N END");
   }
 
@@ -20,7 +24,7 @@ public class MOCarrollCountyParser extends FieldProgramParser {
     return "info@plottlabs.com";
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("Call ([A-Z]{3,5}\\d{4}-\\d{5,6}|CCAD-MIH\\d{4}-null) (?:- (\\S+) )?.*");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("Call ([A-Z]{3,5}(?:\\d{4}|-\\d\\d)-\\d{5,9}|CCAD-MIH\\d{4}-null) (?:- (\\S+) )?.*");
   private static final Pattern TIMES_UNIT_PTN = Pattern.compile("\n *\n *\n(\\S+) -   *");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
 
