@@ -1,29 +1,24 @@
 package net.anei.cadpage.parsers.IN;
 
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
 
 /**
  * Wabash County, IN
  */
-public class INWabashCountyParser extends DispatchA24Parser {
+public class INWabashCountyParser extends DispatchSPKParser {
 
   public INWabashCountyParser() {
     super("WABASH COUNTY", "IN");
   }
 
   @Override
-  public boolean parseMsg(String body, Data data) {
-    int pt = body.indexOf(" - CALL:");
-    if (pt < 0) return false;
-    data.strSource = body.substring(0,pt).trim();
-    body = body.substring(pt+3);
-    return super.parseMsg(body, data);
+  public String getFilter() {
+    return "noreply@public-safety-cloud.com";
   }
 
   @Override
-  public String getProgram() {
-    return "SRC " + super.getProgram();
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 }
