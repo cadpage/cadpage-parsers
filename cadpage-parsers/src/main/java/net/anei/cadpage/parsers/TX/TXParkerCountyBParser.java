@@ -43,6 +43,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     if (name.equals("UNIT")) return new UnitField("(?!TAC)(?:\\b[A-Z]+\\d+\\b,?)+", true);
     if (name.equals("SRC")) return new SourceField("ST\\d+|TC\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
+    if (name.equals("CITY")) return new CityField("([A-Z]{3})(?:\\(S\\).*)?");
     if (name.equals("MAP")) return new MapField("\\d{4}", true);
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();

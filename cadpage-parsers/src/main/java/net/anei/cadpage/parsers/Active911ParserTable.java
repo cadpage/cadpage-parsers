@@ -2807,6 +2807,7 @@ public class Active911ParserTable {
       "US/TX/OysterCreekPD",              "TXBrazoriaCountyB",
       "US/TX/PaloPinto",                  "TXPaloPintoCounty",
       "US/TX/ParkerCounty",               "TXParkerCountyB",
+      "US/TX/ParkerCountySO",             "TXParkerCountyB",
       "US/TX/PolkCounty",                 "TXPolkCounty",
       "US/TX/PonderosaFD",                "TXCyCreekCommCenterB",
       "US/TX/PortArthurFD",               "TXJeffersonCounty",
