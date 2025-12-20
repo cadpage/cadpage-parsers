@@ -39,6 +39,7 @@ public class MTGallatinCountyAParser extends FieldProgramParser {
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new MyIdField();
     return super.getField(name);
   }
 
@@ -89,6 +90,14 @@ public class MTGallatinCountyAParser extends FieldProgramParser {
       field = stripFieldEnd(field, " CAD NOTES None");
       field = field.replace(" CAD  NOTES ", " ");
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyIdField extends IdField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "None,");
       super.parse(field, data);
     }
   }

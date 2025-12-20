@@ -6,7 +6,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MTGallatinCountyParser extends GroupBestParser {
 
   public MTGallatinCountyParser() {
-    super(new MTGallatinCountyAParser(),
-          new MTGallatinCountyBParser());
+    super(new MTGallatinCountyAParser());
   }
 }

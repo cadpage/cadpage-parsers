@@ -272,7 +272,8 @@ public class ManageParsers {
         "NYMadisonCountyB",   "General",                 // 11/11/2025
         "NYMadisonCountyC",   "General",
         "ALWinstonCountyA",   "General",
-        "WIWaukeshaCountyC",  "WIKaukeshaCountyB"       // 11/25/2025
+        "WIWaukeshaCountyC",  "WIKaukeshaCountyB",       // 11/25/2025
+        "MTMallatinCountyB",  "General"
   });
 
 }
