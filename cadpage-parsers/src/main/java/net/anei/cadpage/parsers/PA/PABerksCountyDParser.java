@@ -40,7 +40,6 @@ public class PABerksCountyDParser extends FieldProgramParser {
 
     match = TRAIL_URL_PTN.matcher(body);
     if (match.find()) {
-    int pt = body.indexOf("\\bhttps:");
       data.strInfoURL = match.group(1);
       body = body.substring(0, match.start());
     }
