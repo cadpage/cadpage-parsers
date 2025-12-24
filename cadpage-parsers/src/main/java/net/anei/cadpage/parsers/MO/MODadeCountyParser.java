@@ -43,7 +43,9 @@ public class MODadeCountyParser extends DispatchA48Parser {
       "DADEVILLE",
       "EVERTON",
       "GREENFIELD",
+      "CITY OF GREENFIELD",
       "LOCKWOOD",
+      "CITY OF LOCKWOOD",
       "SOUTH GREENFIELD",
 
       // Unincorporated communities
@@ -55,6 +57,27 @@ public class MODadeCountyParser extends DispatchA48Parser {
       "KINGS POINT",
       "MEINERT",
       "PENNSBORO",
-      "SYLVANIA"
+      "SYLVANIA",
+
+      // Barton County
+      "GOLDEN CITY",
+      "LAMAR",
+
+      // Polk County
+      "ALDRICH",
+
+      // Greene County
+      "ASH GROVE",
+      "WALNUT GROVE",
+
+      // Jasper County
+      "JASPER",
+
+      // Cedar County
+      "JERICO SPRINGS",
+      "STOCKTON",
+
+      // Lawrence County
+      "MILLER"
   };
 }
