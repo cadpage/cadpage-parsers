@@ -11,7 +11,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
 
   public FLPalmBeachCountyParser() {
     super(CITY_CODES, "PALM BEACH COUNTY", "FL",
-          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? Map_page:MAP? Map_Coord:MAP? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Disp:UNIT! UNIT/S+");
+          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? ZONE:MAP? Map_page:MAP/L? Map_Coord:MAP/L? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Case_#:ID? Disp:UNIT! UNIT/C+");
   }
 
   @Override
@@ -44,7 +44,6 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("PLACE")) return new MyPlaceField();
-    if (name.equals("MAP")) return new MyMapField();
     if (name.equals("TIME")) return new TimeField("\\d{2}:\\d{2}:\\d{2}", true);
     return super.getField(name);
   }
