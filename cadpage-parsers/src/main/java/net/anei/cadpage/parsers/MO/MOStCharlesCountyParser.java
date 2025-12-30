@@ -768,6 +768,7 @@ public class MOStCharlesCountyParser extends FieldProgramParser {
       "Small Outside Fire",
       "Small Outside Fire",
       "Smoke Investigation",
+      "Stab CENTRAL Wound",
       "Stabbing Unknown Status",
       "Stabbing Unknown Sta",
       "Stroke Ab Breathing",
