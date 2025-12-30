@@ -36,6 +36,7 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("|")) body = body.substring(1).trim();
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body, data);
   }
 
