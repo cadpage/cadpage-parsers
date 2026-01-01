@@ -8,26 +8,31 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class PAIndianaCountyParser extends SmartAddressParser {
-  
+
   public PAIndianaCountyParser() {
     super(CITY_LIST, "INDIANA COUNTY", "PA");
-    setFieldList("CALL PRI ADDR APT CITY PLACE X CH ID GPS UNIT");
+    setFieldList("SRC CALL PRI ADDR APT CITY PLACE X CH ID GPS UNIT");
     setupMultiWordStreets(MWORD_CITY_LIST);
     removeWords("BUS", "DRIVE");
   }
-  
+
   @Override
   public String getFilter() {
-    return "911@INDIPAGE.LC";
+    return "911@INDIPAGE.LC,724204191";
   }
-  
+
   private static final Pattern MASTER = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*?) FIRE OPS:(.*) INC:(.*)");
   private static final Pattern CITY_EXT_PTN = Pattern.compile("(?:BORO(?:UGH)?|TWP)\\b");
   private static final Pattern CROSS_SFX_PTN = Pattern.compile("(.*) *\\b(ROUTE|PRIVATEROAD)");
-  
+  private static final Pattern ID_UNIT_PTN = Pattern.compile("((?:.* )?\\d{4}-\\d{8} [A-Z0-9]+)\\b[, ]*(.*)");
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Automatic R&R Notification") && !subject.equals("Text Message")) return false;
+    if (!subject.equals("Automatic R&R Notification") && !subject.equals("Text Message")) {
+      if (!body.startsWith("IND911:")) return false;
+      data.strSource = subject;
+      body = body.substring(7).trim();
+    }
 
     body = body.replace("\n", " ");
     Matcher match = MASTER.matcher(body);
@@ -37,7 +42,7 @@ public class PAIndianaCountyParser extends SmartAddressParser {
     String addr = match.group(3).trim();
     data.strChannel = match.group(4).trim();
     String idUnit = match.group(5);
-    
+
     int pt = addr.indexOf(',');
     if (pt < 0) return false;
     parseAddress(addr.substring(0,pt).trim(), data);
@@ -50,7 +55,7 @@ public class PAIndianaCountyParser extends SmartAddressParser {
       addr = addr.substring(match.end()).trim();
       if (match.group().equals("TWP")) data.strCity += " TWP";
     }
-    
+
     pt = addr.indexOf(" - ");
     if (pt >= 0) {
       data.strPlace = addr.substring(0,pt).trim();
@@ -69,31 +74,40 @@ public class PAIndianaCountyParser extends SmartAddressParser {
       }
       data.strCross = append(data.strCross, ", ", crossExt);
     }
-    
+
     match = CROSS_SFX_PTN.matcher(data.strPlace);
     if (match.matches()) {
       data.strPlace = match.group(1).trim();
       data.strCross = append(match.group(2), " ", data.strCross);
     }
-    
+
     pt = Math.max(idUnit.lastIndexOf(']'), idUnit.lastIndexOf(')'))+1;
-    if (pt <= 0) return false;
-    if (pt < idUnit.length() && idUnit.charAt(pt) == ' ') {
-      data.strCallId = idUnit.substring(0,pt);
-      idUnit = idUnit.substring(pt).trim();
-      data.strUnit = setGPSLoc(idUnit, data);
+    if (pt > 0) {
+      if (pt < idUnit.length() && idUnit.charAt(pt) == ' ') {
+        data.strCallId = idUnit.substring(0,pt);
+        idUnit = idUnit.substring(pt).trim();
+        data.strUnit = setGPSLoc(idUnit, data);
+      } else {
+        data.strCallId = idUnit;
+      }
     } else {
-      data.strCallId = idUnit;
+      match = ID_UNIT_PTN.matcher(idUnit);
+      if (match.matches()) {
+        data.strCallId = match.group(1);
+        data.strUnit = match.group(2);
+      } else {
+        data.strUnit = idUnit;
+      }
+      if (data.strUnit.startsWith("20")) data.strUnit = "";
     }
-    
     return true;
   }
-  
+
   @Override
   public String adjustMapCity(String city) {
     return convertCodes(city, COUNTY_CODES);
   }
-  
+
   private static final String[] MWORD_CITY_LIST = new String[] {
       "ALLEN BRIDGE",
       "ANTHONY RUN",
@@ -186,7 +200,7 @@ public class PAIndianaCountyParser extends SmartAddressParser {
   };
 
   private static final String[] CITY_LIST = new String[] {
-      
+
       // Boroughs
       "ARMAGH",
       "BLAIRSVILLE",
@@ -202,7 +216,7 @@ public class PAIndianaCountyParser extends SmartAddressParser {
       "SALTSBURG",
       "SHELOCTA",
       "SMICKSBURG",
-      
+
       // Townships
       "ARMSTRONG",
       "BANKS",
@@ -269,11 +283,11 @@ public class PAIndianaCountyParser extends SmartAddressParser {
 
       //  Cambra County
       "CAMB CO",
-      
+
       // Westmoreland County
       "WEST CO"
   };
-  
+
   private static final Properties COUNTY_CODES = buildCodeTable(new String[] {
       "ARMS CO",  "ARMSTRONG COUNTY",
       "CAMB CO",  "CAMBRIA COUNTY",
