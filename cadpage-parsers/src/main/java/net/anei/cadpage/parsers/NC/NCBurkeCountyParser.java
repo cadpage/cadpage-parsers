@@ -15,7 +15,7 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
 
   public NCBurkeCountyParser() {
     super(CITY_CODES, "BURKE COUNTY", "NC",
-          "( CANCEL ADDR CITY? | FYI? SRC? ( CITY/Z GPS1! GPS2! | ) CALL ( ID CODE? | CODE ID? | ) ADDR! X? X? ) INFO/N+");
+          "( CANCEL ADDR CITY? | FYI? SRC? ( CITY/Z GPS1! GPS2! | ) CALL EMPTY? ( ID CODE? | CODE ID? | ) ADDR! X? X? ) INFO/N+");
   }
 
   @Override
@@ -36,8 +36,16 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
   @Override
   public boolean parseMsg(String body, Data data) {
     if (body.startsWith("|")) body = body.substring(1).trim();
-    if (!body.startsWith("CAD:")) body = "CAD:" + body;
-    return super.parseMsg(body, data);
+    boolean good = body.startsWith("CAD:");
+    if (!good) body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    if (data.strAddress.isEmpty()) return false;
+    if (!data.strSource.isEmpty() ||
+        !data.strCode.isEmpty() ||
+        !data.strCity.isEmpty() ||
+        !data.strCallId.isEmpty() ||
+        !data.strCross.isEmpty()) return true;
+    return isValidAddress(data.strAddress);
   }
 
   @Override
