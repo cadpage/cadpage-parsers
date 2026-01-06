@@ -15,7 +15,8 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
 
   public NCBurkeCountyParser() {
     super(CITY_CODES, "BURKE COUNTY", "NC",
-          "( CANCEL ADDR CITY? | FYI? SRC? ( CITY/Z GPS1! GPS2! | ) CALL EMPTY? ( ID CODE? | CODE ID? | ) ADDR! X? X? ) INFO/N+");
+          "( CANCEL ADDR CITY? | FYI? SRC? ( CITY/Z GPS1! GPS2! | CITY | ) CALL EMPTY? ( ID CODE? | CODE ID? | ) ADDR! X? X? ) CODE? ID? INFO/N+");
+    setupCityValues(CITY_CODES);
   }
 
   @Override

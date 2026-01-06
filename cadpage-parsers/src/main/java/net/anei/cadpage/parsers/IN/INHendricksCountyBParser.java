@@ -30,7 +30,8 @@ public class INHendricksCountyBParser extends DispatchH03Parser {
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "NSL", "NORTH SALEM"
+      "NSL", "NORTH SALEM",
+      "STI", "STILESVILLE"
   });
 
 }

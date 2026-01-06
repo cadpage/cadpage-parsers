@@ -1,6 +1,7 @@
 package net.anei.cadpage.parsers.MO;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ public class MOOsageCountyBParser extends FieldProgramParser {
   public MOOsageCountyBParser() {
     super("OSAGE COUNTY", "MO",
           "Address:ADDRCITYST/SP! Lat/Long:GPS! Phone_Number:PHONE! Call_Details:INFO! Cross_Streets:X! Nearest_intersection:SKIP! Additional_Location_Details/Notes:NOTES! Call_Date:DATETIME! CFS_#:ID! Agency_#'s:SKIP!");
+    setupCities(CITY_CODES);
   }
 
   @Override
@@ -93,4 +95,8 @@ public class MOOsageCountyBParser extends FieldProgramParser {
       data.strSupp = append(field, "\n", data.strSupp);
     }
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "LNN", "LINN"
+  });
 }
