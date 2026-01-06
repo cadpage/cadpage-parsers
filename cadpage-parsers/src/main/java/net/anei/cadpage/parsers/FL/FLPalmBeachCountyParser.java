@@ -6,12 +6,13 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class FLPalmBeachCountyParser extends FieldProgramParser {
 
   public FLPalmBeachCountyParser() {
     super(CITY_CODES, "PALM BEACH COUNTY", "FL",
-          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? ZONE:MAP? Map_page:MAP/L? Map_Coord:MAP/L? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Case_#:ID? Disp:UNIT! UNIT/C+");
+          "Type:CALL! Event_Location:ADDR/S4? APT Dev:PLACE? ZONE:MAP? Map_page:MAP/L? Map_Coord:MAP/L? Talk_Group:CH? TIME:TIME! ( lat/lon:GPS1! GPS2! EMPTY? | ) Case_#:ID? Disp:UNIT UNIT/C+");
   }
 
   @Override
@@ -24,12 +25,25 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static Pattern DOTDOTDOT = Pattern.compile("\\.{3,}");
+  private static final Pattern GEN_ALERT_PTN = Pattern.compile("(?:(.*?) +)?Original message from terminal \\S+  - +(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d) +[^:]+: *(.*)");
+  private static final Pattern DOTDOTDOT = Pattern.compile("\\.{3,}");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
     //check subject
     if (!subject.equals("IPS I/Page Notification")) return false;
+
+    // Process general alert
+    Matcher match = GEN_ALERT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL DATE TIME INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strCall = getOptGroup(match.group(1));
+      data.strDate = match.group(2);
+      data.strTime = match.group(3);
+      data.strSupp = match.group(4);
+      return true;
+    }
 
     //remove \\.{3,}
     body = DOTDOTDOT.matcher(body).replaceAll(" ");
