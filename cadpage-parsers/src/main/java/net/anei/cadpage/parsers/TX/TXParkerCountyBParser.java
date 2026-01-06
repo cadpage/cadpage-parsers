@@ -14,7 +14,9 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     super(CITY_CODES, "PARKER COUNTY", "TX",
           "( SELECT/STATUS UNIT CALL ADDR CITY/Y CALL2 " +
           "| CANCEL ADDR CITY/Y " +
-          "| CALL PLACE? ADDR/Z X/Z+? CITY/Y! CH? UNIT? PRI? MAP? " +
+          "| FYI? ( ID CALL ADDR UNIT? GPS1 GPS2 " +
+                 "| CALL PLACE? ADDR/Z X/Z+? CITY/Y! CH? UNIT? PRI? MAP? " +
+                 ") " +
           ") INFO/N+? BOX");
   }
 
@@ -48,7 +50,7 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
     if (name.equals("PRI")) return new PriorityField("\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("BOX")) return new BoxField("\\d{4}", true);
-    if (name.equals("DIGIT")) return new SkipField("\\d", true);
+    if (name.equals("ID")) return new IdField("\\d{10}", true);
     return super.getField(name);
   }
 
