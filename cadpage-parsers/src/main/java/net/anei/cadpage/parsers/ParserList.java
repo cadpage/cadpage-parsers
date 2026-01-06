@@ -2116,6 +2116,7 @@ public class ParserList {
               ,"ZCAABClearwaterCounty"          ,"Clearwater County, AB"
               ,"ZCAABCypressCounty"             ,"Cypress County, AB"
               ,"ZCAABEdmonton"                  ,"Edmonton, AB"
+              ,"ZCAABFoothillsCounty"           ,"Foothills County, AB"
               ,"ZCAABLacombeCounty"             ,"Lacombe County, AB"
               ,"ZCAABLamontCounty"              ,"Lamont County, AB"
               ,"ZCAABLeducCounty"               ,"Leduc County, AB"

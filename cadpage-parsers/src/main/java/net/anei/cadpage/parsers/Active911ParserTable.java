@@ -28,6 +28,7 @@ public class Active911ParserTable {
       "CA/AB/SylvanLake",                 "ZCAABRedDeerCounty",
       "CA/AB/Taber",                      "ZCAABTaber",
       "CA/AB/VegrevilleFD",               "ZCAABYellowheadCounty",
+      "CA/AB/WheatlandRegional911",				"ZCAABFoothillsCounty",
       "CA/AB/Wetaskiwin",                 "ZCAABYellowheadCounty",
       "CA/AB/YellowheadCounty",           "ZCAABYellowheadCounty",
       "CA/BC/Bulkley",                    "ZCABCSmithers",
