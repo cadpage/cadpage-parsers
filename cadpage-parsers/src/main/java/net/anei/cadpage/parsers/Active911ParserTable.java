@@ -814,6 +814,7 @@ public class Active911ParserTable {
       "US/IN/KokomoFD",                   "INHowardCountyB",
       "US/IN/KosciuskoCounty",            "INKosciuskoCounty",
       "US/IN/LakeCounty",                 "INLakeCounty",
+      "US/IN/LakeCountyNoNote",						"INLakeCounty",
       "US/IN/LaporteCounty",              "INLaporteCounty",
       "US/IN/LawrenceburgFD",             "INDearbornCounty",
       "US/IN/MadisonCounty",              "INMadisonCountyB,INMadisonCountyC",
