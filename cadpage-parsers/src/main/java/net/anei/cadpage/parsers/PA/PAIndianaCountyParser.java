@@ -28,7 +28,9 @@ public class PAIndianaCountyParser extends SmartAddressParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Automatic R&R Notification") && !subject.equals("Text Message")) {
+    if (!subject.equals("Automatic R&R Notification") && 
+        !subject.equals("Text Message") &&
+        !subject.equals("CALLTYPE")) {
       if (!body.startsWith("IND911:")) return false;
       data.strSource = subject;
       body = body.substring(7).trim();

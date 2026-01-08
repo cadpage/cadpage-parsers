@@ -1000,7 +1000,7 @@ public class Active911ParserTable {
       "US/KY/FranklinCounty",             "KYFranklinCountyB",
       "US/KY/FranklinSimpsonAmbulance",   "KYSimpsonCounty",
       "US/KY/FultonCounty",               "KYFultonCounty",
-      "US/KY/GallatinCounty",             "KYGallatinCountyA",
+      "US/KY/GallatinCounty",             "KYGallatinCounty",
       "US/KY/GarrardCounty",              "KYGarrardCounty,KYStatePoliceC",
       "US/KY/Gce911",                     "KYGreenupCounty",
       "US/KY/GrandLakeFD",                "KYLivingstonCounty",
