@@ -3155,6 +3155,7 @@ public class Active911ParserTable {
       "US/WV/WetzelCounty",               "WVWetzelCounty",
       "US/WV/WhiteSulphurSpringsEMS",     "WVGreenbrierCounty",
       "US/WV/WoodCounty",                 "WVWoodCounty",
+      "US/WV/Wyco",												"WVWyomingCountyB",
       "US/WV/Wyoming",                    "WVWyomingCounty",
       "US/WY/AlbanyCounty",               "WYAlbanyCounty",
       "US/WY/BigHornCounty",              "WYBigHornCounty",
