@@ -1,6 +1,6 @@
 package net.anei.cadpage.parsers.dispatch;
 
-import net.anei.cadpage.parsers.HtmlDecoder;
+import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
@@ -8,9 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class DispatchBCParser extends DispatchA3Parser {
+public class DispatchBCParser extends HtmlProgramParser {
 
-  private HtmlDecoder decoder = new HtmlDecoder();
   private AuxA33Parser auxA33Parser;
   private boolean useAuxParser;
 
@@ -25,13 +24,18 @@ public class DispatchBCParser extends DispatchA3Parser {
   public DispatchBCParser(String[] cityList, String defCity, String defState, int flags) {
     super(defCity, defState,
           "( Address:EMPTY! ADDR! Event_Number:EMPTY! ID! Category:EMPTY! CALL! COPY END " +
-          "| Event_No:EMPTY! ID! Status:EMPTY! Disposition:EMPTY! Category:EMPTY! CALL " +
-            "( Complaint_Numbers%EMPTY! Unit:EMPTY! UNIT Reporting_DSN:EMPTY Agency:EMPTY SRC | ) " +
-            "Address:EMPTY! ADDR Precinct:EMPTY! MAP Sector:EMPTY! MAP/D GEO:EMPTY! MAP/D ESZ:EMPTY! MAP/D Ward:EMPTY! MAP/D Intersection:EMPTY! X " +
-            "Date_/_Time%EMPTY Open:EMPTY! DATETIME1? Law_Enf.:EMPTY! SRC Dispatch:EMPTY! DATETIME1? Fire:EMPTY! SRC Enroute:EMPTY! DATETIME2? EMS:EMPTY! SRC Arrival:EMPTY! DATETIME2? " +
-            "Source:EMPTY! Departure:EMPTY! DATETIME3? Closed:EMPTY! DATETIME3? " +
-            "( Person(s)_Involved%EMPTY! Name_Address_Phone%EMPTY! NAME_PHONE Business%EMPTY! | ) " +
-            "Incident_Notes:EMPTY INFO+ Event_Log%EMPTY )");
+          "| Event_Report%EMPTY " +
+              "( Event_No:EMPTY! ID! Status:EMPTY! Disposition:EMPTY! Category:EMPTY! CALL " +
+                "( Complaint_Numbers%EMPTY! Unit:EMPTY! UNIT Reporting_DSN:EMPTY Agency:EMPTY SRC | ) " +
+                "Address:EMPTY! ADDR Precinct:EMPTY! MAP Sector:EMPTY! MAP/D GEO:EMPTY! MAP/D ESZ:EMPTY! MAP/D Ward:EMPTY! MAP/D Intersection:EMPTY! X " +
+                "Date_/_Time%EMPTY Open:EMPTY! DATETIME1? Law_Enf.:EMPTY! SRC Dispatch:EMPTY! DATETIME1? Fire:EMPTY! SRC Enroute:EMPTY! DATETIME2? EMS:EMPTY! SRC Arrival:EMPTY! DATETIME2? " +
+                "Source:EMPTY! Departure:EMPTY! DATETIME3? Closed:EMPTY! DATETIME3? " +
+                "( Person(s)_Involved%EMPTY! Name_Address_Phone%EMPTY! NAME_PHONE Business%EMPTY! | ) " +
+                "Incident_Notes:EMPTY INFO+ Event_Log%EMPTY " +
+              "| CAD_#:EMPTY! ID! Source:SKIP! Call_Type:EMPTY! CALL! BOX! Report_#:EMPTY! Location%EMPTY! PLACE Business_Name:EMPTY! ADDRCITY! Address:EMPTY! " +
+                  "ESZ:EMPTY! MAP Latitude%EMPTY! GPS1! Longitude%EMPTY! GPS2! DATETIME1! Unit_Info%EMPTY! UNIT_INFO+ Agency_Disposition%EMPTY! Notes%EMPTY! INFO+ " +
+              ") " +
+          ")");
 
     auxA33Parser = new AuxA33Parser(cityList, defCity, defState, flags);
   }
@@ -106,10 +110,9 @@ public class DispatchBCParser extends DispatchA3Parser {
     // Inappropriate <br> tags get inserted in the wierdest places, so we
     // will just get rid of them
     body = BR_TAG.matcher(body).replaceAll("");
-    String[] flds = decoder.parseHtml(body);
-    if (flds == null) return false;
+
     times = "";
-    if (! parseFields(flds, data)) return false;
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
    return true;
   }
@@ -142,7 +145,9 @@ public class DispatchBCParser extends DispatchA3Parser {
     if (name.equals("SRC")) return new BaseSourceField();
     if (name.equals("NAME_PHONE")) return new BaseNamePhoneField();
     if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("TIMES")) return new SkipField();
     if (name.equals("COPY")) return new SkipField("©.*", true);
+    if (name.equals("UNIT_INFO")) return new BaseUnitInfoField();
     return super.getField(name);
   }
 
@@ -254,12 +259,22 @@ public class DispatchBCParser extends DispatchA3Parser {
     }
   }
 
-  private static final Pattern INFO_DASHES_PTN = Pattern.compile("-*");
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("-*|\\d\\d:\\d\\d:\\d\\d");
   private class BaseInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (INFO_DASHES_PTN.matcher(field).matches()) return;
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
       data.strSupp = append(data.strSupp, " ", field);
+    }
+  }
+
+  private static final Pattern UNIT_PTN = Pattern.compile("[A-Z0-9 ]+");
+  private class BaseUnitInfoField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!UNIT_PTN.matcher(field).matches()) return;
+      field = field.replace(' ', '_');
+      data.strUnit = append(data.strUnit, ",", field);
     }
   }
 
