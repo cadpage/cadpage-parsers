@@ -1,11 +1,16 @@
 package net.anei.cadpage.parsers.OK;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA99Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchC04Parser;
 
-public class OKCreekCountyParser extends DispatchA99Parser {
+public class OKCreekCountyParser extends DispatchC04Parser {
 
   public OKCreekCountyParser() {
     super("CREEK COUNTY", "OK");
+  }
+  
+  @Override
+  public String getFilter() {
+    return "SOMS@CREEKCOUNTYSHERIFF.COM";
   }
 
   @Override
