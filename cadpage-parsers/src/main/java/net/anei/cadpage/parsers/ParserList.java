@@ -940,6 +940,7 @@ public class ParserList {
               ,"MIMacombCounty"                 ,"Macomb County, MI"
               ,"MIMackinacCounty"               ,"Mackinac County, MI"
               ,"MIMarquetteCounty"              ,"Marquette County, MI"
+              ,"MIMasonCounty"                  ,"Mason County, MI"
               ,"MIMecostaCounty"                ,"Mecosta County, MI"
               ,"MIMidlandCounty"                ,"Midland County, MI"
               ,"MIMobileMedicalResponse"        ,"Mobile Medical Response, MI"

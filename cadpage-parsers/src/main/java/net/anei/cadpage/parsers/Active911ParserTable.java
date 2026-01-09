@@ -1286,6 +1286,7 @@ public class Active911ParserTable {
       "US/MI/MackinacCounty",             "MIMackinacCounty",
       "US/MI/MacombCounty",               "MIMacombCountyB",
       "US/MI/MarquetteCounty",            "MIMarquetteCounty",
+      "US/MI/MasonOceana911",							"MIMasonCounty",
       "US/MI/MeceolaDispatch",            "MIMecostaCounty",
       "US/MI/MedicOneAmbulance",          "MIBerrienCounty",
       "US/MI/MeridianTwpFD",              "MIInghamCountyB",
