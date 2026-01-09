@@ -25,15 +25,15 @@ public class DispatchBCParser extends HtmlProgramParser {
     super(defCity, defState,
           "( Address:EMPTY! ADDR! Event_Number:EMPTY! ID! Category:EMPTY! CALL! COPY END " +
           "| Event_Report%EMPTY " +
-              "( Event_No:EMPTY! ID! Status:EMPTY! Disposition:EMPTY! Category:EMPTY! CALL " +
+              "( CAD_#:EMPTY! ID! Source:SKIP! Call_Type:EMPTY! CALL! BOX! Report_#:EMPTY! Location%EMPTY! PLACE Business_Name:EMPTY! ADDRCITY! Address:EMPTY! " +
+                  "ESZ:EMPTY! MAP Latitude%EMPTY! GPS1! Longitude%EMPTY! GPS2! DATETIME1! Unit_Info%EMPTY! UNIT_INFO+ Agency_Disposition%EMPTY! Notes%EMPTY! INFO+ " +
+              "| Event_No:EMPTY! ID! Status:EMPTY! Disposition:EMPTY! Category:EMPTY! CALL " +
                 "( Complaint_Numbers%EMPTY! Unit:EMPTY! UNIT Reporting_DSN:EMPTY Agency:EMPTY SRC | ) " +
                 "Address:EMPTY! ADDR Precinct:EMPTY! MAP Sector:EMPTY! MAP/D GEO:EMPTY! MAP/D ESZ:EMPTY! MAP/D Ward:EMPTY! MAP/D Intersection:EMPTY! X " +
                 "Date_/_Time%EMPTY Open:EMPTY! DATETIME1? Law_Enf.:EMPTY! SRC Dispatch:EMPTY! DATETIME1? Fire:EMPTY! SRC Enroute:EMPTY! DATETIME2? EMS:EMPTY! SRC Arrival:EMPTY! DATETIME2? " +
                 "Source:EMPTY! Departure:EMPTY! DATETIME3? Closed:EMPTY! DATETIME3? " +
                 "( Person(s)_Involved%EMPTY! Name_Address_Phone%EMPTY! NAME_PHONE Business%EMPTY! | ) " +
                 "Incident_Notes:EMPTY INFO+ Event_Log%EMPTY " +
-              "| CAD_#:EMPTY! ID! Source:SKIP! Call_Type:EMPTY! CALL! BOX! Report_#:EMPTY! Location%EMPTY! PLACE Business_Name:EMPTY! ADDRCITY! Address:EMPTY! " +
-                  "ESZ:EMPTY! MAP Latitude%EMPTY! GPS1! Longitude%EMPTY! GPS2! DATETIME1! Unit_Info%EMPTY! UNIT_INFO+ Agency_Disposition%EMPTY! Notes%EMPTY! INFO+ " +
               ") " +
           ")");
 
