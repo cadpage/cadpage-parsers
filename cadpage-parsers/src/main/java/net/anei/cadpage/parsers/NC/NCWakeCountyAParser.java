@@ -104,7 +104,8 @@ public class NCWakeCountyAParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern INFO_GPS_PTN = Pattern.compile("\\(1\\).*? LAT: *(\\S*) +LON: *(\\S*?)(?=\\([23])");
+  private static final Pattern INFO_GPS_PTN = Pattern.compile("[\\(\\{]1[\\)\\}].*? LAT: *(\\S*) +LON: *(\\S*?)(?=[\\(\\{][23])");
+  private static final Pattern INFO_MRK_PTN = Pattern.compile("[\\(\\{]3[\\)\\}]? *");
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -112,10 +113,9 @@ public class NCWakeCountyAParser extends FieldProgramParser {
       if (match.lookingAt()) {
         setGPSLoc(match.group(1)+','+match.group(2), data);
         field = field.substring(match.end()).trim();
-        int pt = field.indexOf("(3)");
-        if (pt >= 0) {
-          field = field.substring(pt+3).trim();
-        } else return;
+        match = INFO_MRK_PTN.matcher(field);
+        if (match.find()) field = field.substring(match.end());
+        else field = "";
       } else if (field.contains(" LAT:")) return;
 
       super.parse(field, data);
