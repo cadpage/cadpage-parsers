@@ -24,7 +24,9 @@ public class MIMasonCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split(";"), data);
+    if (!parseFields(body.split(";"), data)) return false;
+    if (data.strCity.equals("MI")) data.strCity = "";
+    return true;
   }
 
   @Override

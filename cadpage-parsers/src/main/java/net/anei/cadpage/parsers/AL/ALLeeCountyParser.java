@@ -17,8 +17,10 @@ public class ALLeeCountyParser extends GroupBestParser {
     "AUBURN",
     "OPELIKA",
     "PHENIX CITY",
-    "SMITHS STATION",
+    "SMITH",
+    "SMITH STATION",
     "SMITHS",
+    "SMITHS STATION",
 
     // Towns
     "LOACHAPOKA",
