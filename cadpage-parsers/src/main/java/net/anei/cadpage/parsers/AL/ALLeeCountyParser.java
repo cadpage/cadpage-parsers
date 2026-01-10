@@ -4,11 +4,13 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class ALLeeCountyParser extends GroupBestParser {
-  
+
   public ALLeeCountyParser() {
-    super(new ALLeeCountyAParser(), new ALLeeCountyBParser());
+    super(new ALLeeCountyAParser(),
+          new ALLeeCountyBParser(),
+          new ALLeeCountyCParser());
   }
-  
+
   static final String[] CITY_LIST = {
 
     // Cities
@@ -17,12 +19,12 @@ public class ALLeeCountyParser extends GroupBestParser {
     "PHENIX CITY",
     "SMITHS STATION",
     "SMITHS",
-    
+
     // Towns
     "LOACHAPOKA",
     "NOTASULGA",
     "WAVERLY",
-    
+
     // Unincorporated Communities
     "BEAUREGARD",
     "BEE HIVE",
