@@ -547,6 +547,7 @@ public class ParserList {
               ,"ILMorganCounty"                 ,"Morgan County, IL"
               ,"ILOFallon"                      ,"O'Fallon, IL"
               ,"ILPeoriaCounty"                 ,"Peoria County, IL"
+              ,"ILPikeCounty"                   ,"Pike County, IL"
               ,"ILRandolphCounty"               ,"Randolph County, IL"
               ,"ILRichlandCounty"               ,"Richland County, IL"
               ,"ILRockIslandCounty"             ,"Rock Island County, IL"

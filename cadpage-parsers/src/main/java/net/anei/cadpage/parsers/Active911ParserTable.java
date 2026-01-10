@@ -735,6 +735,7 @@ public class Active911ParserTable {
       "US/IL/OFallon",                    "ILOFallon",
       "US/IL/OrlandFire",                 "ILCookCountyG",
       "US/IL/PekinFD",                    "ILTazewellCounty",
+      "US/IL/PikeCounty",									"ILPikeCounty",
       "US/IL/PleasantviewFPD",            "ILCookCountyI",
       "US/IL/PrairieDuPont",              "ILStClairCountyA,ILStClairCountyC",
       "US/IL/Quadcom911",                 "ILKaneCountyD,ILKaneCountyE,ILKaneCountyF",
