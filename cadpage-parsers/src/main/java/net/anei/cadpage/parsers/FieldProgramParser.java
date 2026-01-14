@@ -1320,17 +1320,7 @@ public class FieldProgramParser extends SmartAddressParser {
     }
 
     public boolean exec(Data data) {
-      if (!step.process(data)) return false;
-
-      // Parse state engine has completed
-      // But we still need to check for any unprocessed required fields
-      while (result && step != null) {
-        if (! step.checkFailure(data)) result = false;
-        if (step.field != null && step.field instanceof EndField &&
-            step.succLink != null) step = step.succLink.step;
-        else step = step.getNextStep();
-      }
-      return true;
+      return step.process1(data);
     }
   }
 
@@ -1683,12 +1673,10 @@ public class FieldProgramParser extends SmartAddressParser {
     /**
      * Execute the program starting with this step.
      * @param data Data object being set up
-     * @param lastStep most recently executed step
-     * @return the next link to be processed, or
-     * SUCCESS to indicate a successful parse, or
-     * FAILURE to indicate a parse failure
+     * @return true if processing completed
+     *         false if processing should continue
      */
-    public boolean process(Data data) {
+    public boolean process1(Data data) {
 
       int ndx = state.getIndex();
       Step lastStep = state.getLastStep();
@@ -1715,6 +1703,17 @@ public class FieldProgramParser extends SmartAddressParser {
         // And this is not an end or select field (which need no data to work with)
         if (field == null || ! (field instanceof EndField || field instanceof SelectField)) {
 
+          // See if we got into an endless end of data step processing loop
+          // If we have, then we are finished
+          if (isChecked()) return true;
+          markChecked();
+
+          // If this was a required step, return overall failure status
+          if (! checkFailure(data)) {
+            state.setResult(false);
+            return true;
+          }
+
           // Otherwise, if there is a failure link, execute it
           // Unless it points back to ourselves, which can happen if there was
           // a repeating condition SKIP step
@@ -1731,10 +1730,18 @@ public class FieldProgramParser extends SmartAddressParser {
             return state.link(succLink);
           }
 
-          // Otherwise we are finished
-          return true;
+          if (field != null && field instanceof EndField && succLink != null) {
+            return state.link(succLink);
+          } else {
+            Step nextStep = getNextStep();
+            state.setStep(nextStep);
+            return nextStep == null;
+          }
         }
       }
+
+      // If we have a real data field, re-initialize the end of data loop detector
+      initStepScan();
 
       // Check for special doNotTrim processing
       boolean doNotTrim = (field != null && field.doNotTrim());
@@ -1879,7 +1886,11 @@ public class FieldProgramParser extends SmartAddressParser {
             // this text.  Which means we have reached the end of text processing
             // and need only check if there are any required fields we haven't
             // encountered
-            if (!startStep.optional) return true;
+            if (!startStep.optional) {
+              state.setIndex(ndx);
+              state.setStep(startStep);
+              return false;
+            }
 
             // Otherwise, the assumption is that there is no matching
             // tagged field.  So we start the whole process all over again
@@ -1887,10 +1898,9 @@ public class FieldProgramParser extends SmartAddressParser {
             ndx = startNdx;
             lastStep = startStep;
             startStep = null;
-            if (succLink != null) startStep = succLink.getStep();
+            if (lastStep.succLink != null) startStep = lastStep.succLink.getStep();
 
-            // If this hits the end of the chain, make sure we didn't skip
-            // any required fields
+            // If this hits the end of the chain, we are done
             if (startStep == null) return true;
           }
           curFld = state.getField(ndx).trim();

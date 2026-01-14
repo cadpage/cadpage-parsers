@@ -13,7 +13,9 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   public DispatchA60Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CODE/Z? CALL ADDRCITYST/Z INFO INFO+? UNIT/C+? DATETIME! ID END");
+          "CODE/X? CALL ADDRCITYST/Z! ( DATETIME! INFO+? UNIT/C+ " +
+                                     "| INFO INFO+? UNIT/C+? DATETIME! ID " +
+                                     ") END");
   }
 
   @Override
@@ -26,12 +28,34 @@ public class DispatchA60Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CODE")) return new CodeField("\\*?[A-Z][-A-Z0-9]+|", false);
+//    if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("DATETIME")) return new MyDateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d", true);
     return super.getField(name);
+  }
+
+  private static final Pattern CODE_PTN = Pattern.compile("\\*?[A-Z][-A-Z0-9]+|");
+  private static final Pattern ADDR_PTN = Pattern.compile("\\d.*|.*[,/&].*|\\{cfs_location\\}");
+  private class MyCodeField extends CodeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!CODE_PTN.matcher(field).matches()) return false;
+      if (ADDR_PTN.matcher(getRelativeField(+1)).matches()) return false;
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
   }
 
   private class MyAddressCityStateField extends AddressCityStateField {
@@ -78,8 +102,10 @@ public class DispatchA60Parser extends FieldProgramParser {
         sb.append(field);
       }
       if (!good) return false;
-      data.strDate = date;
-      data.strTime = time;
+      if (data.strDate.isEmpty()) {
+        data.strDate = date;
+        data.strTime = time;
+      }
       data.strSupp = append(data.strSupp, "\n", sb.toString());
       return true;
     }
