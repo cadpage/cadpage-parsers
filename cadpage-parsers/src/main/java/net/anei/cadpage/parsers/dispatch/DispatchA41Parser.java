@@ -28,10 +28,18 @@ public class DispatchA41Parser extends FieldProgramParser {
 
   private static String calcProgram(int flags) {
     StringBuilder sb = new StringBuilder();
-    sb.append("( SELECT/XX UNIT CODE IDX ( PLACE ADDRCITY/Z CITY CH/Y | ADDRCITY/Z CITY CH/Y | PLACE ADDRCITY/Z CH | ADDRCITY/Z CH? ) INFO/N+? DATETIME! END | CODE! ( CH/Z IDX PLACE ADDRCITY CITY MAP! INFO/N+ Unit:UNIT! DATETIME! END | ");
+    sb.append("( SELECT/XX UNIT CODE IDX ( PLACE ADDRCITY/Z CITY CH/Y | ADDRCITY/Z CITY CH/Y | PLACE ADDRCITY/Z CH | ADDRCITY/Z CH? ) INFO/N+? DATETIME! END " +
+              "| CODE! ( IDX PLACE ADDRCITY CITY MAP! INFO/N+ Unit:UNIT! DATETIME! END " +
+                      "| CH/Z IDX PLACE ADDRCITY CITY MAP! INFO/N+ Unit:UNIT! DATETIME! END " +
+                      "| ");
     if ((flags & A41_FLG_ID) != 0) sb.append("ID ");
     else if ((flags & A41_FLG_NO_CALL) == 0) sb.append("CALL ");
-    sb.append("( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? ( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? ( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? ( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) INFO/CS+ Unit:UNIT UNIT+ ) )");
+    sb.append(          "( PLACE1 CITY/Z AT | ADDRCITY/Z ADDR2? ) CITY? ( CH/Z MAPPAGE! | EMPTY? " +
+                            "( PLACE2 PLACE_APT2 X1 | PLACE2 PLACE_APT2 INT | PLACE2 X1 | PLACE2 INT | X1 | INT | ) EMPTY? " +
+                            "( CH! | PLACE3+? PLACE_APT3 CH! ) ( MAP MAPPAGE | MAPPAGE | MAP MAP2? ) ) INFO/CS+? " +
+                            "( ID1 GPS1 GPS2 ID2? | GPS1 GPS2 ) INFO/CS+ Unit:UNIT UNIT+ " +
+                      ") " +
+              ")");
     return sb.toString();
   }
 
