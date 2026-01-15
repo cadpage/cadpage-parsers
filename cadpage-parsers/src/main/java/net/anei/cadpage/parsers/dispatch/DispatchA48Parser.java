@@ -30,12 +30,17 @@ public class DispatchA48Parser extends FieldProgramParser {
   /**
    * Flag indicating there is no call code.  Just a call description
    */
-  public static final int A48_NO_CODE =           0x04;
+  public static final int A48_NO_CODE =  0x04;
 
   /**
    * Flag indicating call description is optional
    */
   public static final int A48_OPT_CALL = 0x8;
+
+  /**
+   * Flag indicating there are no field break delimiters
+   */
+  public static final int A48_NO_FLD_BREAKS = 0x10;
 
   /**
    * Flag indicating the call description may be a single word code
@@ -221,6 +226,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private boolean optCode;
   private boolean noCode;
   private boolean optCall;
+  private boolean noFldBreaks;
   private Properties callCodes;
   private Pattern unitPtn;
   private String fieldList;
@@ -252,6 +258,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     optCode = (flags & A48_OPT_CODE) != 0;
     noCode = (flags & A48_NO_CODE) != 0;
     optCall = (flags & A48_OPT_CALL) != 0;
+    noFldBreaks = (flags & A48_NO_FLD_BREAKS) != 0;
     this.unitPtn = unitPtn;
     this.callCodes = callCodes;
     fieldList = ("DATE TIME ID CODE CALL ADDR X? APT PLACE? CITY NAME " + fieldType.getFieldList() + " UNIT INFO").replace("  ", " ");
@@ -329,10 +336,12 @@ public class DispatchA48Parser extends FieldProgramParser {
     // Check for the new newline delimited format
     crossSet = new HashSet<String>();
     unitSet = new HashSet<String>();
-    String flds[] = body.split("\n");
-    if (flds.length < 4) flds = body.split(";");
-    if (flds.length >= 4) {
-      return parseFields(flds, data);
+    if (!noFldBreaks) {
+      String flds[] = body.split("\n");
+      if (flds.length < 4) flds = body.split(";");
+      if (flds.length >= 4) {
+        return parseFields(flds, data);
+      }
     }
 
     // No such luck, have to do this the old way
