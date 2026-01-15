@@ -13,7 +13,7 @@ public class ARPopeCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@popeco911.org";
+    return "no-reply@popeco911.org,relay@popecountyar.gov";
   }
 
   @Override
