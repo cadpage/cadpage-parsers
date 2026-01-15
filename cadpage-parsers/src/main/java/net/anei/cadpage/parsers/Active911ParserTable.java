@@ -462,6 +462,7 @@ public class Active911ParserTable {
       "US/CT/OldSaybrook",                "CTMiddlesexCountyD",
       "US/CT/QuinnebaugValleyEmergencyCommunications", "CTNewLondonCountyB",
       "US/CT/TollandCounty",              "CTTollandCountyA,CTTollandCountyD",
+      "US/CT/TollandCountyAnimalControl", "CTTollandCountyA",
       "US/CT/TownofStratford",            "CTFairfieldCountyC",
       "US/CT/Uconn",                      "CTTollandCountyB",
       "US/CT/Valleyshore911",             "CTMiddlesexCountyA",
