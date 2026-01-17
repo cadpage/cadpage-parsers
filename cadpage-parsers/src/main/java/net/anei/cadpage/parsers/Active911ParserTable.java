@@ -893,6 +893,7 @@ public class Active911ParserTable {
       "US/KS/CrawfordCounty",             "KSCrawfordCountyA",
       "US/KS/CutlerFD",                   "KSFranklinCounty",
       "US/KS/DickinsonCounty",            "KSDickinsonCounty",
+      "US/KS/DoniphanCounty",							"KSDoniphanCounty",
       "US/KS/EllisCounty",                "KSEllisCounty",
       "US/KS/EllisCountyFD",              "KSEllisCounty",
       "US/KS/EnterPol",                   "KSSumnerCounty",

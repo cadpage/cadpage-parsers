@@ -226,6 +226,7 @@ public class DispatchA25Parser extends FieldProgramParser {
   }
 
   private static final Pattern CITY_ZIP_PTN = Pattern.compile("(.*), *([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
   private static final Pattern APT_PREFIX_PTN = Pattern.compile("(?:APT(?: ROOM)?|LOT|RM|ROOM|STE)[ :]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
@@ -265,6 +266,15 @@ public class DispatchA25Parser extends FieldProgramParser {
           data.strCity = field.substring(pt+1).trim();
         } else {
           addr = field;
+        }
+      }
+
+      if (ZIP_PTN.matcher(data.strCity).matches()) {
+        pt = addr.lastIndexOf(',');
+        if (pt >= 0) {
+          zip = data.strCity;
+          data.strCity = addr.substring(pt+1).trim();
+          addr = addr.substring(0,pt).trim();
         }
       }
 

@@ -677,6 +677,7 @@ public class ParserList {
               ,"KSCowleyCounty"                 ,"Cowley County, KS"
               ,"KSCrawfordCounty"               ,"Crawford County, KS"
               ,"KSDickinsonCounty"              ,"Dickinson County, KS"
+              ,"KSDoniphanCounty"               ,"Donipohan County, KS"
               ,"KSEllisCounty"                  ,"Ellis County, KS"
               ,"KSEudora"                       ,"Eudora, KS"
               ,"KSFordCounty"                   ,"Ford County, KS"
