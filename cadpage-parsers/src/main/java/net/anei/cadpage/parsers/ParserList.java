@@ -921,6 +921,7 @@ public class ParserList {
               ,"MIClintonCounty"                ,"Clinton County, MI"
               ,"MIEatonCounty"                  ,"Eaton County, MI"
               ,"MIEmmetCounty"                  ,"Emmet County, MI"
+              ,"MIGenesseCounty"                ,"Genesse County, MI"
               ,"MIGogebicCounty"                ,"Gogebic County, MI"
               ,"MIGladwinCounty"                ,"Gladwin County, MI"
               ,"MIGratiotCounty"                ,"Gratiot County, MI"

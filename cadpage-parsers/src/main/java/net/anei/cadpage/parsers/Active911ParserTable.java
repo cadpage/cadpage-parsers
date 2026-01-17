@@ -1258,6 +1258,7 @@ public class Active911ParserTable {
       "US/MI/Firemodules",                "MIOaklandCountyB",
       "US/MI/ForrestCounty",              "MSForestCounty",
       "US/MI/Frankenlust",                "MIBayCountyC",
+      "US/MI/GenesseCounty",							"MIGenesseCounty",
       "US/MI/GeorgetownFD",               "MIOttawaCounty",
       "US/MI/GogebicCounty",              "MIGogebicCounty,MIWayneCounty",
       "US/MI/GrandTraverse",              "General",
