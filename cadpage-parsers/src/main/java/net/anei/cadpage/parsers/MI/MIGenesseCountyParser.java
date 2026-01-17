@@ -20,7 +20,7 @@ public class MIGenesseCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "iamresponding@geneseecounty911.org":
+    return "iamresponding@geneseecounty911.org";
   }
 
   @Override

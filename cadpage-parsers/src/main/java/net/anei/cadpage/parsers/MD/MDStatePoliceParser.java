@@ -1,20 +1,11 @@
 package net.anei.cadpage.parsers.MD;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class MDStatePoliceParser extends DispatchSPKParser {
+
+public class MDStatePoliceParser extends GroupBestParser {
 
   public MDStatePoliceParser() {
-    super("", "MD");
-  }
-
-  @Override
-  public String getFilter() {
-    return "MSP_CAD@server.com";
-  }
-
-  @Override
-  public String getLocName() {
-    return "Maryland State Police";
+    super(new MDStatePoliceAParser(), new MDStatePoliceBParser());
   }
 }
