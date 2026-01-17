@@ -541,6 +541,7 @@ public class ParserList {
               ,"ILMarionCounty"                 ,"Marion County, IL"
               ,"ILMassacCounty"                 ,"Massac County, IL"
               ,"ILMcHenryCounty"                ,"McHenry County, IL"
+              ,"ILMcLeanCounty"                 ,"McLean County, IL"
               ,"ILMedstar"                      ,"Medstar, IL"
               ,"ILMontgomeryCounty"             ,"Montgomery County, IL"
               ,"ILMonroeCounty"                 ,"Monroe County, IL"

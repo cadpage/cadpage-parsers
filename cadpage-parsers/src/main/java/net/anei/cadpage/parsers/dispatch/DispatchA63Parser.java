@@ -20,20 +20,20 @@ public class DispatchA63Parser extends FieldProgramParser {
   public DispatchA63Parser(String defCity, String defState) {
     this(null, null, defCity, defState);
   }
-  
+
   public DispatchA63Parser(Properties cityCodes, String defCity, String defState) {
     this(cityCodes, null, defCity, defState);
   }
-  
+
   public DispatchA63Parser(String[] cityList, String defCity, String defState) {
     this(null, cityList, defCity, defState);
   }
-  
+
   private boolean noCity;
 
   public DispatchA63Parser(Properties cityCodes, String[] cityList, String defCity, String defState) {
     super(cityList, defCity, defState,
-          "( Juris:SRC! CFS:CALL! ( Location:ADDRCITYST! Call#:ID_DATE_TIME " + 
+          "( Juris:SRC! CFS:CALL! ( Location:ADDRCITYST! Call#:ID_DATE_TIME " +
                                  "| Request#:ID! Report_Date/Time:DATETIME! Reporting_Period:SKIP! Location:ADDR! Notify_Type:SKIP Call#:SKIP Login_User:SKIP " +
                                  ") " +
           "| CFS:CALL! Location:ADDR! Call#:ID! Units_Dispatched:UNIT! Stations_Dispatched:SRC? Report_Date/Time:DATETIME! " +
@@ -101,8 +101,8 @@ public class DispatchA63Parser extends FieldProgramParser {
 
     return result.toArray(new String[0]);
   }
-  
-  private static final Pattern NO_BRK_PTN = 
+
+  private static final Pattern NO_BRK_PTN =
       Pattern.compile("(\\S+ \\{\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d(?: [AP]M)?\\}) ([^\\}]+\\}) (.*?) (Units:)(.*?) (Comments:) (.*)");
 
   private boolean parseNoBreak(String body, Data data) {
@@ -131,7 +131,7 @@ public class DispatchA63Parser extends FieldProgramParser {
 
   private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)");
   private static final SimpleDateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
-  
+
   private class BaseDateTimeField extends DateTimeField {
     @Override
     public void parse(String field, Data data) {
@@ -166,7 +166,7 @@ public class DispatchA63Parser extends FieldProgramParser {
       return "ADDR APT CITY";
     }
   }
-  
+
   private static final Pattern ADDR_STATE_ZIP_PTN = Pattern.compile("(.*) ([A-Z]{2})(?: (\\d{5}))?");
   private class BaseAddressCityStateField extends AddressField {
     @Override
@@ -188,10 +188,16 @@ public class DispatchA63Parser extends FieldProgramParser {
         if (apt.equals("BLDG") || apt.equals("LOT") || apt.equals("APT")) apt = "";
       }
       parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, field, data);
-      if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
+      if (data.strCity.isEmpty()) {
+        if (!noCity && !apt.isEmpty()) {
+          parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, apt, data);
+          apt = getStart();
+        }
+        if (data.strCity.isEmpty() && zip != null) data.strCity = zip;
+      }
       data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY ST";
@@ -205,7 +211,7 @@ public class DispatchA63Parser extends FieldProgramParser {
       data.strUnit = UNIT_DELIM_PTN.matcher(field).replaceAll(",");
     }
   }
-  
+
   private static final Pattern ID_DATE_TIME_PTN = Pattern.compile("(\\S+) +\\{(\\d\\d?/\\d\\d?/\\d{4}) +(\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)\\}");
   private class BaseIdDateTimeField extends Field {
     @Override
@@ -227,9 +233,9 @@ public class DispatchA63Parser extends FieldProgramParser {
       return "ID DATE TIME";
     }
   }
-  
+
   private static final Pattern CODE_CALL_PRI_PTN = Pattern.compile("(\\S+) +- +(.*)\\{(\\d)\\}");
-  
+
   private class BaseCodeCallPriorityField extends Field {
 
     @Override
