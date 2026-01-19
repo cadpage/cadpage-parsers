@@ -10,7 +10,7 @@ public class PAClarionCountyGParser extends FieldProgramParser {
 
   public PAClarionCountyGParser() {
     super("CLARION COUNTY", "PA",
-          "Alert_Code:SRC! Address:ADDRCITY! Type:CALL! Channel:CH? Xstreets:X Narrative:INFO/N+ Common_Name:PLACE! Loc_Info:APT2! Caller_Name:NAME! Caller_Phone:PHONE! Units:UNIT! GPS:GPS! END");
+          "Alert_Code:SRC? Address:ADDRCITY! Type:CALL! Channel:CH? Xstreets:X Narrative:INFO/N+ Common_Name:PLACE! Loc_Info:APT2! Caller_Name:NAME! Caller_Phone:PHONE! Units:UNIT! GPS:GPS! Incident_#:ID CFS:SKIP END");
   }
 
   @Override
