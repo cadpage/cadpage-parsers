@@ -10,7 +10,7 @@ public class TXComalCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@getrave.com";
+    return "FlexRapidNotification@dccnotify.com,@getrave.com,@email.getrave.com";
   }
 
   @Override
