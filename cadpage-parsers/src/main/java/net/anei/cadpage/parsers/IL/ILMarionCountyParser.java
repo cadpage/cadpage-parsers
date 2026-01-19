@@ -10,7 +10,7 @@ public class ILMarionCountyParser extends DispatchA76Parser {
 
   @Override
   public String getFilter() {
-    return "marioncad@marionpolicedept.com,CADAlerts@marioncounty911illinois.gov";
+    return "marioncad@marionpolicedept.com,CADAlerts@marioncounty911illinois.gov,marioncad@marionilpd.gov";
   }
 
 }
