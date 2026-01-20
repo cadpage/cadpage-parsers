@@ -21,14 +21,16 @@ public class PAIndianaCountyParser extends SmartAddressParser {
     return "911@INDIPAGE.LC,724204191";
   }
 
-  private static final Pattern MASTER = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*?) FIRE OPS:(.*) INC:(.*)");
+  private static final String FIRE_OPS = " FIRE OPT:";
+  private static final Pattern MASTER1 = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*?) FIRE OPS:(.*) INC:(.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*)");
   private static final Pattern CITY_EXT_PTN = Pattern.compile("(?:BORO(?:UGH)?|TWP)\\b");
   private static final Pattern CROSS_SFX_PTN = Pattern.compile("(.*) *\\b(ROUTE|PRIVATEROAD)");
   private static final Pattern ID_UNIT_PTN = Pattern.compile("((?:.* )?\\d{4}-\\d{8} [A-Z0-9]+)\\b[, ]*(.*)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("Automatic R&R Notification") && 
+    if (!subject.equals("Automatic R&R Notification") &&
         !subject.equals("Text Message") &&
         !subject.equals("CALLTYPE")) {
       if (!body.startsWith("IND911:")) return false;
@@ -37,13 +39,39 @@ public class PAIndianaCountyParser extends SmartAddressParser {
     }
 
     body = body.replace("\n", " ");
-    Matcher match = MASTER.matcher(body);
-    if (!match.matches()) return false;
+    Matcher match = MASTER1.matcher(body);
+    if (!match.matches()) {
+
+      // See if we can find a portion of the FIRE OPS: keyword in a possibly
+      // truncated alert.  If we do not find one, we can still process what is
+      // left, but only if it has been positively identified
+      int pt = body.indexOf(FIRE_OPS);
+      if (pt < 0) {
+        pt = body.lastIndexOf(' ');
+        if (pt < 0) return false;
+        String tmp = body.substring(pt);
+        if (" OPS:".startsWith(tmp)) {
+          pt = body.lastIndexOf(' ', pt-1);
+          if (pt < 0) return false;
+          tmp = body.substring(pt);
+        }
+        if (FIRE_OPS.startsWith(tmp)) {
+          body = body.substring(0,pt).trim();
+        } else {
+          if (!isPositiveId()) return false;
+        }
+      }
+      match = MASTER2.matcher(body);
+      if (!match.matches()) return false;
+    }
     data.strCall = match.group(1).trim();
     data.strPriority = getOptGroup(match.group(2));
     String addr = match.group(3).trim();
-    data.strChannel = match.group(4).trim();
-    String idUnit = match.group(5);
+    String idUnit = "";
+    if (match.groupCount() >= 5) {
+      data.strChannel = match.group(4).trim();
+      idUnit = match.group(5);
+    }
 
     int pt = addr.indexOf(',');
     if (pt < 0) return false;
