@@ -581,10 +581,8 @@ public class FieldProgramParser extends SmartAddressParser {
             // Failure link jumps to failure step, reversing the index adjustment
             step.getFailLink().setLink(failStep, -delta, branchStep);
 
-            // And the forward tag search path should jump to the failure step
-            // except for the last branch of a conditional step which uses the
-            // normal next step link
-            if (nextFail) step.setNextStep(failStep);
+            // If next link should follow fail link, make it so
+            if (nextFail) step.nextStepLink = step.failLink;
 
             // Success link can go two different ways
             // if the decision step is the first step, success links to the next step
@@ -790,6 +788,7 @@ public class FieldProgramParser extends SmartAddressParser {
     StepLink failLink = branchHead.failLink;
     branchHead.failLink = null;
     Step branchTail = branchHead.split();
+    boolean nextFail = failLink != null && failLink == branchHead.nextStepLink;
 
     Step brFailStep = null;
     if (failLink != null) {
@@ -816,7 +815,7 @@ public class FieldProgramParser extends SmartAddressParser {
       // Each branch will be compiled using the branch head step as the
       // start step, the branch tail step as the tail step, and the new
       // link step as the branch failure step
-      compile(branchHead.getSuccLink(), branchTerm, branchTail, linkStep, !lastStep);
+      compile(branchHead.getSuccLink(), branchTerm, branchTail, linkStep, nextFail || !lastStep);
       branchHead = linkStep;
     }
 
@@ -1186,11 +1185,12 @@ public class FieldProgramParser extends SmartAddressParser {
     fieldRecord = new Field[fields.length];
     state = new State(fields);
 
+    // Both any order and ordered processing use the step scanning for different reasons,
+    // but both need it to be initialized
+    initStepScan();
+
     // If we are running in any field order mode, things get a lot easier
     if (anyOrder) {
-
-      // Clear the checked flags for all steps
-      initStepScan();
 
       // Loop through all of the fields
       boolean parenKey = breakChar == ')';
@@ -1309,11 +1309,28 @@ public class FieldProgramParser extends SmartAddressParser {
       this.step = step;
     }
 
+    /**
+     * Execute link step
+     * @param link link step to be executed
+     * @return true if processing is completed
+     */
     public boolean link(StepLink link) {
+      return link(link, false);
+    }
+
+    /**
+     * Execute link step
+     * @param link link step to be executed
+     * @param skipStep true if current step was skipped over
+     * @return true if processing is completed
+     */
+    public boolean link(StepLink link, boolean skipStep) {
       if (link == null) return true;
       Step relStep = link.getRelStep();
       if (relStep != null) index = relStep.getFieldIndex();
-      index += link.getInc();
+      int inc = link.getInc();
+      if (skipStep && inc > 0) inc--;
+      index += inc;
       lastStep = step;
       step =  link.getStep();
       return step == null;
@@ -1498,9 +1515,13 @@ public class FieldProgramParser extends SmartAddressParser {
      * @return next step
      */
     public Step getNextStep() {
-      StepLink link = (nextStepLink != null ? nextStepLink : succLink);
+      StepLink link = getNextLink();
       if (link == null) return null;
       return link.getStep();
+    }
+
+    public StepLink getNextLink() {
+      return (nextStepLink != null ? nextStepLink : succLink);
     }
 
     /**
@@ -1681,6 +1702,8 @@ public class FieldProgramParser extends SmartAddressParser {
       int ndx = state.getIndex();
       Step lastStep = state.getLastStep();
 
+//      System.out.println("processing:" + ndx + " : " + this);
+
       // If this is a field processing step that is not interested in html tags, skip over any in the
       // data stream.  Non-field processing steps have to be left alone because
       // they may be intermediate steps handing control to another step and we
@@ -1697,22 +1720,38 @@ public class FieldProgramParser extends SmartAddressParser {
       // Save the processed field index
       fieldIndex = ndx;
 
-      // Have we passed the end of the data stream
-      if (ndx >= state.getFieldCount()) {
+      // Special EOD processing
+      // If we are still processing live fields, reset the EOD loop detector
+      if (ndx < state.getFieldCount()) {
+        initStepScan();
+      }
 
-        // And this is not an end or select field (which need no data to work with)
-        if (field == null || ! (field instanceof EndField || field instanceof SelectField)) {
+      // Otherwise start special EOD processing
+      else {
 
-          // See if we got into an endless end of data step processing loop
-          // If we have, then we are finished
-          if (isChecked()) return true;
-          markChecked();
+        // If we process the same step twice without an intervening live field process
+        // we are in an EOD loop and need to break out of it
+        if (isChecked()) {
 
-          // If this was a required step, return overall failure status
-          if (! checkFailure(data)) {
-            state.setResult(false);
-            return true;
+          // But first we need to scan through the rest of the steps to see if we
+          // are missing any required ones
+          Step step = this;
+          while (true) {
+            if (!step.checkFailure(data)) {
+              state.setResult(false);    // BREAKPOINT
+              return true;
+            }
+            step = step.getNextStep();
+            if (step == null) return true;
           }
+        }
+
+        // Mark this step as processed
+        markChecked();
+
+        // END and SELECT processing do not require any field information and
+        // can be processed normally
+        if (field != null && !( field instanceof EndField || field instanceof SelectField)) {
 
           // Otherwise, if there is a failure link, execute it
           // Unless it points back to ourselves, which can happen if there was
@@ -1721,27 +1760,24 @@ public class FieldProgramParser extends SmartAddressParser {
             return state.link(failLink);
           }
 
-          // Otherwise, there is no field processing associated with this step
-          // and there is a success link that moves us backward through the
-          // field list, then take the success link.  This is very rare, but it
-          // happens when a decision making conditional branch leaves a tail
-          // link node that happens to fall past the end of data
-          if (field == null && succLink != null && succLink.getInc() < 0) {
-            return state.link(succLink);
+          // If this was a required step, return overall failure status
+          if (! checkFailure(data)) {
+            state.setResult(false);
+            return true;
           }
 
-          if (field != null && field instanceof EndField && succLink != null) {
-            return state.link(succLink);
-          } else {
-            Step nextStep = getNextStep();
-            state.setStep(nextStep);
-            return nextStep == null;
+          // Otherwise we need to jump to the next step, trying to stay in sync with
+          // the appropriate field index.  If this was a tagged field it doesn't
+          // consume a field index, unless it is a repeating tagged field in which
+          // case it does
+          boolean skipFld = tag != null;
+          if (skipFld) {
+            StepLink lnk = getSuccLink();
+            if (lnk != null && lnk.getStep() == this) skipFld = false;
           }
+          return state.link(getNextLink(), skipFld);
         }
       }
-
-      // If we have a real data field, re-initialize the end of data loop detector
-      initStepScan();
 
       // Check for special doNotTrim processing
       boolean doNotTrim = (field != null && field.doNotTrim());
@@ -1918,6 +1954,8 @@ public class FieldProgramParser extends SmartAddressParser {
       int ndx = state.getIndex();
       fieldIndex = ndx;
 
+      boolean eod = ndx >= state.getFieldCount();
+
       // Next we invoke our field object to process the current data field.
       // If there is a fail step and step is no tagged, we will ask the
       // field object to check to see if this is a valid data field before
@@ -1932,16 +1970,16 @@ public class FieldProgramParser extends SmartAddressParser {
           if (tag == null && failLink != null) {
             success = field.doCheckParse(curFld, data);
           }
-          else {
+          else if (!eod) {
             field.doParse(curFld, data);
           }
 
           // Keep a record of which fields successfully processed
           // which data fields
-          if (success && ndx < fieldRecord.length) fieldRecord[ndx] = field.getProcField();
+          if (success && !eod && ndx < fieldRecord.length) fieldRecord[ndx] = field.getProcField();
 
           // Nice debug info
-          // System.out.println(name + ':' + success + ':' + curFld);
+//          System.out.println(name + ':' + success + ':' + ndx + ':' + curFld);
         }
       } catch (FieldProgramException ex) {
         state.setResult(false);
@@ -1971,9 +2009,9 @@ public class FieldProgramParser extends SmartAddressParser {
      */
     public boolean checkFailure(Data data) {
 
-      // Very special case.  A required field that is the decision step of
-      // a new conditional branch is not really required.
-      if (tag != null && nextStepLink != null) return true;
+//      // Very special case.  A required field that is the decision step of
+//      // a new conditional branch is not really required.
+//      if (tag != null && nextStepLink != null) return true;
 
       // If this is a required step, return failure
       if (required == EReqStatus.REQUIRED) {
@@ -1981,6 +2019,10 @@ public class FieldProgramParser extends SmartAddressParser {
       }
       if (required == EReqStatus.EXPECTED) data.expectMore = true;
       return true;
+    }
+
+    public String toString() {
+      return getQualName();
     }
 
     public String toString(Map<Step,Integer> stepMap) {

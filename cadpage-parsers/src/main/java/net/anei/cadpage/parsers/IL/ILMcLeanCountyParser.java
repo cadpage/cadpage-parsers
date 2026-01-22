@@ -2,9 +2,9 @@ package net.anei.cadpage.parsers.IL;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA63Parser;
 
-public class ILMcleanCountyParser extends DispatchA63Parser {
+public class ILMcLeanCountyParser extends DispatchA63Parser {
 
-  public ILMcleanCountyParser() {
+  public ILMcLeanCountyParser() {
     super(CITY_LIST, "MCLEAN COUNTY", "IL");
   }
 

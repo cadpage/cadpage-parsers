@@ -10,7 +10,7 @@ public class MTGallatinCountyAParser extends FieldProgramParser {
 
   public MTGallatinCountyAParser() {
     super("GALLATIN COUNTY", "MT",
-          "CALL UNIT PLACE APT ADDRCITYST INFO ( END |  MAP? GPS ID INFO/N! END )");
+          "CALL UNIT PLACE APT ADDRCITYST! INFO ( END |  MAP? GPS ID INFO/N! END )");
   }
 
   @Override

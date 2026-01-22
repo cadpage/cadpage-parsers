@@ -13,9 +13,9 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
 
   public OHAshtabulaCountyParser() {
     super(CITY_LIST, "ASHTABULA COUNTY", "OH",
-           "CALL ( ADDR/Z CITY/Z ST | ADDR/Z CITY ST? | ADDR/S ) X!+? INFO+");
+           "CALL ( ADDR/Z CITY/Z ST | ADDR/Z CITY ST? | ADDR/S ) X! X+? INFO+");
   }
-  
+
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -30,12 +30,12 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
   public String getFilter() {
     return "@ashtabulacounty.us,@countycad.us,777";
   }
-  
+
   private static final Pattern SRC_PTN = Pattern.compile("([ A-Z]+): +(.*)");
-  
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    
+
     String subCall = null;
     Matcher match = SRC_PTN.matcher(subject);
     if (match.matches()) {
@@ -45,23 +45,23 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
       data.strSource = match.group(1).trim().replace(' ', '_');;
       body = match.group(2);
     }
-    
+
     if (!super.parseMsg(body, data)) return false;
-    
+
     if (subCall != null) {
       data.strCode = data.strCall;
       data.strCall = subCall;
     }
-    
+
     data.strCity = stripFieldEnd(data.strCity, " TWP");
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "SRC CODE " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("\\d{2}", true);
@@ -70,7 +70,7 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
     if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
@@ -78,7 +78,7 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CITY_ST_PTN = Pattern.compile("(.*) +(OH|PA)(?: +\\d{5})?");
   private class MyCityField extends CityField {
     @Override
@@ -86,7 +86,7 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
       if (parseCityState(field, data)) return true;
       return super.checkParse(field, data);
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (parseCityState(field, data)) return;
@@ -100,13 +100,13 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
       data.strState = match.group(2);
       return true;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY ST";
     }
   }
-  
+
 
   private static final String[] CITY_LIST = new String[]{
 
@@ -114,7 +114,7 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
     "ASHTABULA",
     "CONNEAUT",
     "GENEVA",
-    
+
     // Vilages
     "ANDOVER",
     "GENEVA ON THE LAKE",
@@ -181,10 +181,10 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
     "WAYNE",
     "WILLIAMSFIELD",
     "WINDSOR",
-    
+
     // Census designated places
     "EDGEWOOD",
-    
+
     // Other communities
     "AUSTINBURG",
     "DORSET",
@@ -193,13 +193,13 @@ public class OHAshtabulaCountyParser extends DispatchA10Parser {
     "KINGSVILLE",
     "PIERPONT",
     "UNIONVILLE",
-    
+
     // Geauga County
     "HUNTSBURG",
     "MIDDLEFIELD",
     "MONTVILLE",
     "THOMPSON",
-    
+
     // Trumbull County
     "BLOOMFIELD"
   };

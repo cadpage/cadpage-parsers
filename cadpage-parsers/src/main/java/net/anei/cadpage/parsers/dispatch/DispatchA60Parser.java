@@ -93,8 +93,10 @@ public class DispatchA60Parser extends FieldProgramParser {
         Matcher m = LOG_PATTERN.matcher(field);
         if (m.lookingAt()) {
           good = true;
-          date = m.group(1);
-          time =  m.group(2);
+          if (data.strDate.isEmpty()) {
+            data.strDate = m.group(1);
+            data.strTime =  m.group(2);
+          }
           field = field.substring(m.end());
           if (field.isEmpty()) continue;
         }
@@ -102,10 +104,6 @@ public class DispatchA60Parser extends FieldProgramParser {
         sb.append(field);
       }
       if (!good) return false;
-      if (data.strDate.isEmpty()) {
-        data.strDate = date;
-        data.strTime = time;
-      }
       data.strSupp = append(data.strSupp, "\n", sb.toString());
       return true;
     }
