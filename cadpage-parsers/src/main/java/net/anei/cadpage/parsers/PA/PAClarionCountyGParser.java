@@ -33,6 +33,7 @@ public class PAClarionCountyGParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE"))  return new MyPlaceField();
+    if (name.equals("APT2")) return new MyApt2Field();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -52,6 +53,24 @@ public class PAClarionCountyGParser extends FieldProgramParser {
       Matcher match = PLACE_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       super.parse(field, data);
+    }
+  }
+
+  private static final Pattern APT_CH_PTN = Pattern.compile("(?:(.*?)/+)?((?:EMS|MED|TAC).*)");
+  private class MyApt2Field extends Apt2Field {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = APT_CH_PTN.matcher(field);
+      if (match.matches()) {
+        data.strChannel = match.group(2);
+        field = getOptGroup(match.group(1));
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "APT CH";
     }
   }
 
