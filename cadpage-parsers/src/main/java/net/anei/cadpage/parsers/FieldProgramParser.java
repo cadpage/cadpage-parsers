@@ -203,8 +203,8 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  *
  * Debugging
  *
- * There are only four points where this class determines that a page fails to parse.
- * All are marked with a // BREAKPOINT comment.  Put a breakpoint on all 4 of them
+ * There are only several points where this class determines that a page fails to parse.
+ * All are marked with a // BREAKPOINT comment.  Put a breakpoint on all of them
  * and you can probably tell why the parse is failing in short order.
  */
 
