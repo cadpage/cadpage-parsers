@@ -24,8 +24,8 @@ allprojects {
 // into maximum integer value issues, so now the version code is simply incremented with
 // each new release
 ext {
-    versionName = "2.2.13-08"
-    versionCode = 2020212019
+    versionName = "2.2.13-09"
+    versionCode = 2020212020
 }
 
 tasks.register('gstatus', Exec) {
