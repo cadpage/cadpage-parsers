@@ -34,6 +34,8 @@ public class DispatchC04Parser extends FieldProgramParser {
       subject = subject.substring(pt).trim();
       if (subject.equals("COMPLETED-CALL")) data.msgType = MsgType.RUN_REPORT;
     }
+    int pt = body.indexOf("\nThis message is confidential");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n", -1), data);
   }
 

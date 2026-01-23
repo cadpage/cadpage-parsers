@@ -2,15 +2,15 @@ package net.anei.cadpage.parsers.TN;
 
 import net.anei.cadpage.parsers.dispatch.DispatchC04Parser;
 
-public class TNFranklinCountyBParser extends DispatchC04Parser {
+public class TNMaconCountyBParser extends DispatchC04Parser {
 
-  public TNFranklinCountyBParser() {
-    super("FRANKLIN COUNTY", "TN");
+  public TNMaconCountyBParser() {
+    super("MACON COUNTY", "TN");
   }
 
   @Override
   public String getFilter() {
-    return "noreply@tnsewaneepd.mmmicro.com";
+    return "NOREPLY@TNLAFAYETTEPD.MMMICRO.COM";
   }
 
   @Override
