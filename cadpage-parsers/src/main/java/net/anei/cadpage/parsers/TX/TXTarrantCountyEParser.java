@@ -10,7 +10,7 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
 
   public TXTarrantCountyEParser() {
     super("TARRANT COUNTY", "TX",
-          "CALL ADDRCITYST SELECT/1 X/Z? UNIT INFO ( IDDATETIME! | ID/L DATETIME! | DATETIME ID/L! ) ID/L END");
+          "CALL ADDRCITYST X/Z? UNIT INFO ( IDDATETIME! | ID/L DATETIME! | DATETIME ID/L! ) ( EMPTY | ID/L ) END");
   }
 
   @Override
