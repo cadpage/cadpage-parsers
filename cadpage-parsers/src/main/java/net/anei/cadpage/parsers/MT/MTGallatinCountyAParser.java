@@ -15,7 +15,7 @@ public class MTGallatinCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "no-reply@zuercherportal.com,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
   @Override
