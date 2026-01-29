@@ -1037,6 +1037,7 @@ public class Active911ParserTable {
       "US/KY/KentonCountyFlorenc",        "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyFtMitchell",     "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyFtWright",       "KYKentonCountyA,KYKentonCountyB",
+      "US/KY/KentonCountyHHPD",						"KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyIndependence",   "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyLudlow",         "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyParkHills",      "KYKentonCountyA,KYKentonCountyB",
