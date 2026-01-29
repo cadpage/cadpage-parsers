@@ -36,20 +36,25 @@ public class DispatchA33Parser extends FieldProgramParser {
 
   public DispatchA33Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState,
-          "Event_No:ID! ( Status:SKIP! Disposition:SKIP! Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! Ward:SKIP! Intersection:X? Open:DATETIME1! Dispatch:DATETIME1! Law_Enf.:SKIP! Enroute:DATETIME2! Fire:SKIP! Arrival:DATETIME2! EMS:SKIP! Departure:DATETIME3? Source:SKIP? Closed:DATETIME3! Source:SKIP? Name_Address_Phone%EMPTY NAME_PHONE Business%EMPTY PLACE Vehicle(s)%EMPTY Incident_Notes:INFO/N+ " +
-                       "| Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! ESZ:MAP/L! Ward:SKIP! Intersection:X? Date_/_Time%EMPTY! Open:DATETIME1! )");
+          "( Event_No:ID! ( Status:SKIP! Disposition:SKIP! Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! Ward:SKIP! Intersection:X? Open:DATETIME1! Dispatch:DATETIME1! Law_Enf.:SKIP! Enroute:DATETIME2! Fire:SKIP! Arrival:DATETIME2! EMS:SKIP! Departure:DATETIME3? Source:SKIP? Closed:DATETIME3! Source:SKIP? Name_Address_Phone%EMPTY NAME_PHONE Business%EMPTY PLACE Vehicle(s)%EMPTY Incident_Notes:INFO/N+ " +
+                         "| Category:CALL! CALL+? Address:ADDR! Precinct:SKIP! Sector:MAP! GEO:SKIP! ESZ:MAP/L! Ward:SKIP! Intersection:X? Date_/_Time%EMPTY! Open:DATETIME1! ) " +
+          "| Event_Number:ID! Category:CALL! Opened_Date:SKIP! Sub_Category:CALL/L! Street_Address:ADDR! Reporting_Person:NAME! Units:UNIT! INFO/N+ " +
+          ")");
     this.hasCityList = cityList != null;
     this.fixLineBreaks = (flags & A33_FIX_LINE_BREAKS) != 0;
     this.crossAddrExt = (flags & A33_X_ADDR_EXT) != 0;
   }
 
-  private static final Pattern DELIM = Pattern.compile("\n| +(?=Status:|Disposition:|Category:|Precinct:|Sector:|GEO:|ESZ:|Ward:|Law Enf\\.:|Fire:|EMS:|Source:)");
+  private static final Pattern DELIM = Pattern.compile("\n|(?<!Sub) +(?=Status:|Disposition:|Category:|Sub Category:|Precinct:|Sector:|GEO:|ESZ:|Ward:|Law Enf\\.:|Fire:|EMS:|Source:)");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
 
     int pt = body.indexOf("Event No:");
-    if (pt < 0) return false;
+    if (pt < 0) {
+      pt = body.indexOf("Event Number:");
+      if (pt < 0) return false;
+    }
     if (pt > 0) {
       char chr = body.charAt(pt-1);
       if (chr != '\n' && chr != ' ') return false;
@@ -87,6 +92,8 @@ public class DispatchA33Parser extends FieldProgramParser {
     if (name.equals("DATETIME3")) return new BaseDateTimeField(3);
     if (name.equals("NAME_PHONE")) return new BaseNamePhoneField();
     if (name.equals("PLACE")) return new BasePlaceField();
+    if (name.equals("UNIT")) return new BaseUnitField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -270,6 +277,40 @@ public class DispatchA33Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "PLACE PHONE";
+    }
+  }
+
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("Unit Data")) return;
+      super.parse(field, data);
+    }
+  }
+
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "Note:");
+      field = stripFieldStart(field, "CC text:");
+      field = stripFieldStart(field, "Caller Statement:");
+      if (field.startsWith("Response:")) {
+        field = field.substring(9).trim();
+        if (field.length() > 0) field = field.substring(0,1);
+        data.strPriority = field;
+      } else if (field.startsWith("Dispatch Code:")) {
+        field = field.substring(14).trim();
+        int pt = field.indexOf(' ');
+        if (pt >= 0) field = field.substring(0,pt);
+        data.strCode = field;
+      } else {
+        data.strSupp = append(data.strSupp, "\n", field);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "INFO PRI CODE";
     }
   }
 
