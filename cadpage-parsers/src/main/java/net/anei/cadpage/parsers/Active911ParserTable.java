@@ -3019,6 +3019,7 @@ public class Active911ParserTable {
       "US/VT/OrangeCounty",               "VTOrangeCountyB",
       "US/VT/OrleansCounty",              "VTOrleansCounty",
       "US/VT/RandolphCenter",             "VTOrangeCountyA",
+      "US/VT/RutlandCounty",							"VTRutlandCounty",
       "US/VT/SMCVT",                      "VTChittendenCountyF",
       "US/VT/SouthBurlington",            "VTChittendenCountyC",
       "US/VT/StowePS",                    "VTLamoilleCounty",
