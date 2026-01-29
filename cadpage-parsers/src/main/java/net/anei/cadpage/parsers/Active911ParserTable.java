@@ -2856,7 +2856,7 @@ public class Active911ParserTable {
       "US/TX/Sugarland",                  "TXHarrisCountyG,TXFortBendCountyF",
       "US/TX/SurfsideBeachPD",            "TXBrazoriaCountyB",
       "US/TN/SumnerCounty",               "TNSumnerCountyC",
-      "US/TX/TarrantCounty",              "TXTarrantCountyA",
+      "US/TX/TarrantCounty",              "TXTarrantCountyA,TXTarrantCountyC",
       "US/TX/TexasCity",                  "TXTexasCity",
       "US/TX/Tomball",                    "General",
       "US/TX/TravisCounty",               "TXTravisCountyB",

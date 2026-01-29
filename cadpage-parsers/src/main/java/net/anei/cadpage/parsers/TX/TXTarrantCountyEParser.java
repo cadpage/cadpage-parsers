@@ -5,12 +5,13 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class TXTarrantCountyEParser extends FieldProgramParser {
 
   public TXTarrantCountyEParser() {
     super("TARRANT COUNTY", "TX",
-          "CALL ADDRCITYST X/Z? UNIT INFO ( IDDATETIME! | ID/L DATETIME! | DATETIME ID/L! ) ( EMPTY | ID/L ) END");
+          "CALL ADDRCITYST X/Z? UNIT INFO ( IDDATETIME! | ID/L DATETIME! | DATETIME ID/L! ) ID/L+? TIMES? MAP END");
   }
 
   @Override
@@ -28,7 +29,7 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
     }
     else {
       if (subject.isEmpty()) return false;
-      body = subject + " | " + body;
+      if (!body.startsWith(subject)) body = subject + " | " + body;
     }
     return parseFields(body.split("\\|"), data);
   }
@@ -45,6 +46,8 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
     if (name.equals("ID")) return new MyIdField();
     if (name.equals("IDDATETIME")) return new MyIdDateTimeField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("TIMES")) return new MyTimesField();
+    if (name.equals("MAP")) return new MapField("\\d{4}", true);
     return super.getField(name);
   }
 
@@ -52,7 +55,7 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
 
   private class MyUnitField extends UnitField {
     public MyUnitField() {
-      super("(?:[A-Z]+\\d+|\\d{3}|M1[A-Z]+|BCGRAPEVINE)(?:;.*)?", true);
+      super("(?:[A-Z]+\\d+[A-Z]*|\\d{3}|BCBEDFORD|BCGRAPEVINE)(?:;.*)?", true);
     }
 
     @Override
@@ -111,6 +114,36 @@ public class TXTarrantCountyEParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ID DATE TIME";
+    }
+  }
+
+  private static final Pattern TIME_PTN = Pattern.compile("\\S+ - (.*?) \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d");
+  private class MyTimesField extends InfoField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.isEmpty()) return true;
+      StringBuilder sb = new StringBuilder();
+      for (String time : field.split(";")) {
+        time = time.trim();
+        Matcher match = TIME_PTN.matcher(time);
+        if (!match.matches()) return false;
+        if (match.group(1).equals("Available")) data.msgType = MsgType.RUN_REPORT;
+        if (!sb.isEmpty()) sb.append('\n');
+        sb.append(time);
+      }
+      if (data.msgType == MsgType.RUN_REPORT) {
+        if (!data.strSupp.isEmpty()) {
+          sb.append('\n');
+          sb.append(data.strSupp);
+          data.strSupp = sb.toString();
+        }
+      }
+      return true;
     }
   }
 
