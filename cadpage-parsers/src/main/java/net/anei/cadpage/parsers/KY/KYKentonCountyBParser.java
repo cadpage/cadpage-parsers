@@ -6,8 +6,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 public class KYKentonCountyBParser extends DispatchH05Parser {
 
   public KYKentonCountyBParser() {
-    super("KENTON COUNTY", "KY",
+    this("KENTON COUNTY", "KY");
+  }
+
+  KYKentonCountyBParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL:CALL! PLACE:PLACE! ADDRCITYST X GPS! INFO:EMPTY! INFO_BLK/N+ Alerts:ALERT! DATE:DATETIME! INC_#'s:ID! UNITS:UNIT! TIMES:EMPTY! TIMES+");
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "KYKentonCountyB";
   }
 
   @Override
