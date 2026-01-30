@@ -2749,7 +2749,7 @@ public class Active911ParserTable {
       "US/TX/GalvestonCounty",            "TXGalvestonCounty",
       "US/TX/Gatesville",                 "TXGatesville",
       "US/TX/GillespieCounty",            "TXGillespieCounty",
-      "US/TX/Gladewater",                 "TXGreggCountyA",
+      "US/TX/Gladewater",                 "TXGreggCountyA,TXGreggCountyC",
       "US/TX/GlennHeights",               "TXDallasCountyD",
       "US/TX/GonzalesCounty",             "TXGonzalesCounty",
       "US/TX/GrayCounty",                 "TXGrayCounty",

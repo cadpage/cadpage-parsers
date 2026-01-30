@@ -7,14 +7,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA41Parser;
 public class TXGreggCountyAParser extends DispatchA41Parser {
 
   public TXGreggCountyAParser() {
-    super(CITY_CODES, "GREGG COUNTY", "TX", "[A-Z]{2,3}");
+    super(CITY_CODES, "GREGG COUNTY", "TX", "[A-Z]{2,4}");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "CL", "CLARKSVILLE",
       "EA", "EASTON",
