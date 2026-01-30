@@ -2580,7 +2580,7 @@ public class Active911ParserTable {
       "US/TN/CarterCountyRS",             "TNCarterCounty",
       "US/TN/ChesterCounty",              "TNChesterCounty",
       "US/TN/CityofKingsport",            "TNKingsport",
-      "US/TN/CityOfLafollete",            "TNCampbellCountyB",
+      "US/TN/CityOfLafollete",            "TNCampbellCountyC",
       "US/TN/ClaiborneCounty",            "TNClaiborneCounty",
       "US/TN/ClarksvilleFR",              "TNMontgomeryCounty",
       "US/TN/ClayCounty",                 "TNClayCounty",
