@@ -6,13 +6,15 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Rio Grande County, CO
  */
 public class CORioGrandeCountyParser extends GroupBestParser {
-  
+
 
   public CORioGrandeCountyParser() {
-    super(new CORioGrandeCountyAParser(), new CORioGrandeCountyBParser());
+    super(new CORioGrandeCountyAParser(),
+          new CORioGrandeCountyBParser(),
+          new CORioGrandeCountyCParser());
    }
 }
-  
+
 
 
 
