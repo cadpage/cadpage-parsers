@@ -10,7 +10,7 @@ public class NJSussexCountyEParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-sussexcountynj@email.getrave.com";
   }
 
   @Override
