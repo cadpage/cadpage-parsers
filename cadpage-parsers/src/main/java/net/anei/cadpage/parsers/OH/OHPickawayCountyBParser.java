@@ -15,7 +15,7 @@ public class OHPickawayCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "zuercher@pickawaysheriff.com";
+    return "zuercher@pickawaysheriff.com,zuercher@pickawaysheriff.gov";
   }
 
   @Override
