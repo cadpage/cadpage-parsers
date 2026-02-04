@@ -15,7 +15,7 @@ public class GAGilmerCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "gilmer.ga@ez911map.net";
+    return "gilmer.ga@ez911map.net,gilmer.ga@ryzyliant.com";
   }
 
   @Override
