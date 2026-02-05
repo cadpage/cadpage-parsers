@@ -10,7 +10,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
 
   public KYOldhamCountyCParser() {
     super("OLDHAM COUNTY", "KY",
-          "ADDR CITY ST_ZIP? ( GPS:GPS1 GPS2! | ) CALL CALL/C+");
+          "( SELECT/NEW ADDRCITY ST GPS:GPS? | ADDR CITY ST_ZIP? ( GPS:GPS1 GPS2! | ) ) CALL CALL/CS+");
   }
 
   @Override
@@ -30,17 +30,26 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
 
-    Matcher match = INFO_MARK_PTN.matcher(body);
+    Matcher match = TRAIL_UNIT_PTN.matcher(body);
+    if (match.matches()) {
+      body = match.group(1).trim();
+      data.strUnit = match.group(2).replace("; ", ",");
+    }
+
+    match = INFO_MARK_PTN.matcher(body);
     if (!match.find()) return false;
     String info = body.substring(match.start()).trim();
     body = body.substring(0, match.start()).trim();
-    if (!parseFields(body.split(","), data)) return false;
-    data.strCall = stripFieldEnd(data.strCall, "-");
-    match = TRAIL_UNIT_PTN.matcher(info);
-    if (match.matches()) {
-      info = match.group(1).trim();
-      data.strUnit = match.group(2);
+    String[] flds = body.split("\\*");
+    if (flds.length > 1) {
+      setSelectValue("NEW");
+    } else {
+      flds = body.split(",");
+      setSelectValue("OLD");
     }
+
+    if (!parseFields(flds, data)) return false;
+
     if (!info.equals("None")) {
       for (String line : LOG_DATE_TIME_PTN.split(info)) {
         data.strSupp = append(data.strSupp, "\n", line);
@@ -57,7 +66,16 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ST_ZIP")) return new StateField("([A-Z]{2})(?: \\d{5})?", true);
+    if (name.equals("CALL")) return new MyCallField();
     return super.getField(name);
   }
 
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, " -");
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
 }
