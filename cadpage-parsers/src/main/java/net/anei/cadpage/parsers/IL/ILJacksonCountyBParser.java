@@ -6,7 +6,7 @@ public class ILJacksonCountyBParser extends DispatchH05Parser {
 
   public ILJacksonCountyBParser() {
     super("JACKSON COUNTY", "IL",
-          "ID DATETIME ADDRCITY INFO_BLK/Z+? SRC! SKIP+? GPS! TIMES+? UNIT! END");
+          "ID DATETIME ADDRCITY INFO_BLK/Z+? ( SRC! SKIP+? GPS! | GPS! ) TIMES+? UNIT! END");
   }
 
   @Override
