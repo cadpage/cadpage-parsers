@@ -68,7 +68,7 @@ public class DispatchA11Parser extends FieldProgramParser {
       data.strCity = city;
       while (true) {
         String fld = p.getLastOptional(';');
-        if (fld.length() == 0) break;
+        if (fld.isEmpty()) break;
         Matcher match = APT_PTN.matcher(fld);
         if (match.matches()) {
           String apt = match.group(1);
@@ -79,7 +79,9 @@ public class DispatchA11Parser extends FieldProgramParser {
           data.strPlace = append(fld, " - ", data.strPlace);
         }
       }
-      super.parse(p.get(), data);
+      field = p.get(',');
+      data.strPlace = append(p.get(), " - ", data.strPlace);
+      super.parse(field, data);
     }
 
     public String getFieldNames() {

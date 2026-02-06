@@ -10,7 +10,7 @@ public class KYOldhamCountyCParser extends FieldProgramParser {
 
   public KYOldhamCountyCParser() {
     super("OLDHAM COUNTY", "KY",
-          "( SELECT/NEW ADDRCITY ST GPS:GPS? | ADDR CITY ST_ZIP? ( GPS:GPS1 GPS2! | ) ) CALL CALL/CS+");
+          "( SELECT/NEW ADDRCITYST GPS:GPS? | ADDR CITY ST_ZIP? ( GPS:GPS1 GPS2! | ) ) CALL CALL/CS+");
   }
 
   @Override

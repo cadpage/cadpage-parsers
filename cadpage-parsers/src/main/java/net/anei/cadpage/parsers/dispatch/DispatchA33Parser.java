@@ -304,7 +304,7 @@ public class DispatchA33Parser extends FieldProgramParser {
         if (pt >= 0) field = field.substring(0,pt);
         data.strCode = field;
       } else {
-        data.strSupp = append(data.strSupp, "\n", field);
+        super.parse(field,  data);
       }
     }
 

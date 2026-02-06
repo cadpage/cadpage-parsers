@@ -3415,7 +3415,7 @@ public class FieldProgramParser extends SmartAddressParser {
       if (field.length() <= 10 && data.strApt.length() == 0) {
         Matcher match = APT_PAT.matcher(field);
         if (match.find()) {
-          data.strApt = field.substring(match.end());
+          data.strApt = append(data.strApt, "-", field.substring(match.end()));
           return;
         }
       }

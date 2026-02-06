@@ -27,6 +27,7 @@ public class NJSussexCountyFParser extends FieldProgramParser {
     body = body.replace(" Zone:", "\nZone:");
     directions = "";
     if (!parseFields(body.split("\n"), data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, ".");
     data.strSupp = append(directions, "\n", data.strSupp);
     return true;
   }
