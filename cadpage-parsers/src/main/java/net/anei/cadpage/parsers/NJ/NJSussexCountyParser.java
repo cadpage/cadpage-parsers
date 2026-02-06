@@ -15,7 +15,8 @@ public class NJSussexCountyParser extends GroupBestParser {
           new NJSussexCountyBParser(),
           new NJSussexCountyCParser(),
           new NJSussexCountyDParser(),
-          new NJSussexCountyEParser());
+          new NJSussexCountyEParser(),
+          new NJSussexCountyFParser());
   }
 }
 
