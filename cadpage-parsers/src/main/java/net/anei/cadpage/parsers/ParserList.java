@@ -1510,6 +1510,7 @@ public class ParserList {
               ,"OKStephensCounty"               ,"Stephens County, OK"
               ,"OKTinkerAFB"                    ,"Tinker AFB, OK"
               ,"OKTulsa"                        ,"Tulsa, OK"
+              ,"OKTulsaCounty"                  ,"Tulsa County, OK"
               ,"OKWoodsCounty"                  ,"Woods County, OK"
               ,"OKYukon"                        ,"Yukon, OK"
           ),
