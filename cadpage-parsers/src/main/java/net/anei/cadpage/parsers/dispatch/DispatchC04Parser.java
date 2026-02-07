@@ -15,9 +15,15 @@ public class DispatchC04Parser extends FieldProgramParser {
               "( X_PLACE UNIT_TIMES! | UNIT_TIMES! " +
               "| Received:TIMES! " +
               "| X_PLACE PHONE! NAME FAIL Received:TIMES! " +
+              "| X_PLACE X_PLACE PHONE! NAME FAIL Received:TIMES! " +
               "| PHONE! NAME FAIL Received:TIMES! " +
+              "| NAME! FAIL Received:TIMES! " +
+              "| Received:TIMES! " +
+              "| X_PLACE Received:TIMES! " +
+              "| X PLACE X_PLACE Received:TIMES! " +
               "| X_PLACE NAME! FAIL Received:TIMES! " +
-              "| NAME FAIL Received:TIMES! " +
+              "| X_PLACE X_PLACE NAME! FAIL Received:TIMES! " +
+              "| X_PLACE+ Received:TIMES! " +
               ") TIMES/N+");
 
   }
@@ -51,7 +57,7 @@ public class DispatchC04Parser extends FieldProgramParser {
     if (name.equals("UNIT_TIMES")) return new SkipField("Unit Times", true);
     if (name.equals("X_PLACE")) return new BaseCrossPlaceField();
     if (name.equals("GPS")) return new GPSField("\\d+\\.\\d+, -\\d+\\.\\d+", true);
-    if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
+    if (name.equals("PHONE")) return new PhoneField("\\d{9,10}", true);
     if (name.equals("NAME")) return new BaseNameField();
     if (name.equals("TIMES")) return new BaseTimesField();
     return super.getField(name);
@@ -73,9 +79,19 @@ public class DispatchC04Parser extends FieldProgramParser {
   private class BaseAddress2Field extends AddressField {
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!data.strAddress.isEmpty()) return false;
-      super.parse(field, data);
-      return true;
+      if (data.strAddress.isEmpty()) {
+        super.parse(field, data);
+        return true;
+      }
+      else if (checkAddress(data.strAddress) == STATUS_STREET_NAME &&
+               checkAddress(field) == STATUS_STREET_NAME) {
+        field = data.strAddress + " & " + field;
+        data.strAddress = "";
+        super.parse(field, data);
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
