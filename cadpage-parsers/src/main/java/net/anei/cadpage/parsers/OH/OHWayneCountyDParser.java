@@ -14,7 +14,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
 
   protected OHWayneCountyDParser(String defCity, String defState) {
     super(defCity, defState,
-          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR/S6! CITY:CITY! XSTREET:X? ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ CROSS:X END");
+          "( CALL:CALL! | CALL! ) PLACE:PLACE? ADDR:ADDR/S6! CITY:CITY! XSTREET:X? ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+? FIRENO/L Ezone:MAP CROSS:X END");
   }
 
   @Override
@@ -60,6 +60,7 @@ public class OHWayneCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("FIRENO")) return new IdField("FireNo +(.*)", true);
     return super.getField(name);
   }
 
