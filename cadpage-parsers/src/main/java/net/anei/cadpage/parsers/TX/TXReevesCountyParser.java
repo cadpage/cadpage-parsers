@@ -14,7 +14,7 @@ public class TXReevesCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "RCESDCAD@reevescounty-esd.com";
+    return "RCESDCAD@reevescounty-esd.com,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
   private static final Pattern DELIM = Pattern.compile(" *\\| *");
