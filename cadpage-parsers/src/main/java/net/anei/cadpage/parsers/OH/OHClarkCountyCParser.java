@@ -10,7 +10,7 @@ public class OHClarkCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@SPRINGFIELDOHIO.GOV,@alert.active911.com,FlexRapidNotification@dccnotify.com,911Relay@ClarkCountyCommunicationsCe.onmicrosoft.com,911Center@SundogAlertCenter.onmicrosoft.com";
+    return "@SPRINGFIELDOHIO.GOV,@alert.active911.com,FlexRapidNotification@dccnotify.com,911Relay@ClarkCountyCommunicationsCe.onmicrosoft.com,911Center@SundogAlertCenter.onmicrosoft.com,911Center@SundogAlertCenter.com";
   }
 
   @Override
