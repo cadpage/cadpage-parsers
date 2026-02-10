@@ -17,7 +17,7 @@ public class NJMorrisCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "donotreply@lawsoftweb.onmicrosoft.com";
+    return "donotreply@lawsoftweb.onmicrosoft.com,LSDoNotReply@Lawsoft-inc.com";
   }
 
   @Override
