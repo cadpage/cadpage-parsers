@@ -39,7 +39,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
 
   private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: (\\d{4}-\\d{8}\\b.*?))?(?: Priority (\\S+))?");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|RGH|Lifeflight|Lifestar|Sta\\d+|Willimantic)(?:-RIT)?\\b,?)+)");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|DFD|NVAC|RGH|Lifeflight|Lifestar|Sta\\d+|Willimantic)(?:-RIT)?\\b,?)+)");
   private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[-/ ]*\\b(\\d\\d\\.\\d\\d(?:[-/., ]+(?:(?:[A-Z]+ )?F/?G|VFG|TAC[- ]*\\S+))?)\\b *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
 
@@ -104,7 +104,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
         data.strTime = time;
       }
       data.strCallId = getOptGroup(match.group(6));
-      data.strPriority = getOptGroup(match.group(7));
+      data.strPriority = append(data.strPriority, "/", getOptGroup(match.group(7)));
 
       //  Parse trailing unit and channel in either order
 
@@ -133,6 +133,15 @@ public class CTTollandCountyAParser extends FieldProgramParser {
             }
           }
         }
+      }
+
+      pt = body.indexOf(" Call Priority ");
+      if (pt >= 0) {
+        String priority = body.substring(pt+15).trim().toUpperCase();
+        body = body.substring(0,pt).trim();
+        priority = stripFieldStart(priority, "PRIORITY ");
+        priority = stripFieldEnd(priority, " PRIORITY");
+        data.strPriority = priority;
       }
 
       pt = body.indexOf(',');
@@ -267,7 +276,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
         String call = CALL_LIST.getCode(body.substring(j), true);
         if (call != null) {
           data.strCall = body.substring(j);
-          return body.substring(0, j).trim();
+          return stripFieldEnd(body.substring(0, j).trim(), "-");
         }
       }
     }
@@ -400,7 +409,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
   private static final CodeSet CALL_LIST = new CodeSet(
       "- EMS",
       "<New Call>",
-      "31 Y/O MALE CRISIS INTERVENTION Call Priority BLS NVAC",
+      "31 Y/O MALE CRISIS INTERVENTION",
       "Active Violence/Shooter",
       "Aircraft Accident",
       "ALS",
@@ -422,8 +431,8 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Diesel Fuel Spill",
       "Dumpster/Debris Fire",
       "Electrical Fire",
-      "EMS -",
-      "Fire -",
+      "EMS",
+      "Fire",
       "Fire - LPG / Natural Gas Leak OUTSIDE",
       "Fire - Smoke/Odor Investigation",
       "Fire Alarm - Commercial",
