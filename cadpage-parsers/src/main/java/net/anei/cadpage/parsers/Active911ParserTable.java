@@ -2683,6 +2683,7 @@ public class Active911ParserTable {
       "US/TX/Carrollton",                 "TXCarrollton",
       "US/TX/CarsonCounty",               "TXCarsonCounty",
       "US/TX/CassCounty",                 "TXCassCounty",
+      "US/TX/CCFD",												"TXNuecesCounty",
       "US/TX/ChambersCounty",             "TXChambersCounty",
       "US/TX/CherokeeCounty",             "TXCherokeeCounty",
       "US/TX/CIMA",                       "TXCyCreekCommCenterA",
