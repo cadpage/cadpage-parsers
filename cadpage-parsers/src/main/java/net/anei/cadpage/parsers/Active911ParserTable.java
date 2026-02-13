@@ -1967,7 +1967,7 @@ public class Active911ParserTable {
       "US/NY/Cutchogue",                  "NYSuffolkCountyC",
       "US/NY/DelawareCounty",             "NYDelawareCounty",
       "US/NY/DelmarEMS",                  "NYBethlehem",
-      "US/NY/EastHamptonVillage",         "NYSuffolkCountyH",
+      "US/NY/EastHamptonVillage",         "NYSuffolkCountyH,NYSuffolkCountyO",
       "US/NY/Erie",                       "NYErieCountyF,NYErieCountyRedAlert",
       "US/NY/FingerLakesAmbulance",       "NYOntarioCountyB",
       "US/NY/FireRescueSystems",          "NYSuffolkCountyA,NYSuffolkCountyB,NYSuffolkCountyF,NYSuffolkCountyL,NYNassauCountyH",
