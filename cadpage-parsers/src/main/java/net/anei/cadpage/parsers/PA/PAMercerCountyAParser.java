@@ -16,8 +16,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA50Parser;
 public class PAMercerCountyAParser extends DispatchA50Parser {
 
   public PAMercerCountyAParser() {
-    super(CALL_CODES, null, "MERCER COUNTY", "PA");
-    setupCities(CITY_CODES);
+    super(CALL_CODES, CITY_CODES, "MERCER COUNTY", "PA");
     setupCities(REG_CITY_LIST);
     setupCities(OHIO_CITIES);
     setupSpecialStreets("HAYES ORANGEVILLE");

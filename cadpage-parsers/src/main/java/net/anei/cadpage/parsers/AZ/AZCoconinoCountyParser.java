@@ -1,16 +1,12 @@
 package net.anei.cadpage.parsers.AZ;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class AZCoconinoCountyParser extends DispatchA27Parser {
-
+/**
+ * Coconino County, AZ
+ */
+public class AZCoconinoCountyParser extends GroupBestParser {
   public AZCoconinoCountyParser() {
-    super("COCONINO COUNTY", "AZ");
+    super(new AZCoconinoCountyAParser(), new AZCoconinoCountyBParser());
   }
-
-  @Override
-  public String getFilter() {
-    return "noreply@cisusa.org,williamspd@cissystem.com";
-  }
-
 }
