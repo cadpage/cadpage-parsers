@@ -1841,6 +1841,7 @@ public class Active911ParserTable {
       "US/NH/NewLondonPD",                "NHMerrimackCounty",
       "US/NH/UVRESA",                     "NHGraftonCountyC",
       "US/NH/Wolfeboro",                  "NHCarrollCounty",
+      "US/NJ/AtlanticCounty",							"NJAtlanticCountyE",
       "US/NJ/AtPdText",                   "NJSussexCountyA",
       "US/NJ/Belmar",                     "NJMonmouthCountyG",
       "US/NJ/BerlinFCNo1",                "NJCamdenCountyA",

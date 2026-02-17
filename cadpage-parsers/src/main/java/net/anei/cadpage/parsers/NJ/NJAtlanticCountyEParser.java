@@ -1,0 +1,67 @@
+package net.anei.cadpage.parsers.NJ;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgParser;
+
+public class NJAtlanticCountyEParser extends MsgParser {
+
+  public NJAtlanticCountyEParser() {
+    super("ATLANTIC COUNTY", "NJ");
+    setFieldList("ID CALL PLACE ADDR APT CITY ST UNIT INFO");
+  }
+
+  @Override
+  public String getFilter() {
+    return "AtlanticSheriffPaging@Enfwebmail.onmicrosoft.com";
+  }
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("I-\\d{4}-\\d{6}");
+  private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?) +([A-Z]{2})(?: +\\d{5})?");
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+
+    if (!SUBJECT_PTN.matcher(subject).matches()) return false;
+    data.strCallId = subject;
+
+    if (body.endsWith(" -")) body += ' ';
+    int pt = body.indexOf("\nActive Units:");
+    if (pt >= 0) {
+      String units = body.substring(pt+14).trim();
+      body = body.substring(0,pt).trim();
+
+      pt = units.indexOf(" - ");
+      if (pt >= 0) {
+        data.strSupp = units.substring(pt+3).trim();
+        units = units.substring(0,pt).trim();
+      }
+      data.strUnit = units;
+    }
+    else if ((pt = body.indexOf("  - ")) >= 0){
+      data.strSupp = body.substring(pt+4).trim();
+      body = body.substring(0,pt).trim();
+    }
+
+    else {
+
+    }
+
+    Parser p = new Parser(body);
+    data.strCall = p.getOptional(" @ ");
+    if (data.strCall.isEmpty()) return false;
+    data.strPlace = p.getOptional(" - ");
+    String city = p.getLastOptional(",");
+    parseAddress(p.get(), data);
+    Matcher match = CITY_ST_ZIP_PTN.matcher(city);
+    if (match.matches()) {
+      city =  match.group(1);
+      data.strState = match.group(2);
+    }
+    data.strCity = city;
+    return true;
+
+  }
+}

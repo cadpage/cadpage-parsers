@@ -14,6 +14,7 @@ public class NJAtlanticCountyParser extends GroupBestParser {
     super(new NJAtlanticCountyAParser(),
           new NJAtlanticCountyBParser(),
           new NJAtlanticCountyCParser(),
-          new NJAtlanticCountyDParser());
+          new NJAtlanticCountyDParser(),
+          new NJAtlanticCountyEParser());
   }
 }
