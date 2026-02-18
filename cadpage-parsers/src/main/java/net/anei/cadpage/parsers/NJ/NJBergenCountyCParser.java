@@ -17,7 +17,7 @@ public class NJBergenCountyCParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "srpd2srfd@saddleriver.org,DoNotReply@lawsoftweb.onmicrosoft.com";
+    return "srpd2srfd@saddleriver.org,DoNotReply@lawsoftweb.onmicrosoft.com,LSDoNotReply@LawSoft-Inc.com";
   }
 
   @Override

@@ -763,6 +763,8 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "CHOKE-E1u",  "Choking Victim-fully obstructed - unknown",
       "CI",         "Commercial Investigation",
       "CO",         "Carbon Monoxide Alarm",
+      "COAST-P-Pho","COAST-P / COAST-P-Phone call follow up",
+      "COAST-R-Res","COAST-R / COAST-R-Response follow up",
       "Community",  "Community Paramedic Call",
       "CP",         "Chest Pain",
       "CP-A1",      "Chest Pain norm. breathing",
