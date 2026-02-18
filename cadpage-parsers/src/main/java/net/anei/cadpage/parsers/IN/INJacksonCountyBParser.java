@@ -10,6 +10,6 @@ public class INJacksonCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "jacksoncountydispatch@jacksoncountyin.org,FlexRapidNotification@dccnotify.com";
+    return "jacksoncountydispatch@jacksoncountyin.org,FlexRapidNotification@dccnotify.com,jcfireambulance@gmail.com";
   }
 }
