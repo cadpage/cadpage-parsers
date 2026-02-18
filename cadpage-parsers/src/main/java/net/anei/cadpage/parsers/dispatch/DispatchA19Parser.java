@@ -59,6 +59,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     times = "";
     body = HASH_DELIM.matcher(body).replaceAll(":");
     body = FIELD_BREAK.matcher(body).replaceAll("\n$1:");
+    body = body.replace("Determinant\nDesc:", "Determinant Desc:");
     body = body.replace(",\nUNC:", ", UNC:");
     body = body.replace(", UNC:\n", ", UNC: ");
     body = body.replace(",\nLat:", ", Lat:");

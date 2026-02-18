@@ -26,6 +26,11 @@ public class NJOceanCountyBParser extends DispatchA19Parser {
       subject = MBLANK_PTN.matcher(subject).replaceAll("\n");
       body = append(subject, " ", body);
     }
+    if (body.startsWith("emails come from")) {
+      int pt = body.indexOf("\n\n");
+      if (pt < 0) return false;
+      body = body.substring(pt+2).trim();
+    }
     return super.parseMsg(subject, body, data);
   }
 
