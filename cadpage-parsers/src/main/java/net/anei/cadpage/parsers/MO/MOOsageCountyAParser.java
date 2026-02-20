@@ -1,38 +1,22 @@
 package net.anei.cadpage.parsers.MO;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchGlobalDispatchParser;
 
-
-
-public class MOOsageCountyAParser extends DispatchGlobalDispatchParser {
+public class MOOsageCountyAParser extends FieldProgramParser {
 
   public MOOsageCountyAParser() {
-    super(CITY_LIST, "OSAGE COUNTY", "MO", PLACE_FOLLOWS_CALL | PLACE_FOLLOWS_ADDR);
-    setupCities(CITY_CODES);
-    setupCallList(CALL_LIST);
-    setupMultiWordStreets(
-        "CEDAR CREEK",
-        "CHURCH HILL",
-        "CRIPPLE CREEK",
-        "HONEY CREEK",
-        "LINN MEADOWS",
-        "MARTINS BLUFF",
-        "ROLLINS FERRY",
-        "TOWER RIDGE",
-        "TWIN RIDGE"
-    );
-    setAllowDirectionHwyNames();
+    super("OSAGE COUNTY", "MO",
+          "CFS_#:ID! Call_Date:DATETIME! Agency_#'s:SKIP! Incident_Code:CALL! Address:ADDRCITYST! Nearest_intersection:X! Lat/Long:GPS! " +
+                "Location_Alerts:ALERT! Units:UNIT! Phone_Number:PHONE! Call_Details:INFO! END");
   }
 
   @Override
   public String getFilter() {
-    return "sms911@socket.net,osage911sms@gmail.com";
+    return "noreplyosage911@gmail.com";
   }
 
   @Override
@@ -40,135 +24,87 @@ public class MOOsageCountyAParser extends DispatchGlobalDispatchParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern DASH_DIR_PTN = Pattern.compile("- *([NSEW]|[NS][EW])\\b");
-  private static final Pattern STATE_PLACE_PTN = Pattern.compile("(MO)\\b *(.*)");
-  private static final Pattern CROSS_UNIT_PTN = Pattern.compile("(.* (?:[NSEW]|[NS][EW]))\\b *(.*)");
-
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    subject = subject.trim();
-    if (!subject.equals("OsageCo 911 EOC") &&
-        !subject.equals("OsageCounty 911/EOC") &&
-        !subject.equals("Osage 911/EOC")) return false;
-
-    body = DASH_DIR_PTN.matcher(body).replaceAll("$1");
-
-    if (!body.endsWith("\nCALL COMPLETED") && body.contains("Primary Incident Number:")) {
-      body += "\nCALL COMPLETED";
-    }
-
-    if (!super.parseMsg(body, data)) return false;
-
-    data.strCity = convertCodes(data.strCity, CITY_CODES);
-
-    // State usually ends up in place field
-    Matcher match = STATE_PLACE_PTN.matcher(data.strPlace);
-    if (match.matches()) {
-      data.strState = match.group(1);
-      data.strPlace = match.group(2);
-    }
-
-    // Split off unit info from cross street
-    match = CROSS_UNIT_PTN.matcher(data.strCross);
-    String sUnit;
-    if (match.matches()) {
-      data.strCross = match.group(1);
-      sUnit = match.group(2);
-    } else {
-      sUnit = data.strCross;
-      data.strCross = "";
-    }
-    data.strUnit = append(data.strUnit, " ", sUnit);
-
-    return true;
+  public Field getField(String name) {
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("PHONE")) return new MyPhoneField();
+    if (name.equals("INFO")) return new MyInfoField();
+    return super.getField(name);
   }
 
-  @Override
-  public String getProgram() {
-    return super.getProgram().replace("CITY", "CITY ST") + " UNIT";
+  private static final Pattern ADDR1_PTN = Pattern.compile("(.*?, *[A-Z]{2}(?: \\d{5})?)\\b *(?:0\\b *)?(.*)");
+  private static final Pattern ADDR2_PTN = Pattern.compile("(.*?, *[A-Z]+)\\b *(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT) *(.*)|\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "None");
+      String apt = "";
+      if (field.endsWith(" None")) {
+        field = field.substring(0, field.length()-5).trim();
+      } else {
+        Matcher match = ADDR1_PTN.matcher(field);
+        boolean good = match.matches();
+        if (!good) {
+          match = ADDR2_PTN.matcher(field);
+          good = match.matches();
+        }
+        if (good) {
+          field = match.group(1).trim();
+          String extra = match.group(2).trim();
+          match = APT_PTN.matcher(extra);
+          if (match.matches()) {
+            apt = match.group(1);
+            if (apt == null) apt = extra;
+          } else {
+            data.strPlace = extra;
+          }
+        }
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR CITY ST APT PLACE";
+    }
   }
 
-  private static final CodeSet CALL_LIST = new CodeSet(
-      "ABDOMINAL PAIN / PROBLEMS",
-      "ALARM SOUNDING - FIRE (BUSINESS)",
-      "ALARM SOUNDING - FIRE (RESIDENTIAL)",
-      "ALARM SOUNDING - MEDICAL",
-      "ANIMAL BITES / ATTACKS",
-      "ASSIST ANOTHER AGENCY - EMS",
-      "ASSIST ANOTHER AGENCY - FIRE",
-      "BACK PAIN",
-      "BREATHING PROBLEMS",
-      "BRUSH FIRE",
-      "BURGLARY",
-      "CARDIAC OR RESPIRATORY ARREST / DEATH",
-      "CHEST PAIN /  CHEST DISCOMFORT",
-      "CHOKING",
-      "CONVULSIONS / SEIZURES",
-      "DIABETIC PROBLEMS",
-      "FALLS",
-      "FLU FIRE",
-      "FUEL SPILL / GAS LEAK",
-      "HEART PROBLEMS / A.I.C.D",
-      "HEMORRHAGE / LACERATION",
-      "INVESTIGATION - FIRE",
-      "LANE BLOCKAGE",
-      "LIFT ASSIST",
-      "MISSING PERSON / SEARCH & RESCUE",
-      "MOVE UP EMS",
-      "POWER LINES DOWN",
-      "PREGNANCY / CHILDBIRTH / MISCARRIAGE",
-      "PSYCHIATRIC / SUICIDAL ATTEMPT",
-      "RESPONDR INFORMATION",
-      "SICK PERSON",
-      "STAB / GUNSHOT / PENETRATING TRAUMA",
-      "STRANDED MOTORIST",
-      "STROKE / TRANSIENT ISCHEMIC ATTACK",
-      "STRUCTURE FIRE",
-      "SUSPICIOUS ODOR",
-      "TEST MESSAGE",
-      "TRANSFER / INTERFACILITY/PALLIATIVE CARE",
-      "TRANSFER - MEDICAL",
-      "TRAUMATIC EMERGENCIES",
-      "UNCONSCIOUS / FAINTING",
-      "VEHICLE / ATV ACCIDENT - NON-INJURY",
-      "VEHICLE / ATV ACCIDENT - UNKNOW INJURIES",
-      "VEHICLE / ATV ACCIDENT - WITH INJURIES",
-      "VEHICLE FIRE",
-      "WALK IN - MEDICAL"
-  );
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "None");
+      super.parse(field, data);
+    }
+  }
 
-  private static final String[] CITY_LIST = new String[]{
-    "ARGYLE",
-    "BELLE",
-    "BONNOTS MILL",
-    "CHAMOIS",
-    "FOLK",
-    "FRANKENSTEIN",
-    "FREEBURG",
-    "KOELTZTOWN",
-    "LINN",
-    "LOOSE CREEK",
-    "META",
-    "RICH FOUNTAIN",
-    "WESTPHALIA",
+  private class MyUnitField  extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",");
+      super.parse(field, data);
+    }
+  }
 
-    "COLE COUNTY",
-    "ST THOMAS",
+  private class MyPhoneField extends PhoneField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "None");
+      super.parse(field, data);
+    }
+  }
 
-    "GASCONADE COUNTY",
-    "MORRISON",
-
-    "MARIES COUNTY",
-    "VIENNA",
-
-    "MILLER COUNTY",
-    "ST ELIZABETH",
-    "ST ELEZABETH",   // Dispatch typo
-
-    "OSAGE COUNTY"
-  };
-
-  private static final Properties CITY_CODES = buildCodeTable(new String[] {
-      "ST ELEZABETH",     "ST ELIZABETH"
-  });
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "None");
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      data.strSupp = field;
+    }
+  }
 }
