@@ -1540,7 +1540,7 @@ public class Active911ParserTable {
       "US/MO/NodawayCounty",              "MONodawayCounty",
       "US/MO/NodawayCountySorted",        "MONodawayCounty",
       "US/MO/OsageCounty",                "MOOsageCounty,MOGasconadeCounty,MOPhelpsCounty",
-      "US/MO/OsageCountyAmbulanceDistrict","MOOsageCountyB",
+      "US/MO/OsageCountyAmbulanceDistrict","MOOsageCounty",
       "US/MO/OzarkCounty",                "MOOzarkCounty",
       "US/MO/PemiscotCounty",							"MOPemiscotCounty",
       "US/MO/PerryCounty",                "MOPerryCounty",
@@ -2112,6 +2112,7 @@ public class Active911ParserTable {
       "US/OH/DarkeCounty",                "OHShelbyCountyB",
       "US/OH/DarkeCountySheriff",         "OHDarkeCounty",
       "US/OH/DaytonPD",                   "OHMontgomeryCountyA",
+      "US/OH/DearbornCounty",						  "INDearbornCounty",   // A911 misassigned state
       "US/OH/DelawareCounty",             "OHDelawareCounty",
       "US/OH/EatonPolice",                "OHPrebleCounty",
       "US/OH/Elyria",                     "OHLorainCountyC,OHLorainCountyD",
