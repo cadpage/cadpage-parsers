@@ -1324,7 +1324,7 @@ public class Active911ParserTable {
       "US/MI/OxfordFD",                   "MIOaklandCountyC",
       "US/MI/ParmaSandstoneFD",           "MIJacksonCountyA",
       "US/MI/PlainfieldFD",               "MIKentCounty",
-      "US/MI/PresqueIsleCounty",					"MIPresqueIsleCounnty",
+      "US/MI/PresqueIsleCounty",					"MIPresqueIsleCounty",
       "US/MI/RacineCounty",               "WIRacineCountyA",
       "US/MI/RichmondFDDelimited",        "MIMacombCountyA",
       "US/MI/RoscommonCounty",            "MIRoscommonCounty",

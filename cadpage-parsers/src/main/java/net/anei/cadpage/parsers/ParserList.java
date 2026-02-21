@@ -956,7 +956,7 @@ public class ParserList {
               ,"MIOsceolaCounty"                ,"Osceola County, MI"
               ,"MIOtsegoCounty"                 ,"Otsego County, MI"
               ,"MIOttawaCounty"                 ,"Ottawa County, MI"
-              ,"MIPresqueIsleCounnty"           ,"Presque Isle County, MI"
+              ,"MIPresqueIsleCounty"            ,"Presque Isle County, MI"
               ,"MIRichmond"                     ,"Richmond, MI"
               ,"MIRoscommonCounty"              ,"Roscommon County, MI"
               ,"MISaginawCounty"                ,"Saginaw County, MI"

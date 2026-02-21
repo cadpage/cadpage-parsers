@@ -10,6 +10,8 @@ public class MDSaintMarysCountyBParser extends DispatchH05Parser {
           "Common_Name:PLACE! Address:ADDRCITY/S6! Call_Type:CALL! Call_Date/Time:DATETIME! Units:UNIT! UNITS<+ Cross_Street:X? GPS:GPS! " +
                 "Box:BOX! Radio_Channel:CH! Dispatch_Update:INFO! CFS_Number:SKIP? Incident_#:ID? Narrative:INFO_BLK! INFO_BLK+",
                 "tr");
+    setupMultiWordStreets("TAKE IT EASY RANCH");
+    removeWords("APARTMENT");
   }
 
   @Override

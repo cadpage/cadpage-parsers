@@ -49,19 +49,46 @@ public class NJAtlanticCountyEParser extends MsgParser {
 
     }
 
-    Parser p = new Parser(body);
-    data.strCall = p.getOptional(" @ ");
-    if (data.strCall.isEmpty()) return false;
-    data.strPlace = p.getOptional(" - ");
-    String city = p.getLastOptional(",");
-    parseAddress(p.get(), data);
-    Matcher match = CITY_ST_ZIP_PTN.matcher(city);
-    if (match.matches()) {
-      city =  match.group(1);
-      data.strState = match.group(2);
-    }
-    data.strCity = city;
-    return true;
+    pt = body.indexOf(" @ ");
+    if (pt < 0) return false;
+    data.strCall = body.substring(0,pt).trim();
+    body = body.substring(pt+3).trim();
 
+    String city;
+    pt = body.indexOf(" - ");
+    int pt2 = body.indexOf(',');
+    if (pt2 >= 0) {
+      if (pt >= 0 && pt < pt2) {
+        data.strPlace = body.substring(0,pt).trim();
+        pt += 3;
+      } else {
+        pt = 0;
+      }
+      city = body.substring(pt2+1).trim();
+      body = body.substring(pt, pt2).trim();
+    } else {
+      city = null;
+    }
+
+    parseAddress(body, data);
+
+    if (city != null) {
+      pt = city.indexOf(" - ");
+      if (pt >= 0) {
+        data.strPlace = append(data.strPlace, " - ", city.substring(pt+3).trim());
+        city = city.substring(0,pt).trim();
+      }
+      Matcher match = CITY_ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        city =  match.group(1);
+        data.strState = match.group(2);
+      } else if (city.startsWith("AC ")) {
+        data.strPlace = append(data.strPlace, " - ", city.substring(3).trim());
+        city = "ATLANTIC CITY";
+      }
+      data.strCity = city;
+    }
+
+    return true;
   }
 }
