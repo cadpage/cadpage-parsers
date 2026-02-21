@@ -8,9 +8,6 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-
-
-
 public class NYGeneseeCountyParser extends FieldProgramParser {
 
   public NYGeneseeCountyParser() {
@@ -21,7 +18,7 @@ public class NYGeneseeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "911center@co.genesee.ny.us,777,888";
+    return "911center@co.genesee.ny.us,911center@geneseeny.gov,777,888";
   }
 
   private static final Pattern DELIM3 = Pattern.compile("\\* *\\n");
