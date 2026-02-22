@@ -1025,6 +1025,7 @@ public class Active911ParserTable {
       "US/KY/HarrisonCounty",             "KYHarrisonCountyB",
       "US/KY/HarrisonCountyFPD",          "KYHarrisonCountyB",
       "US/KY/HendersonCounty",            "KYHendersonCounty",
+      "US/KY/HenryCounty",								"KYHenryCountyC",
       "US/KY/HickmanCounty",              "KYHickmanCounty",
       "US/KY/HopkinsvilleFD",             "KYChristianCounty",
       "US/KY/HopkinsvillePD",             "KYChristianCounty",

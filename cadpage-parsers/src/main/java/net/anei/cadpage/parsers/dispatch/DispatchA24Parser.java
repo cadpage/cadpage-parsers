@@ -56,6 +56,7 @@ public class DispatchA24Parser extends FieldProgramParser {
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("MAP")) return new BaseMapField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
 
@@ -130,6 +131,19 @@ public class DispatchA24Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "GPS MAP";
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +/{2,} +");
+  private class BaseInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      for (String part : INFO_BRK_PTN.split(' ' + field + ' ')) {
+        part = part.trim();
+        int pt = part.indexOf(", USA");
+        if (pt >= 0) part = part.substring(pt+5).trim();
+        data.strSupp = append(data.strSupp, "\n", part);
+      }
     }
   }
 }
