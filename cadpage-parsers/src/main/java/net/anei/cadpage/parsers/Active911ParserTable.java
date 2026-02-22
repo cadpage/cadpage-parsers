@@ -1529,6 +1529,7 @@ public class Active911ParserTable {
       "US/MO/MercerCounty",               "MOMercerCounty",
       "US/MO/MillerCounty",               "MOMillerCounty",
       "US/MO/MillersvilleRural",          "MOCapeGirardeauCountyC",
+      "US/MO/MississippiCounty",					"MOMississippiCounty",
       "US/MO/MobileFonePlatteCounty",     "MOJacksonCountyB",
       "US/MO/Mobilefonetotalaccess",      "MOJacksonCountyB",
       "US/MO/Moniteau911",                "MOMoniteauCounty",

@@ -1122,6 +1122,7 @@ public class ParserList {
               ,"MOMcDonaldCounty"               ,"McDonald County, MO"
               ,"MOMercerCounty"                 ,"Mercer County, MO"
               ,"MOMillerCounty"                 ,"Miller County, MO"
+              ,"MOMississippiCounty"            ,"Mississippi County, MO"
               ,"MOMoniteauCounty"               ,"Moniteau County, MO"
               ,"MOMontgomeryCounty"             ,"Montgomery County, MO"
               ,"MOMorganCounty"                 ,"Morgan County, MO"
