@@ -74,7 +74,10 @@ public class PAIndianaCountyParser extends SmartAddressParser {
     }
 
     int pt = addr.indexOf(',');
-    if (pt < 0) return false;
+    if (pt < 0) {
+      parseAddress(addr, data);
+      return true;
+    }
     parseAddress(addr.substring(0,pt).trim(), data);
     addr = addr.substring(pt+1).trim();
 
