@@ -12,7 +12,9 @@ public class OHHockingCountyParser extends FieldProgramParser {
 
   public OHHockingCountyParser() {
     super("HOCKING COUNTY", "OH",
-          "ID CALL ADDRCITYST APT PLACE GPS1 GPS2 UNIT INFO! END");
+          "( call_for_service_#:ID! Incident_Code_Description:CALL! Location_Details:LOCATION! Responder_Units:UNIT! Responder_Agencies:SRC?  Priority:PRI! Details:INFO " +
+          "| ID CALL ADDRCITYST APT PLACE GPS1 GPS2 UNIT! INFO " +
+          ") END");
   }
 
   @Override
@@ -27,7 +29,12 @@ public class OHHockingCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\\|"), data);
+    if (body.startsWith("call for service #:")) {
+      body = body.replace(" Details ", " Details:");
+      return super.parseMsg(body, data);
+    } else {
+      return parseFields(body.split("\\|"), data);
+    }
   }
 
   @Override
@@ -38,6 +45,7 @@ public class OHHockingCountyParser extends FieldProgramParser {
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("LOCATION")) return new MyLocationField();
     return super.getField(name);
   }
 
@@ -76,6 +84,29 @@ public class OHHockingCountyParser extends FieldProgramParser {
       for (String line : INFO_SEP_PTN.split(field)) {
         data.strSupp = append(data.strSupp, "\n", line);
       }
+    }
+  }
+
+  private static final Pattern LOC_BRK_PTN = Pattern.compile(" *\\| *");
+  private class MyLocationField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      String[] flds = LOC_BRK_PTN.split(field, -1);
+      if (flds.length != 5) abort();
+
+      super.parse(flds[0], data);
+      data.strApt = append(data.strApt, "-", cleanField(flds[1]));
+      data.strPlace = cleanField(flds[2]);
+      setGPSLoc(flds[3]+','+flds[4], data);
+    }
+
+    private String cleanField(String fld) {
+      return fld.equals("None") ? "" : fld;
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE GPS";
     }
   }
 }
