@@ -39,7 +39,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
   private static final Pattern BAD_PTN = Pattern.compile("\\d{10} .*", Pattern.DOTALL);
 
   private static final Pattern MASTER1 = Pattern.compile("(.*?) Cross Street (?:(.*?) )?(?:(Station \\d+) )?(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?)(?: (\\d{4}-\\d{8}\\b.*?))?(?: Priority (\\S+))?");
-  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|DFD|NVAC|RGH|Lifeflight|Lifestar|Sta\\d+|Willimantic)(?:-RIT)?\\b,?)+)");
+  private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?) ((?:(?:[A-Z]+\\d+|\\d+[A-Z]+\\d*|DFD|MHMB|NVAC|RGH|Lifeflight|Lifestar|Sta\\d+|Willimantic)(?:-RIT)?\\b,?)+)");
   private static final Pattern TRAIL_CH_PTN = Pattern.compile("(.*?)[-/ ]*\\b(\\d\\d\\.\\d\\d(?:[-/., ]+(?:(?:[A-Z]+ )?F/?G|VFG|TAC[- ]*\\S+))?)\\b *(.*)");
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
 
@@ -89,6 +89,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
     }
 
     // Check for variant 1 format
+    body = stripFieldEnd(body,  " FD RESP");
     Matcher match = MASTER1.matcher(body);
     if (match.matches()) {
       setFieldList("ADDR APT CITY PLACE CALL CH X UNIT DATE TIME ID PRI");
@@ -489,6 +490,7 @@ public class CTTollandCountyAParser extends FieldProgramParser {
       "Vehicle Accident W/O Injuries",
       "Vehicle Accident w/o Injury",
       "Vehicle Accident/HeadOn",
+      "Vehicle Accident W/ Extrication POSS MINOR INJURIES-ROLLOVER",
       "Vehicle Fire",
       "Water Rescue",
       "Wires Burning/Arcing"
