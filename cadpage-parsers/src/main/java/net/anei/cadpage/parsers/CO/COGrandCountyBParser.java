@@ -7,10 +7,10 @@ public class COGrandCountyBParser extends DispatchA19Parser {
   public COGrandCountyBParser() {
     super("GRAND COUNTY", "CO");
   }
-  
+
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,@email.getrave.com";
   }
 
 }

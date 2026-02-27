@@ -8,7 +8,7 @@ public class MOMississippiCountyParser extends FieldProgramParser {
   public MOMississippiCountyParser() {
     super("MISSISSIPPI COUNTY", "MO",
           "( Category:CALL! Address:ADDR! END " +
-          "| ID CALL ADDR1 ADDR1 ADDR2 CITY NAME NAME/S! PHONE PLACE EMPTY INFO/N+ " +
+          "| ID CALL CALL2/S? ADDR1 ADDR1 ADDR2 CITY NAME NAME/S! PHONE PLACE EMPTY INFO/N+ " +
           ")");
   }
 
@@ -25,6 +25,7 @@ public class MOMississippiCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID"))  return new IdField("\\d{4}-\\d{5}", true);
+    if (name.equals("CALL2")) return new CallField("AGENCY", true);
     if (name.equals("ADDR1")) return new MyAddressField(false);
     if (name.equals("ADDR2")) return new MyAddressField(true);
     return super.getField(name);
