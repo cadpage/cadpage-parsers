@@ -1478,6 +1478,7 @@ public class Active911ParserTable {
       "US/MO/CooperCounty",               "MOCooperCounty",
       "US/MO/CoxHealth",                  "MOGreeneCountyC",
       "US/MO/CrawfordCounty",             "MOCrawfordCountyB",
+      "US/MO/CreveCoeur",									"MOStLouisCountyE",
       "US/MO/DadeCounty",                 "MODadeCounty",
       "US/MO/DallasCounty",               "MODallasCounty",
       "US/MO/DaviessCounty",              "MODaviessCounty",
