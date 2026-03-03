@@ -4285,6 +4285,17 @@ The second is to install a version of Cadpage from anyplace other than the Googl
 
 The version number displayed by Cadpage tells you what it can do.  If the version number ends with an 'R' it is a restricted version that cannot process text messages without an existing support app.  If it does not, it can continue to function as you expect without the support app.
 
+**************************************************************************************
+Short answer...  The version of Cadpage that is available from Google Play will no longer process SMS or MMS messages.  What you need to do is download and install Cadpage from someplace else.  The quickest source being our download page at https://www.cadpage.org/download-cadpage.
+
+Long technical answer...
+
+Play Store apps were prohibited from processing text messages years ago.  At the time, I developed a workaround where users could install an auxiliary support app that Cadpage would use to perform all of the prohibited functions.  This allowed Cadpage to be distributed through the Play Store while performing all the requested functions for which Play Store apps were not prohibited.
+
+A couple months ago, Google decreed that even hinting that users could download different versions of the app was no prohibited.   To maintain compliance, the Play Store version of Cadpage no longer prompts the user to side-load an auxiliary app or hints that alternate versions of the app were available elsewhere.  It does continue to use the support app if it is already installed, but if you switch to a new phone, or factory reset your existing phone, no support app is available and Cadpage stops working.  All Cadpage can do in this situation is prompt you to email the developer, who will promptly inform you where a full working of version of Cadpage can be found.
+
+Good luck,
+-Ken
 
 **************************************************************************************
 Useful search expressions...
