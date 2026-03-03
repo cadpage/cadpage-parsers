@@ -17,7 +17,8 @@ public class DispatchA24Parser extends FieldProgramParser {
 
   public DispatchA24Parser(String defCity, String defState) {
     super(defCity, defState,
-           "UNIT:UNIT? ( CALL:CALL! RUN:SKIP? PLACE:PLACE? ( ADDR:ADDRCITYST! BLDG:APT APT:APT CITY:CITY! XSTREETS:X ID:ID% PRI:PRI DATE:DATE% TIME:TIME% MAP:MAP% CALLERPHONE:PHONE% JURISDICTION:SRC LATITUDE:GPS1/d LONGITUDE:GPS2/d TPPU:SKIP ( ALLUNITS:UNIT |  UNIT:UNIT | ID:ID? ) | ) INFO:INFO INFO/N+ XSTREET:X WS:CH WARNINGS:ALERT" +
+           "UNIT:UNIT? ( CALL:CALL! RUN:SKIP? PLACE:PLACE? ( ADDR:ADDRCITYST! BLDG:APT APT:APT CITY:CITY! ( XSTREETS:X | XSTREET:X | ) WS:CH? ID:ID? UNIT:UNIT? PRI:PRI DATE:DATE% TIME:TIME% MAP:MAP% CALLERPHONE:PHONE% JURISDICTION:SRC LATITUDE:GPS1/d LONGITUDE:GPS2/d TPPU:SKIP ( ALLUNITS:UNIT |  UNIT:UNIT | ID:ID? ) " +
+                                                          "| ) INFO:INFO INFO/N+ XSTREET:X WS:CH WARNINGS:ALERT" +
                       "| ID:ID! INFO/RN+ " +
                       "| FAIL " +
                       ")");
@@ -53,6 +54,7 @@ public class DispatchA24Parser extends FieldProgramParser {
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("CITY")) return new BaseCityField();
+    if (name.equals("X")) return new BaseCrossField();
     if (name.equals("DATE")) return new DateField("(?:CAD date *\\()?(\\d\\d?/\\d\\d?(?:/\\d{2,4})?)\\)?(?: *\\(.*)?", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("MAP")) return new BaseMapField();
@@ -101,6 +103,15 @@ public class DispatchA24Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "APT CITY";
+    }
+  }
+
+  private class BaseCrossField  extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
     }
   }
 

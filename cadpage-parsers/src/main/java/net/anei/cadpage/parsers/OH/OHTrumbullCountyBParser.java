@@ -2,10 +2,10 @@ package net.anei.cadpage.parsers.OH;
 
 import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
-public class OHLorainCountyDParser extends DispatchA24Parser {
+public class OHTrumbullCountyBParser extends DispatchA24Parser {
 
-  public OHLorainCountyDParser() {
-    super("LORAIN COUNTY", "OH");
+  public OHTrumbullCountyBParser() {
+    super("TRUMBULL COUNTY", "OH");
   }
 
   @Override
