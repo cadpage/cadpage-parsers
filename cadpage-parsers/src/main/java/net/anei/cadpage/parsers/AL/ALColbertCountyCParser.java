@@ -14,7 +14,7 @@ public class ALColbertCountyCParser extends DispatchA77Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@getrave.com";
+    return "FlexRapidNotification@dccnotify.com,@getrave.com,@email.getrave.com";
   }
 
   @Override
@@ -31,6 +31,8 @@ public class ALColbertCountyCParser extends DispatchA77Parser {
       data.strSource = match.group(1);
       subject = "CAD Alert";
     }
+    int pt = body.indexOf("\n\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(subject, body, data);
   }
 
