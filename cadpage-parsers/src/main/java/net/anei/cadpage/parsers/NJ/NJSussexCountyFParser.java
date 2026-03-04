@@ -11,7 +11,7 @@ public class NJSussexCountyFParser extends FieldProgramParser {
   public NJSussexCountyFParser() {
     super("SUSSEX COUNTY", "NJ",
           "TIMEDATE! EMPTY ID! Responding_Units:UNIT! Nature:CALL! Address:ADDR! Cross_Streets:X! City:CITY! Zone:MAP! " +
-              "Comments:EMPTY! INFO/N+ Directions:DIRS! DIRS+? GPS! END");
+              "Comments:EMPTY! INFO/N+ Caller_Phone:PHONE? Caller_Name:NAME? Caller_Address:SKIP? Directions:DIRS! DIRS+? GPS! END");
   }
 
   @Override
@@ -37,6 +37,7 @@ public class NJSussexCountyFParser extends FieldProgramParser {
     if (name.equals("TIMEDATE")) return new TimeDateField("\\d\\d:\\d\\d:\\d\\d \\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("ID")) return new IdField("INCIDENT # *(.*)", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DIRS")) return new MyDirectionsField();
     if (name.equals("GPS")) return new MyGPSField();
@@ -57,6 +58,14 @@ public class NJSussexCountyFParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE";
+    }
+  }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("Intersection of:")) return;
+      super.parse(field, data);
     }
   }
 
