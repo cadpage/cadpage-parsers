@@ -11,7 +11,7 @@ public class DispatchC04Parser extends FieldProgramParser {
 
   public DispatchC04Parser(String defCity, String defState) {
     super(defCity, defState,
-          "CFS:ID! CALL! ADDRCITYST! ADDR2? ( GPS! | X_PLACE GPS! | ) " +
+          "CFS:ID! CALL! ADDRCITYST! ADDR2? ( GPS! | X_PLACE GPS! | APT X_PLACE GPS! | ) " +
               "( X_PLACE UNIT_TIMES! | UNIT_TIMES! " +
               "| Received:TIMES! " +
               "| X_PLACE PHONE! NAME FAIL Received:TIMES! " +
@@ -28,6 +28,8 @@ public class DispatchC04Parser extends FieldProgramParser {
 
   }
 
+  private String times;
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.startsWith("iSOMS - ")) return false;
@@ -42,7 +44,11 @@ public class DispatchC04Parser extends FieldProgramParser {
     }
     int pt = body.indexOf("\nThis message is confidential");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return parseFields(body.split("\n", -1), data);
+    times = "";
+    if (!parseFields(body.split("\n", -1), data)) return false;
+    if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
+    times = null;
+    return true;
   }
 
   @Override
@@ -83,15 +89,24 @@ public class DispatchC04Parser extends FieldProgramParser {
         super.parse(field, data);
         return true;
       }
-      else if (checkAddress(data.strAddress) == STATUS_STREET_NAME &&
-               checkAddress(field) == STATUS_STREET_NAME) {
-        field = data.strAddress + " & " + field;
-        data.strAddress = "";
-        super.parse(field, data);
-        return true;
+      else if (checkAddress(field) == STATUS_STREET_NAME) {
+        if (checkAddress(data.strAddress) == STATUS_STREET_NAME) {
+          field = data.strAddress + " & " + field;
+          data.strAddress = "";
+          super.parse(field, data);
+          return true;
+        } else {
+          data.strCross = field;
+          return true;
+        }
       } else {
         return false;
       }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " X";
     }
   }
 
@@ -138,7 +153,7 @@ public class DispatchC04Parser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = getRelativeField(0);
-      data.strSupp = append(data.strSupp, "\n", field);
+      times = append(times, "\n", field);
       if (field.startsWith("Completed:") || field.startsWith("Canceled:")) data.msgType = MsgType.RUN_REPORT;
     }
   }
