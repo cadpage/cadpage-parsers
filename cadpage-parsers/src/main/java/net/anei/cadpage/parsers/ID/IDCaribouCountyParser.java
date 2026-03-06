@@ -5,6 +5,10 @@ import net.anei.cadpage.parsers.dispatch.DispatchA94Parser;
 public class IDCaribouCountyParser extends DispatchA94Parser {
 
   public IDCaribouCountyParser() {
-    super("CARIBOU COUNTY", "ID");
+    this("CARIBOU COUNTY", "ID");
+  }
+
+  public IDCaribouCountyParser(String defCity, String defState) {
+    super(defCity, defState);
   }
 }

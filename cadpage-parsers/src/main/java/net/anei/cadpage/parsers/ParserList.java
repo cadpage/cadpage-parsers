@@ -494,6 +494,7 @@ public class ParserList {
           ),
           new ParserCategory("Idaho"
               ,"IDAdaCounty"                    ,"Ada County, ID"
+              ,"IDBearLakeCounty"               ,"Bear Lake County, ID"
               ,"IDBenewahCounty"                ,"Benewah County, ID"
               ,"IDBinghamCounty"                ,"BinghamCounty, ID"
               ,"IDBlaineCounty"                 ,"Blaine County, ID"

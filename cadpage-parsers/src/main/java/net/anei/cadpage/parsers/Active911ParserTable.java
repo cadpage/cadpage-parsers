@@ -656,6 +656,7 @@ public class Active911ParserTable {
       "US/IA/WinnebagoCounty",            "IAWinnebagoCounty",
       "US/IA/WoodburyCounty",             "IAWoodburyCounty",
       "US/IA/WorthCounty",                "IAWorthCounty",
+      "US/ID/BearLakeCounty",							"IDBearLakeCounty",
       "US/ID/BenewahCounty",              "IDBenewahCounty",
       "US/ID/BinghamCounty",              "IDBinghamCounty",
       "US/ID/BlaineCounty",               "IDBlaineCounty",
