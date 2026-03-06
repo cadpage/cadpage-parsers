@@ -5,6 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class WVLincolnCountyParser extends GroupBestParser {
 
   public WVLincolnCountyParser() {
-    super(new WVLincolnCountyAParser(), new WVLincolnCountyBParser());
+    super(new WVLincolnCountyAParser(),
+          new WVLincolnCountyBParser(),
+          new WVLincolnCountyCParser());
   }
 }
