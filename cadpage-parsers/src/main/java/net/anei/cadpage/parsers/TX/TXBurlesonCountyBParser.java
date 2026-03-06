@@ -40,7 +40,7 @@ public class TXBurlesonCountyBParser extends FieldProgramParser {
   }
 
   private static final Pattern ADDR_CITY_PTN = Pattern.compile("-(.*)- +(.*)");
-  private static final Pattern APT_CITY_PTN = Pattern.compile("(\\d+[A-Z]?|[A-Z]) +(.*)");
+  private static final Pattern APT_CITY_PTN = Pattern.compile("(\\S*\\d\\S*|[A-Z]) +(.*)");
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {

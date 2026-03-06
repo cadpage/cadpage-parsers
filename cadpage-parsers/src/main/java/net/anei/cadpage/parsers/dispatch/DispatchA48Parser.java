@@ -269,6 +269,7 @@ public class DispatchA48Parser extends FieldProgramParser {
   private static final Pattern TRUNC_HEADER_PTN = Pattern.compile("\\d\\d:\\d\\d \\d{4}-\\d{8} ");
   private static final Pattern TRUNC_HEADER_PTN2 = Pattern.compile(": \\d{4}-\\d{8}(\\s)");
   private static final Pattern MASTER_PTN = Pattern.compile("(?:CAD:[-_A-Za-z0-9]* |[- A-Za-z0-9]*:)? *As of (\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d) (?:([AP]M) )? *(\\d{4}-\\d{5,8}) (.*)");
+  private static final Pattern TIMES_BRK_PTN = Pattern.compile("(?<=:\\d\\d:\\d\\d) +");
   private static final Pattern TRAIL_UNIT_PTN = Pattern.compile("(.*?)[ ,]+([-\\w]+)");
   private static final Pattern DATE_TIME_PTN = Pattern.compile("\\b(\\d\\d?/\\d\\d?/\\d\\d) (\\d\\d?:\\d\\d:\\d\\d)(?: ([AP]M))?\\b");
   private static final Pattern DATE_TIME_UNIT_MARK_PTN = Pattern.compile("(.*?)(?: \\d\\d?/\\d\\d?/\\d\\d)? Date/Time.*");
@@ -355,6 +356,7 @@ public class DispatchA48Parser extends FieldProgramParser {
     boolean first = true;
     boolean unitMark = false;
     Flag unitFound = new Flag(false);
+    addr = parseUnitInfo(addr, data, unitFound);
     for (String part : DATE_TIME_PTN.split(addr)) {
       part = part.trim();
 
@@ -363,10 +365,6 @@ public class DispatchA48Parser extends FieldProgramParser {
         if (pt >= 0) part = part.substring(0,pt);
         addUnit(part, data);
         continue;
-      }
-
-      if (fieldType == FieldType.INFO && data.strUnit.length() == 0) {
-        part = parseUnitInfo(part, data, unitFound);
       }
 
       match = DATE_TIME_UNIT_MARK_PTN.matcher(part);
@@ -380,8 +378,6 @@ public class DispatchA48Parser extends FieldProgramParser {
         data.strSupp = append(data.strSupp, "\n", part);
       }
     }
-
-    if (fieldType != FieldType.INFO) addr = parseUnitInfo(addr, data, unitFound);
 
     Parser p = new Parser(fixCallAddress(addr));
 
@@ -407,6 +403,15 @@ public class DispatchA48Parser extends FieldProgramParser {
     }
 
     addr = p.get();
+
+    pt = addr.indexOf(" Created:");
+    if (pt >= 0) {
+      String times = addr.substring(pt+1);
+      addr = addr.substring(0,pt).trim();
+      times = TIMES_BRK_PTN.matcher(times).replaceAll("\n");
+      if (times.contains("En Route") || times.contains("On Scene") || times.contains("Closed")) data.msgType = MsgType.RUN_REPORT;
+      data.strSupp = times;
+    }
 
     // If we didn't find a unit, try a couple backup routines
     if (unitPtn != null) {
