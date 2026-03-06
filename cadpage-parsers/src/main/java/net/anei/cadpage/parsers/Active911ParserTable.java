@@ -717,6 +717,7 @@ public class Active911ParserTable {
       "US/IL/Jacksonville",               "ILMorganCounty",
       "US/IL/KaneCounty",                 "ILKaneCountyC",
       "US/IL/KankakeeCounty",             "ILKankakeeCounty",
+      "US/IL/KendallCounty",							"ILKendallCounty",
       "US/IL/LakeCounty",                 "ILLakeCountyA,ILLakeCountyF",
       "US/IL/LakeVillaFPD",               "ILLakeCountyA",
       "US/IL/LakeZurichFR",               "ILLakeCountyA",
