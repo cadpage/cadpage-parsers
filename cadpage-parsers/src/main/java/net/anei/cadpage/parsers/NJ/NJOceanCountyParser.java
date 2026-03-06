@@ -14,6 +14,7 @@ public class NJOceanCountyParser extends GroupBestParser {
     super(new NJOceanCountyAParser(),
           new NJOceanCountyBParser(),
           new NJOceanCountyCParser(),
+          new NJOceanCountyDParser(),
           new NJOceanCountyEParser(),
           new NJOceanCountyFParser(),
           new NJOceanCountyGParser(),

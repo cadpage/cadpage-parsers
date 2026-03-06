@@ -1933,6 +1933,7 @@ public class Active911ParserTable {
       "US/NJ/VirtuaEMS",                  "NJBurlingtonCountyH",
       "US/NJ/WaldwickFD",                 "NJBergenCountyF",
       "US/NJ/WarrenCounty",               "NJWarrenCounty",
+      "US/NJ/WaretownFAS",								"NJOceanCountyD",
       "US/NJ/WayneTownship",              "NJWayneTownship",
       "US/NJ/WestamptonTWP",              "NJBurlingtonCountyH",
       "US/NJ/WestCaldwellPD",             "NJEssexCountyA",
