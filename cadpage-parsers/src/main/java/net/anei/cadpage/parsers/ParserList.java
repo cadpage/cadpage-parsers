@@ -1969,6 +1969,7 @@ public class ParserList {
               ,"VAHanoverCounty"                ,"Hanover County, VA"
               ,"VAHenricoCounty"                ,"Henrico County, VA"
               ,"VAHenryCounty"                  ,"Henry County, VA"
+              ,"VAHighlandCounty"               ,"Highland County, VA"
               ,"VAHopewell"                     ,"Hopewell, VA"
               ,"VAIsleOfWightCounty"            ,"Isle of Wight County, VA"
               ,"VAJamesCityCounty"              ,"James City County, VA"

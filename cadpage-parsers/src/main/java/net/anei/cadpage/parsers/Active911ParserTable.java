@@ -2991,6 +2991,7 @@ public class Active911ParserTable {
       "US/VA/HanoverPageGate",            "VAHanoverCountyB",
       "US/VA/HenricoCounty",              "VAHenricoCounty",
       "US/VA/HenryCounty",                "VAHenryCounty",
+      "US/VA/HighlandCounty",							"VAHighlandCounty",
       "US/VA/Hopewell",                   "VAHopewell",
       "US/VA/IsleOfWrightCounty",         "VAIsleOfWightCounty",
       "US/VA/JamesCityCounty",            "VAJamesCityCounty",
