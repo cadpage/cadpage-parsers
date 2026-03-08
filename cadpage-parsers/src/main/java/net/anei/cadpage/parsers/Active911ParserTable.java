@@ -1640,6 +1640,7 @@ public class Active911ParserTable {
       "US/MT/LakeCounty2",                "MTLakeCounty",
       "US/MT/LakesideQRU",                "MTFlatheadCountyC",
       "US/MT/LewisandClarkCounty",        "MTLewisAndClarkCounty",
+      "US/MT/LoganHealthDispatch",				"MTFlatheadCountyF",
       "US/MT/MissoulaCounty",             "MTMissoulaCounty",
       "US/MT/MonarchVFD",                 "MTCascadeCountyB",
       "US/MT/ParkCounty",                 "MTParkCounty",
