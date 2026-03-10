@@ -14,7 +14,7 @@ public class ALColbertCountyCParser extends DispatchA77Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@getrave.com,@email.getrave.com";
+    return "FlexRapidNotification@dccnotify.com,@getrave.com,@email.getrave.com,@getrave.com";
   }
 
   @Override
