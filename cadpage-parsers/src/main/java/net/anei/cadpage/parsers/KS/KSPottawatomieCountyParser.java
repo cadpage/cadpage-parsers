@@ -5,14 +5,14 @@ import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
 
 public class KSPottawatomieCountyParser extends DispatchA25Parser {
-  
+
   public KSPottawatomieCountyParser() {
     super("POTTAWATOMIE COUNTY", "KS");
   }
-  
+
   @Override
   public String getFilter() {
-    return "EnterpolAlerts@atchisonlec.org";
+    return "EnterpolAlerts@atchisonlec.org,EnterpolAlerts@ptsheriff.com,EnterpolAlerts@ptsherifff.com";
   }
 
   @Override
@@ -26,5 +26,5 @@ public class KSPottawatomieCountyParser extends DispatchA25Parser {
     return true;
   }
 
-  
+
 }
