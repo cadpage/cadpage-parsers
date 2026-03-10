@@ -584,7 +584,7 @@ public class Active911ParserTable {
       "US/GA/Ledsportal",                 "GAFloydCounty",
       "US/GA/LowndesCounty",              "GALowndesCounty",
       "US/GA/MaconBibb",                  "GAMaconCountyC",
-      "US/GA/MaconCounty",                "GAMaconCountyB",
+      "US/GA/MaconCounty",                "GAMaconCountyB,GASchleyCountyA",
       "US/GA/MaconCountyFire",            "GAMaconCounty",
       "US/GA/MaconStatePrison",           "GAMaconCountyB",
       "US/GA/MarionCounty",               "GAMarionCounty",
