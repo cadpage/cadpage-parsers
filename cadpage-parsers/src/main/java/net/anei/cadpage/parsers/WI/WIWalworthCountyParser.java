@@ -11,16 +11,16 @@ public class WIWalworthCountyParser extends DispatchA63Parser {
 
   @Override
   public String getFilter() {
-    return "lgpdrms@genevaonline.com";
+    return "@genevaonline.com,@cityoflakegeneva.gov";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     return super.parseMsg(body, data);
   }
-  
+
   private static final String[] CITY_LIST = new String[] {
-      
+
       // Cities[edit]
       "BURLINGTON",
       "DELAVAN",
@@ -28,7 +28,7 @@ public class WIWalworthCountyParser extends DispatchA63Parser {
       "ELKHORN",
       "LAKE GENEVA",
       "WHITEWATER",
-      
+
       // Villages
       "BLOOMFIELD",
       "DARIEN",
@@ -39,7 +39,7 @@ public class WIWalworthCountyParser extends DispatchA63Parser {
       "SHARON",
       "WALWORTH",
       "WILLIAMS BAY",
-      
+
       // Towns
       "BLOOMFIELD",
       "DARIEN",
@@ -103,7 +103,7 @@ public class WIWalworthCountyParser extends DispatchA63Parser {
       "TROY CENTER",
       "VOREE",
       "ZENDA",
-      
+
       //Ghost towns
       "ARMY LAKE",
       "MAYHEWS"
