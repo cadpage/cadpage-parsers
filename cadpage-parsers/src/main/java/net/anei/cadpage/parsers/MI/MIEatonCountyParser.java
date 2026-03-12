@@ -11,24 +11,27 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Eaton County, MI
  */
 public class MIEatonCountyParser extends DispatchOSSIParser {
-  
+
   public MIEatonCountyParser() {
     super(CITY_CODES, "EATON COUNTY", "MI",
-           "( CANCEL | ( FYI | EMPTY ) SRC? ID? DATETIME? CALL )  ADDR! CITY? X+? INFO+");
+           "( CANCEL | ( FYI | EMPTY | ) SRC? ID? DATETIME? CALL )  ADDR! CITY? X+? INFO+");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@eatoncounty.org";
   }
 
   @Override
-  protected boolean parseMsg(String body, Data data) {
+  protected boolean parseMsg(String subject, String body, Data data) {
     int pt = body.indexOf('\n');
     if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseMsg(body, data);
+    boolean good = body.startsWith("CAD:");
+    if (!good) body = "CAD:" + body;
+    if (!super.parseMsg(body, data)) return false;
+    return good || !data.strCity.isEmpty();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}", true);
@@ -38,11 +41,11 @@ public class MIEatonCountyParser extends DispatchOSSIParser {
     if (name.equals("CANCEL")) return new CallField("CANCEL", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern PRIORITY_PTN = Pattern.compile("Event spawned .* PRIORITY (\\d).*");
   private static final Pattern SPECIAL_PTN = Pattern.compile("\\bRESPONSE: \\*\\*\\*PRIORITY (\\d)\\*\\*\\*|\\bCode: ([-A-Z0-9]+):|\\bQuestions:|\\bAborted by Medical Priority with code:|\\bEvent spawned from ");
   private class MyInfoField extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = PRIORITY_PTN.matcher(field);
@@ -60,17 +63,17 @@ public class MIEatonCountyParser extends DispatchOSSIParser {
         match.appendReplacement(sb, " ");
       }
       match.appendTail(sb);
-      
+
       field = sb.toString().replace("  +", " ").trim();
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PRI CODE INFO";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ASYR", "ASSYRIA TWP",      // Barry County
       "BATH", "BATH",
@@ -87,7 +90,7 @@ public class MIEatonCountyParser extends DispatchOSSIParser {
       "DLHI", "DELHI TWP",        // Ingham County
       "DLTA", "LANSING",
       "DOWL", "DOWLING",
-      "EAGL", "EAGLE",            // Clinton County  
+      "EAGL", "EAGLE",            // Clinton County
       "EATN", "EATON TWP",
       "ERCY", "EATON RAPIDS",
       "ERTP", "EATON RAPIDS TWP",
