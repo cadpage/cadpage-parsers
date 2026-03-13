@@ -25,6 +25,7 @@ public class MTGallatinCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace('\n', ' ');
     String[] flds = body.split("\\|", -1);
     for (int ndx = 0; ndx < flds.length; ndx++) {
       if (flds[ndx].equals("None")) flds[ndx] = "";

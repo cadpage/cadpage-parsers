@@ -51,7 +51,7 @@ public class DispatchC06Parser extends MsgParser {
 
     String city;
     pt = body.indexOf(" - ");
-    int pt2 = body.indexOf(',');
+    int pt2 = body.lastIndexOf(',');
     if (pt2 >= 0) {
       if (pt >= 0 && pt < pt2) {
         data.strPlace = body.substring(0,pt).trim();
