@@ -12,6 +12,11 @@ public class VAHighlandCountyParser extends FieldProgramParser {
           "Nature:CALL! Address:ADDR! City:CITY! Cross_Streets:X! Reported:TIMEDATE! ID! Priority:PRI! Type:SKIP! Zone:MAP! Responding_Units:UNIT! END");
   }
 
+  @Override
+  public String getFilter() {
+    return "hcsorapid@highlandcova.org";
+  }
+
   private static final Pattern DELIM = Pattern.compile("\n| +(?=City:|Incident #|Type:|Zone:)");
 
   @Override
