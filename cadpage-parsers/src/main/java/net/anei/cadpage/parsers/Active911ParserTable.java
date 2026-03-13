@@ -1999,7 +1999,7 @@ public class Active911ParserTable {
       "US/NY/JerichoFD",                  "NYNassauCountyRedAlert",
       "US/NY/KJHatzolahEMS",              "NYOrangeCountyF",
       "US/NY/Lewis911",                   "NYLewisCountyA,NYLewisCountyC",
-      "US/NY/LewisCounty",                "NYLewisCountyB",
+      "US/NY/LewisCounty",                "NYLewisCountyC",
       "US/NY/LimaVFD",                    "NYLivingstonCountyA",
       "US/NY/LivingstonCounty",           "NYLivingstonCountyA,NYLivingstonCountyC",
       "US/NY/MadisonCounty",              "NYMadisonCountyD",

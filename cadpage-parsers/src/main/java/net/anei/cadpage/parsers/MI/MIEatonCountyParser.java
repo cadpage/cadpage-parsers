@@ -19,7 +19,7 @@ public class MIEatonCountyParser extends DispatchOSSIParser {
 
   @Override
   public String getFilter() {
-    return "cad@eatoncounty.org";
+    return "cad@eatoncounty.org,MI-Eaton-County-EMA@email.getrave.com";
   }
 
   @Override

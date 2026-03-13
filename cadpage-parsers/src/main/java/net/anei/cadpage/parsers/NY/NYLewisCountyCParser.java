@@ -18,7 +18,7 @@ public class NYLewisCountyCParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FRN-lewiscountyny@email.getrave.com";
   }
 
   @Override
