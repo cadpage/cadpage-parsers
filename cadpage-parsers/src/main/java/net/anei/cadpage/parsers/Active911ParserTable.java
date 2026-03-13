@@ -1165,6 +1165,7 @@ public class Active911ParserTable {
       "US/LA/TangipahoaParish",           "LATangipahoaParish",
       "US/LA/TerrebonneParish",           "LATerrebonneParish",
       "US/LA/Vangy911",                   "LAEvangelineParish",
+      "US/LA/WinstonCounty",              "MSWinstonCounty",       // Wrong state
       "US/LA/WestBatonRougeCouncil",      "LAWestBatonRougeParish",
       "US/LA/WestCarrollSheriff",         "LAWestCarrollParish",
       "US/LA/WestFelicianaParish",        "LAWestFelicianaParish",
@@ -2227,6 +2228,7 @@ public class Active911ParserTable {
       "US/OH/WarrensvilleHeightsFD",      "OHCuyahogaCountyF",
       "US/OH/WashingtonCountySheriff",    "OHWashingtonCountyA",
       "US/OH/WayneCounty",                "OHWayneCountyC,OHWayneCountyE",
+      "US/OH/WeathersfieldFD",            "OHTrumbleCountyA",
       "US/OH/WestChester",                "OHButlerCountyB",
       "US/OH/WhitewaterTwp",              "OHHamiltonCountyA",
       "US/OH/WilliamsCounty",             "OHWilliamsCounty",
