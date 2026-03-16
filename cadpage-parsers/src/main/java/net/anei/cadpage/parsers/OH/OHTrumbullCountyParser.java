@@ -10,6 +10,7 @@ public class OHTrumbullCountyParser extends GroupBestParser {
 
   public OHTrumbullCountyParser() {
     super(new OHTrumbullCountyAParser(),
-           new OHTrumbullCountyBParser());
+          new OHTrumbullCountyBParser(),
+          new OHTrumbullCountyDParser());
   }
 }
