@@ -572,6 +572,7 @@ public class Active911ParserTable {
       "US/GA/GilmerCounty",               "GAGilmerCounty",
       "US/GA/GoldStarEMS",                "GADoughertyCountyB",
       "US/GA/GordonCounty",               "GAGordonCounty",
+      "US/GA/GreeneCounty",               "GAGreeneCounty",
       "US/GA/HabershamCounty",            "GAHabershamCounty",
       "US/GA/HallCounty",                 "GAHallCounty",
       "US/GA/HartCounty",                 "GAHartCounty",

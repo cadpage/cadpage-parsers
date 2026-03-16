@@ -441,6 +441,7 @@ public class ParserList {
               ,"GAFultonCounty"                 ,"Fulton County, GA"
               ,"GAGilmerCounty"                 ,"Gilmer County, GA"
               ,"GAGordonCounty"                 ,"Gordon County, GA"
+              ,"GAGreeneCounty"                 ,"Greene County, GA"
               ,"GAHabershamCounty"              ,"Habersham County, GA"
               ,"GAHallCounty"                   ,"Hall County, GA"
               ,"GAHartCounty"                   ,"Hart Couty, GA"
