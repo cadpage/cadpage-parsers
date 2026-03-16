@@ -484,6 +484,7 @@ public class ParserList {
               ,"GAThomasCounty"                 ,"Thomas County, GA"
               ,"GATiftCounty"                   ,"Tift County, GA"
               ,"GATownsCounty"                  ,"Towns County, GA"
+              ,"GAUnionCounty"                  ,"Union County, GA"
               ,"GAWalkerCounty"                 ,"Walker County, GA"
               ,"GAWaltonCounty"                 ,"Walton County, GA"
               ,"GAWashingtonCounty"             ,"Washington County, GA"
