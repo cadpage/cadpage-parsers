@@ -12,7 +12,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  */
 public class DispatchA39Parser extends FieldProgramParser {
 
-  private static final String PROGRAM_STR = "DEMPTY+? ( ADDR/iS6! | CALL ADDR/iS6! | CALL CALL ADDR/iS6! | CALL ADDR/iS6! ) APT? INFO/N+";
+  private static final String PROGRAM_STR =
+      "DEMPTY+? ( ADDR/iS6! | CALL ADDR/iS6! | CALL CALL ADDR/iS6! | CALL ADDR/iS6! ) APT? INFO/N+ FIRE_NUMBER:ID/L EMS_NUMBER:ID/L Units_Assigned:UNIT END";
 
   private Properties cityCodes;
 
@@ -34,6 +35,7 @@ public class DispatchA39Parser extends FieldProgramParser {
   @Override
   public boolean parseUntrimmedMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch Message")) return false;
+    body = body.replace(" EMS NUMBER:", "\nEMS NUMBER:");
     if (!parseFields(body.split("\n",-1), 2, data)) return false;
     if (data.strCall.length() == 0) data.strCall = "ALERT";
     return true;
@@ -46,6 +48,7 @@ public class DispatchA39Parser extends FieldProgramParser {
     if (name.equals("ADDR")) return new BaseAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("INFO")) return new BaseInfoField();
+    if (name.equals("UNIT")) return new BaseUnitField();
     return super.getField(name);
   }
 
@@ -214,6 +217,15 @@ public class DispatchA39Parser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CALL " + super.getFieldNames();
+    }
+  }
+
+  private static final Pattern MSPACE_PTN = Pattern.compile(" +");
+  private class BaseUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = MSPACE_PTN.matcher(field).replaceAll(",");
+      super.parse(field, data);
     }
   }
 }
