@@ -16,6 +16,9 @@ public class WIWalworthCountyParser extends DispatchA63Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    if (!subject.equals("Phoenix Notification")) return false;
+    int pt = body.indexOf("\n\n*NOTICE OF CONFIDENTIALITY*");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return super.parseMsg(body, data);
   }
 
