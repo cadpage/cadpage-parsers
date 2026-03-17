@@ -2670,6 +2670,7 @@ public class Active911ParserTable {
       "US/TN/WeakleyCounty",              "TNWeakleyCounty",
       "US/TN/WhiteCounty",                "TNWhiteCounty",
       "US/TN/WilliamsonCounty",           "TNWilliamsonCounty",
+      "US/TN/WilsonCounty",               "TNWilsonCounty",
       "US/TX/Acadian",                    "TXAcadianAmbulance",
       "US/TX/AddisonFD",                  "TXDallasCountyC",
       "US/TX/AngletonPD",                 "TXAngleton",

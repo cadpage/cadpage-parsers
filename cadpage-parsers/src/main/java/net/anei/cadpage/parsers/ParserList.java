@@ -1752,6 +1752,7 @@ public class ParserList {
               ,"TNWeakleyCounty"                ,"Weakley County, TN"
               ,"TNWhiteCounty"                  ,"White County, TN"
               ,"TNWilliamsonCounty"             ,"Williamson County, TN"
+              ,"TNWilsonCounty"                 ,"Wilson County, TN"
           ),
           new ParserCategory("Texas"
               ,"TXAcadianAmbulance"             ,"Acadian Ambulance, TX"
