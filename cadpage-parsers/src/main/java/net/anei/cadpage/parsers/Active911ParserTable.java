@@ -2231,7 +2231,7 @@ public class Active911ParserTable {
       "US/OH/WarrensvilleHeightsFD",      "OHCuyahogaCountyF",
       "US/OH/WashingtonCountySheriff",    "OHWashingtonCountyA",
       "US/OH/WayneCounty",                "OHWayneCountyC,OHWayneCountyE",
-      "US/OH/WeathersfieldFD",            "OHTrumbulCountyD",
+      "US/OH/WeathersfieldFD",            "OHTrumbullCountyD",
       "US/OH/WestChester",                "OHButlerCountyB",
       "US/OH/WhitewaterTwp",              "OHHamiltonCountyA",
       "US/OH/WilliamsCounty",             "OHWilliamsCounty",
