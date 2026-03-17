@@ -610,6 +610,7 @@ public class Active911ParserTable {
       "US/GA/SpaldingFD",                 "GASpaldingCounty",
       "US/GA/StephensCounty",             "GAStephensCounty",
       "US/GA/SumterCounty",               "GASumterCounty,GAMaconCountyB",
+      "US/GA/SumterCountySO",             "GASumterCounty",
       "US/GA/TalbotCounty",               "GATalbotCounty",
       "US/GA/TaylorCounty",               "GATaylorCounty",
       "US/GA/TaylorCountyFD",             "GATaylorCountyA",
