@@ -2090,6 +2090,7 @@ public class ParserList {
               ,"WVRaleighCounty"                ,"Raleigh County, WV"
               ,"WVRichieCounty"                 ,"Richie County, WV"
               ,"WVRoaneCounty"                  ,"Roane County, WV"
+              ,"WVSummitBechtelReserve"         ,"Summit Bechtel Reserve, WV"
               ,"WVSummersCounty"                ,"Summers County, WV"
               ,"WVWetzelCounty"                 ,"Wetzel County, WV"
               ,"WVWoodCounty"                   ,"Wood County, WV"
