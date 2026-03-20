@@ -2491,6 +2491,7 @@ public class Active911ParserTable {
       "US/PA/UplandFC",                   "PADelawareCountyB",
       "US/PA/UpperChichester",            "PADelawareCountyB",
       "US/PA/UpperMacungie",              "PALehighCountyC",
+      "US/PA/USSteel",                    "PAAlleghenyCountyH",
       "US/PA/ValleyAmbAut",               "PAAlleghenyCountyC",
       "US/PA/VenangoCounty",              "PAVenangoCountyB,PAVenangoCountyC",
       "US/PA/VMSCLansdaleBurholme",       "PAMontgomeryCountyK",
