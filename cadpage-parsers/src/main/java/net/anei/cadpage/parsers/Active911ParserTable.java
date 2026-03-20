@@ -604,6 +604,7 @@ public class Active911ParserTable {
       "US/GA/PikeCounty",                 "GAPikeCounty",
       "US/GA/PolkCounty",                 "GAPolkCounty",
       "US/GA/RabunCounty",                "GARabunCounty",
+      "US/GA/SchleyCounty",								"GASchleyCountyA",
       "US/GA/SeminoleCounty",             "GASeminoleCounty",
       "US/GA/SouthsideFire",              "GAChathamCountyA",
       "US/GA/SpaldingCounty",             "GASpaldingCounty",
