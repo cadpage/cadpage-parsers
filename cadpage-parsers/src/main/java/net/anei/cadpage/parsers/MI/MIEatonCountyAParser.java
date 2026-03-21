@@ -14,10 +14,10 @@ public class MIEatonCountyAParser extends DispatchOSSIParser {
 
   public MIEatonCountyAParser() {
     super(CITY_CODES, "EATON COUNTY", "MI",
-           "( CANCEL ADDR CITY! INFO/N+ " +
-           "| FYI? ( ( ID | SRC ID ) DATETIME CALL ADDR! CITY? INFO/N+ " +
-                  "| CALL ADDR CITY ( ID DATETIME X+? INFO/N+ " +
-                                   "| INFO/N+? ID END ) " +
+           "( CANCEL ADDRCITY CITY! INFO/N+ " +
+           "| FYI? ( ( ID | SRC ID ) DATETIME CALL ADDRCITY! CITY? INFO/N+ " +
+                  "| CALL ADDRCITY X+? CITY? ( ID DATETIME X+? INFO/N+ " +
+                                            "| INFO/N+? ID END ) " +
                   ") " +
            ")");
   }
@@ -110,6 +110,7 @@ public class MIEatonCountyAParser extends DispatchOSSIParser {
       "KLMO", "KALAMO TWP",
       "LADE", "LANSING DELTA",
       "LAKO", "LAKE ODESSA",
+      "LANN", "LANSING",
       "LANS", "LANSING CITY",
       "LAWI", "LANSING SOUTH",
       "LTWP", "LANSING TWP",      // Ingham County
