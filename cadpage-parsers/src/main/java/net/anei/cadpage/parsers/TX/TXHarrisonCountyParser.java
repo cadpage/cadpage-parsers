@@ -10,6 +10,6 @@ public class TXHarrisonCountyParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "intern@co.harrison.tx.us";
+    return "intern@co.harrison.tx.us,TMCPoliceReports@tmc.edu";
   }
 }
