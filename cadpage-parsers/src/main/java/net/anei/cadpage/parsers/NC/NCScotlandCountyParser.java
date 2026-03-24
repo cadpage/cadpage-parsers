@@ -10,7 +10,7 @@ public class NCScotlandCountyParser extends DispatchA88Parser {
 
   @Override
   public String getFilter() {
-    return "scotlandcountync911@gmail.com";
+    return "scotlandcountync911@gmail.com,dispatch@scotlandcounty.org";
   }
 
   private static final String[] CITY_LIST = new String[] {
