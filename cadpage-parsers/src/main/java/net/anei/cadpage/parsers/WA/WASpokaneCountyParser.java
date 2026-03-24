@@ -31,17 +31,19 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       return true;
     }
 
-    if (subject.toUpperCase().replace("=20", " ").contains("ASSIGNED TO INCIDENT ") ) {
+    String[] flds = body.split("\n");
+    if (flds.length >= 10) {
       return parseFields(body.split("\n"), data);
+    } else {
+      return super.parseMsg(body, data);
     }
-
-    return false;
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCodeCallField();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
   }
 
@@ -70,6 +72,13 @@ public class WASpokaneCountyParser extends FieldProgramParser {
       field = stripFieldEnd(field, "/");
       super.parse(field, data);
     }
+  }
 
+  private class MyUnitField extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace("; ", ",");
+      super.parse(field, data);
+    }
   }
 }
