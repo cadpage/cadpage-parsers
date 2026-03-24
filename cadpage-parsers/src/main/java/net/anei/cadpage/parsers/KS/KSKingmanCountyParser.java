@@ -11,7 +11,7 @@ public class KSKingmanCountyParser extends DispatchA25Parser {
 
   @Override
   public String getFilter() {
-    return "alert@kingmanlec.kscoxmail.com";
+    return "alert@kingmanlec.kscoxmail.com,alert@kingmansheriff.org";
   }
 
   private static final String[] CITY_LIST = new String[] {
