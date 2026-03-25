@@ -25,7 +25,7 @@ public class ARWashingtonCountyBParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "tritech@centralems.org";
+    return "tritech@centralems.org,wrcaa-backup@mail.centralems-employee.org";
   }
 
   @Override
