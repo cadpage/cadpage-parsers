@@ -19,7 +19,7 @@ public class NJEssexCountyBParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "@enfwebmail.onmicrosoft.com";
+    return "@enfwebmail.onmicrosoft.com,support@enforsys.com";
   }
 
   private static final Pattern ID_PTN = Pattern.compile("\\d{4}-\\d{5}|[A-Z]+\\d{2}-\\d{5}");
