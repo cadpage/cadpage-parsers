@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MT;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,14 +14,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MTRavalliCountyParser extends FieldProgramParser {
 
   private static final Pattern BODY_SPLIT_PTN = Pattern.compile("[,;]");
-  private static final Pattern UNIT2_VALIDATE_PTN = Pattern.compile("[^ ]*");
-  private static final Pattern RESPOND_TO_PTN = Pattern.compile("(.*)\\bRESPOND TO +(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern CALL_PTN = Pattern.compile("(.*?)(?<!STAGE |STAGING |ON CALL )\\bFOR +(?:AN? +)?(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern X_VALIDATE_PTN = Pattern.compile("(.*)(?:CROSS ST(?:REET)?|XSTREET) +(.*)", Pattern.CASE_INSENSITIVE);
-  
+
   public MTRavalliCountyParser() {
     super(CITY_LIST, "RAVALLI COUNTY", "MT",
-      "( UNIT1 UNIT2+? | ) ADDRCALLX/S CITY? X+? CALL? X+? INFOX+");
+      "( SAR GPS GPS CITY? INFO+ " +
+      "| ( UNIT1 UNIT2+? | ) ADDRCALLX/S APT? ( PLACE CITY | CITY | ) X+? CALL? X+? INFOX+ " +
+      ")");
+    setupCities(MISSPELLED_CITIES);
   }
 
   public String getFilter() {
@@ -30,21 +30,38 @@ public class MTRavalliCountyParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     body = stripFieldStart(body, "RAVALLI COUNTY:");
     body = stripFieldEnd(body, "\nUNSUBSCRIBE");
+    if (body.startsWith("Call # ")) return false;
     if (!super.parseFields(body.split(BODY_SPLIT_PTN.pattern()), data)) return false;
     return data.strAddress.length() > 0 && data.strCall.length() > 0;
   }
-  
+
   @Override
   public Field getField(String name) {
+    if (name.equals("SAR")) return new CallField("(?i)SAR", true);
+    if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("UNIT1")) return new MyUnit1Field();
     if (name.equals("UNIT2")) return new MyUnit2Field();
     if (name.equals("ADDRCALLX")) return new MyAddressCallXField();
+    if (name.equals("APT")) return new AptField("(?:APT|RM|ROOM|LOT) *(.*)", true);
     if (name.equals("X")) return new MyXField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("INFOX")) return new MyInfoXField();
     return super.getField(name);
   }
-  
+
+  private class MyGPSField extends AddressField {
+    public MyGPSField() {
+      super("[-+]?\\d+\\.\\d+", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      data.strAddress = append(data.strAddress, ", ", field);
+    }
+  }
+
+  private static final Pattern RESPOND_TO_PTN = Pattern.compile("(.*)\\bRESPOND TO +(.*)", Pattern.CASE_INSENSITIVE);
+
   private class MyUnit1Field extends MyUnitField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -53,7 +70,9 @@ public class MTRavalliCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
+  private static final Pattern UNIT2_VALIDATE_PTN = Pattern.compile("[^ ]*");
+
   private class MyUnit2Field extends MyUnitField {
     @Override
     public boolean checkParse(String field, Data data) {
@@ -62,21 +81,24 @@ public class MTRavalliCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       data.strUnit = append(data.strUnit, " ", field);
     }
   }
-  
+
+  private static final Pattern CALL_PTN = Pattern.compile("(.*?)(?<!STAGE |STAGING |ON CALL )\\bFOR +(?:AN? +)?(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern X_VALIDATE_PTN = Pattern.compile("(.*)(?:CROSS ST(?:REET)?|XSTREET) +(.*)", Pattern.CASE_INSENSITIVE);
+
   private class MyAddressCallXField extends AddressField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = RESPOND_TO_PTN.matcher(field);
@@ -101,27 +123,27 @@ public class MTRavalliCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT " + super.getFieldNames() + " CALL X";
     }
-  }  
-  
+  }
+
   private class MyCallField extends CallField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (data.strCall.length() != 0) return false;
       parse(field, data);
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = CALL_PTN.matcher(field);
@@ -140,14 +162,14 @@ public class MTRavalliCountyParser extends FieldProgramParser {
       data.strCall = field.trim();
     }
   }
-  
+
   private class MyXField extends CrossField {
-    
+
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = X_VALIDATE_PTN.matcher(field);
@@ -157,9 +179,9 @@ public class MTRavalliCountyParser extends FieldProgramParser {
       return true;
     }
   }
-  
+
   private class MyInfoXField extends InfoField {
-    
+
     @Override
     public void parse(String field, Data data) {
       Matcher match = X_VALIDATE_PTN.matcher(field);
@@ -169,31 +191,35 @@ public class MTRavalliCountyParser extends FieldProgramParser {
         super.parse(field, data);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " X";
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     return BEAR_CR_PTN.matcher(addr).replaceAll("BEAR CREEK");
   }
   private static final Pattern BEAR_CR_PTN = Pattern.compile("\\bBEAR +CR\\b");
-  
-  
+
+  private static final Properties MISSPELLED_CITIES = buildCodeTable(new String[] {
+      "STEVEMSVILLE",   "STEVENSVILLE",
+      "STEVESNVILLE",   "STEVENSVILLE"
+  });
+
   private static final String[] CITY_LIST = new String[]{
     "RAVALLI COUNTY",
-    
+
     //CITIES
     "HAMILTON",
-    
+
     //TOWNS
     "DARBY",
     "PINESDALE",
     "STEVENSVILLE",
-    
+
     //CENSUS-DESIGNATED PLACES
     "CHARLOS HEIGHTS",
     "CONNER",
