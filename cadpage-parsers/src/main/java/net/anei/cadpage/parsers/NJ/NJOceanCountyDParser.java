@@ -10,6 +10,6 @@ public class NJOceanCountyDParser extends DispatchC06Parser {
 
   @Override
   public String getFilter() {
-    return "OceanPDPaging@Enfwebmail.onmicrosoft.com";
+    return "OceanPDPaging@Enfwebmail.onmicrosoft.com,@enforsyspaging.com";
   }
 }
