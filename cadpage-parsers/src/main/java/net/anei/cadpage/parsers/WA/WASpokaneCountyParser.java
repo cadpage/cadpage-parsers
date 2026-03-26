@@ -47,7 +47,7 @@ public class WASpokaneCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)- *(.*)");
+  private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)- *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyCodeCallField extends Field {
 
     @Override
