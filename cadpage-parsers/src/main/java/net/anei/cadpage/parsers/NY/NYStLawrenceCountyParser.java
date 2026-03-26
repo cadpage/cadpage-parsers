@@ -6,17 +6,17 @@ import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
 
 
 public class NYStLawrenceCountyParser extends DispatchA19Parser {
-  
+
   public NYStLawrenceCountyParser() {
     super("ST LAWRENCE COUNTY", "NY");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "esspillmanalert@stlawco.org,@alert.active911.com";
+    return "esspillmanalert@stlawco.org,@alert.active911.com,@email.getrave.com";
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "A LOT",                                "+44.592942,-75.157808",
       "ADMISSIONS",                           "+44.588479,-75.161936",
@@ -73,7 +73,6 @@ public class NYStLawrenceCountyParser extends DispatchA19Parser {
       "VILAS HALL",                           "+44.592632,-75.162055",
       "WHITMAN ANNEX",                        "+44.590191,-75.159027",
       "WHITMAN HALL",                         "+44.590741,-75.159934"
- 
+
   });
 }
-	
