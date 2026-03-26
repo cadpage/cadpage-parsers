@@ -41,6 +41,8 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\nJefferson County 9-1-1 ECD Legal Notice");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     if (subject.startsWith("Automatic R&R Notification:")) {
       setSelectValue("H1");
       return super.parseHtmlMsg(subject, body, data);
