@@ -970,7 +970,7 @@ public class Active911ParserTable {
       "US/KY/BoydCountyEMS",              "KYBoydCounty",
       "US/KY/BrackenCounty",              "KYBrackenCountyB",
       "US/KY/BullittCounty",              "KYBullittCounty,Cadpage2",
-      "US/KY/ButlerCounty",               "KYStatePolice",
+      "US/KY/ButlerCounty",               "KYButlerCounty",
       "US/KY/CaldwellCounty",             "KYCaldwellCountyB",
       "US/KY/CaldwellSprings",            "KYCrittendenCounty",
       "US/KY/CallowayCounty",             "KYCallowayCounty",

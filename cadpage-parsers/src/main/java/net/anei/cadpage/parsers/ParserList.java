@@ -734,6 +734,7 @@ public class ParserList {
               ,"KYBoydCounty"                   ,"Boyd County, KY"
               ,"KYBrackenCounty"                ,"Bracken County, KY"
               ,"KYBullittCounty"                ,"Bullit County, KY"
+              ,"KYButlerCounty"                 ,"Butler County, KY"
               ,"KYCaldwellCounty"               ,"Caldwell County, KY"
               ,"KYCallowayCounty"               ,"Calloway County, KY"
               ,"KYCarlisleCounty"               ,"Carlisle County, KY"
