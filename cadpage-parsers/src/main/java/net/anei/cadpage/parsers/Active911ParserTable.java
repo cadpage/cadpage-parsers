@@ -1863,6 +1863,7 @@ public class Active911ParserTable {
       "US/NJ/Belmar",                     "NJMonmouthCountyG",
       "US/NJ/BerlinFCNo1",                "NJCamdenCountyA",
       "US/NJ/BeverlyCityFD",              "NJBurlingtonCountyH",
+      "US/NJ/Brigantine",                 "NJAtlanticCountyE",
       "US/NJ/BurlingtonCounty",           "NJBurlingtonCountyC,NJBurlingtonCountyH",
       "US/NJ/CamdenCounty",               "NJCamdenCounty",
       "US/NJ/CamdenFireDepartment",       "NJCamdenCountyA",

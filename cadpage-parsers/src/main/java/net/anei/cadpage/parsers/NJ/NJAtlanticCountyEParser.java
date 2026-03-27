@@ -10,6 +10,6 @@ public class NJAtlanticCountyEParser extends DispatchC06Parser {
 
   @Override
   public String getFilter() {
-    return "AtlanticSheriffPaging@Enfwebmail.onmicrosoft.com";
+    return "@Enfwebmail.onmicrosoft.com";
   }
 }

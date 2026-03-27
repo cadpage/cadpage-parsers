@@ -13,7 +13,7 @@ public class DispatchC06Parser extends MsgParser {
     setFieldList("ID CALL PLACE ADDR APT CITY ST UNIT INFO");
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("I-\\d{4}-\\d{5,6}");
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{1,2}-\\d{4}-\\d{5,6}");
   private static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(.*?) +([A-Z]{2})(?: +\\d{5})?");
 
   @Override
