@@ -27,7 +27,7 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
 
   @Override
   public String getFilter() {
-    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca,ng911_notification@strathcona.ca,@stalbert.ca,Incident@ParklandCounty.com";
+    return "@reddeer.ca,messaging@iamresponding.com,@cremonafire.com,SCESITGroup@Strathcona.ca,ng911_notification@strathcona.ca,@stalbert.ca,Incident@ParklandCounty.com,dispatch@parkland911.ca";
   }
 
   @Override
@@ -35,7 +35,7 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_CR_CRES;
   }
 
-  private static final Pattern NOT_SRC_PTN = Pattern.compile("CAD Message|Incident Message|.*\\d.*");
+  private static final Pattern NOT_SRC_PTN = Pattern.compile("CAD Message|Device Notification|Incident Message|.*\\d.*");
   private static final Pattern JUNK_PTN = Pattern.compile("\n(?:You have received|NOTICE -|This communication) ");
   private static final Pattern CLEAN_CITY_PTN = Pattern.compile("(.*?) +RURAL(?: AREA)?", Pattern.CASE_INSENSITIVE);
 
