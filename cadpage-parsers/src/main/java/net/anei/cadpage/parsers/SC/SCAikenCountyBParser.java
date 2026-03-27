@@ -12,12 +12,12 @@ public class SCAikenCountyBParser extends FieldProgramParser {
 
   public SCAikenCountyBParser() {
     super(CITY_LIST, "AIKEN COUNTY", "SC",
-          "NOTICE:CALL! ADDRESS:SKIP! DATETIME! LOC_INFO:ADDR! END");
+          "NOTICE:CALL! ADDRESS:SKIP! DATETIME! LOC_INFO:ADDR! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "copier@northaugustasc.gov";
+    return "@northaugustasc.gov";
   }
 
   @Override
@@ -28,8 +28,9 @@ public class SCAikenCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("RECEIVED AT +(\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d)", true);
+    if (name.equals("DATETIME")) return new DateTimeField("RECEIVED +AT +(\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d)", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -77,6 +78,16 @@ public class SCAikenCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE X CITY";
+    }
+  }
+
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d\\b *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      super.parse(field, data);
     }
   }
 
