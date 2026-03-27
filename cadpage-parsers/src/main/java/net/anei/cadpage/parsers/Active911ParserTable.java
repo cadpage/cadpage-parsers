@@ -2287,6 +2287,7 @@ public class Active911ParserTable {
       "US/OR/DeschutesCounty",            "ORDeschutesCounty",
       "US/OR/DouglasCounty",              "ORDouglasCountyA,ORDouglasCountyE",
       "US/OR/DrakesCrossing",             "ORMarionCountyA",
+      "US/OR/FrontierRegionalDispatch",   "ORJeffersonCountyC",
       "US/OR/GilliamCounty",              "ORGilliamCounty",
       "US/OR/GrantCounty",                "ORGrantCounty",
       "US/OR/GrantsPass",                 "ORJosephineCounty",
