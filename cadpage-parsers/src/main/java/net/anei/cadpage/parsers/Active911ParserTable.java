@@ -383,6 +383,7 @@ public class Active911ParserTable {
       "US/CO/DeltaCountyAmbulance",       "CODeltaCounty",
       "US/CO/DivideFPD",                  "COTellerCounty",
       "US/CO/DouglasCounty",              "CODouglasCountyA,CODouglasCountyC",
+      "US/CO/EdisonFD",                   "COElPasoCountyD",
       "US/CO/Eforcesoftware",             "CORioBlancoCountyA",
       "US/CO/ElPasoCounty",               "COElPasoCountyA",
       "US/CO/ElPasoPublicServices",       "COElPasoCountyA",
