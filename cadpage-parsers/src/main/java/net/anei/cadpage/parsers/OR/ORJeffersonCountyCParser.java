@@ -14,9 +14,9 @@ public class ORJeffersonCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-frontier911@email.getrave.com";
   }
-  
+
   @Override
   public String getAliasCode() {
     return "ORJeffersonCountyC";
