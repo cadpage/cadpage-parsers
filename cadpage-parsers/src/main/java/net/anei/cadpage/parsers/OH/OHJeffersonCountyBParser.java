@@ -10,7 +10,7 @@ public class OHJeffersonCountyBParser extends MsgParser {
 
   public OHJeffersonCountyBParser() {
     super("JEFFERSON COUNTY", "OH");
-    setFieldList("CALL DATE TIME ADDR CITY ST GPS INFO X");
+    setFieldList("CALL DATE TIME ADDR APT CITY ST GPS INFO X");
   }
 
   @Override
