@@ -13,7 +13,7 @@ public class MOBartonCountyParser extends FieldProgramParser {
 
   public MOBartonCountyParser() {
     super("BARTON COUNTY", "MO",
-          "Address:ADDRCITY! Intersection:X! Category:CALL! Sub_Category:CALL/SDS! Persons:NAME! NAME/CS+ Phone_Number:PHONE! " +
+          "Address:ADDRCITY! Intersection:X! CITY? Category:CALL! Sub_Category:CALL/SDS! Persons:NAME! NAME/CS+ Phone_Number:PHONE! " +
           "Notes:EMPTY! INFO/N+ Event_Number:ID! Originated_By:SKIP! Opened_Date_/_Time:DATETIME! MORE_INFO/N+");
   }
 
@@ -30,6 +30,7 @@ public class MOBartonCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("CITY")) return new CityField("City:? *(.*)", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("MORE_INFO")) return new MyMoreInfoField();
     return super.getField(name);
