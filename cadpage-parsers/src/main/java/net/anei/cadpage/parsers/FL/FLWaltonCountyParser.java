@@ -18,7 +18,7 @@ public class FLWaltonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,@email.getrave.com";
   }
 
   @Override
