@@ -369,6 +369,7 @@ public class ParserList {
               ,"FLCitrusCounty"                 ,"Citrus County, FL"
               ,"FLCocoa"                        ,"Cocoa, FL"
               ,"FLCollierCounty"                ,"Collier County, FL"
+              ,"FLColumbiaCounty"               ,"Columbia County, FL"
               ,"FLCoralSprings"                 ,"Coral Springs, FL"
               ,"FLCrestview"                    ,"Crestview, FL"
               ,"FLEscambiaCounty"               ,"Escambia County, FL"

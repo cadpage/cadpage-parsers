@@ -504,6 +504,7 @@ public class Active911ParserTable {
       "US/FL/CityOfUmatilla",             "FLLakeCountyB",
       "US/FL/CityofWinterPark",           "FLOrangeCountyA",
       "US/FL/CollierCounty",              "FLCollierCounty",
+      "US/FL/ColumbiaCounty",             "FLColumbiaCounty",
       "US/FL/EglinFEC",                   "FLOkaloosaCountyC,FLOkaloosaCountyD",
       "US/FL/EscambiaCounty",             "FLEscambiaCounty",
       "US/FL/GulfBreezePolice",           "FLGulfBreezeB",
