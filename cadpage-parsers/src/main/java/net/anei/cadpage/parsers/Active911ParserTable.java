@@ -2804,6 +2804,7 @@ public class Active911ParserTable {
       "US/TX/GreggCounty",                "TXGreggCountyA,TXGladewater",
       "US/TX/GrimesCounty",               "TXGrimesCounty",
       "US/TX/GuadalupeCounty",            "TXGuadalupeCounty",
+      "US/TX/HamiltonCounty",             "TXHamiltonCounty",
       "US/TX/HardinCounty",               "TXHardinCountyA",
       "US/TX/HarrisCounty",               "TXHarrisCountyA",
       "US/TX/HarrisCountyEC",             "TXHarrisCountyESD1B,TXCyCreekCommCenterA",

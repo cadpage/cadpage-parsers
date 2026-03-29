@@ -9,8 +9,16 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TXBosqueCountyBParser extends FieldProgramParser {
 
   public TXBosqueCountyBParser() {
-    super("BOSQUE COUNTY", "TX",
+    this("BOSQUE COUNTY", "TX");
+  }
+
+  TXBosqueCountyBParser(String defCity, String defState) {
+    super(defCity, defState,
           "CALL ADDR CITY! INFO/N+");
+  }
+
+  public String getAliasCode() {
+    return "TXBosqueCountyB";
   }
 
   @Override
