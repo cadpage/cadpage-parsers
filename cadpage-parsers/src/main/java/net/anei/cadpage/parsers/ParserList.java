@@ -801,6 +801,7 @@ public class ParserList {
               ,"KYMontgomeryCounty"             ,"Montgomery County, KY"
               ,"KYMorganCounty"                 ,"Morgan County, KY"
               ,"KYMuhlenbergCounty"             ,"Muhlenberg County, KY"
+              ,"KYNelsonCounty"                 ,"Nelson County, KY"
               ,"KYNicholasCounty"               ,"Nicholas County, KY"
               ,"KYOhioCounty"                   ,"Ohio County, KY"
               ,"KYOldhamCounty"                 ,"Oldham County, KY"

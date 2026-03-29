@@ -9,7 +9,7 @@ public class DispatchC05Parser extends FieldProgramParser {
 
   public DispatchC05Parser(String defCity, String defState) {
     super(defCity, defState,
-          "ID PRI CALL PLACE+? ADDRCITYST/Z UNIT EMPTY! INFO/N+");
+          "ID ID2/L? PRI CALL PLACE+? ADDRCITYST/Z UNIT EMPTY! INFO/N+");
   }
 
   private static final Pattern DELIM = Pattern.compile(" /(?= )");
@@ -23,6 +23,7 @@ public class DispatchC05Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("INC +(.*)", true);
+    if (name.equals("ID2")) return new IdField("RUN +(.*)", true);
     if (name.equals("PRI")) return new PriorityField("Pri (\\d)", true);
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
