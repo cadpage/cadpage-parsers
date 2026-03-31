@@ -4253,7 +4253,8 @@ then go through the regular registration process.  If, at any point, you are ask
 Good luck,
 -Ken
 
-*************************************************************************************** Not receiving Active911 alerts
+**************************************************************************************
+* Not receiving Active911 alerts
 **************************************************************************************
 
 The bad news is that Cadpage is not currently receiving Active911 alerts, and quite likely never will again.
