@@ -13,7 +13,7 @@ public class ARGarlandCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,@email.getrave.com";
   }
 
   @Override

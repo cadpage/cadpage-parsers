@@ -205,6 +205,7 @@ public class Active911ParserTable {
       "US/AR/FSEMS",                      "ARSebastianCounty",
       "US/AR/GarlandCounty",              "ARGarlandCountyD",
       "US/AR/HotSpringCounty",            "ARHotSpringCounty",
+      "US/AR/HotSpringsFD",               "ARGarlandCountyC",
       "US/AR/HotSpringsVillage",          "ARGarlandCountyC",
       "US/AR/LifeNetEms",                 "ARGarlandCountyA",
       "US/AR/LincolnFD",                  "ARWashingtonCountyB",
