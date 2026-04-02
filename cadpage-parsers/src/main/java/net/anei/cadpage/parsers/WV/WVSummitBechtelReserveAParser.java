@@ -11,7 +11,7 @@ public class WVSummitBechtelReserveAParser extends DispatchA24Parser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
-    body = body.replace("\\n", "\n");
+    body = body.replace("\\\n", "\n");
     return super.parseMsg(body, data);
   }
 
