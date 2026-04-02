@@ -6,7 +6,8 @@ public class PAWashingtonCountyParser extends GroupBestParser {
 
   public PAWashingtonCountyParser() {
     super(new PAWashingtonCountyAParser(),
-          new PAWashingtonCountyBParser());
+          new PAWashingtonCountyBParser(),
+          new PAWashingtonCountyCParser());
   }
 
 }
