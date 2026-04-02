@@ -274,7 +274,8 @@ public class ManageParsers {
         "WIWaukeshaCountyC",  "WIKaukeshaCountyB",       // 11/25/2025
         "MTMallatinCountyB",  "General",
         "LATerrebonneParishA","General",                 // 02/26/2026
-        "LATerrebonneParishB","General"
+        "LATerrebonneParishB","General",
+        "OHJeffersonCountyA", "General"                 // 04/02/2026
   });
 
 }

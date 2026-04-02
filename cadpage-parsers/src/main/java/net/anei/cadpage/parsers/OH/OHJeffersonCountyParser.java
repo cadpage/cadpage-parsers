@@ -7,8 +7,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHJeffersonCountyParser extends GroupBestParser {
-  
+
   public OHJeffersonCountyParser() {
-    super(new OHJeffersonCountyAParser(), new OHJeffersonCountyBParser());
+    super(new OHJeffersonCountyBParser());
   }
 }
