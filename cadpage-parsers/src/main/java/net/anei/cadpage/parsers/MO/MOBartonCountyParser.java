@@ -13,7 +13,10 @@ public class MOBartonCountyParser extends FieldProgramParser {
 
   public MOBartonCountyParser() {
     super("BARTON COUNTY", "MO",
-          "Address:ADDRCITY! Intersection:X! CITY? Category:CALL! Sub_Category:CALL/SDS! Persons:NAME! NAME/CS+ Phone_Number:PHONE! " +
+          "Address:ADDRCITY! ( Intersection:X! CITY? Category:CALL! Sub_Category:CALL/SDS! " +
+                            "| Unit_Unit_Data%EMPTY! ( Intersection:X! CITY! | CITY! Intersection:X! ) Category:CALL! Sub_Category:CALL/SDS! " +
+                            "| CITY EMPTY! Category:CALL! Sub_Category:CALL/SDS! Intersection:X! Unit_Unit_Data%EMPTY! " +
+                            ") Persons:NAME! NAME/CS+ Phone_Number:PHONE! " +
           "Notes:EMPTY! INFO/N+ Event_Number:ID! Originated_By:SKIP! Opened_Date_/_Time:DATETIME! MORE_INFO/N+");
   }
 
@@ -24,13 +27,19 @@ public class MOBartonCountyParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    return parseFields(body.split("\n"), data);
+    if (!parseFields(body.split("\n"), data)) return false;
+    if (data.strState.isEmpty() && data.strCity.endsWith("MO")) {
+      int pt = data.strCity.length()-2;
+      data.strState = data.strCity.substring(pt);
+      data.strCity = data.strCity.substring(0,pt);
+    }
+    return true;
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
-    if (name.equals("CITY")) return new CityField("City:? *(.*)", true);
+    if (name.equals("CITY")) return new CityField("(?i)City:? *(.*)", true);
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("MORE_INFO")) return new MyMoreInfoField();
     return super.getField(name);
