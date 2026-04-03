@@ -12,7 +12,9 @@ public class SCAikenCountyBParser extends FieldProgramParser {
 
   public SCAikenCountyBParser() {
     super(CITY_LIST, "AIKEN COUNTY", "SC",
-          "NOTICE:CALL! ADDRESS:SKIP! DATETIME! LOC_INFO:ADDR! INFO/N+");
+          "NOTICE:CALL! ( ADDRESS:SKIP! DATETIME1! LOC_INFO:ADDR! " +
+                       "| ID:ID! ADDRESS:ADDR_X! CITY:CITY! RECEIVED:DATETIME2! LOC_INFO%EMPTY! PLACE:PLACE! " +
+                       ") INFO/N+");
   }
 
   @Override
@@ -28,8 +30,10 @@ public class SCAikenCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("RECEIVED +AT +(\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d)", true);
+    if (name.equals("DATETIME1")) return new DateTimeField("RECEIVED +AT +(\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d)", true);
+    if (name.equals("DATETIME2")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR_X")) return new MyAddressCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -78,6 +82,25 @@ public class SCAikenCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " PLACE X CITY";
+    }
+  }
+
+  private static final Pattern ADDR_X_PTN = Pattern.compile("(.*?) *\\bx\\b *(.*)");
+
+  private class MyAddressCrossField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = ADDR_X_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        data.strCross = match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " X";
     }
   }
 
