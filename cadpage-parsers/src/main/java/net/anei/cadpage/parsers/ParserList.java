@@ -134,6 +134,7 @@ public class ParserList {
               ,"ALDeKalbCounty"                 ,"DeKalb County, AL"
               ,"ALDothan"                       ,"Dothan, AL"
               ,"ALElmoreCounty"                 ,"Elmore County, AL"
+              ,"ALEscambiaCounty"               ,"Escambia County, AL"
               ,"ALEtowahCounty"                 ,"Etowah County, AL"
               ,"ALFayetteCounty"                ,"Fayette County, AL"
               ,"ALFranklinCounty"               ,"Franklin County, AL"
