@@ -10,7 +10,12 @@ public class WVWyomingCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-wyomingcountywv@email.getrave.com";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
 }

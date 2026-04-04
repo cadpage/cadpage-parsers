@@ -3222,6 +3222,7 @@ public class Active911ParserTable {
       "US/WV/WoodCounty",                 "WVWoodCounty",
       "US/WV/Wyco",                       "WVWyomingCountyB",
       "US/WV/Wyoming",                    "WVWyomingCounty",
+      "US/WV/WyomingCounty",              "WVWyomingCountyB",
       "US/WY/AlbanyCounty",               "WYAlbanyCounty",
       "US/WY/BigHornCounty",              "WYBigHornCounty",
       "US/WY/ParkCounty",                 "WYParkCounty",
