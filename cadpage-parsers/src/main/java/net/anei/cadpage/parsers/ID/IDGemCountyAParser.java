@@ -12,7 +12,7 @@ public class IDGemCountyAParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@getrave.com";
+    return "FlexRapidNotification@dccnotify.com,@getrave.com,FRN-gemid@email.getrave.com";
   }
 
   @Override
