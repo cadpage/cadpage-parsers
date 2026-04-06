@@ -3089,7 +3089,7 @@ public class Active911ParserTable {
       "US/WA/BentonCounty",               "WABentonCounty",
       "US/WA/CityofBuckleyFD",            "WAPierceCountyE",
       "US/WA/CityofFife",                 "WAPierceCountyC",
-      "US/WA/CityofWallaWalla",           "WAWallaWallaCountyB",
+      "US/WA/CityofWallaWalla",           "WAWallaWallaCounty",
       "US/WA/ClallamCounty",              "WAClallamCounty",
       "US/WA/ClarkCounty",                "WAClarkCounty",
       "US/WA/ColvilleConfederatedTribes", "WAColvilleReservation",

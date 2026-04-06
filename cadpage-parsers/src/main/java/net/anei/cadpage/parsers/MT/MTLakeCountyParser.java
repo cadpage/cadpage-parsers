@@ -14,7 +14,7 @@ public class MTLakeCountyParser extends FieldProgramParser {
   MTLakeCountyParser(String defCity, String defState) {
     super(defCity, defState,
           "Address:ADDRCITYST! Address_Name:PLACE! Location_Details:PLACE! CFS_Number:ID! Incident_Type:CALL! Caller:NAME! Dispatcher:SKIP! " +
-              "Call_Time:DATETIME! Call_Location:SKIP! Responding_Units:UNIT! Call_Notes:INFO! Message:EMPTY! CFS_Latitude:GPS1! CFS_Longitude:GPS2! END");
+              "Call_Time:DATETIME! Call_Location:SKIP! Responding_Units:UNIT! Call_Notes:INFO! Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! END");
   }
 
   @Override
@@ -67,7 +67,7 @@ public class MTLakeCountyParser extends FieldProgramParser {
     public void parse(String field, Data data) {
       if (field.equals("None")) return;
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
-      data.strSupp = field;
+      super.parse(field, data);;
     }
   }
 }

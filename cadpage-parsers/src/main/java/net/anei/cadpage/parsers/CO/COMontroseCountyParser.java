@@ -21,8 +21,10 @@ public class COMontroseCountyParser extends FieldProgramParser {
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "BED",  "Bedrock",
+      "CIM",  "Cimarron",
       "DPD",  "Delta",
       "EGN",  "Egnar",
+      "MO2",  "Arapahoe and Roosevelt National Forest",
       "NUC",  "Nucla",
       "PAX",  "Paradox",
       "RED",  "Redvale",
