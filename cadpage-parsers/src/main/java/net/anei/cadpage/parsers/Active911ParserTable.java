@@ -1737,7 +1737,7 @@ public class Active911ParserTable {
       "US/NC/GriffithRoadVFD",            "NCUnionCounty",
       "US/NC/GuilfordCounty",             "NCGuilfordCounty",
       "US/NC/HalifaxCounty",              "NCHalifaxCounty",
-      "US/NC/HarnettCounty",              "NCHarnettCountyD",
+      "US/NC/HarnettCounty",              "NCHarnettCountyB,NCHarnettCountyD",
       "US/NC/Havelock",                   "NCCravenCountyE,NCCravenCountyF",
       "US/NC/HaywoodCounty",              "NCHaywoodCounty",
       "US/NC/HendersonCounty",            "NCHendersonCounty",
