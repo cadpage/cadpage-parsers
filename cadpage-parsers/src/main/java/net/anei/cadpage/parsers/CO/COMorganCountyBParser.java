@@ -17,7 +17,7 @@ public class COMorganCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "centralsquaremorgancounty@gmail.com";
+    return "centralsquaremorgancounty@gmail.com,central.square@morgancountycc.org";
   }
 
   @Override
