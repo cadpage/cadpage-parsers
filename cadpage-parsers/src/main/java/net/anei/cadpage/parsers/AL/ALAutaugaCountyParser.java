@@ -8,31 +8,40 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class ALAutaugaCountyParser extends FieldProgramParser {
-  
+
   public ALAutaugaCountyParser() {
-    super(CITY_CODES, "AUTAUGA COUNTY", "AL", 
-          "SKIP CALL ADDRCITY SRC UNIT! INFO/N+");
+    super(CITY_CODES, "AUTAUGA COUNTY", "AL",
+          "( ID | SKIP ) CALL ( SRC UNIT ADDRCITYST! | ADDRCITY SRC UNIT! ) INFO/N+");
   }
-  
+
   @Override
   public String getFilter() {
     return "@prattvilleal.gov";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "sdspage2732778 ");
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
+    if (name.equals("ID")) return new IdField("\\d{5,}", true);
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("SRC")) return new SourceField("\\d{3,4}", true);
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
     return super.getField(name);
   }
-  
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(stripFieldEnd(field, ","), data);
+    }
+  }
+
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|LOT|UNIT) +(.*)|(\\d{1,4}[A-Z]?|[A-Z])");
   private class MyAddressCityField extends AddressCityField {
     @Override
@@ -53,13 +62,13 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
       }
       parseAddress(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
     }
   }
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "AVL", "AUTAUGAVILLE",
       "BIL", "BILLINGSLEY",
