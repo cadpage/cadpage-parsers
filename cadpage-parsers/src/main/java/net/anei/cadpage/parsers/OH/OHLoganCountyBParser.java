@@ -10,7 +10,7 @@ public class OHLoganCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-logancountyoh@email.getrave.com";
   }
 
   @Override
