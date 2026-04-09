@@ -32,6 +32,7 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("SRC")) return new SourceField("\\d{3,4}", true);
     if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
@@ -66,6 +67,15 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "ADDR APT PLACE CITY";
+    }
+  }
+
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d .*:");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (INFO_JUNK_PTN.matcher(field).matches()) return;
+      super.parse(field, data);
     }
   }
 
