@@ -13,11 +13,8 @@ public class MOBartonCountyParser extends FieldProgramParser {
 
   public MOBartonCountyParser() {
     super("BARTON COUNTY", "MO",
-          "Address:ADDRCITY! ( Intersection:X! CITY? Category:CALL! Sub_Category:CALL/SDS! " +
-                            "| Unit_Unit_Data%EMPTY! ( Intersection:X! CITY! | CITY! Intersection:X! ) Category:CALL! Sub_Category:CALL/SDS! " +
-                            "| CITY EMPTY! Category:CALL! Sub_Category:CALL/SDS! Intersection:X! Unit_Unit_Data%EMPTY! " +
-                            ") Persons:NAME! NAME/CS+ Phone_Number:PHONE! " +
-          "Notes:EMPTY! INFO/N+ Event_Number:ID! Originated_By:SKIP! Opened_Date_/_Time:DATETIME! MORE_INFO/N+");
+          "Address:ADDRCITY! Unit_Unit_Data%EMPTY! Intersection:X! Category:CALL! Sub_Category:CALL/SDS! Persons:EMPTY! NAME/CS+ Phone_Number:PHONE! " +
+                "Notes:EMPTY! INFO/N+ Event_Number:ID! Originated_By:SKIP! Opened_Date_/_Time:DATETIME");
   }
 
   @Override
