@@ -46,6 +46,7 @@ public class CAButteCountyAParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("CH")) return new MyChannelField();
     if (name.equals("GPS")) return new GPSField("<a href=\"https?://maps.google.com/\\?q=(.*?)\"> Map</a>.*", true);
     return super.getField(name);
   }
@@ -95,6 +96,14 @@ public class CAButteCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "DATE TIME";
+    }
+  }
+
+  private class MyChannelField extends ChannelField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("NULL_NAME")) return;
+      super.parse(field, data);
     }
   }
 
