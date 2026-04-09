@@ -509,6 +509,7 @@ public class Active911ParserTable {
       "US/FL/ColumbiaCounty",             "FLColumbiaCounty",
       "US/FL/EglinFEC",                   "FLOkaloosaCountyC,FLOkaloosaCountyD",
       "US/FL/EscambiaCounty",             "FLEscambiaCounty",
+      "US/FL/FDOTD5",                     "FLLakeCountyB",
       "US/FL/GulfBreezePolice",           "FLGulfBreezeB",
       "US/FL/GulfCounty",                 "FLGulfCounty",
       "US/FL/HardeeCounty",               "FLHardeeCounty",
