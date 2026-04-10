@@ -29,6 +29,14 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
   }
 
   @Override
+  public boolean parseFields(String[] fields, Data data) {
+    for (int ndx = 0; ndx < fields.length; ndx++) {
+      if (fields[ndx].trim().equals("None")) fields[ndx] = "";
+    }
+    return super.parseFields(fields, data);
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{6}-\\d{3}");
     if (name.equals("CODE")) return new MyCodeField();
