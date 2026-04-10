@@ -10,6 +10,6 @@ public class MDTalbotCountyCParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "@talbotdes.org,@server.com";
+    return "@talbotdes.org,@server.com,cad@talbotcountymd.gov";
   }
 }
