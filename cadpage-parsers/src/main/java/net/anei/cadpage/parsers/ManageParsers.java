@@ -275,7 +275,14 @@ public class ManageParsers {
         "MTMallatinCountyB",  "General",
         "LATerrebonneParishA","General",                 // 02/26/2026
         "LATerrebonneParishB","General",
-        "OHJeffersonCountyA", "General"                 // 04/02/2026
+        "OHJeffersonCountyA", "General",                 // 04/02/2026
+        "GADoolyCountyB",     "GADoolyCountyA",          // 04/10/2026
+        "GAMaconCountyB",     "GAMaconCountyA",
+        "GAMarionCountyB",    "MarionCountyA",
+        "GASchleyCountyB",    "GASchleyCountyA",
+        "GATaylotCountyB",    "GATaylorCountyA",
+        "GAWebsterCountyB",   "GAWebsterCountyA"
+
   });
 
 }

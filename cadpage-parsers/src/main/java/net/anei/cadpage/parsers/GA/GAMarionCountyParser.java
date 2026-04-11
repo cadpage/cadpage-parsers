@@ -6,8 +6,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Marion County, GA
  */
 public class GAMarionCountyParser extends GroupBestParser {
-  
+
   public GAMarionCountyParser() {
-    super(new GAMarionCountyAParser(), new GAMarionCountyBParser());
+    super(new GAMarionCountyAParser());
   }
 }
