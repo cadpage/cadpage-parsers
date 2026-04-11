@@ -53,6 +53,7 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
     Matcher match = JUNK_PTN.matcher(body);
     if (match.find()) body = body.substring(0,match.start()).trim();
 
+    body = body.replace("s Selected ", ":");
     if (!super.parseMsg(body,  data)) return false;
 
     data.strCity = data.strCity.replace('_', ' ').replace(".", "");
