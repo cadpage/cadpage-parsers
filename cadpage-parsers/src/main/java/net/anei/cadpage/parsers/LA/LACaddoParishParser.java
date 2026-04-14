@@ -16,7 +16,7 @@ public class LACaddoParishParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@caddo911.com";
+    return "@caddo911.com,@caddoparish911.gov";
   }
 
   @Override

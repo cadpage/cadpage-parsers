@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 import net.anei.cadpage.parsers.MsgParser;
 
 public class MOStoddardCountyParser extends MsgParser {
@@ -19,7 +20,9 @@ public class MOStoddardCountyParser extends MsgParser {
   }
 
   private static final Pattern MASTER =
-      Pattern.compile("(?:([^;,]*(?:, -\\d+\\.\\d+ *)?(?:, APT [A-Z0-9]+ *)?)(?:, ([ A-Z]+))?(?:, ([A-Z]{2})(?: \\d{5})?)? )?([^;]*) ((?:[A-Z0-9]+; )*)((?!911)\\d{2,3}|SCSO|[A-Z]{1,2}[FP]D\\d?) (?:(.*) )?Call Time: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d Assigned (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)\\b.*");
+      Pattern.compile("(?:([^;,]*(?:, -\\d+\\.\\d+ *)?(?:, APT [A-Z0-9]+ *)?)(?:, ([ A-Z]+))?(?:, ([A-Z]{2})(?: \\d{5})?)? )?([^;]*) ((?:[A-Z0-9]+; )*)((?!911)\\d{2,3}|SCSO|[A-Z]{1,2}[FP]D\\d?) (?:(.*) )?Call Time: \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d Assigned (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)\\b *(.*)");
+  private static final Pattern TIMES_BRK_PTN = Pattern.compile("[ \\*]*; *");
+  private static final Pattern TIME_PTN = Pattern.compile("(([A-Z][a-z]+) \\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d)\\b.*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -34,6 +37,7 @@ public class MOStoddardCountyParser extends MsgParser {
     data.strCall = getOptGroup(match.group(7));
     data.strDate = match.group(8);
     data.strTime = match.group(9);
+    String times = match.group(10);
     if (subject.length() > data.strCall.length()) data.strCall = subject;
 
     if (!info.isEmpty() && !info.equals("None")) {
@@ -48,6 +52,21 @@ public class MOStoddardCountyParser extends MsgParser {
         }
       }
     }
+
+    StringBuilder sb = new StringBuilder();
+    times = stripFieldStart(times, ";");
+    for (String time : TIMES_BRK_PTN.split(times)) {
+      match = TIME_PTN.matcher(time);
+      if (match.matches()) {
+        if (sb.length() > 0) sb.append('\n');
+        sb.append(match.group(1));
+        if (match.group(2).equals("Completed")) {
+          data.msgType = MsgType.RUN_REPORT;
+          data.strSupp = append(sb.toString(), "\n", data.strSupp);
+        }
+      }
+    }
+
     return true;
   }
 
