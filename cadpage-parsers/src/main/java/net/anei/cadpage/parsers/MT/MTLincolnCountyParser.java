@@ -10,7 +10,7 @@ public class MTLincolnCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-lcsomt@email.getrave.com";
   }
 
   @Override
