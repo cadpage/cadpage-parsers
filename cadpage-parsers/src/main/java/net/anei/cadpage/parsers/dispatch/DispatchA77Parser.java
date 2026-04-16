@@ -56,20 +56,28 @@ public class DispatchA77Parser extends FieldProgramParser {
       String city = p.getLastOptional(':');
       if (cityCodes != null) city = convertCodes(city, cityCodes);
       data.strCity = city;
-      String place = p.getLastOptional(';');
+
+      String apt = "";
+      String addrExt = "";
+      while (true) {
+        String place = p.getLastOptional(';');
+        if (place.isEmpty()) break;
+        Matcher match;
+        if (BOUND_PTN.matcher(place).matches()) {
+          addrExt = append(addrExt, " ", place);
+        }
+        else if ((match = APT_PTN1.matcher(place)).matches()) {
+          apt = append(apt, "-", match.group(1));
+        }
+        else if (APT_PTN2.matcher(place).matches()) {
+          apt = append(apt, "-", place);
+        } else {
+          data.strPlace = append(place, " - ", data.strPlace);
+        }
+      }
       parseAddress(p.get(), data);
-      Matcher match;
-      if (BOUND_PTN.matcher(place).matches()) {
-        data.strAddress = append(data.strAddress, " ", place);
-      }
-      else if ((match = APT_PTN1.matcher(place)).matches()) {
-        data.strApt = append(data.strApt, "-", match.group(1));
-      }
-      else if (APT_PTN2.matcher(place).matches()) {
-        data.strApt = append(data.strApt, "-", place);
-      } else {
-        data.strPlace = place;
-      }
+      data.strAddress = append(data.strAddress, " ", addrExt);
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override

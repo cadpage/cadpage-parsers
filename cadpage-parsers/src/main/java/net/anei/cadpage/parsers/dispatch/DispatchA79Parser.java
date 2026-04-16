@@ -42,9 +42,24 @@ public class DispatchA79Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("CITY_ST_ZIP")) return new BaseCityStateZipField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      String apt = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
   }
 
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|SUITE|UNIT) +(.*)");

@@ -14,7 +14,7 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
     super("JEFFERSON COUNTY", "AL",
           "( SELECT/H1 CALL:CALL! X/Y:GPS! ADDR1:ADDRCITY! ID:ID! DATE/TIME:DATETIME! CALL_TAKER:SKIP! " +
                               "GRID2640:MAP! GOOGLE_MAP:EMPTY! MAP:MAP/L! XSTREETS:X! UNITS:UNIT! NARR:EMPTY INFO_BLK+ " +
-          "| CALL:CALL! ADDR:GPS! ADDR1:ADDR! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
+          "| CALL:CALL! ADDR:GPS! ADDR1:ADDRCITY! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
                                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
                                                                             ") " +
                                                             "| Date/Time:DATETIME GRID2640:MAP? MAP:SKIP! UNITS:UNIT! " +

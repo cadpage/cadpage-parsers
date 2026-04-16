@@ -11,7 +11,7 @@ public class MICassCountyBParser extends DispatchOSSIParser {
 
   public MICassCountyBParser() {
     super(CITY_CODES, "CASS COUNTY", "MI",
-        "CALL ADDR ( PLACE PLACE CITY! | PLACE CITY! | CITY! | EMPTY+? ) X+? INFO/N+");
+        "CALL ADDRCITY ( PLACE PLACE CITY! | PLACE CITY! | CITY! | EMPTY+? ) X+? INFO/N+");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -29,6 +29,20 @@ public class MICassCountyBParser extends DispatchOSSIParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     body = "CAD:" + body;
     return super.parseMsg(body, data);
+  }
+
+  @Override
+  protected Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
+    return super.getField(name);
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{

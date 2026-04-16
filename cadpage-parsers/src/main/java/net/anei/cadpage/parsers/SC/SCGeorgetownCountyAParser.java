@@ -49,6 +49,7 @@ public class SCGeorgetownCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern STATE_PTN = Pattern.compile(", *(?:South Carolina|SC)\\b");
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|RM|ROOM|UNIT|SUITE) *(.*)", Pattern.CASE_INSENSITIVE);
   private class MyPlaceField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
@@ -56,6 +57,15 @@ public class SCGeorgetownCountyAParser extends FieldProgramParser {
       if (match.find()) {
         field = field.substring(0, match.start()).trim();
         super.parse(field, data);
+        while (true) {
+          int pt = data.strAddress.lastIndexOf(',');
+          if (pt < 0) break;
+          String apt = data.strAddress.substring(pt+1).trim();
+          data.strAddress = data.strAddress.substring(0,pt).trim();
+          match = APT_PTN.matcher(apt);
+          if (match.matches()) apt = match.group(1);
+          data.strApt = append(apt, "-", data.strApt);
+        }
         data.strState = "SC";
       } else {
         data.strPlace = field;

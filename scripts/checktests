@@ -2,6 +2,7 @@
 find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e 'PARSE FAILURE' \
    -e '"ADDR:[A-Za-z0-9].*[^-&()/.\[\]'\'' A-Za-z0-9].*"' \
+   -e '"ADDR:\S.*[;,].*"' \
    -e '"CITY:.*[^-/, A-Za-z’'\''].*"' \
    -e '"CITY:[A-Z]{1,3}"' \
    -e '"ST:[A-Z]?[^A-Z]' \
@@ -15,4 +16,4 @@ find cadpage-private/src/test/java -name '*ParserTest.java' -exec grep -E \
    -e 'ZCABCPrinceGeorgeParserTest.java:' \
    -e '\+[[:space:]]*$' \
    -e '"CITY:(\\n|064/284|29 Palms|ADA|ARP|ASH|AMA|AVA|AYR|BIM|BLY|BUD|BOW|CMCH / GOSHEN|COY|FLY|COTTAGE GROVE/HISSOP|GARFIELD/MONARCH|IGO|DAY|DC|ELA|EVA|FEZ|FOX|GAY|GRAYMOOR/DEVONDALE|GUY|HAY|HOU\.R\.|HYE|IRA|IVA|JAY|LEE|NLR|NORTH COUNTY [1-9]|OLA|ONA|OOJ|OPP|ORR|OUT|PAX|PG|RAY|REA|RIG|RIO|RDU|ROY|RYE|SOD|SUN|TAD|TEA|TOW|TOWNSHIP .*|ULM|UNORG .*|URY|WAR|WAX|VAN|YOE|.*WARD *[0-9]|.*WD *[0-9]|[0-9]{5})"' \
-   -e '"ADDR:(LAT:|LL|[+NS]?[0-9].*[0-9] *[,;] *-?[0-9])'
+   -e '"ADDR:(LAT:|LL|=L\(|[+NS]?[0-9].*[0-9] *[,;] *-?[0-9])'

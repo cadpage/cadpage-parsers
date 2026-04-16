@@ -54,6 +54,8 @@ public class ALCalhounCountyBParser extends FieldProgramParser {
       if (match.matches()) {
         field = match.group(1).trim();
         data.strCity = convertCodes(match.group(2).trim(), CITY_CODES);
+      } else {
+        field = stripFieldEnd(field, ",");
       }
       for (String part : field.split(";")) {
         part = part.trim();

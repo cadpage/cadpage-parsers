@@ -147,7 +147,7 @@ public class DispatchA27Parser extends FieldProgramParser {
       }
 
       field = field.replace('@',  '&').replace(" at ,", " at ");
-      String apt = null;
+      String apt = "";
       m = ADDR_APT_PTN.matcher(field);
       if (m.matches()) {
         field = m.group(1).trim();
@@ -155,14 +155,13 @@ public class DispatchA27Parser extends FieldProgramParser {
       }
       super.parse(field, data);
 
-      if (apt == null) {
+      while (true) {
         int pt = data.strAddress.lastIndexOf(',');
-        if (pt >= 0) {
-          apt = data.strAddress.substring(pt+1).trim();
-          data.strAddress = data.strAddress.substring(0,pt).trim();
-        }
+        if (pt < 0) break;
+        apt = append(data.strAddress.substring(pt+1).trim(), "-", apt);
+        data.strAddress = data.strAddress.substring(0,pt).trim();
       }
-      if (apt != null) data.strApt = append(data.strApt, "-", apt);
+      data.strApt = append(data.strApt, "-", apt);
 
       if (data.strCity.isEmpty() && zip != null && !zip.equals("0")) data.strCity = zip;
     }

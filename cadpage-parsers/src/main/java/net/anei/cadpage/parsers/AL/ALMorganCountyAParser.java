@@ -40,6 +40,10 @@ public class ALMorganCountyAParser extends DispatchOSSIParser {
         // But of course that will never work, so we have to do something
         // complicated
 
+        // Fortunelay, name fields are pretty rare
+            "| PLACE ADDR/Z NAME CALL X/Z+? ( INFO | ID UNIT? | UNIT ) " +
+            "| ADDR/Z NAME CALL X/Z+? ( INFO | ID UNIT? | UNIT ) " +
+
         // If we can identify the call field, things are pretty simple
              "| ADDR/Z X/Z PLACE CALL X/Z+? ( INFO | ID UNIT? | UNIT ) " +
              "| PLACE ADDR/Z CALL X/Z+? ( INFO | ID UNIT? | UNIT ) " +
@@ -66,6 +70,7 @@ public class ALMorganCountyAParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("BUS_FIRE")) return new CallField("BUSINESS FIRE", true);
+    if (name.equals("NAME")) return new NameField("[A-Z ]+, [A-Z]+", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("ID")) return new IdField("\\d{8}", true);
