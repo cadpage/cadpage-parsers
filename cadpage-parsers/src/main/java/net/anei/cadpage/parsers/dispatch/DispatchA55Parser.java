@@ -15,7 +15,7 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDR Apartment:APT " +
+          "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDRCITY Apartment:APT " +
                   "( City:CITY! Postal_Code:ZIP "  +
                   "| City_State_County:CITY Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP " +
                   ") Notes:INFO/N+");
@@ -39,8 +39,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     if (match.lookingAt()) subject = subject.substring(match.end());
     data.strCall = subject;
     int pt = body.indexOf("\n_____");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    body = NOTES_PTN.matcher(body).replaceAll("Notes:\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();    body = NOTES_PTN.matcher(body).replaceAll("Notes:\n");
     body = body.replace("\nNOTES\n", "\nNotes:\n");
     body = body.replace("\nFIRST NOTE:", "\nNotes:");
     if (!parseFields(body.split("\n"), data)) return false;
@@ -56,16 +55,44 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CITY")) return new MyCityField();
-    if (name.equals("ZIP")) return new MyZipField();
-    if (name.equals("MP")) return new MyMilePostField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("APT")) return new BaseAptField();
+    if (name.equals("CITY")) return new BaseCityField();
+    if (name.equals("ZIP")) return new BaseZipField();
+    if (name.equals("MP")) return new BaseMilePostField();
+    if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT) *(.*)|((?:[A-Z]-?)?\\d+[A-Z]?|[A-Z])");
+  private class BaseAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      String apt = "";
+      String place = "";
+      Parser p = new Parser(data.strAddress);
+      while (true) {
+        String tmp = p.getLastOptional(';');
+        if (!p.isFound()) break;
+        Matcher match = APT_PTN.matcher(tmp);
+        if (match.matches()) {
+          tmp = match.group(1);
+          if (tmp == null) tmp = match.group(2);
+          apt = append(tmp, "-", apt);
+        } else {
+          place = append(tmp, " - ", place);
+        }
+      }
+      data.strAddress = p.get();
+      data.strApt = append(data.strApt, "-", apt);
+      data.strPlace = append(data.strPlace, " - ", place);
+    }
   }
 
   private static final Pattern CITY_JUNK_PTN = Pattern.compile("\\(.*?\\)");
   private static final Pattern CITY_ST_PTN = Pattern.compile("([ A-Za-z/]+), *([A-Z]{2})(?:[\\( ,]+.*)?");
-  private class MyCityField extends CityField {
+  private class BaseCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
       field = CITY_JUNK_PTN.matcher(field).replaceAll("").trim();
@@ -74,7 +101,9 @@ public class DispatchA55Parser extends FieldProgramParser {
         field = match.group(1).trim();
         data.strState = match.group(2);
       }
-      super.parse(field, data);
+      if (!field.isEmpty()) {
+        super.parse(field, data);
+      }
     }
 
     @Override
@@ -83,7 +112,15 @@ public class DispatchA55Parser extends FieldProgramParser {
     }
   }
 
-  private class MyZipField extends CityField {
+  private class BaseAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      if (data.strApt.contains(field)) return;
+      data.strApt = append(data.strApt, "-", field);
+    }
+  }
+
+  private class BaseZipField extends CityField {
     @Override
     public void parse(String field, Data data) {
       if (data.strCity.length() > 0) return;
@@ -91,7 +128,7 @@ public class DispatchA55Parser extends FieldProgramParser {
     }
   }
 
-  private class MyMilePostField extends Field {
+  private class BaseMilePostField extends Field {
     @Override
     public void parse(String field, Data data) {
       if (field.length() > 0 && !data.strAddress.contains(" MM")) {
@@ -111,7 +148,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
   private static final DateFormat TIME_SEC_FMT = new SimpleDateFormat("hh:mm:ss aa");
   private static final Pattern INFO_CHANNEL_PTN = Pattern.compile("(.*)\\b(OPS *\\d+)", Pattern.CASE_INSENSITIVE);
-  private class MyInfoField extends InfoField {
+  private class BaseInfoField extends InfoField {
 
     @Override
     public void parse(String field, Data data) {

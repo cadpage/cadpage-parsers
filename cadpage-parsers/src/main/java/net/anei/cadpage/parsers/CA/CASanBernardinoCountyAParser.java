@@ -32,7 +32,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
-  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD: *(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?: *, *([A-Za-z ]+))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))? *,?");
+  private static final Pattern AUTO_NOTIFICATION_PTN = Pattern.compile("(?:CAD: *(\\d+-\\d+) )?AUTO NOTIFI?CATION(?: ONLY OF)?: *([-A-Z0-9]+) +DISPATCHED AT[: ]*(.*?)(?: *, *([A-Za-z ]+))?(?: (?:LAT|Lat): +(\\d*) +(?:LONG|Long): *(\\d*))? *(?:Comments: *(.*))?,?");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -40,7 +40,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
     // Parse special auto-notification alert
     Matcher match = AUTO_NOTIFICATION_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("ID CODE CALL ADDR APT CITY GPS");
+      setFieldList("ID CODE CALL ADDR APT CITY GPS INFO");
       data.strCallId = getOptGroup(match.group(1));
       data.strCode = match.group(2);
       String call = lookupCallCode(data.strCode);
@@ -54,6 +54,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
         data.strCity = city;
       }
       setGPSLoc(convGPS(match.group(5))+','+convGPS(match.group(6)), data);
+      data.strSupp = getOptGroup(match.group(7));
       return true;
     }
 

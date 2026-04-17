@@ -33,7 +33,8 @@ public class TXWilliamsonCountyParser extends DispatchOSSIParser {
       return true;
     }
 
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    return !data.strCity.isEmpty() || !data.strUnit.isEmpty();
   }
 
   @Override

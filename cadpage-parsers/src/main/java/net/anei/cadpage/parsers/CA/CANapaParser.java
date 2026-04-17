@@ -10,10 +10,10 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class CANapaParser extends FieldProgramParser {
 
   public CANapaParser() {
-    super(CITY_CODES, "NAPA", "CA", 
+    super(CITY_CODES, "NAPA", "CA",
           "Location:ADDR/S? MUN:CITY? TIME:TIME! EVT_#:ID! EV_TYPE:CALL!");
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA | MAP_FLG_PREFER_GPS;
@@ -42,12 +42,13 @@ public class CANapaParser extends FieldProgramParser {
         field = field.substring(0,pt).trim();
       }
       pt = field.indexOf(',');
+      if (pt < 0) pt = field.indexOf(';');
       if (pt >= 0) {
         data.strApt = field.substring(pt+1).trim();
         field = field.substring(0,pt).trim();
       }
       super.parse(field, data);
-      
+
       pt = data.strAddress.indexOf(": alias");
       if (pt >= 0) {
         data.strAddress = data.strAddress.substring(0,pt).trim() + " (" + data.strAddress.substring(pt+7).trim() + ')';
@@ -59,7 +60,7 @@ public class CANapaParser extends FieldProgramParser {
       return super.getFieldNames() + " PLACE";
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -67,7 +68,7 @@ public class CANapaParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern CALL_GPS_PTN = Pattern.compile("(.*?) \\(LAT: *([\\d\\.]+) *LON: *(-[\\d\\.]+)\\)");
   private class MyCallField extends CallField {
     @Override
@@ -79,7 +80,7 @@ public class CANapaParser extends FieldProgramParser {
       }
       data.strCall = field;
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL GPS";
@@ -98,5 +99,5 @@ public class CANapaParser extends FieldProgramParser {
     "STH",       "ST HELENA",
     "YNT",        "YOUNTVILLE"
   });
-  
+
 }
