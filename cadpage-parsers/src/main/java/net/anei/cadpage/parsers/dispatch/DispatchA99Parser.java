@@ -19,9 +19,22 @@ public class DispatchA99Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
+  }
+
+  private class BaseAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      int pt = data.strAddress.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strApt = append(data.strApt,  "-",  data.strAddress.substring(pt+1).trim());
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
+    }
   }
 
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("^(?:Call Notes:|\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d -[A-Z]+\\b) *| *\\[[A_Z]+\\]$");

@@ -158,8 +158,10 @@ public class DispatchA27Parser extends FieldProgramParser {
       while (true) {
         int pt = data.strAddress.lastIndexOf(',');
         if (pt < 0) break;
-        apt = append(data.strAddress.substring(pt+1).trim(), "-", apt);
+        String tmp = data.strAddress.substring(pt+1).trim();
         data.strAddress = data.strAddress.substring(0,pt).trim();
+        if (tmp.equals(data.strCity) || tmp.equals(zip) || tmp.equals(data.strState)) continue;
+        apt = append(tmp, "-", apt);
       }
       data.strApt = append(data.strApt, "-", apt);
 

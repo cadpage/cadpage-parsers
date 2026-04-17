@@ -68,15 +68,17 @@ public class DispatchA11Parser extends FieldProgramParser {
       data.strCity = city;
       while (true) {
         String fld = p.getLastOptional(';');
-        if (fld.isEmpty()) break;
-        Matcher match = APT_PTN.matcher(fld);
-        if (match.matches()) {
-          String apt = match.group(1);
-          if (apt == null) apt = match.group();
-          else apt = apt.trim();
-          data.strApt = append(apt, "-", data.strApt);
-        } else {
-          data.strPlace = append(fld, " - ", data.strPlace);
+        if (!p.isFound()) break;
+        if (!fld.isEmpty()) {
+          Matcher match = APT_PTN.matcher(fld);
+          if (match.matches()) {
+            String apt = match.group(1);
+            if (apt == null) apt = match.group();
+            else apt = apt.trim();
+            data.strApt = append(apt, "-", data.strApt);
+          } else {
+            data.strPlace = append(fld, " - ", data.strPlace);
+          }
         }
       }
       field = p.get(',');

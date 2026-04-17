@@ -1272,7 +1272,7 @@ public abstract class MsgParser {
    */
   private static final Pattern MSPACE = Pattern.compile(" {2,}");
   private static final Pattern INTERSECT = Pattern.compile("/|&|@");
-  private static final Pattern APT = Pattern.compile("(?!^)(?!RMP|SUITES)((?:APTS|\\bAPT(?!S)|\\bUNIT|\\bSUITE|\\bROOM|\\bSTE|\\bRM|\\bFLOOR|\\bFLRS?|\\bLOT)(?![A-Z].)|#APT|#)[ #\\.:]*(.+)$",Pattern.CASE_INSENSITIVE);
+  private static final Pattern APT = Pattern.compile("(?!^)(?!RMP|SUITES)[, ]*((?:APTS|\\bAPT(?!S)|\\bUNIT|\\bSUITE|\\bROOM|\\bSTE|\\bRM|\\bFLOOR|\\bFLRS?|\\bLOT)(?![A-Z].)|#APT|#)[ #\\.:]*(.+)$",Pattern.CASE_INSENSITIVE);
   private static final Pattern DOT = Pattern.compile("\\.(?!\\d)");
   private static final Pattern DOUBLE_SLASH = Pattern.compile("//+");
   private static void parseAddress(String addressLine, MsgInfo.Data data, boolean parseCity) {
@@ -1884,6 +1884,7 @@ public static void addCodeTable(Properties props, String[] table) {
    private String line;
    private int spt;
    private int ept;
+   private boolean found;
 
    /**
     * Constructor
@@ -2093,6 +2094,13 @@ public static void addCodeTable(Properties props, String[] table) {
    }
 
    /**
+    * @return true if the last delimiter search found what it was looking for
+    */
+   public boolean isFound() {
+     return found;
+   }
+
+   /**
     * @param delim delimiter
     * @param optional true if empty string should be returned if deliminter not found
     * @param required true if null should be returned if delimiter not found
@@ -2232,7 +2240,8 @@ public static void addCodeTable(Properties props, String[] table) {
     * @return whatever was found
     */
    private String get(int npt, int len, boolean optional, boolean required) {
-     if (npt < 0 || npt+len > ept) {
+     found = npt >= 0 && npt+len <= ept;
+     if (!found) {
        if (optional) return "";
        if (required) return null;
        npt = ept;
@@ -2251,7 +2260,8 @@ public static void addCodeTable(Properties props, String[] table) {
     * @return whatever was found
     */
    private String getLast(int npt, int len, boolean optional, boolean required) {
-     if (npt < 0 || npt<spt) {
+     found = npt >= 0 && npt >= spt;
+     if (!found) {
        if (optional) return "";
        if (required) return null;
        npt = spt;

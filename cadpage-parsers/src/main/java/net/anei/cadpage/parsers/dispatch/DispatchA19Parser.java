@@ -108,7 +108,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE)[: ]*(.*)|\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE|UNIT)[: ]*(.*)|[A-Z]?\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
   private class BaseAddressField extends AddressField {
@@ -129,46 +129,26 @@ public class DispatchA19Parser extends FieldProgramParser {
         data.strCity = match.group(2).trim();
       }
 
-      String apt = null;
-      String place = null;
-      int pt = field.lastIndexOf(';');
-      if (pt >= 0) {
-        apt = field.substring(pt+1).trim();
-        field = field.substring(0,pt);
-        pt = field.lastIndexOf(';');
-        if (pt >= 0) {
-          place = field.substring(pt+1).trim();
-          field = field.substring(0,pt).trim();
-        }
-      }
-      if (apt != null) {
-        if (place != null) {
-          String tmp = checkApt(place);
-          if (tmp != null) {
-            place = apt;
-            apt = tmp;
-          }
+      String apt = "";
+      while (true) {
+        int pt = field.lastIndexOf(';');
+        if (pt < 0) break;
+        String tmp = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+        String tmp2 = checkApt(tmp);
+        if (tmp2 != null) {
+          apt = append(tmp2, "-", apt);
         } else {
-          String tmp = checkApt(apt);
-          if (tmp != null) {
-            apt = tmp;
-          } else {
-            place = apt;
-            apt = "";
-          }
+          data.strPlace = append(tmp, " - ", data.strPlace);
         }
       }
-      if (place == null) {
-        pt = field.indexOf(" - ");
-        if (pt >= 0) {
-          place = field.substring(pt+3).trim();
-          field = field.substring(0,pt).trim();
-        }
-      }
-      if (place != null) data.strPlace = place;
 
       super.parse(field, data);
-      if (apt != null && !apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
+      if (apt.contains(data.strApt)) {
+        data.strApt = apt;
+      } else {
+        data.strApt = append(data.strApt, "-", apt);
+      }
     }
 
     private String checkApt(String field) {

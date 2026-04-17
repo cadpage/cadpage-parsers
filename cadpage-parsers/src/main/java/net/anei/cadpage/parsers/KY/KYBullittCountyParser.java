@@ -33,7 +33,7 @@ public class KYBullittCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?:[, ]+(\\d{5}))?");
   private class MyAddressCityStateField extends Field {
 
     @Override

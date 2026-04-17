@@ -71,6 +71,7 @@ public class DispatchA24Parser extends FieldProgramParser {
   }
 
   private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*), USA\\b *#?(.*)");
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d+.\\d+");
   private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
@@ -82,6 +83,22 @@ public class DispatchA24Parser extends FieldProgramParser {
       }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
+
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        String place = data.strAddress.substring(0,pt).trim();
+        if (!GPS_PTN.matcher(place).matches()) {
+          if (!data.strPlace.contains(place)) {
+            data.strPlace = append(data.strPlace, " - ", place);
+          }
+          data.strAddress = data.strAddress.substring(pt+1).trim();
+        }
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
 

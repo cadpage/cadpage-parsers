@@ -47,6 +47,12 @@ public class ARWashingtonCountyCParser extends FieldProgramParser {
     }
   }
 
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equals("OUT OF COUNTY")) return "";
+    return city;
+  }
+
   private static final String[] CITY_LIST = new String[] {
 
       // Cities
@@ -126,6 +132,9 @@ public class ARWashingtonCountyCParser extends FieldProgramParser {
       "WHITE ROCK",
       "WOOLSEY",
       "WYMAN",
-      "WYOLA"
+      "WYOLA",
+
+      // Madison County
+      "HINTSVILLE"
   };
 }
