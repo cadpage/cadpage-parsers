@@ -10,7 +10,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class UTBoxElderCountyParser extends FieldProgramParser {
 
   public UTBoxElderCountyParser() {
-    super(CITY_CODES, "BOX ELDER COUNTY", "UT", "DATETIME! CALL! ADDR CITY INFO+");
+    super(CITY_CODES, "BOX ELDER COUNTY", "UT",
+          "DATETIME! CALL! ADDR CITY INFO+");
   }
 
   private static Pattern ID_GRABBER = Pattern.compile("(.*?)\\[(\\d+)\\]", Pattern.DOTALL);
@@ -46,7 +47,8 @@ public class UTBoxElderCountyParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      String[] fields = field.split(";");
+      field = stripFieldEnd(field, ",");
+      String[] fields = field.split(";", -1);
       if (fields.length > 1) {
         super.parse(fields[0].trim(), data);
         for (int i = 1; i < fields.length; i++) {
@@ -64,7 +66,7 @@ public class UTBoxElderCountyParser extends FieldProgramParser {
       return "ADDR APT PLACE X";
     }
   }
-  
+
   private class MyCityField extends CityField {
     @Override
     public void parse(String field, Data data) {
@@ -75,14 +77,14 @@ public class UTBoxElderCountyParser extends FieldProgramParser {
         data.strCity = data.strCity.substring(0,pt);
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CITY ST";
     }
   }
 
-  
+
   Pattern DATE_TIME_OPERATOR = Pattern.compile("\\d{2}:\\d{2}:\\d{2} \\d{2}/\\d{2}/\\d{4} - .*");
   private class MyInfoField extends InfoField {
     @Override

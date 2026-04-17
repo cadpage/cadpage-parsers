@@ -30,10 +30,19 @@ public class ORBakerCountyParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("PRI_CALL")) return new MyPriCallField();
     if (name.equals("ID")) return new IdField("\\d+");
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
   }
 
   private class MyUnitField extends UnitField {

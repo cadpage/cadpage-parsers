@@ -171,6 +171,12 @@ public class DispatchA63Parser extends FieldProgramParser {
   private class BaseAddressCityStateField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+
+      // See if this is really a simple address field
+      if (field.contains(";")) {
+        new BaseAddressField().parse(field, data);
+        return;
+      }
       String zip = null;
       if (!noCity) {
         Matcher match = ADDR_STATE_ZIP_PTN.matcher(field);

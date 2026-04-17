@@ -12,7 +12,7 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
 
   public ORDouglasCountyAParser() {
     super(CITY_CODES,"DOUGLAS COUNTY", "OR",
-          "DATETIME CALL ADDR CITY_APT PLACE! INFO/N+");
+          "DATETIME CALL ADDRCITY CITY_APT PLACE! INFO/N+");
   }
 
   @Override
@@ -55,7 +55,8 @@ public class ORDouglasCountyAParser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       Matcher match = CITY_APT_PTN.matcher(field);
       if (!match.matches()) return false;
-      super.parse(getOptGroup(match.group(1)), data);
+      String city = getOptGroup(match.group(1));
+      if (!city.isEmpty()) super.parse(city, data);
       data.strApt = append(data.strApt, "-", match.group(2).trim());
       return true;
     }

@@ -139,7 +139,13 @@ public class DispatchA19Parser extends FieldProgramParser {
         if (tmp2 != null) {
           apt = append(tmp2, "-", apt);
         } else {
-          data.strPlace = append(tmp, " - ", data.strPlace);
+          if (!data.strPlace.contains(tmp)) {
+            if (tmp.contains(data.strPlace)) {
+              data.strPlace = tmp;
+            } else {
+              data.strPlace = append(tmp, " - ", data.strPlace);
+            }
+          }
         }
       }
 
