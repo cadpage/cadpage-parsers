@@ -108,7 +108,9 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:(.*) )?(?:APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)|[# ]*([A-Z]?\\d+[A-Z]?)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_ST_PTN = Pattern.compile("[A-Z]{2}");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
   private static final Pattern ADDR_SPLIT_PTN = Pattern.compile("(.*)[;,](?! *Y:)(.*?)");
@@ -136,12 +138,17 @@ public class DispatchA19Parser extends FieldProgramParser {
         if (!match.matches()) break;
         field = match.group(1).trim();
         String place = match.group(2).trim();
-        match = ADDR_APT_PTN.matcher(place);
+        match = ADDR_APT_PTN1.matcher(place);
         if (match.matches()) {
-          place = getOptGroup(match.group(1));
+          place = match.group(1).trim();
           String tmp = match.group(2);
-          if (tmp == null) tmp = match.group(3);
           apt = append(tmp, "-", apt);
+        } else if ((match = ADDR_APT_PTN2.matcher(place)).matches()) {
+          apt = append(match.group(1), "-", apt);
+          place = "";
+        } else if (ADDR_ST_PTN.matcher(place).matches()) {
+          data.strState = place;
+          place = "";
         }
         if (!data.strPlace.contains(place)) {
           if (place.contains(data.strPlace)) {

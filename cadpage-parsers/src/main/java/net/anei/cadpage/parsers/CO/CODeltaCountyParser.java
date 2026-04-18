@@ -30,27 +30,31 @@ public class CODeltaCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*)\\b(?:APT|UNIT|RM) +(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_SPLIT_PTN = Pattern.compile("(.*)[;,:](.*)");
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APT|UNIT|RM|ROOOM|LOT) +(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("[A-Z]?\\d{1,4}[A-Z]?|[A-Z]", Pattern.CASE_INSENSITIVE);
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      String place = "";
-      String apt = p.getLastOptional(';');
-      if (apt.length() == 0) apt = p.getLastOptional(':');
-      if (apt.length() > 0) {
-        Matcher match = ADDR_APT_PTN.matcher(apt);
-        if (match.find()) {
-          place = match.group(1).trim();
-          apt = match.group(2);
-        } else if (apt.length() > 4) {
-          place = apt;
-          apt = "";
+      String apt = "";
+      while (true) {
+        Matcher match = ADDR_SPLIT_PTN.matcher(field);
+        if (!match.matches()) break;
+        field = match.group(1).trim();
+        String place = match.group(2).trim();
+        match = ADDR_APT_PTN1.matcher(place);
+        if (match.matches()) {
+          place = match.group(1);
+          String tmp = match.group(2);
+          if (tmp == null) tmp = match.group(3);
+          apt = append(tmp, "-", apt);
+        } else if (ADDR_APT_PTN2.matcher(place).matches()) {
+          apt = append(place, "-", apt);
+          place = "";
         }
-        if (place.isEmpty()) place = p.getLastOptional(';');
+        data.strPlace = append(place, " - ", data.strPlace);
       }
-      super.parse(p.get(), data);
-      data.strPlace = place;
+      super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
     }
 

@@ -12,23 +12,23 @@ import net.anei.cadpage.parsers.dispatch.DispatchProQAParser;
 
 
 public class MDCalvertCountyParser extends FieldProgramParser {
-  
+
   public MDCalvertCountyParser() {
-    super("CALVERT COUNTY", "MD", 
+    super("CALVERT COUNTY", "MD",
           "DISPATCH_INFO CALL UNIT BOX ADDRCITY PLACE PLACE/SDS! INFO/N+");
     setupSpecialStreets("TJ BRIDGE");
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@co.cal.md.us";
   }
-  
+
   private static final Pattern DELIM = Pattern.compile("[\\|\n]");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     // The actual page format consists of different fields enclosed in square brackets.
     // But by the time it gets here those have all been converted to subject extensions
     // separated by pipe characters.
@@ -38,16 +38,17 @@ public class MDCalvertCountyParser extends FieldProgramParser {
     if (call != null) data.strCall = call;
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DISPATCH_INFO")) return new SkipField("Dispatch Info", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("BOX")) return new BoxField("Box +(.*)|", true);
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_PRIORITY_PTN = Pattern.compile("M Priority (\\d) +(.*)");
   private class MyCallField extends Field {
     @Override
@@ -65,18 +66,31 @@ public class MDCalvertCountyParser extends FieldProgramParser {
       return "PRI CALL";
     }
   }
-  
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        String place =  data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+        if (!place.equals(data.strCity)) data.strPlace = place;
+      }
+    }
+  }
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
       DispatchProQAParser.parseProQAData(true, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE INFO";
     }
   }
-  
+
   private static CodeTable CALL_CODES = new StandardCodeTable();
 }

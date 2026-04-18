@@ -15,7 +15,7 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   public DispatchA55Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDRCITY Apartment:APT " +
+          "Call_Number:ID Call_Type:CALL/SDS Common_Place:PLACE Address:ADDRCITYST Apartment:APT " +
                   "( City:CITY! Postal_Code:ZIP "  +
                   "| City_State_County:CITY Disposition:SKIP How_Reported:SKIP Lat/Long:GPS Zip:ZIP MilePost:MP Subgrid_Grid_District:MAP " +
                   ") Notes:INFO/N+");
@@ -55,7 +55,7 @@ public class DispatchA55Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("ZIP")) return new BaseZipField();
@@ -65,7 +65,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   }
 
   private static final Pattern APT_PTN = Pattern.compile("(?:APT|ROOM|RM|SUITE|LOT) *(.*)|((?:[A-Z]-?)?\\d+[A-Z]?|[A-Z])");
-  private class BaseAddressCityField extends AddressCityField {
+  private class BaseAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
@@ -96,7 +96,7 @@ public class DispatchA55Parser extends FieldProgramParser {
   }
 
   private static final Pattern CITY_JUNK_PTN = Pattern.compile("\\(.*?\\)");
-  private static final Pattern CITY_ST_PTN = Pattern.compile("([ A-Za-z/]+), *([A-Z]{2})(?:[\\( ,]+.*)?");
+  private static final Pattern CITY_ST_PTN = Pattern.compile("([ A-Za-z/]*), *([A-Z]{2})(?:[\\( ,]+.*)?");
   private class BaseCityField extends CityField {
     @Override
     public void parse(String field, Data data) {

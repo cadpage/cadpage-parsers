@@ -360,6 +360,11 @@ public class DispatchSPKParser extends HtmlProgramParser {
           apt = match.group(2);
           bldg = match.group(3);
         }
+        int pt = field.indexOf(';');
+        if (pt >= 0) {
+          data.strPlace = field.substring(pt+1).trim();
+          field = field.substring(0,pt).trim();
+        }
         data.strAddress = "";
         super.parse(field, data);
         if (apt != null) aptField.parse(apt, data);

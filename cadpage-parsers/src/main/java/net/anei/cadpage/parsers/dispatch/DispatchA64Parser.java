@@ -22,7 +22,7 @@ public class DispatchA64Parser extends FieldProgramParser{
     return super.getField(name);
   }
 
-  private class BaseAddressCallField extends AddressField {
+  private class BaseAddressCallField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
@@ -31,7 +31,9 @@ public class DispatchA64Parser extends FieldProgramParser{
         data.strCall = append(data.strCall, " / ", field.substring(semicolonPosition + 1)).trim();
         field =field.substring(0, semicolonPosition).trim();
       }
+      String saveCity = data.strCity;
       super.parse(field, data);
+      if (!saveCity.isEmpty()) data.strCity = saveCity;
     }
 
     @Override
