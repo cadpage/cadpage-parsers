@@ -79,6 +79,7 @@ public class DispatchC04Parser extends FieldProgramParser {
       Matcher match = SHORT_ZIP_PTN.matcher(field);
       if (match.matches()) field = match.group(1);
       super.parse(field, data);
+      data.strAddress = stripFieldEnd(data.strAddress, ",");
     }
   }
 

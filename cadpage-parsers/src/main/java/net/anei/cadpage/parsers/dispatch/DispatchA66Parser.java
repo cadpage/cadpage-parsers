@@ -45,6 +45,7 @@ public class DispatchA66Parser extends FieldProgramParser {
       }
       data.strCity = city;
       data.strCross = p.getLastOptional(';');
+      data.strPlace = p.getLastOptional(';');
       String sAddr = p.get();
       if (sAddr.endsWith("@")) sAddr = sAddr.substring(0,sAddr.length()-1).trim();
       StringBuffer sb = new StringBuffer();
@@ -60,7 +61,7 @@ public class DispatchA66Parser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " X CITY ST";
+      return super.getFieldNames() + " PLACE X CITY ST";
     }
   }
 

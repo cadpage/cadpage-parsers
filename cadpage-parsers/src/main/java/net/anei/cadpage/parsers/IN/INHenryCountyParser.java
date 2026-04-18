@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.IN;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -41,14 +42,31 @@ public class INHenryCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern APT_PTN = Pattern.compile("(?:APARTMENT|APT|LOT|RM|ROOM|UNIT) +(.*)|([A-Z]?\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+
   private class MyAddressCityField extends AddressField {
 
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
       data.strCity = p.getLastOptional(':');
-      data.strPlace = p.getLastOptional(';');
+      String apt = "";
+      while (true) {
+        String part = p.getLastOptional(";");
+        if (!p.isFound()) break;
+        if (part.isEmpty()) continue;
+        part = stripFieldStart(part, "U:");
+        Matcher match = APT_PTN.matcher(part);
+        if (match.matches()) {
+          part = match.group(1);
+          if (part == null) part = match.group(2);
+          apt = append(part, "-", apt);
+        } else {
+          data.strPlace = append(part, " - ", data.strPlace);
+        }
+      }
       super.parse(p.get(), data);
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
