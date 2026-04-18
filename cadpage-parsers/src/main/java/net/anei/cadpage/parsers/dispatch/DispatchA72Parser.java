@@ -13,7 +13,8 @@ public class DispatchA72Parser extends FieldProgramParser {
         "CFS:ID! CALLTYPE:CALL! PRIORITY:PRI! PLACE:PLACE! ADDRESS:ADDR! CITY:CITY! STATE:ST! ZIP:ZIP! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO! INFO/N+ ALERT:ALERT");
   }
 
-  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*) +)?(.*?)[, ]+([A-Z]{2}) +\\d{5}");
+  static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[/ ]+(?:APT|LOT|RM|ROOM|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
+  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*) +)?(.*?)[, ]+([A-Z]{2})(?: +\\d{5})?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -21,17 +22,40 @@ public class DispatchA72Parser extends FieldProgramParser {
     if (!parseFields(body.split("\n"), data)) return false;
     String addr = data.strAddress;
     data.strAddress = "";
+    String apt = "";
+    Matcher match = ADDR_APT_PTN.matcher(addr);
+    if (match.matches()) {
+      addr =  match.group(1);
+      apt =  match.group(2);
+      match = CITY_ST_ZIP_PTN.matcher(apt);
+      if (match.matches()) {
+        apt = match.group(1);
+        data.strCity = match.group(2);
+        data.strState = match.group(3);
+      }
+    }
     addr = stripFieldStart(addr, "@");
     addr = addr.replace('@', '&').replace("//", "&");
     addr = stripFieldEnd(addr, data.strState);
     addr = stripFieldEnd(addr, data.strCity);
+    int pt = addr.indexOf(',');
+    if (pt >= 0) {
+      String city = addr.substring(pt+1).trim();
+      addr = addr.substring(0,pt).trim();
+      if (city.length() == 2) {
+        data.strState = city;
+      } else if (data.strCity.isEmpty()) {
+        data.strCity = city;
+      }
+    }
     parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-    Matcher match = CITY_ST_ZIP_PTN.matcher(data.strApt);
+    match = CITY_ST_ZIP_PTN.matcher(data.strApt);
     if (match.matches()) {
       data.strApt = getOptGroup(match.group(1));
       data.strCity = match.group(2);
       data.strState = match.group(3);
     }
+    data.strApt = append(data.strApt, "-", apt);
     return true;
   }
 

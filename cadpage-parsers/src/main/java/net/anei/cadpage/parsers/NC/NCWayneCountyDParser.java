@@ -12,7 +12,7 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
   public NCWayneCountyDParser() {
     super(CITY_CODES, "WAYNE COUNTY", "NC",
           "( CANCEL ADDR CITY " +
-          "| CALL ADDR ID CITY UNIT EMPTY GPS1 GPS2 CH! DATETIME UNIT/C! " +
+          "| CALL ADDRCITY ID CITY UNIT EMPTY GPS1 GPS2 CH! DATETIME UNIT/C! " +
           ") INFO/N+? UNIT2");
   }
 
@@ -37,9 +37,18 @@ public class NCWayneCountyDParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{10}", true);
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("UNIT2")) return new MyUnit2Field();
     return super.getField(name);
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern UNIT_PTN = Pattern.compile("[A-Z]+\\d+(?:,.*)?");

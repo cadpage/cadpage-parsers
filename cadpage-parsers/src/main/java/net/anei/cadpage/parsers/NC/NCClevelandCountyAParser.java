@@ -21,7 +21,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
   public NCClevelandCountyAParser() {
     super(CITY_LIST, "CLEVELAND COUNTY", "NC",
           "( UNIT ENROUTE ADDR CITY_CODE CALL! END " +
-          "| ( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDR! ADDR2? ( SKIP CITY | ) ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO/N+ )");
+          "| ( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDRCITYST! ADDR2? ( SKIP CITY | ) ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO/N+ )");
     setupMultiWordStreets("OAK GROVE-CLOVER HILL CH", "SANDY RUN CHURCH");
   }
 
@@ -55,6 +55,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("X")) return new MyCrossField();
@@ -109,6 +110,15 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
       if (!isValidCall(field)) return false;
       super.parse(field, data);
       return true;
+    }
+  }
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      String saveCity = data.strCity;
+      super.parse(field, data);
+      if (data.strCity.isEmpty()) data.strCity = saveCity;
     }
   }
 

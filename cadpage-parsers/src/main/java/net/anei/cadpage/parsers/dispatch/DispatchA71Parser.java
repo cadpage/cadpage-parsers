@@ -14,7 +14,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   public DispatchA71Parser(String defCity, String defState) {
     this(defCity, defState,
          "( ID:ID! INFO:INFO! " +
-         "| CALL:CALL PLACE:PLACE ADDR:ADDR? APT:APT CITY:CITY? ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PLACE:PLACE? PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? " +
+         "| CALL:CALL PLACE:PLACE ADDR:ADDRCITY? APT:APT CITY:CITY? ( XY:GPS | LAT:GPS1 LONG:GPS2 ) AREA:MAP? ID:ID! PLACE:PLACE? PRI:PRI? DATE:DATE? TIME:TIME? NAME:NAME? PHONE:PHONE? MAP:MAP? UNIT:UNIT? ESN:LINFO? ELTE:LINFO? ELTF:LINFO? ELTL:LINFO? X:X? INFO:INFO/N? " +
          ") INFO/N+");
   }
 
@@ -40,7 +40,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("PLACE")) return new BasePlaceField();
-    if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?|", true);
     if (name.equals("TIME")) return new BaseTimeField();
@@ -63,8 +63,9 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR|SEC [NSEW]{1,2})", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_PFX_PTN = Pattern.compile("[NSEW]B|\\d+");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[, ]+(?:APT|RM|ROOM|LOT|UNIT) +([^,]+)", Pattern.CASE_INSENSITIVE);
 
-  private class BaseAddressField extends AddressField {
+  private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
 
@@ -74,13 +75,17 @@ public class DispatchA71Parser extends FieldProgramParser {
         if (pt >= 0) {
           int pt2 = field.indexOf(',', pt+1);
           if (pt2 < 0) pt2 = field.length();
-          data.strCity = field.substring(pt+1, pt2).trim();
+          String city = field.substring(pt+1, pt2).trim();
           field = field.substring(0,pt).trim();
+          if (city.length() == 2) {
+            data.strState = city;
+          } else {
+            data.strCity = city;
+          }
         }
         data.strPlace = "";
       }
 
-      field = MSPACE_PTN.matcher(field).replaceAll(" ");
       int pt = data.strPlace.indexOf(field);
       if (pt >= 0) data.strPlace = stripFieldEnd(data.strPlace.substring(0,pt).trim(), "(");;
 
@@ -98,12 +103,25 @@ public class DispatchA71Parser extends FieldProgramParser {
         data.strPlace = "";
       }
 
+      String apt = "";
+      match = ADDR_APT_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        apt = match.group(2).trim();
+      }
+
       super.parse(field, data);
+      if (data.strCity.length() == 2) {
+        data.strState = data.strCity;
+        data.strCity = "";
+      }
+
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " MAP";
+      return super.getFieldNames() + " ST MAP";
     }
   }
 

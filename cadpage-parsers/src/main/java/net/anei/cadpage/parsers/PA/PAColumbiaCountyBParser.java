@@ -9,36 +9,36 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class PAColumbiaCountyBParser extends FieldProgramParser {
-  
+
   public PAColumbiaCountyBParser() {
-    super(CITY_CODES, "COLUMBIA COUNTY", "PA", 
-          "( SELECT/1 DATETIME1 Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1? Caller:NAME? Phone#:PHONE! Callback#:PHONE/L! GPS! Inc_Code:CODE_CALL1! SubType:CALL/SDS!  Unit_RunTimes:EMPTY! TIMES+ CFS#:ID! Comments:EMPTY! INFO/N+ " + 
-          "| ( DR_ID DR_ID+? ADDRCITY/S GPS ( CODE_CALL3 | CODE_CALL2! CALL/SDS ) " + 
+    super(CITY_CODES, "COLUMBIA COUNTY", "PA",
+          "( SELECT/1 DATETIME1 Inc_Addr:ADDRCITY/S! Apt:APT! Cross_Streets:X1? Caller:NAME? Phone#:PHONE! Callback#:PHONE/L! GPS! Inc_Code:CODE_CALL1! SubType:CALL/SDS!  Unit_RunTimes:EMPTY! TIMES+ CFS#:ID! Comments:EMPTY! INFO/N+ " +
+          "| ( DR_ID DR_ID+? ADDRCITY/S GPS ( CODE_CALL3 | CODE_CALL2! CALL/SDS ) " +
             "| ADDRCITY/S ( CODE_CALL2 CALL/SDS DR_ID+? GPS! " +
                          "| CODE_CALL3 DR_ID+? GPS! " +
-                         "| GPS ( CODE_CALL2! CALL/SDS! | CODE_CALL3! " + 
-                         ") " + 
-            ") " + 
+                         "| GPS ( CODE_CALL2! CALL/SDS! | CODE_CALL3! " +
+                         ") " +
+            ") " +
           ") Disp_Time:DATETIME! Units:UNIT! UNIT/S+ Comments:INFO/N+ )");
     setupProtectedNames("TWO AND ONE HALF");
     setupCities(CITY_LIST);
   }
-  
+
   @Override
   public String getFilter() {
     return "dispatch@columbiapa.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Page for CFS ([EF]?\\d{6}-\\d{1,3})");
   private static final Pattern RESPONDING_UNITS_PTN = Pattern.compile("Responding Unit\\(s\\):(?: +Units:)?");
   private static final Pattern BRK_PTN = Pattern.compile("\n|(?<!\n)(?=Disp Time:)");
   private static final Pattern NAME_CITY_PTN = Pattern.compile("(.*) 911");
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
@@ -53,9 +53,9 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       body = body.replace("Disp Time:", " Disp Time:");
       body = RESPONDING_UNITS_PTN.matcher(body).replaceAll("Units:");
     }
-    
+
     if (!parseFields(BRK_PTN.split(body), data)) return false;
-    
+
     if (data.strCity.length() == 0) {
       Matcher match = NAME_CITY_PTN.matcher(data.strName);
       if (match.matches()) {
@@ -65,12 +65,12 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     }
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME1")) return new SkipField("[A-Z][a-z]{2} [A-Z][a-z]{2} \\d\\d \\d{4} \\d\\d:\\d\\d", true);
@@ -100,27 +100,32 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       Pattern.compile("(.*)(?:[\\(,]| \\*\\* )(.*?)(?:\\)|\\*\\*)?"),
       Pattern.compile("(.*):([A-Z ]+):.*")
   };
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      
+
       String apt = "";
       Matcher match = LEAD_UNIT_PTN.matcher(field);
       if (match.lookingAt()) {
         apt = match.group(1);
         field = match.group(2);
       }
-      
+
       super.parse(field, data);
-      data.strAddress = stripFieldEnd(data.strAddress, ";");
+      int pt = data.strAddress.lastIndexOf(';');
+      if (pt >= 0) {
+        String city = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+        if (!city.isEmpty()) data.strCity = city;
+      }
       data.strApt = append(apt, "-", data.strApt);
 
       data.strCity = convertCodes(data.strCity.toUpperCase(), CITY_CODES);
       data.strCity = stripFieldEnd(data.strCity, " B");
       if (data.strCity.endsWith(" T")) data.strCity += "WP";
       data.strCity = data.strCity.replace("  ", " ");
-      
+
       for (Pattern ptn : ADDR_CITY_PTNS) {
         match = ptn.matcher(data.strAddress);
         if (match.matches()) {
@@ -133,7 +138,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
           break;
         }
       }
-      
+
       if (data.strCity.endsWith(" CO") || data.strCity.endsWith(" COUNTY")) {
         Result result = parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, data.strAddress);
         if (result.getCity().length() > 0) {
@@ -142,19 +147,19 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public void setNoCity(boolean noCity) {}
-    
+
   }
-  
+
   private static final Pattern CALL_CODE1_PTN = Pattern.compile("([_+A-Z0-9]+) : ([^:]*)");
   private class MyCodeCall1Field extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CALL_CODE1_PTN.matcher(field);
@@ -163,25 +168,25 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       data.strCall = match.group(2).trim();
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern CALL_CODE2_PTN = Pattern.compile("([_+A-Z0-9]+) : ([^:]*?)(?: :)?");
   private class MyCodeCall2Field extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (field.equals(":  :")) return true;
@@ -191,25 +196,25 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       data.strCall = match.group(2).trim();
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern CALL_CODE3_PTN = Pattern.compile("([_+A-Z0-9]+) : (.*?) : (.*)");
   private class MyCodeCall3Field extends Field {
     @Override
     public boolean canFail() {
       return true;
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       Matcher match = CALL_CODE3_PTN.matcher(field);
@@ -218,18 +223,18 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       data.strCall = append(match.group(2).trim(), " - ", match.group(3).trim());
       return true;
     }
-    
+
     @Override
     public void parse(String field, Data data) {
       if (!checkParse(field, data)) abort();
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
-  
+
   private static final Pattern GPS_PTN = Pattern.compile("http://maps.google.com/maps\\?q=(.*?)%20(.*?)");
   private class MyGPSField extends GPSField {
     @Override
@@ -239,7 +244,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       setGPSLoc(match.group(1)+','+match.group(2), data);
     }
   }
-  
+
   private static final Pattern TIMES_UNIT_PTN = Pattern.compile("([-A-Z0-9]+) +DISP +.*");
   private class MyTimesField extends InfoField {
     @Override
@@ -250,13 +255,13 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "UNIT INFO";
     }
   }
-  
+
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\[\\d\\d:\\d\\d:\\d\\d [A-Za-z ]+\\] *");
   private class MyInfoField extends InfoField {
     @Override
@@ -266,7 +271,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = stripFieldStart(addr, "AREA OF ");
@@ -275,7 +280,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
 
   // Township names used for out of county calls
   private static final String[] CITY_LIST = new String[] {
-    
+
     // Columbia County
     "COLUMBIA CO",
     "COLUMBIA COUNTY",
@@ -364,7 +369,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "UNION",
     "WILKES-BARRE",
     "WRIGHT",
-    
+
     // Lycoming County
     "LYCOMING CO",
     "LYCOMING COUNTY",
@@ -410,7 +415,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WATSON TWP",
     "WOLF TWP",
     "WOODWARD TWP",
-    
+
     // Montour County
     "MONTOUR CO",
     "MONTOUR COUNTY",
@@ -424,7 +429,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "VALLEY TWP",
     "WEST HEMLOCK TWP",
     "DANVILLE",
-    
+
     // Northumberland County
     "NORTHUMBERLAND CO",
     "NORTHUMBERLAND COUNTY",
@@ -458,7 +463,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "RIVERSIDE",
     "SHAMOKIN",
     "SUNBURY",
-    
+
     // Scuylkill County
     "SCUYLKILL CO",
     "SCUYLKILL COUNTY",
@@ -498,7 +503,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "WEST BRUNSWICK TWP",
     "WEST MAHANOY TWP",
     "WEST PENN TWP",
- 
+
     // Sulivan County
     "SULIVAN CO",
     "SULIVAN COUNTY",
@@ -512,7 +517,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
     "LAPORTE TWP",
     "SHREWSBURY TWP"
   };
-  
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ANTHONY",        "ANTHONY TWP",
       "BEAVER",         "BEAVER TWP",
@@ -566,7 +571,7 @@ public class PAColumbiaCountyBParser extends FieldProgramParser {
       "STILLWAT",       "STILLWATER",
       "W HEMLOCK",      "WEST HEMLOCK TWP",
       "WASHNGTON",      "WASHINGTON TWP",
-      
+
       "FAIRMOUNT TWP LUZE CO",    "FAIRMOUNT TWP"
 
   });

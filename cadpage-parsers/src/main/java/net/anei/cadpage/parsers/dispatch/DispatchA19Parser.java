@@ -108,9 +108,10 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE|UNIT)[: ]*(.*)|[A-Z]?\\d+[A-Z]?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:(.*) )?(?:APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)|([A-Z]?\\d+[A-Z]?)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
+  private static final Pattern ADDR_SPLIT_PTN = Pattern.compile("(.*)[;,](.*?)");
   private class BaseAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -131,20 +132,22 @@ public class DispatchA19Parser extends FieldProgramParser {
 
       String apt = "";
       while (true) {
-        int pt = field.lastIndexOf(';');
-        if (pt < 0) break;
-        String tmp = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
-        String tmp2 = checkApt(tmp);
-        if (tmp2 != null) {
-          apt = append(tmp2, "-", apt);
-        } else {
-          if (!data.strPlace.contains(tmp)) {
-            if (tmp.contains(data.strPlace)) {
-              data.strPlace = tmp;
-            } else {
-              data.strPlace = append(tmp, " - ", data.strPlace);
-            }
+        match = ADDR_SPLIT_PTN.matcher(field);
+        if (!match.matches()) break;
+        field = match.group(1).trim();
+        String place = match.group(2).trim();
+        match = ADDR_APT_PTN.matcher(place);
+        if (match.matches()) {
+          place = getOptGroup(match.group(1));
+          String tmp = match.group(2);
+          if (tmp == null) tmp = match.group(3);
+          apt = append(tmp, "-", apt);
+        }
+        if (!data.strPlace.contains(place)) {
+          if (place.contains(data.strPlace)) {
+            data.strPlace = place;
+          } else {
+            data.strPlace = append(place, " - ", data.strPlace);
           }
         }
       }
@@ -155,20 +158,6 @@ public class DispatchA19Parser extends FieldProgramParser {
       } else {
         data.strApt = append(data.strApt, "-", apt);
       }
-    }
-
-    private String checkApt(String field) {
-      Matcher match = ADDR_APT_PTN.matcher(field);
-      if (match.matches()) {
-        String apt = match.group(1);
-        if (apt == null) apt = field;
-        return apt;
-      }
-      if (field.startsWith("#")) {
-        field = field.substring(1).trim();
-        if (!field.contains(" ")) return field;
-      }
-      return null;
     }
 
     @Override

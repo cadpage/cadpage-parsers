@@ -12,7 +12,7 @@ public class DispatchH04Parser extends DispatchH05Parser {
           "LEAD_JUNK+? ( ADDR:ADDRCITY/S6! PLACE:PLACE! | ) " +
           "( CALL:CALL! | Fire_Call_Type:CALL! EMS_CALL_TYPE:CALL2 | FIRE_CALL_TYPE:CALL! EMS_CALL_TYPE:CALL2! | EMS_CALL_TYPE:CALL2 ) " +
           "( PLACE:PLACE! ADDR:ADDRCITY/S6! | ) " +
-          "( ASSIGNED_UNIT(s):UNIT! NARRATIVE:EMPTY! INFO_BLK/N+? PLACE:PLACE! ADDR:ADDR! | ) " +
+          "( ASSIGNED_UNIT(s):UNIT! NARRATIVE:EMPTY! INFO_BLK/N+? PLACE:PLACE! ADDR:ADDRCITY! | ) " +
           "Lat_/_Long:GPS? ( Cross_Streets:X | CROSS_STREETS:X | ) CALLER_NAME:NAME? " +
              "( CALLER_PHONE:PHONE | Caller_Phone:PHONE | Caller_Number:PHONE | ) Lat_/_Long:GPS? ID:ID? " +
              "( PRI:PRI! | FIRE_PRIORITY:PRI! EMS_PRIORITY:PRI2! | ) DATE:DATETIME! " +
@@ -52,6 +52,7 @@ public class DispatchH04Parser extends DispatchH05Parser {
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
       Parser p = new Parser(field);
       String part = p.getLastOptional(',');
       Matcher match = GPS_PTN.matcher(part);

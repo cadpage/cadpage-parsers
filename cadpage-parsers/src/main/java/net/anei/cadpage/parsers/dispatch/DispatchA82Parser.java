@@ -107,6 +107,11 @@ public class DispatchA82Parser extends FieldProgramParser {
         }
       }
       super.parse(field, data);
+      int pt = data.strAddress.lastIndexOf(',');
+      if (pt >= 0) {
+        data.strApt = append(data.strApt, "-", data.strAddress.substring(pt+1).trim());
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
     }
 
     @Override

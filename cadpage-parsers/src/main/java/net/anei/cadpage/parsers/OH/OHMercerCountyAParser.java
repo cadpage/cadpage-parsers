@@ -42,7 +42,7 @@ public class OHMercerCountyAParser extends FieldProgramParser {
         part = part.trim();
         if (part.length() == 0) continue;
         if (data.strAddress.length() == 0) {
-          parseAddress(field, data);
+          parseAddress(part, data);
         } else {
           Matcher match = APT_PTN.matcher(part);
           if (match.matches()) {

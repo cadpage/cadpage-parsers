@@ -88,6 +88,11 @@ public class DispatchA55Parser extends FieldProgramParser {
       data.strApt = append(data.strApt, "-", apt);
       data.strPlace = append(data.strPlace, " - ", place);
     }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT PLACE CITY";
+    }
   }
 
   private static final Pattern CITY_JUNK_PTN = Pattern.compile("\\(.*?\\)");

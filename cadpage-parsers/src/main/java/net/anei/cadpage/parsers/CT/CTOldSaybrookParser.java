@@ -8,29 +8,30 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Old Saybrook, CT
  */
 public class CTOldSaybrookParser extends FieldProgramParser {
-  
+
   public CTOldSaybrookParser() {
     super("OLD SAYBROOK","CT",
-          "CALL:CALL! ADDR:ADDR! ADDR2:APT! CITY:CITY! ID:ID! PRI:PRI! ZONE:MAP! PLACE:PLACE! GPS:GPS! X:X! DATE:DATE! TIME:TIME!");
+          "CALL:CALL! ADDR:ADDRCITY! ADDR2:APT! CITY:CITY! ID:ID! PRI:PRI! ZONE:MAP! PLACE:PLACE! GPS:GPS! X:X! DATE:DATE! TIME:TIME!");
   }
-  
+
   @Override
   public String getFilter() {
     return "noreply@oldsaybrook911.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("ID")) return new IdField("\\d{2}-\\d{9,}", true);
     if (name.equals("PRI")) return new PriorityField("(\\d*)-.*");
     if (name.equals("X")) return new MyCrossField();
@@ -38,7 +39,15 @@ public class CTOldSaybrookParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
-  
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {

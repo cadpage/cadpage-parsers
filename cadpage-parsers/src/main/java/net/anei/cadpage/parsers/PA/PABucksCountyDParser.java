@@ -63,10 +63,25 @@ public class PABucksCountyDParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("TIME_ID"))  return new MyTimeIdField();
     if (name.equals("PHONE")) return new MyPhoneField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      String apt = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
   }
 
   private class MyPhoneField extends PhoneField {

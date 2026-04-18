@@ -10,7 +10,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Washington County, PA
  */
 public class PAWashingtonCountyAParser extends FieldProgramParser {
-  
+
   public PAWashingtonCountyAParser() {
     super(CITY_CODES, "WASHINGTON COUNTY", "PA",
            "Loc:ADDR/S4? Xsts:X? Type:CALL! Time:TIME ( GPS:GPS | LL:GPS? ) Loc_Com:INFO Comments:INFO");
@@ -19,12 +19,12 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
     setupCities(CITY_LIST);
     removeWords("EXTENSION");
   }
-  
+
   @Override
   public String getFilter() {
     return "company10paging,mptfire,WashCo911,@washingtoncounty911.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
@@ -32,13 +32,13 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace("Location:", "Loc:").replace("Xstreet:", "Xsts:").replace("TYPE:", "Type:").replace("TIME:", "Time:");
     return super.parseMsg(body, data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
@@ -47,7 +47,7 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d(?::\\d\\d)?", true);
     return super.getField(name);
   }
-  
+
   // Call description field parser
   private class MyCallField extends CallField {
     @Override
@@ -56,18 +56,18 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   // Address field parser
   private static final Pattern EX_PTN = Pattern.compile("\\bEX\\b");
   private class MyAddressField extends AddressField {
-    
+
     @Override
     public void parse(String fld, Data data) {
       fld = stripFieldStart(fld, "/");
       String prefix = "";
       if (fld.startsWith("LL(")) {
         int pt = fld.indexOf(')');
-        if (pt >= 0) { 
+        if (pt >= 0) {
           prefix = fld.substring(0,pt+1);
           fld = fld.substring(pt+1);
         }
@@ -75,21 +75,23 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
       Parser p = new Parser(fld);
       while (true) {
         String place = p.getLastOptional(':');
-        if (place.length() == 0) break;
-        if (place.startsWith("@")) place = place.substring(1).trim();
+        if (!p.isFound()) break;
+        place = stripFieldStart(place, "@");
         data.strPlace = append(place, " - ", data.strPlace);
       }
+      String apt = p.getLastOptional(',');
       fld = append(prefix, " ", p.get());
       fld = EX_PTN.matcher(fld).replaceAll("EXT");
       super.parse(fld, data);
+      data.strApt = append(data.strApt, "-", apt);
     }
-    
+
     @Override
     public String getFieldNames() {
-      return "ADDR CITY PLACE";
+      return "ADDR CITY APT PLACE";
     }
   }
-  
+
   // Cross street field
   private class MyCrossField extends CrossField {
     @Override
@@ -99,7 +101,7 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
       if (data.strAddress.length() > 0) flags |= FLAG_ONLY_CROSS;
       parseAddress(StartType.START_ADDR, flags, field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "ADDR APT CITY X";
@@ -176,14 +178,14 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
       "WMID", "WEST MIDDLETOWN",
       "WPIK", "WEST PIKE RUN TWP"
   });
-  
+
   private static final String[] CITY_LIST = new String[]{
       "ATLASBURG",
       "SOUTHVIEW"
   };
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
-                  
+
       "302",    "INVOLUNTARY COMMITMENT",
       "911AB",  "911 ABUSE",
       "911IN",  "911 INCIDENT",
@@ -367,7 +369,7 @@ public class PAWashingtonCountyAParser extends FieldProgramParser {
       "WEATH",  "WEATHER UPDATES",
       "WIRES",  "DOWNED/LOW HANGING WIRE",
       "YELLO",  "HOSPITAL CODE YELLOW"
-      
+
       // Unidentified codes
       // DIS
       // NCIC

@@ -22,8 +22,8 @@ public class PAIndianaCountyParser extends SmartAddressParser {
   }
 
   private static final String FIRE_OPS = " FIRE OPT:";
-  private static final Pattern MASTER1 = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*?) FIRE OPS:(.*) INC:(.*)");
-  private static final Pattern MASTER2 = Pattern.compile("(.*?):(?: +|([A-Z]+); *)?(.*)");
+  private static final Pattern MASTER1 = Pattern.compile("(.*?): *(?:([A-Z]+) *; *)?(.*?) FIRE OPS:(.*) INC:(.*)");
+  private static final Pattern MASTER2 = Pattern.compile("(.*?): *(?:([A-Z]+) *; *)?(.*)");
   private static final Pattern CITY_EXT_PTN = Pattern.compile("(?:BORO(?:UGH)?|TWP)\\b");
   private static final Pattern CROSS_SFX_PTN = Pattern.compile("(.*) *\\b(ROUTE|PRIVATEROAD)");
   private static final Pattern ID_UNIT_PTN = Pattern.compile("((?:.* )?\\d{4}-\\d{8} [A-Z0-9]+)\\b[, ]*(.*)");

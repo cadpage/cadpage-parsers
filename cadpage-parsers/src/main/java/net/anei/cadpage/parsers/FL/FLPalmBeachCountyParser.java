@@ -68,9 +68,11 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       Parser p = new Parser(field);
-      String addr = p.get(COLON_AT_PTN);
-      String place = p.get(":APT ").trim();
-      String apt = p.get();
+      String apt2 = p.getLastOptional(":APT ");
+      String place = stripFieldStart(p.getLastOptional(':'), "@");
+      place = append(stripFieldStart(p.getLastOptional(':'), "@"), " - ", place);
+      String apt1 = p.getLastOptional(';');
+      String addr = p.get();
 
       String city = CITY_CODES.getProperty(addr);
       if (city != null) {
@@ -80,7 +82,7 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
       }
       super.parse(addr, data);
       data.strPlace = append(data.strPlace, " - ", place);
-      data.strApt = append(data.strApt, "-", apt);
+      data.strApt = append(data.strApt, "-", append(apt1, "-", apt2));
     }
 
     @Override
@@ -105,13 +107,6 @@ public class FLPalmBeachCountyParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       if (!data.strPlace.equals(field)) data.strPlace = append(data.strPlace, " - ", field);
-    }
-  }
-
-  private class MyMapField extends MapField {
-    @Override
-    public void parse(String field, Data data) {
-      data.strMap = append(data.strMap, " / ", field);
     }
   }
 

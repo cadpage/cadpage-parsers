@@ -39,6 +39,7 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
       data.strUnit = match.group(1);
       data.strCall = match.group(2).trim();
       super.parse(match.group(3).trim(), data);
+      data.strAddress = stripFieldEnd(data.strAddress, ",");
     }
 
     @Override
