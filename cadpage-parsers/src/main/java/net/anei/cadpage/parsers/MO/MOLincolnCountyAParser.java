@@ -9,49 +9,50 @@ import net.anei.cadpage.parsers.dispatch.DispatchA25Parser;
 
 
 public class MOLincolnCountyAParser extends DispatchA25Parser {
-  
+
   public MOLincolnCountyAParser() {
     this("LINCOLN COUNTY", "MO");
   }
-  
+
   public MOLincolnCountyAParser(String defCity, String defState) {
     super(defCity, defState);
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
   }
-  
+
   @Override
   public String getAliasCode() {
     return "MOLincolnCounty";
   }
-  
+
   @Override
   public String getFilter() {
     return "lincolncounty911@LC911Dispatch.org,lincolncounty911@lcsomo.com,messaging@iamresponding.com,EnterpolAlerts@PikeCountySO.or";
   }
-  
+
   private static final Pattern ELSBERRY_PTN = Pattern.compile("(NEW .*)(?: - |, )(Elsberry).?");
   private static final Pattern DIRO_PTN = Pattern.compile("\\b([NSEW])[/ ](O)F?\\b", Pattern.CASE_INSENSITIVE);
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     subject = stripFieldStart(subject, "[txtinfo]");
-    
+
     // Elsberry Fire has a slight variant on one of the unusual alternate formats
     Matcher match = ELSBERRY_PTN.matcher(body);
     if (match.matches()) body = match.group(1) + ", " + match.group(2);
-    
+
     // Fix dir/o construct
     body = DIRO_PTN.matcher(body).replaceAll("$1$2");
-    
-    // We have to eliminate the call description taht includes a dash delimiter
-    body =  body.replace("", "");
-    
-    // TODO Auto-generated method stub
+
+    body = body.replace("/Warren County", "");
+
+    // We have to eliminate the call description that includes a dash delimiter
+//    body =  body.replace("", "");
+
     return super.parseMsg(subject, body, data);
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
       "APPLE GROVE",
       "AUTUMN OAKS",
@@ -140,7 +141,7 @@ public class MOLincolnCountyAParser extends DispatchA25Parser {
       "WOLF PEN HOLLOW"
   };
 
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "911 ABANDONED CALL",
       "911 ACCIDENTAL",
@@ -299,5 +300,5 @@ public class MOLincolnCountyAParser extends DispatchA25Parser {
       "WELL BEING CHECK",
       "ZONE PATROL"
   );
-  
+
 }

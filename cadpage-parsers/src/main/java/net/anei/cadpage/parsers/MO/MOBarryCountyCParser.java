@@ -26,6 +26,13 @@ public class MOBarryCountyCParser extends DispatchSPKParser {
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (!super.parseHtmlMsg(subject, body, data)) return false;
+
+    int pt = data.strAddress.indexOf(',');
+    if (pt >= 0) {
+      data.strCity = data.strAddress.substring(pt+1).trim();
+      data.strAddress = data.strAddress.substring(0,pt).trim();
+    }
+
     if (data.strCity.equalsIgnoreCase("COUNTY")) data.strCity = "";
 
     if (data.strSupp.contains("Dispatch Code: 36A03")) {

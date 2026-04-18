@@ -120,7 +120,7 @@ public class DispatchA8Parser extends FieldProgramParser {
     public boolean checkParse(String field, Data data) {
       if (super.checkParse(field, data)) return true;
       if (!ZIP_PTN.matcher(field).matches()) return false;
-      data.strCity = field;
+      if (!field.isEmpty()) data.strCity = field;
       return true;
     }
   }

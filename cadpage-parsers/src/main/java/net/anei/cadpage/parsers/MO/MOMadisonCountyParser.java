@@ -12,7 +12,7 @@ public class MOMadisonCountyParser extends FieldProgramParser {
 
   public MOMadisonCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "Event_#:ID! Call_Date:SKIP! Address:ADDR! City:CITY! Cross_Street:X! Phone:PHONE! Police_Type:CALL! Fire_Type:CALL/SLS! EMS_Type:CALL/SLS! " +
+          "Event_#:ID! Call_Date:SKIP! Address:ADDRCITYST! City:CITY! Cross_Street:X! Phone:PHONE! Police_Type:CALL! Fire_Type:CALL/SLS! EMS_Type:CALL/SLS! " +
               "EMS_Report_#:ID/L! Person_Name:NAME! Business_Name:PLACE! Unit:UNIT! Notes:EMPTY! INFO/N+");
   }
 
@@ -34,6 +34,21 @@ public class MOMadisonCountyParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Automated Message")) return false;
+    body = body.replace(" MO, ", ", MO ");
     return parseFields(body.split("\n"), data);
+  }
+
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CITY")) return new MyCityField();
+    return super.getField(name);
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
   }
 }

@@ -13,17 +13,17 @@ import net.anei.cadpage.parsers.SplitMsgOptionsCustom;
  * Pennington County, SD
  */
 public class SDPenningtonCountyParser extends FieldProgramParser {
-  
+
   private boolean nextIntersect;
   private String gpsField;
-  
+
   public SDPenningtonCountyParser() {
     super(CITY_LIST, "PENNINGTON COUNTY", "SD",
-          "SRC EMPTY? UNIT CALL ADDR! INFODATETIME+");
+          "SRC EMPTY? UNIT CALL ADDRCITYST! INFODATETIME+");
     setupCallList(CALL_LIST);
   }
 
-// Used for testing non-Active911 split messages  
+// Used for testing non-Active911 split messages
   @Override
   public SplitMsgOptions getActive911SplitMsgOptions() {
     return new SplitMsgOptionsCustom(){
@@ -35,7 +35,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   public String getFilter() {
     return "dispatch@co.pennington.sd.us,dispatch@pennco.org,messaging@iamresponding.com,777,74121,6056076018,7573503185";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
@@ -43,14 +43,14 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
 
   private static final Pattern DELIM = Pattern.compile("- |\\b--\\b");
   private static final Pattern VALID_ADDRESS_PTN = Pattern.compile("[+-]?\\d+\\..*|\\d+ .*|MM .*|EXIT .*|.*&.*", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    
+
     int pt = body.indexOf("\n\n\n");
     boolean complete = pt >= 0;
     if (complete) body = body.substring(0,pt).trim();
-    
+
     nextIntersect = false;
     gpsField = null;
     String[] flds = body.split("\\|");
@@ -68,7 +68,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       if (!parseFields(DELIM.split(body.substring(1)), data)) return false;
     }
     else return false;
-    
+
     // They do things strangely
     // If address looks like a place name, and we have a valid looking intersection in the
     // cross street field, swap things around
@@ -78,12 +78,12 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       parseAddress(data.strCross, data);
       data.strCross = "";
     }
-    
+
     if (complete) data.expectMore = false;
-    
+
     return true;
   }
-  
+
   @Override
   public String getProgram() {
     return super.getProgram().replace("ADDR", "PLACE ADDR");
@@ -92,15 +92,15 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   // *************************************************************************
   // Parse new pipe or dash delimited format
   // *************************************************************************
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFODATETIME")) return new MyInfoDateTimeField();
     return super.getField(name);
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
@@ -108,26 +108,15 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
-  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?) *, *([A-Za-z ]+?) *, +SD(?: +\\d{5})?");
-  private class MyAddressField extends AddressField {
+
+  private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = ADDR_CITY_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1);
-        data.strCity = match.group(2);
-        fixCity(data);
-      }
       super.parse(field, data);
-    }
-    
-    @Override
-    public String getFieldNames() {
-      return super.getFieldNames() + " CITY";
+      fixCity(data);
     }
   }
-  
+
   private static final Pattern INFO_INTERSECT_PTN= Pattern.compile("Nearest Inter +- *(.*)");
   private static final Pattern INFO_AND_PTN = Pattern.compile("\\bAND\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern INFO_GPS_PTN1 = Pattern.compile("([-+]?\\d{2,3}\\.\\d{6,}[ ,]+[-+]?\\d{2,3}\\.\\d{6,})(?:[ /]+(.*))?");
@@ -138,18 +127,18 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   private class MyInfoDateTimeField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      
+
       Matcher match = INFO_INTERSECT_PTN.matcher(field);
       if (match.matches()) {
         nextIntersect = true;
         field = match.group(1);
       }
-      
+
       else if (field.equals("Nearest Inter") || field.equals("Nearest  Inter")) {
         nextIntersect = true;
         return;
       }
-      
+
       if (nextIntersect) {
         nextIntersect = false;
         field = INFO_AND_PTN.matcher(field).replaceAll("/");
@@ -158,14 +147,14 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         data.strCross = append(data.strCross, " / ", field);
         return;
       }
-      
+
       match = INFO_GPS_PTN1.matcher(field);
       if (match.matches()) {
         if (data.strGPSLoc.length() == 0) setGPSLoc(match.group(1), data);
         field = match.group(2);
         if (field ==  null) return;
       }
-      
+
       match = INFO_GPS_PTN2.matcher(field);
       if (match.matches()) {
         if (data.strGPSLoc.length() == 0) {
@@ -178,7 +167,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         }
         return;
       }
-      
+
       // What makes this complicated is that sometimes fields are split by | and contain " - "  markers
       // and sometimes they are split by " - " markers.  We have to cover both cases
       String connect = "\n";
@@ -206,7 +195,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
         connect = "; ";
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "INFO X APT GPS DATE TIME";
@@ -222,10 +211,10 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
   private static final Pattern CITY_PTN = Pattern.compile("(.*?) *, *([A-Z ]+?) *, SD +\\d{5} *(.*?)");
   private static final Pattern CODE_PTN1 = Pattern.compile(" *\\bCode: *([-A-Z0-9]+): *");
   private static final Pattern CODE_PTN2 = Pattern.compile("^Code: *([-A-Z0-9]+): *");
-  
+
   private boolean parseFireCall(String body, Data data) {
     setFieldList("UNIT CALL ADDR APT CITY CODE INFO DATE TIME");
-    
+
     // Parser unit information
     while (true) {
       Matcher match = UNIT_PTN.matcher(body);
@@ -237,8 +226,8 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
     if (!match.lookingAt()) return false;
     data.strUnit = append(data.strUnit, " ", match.group(1));
     body = body.substring(match.end());
-    
-    // Process Date/time splits 
+
+    // Process Date/time splits
     match = DATE_TIME_PTN.matcher(body);
     if (match.find()) {
       data.strDate = match.group(1);
@@ -255,7 +244,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       data.strSupp = append(info, "\n", body.substring(last));
       body = save;
     }
-    
+
     String callAddr = null;
     match = CITY_PTN.matcher(body);
     if (match.matches()) {
@@ -295,16 +284,16 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       data.strSupp = append(data.strSupp, "\n", info);
     }
     fixCity(data);
-        
+
     return true;
   }
 
   private void fixCity(Data data) {
-    if (data.strCity.equalsIgnoreCase("PENNCO")) data.strCity = "";
+    if (data.strCity.equalsIgnoreCase("PENNCO")) data.strCity = "PENNINGTON COUNTY";
     else if (data.strCity.equalsIgnoreCase("JACKCO")) data.strCity = "JACKSON COUNTY";
     else if (data.strCity.equalsIgnoreCase("MEADCO")) data.strCity = "MEADE COUNTY";
   }
-  
+
 
   // *************************************************************************
   // Parse old medical format
@@ -325,7 +314,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       return data.strCall.length() > 0;
     }
   }
-  
+
   // Call list is only needed for old format calls that are (probably) no longer sued
   // so we aren't bothering to maintain it any more
   private static final CodeSet CALL_LIST = new CodeSet(
@@ -441,10 +430,10 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
       "WILDF",
       "WILDF2"
   );
-  
+
   private static final String[] CITY_LIST = new String[]{
     "PENNCO",
-    
+
     "ASHLAND HEIGHTS",
     "COLONIAL PINE HILLS",
     "CREIGHTON",
@@ -460,7 +449,7 @@ public class SDPenningtonCountyParser extends FieldProgramParser {
     "WASTA",
     "WICKSVILLE",
     "PENNCO",
-    
+
     "ELK VALE",
     "ELLSWORTH AFB",
     "MUD BUTTE",

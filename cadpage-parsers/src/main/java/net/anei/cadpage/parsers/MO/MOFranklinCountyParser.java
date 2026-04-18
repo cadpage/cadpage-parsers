@@ -65,6 +65,7 @@ public class MOFranklinCountyParser extends FieldProgramParser {
       field = stripFieldEnd(field, ",");
       Parser p = new Parser(field);
       data.strCross = p.getLastOptional(", Cross Street of");
+      if (!p.isFound()) p.getLastOptional(", Cro");
       p.getLastOptional("Appt or Suite");
       field = MSPACE_PTN.matcher(p.get()).replaceAll(" ");
       int pt = field.indexOf(" Appt");

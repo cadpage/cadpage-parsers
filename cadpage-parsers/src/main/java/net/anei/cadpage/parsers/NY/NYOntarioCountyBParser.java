@@ -11,12 +11,12 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
  * Ontario County, NY (B)
  */
 public class NYOntarioCountyBParser extends FieldProgramParser {
-  
+
   public NYOntarioCountyBParser() {
     super("ONTARIO COUNTY", "NY",
-           "CALL:CALL! ADDR:ADDR! CITY:CITY! INFO:INFO! UNIT:UNIT! VN:SKIP!");
+           "CALL:CALL! ADDR:ADDRCITYST! CITY:CITY! INFO:INFO! UNIT:UNIT! VN:SKIP!");
   }
-  
+
   @Override
   public String getFilter() {
     return "no-reply@fingerlakesambulance.com";
@@ -27,13 +27,15 @@ public class NYOntarioCountyBParser extends FieldProgramParser {
     if (!subject.equals("Cadpage")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
+    if (name.equals("CITY")) return new MyCityField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CODE_CALL_PTN = Pattern.compile("([A-Z0-9]+)-(.*)");
   private class MyCallField extends CallField {
     @Override
@@ -51,11 +53,26 @@ public class NYOntarioCountyBParser extends FieldProgramParser {
         }
       }
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CODE CALL";
     }
   }
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ", UNITED STATES");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
 }
-	
