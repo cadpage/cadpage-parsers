@@ -62,6 +62,7 @@ public class ILAdamsCountyParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ", APT");
       field = field.replace(" and ", " & ");
       super.parse(field, data);
       if (data.strApt.startsWith("BY ")) {

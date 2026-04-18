@@ -13,7 +13,7 @@ public class KSRenoCountyParser extends DispatchH05Parser {
 
   public KSRenoCountyParser() {
     super("RENO COUNTY", "KS",
-          "( SELECT/1 ID1 ADDRCITY1 PLACE CALL UNIT! INFO/N+ " +
+          "( SELECT/1 ID1 ADDRCITY1 PLACE CALL UNIT1! INFO/N+ " +
           "| CALL2 ADDRCITY2 NAME_PHONE? DATETIME2! INFO_BLK/Z+? UNIT2! TIMES+? ID FINAL END )");
   }
 
@@ -48,6 +48,7 @@ public class KSRenoCountyParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("ID1")) return new IdField("\\d{4}-\\d{8}\\b.*|", true);
     if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
+    if (name.equals("UNIT1")) return new MyUnit1Field();
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
@@ -61,8 +62,16 @@ public class KSRenoCountyParser extends DispatchH05Parser {
     @Override
     public void parse(String field, Data data) {
       super.parse(field, data);
-      int pt = data.strCity.indexOf(',');
-      if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
+    }
+  }
+
+  private class MyUnit1Field extends UnitField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
     }
   }
 

@@ -2912,6 +2912,7 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
       String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');

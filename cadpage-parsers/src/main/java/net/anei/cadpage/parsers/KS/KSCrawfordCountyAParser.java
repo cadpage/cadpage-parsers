@@ -63,7 +63,7 @@ public class KSCrawfordCountyAParser extends DispatchH05Parser {
         }
       }
 
-      int pt = field.lastIndexOf(',');
+      int pt = field.indexOf(',');
       if (pt >= 0) {
         data.strCity = field.substring(pt+1).trim();
         field = field.substring(0, pt).trim();
