@@ -12,16 +12,13 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   public ALJeffersonCountyIParser() {
     super("JEFFERSON COUNTY", "AL",
-          "( SELECT/H1 CALL:CALL! X/Y:GPS! ADDR1:ADDRCITY! ID:ID! DATE/TIME:DATETIME! CALL_TAKER:SKIP! " +
-                              "GRID2640:MAP! GOOGLE_MAP:EMPTY! MAP:MAP/L! XSTREETS:X! UNITS:UNIT! NARR:EMPTY INFO_BLK+ " +
-          "| CALL:CALL! ADDR:GPS! ADDR1:ADDRCITY! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
+          "CALL:CALL! ADDR:GPS! ADDR1:ADDRCITY! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
                                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
                                                                             ") " +
                                                             "| Date/Time:DATETIME GRID2640:MAP? MAP:SKIP! UNITS:UNIT! " +
                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
                                                             "| DATE:DATETIME! MAP:SKIP! UNIT:UNIT! " +
-                                                            ") INFO/N+ " +
-         ")");
+                                                            ") INFO/N+");
   }
 
   @Override
@@ -41,14 +38,10 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (!subject.equals("ACTIVE 9-1-1") && !subject.equals("D I S P A T C H")) return false;
     int pt = body.indexOf("\nJefferson County 9-1-1 ECD Legal Notice");
     if (pt >= 0) body = body.substring(0,pt).trim();
-    if (subject.startsWith("Automatic R&R Notification:")) {
-      setSelectValue("H1");
-      return super.parseHtmlMsg(subject, body, data);
-    } else {
-      return parseMsg(subject, body, data);
-    }
+    return parseMsg(subject, body, data);
   }
 
   @Override

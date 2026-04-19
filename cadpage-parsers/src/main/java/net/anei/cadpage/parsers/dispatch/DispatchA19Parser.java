@@ -108,8 +108,8 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APT|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT|APT|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_ST_PTN = Pattern.compile("[A-Z]{2}");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
@@ -157,6 +157,12 @@ public class DispatchA19Parser extends FieldProgramParser {
             data.strPlace = append(place, " - ", data.strPlace);
           }
         }
+      }
+
+      int pt = field.indexOf(" - ");
+      if (pt >= 0) {
+        data.strPlace = append(field.substring(pt+3).trim(), " - ", data.strPlace);
+        field = field.substring(0,pt).trim();
       }
 
       super.parse(field, data);

@@ -63,11 +63,13 @@ public class DispatchA71Parser extends FieldProgramParser {
 
   private static final Pattern ADDR_SECTOR_PTN = Pattern.compile("(.*?)[- ]+([NSEW]{1,2} SECTOR|SEC [NSEW]{1,2})", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_PFX_PTN = Pattern.compile("[NSEW]B|\\d+");
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[, ]+(?:APT|RM|ROOM|LOT|UNIT) +([^,]+)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[, ]+(?:APT|RM|ROOM|LOT|UNIT)\\.? +([^,]+)", Pattern.CASE_INSENSITIVE);
 
   private class BaseAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+
+      field = MSPACE_PTN.matcher(field).replaceAll(" ");
 
       if (field.isEmpty()) {
         field = data.strPlace;
