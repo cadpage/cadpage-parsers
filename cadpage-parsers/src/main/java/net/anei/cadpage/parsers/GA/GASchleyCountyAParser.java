@@ -44,9 +44,18 @@ public class GASchleyCountyAParser extends DispatchA19Parser {
   }
 
   private String fixCounty(String fld, Data data) {
-    if (COUNTY_SET.contains(fld.toUpperCase())) {
-      if (data.strCity.isEmpty()) data.strCity = fld;
-      return "";
+    String fld1, fld2;
+    int pt = fld.lastIndexOf(" - ");
+    if (pt >= 0) {
+      fld1 = fld.substring(0,pt).trim();
+      fld2 = fld.substring(pt+3).trim();
+    } else {
+      fld1 = "";
+      fld2 = fld;
+    }
+    if (COUNTY_SET.contains(fld2.toUpperCase())) {
+      if (data.strCity.isEmpty()) data.strCity = fld2;
+      return fld1;
     } else {
       return fld;
     }
